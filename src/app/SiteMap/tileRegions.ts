@@ -127,15 +127,7 @@ export const buildTileRegions = (
   floorAt: FloorAt,
   openBetween: OpenBetween,
   /** What stone to use where no floor is in reach to say — the floor's own tier. */
-  fallbackTier: Difficulty,
-  /**
-   * A PIT: a cell with no floor, and no rock either, whose state still lights the rock AROUND it. `floorAt`
-   * answers "unlit" for it (no floor, no wall face, a black mouth where floor meets it), but "unlit" is
-   * drawn only within one cell of lit floor, and a pit three cells long has a middle two cells from any
-   * — so the rock beside it would fall away and the hole open onto the margin. The pit itself stays
-   * undrawn: that is the hole.
-   */
-  pitAt: (row: number, col: number) => CellState | null = () => null
+  fallbackTier: Difficulty
 ): TileRegions => {
   const regions: TileRegions = new Map()
   // A rect belongs to the tier of the cell it is part of — the same cell its STATE comes from, so
@@ -158,7 +150,7 @@ export const buildTileRegions = (
     const at = floorAt(r, c)
     return typeof at === "string" ? null : at
   }
-  const stateOf = (r: number, c: number) => floorOf(r, c)?.state ?? pitAt(r, c)
+  const stateOf = (r: number, c: number) => floorOf(r, c)?.state ?? null
   // A wall rect is lit by the floor it actually TOUCHES, and by nothing further away. Asking a
   // 3x3 around two cells at once reached two cells out, which drew a band of stone around every
   // corridor twice as thick as the wall it stands for.
@@ -188,7 +180,7 @@ export const buildTileRegions = (
    * seams on a walked starter floor, 9 on expert, worst at the corners where the test was narrowest.
    */
   const drawnState = (r: number, c: number): CellState | null =>
-    floorOf(r, c)?.state ?? (pitAt(r, c) ? null : litTouching(...ringAround(r, c)))
+    floorOf(r, c)?.state ?? litTouching(...ringAround(r, c))
   // Asked by the gap itself AND by the corners beside it, so the two can never disagree about where a
   // wall band runs — and by the renderer, to find a cell with a band to hang a wall item on.
   const isFaceGap = (r: number, c: number): boolean => hasWallFace(floorAt, openBetween, r, c)
@@ -213,7 +205,7 @@ export const buildTileRegions = (
         // map has never had a reason to show. An unlit passage is stone here too, so its route stays
         // hidden; only its mouth shows, below.
         const around = ringAround(r, c)
-        const lit = pitAt(r, c) ? null : litTouching(...around)
+        const lit = litTouching(...around)
         if (lit) groupsFor(tierAt(...around)).wallMass[lit].push([x, y, CELL, CELL])
       }
 

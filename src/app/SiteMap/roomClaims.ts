@@ -1,4 +1,4 @@
-import type { CellState, DecorationKind, Direction, FloorGrid, GridCell, RoomCell } from "@/game/siteTypes"
+import type { DecorationKind, Direction, FloorGrid, GridCell, RoomCell } from "@/game/siteTypes"
 import { cellAt, isClaimableNeighbor } from "@/game/roomFootprint"
 import { DIR_MOVES, OPPOSITE_DIR } from "./corridorRuns"
 import { buildTileRegions, type FloorAt, type Rect, type TileRegions } from "./tileRegions"
@@ -451,27 +451,6 @@ const cellsThisSideOfAWard = (grid: FloorGrid): ReadonlySet<string> => {
   return reached
 }
 
-/**
- * A DROP'S OBSTACLE IS A HOLE, NOT PAVING: the state of a revealed obstacle cell, or null for any other.
- *
- * Its cells are the gap the player cannot cross, and the drop's sprite covers only a fifth of the run, so
- * drawing them as floor painted walkable ground under most of it. `cellFloorAt` answers "unlit" for a pit
- * (no floor, no wall face, a black mouth where the launch and the landing meet it) and `buildTileRegions`
- * keeps the rock around it standing.
- *
- * WHETHER A SPRITE EXISTS FOR IT DOES NOT COME INTO IT. The gap is a hole at every rank, painted or not:
- * a tier with no drop art draws a bare opening rather than paving the player cannot step on, because the
- * floor is the thing that lies. The sprite dresses a hole; it was never what makes one.
- *
- * A fogged obstacle is not a pit: it is already "unlit", and the drop is not revealed until its cells
- * are lit.
- */
-export const pitStateAt = (grid: FloorGrid, r: number, c: number): CellState | null => {
-  const cell = cellAt(grid, r, c)
-  if (cell.type !== "corridor" || !cell.obstacle || cell.state === "fogged") return null
-  return cell.state
-}
-
 export const cellFloorAt = (
   grid: FloorGrid,
   claims: RoomClaims,
@@ -493,7 +472,6 @@ export const cellFloorAt = (
   const thisSide = cellsThisSideOfAWard(grid)
   const tierOf = (cell: { difficulty?: Difficulty }, row: number, col: number): Difficulty =>
     thisSide.has(`${row},${col}`) ? floorTierOf : (cell.difficulty ?? floorTierOf)
-  if (pitStateAt(grid, r, c)) return "unlit"
   const owner = litClaimOwner(grid, claims, r, c)
   // A claimed cell renders as part of its owner: same material, same state, one continuous chamber.
   // A claimed cell is grid VOID and so on no walk of the floor: it asks the question at its OWNER's
@@ -525,8 +503,7 @@ export const tileRegionsFor = (grid: FloorGrid, claims: RoomClaims, ownedKeys?: 
     grid.cols,
     (r, c) => cellFloorAt(grid, claims, ownedKeys, r, c),
     (r, c, dir) => isPassable(grid, claims, r, c, dir),
-    grid.difficulty ?? "starter",
-    (r, c) => pitStateAt(grid, r, c)
+    grid.difficulty ?? "starter"
   )
 
 // A corridor is a "corner" (and thus a valid click target for corner-reveal/hidden-

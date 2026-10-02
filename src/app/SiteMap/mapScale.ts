@@ -108,9 +108,9 @@ export const DROP_H = 81
  * 24 units by which north's tile is taller are its flight, which climbs head-on into the picture and so
  * stacks drawn height without adding any hole. Against the run the gaps cover about a fifth each.
  * Lengthening the mouth to close that was tried and reverted — it works in the mesh and loses the
- * projection in the paint (docs/instructions/repaint-queue.md, the convergence rule). What is left over is
- * ordinary paving drawn inside a gap the player cannot cross, and that belongs to whatever draws the
- * obstacle's cells, not to a number here. */
+ * projection in the paint (docs/instructions/repaint-queue.md, the convergence rule). What the sprite does
+ * not cover is plain floor: the drop is painted onto a floor tile and that tile is the hole's rim, so the
+ * obstacle's cells are drawn as floor and the art is the gap. */
 export const DROP_NORTH_W = 107.5
 export const DROP_NORTH_H = 143
 export const DROP_SOUTH_W = 77.5
