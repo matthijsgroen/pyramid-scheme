@@ -95,7 +95,8 @@ export const throwMechanism = (mechanism: MechanismRecord, current: string): str
  * the way: a node with something in it stops the walk from revealing past it, so the way out is opened
  * by giving the cell back its corridor — the same cell, the same walls, the same section — rather than
  * by marking the door passed. The corridor keeps what it was a door of (`openGate`), which is only
- * ever read to draw it: every walk, reveal and count sees the corridor it has always seen.
+ * ever read to draw it: every walk, reveal and count sees the corridor it has always seen. A region
+ * barrier's door keeps nothing: open, it is plain ground.
  *
  * **Here, and before the save is applied.** Reachability spreads out of the cells a save calls explored
  * (`completeCell`), so a way out reopened after that pass would be open with the dark still behind it
@@ -114,6 +115,8 @@ export const openWaysOut = (grid: FloorGrid, open: ReadonlySet<string>): FloorGr
       if (cell.type !== "room" || (cell.family !== undefined && cell.gateFace === undefined)) return cell
       if (!cell.tags?.includes("gate") || !cell.requiredKeyId || !open.has(cell.requiredKeyId)) return cell
       opened = true
+      // Open, a region barrier's blockage is gone and its cell is ground: nothing is left to draw.
+      const remembered = cell.regionBarrier === undefined
       return {
         type: "corridor",
         dirs: cell.dirs,
@@ -124,15 +127,17 @@ export const openWaysOut = (grid: FloorGrid, open: ReadonlySet<string>): FloorGr
         ordinal: cell.ordinal,
         difficulty: cell.difficulty,
         hidden: cell.hidden,
-        openGate: {
-          tags: cell.tags,
-          requiredKeyId: cell.requiredKeyId,
-          gateVariant: cell.gateVariant,
-          keyIsAuthored: cell.keyIsAuthored,
-          keyColor: cell.keyColor,
-          keyColors: cell.keyColors,
-          mark: cell.mark,
-        },
+        ...(remembered && {
+          openGate: {
+            tags: cell.tags,
+            requiredKeyId: cell.requiredKeyId,
+            gateVariant: cell.gateVariant,
+            keyIsAuthored: cell.keyIsAuthored,
+            keyColor: cell.keyColor,
+            keyColors: cell.keyColors,
+            mark: cell.mark,
+          },
+        }),
       }
     })
   )

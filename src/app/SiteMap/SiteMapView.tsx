@@ -104,6 +104,9 @@ type Props = {
  * fact about the file — see `flameOnRight` where the flights are placed. */
 const STAIR_FLAME_DX = CELL * 0.43
 
+/** The prop a shut region barrier is drawn as. */
+const REGION_BLOCKAGE = "rubblePile"
+
 /** Anything standing on the floor, with the line it stands on — a room's own furniture and a node's.
  *
  * One list so the PLAYER can be drawn in the middle of it. Two things stand on a map: the explorer and
@@ -427,6 +430,21 @@ export const nodeSpritesFor = (
           y: ey + CELL / 2 - PROP_H,
           mirrored: false,
           light: { x: ex, y: ey + CELL * 0.12, r: LAMP_POOL_RADIUS },
+        })
+      } else if (kind === "gate" && cell.regionBarrier) {
+        // A REGION BARRIER IS A BLOCKAGE FILLING THE PASSAGE, NOT A DOOR HUNG IN IT: it stands on the
+        // cell itself, centred, with nothing to step round. Its owner's mark rides on it, being the one
+        // thing tying it to its mechanism. Rubble is the stand-in until a blockage per theme is painted.
+        const url = tileOrPlaceholder(tier, REGION_BLOCKAGE)
+        if (!url) continue
+        out.push({
+          footprint,
+          key: `blockage:${r},${c}`,
+          url,
+          x: cx - CELL / 2,
+          y: cy + CELL / 2 - PROP_H,
+          mirrored: false,
+          ...(cell.mark ? { mark: cell.mark } : {}),
         })
       } else if (kind === "gate") {
         gateLeaf(r, c, tier, cell.dirs, {
