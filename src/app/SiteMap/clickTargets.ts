@@ -29,9 +29,10 @@ export type OfferContext = {
   /** A drop's launch and landing, keyed by cell, each with the direction a walker enters it from its own
    * node — see `dropEndsOf`. */
   dropEnds: ReadonlyMap<string, Direction>
-  /** The cells around the player — their own and one step along each open way (`cellsAroundExplorer`), as
-   * `row,col` keys. A drop's arrow is drawn only on these; empty while arrows are suppressed. */
-  nearCells: ReadonlySet<string>
+  /** The cells around the player — their own (`null`) and one step along each open way (the direction the
+   * player steps to reach it), as `row,col` keys (`cellsAroundExplorer`). Arrows are drawn only on these;
+   * empty while arrows are suppressed. */
+  nearCells: ReadonlyMap<string, Direction | null>
   /** Whether the player can actually walk there from where they stand. */
   canWalkTo: (row: number, col: number) => boolean
   /** The builder's free-roam mode: every cell is a target, walkability aside. */
@@ -99,7 +100,7 @@ export const clickTargetAt = (
  *   corridor nobody is in reads as a way the player has this moment, which it is not.
  * - `dot`: a corner or dead end the player can stop on.
  *
- * The one offer with no marker is a corridor corner already walked and not a drop's launch or landing: `null` there is
+ * The one offer with no marker is a corridor corner already walked, not beside the player, and not a drop's launch or landing: `null` there is
  * a decision, and the guard in `movementInvariant.spec.ts` exempts exactly that case by name.
  */
 export type OfferMarker = { kind: "node" } | { kind: "dot" } | { kind: "arrow"; dir: Direction }
@@ -124,8 +125,12 @@ export const markerAt = (
   if (entered) return ctx.nearCells.has(`${r},${c}`) ? { kind: "arrow", dir: entered } : { kind: "dot" }
   if (cell.state === "reachable" && isCorridorCorner(cell.dirs)) return { kind: "dot" }
   // A corner the player has already walked is drawn ground they can see, so it needs no marker to be
-  // found; it stays a tap to walk back to.
-  if (cell.state === "completed" && isCorridorCorner(cell.dirs)) return null
+  // found; it stays a tap to walk back to. Right beside the player it is the next step of the way he is
+  // standing in, so it points there (an arrow is only ever drawn around the player).
+  if (cell.state === "completed" && isCorridorCorner(cell.dirs)) {
+    const step = ctx.nearCells.get(`${r},${c}`)
+    return step ? { kind: "arrow", dir: step } : null
+  }
   return { kind: "dot" }
 }
 
@@ -152,8 +157,10 @@ export const buildOfferContext = (
   return {
     runTargets: opts.runsSuppressed ? NO_RUN_TARGETS : corridorRunTargetsFrom(grid, opts.runFrom),
     dropEnds: dropEndsOf(grid),
-    nearCells: new Set(
-      opts.runsSuppressed ? [] : cellsAroundExplorer(grid, opts.runFrom).map(({ row, col }) => `${row},${col}`)
+    nearCells: new Map(
+      opts.runsSuppressed
+        ? []
+        : cellsAroundExplorer(grid, opts.runFrom).map(({ row, col, dir }) => [`${row},${col}`, dir])
     ),
     canWalkTo: (row, col) => !walkable || walkable.has(`${row},${col}`),
     freeWalk: opts.freeWalk,
