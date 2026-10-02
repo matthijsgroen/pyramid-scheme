@@ -281,9 +281,13 @@ place to another is one mechanic with two states:
             "opens": { "dry": ["floodedVault"], "wet": ["floodedHall"] } }
 ```
 
-**A mechanic may not stand in a region it bars.** The sluice is in `pumpRoom`, not in `hall` or `vault`,
-so turning it can never shut the player in behind his own hand. The tool refuses it where it is written
-rather than leaving the author to notice.
+**A mechanic may not stand in a region it makes IMPASSABLE.** The sluice is in `pumpRoom`, not in `hall`
+or `vault`: flooding the room it stands in would put its own cell beyond reach, and nothing could undo
+it. The tool refuses that where it is written.
+
+**Shutting an edge behind yourself is allowed.** A lever that closes the door you came through leaves
+you standing beside the lever, so you can open it again. That is a choice the player makes, not a trap,
+and nothing stops it.
 
 ### What the tool should show back
 
