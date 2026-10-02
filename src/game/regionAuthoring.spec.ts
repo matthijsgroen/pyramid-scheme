@@ -122,6 +122,29 @@ describe("a layout the builder refuses by name", () => {
     ])
   })
 
+  it("refuses a region nothing joins by name, whatever drops join the arms beside it", () => {
+    const layout = {
+      regions: [region("in"), region("armA"), region("armB"), region("out"), region("orphan")],
+      connections: [
+        ["in", "armA"],
+        ["in", "armB"],
+        ["in", "out"],
+      ] as Array<readonly [string, string]>,
+      in: "in",
+      out: "out",
+    }
+    const config: FloorConfig = {
+      ...floorWith(layout),
+      sideSections: [
+        { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
+        { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
+      ],
+      obstacles: [{ id: "dropAcross", kind: "oneWay", at: { on: "connection", between: ["armA", "armB"] } }],
+    }
+
+    expect(reasons(config)).toEqual([{ type: "regionUnreachable", name: "orphan" }])
+  })
+
   describe("a region only a drop leads to", () => {
     const layout = {
       regions: [region("east"), region("mid"), region("in")],

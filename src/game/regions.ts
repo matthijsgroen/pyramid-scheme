@@ -244,23 +244,27 @@ export type SideChain = { mouth: string; regions: string[] }
  * THE OFF-ROUTE REGIONS, GROUPED INTO THE CHAINS A SIDE PATH SEATS.
  *
  * A region the main route never threads still has to stand somewhere. This groups every such region
- * by which connected stretch of off-route regions it belongs to — `rightLower` and `s1Chamber` off
+ * by which stretch of off-route regions CONNECTIONS join it to — `rightLower` and `s1Chamber` off
  * `doubleBack`'s fork are one component, not two independent pendants, because `s1Chamber` hangs off
  * `rightLower` rather than off the route directly — and orders each component's regions from the
  * on-route region it hangs off (its `mouth`) inward, the region adjacent to the mouth first. That is
  * the same order a side path's own cells are labelled in: a gate on `rightLower → s1Chamber` then
- * stands behind a gate on `entrance → rightLower` by construction, never the other way round.
+ * stands behind a gate on `entrance → rightLower` by construction, never the other way round. A region
+ * appears in one chain only, once, however many connections and drops join it to its neighbour.
  *
  * A component touching the route at more than one region takes the earliest-DECLARED region as its
  * mouth, so the same layout always groups the same way regardless of which cell the carve happens to
  * attach it near (docs/game-design/regions-and-containers.md — a region is a stretch of the carve,
  * not an area set aside).
  *
- * A DROP SEATS A REGION TOO. `oneWays` are directed `[from, to]` passages the layout does not join; for
- * REACHABILITY they stay directed (`strandedRegions`), but seating is physical adjacency — a drop
- * lands in a room the side path has to stand next to — so here each is an UNDIRECTED edge, in the same
- * neighbour map as the connections. A region joined by nothing at all, drop or connection, is still in
- * no chain. Core takes plain pairs, never the `Obstacle` type.
+ * A DROP SEATS A REGION TOO, BUT ONLY ONE NOTHING ELSE JOINS. `oneWays` are directed `[from, to]`
+ * passages the layout does not join; for REACHABILITY they stay directed (`strandedRegions`), but
+ * seating is physical adjacency, so a drop is an UNDIRECTED edge here. It never merges two components
+ * the connections already seat on their own (two arms off the route that only a drop links stay two
+ * chains, each its own side path). A component no connection reaches from the route is seated by its
+ * drops instead: onto the chain of a seated region it touches, else off the earliest-declared route
+ * region it touches. A region joined by nothing at all, drop or connection, is still in no chain.
+ * Core takes plain pairs, never the `Obstacle` type.
  */
 export const offRouteChains = (
   graph: RegionGraph,
@@ -269,60 +273,94 @@ export const offRouteChains = (
   const route = regionRoute(graph)
   const onRoute = new Set(route)
   const order = new Map(graph.regions.map((r, i) => [r.name, i]))
-  const neighbours = new Map<string, string[]>()
-  for (const [a, b] of [...graph.connections, ...oneWays]) {
-    if (!neighbours.has(a)) neighbours.set(a, [])
-    if (!neighbours.has(b)) neighbours.set(b, [])
-    neighbours.get(a)!.push(b)
-    neighbours.get(b)!.push(a)
-  }
   const byDeclaration = (a: string, b: string) => (order.get(a) ?? 0) - (order.get(b) ?? 0)
+  const addEdge = (map: Map<string, Set<string>>, a: string, b: string) => {
+    if (!map.has(a)) map.set(a, new Set())
+    if (!map.has(b)) map.set(b, new Set())
+    map.get(a)!.add(b)
+    map.get(b)!.add(a)
+  }
+  const joins = new Map<string, Set<string>>()
+  for (const [a, b] of graph.connections) addEdge(joins, a, b)
 
+  // Components over connections, off-route regions only, noting every route region each touches.
   const offRoute = graph.regions.map(r => r.name).filter(name => !onRoute.has(name))
-  const visited = new Set<string>()
-  const chains: SideChain[] = []
+  const componentOf = new Map<string, number>()
+  const components: Array<{ members: string[]; mouths: string[] }> = []
   for (const start of offRoute) {
-    if (visited.has(start)) continue
-    // Collect this component (off-route regions only), noting every on-route region it touches —
-    // there may be several where a branch rejoins the route rather than dead-ending.
-    const members = new Set<string>([start])
-    const mouths: string[] = []
-    visited.add(start)
+    if (componentOf.has(start)) continue
+    const component = { members: [start], mouths: [] as string[] }
+    componentOf.set(start, components.length)
     const stack = [start]
     while (stack.length > 0) {
-      for (const next of neighbours.get(stack.pop()!) ?? []) {
-        if (onRoute.has(next)) {
-          mouths.push(next)
-        } else if (!visited.has(next)) {
-          visited.add(next)
-          members.add(next)
+      for (const next of joins.get(stack.pop()!) ?? []) {
+        if (onRoute.has(next)) component.mouths.push(next)
+        else if (!componentOf.has(next)) {
+          componentOf.set(next, components.length)
+          component.members.push(next)
           stack.push(next)
         }
       }
     }
-    // Unreachable from the route at all: strandedRegions already refuses this, so it is not
-    // re-reported here under a different name.
-    if (mouths.length === 0) continue
-    const mouth = [...mouths].sort(byDeclaration)[0]
+    components.push(component)
+  }
 
-    // BFS from the mouth, over connections within {mouth} ∪ members only — the same shape
-    // `regionRoute` threads the main path with, applied to one component instead of the whole graph.
+  // chainOf[c] is the chain a component is seated on; a connection-reached component starts its own.
+  const chains: Array<{ mouth: string; members: Set<string> }> = []
+  const chainOf = new Map<number, number>()
+  components.forEach((component, c) => {
+    if (component.mouths.length === 0) return
+    chainOf.set(c, chains.length)
+    chains.push({ mouth: [...component.mouths].sort(byDeclaration)[0], members: new Set(component.members) })
+  })
+
+  // Components no connection reaches: seated by a drop, onto a seated chain first. Repeats while a
+  // newly seated component lets another one attach. A region no drop reaches either stays out
+  // (strandedRegions already refuses it, so it is not re-reported here under a different name).
+  const dropEdges = new Map<string, Set<string>>()
+  let progressed = true
+  while (progressed) {
+    progressed = false
+    components.forEach((component, c) => {
+      if (chainOf.has(c)) return
+      const touching = oneWays.flatMap(([a, b]) =>
+        component.members.includes(a) ? [b] : component.members.includes(b) ? [a] : []
+      )
+      const seated = touching.filter(n => chainOf.has(componentOf.get(n) ?? -1))
+      const routeMouths = touching.filter(n => onRoute.has(n))
+      if (seated.length > 0) {
+        const index = chainOf.get(componentOf.get([...seated].sort(byDeclaration)[0])!)!
+        chainOf.set(c, index)
+        for (const m of component.members) chains[index].members.add(m)
+      } else if (routeMouths.length > 0) {
+        chainOf.set(c, chains.length)
+        chains.push({ mouth: [...routeMouths].sort(byDeclaration)[0], members: new Set(component.members) })
+      } else return
+      for (const [a, b] of oneWays) {
+        if (component.members.includes(a) || component.members.includes(b)) addEdge(dropEdges, a, b)
+      }
+      progressed = true
+    })
+  }
+
+  // BFS from the mouth over {mouth} ∪ members — the same shape `regionRoute` threads the main path
+  // with, applied to one chain instead of the whole graph.
+  return chains.map(({ mouth, members }) => {
     const within = new Set([mouth, ...members])
     const seen = new Set([mouth])
     const queue = [mouth]
-    const regionsInOrder: string[] = []
+    const regions: string[] = []
     while (queue.length > 0) {
       const at = queue.shift()!
-      const next = (neighbours.get(at) ?? []).filter(n => within.has(n) && !seen.has(n)).sort(byDeclaration)
-      for (const n of next) {
+      const reach = new Set([...(joins.get(at) ?? []), ...(dropEdges.get(at) ?? [])])
+      for (const n of [...reach].filter(n => within.has(n) && !seen.has(n)).sort(byDeclaration)) {
         seen.add(n)
-        regionsInOrder.push(n)
+        regions.push(n)
         queue.push(n)
       }
     }
-    chains.push({ mouth, regions: regionsInOrder })
-  }
-  return chains
+    return { mouth, regions }
+  })
 }
 
 /**

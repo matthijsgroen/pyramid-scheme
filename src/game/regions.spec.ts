@@ -550,3 +550,67 @@ describe("grouping off-route regions a drop joins", () => {
     expect(offRouteChains(pendant, [["in", "cellar"]])).toEqual([{ mouth: "in", regions: ["cellar"] }])
   })
 })
+
+describe("grouping off-route regions as a tree over connections", () => {
+  // Two arms off the entrance, joined to each other by drops alone: still two side paths.
+  const arms = graph(
+    [
+      ["in", "leftLower"],
+      ["in", "rightLower"],
+      ["rightLower", "s1Chamber"],
+      ["leftLower", "s2Chamber"],
+      ["in", "out"],
+    ],
+    ["in", "rightLower", "s1Chamber", "leftLower", "s2Chamber", "out"],
+    { in: "in", out: "out" }
+  )
+  const drops: Array<[string, string]> = [
+    ["s1Chamber", "leftLower"],
+    ["leftLower", "in"],
+  ]
+
+  it("seats two arms off one mouth each on its own chain when only a drop joins them", () => {
+    expect(regionRoute(arms)).toEqual(["in", "out"])
+    expect(offRouteChains(arms, drops)).toEqual([
+      { mouth: "in", regions: ["rightLower", "s1Chamber"] },
+      { mouth: "in", regions: ["leftLower", "s2Chamber"] },
+    ])
+  })
+
+  it("seats the same chains whether or not the drops are passed", () => {
+    expect(offRouteChains(arms, drops)).toEqual(offRouteChains(arms))
+  })
+
+  it("seats a region once when a connection and a drop join the same pair", () => {
+    const cellar = graph(
+      [
+        ["in", "out"],
+        ["in", "midden"],
+        ["midden", "kelder"],
+      ],
+      ["in", "midden", "kelder", "out"],
+      { in: "in", out: "out" }
+    )
+
+    expect(offRouteChains(cellar, [["midden", "kelder"]])).toEqual([{ mouth: "in", regions: ["midden", "kelder"] }])
+    expect(
+      offRouteChains(cellar, [
+        ["kelder", "midden"],
+        ["midden", "kelder"],
+      ])
+    ).toEqual([{ mouth: "in", regions: ["midden", "kelder"] }])
+  })
+
+  it("leaves a region nothing joins out of every chain, beside arms a drop links", () => {
+    const withOrphan = graph(
+      arms.connections as Array<[string, string]>,
+      [...arms.regions.map(r => r.name), "orphan"],
+      { in: "in", out: "out" }
+    )
+
+    expect(offRouteChains(withOrphan, drops)).toEqual([
+      { mouth: "in", regions: ["rightLower", "s1Chamber"] },
+      { mouth: "in", regions: ["leftLower", "s2Chamber"] },
+    ])
+  })
+})
