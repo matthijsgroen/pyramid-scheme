@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { getOwnedKeys } from "@/game/gridNavigation"
+import { concealShutGround } from "@/game/concealment"
 import { getFamilyPlugin } from "@/app/families/familyRegistry"
 import { floorKeyRing } from "@/game/floorKeys"
 import { useCorridorDetection } from "@/app/SiteMap/useCorridorDetection"
@@ -145,6 +146,9 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   // player has already seen here and can't open yet (fogged ones stay secret — see floorKeys.ts).
   const keyRing = useMemo(() => (grid ? floorKeyRing(grid, ownedKeys) : { held: [], needed: [] }), [grid, ownedKeys])
 
+  // What is drawn hides ground a shut barrier cuts off; everything else reads the true grid.
+  const drawnGrid = useMemo(() => (grid ? concealShutGround(grid, explorerPos) : null), [grid, explorerPos])
+
   useFloorExplorationRecorder({ journeys, journeyId, levelNr: levelIndex + 1, currentFloor, grid })
 
   // The chests on THIS floor still holding a consumable the player had no room for, as the coordinates
@@ -226,7 +230,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
       {currentFloor > 0 && <FloorBadge label={t("ui.floor", { number: currentFloor + 1 })} />}
       <div className="relative h-(--screen-height) w-screen">
         <SiteMapView
-          grid={grid}
+          grid={drawnGrid ?? grid}
           onCellClick={onCellClick}
           explorerPos={explorerPos}
           explorerHidden={explorerHidden}
