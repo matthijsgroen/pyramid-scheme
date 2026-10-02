@@ -323,6 +323,51 @@ describe("the offers around a one-way drop", () => {
       })
     })
 
+    // An arrow appears only around the player. Walkability is lifted (walkFrom undefined) so that all four
+    // ends are offered at once, and only the standing cell the arrows are reckoned from varies: an end away
+    // from it must still draw something, a dot, never nothing and never an arrow left behind.
+    describe.each(["reachable", "completed"] as const)("with every cell %s, seen from across the floor", state => {
+      const { grid: stated, at: statedAt } = dropGrid(axis, "room", "room", state)
+      const markersFrom = (runFrom: readonly [number, number], runsSuppressed = false) => {
+        const ctx = buildOfferContext(stated, { walkFrom: undefined, runFrom, runsSuppressed, freeWalk: false })
+        const claims = buildRoomClaims(stated)
+        // The four ends only: with walkability lifted the obstacle's own cells are offered too, and drawn nothing.
+        return Object.fromEntries(
+          Object.values(DROP_AT).map(i => {
+            const [r, c] = statedAt(i)
+            return [key([r, c]), markerAt(stated, claims, r, c, ctx)]
+          })
+        )
+      }
+
+      it("draws a dot on the far launch and an arrow only on the landing beside the player", () => {
+        expect(markersFrom(statedAt(DROP_AT.toNode))).toEqual({
+          [key(statedAt(DROP_AT.fromNode))]: { kind: "node" },
+          [key(statedAt(DROP_AT.launch))]: { kind: "dot" },
+          [key(statedAt(DROP_AT.landing))]: { kind: "arrow", dir: axis.back },
+          [key(statedAt(DROP_AT.toNode))]: { kind: "node" },
+        })
+      })
+
+      it("draws a dot on the far landing and an arrow only on the launch beside the player", () => {
+        expect(markersFrom(statedAt(DROP_AT.fromNode))).toEqual({
+          [key(statedAt(DROP_AT.fromNode))]: { kind: "node" },
+          [key(statedAt(DROP_AT.launch))]: { kind: "arrow", dir: axis.travel },
+          [key(statedAt(DROP_AT.landing))]: { kind: "dot" },
+          [key(statedAt(DROP_AT.toNode))]: { kind: "node" },
+        })
+      })
+
+      it("draws a dot on both ends while the explorer is gliding", () => {
+        expect(markersFrom(statedAt(DROP_AT.fromNode), true)).toEqual({
+          [key(statedAt(DROP_AT.fromNode))]: { kind: "node" },
+          [key(statedAt(DROP_AT.launch))]: { kind: "dot" },
+          [key(statedAt(DROP_AT.landing))]: { kind: "dot" },
+          [key(statedAt(DROP_AT.toNode))]: { kind: "node" },
+        })
+      })
+    })
+
     it("draws no marker on any cell of the obstacle, from any standing place", () => {
       for (const standing of [DROP_AT.fromNode, DROP_AT.launch, DROP_AT.landing, DROP_AT.toNode]) {
         const ctx = offerContextFrom(grid, at(standing), {})

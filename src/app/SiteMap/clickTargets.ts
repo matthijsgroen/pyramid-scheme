@@ -1,7 +1,13 @@
 import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
 import { dropEndsOf, walkableFrom } from "@/game/gridNavigation"
-import { NO_RUN_TARGETS, corridorRunTargetsFrom, isCorridorCorner, type CorridorRunTarget } from "./corridorRuns"
+import {
+  NO_RUN_TARGETS,
+  cellsAroundExplorer,
+  corridorRunTargetsFrom,
+  isCorridorCorner,
+  type CorridorRunTarget,
+} from "./corridorRuns"
 import { litClaimOwner, type RoomClaims } from "./roomClaims"
 
 /**
@@ -23,6 +29,9 @@ export type OfferContext = {
   /** A drop's launch and landing, keyed by cell, each with the direction a walker enters it from its own
    * node — see `dropEndsOf`. */
   dropEnds: ReadonlyMap<string, Direction>
+  /** The cells around the player — their own and one step along each open way (`cellsAroundExplorer`), as
+   * `row,col` keys. A drop's arrow is drawn only on these; empty while arrows are suppressed. */
+  nearCells: ReadonlySet<string>
   /** Whether the player can actually walk there from where they stand. */
   canWalkTo: (row: number, col: number) => boolean
   /** The builder's free-roam mode: every cell is a target, walkability aside. */
@@ -84,7 +93,10 @@ export const clickTargetAt = (
  * The SHAPE is read off what the offer names:
  * - `node`: a room. Its own node art is the marker, drawn for every lit room whatever the offer.
  * - `arrow`: a way to walk, pointing where the tap leads from here — a corridor run's near end, or a
- *   drop's launch or landing, pointed at in the direction it is entered from its own node.
+ *   drop's launch or landing, pointed at in the direction it is entered from its own node. An arrow is
+ *   drawn ONLY AROUND THE PLAYER (`nearCells`): his own cell and one step along each way open from it.
+ *   Further off, a drop's end is a place like any other and draws a dot, because an arrow standing in a
+ *   corridor nobody is in reads as a way the player has this moment, which it is not.
  * - `dot`: a corner or dead end the player can stop on.
  *
  * The one offer with no marker is a corridor corner already walked and not a drop's launch or landing: `null` there is
@@ -105,10 +117,11 @@ export const markerAt = (
   if (cell.type !== "corridor") return { kind: "node" }
   const runTarget = ctx.runTargets.get(`${r},${c}`)
   if (runTarget) return { kind: "arrow", dir: runTarget.dir }
-  // A launch or landing is named by an arrow pointing the way it is walked into, walked or not: it is a
-  // stub at the end of a line the player can see, not ground a dot or silence would find.
+  // A launch or landing is a stopping point wherever it is, but an arrow appears only AROUND THE PLAYER:
+  // beside it or on it the arrow points the way it is entered from its own node; from afar it is a plain
+  // dot, so it stays findable without an arrow left behind.
   const entered = ctx.dropEnds.get(`${r},${c}`)
-  if (entered) return { kind: "arrow", dir: entered }
+  if (entered) return ctx.nearCells.has(`${r},${c}`) ? { kind: "arrow", dir: entered } : { kind: "dot" }
   if (cell.state === "reachable" && isCorridorCorner(cell.dirs)) return { kind: "dot" }
   // A corner the player has already walked is drawn ground they can see, so it needs no marker to be
   // found; it stays a tap to walk back to.
@@ -122,7 +135,7 @@ export const markerAt = (
  * Two positions and one switch are inputs because they genuinely vary; the assembly and the walk rule
  * (`canWalkTo`) are not, and live only here.
  * - `walkFrom`: where `canWalkTo` reckons from — the standing cell. Undefined means every cell is walkable.
- * - `runFrom`: where corridor-run arrows are reckoned from. Callers may pass a different cell than
+ * - `runFrom`: where corridor-run arrows and a drop's arrow are reckoned from. Callers may pass a different cell than
  *   `walkFrom`; this builder does not reconcile them.
  * - `runsSuppressed`: no run arrows at all (the explorer is mid-glide).
  */
@@ -139,6 +152,9 @@ export const buildOfferContext = (
   return {
     runTargets: opts.runsSuppressed ? NO_RUN_TARGETS : corridorRunTargetsFrom(grid, opts.runFrom),
     dropEnds: dropEndsOf(grid),
+    nearCells: new Set(
+      opts.runsSuppressed ? [] : cellsAroundExplorer(grid, opts.runFrom).map(({ row, col }) => `${row},${col}`)
+    ),
     canWalkTo: (row, col) => !walkable || walkable.has(`${row},${col}`),
     freeWalk: opts.freeWalk,
   }

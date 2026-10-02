@@ -1277,6 +1277,8 @@ export const SiteMapView = ({
   // positions feed it. Walkability (which corners and drop ends are offered) follows the LIVE explorer,
   // so mid-glide it is already reckoned from the destination; run arrows follow the SETTLED position
   // and vanish while travelling. Whether both should follow one position is a design question.
+  // A drop's arrow follows the SETTLED position like run arrows: arrows belong around the dot the player
+  // sees, so mid-glide they are gone (the drop end draws a dot) rather than jumping to the destination.
   const offerContext: OfferContext = useMemo(
     () =>
       buildOfferContext(grid, {

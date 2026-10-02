@@ -57,6 +57,24 @@ export type CorridorRunTarget = { row: number; col: number; dir: Direction }
 export const NO_RUN_TARGETS: ReadonlyMap<string, CorridorRunTarget> = new Map()
 
 /**
+ * "Around the player": the explorer's own cell and the cell one step along each way open from it.
+ * Corridor run arrows are keyed by exactly these neighbours, and a drop's arrow is drawn only on these.
+ */
+export const cellsAroundExplorer = (
+  grid: FloorGrid,
+  explorerPos: readonly [number, number] | undefined
+): { row: number; col: number; dir: Direction | null }[] => {
+  if (!explorerPos) return []
+  const [er, ec] = explorerPos
+  const startCell = cellAt(grid, er, ec)
+  if (startCell.type !== "room" && startCell.type !== "corridor") return []
+  return [
+    { row: er, col: ec, dir: null },
+    ...[...startCell.dirs].map(dir => ({ row: er + DIR_MOVES[dir][0], col: ec + DIR_MOVES[dir][1], dir })),
+  ]
+}
+
+/**
  * For each direction open from the explorer's current cell, the corridor run's far click target (if
  * any), keyed by the NEAR cell — the first step of that run — so rendering can put the click
  * affordance right next to the player. `dir` is that first step's direction, unambiguous by
@@ -67,14 +85,8 @@ export const corridorRunTargetsFrom = (
   explorerPos: readonly [number, number] | undefined
 ): ReadonlyMap<string, CorridorRunTarget> => {
   const targets = new Map<string, CorridorRunTarget>()
-  if (!explorerPos) return targets
-  const [er, ec] = explorerPos
-  const startCell = cellAt(grid, er, ec)
-  if (startCell.type !== "room" && startCell.type !== "corridor") return targets
-  for (const dir of startCell.dirs) {
-    const [dr, dc] = DIR_MOVES[dir]
-    const nearR = er + dr,
-      nearC = ec + dc
+  for (const { row: nearR, col: nearC, dir } of cellsAroundExplorer(grid, explorerPos)) {
+    if (!dir) continue
     const target = findCorridorRunTarget(grid, nearR, nearC, dir)
     if (target && (target[0] !== nearR || target[1] !== nearC)) {
       targets.set(`${nearR},${nearC}`, { row: target[0], col: target[1], dir })
