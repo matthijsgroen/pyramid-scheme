@@ -20,7 +20,7 @@
 //      actually reach.
 //   B. taking an offer moves the explorer there — clicking a target the map offered must leave the
 //      explorer standing on it.
-//   C. every tap draws something, except a corridor corner already completed — see `markerViolations`.
+//   C. every tap draws something, except ground the player has already walked — see `markerViolations`.
 //
 // A drop's launch and landing are dead ends like any other, stopping points on their own side. The
 // obstacle between them is never in `walkableFrom`, so property A requires nothing to offer it, which is
@@ -164,15 +164,19 @@ const markerViolations = (grid: FloorGrid, explorerPos: readonly [number, number
   // jsdom has no layout, so it has no `scrollTo`; the map centres on the explorer through it.
   Element.prototype.scrollTo ??= () => {}
   const exempt = new Set<string>()
-  // A launch or landing is never exempt: it is a stub at the end of a line, not ground that shows itself.
+  // GROUND ALREADY WALKED NEEDS NO MARK, and that now covers a drop's ends as well as a corner: a map
+  // that keeps marking where the player has been fills up with his own history. It is a trade, and the
+  // cost is named here rather than hidden — such a cell is still a tap, so it is a tap with nothing drawn
+  // on it, which is the shape of a defect reported from play on 2026-10-01. What makes it bearable is
+  // that it holds only AWAY from the player: anything around him wears an arrow (`markerAt`), so the way
+  // on is always drawn where he is standing. Narrow this the day a tap on walked ground matters again.
   const dropEnds = dropEndsOf(grid)
   grid.cells.forEach((row, r) =>
     row.forEach((cell, c) => {
       if (
         cell.type === "corridor" &&
         cell.state === "completed" &&
-        isCorridorCorner(cell.dirs) &&
-        !dropEnds.has(`${r},${c}`)
+        (isCorridorCorner(cell.dirs) || dropEnds.has(`${r},${c}`))
       ) {
         const { cx, cy } = cellCenter(r, c)
         exempt.add(`${cx - CELL / 2}px,${cy - CELL / 2}px`)

@@ -324,10 +324,13 @@ describe("the offers around a one-way drop", () => {
     })
 
     // An arrow appears only around the player. Walkability is lifted (walkFrom undefined) so that all four
-    // ends are offered at once, and only the standing cell the arrows are reckoned from varies: an end away
-    // from it must still draw something, a dot, never nothing and never an arrow left behind.
+    // ends are offered at once, and only the standing cell the arrows are reckoned from varies. An end away
+    // from the player never wears an arrow left behind: it is a dot while it is somewhere still to go, and
+    // nothing once walked, which is the rule every other stopping point answers to.
     describe.each(["reachable", "completed"] as const)("with every cell %s, seen from across the floor", state => {
       const { grid: stated, at: statedAt } = dropGrid(axis, "room", "room", state)
+      // Already walked, so a far end draws nothing; seen but not walked, so it draws a dot.
+      const far = state === "completed" ? null : { kind: "dot" }
       const markersFrom = (runFrom: readonly [number, number], runsSuppressed = false) => {
         const ctx = buildOfferContext(stated, { walkFrom: undefined, runFrom, runsSuppressed, freeWalk: false })
         const claims = buildRoomClaims(stated)
@@ -340,29 +343,29 @@ describe("the offers around a one-way drop", () => {
         )
       }
 
-      it("draws a dot on the far launch and an arrow only on the landing beside the player", () => {
+      it("draws no arrow on the far launch and an arrow only on the landing beside the player", () => {
         expect(markersFrom(statedAt(DROP_AT.toNode))).toEqual({
           [key(statedAt(DROP_AT.fromNode))]: { kind: "node" },
-          [key(statedAt(DROP_AT.launch))]: { kind: "dot" },
+          [key(statedAt(DROP_AT.launch))]: far,
           [key(statedAt(DROP_AT.landing))]: { kind: "arrow", dir: axis.back },
           [key(statedAt(DROP_AT.toNode))]: { kind: "node" },
         })
       })
 
-      it("draws a dot on the far landing and an arrow only on the launch beside the player", () => {
+      it("draws no arrow on the far landing and an arrow only on the launch beside the player", () => {
         expect(markersFrom(statedAt(DROP_AT.fromNode))).toEqual({
           [key(statedAt(DROP_AT.fromNode))]: { kind: "node" },
           [key(statedAt(DROP_AT.launch))]: { kind: "arrow", dir: axis.travel },
-          [key(statedAt(DROP_AT.landing))]: { kind: "dot" },
+          [key(statedAt(DROP_AT.landing))]: far,
           [key(statedAt(DROP_AT.toNode))]: { kind: "node" },
         })
       })
 
-      it("draws a dot on both ends while the explorer is gliding", () => {
+      it("draws no arrow on either end while the explorer is gliding", () => {
         expect(markersFrom(statedAt(DROP_AT.fromNode), true)).toEqual({
           [key(statedAt(DROP_AT.fromNode))]: { kind: "node" },
-          [key(statedAt(DROP_AT.launch))]: { kind: "dot" },
-          [key(statedAt(DROP_AT.landing))]: { kind: "dot" },
+          [key(statedAt(DROP_AT.launch))]: far,
+          [key(statedAt(DROP_AT.landing))]: far,
           [key(statedAt(DROP_AT.toNode))]: { kind: "node" },
         })
       })

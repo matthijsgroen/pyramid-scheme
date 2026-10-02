@@ -119,10 +119,14 @@ export const markerAt = (
   const runTarget = ctx.runTargets.get(`${r},${c}`)
   if (runTarget) return { kind: "arrow", dir: runTarget.dir }
   // A launch or landing is a stopping point wherever it is, but an arrow appears only AROUND THE PLAYER:
-  // beside it or on it the arrow points the way it is entered from its own node; from afar it is a plain
-  // dot, so it stays findable without an arrow left behind.
+  // beside it or on it the arrow points the way it is entered from its own node. Further off it answers
+  // to the same rule as any other stopping point — a dot while it is somewhere the player has yet to go,
+  // and nothing once he has been there, so a walked floor does not fill up with his own history.
   const entered = ctx.dropEnds.get(`${r},${c}`)
-  if (entered) return ctx.nearCells.has(`${r},${c}`) ? { kind: "arrow", dir: entered } : { kind: "dot" }
+  if (entered) {
+    if (ctx.nearCells.has(`${r},${c}`)) return { kind: "arrow", dir: entered }
+    return cell.state === "completed" ? null : { kind: "dot" }
+  }
   if (cell.state === "reachable" && isCorridorCorner(cell.dirs)) return { kind: "dot" }
   // A corner the player has already walked is drawn ground they can see, so it needs no marker to be
   // found; it stays a tap to walk back to. Right beside the player it is the next step of the way he is
