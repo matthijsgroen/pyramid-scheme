@@ -1,47 +1,55 @@
 #!/usr/bin/env tsx
 /**
- * Draws a lock written in lockText.ts's notation, walks it, says what it could do without, and prints
- * the JSON the notation compiles to. Chain and embed lines resolve against the catalogue.
+ * Draws a lock written in lockNotation.ts's notation, walks it, says what it could do without, and
+ * prints the shared Lock JSON it reads into.
  *
  *   yarn lock                       every lock in the catalogue
  *   yarn lock doubleBack            one of them, with its JSON
  *   yarn lock sketch.lock           a file
- *   yarn lock sketch.lock --watch   the same, redrawn on every save; a new file starts with the notation
+ *   yarn lock sketch.lock --watch   redrawn on every save; a new file starts with the notation
  *   yarn lock - < sketch.lock       standard input
  *   yarn lock --help                the notation
  */
 import { existsSync, readFileSync, watch, writeFileSync } from "node:fs"
 import { basename, dirname } from "node:path"
 import { describeLockWalkFailure, walkLock } from "../src/game/lockWalk"
-import { drawLock, lockQuality, solveLock, topologyLock, unreachedRegions } from "../src/game/lockSketch"
-import type { AuthoredLock } from "../src/game/lockSketch"
-import { LOCK_SYNTAX, parseLock } from "../src/game/lockText"
+import { walkSpecOf, needsFace, notBuildable, openAtStart, readable } from "../src/game/lockWalkSpec"
+import { drawLock } from "../src/game/lockDraw"
+import { lockQuality, solveLock, unreachedRegions } from "../src/game/lockReview"
+import { LOCK_SYNTAX, parseLock } from "../src/game/lockNotation"
+import type { ParsedLock } from "../src/game/lockNotation"
 import { LOCK_CATALOGUE } from "../src/game/lockCatalogue"
 
 const args = process.argv.slice(2)
 const watching = args.includes("--watch")
 const target = args.find(arg => !arg.startsWith("--"))
-const library: Record<string, AuthoredLock> = LOCK_CATALOGUE
+const library: Record<string, ParsedLock> = LOCK_CATALOGUE
 
-const report = (name: string, lock: AuthoredLock, withJson: boolean): boolean => {
-  const spec = topologyLock(lock)
+const report = (name: string, { lock, drafts }: ParsedLock, withJson: boolean): boolean => {
+  const spec = walkSpecOf(lock, drafts)
   const walked = walkLock(spec)
   const unreached = unreachedRegions(spec)
   const reachable = Array.isArray(unreached) && unreached.length === 0
   const deadEnd = !walked.sound && walked.failure.type === "strands"
-  const unplaced = Object.keys(lock.unplaced ?? {})
+  const open = openAtStart(lock)
+  const unbuilt = notBuildable(lock)
+  const sequences = Object.entries(lock.mechanics).flatMap(([id, m]) => (m.control === "sequence" ? [id] : []))
   const checks = [
-    ...(unplaced.length > 0 ? [`✗ not placed yet: ${unplaced.join(", ")}`] : []),
+    ...(drafts.length > 0 ? [`✗ not placed yet: ${drafts.join(", ")}`] : []),
     reachable
       ? "✓ every region is reachable"
       : `✗ ${unreached === "tooLarge" ? "too many states to walk" : `never reached: ${unreached.join(", ")}`}`,
-    walked.sound || deadEnd ? "✓ solvable" : `✗ not solvable: ${describeLockWalkFailure(walked.failure)}`,
-    ...(deadEnd ? [`✗ a dead end: ${describeLockWalkFailure(walked.failure)}`] : []),
+    walked.sound || deadEnd ? "✓ solvable" : `✗ not solvable: ${readable(describeLockWalkFailure(walked.failure))}`,
+    ...(deadEnd ? [`✗ a dead end: ${readable(describeLockWalkFailure(walked.failure))}`] : []),
+    `at the start ${open.length > 0 ? `these gates stand open: ${open.join(", ")}` : "no gate stands open"}`,
+    ...needsFace(lock).map(({ gate, owners }) => `${gate} shows what it waits for: ${owners.join(", ")}`),
+    ...sequences.map(id => `⚠ sequence ${id}: done stays fired, tiles anywhere — contract §8 open`),
+    ...(unbuilt.length > 0 ? [`⚠ not buildable yet: ${unbuilt.join(", ")}`] : []),
   ]
-  const lines = [`## ${name}`, "", ...checks, "", drawLock(topologyLock(lock, { drawn: true }))]
+  const lines = [`## ${name}`, "", ...checks, "", drawLock(lock, drafts)]
   const solved = solveLock(spec)
   if (solved) lines.push("", `cheapest: ${solved.actions} actions — ${solved.steps.join(" ▸ ")}`)
-  const notes = lockQuality(lock)
+  const notes = lockQuality(lock, drafts)
   lines.push(
     "",
     ...(notes.length > 0 ? notes.map(note => `! ${note}`) : walked.sound ? ["every piece bears load"] : [])
@@ -52,15 +60,15 @@ const report = (name: string, lock: AuthoredLock, withJson: boolean): boolean =>
   )
   if (withJson) lines.push("", json)
   console.log(lines.join("\n") + "\n")
-  return unplaced.length === 0 && reachable && walked.sound
+  return drafts.length === 0 && reachable && walked.sound
 }
 
-const syntax = `${LOCK_SYNTAX}\n  locks to chain or embed: ${Object.keys(library).join(", ")}\n`
+const syntax = `${LOCK_SYNTAX}\n  catalogue: ${Object.keys(library).join(", ")}\n`
 
 const fromText = (name: string, text: string): boolean => {
   try {
     // Watching is for designing; the JSON is for when the design is done.
-    return report(name, parseLock(text, library), !watching)
+    return report(name, parseLock(text, name.replace(/\.lock$/, "")), !watching)
   } catch (error) {
     // A watched file carries the syntax in its own comments.
     console.log(`## ${name}\n\n✗ ${(error as Error).message}\n${watching ? "" : `\n${syntax}`}`)
@@ -82,7 +90,7 @@ if (watching && target && target !== "-" && !(target in library) && !existsSync(
 if (args.includes("--help")) {
   console.log(syntax)
 } else if (!target) {
-  const sound = Object.entries(LOCK_CATALOGUE).map(([name, lock]) => report(name, lock, false))
+  const sound = Object.entries(LOCK_CATALOGUE).map(([name, parsed]) => report(name, parsed, false))
   process.exitCode = sound.every(Boolean) ? 0 : 1
 } else if (target === "-") {
   process.exitCode = fromText("stdin", readFileSync(0, "utf8")) ? 0 : 1

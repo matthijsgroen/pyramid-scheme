@@ -4,7 +4,7 @@ import { walkSpecOf } from "./lockWalkSpec"
 import { drawLock } from "./lockDraw"
 import { parseLock } from "./lockNotation"
 import { lockQuality, solveLock, unreachedRegions } from "./lockReview"
-import { LOCK_CATALOGUE_V2 as LOCK_CATALOGUE, LOCK_TEXTS } from "./lockCatalogue"
+import { LOCK_CATALOGUE, LOCK_TEXTS } from "./lockCatalogue"
 
 const walkText = (text: string) => walkLock(walkSpecOf(parseLock(text).lock, parseLock(text).drafts))
 /** The lock with one of its lines rewritten — how each trick's load-bearing piece is taken away. */
