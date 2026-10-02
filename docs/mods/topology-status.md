@@ -117,8 +117,10 @@ Each measured, each with its evidence.
    (`siteAssembler.ts:1463-1500`). On dev pyramid 2 that puts the lever sixteen cells from the fork it
    governs.
 6. **`openDoorsFor` and `floorLock` are not proved equivalent** for a door naming more than one key
-   (`mechanismDoors.ts:13-28`, which also records the two measured ways they can disagree). Latent: no
-   authored floor builds such a door.
+   (`mechanismDoors.ts:13-28`, which also records the two measured ways they can disagree). This was
+   documented and left alone because nothing could author such a door. It is now LOAD-BEARING: a floor
+   key is an activator and may take part in an `and`/`any` condition (`mechanic-contract.md` §2, §3), so
+   "four torches and the key" is exactly that door.
 7. **A multi-state control cycles**; the player cannot choose a state.
 8. **Toggle-off holds for `obstacles`, `controls` and `switches`, not for `handles`**
    (`modOwnedAuthoring.ts:48-57`). What a `handles` floor does with the mod unregistered is UNKNOWN.
@@ -132,10 +134,12 @@ code. Every time, the author got something other than what they wrote, and nothi
 
 ### A — Vocabulary (the lock-authoring tool)
 
-- **A1. One name per concept.** No word with two meanings; no concept with four names.
-- **A2. The mechanic contract.** Each mechanic declares `operates` / `states` / `governs` / `stands` /
-  `built`, and a LOCK declares itself a unit with `in`/`out` that can be placed, chained and nested.
-  Everything else hangs off this.
+- **A1. One name per concept.** No word with two meanings; no concept with four names. Settled:
+  **lock**, **mechanic**, **gate**, **region**. A zipline is a realisation of `one-way`; a lightswitch is
+  a realisation of `fork-switch`. An author never sees "section" or "side path".
+- **A2. The mechanic contract.** Settled on 2026-10-02 and written down in `mechanic-contract.md`:
+  three layers (control, effect, realisation), four controls plus one-way, targets that are edges or
+  regions, realisations bound from outside. Everything else hangs off this.
 - **A3. The tool refuses what a mechanic cannot govern.** Naming a seam for a light switch is an error
   where it is written, not a lever sixteen cells away.
 - **A4. No silent default.** An omitted property is asked for or refused, never guessed.
@@ -147,7 +151,10 @@ code. Every time, the author got something other than what they wrote, and nothi
 
 - **B1. An open gate keeps its symbol and colour.** (Fixes 6.3.)
 - **B2. Two mechanisms on one floor never share a mark.** (Fixes 6.4.)
-- **B3. A switch can own named seams.** (Fixes 6.1; unblocks doubleBack.)
+- **B3. A fork's exits can be the authored seams.** (Fixes 6.1; unblocks doubleBack.) Not "a switch may
+  own named seams" — a fork puzzle operates its own fork (`mechanic-contract.md` §4), so what must move
+  is the carve: when a fork-switch stands in a region whose connections are the fork's branches, the
+  junction's exits must be laid on those seams rather than chosen independently of them.
 - **B4. A control stands where the lock it governs is.** (Fixes 6.5.)
 - **B5. `encounter` decides the drawing too.** (Fixes 6.2.)
 - **B6. Several locks on one floor, in sequence.** `placement` is the foundation and has never been

@@ -1,0 +1,158 @@
+# The mechanic contract
+
+How a lock and its mechanics are defined, so that what an author writes is what they get. Settled with
+the designer on 2026-10-02. `topology-status.md` says what is built today; this says what the authoring
+vocabulary must express. Where the two disagree, this document is the target and that one is the record.
+
+**The defect this exists to prevent is silent fallback.** A control with no encounter became a lever; a
+`encounter: "torch"` was drawn as a lever; `switches` meant one thing in the spec and another in the
+code. Every time the author got something other than what they wrote, and nothing said so. So: an
+omitted property is asked for or refused, never guessed, and the tool refuses what the carve cannot
+build rather than substituting something near it.
+
+## 1. Three layers
+
+| layer | what it says | examples |
+|---|---|---|
+| **control** | the state machine the player drives | back and forth, on only, in order, rest plus one per exit |
+| **effect** | what each state does to the map | these gates open, these regions impassable |
+| **realisation** | how it looks and is operated | zipline or headwind, lightswitch or another switch puzzle |
+
+A **lock** names controls and effects. It never names a realisation. A realisation is bound from
+**outside**, where the lock is placed, so one lock can be reused across pyramids with different themes:
+the same one-way is a zipline in one pyramid and a strong headwind in another.
+
+**A realisation may not change what the solver sees.** Same states, same edges, same directions. Only
+the drawing and the operation differ. Something that adds a state is not another realisation of that
+control; it is another control.
+
+## 2. The controls
+
+| control | states | notes |
+|---|---|---|
+| **toggle** | two, back and forth | the lever |
+| **activator** | two, no way back | the torch; also a floor key, whose operation is taking it from a chest |
+| **sequence** | progress 0..n, with a reset | tiles walked in the right order |
+| **fork-switch** | rest, plus one per exit of its fork | governs its own fork; see §4 |
+
+**one-way** is an effect with no control: always on, directed, and **always taken through a prompt** so
+the player never crosses by accident and finds they cannot come back. Every realisation of it must
+offer that prompt, including ones that would otherwise be passive.
+
+A **floor key is an activator.** The solver already models it as `absent -> held` with no return; the
+only difference from a torch is how the player works it. It can therefore own gates and take part in
+conditions like any other control.
+
+## 3. Effects
+
+An effect is a table from a control's state to what that state opens. A state that names nothing does
+nothing, so nothing has to be forbidden.
+
+A target is either:
+
+- **an edge** — a gate between two regions
+- **a region** — made impassable
+
+A gate may name more than one owner, with `and` (every owner must name it) or `any` (one is enough).
+Four torches opening one gate is four activators owning one gate with `and`.
+
+### Impassable regions
+
+A region made impassable behaves as a gate that presents differently: the player can see the first
+stretch and the blockage — a sand pile, a flooded passage — and nothing beyond it.
+
+**It conceals what was already explored.** Exploration is otherwise permanent, but a region that becomes
+impassable again hides what the player saw while it was open; otherwise they look straight through the
+sand and the illusion is gone. The exploration is **hidden, not erased**: when the region opens again it
+is there as they left it, and they do not walk it twice.
+
+This is a property of the effect, not of the realisation. Sand and water conceal alike.
+
+## 4. The fork-switch governs its own fork
+
+Every other control takes its effect from the lock. A fork-switch does not: **a fork puzzle operates
+that fork.** Its targets are the exits of the junction it stands in, and its state count follows from
+them.
+
+The consequence for the carve: when a fork-switch stands in a region whose connections are the fork's
+branches, **the carve must lay the fork so that its exits are those seams.** Today the carve chooses the
+junction's exits independently of the region seams, which is why a floor authored this way strands — the
+region straddles the door.
+
+## 5. Binding a realisation
+
+- Written **outside** the lock, where it is placed.
+- Declared at several levels — floor, pyramid, journey, difficulty — and **the most specific wins**, the
+  same way the other selectors in this codebase work. Global defaults, local overrides.
+- **Resolved at bake time**, because space depends on the realisation and the carve has to know it before
+  it searches.
+- **An unbound role is refused.** No default realisation.
+
+Within one lock, all roles of a kind take the same realisation for now. Per-role selectors are a later
+idea, not a current one.
+
+**Space is realisation-dependent, and that is the carve's problem to solve.** A zipline needs a straight
+run of launch, three obstacle cells and a landing; a vertical lightswitch currently takes more cells than
+a horizontal one; a headwind may need almost nothing. The carve may grow to fit, which costs time, and
+the seed that succeeded is pinned afterwards — which is what `carveLedger.json` already does.
+
+**Mechanics are independent of difficulty.** Art is not: a realisation may have no art at a given rank
+yet. That is an outstanding job with a chosen fallback, not a reason to refuse the binding — but the
+fallback must be chosen rather than whatever happens today.
+
+## 6. What a mechanic declares
+
+```
+mechanic lever
+  control    toggle              # two states, back and forth
+  governs    edges, regions      # what its effect may target
+  built      yes
+
+mechanic torch
+  control    activator
+  governs    edges, regions
+  built      yes
+
+mechanic pressure-tiles
+  control    sequence            # progress along tiles, with a reset
+  governs    edges, regions
+  built      no
+
+mechanic lightswitch
+  control    fork-switch
+  governs    own-fork            # the exception of §4
+  built      yes
+```
+
+`built: no` is what lets a design be written and checked before the code exists. The tool validates such
+a lock and refuses to bake it, saying which mechanic is not ready.
+
+## 7. Settled, and still open
+
+**Settled.** The three layers. The four controls plus one-way. Targets are edges or regions. `and`/`any`
+conditions. A floor key is an activator. The fork-switch governs its own fork. Realisations are bound
+from outside, most specific wins, at bake time, refused when unbound. A realisation may not change what
+the solver sees. Impassable conceals, and conceals what was explored, without erasing it.
+
+**Open.**
+
+- The sequence control: what a wrong step does (reset, or nothing), whether its tiles may span regions
+  and so interact with another lock, whether it stays fired once fired.
+- The sand barrier: parked. A wizard-pyramid idea that may not belong to the lock model at all.
+- Whether a realisation may demand anything of placement beyond space.
+
+## 8. What this requires of the engine
+
+Each is measured in `topology-status.md` §6.
+
+1. **Separate control from effect.** `MechanismRecord` already carries states and a table of state to
+   what opens; the table must widen from gate ids to targets, where a target is an edge or a region.
+2. **The fork's exits must be able to coincide with authored seams** (§4).
+3. **An open gate keeps its symbol and colour**, or the player cannot reason that it will shut when
+   another opens.
+4. **Two mechanics on one floor never share a mark.**
+5. **A realisation decides the drawing**, which `encounter` does not do today.
+6. **`openDoorsFor` and `floorLock` must agree on a door naming more than one key.** This was documented
+   and left alone on 2026-10-01, correctly, because nothing could author such a door. Floor keys taking
+   part in conditions makes it reachable, so it is now load-bearing.
+7. **Concealing an explored region** is new: exploration is permanent today.
