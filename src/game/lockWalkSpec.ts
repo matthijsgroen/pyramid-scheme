@@ -11,7 +11,10 @@ const DRAFT = "draft"
 /** A walk-only stretch between two barriers on one join: never in the JSON, the drawing or a route. */
 export const isStretch = (region: string) => region.includes("|")
 
-export const readable = (text: string) => text.replace(/(\w+)\|(\w+)#[\d.]+/g, "between $1 and $2")
+/** A walk failure in the author's words: stretches by their regions, and no mention of the owner every
+ * bare corridor shares. */
+export const readable = (text: string) =>
+  text.replace(/(\w+)\|(\w+)#[\d.]+/g, "between $1 and $2").replaceAll(`, ${OPEN} at open`, "")
 
 type Hop = { kind: "gate" | "oneWay" | "region"; id: string }
 
@@ -28,16 +31,17 @@ export const walkSpecOf = (lock: Lock, drafts: readonly string[] = []): LockSpec
     const [a, b] = joinOf(connection)
     const hops: Hop[] = barriersOf(connection).map(id => ({ kind: id in (lock.oneWays ?? {}) ? "oneWay" : "gate", id }))
     const towards = (hop: Hop, end: string) => hop.kind === "oneWay" && lock.oneWays![hop.id].to === end
-    // A barred region is held at the way in: before the first drop heading into it, else beside it.
+    // A barred region holds the last step into it. When that step is a drop landing in the region, the
+    // drop itself cannot be taken while the region is shut, so the hold stands just before it.
     for (const [id, gate] of regionGates) {
       if (!isRegionGate(gate)) continue
       if (gate.region === b) {
-        const drop = hops.findIndex(hop => towards(hop, b))
-        hops.splice(drop < 0 ? hops.length : drop, 0, { kind: "region", id })
+        const last = hops.at(-1)
+        hops.splice(last && towards(last, b) ? hops.length - 1 : hops.length, 0, { kind: "region", id })
       }
       if (gate.region === a) {
-        const drop = hops.map(hop => towards(hop, a)).lastIndexOf(true)
-        hops.splice(drop < 0 ? 0 : drop + 1, 0, { kind: "region", id })
+        const first = hops[0]
+        hops.splice(first && towards(first, a) ? 1 : 0, 0, { kind: "region", id })
       }
     }
     if (hops.length === 0) {

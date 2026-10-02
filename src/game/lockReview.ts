@@ -42,6 +42,8 @@ export const solveLock = (spec: LockSpec): { steps: string[]; actions: number } 
   for (let n = end; n >= 0; n = prev[n]) path.unshift(n)
   const steps = [order[0].region]
   let actions = 0
+  // A drop taken into a stretch still marks the region the stretch leads on to.
+  let dropped = false
   for (let i = 1; i < path.length; i++) {
     const [a, b] = [order[path[i - 1]], order[path[i]]]
     if (a.region === b.region) {
@@ -50,12 +52,14 @@ export const solveLock = (spec: LockSpec): { steps: string[]; actions: number } 
       actions++
       continue
     }
-    if (isStretch(b.region)) continue
     const byGate = [...openGates(spec, a.config)].some(g => {
       const gate = spec.gates[g]
       return (gate.from === a.region && gate.to === b.region) || (gate.to === a.region && gate.from === b.region)
     })
-    steps.push(byGate ? b.region : `⤓${b.region}`)
+    dropped ||= !byGate
+    if (isStretch(b.region)) continue
+    steps.push(dropped ? `⤓${b.region}` : b.region)
+    dropped = false
   }
   return { steps, actions }
 }

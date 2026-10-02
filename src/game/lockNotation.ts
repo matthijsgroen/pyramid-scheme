@@ -72,6 +72,7 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
     return { list, owners, mode: written.includes("|") ? ("any" as const) : undefined }
   }
   const join = (n: number, from: string, to: string, ops: string[]) => {
+    if (from === to) fail(n, `a join leads from ${from} to ${to}`)
     if (ops.includes("--") && ops.length > 1) fail(n, "-- is a bare corridor and carries no barriers")
     if (ops[0] === "--") {
       const twin = joins.find(j => j.barriers.length === 0 && [from, to].every(r => j.between.includes(r)))

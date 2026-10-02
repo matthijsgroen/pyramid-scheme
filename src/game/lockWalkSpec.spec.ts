@@ -95,3 +95,22 @@ describe("what a lock starts as", () => {
     expect(notBuildable(parseLock(DOUBLE_BACK).lock)).toEqual([])
   })
 })
+
+describe("a region gate on the way in", () => {
+  it("is the last step into the region, so a drop with a gate after it can be taken while it is shut", () => {
+    const result = walkLock(compiled("in >> -[sl:wet]- R\nR -- out\nin -- out\nR -[sl:wet]\nsl toggle @in dry wet"))
+    expect(result).toMatchObject({ sound: false, failure: { type: "strands" } })
+  })
+
+  it("stops a drop that lands straight in the barred region from being taken at all", () => {
+    expect(walkLock(compiled("in >> R\nR -- out\nin -- out\nR -[sl:wet]\nsl toggle @in dry wet")).sound).toBe(true)
+  })
+})
+
+describe("readable", () => {
+  it("leaves out the owner every bare corridor shares", () => {
+    expect(readable("from hall, Y at rest, · at open, nothing reaches the way out")).toBe(
+      "from hall, Y at rest, nothing reaches the way out"
+    )
+  })
+})

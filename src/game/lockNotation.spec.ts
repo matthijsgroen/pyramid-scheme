@@ -136,6 +136,7 @@ describe("parseLock", () => {
     ["in -- -[H]- out", "line 1: -- is a bare corridor and carries no barriers"],
     ["in -[Y]- >>", "line 1: a line starts and ends with a region"],
     ["in => out", 'line 1: cannot read "in => out"'],
+    ["in -[Y]- in\nin -- out\nY fork @in", "line 1: a join leads from in to in"],
   ])("refuses %j", (text, message) => {
     expect(() => parseLock(text)).toThrow(message)
   })

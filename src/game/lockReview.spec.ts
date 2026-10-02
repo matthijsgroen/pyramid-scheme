@@ -49,3 +49,13 @@ describe("unreachedRegions", () => {
     expect(unreachedRegions(spec("in -[H]- >> hall\nhall -- out\nH toggle @in"))).toEqual([])
   })
 })
+
+describe("solveLock, past a stretch", () => {
+  it("marks a drop taken on the way, even when a gate follows it", () => {
+    expect(solveLock(spec("in >> -[X:a]- hall\nhall -- out\nX toggle @hall\nin -[X]- hall"))?.steps).toEqual([
+      "in",
+      "⤓hall",
+      "out",
+    ])
+  })
+})
