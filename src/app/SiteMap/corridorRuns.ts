@@ -1,5 +1,6 @@
 import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
+import { isSealedWayOut } from "@/game/gridNavigation"
 
 // Corridor geometry: which cells are corners, and where a straight run of corridor ends. Pure grid
 // reading with no React and no drawing in it, so the map's click rules (`clickTargets.ts`) and the
@@ -23,28 +24,36 @@ export const isCorridorCorner = (dirs: ReadonlySet<Direction>): boolean =>
 // out means the on-screen entrance to the run has nothing to tap. This walks a run
 // forward from its near end (right next to the explorer) to find that far target, so the
 // caller can render the click affordance where the player already is instead.
+//
+// A run that ends at a way a switch shut (`isSealedWayOut`) has no far target to enter: that end is a
+// wall. The run then offers the last cell before it — ground the player can stand on, right in front
+// of the door — and says so with `shut`, because that cell can be the near cell itself. Every other
+// unenterable end (ground still in the dark, a room not yet reachable) still withdraws the run.
 const findCorridorRunTarget = (
   grid: FloorGrid,
   startR: number,
   startC: number,
   incomingDir: Direction
-): readonly [number, number] | null => {
+): { at: readonly [number, number]; shut: boolean } | null => {
   let r = startR,
     c = startC,
-    fromDir = incomingDir
+    fromDir = incomingDir,
+    before: readonly [number, number] | null = null
   for (let steps = 0; steps < grid.rows * grid.cols; steps++) {
     const cell = cellAt(grid, r, c)
     if (cell.type === "empty") return null
     if (cell.type === "room") {
-      return cell.state === "reachable" || cell.state === "completed" ? [r, c] : null
+      if (isSealedWayOut(cell) && cell.state !== "fogged") return before && { at: before, shut: true }
+      return cell.state === "reachable" || cell.state === "completed" ? { at: [r, c], shut: false } : null
     }
     if (isCorridorCorner(cell.dirs)) {
-      return cell.state === "reachable" || cell.state === "completed" ? [r, c] : null
+      return cell.state === "reachable" || cell.state === "completed" ? { at: [r, c], shut: false } : null
     }
     if (cell.state !== "visible" && cell.state !== "reachable" && cell.state !== "completed") return null
     const nextDir = ([...cell.dirs] as Direction[]).find(d => d !== OPPOSITE_DIR[fromDir])
     if (!nextDir) return null
     const [dr, dc] = DIR_MOVES[nextDir]
+    before = [r, c]
     r += dr
     c += dc
     fromDir = nextDir
@@ -88,8 +97,10 @@ export const corridorRunTargetsFrom = (
   for (const { row: nearR, col: nearC, dir } of cellsAroundExplorer(grid, explorerPos)) {
     if (!dir) continue
     const target = findCorridorRunTarget(grid, nearR, nearC, dir)
-    if (target && (target[0] !== nearR || target[1] !== nearC)) {
-      targets.set(`${nearR},${nearC}`, { row: target[0], col: target[1], dir })
+    // A run whose far end is the near cell itself has nothing to point at, except in front of a shut
+    // door: there the near cell IS the place to walk to.
+    if (target && (target.shut || target.at[0] !== nearR || target.at[1] !== nearC)) {
+      targets.set(`${nearR},${nearC}`, { row: target.at[0], col: target.at[1], dir })
     }
   }
   return targets

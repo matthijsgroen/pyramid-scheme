@@ -19,7 +19,7 @@ import { useMechanismStates } from "./useMechanismStates"
 import { useSiteNavigation } from "./useSiteNavigation"
 import { buildRoomClaims } from "./roomClaims"
 import { markerAt, offerContextFrom, offeredTargets } from "./clickTargets"
-import { DIR_MOVES, corridorRunTargetsFrom } from "./corridorRuns"
+import { DIR_MOVES } from "./corridorRuns"
 import { encodeEdge } from "./edgeId"
 import { buildConfigs } from "@/worldGen/configBuilder"
 import { DEV_JOURNEY_ID } from "@/worldGen/data"
@@ -351,10 +351,8 @@ afterAll(() => {
 const NAMES: Record<Direction, string> = { n: "north", s: "south", e: "east", w: "west" }
 
 /** Every way open out of the player's own cell that leads to a walkable cell, with nothing offered
- * toward it or nothing drawn on it. Each violation reads as a map reference.
- *
- * A run that ends at a shut gate is left out: its far end is a wall the player can see (`walkableFrom`
- * refuses to enter it), so the run offers nothing by design. */
+ * toward it or nothing drawn on it. Each violation reads as a map reference. A run that ends at a shut
+ * gate offers the cell before the door, so it is no exception. */
 const wayOutViolations = (grid: FloorGrid, at: readonly [number, number]): string[] => {
   const cell = grid.cells[at[0]][at[1]]
   if (cell.type === "empty") return []
@@ -362,7 +360,6 @@ const wayOutViolations = (grid: FloorGrid, at: readonly [number, number]): strin
   const offers = offeredTargets(grid, claims, at)
   const ctx = offerContextFrom(grid, at, {})
   const walkable = walkableFrom(grid, at)
-  const runs = corridorRunTargetsFrom(grid, at)
   const out: string[] = []
   for (const dir of cell.dirs) {
     const nr = at[0] + DIR_MOVES[dir][0]
@@ -370,8 +367,6 @@ const wayOutViolations = (grid: FloorGrid, at: readonly [number, number]): strin
     const key = `${nr},${nc}`
     const next = grid.cells[nr]?.[nc]
     if (!next || next.type === "empty" || !walkable.has(key)) continue
-    const run = runs.get(key)
-    if (run && !walkable.has(`${run.row},${run.col}`)) continue
     const offered = offers.has(key)
     const marker = markerAt(grid, claims, nr, nc, ctx)
     if (offered && marker) continue
