@@ -1,6 +1,7 @@
 import { mulberry32, shuffle } from "./random"
 import { hashString } from "@/support/hashString"
 import { allocateMarks, type Mark, type MarkRequest } from "./mark"
+import { withGateFaces } from "./gateFace"
 import type {
   AssemblerFailure,
   AssemblerResult,
@@ -3671,7 +3672,9 @@ export const assembleFloor = (
       }
     }
 
-    return { success: true, grid, attempt }
+    // A DOOR THAT WAITS ON SEVERAL OWNERS GAINS ITS FACE LAST, after every check above has read the carve:
+    // only the door cell's family changes, so no wall, `dirs` or slot can have moved for it.
+    return { success: true, grid: withGateFaces(grid, floorRef.floorIndex, new Map()), attempt }
   }
 
   return {

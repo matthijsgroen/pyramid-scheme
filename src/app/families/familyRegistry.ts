@@ -75,6 +75,9 @@ export type FamilyContext = {
    * every gate it drives wears on the map. A lever puts it on its own buttons so the player can go and
    * look for it; unset off mechanism rooms and the gates they own. */
   mark?: Mark
+  /** WHAT THIS DOOR WAITS FOR (RoomCell.gateFace), lit as its owners stand now. The gate-face family draws
+   * it; unset off a door that has one. */
+  gateFace?: RoomCell["gateFace"]
 }
 
 type InventoryAPI = ReturnType<typeof useInventory>

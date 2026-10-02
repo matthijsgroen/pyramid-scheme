@@ -1114,5 +1114,12 @@
     "invitation": "Light the torch",
     "goal": "An unlit torch. Once it burns it cannot be put out again.",
     "lit": "The torch is burning."
+  },
+  "gateFace": {
+    "title": "A Door That Waits",
+    "hint": "Every sign must burn before this door will open.",
+    "lit": "{{owner}}: lit",
+    "unlit": "{{owner}}: not yet",
+    "owner": { "torch": "Torch", "handle": "Lever", "key": "Key", "other": "Mechanism" }
   }
 }

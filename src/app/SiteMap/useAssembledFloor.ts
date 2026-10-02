@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react"
 import { assembleFloor } from "@/game/siteAssembler"
 import { openDoorsFor, openWaysOut } from "@/game/mechanismDoors"
+import { withGateFaces } from "@/game/gateFace"
 import { completeCell, isSealedWayOut } from "@/game/gridNavigation"
 import type { Direction, FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
 import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry"
@@ -363,10 +364,18 @@ export const useAssembledFloor = (
     [baseGrid, currentFloor, mechanismPositions]
   )
 
-  // The carve as the floor's own switches have left it — what everything below reads as "the floor".
+  // The carve as the floor's own switches have left it — what everything below reads as "the floor". A
+  // door still shut wears its face lit as its owners stand now.
   const carvedGrid = useMemo(
-    () => (baseGrid ? sealWaysOut(openWaysOut(baseGrid, openGateKeys)) : null),
-    [baseGrid, openGateKeys]
+    () =>
+      baseGrid
+        ? withGateFaces(
+            sealWaysOut(openWaysOut(baseGrid, openGateKeys)),
+            currentFloor,
+            mechanismPositions ?? NO_POSITIONS
+          )
+        : null,
+    [baseGrid, openGateKeys, currentFloor, mechanismPositions]
   )
 
   // Standing in the doorway is having been there: the entrance reads explored whether or not the save

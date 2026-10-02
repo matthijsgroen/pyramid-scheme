@@ -94,14 +94,15 @@ export const throwMechanism = (mechanism: MechanismRecord, current: string): str
  * switch had never shut that way.
  *
  * Only a door with nothing standing in it is ever touched: a gate a family renders is opened by what
- * the player does in it, and that is not this.
+ * the player does in it, and that is not this. The exception is a door wearing its face (`gateFace`),
+ * which reads and never opens, so its condition being met is the only thing that can.
  */
 export const openWaysOut = (grid: FloorGrid, open: ReadonlySet<string>): FloorGrid => {
   if (open.size === 0) return grid
   let opened = false
   const cells = grid.cells.map(row =>
     row.map((cell): GridCell => {
-      if (cell.type !== "room" || cell.family !== undefined) return cell
+      if (cell.type !== "room" || (cell.family !== undefined && cell.gateFace === undefined)) return cell
       if (!cell.tags?.includes("gate") || !cell.requiredKeyId || !open.has(cell.requiredKeyId)) return cell
       opened = true
       return {

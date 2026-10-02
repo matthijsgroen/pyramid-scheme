@@ -1114,5 +1114,12 @@
     "invitation": "Steek de fakkel aan",
     "goal": "Een onaangestoken fakkel. Als hij eenmaal brandt, kun je hem niet meer doven.",
     "lit": "De fakkel brandt."
+  },
+  "gateFace": {
+    "title": "Een Wachtende Deur",
+    "hint": "Elk teken moet branden voordat deze deur opengaat.",
+    "lit": "{{owner}}: aan",
+    "unlit": "{{owner}}: nog niet",
+    "owner": { "torch": "Fakkel", "handle": "Hendel", "key": "Sleutel", "other": "Mechanisme" }
   }
 }

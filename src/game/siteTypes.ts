@@ -2,6 +2,7 @@ import type { Mark } from "./mark"
 import type { ContentKind, PlacedContainer } from "./regions"
 import type { Control, Obstacle } from "./obstacles"
 import type { CarveFault } from "./carveAgreement"
+import type { GateFace } from "./gateFace"
 export type RoomType = "portal" | "fork" | "encounter"
 // OPEN reward vocabulary (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1):
 // core enumerates no reward/currency id. A reward is a `type` tag plus arbitrary payload fields the
@@ -295,6 +296,10 @@ export type RoomCell = {
    * A mechanism's room and every gate it owns carry the same pair, and that pairing is the only thing
    * on the floor that says which lever drives which door. Unset everywhere else. */
   mark?: Mark
+  /** WHAT THIS DOOR WAITS FOR, on a door that has several owners all of which must name it: one marker per
+   * owner, lit as that owner stands. Derived from the owners (src/game/gateFace.ts), never authored. Unset
+   * on every other door, where operating an owner shows its own consequence. */
+  gateFace?: GateFace
 }
 export type GridCell = EmptyCell | CorridorCell | RoomCell
 
