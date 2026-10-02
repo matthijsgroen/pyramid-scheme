@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`drawLock > draws doubleBack 1`] = `
+"  [s2 · S2]           [s1 · S1]
+      │    ╭╌╌╌╌╌╌╌╌╌╌╯   │
+      ■S1:b╎              □S1:a
+      │    ╎              │
+      │    ╎              │
+      │    ▼              │
+ [leftLower]        [rightLower]
+  ╎   │                   │
+  ╎   ■Y                  ■Y
+  ╎   │                   │
+  ╎   ├───────────────────┘
+  ▼   │
+→ [in · Y]──────────────■S2:b───────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   Name:state opens it"
+`;
