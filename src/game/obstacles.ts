@@ -15,13 +15,8 @@ import type { ForkDemand } from "./siteTypes"
  * Core's RegionGraph names none of this. A region is core and a gate is the topology mod's, so the
  * mod points AT the layout by region name and never hangs anything on it.
  */
-/** A boundary a control can hold open or shut. `between` is unordered — a gate is passable from
- * either side once it stands open — and is checked against the layout's own connections: a gate
- * stands only where the two regions already touch. */
-export type GateObstacle = {
-  id: string
-  kind: "gate"
-  at: { on: "connection"; between: readonly [string, string] }
+/** What every gate carries, whatever it bars. */
+type GateTerms = {
   /** THE GATE'S OWN OPENING CONDITION, asked of every control that names it in any state. Absent: it
    * stands open only while EVERY such control is in a state naming it (`and`). `"any"`: while one is
    * (`or`). The same reading as `LockGate.mode` (lockWalk.ts), which the soundness walk folds by. */
@@ -30,6 +25,33 @@ export type GateObstacle = {
    * fork-switch (`ForkSwitchControl`) may be named here for now; a gate it owns appears in no control's `opens`. */
   owners?: string[]
 }
+
+/** A boundary a control can hold open or shut. `between` is unordered — a gate is passable from
+ * either side once it stands open — and is checked against the layout's own connections: a gate
+ * stands only where the two regions already touch. */
+export type EdgeGateObstacle = GateTerms & {
+  id: string
+  kind: "gate"
+  at: { on: "connection"; between: readonly [string, string] }
+}
+
+/** A barrier over a whole region — flooded, buried — rather than over a boundary. The carve stands it
+ * inside the region, a short stretch in from each entrance, so the player sees the first stretch, the
+ * blockage and nothing beyond (docs/mods/mechanic-contract.md, "Impassable regions"). Owned like any
+ * gate: a control names its id in `opens`. */
+export type RegionGateObstacle = GateTerms & {
+  id: string
+  kind: "gate"
+  at: { on: "region"; region: string }
+}
+
+export type GateObstacle = EdgeGateObstacle | RegionGateObstacle
+
+export const isRegionGate = (obstacle: Obstacle): obstacle is RegionGateObstacle =>
+  obstacle.kind === "gate" && obstacle.at.on === "region"
+
+export const isEdgeGate = (obstacle: Obstacle): obstacle is EdgeGateObstacle =>
+  obstacle.kind === "gate" && obstacle.at.on === "connection"
 
 /**
  * A DIRECTED PASSAGE THE CARVE PLACES, NOT ONE THE LAYOUT ALREADY JOINS — the region-addressed form
@@ -48,8 +70,7 @@ export type OneWayObstacle = {
   at: { on: "connection"; between: readonly [string, string] }
 }
 
-/** WHAT STANDS IN THE WAY. One union, exhaustively checked, meant to grow: a flood that shuts a
- * region rather than a boundary is the next the catalogue already names. */
+/** WHAT STANDS IN THE WAY. One union, exhaustively checked, meant to grow. */
 export type Obstacle = GateObstacle | OneWayObstacle
 
 /**
@@ -126,6 +147,15 @@ export type TopologyFault =
   | { type: "forkSwitchSeamUngated"; id: string; between: [string, string] }
   /** A seam of a fork-switch's fork carries several gates it owns, so its exit has no single key. */
   | { type: "forkSwitchSeamGatedTwice"; id: string; between: [string, string] }
+  /** A region barrier bars the region holding the layout's way in or way out, which would shut the lock
+   * on its own ends; `id` is the barrier. */
+  | { type: "regionBarrierHoldsPort"; id: string; region: string; port: "in" | "out" }
+  /** A control stands in a region one of its own `opens` bars outright, so it would put itself beyond
+   * reach and nothing could undo it; `id` is the control, `barrier` the region barrier it names. */
+  | { type: "mechanicStandsInBarredRegion"; id: string; region: string; barrier: string }
+  /** A drop lands in a barred region, an entrance the carve cannot stand a barrier across; `id` is the
+   * barrier, `drop` the one-way obstacle. */
+  | { type: "regionBarrierDropLands"; id: string; region: string; drop: string }
 
 /** The two ends of a connection in a stable order, so `["a","b"]` and `["b","a"]` are one connection. */
 const connectionKey = (a: string, b: string): string => JSON.stringify([a, b].sort())
@@ -153,7 +183,7 @@ export const topologyFaults = (
   if (!layout) {
     for (const o of obstacles)
       faults.push(
-        o.kind === "oneWay"
+        o.kind === "oneWay" || isRegionGate(o)
           ? { type: "obstacleNamesNoRegion", id: o.id }
           : { type: "obstacleNamesNoConnection", id: o.id }
       )
@@ -178,6 +208,19 @@ export const topologyFaults = (
     if (seenObstacle.has(obstacle.id)) faults.push({ type: "obstacleIdRepeated", id: obstacle.id })
     seenObstacle.add(obstacle.id)
     obstacleById.set(obstacle.id, obstacle)
+    if (isRegionGate(obstacle)) {
+      const { region } = obstacle.at
+      if (!regions.has(region)) {
+        faults.push({ type: "obstacleNamesNoRegion", id: obstacle.id })
+        continue
+      }
+      if (layout.in === region) faults.push({ type: "regionBarrierHoldsPort", id: obstacle.id, region, port: "in" })
+      if (layout.out === region) faults.push({ type: "regionBarrierHoldsPort", id: obstacle.id, region, port: "out" })
+      for (const drop of obstacles)
+        if (drop.kind === "oneWay" && drop.at.between[1] === region)
+          faults.push({ type: "regionBarrierDropLands", id: obstacle.id, region, drop: drop.id })
+      continue
+    }
     const [a, b] = obstacle.at.between
     if (obstacle.kind === "oneWay") {
       // A DROP JOINS TWO REGIONS ON PURPOSE THE LAYOUT NEVER DOES — that is the whole of what it is
@@ -200,6 +243,7 @@ export const topologyFaults = (
     // A fork-switch has no states or `opens` to check; the gates name it, which is answered below.
     if (isForkSwitch(control)) continue
     const states = new Set(control.states)
+    const barredHere = new Set<string>()
     if (!states.has(control.initial)) faults.push({ type: "controlUnsatisfied", id: control.id, what: control.initial })
     for (const [state, opens] of Object.entries(control.opens)) {
       if (!states.has(state)) faults.push({ type: "controlUnsatisfied", id: control.id, what: state })
@@ -210,6 +254,12 @@ export const topologyFaults = (
         // same way as one pointing at nothing at all.
         if (!obstacle || obstacle.kind !== "gate") faults.push({ type: "controlUnsatisfied", id: control.id, what: id })
         owned.add(id)
+        // A control that bars the very region it stands in could not be reached to undo it, in any state
+        // it names the barrier. Shutting an EDGE behind yourself stays allowed: the control is still in reach.
+        if (obstacle && isRegionGate(obstacle) && obstacle.at.region === control.in && !barredHere.has(id)) {
+          barredHere.add(id)
+          faults.push({ type: "mechanicStandsInBarredRegion", id: control.id, region: control.in, barrier: id })
+        }
       }
     }
   }
@@ -237,7 +287,7 @@ export const topologyFaults = (
   const opensGate = new Set(
     controls.flatMap(control => (isForkSwitch(control) ? [] : Object.values(control.opens).flat()))
   )
-  const gatesOwnedBy = new Map<string, Obstacle[]>()
+  const gatesOwnedBy = new Map<string, EdgeGateObstacle[]>()
   for (const obstacle of obstacles) {
     if (obstacle.kind !== "gate") continue
     for (const owner of obstacle.owners ?? []) {
@@ -245,6 +295,11 @@ export const topologyFaults = (
       const fork = forkSwitches.get(owner)
       if (!fork) {
         faults.push({ type: "gateOwnerNotForkSwitch", id: obstacle.id, owner })
+        continue
+      }
+      // A fork-switch's gates are its junction's seams, and a region barrier is no seam.
+      if (isRegionGate(obstacle)) {
+        faults.push({ type: "gateOwnedOffSeam", id: obstacle.id, owner })
         continue
       }
       gatesOwnedBy.set(owner, [...(gatesOwnedBy.get(owner) ?? []), obstacle])
@@ -313,6 +368,8 @@ const reachableOver = (connections: ReadonlyArray<readonly [string, string]>, fr
 export const doorsToEnterRegion = (layout: RegionGraph, obstacles: readonly Obstacle[]): Map<string, Set<string>> => {
   const doors = new Map(layout.regions.map(r => [r.name, new Set<string>()]))
   for (const obstacle of obstacles) {
+    // A region barrier stands inside its region rather than on a connection, so no connection is its to take away.
+    if (isRegionGate(obstacle)) continue
     const without = layout.connections.filter(
       ([a, b]) => connectionKey(a, b) !== connectionKey(obstacle.at.between[0], obstacle.at.between[1])
     )
@@ -362,4 +419,45 @@ export const crossesNoDoor = (behindA: ReadonlySet<string>, behindB: ReadonlySet
   if (behindA.size !== behindB.size) return false
   for (const door of behindA) if (!behindB.has(door)) return false
   return true
+}
+
+/**
+ * WHERE ONE REGION BARRIER'S DOORS STAND ALONG ONE PATH — a pure question about a label sequence, so it
+ * is answered and tested apart from the carve that supplies the labels. `labels[step]` names the region
+ * each step stands in (a side chain has its mouth prefixed as step 0, the way `seamIndexFor` reads one).
+ *
+ * A barrier has one door per ENTRANCE: the join with the region standing before it on the path and,
+ * where the path goes on, the one after. Each door stands inside the region with at least one of the
+ * region's own steps in front of it from that entrance — the first stretch the player sees — and never
+ * on its last step, so the far side of the door is never the end room or the next region. `free` says
+ * which steps nothing else claims. Two entrances never share a door, so each is one blockage with its
+ * own save slot.
+ *
+ * Answers `undefined` when the path does not hold the region or some entrance has no free step to stand
+ * a door on: the barrier is never put anywhere else.
+ */
+export const seatBarrierDoors = (
+  labels: ReadonlyArray<string | undefined>,
+  region: string,
+  free: (step: number) => boolean
+): { entrance: string; step: number }[] | undefined => {
+  const first = labels.indexOf(region)
+  if (first < 0) return undefined
+  const last = labels.lastIndexOf(region)
+  const entrances: { neighbour: string; fromFirst: boolean }[] = []
+  const before = labels[first - 1]
+  if (before !== undefined) entrances.push({ neighbour: before, fromFirst: true })
+  const after = labels[last + 1]
+  if (after !== undefined) entrances.push({ neighbour: after, fromFirst: false })
+  if (entrances.length === 0) return undefined
+  const taken = new Set<number>()
+  const doors: { entrance: string; step: number }[] = []
+  for (const { neighbour, fromFirst } of entrances) {
+    const inside = Array.from({ length: Math.max(0, last - first - 1) }, (_, k) => first + 1 + k)
+    const step = (fromFirst ? inside : inside.reverse()).find(i => free(i) && !taken.has(i))
+    if (step === undefined) return undefined
+    taken.add(step)
+    doors.push({ entrance: neighbour, step })
+  }
+  return doors
 }

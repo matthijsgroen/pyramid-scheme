@@ -271,3 +271,20 @@ describe("generateFile — a gate on a connection survives the bake", () => {
     )
   })
 })
+
+describe("generateFile — a region barrier survives the bake", () => {
+  it("emits a barrier's region in place of a connection", () => {
+    const floor = {
+      pathPuzzles: 0,
+      difficulty: "starter" as const,
+      end: "treasure" as const,
+      exitOrStaircase: "exit" as const,
+      sideSections: [],
+      obstacles: [{ id: "floodedHall", kind: "gate" as const, at: { on: "region" as const, region: "hall" } }],
+    }
+
+    const emitted = generateFile({ testJourney: [[floor]] })
+
+    expect(emitted).toContain('obstacles: [{ id: "floodedHall", kind: "gate", at: { on: "region", region: "hall" } }]')
+  })
+})

@@ -15,6 +15,8 @@ export const OBSTACLE_KEY_PREFIX = "obstacle:"
  * - an obstacle's gate or a mechanism's own room (a handle's or a control's) carries the family PLUS
  *   its own authored id — a region layout can stand more than one obstacle gate or control on the
  *   SAME main path, so family alone would no longer tell them apart
+ * - a region barrier has one door per entrance, all asking for one key, so each is named by the authored id
+ *   PLUS the neighbouring region it is the entrance from
  * - a staircase is its `stairId`; the two plain portals are the entrance and the exit
  *
  * Corridors and bare forks get none, because they have no authored identity — how many corridor cells
@@ -55,7 +57,9 @@ export const cellSlot = (grid: FloorGrid, row: number, col: number): string | nu
   if (cell.requiredKeyId?.startsWith(OBSTACLE_KEY_PREFIX)) {
     const afterPrefix = cell.requiredKeyId.slice(OBSTACLE_KEY_PREFIX.length)
     const id = afterPrefix.slice(afterPrefix.indexOf(":") + 1)
-    return `xobstacle:${id}`
+    // One door per entrance of a region barrier: the neighbour's authored name tells them apart, and
+    // is what a re-carve cannot move.
+    return cell.regionBarrier ? `xobstacle:${id}@${cell.regionBarrier.entrance}` : `xobstacle:${id}`
   }
   return `x${cell.family ?? "?"}`
 }

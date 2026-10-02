@@ -96,13 +96,14 @@ const serializeObject = (o: object): string =>
     .map(([k, v]) => `${k}: ${typeof v === "string" || Array.isArray(v) ? serializeEncounter(v) : serializeValue(v)}`)
     .join(", ")} }`
 
-// `at` nests one layer deep (`{ on, between }`), which `serializeObject` cannot reach.
-const serializeObstacle = (o: Obstacle): string =>
-  `{ id: ${JSON.stringify(o.id)}, kind: ${JSON.stringify(o.kind)}, at: { on: ${JSON.stringify(o.at.on)}, between: [${o.at.between
-    .map(s => JSON.stringify(s))
-    .join(
-      ", "
-    )}] }${o.kind === "gate" && o.owners ? `, owners: [${o.owners.map(s => JSON.stringify(s)).join(", ")}]` : ""} }`
+// `at` nests one layer deep (`{ on, between }` or `{ on, region }`), which `serializeObject` cannot reach.
+const serializeObstacle = (o: Obstacle): string => {
+  const at =
+    o.at.on === "region"
+      ? `region: ${JSON.stringify(o.at.region)}`
+      : `between: [${o.at.between.map(s => JSON.stringify(s)).join(", ")}]`
+  return `{ id: ${JSON.stringify(o.id)}, kind: ${JSON.stringify(o.kind)}, at: { on: ${JSON.stringify(o.at.on)}, ${at} }${o.kind === "gate" && o.owners ? `, owners: [${o.owners.map(s => JSON.stringify(s)).join(", ")}]` : ""} }`
+}
 
 // `opens` is a Record<state, obstacleId[]>, which `serializeObject` cannot reach either.
 const serializeControl = (c: Control): string => {

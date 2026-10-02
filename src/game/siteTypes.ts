@@ -300,6 +300,10 @@ export type RoomCell = {
    * owner, lit as that owner stands. Derived from the owners (src/game/gateFace.ts), never authored. Unset
    * on every other door, where operating an owner shows its own consequence. */
   gateFace?: GateFace
+  /** THIS DOOR IS ONE ENTRANCE OF A REGION BARRIER (obstacles.ts, RegionGateObstacle): `region` is the
+   * barred region it stands in, `entrance` the neighbouring region the player comes from, which is what
+   * tells this door from the barrier's others. A barrier has one door per entrance, all asking for one key. */
+  regionBarrier?: { region: string; entrance: string }
 }
 export type GridCell = EmptyCell | CorridorCell | RoomCell
 
@@ -684,6 +688,13 @@ export type AssemblerReason =
   | { type: "gateOwnedTwice"; id: string; owner: string }
   | { type: "forkSwitchSeamUngated"; id: string; between: [string, string] }
   | { type: "forkSwitchSeamGatedTwice"; id: string; between: [string, string] }
+  | { type: "regionBarrierHoldsPort"; id: string; region: string; port: "in" | "out" }
+  | { type: "mechanicStandsInBarredRegion"; id: string; region: string; barrier: string }
+  | { type: "regionBarrierDropLands"; id: string; region: string; drop: string }
+  /** No carve could stand a region barrier inside its region: some entrance of `region` had no free node
+   * with a stretch of the region in front of it, so the barrier is refused rather than set elsewhere.
+   * `id` is the barrier. */
+  | { type: "regionBarrierNotSeated"; id: string; region: string }
   /** The floor's mechanics (and sequence tiles) need more distinct glyphs than the six a mark can wear,
    * so a mark would be shared. `ids` are the ones left without a glyph, in authoring order. */
   | { type: "marksExhausted"; ids: string[] }

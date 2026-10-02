@@ -29,8 +29,17 @@ import {
   strandedRegions,
 } from "./regions"
 import type { ContentKind, SideChain } from "./regions"
-import { crossesNoDoor, doorsToEnterRegion, isForkSwitch, seamIndexFor, topologyFaults } from "./obstacles"
-import type { Obstacle, StatefulControl } from "./obstacles"
+import {
+  crossesNoDoor,
+  doorsToEnterRegion,
+  isEdgeGate,
+  isForkSwitch,
+  isRegionGate,
+  seamIndexFor,
+  seatBarrierDoors,
+  topologyFaults,
+} from "./obstacles"
+import type { EdgeGateObstacle, Obstacle, OneWayObstacle, StatefulControl } from "./obstacles"
 import { cellSlot } from "./cellSlot"
 import { adjacencyFaults, dropLandingFaults, gateDoorFaults } from "./carveAgreement"
 import type { CarveFault } from "./carveAgreement"
@@ -926,7 +935,7 @@ export const assembleFloor = (
   )
   // The gates one fork-switch owns, by the id the author gave them.
   const gatesOwnedBy = (controlId: string) =>
-    (authoredConfig.obstacles ?? []).flatMap(o => (o.kind === "gate" && o.owners?.includes(controlId) ? [o] : []))
+    (authoredConfig.obstacles ?? []).flatMap(o => (isEdgeGate(o) && o.owners?.includes(controlId) ? [o] : []))
   // A CONTROL AND EVERY OBSTACLE IT OPENS WEAR ONE MARK, so the map reads "this lever, these doors" as
   // one pair the same way a handle's does. The glyph it prefers is hashed from the AUTHORED obstacle
   // id(s) it drives (sorted, so `opens`' state order does not matter) or, for a fork-switch, the gates
@@ -1101,12 +1110,10 @@ export const assembleFloor = (
       if (i >= config.sideSections.length || !config.sideSections[i].gate) return []
       // A ONE-WAY NEVER COLLIDES HERE: it mints no gate room and claims no cell of its own, so only a
       // GATE at the mouth is the collision this check exists for.
-      const mouthObstacle = (authoredConfig.obstacles ?? [])
-        .filter(o => o.kind === "gate")
-        .find(o => {
-          const [a, b] = o.at.between
-          return (a === chain.mouth && b === chain.regions[0]) || (b === chain.mouth && a === chain.regions[0])
-        })
+      const mouthObstacle = (authoredConfig.obstacles ?? []).filter(isEdgeGate).find(o => {
+        const [a, b] = o.at.between
+        return (a === chain.mouth && b === chain.regions[0]) || (b === chain.mouth && a === chain.regions[0])
+      })
       return mouthObstacle ? [{ address: `s${i}`, obstacleId: mouthObstacle.id }] : []
     })
     if (mouthGateCollisions.length > 0) {
@@ -1272,6 +1279,9 @@ export const assembleFloor = (
   // same reason: the path lengthens across the attempt budget, so what one attempt cannot seat a
   // later one may.
   let gateSeamMissing: string[] | undefined
+  // The first region barrier no attempt could stand a door on at every entrance, kept the same way and for
+  // the same reason: the path and its chains lengthen across the attempt budget.
+  let regionBarrierShort: { id: string; region: string } | undefined
   // The first attempt's controls no node stood in their region at all — main path or chain, whichever
   // hosts it — kept the same way and for the same reason: `mainPath.length` and a chain's own length
   // both grow across the attempt budget.
@@ -1377,12 +1387,13 @@ export const assembleFloor = (
       if (i >= config.sideSections.length || chain.regions.length === 0) return
       const first = chain.regions[0]
       if (joinedByConnection(chain.mouth, first)) return
-      const drop = (authoredConfig.obstacles ?? []).find(
-        o =>
-          o.kind === "oneWay" &&
-          ((o.at.between[0] === chain.mouth && o.at.between[1] === first) ||
-            (o.at.between[1] === chain.mouth && o.at.between[0] === first))
-      )
+      const drop = (authoredConfig.obstacles ?? [])
+        .filter((o): o is OneWayObstacle => o.kind === "oneWay")
+        .find(
+          o =>
+            (o.at.between[0] === chain.mouth && o.at.between[1] === first) ||
+            (o.at.between[1] === chain.mouth && o.at.between[0] === first)
+        )
       if (drop)
         dropSeams.set(i, { obstacleId: drop.id, mouth: chain.mouth, mouthFirst: drop.at.between[0] === chain.mouth })
     })
@@ -1406,8 +1417,12 @@ export const assembleFloor = (
     // GATES ONLY: a one-way obstacle seats through its own, entirely different search (below, "ONE-WAY
     // DROPS") — its two regions need not touch at all, so neither `stepRegion`'s seam nor a chain's
     // own seam is the question to ask it.
-    const gateObstacles = (authoredConfig.obstacles ?? []).filter(o => o.kind === "gate")
-    const onRouteObstacle = (o: Obstacle) => onRouteSet.has(o.at.between[0]) && onRouteSet.has(o.at.between[1])
+    const gateObstacles = (authoredConfig.obstacles ?? []).filter(isEdgeGate)
+    // A REGION BARRIER stands INSIDE its region rather than on a seam, so it answers neither of the
+    // seam searches here: its doors are seated once the nodes they may not take are known (below, for
+    // the main path; in the chain loop for a side path).
+    const regionBarriers = (authoredConfig.obstacles ?? []).filter(isRegionGate)
+    const onRouteObstacle = (o: EdgeGateObstacle) => onRouteSet.has(o.at.between[0]) && onRouteSet.has(o.at.between[1])
     const mainPathObstacles = gateObstacles.filter(onRouteObstacle)
     const offRouteObstacles = gateObstacles.filter(o => !onRouteObstacle(o))
     // A CONTROL STANDING IN AN OFF-ROUTE REGION splits the same way: `stepRegion` never names its
@@ -1542,6 +1557,31 @@ export const assembleFloor = (
       continue
     }
 
+    // A REGION BARRIER ON THE MAIN PATH gets a door at each entrance, taken from the nodes nothing else
+    // claims — read off the finished content so no puzzle, junction or seam is moved for it. A door the
+    // path cannot seat fails the attempt: a longer path may, and the last attempt names the barrier.
+    const barrierDoorOnMain = new Map<number, { id: string; region: string; entrance: string }>()
+    for (const barrier of regionBarriers) {
+      if (!onRouteSet.has(barrier.at.region)) continue
+      const doors = seatBarrierDoors(
+        stepRegion,
+        barrier.at.region,
+        step =>
+          step > 0 &&
+          step < mainPath.length - 1 &&
+          !placedContent.includes(step) &&
+          !forkJunctionIdx.has(step) &&
+          !gateIndices.has(step) &&
+          !barrierDoorOnMain.has(step)
+      )
+      if (!doors) {
+        if (!regionBarrierShort) regionBarrierShort = { id: barrier.id, region: barrier.at.region }
+        continue attempt
+      }
+      for (const { entrance, step } of doors)
+        barrierDoorOnMain.set(step, { id: barrier.id, region: barrier.at.region, entrance })
+    }
+
     // A CONTROL STANDS IN A REGION, so its room is A NODE OF THAT STRETCH — any main-path node, not only
     // a content-designated one, because content is spread for rhythm and is not guaranteed to put a node
     // in every region (a short early region can go unspread-into entirely — measured), while `unseated`
@@ -1584,6 +1624,7 @@ export const assembleFloor = (
         mi !== goalIndex &&
         mi !== leverIndex &&
         !gateIndices.has(mi) &&
+        !barrierDoorOnMain.has(mi) &&
         !forkJunctionIdx.has(mi)
 
       let index: number | undefined
@@ -1602,6 +1643,7 @@ export const assembleFloor = (
           while (
             shifted < goalIndex &&
             (gateIndices.has(shifted) ||
+              barrierDoorOnMain.has(shifted) ||
               placedContent.includes(shifted) ||
               takenByControl.has(shifted) ||
               forkJunctionIdx.has(shifted))
@@ -2111,6 +2153,15 @@ export const assembleFloor = (
     // shape. The control's own authored id is carried onto the cell for the same reason a handle's
     // room carries its own address (see RoomCell.mechanismId): one uniform rule, not a
     // control-only exception.
+    // One entrance's door of a region barrier: a family-less gate room like any other, so it draws as bars
+    // and `openWaysOut` hands its corridor back once its owners open it. `regionBarrier` is what tells it
+    // from an edge gate, and which of its barrier's doors it is.
+    const regionBarrierDoorSpec = (id: string, region: string, entrance: string): RoomSpec => ({
+      roomType: "encounter",
+      tags: [...keyGate.tags, "region-barrier"],
+      requiredKeyId: gateKeyOf(id),
+      regionBarrier: { region, entrance },
+    })
     const controlRoomSpec = (control: StatefulControl, record: MechanismRecord): RoomSpec => ({
       roomType: "encounter",
       family: resolveEncounter(control.encounter, HANDLE_FAMILY).familyId,
@@ -2450,6 +2501,9 @@ export const assembleFloor = (
           tags: keyGate.tags,
           requiredKeyId: gateKeyOf(obstacleId),
         })
+      } else if (barrierDoorOnMain.has(mi)) {
+        const { id, region, entrance } = barrierDoorOnMain.get(mi)!
+        roomSpecs.set(posKey(r, c), regionBarrierDoorSpec(id, region, entrance))
       } else if (mi === leverIndex) {
         roomSpecs.set(posKey(r, c), leverSpec(MAIN_SECTION_ADDRESS))
       } else if (controlAtIndex.has(mi)) {
@@ -2508,6 +2562,12 @@ export const assembleFloor = (
     // iteration of the loop, checked complete only once every chain has had its turn.
     const chainControlSeated = new Set<string>()
     const sawChainContentCandidate = new Set<string>()
+    // EVERY DOOR OF EVERY REGION BARRIER, as the cells they stand on, grouped by barrier — the main path's
+    // here, a side path's added as its chain is carved. A barrier with no entry once every chain has had its
+    // turn found no chain to host its region.
+    const barrierDoorCells = new Map<string, string[]>()
+    for (const [step, { id }] of barrierDoorOnMain)
+      barrierDoorCells.set(id, [...(barrierDoorCells.get(id) ?? []), posKey(mainPath[step][0], mainPath[step][1])])
 
     // CHAIN NODES: the gate at the head where one guards the way in, a lever behind it where one
     // stands there, the chain's own content spread through whatever room the carve gave it, and its
@@ -2682,6 +2742,43 @@ export const assembleFloor = (
         roomSpecs.set(posKey(cells[seatIndex][0], cells[seatIndex][1]), controlRoomSpec(control, record))
       }
 
+      // A REGION BARRIER HOSTED BY THIS CHAIN gets its doors from the cells nothing else here claims, once
+      // content and controls have settled where they stand.
+      const hostedHere = parentIdx === undefined ? chainRegionsBySectionIdx.get(idx) : undefined
+      if (hostedHere) {
+        const claimedHead = (isFloorKeyGate && keyNodeId !== undefined) || isTombKeyGate
+        const barrierCells = new Set<number>()
+        for (const barrier of regionBarriers) {
+          if (!hostedHere.regions.includes(barrier.at.region)) continue
+          const doors = seatBarrierDoors(
+            [hostedHere.mouth, ...cells.map(([cr, cc]) => cellRegion.get(posKey(cr, cc)))],
+            barrier.at.region,
+            step => {
+              const cell = step - 1
+              return (
+                cell >= (claimedHead ? 1 : 0) &&
+                cell < cells.length - 1 &&
+                !chainGateIndices.has(cell) &&
+                !contentIndices.includes(cell) &&
+                cell !== leverIndexInChain &&
+                !takenByChainControl.has(cell) &&
+                !barrierCells.has(cell)
+              )
+            }
+          )
+          if (!doors) {
+            if (!regionBarrierShort) regionBarrierShort = { id: barrier.id, region: barrier.at.region }
+            continue attempt
+          }
+          for (const { entrance, step } of doors) {
+            const [dr, dc] = cells[step - 1]
+            barrierCells.add(step - 1)
+            roomSpecs.set(posKey(dr, dc), regionBarrierDoorSpec(barrier.id, barrier.at.region, entrance))
+            barrierDoorCells.set(barrier.id, [...(barrierDoorCells.get(barrier.id) ?? []), posKey(dr, dc)])
+          }
+        }
+      }
+
       for (let pi = 0; pi < section.pathPuzzles; pi++) {
         const [r, c] = cells[contentIndices[pi]]
         const reward = section.rewards?.[pi]
@@ -2756,6 +2853,14 @@ export const assembleFloor = (
       if (bare.length > 0 && !controlNotSeated) controlNotSeated = bare.map(({ control }) => control.id)
       if (displaceable.length > 0 && !controlPuzzleUndisplaceable)
         controlPuzzleUndisplaceable = displaceable.map(({ control }) => control.id)
+      continue
+    }
+
+    // A BARRIER ON A REGION NO CHAIN HOSTED THIS ATTEMPT has no door at all, which is the same shortfall as
+    // one whose entrance had no free step: refused by the barrier's name rather than set anywhere else.
+    const unhostedBarrier = regionBarriers.find(barrier => !barrierDoorCells.has(barrier.id))
+    if (unhostedBarrier) {
+      if (!regionBarrierShort) regionBarrierShort = { id: unhostedBarrier.id, region: unhostedBarrier.at.region }
       continue
     }
 
@@ -2859,7 +2964,7 @@ export const assembleFloor = (
     // A ONE-WAY OBSTACLE (kind "oneWay") IS THE REGION-ADDRESSED FORM OF THE SAME DEMAND
     // `config.oneWays` authors by section address — same carve, same shortfall, only the label it
     // resolves `from`/`to` against differs (see the unified `oneWayDemands` below).
-    const oneWayObstacles = (authoredConfig.obstacles ?? []).filter(o => o.kind === "oneWay")
+    const oneWayObstacles = (authoredConfig.obstacles ?? []).filter((o): o is OneWayObstacle => o.kind === "oneWay")
     const seamObstacleIds = new Set([...dropSeams.values()].map(seam => seam.obstacleId))
     for (let n = 0; ((config.oneWays ?? []).length > 0 || oneWayObstacles.length > 0) && n < switchesPlaced; n++)
       for (const { neighborKey } of freeWaysOut(reservedForks[n])) {
@@ -3695,6 +3800,7 @@ export const assembleFloor = (
       ...(oneWayShortfall ? [{ type: "oneWayUnsatisfied", ...oneWayShortfall } as const] : []),
       ...(unseatedRegions ? [{ type: "regionNotSeated", regions: unseatedRegions } as const] : []),
       ...(gateSeamMissing ? [{ type: "obstacleSeamNotCarved" as const, ids: gateSeamMissing }] : []),
+      ...(regionBarrierShort ? [{ type: "regionBarrierNotSeated" as const, ...regionBarrierShort }] : []),
       ...(controlNotSeated ? [{ type: "controlNotSeated" as const, ids: controlNotSeated }] : []),
       ...(controlPuzzleUndisplaceable
         ? [{ type: "controlPuzzleUndisplaceable" as const, ids: controlPuzzleUndisplaceable }]

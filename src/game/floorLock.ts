@@ -41,7 +41,7 @@ const dirsOf = (cell: GridCell): ReadonlySet<Direction> =>
 //
 // Hidden cells are left out: a hidden section is never a statement that the player found it, so a
 // floor has to be sound without one.
-const regionsOf = (grid: FloorGrid): { ids: RegionId[]; of: Map<string, RegionId> } => {
+export const regionsOf = (grid: FloorGrid): { ids: RegionId[]; of: Map<string, RegionId> } => {
   const of = new Map<string, RegionId>()
   const ids: RegionId[] = []
 
