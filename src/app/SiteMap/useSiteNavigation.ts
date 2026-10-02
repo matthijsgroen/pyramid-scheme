@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import { cellAddress } from "./cellIdentity"
-import { findPath, getCell, oneWayRuns } from "@/game/gridNavigation"
+import { dropLaunchedAt, findPath, getCell } from "@/game/gridNavigation"
 import { legalTargets, throwMechanism } from "@/game/mechanismDoors"
 import type { FloorGrid, MechanismRecord, ObstacleKind, RoomCell, SiteConfig, TreasureReward } from "@/game/siteTypes"
 import { useTimeout } from "@/support/useTimeout"
@@ -213,8 +213,7 @@ export const useSiteNavigation = ({
       // A LAUNCH IS WALKED TO AND THEN OFFERED, like a staircase: the span between it and the landing is
       // not ground, so reaching the far side is something the player takes rather than a tap on it. Its
       // words come from what the span is (traversalInvitation), not from here.
-      const span =
-        cell.type === "corridor" ? oneWayRuns(grid).find(r => r.launch[0] === row && r.launch[1] === col) : undefined
+      const span = cell.type === "corridor" ? dropLaunchedAt(grid, row, col) : undefined
       if (span) {
         journeys.markCellExplored(sectionHash, edgeId, address)
         goHere()

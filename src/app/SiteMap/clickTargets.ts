@@ -1,7 +1,7 @@
 import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
-import { oneWayRuns, walkableFrom } from "@/game/gridNavigation"
-import { corridorRunTargetsFrom, isCorridorCorner, OPPOSITE_DIR, type CorridorRunTarget } from "./corridorRuns"
+import { dropEndsOf, walkableFrom } from "@/game/gridNavigation"
+import { corridorRunTargetsFrom, isCorridorCorner, type CorridorRunTarget } from "./corridorRuns"
 import { litClaimOwner, type RoomClaims } from "./roomClaims"
 
 /**
@@ -21,22 +21,12 @@ export type OfferContext = {
   /** The far end of each corridor run, keyed by the run's near cell — see `corridorRuns.ts`. */
   runTargets: ReadonlyMap<string, CorridorRunTarget>
   /** A drop's launch and landing, keyed by cell, each with the direction a walker enters it from its own
-   * node. Read off `oneWayRuns`, never off a cell's shape: a one-direction stub is not a launch in general. */
+   * node — see `dropEndsOf`. */
   dropEnds: ReadonlyMap<string, Direction>
   /** Whether the player can actually walk there from where they stand. */
   canWalkTo: (row: number, col: number) => boolean
   /** The builder's free-roam mode: every cell is a target, walkability aside. */
   freeWalk: boolean
-}
-
-/** The direction a walker enters each launch and landing of the floor from its own node, keyed by cell. */
-export const dropEndsOf = (grid: FloorGrid): ReadonlyMap<string, Direction> => {
-  const ends = new Map<string, Direction>()
-  for (const run of oneWayRuns(grid)) {
-    ends.set(`${run.launch[0]},${run.launch[1]}`, run.dir)
-    ends.set(`${run.landing[0]},${run.landing[1]}`, OPPOSITE_DIR[run.dir])
-  }
-  return ends
 }
 
 /** A corridor's own rule, shared by the claimed and unclaimed branches — the same condition either way. */

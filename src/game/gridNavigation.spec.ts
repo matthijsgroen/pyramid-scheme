@@ -353,6 +353,33 @@ describe(walkableFrom, () => {
   })
 })
 
+describe("walkableFrom and findPath share one step rule", () => {
+  it("walkableFrom is exactly the cells findPath reaches, from several positions on carved floors", () => {
+    let checked = 0
+    for (let seed = 0; seed < 10; seed++) {
+      const result = assembleFloor("spike:1", dropFloor, seed, undefined, {
+        floorRef: { journeyId: "spike", levelIndex: 0, floorIndex: 0 },
+      })
+      if (!result.success) continue
+      const [er, ec] = result.grid.entrancePos
+      // Part-explored: some ground in the dark, so the fog is part of what the two must agree on.
+      const explored = completeCell(result.grid, er, ec)
+      const [run] = oneWayRuns(explored)
+      for (const grid of [explored, completeCell(explored, run.launch[0], run.launch[1]), revealAll(result.grid)]) {
+        const starts: [number, number][] = [[er, ec], run.launch, run.landing, run.cells[0]]
+        for (const from of starts) {
+          const reached = new Set<string>()
+          for (let r = 0; r < grid.rows; r++)
+            for (let c = 0; c < grid.cols; c++) if (findPath(grid, from, [r, c]).length > 0) reached.add(`${r},${c}`)
+          expect(walkableFrom(grid, from)).toEqual(reached)
+          checked++
+        }
+      }
+    }
+    expect(checked).toBeGreaterThan(0)
+  })
+})
+
 describe("a drop is a span of cells", () => {
   it("finds no route from the launch to the landing, nor from the landing to the launch", () => {
     const grid = runGrid("visible")

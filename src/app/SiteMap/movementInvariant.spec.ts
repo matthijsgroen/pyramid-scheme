@@ -39,7 +39,7 @@ import { renderHook, act, render } from "@testing-library/react"
 import { createElement, useState } from "react"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import type { Direction, FloorConfig, FloorGrid, MechanismRecord, SiteConfig } from "@/game/siteTypes"
-import { walkableFrom, findPath, isSealedWayOut, oneWayRuns, revealAll } from "@/game/gridNavigation"
+import { dropEndsOf, walkableFrom, findPath, isSealedWayOut, oneWayRuns, revealAll } from "@/game/gridNavigation"
 import { cellAddress } from "@/game/cellAddress"
 import { OBSTACLE_KEY_PREFIX } from "@/game/cellSlot"
 import { nodeSpritesFor } from "./SiteMapView"
@@ -51,7 +51,7 @@ import { useAssembledFloor } from "./useAssembledFloor"
 import { useMechanismStates } from "./useMechanismStates"
 import { useSiteNavigation } from "./useSiteNavigation"
 import { buildRoomClaims } from "./roomClaims"
-import { dropEndsOf, offeredTargets } from "./clickTargets"
+import { offeredTargets } from "./clickTargets"
 import { SiteMapView } from "./SiteMapView"
 import { CELL, cellCenter } from "./mapScale"
 import { isCorridorCorner } from "./corridorRuns"
@@ -139,7 +139,7 @@ const offerViolations = (
   const violations: string[] = []
   // A drop's launch and landing are stopping points by what the carve made of them (`oneWayRuns`), not by
   // the shape of the cell, so they are counted here whatever that shape is.
-  const dropEnds = new Set(oneWayRuns(grid).flatMap(run => [run.launch, run.landing].map(([r, c]) => `${r},${c}`)))
+  const dropEnds = dropEndsOf(grid)
   for (const key of walkable) {
     if (key === `${explorerPos[0]},${explorerPos[1]}`) continue
     const [r, c] = key.split(",").map(Number)

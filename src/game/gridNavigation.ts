@@ -74,6 +74,26 @@ export const oneWayRuns = (
   return runs
 }
 
+/** The drop whose launch is this cell, if any: what a walker standing on a launch takes across. */
+export const dropLaunchedAt = (
+  grid: FloorGrid,
+  row: number,
+  col: number
+): ReturnType<typeof oneWayRuns>[number] | undefined =>
+  oneWayRuns(grid).find(run => run.launch[0] === row && run.launch[1] === col)
+
+/** The one answer to "which cells are a drop's ends": every launch and landing of the floor, keyed by
+ * cell, each with the direction a walker enters it from its own node. Read off `oneWayRuns`, never off a
+ * cell's shape: a one-direction stub is not a launch in general. */
+export const dropEndsOf = (grid: FloorGrid): ReadonlyMap<string, Direction> => {
+  const ends = new Map<string, Direction>()
+  for (const run of oneWayRuns(grid)) {
+    ends.set(`${run.launch[0]},${run.launch[1]}`, run.dir)
+    ends.set(`${run.landing[0]},${run.landing[1]}`, opposite[run.dir])
+  }
+  return ends
+}
+
 /** Brings every obstacle out of the fog once its launch or its landing is seen: the whole zipline is
  * visible from either foot, and nothing past it. The far end stays dark, so a player at the launch sees
  * the line and not what it lands on. Read off `grid`, the shape carved into it never changing mid-walk,
@@ -178,6 +198,12 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
   return { ...grid, cells: newCells }
 }
 
+/** The one step rule of every walk: a walker may move onto `neighbor` unless it is solid stone, ground
+ * still in the dark, or a way a switch shut (a wall: drawn, and standable on by nobody). `findPath` (by
+ * what route) and `walkableFrom` (which cells) both ask it, so they cannot disagree about what is ground. */
+export const mayStepOnto = (neighbor: GridCell | undefined): neighbor is GridCell =>
+  neighbor !== undefined && neighbor.type !== "empty" && neighbor.state !== "fogged" && !isSealedWayOut(neighbor)
+
 export const findPath = (
   grid: FloorGrid,
   from: readonly [number, number],
@@ -207,7 +233,7 @@ export const findPath = (
       // Restricting to non-fogged cells keeps the animated path on ground the player has
       // genuinely seen, even if that means a longer route than the absolute shortest one.
       // A shut way out is a wall, so no route ends on it and none runs through it.
-      if (!neighbor || neighbor.type === "empty" || neighbor.state === "fogged" || isSealedWayOut(neighbor)) continue
+      if (!mayStepOnto(neighbor)) continue
       parent.set(nk, key(r, c))
       if (nr === tr && nc === tc) break outer
       queue.push([nr, nc])
@@ -252,8 +278,7 @@ export const walkableFrom = (grid: FloorGrid, from: readonly [number, number]): 
       const key = `${nr},${nc}`
       if (seen.has(key)) continue
       const neighbor = grid.cells[nr]?.[nc]
-      // A shut way out is a wall: drawn, and standable on by nobody.
-      if (!neighbor || neighbor.type === "empty" || neighbor.state === "fogged" || isSealedWayOut(neighbor)) continue
+      if (!mayStepOnto(neighbor)) continue
       seen.add(key)
       queue.push([nr, nc])
     }

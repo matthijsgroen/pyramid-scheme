@@ -9,7 +9,7 @@ import type {
   WallDecorationKind,
 } from "../../game/siteTypes"
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
-import { isSealedWayOut, oneWayRuns, revealAll, walkableFrom } from "../../game/gridNavigation"
+import { dropEndsOf, isSealedWayOut, oneWayRuns, revealAll, walkableFrom } from "../../game/gridNavigation"
 import { ExplorerDot, LightPool } from "./ExplorerDot"
 import { driftsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
@@ -47,7 +47,7 @@ import { MarkArtBadge } from "./mark"
 import { FloorShade, LitPlaces } from "./torchlight"
 import { LIT_STANDING_STRENGTH, SEATING_PASS, STANDING_RELIEF } from "./lighting"
 import { TileLayers } from "./tileLayers"
-import { clickTargetAt, dropEndsOf, markerAt, type OfferContext, type OfferMarker } from "./clickTargets"
+import { clickTargetAt, markerAt, type OfferContext, type OfferMarker } from "./clickTargets"
 import {
   FACE_SHADOW,
   allFloorRects,
