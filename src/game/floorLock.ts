@@ -1,7 +1,7 @@
 import type { Direction, FloorGrid, GridCell, MechanismRecord, TombKeyReward } from "./siteTypes"
 import type { LockSpec, Mechanism, GateId, MechanismId, RegionId } from "./lockWalk"
 import { nodeBeyond } from "./siteValidator"
-import { legalTargets } from "./mechanismDoors"
+import { legalTargets, mechanismWorkedAt } from "./mechanismDoors"
 import { isObstacleCell, oneWayRuns } from "./gridNavigation"
 
 type Pos = readonly [number, number]
@@ -155,6 +155,21 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
     }
   if (mechanismsAt.size === 0) return undefined
 
+  // A CELL THAT WORKS A MECHANISM ELSEWHERE AND THE RECORD THAT PLACES IT ARE TWO ACCOUNTS OF ONE FACT,
+  // and a cell naming a transition the record puts somewhere else would be thrown from a place the walk
+  // never put it.
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type !== "room" || !cell.worksMechanism) continue
+      const placed = mechanismWorkedAt(grid, r, c)?.record.transitions?.[cell.worksMechanism.transition]
+      if (!placed || placed.at[0] !== r || placed.at[1] !== c)
+        throw new Error(
+          `floorLock: on site ${grid.siteId}, ${posKey(r, c)} works transition ${cell.worksMechanism.transition} ` +
+            `of ${cell.worksMechanism.mechanismId}, which the mechanism does not place there`
+        )
+    }
+
   const { ids, of } = regionsOf(grid)
   const gates: LockSpec["gates"] = {}
   const mechanisms: Record<string, Mechanism> = {}
@@ -243,7 +258,25 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
       states,
       initial,
       opens,
-      transitions: states.flatMap(from => legalTargets(record, from).map(to => ({ from, to, at: of.get(at)! }))),
+      transitions: states.flatMap(from =>
+        legalTargets(record, from).flatMap(to => {
+          // A move the record places is made in each place it names, in the region that cell stands in;
+          // one it does not place is made where the mechanism stands.
+          const placed = (record.transitions ?? []).filter(
+            t => t.to === to && (t.from === undefined || t.from === from)
+          )
+          if (placed.length === 0) return [{ from, to, at: of.get(at)! }]
+          return placed.map(({ at: [r, c] }) => {
+            const region = of.get(posKey(r, c))
+            if (!region)
+              throw new Error(
+                `floorLock: on site ${grid.siteId}, the mechanism at ${at} is worked at ${posKey(r, c)}, ` +
+                  `which is no ground the walk can stand on`
+              )
+            return { from, to, at: region }
+          })
+        })
+      ),
     }
     for (const { gateIds, keyId, mode } of byPosition)
       for (const gateId of gateIds) {

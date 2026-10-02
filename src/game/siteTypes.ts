@@ -292,6 +292,11 @@ export type RoomCell = {
    * disambiguates both rather than a control-only exception beside a family-only default: a handle's
    * is the authored address `leverByAddress` is keyed by (`handle.in`); a control's is its own `id`. */
   mechanismId?: string
+  /** THIS ROOM WORKS A MECHANISM THAT STANDS ELSEWHERE: `mechanismId` names its home room (whose
+   * `mechanism` holds the one state), `transition` indexes that record's `transitions`. The state is
+   * never stored here — it is read and written under the home room's address, so however many rooms
+   * can work a mechanism there is one entry for it. Unset on every room that works nothing remote. */
+  worksMechanism?: { mechanismId: string; transition: number }
   /** WHICH MECHANISM THIS ROOM BELONGS TO, said in a glyph on a coloured ground (src/app/SiteMap/mark.tsx).
    * A mechanism's room and every gate it owns carry the same pair, and that pairing is the only thing
    * on the floor that says which lever drives which door. Unset everywhere else. */
@@ -387,6 +392,12 @@ export type MechanismRecord = {
    * `mode` is the GATE's condition, carried on every owner's entry for it: absent means the gate stands
    * open only while EVERY mechanism naming it is in a position that names it, `"any"` while one is. */
   positions: { state: string; gateKeyId: string; mode?: "any" }[]
+  /** WHERE A MOVE IS MADE, when it is not in the mechanism's own room: a sequence advances at its tiles
+   * and resets at its door. An entry places every move INTO `to` (out of `from` when it names one, out
+   * of any state otherwise) at the cell `at`, and several entries may place one move in several places.
+   * A move no entry places is made in the mechanism's own room, so a record without this field is
+   * worked exactly where it stands. Each remote cell points back with `RoomCell.worksMechanism`. */
+  transitions?: { from?: string; to: string; at: readonly [number, number] }[]
 }
 export type GateConfig =
   | {

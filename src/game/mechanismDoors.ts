@@ -55,6 +55,37 @@ export const openDoorsFor = (grid: FloorGrid, floor: number, positions: Readonly
   return open
 }
 
+/** A mechanism as one cell sees it: where its record and its one stored state live (`home`), and which
+ * of its placed transitions this cell works, when it is not the home itself. */
+export type WorkedMechanism = { home: [number, number]; record: MechanismRecord; transition?: number }
+
+/**
+ * WHICH MECHANISM A CELL WORKS, and which transition of it. A room carrying a record works its own,
+ * every move; a room pointing at one (`worksMechanism`) works the move the record places at it. Nothing
+ * when the cell works none, or points at a home this floor does not have.
+ */
+export const mechanismWorkedAt = (grid: FloorGrid, row: number, col: number): WorkedMechanism | undefined => {
+  const cell = grid.cells[row]?.[col]
+  if (cell?.type !== "room") return undefined
+  if (cell.mechanism) return { home: [row, col], record: cell.mechanism }
+  if (!cell.worksMechanism) return undefined
+  const { mechanismId, transition } = cell.worksMechanism
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const home = grid.cells[r][c]
+      if (home.type === "room" && home.mechanism && home.mechanismId === mechanismId)
+        return { home: [r, c], record: home.mechanism, transition }
+    }
+  return undefined
+}
+
+/** THE ONE KEY A MECHANISM'S STATE IS FILED UNDER, whichever of its cells is asking: the home room's
+ * address, so a remote cell reads and writes the entry its home does and no key of its own. */
+export const mechanismAddress = (grid: FloorGrid, floor: number, row: number, col: number): string | null => {
+  const worked = mechanismWorkedAt(grid, row, col)
+  return worked ? cellAddress(grid, floor, worked.home[0], worked.home[1]) : null
+}
+
 type MechanismShape = Pick<MechanismRecord, "states" | "initial" | "returnsToInitial">
 
 /**
@@ -74,6 +105,33 @@ export const legalTargets = ({ states, initial, returnsToInitial }: MechanismSha
  */
 export const isSpent = (mechanism: MechanismShape, state: string): boolean =>
   legalTargets(mechanism, state).length === 0
+
+/**
+ * WHAT A PRESS AT ONE CELL WRITES: the mechanism's one key and the state it goes to. A cell working its
+ * own mechanism sends it to the next of `throwMechanism`; a remote cell works only the move the record
+ * places there, and a press out of a state that move does not leave from writes the state it is in.
+ * Nothing when the cell works no mechanism.
+ */
+export const pressAt = (
+  grid: FloorGrid,
+  floor: number,
+  row: number,
+  col: number,
+  states: ReadonlyMap<string, string>
+): { address: string; state: string } | undefined => {
+  const worked = mechanismWorkedAt(grid, row, col)
+  const address = mechanismAddress(grid, floor, row, col)
+  if (!worked || !address) return undefined
+  const { record, transition } = worked
+  const current = states.get(address) ?? record.initial
+  if (transition === undefined) return { address, state: throwMechanism(record, current) }
+  const placed = record.transitions?.[transition]
+  const moves =
+    !!placed &&
+    (placed.from === undefined || placed.from === current) &&
+    legalTargets(record, current).includes(placed.to)
+  return { address, state: moves ? placed.to : current }
+}
 
 /**
  * WHERE ONE PRESS SENDS IT: the next of `legalTargets` after the current state in declared order,
