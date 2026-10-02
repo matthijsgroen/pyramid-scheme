@@ -1,4 +1,6 @@
 import type { FloorGrid, RoomCell } from "@/game/siteTypes"
+import { isSpent } from "@/game/mechanismDoors"
+import { cellAddress } from "@/game/cellAddress"
 import { getFamilyPlugin } from "@/app/families/familyRegistry"
 import { NODE_RADIUS_FORK, NODE_RADIUS_LARGE, NODE_RADIUS_PUZZLE } from "./mapScale"
 
@@ -80,4 +82,20 @@ export const nodeRadius: Record<ShapeKind, number> = {
   treasure: NODE_RADIUS_LARGE,
   stairhead: NODE_RADIUS_LARGE,
   exit: NODE_RADIUS_LARGE,
+}
+
+/** A room whose mechanism has been used up (a lit torch), read off the position it stands in now — the
+ * same address `openDoorsFor` reads, falling back to `initial` for a save with no entry yet — so the map
+ * can say "done" without the player touching it. No stored state of its own. */
+export const isSpentAt = (
+  grid: FloorGrid,
+  floorIndex: number,
+  r: number,
+  c: number,
+  cell: RoomCell,
+  mechanismStates: ReadonlyMap<string, string> | undefined
+): boolean => {
+  if (!cell.mechanism) return false
+  const address = cellAddress(grid, floorIndex, r, c)
+  return isSpent(cell.mechanism, (address && mechanismStates?.get(address)) || cell.mechanism.initial)
 }

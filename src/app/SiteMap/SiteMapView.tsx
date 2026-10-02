@@ -40,7 +40,7 @@ import { MapGrowth, MapLife, MapWeather } from "./MapMood"
 import { hashString } from "@/support/hashString"
 import { ART_IMAGE_RENDERING, patronTileUrl, tileOrPlaceholder, tileUrl, tileVariants } from "./tileAssets"
 import { cellAddress } from "@/game/cellAddress"
-import { isLockedGate, nodeRadius, shapeKindFor, staysOpen } from "./nodeKinds"
+import { isLockedGate, isSpentAt, nodeRadius, shapeKindFor, staysOpen } from "./nodeKinds"
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
 import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
 import { MarkArtBadge, type Mark } from "./mark"
@@ -461,6 +461,7 @@ export const nodeSpritesFor = (
         out.push({
           footprint,
           key: `handle:${r},${c}`,
+          ...(isSpentAt(grid, floorIndex, r, c, cell, mechanismStates) ? { spent: true } : {}),
           url: back,
           x: cx + dx - CELL / 2,
           y: cy + dy + CELL / 2 - PROP_H,
@@ -1136,7 +1137,7 @@ export const SiteMapView = ({
             opacity={
               standingOn && sprite.fadeAt?.includes(standingOn)
                 ? ARCH_FADE
-                : sprite.badge === "taken"
+                : sprite.badge === "taken" || sprite.spent
                   ? LOOTED_OPACITY
                   : undefined
             }
@@ -1487,7 +1488,11 @@ export const SiteMapView = ({
                 const state = cell.state
                 // Reached, and done with. A room its family keeps open is reached and never done with, so it
                 // is left out of everything below that says finished — the dim and the ✓ alike.
-                const isCompleted = state === "completed" && !staysOpen(cell)
+                // A USED ACTIVATOR IS DONE, THOUGH ITS ROOM STAYS OPEN: a lit torch has nothing left to offer, so
+                // it wears the dim and the ✓ a finished room does. Read off the mechanism's position, so it
+                // shows without the player touching it; an unlit one wears neither.
+                const spent = isSpentAt(grid, currentFloor ?? 0, r, c, cell, mechanismStates)
+                const isCompleted = (state === "completed" && !staysOpen(cell)) || spent
                 // Only ever a pending-loot marker for a treasure room with a consumable reward — this
                 // guards against stale coordinates in pendingCells (e.g. left over from before a site
                 // was regenerated) painting the badge onto whatever room now occupies that cell.

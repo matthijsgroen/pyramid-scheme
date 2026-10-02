@@ -67,6 +67,15 @@ export const legalTargets = ({ states, initial, returnsToInitial }: MechanismSha
   states.filter(to => to !== from && (returnsToInitial || to !== initial))
 
 /**
+ * A SPENT MECHANISM: one with nowhere left to go, so a press would do nothing. Of the contract's kinds
+ * that is the activator once used (a lit torch, a thrown one-way switch) and nothing else: a mechanism
+ * that returns to its start, or a one-way one with a position still ahead of it, can always be pressed.
+ * Navigation reads it to offer nothing and the map to draw the used appearance, so the two agree.
+ */
+export const isSpent = (mechanism: MechanismShape, state: string): boolean =>
+  legalTargets(mechanism, state).length === 0
+
+/**
  * WHERE ONE PRESS SENDS IT: the next of `legalTargets` after the current state in declared order,
  * wrapping round. A two-state returning mechanism toggles; a mechanism with no legal target (a torch
  * once lit) stays where it is. A state the record does not have (a stale save) takes the first target.

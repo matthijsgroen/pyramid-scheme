@@ -2,7 +2,7 @@ import { useCallback, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import { cellAddress } from "./cellIdentity"
 import { dropLaunchedAt, findPath, getCell } from "@/game/gridNavigation"
-import { legalTargets, throwMechanism } from "@/game/mechanismDoors"
+import { isSpent as mechanismIsSpent, throwMechanism } from "@/game/mechanismDoors"
 import type { FloorGrid, MechanismRecord, ObstacleKind, RoomCell, SiteConfig, TreasureReward } from "@/game/siteTypes"
 import { useTimeout } from "@/support/useTimeout"
 import type { JourneyAPI } from "@/app/state/useJourneys"
@@ -182,7 +182,7 @@ export const useSiteNavigation = ({
       // A SPENT MECHANISM (a lit torch) OFFERS NOTHING: with no legal target a throw would be an empty
       // prompt, so the room reads as plain floor the player walks through.
       const isSpent = (target: RoomCell) =>
-        !!target.mechanism && legalTargets(target.mechanism, stateOf(target.mechanism)).length === 0
+        !!target.mechanism && mechanismIsSpent(target.mechanism, stateOf(target.mechanism))
 
       // A portal takes the player somewhere whatever state its cell is in, so both kinds are answered
       // BEFORE the completed-cell block below, which would otherwise just reposition and swallow the
