@@ -297,6 +297,11 @@ export type RoomCell = {
    * never stored here — it is read and written under the home room's address, so however many rooms
    * can work a mechanism there is one entry for it. Unset on every room that works nothing remote. */
   worksMechanism?: { mechanismId: string; transition: number }
+  /** THIS ROOM IS ONE TILE OF A SEQUENCE (obstacles.ts, SequenceControl): `id` is the sequence, `step` the
+   * place of this tile in its order, `glyph` the hieroglyph it wears (mark.ts allocates it, distinct
+   * from every other glyph on the floor). The sequence's one record sits on the tile of step 0; every
+   * tile works the moves that record places at it through `worksMechanism`. */
+  sequenceTile?: { id: string; step: number; glyph: number }
   /** WHICH MECHANISM THIS ROOM BELONGS TO, said in a glyph on a coloured ground (src/app/SiteMap/mark.tsx).
    * A mechanism's room and every gate it owns carry the same pair, and that pairing is the only thing
    * on the floor that says which lever drives which door. Unset everywhere else. */
@@ -398,6 +403,10 @@ export type MechanismRecord = {
    * A move no entry places is made in the mechanism's own room, so a record without this field is
    * worked exactly where it stands. Each remote cell points back with `RoomCell.worksMechanism`. */
   transitions?: { from?: string; to: string; at: readonly [number, number] }[]
+  /** EVERY MOVE THIS MECHANISM HAS IS ONE OF `transitions`: a move no entry places is not made anywhere,
+   * where otherwise it is made in the mechanism's own room. A sequence is the one that needs it, because
+   * most pairs of its states are not moves at all (progress cannot skip a tile). */
+  placedOnly?: true
 }
 export type GateConfig =
   | {
@@ -702,10 +711,19 @@ export type AssemblerReason =
   | { type: "regionBarrierHoldsPort"; id: string; region: string; port: "in" | "out" }
   | { type: "mechanicStandsInBarredRegion"; id: string; region: string; barrier: string }
   | { type: "regionBarrierDropLands"; id: string; region: string; drop: string }
+  | { type: "sequenceTooShort"; id: string }
+  | { type: "sequenceStepNamesNoRegion"; id: string; step: number }
+  | { type: "sequenceOpensNotAGate"; id: string; gate: string }
+  | { type: "sequenceResetNotAGate"; id: string; gate: string }
+  | { type: "sequenceResetNotOpened"; id: string; gate: string }
+  | { type: "sequenceStepBehindOwnDoor"; id: string; step: number }
   /** No carve could stand a region barrier inside its region: some entrance of `region` had no free node
    * with a stretch of the region in front of it, so the barrier is refused rather than set elsewhere.
    * `id` is the barrier. */
   | { type: "regionBarrierNotSeated"; id: string; region: string }
+  /** No carve found a free corridor node in the region a sequence's step names, for every step that
+   * needs its own tile there. `id` is the sequence, `step` the first step left without a tile. */
+  | { type: "sequenceTileNotPlaced"; id: string; step: number }
   /** The floor's mechanics (and sequence tiles) need more distinct glyphs than the six a mark can wear,
    * so a mark would be shared. `ids` are the ones left without a glyph, in authoring order. */
   | { type: "marksExhausted"; ids: string[] }

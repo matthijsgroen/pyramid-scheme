@@ -35,12 +35,14 @@ import {
   isEdgeGate,
   isForkSwitch,
   isRegionGate,
+  isSequence,
   seamIndexFor,
   seatBarrierDoors,
   topologyFaults,
 } from "./obstacles"
 import type { EdgeGateObstacle, Obstacle, OneWayObstacle, StatefulControl } from "./obstacles"
 import { cellSlot } from "./cellSlot"
+import { placeSequences } from "./sequenceTiles"
 import { adjacencyFaults, dropLandingFaults, gateDoorFaults } from "./carveAgreement"
 import type { CarveFault } from "./carveAgreement"
 import { stairIdAt } from "./stairAddress"
@@ -930,8 +932,13 @@ export const assembleFloor = (
   // those ids mint, one entry per obstacle per state that opens it — several entries may share a
   // state, which is what lets one position open a set.
   const forkSwitches = (authoredConfig.controls ?? []).filter(isForkSwitch)
+  // A SEQUENCE IS NOT COMPILED HERE: its record places each move at a cell, and the cells only exist once
+  // the carve has stood its tiles (`placeSequences`, last).
+  const sequences = (authoredConfig.controls ?? []).filter(isSequence)
   const controlRecords = (authoredConfig.controls ?? []).flatMap(control =>
-    isForkSwitch(control) ? [] : [{ control, record: compileMechanism(control, gateKeyOf, obstacleMode) }]
+    isForkSwitch(control) || isSequence(control)
+      ? []
+      : [{ control, record: compileMechanism(control, gateKeyOf, obstacleMode) }]
   )
   // The gates one fork-switch owns, by the id the author gave them.
   const gatesOwnedBy = (controlId: string) =>
@@ -948,6 +955,14 @@ export const assembleFloor = (
         .sort()
       if (owned.length > 0)
         markedMechanics.push({ id: control.id, seed: hashString(owned.join("|")), gateKeys: owned.map(gateKeyOf) })
+      continue
+    }
+    if (isSequence(control)) {
+      markedMechanics.push({
+        id: control.id,
+        seed: hashString([...new Set(control.opens.done)].sort().join("|")),
+        gateKeys: control.opens.done.map(gateKeyOf),
+      })
       continue
     }
     const drivenIds = [...new Set(Object.values(control.opens).flat())].sort()
@@ -1073,7 +1088,13 @@ export const assembleFloor = (
     markedMechanics.push({ id: `switch:${n}`, seed: hashString(switchStem(n)), gateKeys: [] })
   // MORE MECHANICS THAN THERE ARE GLYPHS IS ANSWERED HERE, BEFORE A WALL IS CARVED: the count is fixed by
   // the config, and a mark shared between two mechanics would say one drives the other's door.
-  const allocation = allocateMarks(markedMechanics)
+  const tileRequests: MarkRequest[] = sequences.flatMap(sequence =>
+    sequence.steps.map((_, step) => ({
+      id: `${sequence.id}#${step}`,
+      seed: hashString(`sequence|${sequence.id}|${step}`),
+    }))
+  )
+  const allocation = allocateMarks(markedMechanics, tileRequests)
   if (allocation.unmarked.length > 0)
     return { success: false, reasons: [{ type: "marksExhausted", ids: allocation.unmarked }] }
   for (const mechanic of markedMechanics)
@@ -1286,6 +1307,8 @@ export const assembleFloor = (
   // hosts it — kept the same way and for the same reason: `mainPath.length` and a chain's own length
   // both grow across the attempt budget.
   let controlNotSeated: string[] | undefined
+  // The first sequence step no attempt could stand a tile for, kept the same way.
+  let sequenceShortfall: { id: string; step: number } | undefined
   // The first attempt's controls whose only candidate node already held a puzzle with no room to move
   // it, kept the same way — see the seating searches below (main path and chain alike).
   let controlPuzzleUndisplaceable: string[] | undefined
@@ -3777,6 +3800,33 @@ export const assembleFloor = (
       }
     }
 
+    // A SEQUENCE'S TILES STAND ON THE FINISHED CARVE and move no wall, so a floor authoring none is carved as
+    // it always was. A tile the carve has no free node for in its step's region fails the attempt: a
+    // longer path may have one, and the last attempt names the sequence and the step.
+    if (sequences.length > 0) {
+      const unplaced = placeSequences(
+        cells2D,
+        sequences.map(sequence => ({
+          id: sequence.id,
+          regions: sequence.steps.map(step => step.in),
+          glyphs: sequence.steps.map((_, step) => allocation.tileGlyphs.get(`${sequence.id}#${step}`)!),
+          gates: sequence.opens.done.map(id => {
+            const mode = obstacleMode(id)
+            return { gateKeyId: gateKeyOf(id), ...(mode ? { mode } : {}) }
+          }),
+          doorKey: gateKeyOf(sequence.resetAt),
+        })),
+        new Set(mainPath.map(([r, c]) => posKey(r, c))),
+        siteId
+      )
+      if (unplaced) {
+        if (!sequenceShortfall) sequenceShortfall = unplaced
+        continue
+      }
+      const tileDuplicate = duplicateSlot()
+      if (tileDuplicate) return { success: false, reasons: [{ type: "duplicateCellSlot", slot: tileDuplicate }] }
+    }
+
     // A DOOR THAT WAITS ON SEVERAL OWNERS GAINS ITS FACE LAST, after every check above has read the carve:
     // only the door cell's family changes, so no wall, `dirs` or slot can have moved for it.
     return { success: true, grid: withGateFaces(grid, floorRef.floorIndex, new Map()), attempt }
@@ -3802,6 +3852,7 @@ export const assembleFloor = (
       ...(gateSeamMissing ? [{ type: "obstacleSeamNotCarved" as const, ids: gateSeamMissing }] : []),
       ...(regionBarrierShort ? [{ type: "regionBarrierNotSeated" as const, ...regionBarrierShort }] : []),
       ...(controlNotSeated ? [{ type: "controlNotSeated" as const, ids: controlNotSeated }] : []),
+      ...(sequenceShortfall ? [{ type: "sequenceTileNotPlaced" as const, ...sequenceShortfall }] : []),
       ...(controlPuzzleUndisplaceable
         ? [{ type: "controlPuzzleUndisplaceable" as const, ids: controlPuzzleUndisplaceable }]
         : []),

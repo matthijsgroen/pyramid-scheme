@@ -67,7 +67,13 @@ export type WorkedMechanism = { home: [number, number]; record: MechanismRecord;
 export const mechanismWorkedAt = (grid: FloorGrid, row: number, col: number): WorkedMechanism | undefined => {
   const cell = grid.cells[row]?.[col]
   if (cell?.type !== "room") return undefined
-  if (cell.mechanism) return { home: [row, col], record: cell.mechanism }
+  // A home that also works a move of its own (a sequence's first tile) says which one.
+  if (cell.mechanism)
+    return {
+      home: [row, col],
+      record: cell.mechanism,
+      ...(cell.worksMechanism ? { transition: cell.worksMechanism.transition } : {}),
+    }
   if (!cell.worksMechanism) return undefined
   const { mechanismId, transition } = cell.worksMechanism
   for (let r = 0; r < grid.rows; r++)
@@ -86,7 +92,7 @@ export const mechanismAddress = (grid: FloorGrid, floor: number, row: number, co
   return worked ? cellAddress(grid, floor, worked.home[0], worked.home[1]) : null
 }
 
-type MechanismShape = Pick<MechanismRecord, "states" | "initial" | "returnsToInitial">
+type MechanismShape = Pick<MechanismRecord, "states" | "initial" | "returnsToInitial" | "transitions" | "placedOnly">
 
 /**
  * THE ONE RULE FOR WHERE A PRESS CAN SEND A MECHANISM, shared by the solver (`floorLock`'s transitions)
@@ -94,8 +100,14 @@ type MechanismShape = Pick<MechanismRecord, "states" | "initial" | "returnsToIni
  * but the one it stands in, and never `initial` when the record says it does not return there. Declared
  * order, so a press has a stable "next". Empty for a spent one-way mechanism.
  */
-export const legalTargets = ({ states, initial, returnsToInitial }: MechanismShape, from: string): string[] =>
-  states.filter(to => to !== from && (returnsToInitial || to !== initial))
+export const legalTargets = (
+  { states, initial, returnsToInitial, transitions, placedOnly }: MechanismShape,
+  from: string
+): string[] => {
+  // A mechanism that places every move has only the moves it places, out of the state it is in.
+  const placed = new Set((transitions ?? []).filter(t => t.from === undefined || t.from === from).map(({ to }) => to))
+  return states.filter(to => to !== from && (returnsToInitial || to !== initial) && (!placedOnly || placed.has(to)))
+}
 
 /**
  * A SPENT MECHANISM: one with nowhere left to go, so a press would do nothing. Of the contract's kinds
@@ -108,8 +120,8 @@ export const isSpent = (mechanism: MechanismShape, state: string): boolean =>
 
 /**
  * WHAT A PRESS AT ONE CELL WRITES: the mechanism's one key and the state it goes to. A cell working its
- * own mechanism sends it to the next of `throwMechanism`; a remote cell works only the move the record
- * places there, and a press out of a state that move does not leave from writes the state it is in.
+ * own mechanism sends it to the next of `throwMechanism`; a remote cell works only the moves the record
+ * places there, and a press out of a state none of them leaves from writes the state it is in.
  * Nothing when the cell works no mechanism.
  */
 export const pressAt = (
@@ -125,12 +137,13 @@ export const pressAt = (
   const { record, transition } = worked
   const current = states.get(address) ?? record.initial
   if (transition === undefined) return { address, state: throwMechanism(record, current) }
-  const placed = record.transitions?.[transition]
-  const moves =
-    !!placed &&
-    (placed.from === undefined || placed.from === current) &&
-    legalTargets(record, current).includes(placed.to)
-  return { address, state: moves ? placed.to : current }
+  // Every move the record places at this cell is this cell's to make, so one tile can advance a run,
+  // spoil it or do nothing according to where the run stands.
+  const legal = legalTargets(record, current)
+  const move = (record.transitions ?? []).find(
+    t => t.at[0] === row && t.at[1] === col && (t.from === undefined || t.from === current) && legal.includes(t.to)
+  )
+  return { address, state: move ? move.to : current }
 }
 
 /**

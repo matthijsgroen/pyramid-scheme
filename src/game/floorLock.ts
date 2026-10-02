@@ -257,6 +257,24 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
       }
     }
 
+  // WHERE A PLAYER STANDS TO WORK A MOVE PLACED AT ONE CELL. On ground it is the region of that cell. At a
+  // door it is every region the door touches, since the door region is only entered once the door is open
+  // and a move made AT a door is made from beside it, on whichever side the player is.
+  const regionsToWorkFrom = (r: number, c: number): RegionId[] => {
+    const cell = grid.cells[r]?.[c]
+    const own = of.get(posKey(r, c))
+    if (!own || !cell) return []
+    if (doorKeysOf(cell).length === 0) return [own]
+    return [
+      ...new Set(
+        [...dirsOf(cell)].flatMap(dir => {
+          const beside = of.get(posKey(r + MOVES[dir][0], c + MOVES[dir][1]))
+          return beside && beside !== own ? [beside] : []
+        })
+      ),
+    ]
+  }
+
   // A MECHANISM: the position it stands in until it is worked, then a state per set of gates it can
   // open, and re-workable from any state into any other — which is what lets a player change their
   // mind, and the only reason the doors it shut are not a trap.
@@ -301,14 +319,14 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
             t => t.to === to && (t.from === undefined || t.from === from)
           )
           if (placed.length === 0) return [{ from, to, at: of.get(at)! }]
-          return placed.map(({ at: [r, c] }) => {
-            const region = of.get(posKey(r, c))
-            if (!region)
+          return placed.flatMap(({ at: [r, c] }) => {
+            const regions = regionsToWorkFrom(r, c)
+            if (regions.length === 0)
               throw new Error(
                 `floorLock: on site ${grid.siteId}, the mechanism at ${at} is worked at ${posKey(r, c)}, ` +
                   `which is no ground the walk can stand on`
               )
-            return { from, to, at: region }
+            return regions.map(region => ({ from, to, at: region }))
           })
         })
       ),

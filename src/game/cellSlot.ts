@@ -15,6 +15,8 @@ export const OBSTACLE_KEY_PREFIX = "obstacle:"
  * - an obstacle's gate or a mechanism's own room (a handle's or a control's) carries the family PLUS
  *   its own authored id — a region layout can stand more than one obstacle gate or control on the
  *   SAME main path, so family alone would no longer tell them apart
+ * - a sequence's tile is the sequence's authored id plus its step in the order, so every tile has a name of
+ *   its own and the first tile's is the one its single state is filed under
  * - a region barrier has one door per entrance, all asking for one key, so each is named by the authored id
  *   PLUS the neighbouring region it is the entrance from
  * - a staircase is its `stairId`; the two plain portals are the entrance and the exit
@@ -47,6 +49,7 @@ export const cellSlot = (grid: FloorGrid, row: number, col: number): string | nu
   // main path (FloorConfig.controls), and several may resolve to the same family ("handle") when none
   // names its own `encounter` — so every mechanism room carries its identity (RoomCell.mechanismId)
   // rather than only the ones that would otherwise collide.
+  if (cell.sequenceTile) return `xsequence:${cell.sequenceTile.id}#${cell.sequenceTile.step}`
   if (cell.mechanismId !== undefined) return `x${cell.family ?? "?"}:${cell.mechanismId}`
   // AN OBSTACLE'S GATE IS THE SAME KIND OF ROOM, ONE STEP OVER: a region layout can stand more than
   // one on the main path (one per connection its route crosses), and a control owns it so it carries no

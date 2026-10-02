@@ -21,6 +21,7 @@ import type { FloorGrid, RoomCell } from "@/game/siteTypes"
 import { assembleFloor, defaultResolveEncounter } from "@/game/siteAssembler"
 import type { ResolveEncounter } from "@/game/siteAssembler"
 import type { FloorConfig as GameFloorConfig } from "@/game/siteTypes"
+import type { StatefulControl } from "@/game/obstacles"
 
 const floor = (overrides: Partial<FloorConfig> = {}): FloorConfig => ({
   pathPuzzles: 1,
@@ -475,7 +476,7 @@ describe("findDeadRegions", () => {
 
   it("stays silent once the control stands where a player can actually reach it to throw", () => {
     const reachable = selfDeadlockedFloor()
-    reachable.controls = [{ ...reachable.controls![0], in: "mouth" }]
+    reachable.controls = [{ ...(reachable.controls![0] as StatefulControl), in: "mouth" }]
     const configs = { spec: [[reachable]] } as Record<string, SiteConfig[]>
     expect(findDeadRegions(configs, (_journeyId, config) => carve(config))).toEqual([])
   })

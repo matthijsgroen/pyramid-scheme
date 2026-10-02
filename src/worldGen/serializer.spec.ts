@@ -288,3 +288,30 @@ describe("generateFile — a region barrier survives the bake", () => {
     expect(emitted).toContain('obstacles: [{ id: "floodedHall", kind: "gate", at: { on: "region", region: "hall" } }]')
   })
 })
+
+describe("generateFile — a sequence survives the bake", () => {
+  it("emits its steps in order, the gate it resets at and what finishing opens", () => {
+    const floor = {
+      pathPuzzles: 0,
+      difficulty: "starter" as const,
+      end: "treasure" as const,
+      exitOrStaircase: "exit" as const,
+      sideSections: [],
+      controls: [
+        {
+          id: "plates",
+          control: "sequence" as const,
+          steps: [{ in: "hall" }, { in: "annex" }, { in: "hall" }],
+          resetAt: "vaultDoor",
+          opens: { done: ["vaultDoor"] },
+        },
+      ],
+    }
+
+    const emitted = generateFile({ testJourney: [[floor]] })
+
+    expect(emitted).toContain(
+      'controls: [{ id: "plates", control: "sequence", steps: [{ in: "hall" }, { in: "annex" }, { in: "hall" }], resetAt: "vaultDoor", opens: { done: ["vaultDoor"] } }]'
+    )
+  })
+})

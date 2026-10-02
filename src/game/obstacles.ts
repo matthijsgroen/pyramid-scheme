@@ -119,9 +119,28 @@ export type ForkSwitchControl = {
   encounter: string
 }
 
-export type Control = StatefulControl | ForkSwitchControl
+/**
+ * TILES WALKED IN ORDER, with a reset at the door. One control however many tiles: `steps` is the order
+ * and each names the region its tile stands in, so two steps in one region are two tiles there. It names
+ * no `in` and counts no states — its states follow from the steps (sequence.ts) — and the carve picks the
+ * hieroglyphs. `opens.done` is what the finished order opens; `resetAt` is one of those gates (an edge
+ * gate, so it has one door to read the order at and start again from).
+ */
+export type SequenceControl = {
+  id: string
+  control: "sequence"
+  steps: { in: string }[]
+  resetAt: string
+  opens: { done: string[] }
+  /** A sequence names no encounter: its tiles are not a family's rooms. */
+  encounter?: undefined
+}
+
+export type Control = StatefulControl | ForkSwitchControl | SequenceControl
 
 export const isForkSwitch = (control: Control): control is ForkSwitchControl => control.control === "fork-switch"
+
+export const isSequence = (control: Control): control is SequenceControl => control.control === "sequence"
 
 export type TopologyFault =
   | { type: "obstacleIdRepeated"; id: string }
@@ -156,9 +175,76 @@ export type TopologyFault =
   /** A drop lands in a barred region, an entrance the carve cannot stand a barrier across; `id` is the
    * barrier, `drop` the one-way obstacle. */
   | { type: "regionBarrierDropLands"; id: string; region: string; drop: string }
+  /** A sequence with fewer than two steps is a single plate, which is a torch; `id` is the sequence. */
+  | { type: "sequenceTooShort"; id: string }
+  /** A sequence's step names a region this floor's layout does not declare. */
+  | { type: "sequenceStepNamesNoRegion"; id: string; step: number }
+  /** A sequence's `opens` names something that is not a gate of this floor; `gate` is what it named. */
+  | { type: "sequenceOpensNotAGate"; id: string; gate: string }
+  /** A sequence's `resetAt` is not an edge gate, so there is no one door to start again at. */
+  | { type: "sequenceResetNotAGate"; id: string; gate: string }
+  /** A sequence's `resetAt` is a gate, but not one the sequence opens. */
+  | { type: "sequenceResetNotOpened"; id: string; gate: string }
+  /** A step's region cannot be reached without passing a gate this sequence opens, so its tile could
+   * never be walked before the order is done. */
+  | { type: "sequenceStepBehindOwnDoor"; id: string; step: number }
 
 /** The two ends of a connection in a stable order, so `["a","b"]` and `["b","a"]` are one connection. */
 const connectionKey = (a: string, b: string): string => JSON.stringify([a, b].sort())
+
+/**
+ * EVERY WAY ONE SEQUENCE DOES NOT RESOLVE, from the config alone. Reachability is asked of the layout with
+ * the gates this sequence opens taken away, ignoring every other control: a tile that cannot be reached
+ * even when nothing else stands in the way is a tile behind its own door.
+ */
+const sequenceFaults = (
+  sequence: SequenceControl,
+  layout: RegionGraph,
+  obstacleById: ReadonlyMap<string, Obstacle>,
+  drops: ReadonlyArray<readonly [string, string]>
+): TopologyFault[] => {
+  const faults: TopologyFault[] = []
+  const { id, steps, resetAt } = sequence
+  const opened = sequence.opens.done ?? []
+  const regions = new Set(layout.regions.map(r => r.name))
+  if (steps.length < 2) faults.push({ type: "sequenceTooShort", id })
+  steps.forEach((step, n) => {
+    if (!regions.has(step.in)) faults.push({ type: "sequenceStepNamesNoRegion", id, step: n })
+  })
+  const shutByThis = new Set<string>()
+  const barredByThis = new Set<string>()
+  for (const gate of opened) {
+    const obstacle = obstacleById.get(gate)
+    if (!obstacle || obstacle.kind !== "gate") faults.push({ type: "sequenceOpensNotAGate", id, gate })
+    else if (isRegionGate(obstacle)) barredByThis.add(obstacle.at.region)
+    else shutByThis.add(connectionKey(obstacle.at.between[0], obstacle.at.between[1]))
+  }
+  const reset = obstacleById.get(resetAt)
+  if (!reset || !isEdgeGate(reset)) faults.push({ type: "sequenceResetNotAGate", id, gate: resetAt })
+  else if (!opened.includes(resetAt)) faults.push({ type: "sequenceResetNotOpened", id, gate: resetAt })
+
+  const neighbours = new Map<string, string[]>()
+  const join = (from: string, to: string) => neighbours.set(from, [...(neighbours.get(from) ?? []), to])
+  for (const [a, b] of layout.connections)
+    if (!shutByThis.has(connectionKey(a, b))) {
+      join(a, b)
+      join(b, a)
+    }
+  for (const [from, to] of drops) join(from, to)
+  const seen = new Set<string>()
+  const queue = barredByThis.has(layout.in) ? [] : [layout.in]
+  for (const region of queue) seen.add(region)
+  for (let at = 0; at < queue.length; at++)
+    for (const next of neighbours.get(queue[at]) ?? [])
+      if (!seen.has(next) && !barredByThis.has(next)) {
+        seen.add(next)
+        queue.push(next)
+      }
+  steps.forEach((step, n) => {
+    if (regions.has(step.in) && !seen.has(step.in)) faults.push({ type: "sequenceStepBehindOwnDoor", id, step: n })
+  })
+  return faults
+}
 
 /**
  * EVERY WAY THE AUTHORED TOPOLOGY DOES NOT RESOLVE, answered from the config alone so it is refused
@@ -187,7 +273,8 @@ export const topologyFaults = (
           ? { type: "obstacleNamesNoRegion", id: o.id }
           : { type: "obstacleNamesNoConnection", id: o.id }
       )
-    for (const c of controls) faults.push({ type: "controlUnsatisfied", id: c.id, what: c.in })
+    for (const c of controls)
+      faults.push({ type: "controlUnsatisfied", id: c.id, what: isSequence(c) ? (c.steps[0]?.in ?? c.id) : c.in })
     return faults
   }
 
@@ -239,6 +326,11 @@ export const topologyFaults = (
   for (const control of controls) {
     if (seenControl.has(control.id)) faults.push({ type: "controlUnsatisfied", id: control.id, what: control.id })
     seenControl.add(control.id)
+    if (isSequence(control)) {
+      faults.push(...sequenceFaults(control, layout, obstacleById, drops))
+      for (const id of control.opens.done ?? []) owned.add(id)
+      continue
+    }
     if (!regions.has(control.in)) faults.push({ type: "controlUnsatisfied", id: control.id, what: control.in })
     // A fork-switch has no states or `opens` to check; the gates name it, which is answered below.
     if (isForkSwitch(control)) continue
