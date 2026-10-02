@@ -106,7 +106,7 @@ exports[`overlook > draws, with its cheapest way through 1`] = `
 
 ■ shut on arrival   □ open on arrival   ╌▶ one-way drop   Name:state opens it
 
-in ▸ top ▸ ⤓s1 ▸ S1:right ▸ ⤓in ▸ top ▸ ⤓middle ▸ s2 ▸ S2:right ▸ in ▸ out"
+in ▸ ⤓s1 ▸ S1:right ▸ ⤓in ▸ ⤓middle ▸ s2 ▸ S2:right ▸ in ▸ out"
 `;
 
 exports[`seesaw > draws, with its cheapest way through 1`] = `

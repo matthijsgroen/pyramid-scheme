@@ -25,7 +25,7 @@ describe.each(Object.entries(LOCK_CATALOGUE))("%s", (_, lock) => {
   })
 
   it("draws, with its cheapest way through", () => {
-    expect(`${drawLock(topologyLock(lock))}\n\n${solution(lock).join(" ▸ ")}`).toMatchSnapshot()
+    expect(`${drawLock(topologyLock(lock, { drawn: true }))}\n\n${solution(lock).join(" ▸ ")}`).toMatchSnapshot()
   })
 })
 

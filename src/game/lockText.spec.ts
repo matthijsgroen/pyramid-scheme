@@ -6,7 +6,7 @@ describe("parseLock", () => {
   it("reads gates, rest sides, drops, corridors, keys and appetites", () => {
     const lock = parseLock(`
       in -- top            // a comment
-      top -[!H]- hall -[H+#red]- vault
+      top -[!H]- hall -[H]- vault -[#red]- treasury
       hall >> in
       vault -- out
       H lever @hall
@@ -17,7 +17,7 @@ describe("parseLock", () => {
       ["in", "top"],
       ["vault", "out"],
     ])
-    expect(lock.gates["hall-vault"]).toEqual({ from: "hall", to: "vault", owners: ["H", "#red"] })
+    expect(lock.gates["vault-treasury"]).toEqual({ from: "vault", to: "treasury", owners: ["#red"] })
     expect(lock.switches.H).toEqual({
       in: "hall",
       encounter: "handle",
@@ -46,6 +46,7 @@ describe("parseLock", () => {
     ["in -[H]- out\nH lever @in\nG lever @in", "line 3: G owns no gate"],
     ["in -[A+B|C]- out", "line 1: -[A+B|C]- mixes + and |"],
     ["in -[!H+H]- out\nH lever @in", "line 1: -[!H+H]- names H twice"],
+    ["in -[A|#red]- out", "line 1: -[A|#red]- mixes a key with a lever or board, which the runtime cannot open yet"],
     ["in => out", 'line 1: cannot read "in => out"'],
     ["in -[H]- hall\nH lever @in", "the lock never reaches out"],
     ["chain twoLamps nope", "line 1: no lock called nope"],

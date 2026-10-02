@@ -73,6 +73,10 @@ export const parseLock = (text: string, library: Record<string, AuthoredLock> = 
       .split(/[+|]/)
       .map(term => term.trim().match(/^(!?)(#?\w+)$/) ?? fail(n, `cannot read owner "${term}"`))
     const owned = terms.map(([, , owner]) => owner)
+    // ponytail: refused until the runtime folds a floor key and a mechanism on one door the way the walk
+    // does (it opens such a door on the mechanism alone); lift it when mechanismDoors.ts learns keys.
+    if (owned.some(o => o.startsWith("#")) && owned.some(o => !o.startsWith("#")))
+      fail(n, `-[${owners}]- mixes a key with a lever or board, which the runtime cannot open yet`)
     const twice = owned.find((owner, i) => owned.indexOf(owner) !== i)
     if (twice) fail(n, `-[${owners}]- names ${twice} twice`)
     for (const [, rest, owner] of terms) {

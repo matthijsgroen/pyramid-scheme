@@ -38,7 +38,7 @@ const report = (name: string, lock: AuthoredLock, withJson: boolean): boolean =>
     walked.sound || deadEnd ? "✓ solvable" : `✗ not solvable: ${describeLockWalkFailure(walked.failure)}`,
     ...(deadEnd ? [`✗ a dead end: ${describeLockWalkFailure(walked.failure)}`] : []),
   ]
-  const lines = [`## ${name}`, "", ...checks, "", drawLock(spec)]
+  const lines = [`## ${name}`, "", ...checks, "", drawLock(topologyLock(lock, { drawn: true }))]
   const solved = solveLock(spec)
   if (solved) lines.push("", `cheapest: ${solved.actions} actions — ${solved.steps.join(" ▸ ")}`)
   const notes = lockQuality(lock)

@@ -30,6 +30,9 @@ export type AuthoredLock = {
   out: string
 }
 
+// The runtime's name for a board nobody has solved (siteTypes.ts's MECHANISM_AT_REST).
+const REST = "rest"
+
 const isHandle = (s: LockSwitch): s is Extract<LockSwitch, { encounter: "handle" }> => s.encounter === "handle"
 
 const compileSwitch = (id: string, s: LockSwitch, lock: AuthoredLock): Mechanism => {
@@ -49,18 +52,24 @@ const compileSwitch = (id: string, s: LockSwitch, lock: AuthoredLock): Mechanism
   // A board rests unsolved, and the player can walk back in and put it back to rest or solve it the
   // other way: every state reaches every other.
   const ways = Object.keys(lock.gates).filter(gate => lock.gates[gate].owners.includes(id))
-  const states = ["unset", ...ways]
+  const states = [REST, ...ways]
   return {
     states,
-    initial: "unset",
-    opens: Object.fromEntries(states.map(state => [state, state === "unset" ? [] : [state]])),
+    initial: REST,
+    opens: Object.fromEntries(states.map(state => [state, state === REST ? [] : [state]])),
     transitions: states.flatMap(from => states.filter(to => to !== from).map(to => ({ from, to, at: s.in }))),
   }
 }
 
 const OPEN = "·"
 
-export const topologyLock = (lock: AuthoredLock): LockSpec => {
+/**
+ * The lock the walk proves. Regions a plain corridor joins are ONE region to the walk, as they are to
+ * the runtime, which splits regions only at doors; `{ drawn: true }` keeps them apart for the drawing,
+ * joined by a gate that always stands open.
+ */
+export const topologyLock = (lock: AuthoredLock, { drawn = false } = {}): LockSpec => {
+  if (!drawn && lock.connections?.length) return joinCorridors(lock)
   // A board's states are named by the gate they open, so the walk's failures read as "Y at forkLeft".
   const switches = Object.entries(lock.switches).map(([id, s]) => [id, compileSwitch(id, s, lock)])
   const keys = Object.entries(lock.keys ?? {}).map(([id, key]): [string, Mechanism] => [
@@ -91,6 +100,36 @@ export const topologyLock = (lock: AuthoredLock): LockSpec => {
     oneWays: lock.oneWays,
     in: lock.in,
     out: lock.out,
+  }
+}
+
+// Every region a plain corridor reaches is named after the first of them the lock wrote, the ports first.
+const joinCorridors = (lock: AuthoredLock): LockSpec => {
+  const order = [lock.in, lock.out, ...Object.keys(lock.regions)]
+  const root = new Map<string, string>()
+  const find = (r: string): string => (root.has(r) && root.get(r) !== r ? find(root.get(r)!) : r)
+  for (const [a, b] of lock.connections ?? []) {
+    const [x, y] = [find(a), find(b)]
+    if (x === y) continue
+    const [keep, drop] = order.indexOf(x) <= order.indexOf(y) ? [x, y] : [y, x]
+    root.set(drop, keep)
+  }
+  const at = (r: string) => find(r)
+  const spec = topologyLock({ ...lock, connections: [] })
+  return {
+    regions: spec.regions.filter(r => at(r) === r),
+    gates: Object.fromEntries(
+      Object.entries(spec.gates).map(([g, v]) => [g, { ...v, from: at(v.from), to: at(v.to) }])
+    ),
+    mechanisms: Object.fromEntries(
+      Object.entries(spec.mechanisms).map(([id, m]) => [
+        id,
+        { ...m, transitions: m.transitions.map(t => ({ ...t, at: at(t.at) })) },
+      ])
+    ),
+    oneWays: spec.oneWays?.map(w => ({ from: at(w.from), to: at(w.to) })),
+    in: at(spec.in),
+    out: at(spec.out),
   }
 }
 
