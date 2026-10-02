@@ -287,6 +287,7 @@ full of — `--contents` on what exists rather than a new model. `prim_niche`, `
 - **Patron gods** — designed, and now UNBLOCKED rather than unbuilt: `tileVariants` is the selector they
   needed. A patron is `statue-2.png` beside `statue.png`, and the same for `shrine`, `wallShrine`, `stela`
   and `mask`. No new kinds, no pool edits, no world regeneration, and art can arrive one file at a time.
+- **A sequence tile (pressure plate)** is a vector slab with its glyph (`PlateShape`) in three looks (unwalked, walked in order, walked out of order); a painted plate is wanted in the same three states.
 
 **Built since this list was written**, and noted because the list claimed otherwise for a while:
 

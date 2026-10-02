@@ -20,7 +20,7 @@ const STATES: CellState[] = ["fogged", "visible", "reachable"]
 
 // Only the kinds a room actually stands as (portal kinds — entrance/stairhead/exit — read off position,
 // not off a room's own family/tags, so they're left out of a "which room is this" comparison).
-const KINDS: ShapeKind[] = ["puzzle", "trap", "fork", "switch", "handle", "gate", "treasure"]
+const KINDS: ShapeKind[] = ["puzzle", "trap", "fork", "switch", "handle", "plate", "gate", "treasure"]
 
 const Grid = ({ ground }: { ground: string }) => (
   <table style={{ borderCollapse: "collapse", background: ground }}>
@@ -59,4 +59,17 @@ export const OnLimestone: Story = {
 export const OnGranite: Story = {
   args: { type: "handle", state: "reachable" },
   render: () => <Grid ground="#14110d" />,
+}
+
+export const PlateStatuses: Story = {
+  args: { type: "plate", state: "reachable" },
+  render: () => (
+    <div style={{ display: "flex", gap: 16, background: "#14110d", padding: 16 }}>
+      {(["unwalked", "inOrder", "outOfOrder"] as const).map(status => (
+        <svg key={status} width={48} height={48} viewBox="-24 -24 48 48">
+          <NodeShape type="plate" state="reachable" plate={{ glyph: 0x13080, status }} />
+        </svg>
+      ))}
+    </div>
+  ),
 }

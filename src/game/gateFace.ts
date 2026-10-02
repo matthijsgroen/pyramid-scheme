@@ -1,4 +1,6 @@
 import { cellAddress } from "./cellAddress"
+import { pressAt } from "./mechanismDoors"
+import { tileStatus, type TileStatus } from "./sequence"
 import type { FloorGrid, GridCell, KeyColor, MechanismRecord, RoomCell } from "./siteTypes"
 
 /** The family that stands in a gate which has to explain itself. It reads and never opens: the door
@@ -12,9 +14,20 @@ export type GateOwnerIcon = { kind: "mechanism"; family: string } | { kind: "key
 /** One owner of the door, unlit until its current state names the door. */
 export type GateMarker = { id: string; icon: GateOwnerIcon; lit: boolean }
 
-/** WHAT A DOOR WAITS FOR, one marker per owner, in a list so a door that waits on an ORDER can carry its
- * markers in that order. Derived from the owners; nobody authors it. */
-export type GateFace = { markers: readonly GateMarker[] }
+/** One tile of a sequence as the door lists it: the glyph it wears and how the run stands on it. */
+export type SequenceFaceTile = { glyph: number; status: TileStatus }
+
+/** The order a door waits on, tiles in step order, and the reset the door carries: the write that sends
+ * the run back to its start, absent while there is nothing to start again. */
+export type SequenceFace = {
+  id: string
+  tiles: readonly SequenceFaceTile[]
+  reset?: { address: string; state: string }
+}
+
+/** WHAT A DOOR WAITS FOR, one marker per owner, plus the order of each sequence it waits on. Derived from
+ * the owners; nobody authors it. */
+export type GateFace = { markers: readonly GateMarker[]; sequences?: readonly SequenceFace[] }
 
 type Owner = { id: string; family: string; mechanism: MechanismRecord; at: readonly [number, number] }
 
@@ -33,8 +46,22 @@ const ownersOf = (grid: FloorGrid, gateKeyId: string): Owner[] => {
 
 // A face is owed only where operating an owner can change nothing visible: an `and` door with more than
 // one owner. A single owner teaches by consequence, and an `any` door opens on the first owner touched.
+// A door a sequence opens or resets at is owed one besides: nothing else says what order it waits on.
 const needsFace = (owners: readonly Owner[], gateKeyId: string): boolean =>
   owners.length > 1 && !owners.some(o => o.mechanism.positions.some(p => p.gateKeyId === gateKeyId && p.mode === "any"))
+
+type SequenceHome = { id: string; mechanism: MechanismRecord; at: readonly [number, number] }
+
+const sequencesOf = (grid: FloorGrid): SequenceHome[] => {
+  const homes: SequenceHome[] = []
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type === "room" && cell.mechanism && cell.sequenceTile?.step === 0)
+        homes.push({ id: cell.sequenceTile.id, mechanism: cell.mechanism, at: [r, c] })
+    }
+  return homes.sort((a, b) => a.id.localeCompare(b.id))
+}
 
 const isGateDoor = (cell: GridCell): cell is RoomCell & { requiredKeyId: string } =>
   cell.type === "room" && cell.requiredKeyId !== undefined && (cell.tags?.includes("gate") ?? false)
@@ -49,12 +76,18 @@ const isGateDoor = (cell: GridCell): cell is RoomCell & { requiredKeyId: string 
  */
 export const withGateFaces = (grid: FloorGrid, floor: number, positions: ReadonlyMap<string, string>): FloorGrid => {
   let changed = false
-  const cells = grid.cells.map(row =>
-    row.map((cell): GridCell => {
+  const homes = sequencesOf(grid)
+  const cells = grid.cells.map((row, r) =>
+    row.map((cell, c): GridCell => {
       if (!isGateDoor(cell)) return cell
       const key = cell.requiredKeyId
       const owners = ownersOf(grid, key)
-      if (!needsFace(owners, key)) return cell
+      // A sequence is on a door it opens, and on the door it is reset at.
+      const sequences = homes.filter(
+        ({ id, mechanism }) =>
+          mechanism.positions.some(p => p.gateKeyId === key) || cell.worksMechanism?.mechanismId === id
+      )
+      if (!needsFace(owners, key) && sequences.length === 0) return cell
       const markers = owners.map(({ id, family, mechanism, at }): GateMarker => {
         const address = cellAddress(grid, floor, at[0], at[1])
         const state = (address ? positions.get(address) : undefined) ?? mechanism.initial
@@ -64,8 +97,23 @@ export const withGateFaces = (grid: FloorGrid, floor: number, positions: Readonl
           lit: mechanism.positions.some(p => p.gateKeyId === key && p.state === state),
         }
       })
+      const orders = sequences.map(({ id, mechanism, at }): SequenceFace => {
+        const address = cellAddress(grid, floor, at[0], at[1])
+        const state = (address ? positions.get(address) : undefined) ?? mechanism.initial
+        const tiles = grid.cells
+          .flat()
+          .flatMap(tile => (tile.type === "room" && tile.sequenceTile?.id === id ? [tile.sequenceTile] : []))
+          .sort((a, b) => a.step - b.step)
+          .map(({ step, glyph }): SequenceFaceTile => ({ glyph, status: tileStatus(state, step) }))
+        const press = cell.worksMechanism?.mechanismId === id ? pressAt(grid, floor, r, c, positions) : undefined
+        return { id, tiles, ...(press && press.state !== state ? { reset: press } : {}) }
+      })
       changed = true
-      return { ...cell, family: GATE_FACE_FAMILY, gateFace: { markers } }
+      return {
+        ...cell,
+        family: GATE_FACE_FAMILY,
+        gateFace: { markers, ...(orders.length > 0 ? { sequences: orders } : {}) },
+      }
     })
   )
   return changed ? { ...grid, cells } : grid

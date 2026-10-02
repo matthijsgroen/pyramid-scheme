@@ -1,4 +1,6 @@
 import type { CellState, GateVariant, KeyColor } from "@/game/siteTypes"
+import type { TileStatus } from "@/game/sequence"
+import { plateLook } from "./plateLook"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { keyColorHex } from "@/ui/tokens/keyColors"
 import { NODE_RADIUS_FORK, NODE_RADIUS_LARGE, NODE_RADIUS_PUZZLE } from "./mapScale"
@@ -87,6 +89,49 @@ export type ShapeProps = {
   // Which mechanism this room belongs to (RoomCell.mark) — the lever and every gate it drives wear
   // the same pair, and that is all that says which lever opens which door. Unset off both.
   mark?: Mark
+  // A sequence tile's glyph and how the run stands on it (RoomCell.sequenceTile, `tileStatusAt`). Unset off a plate.
+  plate?: { glyph: number; status: TileStatus }
+}
+
+/** A pressure plate: ground with its glyph on it, stepped on rather than entered. */
+const PlateShape = ({ plate }: ShapeProps) => {
+  const r = NODE_RADIUS_PUZZLE
+  const status = plate?.status ?? "unwalked"
+  const look = plateLook[status]
+  return (
+    <g data-plate={plate?.glyph} data-status={status}>
+      <rect x={-r} y={-r} width={r * 2} height={r * 2} rx={2} fill={look.fill} stroke={look.stroke} strokeWidth={1.5} />
+      {plate && (
+        <text
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontSize={r * 1.1}
+          fill={look.ink}
+          style={{ userSelect: "none" }}
+        >
+          {String.fromCodePoint(plate.glyph)}
+        </text>
+      )}
+      {status === "inOrder" && (
+        <path
+          d={`M ${r - 12},${r - 6} l 3,3 l 6,-7`}
+          fill="none"
+          stroke={look.stroke}
+          strokeWidth={2}
+          strokeLinecap="round"
+        />
+      )}
+      {status === "outOfOrder" && (
+        <path
+          d={`M ${r - 13},${r - 13} l 8,8 m 0,-8 l -8,8`}
+          fill="none"
+          stroke={look.stroke}
+          strokeWidth={2}
+          strokeLinecap="round"
+        />
+      )}
+    </g>
+  )
 }
 
 const PuzzleShape = ({ state }: ShapeProps) => {
@@ -369,8 +414,9 @@ export const NodeShape = ({
   keyColors,
   difficulty,
   mark,
+  plate,
 }: ShapeProps & { type: ShapeKind }) => {
-  const p = { state, gateVariant, keyColor, keyColors, difficulty, mark }
+  const p = { state, gateVariant, keyColor, keyColors, difficulty, mark, plate }
   switch (type) {
     case "entrance":
       return <EntranceShape {...p} />
@@ -384,6 +430,8 @@ export const NodeShape = ({
       return <SwitchShape {...p} />
     case "handle":
       return <HandleShape {...p} />
+    case "plate":
+      return <PlateShape {...p} />
     case "gate":
       return <GateNodeShape {...p} />
     case "treasure":

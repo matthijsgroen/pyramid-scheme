@@ -9,11 +9,11 @@ import { NODE_RADIUS_FORK, NODE_RADIUS_LARGE, NODE_RADIUS_PUZZLE } from "./mapSc
 // it (`roomClaims.ts`). Kept apart from either so neither has to import the other.
 
 export type ShapeKind =
-  "entrance" | "puzzle" | "trap" | "fork" | "switch" | "handle" | "gate" | "treasure" | "stairhead" | "exit"
+  "entrance" | "puzzle" | "trap" | "fork" | "switch" | "handle" | "plate" | "gate" | "treasure" | "stairhead" | "exit"
 
 /** Everything a room's shape is read off and nothing else, so a caller holding a hand-built room can
  * ask without building a whole cell around it. */
-export type ShapeCell = Pick<RoomCell, "roomType" | "tags" | "stairId" | "family">
+export type ShapeCell = Pick<RoomCell, "roomType" | "tags" | "stairId" | "family" | "sequenceTile">
 
 export const shapeKindFor = (grid: FloorGrid, r: number, c: number, cell: ShapeCell): ShapeKind => {
   // A junction that carries a family DIVIDES rather than merely branching: it asks something of the
@@ -33,6 +33,8 @@ export const shapeKindFor = (grid: FloorGrid, r: number, c: number, cell: ShapeC
     if (cell.stairId) return "stairhead"
     return r === grid.entrancePos[0] && c === grid.entrancePos[1] ? "entrance" : "exit"
   }
+  // A sequence tile is ground with a glyph on it, whatever else its cell says.
+  if (cell.sequenceTile) return "plate"
   // A handle stands as an ordinary "encounter" room, not a "fork" — it is a lever to pull, not a
   // junction — so it reads off its tag rather than off the fork/family branch above.
   if (cell.tags?.includes("handle")) return "handle"
@@ -78,6 +80,8 @@ export const nodeRadius: Record<ShapeKind, number> = {
   switch: NODE_RADIUS_PUZZLE,
   // A lever is somewhere to go, so it is sized like a room rather than like a junction's dot.
   handle: NODE_RADIUS_PUZZLE,
+  // A pressure plate is stepped on rather than entered, so it is the size of a room and no larger.
+  plate: NODE_RADIUS_PUZZLE,
   gate: NODE_RADIUS_LARGE,
   treasure: NODE_RADIUS_LARGE,
   stairhead: NODE_RADIUS_LARGE,
@@ -95,7 +99,9 @@ export const isSpentAt = (
   cell: RoomCell,
   mechanismStates: ReadonlyMap<string, string> | undefined
 ): boolean => {
-  if (!cell.mechanism) return false
+  // A sequence's first tile holds the record but is no activator: the sequence is one mechanism that is
+  // never used up by a tile, and its tiles are ground.
+  if (!cell.mechanism || cell.sequenceTile) return false
   const address = cellAddress(grid, floorIndex, r, c)
   return isSpent(cell.mechanism, (address && mechanismStates?.get(address)) || cell.mechanism.initial)
 }

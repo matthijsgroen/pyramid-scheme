@@ -1120,6 +1120,10 @@
     "hint": "Elk teken moet branden voordat deze deur opengaat.",
     "lit": "{{owner}}: aan",
     "unlit": "{{owner}}: nog niet",
-    "owner": { "torch": "Fakkel", "handle": "Hendel", "key": "Sleutel", "other": "Mechanisme" }
+    "owner": { "torch": "Fakkel", "handle": "Hendel", "key": "Sleutel", "other": "Mechanisme" },
+    "orderHint": "Betreed de tegels in deze volgorde.",
+    "reset": "Opnieuw beginnen",
+    "spoiled": "De reeks is verpest: een tegel is in de verkeerde volgorde betreden.",
+    "tile": { "unwalked": "Stap {{step}}: nog niet betreden", "inOrder": "Stap {{step}}: in volgorde betreden", "outOfOrder": "Stap {{step}}: in verkeerde volgorde betreden" }
   }
 }

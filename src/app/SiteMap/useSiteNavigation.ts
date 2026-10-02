@@ -3,6 +3,7 @@ import { flushSync } from "react-dom"
 import { cellAddress } from "./cellIdentity"
 import { dropLaunchedAt, findPath, getCell } from "@/game/gridNavigation"
 import { isSpent as mechanismIsSpent, throwMechanism } from "@/game/mechanismDoors"
+import { walkPresses } from "@/game/sequencePlay"
 import type { FloorGrid, MechanismRecord, ObstacleKind, RoomCell, SiteConfig, TreasureReward } from "@/game/siteTypes"
 import { useTimeout } from "@/support/useTimeout"
 import type { JourneyAPI } from "@/app/state/useJourneys"
@@ -166,6 +167,18 @@ export const useSiteNavigation = ({
       const address = cellAddress(grid, currentFloor, row, col) ?? edgeId
       const goHere = () => journeys.updatePosition(journeyId, address, edgeId)
 
+      // WALKING ONTO A SEQUENCE TILE WORKS IT: no prompt, no screen, no stop beyond the step. Every tile
+      // on the route counts, not only the one tapped, since a tile on the way is stood on. Written now,
+      // beside the position and the exploration, so a tile never reads walked for a step the position
+      // does not hold.
+      for (const press of walkPresses(
+        grid,
+        currentFloor,
+        findPath(grid, explorerPos, [row, col]),
+        journeys.getMechanismStates(journeyId)
+      ))
+        journeys.setMechanismState(press.address, press.state)
+
       // THROWING IT IS THE WHOLE VISIT (FamilyMeta.actsOnArrival): no screen opens for it, so this is
       // where a lever's position gets written — the same call its old modal made (`setMechanismState`),
       // never a second path to that state. Only the position: a lever is written down by being stood in
@@ -293,6 +306,10 @@ export const useSiteNavigation = ({
         journeys.markCellExplored(sectionHash, edgeId, address)
         goHere()
         if (cell.family !== undefined) scheduleArrival(walkDelay(row, col), () => onEncounter([row, col], true))
+      } else if (cell.sequenceTile) {
+        // A tile is ground: written down by standing on it, as a junction is, and nothing opens on it.
+        journeys.markCellExplored(sectionHash, edgeId, address)
+        goHere()
       } else if (cell.roomType === "encounter") {
         // A GATE IS WALKED INTO LIKE ANY OTHER ROOM. Its bars are drawn across the FAR side of its own
         // square, on the sill where this rank's stone meets the pocket's (`SiteMapView`), so the square

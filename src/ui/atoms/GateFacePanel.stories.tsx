@@ -43,3 +43,37 @@ export const AllLit: Story = {
     ],
   },
 }
+
+export const SequenceMidRun: Story = {
+  args: {
+    markers: [],
+    orders: [
+      {
+        id: "plates",
+        tiles: [
+          { id: "0", glyph: "𓀀", status: "inOrder", label: "Step 1: walked in order" },
+          { id: "1", glyph: "𓁐", status: "unwalked", label: "Step 2: not yet walked" },
+          { id: "2", glyph: "𓂀", status: "unwalked", label: "Step 3: not yet walked" },
+        ],
+      },
+    ],
+  },
+}
+
+export const SequenceSpoiled: Story = {
+  args: {
+    markers: [],
+    orders: [
+      {
+        id: "plates",
+        tiles: [
+          { id: "0", glyph: "𓀀", status: "inOrder", label: "Step 1: walked in order" },
+          { id: "1", glyph: "𓁐", status: "unwalked", label: "Step 2: not yet walked" },
+          { id: "2", glyph: "𓂀", status: "outOfOrder", label: "Step 3: walked out of order" },
+        ],
+        note: "A tile was walked out of order.",
+        reset: { label: "Start again", onReset: () => {} },
+      },
+    ],
+  },
+}

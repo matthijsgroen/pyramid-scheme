@@ -40,6 +40,7 @@ import { MapGrowth, MapLife, MapWeather } from "./MapMood"
 import { hashString } from "@/support/hashString"
 import { ART_IMAGE_RENDERING, patronTileUrl, tileOrPlaceholder, tileUrl, tileVariants } from "./tileAssets"
 import { cellAddress } from "@/game/cellAddress"
+import { tileStatusAt } from "@/game/sequencePlay"
 import { isLockedGate, isSpentAt, nodeRadius, shapeKindFor, staysOpen } from "./nodeKinds"
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
 import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
@@ -1510,7 +1511,9 @@ export const SiteMapView = ({
                 // it wears the dim and the ✓ a finished room does. Read off the mechanism's position, so it
                 // shows without the player touching it; an unlit one wears neither.
                 const spent = isSpentAt(grid, currentFloor ?? 0, r, c, cell, mechanismStates)
-                const isCompleted = (state === "completed" && !staysOpen(cell)) || spent
+                // A SEQUENCE TILE SAYS HOW THE RUN STANDS ON IT, never "done": walked is its own look.
+                const plateStatus = tileStatusAt(grid, currentFloor ?? 0, r, c, mechanismStates)
+                const isCompleted = (state === "completed" && !staysOpen(cell) && !cell.sequenceTile) || spent
                 // Only ever a pending-loot marker for a treasure room with a consumable reward — this
                 // guards against stale coordinates in pendingCells (e.g. left over from before a site
                 // was regenerated) painting the badge onto whatever room now occupies that cell.
@@ -1578,6 +1581,11 @@ export const SiteMapView = ({
                           keyColors={cell.keyColors}
                           difficulty={wardKeyDifficulty(cell.requiredKeyId)}
                           mark={cell.mark}
+                          plate={
+                            cell.sequenceTile && plateStatus
+                              ? { glyph: cell.sequenceTile.glyph, status: plateStatus }
+                              : undefined
+                          }
                         />
                       </g>
                       {/* A chest wears its own badge (`nodeSpritesFor`), because it stands over this one. */}
