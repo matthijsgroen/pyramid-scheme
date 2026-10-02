@@ -1,0 +1,138 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`cellar > draws, with its cheapest way through 1`] = `
+"[ledge · H]╌╌╌╌╌╌╌▶[cell · blue]
+     │                   │
+     □H:a                ■blue:on
+     │                   │
+     ├───────────────────┘
+     │
+ → [in]────────────────■H:b────────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   Name:state opens it
+
+in ▸ ledge ▸ H:b ▸ ⤓cell ▸ blue:on ▸ in ▸ out"
+`;
+
+exports[`doubleBack > draws, with its cheapest way through 1`] = `
+"  [s2 · S2]           [s1 · S1]
+      │    ╭╌╌╌╌╌╌╌╌╌╌╯   │
+      ■S1:b╎              □S1:a
+      │    ╎              │
+      │    ╎              │
+      │    ▼              │
+ [leftLower]        [rightLower]
+  ╎   │                   │
+  ╎   ■Y                  ■Y
+  ╎   │                   │
+  ╎   ├───────────────────┘
+  ▼   │
+→ [in · Y]──────────────■S2:b───────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   Name:state opens it
+
+in ▸ Y:in-rightLower ▸ rightLower ▸ s1 ▸ S1:b ▸ ⤓leftLower ▸ s2 ▸ S2:b ▸ leftLower ▸ ⤓in ▸ out"
+`;
+
+exports[`dropHome > draws, with its cheapest way through 1`] = `
+"[leverRoom · H]
+   ╎   │
+   ╎   □H:a
+   ╎   │
+   ╎   │
+   ╎   │
+   ╎[hall]              [vault]
+   ╎   │                   │
+   ╎   ■Y                  ■Y
+   ╎   │                   │
+   ╎   ├───────────────────┘
+   ▼   │
+ → [in · Y]───────────────■H:b───────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   Name:state opens it
+
+in ▸ Y:in-hall ▸ hall ▸ leverRoom ▸ H:b ▸ ⤓in ▸ out"
+`;
+
+exports[`keyring > draws, with its cheapest way through 1`] = `
+"[redRoom · red]
+       │
+       ■H:b
+       │
+       │
+       │
+[leverRoom · H]      [greenRoom · green]
+       │                      │
+       □H:a                   ■red:on
+       │                      │
+       ├──────────────────────┘
+       │
+   → [in]────────────────■green:on─────────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   Name:state opens it
+
+in ▸ leverRoom ▸ H:b ▸ redRoom ▸ red:on ▸ leverRoom ▸ H:a ▸ in ▸ greenRoom ▸ green:on ▸ in ▸ out"
+`;
+
+exports[`lamplighter > draws, with its cheapest way through 1`] = `
+" [west · A]
+      │   ╰╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╮
+      ■Y                                 ╎
+      │                                  ╎
+      │                                  ╎
+      │                                  ▼
+→ [in · Y]──────────────■Y───────────────[east · B]────────────■A:b+B:b─────────────[out] →
+         ▲╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╯
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   Name:state opens it
+
+in ▸ Y:in-west ▸ west ▸ A:b ▸ ⤓east ▸ B:b ▸ out"
+`;
+
+exports[`overlook > draws, with its cheapest way through 1`] = `
+"[s1 · S1]          ╭[middle]
+ ╎▲                ╎▲   │
+ ╎╎                ╎╎   ■S1:b
+ ╎╎                ╎╎   │
+ ╎╎                ╎╎   │
+ ╎╎   ╭╌╌╌╌╌╌╌╌╌╌╌╌┼╯   │
+ ╎[top]            ╎[s2 · S2]
+ ╎  │              ╎    │
+ ╎  │              ╎    ■S2:b
+ ╎  │              ╎    │
+ ╎  ├───────────────────┘
+ ╎  │▼╌╌╌╌╌╌╌╌╌╌╌╌╌╯
+→▶[in]───────────────■S2:b────────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   Name:state opens it
+
+in ▸ top ▸ ⤓s1 ▸ S1:b ▸ ⤓in ▸ top ▸ ⤓middle ▸ s2 ▸ S2:b ▸ in ▸ out"
+`;
+
+exports[`seesaw > draws, with its cheapest way through 1`] = `
+"[west · A]╌╌╌╌╌╌╌╌╌▶[east · B]
+     │              ╎    │
+     □B:a           ╎    □A:a
+     │              ╎    │
+     ├───────────────────┘
+     │▼╌╌╌╌╌╌╌╌╌╌╌╌╌╯
+ → [in]──────────────■A:b+B:b──────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   Name:state opens it
+
+in ▸ west ▸ A:b ▸ ⤓east ▸ B:b ▸ ⤓in ▸ out"
+`;
+
+exports[`twoLamps > draws, with its cheapest way through 1`] = `
+" [west · A]          [east · B]
+      │                   │
+      ■Y                  ■Y
+      │                   │
+      ├───────────────────┘
+      │
+→ [in · Y]─────────────■A:b+B:b─────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   Name:state opens it
+
+in ▸ Y:in-west ▸ west ▸ A:b ▸ in ▸ Y:in-east ▸ east ▸ B:b ▸ in ▸ out"
+`;
