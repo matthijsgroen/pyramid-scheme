@@ -277,9 +277,13 @@ one of them must be a seam leaving the region it stands in (§4). The tool check
 place to another is one mechanic with two states:
 
 ```json
-"sluice": { "control": "toggle", "in": "hall", "starts": "dry",
+"sluice": { "control": "toggle", "in": "pumpRoom", "starts": "dry",
             "opens": { "dry": ["floodedVault"], "wet": ["floodedHall"] } }
 ```
+
+**A mechanic may not stand in a region it bars.** The sluice is in `pumpRoom`, not in `hall` or `vault`,
+so turning it can never shut the player in behind his own hand. The tool refuses it where it is written
+rather than leaving the author to notice.
 
 ### What the tool should show back
 
