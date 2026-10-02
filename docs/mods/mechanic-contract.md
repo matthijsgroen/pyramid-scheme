@@ -78,7 +78,7 @@ waiting for, the way a ward gate already shows the key it wants.
   the progress, turning the safety net into a trap.
 - The reset is operated **at the door, not where the mechanic stands.** `LockSpec` already carries an
   `at` per transition, so the advance steps happen at each tile's region and the reset at the gate's —
-  see §8.
+  see §9.
 
 ### Impassable regions
 
@@ -151,7 +151,127 @@ mechanic lightswitch
 `built: no` is what lets a design be written and checked before the code exists. The tool validates such
 a lock and refuses to bake it, saying which mechanic is not ready.
 
-## 7. Settled, and still open
+## 7. The lock format
+
+A lock is one JSON document. It names regions, the barriers between them, and the mechanics that work
+those barriers. It never names a realisation: that is bound outside, where the lock is placed (§5), and
+so is nesting one lock inside another.
+
+```json
+{
+  "name": "doubleBack",
+  "regions": {
+    "in":         { "takes": "puzzles" },
+    "leftLower":  { "takes": "nothing" },
+    "rightLower": { "takes": "nothing" },
+    "s1":         { "takes": "nothing" },
+    "s2":         { "takes": "reward" },
+    "out":        { "takes": "nothing" }
+  },
+  "gates": {
+    "in-leftLower":  { "from": "in",         "to": "leftLower",  "owners": ["Y"] },
+    "in-rightLower": { "from": "in",         "to": "rightLower", "owners": ["Y"] },
+    "rightLower-s1": { "from": "rightLower", "to": "s1",         "owners": ["S1"] },
+    "leftLower-s2":  { "from": "leftLower",  "to": "s2",         "owners": ["S1"] },
+    "in-out":        { "from": "in",         "to": "out",        "owners": ["S2"] }
+  },
+  "mechanics": {
+    "Y":  { "control": "fork-switch", "in": "in" },
+    "S1": { "control": "toggle", "in": "s1", "starts": "a",
+            "opens": { "a": ["rightLower-s1"], "b": ["leftLower-s2"] } },
+    "S2": { "control": "toggle", "in": "s2", "starts": "a",
+            "opens": { "a": [], "b": ["in-out"] } }
+  },
+  "oneWays": [
+    { "from": "s1",        "to": "leftLower" },
+    { "from": "leftLower", "to": "in" }
+  ],
+  "in": "in",
+  "out": "out"
+}
+```
+
+### Gates
+
+A gate is a barrier. It has two shapes, and `opens` names either kind by id:
+
+```json
+"in-leftLower": { "from": "in", "to": "leftLower", "owners": ["Y"] },
+"floodedHall":  { "region": "hall",               "owners": ["sluice"] }
+```
+
+An edge gate stands between two regions. A **region gate** makes a whole region impassable: the player
+sees the first stretch and the blockage and nothing beyond it (§3).
+
+`owners` lists the mechanics that work it. With more than one, `"mode": "any"` means one is enough;
+the default is that every owner must name it.
+
+**A gate has no start state of its own.** It is open when the starting states of its owners name it,
+folded by its mode. Saying it twice — once on the mechanic, once on the gate — gives two sources that
+can contradict each other, so the mechanic is the only one.
+
+### Mechanics, one small example each
+
+**toggle** — two states, back and forth. The lever, and anything else that can be put back.
+
+```json
+"S1": { "control": "toggle", "in": "s1", "starts": "a",
+        "opens": { "a": ["rightLower-s1"], "b": ["leftLower-s2"] } }
+```
+
+**activator** — two states, no way back. The torch; a floor key is the same control with another
+realisation.
+
+```json
+"brazier": { "control": "activator", "in": "hall", "starts": "unlit",
+             "opens": { "unlit": [], "lit": ["hall-vault"] } }
+```
+
+Four of them on one door is four activators and the default `and`:
+
+```json
+"hall-vault": { "from": "hall", "to": "vault",
+                "owners": ["brazier1", "brazier2", "brazier3", "brazier4"] }
+```
+
+**sequence** — tiles walked in order, with a reset at the door. Each step names its own region, so the
+author places them; the carve picks the hieroglyphs, distinct within a floor.
+
+```json
+"plates": { "control": "sequence", "in": "hall",
+            "steps":   [{ "in": "hall" }, { "in": "vault" }, { "in": "hall" }],
+            "resetAt": "hall-vault",
+            "opens":   { "done": ["hall-vault"] } }
+```
+
+**fork-switch** — operates its own fork, so it names no targets. The gates name it instead, and every
+one of them must be a seam leaving the region it stands in (§4). The tool checks that.
+
+```json
+"Y": { "control": "fork-switch", "in": "in" }
+```
+
+**one-way** — an effect with no control, always taken through a prompt.
+
+```json
+"oneWays": [ { "from": "s1", "to": "leftLower" } ]
+```
+
+**a region put beyond reach** — an ordinary toggle whose targets are region gates. Water moved from one
+place to another is one mechanic with two states:
+
+```json
+"sluice": { "control": "toggle", "in": "hall", "starts": "dry",
+            "opens": { "dry": ["floodedVault"], "wet": ["floodedHall"] } }
+```
+
+### What the tool should show back
+
+The starting state is derived, so the author cannot read it off the document. The tool should report it:
+*"at the start these gates stand open"*. That catches a lock whose only open gate is one nobody can
+reach yet — which is what doubleBack does today.
+
+## 8. Settled, and still open
 
 **Settled.** The three layers. The four controls plus one-way. Targets are edges or regions. `and`/`any`
 conditions. A floor key is an activator. The fork-switch governs its own fork. Realisations are bound
@@ -167,7 +287,7 @@ A gate may show its own condition, and a sequence's reset is at its door.
 - The sand barrier: parked. A wizard-pyramid idea that may not belong to the lock model at all.
 - Whether a realisation may demand anything of placement beyond space.
 
-## 8. What this requires of the engine
+## 9. What this requires of the engine
 
 Each is measured in `topology-status.md` §6.
 
