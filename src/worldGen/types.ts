@@ -1,4 +1,11 @@
-import type { DecorationKind, HandleSide, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
+import type {
+  DecorationKind,
+  ForkDemand,
+  HandleSide,
+  Patron,
+  SiteCondition,
+  WallDecorationKind,
+} from "../game/siteTypes"
 import type { PlacedContainer } from "../game/regions"
 import type { Control, Obstacle } from "@/game/obstacles"
 
@@ -110,7 +117,7 @@ export type FloorConfig = {
   condition?: SiteCondition
   /** How many junctions this floor's carve must offer, and how many ways out each must leave free to
    * be closed — mirrors game/siteTypes.ts's FloorConfig.forks. */
-  forks?: { exits: number; count: number }[]
+  forks?: ForkDemand[]
   /** A passage from one named section to another that the player may take only in that direction —
    * mirrors game/siteTypes.ts's FloorConfig.oneWays. */
   oneWays?: { from: string; to: string }[]

@@ -221,6 +221,105 @@ describe("dropUnownedAuthoring — obstacles and controls", () => {
   })
 })
 
+// The designer's doubleBack with its fork named by region: the junction holds from `regionLayout` and
+// `forks` (both core), so dropping every obstacle and control moves no wall. Carries only the gate on
+// the route and the controls that open it — the off-route gates of the full doubleBack diverge between
+// builds for a reason of their own (the "five obstacles" case above), which would hide what this proves.
+const forkedDoubleBack: GameFloorConfig = {
+  pathPuzzles: 0,
+  packing: 7,
+  difficulty: "expert",
+  end: "treasure",
+  exitOrStaircase: "exit",
+  sideSections: [
+    { pathPuzzles: 0, difficulty: "expert", end: "treasure" },
+    { pathPuzzles: 0, difficulty: "expert", end: "treasure" },
+  ],
+  forks: [{ in: "entrance" }],
+  regionLayout: {
+    regions: [
+      { name: "entrance", appetite: "free" },
+      { name: "rightLower", appetite: "free" },
+      { name: "s1Chamber", appetite: "free" },
+      { name: "leftLower", appetite: "free" },
+      { name: "s2Chamber", appetite: "free" },
+      { name: "wayOut", appetite: "free" },
+    ],
+    connections: [
+      ["entrance", "leftLower"],
+      ["entrance", "rightLower"],
+      ["rightLower", "s1Chamber"],
+      ["leftLower", "s2Chamber"],
+      ["entrance", "wayOut"],
+    ],
+    in: "entrance",
+    out: "wayOut",
+  },
+  obstacles: [{ id: "endDoor", kind: "gate", at: { on: "connection", between: ["entrance", "wayOut"] } }],
+  controls: [
+    {
+      id: "Y",
+      in: "entrance",
+      states: ["unset", "set"],
+      initial: "unset",
+      returnsToInitial: false,
+      opens: { unset: [], set: ["endDoor"] },
+    },
+    {
+      id: "S2",
+      in: "s2Chamber",
+      states: ["start", "thrown"],
+      initial: "start",
+      returnsToInitial: false,
+      opens: { start: [], thrown: ["endDoor"] },
+    },
+  ],
+}
+
+describe("a fork named by region, with the topology mod off", () => {
+  const stripped = dropUnownedAuthoring(forkedDoubleBack, new Set(), undefined) as GameFloorConfig
+
+  it("carves the identical walls with every obstacle and control stripped, on every seed both builds carve", () => {
+    const diverged: number[] = []
+    let compared = 0
+    for (let seed = 1; seed <= 40; seed++) {
+      const withMod = assembleFloor("dev", forkedDoubleBack, seed)
+      const without = assembleFloor("dev", stripped, seed)
+      if (!withMod.success || !without.success) continue
+      compared++
+      if (dirsOf(without.grid) !== dirsOf(withMod.grid)) diverged.push(seed)
+    }
+    expect(compared).toBeGreaterThan(0)
+    expect(diverged).toEqual([])
+  }, 60_000)
+
+  it("leaves a bare junction in the region whose side exits are still the two chains", () => {
+    const step = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] } as const
+    let carved = 0
+    for (let seed = 1; seed <= 40; seed++) {
+      const result = assembleFloor("dev", stripped, seed)
+      if (!result.success) continue
+      carved++
+      const { cells } = result.grid
+      const junctions = cells.flatMap((row, r) =>
+        row.flatMap((cell, c) => {
+          if (cell.type !== "room" || cell.roomType !== "fork" || cell.region !== "entrance") return []
+          const led = (cell.exits ?? [])
+            .filter(exit => exit.kind === "side")
+            .map(({ dir }) => {
+              const next = cells[r + step[dir][0] * 2]?.[c + step[dir][1] * 2]
+              return next && next.type !== "empty" ? next.region : undefined
+            })
+            .sort()
+          return [{ family: cell.family, led }]
+        })
+      )
+      expect(junctions).toEqual([{ family: undefined, led: ["leftLower", "rightLower"] }])
+    }
+    expect(carved).toBeGreaterThan(0)
+  }, 60_000)
+})
+
 // allFamilyMeta's resolveEncounterMeta answers out of the families the REGISTERED mods contribute, so
 // with topology out of that list its two families are simply not in the catalogue. This is that same
 // id-then-tag lookup over a catalogue topology has left — the resolver the generator would inject.

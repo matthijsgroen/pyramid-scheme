@@ -2813,4 +2813,103 @@ describe("the designer's doubleBack, two arms off the entrance with drops betwee
     }
     expect(outcomes.at(-1)).toBe("carved")
   })
+
+  describe("a fork named by region", () => {
+    const forked = (forks: FloorConfig["forks"]): FloorConfig => ({ ...designerDoubleBack(), forks })
+
+    // The ways out of every junction standing in `region`, as the regions they lead into: a way out is
+    // read one node on (nodes are two cells apart), where the neighbouring room names its own region.
+    const sideExitRegions = (grid: FloorGrid, region: string): string[][] => {
+      const step: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+      return grid.cells.flatMap((row, r) =>
+        row.flatMap((cell, c) => {
+          if (cell.type !== "room" || cell.roomType !== "fork" || cell.region !== region) return []
+          const sides = (cell.exits ?? []).filter(exit => exit.kind === "side")
+          return [
+            sides
+              .map(({ dir }) => {
+                const next = grid.cells[r + step[dir][0] * 2]?.[c + step[dir][1] * 2]
+                return next && next.type !== "empty" ? (next.region ?? "?") : "?"
+              })
+              .sort(),
+          ]
+        })
+      )
+    }
+
+    it("lays one junction in the region whose side exits lead into exactly the chains hanging off it, on every carved seed", () => {
+      const wrong: string[] = []
+      let carved = 0
+      for (let seed = 1; seed <= 40; seed++) {
+        const result = assembleFloor("site-fork-in", forked([{ in: "entrance" }]), seed)
+        if (!result.success) continue
+        carved++
+        const junctions = sideExitRegions(result.grid, "entrance")
+        if (JSON.stringify(junctions) !== JSON.stringify([["leftLower", "rightLower"]]))
+          wrong.push(`seed ${seed}: ${JSON.stringify(junctions)}`)
+      }
+      expect(carved).toBeGreaterThan(0)
+      expect(wrong).toEqual([])
+    }, 60_000)
+
+    it("refuses a region authored together with counts, rather than ignoring either", () => {
+      const result = assembleFloor("site-fork-in-counts", forked([{ in: "entrance", exits: 2, count: 1 }]), 1)
+      expect(result).toEqual({
+        success: false,
+        reasons: [{ type: "forkRegionRefused", region: "entrance", cause: "contradictsCounts" }],
+      })
+    })
+
+    it("refuses a region the layout does not have", () => {
+      const result = assembleFloor("site-fork-in-unknown", forked([{ in: "nowhere" }]), 1)
+      expect(result).toEqual({
+        success: false,
+        reasons: [{ type: "forkRegionRefused", region: "nowhere", cause: "notInLayout" }],
+      })
+    })
+
+    it("refuses a region the main route never threads", () => {
+      const result = assembleFloor("site-fork-in-offroute", forked([{ in: "leftLower" }]), 1)
+      expect(result).toEqual({
+        success: false,
+        reasons: [{ type: "forkRegionRefused", region: "leftLower", cause: "offRoute" }],
+      })
+    })
+
+    it("refuses a region with fewer than two chains hanging off it, since one exit is no fork", () => {
+      const result = assembleFloor("site-fork-in-one-seam", forked([{ in: "wayOut" }]), 1)
+      expect(result).toEqual({
+        success: false,
+        reasons: [{ type: "forkRegionRefused", region: "wayOut", cause: "fewerThanTwoSeams" }],
+      })
+    })
+
+    it("refuses one region named twice", () => {
+      const result = assembleFloor("site-fork-in-twice", forked([{ in: "entrance" }, { in: "entrance" }]), 1)
+      expect(result).toEqual({
+        success: false,
+        reasons: [{ type: "forkRegionRefused", region: "entrance", cause: "repeated" }],
+      })
+    })
+
+    it("names the region and its seams when the floor authors fewer side sections than chains, never placing the junction elsewhere", () => {
+      const config = { ...forked([{ in: "entrance" }]), sideSections: designerDoubleBack().sideSections.slice(0, 1) }
+      for (let seed = 1; seed <= 5; seed++) {
+        expect(assembleFloor("site-fork-in-unlaid", config, seed)).toEqual({
+          success: false,
+          reasons: [
+            {
+              type: "forkSeamsNotLaid",
+              region: "entrance",
+              seams: [
+                ["entrance", "rightLower"],
+                ["entrance", "leftLower"],
+              ],
+            },
+            { type: "layoutNotFound" },
+          ],
+        })
+      }
+    })
+  })
 })

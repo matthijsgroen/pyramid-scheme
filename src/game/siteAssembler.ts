@@ -671,6 +671,9 @@ type Chain = {
   keyHostColors: KeyColor[]
 }
 
+/** A `{ in }` fork resolved against the layout: its seams, and the top-level side sections hosting them. */
+type ForkIn = { region: string; seams: [string, string][]; sectionIdxs: number[] }
+
 /** The doors shutting a chain off from the way in: its parent's, plus its own where it has one. */
 const doorsShutting = (
   section: SideSection | SubSection,
@@ -968,8 +971,40 @@ export const assembleFloor = (
   // How many junctions this floor reserves for something to stand in, and how wide each has to be.
   // Widest demand first, so a wide one is never left with only a narrow junction to take.
   const forkDemands = (config.forks ?? [])
-    .flatMap(f => Array.from({ length: f.count }, () => f.exits))
+    .flatMap(f => ("in" in f ? [] : Array.from({ length: f.count }, () => f.exits)))
     .sort((a, b) => b - a)
+
+  // A `{ in }` FORK IS RESOLVED AGAINST THE LAYOUT ALONE — `regionLayout` and `forks`, both core — so the
+  // junction it asks for carves the same with the topology mod on or off. Which chains hang off the
+  // named region, and which section hosts each, is fixed by the config, so a region that cannot hold
+  // the junction is refused once here by name rather than blamed on sixty carves. Only a chain joined to
+  // its mouth by a connection is a way out a junction can have: one a drop alone joins has no corridor.
+  const forkIns: ForkIn[] = []
+  if (config.forks?.some(f => "in" in f)) {
+    const layoutChains = regionLayout ? offRouteChains(regionLayout, drops) : []
+    const routeRegions = new Set(regionLayout ? regionRoute(regionLayout) : [])
+    const joined = (a: string, b: string) =>
+      (regionLayout?.connections ?? []).some(([x, y]) => (x === a && y === b) || (x === b && y === a))
+    for (const fork of config.forks) {
+      if (!("in" in fork)) continue
+      const region = fork.in
+      const refuse = (cause: "contradictsCounts" | "notInLayout" | "offRoute" | "fewerThanTwoSeams" | "repeated") =>
+        ({ success: false, reasons: [{ type: "forkRegionRefused", region, cause }] }) satisfies AssemblerFailure
+      if ("exits" in fork || "count" in fork) return refuse("contradictsCounts")
+      if (!regionLayout?.regions.some(r => r.name === region)) return refuse("notInLayout")
+      if (!routeRegions.has(region)) return refuse("offRoute")
+      if (forkIns.some(other => other.region === region)) return refuse("repeated")
+      const seams: [string, string][] = []
+      const sectionIdxs: number[] = []
+      layoutChains.forEach((chain, i) => {
+        if (chain.mouth !== region || chain.regions.length === 0 || !joined(region, chain.regions[0])) return
+        seams.push([region, chain.regions[0]])
+        if (i < config.sideSections.length) sectionIdxs.push(i)
+      })
+      if (seams.length < 2) return refuse("fewerThanTwoSeams")
+      forkIns.push({ region, seams, sectionIdxs })
+    }
+  }
 
   // A SWITCH'S ROOM HAS TO STAY OPEN. It opens one of its ways out and leaves the others shut, and keys
   // accumulate — so a player who spent the choice on a side branch pays for the main path onward with a
@@ -1176,6 +1211,8 @@ export const assembleFloor = (
   // The closest any attempt came to the junctions `forks` asks for, so the failure can name the
   // shortfall rather than blaming the maze.
   let forkShortfall: { exits: number; count: number; carved: number } | undefined
+  // The first `{ in }` fork no attempt laid on its seams, kept the same way.
+  let forkSeamShortfall: ForkIn | undefined
   // The first drop an attempt could not find room for, kept from the first attempt that came up short,
   // so a floor no attempt ever satisfies says which drop it failed on rather than blaming the maze.
   let oneWayShortfall: { from: string; to: string } | undefined
@@ -1425,6 +1462,39 @@ export const assembleFloor = (
     const puzzleRole = new Map<number, number>()
     placedContent.slice(leverOnMain ? 1 : 0, -1).forEach((idx, k) => puzzleRole.set(idx, k))
 
+    // WHERE EACH `{ in }` FORK'S JUNCTION STANDS, settled before anything mod-owned seats on the main
+    // path so no control, displaced puzzle or branch can take the cell: a node of the named region that
+    // is no seam, holds no content and is neither the entrance nor the exit. Drawn from the region's own
+    // nodes and `regionLayout` alone, so the mod being off cannot move it.
+    const forkJunctionIdx = new Set<number>()
+    const junctionIdxOf: number[] = []
+    for (const fork of forkIns) {
+      // It needs a free node beside it for every seam, or no chain could ever hang off it.
+      const mainKeys = new Set(mainPath.map(([r, c]) => `${r},${c}`))
+      const sideRoom = ([r, c]: [number, number]) =>
+        DIRS2.filter(([dr, dc]) => {
+          const [nr, nc] = [r + dr, c + dc]
+          return nr >= 0 && nr < N && nc >= 0 && nc < N && !mainKeys.has(`${nr},${nc}`)
+        }).length
+      const nodes: number[] = []
+      for (let mi = 1; mi < mainPath.length - 1; mi++)
+        if (
+          stepRegion[mi] === fork.region &&
+          !regionSeamIndices.has(mi) &&
+          !placedContent.includes(mi) &&
+          sideRoom(mainPath[mi]) >= fork.seams.length
+        )
+          nodes.push(mi)
+      if (nodes.length === 0 || fork.sectionIdxs.length < fork.seams.length) break
+      const mi = nodes[Math.floor(rand() * nodes.length)]
+      forkJunctionIdx.add(mi)
+      junctionIdxOf.push(mi)
+    }
+    if (junctionIdxOf.length < forkIns.length) {
+      if (!forkSeamShortfall) forkSeamShortfall = forkIns[junctionIdxOf.length]
+      continue
+    }
+
     // A CONTROL STANDS IN A REGION, so its room is A NODE OF THAT STRETCH — any main-path node, not only
     // a content-designated one, because content is spread for rhythm and is not guaranteed to put a node
     // in every region (a short early region can go unspread-into entirely — measured), while `unseated`
@@ -1466,7 +1536,8 @@ export const assembleFloor = (
         !takenByControl.has(mi) &&
         mi !== goalIndex &&
         mi !== leverIndex &&
-        !gateIndices.has(mi)
+        !gateIndices.has(mi) &&
+        !forkJunctionIdx.has(mi)
 
       let index: number | undefined
       for (let mi = 1; mi < mainPath.length - 1; mi++) {
@@ -1483,7 +1554,10 @@ export const assembleFloor = (
           let shifted = mi + 1
           while (
             shifted < goalIndex &&
-            (gateIndices.has(shifted) || placedContent.includes(shifted) || takenByControl.has(shifted))
+            (gateIndices.has(shifted) ||
+              placedContent.includes(shifted) ||
+              takenByControl.has(shifted) ||
+              forkJunctionIdx.has(shifted))
           )
             shifted += 1
           if (shifted >= goalIndex) continue // nowhere to move this one — try the region's next content node
@@ -1592,6 +1666,7 @@ export const assembleFloor = (
     const mainZoneCandidates: Array<[number, number]> = []
     for (let pi = 0; pi < mainPath.length - 1; pi++) {
       const [pr, pc] = mainPath[pi]
+      if (forkJunctionIdx.has(pi)) continue
       if (rawFreeNeighbors(pr, pc).length === 0) continue
       branchCandidates.push([pr, pc])
       if (pi < goalIndex && !regionSeamIndices.has(pi)) mainZoneCandidates.push([pr, pc])
@@ -1696,7 +1771,11 @@ export const assembleFloor = (
       needed: number
     ): { cells: Array<[number, number]>; attachedAt: [number, number] } | null => {
       const mouthNodes = mainPath.filter(
-        (_, pi) => pi < mainPath.length - 1 && stepRegion[pi] === seam.mouth && !regionSeamIndices.has(pi)
+        (_, pi) =>
+          pi < mainPath.length - 1 &&
+          stepRegion[pi] === seam.mouth &&
+          !regionSeamIndices.has(pi) &&
+          !forkJunctionIdx.has(pi)
       )
       for (const [ar, ac] of scoreCandidates(mouthNodes)) {
         for (const [dr, dc, d] of shuffle(CONNECTOR_DIRS, rand)) {
@@ -1747,9 +1826,13 @@ export const assembleFloor = (
       sideSections.map((_, i) => i),
       rand
     )
-    const hubGroups: number[][] = []
-    for (let i = 0; i < sectionOrder.length; i += hubGroupSize) {
-      hubGroups.push(sectionOrder.slice(i, i + hubGroupSize))
+    // A `{ in }` fork's sections are a hub of their own, first, hung from its junction and nowhere else.
+    const forkGroups = forkIns.map(fork => fork.sectionIdxs)
+    const forkedSections = new Set(forkGroups.flat())
+    const looseSections = sectionOrder.filter(si => !forkedSections.has(si))
+    const hubGroups: number[][] = [...forkGroups]
+    for (let i = 0; i < looseSections.length; i += hubGroupSize) {
+      hubGroups.push(looseSections.slice(i, i + hubGroupSize))
     }
 
     // Split the main-path puzzle stretch into one contiguous slice per hub group, in path
@@ -1773,6 +1856,7 @@ export const assembleFloor = (
     outer: for (const [groupIdx, group] of hubGroups.entries()) {
       let hubCell: [number, number] | null = null
       const ownSlice = mainZoneSlices[sliceOrder[groupIdx]]
+      const junctionCell = groupIdx < forkIns.length ? mainPath[junctionIdxOf[groupIdx]] : undefined
 
       for (const si of group) {
         // Try the shared hub first (if this group already has one), then this group's own
@@ -1780,15 +1864,18 @@ export const assembleFloor = (
         // (including the tail) as a last resort. Every one of them may be carved into: see
         // rawFreeNeighbors above for why that has to work for the first branch off a spot too,
         // not only subsequent ones.
-        const candidateSources: Array<[number, number]> = hubCell
-          ? [hubCell, ...ownSlice, ...shuffledMainZoneCandidates, ...shuffledCandidates]
-          : [...ownSlice, ...shuffledMainZoneCandidates, ...shuffledCandidates]
+        const candidateSources: Array<[number, number]> = junctionCell
+          ? [junctionCell]
+          : hubCell
+            ? [hubCell, ...ownSlice, ...shuffledMainZoneCandidates, ...shuffledCandidates]
+            : [...ownSlice, ...shuffledMainZoneCandidates, ...shuffledCandidates]
         const needed = paddedChainLength(chainRooms(sideSections[si], `s${si}`))
         const seam = dropSeams.get(si)
         const attached = seam ? attachByDrop(seam, needed) : attachChain(candidateSources, needed, true)
 
         if (attached === null) {
           failed = true
+          if (junctionCell && !forkSeamShortfall) forkSeamShortfall = forkIns[groupIdx]
           break outer
         }
         sectionGroups.push({ sectionIdx: si, ...attached })
@@ -2654,17 +2741,53 @@ export const assembleFloor = (
     // The narrowest junction that still answers each demand, widest demand first, so a wide demand is
     // never left with a junction too narrow for it. Two reserved junctions never share a way out: one
     // boundary closed twice is two doors in one doorway.
-    const reservedForks: string[] = []
+    //
+    // A `{ in }` FORK'S JUNCTION IS THE ONE LAID FOR IT, and is held out of the rest: it is proven to
+    // exit by exactly its seams — every way out of it that is not the main path is the first cell of a
+    // chain it was laid for — and a junction that does not is this attempt's shortfall, never a junction
+    // elsewhere. Read off the carve's geometry, not its rooms: a gate standing on a seam is a room, and
+    // the mod being off must not change which ways out the junction has.
+    const inForkJunctions = new Set<string>()
     const claimedWaysOut = new Set<string>()
+    let seamsLaid = true
+    forkIns.forEach((fork, k) => {
+      const junctionIndex = junctionIdxOf[k]
+      const pk = posKey(mainPath[junctionIndex][0], mainPath[junctionIndex][1])
+      const wanted = new Set(
+        fork.sectionIdxs.map(si => {
+          const first = chains.find(chain => chain.parentIdx === undefined && chain.idx === si)!.cells[0]
+          return posKey(first[0], first[1])
+        })
+      )
+      const sideWays = nodeExitsOf(pk)
+        .map(({ neighborKey }) => neighborKey)
+        .filter(neighborKey => {
+          const neighborIndex = mainPathIndexByKey.get(neighborKey)
+          return neighborIndex === undefined || Math.abs(neighborIndex - junctionIndex) !== 1
+        })
+      const exact =
+        roomSpecs.get(pk)?.roomType === "fork" &&
+        sideWays.length === wanted.size &&
+        sideWays.every(neighborKey => wanted.has(neighborKey))
+      if (!exact) {
+        seamsLaid = false
+        if (!forkSeamShortfall) forkSeamShortfall = fork
+        return
+      }
+      inForkJunctions.add(pk)
+      for (const neighborKey of sideWays) claimedWaysOut.add(neighborKey)
+    })
+    if (!seamsLaid) continue
+    const reservedForks: string[] = []
     for (const exits of forkDemands) {
       const pick = [...forkPositions]
-        .filter(pk => !reservedForks.includes(pk) && roomSpecs.get(pk)?.roomType === "fork")
+        .filter(pk => !inForkJunctions.has(pk) && !reservedForks.includes(pk) && roomSpecs.get(pk)?.roomType === "fork")
         .map(pk => ({ pk, ways: freeWaysOut(pk).filter(({ neighborKey }) => !claimedWaysOut.has(neighborKey)) }))
         .filter(({ ways }) => ways.length >= exits)
         .sort((a, b) => a.ways.length - b.ways.length)[0]
       if (pick === undefined) {
         const carved = [...forkPositions].filter(
-          pk => roomSpecs.get(pk)?.roomType === "fork" && freeWaysOut(pk).length >= exits
+          pk => !inForkJunctions.has(pk) && roomSpecs.get(pk)?.roomType === "fork" && freeWaysOut(pk).length >= exits
         ).length
         const count = forkDemands.filter(demand => demand >= exits).length
         if (!forkShortfall || carved > forkShortfall.carved) forkShortfall = { exits, count, carved }
@@ -3441,6 +3564,15 @@ export const assembleFloor = (
     // The fork shortfall first where it ever applied: a floor no carve could give the junctions it
     // asks for is an authoring mistake, and "no layout" alone would send the reader after the maze.
     reasons: [
+      ...(forkSeamShortfall
+        ? [
+            {
+              type: "forkSeamsNotLaid" as const,
+              region: forkSeamShortfall.region,
+              seams: forkSeamShortfall.seams,
+            },
+          ]
+        : []),
       ...(forkShortfall ? [{ type: "forksUnsatisfied", ...forkShortfall } as const] : []),
       ...(oneWayShortfall ? [{ type: "oneWayUnsatisfied", ...oneWayShortfall } as const] : []),
       ...(unseatedRegions ? [{ type: "regionNotSeated", regions: unseatedRegions } as const] : []),

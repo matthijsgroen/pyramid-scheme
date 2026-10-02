@@ -420,6 +420,15 @@ export type SubSection = {
 export type SideSection = SubSection & {
   sideSections?: SubSection[]
 }
+/**
+ * One statement `FloorConfig.forks` makes. `{ exits, count }` asks for `count` junctions with at least
+ * `exits` free ways out, wherever the carve finds them. `{ in }` names a region of the layout instead:
+ * ONE junction on the main path inside it whose side exits are the first cells of the off-route chains
+ * hanging off that region, so the number of exits is the number of chains and the author counts
+ * nothing. Naming a region AND counts is a contradiction and is refused, never ignored.
+ */
+export type ForkDemand = { exits: number; count: number } | { in: string }
+
 export type FloorConfig = {
   pathPuzzles: number
   difficulty: Difficulty
@@ -449,7 +458,7 @@ export type FloorConfig = {
    *
    * Structural, and it decides the floor's shape on its own: the same `forks` carves the same floor
    * whether or not anything is ever stood in those junctions. */
-  forks?: { exits: number; count: number }[]
+  forks?: ForkDemand[]
   /** WHAT THE CARVE MUST PROVIDE: a passage from one named section to another that the player may
    * take only in that direction. Both ends name a section address — a `label` where a section has
    * one, the positional `s0`/`s1.2` where it does not, and `main` for the main path.
@@ -593,6 +602,20 @@ export type AssemblerReason =
   /** More switches are asked for than the floor's `forks` reserve junctions to hold them, which no
    * carve can settle. See FloorConfig.switches. */
   | { type: "switchesExceedForks"; min: number; forks: number }
+  /** A `forks` entry names a region (`{ in }`) that cannot hold the junction it asks for, fixed by the
+   * config alone: `contradictsCounts` also authors `exits`/`count`, `notInLayout` is no region of the
+   * layout (or there is no layout), `offRoute` is not on the route the main path threads,
+   * `fewerThanTwoSeams` has fewer than two off-route chains with it as mouth, and `repeated` is named
+   * by another entry too. See ForkDemand. */
+  | {
+      type: "forkRegionRefused"
+      region: string
+      cause: "contradictsCounts" | "notInLayout" | "offRoute" | "fewerThanTwoSeams" | "repeated"
+    }
+  /** No carve laid the junction of a `{ in }` fork on its seams: `seams` are the connections it had to
+   * exit by, each `[region, first region of the chain it leads into]`. The junction is never placed
+   * elsewhere or with other exits. See ForkDemand. */
+  | { type: "forkSeamsNotLaid"; region: string; seams: [string, string][] }
   /** A switch was authored with a family whose room closes behind the player. Its gates open one way
    * out and leave the others shut, and keys accumulate, so the cost of the choice is a walk back to
    * spend it again — which a room that cannot be re-entered never offers. See FamilyMeta.reEnterable. */

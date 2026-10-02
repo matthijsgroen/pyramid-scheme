@@ -75,7 +75,7 @@ export const switchFamilies = (
 ): { families: string[]; count: number } => {
   const switches = floor.switches
   if (!switches) return { families: [], count: 0 }
-  const junctions = (floor.forks ?? []).reduce((sum, fork) => sum + fork.count, 0)
+  const junctions = (floor.forks ?? []).reduce((sum, fork) => sum + ("in" in fork ? 0 : fork.count), 0)
   return {
     families: Array.isArray(switches.encounter) ? switches.encounter : [switches.encounter],
     count: Math.min(switches.max, junctions),

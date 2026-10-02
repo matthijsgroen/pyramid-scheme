@@ -380,7 +380,7 @@ export const floorsOwingALock = (configs: Record<string, SiteConfig[]>): FloorRe
   for (const [journeyId, sites] of Object.entries(configs))
     sites.forEach((site, siteIdx) =>
       site.forEach((floor, floorIndex) => {
-        const junctions = (floor.forks ?? []).reduce((sum, fork) => sum + fork.count, 0)
+        const junctions = (floor.forks ?? []).reduce((sum, fork) => sum + ("in" in fork ? 0 : fork.count), 0)
         if (
           Math.min(floor.switches?.min ?? 0, junctions) > 0 ||
           (floor.handles?.length ?? 0) > 0 ||
