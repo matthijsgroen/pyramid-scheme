@@ -260,6 +260,32 @@ def cone(r_bottom, r_top, h, x=0.0, y=0.0, z=0.0, verts=18):
     return obj
 
 
+def dome(r, h, x=0.0, y=0.0, z=0.0, segments=18, rings=9):
+    """A half-sphere standing on z=0: a sphere with everything below its equator deleted.
+
+    NOT A SPHERE PUSHED HALF UNDER THE FLOOR, which is the obvious build and does not survive this
+    pipeline: `seat_and_normalise` lifts an object until its lowest point sits on the floor line, so a
+    half-buried sphere comes back up as a whole one. The bottom has to be gone from the MESH.
+
+    Left open underneath on purpose. The underside is a down-facing face, and under `z + k*y` a
+    down-facing normal turns away from the camera — it is never drawn, so there is nothing to close.
+
+    ITS SEGMENT COUNT IS THE DETAIL. Flat-shaded under one steep sun a smooth dome is a soft gradient,
+    which this rig draws worst and the repaint reads as a blob; at 18 segments the facets themselves
+    read as the radiating panels the owner drew on it, and cost nothing."""
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=segments, ring_count=rings, radius=1.0, location=(0, 0, 0))
+    o = bpy.context.object
+    bm = bmesh.new()
+    bm.from_mesh(o.data)
+    bmesh.ops.delete(bm, geom=[v for v in bm.verts if v.co.z < -1e-5], context="VERTS")
+    bm.to_mesh(o.data)
+    bm.free()
+    o.scale = (r, r, h)
+    o.location = (x, y, z)
+    bpy.ops.object.transform_apply(scale=True)
+    return o
+
+
 def prim_market():
     """One table and what is on it: `--contents=market` is the merchant's balance and heap of grain,
     `--contents=laid` the nobleman's laid dining table.
@@ -481,6 +507,19 @@ def turn(obj, degrees, axis="Y", x=0.0, y=0.0, z=0.0):
     obj.rotation_euler[i] = math.radians(degrees)
     obj.location = (x, y, z)
     return obj
+
+
+def strung(a, b, thickness=0.04):
+    """A thin taut bar from point A to point B, built at the origin and turned to point along it —
+    `turn`'s own two-step pattern (build at the origin, rotate, then place), extended from one named axis
+    to an arbitrary direction. `prim_pit`'s zipline needs a line that runs in both Y and Z at once, which
+    `turn`'s single-axis degrees cannot express."""
+    a, b = Vector(a), Vector(b)
+    span = b - a
+    bar = box(span.length, thickness, thickness)
+    bar.rotation_euler = span.to_track_quat("X", "Z").to_euler()
+    bar.location = a.lerp(b, 0.5)
+    return bar
 
 
 def prim_shelf():
@@ -1398,6 +1437,191 @@ def prim_rubbleheap():
     return join_all()
 
 
+def _launch_crossing(w, d, heading):
+    """The one-way's crossing, drawn the owner's way: a short flight of steps up onto a block at ONE lip,
+    a TALL post standing on that block, a SHORT post on bare paving at the opposite lip, and the line run
+    head to head between them. Sketched as a side elevation, 2026-09-27.
+
+    THE THREE RULES A HOLE IN THIS SET OBEYS, each paid for separately and stated together so they stop
+    being rediscovered one roll at a time:
+
+    1. NOTHING STANDS ON THE NEAR LIP LINE. The band's lower edge — the boundary between the black and
+       the lit paving in front of it — runs unbroken, or the tile reads as a recess in a wall rather
+       than a hole in a floor. A narrow post crossing it is survivable; a block is not.
+    2. THE MOUTH SPANS THE PASSAGE, across the direction of travel, edge to edge of the sprite. Pale
+       floor beside the black is a ledge, and a crossing a player can walk round is not a crossing.
+       Which axis that is depends on the heading: east and west are crossed left to right, so their gap
+       spans in y and nothing beside it in x is a ledge; north and south are walked up and down, so
+       their gap must span in x.
+    3. THE LAUNCH STANDS AT THE SOURCE LIP. That is what makes the heading readable at all.
+
+    WHERE THEY CANNOT ALL HOLD, THE FLIGHT GIVES WAY. It is the newest of the three elements and the
+    only one not load-bearing for the feature: a post and a tie at the source lip still say which end
+    you start from.
+
+    THE HEIGHT DIFFERENCE IS THE DIRECTION, and the steps are there to explain the height rather than to
+    be the cue themselves. High end, with the way up to it built: where you start. Low end: where you
+    land. Coming back means climbing the line to a head that is above you with nothing under it, which is
+    a thing a player can see rather than a rule they have to be told.
+
+    THE STAIR GOES AT THE SOURCE END AND NEVER AT BOTH. A flight at the landing reads as the way out,
+    which says nothing about why the way back is shut; a flight at each end says the crossing is a bridge.
+    Which lip carries it is exactly what differs between the three renders.
+
+    THE FLIGHT CLIMBS THE WAY THE PLAYER DOES, and the three headings are not alike. `dropNorth`'s is
+    climbed into the picture, so it runs in +Y and is read head-on, risers stacking toward the camera —
+    the arrangement `prim_stair` measures as separating TWICE over, each tread gaining its own rise and
+    0.7 of its going. `drop` crosses the frame and runs in X, where the rise is drawn honestly and the
+    profile is a stepped side view. The one direction never used is a flight climbing TOWARD the viewer:
+    at a rise of 0.08 against a going of 0.17 the treads move 0.04 apart on the page and the flight
+    smears into the block it climbs to.
+
+    WHAT THE SHEAR DOES TO THE SLOPE, stated because it cannot be fixed and should not be papered over.
+    Drawn height is z + k*y, so on the two Y headings the lips themselves are already k*d apart on the
+    page — 0.56 against a post-head difference of 0.37. The line therefore draws downhill on `dropSouth`
+    and uphill on `dropNorth`, whichever way the world slopes. The cue that survives both is the BLOCK'S
+    POSITION: steps and tall post at the top of the tile, or at the bottom. Height carries it on the
+    horizontal heading, where the two lips draw level and the slope is the whole of the difference."""
+    # A RISER IS THREE PIXELS, so the flight is two treads and no more and each one is given all the
+    # going it can have. What reads at 56 units is the stepped SILHOUETTE against the paving, not the
+    # shading on the treads — the same trade `prim_stair`'s parapets make.
+    plinth_h, rise, going, post = 0.24, 0.08, 0.17, 0.06
+    tall, short = 0.26, 0.14
+
+    def block(px0, px1, py0, py1, step_y, frontal=False):
+        mark(box(px1 - px0, py1 - py0, plinth_h, x=(px0 + px1) / 2, y=(py0 + py1) / 2, z=plinth_h / 2), "body")
+        # Two treads, the lower one furthest from the block. They overlap it by nothing — each is a
+        # separate stone and the gap between their drawn tops is the whole of what says "steps".
+        #
+        # FRONTAL climbs AWAY from the viewer instead of across the frame, for a heading whose player
+        # climbs into the picture. It is the arrangement this projection pays best: `prim_stair` measures
+        # that a flight rising as it recedes separates TWICE over — each tread gains its own rise and 0.7
+        # of its going — where the same flight climbing toward the viewer very nearly cancels and smears.
+        # Each tread is also a little wider than the one above it, so the flight fans out downward and
+        # the silhouette is a stair rather than the striped wall a head-on flight otherwise draws.
+        for i in (0, 1):
+            h = rise * (i + 1)
+            if frontal:
+                fan = (1 - i) * 0.035
+                mark(
+                    box(px1 - px0 + 2 * fan, going, h, x=(px0 + px1) / 2, y=py0 - going * (1.5 - i), z=h / 2),
+                    "body",
+                )
+            else:
+                mark(box(going, step_y, h, x=px0 - going * (1.5 - i), y=(py0 + py1) / 2, z=h / 2), "body")
+
+    if heading == "dropNorth":  # travel toward the far lip: the block stands at the NEAR one
+        # AND STANDS TO ONE SIDE OF THE MOUTH RATHER THAN ACROSS IT, which is the difference between a
+        # tile that reads and the one roll this concept lost. Anything raised at the NEAR lip draws
+        # between the viewer and the opening: a block of height h with its back face on the lip draws
+        # its top at h - k*d/2, which is inside the mouth's own band for every h above zero. There is no
+        # height at which it clears, so the only free axis is x.
+        #
+        # What it was breaking is not "part of the opening". It is the NEAR LIP LINE — the band's bottom
+        # edge, the one line that says this dark shape is a hole in the ground and not a recess in a
+        # wall. Hidden along half its width, with the spoil closing most of the rest, the first roll came
+        # back as a slab of wall with an alcove cut in it, which is the exact failure the retired `pit`
+        # was killed for. Moved out past `-w/2` the lip runs unbroken under the whole mouth, which is
+        # what `drop` and `dropSouth` have always had — east by standing its block beside the mouth,
+        # south by standing it beyond and above.
+        #
+        # SO IT STANDS IN FRONT OF THE LIP INSTEAD, and that is the axis the block moved to once the
+        # sideways one had been spent: out past `-w/2` it cleared the lip line and left pale floor
+        # beside the black, which is rule 2. Forward, it satisfies both — the lip runs unbroken because
+        # the block draws below the band, and the mouth stays the widest thing in the sprite because
+        # the block is inside its width.
+        #
+        # HOW FAR FORWARD IS ARITHMETIC, not taste. A part of height h with its back face at y draws its
+        # top at h + k*y, so it clears the band's lower edge at -k*d/2 when it stands `(h + margin) / k`
+        # in front of the near lip. At a 0.24 block and a 0.05 margin that is 0.41 — a third of the
+        # mouth's own depth, which is why no small nudge was ever going to do it.
+        #
+        # IT COSTS NOTHING IN HEIGHT, which is the part that looked impossible and was not. All that
+        # depth is drawn BELOW the mouth, and the tall post standing on it is at the near lip, where the
+        # shear draws a thing LOW — so the top of the sprite is still the short post at the far lip and
+        # the tile lands comfortably inside the cap.
+        #
+        # ITS FLIGHT CLIMBS FRONTALLY, away from the viewer: the player climbs here and then travels
+        # into the picture, so the risers face the camera. It is also what gives north a silhouette
+        # `drop` does not have — a stack of treads read head-on against east's stepped wedge.
+        clear = (plinth_h + 0.05) / 0.7
+        py1 = -d / 2 - clear
+        py0 = py1 - 0.26
+        # THE LAUNCH STANDS AT THE LEFT OF THE MOUTH AND THE FAR POST AT THE RIGHT, so the line crosses
+        # 0.78 of the mouth's 1.04 in x while it runs the whole of a deep mouth in depth. At 0.34 across
+        # a 0.80 mouth it drew ten degrees off vertical; across a mouth seven times as deep the same
+        # offset is under three, and a line with no visible lean reads as a post (see `zipline`).
+        block(-0.40, 0.0, py0, py1, (py1 - py0) * 0.80, frontal=True)
+        head, foot = (-0.34, (py0 + py1) / 2), (0.44, d / 2 + 0.07)
+    elif heading == "dropSouth":  # travel toward the viewer: the block stands at the FAR lip
+        # ITS FLIGHT AND ITS BLOCK BOTH STAND INSIDE THE MOUTH'S OWN WIDTH. They used to start at
+        # x=-0.32 and step LEFT, which put both treads past `-w/2` and hung pale floor off the tile's
+        # left edge beside the black — a ledge, and rule 2 above. Shifted right the whole launch fits
+        # between the mouth's own sides, so nothing widens the sprite but the spoil and the band runs
+        # from one edge of it to the other.
+        py0, py1 = d / 2 - 0.03, d / 2 + 0.23
+        block(-0.26, 0.14, py0, py1, (py1 - py0) * 0.80)
+        # The foot stands 0.30 in front of the near lip, not 0.07, so it draws below the band and not
+        # on the lip line, and clear of the spoil beside it; that is what lets it sit at x=0.44 and give
+        # the line its lean across the mouth (see `dropNorth`).
+        head, foot = (-0.20, (py0 + py1) / 2), (0.44, -d / 2 - 0.30)
+    else:  # `drop` — travel to the right, mirrored in x for the other horizontal heading
+        px0, px1 = -w / 2 - 0.30, -w / 2 + 0.03
+        block(px0, px1, -0.23, 0.23, 0.38)
+        head, foot = ((px0 + px1) / 2 + 0.02, 0.0), (w / 2 + 0.07, 0.10)
+
+    hx, hy = head
+    fx, fy = foot
+    # TIMBER, so the two posts tell themselves apart from the block and the steps they stand among. A
+    # post in the rank's own stone beside a stone plinth is one mass, and at 56 units the whole crossing
+    # would read as masonry with a wire over it.
+    mark(box(post, post, tall, x=hx, y=hy, z=plinth_h + tall / 2), "timber")
+    mark(box(post, post, short, x=fx, y=fy, z=short / 2), "timber")
+    mark(strung((hx, hy, plinth_h + tall), (fx, fy, short)), nocast("body"))
+
+
+def _shaft_courses(d):
+    """The top of a shaft wall, built as rough stone so a hole EMITS DEPTH instead of being a flat black
+    rectangle — `prim_stair`'s `down` falloff (body, then deep, then the void) applied to a pit.
+
+    A PIT HAS NO LIGHT IN IT, so depth cannot come from the lamp and has to be built as value. The
+    retired `pit` prop is the warning at one end — a dark rectangle with four stones at its lip, which
+    read as an alcove you could walk into — and a fully drawn interior is the warning at the other. What
+    goes between is TWO COURSES and no more: a lit one just under the far lip and a shaded one below it,
+    and then the black, which is where the eye stops.
+
+    THE COURSES STAND PROUD OF THE VOID WALL, each a little less than the one above, so every block
+    shows a sliver of up-facing top. That top face is the only surface in a hole the rig can light — the
+    shaft's own walls stand in the y-z plane and draw as lines — and it is what makes the stone read as
+    stone rather than as a paler rectangle inside a darker one.
+
+    THE BOTTOM EDGE IS RAGGED AND THE TOP EDGE IS NOT. Blocks of four different heights leave the
+    transition into the black broken, which is what stops the pair reading as a bar; the gap ABOVE them
+    is left straight and dark, because that is the far lip overhanging its own shaft.
+
+    NOTHING IS BUILT AT THE NEAR LIP, and it is not an omission. Under z + k*y an up-facing face draws
+    toward the viewer and a down-facing one away from him, so the underside of the near lip is a back
+    face and is never drawn; a lit sliver put there anyway would be a pale bar UNDER a dark band under a
+    pale bar, which is `prim_shelf`'s silhouette exactly and the reading this primitive already spends
+    four renders avoiding."""
+    face = d / 2 - 0.05  # the void wall's own front face; a course proud of the shaft starts here
+    # x, width, how far it stands proud, its top, and how far down it reaches. Two rows: the lit course
+    # under the lip and the shaded one below it, the second standing less proud than the first.
+    for x, bw, proud, top, drop, part in (
+        (-0.33, 0.28, 0.055, -0.030, 0.075, "deep"),
+        (-0.04, 0.24, 0.045, -0.025, 0.100, "deep"),
+        (0.22, 0.20, 0.060, -0.035, 0.065, "deep"),
+        (0.40, 0.14, 0.040, -0.025, 0.090, "deep"),
+        (-0.24, 0.34, 0.022, -0.115, 0.090, VOID),
+        (0.16, 0.30, 0.030, -0.105, 0.110, VOID),
+        (0.44, 0.13, 0.018, -0.125, 0.075, VOID),
+    ):
+        # Into the wall behind by 0.03 rather than butted against it: a hairline is a gap, and a course
+        # that merely touches the shaft leaves a line of floor colour along its own back edge.
+        front, back = face - proud, face + 0.03
+        mark(box(bw, back - front, drop, x=x, y=(front + back) / 2, z=top - drop / 2), part)
+
+
 def prim_pit():
     """A cellar shaft cut through the floor, a pole laid across its far lip and a rope ladder over it.
 
@@ -1437,23 +1661,122 @@ def prim_pit():
 
     NO FOOTPRINT. Import this with --shadow=0 and no --seat: `make_shadow` flattens the object to z=0
     and pushes it toward the viewer, so a pit's footprint is a second dark parallelogram lying in front
-    of the first one, and the tile reads as two holes. A hole casts nothing."""
+    of the first one, and the tile reads as two holes. A hole casts nothing.
+
+    `--contents=zipline` / `ziplineNorth` / `ziplineSouth` REPLACE THE LADDER WITH A ONE-WAY DROP'S OWN
+    CROSSING: a stake at the entry lip and a taut line running to the far lip, where there is nothing to
+    hold. See the branch below for why direction costs two renders and not one.
+
+    `--contents=drop` / `dropNorth` / `dropSouth` ARE THE ONES THAT SHIP, and they differ from the three
+    above in every part except the hole: a mouth 0.14 deeper, `_shaft_courses` showing cut stone under
+    the far lip before it falls to black, and `_launch_crossing` in place of the bare stake — steps up
+    onto a block at the source lip, a tall post on it, a short post on the paving opposite, and the line
+    run head to head. The three ziplines are kept only as the flat reading they were queued as."""
     w, d = 0.94, 0.66  # the opening
     k = 0.7  # the shear this set is drawn at; the shaft's visible height is a function of it
+    contents = arg("contents")
+    # `drop*` is the zipline over a shaft that SHOWS ITS STONE, and it buys the depth with a mouth
+    # 0.14 deeper: the band is k*d tall and everything drawn inside it has to fit there, so at the
+    # ladder's own 0.66 the whole shaft is 17 pixels and three values in it are three pixels each.
+    # Only the unpainted variants take it — `plain` and the ladder keep the opening their masters were
+    # cut from.
+    courses = contents in ("drop", "dropNorth", "dropSouth")
+    if courses:
+        d = 0.80
+    # THE TWO VERTICAL HEADINGS GET A WIDER AND A MUCH DEEPER MOUTH, and both are rule 2 in
+    # `_launch_crossing`, turned on each axis in its turn.
+    #
+    # WIDTH: a drop walked up and down the page must have its gap span the passage in X, edge to edge
+    # of the sprite, or the paving left beside the black reads as a ledge to walk round. The sprite is
+    # scaled to its own widest element, so "spans" means the MOUTH has to BE that element — which it
+    # was not at 0.94 against spoil reaching 0.58 either side. Hence 1.04, with the spoil pulled in to
+    # 0.85 of its spread.
+    #
+    # DEPTH STAYS AT THE MOUTH'S OWN 0.80, AND DEEPENING IT WAS TRIED AND ABANDONED. The obstacle is
+    # `ONE_WAY_RUN_CELLS` = 3 cells, which a vertical heading walks 224 units down the page, and the
+    # first pair of tiles covered only 63% and 42% of that — ordinary paving left at each end of a gap
+    # the player cannot cross. The black band is k*d tall, so depth is the dial that lengthens it: 0.80
+    # draws 42 units, 4.0 draws 154, 5.9 draws 224.
+    #
+    # IT IS NOT A DIAL THAT CAN BE TURNED, because the generator stops holding this projection. The
+    # shallow mouth paints correctly: the masters in `art/masters/props/expert` came back flat-sided and
+    # square to the frame. Every roll against a deepened one came back in one-point perspective — long
+    # sides converging, then the whole object rotated off-axis with a coping round the mouth — which is
+    # this file's own warning in `prop-pipeline.md` ("a generator refuses this projection, and the
+    # scaffold is the only thing that has ever made it obey") holding only while the scaffold is shallow
+    # enough to leave nothing to reinterpret. Three rolls, three failures, one variable.
+    #
+    # The paving the short tile leaves at the run's ends is a DRAWING problem and belongs in the map, not
+    # here: cells an obstacle covers should not draw walkable floor whether or not a sprite reaches them.
+    spoil_x = 1.0
+    if contents in ("dropNorth", "dropSouth"):
+        w, spoil_x = 1.04, 0.85
     hv = k * d
     # The shaft: the far wall alone, exactly filling the drawn opening, and the only VOID part of any
     # primitive — everything else here is stone in the rank's own colour.
     mark(box(w, 0.05, hv, y=(d - 0.05) / 2, z=-hv / 2), VOID)
+    if courses:
+        _shaft_courses(d)
     # The spoil: what came out of the shaft, lying at its near edge and over the corners, so the mouth
     # has no straight side left. Drawn BELOW the hole, where this projection puts anything in front.
+    # Carried out with the near lip when the mouth is deepened, so it still lies on the paving in front
+    # of the opening rather than half inside it.
+    spoil_dy = 0.33 - d / 2
     for sx, sy, x, y, yaw in (
         (0.26, 0.13, -0.44, -0.40, -9),
         (0.22, 0.12, 0.44, -0.42, 13),
         (0.20, 0.12, -0.58, -0.16, 66),
         (0.18, 0.12, 0.57, -0.10, -58),
     ):
-        mark(tilt(box(sx, sy, 0.08, x=x, y=y, z=0.04), yaw, "Z"), "body")
-    if arg("contents") == "plain":
+        if contents in ("dropNorth", "dropSouth"):
+            # `tilt` turns about the world origin, and a deep mouth carries the near lip a long way
+            # from it: at yaw 66 a block 3 units out is thrown 2.7 sideways, off the tile altogether.
+            mark(turn(box(sx, sy, 0.08), yaw, "Z", x=x * spoil_x, y=y + spoil_dy, z=0.04), "body")
+        else:
+            mark(tilt(box(sx, sy, 0.08, x=x * spoil_x, y=y + spoil_dy, z=0.04), yaw, "Z"), "body")
+    if contents == "plain":
+        return join_all()
+    if courses:
+        _launch_crossing(w, d, contents)
+        return join_all()
+    zip_dir = contents
+    if zip_dir in ("zipline", "ziplineNorth", "ziplineSouth"):
+        # THE ZIPLINE, a one-way drop's own crossing — `docs/authored-locks-roadmap.md` ("A one-way is
+        # a place, and the movement markers carry the rule") settles it as a place rather than a sign: a
+        # stake driven into the paving at the entry lip, and a taut line running from it, over the
+        # opening, down to the far lip, where there is nothing to hold. Direction lives in which lip
+        # gets the stake, never in `--spin` — the mouth stays a parallelogram cut to the cell, same as
+        # every other pit.
+        #
+        # `zipline` runs the stake-to-tie line in X, so it is one asset the renderer mirrors left-right
+        # for the opposite horizontal heading. `ziplineNorth` and `ziplineSouth` run it in Y and are two
+        # separate renders rather than one flipped vertically — a vertical flip would swap which lip
+        # draws the far wall's up-facing top, against this projection's own rule that a block shows an
+        # up-facing band on top and a viewer-facing face below, never the reverse.
+        #
+        # Both ends stand on the solid paving just past the opening's edge, never over it — the stake
+        # so it casts a normal shadow, the tie so it never reaches for the ground below the near lip's
+        # own line, which this shear never draws. The line itself is free to cross the opening: it is
+        # the thing that CROSSES ITS EDGE, the same job the ladder did.
+        #
+        # Both ends also carry an X offset even where the heading is pure Y (`ziplineNorth`/`South`): a
+        # bar built with no X extent at all draws as a vertical stack under this shear (`prim_pit`'s own
+        # ladder rope is why nothing here runs along bare -Y), and a zipline with no visible slope across
+        # the frame reads as a post, not a line strung to somewhere.
+        post_h = 0.34
+        if zip_dir == "zipline":
+            stake_xy = (-w / 2 - 0.05, 0.0)
+            tie_xy = (w / 2 + 0.02, 0.0)
+        elif zip_dir == "ziplineNorth":
+            stake_xy = (-0.22, -d / 2 - 0.05)
+            tie_xy = (0.22, d / 2 + 0.02)
+        else:  # ziplineSouth
+            stake_xy = (0.22, d / 2 + 0.05)
+            tie_xy = (-0.22, -d / 2 - 0.02)
+        sx, sy = stake_xy
+        tx, ty = tie_xy
+        mark(box(0.06, 0.06, post_h, x=sx, y=sy, z=post_h / 2), "body")
+        mark(strung((sx, sy, post_h), (tx, ty, 0.015)), nocast("body"))
         return join_all()
     # The pole laid across the far lip, and the ladder over it. Coarse on purpose — at 56 units across
     # the opening a rope of 0.03 is two pixels and the ladder becomes a smudge.
@@ -1464,6 +1787,438 @@ def prim_pit():
         mark(box(0.05, 0.05, 0.10 + hv, x=sx * 0.25, y=rope_y, z=(0.10 - hv) / 2), NOCAST)
     for i in range(3):
         mark(box(0.55, 0.055, 0.055, y=rope_y, z=-0.09 - i * 0.15), NOCAST)
+    return join_all()
+
+
+def bound_marker(p0, p1):
+    """Two loose vertices, no faces and no material — opposite corners of a FRAME rather than of an
+    object. Nothing rasterises a vertex with no polygon, so this contributes no pixel and no alpha to any
+    render; but `local_bounds` reads straight off `obj.data.vertices`, which is all `seat_and_normalise`
+    and `add_camera` ever look at. So two variants built from DISJOINT parts, with nothing visible in
+    common to hold a frame steady between them, can still be pinned to the identical frame by handing
+    both the same two corners: whichever real geometry is actually drawn, provided it never reaches past
+    them, the object is scaled, centred and camera-framed exactly the same way regardless.
+
+    `prim_lever`'s `base` and `arm` are exactly that pair — see there. `prim_jarrack`'s `--contents=none`
+    is the one-sided version of the same law: a frame that stays VISIBLE (the rack's posts and rails)
+    rather than staying invisible, because there every variant has that frame in common and this one
+    does not."""
+    mesh = bpy.data.meshes.new("bounds")
+    mesh.from_pydata([p0, p1], [], [])
+    mesh.update()
+    obj = bpy.data.objects.new("bounds", mesh)
+    bpy.context.scene.collection.objects.link(obj)
+    return obj
+
+
+def prim_lever():
+    """A floor lever a player throws: a domed bronze housing bedded in the paving, one arm rising out of
+    it and laid over to the left or the right, and a chunky canted grip on the arm's end. Drawn from the
+    owner's side elevation, 2026-09-27.
+
+    NO POST, AND THAT IS THE SECOND BUILD'S LESSON. The first stood the arm on a squared timber column
+    and the column was what everyone read: a PILLAR, a structural thing, and a structural thing that
+    might turn about its own axis — which is a capstan, a different machine making a different promise.
+    A lever is a handle pivoted at floor level and thrown over.
+
+    THE ARM IS THE WHOLE SILHOUETTE, and that is what makes the two states read. `--contents=left` and
+    `--contents=right` are the same lever thrown each way; with a column in the picture they shared a
+    large fixed vertical mass and differed only in a smaller arm above it, which is the weak-distinction
+    problem `prim_spikes` measured and failed. With the post gone the throw is the entire difference.
+
+    THE GRIP IS THE PART THAT CARRIES IT, not the shaft. It is the mass at the far end of the lean, so
+    it travels furthest of anything in the object — `2 * reach * sin` of the throw — and it is also what
+    stops a leaning shaft reading as a stick. It is CANTED further over than the shaft rather than run
+    in line with it, which is what the owner drew and what makes it a handhold rather than a finial: the
+    cant puts its own length on the outside of the swing, so the grip's far end clears the dome entirely
+    on each side and neither state can be mistaken for the other or for a lever standing upright.
+
+    THE ARM RUNS IN X, the only axis drawn honestly (`prim_sconce`'s bracket, one object over). Swung in
+    y it would be a bar lying in depth, which images as drawn height and nothing else — the two states
+    would be one shape at two lengths.
+
+    THE ARM COMES OUT OF THE DOME, not off the top of it: its root sits below the crown, so the pivot is
+    inside the mound. That is the difference between a lever and a mast, and it costs nothing — the
+    buried part is never drawn.
+
+    IT MUST NOT READ AS A TRAP. This game's traps are rooms wearing a crimson badge with a skull and
+    they are disarmed with a tool; a lever is not. Nothing here is sharp, sprung or pointed, and no red
+    goes near it. A mound, an arm and a worn grip: an object whose only affordance is PULL.
+
+    SEAT IT NORMALLY — this stands on the floor and its footprint is a real one.
+
+    `--contents=base`, `--contents=baseBack`, `--contents=baseFront` AND `--contents=arm` ARE A SECOND
+    BODY, drawn the same way but never joined into one tile: the dome and the kerb — whole, or cut in
+    half at the plane the arm turns about — and the shaft, ferrule and grip alone, standing UPRIGHT
+    (swing=0, the cant kept at its usual +20). The swing that used to be baked into `left`/`right` is now
+    applied at RUNTIME, by a CSS `transform: rotate()` on the arm layer alone — so the map only ever
+    needs the one upright arm, thrown either way in the browser about a pivot every tile agrees on.
+    `base` itself is what gets PAINTED; `baseBack` and `baseFront` are cut from that same paint at import
+    (see below) and are what the map actually stacks.
+
+    ALL FOUR RENDERS SHARE ONE CAMERA FRAME, which is what lets a single `transform-origin` mean the same
+    point in every one of them. `add_camera` frames every render from its own object's vertex bounds
+    alone, and these share no geometry to hold that frame steady by construction (`prim_jarrack`'s trick
+    needs a frame that stays in the picture; here no tile may show another's parts at all) — so
+    `bound_marker` plants the same two invisible corners in each, sized to the kerb's own radius in x and
+    y and to the upright grip's own reach in z, and no visible part of any of them ever draws past.
+
+    THE ARM DOES NOT SIMPLY LAYER BEHIND THE BASE — the dome has to hide the shaft's buried foot at every
+    angle the CSS ever turns it to, and a single base tile put wholly behind or wholly in front cannot: the
+    root sits inside the mound's own painted area (measured on the first `base` render: the dome spans
+    roughly 62%-89% down the frame, the root at ~74%), so behind the WHOLE base the near lip of the mound
+    can never cross in front of the shaft, and the shaft reads as balanced on the crown — the exact
+    failure this docstring already records fighting once, in the first build's post. `--contents=baseBack`
+    and `--contents=baseFront` cut the SAME dome and kerb at y=0 — the plane `turn` rotates the arm about,
+    where the arm's own root always sits — so the far side of the mound can go BEHIND the arm and the near
+    side stays IN FRONT of it: back, arm, front, three layers where a real lever has a near lip crossing
+    the shaft at every throw.
+
+    THESE ARE MASKS, NOT A SECOND PAINTING. `base` is still painted once — `baseBack` and `baseFront` cut
+    that one master's silhouette in two at import, through two extra Blender render passes that only ever
+    need `--shadow=0 --background=none`, never a repaint of their own. One dome painted once cannot
+    disagree with itself about light or palette; two dome HALVES painted separately would reintroduce
+    exactly the drift this whole split exists to remove.
+
+    THE MOUND IS CUT FOR A TRACK, not just leant against — a dome with a shaft standing in it says
+    nothing about the shaft MOVING; a slot cut along the arc it sweeps says both that it moves and how
+    far, for free, out of geometry the throw already fixes: the track is exactly ±36 degrees wide, no
+    more. It is also what the back/front split was missing on its own — without it the arm still emerged
+    from unbroken bronze, reading as passing THROUGH solid metal rather than travelling in a housing.
+    Cut at the shell's own radius, solved per angle rather than at one constant depth (a constant deep
+    enough to clear the surface at the full throw pokes a flat-topped chimney through the crown at the
+    top of the sweep, where the true surface sits closest to the pivot), and marked VOID so its interior
+    paints near-black before any repaint sees it — the same law `prim_pit` and `prim_market`'s altar
+    channel already carry, here cut into a dome instead of a floor or a slab.
+
+    THE SEATED SHADOW BELONGS TO `baseBack`, the layer everything else stands on; `baseFront` casts
+    nothing, the same rule `arm` already follows and for the same reason — a footprint on a layer that
+    sits in front of the object it shadows would float.
+
+    THE ARM CASTS NOTHING. A shadow that swung with the CSS rotation would be wrong the instant the lever
+    moved, so `arm` is rendered `--shadow=0` and takes no `--seat` at import; the seated shadow belongs to
+    `baseBack`, which never moves.
+
+    NO `--spin` ON ANY OF THEM. `left`/`right` took one for variety on the floor, but that variety now
+    comes from the runtime swing itself, and a baked floor turn would rotate `bound_marker`'s square
+    envelope into a bigger axis-aligned box in one render and not the others unless spun identically — one
+    more number to keep in lockstep for no picture bought. Left at 0, the shared frame is exact across all
+    four contents and needs no matching flag."""
+    contents = arg("contents", "right")
+    dome_r, dome_h = 0.22, 0.17
+    shaft_len, root_z = 0.56, 0.07
+    grip_len = 0.26
+
+    if contents in ("base", "arm", "baseBack", "baseFront"):
+        cant_deg = 20.0  # upright: swing=0, so cant = swing + 20 is just the +20
+        cant = math.radians(cant_deg)
+        tip_z = root_z + shaft_len  # the shaft's own tip; tip_x is 0, upright
+        reach = grip_len / 2 - 0.05
+        grip_cx, grip_cz = math.sin(cant) * reach, tip_z + math.cos(cant) * reach
+        # The grip box's own half-dims in x and z before the cant turns it, and the rotated AABB those
+        # turn into — the standard `|a*cos| + |b*sin|` sum for a box carried through a rotation.
+        hx, hz = 0.115 / 2, grip_len / 2
+        grip_hx = hx * math.cos(cant) + hz * math.sin(cant)
+        grip_hz = hx * math.sin(cant) + hz * math.cos(cant)
+        kerb_r = dome_r + 0.05
+        # The kerb's own radius dominates in x and y (0.27 against the grip's 0.10 either side of centre)
+        # — kept as a `max` rather than asserted, so a future change to either constant cannot silently
+        # let the grip draw past an envelope sized only for the kerb.
+        env_r = max(kerb_r, grip_cx + grip_hx, grip_hx - grip_cx)
+        env_top = grip_cz + grip_hz  # the grip's own top, upright — taller than the dome by construction
+
+        if contents == "arm":
+            bound_marker((-env_r, -env_r, -0.01), (env_r, env_r, env_top))
+            mark(box(0.075, 0.075, shaft_len, z=root_z + shaft_len / 2), "timber")
+            # The same ferrule as `left`/`right`, upright: swing=0 so ux=0, uz=1, and `turn`'s rotation
+            # is a no-op here — built with `box` directly rather than through `turn` for that reason.
+            mark(box(0.10, 0.095, 0.075, z=tip_z - 0.02), "metal")
+            mark(turn(box(0.115, 0.105, grip_len), cant_deg, "Y", x=grip_cx, z=grip_cz), "accent")
+            return join_all()
+
+        mark(dome(dome_r, dome_h), "metal")
+        # A low stone kerb round the dome's foot, where it meets the paving. Without it the mound sits ON
+        # the floor like a dropped bowl; with it, it is bedded INTO it — and it is the one part that keeps
+        # the object's widest point at ground level, which is what a thing driven into a floor looks like.
+        mark(cone(dome_r + 0.05, dome_r + 0.01, 0.045, z=0.022, verts=20), "body")
+        # THE SLOT: a curved track cut through the crown, along the exact arc the arm sweeps, which is
+        # what tells a player the shaft MOVES and how far — the throw is ±36 degrees and the track is
+        # precisely that arc, no wider. Built the same way the shaft itself is (`turn`'s own pattern: a
+        # box made at the origin, turned about Y, then placed), so the cut tracks the swing exactly rather
+        # than approximating it — a fan of overlapping radial wedges, one per angle, marked VOID so
+        # `--void` paints the interior near-black before any repaint sees it (`prop-pipeline.md`, "A HOLE
+        # is one parallelogram deep, and its dark is geometry too" — the same law, here cut into a dome
+        # instead of a floor).
+        #
+        # THE OUTER RADIUS FOLLOWS THE DOME'S OWN CURVE, not a constant. A line from the pivot at angle t
+        # crosses the ellipsoid `x²/dome_r² + z²/dome_h² = 1` at a radius that grows only slightly over the
+        # sweep — 0.100 straight up, 0.114 at the full 36 degrees — but a CONSTANT outer radius generous
+        # enough to clear the surface at 36 degrees pokes a flat-topped chimney out through the crown at 0,
+        # where the true surface sits closest to the pivot. Solved per segment instead (`_slot_surface_r`),
+        # so the cut's outer face tracks the crown's curve and stands proud of it by the same small margin
+        # the whole way round — measured by rendering both and looking: a constant radius left a squared-
+        # off black rectangle standing clear above the dome at the top of the sweep; solved per angle, the
+        # cut's outer edge follows the crown's own curve and stays inside its silhouette everywhere.
+        def _slot_surface_r(t_deg):
+            th = math.radians(t_deg)
+            sx, cz = math.sin(th), math.cos(th)
+            a = (sx / dome_r) ** 2 + (cz / dome_h) ** 2
+            b = 2 * root_z * cz / dome_h**2
+            c = (root_z / dome_h) ** 2 - 1
+            return (-b + math.sqrt(b * b - 4 * a * c)) / (2 * a)
+
+        slot_half_w = 0.075 / 2 + 0.015  # the shaft's own half-thickness, plus a little clearance
+        slot_outer_margin, slot_depth = 0.012, 0.035
+        slot_segments = 13
+        for i in range(slot_segments):
+            t = -36.0 + 72.0 * i / (slot_segments - 1)
+            tr = math.radians(t)
+            r_surf = _slot_surface_r(t)
+            r0, r1 = r_surf - slot_depth, r_surf + slot_outer_margin
+            rc = (r0 + r1) / 2
+            mark(
+                turn(
+                    # Tangential width overlaps the next wedge by design — the arc is 13 steps of 6 degrees
+                    # each, and 1.3x the step's own arc length at this radius closes every gap between them
+                    # (`prop-pipeline.md`'s "a hairline is a gap" law, the same reason parts butt with
+                    # margin everywhere else in this file) without the corners of each straight box
+                    # standing far enough proud of the true arc to crenellate its outer edge.
+                    box(rc * math.radians(72.0 / (slot_segments - 1)) * 1.3, slot_half_w * 2, r1 - r0),
+                    t,
+                    "Y",
+                    x=math.sin(tr) * rc,
+                    z=root_z + math.cos(tr) * rc,
+                ),
+                VOID,
+            )
+        # Joined here, on its own, so a `baseBack`/`baseFront` bisect below cuts only the dome, the kerb
+        # and the slot — never `bound_marker`'s pair, which is added after and must survive whole into
+        # BOTH halves so all four contents share one camera frame.
+        dome_obj = join_all()
+
+        if contents in ("baseBack", "baseFront"):
+            # `base` is painted ONCE, against the union of these two, and imported TWICE — one paint, two
+            # masks — so the arm can be composited BETWEEN them: the mound's far side, then the arm, then
+            # its near side, which is what puts the near lip in front of the arm's foot instead of the
+            # arm appearing to start at the crown (`prim_lever`'s own first build, fought again).
+            #
+            # CUT AT THE SLOT'S OWN NEAR WALL, not at y=0. y=0 is where `turn`'s rotation axis sits and
+            # where the arm's root always is, and it was the first thing tried — but the slot is a real
+            # cut with width, and bisecting through its MIDDLE hands half its dark interior to `baseFront`,
+            # which sits in FRONT of the arm and would paint that half of the void straight over the
+            # shaft. Moved to the slot's near face, `baseFront` is everything nearer than the track — no
+            # void in it at all — and `baseBack` carries the track's far wall, its whole dark interior,
+            # and everything behind. Checked by rendering both: at y=0 the composited shaft's OWN
+            # near edge is dulled by a strip of the front half's dark paint sitting over it; moved here,
+            # the arm sits cleanly inside the cut with nothing of the front layer crossing it.
+            #
+            # `bisect_plane` on the merged mesh, not a vertex-threshold delete: a delete-by-coordinate
+            # removes any face that touches the boundary from BOTH halves (a face's vertices split across
+            # the cut has one vertex missing from EACH half), leaving a gap neither half covers. Bisecting
+            # inserts the seam as new geometry first, so both halves keep an intact edge at the cut and
+            # their union reproduces `base` exactly — measured below.
+            cut_y = -slot_half_w
+            bm = bmesh.new()
+            bm.from_mesh(dome_obj.data)
+            bmesh.ops.bisect_plane(
+                bm,
+                geom=bm.verts[:] + bm.edges[:] + bm.faces[:],
+                plane_co=(0, cut_y, 0),
+                plane_no=(0, 1, 0),
+                # `clear_outer` empties the side `plane_no` points AWAY from the plane toward — measured
+                # against a bare sphere before trusting it: `clear_outer=True` left y in [-1, 0] there.
+                # Y is depth, away from the viewer positive (this file's own axis note), so that is the
+                # NEAR half — `baseFront`.
+                clear_outer=contents == "baseFront",
+                clear_inner=contents == "baseBack",
+            )
+            bm.to_mesh(dome_obj.data)
+            bm.free()
+
+        bound_marker((-env_r, -env_r, -0.01), (env_r, env_r, env_top))
+        return join_all()
+
+    left = contents == "left"
+    # 36 degrees off vertical, and the number is the GRIP'S reach rather than the shaft's. The owner's
+    # elevation leans about 20, which is a lever caught mid-throw; at 20 the grips of the two states sit
+    # 0.42 apart against a dome 0.68 wide and the pair reads as one lever wobbling. At 36, with the
+    # grip's own cant carrying its length outward too, each grip clears the dome's edge and the two
+    # silhouettes are a backslash and a forward slash — which is the reading being bought.
+    swing = -36.0 if left else 36.0
+    # THE CANT IS A PROPERTY OF THE BODY, SO IT DOES NOT CHANGE SIGN WITH THE THROW. It was built as
+    # `swing +/- 40`, which puts the grip at +40 to the arm in one state and -40 in the other — and that
+    # is a MIRROR, not a rotation. A lever is one rigid piece turning about one pivot: rotate it and the
+    # angle between grip and arm keeps its signed value. Flipping the sign draws a grip that has swung
+    # on a joint of its own, and it was read that way the moment anyone saw the pair.
+    #
+    # 20 degrees rather than the 40 it had. A grip canted near a right angle to its arm is a crosspiece
+    # stuck on the end, which is what a HINGED handle looks like; a shallow kick reads as the top of the
+    # lever thickening into something to hold.
+    cant = swing + 20.0
+    # THE DOME IS SMALL, and the first build's was not: at radius 0.34 it drew 0.30 of its own height
+    # plus k times its whole 0.68 of depth, 0.78 in all, against an arm reaching 0.62 — so the mound
+    # out-drew the lever standing on it and the tile read as a bell with a stick in it. A round base is
+    # the most expensive shape this projection has, because depth is taxed into height at 0.7 and a
+    # circle is as deep as it is wide. Radius 0.22 keeps the owner's proportion in the DRAWN picture
+    # rather than in the plan.
+    dome_r, dome_h = 0.22, 0.17
+    shaft_len, root_z = 0.56, 0.07
+    grip_len = 0.26
+
+    mark(dome(dome_r, dome_h), "metal")
+    # A low stone kerb round the dome's foot, where it meets the paving. Without it the mound sits ON
+    # the floor like a dropped bowl; with it, it is bedded INTO it — and it is the one part that keeps
+    # the object's widest point at ground level, which is what a thing driven into a floor looks like.
+    mark(cone(dome_r + 0.05, dome_r + 0.01, 0.045, z=0.022, verts=20), "body")
+    a, c = math.radians(swing), math.radians(cant)
+    ux, uz = math.sin(a), math.cos(a)
+    vx, vz = math.sin(c), math.cos(c)
+    tip_x, tip_z = ux * shaft_len, root_z + uz * shaft_len
+    # The shaft, built upright at the origin and turned about Y so it lays over in X — `turn`'s pattern,
+    # which rotates a part about its own centre before placing it.
+    mark(turn(box(0.075, 0.075, shaft_len), swing, "Y", x=ux * shaft_len / 2, z=root_z + uz * shaft_len / 2), "timber")
+    # THE FERRULE, at the join, and it is there to say ONE PIECE. Two masses meeting at an angle read as
+    # two parts meeting at a joint; a collar banding them together is what a tool looks like where a
+    # handle is fitted to a shaft, and it costs one box.
+    mark(
+        turn(box(0.10, 0.095, 0.075), swing, "Y", x=tip_x - ux * 0.02, z=tip_z - uz * 0.02),
+        "metal",
+    )
+    # The grip: a block on its own axis, overlapping the shaft's end rather than butting it, because a
+    # hairline is a gap. Thicker than the shaft in every direction — at 56 units the difference between
+    # a handhold and a stick is mass, and this is the mass.
+    mark(
+        turn(
+            box(0.115, 0.105, grip_len),
+            cant,
+            "Y",
+            x=tip_x + vx * (grip_len / 2 - 0.05),
+            z=tip_z + vz * (grip_len / 2 - 0.05),
+        ),
+        "accent",
+    )
+    return join_all()
+
+
+def prim_spikes():
+    """A sprung one-way: a rank of angled blades standing out of a slot in the floor, passable along the
+    lean and refused against the points. `--contents=east` is the passage walked ACROSS, `north` and
+    `south` the passage walked up and down the page.
+
+    WHY IT EXISTS AT ALL, against the drop: it is the one shape tried so far that carries DIRECTION in
+    the tile. A plug stone and a zipline both read as "a way you take once" and neither says which way —
+    the rendering spike measured that and punted direction to the movement markers. A blade has a point
+    and a back, and a lean is a line at an angle, which is the cheapest thing this projection draws.
+
+    THE LEAN IS THE WHOLE ASSET, so each heading puts it on the axis that heading can afford:
+
+    - `east` leans in X, the only axis drawn honestly, and is mirrored in x for west. Its rank stands
+      ALONG the corridor rather than across it — see the arrangement below, which is where that trade
+      was paid for. `prim_gate`'s `-side` made the same one and its docstring is the argument: not a
+      truthful projection, the one drawing that still says what the object is.
+    - `north` and `south` run the rank in X, where a row is a row, and lay the lean over in Y past the
+      angle at which a lean becomes a POSITION — see the 55-degree note on `lean`. North's points draw
+      at the top of the tile and south's at the bottom, which is a difference a player can read; at a
+      gentler angle both draw at the top and the two headings say nothing. They are two renders and not
+      one flipped: a vertical flip would turn every up-facing top face downward, which this projection
+      never draws.
+
+    THE SLOT RUNS IN X ON ALL THREE, which is not what a plan would draw and is what the projection
+    can. It is `deep` rather than VOID — the blades came out of it, so it is a slot with something in
+    it and not a hole in the floor, which is the other primitive.
+
+    THE BLADES ARE METAL AND THE ANCHORS ARE STONE. One flat colour would hand the repaint a comb of
+    identical prongs to guess at; `metal` puts the blades in dull bronze and the two anchor stones at
+    the rank's ends in the rank's own limestone, which is also what stops the row reaching the frame's
+    edges — `prim_stair`'s parapets, for the same reason.
+
+    `--contents=<heading>Tip` BUILDS EACH BLADE IN TWO PIECES — a stone shaft and a bronze point — and
+    it is aimed at the one thing the matte single-material rank cannot say. A cone 20 units tall reads
+    as a cone from either end, so nothing in it says which end is the business end; two materials put
+    four bright marks on the points alone, and WHERE THOSE MARKS SIT — bunched against the top edge of
+    the tile or against the bottom — is a position, which this projection draws reliably at any lean.
+    The lean itself is not: a blade tipped 28 degrees at the viewer and one tipped away have very
+    nearly the same silhouette under `z + k*y`, which is why a steeper angle bought nothing.
+
+    Pair it with `--gloss=accent` for the other half of the experiment. A specular hit encodes SURFACE
+    ORIENTATION rather than outline, so where it lands on a point and how it stretches differs between
+    a blade leaning at the viewer and one leaning away — the information the matte version is missing
+    by construction. It is a deliberate exception to the set's matte rule and the flag is not on by
+    default; see `gloss_parts`."""
+    facing = arg("contents", "east")
+    # The two-piece blade is a suffix on the heading rather than a heading of its own: the rank, the
+    # slot, the anchors and the lean are all the same drawing, and only what a blade is MADE of changes.
+    tipped = facing.endswith("Tip")
+    if tipped:
+        facing = facing[: -len("Tip")]
+    h, r_base = 0.46, 0.075
+    # 55 DEGREES IS WHERE A LEAN IN Y STOPS BEING A LEAN AND BECOMES A POSITION, and it is the number
+    # this whole primitive turns on. A blade of length L tipped by θ puts its point `L*(cos θ - k*sin θ)`
+    # above its own root, so at tan θ = 1/k — 55 degrees at k = 0.7 — the point draws level with the
+    # root, and past it the point draws BELOW. Under 55 every heading's points sit at the top of the
+    # tile whichever way the blade leans, which is exactly why 28 and 45 said nothing about direction.
+    # At 65 the two headings put their points at opposite ends of the tile, which is a position, and a
+    # position is the one thing this projection renders reliably.
+    #
+    # The steep lean also gives back the light it was supposed to cost: past 55 a blade tipped at the
+    # viewer has turned far enough that its broad faces come back UP toward the lamp, so south stops
+    # rendering as a row of near-black diamonds the way it did at 45.
+    #
+    # East keeps 45: its lean is in X, drawn honestly, and there is nothing to buy by laying it down.
+    lean = 65.0 if facing in ("north", "south") else 45.0
+
+    def blade(x, y, angle, axis, scale=1.0):
+        # A cone of four sides is a tapered blade, and turning it on its own centre before placing it is
+        # `turn`'s pattern: `cone` leaves the mesh centred, so the rotation is about the blade and not
+        # about the prop. Standing it back up after the tip goes over costs a cosine, less a little so
+        # the root stays down in the slot rather than balancing on the floor beside it.
+        hh, rr = h * scale, r_base * scale
+        stand = (hh / 2) * math.cos(math.radians(angle)) - 0.035
+        if not tipped:
+            return mark(turn(cone(rr, 0.004, hh, verts=4), angle, axis, x=x, y=y, z=stand), "metal")
+        # TWO PIECES ON ONE AXIS, placed by walking along the blade rather than by stacking in z: both
+        # halves take the same turn, so the socket has to sit where the shaft's own direction puts it
+        # and not where a vertical offset would. `turn` rotates about a part's centre, so each piece is
+        # measured from the blade's centre at t = 0 — the shaft from -0.5 to +0.1 of the length, the
+        # point from +0.08 to +0.5, overlapping by a hair because a hairline is a gap.
+        a = math.radians(angle)
+        u = (math.sin(a), 0.0, math.cos(a)) if axis == "Y" else (0.0, -math.sin(a), math.cos(a))
+        r_mid = rr * 0.44
+
+        def along(t, piece, r0, r1, length):
+            return mark(
+                turn(cone(r0, r1, length, verts=4), angle, axis, x=x + u[0] * t, y=y + u[1] * t, z=stand + u[2] * t),
+                piece,
+            )
+
+        along(-hh * 0.20, "body", rr, r_mid, hh * 0.60)
+        return along(hh * 0.29, "accent", r_mid, 0.004, hh * 0.42)
+
+    # ONE ARRANGEMENT FOR ALL THREE, and only the lean's axis changes. The rank was first built the way
+    # the fiction wants it — spanning the passage, so in Y for a passage walked across — and that render
+    # is why it is not built that way now: four blades spread in depth draw stacked up the page at one x,
+    # the object comes out 28 units wide and 84 tall, and the rank reads as a single torn shape. Spread
+    # in X, which is the only axis drawn honestly, the same four read as four. What that costs is the
+    # plan: east's blades stand along the corridor rather than across it, a BED of spikes rather than a
+    # rank in a doorway. The bed is the reading that survives at 56 units.
+    # THE SLOT IS SET OFF-CENTRE ON THE TWO VERTICAL HEADINGS, so the roots have somewhere to be that
+    # is not where the points are: north puts it in front of the rank and south behind it, which reads
+    # as the blades having been driven in from the side they refuse.
+    slot_y = {"north": -0.12, "south": 0.12}.get(facing, 0.0)
+    mark(box(0.84, 0.11, 0.035, y=slot_y, z=0.018), "deep")
+    for i, (x, sc) in enumerate(((-0.30, 0.96), (-0.10, 1.0), (0.10, 0.92), (0.30, 0.98))):
+        # Turning about +Y tips a blade's tip toward +x; about +X it tips toward -y, which is toward the
+        # viewer — so south is the positive angle and north the negative one. A little y jitter on each,
+        # so the rank is a rank of driven blades and not a machined comb.
+        jitter = 0.03 if i % 2 else -0.03
+        if facing == "east":
+            blade(x, jitter, lean, "Y", sc)
+        else:
+            blade(x, slot_y + jitter, lean if facing == "south" else -lean, "X", sc)
+    # An anchor stone at each end, driven in beside the slot: it stops the rank reaching the frame's
+    # edges and gives the tile a silhouette that stands on the floor — `prim_stair`'s parapets.
+    for sx in (-1, 1):
+        mark(box(0.14, 0.19, 0.17, x=sx * 0.50, y=slot_y * 0.5, z=0.085), "body")
     return join_all()
 
 
@@ -2747,6 +3502,8 @@ PRIMITIVES.update(
         "rubblePile": prim_rubbleheap,
         "niche": prim_niche,
         "pit": prim_pit,
+        "lever": prim_lever,
+        "spikes": prim_spikes,
         "stair": prim_stair,
         "gate": prim_gate,
         "exit": prim_exit,
@@ -2795,6 +3552,29 @@ def unlit_parts():
     For a part that IS light rather than a thing light falls on. See `flat_material`: the exit's shaft is
     the only user, and the top of it rendered darker than its own hex until this existed."""
     return {p.strip() for p in (arg("unlit") or "").split(",") if p.strip()}
+
+
+def gloss_parts():
+    """The parts `--gloss=a,b` names, which are rendered with a specular hit on them.
+
+    What it was reached for is the one thing a matte surface cannot encode: which way a face is
+    POINTING. A silhouette under `z + k*y` is nearly the same for a cone leaning at the viewer and one
+    leaning away, so a highlight — a function of the normal rather than of the outline — is in
+    principle the cue that tells them apart.
+
+    IT DOES NOT SURVIVE THIS RIG ON A SMALL PART, and that is measured rather than argued. Between a
+    matte bronze spear point and the same point glossed, the tile differs by 0.16% of full range on
+    north and 0.31% on south (RMSE over the composited 112x168 cell). Four settings were tried: this
+    one, a lower roughness with a 6-degree sun, fully metallic, and half-metallic. The two metallic
+    ones are WORSE — EEVEE has no environment here but a flat grey world, so a metal reflects grey and
+    the bronze stops being bronze, which costs the colour cue that was doing the actual work. Applied
+    to a large part the flag plainly works (`--gloss=body,accent` on the same prop moves the render by
+    1.5%, and the slot reads visibly brighter); a spear point at 56 units is six pixels and there is no
+    room in it for a highlight to be anywhere in particular.
+
+    So a shiny tile is a thing to ASK THE PAINTER for, in the entry's prompt, and not a thing a
+    scaffold can hand over. What a scaffold gives is geometry and value separation."""
+    return {p.strip() for p in (arg("gloss") or "").split(",") if p.strip()}
 
 
 def part_of(slot_name):
@@ -2879,7 +3659,7 @@ def mark(obj, name):
     return obj
 
 
-def flat_material(name, hex_colour, alpha=1.0, unlit=False):
+def flat_material(name, hex_colour, alpha=1.0, unlit=False, gloss=False):
     """A flat matte material in one colour. Roughness 1 and zero specular: the set is painted and matte,
     with no highlight anywhere (tile-art-brief.md, "The style").
 
@@ -2908,6 +3688,16 @@ def flat_material(name, hex_colour, alpha=1.0, unlit=False):
     for slot in ("Specular IOR Level", "Specular"):
         if slot in bsdf.inputs:
             bsdf.inputs[slot].default_value = 0.0
+    if gloss:
+        # A HIT, not a mirror. The rig's sun is 45 degrees across, so the lobe is broad however low the
+        # roughness goes and there is nothing in the world for a metal to reflect but flat grey — turned
+        # fully metallic the part renders darker than its own hex, which is the exit shaft's lesson one
+        # shader over. Dielectric, rough enough to keep the hit soft, specular up: what lands is a pale
+        # smear on whichever faces are turned toward the lamp, which is the whole point of the flag.
+        bsdf.inputs["Roughness"].default_value = 0.22
+        for slot in ("Specular IOR Level", "Specular"):
+            if slot in bsdf.inputs:
+                bsdf.inputs[slot].default_value = 1.0
     if unlit:
         # Emission on the same BSDF rather than a separate shader, so the alpha branch below still
         # applies to it — an emissive part that cannot be made transparent is no use to a beam.
@@ -2967,6 +3757,7 @@ def paint(obj, hex_colour):
             arg(f"colour-{part}", default),
             float(arg(f"alpha-{part}", "1")),
             part in unlit_parts(),
+            part in gloss_parts(),
         )
 
 
@@ -3549,6 +4340,11 @@ def main():
         if shadow:
             shadow.data.transform(Matrix(((1, 0, 0, 0), (0, 1, 0, 0), (0, k, 1, 0), (0, 0, 0, 1))))
         shear(obj, k, 0)
+    # THE DRAWN SHAPE, READ OFF THE SHEARED MESH, and it is the only honest source for what the tile will
+    # be. `shear` transforms the mesh data, so after it every vertex's z IS its drawn height — the box
+    # round those vertices is the picture. See the print at the foot of this function for the number
+    # this replaces and for what that number cost.
+    drawn_box = local_bounds(obj)
     # After the shear the drawn height is the object's height plus k times its depth: that is the whole
     # projection in one line, and it is why a deep object comes out taller on the page than a shallow one.
     # --margin is air around the object, and it matters on the WALL slot in a way it does not elsewhere:
@@ -3685,12 +4481,32 @@ def main():
     # the object and scales it into a 56x84 slot, so drawn height is 56 * (height / width) capped at 84 —
     # which is how a 20cm shabti arrived 84 units tall, as tall as the explorer, and nobody noticed until
     # after it had been painted. --scale divides both.
-    drawn_h = 1.0 + k * d_units
-    aspect = drawn_h / w_units if w_units else 0
+    # MEASURED OFF THE SHEARED MESH, NOT ADDED UP FROM THE EXTENTS, and the difference is not small.
+    #
+    # This line used to read `drawn_h = 1.0 + k * d_units` — the object's whole height plus k times its
+    # whole depth — which is the drawn height only if the TALLEST part is also the FURTHEST BACK. For a
+    # pit with a post standing in front of it that is false and the error is enormous: it printed 55x84
+    # for a `dropSouth` that really lands 56x61, and 53x84 for a `leverLeft` that lands 56x76. Sprites
+    # were widened, mouths were re-proportioned and two rounds of design were argued to get under a cap
+    # nothing was ever near.
+    #
+    # The check that settles it, for anyone who doubts this one too: render the ladder `pit`, trim the
+    # render, and divide. It measures 426x282, aspect 0.66, predicting 56x37 — and the tile that was
+    # actually imported from it, `src/assets/tiles/expert/pit.png`, has an opaque box of 112x72, which
+    # is 56x36. The landed tile matches the sheared render's own bounding box and matched the old
+    # formula not at all.
+    #
+    # `import-tile` seats a prop by building a frame at the slot's 2:3 aspect that CONTAINS the trimmed
+    # object (`seatOnFloorLine`), so an object drawn taller than 1.5 is height-limited and lands
+    # narrower than a cell, and one drawn shorter fills the width and leaves the rest of the band empty.
+    # That is what these two numbers are predicting.
+    (dx0, dx1), _, (dz0, dz1) = drawn_box
+    drawn_w, drawn_h = dx1 - dx0, dz1 - dz0
+    aspect = drawn_h / drawn_w if drawn_w else 0
     cell_h = min(84, round(56 * aspect))
     cell_w = round(cell_h / aspect) if aspect else 0
     print(f"{out} — {width}x{height}, {engine}, shear {k}, spin {spin}deg, colour {colour}")
-    print(f"  object {w_units:.2f} wide {d_units:.2f} deep, aspect {aspect:.2f}")
+    print(f"  object {w_units:.2f} wide {d_units:.2f} deep; DRAWN {drawn_w:.2f} x {drawn_h:.2f}, aspect {aspect:.2f}")
     print(f"  lands at {cell_w}x{cell_h} map units at --scale=1   (a cell is 56, the explorer is 40x70)")
 
 

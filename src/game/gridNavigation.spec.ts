@@ -1,6 +1,16 @@
 import { describe, expect, it } from "vitest"
-import { completeCell, findPath, getOwnedKeys, revealAll } from "./gridNavigation"
-import type { Direction, FloorGrid } from "./siteTypes"
+import {
+  completeCell,
+  findPath,
+  getOwnedKeys,
+  isObstacleCell,
+  oneWayRuns,
+  renderAscii,
+  revealAll,
+  walkableFrom,
+} from "./gridNavigation"
+import { assembleFloor, ONE_WAY_RUN_CELLS } from "./siteAssembler"
+import type { Direction, FloorConfig, FloorGrid, GridCell } from "./siteTypes"
 
 // Simple 1×3 grid: [entrance room -e- corridor -e- exit room]
 const makeLinearGrid = (): FloorGrid => ({
@@ -18,6 +28,23 @@ const makeLinearGrid = (): FloorGrid => ({
     ],
   ],
 })
+
+const MOVE: Record<Direction, readonly [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+const stateOf = (cell: GridCell): string => (cell.type === "empty" ? "empty" : cell.state)
+
+// A floor that authors one drop between two side sections, which the carve lays as launch, obstacle,
+// landing between two nodes.
+const dropFloor: FloorConfig = {
+  pathPuzzles: 2,
+  difficulty: "junior",
+  end: "treasure",
+  exitOrStaircase: "exit",
+  sideSections: [
+    { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "upper" },
+    { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "lower" },
+  ],
+  oneWays: [{ from: "upper", to: "lower" }],
+}
 
 describe(getOwnedKeys, () => {
   it("returns empty set when no completed tombKey rooms", () => {
@@ -175,6 +202,264 @@ describe(completeCell, () => {
     expect(exit.type).toBe("room")
     if (exit.type === "room") expect(exit.state).toBe("reachable")
   })
+
+  it("brings the zipline out of the fog from the launch's node, and nothing past it, on every carved floor", () => {
+    let checked = 0
+    for (let seed = 0; seed < 30; seed++) {
+      const result = assembleFloor("spike:1", dropFloor, seed, undefined, {
+        floorRef: { journeyId: "spike", levelIndex: 0, floorIndex: 0 },
+      })
+      if (!result.success) continue
+      for (const run of oneWayRuns(result.grid)) {
+        checked++
+        const [fr, fc] = [run.launch[0] - MOVE[run.dir][0], run.launch[1] - MOVE[run.dir][1]]
+        const after = completeCell(result.grid, fr, fc)
+        expect(run.cells.map(([r, c]) => stateOf(after.cells[r][c]))).toEqual(Array(ONE_WAY_RUN_CELLS).fill("visible"))
+        expect(stateOf(after.cells[run.landing[0]][run.landing[1]])).toBe("fogged")
+      }
+    }
+    expect(checked).toBeGreaterThan(0)
+  })
+
+  it("brings the zipline out of the fog from the landing's node, and nothing past it, on every carved floor", () => {
+    let checked = 0
+    for (let seed = 0; seed < 30; seed++) {
+      const result = assembleFloor("spike:1", dropFloor, seed, undefined, {
+        floorRef: { journeyId: "spike", levelIndex: 0, floorIndex: 0 },
+      })
+      if (!result.success) continue
+      for (const run of oneWayRuns(result.grid)) {
+        checked++
+        const [tr, tc] = [run.landing[0] + MOVE[run.dir][0], run.landing[1] + MOVE[run.dir][1]]
+        const after = completeCell(result.grid, tr, tc)
+        expect(run.cells.map(([r, c]) => stateOf(after.cells[r][c]))).toEqual(Array(ONE_WAY_RUN_CELLS).fill("visible"))
+        expect(stateOf(after.cells[run.launch[0]][run.launch[1]])).toBe("fogged")
+      }
+    }
+    expect(checked).toBeGreaterThan(0)
+  })
+})
+
+// A drop on one row, east-going, as the carve lays it: from-node, launch, ONE_WAY_RUN_CELLS obstacle
+// cells, landing, to-node. Every cell starts as `state`, so what a walk or a reveal does to it is the
+// only thing under test.
+const LAUNCH = 1
+const OBSTACLE = Array.from({ length: ONE_WAY_RUN_CELLS }, (_, k) => k + 2)
+const LANDING = ONE_WAY_RUN_CELLS + 2
+const TO_NODE = ONE_WAY_RUN_CELLS + 3
+const runGrid = (state: "visible" | "fogged"): FloorGrid => ({
+  siteId: "test",
+  rows: 1,
+  cols: ONE_WAY_RUN_CELLS + 4,
+  entrancePos: [0, 0],
+  exitPos: [0, TO_NODE],
+  staircases: {},
+  cells: [
+    [
+      { type: "room", roomType: "encounter", dirs: new Set<Direction>(["e"]), state },
+      { type: "corridor", dirs: new Set<Direction>(["w"]), state },
+      ...OBSTACLE.map((): GridCell => ({
+        type: "corridor",
+        dirs: new Set<Direction>(),
+        state,
+        obstacle: { dir: "e", kind: "zipline" },
+      })),
+      { type: "corridor", dirs: new Set<Direction>(["e"]), state },
+      { type: "room", roomType: "encounter", dirs: new Set<Direction>(["w"]), state },
+    ],
+  ],
+})
+const keysOf = (...cols: number[]) => new Set(cols.map(c => `0,${c}`))
+
+describe(oneWayRuns, () => {
+  it("reads back as one drop: its launch, its obstacle cells in order from the launch, its landing", () => {
+    expect(oneWayRuns(runGrid("visible"))).toEqual([
+      { launch: [0, LAUNCH], cells: OBSTACLE.map(c => [0, c]), landing: [0, LANDING], dir: "e", kind: "zipline" },
+    ])
+  })
+
+  it("reads each of two drops back whole, running opposite ways on one floor", () => {
+    const east = runGrid("visible").cells[0]
+    const mirror = (cell: GridCell): GridCell => {
+      if (cell.type === "empty") return cell
+      const dirs = new Set<Direction>([...cell.dirs].map(d => (d === "e" ? "w" : "e")))
+      return cell.type === "corridor" && cell.obstacle
+        ? { ...cell, dirs, obstacle: { dir: "w", kind: "zipline" } }
+        : { ...cell, dirs }
+    }
+    const west = [...east].reverse().map(mirror)
+    // Column `c` of the east row is column `last - c` of its mirror.
+    const last = TO_NODE
+    const both: FloorGrid = {
+      ...runGrid("visible"),
+      rows: 3,
+      cells: [east, [...east].map(() => ({ type: "empty" }) as GridCell), west],
+    }
+    expect(oneWayRuns(both)).toEqual([
+      { launch: [0, LAUNCH], cells: OBSTACLE.map(c => [0, c]), landing: [0, LANDING], dir: "e", kind: "zipline" },
+      {
+        launch: [2, last - LAUNCH],
+        cells: OBSTACLE.map(col => [2, last - col]),
+        landing: [2, last - LANDING],
+        dir: "w",
+        kind: "zipline",
+      },
+    ])
+  })
+
+  it("finds no drop in a floor that carries no marker, however a corridor is shaped", () => {
+    const unmarked: FloorGrid = {
+      ...runGrid("visible"),
+      cells: [
+        runGrid("visible").cells[0].map((cell): GridCell =>
+          cell.type === "corridor" ? { ...cell, obstacle: undefined } : cell
+        ),
+      ],
+    }
+    expect(oneWayRuns(unmarked)).toEqual([])
+  })
+})
+
+describe(isObstacleCell, () => {
+  it("is true for exactly the obstacle's cells, and false for the launch, the landing and both nodes", () => {
+    const grid = runGrid("visible")
+    expect(grid.cells[0].map(cell => isObstacleCell(cell))).toEqual(grid.cells[0].map((_, c) => OBSTACLE.includes(c)))
+  })
+
+  it("is false for an unmarked corridor that names no direction, and for no cell at all", () => {
+    expect(isObstacleCell({ type: "corridor", dirs: new Set(), state: "visible" })).toBe(false)
+    expect(isObstacleCell(undefined)).toBe(false)
+  })
+})
+
+describe(walkableFrom, () => {
+  const grid = runGrid("visible")
+
+  it("from the launch, walks to its own node and nothing across the obstacle", () => {
+    expect(walkableFrom(grid, [0, LAUNCH])).toEqual(keysOf(0, LAUNCH))
+  })
+
+  it("from the landing, walks to its own node and nothing toward the obstacle", () => {
+    expect(walkableFrom(grid, [0, LANDING])).toEqual(keysOf(LANDING, TO_NODE))
+  })
+
+  it.each(OBSTACLE)("from obstacle cell %i, walks nowhere but the cell itself", col => {
+    expect(walkableFrom(grid, [0, col])).toEqual(keysOf(col))
+  })
+
+  it("from either node, walks its own side's ground and none of the obstacle", () => {
+    expect(walkableFrom(grid, [0, 0])).toEqual(keysOf(0, LAUNCH))
+    expect(walkableFrom(grid, [0, TO_NODE])).toEqual(keysOf(LANDING, TO_NODE))
+  })
+})
+
+describe("walkableFrom and findPath share one step rule", () => {
+  it("walkableFrom is exactly the cells findPath reaches, from several positions on carved floors", () => {
+    let checked = 0
+    for (let seed = 0; seed < 10; seed++) {
+      const result = assembleFloor("spike:1", dropFloor, seed, undefined, {
+        floorRef: { journeyId: "spike", levelIndex: 0, floorIndex: 0 },
+      })
+      if (!result.success) continue
+      const [er, ec] = result.grid.entrancePos
+      // Part-explored: some ground in the dark, so the fog is part of what the two must agree on.
+      const explored = completeCell(result.grid, er, ec)
+      const [run] = oneWayRuns(explored)
+      for (const grid of [explored, completeCell(explored, run.launch[0], run.launch[1]), revealAll(result.grid)]) {
+        const starts: [number, number][] = [[er, ec], run.launch, run.landing, run.cells[0]]
+        for (const from of starts) {
+          const reached = new Set<string>()
+          for (let r = 0; r < grid.rows; r++)
+            for (let c = 0; c < grid.cols; c++) if (findPath(grid, from, [r, c]).length > 0) reached.add(`${r},${c}`)
+          expect(walkableFrom(grid, from)).toEqual(reached)
+          checked++
+        }
+      }
+    }
+    expect(checked).toBeGreaterThan(0)
+  })
+})
+
+describe("a drop is a span of cells", () => {
+  it("finds no route from the launch to the landing, nor from the landing to the launch", () => {
+    const grid = runGrid("visible")
+    expect(findPath(grid, [0, LAUNCH], [0, LANDING])).toEqual([])
+    expect(findPath(grid, [0, LANDING], [0, LAUNCH])).toEqual([])
+  })
+
+  it("finds the one step from each end to its own node, and none onto any obstacle cell", () => {
+    const grid = runGrid("visible")
+    expect(findPath(grid, [0, LAUNCH], [0, 0])).toEqual([
+      [0, LAUNCH],
+      [0, 0],
+    ])
+    expect(findPath(grid, [0, LANDING], [0, TO_NODE])).toEqual([
+      [0, LANDING],
+      [0, TO_NODE],
+    ])
+    for (const col of OBSTACLE) {
+      expect(findPath(grid, [0, LAUNCH], [0, col])).toEqual([])
+      expect(findPath(grid, [0, LANDING], [0, col])).toEqual([])
+    }
+  })
+
+  it("brings the whole obstacle out of the fog from the landing, and nothing behind the launch", () => {
+    const after = completeCell(runGrid("fogged"), 0, LANDING)
+    expect(after.cells[0].map(stateOf)).toEqual([
+      "fogged",
+      "fogged",
+      ...Array(ONE_WAY_RUN_CELLS).fill("visible"),
+      "completed",
+      "reachable",
+    ])
+  })
+
+  it("brings the whole obstacle out of the fog from the launch, and nothing past the landing", () => {
+    const after = completeCell(runGrid("fogged"), 0, LAUNCH)
+    expect(after.cells[0].map(stateOf)).toEqual([
+      "reachable",
+      "completed",
+      ...Array(ONE_WAY_RUN_CELLS).fill("visible"),
+      "fogged",
+      "fogged",
+    ])
+  })
+
+  it("brings the obstacle out of the fog from the node beside the launch, with the landing still dark", () => {
+    const after = completeCell(runGrid("fogged"), 0, 0)
+    expect(after.cells[0].map(stateOf)).toEqual([
+      "completed",
+      "reachable",
+      ...Array(ONE_WAY_RUN_CELLS).fill("visible"),
+      "fogged",
+      "fogged",
+    ])
+  })
+
+  it("takes an unmarked dead end as long as the obstacle for no drop at all, its cells left in the fog", () => {
+    const stub: GridCell[] = OBSTACLE.map(() => ({
+      type: "corridor",
+      dirs: new Set<Direction>(["w"]),
+      state: "fogged",
+    }))
+    const grid: FloorGrid = {
+      ...runGrid("fogged"),
+      cells: [
+        [
+          runGrid("fogged").cells[0][0],
+          runGrid("fogged").cells[0][1],
+          ...stub,
+          ...runGrid("fogged").cells[0].slice(-2),
+        ],
+      ],
+    }
+    expect(oneWayRuns(grid)).toEqual([])
+    expect(
+      completeCell(grid, 0, LAUNCH)
+        .cells[0].slice(2, 2 + ONE_WAY_RUN_CELLS)
+        .map(stateOf)
+    ).toEqual(Array(ONE_WAY_RUN_CELLS).fill("fogged"))
+  })
 })
 
 describe(findPath, () => {
@@ -293,5 +578,26 @@ describe(revealAll, () => {
         }
       }
     }
+  })
+})
+
+const corridor = (dirs: string[]): GridCell =>
+  ({ type: "corridor", dirs: new Set(dirs), state: "visible" }) as unknown as GridCell
+
+const gridOf = (cells: GridCell[][]): FloorGrid =>
+  ({ rows: cells.length, cols: cells[0].length, cells, entrancePos: [0, 0], exitPos: [0, 0] }) as unknown as FloorGrid
+
+describe("renderAscii", () => {
+  it("draws a cell you may only leave one way as the arrow it is", () => {
+    const drawn = renderAscii(gridOf([[corridor(["s"]), corridor(["n"]), corridor(["e"]), corridor(["w"])]]))
+    expect(drawn.trim()).toBe("↓↑→←")
+  })
+
+  it("draws an arrow only for a cell with exactly one way out", () => {
+    // A corridor with no ways out is the only other cell that reaches the arrow's guard: every two-
+    // and three-direction set is already claimed by the line and corner branches above it.
+    const drawn = renderAscii(gridOf([[corridor([]), corridor(["e", "w"])]]))
+    expect(drawn.trim()).toBe("·─")
+    expect(drawn).not.toContain("←")
   })
 })

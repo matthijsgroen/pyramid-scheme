@@ -51,6 +51,7 @@ import {
   seedTarget,
   seedFloor,
   SEED_CAP,
+  demandLabel,
   type ConfigDemand,
 } from "../src/game/seeds/enumerateConfigs"
 import { ALL_FAMILY_META } from "../src/mods/allFamilyMeta"
@@ -81,7 +82,7 @@ const rebuild = argv.includes("--rebuild")
 const allDemands = enumerateConfigs(worldLevelSites, ALL_FAMILY_META)
 const demands = allDemands.filter(demand => !only || only.includes(demand.familyId))
 const targetFor = (demand: ConfigDemand) => seedTarget(demand, CAP)
-const describe = (demand: ConfigDemand) => `${demand.familyId}/${demand.difficulty} (${demand.rooms} rooms)`
+const describe = (demand: ConfigDemand) => `${demandLabel(demand)} (${demand.rooms} rooms)`
 
 const summarise = (grades: Grade[]) => {
   if (!grades.length) return ""
@@ -131,6 +132,7 @@ const runPool = async (buckets: Bucket[]) => {
         hash: bucket.demand.hash,
         familyId: bucket.demand.familyId,
         difficulty: bucket.demand.difficulty,
+        ctx: bucket.demand.ctx,
         from: bucket.resumeFrom + window * CHUNK,
         count: CHUNK,
       })
@@ -363,7 +365,7 @@ if (command === "generate") {
     if (!listedSeeds?.length) continue
     const meta = metaFor.get(demand.familyId)
     if (!meta?.seedable) continue
-    const options = meta.seedable.resolveOptions({ difficulty: demand.difficulty })
+    const options = meta.seedable.resolveOptions(demand.ctx)
     const builds = (seed: number) => {
       try {
         return meta.seedable!.grade(meta.seedable!.generate(seed, options, 1), options) !== null

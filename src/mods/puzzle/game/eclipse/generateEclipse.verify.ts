@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { difficulties } from "@/data/difficultyLevels"
-import { eclipseSolved, lines, type Mark } from "./eclipse"
+import { eclipseSolved, lines } from "./eclipse"
 import { ECLIPSE_CONFIG } from "./eclipseConfig"
 import { eclipseGivenCount, generateEclipse, techniquesUpTo, type EclipseOptions } from "./generateEclipse"
 import { solveEclipseByTechniques } from "./techniques"
@@ -60,12 +60,15 @@ describe("eclipse generation", () => {
     }
   })
 
-  it("draws the same board for the same seed", () => {
-    const first = generateEclipse(9, ECLIPSE_CONFIG.master)
-    const second = generateEclipse(9, ECLIPSE_CONFIG.master)
-    expect(second.variant).toBe(first.variant)
-    expect(second.given as Mark[]).toEqual(first.given as Mark[])
-    expect(second.links).toEqual(first.links)
+  // A counted slice of the tier's search, rather than however many draws a seed needs to meet master's
+  // quota. Two is every shape the loop has — a draw, and a second draw ranked against it as the near-miss
+  // fallback — and a seed that replays across two attempts replays across sixty, being one RNG stream.
+  const REPLAYED_ATTEMPTS = 2
+
+  it("draws the same board, solution and all, for the same seed", () => {
+    const first = generateEclipse(9, ECLIPSE_CONFIG.master, REPLAYED_ATTEMPTS)
+    const second = generateEclipse(9, ECLIPSE_CONFIG.master, REPLAYED_ATTEMPTS)
+    expect(second).toStrictEqual(first)
   })
 })
 

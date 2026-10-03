@@ -14,12 +14,17 @@ const MOVES: Record<string, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 
 // reachable frontier but not satisfied by `ownedKeys` — the worklist solver's own "discovered
 // lock" signal (docs/game-design/keys-and-locks-solver.md, "Structure, then loot": a wish
 // was always there in the structure, this is just the walk noticing it for the first time).
+// `authoredKeysHeld` switches the walk into the permissive bracket: a door whose key is minted
+// by a room the player solves (RoomCell.keyIsAuthored) stands open, because the question then
+// asked is whether what lies beyond is ever obtainable, not whether it is open right now. Off by
+// default, so the walk gates on held keys alone.
 export const reachableFrom = (
   grid: FloorGrid,
   startPos: Pos,
   ownedKeys: ReadonlySet<string> = new Set(),
   blockedPos?: Pos,
-  blockedRequirements?: Set<string>
+  blockedRequirements?: Set<string>,
+  authoredKeysHeld = false
 ): Set<string> => {
   const [sr, sc] = startPos
   const startKey = posKey(sr, sc)
@@ -48,12 +53,24 @@ export const reachableFrom = (
       // the signal — any encounter can carry a key requirement (a gate's only job; a
       // tableau's several, one per hieroglyph it needs complete), not just rooms tagged
       // "gate".
-      if (ncell.type === "room" && ncell.requiredKeyId && !ownedKeys.has(ncell.requiredKeyId)) {
-        blockedRequirements?.add(ncell.requiredKeyId)
+      //
+      // In the permissive bracket an authored door is walked through: solving the room that mints
+      // its key is how the player gets past it, so what lies beyond is obtainable.
+      const authoredDoorOpen = authoredKeysHeld && ncell.type === "room" && !!ncell.keyIsAuthored
+
+      if (!authoredDoorOpen && ncell.type === "room" && ncell.requiredKeyId && !ownedKeys.has(ncell.requiredKeyId)) {
+        // An authored key (RoomCell.keyIsAuthored) is minted by a room a player solves, never
+        // placed by the world-gen loot solver — reporting it as a discovered lock would ask
+        // placeFragments' winnability guard to prove a fact only gameplay resolves. The door
+        // still blocks this walk (a real, unopened gate); it just isn't this solver's problem.
+        if (!ncell.keyIsAuthored) blockedRequirements?.add(ncell.requiredKeyId)
         continue
       }
-      if (ncell.type === "room" && ncell.requiredKeyIds?.some(id => !ownedKeys.has(id))) {
-        for (const id of ncell.requiredKeyIds) if (!ownedKeys.has(id)) blockedRequirements?.add(id)
+      if (!authoredDoorOpen && ncell.type === "room" && ncell.requiredKeyIds?.some(id => !ownedKeys.has(id))) {
+        // Authored keys are none of this solver's business here either — the single-key branch above
+        // says why. No family asks for several of them today; the day one does, it reads the same.
+        if (!ncell.keyIsAuthored)
+          for (const id of ncell.requiredKeyIds) if (!ownedKeys.has(id)) blockedRequirements?.add(id)
         continue
       }
 
@@ -70,17 +87,20 @@ export const reachableFrom = (
 // ones (a room's own tombKey reward opening its own further gate — pyramid-interior-
 // design.md §8, "the treasure IS the key"). Exported for src/worldGen/reachability.ts's
 // coarse graph, which needs the same fixed point across a whole multi-floor site.
+// `authoredKeysHeld` passes straight to `reachableFrom` — see there for what the permissive
+// bracket opens.
 export const collectReachableKeys = (
   grid: FloorGrid,
   startPos: Pos,
-  initialKeys: ReadonlySet<string> = new Set()
+  initialKeys: ReadonlySet<string> = new Set(),
+  authoredKeysHeld = false
 ): { reachable: Set<string>; keys: Set<string>; blockedRequirements: Set<string> } => {
   const collectedKeys = new Set(initialKeys)
   // Fresh set per pass — only the FINAL (post-fixed-point) pass's blocked requirements are
   // genuine discovered locks; an earlier pass's block may have been resolved by a tombKey
   // this same floor's fixed point went on to collect.
   let blockedRequirements = new Set<string>()
-  let reachable = reachableFrom(grid, startPos, collectedKeys, undefined, blockedRequirements)
+  let reachable = reachableFrom(grid, startPos, collectedKeys, undefined, blockedRequirements, authoredKeysHeld)
   let changed = true
   while (changed) {
     changed = false
@@ -100,10 +120,25 @@ export const collectReachableKeys = (
     }
     if (changed) {
       blockedRequirements = new Set<string>()
-      reachable = reachableFrom(grid, startPos, collectedKeys, undefined, blockedRequirements)
+      reachable = reachableFrom(grid, startPos, collectedKeys, undefined, blockedRequirements, authoredKeysHeld)
     }
   }
   return { reachable, keys: collectedKeys, blockedRequirements }
+}
+
+// The room one of a fork's ways out leads to. A fork names its exits by compass point, and what stands
+// down one is the next ROOM along it, with the connector cells between them walked straight through —
+// nodes sit two cells apart on an assembled floor, and directly adjacent on a hand-built one.
+export const nodeBeyond = (grid: FloorGrid, from: Pos, dir: string): Pos | undefined => {
+  const [dr, dc] = MOVES[dir]
+  let [r, c] = [from[0] + dr, from[1] + dc]
+  while (r >= 0 && r < grid.rows && c >= 0 && c < grid.cols) {
+    const cell = grid.cells[r][c]
+    if (cell.type === "room") return [r, c]
+    if (cell.type !== "corridor") return undefined
+    ;[r, c] = [r + dr, c + dc]
+  }
+  return undefined
 }
 
 export const validateSite = (grid: FloorGrid): ValidationResult => {
@@ -111,13 +146,65 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
 
   const { keys: collectedKeys } = collectReachableKeys(grid, grid.entrancePos)
 
-  // All floor-key gates must have a collectible key
+  // WHO CLAIMS EACH GATED BOUNDARY. A gate sits in the boundary between two nodes, and the room it
+  // occupies is where the floor writes it down: its own `requiredKeyId`, plus the `gateKeyId` any fork
+  // closed toward it. A room's `requiredKeyIds` stays out — several hieroglyphs are one family asking
+  // for its own precondition, not a second door standing in the same doorway.
+  const openersAt = new Map<string, Set<string>>()
+  const claim = (r: number, c: number, keyId: string) => {
+    const at = openersAt.get(posKey(r, c)) ?? new Set<string>()
+    at.add(keyId)
+    openersAt.set(posKey(r, c), at)
+  }
+  const switchGates: { switchPos: Pos; gatePos: Pos }[] = []
+  const allKeyIds = new Set<string>()
+
+  for (let r = 0; r < grid.rows; r++) {
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type !== "room") continue
+      if (cell.requiredKeyId) {
+        claim(r, c, cell.requiredKeyId)
+        allKeyIds.add(cell.requiredKeyId)
+      }
+      for (const id of cell.requiredKeyIds ?? []) allKeyIds.add(id)
+      for (const exit of cell.exits ?? []) {
+        if (exit.gateKeyId === undefined) continue
+        allKeyIds.add(exit.gateKeyId)
+        const gatePos = nodeBeyond(grid, [r, c], exit.dir)
+        if (!gatePos) continue
+        claim(gatePos[0], gatePos[1], exit.gateKeyId)
+        switchGates.push({ switchPos: [r, c], gatePos })
+      }
+    }
+  }
+
+  for (const [key, openers] of openersAt) {
+    if (openers.size < 2) continue
+    const [r, c] = key.split(",").map(Number)
+    reasons.push({ type: "boundaryGatedTwice", pos: [r, c], keyIds: [...openers].sort() })
+  }
+
+  // THE OPENER COMES BEFORE THE BLOCKER. A switch's gates may be walked up to only through the switch,
+  // so taking its cell out of the walk must leave every one of them unreached. Every key is granted for
+  // this walk: what is asked is whether the geometry routes round the switch, not whether some key
+  // happens to be short.
+  for (const { switchPos, gatePos } of switchGates) {
+    // Starting in the switch is standing in it, so a walk out of the entrance is already through it.
+    if (switchPos[0] === grid.entrancePos[0] && switchPos[1] === grid.entrancePos[1]) continue
+    const withoutSwitch = reachableFrom(grid, grid.entrancePos, allKeyIds, switchPos)
+    if (withoutSwitch.has(posKey(gatePos[0], gatePos[1])))
+      reasons.push({ type: "switchGateNotBehindSwitch", switchPos, gatePos })
+  }
+
+  // All floor-key gates must have a collectible key — except an authored one, whose key comes
+  // from elsewhere (RoomCell.keyIsAuthored) rather than a chest this floor grows.
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
       if (cell.type !== "room") continue
 
-      if (cell.requiredKeyId && cell.gateVariant === "floor-key") {
+      if (cell.requiredKeyId && cell.gateVariant === "floor-key" && !cell.keyIsAuthored) {
         if (!collectedKeys.has(cell.requiredKeyId)) {
           const gatePos: Pos = [r, c]
           let keyPos: Pos = gatePos
@@ -191,14 +278,10 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
 
   // mosaicReachable: mosaic must be reachable when all gate keys are hypothetically owned
   let mosaicPos: Pos | null = null
-  const allKeyIds = new Set<string>()
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
-      if (cell.type !== "room") continue
-      if (cell.reward?.type === "mosaicPiece") mosaicPos = [r, c]
-      if (cell.requiredKeyId) allKeyIds.add(cell.requiredKeyId)
-      for (const id of cell.requiredKeyIds ?? []) allKeyIds.add(id)
+      if (cell.type === "room" && cell.reward?.type === "mosaicPiece") mosaicPos = [r, c]
     }
   }
 

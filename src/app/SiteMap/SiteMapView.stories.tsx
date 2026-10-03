@@ -2,8 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { useState } from "react"
 import { assembleFloor } from "../../game/siteAssembler"
 import { generatedWorldConfigs } from "../../data/generatedWorld"
-import { completeCell, revealAll } from "../../game/gridNavigation"
-import type { CellState, Direction, FloorGrid, GridCell } from "../../game/siteTypes"
+import { completeCell, oneWayRuns, revealAll } from "../../game/gridNavigation"
+import type { CellState, Direction, FloorConfig, FloorGrid, GridCell } from "../../game/siteTypes"
+import { floorWithHandle } from "../../game/testSupport/handleFixtures"
 import { SiteMapView } from "./SiteMapView"
 import { buildRoomClaims, floorTier } from "./roomClaims"
 import { beamShafts, litPlaceCells } from "./lighting"
@@ -451,6 +452,43 @@ export const TreasureTakenAndNot: Story = {
   },
 }
 
+// ─── One-way drop ──────────────────────────────────────────────────────────────
+// A floor authoring `oneWays` carves a launch, an obstacle and a landing between two nodes. The player
+// stands at the launch or the landing; the obstacle between them is the zipline, lit from either foot.
+const oneWayDropConfig: FloorConfig = {
+  pathPuzzles: 2,
+  difficulty: "junior",
+  end: "treasure",
+  exitOrStaircase: "exit",
+  sideSections: [
+    { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "upper" },
+    { pathPuzzles: 1, difficulty: "junior", end: "treasure", label: "lower" },
+  ],
+  oneWays: [{ from: "upper", to: "lower" }],
+}
+
+const oneWayDropGrid = (): FloorGrid => {
+  for (let seed = 0; seed < 60; seed++) {
+    const result = assembleFloor("story-oneway", oneWayDropConfig, seed, undefined, {
+      floorRef: { journeyId: "story-oneway", levelIndex: 0, floorIndex: 0 },
+    })
+    if (result.success) return result.grid
+  }
+  throw new Error("no seed carves the authored drop")
+}
+
+const [carvedDrop] = oneWayRuns(oneWayDropGrid())
+
+/** Standing at the landing of a junior floor: the zipline's cells are lit and the launch beyond it is not.
+ * The floor is junior and the drop art exists only at expert, so no zipline is drawn here; `Topology/Zipline`
+ * shows the painted tile. */
+export const OneWayDropLanding: Story = {
+  args: {
+    grid: completeCell(oneWayDropGrid(), ...carvedDrop.landing),
+    explorerPos: carvedDrop.landing,
+  },
+}
+
 // Both hands of the descending side flight, side by side: the pool of light has to land under the cresset
 // the tile actually carries, and the tile's flame swaps with the mirror. Reported from play — a stair
 // entered from the east drew its torch on the right and lit the floor on the left.
@@ -477,5 +515,23 @@ export const SideStairsBothHands: Story = {
         staircases: {},
       }
     })(),
+  },
+}
+
+/**
+ * A LEVER AND THE TWO DOORS IT DRIVES, every cell revealed: the pairing this map has to make readable is
+ * the mark, so what this story is for is seeing that the lever's badge and both gates' badges are the
+ * same glyph on the same ground — and that the glyph is a GLYPH and not the empty box a code point the
+ * shipped font subset does not carry draws as.
+ *
+ * Two handles, because the case that matters is telling one lever's doors from another's.
+ */
+export const HandlesAndTheirDoors: Story = {
+  args: {
+    grid: floorWithHandle(
+      { in: "lever", left: ["vault"], right: ["pocket"] },
+      { in: "lever2", left: ["vault2"], right: [] }
+    ).grid,
+    revealAllCells: true,
   },
 }

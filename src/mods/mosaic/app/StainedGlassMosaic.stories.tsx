@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { useState } from "react"
-import { StainedGlassMosaic } from "@/ui/atoms/StainedGlassMosaic"
+import { StainedGlassMosaic } from "./StainedGlassMosaic"
 import { StoneFrame } from "@/ui/atoms/StoneFrame"
-import { MOSAIC_PIECES } from "@/ui/atoms/mosaicPieces.generated"
+import { MOSAIC_PIECES } from "../game/mosaicPieces.generated"
 import { LEVEL_STEPS } from "@/mods/mosaic/game/mosaicRevealOrder"
 
 // Mod-side though the component is core's: it names mosaic, and a story ships in build-storybook.

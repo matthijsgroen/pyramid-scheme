@@ -79,6 +79,7 @@ export const PuzzleLab: FC = () => {
   const ctx = useMemo(
     () => ({
       journeyId: "puzzle-lab",
+      levelNr: 1,
       edgeId: `lab:${seed}`,
       address: `lab#${seed}@rencounter`,
       sectionHash: "lab",

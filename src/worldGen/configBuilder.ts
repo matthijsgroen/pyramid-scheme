@@ -1,8 +1,9 @@
 import type { Difficulty, SiteConfig, Tier, TreasureReward } from "./types"
-import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
+import { DEV_JOURNEYS, PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
+import type { JourneyDef } from "./types"
 import { resolvePyramidConstraintWithProvenance } from "./constraintResolver"
 import type { Provenance } from "./constraintResolver"
-import { worldSpec } from "./worldSpec"
+import { devSpec, worldSpec } from "./worldSpec"
 import type {
   PyramidConstraint,
   FloorConstraint,
@@ -15,6 +16,7 @@ import { wardPath, wardChest } from "./dsl"
 import { specToReward } from "./rewards"
 import { buildSite } from "./buildSite"
 import { assignEncounters, type EncounterAllocator, type FamilyCapacityFor, type IsTrapFamily } from "./placeEncounters"
+import { dropUnownedAuthoring } from "./modOwnedAuthoring"
 import { dressByRole } from "./dressingRoles"
 import { placeShopStock, type ShopStockAssignment } from "./shopStock"
 import { placeFragments } from "./placeFragments"
@@ -22,9 +24,10 @@ import type { CurrencyDistribution, CappedCurrency } from "./placeFragments"
 import type { ReachabilitySupport } from "./reachability"
 import type { Distribution } from "./slotAllocator"
 import type { FamilyPriorityFor } from "./slots"
-import type { ResolveKeyRequirements } from "../game/siteAssembler"
+import type { ResolveEncounter, ResolveKeyRequirements } from "../game/siteAssembler"
 import { validateRewardCounts, type WorldValidator } from "./validate"
-import { PYRAMID_CAPABILITIES } from "./capabilities"
+import { capabilitiesFor } from "./capabilities"
+import { clearUncollectedSlots } from "./slots"
 import { TOMB_ROOMS_PER_FLOOR } from "./data"
 
 // ── Ward tier progression ─────────────────────────────────────────────────────
@@ -63,11 +66,18 @@ export type PyramidPlan = {
   provenance: Provenance
 }
 
-const buildPlan = (): PyramidPlan[] =>
-  PYRAMID_JOURNEYS.flatMap(j =>
+// The playtest journey is a BUILD-TIME opt-in: `INCLUDE_DEV=1 yarn generate-world` grows it, a plain
+// run does not, and the committed world is the plain run's. Read here rather than in data.ts because
+// this module is the generator's alone — data.ts is in the app bundle, where `process.env` is not a
+// thing. Same escape-hatch shape as the shop's SKIP_ECONOMY_GUARD, and for the same reason: an env
+// var, not a config knob anything ships with.
+const includeDev = (): boolean => !!process.env.INCLUDE_DEV
+
+const planFor = (journeys: readonly JourneyDef[], spec: typeof worldSpec): PyramidPlan[] =>
+  journeys.flatMap(j =>
     Array.from({ length: j.levelCount }, (_, i) => {
       const { constraint, provenance } = resolvePyramidConstraintWithProvenance(
-        worldSpec,
+        spec,
         j.id,
         j.tier as Tier,
         i,
@@ -92,6 +102,11 @@ const buildPlan = (): PyramidPlan[] =>
       }
     })
   )
+
+const buildPlan = (): PyramidPlan[] => [
+  ...planFor(PYRAMID_JOURNEYS, worldSpec),
+  ...planFor(includeDev() ? DEV_JOURNEYS : [], devSpec),
+]
 
 // ── Phase 4: Build SiteConfigs from plan ──────────────────────────────────────
 
@@ -128,7 +143,8 @@ const buildSiteConfigs = (
         pathPuzzles: pp,
         constraint,
         difficulty,
-        hasMapPieceBranch: PYRAMID_CAPABILITIES.emitMapPiece && i === mapPiecePyramid && tier !== "starter",
+        hasMapPieceBranch:
+          (capabilitiesFor(journeyId)?.emitMapPiece ?? false) && i === mapPiecePyramid && tier !== "starter",
         hasWardGate: i >= Math.ceil(levelCount / 2) && nextTier !== null,
         nextTier,
         reservedTreasureIndices,
@@ -284,7 +300,19 @@ export const buildConfigs = (
   reservedTreasureIndices?: (tombId: string) => number[],
   // Whether a resolved encounter is a trap — gen records that as `sealed` so the encounter itself
   // stays structurally inert. Injected from src/mods (allFamilyMeta.familyIsTrap).
-  isTrapFamily?: IsTrapFamily
+  isTrapFamily?: IsTrapFamily,
+  // Which mods are registered — gates authored owner-tagged (SideSection["gate"].ownerMod) drop
+  // when their mod isn't in here (a switch fork's owner comes off `resolveEncounter` instead, since
+  // it names its family and not a mod), before Phase 4's worklist can hard-fail on a lock nothing claims
+  // (placeFragments.ts's winnability guard, for a gating mod toggled off with its gate still
+  // authored). Absent ⇒ drop nothing, so a caller that doesn't pass this (existing callers, specs)
+  // is unaffected; scripts/generateWorld.ts injects the real registered set.
+  registeredModIds?: ReadonlySet<string>,
+  // Real family resolution (reEnterable and ownerMod included) for Phase 3.1's switch-fork drop and
+  // Phase 4's reachability walk — injected from src/mods/allFamilyMeta.ts (resolveEncounterMeta) by
+  // scripts/generateWorld.ts. Absent (existing callers, specs) leaves the reachability walk on its
+  // own default, which never claims reEnterable for anyone, and leaves every switch fork standing.
+  resolveEncounter?: ResolveEncounter
 ): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
   const plan = buildPlan()
@@ -295,7 +323,25 @@ export const buildConfigs = (
   // Phase 3: Build tomb site configs
   const tombConfigs = buildTombConfigs(resolveTombTreasure)
 
-  const allConfigs = { ...pyramidConfigs, ...tombConfigs }
+  const builtConfigs = { ...pyramidConfigs, ...tombConfigs }
+
+  // Phase 3.1: drop mod-owned authoring whose mod isn't registered, before Phase 4's worklist can
+  // hard-fail on a lock nothing claims (placeFragments.ts's winnability guard) and before any floor
+  // is assembled with a switch whose family the build no longer holds. No registered set ⇒ drop
+  // nothing.
+  const allConfigs: Record<string, SiteConfig[]> = registeredModIds
+    ? Object.fromEntries(
+        Object.entries(builtConfigs).map(([journeyId, pyramids]) => [
+          journeyId,
+          pyramids.map(floors => floors.map(floor => dropUnownedAuthoring(floor, registeredModIds, resolveEncounter))),
+        ])
+      )
+    : builtConfigs
+
+  // Phase 3.2: a site outside the loot economy is never collected, so nothing downstream would fill
+  // or clear the placement sentinels on its path ends — and a surviving sentinel is refused by the
+  // serializer. Cleared here, which is what leaves such a site contributing no reward of any kind.
+  clearUncollectedSlots(allConfigs)
 
   // Phase 3.5: Resolve authored encounter ROLES (family tags) → concrete families, baked in.
   // Runs before slot collection (rewardPriority derives from the chosen family) and serialization.
@@ -314,7 +360,7 @@ export const buildConfigs = (
 
   // Phase 4: Worklist-driven currency placement (docs/game-design/keys-and-locks-solver.md)
   // — assigns fragmentSlot positions per registered currency, fills the remainder with junk loot
-  placeFragments(
+  const reachableRewards = placeFragments(
     allConfigs,
     currencies,
     resolveKeyRequirements,
@@ -322,7 +368,8 @@ export const buildConfigs = (
     dynamicDistributions,
     familyPriorityFor,
     emptyFraction,
-    reachabilitySupport
+    reachabilitySupport,
+    resolveEncounter
   )
 
   // Phase 5+7: Validate all configs together — reward counts, staircase guardrail,
@@ -336,7 +383,10 @@ export const buildConfigs = (
   // the generic total below can only ever say the sum is off. Running mod validators first means
   // a real per-symbol shortfall surfaces with that detail instead of the coarser "expected N, got
   // M" from validateRewardCounts. They drop out with their mod, so core names none.
-  for (const validate of worldValidators) validate(allConfigs)
+  // `reachableRewards` is placeFragments' final permissive walk: every reward a player can ever
+  // get to, hidden pockets and authored-key doors included. A mod counts its own kind in there to
+  // hold its collection's target count; one that only reads the configs ignores it.
+  for (const validate of worldValidators) validate(allConfigs, reachableRewards)
 
   const expectedCurrencyRewards = currencies.reduce((sum, c) => sum + (c.expectedTotal?.() ?? 0), 0)
   const isCurrencyReward = (r: TreasureReward) => currencies.some(c => c.bucketForReward?.(r) !== undefined)

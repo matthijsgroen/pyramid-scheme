@@ -16,6 +16,7 @@ import { readdirSync, existsSync } from "fs"
 import { dirname, join } from "path"
 import { fileURLToPath } from "url"
 import { assembleFloor } from "../src/game/siteAssembler"
+import { resolveOneWayRealisation } from "../src/mods/allOneWayRealisations"
 import { journeys } from "../src/data/journeys"
 import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
 import type { Difficulty } from "../src/data/difficultyLevels"
@@ -88,6 +89,7 @@ for (const journey of journeys) {
     site.forEach((config, floorIndex) => {
       const result = assembleFloor(journey.id, config, floorAssemblySeed(siteSeed, levelNr, floorIndex), undefined, {
         floorRef: { journeyId: journey.id, floorIndex },
+        resolveOneWay: resolveOneWayRealisation,
       })
       if (!result.success) return
       if (result.grid.condition) bump(condition, result.grid.condition.kind)

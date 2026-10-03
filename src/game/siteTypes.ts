@@ -1,3 +1,12 @@
+import type { Mark } from "./mark"
+import type { ContentKind, PlacedContainer } from "./regions"
+import type { BarrierOrder, Control, Obstacle } from "./obstacles"
+import type { OneWayRefusal } from "./oneWayRealisation"
+import type { CarveFault } from "./carveAgreement"
+import type { GateFace } from "./gateFace"
+import type { RealisationMissing } from "./mechanics/realisations"
+import type { LockNesting, LockNestingFault, PlacedLock } from "./floorLocks"
+import type { LockFault, RealisationBinding } from "./lockCompile"
 export type RoomType = "portal" | "fork" | "encounter"
 // OPEN reward vocabulary (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1):
 // core enumerates no reward/currency id. A reward is a `type` tag plus arbitrary payload fields the
@@ -34,6 +43,13 @@ export type CorridorCell = {
    *  the builder hangs it after the first encounter or the third, and whether it holds four puzzles or
    *  six. Same addresses `boardIndex.ts` deals boards by. See docs/game-design/world-stability.md. */
   sectionAddress?: string
+  /** Which region of the floor's authored layout this cell stands in, where the floor authors one
+   * (FloorConfig.regionLayout). A region is a stretch of the carve: the main path crosses several, and
+   * a side path belongs to the region it grows from — unless the route never threads that region at
+   * all, in which case the side path seats it instead (offRouteChains, regions.ts), one region per
+   * stretch of its own cells, nearest the branch's mouth first. Absent on a floor that authors no
+   * layout. */
+  region?: string
   /** Structural fingerprint of the section — how many rooms, how long the walk, what gates it. NOT the
    *  save's identity any more (`sectionAddress` is): it moves when the floor's own carve knobs are
    *  retuned, which is exactly what compacting the corridors does, and that would reset every run in
@@ -50,7 +66,24 @@ export type CorridorCell = {
    *  restores the fog as far as the furthest room reached. See docs/game-design/world-stability.md. */
   ordinal?: string
   hidden?: boolean
+  /** Set on a cell that is part of an obstacle (a one-way drop's span) rather than ground. `dir` runs
+   * from the launch toward the landing, and `kind` is what the span is, which is what the launch offers
+   * to do with it. Such a cell names no direction at all and no neighbour names it, so no walk enters
+   * it; the marker is what lets the art span it and the lock read the drop back. */
+  obstacle?: { dir: Direction; kind: ObstacleKind }
+  /** A GATE A MECHANISM HOLDS OPEN, remembered on the ground it has become. It is a corridor to every
+   * walk — no prompt, no stop, reveal runs through it — and this is all the map needs to keep drawing
+   * the door, open, in the mark and colour it wore shut. Derived from the mechanism's position each
+   * time the floor is read and never stored. */
+  openGate?: OpenGate
 }
+/** What an open gate keeps of the room it was: the fields that say it is a gate and whose. */
+export type OpenGate = Pick<RoomCell, "tags" | "gateVariant" | "keyIsAuthored" | "keyColor" | "keyColors" | "mark"> & {
+  requiredKeyId: string
+}
+/** What an obstacle's span is: the id of the one-way realisation it was bound to, whose declared prompt the
+ * launch offers (game/oneWayRealisation.ts). */
+export type ObstacleKind = string
 export type GateVariant = "floor-key" | "tomb-key"
 export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"
 // Canonical order for anything that LISTS colors (a key ring, a chest's badges) — world-gen assigns
@@ -141,6 +174,13 @@ export type RoomCell = {
    *  the builder hangs it after the first encounter or the third, and whether it holds four puzzles or
    *  six. Same addresses `boardIndex.ts` deals boards by. See docs/game-design/world-stability.md. */
   sectionAddress?: string
+  /** Which region of the floor's authored layout this cell stands in, where the floor authors one
+   * (FloorConfig.regionLayout). A region is a stretch of the carve: the main path crosses several, and
+   * a side path belongs to the region it grows from — unless the route never threads that region at
+   * all, in which case the side path seats it instead (offRouteChains, regions.ts), one region per
+   * stretch of its own cells, nearest the branch's mouth first. Absent on a floor that authors no
+   * layout. */
+  region?: string
   /** See CorridorCell.sectionHash — structural, and no longer the save's identity. */
   sectionHash?: string
   /** See CorridorCell.legacySectionHash. */
@@ -165,6 +205,10 @@ export type RoomCell = {
   // interprets what an id means.
   requiredKeyIds?: string[]
   gateVariant?: GateVariant
+  /** True when requiredKeyId is an authored id (SubSection["gate"].keyId), not one the assembler's
+   * own key-host chain assigned — the key comes from elsewhere, so validateSite expects no on-floor
+   * tombKey for it. Written down rather than inferred, same reasoning as RoomCell.patronRoom. */
+  keyIsAuthored?: boolean
   keyColor?: KeyColor
   keyColors?: KeyColor[]
   // This room's position among its own section's puzzle rooms (0-based, path order) —
@@ -214,6 +258,66 @@ export type RoomCell = {
    * a fact about that room, not something to re-derive from what it happens to be wearing.
    */
   patronRoom?: boolean
+  /** A fork room's own ways out, each with what lies down it: `main` continues the main path,
+   * `side` reaches an attached section, `ward` is a side gated by a tomb-key, and `fork` leads
+   * straight to another fork room. Read off the neighbour node two grid cells away (NODE_STEP in
+   * siteAssembler.ts) in each of the cell's own `dirs`. Unset off fork rooms — nothing needs it yet.
+   *
+   * `gateKeyId` is set on the ways out a SWITCH closed, and is how the builder reports which ones it
+   * chose: whatever stands in the switch reads them off the room it is in rather than guessing the
+   * floor's shape. It NAMES the way out and is not a key anything holds — the board in the fork opens
+   * one of these ids at a time, and no chest anywhere mints them.
+   *
+   * `mark` is the pair the gate on that way out wears on the map, set where a fork-switch owns it, so the
+   * board standing in the junction can draw each doorway with the mark of the gate it opens. */
+  exits?: { dir: Direction; kind: "main" | "side" | "ward" | "fork"; gateKeyId?: string; mark?: Mark }[]
+  /** THIS ROOM IS A MECHANISM: which gate key id each of its positions opens, and which position it
+   * stands in until someone moves it.
+   *
+   * One record for every mechanism the floor has, so the walk (src/game/floorLock.ts) and the runtime
+   * (src/game/mechanismDoors.ts) read the same list rather than each deriving one. A switch also
+   * reports its doors on `exits[].gateKeyId`: that is what its own board reads to know what to draw,
+   * and it is the account the walk matches a switch's doors by, so a key id colliding with another
+   * door's elsewhere on the floor cannot hand a board a door that is not its own. A lever, standing
+   * sections away from what it drives, names no direction and is matched by the key the room asks for.
+   *
+   * A lever is a toggle: two positions, each opening a set of gates and shutting the other's, thrown
+   * back and forth for ever. A board has one position more than it has ways out — rest, which opens
+   * none — and it too is worked back and forth: the player walks back into a solved switch, turns a
+   * mirror off every shrine and leaves it lighting nothing. The walk (src/game/floorLock.ts) gives
+   * each the moves it really has by reading them off this record, never by assuming a shape for a
+   * kind — which hands the walk a move the player does not have, or takes one they do. */
+  mechanism?: MechanismRecord
+  /** A MECHANISM'S OWN AUTHORED IDENTITY, carried onto its room so `cellSlot.ts` can name it by
+   * something that depends only on what was authored, never on where the carve put it — family alone
+   * no longer picks out a single room once a region layout can stand more than one control on the
+   * main path (FloorConfig.controls: several may resolve to the same family, `"handle"`, when none
+   * names its own `encounter`). Set on every mechanism's room, handle and control alike, so one rule
+   * disambiguates both rather than a control-only exception beside a family-only default: a handle's
+   * is the authored address `leverByAddress` is keyed by (`handle.in`); a control's is its own `id`. */
+  mechanismId?: string
+  /** THIS ROOM WORKS A MECHANISM THAT STANDS ELSEWHERE: `mechanismId` names its home room (whose
+   * `mechanism` holds the one state), `transition` indexes that record's `transitions`. The state is
+   * never stored here — it is read and written under the home room's address, so however many rooms
+   * can work a mechanism there is one entry for it. Unset on every room that works nothing remote. */
+  worksMechanism?: { mechanismId: string; transition: number }
+  /** THIS ROOM IS ONE TILE OF A SEQUENCE (obstacles.ts, SequenceControl): `id` is the sequence, `step` the
+   * place of this tile in its order, `glyph` the hieroglyph it wears (mark.ts allocates it, distinct
+   * from every other glyph on the floor). The sequence's one record sits on the tile of step 0; every
+   * tile works the moves that record places at it through `worksMechanism`. */
+  sequenceTile?: { id: string; step: number; glyph: number }
+  /** WHICH MECHANISM THIS ROOM BELONGS TO, said in a glyph on a coloured ground (src/app/SiteMap/mark.tsx).
+   * A mechanism's room and every gate it owns carry the same pair, and that pairing is the only thing
+   * on the floor that says which lever drives which door. Unset everywhere else. */
+  mark?: Mark
+  /** WHAT THIS DOOR WAITS FOR, on a door that has several owners all of which must name it: one marker per
+   * owner, lit as that owner stands. Derived from the owners (src/game/gateFace.ts), never authored. Unset
+   * on every other door, where operating an owner shows its own consequence. */
+  gateFace?: GateFace
+  /** THIS DOOR IS ONE ENTRANCE OF A REGION BARRIER (obstacles.ts, RegionGateObstacle): `region` is the
+   * barred region it stands in, `entrance` the neighbouring region the player comes from, which is what
+   * tells this door from the barrier's others. A barrier has one door per entrance, all asking for one key. */
+  regionBarrier?: { region: string; entrance: string }
 }
 export type GridCell = EmptyCell | CorridorCell | RoomCell
 
@@ -240,9 +344,89 @@ export type FloorGrid = {
   readonly exitPos: readonly [number, number]
   readonly siteId: string
   readonly staircases: Record<string, readonly [number, number]>
+  /** The locks nested in a region of another, as the floor's `locks` placed them; absent on a floor with none.
+   * The walk reads it to take each nested lock as one place of its host (game/floorLockWalk.ts). */
+  readonly lockNesting?: readonly LockNesting[]
 }
 
-export type GateConfig = { type: "floor-key"; color?: KeyColor } | { type: "tomb-key"; wardKeyId: string }
+/** THE TWO SIDES A LEVER HANGS ON, and the whole of its state vocabulary. The assembler tags each
+ * gate with one, the record declares exactly these, the save stores one of them, and the lever's
+ * screen draws one button per side and asks the locale files for its name — all of which have to
+ * agree letter for letter, so they read the same list. */
+export const HANDLE_SIDES = ["left", "right"] as const
+export type HandleSide = (typeof HANDLE_SIDES)[number]
+
+/** The position a beam board sits in when it opens nothing: no shrine lit, so every way out of its
+ * fork stands shut. One name for it, in the save and in the compiled lock alike — a board turned back
+ * off every shrine and a board never touched are the same POSITION and a different FACT, which is why
+ * one is stored and the other is absent.
+ *
+ * A board's position only. A lever has the two sides it hangs on and nothing between them
+ * (HANDLE_SIDES), and the side the author starts it on is a position like any other, so no lever ever
+ * stores this.
+ *
+ * Plain data written onto cells by the assembler, so it lives in the domain rather than beside the
+ * save that stores it (src/app/state/useJourneys.ts re-exports it for app callers): the domain layer
+ * holds no React, and `yarn generate-world` is a node CLI that reaches this file. Same reasoning as
+ * `Mark` in src/game/mark.ts. */
+export const MECHANISM_AT_REST = "rest"
+
+/**
+ * A MECHANISM'S WHOLE STATE MACHINE, said once on the cell it stands in: the positions it has, the one
+ * it starts in, whether it can be put back there, and which gate each position opens.
+ *
+ * The walk (src/game/floorLock.ts) and the runtime (src/game/mechanismDoors.ts) both read THIS rather
+ * than each deriving a shape from what kind of thing they think is standing there. Which moves a
+ * mechanism offers is a fact about the mechanism, not about its family: assuming a shape for a kind
+ * hands the walk a move the player does not have, or takes one they do.
+ */
+export type MechanismRecord = {
+  /** Every position this mechanism has, including ones that open nothing. Declared rather than derived
+   * from `positions`: a lever hangs left or right whether or not either side names a gate, so a walk
+   * that read the vocabulary off the gates would not know the door could be shut again. */
+  states: string[]
+  /** The position it stands in before anyone touches it. A save holding no entry for it means THIS
+   * state, not "nothing open" — which is what lets one side of a toggle stand open on arrival without
+   * the carve having to place an already-open gate. One of `states`. */
+  initial: string
+  /** Whether `initial` is a position the player can put it back into. True of a lever, whose two sides
+   * are thrown back and forth for ever, and true of a beam board as well: walking back into a solved
+   * switch and turning a mirror off every shrine leaves it lighting nothing, which is where it began.
+   *
+   * Declared rather than assumed from what kind of thing is standing there. A mechanism that could not
+   * be put back would hand the walk a move the player has not got, and the day one is authored this is
+   * where it says so. */
+  returnsToInitial: boolean
+  /** One entry per gate this mechanism drives, tagged with the position that opens it. Several entries
+   * may share a position — a lever thrown left opens every gate its left side names — and a position
+   * that opens nothing simply has none.
+   *
+   * `mode` is the GATE's condition, carried on every owner's entry for it: absent means the gate stands
+   * open only while EVERY mechanism naming it is in a position that names it, `"any"` while one is. */
+  positions: { state: string; gateKeyId: string; mode?: "any" }[]
+  /** WHERE A MOVE IS MADE, when it is not in the mechanism's own room: a sequence advances at its tiles
+   * and resets at its door. An entry places every move INTO `to` (out of `from` when it names one, out
+   * of any state otherwise) at the cell `at`, and several entries may place one move in several places.
+   * A move no entry places is made in the mechanism's own room, so a record without this field is
+   * worked exactly where it stands. Each remote cell points back with `RoomCell.worksMechanism`. */
+  transitions?: { from?: string; to: string; at: readonly [number, number] }[]
+  /** EVERY MOVE THIS MECHANISM HAS IS ONE OF `transitions`: a move no entry places is not made anywhere,
+   * where otherwise it is made in the mechanism's own room. A sequence is the one that needs it, because
+   * most pairs of its states are not moves at all (progress cannot skip a tile). */
+  placedOnly?: true
+}
+export type GateConfig =
+  | {
+      type: "floor-key"
+      color?: KeyColor
+      /** The key this gate wants, authored explicitly instead of drawn from the floor's key-color
+       * rotation — the assembler grows no host chest for it. Mirrors worldGen/types.ts's
+       * SubSection["gate"].keyId. */
+      keyId?: string
+      /** Which mod mints that key; unread here. Mirrors worldGen/types.ts's SubSection["gate"].ownerMod. */
+      ownerMod?: string
+    }
+  | { type: "tomb-key"; wardKeyId: string }
 export type { Difficulty } from "@/data/difficultyLevels"
 import type { Difficulty } from "@/data/difficultyLevels"
 export type SubSection = {
@@ -284,6 +468,15 @@ export type SubSection = {
 export type SideSection = SubSection & {
   sideSections?: SubSection[]
 }
+/**
+ * One statement `FloorConfig.forks` makes. `{ exits, count }` asks for `count` junctions with at least
+ * `exits` free ways out, wherever the carve finds them. `{ in }` names a region of the layout instead:
+ * ONE junction on the main path inside it whose side exits are the first cells of the off-route chains
+ * hanging off that region, so the number of exits is the number of chains and the author counts
+ * nothing. Naming a region AND counts is a contradiction and is refused, never ignored.
+ */
+export type ForkDemand = { exits: number; count: number } | { in: string }
+
 export type FloorConfig = {
   pathPuzzles: number
   difficulty: Difficulty
@@ -305,6 +498,108 @@ export type FloorConfig = {
   rewards?: (TreasureReward | undefined)[]
   /** Default family/tag(s) for this floor's main-path encounter rooms. An array means "any of these". */
   encounter?: string | string[]
+  /** WHAT THE CARVE MUST PROVIDE: `count` junctions, each with at least `exits` ways out free to be
+   * closed. A junction's free ways out are the main path ONWARD and the side paths hanging off it —
+   * never the way back (which would shut the player in with the junction), never one a ward door or
+   * another room already stands in, and never one into a hidden section. A carve offering fewer is
+   * re-carved, and a floor no carve can satisfy fails rather than losing the junction quietly.
+   *
+   * Structural, and it decides the floor's shape on its own: the same `forks` carves the same floor
+   * whether or not anything is ever stood in those junctions. */
+  forks?: ForkDemand[]
+  /** WHAT THE CARVE MUST PROVIDE: a passage from one named section to another that the player may
+   * take only in that direction. Both ends name a section address — a `label` where a section has
+   * one, the positional `s0`/`s1.2` where it does not, and `main` for the main path.
+   *
+   * Structural, like `forks`: the two sections have to come out of the carve with node cells two
+   * apart, so an attempt that cannot place one is re-carved and a floor no attempt can satisfy fails
+   * rather than losing the passage quietly. Where a drop lands is a design decision, which is why it
+   * is authored rather than found — see docs/mods/floor-topology-design.md.
+   *
+   * Named ends, unlike `forks`' counts: a floor whose side sections a rule strips or never grows has
+   * no address for either end to resolve to, and the drop is then refused outright rather than landing
+   * somewhere else. Author `oneWays` on a floor whose sections you also author.
+   *
+   * Section-addressed, and stays that way: an `obstacles` entry of `kind: "oneWay"` is the same
+   * passage authored by REGION instead (src/game/obstacles.ts) — a drop between two regions the
+   * layout does not otherwise join, for a floor that authors `regionLayout` rather than bare
+   * sections. Both land through the same carve step and read into `LockSpec.oneWays` the same way. */
+  oneWays?: { from: string; to: string }[]
+  /** THE REALISATION EVERY ONE-WAY OF THIS FLOOR IS CROSSED THROUGH, bound here from outside the lock: the
+   * id of a one-way realisation a registered mod declares, and what it declares is the prompt the
+   * player takes the crossing through. A floor with a one-way and no usable realisation is refused
+   * (`oneWayRealisationRefused`) before anything is carved; there is no default. */
+  oneWayRealisation?: string
+  /** A LEVER STANDING IN ONE SECTION THAT OPENS A GATE ON OTHERS. `in` names the section the lever
+   * stands in; `left` and `right` name the sections whose entrance gates each side of it owns. All
+   * are section addresses — a `label` where a section has one, the positional `s0`/`s1.2` where it
+   * does not, and `main` for the main path — the same vocabulary `oneWays` names its two ends with.
+   *
+   * Unlike `switches`, which stands an encounter in a junction and closes THAT junction's own ways out,
+   * a handle reaches across the floor. That is the whole of what it buys, and it is what a fork cannot
+   * express: the catalogue's "a lever elsewhere opens a door here".
+   *
+   * Each driven section gets a gate keyed `handle:<journeyId>#<levelIndex>#<floorIndex>#<n>:<address>`,
+   * derived from where the floor was AUTHORED — neither end of which a re-carve can move, so a position
+   * kept from an earlier layout cannot come to fit a door it was never thrown for.
+   *
+   * A lever has two positions and nothing between them: thrown to a side, it opens every section that
+   * side names and shuts every section the other side names. It starts on `starts` (left unless the
+   * author says otherwise), so those gates stand open the moment the player arrives.
+   *
+   * A driven section may not be the main path (which has no entrance to gate), may not be the one the
+   * lever stands in (which would shut the lever in behind its own door), may not already carry an
+   * authored gate, may not be driven by a second handle, and may not stand on both sides of one lever
+   * (a door it could neither open nor close) — each is refused by name before a wall is carved. */
+  handles?: { in: string; left: string[]; right: string[]; starts?: HandleSide }[]
+  /**
+   * THE FLOOR'S AUTHORED REGION LAYOUT: a container — named regions, what joins them, and the two
+   * ports IT is entered and left through (docs/game-design/regions-and-containers.md). The ports are
+   * the container's own, not the floor's: with no `placement` the container is the whole floor and
+   * they coincide with its entrance and exit; with one, the container stands on a stretch of the main
+   * path and the steps either side of it are the floor's ordinary ground. Not to be confused with
+   * `AssemblerReason`'s `layoutNotFound`, which means the carve found no MAZE layout at this seed —
+   * an unrelated, later-stage failure that shares no field with this one.
+   *
+   * A region declares only an APPETITE — what it will take — and never what fills it. Typed as
+   * `PlacedContainer` (over `RegionGraph`) rather than restated here, so the shape has one definition and the vocabulary can
+   * grow in one place.
+   */
+  regionLayout?: PlacedContainer
+  /** WHAT STANDS BETWEEN THE FLOOR'S REGIONS, and what decides whether it does — core's,
+   * pointing at `regionLayout` by region name (src/game/obstacles.ts). An obstacle is named once here
+   * and referred to by id; a control names which obstacles each of its states opens, and is one of core's
+   * control kinds (src/game/mechanics). Never dropped when a mod is not registered: the walls carve the same,
+   * and a floor whose controls need a realisation no registered mod provides is refused by name
+   * (`realisationMissing`). */
+  obstacles?: Obstacle[]
+  controls?: Control[]
+  /** THE ORDER OF THE GATES ON ANY CONNECTION THAT CARRIES SEVERAL, from `between[0]` to `between[1]`
+   * (src/game/obstacles.ts). Required wherever a connection has more than one gate; the carve keeps the
+   * order and chooses the spacing. Core authoring with `obstacles`. */
+  barrierOrder?: BarrierOrder[]
+  /** THE LOCKS STANDING ON THIS FLOOR, in sequence along its main route (src/game/floorLocks.ts). Compiled into
+   * `regionLayout`, `obstacles`, `controls`, `forks` and `barrierOrder` where the floor is assembled, so a
+   * floor authoring `locks` may not author those itself: the contradiction is refused by name. */
+  locks?: PlacedLock[]
+  /** WHICH REALISATION EACH CONTROL KIND OF THE FLOOR'S LOCKS IS DRESSED AS, by kind, as the build resolved
+   * them (floor over pyramid over journey over difficulty) and baked. The runtime reads this and never resolves from the levels. */
+  realisations?: RealisationBinding
+  /** A SWITCH: an encounter standing in one of the junctions `forks` reserved, closing that
+   * junction's free ways out so that what the player meets there decides which one opens.
+   * Family/tag(s) like `encounter`. At least `min` and at most `max` of the reserved junctions get
+   * one, and a `min` beyond what `forks` reserves fails the floor.
+   *
+   * The author names what stands there and nothing else — not which junction (where they fall is the
+   * carve's choice), not which ways out (the builder closes every free one and reports them back on
+   * the room's own `exits`, RoomCell.exits.gateKeyId), and not the key ids. Each gate wants
+   * `switch:<journeyId>#<levelIndex>#<floorIndex>#<n>:<sectionAddress>` — derived from where the
+   * floor was AUTHORED and which section that way out reaches, neither of which a re-carve can move,
+   * so a key kept from an earlier layout cannot come to fit a door it was never solved for.
+   *
+   * Opaque to core: the ids name no mod and nothing here mints them; whatever fills the switch does,
+   * reading them off the room's own `exits`. */
+  switches?: { encounter: string | string[]; min: number; max: number }
   /** Per-node encounter override for the main path: 0-based room index → family/tag, resolved from
    * authored `nodes` selectors (e.g. the last room → "capstone"/crocodile). Room k uses
    * `encountersByIndex[k] ?? encounter`; baked to concrete family ids by the gen-time encounter
@@ -314,6 +609,10 @@ export type FloorConfig = {
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
   packing?: number
+  /** The seed this floor carves at, in place of the one its address derives. Read inside the assembler, so
+   * every entry point that carves the floor (the hook, stair travel, the scanner, the bake) agrees. Baked
+   * from a search that found a seed carving soundly on the first attempt. */
+  seed?: number
   /** Isolates the main path's cells from leftover maze edges, so a compact layout can't merge a shortcut around a puzzle room. */
   sealed?: boolean
   /** Opaque payload for whichever family renders the main path's rooms (e.g. a tableau's
@@ -338,17 +637,204 @@ export type ValidationReason =
   | { type: "mosaicMissing" }
   | { type: "mosaicNotReachable" }
   | { type: "mosaicDuplicate"; siteId: string }
+  /** Two different openers stand in one room-to-corridor boundary — a gate room's own key and a fork's
+   * exit closed toward it, or two forks closing the same way out. A player meeting it cannot tell which
+   * door they are looking at, nor which of the two they have just satisfied. */
+  | { type: "boundaryGatedTwice"; pos: readonly [number, number]; keyIds: string[] }
+  /** A gate a switch closed can be walked up to without passing through the switch, so the blocker is
+   * met before its opener. At a fork the opener is the room the player stands in, so this holds by
+   * construction; the check is what keeps it true when something else moves. */
+  | { type: "switchGateNotBehindSwitch"; switchPos: readonly [number, number]; gatePos: readonly [number, number] }
 
 export type ValidationResult = { valid: true } | { valid: false; reasons: ValidationReason[] }
 export type AssemblerReason =
   | ValidationReason
+  /** A mechanic of the floor needs a realisation no registered mod provides. Core owns the kinds and a mod
+   * dresses them, so with the mod gone the floor is refused rather than carved with another standing in.
+   * `mechanic` is the authored id, `kind` its control kind (or "door-face"), `realisation` what went unanswered. */
+  | RealisationMissing
   | { type: "noUngatedSectionForKey" }
   | { type: "layoutNotFound" }
   /** A section cannot be given a name a save could file it under: an authored `label` repeated, one
    * shaped like the positional addresses, or one carrying an address separator. See SubSection.label. */
   | { type: "unusableSectionAddress"; address: string }
+  /** A section hangs below the two levels of side path the assembler carves, so it would be authored
+   * and baked but never built — the DSL nests without limit, the carve does not. `address` is the name
+   * the section answers to. See SideSection.sideSections. */
+  | { type: "sectionTooDeep"; address: string }
+  /** Two rooms of one section answer to the same name, so a save cannot tell them apart — a switch
+   * authored with the family that already fills its section's chest, shop or gate. See cellSlot.ts. */
+  | { type: "duplicateCellSlot"; slot: string }
+  /** No carve offered as many junctions with `exits` ways out free to close as `forks` asked for —
+   * `carved` is the most any attempt managed. See FloorConfig.forks. */
+  | { type: "forksUnsatisfied"; exits: number; count: number; carved: number }
+  /** More switches are asked for than the floor's `forks` reserve junctions to hold them, which no
+   * carve can settle. See FloorConfig.switches. */
+  | { type: "switchesExceedForks"; min: number; forks: number }
+  /** A `forks` entry names a region (`{ in }`) that cannot hold the junction it asks for, fixed by the
+   * config alone: `contradictsCounts` also authors `exits`/`count`, `notInLayout` is no region of the
+   * layout (or there is no layout), `offRoute` is not on the route the main path threads,
+   * `fewerThanTwoSeams` has fewer than two off-route chains with it as mouth, and `repeated` is named
+   * by another entry too. See ForkDemand. */
+  | {
+      type: "forkRegionRefused"
+      region: string
+      cause: "contradictsCounts" | "notInLayout" | "offRoute" | "fewerThanTwoSeams" | "repeated"
+    }
+  /** No carve laid the junction of a `{ in }` fork on its seams: `seams` are the connections it had to
+   * exit by, each `[region, first region of the chain it leads into]`. The junction is never placed
+   * elsewhere or with other exits. See ForkDemand. */
+  | { type: "forkSeamsNotLaid"; region: string; seams: [string, string][] }
+  /** A switch was authored with a family whose room closes behind the player. Its gates open one way
+   * out and leave the others shut, and keys accumulate, so the cost of the choice is a walk back to
+   * spend it again — which a room that cannot be re-entered never offers. See FamilyMeta.reEnterable. */
+  | { type: "switchFamilyNotReEnterable"; family: string }
+  /** An authored one-way never got its passage — `FloorConfig.oneWays`, naming two section
+   * addresses, or an `obstacles` entry of `kind: "oneWay"` (src/game/obstacles.ts), naming two
+   * regions: `from`/`to` name whichever failed. Either `from` or `to` names an end this floor does
+   * not have, or every attempt ran out before it found two cells of the named ends a node apart with
+   * an empty cell between them. */
+  | { type: "oneWayUnsatisfied"; from: string; to: string }
+  /** A one-way has no realisation it can be crossed through: it names none (`unbound`), names one no
+   * registered mod declares (`unknown`), or names one that declares no prompt (`noPrompt`). `from`/`to`
+   * name the one-way as authored and `realisation` what it named. */
+  | {
+      type: "oneWayRealisationRefused"
+      from: string
+      to: string
+      realisation: string | null
+      why: OneWayRefusal
+    }
+  /** An authored handle (FloorConfig.handles) names a section it cannot have, and `address` is the
+   * name that failed: `in` or a `left`/`right` entry naming no section of this floor, a driven
+   * section that is the main path, the one the lever stands in, one already carrying a gate, or one a
+   * second handle drives too. Which sections exist and what each already carries is fixed by the config, so this is
+   * answered once rather than blamed on carves that could never have satisfied it. */
+  | { type: "handleUnsatisfied"; handle: number; address: string }
+  /** A gate asks for the floor key of a section that has no floor-key gate; `id` is the gate. */
+  | { type: "gateKeyNamesNoFloorKey"; id: string; section: string }
+  /** Two regions of one layout answer to the same name, so nothing could tell which one a connection,
+   * a port or a piece of content meant. See FloorConfig.regionLayout. */
+  | { type: "regionNameRepeated"; name: string }
+  /** A connection names a region the layout never declares. It would carry the route without ever
+   * being a place, so a region the walk must pass through could read as neither main path nor
+   * stranded. See FloorConfig.regionLayout. */
+  | { type: "connectionNamesNoRegion"; name: string }
+  /** A layout's port names a region it does not have, so the floor has no way in or no way out. */
+  | { type: "portNamesNoRegion"; port: "in" | "out"; name: string }
+  /** A container's placement (`regionLayout.placement.enters`) is not a share of the main path in
+   * [0, 1), so there is no step to enter it at. See FloorConfig.regionLayout. */
+  | { type: "placementOutOfRange"; enters: number }
+  /** A region no walk from the way in arrives at. Once regions carry content, that is loot a player
+   * can never collect (docs/game-design/regions-and-containers.md). */
+  | { type: "regionUnreachable"; name: string }
+  /** A room stands in a region whose appetite does not take what it holds — a puzzle where the layout
+   * promised nothing, a reward where it asked for puzzles. The floor's content and its layout disagree,
+   * and which is wrong is the author's to say. See FloorConfig.regionLayout. */
+  | { type: "regionWillNotTake"; region: string; kind: ContentKind }
+  /** An authored obstacle or control does not resolve against the floor's region layout — the id that
+   * failed is named, because the author needs to know which one. See src/game/obstacles.ts's
+   * TopologyFault, whose members these are. */
+  | { type: "obstacleIdRepeated"; id: string }
+  | { type: "obstacleNamesNoConnection"; id: string }
+  | { type: "obstacleNamesNoRegion"; id: string }
+  | { type: "obstacleOffRoute"; id: string }
+  | { type: "obstacleUnowned"; id: string }
+  | { type: "controlUnsatisfied"; id: string; what: string }
+  | { type: "unknownControlKind"; id: string; control: string }
+  | { type: "forkSwitchNoFork"; id: string; region: string }
+  | { type: "forkSwitchNoEncounter"; id: string }
+  | { type: "gateOwnerNotForkSwitch"; id: string; owner: string }
+  | { type: "gateOwnedOffSeam"; id: string; owner: string }
+  | { type: "gateOwnedTwice"; id: string; owner: string }
+  | { type: "forkSwitchSeamUngated"; id: string; between: [string, string] }
+  | { type: "forkSwitchSeamGatedTwice"; id: string; between: [string, string] }
+  | { type: "regionBarrierHoldsPort"; id: string; region: string; port: "in" | "out" }
+  | { type: "mechanicStandsInBarredRegion"; id: string; region: string; barrier: string }
+  | { type: "regionBarrierDropLands"; id: string; region: string; drop: string }
+  | { type: "sequenceTooShort"; id: string }
+  | { type: "sequenceStepNamesNoRegion"; id: string; step: number }
+  | { type: "sequenceOpensNotAGate"; id: string; gate: string }
+  | { type: "sequenceResetNotAGate"; id: string; gate: string }
+  | { type: "sequenceResetNotOpened"; id: string; gate: string }
+  | { type: "sequenceStepBehindOwnDoor"; id: string; step: number }
+  | { type: "barrierOrderNamesNoConnection"; between: [string, string] }
+  | { type: "barrierOrderRepeated"; between: [string, string] }
+  | { type: "barrierNotDefined"; id: string; between: [string, string] }
+  | { type: "barrierNotOnConnection"; id: string; between: [string, string] }
+  | { type: "barrierListedTwice"; id: string; between: [string, string] }
+  | { type: "barrierUnordered"; id: string; between: [string, string] }
+  | { type: "forkGateNotFirst"; id: string; owner: string; between: [string, string] }
+  /** No carve could stand every gate of one connection in the order stated, each with a step of its own
+   * inside the far region: the gates are refused rather than reordered or put elsewhere. `between` is
+   * the connection as the order was written, `barriers` its gates from `between[0]`. */
+  | { type: "barriersNotSeated"; between: [string, string]; barriers: string[] }
+  /** No carve could stand a region barrier inside its region: some entrance of `region` had no free node
+   * with a stretch of the region in front of it, so the barrier is refused rather than set elsewhere.
+   * `id` is the barrier. */
+  | { type: "regionBarrierNotSeated"; id: string; region: string }
+  /** No carve found a free corridor node in the region a sequence's step names, for every step that
+   * needs its own tile there. `id` is the sequence, `step` the first step left without a tile. */
+  | { type: "sequenceTileNotPlaced"; id: string; step: number }
+  /** The floor's mechanics (and sequence tiles) need more distinct glyphs than the six a mark can wear,
+   * so a mark would be shared. `ids` are the ones left without a glyph, in authoring order. */
+  | { type: "marksExhausted"; ids: string[] }
+  /** A side section matched to an off-route chain (offRouteChains, regions.ts) hosts that chain's
+   * regions across its own cells, cells[0] included — and an obstacle standing on the chain's own
+   * MOUTH connection always seats there too (seamIndexFor, obstacles.ts: the mouth's far region
+   * begins at step 1, one less than that is 0). A `section.gate` (floor-key or tomb-key) claims that
+   * same cell unconditionally, so the two authoring vocabularies would silently overwrite one
+   * another — the topology mod's gate room vanishing with nothing said, its control left opening a
+   * door no cell carries any more. Refused before a wall is carved, since which side section hosts
+   * which chain and which obstacle stands on its mouth are both fixed by the config, not the seed.
+   * `address` names the side section (`s0`, `s0.1`); `obstacleId` the mouth obstacle it collides with. */
+  | { type: "chainGateCollidesWithSectionGate"; address: string; obstacleId: string }
+  /** A declared region that never got a cell. A region off the main route seats on a side path instead
+   * (offRouteChains, regions.ts), so this now fires only where even that falls short: the main path's
+   * own route ran longer than the path had steps, so the regions at its far end were never reached; a
+   * side chain's own cells ran out before its component's deeper regions did; or the floor authors
+   * fewer top-level side sections than it has off-route components to seat, so one was never matched to
+   * a side path at all. Either way content that would have gone there lands in a region the author did
+   * not name. `regions` are every one left unseated, in the layout's own declared order. See
+   * FloorConfig.regionLayout. Unlike its five neighbours above, this reason carries a LIST rather than
+   * one name: those are each an independent fault where fixing the one name removes it, whereas an
+   * unseated set is a single fault whose extent happens to be a list — fixing one name here fixes
+   * nothing, so do not normalise this to a single-name shape. */
+  | { type: "regionNotSeated"; regions: string[] }
+  /** The route threads the connection these obstacles stand on, but no carve produced a cell on each
+   * side of the seam, so there was nowhere to stand the bars. `ids` are the obstacles left unplaced. */
+  | { type: "obstacleSeamNotCarved"; ids: string[] }
+  /** No carve put a main-path room inside the region these controls stand in. `ids` are the controls
+   * left unseated. */
+  | { type: "controlNotSeated"; ids: string[] }
+  /** A control's only candidate node in its region already held a puzzle, and no later main-path node
+   * (before the goal) was free to take that puzzle instead — seating the control there would carve the
+   * puzzle out from under it with nothing said. `ids` are the controls left unseated this way, apart
+   * from `controlNotSeated` (no candidate node at all): a wider path is not what this one is short of. */
+  | { type: "controlPuzzleUndisplaceable"; ids: string[] }
+  /** The carve the floor came out as is not the layout it was authored from: regions joined that the
+   * layout does not join, a gate's door off its boundary, or a drop landing where no gate borders.
+   * Each member names the disagreement in the author's own region and obstacle names. See
+   * carveAgreement.ts. */
+  | CarveFault
+  /** A floor authors `locks` beside fields they compile into; `fields` are the ones written twice. */
+  | { type: "locksContradictFloor"; fields: string[] }
+  /** Two locks of one floor answer to one instance name, so their ids would collide; the second must say `as`. */
+  | { type: "lockInstanceRepeated"; instance: string }
+  /** A placed lock is refused, by the instance it was placed as and the fault of the lock itself. */
+  | { type: "lockRefused"; instance: string; fault: LockFault }
+  /** A placed lock cannot be seated inside the region of another lock it names. */
+  | { type: "lockNestingRefused"; instance: string; fault: LockNestingFault }
+  /** The locks of the floor did not fit the lattice: `part` is the stretch, corridor or drop the search got
+   * stuck on, `grid` the largest grid it was tried at. */
+  | { type: "lockNotLaid"; part: { kind: "region" | "corridor" | "drop"; id: string }; grid: number }
+  /** The floor's side sections held rooms of these kinds that no laid node, nor any lengthening of a laid
+   * stretch, took. */
+  | { type: "contentNotLaid"; kinds: ("reward" | "puzzle")[] }
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }
-export type AssemblerResult = { success: true; grid: FloorGrid } | AssemblerFailure
+/** `attempt` is the 0-based attempt that carved the floor: anything past 0 carved on a widened grid and a
+ * doubled `packing`, not the authored one. */
+export type AssemblerResult = { success: true; grid: FloorGrid; attempt: number } | AssemblerFailure
 
 // ── Detector types ────────────────────────────────────────────────────────────
 

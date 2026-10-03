@@ -50,6 +50,8 @@ export const sandBottom = [
   "sand-700", "sand-800", "sand-900", "sky-950", "sky-950", "sky-950", "sky-900", "sky-900",
 ]
 
+/** The four steps the cycle arrays above are indexed by. A journey authors its own copy of this
+ * list (`src/data/journeys.ts`), because the design system imports nothing from `src/`. */
 export type DayNightCycleStep = "morning" | "afternoon" | "evening" | "night"
 
 const dayCycleIndices: Record<DayNightCycleStep, number> = {

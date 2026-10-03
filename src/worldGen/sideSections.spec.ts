@@ -54,11 +54,13 @@ describe("pathCountForDensity", () => {
 // ── buildSideSections ────────────────────────────────────────────────────────
 
 const noReward = () => undefined
+// The floor these sections hang off — what their stairhead ids are addressed by.
+const floor = { journeyId: "j", pyramidIndex: 0, floorIndex: 0 }
 
 describe("buildSideSections", () => {
   it("with no options set, produces no sections", () => {
     expect(
-      buildSideSections({ tier: "starter", difficulty: "starter", resolveReward: noReward, journeyId: "j" })
+      buildSideSections({ tier: "starter", difficulty: "starter", resolveReward: noReward, journeyId: "j", floor })
     ).toEqual([])
   })
 
@@ -68,6 +70,7 @@ describe("buildSideSections", () => {
       difficulty: "expert",
       resolveReward: noReward,
       journeyId: "j",
+      floor,
       hasMapPieceBranch: true,
     })
     // A generic sentinel tagged `mapPiece:<tombId>` — the tomb-treasure mod's currency fills it,
@@ -88,6 +91,7 @@ describe("buildSideSections", () => {
       difficulty: "junior",
       resolveReward: noReward,
       journeyId: "j",
+      floor,
       hasWardGate: true,
       nextTier: "expert",
     })
@@ -101,6 +105,7 @@ describe("buildSideSections", () => {
       difficulty: "wizard",
       resolveReward: noReward,
       journeyId: "j",
+      floor,
       hasWardGate: true,
       nextTier: null,
     })
@@ -118,6 +123,7 @@ describe("buildSideSections", () => {
         difficulty: "junior",
         resolveReward: noReward,
         journeyId,
+        floor: { journeyId, pyramidIndex: 0, floorIndex: 0 },
         hasWardGate: true,
         nextTier: "expert",
       })[0].gate
@@ -138,6 +144,7 @@ describe("buildSideSections", () => {
       difficulty: "starter",
       resolveReward: () => ({ type: "mosaicPiece" }),
       journeyId: "j",
+      floor,
       constraintSections: [{ pathPuzzles: 2, endReward: "mosaicPiece" }],
     })
     expect(sections).toEqual([
@@ -151,6 +158,7 @@ describe("buildSideSections", () => {
       difficulty: "starter",
       resolveReward: noReward,
       journeyId: "j",
+      floor,
       constraintSections: [{ pathPuzzles: 1, sideSections: [{ pathPuzzles: 0, hidden: true }] }],
     })
     // A plain treasure end (no authored reward, no gate) defaults to an untagged loot slot.
@@ -159,17 +167,34 @@ describe("buildSideSections", () => {
     ])
   })
 
-  it('end: "staircase" numbers the stairId by position among already-pushed sections', () => {
+  it('end: "staircase" takes the id of the floor it stands on and its position among already-pushed sections', () => {
     const sections = buildSideSections({
       tier: "starter",
       difficulty: "starter",
       resolveReward: noReward,
       journeyId: "myJourney",
+      floor: { journeyId: "myJourney", pyramidIndex: 2, floorIndex: 1 },
       hasMapPieceBranch: true,
       constraintSections: [{ pathPuzzles: 1, end: "staircase" }],
     })
     // index 0 = map-piece branch sentinel, index 1 = the staircase section
-    expect(sections[1].end).toEqual({ stairId: "myJourney:side1" })
+    expect(sections[1].end).toEqual({ stairId: "myJourney:p2:f1:s1" })
+  })
+
+  it("a stairhead nested under a section keeps its parent's address, so it cannot collide with a top-level one", () => {
+    const sections = buildSideSections({
+      tier: "starter",
+      difficulty: "starter",
+      resolveReward: noReward,
+      journeyId: "myJourney",
+      floor: { journeyId: "myJourney", pyramidIndex: 2, floorIndex: 1 },
+      constraintSections: [
+        { pathPuzzles: 1, end: "staircase" },
+        { pathPuzzles: 1, sideSections: [{ pathPuzzles: 0, end: "staircase" }] },
+      ],
+    })
+    expect(sections[0].end).toEqual({ stairId: "myJourney:p2:f1:s0" })
+    expect(sections[1].sideSections?.[0].end).toEqual({ stairId: "myJourney:p2:f1:s1.0" })
   })
 
   it("declaredSidePaths/declaredHiddenPaths expand by seeded density count", () => {
@@ -178,6 +203,7 @@ describe("buildSideSections", () => {
       difficulty: "starter",
       resolveReward: noReward,
       journeyId: "j",
+      floor,
       pyramidIndex: 0,
       declaredSidePaths: [{ density: "low", pathPuzzles: 1, end: "treasure" }],
       declaredHiddenPaths: [{ density: "low", pathPuzzles: 1, end: "fragment" }],
@@ -193,6 +219,7 @@ describe("buildSideSections", () => {
       difficulty: "starter",
       resolveReward: () => undefined,
       journeyId: "j",
+      floor,
       constraintSections: [{ pathPuzzles: 0, endReward: "tombTreasure" }],
     })
     expect(sections[0].endReward).toBeUndefined()

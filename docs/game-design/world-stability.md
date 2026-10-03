@@ -158,7 +158,15 @@ there for, and they go with the reshape.
 
 ## Storage version
 
-Progression and journey state are stored under versioned keys. If a breaking migration is ever needed, the policy is to bump the storage version and hard-reset — accept a fresh start rather than attempt an in-place migration.
+Progression and journey state are stored under versioned keys. A save is never reset to get past a change of key format: saves are treated as production data, alpha or not. A change to how a cell is addressed is an **additive migration**, in three parts:
+
+1. **Write the new key.** Every write goes to the cell's current address.
+2. **Read new, then old.** A reader asks for the entry under the current address and falls back to the address the cell had before (`legacyCellAddress`, `storedAtCell`). A mechanism's room is the case today: its slot is `xmech:<mechanismId>`, naming the mechanism and never the family that realises it, and `x<family>:<id>` (a plain switch: bare `x<family>`) is its legacy slot.
+3. **Backfill old to new, once per save.** On launch a hook copies every entry found under the old address to the new one, only where the new key is absent, so running it again changes nothing (`backfillMechanismSlots`, stamped by `mechanismSlotVersion`). Only the floors the save names are assembled.
+
+Nothing is deleted from a save by a migration. The old keys are dropped in a later release, once every save carries the stamp, together with the fallbacks that read them.
+
+The one thing a change of address does not carry is the unfinished board of the room that is open at that moment (`puzzleState`, a single slot keyed by address, family and board): it starts again.
 
 ---
 

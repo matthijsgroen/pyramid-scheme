@@ -1,5 +1,5 @@
 import { tier, journey, tomb, sidePath, wardWing, wardChest } from "../dsl"
-import type { Rule } from "../dsl"
+import type { Rule, PathSettings } from "../dsl"
 import { TOMB_ROOMS_PER_FLOOR } from "../data"
 
 // Varied "come back stronger" ward wings, mixed into the back-half pyramids of each junior
@@ -40,6 +40,28 @@ const starterEcho = () => wardChest({ tomb: "starter_treasure_tomb", index: 0, p
 // (lootEconomyInvariants.spec.ts guards both the ≥1-of-each and the spread.)
 const oldWorkings = () => sidePath({ puzzles: 1, tier: "starter", endReward: "junk" })
 
+// junior tier's own side-path settings (the tier() rule below) — named here so junior_2 pyramid
+// 2's floor 0 can re-declare them verbatim instead of drifting from a hand copy. That floor
+// authors its own `.floor()` (for the switch fork below), and buildSite.ts's authored-floors
+// branch reads a floor's OWN sidePaths/hiddenPaths rather than the pyramid's tier-cascaded ones —
+// so a floor authored via `.floor()` gets none of the tier default unless it re-declares it, and
+// declaring it from the same constant keeps the two from ever disagreeing.
+const JUNIOR_FRAGMENT_PATH: PathSettings = { pathPuzzles: 1, end: "fragment" }
+const JUNIOR_VISIBLE_MOSAIC_PATH: PathSettings = { pathPuzzles: 0, end: "mosaic" }
+const JUNIOR_HIDDEN_MOSAIC_PATH: PathSettings = { pathPuzzles: 0, end: "mosaic" }
+const JUNIOR_HIDDEN_TRAP_PATH: PathSettings = { pathPuzzles: 2, end: "junk", encounter: "trap", chance: 0.4 }
+
+// The junction junior_2 pyramid 2's floor 0 holds open, and the board that stands in it. Two ways
+// out is the junction a carve nearly always offers; three is rare and four is never carved
+// (game/forkShape.spec.ts), so asking for more would be asking for a floor that fails to build.
+// The builder picks which ways out to shut and keys them on the floor's own authoring address, so
+// nothing here names a key.
+const SWITCH_FORK = [{ exits: 2, count: 1 }]
+const SWITCH_BOARD = { encounter: "lightbeamSwitch", min: 1, max: 1 }
+
+// An ungated branch, so the junction has a way out worth closing and the switch decides something.
+const switchBranch = () => sidePath({ puzzles: 1, endReward: "junk" })
+
 export const juniorRules: Rule[] = [
   // a nobleman's wing: a painted ka-statue, sealed chests, an ablution basin, linen and lamps.
   tier("junior", {
@@ -66,19 +88,19 @@ export const juniorRules: Rule[] = [
   tier("junior")
     .set({})
     .sidePaths("medium")
-    .settings({ pathPuzzles: 1, end: "fragment" })
+    .settings(JUNIOR_FRAGMENT_PATH)
     // One VISIBLE mosaic per pyramid: the corridor detector isn't earned until the master tier, so
     // the hidden mosaic below is unreachable this early (junior_1 was all-hidden = 0 reachable). A
     // surplus visible end slot the capped pass fills. See starter tier default.
     .sidePaths("low")
-    .settings({ pathPuzzles: 0, end: "mosaic" })
+    .settings(JUNIOR_VISIBLE_MOSAIC_PATH)
     // One plain-loot hidden mosaic in every pyramid; a trapped one in only ~40% (chance),
     // so junior traps stay light and some hidden paths are just loot. The chance-gated path
     // holds junk loot (uncounted budget) — `chance` + mosaic would misreserve the cap.
     .hiddenPaths("low")
-    .settings({ pathPuzzles: 0, end: "mosaic" })
+    .settings(JUNIOR_HIDDEN_MOSAIC_PATH)
     .hiddenPaths("low")
-    .settings({ pathPuzzles: 2, end: "junk", encounter: "trap", chance: 0.4 }),
+    .settings(JUNIOR_HIDDEN_TRAP_PATH),
 
   // **The Lighthouse of Alexandria runs on sky.** Every main-path room in its five pyramids draws from the
   // `sky` pool rather than the general `puzzle` one — the beam family, the sun-and-moon grid and the star
@@ -125,7 +147,27 @@ export const juniorRules: Rule[] = [
   journey("junior_1").pyramid(1, { sideSections: [holdChest(0), starterEcho()] }),
   journey("junior_1").pyramid(2, { sideSections: [holdChest(1), oldWorkings()] }),
   journey("junior_2").pyramid(1, { sideSections: [holdChest(0)] }),
-  journey("junior_2").pyramid(2, { sideSections: [holdChest(1), oldWorkings()] }),
+  // junior_2 pyramid 2: the world's one switch fork. The mirror board stands in a junction the carve
+  // holds open, and the way out it routes its beam to is the one that stands open — the rest are
+  // shut until the player walks back in and sends the light another way. Every main-path room is
+  // left to the ordinary pool; what the junction chooses between is the branches below. The tier's
+  // own sidePaths/hiddenPaths are re-declared (from the shared JUNIOR_* constants above, not a hand
+  // copy) because this floor's own `.floor()` bypasses the pyramid-level tier cascade for them.
+  journey("junior_2")
+    .pyramid(2, {})
+    .floor(0, {
+      forks: SWITCH_FORK,
+      switches: SWITCH_BOARD,
+      sidePaths: [
+        { density: "medium", ...JUNIOR_FRAGMENT_PATH },
+        { density: "low", ...JUNIOR_VISIBLE_MOSAIC_PATH },
+      ],
+      hiddenPaths: [
+        { density: "low", ...JUNIOR_HIDDEN_MOSAIC_PATH },
+        { density: "low", ...JUNIOR_HIDDEN_TRAP_PATH },
+      ],
+      sideSections: [holdChest(1), oldWorkings(), switchBranch(), switchBranch()],
+    }),
   journey("junior_3").pyramid(1, { sideSections: [holdChest(0)] }),
   journey("junior_3").pyramid(2, { sideSections: [holdChest(2), oldWorkings()] }),
   journey("junior_4").pyramid(1, { sideSections: [holdChest(0)] }),

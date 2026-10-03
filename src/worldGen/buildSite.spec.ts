@@ -39,17 +39,17 @@ describe("wireStaircases", () => {
       buildFloor({ pathPuzzles: 1, difficulty: "starter", sideSections: [] }),
       buildFloor({ pathPuzzles: 1, difficulty: "starter", sideSections: [] }),
     ]
-    wireStaircases(floors, fi => `j:${fi}`)
-    expect(floors[0].exitOrStaircase).toEqual({ stairId: "j:0" })
-    expect(floors[1].entrance).toEqual({ stairId: "j:0" })
-    expect(floors[1].exitOrStaircase).toEqual({ stairId: "j:1" })
-    expect(floors[2].entrance).toEqual({ stairId: "j:1" })
+    wireStaircases(floors, { journeyId: "j", pyramidIndex: 4 })
+    expect(floors[0].exitOrStaircase).toEqual({ stairId: "j:p4:f0:main" })
+    expect(floors[1].entrance).toEqual({ stairId: "j:p4:f0:main" })
+    expect(floors[1].exitOrStaircase).toEqual({ stairId: "j:p4:f1:main" })
+    expect(floors[2].entrance).toEqual({ stairId: "j:p4:f1:main" })
     expect(floors[2].exitOrStaircase).toBe("exit")
   })
 
   it("does nothing for a single floor", () => {
     const floors = [buildFloor({ pathPuzzles: 1, difficulty: "starter", sideSections: [] })]
-    wireStaircases(floors, fi => `j:${fi}`)
+    wireStaircases(floors, { journeyId: "j", pyramidIndex: 4 })
     expect(floors[0].exitOrStaircase).toBe("exit")
     expect(floors[0].entrance).toBeUndefined()
   })
@@ -113,7 +113,7 @@ describe("buildSite", () => {
   it("auto multi-floor branch: mainFloors > 1 chains floors via wireStaircases, non-last floor gets a real reward slot", () => {
     const { floors } = buildSite({ ...baseCtx, constraint: { mainFloors: 3 } })
     expect(floors).toHaveLength(3)
-    expect(floors[0].exitOrStaircase).toEqual({ stairId: expect.stringContaining("main0") })
+    expect(floors[0].exitOrStaircase).toEqual({ stairId: "j1:p0:f0:main" })
     // Non-last main floors must carry a real mainEndReward (fragmentSlot), never leave it
     // unset — an unset mainEndReward used to fall back to a free, uncounted mosaicPiece.
     expect(floors[0].mainEndReward).toEqual({ type: "fragmentSlot" })
@@ -216,5 +216,54 @@ describe("a site theme handed down", () => {
       const { floors } = buildSite({ ...ctx, constraint: { ...night, sideSections: [section] }, sideTheme: "night" })
       expect(floors[0].sideSections[0].theme).toBe("day")
     })
+  })
+})
+
+// The authoring side of the same seam: a floor constraint's junctions and its switch have to reach
+// the FloorConfig the serializer then bakes, or the feature is dropped between two files that both
+// compile.
+describe("authored forks and switches", () => {
+  const built = (constraint: PyramidConstraint) =>
+    buildSite({
+      journeyId: "j1",
+      tier: "junior",
+      pyramidIndex: 0,
+      levelCount: 1,
+      pathPuzzles: 2,
+      constraint,
+      difficulty: "junior",
+      hasMapPieceBranch: false,
+      hasWardGate: false,
+      nextTier: null,
+      resolveReward: () => undefined,
+      resolveMainEndReward: () => ({ type: "mosaicPiece" }),
+    }).floors
+
+  it("reaches the built floor config", () => {
+    const floors = built({
+      floors: [{ forks: [{ exits: 2, count: 1 }], switches: { encounter: "lightbeamSwitch", min: 1, max: 1 } }],
+    })
+
+    expect(floors[0].forks).toEqual([{ exits: 2, count: 1 }])
+    expect(floors[0].switches).toEqual({ encounter: "lightbeamSwitch", min: 1, max: 1 })
+  })
+
+  it("hands the site's own down to a floor that names none", () => {
+    const floors = built({
+      forks: [{ exits: 3, count: 2 }],
+      switches: { encounter: "lightbeamSwitch", min: 1, max: 2 },
+    })
+
+    expect(floors[0].forks).toEqual([{ exits: 3, count: 2 }])
+    expect(floors[0].switches).toEqual({ encounter: "lightbeamSwitch", min: 1, max: 2 })
+  })
+
+  it("lets the floor's own win over the site's", () => {
+    const floors = built({
+      forks: [{ exits: 3, count: 2 }],
+      floors: [{ forks: [{ exits: 2, count: 1 }] }],
+    })
+
+    expect(floors[0].forks).toEqual([{ exits: 2, count: 1 }])
   })
 })

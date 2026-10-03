@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { journeys } from "@/data/journeys"
+import { journeys, type Journey } from "@/data/journeys"
 import { TIER_UNLOCK_PERK_IDS } from "@/data/treasurePerks"
 import { availablePyramidJourneyIds, isTierUnlocked, nextPyramidJourneyId } from "./journeyAvailability"
 
@@ -75,5 +75,32 @@ describe(nextPyramidJourneyId, () => {
 
   it("announces nothing the player couldn't start", () => {
     expect(nextPyramidJourneyId(journeys, juniorPyramids[0], noKeys)).toBeUndefined()
+  })
+})
+
+// The playtesting journey is present only in a world generated with INCLUDE_DEV, so it is built here
+// rather than looked up: the ladder's answer must not depend on which world the build holds.
+const devJourney: Journey = {
+  ...journeys.find(j => j.id === starterPyramids[0])!,
+  id: "dev_journey_under_test",
+  dev: true,
+  difficulty: "starter",
+}
+
+describe("a dev journey on the travel screen", () => {
+  it("is never offered by the tier ladder, however much the player holds", () => {
+    const available = availablePyramidJourneyIds([devJourney, ...journeys], noKeys, completed())
+    expect(available.has(devJourney.id)).toBe(false)
+  })
+
+  it("never stands between two real expeditions — the first one is still the first", () => {
+    const available = availablePyramidJourneyIds([devJourney, ...journeys], noKeys, completed())
+    expect([...available]).toEqual([starterPyramids[0]])
+  })
+
+  it("is never announced as what comes next", () => {
+    const upToDev = [...journeys.filter(j => j.difficulty === "starter" && !j.entryLock), devJourney]
+    expect(nextPyramidJourneyId(upToDev, starterPyramids.at(-2)!, noKeys)).toBe(starterPyramids.at(-1))
+    expect(nextPyramidJourneyId(upToDev, starterPyramids.at(-1)!, noKeys)).toBeUndefined()
   })
 })

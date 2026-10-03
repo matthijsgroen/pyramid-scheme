@@ -2,7 +2,7 @@ import { useMemo, type FC } from "react"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
-import { useCelebration } from "../useCelebration"
+import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import type { CanistersPuzzle as CanistersPuzzleData } from "@/mods/puzzle/game/canisters/canisters"
@@ -43,7 +43,7 @@ export const CanistersPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, ro
     7
   )
   const skin = skinFor(role, theme, shape, room)
-  const [state, setState] = usePuzzleState(() => createCanistersState(puzzle))
+  const [state, setState] = usePuzzleState(() => createCanistersState(puzzle), puzzle)
 
   const solved = isCanistersSolved(puzzle, state)
   const left = movesLeft(puzzle, state)

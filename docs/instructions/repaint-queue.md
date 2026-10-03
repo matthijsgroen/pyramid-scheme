@@ -23,6 +23,16 @@ and the scaffold is the only thing that has ever made it obey.
 A square return is also unimportable as it stands, whatever it looks like: the import scales the master
 into the slot, and a 1:1 master in a 2:3 slot is a third out.
 
+**EDGES THAT CONVERGE MEAN THE SAME THING — re-roll, and suspect the scaffold is too deep.** This set is
+drawn in an oblique shear with no vanishing point: parallel edges stay parallel, and depth is carried by
+a thing being drawn HIGHER, never smaller. The scaffold normally holds that on its own. It stops holding
+it once the object gets DEEP: the drop's mouth was lengthened from 0.80 to 4.16 to make a vertical gap
+span its run, and three rolls came back in one-point perspective — long sides tapering, then the whole
+object rotated off-axis with a coping built round the mouth — where the same prompt against the shallow
+mouth had painted flat and square every time. Saying "the sides are parallel, there is no vanishing
+point" in the prompt did not save the second roll. The depth was put back and the shortfall moved to
+the renderer instead. Length in an object is the thing this pipeline buys most dearly.
+
 **Which is why every prompt here now opens by naming its FRAME** — portrait two by three for a prop,
 landscape two by one for a wall item, "exactly as the reference", and do not re-compose it square. It is
 the one non-material sentence a repaint may carry: naming the canvas is not naming the projection, which
@@ -2559,3 +2569,186 @@ Everything else at starter, junior and expert is drawn. These three are the whol
 master, and every one of them is a SINGLE room — which is why they sat unqueued while 62 rooms' worth of
 expert work went in ahead of them. They are here because "done up to expert" is not done with dummies
 still in it, not because any of them is urgent.
+
+## One-way drop — expert, three directions
+
+The first art for a one-way: a passage the player takes once and cannot come back up. The owner settled
+it as a place, not a sign (`docs/authored-locks-roadmap.md`, "A one-way is a place, and the movement
+markers carry the rule"), and then settled what the place looks like — a launch: a short flight of steps
+onto a block at one lip, a tall post standing on it, a short post on bare paving at the other lip, and a
+line run head to head between them. You climb up, take the line and ride down; coming back means
+climbing to a head that is above you with nothing under it.
+
+**The height difference is the direction, and the steps explain the height.** High end with the way up
+to it built = where you start; low end = where you land. Nothing to learn, which is the whole reason it
+beat the two concepts it was chosen over — a plug stone and a spiked one-way, neither of which carried
+direction at all.
+
+It is drawn on the connector cell's own floor square, at cell size, from `prim_pit`'s
+`--contents=drop`/`dropNorth`/`dropSouth`: the void shaft, two courses of cut stone under the far rim
+so the hole shows depth rather than reading as a flat black rectangle, the spoil, and the launch. See
+`renderProp.py`'s `prim_pit`, `_shaft_courses` and `_launch_crossing` for what each part is and why.
+
+Queued at expert only: the develop journey's drop stands on an expert floor, which is the one rank a
+drop can actually be seen on today. The other four ranks stay unqueued until this one has landed.
+
+**The two vertical headings take a WIDER mouth — `w` 1.04 against 0.94 — and it is the full-span rule
+that buys it.** A drop walked up and down the page must have its
+gap span the passage in x, edge to edge of the sprite, or the paving left beside the black reads as a
+ledge to step round; the sprite is scaled to its own widest element, so the mouth has to BE that
+element, which it was not while the spoil reached further out than the crack did, so the spoil is pulled
+in to 0.85 of its spread as well. Measured on the composited tile, `dropSouth`'s black went from 72% of
+the cell's width to 87%, and `dropNorth`'s to the same. `dropEast` keeps the original mouth: its gap
+spans in y, where the shear already gives it the whole cell, and it is painted.
+
+The depth stays at 0.80. It was shallowed to 0.60 for a while to get a sprite under the 84-row cap, and
+nothing was ever near that cap: the number saying otherwise was `renderProp.py`'s own `lands at` line,
+which added the whole height to the whole depth as though the tallest part were also the furthest back.
+Measured off the sheared mesh these tiles draw at aspect 0.6 to 1.3 against a limit of 1.5. The line has
+been fixed and carries the story in a comment.
+
+**`dropNorth`'s flight is climbed FRONTALLY**, away from the viewer, where `dropEast`'s is crossed from
+the side. That is the honest orientation for a heading whose player climbs and then travels into the
+picture, it is the arrangement this projection separates best (`prim_stair`: a flight rising as it
+recedes gains its own rise AND 0.7 of its going, twice over), and it is what gives north a silhouette
+east does not have — a stack of treads read head-on against east's stepped wedge. Without it the two
+tiles launch from the same corner and run their line the same way.
+
+**`dropNorth` stands its launch IN FRONT of the mouth, and getting there cost a roll and two wrong
+turns.** Anything raised at the near lip draws between the viewer and the opening — a block of height h
+with its back face on the lip draws its top at `h - k*d/2`, inside the mouth's own band for every h
+above zero. What that covers is the NEAR LIP LINE, the band's lower edge, which is the one line saying
+the dark shape is a hole in a floor rather than a recess in a wall; with it hidden the first roll came
+back as a slab of wall with an alcove cut in it — the exact failure the retired `pit` was killed for.
+
+Moving the launch sideways cleared the lip and broke the other rule instead, leaving pale floor beside
+the black. Forward is the axis that satisfies both, and how far forward is arithmetic: a part of height
+h clears the band's lower edge when it stands `(h + margin) / k` in front of the near lip, which at a
+0.24 block is 0.41 — a third of the mouth's own depth, and why no small nudge was ever going to do it.
+It costs nothing in height, because all that depth draws BELOW the mouth and the tall post standing on
+it is at the near lip, where the shear draws a thing low. Its prompt names the rim outright.
+
+**Three renders, not four.** The two horizontal headings are one asset, `dropEast`, mirrored left-right
+for `dropWest` when the renderer picks it — that wiring is not part of this queue. The two vertical
+headings, `dropNorth` and `dropSouth`, each need their own: a vertical flip would swap which lip carries
+the void's up-facing top face, against this projection's own rule that a block shows an up-facing band
+on top and a viewer-facing face below it, never the reverse. Which lip carries the steps is exactly
+what differs between the three.
+
+**`--seat` on all three**, which is the opposite of what this section said before and of what
+`prim_pit`'s own docstring still implies. `make_shadow` drops VOID and NOCAST faces before it flattens,
+so the hole casts nothing on its own while the spoil, the block and the posts — which do stand on the
+floor — cast normally. `art/rebuild.sh` already seats `starter/pit` and `expert/pit` this way. Without
+it the stonework round the mouth comes back with no footprint and reads as pasted on.
+
+**`--colour-deep` is not optional at this rank.** The shaft's courses are painted with the `deep` part's
+default, a warm brown, which against expert's blue-grey basalt is a different material. `#5f6b77` is
+that rank's own stone in shade.
+
+**What is asked about the near rim, and why it is asked in words.** The lower edge of the opening —
+the paving's own broken edge, nearest the viewer — is the one edge that sells a hole, and the renderer
+cannot draw it: under this projection a down-facing face turns away from the camera, so the lip's
+underside is a back face and is never rendered. It is therefore the painter's job, and these three
+prompts ask for it outright.
+
+### `expert/dropNorth` — a launch at the near corner, riding away
+
+**Attach:**
+
+1. `~/tile-previews/dropNorth-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a FISSURE torn across a passage floor, seen from above. The dark quadrilateral is the
+OPENING — a hole in the floor, not a wall, not a doorway and not a niche, and nothing stands inside it
+that a person could stand on. Just under its far rim two courses of rough CUT STONE show, the shaft's
+own lining, taking what little light reaches down; below those courses the shaft goes black and stays
+black, and nothing is drawn down there at all. THE OPENING'S LOWER RIM — its edge nearest the viewer —
+runs unbroken from one side of the crack to the other: nothing stands in front of it, nothing covers it,
+and it is the line that says this is a hole in a floor and not a recess in a wall. IN FRONT of the
+opening, on the paving between the crack and the viewer, a short flight of two STEPS climbs onto a low
+stone BLOCK, and a tall timber POST stands on that block. At the FAR edge of the
+opening, furthest from the viewer, a second timber POST stands on bare paving, barely knee high. A taut
+ROPE runs from the head of the tall post, across the opening, to the head of the short one. The loose
+blocks scattered at the opening's edge are broken basalt, shaken free where the floor gave way. There is
+no rim, no coping and no frame around the opening: the crack meets bare paving on every side.
+
+Basalt worn dark and faintly polished where feet have crossed near it, with a thin crust of pale natron
+dust settled into the crack's edges and over the fallen blocks. The posts are old timber, split and
+grey. The rope is bleached hemp, pale against the dark stone.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+Light it as one low lamp in a closed tomb. The edges turned toward that lamp may CATCH it — the broken
+paving along the lower rim of the opening nearest the viewer, the top of each course of stone in the
+shaft, the head of each post — and everything turned away from it falls into shadow. Keep that caught
+light on the EDGES of the stone; the opening itself stays the darkest thing in the picture, and no ledge,
+step or floor appears inside it.
+
+The shadow at the posts' feet is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold pit --contents=dropNorth --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/expert/dropNorth.webp --tier=expert --name=dropNorth --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
+```
+
+### `expert/dropSouth` — a launch at the far lip, riding toward the viewer
+
+**Attach:**
+
+1. `~/tile-previews/dropSouth-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a FISSURE torn across a passage floor, seen from above. The dark quadrilateral is the
+OPENING — a hole in the floor, not a wall, not a doorway and not a niche, and nothing stands inside it
+that a person could stand on. Just under its far rim two courses of rough CUT STONE show, the shaft's
+own lining, taking what little light reaches down; below those courses the shaft goes black and stays
+black, and nothing is drawn down there at all. THE OPENING'S LOWER RIM — its edge nearest the viewer —
+runs unbroken from one side of the crack to the other: nothing stands in front of it, nothing covers it,
+and it is the line that says this is a hole in a floor and not a recess in a wall. At the FAR edge of the
+opening, furthest from the viewer, a short flight of two STEPS climbs onto a low stone BLOCK set against
+the rim, and a tall timber POST stands on that block. At the edge NEAREST the viewer a second timber POST stands on bare paving, barely
+knee high. A taut ROPE runs from the head of the tall post, across the opening and downhill, to the head
+of the short one. The loose blocks scattered at the opening's edge are broken basalt, shaken free where
+the floor gave way. There is no rim, no coping and no frame around the opening: the crack meets bare
+paving on every side.
+
+Basalt worn dark and faintly polished where feet have crossed near it, with a thin crust of pale natron
+dust settled into the crack's edges and over the fallen blocks. The posts are old timber, split and
+grey. The rope is bleached hemp, pale against the dark stone.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+Light it as one low lamp in a closed tomb. The edges turned toward that lamp may CATCH it — the broken
+paving along the lower rim of the opening nearest the viewer, the top of each course of stone in the
+shaft, the head of each post — and everything turned away from it falls into shadow. Keep that caught
+light on the EDGES of the stone; the opening itself stays the darkest thing in the picture, and no ledge,
+step or floor appears inside it.
+
+The shadow at the posts' feet is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold pit --contents=dropSouth --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/expert/dropSouth.webp --tier=expert --name=dropSouth --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
+```

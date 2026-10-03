@@ -1,7 +1,6 @@
 // puzzle's app entrypoint (side-effect): the non-gating puzzle families.
 import "./sumplete/plugin"
 import "./futoshiki/plugin"
-import "./lightbeam/plugin"
 import "./balanceScale/plugin"
 import "./eclipse/plugin"
 import "./constellation/plugin"

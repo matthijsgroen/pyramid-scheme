@@ -1,3 +1,5 @@
+import type { Direction } from "@/game/siteTypes"
+
 // Every size on the site map derives from this one base unit. Bump EM to zoom the whole
 // map in or out — cell size, wall thickness, and every room icon's radius scale with it,
 // instead of needing a dozen hand-tuned constants kept in sync by hand.
@@ -81,6 +83,54 @@ export const ARCH_H = ARCH_RISE + WALL_H + ARCH_DROP // 49
  * something set into the hole. Which is also the placement rule: a doorway only gets an arch when the
  * bands either side of it are wall, so both corners are masonry (see doorwaysFor). */
 export const ARCH_W = CELL + SIDE_W * 2 // 84
+
+/** A one-way drop is drawn at the scale it was painted, 9.464 master pixels to a map unit, centred on its run.
+ * The tile is the art's own ink, 340 x 162 pixels: 170 x 81 units, two pixels to a unit, so nothing is stored
+ * softer than it is drawn at a 2x screen. The run is 3 cells (196 units) and the art is 2.8 of them, so it
+ * stands inside the run with a few units to spare at each end. The tile's bottom edge IS the corridor floor's
+ * bottom edge, and the corridor floor is the bottom 56 units of it (rows 50-162): the pit's mouth and its
+ * dark shaft fill the cell's width, and the rail, posts and steps stand proud above, 25 units over the floor's top. */
+export const DROP_W = 170
+export const DROP_H = 81
+
+/** A vertical drop's scale is set by the corridor edges MARKED ON ITS MASTER, not by the pit's own ink: the
+ * crack is torn wider than the passage it crosses, so the painted black overhangs the corridor the way
+ * dropEast's spoil stands proud above its own. North's marks are 861 master pixels apart, which over a
+ * 56-unit corridor is 15.375 pixels to a unit, and the tile measures 215 x 286 pixels at that scale.
+ *
+ * South is marked the same way, 1186 pixels over 56, giving 21.18 and a 155 x 237 tile. Its master was
+ * stretched down the page by hand after painting, which is why its ink is taller than the scaffold it was
+ * painted on and why it is imported on the chroma key alone — the rendered mask no longer fits it.
+ *
+ * NEITHER COVERS ITS RUN, AND THE ART IS NOT THE PLACE TO FIX IT. A vertical run is 224 units down the page
+ * (ROW_PITCH x 2 + CELL) against a horizontal one's 196. These are the TILE's extent and not the hole's:
+ * measured off the void itself the two vertical gaps are 42 and 48 units, near enough the same, and the
+ * 24 units by which north's tile is taller are its flight, which climbs head-on into the picture and so
+ * stacks drawn height without adding any hole. Against the run the gaps cover about a fifth each.
+ * Lengthening the mouth to close that was tried and reverted — it works in the mesh and loses the
+ * projection in the paint (docs/instructions/repaint-queue.md, the convergence rule). What the sprite does
+ * not cover is plain floor: the drop is painted onto a floor tile and that tile is the hole's rim, so the
+ * obstacle's cells are drawn as floor and the art is the gap. */
+export const DROP_NORTH_W = 107.5
+export const DROP_NORTH_H = 143
+export const DROP_SOUTH_W = 77.5
+export const DROP_SOUTH_H = 118.5
+
+/** The sprite's box for a drop whose run is `cells` and which travels `dir`. A horizontal drop is centred on
+ * its run with its bottom on the run's floor line; a vertical one is centred on its run both ways, because
+ * its length lies down the page and it has no single floor line to stand on. */
+export const dropFrame = (cells: readonly (readonly [number, number])[], dir: Direction = "e") => {
+  const first = cellCenter(...cells[0])
+  const last = cellCenter(...cells[cells.length - 1])
+  const cx = (first.cx + last.cx) / 2
+  const cy = (first.cy + last.cy) / 2
+  if (dir === "n") return { x: cx - DROP_NORTH_W / 2, y: cy - DROP_NORTH_H / 2, w: DROP_NORTH_W, h: DROP_NORTH_H }
+  if (dir === "s") return { x: cx - DROP_SOUTH_W / 2, y: cy - DROP_SOUTH_H / 2, w: DROP_SOUTH_W, h: DROP_SOUTH_H }
+  return { x: cx - DROP_W / 2, y: cy + CELL / 2 - DROP_H, w: DROP_W, h: DROP_H }
+}
+
+/** The floor line a drop stands on: the frame's bottom edge, which is the run's floor edge. */
+export const dropFloorLine = (frame: { y: number; h?: number }) => frame.y + (frame.h ?? 0)
 
 /** Padding around the map: room for the one-cell ring of wall outside the grid. */
 export const PAD = CELL

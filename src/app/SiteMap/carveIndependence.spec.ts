@@ -14,10 +14,13 @@ const resolveKeyRequirements: ResolveKeyRequirements = (familyId, ctx) =>
 const gridFor = (journeyId: string, levelNr: number, floorIndex: number, seedOffset = 0): FloorGrid => {
   const journey = journeys.find(j => j.id === journeyId)!
   const site = journey.siteConfigs![levelNr - 1] ?? journey.siteConfigs![0]
+  // The floor carries its own pinned seed, which wins over the address one, so the offset moves that.
+  const floor = site[floorIndex]
+  const pinned = floor.seed ?? floorAssemblySeed(persistentInteriorSeed(journeyId), levelNr, floorIndex)
   const result = assembleFloor(
     journeyId,
-    site[floorIndex],
-    floorAssemblySeed(persistentInteriorSeed(journeyId), levelNr, floorIndex) + seedOffset,
+    { ...floor, seed: pinned + seedOffset },
+    pinned + seedOffset,
     resolveEncounter,
     {
       resolveKeyRequirements,

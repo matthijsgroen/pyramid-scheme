@@ -1,4 +1,5 @@
 import type { Difficulty } from "@/data/difficultyLevels"
+import type { ForkShape } from "@/game/forkShape"
 
 // Ctx shape matches src/game/siteAssembler.ts's ResolveKeyRequirements (minus the familyId
 // dispatch param, already implied by which FamilyMeta this sits on) — kept as a local,
@@ -11,6 +12,16 @@ export type FamilyKeyRequirementResolverCtx = {
 }
 export type FamilyKeyRequirementResolver = (ctx: FamilyKeyRequirementResolverCtx) => string[] | undefined
 
+/** How the map draws a room of a family that works a mechanism. The family declares it, so the map never
+ * guesses a drawing from what the room is for. */
+export type FamilyDrawing = {
+  /** The marker the room wears at every rank: "handle" is the lever glyph, "mechanism" the family's own
+   * `icon`. This is also the whole drawing wherever `art` is not painted. */
+  marker: "handle" | "mechanism"
+  /** Furniture drawn beside the marker at a rank that has painted it ("lever"). Unset: the marker alone. */
+  art?: "lever"
+}
+
 // Plain data describing a registered encounter family — no React/app dependency, so
 // world-gen (src/worldGen/) can read it directly via allFamilyMeta.ts alongside the app's
 // own family registry (src/app/families/familyRegistry.ts), which re-exports this type.
@@ -20,6 +31,9 @@ export type FamilyMeta = {
   tags: string[]
   icon: string
   color: string
+  /** How a room of this family is drawn on the map. Unset on a family that works no mechanism; a mechanism's
+   * room whose family declares none is drawn as the "mechanism" marker. */
+  drawing?: FamilyDrawing
   // Priority for the reward-weight fill-order allocator (docs/mods/ARCHITECTURE.md's placement
   // pipeline, folded into the keys-and-locks solver's placement model) — 0-100 scale, higher fills
   // first, 0 = never eligible for this pool. Treasure (100) always has loot and fills
@@ -29,6 +43,45 @@ export type FamilyMeta = {
   // fragment) — explicit DSL authoring or a system that targets it directly, never this
   // generic pool, even though a shop has real capacity (several stock slots).
   rewardPriority: number
+  /**
+   * A finished room of this family is walked back INTO, rather than only repositioned on like every
+   * other completed cell (src/app/SiteMap/useSiteNavigation.ts).
+   *
+   * For a family whose room hands over one of several things it holds, one per visit: a switch leaves
+   * open the one way out it routes its beam to, and without a second visit the branches it shut would
+   * hold content nothing could ever reach. The cost of the choice is the walk back, not the content.
+   * The board starts fresh, unless the family also claims `stateIsTheMechanism` below.
+   */
+  reEnterable?: boolean
+  /**
+   * What the room ASKS OF THE PLAYER standing in it, as the i18n key of the prompt beside the explorer
+   * (src/app/SiteMap/SiteMapScreen.tsx): the switch asks for its mirrors to be turned, the stall to be
+   * looked over. The player is already in the room — the prompt opens what stands there and moves nobody
+   * — so the words are about working the thing, never about going in.
+   *
+   * A family that names none, or whose mod is switched off, gets a prompt honest for any room.
+   */
+  invitation?: string
+  /**
+   * The board of this family IS the mechanism the room works, so what the player left it on outlives the
+   * solve and the room reopens on it.
+   *
+   * The switch standing in a fork is what this exists for: how its mirrors lie is which way out stands
+   * open, so a board offered dark would deny the door the player can see standing open beside it. Every
+   * other family's board is a question that has been answered, and its moves have nothing left to say.
+   */
+  stateIsTheMechanism?: boolean
+  /**
+   * Pressing this room's arrival prompt IS the whole interaction — no board is ever offered, and the
+   * family's own `generate`/`Component` never run for it (src/app/SiteMap/useSiteNavigation.ts).
+   *
+   * A lever has nothing to solve and nothing to look at: the position it is thrown to is written the
+   * moment the prompt is taken, the same way walking into the exit chamber or a staircase acts on the
+   * spot rather than opening a screen first. `stateIsTheMechanism` alone does not imply this — the
+   * lightbeam switch also carries no separate "solve", but its board is a real thing the player works,
+   * so it keeps its screen; this is for the family that has none at all.
+   */
+  actsOnArrival?: boolean
   // How many reward slots a node of this family exposes. Default 1 (an ordinary node bears one
   // reward, like a chest or a puzzle-chain position). A shop is the one family that overrides it
   // (6): its node carries a `rewards[]` stock array of this length, filled by the mods that place
@@ -92,6 +145,13 @@ export type FamilyGenerationCtx = {
    * generatePuzzle, never `resolveOptions`'s result — the bucket key is the options, so which board a
    * room draws cannot change which list it draws from. */
   boardIndex?: number
+  /** The shape of the fork this room is, where it is one (src/game/forkShape.ts) — a generator that
+   * lays a board out per way out needs to know how many there are and how they sit.
+   *
+   * The SHAPE, never the room's own `exits`: those carry a per-room gate key each, and a bucket key
+   * built over them would be one bucket per room. There are three shapes, so there are three buckets.
+   * What the board is drawn ON belongs to the Component, which reads the exits off FamilyContext. */
+  forkShape?: ForkShape
 }
 
 // What solving an admitted board taught the offline pass. Reported by the CLI so a designer tuning a

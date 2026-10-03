@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import { PyramidDisplay } from "./PyramidDisplay"
 import { generateLevel } from "@/game/generateLevel"
 import { mulberry32 } from "@/game/random"
-import { createFloorStartIndices } from "./support"
+import { createFloorStartIndices } from "@/game/pyramidBlocks"
 import { useState } from "react"
 
 type PyramidLevelArgs = {

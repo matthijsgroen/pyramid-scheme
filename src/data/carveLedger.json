@@ -1,0 +1,126 @@
+{
+  "expert_1#2#0": {
+    "hash": "100cb8014e55c50d6feb89d23560d5e4cee88b05",
+    "refusal": "expert_1 level 2 floor 0: no seed in 4343 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "expert_1#3#0": {
+    "hash": "7167665e64e03eb2424f7542a34c7f97077590a1",
+    "refusal": "expert_1 level 3 floor 0: no seed in 4343 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "expert_1#4#0": {
+    "hash": "76e81f6562eec25b7fcd3d96ac202559a5d1f219",
+    "refusal": "expert_1 level 4 floor 0: no seed in 4646 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "expert_2#1#0": {
+    "hash": "9cf44a4d6d91c0d0b042c679fe7cb64affd4042a",
+    "refusal": "expert_2 level 1 floor 0: no seed in 4646 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "expert_2#2#0": {
+    "hash": "02e665f8e404c89a18973459ffe3b4782bcb6f29",
+    "refusal": "expert_2 level 2 floor 0: no seed in 4646 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "expert_2#3#0": {
+    "hash": "396bc40ff15587c797d07d587703ee0d69aeae83",
+    "refusal": "expert_2 level 3 floor 0: no seed in 4646 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "expert_2#4#0": {
+    "hash": "7a6a62b0434b33cc030cebc47342e25fe7cd7728",
+    "refusal": "expert_2 level 4 floor 0: no seed in 4343 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "expert_3#3#0": {
+    "hash": "5a370e8a4823fc33040250cc44f009230febbc3f",
+    "refusal": "expert_3 level 3 floor 0: no seed in 4343 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "expert_3#5#0": {
+    "hash": "89dca3d06cfa4180064a9edf748df66b23f1bb9c",
+    "refusal": "expert_3 level 5 floor 0: no seed in 4646 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "expert_4#2#0": {
+    "hash": "f03658491a5859e4a1f4ce416de6d786726ecfd5",
+    "refusal": "expert_4 level 2 floor 0: no seed in 4141 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "expert_4#4#0": {
+    "hash": "f46b00d5b2bd564d64bacca4002aea03a8f4fe1e",
+    "refusal": "expert_4 level 4 floor 0: no seed in 4141 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "master_1#1#0": {
+    "hash": "5aab029fe5ba1f6fa37f94116d11dbb874d5c81c",
+    "refusal": "master_1 level 1 floor 0: no seed in 4646 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "master_1#2#0": {
+    "hash": "f1987b6dad24b1a9fc6b1cf3d7e8b3630a7ba25f",
+    "refusal": "master_1 level 2 floor 0: no seed in 4646 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "master_1#3#0": {
+    "hash": "20ddae5c59d3530bd2b3fa1b38697513c7ba4c96",
+    "refusal": "master_1 level 3 floor 0: no seed in 4646 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "master_2#3#0": {
+    "hash": "49cd17445093e2295eff31932f11db19bf5a28b2",
+    "refusal": "master_2 level 3 floor 0: no seed in 4646 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "master_3#1#0": {
+    "hash": "5048e685aecad9e194fea7cc4ca13042a6a738a1",
+    "refusal": "master_3 level 1 floor 0: no seed in 4646 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "master_3#3#0": {
+    "hash": "3b632d4ec5b950486f74e75c7c68e67e0d445f53",
+    "refusal": "master_3 level 3 floor 0: no seed in 4646 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "master_4#1#0": {
+    "hash": "df66191275d6b76f0633b6fc8efdbeeaf0a4f0ef",
+    "refusal": "master_4 level 1 floor 0: no seed in 4646 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "master_4#3#0": {
+    "hash": "e7415783e6fec5209db11ffb34209ef40ce97ecc",
+    "refusal": "master_4 level 3 floor 0: no seed in 4646 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "wizard_1#1#1": {
+    "hash": "9533efd575b5b8b729d1fc22db03fa417eafd818",
+    "refusal": "wizard_1 level 1 floor 1: no seed in 4646 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "wizard_1#2#1": {
+    "hash": "f1964714fff0c2a1b0719a5d1352828a2c7dc1a8",
+    "refusal": "wizard_1 level 2 floor 1: no seed in 4343 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "wizard_1#3#1": {
+    "hash": "339e754b2819167b415796b293bacd9113da2d5e",
+    "refusal": "wizard_1 level 3 floor 1: no seed in 4646 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "wizard_2#2#1": {
+    "hash": "6ee53526a09fea8bd39453f5fdbb6ef75e8ecd19",
+    "refusal": "wizard_2 level 2 floor 1: no seed in 4343 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "wizard_2#3#1": {
+    "hash": "ac6491e36c8cd5dee8fcf219dee3ab48dc367572",
+    "refusal": "wizard_2 level 3 floor 1: no seed in 4646 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "wizard_3#1#1": {
+    "hash": "33dc51914d7e8c0a909054311b585a6baa9a9f26",
+    "refusal": "wizard_3 level 1 floor 1: no seed in 4343 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "wizard_3#2#1": {
+    "hash": "50f9a68e52d4992e606304c3c0c2d095bb83a7ca",
+    "refusal": "wizard_3 level 2 floor 1: no seed in 4646 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "wizard_3#3#1": {
+    "hash": "71125a2b7ccfb9917f231cd42b72dd5d957d7a1b",
+    "refusal": "wizard_3 level 3 floor 1: no seed in 4646 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "wizard_4#1#1": {
+    "hash": "5322892d4b69ee64b4b5c6c9aa16737816c2b090",
+    "refusal": "wizard_4 level 1 floor 1: no seed in 4343 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "wizard_4#2#1": {
+    "hash": "d31f38893d0e3d33d5bcc7d74fd70da3c6a4debf",
+    "refusal": "wizard_4 level 2 floor 1: no seed in 4646 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "wizard_4#3#1": {
+    "hash": "a8fba9d1a2083b9d9e127f7aa85d27434d47e631",
+    "refusal": "wizard_4 level 3 floor 1: no seed in 4646 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  },
+  "wizard_4#4#1": {
+    "hash": "3cdbccabed04f8ce1fe09511e89367b9d3060e32",
+    "refusal": "wizard_4 level 4 floor 1: no seed in 4646 tries up to packing 1 satisfies \"carves\" — [{\"type\":\"layoutNotFound\"}]"
+  }
+}

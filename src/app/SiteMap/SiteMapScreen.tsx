@@ -1,9 +1,12 @@
 import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { getOwnedKeys } from "@/game/gridNavigation"
+import { concealShutGround } from "@/game/concealment"
+import { getFamilyPlugin } from "@/app/families/familyRegistry"
 import { floorKeyRing } from "@/game/floorKeys"
 import { useCorridorDetection } from "@/app/SiteMap/useCorridorDetection"
 import { useFoundCorridors } from "@/app/SiteMap/useFoundCorridors"
+import { useMechanismStates } from "@/app/SiteMap/useMechanismStates"
 import { useDetectorBand } from "@/app/SiteMap/useDetectorBand"
 import type { SiteConfig } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
@@ -14,7 +17,7 @@ import { useFloorExplorationRecorder } from "./useFloorExplorationRecorder"
 import { useEncounter } from "./useEncounter"
 import { useRewardOffer } from "./useRewardOffer"
 import { useSiteExit } from "./useSiteExit"
-import { useSiteNavigation } from "./useSiteNavigation"
+import { useSiteNavigation, type ArrivalPrompt, type ArrivalPromptKind } from "./useSiteNavigation"
 import { RewardFlow } from "./RewardFlow"
 import { EncounterModal } from "./EncounterModal"
 import { useApplyReward } from "./applyReward"
@@ -32,7 +35,6 @@ import { PuzzleRoomContext } from "@/mods/core/app/puzzleState"
 import { DetectorPanel } from "@/ui/atoms/DetectorPanel"
 import { DetectorButton } from "@/ui/atoms/DetectorButton"
 import { BackButton } from "@/ui/atoms/BackButton"
-import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { FloorBadge } from "@/ui/atoms/FloorBadge"
 import { SiteHudBar } from "@/ui/atoms/SiteHudBar"
 import { FloorKeyRing } from "@/ui/molecules/FloorKeyRing"
@@ -65,12 +67,17 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   const detectorLevels = useMergedDetectorLevels()
   const readout = useDetectorReadout(detectorLevels)
 
-  const currentFloor = floorOfPosition(journeyState?.positionKey, siteConfig.length)
+  // The standing cell first: it is what `explorerPos` below resolves first too, so the floor assembled
+  // here is always the one the explorer will actually be drawn on. `positionKey` only disagrees with it
+  // in the window before the player's first walk on a level (standing not yet written), where both name
+  // the entrance floor anyway.
+  const currentFloor = floorOfPosition(journeyState?.standingKey ?? journeyState?.positionKey, siteConfig.length)
   const floorConfig = siteConfig[currentFloor]
 
   const foundCorridors = useFoundCorridors(journeys, journeyId)
+  const mechanismStates = useMechanismStates(journeys, journeyId)
 
-  const { grid, explorerPos, hiddenSections, junctionSections } = useAssembledFloor(
+  const { grid, explorerPos, hiddenSections, junctionSections, openGateKeys } = useAssembledFloor(
     journeyId,
     floorConfig,
     seed,
@@ -79,7 +86,9 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
     journeyState?.positionKey,
     detectorLevels.corridor,
     foundCorridors,
-    levelIndex
+    levelIndex,
+    mechanismStates,
+    journeyState?.standingKey
   )
 
   // Where a stored address sits on the floor the player is looking at. Only this floor is assembled,
@@ -119,16 +128,26 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
     currentLevelIdx: (journeyState?.levelNr ?? 1) - 1,
   })
 
-  // Keys the player already holds for THIS floor's gates: this floor's own completed
-  // tomb-key treasures, union'd with ward keys owned entering the site (progression's
-  // global tombKeyIds, above). Gating is soft, so this union is purely a "is this gate
-  // satisfied" read, for the gate family's own precondition and the map's locked/unlocked
-  // gate coloring.
-  const ownedKeys = useMemo(() => (grid ? new Set([...getOwnedKeys(grid), ...wardKeys]) : wardKeys), [grid, wardKeys])
+  // Keys the player already holds for THIS floor's gates: this floor's own completed tomb-key
+  // treasures, union'd with the ward keys owned entering the site (progression's global
+  // tombKeyIds, above), union'd with the gate keys this floor's own mechanisms currently hold open.
+  // Gating is soft, so this union is purely a "is this gate satisfied" read, for the gate family's
+  // own precondition, the map's locked/unlocked gate coloring and the key ring below.
+  //
+  // A thrown lever is "held" in exactly this sense — the player may pass what it opens now — but it
+  // mints nothing a chest could also hold: `openGateKeys` carries no colour (siteAssembler never sets
+  // one on an authored gate), so the union changes what is passable without adding a key to go find.
+  const ownedKeys = useMemo(
+    () => new Set([...(grid ? getOwnedKeys(grid) : []), ...wardKeys, ...openGateKeys]),
+    [grid, wardKeys, openGateKeys]
+  )
 
   // What the HUD key ring shows: this floor's coloured keys in hand, and the colours of doors the
   // player has already seen here and can't open yet (fogged ones stay secret — see floorKeys.ts).
   const keyRing = useMemo(() => (grid ? floorKeyRing(grid, ownedKeys) : { held: [], needed: [] }), [grid, ownedKeys])
+
+  // What is drawn hides ground a shut barrier cuts off; everything else reads the true grid.
+  const drawnGrid = useMemo(() => (grid ? concealShutGround(grid, explorerPos) : null), [grid, explorerPos])
 
   useFloorExplorationRecorder({ journeys, journeyId, levelNr: levelIndex + 1, currentFloor, grid })
 
@@ -152,6 +171,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   const encounter = useEncounter({
     journeys,
     journeyId,
+    levelNr: levelIndex + 1,
     currentFloor,
     difficulty: floorConfig.difficulty,
     grid,
@@ -161,7 +181,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
 
   const exit = useSiteExit()
 
-  const { onCellClick } = useSiteNavigation({
+  const { onCellClick, prompt, explorerHidden } = useSiteNavigation({
     journeys,
     journeyId,
     siteConfig,
@@ -173,6 +193,25 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
     onSkippedConsumable: rewardOffer.offerSkipped,
     onExitReached: exit.arrived,
   })
+
+  // What the prompt beside the explorer says when the floor itself is what is offered. Written out
+  // rather than looked up by a built key, so the locale guard can see every one of them. `here` is the
+  // room prompt for a family that names none of its own, and for a room left by a mod that is off: it
+  // claims nothing about what stands there or about having been there before.
+  const promptLabels: Record<Exclude<ArrivalPromptKind, "obstacle">, string> = {
+    room: t("ui.prompt.here"),
+    stairs: t("ui.prompt.stairs"),
+    exit: t("ui.prompt.exit"),
+  }
+
+  // A room's own words come from the family standing in it (FamilyMeta.invitation), read through the
+  // registry so core names no mod and an unregistered one simply has nothing to say.
+  const promptLabel = (prompt: ArrivalPrompt): string => {
+    // A crossing's words are its realisation's own; one no mod declares still says it cannot be undone.
+    if (prompt.kind === "obstacle") return prompt.invitation ? t(prompt.invitation) : t("ui.prompt.oneWay")
+    const invitation = prompt.familyId ? getFamilyPlugin(prompt.familyId)?.meta.invitation : undefined
+    return invitation ? t(invitation) : promptLabels[prompt.kind]
+  }
 
   const ActiveEncounterComponent = encounter.family?.Component ?? null
 
@@ -186,12 +225,15 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
       {currentFloor > 0 && <FloorBadge label={t("ui.floor", { number: currentFloor + 1 })} />}
       <div className="relative h-(--screen-height) w-screen">
         <SiteMapView
-          grid={grid}
+          grid={drawnGrid ?? grid}
           onCellClick={onCellClick}
           explorerPos={explorerPos}
+          explorerHidden={explorerHidden}
           currentFloor={currentFloor}
           pendingCells={pendingConsumableCells}
           ownedKeys={ownedKeys}
+          mechanismStates={mechanismStates}
+          prompt={prompt && { label: promptLabel(prompt), at: prompt.at, onTake: prompt.take }}
           className="size-full"
         />
       </div>
@@ -257,18 +299,6 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
           ))}
         </div>
       </SiteHudBar>
-      {/* ponytail: plain confirm dialog for now — the exit chamber's own artwork (daylight through
-          the doorway) can take over this step later without moving the decision. */}
-      <ConfirmModal
-        isOpen={exit.prompting}
-        title={t("ui.leaveSiteTitle")}
-        message={t("ui.leaveSiteMessage")}
-        confirmText={t("ui.leaveSiteConfirm")}
-        cancelText={t("ui.leaveSiteCancel")}
-        confirmButtonClass="bg-amber-600 hover:bg-amber-700"
-        onConfirm={exit.confirm}
-        onCancel={exit.cancel}
-      />
       {exit.leaving && (
         <EntranceTransitionOverlay
           origin="50% 50%"

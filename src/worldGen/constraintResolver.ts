@@ -1,4 +1,5 @@
 import type { Tier } from "./types"
+import { resolveBinding, withResolvedBinding } from "./realisationBinding"
 import type { Rule, RuleScope, PyramidConstraint, FloorConstraint, PyramidSelector } from "./dsl"
 
 export type Provenance = Partial<Record<keyof PyramidConstraint, RuleScope>>
@@ -154,7 +155,12 @@ export const resolvePyramidConstraintWithProvenance = (
   }
 
   validatePyramidConstraint(constraint, `journey=${journeyId} pyramid=${pyramidIndex + 1}`)
-  return { constraint, provenance }
+  // Per kind, not per key: a journey binding the toggle must not unbind what the difficulty bound for the activator.
+  const resolved = withResolvedBinding(
+    constraint,
+    resolveBinding(matching.map(rule => rule.constraints as PyramidConstraint))
+  )
+  return { constraint: resolved, provenance }
 }
 
 export const resolvePyramidConstraint = (
@@ -180,5 +186,8 @@ export const resolveFloorConstraint = (
   return rules
     .filter(r => matchesFloorScope(r.scope, journeyId, tier, pyramidIndex, levelCount, floorIndex))
     .sort((a, b) => SPECIFICITY[a.scope.level] - SPECIFICITY[b.scope.level])
-    .reduce<FloorConstraint>((acc, rule) => mergeConstraints(acc, rule.constraints as FloorConstraint), fromArray)
+    .reduce<FloorConstraint>((acc, rule) => {
+      const merged = mergeConstraints(acc, rule.constraints as FloorConstraint)
+      return withResolvedBinding(merged, resolveBinding([acc, rule.constraints as FloorConstraint]))
+    }, fromArray)
 }

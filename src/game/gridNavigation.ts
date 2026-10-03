@@ -1,9 +1,26 @@
-import type { FloorGrid, GridCell, Direction, CellState, TombKeyReward } from "./siteTypes"
+import type { FloorGrid, GridCell, Direction, CellState, TombKeyReward, CorridorCell, ObstacleKind } from "./siteTypes"
 
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 const opposite: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
 
 export const getCell = (grid: FloorGrid, r: number, c: number): GridCell | undefined => grid.cells[r]?.[c]
+
+/**
+ * A WAY OUT A SWITCH SHUT: a wall the player can see, not a door they walk up to.
+ *
+ * It wears a gate's bars and holds nothing to enter — no family renders it, and no key anything mints
+ * ever satisfies it. The board standing in the fork is the only thing that opens one, and it opens it
+ * by giving the cell back the corridor it was cut from. So the player may see it and read that the way
+ * is shut; they may not stand on it, pass it, or have anything beyond it revealed.
+ *
+ * Every other gate — a ward, an authored floor-key door — carries the family that renders it, and stays
+ * soft-gated: walked up to, tapped, and told what it wants.
+ */
+export const isSealedWayOut = (cell: GridCell | undefined): boolean =>
+  cell?.type === "room" &&
+  cell.family === undefined &&
+  cell.requiredKeyId !== undefined &&
+  (cell.tags?.includes("gate") ?? false)
 
 export const getOwnedKeys = (grid: FloorGrid): ReadonlySet<string> => {
   const keys = new Set<string>()
@@ -12,6 +29,87 @@ export const getOwnedKeys = (grid: FloorGrid): ReadonlySet<string> => {
       if (cell.type === "room" && cell.state === "completed" && cell.reward?.type === "tombKey")
         keys.add((cell.reward as TombKeyReward).keyId)
   return keys
+}
+
+/** Whether a cell is part of an obstacle's span rather than ground. Such a cell names no direction and
+ * no neighbour names it, so no walk ever enters it; the marker is how the art and the lock find it. */
+export const isObstacleCell = (
+  cell: GridCell | undefined
+): cell is CorridorCell & { obstacle: NonNullable<CorridorCell["obstacle"]> } =>
+  cell?.type === "corridor" && cell.obstacle !== undefined
+
+/** Every drop on the floor as one thing, read back off the cells that carry the `obstacle` marker: the
+ * launch the player stands on, the obstacle's cells in order from the launch, the landing they arrive
+ * on, and the direction the drop runs. The launch is the cell before the first obstacle cell and the
+ * landing the cell after the last, each a standable dead end off its own node.
+ *
+ * The grid is the only place a drop is written down, so this is the one place that reads it back whole.
+ * Nothing here decides what can be walked: a walk follows `dirs` alone, and the obstacle names none. */
+export const oneWayRuns = (
+  grid: FloorGrid
+): {
+  launch: [number, number]
+  cells: [number, number][]
+  landing: [number, number]
+  dir: Direction
+  kind: ObstacleKind
+}[] => {
+  const runs: ReturnType<typeof oneWayRuns> = []
+  const continues = (r: number, c: number, dir: Direction): boolean => {
+    const cell = getCell(grid, r, c)
+    return isObstacleCell(cell) && cell.obstacle.dir === dir
+  }
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const first = getCell(grid, r, c)
+      if (!isObstacleCell(first)) continue
+      const { dir, kind } = first.obstacle
+      const [dr, dc] = MOVES[dir]
+      if (continues(r - dr, c - dc, dir)) continue
+      const cells: [number, number][] = []
+      for (let at = 0; continues(r + dr * at, c + dc * at, dir); at++) cells.push([r + dr * at, c + dc * at])
+      const [lr, lc] = cells[cells.length - 1]
+      runs.push({ launch: [r - dr, c - dc], cells, landing: [lr + dr, lc + dc], dir, kind })
+    }
+  return runs
+}
+
+/** The drop whose launch is this cell, if any: what a walker standing on a launch takes across. */
+export const dropLaunchedAt = (
+  grid: FloorGrid,
+  row: number,
+  col: number
+): ReturnType<typeof oneWayRuns>[number] | undefined =>
+  oneWayRuns(grid).find(run => run.launch[0] === row && run.launch[1] === col)
+
+/** The one answer to "which cells are a drop's ends": every launch and landing of the floor, keyed by
+ * cell, each with the direction a walker enters it from its own node. Read off `oneWayRuns`, never off a
+ * cell's shape: a one-direction stub is not a launch in general. */
+export const dropEndsOf = (grid: FloorGrid): ReadonlyMap<string, Direction> => {
+  const ends = new Map<string, Direction>()
+  for (const run of oneWayRuns(grid)) {
+    ends.set(`${run.launch[0]},${run.launch[1]}`, run.dir)
+    ends.set(`${run.landing[0]},${run.landing[1]}`, opposite[run.dir])
+  }
+  return ends
+}
+
+/** Brings every obstacle out of the fog once its launch or its landing is seen: the whole zipline is
+ * visible from either foot, and nothing past it. The far end stays dark, so a player at the launch sees
+ * the line and not what it lands on. Read off `grid`, the shape carved into it never changing mid-walk,
+ * but written into `cells`, this call's own running state. */
+const revealObstacles = (cells: GridCell[][], grid: FloorGrid): void => {
+  for (const run of oneWayRuns(grid)) {
+    const seen = [run.launch, run.landing].some(([r, c]) => {
+      const cell = cells[r]?.[c]
+      return cell !== undefined && cell.type !== "empty" && cell.state !== "fogged"
+    })
+    if (!seen) continue
+    for (const [r, c] of run.cells) {
+      const cell = cells[r][c]
+      if (cell.type === "corridor" && cell.state === "fogged") cells[r][c] = { ...cell, state: "visible" }
+    }
+  }
 }
 
 export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGrid => {
@@ -25,12 +123,14 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
   } else if (targetCell.type === "corridor") {
     newCells[row][col] = { ...targetCell, state: "completed" }
   }
-
   const updatedGrid = { ...grid, cells: newCells }
 
   // 3. BFS through corridors and rooms from (row,col)
   const cell = newCells[row][col]
-  if (cell.type === "empty") return updatedGrid
+  if (cell.type === "empty") {
+    revealObstacles(newCells, grid)
+    return updatedGrid
+  }
 
   type QItem = { r: number; c: number; fromDir: Direction | null }
   const visited = new Set<string>([`${row},${col}`])
@@ -54,8 +154,13 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
 
     if (neighbor.type === "corridor") {
       // Straight-through: corridor continues in the same direction we arrived from, no branches.
-      // Anything else (corner, T-junction) is a blind spot the player must click to reveal.
-      const isStraight = fromDir !== null && neighbor.dirs.has(fromDir) && neighbor.dirs.size === 2
+      // Anything else (corner, T-junction, dead end) is a blind spot the player must click to reveal.
+      // A straight names the way back as well as the way onward.
+      const isStraight =
+        fromDir !== null &&
+        neighbor.dirs.size === 2 &&
+        neighbor.dirs.has(fromDir) &&
+        neighbor.dirs.has(opposite[fromDir])
       if (isStraight) {
         if (neighbor.state === "fogged") {
           newCells[r][c] = { ...neighbor, state: "visible" }
@@ -77,10 +182,11 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
         }
       }
     } else if (neighbor.type === "room") {
-      // Gating is soft: a locked gate is still approachable and clickable, same as any
-      // other room — its own family shows "you don't have the key yet" and refuses to
-      // solve. Reachability past it (revealing what's beyond) only happens once it's
-      // actually completed, which "don't traverse through rooms" below already enforces.
+      // A room comes out of the fog so the player can see it, and the walk stops there: reachability
+      // past it only happens once it is completed, which "don't traverse through rooms" below
+      // enforces. That is as true of a shut way out, which is seen and never completed, as it is of a
+      // gate a family renders, where the family shows "you don't have the key yet" and refuses to
+      // solve — those stay approachable and clickable like any other room.
       if (neighbor.state === "fogged" || neighbor.state === "visible") {
         newCells[r][c] = { ...neighbor, state: "reachable" }
       }
@@ -88,8 +194,15 @@ export const completeCell = (grid: FloorGrid, row: number, col: number): FloorGr
     }
   }
 
+  revealObstacles(newCells, grid)
   return { ...grid, cells: newCells }
 }
+
+/** The one step rule of every walk: a walker may move onto `neighbor` unless it is solid stone, ground
+ * still in the dark, or a way a switch shut (a wall: drawn, and standable on by nobody). `findPath` (by
+ * what route) and `walkableFrom` (which cells) both ask it, so they cannot disagree about what is ground. */
+export const mayStepOnto = (neighbor: GridCell | undefined): neighbor is GridCell =>
+  neighbor !== undefined && neighbor.type !== "empty" && neighbor.state !== "fogged" && !isSealedWayOut(neighbor)
 
 export const findPath = (
   grid: FloorGrid,
@@ -119,7 +232,8 @@ export const findPath = (
       // player has actually walked — it can cut through a corridor never revealed yet.
       // Restricting to non-fogged cells keeps the animated path on ground the player has
       // genuinely seen, even if that means a longer route than the absolute shortest one.
-      if (!neighbor || neighbor.type === "empty" || neighbor.state === "fogged") continue
+      // A shut way out is a wall, so no route ends on it and none runs through it.
+      if (!mayStepOnto(neighbor)) continue
       parent.set(nk, key(r, c))
       if (nr === tr && nc === tc) break outer
       queue.push([nr, nc])
@@ -144,7 +258,10 @@ export const findPath = (
 /** Every cell the player can WALK to from `from`: real edges only, never through ground still in
  * the dark — the same rule findPath walks, which is the point. A marker offered on a cell outside this
  * set is an affordance the map cannot honour, and the corridor holding it should read as the dead end
- * it is. */
+ * it is.
+ *
+ * An obstacle's cells are never in this set: nothing names them, so only the launch and the landing, each
+ * on its own side, are ever walked to. Crossing is the action's, never the walk's. */
 export const walkableFrom = (grid: FloorGrid, from: readonly [number, number]): ReadonlySet<string> => {
   const [fr, fc] = from
   const seen = new Set<string>([`${fr},${fc}`])
@@ -161,7 +278,7 @@ export const walkableFrom = (grid: FloorGrid, from: readonly [number, number]): 
       const key = `${nr},${nc}`
       if (seen.has(key)) continue
       const neighbor = grid.cells[nr]?.[nc]
-      if (!neighbor || neighbor.type === "empty" || neighbor.state === "fogged") continue
+      if (!mayStepOnto(neighbor)) continue
       seen.add(key)
       queue.push([nr, nc])
     }
@@ -241,6 +358,14 @@ export const renderAscii = (grid: FloorGrid): string => {
         }
         if (d.has("n") && d.has("w")) {
           line += "┘"
+          continue
+        }
+        // A cell with one way out may only be left in the direction it names, whether that is a dead
+        // end or the far side of a drop, and the arrow says which direction. Without this it draws as
+        // an anonymous dot and a spec reading the map cannot tell either from an open corridor.
+        if (d.size === 1) {
+          const [only] = d
+          line += only === "n" ? "↑" : only === "s" ? "↓" : only === "e" ? "→" : "←"
           continue
         }
         line += "·"

@@ -3,10 +3,11 @@ import { act, renderHook } from "@testing-library/react"
 import { beforeEach, describe, expect, it } from "vitest"
 import type { ReactNode } from "react"
 import { PuzzleRoomContext, usePuzzleState, useClearPuzzleState } from "./puzzleState"
-import { clearGameData } from "@/support/useGameStorage"
+import { clearGameData, writeGameData } from "@/support/useGameStorage"
 
 type Board = { moves: number[] }
 const create = (): Board => ({ moves: [] })
+const BOARD = { cells: 9 }
 
 const inRoom =
   (room: string | undefined) =>
@@ -19,8 +20,8 @@ const settle = async () => {
   })
 }
 
-const playIn = async (room: string | undefined, move: number) => {
-  const { result, unmount } = renderHook(() => usePuzzleState(create), { wrapper: inRoom(room) })
+const playIn = async (room: string | undefined, move: number, board: unknown = BOARD) => {
+  const { result, unmount } = renderHook(() => usePuzzleState(create, board), { wrapper: inRoom(room) })
   await settle()
   await act(async () => {
     result.current[1](prev => ({ moves: [...prev.moves, move] }))
@@ -28,8 +29,8 @@ const playIn = async (room: string | undefined, move: number) => {
   unmount()
 }
 
-const boardIn = async (room: string | undefined) => {
-  const { result } = renderHook(() => usePuzzleState(create), { wrapper: inRoom(room) })
+const boardIn = async (room: string | undefined, board: unknown = BOARD) => {
+  const { result } = renderHook(() => usePuzzleState(create, board), { wrapper: inRoom(room) })
   await settle()
   await settle()
   return result
@@ -51,6 +52,28 @@ describe("usePuzzleState", () => {
     await playIn("room-a", 1)
 
     const result = await boardIn("room-b")
+    expect(result.current[0].moves).toEqual([])
+  })
+
+  it("starts the same room fresh when the board under it is not the one the state was played on", async () => {
+    await playIn("room-a", 1, { cells: 9 })
+
+    const result = await boardIn("room-a", { cells: 16 })
+    expect(result.current[0].moves).toEqual([])
+  })
+
+  it("plays the next move onto a fresh board, not onto the state of the board it replaced", async () => {
+    await playIn("room-a", 1, { cells: 9 })
+    await playIn("room-a", 2, { cells: 16 })
+
+    const result = await boardIn("room-a", { cells: 16 })
+    expect(result.current[0].moves).toEqual([2])
+  })
+
+  it("does not trust a record written before boards were stamped, and starts fresh", async () => {
+    await writeGameData({ puzzleState: { room: "room-a", state: { moves: [7] } } })
+
+    const result = await boardIn("room-a", { cells: 16 })
     expect(result.current[0].moves).toEqual([])
   })
 

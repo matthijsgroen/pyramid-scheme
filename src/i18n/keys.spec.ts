@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { readdirSync, readFileSync } from "node:fs"
+import { ALL_FAMILY_META } from "@/mods/allFamilyMeta"
 import { join } from "node:path"
 
 // **A key that exists in no locale file renders as itself**, so `canisters.claim` shipped as the word
@@ -53,5 +54,19 @@ describe("every translation key a screen asks for", () => {
     const nl = shippedKeys("nl")
     expect([...en].filter(key => !nl.has(key))).toEqual([])
     expect([...nl].filter(key => !en.has(key))).toEqual([])
+  })
+
+  /**
+   * **And so is the prompt a family names for itself.** A `FamilyMeta.invitation` reaches `t` as a
+   * variable, so the literal-key sweep above is blind to it — this is what stands in for it.
+   */
+  it("covers the prompt every family names for itself", () => {
+    const en = shippedKeys("en")
+    const nl = shippedKeys("nl")
+    const naming = ALL_FAMILY_META.filter(meta => meta.invitation !== undefined)
+    // Families do name their own prompts, so a sweep finding none has stopped reading them.
+    expect(naming.map(meta => meta.id)).not.toEqual([])
+    expect(naming.filter(meta => !en.has(meta.invitation!)).map(meta => meta.id)).toEqual([])
+    expect(naming.filter(meta => !nl.has(meta.invitation!)).map(meta => meta.id)).toEqual([])
   })
 })

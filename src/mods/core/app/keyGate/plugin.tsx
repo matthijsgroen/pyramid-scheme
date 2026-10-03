@@ -26,7 +26,11 @@ const KeyGateComponent: FamilyPlugin["Component"] = ({ puzzle, ctx, onSolved, on
   // A floor-key door is identified by colour, not by a symbol: the key that opens it sits somewhere
   // on this same floor, in a chest wearing the matching badge. Say the colour outright — the tinted
   // door tile on the map is easy to miss, and "the right key" told the player nothing.
-  const gateColor = ctx.gateVariant === "floor-key" ? (ctx.keyColor ?? "blue") : undefined
+  //
+  // No colour is a real answer, and never a missing one: a gate whose key is authored (a mod mints it,
+  // see RoomCell.keyIsAuthored) has no chest to wear a badge, so naming a colour would send the player
+  // hunting a key that grows nowhere on this floor. The colourless line below is what such a door says.
+  const gateColor = ctx.gateVariant === "floor-key" ? ctx.keyColor : undefined
   return (
     <div className="fixed inset-0 z-30 flex flex-col items-center justify-center gap-6 bg-black/85">
       <p className="font-pyramid text-2xl text-amber-300">{t("gate.title")}</p>

@@ -283,3 +283,63 @@ describe("wardPath / wardChest / wardWing difficulty auto-derive", () => {
     expect(wardWing({ tomb: "junior_treasure_tomb", index: 0, tier: "wizard" }).difficulty).toBe("wizard")
   })
 })
+
+// ── Authored region layout (regions-and-containers slice 2) ──────────────────
+
+describe("regionLayout constraint", () => {
+  it("carries an authored layout onto the floor it was authored for", () => {
+    const layout = {
+      regions: [
+        { name: "mouth", appetite: "nothing" as const },
+        { name: "vault", appetite: "reward" as const },
+      ],
+      connections: [["mouth", "vault"] as const],
+      in: "mouth",
+      out: "vault",
+    }
+
+    const rule = tier("starter").set({ regionLayout: layout })
+
+    // Assert the whole layout survived, not a representative field: both regions with their
+    // own appetite, the connection between them, and both ports.
+    expect(rule.constraints.regionLayout).toEqual(layout)
+    expect(rule.constraints.regionLayout!.regions).toHaveLength(2)
+    expect(rule.constraints.regionLayout!.regions[0]).toEqual({ name: "mouth", appetite: "nothing" })
+    expect(rule.constraints.regionLayout!.regions[1]).toEqual({ name: "vault", appetite: "reward" })
+    expect(rule.constraints.regionLayout!.connections).toEqual([["mouth", "vault"]])
+    expect(rule.constraints.regionLayout!.in).toBe("mouth")
+    expect(rule.constraints.regionLayout!.out).toBe("vault")
+  })
+})
+
+// ── Authored gate on a connection (regions-and-containers slice 5, task 7) ───
+
+describe("obstacles/controls constraint", () => {
+  it("carries an authored gate and the control that opens it onto the pyramid they were authored for", () => {
+    const obstacles = [
+      {
+        id: "vaultDoor",
+        kind: "gate" as const,
+        at: { on: "connection" as const, between: ["hall", "vault"] as const },
+      },
+    ]
+    const controls = [
+      {
+        id: "s1",
+        in: "mouth",
+        states: ["left", "right"],
+        initial: "right",
+        returnsToInitial: true,
+        opens: { right: ["vaultDoor"] },
+      },
+    ]
+
+    const rule = tier("starter").set({ obstacles, controls })
+
+    // Both whole, not a representative field: the obstacle's nested `at` and the control's nested
+    // `opens` record are exactly the two shapes serializer.ts cannot reach through its generic
+    // object emitter (see serializer.spec.ts) — the same reason they are worth asserting in full here.
+    expect(rule.constraints.obstacles).toEqual(obstacles)
+    expect(rule.constraints.controls).toEqual(controls)
+  })
+})

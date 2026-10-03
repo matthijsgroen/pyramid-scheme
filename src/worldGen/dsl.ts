@@ -1,5 +1,9 @@
 import type { Tier, Difficulty, PathPuzzlesRange } from "./types"
-import type { DecorationKind, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
+import type { DecorationKind, HandleSide, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
+import type { PlacedContainer } from "../game/regions"
+import type { BarrierOrder, Control, Obstacle } from "@/game/obstacles"
+import type { PlacedLock } from "@/game/floorLocks"
+import type { RealisationBinding } from "@/game/lockCompile"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { wardKeyDifficulty } from "../data/difficultyLevels"
 
@@ -35,9 +39,14 @@ export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"
 export type RewardHint = "mosaicPiece" | "mapPiece" | "hieroglyph" | "junk"
 // Structured reward — carries specific IDs; string form is a shorthand resolved by tier context
 export type RewardSpec = RewardHint | { type: "mapPiece"; tombId: string } | { type: "tombKey"; keyId: string }
-// Structured gate — tomb-key references a perk by tomb journey ID + zero-based index
+// Structured gate — tomb-key references a perk by tomb journey ID + zero-based index. A floor-key's
+// `keyId`/`ownerMod` name an authored key instead of the floor's own rotation — see
+// worldGen/types.ts's SubSection["gate"] for what naming one changes.
 export type GateSpec =
-  GateType | null | { type: "tomb-key"; tombId: string; index: number } | { type: "floor-key"; color?: KeyColor }
+  | GateType
+  | null
+  | { type: "tomb-key"; tombId: string; index: number }
+  | { type: "floor-key"; color?: KeyColor; keyId?: string; ownerMod?: string }
 
 export type Theme = string // e.g. "desert", "underwater" — visual hint to renderer
 
@@ -147,10 +156,72 @@ export type FloorConstraint<TExtra extends string = never> = {
    * puzzle chain (e.g. `{ where: "last", encounter: "capstone" }` for the crocodile capstone). See
    * NodeSelector. Replaces the old hardcoded last-main-puzzle special case. */
   nodes?: NodeSelector[]
+  /** WHAT THE CARVE MUST PROVIDE: `count` junctions with at least `exits` ways out free to be closed
+   * — the main path onward and the side paths off the junction, never the way back, never one
+   * something else already stands in, never one into a hidden branch. A carve offering fewer is
+   * re-carved and a floor no carve can satisfy fails the build.
+   *
+   * Structural and owned by no mod: the same `forks` carves the same floor whether or not anything
+   * is ever stood in those junctions, which is what lets a switch's mod leave the build without
+   * moving a wall. */
+  forks?: { exits: number; count: number }[]
+  /** A passage from one named section to another that the player may take only in that direction.
+   * Both ends name a section address — a `label` where a section has one, the positional `s0`/`s1.2`
+   * where it does not, and `main` for the main path. Structural, like `forks`.
+   *
+   * Named ends rather than `forks`' counts: on a floor built with no side sections there is no address
+   * for either end, so the drop can only ever be refused where `forks` would still be satisfied. */
+  oneWays?: { from: string; to: string }[]
+  /** The realisation every one-way of this floor is crossed through, named here and never in the lock. A
+   * floor with a one-way and no realisation is refused: there is no default. */
+  oneWayRealisation?: string
+  /** A LEVER standing in the section `in` names. It hangs one way or the other: on the side it hangs
+   * on, the entrance gate of every section that side names stands open, and every section the other
+   * side names stands shut. It starts on `starts`, left unless said otherwise. Section addresses, the
+   * same vocabulary `oneWays` uses for its two ends.
+   *
+   * What a fork cannot express: a switch decides which of ITS OWN ways out opens, while a handle
+   * reaches across the floor. The author names where the lever stands and what it opens, and nothing
+   * else — the gate ids are derived from the floor's own authoring address and the section each gate
+   * stands on, so a position kept from an earlier layout cannot come to fit a door it was never
+   * thrown for. */
+  handles?: { in: string; left: string[]; right: string[]; starts?: HandleSide }[]
+  /** The coarse layout this floor's regions are named in — see game/regions.ts's RegionGraph. */
+  regionLayout?: PlacedContainer
+  /** WHAT STANDS BETWEEN THE FLOOR'S REGIONS, named once and referred to by id — the topology mod's,
+   * pointing at `regionLayout` by region name (see game/obstacles.ts). A control names which
+   * obstacles each of its states opens. Both drop when the mod is not registered, and the identical
+   * walls then carve with every connection open. */
+  obstacles?: Obstacle[]
+  controls?: Control[]
+  /** The order of the gates on any connection that carries several, from `between[0]` to `between[1]`
+   * — required wherever a connection has more than one gate (see game/obstacles.ts's BarrierOrder). */
+  barrierOrder?: BarrierOrder[]
+  /** LOCKS standing on this floor in sequence, each a `Lock` value shared by reference between every floor that
+   * uses it. A second placement of one lock on a floor must say `as`. Compiled into `regionLayout`, `obstacles`,
+   * `controls`, `forks` and `barrierOrder` when the floor is assembled, so authoring those beside `locks` is
+   * refused. Floor-level only: a lock is placed on a floor, never inherited from the pyramid. */
+  locks?: PlacedLock[]
+  /** The realisation each control kind of this floor's locks is dressed as, floor level: it wins, per kind, over the
+   * pyramid, journey and difficulty declarations. The built floor carries the resolved binding — see FloorConfig.realisations. */
+  realisations?: RealisationBinding
+  /** A SWITCH: `encounter` stands in a junction `forks` reserved and closes its free ways out, so the
+   * player stands in the fork and what is in it decides which way opens. Between `min` and `max` of
+   * the reserved junctions get one, and a `min` past what `forks` reserves fails the build.
+   *
+   * The author names what stands there and nothing else: not which junction (the carve chooses where
+   * they fall), not which ways out (the builder chooses, and reports them back on the room), and not
+   * the keys. Those are derived from the floor's own authoring address and the section each way out
+   * reaches, because how many ways out there are is not something the authoring can know and a name
+   * the carve chose would let a key survive a re-carve into a door it does not belong to. */
+  switches?: { encounter: string | string[]; min: number; max: number }
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65; lower = more winding. */
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
   packing?: number
+  /** The seed this floor carves at, in place of the one its address derives. Authored only where the floor
+   * has no baked output to carry a searched seed; every other floor's seed is stamped by the bake. */
+  seed?: number
   /** Isolates the main path's cells from leftover maze edges in a compact layout, so a
    * shortcut can't merge around a main-path puzzle room. */
   sealed?: boolean
@@ -257,6 +328,35 @@ export type PyramidConstraint = {
    * "tableau" (or the "tomb-puzzle" tag) here so every floor's main-path rooms use it. An array is
    * "any of these". */
   encounter?: string | string[]
+  /** Junctions every floor of this site must carve, unless a floor names its own — see
+   * FloorConstraint.forks. Authored here, a whole climb is shaped in one line. */
+  forks?: { exits: number; count: number }[]
+  /** One-way passages every floor of this site must carve, unless a floor names its own — see
+   * FloorConstraint.oneWays. Authored here, a whole climb is shaped in one line. */
+  oneWays?: { from: string; to: string }[]
+  /** The realisation the one-ways of every floor of this site are crossed through, unless a floor names its
+   * own — see FloorConstraint.oneWayRealisation. The one-way's entry in `realisations`, spelt alone. */
+  oneWayRealisation?: string
+  /** The realisation each control kind is dressed as, declared as a difficulty (`tier(...)`), journey or pyramid
+   * rule. Resolved per kind, the most specific rule naming a kind winning, and a floor's own `realisations` over
+   * all of them. */
+  realisations?: RealisationBinding
+  /** The levers every floor of this site stands, unless a floor names its own — see
+   * FloorConstraint.handles. */
+  handles?: { in: string; left: string[]; right: string[]; starts?: HandleSide }[]
+  /** The layout every floor of this site carries, unless a floor names its own — see
+   * FloorConstraint.regionLayout. */
+  regionLayout?: PlacedContainer
+  /** The obstacles/controls standing in that layout on every floor of this site, unless a floor
+   * names its own — see FloorConstraint.obstacles/.controls. */
+  obstacles?: Obstacle[]
+  controls?: Control[]
+  /** The gate order standing on those connections, unless a floor names its own — see
+   * FloorConstraint.barrierOrder. */
+  barrierOrder?: BarrierOrder[]
+  /** The switch every floor of this site stands in the junctions `forks` reserved, unless a floor
+   * names its own — see FloorConstraint.switches. */
+  switches?: { encounter: string | string[]; min: number; max: number }
   /**
    * Arguments handed to every encounter of this site that does not carry its own.
    *
@@ -274,6 +374,9 @@ export type PyramidConstraint = {
   windyStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */
   packing?: number
+  /** The seed the floor carves at, in place of the one its address derives. Authored only where the floor
+   * has no baked output to carry a searched seed; every other floor's seed is stamped by the bake. */
+  seed?: number
   /** Chance [0-1], rolled per pyramid, of an extra-large packing floor. Ignored if packing is set. */
   packingChance?: number
   /** packing used on a packingChance hit. Default 1.6. */

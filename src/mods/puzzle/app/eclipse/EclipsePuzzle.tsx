@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState, type FC } from "react"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
-import { useCelebration } from "../useCelebration"
+import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import {
@@ -28,7 +28,7 @@ type Props = {
 
 export const EclipsePuzzle: FC<Props> = ({ puzzle, difficulty, theme, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
-  const [state, setState] = usePuzzleState(() => createEclipseState(puzzle))
+  const [state, setState] = usePuzzleState(() => createEclipseState(puzzle), puzzle)
 
   /**
    * Whether the player has asked for a hint, which is what gates deriving one.

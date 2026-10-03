@@ -1,4 +1,6 @@
 import type { FloorConfig, SideSection, SiteConfig, TreasureReward } from "./types"
+import type { PlacedContainer } from "@/game/regions"
+import { isForkSwitch, isSequence, type Control, type GateTerms, type Obstacle } from "@/game/obstacles"
 import { WORLD_SEED } from "./data"
 
 // Extra top-level exports a mod wants baked into the generated world file (name → JSON-serializable
@@ -12,8 +14,11 @@ export type ModExports = Record<string, unknown>
 // Serialization
 // ---------------------------------------------------------------------------
 
+// Every string reaches the baked file through JSON.stringify rather than through a quoted template:
+// family ids, key ids and labels are free-form and a mod's own to choose, and one quote or backslash
+// in one of them would write TypeScript that does not parse.
 const serializeEncounter = (encounter: string | string[]): string =>
-  Array.isArray(encounter) ? `[${encounter.map(e => `"${e}"`).join(", ")}]` : `"${encounter}"`
+  Array.isArray(encounter) ? `[${encounter.map(e => JSON.stringify(e)).join(", ")}]` : JSON.stringify(encounter)
 
 // Per-node encounter overrides: `{ 1: "crocodile" }` — ascending index order for stable output.
 const serializeEncountersByIndex = (m: Record<number, string | string[]>): string =>
@@ -28,7 +33,7 @@ const serializeEncountersByIndex = (m: Record<number, string | string[]>): strin
 // Reward payloads are flat scalars (type + amount/itemId/hieroglyphId/pieceIndex/…). fragmentSlot
 // is the placement sentinel; any hieroglyph pieceIndex is already stamped by the hieroglyph
 // finalize pass (scripts/generateWorld.ts) before we get here.
-const serializeValue = (v: unknown): string => (typeof v === "string" ? `"${v}"` : `${v}`)
+const serializeValue = (v: unknown): string => (typeof v === "string" ? JSON.stringify(v) : `${v}`)
 const serializeReward = (r: TreasureReward): string => {
   if (r.type === "fragmentSlot")
     throw new Error("fragmentSlot reached serializer — placement must fill or clear every slot first")
@@ -40,18 +45,20 @@ const serializeReward = (r: TreasureReward): string => {
 const serializePuzzleRewards = (rewards: (TreasureReward | undefined)[]): string =>
   `[${rewards.map(r => (r ? serializeReward(r) : "undefined")).join(", ")}]`
 
+// Emits every field the gate object carries (whatever they are) rather than a fixed field
+// list — so an authored keyId/ownerMod, or any later field, survives the bake without this
+// function needing to name it.
+const serializeGate = (g: NonNullable<SideSection["gate"]>): string =>
+  `{ ${Object.entries(g)
+    .filter(([, v]) => v !== undefined)
+    .map(([k, v]) => `${k}: ${serializeValue(v)}`)
+    .join(", ")} }`
+
 const serializeSideSection = (s: SideSection): string => {
   const endStr = typeof s.end === "object" ? `{ stairId: "${s.end.stairId}" }` : `"${s.end}"`
   const parts = [`pathPuzzles: ${s.pathPuzzles}`, `difficulty: "${s.difficulty}"`, `end: ${endStr}`]
   if (s.label !== undefined) parts.unshift(`label: ${JSON.stringify(s.label)}`)
-  if (s.gate)
-    parts.push(
-      s.gate.type === "tomb-key"
-        ? `gate: { type: "tomb-key", wardKeyId: "${s.gate.wardKeyId}" }`
-        : s.gate.color
-          ? `gate: { type: "floor-key", color: "${s.gate.color}" }`
-          : `gate: { type: "floor-key" }`
-    )
+  if (s.gate) parts.push(`gate: ${serializeGate(s.gate)}`)
   if (s.endReward) parts.push(`endReward: ${serializeReward(s.endReward)}`)
   if (s.rewards?.length) parts.push(`rewards: ${serializePuzzleRewards(s.rewards)}`)
   if (s.hidden) parts.push(`hidden: true`)
@@ -69,39 +76,130 @@ const serializeSideSection = (s: SideSection): string => {
   return `{ ${parts.join(", ")} }`
 }
 
-const serializeFloor = (c: FloorConfig): string => {
-  const sideSectionsStr =
-    c.sideSections.length === 0
-      ? "[]"
-      : `[\n${c.sideSections.map(s => `      ${serializeSideSection(s)}`).join(",\n")},\n    ]`
-  const lines: string[] = [
-    `    pathPuzzles: ${c.pathPuzzles},`,
-    `    difficulty: "${c.difficulty}",`,
-    `    end: "treasure",`,
-    typeof c.exitOrStaircase === "object"
-      ? `    exitOrStaircase: { stairId: "${c.exitOrStaircase.stairId}" },`
-      : `    exitOrStaircase: "${c.exitOrStaircase}",`,
-    `    sideSections: ${sideSectionsStr},`,
+const serializeRegionGraph = (g: PlacedContainer): string =>
+  `{ regions: [${g.regions
+    .map(r => `{ name: ${JSON.stringify(r.name)}, appetite: ${JSON.stringify(r.appetite)} }`)
+    .join(", ")}], connections: [${g.connections
+    .map(([a, b]) => `[${JSON.stringify(a)}, ${JSON.stringify(b)}]`)
+    .join(", ")}], in: ${JSON.stringify(g.in)}, out: ${JSON.stringify(g.out)}${
+    g.placement ? `, placement: { enters: ${g.placement.enters} }` : ""
+  } }`
+
+// Emits every field the object carries rather than a fixed list, the way `serializeGate` does, so a
+// field added to a fork demand or a switch later rides along without this function naming it. Only
+// good for a FLAT object: a nested one (Obstacle's `at`, Control's `opens`) reaches `serializeValue`'s
+// `${v}` branch and comes out "[object Object]" — that is exactly why `serializeObstacle` and
+// `serializeControl` below are written out longhand instead of reusing this.
+const serializeObject = (o: object): string =>
+  `{ ${Object.entries(o)
+    .filter(([, v]) => v !== undefined)
+    .map(([k, v]) => `${k}: ${typeof v === "string" || Array.isArray(v) ? serializeEncounter(v) : serializeValue(v)}`)
+    .join(", ")} }`
+
+const strings = (list: readonly string[]): string => `[${list.map(s => JSON.stringify(s)).join(", ")}]`
+
+// One emitter per gate field, keyed by the field itself: a field added to `GateTerms` without an entry
+// here is a compile error, so a gate term can never be dropped from the bake without a word.
+const GATE_TERMS: { [K in keyof Required<GateTerms>]: (v: NonNullable<GateTerms[K]>) => string } = {
+  mode: v => JSON.stringify(v),
+  owners: strings,
+  floorKeys: strings,
+}
+
+// `at` nests one layer deep (`{ on, between }` or `{ on, region }`), which `serializeObject` cannot reach.
+const serializeObstacle = (o: Obstacle): string => {
+  const at =
+    o.at.on === "region"
+      ? `region: ${JSON.stringify(o.at.region)}`
+      : `between: [${o.at.between.map(s => JSON.stringify(s)).join(", ")}]`
+  const terms =
+    o.kind === "gate"
+      ? (Object.keys(GATE_TERMS) as (keyof GateTerms)[])
+          .filter(k => o[k] !== undefined)
+          .map(k => `, ${k}: ${(GATE_TERMS[k] as (v: unknown) => string)(o[k])}`)
+          .join("")
+      : ""
+  return `{ id: ${JSON.stringify(o.id)}, kind: ${JSON.stringify(o.kind)}, at: { on: ${JSON.stringify(o.at.on)}, ${at} }${terms} }`
+}
+
+// `opens` is a Record<state, obstacleId[]>, which `serializeObject` cannot reach either.
+const serializeControl = (c: Control): string => {
+  if (isSequence(c))
+    return `{ id: ${JSON.stringify(c.id)}, control: "sequence", steps: [${c.steps.map(step => `{ in: ${JSON.stringify(step.in)} }`).join(", ")}], resetAt: ${JSON.stringify(c.resetAt)}, opens: { done: [${c.opens.done.map(id => JSON.stringify(id)).join(", ")}] }${c.encounter === undefined ? "" : `, encounter: ${JSON.stringify(c.encounter)}`} }`
+  if (isForkSwitch(c))
+    return `{ id: ${JSON.stringify(c.id)}, in: ${JSON.stringify(c.in)}, control: "fork-switch", encounter: ${JSON.stringify(c.encounter)} }`
+  const parts = [
+    `id: ${JSON.stringify(c.id)}`,
+    `in: ${JSON.stringify(c.in)}`,
+    `states: [${c.states.map(s => JSON.stringify(s)).join(", ")}]`,
+    `initial: ${JSON.stringify(c.initial)}`,
+    `returnsToInitial: ${c.returnsToInitial}`,
+    `opens: { ${Object.entries(c.opens)
+      .map(([state, ids]) => `${JSON.stringify(state)}: [${ids.map(id => JSON.stringify(id)).join(", ")}]`)
+      .join(", ")} }`,
   ]
-  if (c.entrance) {
-    const val = typeof c.entrance === "object" ? `{ stairId: "${c.entrance.stairId}" }` : `"${c.entrance}"`
-    lines.push(`    entrance: ${val},`)
+  if (c.encounter !== undefined) parts.push(`encounter: ${JSON.stringify(c.encounter)}`)
+  return `{ ${parts.join(", ")} }`
+}
+
+/**
+ * ONE EMITTER PER FloorConfig FIELD, and the type is what makes that exhaustive: a field added to
+ * FloorConfig with no emitter here fails the build, instead of the floor being baked without it.
+ *
+ * A whitelist could not say that. Authoring silently absent from `src/data/generatedWorld.ts` — no
+ * type error, no failing test, the world simply built without the feature — is the failure this shape
+ * exists to make impossible.
+ *
+ * Key order is emission order. A `null` return omits the line: an empty pool or a false flag is not
+ * worth a field in the baked world.
+ */
+const floorFieldEmitters: {
+  [K in keyof Required<FloorConfig>]: (value: NonNullable<FloorConfig[K]>) => string | null
+} = {
+  pathPuzzles: v => `pathPuzzles: ${v}`,
+  difficulty: v => `difficulty: "${v}"`,
+  end: () => `end: "treasure"`,
+  exitOrStaircase: v =>
+    typeof v === "object" ? `exitOrStaircase: { stairId: "${v.stairId}" }` : `exitOrStaircase: "${v}"`,
+  sideSections: v =>
+    `sideSections: ${v.length === 0 ? "[]" : `[\n${v.map(s => `      ${serializeSideSection(s)}`).join(",\n")},\n    ]`}`,
+  entrance: v => `entrance: ${typeof v === "object" ? `{ stairId: "${v.stairId}" }` : `"${v}"`}`,
+  encounter: v => `encounter: ${serializeEncounter(v)}`,
+  encounterArgs: v => `encounterArgs: ${JSON.stringify(v)}`,
+  theme: v => `theme: ${JSON.stringify(v)}`,
+  decorations: v => (v.length ? `decorations: ${JSON.stringify(v)}` : null),
+  condition: v => `condition: ${JSON.stringify(v)}`,
+  patron: v => `patron: ${JSON.stringify(v)}`,
+  wallDecorations: v => (v.length ? `wallDecorations: ${JSON.stringify(v)}` : null),
+  role: v => `role: ${serializeEncounter(v)}`,
+  encountersByIndex: v => (Object.keys(v).length ? `encountersByIndex: ${serializeEncountersByIndex(v)}` : null),
+  corridorStraightness: v => `corridorStraightness: ${v}`,
+  packing: v => `packing: ${v}`,
+  seed: v => `seed: ${v}`,
+  sealed: v => (v ? `sealed: true` : null),
+  mainEndReward: v => `mainEndReward: ${serializeReward(v)}`,
+  rewards: v => (v.length ? `rewards: ${serializePuzzleRewards(v)}` : null),
+  forks: v => (v.length ? `forks: [${v.map(serializeObject).join(", ")}]` : null),
+  oneWays: v => (v.length ? `oneWays: [${v.map(serializeObject).join(", ")}]` : null),
+  oneWayRealisation: v => `oneWayRealisation: ${JSON.stringify(v)}`,
+  handles: v => (v.length ? `handles: [${v.map(serializeObject).join(", ")}]` : null),
+  regionLayout: v => `regionLayout: ${serializeRegionGraph(v)}`,
+  obstacles: v => (v.length ? `obstacles: [${v.map(serializeObstacle).join(", ")}]` : null),
+  controls: v => (v.length ? `controls: [${v.map(serializeControl).join(", ")}]` : null),
+  barrierOrder: v => (v.length ? `barrierOrder: [${v.map(serializeObject).join(", ")}]` : null),
+  locks: v => (v.length ? `locks: ${JSON.stringify(v)}` : null),
+  realisations: v => `realisations: ${JSON.stringify(v)}`,
+  switches: v => `switches: ${serializeObject(v)}`,
+}
+
+const serializeFloor = (c: FloorConfig): string => {
+  const lines: string[] = []
+  for (const key of Object.keys(floorFieldEmitters) as (keyof FloorConfig)[]) {
+    const value = c[key]
+    if (value === undefined) continue
+    const line = (floorFieldEmitters[key] as (v: unknown) => string | null)(value)
+    if (line !== null) lines.push(`    ${line},`)
   }
-  if (c.encounter) lines.push(`    encounter: ${serializeEncounter(c.encounter)},`)
-  if (c.encounterArgs !== undefined) lines.push(`    encounterArgs: ${JSON.stringify(c.encounterArgs)},`)
-  if (c.theme) lines.push(`    theme: ${JSON.stringify(c.theme)},`)
-  if (c.decorations?.length) lines.push(`    decorations: ${JSON.stringify(c.decorations)},`)
-  if (c.condition) lines.push(`    condition: ${JSON.stringify(c.condition)},`)
-  if (c.patron) lines.push(`    patron: ${JSON.stringify(c.patron)},`)
-  if (c.wallDecorations?.length) lines.push(`    wallDecorations: ${JSON.stringify(c.wallDecorations)},`)
-  if (c.role) lines.push(`    role: ${serializeEncounter(c.role)},`)
-  if (c.encountersByIndex && Object.keys(c.encountersByIndex).length)
-    lines.push(`    encountersByIndex: ${serializeEncountersByIndex(c.encountersByIndex)},`)
-  if (c.corridorStraightness !== undefined) lines.push(`    corridorStraightness: ${c.corridorStraightness},`)
-  if (c.packing !== undefined) lines.push(`    packing: ${c.packing},`)
-  if (c.sealed) lines.push(`    sealed: true,`)
-  if (c.mainEndReward) lines.push(`    mainEndReward: ${serializeReward(c.mainEndReward)},`)
-  if (c.rewards?.length) lines.push(`    rewards: ${serializePuzzleRewards(c.rewards)},`)
   return `  {\n${lines.join("\n")}\n  }`
 }
 

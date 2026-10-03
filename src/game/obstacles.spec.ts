@@ -1,0 +1,366 @@
+import { describe, expect, it } from "vitest"
+import { crossesNoDoor, doorsToEnterRegion, seamIndexFor, topologyFaults } from "./obstacles"
+import type { Obstacle, StatefulControl } from "./obstacles"
+import type { RegionGraph } from "./regions"
+
+// A linear chain plus one connection the route does not take, so "on the layout" and "on the route"
+// are two different questions this fixture can tell apart.
+const layout: RegionGraph = {
+  regions: [
+    { name: "mouth", appetite: "free" },
+    { name: "hall", appetite: "free" },
+    { name: "vault", appetite: "free" },
+    { name: "cellar", appetite: "free" },
+  ],
+  connections: [
+    ["mouth", "hall"],
+    ["hall", "vault"],
+    ["hall", "cellar"],
+  ],
+  in: "mouth",
+  out: "vault",
+}
+
+const gate = (id: string, between: readonly [string, string]): Obstacle => ({
+  id,
+  kind: "gate",
+  at: { on: "connection", between },
+})
+
+const oneWay = (id: string, between: readonly [string, string]): Obstacle => ({
+  id,
+  kind: "oneWay",
+  at: { on: "connection", between },
+})
+
+const lever = (id: string, opens: Record<string, string[]>): StatefulControl => ({
+  id,
+  in: "mouth",
+  states: ["left", "right"],
+  initial: "left",
+  returnsToInitial: true,
+  opens,
+})
+
+describe("authored topology that resolves", () => {
+  it("finds no fault in a gate on the route with a control that opens it", () => {
+    const faults = topologyFaults(layout, [gate("g1", ["hall", "vault"])], [lever("s1", { left: ["g1"], right: [] })])
+
+    expect(faults).toEqual([])
+  })
+
+  it("finds no fault in one control driving two gates from different states", () => {
+    const faults = topologyFaults(
+      layout,
+      [gate("g1", ["mouth", "hall"]), gate("g2", ["hall", "vault"])],
+      [lever("s1", { left: ["g1"], right: ["g2"] })]
+    )
+
+    expect(faults).toEqual([])
+  })
+
+  it("finds no fault in two controls driving one gate", () => {
+    const faults = topologyFaults(
+      layout,
+      [gate("g1", ["hall", "vault"])],
+      [lever("s1", { left: ["g1"], right: [] }), { ...lever("s2", { left: ["g1"], right: [] }), id: "s2" }]
+    )
+
+    expect(faults).toEqual([])
+  })
+
+  it("finds no fault at all when the floor authors neither", () => {
+    expect(topologyFaults(undefined, [], [])).toEqual([])
+  })
+
+  // `cellar` hangs off `hall` (a pocket the route never threads — `regionRoute` runs mouth→hall→vault),
+  // so this connection is a side path's own mouth rather than a step of the main route. A gate stands
+  // there just as honestly: `offRouteChains` seats `cellar` on a chain grown from `hall`.
+  it("finds no fault in a gate at a side chain's own mouth", () => {
+    const faults = topologyFaults(layout, [gate("g1", ["hall", "cellar"])], [lever("s1", { left: ["g1"], right: [] })])
+
+    expect(faults).toEqual([])
+  })
+
+  // A chain two regions deep (doubleBack's own shape): `rightLower` hangs off the route's `in`, and
+  // `s1Chamber` hangs off `rightLower` in turn. The join WITHIN the chain is a boundary too, not just
+  // the mouth where it leaves the route.
+  it("finds no fault in a gate within a side chain, not on its mouth", () => {
+    const branching: RegionGraph = {
+      regions: [
+        { name: "in", appetite: "free" },
+        { name: "leftLower", appetite: "free" },
+        { name: "out", appetite: "free" },
+        { name: "rightLower", appetite: "free" },
+        { name: "s1Chamber", appetite: "free" },
+      ],
+      connections: [
+        ["in", "leftLower"],
+        ["leftLower", "out"],
+        ["in", "rightLower"],
+        ["rightLower", "s1Chamber"],
+      ],
+      in: "in",
+      out: "out",
+    }
+    const faults = topologyFaults(
+      branching,
+      [gate("g1", ["rightLower", "s1Chamber"])],
+      [{ ...lever("s1", { left: ["g1"], right: [] }), in: "in" }]
+    )
+
+    expect(faults).toEqual([])
+  })
+
+  // `mouth` and `cellar` share no connection at all — the whole point of a one-way is a shortcut
+  // between two regions the layout does not otherwise join, so unlike a gate it never has to answer
+  // `joined`/`seatable`. No control owns it either: a one-way is meaningful on its own, its direction
+  // fixed at whatever it was authored with.
+  it("finds no fault in an unowned one-way between two regions the layout never joins", () => {
+    const faults = topologyFaults(layout, [oneWay("drop1", ["mouth", "cellar"])], [])
+
+    expect(faults).toEqual([])
+  })
+})
+
+describe("authored topology that does not resolve", () => {
+  it("names an obstacle id used twice", () => {
+    const faults = topologyFaults(
+      layout,
+      [gate("g1", ["mouth", "hall"]), gate("g1", ["hall", "vault"])],
+      [lever("s1", { left: ["g1"], right: [] })]
+    )
+
+    expect(faults).toContainEqual({ type: "obstacleIdRepeated", id: "g1" })
+  })
+
+  it("names an obstacle standing on a connection the layout does not have", () => {
+    const faults = topologyFaults(layout, [gate("g1", ["mouth", "vault"])], [lever("s1", { left: ["g1"], right: [] })])
+
+    expect(faults).toEqual([{ type: "obstacleNamesNoConnection", id: "g1" }])
+  })
+
+  // `cellar` touches the route twice — once at `hall`, once at `vault` — so `offRouteChains` takes
+  // the earliest-declared as its mouth (`hall`) and the OTHER join is one the carve never turns into a
+  // physical adjacency: `cellar`'s cells grow from `hall`'s side path alone, never touching `vault`'s.
+  // That is a connection genuinely off both the route and every chain's own seam, still refused.
+  it("names an obstacle on a connection the carve produces no seam for", () => {
+    const doubleTouching: RegionGraph = {
+      regions: [
+        { name: "mouth", appetite: "free" },
+        { name: "hall", appetite: "free" },
+        { name: "vault", appetite: "free" },
+        { name: "cellar", appetite: "free" },
+      ],
+      connections: [
+        ["mouth", "hall"],
+        ["hall", "vault"],
+        ["hall", "cellar"],
+        ["vault", "cellar"],
+      ],
+      in: "mouth",
+      out: "vault",
+    }
+    const faults = topologyFaults(
+      doubleTouching,
+      [gate("g1", ["vault", "cellar"])],
+      [lever("s1", { left: ["g1"], right: [] })]
+    )
+
+    expect(faults).toEqual([{ type: "obstacleOffRoute", id: "g1" }])
+  })
+
+  it("names an obstacle no control opens in any state", () => {
+    const faults = topologyFaults(layout, [gate("g1", ["hall", "vault"])], [lever("s1", { left: [], right: [] })])
+
+    expect(faults).toEqual([{ type: "obstacleUnowned", id: "g1" }])
+  })
+
+  it("names a control id used twice", () => {
+    const faults = topologyFaults(
+      layout,
+      [gate("g1", ["hall", "vault"])],
+      [lever("s1", { left: ["g1"], right: [] }), { ...lever("s1", { left: [], right: ["g1"] }), id: "s1" }]
+    )
+
+    expect(faults).toEqual([{ type: "controlUnsatisfied", id: "s1", what: "s1" }])
+  })
+
+  it("names a control standing in no region of the layout", () => {
+    const faults = topologyFaults(
+      layout,
+      [gate("g1", ["hall", "vault"])],
+      [{ ...lever("s1", { left: ["g1"], right: [] }), in: "attic" }]
+    )
+
+    expect(faults).toEqual([{ type: "controlUnsatisfied", id: "s1", what: "attic" }])
+  })
+
+  it("names a control starting in a state it does not have", () => {
+    const faults = topologyFaults(
+      layout,
+      [gate("g1", ["hall", "vault"])],
+      [{ ...lever("s1", { left: ["g1"], right: [] }), initial: "middle" }]
+    )
+
+    expect(faults).toEqual([{ type: "controlUnsatisfied", id: "s1", what: "middle" }])
+  })
+
+  it("names a control opening gates in a state it does not have", () => {
+    const faults = topologyFaults(layout, [gate("g1", ["hall", "vault"])], [lever("s1", { sideways: ["g1"] })])
+
+    expect(faults).toContainEqual({ type: "controlUnsatisfied", id: "s1", what: "sideways" })
+  })
+
+  it("names a control opening an obstacle that does not exist", () => {
+    const faults = topologyFaults(layout, [gate("g1", ["hall", "vault"])], [lever("s1", { left: ["g1", "g9"] })])
+
+    expect(faults).toEqual([{ type: "controlUnsatisfied", id: "s1", what: "g9" }])
+  })
+
+  it("names every obstacle and control when the floor authors no layout at all", () => {
+    const faults = topologyFaults(undefined, [gate("g1", ["a", "b"])], [lever("s1", { left: ["g1"] })])
+
+    expect(faults).toEqual([
+      { type: "obstacleNamesNoConnection", id: "g1" },
+      { type: "controlUnsatisfied", id: "s1", what: "mouth" },
+    ])
+  })
+
+  // Unlike a gate, a one-way never needs `joined`/`seatable` — but it still needs both ends to be
+  // regions this floor actually declares, and a floor with no layout at all declares none.
+  it("names a one-way obstacle by its own reason when the floor authors no layout at all", () => {
+    const faults = topologyFaults(undefined, [oneWay("drop1", ["a", "b"])], [])
+
+    expect(faults).toEqual([{ type: "obstacleNamesNoRegion", id: "drop1" }])
+  })
+
+  it("names a one-way obstacle naming a region the layout does not declare", () => {
+    const faults = topologyFaults(layout, [oneWay("drop1", ["mouth", "attic"])], [])
+
+    expect(faults).toEqual([{ type: "obstacleNamesNoRegion", id: "drop1" }])
+  })
+
+  // `opens` can only ever name a GATE (Control.opens): "stands open" is not a question a one-way's
+  // direction answers, so a control pointing `opens` at one is refused the same way as one pointing
+  // at an obstacle that does not exist.
+  it("names a control opening a one-way, which opens cannot express a direction for", () => {
+    const faults = topologyFaults(
+      layout,
+      [oneWay("drop1", ["mouth", "cellar"])],
+      [lever("s1", { left: ["drop1"], right: [] })]
+    )
+
+    expect(faults).toEqual([{ type: "controlUnsatisfied", id: "s1", what: "drop1" }])
+  })
+})
+
+describe("seamIndexFor", () => {
+  // Steps 0-1 mouth, 2-4 hall, 5-6 vault — a run with a multi-step stretch on both sides of the seam.
+  const run = ["mouth", "mouth", "hall", "hall", "hall", "vault", "vault"]
+
+  it("finds the seam in the middle of a run", () => {
+    expect(seamIndexFor(run, ["hall", "vault"])).toBe(5)
+  })
+
+  it("finds the seam when the far region is exactly one step long", () => {
+    const oneStepFar = ["mouth", "hall", "hall", "vault"]
+
+    expect(seamIndexFor(oneStepFar, ["hall", "vault"])).toBe(3)
+  })
+
+  it("finds the same seam whichever order the two region names are given", () => {
+    expect(seamIndexFor(run, ["hall", "vault"])).toBe(5)
+    expect(seamIndexFor(run, ["vault", "hall"])).toBe(5)
+  })
+
+  // The gap-free layout `regionOfStep` produces today never reaches this case (see the comment above
+  // this refusal in siteAssembler.ts) — but the question is answered honestly regardless of what
+  // built `stepRegion`, which is what lets "no seam" be pinned down here rather than only inferred.
+  it("answers undefined when the two regions are both present but not adjacent", () => {
+    const gapped = ["mouth", "hall", "cellar", "vault"]
+
+    expect(seamIndexFor(gapped, ["hall", "vault"])).toBeUndefined()
+  })
+
+  it("answers undefined when one of the two regions is missing entirely", () => {
+    const missingVault = ["mouth", "hall", "hall"]
+
+    expect(seamIndexFor(missingVault, ["hall", "vault"])).toBeUndefined()
+  })
+})
+
+describe("the doors a region stands behind", () => {
+  it("names nothing for a region in front of every gate", () => {
+    const doors = doorsToEnterRegion(layout, [gate("g1", ["hall", "vault"])])
+
+    expect(doors.get("mouth")).toEqual(new Set())
+    expect(doors.get("hall")).toEqual(new Set())
+  })
+
+  it("names the gate for the region behind it", () => {
+    const doors = doorsToEnterRegion(layout, [gate("g1", ["hall", "vault"])])
+
+    expect(doors.get("vault")).toEqual(new Set(["g1"]))
+  })
+
+  it("names every gate on a chain of them, not just the nearest", () => {
+    const doors = doorsToEnterRegion(layout, [gate("g1", ["mouth", "hall"]), gate("g2", ["hall", "vault"])])
+
+    expect(doors.get("mouth")).toEqual(new Set())
+    expect(doors.get("hall")).toEqual(new Set(["g1"]))
+    expect(doors.get("vault")).toEqual(new Set(["g1", "g2"]))
+    expect(doors.get("cellar")).toEqual(new Set(["g1"]))
+  })
+
+  it("names no gate a player can walk round", () => {
+    // mouth—hall—vault and mouth—vault: the hall gate bounds nothing, because vault is reachable
+    // without it.
+    const ring: RegionGraph = {
+      ...layout,
+      connections: [
+        ["mouth", "hall"],
+        ["hall", "vault"],
+        ["mouth", "vault"],
+      ],
+    }
+    const doors = doorsToEnterRegion(ring, [gate("g1", ["hall", "vault"])])
+
+    expect(doors.get("vault")).toEqual(new Set())
+  })
+
+  it("gives every declared region an entry, so a caller never has to guess at an absent one", () => {
+    const doors = doorsToEnterRegion(layout, [gate("g1", ["hall", "vault"])])
+
+    expect([...doors.keys()].sort()).toEqual(["cellar", "hall", "mouth", "vault"])
+  })
+})
+
+describe("an edge that crosses no door", () => {
+  const behind = (...ids: string[]) => new Set(ids)
+
+  it("allows two cells in front of every door", () => {
+    expect(crossesNoDoor(behind(), behind())).toBe(true)
+  })
+
+  it("allows two cells behind the same one door", () => {
+    expect(crossesNoDoor(behind("g1"), behind("g1"))).toBe(true)
+  })
+
+  it("allows two cells behind the same two doors, named in either order", () => {
+    expect(crossesNoDoor(behind("g1", "g2"), behind("g2", "g1"))).toBe(true)
+  })
+
+  it("refuses an edge from open ground into a gated region", () => {
+    expect(crossesNoDoor(behind(), behind("g1"))).toBe(false)
+    expect(crossesNoDoor(behind("g1"), behind())).toBe(false)
+  })
+
+  it("refuses an edge that skips the second of two doors", () => {
+    expect(crossesNoDoor(behind("g1"), behind("g1", "g2"))).toBe(false)
+  })
+
+  it("refuses an edge between two regions behind different doors, being past one earning nothing toward the other", () => {
+    expect(crossesNoDoor(behind("g1"), behind("g2"))).toBe(false)
+  })
+})

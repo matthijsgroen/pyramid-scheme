@@ -16,9 +16,7 @@ import {
 // The 1927 polygons are the largest data file in the app and this window is the only thing that
 // draws them, so they load with the window rather than with the game. The reveal order, the
 // currencies and the placement queue all work off piece ids alone, and stay eager.
-const StainedGlassMosaic = lazy(() =>
-  import("@/ui/atoms/StainedGlassMosaic").then(m => ({ default: m.StainedGlassMosaic }))
-)
+const StainedGlassMosaic = lazy(() => import("./StainedGlassMosaic").then(m => ({ default: m.StainedGlassMosaic })))
 
 // One piece drops into the window this often while a handful is being set in, so a batch reads as
 // a cascade rather than a snap.

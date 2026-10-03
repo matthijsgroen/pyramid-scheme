@@ -6,8 +6,10 @@ import { mulberry32 } from "../game/random"
 import { hashStr, hintToReward } from "./rewards"
 import { initPuzzleChains } from "./puzzleRewards"
 import { buildSideSections, type ResolveReward } from "./sideSections"
+import { stairIdAt } from "../game/stairAddress"
 import type { FloorConstraint, PyramidConstraint, RewardSpec } from "./dsl"
 import { resolveNodeSelectors } from "./dsl"
+import { ONE_WAY_KIND, declaredBinding, resolveBinding } from "./realisationBinding"
 
 // ── Per-pyramid randomized resolution ─────────────────────────────────────────
 
@@ -92,8 +94,20 @@ export type BuildFloorOptions = {
   mainEndReward?: TreasureReward
   encounter?: FloorConfig["encounter"]
   encountersByIndex?: FloorConfig["encountersByIndex"]
+  forks?: FloorConfig["forks"]
+  oneWays?: FloorConfig["oneWays"]
+  oneWayRealisation?: FloorConfig["oneWayRealisation"]
+  handles?: FloorConfig["handles"]
+  regionLayout?: FloorConfig["regionLayout"]
+  obstacles?: FloorConfig["obstacles"]
+  controls?: FloorConfig["controls"]
+  barrierOrder?: FloorConfig["barrierOrder"]
+  locks?: FloorConfig["locks"]
+  realisations?: FloorConfig["realisations"]
+  switches?: FloorConfig["switches"]
   corridorStraightness?: number
   packing?: number
+  seed?: number
   sealed?: boolean
   encounterArgs?: unknown
   theme?: string
@@ -124,17 +138,29 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
     : {}),
   ...(opts.corridorStraightness !== undefined ? { corridorStraightness: opts.corridorStraightness } : {}),
   ...(opts.packing !== undefined ? { packing: opts.packing } : {}),
+  ...(opts.seed !== undefined ? { seed: opts.seed } : {}),
   ...(opts.sealed ? { sealed: true } : {}),
   ...(opts.encounterArgs !== undefined ? { encounterArgs: opts.encounterArgs } : {}),
   ...(opts.theme !== undefined ? { theme: opts.theme } : {}),
+  ...(opts.forks ? { forks: opts.forks } : {}),
+  ...(opts.oneWays ? { oneWays: opts.oneWays } : {}),
+  ...(opts.oneWayRealisation ? { oneWayRealisation: opts.oneWayRealisation } : {}),
+  ...(opts.handles ? { handles: opts.handles } : {}),
+  ...(opts.regionLayout ? { regionLayout: opts.regionLayout } : {}),
+  ...(opts.obstacles ? { obstacles: opts.obstacles } : {}),
+  ...(opts.controls ? { controls: opts.controls } : {}),
+  ...(opts.barrierOrder ? { barrierOrder: opts.barrierOrder } : {}),
+  ...(opts.locks?.length ? { locks: opts.locks } : {}),
+  ...(opts.realisations ? { realisations: opts.realisations } : {}),
+  ...(opts.switches ? { switches: opts.switches } : {}),
 })
 
-// Sequentially links floors[fi] → floors[fi+1] via a stairhead: floor fi's exitOrStaircase
-// and floor fi+1's entrance both become { stairId: stairId(fi) }. Used for main-path chains
-// (pyramid auto-multi-floor) — never touches the last floor's exit.
-export const wireStaircases = (floors: FloorConfig[], stairId: (index: number) => string): void => {
+// Sequentially links floors[fi] → floors[fi+1] via a stairhead: floor fi's exitOrStaircase and floor
+// fi+1's entrance both become the id of floor fi's main-path way up, which is what pairs them. Used
+// for main-path chains (pyramid auto-multi-floor) — never touches the last floor's exit.
+export const wireStaircases = (floors: FloorConfig[], site: { journeyId: string; pyramidIndex: number }): void => {
   for (let fi = 0; fi < floors.length - 1; fi++) {
-    const id = stairId(fi)
+    const id = stairIdAt({ ...site, floorIndex: fi, path: "main" })
     floors[fi].exitOrStaircase = { stairId: id }
     floors[fi + 1].entrance = { stairId: id }
   }
@@ -223,12 +249,10 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         tier,
         difficulty: floorDiff,
         resolveReward,
-        // Per-floor-scoped, so each floor's auto-generated stairhead ids (e.g. a
-        // "staircase"-ending side section) are globally unique across the whole site —
-        // a plain site-level journeyId would let two floors' sections collide on the same
-        // id, and the cross-floor teleport lookup (SiteMapScreen.tsx) would find whichever
-        // floor happens to come first instead of the intended one.
+        // Per-floor-scoped, so each floor of the site rolls its own densities and chances rather
+        // than every floor of it repeating one roll.
         journeyId: `${journeyId}:${i}:floor${fi}`,
+        floor: { journeyId, pyramidIndex: i, floorIndex: fi },
         constraintSections: floorSections,
         // Floor-level declared side/hidden paths. Authored per-floor (fc.*); no pyramid/tier
         // fallback here so a fully-authored floor stays explicit (tombs author everything).
@@ -245,6 +269,11 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
       const floorStraightness = fc.corridorStraightness ?? resolveCorridorStraightness(constraint, journeyId, i)
       const floorPacking = fc.packing ?? resolvePacking(constraint, journeyId, i)
       const floorSealed = fc.sealed ?? resolveSealed(constraint)
+      // Per kind, the most specific level naming it wins: difficulty, journey, pyramid, floor (the constraint is
+      // already the first three, resolved).
+      const floorBinding = resolveBinding([constraint, fc])
+      const hasLocks = (fc.locks?.length ?? 0) > 0
+      const bakedBinding = hasLocks && Object.keys(floorBinding).length > 0 ? floorBinding : undefined
       // A floor's own reward can gate its own further shortcut (a tomb's self-referential
       // "treasure IS the key") — resolved per floor, falling back to the site-level reward on the
       // last floor. A non-last floor's main path also exits into a treasure chest (floors chain via
@@ -268,8 +297,23 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           encounter: fc.encounter ?? constraint.encounter,
           // Resolve this floor's authored `nodes` selectors → per-node encounter overrides (§G).
           encountersByIndex: resolveNodeSelectors(fc.nodes, floorPP),
+          // A floor's own junctions win; otherwise the site's, the way `encounter` and `theme` resolve.
+          forks: fc.forks ?? constraint.forks,
+          oneWays: fc.oneWays ?? constraint.oneWays,
+          // Bound from outside the lock; a floor that places locks carries the whole binding instead.
+          oneWayRealisation: hasLocks ? undefined : floorBinding[ONE_WAY_KIND],
+          handles: fc.handles ?? constraint.handles,
+          regionLayout: fc.regionLayout ?? constraint.regionLayout,
+          obstacles: fc.obstacles ?? constraint.obstacles,
+          controls: fc.controls ?? constraint.controls,
+          barrierOrder: fc.barrierOrder ?? constraint.barrierOrder,
+          // The binding is resolved here, once, and baked: a floor never re-resolves it from the levels.
+          locks: fc.locks,
+          realisations: bakedBinding,
+          switches: fc.switches ?? constraint.switches,
           corridorStraightness: floorStraightness,
           packing: floorPacking,
+          seed: fc.seed,
           sealed: floorSealed,
           encounterArgs: fc.encounterArgs ?? constraint.encounterArgs,
           // A floor may wear its own skin inside a plainer pyramid; unset, it wears the site’s.
@@ -315,6 +359,16 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             sideSections: [],
             mainEndReward: { type: "fragmentSlot" },
             encounter: constraint.encounter,
+            // The junctions the site asks every floor of it to carve, and what stands in them.
+            forks: constraint.forks,
+            oneWays: constraint.oneWays,
+            oneWayRealisation: declaredBinding(constraint)[ONE_WAY_KIND],
+            handles: constraint.handles,
+            regionLayout: constraint.regionLayout,
+            obstacles: constraint.obstacles,
+            controls: constraint.controls,
+            barrierOrder: constraint.barrierOrder,
+            switches: constraint.switches,
             encounterArgs: constraint.encounterArgs,
             theme: constraint.theme,
             // The SITE's condition, on every floor. It rides beside `theme` at each of these calls, and the
@@ -339,6 +393,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         difficulty,
         resolveReward,
         journeyId,
+        // Only the last main floor carries the site's side content, so `fi` is where these sit.
+        floor: { journeyId, pyramidIndex: i, floorIndex: fi },
         constraintSections,
         hasMapPieceBranch,
         hasWardGate,
@@ -360,6 +416,16 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           sideSections,
           mainEndReward,
           encounter: constraint.encounter,
+          // The junctions the site asks every floor of it to carve, and what stands in them.
+          forks: constraint.forks,
+          oneWays: constraint.oneWays,
+          oneWayRealisation: declaredBinding(constraint)[ONE_WAY_KIND],
+          handles: constraint.handles,
+          regionLayout: constraint.regionLayout,
+          obstacles: constraint.obstacles,
+          controls: constraint.controls,
+          barrierOrder: constraint.barrierOrder,
+          switches: constraint.switches,
           encounterArgs: constraint.encounterArgs,
           theme: constraint.theme,
           condition: constraint.condition,
@@ -371,13 +437,14 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           wallDecorations: constraint.wallDecorations,
           corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
           packing: resolvePacking(constraint, journeyId, i),
+          seed: constraint.seed,
           sealed: resolveSealed(constraint),
         })
       )
     }
 
     // Wire main-floor stairheads sequentially (floor N's exit → floor N+1's entrance).
-    wireStaircases(floorConfigs, fi => `${journeyId}:p${i}:main${fi}`)
+    wireStaircases(floorConfigs, { journeyId, pyramidIndex: i })
 
     if (wingCount > 0 || wardPaths > 0) {
       const tombId = `${tier}_treasure_tomb`
@@ -412,8 +479,16 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             endReward: undefined,
           }))
 
-      wingDefs.forEach((wing, w) => {
-        const wingStairId = `${journeyId}:p${i}:wing${w}`
+      wingDefs.forEach(wing => {
+        // The stairs up to a wing are a section of the last main floor, so the id takes that
+        // section's own address — the index it is about to land on, which is what the assembler
+        // would have called it had the authoring left the stairhead unnamed.
+        const wingStairId = stairIdAt({
+          journeyId,
+          pyramidIndex: i,
+          floorIndex: mainFloors - 1,
+          path: `s${lastMain.sideSections.length}`,
+        })
         lastMain.sideSections = [
           ...lastMain.sideSections,
           {
@@ -436,6 +511,16 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             mainEndReward: wing.endReward ? hintToReward(wing.endReward, wing.difficulty) : { type: "fragmentSlot" },
             // A wing is a floor of this pyramid, so it wears the pyramid's theme too.
             encounter: constraint.encounter,
+            // The junctions the site asks every floor of it to carve, and what stands in them.
+            forks: constraint.forks,
+            oneWays: constraint.oneWays,
+            oneWayRealisation: declaredBinding(constraint)[ONE_WAY_KIND],
+            handles: constraint.handles,
+            regionLayout: constraint.regionLayout,
+            obstacles: constraint.obstacles,
+            controls: constraint.controls,
+            barrierOrder: constraint.barrierOrder,
+            switches: constraint.switches,
             encounterArgs: constraint.encounterArgs,
             theme: constraint.theme,
             condition: constraint.condition,
@@ -482,6 +567,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     difficulty,
     resolveReward,
     journeyId,
+    // A single-floor site: everything it has hangs off floor 0.
+    floor: { journeyId, pyramidIndex: i, floorIndex: 0 },
     constraintSections,
     hasMapPieceBranch,
     hasWardGate,
@@ -502,6 +589,16 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     sideSections,
     mainEndReward,
     encounter: constraint.encounter,
+    // The junctions the site asks every floor of it to carve, and what stands in them.
+    forks: constraint.forks,
+    oneWays: constraint.oneWays,
+    oneWayRealisation: declaredBinding(constraint)[ONE_WAY_KIND],
+    handles: constraint.handles,
+    regionLayout: constraint.regionLayout,
+    obstacles: constraint.obstacles,
+    controls: constraint.controls,
+    barrierOrder: constraint.barrierOrder,
+    switches: constraint.switches,
     encounterArgs: constraint.encounterArgs,
     theme: constraint.theme,
     condition: constraint.condition,
@@ -513,6 +610,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     wallDecorations: constraint.wallDecorations,
     corridorStraightness: resolveCorridorStraightness(constraint, journeyId, i),
     packing: resolvePacking(constraint, journeyId, i),
+    seed: constraint.seed,
     sealed: resolveSealed(constraint),
   })
 

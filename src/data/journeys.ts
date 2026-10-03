@@ -1,8 +1,8 @@
-import type { DayNightCycleStep } from "@/ui/atoms/backdropSelection"
 import type { Difficulty } from "./difficultyLevels"
 import type { SiteConfig } from "@/game/siteTypes"
 import { generatedWorldConfigs } from "./generatedWorld"
 import { PYRAMID_STRUCTURES, TOMB_STRUCTURES } from "./journeyStructure"
+import { DEV_JOURNEY_ID } from "@/worldGen/data"
 
 /**
  * JourneyLength:
@@ -10,6 +10,15 @@ import { PYRAMID_STRUCTURES, TOMB_STRUCTURES } from "./journeyStructure"
  * - medium: 5-7 levels
  * - long: 7-10 levels
  */
+
+/**
+ * Which hour a journey's exterior is drawn at.
+ *
+ * The backdrop that paints it declares the same four steps for itself (`src/ui/atoms/backdropSelection.ts`):
+ * the design system imports nothing from `src/`, so the list a journey is AUTHORED against belongs here,
+ * beside the authoring. Structurally identical, so a journey's `time` passes straight to the backdrop.
+ */
+export type DayNightCycleStep = "morning" | "afternoon" | "evening" | "night"
 
 export type Journey = {
   id: string
@@ -44,6 +53,10 @@ export type Journey = {
   // that currency says which one it is and reports the progress (app/pages/journeyContributions.ts);
   // core only knows a count has to be reached.
   entryLock?: { count: number }
+  // A playtesting journey, reachable only under develop mode. The tier ladder never offers it
+  // (journeyAvailability skips it the way it skips an entry-locked one), so without the secret taps
+  // it is not on the travel screen at all.
+  dev?: boolean
   siteConfigs?: SiteConfig[]
 }
 
@@ -623,3 +636,30 @@ export const journeys: Journey[] = authoredJourneys.map(journey => {
   // own input so the screens still have something to draw.
   return { ...journey, levelCount: config?.length ?? structure.levelCount, siteConfigs: config }
 })
+
+// The topology playtesting journey — one site per floor-topology feature, entered straight off the
+// travel map so a mechanic can be walked without a save that has earned its way to it.
+//
+// It is here only when the world was generated with INCLUDE_DEV: a plain build has no config for the
+// id, so the journey does not exist at all rather than existing and being hidden. Its small entry
+// board is deliberate — the point is to be inside the floor, not to solve a cross-sum first.
+const devJourney: AuthoredJourney = {
+  id: DEV_JOURNEY_ID,
+  name: "Topology Proving Ground",
+  exterior: "pyramid",
+  description: "One site per floor-topology feature. Develop mode only.",
+  difficulty: "wizard",
+  journeyLength: "medium",
+  dev: true,
+  background: { time: "night" },
+  levelSettings: {
+    startFloorCount: 3,
+    blocksOpen: [0.5, 1],
+    startNumberRange: [1, 3],
+  },
+}
+
+const devSiteConfigs = generatedWorldConfigs[DEV_JOURNEY_ID]
+if (devSiteConfigs) {
+  journeys.push({ ...devJourney, levelCount: devSiteConfigs.length, siteConfigs: devSiteConfigs })
+}

@@ -1,7 +1,9 @@
 import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
-import type { GateVariant, KeyColor, TreasureReward } from "@/game/siteTypes"
-import type { ResolveEncounter } from "@/game/siteAssembler"
+import type { GateVariant, KeyColor, MechanismRecord, RoomCell, TreasureReward } from "@/game/siteTypes"
+import type { ForkShape } from "@/game/forkShape"
+import type { Mark } from "@/app/SiteMap/mark"
+import { encounterFromMeta, type ResolveEncounter } from "@/game/siteAssembler"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { ProgressionAPI } from "@/app/state/useProgression"
 import type { JourneyAPI } from "@/app/state/useJourneys"
@@ -15,12 +17,19 @@ export type { FamilyMeta }
 export type FamilyContext = {
   // This room's own identity, for families that act on journeys/progression directly.
   journeyId: string
+  /** Which level of the journey this site is, 1-based. A journey authors one site per level, so the
+   * journey alone does not name a pyramid — two of them can hold the same floor index. A family that
+   * mints something identified by WHERE it stands needs this as well as the floor. */
+  levelNr: number
   /** Where this room is drawn in the carve that is on screen — for anything about the here and now. */
   edgeId: string
   /** WHICH ROOM THIS IS, as `${sectionHash}#${floor}/${slot}` (cellIdentity.ts). A family
    * that remembers anything per room — a bought shop slot, a disarmed trap, a half-finished board —
    * files it under this, because the coordinate above moves when the floor is carved again. */
   address: string
+  /** The address this room had before a mechanism's slot named the mechanism (`legacyCellAddress`), for
+   * reading an entry a save still holds under it. Unset on every room whose address never changed. */
+  legacyAddress?: string
   sectionHash: string
   // False when the player re-clicks this room while already standing on it (vs. having
   // traveled away and back) — shop uses this to decide whether its own stock resets.
@@ -55,6 +64,23 @@ export type FamilyContext = {
   gateVariant?: GateVariant
   keyColor?: KeyColor
   ownedKeys?: ReadonlySet<string>
+  /** This room's own ways out when it is a fork (RoomCell.exits): each one's compass direction, what
+   * lies down it, and the key a switch closed it with. What a board standing in a fork draws its doors
+   * from, and where it reads the key to mint for the way out the player chose. Unset off fork rooms. */
+  exits?: RoomCell["exits"]
+  /** The shape those ways out make (src/game/forkShape.ts) — the layout a board is built FOR, where
+   * `exits` above is which doors this particular room has. Unset off fork rooms. */
+  forkShape?: ForkShape
+  /** THIS ROOM IS A MECHANISM (RoomCell.mechanism): its own positions and whether it can rest. A lever
+   * reads this to know which buttons to draw; unset off mechanism rooms. */
+  mechanism?: MechanismRecord
+  /** THE PAIR THIS ROOM'S MECHANISM WEARS (RoomCell.mark): a glyph on a coloured ground, the same one
+   * every gate it drives wears on the map. A lever puts it on its own buttons so the player can go and
+   * look for it; unset off mechanism rooms and the gates they own. */
+  mark?: Mark
+  /** WHAT THIS DOOR WAITS FOR (RoomCell.gateFace), lit as its owners stand now. The gate-face family draws
+   * it; unset off a door that has one. */
+  gateFace?: RoomCell["gateFace"]
 }
 
 type InventoryAPI = ReturnType<typeof useInventory>
@@ -101,7 +127,5 @@ export const resolveFamilyByIdOrTag = (idOrTag: string | string[]): FamilyPlugin
 // an authored `encounter` id/tag actually reaches a family's real id and tags.
 export const resolveEncounter: ResolveEncounter = (encounter, defaultTag) => {
   const query = encounter ?? defaultTag
-  const plugin = resolveFamilyByIdOrTag(query)
-  if (plugin) return { familyId: plugin.meta.id, tags: plugin.meta.tags }
-  return { familyId: Array.isArray(query) ? query.join("+") : query, tags: [] }
+  return encounterFromMeta(resolveFamilyByIdOrTag(query)?.meta, query)
 }

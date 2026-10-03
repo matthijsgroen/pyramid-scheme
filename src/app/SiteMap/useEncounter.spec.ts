@@ -3,6 +3,7 @@ import { renderHook, act } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FloorGrid, GridCell } from "@/game/siteTypes"
+import { HANDLE_SIDES } from "@/game/siteTypes"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { registerFamily } from "@/app/families/familyRegistry"
 import { useEncounter } from "./useEncounter"
@@ -27,6 +28,7 @@ const setup = (cells: GridCell[], floorDifficulty: Difficulty = "starter") => {
     useEncounter({
       journeys,
       journeyId: "j1",
+      levelNr: 1,
       currentFloor: 0,
       difficulty: floorDifficulty,
       grid: gridOf(cells),
@@ -61,6 +63,20 @@ registerFamily({
   Component: () => null,
 })
 const stubRoom: GridCell = { ...emptyRoom, family: STUB_FAMILY }
+
+// A switch: the stub family standing in a fork whose north and south ways out it closed, with its east
+// one left open. Written out rather than carved, because what is under test here is what core carries
+// from the cell — src/game/forkShape.spec.ts is where real carves say which layouts exist.
+const forkRoom: GridCell = {
+  ...stubRoom,
+  roomType: "fork",
+  dirs: new Set(["n", "s", "e"]),
+  exits: [
+    { dir: "n", kind: "side", gateKeyId: "switch:test:sec-a" },
+    { dir: "s", kind: "side", gateKeyId: "switch:test:sec-b" },
+    { dir: "e", kind: "main" },
+  ],
+}
 
 // A family whose generator cannot build its board. There is one in the wild — see the crash this spec
 // was written for — and no reproduction of it, which is the whole reason the room has to be named.
@@ -136,6 +152,70 @@ describe("useEncounter", () => {
     act(() => hook.result.current.open([0, 0], true))
 
     expect(hook.result.current.ctx?.difficulty).toBe("wizard")
+  })
+
+  // A room its family keeps re-enterable is solved again on every visit, and the loot it held was
+  // handed over on the visit that finished it.
+  it("offers no second helping of loot in a room already finished", () => {
+    const { hook, onReward } = setup([
+      { ...emptyRoom, state: "completed", reward: { type: "consumable", itemId: "bandage" } },
+    ])
+
+    act(() => hook.result.current.open([0, 0], true))
+
+    expect(onReward).not.toHaveBeenCalled()
+  })
+
+  // A board standing in a fork draws that fork's own doors, so it needs them; the generator that built
+  // it needs only their shape (src/game/forkShape.ts).
+  it("hands a fork's own ways out to the family standing in it", () => {
+    const { hook } = setup([forkRoom])
+
+    act(() => hook.result.current.open([0, 0], true))
+
+    expect(hook.result.current.ctx?.exits).toEqual(forkRoom.exits)
+  })
+
+  it("shapes a fork on the ways out a switch closed, not on the ones it left open", () => {
+    const { hook } = setup([forkRoom])
+
+    act(() => hook.result.current.open([0, 0], true))
+
+    // North and south are the gated pair; counting the open east way out would read as "three".
+    expect(hook.result.current.ctx?.forkShape).toBe("opposite")
+  })
+
+  it("leaves both unset in a room that is no fork", () => {
+    const { hook } = setup([stubRoom])
+
+    act(() => hook.result.current.open([0, 0], true))
+
+    expect(hook.result.current.ctx?.exits).toBeUndefined()
+    expect(hook.result.current.ctx?.forkShape).toBeUndefined()
+  })
+
+  // A lever's room reads which positions it drives off its own cell, the same way a fork reads its
+  // ways out — the family standing in it has no other way to learn what it stands over.
+  it("hands a mechanism's own record to the family standing on it", () => {
+    const mechanism = {
+      states: [...HANDLE_SIDES],
+      initial: "left",
+      returnsToInitial: true,
+      positions: [{ state: "left", gateKeyId: "handle:test:vault" }],
+    }
+    const { hook } = setup([{ ...stubRoom, mechanism }])
+
+    act(() => hook.result.current.open([0, 0], true))
+
+    expect(hook.result.current.ctx?.mechanism).toEqual(mechanism)
+  })
+
+  it("leaves it unset off a room with no mechanism", () => {
+    const { hook } = setup([stubRoom])
+
+    act(() => hook.result.current.open([0, 0], true))
+
+    expect(hook.result.current.ctx?.mechanism).toBeUndefined()
   })
 
   it("offers nothing for an empty room, while still marking it explored", () => {

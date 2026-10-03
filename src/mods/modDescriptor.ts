@@ -6,6 +6,7 @@ import type { ShopStockAssignment } from "@/worldGen/shopStock"
 import type { WorldValidator } from "@/worldGen/validate"
 import type { CurrencyMeta } from "@/game/ledger/currencyRegistry"
 import type { FamilyMeta } from "@/game/families/familyMeta"
+import type { OneWayRealisationMeta } from "@/game/oneWayRealisation"
 
 // A mod is a container registered as one unit in src/mods/registeredMods.ts's REGISTERED_MODS.
 // A mod is "on" iff it appears there; toggle it off (for a demo, or while proving a boundary is
@@ -28,6 +29,9 @@ export type ModDescriptor = {
   // React Component + runtime generate register app-side (registerModApps), gated on this
   // mod — this descriptor stays React-free. Merged into allFamilyMeta.ts.
   families?: FamilyMeta[]
+  // The one-way realisations this mod offers, each declaring the prompt its crossing is taken through.
+  // Merged into allOneWayRealisations.ts; a one-way bound to one that drops with the mod is refused.
+  oneWayRealisations?: OneWayRealisationMeta[]
   // Currency display/ownership metadata for the ledger + collection UI — one or many.
   currencyMeta?: CurrencyMeta | CurrencyMeta[]
   // Dynamic-loot distributions this mod owns (the unified loot primitive): each claims slots by

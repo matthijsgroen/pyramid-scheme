@@ -42,6 +42,13 @@ describe(floorKeyRing, () => {
     expect(floorKeyRing(opened, new Set(["k1"]))).toEqual({ held: ["blue"], needed: [] })
   })
 
+  // Whether a door is still shut is a question about the keys in hand, not about the chests on the
+  // floor: the chest is the usual place a floor key comes from, and the ring asks the key ids.
+  it("leaves a door out of needed when its key is in hand and no chest here holds that key", () => {
+    const grid = gridOf([door("k9", "blue", "reachable")])
+    expect(floorKeyRing(grid, new Set(["k9"]))).toEqual({ held: [], needed: [] })
+  })
+
   it("lists every colour a multi-key chest carries", () => {
     const grid = gridOf([
       keyChest("k1", ["red", "green"], "completed"),
@@ -88,6 +95,25 @@ describe(floorKeyRing, () => {
       keyChest("k3", ["blue"], "completed"),
     ])
     expect(floorKeyRing(grid, new Set(["k1", "k2", "k3"])).held).toEqual(["blue", "red", "purple"])
+  })
+
+  // A mechanism-opened gate (siteAssembler's obstacle gates, or an old-style handle gate) is
+  // authored: no chest on the floor grows its key, so it carries no colour, and the union that makes
+  // it "owned" (SiteMapScreen.tsx) must not make it appear as something to hold or hunt for.
+  it("shows no colour for a mechanism-opened gate, held or needed", () => {
+    const grid = gridOf([
+      {
+        type: "room",
+        roomType: "encounter",
+        dirs: noDirs,
+        state: "reachable",
+        gateVariant: "floor-key",
+        requiredKeyId: "obstacle:test#0#0:vaultDoor",
+        keyIsAuthored: true,
+      },
+    ])
+    expect(floorKeyRing(grid, new Set(["obstacle:test#0#0:vaultDoor"]))).toEqual({ held: [], needed: [] })
+    expect(floorKeyRing(grid, new Set())).toEqual({ held: [], needed: [] })
   })
 
   it("a treasure chest with no key colour is not a key host", () => {

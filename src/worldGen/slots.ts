@@ -1,4 +1,4 @@
-import type { SiteConfig, Tier, TreasureReward, FragmentSlotReward } from "./types"
+import type { SiteConfig, SubSection, Tier, TreasureReward, FragmentSlotReward } from "./types"
 import type { Difficulty } from "../data/difficultyLevels"
 import { capabilitiesFor } from "./capabilities"
 import type { FloorRef } from "./reachability"
@@ -241,4 +241,30 @@ export const collectSlots = (
   }
 
   return slots
+}
+
+// Sites collectSlots never visits (capabilitiesFor().emitFragmentSlots === false) still get the
+// fragmentSlot sentinels buildSite puts on every path end — and nothing ever fills or clears them,
+// because filling and clearing are both things the slot pool does. A sentinel that survives reaches
+// the serializer, which refuses it. Drop them here instead: a site outside the loot economy has ends
+// that hold nothing, which is precisely what it is for.
+export const clearUncollectedSlots = (allConfigs: Record<string, SiteConfig[]>): void => {
+  const clear = (r: TreasureReward | undefined) => (r?.type === "fragmentSlot" ? undefined : r)
+  const clearSub = (s: SubSection) => {
+    s.endReward = clear(s.endReward)
+    s.rewards = s.rewards?.map(clear)
+  }
+  for (const [journeyId, siteConfigs] of Object.entries(allConfigs)) {
+    if (capabilitiesFor(journeyId)?.emitFragmentSlots !== false) continue
+    for (const floors of siteConfigs) {
+      for (const floor of floors) {
+        floor.mainEndReward = clear(floor.mainEndReward)
+        floor.rewards = floor.rewards?.map(clear)
+        for (const section of floor.sideSections) {
+          clearSub(section)
+          for (const sub of section.sideSections ?? []) clearSub(sub)
+        }
+      }
+    }
+  }
 }

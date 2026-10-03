@@ -1,8 +1,11 @@
 import type { CellState, GateVariant, KeyColor } from "@/game/siteTypes"
+import type { TileStatus } from "@/game/sequence"
+import { plateLook } from "./plateLook"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { keyColorHex } from "@/ui/tokens/keyColors"
 import { NODE_RADIUS_FORK, NODE_RADIUS_LARGE, NODE_RADIUS_PUZZLE } from "./mapScale"
 import type { ShapeKind } from "./nodeKinds"
+import { type Mark, MarkBadge } from "./mark"
 
 // WHAT A NODE MARKER LOOKS LIKE: a shape per kind, a colour per state, the badges on its rim. All of it
 // vector and all of it stateless — props in, SVG out — so the map's own file is left holding the floor
@@ -83,6 +86,54 @@ export type ShapeProps = {
   keyColors?: KeyColor[]
   // A ward (tomb-key) gate's tier, derived from its key id — tints the gate by difficulty.
   difficulty?: Difficulty
+  // Which mechanism this room belongs to (RoomCell.mark) — the lever and every gate it drives wear
+  // the same pair, and that is all that says which lever opens which door. Unset off both.
+  mark?: Mark
+  // A sequence tile's glyph and how the run stands on it (RoomCell.sequenceTile, `tileStatusAt`). Unset off a plate.
+  plate?: { glyph: number; status: TileStatus }
+  // The icon of the family standing in the room (FamilyMeta.icon), drawn by a "mechanism" marker.
+  icon?: string
+}
+
+/** A pressure plate: ground with its glyph on it, stepped on rather than entered. */
+const PlateShape = ({ plate }: ShapeProps) => {
+  const r = NODE_RADIUS_PUZZLE
+  const status = plate?.status ?? "unwalked"
+  const look = plateLook[status]
+  return (
+    <g data-plate={plate?.glyph} data-status={status}>
+      <rect x={-r} y={-r} width={r * 2} height={r * 2} rx={2} fill={look.fill} stroke={look.stroke} strokeWidth={1.5} />
+      {plate && (
+        <text
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontSize={r * 1.1}
+          fill={look.ink}
+          style={{ userSelect: "none" }}
+        >
+          {String.fromCodePoint(plate.glyph)}
+        </text>
+      )}
+      {status === "inOrder" && (
+        <path
+          d={`M ${r - 12},${r - 6} l 3,3 l 6,-7`}
+          fill="none"
+          stroke={look.stroke}
+          strokeWidth={2}
+          strokeLinecap="round"
+        />
+      )}
+      {status === "outOfOrder" && (
+        <path
+          d={`M ${r - 13},${r - 13} l 8,8 m 0,-8 l -8,8`}
+          fill="none"
+          stroke={look.stroke}
+          strokeWidth={2}
+          strokeLinecap="round"
+        />
+      )}
+    </g>
+  )
 }
 
 const PuzzleShape = ({ state }: ShapeProps) => {
@@ -162,7 +213,89 @@ const ForkShape = ({ state }: ShapeProps) => {
   return <polygon points={`0,${-r} ${r},0 0,${r} ${-r},0`} fill="#1e160e" stroke={stroke} strokeWidth={1.5} />
 }
 
-const GateNodeShape = ({ state, gateVariant, keyColor, difficulty }: ShapeProps) => {
+/** A junction that carries a board: one way in that splits into two. The mechanic drawn literally, so
+ * it is read before the player walks onto it — bare arms rather than a room's body, because a junction
+ * is the space between rooms and there is no chamber here to draw walls around. It wears the puzzle
+ * palette (amber until it is solved, green once it answers) at a puzzle's size, so it stands among the
+ * other things there are to do rather than among the junctions. */
+const SwitchShape = ({ state }: ShapeProps) => {
+  const r = NODE_RADIUS_PUZZLE
+  const arm = r * 0.65
+  return (
+    <path
+      d={`M ${-arm},${-arm} L 0,0 L ${arm},${-arm} M 0,0 L 0,${r - 6}`}
+      fill="none"
+      stroke={puzzleIcon[state]}
+      strokeWidth={3}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  )
+}
+
+/** A handle stands as an ordinary "encounter" room (not a "fork" — see `shapeKindFor`), so it wears the
+ * same opaque, outlined backdrop the other rooms do rather than the switch's bare backdrop-less path;
+ * that backdrop alone already separates it from the switch at map zoom. The icon drawn on top is a
+ * lever: a mounted post with an arm swung off it and a grip on its end, literal rather than abstract so
+ * a player learns "this is a lever" on sight. */
+const HandleShape = ({ state, mark }: ShapeProps) => {
+  const r = NODE_RADIUS_PUZZLE
+  const fill = handleFill[state]
+  const stroke = handleStroke[state]
+  return (
+    <>
+      <rect x={-r} y={-r} width={r * 2} height={r * 2} rx={2} fill={fill} stroke={stroke} strokeWidth={1.5} />
+      {state !== "fogged" && (
+        <g stroke={handleIcon[state]} strokeLinecap="round">
+          {/* Base plate the post is mounted to */}
+          <rect x={-6} y={8} width={12} height={3} rx={1} fill={handleIcon[state]} stroke="none" />
+          {/* Upright post, pivot near its top */}
+          <line x1={0} y1={8} x2={0} y2={-2} strokeWidth={3} />
+          {/* Arm swung off the pivot, up and to the side */}
+          <line x1={0} y1={-2} x2={9} y2={-12} strokeWidth={3} />
+          {/* Grip at the arm's end */}
+          <circle cx={9} cy={-12} r={3} fill={handleIcon[state]} stroke="none" />
+        </g>
+      )}
+      {mark && <MarkBadge mark={mark} r={r} state={state} />}
+    </>
+  )
+}
+
+/** A mechanism whose realisation has no drawing of its own: the same backdrop a lever wears, carrying the
+ * icon of the family that realises it (a flame for a torch). A room whose family is unknown wears a plain
+ * diamond rather than nothing. */
+const MechanismShape = ({ state, mark, icon }: ShapeProps) => {
+  const r = NODE_RADIUS_PUZZLE
+  return (
+    <>
+      <rect
+        x={-r}
+        y={-r}
+        width={r * 2}
+        height={r * 2}
+        rx={2}
+        fill={handleFill[state]}
+        stroke={handleStroke[state]}
+        strokeWidth={1.5}
+      />
+      {state !== "fogged" && (
+        <text
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontSize={16}
+          data-mechanism-icon
+          style={{ userSelect: "none" }}
+        >
+          {icon ?? "\u25C6"}
+        </text>
+      )}
+      {mark && <MarkBadge mark={mark} r={r} state={state} />}
+    </>
+  )
+}
+
+const GateNodeShape = ({ state, gateVariant, keyColor, difficulty, mark }: ShapeProps) => {
   const r = NODE_RADIUS_LARGE
   const isTomb = gateVariant === "tomb-key"
   const colorKey = state === "visible" ? "visible" : "reachable"
@@ -220,6 +353,7 @@ const GateNodeShape = ({ state, gateVariant, keyColor, difficulty }: ShapeProps)
       {state !== "fogged" && (
         <line x1={-r + 3} y1={-r / 3} x2={r - 3} y2={-r / 3} stroke={barColor} strokeWidth={1.5} />
       )}
+      {mark && <MarkBadge mark={mark} r={r} state={state} />}
     </>
   )
 }
@@ -314,8 +448,11 @@ export const NodeShape = ({
   keyColor,
   keyColors,
   difficulty,
+  mark,
+  plate,
+  icon,
 }: ShapeProps & { type: ShapeKind }) => {
-  const p = { state, gateVariant, keyColor, keyColors, difficulty }
+  const p = { state, gateVariant, keyColor, keyColors, difficulty, mark, plate, icon }
   switch (type) {
     case "entrance":
       return <EntranceShape {...p} />
@@ -325,6 +462,14 @@ export const NodeShape = ({
       return <TrapShape {...p} />
     case "fork":
       return <ForkShape {...p} />
+    case "switch":
+      return <SwitchShape {...p} />
+    case "handle":
+      return <HandleShape {...p} />
+    case "mechanism":
+      return <MechanismShape {...p} />
+    case "plate":
+      return <PlateShape {...p} />
     case "gate":
       return <GateNodeShape {...p} />
     case "treasure":
@@ -333,6 +478,12 @@ export const NodeShape = ({
       return <StairheadShape {...p} />
     case "exit":
       return <ExitShape {...p} />
+    default: {
+      // A ShapeKind with no case above would draw NOTHING on the map and say nothing about it. This
+      // makes the omission a compile error instead.
+      const unhandled: never = type
+      return unhandled
+    }
   }
 }
 
@@ -355,6 +506,27 @@ const puzzleIcon: Record<CellState, string> = {
   visible: "#d09030",
   reachable: "#90c060",
   completed: "#90c060",
+}
+
+// A lever's own bronze/brass cast — warm like the puzzle palette (it is still a room to solve), but a
+// distinct hue so a glance tells the two apart even before the shape does.
+const handleFill: Record<CellState, string> = {
+  fogged: "#1a1208",
+  visible: "#241a08",
+  reachable: "#221c08",
+  completed: "#221c08",
+}
+const handleStroke: Record<CellState, string> = {
+  fogged: "#2e2010",
+  visible: "#8a6a30",
+  reachable: "#c99a48",
+  completed: "#c99a48",
+}
+const handleIcon: Record<CellState, string> = {
+  fogged: "#2e2010",
+  visible: "#c2943c",
+  reachable: "#e8b860",
+  completed: "#e8b860",
 }
 
 const gateFill: Record<CellState, string> = {

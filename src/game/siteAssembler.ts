@@ -1,8 +1,23 @@
 import { mulberry32, shuffle } from "./random"
+import { DEFAULT_PACKING, ONE_WAY_RUN_CELLS } from "./carveConstants"
 import { hashString } from "@/support/hashString"
+import { allocateMarks, type Mark, type MarkRequest } from "./mark"
+import { withGateFaces } from "./gateFace"
+import {
+  DEFAULT_CONTROL_ROLE,
+  DOOR_FACE_ROLE,
+  defaultResolveEncounter,
+  defaultResolveOneWayRealisation,
+} from "./encounterFallback"
+import type { OneWayRefusal, ResolveOneWayRealisation } from "./oneWayRealisation"
+
+export { defaultResolveEncounter }
+export { DEFAULT_PACKING, ONE_WAY_RUN_CELLS }
 import type {
+  AssemblerFailure,
   AssemblerResult,
   FloorConfig,
+  MechanismRecord,
   FloorGrid,
   GridCell,
   Direction,
@@ -15,17 +30,84 @@ import type {
   WallDecorationKind,
   Difficulty,
 } from "./siteTypes"
+import { HANDLE_SIDES, MECHANISM_AT_REST } from "./siteTypes"
+import {
+  appetiteAccepts,
+  offRouteChains,
+  regionOfStep,
+  regionRoute,
+  regionsAlongPath,
+  strandedRegions,
+} from "./regions"
+import type { ContentKind, SideChain } from "./regions"
+import {
+  barrierRuns,
+  crossesNoDoor,
+  doorsToEnterRegion,
+  isEdgeGate,
+  isForkSwitch,
+  isRegionGate,
+  isSequence,
+  seamIndexFor,
+  seatBarrierDoors,
+  seatBarrierRun,
+  topologyFaults,
+} from "./obstacles"
+import type { EdgeGateObstacle, Obstacle, OneWayObstacle, StatefulControl } from "./obstacles"
+import { cellSlot, plainSwitchId } from "./cellSlot"
+import { placeSequences } from "./sequenceTiles"
+import { expandFloorLocks } from "./floorLocks"
+import { layLockPlan, startingGridSize } from "./layLocks"
+import {
+  fillLaidFloor,
+  lengthenPlan,
+  lengtheningCandidates,
+  placeContentOnRoute,
+  planToLay,
+  seatLaidFloor,
+} from "./laidFloor"
+import type { AbsorbedDemand, LaidFloor, LengtheningChoice } from "./laidFloor"
+import { planLockFloor } from "./lockPlan"
+import type { LockPlan } from "./lockPlan"
+import { doorFacesMissing, realisationsMissing } from "./mechanics/realisations"
+import { adjacencyFaults, dropLandingFaults, gateDoorFaults } from "./carveAgreement"
+import type { CarveFault } from "./carveAgreement"
+import { stairIdAt } from "./stairAddress"
 import { footprintSize } from "./roomFootprint"
 import type { ResolveBoardIndex } from "./seeds/boardIndex"
 import { validateSite } from "./siteValidator"
 import { rolesOfProp, rolesOfWallItem } from "./dressingTags"
+import type { FamilyMeta } from "./families/familyMeta"
 
 // Resolves an authored `encounter` (exact family id, or tag(s)) to a concrete family id
 // plus that family's own tags. Injected by the caller so this domain module never needs
 // to know which families/mods actually exist — see resolveEncounter in
 // src/app/families/familyRegistry.ts for the real (registry-backed) implementation.
-export type EncounterResolution = { familyId: string; tags: string[] }
+// `reEnterable` mirrors the resolved family's own FamilyMeta.reEnterable — whether a finished room of
+// it is walked back INTO. Carried here because a switch needs it and core may not read a mod's meta:
+// the resolver that knows the registry answers, and this module only asks.
+// `ownerMod` names the mod that contributed the resolved family, and is absent exactly when no family
+// answered the query — which is how a caller holding only this resolution tells a room whose mod left
+// the build from one a mod that is here still stands in.
+export type EncounterResolution = { familyId: string; tags: string[]; reEnterable?: boolean; ownerMod?: string }
 export type ResolveEncounter = (encounter: string | string[] | undefined, defaultTag: string) => EncounterResolution
+
+// The one place a resolved FamilyMeta becomes an EncounterResolution — shared by
+// familyRegistry.ts's app-layer resolveEncounter and allFamilyMeta.ts's world-gen-reachable
+// resolveEncounterMeta, so a field neither can read without the other (rewardPriority's
+// siblings, reEnterable before it) is added once instead of copied into two lookup functions.
+// `fallback` is the pre-resolution id/tag query, echoed back (id-joined if an array) when no
+// family matched — an unauthored or mod-disabled encounter falls through to the runtime's own
+// family-absence handling rather than resolving to nothing.
+export const encounterFromMeta = (meta: FamilyMeta | undefined, fallback: string | string[]): EncounterResolution => {
+  if (!meta) return { familyId: Array.isArray(fallback) ? fallback.join("+") : fallback, tags: [] }
+  return {
+    familyId: meta.id,
+    tags: meta.tags,
+    ownerMod: meta.ownerMod,
+    ...(meta.reEnterable ? { reEnterable: true } : {}),
+  }
+}
 
 // Resolves a main-path puzzle room's own completion precondition (e.g. a tableau's
 // hieroglyph requirement) to opaque key ids — same idea as ResolveEncounter, injected so
@@ -38,27 +120,9 @@ export type ResolveKeyRequirements = (
 ) => string[] | undefined
 const defaultResolveKeyRequirements: ResolveKeyRequirements = () => undefined
 
-const DEFAULT_TAG_FAMILIES: Record<string, string> = {
-  trap: "arithmetic-reflex",
-  puzzle: "sumplete",
-  "tomb-puzzle": "tableau",
-}
-const DEFAULT_FAMILY_TAGS: Record<string, string[]> = {
-  "arithmetic-reflex": ["trap"],
-  sumplete: ["puzzle"],
-  tableau: ["tomb-puzzle"],
-  crocodile: ["tomb-puzzle"],
-  "treasure-chest": ["treasure"],
-  "fez-shop": ["shop"],
-  "key-gate": ["gate"],
-}
-// Fallback for callers that don't inject the real family registry (tests, stories) —
-// production always passes familyRegistry.ts's resolveEncounter.
-const defaultResolveEncounter: ResolveEncounter = (encounter, defaultTag) => {
-  const value = (Array.isArray(encounter) ? encounter[0] : encounter) ?? defaultTag
-  const familyId = DEFAULT_TAG_FAMILIES[value] ?? value
-  return { familyId, tags: DEFAULT_FAMILY_TAGS[familyId] ?? [] }
-}
+/** What a mechanism's room is made of: the family its realisation resolved to, and the tags that family
+ * carries. Both come off the resolution, so the room is drawn and filled by whatever realises it. */
+const mechanismRoom = ({ familyId, tags }: EncounterResolution) => ({ family: familyId, tags })
 
 // A section hash is a run's handle on a stretch of floor: saved explored cells and found hidden
 // corridors are filed under it, and a cell whose hash no longer matches is dropped as stale. So it
@@ -119,12 +183,29 @@ const POSITIONAL_ADDRESS = /^(main|s\d+(\.\d+)?)$/
  * label carrying either would produce a cell address that reads back as a different section or floor. */
 const USABLE_LABEL = /^[A-Za-z0-9][A-Za-z0-9_-]*$/
 
+/** How many levels of section the carve builds: the paths off the main one, and the paths off those.
+ * `sectionTooDeep` refuses anything hung below that, and seeds/boardIndex.ts stops at the same depth. */
+const CARVED_SECTION_DEPTH = 2
+
+/**
+ * What hangs off a section, however deep it was authored.
+ *
+ * The type stops one level down because that is as deep as the carve goes, while the DSL nests
+ * without limit (worldGen/dsl.ts) and the serializer bakes whatever it is given — so a deeper level
+ * arrives here as data the type cannot see. Reading it is what lets the floor be refused by name
+ * instead of assembled with the deepest sections missing.
+ */
+const childSectionsOf = (section: SubSection): SubSection[] => (section as SideSection).sideSections ?? []
+
 /**
  * What each of a floor's sections is called: its authored `label` where it has one, else where it sits.
  *
  * Labelling is opt-in per path, because naming every one of them would be a tax on authoring for the
  * sake of the few that matter. An unlabelled section keeps the positional address and the hazard that
  * comes with it — insert a sidepath ahead of it and it shifts — which is exactly what a label buys off.
+ *
+ * Walks every authored level, not only the ones the carve reaches: a name is a save key wherever it
+ * sits, so one repeated three levels down would share progress exactly as one repeated at the top.
  *
  * Returns the duplicates instead of the addresses when two sections would answer to the same name: a
  * save cannot tell them apart, so their progress would be shared between two places.
@@ -144,14 +225,33 @@ const sectionAddresses = (
     of.set(positional, address)
     return address
   }
-  for (const [idx, side] of config.sideSections.entries()) {
-    if (claim(`s${idx}`, side.label) === null) return { ok: false, duplicate: side.label ?? `s${idx}` }
-    for (const [subIdx, sub] of (side.sideSections ?? []).entries()) {
-      if (claim(`s${idx}.${subIdx}`, sub.label) === null)
-        return { ok: false, duplicate: sub.label ?? `s${idx}.${subIdx}` }
+  const walk = (sections: SubSection[], prefix: string): string | null => {
+    for (const [idx, section] of sections.entries()) {
+      const positional = `${prefix}${idx}`
+      if (claim(positional, section.label) === null) return section.label ?? positional
+      const deeper = walk(childSectionsOf(section), `${positional}.`)
+      if (deeper !== null) return deeper
+    }
+    return null
+  }
+  const duplicate = walk(config.sideSections, "s")
+  return duplicate === null ? { ok: true, of } : { ok: false, duplicate }
+}
+
+/** Every section authored below the depth the carve builds, by the name it answers to. */
+const sectionsTooDeep = (config: FloorConfig, addressOf: ReadonlyMap<string, string>): string[] => {
+  const below: string[] = []
+  const walk = (sections: SubSection[], prefix: string, depth: number): void => {
+    for (const [idx, section] of sections.entries()) {
+      const positional = `${prefix}${idx}`
+      if (depth > CARVED_SECTION_DEPTH) below.push(addressOf.get(positional) ?? positional)
+      // A section already named goes no deeper: its own children are refused along with it, and one
+      // name per branch says where the authoring left what the carve builds.
+      else walk(childSectionsOf(section), `${positional}.`, depth + 1)
     }
   }
-  return { ok: true, of }
+  walk(config.sideSections, "s", 1)
+  return below
 }
 
 // The floor-wide inputs to the carve itself: change either and every cell on the floor moves.
@@ -224,6 +324,23 @@ const CONNECTOR_DIRS: Array<[number, number, Direction]> = [
 ]
 const OPPOSITE: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
 
+/** Steps from the node a drop hangs off to the node it lands beside: launch, obstacle, landing, and the
+ * step onto the far node. */
+const ONE_WAY_REACH = ONE_WAY_RUN_CELLS + 3
+
+type OneWayEdge = {
+  from: string
+  to: string
+  dir: Direction
+  launch: string
+  run: string[]
+  landing: string
+  /** The authored drop this run carries. */
+  obstacleId?: string
+  /** The id of the realisation the drop was bound to, which names its span and so its prompt. */
+  realisation: string
+}
+
 const makePkey = (N: number) => (r1: number, c1: number, r2: number, c2: number) => {
   const a = r1 * N + c1,
     b = r2 * N + c2
@@ -237,12 +354,18 @@ const makePkey = (N: number) => (r1: number, c1: number, r2: number, c2: number)
 // Overridable per floor via FloorConfig.corridorStraightness (see assembleFloor).
 const DEFAULT_STRAIGHT_BIAS = 0.65
 
-// Multiplier on the grid's roaming room beyond its bare content minimum (see the N-growth
-// loop in assembleFloor). 1 = today's default footprint; <1 packs the floor (and its
-// winding corridors) tighter, >1 gives it more breathing room. Overridable per floor via
-// FloorConfig.packing.
-const DEFAULT_PACKING = 0.1
-
+// THE LADDER IS LOAD-BEARING FOR 31 OF THE 206 SHIPPED FLOORS. The bake searches every floor for the
+// smallest `packing` (from the authored one, in small steps) and a seed that carve on attempt 0
+// (worldGen/carveSeedSearch.ts), and bakes the pair, so 175 floors never leave attempt 0. The other 31
+// (expert, master and wizard main floors, listed in worldGen/bakedCarve.spec.ts) fail attempt 0 with
+// `layoutNotFound` at every seed and every `packing` up to PACKING_CEILING: the grid `deriveN` sizes
+// is too small for them, and only the rungs below that grow it (`N += 2`, then recovery's `carvedCells`
+// sizing) carve them. Without the ladder those 31 render "Site layout unavailable." for every player.
+// A floor whose pair was never searched is carved by it too. Removing it is a decision, and needs the
+// derived grid to start large enough for those 31 first; changing its rungs re-carves every floor that
+// climbs them. STRICT_ATTEMPT_ZERO=1 on `yarn generate-world` fails the build by name on a floor that
+// needs it.
+//
 // Maze carving is a per-attempt gamble (each attempt reshuffles branch points and section
 // order), so assembleFloor retries. The first RECOVERY_ATTEMPT attempts run at the original
 // sizing; the rest re-size the grid to what the carve actually needs and wind the side chains
@@ -250,6 +373,12 @@ const DEFAULT_PACKING = 0.1
 // at attempt 37, so the tail of the budget is headroom rather than something floors rely on.
 // See the retry loop in assembleFloor for why the first stretch is deliberately frozen.
 const RECOVERY_ATTEMPT = 30
+// What separates the lay of one attempt from the next, and where the chains of a laid lock count from so
+// no index of theirs is one of an authored section.
+const LAY_SEED_STRIDE = 1000003
+const LAID_CHAIN_IDX = 10000
+// The most stretches one attempt lengthens to hold a floor's content before it is given up as too tight.
+const MAX_LENGTHENINGS = 12
 // Attempts spent at one packing before asking for more room, and how much more. Four rerolls is
 // enough for a floor that only needed shuffle luck; seven rungs of 1.5x carry the tightest default
 // past 1, so no floor is stuck at a wish its sections cannot fit.
@@ -262,7 +391,7 @@ const PACKING_WIDEN = 2
 // The roomiest a widening will ever ask for. Past it the retry goes back to growing the grid, which
 // is the lever that suits a floor whose sections already have room to wander: compounding the wish
 // instead carves a walk hundreds of cells long for a floor holding three puzzles.
-const PACKING_CEILING = 1
+export const PACKING_CEILING = 1
 const ASSEMBLY_ATTEMPTS = 60
 
 /** The five kinds a god can be DEPICTED on, as `tileAssets.ts`'s resolver reads them: a patron reaches
@@ -362,6 +491,45 @@ const buildMaze = (
   return { neighbors, mainPath, passages }
 }
 
+// Grows the maze among the nodes a lock left free: passages join the laid ways exactly as laid, and a free
+// node is reached from another free node and from no laid one, so a side path grown here can never join two
+// regions the lock keeps apart. A side path attaches to laid ground by a passage the attach itself carves.
+const growMazeAround = (N: number, laid: LaidFloor, rand: () => number, straightBias: number) => {
+  const passages = new Set<string>(laid.passages)
+  const pkey = makePkey(N)
+  const visited = new Set<string>([...laid.label.keys(), ...laid.held])
+  const arrivedVia = new Map<string, [number, number]>()
+  for (let sr = 0; sr < N; sr += NODE_STEP)
+    for (let sc = 0; sc < N; sc += NODE_STEP) {
+      if (visited.has(`${sr},${sc}`)) continue
+      visited.add(`${sr},${sc}`)
+      const stack: Array<[number, number]> = [[sr, sc]]
+      while (stack.length > 0) {
+        const [r, c] = stack[stack.length - 1]
+        const unvisited = DIRS2.map(([dr, dc]) => [r + dr, c + dc] as [number, number]).filter(
+          ([nr, nc]) => nr >= 0 && nr < N && nc >= 0 && nc < N && !visited.has(`${nr},${nc}`)
+        )
+        if (unvisited.length === 0) {
+          stack.pop()
+          continue
+        }
+        const incoming = arrivedVia.get(`${r},${c}`)
+        const straightAhead = incoming && unvisited.find(([nr, nc]) => nr - r === incoming[0] && nc - c === incoming[1])
+        const [nr, nc] =
+          straightAhead && rand() < straightBias ? straightAhead : unvisited[Math.floor(rand() * unvisited.length)]
+        passages.add(pkey(r, c, nr, nc))
+        visited.add(`${nr},${nc}`)
+        arrivedVia.set(`${nr},${nc}`, [nr - r, nc - c])
+        stack.push([nr, nc])
+      }
+    }
+  const neighbors = (r: number, c: number): Array<[number, number]> =>
+    DIRS2.map(([dr, dc]) => [r + dr, c + dc] as [number, number]).filter(
+      ([nr, nc]) => nr >= 0 && nr < N && nc >= 0 && nc < N && passages.has(pkey(r, c, nr, nc))
+    )
+  return { neighbors, mainPath: laid.route, passages }
+}
+
 // Find a chain of `count` cells starting from (startR, startC),
 // extending through available maze neighbors not in usedCells. The final cell in the
 // chain becomes a section/sub-section endpoint, which later wants a multi-cell footprint
@@ -430,60 +598,587 @@ const spreadContentIndices = (count: number, startIdx: number, totalLen: number)
 
 export type AssembleFloorKeyRequirements = {
   resolveKeyRequirements?: ResolveKeyRequirements
-  floorRef?: { journeyId: string; floorIndex: number }
+  /** Where this floor was AUTHORED — which journey, which of its levels, which floor of that level.
+   * `levelIndex` is what separates two levels of one journey, so the ids derived from it (a switch's
+   * gate stems) stay distinct across the world; unset (stories, the builder) it reads as 0. */
+  floorRef?: { journeyId: string; levelIndex?: number; floorIndex: number }
   /** Which seed-list entry each room draws, by its authored address — injected for the same reason
    * resolveEncounter is: this module knows a floor's chains, never which world they belong to.
    * Absent (stories, specs, the builder) leaves rooms unstamped and they index by their own hash. */
   resolveBoardIndex?: ResolveBoardIndex
+  /** Binds each one-way to the realisation it names, and says what that realisation declares. Production
+   * passes the registry's, which binds a one-way that names none to nothing; absent (stories, specs, the
+   * builder) the fallback catalogue answers. */
+  resolveOneWay?: ResolveOneWayRealisation
+  /** How many attempts the floor may take, at most ASSEMBLY_ATTEMPTS. The bake's seed search asks for 1:
+   * it wants a seed that carves at the authored `packing`, and a seed that only carves after the ladder
+   * widened the grid is one it has to reject, so it must not pay for the climb to learn that. */
+  maxAttempts?: number
+  /** Called with the laid locks of every attempt that lays any, so a spec can read a carve against the
+   * structure it was carved from. */
+  onLaid?: (laid: LaidFloor) => void
 }
 
-export const assembleFloor = (
-  siteId: string,
+// A floor-key gate whose keyId is authored gets its key from wherever the author names (a
+// family, a room reward) rather than this floor's own rotation — so it needs no host chest
+// grown for it and takes no part in the key-host chain below.
+const needsFloorKeyHost = (s: SubSection): boolean => s.gate?.type === "floor-key" && !s.gate.keyId
+
+/**
+ * THE SECTION THE ASSEMBLER GROWS ITSELF where a level's floor-key gates have nowhere to put their key,
+ * so a floor carries paths its authoring never named — `s2.1` on a shipped floor may be one of these.
+ */
+const GROWN_KEY_HOST = { pathPuzzles: 0, difficulty: "starter", end: "treasure" } as const
+
+/**
+ * Whether one level of a floor owes a key a home it does not already have.
+ *
+ * A floor-key gate's key host is a purely local, structural requirement — every floor-key gate at one
+ * level needs exactly one key SOMEWHERE at that same level, decided before any section's own endReward
+ * gets treated as competing content. "Available host" means genuinely free capacity: ungated AND not
+ * already carrying its own authored reward (a section holding a map piece/mosaic/fragment is not free
+ * capacity just because it lacks a gate — see docs/game-design/keys-and-locks-solver.md, "Slots have
+ * capacity").
+ *
+ * Asked of whichever sections may ANSWER it: every level asks only its visible ones, so a hidden
+ * section never satisfies a key-holder requirement at any depth.
+ */
+const owesAKeyHost = (eligible: readonly SubSection[]): boolean =>
+  eligible.some(needsFloorKeyHost) && !eligible.some(s => !s.gate && !s.endReward)
+
+/** Which of one level's sections hold a floor-key gate owing a key, and which are free to host one.
+ * A hidden section is never free capacity: its cells are masked until the player finds them, so a key
+ * put there is one they may never be shown a way to. */
+const keyHostIdxs = (sections: readonly SubSection[]) => ({
+  gatedIdxs: sections.map((_, i) => i).filter(i => needsFloorKeyHost(sections[i])),
+  ungatedIdxs: sections
+    .map((_, i) => i)
+    .filter(i => !sections[i].gate && !sections[i].endReward && !sections[i].hidden),
+})
+
+/** The sections a handle drives carry its gate, so the rest of the carve meets an ordinary authored
+ * floor-key gate: the section is isolated behind it, no host chest is grown for a key nothing on this
+ * floor mints, and the gate room is written by the one place that writes gate rooms. */
+const withHandleGates = (
   config: FloorConfig,
-  seed: number,
+  addressOf: ReadonlyMap<string, string>,
+  gateKeyByAddress: ReadonlyMap<string, string>
+): FloorConfig => {
+  // Every authored section has an address (sectionAddresses claims one for each), and a missing one
+  // would silently skip a gate the lever is already carrying a position for.
+  const gateKeyAt = (positional: string): string | undefined => {
+    const address = addressOf.get(positional)
+    if (address === undefined) throw new Error(`[siteAssembler] section ${positional} has no address`)
+    return gateKeyByAddress.get(address)
+  }
+  return {
+    ...config,
+    sideSections: config.sideSections.map((side, idx) => {
+      const subSections = side.sideSections?.map((sub, subIdx) => {
+        const keyId = gateKeyAt(`s${idx}.${subIdx}`)
+        return keyId ? { ...sub, gate: { type: "floor-key" as const, keyId } } : sub
+      })
+      const keyId = gateKeyAt(`s${idx}`)
+      return {
+        ...side,
+        ...(subSections ? { sideSections: subSections } : {}),
+        ...(keyId ? { gate: { type: "floor-key" as const, keyId } } : {}),
+      }
+    }),
+  }
+}
+
+/**
+ * One carved path hanging off another: what was authored, where the carve put it, and the name it
+ * answers to.
+ *
+ * A path off the main walk and a path off one of those differ only in these fields, so every pass
+ * below — isolation, the cell metadata, the rooms — reads a chain rather than a level, and a rule
+ * written once holds at both.
+ */
+type Chain = {
+  section: SideSection | SubSection
+  cells: Array<[number, number]>
+  attachedAt: [number, number]
+  /** Where it sits among its siblings: `s0`, `s0.1`. */
+  positional: string
+  /** Its own index, and its parent's where it has one — what the section hash is keyed on. */
+  idx: number
+  parentIdx?: number
+  /** The doors that must be earned to stand on it: its own where it is gated or sealed, and every
+   * ancestor's. Empty for ground the player reaches unimpeded. */
+  doors: string[]
+  hidden: boolean
+  /** The floor key its gate wants, where it has an unauthored floor-key gate. */
+  keyNodeId?: string
+  /** The colours of the keys its end room hands out — empty where it hosts none. */
+  keyHostColors: KeyColor[]
+  /** Ground a lock laid: it has no end room, and its cells answer to the lock's regions, not to a section. */
+  laid?: boolean
+}
+
+/** A `{ in }` fork resolved against the layout: its seams, and the top-level side sections hosting them. */
+type ForkIn = { region: string; seams: [string, string][]; sectionIdxs: number[] }
+
+/** The doors shutting a chain off from the way in: its parent's, plus its own where it has one. */
+const doorsShutting = (
+  section: SideSection | SubSection,
+  positional: string,
+  inherited: readonly string[]
+): string[] => (section.gate || section.sealed ? [...inherited, positional] : [...inherited])
+
+const assembleExpandedFloor = (
+  siteId: string,
+  authoredConfig: FloorConfig,
+  addressSeed: number,
   resolveEncounter: ResolveEncounter = defaultResolveEncounter,
-  keyRequirements: AssembleFloorKeyRequirements = {}
+  keyRequirements: AssembleFloorKeyRequirements = {},
+  plan?: LockPlan
 ): AssemblerResult => {
   const {
     resolveKeyRequirements = defaultResolveKeyRequirements,
     floorRef = { journeyId: siteId, floorIndex: 0 },
     resolveBoardIndex,
+    resolveOneWay = defaultResolveOneWayRealisation,
+    maxAttempts = ASSEMBLY_ATTEMPTS,
+    onLaid,
   } = keyRequirements
   // Before anything is carved: two sections a save could not tell apart is a data-loss bug, not a
   // layout one, so it fails the floor loudly here rather than quietly sharing one player's progress
   // between two places. `yarn generate-world` and the floor sweep both build every floor, so an
   // authored label that collides cannot reach a player.
-  const addresses = sectionAddresses(config)
+  const addresses = sectionAddresses(authoredConfig)
   if (!addresses.ok) {
     return { success: false, reasons: [{ type: "unusableSectionAddress", address: addresses.duplicate }] }
   }
+
+  // A section hung below the two levels the carve builds would be authored, serialized and then never
+  // exist — the gate, the reward and the rooms on it all quietly absent from the floor a player walks.
+  // How deep a config goes is fixed before a seed is chosen, so it is refused by name here rather than
+  // dropped, the same way a misnamed one-way is.
+  const tooDeep = sectionsTooDeep(authoredConfig, addresses.of)
+  if (tooDeep.length > 0) {
+    return { success: false, reasons: tooDeep.map(address => ({ type: "sectionTooDeep" as const, address })) }
+  }
+
+  // A LAYOUT IS FIXED BY THE CONFIG, NOT BY THE SEED, so a broken one is refused once here rather
+  // than blamed on sixty carves that could never have satisfied it either. Ordered so each check can
+  // trust what the one before it established: names are unique before connections are resolved
+  // against them, and both hold before the walk that finds what nothing reaches.
+  const regionLayout = authoredConfig.regionLayout
+  const drops = (authoredConfig.obstacles ?? []).flatMap(o =>
+    o.kind === "oneWay" ? [[o.at.between[0], o.at.between[1]] as const] : []
+  )
+  if (regionLayout) {
+    const declared = new Set<string>()
+    const repeated = new Set<string>()
+    for (const { name } of regionLayout.regions) {
+      if (declared.has(name)) repeated.add(name)
+      declared.add(name)
+    }
+    if (repeated.size > 0)
+      return {
+        success: false,
+        reasons: [...repeated].map(name => ({ type: "regionNameRepeated" as const, name })),
+      }
+    const undeclaredEnds = new Set<string>()
+    for (const [from, to] of regionLayout.connections)
+      for (const end of [from, to]) if (!declared.has(end)) undeclaredEnds.add(end)
+    if (undeclaredEnds.size > 0)
+      return {
+        success: false,
+        reasons: [...undeclaredEnds].map(name => ({ type: "connectionNamesNoRegion" as const, name })),
+      }
+    const badPorts = (["in", "out"] as const)
+      .filter(port => !declared.has(regionLayout[port]))
+      .map(port => ({ type: "portNamesNoRegion" as const, port, name: regionLayout[port] }))
+    if (badPorts.length > 0) return { success: false, reasons: badPorts }
+    // A PLACEMENT THAT IS NOT A SHARE OF THE PATH could seat the container nowhere, or seat it
+    // differently at every path length; refused rather than clamped into a position nobody wrote.
+    const enters = regionLayout.placement?.enters
+    if (enters !== undefined && !(Number.isFinite(enters) && enters >= 0 && enters < 1))
+      return { success: false, reasons: [{ type: "placementOutOfRange" as const, enters }] }
+    const stranded = strandedRegions(regionLayout, drops)
+    if (stranded.length > 0)
+      return { success: false, reasons: stranded.map(name => ({ type: "regionUnreachable" as const, name })) }
+  }
+
+  // REFUSED BEFORE A WALL IS CARVED, like the region checks above and for the same reason: which
+  // regions exist, what joins them and which route the main path threads are all fixed by the config,
+  // so a misnamed id is answered once here rather than blamed on sixty carves that could never have
+  // satisfied it.
+  const topologyProblems = topologyFaults(
+    regionLayout,
+    authoredConfig.obstacles ?? [],
+    authoredConfig.controls ?? [],
+    authoredConfig.forks ?? [],
+    authoredConfig.barrierOrder ?? []
+  )
+  if (topologyProblems.length > 0) return { success: false, reasons: topologyProblems }
+
+  // An authored one-way naming a section this floor does not have is the same kind of mistake: which
+  // sections exist is fixed by the config, not by the seed, so a misnamed end is refused once here
+  // rather than blamed on sixty carves that could never have satisfied it either. The region-addressed
+  // form (`obstacles`, kind "oneWay") is validated the same way, just against regions instead of
+  // sections — `topologyProblems` above already covers it.
+  const knownSectionAddresses = new Set<string>([MAIN_SECTION_ADDRESS, ...addresses.of.values()])
+  const unusableOneWays = (authoredConfig.oneWays ?? []).filter(
+    oneWay => !knownSectionAddresses.has(oneWay.from) || !knownSectionAddresses.has(oneWay.to)
+  )
+  if (unusableOneWays.length > 0) {
+    return {
+      success: false,
+      reasons: unusableOneWays.map(({ from, to }) => ({ type: "oneWayUnsatisfied" as const, from, to })),
+    }
+  }
+
+  // EVERY ONE-WAY IS CROSSED THROUGH A REALISATION THAT OFFERS ITS PROMPT, answered before a wall is carved:
+  // the floor names one realisation for all of its one-ways, and a crossing with no prompt is one the player
+  // could take by accident. Refused by name, the whole list at once.
+  const realisationRefusals = [
+    ...(authoredConfig.oneWays ?? []),
+    ...(authoredConfig.obstacles ?? []).flatMap(o =>
+      o.kind === "oneWay" ? [{ from: o.at.between[0], to: o.at.between[1] }] : []
+    ),
+  ].flatMap(({ from, to }) => {
+    const named = authoredConfig.oneWayRealisation
+    const bound = resolveOneWay(named)
+    const why: OneWayRefusal | undefined = bound
+      ? bound.prompt
+        ? undefined
+        : "noPrompt"
+      : named === undefined
+        ? "unbound"
+        : "unknown"
+    return why ? [{ type: "oneWayRealisationRefused" as const, from, to, realisation: named ?? null, why }] : []
+  })
+  // EVERY CONTROL IS ONE OF CORE'S KINDS, DRESSED BY A MOD'S REALISATION, so a floor whose controls name one no
+  // registered mod provides is refused by name here, in the same list, rather than carved with another
+  // standing in: the carve depends on core alone, and a mod's absence cannot move a wall.
+  const realisationProblems = [...realisationRefusals, ...realisationsMissing(authoredConfig, resolveEncounter)]
+  if (realisationProblems.length > 0) return { success: false, reasons: realisationProblems }
+  // Refused just above wherever the floor binds no usable realisation, so one resolves here.
+  const boundRealisation = (): string => resolveOneWay(authoredConfig.oneWayRealisation)!.id
+
+  // A HANDLE'S REACH IS AUTHORED, SO WHAT IT CANNOT REACH IS ANSWERED BEFORE A WALL IS CARVED — the
+  // same reasoning, and the same shape, as the one-way above: which sections exist and what each
+  // already carries is fixed by the config, so a lever naming one it cannot have is refused once, by
+  // the name that failed.
+  const sectionByAddress = new Map<string, SideSection | SubSection>()
+  for (const [idx, side] of authoredConfig.sideSections.entries()) {
+    sectionByAddress.set(addresses.of.get(`s${idx}`) ?? `s${idx}`, side)
+    for (const [subIdx, sub] of (side.sideSections ?? []).entries())
+      sectionByAddress.set(addresses.of.get(`s${idx}.${subIdx}`) ?? `s${idx}.${subIdx}`, sub)
+  }
+  // A GATE IS NAMED BY WHERE THE FLOOR WAS AUTHORED AND THE SECTION IT STANDS ON, NEVER BY THE CARVE.
+  // Same reasoning as a switch's `switch:` stem: a position kept from an earlier layout must not come
+  // to fit a door it was never thrown for, and an authoring address is what a re-carve cannot move.
+  const switchStem = (n: number) =>
+    `switch:${floorRef.journeyId}#${floorRef.levelIndex ?? 0}#${floorRef.floorIndex}#${n}`
+  const handleStem = (n: number) =>
+    `handle:${floorRef.journeyId}#${floorRef.levelIndex ?? 0}#${floorRef.floorIndex}#${n}`
+  // AN OBSTACLE'S KEY IS NAMED THE SAME WAY: where the floor was AUTHORED plus the obstacle's own
+  // AUTHORED id — neither of which a re-carve can move, so a saved lever position cannot come to fit
+  // a door it was never thrown for.
+  const gateKeyOf = (id: string) =>
+    `obstacle:${floorRef.journeyId}#${floorRef.levelIndex ?? 0}#${floorRef.floorIndex}:${id}`
+  // THE SHAPE BOTH AUTHORING PATHS COMPILE THROUGH: a handle is the two-state case of a control, so
+  // the same four fields drive the same compile step whichever wrote them — `id` and `in` are a
+  // control's own, not this compile step's business.
+  type Mechanism = Pick<StatefulControl, "states" | "initial" | "returnsToInitial" | "opens">
+  // ONE MECHANISM-BUILDING PATH: `opens` names obstacles by id; `resolveGateKey` says what gate key
+  // each id mints — a control mints one from the obstacle's own authored id (`gateKeyOf`), a handle
+  // already knows each driven section's key and hands it back verbatim. Iterates `states`, not
+  // `Object.entries(opens)`, so compiled order follows what the author declared.
+  const compileMechanism = (
+    mechanism: Mechanism,
+    resolveGateKey: (obstacleId: string) => string,
+    modeOf: (obstacleId: string) => "any" | undefined = () => undefined
+  ): MechanismRecord => ({
+    states: mechanism.states,
+    initial: mechanism.initial,
+    returnsToInitial: mechanism.returnsToInitial,
+    positions: mechanism.states.flatMap(state =>
+      (mechanism.opens[state] ?? []).map(id => {
+        const mode = modeOf(id)
+        return { state, gateKeyId: resolveGateKey(id), ...(mode ? { mode } : {}) }
+      })
+    ),
+  })
+  const obstacleMode = (id: string) => {
+    const found = (authoredConfig.obstacles ?? []).find(o => o.id === id)
+    return found?.kind === "gate" ? found.mode : undefined
+  }
+  // The id a stairhead here takes when the authoring named none — the floor's own address plus where
+  // on it the stairs stand, built by the one constructor world generation also mints ids with, so a
+  // floor assembled from an unnamed stairhead lands on the same id the spec would have given it.
+  const stairOnThisFloor = (path: string) =>
+    stairIdAt({
+      journeyId: floorRef.journeyId,
+      pyramidIndex: floorRef.levelIndex ?? 0,
+      floorIndex: floorRef.floorIndex,
+      path,
+    })
+  const handleGateKeyByAddress = new Map<string, string>()
+  const leverByAddress = new Map<string, MechanismRecord>()
+  // THE PAIR BOTH ENDS WEAR, by the gate key that already names one end: a mechanism's room is found
+  // again through the keys its own positions carry, so nothing has to re-derive which section or region
+  // a mark is for. Populated here for handles and below (after `controlRecords`) for controls — one map,
+  // read by the single pass over the finished grid that paints marks onto both ends (near the end of
+  // this function).
+  const markByGateKey = new Map<string, Mark>()
+  // Every mechanic that wears a mark, in AUTHORING ORDER — handles, then controls (fork-switches among
+  // them) as the config lists them, then switches — each with the gate keys it wears it on. The order
+  // is what `allocateMarks` settles a glyph collision by, so it is fixed here and nowhere else.
+  const markedMechanics: (MarkRequest & { gateKeys: string[] })[] = []
+  for (const [n, handle] of (authoredConfig.handles ?? []).entries()) {
+    const refuse = (address: string): AssemblerFailure => ({
+      success: false,
+      reasons: [{ type: "handleUnsatisfied", handle: n, address }],
+    })
+    // Two levers in one section would answer to the same name in a save (cellSlot.ts), which is the
+    // data-loss bug the address checks above exist for. A lever naming no section on either side is
+    // refused by the same name: it drives nothing, so it is a room the player taps with no door on the
+    // end of it, and an authoring typo should say so here rather than reach the world as a floor.
+    if (
+      !knownSectionAddresses.has(handle.in) ||
+      leverByAddress.has(handle.in) ||
+      handle.left.length + handle.right.length === 0
+    )
+      return refuse(handle.in)
+    // A HANDLE IS THE TWO-STATE CASE OF A CONTROL: what it drives becomes `opens`, keyed by side and
+    // naming the driven section's own address, so the same compile step a control goes through mints
+    // its mechanism record below. BOTH SIDES ARE READ THE SAME WAY AND INTO THE SAME INDEX, which is
+    // what makes a section named on both sides refuse itself: the second naming finds the first one's
+    // gate already written, exactly as a second handle driving it would. Such a door is one the lever
+    // could neither open nor close.
+    const opens: Record<string, string[]> = {}
+    const handleGateKeys: string[] = []
+    for (const side of HANDLE_SIDES) {
+      opens[side] = []
+      for (const driven of handle[side]) {
+        // The main path has no entrance to gate; the lever's own section would shut the lever in behind
+        // the door it opens; and a section already gated — by an author or by another handle — would
+        // lose one of the two doors without saying so.
+        if (
+          !sectionByAddress.has(driven) ||
+          driven === handle.in ||
+          sectionByAddress.get(driven)?.gate !== undefined ||
+          handleGateKeyByAddress.has(driven)
+        )
+          return refuse(driven)
+        const gateKeyId = `${handleStem(n)}:${driven}`
+        handleGateKeyByAddress.set(driven, gateKeyId)
+        handleGateKeys.push(gateKeyId)
+        opens[side].push(driven)
+      }
+    }
+    markedMechanics.push({
+      id: `handle:${handle.in}`,
+      seed: hashString(`handle|${handle.in}`),
+      gateKeys: handleGateKeys,
+    })
+    // A LEVER DECLARES BOTH SIDES WHATEVER IT DRIVES, so the walk knows a door can be shut again even
+    // where the far side names no gate of its own. It hangs on `starts` before anyone touches it — so
+    // those gates stand open on arrival without the carve having to place an already-open door
+    // (mechanismDoors.ts reads `initial` for exactly that) — and can always be thrown back. The gate
+    // key each driven section mints is already known (`handleGateKeyByAddress`, above), so the resolver
+    // hands it back rather than minting one the way a control's own obstacle id does.
+    leverByAddress.set(
+      handle.in,
+      compileMechanism(
+        { states: [...HANDLE_SIDES], initial: handle.starts ?? HANDLE_SIDES[0], returnsToInitial: true, opens },
+        driven => handleGateKeyByAddress.get(driven)!
+      )
+    )
+  }
+
+  // A GATE ASKING FOR A FLOOR KEY NAMES A SECTION THAT HAS ONE: the key is the one that section's own floor-key
+  // door wants, so a section with no such gate leaves the gate waiting on a key nothing mints.
+  for (const obstacle of authoredConfig.obstacles ?? [])
+    for (const section of obstacle.kind === "gate" ? (obstacle.floorKeys ?? []) : [])
+      if (sectionByAddress.get(section)?.gate?.type !== "floor-key")
+        return { success: false, reasons: [{ type: "gateKeyNamesNoFloorKey", id: obstacle.id, section }] }
+
+  // A CONTROL IS COMPILED INTO THE RECORD THE WALK ALREADY EATS, the same step a handle desugars
+  // through above. `opens` names obstacles by their authored ids; `positions` names the gate keys
+  // those ids mint, one entry per obstacle per state that opens it — several entries may share a
+  // state, which is what lets one position open a set.
+  const forkSwitches = (authoredConfig.controls ?? []).filter(isForkSwitch)
+  // A SEQUENCE IS NOT COMPILED HERE: its record places each move at a cell, and the cells only exist once
+  // the carve has stood its tiles (`placeSequences`, last).
+  const sequences = (authoredConfig.controls ?? []).filter(isSequence)
+  const controlRecords = (authoredConfig.controls ?? []).flatMap(control =>
+    isForkSwitch(control) || isSequence(control)
+      ? []
+      : [{ control, record: compileMechanism(control, gateKeyOf, obstacleMode) }]
+  )
+  // The gates one fork-switch owns, by the id the author gave them.
+  const gatesOwnedBy = (controlId: string) =>
+    (authoredConfig.obstacles ?? []).flatMap(o => (isEdgeGate(o) && o.owners?.includes(controlId) ? [o] : []))
+  // A CONTROL AND EVERY OBSTACLE IT OPENS WEAR ONE MARK, so the map reads "this lever, these doors" as
+  // one pair the same way a handle's does. The glyph it prefers is hashed from the AUTHORED obstacle
+  // id(s) it drives (sorted, so `opens`' state order does not matter) or, for a fork-switch, the gates
+  // it owns — stable across a re-carve and never an ordinal. A control that opens nothing names no
+  // obstacle to pair with, so it gets no mark.
+  for (const control of authoredConfig.controls ?? []) {
+    if (isForkSwitch(control)) {
+      const owned = gatesOwnedBy(control.id)
+        .map(gate => gate.id)
+        .sort()
+      if (owned.length > 0)
+        markedMechanics.push({ id: control.id, seed: hashString(owned.join("|")), gateKeys: owned.map(gateKeyOf) })
+      continue
+    }
+    if (isSequence(control)) {
+      markedMechanics.push({
+        id: control.id,
+        seed: hashString([...new Set(control.opens.done)].sort().join("|")),
+        gateKeys: control.opens.done.map(gateKeyOf),
+      })
+      continue
+    }
+    const drivenIds = [...new Set(Object.values(control.opens).flat())].sort()
+    if (drivenIds.length === 0) continue
+    const record = controlRecords.find(entry => entry.control === control)!.record
+    markedMechanics.push({
+      id: control.id,
+      seed: hashString(drivenIds.join("|")),
+      gateKeys: record.positions.map(position => position.gateKeyId),
+    })
+  }
+
+  // From here the floor is read with the handles' gates already on it, so every pass that sizes a
+  // chain, isolates a section or writes a gate room meets one gate rule rather than two.
+  const config =
+    handleGateKeyByAddress.size > 0
+      ? withHandleGates(authoredConfig, addresses.of, handleGateKeyByAddress)
+      : authoredConfig
+
+  // Which chains carry a lever, by the positional key the sizing passes below have to hand. A lever
+  // stands in a room of its own — it is not the k-th puzzle of the chain and takes no content slot —
+  // so a chain holding one is carved a room longer.
+  const leverAtPositional = new Set<string>()
+  for (const [positional, address] of addresses.of) if (leverByAddress.has(address)) leverAtPositional.add(positional)
+  if (leverByAddress.has(MAIN_SECTION_ADDRESS)) leverAtPositional.add(MAIN_SECTION_ADDRESS)
+  const leverRooms = (positional: string): number => (leverAtPositional.has(positional) ? 1 : 0)
+
+  // WHOSE GATE THIS IS DECIDES WHETHER ANYTHING STANDS IN IT. `openWaysOut` (useAssembledFloor) gives a
+  // cell back its corridor only where NOTHING stands in it — a gate a family renders is opened by what
+  // the player does in it — so a family on a lever's door would leave the lever unable ever to open it.
+  // A switch's own doors carry none for the same reason (see closeWaysOut).
+  const isHandleGate = (positional: string): boolean => {
+    const address = addresses.of.get(positional)
+    return address !== undefined && handleGateKeyByAddress.has(address)
+  }
+
+  // Every room a chain has to hold: its own content, its terminal room, its gate where it has one, and
+  // the lever where one stands in it.
+  const chainRooms = (section: SideSection | SubSection, positional: string): number =>
+    section.pathPuzzles + 1 + (section.gate ? 1 : 0) + leverRooms(positional)
+
+  // THE LEVER'S ROOM SAYS WHICH DOOR EACH POSITION OPENS, AND THE SAVE SAYS ONLY WHICH POSITION IT IS
+  // IN (mechanismDoors.ts). Keeping the mapping on the floor is what lets a re-carve move a door
+  // without a position kept from an earlier layout coming to fit one it was never thrown for. It takes
+  // no `pathIndex`: it is not the k-th room of its chain, so a save names it by what fills it, the way
+  // a section's chest or gate is named (cellSlot.ts).
+  const leverSpec = (positional: string) => ({
+    roomType: "encounter" as const,
+    ...mechanismRoom(resolveEncounter(undefined, DEFAULT_CONTROL_ROLE)),
+    mechanism: leverByAddress.get(addresses.of.get(positional) ?? positional)!,
+    // The handle's own authored address — the same name `leverByAddress` is keyed by — carried onto
+    // the cell so `cellSlot.ts` names every mechanism's room by its authored identity uniformly,
+    // rather than by family alone (see RoomCell.mechanismId).
+    mechanismId: addresses.of.get(positional) ?? positional,
+  })
 
   const treasureChest = resolveEncounter("treasure-chest", "treasure-chest")
   const fezShop = resolveEncounter("fez-shop", "fez-shop")
   const keyGate = resolveEncounter("key-gate", "key-gate")
 
-  // A floor-key gate's key host is a purely local, structural requirement — every floor-key
-  // gate on this floor needs exactly one key SOMEWHERE on this same floor, decided here,
-  // before any section's own endReward gets treated as competing content. "Available host"
-  // means genuinely free capacity: ungated AND not already carrying its own authored reward
-  // (a section holding a map piece/mosaic/fragment is not free capacity just because it
-  // lacks a gate — see docs/game-design/keys-and-locks-solver.md, "Slots have capacity").
-  // Gate/ungated checks use only visible sections so hidden sections don't satisfy key-holder requirements.
-  const visibleSections = config.sideSections.filter(s => !s.hidden)
-  const hasGatedFloorKey = visibleSections.some(s => s.gate?.type === "floor-key")
-  const hasFreeUngatedHost = visibleSections.some(s => !s.gate && !s.endReward)
+  // How many junctions this floor reserves for something to stand in, and how wide each has to be.
+  // Widest demand first, so a wide one is never left with only a narrow junction to take.
+  const forkDemands = (config.forks ?? [])
+    .flatMap(f => ("in" in f ? [] : Array.from({ length: f.count }, () => f.exits)))
+    .sort((a, b) => b - a)
 
-  // Hidden sections are included in maze generation (tagged hidden:true on cells) but masked by useAssembledFloor
-  const allSections = config.sideSections
-  const sideSections =
-    hasGatedFloorKey && !hasFreeUngatedHost
-      ? [...allSections, { pathPuzzles: 0, difficulty: "starter" as const, end: "treasure" as const }]
-      : allSections
+  // A `{ in }` FORK IS RESOLVED AGAINST THE LAYOUT ALONE — `regionLayout` and `forks`, both core — so the
+  // junction it asks for carves the same with the topology mod on or off. Which chains hang off the
+  // named region, and which section hosts each, is fixed by the config, so a region that cannot hold
+  // the junction is refused once here by name rather than blamed on sixty carves. Only a chain joined to
+  // its mouth by a connection is a way out a junction can have: one a drop alone joins has no corridor.
+  const forkIns: ForkIn[] = []
+  if (config.forks?.some(f => "in" in f)) {
+    const layoutChains = regionLayout ? offRouteChains(regionLayout, drops) : []
+    const routeRegions = new Set(regionLayout ? regionRoute(regionLayout) : [])
+    const joined = (a: string, b: string) =>
+      (regionLayout?.connections ?? []).some(([x, y]) => (x === a && y === b) || (x === b && y === a))
+    for (const fork of config.forks) {
+      if (!("in" in fork)) continue
+      const region = fork.in
+      const refuse = (cause: "contradictsCounts" | "notInLayout" | "offRoute" | "fewerThanTwoSeams" | "repeated") =>
+        ({ success: false, reasons: [{ type: "forkRegionRefused", region, cause }] }) satisfies AssemblerFailure
+      if ("exits" in fork || "count" in fork) return refuse("contradictsCounts")
+      if (!regionLayout?.regions.some(r => r.name === region)) return refuse("notInLayout")
+      if (!routeRegions.has(region)) return refuse("offRoute")
+      if (forkIns.some(other => other.region === region)) return refuse("repeated")
+      const seams: [string, string][] = []
+      const sectionIdxs: number[] = []
+      layoutChains.forEach((chain, i) => {
+        if (chain.mouth !== region || chain.regions.length === 0 || !joined(region, chain.regions[0])) return
+        seams.push([region, chain.regions[0]])
+        if (!plan && i < config.sideSections.length) sectionIdxs.push(i)
+      })
+      if (seams.length < 2) return refuse("fewerThanTwoSeams")
+      forkIns.push({ region, seams, sectionIdxs })
+    }
+  }
 
-  const hiddenSectionIdxs = new Set(allSections.map((s, i) => (s.hidden ? i : -1)).filter(i => i >= 0))
+  // A SWITCH'S ROOM HAS TO STAY OPEN. It opens one of its ways out and leaves the others shut, and keys
+  // accumulate — so a player who spent the choice on a side branch pays for the main path onward with a
+  // walk back to the switch, not with the run. A family whose room closes behind the player has no walk
+  // back to offer, and leaves them at a door they can never open. Asked here rather than re-carved: no
+  // seed changes which family was authored.
+  if (config.switches) {
+    const switchFamily = resolveEncounter(config.switches.encounter, "puzzle")
+    if (!switchFamily.reEnterable)
+      return { success: false, reasons: [{ type: "switchFamilyNotReEnterable", family: switchFamily.familyId }] }
+    // More switches than there are junctions held for them is a contradiction between the two
+    // statements, which no seed can settle — so it is answered before a single wall is carved.
+    if (config.switches.min > forkDemands.length)
+      return {
+        success: false,
+        reasons: [{ type: "switchesExceedForks", min: config.switches.min, forks: forkDemands.length }],
+      }
+  }
 
-  const gatedFloorKeyIdxs = sideSections.map((_, i) => i).filter(i => sideSections[i].gate?.type === "floor-key")
-  const ungatedIdxs = sideSections.map((_, i) => i).filter(i => !sideSections[i].gate && !sideSections[i].endReward)
+  // A SWITCH IS A MECHANIC TOO, AND HOW MANY THERE ARE IS FIXED BY THE CONFIG: every reserved junction
+  // is one of `forkDemands` and `switchesPlaced` takes the first `max` of them. Each wears the mark its
+  // authoring stem prefers, on the junction and on every door `closeWaysOut` mints.
+  const switchCount = config.switches ? Math.min(config.switches.max, forkDemands.length) : 0
+  for (let n = 0; n < switchCount; n++)
+    markedMechanics.push({ id: `switch:${n}`, seed: hashString(switchStem(n)), gateKeys: [] })
+  // MORE MECHANICS THAN THERE ARE GLYPHS IS ANSWERED HERE, BEFORE A WALL IS CARVED: the count is fixed by
+  // the config, and a mark shared between two mechanics would say one drives the other's door.
+  const tileRequests: MarkRequest[] = sequences.flatMap(sequence =>
+    sequence.steps.map((_, step) => ({
+      id: `${sequence.id}#${step}`,
+      seed: hashString(`sequence|${sequence.id}|${step}`),
+    }))
+  )
+  const allocation = allocateMarks(markedMechanics, tileRequests)
+  if (allocation.unmarked.length > 0)
+    return { success: false, reasons: [{ type: "marksExhausted", ids: allocation.unmarked }] }
+  for (const mechanic of markedMechanics)
+    for (const gateKey of mechanic.gateKeys) markByGateKey.set(gateKey, allocation.marks.get(mechanic.id)!)
+  const switchMark = (n: number) => allocation.marks.get(`switch:${n}`)!
+
+  // Hidden sections are included in maze generation (tagged hidden:true on cells) but masked by
+  // useAssembledFloor — so they are carved, but they are not asked to host a key.
+  const sideSections: SideSection[] = owesAKeyHost(config.sideSections.filter(s => !s.hidden))
+    ? [...config.sideSections, GROWN_KEY_HOST]
+    : config.sideSections
+  const { gatedIdxs: gatedFloorKeyIdxs, ungatedIdxs } = keyHostIdxs(sideSections)
 
   // The auto-injection above guarantees a free host whenever one's needed — this is a
   // structural safety net, not an expected path: if a floor-key gate still has nowhere to
@@ -493,19 +1188,110 @@ export const assembleFloor = (
     return { success: false, reasons: [{ type: "noUngatedSectionForKey" }] }
   }
 
+  // A TOPOLOGY GATE AT A CHAIN'S OWN MOUTH AND A SECTION'S OWN `gate` BOTH CLAIM `cells[0]` — checked
+  // here because which side section a chain matches to (offRouteChains groups off-route regions in
+  // declaration order, the Nth chain to the Nth authored side section) and which obstacle stands on a
+  // chain's mouth connection are both fixed by the config alone, never by the seed: a mouth obstacle's
+  // seam is always the chain's first hosted region (`regionOfStep` always seats the first-declared
+  // region from the front), so it always resolves to `cellIndex === 0`, the same cell a floor-key or
+  // tomb-key gate always claims. Refused by name rather than made to work by shifting one vocabulary
+  // around the other — a side section that hosts an off-route chain and ALSO authors its own gate is
+  // asking two authoring surfaces to run the same cell, and the two must stay genuinely independent
+  // rather than merely non-colliding by luck.
+  if (regionLayout && !plan) {
+    const mouthGateCollisions = offRouteChains(regionLayout, drops).flatMap((chain, i) => {
+      if (i >= config.sideSections.length || !config.sideSections[i].gate) return []
+      // A ONE-WAY NEVER COLLIDES HERE: it mints no gate room and claims no cell of its own, so only a
+      // GATE at the mouth is the collision this check exists for.
+      const mouthObstacle = (authoredConfig.obstacles ?? []).filter(isEdgeGate).find(o => {
+        const [a, b] = o.at.between
+        return (a === chain.mouth && b === chain.regions[0]) || (b === chain.mouth && a === chain.regions[0])
+      })
+      return mouthObstacle ? [{ address: `s${i}`, obstacleId: mouthObstacle.id }] : []
+    })
+    if (mouthGateCollisions.length > 0) {
+      return {
+        success: false,
+        reasons: mouthGateCollisions.map(({ address, obstacleId }) => ({
+          type: "chainGateCollidesWithSectionGate" as const,
+          address,
+          obstacleId,
+        })),
+      }
+    }
+  }
+
+  // A GATE OR A CONTROL ROOM IS NOT SIZED IN HERE — deliberately. Both are owned by the topology mod
+  // (FloorConfig.obstacles/controls) and dropped along with it when that mod is off, so a term for
+  // either in the path's minimum length would make the maze walk a different distance with the mod on
+  // than with it off: the whole floor would re-carve, not just lose a mod's furniture. A gate or
+  // control room instead occupies a node the path already has — the same one content would otherwise
+  // use (see `placedContent`'s forward-shift and `controlNotSeated`/`obstacleSeamNotCarved` below) —
+  // so toggling the mod off is identical BY CONSTRUCTION: the maze never sees it existed
+  // (docs/game-design/regions-and-containers.md, "the identical walls carve with every connection
+  // open").
+
   // Minimum node count for the main path alone (entrance, its own content, goal, exit) —
   // kept separate from `minCells` below (which folds in every side-section's cost too) so
   // `packing`'s path-length target scales with what the *main path itself* needs, not with
   // how much unrelated side-section content happens to branch off it elsewhere.
-  const mainPathCells = 1 /* entrance */ + config.pathPuzzles + 1 /* goal */ + 1 /* exit/stairhead */
+  const mainPathCells =
+    1 /* entrance */ + config.pathPuzzles + 1 /* goal */ + 1 /* exit/stairhead */ + leverRooms(MAIN_SECTION_ADDRESS)
+
+  // A lock floor is laid before anything grows around it, so its stretches and corridors take room the
+  // authored sections do not.
+  const layPlan = plan
+    ? planToLay(plan, {
+        content: [
+          ...Array.from({ length: config.pathPuzzles + leverRooms(MAIN_SECTION_ADDRESS) }, (): ContentKind => "puzzle"),
+          "reward",
+        ],
+        appetite: new Map((regionLayout?.regions ?? []).map(region => [region.name, region.appetite])),
+      })
+    : undefined
+  // AN UNGATED SIDE SECTION IS CONTENT, NOT A BRANCH: a section whose entrance carries no door (no gate of its
+  // own, not sealed, not hidden), that hangs nothing off itself, ends in a chest or shop, holds no lever and
+  // is not named by a one-way, has its rooms stood on laid corridor and region nodes. A gated, keyed, sealed or
+  // hidden section stays a branch off laid ground, because a gate needs a branch to stand on.
+  const oneWayNames = new Set((config.oneWays ?? []).flatMap(way => [way.from, way.to]))
+  const isContentSection = (section: SideSection, i: number): boolean =>
+    plan !== undefined &&
+    !section.gate &&
+    !section.sealed &&
+    !section.hidden &&
+    !section.sideSections?.length &&
+    section.end === "treasure" &&
+    leverRooms(`s${i}`) === 0 &&
+    !oneWayNames.has(addresses.of.get(`s${i}`) ?? `s${i}`)
+  const contentSections = new Set(sideSections.flatMap((section, i) => (isContentSection(section, i) ? [i] : [])))
+  // The section hosting the key a floor-key gate waits on stands on ground no door shuts: nothing opens a door
+  // for the player to fetch the key that opens another.
+  const hostsKeys = (section: number) => gatedFloorKeyIdxs.length > 0 && ungatedIdxs[0] === section
+  const absorbedDemands: AbsorbedDemand[] = [...contentSections].map(section => ({
+    section,
+    kinds: [
+      ...Array.from({ length: sideSections[section].pathPuzzles }, (): ContentKind => "puzzle"),
+      "reward" as const,
+    ],
+    ...(hostsKeys(section) ? { open: true } : {}),
+  }))
+  const appetiteOfRegion = new Map((regionLayout?.regions ?? []).map(region => [region.name, region.appetite]))
+  const lockCells = layPlan
+    ? layPlan.regions.reduce((sum, region) => sum + Math.max(2, region.minNodes), 0) +
+      layPlan.corridors.reduce((sum, corridor) => sum + corridor.minNodes + 1, 0)
+    : 0
 
   // Minimum node count needed (real path nodes only — the connector cell between two
   // adjacent nodes lives at a separate, non-node grid position, see NODE_STEP above).
   const minCells =
     mainPathCells +
-    sideSections.reduce((sum, sec) => {
-      const secCells = sec.pathPuzzles + 1 + (sec.gate ? 1 : 0)
-      const subCells = (sec.sideSections ?? []).reduce((s2, sub) => s2 + sub.pathPuzzles + 1 + (sub.gate ? 1 : 0), 0)
+    lockCells +
+    sideSections.reduce((sum, sec, idx) => {
+      const secCells = chainRooms(sec, `s${idx}`)
+      const subCells = (sec.sideSections ?? []).reduce(
+        (s2, sub, subIdx) => s2 + chainRooms(sub, `s${idx}.${subIdx}`),
+        0
+      )
       return sum + secCells + subCells
     }, 0)
 
@@ -537,6 +1323,9 @@ export const assembleFloor = (
   const distanceFor = (p: number) => Math.max(1, Math.round(mainPathCells * (1 + 5 * p)))
   // The authored wish is where the retry STARTS, not what it is held to: see the widening in the loop.
   let packing = config.packing ?? DEFAULT_PACKING
+  // The seed a floor was told wins over the one its address derives, read here so every caller that
+  // carves the floor agrees without re-deriving it.
+  const seed = config.seed ?? addressSeed
   let targetDistance = distanceFor(packing)
 
   // Same `packing` scaling applied to every section/sub-section chain — a gated path used
@@ -562,10 +1351,11 @@ export const assembleFloor = (
   // wound the chains down to rather than leaving a shrunken floor rattling around a huge grid.
   const carvedCells = (): number =>
     mainPathCells +
-    sideSections.reduce((sum, sec) => {
-      const secCells = paddedChainLength(sec.pathPuzzles + 1 + (sec.gate ? 1 : 0))
+    lockCells +
+    sideSections.reduce((sum, sec, idx) => {
+      const secCells = paddedChainLength(chainRooms(sec, `s${idx}`))
       const subCells = (sec.sideSections ?? []).reduce(
-        (s2, sub) => s2 + paddedChainLength(sub.pathPuzzles + 1 + (sub.gate ? 1 : 0)),
+        (s2, sub, subIdx) => s2 + paddedChainLength(chainRooms(sub, `s${idx}.${subIdx}`)),
         0
       )
       return sum + secCells + subCells
@@ -595,7 +1385,7 @@ export const assembleFloor = (
       n += 2
     return n
   }
-  let startingN = deriveN(minCells)
+  let startingN = Math.max(deriveN(minCells), layPlan ? startingGridSize(layPlan) : 0)
   let N = startingN
 
   const nid = (r: number, c: number) => `${siteId}-${r}-${c}`
@@ -609,7 +1399,50 @@ export const assembleFloor = (
   // while winding `chainPacking` from `packing` down to 0, so the last attempt is the most permissive
   // shape this config can take. That is what makes the phase converge rather than reroll the same
   // too-tight puzzle.
-  for (let attempt = 0; attempt < ASSEMBLY_ATTEMPTS; attempt++) {
+
+  // The closest any attempt came to the junctions `forks` asks for, so the failure can name the
+  // shortfall rather than blaming the maze.
+  let forkShortfall: { exits: number; count: number; carved: number } | undefined
+  // The first `{ in }` fork no attempt laid on its seams, kept the same way.
+  let forkSeamShortfall: ForkIn | undefined
+  // The first drop an attempt could not find room for, kept from the first attempt that came up short,
+  // so a floor no attempt ever satisfies says which drop it failed on rather than blaming the maze.
+  let oneWayShortfall: { from: string; to: string } | undefined
+  // The first attempt's declared regions the main path never reached at all, kept from the first
+  // attempt that came up short — `mainPath.length` grows with packing across attempts (see
+  // `distanceFor`), so an attempt that cannot seat every region today may not be the attempt that
+  // decides the floor, and only the budget's end may call that.
+  let unseatedRegions: string[] | undefined
+  // The first attempt's obstacles whose seam the path did not produce, kept the same way and for the
+  // same reason: the path lengthens across the attempt budget, so what one attempt cannot seat a
+  // later one may.
+  let gateSeamMissing: string[] | undefined
+  // The first connection whose gates no attempt could stand in the order stated, kept the same way.
+  let barriersShort: { between: [string, string]; barriers: string[] } | undefined
+  // The first region barrier no attempt could stand a door on at every entrance, kept the same way and for
+  // the same reason: the path and its chains lengthen across the attempt budget.
+  let regionBarrierShort: { id: string; region: string } | undefined
+  // The first attempt's controls no node stood in their region at all — main path or chain, whichever
+  // hosts it — kept the same way and for the same reason: `mainPath.length` and a chain's own length
+  // both grow across the attempt budget.
+  let controlNotSeated: string[] | undefined
+  // The first sequence step no attempt could stand a tile for, kept the same way.
+  let sequenceShortfall: { id: string; step: number } | undefined
+  // The first attempt's controls whose only candidate node already held a puzzle with no room to move
+  // it, kept the same way — see the seating searches below (main path and chain alike).
+  let controlPuzzleUndisplaceable: string[] | undefined
+  // The first attempt's rooms standing where their region's appetite refuses them, kept the same way.
+  let regionMismatch: { region: string; kind: ContentKind }[] | undefined
+  // The first attempt's carve that disagreed with the layout it was authored from, kept the same way.
+  let carveDisagreement: CarveFault[] | undefined
+  // The first laid plan no grid held, kept the same way.
+  let lockNotLaid: { part: { kind: "region" | "corridor" | "drop"; id: string }; grid: number } | undefined
+  // The first laid floor whose content no lengthening could seat, kept the same way.
+  let contentNotLaid: ContentKind[] | undefined
+  // Labeled so a gate reserved deep inside a chain's own content loop (below) can retry the WHOLE
+  // attempt the same way every other shortfall here does, rather than only skipping the rest of one
+  // chain's own content.
+  attempt: for (let attempt = 0; attempt < Math.min(maxAttempts, ASSEMBLY_ATTEMPTS); attempt++) {
     if (attempt >= RECOVERY_ATTEMPT) {
       // Recovery asks for the roomiest wish outright. Winding the CHAINS down is its lever, and on a
       // floor already carved as tight as it goes there is nothing left to wind: without this, a tight
@@ -636,6 +1469,56 @@ export const assembleFloor = (
     }
 
     const rand = mulberry32(seed + attempt * 7919)
+
+    // A LOCK FLOOR IS LAID BEFORE ANYTHING IS CARVED AROUND IT: the route, the arms, the junction, the drops and
+    // every region stand on the lattice already, so what follows reads them rather than deriving them. The lay
+    // has its own stream, so a floor without locks draws exactly what it always drew.
+    //
+    // THE FLOOR'S OWN CONTENT IS FILLED INTO WHAT IS LAID, and where the laid stretches are too short for it the
+    // plan asks the lay for more nodes on the cheapest stretch and lays again, rather than growing a branch.
+    let laid: LaidFloor | undefined
+    let mainSteps: number[] | undefined
+    if (layPlan && plan) {
+      let lengthPlan = layPlan
+      const lengthened: LengtheningChoice[] = []
+      for (;;) {
+        const result = layLockPlan(lengthPlan, { seed: seed + attempt * LAY_SEED_STRIDE, n: N })
+        if (!result.ok) {
+          if (!lockNotLaid) lockNotLaid = result.refusal
+          continue attempt
+        }
+        N = result.laid.n
+        const seated = seatLaidFloor(plan, result.laid)
+        const mainContent = config.pathPuzzles + 1 /* goal */ + leverRooms(MAIN_SECTION_ADDRESS)
+        const onMain = placeContentOnRoute(seated, spreadContentIndices(mainContent, 1, seated.route.length), {
+          leverFirst: leverRooms(MAIN_SECTION_ADDRESS) === 1,
+          appetite: appetiteOfRegion,
+        })
+        if (onMain === undefined) continue attempt
+        const filled = fillLaidFloor(
+          seated,
+          new Set(onMain.map(step => `${seated.route[step][0]},${seated.route[step][1]}`)),
+          absorbedDemands,
+          appetiteOfRegion
+        )
+        if ("placed" in filled) {
+          mainSteps = onMain
+          laid = { ...seated, absorbed: filled.placed, lengthened }
+          break
+        }
+        const considered = lengtheningCandidates(lengthPlan, seated, filled.missing, appetiteOfRegion)
+        const [cheapest] = considered
+        if (cheapest === undefined || lengthened.length >= MAX_LENGTHENINGS) {
+          if (!contentNotLaid) contentNotLaid = filled.missing.map(({ kind }) => kind)
+          continue attempt
+        }
+        lengthened.push({ kind: cheapest.kind, id: cheapest.id, nodes: cheapest.nodes, considered })
+        lengthPlan = lengthenPlan(lengthPlan, seated, cheapest)
+      }
+      onLaid?.(laid!)
+    }
+    // The laid nodes a section of the floor stands its rooms on: no mechanism's seat may take one.
+    const absorbedCell = new Set((laid?.absorbed ?? []).flatMap(({ cells }) => cells))
     const pkey = makePkey(N)
 
     // Pick entrance from edge cells (non-corner preferred for more connections).
@@ -649,10 +1532,175 @@ export const assembleFloor = (
       edgeCells.push([0, c])
       edgeCells.push([N - 1, c])
     }
-    const [entR, entC] = edgeCells[Math.floor(rand() * edgeCells.length)]
+    const [entR, entC] = laid ? laid.route[0] : edgeCells[Math.floor(rand() * edgeCells.length)]
 
     const straightBias = config.corridorStraightness ?? DEFAULT_STRAIGHT_BIAS
-    const { neighbors, mainPath, passages } = buildMaze(N, entR, entC, rand, straightBias, targetDistance)
+    const { neighbors, mainPath, passages } = laid
+      ? growMazeAround(N, laid, rand, straightBias)
+      : buildMaze(N, entR, entC, rand, straightBias, targetDistance)
+    const routeStepOf = new Map<string, number>(mainPath.map(([r, c], step) => [`${r},${c}`, step]))
+
+    // WHICH REGION EACH CELL STANDS IN, where the floor authors one — absent everywhere on a floor
+    // that does not, so the shipped world (no floor authors a regionLayout) carves unchanged. A
+    // main-path cell takes its region from its step along the route; a chain hosting no off-route
+    // component takes the region of the cell it grows from; a chain matched to one (below) takes that
+    // component's own regions instead. Computed ahead of content placement: the gate cells below have
+    // to be known before content claims a node.
+    const route = regionLayout ? regionRoute(regionLayout) : []
+    const stepRegion = laid
+      ? laid.routeLabels
+      : regionLayout
+        ? regionsAlongPath(regionLayout, route, mainPath.length)
+        : []
+    // A ROUTE LONGER THAN THE PATH SEATS NOTHING AT ITS FAR END — `regionOfStep` deals what there is
+    // rather than refusing (it has no floor in front of it; only a carve knows how many steps the main
+    // path has). Checked against the route's own regions only: a region the route never threads at all
+    // is not this cause's business (a side path seats those, below) and must not retry a longer main
+    // path forever waiting for a route it is never on.
+    const onRouteSet = new Set(route)
+    const unseated = regionLayout
+      ? regionLayout.regions.map(r => r.name).filter(name => onRouteSet.has(name) && !stepRegion.includes(name))
+      : []
+    if (unseated.length > 0) {
+      if (!unseatedRegions) unseatedRegions = unseated
+      continue
+    }
+    // A REGION THE ROUTE NEVER THREADS SEATS ON A SIDE PATH INSTEAD — matched to a top-level side
+    // section deterministically by CONFIG order (offRouteChains groups off-route regions in
+    // declaration order, and the Nth chain takes the Nth authored side section), never by which cell
+    // the carve happens to attach a branch near: `sectionOrder` below only shuffles WHERE a branch
+    // attaches, and a layout must group the same way regardless. More chains than the floor authors
+    // side sections for leaves the excess unmatched here; that shows up as a genuinely unseated region
+    // once the carve is finished (below), not as a fault raised on the config alone, because a wider
+    // retry can still grow the floor a side section it did not have room for at attempt 0.
+    const sideChains = regionLayout && !laid ? offRouteChains(regionLayout, drops) : []
+    const chainRegionsBySectionIdx = new Map<number, SideChain>()
+    sideChains.forEach((chain, i) => {
+      if (i < config.sideSections.length) chainRegionsBySectionIdx.set(i, chain)
+    })
+    // A SIDE PATH THE LAYOUT JOINS TO ITS MOUTH BY A DROP ALONE has no corridor to its mouth to carve:
+    // the seam IS the drop's run, launch, obstacle cells and landing, between the mouth's node and the
+    // chain's first one, falling the way the author wrote it (`mouthFirst`: the drop is authored
+    // `[mouth, first region]`). A corridor carved there anyway is a walkable join nobody authored, and
+    // the lock walk would flood the real cells through it.
+    const dropSeams = new Map<number, { obstacleId: string; mouth: string; mouthFirst: boolean; realisation: string }>()
+    const joinedByConnection = (a: string, b: string) =>
+      (regionLayout?.connections ?? []).some(([x, y]) => (x === a && y === b) || (x === b && y === a))
+    sideChains.forEach((chain, i) => {
+      if (i >= config.sideSections.length || chain.regions.length === 0) return
+      const first = chain.regions[0]
+      if (joinedByConnection(chain.mouth, first)) return
+      const drop = (authoredConfig.obstacles ?? [])
+        .filter((o): o is OneWayObstacle => o.kind === "oneWay")
+        .find(
+          o =>
+            (o.at.between[0] === chain.mouth && o.at.between[1] === first) ||
+            (o.at.between[1] === chain.mouth && o.at.between[0] === first)
+        )
+      if (drop)
+        dropSeams.set(i, {
+          obstacleId: drop.id,
+          mouth: chain.mouth,
+          mouthFirst: drop.at.between[0] === chain.mouth,
+          realisation: boundRealisation(),
+        })
+    })
+    const dropSeamEdges: OneWayEdge[] = []
+    // A laid drop is a seam the lock already cut: its run, launch and landing stand between the two nodes laid for it.
+    for (const drop of laid?.drops ?? [])
+      dropSeamEdges.push({
+        from: drop.from,
+        to: drop.to,
+        dir: drop.dir,
+        launch: drop.launchCell,
+        run: drop.run,
+        landing: drop.landingCell,
+        obstacleId: drop.id,
+        realisation: boundRealisation(),
+      })
+    // Cells a drop seam holds clear while the chains are still being placed, so nothing else is carved
+    // through them; handed to `takenRunCells` once the chains are down.
+    const heldForSeams = new Set<string>()
+    // WHERE ONE REGION STOPS AND THE NEXT BEGINS. The route threads the regions in order, so a
+    // connection on it is the seam between two consecutive stretches and the first cell of the far
+    // stretch is the one the player has to walk into — which is where the bars belong. The lookup
+    // itself is `seamIndexFor` (obstacles.ts): a pure question about `stepRegion` that is tested on
+    // its own.
+    //
+    // ONLY A MAIN-PATH OBSTACLE ANSWERS HERE — one whose two regions are both on the route, so
+    // `stepRegion` (known this early, before a single side-path cell exists) is the right question to
+    // ask it. An obstacle touching an off-route region seats on the CHAIN it belongs to instead, which
+    // exists only once that chain's own cells are carved (below, alongside `cellRegion`) —
+    // `topologyFaults` has already proven every obstacle seats SOMEWHERE, so failing this test only
+    // ever means "ask the other question," never a genuine fault.
+    //
+    // GATES ONLY: a one-way obstacle seats through its own, entirely different search (below, "ONE-WAY
+    // DROPS") — its two regions need not touch at all, so neither `stepRegion`'s seam nor a chain's
+    // own seam is the question to ask it.
+    const gateObstacles = (authoredConfig.obstacles ?? []).filter(isEdgeGate)
+    // A REGION BARRIER stands INSIDE its region rather than on a seam, so it answers neither of the
+    // seam searches here: its doors are seated once the nodes they may not take are known (below, for
+    // the main path; in the chain loop for a side path).
+    const regionBarriers = (authoredConfig.obstacles ?? []).filter(isRegionGate)
+    const onRouteObstacle = (o: EdgeGateObstacle) => onRouteSet.has(o.at.between[0]) && onRouteSet.has(o.at.between[1])
+    // A CONTROL STANDING IN AN OFF-ROUTE REGION splits the same way: `stepRegion` never names its
+    // region, so the main-path search below (which asks only `stepRegion`) would find it no candidate
+    // ever, attempt after attempt, before a single side-path cell exists. Held out here and asked
+    // again once its own chain's cells are carved (alongside that chain's own content, further down) —
+    // the identical reasoning the main-path and off-route gate runs split on below.
+    const mainPathControls = controlRecords.filter(({ control }) => onRouteSet.has(control.in))
+    const offRouteControls = controlRecords.filter(({ control }) => !onRouteSet.has(control.in))
+    // Every connection's gates in the order stated; one gate is a run of its own.
+    const runs = barrierRuns(authoredConfig.obstacles ?? [], authoredConfig.barrierOrder ?? [])
+    const mainPathRuns = runs.filter(run => run.gates.every(onRouteObstacle))
+    const offRouteRuns = runs.filter(run => !run.gates.every(onRouteObstacle))
+    const gateIndexByObstacle = new Map<string, number>()
+    // The gate nearest the way in stands on the seam itself, which is where a connection's only gate
+    // has always stood; the rest of a run is seated once content and junctions have taken their nodes.
+    if (laid) {
+      for (const [id, cell] of laid.gateDoor) {
+        const step = routeStepOf.get(cell)
+        if (step !== undefined) gateIndexByObstacle.set(id, step)
+      }
+    } else
+      for (const run of mainPathRuns) {
+        const seam = seamIndexFor(stepRegion, run.between)
+        if (seam === undefined) continue
+        const entersFirst = stepRegion[seam - 1] === run.between[0]
+        const nearest = entersFirst ? run.gates[0] : run.gates[run.gates.length - 1]
+        gateIndexByObstacle.set(nearest.id, seam)
+      }
+    // A seam the carve did not produce. `regionOfStep` (regions.ts) lays every floor's route out as a
+    // gap-free concatenation — a region is either fully seated or, when the path is too short, absent
+    // together with every region after it on the route (caught by `unseatedRegions` above, which
+    // always `continue`s first) — so with today's carve, a route-adjacent obstacle's two regions are
+    // never "both seated but not adjacent": `seamIndexFor` cannot actually return `undefined` here for
+    // a genuinely main-path obstacle. Retried rather than refused for the same reason `unseatedRegions`
+    // is: `mainPath.length` GROWS across the attempt budget.
+    if (!laid && gateIndexByObstacle.size < mainPathRuns.length) {
+      if (!gateSeamMissing)
+        gateSeamMissing = mainPathRuns
+          .flatMap(run => run.gates)
+          .filter(o => !gateIndexByObstacle.has(o.id))
+          .map(o => o.id)
+      continue
+    }
+    const gateIndices = new Set(gateIndexByObstacle.values())
+    // EVERY MAIN-PATH SEAM, GATED OR NOT — read off `stepRegion` alone, which `regionLayout` (core,
+    // never dropped by `dropUnownedAuthoring`) fixes the moment `mainPath` does. `gateIndices` above
+    // answers "where does an AUTHORED gate stand", which is exactly what must NOT decide content
+    // pacing or candidate membership below: the topology mod owns which of these seams carries a
+    // gate, but not how many seams the layout has or where they fall, so a reservation keyed off
+    // `gateIndices` shrinks and grows with the mod while one keyed off `stepRegion` cannot — the same
+    // physical stretch is reserved whether the mod that might gate it is even in the build.
+    const regionSeamIndices = new Set<number>()
+    for (let step = 1; step < stepRegion.length; step++)
+      if (stepRegion[step] !== stepRegion[step - 1]) regionSeamIndices.add(step)
+    // WHERE AN OFF-ROUTE OBSTACLE'S OWN SEAM LANDS — filled in once each matched chain's own cells
+    // exist (alongside `cellRegion`, below): `{ idx, cellIndex }` names which chain (its top-level
+    // `chains` index) and which of that chain's own cells the seam is, mirroring `gateIndexByObstacle`
+    // one level down.
+    const chainGateIndexByObstacle = new Map<string, { idx: number; cellIndex: number }>()
 
     // Exit placed at the main path's end, forced to degree-1 below so no corridor passes
     // through it. Content nodes (puzzles/chests + the goal) are spread evenly across the whole main
@@ -660,19 +1708,274 @@ export const assembleFloor = (
     // bare corridor behind the goal with nothing to do and nowhere to branch. Spreading
     // keeps something to find along the whole walk, and puts the goal last (closest to
     // the exit) so there's no unused tail behind it either.
-    const contentCount = config.pathPuzzles + 1 // + goal
+    const leverOnMain = leverRooms(MAIN_SECTION_ADDRESS) === 1
+    // NOT GROWN FOR A CONTROL. A control's room is carved out of a node this count already reserves
+    // for the floor's own content — see the control-seeking search below — rather than an extra one
+    // added here: the maze must carve the same way whether the topology mod that owns `controls` is
+    // registered or not, and a term for it here would size the path (and so the seeded walk's target
+    // distance) differently between the two.
+    const contentCount = config.pathPuzzles + 1 /* goal */ + leverRooms(MAIN_SECTION_ADDRESS)
     if (mainPath.length < contentCount + 2) continue // need entrance + content + a distinct exit
 
     const contentIndices = spreadContentIndices(contentCount, 1, mainPath.length)
-    const goalIndex = contentIndices[contentIndices.length - 1]
-    // puzzleIndices[k] is the mainPath position of the k-th puzzle (0-based, path order) —
-    // used to index into config.rewards[k] below.
-    const puzzleIndices = contentIndices.slice(0, -1)
+    // A laid floor places its content with the route's own doors, junction and seats in view, and in regions
+    // whose appetite takes it.
+    const laidContent = mainSteps
+    // A GATE ROOM AND A PUZZLE CANNOT BOTH STAND IN ONE CELL, and it is the content that moves: a
+    // seam is where the regions actually change, while content is spread for rhythm and one node
+    // either way is the kind of thing the carve already decides. Forward to the next free node, so
+    // one layout always places the same way. `spreadContentIndices` deals in mainPath-array indices
+    // (one real node apart — see NODE_STEP's own contrast with the grid lattice), the same space
+    // `regionSeamIndices` is built in, so the step here is 1, not 2.
+    //
+    // `regionSeamIndices`, NOT `gateIndices` — every seam forwards content past it, gated or not, so
+    // `goalIndex` below lands on the identical node whether or not the topology mod (and so any
+    // obstacle) is in the build. Skipping only actual gate cells would let `goalIndex` drift outward
+    // exactly by however many gates fall before it, which is mod-owned by construction: two builds
+    // that agree on `regionLayout` but disagree on `obstacles` would then disagree on where the main
+    // zone ends (see `mainZoneCandidates` below), which is the identity bug this line exists to avoid.
+    const placedContent: number[] = laidContent ?? []
+    for (const wanted of laid ? [] : contentIndices) {
+      let index = wanted
+      while (index < mainPath.length - 1 && (regionSeamIndices.has(index) || placedContent.includes(index))) index += 1
+      if (index >= mainPath.length - 1) break
+      placedContent.push(index)
+    }
+    // The path had no free node left for every piece of content. Retried rather than refused: the
+    // path lengthens across the attempt budget.
+    if (placedContent.length < contentCount) continue
+
+    const goalIndex = placedContent[placedContent.length - 1]
+    // A lever the main path holds takes the first content node: it opens what lies further on, so the
+    // walk has to reach it before the doors it owns are worth reaching.
+    const leverIndex = leverOnMain ? placedContent[0] : -1
+
+    // EACH PUZZLE'S AUTHORED ORDINAL — 0-based, in path order — ASSIGNED ONCE, HERE, before a control
+    // gets any chance to move one of these nodes. `k` is this ordinal's home from here on: it indexes
+    // `config.rewards[k]`/`config.encountersByIndex[k]` below and is handed to `resolveKeyRequirements`
+    // as `pathIndex`, and the room built from it carries `pathIndex: k` onward into its own save address
+    // (`p${k}`, cellSlot.ts) — the key loot, solve state and explored-cell tracking all file under. A
+    // puzzle keeps its ordinal wherever its physical node ends up: the control-seating search below MOVES
+    // an entry of this map when it displaces a puzzle's node, and never rebuilds the map from array
+    // position afterward — rebuilding from position is exactly what would renumber every puzzle after the
+    // one a control displaced, sliding each one's reward, encounter override and save slot onto a
+    // different room even though nothing about THAT room's own content changed.
     const puzzleRole = new Map<number, number>()
-    puzzleIndices.forEach((idx, k) => puzzleRole.set(idx, k))
+    placedContent.slice(leverOnMain ? 1 : 0, -1).forEach((idx, k) => puzzleRole.set(idx, k))
+
+    // WHERE EACH `{ in }` FORK'S JUNCTION STANDS, settled before anything mod-owned seats on the main
+    // path so no control, displaced puzzle or branch can take the cell: a node of the named region that
+    // is no seam, holds no content and is neither the entrance nor the exit. Drawn from the region's own
+    // nodes and `regionLayout` alone, so the mod being off cannot move it.
+    const forkJunctionIdx = new Set<number>()
+    const junctionIdxOf: number[] = []
+    // A laid junction is the cell the lock laid for it, already on the route.
+    for (const junction of laid?.junctions ?? []) {
+      forkJunctionIdx.add(junction.step)
+      junctionIdxOf.push(junction.step)
+    }
+    for (const fork of laid ? [] : forkIns) {
+      // It needs a free node beside it for every seam, or no chain could ever hang off it.
+      const mainKeys = new Set(mainPath.map(([r, c]) => `${r},${c}`))
+      const sideRoom = ([r, c]: [number, number]) =>
+        DIRS2.filter(([dr, dc]) => {
+          const [nr, nc] = [r + dr, c + dc]
+          return nr >= 0 && nr < N && nc >= 0 && nc < N && !mainKeys.has(`${nr},${nc}`)
+        }).length
+      const nodes: number[] = []
+      for (let mi = 1; mi < mainPath.length - 1; mi++)
+        if (
+          stepRegion[mi] === fork.region &&
+          !regionSeamIndices.has(mi) &&
+          !placedContent.includes(mi) &&
+          sideRoom(mainPath[mi]) >= fork.seams.length
+        )
+          nodes.push(mi)
+      if (nodes.length === 0 || fork.sectionIdxs.length < fork.seams.length) break
+      const mi = nodes[Math.floor(rand() * nodes.length)]
+      forkJunctionIdx.add(mi)
+      junctionIdxOf.push(mi)
+    }
+    if (junctionIdxOf.length < forkIns.length) {
+      if (!forkSeamShortfall) forkSeamShortfall = forkIns[junctionIdxOf.length]
+      continue
+    }
+
+    // THE REST OF EACH CONNECTION'S GATES, in the order stated, on the nodes nothing else claims — read off
+    // the finished content and junctions so no puzzle or junction is moved for them: content may end up
+    // between two gates, which is the carve's to distribute, and mod-off carves the same walls because a
+    // gate only ever takes a node the path already has. A run the far region cannot seat fails the
+    // attempt, since a longer path may; the last attempt names the connection.
+    for (const run of laid ? [] : mainPathRuns) {
+      if (run.gates.length < 2) continue
+      const steps = seatBarrierRun(
+        stepRegion,
+        run.between,
+        run.gates.length,
+        step =>
+          step > 0 &&
+          step < mainPath.length - 1 &&
+          !placedContent.includes(step) &&
+          !forkJunctionIdx.has(step) &&
+          !gateIndices.has(step)
+      )
+      if (!steps) {
+        if (!barriersShort)
+          barriersShort = { between: [run.between[0], run.between[1]], barriers: run.gates.map(gate => gate.id) }
+        continue attempt
+      }
+      run.gates.forEach((gate, i) => {
+        gateIndexByObstacle.set(gate.id, steps[i])
+        gateIndices.add(steps[i])
+      })
+    }
+
+    // A REGION BARRIER ON THE MAIN PATH gets a door at each entrance, taken from the nodes nothing else
+    // claims — read off the finished content so no puzzle, junction or seam is moved for it. A door the
+    // path cannot seat fails the attempt: a longer path may, and the last attempt names the barrier.
+    const barrierDoorOnMain = new Map<number, { id: string; region: string; entrance: string }>()
+    for (const door of laid?.regionDoors ?? []) {
+      const [dr, dc] = door.cell.split(",").map(Number)
+      const step = routeStepOf.get(`${dr},${dc}`)
+      if (step !== undefined)
+        barrierDoorOnMain.set(step, { id: door.barrier, region: door.region, entrance: door.entrance })
+    }
+    for (const barrier of laid ? [] : regionBarriers) {
+      if (!onRouteSet.has(barrier.at.region)) continue
+      const doors = seatBarrierDoors(
+        stepRegion,
+        barrier.at.region,
+        step =>
+          step > 0 &&
+          step < mainPath.length - 1 &&
+          !placedContent.includes(step) &&
+          !forkJunctionIdx.has(step) &&
+          !gateIndices.has(step) &&
+          !barrierDoorOnMain.has(step)
+      )
+      if (!doors) {
+        if (!regionBarrierShort) regionBarrierShort = { id: barrier.id, region: barrier.at.region }
+        continue attempt
+      }
+      for (const { entrance, step } of doors)
+        barrierDoorOnMain.set(step, { id: barrier.id, region: barrier.at.region, entrance })
+    }
+
+    // A CONTROL STANDS IN A REGION, so its room is A NODE OF THAT STRETCH — any main-path node, not only
+    // a content-designated one, because content is spread for rhythm and is not guaranteed to put a node
+    // in every region (a short early region can go unspread-into entirely — measured), while `unseated`
+    // above already guarantees every declared region at least ONE step. Searching the whole path rather
+    // than the narrower content set is what makes a control seatable on the SAME attempt core's own
+    // content already succeeds on, whether or not the topology mod that owns it is even registered — the
+    // mod must not cost this floor an extra retry the mod-off build never has to pay
+    // (docs/game-design/regions-and-containers.md's toggle-off gate).
+    //
+    // ONLY `mainPathControls` IS SOUGHT HERE — a control hosted by an off-route region is sought within
+    // its own chain instead, below, the same split the main-path and off-route gate runs make above.
+    //
+    // A FREE NODE IS PREFERRED OVER A CONTENT ONE: `placedContent` is the puzzles this floor already
+    // authored, each already holding its own AUTHORED ORDINAL in `puzzleRole` above. Seating a control
+    // directly on one of those nodes would either carve the puzzle out from under it with nothing
+    // reported, or — filtering it back out downstream instead — renumber every puzzle after it, sliding
+    // each one's reward, encounter override and save slot onto a different room. Both are the "decide
+    // quietly" the governing rule of this whole area forbids. So a content node is only taken once the
+    // region's free nodes are exhausted, and taking one DISPLACES the puzzle it held forward to the next
+    // free node — moving its `puzzleRole` entry to the new node rather than dropping or renumbering it,
+    // so the puzzle keeps its ordinal wherever it ends up — using the same forward-shift `placedContent`'s
+    // own build above uses. Never past the goal — content only ever stands before it (the pacing
+    // `spreadContentIndices` was chosen for), so the shift's ceiling is `goalIndex`, not the path's end.
+    //
+    // Excludes the entrance (index 0, a portal room) and the exit (the last index, forced to degree-1
+    // below), and `leverIndex` alongside the goal: that node already carries the main-path HANDLE's room
+    // (a different mechanism from a different authoring vocabulary), and the room-spec write-up below
+    // tests `mi === leverIndex` first — a control landing there would compile successfully and then be
+    // silently dropped from the grid, a door nothing ever reports as unseated.
+    const controlIndexById = new Map<string, number>()
+    const takenByControl = new Set<number>()
+    // A control that reached the content-fallback search at all, whether or not it found room to
+    // displace what it found there — read below to tell "no candidate at all" apart from "a candidate
+    // stood, but nothing had room for the puzzle it held".
+    const sawContentCandidate = new Set<string>()
+    for (const { control } of mainPathControls) {
+      const inRegion = (mi: number) =>
+        stepRegion[mi] === control.in &&
+        !takenByControl.has(mi) &&
+        mi !== goalIndex &&
+        mi !== leverIndex &&
+        !gateIndices.has(mi) &&
+        !barrierDoorOnMain.has(mi) &&
+        !forkJunctionIdx.has(mi) &&
+        !absorbedCell.has(`${mainPath[mi][0]},${mainPath[mi][1]}`)
+
+      let index: number | undefined
+      for (let mi = 1; mi < mainPath.length - 1; mi++) {
+        if (inRegion(mi) && !placedContent.includes(mi)) {
+          index = mi
+          break
+        }
+      }
+
+      if (index === undefined) {
+        for (let mi = 1; mi < mainPath.length - 1; mi++) {
+          if (!inRegion(mi) || !placedContent.includes(mi)) continue
+          sawContentCandidate.add(control.id)
+          let shifted = mi + 1
+          while (
+            shifted < goalIndex &&
+            (gateIndices.has(shifted) ||
+              barrierDoorOnMain.has(shifted) ||
+              placedContent.includes(shifted) ||
+              takenByControl.has(shifted) ||
+              forkJunctionIdx.has(shifted) ||
+              absorbedCell.has(`${mainPath[shifted][0]},${mainPath[shifted][1]}`))
+          )
+            shifted += 1
+          if (shifted >= goalIndex) continue // nowhere to move this one — try the region's next content node
+          placedContent[placedContent.indexOf(mi)] = shifted
+          // The puzzle's ORDINAL moves with it, never recomputed from where it lands: `mi` was one
+          // of `puzzleRole`'s own keys (every non-lever, non-goal member of `placedContent` is), so this
+          // is a move, not an insert — the same puzzle now answers at `shifted` under the same `k`.
+          puzzleRole.set(shifted, puzzleRole.get(mi)!)
+          puzzleRole.delete(mi)
+          index = mi
+          break
+        }
+      }
+
+      if (index === undefined) continue
+      controlIndexById.set(control.id, index)
+      takenByControl.add(index)
+    }
+    // Two different shortfalls, reported apart because they call for different fixes. A control this
+    // attempt gave NO candidate node to at all — unreachable once `unseated` above has passed for a
+    // route-adjacent connection (same reasoning `gateSeamMissing`'s own comment gives) — is
+    // `controlNotSeated`, and a wider path (packing widens at 8/16/24) is what rescues it. A control
+    // whose only candidate already held a puzzle with nowhere to move it is `controlPuzzleUndisplaceable`
+    // instead: a wider path helps this one too (more room past the candidate to shift into), so it is
+    // retried the same way, just named for what actually went wrong. Both retried rather than refused,
+    // for the reason slice 4 measured: `mainPath.length` GROWS across the attempt budget.
+    if (controlIndexById.size < mainPathControls.length) {
+      const stillUnseated = mainPathControls.filter(({ control }) => !controlIndexById.has(control.id))
+      const bare = stillUnseated.filter(({ control }) => !sawContentCandidate.has(control.id))
+      const displaceable = stillUnseated.filter(({ control }) => sawContentCandidate.has(control.id))
+      if (bare.length > 0 && !controlNotSeated) controlNotSeated = bare.map(({ control }) => control.id)
+      if (displaceable.length > 0 && !controlPuzzleUndisplaceable)
+        controlPuzzleUndisplaceable = displaceable.map(({ control }) => control.id)
+      continue
+    }
+    const controlAtIndex = new Map(
+      controlRecords.map(entry => [controlIndexById.get(entry.control.id)!, entry] as const)
+    )
 
     // Full mainPath as corridor so sections can branch from anywhere along it
     const usedCells = new Set<string>(mainPath.map(([r, c]) => `${r},${c}`))
+    // The stretches a lock laid off the route are ground already, and a drop's run is held clear of
+    // anything a branch could take until the branches are down.
+    for (const chain of laid?.chains ?? []) for (const [r, c] of chain.cells) usedCells.add(`${r},${c}`)
+    for (const cellKey of laid?.held ?? []) {
+      usedCells.add(cellKey)
+      heldForSeams.add(cellKey)
+    }
     const [exR, exC] = mainPath[mainPath.length - 1]
 
     // Force the exit to be a true dead-end (degree 1). The packing knob (targetDistance) ends
@@ -713,19 +2016,42 @@ export const assembleFloor = (
         ([nr, nc]) => nr >= 0 && nr < N && nc >= 0 && nc < N && !usedCells.has(`${nr},${nc}`)
       )
 
-    type BranchCandidate = { pathCell: [number, number] }
-    const branchCandidates: BranchCandidate[] = []
+    const branchCandidates: Array<[number, number]> = []
     // Cells within the actual puzzle-bearing stretch of the main path (before the goal),
     // in path order — kept separate so fork placement can prefer interleaving with main-path
     // puzzles over the unused corridor tail beyond the goal (see bucketing below).
-    const mainZoneCandidates: BranchCandidate[] = []
+    //
+    // A SEAM'S OWN CELL IS EXCLUDED HERE TOO, alongside the goal's — not because a chain could not
+    // grow from a gate room (a junction that already holds a main-path room keeps that room, same as a
+    // puzzle or the goal, see the fork-fallback below), but because `regionSeamIndices` is what shifts
+    // CONTENT forward past it (`placedContent`'s loop above), moving `goalIndex` outward by the width
+    // of however many seams fell in content's way — so the same set has to be excluded here too, or the
+    // two would disagree about which cells this stretch actually holds.
+    //
+    // `regionSeamIndices`, NOT `gateIndices` — READ OFF `regionLayout` (core), NEVER OFF `obstacles`
+    // (the mod's). This is BY CONSTRUCTION, not by compensation: `regionLayout` is never dropped by
+    // `dropUnownedAuthoring`, so `stepRegion` and therefore `regionSeamIndices` are the identical set
+    // whether or not the topology mod is even in the build. Scoring draws one `rand()` per candidate
+    // below (`scoreCandidates`), and `mainZoneCandidates` is later sliced by contiguous range
+    // (`mainZoneSlices`) — so it is not enough for the two builds to exclude the same COUNT of cells,
+    // as `gateIndices` alone did (mod on excludes exactly the gated seams; mod off excludes none, but
+    // `goalIndex` shrunk to match — same count leaving the loop, different physical cells inside it,
+    // which is exactly what let seed-dependent `rand()` draws diverge after the sweep in
+    // `toggleOff.spec.ts` measured 24 of 50 seeds disagreeing on a two-obstacle floor). Keying off
+    // `regionLayout` instead means the mod's OWN OBSTACLE LIST never reaches this loop at all: there is
+    // no count to keep equal, because there is nothing left for the mod to perturb.
+    const mainZoneCandidates: Array<[number, number]> = []
     for (let pi = 0; pi < mainPath.length - 1; pi++) {
       const [pr, pc] = mainPath[pi]
+      if (forkJunctionIdx.has(pi) || laid?.reserved.has(pi)) continue
       if (rawFreeNeighbors(pr, pc).length === 0) continue
-      const candidate: BranchCandidate = { pathCell: [pr, pc] }
-      branchCandidates.push(candidate)
-      if (pi < goalIndex) mainZoneCandidates.push(candidate)
+      branchCandidates.push([pr, pc])
+      if (pi < goalIndex && !regionSeamIndices.has(pi)) mainZoneCandidates.push([pr, pc])
     }
+    // Side paths hang off the ground a lock laid as well as off the route, never off a door.
+    for (const chain of laid?.chains ?? [])
+      for (const [pr, pc] of chain.cells)
+        if (!laid!.doors.has(`${pr},${pc}`) && rawFreeNeighbors(pr, pc).length > 0) branchCandidates.push([pr, pc])
     // Prefer branch points that sit next to a genuinely large contiguous empty pocket —
     // this is where the fork ends up, and its later multi-cell footprint (the claiming
     // pass below) floods outward through exactly this kind of pocket. A handful of
@@ -752,26 +2078,147 @@ export const assembleFloor = (
       return count
     }
     const spaciousness = (pathCell: [number, number]): number => pocketSize(pathCell, 8)
-    const scoreCandidates = (list: BranchCandidate[]): BranchCandidate[] =>
+    const scoreCandidates = (list: Array<[number, number]>): Array<[number, number]> =>
       list
-        .map(bc => ({ bc, score: spaciousness(bc.pathCell) + rand() * 3 }))
+        .map(bc => ({ bc, score: spaciousness(bc) + rand() * 3 }))
         .sort((a, b) => b.score - a.score)
         .map(({ bc }) => bc)
     const shuffledCandidates = scoreCandidates(branchCandidates)
+
+    /**
+     * Hangs a chain of `needed` cells off the first of `candidates` that can take one — a free maze
+     * neighbour to start from, then a walk through whatever is still empty — and claims what it takes.
+     * A candidate whose walk runs out of room gives back the cell it started on and the next is tried.
+     *
+     * `mayCarve` allows a brand-new passage into a plain grid-adjacent unused cell where a candidate
+     * has no natural one to branch into: a deliberate departure from "perfect maze" (a real cycle) at
+     * branch spots. Two junctions ending up next to each other is fine — players can explore either
+     * order, and it reads as one genuine multi-exit room instead of two separate ones.
+     */
+    const attachChain = (
+      candidates: Array<[number, number]>,
+      needed: number,
+      mayCarve: boolean
+    ): { cells: Array<[number, number]>; attachedAt: [number, number] } | null => {
+      for (const [pcr, pcc] of candidates) {
+        let freeAdj = shuffle(
+          neighbors(pcr, pcc).filter(([ar, ac]) => !usedCells.has(`${ar},${ac}`)),
+          rand
+        )
+        if (freeAdj.length === 0 && mayCarve) {
+          const carveCandidates = shuffle(
+            DIRS2.map(([dr, dc]): [number, number] => [pcr + dr, pcc + dc]).filter(
+              ([nr, nc]) =>
+                nr >= 0 &&
+                nr < N &&
+                nc >= 0 &&
+                nc < N &&
+                !usedCells.has(`${nr},${nc}`) &&
+                !passages.has(pkey(pcr, pcc, nr, nc))
+            ),
+            rand
+          )
+          if (carveCandidates.length > 0) {
+            passages.add(pkey(pcr, pcc, carveCandidates[0][0], carveCandidates[0][1]))
+            freeAdj = [carveCandidates[0]]
+          }
+        }
+        if (freeAdj.length === 0) continue
+        for (const [startR, startC] of freeAdj) {
+          usedCells.add(`${startR},${startC}`)
+          const rest = extendPath(startR, startC, needed - 1, neighbors, usedCells, rand, (r, c) =>
+            pocketSize([r, c], 8)
+          )
+          if (rest === null) {
+            usedCells.delete(`${startR},${startC}`)
+            continue
+          }
+          const cells: Array<[number, number]> = [[startR, startC], ...rest]
+          cells.slice(1).forEach(([r, c]) => usedCells.add(`${r},${c}`))
+          return { cells, attachedAt: [pcr, pcc] }
+        }
+      }
+      return null
+    }
+
+    /**
+     * Hangs a chain off a node of its mouth's region by a DROP: its first node stands `ONE_WAY_REACH`
+     * steps along a straight line from the mouth's, every cell between them uncarved and held for the
+     * run. No passage joins the two, so the only way between them is the drop, and it falls the way the
+     * author wrote it. Nothing is claimed unless the whole run and the chain both fit.
+     */
+    const attachByDrop = (
+      seam: { obstacleId: string; mouth: string; mouthFirst: boolean; realisation: string },
+      needed: number
+    ): { cells: Array<[number, number]>; attachedAt: [number, number] } | null => {
+      const mouthNodes = mainPath.filter(
+        (_, pi) =>
+          pi < mainPath.length - 1 &&
+          stepRegion[pi] === seam.mouth &&
+          !regionSeamIndices.has(pi) &&
+          !forkJunctionIdx.has(pi)
+      )
+      for (const [ar, ac] of scoreCandidates(mouthNodes)) {
+        for (const [dr, dc, d] of shuffle(CONNECTOR_DIRS, rand)) {
+          const ur = dr / NODE_STEP,
+            uc = dc / NODE_STEP
+          const [fr, fc] = [ar + ur * ONE_WAY_REACH, ac + uc * ONE_WAY_REACH]
+          if (fr < 0 || fr >= N || fc < 0 || fc >= N) continue
+          const between = Array.from(
+            { length: ONE_WAY_REACH - 1 },
+            (_, k) => `${ar + ur * (k + 1)},${ac + uc * (k + 1)}`
+          )
+          const held = [...between, `${fr},${fc}`]
+          if (held.some(cellKey => usedCells.has(cellKey))) continue
+          for (const cellKey of held) usedCells.add(cellKey)
+          const rest = extendPath(fr, fc, needed - 1, neighbors, usedCells, rand, (r, c) => pocketSize([r, c], 8))
+          if (rest === null) {
+            for (const cellKey of held) usedCells.delete(cellKey)
+            continue
+          }
+          rest.forEach(([r, c]) => usedCells.add(`${r},${c}`))
+          for (const cellKey of between) heldForSeams.add(cellKey)
+          const mouthKey = `${ar},${ac}`
+          const chainFirst = `${fr},${fc}`
+          // The run is listed from the end it falls FROM, so a drop out of the chain reads back to front.
+          const along = seam.mouthFirst ? between : [...between].reverse()
+          dropSeamEdges.push({
+            from: seam.mouthFirst ? mouthKey : chainFirst,
+            to: seam.mouthFirst ? chainFirst : mouthKey,
+            dir: seam.mouthFirst ? d : OPPOSITE[d],
+            launch: along[0],
+            run: along.slice(1, -1),
+            landing: along[along.length - 1],
+            obstacleId: seam.obstacleId,
+            realisation: seam.realisation,
+          })
+          return { cells: [[fr, fc], ...rest], attachedAt: [ar, ac] }
+        }
+      }
+      return null
+    }
 
     // Bundle side sections onto shared branch points ("hubs") instead of every section
     // scattering to its own private fork — a floor with many side sections reads as a
     // few significant crossroads rooms rather than many forgettable single junctions.
     // Group size scales with how many sections there are; low counts stay ungrouped
     // (today's behavior, one fork per section).
-    const hubGroupSize = sideSections.length >= 5 ? 3 : sideSections.length >= 2 ? 2 : 1
-    const sectionOrder = shuffle(
-      sideSections.map((_, i) => i),
-      rand
-    )
-    const hubGroups: number[][] = []
-    for (let i = 0; i < sectionOrder.length; i += hubGroupSize) {
-      hubGroups.push(sectionOrder.slice(i, i + hubGroupSize))
+    const sectionKinds = (section: SideSection | SubSection): ContentKind[] => [
+      ...(section.pathPuzzles > 0 || childSectionsOf(section as SubSection).some(sub => sub.pathPuzzles > 0)
+        ? (["puzzle"] as const)
+        : []),
+      ...(section.end === "staircase" ? [] : (["reward"] as const)),
+    ]
+    const branchSections = sideSections.map((_, i) => i).filter(i => !contentSections.has(i))
+    const hubGroupSize = branchSections.length >= 5 ? 3 : branchSections.length >= 2 ? 2 : 1
+    const sectionOrder = shuffle(branchSections, rand)
+    // A `{ in }` fork's sections are a hub of their own, first, hung from its junction and nowhere else.
+    const forkGroups = forkIns.map(fork => fork.sectionIdxs)
+    const forkedSections = new Set(forkGroups.flat())
+    const looseSections = sectionOrder.filter(si => !forkedSections.has(si))
+    const hubGroups: number[][] = [...forkGroups]
+    for (let i = 0; i < looseSections.length; i += hubGroupSize) {
+      hubGroups.push(looseSections.slice(i, i + hubGroupSize))
     }
 
     // Split the main-path puzzle stretch into one contiguous slice per hub group, in path
@@ -781,7 +2228,7 @@ export const assembleFloor = (
     // is meant to avoid). Slices are handed out in a shuffled order so hub 0 doesn't always
     // land nearest the entrance. Falls back to the full main zone, then the whole corridor
     // (today's behavior), so this can never make an otherwise-placeable section fail.
-    const mainZoneSlices: BranchCandidate[][] = hubGroups.map((_, bi) => {
+    const mainZoneSlices: Array<Array<[number, number]>> = hubGroups.map((_, bi) => {
       const start = Math.floor((bi * mainZoneCandidates.length) / hubGroups.length)
       const end = Math.floor(((bi + 1) * mainZoneCandidates.length) / hubGroups.length)
       return scoreCandidates(mainZoneCandidates.slice(start, end))
@@ -795,109 +2242,54 @@ export const assembleFloor = (
     outer: for (const [groupIdx, group] of hubGroups.entries()) {
       let hubCell: [number, number] | null = null
       const ownSlice = mainZoneSlices[sliceOrder[groupIdx]]
+      const junctionCell = groupIdx < forkIns.length ? mainPath[junctionIdxOf[groupIdx]] : undefined
 
       for (const si of group) {
-        const section = sideSections[si]
-        const needed = paddedChainLength(section.pathPuzzles + 1 + (section.gate ? 1 : 0))
-        let placed = false
-
         // Try the shared hub first (if this group already has one), then this group's own
         // stretch of the puzzle zone, then any other main-zone spot, then the full corridor
-        // (including the tail) as a last resort.
-        const candidateSources: BranchCandidate[] = hubCell
-          ? [{ pathCell: hubCell }, ...ownSlice, ...shuffledMainZoneCandidates, ...shuffledCandidates]
-          : [...ownSlice, ...shuffledMainZoneCandidates, ...shuffledCandidates]
-
-        for (const {
-          pathCell: [pcr, pcc],
-        } of candidateSources) {
-          let freeAdj = shuffle(
-            neighbors(pcr, pcc).filter(([ar, ac]) => !usedCells.has(`${ar},${ac}`)),
-            rand
-          )
-
-          // No natural passage to branch into — carve a brand-new one into a plain
-          // grid-adjacent unused cell instead of giving up on this candidate. A deliberate
-          // departure from "perfect maze" (a real cycle) at branch spots: two junctions
-          // ending up next to each other is fine, players can explore either order — it
-          // just makes that visible as one genuine multi-exit room instead of two separate
-          // ones. Not just for repeat-hub cells (see rawFreeNeighbors above for why this
-          // needs to work for the first branch off a spot too, not only subsequent ones).
-          if (freeAdj.length === 0) {
-            const carveCandidates = shuffle(
-              DIRS2.map(([dr, dc]): [number, number] => [pcr + dr, pcc + dc]).filter(
-                ([nr, nc]) =>
-                  nr >= 0 &&
-                  nr < N &&
-                  nc >= 0 &&
-                  nc < N &&
-                  !usedCells.has(`${nr},${nc}`) &&
-                  !passages.has(pkey(pcr, pcc, nr, nc))
-              ),
-              rand
+        // (including the tail) as a last resort. Every one of them may be carved into: see
+        // rawFreeNeighbors above for why that has to work for the first branch off a spot too,
+        // not only subsequent ones.
+        const everywhere: Array<[number, number]> = junctionCell
+          ? [junctionCell]
+          : hubCell
+            ? [hubCell, ...ownSlice, ...shuffledMainZoneCandidates, ...shuffledCandidates]
+            : [...ownSlice, ...shuffledMainZoneCandidates, ...shuffledCandidates]
+        // On a laid floor a path hangs only where its region takes everything the path holds.
+        const candidateSources = laid
+          ? everywhere.filter(([cr, cc]) =>
+              sectionKinds(sideSections[si]).every(kind =>
+                appetiteAccepts(appetiteOfRegion.get(laid.label.get(`${cr},${cc}`) ?? "") ?? "free", kind)
+              )
             )
-            if (carveCandidates.length > 0) {
-              passages.add(pkey(pcr, pcc, carveCandidates[0][0], carveCandidates[0][1]))
-              freeAdj = [carveCandidates[0]]
-            }
-          }
-          if (freeAdj.length === 0) continue
+          : everywhere
+        const needed = paddedChainLength(chainRooms(sideSections[si], `s${si}`))
+        const seam = dropSeams.get(si)
+        const attached = seam ? attachByDrop(seam, needed) : attachChain(candidateSources, needed, true)
 
-          for (const [startR, startC] of freeAdj) {
-            usedCells.add(`${startR},${startC}`)
-            const rest = extendPath(startR, startC, needed - 1, neighbors, usedCells, rand, (r, c) =>
-              pocketSize([r, c], 8)
-            )
-            if (rest === null) {
-              usedCells.delete(`${startR},${startC}`)
-              continue
-            }
-            const cells: Array<[number, number]> = [[startR, startC], ...rest]
-            cells.slice(1).forEach(([r, c]) => usedCells.add(`${r},${c}`))
-            sectionGroups.push({ sectionIdx: si, cells, attachedAt: [pcr, pcc] })
-            if (!hubCell) hubCell = [pcr, pcc]
-            placed = true
-            break
-          }
-          if (placed) break
-        }
-
-        if (!placed) {
+        if (attached === null) {
           failed = true
+          if (junctionCell && !forkSeamShortfall) forkSeamShortfall = forkIns[groupIdx]
           break outer
         }
+        sectionGroups.push({ sectionIdx: si, ...attached })
+        if (!hubCell && !seam) hubCell = attached.attachedAt
       }
     }
 
     // ── Sub-sections: branch from cells of parent sections ─────────────────
-    type SubSectionGroup = {
-      subSection: SubSection
-      cells: Array<[number, number]>
-      attachedAt: [number, number]
-      parentSectionIdx: number
-      subSectionIdx: number
-      keyNodeId?: string
-      isKeyHost: boolean
-      keyHostColor?: KeyColor
-      keyHostColors?: KeyColor[]
-    }
-    const subSectionGroups: SubSectionGroup[] = []
+    const subChains: Chain[] = []
 
     for (const group of sectionGroups) {
       if (failed) break
       const parentSection = sideSections[group.sectionIdx]
       if (!parentSection.sideSections?.length) continue
+      const parentDoors = doorsShutting(parentSection, `s${group.sectionIdx}`, [])
 
-      let subSects = parentSection.sideSections
-      // Same "free host, not just ungated" reasoning as the top-level side sections above —
-      // a sub-section already carrying its own endReward isn't free capacity for a key.
-      const anySubGatedFloorKey = subSects.some(s => s.gate?.type === "floor-key")
-      const anySubFreeUngated = subSects.some(s => !s.gate && !s.endReward)
-      if (anySubGatedFloorKey && !anySubFreeUngated)
-        subSects = [...subSects, { pathPuzzles: 0, difficulty: "starter" as const, end: "treasure" as const }]
-
-      const subGatedIdxs = subSects.map((_, i) => i).filter(i => subSects[i].gate?.type === "floor-key")
-      const subUngatedIdxs = subSects.map((_, i) => i).filter(i => !subSects[i].gate && !subSects[i].endReward)
+      const subSects: SubSection[] = owesAKeyHost(parentSection.sideSections.filter(s => !s.hidden))
+        ? [...parentSection.sideSections, GROWN_KEY_HOST]
+        : parentSection.sideSections
+      const { gatedIdxs: subGatedIdxs, ungatedIdxs: subUngatedIdxs } = keyHostIdxs(subSects)
 
       // Same reasoning as the top-level check above — this is config-derived, not
       // seed-derived, so failing immediately (not retrying) is correct here too.
@@ -931,63 +2323,17 @@ export const assembleFloor = (
       }> = []
 
       for (let si = 0; si < subSects.length; si++) {
-        const sub = subSects[si]
-        const subNeeded = paddedChainLength(sub.pathPuzzles + 1 + (sub.gate ? 1 : 0))
-        let placed = false
-
-        for (const [pcr, pcc] of subBranchCandidates) {
-          let freeAdj = shuffle(
-            neighbors(pcr, pcc).filter(([ar, ac]) => !usedCells.has(`${ar},${ac}`)),
-            rand
-          )
-
-          // In recovery, carve a brand-new passage out of the parent chain rather than give up
-          // on this candidate — the same departure from "perfect maze" the top-level branch loop
-          // above already makes, and for the same reason. Sub-sections not having it is what left
-          // the recovery phase stuck: by the time they're placed, earlier chains have boxed the
-          // parent in, and a sub-section needing a single free cell would fail the whole attempt
-          // with plenty of grid still empty one wall away. Kept to recovery so the frozen
-          // attempts stay byte-identical.
-          if (freeAdj.length === 0 && attempt >= RECOVERY_ATTEMPT) {
-            const carveCandidates = shuffle(
-              DIRS2.map(([dr, dc]): [number, number] => [pcr + dr, pcc + dc]).filter(
-                ([nr, nc]) =>
-                  nr >= 0 &&
-                  nr < N &&
-                  nc >= 0 &&
-                  nc < N &&
-                  !usedCells.has(`${nr},${nc}`) &&
-                  !passages.has(pkey(pcr, pcc, nr, nc))
-              ),
-              rand
-            )
-            if (carveCandidates.length > 0) {
-              passages.add(pkey(pcr, pcc, carveCandidates[0][0], carveCandidates[0][1]))
-              freeAdj = [carveCandidates[0]]
-            }
-          }
-          if (freeAdj.length === 0) continue
-          for (const [startR, startC] of freeAdj) {
-            usedCells.add(`${startR},${startC}`)
-            const rest = extendPath(startR, startC, subNeeded - 1, neighbors, usedCells, rand, (r, c) =>
-              pocketSize([r, c], 8)
-            )
-            if (rest === null) {
-              usedCells.delete(`${startR},${startC}`)
-              continue
-            }
-            const cells: Array<[number, number]> = [[startR, startC], ...rest]
-            cells.slice(1).forEach(([r, c]) => usedCells.add(`${r},${c}`))
-            placedSubs.push({ idx: si, cells, attachedAt: [pcr, pcc] })
-            placed = true
-            break
-          }
-          if (placed) break
-        }
-        if (!placed) {
+        const subNeeded = paddedChainLength(chainRooms(subSects[si], `s${group.sectionIdx}.${si}`))
+        // Carving out of the parent chain is kept to recovery, where the frozen attempts are past
+        // and a layout that fits at all is worth a cycle. It is what unstuck that phase: by the time
+        // sub-sections are placed, earlier chains have boxed the parent in, and one needing a single
+        // free cell would fail the whole attempt with plenty of grid still empty one wall away.
+        const attached = attachChain(subBranchCandidates, subNeeded, attempt >= RECOVERY_ATTEMPT)
+        if (attached === null) {
           failed = true
           break
         }
+        placedSubs.push({ idx: si, ...attached })
       }
       if (failed) break
 
@@ -1016,24 +2362,30 @@ export const assembleFloor = (
         subKeyHostColorsMap.get(hostIdx)!.push(color)
         for (const gatedIdx of subGatedByColor.get(color)!) subKeyNodeIdMap.set(gatedIdx, keyId)
       }
-      const subKeyHostIdxs = new Set(subKeyHostColorsMap.keys())
-
       for (const { idx, cells, attachedAt } of placedSubs) {
-        subSectionGroups.push({
-          subSection: subSects[idx],
+        const sub = subSects[idx]
+        const positional = `s${group.sectionIdx}.${idx}`
+        // An authored keyId is used verbatim; only an unauthored gate takes the id the
+        // key-host distribution above assigned it.
+        const authoredSubKeyId = sub.gate?.type === "floor-key" ? sub.gate.keyId : undefined
+        subChains.push({
+          section: sub,
           cells,
           attachedAt,
-          parentSectionIdx: group.sectionIdx,
-          subSectionIdx: idx,
-          keyNodeId: subKeyNodeIdMap.get(idx),
-          isKeyHost: subKeyHostIdxs.has(idx),
-          keyHostColor: subKeyHostColorsMap.get(idx)?.[0],
-          keyHostColors: subKeyHostColorsMap.get(idx),
+          positional,
+          idx,
+          parentIdx: group.sectionIdx,
+          doors: doorsShutting(sub, positional, parentDoors),
+          hidden: Boolean(sub.hidden),
+          keyNodeId: authoredSubKeyId ?? subKeyNodeIdMap.get(idx),
+          keyHostColors: subKeyHostColorsMap.get(idx) ?? [],
         })
       }
     }
 
     if (failed) continue
+    // The seam runs are held by `takenRunCells` from here on; they were never nodes.
+    for (const cellKey of heldForSeams) usedCells.delete(cellKey)
 
     // Build a random key chain: only FREE (no endReward) treasure-end gated sections can
     // safely relay the next key onward — one that already carries its own authored reward
@@ -1050,8 +2402,16 @@ export const assembleFloor = (
     const keyNodeIdMap = new Map<number, string>() // gated section idx → key node id
     const chainKeyColorMap = new Map<number, KeyColor[]>() // host section idx → key color(s) its end room holds
 
+    // A content section's end room stands on a laid node; it hosts a key the same way a branch's does.
+    const absorbedGroups: SectionGroup[] = (laid?.absorbed ?? []).map(({ section, cells }) => {
+      const nodes = cells.map(key => key.split(",").map(Number) as [number, number])
+      return { sectionIdx: section, cells: nodes, attachedAt: nodes[0] }
+    })
+    const groupOf = (idx: number) =>
+      sectionGroups.find(g => g.sectionIdx === idx) ?? absorbedGroups.find(g => g.sectionIdx === idx)
+
     if (chain.length > 0 && ungatedIdxs.length > 0) {
-      const hostGroup = sectionGroups.find(g => g.sectionIdx === ungatedIdxs[0])
+      const hostGroup = groupOf(ungatedIdxs[0])
       if (hostGroup) {
         let hostIdx = ungatedIdxs[0]
         let hostCell = hostGroup.cells[hostGroup.cells.length - 1]
@@ -1064,7 +2424,7 @@ export const assembleFloor = (
           chainKeyColorMap.set(hostIdx, colors)
 
           if (!sideSections[idx].endReward) {
-            const group = sectionGroups.find(g => g.sectionIdx === idx)
+            const group = groupOf(idx)
             if (group) {
               hostIdx = idx
               hostCell = group.cells[group.cells.length - 1]
@@ -1074,12 +2434,142 @@ export const assembleFloor = (
       }
     }
 
-    const chainKeyHostIdxs = new Set(chainKeyColorMap.keys())
+    // EVERY CARVED PATH OFF THE MAIN WALK, at both levels, in the order the passes below read them:
+    // the paths off the main path first, then the paths off those. What each of them was authored as
+    // and what the carve gave it, so nothing downstream asks which level it came from.
+    const laidSection: SideSection = { pathPuzzles: 0, difficulty: config.difficulty, end: "treasure" }
+    const laidChains = (laid?.chains ?? []).map((chain, i): Chain => ({
+      section: laidSection,
+      cells: chain.cells,
+      attachedAt: chain.attachedAt ?? chain.cells[0],
+      positional: `lock${i}`,
+      idx: LAID_CHAIN_IDX + i,
+      doors: [],
+      hidden: false,
+      keyHostColors: [],
+      laid: true,
+    }))
+    const chains: Chain[] = [
+      ...laidChains,
+      ...sectionGroups.map((group): Chain => {
+        const section = sideSections[group.sectionIdx]
+        const positional = `s${group.sectionIdx}`
+        // An authored keyId is used verbatim; only an unauthored gate looks up the id the
+        // key-host chain above assigned it.
+        const authoredKeyId = section.gate?.type === "floor-key" ? section.gate.keyId : undefined
+        return {
+          section,
+          cells: group.cells,
+          attachedAt: group.attachedAt,
+          positional,
+          idx: group.sectionIdx,
+          doors: doorsShutting(section, positional, []),
+          hidden: Boolean(section.hidden),
+          keyNodeId: authoredKeyId ?? keyNodeIdMap.get(group.sectionIdx),
+          keyHostColors: chainKeyColorMap.get(group.sectionIdx) ?? [],
+        }
+      }),
+      ...subChains,
+    ]
 
     // Build room cell specs: posKey -> room properties (sectionHash injected separately)
     type RoomSpec = Omit<RoomCell, "type" | "dirs" | "state" | "sectionHash" | "legacySectionHash" | "hidden">
     const roomSpecs = new Map<string, RoomSpec>()
+    // A CONTROL'S ROOM, wherever it stands — the main path or a chain, both write the identical
+    // shape. The control's own authored id is carried onto the cell for the same reason a handle's
+    // room carries its own address (see RoomCell.mechanismId): one uniform rule, not a
+    // control-only exception.
+    // THE FLOOR KEYS A GATE ALSO ASKS FOR, as the key ids their sections' own doors want — so the key a
+    // player carries to the section is the key that owns this door beside its controls.
+    const floorKeysOfGate = (obstacleId: string): Pick<RoomSpec, "requiredKeyIds"> => {
+      const obstacle = (authoredConfig.obstacles ?? []).find(o => o.id === obstacleId)
+      const keyIds = (obstacle?.kind === "gate" ? (obstacle.floorKeys ?? []) : []).flatMap(address =>
+        chains.flatMap(chain =>
+          addresses.of.get(chain.positional) === address && chain.keyNodeId ? [chain.keyNodeId] : []
+        )
+      )
+      return keyIds.length > 0 ? { requiredKeyIds: keyIds } : {}
+    }
+    // One entrance's door of a region barrier: a family-less gate room like any other, so it draws as bars
+    // and `openWaysOut` hands its corridor back once its owners open it. `regionBarrier` is what tells it
+    // from an edge gate, and which of its barrier's doors it is.
+    const regionBarrierDoorSpec = (id: string, region: string, entrance: string): RoomSpec => ({
+      roomType: "encounter",
+      tags: [...keyGate.tags, "region-barrier"],
+      requiredKeyId: gateKeyOf(id),
+      ...floorKeysOfGate(id),
+      regionBarrier: { region, entrance },
+    })
+    const controlRoomSpec = (control: StatefulControl, record: MechanismRecord): RoomSpec => ({
+      roomType: "encounter",
+      ...mechanismRoom(resolveEncounter(control.encounter, DEFAULT_CONTROL_ROLE)),
+      mechanism: record,
+      mechanismId: control.id,
+    })
+    // THE ROOMS A SIDE SECTION IS MADE OF, written once for a branch and for a section filled into laid nodes.
+    const puzzleRoomSpec = (section: SideSection | SubSection, positional: string, pi: number): RoomSpec => {
+      const reward = section.rewards?.[pi]
+      const override = section.encountersByIndex?.[pi]
+      const family =
+        override !== undefined ? resolveEncounter(override, "puzzle") : resolveEncounter(section.encounter, "puzzle")
+      const requiredKeyIds = resolveKeyRequirements(family.familyId, {
+        ...floorRef,
+        pathIndex: pi,
+        encounterArgs: section.encounterArgs,
+      })
+      const boardIndex = resolveBoardIndex?.(family.familyId, { section: positional, pathIndex: pi })
+      return {
+        roomType: "encounter",
+        // Never inherits the floor's own tableau encounter — tableaus consume hieroglyph
+        // symbols the player may not have yet, so a side path stays sumplete (the "puzzle"
+        // tag's default) unless it explicitly opts into a different family itself.
+        family: family.familyId,
+        tags: family.tags,
+        pathIndex: pi,
+        ...(boardIndex !== undefined ? { boardIndex } : {}),
+        ...(section.encounterArgs !== undefined ? { encounterArgs: section.encounterArgs } : {}),
+        difficulty: section.difficulty,
+        ...(section.theme !== undefined ? { theme: section.theme } : {}),
+        ...(section.role !== undefined ? { role: section.role } : {}),
+        ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
+        ...(reward ? { reward } : {}),
+      }
+    }
+    const endRoomSpec = (
+      section: SideSection | SubSection,
+      positional: string,
+      keyHostColors: readonly KeyColor[],
+      [er, ec]: [number, number]
+    ): RoomSpec => {
+      if (keyHostColors.length > 0)
+        return {
+          roomType: "encounter",
+          family: treasureChest.familyId,
+          tags: treasureChest.tags,
+          reward: { type: "tombKey", keyId: nid(er, ec) },
+          ...(keyHostColors.length === 1 ? { keyColor: keyHostColors[0] } : {}),
+          ...(keyHostColors.length > 1 ? { keyColors: [...keyHostColors] } : {}),
+        }
+      if (section.end === "staircase" || typeof section.end === "object") {
+        const stairId = typeof section.end === "object" ? section.end.stairId : stairOnThisFloor(positional)
+        return { roomType: "portal", stairId }
+      }
+      // A shop is a chain whose resolved encounter is fez-shop (a pathPuzzles:0 node — no chain of
+      // its own, so `encounter` describes this end node). It renders its `rewards[]` as buyable
+      // stock; a plain end renders its single endReward. Shop-off → encounter didn't resolve to
+      // fez-shop → falls back to a treasure chest here.
+      const isShop =
+        section.encounter !== undefined && resolveEncounter(section.encounter, "treasure").familyId === fezShop.familyId
+      return {
+        roomType: "encounter",
+        family: isShop ? fezShop.familyId : treasureChest.familyId,
+        tags: isShop ? fezShop.tags : treasureChest.tags,
+        ...(isShop ? { stock: section.rewards ?? [] } : section.endReward ? { reward: section.endReward } : {}),
+      }
+    }
     const cellSectionHash = new Map<string, string>()
+    // The section hash a filled-in room carries, which is its section's and never the ground's it stands on.
+    const absorbedHash = new Map<string, { hash: string; legacy: string }>()
     /**
      * WHICH AUTHORED SECTION each cell belongs to — `main`, `s0`, `s0.1`. What the author steers, and
      * so what a save files the cell under: where the builder hangs a sidepath along the main walk, and
@@ -1117,6 +2607,33 @@ export const assembleFloor = (
     // gate or trap, sub-sections included. A door is allowed if it is intended, or if neither endpoint
     // is gated.
     const gatedCellKeys = new Set<string>()
+    // WHICH DOORS MUST BE EARNED TO STAND ON A CELL, not merely whether any must. A one-way drop may
+    // run inside what a door shuts off, or out of it, but never into ground shut by a door the cell it
+    // falls from does not already stand behind: being past one door earns nothing toward another.
+    //
+    // One notion covering every door on the floor: the authored gates and traps, written here in the
+    // same three places as `gatedCellKeys` by the positional ids `s0`/`s0.1` addresses already use,
+    // and the doors a reserved junction's switch mints, added once the carve is settled below.
+    const doorsToEnter = new Map<string, Set<string>>()
+    const needsDoor = (cellKey: string, door: string) =>
+      doorsToEnter.set(cellKey, (doorsToEnter.get(cellKey) ?? new Set()).add(door))
+    /** The doors between the way in and a cell — empty for ground the player reaches unimpeded. */
+    const standsBehind = (cellKey: string): ReadonlySet<string> => doorsToEnter.get(cellKey) ?? new Set()
+
+    // A SECOND, STRUCTURAL NOTION OF "BEHIND" — populated below (alongside `gatedCellKeys`, once
+    // `cellRegion` is settled) from EVERY connection `regionLayout` declares, gated or not, never
+    // from `gateObstacles`. `gatedCellKeys`/`doorsToEnter` above answer "has the player earned a REAL
+    // key" (oneWay's own check, further down, has to ask exactly that — a drop landing behind an
+    // ungated seam has earned nothing and must not trip it). This one answers "do two regions meet
+    // ONLY here" — a question `regionLayout` alone can settle, so a stray tree edge that would bridge
+    // two regions elsewhere is refused whether or not the topology mod ever gates that seam. Kept
+    // apart rather than folded into `doorsToEnter` for that reason: merging them would make an
+    // UNGATED seam look, to the oneWay check, like a real door nothing has been earned toward.
+    const seamCellKeys = new Set<string>()
+    const seamDoorsToEnter = new Map<string, Set<string>>()
+    const needsSeamDoor = (cellKey: string, door: string) =>
+      seamDoorsToEnter.set(cellKey, (seamDoorsToEnter.get(cellKey) ?? new Set()).add(door))
+    const standsBehindSeam = (cellKey: string): ReadonlySet<string> => seamDoorsToEnter.get(cellKey) ?? new Set()
     const intendedEdgeKeys = new Set<string>()
     const markChain = (attachedAt: [number, number], chainCells: Array<[number, number]>) => {
       let [pr, pc] = attachedAt
@@ -1134,37 +2651,59 @@ export const assembleFloor = (
     // step past what guards it. A gate asks for it, and `sealed` asks for it on an ordinary visible
     // path — which is how a trap gets it too: world-gen writes `sealed` on the section it gives a
     // trap to (placeEncounters), so nothing here has to read an encounter to lay out a floor. A
-    // sub-section inherits its parent's isolation — reaching it means going through the parent
-    // either way.
+    // chain stands behind its own door AND every ancestor's, each written only where it exists:
+    // reaching it means going through the parent either way, so a chain with no gate of its own is no
+    // further in than its parent is.
     //
-    // Named once because the section hash records exactly this boolean, so hash and layout cannot
-    // drift apart: a floor forgets a run's progress only when its corridors really changed.
-    const sideIsolated = (idx: number): boolean => Boolean(sideSections[idx].gate) || Boolean(sideSections[idx].sealed)
-    const subIsolated = (parentIdx: number, sub: SubSection): boolean =>
-      sideIsolated(parentIdx) || Boolean(sub.gate) || Boolean(sub.sealed)
+    // A chain's doors are named once (`doorsShutting`) because the section hash records exactly
+    // whether there are any, so hash and layout cannot drift apart: a floor forgets a run's progress
+    // only when its corridors really changed.
+    //
     // Every consecutive main-path edge is already `intended` above, so isolating the main path only
     // blocks *extra* leftover edges that would merge a shortcut around a puzzle room.
     const mainIsolated = Boolean(config.sealed)
 
     if (mainIsolated) {
-      for (const [r, c] of mainPath) gatedCellKeys.add(posKey(r, c))
-    }
-    for (const group of sectionGroups) {
-      markChain(group.attachedAt, group.cells)
-      if (sideIsolated(group.sectionIdx)) {
-        for (const [r, c] of group.cells) gatedCellKeys.add(posKey(r, c))
+      for (const [r, c] of mainPath) {
+        gatedCellKeys.add(posKey(r, c))
+        needsDoor(posKey(r, c), MAIN_SECTION_ADDRESS)
       }
     }
-    for (const sub of subSectionGroups) {
-      markChain(sub.attachedAt, sub.cells)
-      if (subIsolated(sub.parentSectionIdx, sub.subSection)) {
-        for (const [r, c] of sub.cells) gatedCellKeys.add(posKey(r, c))
+    // The ways a lock laid are walked ways, every one of them.
+    for (const key of laid?.passages ?? []) intendedEdgeKeys.add(key)
+    // Ground a stray maze edge may not leave: a path hung off laid ground answers to the ground it hangs from.
+    const groundOfCell = new Map<string, string>(laid?.ground)
+    for (const chain of chains) {
+      if (laid && !chain.laid) {
+        const ground = groundOfCell.get(posKey(chain.attachedAt[0], chain.attachedAt[1]))
+        if (ground !== undefined) for (const [r, c] of chain.cells) groundOfCell.set(posKey(r, c), ground)
+      }
+      markChain(chain.attachedAt, chain.cells)
+      if (chain.doors.length === 0) continue
+      for (const [r, c] of chain.cells) {
+        gatedCellKeys.add(posKey(r, c))
+        for (const door of chain.doors) needsDoor(posKey(r, c), door)
       }
     }
     const edgeAllowed = (r: number, c: number, nr: number, nc: number): boolean => {
       if (!passages.has(pkey(r, c, nr, nc))) return false
       if (intendedEdgeKeys.has(pkey(r, c, nr, nc))) return true
-      return !gatedCellKeys.has(posKey(r, c)) && !gatedCellKeys.has(posKey(nr, nc))
+      const hereKey = posKey(r, c)
+      const thereKey = posKey(nr, nc)
+      // A leftover edge on a laid floor stays inside one stretch of ground, so it can neither join two
+      // regions the lock keeps apart nor go round a door.
+      if (laid && groundOfCell.get(hereKey) !== groundOfCell.get(thereKey)) return false
+      const gateClear =
+        (!gatedCellKeys.has(hereKey) && !gatedCellKeys.has(thereKey)) ||
+        crossesNoDoor(standsBehind(hereKey), standsBehind(thereKey))
+      if (!gateClear) return false
+      // STRUCTURAL check, asked whether or not the topology mod gates anything here (see
+      // `seamCellKeys` above) — so a stray edge that would bridge two regions gets refused the
+      // identical way whether or not an obstacle happens to stand at their one real seam.
+      return (
+        (!seamCellKeys.has(hereKey) && !seamCellKeys.has(thereKey)) ||
+        crossesNoDoor(standsBehindSeam(hereKey), standsBehindSeam(thereKey))
+      )
     }
 
     // Which tier each cell's own section was authored at, so a passage into a pocket of another
@@ -1181,54 +2720,237 @@ export const assembleFloor = (
       cellDressing.set(posKey(r, c), { props: config.decorations, wall: config.wallDecorations })
       cellDifficulty.set(posKey(r, c), config.difficulty)
     }
-    for (const group of sectionGroups) {
-      const sHash = computeSideSectionHash(
-        sideSections[group.sectionIdx],
-        group.sectionIdx,
-        sideIsolated(group.sectionIdx),
-        config
-      )
-      const legacyHash = computeLegacySideSectionHash(sideSections[group.sectionIdx], group.sectionIdx)
-      const isHidden = hiddenSectionIdxs.has(group.sectionIdx)
-      const pools: DressingPools = {
-        props: sideSections[group.sectionIdx].decorations,
-        wall: sideSections[group.sectionIdx].wallDecorations,
+    const cellRegion = new Map<string, string>()
+    mainPath.forEach(([r, c], step) => {
+      const region = stepRegion[step]
+      if (region !== undefined) cellRegion.set(posKey(r, c), region)
+    })
+    const gateAtCell = new Map([...(laid?.gateDoor ?? [])].map(([id, cell]) => [cell, id] as const))
+    let laidOrdinal = 0
+    for (const chain of chains) {
+      const { section, cells, positional, idx, parentIdx, doors, hidden, attachedAt } = chain
+      // A stretch the lock laid takes its labels, its address and its hash from the regions it crosses, so a
+      // re-carve that moves the stretch moves nothing a save was filed under.
+      if (laid && chain.laid) {
+        cells.forEach(([r, c], step) => {
+          const key = posKey(r, c)
+          const region = laid.label.get(key)!
+          cellOrdinal.set(key, String(laidOrdinal++))
+          cellSectionAddress.set(key, `lock:${region}`)
+          cellRegion.set(key, region)
+          cellSectionHash.set(key, String(hashString(`lock|${region}`)))
+          cellLegacySectionHash.set(key, String(hashString(`lock|${region}|legacy`)))
+          cellDressing.set(key, { props: config.decorations, wall: config.wallDecorations })
+          cellDifficulty.set(key, config.difficulty)
+          const gate = gateAtCell.get(key)
+          if (gate !== undefined) chainGateIndexByObstacle.set(gate, { idx, cellIndex: step })
+        })
+        continue
       }
-      const sectionTier = sideSections[group.sectionIdx].difficulty
-      group.cells.forEach(([r, c], step) => cellOrdinal.set(posKey(r, c), String(step)))
-      const groupAddress = addresses.of.get(`s${group.sectionIdx}`) ?? `s${group.sectionIdx}`
-      group.cells.forEach(([r, c]) => cellSectionAddress.set(posKey(r, c), groupAddress))
-      for (const [r, c] of group.cells) {
-        cellSectionHash.set(posKey(r, c), sHash)
-        cellLegacySectionHash.set(posKey(r, c), legacyHash)
-        cellDressing.set(posKey(r, c), pools)
-        cellDifficulty.set(posKey(r, c), sectionTier)
-        if (isHidden) hiddenCellPositions.add(posKey(r, c))
-      }
-    }
-    for (const { subSection, cells, parentSectionIdx, subSectionIdx } of subSectionGroups) {
-      const sHash = computeSideSectionHash(
-        subSection,
-        subSectionIdx,
-        subIsolated(parentSectionIdx, subSection),
-        config,
-        parentSectionIdx
-      )
-      const legacyHash = computeLegacySideSectionHash(subSection, subSectionIdx, parentSectionIdx)
+      const sHash = computeSideSectionHash(section, idx, doors.length > 0, config, parentIdx)
+      const legacyHash = computeLegacySideSectionHash(section, idx, parentIdx)
+      const pools: DressingPools = { props: section.decorations, wall: section.wallDecorations }
+      const address = addresses.of.get(positional) ?? positional
       cells.forEach(([r, c], step) => cellOrdinal.set(posKey(r, c), String(step)))
-      const subAddress =
-        addresses.of.get(`s${parentSectionIdx}.${subSectionIdx}`) ?? `s${parentSectionIdx}.${subSectionIdx}`
-      cells.forEach(([r, c]) => cellSectionAddress.set(posKey(r, c), subAddress))
+      cells.forEach(([r, c]) => cellSectionAddress.set(posKey(r, c), address))
+      // A top-level chain matched to an off-route component (chainRegionsBySectionIdx, above) seats
+      // that component's OWN regions across its cells — nearest the mouth first — the same way
+      // `regionOfStep` deals the main route across the main path; re-using it here is what keeps a
+      // chain's region always in the order its component declared, regardless of how many cells the
+      // carve gave it. Every other chain keeps today's behaviour: it belongs to the region it grows
+      // from, whole.
+      const chainRecord = parentIdx === undefined ? chainRegionsBySectionIdx.get(idx) : undefined
+      const hostedRegions = chainRecord?.regions
+      if (hostedRegions) {
+        const perCell = regionOfStep(hostedRegions, cells.length)
+        cells.forEach(([r, c], step) => {
+          const region = perCell[step]
+          if (region !== undefined) cellRegion.set(posKey(r, c), region)
+        })
+        // AN OFF-ROUTE OBSTACLE SEATS ON THIS CHAIN'S OWN STEP LIST the identical way a main-path one
+        // seats on `stepRegion` above — the same `seamIndexFor`, asked of `perCell` instead — prefixed
+        // with the chain's own mouth (the on-route region a step of `perCell` never itself carries, a
+        // cell being main path or side path but never both) so a gate at the mouth's own boundary asks
+        // the same question as one further in. `cellIndex` is one less than the step `seamIndexFor`
+        // answers, since the mouth is a virtual step ahead of `cells[0]`.
+        const extendedStepRegion = [chainRecord!.mouth, ...perCell]
+        // A run's gates stand in the order stated: the one nearest the mouth on the seam, the rest on later
+        // cells of the far region, never on the chain's end room, which is reserved. A chain too short to
+        // seat them all fails the attempt, since a wider chain may.
+        for (const run of offRouteRuns) {
+          if (run.gates.some(gate => chainGateIndexByObstacle.has(gate.id))) continue
+          const taken = new Set(
+            [...chainGateIndexByObstacle.values()].filter(loc => loc.idx === idx).map(loc => loc.cellIndex)
+          )
+          const steps = seatBarrierRun(
+            extendedStepRegion,
+            run.between,
+            run.gates.length,
+            step => step - 1 < cells.length - 1 && !taken.has(step - 1)
+          )
+          if (!steps) {
+            if (seamIndexFor(extendedStepRegion, run.between) !== undefined && !barriersShort)
+              barriersShort = { between: [run.between[0], run.between[1]], barriers: run.gates.map(gate => gate.id) }
+            continue
+          }
+          run.gates.forEach((gate, i) => chainGateIndexByObstacle.set(gate.id, { idx, cellIndex: steps[i] - 1 }))
+        }
+      } else {
+        const grownFrom = cellRegion.get(posKey(attachedAt[0], attachedAt[1]))
+        if (grownFrom !== undefined) for (const [r, c] of cells) cellRegion.set(posKey(r, c), grownFrom)
+      }
       for (const [r, c] of cells) {
         cellSectionHash.set(posKey(r, c), sHash)
         cellLegacySectionHash.set(posKey(r, c), legacyHash)
-        cellDressing.set(posKey(r, c), { props: subSection.decorations, wall: subSection.wallDecorations })
-        cellDifficulty.set(posKey(r, c), subSection.difficulty)
+        cellDressing.set(posKey(r, c), pools)
+        cellDifficulty.set(posKey(r, c), section.difficulty)
+        if (hidden) hiddenCellPositions.add(posKey(r, c))
       }
     }
 
+    // A DECLARED REGION NO CELL EVER TOOK, checked once `cellRegion` is fully settled — the only point
+    // a side chain's own length is known, so this is the one region check that cannot run before the
+    // carve (docs/game-design/regions-and-containers.md, "one refusal necessarily runs after the
+    // carve"). Two ways here: a side chain shorter than the component matched to it, so `regionOfStep`
+    // seated the near end and left the rest off (same shortfall the main path's `unseated` check above
+    // catches for the route, one carve later); or more off-route components than the floor authors
+    // top-level side sections for, so `chainRegionsBySectionIdx` never matched one at all. Retried
+    // rather than refused outright: a later attempt may grow the floor a longer or extra side path.
+    if (regionLayout) {
+      const seated = new Set(cellRegion.values())
+      const stillUnseated = regionLayout.regions.map(r => r.name).filter(name => !seated.has(name))
+      if (stillUnseated.length > 0) {
+        if (!unseatedRegions) unseatedRegions = stillUnseated
+        continue
+      }
+    }
+
+    // AN OFF-ROUTE OBSTACLE'S OWN SEAM, checked here for the same reason the region check just above
+    // is: a chain's own cells, and so its seam, exist only once the carve produces them. Retried the
+    // same way `gateSeamMissing` is above — a region the chain never got to seat (caught by
+    // `unseatedRegions` first, on an earlier attempt of its own) is one cause; a genuinely un-carved
+    // seam within an otherwise-seated chain, this task's own reason for existing, is the other.
+    const offRouteGates = laid
+      ? gateObstacles.filter(o => !gateIndexByObstacle.has(o.id))
+      : offRouteRuns.flatMap(run => run.gates)
+    if (chainGateIndexByObstacle.size < offRouteGates.length) {
+      if (barriersShort) continue
+      if (!gateSeamMissing)
+        gateSeamMissing = offRouteGates.filter(o => !chainGateIndexByObstacle.has(o.id)).map(o => o.id)
+      continue
+    }
+    // A GATE AT A CHAIN'S OWN LAST CELL WOULD STAND WHERE THE END ROOM MUST — every chain reserves
+    // that cell unconditionally (below), the same way the main path's own last index is reserved for
+    // the exit and excluded from every dynamic placement (`gateIndices`, content, controls all stop
+    // one short of it). Retried rather than refused: a wider chain, which `chainPacking` grows across
+    // the attempt budget the same way `packing` grows the main path, may leave room past it.
+    const chainGateCrowdsEnd = [...chainGateIndexByObstacle.values()].some(({ idx, cellIndex }) => {
+      const host = chains.find(c => c.parentIdx === undefined && c.idx === idx)
+      return !host?.laid && cellIndex === (host?.cells.length ?? 0) - 1
+    })
+    if (chainGateCrowdsEnd) continue
+
+    // A CELL IN A GATED REGION STANDS BEHIND EVERY OBSTACLE BOUNDING IT, written into the same map
+    // the authored gates and traps use — so a one-way falling into a gated region, a stray tree edge
+    // beside one and the fog are all answered by one notion of "what must be earned to stand here".
+    // Read once `cellRegion` is fully settled (main path AND chains, a chain inheriting its host's
+    // region above), so a chain grown inside a gated region is gated with it. GATES only: a one-way's
+    // `between` is typically not even a real connection of the layout, so asking `doorsToEnterRegion`
+    // to remove it would at best be a no-op and at worst — where a drop's ends happen to coincide with
+    // a real connection — misread a shortcut as a door nothing on the floor actually bars.
+    const regionDoors = regionLayout ? doorsToEnterRegion(regionLayout, gateObstacles) : undefined
+    if (regionDoors)
+      for (const [cellKey, region] of cellRegion) {
+        for (const id of regionDoors.get(region) ?? []) {
+          gatedCellKeys.add(cellKey)
+          needsDoor(cellKey, gateKeyOf(id))
+        }
+      }
+    // THE STRUCTURAL TWIN OF THE MARKING ABOVE — every connection `regionLayout` declares stands in
+    // for an obstacle here, gated or not, so `edgeAllowed`'s bypass check (above) reserves the same
+    // stray edges whether or not the topology mod is in the build. `id` is a seam's own name, never
+    // an authored obstacle's — it never reaches `gateKeyOf` or a room's `requiredKeyId`, only
+    // `standsBehindSeam`'s set-equality check.
+    const asSeamObstacle = ([a, b]: readonly [string, string]): Obstacle => ({
+      id: `seam:${a}::${b}`,
+      kind: "gate",
+      at: { on: "connection", between: [a, b] },
+    })
+    const regionSeamDoors = regionLayout
+      ? doorsToEnterRegion(regionLayout, regionLayout.connections.map(asSeamObstacle))
+      : undefined
+    if (regionSeamDoors)
+      for (const [cellKey, region] of cellRegion) {
+        for (const id of regionSeamDoors.get(region) ?? []) {
+          seamCellKeys.add(cellKey)
+          needsSeamDoor(cellKey, id)
+        }
+      }
+
     // Collect branch junction cells (become fork nodes)
-    const forkPositions = new Set(sectionGroups.map(g => posKey(g.attachedAt[0], g.attachedAt[1])))
+    const forkPositions = new Set([
+      ...sectionGroups.map(g => posKey(g.attachedAt[0], g.attachedAt[1])),
+      ...(laid?.chains ?? []).flatMap(chain =>
+        chain.attachedAt ? [posKey(chain.attachedAt[0], chain.attachedAt[1])] : []
+      ),
+    ])
+    // A fork always sits ON the main path (attachedAt is always a mainPath cell — see the
+    // candidateSources above), so this is how a fork tells its two main-path neighbours from
+    // everything else it opens onto. The INDEX, not mere membership: `passages` spans the whole
+    // lattice, so two main-path cells far apart along the walk can be tree-adjacent through an edge
+    // no chain walked (see "Gate isolation" below), and plain membership would read that stray door
+    // as the path continuing.
+    const mainPathIndexByKey = new Map(mainPath.map(([r, c], i) => [posKey(r, c), i]))
+
+    // What lies one node away, read off the NEIGHBOUR's own kind rather than inferred from this cell.
+    const exitKindOf = (cellKey: string, neighborKey: string): "main" | "side" | "ward" | "fork" => {
+      if (forkPositions.has(neighborKey)) return "fork"
+      if (roomSpecs.get(neighborKey)?.gateVariant === "tomb-key") return "ward"
+      const mi = mainPathIndexByKey.get(cellKey)
+      const neighborMi = mainPathIndexByKey.get(neighborKey)
+      return mi !== undefined && neighborMi !== undefined && Math.abs(mi - neighborMi) === 1 ? "main" : "side"
+    }
+
+    // Every way out of one node — the passages it actually has, to the node two cells away (NODE_STEP
+    // above).
+    const nodeExitsOf = (cellKey: string) => {
+      const [r, c] = cellKey.split(",").map(Number)
+      const out: { dir: Direction; neighborKey: string }[] = []
+      for (const [dr, dc, d] of CONNECTOR_DIRS) {
+        const nr = r + dr,
+          nc = c + dc
+        if (nr < 0 || nr >= N || nc < 0 || nc >= N) continue
+        if (!usedCells.has(`${nr},${nc}`) || !edgeAllowed(r, c, nr, nc)) continue
+        out.push({ dir: d, neighborKey: posKey(nr, nc) })
+      }
+      return out
+    }
+
+    // A SECTION FILLED INTO LAID NODES KEEPS ITS OWN IDENTITY ON ITS ROOMS: the section's address, its slots and
+    // its hash are the ones it would have as a branch, so a save filed under them survives a re-carve that
+    // moves the room to another node. The ground between the rooms stays the lock's.
+    for (const { section: idx, cells: nodes } of laid?.absorbed ?? []) {
+      const section = sideSections[idx]
+      const positional = `s${idx}`
+      const own = {
+        hash: computeSideSectionHash(section, idx, false, config, undefined),
+        legacy: computeLegacySideSectionHash(section, idx, undefined),
+      }
+      nodes.forEach((cellKey, i) => {
+        const [r, c] = cellKey.split(",").map(Number)
+        const spec =
+          i < section.pathPuzzles
+            ? puzzleRoomSpec(section, positional, i)
+            : endRoomSpec(section, positional, chainKeyColorMap.get(idx) ?? [], [r, c])
+        roomSpecs.set(cellKey, {
+          ...spec,
+          sectionAddress: addresses.of.get(positional) ?? positional,
+          difficulty: section.difficulty,
+        })
+        absorbedHash.set(cellKey, own)
+        cellDressing.set(cellKey, { props: section.decorations, wall: section.wallDecorations })
+      })
+    }
 
     // Main path nodes — spread across the full path per contentIndices/goalIndex above;
     // everything else along mainPath is left unassigned and falls through to plain corridor.
@@ -1239,7 +2961,7 @@ export const assembleFloor = (
       const [r, c] = mainPath[mi]
       if (mi === 0) {
         if (config.entrance) {
-          const stairId = typeof config.entrance === "object" ? config.entrance.stairId : `${siteId}:entrance`
+          const stairId = typeof config.entrance === "object" ? config.entrance.stairId : stairOnThisFloor("entrance")
           roomSpecs.set(posKey(r, c), { roomType: "portal", stairId })
         } else {
           roomSpecs.set(posKey(r, c), { roomType: "portal" })
@@ -1251,6 +2973,26 @@ export const assembleFloor = (
           tags: treasureChest.tags,
           ...(config.mainEndReward ? { reward: config.mainEndReward } : {}),
         })
+      } else if (gateIndices.has(mi)) {
+        const [obstacleId] = [...gateIndexByObstacle].find(([, index]) => index === mi)!
+        roomSpecs.set(posKey(r, c), {
+          roomType: "encounter",
+          // A gate a control owns has no interaction of its own: the interaction is at the control, and
+          // the gate only shows or hides. No family means nothing stands in it to enter or tap, it draws
+          // as bars from its tags, and `openWaysOut` gives the cell back its corridor while its control
+          // holds it open.
+          tags: keyGate.tags,
+          requiredKeyId: gateKeyOf(obstacleId),
+          ...floorKeysOfGate(obstacleId),
+        })
+      } else if (barrierDoorOnMain.has(mi)) {
+        const { id, region, entrance } = barrierDoorOnMain.get(mi)!
+        roomSpecs.set(posKey(r, c), regionBarrierDoorSpec(id, region, entrance))
+      } else if (mi === leverIndex) {
+        roomSpecs.set(posKey(r, c), leverSpec(MAIN_SECTION_ADDRESS))
+      } else if (controlAtIndex.has(mi)) {
+        const { control, record } = controlAtIndex.get(mi)!
+        roomSpecs.set(posKey(r, c), controlRoomSpec(control, record))
       } else if (puzzleRole.has(mi)) {
         const k = puzzleRole.get(mi)!
         // Per-node override (authored `nodes` selectors, e.g. the last room's capstone) if this
@@ -1283,7 +3025,9 @@ export const assembleFloor = (
       }
     }
 
-    // Corridor cells that are branch junctions become fork nodes too
+    // Corridor cells that are branch junctions become fork nodes too. A junction that already holds a
+    // main-path room stays that room: the carve is free to hang a side section off the entrance, off a
+    // puzzle or off the goal chest, and none of those is a place the player chooses a way out from.
     for (const pk of forkPositions) {
       if (!roomSpecs.has(pk)) roomSpecs.set(pk, { roomType: "fork" })
     }
@@ -1292,31 +3036,93 @@ export const assembleFloor = (
     if (config.exitOrStaircase === "exit") {
       roomSpecs.set(posKey(exR, exC), { roomType: "portal" })
     } else {
-      const stairId = typeof config.exitOrStaircase === "object" ? config.exitOrStaircase.stairId : `${siteId}:main`
+      const stairId =
+        typeof config.exitOrStaircase === "object" ? config.exitOrStaircase.stairId : stairOnThisFloor("main")
       roomSpecs.set(posKey(exR, exC), { roomType: "portal", stairId })
     }
 
-    // Section nodes
-    for (const group of sectionGroups) {
-      const { sectionIdx, cells } = group
-      const section = sideSections[sectionIdx]
+    // AN OFF-ROUTE CONTROL'S OWN SEATING, found chain by chain below as each one's own content is
+    // placed — a control's region may sit on any chain, so this is bookkeeping shared across every
+    // iteration of the loop, checked complete only once every chain has had its turn.
+    const chainControlSeated = new Set<string>()
+    const sawChainContentCandidate = new Set<string>()
+    // EVERY DOOR OF EVERY REGION BARRIER, as the cells they stand on, grouped by barrier — the main path's
+    // here, a side path's added as its chain is carved. A barrier with no entry once every chain has had its
+    // turn found no chain to host its region.
+    const barrierDoorCells = new Map<string, string[]>()
+    for (const [step, { id }] of barrierDoorOnMain)
+      barrierDoorCells.set(id, [...(barrierDoorCells.get(id) ?? []), posKey(mainPath[step][0], mainPath[step][1])])
+
+    // CHAIN NODES: the gate at the head where one guards the way in, a lever behind it where one
+    // stands there, the chain's own content spread through whatever room the carve gave it, and its
+    // end room. One body for a path off the main walk and a path off one of those — the two differ
+    // only in what the chain record already carries.
+    const regionDoorAt = new Map((laid?.regionDoors ?? []).map(door => [door.cell, door] as const))
+    for (const { section, cells, positional, idx, parentIdx, keyNodeId, keyHostColors, laid: laidChain } of chains) {
+      // A stretch a lock laid ends where the lock does, so it holds no end room and may seat on its last node.
+      const seatable = laidChain ? cells.length : cells.length - 1
+      const laidDoorIdx = new Set(
+        laidChain ? cells.flatMap(([r, c], i) => (regionDoorAt.has(posKey(r, c)) ? [i] : [])) : []
+      )
       const isFloorKeyGate = section.gate?.type === "floor-key"
       const isTombKeyGate = section.gate?.type === "tomb-key"
-      const keyNodeId = isFloorKeyGate ? keyNodeIdMap.get(sectionIdx) : undefined
+      // An authored keyId is used verbatim; only an unauthored gate looks up the id the
+      // key-host chain above assigned it.
+      const authoredKeyId = isFloorKeyGate ? (section.gate as { keyId?: string }).keyId : undefined
 
+      // AN OFF-ROUTE OBSTACLE'S GATE ROOM — this chain's own cell indices from `chainGateIndexByObstacle`
+      // (filled once, above, alongside `cellRegion`), written the identical way a main-path gate's is
+      // (`gateKeyOf`/`keyGate`, below): furniture the topology mod stands on a connection, wired to
+      // whichever control opens it. A different authoring vocabulary from the floor-key/tomb-key gate
+      // below, standing at a different node — UNLESS this chain's own mouth is where an obstacle
+      // seats, which always resolves to this same `cells[0]` the floor-key/tomb-key block claims; that
+      // combination is refused by name before a single wall is carved
+      // (`chainGateCollidesWithSectionGate`, above the attempt loop), so writing both here never has to
+      // decide which one wins.
+      //
+      // `parentIdx === undefined` is checked alongside `idx`, not just `idx` alone: `chainGateIndexByObstacle`
+      // only ever keys by a TOP-LEVEL chain's own `idx` (populated only where `hostedRegions` is,
+      // which itself requires `parentIdx === undefined`, above) — but a sub-chain's `idx` numbers its
+      // position among its OWN parent's sub-sections, starting from 0 the same as a top-level chain's
+      // does, so `idx` alone can coincide between a top-level chain and an unrelated sub-chain.
+      const chainGateIndices = new Set<number>()
+      if (parentIdx === undefined) {
+        for (const [obstacleId, loc] of chainGateIndexByObstacle) {
+          if (loc.idx !== idx) continue
+          chainGateIndices.add(loc.cellIndex)
+          const [gr, gc] = cells[loc.cellIndex]
+          roomSpecs.set(posKey(gr, gc), {
+            roomType: "encounter",
+            // Owned by a control, so nothing stands in it (see the main path's obstacle gate).
+            tags: keyGate.tags,
+            requiredKeyId: gateKeyOf(obstacleId),
+            ...floorKeysOfGate(obstacleId),
+          })
+        }
+      }
       let contentStart = 0
 
-      // Gate node occupies cells[0] for gated sections
+      // Gate node occupies cells[0] for gated chains
       if (isFloorKeyGate && keyNodeId) {
         const [gr, gc] = cells[0]
         const floorKeyGate = section.gate as { type: "floor-key"; color?: KeyColor }
         roomSpecs.set(posKey(gr, gc), {
           roomType: "encounter",
-          family: keyGate.familyId,
+          // A lever's door wears the bars and holds nothing to enter or tap — see `isHandleGate`.
+          ...(isHandleGate(positional) ? {} : { family: keyGate.familyId }),
           tags: keyGate.tags,
           requiredKeyId: keyNodeId,
           gateVariant: "floor-key",
-          keyColor: floorKeyGate.color ?? "blue",
+          // The colour is the sign saying which CHEST on this floor holds the key. An authored key is
+          // minted by a room instead and grows no chest, so defaulting one here would put the door in the
+          // HUD key ring (src/game/floorKeys.ts) pointing at a chest that does not exist. An author who
+          // names a colour anyway still gets it.
+          ...(floorKeyGate.color
+            ? { keyColor: floorKeyGate.color }
+            : authoredKeyId
+              ? {}
+              : { keyColor: "blue" as const }),
+          ...(authoredKeyId ? { keyIsAuthored: true } : {}),
         })
         contentStart = 1
       } else if (isTombKeyGate) {
@@ -1332,183 +3138,427 @@ export const assembleFloor = (
         contentStart = 1
       }
 
-      // Intermediate nodes within section (puzzles/traps) — spread across whatever room
-      // `paddedChainLength` gave this chain (see spreadContentIndices), same technique as
-      // the main path, instead of assumed-consecutive from contentStart (which only ever
-      // held when a chain was exactly its bare content length).
-      const secContentIndices = spreadContentIndices(section.pathPuzzles, contentStart, cells.length)
-      for (let pi = 0; pi < section.pathPuzzles; pi++) {
-        const [r, c] = cells[secContentIndices[pi]]
-        const reward = section.rewards?.[pi]
-        const secOverride = section.encountersByIndex?.[pi]
-        const family =
-          secOverride !== undefined
-            ? resolveEncounter(secOverride, "puzzle")
-            : resolveEncounter(section.encounter, "puzzle")
-        const requiredKeyIds = resolveKeyRequirements(family.familyId, {
-          ...floorRef,
-          pathIndex: pi,
-          encounterArgs: section.encounterArgs,
-        })
-        const boardIndex = resolveBoardIndex?.(family.familyId, { section: `s${sectionIdx}`, pathIndex: pi })
-        roomSpecs.set(posKey(r, c), {
-          roomType: "encounter",
-          // Never inherits the floor's own tableau encounter — tableaus consume hieroglyph
-          // symbols the player may not have yet, so a side path stays sumplete (the "puzzle"
-          // tag's default) unless it explicitly opts into a different family itself.
-          family: family.familyId,
-          tags: family.tags,
-          pathIndex: pi,
-          ...(boardIndex !== undefined ? { boardIndex } : {}),
-          ...(section.encounterArgs !== undefined ? { encounterArgs: section.encounterArgs } : {}),
-          difficulty: section.difficulty,
-          ...(section.theme !== undefined ? { theme: section.theme } : {}),
-          ...(section.role !== undefined ? { role: section.role } : {}),
-          ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
-          ...(reward ? { reward } : {}),
-        })
+      // A TOPOLOGY GATE AT OR AHEAD OF `contentStart` CLAIMS THAT CELL TOO — advanced past exactly
+      // like a main-path gate advances `placedContent` above: the room there is the gate's, not
+      // content's, whichever authoring vocabulary put it there. Never past `cells.length - 1`, the
+      // chain's own end room, reserved unconditionally below (`chainGateCrowdsEnd` already refused an
+      // attempt where a gate would have landed there).
+      while (chainGateIndices.has(contentStart) && contentStart < cells.length - 1) contentStart += 1
+
+      // A lever stands at the head of its chain, past whatever gate guards the way in: the player
+      // reaches it before the content, and throwing it is a walk back out rather than a room solved
+      // deeper in. A gate leaving no room ahead of it at all is the same shortfall the puzzle spread
+      // below retries for, asked one node earlier. Its own index is kept (`leverIndexInChain`) so the
+      // control search below can exclude it the same way the main path's own search excludes
+      // `leverIndex`.
+      let leverIndexInChain = -1
+      if (leverRooms(positional) === 1) {
+        if (contentStart >= cells.length - 1) continue attempt
+        leverIndexInChain = contentStart
+        const [lr, lc] = cells[contentStart]
+        roomSpecs.set(posKey(lr, lc), leverSpec(positional))
+        contentStart += 1
+        while (chainGateIndices.has(contentStart) && contentStart < cells.length - 1) contentStart += 1
       }
 
-      // End node
-      const [er, ec] = cells[cells.length - 1]
-      if (chainKeyHostIdxs.has(sectionIdx)) {
-        const hColors = chainKeyColorMap.get(sectionIdx) ?? []
-        roomSpecs.set(posKey(er, ec), {
-          roomType: "encounter",
-          family: treasureChest.familyId,
-          tags: treasureChest.tags,
-          reward: { type: "tombKey", keyId: nid(er, ec) },
-          ...(hColors.length === 1 ? { keyColor: hColors[0] } : {}),
-          ...(hColors.length > 1 ? { keyColors: hColors } : {}),
-        })
-      } else if (section.end === "staircase" || typeof section.end === "object") {
-        const stairId = typeof section.end === "object" ? section.end.stairId : `${siteId}:side${sectionIdx}`
-        roomSpecs.set(posKey(er, ec), { roomType: "portal", stairId })
-      } else {
-        // A shop is a section whose resolved encounter is fez-shop (a pathPuzzles:0 node — no chain,
-        // so `encounter` describes this end node). It renders its `rewards[]` as buyable stock; a
-        // plain end renders its single endReward. Shop-off → encounter didn't resolve to fez-shop →
-        // falls back to a treasure chest here.
-        const isShop =
-          section.encounter !== undefined &&
-          resolveEncounter(section.encounter, "treasure").familyId === fezShop.familyId
-        roomSpecs.set(posKey(er, ec), {
-          roomType: "encounter",
-          family: isShop ? fezShop.familyId : treasureChest.familyId,
-          tags: isShop ? fezShop.tags : treasureChest.tags,
-          ...(isShop ? { stock: section.rewards ?? [] } : section.endReward ? { reward: section.endReward } : {}),
-        })
+      // Intermediate nodes (puzzles/traps) — spread across whatever room `paddedChainLength` gave
+      // this chain (see spreadContentIndices), same technique as the main path, instead of
+      // assumed-consecutive from contentStart (which only ever held when a chain was exactly its
+      // bare content length). Indices map through `contentIndices`, so a multi-puzzle chain indexes
+      // its own content rather than past it.
+      //
+      // A GATE CELL AND A PUZZLE CANNOT BOTH STAND IN ONE CELL EITHER, same rule and same technique
+      // as the main path's own `placedContent`: forward to the next free node, so one layout always
+      // places the same way. Runs out of room only where a gate leaves fewer free cells than this
+      // chain's own `pathPuzzles` asks for, in which case this attempt retries the same way a
+      // main-path shortfall does — a wider chain (`chainPacking`) may fit both.
+      const rawContentIndices = spreadContentIndices(section.pathPuzzles, contentStart, cells.length)
+      const contentIndices: number[] = []
+      for (const wanted of rawContentIndices) {
+        let index = wanted
+        while (index < cells.length - 1 && (chainGateIndices.has(index) || contentIndices.includes(index))) index += 1
+        if (index >= cells.length - 1) break
+        contentIndices.push(index)
       }
+      if (contentIndices.length < section.pathPuzzles) continue attempt
+
+      // A CONTROL HOSTED BY THIS CHAIN'S OWN REGION(S) — the identical search the main path's own runs
+      // above (a free node preferred; only once none is free does it take a puzzle's node, displacing
+      // that puzzle onward rather than refusing quietly), asked of this chain's own cells instead. A
+      // chain's own puzzle ordinal IS its position in `contentIndices` (`pi`, below the write loop) —
+      // displacing here only ever moves which CELL a position points at, never the position itself, so
+      // this needs no ordinal-preserving map of its own the way the main path's `puzzleRole` does.
+      const chainRegionAt = (i: number) => cellRegion.get(posKey(cells[i][0], cells[i][1]))
+      const takenByChainControl = new Set<number>()
+      for (const { control, record } of offRouteControls) {
+        if (chainControlSeated.has(control.id)) continue
+        const inThisChain = (i: number) =>
+          i < seatable &&
+          chainRegionAt(i) === control.in &&
+          !chainGateIndices.has(i) &&
+          !laidDoorIdx.has(i) &&
+          !absorbedCell.has(posKey(cells[i][0], cells[i][1])) &&
+          i !== leverIndexInChain &&
+          !takenByChainControl.has(i)
+
+        let seatIndex: number | undefined
+        for (let i = 0; i < seatable; i++) {
+          if (inThisChain(i) && !contentIndices.includes(i)) {
+            seatIndex = i
+            break
+          }
+        }
+        if (seatIndex === undefined) {
+          for (let k = 0; k < contentIndices.length; k++) {
+            const i = contentIndices[k]
+            if (!inThisChain(i)) continue
+            sawChainContentCandidate.add(control.id)
+            // `takenByChainControl` excluded here too, not just from the free-node search above: a
+            // second control's displacement destination must not land on a node a first control this
+            // same chain already seated — the same exclusion the main path's own displacement search
+            // makes against its own `takenByControl`.
+            let shifted = i + 1
+            while (
+              shifted < seatable &&
+              (chainGateIndices.has(shifted) || contentIndices.includes(shifted) || takenByChainControl.has(shifted))
+            )
+              shifted += 1
+            if (shifted >= seatable) continue // nowhere to move this one — try the chain's next content node
+            contentIndices[k] = shifted
+            seatIndex = i
+            break
+          }
+        }
+        if (seatIndex === undefined) continue // this chain hosts none of this control's region — try the next chain
+        chainControlSeated.add(control.id)
+        takenByChainControl.add(seatIndex)
+        roomSpecs.set(posKey(cells[seatIndex][0], cells[seatIndex][1]), controlRoomSpec(control, record))
+      }
+
+      // The doors a lock laid on this stretch stand where it laid them.
+      for (const i of laidDoorIdx) {
+        const [dr, dc] = cells[i]
+        const door = regionDoorAt.get(posKey(dr, dc))!
+        roomSpecs.set(posKey(dr, dc), regionBarrierDoorSpec(door.barrier, door.region, door.entrance))
+        barrierDoorCells.set(door.barrier, [...(barrierDoorCells.get(door.barrier) ?? []), posKey(dr, dc)])
+      }
+
+      // A REGION BARRIER HOSTED BY THIS CHAIN gets its doors from the cells nothing else here claims, once
+      // content and controls have settled where they stand.
+      const hostedHere = parentIdx === undefined ? chainRegionsBySectionIdx.get(idx) : undefined
+      if (hostedHere) {
+        const claimedHead = (isFloorKeyGate && keyNodeId !== undefined) || isTombKeyGate
+        const barrierCells = new Set<number>()
+        for (const barrier of regionBarriers) {
+          if (!hostedHere.regions.includes(barrier.at.region)) continue
+          const doors = seatBarrierDoors(
+            [hostedHere.mouth, ...cells.map(([cr, cc]) => cellRegion.get(posKey(cr, cc)))],
+            barrier.at.region,
+            step => {
+              const cell = step - 1
+              return (
+                cell >= (claimedHead ? 1 : 0) &&
+                cell < cells.length - 1 &&
+                !chainGateIndices.has(cell) &&
+                !contentIndices.includes(cell) &&
+                cell !== leverIndexInChain &&
+                !takenByChainControl.has(cell) &&
+                !barrierCells.has(cell)
+              )
+            }
+          )
+          if (!doors) {
+            if (!regionBarrierShort) regionBarrierShort = { id: barrier.id, region: barrier.at.region }
+            continue attempt
+          }
+          for (const { entrance, step } of doors) {
+            const [dr, dc] = cells[step - 1]
+            barrierCells.add(step - 1)
+            roomSpecs.set(posKey(dr, dc), regionBarrierDoorSpec(barrier.id, barrier.at.region, entrance))
+            barrierDoorCells.set(barrier.id, [...(barrierDoorCells.get(barrier.id) ?? []), posKey(dr, dc)])
+          }
+        }
+      }
+
+      for (let pi = 0; pi < section.pathPuzzles; pi++) {
+        const [r, c] = cells[contentIndices[pi]]
+        roomSpecs.set(posKey(r, c), puzzleRoomSpec(section, positional, pi))
+      }
+
+      // A stretch a lock laid ends with the lock's own room, or in none.
+      if (laidChain) continue
+
+      const [er, ec] = cells[cells.length - 1]
+      roomSpecs.set(posKey(er, ec), endRoomSpec(section, positional, keyHostColors, [er, ec]))
     }
 
-    // Sub-section nodes
-    for (const {
-      subSection,
-      cells,
-      keyNodeId,
-      isKeyHost,
-      keyHostColor,
-      keyHostColors,
-      parentSectionIdx,
-      subSectionIdx,
-    } of subSectionGroups) {
-      const isFloorKeyGate = subSection.gate?.type === "floor-key"
-      const isTombKeyGate = subSection.gate?.type === "tomb-key"
-      let contentStart = 0
+    // Two shortfalls, reported under the SAME names the main-path search above uses — a control that
+    // matched no chain node at all is `controlNotSeated`, one whose only candidate already held a
+    // puzzle with nowhere to move it is `controlPuzzleUndisplaceable` — kept apart the identical way,
+    // for the identical reason: a wider chain (`chainPacking`) rescues both, so both retry rather than
+    // refuse. Checked once every chain has had its turn, since a control's own region may be seated on
+    // any one of them.
+    if (chainControlSeated.size < offRouteControls.length) {
+      const stillUnseated = offRouteControls.filter(({ control }) => !chainControlSeated.has(control.id))
+      const bare = stillUnseated.filter(({ control }) => !sawChainContentCandidate.has(control.id))
+      const displaceable = stillUnseated.filter(({ control }) => sawChainContentCandidate.has(control.id))
+      if (bare.length > 0 && !controlNotSeated) controlNotSeated = bare.map(({ control }) => control.id)
+      if (displaceable.length > 0 && !controlPuzzleUndisplaceable)
+        controlPuzzleUndisplaceable = displaceable.map(({ control }) => control.id)
+      continue
+    }
 
-      if (isFloorKeyGate && keyNodeId) {
-        const [gr, gc] = cells[0]
-        const floorKeyGate = subSection.gate as { type: "floor-key"; color?: KeyColor }
-        roomSpecs.set(posKey(gr, gc), {
-          roomType: "encounter",
-          family: keyGate.familyId,
-          tags: keyGate.tags,
-          requiredKeyId: keyNodeId,
-          gateVariant: "floor-key",
-          keyColor: floorKeyGate.color ?? "blue",
+    // A BARRIER ON A REGION NO CHAIN HOSTED THIS ATTEMPT has no door at all, which is the same shortfall as
+    // one whose entrance had no free step: refused by the barrier's name rather than set anywhere else.
+    const unhostedBarrier = regionBarriers.find(barrier => !barrierDoorCells.has(barrier.id))
+    if (unhostedBarrier) {
+      if (!regionBarrierShort) regionBarrierShort = { id: unhostedBarrier.id, region: unhostedBarrier.at.region }
+      continue
+    }
+
+    // WHICH WAYS OUT A JUNCTION HAS FREE. Of the main path, only the way ONWARD: closing the way back
+    // would shut the player in with the junction. And of the rest, only the ways out that nothing
+    // already stands beyond — which is one rule and covers the two the floor cannot have. A ward's own
+    // door already claims that boundary, and a second door on one boundary is two doors in one
+    // doorway; a junction beyond a way out is one open space, and a gate would draw a wall through the
+    // middle of it. Both of those are rooms by the time this runs, and so is a side path's own gate and
+    // any room the carve hung right beside the junction. What is left — the main path onward and the
+    // side paths off this junction — is what may be closed.
+    //
+    // Nor a way out into a HIDDEN section: a gate the player can see is a statement that something is
+    // there, and a hidden section is the statement that nothing is until they find otherwise. Refused
+    // here, so the spoiler never exists rather than being swept up afterwards.
+    const freeWaysOut = (pk: string) => {
+      const onward = (mainPathIndexByKey.get(pk) ?? -1) + 1
+      return nodeExitsOf(pk).filter(({ neighborKey }) => {
+        const neighborMi = mainPathIndexByKey.get(neighborKey)
+        if (neighborMi !== undefined && neighborMi !== onward) return false
+        if (hiddenCellPositions.has(neighborKey)) return false
+        return !roomSpecs.has(neighborKey)
+      })
+    }
+
+    // WHICH JUNCTIONS THIS CARVE HOLDS FOR `forks`, in the order anything will fill them. Read off the
+    // carve and the rooms already on it, never off `switches` — which is what makes this attempt kept
+    // or rejected for the same reason whether or not a mod is here to fill them.
+    //
+    // The narrowest junction that still answers each demand, widest demand first, so a wide demand is
+    // never left with a junction too narrow for it. Two reserved junctions never share a way out: one
+    // boundary closed twice is two doors in one doorway.
+    //
+    // A `{ in }` FORK'S JUNCTION IS THE ONE LAID FOR IT, and is held out of the rest: it is proven to
+    // exit by exactly its seams — every way out of it that is not the main path is the first cell of a
+    // chain it was laid for — and a junction that does not is this attempt's shortfall, never a junction
+    // elsewhere. Read off the carve's geometry, not its rooms: a gate standing on a seam is a room, and
+    // the mod being off must not change which ways out the junction has.
+    const inForkJunctions = new Set<string>()
+    const claimedWaysOut = new Set<string>()
+    let seamsLaid = true
+    forkIns.forEach((fork, k) => {
+      const junctionIndex = junctionIdxOf[k]
+      const pk = posKey(mainPath[junctionIndex][0], mainPath[junctionIndex][1])
+      const wanted = new Set(
+        laid
+          ? laid.junctions[k].arms.map(arm => arm.first)
+          : fork.sectionIdxs.map(si => {
+              const first = chains.find(chain => chain.parentIdx === undefined && chain.idx === si)!.cells[0]
+              return posKey(first[0], first[1])
+            })
+      )
+      const sideWays = nodeExitsOf(pk)
+        .map(({ neighborKey }) => neighborKey)
+        .filter(neighborKey => {
+          const neighborIndex = mainPathIndexByKey.get(neighborKey)
+          return neighborIndex === undefined || Math.abs(neighborIndex - junctionIndex) !== 1
         })
-        contentStart = 1
-      } else if (isTombKeyGate) {
-        const [gr, gc] = cells[0]
-        const tombGate = subSection.gate as { type: "tomb-key"; wardKeyId: string }
-        roomSpecs.set(posKey(gr, gc), {
-          roomType: "encounter",
-          family: keyGate.familyId,
-          tags: keyGate.tags,
-          requiredKeyId: tombGate.wardKeyId,
-          gateVariant: "tomb-key",
-        })
-        contentStart = 1
+      const exact =
+        roomSpecs.get(pk)?.roomType === "fork" &&
+        sideWays.length === wanted.size &&
+        sideWays.every(neighborKey => wanted.has(neighborKey))
+      if (!exact) {
+        seamsLaid = false
+        if (!forkSeamShortfall) forkSeamShortfall = fork
+        return
+      }
+      inForkJunctions.add(pk)
+      for (const neighborKey of sideWays) claimedWaysOut.add(neighborKey)
+    })
+    if (!seamsLaid) continue
+    const reservedForks: string[] = []
+    for (const exits of forkDemands) {
+      const pick = [...forkPositions]
+        .filter(pk => !inForkJunctions.has(pk) && !reservedForks.includes(pk) && roomSpecs.get(pk)?.roomType === "fork")
+        .map(pk => ({ pk, ways: freeWaysOut(pk).filter(({ neighborKey }) => !claimedWaysOut.has(neighborKey)) }))
+        .filter(({ ways }) => ways.length >= exits)
+        .sort((a, b) => a.ways.length - b.ways.length)[0]
+      if (pick === undefined) {
+        const carved = [...forkPositions].filter(
+          pk => !inForkJunctions.has(pk) && roomSpecs.get(pk)?.roomType === "fork" && freeWaysOut(pk).length >= exits
+        ).length
+        const count = forkDemands.filter(demand => demand >= exits).length
+        if (!forkShortfall || carved > forkShortfall.carved) forkShortfall = { exits, count, carved }
+        break
+      }
+      reservedForks.push(pick.pk)
+      for (const { neighborKey } of pick.ways) claimedWaysOut.add(neighborKey)
+    }
+    // A junction short is an authored feature this carve cannot hold, so take another carve.
+    if (reservedForks.length < forkDemands.length) continue
+
+    // HOW MANY OF THE RESERVED JUNCTIONS END UP WITH A SWITCH IN THEM, which is also how many of them
+    // keep the doors closed below. Settled here because a drop may not land behind a door one of them
+    // is going to mint.
+    const switchesPlaced = config.switches ? Math.min(config.switches.max, reservedForks.length) : 0
+
+    // A SWITCH'S OWN DOORS ARE DOORS, and nothing authored them: `closeWaysOut` mints one per free way
+    // out once the carve is settled. Which ground each shuts off is settled here, so the drop rule
+    // below refuses a landing the player would otherwise reach without ever solving the board.
+    // Nothing but the drop rule reads them, so a floor authoring no drop is spared the walk.
+    const entranceKey = posKey(entR, entC)
+    // A ONE-WAY OBSTACLE (kind "oneWay") IS THE REGION-ADDRESSED FORM OF THE SAME DEMAND
+    // `config.oneWays` authors by section address — same carve, same shortfall, only the label it
+    // resolves `from`/`to` against differs (see the unified `oneWayDemands` below).
+    const oneWayObstacles = (authoredConfig.obstacles ?? []).filter((o): o is OneWayObstacle => o.kind === "oneWay")
+    const seamObstacleIds = new Set([
+      ...[...dropSeams.values()].map(seam => seam.obstacleId),
+      ...(laid?.drops ?? []).map(drop => drop.id),
+    ])
+    for (let n = 0; ((config.oneWays ?? []).length > 0 || oneWayObstacles.length > 0) && n < switchesPlaced; n++)
+      for (const { neighborKey } of freeWaysOut(reservedForks[n])) {
+        // Behind a door means every way in passes through it — so it is what the way in stops reaching
+        // once that one node is shut. The drops being placed below are not ways in: a drop that let
+        // another drop past a door would be the same bypass one step removed.
+        const reached = new Set<string>([entranceKey])
+        const queue = [entranceKey]
+        for (let at = 0; at < queue.length; at++)
+          for (const { neighborKey: onward } of nodeExitsOf(queue[at])) {
+            if (onward === neighborKey || reached.has(onward)) continue
+            reached.add(onward)
+            queue.push(onward)
+          }
+        for (const cellKey of usedCells) if (!reached.has(cellKey)) needsDoor(cellKey, `door ${neighborKey}`)
       }
 
-      // Spread across whatever room `paddedChainLength` gave this chain — same technique
-      // as the parent section and the main path (see spreadContentIndices). Indices must map
-      // through `subContentIndices` (not a raw `(contentStart + pi) * 2`), so a multi-puzzle
-      // sub-section indexes its own content rather than past it.
-      const subContentIndices = spreadContentIndices(subSection.pathPuzzles, contentStart, cells.length)
-      for (let pi = 0; pi < subSection.pathPuzzles; pi++) {
-        const [r, c] = cells[subContentIndices[pi]]
-        const reward = subSection.rewards?.[pi]
-        const subOverride = subSection.encountersByIndex?.[pi]
-        const family =
-          subOverride !== undefined
-            ? resolveEncounter(subOverride, "puzzle")
-            : resolveEncounter(subSection.encounter, "puzzle")
-        const requiredKeyIds = resolveKeyRequirements(family.familyId, {
-          ...floorRef,
-          pathIndex: pi,
-          encounterArgs: subSection.encounterArgs,
-        })
-        const boardIndex = resolveBoardIndex?.(family.familyId, {
-          section: `s${parentSectionIdx}.${subSectionIdx}`,
-          pathIndex: pi,
-        })
-        roomSpecs.set(posKey(r, c), {
-          roomType: "encounter",
-          // Same reasoning as the side-section case above: never inherits the floor's
-          // tableau encounter unless the sub-section explicitly opts in itself.
-          family: family.familyId,
-          tags: family.tags,
-          pathIndex: pi,
-          ...(boardIndex !== undefined ? { boardIndex } : {}),
-          ...(subSection.encounterArgs !== undefined ? { encounterArgs: subSection.encounterArgs } : {}),
-          difficulty: subSection.difficulty,
-          ...(subSection.theme !== undefined ? { theme: subSection.theme } : {}),
-          ...(subSection.role !== undefined ? { role: subSection.role } : {}),
-          ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
-          ...(reward ? { reward } : {}),
-        })
+    // ONE-WAY DROPS. Each authored passage needs a node of `from` and a node of `to` on one axis with
+    // exactly 2 + ONE_WAY_RUN_CELLS cells between them (a launch, the obstacle, a landing), every one of
+    // them uncarved — not a node, not a connector some chain walked, not a cell another drop already
+    // holds. The reservation is made whole or not at all: a drop is never placed shorter, and never placed anywhere but between the
+    // two ends it names. Picked here, off the same node set the grid below is built from, and sorted by
+    // position so the same seed always drops the same pair. A demand with no such pair is this carve's
+    // own shortfall, not the authoring's: another seed may still place it, so the attempt is re-carved
+    // rather than refused.
+    //
+    // TWO AUTHORING SURFACES, ONE CARVE: `config.oneWays` names two section addresses,
+    // `oneWayObstacles` (kind "oneWay") names two regions — `doubleBack`'s own drops join the far end
+    // of one side chain to another, which `config.oneWays`' section addresses cannot reach at all
+    // (regions-and-containers.md). Both resolve to the identical question, "which cells carry this
+    // label", just answered off a different map, so one demand list carries both and the search below
+    // runs once regardless of which vocabulary asked.
+    const exitKey = posKey(exR, exC)
+    const oneWayEdges: OneWayEdge[] = [...dropSeamEdges]
+    let oneWayShort: { from: string; to: string } | undefined
+    const bySectionAddress = (address: string) => (key: string) => cellSectionAddress.get(key) === address
+    const byRegion = (region: string) => (key: string) => cellRegion.get(key) === region
+    // `sectioned` marks which vocabulary asked, because the landing-doors check just below reads it:
+    // the two forms carry different authorship and so different exemptions from it (see there).
+    const oneWayDemands = [
+      ...(config.oneWays ?? []).map(w => ({
+        id: undefined as string | undefined,
+        from: w.from,
+        to: w.to,
+        realisation: boundRealisation(),
+        matchesFrom: bySectionAddress(w.from),
+        matchesTo: bySectionAddress(w.to),
+        sectioned: true,
+      })),
+      ...oneWayObstacles
+        .filter(o => !seamObstacleIds.has(o.id))
+        .map(o => ({
+          id: o.id,
+          from: o.at.between[0],
+          to: o.at.between[1],
+          realisation: boundRealisation(),
+          matchesFrom: byRegion(o.at.between[0]),
+          matchesTo: byRegion(o.at.between[1]),
+          sectioned: false,
+        })),
+    ]
+    // ONE RUN CARRIES ONE DROP. Two drops sharing a cell would write it twice and leave a passage the
+    // author asked for gone with nothing reported, so the second takes the next free run — or, with
+    // none left, is this carve's shortfall like any other.
+    const takenRunCells = new Set<string>(dropSeamEdges.flatMap(edge => [edge.launch, ...edge.run, edge.landing]))
+    for (const demand of oneWayDemands) {
+      const candidates: typeof oneWayEdges = []
+      for (const fromKey of usedCells) {
+        if (!demand.matchesFrom(fromKey)) continue
+        // The exit was forced to a true dead end just above (every passage off it dropped but the one
+        // to its predecessor) precisely so nothing reads as continuing past it. A drop hanging off it
+        // would add exactly the direction that was deleted to guarantee that.
+        if (fromKey === exitKey) continue
+        const fromDoors = standsBehind(fromKey)
+        const [r, c] = fromKey.split(",").map(Number)
+        for (const [dr, dc, d] of CONNECTOR_DIRS) {
+          // The reservation is the cells strictly between the two nodes, one unit step at a time.
+          const ur = dr / NODE_STEP,
+            uc = dc / NODE_STEP
+          const nr = r + ur * ONE_WAY_REACH,
+            nc = c + uc * ONE_WAY_REACH
+          if (nr < 0 || nr >= N || nc < 0 || nc >= N) continue
+          const toKey = posKey(nr, nc)
+          if (toKey === exitKey) continue
+          if (!demand.matchesTo(toKey)) continue
+          const between = Array.from({ length: ONE_WAY_REACH - 1 }, (_, k) =>
+            posKey(r + ur * (k + 1), c + uc * (k + 1))
+          )
+          if (between.some(cellKey => usedCells.has(cellKey) || takenRunCells.has(cellKey))) continue
+          // A SECTION-ADDRESSED DROP MAY RUN INSIDE WHAT A DOOR SHUTS OFF, OR OUT OF IT, NEVER INTO
+          // GROUND SHUT BY A DOOR THE PLAYER HAS NOT EARNED BY STANDING WHERE THEY FALL FROM. A
+          // switch's doors count here exactly as an authored gate's do: both are asked of one map
+          // (`doorsToEnter`). This is the carve's own anti-spoiler check — the carve, not the author,
+          // picked which cells span a section boundary, so an accidental shortcut past a gate is a
+          // real hazard here.
+          //
+          // A REGION-ADDRESSED DROP (`oneWayObstacles`) IS EXEMPT. Its two ends are regions the author
+          // named outright, so the author has already stated the intent this check exists to infer —
+          // it cannot tell a deliberate double-back from a mistake, and for this form there is no
+          // mistake to catch: `deadRegions` and `walkLock` answer, over the compiled lock, whether a
+          // region-to-region drop leaves the floor unsound or strands the player (lockWalk.spec.ts's
+          // `doubleBack`, siteAssembler.spec.ts's own region-drop coverage).
+          if (demand.sectioned && [...standsBehind(toKey)].some(door => !fromDoors.has(door))) continue
+          // A hidden section is the statement that nothing is there until the player finds otherwise,
+          // and the runtime empties its cells — so a visible drop into one leaves the source pointing
+          // at a stub, which is the spoiler `freeWaysOut` refuses for a gate. Out of one stays legal.
+          if (hiddenCellPositions.has(toKey)) continue
+          candidates.push({
+            ...(demand.id !== undefined ? { obstacleId: demand.id } : {}),
+            realisation: demand.realisation,
+            from: fromKey,
+            to: toKey,
+            dir: d,
+            launch: between[0],
+            run: between.slice(1, -1),
+            landing: between[between.length - 1],
+          })
+        }
       }
-
-      const [er, ec] = cells[cells.length - 1]
-      if (isKeyHost) {
-        const hColors = keyHostColors ?? (keyHostColor ? [keyHostColor] : [])
-        roomSpecs.set(posKey(er, ec), {
-          roomType: "encounter",
-          family: treasureChest.familyId,
-          tags: treasureChest.tags,
-          reward: { type: "tombKey", keyId: nid(er, ec) },
-          ...(hColors.length === 1 ? { keyColor: hColors[0] } : {}),
-          ...(hColors.length > 1 ? { keyColors: hColors } : {}),
-        })
-      } else if (subSection.end === "staircase" || typeof subSection.end === "object") {
-        const stairId = typeof subSection.end === "object" ? subSection.end.stairId : `${siteId}:subsection`
-        roomSpecs.set(posKey(er, ec), { roomType: "portal", stairId })
-      } else {
-        const isShop =
-          subSection.encounter !== undefined &&
-          resolveEncounter(subSection.encounter, "treasure").familyId === fezShop.familyId
-        roomSpecs.set(posKey(er, ec), {
-          roomType: "encounter",
-          family: isShop ? fezShop.familyId : treasureChest.familyId,
-          tags: isShop ? fezShop.tags : treasureChest.tags,
-          ...(isShop
-            ? { stock: subSection.rewards ?? [] }
-            : subSection.endReward
-              ? { reward: subSection.endReward }
-              : {}),
-        })
+      candidates.sort((a, b) => {
+        const [ar, ac] = a.from.split(",").map(Number)
+        const [br, bc] = b.from.split(",").map(Number)
+        const [atr, atc] = a.to.split(",").map(Number)
+        const [btr, btc] = b.to.split(",").map(Number)
+        return ar - br || ac - bc || atr - btr || atc - btc
+      })
+      const picked = candidates[0]
+      if (!picked) {
+        oneWayShort = { from: demand.from, to: demand.to }
+        break
       }
+      for (const cellKey of [picked.launch, ...picked.run, picked.landing]) takenRunCells.add(cellKey)
+      oneWayEdges.push(picked)
+    }
+    if (oneWayShort) {
+      if (!oneWayShortfall) oneWayShortfall = oneWayShort
+      continue
     }
 
     // Build 2D grid
@@ -1519,21 +3569,29 @@ export const assembleFloor = (
     // Fill used cells with corridor or room
     for (const cellKey of usedCells) {
       const [r, c] = cellKey.split(",").map(Number)
-      // Compute dirs from passages — nodes are two cells apart (see NODE_STEP above)
+      const spec = roomSpecs.get(cellKey)
+      // Compute dirs from passages — nodes are two cells apart (see NODE_STEP above). A fork
+      // also names what each of its own dirs leads to (RoomCell.exits) — main path continuing,
+      // an attached side section, that side's own tomb-key gate ("ward"), or straight into
+      // another fork. A switch adds the key it closed a way out on, once the carve is settled.
       const dirs = new Set<Direction>()
+      const exits: RoomCell["exits"] = spec?.roomType === "fork" ? [] : undefined
       for (const [dr, dc, d] of CONNECTOR_DIRS) {
         const nr = r + dr,
           nc = c + dc
         if (nr >= 0 && nr < N && nc >= 0 && nc < N && usedCells.has(`${nr},${nc}`) && edgeAllowed(r, c, nr, nc)) {
           dirs.add(d)
+          if (exits) exits.push({ dir: d, kind: exitKindOf(cellKey, posKey(nr, nc)) })
         }
       }
 
-      const spec = roomSpecs.get(cellKey)
       const sectionHash = cellSectionHash.get(cellKey) ?? mainSectionHash
       const sectionAddress = cellSectionAddress.get(cellKey) ?? MAIN_SECTION_ADDRESS
       const legacySectionHash = cellLegacySectionHash.get(cellKey) ?? legacyMainSectionHash
       const hidden = hiddenCellPositions.has(cellKey) || undefined
+      // Unlike sectionAddress there is no default: a floor that authors no regionLayout leaves every
+      // cell's region absent, which is what keeps a floor with no layout carving unchanged.
+      const region = cellRegion.get(cellKey)
       if (spec) {
         // Spread the whole spec (RoomSpec = RoomCell minus the structural fields set here)
         // rather than copying fields one by one — a field dropped from this list is exactly
@@ -1548,11 +3606,13 @@ export const assembleFloor = (
           // their own. The spread below still wins, so a room authored at its own tier keeps it.
           ...(cellDifficulty.get(cellKey) ? { difficulty: cellDifficulty.get(cellKey) } : {}),
           sectionAddress,
-          sectionHash,
-          legacySectionHash,
+          sectionHash: absorbedHash.get(cellKey)?.hash ?? sectionHash,
+          legacySectionHash: absorbedHash.get(cellKey)?.legacy ?? legacySectionHash,
           ...(cellOrdinal.get(cellKey) ? { ordinal: cellOrdinal.get(cellKey) } : {}),
           ...(hidden ? { hidden } : {}),
+          ...(region !== undefined ? { region } : {}),
           ...spec,
+          ...(exits ? { exits } : {}),
         }
         cells2D[r][c] = roomCell
       } else {
@@ -1567,18 +3627,68 @@ export const assembleFloor = (
           ...(cellOrdinal.get(cellKey) ? { ordinal: cellOrdinal.get(cellKey) } : {}),
           ...(cellTier ? { difficulty: cellTier } : {}),
           ...(hidden ? { hidden } : {}),
+          ...(region !== undefined ? { region } : {}),
         }
         cells2D[r][c] = corridorCell
       }
     }
 
-    // Materialize the connector cell for every real edge between two used nodes — this
-    // is the plain 1-wide corridor cell physically between them (see NODE_STEP above).
-    // Each edge is only processed once (from its lower-keyed endpoint) since it's
-    // symmetric. A connector inherits `hidden` only when both endpoints do, so a hidden
-    // section's own internal corridors stay hidden together with it, while the single
-    // corridor linking a hidden section to its (visible) attachment point stays visible
-    // — same as a normal doorway would.
+    // THE PLAIN 1-WIDE CORRIDOR CELL PHYSICALLY BETWEEN TWO NODES (see NODE_STEP above), built the one
+    // way wherever one is built — a two-way passage and a drop alike — so a future CorridorCell field
+    // cannot go missing from one of them. `owner` is the node the connector answers to: its section,
+    // its hash and its tier, which for a drop is the node it falls FROM.
+    //
+    // A connector inherits `hidden` only when both ends do, so a hidden section's own internal
+    // corridors stay hidden together with it, while the single corridor linking a hidden section to its
+    // (visible) attachment point stays visible — same as a normal doorway would.
+    // `drop` marks the one caller (the WRITE THE CHOSEN DROPS pass below) whose two ends belong to
+    // DIFFERENT sections — everywhere else, `owner` and `other` are two steps of the same chain, so the
+    // bare sorted pair already names them uniquely within that chain's address. A drop's `other` is a
+    // step of the LANDING section instead, filed under the FROM section's address (see the comment on
+    // `sectionAddress` above) — so the bare pair is not an identity there, it is a coincidence: "upper"
+    // step 1 dropping onto "lower" step 0 sorts to the same "0|1" as upper's own ordinary connector
+    // between its steps 0 and 1. Qualifying `other` with the section it actually belongs to is what an
+    // ordinal needs to survive a re-carve AND stay unique — the pair alone cannot name a drop's
+    // connector, because its two ends were never steps of one chain to begin with.
+    const connectorBetween = (
+      owner: string,
+      other: string,
+      dirs: Set<Direction>,
+      drop = false,
+      runIndex = 0
+    ): CorridorCell => {
+      const ownerOrdinal = cellOrdinal.get(owner)
+      const otherOrdinal = cellOrdinal.get(other)
+      const otherLabel =
+        drop && otherOrdinal !== undefined
+          ? `${cellSectionAddress.get(other) ?? MAIN_SECTION_ADDRESS}:${otherOrdinal}`
+          : otherOrdinal
+      const tier = cellDifficulty.get(owner)
+      return {
+        type: "corridor",
+        dirs,
+        state: "fogged",
+        sectionAddress: cellSectionAddress.get(owner) ?? MAIN_SECTION_ADDRESS,
+        sectionHash: cellSectionHash.get(owner) ?? mainSectionHash,
+        legacySectionHash: cellLegacySectionHash.get(owner) ?? legacyMainSectionHash,
+        // A CONNECTOR IS NAMED BY THE TWO CELLS IT JOINS. An ordinary one sorts the pair so it does not
+        // matter which end the edge was walked from; a drop's is directional already (`owner` is always
+        // the FROM node, never the other way round), and its far end is qualified as above.
+        ...(ownerOrdinal && otherLabel
+          ? {
+              ordinal: drop ? `${ownerOrdinal}|${otherLabel}#${runIndex}` : [ownerOrdinal, otherLabel].sort().join("|"),
+            }
+          : {}),
+        ...(tier ? { difficulty: tier } : {}),
+        ...(hiddenCellPositions.has(owner) && hiddenCellPositions.has(other) ? { hidden: true } : {}),
+        // Same rule as sectionAddress just above: a connector answers to its owner node, region
+        // included, and absent everywhere a floor authors no regionLayout.
+        ...(cellRegion.get(owner) !== undefined ? { region: cellRegion.get(owner) } : {}),
+      }
+    }
+
+    // Materialize the connector for every real edge between two used nodes. Each edge is only
+    // processed once (from its lower-keyed endpoint) since it's symmetric.
     for (const cellKey of usedCells) {
       const [r, c] = cellKey.split(",").map(Number)
       for (const [dr, dc, d] of CONNECTOR_DIRS) {
@@ -1590,28 +3700,48 @@ export const assembleFloor = (
         if (r * N + c > nr * N + nc) continue // process each edge once
         const mr = (r + nr) / 2,
           mc = (c + nc) / 2
-        const hidden = hiddenCellPositions.has(cellKey) && hiddenCellPositions.has(neighborKey) ? true : undefined
-        const sectionHash = cellSectionHash.get(cellKey) ?? mainSectionHash
-        const sectionAddress = cellSectionAddress.get(cellKey) ?? MAIN_SECTION_ADDRESS
-        const connectorTier = cellDifficulty.get(cellKey)
-        const endA = cellOrdinal.get(cellKey)
-        const endB = cellOrdinal.get(neighborKey)
-        const connectorOrdinal = endA && endB ? [endA, endB].sort().join("|") : undefined
-        cells2D[mr][mc] = {
-          type: "corridor",
-          dirs: new Set([d, OPPOSITE[d]]),
-          state: "fogged",
-          sectionAddress,
-          sectionHash,
-          legacySectionHash: cellLegacySectionHash.get(cellKey) ?? legacyMainSectionHash,
-          // A CONNECTOR IS NAMED BY THE TWO CELLS IT JOINS, sorted so it does not matter which end the
-          // edge was walked from. Its own coordinate is the midpoint of wherever the carve put those
-          // two, so it cannot be the identity; the pair of ordinals can, and survives the move.
-          ...(connectorOrdinal ? { ordinal: connectorOrdinal } : {}),
-          ...(connectorTier ? { difficulty: connectorTier } : {}),
-          ...(hidden ? { hidden } : {}),
-        }
+        cells2D[mr][mc] = connectorBetween(cellKey, neighborKey, new Set([d, OPPOSITE[d]]))
       }
+    }
+
+    // WRITE THE CHOSEN DROPS. A drop is the launch, the obstacle, the landing — in that order along
+    // `dir`, each cell written once, all of them uncarved when reserved.
+    //
+    //  - The launch is an ordinary dead-end cell: the from-node names it and it names the from-node, and
+    //    it names NO direction toward the obstacle.
+    //  - The landing is the same off the to-node: it names the to-node and the to-node names it, and it
+    //    names NO direction back toward the obstacle.
+    //  - Every obstacle cell is a corridor whose `dirs` is the EMPTY set, marked `obstacle` so the art
+    //    spans it and the lock can read the drop back. Nothing else is written onto it.
+    //
+    // CROSSING IS IMPOSSIBLE BY CONSTRUCTION. A walk only ever follows a direction a cell names. The
+    // obstacle cells name none and nothing names them, so they are an island in the walk graph and the
+    // launch's side and the landing's side share no edge through them. There is no check to forget:
+    // the way across does not exist as data, and taking the drop is the one thing that joins the two ends.
+    for (const edge of oneWayEdges) {
+      const writeStub = (cellKey: string, owner: string, other: string, dirs: Set<Direction>, index: number) => {
+        const [r, c] = cellKey.split(",").map(Number)
+        if (cells2D[r][c].type !== "empty")
+          throw new Error(`[siteAssembler] one-way from ${edge.from} ran into a carved cell at ${cellKey}`)
+        cells2D[r][c] = connectorBetween(owner, other, dirs, true, index)
+      }
+      const joinNode = (nodeKey: string, dir: Direction) => {
+        const [r, c] = nodeKey.split(",").map(Number)
+        const node = cells2D[r][c]
+        if (node.type === "empty")
+          throw new Error(`[siteAssembler] one-way from ${edge.from} landed on an uncarved cell at ${nodeKey}`)
+        cells2D[r][c] = { ...node, dirs: new Set([...node.dirs, dir]) }
+      }
+      joinNode(edge.from, edge.dir)
+      writeStub(edge.launch, edge.from, edge.to, new Set([OPPOSITE[edge.dir]]), 0)
+      edge.run.forEach((cellKey, k) => {
+        writeStub(cellKey, edge.from, edge.to, new Set(), k + 1)
+        const [r, c] = cellKey.split(",").map(Number)
+        const cell = cells2D[r][c]
+        if (cell.type === "corridor") cells2D[r][c] = { ...cell, obstacle: { dir: edge.dir, kind: edge.realisation } }
+      })
+      writeStub(edge.landing, edge.to, edge.from, new Set([edge.dir]), ONE_WAY_RUN_CELLS + 1)
+      joinNode(edge.to, OPPOSITE[edge.dir])
     }
 
     // Set entrance cell state to "reachable"
@@ -1814,12 +3944,420 @@ export const assembleFloor = (
       staircases,
     }
 
-    const v = validateSite(grid)
-    if (v.valid) return { success: true, grid }
+    // Two rooms of one section that a save cannot tell apart is a data-loss bug, not a layout one —
+    // the same reason section addresses are checked before anything is carved. So it fails the floor
+    // outright instead of re-carving: the collision is in the AUTHORING (two rooms of a section named
+    // by the same family, no chain position between them), and every seed produces it.
+    const duplicateSlot = (): string | undefined => {
+      const slotsSeen = new Set<string>()
+      for (let r = 0; r < N; r++) {
+        for (let c = 0; c < N; c++) {
+          const slot = cellSlot(grid, r, c)
+          if (!slot) continue
+          const cell = cells2D[r][c]
+          const section = (cell.type !== "empty" && cell.sectionAddress) || MAIN_SECTION_ADDRESS
+          const named = `${section}/${slot}`
+          if (slotsSeen.has(named)) return named
+          slotsSeen.add(named)
+        }
+      }
+      return undefined
+    }
+
+    const bareDuplicate = duplicateSlot()
+    if (bareDuplicate) return { success: false, reasons: [{ type: "duplicateCellSlot", slot: bareDuplicate }] }
+
+    // A GATE IS NAMED BY WHERE THE FLOOR WAS AUTHORED AND THE BRANCH IT STANDS AT, NEVER BY WHERE THE
+    // COMPASS POINTS OR WHICH CELL THE CARVE CHOSE. A key a player holds outlives the layout it was
+    // minted on, and the failure that costs is not the key that stops fitting: it is one kept from an
+    // earlier layout still fitting after a re-carve has swung that branch round to another quarter,
+    // opening a door nothing was solved for. An authoring address cannot move under a re-carve. The
+    // main path onward answers to MAIN_SECTION_ADDRESS, which no side path can be given (see
+    // sectionAddresses); whatever needs the compass reads it off `exits[].dir`.
+    const stemFor = switchStem
+
+    // Closes one reserved junction's ways out — the corridor cell each leads to becomes the door, and
+    // the junction reports the key it now wants on that exit. Returns what it overwrote, so a junction
+    // nothing ends up standing in can be opened again.
+    const closeWaysOut = (n: number, pk: string): Map<string, GridCell> => {
+      const overwritten = new Map<string, GridCell>()
+      const [sr, sc] = pk.split(",").map(Number)
+      const junction = cells2D[sr][sc]
+      if (junction.type !== "room") throw new Error(`[siteAssembler] reserved fork ${pk} is not a room`)
+      overwritten.set(pk, junction)
+      const gateKeyByDir = new Map<Direction, string>()
+      for (const { dir, neighborKey } of freeWaysOut(pk)) {
+        const gateKeyId = `${stemFor(n)}:${cellSectionAddress.get(neighborKey) ?? MAIN_SECTION_ADDRESS}`
+        gateKeyByDir.set(dir, gateKeyId)
+        if (n < switchesPlaced) markByGateKey.set(gateKeyId, switchMark(n))
+        const [gr, gc] = neighborKey.split(",").map(Number)
+        const wayOut = cells2D[gr][gc]
+        // A free way out leads to a node no room spec claimed, which the fill above wrote as corridor.
+        if (wayOut.type !== "corridor") throw new Error(`[siteAssembler] way out ${neighborKey} is not a corridor`)
+        overwritten.set(neighborKey, wayOut)
+        cells2D[gr][gc] = {
+          ...wayOut,
+          type: "room",
+          roomType: "encounter",
+          // THE WAY IS SHUT, AND THAT IS THE WHOLE OF IT. A cell is drawn as a gate by its tags and
+          // read as locked by the key it wants, neither of which asks for a family — so this door
+          // wears a ward gate's bars and holds nothing to enter or tap. The switch is what opens it,
+          // and a door the player opens by tapping is a door the switch does not control.
+          tags: keyGate.tags,
+          // NO KEY EVER SATISFIES THIS ONE, and nothing mints one. On a switch's door the id NAMES THE
+          // WAY OUT — which branch of which fork this is — so the board standing in the fork can say
+          // which way it left open (`useAssembledFloor`'s openWaysOut) and the rest stay shut. It keeps
+          // the field the ward gates use because everything that reads a door reads it there.
+          requiredKeyId: gateKeyId,
+          gateVariant: "floor-key",
+          // Minted by whatever stands in the switch, so this floor grows no chest holding it and the
+          // door wears no colour pointing at one (see the floor-key gate written per section above).
+          keyIsAuthored: true,
+        }
+      }
+      cells2D[sr][sc] = {
+        ...junction,
+        exits: junction.exits?.map(exit => {
+          const gateKeyId = gateKeyByDir.get(exit.dir)
+          return gateKeyId ? { ...exit, gateKeyId } : exit
+        }),
+        // The same doors, said once more in the form a mechanism is asked for: a state per way out, and
+        // rest before it is solved. A solved board can be put back to rest — the player walks in, turns
+        // a mirror off every shrine and leaves — and that shuts every way out of the fork, so the walk
+        // is handed that move and has to prove the floor survives it.
+        mechanism: {
+          states: [MECHANISM_AT_REST, ...gateKeyByDir.values()],
+          initial: MECHANISM_AT_REST,
+          returnsToInitial: true,
+          positions: [...gateKeyByDir.values()].map(gateKeyId => ({ state: gateKeyId, gateKeyId })),
+        },
+      }
+      return overwritten
+    }
+
+    // A CARVE HAS TO SURVIVE ITS RESERVED JUNCTIONS BEING CLOSED, AND SURVIVE THEM BEING OPEN. Closed
+    // is where a floor shuts a section's own key away behind a door the player has not reached yet;
+    // open is where a junction is left with nothing worth reaching down any branch. `forks` promises
+    // junctions that answer both, so both are asked — and neither reads `switches`, which is what
+    // makes this attempt kept or rejected for the same reason whether or not a mod is here to fill
+    // them. The doors are then opened again wherever no switch stands: a door nothing mints the key
+    // for is not a door.
+    if (!validateSite(grid).valid) continue
+    const opened = reservedForks.map((pk, n) => closeWaysOut(n, pk))
+    const closedValid = validateSite(grid).valid
+    for (let n = switchesPlaced; n < opened.length; n++)
+      for (const [pk, cell] of opened[n]) {
+        const [r, c] = pk.split(",").map(Number)
+        cells2D[r][c] = cell
+      }
+    if (!closedValid) continue
+
+    // A switch is a fork AND its encounter, not one or the other — the room keeps `roomType: "fork"`,
+    // so its footprint, its exits and the junction geometry stay a fork's, and it gains the
+    // encounter's own fields on top. It takes no `pathIndex`: it is not the k-th room of a chain, so a
+    // save names it by what fills it the way a section's chest or gate is named (cellSlot.ts), and
+    // `requiredKeyIds`, addressed by chain position, is none of its business.
+    if (config.switches) {
+      const family = resolveEncounter(config.switches.encounter, "puzzle")
+      for (let n = 0; n < switchesPlaced; n++) {
+        const [sr, sc] = reservedForks[n].split(",").map(Number)
+        const junction = cells2D[sr][sc]
+        if (junction.type !== "room") throw new Error(`[siteAssembler] reserved fork ${reservedForks[n]} is not a room`)
+        cells2D[sr][sc] = {
+          ...junction,
+          family: family.familyId,
+          tags: family.tags,
+          mechanismId: plainSwitchId(n),
+          // THE BOARD HAS TO STAND STILL WHILE THE JUNCTION MOVES. Having no chain position, a switch
+          // gets no entry from the world's board dealer, and `generatePuzzle` then falls back to a seed
+          // hashed from the cell's COORDINATE — which the next carve changes, under a save slot that
+          // does not, so a half-solved switch would come back on a different board. Hashed from the
+          // same authoring address its gates are named from instead.
+          boardIndex: hashString(`${stemFor(n)}|${family.familyId}`),
+          ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
+          difficulty: config.difficulty,
+          ...(config.theme !== undefined ? { theme: config.theme } : {}),
+          ...(config.condition !== undefined ? { condition: config.condition } : {}),
+          ...(config.patron !== undefined ? { patron: config.patron } : {}),
+          ...(config.role !== undefined ? { role: config.role } : {}),
+        }
+      }
+
+      // A switch named the same as the chest of the section it stands in leaves two rooms answering to
+      // one save entry — asked again because the name only exists once a family is in the junction.
+      // A carve that satisfied `forks` is not re-rolled to hide it: the collision is in the authoring.
+      const switchedDuplicate = duplicateSlot()
+      if (switchedDuplicate)
+        return { success: false, reasons: [{ type: "duplicateCellSlot", slot: switchedDuplicate }] }
+    }
+
+    // A FORK-SWITCH IS THE JUNCTION A `{ in }` FORK LAID, with its encounter standing in it. Only the seams
+    // are its doors — the gates its `owners` put on the first cell of each chain — so the main path onward
+    // stays open, and its states follow from those seams: rest, plus one per exit.
+    for (const control of forkSwitches) {
+      const k = forkIns.findIndex(fork => fork.region === control.in)
+      const fork = forkIns[k]
+      const junctionKey = posKey(mainPath[junctionIdxOf[k]][0], mainPath[junctionIdxOf[k]][1])
+      const [sr, sc] = junctionKey.split(",").map(Number)
+      const junction = cells2D[sr][sc]
+      if (junction.type !== "room") throw new Error(`[siteAssembler] fork-switch junction ${junctionKey} is not a room`)
+      const dirOfWay = new Map(nodeExitsOf(junctionKey).map(({ dir, neighborKey }) => [neighborKey, dir]))
+      const gateKeyByDir = new Map<Direction, string>()
+      fork.seams.forEach(([from, to], j) => {
+        const wayKey = laid
+          ? laid.junctions[k].arms.find(
+              arm => (arm.seam[0] === from && arm.seam[1] === to) || (arm.seam[0] === to && arm.seam[1] === from)
+            )!.first
+          : (() => {
+              const first = chains.find(chain => chain.parentIdx === undefined && chain.idx === fork.sectionIdxs[j])!
+                .cells[0]
+              return posKey(first[0], first[1])
+            })()
+        const [fr, fc] = wayKey.split(",").map(Number)
+        const gate = gatesOwnedBy(control.id).find(
+          ({
+            at: {
+              between: [a, b],
+            },
+          }) => (a === from && b === to) || (a === to && b === from)
+        )!
+        const door = cells2D[fr][fc]
+        if (door.type !== "room" || door.requiredKeyId !== gateKeyOf(gate.id))
+          throw new Error(`[siteAssembler] gate ${gate.id} does not stand beside the junction of ${control.id}`)
+        gateKeyByDir.set(dirOfWay.get(wayKey)!, gateKeyOf(gate.id))
+      })
+      const family = resolveEncounter(control.encounter, "puzzle")
+      cells2D[sr][sc] = {
+        ...junction,
+        family: family.familyId,
+        tags: family.tags,
+        mechanismId: control.id,
+        // Hashed from the authored id, so the board stands still while a re-carve moves the junction.
+        boardIndex: hashString(`${gateKeyOf(control.id)}|${family.familyId}`),
+        exits: junction.exits?.map(exit => {
+          const gateKeyId = gateKeyByDir.get(exit.dir)
+          return gateKeyId ? { ...exit, gateKeyId } : exit
+        }),
+        mechanism: {
+          states: [MECHANISM_AT_REST, ...gateKeyByDir.values()],
+          initial: MECHANISM_AT_REST,
+          returnsToInitial: true,
+          positions: [...gateKeyByDir.values()].map(gateKeyId => ({ state: gateKeyId, gateKeyId })),
+        },
+        ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
+        difficulty: config.difficulty,
+        ...(config.theme !== undefined ? { theme: config.theme } : {}),
+        ...(config.condition !== undefined ? { condition: config.condition } : {}),
+        ...(config.patron !== undefined ? { patron: config.patron } : {}),
+        ...(config.role !== undefined ? { role: config.role } : {}),
+      }
+    }
+    if (forkSwitches.length > 0) {
+      const standingDuplicate = duplicateSlot()
+      if (standingDuplicate)
+        return { success: false, reasons: [{ type: "duplicateCellSlot", slot: standingDuplicate }] }
+    }
+
+    // WHICH MECHANISM DRIVES WHICH DOOR IS ONLY READABLE IF BOTH ENDS SAY SO, so the mark goes on the
+    // lever's or control's room AND on every gate it owns — one pair per mechanism, worn twice. Written
+    // here, over the finished cells, because a gate room is carved by the ordinary gate pass and a
+    // mechanism's room by the lever/control pass, and neither of them knows about the other.
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const cell = cells2D[r][c]
+        if (cell.type !== "room") continue
+        // A mechanism is found by the keys its own positions carry, a door by the key it asks for. A
+        // switch's mechanism and an authored gate's key are not in the map, so they stay unmarked.
+        const key = cell.mechanism?.positions[0]?.gateKeyId ?? cell.requiredKeyId
+        const mark = key === undefined ? undefined : markByGateKey.get(key)
+        if (mark) cells2D[r][c] = { ...cell, mark }
+        // Each way out a fork-switch owns carries what its own gate wears, which is what the board draws.
+        const marked = cells2D[r][c]
+        if (marked.type === "room" && marked.exits?.some(exit => exit.gateKeyId && markByGateKey.has(exit.gateKeyId)))
+          cells2D[r][c] = {
+            ...marked,
+            exits: marked.exits.map(exit => {
+              const wayMark = exit.gateKeyId ? markByGateKey.get(exit.gateKeyId) : undefined
+              return wayMark ? { ...exit, mark: wayMark } : exit
+            }),
+          }
+      }
+    }
+
+    // WHAT A ROOM HOLDS AGAINST WHAT ITS REGION WILL TAKE. A puzzle node is a room the floor authored
+    // as a puzzle (`pathIndex` is set only on the k-th room of a chain's own puzzles — never on a
+    // mechanism, a gate or the goal/end chest, which have no chain position of their own). A chest
+    // node is a room holding treasure — a `reward` payload, the `"treasure"` tag the goal/end chest
+    // always carries even before a reward is authored onto it, or `stock`: a shop hands the player loot
+    // just as a chest does, it just carries it as several slots rather than one. A mechanism room
+    // (lever, switch, gate) is neither: the region never declares it, the mod that owns it points AT
+    // the region instead (docs/game-design/regions-and-containers.md). Reported per region and kind
+    // rather than per room — five puzzles standing in one region that promised nothing is one
+    // disagreement between the floor and its layout, not five.
+    if (regionLayout) {
+      const appetiteOf = new Map(regionLayout.regions.map(r => [r.name, r.appetite]))
+      const willNotTake = new Map<string, { region: string; kind: ContentKind }>()
+      for (const row of cells2D)
+        for (const cell of row) {
+          if (cell.type !== "room" || cell.region === undefined) continue
+          const appetite = appetiteOf.get(cell.region)
+          if (appetite === undefined) continue
+          const holds: ContentKind[] = []
+          if (cell.roomType === "encounter" && cell.pathIndex !== undefined) holds.push("puzzle")
+          if (cell.reward !== undefined || cell.stock !== undefined || cell.tags?.includes("treasure"))
+            holds.push("reward")
+          for (const kind of holds)
+            if (!appetiteAccepts(appetite, kind))
+              willNotTake.set(`${cell.region}|${kind}`, { region: cell.region, kind })
+        }
+      if (willNotTake.size > 0) {
+        if (!regionMismatch) regionMismatch = [...willNotTake.values()]
+        continue
+      }
+
+      // THE CARVE AGAINST THE LAYOUT IT WAS DRAWN FROM. Every seated region, seam and appetite above is
+      // asked of a label; this asks of the walls. A side chain takes its labels from the layout but hangs
+      // off whichever main-path cell the carve found roomy, so a carve can be labelled exactly as
+      // authored and still join the wrong regions — which the lock, flooded off these very cells, then
+      // walks as a different floor. Retried like every other shortfall: another seed may join them right.
+      const gateKeys = runs.flatMap(run =>
+        run.gates.map((o, i) => ({
+          id: o.id,
+          between: o.at.between,
+          key: gateKeyOf(o.id),
+          bounds: [...(i === 0 ? [run.between[0]] : []), ...(i === run.gates.length - 1 ? [run.between[1]] : [])],
+        }))
+      )
+      const runCells = new Set(oneWayEdges.flatMap(edge => edge.run))
+      const dropIdsWithRuns = oneWayObstacles.map(o => ({
+        o,
+        edge: oneWayEdges.find(edge => edge.obstacleId === o.id)!,
+      }))
+      const disagreement = [
+        ...adjacencyFaults(cells2D, regionLayout),
+        ...gateDoorFaults(cells2D, gateKeys, runCells),
+        ...dropLandingFaults(
+          cells2D,
+          dropIdsWithRuns.map(({ o, edge }) => ({
+            id: o.id,
+            region: o.at.between[1],
+            landing: edge.to.split(",").map(Number) as [number, number],
+          })),
+          gateKeys,
+          runCells
+        ),
+      ]
+      if (disagreement.length > 0) {
+        if (!carveDisagreement) carveDisagreement = disagreement
+        continue
+      }
+    }
+
+    // A SEQUENCE'S TILES STAND ON THE FINISHED CARVE and move no wall, so a floor authoring none is carved as
+    // it always was. A tile the carve has no free node for in its step's region fails the attempt: a
+    // longer path may have one, and the last attempt names the sequence and the step.
+    if (sequences.length > 0) {
+      const unplaced = placeSequences(
+        cells2D,
+        sequences.map(sequence => ({
+          id: sequence.id,
+          regions: sequence.steps.map(step => step.in),
+          glyphs: sequence.steps.map((_, step) => allocation.tileGlyphs.get(`${sequence.id}#${step}`)!),
+          gates: sequence.opens.done.map(id => {
+            const mode = obstacleMode(id)
+            return { gateKeyId: gateKeyOf(id), ...(mode ? { mode } : {}) }
+          }),
+          doorKey: gateKeyOf(sequence.resetAt),
+        })),
+        new Set(mainPath.map(([r, c]) => posKey(r, c))),
+        siteId
+      )
+      if (unplaced) {
+        if (!sequenceShortfall) sequenceShortfall = unplaced
+        continue
+      }
+      const tileDuplicate = duplicateSlot()
+      if (tileDuplicate) return { success: false, reasons: [{ type: "duplicateCellSlot", slot: tileDuplicate }] }
+    }
+
+    // A DOOR THAT WAITS ON SEVERAL OWNERS GAINS ITS FACE LAST, after every check above has read the carve:
+    // only the door cell's family changes, so no wall, `dirs` or slot can have moved for it.
+    const faced = withGateFaces(
+      grid,
+      floorRef.floorIndex,
+      new Map(),
+      undefined,
+      resolveEncounter(undefined, DOOR_FACE_ROLE).familyId
+    )
+    // A door that owes a face and has no family to read it is refused by name, not left blank: the carve is
+    // done and identical, only what would stand in the door is missing.
+    const unfaced = grid.cells.flat()
+    const facedDoors = faced.cells.flat().flatMap((cell, i) => {
+      const before = unfaced[i]
+      return cell.type === "room" && cell.gateFace && !(before.type === "room" && before.gateFace)
+        ? [cell.requiredKeyId ?? ""]
+        : []
+    })
+    const faceProblems = facedDoors.length > 0 ? doorFacesMissing(facedDoors, resolveEncounter) : []
+    if (faceProblems.length > 0) return { success: false, reasons: faceProblems }
+    return { success: true, grid: faced, attempt }
   }
 
   return {
     success: false,
-    reasons: [{ type: "layoutNotFound" }],
+    // The fork shortfall first where it ever applied: a floor no carve could give the junctions it
+    // asks for is an authoring mistake, and "no layout" alone would send the reader after the maze.
+    reasons: [
+      ...(lockNotLaid ? [{ type: "lockNotLaid" as const, ...lockNotLaid }] : []),
+      ...(contentNotLaid ? [{ type: "contentNotLaid" as const, kinds: contentNotLaid }] : []),
+      ...(forkSeamShortfall
+        ? [
+            {
+              type: "forkSeamsNotLaid" as const,
+              region: forkSeamShortfall.region,
+              seams: forkSeamShortfall.seams,
+            },
+          ]
+        : []),
+      ...(forkShortfall ? [{ type: "forksUnsatisfied", ...forkShortfall } as const] : []),
+      ...(oneWayShortfall ? [{ type: "oneWayUnsatisfied", ...oneWayShortfall } as const] : []),
+      ...(unseatedRegions ? [{ type: "regionNotSeated", regions: unseatedRegions } as const] : []),
+      ...(gateSeamMissing ? [{ type: "obstacleSeamNotCarved" as const, ids: gateSeamMissing }] : []),
+      ...(barriersShort ? [{ type: "barriersNotSeated" as const, ...barriersShort }] : []),
+      ...(regionBarrierShort ? [{ type: "regionBarrierNotSeated" as const, ...regionBarrierShort }] : []),
+      ...(controlNotSeated ? [{ type: "controlNotSeated" as const, ids: controlNotSeated }] : []),
+      ...(sequenceShortfall ? [{ type: "sequenceTileNotPlaced" as const, ...sequenceShortfall }] : []),
+      ...(controlPuzzleUndisplaceable
+        ? [{ type: "controlPuzzleUndisplaceable" as const, ids: controlPuzzleUndisplaceable }]
+        : []),
+      ...(carveDisagreement ?? []),
+      ...(regionMismatch
+        ? regionMismatch.map(({ region, kind }) => ({ type: "regionWillNotTake" as const, region, kind }))
+        : []),
+      { type: "layoutNotFound" } as const,
+    ],
   }
+}
+
+// Where a floor's `locks` become its layout, obstacles and controls, so the bake, the sweeps and the
+// runtime all carve the one expanded config; a floor without locks passes through untouched.
+export const assembleFloor = (
+  siteId: string,
+  authoredConfig: FloorConfig,
+  addressSeed: number,
+  resolveEncounter: ResolveEncounter = defaultResolveEncounter,
+  keyRequirements: AssembleFloorKeyRequirements = {}
+): AssemblerResult => {
+  const expanded = expandFloorLocks(authoredConfig)
+  if (!expanded.ok) return { success: false, reasons: expanded.reasons }
+  const result = assembleExpandedFloor(
+    siteId,
+    expanded.config,
+    addressSeed,
+    resolveEncounter,
+    keyRequirements,
+    planLockFloor(expanded)
+  )
+  if (!result.success || !expanded.nesting) return result
+  return { ...result, grid: { ...result.grid, lockNesting: expanded.nesting } }
 }

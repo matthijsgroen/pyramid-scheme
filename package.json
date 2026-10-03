@@ -14,7 +14,7 @@
     "build-storybook": "storybook build",
     "generate-pwa-assets": "pwa-assets-generator",
     "generate-world": "tsx scripts/generateWorld.ts && yarn prettier --write src/data/generatedWorld.ts",
-    "generate-mosaic": "tsx scripts/traceMask.ts && yarn prettier --write src/ui/atoms/mosaic{Pieces,Geometry}.generated.ts",
+    "generate-mosaic": "tsx scripts/traceMask.ts && yarn prettier --write src/mods/mosaic/game/mosaic{Pieces,Geometry}.generated.ts",
     "generate-font": "tsx scripts/generateFont.ts && yarn prettier --write src/ui/tokens/hieroglyphFont.generated.ts",
     "generate-dummy-tiles": "tsx scripts/generateDummyTiles.ts",
     "make-seamless": "tsx scripts/makeSeamless.ts",

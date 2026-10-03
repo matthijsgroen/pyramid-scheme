@@ -1,4 +1,15 @@
-import type { DecorationKind, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
+import type {
+  DecorationKind,
+  ForkDemand,
+  HandleSide,
+  Patron,
+  SiteCondition,
+  WallDecorationKind,
+} from "../game/siteTypes"
+import type { PlacedContainer } from "../game/regions"
+import type { BarrierOrder, Control, Obstacle } from "@/game/obstacles"
+import type { PlacedLock } from "@/game/floorLocks"
+import type { RealisationBinding } from "@/game/lockCompile"
 
 export type Tier = "starter" | "junior" | "expert" | "master" | "wizard"
 // Authored puzzle-count progression across a journey's pyramids: `start` on pyramid 1,
@@ -20,7 +31,19 @@ export type SubSection = {
   pathPuzzles: number
   difficulty: Difficulty
   end: "treasure" | "staircase" | { stairId: string }
-  gate?: { type: "floor-key"; color?: string } | { type: "tomb-key"; wardKeyId: string }
+  gate?:
+    | {
+        type: "floor-key"
+        color?: string
+        /** The key this gate wants, named by the author. Naming one means the AUTHOR owns where the key
+         * comes from — a family that mints it, not a chest — so the floor grows no host section for it.
+         * Opaque to core: it is a string, and nothing here knows what minted it. */
+        keyId?: string
+        /** Which mod mints that key. A gate naming one drops when that mod is not registered, so the
+         * branch it guarded is simply open. Core compares it against the registered ids and names no mod. */
+        ownerMod?: string
+      }
+    | { type: "tomb-key"; wardKeyId: string }
   endReward?: TreasureReward
   rewards?: (TreasureReward | undefined)[]
   hidden?: boolean
@@ -69,6 +92,10 @@ export type FloorConfig = {
   encountersByIndex?: Record<number, string | string[]>
   corridorStraightness?: number
   packing?: number
+  /** The seed this floor carves at, in place of the one its address derives. Read inside the assembler, so
+   * every entry point that carves the floor (the hook, stair travel, the scanner, the bake) agrees. Baked
+   * from a search that found a seed carving soundly on the first attempt. */
+  seed?: number
   /** Isolates the main path's cells from leftover maze edges, so a compact layout can't merge a shortcut around a puzzle room. */
   sealed?: boolean
   /** Opaque payload for whichever family renders the main path's rooms (e.g. a tableau's
@@ -90,6 +117,36 @@ export type FloorConfig = {
    * and copied onto every floor, exactly as `condition` is. */
   patron?: Patron
   condition?: SiteCondition
+  /** How many junctions this floor's carve must offer, and how many ways out each must leave free to
+   * be closed — mirrors game/siteTypes.ts's FloorConfig.forks. */
+  forks?: ForkDemand[]
+  /** A passage from one named section to another that the player may take only in that direction —
+   * mirrors game/siteTypes.ts's FloorConfig.oneWays. */
+  oneWays?: { from: string; to: string }[]
+  /** Mirrors game/siteTypes.ts's FloorConfig.oneWayRealisation. */
+  oneWayRealisation?: string
+  /** A lever standing in one named section, opening the entrance gates the side it hangs on names and
+   * shutting the other side's — mirrors game/siteTypes.ts's FloorConfig.handles. */
+  handles?: { in: string; left: string[]; right: string[]; starts?: HandleSide }[]
+  /** The floor's authored REGION layout — see game/regions.ts's RegionGraph, which is this field's
+   * type rather than a shape restated here. Distinct from AssemblerReason's `layoutNotFound` (the
+   * carve finding no MAZE layout at a seed), an unrelated failure this field shares no meaning with. */
+  regionLayout?: PlacedContainer
+  /** A SWITCH standing in one of the junctions `forks` reserved, closing that junction's free ways out
+   * so what the player meets there decides which one opens — mirrors game/siteTypes.ts's
+   * FloorConfig.switches. */
+  switches?: { encounter: string | string[]; min: number; max: number }
+  /** WHAT STANDS BETWEEN THE FLOOR'S REGIONS, and what decides whether it does — mirrors
+   * game/siteTypes.ts's FloorConfig.obstacles/.controls (see game/obstacles.ts). Core authoring: they stay
+   * when a mod is not registered, and a floor whose controls need a realisation no mod provides is refused. */
+  obstacles?: Obstacle[]
+  controls?: Control[]
+  /** The order of the gates on any connection carrying several — mirrors game/siteTypes.ts's
+   * FloorConfig.barrierOrder. Core authoring, like the obstacles. */
+  barrierOrder?: BarrierOrder[]
+  /** Mirrors game/siteTypes.ts's FloorConfig.locks and .realisations. */
+  locks?: PlacedLock[]
+  realisations?: RealisationBinding
 }
 
 export type SiteConfig = FloorConfig[]
