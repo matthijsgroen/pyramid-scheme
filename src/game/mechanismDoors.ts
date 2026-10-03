@@ -1,34 +1,25 @@
 import type { FloorGrid, GridCell, MechanismRecord } from "./siteTypes"
 import { cellAddress } from "./cellAddress"
+import { doorOpen, type DoorMode } from "./doorOpen"
+
+const NO_KEYS: ReadonlySet<string> = new Set()
 
 // WHICH DOORS STAND OPEN IS ASKED OF EACH MECHANISM'S OWN MAPPING, NEVER STORED. The save holds the
 // position; the floor holds what that position opens. Keeping the mapping here rather than in the save
 // is what lets a re-carve move a door without a stored entry coming to fit one it was never set for.
 //
-// A GATE IS FOLDED FROM ITS OWNERS, NEVER UNIONED. Every mechanism naming a gate key in any position owns
-// it, and each is asked whether its CURRENT state names it; the answers are folded by the gate's mode,
-// the same fold `openGates` (lockWalk.ts) applies, so what is proved is what is played for a door one
-// key names.
-//
-// EQUIVALENCE IS NOT PROVED FOR A DOOR NAMING MORE THAN ONE KEY. This fold keys its owners by gate KEY
-// id and sets "any" per key; `floorLock` keys them by BOUNDARY, adds a `sealed <keyId>` owner for every
-// key the floor cannot open, and sets `anyGates` per boundary, so "any" authored for one key applies to
-// the whole door. Obstacle keys are namespaced `obstacle:`, so no authoring today builds that door;
-// whoever authors the first multi-key one must reconcile the two folds before trusting either.
-//
-// MEASURED, for a door owned by a mechanism and a FLOOR key, both ways round:
-//   - No chest on the floor mints that key. `floorLock` gets owners [mechanism, `sealed <key>`] with
-//     mode "any", so the door opens whenever the mechanism does. This fold never sees the key at all —
-//     it reads only cells carrying `cell.mechanism` — and opens on the mechanism too. The two AGREE AND
-//     ARE BOTH WRONG: a door stands open only while every key it names is satisfied.
-//   - A chest does mint it. `floorLock` makes `key <id>` a real owner and folds mechanism OR held, which
-//     is what "any" asks for. This fold still sees only the mechanism, so the two DISAGREE whenever the
-//     key is held and the mechanism is at rest.
-// Reconciling them means teaching this fold about floor keys, which it has no concept of, on the path
-// that opens and shuts doors in live play. That is why it has not been done for a door nothing can
-// author: the fix carries more risk today than the divergence does.
-export const openDoorsFor = (grid: FloorGrid, floor: number, positions: ReadonlyMap<string, string>): Set<string> => {
-  const owners = new Map<string, { says: boolean[]; any: boolean }>()
+// A DOOR IS FOLDED FROM ITS OWNERS, NEVER UNIONED, BY `doorOpen` — the rule `openGates` (lockWalk.ts)
+// folds the proof by. Its owners are every mechanism naming its gate key in any position, each asked
+// whether its CURRENT state names it, and every floor key a door cell lists beside that gate key
+// (`requiredKeyIds`), each asked whether it is held. An owner nothing on the floor can supply (a key no
+// chest mints) is never held, so under `and` it keeps the door shut and under `any` it stands aside.
+export const openDoorsFor = (
+  grid: FloorGrid,
+  floor: number,
+  positions: ReadonlyMap<string, string>,
+  heldKeys: ReadonlySet<string> = NO_KEYS
+): Set<string> => {
+  const owners = new Map<string, { says: boolean[]; mode: DoorMode; floorKeys: Set<string> }>()
   for (let r = 0; r < grid.rows; r++)
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
@@ -43,15 +34,29 @@ export const openDoorsFor = (grid: FloorGrid, floor: number, positions: Readonly
       // the nearest position would open a door nobody threw the lever for.
       const { positions: named } = cell.mechanism
       for (const gateKeyId of new Set(named.map(p => p.gateKeyId))) {
-        const gate = owners.get(gateKeyId) ?? { says: [], any: false }
+        const gate = owners.get(gateKeyId) ?? { says: [], mode: "all", floorKeys: new Set() }
         gate.says.push(named.some(p => p.gateKeyId === gateKeyId && p.state === state))
-        if (named.some(p => p.gateKeyId === gateKeyId && p.mode === "any")) gate.any = true
+        if (named.some(p => p.gateKeyId === gateKeyId && p.mode === "any")) gate.mode = "any"
         owners.set(gateKeyId, gate)
       }
     }
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type !== "room" || !cell.requiredKeyId || !cell.requiredKeyIds?.length) continue
+      // A gate key no mechanism names is an owner that never says yes, as `floorLock` seals it.
+      const gate = owners.get(cell.requiredKeyId) ?? {
+        says: [false],
+        mode: "all" as const,
+        floorKeys: new Set<string>(),
+      }
+      owners.set(cell.requiredKeyId, gate)
+      // A set, so the several doors of one region barrier count a key once.
+      for (const keyId of cell.requiredKeyIds) gate.floorKeys.add(keyId)
+    }
   const open = new Set<string>()
-  for (const [gateKeyId, { says, any }] of owners)
-    if (any ? says.some(Boolean) : says.every(Boolean)) open.add(gateKeyId)
+  for (const [gateKeyId, { says, mode, floorKeys }] of owners)
+    if (doorOpen([...says, ...[...floorKeys].map(keyId => heldKeys.has(keyId))], mode)) open.add(gateKeyId)
   return open
 }
 

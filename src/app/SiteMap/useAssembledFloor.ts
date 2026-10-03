@@ -3,7 +3,7 @@ import { assembleFloor } from "@/game/siteAssembler"
 import { openDoorsFor, openWaysOut } from "@/game/mechanismDoors"
 import { withGateFaces } from "@/game/gateFace"
 import { completeCell, isSealedWayOut } from "@/game/gridNavigation"
-import type { Direction, FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
+import type { Direction, FloorConfig, FloorGrid, GridCell, TombKeyReward } from "@/game/siteTypes"
 import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry"
 import type { ResolveKeyRequirements } from "@/game/siteAssembler"
 import { OBSTACLE_KEY_PREFIX } from "@/game/cellSlot"
@@ -19,6 +19,42 @@ const NO_OPEN_GATES: ReadonlySet<string> = new Set()
 // gate's key. Inert for play — no other runtime code gates on requiredKeyIds.
 const resolveKeyRequirements: ResolveKeyRequirements = (familyId, ctx) =>
   getFamilyPlugin(familyId)?.meta.resolveKeyRequirements?.(ctx)
+
+// Filed by the section's AUTHORING address, so re-authoring what is inside a section no longer makes
+// it a different section. There is no older address format to fall back to: a save still holding the
+// structural hashes is re-keyed from the coordinate archive before it is ever read (cellKeyVersion).
+// A save never calls a WALL explored. A way out a switch shut is not ground, so a key naming one is
+// a leftover from a floor where it could still be walked onto — and honouring it would carry the
+// section's high-water mark past the bars, which is the whole floor beyond them coming back lit.
+const savedAsExplored = (
+  grid: FloorGrid,
+  floor: number,
+  exploredCells: Record<string, string[]>,
+  r: number,
+  c: number
+): boolean => {
+  const cell = grid.cells[r][c]
+  if (cell.type === "empty" || cell.sectionAddress === undefined || isSealedWayOut(cell)) return false
+  const key = cellKey(grid, floor, r, c)
+  return key !== null && (exploredCells[cell.sectionAddress]?.includes(key) ?? false)
+}
+
+/** The floor keys the save has in hand: the key chests it names as opened. Read off the save alone, so it
+ * can decide which doors stand open before the floor is carved by them. */
+export const heldFloorKeys = (
+  grid: FloorGrid,
+  floor: number,
+  exploredCells: Record<string, string[]>
+): ReadonlySet<string> => {
+  const held = new Set<string>()
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type === "room" && cell.reward?.type === "tombKey" && savedAsExplored(grid, floor, exploredCells, r, c))
+        held.add((cell.reward as TombKeyReward).keyId)
+    }
+  return held
+}
 
 /**
  * Restore one floor's exploration from the cell keys a save holds, never from the coordinates beside
@@ -56,19 +92,7 @@ export const applyExplored = (
   exploredCells: Record<string, string[]>,
   openGateKeys: ReadonlySet<string> = NO_OPEN_GATES
 ): FloorGrid => {
-  // Filed by the section's AUTHORING address, so re-authoring what is inside a section no longer makes
-  // it a different section. There is no older address format to fall back to: a save still holding the
-  // structural hashes is re-keyed from the coordinate archive before it is ever read (cellKeyVersion).
-  const keysFor = (cell: GridCell): string[] | undefined =>
-    cell.type === "empty" || cell.sectionAddress === undefined ? undefined : exploredCells[cell.sectionAddress]
-  // A save never calls a WALL explored. A way out a switch shut is not ground, so a key naming one is
-  // a leftover from a floor where it could still be walked onto — and honouring it would carry the
-  // section's high-water mark past the bars, which is the whole floor beyond them coming back lit.
-  const named = (r: number, c: number): boolean => {
-    if (isSealedWayOut(grid.cells[r][c])) return false
-    const key = cellKey(grid, floor, r, c)
-    return key !== null && (keysFor(grid.cells[r][c])?.includes(key) ?? false)
-  }
+  const named = (r: number, c: number): boolean => savedAsExplored(grid, floor, exploredCells, r, c)
 
   const isShutObstacleGate = (cell: GridCell): boolean =>
     cell.type === "room" &&
@@ -360,8 +384,16 @@ export const useAssembledFloor = (
   // Which gates the floor's own mechanisms currently hold open — read once so the carve (below) and
   // the fog restore (applyExplored) agree on the same set rather than each asking openDoorsFor its own.
   const openGateKeys = useMemo(
-    () => (baseGrid ? openDoorsFor(baseGrid, currentFloor, mechanismPositions ?? NO_POSITIONS) : NO_OPEN_GATES),
-    [baseGrid, currentFloor, mechanismPositions]
+    () =>
+      baseGrid
+        ? openDoorsFor(
+            baseGrid,
+            currentFloor,
+            mechanismPositions ?? NO_POSITIONS,
+            heldFloorKeys(baseGrid, currentFloor, exploredCells)
+          )
+        : NO_OPEN_GATES,
+    [baseGrid, currentFloor, mechanismPositions, exploredCells]
   )
 
   // The carve as the floor's own switches have left it — what everything below reads as "the floor". A

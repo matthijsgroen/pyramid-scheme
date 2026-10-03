@@ -930,6 +930,13 @@ export const assembleFloor = (
     )
   }
 
+  // A GATE ASKING FOR A FLOOR KEY NAMES A SECTION THAT HAS ONE: the key is the one that section's own floor-key
+  // door wants, so a section with no such gate leaves the gate waiting on a key nothing mints.
+  for (const obstacle of authoredConfig.obstacles ?? [])
+    for (const section of obstacle.kind === "gate" ? (obstacle.floorKeys ?? []) : [])
+      if (sectionByAddress.get(section)?.gate?.type !== "floor-key")
+        return { success: false, reasons: [{ type: "gateKeyNamesNoFloorKey", id: obstacle.id, section }] }
+
   // A CONTROL IS COMPILED INTO THE RECORD THE WALK ALREADY EATS, the same step a handle desugars
   // through above. `opens` names obstacles by their authored ids; `positions` names the gate keys
   // those ids mint, one entry per obstacle per state that opens it — several entries may share a
@@ -2220,6 +2227,17 @@ export const assembleFloor = (
     // shape. The control's own authored id is carried onto the cell for the same reason a handle's
     // room carries its own address (see RoomCell.mechanismId): one uniform rule, not a
     // control-only exception.
+    // THE FLOOR KEYS A GATE ALSO ASKS FOR, as the key ids their sections' own doors want — so the key a
+    // player carries to the section is the key that owns this door beside its controls.
+    const floorKeysOfGate = (obstacleId: string): Pick<RoomSpec, "requiredKeyIds"> => {
+      const obstacle = (authoredConfig.obstacles ?? []).find(o => o.id === obstacleId)
+      const keyIds = (obstacle?.kind === "gate" ? (obstacle.floorKeys ?? []) : []).flatMap(address =>
+        chains.flatMap(chain =>
+          addresses.of.get(chain.positional) === address && chain.keyNodeId ? [chain.keyNodeId] : []
+        )
+      )
+      return keyIds.length > 0 ? { requiredKeyIds: keyIds } : {}
+    }
     // One entrance's door of a region barrier: a family-less gate room like any other, so it draws as bars
     // and `openWaysOut` hands its corridor back once its owners open it. `regionBarrier` is what tells it
     // from an edge gate, and which of its barrier's doors it is.
@@ -2227,6 +2245,7 @@ export const assembleFloor = (
       roomType: "encounter",
       tags: [...keyGate.tags, "region-barrier"],
       requiredKeyId: gateKeyOf(id),
+      ...floorKeysOfGate(id),
       regionBarrier: { region, entrance },
     })
     const controlRoomSpec = (control: StatefulControl, record: MechanismRecord): RoomSpec => ({
@@ -2585,6 +2604,7 @@ export const assembleFloor = (
           // holds it open.
           tags: keyGate.tags,
           requiredKeyId: gateKeyOf(obstacleId),
+          ...floorKeysOfGate(obstacleId),
         })
       } else if (barrierDoorOnMain.has(mi)) {
         const { id, region, entrance } = barrierDoorOnMain.get(mi)!
@@ -2691,6 +2711,7 @@ export const assembleFloor = (
             // Owned by a control, so nothing stands in it (see the main path's obstacle gate).
             tags: keyGate.tags,
             requiredKeyId: gateKeyOf(obstacleId),
+            ...floorKeysOfGate(obstacleId),
           })
         }
       }

@@ -677,6 +677,8 @@ export type AssemblerReason =
    * second handle drives too. Which sections exist and what each already carries is fixed by the config, so this is
    * answered once rather than blamed on carves that could never have satisfied it. */
   | { type: "handleUnsatisfied"; handle: number; address: string }
+  /** A gate asks for the floor key of a section that has no floor-key gate; `id` is the gate. */
+  | { type: "gateKeyNamesNoFloorKey"; id: string; section: string }
   /** Two regions of one layout answer to the same name, so nothing could tell which one a connection,
    * a port or a piece of content meant. See FloorConfig.regionLayout. */
   | { type: "regionNameRepeated"; name: string }

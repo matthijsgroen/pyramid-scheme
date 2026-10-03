@@ -24,6 +24,11 @@ type GateTerms = {
   /** THE CONTROLS THAT OWN THIS GATE, named from the gate's side rather than from `opens`. Only a
    * fork-switch (`ForkSwitchControl`) may be named here for now; a gate it owns appears in no control's `opens`. */
   owners?: string[]
+  /** FLOOR KEYS THIS GATE ALSO ASKS FOR, each named by the section (label or position) whose floor-key
+   * gate wants it. A floor key is an activator, so it owns the gate beside its controls: under `and` the
+   * gate stands open only while the key is held too, under `any` the key alone is enough. Only a gate
+   * some control owns takes one. */
+  floorKeys?: string[]
 }
 
 /** A boundary a control can hold open or shut. `between` is unordered — a gate is passable from

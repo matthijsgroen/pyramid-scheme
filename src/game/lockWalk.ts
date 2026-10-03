@@ -1,3 +1,5 @@
+import { doorOpen, type DoorMode } from "./doorOpen"
+
 // A LOCK IS A GRAPH OF PLACES AND THE THINGS THAT CHANGE WHICH OF THEM JOIN UP. Nothing here knows
 // about grids, families or mods: a beam board, a lever, a sequence and a floor key are one shape with
 // different data — states, which of its gates each state opens, and the moves that change state. See
@@ -16,7 +18,7 @@ export type LockGate = {
   /** Every mechanism with a say in this boundary. At least one. */
   owners: MechanismId[]
   /** "all" (the default) opens it only while every owner opens it; "any" while one of them does. */
-  mode?: "all" | "any"
+  mode?: DoorMode
 }
 
 export type Mechanism = {
@@ -97,7 +99,7 @@ export const openGates = (spec: LockSpec, config: LockConfig): Set<GateId> => {
   const open = new Set<GateId>()
   for (const [gateId, gate] of Object.entries(spec.gates)) {
     const says = gate.owners.map(owner => (spec.mechanisms[owner].opens[config[owner]] ?? []).includes(gateId))
-    if (gate.mode === "any" ? says.some(Boolean) : says.every(Boolean)) open.add(gateId)
+    if (doorOpen(says, gate.mode)) open.add(gateId)
   }
   return open
 }
