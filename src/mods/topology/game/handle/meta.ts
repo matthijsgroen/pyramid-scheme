@@ -1,4 +1,5 @@
 import type { FamilyMeta } from "@/game/families/familyMeta"
+import { DEFAULT_CONTROL_ROLE } from "@/game/encounterFallback"
 
 export const HANDLE_META: FamilyMeta = {
   id: "handle",
@@ -6,9 +7,11 @@ export const HANDLE_META: FamilyMeta = {
   // Its own tag, not "puzzle": what this room hands over is which door on the floor stands open, so a
   // room drawn into the generic pool would offer a lever with nothing on the end of it. Placed only
   // where a floor authors it by id, the same way lightbeamSwitch and crocodile stay out of the pool.
-  tags: ["handle"],
+  // "default-control" is the role a control stands as when its author names no other realisation.
+  tags: ["handle", DEFAULT_CONTROL_ROLE],
   icon: "🎚️",
   color: "amber",
+  drawing: { marker: "handle", art: "lever" },
   // The lever is not a loot slot: what it hands over is the floor's own shape.
   rewardPriority: 0,
   invitation: "handle.invitation",

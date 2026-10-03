@@ -12,6 +12,16 @@ export type FamilyKeyRequirementResolverCtx = {
 }
 export type FamilyKeyRequirementResolver = (ctx: FamilyKeyRequirementResolverCtx) => string[] | undefined
 
+/** How the map draws a room of a family that works a mechanism. The family declares it, so the map never
+ * guesses a drawing from what the room is for. */
+export type FamilyDrawing = {
+  /** The marker the room wears at every rank: "handle" is the lever glyph, "mechanism" the family's own
+   * `icon`. This is also the whole drawing wherever `art` is not painted. */
+  marker: "handle" | "mechanism"
+  /** Furniture drawn beside the marker at a rank that has painted it ("lever"). Unset: the marker alone. */
+  art?: "lever"
+}
+
 // Plain data describing a registered encounter family — no React/app dependency, so
 // world-gen (src/worldGen/) can read it directly via allFamilyMeta.ts alongside the app's
 // own family registry (src/app/families/familyRegistry.ts), which re-exports this type.
@@ -21,6 +31,9 @@ export type FamilyMeta = {
   tags: string[]
   icon: string
   color: string
+  /** How a room of this family is drawn on the map. Unset on a family that works no mechanism; a mechanism's
+   * room whose family declares none is drawn as the "mechanism" marker. */
+  drawing?: FamilyDrawing
   // Priority for the reward-weight fill-order allocator (docs/mods/ARCHITECTURE.md's placement
   // pipeline, folded into the keys-and-locks solver's placement model) — 0-100 scale, higher fills
   // first, 0 = never eligible for this pool. Treasure (100) always has loot and fills

@@ -9,6 +9,8 @@ export const TORCH_META: FamilyMeta = {
   tags: ["torch"],
   icon: "🔥",
   color: "amber",
+  // No torch is painted at any rank, so the whole drawing is the marker carrying the flame.
+  drawing: { marker: "mechanism" },
   rewardPriority: 0,
   invitation: "torch.invitation",
   // Re-enterable so a player who walked past it unlit can come back and light it; once lit it offers

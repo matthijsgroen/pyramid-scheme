@@ -41,7 +41,7 @@ import { hashString } from "@/support/hashString"
 import { ART_IMAGE_RENDERING, patronTileUrl, tileOrPlaceholder, tileUrl, tileVariants } from "./tileAssets"
 import { storedAtCell } from "@/game/cellAddress"
 import { tileStatusAt } from "@/game/sequencePlay"
-import { isLockedGate, isSpentAt, nodeRadius, shapeKindFor, staysOpen } from "./nodeKinds"
+import { drawingOf, familyIconOf, isLockedGate, isSpentAt, nodeRadius, shapeKindFor, staysOpen } from "./nodeKinds"
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
 import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
 import { MarkArtBadge, type Mark } from "./mark"
@@ -453,7 +453,7 @@ export const nodeSpritesFor = (
           wall: isSealedWayOut(cell),
           mark: cell.mark,
         })
-      } else if (kind === "handle") {
+      } else if (drawingOf(cell)?.art === "lever") {
         // BLOCKED UNTIL ALL THREE TILES EXIST, AND NEVER PLACEHOLDER: `tileUrl`, not `tileOrPlaceholder`
         // — a stand-in dome with no arm to swing would draw a lie, and the superseded single-piece
         // `leverLeft`/`leverRight` tiles are not reached for either. A rank with only some of the three
@@ -1562,6 +1562,7 @@ export const SiteMapView = ({
                         vector can be spared. Opacity rather than a skipped render, which keeps every cell's
                         drawing the same shape whatever is on it; the tap is the cell's own box either way. */}
                       <g
+                        data-shape-kind={shapeKind}
                         opacity={
                           sealedWay || hasStair || hasExit
                             ? 0
@@ -1579,6 +1580,7 @@ export const SiteMapView = ({
                           keyColor={cell.keyColor}
                           keyColors={cell.keyColors}
                           difficulty={wardKeyDifficulty(cell.requiredKeyId)}
+                          icon={familyIconOf(cell)}
                           mark={cell.mark}
                           plate={
                             cell.sequenceTile && plateStatus

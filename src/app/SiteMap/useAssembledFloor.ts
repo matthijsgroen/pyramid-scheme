@@ -2,6 +2,7 @@ import { useCallback, useMemo } from "react"
 import { assembleFloor } from "@/game/siteAssembler"
 import { openDoorsFor, openWaysOut } from "@/game/mechanismDoors"
 import { withGateFaces } from "@/game/gateFace"
+import { DOOR_FACE_ROLE } from "@/game/encounterFallback"
 import { completeCell, isSealedWayOut } from "@/game/gridNavigation"
 import type { Direction, FloorConfig, FloorGrid, GridCell, TombKeyReward } from "@/game/siteTypes"
 import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry"
@@ -405,7 +406,8 @@ export const useAssembledFloor = (
             sealWaysOut(openWaysOut(baseGrid, openGateKeys)),
             currentFloor,
             mechanismPositions ?? NO_POSITIONS,
-            heldKeys
+            heldKeys,
+            resolveEncounter(undefined, DOOR_FACE_ROLE).familyId
           )
         : null,
     [baseGrid, openGateKeys, currentFloor, mechanismPositions, heldKeys]

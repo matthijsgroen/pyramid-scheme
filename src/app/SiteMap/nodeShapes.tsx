@@ -91,6 +91,8 @@ export type ShapeProps = {
   mark?: Mark
   // A sequence tile's glyph and how the run stands on it (RoomCell.sequenceTile, `tileStatusAt`). Unset off a plate.
   plate?: { glyph: number; status: TileStatus }
+  // The icon of the family standing in the room (FamilyMeta.icon), drawn by a "mechanism" marker.
+  icon?: string
 }
 
 /** A pressure plate: ground with its glyph on it, stepped on rather than entered. */
@@ -260,6 +262,39 @@ const HandleShape = ({ state, mark }: ShapeProps) => {
   )
 }
 
+/** A mechanism whose realisation has no drawing of its own: the same backdrop a lever wears, carrying the
+ * icon of the family that realises it (a flame for a torch). A room whose family is unknown wears a plain
+ * diamond rather than nothing. */
+const MechanismShape = ({ state, mark, icon }: ShapeProps) => {
+  const r = NODE_RADIUS_PUZZLE
+  return (
+    <>
+      <rect
+        x={-r}
+        y={-r}
+        width={r * 2}
+        height={r * 2}
+        rx={2}
+        fill={handleFill[state]}
+        stroke={handleStroke[state]}
+        strokeWidth={1.5}
+      />
+      {state !== "fogged" && (
+        <text
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontSize={16}
+          data-mechanism-icon
+          style={{ userSelect: "none" }}
+        >
+          {icon ?? "\u25C6"}
+        </text>
+      )}
+      {mark && <MarkBadge mark={mark} r={r} state={state} />}
+    </>
+  )
+}
+
 const GateNodeShape = ({ state, gateVariant, keyColor, difficulty, mark }: ShapeProps) => {
   const r = NODE_RADIUS_LARGE
   const isTomb = gateVariant === "tomb-key"
@@ -415,8 +450,9 @@ export const NodeShape = ({
   difficulty,
   mark,
   plate,
+  icon,
 }: ShapeProps & { type: ShapeKind }) => {
-  const p = { state, gateVariant, keyColor, keyColors, difficulty, mark, plate }
+  const p = { state, gateVariant, keyColor, keyColors, difficulty, mark, plate, icon }
   switch (type) {
     case "entrance":
       return <EntranceShape {...p} />
@@ -430,6 +466,8 @@ export const NodeShape = ({
       return <SwitchShape {...p} />
     case "handle":
       return <HandleShape {...p} />
+    case "mechanism":
+      return <MechanismShape {...p} />
     case "plate":
       return <PlateShape {...p} />
     case "gate":

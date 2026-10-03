@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from "vitest"
 import { assembleFloor, defaultResolveEncounter, type ResolveEncounter } from "./siteAssembler"
 import { cellAddress } from "./cellAddress"
-import { GATE_FACE_FAMILY, withGateFaces } from "./gateFace"
+import { withGateFaces } from "./gateFace"
 import { openDoorsFor, openWaysOut } from "./mechanismDoors"
 import type { FloorConfig, FloorGrid, GridCell, RoomCell } from "./siteTypes"
 import { designerDoubleBack, forkSwitchFloorConfig } from "./testSupport/forkSwitchFixtures"
@@ -14,6 +14,8 @@ import {
   soloTorchDoorFloor,
   threeOwnerDoorFloor,
 } from "./testSupport/gateFaceFixtures"
+
+const GATE_FACE_FAMILY = "gate-face"
 
 const reEnterable: ResolveEncounter = (encounter, defaultTag) => ({
   ...defaultResolveEncounter(encounter, defaultTag),

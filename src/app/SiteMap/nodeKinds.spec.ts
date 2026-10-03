@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import type { Direction, FloorGrid, GridCell, RoomCell } from "@/game/siteTypes"
 import { registerFamily } from "@/app/families/familyRegistry"
+import "@/mods/registerModApps"
 import { isLockedGate, shapeKindFor } from "./nodeKinds"
 import { buildRoomClaims } from "./roomClaims"
 

@@ -110,7 +110,7 @@ describe("a spent activator says so on the map", () => {
       }
     })
 
-    it(`${name}: a torch's drawn furniture eases back once lit and stands full when unlit`, () => {
+    it(`${name}: a torch hangs no lever furniture in any lighting, its used look being its marker alone`, () => {
       const { grid: base } = carved.get(name)!
       const torches = torchesOf(base)
       for (const { label, states } of everyLighting(base, torches)) {
@@ -118,10 +118,12 @@ describe("a spent activator says so on the map", () => {
           <SiteMapView grid={walked(base)} currentFloor={0} mechanismStates={states} />
         )
         for (const { at } of torches) {
-          const lit = states.get(cellAddress(base, 0, at[0], at[1])!) === "lit"
           const art = container.querySelector<HTMLElement>(`[data-node-sprite="handle:${at[0]},${at[1]}"]`)
-          expect(art, `${name} / ${label}: the torch draws furniture`).not.toBeNull()
-          expect(art!.style.opacity === "0.5", `${name} / ${label} / ${at}`).toBe(lit)
+          expect(art, `${name} / ${label} / ${at}: no lever stack on a torch`).toBeNull()
+          expect(
+            markerOf(container, at[0], at[1])?.querySelector("[data-mechanism-icon]")?.textContent,
+            `${name} / ${label} / ${at}: flame marker`
+          ).toBe("🔥")
         }
         unmount()
       }

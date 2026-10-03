@@ -1,6 +1,7 @@
 import type { FloorGrid, RoomCell } from "@/game/siteTypes"
 import { isSpent } from "@/game/mechanismDoors"
 import { storedAtCell } from "@/game/cellAddress"
+import type { FamilyDrawing } from "@/game/families/familyMeta"
 import { getFamilyPlugin } from "@/app/families/familyRegistry"
 import { NODE_RADIUS_FORK, NODE_RADIUS_LARGE, NODE_RADIUS_PUZZLE } from "./mapScale"
 
@@ -9,11 +10,31 @@ import { NODE_RADIUS_FORK, NODE_RADIUS_LARGE, NODE_RADIUS_PUZZLE } from "./mapSc
 // it (`roomClaims.ts`). Kept apart from either so neither has to import the other.
 
 export type ShapeKind =
-  "entrance" | "puzzle" | "trap" | "fork" | "switch" | "handle" | "plate" | "gate" | "treasure" | "stairhead" | "exit"
+  | "entrance"
+  | "puzzle"
+  | "trap"
+  | "fork"
+  | "switch"
+  | "handle"
+  | "mechanism"
+  | "plate"
+  | "gate"
+  | "treasure"
+  | "stairhead"
+  | "exit"
 
 /** Everything a room's shape is read off and nothing else, so a caller holding a hand-built room can
  * ask without building a whole cell around it. */
-export type ShapeCell = Pick<RoomCell, "roomType" | "tags" | "stairId" | "family" | "sequenceTile">
+export type ShapeCell = Pick<RoomCell, "roomType" | "tags" | "stairId" | "family" | "sequenceTile" | "mechanism">
+
+/** How the family standing in a room declares it is drawn; unset for a family that declares none, an
+ * unregistered one, and a room with no family. */
+export const drawingOf = (cell: Pick<RoomCell, "family">): FamilyDrawing | undefined =>
+  cell.family === undefined ? undefined : getFamilyPlugin(cell.family)?.meta.drawing
+
+/** The icon of the family standing in a room, for the marker that has no drawing of its own. */
+export const familyIconOf = (cell: Pick<RoomCell, "family">): string | undefined =>
+  cell.family === undefined ? undefined : getFamilyPlugin(cell.family)?.meta.icon
 
 export const shapeKindFor = (grid: FloorGrid, r: number, c: number, cell: ShapeCell): ShapeKind => {
   // A junction that carries a family DIVIDES rather than merely branching: it asks something of the
@@ -35,9 +56,13 @@ export const shapeKindFor = (grid: FloorGrid, r: number, c: number, cell: ShapeC
   }
   // A sequence tile is ground with a glyph on it, whatever else its cell says.
   if (cell.sequenceTile) return "plate"
-  // A handle stands as an ordinary "encounter" room, not a "fork" — it is a lever to pull, not a
-  // junction — so it reads off its tag rather than off the fork/family branch above.
-  if (cell.tags?.includes("handle")) return "handle"
+  // A MECHANISM'S ROOM IS DRAWN AS ITS REALISATION SAYS (`FamilyMeta.drawing`), never as a default: a lever
+  // is a lever and a torch a torch, though both stand in an ordinary "encounter" room. A room working a
+  // mechanism whose family declares no drawing — or whose mod is off — wears the family-icon marker, the one
+  // drawing every realisation can fall back to.
+  const drawing = drawingOf(cell)
+  if (drawing) return drawing.marker
+  if (cell.mechanism) return "mechanism"
   if (cell.tags?.includes("gate")) return "gate"
   if (cell.tags?.includes("trap")) return "trap"
   if (cell.tags?.includes("treasure") || cell.tags?.includes("shop")) return "treasure"
@@ -80,6 +105,8 @@ export const nodeRadius: Record<ShapeKind, number> = {
   switch: NODE_RADIUS_PUZZLE,
   // A lever is somewhere to go, so it is sized like a room rather than like a junction's dot.
   handle: NODE_RADIUS_PUZZLE,
+  // A mechanism marked by its family's icon is somewhere to go like a lever, and sized like one.
+  mechanism: NODE_RADIUS_PUZZLE,
   // A pressure plate is stepped on rather than entered, so it is the size of a room and no larger.
   plate: NODE_RADIUS_PUZZLE,
   gate: NODE_RADIUS_LARGE,

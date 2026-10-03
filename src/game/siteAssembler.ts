@@ -2,6 +2,9 @@ import { mulberry32, shuffle } from "./random"
 import { hashString } from "@/support/hashString"
 import { allocateMarks, type Mark, type MarkRequest } from "./mark"
 import { withGateFaces } from "./gateFace"
+import { DEFAULT_CONTROL_ROLE, DOOR_FACE_ROLE, defaultResolveEncounter } from "./encounterFallback"
+
+export { defaultResolveEncounter }
 import type {
   AssemblerFailure,
   AssemblerResult,
@@ -95,30 +98,9 @@ export type ResolveKeyRequirements = (
 ) => string[] | undefined
 const defaultResolveKeyRequirements: ResolveKeyRequirements = () => undefined
 
-const DEFAULT_TAG_FAMILIES: Record<string, string> = {
-  trap: "arithmetic-reflex",
-  puzzle: "sumplete",
-  "tomb-puzzle": "tableau",
-}
-const DEFAULT_FAMILY_TAGS: Record<string, string[]> = {
-  "arithmetic-reflex": ["trap"],
-  sumplete: ["puzzle"],
-  tableau: ["tomb-puzzle"],
-  crocodile: ["tomb-puzzle"],
-  "treasure-chest": ["treasure"],
-  "fez-shop": ["shop"],
-  "key-gate": ["gate"],
-}
-// Fallback for callers that don't inject the real family registry (tests, stories) —
-// production always passes familyRegistry.ts's resolveEncounter. Never claims `reEnterable`: this
-// fallback's own catalogue holds no family that offers a walk back in, and it has no registry to ask
-// about any other id, so a switch resolved through it is refused rather than guessed open. A caller
-// that needs a real answer (world-gen's sweep, the runtime) injects a resolver that has one.
-export const defaultResolveEncounter: ResolveEncounter = (encounter, defaultTag) => {
-  const value = (Array.isArray(encounter) ? encounter[0] : encounter) ?? defaultTag
-  const familyId = DEFAULT_TAG_FAMILIES[value] ?? value
-  return { familyId, tags: DEFAULT_FAMILY_TAGS[familyId] ?? [] }
-}
+/** What a mechanism's room is made of: the family its realisation resolved to, and the tags that family
+ * carries. Both come off the resolution, so the room is drawn and filled by whatever realises it. */
+const mechanismRoom = ({ familyId, tags }: EncounterResolution) => ({ family: familyId, tags })
 
 // A section hash is a run's handle on a stretch of floor: saved explored cells and found hidden
 // corridors are filed under it, and a cell whose hash no longer matches is dropped as stale. So it
@@ -622,10 +604,6 @@ const keyHostIdxs = (sections: readonly SubSection[]) => ({
     .filter(i => !sections[i].gate && !sections[i].endReward && !sections[i].hidden),
 })
 
-/** What a lever's room is drawn and filled by. Nothing but a name here: which family answers to it is
- * the registry's, and the floor only says a lever stands in this room. */
-const HANDLE_FAMILY = "handle"
-
 /** The sections a handle drives carry its gate, so the rest of the carve meets an ordinary authored
  * floor-key gate: the section is isolated behind it, no host chest is grown for a key nothing on this
  * floor mints, and the gate room is written by the one place that writes gate rooms. */
@@ -1021,8 +999,7 @@ export const assembleFloor = (
   // a section's chest or gate is named (cellSlot.ts).
   const leverSpec = (positional: string) => ({
     roomType: "encounter" as const,
-    family: HANDLE_FAMILY,
-    tags: [HANDLE_FAMILY],
+    ...mechanismRoom(resolveEncounter(undefined, DEFAULT_CONTROL_ROLE)),
     mechanism: leverByAddress.get(addresses.of.get(positional) ?? positional)!,
     // The handle's own authored address — the same name `leverByAddress` is keyed by — carried onto
     // the cell so `cellSlot.ts` names every mechanism's room by its authored identity uniformly,
@@ -2250,8 +2227,7 @@ export const assembleFloor = (
     })
     const controlRoomSpec = (control: StatefulControl, record: MechanismRecord): RoomSpec => ({
       roomType: "encounter",
-      family: resolveEncounter(control.encounter, HANDLE_FAMILY).familyId,
-      tags: [HANDLE_FAMILY],
+      ...mechanismRoom(resolveEncounter(control.encounter, DEFAULT_CONTROL_ROLE)),
       mechanism: record,
       mechanismId: control.id,
     })
@@ -3920,7 +3896,17 @@ export const assembleFloor = (
 
     // A DOOR THAT WAITS ON SEVERAL OWNERS GAINS ITS FACE LAST, after every check above has read the carve:
     // only the door cell's family changes, so no wall, `dirs` or slot can have moved for it.
-    return { success: true, grid: withGateFaces(grid, floorRef.floorIndex, new Map()), attempt }
+    return {
+      success: true,
+      grid: withGateFaces(
+        grid,
+        floorRef.floorIndex,
+        new Map(),
+        undefined,
+        resolveEncounter(undefined, DOOR_FACE_ROLE).familyId
+      ),
+      attempt,
+    }
   }
 
   return {

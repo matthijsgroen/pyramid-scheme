@@ -1,11 +1,8 @@
 import { storedAtCell } from "./cellAddress"
 import { pressAt } from "./mechanismDoors"
+import { DOOR_FACE_ROLE, defaultResolveEncounter } from "./encounterFallback"
 import { tileStatus, type TileStatus } from "./sequence"
 import type { FloorGrid, GridCell, KeyColor, MechanismRecord, RoomCell } from "./siteTypes"
-
-/** The family that stands in a gate which has to explain itself. It reads and never opens: the door
- * opens by its condition being met (`openWaysOut`), never by anything done in front of it. */
-export const GATE_FACE_FAMILY = "gate-face"
 
 /** What an owner looks like on the face: a mechanism wears its own family's icon (a flame for a torch),
  * a floor key wears a key in its colour. */
@@ -70,6 +67,9 @@ const isGateDoor = (cell: GridCell): cell is RoomCell & { requiredKeyId: string 
   cell.type === "room" && cell.requiredKeyId !== undefined && (cell.tags?.includes("gate") ?? false)
 
 /**
+ * `faceFamily` is the family that stands in such a door (it reads and never opens: `openWaysOut` opens the
+ * door by its condition being met), handed in by whoever holds the registry.
+ *
  * Gives every door that needs one its face, lit by where each owner stands in `positions` (keyed by the
  * owner's cell address; an owner with no entry stands in its initial state).
  *
@@ -81,7 +81,8 @@ export const withGateFaces = (
   grid: FloorGrid,
   floor: number,
   positions: ReadonlyMap<string, string>,
-  heldKeys: ReadonlySet<string> = NO_KEYS
+  heldKeys: ReadonlySet<string> = NO_KEYS,
+  faceFamily: string = defaultResolveEncounter(undefined, DOOR_FACE_ROLE).familyId
 ): FloorGrid => {
   let changed = false
   const homes = sequencesOf(grid)
@@ -120,7 +121,7 @@ export const withGateFaces = (
       changed = true
       return {
         ...cell,
-        family: GATE_FACE_FAMILY,
+        family: faceFamily,
         gateFace: { markers, ...(orders.length > 0 ? { sequences: orders } : {}) },
       }
     })
