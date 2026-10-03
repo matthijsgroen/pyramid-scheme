@@ -20,6 +20,12 @@ export type PlacedLock = { lock: Lock; as?: string; inside?: { instance: string;
  * its host instance, and the inner's own regions and ports under their floor (namespaced) names. */
 export type LockNesting = { instance: string; host: string; regions: string[]; in: string; out: string }
 
+/** A LOCK INSTANCE AS PLACED ON A FLOOR: its regions under their floor (namespaced) names, and the host region it stands in when nested. */
+export type PlacedInstance = { instance: string; regions: string[]; inside?: { host: string; region: string } }
+
+/** What `expandFloorLocks` hands back for a floor that places locks: the config the carve sees, and what the planner reads beside it. */
+export type ExpandedFloor = { config: FloorConfig; nesting?: LockNesting[]; placed?: PlacedInstance[] }
+
 /** EVERY WAY A NESTING IS REFUSED, naming the host, region or instance to fix. Authored names. */
 export type LockNestingFault =
   | { type: "hostUnknown"; host: string }
@@ -156,7 +162,7 @@ const seatNested = (placements: PlacedLock[]): { reasons: AssemblerReason[]; sea
  */
 export const expandFloorLocks = (
   config: FloorConfig
-): { ok: true; config: FloorConfig; nesting?: LockNesting[] } | { ok: false; reasons: AssemblerReason[] } => {
+): ({ ok: true } & ExpandedFloor) | { ok: false; reasons: AssemblerReason[] } => {
   const placements = config.locks ?? []
   if (placements.length === 0) return { ok: true, config }
 
@@ -242,6 +248,15 @@ export const expandFloorLocks = (
     const layout = fragments.get(instance)!.regionLayout
     return { instance, host, regions: layout.regions.map(region => region.name), in: layout.in, out: layout.out }
   })
+  const placed: PlacedInstance[] = ordered.map(({ name, fragment }) => {
+    const inside = insideOf.get(name)
+    const seat = nested.seats.find(candidate => candidate.instance === name)
+    return {
+      instance: name,
+      regions: fragment.regionLayout.regions.map(region => region.name),
+      ...(inside && seat ? { inside: { host: seat.host, region: `${seat.host}.${seat.region}` } } : {}),
+    }
+  })
   return {
     ok: true,
     config: {
@@ -259,5 +274,6 @@ export const expandFloorLocks = (
       ...(oneWayRealisation === undefined ? {} : { oneWayRealisation }),
     },
     ...(nesting.length > 0 ? { nesting } : {}),
+    placed,
   }
 }

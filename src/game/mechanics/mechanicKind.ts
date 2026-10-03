@@ -25,6 +25,9 @@ export type CompileContext = {
 /** What one mechanic becomes on a floor: its controls, and the junctions it asks the carve to lay. */
 export type Compiled = { controls: Control[]; forks?: ForkDemand[] }
 
+/** What a control needs a node for: its own board, one tile of a sequence, or the cell a fork is operated from. */
+export type ControlSeatKind = "control" | "tile" | "junction"
+
 /**
  * ONE KIND OF CONTROL, a plug-in OF CORE (docs/mods/mechanic-contract.md): the state machine a player drives,
  * what it needs of the carve, how it compiles into the floor's vocabulary and what it refuses. Always
@@ -48,6 +51,8 @@ export type MechanicKind = {
   faults?: (id: string, mechanic: LooseMechanic) => LockFault[]
   /** How a mechanic of this kind becomes controls on the floor. Absent: the kind has no mechanic to compile. */
   compile?: (id: string, mechanic: LockMechanic, context: CompileContext) => Compiled
+  /** Where a floor control of this kind needs a node of its own, one entry per node, in order. Absent: it needs none. */
+  seats?: (control: Control) => { region: string; seat: ControlSeatKind }[]
   /** An effect with no control of its own, compiled where the lock's gates and drops are (a one-way). */
   effectOnly?: true
 }

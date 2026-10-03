@@ -10,6 +10,7 @@ export const FORK_SWITCH: MechanicKind = {
   built: true,
   gates: "owns",
   oneToARegion: true,
+  seats: control => (control.control === "fork-switch" ? [{ region: control.in, seat: "junction" }] : []),
   compile: (id, mechanic, { name, binding }) => {
     if (mechanic.control !== "fork-switch") return { controls: [] }
     return {

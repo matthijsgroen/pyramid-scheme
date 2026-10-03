@@ -4,7 +4,14 @@ import { ONE_WAY } from "./oneWay"
 import { SEQUENCE } from "./sequence"
 import { ACTIVATOR, TOGGLE } from "./toggle"
 
-export type { Compiled, CompileContext, LooseMechanic, MechanicKind, ResolveMechanicKind } from "./mechanicKind"
+export type {
+  Compiled,
+  CompileContext,
+  ControlSeatKind,
+  LooseMechanic,
+  MechanicKind,
+  ResolveMechanicKind,
+} from "./mechanicKind"
 
 /** THE CONTROL KINDS, core's own and never toggled off. A mod dresses them; it never adds or removes one. */
 export const CORE_MECHANICS: readonly MechanicKind[] = [TOGGLE, ACTIVATOR, SEQUENCE, FORK_SWITCH, ONE_WAY]

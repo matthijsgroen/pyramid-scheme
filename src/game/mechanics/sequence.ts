@@ -10,6 +10,8 @@ export const SEQUENCE: MechanicKind = {
     Object.keys(mechanic.opens ?? {})
       .filter(state => state !== "done")
       .map(state => ({ type: "sequenceStateNotDone", mechanic: id, state })),
+  seats: control =>
+    control.control === "sequence" ? control.steps.map(step => ({ region: step.in, seat: "tile" as const })) : [],
   compile: (id, mechanic, { name, binding }) => {
     if (mechanic.control !== "sequence") return { controls: [] }
     const encounter = binding.sequence

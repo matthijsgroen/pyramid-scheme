@@ -38,6 +38,7 @@ export const TOGGLE: MechanicKind = {
   gates: "opens",
   faults: twoStateFaults,
   compile: twoState(true),
+  seats: control => (control.control === undefined ? [{ region: control.in, seat: "control" }] : []),
 }
 
 /** Two states, no way back: the torch. A floor key is the same state machine, worked by taking it from a chest. */
@@ -47,4 +48,5 @@ export const ACTIVATOR: MechanicKind = {
   gates: "opens",
   faults: twoStateFaults,
   compile: twoState(false),
+  seats: control => (control.control === undefined ? [{ region: control.in, seat: "control" }] : []),
 }
