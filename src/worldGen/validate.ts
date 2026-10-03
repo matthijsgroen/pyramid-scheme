@@ -5,8 +5,7 @@ import { FORK_SHAPES, type ForkShape } from "@/game/forkShape"
 import { configHash } from "@/game/seeds/configHash"
 import { switchFamilies } from "@/game/seeds/enumerateConfigs"
 import type { FloorGrid as AssembledFloor } from "@/game/siteTypes"
-import { floorLock } from "@/game/floorLock"
-import { walkLock, describeLockWalkFailure, deadRegions } from "@/game/lockWalk"
+import { walkFloorLock, describeFloorWalkFailure, deadFloorRegions } from "@/game/floorLockWalk"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { WORLD_TARGETS } from "./worldSpec"
 import { capabilitiesFor, type SiteCapabilities } from "./capabilities"
@@ -319,13 +318,12 @@ export const findStrandingLocks = (
       site.forEach((floor, floorIndex) => {
         const grid = assembleFloorAt(journeyId, floor, siteIdx + 1, floorIndex)
         if (!grid) return
-        const lock = floorLock(grid)
-        if (!lock) return
+        const result = walkFloorLock(grid)
+        if (!result) return
         const ref = { journeyId, levelNr: siteIdx + 1, floorIndex }
         walked.push(ref)
-        const result = walkLock(lock)
         if (result.sound) return
-        stranding.push({ ...ref, problem: describeLockWalkFailure(result.failure) })
+        stranding.push({ ...ref, problem: describeFloorWalkFailure(result.failure) })
       })
     )
   return { walked, stranding }
@@ -357,9 +355,7 @@ export const findDeadRegions = (
       site.forEach((floor, floorIndex) => {
         const grid = assembleFloorAt(journeyId, floor, siteIdx + 1, floorIndex)
         if (!grid) return
-        const lock = floorLock(grid)
-        if (!lock) return
-        const regions = deadRegions(lock)
+        const regions = deadFloorRegions(grid)
         if (regions.length > 0) found.push({ journeyId, levelNr: siteIdx + 1, floorIndex, regions })
       })
     )

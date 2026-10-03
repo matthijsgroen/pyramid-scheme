@@ -4014,5 +4014,7 @@ export const assembleFloor = (
 ): AssemblerResult => {
   const expanded = expandFloorLocks(authoredConfig)
   if (!expanded.ok) return { success: false, reasons: expanded.reasons }
-  return assembleExpandedFloor(siteId, expanded.config, addressSeed, resolveEncounter, keyRequirements)
+  const result = assembleExpandedFloor(siteId, expanded.config, addressSeed, resolveEncounter, keyRequirements)
+  if (!result.success || !expanded.nesting) return result
+  return { ...result, grid: { ...result.grid, lockNesting: expanded.nesting } }
 }

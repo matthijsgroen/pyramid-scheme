@@ -1,5 +1,4 @@
-import { floorLock } from "@/game/floorLock"
-import { walkLock, describeLockWalkFailure, deadRegions } from "@/game/lockWalk"
+import { walkFloorLock, describeFloorWalkFailure, deadFloorRegions } from "@/game/floorLockWalk"
 import type { AssemblerResult, FloorGrid } from "@/game/siteTypes"
 
 /** The checks a seed must pass, in the order they are asked. A seed that fails one is never asked the next. */
@@ -46,11 +45,10 @@ export const refusal = (result: AssemblerResult): { criterion: CarveCriterion; d
   if (!result.success) return { criterion: "carves", detail: JSON.stringify(result.reasons) }
   if (result.attempt > 0)
     return { criterion: "attempt 0", detail: `carved only on attempt ${result.attempt}, past the authored packing` }
-  const lock = floorLock(result.grid)
-  if (!lock) return null
-  const walk = walkLock(lock)
-  if (!walk.sound) return { criterion: "lock walks sound", detail: describeLockWalkFailure(walk.failure) }
-  const dead = deadRegions(lock)
+  const walk = walkFloorLock(result.grid)
+  if (!walk) return null
+  if (!walk.sound) return { criterion: "lock walks sound", detail: describeFloorWalkFailure(walk.failure) }
+  const dead = deadFloorRegions(result.grid)
   if (dead.length > 0) return { criterion: "no dead region", detail: dead.join(", ") }
   return null
 }

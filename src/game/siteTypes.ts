@@ -5,7 +5,7 @@ import type { OneWayRefusal } from "./oneWayRealisation"
 import type { CarveFault } from "./carveAgreement"
 import type { GateFace } from "./gateFace"
 import type { RealisationMissing } from "./mechanics/realisations"
-import type { PlacedLock } from "./floorLocks"
+import type { LockNesting, LockNestingFault, PlacedLock } from "./floorLocks"
 import type { LockFault, RealisationBinding } from "./lockCompile"
 export type RoomType = "portal" | "fork" | "encounter"
 // OPEN reward vocabulary (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1):
@@ -344,6 +344,9 @@ export type FloorGrid = {
   readonly exitPos: readonly [number, number]
   readonly siteId: string
   readonly staircases: Record<string, readonly [number, number]>
+  /** The locks nested in a region of another, as the floor's `locks` placed them; absent on a floor with none.
+   * The walk reads it to take each nested lock as one place of its host (game/floorLockWalk.ts). */
+  readonly lockNesting?: readonly LockNesting[]
 }
 
 /** THE TWO SIDES A LEVER HANGS ON, and the whole of its state vocabulary. The assembler tags each
@@ -820,6 +823,8 @@ export type AssemblerReason =
   | { type: "lockInstanceRepeated"; instance: string }
   /** A placed lock is refused, by the instance it was placed as and the fault of the lock itself. */
   | { type: "lockRefused"; instance: string; fault: LockFault }
+  /** A placed lock cannot be seated inside the region of another lock it names. */
+  | { type: "lockNestingRefused"; instance: string; fault: LockNestingFault }
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }
 /** `attempt` is the 0-based attempt that carved the floor: anything past 0 carved on a widened grid and a
  * doubled `packing`, not the authored one. */
