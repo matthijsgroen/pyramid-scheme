@@ -62,6 +62,28 @@ Core owns _mechanisms_; mods own _meaning_.
   numbers a mod-agnostic core must not hold — the target count moves into
   the owning mod (e.g. the mosaic currency's `totalRequired`).
 
+## Mechanics are core, realisations are mods
+
+The control kinds a floor may author (toggle, activator, sequence, fork-switch, one-way) are **core
+plug-ins** (`src/game/mechanics`): each holds its state machine, what it needs of the carve, its compile
+rule and its refusals. They are always present and never toggled off. What a mod provides is the
+**realisation** that dresses a kind: the handle and the torch for a toggle and an activator, the lightbeam
+switch for a fork-switch, the zipline for a one-way, the gate face for the reader of a door.
+
+So the carve never depends on a mod. `obstacles`, `controls`, `barrierOrder`, `oneWays`, `handles` and a
+`{ in }` fork are core authoring and are never dropped when a mod is off; a floor carves from them alone.
+With the realisation missing, a floor that authors the mechanic is **refused by name before it is carved**
+(`realisationMissing`, or `oneWayRealisationRefused` for a one-way), never carved with a default standing
+in and never stripped into a floor with other walls. A floor that authors no mechanic is unaffected.
+
+Consequence for rule 1 with the topology mod removed from `registeredMods`: `yarn generate-world` still
+builds the **shipped** world, because no shipped journey authors a mechanic that needs a realisation. The
+one mechanic-like field it carries is junior_2's `switches`, a family standing in a junction `forks` already
+reserved: it is dropped with its family and leaves the identical walls and a bare junction. The **dev
+journey** (`INCLUDE_DEV`) with the mod off is refused by name on the four floors that author a mechanic
+(levels 2, 3, 7 and 8: the doubleBack, the one-way, the lever, the gate and its control) and carves the other
+five identically.
+
 ## Approach
 
 Vertical slices — one mod fully to target at a time, each ending in a toggle-off

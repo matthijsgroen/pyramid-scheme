@@ -40,6 +40,12 @@ const keepSwitches = (
   return resolveEncounter(switches.encounter, "puzzle").ownerMod === undefined ? undefined : switches
 }
 
+// MECHANICS ARE CORE AUTHORING AND ARE NEVER DROPPED HERE. `obstacles`, `controls`, `barrierOrder`, `oneWays` and a
+// `{ in }` fork name core's control kinds (src/game/mechanics); only the realisation that dresses one is a mod's.
+// A floor whose mechanics need a realisation no registered mod provides is refused by name when it is assembled
+// (`realisationMissing`), never stripped into a floor that carves differently. `switches` is the one mechanic-like
+// field dropped above: it is a family standing in a junction `forks` already reserved, so dropping it leaves the
+// identical walls and a bare junction, which is what keeps the shipped world buildable with the mod off.
 // The resolver is passed explicitly even where there is none, so a caller that has one and forgets to
 // hand it over is a type error rather than a floor whose switch quietly survives its mod.
 export const dropUnownedAuthoring = (
@@ -50,8 +56,4 @@ export const dropUnownedAuthoring = (
   ...floor,
   switches: keepSwitches(floor.switches, resolveEncounter),
   sideSections: floor.sideSections.map(dropIfUnowned(registeredModIds)),
-  // WHOLLY THE TOPOLOGY MOD'S. Unlike a section's gate, which may be core's when it names no owner,
-  // an obstacle, a control and the order of a connection's gates exist only because the mod does — so all
-  // drop together and the regions carve with every connection open, which is this mod's acceptance gate (docs/mods/TARGET.md).
-  ...(registeredModIds.has("topology") ? {} : { obstacles: undefined, controls: undefined, barrierOrder: undefined }),
 })

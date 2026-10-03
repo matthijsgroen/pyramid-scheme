@@ -1,3 +1,5 @@
+import type { ResolveMechanicKind } from "./mechanics"
+import { resolveMechanicKind } from "./mechanics"
 import type { RegionGraph } from "./regions"
 import { offRouteChains, regionRoute } from "./regions"
 import type { ForkDemand } from "./siteTypes"
@@ -6,14 +8,13 @@ import type { ForkDemand } from "./siteTypes"
  * WHAT STANDS IN THE WAY, AND WHAT DECIDES WHETHER IT DOES — two separate things joined by an
  * authored id (docs/game-design/regions-and-containers.md).
  *
- * An obstacle is furniture the topology mod stands at a place in the floor's layout. A control is a
+ * An obstacle is furniture stood at a place in the floor's layout. A control is a
  * thing with named states. The wiring between them is the control's `opens`: which obstacles stand
  * open while it is in each state. Keeping them apart is what lets one control drive several
  * obstacles, several controls drive one, and a new kind of obstacle arrive without a new kind of
  * control.
  *
- * Core's RegionGraph names none of this. A region is core and a gate is the topology mod's, so the
- * mod points AT the layout by region name and never hangs anything on it.
+ * Core's RegionGraph names none of this: a gate points AT the layout by region name and hangs nothing on it.
  */
 /** What every gate carries, whatever it bars. */
 export type GateTerms = {
@@ -147,6 +148,11 @@ export const isForkSwitch = (control: Control): control is ForkSwitchControl => 
 
 export const isSequence = (control: Control): control is SequenceControl => control.control === "sequence"
 
+/** The core control kind a floor control is an instance of (src/game/mechanics): a stateful one is a toggle where it
+ * returns to its start and an activator where it does not. */
+export const controlKindOf = (control: Control): string =>
+  control.control ?? (control.returnsToInitial ? "toggle" : "activator")
+
 /**
  * THE ORDER OF THE GATES STANDING ON ONE CONNECTION, written from `between[0]` to `between[1]`. Stated
  * only where a connection carries more than one gate: with one there is nothing to order, and with
@@ -164,6 +170,8 @@ export type TopologyFault =
   | { type: "obstacleOffRoute"; id: string }
   | { type: "obstacleUnowned"; id: string }
   | { type: "controlUnsatisfied"; id: string; what: string }
+  /** The build has no plug-in for this control kind (src/game/mechanics); `id` is the control or one-way. */
+  | { type: "unknownControlKind"; id: string; control: string }
   /** A fork-switch stands in a region no `forks: [{ in }]` entry lays a junction in. */
   | { type: "forkSwitchNoFork"; id: string; region: string }
   /** A fork-switch authored without the encounter that stands in its junction. */
@@ -291,7 +299,8 @@ export const topologyFaults = (
   obstacles: readonly Obstacle[],
   controls: readonly Control[],
   forks: readonly ForkDemand[] = [],
-  barrierOrder: readonly BarrierOrder[] = []
+  barrierOrder: readonly BarrierOrder[] = [],
+  kinds: ResolveMechanicKind = resolveMechanicKind
 ): TopologyFault[] => {
   const faults: TopologyFault[] = []
   if (obstacles.length === 0 && controls.length === 0 && barrierOrder.length === 0) return faults
@@ -341,6 +350,7 @@ export const topologyFaults = (
     }
     const [a, b] = obstacle.at.between
     if (obstacle.kind === "oneWay") {
+      if (!kinds("one-way")) faults.push({ type: "unknownControlKind", id: obstacle.id, control: "one-way" })
       // A DROP JOINS TWO REGIONS ON PURPOSE THE LAYOUT NEVER DOES — that is the whole of what it is
       // for, so the connection/seam questions a gate asks below (`joined`, `seatable`) do not apply
       // to it. The only structural question left is whether both ends are regions this floor has.
@@ -357,6 +367,10 @@ export const topologyFaults = (
   for (const control of controls) {
     if (seenControl.has(control.id)) faults.push({ type: "controlUnsatisfied", id: control.id, what: control.id })
     seenControl.add(control.id)
+    if (!kinds(controlKindOf(control))) {
+      faults.push({ type: "unknownControlKind", id: control.id, control: controlKindOf(control) })
+      continue
+    }
     if (isSequence(control)) {
       faults.push(...sequenceFaults(control, layout, obstacleById, drops))
       for (const id of control.opens.done ?? []) owned.add(id)

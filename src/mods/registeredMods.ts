@@ -6,7 +6,6 @@ import type { ShopStockAssignment } from "@/worldGen/shopStock"
 import type { WorldValidator } from "@/worldGen/validate"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { OneWayRealisationMeta, ResolveOneWayRealisation } from "@/game/oneWayRealisation"
-import type { MechanicKindMeta, ResolveMechanicKind } from "@/game/mechanicKinds"
 import type { ModDescriptor } from "./modDescriptor"
 import { puzzleMod } from "./puzzle"
 import { mosaicMod } from "./mosaic"
@@ -54,12 +53,6 @@ export const MOD_ONE_WAY_REALISATIONS: OneWayRealisationMeta[] = REGISTERED_MODS
 // nothing: there is no default, so it is refused where it is bound (siteAssembler).
 export const resolveOneWayRealisation: ResolveOneWayRealisation = id =>
   id === undefined ? undefined : MOD_ONE_WAY_REALISATIONS.find(realisation => realisation.id === id)
-
-// Every control kind a registered mod declares for locks. A kind that drops with its mod leaves a lock naming it refused.
-export const MOD_MECHANIC_KINDS: MechanicKindMeta[] = REGISTERED_MODS.flatMap(m => m.mechanicKinds ?? [])
-
-export const resolveMechanicKind: ResolveMechanicKind = control =>
-  MOD_MECHANIC_KINDS.find(kind => kind.control === control)
 
 // Every dynamic-loot distribution all enabled mods contribute, in registry order (trap consumables
 // before the shop money economy — consumables claim their expert+ puzzle slots first, then the shop

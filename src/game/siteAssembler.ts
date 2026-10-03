@@ -54,6 +54,7 @@ import {
 import type { EdgeGateObstacle, Obstacle, OneWayObstacle, StatefulControl } from "./obstacles"
 import { cellSlot, plainSwitchId } from "./cellSlot"
 import { placeSequences } from "./sequenceTiles"
+import { doorFacesMissing, realisationsMissing } from "./mechanics/realisations"
 import { adjacencyFaults, dropLandingFaults, gateDoorFaults } from "./carveAgreement"
 import type { CarveFault } from "./carveAgreement"
 import { stairIdAt } from "./stairAddress"
@@ -808,7 +809,11 @@ export const assembleFloor = (
         : "unknown"
     return why ? [{ type: "oneWayRealisationRefused" as const, from, to, realisation: named ?? null, why }] : []
   })
-  if (realisationRefusals.length > 0) return { success: false, reasons: realisationRefusals }
+  // EVERY CONTROL IS ONE OF CORE'S KINDS, DRESSED BY A MOD'S REALISATION, so a floor whose controls name one no
+  // registered mod provides is refused by name here, in the same list, rather than carved with another
+  // standing in: the carve depends on core alone, and a mod's absence cannot move a wall.
+  const realisationProblems = [...realisationRefusals, ...realisationsMissing(authoredConfig, resolveEncounter)]
+  if (realisationProblems.length > 0) return { success: false, reasons: realisationProblems }
   // Refused just above wherever the floor binds no usable realisation, so one resolves here.
   const boundRealisation = (): string => resolveOneWay(authoredConfig.oneWayRealisation)!.id
 
@@ -3942,17 +3947,25 @@ export const assembleFloor = (
 
     // A DOOR THAT WAITS ON SEVERAL OWNERS GAINS ITS FACE LAST, after every check above has read the carve:
     // only the door cell's family changes, so no wall, `dirs` or slot can have moved for it.
-    return {
-      success: true,
-      grid: withGateFaces(
-        grid,
-        floorRef.floorIndex,
-        new Map(),
-        undefined,
-        resolveEncounter(undefined, DOOR_FACE_ROLE).familyId
-      ),
-      attempt,
-    }
+    const faced = withGateFaces(
+      grid,
+      floorRef.floorIndex,
+      new Map(),
+      undefined,
+      resolveEncounter(undefined, DOOR_FACE_ROLE).familyId
+    )
+    // A door that owes a face and has no family to read it is refused by name, not left blank: the carve is
+    // done and identical, only what would stand in the door is missing.
+    const unfaced = grid.cells.flat()
+    const facedDoors = faced.cells.flat().flatMap((cell, i) => {
+      const before = unfaced[i]
+      return cell.type === "room" && cell.gateFace && !(before.type === "room" && before.gateFace)
+        ? [cell.requiredKeyId ?? ""]
+        : []
+    })
+    const faceProblems = facedDoors.length > 0 ? doorFacesMissing(facedDoors, resolveEncounter) : []
+    if (faceProblems.length > 0) return { success: false, reasons: faceProblems }
+    return { success: true, grid: faced, attempt }
   }
 
   return {

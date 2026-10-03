@@ -1,6 +1,7 @@
-import type { Lock, LockMechanic, Opens } from "./lockAuthoring"
+import type { Lock, LockMechanic } from "./lockAuthoring"
 import { barriersOf, isRegionGate, joinOf } from "./lockAuthoring"
-import type { ResolveMechanicKind } from "./mechanicKinds"
+import type { LooseMechanic, ResolveMechanicKind } from "./mechanics"
+import { resolveMechanicKind } from "./mechanics"
 import type { BarrierOrder, Control, Obstacle, TopologyFault } from "./obstacles"
 import { topologyFaults } from "./obstacles"
 import type { RegionGraph } from "./regions"
@@ -57,11 +58,11 @@ export type LockFault =
   | { type: "sequenceStateNotDone"; mechanic: string; state: string }
   /** Two fork-switches stand in one region, so one junction would have two operators. */
   | { type: "forkRegionShared"; region: string; mechanics: string[] }
-  /** No registered mod declares this control kind. */
+  /** The build has no plug-in for this control kind. */
   | { type: "unknownControlKind"; mechanic: string; control: string }
   /** The kind is declared and not built yet: the lock is checked, and cannot be baked. */
   | { type: "unbuiltMechanic"; mechanic: string; control: string }
-  /** The kind is declared built, but this compiler has no translation for it, so baking would drop it. */
+  /** The kind is declared built, but its plug-in has no compile rule, so baking would drop it. */
   | { type: "kindNotCompilable"; mechanic: string; control: string }
   /** The binding names no realisation for a kind the lock uses; `mechanics` are the ones that use it. */
   | { type: "unboundRole"; kind: string; mechanics: string[] }
@@ -71,29 +72,21 @@ export type LockFault =
 export type CompileResult = { ok: true; fragment: LockFragment } | { ok: false; faults: LockFault[] }
 
 export type CompileOptions = {
-  kinds: ResolveMechanicKind
+  /** The control kinds the build has: core's own by default, or a registry a test hands in with a kind added or removed. */
+  kinds?: ResolveMechanicKind
   /** Prefixes every region, barrier and mechanic id, so a clone of one lock on a floor has names of its own. */
   namespace?: string
 }
 
-// A mechanic as the checks read it: a kind this build may not know has only the fields every kind shares.
-type Loose = {
-  control: string
-  in?: string
-  starts?: string
-  opens?: Opens
-  steps?: readonly { readonly in: string }[]
-}
-
-const looseOf = (mechanic: LockMechanic): Loose => mechanic
+const looseOf = (mechanic: LockMechanic): LooseMechanic => mechanic
 
 const keyOf = (a: string, b: string): string => JSON.stringify([a, b].sort())
 
 const pairOf = (join: readonly [string, string]): [string, string] => [join[0], join[1]]
 
-const opensOf = (mechanic: Loose): [string, readonly string[]][] => Object.entries(mechanic.opens ?? {})
+const opensOf = (mechanic: LooseMechanic): [string, readonly string[]][] => Object.entries(mechanic.opens ?? {})
 
-const regionsOfMechanic = (mechanic: Loose): string[] => [
+const regionsOfMechanic = (mechanic: LooseMechanic): string[] => [
   ...(mechanic.in === undefined ? [] : [mechanic.in]),
   ...(mechanic.steps ?? []).map(step => step.in),
 ]
@@ -171,24 +164,18 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
     need(`oneWay ${id}`, oneWay.to)
   }
 
-  const forkRegions = new Map<string, string[]>()
+  const regionHolders = new Map<string, string[]>()
   for (const [id, mechanic] of Object.entries(lock.mechanics)) {
     const loose = looseOf(mechanic)
+    const kind = kinds(loose.control)
     for (const region of regionsOfMechanic(loose)) need(`mechanic ${id}`, region)
-    if (!kinds(loose.control)) faults.push({ type: "unknownControlKind", mechanic: id, control: loose.control })
-    if (loose.control === "fork-switch" && loose.in !== undefined)
-      forkRegions.set(loose.in, [...(forkRegions.get(loose.in) ?? []), id])
-    if (loose.control === "toggle" || loose.control === "activator") {
-      const states = Object.keys(loose.opens ?? {})
-      if (states.length !== 2) faults.push({ type: "statesNotTwo", mechanic: id, states })
-      if (loose.starts === undefined || !states.includes(loose.starts))
-        faults.push({ type: "startsNotAState", mechanic: id, starts: loose.starts ?? "" })
-    }
+    if (!kind) faults.push({ type: "unknownControlKind", mechanic: id, control: loose.control })
+    if (kind?.oneToARegion && loose.in !== undefined)
+      regionHolders.set(loose.in, [...(regionHolders.get(loose.in) ?? []), id])
+    faults.push(...(kind?.faults?.(id, loose) ?? []))
     const named = new Set<string>()
     const unowned = new Set<string>()
     for (const [state, ids] of opensOf(loose)) {
-      if (loose.control === "sequence" && state !== "done")
-        faults.push({ type: "sequenceStateNotDone", mechanic: id, state })
       for (const barrier of ids) {
         if (!(barrier in lock.gates)) {
           faults.push(
@@ -206,10 +193,10 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
       }
     }
     for (const [barrier, gateOwners] of owners)
-      if (gateOwners.includes(id) && loose.control !== "fork-switch" && !named.has(barrier))
+      if (gateOwners.includes(id) && kind && kind.gates !== "owns" && !named.has(barrier))
         faults.push({ type: "ownerNamesNoGate", barrier, owner: id })
   }
-  for (const [region, mechanics] of forkRegions)
+  for (const [region, mechanics] of regionHolders)
     if (mechanics.length > 1) faults.push({ type: "forkRegionShared", region, mechanics })
 
   if (Object.keys(oneWays).length > 0 && !kinds("one-way"))
@@ -217,14 +204,11 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
   return faults
 }
 
-// The kinds `translate` has a case for; a kind a mod declares built beyond these cannot be baked.
-const COMPILED_KINDS = new Set(["toggle", "activator", "sequence", "fork-switch", "one-way"])
-
 const unbakeableFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] =>
   [...kindsUsed(lock)].flatMap(([control, ids]): LockFault[] => {
     const meta = kinds(control)
     if (meta?.built === false) return ids.map(mechanic => ({ type: "unbuiltMechanic" as const, mechanic, control }))
-    if (meta?.built === true && !COMPILED_KINDS.has(control))
+    if (meta?.built === true && !meta.compile && !meta.effectOnly)
       return ids.map(mechanic => ({ type: "kindNotCompilable" as const, mechanic, control }))
     return []
   })
@@ -247,7 +231,12 @@ const unboundFaults = (lock: Lock, binding: RealisationBinding, kinds: ResolveMe
  * - fork-switch -> a fork-switch control and the `forks` entry that lays its junction.
  * - sequence -> a sequence control; connection barriers -> `barrierOrder` where a connection has several.
  */
-const translate = (lock: Lock, binding: RealisationBinding, namespace: string | undefined): LockFragment => {
+const translate = (
+  lock: Lock,
+  binding: RealisationBinding,
+  namespace: string | undefined,
+  kinds: ResolveMechanicKind
+): LockFragment => {
   const name = (id: string) => (namespace === undefined ? id : `${namespace}.${id}`)
   const oneWays = lock.oneWays ?? {}
   const standsAlone = new Set(
@@ -262,7 +251,7 @@ const translate = (lock: Lock, binding: RealisationBinding, namespace: string | 
 
   const obstacles: Obstacle[] = []
   for (const [id, gate] of Object.entries(lock.gates)) {
-    const forkOwners = gate.owners.filter(owner => lock.mechanics[owner].control === "fork-switch").map(name)
+    const forkOwners = gate.owners.filter(owner => kinds(lock.mechanics[owner].control)?.gates === "owns").map(name)
     const terms = {
       ...(gate.mode === "any" ? { mode: "any" as const } : {}),
       ...(forkOwners.length > 0 ? { owners: forkOwners } : {}),
@@ -285,45 +274,12 @@ const translate = (lock: Lock, binding: RealisationBinding, namespace: string | 
       at: { on: "connection", between: [name(oneWay.from), name(oneWay.to)] },
     })
 
-  const namedOpens = (opens: Opens): Record<string, string[]> =>
-    Object.fromEntries(Object.entries(opens).map(([state, ids]) => [state, ids.map(name)]))
   const controls: Control[] = []
   const forks: ForkDemand[] = []
   for (const [id, mechanic] of Object.entries(lock.mechanics)) {
-    switch (mechanic.control) {
-      case "toggle":
-      case "activator": {
-        const encounter = binding[mechanic.control]
-        controls.push({
-          id: name(id),
-          in: name(mechanic.in),
-          states: Object.keys(mechanic.opens),
-          initial: mechanic.starts,
-          returnsToInitial: mechanic.control === "toggle",
-          opens: namedOpens(mechanic.opens),
-          ...(encounter === undefined ? {} : { encounter }),
-        })
-        break
-      }
-      case "fork-switch":
-        controls.push({
-          id: name(id),
-          in: name(mechanic.in),
-          control: "fork-switch",
-          encounter: binding["fork-switch"] ?? "",
-        })
-        forks.push({ in: name(mechanic.in) })
-        break
-      case "sequence":
-        controls.push({
-          id: name(id),
-          control: "sequence",
-          steps: mechanic.steps.map(step => ({ in: name(step.in) })),
-          resetAt: name(mechanic.resetAt),
-          opens: { done: (mechanic.opens.done ?? []).map(name) },
-        })
-        break
-    }
+    const compiled = kinds(mechanic.control)?.compile?.(id, mechanic, { name, binding })
+    controls.push(...(compiled?.controls ?? []))
+    forks.push(...(compiled?.forks ?? []))
   }
 
   const barrierOrder: BarrierOrder[] = lock.connections.flatMap(connection => {
@@ -349,9 +305,9 @@ const translate = (lock: Lock, binding: RealisationBinding, namespace: string | 
   }
 }
 
-const topologyOf = (lock: Lock): LockFault[] => {
-  const { regionLayout, obstacles, controls, forks, barrierOrder } = translate(lock, {}, undefined)
-  return topologyFaults(regionLayout, obstacles, controls, forks, barrierOrder)
+const topologyOf = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
+  const { regionLayout, obstacles, controls, forks, barrierOrder } = translate(lock, {}, undefined, kinds)
+  return topologyFaults(regionLayout, obstacles, controls, forks, barrierOrder, kinds)
     .filter(fault => fault.type !== "forkSwitchNoEncounter")
     .map(fault => ({ type: "topology", fault }))
 }
@@ -361,22 +317,19 @@ const topologyOf = (lock: Lock): LockFault[] => {
  * built yet passes: it is a design that can be checked, and `compileLock` is what refuses to bake it. Its
  * topology is then not asked, because there is nothing to translate it into.
  */
-export const checkLock = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
+export const checkLock = (lock: Lock, kinds: ResolveMechanicKind = resolveMechanicKind): LockFault[] => {
   const faults = lockFaults(lock, kinds)
   if (faults.length > 0 || unbakeableFaults(lock, kinds).length > 0) return faults
-  return topologyOf(lock)
+  return topologyOf(lock, kinds)
 }
 
 /**
  * A LOCK BAKED INTO THE FLOOR'S VOCABULARY, or every reason it cannot be: its own faults, a mechanic whose kind
  * is not built (named), and each kind the binding leaves without a realisation (named; there is no default).
  */
-export const compileLock = (lock: Lock, binding: RealisationBinding, options: CompileOptions): CompileResult => {
-  const faults = [
-    ...checkLock(lock, options.kinds),
-    ...unbakeableFaults(lock, options.kinds),
-    ...unboundFaults(lock, binding, options.kinds),
-  ]
+export const compileLock = (lock: Lock, binding: RealisationBinding, options: CompileOptions = {}): CompileResult => {
+  const kinds = options.kinds ?? resolveMechanicKind
+  const faults = [...checkLock(lock, kinds), ...unbakeableFaults(lock, kinds), ...unboundFaults(lock, binding, kinds)]
   if (faults.length > 0) return { ok: false, faults }
-  return { ok: true, fragment: translate(lock, binding, options.namespace) }
+  return { ok: true, fragment: translate(lock, binding, options.namespace, kinds) }
 }

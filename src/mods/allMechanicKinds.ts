@@ -1,1 +1,0 @@
-export { resolveMechanicKind } from "./registeredMods"

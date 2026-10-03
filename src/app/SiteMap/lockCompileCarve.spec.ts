@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import "@/mods/registerModApps"
 import { getFamilyPlugin, resolveEncounter } from "@/app/families/familyRegistry"
-import { resolveMechanicKind } from "@/mods/allMechanicKinds"
+import { resolveMechanicKind } from "@/game/mechanics"
 import { floorLock } from "@/game/floorLock"
 import { compileLock, type LockFragment } from "@/game/lockCompile"
 import { walkLock } from "@/game/lockWalk"

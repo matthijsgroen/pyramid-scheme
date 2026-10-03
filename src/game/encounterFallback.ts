@@ -18,6 +18,9 @@ const DEFAULT_TAG_FAMILIES: Record<string, string> = {
   [DEFAULT_CONTROL_ROLE]: "handle",
   [DOOR_FACE_ROLE]: "gate-face",
 }
+// Who this catalogue says answered: nobody the build registered, but it answers EVERYTHING it is asked, so a
+// caller holding no registry is never told a realisation is missing. Only a real resolver can say that.
+const REGISTRY_LESS = "registry-less"
 const DEFAULT_FAMILY_TAGS: Record<string, string[]> = {
   "arithmetic-reflex": ["trap"],
   sumplete: ["puzzle"],
@@ -37,7 +40,7 @@ const DEFAULT_FAMILY_TAGS: Record<string, string[]> = {
 export const defaultResolveEncounter: ResolveEncounter = (encounter, defaultTag): EncounterResolution => {
   const value = (Array.isArray(encounter) ? encounter[0] : encounter) ?? defaultTag
   const familyId = DEFAULT_TAG_FAMILIES[value] ?? value
-  return { familyId, tags: DEFAULT_FAMILY_TAGS[familyId] ?? [] }
+  return { familyId, tags: DEFAULT_FAMILY_TAGS[familyId] ?? [], ownerMod: REGISTRY_LESS }
 }
 
 const DEFAULT_ONE_WAY: OneWayRealisationMeta = { id: "zipline", ownerMod: "topology", prompt: "ui.prompt.zipline" }

@@ -135,12 +135,12 @@ export type FloorConfig = {
    * FloorConfig.switches. */
   switches?: { encounter: string | string[]; min: number; max: number }
   /** WHAT STANDS BETWEEN THE FLOOR'S REGIONS, and what decides whether it does — mirrors
-   * game/siteTypes.ts's FloorConfig.obstacles/.controls (see game/obstacles.ts). Both drop when the
-   * topology mod is not registered. */
+   * game/siteTypes.ts's FloorConfig.obstacles/.controls (see game/obstacles.ts). Core authoring: they stay
+   * when a mod is not registered, and a floor whose controls need a realisation no mod provides is refused. */
   obstacles?: Obstacle[]
   controls?: Control[]
   /** The order of the gates on any connection carrying several — mirrors game/siteTypes.ts's
-   * FloorConfig.barrierOrder. Drops with the obstacles. */
+   * FloorConfig.barrierOrder. Core authoring, like the obstacles. */
   barrierOrder?: BarrierOrder[]
 }
 

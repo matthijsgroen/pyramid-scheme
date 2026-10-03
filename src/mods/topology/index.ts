@@ -1,9 +1,9 @@
 import type { ModDescriptor } from "../modDescriptor"
+import { GATE_FACE_META } from "./game/gateFace/meta"
 import { LIGHTBEAM_META } from "./game/lightbeam/meta"
 import { LIGHTBEAM_SWITCH_META } from "./game/lightbeamSwitch/meta"
 import { HANDLE_META } from "./game/handle/meta"
 import { TORCH_META } from "./game/torch/meta"
-import { TOPOLOGY_MECHANIC_KINDS } from "./game/mechanicKinds"
 import { ZIPLINE_META } from "./game/zipline/meta"
 
 // The topology mod descriptor. Owns the families whose board decides where the player may WALK, rather
@@ -13,6 +13,11 @@ import { ZIPLINE_META } from "./game/zipline/meta"
 // re-shape a floor stays in one mod, and nothing about it leaks into the general puzzle mod or into
 // core. Minimal by design (docs/mods/TARGET.md): only the fields this mod actually uses.
 //
+// The control KINDS are core's (src/game/mechanics) and stay when this mod is off. What this mod provides is
+// their REALISATIONS: the handle and torch dress a toggle and an activator, the lightbeam switch a fork-switch,
+// the zipline a one-way, the gate face the reader of a door. A floor authoring a mechanic is refused by name
+// where none of these is registered.
+//
 // Each family keeps its own folder under game/ and app/, so a family joining the mod is a new folder and
 // one more entry in the list below.
 //
@@ -21,7 +26,6 @@ import { ZIPLINE_META } from "./game/zipline/meta"
 // enabled. Toggle the mod off by removing it from src/mods/registeredMods.ts's REGISTERED_MODS list.
 export const topologyMod: ModDescriptor = {
   id: "topology",
-  families: [LIGHTBEAM_META, LIGHTBEAM_SWITCH_META, HANDLE_META, TORCH_META],
+  families: [LIGHTBEAM_META, LIGHTBEAM_SWITCH_META, HANDLE_META, TORCH_META, GATE_FACE_META],
   oneWayRealisations: [ZIPLINE_META],
-  mechanicKinds: TOPOLOGY_MECHANIC_KINDS,
 }

@@ -4,6 +4,7 @@ import type { BarrierOrder, Control, Obstacle } from "./obstacles"
 import type { OneWayRefusal } from "./oneWayRealisation"
 import type { CarveFault } from "./carveAgreement"
 import type { GateFace } from "./gateFace"
+import type { RealisationMissing } from "./mechanics/realisations"
 export type RoomType = "portal" | "fork" | "encounter"
 // OPEN reward vocabulary (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1):
 // core enumerates no reward/currency id. A reward is a `type` tag plus arbitrary payload fields the
@@ -560,16 +561,17 @@ export type FloorConfig = {
    * grow in one place.
    */
   regionLayout?: PlacedContainer
-  /** WHAT STANDS BETWEEN THE FLOOR'S REGIONS, and what decides whether it does — the topology mod's,
-   * pointing at core's `regionLayout` by region name (src/game/obstacles.ts). An obstacle is named
-   * once here and referred to by id; a control names which obstacles each of its states opens. Both
-   * drop when the mod is not registered, and the identical walls then carve with every connection
-   * open. */
+  /** WHAT STANDS BETWEEN THE FLOOR'S REGIONS, and what decides whether it does — core's,
+   * pointing at `regionLayout` by region name (src/game/obstacles.ts). An obstacle is named once here
+   * and referred to by id; a control names which obstacles each of its states opens, and is one of core's
+   * control kinds (src/game/mechanics). Never dropped when a mod is not registered: the walls carve the same,
+   * and a floor whose controls need a realisation no registered mod provides is refused by name
+   * (`realisationMissing`). */
   obstacles?: Obstacle[]
   controls?: Control[]
   /** THE ORDER OF THE GATES ON ANY CONNECTION THAT CARRIES SEVERAL, from `between[0]` to `between[1]`
    * (src/game/obstacles.ts). Required wherever a connection has more than one gate; the carve keeps the
-   * order and chooses the spacing. Owned by the topology mod with `obstacles`, and dropped with them. */
+   * order and chooses the spacing. Core authoring with `obstacles`. */
   barrierOrder?: BarrierOrder[]
   /** A SWITCH: an encounter standing in one of the junctions `forks` reserved, closing that
    * junction's free ways out so that what the player meets there decides which one opens.
@@ -635,6 +637,10 @@ export type ValidationReason =
 export type ValidationResult = { valid: true } | { valid: false; reasons: ValidationReason[] }
 export type AssemblerReason =
   | ValidationReason
+  /** A mechanic of the floor needs a realisation no registered mod provides. Core owns the kinds and a mod
+   * dresses them, so with the mod gone the floor is refused rather than carved with another standing in.
+   * `mechanic` is the authored id, `kind` its control kind (or "door-face"), `realisation` what went unanswered. */
+  | RealisationMissing
   | { type: "noUngatedSectionForKey" }
   | { type: "layoutNotFound" }
   /** A section cannot be given a name a save could file it under: an authored `label` repeated, one
@@ -723,6 +729,7 @@ export type AssemblerReason =
   | { type: "obstacleOffRoute"; id: string }
   | { type: "obstacleUnowned"; id: string }
   | { type: "controlUnsatisfied"; id: string; what: string }
+  | { type: "unknownControlKind"; id: string; control: string }
   | { type: "forkSwitchNoFork"; id: string; region: string }
   | { type: "forkSwitchNoEncounter"; id: string }
   | { type: "gateOwnerNotForkSwitch"; id: string; owner: string }

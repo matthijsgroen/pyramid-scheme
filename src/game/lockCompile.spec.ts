@@ -1,5 +1,5 @@
 import { describe, expect, expectTypeOf, it } from "vitest"
-import { resolveMechanicKind } from "@/mods/allMechanicKinds"
+import { CORE_MECHANICS, mechanicRegistry, resolveMechanicKind } from "./mechanics"
 import type { Activator, ForkSwitch, Lock, LockMechanic, LockOneWay, Sequence, Toggle } from "./lockAuthoring"
 import { checkLock, compileLock, type LockFragment, type RealisationBinding } from "./lockCompile"
 import { BINDING, doubleBackLock, sluiceLock } from "./testSupport/lockFixtures"
@@ -321,7 +321,7 @@ describe("a lock using a mechanic that is not built yet", () => {
     }
   }
   const declared = (built: boolean) => (control: string) =>
-    control === "pressure-tiles" ? { control, ownerMod: "test", built } : resolveMechanicKind(control)
+    control === "pressure-tiles" ? { control, built, gates: "opens" as const } : resolveMechanicKind(control)
 
   it("is written and checked, and passes", () => {
     expect(checkLock(withPressureTiles(), declared(false))).toEqual([])
@@ -342,10 +342,22 @@ describe("a lock using a mechanic that is not built yet", () => {
     })
   })
 
-  it("is refused as unknown where no mod declares its kind, as with the topology mod off", () => {
+  it("is refused as unknown where core has no plug-in for its kind", () => {
     expect(checkLock(withPressureTiles(), resolveMechanicKind)).toEqual([
       { type: "unknownControlKind", mechanic: "tiles", control: "pressure-tiles" },
     ])
+  })
+
+  it("is honoured once a plug-in for its kind is registered in the core registry", () => {
+    const registry = mechanicRegistry([...CORE_MECHANICS, { control: "pressure-tiles", built: false, gates: "opens" }])
+    expect(checkLock(withPressureTiles(), registry)).toEqual([])
+    expect(compileLock(withPressureTiles(), BINDING, { kinds: registry })).toEqual({
+      ok: false,
+      faults: [{ type: "unbuiltMechanic", mechanic: "tiles", control: "pressure-tiles" }],
+    })
+  })
+
+  it("refuses every kind the registry no longer holds, naming each mechanic", () => {
     expect(checkLock(doubleBackLock(), () => undefined).map(fault => fault.type)).toEqual([
       "unknownControlKind",
       "unknownControlKind",
@@ -353,6 +365,24 @@ describe("a lock using a mechanic that is not built yet", () => {
       "unknownControlKind",
       "unknownControlKind",
     ])
+  })
+
+  it("refuses only the mechanics of the kind removed from the registry", () => {
+    const withoutToggle = mechanicRegistry(CORE_MECHANICS.filter(kind => kind.control !== "toggle"))
+    const faults = checkLock(sluiceLock(), withoutToggle)
+    expect(faults.length).toBeGreaterThan(0)
+    expect(faults.every(fault => fault.type === "unknownControlKind" && fault.control === "toggle")).toBe(true)
+  })
+
+  it("carries no mod: the kinds are the same with every mod removed from the build", () => {
+    expect(CORE_MECHANICS.map(kind => kind.control)).toEqual([
+      "toggle",
+      "activator",
+      "sequence",
+      "fork-switch",
+      "one-way",
+    ])
+    expect(CORE_MECHANICS.every(kind => kind.built)).toBe(true)
   })
 })
 

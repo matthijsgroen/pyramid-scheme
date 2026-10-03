@@ -12,8 +12,22 @@ describe("the topology mod", () => {
   })
 
   it("contributes its families, each owned by itself", () => {
-    expect(topologyMod.families?.map(f => f.id)).toEqual(["lightbeam", "lightbeamSwitch", "handle", "torch"])
-    expect(topologyMod.families?.map(f => f.ownerMod)).toEqual(["topology", "topology", "topology", "topology"])
+    expect(topologyMod.families?.map(f => f.id)).toEqual([
+      "lightbeam",
+      "lightbeamSwitch",
+      "handle",
+      "torch",
+      "gate-face",
+    ])
+    expect(topologyMod.families?.map(f => f.ownerMod)).toEqual(Array(5).fill("topology"))
+  })
+
+  // The door's reader is a realisation like the handle: with this mod out of the build nothing answers to
+  // the door-face role, which is how a floor that needs a face is refused by name.
+  it("is the one that answers to the door-face role, and never draws from a pool", () => {
+    const face = ALL_FAMILY_META.filter(m => m.tags.includes("door-face"))
+    expect(face.map(m => m.ownerMod)).toEqual(["topology"])
+    expect(ALL_FAMILY_META.filter(m => m.tags.includes("puzzle")).map(m => m.id)).not.toContain("gate-face")
   })
 
   // A switch is a fork the player walks back into to change their mind; without this the branch they

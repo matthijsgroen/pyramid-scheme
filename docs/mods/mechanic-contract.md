@@ -358,7 +358,8 @@ example and 12 undoes a decision made the same afternoon.
     lock to another realisation orphans the player's stored progress on that mechanic.
 16. **The carve may not depend on mod-owned authoring.** `forks` is core and `switches` is owned by the
     topology mod, so a seam-coincident junction has to hold from `regionLayout` and `forks` alone, or
-    turning the mod off moves the carve.
+    turning the mod off moves the carve. Holds: mechanics are core authoring, so a mod being off refuses a
+    floor by name (`realisationMissing`) and never changes its walls (`docs/mods/ARCHITECTURE.md`).
 17. **One fold for a gate's mode.** `floorLock` sets it per boundary and `openDoorsFor` per key. It
     bites as soon as a gate has several owners, which §3 invites.
 18. **Every realisation of a one-way offers its prompt.** §2 requires it of all of them; only the

@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, it } from "vitest"
 import { resolveEncounterMeta as resolveEncounter } from "@/mods/allFamilyMeta"
 import { dropUnownedAuthoring } from "@/worldGen/modOwnedAuthoring"
+import { TOPOLOGY_OFF, isRealisationRefusal, outcomeOf } from "./testSupport/modOff"
 import { assembleFloor } from "./siteAssembler"
 import { cellSlot } from "./cellSlot"
 import { floorLock, regionsOf } from "./floorLock"
@@ -460,14 +461,31 @@ describe("a gate that follows another on its fork seam", () => {
 })
 
 describe("with the topology mod off", () => {
-  const without = (config: FloorConfig): FloorConfig =>
-    dropUnownedAuthoring(config, new Set(), undefined) as unknown as FloorConfig
+  const off = (config: FloorConfig): FloorConfig =>
+    dropUnownedAuthoring(config, TOPOLOGY_OFF.modIds, TOPOLOGY_OFF.resolveEncounter) as unknown as FloorConfig
+  const assembleOff = (config: FloorConfig, seed: number) =>
+    assembleFloor("test", off(config), seed, TOPOLOGY_OFF.resolveEncounter, {
+      resolveOneWay: TOPOLOGY_OFF.resolveOneWay,
+    })
 
-  it("drops the order with the obstacles, so the floor is no longer refused for naming gates it does not have", () => {
-    const dropped = without(twoGatesOnRouteFloor())
+  it("keeps the order with the obstacles: gates and their order are core authoring", () => {
+    const kept = off(twoGatesOnRouteFloor())
 
-    expect([dropped.obstacles, dropped.controls, dropped.barrierOrder]).toEqual([undefined, undefined, undefined])
-    expect(assembleFloor("test", dropped, 1, resolveEncounter).success).toBe(true)
+    expect([kept.obstacles, kept.controls, kept.barrierOrder]).toEqual([
+      twoGatesOnRouteFloor().obstacles,
+      twoGatesOnRouteFloor().controls,
+      twoGatesOnRouteFloor().barrierOrder,
+    ])
+  })
+
+  it("refuses the floor by name for the levers whose realisation left, instead of carving it without its doors", () => {
+    const result = assembleOff(twoGatesOnRouteFloor(), 1)
+
+    expect(result.success).toBe(false)
+    expect(!result.success && result.reasons).toEqual([
+      { type: "realisationMissing", mechanic: "ironLever", kind: "toggle", realisation: "default-control" },
+      { type: "realisationMissing", mechanic: "sandLever", kind: "toggle", realisation: "default-control" },
+    ])
   })
 
   it("keeps the order with them when the mod is registered", () => {
@@ -476,18 +494,16 @@ describe("with the topology mod off", () => {
     expect(kept.barrierOrder).toEqual(twoGatesOnRouteFloor().barrierOrder)
   })
 
-  it("carves the walls of the floor with every connection open, whichever fixture the gates stand in", () => {
-    const dirs = (grid: FloorGrid) =>
-      grid.cells
-        .map(row => row.map(cell => (walkable(cell) ? [...cell.dirs].sort().join("") : "-")).join("|"))
-        .join("\n")
+  it("never carves other walls than the mod on does: identical, or refused by name", () => {
+    const outcomes = new Set<string>()
     for (const make of [twoGatesOnRouteFloor, twoGatesOffRouteFloor])
       for (const seed of SEEDS) {
-        const gated = assembleFloor("test", make(), seed, resolveEncounter)
-        const open = assembleFloor("test", without(make()), seed, resolveEncounter)
-        if (!gated.success || !open.success) continue
-        expect(dirs(gated.grid), `seed ${seed}`).toBe(dirs(open.grid))
+        const outcome = outcomeOf(assembleFloor("test", make(), seed, resolveEncounter), assembleOff(make(), seed))
+        if (outcome.kind === "notCarvedWithMod") continue
+        expect(outcome.kind === "identical" || isRealisationRefusal(outcome), `seed ${seed}`).toBe(true)
+        outcomes.add(outcome.kind)
       }
+    expect([...outcomes]).toEqual(["refused"])
   })
 })
 

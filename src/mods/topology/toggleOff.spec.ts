@@ -1,8 +1,16 @@
 import { beforeAll, describe, it, expect } from "vitest"
 import { dropUnownedAuthoring } from "@/worldGen/modOwnedAuthoring"
-import { assembleFloor, encounterFromMeta, type ResolveEncounter } from "@/game/siteAssembler"
-import { ALL_FAMILY_META, resolveEncounterMeta } from "@/mods/allFamilyMeta"
-import type { FloorConfig as GameFloorConfig, FloorGrid, RoomCell } from "@/game/siteTypes"
+import { assembleFloor, type ResolveEncounter } from "@/game/siteAssembler"
+import { resolveEncounterMeta } from "@/mods/allFamilyMeta"
+import {
+  REALISATION_REFUSALS,
+  TOPOLOGY_OFF,
+  dirsOf,
+  isRealisationRefusal,
+  outcomeOf,
+  type Outcome,
+} from "@/game/testSupport/modOff"
+import type { FloorConfig as GameFloorConfig, RoomCell } from "@/game/siteTypes"
 import { allFloors, resolveKeyRequirements } from "@/app/SiteMap/worldFloors.testing"
 import { resolveEncounter } from "@/app/families/familyRegistry"
 import { validateSite } from "@/game/siteValidator"
@@ -154,11 +162,11 @@ const fiveObstacleFloor = {
 }
 
 describe("dropUnownedAuthoring — obstacles and controls", () => {
-  it("drops obstacles and controls when the topology mod is not registered", () => {
-    const dropped = dropUnownedAuthoring(gatedFloor, new Set(["mosaic"]), undefined)
+  it("keeps obstacles and controls when the topology mod is not registered: they are core authoring", () => {
+    const kept = dropUnownedAuthoring(gatedFloor, new Set(["mosaic"]), undefined)
 
-    expect(dropped.obstacles).toBeUndefined()
-    expect(dropped.controls).toBeUndefined()
+    expect(kept.obstacles).toEqual(gatedFloor.obstacles)
+    expect(kept.controls).toEqual(gatedFloor.controls)
   })
 
   it("keeps both when it is", () => {
@@ -168,56 +176,51 @@ describe("dropUnownedAuthoring — obstacles and controls", () => {
     expect(kept.controls).toEqual(gatedFloor.controls)
   })
 
-  // The acceptance gate for the whole slice: the gate room disappears and nothing else moves. Compared
-  // by each cell's `dirs`, never its `type` (`dirsOf`, defined below) — a gate room is a corridor cell
-  // turned into a room without a wall having moved, and comparing types would call that a difference.
-  //
-  // Swept rather than pinned to one seed, over a one-, two- and five-obstacle shape: a single seed
-  // proves nothing about the other 49, and `mainZoneCandidates`' own former comment (siteAssembler.ts)
-  // only ever claimed what a handful of seeds measured, never a guarantee by construction. Where this
-  // sweep finds a seed that diverges, `divergentSeeds` names it and the assertion holds the CURRENT
-  // count rather than 0 — a red diff here would be a finding to keep visible, not something to narrow
-  // the range to avoid.
-  const divergesAt = (floor: GameFloorConfig): number[] => {
-    const seeds: number[] = []
-    for (let seed = 0; seed < 50; seed++) {
-      const withMod = assembleFloor("dev", floor, seed)
-      const without = assembleFloor("dev", dropUnownedAuthoring(floor, new Set(), undefined) as GameFloorConfig, seed)
-      if (!withMod.success || !without.success) continue // a seed neither build carves proves nothing either way
-      if (dirsOf(without.grid) !== dirsOf(withMod.grid)) seeds.push(seed)
+  // The acceptance gate: with the mod off the walls are never other walls. The floor is either carved
+  // identically (compared by each cell's `dirs`, never its `type`) or refused by name for the realisation
+  // that left — here the levers, which name none and so stand as the default control the mod provided.
+  // Swept over seeds 0-49 rather than pinned to one: a single seed proves nothing about the other 49.
+  const outcomesAt = (floor: GameFloorConfig): Outcome[] =>
+    Array.from({ length: 50 }, (_, seed) =>
+      outcomeOf(
+        assembleFloor("dev", floor, seed, resolveEncounter),
+        assembleFloor(
+          "dev",
+          dropUnownedAuthoring(floor, TOPOLOGY_OFF.modIds, TOPOLOGY_OFF.resolveEncounter) as GameFloorConfig,
+          seed,
+          TOPOLOGY_OFF.resolveEncounter,
+          {
+            resolveOneWay: TOPOLOGY_OFF.resolveOneWay,
+          }
+        )
+      )
+    ).filter(outcome => outcome.kind !== "notCarvedWithMod")
+
+  const neverMoves = (floor: GameFloorConfig): { carved: number; moved: number; unnamed: number } => {
+    const outcomes = outcomesAt(floor)
+    return {
+      carved: outcomes.length,
+      moved: outcomes.filter(outcome => outcome.kind === "moved").length,
+      unnamed: outcomes.filter(outcome => outcome.kind === "refused" && !isRealisationRefusal(outcome)).length,
     }
-    return seeds
   }
 
-  it("carves the identical walls with the mod off, across seeds 0-49, one obstacle", () => {
-    expect(divergesAt(gatedFloor as GameFloorConfig)).toEqual([])
+  it("moves no wall with the mod off, across seeds 0-49, one obstacle", () => {
+    const result = neverMoves(gatedFloor as GameFloorConfig)
+    expect(result.carved).toBeGreaterThan(0)
+    expect(result).toEqual({ carved: result.carved, moved: 0, unnamed: 0 })
   })
 
-  // Was RED (measured 24 of 50 seeds 0-49 diverging) while `mainZoneCandidates` reserved by COUNT —
-  // excluding a gate's own cell but not the seam a mainzone stretch is sliced from, so which physical
-  // cells landed in which hub-attachment slice still differed between the two builds even though the
-  // same NUMBER left the loop. Fixed by reserving `regionSeamIndices` — every main-path region
-  // boundary `regionLayout` (core, never dropped by `dropUnownedAuthoring`) declares, whether or not an
-  // obstacle happens to gate it — so the excluded set is the identical set by construction, not merely
-  // the identical size.
-  it("carves the identical walls with the mod off, across seeds 0-49, two obstacles", () => {
-    expect(divergesAt(twoObstacleFloor as GameFloorConfig)).toEqual([])
+  it("moves no wall with the mod off, across seeds 0-49, two obstacles", () => {
+    const result = neverMoves(twoObstacleFloor as GameFloorConfig)
+    expect(result.carved).toBeGreaterThan(0)
+    expect(result).toEqual({ carved: result.carved, moved: 0, unnamed: 0 })
   })
 
-  // Proves the fix scales past two ON-ROUTE gates. NOT a proof that `doubleBack` itself is
-  // identity-stable — its two OFF-ROUTE gates (`forkRight`, `greenRight`) hit a SEPARATE mechanism,
-  // `chainGateCrowdsEnd` (siteAssembler.ts), which retries only when an actual obstacle crowds a
-  // chain's own end room. Mod off never authors that obstacle, so it never retries, and the two builds
-  // can carve at different grid sizes entirely — measured 50 of 50 seeds diverging (seed 0: N=11 with
-  // the mod, N=9 without). A structural fix analogous to `regionSeamIndices` (reserve every hosted-
-  // region seam regardless of gating) was tried and reverted: it made `siteAssembler.spec.ts`'s "still
-  // refuses by name when no chain node is ever free for the control" retry forever instead of refusing
-  // by name, because that fixture's chain is structurally always end-crowded with NO gate ever
-  // authored there — the same reservation that fixes a genuinely gated chain breaks an ungated one, and
-  // `dropUnownedAuthoring`'s stripped config gives the mod-off build no way to tell the two apart. Left
-  // open; see the report.
-  it("carves the identical walls with the mod off, across seeds 0-49, five obstacles", () => {
-    expect(divergesAt(fiveObstacleFloor as GameFloorConfig)).toEqual([])
+  it("moves no wall with the mod off, across seeds 0-49, five obstacles", () => {
+    const result = neverMoves(fiveObstacleFloor as GameFloorConfig)
+    expect(result.carved).toBeGreaterThan(0)
+    expect(result).toEqual({ carved: result.carved, moved: 0, unnamed: 0 })
   })
 })
 
@@ -276,28 +279,27 @@ const forkedDoubleBack: GameFloorConfig = {
   ],
 }
 
-describe("a fork named by region, with the topology mod off", () => {
-  const stripped = dropUnownedAuthoring(forkedDoubleBack, new Set(), undefined) as GameFloorConfig
+// With no mechanic authored, a fork named by region leaves a bare junction in core's own carve: nothing
+// stands in it and nothing needs a realisation, so the mod being off changes neither it nor the walls.
+describe("a fork named by region, authoring no mechanic", () => {
+  const bare: GameFloorConfig = { ...forkedDoubleBack, obstacles: undefined, controls: undefined }
 
-  it("carves the identical walls with every obstacle and control stripped, on every seed both builds carve", () => {
-    const diverged: number[] = []
-    let compared = 0
-    for (let seed = 1; seed <= 40; seed++) {
-      const withMod = assembleFloor("dev", forkedDoubleBack, seed)
-      const without = assembleFloor("dev", stripped, seed)
-      if (!withMod.success || !without.success) continue
-      compared++
-      if (dirsOf(without.grid) !== dirsOf(withMod.grid)) diverged.push(seed)
-    }
-    expect(compared).toBeGreaterThan(0)
-    expect(diverged).toEqual([])
+  it("is not refused with the topology mod off, and carves the walls the mod on carves", () => {
+    const outcomes = Array.from({ length: 40 }, (_, i) =>
+      outcomeOf(
+        assembleFloor("dev", bare, i + 1, resolveEncounter),
+        assembleFloor("dev", bare, i + 1, TOPOLOGY_OFF.resolveEncounter, { resolveOneWay: TOPOLOGY_OFF.resolveOneWay })
+      )
+    ).filter(outcome => outcome.kind !== "notCarvedWithMod")
+    expect(outcomes.length).toBeGreaterThan(0)
+    expect(outcomes.filter(outcome => outcome.kind !== "identical")).toEqual([])
   }, 60_000)
 
   it("leaves a bare junction in the region whose side exits are still the two chains", () => {
     const step = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] } as const
     let carved = 0
     for (let seed = 1; seed <= 40; seed++) {
-      const result = assembleFloor("dev", stripped, seed)
+      const result = assembleFloor("dev", bare, seed)
       if (!result.success) continue
       carved++
       const { cells } = result.grid
@@ -337,51 +339,55 @@ const forkSwitchedDoubleBack: GameFloorConfig = {
 }
 
 describe("a fork-switch, with the topology mod off", () => {
-  const stripped = dropUnownedAuthoring(forkSwitchedDoubleBack, new Set(), undefined) as GameFloorConfig
+  const assembleOff = (seed: number) =>
+    assembleFloor(
+      "dev",
+      dropUnownedAuthoring(
+        forkSwitchedDoubleBack,
+        TOPOLOGY_OFF.modIds,
+        TOPOLOGY_OFF.resolveEncounter
+      ) as GameFloorConfig,
+      seed,
+      TOPOLOGY_OFF.resolveEncounter,
+      { resolveOneWay: TOPOLOGY_OFF.resolveOneWay }
+    )
 
-  it("carves the identical walls with the fork-switch and every gate stripped, on every seed both builds carve", () => {
-    const diverged: number[] = []
+  it("keeps the fork-switch and every gate: they are core authoring", () => {
+    const kept = dropUnownedAuthoring(forkSwitchedDoubleBack, TOPOLOGY_OFF.modIds, TOPOLOGY_OFF.resolveEncounter)
+    expect(kept.obstacles).toEqual(forkSwitchedDoubleBack.obstacles)
+    expect(kept.controls).toEqual(forkSwitchedDoubleBack.controls)
+  })
+
+  it("is refused by name for the switch board and the lever, never carved with a bare junction", () => {
+    const result = assembleOff(1)
+    expect(result.success).toBe(false)
+    expect(!result.success && result.reasons).toEqual([
+      { type: "realisationMissing", mechanic: "Y", kind: "fork-switch", realisation: "lightbeamSwitch" },
+      { type: "realisationMissing", mechanic: "S2", kind: "activator", realisation: "default-control" },
+    ])
+  })
+
+  it("stands the switch in the junction with the mod on, where the mod off refuses the floor", () => {
     let compared = 0
     for (let seed = 1; seed <= 60; seed++) {
       const withMod = assembleFloor("dev", forkSwitchedDoubleBack, seed, resolveEncounter)
-      const without = assembleFloor("dev", stripped, seed)
-      if (!withMod.success || !without.success) continue
+      if (!withMod.success) continue
       compared++
-      if (dirsOf(without.grid) !== dirsOf(withMod.grid)) diverged.push(seed)
-    }
-    expect(compared).toBeGreaterThan(0)
-    expect(diverged).toEqual([])
-  }, 120_000)
-
-  it("stands the switch in the junction with the mod on and leaves it a bare fork with the mod off", () => {
-    let compared = 0
-    for (let seed = 1; seed <= 60; seed++) {
-      const withMod = assembleFloor("dev", forkSwitchedDoubleBack, seed, resolveEncounter)
-      const without = assembleFloor("dev", stripped, seed)
-      if (!withMod.success || !without.success) continue
-      compared++
-      const junctions = (grid: FloorGrid) =>
-        grid.cells
-          .flat()
-          .flatMap(cell =>
-            cell.type === "room" && cell.roomType === "fork" && cell.region === "entrance" ? [cell.family] : []
-          )
-      expect(junctions(withMod.grid), `seed ${seed}`).toEqual(["lightbeamSwitch"])
-      expect(junctions(without.grid), `seed ${seed}`).toEqual([undefined])
+      const junctions = withMod.grid.cells
+        .flat()
+        .flatMap(cell =>
+          cell.type === "room" && cell.roomType === "fork" && cell.region === "entrance" ? [cell.family] : []
+        )
+      expect(junctions, `seed ${seed}`).toEqual(["lightbeamSwitch"])
+      expect(assembleOff(seed).success, `seed ${seed}`).toBe(false)
     }
     expect(compared).toBeGreaterThan(0)
   }, 120_000)
 })
 
-// allFamilyMeta's resolveEncounterMeta answers out of the families the REGISTERED mods contribute, so
-// with topology out of that list its two families are simply not in the catalogue. This is that same
+// With topology out of the registered list its families are simply not in the catalogue: this is that same
 // id-then-tag lookup over a catalogue topology has left — the resolver the generator would inject.
-const WITHOUT_TOPOLOGY = ALL_FAMILY_META.filter(meta => meta.ownerMod !== "topology")
-const topologyOff: ResolveEncounter = (encounter, defaultTag) => {
-  const value = (Array.isArray(encounter) ? encounter[0] : encounter) ?? defaultTag
-  const meta = WITHOUT_TOPOLOGY.find(m => m.id === value) ?? WITHOUT_TOPOLOGY.find(m => m.tags.includes(value))
-  return encounterFromMeta(meta, value)
-}
+const topologyOff: ResolveEncounter = TOPOLOGY_OFF.resolveEncounter
 
 const SWITCH_STEM = "switch:toggle-off#0#0#0"
 const switchFloor = {
@@ -461,11 +467,6 @@ describe("a switch whose family's mod is toggled off", () => {
 // mod leaving the build. Compared by each cell's `dirs`, never its `type`: standing a switch in a
 // junction turns the corridor cell it closes into a door, which is a room where a corridor was
 // without one wall having moved, and comparing types would call that a difference.
-const dirsOf = (grid: FloorGrid) =>
-  grid.cells
-    .map(row => row.map(cell => (cell.type === "empty" ? "" : [...cell.dirs].sort().join(""))).join("|"))
-    .join("\n")
-
 // Asked of the world as it is baked, one junction added to every authored floor, rather than of a
 // floor invented to make the point: what a shipped floor's carve does under an unregistered mod is
 // the thing saves depend on.
@@ -477,6 +478,8 @@ type Carve = {
   forksOnly: string | null
   withSwitch: string | null
   modOff: string | null
+  /** Refused with the mod off, and wholly for a realisation that left. */
+  modOffRefused: boolean
   held: boolean
   unsound: ValidationReason[]
 }
@@ -489,25 +492,28 @@ describe("the carve a floor authoring forks gets", () => {
     for (const floor of allFloors()) {
       const withForks = { ...floor.config, forks: FORKS }
       const authored = { ...withForks, switches: SWITCHES }
-      const opts = (resolve: ResolveEncounter, config: GameFloorConfig) =>
+      const opts = (resolve: ResolveEncounter, config: GameFloorConfig, off = false) =>
         assembleFloor(floor.journeyId, config, floor.seed, resolve, {
           resolveKeyRequirements,
+          ...(off ? { resolveOneWay: TOPOLOGY_OFF.resolveOneWay } : {}),
           floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
         })
       const forksOnly = opts(resolveEncounter, withForks)
       const withSwitch = opts(resolveEncounter, authored)
-      // What the build looks like once topology has left it: `dropUnownedAuthoring` strips `switches`
-      // and leaves `forks` (proven above), and the resolver answers out of a catalogue without
-      // topology's families in it.
+      // What the build looks like once topology has left it: `dropUnownedAuthoring` drops `switches` and
+      // leaves `forks` and every mechanic (proven above), and the resolvers answer out of a catalogue without
+      // topology's families and realisations in it.
       const modOff = opts(
         topologyOff,
-        dropUnownedAuthoring(authored, new Set(["topology"]), topologyOff) as GameFloorConfig
+        dropUnownedAuthoring(authored, TOPOLOGY_OFF.modIds, topologyOff) as GameFloorConfig,
+        true
       )
       carves.push({
         label: floor.label,
         forksOnly: forksOnly.success ? dirsOf(forksOnly.grid) : null,
         withSwitch: withSwitch.success ? dirsOf(withSwitch.grid) : null,
         modOff: modOff.success ? dirsOf(modOff.grid) : null,
+        modOffRefused: !modOff.success && modOff.reasons.every(reason => REALISATION_REFUSALS.has(reason.type)),
         held:
           withSwitch.success &&
           withSwitch.grid.cells.flat().some(cell => cell.type === "room" && cell.roomType === "fork" && cell.family),
@@ -534,13 +540,19 @@ describe("the carve a floor authoring forks gets", () => {
     expect(unsound.map(carve => `${carve.label}: ${JSON.stringify(carve.unsound)}`)).toEqual([])
   })
 
-  it("assembles or refuses for the same reason in all three builds", () => {
+  it("assembles or refuses for the same reason with a switch, and with the mod off only ever refuses by name", () => {
     const disagreed = carves.filter(
       carve =>
         (carve.forksOnly === null) !== (carve.withSwitch === null) ||
-        (carve.forksOnly === null) !== (carve.modOff === null)
+        ((carve.forksOnly === null) !== (carve.modOff === null) && !carve.modOffRefused)
     )
     expect(disagreed.map(carve => carve.label)).toEqual([])
+  })
+
+  it("refuses with the mod off only floors that author a mechanic, which in the baked world is the dev journey", () => {
+    const refused = carves.filter(carve => carve.modOffRefused && carve.forksOnly !== null)
+    expect(refused.length).toBeGreaterThan(0)
+    expect(refused.filter(carve => !carve.label.startsWith("dev_topology")).map(carve => carve.label)).toEqual([])
   })
 
   it("is the same one whether or not a switch stands in what it reserved", () => {
@@ -548,8 +560,10 @@ describe("the carve a floor authoring forks gets", () => {
     expect(moved.map(carve => carve.label)).toEqual([])
   })
 
-  it("is the same one whether or not the mod standing in it is registered at all", () => {
-    const moved = carves.filter(carve => carve.forksOnly !== null && carve.forksOnly !== carve.modOff)
+  it("is the same one whether or not the mod standing in it is registered at all, where it is carved", () => {
+    const moved = carves.filter(
+      carve => carve.forksOnly !== null && carve.modOff !== null && carve.forksOnly !== carve.modOff
+    )
     expect(moved.map(carve => carve.label)).toEqual([])
   })
 })
