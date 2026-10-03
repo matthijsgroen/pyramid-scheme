@@ -2,6 +2,7 @@ import { journey, sidePath } from "../dsl"
 import type { Rule } from "../dsl"
 import type { Difficulty } from "../types"
 import { DEV_JOURNEY_ID } from "../data"
+import { doubleBackLock } from "./locks/doubleBack"
 
 /**
  * The dev journey's world spec — one site per floor-topology feature, so each mechanic can be
@@ -82,88 +83,35 @@ export const devRules: Rule[] = [
       out: "vault",
     },
   }),
-  // 2 — doubleBack. The design doc's worked example (lockWalk.spec.ts's `doubleBack()`), assembled:
-  // Y is a fork board in `entrance` whose two ways out (`forkLeft`, `forkRight`) are both shut at
-  // first and genuinely three-state (unset/left/right, `returnsToInitial: false` — turning it does
-  // not hand back the branch just left). Right leads to S1 in `s1Chamber`; throwing it shuts the way
-  // back (`greenRight`) and opens `leftLower`'s own gate (`greenLeft`) — S1's `start` opens nothing of
-  // its own. A drop out of `s1Chamber` lands in `leftLower` BETWEEN `forkLeft` (still shut — Y never
-  // said "left") and `greenLeft` (now open), which is the whole trick: reaching `s2Chamber` without
-  // ever solving Y left. A second drop off `leftLower` is what saves a player who takes the first one
-  // before throwing S1 at all — see the playtest instructions in the Task 8 report for what that
-  // strands without it. S2's `start` likewise opens nothing; only `thrown` opens `endDoor`.
+  // 2 — doubleBack. The designer's lock, placed whole: Y is a fork-switch operating its own fork on the
+  // lock's seams, S1 and S2 are toggles, and two drops fall out of the off-route chain. The lock's regions
+  // are all `free`: its puzzles/nothing/reward appetites carve 0 of 60 seeds on this layout, and what this
+  // bench holds is the topology, not what sits in each region.
   //
-  // `packing: 7` is not decorative and is tied to THIS floor's own seed, not to the shape being
-  // carved — a floor at this position in the journey resolves to a different production seed than
-  // the same shape would at any other position, and the packing value that carves it sound does not
-  // transfer. Each drop reserves a run of cells of its own, which the carve must find room for. The
-  // early-drop hazard below needs the pair to carve sound AND to fail as `strands` once the second drop
-  // is taken away: a pair that degrades the ablation to a bare `unsolvable` would not prove the hazard.
-  journey(DEV_JOURNEY_ID).pyramid(2, {
-    difficulty: "expert",
-    pathPuzzles: 0,
-    packing: 7,
-    // Recorded from the bake's own carve search (searchCarvePair), not tuned by hand: the first seed
-    // 43 steps past this floor's address seed that carves on attempt 0 at `packing` 7, walks sound and
-    // leaves no dead region. Pinned here because a dev floor has no baked output to carry it.
-    seed: 4293857902,
-    sideSections: [sidePath({ puzzles: 0 })],
-    oneWayRealisation: "zipline",
-    regionLayout: {
-      regions: [
-        { name: "entrance", appetite: "free" },
-        { name: "rightLower", appetite: "free" },
-        { name: "s1Chamber", appetite: "free" },
-        { name: "leftLower", appetite: "free" },
-        { name: "s2Chamber", appetite: "free" },
-        { name: "wayOut", appetite: "free" },
+  // The binding stands at the pyramid, the level that names this floor's mechanics together: a fork-switch
+  // is a lightbeam switch, a toggle is a handle, a one-way is a zipline.
+  journey(DEV_JOURNEY_ID)
+    .pyramid(2, {
+      difficulty: "expert",
+      pathPuzzles: 0,
+      realisations: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
+    })
+    .floor(0, {
+      locks: [{ lock: doubleBackLock() }],
+      // Four bare side paths: the count the pinned pair carves at.
+      sideSections: [
+        sidePath({ puzzles: 0 }),
+        sidePath({ puzzles: 0 }),
+        sidePath({ puzzles: 0 }),
+        sidePath({ puzzles: 0 }),
       ],
-      connections: [
-        ["entrance", "leftLower"],
-        ["entrance", "rightLower"],
-        ["rightLower", "s1Chamber"],
-        ["leftLower", "s2Chamber"],
-        ["s2Chamber", "wayOut"],
-      ],
-      in: "entrance",
-      out: "wayOut",
-    },
-    obstacles: [
-      { id: "forkLeft", kind: "gate", at: { on: "connection", between: ["entrance", "leftLower"] } },
-      { id: "forkRight", kind: "gate", at: { on: "connection", between: ["entrance", "rightLower"] } },
-      { id: "greenRight", kind: "gate", at: { on: "connection", between: ["rightLower", "s1Chamber"] } },
-      { id: "greenLeft", kind: "gate", at: { on: "connection", between: ["leftLower", "s2Chamber"] } },
-      { id: "endDoor", kind: "gate", at: { on: "connection", between: ["s2Chamber", "wayOut"] } },
-      { id: "dropToLeft", kind: "oneWay", at: { on: "connection", between: ["s1Chamber", "leftLower"] } },
-      { id: "dropToEntrance", kind: "oneWay", at: { on: "connection", between: ["leftLower", "entrance"] } },
-    ],
-    controls: [
-      {
-        id: "Y",
-        in: "entrance",
-        states: ["unset", "left", "right"],
-        initial: "unset",
-        returnsToInitial: false,
-        opens: { unset: [], left: ["forkLeft"], right: ["forkRight"] },
-      },
-      {
-        id: "S1",
-        in: "s1Chamber",
-        states: ["start", "thrown"],
-        initial: "start",
-        returnsToInitial: false,
-        opens: { start: ["greenRight"], thrown: ["greenLeft"] },
-      },
-      {
-        id: "S2",
-        in: "s2Chamber",
-        states: ["start", "thrown"],
-        initial: "start",
-        returnsToInitial: false,
-        opens: { start: [], thrown: ["endDoor"] },
-      },
-    ],
-  }),
+      // Recorded from the bake's own carve search (searchCarvePair), not tuned by hand: the first seed
+      // 81 steps past this floor's address seed that carves on attempt 0 at `packing` 8, walks sound and
+      // leaves no dead region. One seed in 300 carves at all (the fork's two seams are rarely laid), so
+      // the pair is pinned here, where a dev floor has no baked output to carry it.
+      packing: 8,
+      seed: 4293857940,
+    }),
   // 3 — the one-way drop. The ledge's own way on is a fall into the sink, and the sink has no way
   // back up it: the passage is drawn from both sides today, which is why this stands here and on no
   // authored pyramid until it is drawn as a drop.

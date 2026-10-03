@@ -19,8 +19,10 @@ import { assembleFloor } from "../game/siteAssembler"
 // assigns values the stricter type accepts too — the same cast reachability.ts makes to assemble.
 import type { FloorConfig as GameFloorConfig, FloorGrid } from "../game/siteTypes"
 import { floorAssemblySeed, persistentInteriorSeed } from "../game/siteSeed"
-import { floorLock } from "../game/floorLock"
-import { walkLock, deadRegions } from "../game/lockWalk"
+import { expandFloorLocks } from "../game/floorLocks"
+import { deadFloorRegions, walkFloorLock } from "../game/floorLockWalk"
+import { oneWayRuns } from "../game/gridNavigation"
+import { doubleBackLock } from "./spec/locks/doubleBack"
 // Same sanctioned exception configBuilder.integration.spec.ts takes: the claim here is about the
 // REAL, complete world, which only the real mod-owned currencies can build.
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../mods/allCurrencyDistributions"
@@ -227,10 +229,10 @@ describe("what the dev journey authors", () => {
   // a dev site sits at a position that would earn both. Its capability preset is what keeps them off
   // it, so the count of side sections is exactly what the spec authors: two branches on a switch
   // floor, three on the lever's — the room it stands in and the two doors it swaps — one on the
-  // gate's, which needs only somewhere for its control to stand, and one on doubleBack's, which seats
-  // its whole off-route chain (`rightLower`, `s1Chamber`) on the single side section Task 1 built for.
+  // gate's, which needs only somewhere for its control to stand, and four on doubleBack's, the count its
+  // pinned (packing, seed) pair carves at.
   it("grows none of the branches the real economies inject by position", () => {
-    expect(devFloors(withDev).map(floor => floor.sideSections.length)).toEqual([2, 1, 2, 2, 2, 2, 3, 1, 2])
+    expect(devFloors(withDev).map(floor => floor.sideSections.length)).toEqual([2, 4, 2, 2, 2, 2, 3, 1, 2])
   })
 
   it("carves every one of them at the seed the runtime hands it", () => {
@@ -334,90 +336,169 @@ describe("what the dev journey authors", () => {
     ])
   })
 
-  it("stands doubleBack's six regions and five gates on pyramid 2, carried through world generation", () => {
+  it("places the designer's doubleBack lock on pyramid 2, bound to the lightbeam switch, the handle and the zipline", () => {
     const pyramid2 = withDev[DEV_JOURNEY_ID][1]
     expect(pyramid2).toHaveLength(1)
     const [floor] = pyramid2
 
-    expect(floor.regionLayout).toEqual({
-      regions: [
-        { name: "entrance", appetite: "free" },
-        { name: "rightLower", appetite: "free" },
-        { name: "s1Chamber", appetite: "free" },
-        { name: "leftLower", appetite: "free" },
-        { name: "s2Chamber", appetite: "free" },
-        { name: "wayOut", appetite: "free" },
-      ],
-      connections: [
-        ["entrance", "leftLower"],
-        ["entrance", "rightLower"],
-        ["rightLower", "s1Chamber"],
-        ["leftLower", "s2Chamber"],
-        ["s2Chamber", "wayOut"],
-      ],
-      in: "entrance",
-      out: "wayOut",
-    })
-    expect(floor.obstacles).toEqual([
-      { id: "forkLeft", kind: "gate", at: { on: "connection", between: ["entrance", "leftLower"] } },
-      { id: "forkRight", kind: "gate", at: { on: "connection", between: ["entrance", "rightLower"] } },
-      { id: "greenRight", kind: "gate", at: { on: "connection", between: ["rightLower", "s1Chamber"] } },
-      { id: "greenLeft", kind: "gate", at: { on: "connection", between: ["leftLower", "s2Chamber"] } },
-      { id: "endDoor", kind: "gate", at: { on: "connection", between: ["s2Chamber", "wayOut"] } },
-      { id: "dropToLeft", kind: "oneWay", at: { on: "connection", between: ["s1Chamber", "leftLower"] } },
-      { id: "dropToEntrance", kind: "oneWay", at: { on: "connection", between: ["leftLower", "entrance"] } },
+    expect(floor.locks).toEqual([{ lock: doubleBackLock() }])
+    expect(floor.realisations).toEqual({ "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" })
+    // The lock compiles the layout and the barriers; authoring them beside it would be two statements of one thing.
+    expect(floor.regionLayout).toBeUndefined()
+    expect(floor.obstacles).toBeUndefined()
+    expect(floor.controls).toBeUndefined()
+  })
+
+  it("compiles doubleBack's six regions, five gates and two drops, between the floor's entrance and exit", () => {
+    const [floor] = withDev[DEV_JOURNEY_ID][1]
+    const expanded = expandFloorLocks(floor as GameFloorConfig)
+    if (!expanded.ok) throw new Error(`doubleBack did not compile: ${JSON.stringify(expanded.reasons)}`)
+    const { regionLayout, obstacles } = expanded.config
+
+    expect(regionLayout!.regions.map(region => region.name)).toEqual([
+      "entrance",
+      "doubleBack.in",
+      "doubleBack.leftLower",
+      "doubleBack.rightLower",
+      "doubleBack.s1",
+      "doubleBack.s2",
+      "doubleBack.out",
+      "exit",
+    ])
+    expect(regionLayout!.connections).toEqual([
+      ["entrance", "doubleBack.in"],
+      ["doubleBack.in", "doubleBack.leftLower"],
+      ["doubleBack.in", "doubleBack.rightLower"],
+      ["doubleBack.rightLower", "doubleBack.s1"],
+      ["doubleBack.leftLower", "doubleBack.s2"],
+      ["doubleBack.in", "doubleBack.out"],
+      ["doubleBack.out", "exit"],
+    ])
+    expect(obstacles!.map(({ id, kind, at }) => [id, kind, at.on === "connection" ? at.between : undefined])).toEqual([
+      ["doubleBack.in-leftLower", "gate", ["doubleBack.in", "doubleBack.leftLower"]],
+      ["doubleBack.in-rightLower", "gate", ["doubleBack.in", "doubleBack.rightLower"]],
+      ["doubleBack.rightLower-s1", "gate", ["doubleBack.rightLower", "doubleBack.s1"]],
+      ["doubleBack.leftLower-s2", "gate", ["doubleBack.leftLower", "doubleBack.s2"]],
+      ["doubleBack.in-out", "gate", ["doubleBack.in", "doubleBack.out"]],
+      ["doubleBack.dropToLeft", "oneWay", ["doubleBack.s1", "doubleBack.leftLower"]],
+      ["doubleBack.dropToIn", "oneWay", ["doubleBack.leftLower", "doubleBack.in"]],
     ])
   })
 
-  it("stands doubleBack's three controls on pyramid 2: a genuinely three-state fork and two one-shot sequences", () => {
-    const pyramid2 = withDev[DEV_JOURNEY_ID][1]
-    const [floor] = pyramid2
+  it("compiles doubleBack's three controls: a fork-switch operating its own fork and two toggles dressed as handles", () => {
+    const [floor] = withDev[DEV_JOURNEY_ID][1]
+    const expanded = expandFloorLocks(floor as GameFloorConfig)
+    if (!expanded.ok) throw new Error(`doubleBack did not compile: ${JSON.stringify(expanded.reasons)}`)
 
-    expect(floor.controls).toEqual([
+    expect(expanded.config.controls).toEqual([
+      { id: "doubleBack.Y", in: "doubleBack.in", control: "fork-switch", encounter: "lightbeamSwitch" },
       {
-        id: "Y",
-        in: "entrance",
-        states: ["unset", "left", "right"],
-        initial: "unset",
-        returnsToInitial: false,
-        opens: { unset: [], left: ["forkLeft"], right: ["forkRight"] },
+        id: "doubleBack.S1",
+        in: "doubleBack.s1",
+        states: ["a", "b"],
+        initial: "a",
+        returnsToInitial: true,
+        opens: { a: ["doubleBack.rightLower-s1"], b: ["doubleBack.leftLower-s2"] },
+        encounter: "handle",
       },
       {
-        id: "S1",
-        in: "s1Chamber",
-        states: ["start", "thrown"],
-        initial: "start",
-        returnsToInitial: false,
-        opens: { start: ["greenRight"], thrown: ["greenLeft"] },
-      },
-      {
-        id: "S2",
-        in: "s2Chamber",
-        states: ["start", "thrown"],
-        initial: "start",
-        returnsToInitial: false,
-        opens: { start: [], thrown: ["endDoor"] },
+        id: "doubleBack.S2",
+        in: "doubleBack.s2",
+        states: ["a", "b"],
+        initial: "a",
+        returnsToInitial: true,
+        opens: { a: [], b: ["doubleBack.in-out"] },
+        encounter: "handle",
       },
     ])
   })
 
-  // Not decorative: at this floor's own production seed (`assembleAt` below), the carve needs the
-  // extra main-path length to seat five gates, three controls and two drops at once — see the
-  // move-to-pyramid-2 report for the sweep across `packing` values this number came from.
-  it("carves pyramid 2 at its own seed sound: solvable, and no order of moves strands anyone", () => {
-    const pyramid2 = withDev[DEV_JOURNEY_ID][1]
-    const [floor] = pyramid2
-    expect(floor.packing).toBe(7)
+  // Not decorative: the fork's two seams are rarely laid, so the pinned pair is the only reason this floor
+  // carves at all — at `packing` 8 one seed in 300 does, and this is it.
+  it("carves pyramid 2 at its own pinned seed on the first attempt, sound: solvable, and no order of moves strands anyone", () => {
+    const [floor] = withDev[DEV_JOURNEY_ID][1]
+    expect(floor.packing).toBe(8)
+    expect(floor.seed).toBe(4293857940)
 
+    const result = assembleFloor(
+      DEV_JOURNEY_ID,
+      floor as GameFloorConfig,
+      floorAssemblySeed(persistentInteriorSeed(DEV_JOURNEY_ID), 2, 0),
+      resolveEncounterMeta,
+      { resolveKeyRequirements, floorRef: { journeyId: DEV_JOURNEY_ID, floorIndex: 0 }, maxAttempts: 1 }
+    )
+    if (!result.success) throw new Error(`doubleBack did not carve at its own seed: ${JSON.stringify(result.reasons)}`)
+    expect(result.attempt).toBe(0)
+    expect(walkFloorLock(result.grid)).toEqual({ sound: true, states: expect.any(Number) })
+    // The second drop is what keeps every region reachable, not what keeps every region occupied by
+    // some state — no region is dead on this floor exactly as on the design doc's own worked example.
+    expect(deadFloorRegions(result.grid)).toEqual([])
+  })
+
+  it("stands the fork-switch junction on exactly the two seams into the arms, resting or open to one of them", () => {
+    const [floor] = withDev[DEV_JOURNEY_ID][1]
     const grid = assembleAt(DEV_JOURNEY_ID, floor, 2, 0)
     if (!grid) throw new Error("doubleBack did not carve at its own seed")
-    const spec = floorLock(grid)
-    if (!spec) throw new Error("floorLock found no mechanism on a floor that authors three")
-    expect(walkLock(spec)).toEqual({ sound: true, states: expect.any(Number) })
-    // The second drop is what keeps every region reachable, not what keeps every region occupied by
-    // some state — deadRegions stays silent on this floor exactly as it does on the design doc's own
-    // worked example (lockWalk.spec.ts).
-    expect(deadRegions(spec)).toEqual([])
+    const junctions = grid.cells
+      .flat()
+      .filter((cell): cell is Extract<typeof cell, { type: "room" }> => cell.type === "room")
+      .filter(room => room.mechanismId === "doubleBack.Y")
+    expect(junctions).toHaveLength(1)
+    const [Y] = junctions
+
+    expect(Y.family).toBe("lightbeamSwitch")
+    expect(Y.region).toBe("doubleBack.in")
+    const seams = Y.exits!.filter(exit => exit.kind !== "main")
+    const arm = (dir: string): string | undefined => {
+      const [r, c] = grid.cells
+        .flatMap((row, ri) => row.map((cell, ci) => (cell === Y ? [ri, ci] : [])))
+        .find(at => at.length)!
+      const [dr, dc] = { n: [-2, 0], s: [2, 0], e: [0, 2], w: [0, -2] }[dir]!
+      const next = grid.cells[r + dr][c + dc]
+      return next.type === "empty" ? undefined : next.region
+    }
+    expect(seams.map(exit => [exit.gateKeyId!.split(":").pop(), arm(exit.dir)]).sort()).toEqual([
+      ["doubleBack.in-leftLower", "doubleBack.leftLower"],
+      ["doubleBack.in-rightLower", "doubleBack.rightLower"],
+    ])
+    // Rest, then one position per seam: each opens its own seam and shuts the other.
+    expect(Y.mechanism!.states).toHaveLength(3)
+    expect(Y.mechanism!.states[0]).toBe("rest")
+    expect([...Y.mechanism!.positions.map(p => p.gateKeyId)].sort()).toEqual(seams.map(exit => exit.gateKeyId!).sort())
+  })
+
+  it("stands S1 and S2 as handles, each in its own chamber", () => {
+    const [floor] = withDev[DEV_JOURNEY_ID][1]
+    const grid = assembleAt(DEV_JOURNEY_ID, floor, 2, 0)
+    if (!grid) throw new Error("doubleBack did not carve at its own seed")
+    const toggles = grid.cells
+      .flat()
+      .filter((cell): cell is Extract<typeof cell, { type: "room" }> => cell.type === "room")
+      .filter(room => room.mechanismId === "doubleBack.S1" || room.mechanismId === "doubleBack.S2")
+
+    expect(toggles.map(room => [room.mechanismId, room.family, room.region]).sort()).toEqual([
+      ["doubleBack.S1", "handle", "doubleBack.s1"],
+      ["doubleBack.S2", "handle", "doubleBack.s2"],
+    ])
+  })
+
+  it("draws both drops as ziplines: s1 falls into leftLower, and leftLower into the junction's own region", () => {
+    const [floor] = withDev[DEV_JOURNEY_ID][1]
+    const grid = assembleAt(DEV_JOURNEY_ID, floor, 2, 0)
+    if (!grid) throw new Error("doubleBack did not carve at its own seed")
+    const regionAt = ([r, c]: readonly [number, number]) => {
+      const cell = grid.cells[r][c]
+      return cell.type === "empty" ? undefined : cell.region
+    }
+
+    expect(
+      oneWayRuns(grid)
+        .map(run => [run.kind, regionAt(run.launch), regionAt(run.landing)])
+        .sort()
+    ).toEqual([
+      ["zipline", "doubleBack.leftLower", "doubleBack.in"],
+      ["zipline", "doubleBack.s1", "doubleBack.leftLower"],
+    ])
   })
 
   it("has Y, S1 and S2 on pyramid 2 each wear a glyph of their own, and every gate wear its mechanism's mark", () => {
@@ -426,7 +507,7 @@ describe("what the dev journey authors", () => {
     if (!grid) throw new Error("doubleBack did not carve at its own seed")
     const rooms = grid.cells.flat().filter(cell => cell.type === "room")
     const mechanisms = rooms.filter(room => room.mechanismId !== undefined)
-    expect(mechanisms.map(room => room.mechanismId).sort()).toEqual(["S1", "S2", "Y"])
+    expect(mechanisms.map(room => room.mechanismId).sort()).toEqual(["doubleBack.S1", "doubleBack.S2", "doubleBack.Y"])
     const glyphs = mechanisms.map(room => room.mark?.glyph)
     expect(glyphs.every(glyph => glyph !== undefined)).toBe(true)
     expect(new Set(glyphs).size).toBe(3)
@@ -436,28 +517,25 @@ describe("what the dev journey authors", () => {
           expect(gate.mark, `${room.mechanismId} ${gateKeyId}`).toEqual(room.mark)
   })
 
-  // THE EARLY-DROP HAZARD, ON THE REAL ASSEMBLED FLOOR — the physical counterpart to
-  // lockWalk.spec.ts's own proof that the fixture strands without its second drop. Reassembled with
-  // `dropToEntrance` left out, at the same production seed, so the only thing that differs is the
-  // one drop under test.
-  it("strands the player who drops early on pyramid 2's own carve, once the second drop is taken away", () => {
-    const pyramid2 = withDev[DEV_JOURNEY_ID][1]
-    const [floor] = pyramid2
-    const withoutSecondDrop: FloorConfig = {
-      ...floor,
-      obstacles: floor.obstacles!.filter(o => o.id !== "dropToEntrance"),
+  // THE SECOND DROP, ON THE REAL ASSEMBLED FLOOR: reassembled from the compiled lock with `dropToIn` left
+  // out, at the same pinned seed, so the only thing that differs is the one drop under test. Without it the
+  // player who falls into leftLower has no way back to the junction, and nothing else reaches the way out.
+  it("cannot be solved on pyramid 2's own carve once the second drop is taken away", () => {
+    const [floor] = withDev[DEV_JOURNEY_ID][1]
+    const expanded = expandFloorLocks(floor as GameFloorConfig)
+    if (!expanded.ok) throw new Error(`doubleBack did not compile: ${JSON.stringify(expanded.reasons)}`)
+    const { locks: _locks, realisations: _binding, ...bare } = floor
+    const withoutSecondDrop = {
+      ...bare,
+      ...expanded.config,
+      obstacles: expanded.config.obstacles!.filter(obstacle => obstacle.id !== "doubleBack.dropToIn"),
     }
 
-    const grid = assembleAt(DEV_JOURNEY_ID, withoutSecondDrop, 2, 0)
+    const grid = assembleAt(DEV_JOURNEY_ID, withoutSecondDrop as FloorConfig, 2, 0)
     if (!grid) throw new Error("doubleBack without its second drop did not carve at the same seed")
-    const spec = floorLock(grid)
-    if (!spec) throw new Error("floorLock found no mechanism")
-    const result = walkLock(spec)
-    if (result.sound) throw new Error("expected the early drop to strand without the second one")
-    expect(result.failure.type).toBe("strands")
-    // deadRegions stays silent here exactly as it does on the fixture (lockWalk.spec.ts): the second
-    // drop is what keeps every region reachable, not what keeps every region occupied by some state.
-    expect(deadRegions(spec)).toEqual([])
+    const result = walkFloorLock(grid)
+    if (!result || result.sound) throw new Error("expected the floor to be unsolvable without the second drop")
+    expect(result.failure.type).toBe("unsolvable")
   })
 
   // The develop-only boundary is what keeps an undrawn drop off a floor a player will meet, and it is

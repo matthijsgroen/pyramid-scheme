@@ -270,16 +270,19 @@ const walkFloor = async (
 
     const claims = buildRoomClaims(grid)
     const offers = offeredTargets(grid, claims, explorerPos)
-    for (const [, target] of offers) {
+    for (const [tapped, target] of offers) {
+      const [tapRow, tapCol] = tapped.split(",").map(Number)
       const targetSig = sig() + `@${target[0]},${target[1]}`
       if (visited.has(targetSig)) continue
       const before = snapshot()
-      act(() => hook.result.current.onCellClick(target[0], target[1]))
+      // The tap is where the offer is drawn, which is not always the cell it leads to: a straight run's near
+      // cell leads to its far end, and the far end is no tap of its own.
+      act(() => hook.result.current.onCellClick(tapRow, tapCol))
       hook.rerender()
       const after = hook.result.current.explorerPos
       if (after[0] !== target[0] || after[1] !== target[1]) {
         violations.push(
-          `clicked the offer at ${target[0]},${target[1]} from ${explorerPos} but the explorer is at ${after[0]},${after[1]}`
+          `clicked the offer at ${tapped} leading to ${target[0]},${target[1]} from ${explorerPos} but the explorer is at ${after[0]},${after[1]}`
         )
         Object.assign(store, before)
         continue

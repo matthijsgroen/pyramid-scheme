@@ -260,7 +260,8 @@ describe("compiling regions apart", () => {
     let walked = 0
     dev.forEach((site, levelIndex) =>
       site.forEach((floor, floorIndex) => {
-        if ((floor as GameFloorConfig).regionLayout) return
+        // A floor placing locks carries the layout those locks compile into, so it authors one all the same.
+        if ((floor as GameFloorConfig).regionLayout || floor.locks?.length) return
         const grid = assembleDevAt(floor, levelIndex + 1, floorIndex)
         const lock = grid && floorLock(grid)
         if (!grid || !lock) return
