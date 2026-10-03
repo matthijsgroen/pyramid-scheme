@@ -234,11 +234,10 @@ original placeholder-generation commit: speculative art for a kind nobody added,
 report because no room asks for it and which anyone reading the tile folder would take for work in
 progress.
 
-**Region-barrier blockage — owed, per rank and per condition.** A shut region barrier (a hall flooded, a
-vault buried) stands in its passage as a prop, today the rank's `rubblePile` (placeholder where unpainted).
-It owes a `blockage` tile per rank: a plug filling the passage's width, sand drift or collapsed stone by day
-and a flooded variant (`blockage-flooded`) for a `flooded` condition; the mark is drawn over it, so keep its
-upper third plain.
+**Region-barrier covers — owed, two textures.** A shut region barrier (a hall flooded, a vault buried) is drawn as
+a cover over its region, from one seamless texture per realisation, shared by every rank: `default/regionWater`
+and `default/regionSand`, both in `repaint-queue.md`. Until they land the map draws each realisation's flat
+fallback colour; the owner's mark is drawn over the cover, so nothing in the texture needs to leave room for it.
 
 ## 6. Waiting on a scan
 

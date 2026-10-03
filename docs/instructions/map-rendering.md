@@ -30,6 +30,7 @@ Bottom to top, all inside `[data-map]`:
 | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | `TileLayers`                                                            | floor, wall mass, faces, tops, sills, shadows, state washes                           |
 | sand, scatter, arch shadows, the lit place, scarabs, growth, wall items | the floor's own dressing                                                              |
+| `RegionBarrierCovers`                                                    | the water or sand over a shut region barrier, a box per cell, under the shade and lamp |
 | the markers                                                             | one `MarkerCell` per cell: an icon in a little `<svg>`, in a box the size of the cell |
 | the standing layer                                                      | props, chests, stairs, exits, gates, the explorer — sorted by floor line              |
 | archways and gates                                                      | drawn last, so the player walks under them                                            |

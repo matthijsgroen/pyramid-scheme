@@ -26,6 +26,7 @@ const floor = (
   regionLayout: config.regionLayout,
   obstacles: config.obstacles,
   controls: config.controls,
+  regionBarrierRealisation: "water",
 })
 
 const region = (name: string) => ({ name, appetite: "free" as const })

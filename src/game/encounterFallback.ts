@@ -1,5 +1,6 @@
 import type { EncounterResolution, ResolveEncounter } from "./siteAssembler"
 import type { OneWayRealisationMeta, ResolveOneWayRealisation } from "./oneWayRealisation"
+import type { ResolveRegionBarrierRealisation } from "./regionBarrierRealisation"
 
 /** The role a mechanism room stands as when its author names no realisation. A role, not a family: which
  * family answers to it is the registry's, and the floor only says a control stands in this room. */
@@ -49,3 +50,8 @@ const DEFAULT_ONE_WAY: OneWayRealisationMeta = { id: "zipline", ownerMod: "topol
 // realisation this catalogue knows. Production passes the registry's resolver, which binds nothing by default.
 export const defaultResolveOneWayRealisation: ResolveOneWayRealisation = id =>
   id === undefined || id === DEFAULT_ONE_WAY.id ? DEFAULT_ONE_WAY : undefined
+
+// A caller with no registry accepts any realisation a region barrier names, as it answers every encounter; an
+// unnamed one is still refused, so no default stands in.
+export const defaultResolveRegionBarrierRealisation: ResolveRegionBarrierRealisation = id =>
+  id === undefined ? undefined : { id, ownerMod: REGISTRY_LESS, fallback: "#808080" }

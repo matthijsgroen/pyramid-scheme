@@ -61,7 +61,8 @@ export const nodeArtOffset = (dirs: ReadonlySet<Direction> | undefined): { dx: n
  */
 export type NodeSprite = {
   key: string
-  url: string
+  /** The art. Absent for a node that is only a seat for its mark, drawn over what covers the floor. */
+  url?: string
   x: number
   y: number
   /** Mirrored in x — how a stair is aimed. A reflection is a real oblique view; a rotation is a skew. */

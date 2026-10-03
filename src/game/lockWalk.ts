@@ -28,6 +28,13 @@ export type Mechanism = {
   opens: Record<StateId, GateId[]>
   /** The moves the player makes: standing in `at`, this mechanism goes from one state to another. */
   transitions: { from: StateId; to: StateId; at: RegionId }[]
+  /**
+   * Moves the walk makes by ENTERING `at`, never as a choice: arriving in the region from any other puts the
+   * mechanism from `from` to `to`; in any other state, entering does nothing. A sequence's tile works so.
+   */
+  entries?: { from: StateId; to: StateId; at: RegionId }[]
+  /** A state some walk has to reach, or the lock is refused naming `label`: the order of a sequence kept. */
+  goal?: { state: StateId; label: string }
 }
 
 export type LockSpec = {
@@ -82,7 +89,7 @@ export const checkLockSpec = (spec: LockSpec): string | undefined => {
         if (!gate.owners.includes(id)) return `${id} opens ${gateId}, which it does not own`
       }
     }
-    for (const transition of mechanism.transitions) {
+    for (const transition of [...mechanism.transitions, ...(mechanism.entries ?? [])]) {
       if (!states.has(transition.from)) return `${id} moves from a state it does not have: ${transition.from}`
       if (!states.has(transition.to)) return `${id} moves to a state it does not have: ${transition.to}`
       if (!regions.has(transition.at)) return `${id} is thrown from no region: ${transition.at}`
@@ -126,25 +133,38 @@ const stateKey = (ids: readonly MechanismId[], state: LockState): string =>
 // from a chamber a mechanism has sealed.
 const movesFrom = (spec: LockSpec, state: LockState): LockState[] => {
   const { region, config } = state
-  const next: LockState[] = []
+  const moves: LockState[] = []
 
   for (const gateId of openGates(spec, config)) {
     const gate = spec.gates[gateId]
-    if (gate.from === region) next.push({ region: gate.to, config })
-    if (gate.to === region) next.push({ region: gate.from, config })
+    if (gate.from === region) moves.push({ region: gate.to, config })
+    if (gate.to === region) moves.push({ region: gate.from, config })
   }
-  for (const oneWay of spec.oneWays ?? []) if (oneWay.from === region) next.push({ region: oneWay.to, config })
+  for (const oneWay of spec.oneWays ?? []) if (oneWay.from === region) moves.push({ region: oneWay.to, config })
   for (const { a, b } of spec.passages ?? []) {
-    if (a === region) next.push({ region: b, config })
-    if (b === region) next.push({ region: a, config })
+    if (a === region) moves.push({ region: b, config })
+    if (b === region) moves.push({ region: a, config })
   }
   for (const [id, mechanism] of Object.entries(spec.mechanisms))
     for (const transition of mechanism.transitions)
       if (transition.at === region && config[id] === transition.from)
-        next.push({ region, config: { ...config, [id]: transition.to } })
-  if (region === spec.out) next.push({ region: spec.in, config })
+        moves.push({ region, config: { ...config, [id]: transition.to } })
+  if (region === spec.out) moves.push({ region: spec.in, config })
 
-  return next
+  return moves.map(move => entering(spec, region, move))
+}
+
+// STEPPING INTO A REGION WORKS ITS ENTRIES: the player cannot arrive without the move having been made.
+export const entering = (spec: LockSpec, from: RegionId, arrived: LockState): LockState => {
+  if (arrived.region === from) return arrived
+  let config = arrived.config
+  for (const [id, mechanism] of Object.entries(spec.mechanisms))
+    for (const entry of mechanism.entries ?? [])
+      if (entry.at === arrived.region && config[id] === entry.from) {
+        config = { ...config, [id]: entry.to }
+        break
+      }
+  return config === arrived.config ? arrived : { region: arrived.region, config }
 }
 
 // Breadth-first, with `order` doubling as the queue: a state's index is therefore its discovery
@@ -185,6 +205,7 @@ export type LockWalkFailure =
   | { type: "malformed"; problem: string }
   | { type: "tooLarge" }
   | { type: "unsolvable" }
+  | { type: "goalUnreachable"; label: string }
   | { type: "strands"; at: LockState }
 
 export type LockWalkResult = { sound: true; states: number } | { sound: false; failure: LockWalkFailure }
@@ -200,6 +221,12 @@ export const walkLock = (spec: LockSpec): LockWalkResult => {
   const found = reachableStates(spec)
   if (found === "tooLarge") return { sound: false, failure: { type: "tooLarge" } }
   const { order, edges } = found
+
+  // A mechanism's goal comes first: a floor whose sequence no walk completes is refused by naming it, and not
+  // by what the shut door behind it then makes of the way out.
+  for (const [id, { goal }] of Object.entries(spec.mechanisms))
+    if (goal && !order.some(state => state.config[id] === goal.state))
+      return { sound: false, failure: { type: "goalUnreachable", label: goal.label } }
 
   const backwards: number[][] = order.map(() => [])
   edges.forEach((tos, from) => tos.forEach(to => backwards[to].push(from)))
@@ -249,7 +276,7 @@ export const deadRegions = (spec: LockSpec): RegionId[] => {
   const stood = new Set(found.order.map(state => state.region))
   const onFloor = new Set(
     Object.entries(spec.mechanisms)
-      .filter(([, mechanism]) => mechanism.transitions.length > 0)
+      .filter(([, mechanism]) => mechanism.transitions.length > 0 || (mechanism.entries ?? []).length > 0)
       .map(([id]) => id)
   )
   return spec.regions.filter(region => {
@@ -267,6 +294,8 @@ export const describeLockWalkFailure = (failure: LockWalkFailure): string => {
       return `the lock names more than ${MAX_LOCK_STATES} states`
     case "unsolvable":
       return "no sequence of moves reaches the way out"
+    case "goalUnreachable":
+      return `${failure.label} is never completed: no walk keeps the order`
     case "strands": {
       const config = Object.entries(failure.at.config)
         .map(([id, state]) => `${id} at ${state}`)

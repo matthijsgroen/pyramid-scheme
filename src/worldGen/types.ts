@@ -125,6 +125,8 @@ export type FloorConfig = {
   oneWays?: { from: string; to: string }[]
   /** Mirrors game/siteTypes.ts's FloorConfig.oneWayRealisation. */
   oneWayRealisation?: string
+  /** Mirrors game/siteTypes.ts's FloorConfig.regionBarrierRealisation. */
+  regionBarrierRealisation?: string
   /** A lever standing in one named section, opening the entrance gates the side it hangs on names and
    * shutting the other side's — mirrors game/siteTypes.ts's FloorConfig.handles. */
   handles?: { in: string; left: string[]; right: string[]; starts?: HandleSide }[]

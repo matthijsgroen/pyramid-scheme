@@ -29,7 +29,7 @@ const door: RoomCell = {
   state: "reachable",
   tags: ["gate"],
   requiredKeyId: KEY,
-  regionBarrier: { region: "vault", entrance: "hall" },
+  regionBarrier: { region: "vault", entrance: "hall", realisation: "water" },
 }
 const end: RoomCell = { type: "room", roomType: "portal", dirs: new Set(["w"]), state: "reachable" }
 

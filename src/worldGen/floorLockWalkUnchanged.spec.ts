@@ -58,7 +58,7 @@ afterAll(() => {
 
 describe("the dev journey's floors, none of them nested", () => {
   it("are walked over their whole lock exactly as before nesting existed, on every dev floor", () => {
-    expect(dev).toHaveLength(9)
+    expect(dev).toHaveLength(10)
     let walked = 0
     dev.forEach((site, levelIndex) =>
       site.forEach((floor, floorIndex) => {

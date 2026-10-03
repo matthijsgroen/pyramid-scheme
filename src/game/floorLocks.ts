@@ -48,7 +48,14 @@ export const FLOOR_ENTRANCE = "entrance"
 export const FLOOR_EXIT = "exit"
 
 /** The fields a floor's locks compile into; authoring any of them beside `locks` would be two statements of one thing. */
-const COMPILED_FIELDS = ["regionLayout", "obstacles", "controls", "barrierOrder", "oneWayRealisation"] as const
+const COMPILED_FIELDS = [
+  "regionLayout",
+  "obstacles",
+  "controls",
+  "barrierOrder",
+  "oneWayRealisation",
+  "regionBarrierRealisation",
+] as const
 
 const contradictions = (config: FloorConfig): string[] => [
   ...COMPILED_FIELDS.filter(field => config[field] !== undefined),
@@ -244,6 +251,7 @@ export const expandFloorLocks = (
   const forks = [...(config.forks ?? []), ...all.flatMap(fragment => fragment.forks)]
   const barrierOrder = all.flatMap(fragment => fragment.barrierOrder)
   const oneWayRealisation = all.find(fragment => fragment.oneWayRealisation)?.oneWayRealisation
+  const regionBarrierRealisation = all.find(fragment => fragment.regionBarrierRealisation)?.regionBarrierRealisation
   const nesting: LockNesting[] = nested.seats.map(({ instance, host }) => {
     const layout = fragments.get(instance)!.regionLayout
     return { instance, host, regions: layout.regions.map(region => region.name), in: layout.in, out: layout.out }
@@ -272,6 +280,7 @@ export const expandFloorLocks = (
       ...(forks.length > 0 ? { forks } : {}),
       ...(barrierOrder.length > 0 ? { barrierOrder } : {}),
       ...(oneWayRealisation === undefined ? {} : { oneWayRealisation }),
+      ...(regionBarrierRealisation === undefined ? {} : { regionBarrierRealisation }),
     },
     ...(nesting.length > 0 ? { nesting } : {}),
     placed,

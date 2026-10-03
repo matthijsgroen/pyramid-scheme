@@ -1,4 +1,6 @@
 import type { RealisationBinding } from "../game/lockCompile"
+import { isRegionGate, type Obstacle } from "../game/obstacles"
+import { REGION_BARRIER_KIND } from "../game/regionBarrierRealisation"
 
 /** What one level of authoring may say about realisations: a binding, and the one-way's older single-name spelling. */
 export type BindingDeclaration = { realisations?: RealisationBinding; oneWayRealisation?: string }
@@ -28,3 +30,9 @@ export const withResolvedBinding = <T extends BindingDeclaration>(constraint: T,
   const { oneWayRealisation: _folded, realisations: _replaced, ...rest } = constraint
   return { ...rest, ...(Object.keys(binding).length > 0 ? { realisations: binding } : {}) } as T
 }
+
+/** What a floor with no locks carries as `regionBarrierRealisation`: the binding's entry, and only where a region is barred. */
+export const regionBarrierBinding = (
+  obstacles: readonly Obstacle[] | undefined,
+  binding: RealisationBinding
+): string | undefined => (obstacles?.some(isRegionGate) ? binding[REGION_BARRIER_KIND] : undefined)
