@@ -388,6 +388,11 @@ export type PyramidConstraint = {
   mainEndReward?: RewardSpec
   gateHint?: GateType
   floors?: (FloorConstraint | null)[]
+  /** LOCKS (and the floor-level `realisations` that dress them) on floors of an auto-built pyramid, keyed by floor
+   * index. Chaining `.floor(n, ...)` switches a pyramid to explicit `floors`, which builds none of the wing, stair,
+   * side paths or gates the auto build makes; this lays the locks over what the auto build made and touches nothing
+   * else. Refused beside `floors`, and for a floor index the pyramid does not build. */
+  floorLocks?: Record<number, Pick<FloorConstraint, "locks" | "realisations">>
   /** Baseline floor count for the main path itself, before any ward wings. Default 1. */
   mainFloors?: number
   /** Ward-gated bonus floors branching off the last main floor. A `number` auto-generates that
