@@ -9,6 +9,10 @@ reveals both attachments in the Finder, ready to drag. `yarn repaint` with no ar
 still owed. It parses THIS file, so a prompt edited here is the prompt that gets pasted — there is no second
 copy anywhere.
 
+It lists the story's characters alongside these tiles, from
+[character-art-prompts.md](../game-design/story/character-art-prompts.md), under `portrait` and `ghost`.
+Same handoff, different subject: an hour at the generator is an hour whichever kind of art it goes on.
+
 The loop stays manual on purpose. Driving Gemini's web UI is against Google's terms, and the API bills per
 image; neither is worth it for two dozen tiles, so the paste is done by hand and the script only saves the
 searching — the right block out of nine hundred lines, and two files out of a folder of two hundred renders.

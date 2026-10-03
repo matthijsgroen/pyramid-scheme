@@ -1,127 +1,127 @@
 {
   "starter_1": {
     "name": "Dageraad bij de Sfinx",
-    "description": "Begin je avontuur bij de Grote Sfinx terwijl de ochtendzon zijn oude gezicht verlicht. Een zachte introductie tot de mysteries van Egypte."
+    "description": "De Grote Sfinx, en het schrift aan zijn voeten dat niemand meer kan lezen. De kaart zegt: hier beginnen."
   },
   "starter_2": {
     "name": "Papyrushandelaar Route",
-    "description": "Volg de handelsroutes van oude papyrushandelaren langs de vreedzame oevers van de Nijl. Ontdek de geheimen van de Egyptische handel."
+    "description": "Papyrus ging via deze weg de Nijl op, en de handelaren schreven op wie wat schuldig was. De bonnen overleefden de waar."
   },
   "starter_3": {
     "name": "Tempel van Bastet",
-    "description": "Bezoek de heilige tempel van kattengodin Bastet, waar trouwe aanbidders offers brengen en bescherming zoeken tegen boze geesten."
+    "description": "De tempel van Bastet. De katten hier waren heilig, en het jaarlijkse feest was het grootste van Egypte — boten, muziek, alles erop en eraan."
   },
   "starter_4": {
     "name": "Schrijversacademie",
-    "description": "Leer de kunst van hiëroglyfisch schrijven in de prestigieuze schrijversacademie, waar kennis waardevoller is dan goud."
+    "description": "De school van de schrijvers. Ze kerfden hun hiërogliefen in potscherven, want papyrus was veel te duur voor kinderen."
   },
   "starter_treasure_tomb": {
     "name": "Vergeten Handelaars Voorraad",
-    "description": "Ontdek een kleine ondergrondse kamer waar een oude handelaar zijn kostbare goederen heeft verborgen. Een perfecte introductie tot het zoeken naar schatten.",
+    "description": "De kelder van een handelaar, niet van een koning: kruiken gestapeld, verzegeld en gelabeld, en niemand beneden die tegensputtert.",
     "mapHint": "Het stukje schetst een marktweg en een kelderdeur — een schuilplek van een handelaar, niets groters."
   },
   "junior_1": {
     "name": "Heilige Ibis Migratie",
-    "description": "Volg de heilige ibis vogels op hun jaarlijkse migratie langs de Nijl. Leer de patronen die oude Egyptenaren gebruikten om de overstroming te voorspellen."
+    "description": "Moerasland, en de ibis die erdoorheen waadt. Egypte keek naar deze vogels: als zij terugkomen, komt het hoogwater."
   },
   "junior_2": {
     "name": "Vallei van de Ambachtslieden",
-    "description": "Verken het dorp waar vaardige ambachtslieden schatten creëerden voor de farao's. Beheers de oude technieken van metaalbewerking en juwelen maken."
+    "description": "Deir el-Medina, waar de grafbouwers woonden. Alles wat in een koningsgraf ging werd hier gemaakt, in mallen."
   },
   "junior_3": {
     "name": "Tempel van Thoth",
-    "description": "Betreed de tempel van Thoth, god van wijsheid en schrijven. Los wiskundige puzzels op die je begrip van oude Egyptische getallen testen."
+    "description": "De tempel van Thoth. Hij vond het schrift uit, hield de administratie bij en deed het rekenwerk — zo'n beetje wat wij ook doen."
   },
   "junior_4": {
     "name": "Vuurtoren van Alexandrië",
-    "description": "Beklim de legendarische vuurtoren van Alexandrië, een van de Zeven Wereldwonderen. Navigeer door de wiskundige principes die dit wonder mogelijk maakten."
+    "description": "De Pharos van Alexandrië. Bovenin een vuur dat de hele nacht brandde, en zeelui die de kust op een dagreis afstand vonden."
   },
   "junior_treasure_tomb": {
     "name": "Edelman's Verborgen Kluis",
-    "description": "Verken de geheime kluis van een rijke Egyptische edelman, gevuld met gouden artefacten en kostbare edelstenen verstopt voor grafrovers.",
+    "description": "Het gewelf van een edelvrouw, van vloer tot plafond beschilderd. Ze kocht de mooiste kopieën die er waren, en zei dat nooit hardop.",
     "mapHint": "Fijne inkt, een gezegeld wapen in de hoek — iemand van stand wilde deze kamer vergeten laten."
   },
   "expert_1": {
     "name": "Vallei der Koningen",
-    "description": "Verken de koninklijke necropolis waar farao's voor de eeuwigheid rusten. Navigeer door uitgebreide grafkamers vol oude puzzels."
+    "description": "Het Dal der Koningen. Ze stopten met piramides bouwen en verstopten de koningsgraven in één dal, onder een top in de vorm van een piramide."
   },
   "expert_2": {
     "name": "Karnak Tempelcomplex",
-    "description": "Waag je door het uitgestrekte tempelcomplex van Karnak, gewijd aan Amun-Ra. Los de raadsels op die door hogepriesters door de eeuwen heen zijn achtergelaten."
+    "description": "Karnak, tweeduizend jaar lang uitgebreid. Alleen de grote zaal al heeft honderdvierendertig zuilen, stuk voor stuk bewerkt."
   },
   "expert_3": {
     "name": "Nijldelta Expeditie",
-    "description": "Reis door de vruchtbare Nijldelta, ontmoet krokodilgoden en los de mysteries op van de jaarlijkse overstroming van de rivier."
+    "description": "Waar de Nijl zich splitst en groen uitwaaiert. Het land van Sobek — papyrus, vis, en krokodillen die vereerd en gevoerd werden."
   },
   "expert_4": {
     "name": "Piramide van Djoser",
-    "description": "Beklim de trappenpiramide van Djoser, de eerste piramide ooit gebouwd. Ga de uitdagingen aan die dit monument millennia lang hebben beschermd."
+    "description": "De trappiramide van Djoser, het eerste bouwwerk van dat formaat in steen. Zijn architect Imhotep werd uiteindelijk als god vereerd."
   },
   "expert_treasure_tomb": {
     "name": "Hogepriester's Schatkamer",
-    "description": "Infiltreer de uitgebreide ondergrondse schatkamer van een machtige hogepriester, waar heilige relieken en goddelijke artefacten wachten op de waardigen.",
+    "description": "De schatkamer van een hogepriester, onder de offervloer. Alles daarbeneden is aan een god gegeven en nooit meer opgehaald.",
     "mapHint": "De lijnen tekenen een tempelterrein, en een trap die afdaalt onder de offervloer."
   },
   "expert_treasure_tomb_b": {
     "name": "Binnenste Heiligdom",
-    "description": "Dring door in het verzegelde binnenste heiligdom waar enkel de hoogste priesters durfden te komen, hoeder van de heiligste voorwerpen van de tempel.",
+    "description": "De verzegelde kamer in het hart van de tempel. De hogepriester ging er één keer per dag naar binnen, om de god te wassen en aan te kleden.",
     "mapHint": "Gangen lopen voorbij de tempelkluizen naar een verzegelde deur — enkel de hoogste priesters kwamen erdoor."
   },
   "master_1": {
     "name": "Grote Piramide van Gizeh",
-    "description": "Betreed de meest magnifieke piramide ooit gebouwd. Ga de ultieme test aan terwijl je door de Grote Galerij navigeert en de Koningskamer bereikt."
+    "description": "De Grote Piramide. Twintig jaar steen, en een heel dorp ernaast dat de ploegen voedde met brood en bier."
   },
   "master_2": {
     "name": "Boek der Doden",
-    "description": "Ontrafel de mysteries van het hiernamaals door het verzamelen en ontcijferen van de heilige teksten die zielen door de onderwereld leiden."
+    "description": "Geen boek maar een reeks spreuken, op bestelling gekopieerd. Bij de goedkope versies bleef er een gat open waar je naam hoorde."
   },
   "master_3": {
     "name": "Vloek van de Farao's",
-    "description": "Breek de oude vloek die grafrovers eeuwenlang heeft geplaagd. Ga bovennatuurlijke uitdagingen en goddelijke vergelding aan."
+    "description": "De beroemde vloek is in 1923 door kranten verzonnen. De Egyptenaren bewaakten hun graven met deuren en administratie."
   },
   "master_4": {
     "name": "Graf van Nefertari",
-    "description": "Betreed het meest prachtig gedecoreerde graf in de Vallei der Koninginnen. Los puzzels op gebaseerd op de verbluffende muurschilderingen en hiërogliefen."
+    "description": "Het graf van Nefertari, de best beschilderde kamer van Egypte. De kleuren werden uit steen gemalen — azuriet, malachiet, oker."
   },
   "master_treasure_tomb": {
     "name": "Farao's Geheime Schat",
-    "description": "Onthul de legendarische geheime schatkamer van een grote farao, verborgen onder het woestijnzand en beschermd door oude vloeken.",
+    "description": "De privéschat van een koning, daar waar de kaarten ophouden. Wat er met hem de grond in ging ligt er nog.",
     "mapHint": "Een koninklijke cartouche staat in de rand, en de route eindigt ver weg onder open zand."
   },
   "master_treasure_tomb_b": {
     "name": "Hal van Osiris",
-    "description": "Daal af in de diepere hal waar Osiris heerst, heer van de onderwereld. Doorsta de mysteries van dood en wedergeboorte om zijn oude relieken op te eisen.",
+    "description": "De zaal van Osiris. God van het hoogwater en het graan — wat hier de grond in gaat, wordt terugverwacht.",
     "mapHint": "Onder de koninklijke kamers blijft de kaart dalen, naar een hal getekend met de riten van de doden."
   },
   "wizard_1": {
     "name": "Ra's Zonnereis",
-    "description": "Vergezeld Ra op zijn gevaarlijke nachtelijke reis door de onderwereld, vecht tegen de slang Apep en zorg ervoor dat de zon weer opkomt."
+    "description": "Ra gaat bij zonsondergang onder de wereld door en heeft twaalf uur donker te gaan. Egypte schreef op wat er in elk uur gebeurt."
   },
   "wizard_2": {
-    "name": "Geheimen van de Sfinx",
-    "description": "Ontgrendel de diepste mysteries verborgen in de Grote Sfinx. Ga raadsels aan die de grootste geesten millennia lang hebben uitgedaagd."
+    "name": "Kolossen van Memnon",
+    "description": "Twee zittende reuzen van Amenhotep III. De Grieken besloten dat het iemand anders was, en die naam bleef tweeduizend jaar plakken."
   },
   "wizard_3": {
     "name": "Kamer van Ma'at",
-    "description": "Betreed de kosmische kamer waar Ma'at de harten van de doden weegt. Balanceer goddelijke wiskunde in het rijk van perfecte gerechtigheid."
+    "description": "De kamer van Ma'at. Zij is de orde der dingen, en haar ene struisvogelveer is waar al het andere tegen wordt afgewogen."
   },
   "wizard_4": {
     "name": "Eeuwige Piramide",
-    "description": "Beklim de mythische Eeuwige Piramide die bestaat buiten tijd en ruimte. Beheers de ultieme wiskundige mysteries van de schepping zelf."
+    "description": "De bekleding was gepolijste kalksteen, wit als zout, zo strak gelegd dat je hem van een dagreis ver zag blinken."
   },
   "wizard_treasure_tomb": {
     "name": "Kluis van de Goden",
-    "description": "Betreed de mythische schatkamer waar de goden zelf hun kostbaarste artefacten bewaarden. Alleen de meest vaardige avonturiers durven deze ultieme schattenjacht te proberen.",
+    "description": "Waar de tempel bewaarde wat van de goden was. Niemand werd hier aangekondigd zonder het juiste in zijn handen.",
     "mapHint": "Geen enkel baken op dit stukje hoort bij de wereld van mensen — wat het ook toont, goden legden het daar."
   },
   "wizard_treasure_tomb_b": {
     "name": "Rijk der Kosmische Krachten",
-    "description": "Waag je dieper in het goddelijke rijk waar kosmische krachten van leven, dood, chaos en wind zich manifesteren als oude relieken van onmetelijke macht.",
+    "description": "Sterrenkaarten over het plafond, geschilderd zodat de doden 's nachts het uur konden aflezen. Iemands touw hangt nog in de schacht.",
     "mapHint": "Voorbij de goddelijke kluis breken de lijnen uit in sterrenpaden, waar de krachten van leven en chaos als relieken bewaard worden."
   },
   "wizard_treasure_tomb_c": {
     "name": "Troon der Eeuwigheid",
-    "description": "Bereik het binnenste heiligdom van het goddelijke rijk — de Troon der Eeuwigheid waar de goden zelf rusten. Enkel de grootste wiskundigen aller tijden hebben hier gestaan.",
+    "description": "Eén zetel in het midden en tweeënveertig rechters eromheen, elk met een vraag waarop je geacht wordt nee te antwoorden.",
     "mapHint": "Alle sterrenpaden op dit fragment komen samen op één zetel, in het hart van het goddelijke rijk."
   },
   "dev_topology": {

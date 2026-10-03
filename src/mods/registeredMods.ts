@@ -13,6 +13,7 @@ import { hieroglyphMod } from "./hieroglyph"
 import { trapMod } from "./trap"
 import { shopMod } from "./shop"
 import { tombTreasureMod } from "./tombTreasure"
+import { storyMod } from "./story"
 import { topologyMod } from "./topology"
 
 // The registered mods, in one list. A mod is "on" iff it appears here; toggle a mod off (for a
@@ -27,6 +28,7 @@ export const REGISTERED_MODS: ModDescriptor[] = [
   trapMod,
   shopMod,
   tombTreasureMod,
+  storyMod,
   topologyMod,
 ]
 

@@ -4,6 +4,7 @@ import type { JourneyAPI } from "@/app/state/useJourneys"
 import { TRAP_TIME_LIMITS_SECONDS, TRAP_TIME_EXTENSION_PER_INSIGHT_STACK } from "@/mods/trap/game/trapConfig"
 import { TrapWarningScreen } from "@/mods/trap/app/TrapWarningScreen"
 import { useTrapProgress } from "./useTrapProgress"
+import type { SolveOutcome } from "@/app/reactions/reactionContributions"
 
 // Generic across any trap family — the warning/attempt/disable/turn-around lifecycle has
 // nothing challenge-specific about it, so every family reuses it rather than re-deriving it.
@@ -13,7 +14,7 @@ type Props<T> = {
   question: T
   ctx: FamilyContext
   journeys: JourneyAPI
-  onSolved: () => void
+  onSolved: (outcome?: SolveOutcome) => void
   onCancel: () => void
   ChallengeComponent: FC<{ question: T; timeLimit: number; onPass: () => void; onFail: () => void }>
 }
@@ -56,7 +57,10 @@ export const TrapFamilyShell = <T,>({ question, ctx, journeys, onSolved, onCance
       <ChallengeComponent
         question={question}
         timeLimit={timeLimit}
-        onPass={onSolved}
+        // "Close" is the health the player walked out with, not how near the timer ran: a trap
+        // beaten on the last heart is the one worth a remark, and a trap beaten at full health is
+        // not. Half the bar, so the perks that raise the ceiling raise the bar with it.
+        onPass={() => onSolved({ close: trap.currentHealth <= trap.maxHealth / 2 })}
         onFail={() => {
           trap.takeTrapDamage()
           onCancel()

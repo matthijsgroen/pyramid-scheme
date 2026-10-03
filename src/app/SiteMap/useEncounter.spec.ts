@@ -7,6 +7,7 @@ import { HANDLE_SIDES } from "@/game/siteTypes"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { registerFamily } from "@/app/families/familyRegistry"
 import { useEncounter } from "./useEncounter"
+import { registerReactionContribution, type Reaction } from "@/app/reactions/reactionContributions"
 
 // No mod app entrypoints are imported here on purpose: with an empty family registry every room
 // reads as "family missing", which is the pass-through path this spec pins down. A room's own puzzle
@@ -225,5 +226,21 @@ describe("useEncounter", () => {
 
     expect(journeys.markCellExplored).toHaveBeenCalled()
     expect(onReward).not.toHaveBeenCalled()
+  })
+})
+
+// A rail nothing reports into is a rail that passes every unit test and never fires in the game,
+// so what is pinned here is the REPORT: that solving a room tells the listeners, and tells them
+// both halves — what the family said about the outcome, and where it happened.
+describe("what a solved room reports", () => {
+  it("carries the family's outcome and the room's own place", () => {
+    const heard: Reaction[] = []
+    registerReactionContribution(() => reaction => heard.push(reaction))
+    const { hook } = setup([{ ...stubRoom, difficulty: "junior" }])
+
+    act(() => hook.result.current.open([0, 0], true))
+    act(() => hook.result.current.solved({ unaided: true }))
+
+    expect(heard).toEqual([{ kind: "solved", tags: ["puzzle"], unaided: true, tier: "junior", journeyId: "j1" }])
   })
 })

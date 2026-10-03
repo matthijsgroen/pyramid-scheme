@@ -1574,3 +1574,23 @@ yarn import-tile art/masters/surfaces/overgrown-curtain.webp --tier=default --na
 yarn drift-mask --out="$OBJ" --seed=grass --size=504 --peak=1 --core=0.92 --lobes=5 --blur=1
 yarn import-tile art/masters/surfaces/overgrown-grass.webp --tier=default --name=overgrown-grass --slot=drift \
   --filter=smooth --mask="$OBJ" --brightness=0.7
+
+# Conversation portraits. No render and no scaffold: a character is generated whole, on white, and the
+# import keys the white out and seats the figure on the bottom edge. The explorer's neutral and grinning
+# masters are the ORIGINAL character artwork the walking sprites were drawn from — which is why his
+# skin and his cream trousers match on the map and in a conversation.
+#
+# --bust cuts every human waist-up so their faces read at Fez's size rather than a third of it, --holes
+# names the enclosed background no flood can reach, and --centre keeps the pointing pose's finger in
+# frame. All three are explained in docs/game-design/story/character-art-prompts.md.
+yarn import-portrait art/masters/characters/explorer.jpeg --name=explorer --bust=0.55 \
+  --holes="574,1299;631,1503;1242,1025;646,1062;748,642"
+yarn import-portrait art/masters/characters/grin-explorer.jpeg --name=grin-explorer --bust=0.55 \
+  --holes="582,1329;1243,1026;646,1061;929,599;749,642"
+yarn import-portrait art/masters/characters/point-explorer.jpeg --name=point-explorer --bust=0.55 --centre=1065 \
+  --holes="586,1330;649,1059;753,638"
+yarn import-portrait art/masters/characters/ghost-ipi.jpeg --name=ghost-ipi --bust=0.55
+yarn import-portrait art/masters/characters/ghost-henut.jpeg --name=ghost-henut --bust=0.55
+yarn import-portrait art/masters/characters/ghost-priest.jpeg --name=ghost-priest --bust=0.55
+yarn import-portrait art/masters/characters/ghost-pharaoh.jpeg --name=ghost-pharaoh --bust=0.55
+yarn import-portrait art/masters/characters/ghost-other.jpeg --name=ghost-other --bust=0.55

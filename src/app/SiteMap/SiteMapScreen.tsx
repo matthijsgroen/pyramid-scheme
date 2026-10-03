@@ -31,6 +31,7 @@ import { useMergedRewardContributions } from "@/app/SiteMap/rewardContributions"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { useDetectorReadout } from "@/app/SiteMap/useDetectorReadout"
+import { useMergedReactions } from "@/app/reactions/reactionContributions"
 import { PuzzleRoomContext } from "@/mods/core/app/puzzleState"
 import { DetectorPanel } from "@/ui/atoms/DetectorPanel"
 import { DetectorButton } from "@/ui/atoms/DetectorButton"
@@ -166,6 +167,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
 
   // Applies a claimed reward to game state; whether it reaches the player at all is useRewardOffer's.
   const applyReward = useApplyReward(progression, inventory, journeyId)
+  const react = useMergedReactions()
   const rewardOffer = useRewardOffer({ journeys, rewardContributions, applyReward })
 
   const encounter = useEncounter({
@@ -304,7 +306,12 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
           origin="50% 50%"
           // Any exit portal finishes the site and advances the journey. Floors past the exit stay
           // reachable on a later revisit (with keys); the interior is a persistent, stable-seed site.
-          onComplete={onSiteComplete}
+          onComplete={() => {
+            // Walking out is a move too: the beat that belongs to a place the player has finished
+            // with cannot fire inside it, because inside it they have not finished.
+            react({ kind: "siteLeft", journeyId })
+            onSiteComplete()
+          }}
         />
       )}
       {encounter.isOpen && ActiveEncounterComponent && encounter.ctx && (
