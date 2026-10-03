@@ -4,6 +4,7 @@ import type { ResolveEncounter, ResolveKeyRequirements } from "../game/siteAssem
 import { assembleFloor, defaultResolveEncounter } from "../game/siteAssembler"
 import type { ResolveOneWayRealisation } from "../game/oneWayRealisation"
 import { collectReachableKeys } from "../game/siteValidator"
+import { mechanismGatesOf } from "../game/mechanismDoors"
 import { hashString } from "../support/hashString"
 
 // Every piece of currency knowledge reachability needs, injected by the caller (placeFragments,
@@ -179,8 +180,16 @@ export const reachableFloorsInSite = (
       keys: expandedKeys,
       reachable: reachableHere,
       blockedRequirements,
-    } = collectReachableKeys(result.grid, result.grid.entrancePos, keys, authoredKeysHeld)
+    } = collectReachableKeys(
+      result.grid,
+      result.grid.entrancePos,
+      keys,
+      authoredKeysHeld,
+      mechanismGatesOf(result.grid)
+    )
     keys = expandedKeys
+    // A gate a mechanism of this floor owns is never blocking here (the walk takes the floor's own lock as
+    // sound), so only a key gate, or a floor key such a gate also lists, is a lock the worklist can see.
     for (const id of blockedRequirements) discoveredLocks.add(id)
 
     for (let r = 0; r < result.grid.rows; r++) {
