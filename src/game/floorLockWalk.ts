@@ -88,7 +88,10 @@ const cutOf = (grid: FloorGrid, lock: LockSpec): Cut => {
     )
   const mechanismOwner = new Map<string, Owner | undefined>()
   for (const [id, mechanism] of Object.entries(lock.mechanisms))
-    mechanismOwner.set(id, only(new Set(mechanism.transitions.map(t => regionOwner.get(t.at)!)), id))
+    mechanismOwner.set(
+      id,
+      only(new Set([...mechanism.transitions, ...(mechanism.entries ?? [])].map(t => regionOwner.get(t.at)!)), id)
+    )
 
   const opening = (region: RegionId): Owner | undefined =>
     only(
@@ -118,7 +121,9 @@ const cutOf = (grid: FloorGrid, lock: LockSpec): Cut => {
     )
 
   const portOf = (label: string): RegionId => {
-    const found = lock.regions.filter(region => !isDoor(region) && labels.get(region)?.has(label))
+    const found = lock.regions.filter(
+      region => !isDoor(region) && !region.startsWith("tile ") && labels.get(region)?.has(label)
+    )
     if (found.length !== 1) throw new Entangled(`${label} is not one region of the floor`)
     return found[0]
   }

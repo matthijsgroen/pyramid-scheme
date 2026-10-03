@@ -4259,6 +4259,7 @@ const assembleExpandedFloor = (
     if (sequences.length > 0) {
       const unplaced = placeSequences(
         cells2D,
+        grid,
         sequences.map(sequence => ({
           id: sequence.id,
           regions: sequence.steps.map(step => step.in),
@@ -4269,7 +4270,6 @@ const assembleExpandedFloor = (
           }),
           doorKey: gateKeyOf(sequence.resetAt),
         })),
-        new Set(mainPath.map(([r, c]) => posKey(r, c))),
         siteId
       )
       if (unplaced) {
