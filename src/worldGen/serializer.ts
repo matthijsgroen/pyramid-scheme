@@ -125,7 +125,7 @@ const serializeObstacle = (o: Obstacle): string => {
 // `opens` is a Record<state, obstacleId[]>, which `serializeObject` cannot reach either.
 const serializeControl = (c: Control): string => {
   if (isSequence(c))
-    return `{ id: ${JSON.stringify(c.id)}, control: "sequence", steps: [${c.steps.map(step => `{ in: ${JSON.stringify(step.in)} }`).join(", ")}], resetAt: ${JSON.stringify(c.resetAt)}, opens: { done: [${c.opens.done.map(id => JSON.stringify(id)).join(", ")}] } }`
+    return `{ id: ${JSON.stringify(c.id)}, control: "sequence", steps: [${c.steps.map(step => `{ in: ${JSON.stringify(step.in)} }`).join(", ")}], resetAt: ${JSON.stringify(c.resetAt)}, opens: { done: [${c.opens.done.map(id => JSON.stringify(id)).join(", ")}] }${c.encounter === undefined ? "" : `, encounter: ${JSON.stringify(c.encounter)}`} }`
   if (isForkSwitch(c))
     return `{ id: ${JSON.stringify(c.id)}, in: ${JSON.stringify(c.in)}, control: "fork-switch", encounter: ${JSON.stringify(c.encounter)} }`
   const parts = [

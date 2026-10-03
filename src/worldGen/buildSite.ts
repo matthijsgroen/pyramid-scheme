@@ -9,6 +9,7 @@ import { buildSideSections, type ResolveReward } from "./sideSections"
 import { stairIdAt } from "../game/stairAddress"
 import type { FloorConstraint, PyramidConstraint, RewardSpec } from "./dsl"
 import { resolveNodeSelectors } from "./dsl"
+import { ONE_WAY_KIND, declaredBinding, resolveBinding } from "./realisationBinding"
 
 // ── Per-pyramid randomized resolution ─────────────────────────────────────────
 
@@ -268,6 +269,11 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
       const floorStraightness = fc.corridorStraightness ?? resolveCorridorStraightness(constraint, journeyId, i)
       const floorPacking = fc.packing ?? resolvePacking(constraint, journeyId, i)
       const floorSealed = fc.sealed ?? resolveSealed(constraint)
+      // Per kind, the most specific level naming it wins: difficulty, journey, pyramid, floor (the constraint is
+      // already the first three, resolved).
+      const floorBinding = resolveBinding([constraint, fc])
+      const hasLocks = (fc.locks?.length ?? 0) > 0
+      const bakedBinding = hasLocks && Object.keys(floorBinding).length > 0 ? floorBinding : undefined
       // A floor's own reward can gate its own further shortcut (a tomb's self-referential
       // "treasure IS the key") — resolved per floor, falling back to the site-level reward on the
       // last floor. A non-last floor's main path also exits into a treasure chest (floors chain via
@@ -294,16 +300,16 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           // A floor's own junctions win; otherwise the site's, the way `encounter` and `theme` resolve.
           forks: fc.forks ?? constraint.forks,
           oneWays: fc.oneWays ?? constraint.oneWays,
-          // Bound from outside the lock, the most specific declaration winning like the rest.
-          oneWayRealisation: fc.oneWayRealisation ?? constraint.oneWayRealisation,
+          // Bound from outside the lock; a floor that places locks carries the whole binding instead.
+          oneWayRealisation: hasLocks ? undefined : floorBinding[ONE_WAY_KIND],
           handles: fc.handles ?? constraint.handles,
           regionLayout: fc.regionLayout ?? constraint.regionLayout,
           obstacles: fc.obstacles ?? constraint.obstacles,
           controls: fc.controls ?? constraint.controls,
           barrierOrder: fc.barrierOrder ?? constraint.barrierOrder,
-          // Floor-level only, and the one place the binding is stated until the cascade supplies it.
+          // The binding is resolved here, once, and baked: a floor never re-resolves it from the levels.
           locks: fc.locks,
-          realisations: fc.realisations,
+          realisations: bakedBinding,
           switches: fc.switches ?? constraint.switches,
           corridorStraightness: floorStraightness,
           packing: floorPacking,
@@ -356,7 +362,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             // The junctions the site asks every floor of it to carve, and what stands in them.
             forks: constraint.forks,
             oneWays: constraint.oneWays,
-            oneWayRealisation: constraint.oneWayRealisation,
+            oneWayRealisation: declaredBinding(constraint)[ONE_WAY_KIND],
             handles: constraint.handles,
             regionLayout: constraint.regionLayout,
             obstacles: constraint.obstacles,
@@ -413,7 +419,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           // The junctions the site asks every floor of it to carve, and what stands in them.
           forks: constraint.forks,
           oneWays: constraint.oneWays,
-          oneWayRealisation: constraint.oneWayRealisation,
+          oneWayRealisation: declaredBinding(constraint)[ONE_WAY_KIND],
           handles: constraint.handles,
           regionLayout: constraint.regionLayout,
           obstacles: constraint.obstacles,
@@ -508,7 +514,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             // The junctions the site asks every floor of it to carve, and what stands in them.
             forks: constraint.forks,
             oneWays: constraint.oneWays,
-            oneWayRealisation: constraint.oneWayRealisation,
+            oneWayRealisation: declaredBinding(constraint)[ONE_WAY_KIND],
             handles: constraint.handles,
             regionLayout: constraint.regionLayout,
             obstacles: constraint.obstacles,
@@ -586,7 +592,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     // The junctions the site asks every floor of it to carve, and what stands in them.
     forks: constraint.forks,
     oneWays: constraint.oneWays,
-    oneWayRealisation: constraint.oneWayRealisation,
+    oneWayRealisation: declaredBinding(constraint)[ONE_WAY_KIND],
     handles: constraint.handles,
     regionLayout: constraint.regionLayout,
     obstacles: constraint.obstacles,

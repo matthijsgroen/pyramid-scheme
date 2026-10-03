@@ -314,6 +314,28 @@ describe("generateFile — a sequence survives the bake", () => {
       'controls: [{ id: "plates", control: "sequence", steps: [{ in: "hall" }, { in: "annex" }, { in: "hall" }], resetAt: "vaultDoor", opens: { done: ["vaultDoor"] } }]'
     )
   })
+
+  it("emits the realisation a lock bound it to, so the bake does not drop it", () => {
+    const floor = {
+      pathPuzzles: 0,
+      difficulty: "starter" as const,
+      end: "treasure" as const,
+      exitOrStaircase: "exit" as const,
+      sideSections: [],
+      controls: [
+        {
+          id: "plates",
+          control: "sequence" as const,
+          steps: [{ in: "hall" }, { in: "annex" }],
+          resetAt: "vaultDoor",
+          opens: { done: ["vaultDoor"] },
+          encounter: "torch",
+        },
+      ],
+    }
+
+    expect(generateFile({ testJourney: [[floor]] })).toContain('opens: { done: ["vaultDoor"] }, encounter: "torch" }]')
+  })
 })
 
 describe("generateFile — every term of a gate survives the bake", () => {

@@ -483,13 +483,24 @@ describe("a lock compiles into the floor's vocabulary", () => {
     })
   })
 
-  it("makes a sequence a sequence control, naming no realisation", () => {
+  it("makes a sequence a sequence control dressed as the realisation the binding names", () => {
     expect(fragmentOf(hallLock()).controls[2]).toEqual({
       id: "plates",
       control: "sequence",
       steps: [{ in: "hall" }, { in: "annex" }, { in: "hall" }],
       resetAt: "grate",
       opens: { done: ["grate"] },
+      encounter: "plates",
+    })
+    expect(fragmentOf(hallLock(), { ...BINDING, sequence: "tiles" }).controls[2].encounter).toBe("tiles")
+  })
+
+  it("refuses a sequence the binding leaves without a realisation, naming the kind", () => {
+    const { sequence: _sequence, ...withoutSequence } = BINDING
+
+    expect(compile(hallLock(), withoutSequence)).toEqual({
+      ok: false,
+      faults: [{ type: "unboundRole", kind: "sequence", mechanics: ["plates"] }],
     })
   })
 

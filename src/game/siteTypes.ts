@@ -579,8 +579,8 @@ export type FloorConfig = {
    * `regionLayout`, `obstacles`, `controls`, `forks` and `barrierOrder` where the floor is assembled, so a
    * floor authoring `locks` may not author those itself: the contradiction is refused by name. */
   locks?: PlacedLock[]
-  /** WHICH REALISATION EACH CONTROL KIND OF THE FLOOR'S LOCKS IS DRESSED AS, by kind. Stated on the floor for now;
-   * the cascade over pyramid, journey and difficulty replaces where it comes from, not this field. */
+  /** WHICH REALISATION EACH CONTROL KIND OF THE FLOOR'S LOCKS IS DRESSED AS, by kind, as the build resolved
+   * them (floor over pyramid over journey over difficulty) and baked. The runtime reads this and never resolves from the levels. */
   realisations?: RealisationBinding
   /** A SWITCH: an encounter standing in one of the junctions `forks` reserved, closing that
    * junction's free ways out so that what the player meets there decides which one opens.

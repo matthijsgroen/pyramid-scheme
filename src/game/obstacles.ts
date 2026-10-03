@@ -138,8 +138,8 @@ export type SequenceControl = {
   steps: { in: string }[]
   resetAt: string
   opens: { done: string[] }
-  /** A sequence names no encounter: its tiles are not a family's rooms. */
-  encounter?: undefined
+  /** The realisation the sequence is dressed as, bound where its lock is placed. Absent on a floor authored longhand. */
+  encounter?: string
 }
 
 export type Control = StatefulControl | ForkSwitchControl | SequenceControl

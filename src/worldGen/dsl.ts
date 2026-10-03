@@ -202,7 +202,8 @@ export type FloorConstraint<TExtra extends string = never> = {
    * `controls`, `forks` and `barrierOrder` when the floor is assembled, so authoring those beside `locks` is
    * refused. Floor-level only: a lock is placed on a floor, never inherited from the pyramid. */
   locks?: PlacedLock[]
-  /** The realisation each control kind of this floor's locks is dressed as — see FloorConfig.realisations. */
+  /** The realisation each control kind of this floor's locks is dressed as, floor level: it wins, per kind, over the
+   * pyramid, journey and difficulty declarations. The built floor carries the resolved binding — see FloorConfig.realisations. */
   realisations?: RealisationBinding
   /** A SWITCH: `encounter` stands in a junction `forks` reserved and closes its free ways out, so the
    * player stands in the fork and what is in it decides which way opens. Between `min` and `max` of
@@ -334,8 +335,12 @@ export type PyramidConstraint = {
    * FloorConstraint.oneWays. Authored here, a whole climb is shaped in one line. */
   oneWays?: { from: string; to: string }[]
   /** The realisation the one-ways of every floor of this site are crossed through, unless a floor names its
-   * own — see FloorConstraint.oneWayRealisation. */
+   * own — see FloorConstraint.oneWayRealisation. The one-way's entry in `realisations`, spelt alone. */
   oneWayRealisation?: string
+  /** The realisation each control kind is dressed as, declared as a difficulty (`tier(...)`), journey or pyramid
+   * rule. Resolved per kind, the most specific rule naming a kind winning, and a floor's own `realisations` over
+   * all of them. */
+  realisations?: RealisationBinding
   /** The levers every floor of this site stands, unless a floor names its own — see
    * FloorConstraint.handles. */
   handles?: { in: string; left: string[]; right: string[]; starts?: HandleSide }[]

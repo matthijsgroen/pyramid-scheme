@@ -18,15 +18,15 @@ const answered = (resolve: ResolveEncounter, encounter: string | undefined, role
 /**
  * EVERY CONTROL OF THE FLOOR WHOSE REALISATION THE BUILD CANNOT ANSWER, asked from the config alone so it is
  * known before a wall is carved. A control names its realisation (`encounter`) or stands as the default
- * control role; a fork-switch must name one. A sequence draws its tiles itself and names none: its reader is
- * the door's face (`doorFacesMissing`).
+ * control role; a fork-switch must name one. A sequence authored longhand names none and is read at the door's
+ * face (`doorFacesMissing`); one a lock placed carries its bound realisation and is asked like any other.
  */
 export const realisationsMissing = (
   config: Pick<FloorConfig, "controls" | "handles">,
   resolveEncounter: ResolveEncounter
 ): RealisationMissing[] => [
   ...(config.controls ?? []).flatMap((control): RealisationMissing[] => {
-    if (control.control === "sequence") return []
+    if (control.control === "sequence" && control.encounter === undefined) return []
     const role = control.control === "fork-switch" ? "puzzle" : DEFAULT_CONTROL_ROLE
     return answered(resolveEncounter, control.encounter, role)
       ? []
