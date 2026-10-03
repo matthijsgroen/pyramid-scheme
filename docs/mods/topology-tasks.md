@@ -314,3 +314,22 @@ torches on one door they cannot count what they have left.
 3. It offers nothing and is walked over like ordinary ground once used.
 
 **Carve moves: no. Saves: no.** Independent.
+
+## T19 — Stepping onto a tile is not optional
+
+**Why.** The puzzle of a sequence is the walk: which way through the regions, which drops to take, in
+which order. A tile the player can walk round makes every order trivial, so a tile stands where it cannot
+be avoided — and then the walk must know that crossing it is stepping on it. Today the solver treats every
+tile move as a choice (`mechanic-contract.md` §9 item 13), so it approves a floor whose order no walk can
+keep.
+
+**Acceptance**
+1. A tile stands where it cannot be walked round: every way through the stretch it stands in crosses it.
+2. The solver makes a tile's transition whenever the walk enters the tile — a right step advances, a wrong
+   step spoils — never as a move the player may decline.
+3. A floor on which no walk keeps the order is refused before it is baked, naming the sequence.
+4. A floor on which some walk keeps the order, and the door's reset is always in reach, walks sound.
+5. The runtime and the solver agree: crossing a tile on the map changes the state exactly as the solver's
+   entry does.
+
+**Carve moves: YES** (tile placement, sequence floors only). **Saves: no.**
