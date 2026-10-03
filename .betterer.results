@@ -27,8 +27,8 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/app/SiteMap/tileAssets.ts:2333639883": [
       [48, 24, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/app/SiteMap/useAssembledFloor.ts:1622597138": [
-      [240, 82, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/app/SiteMap/useAssembledFloor.ts:4024460583": [
+      [241, 82, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/app/SiteMap/useCorridorDetection.ts:837024504": [
       [27, 40, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
@@ -93,18 +93,18 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/game/seeds/generatePuzzle.ts:94021237": [
       [9, 42, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/game/siteTypes.ts:844507773": [
-      [10, 70, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [20, 19, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [21, 82, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [129, 77, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [237, 84, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [335, 85, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [843, 82, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [852, 24, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [858, 86, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [870, 85, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [879, 4, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/game/siteTypes.ts:3761384951": [
+      [11, 70, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [21, 19, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [22, 82, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [130, 77, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [238, 84, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [337, 85, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [859, 82, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [868, 24, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [874, 86, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [886, 85, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [895, 4, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/game/siteValidator.ts:3439886959": [
       [87, 13, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
@@ -133,8 +133,8 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/mods/core/app/useHintAvailability.ts:2093629096": [
       [24, 39, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/hieroglyph/app/compassScanner.ts:3001634811": [
-      [99, 56, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/mods/hieroglyph/app/compassScanner.ts:3469596068": [
+      [100, 56, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/hieroglyph/app/useHieroglyphProgress.compass.spec.ts:4259672633": [
       [20, 47, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
@@ -147,8 +147,8 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/mods/hieroglyph/game/fragmentFinalize.ts:152439608": [
       [3, 84, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/modDescriptor.ts:1238636951": [
-      [45, 92, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/mods/modDescriptor.ts:2981324551": [
+      [49, 92, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/mosaic/game/mosaicRevealOrder.ts:2848963152": [
       [8, 75, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
@@ -814,10 +814,10 @@ exports[`design doc references name a file, not a paragraph`] = {
       [9, 76, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [62, 81, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/registeredMods.ts:3931390223": [
-      [74, 37, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [91, 39, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [98, 74, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/mods/registeredMods.ts:2878130775": [
+      [84, 37, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [102, 39, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [109, 74, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/tombTreasure/app/index.ts:4105543938": [
       [42, 63, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
@@ -959,10 +959,10 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/ui/organisms/JourneyCard.tsx:3559186348": [
       [21, 27, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/worldGen/buildSite.ts:2679526222": [
-      [172, 3, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [216, 31, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [297, 93, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/worldGen/buildSite.ts:3000685818": [
+      [174, 3, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [218, 31, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [299, 93, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/worldGen/configBuilder.integration.verify.ts:2537230885": [
       [198, 7, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
@@ -987,8 +987,8 @@ exports[`design doc references name a file, not a paragraph`] = {
       [249, 37, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [249, 76, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/worldGen/reachability.ts:2735334360": [
-      [117, 79, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/worldGen/reachability.ts:1735090974": [
+      [120, 79, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/worldGen/rewards.spec.ts:2677121485": [
       [114, 62, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
@@ -996,7 +996,7 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/worldGen/rewards.ts:2545495409": [
       [74, 49, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/worldGen/serializer.ts:1016314837": [
+    "src/worldGen/serializer.ts:1364789798": [
       [31, 67, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/worldGen/sideSections.ts:4048066495": [
@@ -1045,13 +1045,13 @@ exports[`core names no mod family id`] = {
     "src/game/families/familyMeta.ts:1147814718": [
       [19, 10, 8, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "1887827023"]
     ],
-    "src/game/siteAssembler.ts:4272179928": [
-      [1094, 41, 16, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "2791014258"],
-      [1094, 59, 16, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "2791014258"],
-      [1095, 35, 10, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "1854886293"],
-      [1095, 47, 10, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "1854886293"],
-      [1096, 35, 10, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "3983301704"],
-      [1096, 47, 10, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "3983301704"]
+    "src/game/siteAssembler.ts:3331464730": [
+      [1126, 41, 16, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "2791014258"],
+      [1126, 59, 16, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "2791014258"],
+      [1127, 35, 10, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "1854886293"],
+      [1127, 47, 10, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "1854886293"],
+      [1128, 35, 10, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "3983301704"],
+      [1128, 47, 10, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "3983301704"]
     ]
   }`
 };

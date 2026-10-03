@@ -1,0 +1,1 @@
+export { resolveRegionBarrierRealisation } from "./registeredMods"
