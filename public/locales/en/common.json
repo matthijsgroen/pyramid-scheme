@@ -43,7 +43,8 @@
       "here": "Investigate",
       "stairs": "Take the stairs",
       "exit": "Leave this place",
-      "zipline": "Slide across"
+      "zipline": "Ride the line — there is no way back",
+      "oneWay": "Cross over — there is no way back"
     },
     "travel": "Travel",
     "chooseYourJourney": "Choose Your Journey",

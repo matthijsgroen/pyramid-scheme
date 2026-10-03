@@ -14,6 +14,8 @@ import { buildOfferContext, clickTargetAt } from "./clickTargets"
 import { buildRoomClaims } from "./roomClaims"
 import { stairPeerPosition } from "./stairTravel"
 import { crossAtOnce, type PlayTraversal, type Traversal } from "./obstacleTraversal"
+import type { ResolveOneWayRealisation } from "@/game/oneWayRealisation"
+import { resolveOneWayRealisation } from "@/mods/allOneWayRealisations"
 
 type NavigationArgs = {
   journeys: JourneyAPI
@@ -31,6 +33,8 @@ type NavigationArgs = {
   onExitReached: () => void
   /** Plays a span the player takes (see obstacleTraversal.ts). Settles when the traversal is over. */
   playTraversal?: PlayTraversal
+  /** Says what the realisation a span was bound to declares, namely the prompt its crossing is offered through. */
+  resolveOneWay?: ResolveOneWayRealisation
 }
 
 /**
@@ -50,6 +54,9 @@ export type ArrivalPrompt = {
   familyId?: string
   /** What the span is, on an `obstacle` prompt, so the span names the prompt itself. */
   obstacleKind?: ObstacleKind
+  /** Locale key of the prompt the span's realisation declared. Unset where none is registered, which reads
+   * as the generic one-way prompt: a crossing is never taken without one. */
+  invitation?: string
   /** Takes what is offered — this does what arriving used to do on its own. */
   take: () => void
 }
@@ -78,6 +85,7 @@ export const useSiteNavigation = ({
   onSkippedConsumable,
   onExitReached,
   playTraversal = crossAtOnce,
+  resolveOneWay = resolveOneWayRealisation,
 }: NavigationArgs): SiteNavigation => {
   const [scheduleArrival] = useTimeout()
   const [prompt, setPrompt] = useState<ArrivalPrompt | null>(null)
@@ -94,13 +102,15 @@ export const useSiteNavigation = ({
       col: number,
       accept: () => void,
       familyId?: string,
-      obstacleKind?: ObstacleKind
+      obstacleKind?: ObstacleKind,
+      invitation?: string
     ) =>
       setPrompt({
         kind,
         at: [row, col],
         familyId,
         obstacleKind,
+        invitation,
         take: () => {
           setPrompt(null)
           accept()
@@ -243,7 +253,15 @@ export const useSiteNavigation = ({
         goHere()
         const traversal: Traversal = { kind: span.kind, from: span.launch, to: span.landing, dir: span.dir }
         scheduleArrival(walkDelay(row, col), () =>
-          offer("obstacle", row, col, () => void takeSpan(traversal), undefined, span.kind)
+          offer(
+            "obstacle",
+            row,
+            col,
+            () => void takeSpan(traversal),
+            undefined,
+            span.kind,
+            resolveOneWay(span.kind)?.prompt
+          )
         )
         return
       }
@@ -353,6 +371,7 @@ export const useSiteNavigation = ({
       onExitReached,
       offer,
       takeSpan,
+      resolveOneWay,
     ]
   )
 

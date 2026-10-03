@@ -8,6 +8,7 @@ import type { Direction, FloorConfig, FloorGrid, GridCell, TombKeyReward } from 
 import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry"
 import type { ResolveKeyRequirements } from "@/game/siteAssembler"
 import { OBSTACLE_KEY_PREFIX } from "@/game/cellSlot"
+import { resolveOneWayRealisation } from "@/mods/allOneWayRealisations"
 import { boardIndexesForFloor } from "./boardIndexes"
 import { cellKey, legacyCellKey, cellSlot, findByAddress, floorOfAddress, walkPosition } from "./cellIdentity"
 
@@ -377,6 +378,7 @@ export const useAssembledFloor = (
   const baseGrid = useMemo(() => {
     const result = assembleFloor(journeyId, floorConfig, seed + currentFloor, resolveEncounter, {
       resolveKeyRequirements,
+      resolveOneWay: resolveOneWayRealisation,
       floorRef: { journeyId, ...(levelIndex !== undefined ? { levelIndex } : {}), floorIndex: currentFloor },
       ...(levelIndex !== undefined
         ? { resolveBoardIndex: boardIndexesForFloor(journeyId, levelIndex, currentFloor) }

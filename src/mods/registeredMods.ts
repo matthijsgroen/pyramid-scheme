@@ -5,6 +5,7 @@ import type { Distribution } from "@/worldGen/slotAllocator"
 import type { ShopStockAssignment } from "@/worldGen/shopStock"
 import type { WorldValidator } from "@/worldGen/validate"
 import type { FamilyMeta } from "@/game/families/familyMeta"
+import type { OneWayRealisationMeta, ResolveOneWayRealisation } from "@/game/oneWayRealisation"
 import type { ModDescriptor } from "./modDescriptor"
 import { puzzleMod } from "./puzzle"
 import { mosaicMod } from "./mosaic"
@@ -43,6 +44,16 @@ export const CURRENCY_DISTRIBUTIONS: CurrencyDistribution[] = REGISTERED_MODS.fl
 // allFamilyMeta.ts. A mod's families drop out of world-gen dispatch when it leaves this list.
 export const MOD_FAMILY_META: FamilyMeta[] = REGISTERED_MODS.flatMap(m => m.families ?? [])
 
+// Every one-way realisation a registered mod declares. One that drops with its mod leaves a one-way naming it refused.
+export const MOD_ONE_WAY_REALISATIONS: OneWayRealisationMeta[] = REGISTERED_MODS.flatMap(
+  m => m.oneWayRealisations ?? []
+)
+
+// Domain-only, so the app and world-gen read the same declarations. A one-way naming no realisation binds to
+// nothing: there is no default, so it is refused where it is bound (siteAssembler).
+export const resolveOneWayRealisation: ResolveOneWayRealisation = id =>
+  id === undefined ? undefined : MOD_ONE_WAY_REALISATIONS.find(realisation => realisation.id === id)
+
 // Every dynamic-loot distribution all enabled mods contribute, in registry order (trap consumables
 // before the shop money economy — consumables claim their expert+ puzzle slots first, then the shop
 // takes what's left). A distribution drops when its mod leaves REGISTERED_MODS: shop off → no
@@ -75,6 +86,7 @@ export const MOD_REACHABILITY_SUPPORT: ReachabilitySupport = {
   bucketForReward: reward => firstDefined(REACHABILITY_SUPPORTS.map(s => s.bucketForReward?.(reward))),
   journeyEntryLock: journeyId => firstDefined(REACHABILITY_SUPPORTS.map(s => s.journeyEntryLock?.(journeyId))),
   tierUnlockBucket: tier => firstDefined(REACHABILITY_SUPPORTS.map(s => s.tierUnlockBucket?.(tier))),
+  resolveOneWay: resolveOneWayRealisation,
 }
 
 // The tomb-treasure content resolver (§E): maps a tomb's floor position → its `tombKey` reward, so

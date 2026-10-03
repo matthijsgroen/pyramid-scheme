@@ -1,6 +1,7 @@
 import type { Mark } from "./mark"
 import type { ContentKind, PlacedContainer } from "./regions"
 import type { BarrierOrder, Control, Obstacle } from "./obstacles"
+import type { OneWayRefusal } from "./oneWayRealisation"
 import type { CarveFault } from "./carveAgreement"
 import type { GateFace } from "./gateFace"
 export type RoomType = "portal" | "fork" | "encounter"
@@ -77,9 +78,9 @@ export type CorridorCell = {
 export type OpenGate = Pick<RoomCell, "tags" | "gateVariant" | "keyIsAuthored" | "keyColor" | "keyColors" | "mark"> & {
   requiredKeyId: string
 }
-/** What an obstacle's span is. A new kind is a new member here and a new line in the table of what the launch
- * invites the player to do (SiteMapScreen's `obstacleLabels`). */
-export type ObstacleKind = "zipline"
+/** What an obstacle's span is: the id of the one-way realisation it was bound to, whose declared prompt the
+ * launch offers (game/oneWayRealisation.ts). */
+export type ObstacleKind = string
 export type GateVariant = "floor-key" | "tomb-key"
 export type KeyColor = "blue" | "red" | "green" | "yellow" | "purple"
 // Canonical order for anything that LISTS colors (a key ring, a chest's badges) — world-gen assigns
@@ -518,6 +519,11 @@ export type FloorConfig = {
    * layout does not otherwise join, for a floor that authors `regionLayout` rather than bare
    * sections. Both land through the same carve step and read into `LockSpec.oneWays` the same way. */
   oneWays?: { from: string; to: string }[]
+  /** THE REALISATION EVERY ONE-WAY OF THIS FLOOR IS CROSSED THROUGH, bound here from outside the lock: the
+   * id of a one-way realisation a registered mod declares, and what it declares is the prompt the
+   * player takes the crossing through. A floor with a one-way and no usable realisation is refused
+   * (`oneWayRealisationRefused`) before anything is carved; there is no default. */
+  oneWayRealisation?: string
   /** A LEVER STANDING IN ONE SECTION THAT OPENS A GATE ON OTHERS. `in` names the section the lever
    * stands in; `left` and `right` name the sections whose entrance gates each side of it owns. All
    * are section addresses — a `label` where a section has one, the positional `s0`/`s1.2` where it
@@ -671,6 +677,16 @@ export type AssemblerReason =
    * not have, or every attempt ran out before it found two cells of the named ends a node apart with
    * an empty cell between them. */
   | { type: "oneWayUnsatisfied"; from: string; to: string }
+  /** A one-way has no realisation it can be crossed through: it names none (`unbound`), names one no
+   * registered mod declares (`unknown`), or names one that declares no prompt (`noPrompt`). `from`/`to`
+   * name the one-way as authored and `realisation` what it named. */
+  | {
+      type: "oneWayRealisationRefused"
+      from: string
+      to: string
+      realisation: string | null
+      why: OneWayRefusal
+    }
   /** An authored handle (FloorConfig.handles) names a section it cannot have, and `address` is the
    * name that failed: `in` or a `left`/`right` entry naming no section of this floor, a driven
    * section that is the main path, the one the lever stands in, one already carrying a gate, or one a

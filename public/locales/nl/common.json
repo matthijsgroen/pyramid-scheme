@@ -42,8 +42,9 @@
     "prompt": {
       "here": "Onderzoek",
       "stairs": "Neem de trap",
-      "zipline": "Glij naar overkant",
-      "exit": "Deze plek verlaten"
+      "exit": "Deze plek verlaten",
+      "zipline": "Glij langs de lijn — er is geen weg terug",
+      "oneWay": "Steek over — er is geen weg terug"
     },
     "travel": "Reizen",
     "chooseYourJourney": "Kies je Reis",

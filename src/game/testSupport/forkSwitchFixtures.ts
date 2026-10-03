@@ -1,6 +1,7 @@
 import type { FloorConfig } from "@/game/siteTypes"
 
 export const designerDoubleBack = (): FloorConfig => ({
+  oneWayRealisation: "zipline",
   pathPuzzles: 0,
   packing: 7,
   difficulty: "expert",

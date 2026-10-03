@@ -181,6 +181,7 @@ const floorFieldEmitters: {
   rewards: v => (v.length ? `rewards: ${serializePuzzleRewards(v)}` : null),
   forks: v => (v.length ? `forks: [${v.map(serializeObject).join(", ")}]` : null),
   oneWays: v => (v.length ? `oneWays: [${v.map(serializeObject).join(", ")}]` : null),
+  oneWayRealisation: v => `oneWayRealisation: ${JSON.stringify(v)}`,
   handles: v => (v.length ? `handles: [${v.map(serializeObject).join(", ")}]` : null),
   regionLayout: v => `regionLayout: ${serializeRegionGraph(v)}`,
   obstacles: v => (v.length ? `obstacles: [${v.map(serializeObstacle).join(", ")}]` : null),

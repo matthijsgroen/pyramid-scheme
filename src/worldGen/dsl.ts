@@ -170,6 +170,9 @@ export type FloorConstraint<TExtra extends string = never> = {
    * Named ends rather than `forks`' counts: on a floor built with no side sections there is no address
    * for either end, so the drop can only ever be refused where `forks` would still be satisfied. */
   oneWays?: { from: string; to: string }[]
+  /** The realisation every one-way of this floor is crossed through, named here and never in the lock. A
+   * floor with a one-way and no realisation is refused: there is no default. */
+  oneWayRealisation?: string
   /** A LEVER standing in the section `in` names. It hangs one way or the other: on the side it hangs
    * on, the entrance gate of every section that side names stands open, and every section the other
    * side names stands shut. It starts on `starts`, left unless said otherwise. Section addresses, the
@@ -321,6 +324,9 @@ export type PyramidConstraint = {
   /** One-way passages every floor of this site must carve, unless a floor names its own — see
    * FloorConstraint.oneWays. Authored here, a whole climb is shaped in one line. */
   oneWays?: { from: string; to: string }[]
+  /** The realisation the one-ways of every floor of this site are crossed through, unless a floor names its
+   * own — see FloorConstraint.oneWayRealisation. */
+  oneWayRealisation?: string
   /** The levers every floor of this site stands, unless a floor names its own — see
    * FloorConstraint.handles. */
   handles?: { in: string; left: string[]; right: string[]; starts?: HandleSide }[]

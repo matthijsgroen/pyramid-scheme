@@ -2,6 +2,7 @@ import type { SiteConfig, Tier, TreasureReward } from "./types"
 import type { AssemblerResult, FloorConfig as GameFloorConfig } from "../game/siteTypes"
 import type { ResolveEncounter, ResolveKeyRequirements } from "../game/siteAssembler"
 import { assembleFloor, defaultResolveEncounter } from "../game/siteAssembler"
+import type { ResolveOneWayRealisation } from "../game/oneWayRealisation"
 import { collectReachableKeys } from "../game/siteValidator"
 import { hashString } from "../support/hashString"
 
@@ -20,6 +21,8 @@ import { hashString } from "../support/hashString"
 //                       has no lock (e.g. the first tier).
 export type ReachabilitySupport = {
   thresholdFor?: (bucket: string) => number | undefined
+  /** Binds each one-way to its realisation, so a floor binding none is refused here as it is in play. */
+  resolveOneWay?: ResolveOneWayRealisation
   bucketForReward?: (reward: TreasureReward) => string | undefined
   journeyEntryLock?: (journeyId: string) => { bucket: string; threshold: number } | undefined
   tierUnlockBucket?: (tier: Tier) => string[] | undefined
@@ -154,6 +157,7 @@ export const reachableFloorsInSite = (
       result = assembleFloor(siteId, site[i] as GameFloorConfig, seed + i, resolveEncounter, {
         resolveKeyRequirements: resolveRequirements,
         floorRef: { journeyId: ref.journeyId, levelIndex: ref.levelIndex, floorIndex: i },
+        ...(support.resolveOneWay ? { resolveOneWay: support.resolveOneWay } : {}),
       })
       cache?.set(cacheKey, result)
     }

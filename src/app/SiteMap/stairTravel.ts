@@ -1,4 +1,5 @@
 import { assembleFloor } from "@/game/siteAssembler"
+import { resolveOneWayRealisation } from "@/mods/allOneWayRealisations"
 import { resolveEncounter } from "@/app/families/familyRegistry"
 import type { SiteConfig } from "@/game/siteTypes"
 import { cellAddress, floorOfAddress } from "./cellIdentity"
@@ -26,7 +27,9 @@ export const stairPeerPosition = (
 ): { floor: number; pos: readonly [number, number]; address: string } | null => {
   for (let fi = 0; fi < siteConfig.length; fi++) {
     if (fi === fromFloor) continue
-    const result = assembleFloor(journeyId, siteConfig[fi], seed + fi, resolveEncounter)
+    const result = assembleFloor(journeyId, siteConfig[fi], seed + fi, resolveEncounter, {
+      resolveOneWay: resolveOneWayRealisation,
+    })
     if (!result.success) continue
     const peerPos = result.grid.staircases[stairId]
     if (!peerPos) continue

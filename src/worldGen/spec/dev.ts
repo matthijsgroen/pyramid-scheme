@@ -108,6 +108,7 @@ export const devRules: Rule[] = [
     // leaves no dead region. Pinned here because a dev floor has no baked output to carry it.
     seed: 4293857902,
     sideSections: [sidePath({ puzzles: 0 })],
+    oneWayRealisation: "zipline",
     regionLayout: {
       regions: [
         { name: "entrance", appetite: "free" },
@@ -180,6 +181,7 @@ export const devRules: Rule[] = [
     forks: FORKS,
     switches: SWITCHES,
     oneWays: [{ from: "ledge", to: "sink" }],
+    oneWayRealisation: "zipline",
   }),
   // 4 — waterline. Waiting for the level that closes the floor's lower rooms until it is dropped.
   devSite(4, "expert"),

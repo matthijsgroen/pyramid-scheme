@@ -1,4 +1,5 @@
 import { assembleFloor } from "../src/game/siteAssembler"
+import { resolveOneWayRealisation } from "../src/mods/allOneWayRealisations"
 import { journeys } from "../src/data/journeys"
 import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
 
@@ -7,6 +8,7 @@ const seed = persistentInteriorSeed(journey.id)
 const site = journey.siteConfigs![0]
 const r = assembleFloor(journey.id, site[0], floorAssemblySeed(seed, 1, 0), undefined, {
   floorRef: { journeyId: journey.id, floorIndex: 0 },
+  resolveOneWay: resolveOneWayRealisation,
 })
 if (!r.success) throw new Error("assembly failed")
 let n = 0

@@ -95,6 +95,7 @@ export type BuildFloorOptions = {
   encountersByIndex?: FloorConfig["encountersByIndex"]
   forks?: FloorConfig["forks"]
   oneWays?: FloorConfig["oneWays"]
+  oneWayRealisation?: FloorConfig["oneWayRealisation"]
   handles?: FloorConfig["handles"]
   regionLayout?: FloorConfig["regionLayout"]
   obstacles?: FloorConfig["obstacles"]
@@ -140,6 +141,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.theme !== undefined ? { theme: opts.theme } : {}),
   ...(opts.forks ? { forks: opts.forks } : {}),
   ...(opts.oneWays ? { oneWays: opts.oneWays } : {}),
+  ...(opts.oneWayRealisation ? { oneWayRealisation: opts.oneWayRealisation } : {}),
   ...(opts.handles ? { handles: opts.handles } : {}),
   ...(opts.regionLayout ? { regionLayout: opts.regionLayout } : {}),
   ...(opts.obstacles ? { obstacles: opts.obstacles } : {}),
@@ -288,6 +290,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           // A floor's own junctions win; otherwise the site's, the way `encounter` and `theme` resolve.
           forks: fc.forks ?? constraint.forks,
           oneWays: fc.oneWays ?? constraint.oneWays,
+          // Bound from outside the lock, the most specific declaration winning like the rest.
+          oneWayRealisation: fc.oneWayRealisation ?? constraint.oneWayRealisation,
           handles: fc.handles ?? constraint.handles,
           regionLayout: fc.regionLayout ?? constraint.regionLayout,
           obstacles: fc.obstacles ?? constraint.obstacles,
@@ -345,6 +349,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             // The junctions the site asks every floor of it to carve, and what stands in them.
             forks: constraint.forks,
             oneWays: constraint.oneWays,
+            oneWayRealisation: constraint.oneWayRealisation,
             handles: constraint.handles,
             regionLayout: constraint.regionLayout,
             obstacles: constraint.obstacles,
@@ -401,6 +406,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           // The junctions the site asks every floor of it to carve, and what stands in them.
           forks: constraint.forks,
           oneWays: constraint.oneWays,
+          oneWayRealisation: constraint.oneWayRealisation,
           handles: constraint.handles,
           regionLayout: constraint.regionLayout,
           obstacles: constraint.obstacles,
@@ -495,6 +501,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             // The junctions the site asks every floor of it to carve, and what stands in them.
             forks: constraint.forks,
             oneWays: constraint.oneWays,
+            oneWayRealisation: constraint.oneWayRealisation,
             handles: constraint.handles,
             regionLayout: constraint.regionLayout,
             obstacles: constraint.obstacles,
@@ -572,6 +579,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     // The junctions the site asks every floor of it to carve, and what stands in them.
     forks: constraint.forks,
     oneWays: constraint.oneWays,
+    oneWayRealisation: constraint.oneWayRealisation,
     handles: constraint.handles,
     regionLayout: constraint.regionLayout,
     obstacles: constraint.obstacles,

@@ -2,7 +2,13 @@ import { mulberry32, shuffle } from "./random"
 import { hashString } from "@/support/hashString"
 import { allocateMarks, type Mark, type MarkRequest } from "./mark"
 import { withGateFaces } from "./gateFace"
-import { DEFAULT_CONTROL_ROLE, DOOR_FACE_ROLE, defaultResolveEncounter } from "./encounterFallback"
+import {
+  DEFAULT_CONTROL_ROLE,
+  DOOR_FACE_ROLE,
+  defaultResolveEncounter,
+  defaultResolveOneWayRealisation,
+} from "./encounterFallback"
+import type { OneWayRefusal, ResolveOneWayRealisation } from "./oneWayRealisation"
 
 export { defaultResolveEncounter }
 import type {
@@ -333,6 +339,8 @@ type OneWayEdge = {
   landing: string
   /** The authored drop this run carries. */
   obstacleId?: string
+  /** The id of the realisation the drop was bound to, which names its span and so its prompt. */
+  realisation: string
 }
 
 const makePkey = (N: number) => (r1: number, c1: number, r2: number, c2: number) => {
@@ -561,6 +569,10 @@ export type AssembleFloorKeyRequirements = {
    * resolveEncounter is: this module knows a floor's chains, never which world they belong to.
    * Absent (stories, specs, the builder) leaves rooms unstamped and they index by their own hash. */
   resolveBoardIndex?: ResolveBoardIndex
+  /** Binds each one-way to the realisation it names, and says what that realisation declares. Production
+   * passes the registry's, which binds a one-way that names none to nothing; absent (stories, specs, the
+   * builder) the fallback catalogue answers. */
+  resolveOneWay?: ResolveOneWayRealisation
   /** How many attempts the floor may take, at most ASSEMBLY_ATTEMPTS. The bake's seed search asks for 1:
    * it wants a seed that carves at the authored `packing`, and a seed that only carves after the ladder
    * widened the grid is one it has to reject, so it must not pay for the climb to learn that. */
@@ -684,6 +696,7 @@ export const assembleFloor = (
     resolveKeyRequirements = defaultResolveKeyRequirements,
     floorRef = { journeyId: siteId, floorIndex: 0 },
     resolveBoardIndex,
+    resolveOneWay = defaultResolveOneWayRealisation,
     maxAttempts = ASSEMBLY_ATTEMPTS,
   } = keyRequirements
   // Before anything is carved: two sections a save could not tell apart is a data-loss bug, not a
@@ -774,6 +787,30 @@ export const assembleFloor = (
       reasons: unusableOneWays.map(({ from, to }) => ({ type: "oneWayUnsatisfied" as const, from, to })),
     }
   }
+
+  // EVERY ONE-WAY IS CROSSED THROUGH A REALISATION THAT OFFERS ITS PROMPT, answered before a wall is carved:
+  // the floor names one realisation for all of its one-ways, and a crossing with no prompt is one the player
+  // could take by accident. Refused by name, the whole list at once.
+  const realisationRefusals = [
+    ...(authoredConfig.oneWays ?? []),
+    ...(authoredConfig.obstacles ?? []).flatMap(o =>
+      o.kind === "oneWay" ? [{ from: o.at.between[0], to: o.at.between[1] }] : []
+    ),
+  ].flatMap(({ from, to }) => {
+    const named = authoredConfig.oneWayRealisation
+    const bound = resolveOneWay(named)
+    const why: OneWayRefusal | undefined = bound
+      ? bound.prompt
+        ? undefined
+        : "noPrompt"
+      : named === undefined
+        ? "unbound"
+        : "unknown"
+    return why ? [{ type: "oneWayRealisationRefused" as const, from, to, realisation: named ?? null, why }] : []
+  })
+  if (realisationRefusals.length > 0) return { success: false, reasons: realisationRefusals }
+  // Refused just above wherever the floor binds no usable realisation, so one resolves here.
+  const boundRealisation = (): string => resolveOneWay(authoredConfig.oneWayRealisation)!.id
 
   // A HANDLE'S REACH IS AUTHORED, SO WHAT IT CANNOT REACH IS ANSWERED BEFORE A WALL IS CARVED — the
   // same reasoning, and the same shape, as the one-way above: which sections exist and what each
@@ -1392,7 +1429,7 @@ export const assembleFloor = (
     // chain's first one, falling the way the author wrote it (`mouthFirst`: the drop is authored
     // `[mouth, first region]`). A corridor carved there anyway is a walkable join nobody authored, and
     // the lock walk would flood the real cells through it.
-    const dropSeams = new Map<number, { obstacleId: string; mouth: string; mouthFirst: boolean }>()
+    const dropSeams = new Map<number, { obstacleId: string; mouth: string; mouthFirst: boolean; realisation: string }>()
     const joinedByConnection = (a: string, b: string) =>
       (regionLayout?.connections ?? []).some(([x, y]) => (x === a && y === b) || (x === b && y === a))
     sideChains.forEach((chain, i) => {
@@ -1407,7 +1444,12 @@ export const assembleFloor = (
             (o.at.between[1] === chain.mouth && o.at.between[0] === first)
         )
       if (drop)
-        dropSeams.set(i, { obstacleId: drop.id, mouth: chain.mouth, mouthFirst: drop.at.between[0] === chain.mouth })
+        dropSeams.set(i, {
+          obstacleId: drop.id,
+          mouth: chain.mouth,
+          mouthFirst: drop.at.between[0] === chain.mouth,
+          realisation: boundRealisation(),
+        })
     })
     const dropSeamEdges: OneWayEdge[] = []
     // Cells a drop seam holds clear while the chains are still being placed, so nothing else is carved
@@ -1907,7 +1949,7 @@ export const assembleFloor = (
      * author wrote it. Nothing is claimed unless the whole run and the chain both fit.
      */
     const attachByDrop = (
-      seam: { obstacleId: string; mouth: string; mouthFirst: boolean },
+      seam: { obstacleId: string; mouth: string; mouthFirst: boolean; realisation: string },
       needed: number
     ): { cells: Array<[number, number]>; attachedAt: [number, number] } | null => {
       const mouthNodes = mainPath.filter(
@@ -1949,6 +1991,7 @@ export const assembleFloor = (
             run: along.slice(1, -1),
             landing: along[along.length - 1],
             obstacleId: seam.obstacleId,
+            realisation: seam.realisation,
           })
           return { cells: [[fr, fc], ...rest], attachedAt: [ar, ac] }
         }
@@ -3091,6 +3134,7 @@ export const assembleFloor = (
         id: undefined as string | undefined,
         from: w.from,
         to: w.to,
+        realisation: boundRealisation(),
         matchesFrom: bySectionAddress(w.from),
         matchesTo: bySectionAddress(w.to),
         sectioned: true,
@@ -3101,6 +3145,7 @@ export const assembleFloor = (
           id: o.id,
           from: o.at.between[0],
           to: o.at.between[1],
+          realisation: boundRealisation(),
           matchesFrom: byRegion(o.at.between[0]),
           matchesTo: byRegion(o.at.between[1]),
           sectioned: false,
@@ -3154,6 +3199,7 @@ export const assembleFloor = (
           if (hiddenCellPositions.has(toKey)) continue
           candidates.push({
             ...(demand.id !== undefined ? { obstacleId: demand.id } : {}),
+            realisation: demand.realisation,
             from: fromKey,
             to: toKey,
             dir: d,
@@ -3360,7 +3406,7 @@ export const assembleFloor = (
         writeStub(cellKey, edge.from, edge.to, new Set(), k + 1)
         const [r, c] = cellKey.split(",").map(Number)
         const cell = cells2D[r][c]
-        if (cell.type === "corridor") cells2D[r][c] = { ...cell, obstacle: { dir: edge.dir, kind: "zipline" } }
+        if (cell.type === "corridor") cells2D[r][c] = { ...cell, obstacle: { dir: edge.dir, kind: edge.realisation } }
       })
       writeStub(edge.landing, edge.to, edge.from, new Set([edge.dir]), ONE_WAY_RUN_CELLS + 1)
       joinNode(edge.to, OPPOSITE[edge.dir])
