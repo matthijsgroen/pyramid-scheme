@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next"
 import type { FamilyPlugin } from "@/app/families/familyRegistry"
 import { MarkChip } from "@/app/SiteMap/mark"
 import { HANDLE_SIDES } from "@/game/siteTypes"
+import { storedAtAddress } from "@/game/cellAddress"
 
 // A lever's whole content is which side it hangs on: no board, no fail state (decision 4 — a lever is
 // never unsolved), and every visit leaves it exactly where it was last thrown
@@ -31,7 +32,10 @@ export const HandleComponent: FamilyPlugin["Component"] = ({ ctx, journeys, onSo
   const realStates = ctx.mechanism ? ctx.mechanism.states.slice(-2) : [...HANDLE_SIDES]
   // Unread until the player throws it once, and that is the side the floor hung it on — a lever always
   // stands somewhere, so one side's doors are open before anybody touches it (mechanismDoors.ts).
-  const current = journeys.getMechanismStates(ctx.journeyId).get(ctx.address) ?? ctx.mechanism?.initial ?? realStates[0]
+  const current =
+    storedAtAddress(journeys.getMechanismStates(ctx.journeyId), ctx.address, ctx.legacyAddress) ??
+    ctx.mechanism?.initial ??
+    realStates[0]
 
   const buttonCls = (pressed: boolean) =>
     clsx(

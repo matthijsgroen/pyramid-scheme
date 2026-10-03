@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { cellAddress } from "./cellIdentity"
+import { cellAddress, legacyCellAddress } from "./cellIdentity"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FloorGrid, KeyColor, TreasureReward } from "@/game/siteTypes"
 import { getCell } from "@/game/gridNavigation"
@@ -75,6 +75,7 @@ export const useEncounter = ({
       // What a family files this room's state under. The coordinate above says where the room is drawn
       // right now; this says which room it IS, and keeps saying it after the floor is carved again.
       address: (grid && cellAddress(grid, currentFloor, row, col)) || edgeId,
+      legacyAddress: (grid && legacyCellAddress(grid, currentFloor, row, col)) || undefined,
       sectionHash,
       freshArrival: active.freshArrival,
       // The tier this room's own section was authored at, falling back to the floor's for a cell that

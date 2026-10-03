@@ -893,7 +893,7 @@ describe("a lever the player stands at", () => {
       [0, 4],
       [0, 4],
     ])
-    expect(store.exploredCells).toEqual({ [LEVER_STORE_KEY]: ["0/xhandle:lever"] })
+    expect(store.exploredCells).toEqual({ [LEVER_STORE_KEY]: ["0/xmech:lever"] })
     expect(store.mechanismStates).toEqual({})
   })
 
@@ -921,7 +921,7 @@ describe("a lever the player stands at", () => {
     act(() => (hook.result.current.prompt as { take: () => void }).take())
     hook.rerender()
 
-    expect(store.mechanismStates).toEqual({ [`${LEVER_STORE_KEY}#0/xhandle:lever`]: "right" })
+    expect(store.mechanismStates).toEqual({ [`${LEVER_STORE_KEY}#0/xmech:lever`]: "right" })
     expect(hook.result.current.grid!.cells[GATE_AT[0]][GATE_AT[1]]).toMatchObject({ type: "corridor" })
     expect(walkableFrom(revealAll(hook.result.current.grid!), [0, 4]).has("0,8")).toBe(true)
   })

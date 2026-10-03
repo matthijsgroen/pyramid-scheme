@@ -39,7 +39,7 @@ import { cellAt } from "@/game/roomFootprint"
 import { MapGrowth, MapLife, MapWeather } from "./MapMood"
 import { hashString } from "@/support/hashString"
 import { ART_IMAGE_RENDERING, patronTileUrl, tileOrPlaceholder, tileUrl, tileVariants } from "./tileAssets"
-import { cellAddress } from "@/game/cellAddress"
+import { storedAtCell } from "@/game/cellAddress"
 import { tileStatusAt } from "@/game/sequencePlay"
 import { isLockedGate, isSpentAt, nodeRadius, shapeKindFor, staysOpen } from "./nodeKinds"
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
@@ -472,8 +472,7 @@ export const nodeSpritesFor = (
         const mechanism = cell.mechanism
         let angleDeg = 0
         if (mechanism) {
-          const address = cellAddress(grid, floorIndex, r, c)
-          const state = (address && mechanismStates?.get(address)) ?? mechanism.initial
+          const state = storedAtCell(grid, floorIndex, r, c, mechanismStates) ?? mechanism.initial
           const index = mechanism.states.indexOf(state)
           if (index >= 0) angleDeg = angleForState(index, mechanism.states.length, HANDLE_THROW_DEG)
         }

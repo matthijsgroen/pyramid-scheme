@@ -4,6 +4,16 @@ import type { FloorGrid } from "./siteTypes"
  * requiredKeyId as driven by a region layout's own control rather than a ward or a floor's own chest. */
 export const OBSTACLE_KEY_PREFIX = "obstacle:"
 
+/** The id a plain switch's junction answers to (`RoomCell.mechanismId`): its index among the floor's
+ * reserved junctions. No authored id can start with it, because an authored id is letters, digits, `_`
+ * and `-` (USABLE_LABEL in the assembler), so a switch never answers to the name of a control or handle. */
+const PLAIN_SWITCH_PREFIX = "switch:"
+export const plainSwitchId = (index: number): string => `${PLAIN_SWITCH_PREFIX}${index}`
+
+/** What a mechanism's room is filed under. It names the mechanism and never the family that realises it,
+ * so a mechanic bound to another realisation keeps its stored state and its explored mark. */
+const mechanismSlot = (mechanismId: string): string => `xmech:${mechanismId}`
+
 /**
  * WHICH ROOM OF ITS SECTION A CELL IS, in a name the carve cannot move.
  *
@@ -12,9 +22,10 @@ export const OBSTACLE_KEY_PREFIX = "obstacle:"
  * - a puzzle, trap or tableau room is the k-th room of its chain — `p${pathIndex}`
  * - a chest, a shop, or a section's own key-gate (SubSection.gate) is its section's one, named by the
  *   family that fills it — a section carries only one, so family alone already tells it apart
- * - an obstacle's gate or a mechanism's own room (a handle's or a control's) carries the family PLUS
- *   its own authored id — a region layout can stand more than one obstacle gate or control on the
- *   SAME main path, so family alone would no longer tell them apart
+ * - a mechanism's own room (a handle's, a control's, a switch's) is `xmech:` plus its own authored id,
+ *   never the family — binding the mechanism to another realisation must not move its progress
+ * - an obstacle's gate carries its own authored id — a region layout can stand more than one on the
+ *   SAME main path, so family alone would not tell them apart
  * - a sequence's tile is the sequence's authored id plus its step in the order, so every tile has a name of
  *   its own and the first tile's is the one its single state is filed under
  * - a region barrier has one door per entrance, all asking for one key, so each is named by the authored id
@@ -43,14 +54,15 @@ export const cellSlot = (grid: FloorGrid, row: number, col: number): string | nu
   // one of — its terminal chest or shop, its own key-gate, the switch standing in its junction — are
   // named by what fills them.
   if (cell.pathIndex !== undefined) return `p${cell.pathIndex}`
-  // A MECHANISM'S ROOM IS NAMED BY ITS OWN AUTHORED IDENTITY, UNIFORMLY — a handle and a control
-  // alike, one rule rather than a control-only exception beside a family-only default. Family alone
-  // stops picking out a single room the moment a region layout can stand more than one control on the
-  // main path (FloorConfig.controls), and several may resolve to the same family ("handle") when none
-  // names its own `encounter` — so every mechanism room carries its identity (RoomCell.mechanismId)
-  // rather than only the ones that would otherwise collide.
+  // A MECHANISM'S ROOM IS NAMED BY ITS OWN AUTHORED IDENTITY, UNIFORMLY — a handle, a control and a
+  // switch alike, and never by the family that realises it. Family alone stops picking out a single room
+  // the moment a region layout can stand more than one control on the main path (FloorConfig.controls),
+  // and the family is the one thing a binding may change, so every mechanism room carries its identity
+  // (RoomCell.mechanismId).
+  // A sequence's tile is named by the sequence, which is a kind of control with one state across several
+  // cells, not a realisation: it carries no family.
   if (cell.sequenceTile) return `xsequence:${cell.sequenceTile.id}#${cell.sequenceTile.step}`
-  if (cell.mechanismId !== undefined) return `x${cell.family ?? "?"}:${cell.mechanismId}`
+  if (cell.mechanismId !== undefined) return mechanismSlot(cell.mechanismId)
   // AN OBSTACLE'S GATE IS THE SAME KIND OF ROOM, ONE STEP OVER: a region layout can stand more than
   // one on the main path (one per connection its route crosses), and a control owns it so it carries no
   // family: it is named `xobstacle:<authored id>`. Its key already carries the
@@ -65,4 +77,18 @@ export const cellSlot = (grid: FloorGrid, row: number, col: number): string | nu
     return cell.regionBarrier ? `xobstacle:${id}@${cell.regionBarrier.entrance}` : `xobstacle:${id}`
   }
   return `x${cell.family ?? "?"}`
+}
+
+/**
+ * THE SLOT A MECHANISM'S ROOM WAS FILED UNDER BEFORE IT NAMED THE MECHANISM — `x<family>:<id>`, or a bare
+ * `x<family>` for a plain switch — or null when the room has no such second name. A save may still hold
+ * entries under it: reads fall back to it and the backfill copies them to `cellSlot`'s name. Nothing is
+ * deleted from a save, so it stays readable until a later release drops the old keys.
+ */
+export const legacyCellSlot = (grid: FloorGrid, row: number, col: number): string | null => {
+  const cell = grid.cells[row]?.[col]
+  if (!cell || cell.type !== "room" || cell.pathIndex !== undefined || cell.sequenceTile) return null
+  if (cell.mechanismId === undefined) return null
+  const family = cell.family ?? "?"
+  return cell.mechanismId.startsWith(PLAIN_SWITCH_PREFIX) ? `x${family}` : `x${family}:${cell.mechanismId}`
 }

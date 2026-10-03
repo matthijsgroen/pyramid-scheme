@@ -1,5 +1,5 @@
 import type { FloorGrid } from "./siteTypes"
-import { cellSlot } from "./cellSlot"
+import { cellSlot, legacyCellSlot } from "./cellSlot"
 
 /**
  * WHAT A SAVE CALLS A CELL, once the carve is free to move.
@@ -51,3 +51,37 @@ export const cellAddress = (grid: FloorGrid, floor: number, row: number, col: nu
   if (!slot || cell.sectionAddress === undefined) return null
   return `${cell.sectionAddress}#${floor}/${slot}`
 }
+
+/**
+ * THE ADDRESS A MECHANISM'S ROOM HAD BEFORE ITS SLOT NAMED THE MECHANISM (`legacyCellSlot`), or null for a
+ * room whose address never changed. A save may hold state and exploration under it still: every reader
+ * of a mechanism room's entries asks the address first and this second, and the backfill copies the
+ * second to the first.
+ */
+export const legacyCellAddress = (grid: FloorGrid, floor: number, row: number, col: number): string | null => {
+  const cell = grid.cells[row]?.[col]
+  const slot = legacyCellSlot(grid, row, col)
+  if (!cell || cell.type === "empty" || !slot || cell.sectionAddress === undefined) return null
+  return `${cell.sectionAddress}#${floor}/${slot}`
+}
+
+/** What a save holds for a room: the entry under its address, else the one under the address it had
+ * before its slot named the mechanism. Writes always go to the address, so the first read that finds
+ * either is the one that stops being needed once the backfill has copied it. */
+export const storedAtCell = <T>(
+  grid: FloorGrid,
+  floor: number,
+  row: number,
+  col: number,
+  stored: ReadonlyMap<string, T> | undefined
+): T | undefined => {
+  return storedAtAddress(stored, cellAddress(grid, floor, row, col), legacyCellAddress(grid, floor, row, col))
+}
+
+/** The same read for a caller that already holds the two addresses (`FamilyContext`). */
+export const storedAtAddress = <T>(
+  stored: ReadonlyMap<string, T> | undefined,
+  address: string | null | undefined,
+  legacyAddress: string | null | undefined
+): T | undefined =>
+  (address ? stored?.get(address) : undefined) ?? (legacyAddress ? stored?.get(legacyAddress) : undefined)

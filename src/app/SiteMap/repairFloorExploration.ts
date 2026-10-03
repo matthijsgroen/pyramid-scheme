@@ -1,7 +1,7 @@
 import { computeFloorExploration, type FloorExploration } from "./floorExploration"
 import { applyExplored } from "./useAssembledFloor"
 import type { FloorGrid } from "@/game/siteTypes"
-import { cellKey, cellSlot, walkPosition, type AssembleFor } from "./cellIdentity"
+import { cellKey, legacyCellKey, cellSlot, walkPosition, type AssembleFor } from "./cellIdentity"
 
 type Repairable = {
   /** Keyed `${levelNr}:${floorIndex}` — the summaries to re-derive. */
@@ -54,7 +54,12 @@ export const repairFloorExploration = (stored: Repairable, assembleFor: Assemble
       // A finished level was left through AN exit, but most sites carry one on every floor and only
       // one of them was used. What says this is the one: the last room before it was walked. Without
       // that, a floor the player only passed through would have its tail marked walked as well.
-      if (exit && section && !held.includes(exit.key) && (!exit.lastRoomKey || held.includes(exit.lastRoomKey)))
+      if (
+        exit &&
+        section &&
+        !held.includes(exit.key) &&
+        (exit.lastRoomKeys.length === 0 || exit.lastRoomKeys.some(key => held.includes(key)))
+      )
         exploredCells[section] = [...held, exit.key]
     }
 
@@ -70,7 +75,7 @@ export const repairFloorExploration = (stored: Repairable, assembleFor: Assemble
   return { exploredCells, floorExploration }
 }
 
-type Exit = { section: string; key: string; lastRoomKey: string | null }
+type Exit = { section: string; key: string; lastRoomKeys: string[] }
 
 /** The way out of this floor, with the last authored room standing before it on the same chain — the
  * evidence that the player came this way. Null when the floor has no exit of its own. */
@@ -84,19 +89,20 @@ const exitOf = (grid: FloorGrid, floor: number): Exit | null => {
       return {
         section: cell.sectionAddress,
         key,
-        lastRoomKey: lastRoomBefore(grid, floor, cell.sectionAddress, cell.ordinal),
+        lastRoomKeys: lastRoomBefore(grid, floor, cell.sectionAddress, cell.ordinal),
       }
     }
   }
   return null
 }
 
-/** The furthest room along a section's chain that stands before `ordinal`. Corridors are skipped: they
- * carry no authored slot, so a save cannot say whether one was walked once the floor has moved. */
-const lastRoomBefore = (grid: FloorGrid, floor: number, section: string, ordinal: string): string | null => {
+/** The keys a save may name the furthest room along a section's chain that stands before `ordinal` by —
+ * its key, and its legacy key where it has one — none when there is no such room. Corridors are skipped:
+ * they carry no authored slot, so a save cannot say whether one was walked once the floor has moved. */
+const lastRoomBefore = (grid: FloorGrid, floor: number, section: string, ordinal: string): string[] => {
   const limit = walkPosition(ordinal)
   let bestAt = -Infinity
-  let best: string | null = null
+  let best: string[] = []
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
@@ -106,7 +112,7 @@ const lastRoomBefore = (grid: FloorGrid, floor: number, section: string, ordinal
       const at = walkPosition(cell.ordinal)
       if (at >= limit || at <= bestAt) continue
       bestAt = at
-      best = cellKey(grid, floor, r, c)
+      best = [cellKey(grid, floor, r, c), legacyCellKey(grid, floor, r, c)].filter((key): key is string => key !== null)
     }
   }
   return best

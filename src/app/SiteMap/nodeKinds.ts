@@ -1,6 +1,6 @@
 import type { FloorGrid, RoomCell } from "@/game/siteTypes"
 import { isSpent } from "@/game/mechanismDoors"
-import { cellAddress } from "@/game/cellAddress"
+import { storedAtCell } from "@/game/cellAddress"
 import { getFamilyPlugin } from "@/app/families/familyRegistry"
 import { NODE_RADIUS_FORK, NODE_RADIUS_LARGE, NODE_RADIUS_PUZZLE } from "./mapScale"
 
@@ -102,6 +102,5 @@ export const isSpentAt = (
   // A sequence's first tile holds the record but is no activator: the sequence is one mechanism that is
   // never used up by a tile, and its tiles are ground.
   if (!cell.mechanism || cell.sequenceTile) return false
-  const address = cellAddress(grid, floorIndex, r, c)
-  return isSpent(cell.mechanism, (address && mechanismStates?.get(address)) || cell.mechanism.initial)
+  return isSpent(cell.mechanism, storedAtCell(grid, floorIndex, r, c, mechanismStates) || cell.mechanism.initial)
 }

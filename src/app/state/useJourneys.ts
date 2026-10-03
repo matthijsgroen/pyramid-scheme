@@ -8,6 +8,7 @@ import { hashString } from "@/support/hashString"
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 import { isPlaceAddress, keyOfAddress, sectionOfAddress, type CarveIndependentState } from "@/app/SiteMap/cellIdentity"
 import type { RepairedExploration } from "@/app/SiteMap/repairFloorExploration"
+import type { MechanismSlotBackfill } from "@/app/SiteMap/backfillMechanismSlots"
 
 /** Bumped whenever a stored cell key changes shape. 2 named cells by their authored slot and floor
  * rather than by their step along the carved walk. 3 named their SECTION by its authoring address
@@ -20,6 +21,10 @@ export const CELL_KEY_VERSION = 3
  * save kept from a visit it never finished, which went on lighting emptied pyramids on the map. See
  * rederiveFloorExploration. */
 export const FLOOR_EXPLORATION_VERSION = 1
+
+/** Bumped when a mechanism room's address changes, so its stored state and explored mark are copied to
+ * the new address (backfillMechanismSlots). 1 is the slot that names the mechanism, not its family. */
+export const MECHANISM_SLOT_VERSION = 1
 
 /** The position a mechanism sits in when it opens nothing — see src/game/siteTypes.ts, where it lives
  * because the assembler writes it onto cells and the domain layer holds no React. Re-exported here so
@@ -95,6 +100,8 @@ export type StoredJourneyStateV3 = {
   /** Which derivation of `floorExploration` is stored, so wrong summaries are recomputed from the
    *  floors rather than waiting for a visit that the wrong summary is itself provoking. */
   floorExplorationVersion?: number
+  /** Which mechanism-slot copy this save has been through, so the backfill runs once per save. */
+  mechanismSlotVersion?: number
 }
 
 export type CombinedJourneyState = StoredJourneyStateV3 & {
@@ -127,6 +134,9 @@ export type JourneyAPI = {
   /** Saves whose floor summaries predate the current derivation — see useFloorExplorationBackfill. */
   journeysNeedingFloorRederive: () => StoredJourneyStateV3[]
   setRepairedExploration: (journeyId: string, repaired: RepairedExploration) => void
+  /** Saves whose mechanism rooms may still be filed under their earlier address — see useMechanismSlotBackfill. */
+  journeysNeedingMechanismSlots: () => StoredJourneyStateV3[]
+  setMechanismSlotBackfill: (journeyId: string, copied: MechanismSlotBackfill) => void
   /** This level's exploration, by section: the cell keys the map restores from. */
   getExploredCells: (journeyId: string) => Record<string, string[]>
   /** Records `address` as the live cell the player is standing on (`standingKey`), and — unless it
@@ -285,6 +295,7 @@ export const createJourneysV3Api = ({
       interiorLevelNr: null,
       // Born current: a journey started under this release has never been keyed any other way.
       cellKeyVersion: CELL_KEY_VERSION,
+      mechanismSlotVersion: MECHANISM_SLOT_VERSION,
     }
     return Promise.resolve(setJourneys(prev => [...prev, newJourney]))
   }
@@ -418,6 +429,30 @@ export const createJourneysV3Api = ({
       prev.map(j =>
         j.journeyId === journeyId ? { ...j, ...repaired, floorExplorationVersion: FLOOR_EXPLORATION_VERSION } : j
       )
+    )
+  }
+
+  // Stamped on every journey, for the same reason: the stamp is the exact record of which saves have
+  // been copied, which is what a later release reads before it drops the old keys.
+  const journeysNeedingMechanismSlots = () => journeys.filter(j => j.mechanismSlotVersion !== MECHANISM_SLOT_VERSION)
+
+  // Merged into what is stored NOW, never written over it: the other backfills of the same launch write
+  // exploration from their own snapshots, and a state the player has already set under the new address
+  // outranks the copy of an old one.
+  const setMechanismSlotBackfill = (journeyId: string, copied: MechanismSlotBackfill) => {
+    setJourneys(prev =>
+      prev.map(j => {
+        if (j.journeyId !== journeyId) return j
+        const exploredCells = { ...(j.exploredCells ?? {}) }
+        for (const [section, keys] of Object.entries(copied.exploredCells))
+          exploredCells[section] = [...new Set([...(exploredCells[section] ?? []), ...keys])]
+        return {
+          ...j,
+          exploredCells,
+          mechanismStates: { ...copied.mechanismStates, ...(j.mechanismStates ?? {}) },
+          mechanismSlotVersion: MECHANISM_SLOT_VERSION,
+        }
+      })
     )
   }
 
@@ -684,5 +719,7 @@ export const createJourneysV3Api = ({
     getUnexploredLevels,
     journeysNeedingFloorRederive,
     setRepairedExploration,
+    journeysNeedingMechanismSlots,
+    setMechanismSlotBackfill,
   }
 }

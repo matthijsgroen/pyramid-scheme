@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import { cellAddress } from "./cellIdentity"
+import { storedAtCell } from "@/game/cellAddress"
 import { dropLaunchedAt, findPath, getCell } from "@/game/gridNavigation"
 import { isSpent as mechanismIsSpent, throwMechanism } from "@/game/mechanismDoors"
 import { walkPresses } from "@/game/sequencePlay"
@@ -185,7 +186,7 @@ export const useSiteNavigation = ({
       // (the encounter branch below), the way a junction is, so a player who declines to throw it still
       // sees every way out of it.
       const stateOf = (mechanism: MechanismRecord) =>
-        journeys.getMechanismStates(journeyId).get(address) ?? mechanism.initial
+        storedAtCell(grid, currentFloor, row, col, journeys.getMechanismStates(journeyId)) ?? mechanism.initial
       const throwLever = (target: RoomCell) => {
         if (!target.mechanism) return
         const current = stateOf(target.mechanism)

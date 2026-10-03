@@ -219,7 +219,7 @@ describe("two controls on one floor", () => {
       .filter((slot): slot is string => slot !== null)
       .sort()
 
-    expect(slots).toEqual(["xhandle:s1", "xhandle:s2"])
+    expect(slots).toEqual(["xmech:s1", "xmech:s2"])
   })
 
   // Two controls, each pairing with its own gate — a mark is only useful if the two pairs read apart.

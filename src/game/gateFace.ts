@@ -1,4 +1,4 @@
-import { cellAddress } from "./cellAddress"
+import { storedAtCell } from "./cellAddress"
 import { pressAt } from "./mechanismDoors"
 import { tileStatus, type TileStatus } from "./sequence"
 import type { FloorGrid, GridCell, KeyColor, MechanismRecord, RoomCell } from "./siteTypes"
@@ -99,8 +99,7 @@ export const withGateFaces = (
       const floorKeys = cell.requiredKeyIds ?? []
       if (!needsFace(owners, floorKeys.length, key) && sequences.length === 0) return cell
       const markers = owners.map(({ id, family, mechanism, at }): GateMarker => {
-        const address = cellAddress(grid, floor, at[0], at[1])
-        const state = (address ? positions.get(address) : undefined) ?? mechanism.initial
+        const state = storedAtCell(grid, floor, at[0], at[1], positions) ?? mechanism.initial
         return {
           id,
           icon: { kind: "mechanism", family },
@@ -109,8 +108,7 @@ export const withGateFaces = (
       })
       for (const keyId of floorKeys) markers.push({ id: keyId, icon: { kind: "key" }, lit: heldKeys.has(keyId) })
       const orders = sequences.map(({ id, mechanism, at }): SequenceFace => {
-        const address = cellAddress(grid, floor, at[0], at[1])
-        const state = (address ? positions.get(address) : undefined) ?? mechanism.initial
+        const state = storedAtCell(grid, floor, at[0], at[1], positions) ?? mechanism.initial
         const tiles = grid.cells
           .flat()
           .flatMap(tile => (tile.type === "room" && tile.sequenceTile?.id === id ? [tile.sequenceTile] : []))

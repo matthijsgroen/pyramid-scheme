@@ -1,13 +1,15 @@
 import { useTranslation } from "react-i18next"
 import type { FamilyPlugin } from "@/app/families/familyRegistry"
 import { legalTargets } from "@/game/mechanismDoors"
+import { storedAtAddress } from "@/game/cellAddress"
 
 // PLACEHOLDER SCREEN, reached only from the puzzle lab (FamilyMeta.actsOnArrival: real play lights the
 // torch from the arrival prompt). No art exists for a torch yet; this is one button and a line of text.
 export const TorchComponent: FamilyPlugin["Component"] = ({ ctx, journeys, onSolved }) => {
   const { t } = useTranslation("common")
   const mechanism = ctx.mechanism
-  const current = journeys.getMechanismStates(ctx.journeyId).get(ctx.address) ?? mechanism?.initial
+  const current =
+    storedAtAddress(journeys.getMechanismStates(ctx.journeyId), ctx.address, ctx.legacyAddress) ?? mechanism?.initial
   const [next] = mechanism && current !== undefined ? legalTargets(mechanism, current) : []
 
   return (

@@ -196,7 +196,7 @@ describe("useAssembledFloor — hidden junctions", () => {
     expect(masked?.type).toBe("room")
     expect(masked?.type === "room" && masked.family).toBe("lightbeamSwitch")
     expect(masked?.type === "room" && masked.exits?.length).toBeGreaterThan(0)
-    expect(cellSlot(result.current.grid!, r, c)).toBe("xlightbeamSwitch")
+    expect(cellSlot(result.current.grid!, r, c)).toBe("xmech:switch:0")
   })
 
   // A gate the player can see says something is there, and a way out drawn on the board says the same.

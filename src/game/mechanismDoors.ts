@@ -1,5 +1,5 @@
 import type { FloorGrid, GridCell, MechanismRecord } from "./siteTypes"
-import { cellAddress } from "./cellAddress"
+import { cellAddress, storedAtCell } from "./cellAddress"
 import { doorOpen, type DoorMode } from "./doorOpen"
 
 const NO_KEYS: ReadonlySet<string> = new Set()
@@ -24,12 +24,11 @@ export const openDoorsFor = (
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
       if (cell.type !== "room" || !cell.mechanism) continue
-      const at = cellAddress(grid, floor, r, c)
-      if (!at) continue
+      if (!cellAddress(grid, floor, r, c)) continue
       // NO STORED ENTRY MEANS THE MECHANISM'S OWN INITIAL POSITION, never "nothing open": a lever
       // stands on one of its two sides from the moment the floor is carved, and the gates that side
       // names stand open before anybody touches it.
-      const state = positions.get(at) ?? cell.mechanism.initial
+      const state = storedAtCell(grid, floor, r, c, positions) ?? cell.mechanism.initial
       // A position this build no longer has simply opens nothing — the only safe answer: guessing at
       // the nearest position would open a door nobody threw the lever for.
       const { positions: named } = cell.mechanism
@@ -140,7 +139,7 @@ export const pressAt = (
   const address = mechanismAddress(grid, floor, row, col)
   if (!worked || !address) return undefined
   const { record, transition } = worked
-  const current = states.get(address) ?? record.initial
+  const current = storedAtCell(grid, floor, worked.home[0], worked.home[1], states) ?? record.initial
   if (transition === undefined) return { address, state: throwMechanism(record, current) }
   // Every move the record places at this cell is this cell's to make, so one tile can advance a run,
   // spoil it or do nothing according to where the run stands.

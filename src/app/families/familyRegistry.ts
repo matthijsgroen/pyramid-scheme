@@ -27,6 +27,9 @@ export type FamilyContext = {
    * that remembers anything per room — a bought shop slot, a disarmed trap, a half-finished board —
    * files it under this, because the coordinate above moves when the floor is carved again. */
   address: string
+  /** The address this room had before a mechanism's slot named the mechanism (`legacyCellAddress`), for
+   * reading an entry a save still holds under it. Unset on every room whose address never changed. */
+  legacyAddress?: string
   sectionHash: string
   // False when the player re-clicks this room while already standing on it (vs. having
   // traveled away and back) — shop uses this to decide whether its own stock resets.

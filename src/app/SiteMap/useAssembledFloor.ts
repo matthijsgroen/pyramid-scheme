@@ -8,7 +8,7 @@ import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry
 import type { ResolveKeyRequirements } from "@/game/siteAssembler"
 import { OBSTACLE_KEY_PREFIX } from "@/game/cellSlot"
 import { boardIndexesForFloor } from "./boardIndexes"
-import { cellKey, cellSlot, findByAddress, floorOfAddress, walkPosition } from "./cellIdentity"
+import { cellKey, legacyCellKey, cellSlot, findByAddress, floorOfAddress, walkPosition } from "./cellIdentity"
 
 const NO_OPEN_GATES: ReadonlySet<string> = new Set()
 const NO_HELD_KEYS: ReadonlySet<string> = new Set()
@@ -36,8 +36,10 @@ const savedAsExplored = (
 ): boolean => {
   const cell = grid.cells[r][c]
   if (cell.type === "empty" || cell.sectionAddress === undefined || isSealedWayOut(cell)) return false
+  const named = exploredCells[cell.sectionAddress]
   const key = cellKey(grid, floor, r, c)
-  return key !== null && (exploredCells[cell.sectionAddress]?.includes(key) ?? false)
+  const legacy = legacyCellKey(grid, floor, r, c)
+  return (key !== null && (named?.includes(key) ?? false)) || (legacy !== null && (named?.includes(legacy) ?? false))
 }
 
 /** The floor keys the save has in hand: the key chests it names as opened. Read off the save alone, so it

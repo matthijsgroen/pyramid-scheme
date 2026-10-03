@@ -1,11 +1,11 @@
 import type { FloorGrid } from "@/game/siteTypes"
 import { cellSlot } from "@/game/cellSlot"
-import { cellAddress } from "@/game/cellAddress"
+import { cellAddress, legacyCellAddress } from "@/game/cellAddress"
 import { decodeEdge } from "./edgeId"
 
 /** The two names the domain gives a cell (`@/game/cellAddress`, `@/game/cellSlot`), re-exported because
  * a save spends them alongside every reader below. */
-export { cellSlot, cellAddress }
+export { cellSlot, cellAddress, legacyCellAddress }
 
 /** Which authored section an address belongs to, and which floor — both readable without assembling
  * anything, which is what lets the map pick a floor to build before it can resolve the rest. */
@@ -23,6 +23,13 @@ export const cellKey = (grid: FloorGrid, floor: number, row: number, col: number
   return address === null ? null : keyOfAddress(address)
 }
 
+/** What a save may still file a mechanism's room under inside its section: the key of its legacy
+ * address (`legacyCellAddress`), or null for a room whose key never changed. */
+export const legacyCellKey = (grid: FloorGrid, floor: number, row: number, col: number): string | null => {
+  const address = legacyCellAddress(grid, floor, row, col)
+  return address === null ? null : keyOfAddress(address)
+}
+
 export const keyOfAddress = (address: string): string => address.split("#").slice(1).join("#")
 
 /** Whether an address names an authored place (`cellSlot` in `@/game/cellSlot`) rather than a corridor
@@ -34,11 +41,12 @@ export const isPlaceAddress = (address: string): boolean => {
 }
 
 /** Where an address sits in THIS carve, or null when nothing here answers to it — which is the right
- * answer for a `~ordinal` corridor after the floor has moved. */
+ * answer for a `~ordinal` corridor after the floor has moved. A mechanism's room also answers to its
+ * legacy address, which a save written before the slot named the mechanism still holds. */
 export const findByAddress = (grid: FloorGrid, floor: number, address: string): [row: number, col: number] | null => {
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
-      if (cellAddress(grid, floor, r, c) === address) return [r, c]
+      if (cellAddress(grid, floor, r, c) === address || legacyCellAddress(grid, floor, r, c) === address) return [r, c]
     }
   }
   return null

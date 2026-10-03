@@ -10,6 +10,7 @@ import { floorKeyRing } from "./floorKeys"
 import { openDoorsFor } from "./mechanismDoors"
 import { designerDoubleBack, forkSwitchFloorConfig as forkSwitched } from "./testSupport/forkSwitchFixtures"
 import { cellAddress } from "./cellAddress"
+import { cellSlot } from "./cellSlot"
 import { floorLock } from "./floorLock"
 import { walkLock } from "./lockWalk"
 // The real registry, for the one spec that has to prove the refusal against a family that
@@ -1834,13 +1835,19 @@ describe("a switch fork", () => {
     expect(result.success === false && result.reasons).toEqual([{ type: "switchesExceedForks", min: 2, forks: 1 }])
   })
 
-  // Two rooms of one section answering to the same name would share one save entry.
-  it("refuses a floor whose switch wears the name its section's chest already has", () => {
-    // The same seed the board case proves carves a switch, and this floor's main path ends in a chest.
+  // Two rooms of one section answering to the same name would share one save entry. A switch is named
+  // for the mechanism, so realising it as a chest does not make it answer to its section's chest.
+  it("assembles a floor whose switch is realised by a chest, the two rooms answering to different slots", () => {
     const result = assembleAt("site-switch-board", switchConfig({ encounter: "treasure-chest", min: 1, max: 1 }), 7)
 
-    expect(result.success).toBe(false)
-    expect(result.success === false && result.reasons.map(r => r.type)).toContain("duplicateCellSlot")
+    expect(result.success).toBe(true)
+    if (!result.success) return
+    const slotsOf = (match: (cell: RoomCell) => boolean) =>
+      result.grid.cells.flatMap((row, r) =>
+        row.flatMap((cell, c) => (cell.type === "room" && match(cell) ? [cellSlot(result.grid, r, c)] : []))
+      )
+    expect(slotsOf(cell => cell.roomType === "fork" && cell.mechanismId !== undefined)).toEqual(["xmech:switch:0"])
+    expect(slotsOf(cell => cell.roomType !== "fork" && cell.family === "treasure-chest")).toContain("xtreasure-chest")
   })
 
   // A switch opens one way out and leaves the others shut. Keys accumulate, so spending the choice on a

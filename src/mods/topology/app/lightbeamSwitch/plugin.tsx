@@ -4,6 +4,7 @@ import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry
 import { MECHANISM_AT_REST } from "@/app/state/useJourneys"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { ForkShape } from "@/game/forkShape"
+import { storedAtAddress } from "@/game/cellAddress"
 import type { Direction as WayOut, RoomCell } from "@/game/siteTypes"
 import { isModEnabled } from "@/mods/registeredMods"
 import { generatePuzzle } from "@/game/seeds/generatePuzzle"
@@ -59,9 +60,13 @@ const LightbeamSwitchComponent: FamilyPlugin<LightbeamSwitchBoard>["Component"] 
   const exits = ctx.exits
   const address = ctx.address
   const mechanismStates = journeys.getMechanismStates(ctx.journeyId)
-  const state = mechanismStates.get(address)
+  const state = storedAtAddress(mechanismStates, address, ctx.legacyAddress)
   const openWayOut = shutWaysOut(exits).find(way => wayOutId(exits, way) === state)
-  const savedAnglesRaw = mechanismStates.get(anglesAddress(address))
+  const savedAnglesRaw = storedAtAddress(
+    mechanismStates,
+    anglesAddress(address),
+    ctx.legacyAddress && anglesAddress(ctx.legacyAddress)
+  )
   const savedAngles = savedAnglesRaw ? decodeLightbeamAngles(savedAnglesRaw) : undefined
 
   // What this visit has already told the floor. The board is re-rendered on every tap and reports where

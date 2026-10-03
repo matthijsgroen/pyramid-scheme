@@ -43,7 +43,7 @@ import {
   topologyFaults,
 } from "./obstacles"
 import type { EdgeGateObstacle, Obstacle, OneWayObstacle, StatefulControl } from "./obstacles"
-import { cellSlot } from "./cellSlot"
+import { cellSlot, plainSwitchId } from "./cellSlot"
 import { placeSequences } from "./sequenceTiles"
 import { adjacencyFaults, dropLandingFaults, gateDoorFaults } from "./carveAgreement"
 import type { CarveFault } from "./carveAgreement"
@@ -3713,6 +3713,7 @@ export const assembleFloor = (
           ...junction,
           family: family.familyId,
           tags: family.tags,
+          mechanismId: plainSwitchId(n),
           // THE BOARD HAS TO STAND STILL WHILE THE JUNCTION MOVES. Having no chain position, a switch
           // gets no entry from the world's board dealer, and `generatePuzzle` then falls back to a seed
           // hashed from the cell's COORDINATE — which the next carve changes, under a save slot that
