@@ -7,6 +7,7 @@ import type { WorldValidator } from "@/worldGen/validate"
 import type { CurrencyMeta } from "@/game/ledger/currencyRegistry"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { OneWayRealisationMeta } from "@/game/oneWayRealisation"
+import type { MechanicKindMeta } from "@/game/mechanicKinds"
 
 // A mod is a container registered as one unit in src/mods/registeredMods.ts's REGISTERED_MODS.
 // A mod is "on" iff it appears there; toggle it off (for a demo, or while proving a boundary is
@@ -32,6 +33,9 @@ export type ModDescriptor = {
   // The one-way realisations this mod offers, each declaring the prompt its crossing is taken through.
   // Merged into allOneWayRealisations.ts; a one-way bound to one that drops with the mod is refused.
   oneWayRealisations?: OneWayRealisationMeta[]
+  // The control kinds a lock may name that this mod builds (or declares not built yet). Merged into
+  // allMechanicKinds.ts; a lock naming a kind that drops with the mod is refused.
+  mechanicKinds?: MechanicKindMeta[]
   // Currency display/ownership metadata for the ledger + collection UI — one or many.
   currencyMeta?: CurrencyMeta | CurrencyMeta[]
   // Dynamic-loot distributions this mod owns (the unified loot primitive): each claims slots by
