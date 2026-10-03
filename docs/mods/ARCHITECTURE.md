@@ -41,6 +41,26 @@ Record<string, unknown>`, validated per-type by owner-registered zod schemas at
   boot. Prefer a codegen'd union over bare `string` where exhaustiveness matters.
   Don't open everything: the boundary is "what mods extend," nothing more.
 
+### Mechanics are core plug-ins, realisations are mods
+
+A mechanic is a state machine the player drives; how it looks and is operated is its realisation.
+
+| Owner | What | Where |
+| --- | --- | --- |
+| **core** | the five control kinds: toggle, activator, sequence, fork-switch, one-way. Each is a `MechanicKind` plug-in holding what it needs of the carve, its compile rule and its refusals. | `src/game/mechanics/` (registry: `CORE_MECHANICS`, `resolveMechanicKind`) |
+| **core** | the authoring: `obstacles`, `controls`, `barrierOrder`, `oneWays`, `handles`, `forks: [{ in }]` | `FloorConfig` |
+| **mod** (topology today) | the realisation bound to a kind: the handle and torch families, the lightbeam switch, the zipline, the gate face | `families`, `oneWayRealisations` of the descriptor |
+
+`lockCompile` and `topologyFaults` read kinds through the registry, not through a branch per kind: a kind
+removed from it is refused with `unknownControlKind`, one added is honoured. The carve reads core authoring
+only, so no mod being present or absent moves a wall.
+
+With a realisation unregistered, `assembleFloor` refuses a floor that authors a mechanic needing it, by name and
+before carving: `realisationMissing` (`mechanic`, `kind`, `realisation`) for a control, a handle or a door that
+needs a face, `oneWayRealisationRefused` for a one-way. There is no default realisation and nothing is stripped.
+Only `switches` is dropped with its family: it fills a junction `forks` reserves, so dropping it leaves the same
+walls and a bare junction.
+
 ## Layers
 
 ```

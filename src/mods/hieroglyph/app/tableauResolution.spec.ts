@@ -8,6 +8,7 @@ import { getTableauLevel } from "@/mods/hieroglyph/game/tableaus"
 // Any other symbol set can leave the floor stuck at 0/N. See src/mods/hieroglyph/app/plugin.tsx.
 const ctxFor = (journeyId: string, runNr: number): FamilyContext => ({
   journeyId,
+  levelNr: 1,
   edgeId: `edge-${runNr}`,
   address: `s#0/${runNr}@rencounter`,
   sectionHash: "",

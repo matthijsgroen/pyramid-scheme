@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState, type FC } from "react"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
-import { useCelebration } from "../useCelebration"
+import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import {
@@ -40,7 +40,7 @@ export const ProcessionPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, r
    * a commitment three moves deep; here a bar is dragged straight back to where it was, so an undo button
    * would be a second way to do what the board already does.
    */
-  const [state, setState] = usePuzzleState(() => createProcessionState(puzzle))
+  const [state, setState] = usePuzzleState(() => createProcessionState(puzzle), puzzle)
   const [focus, setFocus] = useState<number | undefined>()
 
   const [asked, setAsked] = useState(false)

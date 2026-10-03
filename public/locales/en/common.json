@@ -38,11 +38,14 @@
     "backArrow": "←",
     "back": "← Back",
     "floor": "Floor {{number}}",
-    "leaveSiteTitle": "The way out",
-    "leaveSiteMessage": "Daylight falls through the doorway. Leave this place and end the expedition?",
-    "leaveSiteConfirm": "Step outside",
-    "leaveSiteCancel": "Stay inside",
     "enterSite": "Step inside",
+    "prompt": {
+      "here": "Investigate",
+      "stairs": "Take the stairs",
+      "exit": "Leave this place",
+      "zipline": "Ride the line — there is no way back",
+      "oneWay": "Cross over — there is no way back"
+    },
     "travel": "Travel",
     "chooseYourJourney": "Choose Your Journey",
     "backToMap": "Back to map",
@@ -155,6 +158,7 @@
   },
   "shop": {
     "title": "Fez's Stall",
+    "invitation": "Look over the stall",
     "buy": "Buy",
     "sell": "Sell",
     "soldOut": "Sold out",
@@ -1119,5 +1123,43 @@
       "cannot": "Two signs you know, and a space you cannot fill. Not yet.",
       "gap": "The missing sign"
     }
+  },
+  "lightbeamSwitch": {
+    "name": "The Turning Light",
+    "invitation": "Turn the mirrors",
+    "goal": "The light rests in a shrine, and the way out beneath it stands open.",
+    "rules": {
+      "shrines": "One disc of light, and a shrine over every way out of this junction. The mirrors on the floor can carry the light to any of them.",
+      "doors": "The way out the light reaches stands open, and the others are shut. One routing, one way on.",
+      "returning": "Nothing is lost by choosing. Walk back in whenever you like and send the light another way instead — that way opens, and this one closes.",
+      "tap": "Tap a mirror to turn it. Tapping it again puts it back."
+    },
+    "doorOpen": "{{way}} way out: open",
+    "doorShut": "{{way}} way out: shut",
+    "way": { "n": "Northern", "e": "Eastern", "s": "Southern", "w": "Western" }
+  },
+  "handle": {
+    "name": "The Lever",
+    "invitation": "Throw the lever",
+    "goal": "The lever hangs one way or the other. What one side opens, the other shuts.",
+    "left": "Throw it left",
+    "right": "Throw it right"
+  },
+  "torch": {
+    "name": "The Torch",
+    "invitation": "Light the torch",
+    "goal": "An unlit torch. Once it burns it cannot be put out again.",
+    "lit": "The torch is burning."
+  },
+  "gateFace": {
+    "title": "A Door That Waits",
+    "hint": "Every sign must burn before this door will open.",
+    "lit": "{{owner}}: lit",
+    "unlit": "{{owner}}: not yet",
+    "owner": { "torch": "Torch", "handle": "Lever", "key": "Key", "other": "Mechanism" },
+    "orderHint": "Walk the tiles in this order.",
+    "reset": "Start again",
+    "spoiled": "The run is spoiled: a tile was walked out of order.",
+    "tile": { "unwalked": "Step {{step}}: not yet walked", "inOrder": "Step {{step}}: walked in order", "outOfOrder": "Step {{step}}: walked out of order" }
   }
 }

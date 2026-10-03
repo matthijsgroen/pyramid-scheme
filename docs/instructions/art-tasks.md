@@ -234,6 +234,12 @@ original placeholder-generation commit: speculative art for a kind nobody added,
 report because no room asks for it and which anyone reading the tile folder would take for work in
 progress.
 
+**Region-barrier blockage — owed, per rank and per condition.** A shut region barrier (a hall flooded, a
+vault buried) stands in its passage as a prop, today the rank's `rubblePile` (placeholder where unpainted).
+It owes a `blockage` tile per rank: a plug filling the passage's width, sand drift or collapsed stone by day
+and a flooded variant (`blockage-flooded`) for a `flooded` condition; the mark is drawn over it, so keep its
+upper third plain.
+
 ## 6. Waiting on a scan
 
 Step 0's table sends statues and coffins to a museum scan (Scan the World, Smithsonian Open Access,
@@ -281,6 +287,10 @@ full of — `--contents` on what exists rather than a new model. `prim_niche`, `
 - **Patron gods** — designed, and now UNBLOCKED rather than unbuilt: `tileVariants` is the selector they
   needed. A patron is `statue-2.png` beside `statue.png`, and the same for `shrine`, `wallShrine`, `stela`
   and `mask`. No new kinds, no pool edits, no world regeneration, and art can arrive one file at a time.
+- **Torch (`torch` family) — no art at any rank.** A torch room is drawn as its marker carrying the flame icon; wanted per rank (starter, junior, expert, master, wizard) is a painted torch the three-state spent look can ease back, declared by setting `drawing.art` on the torch meta once it exists.
+- **Lever (`leverBaseBack`, `leverArm`, `leverBaseFront`) — painted at expert only.** Starter, junior, master and wizard draw the lever-glyph marker alone; a rank with only some of the three draws none.
+- **Drop (`dropEast`, `dropNorth`, `dropSouth`) — painted at expert only.** The other four ranks draw no drop furniture, the way the map draws one-ways today.
+- **A sequence tile (pressure plate)** is a vector slab with its glyph (`PlateShape`) in three looks (unwalked, walked in order, walked out of order); a painted plate is wanted in the same three states.
 
 **Built since this list was written**, and noted because the list claimed otherwise for a while:
 

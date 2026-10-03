@@ -8,6 +8,7 @@ import { cellAddress, cellKey, cellSlot, walkPosition } from "./cellIdentity"
 // useAssembledFloor resolves families through the real registry — populate it, same as
 // SiteMapScreen.tsx does, so resolution doesn't silently fall back to untagged rooms.
 import "@/mods/registerModApps"
+import { resolveEncounter } from "@/app/families/familyRegistry"
 
 /** The save a player standing on this cell would hold: the cell written down under its own key, the
  * way `markCellExplored` writes it as they walk (cellIdentity.ts). */
@@ -153,6 +154,105 @@ describe("useAssembledFloor — hidden junctions", () => {
     if (gateway?.type === "empty") throw new Error("expected a real cell at the gateway")
     expect(gateway?.state).not.toBe("reachable")
   })
+
+  /**
+   * Masking rebuilds a room that comes out a passthrough as a corridor — which would shed a switch's
+   * family, its tags and its exits, and leave its solved state nothing to come back to (a corridor has
+   * no slot). So a floor that loses cells to masking has to hand the switch back whole.
+   */
+  it("brings a switch through masking whole, on a floor that hides a branch", () => {
+    const config: FloorConfig = {
+      pathPuzzles: 2,
+      difficulty: "expert",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      // A family whose room is walked back into, which is what a switch asks of the one standing in it.
+      forks: [{ exits: 2, count: 1 }],
+      switches: { encounter: "lightbeamSwitch", min: 1, max: 1 },
+      sideSections: [
+        { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true, endReward: { type: "mosaicPiece" } },
+        { pathPuzzles: 1, difficulty: "expert", end: "treasure" },
+      ],
+    }
+    const seed = [0, 1, 2, 3, 4, 5, 6, 7].find(s => {
+      const built = assembleFloor(JOURNEY_ID, config, s, resolveEncounter)
+      return built.success && built.grid.cells.flat().some(c => c.type === "room" && c.roomType === "fork" && c.family)
+    })
+    if (seed === undefined) throw new Error("no seed carved a switch onto this floor")
+    const assembled = assembleFloor(JOURNEY_ID, config, seed, resolveEncounter)
+    if (!assembled.success) throw new Error("assembly failed")
+    const [r, c] = assembled.grid.cells.flatMap((row, rr) =>
+      row.flatMap((cell, cc) => (cell.type === "room" && cell.roomType === "fork" && cell.family ? [[rr, cc]] : []))
+    )[0]
+
+    const { result } = renderHook(() => useAssembledFloor(JOURNEY_ID, config, seed, 0, {}, null, 0, new Set()))
+
+    // The premise: masking really did take cells off this floor, so the switch came through a mask
+    // rather than through a grid nothing happened to.
+    const drawn = (g: FloorGrid) => g.cells.flat().filter(cell => cell.type !== "empty").length
+    expect(drawn(result.current.grid!)).toBeLessThan(drawn(assembled.grid))
+
+    const masked = result.current.grid?.cells[r]?.[c]
+    expect(masked?.type).toBe("room")
+    expect(masked?.type === "room" && masked.family).toBe("lightbeamSwitch")
+    expect(masked?.type === "room" && masked.exits?.length).toBeGreaterThan(0)
+    expect(cellSlot(result.current.grid!, r, c)).toBe("xmech:switch:0")
+  })
+
+  // A gate the player can see says something is there, and a way out drawn on the board says the same.
+  // So an exit is pruned whenever the node it leads to is hidden — proven on a real carve rather than a
+  // hand-built grid, because a fork never actually stands directly beside a hidden cell (nodes sit two
+  // cells apart; the connector between a visible fork and a hidden node stays visible, so the fork's own
+  // `dirs` never move here). The exit still has to go, or the board draws a door into a branch nobody
+  // has found.
+  it("prunes a fork's exit toward a branch that hides, leaving its other exits and its own dirs alone", () => {
+    const config: FloorConfig = {
+      pathPuzzles: 2,
+      difficulty: "expert",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      forks: [{ exits: 2, count: 1 }],
+      switches: { encounter: "lightbeamSwitch", min: 1, max: 1 },
+      sideSections: [
+        { pathPuzzles: 0, difficulty: "expert", end: "treasure", hidden: true, endReward: { type: "mosaicPiece" } },
+        { pathPuzzles: 1, difficulty: "expert", end: "treasure" },
+      ],
+    }
+    const findFork = (grid: FloorGrid) =>
+      grid.cells
+        .flatMap((row, r) =>
+          row.flatMap((cell, c) =>
+            cell.type === "room" && cell.roomType === "fork" && cell.family ? [{ r, c, cell }] : []
+          )
+        )
+        .at(0)
+    const leadsToHidden = (grid: FloorGrid, r: number, c: number, dir: string) => {
+      const [dr, dc] = DIR_MOVE[dir]
+      const beyond = grid.cells[r + dr * 2]?.[c + dc * 2]
+      return beyond !== undefined && beyond.type !== "empty" && !!beyond.hidden
+    }
+    const seed = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].find(s => {
+      const built = assembleFloor(JOURNEY_ID, config, s, resolveEncounter)
+      if (!built.success) return false
+      const fork = findFork(built.grid)
+      return fork !== undefined && fork.cell.exits?.some(exit => leadsToHidden(built.grid, fork.r, fork.c, exit.dir))
+    })
+    if (seed === undefined) throw new Error("no seed carved a switch beside a hidden branch")
+
+    const raw = assembleFloor(JOURNEY_ID, config, seed, resolveEncounter)
+    if (!raw.success) throw new Error("assembly failed")
+    const rawFork = findFork(raw.grid)
+    if (!rawFork) throw new Error("no switch was carved")
+    const { r, c, cell: rawCell } = rawFork
+
+    const { result } = renderHook(() => useAssembledFloor(JOURNEY_ID, config, seed, 0, {}, null, 0, new Set()))
+    const masked = result.current.grid?.cells[r]?.[c]
+    if (masked?.type !== "room") throw new Error("expected the fork to survive masking as a room")
+
+    expect([...masked.dirs].sort()).toEqual([...rawCell.dirs].sort())
+    expect(masked.exits?.length).toBe((rawCell.exits?.length ?? 0) - 1)
+    expect(masked.exits?.some(exit => leadsToHidden(raw.grid, r, c, exit.dir))).toBe(false)
+  })
 })
 
 describe("useAssembledFloor — restoring a saved position", () => {
@@ -284,5 +384,160 @@ describe("useAssembledFloor — the high-water mark", () => {
     )
     // Only the entrance, which is explored by standing in it.
     expect(completed).toEqual([[...restored.entrancePos]])
+  })
+})
+
+describe("useAssembledFloor — the mark does not carry past a shut region gate", () => {
+  const GATE_JOURNEY_ID = "gate-test"
+  const threeRegions: FloorConfig["regionLayout"] = {
+    regions: [
+      { name: "mouth", appetite: "free" },
+      { name: "hall", appetite: "free" },
+      { name: "vault", appetite: "free" },
+    ],
+    connections: [
+      ["mouth", "hall"],
+      ["hall", "vault"],
+    ],
+    in: "mouth",
+    out: "vault",
+  }
+  // A long main path so "vault" holds several main-path rooms past the gate, not just the gate room
+  // and the exit — a corridor strictly between two vault rooms is what proves the mark reaches past
+  // the bars, rather than the seam connector the gate itself already sits on.
+  const gatedConfig: FloorConfig = {
+    pathPuzzles: 10,
+    difficulty: "starter",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: [],
+    regionLayout: threeRegions,
+    obstacles: [{ id: "vaultDoor", kind: "gate", at: { on: "connection", between: ["hall", "vault"] } }],
+    controls: [
+      {
+        id: "s1",
+        in: "mouth",
+        states: ["left", "right"],
+        initial: "right",
+        returnsToInitial: true,
+        opens: { right: ["vaultDoor"] },
+      },
+    ],
+  }
+
+  const gateRoomsOf = (grid: FloorGrid) =>
+    grid.cells.flatMap((row, r) =>
+      row.flatMap((cell, c) => (cell.type === "room" && cell.tags?.includes("gate") ? [{ r, c, cell }] : []))
+    )
+
+  const mechanismRoomOf = (grid: FloorGrid) =>
+    grid.cells.flatMap((row, r) =>
+      row.flatMap((cell, c) => (cell.type === "room" && cell.mechanism ? [{ r, c, cell }] : []))
+    )[0]!
+
+  // Every main-path room of "vault" other than the gate itself, in walk order — the rooms a player
+  // could have stood in and had written down while the gate was still open.
+  const vaultRoomsPastGate = (grid: FloorGrid, gate: RoomCell) =>
+    grid.cells
+      .flatMap((row, r) =>
+        row.flatMap((cell, c) =>
+          cell.type === "room" &&
+          cell !== gate &&
+          cell.region === "vault" &&
+          cell.sectionAddress === "main" &&
+          cell.ordinal !== undefined
+            ? [{ r, c, cell }]
+            : []
+        )
+      )
+      .sort((a, b) => walkPosition(a.cell.ordinal!) - walkPosition(b.cell.ordinal!))
+
+  // A seed that carves this layout AND leaves at least two main-path rooms in vault past the gate —
+  // one to name in the save, and at least one corridor strictly between vault rooms to prove the mark
+  // reaches past the bars rather than only touching the seam connector the gate itself sits on.
+  const findFixture = () => {
+    for (let seed = 0; seed < 40; seed++) {
+      const built = assembleFloor(GATE_JOURNEY_ID, gatedConfig, seed)
+      if (!built.success) continue
+      const gates = gateRoomsOf(built.grid)
+      if (gates.length !== 1) continue
+      const pastGate = vaultRoomsPastGate(built.grid, gates[0].cell)
+      if (pastGate.length >= 2) return { seed, grid: built.grid, gate: gates[0], pastGate }
+    }
+    throw new Error("no seed in range carved a vault with two main-path rooms past its gate")
+  }
+
+  it("keeps every vault corridor past a SHUT gate dark, even though a room further along is named", () => {
+    const { seed, grid, gate, pastGate } = findFixture()
+    const control = mechanismRoomOf(grid)
+    const controlAddress = cellAddress(grid, 0, control.r, control.c)!
+    // "left" opens nothing (only "right" opens vaultDoor) — the gate is shut on arrival.
+    const mechanismPositions = new Map([[controlAddress, "left"]])
+
+    // The save: the gate room itself (walked while it was still open) and the LAST room of vault, per
+    // its own walk order — naming the far end, not the near one, so the mark is forced its longest.
+    const target = pastGate[pastGate.length - 1]
+    const section = gate.cell.sectionAddress ?? ""
+    const saved = {
+      [section]: [cellKey(grid, 0, gate.r, gate.c)!, cellKey(grid, 0, target.r, target.c)!],
+    }
+
+    const { result } = renderHook(() =>
+      useAssembledFloor(GATE_JOURNEY_ID, gatedConfig, seed, 0, saved, null, 0, new Set(), undefined, mechanismPositions)
+    )
+    const restored = result.current.grid!
+
+    // A corridor strictly between two named vault rooms — never itself named by the save — whose
+    // walkPosition sits past the shut gate. It must stay dark; this is the assertion that is expected
+    // to fail before the fix.
+    const litPastTheGate = restored.cells.some((row, r) =>
+      row.some((cell, c) => {
+        if (cell.type === "empty" || cellSlot(restored, r, c) || cell.region !== "vault") return false
+        const key = cellKey(restored, 0, r, c)
+        if (key !== null && saved[section].includes(key)) return false
+        return cell.state === "completed"
+      })
+    )
+    expect(litPastTheGate).toBe(false)
+  })
+
+  it("still restores everything named, and everything ahead of an OPEN gate, unchanged", () => {
+    const { seed, grid, gate, pastGate } = findFixture()
+    const control = mechanismRoomOf(grid)
+    const controlAddress = cellAddress(grid, 0, control.r, control.c)!
+    // "right" is the mechanism's own initial state and it is what opens vaultDoor.
+    const mechanismPositions = new Map([[controlAddress, "right"]])
+
+    // The FIRST room past the gate, not the last: naming the far end would leave nothing past it to
+    // tell "restored" from "was always going to be dark anyway" (findFixture's fixture ends its main
+    // path there — see the sibling test above, which relies on exactly that to force the mark its
+    // longest). Naming the near end instead leaves rooms after it whose corridors must stay dark.
+    const target = pastGate[0]
+    const section = gate.cell.sectionAddress ?? ""
+    const saved = { [section]: [cellKey(grid, 0, target.r, target.c)!] }
+
+    const { result } = renderHook(() =>
+      useAssembledFloor(GATE_JOURNEY_ID, gatedConfig, seed, 0, saved, null, 0, new Set(), undefined, mechanismPositions)
+    )
+    const restored = result.current.grid!
+
+    // With the gate open, this section behaves exactly as it would with no gate at all: every vault
+    // CORRIDOR (a room needs its own name — see the "never opens a room" case above) up to the named
+    // room's mark comes back lit, and none past it does.
+    const mark = walkPosition(target.cell.ordinal!)
+    const vaultCorridors = grid.cells.flatMap((row, r) =>
+      row.flatMap((cell, c) =>
+        cell.type === "corridor" && cell.region === "vault" && cell.sectionAddress === "main" && cell.ordinal
+          ? [{ r, c, at: walkPosition(cell.ordinal) }]
+          : []
+      )
+    )
+    expect(vaultCorridors.some(({ at }) => at < mark)).toBe(true)
+    expect(vaultCorridors.some(({ at }) => at > mark)).toBe(true)
+    for (const { r, c, at } of vaultCorridors) {
+      const state = restored.cells[r][c].type === "empty" ? "empty" : restored.cells[r][c].state
+      if (state === "empty") continue
+      expect(state === "completed").toBe(at <= mark)
+    }
   })
 })

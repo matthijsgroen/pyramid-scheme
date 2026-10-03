@@ -3,6 +3,7 @@ import type { DecorationKind, WallDecorationKind } from "../game/siteTypes"
 import { mulberry32 } from "../game/random"
 import { TIER_UNLOCK_PERK_IDS } from "../data/treasurePerks"
 import { hashStr, pathEndToReward, specToGate } from "./rewards"
+import { stairIdAt, type StairAddress } from "../game/stairAddress"
 import type { KeyColor, PathEntry, RewardSpec, SideIntensity, SideSectionConstraint } from "./dsl"
 import { resolveNodeSelectors } from "./dsl"
 
@@ -33,20 +34,23 @@ export const pathCountForDensity = (density: SideIntensity, journeyId: string, p
 // sentinel), tomb passes the perk-stream allocator (which may run out and return undefined).
 export type ResolveReward<TExtra extends string = never> = (spec: RewardSpec | TExtra) => TreasureReward | undefined
 
+/** The floor these sections hang off: a stair address minus the path within the floor. */
+export type FloorStairAddress = Omit<StairAddress, "path">
+
 // Recursively translates one DSL-authored side section (and any nested sideSections) into
-// a runtime SideSection. `stairIndex` numbers this section's stairhead among its siblings —
-// only meaningful when `cs.end === "staircase"`.
+// a runtime SideSection. `path` is where this section sits on its floor (`s0`, `s0.1`) — only
+// used when `cs.end === "staircase"`, to name the stairhead it ends in.
 const buildDslSection = <TExtra extends string>(
   cs: SideSectionConstraint<TExtra>,
   difficulty: Difficulty,
   resolveReward: ResolveReward<TExtra>,
-  journeyId: string,
-  stairIndex: number
+  floor: FloorStairAddress,
+  path: string
 ): SideSection => {
   const gate = specToGate(cs.gate)
   const sectionDifficulty = cs.difficulty ?? difficulty
-  const subSections = buildDslSections(cs.sideSections, sectionDifficulty, resolveReward, journeyId)
-  const end = cs.end === "staircase" ? { stairId: `${journeyId}:side${stairIndex}` } : ("treasure" as const)
+  const subSections = buildDslSections(cs.sideSections, sectionDifficulty, resolveReward, floor, `${path}.`)
+  const end = cs.end === "staircase" ? { stairId: stairIdAt({ ...floor, path }) } : ("treasure" as const)
   // A treasure end with no authored reward and no gate is a plain loot slot — default it to the
   // untagged `treasure` slot (filled by whatever's spare). A gated end already becomes a slot via
   // its open gate (collectSlots); a staircase end bears no reward.
@@ -79,20 +83,36 @@ const buildDslSection = <TExtra extends string>(
   }
 }
 
+// `pathPrefix` is what this level of nesting spells before a section's own index: `s` at the top of
+// a floor, `s3.` below the section that sits at s3. `startIndex` is how many sections the caller has
+// already pushed ahead of these, so the addresses continue the floor's numbering rather than
+// restarting at 0 — which is also exactly what the assembler counts (siteAssembler.ts's Chain).
 const buildDslSections = <TExtra extends string>(
   constraintSections: SideSectionConstraint<TExtra>[] | undefined,
   difficulty: Difficulty,
   resolveReward: ResolveReward<TExtra>,
-  journeyId: string,
+  floor: FloorStairAddress,
+  pathPrefix: string,
   startIndex = 0
 ): SideSection[] =>
-  (constraintSections ?? []).map((cs, i) => buildDslSection(cs, difficulty, resolveReward, journeyId, startIndex + i))
+  (constraintSections ?? []).map((cs, i) =>
+    buildDslSection(cs, difficulty, resolveReward, floor, `${pathPrefix}${startIndex + i}`)
+  )
 
 export type BuildSideSectionsOptions<TExtra extends string = never> = {
   tier: string
   difficulty: Difficulty
   resolveReward: ResolveReward<TExtra>
+  /**
+   * What the seeded rolls below are keyed on — the ward-gate key pick and every density/chance roll.
+   *
+   * A caller building one floor of a multi-floor site scopes it per floor, so each floor of a tomb
+   * rolls its own path counts instead of every floor repeating one roll. Stair ids do not come from
+   * here: they come from `floor`, which names the address in full.
+   */
   journeyId: string
+  /** Where this floor sits, for the ids its stairheads take (game/stairAddress.ts). */
+  floor: FloorStairAddress
   constraintSections?: SideSectionConstraint<TExtra>[]
   /**
    * A role for sections that do not author one — the site's theme, handed down.
@@ -162,6 +182,7 @@ export const buildSideSections = <TExtra extends string = never>(
     difficulty,
     resolveReward,
     journeyId,
+    floor,
     constraintSections,
     hasMapPieceBranch,
     hasWardGate,
@@ -200,7 +221,7 @@ export const buildSideSections = <TExtra extends string = never>(
     }
   }
 
-  sections.push(...buildDslSections(constraintSections, difficulty, resolveReward, journeyId, sections.length))
+  sections.push(...buildDslSections(constraintSections, difficulty, resolveReward, floor, "s", sections.length))
 
   const colorCount = Math.min(keyColors ?? 1, 5)
 

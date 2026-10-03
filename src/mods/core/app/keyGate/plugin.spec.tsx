@@ -101,9 +101,15 @@ describe("floor-key door", () => {
     expect(queryByText("gate.unlocked")).not.toBeNull()
   })
 
-  it("falls back to blue when world-gen left the colour unset — the same default the map draws", () => {
+  // A colourless floor-key door is a door whose key is AUTHORED: a mod mints it, so no chest on this
+  // floor wears its badge. Naming a colour would send the player hunting a key that grows nowhere —
+  // which is why the map's own gate tile and the key ring draw nothing for one either.
+  it("names no colour when the door carries none, and says only that it is locked", () => {
     const { queryByText } = floorGate({ keyColor: undefined, ownedKeys: new Set() })
 
-    expect(queryByText("keys.blue")).not.toBeNull()
+    expect(queryByText("gate.needsKey")).toBeNull()
+    expect(queryByText("keys.blue")).toBeNull()
+    expect(queryByText("gate.locked")).not.toBeNull()
+    expect(queryByText("gate.lockedColor")).toBeNull()
   })
 })

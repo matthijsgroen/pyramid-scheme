@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState, type FC } from "react"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
-import { useCelebration } from "../useCelebration"
+import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import {
@@ -38,7 +38,7 @@ type Props = {
 
 export const StarBattlePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
-  const [state, setState] = usePuzzleState(() => createStarBattleState(puzzle))
+  const [state, setState] = usePuzzleState(() => createStarBattleState(puzzle), puzzle)
   // Which place this room is. The board, the goal, the rules and every hint sentence are all drawn from it,
   // so it is resolved once.
   const skin = skinFor(role, theme, 0, room)

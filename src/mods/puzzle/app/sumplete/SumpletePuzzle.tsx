@@ -7,7 +7,7 @@ import { buildSumpleteHint } from "@/mods/puzzle/app/sumplete/sumpleteHint"
 import { computeColLines, computeRowLines, isSumpleteSolved } from "@/mods/puzzle/game/sumplete/sumpleteStatus"
 import { createSumpleteState, toggleSumpleteCell } from "@/mods/puzzle/game/sumplete/sumpleteState"
 import type { SumpleteGrid } from "@/mods/puzzle/game/sumplete/generateSumplete"
-import { useCelebration } from "../useCelebration"
+import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import type { Difficulty } from "@/data/difficultyLevels"
@@ -22,7 +22,7 @@ type Props = {
 export const SumpletePuzzle: FC<Props> = ({ puzzle, difficulty, onSolved, onCancel }) => {
   const { t } = useTranslation("common")
   const { grid, rowTargets, colTargets, solution, techniqueCap } = puzzle
-  const [state, setState] = usePuzzleState(() => createSumpleteState(grid.length))
+  const [state, setState] = usePuzzleState(() => createSumpleteState(grid.length), puzzle)
 
   const toggle = useCallback(
     (row: number, col: number) => setState(prev => toggleSumpleteCell(prev, row, col)),

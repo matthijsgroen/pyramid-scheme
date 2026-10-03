@@ -1,8 +1,8 @@
 import { writeFileSync } from "node:fs"
 import path from "node:path"
 import { difficulties } from "../src/data/difficultyLevels"
-import { LIGHTBEAM_CONFIG } from "../src/mods/puzzle/game/lightbeam/lightbeamConfig"
-import { generateLightbeam } from "../src/mods/puzzle/game/lightbeam/generateLightbeam"
+import { LIGHTBEAM_CONFIG } from "../src/mods/topology/game/lightbeam/lightbeamConfig"
+import { generateLightbeam } from "../src/mods/topology/game/lightbeam/generateLightbeam"
 import { SUDOKU_CONFIG } from "../src/mods/puzzle/game/sudoku/sudokuConfig"
 import { generateSudoku } from "../src/mods/puzzle/game/sudoku/generateSudoku"
 import { ECLIPSE_CONFIG } from "../src/mods/puzzle/game/eclipse/eclipseConfig"
@@ -46,7 +46,7 @@ export const constellationFixture = () =>
 export const rushHourFixture = () => perTier((tier, seed) => generateRushHour(seed, RUSH_HOUR_CONFIG[tier]))
 
 const FIXTURES = {
-  lightbeam: { build: lightbeamFixture, at: "src/mods/puzzle/game/lightbeam/boards.fixture.json" },
+  lightbeam: { build: lightbeamFixture, at: "src/mods/topology/game/lightbeam/boards.fixture.json" },
   sudoku: { build: sudokuFixture, at: "src/mods/puzzle/game/sudoku/boards.fixture.json" },
   eclipse: { build: eclipseFixture, at: "src/mods/puzzle/game/eclipse/boards.fixture.json" },
   constellation: { build: constellationFixture, at: "src/mods/puzzle/game/constellation/boards.fixture.json" },

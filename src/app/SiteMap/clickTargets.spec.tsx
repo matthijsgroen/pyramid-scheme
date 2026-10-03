@@ -3,12 +3,14 @@ import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor } from "@/game/siteAssembler"
-import { completeCell, findPath } from "@/game/gridNavigation"
-import { offeredTargets } from "./clickTargets"
+import { completeCell, findPath, revealAll, walkableFrom } from "@/game/gridNavigation"
+import { buildOfferContext, clickTargetAt, markerAt, offerContextFrom, offeredTargets } from "./clickTargets"
 import { buildRoomClaims } from "./roomClaims"
-import type { FloorGrid } from "@/game/siteTypes"
+import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 import { CELL, cellCenter } from "./mapScale"
+import { DIR_MOVES } from "./corridorRuns"
+import { AXES, DROP_AT, dropGrid, obstacleIndexes } from "./floorFixtures.testing"
 
 // jsdom has no scrollTo; the map scrolls itself to the explorer on mount.
 Element.prototype.scrollTo = Element.prototype.scrollTo ?? (() => {})
@@ -207,5 +209,228 @@ describe("the corridor detector's hint", () => {
 
     expect(junction?.querySelector("circle[stroke]")).toBeTruthy()
     expect(junction?.style.cursor).toBe("pointer")
+  })
+})
+
+// SOFT GATING, WHICH IS EVERY GATE BUT ONE. A ward and an authored floor-key door each carry the family
+// that renders them, so the player walks up, taps, and is told what it wants. Only a way out a switch
+// shut — bars with nothing behind them to enter — is a wall (`isSealedWayOut`), and narrowing the block
+// to that is the whole of the claim: pinned here against real gates off a real carve.
+describe("a gate the player can enter", () => {
+  const gatedFloor: FloorConfig = {
+    pathPuzzles: 2,
+    difficulty: "junior",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: [
+      { pathPuzzles: 1, difficulty: "junior", end: "treasure", gate: { type: "tomb-key", wardKeyId: "ward:pin" } },
+      { pathPuzzles: 1, difficulty: "junior", end: "treasure", gate: { type: "floor-key", color: "red" } },
+    ],
+  }
+
+  const gatesOf = (grid: FloorGrid) =>
+    grid.cells.flatMap((row, r) =>
+      row.flatMap((cell, c) =>
+        cell.type === "room" && cell.tags?.includes("gate") && cell.requiredKeyId
+          ? [{ at: [r, c] as [number, number], variant: cell.gateVariant, family: cell.family }]
+          : []
+      )
+    )
+
+  const carved = (() => {
+    for (let seed = 0; seed < 40; seed++) {
+      const result = assembleFloor("gate-pin", gatedFloor, seed)
+      if (result.success && gatesOf(result.grid).length === 2) return revealAll(result.grid)
+    }
+    throw new Error("no seed carved both a ward and a floor-key door")
+  })()
+
+  const gates = gatesOf(carved)
+
+  it("is a ward and an authored floor-key door, each with its own family standing in it", () => {
+    expect(gates.map(gate => gate.variant).sort()).toEqual(["floor-key", "tomb-key"])
+    expect(gates.every(gate => gate.family !== undefined)).toBe(true)
+  })
+
+  it.each([0, 1])("is walked up to and tapped from the passage outside it, gate %i", index => {
+    const gate = gates[index]
+    const cell = carved.cells[gate.at[0]][gate.at[1]]
+    if (cell.type === "empty") throw new Error("a gate stood on no cell at all")
+    const [dir] = [...cell.dirs]
+    const outside: [number, number] = [gate.at[0] + DIR_MOVES[dir][0], gate.at[1] + DIR_MOVES[dir][1]]
+
+    expect(walkableFrom(carved, outside).has(`${gate.at[0]},${gate.at[1]}`)).toBe(true)
+    expect(findPath(carved, outside, gate.at).length).toBeGreaterThan(0)
+    expect([...offeredTargets(carved, buildRoomClaims(carved), outside).values()]).toContainEqual(gate.at)
+  })
+})
+
+// A ZIPLINE IS TAKEN, NOT WALKED: the launch and the landing are destinations on their own side, and
+// the obstacle between them is never one. Offers are asserted as whole sets of targets, so a target that
+// leaks across the obstacle, or one that goes missing, is red either way.
+describe("the offers around a one-way drop", () => {
+  const key = ([r, c]: readonly [number, number]) => `${r},${c}`
+  const targetsFrom = (grid: FloorGrid, from: readonly [number, number]) =>
+    new Set([...offeredTargets(grid, buildRoomClaims(grid), from).values()].map(key))
+
+  describe.each(AXES)("going $travel", axis => {
+    const { grid, at } = dropGrid(axis, "room", "room", "reachable")
+
+    it("offers its own side's two ends and nothing across the obstacle, from the launch's side", () => {
+      const side = new Set([key(at(DROP_AT.fromNode)), key(at(DROP_AT.launch))])
+      expect(targetsFrom(grid, at(DROP_AT.fromNode))).toEqual(side)
+      expect(targetsFrom(grid, at(DROP_AT.launch))).toEqual(side)
+    })
+
+    it("offers its own side's two ends and nothing across the obstacle, from the landing's side", () => {
+      const side = new Set([key(at(DROP_AT.landing)), key(at(DROP_AT.toNode))])
+      expect(targetsFrom(grid, at(DROP_AT.toNode))).toEqual(side)
+      expect(targetsFrom(grid, at(DROP_AT.landing))).toEqual(side)
+    })
+
+    // The four places a player stands at a drop, each asserted as the WHOLE of what is drawn: an arrow on a
+    // launch or landing pointing the way it is entered from its own node (whether or not it has been
+    // walked), and the node art on a room.
+    describe.each(["reachable", "completed"] as const)("with every cell %s", state => {
+      const { grid: stated, at: statedAt } = dropGrid(axis, "room", "room", state)
+      const markersFrom = (from: readonly [number, number]) => {
+        const ctx = offerContextFrom(stated, from, {})
+        const claims = buildRoomClaims(stated)
+        return Object.fromEntries(
+          [...offeredTargets(stated, claims, from).keys()].sort().map(cell => {
+            const [r, c] = cell.split(",").map(Number)
+            return [cell, markerAt(stated, claims, r, c, ctx)]
+          })
+        )
+      }
+      const fromSide = {
+        [key(statedAt(DROP_AT.fromNode))]: { kind: "node" },
+        [key(statedAt(DROP_AT.launch))]: { kind: "arrow", dir: axis.travel },
+      }
+      const toSide = {
+        [key(statedAt(DROP_AT.landing))]: { kind: "arrow", dir: axis.back },
+        [key(statedAt(DROP_AT.toNode))]: { kind: "node" },
+      }
+
+      it("marks the launch with an arrow from beside it and from on it", () => {
+        expect(markersFrom(statedAt(DROP_AT.fromNode))).toEqual(fromSide)
+        expect(markersFrom(statedAt(DROP_AT.launch))).toEqual(fromSide)
+      })
+
+      it("marks the landing with an arrow from beside it and from on it", () => {
+        expect(markersFrom(statedAt(DROP_AT.toNode))).toEqual(toSide)
+        expect(markersFrom(statedAt(DROP_AT.landing))).toEqual(toSide)
+      })
+    })
+
+    // An arrow appears only around the player. Walkability is lifted (walkFrom undefined) so that all four
+    // ends are offered at once, and only the standing cell the arrows are reckoned from varies. An end away
+    // from the player never wears an arrow left behind: it is a dot while it is somewhere still to go, and
+    // nothing once walked, which is the rule every other stopping point answers to.
+    describe.each(["reachable", "completed"] as const)("with every cell %s, seen from across the floor", state => {
+      const { grid: stated, at: statedAt } = dropGrid(axis, "room", "room", state)
+      // Already walked, so a far end draws nothing; seen but not walked, so it draws a dot.
+      const far = state === "completed" ? null : { kind: "dot" }
+      const markersFrom = (runFrom: readonly [number, number], runsSuppressed = false) => {
+        const ctx = buildOfferContext(stated, { walkFrom: undefined, runFrom, runsSuppressed, freeWalk: false })
+        const claims = buildRoomClaims(stated)
+        // The four ends only: with walkability lifted the obstacle's own cells are offered too, and drawn nothing.
+        return Object.fromEntries(
+          Object.values(DROP_AT).map(i => {
+            const [r, c] = statedAt(i)
+            return [key([r, c]), markerAt(stated, claims, r, c, ctx)]
+          })
+        )
+      }
+
+      it("draws no arrow on the far launch and an arrow only on the landing beside the player", () => {
+        expect(markersFrom(statedAt(DROP_AT.toNode))).toEqual({
+          [key(statedAt(DROP_AT.fromNode))]: { kind: "node" },
+          [key(statedAt(DROP_AT.launch))]: far,
+          [key(statedAt(DROP_AT.landing))]: { kind: "arrow", dir: axis.back },
+          [key(statedAt(DROP_AT.toNode))]: { kind: "node" },
+        })
+      })
+
+      it("draws no arrow on the far landing and an arrow only on the launch beside the player", () => {
+        expect(markersFrom(statedAt(DROP_AT.fromNode))).toEqual({
+          [key(statedAt(DROP_AT.fromNode))]: { kind: "node" },
+          [key(statedAt(DROP_AT.launch))]: { kind: "arrow", dir: axis.travel },
+          [key(statedAt(DROP_AT.landing))]: far,
+          [key(statedAt(DROP_AT.toNode))]: { kind: "node" },
+        })
+      })
+
+      it("draws no arrow on either end while the explorer is gliding", () => {
+        expect(markersFrom(statedAt(DROP_AT.fromNode), true)).toEqual({
+          [key(statedAt(DROP_AT.fromNode))]: { kind: "node" },
+          [key(statedAt(DROP_AT.launch))]: far,
+          [key(statedAt(DROP_AT.landing))]: far,
+          [key(statedAt(DROP_AT.toNode))]: { kind: "node" },
+        })
+      })
+    })
+
+    it("draws no marker on any cell of the obstacle, from any standing place", () => {
+      for (const standing of [DROP_AT.fromNode, DROP_AT.launch, DROP_AT.landing, DROP_AT.toNode]) {
+        const ctx = offerContextFrom(grid, at(standing), {})
+        for (const index of obstacleIndexes) {
+          const [r, c] = at(index)
+          expect(markerAt(grid, buildRoomClaims(grid), r, c, ctx)).toBeNull()
+        }
+      }
+    })
+  })
+})
+
+// THE DRIFT GUARD. The game's context and the specs' used to be two assemblies; they are one builder
+// (`buildOfferContext`) now, and this holds the view to it in the state where they could differ: the
+// explorer is gliding, so the live position (walk rule) and the settled one (run arrows) are different
+// cells. Pinned as it is today — walk reckoned from the live cell, no run arrows — not as it should be.
+describe("the map in mid-glide taps what the one builder offers", () => {
+  const sorted = (pairs: readonly (readonly [number, number])[]) => [...pairs].map(([r, c]) => `${r},${c}`).sort()
+
+  const glide = (grid: FloorGrid, settled: readonly [number, number], live: readonly [number, number]) => {
+    const onCellClick = vi.fn()
+    const { container, rerender } = render(<SiteMapView grid={grid} explorerPos={settled} onCellClick={onCellClick} />)
+    rerender(<SiteMapView grid={grid} explorerPos={live} onCellClick={onCellClick} />)
+    for (const el of container.querySelectorAll<HTMLElement>("[data-marker-cell]"))
+      if (el.style?.cursor === "pointer") fireEvent.click(el)
+
+    const claims = buildRoomClaims(grid)
+    const ctx = buildOfferContext(grid, { walkFrom: live, runFrom: settled, runsSuppressed: true, freeWalk: false })
+    const offered: [number, number][] = []
+    for (let r = -1; r <= grid.rows; r++)
+      for (let c = -1; c <= grid.cols; c++) {
+        const target = clickTargetAt(grid, claims, r, c, ctx)
+        if (target) offered.push([target[0], target[1]])
+      }
+    return {
+      ctx,
+      tapped: sorted(onCellClick.mock.calls as [number, number][]),
+      offered: sorted(offered),
+      atRest: (at: readonly [number, number]) => sorted([...offeredTargets(grid, claims, at).values()]),
+    }
+  }
+
+  it("offers no run arrows while the dot is travelling", () => {
+    const { grid, at: settled } = arrivedAtEntrance("junior_1")
+    const live = grid.cells
+      .flatMap((row, r) => row.map((cell, c) => ({ cell, r, c })))
+      .filter(
+        ({ cell, r, c }) =>
+          cell.type !== "empty" && cell.state === "reachable" && (r !== settled[0] || c !== settled[1])
+      )
+      .map(({ r, c }) => [r, c] as const)[0]
+    if (!live) throw new Error("no cell to glide to")
+
+    const { ctx, tapped, offered, atRest } = glide(grid, settled, live)
+
+    expect(ctx.runTargets.size).toBe(0)
+    // A glide only ever runs along a route, so both ends lie on one connected floor and the walk rule gives
+    // the same answer from either: the live-vs-settled walk position is not observable here, only the arrows.
+    expect(walkableFrom(grid, live)).toEqual(walkableFrom(grid, settled))
+    expect(tapped).toEqual(offered)
+    expect(offered).not.toEqual(atRest(settled))
   })
 })

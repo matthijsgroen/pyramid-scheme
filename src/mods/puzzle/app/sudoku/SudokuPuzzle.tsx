@@ -20,7 +20,7 @@ import {
 } from "@/mods/puzzle/game/sudoku/sudokuState"
 import { isSudokuSolved, strandedNotes, sudokuConflicts } from "@/mods/puzzle/game/sudoku/sudokuStatus"
 import { boxCount } from "@/mods/puzzle/game/sudoku/techniques"
-import { useCelebration } from "../useCelebration"
+import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import type { Difficulty } from "@/data/difficultyLevels"
@@ -52,7 +52,7 @@ export const SudokuPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
   // Which place this room is. The board, the pad, the name, the goal, the rules and every hint
   // sentence are drawn from it — including what a value LOOKS like, which is this family's second face.
   const skin = skinFor(role, theme, 0, room)
-  const [state, setState] = usePuzzleState(() => createSudokuState(puzzle))
+  const [state, setState] = usePuzzleState(() => createSudokuState(puzzle), puzzle)
   const { selected, pencil, selectCell, focusCell, togglePencil, clearSelection } = useSudokuEntry()
 
   const values = useMemo(() => sudokuValues(state), [state])

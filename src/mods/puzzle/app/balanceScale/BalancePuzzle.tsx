@@ -2,7 +2,7 @@ import { useMemo, type FC } from "react"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
-import { useCelebration } from "../useCelebration"
+import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import { computeBalanceLines, isBalanceSolved } from "@/mods/puzzle/game/balanceScale/balanceStatus"
@@ -43,7 +43,7 @@ export const BalancePuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room
   const { t } = useTranslation("common")
   const skin = skinFor(role, theme, 0, room)
   const { glyphs, scales, maxValue, solution, techniqueCap } = puzzle
-  const [state, setState] = usePuzzleState(() => createBalanceState(glyphs))
+  const [state, setState] = usePuzzleState(() => createBalanceState(glyphs), puzzle)
 
   const lines = computeBalanceLines(scales, state.values)
   const board = useMemo(

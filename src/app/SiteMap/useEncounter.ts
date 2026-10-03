@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { cellAddress } from "./cellIdentity"
+import { cellAddress, legacyCellAddress } from "./cellIdentity"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FloorGrid, KeyColor, TreasureReward } from "@/game/siteTypes"
 import { getCell } from "@/game/gridNavigation"
+import { classifyForkShape } from "@/game/forkShape"
 import { hashString } from "@/support/hashString"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { getFamilyPlugin, type FamilyContext, type FamilyPlugin } from "@/app/families/familyRegistry"
@@ -13,6 +14,8 @@ import { useMergedReactions, type SolveOutcome } from "@/app/reactions/reactionC
 type EncounterArgs = {
   journeys: JourneyAPI
   journeyId: string
+  /** Which level of the journey this is (1-based) — see FamilyContext.levelNr. */
+  levelNr: number
   currentFloor: number
   difficulty: Difficulty
   grid: FloorGrid | null
@@ -41,6 +44,7 @@ export type Encounter = {
 export const useEncounter = ({
   journeys,
   journeyId,
+  levelNr,
   currentFloor,
   difficulty,
   grid,
@@ -64,12 +68,15 @@ export const useEncounter = ({
     const cell = getCell(grid, row, col)
     const sectionHash = cell && cell.type !== "empty" ? (cell.sectionHash ?? "") : ""
     const edgeId = encodeEdge(currentFloor, row, col)
+    const exits = cell?.type === "room" ? cell.exits : undefined
     return {
       journeyId,
+      levelNr,
       edgeId,
       // What a family files this room's state under. The coordinate above says where the room is drawn
       // right now; this says which room it IS, and keeps saying it after the floor is carved again.
       address: (grid && cellAddress(grid, currentFloor, row, col)) || edgeId,
+      legacyAddress: (grid && legacyCellAddress(grid, currentFloor, row, col)) || undefined,
       sectionHash,
       freshArrival: active.freshArrival,
       // The tier this room's own section was authored at, falling back to the floor's for a cell that
@@ -87,9 +94,19 @@ export const useEncounter = ({
       requiredKeyId: cell?.type === "room" ? cell.requiredKeyId : undefined,
       gateVariant: cell?.type === "room" ? cell.gateVariant : undefined,
       keyColor: cell?.type === "room" ? cell.keyColor : undefined,
+      // A fork's ways out, and the shape they make. The family standing in a fork draws its doors from
+      // the exits themselves; its GENERATOR gets only the shape, because the exits name a key per room
+      // and a board is built for a layout, not for a room.
+      exits,
+      forkShape: classifyForkShape((exits ?? []).filter(exit => exit.gateKeyId).map(exit => exit.dir)),
+      // A lever's room reads its own positions off the cell, the same way a fork reads its ways out.
+      mechanism: cell?.type === "room" ? cell.mechanism : undefined,
+      // The pair this room's mechanism wears on the map, so the screen the player opens wears it too.
+      mark: cell?.type === "room" ? cell.mark : undefined,
+      gateFace: cell?.type === "room" ? cell.gateFace : undefined,
       ownedKeys,
     }
-  }, [active, grid, currentFloor, journeyId, difficulty, ownedKeys])
+  }, [active, grid, currentFloor, journeyId, levelNr, difficulty, ownedKeys])
 
   const puzzle = useMemo(() => {
     if (!family || !ctx) return null
@@ -137,10 +154,16 @@ export const useEncounter = ({
       const sectionHash = cell && cell.type !== "empty" ? (cell.sectionHash ?? "") : ""
       const address = (grid && cellAddress(grid, currentFloor, row, col)) || edgeId
       journeys.markCellExplored(sectionHash, edgeId, address)
-      // A resolved room is never reopened, so its moves have nothing left to say.
-      clearPuzzleState()
+      // The board is finished, so the moves that made it have nothing left to say, and a room walked back
+      // into gets a fresh one. Unless those moves ARE the mechanism (FamilyMeta.stateIsTheMechanism):
+      // there they say how the floor itself stands, and the room has to reopen on them.
+      const solvedFamily = cell?.type === "room" && cell.family ? getFamilyPlugin(cell.family) : undefined
+      if (!solvedFamily?.meta.stateIsTheMechanism) clearPuzzleState()
       setActive(null)
 
+      // Loot is what the room held, not what solving it pays — a room walked back into has already
+      // handed it over, and was marked explored on the visit that did.
+      if (cell?.type === "room" && cell.state === "completed") return
       const reward = cell?.type === "room" ? cell.reward : undefined
       if (!reward) return
       // A key-host chest wears the colour(s) of the doors its key opens; carry that into the popup so

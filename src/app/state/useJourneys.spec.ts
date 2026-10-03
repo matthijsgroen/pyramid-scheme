@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from "vitest"
-import { createJourneysV3Api, type StoredJourneyStateV3 } from "./useJourneys"
+import { createJourneysV3Api, MECHANISM_AT_REST, type StoredJourneyStateV3 } from "./useJourneys"
 import type { TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { journeys as allJourneys } from "@/data/journeys"
+import { migrateJourneyToCarveIndependent } from "@/app/SiteMap/cellIdentity"
 
 // completeJourney checks against knownJourneyIds (the real journey list), so we
 // need a real journey ID — use the first pyramid entry from the data.
@@ -95,6 +96,132 @@ describe("markCellExplored", () => {
     })
     const api = makeApi([stored])
     expect(api.getExploredCells(REAL_ID)).toEqual({ sec1: ["0/~0"], sec2: ["0/p1"] })
+  })
+})
+
+// ── updatePosition ────────────────────────────────────────────────────────────
+
+describe("updatePosition", () => {
+  const run = (steps: (api: ReturnType<typeof makeApi>) => void, initial: Partial<StoredJourneyStateV3> = {}) => {
+    let state = [makeStoredJourney(initial)]
+    const set = (updater: unknown) => {
+      state =
+        typeof updater === "function"
+          ? (updater as (p: StoredJourneyStateV3[]) => StoredJourneyStateV3[])(state)
+          : (updater as StoredJourneyStateV3[])
+    }
+    steps(createJourneysV3Api({ journeys: state, setJourneys: set, journeyData: [makeJourneyData(REAL_ID)] }))
+    return { state }
+  }
+
+  it("walking onto a place records it", () => {
+    const { state } = run(api => api.updatePosition(REAL_ID, "sec#0/p2", "0:1,2"))
+    expect(state[0].positionKey).toBe("sec#0/p2")
+    expect(state[0].position).toBe("0:1,2")
+  })
+
+  it("leaves the recorded position at the last place, not the bend just walked onto", () => {
+    const { state } = run(api => api.updatePosition(REAL_ID, "sec#0/~4", "0:1,3"), {
+      position: "0:1,2",
+      positionKey: "sec#0/p2",
+    })
+    expect(state[0].positionKey).toBe("sec#0/p2")
+    expect(state[0].position).toBe("0:1,2")
+  })
+
+  it("a player who has only stood on bends since entering resolves to the entrance (null)", () => {
+    const { state } = run(
+      api => {
+        api.updatePosition(REAL_ID, "sec#0/~1", "0:0,1")
+        api.updatePosition(REAL_ID, "sec#0/~2", "0:0,2")
+      },
+      { position: null, positionKey: null }
+    )
+    expect(state[0].positionKey).toBeNull()
+    expect(state[0].position).toBeNull()
+  })
+
+  it("keeps the raw archive and the address in step, even across an ignored bend", () => {
+    const { state } = run(api => {
+      api.updatePosition(REAL_ID, "sec#0/p2", "0:1,2")
+      api.updatePosition(REAL_ID, "sec#0/~5", "0:1,5")
+    })
+    expect(state[0].position).toBe("0:1,2")
+    expect(state[0].positionKey).toBe("sec#0/p2")
+  })
+})
+
+// ── standingKey clears everywhere positionKey does ─────────────────────────────
+
+describe("standingKey clears wherever positionKey does", () => {
+  // Writers are found, not listed: every function on the api is called with each shape of argument the
+  // api takes, and any that moves `positionKey` must not leave the stale `standingKey` behind — it
+  // outranks `positionKey` in both readers. A sixth writer is caught the day it exists.
+  const STALE = "sec#0/~4"
+  const journey = allJourneys.find(j => j.id === REAL_ID)!
+  // The real migration's output, so the guard sees what the launch hands to setCarveIndependentState.
+  const carveState = migrateJourneyToCarveIndependent({ levelNr: 1, position: "0:1,2" }, () => null)
+  const argumentShapes: unknown[][] = [
+    [],
+    [REAL_ID, 2],
+    [journey],
+    [REAL_ID, carveState],
+    [REAL_ID, "sec#0/p9", "0:9,9"],
+  ]
+  const startingPoints = [1, journey.levelCount + 1]
+
+  const probe = () => {
+    const writers = new Map<string, StoredJourneyStateV3[]>()
+    const names = Object.entries(makeApi([makeStoredJourney()]))
+      .filter(([, value]) => typeof value === "function")
+      .map(([name]) => name)
+    for (const name of names) {
+      for (const levelNr of startingPoints) {
+        for (const args of argumentShapes) {
+          let state = [makeStoredJourney({ levelNr, position: "0:1,2", positionKey: "sec#0/p2", standingKey: STALE })]
+          const api = createJourneysV3Api({
+            journeys: state,
+            setJourneys: updater => {
+              state = typeof updater === "function" ? updater(state) : updater
+            },
+            journeyData: [makeJourneyData(REAL_ID)],
+          }) as unknown as Record<string, (...a: unknown[]) => unknown>
+          try {
+            api[name](...args)
+          } catch {
+            continue
+          }
+          if (state[0].positionKey !== "sec#0/p2") writers.set(name, [...(writers.get(name) ?? []), ...state])
+        }
+      }
+    }
+    return writers
+  }
+
+  it("no writer that moves positionKey leaves the stale standingKey behind", () => {
+    const writers = probe()
+    expect(writers.size).toBeGreaterThan(0)
+    for (const [name, states] of writers) {
+      for (const stored of states) {
+        expect(stored.standingKey, `${name} moved positionKey but kept a stale standingKey`).not.toBe(STALE)
+      }
+    }
+  })
+
+  it("the writers it finds are the ones known, so a probe gone blind or a new writer is noticed", () => {
+    // setRepairedExploration is listed because the probe hands it a carve state, which it spreads; its
+    // own argument type carries no positionKey.
+    expect([...probe().keys()].sort()).toEqual(
+      [
+        "completeJourney",
+        "completeLevel",
+        "setCarveIndependentState",
+        "setRepairedExploration",
+        "startJourney",
+        "updatePosition",
+        "visitLevel",
+      ].sort()
+    )
   })
 })
 
@@ -269,6 +396,68 @@ describe("markShopSlotPurchased / getPurchasedShopSlots", () => {
     api.markShopSlotPurchased("sec#0/p3", 0) // dedup
     api.markShopSlotPurchased("sec#0/p3", 2)
     expect(state[0].purchasedStock).toEqual(["1:sec#0/p3!0", "1:sec#0/p3!2"])
+  })
+})
+
+// ── setMechanismState / getMechanismStates ──────────────────────────────────────
+
+describe("mechanism positions", () => {
+  // The api captures `journeys` at creation, so reads must run against a freshly-built api over the
+  // latest state — mirrors how the hook rebuilds each render.
+  const run = (steps: (api: ReturnType<typeof makeApi>) => void) => {
+    let state = [makeStoredJourney()]
+    const set = (updater: unknown) => {
+      state =
+        typeof updater === "function"
+          ? (updater as (p: unknown) => StoredJourneyStateV3[])(state)
+          : (updater as StoredJourneyStateV3[])
+    }
+    steps(createJourneysV3Api({ journeys: state, setJourneys: set, journeyData: [makeJourneyData(REAL_ID)] }))
+    return {
+      state,
+      api: createJourneysV3Api({ journeys: state, setJourneys: set, journeyData: [makeJourneyData(REAL_ID)] }),
+    }
+  }
+
+  it("tells a mechanism put back to rest apart from one never touched", () => {
+    const untouched = run(() => {})
+    expect(untouched.api.getMechanismStates(REAL_ID).has("s0#0/p1")).toBe(false)
+
+    const routed = run(api => api.setMechanismState("s0#0/p1", "s1"))
+    expect(routed.api.getMechanismStates(REAL_ID).get("s0#0/p1")).toBe("s1")
+
+    const atRest = run(api => api.setMechanismState("s0#0/p1", MECHANISM_AT_REST))
+    const states = atRest.api.getMechanismStates(REAL_ID)
+    expect(states.get("s0#0/p1")).toBe(MECHANISM_AT_REST)
+    expect(states.has("s0#0/p1")).toBe(true)
+  })
+
+  it("keeps one position per mechanism, replacing rather than accumulating", () => {
+    const { state } = run(api => {
+      api.setMechanismState("s0#0/p1", "s1")
+      api.setMechanismState("s0#0/p1", "s2")
+    })
+    expect(state[0].mechanismStates).toEqual({ "1:s0#0/p1": "s2" })
+  })
+
+  it("stores a position value without interpreting it, whatever characters it carries", () => {
+    const { api } = run(a => a.setMechanismState("s0#0/p1", "odd=label"))
+    expect(api.getMechanismStates(REAL_ID).get("s0#0/p1")).toBe("odd=label")
+  })
+
+  it("hands a level only its own positions, never another level's of the same journey", () => {
+    // The address a mechanism is stored under carries no level, so the `${levelNr}:` prefix is the
+    // only thing keeping two levels of one journey apart — and two levels of one journey both
+    // standing a lever is ordinary, not exotic.
+    const api = makeApi([
+      makeStoredJourney({ levelNr: 2, mechanismStates: { "1:lever#0/xhandle": "right", "2:gate#0/xhandle": "left" } }),
+    ])
+    expect([...api.getMechanismStates(REAL_ID)]).toEqual([["gate#0/xhandle", "left"]])
+  })
+
+  it("hands a level nothing when every stored position belongs to another level", () => {
+    const api = makeApi([makeStoredJourney({ levelNr: 2, mechanismStates: { "1:lever#0/xhandle": "right" } })])
+    expect(api.getMechanismStates(REAL_ID).size).toBe(0)
   })
 })
 
@@ -523,6 +712,7 @@ describe("re-keying bookkeeping", () => {
     api.setCarveIndependentState(REAL_ID, {
       exploredCells: { "1:abc": ["0/p7"] },
       positionKey: "abc#0/p7",
+      standingKey: null,
       disabledTraps: ["1:abc#0/p2"],
       skippedConsumables: [],
       purchasedStock: [],

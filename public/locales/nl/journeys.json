@@ -123,5 +123,9 @@
     "name": "Troon der Eeuwigheid",
     "description": "Eén zetel in het midden en tweeënveertig rechters eromheen, elk met een vraag waarop je geacht wordt nee te antwoorden.",
     "mapHint": "Alle sterrenpaden op dit fragment komen samen op één zetel, in het hart van het goddelijke rijk."
+  },
+  "dev_topology": {
+    "name": "Topology Proving Ground",
+    "description": "One site per floor-topology feature. Develop mode only."
   }
 }

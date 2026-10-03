@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState, type FC } from "react"
 import { usePuzzleState } from "@/mods/core/app/puzzleState"
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
-import { useCelebration } from "../useCelebration"
+import { useCelebration } from "@/mods/core/app/useCelebration"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import {
@@ -41,7 +41,7 @@ export const RushHourPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, roo
    * pinned the one you wanted — and the alternative to stepping back is resetting a board the player has
    * spent two minutes on.
    */
-  const [past, setPast] = usePuzzleState<RushHourState[]>(() => [createRushHourState(puzzle)])
+  const [past, setPast] = usePuzzleState<RushHourState[]>(() => [createRushHourState(puzzle)], puzzle)
   const state = past[past.length - 1]
 
   /** Whether the player has asked for a hint, which is what gates the search (§4). */

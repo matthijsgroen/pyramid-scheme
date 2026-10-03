@@ -1,5 +1,5 @@
 import type { SiteConfig, Tier, TreasureReward } from "./types"
-import type { ResolveKeyRequirements } from "../game/siteAssembler"
+import type { ResolveEncounter, ResolveKeyRequirements } from "../game/siteAssembler"
 import {
   computeReachability,
   createFloorAssemblyCache,
@@ -118,6 +118,10 @@ const buildJourneyMeta = (): Record<string, JourneyMeta> => {
 // distributions (allocateDistributions — the mod-owned money/junk/consumable Distributions).
 // Throws (does not warn) if a demand has no reachable slot once every relaxation rung is exhausted
 // — docs/game-design/keys-and-locks-solver.md, "Exhausted relaxation is a build failure, not a warning".
+//
+// Returns every reward standing in reachable ground once placement is finished, walked in the
+// permissive bracket (see the final pass at the bottom) — what a collection's target count is
+// checked against.
 export const placeFragments = (
   allConfigs: Record<string, SiteConfig[]>,
   currencies: readonly CurrencyDistribution[],
@@ -126,8 +130,14 @@ export const placeFragments = (
   dynamicDistributions: readonly Distribution[] = [],
   familyPriorityFor?: FamilyPriorityFor,
   emptyFraction = 0,
-  reachabilitySupport: ReachabilitySupport = {}
-): void => {
+  reachabilitySupport: ReachabilitySupport = {},
+  // Real family resolution (reEnterable included) for the reachability walk's own assembleFloor
+  // calls — injected from src/mods/allFamilyMeta.ts (resolveEncounterMeta) by
+  // scripts/generateWorld.ts, the same way resolveRequirements already travels. Absent (tests,
+  // callers with no mods) falls back to reachability.ts's own default, which never claims
+  // reEnterable for anyone.
+  resolveEncounter?: ResolveEncounter
+): readonly TreasureReward[] => {
   const slots = collectSlots(allConfigs, familyPriorityFor)
   const available = new Set(slots)
   const journeyMeta = buildJourneyMeta()
@@ -138,6 +148,11 @@ export const placeFragments = (
   // so every one of this loop's many computeReachability calls reuses the same assembled
   // grids instead of re-running maze generation for every reachable floor every time.
   const assemblyCache = createFloorAssemblyCache()
+  // A second cache for the permissive final pass, which runs after the filler passes have written
+  // rewards into floors `assemblyCache` still holds pre-filler copies of. Authored doors stand open
+  // only there, so the two caches also never mix walks under different gating.
+  const permissiveCache = createFloorAssemblyCache()
+  let authoredKeysHeld = false
   // Currency knowledge reachability needs but must not import (it's mod-agnostic): each
   // registered currency supplies its own gate threshold + reward→bucket harvest, merged with the
   // mod-injected `reachabilitySupport` (the tomb-treasure mod's tomb-key harvest, the tomb
@@ -157,7 +172,16 @@ export const placeFragments = (
     tierUnlockBucket: reachabilitySupport.tierUnlockBucket,
   }
   const computeReach = () =>
-    computeReachability(allConfigs, journeyMeta, ownedCounts, resolveRequirements, assemblyCache, support)
+    computeReachability(
+      allConfigs,
+      journeyMeta,
+      ownedCounts,
+      resolveRequirements,
+      authoredKeysHeld ? permissiveCache : assemblyCache,
+      support,
+      resolveEncounter,
+      authoredKeysHeld
+    )
 
   let reach = computeReach()
 
@@ -359,4 +383,17 @@ export const placeFragments = (
   // path end — clear the fragmentSlot sentinels so none reaches the serializer.
   for (const slot of available) slot.assign(undefined)
   available.clear()
+
+  // One last walk, now that every reward the world will ever hold is in place, in the permissive
+  // bracket: every blocker assumed clearable, so it answers "is every reward ever obtainable"
+  // rather than "is it open right now". That is the bracket a COLLECTION is judged in — a
+  // collection is loot, not a lock, so a piece in a discovery-gated pocket or behind a door whose
+  // key the player solves for still counts. Locks keep the stricter bracket the walks above use:
+  // an opener must be reachable BEFORE its blocker, and nothing here relaxes that.
+  //
+  // Handed to the world validators, so a mod can hold its own collection's target count to it.
+  authoredKeysHeld = true
+  reach = computeReach()
+  settleHarvest()
+  return reach.reachableRewards
 }

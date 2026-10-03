@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest"
 import { LEVEL_STEPS, PIECES_BY_STEP } from "./mosaicRevealOrder"
-import { MOSAIC_PIECES } from "@/ui/atoms/mosaicPieces.generated"
-import { MOSAIC_POINTS } from "@/ui/atoms/mosaicGeometry.generated"
+import { MOSAIC_PIECES } from "./mosaicPieces.generated"
+import { MOSAIC_POINTS } from "./mosaicGeometry.generated"
 
 // The reveal order is computed once at module load. Its contract: every piece-bearing step is
 // revealed exactly once (a missed step = a mosaic slice that never lights up; a duplicate = a

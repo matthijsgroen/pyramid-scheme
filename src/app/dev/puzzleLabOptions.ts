@@ -12,7 +12,7 @@ export const allowedDifficulties = (meta: FamilyMeta): Difficulty[] =>
 export const themesFor = (meta: FamilyMeta): string[] => meta.themes ?? [DEFAULT_THEME]
 
 /**
- * Which families the bench can play: the plain puzzle rooms, and the two boards a tomb serves — a capstone
+ * Which families the bench can play: the plain puzzle rooms and the two boards a tomb serves — a capstone
  * crocodile and a tableau.
  *
  * The tomb pair are on the list because a family the bench cannot reach is a family nobody reviews: they were
@@ -23,6 +23,9 @@ export const themesFor = (meta: FamilyMeta): string[] => meta.themes ?? [DEFAULT
  * **A tableau still needs its hieroglyphs**, and the bench does not grant them: filling a slot asks the save
  * for a completed hieroglyph, so a tableau plays here only as far as the fragments already collected allow.
  * That is enough to look at the board and not enough to solve one cold.
+ *
+ * **A board whose answer is the floor's own shape is not on the list.** A switch decides which way out of
+ * its fork opens, and the bench has no fork around it for that answer to mean anything.
  */
 const BENCH_TAGS = ["puzzle", "tomb-puzzle", "capstone"]
 

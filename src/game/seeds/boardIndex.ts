@@ -1,3 +1,4 @@
+import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { EncounterResolution, ResolveEncounter } from "@/game/siteAssembler"
 import type { FloorConfig, SiteConfig, SubSection } from "@/game/siteTypes"
@@ -22,7 +23,9 @@ export type ResolveBoardIndex = (familyId: string, address: RoomAddress) => numb
  * enumerateConfigs.ts already fails the build on.
  *
  * Ordinals are assigned world-wide rather than per journey, so no two rooms anywhere serve the same board.
- * They are also positional: insert a room early in a bucket and every later room in it shifts along one.
+ * Journeys are dealt in tier order (starter first, wizard last), and alphabetically by id within a tier, so
+ * a higher tier never takes an ordinal ahead of a lower one: authoring master or wizard cannot move a
+ * starter board, even when a master journey holds starter-difficulty rooms. They are also positional: insert a room early in a bucket and every later room in it shifts along one.
  * That costs nothing at play time (a room the player has already solved is remembered as explored, not as
  * a board) but it does mean the puzzle waiting in an unvisited room can change when the world is
  * re-authored.
@@ -48,7 +51,7 @@ const addressKey = (
  * section, then that section's own sub-sections. Nesting stops one level down because that is as deep as
  * the assembler carves — anything deeper is authored but never built, and must not consume a board.
  */
-const chainsOf = (floor: FloorConfig): Array<{ section: SubSection | FloorConfig; address: string }> => [
+export const chainsOf = (floor: FloorConfig): Array<{ section: SubSection | FloorConfig; address: string }> => [
   { section: floor, address: "main" },
   ...floor.sideSections.flatMap((side, i) => [
     { section: side, address: `s${i}` },
@@ -56,19 +59,27 @@ const chainsOf = (floor: FloorConfig): Array<{ section: SubSection | FloorConfig
   ]),
 ]
 
+/** Every journey id of `world`, lowest tier first; ties break alphabetically so the order never rides on
+ * the generated file's key order. */
+export const journeysInDealOrder = (
+  world: Record<string, unknown>,
+  tierOf: (journeyId: string) => Difficulty
+): string[] =>
+  Object.keys(world).sort((a, b) => difficultyCompare(tierOf(a), tierOf(b)) || (a < b ? -1 : a > b ? 1 : 0))
+
 /** `world` is keyed by journey and indexed by LEVEL, not by authored site (src/data/worldLevels.ts) — a
  * tomb re-enters its one site once per level, and each of those visits is a room of its own. */
 export const buildBoardIndexes = (
   world: Record<string, SiteConfig[]>,
   families: FamilyMeta[],
-  resolveEncounter: ResolveEncounter
+  resolveEncounter: ResolveEncounter,
+  tierOf: (journeyId: string) => Difficulty
 ): BoardIndexes => {
   const byId = new Map(families.map(family => [family.id, family]))
   const nextInBucket = new Map<string, number>()
   const indexes = new Map<string, number>()
 
-  // Sorted so the walk cannot ride on the generated file's key order.
-  for (const journeyId of Object.keys(world).sort())
+  for (const journeyId of journeysInDealOrder(world, tierOf))
     world[journeyId].forEach((levelSite, levelIndex) =>
       levelSite.forEach((floor, floorIndex) => {
         for (const { section, address } of chainsOf(floor))

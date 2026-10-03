@@ -21,7 +21,7 @@ const run = (task: SeedTask): SeedWorkerMessage => {
   const seedable = byId.get(task.familyId)?.seedable
   if (!seedable) return { type: "result", taskId: task.taskId, found: [], error: `${task.familyId} is not seedable` }
   try {
-    const options = seedable.resolveOptions({ difficulty: task.difficulty })
+    const options = seedable.resolveOptions(task.ctx)
     return { type: "result", taskId: task.taskId, found: findSeeds(seedable, options, task.from, task.count) }
   } catch (error) {
     // Reported rather than thrown: one bad window must not take the thread down and strand the pool.

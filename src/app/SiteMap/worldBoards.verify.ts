@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest"
+import { resolveOneWayRealisation } from "@/mods/allOneWayRealisations"
 import { assembleFloor } from "@/game/siteAssembler"
 import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry"
 import { hashString } from "@/support/hashString"
@@ -22,6 +23,7 @@ describe("every room in the world builds the board its tap asks for", () => {
       const result = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, {
         resolveKeyRequirements,
         floorRef: { journeyId: floor.journeyId, floorIndex: floor.floorIndex },
+        resolveOneWay: resolveOneWayRealisation,
         resolveBoardIndex: boardIndexesForFloor(floor.journeyId, floor.levelIndex, floor.floorIndex),
       })
       if (!result.success) continue
@@ -35,6 +37,7 @@ describe("every room in the world builds the board its tap asks for", () => {
             // The context useEncounter hands a family, built from the same cell.
             family.generate(hashString(floor.journeyId + edgeId), {
               journeyId: floor.journeyId,
+              levelNr: floor.levelIndex + 1,
               edgeId,
               address: cellAddress(result.grid, floor.floorIndex, r, c) ?? edgeId,
               sectionHash: cell.sectionHash ?? "",

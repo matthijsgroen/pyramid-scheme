@@ -1,4 +1,5 @@
 import type { Direction } from "@/game/siteTypes"
+import type { Mark } from "./mark"
 import { CELL } from "./mapScale"
 
 /** How far a node's own furniture stands out of the way of its marker, across and up the cell.
@@ -65,6 +66,10 @@ export type NodeSprite = {
   y: number
   /** Mirrored in x — how a stair is aimed. A reflection is a real oblique view; a rotation is a skew. */
   mirrored: boolean
+  /** The frame the art is drawn in, when it is not the cell-wide prop frame (`CELL` x `PROP_H`) every
+   * other node sprite shares. Anchored by `x`/`y` like any other: `y + h` is the line it stands on. */
+  w?: number
+  h?: number
   /** Where this sprite's own flame lands on the floor, in map space, if it carries one.
    *
    * AT THE FLAME AND NOT AT THE CELL. A stair's cresset stands at the edge of its mouth, some 24 units
@@ -92,4 +97,41 @@ export type NodeSprite = {
    * badge moves onto the chest, where the player is already looking, and the marker underneath drops
    * its own so the room is not checked twice.  */
   badge?: "taken" | "pending"
+  /** A control that has been used up (a lit torch): its furniture eases back as an emptied chest does. Its
+   * marker, which stands beside the art and not under it, wears the ✓ itself. */
+  spent?: boolean
+  /** Which mechanism this node belongs to (RoomCell.mark), for art that covers its own marker.
+   *
+   * A door a lever drives is drawn as a leaf of stone and its marker is hidden outright (a way a switch
+   * shut is a wall, `isSealedWayOut`) — so the pair the lever wears would have been worn at one end
+   * only, which tells a player nothing. Same move as `badge` above, for the same reason. */
+  mark?: Mark
+  /** A CONTROL'S ARM AND NEAR HALF, riding between `url` (the far half, `leverBaseBack`) and the floor —
+   * set only where a lever stands, so `url` alone still draws every other kind.
+   *
+   * Two more sprites rather than a field on `url`, because the arm has to sit BETWEEN the mound's two
+   * halves: the shaft's buried root sits inside the mound's own painted area, so drawn behind the WHOLE
+   * base it reads as balanced on the crown rather than rising out of it (`prim_lever`'s docstring,
+   * fought once already in the object's first build). `leverBaseFront`'s near lip then crosses the
+   * shaft's foot, which is what makes it look SEATED rather than stuck to the mound's front. */
+  armStack?: {
+    /** The upright arm, thrown to `angleDeg` by a `transform` at render time — the map never stores or
+     * paints a swung state, only the control's current position. */
+    armUrl: string
+    /** Everything nearer than the mound's own track — drawn last, over the arm. */
+    frontUrl: string
+    /** The control's current throw, in degrees off upright — see `angleForState` (SiteMapView.tsx). */
+    angleDeg: number
+  }
+}
+
+/** The art a one-way drop's mouth draws, by the direction the drop TRAVELS (the mouth's single `dirs`
+ * entry). One horizontal asset covers both headings, mirrored left-right for west. North and south are two
+ * renders of their own, never a flip of each other or of `dropEast`: a vertical flip is the wrong transform
+ * for this projection's up-facing top rule. */
+export const DROP_ART: Readonly<Record<Direction, { name: string; mirrored: boolean } | null>> = {
+  e: { name: "dropEast", mirrored: false },
+  w: { name: "dropEast", mirrored: true },
+  n: { name: "dropNorth", mirrored: false },
+  s: { name: "dropSouth", mirrored: false },
 }

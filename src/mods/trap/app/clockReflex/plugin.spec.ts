@@ -7,6 +7,7 @@ import "./plugin"
 const generate = (seed: number, difficulty: Difficulty) =>
   getFamilyPlugin("clock-reflex")!.generate(seed, {
     journeyId: "test",
+    levelNr: 1,
     edgeId: "test",
     address: "s#0/0@rencounter",
     sectionHash: "test",

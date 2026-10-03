@@ -17,7 +17,7 @@ import {
   undoHidato,
 } from "@/mods/puzzle/game/hidato/hidatoState"
 import { PuzzleFamilyShell } from "@/mods/core/app/PuzzleFamilyShell"
-import { useCelebration } from "../useCelebration"
+import { useCelebration } from "@/mods/core/app/useCelebration"
 import { hintIdleDelay } from "@/mods/core/app/useHintAvailability"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { skinFor } from "./skins"
@@ -39,7 +39,7 @@ export const HidatoPuzzle: FC<Props> = ({ puzzle, difficulty, role, theme, room,
   const { t } = useTranslation("common")
   // Which place this room is. The board, the goal, the rules and every hint sentence are drawn from it.
   const skin = skinFor(role, theme, 0, room)
-  const [state, setState] = usePuzzleState(() => createHidatoState(puzzle))
+  const [state, setState] = usePuzzleState(() => createHidatoState(puzzle), puzzle)
   const last = puzzle.cells.length
 
   const hint = useMemo(

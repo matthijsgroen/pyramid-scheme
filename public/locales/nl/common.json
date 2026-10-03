@@ -38,11 +38,14 @@
     "backArrow": "←",
     "back": "← Terug",
     "floor": "Verdieping {{number}}",
-    "leaveSiteTitle": "De weg naar buiten",
-    "leaveSiteMessage": "Daglicht valt door de deuropening. Deze plek verlaten en de expeditie beëindigen?",
-    "leaveSiteConfirm": "Naar buiten",
-    "leaveSiteCancel": "Binnen blijven",
     "enterSite": "Naar binnen",
+    "prompt": {
+      "here": "Onderzoek",
+      "stairs": "Neem de trap",
+      "exit": "Deze plek verlaten",
+      "zipline": "Glij langs de lijn — er is geen weg terug",
+      "oneWay": "Steek over — er is geen weg terug"
+    },
     "travel": "Reizen",
     "chooseYourJourney": "Kies je Reis",
     "backToMap": "Terug naar kaart",
@@ -155,6 +158,7 @@
   },
   "shop": {
     "title": "Fez's Kraam",
+    "invitation": "Bekijk de kraam",
     "buy": "Kopen",
     "sell": "Verkopen",
     "soldOut": "Uitverkocht",
@@ -1119,5 +1123,43 @@
       "cannot": "Twee tekens die je kent, en een plek die je niet kunt vullen. Nog niet.",
       "gap": "Het ontbrekende teken"
     }
+  },
+  "lightbeamSwitch": {
+    "name": "Het Kerende Licht",
+    "invitation": "Draai de spiegels",
+    "goal": "Het licht rust in een heiligdom, en de doorgang eronder staat open.",
+    "rules": {
+      "shrines": "Eén schijf licht, en een heiligdom boven elke doorgang van dit kruispunt. De spiegels op de vloer kunnen het licht naar elk ervan brengen.",
+      "doors": "De doorgang die het licht bereikt staat open, de andere zijn dicht. Eén route, één weg verder.",
+      "returning": "Kiezen kost je niets. Loop wanneer je wilt weer binnen en stuur het licht een andere kant op — die gaat open, en deze gaat dicht.",
+      "tap": "Tik op een spiegel om hem te draaien. Nog een tik zet hem terug."
+    },
+    "doorOpen": "{{way}} doorgang: open",
+    "doorShut": "{{way}} doorgang: dicht",
+    "way": { "n": "Noordelijke", "e": "Oostelijke", "s": "Zuidelijke", "w": "Westelijke" }
+  },
+  "handle": {
+    "name": "De Hendel",
+    "invitation": "Trek de hendel over",
+    "goal": "De hendel staat naar links of naar rechts. Wat de ene kant opent, sluit de andere.",
+    "left": "Naar links",
+    "right": "Naar rechts"
+  },
+  "torch": {
+    "name": "De Fakkel",
+    "invitation": "Steek de fakkel aan",
+    "goal": "Een onaangestoken fakkel. Als hij eenmaal brandt, kun je hem niet meer doven.",
+    "lit": "De fakkel brandt."
+  },
+  "gateFace": {
+    "title": "Een Wachtende Deur",
+    "hint": "Elk teken moet branden voordat deze deur opengaat.",
+    "lit": "{{owner}}: aan",
+    "unlit": "{{owner}}: nog niet",
+    "owner": { "torch": "Fakkel", "handle": "Hendel", "key": "Sleutel", "other": "Mechanisme" },
+    "orderHint": "Betreed de tegels in deze volgorde.",
+    "reset": "Opnieuw beginnen",
+    "spoiled": "De reeks is verpest: een tegel is in de verkeerde volgorde betreden.",
+    "tile": { "unwalked": "Stap {{step}}: nog niet betreden", "inOrder": "Stap {{step}}: in volgorde betreden", "outOfOrder": "Stap {{step}}: in verkeerde volgorde betreden" }
   }
 }

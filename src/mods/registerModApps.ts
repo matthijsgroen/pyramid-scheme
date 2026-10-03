@@ -13,6 +13,7 @@ import "./trap/app"
 import "./shop/app"
 import "./tombTreasure/app"
 import "./story/app"
+import "./topology/app"
 
 import { validatePlacedRewards } from "@/app/SiteMap/rewardSchemas"
 import { generatedWorldConfigs } from "@/data/generatedWorld"

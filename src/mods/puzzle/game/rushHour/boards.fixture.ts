@@ -1,7 +1,7 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { RushHourPuzzle } from "./rushHour"
 import boards from "./boards.fixture.json"
-import { reviveBoards } from "../boardFixture"
+import { reviveBoards } from "@/support/boardFixture"
 
 /**
  * Boards the generator made once, checked in beside it.

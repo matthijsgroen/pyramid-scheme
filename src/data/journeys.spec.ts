@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { journeys } from "./journeys"
+import { DEV_JOURNEY_ID } from "@/worldGen/data"
 import { mulberry32 } from "@/game/random"
 import { generateJourneyLevel } from "@/game/generateJourneyLevel"
 import { difficulties, type Difficulty } from "./difficultyLevels"
@@ -33,7 +34,9 @@ describe.each([
   })
 
   it("has no entries for journeys that no longer exist", () => {
-    const ids = new Set(journeys.map(j => j.id))
+    // The dev journey is built only under INCLUDE_DEV, so it is absent from `journeys` in an
+    // ordinary build while its strings still have to be here for the builds that do carry it.
+    const ids = new Set([...journeys.map(j => j.id), DEV_JOURNEY_ID])
     expect(Object.keys(translations).filter(id => !ids.has(id))).toEqual([])
   })
 })

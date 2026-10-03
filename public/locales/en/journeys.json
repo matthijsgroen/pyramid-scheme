@@ -123,5 +123,9 @@
     "name": "Throne of Eternity",
     "description": "One seat at the centre and forty-two judges around it, each one asking a question you are supposed to answer no to.",
     "mapHint": "Every star-path on this fragment converges on a single seat at the very heart of the divine realm."
+  },
+  "dev_topology": {
+    "name": "Topology Proving Ground",
+    "description": "One site per floor-topology feature. Develop mode only."
   }
 }

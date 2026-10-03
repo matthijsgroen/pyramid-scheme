@@ -15,13 +15,18 @@ import {
   MOD_REACHABILITY_SUPPORT,
   MOD_TOMB_TREASURE_RESOLVER,
   MOD_SHOP_STOCK,
+  MOD_RESERVED_TREASURE_INDICES,
+  REGISTERED_MOD_IDS,
 } from "../mods/registeredMods"
-import { MOSAIC_TOTAL } from "../mods/mosaic/game/mosaicCurrency"
+import { MOSAIC_STEPS_BY_TIER, MOSAIC_TOTAL } from "../mods/mosaic/game/mosaicCurrency"
+import { reachableMosaicCounts } from "../mods/mosaic/game/mosaicReachability"
 import {
   resolveKeyRequirements,
   familyPriorityFor,
   familyCapacityFor,
+  familyIsTrap,
   allocateEncounterSpread,
+  resolveEncounterMeta,
 } from "../mods/allFamilyMeta"
 
 // This is a structural golden guard (reward counts, determinism, tomb linking) — NOT an economy
@@ -35,6 +40,9 @@ afterAll(() => {
   delete process.env.SKIP_ECONOMY_GUARD
 })
 
+// Mirrors scripts/generateWorld.ts's own buildConfigs call arg-for-arg (EMPTY_FRACTION 0 included) —
+// a golden guard that invokes the builder differently from production guards a different thing
+// than it claims to.
 const buildRealConfigs = () =>
   buildConfigs(
     resolveKeyRequirements,
@@ -48,7 +56,11 @@ const buildRealConfigs = () =>
     MOD_REACHABILITY_SUPPORT,
     MOD_TOMB_TREASURE_RESOLVER,
     familyCapacityFor,
-    MOD_SHOP_STOCK
+    MOD_SHOP_STOCK,
+    MOD_RESERVED_TREASURE_INDICES,
+    familyIsTrap,
+    REGISTERED_MOD_IDS,
+    resolveEncounterMeta
   )
 
 // Golden guard for the world-builder refactor: buildRealConfigs() must keep
@@ -108,7 +120,56 @@ describe("buildConfigs golden guard", () => {
     const second = buildRealConfigs()
     expect(second).toEqual(first)
   }, 90_000)
+
+  // Reachability answers "can this be got to"; a collection also has to be asked "is there enough
+  // of it", per register and never as one world total. The numbers are pinned rather than derived
+  // from the walk that produced them: 53 of the world's mosaic pieces sit in discovery-gated
+  // pockets, so a walk that dropped that kind would come back short here while the world itself was
+  // fine.
+  it("every mosaic register's target count stands in reachable ground", () => {
+    let reachableRewards: readonly TreasureReward[] = []
+    buildConfigs(
+      resolveKeyRequirements,
+      ALL_CURRENCY_DISTRIBUTIONS,
+      CAPPED_CURRENCIES,
+      DYNAMIC_DISTRIBUTIONS,
+      [
+        ...MOD_WORLD_VALIDATORS,
+        (_configs, rewards) => {
+          reachableRewards = rewards
+        },
+      ],
+      familyPriorityFor,
+      0,
+      allocateEncounterSpread,
+      MOD_REACHABILITY_SUPPORT,
+      MOD_TOMB_TREASURE_RESOLVER,
+      familyCapacityFor,
+      MOD_SHOP_STOCK,
+      MOD_RESERVED_TREASURE_INDICES,
+      familyIsTrap,
+      REGISTERED_MOD_IDS,
+      resolveEncounterMeta
+    )
+    expect(reachableMosaicCounts(reachableRewards)).toEqual(MOSAIC_STEPS_BY_TIER)
+  }, 90_000)
 })
+
+// The world's one authored switch, read back out of a real build. Which ways out it shuts and what
+// it keys them with is the assembler's to decide, so what the builder owes is narrow: the junction
+// reaches the floor, the board that fills it reaches the floor, and no key is hung by hand beside
+// them — an authored gate here would shut a branch the switch cannot open.
+it("authors junior_2 pyramid 2's floor 0 as a switch fork, with no key hung by hand", () => {
+  const floor = buildRealConfigs().junior_2[1][0] // pyramid 2 (levelNr 2), floor 0
+
+  expect(floor.forks).toEqual([{ exits: 2, count: 1 }])
+  expect(floor.switches).toEqual({ encounter: "lightbeamSwitch", min: 1, max: 1 })
+
+  const authoredKeys = floor.sideSections.filter(
+    section => section.gate?.type === "floor-key" && "keyId" in section.gate && section.gate.keyId !== undefined
+  )
+  expect(authoredKeys).toEqual([])
+}, 90_000)
 
 describe("tomb floor linking — ward-path shortcuts", () => {
   // Built in beforeAll (not the describe body) so it runs AFTER the top-level beforeAll sets

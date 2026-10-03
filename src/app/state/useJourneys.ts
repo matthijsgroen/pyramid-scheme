@@ -6,8 +6,9 @@ import { persistentInteriorSeed } from "@/game/siteSeed"
 import { useJourneyTranslations, type TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { hashString } from "@/support/hashString"
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
-import { keyOfAddress, sectionOfAddress, type CarveIndependentState } from "@/app/SiteMap/cellIdentity"
+import { isPlaceAddress, keyOfAddress, sectionOfAddress, type CarveIndependentState } from "@/app/SiteMap/cellIdentity"
 import type { RepairedExploration } from "@/app/SiteMap/repairFloorExploration"
+import type { MechanismSlotBackfill } from "@/app/SiteMap/backfillMechanismSlots"
 
 /** Bumped whenever a stored cell key changes shape. 2 named cells by their authored slot and floor
  * rather than by their step along the carved walk. 3 named their SECTION by its authoring address
@@ -20,6 +21,15 @@ export const CELL_KEY_VERSION = 3
  * save kept from a visit it never finished, which went on lighting emptied pyramids on the map. See
  * rederiveFloorExploration. */
 export const FLOOR_EXPLORATION_VERSION = 1
+
+/** Bumped when a mechanism room's address changes, so its stored state and explored mark are copied to
+ * the new address (backfillMechanismSlots). 1 is the slot that names the mechanism, not its family. */
+export const MECHANISM_SLOT_VERSION = 1
+
+/** The position a mechanism sits in when it opens nothing — see src/game/siteTypes.ts, where it lives
+ * because the assembler writes it onto cells and the domain layer holds no React. Re-exported here so
+ * app callers reach it beside the save that stores it. */
+export { MECHANISM_AT_REST } from "@/game/siteTypes"
 
 export type StoredJourneyStateV3 = {
   journeyId: string
@@ -39,14 +49,41 @@ export type StoredJourneyStateV3 = {
    *  re-derives them from `exploredSections` instead of throwing a run away. Absent = coordinates only. */
   cellKeyVersion?: number
   position: string | null // "floor:row,col" or null (entrance) — the archive; positionKey is what is read
-  /** Where the player stands, as a cell address (src/app/SiteMap/cellIdentity.ts). Null = entrance. */
+  /** The last authored place (src/game/cellSlot.ts) the player stood on, as a cell address
+   *  (src/app/SiteMap/cellIdentity.ts). A bend or bare fork carries no slot and never overwrites this —
+   *  walking one only, since entering, leaves it at null (entrance). */
   positionKey?: string | null
+  /** The cell the player is currently standing on, as a cell address — a corridor bend or bare fork
+   *  included, unlike `positionKey`. Absent reads as "nowhere yet", which falls through to
+   *  `positionKey` (see `useAssembledFloor`'s `explorerPos`). Cleared everywhere `positionKey` is,
+   *  so a new level or a reset never resumes standing on the floor it left. */
+  standingKey?: string | null
   interiorLevelNr: number | null // set when interior is open for a level; cleared on level advance
   // All three name cells by address — `${levelNr}:${sectionHash}#${floor}/${slot}` — so a
   // re-carve moves the cell and takes the entry with it. See migrateJourneyToCarveIndependent.
   disabledTraps?: string[] // cells where trapTool was spent to disarm the corridor
   skippedConsumables?: string[] // cells where inventory was full at collect time
   purchasedStock?: string[] // `${address}!${stockIndex}` of shop slots already bought
+  /** Which POSITION each mechanism on this site stands in, keyed `${levelNr}:${mechanismAddress}`.
+   *
+   * The position, never the consequence. A mechanism whose current position opens nothing is a real
+   * position and has an entry; absence means only that nobody has touched it, and the mechanism sits
+   * at whatever its floor says it starts at. Storing which doors stood open instead cannot tell those
+   * two apart, so a mechanism put into a position that opens nothing would spring back to the one it
+   * starts in on the next load.
+   *
+   * A map, where the sibling fields above pack `address=value` into one string. Those hold SETS of
+   * addresses; this holds a mapping, and storing a mapping as a mapping is both less code at every
+   * read and one fewer thing whose correctness rests elsewhere. What keeps a packed entry parseable
+   * is USABLE_LABEL in the assembler, which today admits only letters, digits, `_` and `-`; a map
+   * needs no separator between key and value, so it does not care what that regex admits tomorrow.
+   *
+   * Which doors that position opens is read off the floor (src/game/mechanismDoors.ts), because the
+   * mapping belongs to the grid and a save that carried it would go stale against a re-carve.
+   *
+   * The address is the mechanism's own cell address — authored, so a re-carve moves the cell and takes
+   * the entry with it. Exactly one entry per mechanism, which is what a map gives for free. */
+  mechanismStates?: Record<string, string>
   // Corridor detector (§7.2, found = noticed via proximity): both keyed `${levelNr}:${sectionAddress}`.
   // `known` = hidden corridors on floors the player has viewed; `found` = ones the detector stopped
   // them at. Outstanding (known \ found) drives the L3 pyramid + L4 travel "unexplored corridor" markers.
@@ -63,6 +100,8 @@ export type StoredJourneyStateV3 = {
   /** Which derivation of `floorExploration` is stored, so wrong summaries are recomputed from the
    *  floors rather than waiting for a visit that the wrong summary is itself provoking. */
   floorExplorationVersion?: number
+  /** Which mechanism-slot copy this save has been through, so the backfill runs once per save. */
+  mechanismSlotVersion?: number
 }
 
 export type CombinedJourneyState = StoredJourneyStateV3 & {
@@ -95,8 +134,14 @@ export type JourneyAPI = {
   /** Saves whose floor summaries predate the current derivation — see useFloorExplorationBackfill. */
   journeysNeedingFloorRederive: () => StoredJourneyStateV3[]
   setRepairedExploration: (journeyId: string, repaired: RepairedExploration) => void
+  /** Saves whose mechanism rooms may still be filed under their earlier address — see useMechanismSlotBackfill. */
+  journeysNeedingMechanismSlots: () => StoredJourneyStateV3[]
+  setMechanismSlotBackfill: (journeyId: string, copied: MechanismSlotBackfill) => void
   /** This level's exploration, by section: the cell keys the map restores from. */
   getExploredCells: (journeyId: string) => Record<string, string[]>
+  /** Records `address` as the live cell the player is standing on (`standingKey`), and — unless it
+   *  names a bend or bare fork, a cell with no slot (src/game/cellSlot.ts) — as `positionKey`, the
+   *  place a save resumes at. */
   updatePosition: (journeyId: string, address: string, nodeId: string) => void
   setInteriorLevel: (journeyId: string, levelNr: number | null) => void
   // Every one of these names a cell by its `${sectionHash}#${floor}/${slot}` address, which
@@ -107,6 +152,11 @@ export type JourneyAPI = {
   getSkippedConsumables: (journeyId: string) => ReadonlySet<string>
   markShopSlotPurchased: (address: string, stockIndex: number) => void
   getPurchasedShopSlots: (journeyId: string) => ReadonlySet<string>
+  /** The mechanism at `address` now stands at `stateId`, replacing whatever position it stood at before
+   * rather than joining it — see mechanismStates. */
+  setMechanismState: (address: string, stateId: string) => void
+  /** The position every mechanism on this level currently stands in, keyed by its cell address. */
+  getMechanismStates: (journeyId: string) => ReadonlyMap<string, string>
   registerHiddenCorridors: (sectionAddresses: string[]) => void
   markCorridorFound: (sectionAddress: string) => void
   getFoundHiddenCorridors: (journeyId: string) => ReadonlySet<string>
@@ -220,7 +270,15 @@ export const createJourneysV3Api = ({
           prev.map(j =>
             j.journeyId === journey.id
               ? alreadyCompletedRun
-                ? { ...j, active: true, levelNr: 1, position: null, positionKey: null, interiorLevelNr: null }
+                ? {
+                    ...j,
+                    active: true,
+                    levelNr: 1,
+                    position: null,
+                    positionKey: null,
+                    standingKey: null,
+                    interiorLevelNr: null,
+                  }
                 : { ...j, active: true }
               : j
           )
@@ -237,6 +295,7 @@ export const createJourneysV3Api = ({
       interiorLevelNr: null,
       // Born current: a journey started under this release has never been keyed any other way.
       cellKeyVersion: CELL_KEY_VERSION,
+      mechanismSlotVersion: MECHANISM_SLOT_VERSION,
     }
     return Promise.resolve(setJourneys(prev => [...prev, newJourney]))
   }
@@ -256,6 +315,7 @@ export const createJourneysV3Api = ({
               completionCount: capCompletionCount ? Math.max(j.completionCount, 1) : j.completionCount + 1,
               position: null,
               positionKey: null,
+              standingKey: null,
               interiorLevelNr: null,
             }
           : j
@@ -268,7 +328,15 @@ export const createJourneysV3Api = ({
       setJourneys(prev =>
         prev.map(j =>
           j.journeyId === journeyId
-            ? { ...j, active: true, levelNr: targetLevelNr, position: null, positionKey: null, interiorLevelNr: null }
+            ? {
+                ...j,
+                active: true,
+                levelNr: targetLevelNr,
+                position: null,
+                positionKey: null,
+                standingKey: null,
+                interiorLevelNr: null,
+              }
             : j
         )
       )
@@ -286,7 +354,14 @@ export const createJourneysV3Api = ({
     setJourneys(prev =>
       prev.map(j =>
         j.journeyId === activeJourneyId
-          ? { ...j, levelNr: j.levelNr + 1, position: null, positionKey: null, interiorLevelNr: null }
+          ? {
+              ...j,
+              levelNr: j.levelNr + 1,
+              position: null,
+              positionKey: null,
+              standingKey: null,
+              interiorLevelNr: null,
+            }
           : j
       )
     )
@@ -357,6 +432,30 @@ export const createJourneysV3Api = ({
     )
   }
 
+  // Stamped on every journey, for the same reason: the stamp is the exact record of which saves have
+  // been copied, which is what a later release reads before it drops the old keys.
+  const journeysNeedingMechanismSlots = () => journeys.filter(j => j.mechanismSlotVersion !== MECHANISM_SLOT_VERSION)
+
+  // Merged into what is stored NOW, never written over it: the other backfills of the same launch write
+  // exploration from their own snapshots, and a state the player has already set under the new address
+  // outranks the copy of an old one.
+  const setMechanismSlotBackfill = (journeyId: string, copied: MechanismSlotBackfill) => {
+    setJourneys(prev =>
+      prev.map(j => {
+        if (j.journeyId !== journeyId) return j
+        const exploredCells = { ...(j.exploredCells ?? {}) }
+        for (const [section, keys] of Object.entries(copied.exploredCells))
+          exploredCells[section] = [...new Set([...(exploredCells[section] ?? []), ...keys])]
+        return {
+          ...j,
+          exploredCells,
+          mechanismStates: { ...copied.mechanismStates, ...(j.mechanismStates ?? {}) },
+          mechanismSlotVersion: MECHANISM_SLOT_VERSION,
+        }
+      })
+    )
+  }
+
   const getExploredCells = (journeyId: string): Record<string, string[]> => {
     const j = journeys.find(j => j.journeyId === journeyId)
     if (!j) return {}
@@ -368,11 +467,22 @@ export const createJourneysV3Api = ({
     return result
   }
 
-  // Both are written: the address is what the map reads, the coordinate is the archive the backfill
-  // re-reads (see `exploredSections`), and both go stale together when the level changes.
+  // `standingKey` is written unconditionally — it is the live cell, bends and bare forks included, that
+  // `useAssembledFloor` draws the explorer at. `position`/`positionKey` (the archive a save resumes at)
+  // keep their own guard, paired as they always were: only an address naming a place
+  // (src/game/cellSlot.ts) overwrites them, since a bend or bare fork has no authored name to resume at
+  // and leaves the last recorded place standing.
   const updatePosition = (journeyId: string, address: string, nodeId: string) => {
     setJourneys(prev =>
-      prev.map(j => (j.journeyId === journeyId ? { ...j, position: nodeId, positionKey: address } : j))
+      prev.map(j =>
+        j.journeyId === journeyId
+          ? {
+              ...j,
+              standingKey: address,
+              ...(isPlaceAddress(address) ? { position: nodeId, positionKey: address } : {}),
+            }
+          : j
+      )
     )
   }
 
@@ -396,6 +506,22 @@ export const createJourneysV3Api = ({
     if (!j) return new Set()
     const prefix = `${j.levelNr}:`
     return new Set((entries ?? []).filter(e => e.startsWith(prefix)).map(e => e.slice(prefix.length)))
+  }
+
+  // The map-shaped equivalent of forThisLevel, for a collection keyed by address rather than packed
+  // into `address=value` strings.
+  const forThisLevelMap = (
+    journeyId: string,
+    entries: Record<string, string> | undefined
+  ): ReadonlyMap<string, string> => {
+    const j = journeys.find(j => j.journeyId === journeyId)
+    if (!j) return new Map()
+    const prefix = `${j.levelNr}:`
+    return new Map(
+      Object.entries(entries ?? {})
+        .filter(([key]) => key.startsWith(prefix))
+        .map(([key, value]) => [key.slice(prefix.length), value])
+    )
   }
 
   const markTrapDisabled = (address: string) => {
@@ -454,6 +580,21 @@ export const createJourneysV3Api = ({
 
   const getPurchasedShopSlots = (journeyId: string): ReadonlySet<string> =>
     forThisLevel(journeyId, journeys.find(j => j.journeyId === journeyId)?.purchasedStock)
+
+  const setMechanismState = (address: string, stateId: string) => {
+    if (!activeJourneyId) return
+    const at = atLevel(address)
+    setJourneys(prev =>
+      prev.map(j => {
+        if (j.journeyId !== activeJourneyId) return j
+        if (j.mechanismStates?.[at] === stateId) return j
+        return { ...j, mechanismStates: { ...(j.mechanismStates ?? {}), [at]: stateId } }
+      })
+    )
+  }
+
+  const getMechanismStates = (journeyId: string): ReadonlyMap<string, string> =>
+    forThisLevelMap(journeyId, journeys.find(j => j.journeyId === journeyId)?.mechanismStates)
 
   // Corridor detector: hidden sections become "known" the moment the player views the floor
   // holding them; keyed by levelNr like exploration so a multi-level pyramid keeps them apart.
@@ -568,6 +709,8 @@ export const createJourneysV3Api = ({
     getSkippedConsumables,
     markShopSlotPurchased,
     getPurchasedShopSlots,
+    setMechanismState,
+    getMechanismStates,
     registerHiddenCorridors,
     markCorridorFound,
     getFoundHiddenCorridors,
@@ -576,5 +719,7 @@ export const createJourneysV3Api = ({
     getUnexploredLevels,
     journeysNeedingFloorRederive,
     setRepairedExploration,
+    journeysNeedingMechanismSlots,
+    setMechanismSlotBackfill,
   }
 }

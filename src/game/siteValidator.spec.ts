@@ -38,6 +38,18 @@ const room = (
   ...opts,
 })
 
+// A way out a switch closed: a gate by its tags and its key, with no family and nothing to enter.
+const switchGate = (dirs: Direction[], keyId: string): RoomCell => ({
+  type: "room",
+  roomType: "encounter",
+  dirs: new Set(dirs),
+  state: "reachable",
+  tags: ["gate"],
+  requiredKeyId: keyId,
+  gateVariant: "floor-key",
+  keyIsAuthored: true,
+})
+
 const corridor = (dirs: Direction[], state: CellState = "reachable"): CorridorCell => ({
   type: "corridor",
   dirs: new Set(dirs),
@@ -100,6 +112,28 @@ describe(validateSite, () => {
     }
   })
 
+  it("keyBeforeGate: passes an authored gate with no on-floor key chest", () => {
+    // entrance -e- gate(requiredKeyId="authored:east", keyIsAuthored) -e- exit, no chest anywhere
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [
+          0,
+          1,
+          room("gate", ["w", "e"], {
+            requiredKeyId: "authored:east",
+            gateVariant: "floor-key",
+            keyIsAuthored: true,
+          }),
+        ],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    expect(validateSite(grid)).toEqual({ valid: true })
+  })
+
   it("keyBeforeGate: fails when key node is behind the gate it unlocks", () => {
     // entrance -e- gate(requiredKeyId="key-chest") -e- key-chest(tombKey keyId="key-chest") -e- exit
     const grid = buildGrid(
@@ -153,6 +187,23 @@ describe(validateSite, () => {
     if (!result.valid) {
       expect(result.reasons.some(r => r.type === "allBlandFork")).toBe(true)
     }
+  })
+
+  // The way a switch shuts is a gate cell with nothing standing in it, and what a branch is worth is
+  // read off the tags a cell wears rather than off the family in it — so a branch ending at one is
+  // worth walking, exactly as a ward's door is.
+  it("noAllBlandFork: passes when a branch ends at a gate holding no encounter", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("fork", ["w", "e", "s"])],
+        [0, 2, room("puzzle", ["w"])],
+        [1, 1, switchGate(["n"], "switch:site#0#0#0:main")],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    expect(validateSite(grid)).toEqual({ valid: true })
   })
 
   it("noAllBlandFork: fails when a fork leads only to a trap, same as only to puzzles", () => {
@@ -265,6 +316,74 @@ describe(validateSite, () => {
       expect(result.reasons.some(r => r.type === "mosaicNotReachable")).toBe(true)
     }
   })
+
+  // Two openers on one barrier and the player cannot tell which door they are looking at, nor which of
+  // the two they have just satisfied. The floor stops being readable before it stops being solvable.
+  it("boundaryGatedTwice: fails when a switch closes a way out a ward's door already owns", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [
+          0,
+          1,
+          room("fork", ["w", "e"], {
+            exits: [
+              { dir: "w", kind: "main" },
+              { dir: "e", kind: "side", gateKeyId: "switch:test:s0" },
+            ],
+          }),
+        ],
+        [0, 2, room("gate", ["w", "e"], { requiredKeyId: "ward:x", gateVariant: "tomb-key" })],
+        [0, 3, room("treasure", ["w"], { reward: { type: "mosaicPiece" } })],
+      ],
+      [0, 0],
+      [0, 3]
+    )
+    expect(validateSite(grid)).toEqual({
+      valid: false,
+      reasons: [{ type: "boundaryGatedTwice", pos: [0, 2], keyIds: ["switch:test:s0", "ward:x"] }],
+    })
+  })
+
+  // The opener has to come before the blocker. A fork gives that for nothing — the player is standing in
+  // it — right up until a corridor reaches round the back of the door it closed.
+  it("switchGateNotBehindSwitch: fails when a corridor reaches a switch's gate around the switch", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, corridor(["w", "e", "s"])],
+        [
+          0,
+          2,
+          room("fork", ["w", "e"], {
+            exits: [
+              { dir: "w", kind: "main" },
+              { dir: "e", kind: "side", gateKeyId: "switch:test:s0" },
+            ],
+          }),
+        ],
+        [
+          0,
+          3,
+          room("gate", ["w", "e"], {
+            requiredKeyId: "switch:test:s0",
+            gateVariant: "floor-key",
+            keyIsAuthored: true,
+          }),
+        ],
+        [0, 4, room("treasure", ["w"], { reward: { type: "mosaicPiece" } })],
+        [1, 1, corridor(["n", "e"])],
+        [1, 2, corridor(["w", "e"])],
+        [1, 3, corridor(["w", "n"])],
+      ],
+      [0, 0],
+      [0, 4]
+    )
+    expect(validateSite(grid)).toEqual({
+      valid: false,
+      reasons: [{ type: "switchGateNotBehindSwitch", switchPos: [0, 2], gatePos: [0, 3] }],
+    })
+  })
 })
 
 // ─── reachableFrom: requiredKeyIds (a tableau needing several hieroglyphs complete) ───────
@@ -298,6 +417,111 @@ describe(reachableFrom, () => {
     expect(reachableFrom(grid, [0, 0], new Set(["k1"])).has("0,2")).toBe(false)
     expect(reachableFrom(grid, [0, 0], new Set(["hieroglyph:a"])).has("0,2")).toBe(false)
     expect(reachableFrom(grid, [0, 0], new Set(["k1", "hieroglyph:a"])).has("0,2")).toBe(true)
+  })
+
+  // An authored key (RoomCell.keyIsAuthored) is minted by a room a player solves, not placed by
+  // the world-gen loot solver — reporting it in blockedRequirements would ask placeFragments'
+  // winnability guard to prove a fact only gameplay resolves (placeFragments.ts's final check
+  // throws on any non-empty discoveredLocks). These two cases pin both halves of the fix:
+  // traversal still treats the gate as a real, unopened door either way, but only an unauthored
+  // one is reported as a lock the placement worklist needs to satisfy.
+  it("an authored gate blocks the walk but is never reported as a discovered lock", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [
+          0,
+          1,
+          room("gate", ["w", "e"], { requiredKeyId: "authored:east", gateVariant: "floor-key", keyIsAuthored: true }),
+        ],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    const blockedRequirements = new Set<string>()
+    const reachable = reachableFrom(grid, [0, 0], new Set(), undefined, blockedRequirements)
+    expect(reachable.has("0,2")).toBe(false)
+    expect(blockedRequirements.size).toBe(0)
+  })
+
+  it("the same gate without keyIsAuthored blocks the walk AND is reported as a discovered lock", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyId: "authored:east", gateVariant: "floor-key" })],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    const blockedRequirements = new Set<string>()
+    const reachable = reachableFrom(grid, [0, 0], new Set(), undefined, blockedRequirements)
+    expect(reachable.has("0,2")).toBe(false)
+    expect(blockedRequirements).toEqual(new Set(["authored:east"]))
+  })
+
+  // The plural form is the same rule. No family asks for several authored keys at once today; the one
+  // that does must not have to rediscover why the singular branch skips the report.
+  it("an authored room asking for SEVERAL keys is reported no differently", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyIds: ["authored:east", "authored:north"], keyIsAuthored: true })],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    const blockedRequirements = new Set<string>()
+    const reachable = reachableFrom(grid, [0, 0], new Set(), undefined, blockedRequirements)
+    expect(reachable.has("0,2")).toBe(false)
+    expect(blockedRequirements.size).toBe(0)
+  })
+
+  it("authoredKeysHeld walks through an authored gate whose key nobody holds", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [
+          0,
+          1,
+          room("gate", ["w", "e"], { requiredKeyId: "authored:east", gateVariant: "floor-key", keyIsAuthored: true }),
+        ],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    expect(reachableFrom(grid, [0, 0], new Set(), undefined, undefined, true).has("0,2")).toBe(true)
+  })
+
+  it("authoredKeysHeld walks through an authored gate asking for SEVERAL keys", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyIds: ["authored:east", "authored:north"], keyIsAuthored: true })],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    expect(reachableFrom(grid, [0, 0], new Set(), undefined, undefined, true).has("0,2")).toBe(true)
+  })
+
+  it("authoredKeysHeld leaves an UNAUTHORED gate shut, so it opens doors rather than all of them", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("gate", ["w", "e"], { requiredKeyId: "tomb:ward", gateVariant: "floor-key" })],
+        [0, 2, room("exit", ["w"])],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    const blockedRequirements = new Set<string>()
+    expect(reachableFrom(grid, [0, 0], new Set(), undefined, blockedRequirements, true).has("0,2")).toBe(false)
+    expect(blockedRequirements).toEqual(new Set(["tomb:ward"]))
   })
 })
 

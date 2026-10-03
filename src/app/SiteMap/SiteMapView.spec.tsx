@@ -12,10 +12,23 @@ import { ARCH_H, ARCH_RISE, CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop 
 import { ALL_STATES } from "./tileRegions"
 import { MAX_ZOOM, MIN_ZOOM } from "./useMapZoom"
 import { tierPalette } from "./tileMaterials"
-import type { CellState, DecorationKind, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
+import type {
+  CellState,
+  DecorationKind,
+  Direction,
+  FloorGrid,
+  GridCell,
+  MechanismRecord,
+  RoomCell,
+} from "@/game/siteTypes"
 import { authoredKindsFor } from "./authoredKinds"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor } from "@/game/siteAssembler"
+import { registerFamily } from "@/app/families/familyRegistry"
+import "@/mods/registerModApps"
+import { floorWithHandle } from "@/game/testSupport/handleFixtures"
+import { cellAddress } from "@/game/cellAddress"
+import { AXES, DROP_AT, dropGrid, obstacleIndexes } from "./floorFixtures.testing"
 import { CHAMBER_SCALE, GROWTH_POOLS, growthTile } from "./moodSettings"
 import { sharedTileUrl } from "./tileAssets"
 import { STANDING_RELIEF } from "./lighting"
@@ -521,6 +534,66 @@ describe("SiteMapView — room clickability", () => {
   it("does not render a fogged room at all", () => {
     const { container } = render(<SiteMapView grid={makeGrid([[room("fogged"), empty]])} />)
     expect(container.querySelectorAll("[data-marker-cell]")).toHaveLength(0)
+  })
+})
+
+describe("SiteMapView — one-way drop", () => {
+  // from-node, launch, the obstacle's cells, landing, to-node, all in sight: the drop as the carve lays it.
+  const { grid: bare, at } = dropGrid(AXES[0], "room", "room", "visible")
+  const grid: FloorGrid = { ...bare, difficulty: "expert" }
+  const every = Array.from({ length: DROP_AT.toNode + 1 }, (_, i) => at(i))
+  const obstacle = obstacleIndexes.map(at)
+  const cellKey = ([r, c]: readonly [number, number]) => `${r},${c}`
+
+  const findCell = (container: HTMLElement, [r, c]: readonly [number, number]) => {
+    const { cx, cy } = cellCenter(r, c)
+    return Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
+      el => parseFloat(el.style.left) === cx - CELL / 2 && parseFloat(el.style.top) === cy - CELL / 2
+    )
+  }
+
+  it("attaches a tap to no cell of the obstacle, wherever the explorer stands", () => {
+    for (const standing of every) {
+      const { container, unmount } = render(<SiteMapView grid={grid} onCellClick={() => {}} explorerPos={standing} />)
+      for (const cell of obstacle) expect(findCell(container, cell)?.style.cursor).not.toBe("pointer")
+      unmount()
+    }
+  })
+
+  it("draws something on every cell it attaches a tap to, wherever the explorer stands", () => {
+    for (const standing of every) {
+      const { container, unmount } = render(<SiteMapView grid={grid} onCellClick={() => {}} explorerPos={standing} />)
+      const taps = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).filter(
+        el => el.style.cursor === "pointer"
+      )
+      for (const tap of taps) expect(tap.querySelector("svg")?.childElementCount ?? 0).toBeGreaterThan(0)
+      unmount()
+    }
+  })
+
+  it.each([DROP_AT.launch, DROP_AT.landing])(
+    "draws the explorer after the drop's art, in front of it, at index %i",
+    index => {
+      const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} explorerPos={at(index)} />)
+      const drop = container.querySelector(`[data-node-sprite="drop:${cellKey(obstacle[obstacle.length - 1])}"]`)!
+      const explorer = container.querySelector("[data-explorer]")!
+      expect(drop).not.toBeNull()
+      expect(explorer).not.toBeNull()
+      expect(drop.compareDocumentPosition(explorer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    }
+  )
+
+  it("offers the player a tap on the launch and on the landing from their own node", () => {
+    // The ends are dead ends the player reaches by walking, so they are tappable once seen as reachable.
+    const reached: FloorGrid = { ...dropGrid(AXES[0], "room", "room", "reachable").grid, difficulty: "expert" }
+    const { container: fromSide } = render(
+      <SiteMapView grid={reached} onCellClick={() => {}} explorerPos={at(DROP_AT.fromNode)} />
+    )
+    expect(findCell(fromSide, at(DROP_AT.launch))?.style.cursor).toBe("pointer")
+    const { container: toSide } = render(
+      <SiteMapView grid={reached} onCellClick={() => {}} explorerPos={at(DROP_AT.toNode)} />
+    )
+    expect(findCell(toSide, at(DROP_AT.landing))?.style.cursor).toBe("pointer")
   })
 })
 
@@ -2200,5 +2273,407 @@ describe("nothing on the map is rasterised at the size of the map", () => {
     expect(Math.max(...areas) / mapPx).toBeLessThan(0.1)
     // And all of them together stay under the map, so no floor can be paid for many times over.
     expect(areas.reduce((a, b) => a + b, 0) / mapPx).toBeLessThan(1)
+  })
+})
+
+// ── What the map may call finished, and what it may not ───────────────────────
+
+// Which families keep their rooms open is theirs to say and the map's only to read, so both sides of
+// the question are stubbed here rather than borrowed from a mod.
+const STAYS_OPEN_FAMILY = "map-stays-open"
+const CLOSES_FAMILY = "map-closes"
+const stubFamily = (id: string, reEnterable?: true) =>
+  registerFamily({
+    meta: {
+      id,
+      ownerMod: "test",
+      tags: ["puzzle"],
+      icon: "",
+      color: "",
+      rewardPriority: 0,
+      ...(reEnterable ? { reEnterable } : {}),
+    },
+    generate: () => null,
+    Component: () => null,
+  })
+stubFamily(STAYS_OPEN_FAMILY, true)
+stubFamily(CLOSES_FAMILY)
+
+/** The node marker drawn on one cell — the `<g>` whose opacity is how far back it has been eased. */
+const markerAt = (container: HTMLElement, r: number, c: number) => {
+  const { cx, cy } = cellCenter(r, c)
+  const box = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
+    el => parseFloat(el.style.left) === cx - CELL / 2 && parseFloat(el.style.top) === cy - CELL / 2
+  )
+  return box?.querySelector<SVGGElement>("g[opacity]")?.getAttribute("opacity")
+}
+
+/** The shapes one cell's node marker is drawn out of, in order — a puzzle room has a body to put an
+ * icon inside, a junction is a small diamond, and a junction that divides is bare arms. */
+const markerShapesAt = (container: HTMLElement, r: number, c: number) => {
+  const { cx, cy } = cellCenter(r, c)
+  const box = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
+    el => parseFloat(el.style.left) === cx - CELL / 2 && parseFloat(el.style.top) === cy - CELL / 2
+  )
+  return Array.from(box?.querySelectorAll("g[opacity] > *") ?? []).map(el => el.tagName)
+}
+
+describe("a room the player can walk back into never says it is finished", () => {
+  const solvedRoom = (family: string): GridCell => ({
+    type: "room",
+    roomType: "encounter",
+    family,
+    dirs: new Set<Direction>(["s"]),
+    state: "completed",
+  })
+  const drawn = (family: string) => {
+    const { container } = render(<SiteMapView grid={makeGrid([[solvedRoom(family), empty]])} />)
+    return { opacity: markerAt(container, 0, 0), tick: container.textContent?.includes("✓") }
+  }
+
+  it("wears no ✓ and takes no dim, however long ago the player first walked in", () => {
+    expect(drawn(STAYS_OPEN_FAMILY)).toEqual({ opacity: "1", tick: false })
+  })
+
+  it("still dims and badges a solved room of a family that closes behind the player", () => {
+    expect(drawn(CLOSES_FAMILY)).toEqual({ opacity: "0.45", tick: true })
+  })
+
+  it("reads a room whose mod is switched off exactly as it always did", () => {
+    // Nothing answers for an unregistered family, and a leftover room is finished with: there is
+    // nothing left in it to come back for.
+    expect(drawn("no-mod-registers-this")).toEqual({ opacity: "0.45", tick: true })
+  })
+
+  it("leaves the chest in such a room full and unticked", () => {
+    const openChamber: GridCell = {
+      type: "room",
+      roomType: "encounter",
+      family: STAYS_OPEN_FAMILY,
+      tags: ["treasure"],
+      dirs: new Set<Direction>(["n"]),
+      state: "completed",
+    }
+    const grid = makeGrid([
+      [empty, corridor("completed", false), empty],
+      [empty, openChamber, empty],
+    ])
+    const { container } = render(<SiteMapView grid={grid} />)
+    expect(spriteMatching(container, "chestProp")[0]?.style.opacity).toBe("")
+    expect(Array.from(container.querySelectorAll("text")).filter(el => el.textContent === "✓")).toHaveLength(0)
+  })
+})
+
+describe("a junction that carries a board is drawn as one", () => {
+  const carrying = (family?: string) => (family ? { family, tags: ["puzzle"] } : {})
+  const junction = (family?: string): GridCell => ({
+    type: "room",
+    roomType: "fork",
+    ...carrying(family),
+    dirs: new Set<Direction>(["s"]),
+    state: "reachable",
+  })
+  const plainRoom = (family: string): GridCell => ({
+    type: "room",
+    roomType: "encounter",
+    ...carrying(family),
+    dirs: new Set<Direction>(["s"]),
+    state: "reachable",
+  })
+  const shapesOf = (cell: GridCell) => {
+    const { container } = render(<SiteMapView grid={makeGrid([[cell, empty]])} />)
+    return markerShapesAt(container, 0, 0)
+  }
+
+  it("draws bare arms rather than a puzzle room's body", () => {
+    expect(shapesOf(junction(CLOSES_FAMILY))).toEqual(["path"])
+  })
+
+  it("leaves a bare junction its own small diamond", () => {
+    expect(shapesOf(junction())).toEqual(["polygon"])
+  })
+
+  it("leaves an ordinary room carrying a board its puzzle body", () => {
+    expect(shapesOf(plainRoom(CLOSES_FAMILY))[0]).toBe("rect")
+  })
+
+  it("draws a junction whose mod is switched off as a bare junction", () => {
+    expect(shapesOf(junction("no-mod-registers-this"))).toEqual(["polygon"])
+  })
+})
+
+// A junction carrying a board is a room with something to do in it, so the map says finished about it
+// on exactly the terms it says finished about any other: its family's, and never the bare junction's
+// blanket exemption.
+describe("what the map may say about a finished junction", () => {
+  const solvedJunction = (family: string): GridCell => ({
+    type: "room",
+    roomType: "fork",
+    family,
+    tags: ["puzzle"],
+    dirs: new Set<Direction>(["s"]),
+    state: "completed",
+  })
+  const drawn = (family: string) => {
+    const { container } = render(<SiteMapView grid={makeGrid([[solvedJunction(family), empty]])} />)
+    return { opacity: markerAt(container, 0, 0), tick: container.textContent?.includes("✓") }
+  }
+
+  it("dims and badges one whose family closes behind the player", () => {
+    expect(drawn(CLOSES_FAMILY)).toEqual({ opacity: "0.45", tick: true })
+  })
+
+  it("says nothing of the sort about one the player can walk back into", () => {
+    expect(drawn(STAYS_OPEN_FAMILY)).toEqual({ opacity: "1", tick: false })
+  })
+})
+
+// A way a switch shut holds nothing to enter and nothing ever opens it from outside (`isSealedWayOut`):
+// it is a wall the player can see. The bars in its doorway say that; a gate marker on top of them offers
+// a door to walk up to and be told what it wants, which is the one thing this cell is not.
+describe("a way a switch shut wears no node marker", () => {
+  const shutWay = (dirs: Direction[]): GridCell => ({
+    type: "room",
+    roomType: "encounter",
+    tags: ["gate"],
+    requiredKeyId: "switch:test#0#0#0:main",
+    dirs: new Set(dirs),
+    state: "reachable",
+  })
+  const wardGate = (dirs: Direction[]): GridCell => ({
+    type: "room",
+    roomType: "encounter",
+    family: "key-gate",
+    tags: ["gate"],
+    requiredKeyId: "ward:pin",
+    dirs: new Set(dirs),
+    state: "reachable",
+  })
+  const floorKeyDoor = (dirs: Direction[]): GridCell => ({
+    type: "room",
+    roomType: "encounter",
+    family: "key-gate",
+    tags: ["gate"],
+    requiredKeyId: "floor:red",
+    gateVariant: "floor-key",
+    keyColor: "red",
+    keyIsAuthored: true,
+    dirs: new Set(dirs),
+    state: "reachable",
+  })
+  // entrance corridor, the gate, and the pocket it shuts beyond it.
+  const gridWith = (gate: GridCell) => ({
+    ...makeGrid([[straightCorridor("completed", ["e"]), gate, straightCorridor("reachable", ["w"])]]),
+    entrancePos: [0, 0] as const,
+  })
+
+  it("draws no marker on it", () => {
+    const { container } = render(<SiteMapView grid={gridWith(shutWay(["w", "e"]))} revealAllCells />)
+    expect(markerAt(container, 0, 1)).toBe("0")
+  })
+
+  it("still stands the bars in its doorway", () => {
+    const { container } = render(<SiteMapView grid={gridWith(shutWay(["w", "e"]))} revealAllCells />)
+    expect(spriteMatching(container, "/gate")[0], "the shut way drew no bars at all").toBeDefined()
+  })
+
+  it("leaves a ward gate its marker", () => {
+    const { container } = render(<SiteMapView grid={gridWith(wardGate(["w", "e"]))} revealAllCells />)
+    expect(markerAt(container, 0, 1)).toBe("1")
+  })
+
+  it("leaves an authored floor-key door its marker", () => {
+    const { container } = render(<SiteMapView grid={gridWith(floorKeyDoor(["w", "e"]))} revealAllCells />)
+    expect(markerAt(container, 0, 1)).toBe("1")
+  })
+})
+
+// An arch is painted last, over everything, because that is what standing under one looks like. The bars
+// of a shut way out stand in the same band and were escaping it, landing on top of the stone.
+describe("the arch over a shut way out is drawn in front of its bars", () => {
+  // entrance corridor, the shut way, then the chamber it seals — the chamber's footprint is what makes
+  // the gap between the two a doorway with an arch in it.
+  const archedShutWay = () => {
+    const grid = makeGrid([
+      [empty, straightCorridor("reachable", ["s"]), empty],
+      [
+        empty,
+        {
+          type: "room",
+          roomType: "encounter",
+          tags: ["gate"],
+          requiredKeyId: "switch:test#0#0#0:main",
+          dirs: new Set<Direction>(["n", "s"]),
+          state: "reachable",
+        },
+        empty,
+      ],
+      [empty, chamber("completed"), empty],
+    ])
+    return { ...grid, entrancePos: [0, 1] as const }
+  }
+
+  const orderIn = (container: HTMLElement, part: string) =>
+    spritesIn(container).findIndex(el => urlOf(el).includes(part))
+
+  it("paints the bars first and the arch over them", () => {
+    const { container } = render(<SiteMapView grid={archedShutWay()} revealAllCells />)
+    const bars = orderIn(container, "/gate")
+    const arch = orderIn(container, "arch")
+    expect(bars, "the shut way drew no bars at all").toBeGreaterThanOrEqual(0)
+    expect(arch, "the doorway drew no arch at all").toBeGreaterThanOrEqual(0)
+    expect(arch).toBeGreaterThan(bars)
+  })
+
+  it("still paints an arch over an open way through last, and still fades it under the player", () => {
+    const { container } = render(<SiteMapView grid={doorwayGrid()} explorerPos={[2, 1]} />)
+    const arch = archesIn(container)[0]
+    const explorer = container.querySelector("[data-explorer]")!
+    expect(explorer.compareDocumentPosition(arch) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    const standing = render(<SiteMapView grid={doorwayGrid()} explorerPos={[1, 1]} />)
+    expect(Number(archesIn(standing.container)[0].style.opacity)).toBeLessThan(1)
+  })
+})
+
+// A MARK ON ONE END OF THE PAIR BUYS NOTHING. A lever's room keeps its marker, but a door it drives is
+// a way a switch shut (`isSealedWayOut`) and so is drawn as stone with its marker hidden — so the mark
+// has to ride the ART there, the same move the emptied-chest ✓ already makes (`NodeSprite.badge`).
+describe("a lever and the doors it drives", () => {
+  const handleGrid = floorWithHandle({ in: "lever", left: ["vault"], right: ["pocket"] }).grid
+
+  const markGlyphsOnScreen = (container: HTMLElement) =>
+    Array.from(container.querySelectorAll("text"))
+      .filter(text => /\p{Script=Egyptian_Hieroglyphs}/u.test(text.textContent ?? ""))
+      .filter(text => !text.closest('[opacity="0"]'))
+      .map(text => text.textContent)
+
+  it("wear the same mark, and every one of them is drawn where the player can see it", () => {
+    const { container } = render(<SiteMapView grid={handleGrid} revealAllCells />)
+    const lever = handleGrid.cells.flat().find(cell => cell.type === "room" && cell.family === "handle")
+    if (lever?.type !== "room" || !lever.mark) throw new Error("the lever wears no mark")
+    const glyph = String.fromCodePoint(lever.mark.glyph)
+
+    expect(markGlyphsOnScreen(container)).toEqual([glyph, glyph, glyph])
+  })
+})
+
+// Task 9: the lever's own three sprites (`leverBaseBack`, `leverArm`, `leverBaseFront`) and the arm's
+// rotation, in one place — hand-built cells throughout, so the tier (art only exists at `expert`) and
+// the mechanism's own state list are the test's to set, rather than whatever an authored side-section
+// happens to carve at.
+describe("the lever's arm — three stacked sprites, thrown to the control's own state", () => {
+  const handleCell = (mechanism: MechanismRecord): RoomCell => ({
+    type: "room",
+    roomType: "encounter",
+    family: "handle",
+    tags: ["handle"],
+    dirs: new Set<Direction>(["w"]),
+    state: "reachable",
+    mechanism,
+  })
+
+  // A floor neighbour on every side the sprite's own offset can reach into (`nodeArtOffset` +
+  // `clipCells`), the same shape `treasureCell`'s own clip test above uses.
+  const gridWith = (cell: GridCell): FloorGrid => ({
+    ...makeGrid([
+      [empty, empty, empty],
+      [corridorBetween(true), cell, corridorBetween(true)],
+      [empty, empty, empty],
+    ]),
+    difficulty: "expert",
+  })
+
+  const armTransformOf = (container: HTMLElement) =>
+    container.querySelector<HTMLElement>('[data-node-sprite="handle:1,1:arm"]')!.style.transform
+
+  const rotateDegOf = (transform: string): number => {
+    const m = /rotate\(([-\d.]+)deg\)/.exec(transform)
+    if (!m) throw new Error(`no rotate() in transform: ${transform}`)
+    return Number(m[1])
+  }
+
+  it("stacks them back, arm, front — in that DOM order, which is depth order (map-rendering.md)", () => {
+    // A test asserting only that three sprites exist would still pass with the arm drawn in front of
+    // the mound, which is the exact failure `prim_lever`'s docstring records fighting: the shaft
+    // reading as balanced on the crown rather than rising out of it.
+    const mechanism: MechanismRecord = {
+      states: ["left", "right"],
+      initial: "left",
+      returnsToInitial: true,
+      positions: [],
+    }
+    const { container } = render(<SiteMapView grid={gridWith(handleCell(mechanism))} />)
+    const orderOf = (part: string) => spritesIn(container).findIndex(el => urlOf(el).includes(part))
+    const back = orderOf("leverBaseBack")
+    const arm = orderOf("leverArm")
+    const front = orderOf("leverBaseFront")
+    expect(back).toBeGreaterThanOrEqual(0)
+    expect(arm).toBeGreaterThan(back)
+    expect(front).toBeGreaterThan(arm)
+  })
+
+  it("throws an N-state control's arm off its own ORDERED state list — a wheel's three, not a binary's two", () => {
+    // The renderer must not be written for a binary: an index into the list, spread evenly across
+    // ±36°, is what a control with more than two states asks for. Every state is asserted.
+    const expected = { low: -36, mid: 0, high: 36 }
+    for (const [state, angle] of Object.entries(expected)) {
+      const { container } = render(
+        <SiteMapView
+          grid={gridWith(
+            handleCell({ states: ["low", "mid", "high"], initial: state, returnsToInitial: true, positions: [] })
+          )}
+        />
+      )
+      expect(rotateDegOf(armTransformOf(container)), `state ${state}`).toBeCloseTo(angle, 5)
+    }
+  })
+
+  it("reads a THROWN position off mechanismStates, not just the mechanism's own `initial`", () => {
+    // The whole point of this task is that the arm moves when the player throws the lever — a test
+    // that only ever renders `initial` proves the arm draws, not that it responds. Same fallback
+    // `openDoorsFor` (mechanismDoors.ts) reads: no stored entry means `initial`, a stored one wins.
+    const mechanism: MechanismRecord = {
+      states: ["left", "right"],
+      initial: "left",
+      returnsToInitial: true,
+      positions: [],
+    }
+    const grid = gridWith({ ...handleCell(mechanism), sectionAddress: "main", mechanismId: "test-lever" })
+    const address = cellAddress(grid, 0, 1, 1)!
+
+    const { container } = render(
+      <SiteMapView grid={grid} currentFloor={0} mechanismStates={new Map([[address, "right"]])} />
+    )
+    // "right" is index 1 of ["left", "right"], so +36° — the OPPOSITE of `initial`'s -36°, not merely
+    // a changed transform.
+    expect(rotateDegOf(armTransformOf(container))).toBeCloseTo(36, 5)
+  })
+
+  // A lever on a straight NORTH-SOUTH passage has no free quarter to step its art into
+  // (`nodeArtOffset`'s `dy: 0` for that shape, unlike an east-west or dead-end lever, which are pushed
+  // toward the viewer instead) — the exact shape doubleBack's Y stands on. Its floor line then lands
+  // exactly on the explorer's own, and the general tie-break ("the actor stands in front of furniture
+  // he shares a floor line with") would bury the lever under the player's own sprite the whole time he
+  // is stood on it, working it.
+  it("stays visible in front of the explorer standing astride a through-passage lever", () => {
+    const mechanism: MechanismRecord = {
+      states: ["left", "right"],
+      initial: "left",
+      returnsToInitial: true,
+      positions: [],
+    }
+    const grid: FloorGrid = {
+      ...makeGrid([
+        [straightCorridor("reachable", ["s"])],
+        [{ ...handleCell(mechanism), dirs: new Set<Direction>(["n", "s"]) }],
+        [straightCorridor("reachable", ["n"])],
+      ]),
+      difficulty: "expert",
+    }
+
+    const { container } = render(<SiteMapView grid={grid} explorerPos={[1, 0]} />)
+    const explorer = container.querySelector("[data-explorer]")!
+    const back = container.querySelector('[data-node-sprite="handle:1,0"]')!
+    expect(explorer.compareDocumentPosition(back) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 })

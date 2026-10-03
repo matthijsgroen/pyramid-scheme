@@ -5,6 +5,7 @@ import { juniorRules } from "./spec/junior"
 import { expertRules } from "./spec/expert"
 import { masterRules } from "./spec/master"
 import { wizardRules } from "./spec/wizard"
+import { devRules } from "./spec/dev"
 
 // Expected reward counts — validated by configBuilder after generation.
 // mapPieceRewards: the sum of every tomb's own piecesRequired (the keys-and-locks solver's
@@ -32,3 +33,13 @@ export const worldSpec = rules([
   ...masterRules,
   ...wizardRules,
 ])
+
+/**
+ * The dev journey's own constraints, resolved separately from `worldSpec` above.
+ *
+ * Two lists rather than one, so neither can reach the other: a playtest floor is not dressed by a
+ * real tier's rules (a wizard pyramid's two main floors and ward paths have nothing to do with
+ * walking a switch), and a rule written for the dev journey cannot move a real pyramid. The global
+ * defaults are shared, because those are the builder's own baseline rather than anyone's authoring.
+ */
+export const devSpec = rules([...globalRules, ...devRules])

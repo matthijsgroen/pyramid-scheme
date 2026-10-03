@@ -7,7 +7,7 @@ import { getAnswers, isComplete } from "@/game/state"
 import clsx from "clsx"
 import { mulberry32 } from "@/game/random"
 import { hieroglyphs } from "@/data/hieroglyphs"
-import { createFloorStartIndices } from "./support"
+import { createFloorStartIndices } from "@/game/pyramidBlocks"
 import type { DayNightCycleStep } from "@/ui/atoms/backdropSelection"
 
 const decorationEmoji = ["🐫", "🐪", "🐐", "🌴", "🪨"]

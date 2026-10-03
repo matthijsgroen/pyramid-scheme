@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { assembleFloor } from "@/game/siteAssembler"
 import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry"
+import { classifyForkShape, type ForkShape } from "@/game/forkShape"
 import { configHash } from "@/game/seeds/configHash"
 import { puzzleSeeds } from "@/data/puzzleSeeds"
 import { hashString } from "@/support/hashString"
@@ -303,12 +304,16 @@ describe("no two rooms in the world serve the same board", () => {
   const boardOf = (
     familyId: string,
     difficulty: Difficulty | undefined,
+    forkShape: ForkShape | undefined,
     boardIndex: number | undefined,
     seed: number
   ): { bucket: string; board: string; listed: boolean } | null => {
     const seedable = getFamilyPlugin(familyId)?.meta.seedable
     if (!seedable) return null
-    const bucket = configHash(seedable.resolveOptions({ difficulty }))
+    // The same ctx useEncounter.ts hands the family, so a room whose bucket key reads more than the tier
+    // — a switch, keyed on its fork's shape too — is looked up in the list it really draws from rather
+    // than in one no room has.
+    const bucket = configHash(seedable.resolveOptions({ difficulty, forkShape }))
     const list = puzzleSeeds[bucket]
     if (!list?.length) return { bucket, board: `unlisted:${seed}`, listed: false }
     return { bucket, board: String(list[(boardIndex ?? seed) % list.length]), listed: true }
@@ -327,7 +332,8 @@ describe("no two rooms in the world serve the same board", () => {
           if (cell.type !== "room" || !cell.family) return []
           const difficulty = cell.difficulty ?? floor.config.difficulty
           const seed = hashString(floor.journeyId + encodeEdge(floor.floorIndex, r, c))
-          const board = boardOf(cell.family, difficulty, cell.boardIndex, seed)
+          const forkShape = classifyForkShape((cell.exits ?? []).filter(exit => exit.gateKeyId).map(exit => exit.dir))
+          const board = boardOf(cell.family, difficulty, forkShape, cell.boardIndex, seed)
           return board ? [{ ...board, dealt: cell.boardIndex !== undefined, label: ` / at ,` }] : []
         })
       )
@@ -390,5 +396,89 @@ describe("a rank is dressed with what it is authored to hold", () => {
         if (!authored.includes(kind)) wrong.push(`${floor.label} ${cell}: ${kind} at ${tier}`)
     }
     expect(wrong.slice(0, 10)).toEqual([])
+  }, 60_000)
+})
+
+// The one floor the world authors a switch onto (src/worldGen/spec/junior.ts). Nothing else would
+// notice it quietly carving a bare junction instead: the floor still assembles, still validates, and
+// simply hands the player an ordinary fork with no board in it and every way out standing open.
+describe("the switch junior_2 stands", () => {
+  // Written from the AUTHORING ADDRESS — journey, the level the floor was authored at, the floor
+  // index, the first switch on it — never read back off the grid, so a stem the pipeline invented
+  // some other way would not match.
+  const STEM = "switch:junior_2#1#0#0"
+  const juniorFloor = () => {
+    const floor = allFloors().find(f => f.journeyId === "junior_2" && f.levelIndex === 1 && f.floorIndex === 0)
+    if (!floor) throw new Error("junior_2 pyramid 2 floor 0 is not in the baked world")
+    return floor
+  }
+  const assembled = () => {
+    const floor = juniorFloor()
+    const result = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, {
+      resolveKeyRequirements,
+      floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
+    })
+    if (!result.success) throw new Error(`junior_2 floor 0 does not assemble: ${JSON.stringify(result.reasons)}`)
+    return result.grid
+  }
+  const switchRoom = (grid: FloorGrid) => {
+    for (let r = 0; r < grid.cells.length; r++)
+      for (let c = 0; c < grid.cells[r].length; c++) {
+        const cell = grid.cells[r][c]
+        if (cell.type === "room" && cell.roomType === "fork" && cell.family !== undefined) return { r, c, cell }
+      }
+    throw new Error("no fork on junior_2 floor 0 carries a board")
+  }
+
+  it("stands the mirror board in a junction the carve held open", () => {
+    expect(switchRoom(assembled()).cell.family).toBe("lightbeamSwitch")
+  })
+
+  it("shuts both its ways out, each on its own key over the floor's authoring address", () => {
+    const grid = assembled()
+    const { r, c, cell } = switchRoom(grid)
+    const move: Record<string, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
+    const shut = (cell.exits ?? []).filter(exit => exit.gateKeyId !== undefined)
+
+    expect(shut.length).toBe(2)
+    expect(new Set(shut.map(exit => exit.gateKeyId)).size).toBe(2)
+    for (const exit of shut) {
+      const [dr, dc] = move[exit.dir]
+      const beyond = grid.cells[r + dr * 2]?.[c + dc * 2]
+      expect(beyond?.type).toBe("room")
+      const address = beyond?.type === "room" ? beyond.sectionAddress : undefined
+      expect(address).toBeTruthy()
+      expect(exit.gateKeyId).toBe(`${STEM}:${address}`)
+      expect(beyond?.type === "room" && beyond.requiredKeyId).toBe(`${STEM}:${address}`)
+      expect(beyond?.type === "room" && beyond.gateVariant).toBe("floor-key")
+    }
+  })
+})
+
+// A room already explored when its board resolves is paid nothing (`useEncounter`'s resolve reads
+// `completed` as "the loot was handed over on an earlier visit"). A fork and a portal are marked
+// explored the moment the explorer arrives (`useSiteNavigation`), before any board opens, so a reward
+// on either would be lost on its first solve.
+describe("a room marked explored on arrival holds no reward", () => {
+  it("has no fork or portal carrying one, in any floor of the world", () => {
+    const arrivalMarked = allFloors().flatMap(floor => {
+      const result = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, {
+        resolveKeyRequirements,
+        floorRef: { journeyId: floor.journeyId, floorIndex: floor.floorIndex },
+      })
+      if (!result.success) return []
+      return result.grid.cells.flatMap((row, r) =>
+        row.flatMap((cell, c) =>
+          cell.type === "room" && (cell.roomType === "fork" || cell.roomType === "portal")
+            ? [{ where: `${floor.label} ${r},${c}`, reward: cell.reward }]
+            : []
+        )
+      )
+    })
+
+    expect(arrivalMarked.length).toBeGreaterThan(100)
+    for (const room of arrivalMarked) {
+      expect(room.reward, `${room.where} is marked explored on arrival yet carries a reward`).toBeUndefined()
+    }
   }, 60_000)
 })

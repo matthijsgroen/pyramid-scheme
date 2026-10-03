@@ -1192,6 +1192,36 @@ scaffold pit --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/expert/pit.webp --tier=expert --name=pit --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 
+# The one-way DROP, riding EAST — `prim_pit --contents=drop`, a launch rather than a ladder: a flight of
+# steps onto a block and a tall post at the near lip, a short post at the far one, a taut rope run head to
+# head between them (`docs/authored-locks-roadmap.md`, "A one-way is a place"). One asset mirrored
+# left-right for `dropWest`.
+scaffold pit --contents=drop --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/expert/dropEast.webp --tier=expert --name=dropEast --slot=prop --crop-below=1513 --tight=9.464 \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
+
+# The drop's two VERTICAL headings, each its own render: a vertical flip would swap which lip carries the
+# up-facing top face, against this projection's rule that a block shows its top above and its front below.
+# --tight is master pixels to a map unit, and the two are NOT measured the same way. North's is the
+# corridor width MARKED on its master, 861 pixels over CELL (56), so the crack overhangs the passage it
+# crosses — a fissure is torn wider than the floor it breaks. South is marked the same way, 1186 over 56,
+# and comes out the shorter tile because its painting spends less canvas on the pit. No --crop-below: that
+# cut belongs to dropEast's horizontal frame.
+#
+# THESE TWO DO NOT COVER THEIR RUN and the mouth is not deepened to make them: a vertical gap is 224 units
+# down the page and these tiles draw about 142 and 94 of it. Lengthening the mouth works in the mesh and
+# loses the projection in the paint — see the convergence rule at the head of docs/instructions/repaint-queue.md.
+# The paving left at the run's ends is the renderer's to stop drawing.
+scaffold pit --contents=dropNorth --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/expert/dropNorth.webp --tier=expert --name=dropNorth --slot=prop --tight=15.375 \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
+# South takes NO --mask AND NO --seat, and it is the one tile here cut by the chroma key alone. Its master
+# was stretched down the page by hand after painting, to carry more of the run than the painting gave it,
+# so the rendered silhouette no longer fits it: masking would crop the stretch straight back off. The key
+# is enough because the ink sits on clean magenta. The cost is the seated shadow north has and this has not.
+yarn import-tile art/masters/props/expert/dropSouth.webp --tier=expert --name=dropSouth --slot=prop --tight=21.18 \
+  --filter=smooth --brightness=0.85
+
 # His CEDAR RELIC BOX, cord-bound with the seal unbroken. No grading flags at all.
 #
 # +76 WARMTH, the highest anything of his measures, and left alone for the jar rack's reason one prop
@@ -1492,6 +1522,26 @@ yarn import-tile art/masters/props/junior/statue-thoth.webp --tier=junior --name
 scaffold statue --contents=mummiform --spin=-6 --colour=#a7b2be --colour-figure=#6f6459 --floor=#8d98a5
 yarn import-tile art/masters/props/expert/sarcophagus.webp --tier=expert --name=sarcophagus --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+
+# The handle a player throws to open a gate elsewhere on the floor — `prim_lever`, no post, the arm alone
+# as the silhouette. Three tiles now, not the two-tile `leverLeft`/`leverRight` pair this superseded: the
+# dome and kerb (cut in half at the track's own near wall, `leverBaseBack`/`leverBaseFront`) and the arm
+# alone, upright (`leverArm`), stacked back/arm/front and thrown at runtime by a CSS `transform: rotate()`
+# rather than baked two ways. Expert only, matching the drops; master and wizard wait for real floors
+# there to author levers.
+scaffold lever --contents=base --colour=#a7b2be --floor=#8d98a5
+yarn render-prop --primitive=lever --contents=baseBack --shadow=0 --background=none \
+  --colour=#a7b2be --floor=#8d98a5 --out="$HOME/tile-previews/leverBaseBack-expert-obj.png"
+yarn render-prop --primitive=lever --contents=baseFront --shadow=0 --background=none \
+  --colour=#a7b2be --floor=#8d98a5 --out="$HOME/tile-previews/leverBaseFront-expert-obj.png"
+yarn import-tile art/masters/props/expert/leverBase.webp --tier=expert --name=leverBaseBack --slot=prop \
+  --filter=smooth --mask="$HOME/tile-previews/leverBaseBack-expert-obj.png" --seat="$SHADOW" --brightness=0.9 --no-trim
+yarn import-tile art/masters/props/expert/leverBase.webp --tier=expert --name=leverBaseFront --slot=prop \
+  --filter=smooth --mask="$HOME/tile-previews/leverBaseFront-expert-obj.png" --brightness=0.9 --no-trim
+
+scaffold lever --contents=arm --shadow=0 --colour=#a7b2be --floor=#8d98a5
+yarn import-tile art/masters/props/expert/leverArm.webp --tier=expert --name=leverArm --slot=prop \
+  --filter=smooth --mask="$OBJ" --brightness=0.9 --no-trim
 
 # The overgrown POOL — the condition's second sprite per slot, so a floor is not overgrown with one weed.
 # Flat tiles: no mesh, no mask, the magenta keyed (docs/instructions/repaint-queue.md, "Overgrown").

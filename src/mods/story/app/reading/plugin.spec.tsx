@@ -24,7 +24,7 @@ const show = (ids: string[], journeyId = "junior_treasure_tomb") => {
   render(
     <FezContext value={{ showConversation } as unknown as React.ContextType<typeof FezContext>}>
       <ReadingComponent
-        ctx={{ journeyId, edgeId: "e", address: "a", sectionHash: "s", freshArrival: true }}
+        ctx={{ journeyId, edgeId: "e", address: "a", sectionHash: "s", levelNr: 1, freshArrival: true }}
         puzzle={{}}
         progression={{} as never}
         journeys={{ markCellExplored: vi.fn() } as never}

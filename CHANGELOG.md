@@ -31,11 +31,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The explorer no longer has white patches under an arm, behind the neck and beside the map.
 - The explorer stands at the opposite edge from Fez instead of just inside it.
 - Everyone who talks to Fez is now drawn waist-up, so their faces are the same size as his instead of a third of it.
+### Added
+
+- A junior pyramid's fork now has a mirror puzzle standing in it, and the way that stands open is the one you route the beam to. Change your mind and the other way opens as that one shuts. The fork and its doors wear one mark on the map.
+- A torch is a switch you can only light, drawn as a flame. Once it burns there is no prompt to touch it again, and you walk past it like any other floor.
+
+### Fixed
+
+- A zipline's gap has a floor under it again, so the drop reads as a hole in the floor instead of hanging in the dark.
+- Pressing an arrow or a corner dot now walks you there. A corridor bend only lifted its fog before, and left you standing where you were.
+- A fork with a puzzle standing in it now wears a forking mark of its own on the map, so you can tell it from an ordinary puzzle room before you walk in.
+- A fork with a mirror puzzle standing in it now shows you the junction and its ways out as soon as you walk in, like any other fork.
+- A room you can walk back into no longer wears the tick and the fade that mean you are finished with a room.
+- A way the mirrors have shut now reads as barred stone, with the archway drawn in front of the bars; the way they hold open still shows its door, standing open.
+- A mirror puzzle whose beam reaches no shrine is no longer called solved, and leaves every way out of its junction shut.
+- The prompt in a room you are standing in now names what is there — "Turn the mirrors", "Look over the stall" — instead of offering to step back into a room you never left.
+- A puzzle whose board changed since you left it now opens fresh instead of broken.
 - Fixed walking when going to a deeper floor.
 - Fixed pyramids pulsing on the map with nothing left in them.
 - The way out of a site now counts as explored, so the corridor to it stays lit.
 - Pyramid floors now lay out the same on every browser, so a save carried between devices lands on the maze it was written against.
 - Fixed a black screen when starting an expedition right after the game loads.
+- Tapping "continue expedition" on the travel map no longer sends you back to a pyramid you already finished.
+- A lever standing across a corridor no longer walls off everything past it.
+- A lever now stays visible while you're standing on it throwing it.
+- A mirror puzzle no longer crashes reopening a fork the game reshaped since you left it mid-turn.
 
 ### Added
 
@@ -43,6 +63,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Saved expeditions start over this release. The way a site's rooms and doors are recorded has changed, and an old save cannot be read against the new one.
+- One wizard floor now has a short passage between two dead ends that used to stand apart. Both sit behind the same door, so it opens nothing you had not already earned.
+- Walking to a staircase, a shop, the way out or a room you can re-enter now leaves a button beside you to go in.
+- Pressing the button at the way out now leaves right away, instead of asking you to confirm a second time.
+- Pressing the button at a lever now throws it right away, instead of opening a screen to ask which way.
 - Overgrown pyramid floors are lit by their own daylight now, thick with plants, with shafts of sun falling into the corridors.
 - Pyramid corridors are much shorter. The walk from one puzzle to the next is about half what it was, and a starter floor a third.
 - Eclipse boards now come in three kinds: with signs, without signs, and ones that never make you compare two lines.

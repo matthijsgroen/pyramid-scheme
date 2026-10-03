@@ -9,12 +9,14 @@ import type {
   WallDecorationKind,
 } from "../../game/siteTypes"
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
-import { revealAll, walkableFrom } from "../../game/gridNavigation"
+import { isSealedWayOut, oneWayRuns, revealAll } from "../../game/gridNavigation"
 import { ExplorerDot, LightPool } from "./ExplorerDot"
 import { driftsFor, grassMatsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
 import {
   CELL,
+  dropFrame,
+  dropFloorLine,
   MARKER_RADIUS,
   ARCH_H,
   ARCH_DROP,
@@ -29,16 +31,27 @@ import {
   mapWidth,
   PROP_H,
 } from "./mapScale"
-import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY, nodeArtOffset, type NodeSprite } from "./nodeArt"
+import { DROP_ART, LOOTED_OPACITY, NODE_OVER_ART_OPACITY, nodeArtOffset, type NodeSprite } from "./nodeArt"
 import { stateWash, tierPalette } from "./tileMaterials"
 import { ClipLayer, OCCLUDER_FADE, Sprite } from "./htmlLayers"
 import { moodFor, growthTile } from "./moodSettings"
 import { cellAt } from "@/game/roomFootprint"
 import { MapGrowth, MapLife, MapWeather } from "./MapMood"
 import { hashString } from "@/support/hashString"
-import { ART_IMAGE_RENDERING, patronTileUrl, tileOrPlaceholder, tileVariants, sharedTileUrl } from "./tileAssets"
-import { isLockedGate, nodeRadius, shapeKindFor } from "./nodeKinds"
+import {
+  ART_IMAGE_RENDERING,
+  patronTileUrl,
+  tileOrPlaceholder,
+  tileUrl,
+  tileVariants,
+  sharedTileUrl,
+} from "./tileAssets"
+import { storedAtCell } from "@/game/cellAddress"
+import { tileStatusAt } from "@/game/sequencePlay"
+import { drawingOf, familyIconOf, isLockedGate, isSpentAt, nodeRadius, shapeKindFor, staysOpen } from "./nodeKinds"
+import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
 import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
+import { MarkArtBadge, type Mark } from "./mark"
 import { FloorShade, LitPlaces } from "./torchlight"
 import {
   SEATING_PASS,
@@ -51,7 +64,7 @@ import {
 } from "./lighting"
 import { BeamLight, BeamShafts } from "./MapBeams"
 import { TileLayers } from "./tileLayers"
-import { clickTargetAt } from "./clickTargets"
+import { buildOfferContext, clickTargetAt, markerAt, type OfferContext, type OfferMarker } from "./clickTargets"
 import {
   FACE_SHADOW,
   allFloorRects,
@@ -63,13 +76,7 @@ import {
   tileRegionsFor,
   type RoomClaims,
 } from "./roomClaims"
-import {
-  DIR_MOVES,
-  NO_RUN_TARGETS,
-  corridorRunTargetsFrom,
-  isCorridorCorner,
-  type CorridorRunTarget,
-} from "./corridorRuns"
+import { DIR_MOVES } from "./corridorRuns"
 import { footprintRects, hasWallFace } from "./tileRegions"
 import type { Rect } from "./tileRegions"
 import type { FloorAt } from "./tileRegions"
@@ -90,6 +97,8 @@ type Props = {
    * itself never sets it. */
   freeWalk?: boolean
   explorerPos?: readonly [number, number]
+  /** The explorer is mid-span and drawn nowhere until he lands. */
+  explorerHidden?: boolean
   /** Current floor index. Keys the explorer dot so a floor switch remounts it (instant snap to the
    * new floor's entrance) instead of animating a walk from the previous floor's coordinates. */
   currentFloor?: number
@@ -97,6 +106,13 @@ type Props = {
   pendingCells?: ReadonlySet<string>
   /** Keys the player already holds — used only to color a gate as locked/unlocked on the map. */
   ownedKeys?: ReadonlySet<string>
+  /** Every mechanism's current position on this journey, keyed by its cell address — the same map
+   * `openDoorsFor` reads, and for the same reason: the save holds the position, the floor holds what it
+   * means. Read here only for a control's OWN room, to throw its arm to the position it actually
+   * stands in rather than always drawing its `initial` one. */
+  mechanismStates?: ReadonlyMap<string, string>
+  /** The way in the explorer is standing at, drawn as a button beside him — see `useSiteNavigation`. */
+  prompt?: { label: string; at: readonly [number, number]; onTake: () => void } | null
   className?: string
 }
 
@@ -104,6 +120,9 @@ type Props = {
  * tile rather than guessed: the flame's own pixels land 24 units to one side of centre. WHICH side is a
  * fact about the file — see `flameOnRight` where the flights are placed. */
 const STAIR_FLAME_DX = CELL * 0.43
+
+/** The prop a shut region barrier is drawn as. */
+const REGION_BLOCKAGE = "rubblePile"
 
 /** Anything standing on the floor, with the line it stands on — a room's own furniture and a node's.
  *
@@ -117,6 +136,13 @@ type StandingSprite = {
   baseY: number
   /** Where this sprite's own flame lands on the floor, if it carries one — see NodeSprite.light. */
   light?: NodeSprite["light"]
+  /** This sprite's own footprint includes the cell the explorer is standing on: a room whose entry has
+   * no free quarter to step its furniture into (`nodeArtOffset`'s `dy: 0`, a straight passage with a
+   * south door — a lever's, a handle's) shares the explorer's exact floor line rather than merely
+   * happening to. The general tie there ("the actor belongs in front of the furniture he shares a floor
+   * line with") is for furniture the player passes NEAR; furniture he stands AT has to win instead, or
+   * he stands on the lever and covers it. */
+  atExplorer?: boolean
   node: ReactNode
 }
 
@@ -156,6 +182,36 @@ export const approachCells = (grid: FloorGrid): Map<string, readonly [number, nu
   return from
 }
 
+/** The lever's authored throw: ±36° off upright. Not ours to shrink — at 20° the two states' grips sit
+ * 0.42 apart against a 0.68-wide dome and read as one lever wobbling; at 36° each grip clears the dome
+ * and the pair reads as a backslash and a forward slash (`prim_lever`'s docstring, `scripts/renderProp.py`).
+ */
+const HANDLE_THROW_DEG = 36
+
+/** Where an N-state control's arm sits: an index into its own ORDERED state list, spread evenly across
+ * ±throwDeg. An index and not two hardcoded sides, because a wheel's control has more states than a
+ * lever's two and the renderer must not be written for a binary. A single-state list has nothing to
+ * throw between and stands upright. */
+const angleForState = (index: number, count: number, throwDeg: number): number =>
+  count <= 1 ? 0 : -throwDeg + (2 * throwDeg * index) / (count - 1)
+
+/** `renderProp.py`'s shear (`z' = z + k*y`, so a unit of world DEPTH draws into the shared vertical axis
+ * at `k` times the rate a unit of world HEIGHT does) scaled by the tile's own width/height ratio
+ * (`add_camera`'s aspect framing — the tile is 112x168, not square). A plain CSS `rotate()` on the arm
+ * tile treats its pixel grid as isotropic; the render that produced the tile was not, by this amount. */
+const LEVER_SHEAR_K = 0.7
+const LEVER_TILE_ASPECT = 112 / 168
+const LEVER_CORRECTION_S = LEVER_SHEAR_K * LEVER_TILE_ASPECT // ≈ 0.4667
+
+/** Undo the projection's vertical squash, rotate in the corrected space, and put the squash back —
+ * `scaleY(1/s) rotate(θ) scaleY(s)`, composed about the shaft's own pivot (CSS applies these right to
+ * left, so the squash goes on first and comes off last). A naive `rotate(θ)` alone puts the tip 10-13px
+ * past the track's painted end at the full ±36° throw, measured against the real ±36° 3D geometry in
+ * `Lever.stories.tsx`; this keeps it inside the rim instead — 65.8 of 112 at +36° and 46.2 at -36°,
+ * against a track painted at 45-67, where the naive tip landed at 77.0 and 35.0. */
+const leverArmTransform = (angleDeg: number): string =>
+  `scaleY(${1 / LEVER_CORRECTION_S}) rotate(${angleDeg}deg) scaleY(${LEVER_CORRECTION_S})`
+
 /** Every node's own furniture on one floor, in map space — chests beside treasure rooms, flights at
  * stairheads. See `NodeSprite` for why this is a list and not a child of each node's own `<g>`.
  *
@@ -164,11 +220,17 @@ export const approachCells = (grid: FloorGrid): Map<string, readonly [number, nu
  * own `entrancePos` is the way back UP (pyramid-interior-design.md: a stairhead descends), and absent
  * art simply yields nothing, leaving the vector marker to carry the node as it always did.
  */
-const nodeSpritesFor = (
+// eslint-disable-next-line react-refresh/only-export-components -- pure function over the grid, exported so tests can assert on sprites
+export const nodeSpritesFor = (
   grid: FloorGrid,
   claims: RoomClaims,
   floorTier: Difficulty,
-  pendingCells?: ReadonlySet<string>
+  pendingCells?: ReadonlySet<string>,
+  /** Every mechanism's current position, and which floor this is — together the address a lever's own
+   * state is stored under (`cellAddress`, `mechanismDoors.ts`). Absent for callers with no journey yet
+   * (a story, a hand-built test grid): every control then draws at its own `initial` position. */
+  mechanismStates?: ReadonlyMap<string, string>,
+  floorIndex = 0
 ): NodeSprite[] => {
   // Which cells belong to each room: the room's own, plus everything it claimed.
   const footprints = new Map<string, string[]>()
@@ -213,12 +275,139 @@ const nodeSpritesFor = (
     return [...cells]
   }
   const out: NodeSprite[] = []
+  // A DROP IS PLACED BY THE CARVE'S SHAPE, NOT DRESSED: its obstacle is the ONE_WAY_RUN_CELLS cells the
+  // carve reserved between a launch and a landing, and the art is drawn across all of them — every one is
+  // in the footprint, so nothing else stands under it. It is a node sprite, never a `DecorationKind`, so
+  // no dressing pool can name it. `tileUrl` and not `tileOrPlaceholder`: an obstacle with no painted art
+  // keeps the plain corridor it always drew rather than a stand-in. The obstacle reveals as
+  // one, so its last cell being fogged means all of it is.
+  for (const run of oneWayRuns(grid)) {
+    const [lr, lc] = run.cells[run.cells.length - 1]
+    const end = grid.cells[lr][lc]
+    if (end.type !== "corridor") continue
+    const art = DROP_ART[run.dir]
+    const { x, y, w, h } = dropFrame(run.cells, run.dir)
+    const dropUrl = art && tileUrl(end.difficulty ?? floorTier, art.name)
+    if (!art || !dropUrl || end.state === "fogged") continue
+    out.push({
+      footprint: clipCells(run.cells.map(([r, c]) => `${r},${c}`)),
+      key: `drop:${lr},${lc}`,
+      url: dropUrl,
+      x,
+      y,
+      w,
+      h,
+      mirrored: art.mirrored,
+    })
+  }
   let approach: Map<string, readonly [number, number]> | null = null
+  /** The leaf of one gate, hung in the passage it shuts. A shut gate is a room; an OPEN one a lever or
+   * switch holds open is a corridor that remembers it (`CorridorCell.openGate`) — both draw through here,
+   * so the open leaf stands exactly where the shut one did. */
+  const gateLeaf = (
+    r: number,
+    c: number,
+    tier: Difficulty,
+    dirs: ReadonlySet<Direction>,
+    { open, wall, mark }: { open: boolean; wall: boolean; mark: Mark | undefined }
+  ): void => {
+    // `gate` is shut and `gate-open` is the same leaf swung back or sunk into the floor; a rank with
+    // neither draws the marker alone, exactly as a stairhead did before its flights were painted.
+    //
+    // THE LEAF STANDS ONE CELL IN FRONT, in the passage it shuts (`approachCells`) — the MARKER keeps
+    // the gate's own square, because its colour is the only thing that says which key, and moving it
+    // would take that off the node it belongs to. Which is also why the leaf is clipped to the cell
+    // it stands in and not to the gate's room: a footprint clip is what keeps furniture inside its
+    // own walls, and the gate's would erase a leaf drawn outside them.
+    //
+    approach ??= approachCells(grid)
+    const stands = approach.get(`${r},${c}`)
+    if (!stands) return
+    const [ar, ac] = stands
+
+    // THE BARS FACE THE POCKET, NOT AWAY FROM THE PLAYER, and on two thirds of the gates in the
+    // world those are different directions. Only `ns` and `ew` gates run straight through; `es`,
+    // `sw`, `nw` and `en` are CORNERS, and on a corner the way you came in and the way that is
+    // sealed are at right angles — so "the side opposite the approach" hung the gate on a wall the
+    // pocket is not even behind, one turn away from the seam it belongs in.
+    //
+    // The sealed side is the one whose neighbour is reached THROUGH this gate, which `approachCells`
+    // already knows: it is the neighbour whose own approach is the gate itself. That also settles a
+    // cell with three ways out, where "not the way I came" would have been a choice of two.
+    const back: Direction = ar < r ? "n" : ar > r ? "s" : ac < c ? "w" : "e"
+    const sealed = [...dirs].find(dir => {
+      if (dir === back) return false
+      const [mr, mc] = DIR_MOVES[dir]
+      const beyond = approach?.get(`${r + mr},${c + mc}`)
+      return beyond?.[0] === r && beyond?.[1] === c
+    })
+    const [dr, dc] = sealed ? DIR_MOVES[sealed] : [r - ar, c - ac]
+
+    // A GATE IS AIMED BY WHICH ONE IS DRAWN, the same as a flight. Shutting a way walked ACROSS, the
+    // grille's own plane is the y-z one and this projection draws that as a line, so `-side` is a
+    // second drawing: narrow and tall where the face-on one is broad, because that is the shape this
+    // projection actually makes of it. Turning the tile instead would be a skew — a reflection is a
+    // real oblique view and a rotation is not (`NodeSprite`).
+    const name = `${open ? "gate-open" : "gate"}${dc !== 0 ? "-side" : ""}`
+    const url =
+      tileOrPlaceholder(tier, name) ??
+      tileOrPlaceholder(tier, open ? "gate-open" : "gate") ??
+      (open ? tileOrPlaceholder(tier, "gate") : undefined)
+    if (!url) return
+
+    // THE BARS STAND ON THE SILL. Wherever one rank's stone meets another's across a way the player
+    // walks, the map lays a threshold in the tier being entered (`tileRegions`), and a ward gate is
+    // exactly such a seam because the pocket it shuts is authored at another tier. A shut gate's own
+    // square wears the FLOOR's stone rather than the pocket's (`cellFloorAt`, which is what stops the
+    // next tier being read off the paving early), so the seam falls on the sealed side of it: the
+    // gate's square is the ground you stand on to work the gate, and the bars are its far wall.
+    //
+    // Which is also why nothing halts the player short of it. He walks in and stops at the bars, the
+    // way you do at a locked gate, and the cell he is standing on is the gate's own.
+    // THE SEAM IN THE MAP'S OWN ARITHMETIC. `cellLeft`/`cellTop` put the gap BEFORE each cell, so the
+    // one AFTER cell c starts at `cellLeft(c) + CELL` and is `SIDE_W` wide, and the band after row r
+    // starts at `cellTop(r) + CELL` and is `WALL_H` tall. Both far cases were written as if the gap
+    // came before: the gate stood a whole `SIDE_W` west of the seam it belonged in, and rested on the
+    // TOP edge of the band below it rather than the bottom, hanging 28 units clear of its own sill.
+    const seamCx = dc > 0 ? cellLeft(c) + CELL + SIDE_W / 2 : dc < 0 ? cellLeft(c) - SIDE_W / 2 : cellLeft(c) + CELL / 2
+    // IN the band, not under it and not on top of it. A horizontal seam is `WALL_H` of wall seen face
+    // on: feet on its lower edge hang the whole grille below the opening, in the room rather than in
+    // the doorway, and feet on its upper edge lift it clear of the floor it is supposed to bar. Half
+    // a band down from the top puts it in the middle of the masonry, which is where a gate hangs.
+    // A seam between COLUMNS has no such band — it is a side wall seen edge-on — so there the floor
+    // line is the floor line.
+    const seamBase = dr > 0 ? cellTop(r) + CELL + WALL_H / 2 : dr < 0 ? cellTop(r) - WALL_H / 2 : cellTop(r) + CELL
+    const base = seamBase
+    const left = seamCx - CELL / 2
+    out.push({
+      // The gate's cell AND the one beyond it, because the clip is what keeps furniture inside its
+      // own walls and this deliberately spans one: clipped to either alone, half the gate is cut.
+      footprint: [`${r},${c}`, `${r + dr},${c + dc}`],
+      // The same two cells fade it: they are the only ones ever behind a gate, exactly as a doorway
+      // fades for the two its arch spans.
+      fadeAt: [`${r},${c}`, `${r + dr},${c + dc}`],
+      // A WAY A SWITCH SHUT IS NOT A GATE HUNG IN A DOORWAY BUT A WALL, and a wall is painted with
+      // the rest of the stone rather than with the leaves that go on last: the arch over the opening
+      // covers it, the way it covers everything else standing on the floor.
+      key: `${wall ? "wall" : "gate"}:${r},${c}`,
+      url,
+      x: left,
+      y: base - PROP_H,
+      mirrored: false,
+      // ON THE LEAF, NOT ON THE MARKER: a way a lever shut hides its marker entirely, so the pair
+      // its lever wears has to be worn by the stone the player is actually looking at.
+      ...(mark ? { mark } : {}),
+    })
+  }
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
+      if (cell.type === "corridor" && cell.openGate && cell.state !== "fogged") {
+        gateLeaf(r, c, cell.difficulty ?? floorTier, cell.dirs, { open: true, wall: false, mark: cell.openGate.mark })
+        continue
+      }
       if (cell.type !== "room" || cell.state === "fogged") continue
-      const kind = shapeKindFor(grid, r, c, cell.roomType, cell.tags, cell.stairId)
+      const kind = shapeKindFor(grid, r, c, cell)
       const tier = cell.difficulty ?? floorTier
       const { cx, cy } = cellCenter(r, c)
       const footprint = clipCells(footprints.get(`${r},${c}`) ?? [`${r},${c}`])
@@ -234,8 +423,9 @@ const nodeSpritesFor = (
           y: cy + dy + CELL / 2 - PROP_H,
           mirrored: false,
           // A reward left behind because the pack was full is still there to come back for: that chest
-          // stays full, and wears the `!` rather than the ✓.
-          ...(cell.state === "completed"
+          // stays full, and wears the `!` rather than the ✓. A chest whose family keeps its room open
+          // wears neither, and is not dimmed: the ✓ and the fade are the pair that say emptied.
+          ...(cell.state === "completed" && !staysOpen(cell)
             ? { badge: pendingCells?.has(`${r},${c}`) ? ("pending" as const) : ("taken" as const) }
             : {}),
         })
@@ -258,89 +448,59 @@ const nodeSpritesFor = (
           mirrored: false,
           light: { x: ex, y: ey + CELL * 0.12, r: LAMP_POOL_RADIUS },
         })
-      } else if (kind === "gate") {
-        // `gate` is shut and `gate-open` is the same leaf swung back or sunk into the floor; a rank with
-        // neither draws the marker alone, exactly as a stairhead did before its flights were painted.
-        //
-        // THE LEAF STANDS ONE CELL IN FRONT, in the passage it shuts (`approachCells`) — the MARKER keeps
-        // the gate's own square, because its colour is the only thing that says which key, and moving it
-        // would take that off the node it belongs to. Which is also why the leaf is clipped to the cell
-        // it stands in and not to the gate's room: a footprint clip is what keeps furniture inside its
-        // own walls, and the gate's would erase a leaf drawn outside them.
-        //
-        const open = cell.state === "completed"
-        approach ??= approachCells(grid)
-        const stands = approach.get(`${r},${c}`)
-        if (!stands) continue
-        const [ar, ac] = stands
-
-        // THE BARS FACE THE POCKET, NOT AWAY FROM THE PLAYER, and on two thirds of the gates in the
-        // world those are different directions. Only `ns` and `ew` gates run straight through; `es`,
-        // `sw`, `nw` and `en` are CORNERS, and on a corner the way you came in and the way that is
-        // sealed are at right angles — so "the side opposite the approach" hung the gate on a wall the
-        // pocket is not even behind, one turn away from the seam it belongs in.
-        //
-        // The sealed side is the one whose neighbour is reached THROUGH this gate, which `approachCells`
-        // already knows: it is the neighbour whose own approach is the gate itself. That also settles a
-        // cell with three ways out, where "not the way I came" would have been a choice of two.
-        const back: Direction = ar < r ? "n" : ar > r ? "s" : ac < c ? "w" : "e"
-        const sealed = [...cell.dirs].find(dir => {
-          if (dir === back) return false
-          const [mr, mc] = DIR_MOVES[dir]
-          const beyond = approach?.get(`${r + mr},${c + mc}`)
-          return beyond?.[0] === r && beyond?.[1] === c
-        })
-        const [dr, dc] = sealed ? DIR_MOVES[sealed] : [r - ar, c - ac]
-
-        // A GATE IS AIMED BY WHICH ONE IS DRAWN, the same as a flight. Shutting a way walked ACROSS, the
-        // grille's own plane is the y-z one and this projection draws that as a line, so `-side` is a
-        // second drawing: narrow and tall where the face-on one is broad, because that is the shape this
-        // projection actually makes of it. Turning the tile instead would be a skew — a reflection is a
-        // real oblique view and a rotation is not (`NodeSprite`).
-        const name = `${open ? "gate-open" : "gate"}${dc !== 0 ? "-side" : ""}`
-        const url =
-          tileOrPlaceholder(tier, name) ??
-          tileOrPlaceholder(tier, open ? "gate-open" : "gate") ??
-          (open ? tileOrPlaceholder(tier, "gate") : undefined)
+      } else if (kind === "gate" && cell.regionBarrier) {
+        // A REGION BARRIER IS A BLOCKAGE FILLING THE PASSAGE, NOT A DOOR HUNG IN IT: it stands on the
+        // cell itself, centred, with nothing to step round. Its owner's mark rides on it, being the one
+        // thing tying it to its mechanism. Rubble is the stand-in until a blockage per theme is painted.
+        const url = tileOrPlaceholder(tier, REGION_BLOCKAGE)
         if (!url) continue
-
-        // THE BARS STAND ON THE SILL. Wherever one rank's stone meets another's across a way the player
-        // walks, the map lays a threshold in the tier being entered (`tileRegions`), and a ward gate is
-        // exactly such a seam because the pocket it shuts is authored at another tier. A shut gate's own
-        // square wears the FLOOR's stone rather than the pocket's (`cellFloorAt`, which is what stops the
-        // next tier being read off the paving early), so the seam falls on the sealed side of it: the
-        // gate's square is the ground you stand on to work the gate, and the bars are its far wall.
-        //
-        // Which is also why nothing halts the player short of it. He walks in and stops at the bars, the
-        // way you do at a locked gate, and the cell he is standing on is the gate's own.
-        // THE SEAM IN THE MAP'S OWN ARITHMETIC. `cellLeft`/`cellTop` put the gap BEFORE each cell, so the
-        // one AFTER cell c starts at `cellLeft(c) + CELL` and is `SIDE_W` wide, and the band after row r
-        // starts at `cellTop(r) + CELL` and is `WALL_H` tall. Both far cases were written as if the gap
-        // came before: the gate stood a whole `SIDE_W` west of the seam it belonged in, and rested on the
-        // TOP edge of the band below it rather than the bottom, hanging 28 units clear of its own sill.
-        const seamCx =
-          dc > 0 ? cellLeft(c) + CELL + SIDE_W / 2 : dc < 0 ? cellLeft(c) - SIDE_W / 2 : cellLeft(c) + CELL / 2
-        // IN the band, not under it and not on top of it. A horizontal seam is `WALL_H` of wall seen face
-        // on: feet on its lower edge hang the whole grille below the opening, in the room rather than in
-        // the doorway, and feet on its upper edge lift it clear of the floor it is supposed to bar. Half
-        // a band down from the top puts it in the middle of the masonry, which is where a gate hangs.
-        // A seam between COLUMNS has no such band — it is a side wall seen edge-on — so there the floor
-        // line is the floor line.
-        const seamBase = dr > 0 ? cellTop(r) + CELL + WALL_H / 2 : dr < 0 ? cellTop(r) - WALL_H / 2 : cellTop(r) + CELL
-        const base = seamBase
-        const left = seamCx - CELL / 2
         out.push({
-          // The gate's cell AND the one beyond it, because the clip is what keeps furniture inside its
-          // own walls and this deliberately spans one: clipped to either alone, half the gate is cut.
-          footprint: [`${r},${c}`, `${r + dr},${c + dc}`],
-          // The same two cells fade it: they are the only ones ever behind a gate, exactly as a doorway
-          // fades for the two its arch spans.
-          fadeAt: [`${r},${c}`, `${r + dr},${c + dc}`],
-          key: `gate:${r},${c}`,
+          footprint,
+          key: `blockage:${r},${c}`,
           url,
-          x: left,
-          y: base - PROP_H,
+          x: cx - CELL / 2,
+          y: cy + CELL / 2 - PROP_H,
           mirrored: false,
+          ...(cell.mark ? { mark: cell.mark } : {}),
+        })
+      } else if (kind === "gate") {
+        gateLeaf(r, c, tier, cell.dirs, {
+          open: cell.state === "completed",
+          wall: isSealedWayOut(cell),
+          mark: cell.mark,
+        })
+      } else if (drawingOf(cell)?.art === "lever") {
+        // BLOCKED UNTIL ALL THREE TILES EXIST, AND NEVER PLACEHOLDER: `tileUrl`, not `tileOrPlaceholder`
+        // — a stand-in dome with no arm to swing would draw a lie, and the superseded single-piece
+        // `leverLeft`/`leverRight` tiles are not reached for either. A rank with only some of the three
+        // painted draws none of them, leaving the room's own marker to carry it, same as an unpainted
+        // stairhead or exit above.
+        const back = tileUrl(tier, "leverBaseBack")
+        const arm = tileUrl(tier, "leverArm")
+        const front = tileUrl(tier, "leverBaseFront")
+        if (!back || !arm || !front) continue
+        // Stepped off its own doorways exactly as a chest is (`nodeArtOffset`): a lever is a cell's
+        // worth of furniture like any other, not a doorway fitting.
+        const { dx, dy } = nodeArtOffset(cell.dirs)
+        // THE CONTROL'S CURRENT POSITION, NOT ALWAYS ITS INITIAL ONE: the same address `openDoorsFor`
+        // reads a saved position off, falling back to the mechanism's own `initial` for the same reason
+        // it does — a save with no entry yet is standing wherever the floor was authored to start it.
+        const mechanism = cell.mechanism
+        let angleDeg = 0
+        if (mechanism) {
+          const state = storedAtCell(grid, floorIndex, r, c, mechanismStates) ?? mechanism.initial
+          const index = mechanism.states.indexOf(state)
+          if (index >= 0) angleDeg = angleForState(index, mechanism.states.length, HANDLE_THROW_DEG)
+        }
+        out.push({
+          footprint,
+          key: `handle:${r},${c}`,
+          ...(isSpentAt(grid, floorIndex, r, c, cell, mechanismStates) ? { spent: true } : {}),
+          url: back,
+          x: cx + dx - CELL / 2,
+          y: cy + dy + CELL / 2 - PROP_H,
+          mirrored: false,
+          armStack: { armUrl: arm, frontUrl: front, angleDeg },
         })
       } else if (kind === "stairhead") {
         const goesUp = r === grid.entrancePos[0] && c === grid.entrancePos[1]
@@ -405,16 +565,6 @@ const nodeSpritesFor = (
 // The floor's own geometry — which void a room claims, what stone a cell is cut from, and the tile
 // regions that fall out of both — lives in `roomClaims.ts`. It is pure grid reading, shared by the
 // renderer and by the map's click rules, and testable without mounting anything.
-
-// The corridor-run geometry lives in `corridorRuns.ts`; this is the memo that keeps one answer per
-// (grid, position) for the render. Recomputed on the explorer's own coordinates rather than on the
-// tuple, which is a fresh array every render.
-const useCorridorRunTargets = (
-  grid: FloorGrid,
-  explorerPos: readonly [number, number] | undefined
-): ReadonlyMap<string, CorridorRunTarget> =>
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useMemo(() => corridorRunTargetsFrom(grid, explorerPos), [grid, explorerPos?.[0], explorerPos?.[1]])
 
 // The stone — floor, wall mass, faces, sills and their washes — is drawn by `tileLayers.tsx`.
 
@@ -892,6 +1042,10 @@ const MARKER_OUTLINE = "#161009"
 
 const ReachableDot = () => <circle r={MARKER_RADIUS} fill={MARKER_FILL} stroke={MARKER_OUTLINE} strokeWidth={2} />
 
+/** The corridor marker an offer names — `markerAt` decides it; this only draws it. */
+const drawCorridorMarker = (marker: OfferMarker | null) =>
+  marker?.kind === "arrow" ? <RunTargetArrow dir={marker.dir} /> : marker?.kind === "dot" ? <ReachableDot /> : null
+
 const RunTargetArrow = ({ dir }: { dir: Direction }) => {
   const r = MARKER_RADIUS * 1.2
   return (
@@ -968,29 +1122,22 @@ export const SiteMapView = ({
   revealAllCells = false,
   freeWalk = false,
   explorerPos,
+  explorerHidden = false,
   currentFloor,
   pendingCells,
   ownedKeys,
+  mechanismStates,
+  prompt,
   className,
 }: Props) => {
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
   const claims = useMemo(() => buildRoomClaims(grid), [grid])
   const tier = useMemo(() => floorTier(grid), [grid])
-  // Where the player can actually walk to. A corner is marked "reachable" when it is revealed, from
-  // wherever the player stood THEN; whether a route still exists from where they stand NOW is a
-  // different question, and it is the one a marker has to answer — an unreachable marker is a tap
-  // that does nothing, where a plain dead end would have told the truth.
-  const walkable = useMemo(
-    () => (explorerPos ? walkableFrom(grid, explorerPos) : null),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [grid, explorerPos?.[0], explorerPos?.[1]]
-  )
-  const canWalkTo = (row: number, col: number) => !walkable || walkable.has(`${row},${col}`)
   const regions = useMemo(() => tileRegionsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const nodeSprites = useMemo(
-    () => nodeSpritesFor(grid, claims, tier, pendingCells),
-    [grid, claims, tier, pendingCells]
+    () => nodeSpritesFor(grid, claims, tier, pendingCells, mechanismStates, currentFloor ?? 0),
+    [grid, claims, tier, pendingCells, mechanismStates, currentFloor]
   )
   // The walkable floor, as rectangles: what a layer cut to the floor is cut to. The sand is the only one
   // left — everything else that used to share the map-wide clip now carries its own shape.
@@ -1002,8 +1149,14 @@ export const SiteMapView = ({
     const standingOn = explorerPos ? `${explorerPos[0]},${explorerPos[1]}` : null
     const sprites: StandingSprite[] = nodeSprites.map(sprite => ({
       key: sprite.key,
-      baseY: sprite.y + PROP_H,
+      // A drop is sorted by its run's floor line, not its bottom edge: the art hangs below the floor, and
+      // sorted by its edge it would be drawn over the player standing on it.
+      baseY: sprite.key.startsWith("drop:") ? dropFloorLine(sprite) : sprite.y + (sprite.h ?? PROP_H),
       ...(sprite.light ? { light: sprite.light } : {}),
+      // A drop is the exception: the player stands IN FRONT of it rather than working it, so on its own
+      // mouth the general tie holds (he stands in front of what shares his floor line) and its parapet
+      // never covers him.
+      atExplorer: standingOn !== null && !sprite.key.startsWith("drop:") && sprite.footprint.includes(standingOn),
       node: (
         <Fragment key={sprite.key}>
           <Sprite
@@ -1011,8 +1164,8 @@ export const SiteMapView = ({
             url={sprite.url}
             x={sprite.x}
             y={sprite.y}
-            w={CELL}
-            h={PROP_H}
+            w={sprite.w ?? CELL}
+            h={sprite.h ?? PROP_H}
             mirrored={sprite.mirrored}
             filter={STANDING_RELIEF[tier]}
             // ITS OWN ROOM AND NOT THE WHOLE FLOOR: furniture stands off-centre and a sprite is a cell
@@ -1021,15 +1174,57 @@ export const SiteMapView = ({
             opacity={
               standingOn && sprite.fadeAt?.includes(standingOn)
                 ? OCCLUDER_FADE
-                : sprite.badge === "taken"
+                : sprite.badge === "taken" || sprite.spent
                   ? LOOTED_OPACITY
                   : undefined
             }
           />
+          {/* THE STACKING ORDER IS THE POINT, and it is in DOM order (map-rendering.md: depth is DOM
+              order, no z-index): the far half above is already painted; the arm rides between it and
+              the near half so it rises OUT of the mound rather than sitting on it — see
+              `NodeSprite.armStack` and `prim_lever`'s docstring. All three share one frame to the
+              pixel, so nothing here computes a per-tile offset: same x/y/w/h as the far half. */}
+          {sprite.armStack && (
+            <>
+              <Sprite
+                data-node-sprite={`${sprite.key}:arm`}
+                url={sprite.armStack.armUrl}
+                x={sprite.x}
+                y={sprite.y}
+                w={CELL}
+                h={PROP_H}
+                filter={STANDING_RELIEF[tier]}
+                clipTo={footprintRects(sprite.footprint)}
+                transform={leverArmTransform(sprite.armStack.angleDeg)}
+                // Inside the mound, not at its crown (`prim_lever`'s docstring: the shaft's root sits
+                // below the dome's own crown, at 76.6% down the shared frame).
+                originXPct={50}
+                originYPct={76.6}
+                // Transform only, and the DURATION lives in the class rather than inline so
+                // `motion-reduce:transition-none` can win over it — an inline style on the same
+                // property always beats a stylesheet rule, media query or not.
+                className="transition-transform duration-[260ms] ease-out motion-reduce:transition-none"
+              />
+              <Sprite
+                data-node-sprite={`${sprite.key}:front`}
+                url={sprite.armStack.frontUrl}
+                x={sprite.x}
+                y={sprite.y}
+                w={CELL}
+                h={PROP_H}
+                filter={STANDING_RELIEF[tier]}
+                clipTo={footprintRects(sprite.footprint)}
+              />
+            </>
+          )}
           {/* ON THE CHEST, NOT ON THE MARKER: the marker's own ✓ is behind the sprite. Sat on the lid,
               where the eye already is. */}
           {sprite.badge && (
             <NodeBadge kind={sprite.badge} x={sprite.x + CELL / 2} y={sprite.y + PROP_H - CELL * 0.62} />
+          )}
+          {/* ON THE LEAF, for the same reason: a door a lever drives has no marker left to wear it. */}
+          {sprite.mark && (
+            <MarkArtBadge mark={sprite.mark} x={sprite.x + CELL / 2} y={sprite.y + PROP_H - CELL * 0.62} />
           )}
         </Fragment>
       ),
@@ -1061,18 +1256,21 @@ export const SiteMapView = ({
 
   // The line the player stands on. A sprite lower than it is nearer the viewer and is drawn after him;
   // one level with it loses the tie, because the actor belongs in front of the furniture he shares a
-  // floor line with.
+  // floor line with — UNLESS that furniture is the room he is standing at (`atExplorer`), which wins
+  // the tie instead: a lever the player is stood on has to stay visible while he works it, not vanish
+  // behind him.
   const explorerBaseY = explorerPos ? cellCenter(explorerPos[0], explorerPos[1]).cy + CELL / 2 : Infinity
   // A GATE IS DRAWN WITH THE ARCHWAYS, after everything else, for the archway's own reason: it is a
   // thing in the world rather than a decal, so the player walks BEHIND it, and it is hung in the wall
   // band where an arch is — sorted by its floor line among the furniture it came out UNDER the doorway
   // it is fitted into, which put the gate's own head behind a beam. It fades for the two cells it spans
   // (`fadeAt`), exactly as a doorway does, so passing behind it never hides the player.
+  // A way a switch shut is keyed `wall:` instead and stays with the furniture — see nodeSpritesFor.
   const isGate = (s: StandingSprite) => s.key.startsWith("gate:")
   const gateSprites = standing.filter(isGate)
   const seated = standing.filter(s => !isGate(s))
-  const behindExplorer = seated.filter(s => s.baseY <= explorerBaseY)
-  const inFrontOfExplorer = seated.filter(s => s.baseY > explorerBaseY)
+  const behindExplorer = seated.filter(s => s.baseY < explorerBaseY || (s.baseY === explorerBaseY && !s.atExplorer))
+  const inFrontOfExplorer = seated.filter(s => s.baseY > explorerBaseY || (s.baseY === explorerBaseY && s.atExplorer))
   const doorways = useMemo(() => doorwaysFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   // Where the arches are, in the same terms the wall bands are built in, with the stone each one is cut
   // from — the sill in that gap is drawn to match it (see TileLayers.archedGaps).
@@ -1175,12 +1373,24 @@ export const SiteMapView = ({
     settledExplorerPos &&
     (explorerPos[0] !== settledExplorerPos[0] || explorerPos[1] !== settledExplorerPos[1])
   )
-  const settledCorridorRunTargets = useCorridorRunTargets(grid, settledExplorerPos)
-  const corridorRunTargets = isTraveling ? NO_RUN_TARGETS : settledCorridorRunTargets
 
-  // One rule for what a tap does, asked per cell below — see `clickTargets.ts`. The three branches of
-  // the marker loop used to spell it out for themselves, in two different spellings.
-  const offerContext = { runTargets: corridorRunTargets, canWalkTo, freeWalk }
+  // One rule for what a tap does, asked per cell below — see `clickTargets.ts`. UNRESOLVED: two
+  // positions feed it. Walkability (which corners and drop ends are offered) follows the LIVE explorer,
+  // so mid-glide it is already reckoned from the destination; run arrows follow the SETTLED position
+  // and vanish while travelling. Whether both should follow one position is a design question.
+  // A drop's arrow follows the SETTLED position like run arrows: arrows belong around the dot the player
+  // sees, so mid-glide they are gone (the drop end draws a dot) rather than jumping to the destination.
+  const offerContext: OfferContext = useMemo(
+    () =>
+      buildOfferContext(grid, {
+        walkFrom: explorerPos,
+        runFrom: settledExplorerPos,
+        runsSuppressed: isTraveling,
+        freeWalk,
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [grid, explorerPos?.[0], explorerPos?.[1], settledExplorerPos?.[0], settledExplorerPos?.[1], isTraveling, freeWalk]
+  )
 
   // Must be >= CELL: a fork/endpoint on the map's edge can claim one cell of "outside
   // the grid" void (see cellAt above), and that extra ring needs to physically fit
@@ -1351,9 +1561,6 @@ export const SiteMapView = ({
                 // it falls through to the corridor rendering below and stands on its own state, rather
                 // than leaving the rooms around it opening onto a gap that draws nothing.
                 if (claimOwner) {
-                  const isCorner = cell.type === "corridor" && isCorridorCorner(cell.dirs)
-                  const runTarget = cell.type === "corridor" ? corridorRunTargets.get(cellKey) : undefined
-                  const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
                   const offer = clickTargetAt(grid, claims, r, c, offerContext)
                   return (
                     <MarkerCell
@@ -1363,12 +1570,7 @@ export const SiteMapView = ({
                       onClick={offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
                     >
                       {cell.type === "corridor" &&
-                        canWalkTo(clickTarget[0], clickTarget[1]) &&
-                        (runTarget ? (
-                          <RunTargetArrow dir={runTarget.dir} />
-                        ) : (
-                          cell.state === "reachable" && isCorner && <ReachableDot />
-                        ))}
+                        drawCorridorMarker(markerAt(grid, claims, r, c, offerContext, offer))}
                     </MarkerCell>
                   )
                 }
@@ -1377,12 +1579,6 @@ export const SiteMapView = ({
                 if (cell.state === "fogged") return null
 
                 if (cell.type === "corridor") {
-                  const isCorner = isCorridorCorner(cell.dirs)
-                  const runTarget = corridorRunTargets.get(cellKey)
-                  // A visible run's near end has no corner of its own to click — it borrows the
-                  // far corner's click target (see findCorridorRunTarget) so a long corridor
-                  // that scrolls off screen still has something to tap right next to the player.
-                  const clickTarget = runTarget ? [runTarget.row, runTarget.col] : [r, c]
                   const offer = clickTargetAt(grid, claims, r, c, offerContext)
                   return (
                     <MarkerCell
@@ -1391,23 +1587,26 @@ export const SiteMapView = ({
                       cy={cy}
                       onClick={offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
                     >
-                      {canWalkTo(clickTarget[0], clickTarget[1]) &&
-                        (runTarget ? (
-                          <RunTargetArrow dir={runTarget.dir} />
-                        ) : (
-                          cell.state === "reachable" && isCorner && <ReachableDot />
-                        ))}
+                      {drawCorridorMarker(markerAt(grid, claims, r, c, offerContext, offer))}
                     </MarkerCell>
                   )
                 }
 
                 // room cell
                 const state = cell.state
-                const isCompleted = state === "completed"
+                // Reached, and done with. A room its family keeps open is reached and never done with, so it
+                // is left out of everything below that says finished — the dim and the ✓ alike.
+                // A USED ACTIVATOR IS DONE, THOUGH ITS ROOM STAYS OPEN: a lit torch has nothing left to offer, so
+                // it wears the dim and the ✓ a finished room does. Read off the mechanism's position, so it
+                // shows without the player touching it; an unlit one wears neither.
+                const spent = isSpentAt(grid, currentFloor ?? 0, r, c, cell, mechanismStates)
+                // A SEQUENCE TILE SAYS HOW THE RUN STANDS ON IT, never "done": walked is its own look.
+                const plateStatus = tileStatusAt(grid, currentFloor ?? 0, r, c, mechanismStates)
+                const isCompleted = (state === "completed" && !staysOpen(cell) && !cell.sequenceTile) || spent
                 // Only ever a pending-loot marker for a treasure room with a consumable reward — this
                 // guards against stale coordinates in pendingCells (e.g. left over from before a site
                 // was regenerated) painting the badge onto whatever room now occupies that cell.
-                const shapeKind = shapeKindFor(grid, r, c, cell.roomType, cell.tags, cell.stairId)
+                const shapeKind = shapeKindFor(grid, r, c, cell)
                 // Portals (entrance/stairhead/exit) are transitions, not tasks — they can't be
                 // "completed", so they never get the completed dim or the ✓ badge even though the
                 // entrance is always marked explored (useAssembledFloor) and used staircases complete.
@@ -1431,49 +1630,63 @@ export const SiteMapView = ({
                 // — so the vector has nothing left to say that the doorway does not say better.
                 const hasExit = shapeKind === "exit" && !!tileOrPlaceholder(cell.difficulty ?? tier, "exit")
                 const roomR = nodeRadius[shapeKind]
+                // A WAY A SWITCH SHUT IS A WALL, AND A WALL WEARS NO NODE. The bars standing in its doorway
+                // already say the way is closed; a gate marker on top of them offers a second reading — a
+                // door to walk up to and be told what it wants — which is the one thing this cell is not.
+                // Every other gate carries the family that renders it, and keeps its marker.
+                const sealedWay = isSealedWayOut(cell)
                 const locked = isLockedGate(cell, ownedKeys)
                 const displayState: CellState = locked && state === "reachable" ? "visible" : state
 
                 return (
-                  <MarkerCell
-                    key={`${r},${c}`}
-                    cx={cx}
-                    cy={cy}
-                    onClick={offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
-                  >
-                    {/* A FLIGHT SAYS STAIRS BETTER THAN A MARKER DOES, so where one is drawn the marker
-                      goes out entirely rather than merely easing back the way a chest's does. The
-                      stair is the only node whose art IS the node — a chest stands BESIDE a treasure
-                      room's marker and still needs it to say which room — so this is the one place the
-                      vector can be spared. Opacity rather than a skipped render, which keeps every cell's
-                      drawing the same shape whatever is on it; the tap is the cell's own box either way. */}
-                    <g
-                      opacity={
-                        isCompleted && !isPending && !isPortal
-                          ? 0.45
-                          : hasStair || hasExit
-                            ? 0
-                            : hasChest
-                              ? NODE_OVER_ART_OPACITY
-                              : 1
-                      }
+                  <Fragment key={`${r},${c}`}>
+                    <MarkerCell
+                      cx={cx}
+                      cy={cy}
+                      onClick={offer && onCellClick ? () => onCellClick(offer[0], offer[1]) : undefined}
                     >
-                      <NodeShape
-                        type={shapeKind}
-                        state={displayState}
-                        gateVariant={cell.gateVariant}
-                        keyColor={cell.keyColor}
-                        keyColors={cell.keyColors}
-                        difficulty={wardKeyDifficulty(cell.requiredKeyId)}
-                      />
-                    </g>
-                    {/* A chest wears its own badge (`nodeSpritesFor`), because it stands over this one. */}
-                    {isCompleted &&
-                      !isPortal &&
-                      !hasChest &&
-                      shapeKind !== "fork" &&
-                      (isPending ? <PendingLootBadge r={roomR} /> : <CompletedBadge r={roomR} />)}
-                  </MarkerCell>
+                      {/* A FLIGHT SAYS STAIRS BETTER THAN A MARKER DOES, so where one is drawn the marker
+                        goes out entirely rather than merely easing back the way a chest's does. The
+                        stair is the only node whose art IS the node — a chest stands BESIDE a treasure
+                        room's marker and still needs it to say which room — so this is the one place the
+                        vector can be spared. Opacity rather than a skipped render, which keeps every cell's
+                        drawing the same shape whatever is on it; the tap is the cell's own box either way. */}
+                      <g
+                        data-shape-kind={shapeKind}
+                        opacity={
+                          sealedWay || hasStair || hasExit
+                            ? 0
+                            : isCompleted && !isPending && !isPortal
+                              ? 0.45
+                              : hasChest
+                                ? NODE_OVER_ART_OPACITY
+                                : 1
+                        }
+                      >
+                        <NodeShape
+                          type={shapeKind}
+                          state={displayState}
+                          gateVariant={cell.gateVariant}
+                          keyColor={cell.keyColor}
+                          keyColors={cell.keyColors}
+                          difficulty={wardKeyDifficulty(cell.requiredKeyId)}
+                          icon={familyIconOf(cell)}
+                          mark={cell.mark}
+                          plate={
+                            cell.sequenceTile && plateStatus
+                              ? { glyph: cell.sequenceTile.glyph, status: plateStatus }
+                              : undefined
+                          }
+                        />
+                      </g>
+                      {/* A chest wears its own badge (`nodeSpritesFor`), because it stands over this one. */}
+                      {isCompleted &&
+                        !isPortal &&
+                        !hasChest &&
+                        shapeKind !== "fork" &&
+                        (isPending ? <PendingLootBadge r={roomR} /> : <CompletedBadge r={roomR} />)}
+                    </MarkerCell>
+                  </Fragment>
                 )
               })
             })}
@@ -1496,7 +1709,7 @@ export const SiteMapView = ({
 
               <StandingLayer sprites={behindExplorer} />
 
-              {explorerPos && (
+              {explorerPos && !explorerHidden && (
                 <ExplorerDot
                   key={currentFloor}
                   grid={grid}
@@ -1563,9 +1776,27 @@ export const SiteMapView = ({
                 headroom
               />
 
-              {/* The cones last of all: a shaft of dust is between the eye and the room, so it stands in
+              {/* The cones after every light: a shaft of dust is between the eye and the room, so it stands in
                 front of the statue it falls on rather than behind it. */}
               <BeamShafts grid={grid} claims={claims} shafts={shafts} siteId={grid.siteId} floorRects={floorRects} />
+
+              {/* AFTER THE LIGHT AND THE SHADE, and last of everything: the prompt is a thing the player
+                  taps rather than a thing in the room, so neither pass may dim it and nothing standing
+                  may cover it. It also opts back into hit-testing, inside a layer that has none. */}
+              {prompt && (
+                <div
+                  data-map-prompt=""
+                  style={{
+                    position: "absolute",
+                    left: cellCenter(prompt.at[0], prompt.at[1]).cx,
+                    top: cellCenter(prompt.at[0], prompt.at[1]).cy - CELL * 0.7,
+                    transform: "translate(-50%, -100%)",
+                    pointerEvents: "auto",
+                  }}
+                >
+                  <MapActionPrompt label={prompt.label} onClick={prompt.onTake} />
+                </div>
+              )}
             </div>
           </div>
         </div>

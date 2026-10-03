@@ -1,4 +1,4 @@
-import type { DecorationKind, Direction, FloorGrid, GridCell, RoomCell, RoomType } from "@/game/siteTypes"
+import type { DecorationKind, Direction, FloorGrid, GridCell, RoomCell } from "@/game/siteTypes"
 import { cellAt, isClaimableNeighbor } from "@/game/roomFootprint"
 import { DIR_MOVES, OPPOSITE_DIR } from "./corridorRuns"
 import { buildTileRegions, type FloorAt, type Rect, type TileRegions } from "./tileRegions"
@@ -20,18 +20,12 @@ import type { Difficulty } from "@/data/difficultyLevels"
 // sprite-tile renderer needs to tile cleanly (see
 // docs/game-design/spritesheet-renderer-prep.md). Purely derived at render time from
 // the existing grid — no generation-side bookkeeping.
-const canClaimVoid = (
-  grid: FloorGrid,
-  r: number,
-  c: number,
-  roomType: RoomType,
-  tags: string[] | undefined,
-  stairId: string | undefined,
-  dirsSize: number
-): boolean => {
-  if (roomType === "fork") return true
-  const kind = shapeKindFor(grid, r, c, roomType, tags, stairId)
-  return (kind === "treasure" || kind === "stairhead" || kind === "exit") && dirsSize === 1
+const canClaimVoid = (grid: FloorGrid, r: number, c: number, cell: RoomCell): boolean => {
+  // EVERY junction absorbs the void around it, whatever stands in it — the footprint is the room type's
+  // and not the marker's, so a junction carrying a board is shaped like the junction it is.
+  if (cell.roomType === "fork") return true
+  const kind = shapeKindFor(grid, r, c, cell)
+  return (kind === "treasure" || kind === "stairhead" || kind === "exit") && cell.dirs.size === 1
 }
 
 const ORTHO_OFFSETS: ReadonlyArray<readonly [number, number]> = [
@@ -139,8 +133,7 @@ export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
-      if (cell.type !== "room" || !canClaimVoid(grid, r, c, cell.roomType, cell.tags, cell.stairId, cell.dirs.size))
-        continue
+      if (cell.type !== "room" || !canClaimVoid(grid, r, c, cell)) continue
       const ownerKey = `${r},${c}`
       const claimedThisOwner = new Set<string>()
       for (const [dr, dc] of ORTHO_OFFSETS) {
@@ -351,6 +344,12 @@ const claimedByFork = (grid: FloorGrid, claims: RoomClaims, key: string): boolea
   return owner?.type === "room" && owner.roomType === "fork"
 }
 
+// Does this cell sit in a drop's run, with `dir` running along the drop's own line?
+const alongObstacle = (cell: GridCell, dir: "s" | "e"): boolean => {
+  const run = cell.type === "corridor" ? cell.obstacle?.dir : undefined
+  return !!run && (dir === "e" ? run === "e" || run === "w" : run === "s" || run === "n")
+}
+
 // Whether the player can pass between two cells the map draws floor for. Adjacency is NOT passage:
 // a room claims the cells around it as footprint, so its floor can sit flush against a corridor it
 // has no way through to, and that boundary needs a partition (see tileRegions.ts) or the room reads
@@ -365,6 +364,11 @@ export const isPassable = (grid: FloorGrid, claims: RoomClaims, r: number, c: nu
   if ((cell.type === "room" || cell.type === "corridor") && cell.dirs.has(dir)) return true
   if ((neighbor.type === "room" || neighbor.type === "corridor") && neighbor.dirs.has(OPPOSITE_DIR[dir])) return true
   if (claims.openEdges.has(edgeKey(r, c, nr, nc))) return true
+  // A drop's run names no direction, because nothing may WALK it, but it is drawn as the passage it
+  // looks like: open along its own line, toward the launch, the landing and its neighbouring cells.
+  // Left shut, every seam in the run draws a side wall and the back wall breaks into jambs.
+  if (alongObstacle(cell, dir) && neighbor.type !== "empty") return true
+  if (alongObstacle(neighbor, dir) && cell.type !== "empty") return true
   // Two junction rooms that each claim their own side of a shared void/corridor cell
   // (buildRoomClaims assigns that cell to whichever claims first) should still read as one open
   // space — junctions are connective tissue, not a distinct place, unlike other room types, which
