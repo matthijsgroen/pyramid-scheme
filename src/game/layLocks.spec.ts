@@ -75,6 +75,25 @@ describe("laying a lock plan on the lattice", { timeout: 120_000 }, () => {
     expect(Math.max(...sizes)).toBeGreaterThan(asked)
   })
 
+  it("lays a corridor held to more nodes than its ends are apart as a path that never crosses itself", () => {
+    const plan = FIXTURES["two locks in sequence"]()
+    const roomy = {
+      ...plan,
+      corridors: plan.corridors.map(corridor => ({ ...corridor, minNodes: corridor.minNodes + 3 })),
+    }
+    const laidSeeds = SEEDS.flatMap(seed => {
+      const result = layLockPlan(roomy, { seed, n: startingGridSize(roomy) })
+      if (!result.ok) return []
+      for (const corridor of result.laid.corridors) {
+        const chain = [corridor.start, ...corridor.nodes, corridor.end]
+        expect(new Set(chain).size, `${corridor.id} on seed ${seed}`).toBe(chain.length)
+      }
+      expect(new Set(result.laid.route).size).toBe(result.laid.route.length)
+      return [seed]
+    })
+    expect(laidSeeds.length).toBeGreaterThanOrEqual(30)
+  })
+
   it("refuses by name the part that did not fit when the grid may not grow past the ceiling", () => {
     const plan = FIXTURES.sluice()
     const result = layLockPlan(plan, { seed: 1, n: 3, ceiling: 3 })

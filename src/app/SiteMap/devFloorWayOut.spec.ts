@@ -11,7 +11,13 @@ import { afterAll, beforeAll, describe, expect, it, vi } from "vitest"
 import type { Direction, FloorConfig, FloorGrid, SiteConfig } from "@/game/siteTypes"
 import { dropEndsOf, walkableFrom } from "@/game/gridNavigation"
 import { cellAddress } from "@/game/cellAddress"
-import { createJourneysV3Api, type JourneyAPI, type StoredJourneyStateV3 } from "@/app/state/useJourneys"
+import { mechanismAddress } from "@/game/mechanismDoors"
+import {
+  createJourneysV3Api,
+  MECHANISM_AT_REST,
+  type JourneyAPI,
+  type StoredJourneyStateV3,
+} from "@/app/state/useJourneys"
 import { journeys as allKnownJourneys } from "@/data/journeys"
 import type { TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { useAssembledFloor } from "./useAssembledFloor"
@@ -93,7 +99,11 @@ type Store = {
 const makeStore = (): Store => ({ exploredCells: {}, positionKey: null, standingKey: null, mechanismStates: {} })
 
 type Harness = {
-  useHook: () => ReturnType<typeof useAssembledFloor> & { onCellClick: (r: number, c: number) => void; prompt: unknown }
+  useHook: () => ReturnType<typeof useAssembledFloor> & {
+    onCellClick: (r: number, c: number) => void
+    prompt: unknown
+    setMechanismState: JourneyAPI["setMechanismState"]
+  }
 }
 
 // `createJourneysV3Api` reads and writes only what its own JourneyAPI surface needs, so the fixture
@@ -216,7 +226,12 @@ const buildHarness = (
       onSkippedConsumable: () => {},
       onExitReached: () => {},
     })
-    return { ...assembled, onCellClick: nav.onCellClick, prompt: nav.prompt }
+    return {
+      ...assembled,
+      onCellClick: nav.onCellClick,
+      prompt: nav.prompt,
+      setMechanismState: journeys.setMechanismState,
+    }
   }
 
   return { useHook }
@@ -299,6 +314,21 @@ const walkFloor = async (
       await visit()
       Object.assign(store, before)
       hook.rerender()
+    }
+
+    // A fork-switch is a board the walker cannot play, so it is operated the way a player who solves the
+    // board does: the board writes one state per way out through `setMechanismState`, and each is walked on.
+    const cell = grid.cells[explorerPos[0]][explorerPos[1]]
+    const address = mechanismAddress(grid, 0, explorerPos[0], explorerPos[1])
+    if (cell.type === "room" && cell.mechanism && address) {
+      for (const state of cell.mechanism.states) {
+        if (state === MECHANISM_AT_REST) continue
+        const before = snapshot()
+        act(() => hook.result.current.setMechanismState(address, state))
+        await visit()
+        Object.assign(store, before)
+        hook.rerender()
+      }
     }
   }
 

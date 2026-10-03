@@ -1,6 +1,6 @@
 import type { LockPlan, PlanCorridor, PlanRegion } from "./lockPlan"
 import { mulberry32, shuffle } from "./random"
-import { DEFAULT_PACKING, ONE_WAY_RUN_CELLS } from "./siteAssembler"
+import { DEFAULT_PACKING, ONE_WAY_RUN_CELLS } from "./carveConstants"
 import type { Direction } from "./siteTypes"
 
 /** A cell of the lattice, "row,col", the way the assembler keys its cells. Nodes stand on even/even cells. */
@@ -369,7 +369,7 @@ const search = (
             }
             continue
           }
-          if (occupied.has(next) || distance(next, t) > left - 1) continue
+          if (occupied.has(next) || path.includes(next) || distance(next, t) > left - 1) continue
           path.push(next)
           yield* walk(next, left - 1)
           path.pop()
