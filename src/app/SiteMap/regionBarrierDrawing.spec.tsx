@@ -95,7 +95,6 @@ const liveGrid = (name: string, state: string) => {
   return revealed(result.current.grid!)
 }
 
-const urlOf = (el: HTMLElement) => /url\(["']?(.*?)["']?\)/.exec(el.style.backgroundImage)?.[1] ?? ""
 const marksIn = (container: HTMLElement) =>
   Array.from(container.querySelectorAll<SVGSVGElement>("svg"))
     .filter(svg => svg.getAttribute("viewBox") === "-12 -12 24 24")
@@ -120,7 +119,7 @@ const spritesAt = (container: HTMLElement, r: number, c: number) =>
 
 describe("a shut region barrier is drawn as a blockage", () => {
   eachPosition((name, state) => {
-    it(`${name}: in ${state}, every shut barrier door is rubble wearing its owner's mark, never a barred door`, () => {
+    it(`${name}: in ${state}, every shut barrier door is a bare cell wearing its owner's mark, never a barred door or a prop`, () => {
       const { shut } = positionOf(name, state)
       const grid = liveGrid(name, state)
       const { container } = render(<SiteMapView grid={grid} />)
@@ -129,12 +128,10 @@ describe("a shut region barrier is drawn as a blockage", () => {
         cell,
       } of shut) {
         const where = `${name} / ${state} / ${r},${c}`
-        const sprites = spritesAt(container, r, c)
         expect(
-          sprites.map(s => s.getAttribute("data-node-sprite")),
-          where
-        ).toEqual([`blockage:${r},${c}`])
-        expect(urlOf(sprites[0]), where).toMatch(/rubblePile/)
+          spritesAt(container, r, c).map(s => s.getAttribute("data-node-sprite")),
+          `${where}: a prop stands on the blockage`
+        ).toEqual([])
         expect(markAt(container, r, c), `${where}: the blockage wears no mark`).toBeDefined()
         expect(markAt(container, r, c)!.glyph).toBe(String.fromCodePoint(cell.mark!.glyph))
       }

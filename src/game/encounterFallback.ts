@@ -54,4 +54,4 @@ export const defaultResolveOneWayRealisation: ResolveOneWayRealisation = id =>
 // A caller with no registry accepts any realisation a region barrier names, as it answers every encounter; an
 // unnamed one is still refused, so no default stands in.
 export const defaultResolveRegionBarrierRealisation: ResolveRegionBarrierRealisation = id =>
-  id === undefined ? undefined : { id, ownerMod: REGISTRY_LESS }
+  id === undefined ? undefined : { id, ownerMod: REGISTRY_LESS, fallback: "#808080" }
