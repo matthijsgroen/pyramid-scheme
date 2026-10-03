@@ -22,6 +22,8 @@ import { floorAssemblySeed, persistentInteriorSeed } from "../game/siteSeed"
 import { expandFloorLocks } from "../game/floorLocks"
 import { deadFloorRegions, walkFloorLock } from "../game/floorLockWalk"
 import { oneWayRuns } from "../game/gridNavigation"
+import { refusal } from "./carveSeedSearch"
+import { resolveOneWayRealisation } from "../mods/allOneWayRealisations"
 import { doubleBackLock } from "./spec/locks/doubleBack"
 // Same sanctioned exception configBuilder.integration.spec.ts takes: the claim here is about the
 // REAL, complete world, which only the real mod-owned currencies can build.
@@ -229,10 +231,10 @@ describe("what the dev journey authors", () => {
   // a dev site sits at a position that would earn both. Its capability preset is what keeps them off
   // it, so the count of side sections is exactly what the spec authors: two branches on a switch
   // floor, three on the lever's — the room it stands in and the two doors it swaps — one on the
-  // gate's, which needs only somewhere for its control to stand, and four on doubleBack's, the count its
-  // pinned (packing, seed) pair carves at.
+  // gate's, which needs only somewhere for its control to stand, and none on doubleBack's, whose lock
+  // is the whole floor.
   it("grows none of the branches the real economies inject by position", () => {
-    expect(devFloors(withDev).map(floor => floor.sideSections.length)).toEqual([2, 4, 2, 2, 2, 2, 3, 1, 2])
+    expect(devFloors(withDev).map(floor => floor.sideSections.length)).toEqual([2, 0, 2, 2, 2, 2, 3, 1, 2])
   })
 
   it("carves every one of them at the seed the runtime hands it", () => {
@@ -413,22 +415,27 @@ describe("what the dev journey authors", () => {
     ])
   })
 
-  // Not decorative: the fork's two seams are rarely laid, so the pinned pair is the only reason this floor
-  // carves at all — at `packing` 8 one seed in 300 does, and this is it.
   it("carves pyramid 2 at its own pinned seed on the first attempt, sound: solvable, and no order of moves strands anyone", () => {
     const [floor] = withDev[DEV_JOURNEY_ID][1]
-    expect(floor.packing).toBe(8)
-    expect(floor.seed).toBe(4293857940)
+    expect(floor.sideSections).toEqual([])
+    expect(floor.packing).toBeUndefined()
+    expect(floor.seed).toBe(111235356889667)
 
     const result = assembleFloor(
       DEV_JOURNEY_ID,
       floor as GameFloorConfig,
       floorAssemblySeed(persistentInteriorSeed(DEV_JOURNEY_ID), 2, 0),
       resolveEncounterMeta,
-      { resolveKeyRequirements, floorRef: { journeyId: DEV_JOURNEY_ID, floorIndex: 0 }, maxAttempts: 1 }
+      {
+        resolveKeyRequirements,
+        resolveOneWay: resolveOneWayRealisation,
+        floorRef: { journeyId: DEV_JOURNEY_ID, levelIndex: 1, floorIndex: 0 },
+        maxAttempts: 1,
+      }
     )
-    if (!result.success) throw new Error(`doubleBack did not carve at its own seed: ${JSON.stringify(result.reasons)}`)
-    expect(result.attempt).toBe(0)
+    // The bake's own acceptance: carves, on attempt 0, walks sound, leaves no dead region.
+    expect(refusal(result)).toBeNull()
+    if (!result.success) throw new Error("unreachable: a refusal-free result carved")
     expect(walkFloorLock(result.grid)).toEqual({ sound: true, states: expect.any(Number) })
     // The second drop is what keeps every region reachable, not what keeps every region occupied by
     // some state — no region is dead on this floor exactly as on the design doc's own worked example.
@@ -517,23 +524,30 @@ describe("what the dev journey authors", () => {
           expect(gate.mark, `${room.mechanismId} ${gateKeyId}`).toEqual(room.mark)
   })
 
-  // THE SECOND DROP, ON THE REAL ASSEMBLED FLOOR: reassembled from the compiled lock with `dropToIn` left
-  // out, at the same pinned seed, so the only thing that differs is the one drop under test. Without it the
-  // player who falls into leftLower has no way back to the junction, and nothing else reaches the way out.
+  // THE SECOND DROP, ON THE REAL ASSEMBLED FLOOR: pyramid 2's own carve with the drop that leaves leftLower for
+  // the junction's region cut out — its launch no longer opens onto it and its span is empty ground — so the only
+  // thing that differs is the one drop under test. Without it the player who falls into leftLower has no way back
+  // to the junction, and nothing else reaches the way out.
   it("cannot be solved on pyramid 2's own carve once the second drop is taken away", () => {
     const [floor] = withDev[DEV_JOURNEY_ID][1]
-    const expanded = expandFloorLocks(floor as GameFloorConfig)
-    if (!expanded.ok) throw new Error(`doubleBack did not compile: ${JSON.stringify(expanded.reasons)}`)
-    const { locks: _locks, realisations: _binding, ...bare } = floor
-    const withoutSecondDrop = {
-      ...bare,
-      ...expanded.config,
-      obstacles: expanded.config.obstacles!.filter(obstacle => obstacle.id !== "doubleBack.dropToIn"),
+    const grid = assembleAt(DEV_JOURNEY_ID, floor, 2, 0)
+    if (!grid) throw new Error("doubleBack did not carve at its own seed")
+    const regionAt = ([r, c]: readonly [number, number]) => {
+      const cell = grid.cells[r][c]
+      return cell.type === "empty" ? undefined : cell.region
     }
+    const second = oneWayRuns(grid).find(
+      run => regionAt(run.launch) === "doubleBack.leftLower" && regionAt(run.landing) === "doubleBack.in"
+    )
+    if (!second) throw new Error("the carve has no drop from leftLower to the junction's region")
+    const cells = grid.cells.map(row => [...row])
+    for (const [r, c] of second.cells) cells[r][c] = { type: "empty" }
+    const [lr, lc] = second.launch
+    const launch = cells[lr][lc]
+    if (launch.type !== "room" && launch.type !== "corridor") throw new Error("the drop's launch is no ground")
+    cells[lr][lc] = { ...launch, dirs: new Set([...launch.dirs].filter(dir => dir !== second.dir)) }
 
-    const grid = assembleAt(DEV_JOURNEY_ID, withoutSecondDrop as FloorConfig, 2, 0)
-    if (!grid) throw new Error("doubleBack without its second drop did not carve at the same seed")
-    const result = walkFloorLock(grid)
+    const result = walkFloorLock({ ...grid, cells })
     if (!result || result.sound) throw new Error("expected the floor to be unsolvable without the second drop")
     expect(result.failure.type).toBe("unsolvable")
   })

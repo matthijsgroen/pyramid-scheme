@@ -2,7 +2,10 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest"
 import { buildConfigs } from "./configBuilder"
 import { DEV_JOURNEY_ID } from "./data"
 import type { SiteConfig } from "./types"
-import type { FloorConfig, SideSection } from "../game/siteTypes"
+import type { Direction, FloorConfig, SideSection } from "../game/siteTypes"
+import { expandFloorLocks } from "../game/floorLocks"
+import { dropLandingFaults } from "../game/carveAgreement"
+import { oneWayRuns } from "../game/gridNavigation"
 import { deadFloorRegions, describeFloorWalkFailure, walkFloorLock } from "../game/floorLockWalk"
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../mods/allCurrencyDistributions"
 import {
@@ -178,4 +181,87 @@ describe("the dev pyramid's doubleBack is carved from the structure laid for it"
         }
       })
     })
+})
+
+// THE FLOOR AS AUTHORED: the real dev config, only its pinned seed cleared so each of the 40 seeds is carved.
+describe("the dev pyramid's doubleBack, authored without a side path", { timeout: 300_000 }, () => {
+  let carves: LaidCarve[]
+  let gates: { id: string; between: [string, string] }[]
+  beforeAll(() => {
+    carves = carve({ ...devDoubleBack, seed: undefined })
+    const expanded = expandFloorLocks(devDoubleBack)
+    if (!expanded.ok) throw new Error("doubleBack did not compile")
+    gates = expanded.config.obstacles!.flatMap(({ id, kind, at }) =>
+      kind === "gate" && at.on === "connection" ? [{ id, between: at.between as [string, string] }] : []
+    )
+  }, 240_000)
+  const carved = () => carves.flatMap(result => (result.ok ? [result] : []))
+
+  it("authors no side section and no packing of its own", () => {
+    expect(devDoubleBack.sideSections).toEqual([])
+    expect(devDoubleBack.packing).toBeUndefined()
+  })
+
+  it("carves on the first attempt at 30 of seeds 1 to 40 at least, and every carve walks sound", () => {
+    expect(carved().length, "seeds carved on attempt 0 of 40").toBeGreaterThanOrEqual(30)
+    for (const { grid, seed } of carved()) {
+      const walk = walkFloorLock(grid)!
+      if (!walk.sound) throw new Error(`seed ${seed}: ${describeFloorWalkFailure(walk.failure)}`)
+    }
+  })
+
+  it("leaves the fork's exits as its two seams and lands each drop between the gates the drawing shows, on every carve", () => {
+    expect(carved().length).toBeGreaterThanOrEqual(30)
+    for (const { grid, seed } of carved()) {
+      const junction = expectForkSwitchRoom(grid, "lightbeamSwitch")
+      const [jr, jc] = grid.cells
+        .flatMap((row, r) => row.map((cell, c) => (cell === junction ? [r, c] : [])))
+        .find(found => found.length)!
+      const regionBeside = (dir: Direction) => {
+        const [dr, dc] = { n: [-2, 0], s: [2, 0], e: [0, 2], w: [0, -2] }[dir]
+        const next = grid.cells[jr + dr][jc + dc]
+        return next.type === "empty" ? undefined : next.region
+      }
+      const seams = junction.exits!.filter(exit => exit.gateKeyId !== undefined)
+      expect(
+        seams.map(exit => [exit.gateKeyId!.split(":").pop(), regionBeside(exit.dir)]).sort(),
+        `seed ${seed}: the fork's side exits`
+      ).toEqual([
+        ["doubleBack.in-leftLower", "doubleBack.leftLower"],
+        ["doubleBack.in-rightLower", "doubleBack.rightLower"],
+      ])
+
+      const regionAt = ([r, c]: readonly [number, number]) => {
+        const cell = grid.cells[r][c]
+        return cell.type === "empty" ? undefined : cell.region
+      }
+      const runs = oneWayRuns(grid)
+      expect(runs.map(run => [regionAt(run.launch), regionAt(run.landing)]).sort(), `seed ${seed}: the drops`).toEqual([
+        ["doubleBack.leftLower", "doubleBack.in"],
+        ["doubleBack.s1", "doubleBack.leftLower"],
+      ])
+      // Each landing stands on ground reaching the door of every gate bounding its region: leftLower's landing
+      // between in-leftLower and leftLower-s2, the junction region's beside its three.
+      const doorKeys = new Map(
+        grid.cells
+          .flat()
+          .flatMap(cell => (cell.type === "room" && cell.requiredKeyId ? [cell.requiredKeyId] : []))
+          .map(key => [key.split(":").pop()!, key])
+      )
+      const drops = runs.map((run, i) => ({ id: `drop${i}`, region: regionAt(run.landing)!, landing: run.landing }))
+      const bounding = gates.flatMap(({ id, between }) =>
+        doorKeys.has(id) ? [{ id, between, key: doorKeys.get(id)! }] : []
+      )
+      expect(bounding.map(gate => gate.id).sort()).toEqual(gates.map(gate => gate.id).sort())
+      expect(
+        dropLandingFaults(
+          grid.cells,
+          drops,
+          bounding,
+          new Set(runs.flatMap(run => run.cells.map(([r, c]) => `${r},${c}`)))
+        ),
+        `seed ${seed}: a landing apart from its gates`
+      ).toEqual([])
+    }
+  })
 })

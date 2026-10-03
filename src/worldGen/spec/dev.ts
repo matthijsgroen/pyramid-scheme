@@ -98,19 +98,11 @@ export const devRules: Rule[] = [
     })
     .floor(0, {
       locks: [{ lock: doubleBackLock() }],
-      // Four bare side paths: the count the pinned pair carves at.
-      sideSections: [
-        sidePath({ puzzles: 0 }),
-        sidePath({ puzzles: 0 }),
-        sidePath({ puzzles: 0 }),
-        sidePath({ puzzles: 0 }),
-      ],
-      // Recorded from the bake's own carve search (searchCarvePair), not tuned by hand: the first seed
-      // 81 steps past this floor's address seed that carves on attempt 0 at `packing` 8, walks sound and
-      // leaves no dead region. One seed in 300 carves at all (the fork's two seams are rarely laid), so
-      // the pair is pinned here, where a dev floor has no baked output to carry it.
-      packing: 8,
-      seed: 4293857940,
+      // Recorded from the bake's own carve search (searchCarvePair): at the default packing the floor's own
+      // address seed carves on attempt 0, walks sound (71 states) and leaves no dead region, so no packing is
+      // authored and the seed is stamped only so the carve does not move with the seed formula. A dev floor has
+      // no baked output to carry the pin.
+      seed: 111235356889667,
     }),
   // 3 — the one-way drop. The ledge's own way on is a fall into the sink, and the sink has no way
   // back up it: the passage is drawn from both sides today, which is why this stands here and on no
