@@ -88,7 +88,8 @@ describe("the plan the carve asks to be laid", () => {
   })
 })
 
-describe("the laid floor as the carve seats rooms on it", () => {
+// Each test seats the doubleBack at several seeds, ~2.5s here; CI runs 2-3x slower than the 5s default allows.
+describe("the laid floor as the carve seats rooms on it", { timeout: 60_000 }, () => {
   it("stands every door of a gate on a node of its own corridor, strictly between the two stretches it shuts", () => {
     const plan = planOf([{ lock: doubleBackLock() }])
     for (const seed of SEEDS) {
@@ -102,7 +103,7 @@ describe("the laid floor as the carve seats rooms on it", () => {
         expect(floor.ground.get(cell)).toBe(`door ${cell}`)
       }
     }
-  }, 60_000)
+  })
 
   it("puts the door of each arm on the cell beside the junction", () => {
     const plan = planOf([{ lock: doubleBackLock() }])
