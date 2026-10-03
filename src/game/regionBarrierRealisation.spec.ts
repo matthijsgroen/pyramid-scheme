@@ -95,8 +95,8 @@ describe("a realisation no registered mod provides is refused by name", () => {
 
   it("declares water and sand as the topology mod's", () => {
     expect(["water", "sand"].map(id => resolveRegionBarrierRealisation(id))).toEqual([
-      { id: "water", ownerMod: "topology" },
-      { id: "sand", ownerMod: "topology" },
+      { id: "water", ownerMod: "topology", texture: "regionWater", fallback: "#2f6f86" },
+      { id: "sand", ownerMod: "topology", texture: "regionSand", fallback: "#c9a45c" },
     ])
   })
 })
