@@ -1,8 +1,12 @@
 import { hashUnit } from "@/support/hashString"
+import type { Difficulty } from "@/data/difficultyLevels"
+import type { ConditionKind } from "@/game/siteTypes"
 import type { Mood } from "./moodSettings"
+import { CANOPY_SCALE, CHAMBER_SCALE, GROWTH_POOLS, growthTile } from "./moodSettings"
 import { CELL, WALL_FACE_H, cellCenter } from "./mapScale"
 import { sharedTileUrl } from "./tileAssets"
-import { Sprite } from "./htmlLayers"
+import { STANDING_RELIEF } from "./lighting"
+import { OCCLUDER_FADE, Sprite } from "./htmlLayers"
 
 // The air, drawn in three layers over the stone: what is carried on it (drift), what lives in it (life),
 // and what colour it is (tint). All of it CSS-animated rather than driven from React — a mote that
@@ -38,10 +42,16 @@ const MOTE_CLASS = "map-mote absolute rounded-full will-change-transform animate
  * of the field's placement comes from a handful of origins — at four the screen went visibly patchy. Two
  * specks a stone's throw apart is a pairing no eye picks out of a drifting field, and it still halves the
  * nodes. `drift.count` stays a number of SPECKS, because that is the number worth authoring. */
-const SPECKS = 2
+export const SPECKS = 2
 const SCARAB_CLASS = "map-scarab animate-map-scurry motion-reduce:animate-none"
 
 const rand = hashUnit
+
+/** How far a thing lying on the paving may lean off true, either way.
+ *
+ * Enough that a row of them is not a row of identical stamps, and not so far that the light they are
+ * painted with stops agreeing with the light every other tile is painted with. */
+const FLOOR_LEAN = 25
 
 /**
  * How solid a tuft in a floor joint is drawn.
@@ -65,6 +75,30 @@ const TUFT_OPACITY = 0.7
 const turned = (degrees: number, mirrored: boolean) =>
   `rotate(${degrees.toFixed(1)}deg)${mirrored ? " scaleX(-1)" : ""}`
 
+/**
+ * The drawings one slot may use, in the pool's own order, with every member that is not on disk resolved
+ * to the one that is (`GROWTH_POOLS`).
+ *
+ * FALLING BACK IS THE NORMAL CASE and not an error path: six of the seven members are painted after this
+ * ships, so a slot is mostly its own sprite repeated and the pool fills in as each tile lands, with no
+ * code change. Undefined where even the slot's own drawing is missing — a condition composed and seen as
+ * a wash before anything is painted at all.
+ */
+const pool = (kind: ConditionKind, members: readonly (string | null)[]): string[] | undefined => {
+  const fallback = sharedTileUrl(growthTile(kind, members[0]))
+  if (!fallback) return undefined
+  return members.map(member => sharedTileUrl(growthTile(kind, member)) ?? fallback)
+}
+
+/** Which member of a slot's pool this cell grew. Seeded off the cell's own place in the floor's fixed
+ * list, as its size and its jitter already are, so a member never moves and adding a tile to the pool is
+ * the only thing that reshuffles one. */
+const memberAt = (length: number, siteId: string, salt: string, index: number) =>
+  Math.floor(rand(siteId, salt, index) * length)
+
+const member = (urls: string[], siteId: string, salt: string, index: number) =>
+  urls[memberAt(urls.length, siteId, salt, index)]
+
 type Props = {
   mood: Mood
   siteId: string
@@ -83,31 +117,56 @@ type Props = {
   chamberCells?: ReadonlyArray<readonly [number, number]>
   /** Whether the player has seen that cell yet. A scarab in the dark is simply not drawn. */
   isLit: (row: number, col: number) => boolean
+  /**
+   * Which half of the chamber plants to draw.
+   *
+   * A PLANT TALLER THAN A PERSON CANNOT BE DRAWN UNDER ONE. The growth layer sits below everything that
+   * stands, which is right for a tuft and wrong for a palm: the explorer would walk in front of a tree
+   * twice their height. So the tall members are drawn again, after the standing layer, and fade while
+   * the player is behind them — the same bargain an archway makes (`OCCLUDER_FADE`), for the same reason:
+   * a thing you can walk behind must not be a thing that hides you.
+   *
+   * The floor joints and the wall roots belong to the under pass only; nothing about them is tall.
+   */
+  canopy?: boolean
+  /** Where the player is, so a canopy plant standing in front of them can get out of the way. */
+  explorerPos?: readonly [number, number]
+  /** The cells a TREE may stand on — the claimed ones nobody can walk into. A shrub needs no such list:
+   * stepping over one is fine, and stepping over a trunk is not. */
+  treeCells?: ReadonlySet<string>
 }
 
 /**
  * What is growing on the stone, drawn with the scarabs and under everything that stands on it.
  *
- * The same trick `MapLife` uses and for the same reason: ONE shared sprite in `tiles/default/`, placed
- * by index into the fixed floor-cell list, so a rank costs no files and a reveal cannot make anything
- * jump. Still rather than scurrying — a weed in a corner does not run — and nudged toward the top of its
- * cell, where the wall band is: what makes a vine read as a vine rather than as a plant in a pot is that
- * it came THROUGH the wall, and the band above a cell is the only wall the map draws.
+ * The same trick `MapLife` uses and for the same reason: SHARED sprites in `tiles/default/`, placed by
+ * index into the fixed floor-cell list, so a rank costs no files and a reveal cannot make anything jump.
+ * Still rather than scurrying — a weed in a corner does not run.
  *
- * Draws nothing until the sprite exists, which is deliberate: the condition can be authored, composed
- * and seen as a wash before a single file is painted.
+ * Each of the three slots draws from a POOL (`GROWTH_POOLS`), picked per cell off the same seed that
+ * decides which cells grow, so a floor is a mix of plants rather than one weed repeated.
+ *
+ * Draws nothing until a slot's own sprite exists, which is deliberate: the condition can be authored,
+ * composed and seen as a wash before a single file is painted.
  */
-export const MapGrowth = ({ mood, siteId, floorCells, wallCells = [], chamberCells = [], isLit }: Props) => {
+export const MapGrowth = ({
+  mood,
+  siteId,
+  tier,
+  floorCells,
+  wallCells = [],
+  chamberCells = [],
+  isLit,
+  canopy = false,
+  explorerPos,
+  treeCells,
+}: Props & { tier: Difficulty }) => {
   const g = mood.growth
   if (!g?.floor && !g?.wall && !g?.chamber) return null
-  // One sprite per PLACE, falling back to the plain one where the other two are not drawn yet. The
-  // fallback is deliberate: it lets the placement be judged — whether the roots sit in the right part of
-  // the band, whether a chamber plant is the right size — before anyone paints a root. Same argument as
-  // drawing the condition as a wash before any sprite existed at all.
-  const tuft = sharedTileUrl(g.kind)
+  const tuft = pool(g.kind, GROWTH_POOLS.floor)
   if (!tuft) return null
-  const root = sharedTileUrl(`${g.kind}-wall`) ?? tuft
-  const plant = sharedTileUrl(`${g.kind}-plant`) ?? tuft
+  const root = pool(g.kind, GROWTH_POOLS.wall) ?? tuft
+  const plant = pool(g.kind, GROWTH_POOLS.chamber) ?? tuft
   /**
    * WHICH cells grow, at a density of `per` — 1 being every one of them.
    *
@@ -137,7 +196,7 @@ export const MapGrowth = ({ mood, siteId, floorCells, wallCells = [], chamberCel
           are: a texture the floor has taken on, read as ground rather than as objects standing on it, and
           told apart at a glance from the roots through the band, which stay solid because a root coming
           through brick is the thing that is supposed to stop you. */}
-      {grown(floorCells, "growth-cell", g.floor).map(({ cell: [row, col], index: i }) => {
+      {(canopy ? [] : grown(floorCells, "growth-cell", g.floor)).map(({ cell: [row, col], index: i }) => {
         if (!isLit(row, col)) return null
         const { cx, cy } = cellCenter(row, col)
         // SIZED AGAINST THE SCATTER, which is the thing on this floor that already reads. A mat or a
@@ -152,8 +211,14 @@ export const MapGrowth = ({ mood, siteId, floorCells, wallCells = [], chamberCel
         return (
           <Sprite
             key={`tuft-${i}`}
-            url={tuft}
+            url={member(tuft, siteId, "growth-kind", i)}
             stretch={false}
+            // THE CONTRAST THE NIGHT TAKES OFF IT, handed back as it is to every other thing standing on
+            // this floor (`STANDING_RELIEF`). A wash dims and flattens in the same stroke, and growth was
+            // the one standing thing paying the second half of that — which is most of why a plant reads
+            // as pasted onto the paving rather than as growing out of it. Per sprite, never on the layer:
+            // a filter rasterises its subtree as one layer and this layer is the size of the map.
+            filter={STANDING_RELIEF[tier]}
             // THE PLAY IS WHAT THE SIZE LEAVES, so a tuft never crosses its own cell whatever size it
             // rolled. A fixed jitter was fine while these were specks and put the big ones over the wall
             // band the moment they were sized to be seen — which the spec above catches.
@@ -171,7 +236,16 @@ export const MapGrowth = ({ mood, siteId, floorCells, wallCells = [], chamberCel
             opacity={TUFT_OPACITY}
             // ANY angle: a tuft in a joint is seen from above and has no up. It is also what stops a
             // floor of them reading as one stamp repeated, which at this density is what they were.
-            transform={turned(rand(siteId, "growth-rot", i) * 360, rand(siteId, "growth-flip", i) > 0.5)}
+            // A LEAN AND A MIRROR, NOT A TURN. A full circle was fine while this slot held one near-symmetric
+            // wisp; it does not survive the tiles that replaced it. These are painted LIT, from the front
+            // and slightly above, and a spray of flowers turned half a circle is lit from underneath with
+            // its heads hanging — which is what it looked like. The mirror is still free, because light
+            // from the front has no left or right to lose. What the full turn used to buy is bought by the
+            // POOL: four members where there was one.
+            transform={turned(
+              (rand(siteId, "growth-rot", i) - 0.5) * 2 * FLOOR_LEAN,
+              rand(siteId, "growth-flip", i) > 0.5
+            )}
           />
         )
       })}
@@ -188,14 +262,15 @@ export const MapGrowth = ({ mood, siteId, floorCells, wallCells = [], chamberCel
 
           So it runs the part of the band that is BRICK, and the variance it used to carry in height lives
           in the width instead. */}
-      {grown(wallCells, "growth-wall-cell", g.wall).map(({ cell: [row, col], index: i }) => {
+      {(canopy ? [] : grown(wallCells, "growth-wall-cell", g.wall)).map(({ cell: [row, col], index: i }) => {
         if (!isLit(row, col)) return null
         const { cx, cy } = cellCenter(row, col)
         const w = 16 + rand(siteId, "growth-wall-w", i) * 18
         return (
           <Sprite
             key={`root-${i}`}
-            url={root}
+            url={member(root, siteId, "growth-wall-kind", i)}
+            filter={STANDING_RELIEF[tier]}
             x={cx - w / 2 + (rand(siteId, "growth-wall-x", i) - 0.5) * (CELL * 0.6)}
             y={cy - CELL / 2 - WALL_FACE_H}
             w={w}
@@ -216,16 +291,29 @@ export const MapGrowth = ({ mood, siteId, floorCells, wallCells = [], chamberCel
       {grown(chamberCells, "growth-plant-cell", g.chamber).map(({ cell: [row, col], index: i }) => {
         if (!isLit(row, col)) return null
         const { cx, cy } = cellCenter(row, col)
-        const size = 30 + rand(siteId, "growth-plant-size", i) * 16
+        // The member is drawn FIRST, because how big this plant is depends on which plant it is — and
+        // whether it belongs to this pass at all.
+        const pick = memberAt(plant.length, siteId, "growth-plant-kind", i)
+        const scale = CHAMBER_SCALE[GROWTH_POOLS.chamber[pick] ?? ""] ?? 1
+        if (scale >= CANOPY_SCALE !== canopy) return null
+        // A tree only where one can stand; a shrub anywhere the room reaches.
+        if (canopy && treeCells && !treeCells.has(`${row},${col}`)) return null
+        const size = (30 + rand(siteId, "growth-plant-size", i) * 16) * scale
+        // BEHIND IT MEANS ITS OWN CELL OR THE ONE BEYOND. A plant is bottom-anchored on its cell and
+        // reaches up over the cell north of it, so those are the two places a player disappears.
+        const behind =
+          canopy && !!explorerPos && explorerPos[1] === col && (explorerPos[0] === row || explorerPos[0] === row - 1)
         return (
           <Sprite
             key={`plant-${i}`}
-            url={plant}
+            url={plant[pick]}
             stretch={false}
+            filter={STANDING_RELIEF[tier]}
             x={cx - size / 2 + (rand(siteId, "growth-plant-x", i) - 0.5) * (CELL * 0.4)}
             y={cy + CELL / 2 - size}
             w={size}
             h={size}
+            opacity={behind ? OCCLUDER_FADE : undefined}
             // Standing, so the same small lean the roots take rather than a turn.
             transform={turned(
               (rand(siteId, "growth-plant-rot", i) - 0.5) * 10,

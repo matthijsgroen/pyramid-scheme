@@ -90,12 +90,19 @@ describe("the repaint queue's ENVELOPE entries — anything rendered from prim_s
  *   projection it has no silhouette at all — `prim_mat` records that its identity is entirely PAINT, so
  *   nothing about its outline is worth holding and the prompt says "fill the whole shape to its edges"
  *   instead.
+ * - **Anything cut by `yarn drift-mask`** — sand, moss. These are the strongest case of all, and the
+ *   predicate is the MASK'S ORIGIN rather than any phrase in the prompt: a generated mask IS the
+ *   silhouette, so there is none for the paint to be held to. Telling one of these to keep every edge
+ *   would be asking it to invent the very thing the mask exists to supply. Keyed on the command because
+ *   the prose moves: moss was first written as a full-bleed texture and later as cushions on magenta
+ *   with holes between them, and both are the same kind of tile.
  *
  * So the check is on masked entries that are none of those, and it is the one that would have caught
  * the six patron statues from the other direction had they not been statues.
  */
 const holdsItsShape = (block: string) =>
   /--mask=/.test(block) &&
+  !/yarn drift-mask/.test(block) &&
   !/need not match the reference/.test(block) &&
   !/Fill the whole shape to its edges/.test(block)
 

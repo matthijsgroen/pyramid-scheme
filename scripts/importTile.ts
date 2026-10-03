@@ -134,15 +134,27 @@ const SLOTS = {
   // seat — a drift lies ON the floor rather than standing on it — and its shape comes from `--mask`
   // (yarn drift-mask) rather than from the art, which is a full-bleed texture with no shape at all.
   drift: { w: TILE * 3, h: TILE * 3, seat: false },
-  // A CONDITION's sprite — the tuft in a joint and the plant in a chamber. Small and square, and it
-  // takes no seat: `MapGrowth` anchors each one itself, the tuft biased up its cell toward the band it
-  // is coming out of and the plant bottom-anchored like a prop. The sizes are the dummy generator's,
-  // which are the sizes the renderer draws them at.
-  growth: { w: px(22), h: px(22), seat: false },
+  // A CONDITION's sprite — the tuft in a joint and the plant in a chamber. Square, and it takes no
+  // seat: `MapGrowth` anchors each one itself, the tuft biased up its cell toward the band it is coming
+  // out of and the plant bottom-anchored like a prop.
+  //
+  // 46 UNITS BECAUSE THAT IS THE LARGEST THE RENDERER DRAWS ONE. It was 22 — the dummy generator's size,
+  // taken on trust as "the size the renderer draws them at", and it never was: `MapGrowth` draws a tuft
+  // at 28-42 (`CELL * 0.5` plus a quarter) and a chamber plant at 30-46, so every sprite in the family
+  // was being blown up about twice and came out visibly softer than the props beside it. A tile is
+  // stored at the size it is DRAWN, which is the same rule the canopy slot below exists for.
+  growth: { w: px(46), h: px(46), seat: false },
   // The same condition coming THROUGH the wall band, and taller than it is wide because the renderer
   // stretches it with `preserveAspectRatio="none"` from the band's top edge to past its bottom. A root
   // that stops inside the band reads as a stain painted on the wall.
   growthWall: { w: px(22), h: px(34), seat: false },
+  // A CANOPY PLANT — the members of the chamber pool that are trees rather than shrubs.
+  //
+  // STORED AT THE SIZE IT IS DRAWN, which `growth` is not. A tuft and a palm shared the 22-unit slot
+  // until the palm was scaled to read as a tree (`CHAMBER_SCALE`): drawn at up to 110 units off a 44px
+  // file, it was upscaled five times and came out visibly softer than every prop beside it. The other
+  // members keep `growth` — nothing about a fern wants four times the bytes.
+  canopy: { w: px(110), h: px(110), seat: false },
   explorer: { w: px(40), h: px(70), seat: true },
 } as const
 

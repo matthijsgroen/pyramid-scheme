@@ -105,13 +105,27 @@ src/game/__tests__/siteAssembler.spec.ts   ✗
 
 ## `.verify.ts` — sweeps too expensive to be tests
 
-A `.verify.ts` file is a vitest file `yarn test` never runs; `yarn verify-world` does. The bar is
-wall clock, not taste: one test runs on one worker, so a long `it()` sets a floor under the whole
-suite. Hold a sweep out only when it is minutes long, cannot be split, and guards something a change
-to its own inputs would break — then name those inputs in the file.
+A `.verify.ts` file is a vitest file `yarn test` never runs; `yarn verify-content` does.
 
-Today that is `src/app/SiteMap/worldBoards.verify.ts`. Everything else about the world stays a test
-in `worldFloorAssembly.spec.ts`.
+**The bar is WHAT THE CHECK NEEDS TO GET HOLD OF, not how long it takes.** A claim about a board — its
+answer solves it, its route is unique, it is not solved by following the light — needs only a board, and a
+stored one serves as well as a fresh one: that stays a test and runs in milliseconds, reading its board
+from the family's `boards.fixture.json` (`yarn generate-boards`). A claim about a GENERATOR, a seed list
+or the world spec has to run the thing that searches, and a search has no runtime worth asserting: eight
+such files racing for the same cores is what made the build red or green according to machine load.
+
+**`verify-content` is the pass you make AFTER AUTHORING** — after changing a generator, a seed list or the
+world spec. It is deliberately not a CI job: a generator is worth re-checking when somebody changes one,
+not on every pull request.
+
+Today that is every family's `generate*.verify.ts`, `lightbeamConfig.verify.ts`, `puzzleSeeds.verify.ts`,
+and for the world `worldBoards.verify.ts`, `worldFloorAssembly.verify.ts` and
+`configBuilder.integration.verify.ts` — the sweeps that read the whole authored world, including the one
+holding the tenet that authoring an encounter never moves a wall
+(docs/game-design/world-spec-stability.md). Those answer a change to the WORLD SPEC, which is why they run
+when somebody makes one rather than on every pull request. A fixture-backed spec pairs with a `.verify.ts` that rebuilds
+the fixture and compares it with `toStrictEqual` — without that the split is a lie, since a stored board
+that has drifted lets the whole spec pass while every board the game deals is broken.
 
 ---
 

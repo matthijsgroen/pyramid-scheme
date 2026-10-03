@@ -2,7 +2,8 @@
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { SiteMapView, approachCells } from "./SiteMapView"
-import { buildRoomClaims, tileRegionsFor } from "./roomClaims"
+import { allFloorRects, buildRoomClaims, tileRegionsFor } from "./roomClaims"
+import { grassMatsFor } from "./floorScatter"
 import { footprintPath } from "./tileRegions"
 import { LOOTED_OPACITY, NODE_OVER_ART_OPACITY } from "./nodeArt"
 import { ExplorerFigure } from "./ExplorerDot"
@@ -28,6 +29,9 @@ import "@/mods/registerModApps"
 import { floorWithHandle } from "@/game/testSupport/handleFixtures"
 import { cellAddress } from "@/game/cellAddress"
 import { AXES, DROP_AT, dropGrid, obstacleIndexes } from "./floorFixtures.testing"
+import { CHAMBER_SCALE, GROWTH_POOLS, growthTile } from "./moodSettings"
+import { sharedTileUrl } from "./tileAssets"
+import { STANDING_RELIEF } from "./lighting"
 
 // Cell positions come from mapScale's own geometry (the pitch is stretched to give every wall a
 // place of its own), so a change there can't silently break every position assumption in this file.
@@ -79,7 +83,14 @@ const clipOf = (el: HTMLElement | null | undefined) => {
   return d.replace(/M(-?[\d.]+) (-?[\d.]+)/g, (_, x: string, y: string) => `M${Number(x) + dx} ${Number(y) + dy}`)
 }
 
-const spriteMatching = (root: HTMLElement, part: string) => spritesIn(root).filter(el => urlOf(el).includes(part))
+/** Sprites drawn from a tile whose name contains `part`.
+ *
+ * GROUND IS EXCLUDED. A mat of grass is `overgrown-grass.png`, so it matches a search for "overgrown"
+ * while being a different layer entirely — it lies under the growth rather than being some of it, and a
+ * test counting tufts in a cell was counting the mat they stand on. `data-ground` is what tells them
+ * apart (`GroundCover`). */
+const spriteMatching = (root: HTMLElement, part: string) =>
+  spritesIn(root).filter(el => urlOf(el).includes(part) && !el.hasAttribute("data-ground"))
 
 // ── Grid factory ──────────────────────────────────────────────────────────────
 
@@ -264,6 +275,163 @@ describe("what a condition grows on", () => {
     ])
     expect(run[0]).toBeGreaterThan(0)
     expect(run[1]).toBe(0)
+  })
+})
+
+describe("the ground an overgrown floor grows out of", () => {
+  /** The PLACEMENT, not the drawing: `overgrown-grass` is not painted yet, and where the mats go is a
+   * fact about the floor rather than about whether the tile has landed. */
+  const matsOn = (amount: number) => {
+    const wide = Array.from({ length: 12 }, () => corridor("completed", false))
+    const grid = makeGrid([wide, wide.map(() => empty)])
+    return grassMatsFor(grid, amount).length
+  }
+
+  it("lays no grass on a floor nothing has grown into", () => {
+    // Sand is weather and falls on any floor; grass is the condition's own ground and falls on no other.
+    expect(matsOn(0)).toBe(0)
+  })
+
+  it("lays more of it the further gone the floor is", () => {
+    expect(matsOn(1)).toBeGreaterThan(matsOn(0.2))
+    expect(matsOn(0.2)).toBeGreaterThan(0)
+  })
+
+  it("draws ground under the things that grow on it, never over them", () => {
+    // Asserted with SAND, which is painted: both grounds are the same component, and what is being
+    // claimed is the order of the layers rather than which tile fills one.
+    const wide = Array.from({ length: 24 }, () => corridor("completed", false))
+    const grid = {
+      ...makeGrid([wide, wide.map(() => empty)]),
+      condition: { kind: "overgrown" as const, amount: 1 },
+    }
+    const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} revealAllCells />)
+    const order = Array.from(container.querySelectorAll("*"))
+    const ground = [...container.querySelectorAll("[data-ground]")].map(el => order.indexOf(el))
+    const growth = spriteMatching(container, "overgrown").map(el => order.indexOf(el))
+    expect(ground.length).toBeGreaterThan(0)
+    expect(growth.length).toBeGreaterThan(0)
+    expect(Math.max(...ground)).toBeLessThan(Math.min(...growth))
+  })
+})
+
+describe("the pool a slot of growth is drawn from", () => {
+  /** A run of corridor wide enough that every member of a pool gets a turn. */
+  const overgrownFloor = () => {
+    const wide = Array.from({ length: 24 }, () => corridor("completed", false))
+    const grid = {
+      ...makeGrid([wide, wide.map(() => empty)]),
+      condition: { kind: "overgrown" as const, amount: 1 },
+    }
+    const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} />)
+    return spriteMatching(container, "overgrown").map(urlOf)
+  }
+
+  /** The tiles that actually exist for a slot, with every unpainted member resolved to the first. */
+  const painted = (members: readonly (string | null)[]) =>
+    new Set(members.map(member => sharedTileUrl(growthTile("overgrown", member)) ?? sharedTileUrl("overgrown")))
+
+  it("draws a member nobody has painted as the slot's own sprite, never as a missing file", () => {
+    // Six of the seven pool members land through `yarn repaint` after this ships, so the common case is a
+    // slot that is mostly its own drawing repeated. What must never happen is a url for a tile that is
+    // not there.
+    const every = new Set([...painted(GROWTH_POOLS.floor), ...painted(GROWTH_POOLS.wall)])
+    const drawn = overgrownFloor()
+    expect(drawn.length).toBeGreaterThan(0)
+    expect(drawn.every(url => every.has(url))).toBe(true)
+  })
+
+  it("gives every painted member of a slot a turn, so a floor is a mix and not one weed repeated", () => {
+    const drawn = new Set(overgrownFloor())
+    for (const url of painted(GROWTH_POOLS.floor)) expect(drawn).toContain(url)
+  })
+
+  it("never turns a plant far enough to light it from underneath", () => {
+    // These tiles are painted LIT, from the front and slightly above. A full circle of rotation was fine
+    // while the slot held one near-symmetric wisp and is not fine now: a spray of flowers turned half a
+    // circle hangs its heads and is lit from below. A mirror is still free — front light has no flank.
+    const wide = Array.from({ length: 24 }, () => corridor("completed", false))
+    const grid = {
+      ...makeGrid([wide, wide.map(() => empty)]),
+      condition: { kind: "overgrown" as const, amount: 1 },
+    }
+    const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} revealAllCells />)
+    const turns = spriteMatching(container, "overgrown")
+      .map(el => /rotate\(([-\d.]+)deg\)/.exec(el.style.transform)?.[1])
+      .filter((deg): deg is string => deg !== undefined)
+      .map(Number)
+    expect(turns.length).toBeGreaterThan(0)
+    for (const deg of turns) expect(Math.abs(deg)).toBeLessThanOrEqual(45)
+  })
+
+  it("draws the same members in the same cells every render", () => {
+    expect(overgrownFloor()).toEqual(overgrownFloor())
+  })
+
+  it("hangs a root only where there is wall above it, never over a chamber's own floor", () => {
+    // EMPTY IS NOT SOLID. A chamber's claimed cells are `type: "empty"` in the grid, so the void test
+    // alone calls the open middle of a room a wall and hangs a root through it — which draws as a dead
+    // twig lying on the paving.
+    const room = {
+      ...makeGrid([
+        [empty, corridor("completed", false), empty],
+        [empty, chamber("completed"), empty],
+        [empty, empty, empty],
+      ]),
+      condition: { kind: "overgrown" as const, amount: 1 },
+    }
+    const { container } = render(<SiteMapView grid={room} onCellClick={() => {}} revealAllCells />)
+    const claims = buildRoomClaims(room)
+    const roots = spriteMatching(container, "overgrown-wall").map(boxOf)
+    for (const box of roots) {
+      const row = Math.round((box.y + box.h) / CELL)
+      const col = Math.round(box.x / CELL)
+      expect(claims.claimedBy.has(`${row - 1},${col}`)).toBe(false)
+    }
+  })
+
+  it("never stands a TREE where the player walks, though a shrub may", () => {
+    // You can step over a bush and not over a trunk. A fifth of a real floor's claimed cells are
+    // walkable, and a shrub on one of those is a room grown through; a palm on one is a tree in the
+    // corridor.
+    const room = {
+      ...makeGrid([
+        [empty, corridor("completed", false), empty],
+        [empty, chamber("completed"), empty],
+        [empty, empty, empty],
+      ]),
+      condition: { kind: "overgrown" as const, amount: 1 },
+    }
+    const { container } = render(<SiteMapView grid={room} onCellClick={() => {}} revealAllCells />)
+    const walkable = new Set<string>()
+    room.cells.forEach((row, r) => row.forEach((cell, c) => cell.type !== "empty" && walkable.add(`${r},${c}`)))
+    // Every palm's own cell, read back off where it was drawn.
+    for (const box of spriteMatching(container, "overgrown-palm").map(boxOf)) {
+      const row = Math.round((box.y + box.h - CELL / 2) / CELL)
+      const col = Math.round(box.x / CELL)
+      expect(walkable.has(`${row},${col}`)).toBe(false)
+    }
+  })
+
+  it("draws a palm bigger than the bush beside it, because a pool member is a different plant", () => {
+    // One size range for the whole pool drew palms and bushes alike at 30-46 units, so half the palms on
+    // a floor were smaller than the shrub next to them.
+    expect(CHAMBER_SCALE.palm).toBeGreaterThan(CHAMBER_SCALE.plant)
+    expect(CHAMBER_SCALE.ferns).toBeLessThan(CHAMBER_SCALE.plant)
+  })
+
+  it("hands growth back the contrast the night takes out of it, as every other standing thing gets", () => {
+    // Per sprite and not on the layer: a filter rasterises its subtree as one layer, and the growth layer
+    // is the size of the map.
+    const wide = Array.from({ length: 6 }, () => corridor("completed", false))
+    const grid = {
+      ...makeGrid([wide, wide.map(() => empty)]),
+      condition: { kind: "overgrown" as const, amount: 1 },
+    }
+    const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} />)
+    const sprites = spriteMatching(container, "overgrown")
+    expect(sprites.length).toBeGreaterThan(0)
+    expect(sprites.every(el => el.style.filter === STANDING_RELIEF.starter)).toBe(true)
   })
 })
 
@@ -1263,6 +1431,112 @@ describe("the light falls in the same two passes the shade does", () => {
   })
 })
 
+describe("a shaft of daylight falls into a room", () => {
+  // The default floor's chambers are under a roof that has given way: the rank's own chance is 0.34 and
+  // this floor's first two draws come in under it. Placement itself is `lighting.spec.ts`; what these
+  // freeze is what the map does with it.
+  const beamedRoom = () =>
+    makeGrid([
+      [empty, corridor("completed", false), empty],
+      [empty, chamber("completed"), empty],
+    ])
+
+  it("lights the room with nobody on the floor, so its statue reads from the doorway", () => {
+    const { container } = render(<SiteMapView grid={beamedRoom()} revealAllCells />)
+
+    expect(container.querySelector("[data-beam='lit']")).toBeTruthy()
+    expect(container.querySelector("[data-torch]")).toBeNull()
+  })
+
+  it("lights the chamber whole, not the one cell the shaft comes down in", () => {
+    // A square of light in the middle of a room reads as a coloured-in tile; what a room is lit by is a
+    // light that reaches its walls. `litPlaceCells` given any cell of a chamber returns the footprint.
+    const { container } = render(<SiteMapView grid={beamedRoom()} revealAllCells />)
+    const clip = clipOf(container.querySelector<HTMLElement>("[data-beam='lit']"))
+    const cells = [...clip.matchAll(new RegExp(`h${CELL}v${CELL}`, "g"))]
+
+    expect(clip).toContain(`M${cellLeft(1)} ${cellTop(1)}`)
+    expect(cells.length).toBeGreaterThan(1)
+  })
+
+  it("puts none in a floor of passages, which a player walks through rather than stands in", () => {
+    const corridors = makeGrid([[corridor("completed", false), corridor("completed", false)]])
+    const { container } = render(<SiteMapView grid={corridors} revealAllCells />)
+
+    expect(container.querySelectorAll("[data-beam]")).toHaveLength(0)
+  })
+
+  it("hands the room over to the lamp when the explorer walks in, instead of adding to it", () => {
+    // Both lights are solved to the same top end, and `color-dodge` multiplies: drawn over each other
+    // they take the floor half again as bright as anywhere else on the map. So the shaft's own light
+    // fades out on the same crossfade the lamp fades in on, and the room never changes value.
+    const { container } = render(<SiteMapView grid={beamedRoom()} explorerPos={[1, 1]} revealAllCells />)
+
+    expect(Number(container.querySelector<HTMLElement>("[data-beam='lit']")!.style.opacity)).toBe(0)
+    expect(Number(container.querySelector<HTMLElement>("[data-torch='lit']")!.style.opacity)).toBeGreaterThan(0)
+  })
+
+  it("stands the cone in front of what is standing in the room", () => {
+    const { container } = render(<SiteMapView grid={beamedRoom()} revealAllCells />)
+    const depthOf = (el: Element) => Array.from(container.querySelectorAll("*")).indexOf(el)
+    const standing = container.querySelector("[data-node-sprite]")!
+
+    expect(depthOf(container.querySelector("[data-beam-shaft]")!)).toBeGreaterThan(depthOf(standing))
+  })
+
+  it("cuts the RAYS to the floor and their own way in, never across the rock beside it", () => {
+    // The rays were cut to their own geometry only, so a beam leaning toward a wall laid a wedge of
+    // light over the stone outside the room. A beam may fall on floor it can see, and on the band of
+    // wall it comes through — nothing else.
+    const { container } = render(<SiteMapView grid={beamedRoom()} revealAllCells />)
+    const rays = [...container.querySelectorAll<HTMLElement>("[data-beam-shaft]")]
+    expect(rays.length).toBeGreaterThan(0)
+    // Every square a beam may touch: the floor of the room it falls in, and the band of wall directly
+    // above that floor, which is the roof it comes through.
+    const floor = allFloorRects(regionsOf(beamedRoom()))
+    const allowed: Rect[] = floor.flatMap(([x, y, w, h]) => [[x, y, w, h] as Rect, [x, y - WALL_H, w, WALL_H] as Rect])
+    for (const ray of rays) {
+      // The element's box is the union of the pieces, so the pieces themselves are what to check, and
+      // they are the clip path on the child the feather paints into.
+      const cut = ray.querySelector<HTMLElement>("[style*='clip-path']") ?? ray
+      const { x: ox, y: oy } = boxOf(ray)
+      const pieces = [...cut.style.clipPath.matchAll(/M(-?[\d.]+) (-?[\d.]+)h(-?[\d.]+)v(-?[\d.]+)/g)].map(
+        m => [ox + Number(m[1]), oy + Number(m[2]), Number(m[3]), Number(m[4])] as Rect
+      )
+      expect(pieces.length).toBeGreaterThan(0)
+      for (const [px, py, pw, ph] of pieces) {
+        const held = allowed.some(
+          ([ax, ay, aw, ah]) =>
+            px >= ax - 0.01 && py >= ay - 0.01 && px + pw <= ax + aw + 0.01 && py + ph <= ay + ah + 0.01
+        )
+        expect(held).toBe(true)
+      }
+    }
+  })
+
+  it("cuts the patch of sun to the floor, so no light falls on the rock outside", () => {
+    // The lean picks a side with ground on it, but it looks ONE cell over and the pool reaches about one
+    // and a half: a shaft a cell in from a chamber's edge threw its sun past the wall onto the rock, and
+    // a hard bright ellipse out there has nothing in the picture to have cast it.
+    const { container } = render(<SiteMapView grid={beamedRoom()} revealAllCells />)
+    const pools = [...container.querySelectorAll<HTMLElement>("[data-beam-pool]")]
+    expect(pools.length).toBeGreaterThan(0)
+    for (const pool of pools) expect(pool.style.clipPath).toMatch(/^path\(/)
+  })
+
+  it("lands the rays in a patch of sun, under them rather than over them", () => {
+    const { container } = render(<SiteMapView grid={beamedRoom()} revealAllCells />)
+    const depthOf = (el: Element) => Array.from(container.querySelectorAll("*")).indexOf(el)
+
+    expect(container.querySelectorAll("[data-beam-pool]")).toHaveLength(
+      container.querySelectorAll("[data-beam-shaft]").length
+    )
+    expect(depthOf(container.querySelector("[data-beam-pool]")!)).toBeLessThan(
+      depthOf(container.querySelector("[data-beam-shaft]")!)
+    )
+  })
+})
+
 describe("the explorer stands in the room", () => {
   const spriteIn = (container: HTMLElement) => container.querySelector<HTMLImageElement>("[data-explorer] img")
 
@@ -1963,7 +2237,7 @@ describe("a rank is dressed with what it is authored to hold", () => {
   // Reported from play: a crystal — a wizard thing, the gods' vault — stood beside Anubis in the Valley
   // of the Kings, which is expert. It was a COMPANION, the second prop placed beside one of the same
   // purpose, and its guard asked only whether a FILE existed. Every kind has a placeholder, so every rank
-  // could reach the whole vocabulary. The world-wide sweep is in `worldFloorAssembly.spec`; this is the
+  // could reach the whole vocabulary. The world-wide sweep is in `worldFloorAssembly.verify`; this is the
   // case that names the bug.
   it("offers no companion the rank never authors, however well it agrees", () => {
     const expert = authoredKindsFor("expert").props

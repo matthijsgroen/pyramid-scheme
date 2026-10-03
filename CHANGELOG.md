@@ -33,6 +33,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A lever now stays visible while you're standing on it throwing it.
 - A mirror puzzle no longer crashes reopening a fork the game reshaped since you left it mid-turn.
 
+### Added
+
+- Daylight now falls into some chambers through a hole in the roof, lighting the room and what stands in it without a torch.
+
 ### Changed
 
 - Saved expeditions start over this release. The way a site's rooms and doors are recorded has changed, and an old save cannot be read against the new one.
@@ -40,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Walking to a staircase, a shop, the way out or a room you can re-enter now leaves a button beside you to go in.
 - Pressing the button at the way out now leaves right away, instead of asking you to confirm a second time.
 - Pressing the button at a lever now throws it right away, instead of opening a screen to ask which way.
+- Overgrown pyramid floors are lit by their own daylight now, thick with plants, with shafts of sun falling into the corridors.
 - Pyramid corridors are much shorter. The walk from one puzzle to the next is about half what it was, and a starter floor a third.
 - Eclipse boards now come in three kinds: with signs, without signs, and ones that never make you compare two lines.
 - Star battle and twin stars boards no longer hand you a star to start with, and the hard ones ask you to rule squares out first.

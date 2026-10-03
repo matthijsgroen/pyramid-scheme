@@ -7,7 +7,6 @@ import { generatedWorldConfigs } from "../../data/generatedWorld"
 import { journeys } from "../../data/journeys"
 import type { Journey } from "../../data/journeys"
 import { SiteMapView } from "./SiteMapView"
-import { ExplorerDot } from "./ExplorerDot"
 import { encodeEdge, decodeEdge } from "./edgeId"
 import type { FloorConfig } from "../../game/siteTypes"
 
@@ -289,7 +288,6 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
             revealAllCells={revealAll}
             freeWalk={revealAll}
           />
-          <ExplorerDot grid={grid} pos={pos} />
         </div>
         <p className="text-xs text-stone-600">
           {revealAll

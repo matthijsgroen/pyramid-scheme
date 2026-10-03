@@ -14,7 +14,7 @@ The goal: **as stable as possible, not perfect.** A restructured section requiri
 
 Every cell in the assembled grid carries a `sectionHash` that fingerprints the structural shape of the section it belongs to: what it covers and what it deliberately ignores is the field list in [world-spec-stability.md](./world-spec-stability.md), which is the authoring-side view of this same mechanism. The short version is that the hash fingerprints the shape of the place — how many rooms, how long the walk, what isolates it, whether it is hidden — and ignores everything about what lives inside it.
 
-The rule the two pages share: **structure changes only when the corridors change**, their number or their length. A setting that re-carves a floor must move the hash; a setting that does not must move nothing. `worldFloorAssembly.spec.ts` sweeps every authored floor on every test run to hold both halves.
+The rule the two pages share: **structure changes only when the corridors change**, their number or their length. A setting that re-carves a floor must move the hash; a setting that does not must move nothing. `worldFloorAssembly.verify.ts` sweeps every authored floor to hold both halves, under `yarn verify-content` — run it after authoring.
 
 The hash is **no longer what a save is filed under** — see "Which section is this?" below. It stayed too sensitive to be an identity: it covers the floor's own carve knobs, so retuning them moved every hash in the world. It survives only as the key the coordinate archive is matched by while re-keying, and goes with the archive.
 
