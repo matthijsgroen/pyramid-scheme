@@ -104,3 +104,28 @@ export const strandingSluiceFloor = (): FloorConfig => {
     ],
   }
 }
+
+/** The flooded hall drops into a wing the pump room also joins, so a player in the hall can fall out of it
+ * while a player in the wing can never climb back in. */
+export const dropOutOfSluiceFloor = (): FloorConfig => ({
+  ...floor({
+    regionLayout: {
+      regions: [region("pumpRoom"), region("gallery"), region("hall"), region("wing")],
+      connections: [
+        ["pumpRoom", "gallery"],
+        ["pumpRoom", "hall"],
+        ["pumpRoom", "wing"],
+      ],
+      in: "pumpRoom",
+      out: "gallery",
+    },
+    obstacles: [
+      barrier("floodedHall", "hall"),
+      { id: "dropToWing", kind: "oneWay", at: { on: "connection", between: ["hall", "wing"] } },
+    ],
+    controls: [sluice("pumpRoom", { dry: [], wet: ["floodedHall"] })],
+    chains: [3, 1],
+  }),
+  packing: 7,
+  oneWayRealisation: "zipline",
+})

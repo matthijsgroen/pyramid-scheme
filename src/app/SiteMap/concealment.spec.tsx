@@ -10,7 +10,8 @@ import { concealShutGround, concealedBehindBarriers } from "@/game/concealment"
 import { journeys as allKnownJourneys } from "@/data/journeys"
 import { resolveEncounter } from "@/app/families/familyRegistry"
 import { resolveKeyRequirements } from "@/mods/allFamilyMeta"
-import { offRouteSluiceFloor, onRouteSluiceFloor } from "@/game/testSupport/regionBarrierFixtures"
+import { resolveOneWayRealisation } from "@/mods/allOneWayRealisations"
+import { dropOutOfSluiceFloor, offRouteSluiceFloor, onRouteSluiceFloor } from "@/game/testSupport/regionBarrierFixtures"
 import { forkSwitchFloorConfig } from "@/game/testSupport/forkSwitchFixtures"
 import { soloLeverDoorFloor } from "@/game/testSupport/gateFaceFixtures"
 import { sealWaysOut, useAssembledFloor } from "./useAssembledFloor"
@@ -24,26 +25,34 @@ const floorRef = { journeyId: JOURNEY, floorIndex: 0 }
 
 const carve = (config: FloorConfig): { seed: number; grid: FloorGrid } => {
   for (let seed = 0; seed < 120; seed++) {
-    const result = assembleFloor(JOURNEY, config, seed, resolveEncounter, { resolveKeyRequirements, floorRef })
+    const result = assembleFloor(JOURNEY, config, seed, resolveEncounter, {
+      resolveKeyRequirements,
+      resolveOneWay: resolveOneWayRealisation,
+      floorRef,
+    })
     if (result.success) return { seed, grid: result.grid }
   }
   throw new Error("no seed carved this floor")
 }
 
 type Scenario = { name: string; config: FloorConfig; mechanismId?: string }
-const SCENARIOS: Scenario[] = [
+const REGION_SCENARIOS: Scenario[] = [
   { name: "a sluice flooding one of two side regions", config: offRouteSluiceFloor(), mechanismId: "sluice" },
   { name: "a sluice flooding a hall on the route", config: onRouteSluiceFloor(), mechanismId: "sluice" },
+  { name: "a sluice flooding a hall that drops into a wing", config: dropOutOfSluiceFloor(), mechanismId: "sluice" },
+]
+const EDGE_SCENARIOS: Scenario[] = [
   { name: "a lever barring the vault door", config: soloLeverDoorFloor(), mechanismId: "beam" },
   { name: "a fork-switch shutting the ways out of its fork", config: forkSwitchFloorConfig(), mechanismId: "Y" },
 ]
+const SCENARIOS: Scenario[] = [...REGION_SCENARIOS, ...EDGE_SCENARIOS]
 
 const carved = new Map<string, { seed: number; grid: FloorGrid }>()
 beforeAll(() => {
   for (const scenario of SCENARIOS) carved.set(scenario.name, carve(scenario.config))
 }, 240_000)
 
-const DOUBLE_BACK = SCENARIOS[3].name
+const DROP_OUT = REGION_SCENARIOS[2].name
 
 const roomsOf = (grid: FloorGrid): { cell: RoomCell; at: [number, number] }[] =>
   grid.cells.flatMap((row, r) =>
@@ -153,8 +162,8 @@ const cellsOf = (container: HTMLElement) => {
 
 afterEach(cleanup)
 
-describe("ground a shut barrier cuts off is hidden, explored or not", () => {
-  for (const { name } of SCENARIOS)
+describe("ground a shut region barrier cuts off is hidden, explored or not", { timeout: 30_000 }, () => {
+  for (const { name } of REGION_SCENARIOS)
     it(`${name}: in every position the hidden set is exactly what the shut barriers cut off`, () => {
       let hiddenSomewhere = false
       for (const state of statesOf(name)) {
@@ -167,7 +176,7 @@ describe("ground a shut barrier cuts off is hidden, explored or not", () => {
       expect(hiddenSomewhere, "some position shuts something off, so the equality above is not empty").toBe(true)
     })
 
-  for (const { name } of SCENARIOS)
+  for (const { name } of REGION_SCENARIOS)
     it(`${name}: whether the ground was explored makes no difference to what is hidden`, () => {
       for (const state of statesOf(name)) {
         const hook = floorFor(name, positionsAt(name, state))
@@ -180,7 +189,7 @@ describe("ground a shut barrier cuts off is hidden, explored or not", () => {
       }
     })
 
-  for (const { name } of SCENARIOS)
+  for (const { name } of REGION_SCENARIOS)
     it(`${name}: every hidden cell is drawn as fog and every other drawn cell stays as it was`, () => {
       let drawnBeforeHidden = 0
       for (const state of statesOf(name)) {
@@ -231,8 +240,28 @@ const exploredEverywhere = (grid: FloorGrid): Record<string, string[]> => {
   return explored
 }
 
-describe("hidden ground is kept, not erased, and opens again as it was left", () => {
-  for (const { name } of SCENARIOS)
+describe("a shut edge gate conceals nothing", { timeout: 30_000 }, () => {
+  for (const { name } of EDGE_SCENARIOS)
+    it(`${name}: in every position the whole floor is drawn as it would be with nothing concealed`, () => {
+      let shutSomewhere = false
+      for (const state of statesOf(name)) {
+        const { grid, from } = withState(name, state)
+        const sealed = grid.cells.flat().some(cell => isSealedWayOut(cell))
+        if (sealed) shutSomewhere = true
+        expect([...concealedBehindBarriers(grid, from)], `${name} / ${state}`).toEqual([])
+        expect(concealShutGround(grid, from), `${name} / ${state}`).toEqual(grid)
+        const plain = cellsOf(render(<SiteMapView grid={grid} />).container)
+        cleanup()
+        const concealed = cellsOf(render(<SiteMapView grid={concealShutGround(grid, from)} />).container)
+        cleanup()
+        expect([...concealed].sort(), `${name} / ${state}`).toEqual([...plain].sort())
+      }
+      expect(shutSomewhere, "some position leaves an edge gate shut, so the equality above is not empty").toBe(true)
+    })
+})
+
+describe("hidden ground is kept, not erased, and opens again as it was left", { timeout: 30_000 }, () => {
+  for (const { name } of REGION_SCENARIOS)
     it(`${name}: shutting and reopening a barrier draws every cell of the floor as before, and writes nothing`, () => {
       const states = statesOf(name)
       const { grid: base } = carved.get(name)!
@@ -272,8 +301,8 @@ describe("hidden ground is kept, not erased, and opens again as it was left", ()
 })
 
 describe("what is cut off is reckoned from where the player stands", () => {
-  const unsetFloor = () => {
-    const { grid, from } = withState(DOUBLE_BACK, "unset")
+  const floodedFloor = () => {
+    const { grid, from } = withState(DROP_OUT, "dry")
     return { grid, from }
   }
   const regionOf = (grid: FloorGrid, key: string): string | undefined => {
@@ -293,22 +322,24 @@ describe("what is cut off is reckoned from where the player stands", () => {
       )
     )
 
-  it("standing at the landing of a drop, the ground it dropped from is hidden behind the shut gate, not reachable back up", () => {
-    const { grid } = unsetFloor()
-    const run = oneWayRuns(grid).find(r => regionOf(grid, `${r.launch[0]},${r.launch[1]}`) === "leftLower")!
+  it("standing at the landing of a drop, the hall it dropped from is hidden behind the shut barrier, not reachable back up", () => {
+    const { grid } = floodedFloor()
+    const run = oneWayRuns(grid).find(r => regionOf(grid, `${r.launch[0]},${r.launch[1]}`) === "hall")!
     const hidden = concealedBehindBarriers(grid, run.landing)
-    const lowerLeft = cellsInRegion(grid, "leftLower")
-    expect(lowerLeft.length).toBeGreaterThan(0)
-    expect(lowerLeft.filter(key => !hidden.has(key))).toEqual([])
+    const hall = cellsInRegion(grid, "hall")
+    const standable = reachable(grid, run.landing)
+    expect(hall.length).toBeGreaterThan(0)
+    expect(hidden.has(`${run.launch[0]},${run.launch[1]}`), "the launch it fell from").toBe(true)
+    expect(hall.filter(key => !hidden.has(key) && !standable.has(key))).toEqual([])
   })
 
-  it("standing at the launch of a drop, the ground it lands on is not hidden though the gate beside it is shut", () => {
-    const { grid } = unsetFloor()
-    const run = oneWayRuns(grid).find(r => regionOf(grid, `${r.launch[0]},${r.launch[1]}`) === "leftLower")!
+  it("standing at the launch of a drop, the ground it lands on is not hidden though the barrier around it is shut", () => {
+    const { grid } = floodedFloor()
+    const run = oneWayRuns(grid).find(r => regionOf(grid, `${r.launch[0]},${r.launch[1]}`) === "hall")!
     const hidden = concealedBehindBarriers(grid, run.launch)
     const landing = regionOf(grid, `${run.landing[0]},${run.landing[1]}`)
     const there = cellsInRegion(grid, landing!)
-    expect(landing).toBe("entrance")
+    expect(landing).toBe("wing")
     expect(there.length).toBeGreaterThan(0)
     expect(there.filter(key => hidden.has(key))).toEqual([])
   })

@@ -29,10 +29,11 @@ const door: RoomCell = {
   state: "reachable",
   tags: ["gate"],
   requiredKeyId: KEY,
+  regionBarrier: { region: "vault", entrance: "hall" },
 }
 const end: RoomCell = { type: "room", roomType: "portal", dirs: new Set(["w"]), state: "reachable" }
 
-// One row: a lever, ground, a drop east, ground, a door the lever owns, ground, a room.
+// One row: a lever, ground, a drop east, ground, a region barrier's door the lever owns, ground, a room.
 const row: GridCell[] = [lever, way("w", "e"), way("w"), span, way("e"), way("w", "e"), door, way("w", "e"), end]
 const grid: FloorGrid = {
   cells: [row],
@@ -44,8 +45,8 @@ const grid: FloorGrid = {
   staircases: {},
 }
 
-describe("concealedBehindBarriers on a drop with a door past it", () => {
-  it("ground only a drop already taken has cut off is not hidden, while the ground behind the shut door is", () => {
+describe("concealedBehindBarriers on a drop with a region barrier past it", () => {
+  it("ground only a drop already taken has cut off is not hidden, while the ground behind the shut barrier is", () => {
     expect([...concealedBehindBarriers(grid, [0, 5])].sort()).toEqual(["0,7", "0,8"])
   })
 
@@ -53,6 +54,12 @@ describe("concealedBehindBarriers on a drop with a door past it", () => {
     const hidden = concealedBehindBarriers(grid, [0, 5])
     expect(hidden.has("0,6")).toBe(false)
     expect(hidden.has("0,3")).toBe(false)
+  })
+
+  it("an edge gate the lever owns hides nothing, because only a region barrier conceals", () => {
+    const edge: RoomCell = { ...door, regionBarrier: undefined }
+    const edged = { ...grid, cells: [row.map(cell => (cell === door ? edge : cell))] }
+    expect(concealedBehindBarriers(edged, [0, 5]).size).toBe(0)
   })
 
   it("a gate no mechanism owns hides nothing", () => {

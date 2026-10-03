@@ -150,14 +150,14 @@ know why the door stays shut.
 straight through the sand.
 
 **Acceptance**
-1. Ground cut off by a currently shut barrier is hidden, whether or not it was explored.
+1. Ground cut off by a currently shut region barrier is hidden, whether or not it was explored.
 2. It is hidden, not erased: opening the barrier shows it exactly as it was left, with nothing to walk
    again.
 3. Cut off is reckoned from where the player is, so a one-way counts in one direction only.
 4. A hidden stretch does not read as unexplored to anything that counts progress.
 
-**Carve moves: no. Saves: no**, provided concealment is derived when drawing. **Depends on T6** for
-regions; works for edge gates on its own.
+**Carve moves: no. Saves: no**, provided concealment is derived when drawing. **Depends on T6**: concealment is a property of a region barrier only (the shut door cells
+carrying `regionBarrier`); an edge gate conceals nothing, so ground behind a shut one stays drawn as explored.
 
 ## T8 — The sequence
 

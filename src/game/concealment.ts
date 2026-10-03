@@ -3,8 +3,8 @@ import { oneWayRuns } from "./gridNavigation"
 
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 
-// A gate a mechanism drives: a shut one is a barrier the player can open from elsewhere. A ward or
-// key gate names a key the player earns, so it is not a barrier in this sense and conceals nothing.
+// A region barrier's door a mechanism drives: a shut one is a barrier the player can open from elsewhere.
+// An edge gate, a ward or a key gate is not a barrier in this sense and conceals nothing.
 const mechanismKeysOf = (grid: FloorGrid): ReadonlySet<string> => {
   const keys = new Set<string>()
   for (const row of grid.cells)
@@ -15,7 +15,7 @@ const mechanismKeysOf = (grid: FloorGrid): ReadonlySet<string> => {
 
 const isBarrier = (cell: GridCell, keys: ReadonlySet<string>): boolean =>
   cell.type === "room" &&
-  (cell.tags?.includes("gate") ?? false) &&
+  cell.regionBarrier !== undefined &&
   cell.requiredKeyId !== undefined &&
   keys.has(cell.requiredKeyId)
 
