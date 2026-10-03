@@ -19,7 +19,7 @@ type-checks, walks with the same verdict as today, and draws.
 One model, the shared type:
 
 ```
-text --parseLock--> Lock --compileLock--> LockSpec --> walkLock, solveLock, lockQuality, drawLock
+text --parseLock--> Lock --walkSpecOf--> LockSpec --> walkLock, solveLock, lockQuality, drawLock
 ```
 
 `AuthoredLock`, `topologyLock`, `chain` and `embed` are deleted. Composition and realisation are said
@@ -79,7 +79,9 @@ Every refusal names its line. New on top of today's:
 
 ## Walking
 
-`compileLock` turns a `Lock` into the `LockSpec` the walk proves, with every move the player has:
+`walkSpecOf` (lockWalkSpec.ts — not the engine's `compileLock` in lockCompile.ts, which turns a `Lock`
+into floor vocabulary for the carve) turns a `Lock` into the `LockSpec` the walk proves, with every move
+the player has:
 
 | control | states | moves |
 | --- | --- | --- |
