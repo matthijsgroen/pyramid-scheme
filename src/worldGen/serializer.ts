@@ -168,6 +168,7 @@ const floorFieldEmitters: {
   regionLayout: v => `regionLayout: ${serializeRegionGraph(v)}`,
   obstacles: v => (v.length ? `obstacles: [${v.map(serializeObstacle).join(", ")}]` : null),
   controls: v => (v.length ? `controls: [${v.map(serializeControl).join(", ")}]` : null),
+  barrierOrder: v => (v.length ? `barrierOrder: [${v.map(serializeObject).join(", ")}]` : null),
   switches: v => `switches: ${serializeObject(v)}`,
 }
 

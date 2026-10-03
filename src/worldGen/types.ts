@@ -7,7 +7,7 @@ import type {
   WallDecorationKind,
 } from "../game/siteTypes"
 import type { PlacedContainer } from "../game/regions"
-import type { Control, Obstacle } from "@/game/obstacles"
+import type { BarrierOrder, Control, Obstacle } from "@/game/obstacles"
 
 export type Tier = "starter" | "junior" | "expert" | "master" | "wizard"
 // Authored puzzle-count progression across a journey's pyramids: `start` on pyramid 1,
@@ -137,6 +137,9 @@ export type FloorConfig = {
    * topology mod is not registered. */
   obstacles?: Obstacle[]
   controls?: Control[]
+  /** The order of the gates on any connection carrying several — mirrors game/siteTypes.ts's
+   * FloorConfig.barrierOrder. Drops with the obstacles. */
+  barrierOrder?: BarrierOrder[]
 }
 
 export type SiteConfig = FloorConfig[]

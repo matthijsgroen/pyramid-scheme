@@ -1,7 +1,7 @@
 import type { Tier, Difficulty, PathPuzzlesRange } from "./types"
 import type { DecorationKind, HandleSide, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
 import type { PlacedContainer } from "../game/regions"
-import type { Control, Obstacle } from "@/game/obstacles"
+import type { BarrierOrder, Control, Obstacle } from "@/game/obstacles"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { wardKeyDifficulty } from "../data/difficultyLevels"
 
@@ -189,6 +189,9 @@ export type FloorConstraint<TExtra extends string = never> = {
    * walls then carve with every connection open. */
   obstacles?: Obstacle[]
   controls?: Control[]
+  /** The order of the gates on any connection that carries several, from `between[0]` to `between[1]`
+   * — required wherever a connection has more than one gate (see game/obstacles.ts's BarrierOrder). */
+  barrierOrder?: BarrierOrder[]
   /** A SWITCH: `encounter` stands in a junction `forks` reserved and closes its free ways out, so the
    * player stands in the fork and what is in it decides which way opens. Between `min` and `max` of
    * the reserved junctions get one, and a `min` past what `forks` reserves fails the build.
@@ -328,6 +331,9 @@ export type PyramidConstraint = {
    * names its own — see FloorConstraint.obstacles/.controls. */
   obstacles?: Obstacle[]
   controls?: Control[]
+  /** The gate order standing on those connections, unless a floor names its own — see
+   * FloorConstraint.barrierOrder. */
+  barrierOrder?: BarrierOrder[]
   /** The switch every floor of this site stands in the junctions `forks` reserved, unless a floor
    * names its own — see FloorConstraint.switches. */
   switches?: { encounter: string | string[]; min: number; max: number }

@@ -142,6 +142,13 @@ export const isForkSwitch = (control: Control): control is ForkSwitchControl => 
 
 export const isSequence = (control: Control): control is SequenceControl => control.control === "sequence"
 
+/**
+ * THE ORDER OF THE GATES STANDING ON ONE CONNECTION, written from `between[0]` to `between[1]`. Stated
+ * only where a connection carries more than one gate: with one there is nothing to order, and with
+ * several no default is guessed. The carve keeps this order and chooses the spacing.
+ */
+export type BarrierOrder = { between: readonly [string, string]; barriers: readonly string[] }
+
 export type TopologyFault =
   | { type: "obstacleIdRepeated"; id: string }
   | { type: "obstacleNamesNoConnection"; id: string }
@@ -188,6 +195,22 @@ export type TopologyFault =
   /** A step's region cannot be reached without passing a gate this sequence opens, so its tile could
    * never be walked before the order is done. */
   | { type: "sequenceStepBehindOwnDoor"; id: string; step: number }
+  /** A `barrierOrder` entry names a pair of regions the layout does not join. */
+  | { type: "barrierOrderNamesNoConnection"; between: [string, string] }
+  /** Two `barrierOrder` entries state the order of one connection. */
+  | { type: "barrierOrderRepeated"; between: [string, string] }
+  /** A `barrierOrder` names an id no obstacle defines; `between` is the connection it was written under. */
+  | { type: "barrierNotDefined"; id: string; between: [string, string] }
+  /** A `barrierOrder` names an obstacle that is not an edge gate on the connection it was written under. */
+  | { type: "barrierNotOnConnection"; id: string; between: [string, string] }
+  /** A `barrierOrder` lists one gate twice. */
+  | { type: "barrierListedTwice"; id: string; between: [string, string] }
+  /** A gate stands on a connection with several gates and its order does not state it, so where it
+   * stands among them is a guess nobody wrote; `between` is the gate's own connection. */
+  | { type: "barrierUnordered"; id: string; between: [string, string] }
+  /** A gate a fork-switch owns is not the first on its connection from the fork's side, so the player
+   * would meet another barrier before the door the junction operates; `id` is the gate. */
+  | { type: "forkGateNotFirst"; id: string; owner: string; between: [string, string] }
 
 /** The two ends of a connection in a stable order, so `["a","b"]` and `["b","a"]` are one connection. */
 const connectionKey = (a: string, b: string): string => JSON.stringify([a, b].sort())
@@ -262,11 +285,14 @@ export const topologyFaults = (
   layout: RegionGraph | undefined,
   obstacles: readonly Obstacle[],
   controls: readonly Control[],
-  forks: readonly ForkDemand[] = []
+  forks: readonly ForkDemand[] = [],
+  barrierOrder: readonly BarrierOrder[] = []
 ): TopologyFault[] => {
   const faults: TopologyFault[] = []
-  if (obstacles.length === 0 && controls.length === 0) return faults
+  if (obstacles.length === 0 && controls.length === 0 && barrierOrder.length === 0) return faults
   if (!layout) {
+    for (const { between } of barrierOrder)
+      faults.push({ type: "barrierOrderNamesNoConnection", between: [between[0], between[1]] })
     for (const o of obstacles)
       faults.push(
         o.kind === "oneWay" || isRegionGate(o)
@@ -418,10 +444,144 @@ export const topologyFaults = (
     }
   }
 
+  faults.push(...barrierOrderFaults(joined, obstacleById, obstacles, barrierOrder, forkSwitches, gatesOwnedBy))
+
   for (const obstacle of obstacles)
     if (obstacle.kind === "gate" && !owned.has(obstacle.id)) faults.push({ type: "obstacleUnowned", id: obstacle.id })
 
   return faults
+}
+
+const pairOf = ([a, b]: readonly [string, string]): [string, string] => [a, b]
+
+/**
+ * EVERY WAY THE STATED ORDER OF A CONNECTION'S GATES DOES NOT RESOLVE. An id in an order must be a gate
+ * defined on that very connection; a connection carrying several gates must state an order that lists
+ * each exactly once; a gate a fork-switch owns must be first from the fork's side. A gate is always
+ * placed by its own `at`, so "defined but standing nowhere" is `obstacleNamesNoConnection`,
+ * `obstacleNamesNoRegion` and `obstacleOffRoute` above, never a gap the order could leave.
+ */
+const barrierOrderFaults = (
+  joined: ReadonlySet<string>,
+  obstacleById: ReadonlyMap<string, Obstacle>,
+  obstacles: readonly Obstacle[],
+  barrierOrder: readonly BarrierOrder[],
+  forkSwitches: ReadonlyMap<string, ForkSwitchControl>,
+  gatesOwnedBy: ReadonlyMap<string, EdgeGateObstacle[]>
+): TopologyFault[] => {
+  const faults: TopologyFault[] = []
+  const orderOf = new Map<string, BarrierOrder>()
+  for (const order of barrierOrder) {
+    const between = pairOf(order.between)
+    const key = connectionKey(...between)
+    if (!joined.has(key)) {
+      faults.push({ type: "barrierOrderNamesNoConnection", between })
+      continue
+    }
+    if (orderOf.has(key)) {
+      faults.push({ type: "barrierOrderRepeated", between })
+      continue
+    }
+    orderOf.set(key, order)
+    const listed = new Set<string>()
+    for (const id of order.barriers) {
+      if (listed.has(id)) {
+        faults.push({ type: "barrierListedTwice", id, between })
+        continue
+      }
+      listed.add(id)
+      const obstacle = obstacleById.get(id)
+      if (!obstacle) faults.push({ type: "barrierNotDefined", id, between })
+      else if (!isEdgeGate(obstacle) || connectionKey(...obstacle.at.between) !== key)
+        faults.push({ type: "barrierNotOnConnection", id, between })
+    }
+  }
+
+  const gatesOn = new Map<string, EdgeGateObstacle[]>()
+  for (const obstacle of obstacles)
+    if (isEdgeGate(obstacle)) {
+      const key = connectionKey(...obstacle.at.between)
+      gatesOn.set(key, [...(gatesOn.get(key) ?? []), obstacle])
+    }
+  // A seam two of one fork's own gates stand on is already refused as `forkSwitchSeamGatedTwice`; an order
+  // cannot mend it, so it is not refused a second time here for having none.
+  const refusedAsForkSeam = new Set(
+    [...gatesOwnedBy.values()].flatMap(owned => {
+      const perSeam = new Map<string, number>()
+      for (const gate of owned) {
+        const key = connectionKey(...gate.at.between)
+        perSeam.set(key, (perSeam.get(key) ?? 0) + 1)
+      }
+      return [...perSeam].filter(([, n]) => n > 1).map(([key]) => key)
+    })
+  )
+  for (const [key, gates] of gatesOn) {
+    if (gates.length < 2 || refusedAsForkSeam.has(key)) continue
+    const listed = new Set(orderOf.get(key)?.barriers ?? [])
+    for (const gate of gates)
+      if (!listed.has(gate.id)) faults.push({ type: "barrierUnordered", id: gate.id, between: pairOf(gate.at.between) })
+  }
+
+  for (const [owner, gates] of [...forkSwitches].map(([id, fork]) => [fork, gatesOwnedBy.get(id) ?? []] as const)) {
+    for (const gate of gates) {
+      const key = connectionKey(...gate.at.between)
+      const order = orderOf.get(key)
+      if (!order || order.barriers.length < 2 || !order.barriers.includes(gate.id)) continue
+      const first = order.between[0] === owner.in
+      const standsFirst = first ? order.barriers[0] === gate.id : order.barriers[order.barriers.length - 1] === gate.id
+      if (!standsFirst)
+        faults.push({ type: "forkGateNotFirst", id: gate.id, owner: owner.id, between: pairOf(order.between) })
+    }
+  }
+  return faults
+}
+
+/** A connection's gates, in the order they stand from `between[0]` to `between[1]`. */
+export type BarrierRun = { between: readonly [string, string]; gates: EdgeGateObstacle[] }
+
+/**
+ * EVERY CONNECTION THAT CARRIES A GATE, with its gates in the order stated. A connection with one gate is
+ * its own run; one with several is ordered by `barrierOrder`, which `topologyFaults` has already proven
+ * lists each of them exactly once.
+ */
+export const barrierRuns = (obstacles: readonly Obstacle[], barrierOrder: readonly BarrierOrder[]): BarrierRun[] => {
+  const byKey = new Map<string, EdgeGateObstacle[]>()
+  for (const obstacle of obstacles.filter(isEdgeGate)) {
+    const key = connectionKey(...obstacle.at.between)
+    byKey.set(key, [...(byKey.get(key) ?? []), obstacle])
+  }
+  return [...byKey].map(([key, gates]) => {
+    const order = barrierOrder.find(entry => connectionKey(...entry.between) === key)
+    if (gates.length < 2 || !order) return { between: gates[0].at.between, gates }
+    const byId = new Map(gates.map(gate => [gate.id, gate]))
+    return { between: order.between, gates: order.barriers.flatMap(id => byId.get(id) ?? []) }
+  })
+}
+
+/**
+ * WHERE ONE CONNECTION'S GATES STAND ALONG A PATH, in the order stated — a pure question about a label
+ * sequence, like `seamIndexFor`. The gate nearest the way in stands on the seam itself; each next one
+ * stands on a later free step still inside the far region, so the stretch between two gates always has a
+ * step of its own and a gate may stand halfway along a corridor. `free` says which steps nothing else
+ * claims; content may therefore end up between two gates, and is never moved to or from there.
+ *
+ * Answers the steps in the order of `between` (`[0]` first), or `undefined` when the path cannot seat
+ * them all: the gates are never reordered or put in another region.
+ */
+export const seatBarrierRun = (
+  labels: ReadonlyArray<string | undefined>,
+  between: readonly [string, string],
+  count: number,
+  free: (step: number) => boolean
+): number[] | undefined => {
+  const seam = seamIndexFor(labels, between)
+  if (seam === undefined) return undefined
+  const far = labels[seam]
+  const steps = [seam]
+  for (let step = seam + 1; step < labels.length && labels[step] === far && steps.length < count; step++)
+    if (free(step)) steps.push(step)
+  if (steps.length < count) return undefined
+  return labels[seam - 1] === between[0] ? steps : steps.reverse()
 }
 
 /** Every region reached from `from` over `connections`, a four-line flood local to this module so

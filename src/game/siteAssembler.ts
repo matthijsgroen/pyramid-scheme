@@ -30,6 +30,7 @@ import {
 } from "./regions"
 import type { ContentKind, SideChain } from "./regions"
 import {
+  barrierRuns,
   crossesNoDoor,
   doorsToEnterRegion,
   isEdgeGate,
@@ -38,6 +39,7 @@ import {
   isSequence,
   seamIndexFor,
   seatBarrierDoors,
+  seatBarrierRun,
   topologyFaults,
 } from "./obstacles"
 import type { EdgeGateObstacle, Obstacle, OneWayObstacle, StatefulControl } from "./obstacles"
@@ -774,7 +776,8 @@ export const assembleFloor = (
     regionLayout,
     authoredConfig.obstacles ?? [],
     authoredConfig.controls ?? [],
-    authoredConfig.forks ?? []
+    authoredConfig.forks ?? [],
+    authoredConfig.barrierOrder ?? []
   )
   if (topologyProblems.length > 0) return { success: false, reasons: topologyProblems }
 
@@ -1300,6 +1303,8 @@ export const assembleFloor = (
   // same reason: the path lengthens across the attempt budget, so what one attempt cannot seat a
   // later one may.
   let gateSeamMissing: string[] | undefined
+  // The first connection whose gates no attempt could stand in the order stated, kept the same way.
+  let barriersShort: { between: [string, string]; barriers: string[] } | undefined
   // The first region barrier no attempt could stand a door on at every entrance, kept the same way and for
   // the same reason: the path and its chains lengthen across the attempt budget.
   let regionBarrierShort: { id: string; region: string } | undefined
@@ -1446,19 +1451,26 @@ export const assembleFloor = (
     // the main path; in the chain loop for a side path).
     const regionBarriers = (authoredConfig.obstacles ?? []).filter(isRegionGate)
     const onRouteObstacle = (o: EdgeGateObstacle) => onRouteSet.has(o.at.between[0]) && onRouteSet.has(o.at.between[1])
-    const mainPathObstacles = gateObstacles.filter(onRouteObstacle)
-    const offRouteObstacles = gateObstacles.filter(o => !onRouteObstacle(o))
     // A CONTROL STANDING IN AN OFF-ROUTE REGION splits the same way: `stepRegion` never names its
     // region, so the main-path search below (which asks only `stepRegion`) would find it no candidate
     // ever, attempt after attempt, before a single side-path cell exists. Held out here and asked
     // again once its own chain's cells are carved (alongside that chain's own content, further down) —
-    // the identical reasoning `mainPathObstacles`/`offRouteObstacles` splits on just above.
+    // the identical reasoning the main-path and off-route gate runs split on below.
     const mainPathControls = controlRecords.filter(({ control }) => onRouteSet.has(control.in))
     const offRouteControls = controlRecords.filter(({ control }) => !onRouteSet.has(control.in))
+    // Every connection's gates in the order stated; one gate is a run of its own.
+    const runs = barrierRuns(authoredConfig.obstacles ?? [], authoredConfig.barrierOrder ?? [])
+    const mainPathRuns = runs.filter(run => run.gates.every(onRouteObstacle))
+    const offRouteRuns = runs.filter(run => !run.gates.every(onRouteObstacle))
     const gateIndexByObstacle = new Map<string, number>()
-    for (const obstacle of mainPathObstacles) {
-      const seam = seamIndexFor(stepRegion, obstacle.at.between)
-      if (seam !== undefined) gateIndexByObstacle.set(obstacle.id, seam)
+    // The gate nearest the way in stands on the seam itself, which is where a connection's only gate
+    // has always stood; the rest of a run is seated once content and junctions have taken their nodes.
+    for (const run of mainPathRuns) {
+      const seam = seamIndexFor(stepRegion, run.between)
+      if (seam === undefined) continue
+      const entersFirst = stepRegion[seam - 1] === run.between[0]
+      const nearest = entersFirst ? run.gates[0] : run.gates[run.gates.length - 1]
+      gateIndexByObstacle.set(nearest.id, seam)
     }
     // A seam the carve did not produce. `regionOfStep` (regions.ts) lays every floor's route out as a
     // gap-free concatenation — a region is either fully seated or, when the path is too short, absent
@@ -1467,9 +1479,12 @@ export const assembleFloor = (
     // never "both seated but not adjacent": `seamIndexFor` cannot actually return `undefined` here for
     // a genuinely main-path obstacle. Retried rather than refused for the same reason `unseatedRegions`
     // is: `mainPath.length` GROWS across the attempt budget.
-    if (gateIndexByObstacle.size < mainPathObstacles.length) {
+    if (gateIndexByObstacle.size < mainPathRuns.length) {
       if (!gateSeamMissing)
-        gateSeamMissing = mainPathObstacles.filter(o => !gateIndexByObstacle.has(o.id)).map(o => o.id)
+        gateSeamMissing = mainPathRuns
+          .flatMap(run => run.gates)
+          .filter(o => !gateIndexByObstacle.has(o.id))
+          .map(o => o.id)
       continue
     }
     const gateIndices = new Set(gateIndexByObstacle.values())
@@ -1580,6 +1595,35 @@ export const assembleFloor = (
       continue
     }
 
+    // THE REST OF EACH CONNECTION'S GATES, in the order stated, on the nodes nothing else claims — read off
+    // the finished content and junctions so no puzzle or junction is moved for them: content may end up
+    // between two gates, which is the carve's to distribute, and mod-off carves the same walls because a
+    // gate only ever takes a node the path already has. A run the far region cannot seat fails the
+    // attempt, since a longer path may; the last attempt names the connection.
+    for (const run of mainPathRuns) {
+      if (run.gates.length < 2) continue
+      const steps = seatBarrierRun(
+        stepRegion,
+        run.between,
+        run.gates.length,
+        step =>
+          step > 0 &&
+          step < mainPath.length - 1 &&
+          !placedContent.includes(step) &&
+          !forkJunctionIdx.has(step) &&
+          !gateIndices.has(step)
+      )
+      if (!steps) {
+        if (!barriersShort)
+          barriersShort = { between: [run.between[0], run.between[1]], barriers: run.gates.map(gate => gate.id) }
+        continue attempt
+      }
+      run.gates.forEach((gate, i) => {
+        gateIndexByObstacle.set(gate.id, steps[i])
+        gateIndices.add(steps[i])
+      })
+    }
+
     // A REGION BARRIER ON THE MAIN PATH gets a door at each entrance, taken from the nodes nothing else
     // claims — read off the finished content so no puzzle, junction or seam is moved for it. A door the
     // path cannot seat fails the attempt: a longer path may, and the last attempt names the barrier.
@@ -1615,7 +1659,7 @@ export const assembleFloor = (
     // (docs/game-design/regions-and-containers.md's toggle-off gate).
     //
     // ONLY `mainPathControls` IS SOUGHT HERE — a control hosted by an off-route region is sought within
-    // its own chain instead, below, the same split `mainPathObstacles`/`offRouteObstacles` makes above.
+    // its own chain instead, below, the same split the main-path and off-route gate runs make above.
     //
     // A FREE NODE IS PREFERRED OVER A CONTENT ONE: `placedContent` is the puzzles this floor already
     // authored, each already holding its own AUTHORED ORDINAL in `puzzleRole` above. Seating a control
@@ -2365,10 +2409,26 @@ export const assembleFloor = (
         // the same question as one further in. `cellIndex` is one less than the step `seamIndexFor`
         // answers, since the mouth is a virtual step ahead of `cells[0]`.
         const extendedStepRegion = [chainRecord!.mouth, ...perCell]
-        for (const obstacle of offRouteObstacles) {
-          if (chainGateIndexByObstacle.has(obstacle.id)) continue
-          const seam = seamIndexFor(extendedStepRegion, obstacle.at.between)
-          if (seam !== undefined) chainGateIndexByObstacle.set(obstacle.id, { idx, cellIndex: seam - 1 })
+        // A run's gates stand in the order stated: the one nearest the mouth on the seam, the rest on later
+        // cells of the far region, never on the chain's end room, which is reserved. A chain too short to
+        // seat them all fails the attempt, since a wider chain may.
+        for (const run of offRouteRuns) {
+          if (run.gates.some(gate => chainGateIndexByObstacle.has(gate.id))) continue
+          const taken = new Set(
+            [...chainGateIndexByObstacle.values()].filter(loc => loc.idx === idx).map(loc => loc.cellIndex)
+          )
+          const steps = seatBarrierRun(
+            extendedStepRegion,
+            run.between,
+            run.gates.length,
+            step => step - 1 < cells.length - 1 && !taken.has(step - 1)
+          )
+          if (!steps) {
+            if (seamIndexFor(extendedStepRegion, run.between) !== undefined && !barriersShort)
+              barriersShort = { between: [run.between[0], run.between[1]], barriers: run.gates.map(gate => gate.id) }
+            continue
+          }
+          run.gates.forEach((gate, i) => chainGateIndexByObstacle.set(gate.id, { idx, cellIndex: steps[i] - 1 }))
         }
       } else {
         const grownFrom = cellRegion.get(posKey(attachedAt[0], attachedAt[1]))
@@ -2405,9 +2465,11 @@ export const assembleFloor = (
     // same way `gateSeamMissing` is above — a region the chain never got to seat (caught by
     // `unseatedRegions` first, on an earlier attempt of its own) is one cause; a genuinely un-carved
     // seam within an otherwise-seated chain, this task's own reason for existing, is the other.
-    if (chainGateIndexByObstacle.size < offRouteObstacles.length) {
+    const offRouteGates = offRouteRuns.flatMap(run => run.gates)
+    if (chainGateIndexByObstacle.size < offRouteGates.length) {
+      if (barriersShort) continue
       if (!gateSeamMissing)
-        gateSeamMissing = offRouteObstacles.filter(o => !chainGateIndexByObstacle.has(o.id)).map(o => o.id)
+        gateSeamMissing = offRouteGates.filter(o => !chainGateIndexByObstacle.has(o.id)).map(o => o.id)
       continue
     }
     // A GATE AT A CHAIN'S OWN LAST CELL WOULD STAND WHERE THE END ROOM MUST — every chain reserves
@@ -3774,7 +3836,14 @@ export const assembleFloor = (
       // off whichever main-path cell the carve found roomy, so a carve can be labelled exactly as
       // authored and still join the wrong regions — which the lock, flooded off these very cells, then
       // walks as a different floor. Retried like every other shortfall: another seed may join them right.
-      const gateKeys = gateObstacles.map(o => ({ id: o.id, between: o.at.between, key: gateKeyOf(o.id) }))
+      const gateKeys = runs.flatMap(run =>
+        run.gates.map((o, i) => ({
+          id: o.id,
+          between: o.at.between,
+          key: gateKeyOf(o.id),
+          bounds: [...(i === 0 ? [run.between[0]] : []), ...(i === run.gates.length - 1 ? [run.between[1]] : [])],
+        }))
+      )
       const runCells = new Set(oneWayEdges.flatMap(edge => edge.run))
       const dropIdsWithRuns = oneWayObstacles.map(o => ({
         o,
@@ -3850,6 +3919,7 @@ export const assembleFloor = (
       ...(oneWayShortfall ? [{ type: "oneWayUnsatisfied", ...oneWayShortfall } as const] : []),
       ...(unseatedRegions ? [{ type: "regionNotSeated", regions: unseatedRegions } as const] : []),
       ...(gateSeamMissing ? [{ type: "obstacleSeamNotCarved" as const, ids: gateSeamMissing }] : []),
+      ...(barriersShort ? [{ type: "barriersNotSeated" as const, ...barriersShort }] : []),
       ...(regionBarrierShort ? [{ type: "regionBarrierNotSeated" as const, ...regionBarrierShort }] : []),
       ...(controlNotSeated ? [{ type: "controlNotSeated" as const, ids: controlNotSeated }] : []),
       ...(sequenceShortfall ? [{ type: "sequenceTileNotPlaced" as const, ...sequenceShortfall }] : []),

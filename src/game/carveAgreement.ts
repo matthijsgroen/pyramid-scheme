@@ -126,7 +126,9 @@ const doorsOfGate = (cells: Cells, key: string): Array<[number, number]> => {
   return doors
 }
 
-type Gate = { id: string; between: readonly [string, string]; key: string }
+/** `bounds` are the regions this gate stands against: of several gates in series on one connection only
+ * the first and last touch a region, so a drop landing in one reaches the door at its own end. Absent: both. */
+type Gate = { id: string; between: readonly [string, string]; key: string; bounds?: readonly string[] }
 
 /**
  * EVERY GATE'S DOOR SEPARATES EXACTLY TWO LOCK REGIONS — the ground a door shuts off from the ground
@@ -175,7 +177,7 @@ export const dropLandingFaults = (
   for (const drop of drops) {
     const landedOn = ground.get(posKey(drop.landing[0], drop.landing[1]))
     const apart = gates
-      .filter(gate => gate.between.includes(drop.region))
+      .filter(gate => (gate.bounds ?? gate.between).includes(drop.region))
       .filter(
         gate =>
           !doorsOfGate(cells, gate.key).some(([r, c]) =>

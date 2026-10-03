@@ -99,6 +99,7 @@ export type BuildFloorOptions = {
   regionLayout?: FloorConfig["regionLayout"]
   obstacles?: FloorConfig["obstacles"]
   controls?: FloorConfig["controls"]
+  barrierOrder?: FloorConfig["barrierOrder"]
   switches?: FloorConfig["switches"]
   corridorStraightness?: number
   packing?: number
@@ -143,6 +144,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.regionLayout ? { regionLayout: opts.regionLayout } : {}),
   ...(opts.obstacles ? { obstacles: opts.obstacles } : {}),
   ...(opts.controls ? { controls: opts.controls } : {}),
+  ...(opts.barrierOrder ? { barrierOrder: opts.barrierOrder } : {}),
   ...(opts.switches ? { switches: opts.switches } : {}),
 })
 
@@ -290,6 +292,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           regionLayout: fc.regionLayout ?? constraint.regionLayout,
           obstacles: fc.obstacles ?? constraint.obstacles,
           controls: fc.controls ?? constraint.controls,
+          barrierOrder: fc.barrierOrder ?? constraint.barrierOrder,
           switches: fc.switches ?? constraint.switches,
           corridorStraightness: floorStraightness,
           packing: floorPacking,
@@ -346,6 +349,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             regionLayout: constraint.regionLayout,
             obstacles: constraint.obstacles,
             controls: constraint.controls,
+            barrierOrder: constraint.barrierOrder,
             switches: constraint.switches,
             encounterArgs: constraint.encounterArgs,
             theme: constraint.theme,
@@ -401,6 +405,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           regionLayout: constraint.regionLayout,
           obstacles: constraint.obstacles,
           controls: constraint.controls,
+          barrierOrder: constraint.barrierOrder,
           switches: constraint.switches,
           encounterArgs: constraint.encounterArgs,
           theme: constraint.theme,
@@ -494,6 +499,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             regionLayout: constraint.regionLayout,
             obstacles: constraint.obstacles,
             controls: constraint.controls,
+            barrierOrder: constraint.barrierOrder,
             switches: constraint.switches,
             encounterArgs: constraint.encounterArgs,
             theme: constraint.theme,
@@ -570,6 +576,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     regionLayout: constraint.regionLayout,
     obstacles: constraint.obstacles,
     controls: constraint.controls,
+    barrierOrder: constraint.barrierOrder,
     switches: constraint.switches,
     encounterArgs: constraint.encounterArgs,
     theme: constraint.theme,

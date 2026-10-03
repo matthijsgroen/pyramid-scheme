@@ -1,6 +1,6 @@
 import type { Mark } from "./mark"
 import type { ContentKind, PlacedContainer } from "./regions"
-import type { Control, Obstacle } from "./obstacles"
+import type { BarrierOrder, Control, Obstacle } from "./obstacles"
 import type { CarveFault } from "./carveAgreement"
 import type { GateFace } from "./gateFace"
 export type RoomType = "portal" | "fork" | "encounter"
@@ -561,6 +561,10 @@ export type FloorConfig = {
    * open. */
   obstacles?: Obstacle[]
   controls?: Control[]
+  /** THE ORDER OF THE GATES ON ANY CONNECTION THAT CARRIES SEVERAL, from `between[0]` to `between[1]`
+   * (src/game/obstacles.ts). Required wherever a connection has more than one gate; the carve keeps the
+   * order and chooses the spacing. Owned by the topology mod with `obstacles`, and dropped with them. */
+  barrierOrder?: BarrierOrder[]
   /** A SWITCH: an encounter standing in one of the junctions `forks` reserved, closing that
    * junction's free ways out so that what the player meets there decides which one opens.
    * Family/tag(s) like `encounter`. At least `min` and at most `max` of the reserved junctions get
@@ -717,6 +721,17 @@ export type AssemblerReason =
   | { type: "sequenceResetNotAGate"; id: string; gate: string }
   | { type: "sequenceResetNotOpened"; id: string; gate: string }
   | { type: "sequenceStepBehindOwnDoor"; id: string; step: number }
+  | { type: "barrierOrderNamesNoConnection"; between: [string, string] }
+  | { type: "barrierOrderRepeated"; between: [string, string] }
+  | { type: "barrierNotDefined"; id: string; between: [string, string] }
+  | { type: "barrierNotOnConnection"; id: string; between: [string, string] }
+  | { type: "barrierListedTwice"; id: string; between: [string, string] }
+  | { type: "barrierUnordered"; id: string; between: [string, string] }
+  | { type: "forkGateNotFirst"; id: string; owner: string; between: [string, string] }
+  /** No carve could stand every gate of one connection in the order stated, each with a step of its own
+   * inside the far region: the gates are refused rather than reordered or put elsewhere. `between` is
+   * the connection as the order was written, `barriers` its gates from `between[0]`. */
+  | { type: "barriersNotSeated"; between: [string, string]; barriers: string[] }
   /** No carve could stand a region barrier inside its region: some entrance of `region` had no free node
    * with a stretch of the region in front of it, so the barrier is refused rather than set elsewhere.
    * `id` is the barrier. */
