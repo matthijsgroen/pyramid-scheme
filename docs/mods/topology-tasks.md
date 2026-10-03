@@ -333,3 +333,38 @@ keep.
    entry does.
 
 **Carve moves: YES** (tile placement, sequence floors only). **Saves: no.**
+
+## T20 — A region barrier is realised from outside
+
+**Why.** A flooded hall and a buried one are the same mechanic: a region barred, revealed, concealed and
+reopened alike. What differs is the look, and the look is a realisation — bound where the lock is placed,
+like every other role, so one lock is water in one pyramid and sand in another.
+
+**Acceptance**
+1. A region barrier's realisation (water, sand) is bound outside the lock, through the same cascade as the
+   control kinds (floor, pyramid, journey, difficulty; the most specific wins), fixed at bake time.
+2. A region barrier with no realisation bound is refused by name. No default.
+3. A realisation names a mod that provides it; with that mod off the floor is refused by name, like a
+   missing control realisation.
+4. The realisation changes nothing the solver or the carve sees: same walls, same walk, whichever is bound.
+
+**Carve moves: no. Saves: no.**
+
+## T21 — A barred region is covered, not walled
+
+**Why.** A region barred by water or sand reads as the stuff itself spreading over the floor, not as a
+door: the player sees the first stretch going under, the blockage, and nothing past it.
+
+**Acceptance**
+1. Over a shut region barrier's region a layer of its realisation is drawn per cell, from one seamless
+   texture per realisation, tinted to the floor's light.
+2. From each way into the region the layer fades from transparent to full cover over a short fixed
+   distance, and stays full to the blockage. The covered first stretch stays drawn, so the player sees the
+   water or sand.
+3. Past the blockage the region is concealed (T7).
+4. When the barrier opens while the player watches, the layer fades away in a short animation and leaves
+   ordinary ground.
+5. A realisation whose texture is not painted yet falls back to a stated drawing, and the texture is owed
+   in `docs/instructions/repaint-queue.md`.
+
+**Carve moves: no. Saves: no. Depends on T20.**
