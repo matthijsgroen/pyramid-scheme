@@ -34,10 +34,20 @@ that way, and only with four side paths authored as ballast. Laid first, it fits
    two regions are laid next to each other in space because the drop needs it. Nothing is checked
    afterwards; it is placed right or the floor is refused by name (it does not fit at this size → the
    grid grows, and past the ceiling the refusal names what did not fit).
-3. **Grow.** The existing carve continues around the laid structure: side paths hang off the laid
-   corridors wherever there is length to spare, further side paths (gated ones too) go elsewhere, the
-   maze fills the rest, and content lands — exactly as it does today, but on top of claimed cells it may
-   not change, and never with a passage that joins two regions the lock keeps apart.
+3. **Fill.** The content the floor's side paths carry lands in the corridors already laid, where they are
+   long enough to take it. Where they are not, the carve lengthens corridors — whichever lengthening costs
+   least — rather than growing new branches for it.
+4. **Grow.** The existing carve continues around the laid structure: further side paths (gated ones too)
+   go elsewhere, the maze fills the rest — on top of claimed cells it may not change, and never with a
+   passage that joins two regions the lock keeps apart.
+
+The drawing the lock-design tool prints is a picture of the topology, not a placement: the carve owes it
+the regions, joins and barriers, never which region lies left of which.
+
+**The main path is the whole route.** Locks chained at the top level are laid in sequence, `entrance →
+lock1.in … lock1.out → lock2.in … lock2.out → exit`, and the main path runs that entire route, so the exit
+lies behind the last `out`. A nested lock is laid inside its host's region and is not on the top-level
+sequence.
 
 Today's `carveAgreement` checks (regions joined only where the layout joins them, gate doors between two
 regions, drops landing beside their gates) stay on. For a laid floor they can no longer fire; if one
@@ -79,12 +89,14 @@ not done.
 **Acceptance**
 1. With a plan, the carve starts from the laid structure instead of a maze-first floor: route, arms,
    junction, drops and regions are read from it, not derived.
-2. Side paths hang off laid corridors where there is length, and elsewhere; the floor's authored side
-   paths are extra content and are not consumed by the lock's arms.
-3. The maze fill never joins two regions the lock keeps apart, and never adds a way round a barrier.
-4. Content lands in the regions whose appetite takes it.
-5. `carveAgreement` never fires on a laid floor (asserted over every seed tried, not retried).
-6. A floor without locks takes today's code path: same draws, same cells.
+2. The content of the floor's side paths lands in laid corridors that are long enough; where none is,
+   the carve lengthens the corridor whose lengthening costs least, and says which it chose in a test. The
+   floor's authored side paths are content, not ballast the lock's arms consume.
+3. The main path runs the whole top-level route and the exit lies behind the last `out`.
+4. The maze fill never joins two regions the lock keeps apart, and never adds a way round a barrier.
+5. Content lands in the regions whose appetite takes it.
+6. `carveAgreement` never fires on a laid floor (asserted over every seed tried, not retried).
+7. A floor without locks takes today's code path: same draws, same cells.
 
 **Carve moves: YES, lock floors only.** Baseline: every floor's `dirs` before and after — only lock floors
 may differ. `generatedWorld.ts` byte-identical for every floor without locks.
@@ -103,16 +115,13 @@ may differ. `generatedWorld.ts` byte-identical for every floor without locks.
 
 - Non-lock floors: identical `dirs` for all 215 floors, and a byte-identical serialized world without dev.
 - Lock floors: the plan (C1) as data; the laid geometry's invariants (C2 1–4) over every seed; the carve's
-  invariants (C3 3–5) over every seed; the doubleBack's rate and soundness (C4).
+  invariants (C3 2–6) over every seed; the doubleBack's rate and soundness (C4).
 - Not frozen: exact cell positions of a lock floor. They are the carve's to choose.
 
-## Open — the designer's to settle before C2
+## Settled with the designer (2026-10-03)
 
-1. **Does the drawing carry geometry?** The lock-design tool prints a layout (s1 and s2 above, in at the
-   bottom). Is that only a picture of the topology, or a placement the carve should honour (which region
-   lies left, above, beside which)?
-2. **How long is a region?** Minimum from what stands in it, and the carve may lengthen it — or does its
-   appetite size it (a `puzzles` region long enough for its puzzles)? Today §7's appetites carve on 0 of
-   60 seeds; in this model appetite would decide what lands there in step 3.
-3. **May the floor's own side paths hang off a lock's corridors**, inside the lock (behind its gates), or
-   only off ground outside every lock?
+1. The tool's drawing is topology only; the carve does not follow its placement.
+2. Locks first — chained in sequence and nested in their hosts — then the content of side paths goes into
+   the corridors that exist; corridors are lengthened only where they cannot take it, the cheapest
+   lengthening first.
+3. The main path is the whole top-level `in → out` route; the exit lies behind the last `out`.
