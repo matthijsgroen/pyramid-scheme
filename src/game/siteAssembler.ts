@@ -4302,7 +4302,8 @@ const assembleExpandedFloor = (
           }),
           doorKey: gateKeyOf(sequence.resetAt),
         })),
-        siteId
+        siteId,
+        new Set(reservedForks.flatMap(pk => freeWaysOut(pk).map(({ neighborKey }) => neighborKey)))
       )
       if (unplaced) {
         if (!sequenceShortfall) sequenceShortfall = unplaced

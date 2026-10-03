@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { assembleFloor } from "./siteAssembler"
+import { assembleFloor, defaultResolveEncounter, type ResolveEncounter } from "./siteAssembler"
 import type { Direction, FloorConfig, FloorGrid } from "./siteTypes"
 import { floorLock, regionsOf } from "./floorLock"
 import { reachableStates, walkLock } from "./lockWalk"
@@ -197,5 +197,44 @@ describe("a sequence the carve cannot stand as written", () => {
         success: false,
         reasons: [{ type: "sequenceStepBehindOwnDoor", id: "plates", step: 1 }],
       })
+  })
+})
+
+// A switch fills a junction the floor reserves with `forks`, so standing one there may not move the carve: the
+// tiles go where they go whether or not a switch has shut that junction's ways out.
+describe("a sequence over off-route regions, on a floor that reserves a fork", () => {
+  const make = offRouteSequenceFloor
+  const reEnterable: ResolveEncounter = (encounter, tag) => ({
+    ...defaultResolveEncounter(encounter, tag),
+    reEnterable: true,
+  })
+  const walls = (grid: FloorGrid) =>
+    grid.cells.flat().map(cell => (cell.type === "empty" ? "" : [...cell.dirs].sort().join("")))
+  const tileCells = (grid: FloorGrid) => tilesOf(grid).map(({ r, c }) => `${r},${c}`)
+
+  const pairs = SEEDS.flatMap(seed => {
+    const withForks = { ...make(), forks: [{ exits: 2, count: 1 }] }
+    const without = assembleFloor("test", withForks, seed, reEnterable)
+    const switched = assembleFloor(
+      "test",
+      { ...withForks, switches: { encounter: "lightbeamSwitch", min: 1, max: 1 } },
+      seed,
+      reEnterable
+    )
+    return without.success ? [{ seed, without, switched }] : []
+  })
+
+  it("carves on at least one seed", () => {
+    expect(pairs.length).toBeGreaterThan(0)
+  })
+
+  it("carves the same walls and stands the same tiles with a switch in the fork", () => {
+    for (const { seed, without, switched } of pairs) {
+      if (!without.success) continue
+      expect(switched.success ? [] : switched.reasons, `seed ${seed}`).toEqual([])
+      if (!switched.success) continue
+      expect(walls(switched.grid), `seed ${seed}`).toEqual(walls(without.grid))
+      expect(tileCells(switched.grid), `seed ${seed}`).toEqual(tileCells(without.grid))
+    }
   })
 })

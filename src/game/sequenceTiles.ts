@@ -93,12 +93,16 @@ const isCandidate = (cell: GridCell, r: number, c: number, region: string): bool
  * (one no walk goes round) for a step refuses the whole placement, naming the sequence and the step.
  *
  * The sequence's one record goes on the tile of step 0; the door named by `doorKey` works the reset.
+ *
+ * `reserved` are cells a tile may never take: a switch's way out is a corridor node whether or not a switch ends
+ * up shutting it, and a tile there would be placed on a carve that differs by whether a mod filled the junction.
  */
 export const placeSequences = (
   cells: GridCell[][],
   grid: FloorGrid,
   sequences: readonly SequenceDemand[],
-  salt: string
+  salt: string,
+  reserved: ReadonlySet<string> = new Set()
 ): { id: string; step: number } | undefined => {
   const { isCut, reachedFrom, neighbours } = walkGraphOf(grid)
   const entrance = `${grid.entrancePos[0]},${grid.entrancePos[1]}`
@@ -117,7 +121,13 @@ export const placeSequences = (
       const candidates: Place[] = []
       for (let r = 0; r < cells.length; r++)
         for (let c = 0; c < cells[r].length; c++)
-          if (!taken.has(`${r},${c}`) && isCandidate(cells[r][c], r, c, region) && isCut(r, c)) candidates.push([r, c])
+          if (
+            !taken.has(`${r},${c}`) &&
+            !reserved.has(`${r},${c}`) &&
+            isCandidate(cells[r][c], r, c, region) &&
+            isCut(r, c)
+          )
+            candidates.push([r, c])
       const rank = ([r, c]: Place) => hashString(`${salt}|sequence|${id}|${step}|${r},${c}`)
       // A cell that shuts the way from a start to a tile already stood would make that tile's turn
       // unreachable before this one, so such cells come last.
