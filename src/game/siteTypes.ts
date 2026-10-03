@@ -5,6 +5,8 @@ import type { OneWayRefusal } from "./oneWayRealisation"
 import type { CarveFault } from "./carveAgreement"
 import type { GateFace } from "./gateFace"
 import type { RealisationMissing } from "./mechanics/realisations"
+import type { PlacedLock } from "./floorLocks"
+import type { LockFault, RealisationBinding } from "./lockCompile"
 export type RoomType = "portal" | "fork" | "encounter"
 // OPEN reward vocabulary (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1):
 // core enumerates no reward/currency id. A reward is a `type` tag plus arbitrary payload fields the
@@ -573,6 +575,13 @@ export type FloorConfig = {
    * (src/game/obstacles.ts). Required wherever a connection has more than one gate; the carve keeps the
    * order and chooses the spacing. Core authoring with `obstacles`. */
   barrierOrder?: BarrierOrder[]
+  /** THE LOCKS STANDING ON THIS FLOOR, in sequence along its main route (src/game/floorLocks.ts). Compiled into
+   * `regionLayout`, `obstacles`, `controls`, `forks` and `barrierOrder` where the floor is assembled, so a
+   * floor authoring `locks` may not author those itself: the contradiction is refused by name. */
+  locks?: PlacedLock[]
+  /** WHICH REALISATION EACH CONTROL KIND OF THE FLOOR'S LOCKS IS DRESSED AS, by kind. Stated on the floor for now;
+   * the cascade over pyramid, journey and difficulty replaces where it comes from, not this field. */
+  realisations?: RealisationBinding
   /** A SWITCH: an encounter standing in one of the junctions `forks` reserved, closing that
    * junction's free ways out so that what the player meets there decides which one opens.
    * Family/tag(s) like `encounter`. At least `min` and at most `max` of the reserved junctions get
@@ -805,6 +814,12 @@ export type AssemblerReason =
    * Each member names the disagreement in the author's own region and obstacle names. See
    * carveAgreement.ts. */
   | CarveFault
+  /** A floor authors `locks` beside fields they compile into; `fields` are the ones written twice. */
+  | { type: "locksContradictFloor"; fields: string[] }
+  /** Two locks of one floor answer to one instance name, so their ids would collide; the second must say `as`. */
+  | { type: "lockInstanceRepeated"; instance: string }
+  /** A placed lock is refused, by the instance it was placed as and the fault of the lock itself. */
+  | { type: "lockRefused"; instance: string; fault: LockFault }
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }
 /** `attempt` is the 0-based attempt that carved the floor: anything past 0 carved on a widened grid and a
  * doubled `packing`, not the authored one. */

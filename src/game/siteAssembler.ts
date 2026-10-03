@@ -54,6 +54,7 @@ import {
 import type { EdgeGateObstacle, Obstacle, OneWayObstacle, StatefulControl } from "./obstacles"
 import { cellSlot, plainSwitchId } from "./cellSlot"
 import { placeSequences } from "./sequenceTiles"
+import { expandFloorLocks } from "./floorLocks"
 import { doorFacesMissing, realisationsMissing } from "./mechanics/realisations"
 import { adjacencyFaults, dropLandingFaults, gateDoorFaults } from "./carveAgreement"
 import type { CarveFault } from "./carveAgreement"
@@ -686,7 +687,7 @@ const doorsShutting = (
   inherited: readonly string[]
 ): string[] => (section.gate || section.sealed ? [...inherited, positional] : [...inherited])
 
-export const assembleFloor = (
+const assembleExpandedFloor = (
   siteId: string,
   authoredConfig: FloorConfig,
   addressSeed: number,
@@ -4000,4 +4001,18 @@ export const assembleFloor = (
       { type: "layoutNotFound" } as const,
     ],
   }
+}
+
+// Where a floor's `locks` become its layout, obstacles and controls, so the bake, the sweeps and the
+// runtime all carve the one expanded config; a floor without locks passes through untouched.
+export const assembleFloor = (
+  siteId: string,
+  authoredConfig: FloorConfig,
+  addressSeed: number,
+  resolveEncounter: ResolveEncounter = defaultResolveEncounter,
+  keyRequirements: AssembleFloorKeyRequirements = {}
+): AssemblerResult => {
+  const expanded = expandFloorLocks(authoredConfig)
+  if (!expanded.ok) return { success: false, reasons: expanded.reasons }
+  return assembleExpandedFloor(siteId, expanded.config, addressSeed, resolveEncounter, keyRequirements)
 }

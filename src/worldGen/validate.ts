@@ -384,7 +384,8 @@ export const floorsOwingALock = (configs: Record<string, SiteConfig[]>): FloorRe
         if (
           Math.min(floor.switches?.min ?? 0, junctions) > 0 ||
           (floor.handles?.length ?? 0) > 0 ||
-          (floor.controls?.length ?? 0) > 0
+          (floor.controls?.length ?? 0) > 0 ||
+          (floor.locks?.length ?? 0) > 0
         )
           owed.push({ journeyId, levelNr: siteIdx + 1, floorIndex })
       })

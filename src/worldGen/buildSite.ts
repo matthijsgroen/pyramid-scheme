@@ -101,6 +101,8 @@ export type BuildFloorOptions = {
   obstacles?: FloorConfig["obstacles"]
   controls?: FloorConfig["controls"]
   barrierOrder?: FloorConfig["barrierOrder"]
+  locks?: FloorConfig["locks"]
+  realisations?: FloorConfig["realisations"]
   switches?: FloorConfig["switches"]
   corridorStraightness?: number
   packing?: number
@@ -147,6 +149,8 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.obstacles ? { obstacles: opts.obstacles } : {}),
   ...(opts.controls ? { controls: opts.controls } : {}),
   ...(opts.barrierOrder ? { barrierOrder: opts.barrierOrder } : {}),
+  ...(opts.locks?.length ? { locks: opts.locks } : {}),
+  ...(opts.realisations ? { realisations: opts.realisations } : {}),
   ...(opts.switches ? { switches: opts.switches } : {}),
 })
 
@@ -297,6 +301,9 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           obstacles: fc.obstacles ?? constraint.obstacles,
           controls: fc.controls ?? constraint.controls,
           barrierOrder: fc.barrierOrder ?? constraint.barrierOrder,
+          // Floor-level only, and the one place the binding is stated until the cascade supplies it.
+          locks: fc.locks,
+          realisations: fc.realisations,
           switches: fc.switches ?? constraint.switches,
           corridorStraightness: floorStraightness,
           packing: floorPacking,

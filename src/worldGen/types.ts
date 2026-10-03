@@ -8,6 +8,8 @@ import type {
 } from "../game/siteTypes"
 import type { PlacedContainer } from "../game/regions"
 import type { BarrierOrder, Control, Obstacle } from "@/game/obstacles"
+import type { PlacedLock } from "@/game/floorLocks"
+import type { RealisationBinding } from "@/game/lockCompile"
 
 export type Tier = "starter" | "junior" | "expert" | "master" | "wizard"
 // Authored puzzle-count progression across a journey's pyramids: `start` on pyramid 1,
@@ -142,6 +144,9 @@ export type FloorConfig = {
   /** The order of the gates on any connection carrying several — mirrors game/siteTypes.ts's
    * FloorConfig.barrierOrder. Core authoring, like the obstacles. */
   barrierOrder?: BarrierOrder[]
+  /** Mirrors game/siteTypes.ts's FloorConfig.locks and .realisations. */
+  locks?: PlacedLock[]
+  realisations?: RealisationBinding
 }
 
 export type SiteConfig = FloorConfig[]

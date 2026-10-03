@@ -2,6 +2,8 @@ import type { Tier, Difficulty, PathPuzzlesRange } from "./types"
 import type { DecorationKind, HandleSide, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
 import type { PlacedContainer } from "../game/regions"
 import type { BarrierOrder, Control, Obstacle } from "@/game/obstacles"
+import type { PlacedLock } from "@/game/floorLocks"
+import type { RealisationBinding } from "@/game/lockCompile"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { wardKeyDifficulty } from "../data/difficultyLevels"
 
@@ -195,6 +197,13 @@ export type FloorConstraint<TExtra extends string = never> = {
   /** The order of the gates on any connection that carries several, from `between[0]` to `between[1]`
    * — required wherever a connection has more than one gate (see game/obstacles.ts's BarrierOrder). */
   barrierOrder?: BarrierOrder[]
+  /** LOCKS standing on this floor in sequence, each a `Lock` value shared by reference between every floor that
+   * uses it. A second placement of one lock on a floor must say `as`. Compiled into `regionLayout`, `obstacles`,
+   * `controls`, `forks` and `barrierOrder` when the floor is assembled, so authoring those beside `locks` is
+   * refused. Floor-level only: a lock is placed on a floor, never inherited from the pyramid. */
+  locks?: PlacedLock[]
+  /** The realisation each control kind of this floor's locks is dressed as — see FloorConfig.realisations. */
+  realisations?: RealisationBinding
   /** A SWITCH: `encounter` stands in a junction `forks` reserved and closes its free ways out, so the
    * player stands in the fork and what is in it decides which way opens. Between `min` and `max` of
    * the reserved junctions get one, and a `min` past what `forks` reserves fails the build.
