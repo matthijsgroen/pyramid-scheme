@@ -125,3 +125,5 @@ may differ. `generatedWorld.ts` byte-identical for every floor without locks.
    the corridors that exist; corridors are lengthened only where they cannot take it, the cheapest
    lengthening first.
 3. The main path is the whole top-level `in → out` route; the exit lies behind the last `out`.
+4. The carve decides every length — regions, corridors, the stretch between barriers. The author never
+   counts cells.
