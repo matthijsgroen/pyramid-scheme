@@ -40,6 +40,7 @@ export const BINDING: RealisationBinding = {
   sequence: "plates",
   "fork-switch": "lightbeamSwitch",
   "one-way": "zipline",
+  "region-barrier": "water",
 }
 
 export { doubleBackLock }

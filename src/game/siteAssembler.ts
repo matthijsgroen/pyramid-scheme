@@ -8,8 +8,10 @@ import {
   DOOR_FACE_ROLE,
   defaultResolveEncounter,
   defaultResolveOneWayRealisation,
+  defaultResolveRegionBarrierRealisation,
 } from "./encounterFallback"
 import type { OneWayRefusal, ResolveOneWayRealisation } from "./oneWayRealisation"
+import type { RegionBarrierRefusal, ResolveRegionBarrierRealisation } from "./regionBarrierRealisation"
 
 export { defaultResolveEncounter }
 export { DEFAULT_PACKING, ONE_WAY_RUN_CELLS }
@@ -610,6 +612,9 @@ export type AssembleFloorKeyRequirements = {
    * passes the registry's, which binds a one-way that names none to nothing; absent (stories, specs, the
    * builder) the fallback catalogue answers. */
   resolveOneWay?: ResolveOneWayRealisation
+  /** Binds each region barrier to the realisation it names. Production passes the registry's, which binds a
+   * barrier that names none to nothing; absent (stories, specs, the builder) the fallback accepts any named one. */
+  resolveRegionBarrier?: ResolveRegionBarrierRealisation
   /** How many attempts the floor may take, at most ASSEMBLY_ATTEMPTS. The bake's seed search asks for 1:
    * it wants a seed that carves at the authored `packing`, and a seed that only carves after the ladder
    * widened the grid is one it has to reject, so it must not pay for the climb to learn that. */
@@ -740,6 +745,7 @@ const assembleExpandedFloor = (
     floorRef = { journeyId: siteId, floorIndex: 0 },
     resolveBoardIndex,
     resolveOneWay = defaultResolveOneWayRealisation,
+    resolveRegionBarrier = defaultResolveRegionBarrierRealisation,
     maxAttempts = ASSEMBLY_ATTEMPTS,
     onLaid,
   } = keyRequirements
@@ -855,10 +861,36 @@ const assembleExpandedFloor = (
   // EVERY CONTROL IS ONE OF CORE'S KINDS, DRESSED BY A MOD'S REALISATION, so a floor whose controls name one no
   // registered mod provides is refused by name here, in the same list, rather than carved with another
   // standing in: the carve depends on core alone, and a mod's absence cannot move a wall.
-  const realisationProblems = [...realisationRefusals, ...realisationsMissing(authoredConfig, resolveEncounter)]
+  // A REGION BARRIER IS DRESSED BY A REALISATION BOUND FROM OUTSIDE, answered here too: unbound, or naming one
+  // no registered mod provides, it is refused by name (barrier and region), never carved with a default.
+  const regionBarrierRefusals = (authoredConfig.obstacles ?? []).filter(isRegionGate).flatMap(barrier => {
+    const named = authoredConfig.regionBarrierRealisation
+    const why: RegionBarrierRefusal | undefined = resolveRegionBarrier(named)
+      ? undefined
+      : named === undefined
+        ? "unbound"
+        : "unknown"
+    return why
+      ? [
+          {
+            type: "regionBarrierRealisationRefused" as const,
+            id: barrier.id,
+            region: barrier.at.region,
+            realisation: named ?? null,
+            why,
+          },
+        ]
+      : []
+  })
+  const realisationProblems = [
+    ...realisationRefusals,
+    ...regionBarrierRefusals,
+    ...realisationsMissing(authoredConfig, resolveEncounter),
+  ]
   if (realisationProblems.length > 0) return { success: false, reasons: realisationProblems }
   // Refused just above wherever the floor binds no usable realisation, so one resolves here.
   const boundRealisation = (): string => resolveOneWay(authoredConfig.oneWayRealisation)!.id
+  const boundRegionBarrier = (): string => resolveRegionBarrier(authoredConfig.regionBarrierRealisation)!.id
 
   // A HANDLE'S REACH IS AUTHORED, SO WHAT IT CANNOT REACH IS ANSWERED BEFORE A WALL IS CARVED — the
   // same reasoning, and the same shape, as the one-way above: which sections exist and what each
@@ -2492,13 +2524,13 @@ const assembleExpandedFloor = (
     }
     // One entrance's door of a region barrier: a family-less gate room like any other, so it draws as bars
     // and `openWaysOut` hands its corridor back once its owners open it. `regionBarrier` is what tells it
-    // from an edge gate, and which of its barrier's doors it is.
+    // from an edge gate, which of its barrier's doors it is and what it was bound to.
     const regionBarrierDoorSpec = (id: string, region: string, entrance: string): RoomSpec => ({
       roomType: "encounter",
       tags: [...keyGate.tags, "region-barrier"],
       requiredKeyId: gateKeyOf(id),
       ...floorKeysOfGate(id),
-      regionBarrier: { region, entrance },
+      regionBarrier: { region, entrance, realisation: boundRegionBarrier() },
     })
     const controlRoomSpec = (control: StatefulControl, record: MechanismRecord): RoomSpec => ({
       roomType: "encounter",
