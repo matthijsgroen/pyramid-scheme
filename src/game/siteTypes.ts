@@ -828,6 +828,9 @@ export type AssemblerReason =
   /** The locks of the floor did not fit the lattice: `part` is the stretch, corridor or drop the search got
    * stuck on, `grid` the largest grid it was tried at. */
   | { type: "lockNotLaid"; part: { kind: "region" | "corridor" | "drop"; id: string }; grid: number }
+  /** The floor's side sections held rooms of these kinds that no laid node, nor any lengthening of a laid
+   * stretch, took. */
+  | { type: "contentNotLaid"; kinds: ("reward" | "puzzle")[] }
 export type AssemblerFailure = { success: false; reasons: AssemblerReason[] }
 /** `attempt` is the 0-based attempt that carved the floor: anything past 0 carved on a widened grid and a
  * doubled `packing`, not the authored one. */

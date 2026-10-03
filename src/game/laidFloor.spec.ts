@@ -1,7 +1,14 @@
 import { describe, expect, it } from "vitest"
 import { expandFloorLocks } from "./floorLocks"
 import type { PlacedLock } from "./floorLocks"
-import { placeContentOnRoute, planToLay, seatLaidFloor } from "./laidFloor"
+import {
+  fillLaidFloor,
+  lengthenPlan,
+  lengtheningCandidates,
+  placeContentOnRoute,
+  planToLay,
+  seatLaidFloor,
+} from "./laidFloor"
 import type { LaidFloor } from "./laidFloor"
 import { layLockPlan, startingGridSize } from "./layLocks"
 import { planLockFloor } from "./lockPlan"
@@ -219,5 +226,192 @@ describe("the route's own content", () => {
     const floor = seated(lever, 1)
     const slots = Array.from({ length: floor.route.length }, (_, i) => i + 1)
     expect(placeContentOnRoute(floor, slots, { leverFirst: false, appetite: FREE })).toBeUndefined()
+  })
+})
+
+// A straight route of nodes, one per entry of `labels`: the way in at its head, the way out at its tail.
+const straight = (labels: string[]) => {
+  const keys = labels.map((_, i) => `0,${2 * i}`)
+  return {
+    route: keys.map((key): [number, number] => key.split(",").map(Number) as [number, number]),
+    routeLabels: labels,
+    label: new Map(keys.map((key, i) => [key, labels[i]])),
+    depth: new Map(keys.map((key, i) => [key, i])),
+    open: new Set(keys),
+    doors: new Set<string>(),
+    junctions: [],
+    drops: [],
+    seatDemand: new Map<string, number>(),
+  }
+}
+
+describe("the floor's side sections filled into the laid nodes", () => {
+  const hall = straight(["entrance", "hall", "hall", "hall", "hall", "vault", "vault", "exit"])
+  const appetite = new Map<string, RegionAppetite>([
+    ["hall", "puzzles"],
+    ["vault", "reward"],
+  ])
+  const cellsOf = (result: ReturnType<typeof fillLaidFloor>) => {
+    if (!("placed" in result)) throw new Error(`missing ${JSON.stringify(result.missing)}`)
+    return result.placed.map(place => place.cells)
+  }
+  const stepOf = (key: string) => Number(key.split(",")[1]) / 2
+
+  it("stands a section's puzzles in walk order and its end room last", () => {
+    const [cells] = cellsOf(
+      fillLaidFloor(hall, new Set(), [{ section: 0, kinds: ["puzzle", "puzzle", "reward"] }], appetite)
+    )
+    const steps = cells.map(stepOf)
+    expect([...steps].sort((a, b) => a - b)).toEqual(steps)
+    expect(new Set(steps).size).toBe(3)
+    expect(hall.routeLabels[steps[2]]).toBe("vault")
+  })
+
+  it("puts a room only in a region whose appetite takes its kind, though a refusing node lies nearer its spread", () => {
+    // The vault nodes ahead of the hall are the nearest to where the puzzle is spread to.
+    const floor = straight(["entrance", "vault", "vault", "hall", "hall", "vault", "exit"])
+    const [cells] = cellsOf(fillLaidFloor(floor, new Set(), [{ section: 0, kinds: ["puzzle", "reward"] }], appetite))
+    expect(cells.map(key => floor.label.get(key))).toEqual(["hall", "vault"])
+  })
+
+  it("never takes a door, a junction, a drop end, the way in, the way out or a node the main content has", () => {
+    const keys = [...hall.label.keys()]
+    const floor = {
+      ...hall,
+      doors: new Set([keys[1]]),
+      junctions: [{ cell: keys[2] }] as never,
+      drops: [{ from: keys[3], to: keys[6] }] as never,
+    }
+    const result = fillLaidFloor(floor, new Set([keys[4]]), [{ section: 0, kinds: ["reward"] }], appetite)
+    // Of the vault's two nodes one is a drop end: the reward goes to the other.
+    expect(cellsOf(result)).toEqual([[keys[5]]])
+    const refused = fillLaidFloor(floor, new Set([keys[4]]), [{ section: 0, kinds: ["puzzle"] }], appetite)
+    expect("missing" in refused).toBe(true)
+  })
+
+  it("leaves a region the nodes its mechanics will seat on", () => {
+    const seats = { ...hall, seatDemand: new Map([["hall", 3]]) }
+    const result = fillLaidFloor(seats, new Set(), [{ section: 0, kinds: ["puzzle", "puzzle"] }], appetite)
+    expect(result).toEqual({ missing: [{ kind: "puzzle", open: false }] })
+  })
+
+  it("names the kinds of room that found no node, with the ground each asked for", () => {
+    const result = fillLaidFloor(
+      hall,
+      new Set(),
+      [
+        { section: 0, kinds: ["puzzle", "puzzle", "puzzle", "puzzle", "puzzle"] },
+        { section: 1, kinds: ["reward", "reward", "reward"], open: true },
+      ],
+      appetite
+    )
+    expect(result).toEqual({
+      missing: [
+        { kind: "puzzle", open: false },
+        { kind: "reward", open: true },
+      ],
+    })
+  })
+
+  it("keeps a section that hosts a key on ground no door shuts", () => {
+    const keys = [...hall.label.keys()]
+    const shut = { ...hall, open: new Set(keys.slice(0, 3)) }
+    const [cells] = cellsOf(fillLaidFloor(shut, new Set(), [{ section: 0, kinds: ["puzzle"], open: true }], appetite))
+    expect(shut.open.has(cells[0])).toBe(true)
+    const none = fillLaidFloor(shut, new Set(), [{ section: 0, kinds: ["reward"], open: true }], appetite)
+    expect(none).toEqual({ missing: [{ kind: "reward", open: true }] })
+  })
+
+  it("packs from the way in when spreading the rooms along the walk would strand one", () => {
+    const strand = straight(["entrance", "hall", "hall", "hall", "vault", "exit"])
+    const [cells] = cellsOf(
+      fillLaidFloor(strand, new Set(), [{ section: 0, kinds: ["puzzle", "puzzle", "puzzle"] }], appetite)
+    )
+    expect(cells.map(stepOf)).toEqual([1, 2, 3])
+  })
+})
+
+describe("the stretch the carve lengthens when the laid nodes cannot take the content", () => {
+  const region = (id: string, onRoute: boolean) => ({ id, onRoute, seats: [], minNodes: 1 })
+  const corridor = (from: string, to: string, onRoute: boolean) => ({
+    id: `${from}>${to}`,
+    from,
+    to,
+    onRoute,
+    barriers: [],
+    minNodes: 0,
+  })
+  // A route A, B with a side stretch C off B, joined by a corridor each.
+  const plan: LockPlan = {
+    route: ["A", "B"],
+    regions: [region("A", true), region("B", true), region("C", false)],
+    corridors: [corridor("A", "B", true), corridor("B", "C", false)],
+    junctions: [],
+    drops: [],
+    nested: [],
+  }
+  const stretches = (lengths: Record<string, number>) =>
+    new Map(Object.entries(lengths).map(([part, length]) => [part, Array.from({ length }, (_, i) => `${part}:${i}`)]))
+  const laid = (lengths: Record<string, number>, open: string[] = []) => ({
+    stretches: stretches(lengths),
+    open: new Set(open),
+  })
+  const FLAT = { "region:A": 2, "region:B": 2, "region:C": 2, "corridor:A>B": 2, "corridor:B>C": 2 }
+  const ids = (found: ReturnType<typeof lengtheningCandidates>) => found.map(({ kind, id }) => `${kind}:${id}`)
+  const puzzle = [{ kind: "puzzle" as const, open: false }]
+
+  it("prefers a stretch off the route to one on it, since a route node lengthens every walk past it", () => {
+    const found = lengtheningCandidates(plan, laid(FLAT), puzzle, new Map())
+    expect(ids(found).slice(0, 2).sort()).toEqual(["corridor:B>C", "region:C"])
+    expect(found[0].cost[1]).toBe(0)
+    expect(found[found.length - 1].cost[1]).toBe(1)
+  })
+
+  it("prefers a stretch that takes everything missing to one that takes only some of it", () => {
+    const appetite = new Map<string, RegionAppetite>([
+      ["C", "puzzles"],
+      ["A", "free"],
+    ])
+    const missing = [
+      { kind: "puzzle" as const, open: false },
+      { kind: "reward" as const, open: false },
+    ]
+    const [first] = lengtheningCandidates(plan, laid(FLAT), missing, appetite)
+    expect(first.id).not.toBe("C")
+    expect(first.cost[0]).toBe(0)
+    const partial = lengtheningCandidates(plan, laid(FLAT), missing, appetite).find(found => found.id === "C")!
+    expect(partial).toMatchObject({ kind: "region", nodes: 1 })
+    expect(partial.cost[0]).toBe(1)
+  })
+
+  it("prefers the stretch laid shorter, then the one whose id sorts first", () => {
+    const shorter = lengtheningCandidates(plan, laid({ ...FLAT, "corridor:B>C": 3, "region:C": 1 }), puzzle, new Map())
+    expect(ids(shorter)[0]).toBe("region:C")
+    const tied = lengtheningCandidates(plan, laid({ ...FLAT, "region:C": 2, "corridor:B>C": 2 }), puzzle, new Map())
+    expect(ids(tied).slice(0, 2)).toEqual(["corridor:B>C", "region:C"])
+  })
+
+  it("never offers a stretch whose new node's region refuses what is missing", () => {
+    const appetite = new Map<string, RegionAppetite>([
+      ["C", "nothing"],
+      ["B", "reward"],
+    ])
+    const found = lengtheningCandidates(plan, laid(FLAT), puzzle, appetite)
+    expect(ids(found)).not.toContain("region:C")
+    expect(ids(found)).not.toContain("region:B")
+  })
+
+  it("offers only whole regions the way in reaches before any door when a room asks for open ground", () => {
+    const keys = ["region:A:0", "region:A:1"]
+    const found = lengtheningCandidates(plan, laid(FLAT, keys), [{ kind: "reward", open: true }], new Map())
+    expect(ids(found)).toEqual(["region:A"])
+  })
+
+  it("asks the lay for the laid length of a stretch plus the nodes wanted, and no other stretch for more", () => {
+    const grown = lengthenPlan(plan, laid({ ...FLAT, "corridor:B>C": 4 }), { kind: "corridor", id: "B>C", nodes: 2 })
+    expect(grown.corridors.map(found => found.minNodes)).toEqual([0, 6])
+    expect(grown.regions.map(found => found.minNodes)).toEqual([1, 1, 1])
+    const region = lengthenPlan(plan, laid(FLAT), { kind: "region", id: "C", nodes: 1 })
+    expect(region.regions.map(found => found.minNodes)).toEqual([1, 1, 3])
   })
 })

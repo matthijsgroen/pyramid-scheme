@@ -66,7 +66,12 @@ afterAll(() => {
   delete process.env.INCLUDE_DEV
 })
 
-const path = (pathPuzzles: number): SideSection => ({ pathPuzzles, difficulty: "expert", end: "treasure" })
+const path = (pathPuzzles: number, more: Partial<SideSection> = {}): SideSection => ({
+  pathPuzzles,
+  difficulty: "expert",
+  end: "treasure",
+  ...more,
+})
 const SEEDS = Array.from({ length: 40 }, (_, i) => i + 1)
 
 // The dev pyramid's own doubleBack, without the pinned packing and seed that its ballast side paths needed.
@@ -80,13 +85,19 @@ const authored = (sideSections: SideSection[]): FloorConfig => ({
 const carve = (floor: FloorConfig): LaidCarve[] =>
   SEEDS.map(seed => carveOnce(DEV_JOURNEY_ID, floor, seed, resolveEncounterMeta, { resolveKeyRequirements }))
 
-const VARIANTS: Record<string, () => FloorConfig> = {
-  "without any side path": () => authored([]),
-  "with a couple of ordinary side paths": () => authored([path(1), path(0)]),
+// What each variant authors, and how many seeds of 40 it must carve on the first attempt.
+const VARIANTS: Record<string, { make: () => FloorConfig; minimum: number }> = {
+  "without any side path": { make: () => authored([]), minimum: 30 },
+  "with a couple of ordinary side paths": { make: () => authored([path(1), path(0)]), minimum: 30 },
+  "with two ungated side paths of puzzles and a reward": { make: () => authored([path(2), path(1)]), minimum: 30 },
+  "with one ungated and one floor-key-gated side path": {
+    make: () => authored([path(2), path(1, { gate: { type: "floor-key" } })]),
+    minimum: 20,
+  },
 }
 
 describe("the dev pyramid's doubleBack is carved from the structure laid for it", { timeout: 300_000 }, () => {
-  for (const [name, make] of Object.entries(VARIANTS))
+  for (const [name, { make, minimum }] of Object.entries(VARIANTS))
     describe(name, () => {
       let carves: LaidCarve[]
       beforeAll(() => {
@@ -95,12 +106,12 @@ describe("the dev pyramid's doubleBack is carved from the structure laid for it"
       // A check over the carves that did not carve would pass for nothing, so every one asks for the rate first.
       const carved = () => {
         const found = carves.flatMap(result => (result.ok ? [result] : []))
-        expect(found.length, `${name} carves`).toBeGreaterThanOrEqual(30)
+        expect(found.length, `${name} carves`).toBeGreaterThanOrEqual(minimum)
         return found
       }
 
-      it("carves on the first attempt at 30 of 40 seeds at least, every one sound with no dead region", () => {
-        expect(carved().length).toBeGreaterThanOrEqual(30)
+      it(`carves on the first attempt at ${minimum} of 40 seeds at least, every one sound with no dead region`, () => {
+        expect(carved().length).toBeGreaterThanOrEqual(minimum)
         for (const { grid } of carved()) {
           const walk = walkFloorLock(grid)!
           if (!walk.sound) throw new Error(describeFloorWalkFailure(walk.failure))
@@ -124,6 +135,38 @@ describe("the dev pyramid's doubleBack is carved from the structure laid for it"
             expectNoWayRoundADoor(result.grid, result.laid)
             expectContentFitsAppetite(result.grid, make())
           }
+        }
+      })
+
+      it("stands an ungated side path's rooms on laid nodes in walk order and leaves a gated one a branch", () => {
+        const sides = make().sideSections
+        for (const { grid, laid } of carved()) {
+          const filled = sides.flatMap((side, i) => (side.gate === undefined ? [i] : []))
+          expect(laid.absorbed.map(({ section }) => section)).toEqual(filled)
+          for (const { section, cells } of laid.absorbed) {
+            const own = grid.cells.flatMap((row, r) =>
+              row.flatMap((cell, c) =>
+                (cell.type === "room" || cell.type === "corridor") && cell.sectionAddress === `s${section}`
+                  ? [`${r},${c}`]
+                  : []
+              )
+            )
+            expect(own.sort()).toEqual([...cells].sort())
+            const depths = cells.map(key => laid.depth.get(key)!)
+            expect(depths).toEqual([...depths].sort((a, b) => a - b))
+          }
+          sides.forEach((side, i) => {
+            if (side.gate === undefined) return
+            const branch = grid.cells.flatMap((row, r) =>
+              row.flatMap((cell, c) =>
+                (cell.type === "room" || cell.type === "corridor") && cell.sectionAddress === `s${i}`
+                  ? [`${r},${c}`]
+                  : []
+              )
+            )
+            expect(branch.length).toBeGreaterThan(1)
+            for (const key of branch) expect(laid.label.has(key)).toBe(false)
+          })
         }
       })
 

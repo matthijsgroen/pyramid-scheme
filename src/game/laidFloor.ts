@@ -25,6 +25,23 @@ const doorsOnCorridor = (plan: LockPlan, corridor: PlanCorridor): CorridorDoor[]
 }
 
 /**
+ * HOW A CORRIDOR OF `k` NODES IS SPLIT BETWEEN ITS TWO REGIONS: the first `split` nodes answer to `from`, the
+ * rest to `to`, and `firstDoor` is the node its nearest door stands on. A corridor ending at a junction's
+ * region has its nearest door beside the junction, at its far end.
+ */
+const corridorSplit = (plan: LockPlan, corridor: PlanCorridor, k: number): { split: number; firstDoor: number } => {
+  const junctionRegions = new Set(plan.junctions.map(junction => junction.region))
+  const m = doorsOnCorridor(plan, corridor).length
+  const firstDoor = junctionRegions.has(corridor.to) && !junctionRegions.has(corridor.from) ? k - m : 0
+  return { split: m > 0 ? firstDoor : Math.ceil(k / 2), firstDoor }
+}
+
+const corridorLabels = (plan: LockPlan, corridor: PlanCorridor, k: number): string[] => {
+  const { split } = corridorSplit(plan, corridor, k)
+  return Array.from({ length: k }, (_, i) => (i < split ? corridor.from : corridor.to))
+}
+
+/**
  * HOW MANY NODES A REGION'S MECHANICS WANT, beyond the doors its corridors carry: one per control and tile, and
  * for a region with tiles one more for every way off the route that leaves it, because a tile stands on a node
  * with two ways and not three.
@@ -113,6 +130,16 @@ export type LaidFloor = {
   drops: LaidDrop[]
   held: CellKey[]
   passages: string[]
+  /** Walk distance from the way in, over the laid passages, of every laid node. */
+  depth: Map<CellKey, number>
+  /** The nodes the way in reaches without opening a door. */
+  open: Set<CellKey>
+  /** The nodes each laid stretch holds, keyed `region:<id>` and `corridor:<id>`. */
+  stretches: Map<string, CellKey[]>
+  /** The authored side sections the carve filled into laid nodes; empty until the carve has filled the floor. */
+  absorbed: AbsorbedPlace[]
+  /** The stretches the carve lengthened to hold that content, in the order it chose them. */
+  lengthened: LengtheningChoice[]
 }
 
 const decodePassage = (key: string, n: number): [CellKey, CellKey] => {
@@ -125,7 +152,6 @@ export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
   const label = new Map<CellKey, string>()
   for (const region of laid.regions) for (const node of region.nodes) label.set(node, region.id)
 
-  const junctionRegions = new Set(plan.junctions.map(junction => junction.region))
   const gateDoor = new Map<string, CellKey>()
   const regionDoors: LaidRegionDoor[] = []
   const doorCells = new Set<CellKey>()
@@ -133,11 +159,9 @@ export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
     const laidCorridor = laid.corridors.find(candidate => candidate.id === corridor.id)!
     const doors = doorsOnCorridor(plan, corridor)
     const k = laidCorridor.nodes.length
-    const m = doors.length
-    // A corridor ending at a junction's region has its nearest door beside the junction, at its far end.
-    const firstDoor = junctionRegions.has(corridor.to) && !junctionRegions.has(corridor.from) ? k - m : 0
-    const split = m > 0 ? firstDoor : Math.ceil(k / 2)
-    laidCorridor.nodes.forEach((node, i) => label.set(node, i < split ? corridor.from : corridor.to))
+    const labels = corridorLabels(plan, corridor, k)
+    const { firstDoor } = corridorSplit(plan, corridor, k)
+    laidCorridor.nodes.forEach((node, i) => label.set(node, labels[i]))
     doors.forEach((door, j) => {
       const cell = laidCorridor.nodes[firstDoor + j]
       doorCells.add(cell)
@@ -180,6 +204,23 @@ export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
     neighbours.set(b, [...(neighbours.get(b) ?? []), a])
   }
   for (const list of neighbours.values()) list.sort()
+
+  const depth = new Map<CellKey, number>([[laid.route[0], 0]])
+  const queue = [laid.route[0]]
+  for (let i = 0; i < queue.length; i++)
+    for (const next of neighbours.get(queue[i]) ?? [])
+      if (!depth.has(next)) {
+        depth.set(next, depth.get(queue[i])! + 1)
+        queue.push(next)
+      }
+  const open = new Set<CellKey>([laid.route[0]])
+  const reached = [laid.route[0]]
+  for (let i = 0; i < reached.length; i++)
+    for (const next of neighbours.get(reached[i]) ?? [])
+      if (!open.has(next) && !doorCells.has(next)) {
+        open.add(next)
+        reached.push(next)
+      }
 
   // The off-route nodes, as chains: each walk continues through the first unseen neighbour and leaves the
   // others to chains of their own, so a node with three ways out hangs two chains off the one that reached it.
@@ -255,6 +296,14 @@ export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
     drops: laid.drops,
     held: laid.held,
     passages: laid.passages,
+    depth,
+    open,
+    stretches: new Map([
+      ...laid.regions.map(region => [`region:${region.id}`, region.nodes] as const),
+      ...laid.corridors.map(corridor => [`corridor:${corridor.id}`, corridor.nodes] as const),
+    ]),
+    absorbed: [],
+    lengthened: [],
   }
 }
 
@@ -298,4 +347,175 @@ export const placeContentOnRoute = (
     puzzles.push(take(best))
   }
   return [...puzzles.sort((a, b) => a - b), goal]
+}
+
+/**
+ * What an authored side section holds, in the order the player meets it: its puzzles, then its end room.
+ * `open` asks for ground the way in reaches without opening a door, for a section hosting a key that the floor's
+ * own gates wait on.
+ */
+export type AbsorbedDemand = { section: number; kinds: ContentKind[]; open?: boolean }
+
+/** A room of a section no laid node took. */
+export type MissingRoom = { kind: ContentKind; open: boolean }
+
+/** The laid node each room of an absorbed section stands on, the end room last. */
+export type AbsorbedPlace = { section: number; cells: CellKey[] }
+
+/** A stretch of the plan the carve asked the lay for more nodes on, and how many. */
+export type Lengthening = { kind: "region" | "corridor"; id: string; nodes: number }
+
+/**
+ * FILLS THE FLOOR'S AUTHORED SIDE SECTIONS INTO THE LAID NODES, or names the kinds of room that found none.
+ * A room may stand on any node that is no door, junction, drop end, entrance, exit or node the main content
+ * took, in a region whose appetite takes its kind, and a region always keeps the nodes its mechanics' seats
+ * want: on the route those come off the route's nodes, off it off the region's own. A section's rooms stand
+ * in walk order from the way in, its puzzles first and its end room last, spread along the walk; a floor the
+ * spread cannot seat is packed from the way in instead.
+ */
+export const fillLaidFloor = (
+  floor: Pick<
+    LaidFloor,
+    "route" | "routeLabels" | "label" | "depth" | "open" | "doors" | "junctions" | "drops" | "seatDemand"
+  >,
+  taken: ReadonlySet<CellKey>,
+  demands: readonly AbsorbedDemand[],
+  appetite: ReadonlyMap<string, RegionAppetite>
+): { placed: AbsorbedPlace[] } | { missing: MissingRoom[] } => {
+  const routeKeys = new Set(floor.route.map(([r, c]) => `${r},${c}`))
+  const [entrance, exit] = [floor.route[0], floor.route[floor.route.length - 1]].map(([r, c]) => `${r},${c}`)
+  const held = new Set([
+    entrance,
+    exit,
+    ...taken,
+    ...floor.doors,
+    ...floor.junctions.map(junction => junction.cell),
+    ...floor.drops.flatMap(drop => [drop.from, drop.to]),
+  ])
+  const candidates = [...floor.label.keys()]
+    .filter(key => !held.has(key) && floor.depth.has(key))
+    .sort((a, b) => floor.depth.get(a)! - floor.depth.get(b)! || (a < b ? -1 : 1))
+  const onRoute = new Set(floor.routeLabels)
+  const poolOf = (key: CellKey) => `${floor.label.get(key)!}|${routeKeys.has(key) ? "route" : "chain"}`
+  const allowance = new Map<string, number>()
+  for (const key of candidates) allowance.set(poolOf(key), (allowance.get(poolOf(key)) ?? 0) + 1)
+  for (const [region, seats] of floor.seatDemand) {
+    const pool = `${region}|${onRoute.has(region) ? "route" : "chain"}`
+    allowance.set(pool, Math.max(0, (allowance.get(pool) ?? 0) - seats))
+  }
+  const accepts = (key: CellKey, kind: ContentKind, open: boolean) =>
+    appetiteAccepts(appetite.get(floor.label.get(key)!) ?? "free", kind) && (!open || floor.open.has(key))
+
+  const fill = (spread: boolean): { placed: AbsorbedPlace[]; missing: MissingRoom[] } => {
+    const room = new Map(allowance)
+    const used = new Set<number>()
+    const placed: AbsorbedPlace[] = []
+    const missing: MissingRoom[] = []
+    demands.forEach(({ section, kinds, open = false }, s) => {
+      const cells: CellKey[] = []
+      let behind = -1
+      for (const [j, kind] of kinds.entries()) {
+        const target = spread
+          ? Math.floor(((j + (s + 1) / (demands.length + 1)) / kinds.length) * candidates.length)
+          : behind + 1
+        let best = -1
+        for (let p = behind + 1; p < candidates.length; p++) {
+          const key = candidates[p]
+          if (used.has(p) || !accepts(key, kind, open) || (room.get(poolOf(key)) ?? 0) <= 0) continue
+          if (best < 0 || Math.abs(p - target) < Math.abs(best - target)) best = p
+          if (p >= target) break
+        }
+        if (best < 0) {
+          missing.push(...kinds.slice(j).map(missed => ({ kind: missed, open })))
+          break
+        }
+        used.add(best)
+        room.set(poolOf(candidates[best]), room.get(poolOf(candidates[best]))! - 1)
+        cells.push(candidates[best])
+        behind = best
+      }
+      placed.push({ section, cells })
+    })
+    return { placed, missing }
+  }
+
+  const spread = fill(true)
+  if (spread.missing.length === 0) return { placed: spread.placed }
+  const packed = fill(false)
+  return packed.missing.length === 0 ? { placed: packed.placed } : { missing: packed.missing }
+}
+
+/** A stretch the carve could lengthen to take what is missing, with what it would cost. */
+export type LengtheningCandidate = Lengthening & { cost: [number, number, number, string] }
+
+/** A stretch the carve lengthened, with every stretch it weighed it against, cheapest first. */
+export type LengtheningChoice = Lengthening & { considered: LengtheningCandidate[] }
+
+/**
+ * THE STRETCHES THAT COULD TAKE WHAT IS MISSING, CHEAPEST FIRST. A lengthening adds nodes to one stretch of
+ * the plan, and the node it adds answers to a region (a corridor's new node answers to whichever end its split
+ * gives it to), so only a stretch whose new node's appetite takes a missing kind is a candidate, and it is asked
+ * for as many nodes as there are rooms it takes. The cost, read left to right: the rooms still missing once it
+ * is lengthened (none, for a stretch that takes everything), a stretch off the route before one on it (a route
+ * node lengthens every walk past it), the shorter stretch as laid, then the id so the same floor always chooses
+ * the same stretch.
+ */
+export const lengtheningCandidates = (
+  plan: LockPlan,
+  floor: Pick<LaidFloor, "stretches" | "open">,
+  missing: readonly MissingRoom[],
+  appetite: ReadonlyMap<string, RegionAppetite>
+): LengtheningCandidate[] => {
+  const found: LengtheningCandidate[] = []
+  // Ground the way in reaches before any door is a whole region's: a corridor's new node may lie past one.
+  const isOpen = (kind: Lengthening["kind"], id: string) => {
+    const nodes = floor.stretches.get(`${kind}:${id}`) ?? []
+    return kind === "region" && nodes.length > 0 && nodes.every(node => floor.open.has(node))
+  }
+  const consider = (kind: Lengthening["kind"], id: string, label: string, onRoute: boolean) => {
+    const fits = missing.filter(
+      missed => appetiteAccepts(appetite.get(label) ?? "free", missed.kind) && (!missed.open || isOpen(kind, id))
+    )
+    if (fits.length === 0) return
+    found.push({
+      kind,
+      id,
+      nodes: fits.length,
+      cost: [
+        missing.length - fits.length,
+        onRoute ? 1 : 0,
+        floor.stretches.get(`${kind}:${id}`)?.length ?? 0,
+        `${kind}:${id}`,
+      ],
+    })
+  }
+  for (const region of plan.regions) consider("region", region.id, region.id, region.onRoute)
+  for (const corridor of plan.corridors) {
+    const k = floor.stretches.get(`corridor:${corridor.id}`)?.length ?? 0
+    const before = corridorLabels(plan, corridor, k)
+    const after = corridorLabels(plan, corridor, k + 1)
+    const gained = after.filter(label => after.filter(l => l === label).length > before.filter(l => l === label).length)
+    consider("corridor", corridor.id, gained[0] ?? corridor.to, corridor.onRoute)
+  }
+  return found.sort((a, b) => {
+    for (let i = 0; i < a.cost.length; i++) if (a.cost[i] !== b.cost[i]) return a.cost[i] < b.cost[i] ? -1 : 1
+    return 0
+  })
+}
+
+/** THE PLAN ASKING THE LAY FOR MORE NODES ON ONE STRETCH than it was laid with, so the next lay must give them. */
+export const lengthenPlan = (plan: LockPlan, floor: Pick<LaidFloor, "stretches">, part: Lengthening): LockPlan => {
+  const laidLength = floor.stretches.get(`${part.kind}:${part.id}`)?.length ?? 0
+  const grown = (minNodes: number) => Math.max(minNodes, laidLength) + part.nodes
+  return {
+    ...plan,
+    regions: plan.regions.map(region =>
+      part.kind === "region" && region.id === part.id ? { ...region, minNodes: grown(region.minNodes) } : region
+    ),
+    corridors: plan.corridors.map(corridor =>
+      part.kind === "corridor" && corridor.id === part.id
+        ? { ...corridor, minNodes: grown(corridor.minNodes) }
+        : corridor
+    ),
+  }
 }

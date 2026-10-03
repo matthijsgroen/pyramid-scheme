@@ -50,8 +50,8 @@ const dirsOf = (cell: GridCell): ReadonlySet<Direction> =>
   cell.type === "room" || cell.type === "corridor" ? cell.dirs : new Set<Direction>()
 const isNode = (r: number, c: number) => r % 2 === 0 && c % 2 === 0
 
-/** Every node of the grid that belongs to the lock's own ground: the route and the stretches off it. */
-const lockGround = (grid: FloorGrid): string[] => {
+/** Every node of the grid that belongs to the lock's own ground: the route and the stretches off it, and the rooms of the floor's sections that stand on them. */
+const lockGround = (grid: FloorGrid, filledIn: ReadonlySet<string>): string[] => {
   const found: string[] = []
   grid.cells.forEach((row, r) =>
     row.forEach((cell, c) => {
@@ -61,7 +61,8 @@ const lockGround = (grid: FloorGrid): string[] => {
         (cell.type === "corridor" && cell.obstacle)
       )
         return
-      if (cell.sectionAddress === "main" || cell.sectionAddress?.startsWith("lock:")) found.push(`${r},${c}`)
+      if (cell.sectionAddress === "main" || cell.sectionAddress?.startsWith("lock:") || filledIn.has(`${r},${c}`))
+        found.push(`${r},${c}`)
     })
   )
   return found.sort()
@@ -75,7 +76,7 @@ const lockGround = (grid: FloorGrid): string[] => {
 export const expectCarveReadsLaid = (grid: FloorGrid, laid: LaidFloor): void => {
   const routeKeys = laid.route.map(([r, c]) => `${r},${c}`)
   const laidNodes = new Set([...routeKeys, ...laid.chains.flatMap(chain => chain.cells.map(([r, c]) => `${r},${c}`))])
-  expect(lockGround(grid)).toEqual([...laidNodes].sort())
+  expect(lockGround(grid, new Set(laid.absorbed.flatMap(({ cells }) => cells)))).toEqual([...laidNodes].sort())
   for (const node of laidNodes) expect((at(grid, node) as { region?: string }).region).toBe(laid.label.get(node))
 
   const passages = new Set(laid.passages)
@@ -121,14 +122,17 @@ export const expectCarveReadsLaid = (grid: FloorGrid, laid: LaidFloor): void => 
 export const expectRouteIsWholeRoute = (grid: FloorGrid, config: FloorConfig, laid: LaidFloor): void => {
   const expanded = expandFloorLocks(config)
   if (!expanded.ok) throw new Error("did not expand")
+  const routeKeys = new Set(laid.route.map(([r, c]) => `${r},${c}`))
+  const filledIn = new Set(laid.absorbed.flatMap(({ cells }) => cells).filter(key => routeKeys.has(key)))
   const walked = grid.cells
-    .flat()
-    .flatMap(cell =>
-      (cell.type === "room" || cell.type === "corridor") &&
-      cell.sectionAddress === "main" &&
-      /^\d+$/.test(cell.ordinal ?? "")
-        ? [cell]
-        : []
+    .flatMap((row, r) =>
+      row.flatMap((cell, c) =>
+        (cell.type === "room" || cell.type === "corridor") &&
+        (cell.sectionAddress === "main" || filledIn.has(`${r},${c}`)) &&
+        /^\d+$/.test(cell.ordinal ?? "")
+          ? [cell]
+          : []
+      )
     )
     .sort((a, b) => Number(a.ordinal) - Number(b.ordinal))
   expect(walked.map(cell => cell.region)).toEqual(laid.routeLabels)

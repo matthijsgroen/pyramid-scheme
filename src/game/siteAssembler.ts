@@ -58,8 +58,15 @@ import { cellSlot, plainSwitchId } from "./cellSlot"
 import { placeSequences } from "./sequenceTiles"
 import { expandFloorLocks } from "./floorLocks"
 import { layLockPlan, startingGridSize } from "./layLocks"
-import { placeContentOnRoute, planToLay, seatLaidFloor } from "./laidFloor"
-import type { LaidFloor } from "./laidFloor"
+import {
+  fillLaidFloor,
+  lengthenPlan,
+  lengtheningCandidates,
+  placeContentOnRoute,
+  planToLay,
+  seatLaidFloor,
+} from "./laidFloor"
+import type { AbsorbedDemand, LaidFloor, LengtheningChoice } from "./laidFloor"
 import { planLockFloor } from "./lockPlan"
 import type { LockPlan } from "./lockPlan"
 import { doorFacesMissing, realisationsMissing } from "./mechanics/realisations"
@@ -370,6 +377,8 @@ const RECOVERY_ATTEMPT = 30
 // no index of theirs is one of an authored section.
 const LAY_SEED_STRIDE = 1000003
 const LAID_CHAIN_IDX = 10000
+// The most stretches one attempt lengthens to hold a floor's content before it is given up as too tight.
+const MAX_LENGTHENINGS = 12
 // Attempts spent at one packing before asking for more room, and how much more. Four rerolls is
 // enough for a floor that only needed shuffle luck; seven rungs of 1.5x carry the tightest default
 // past 1, so no floor is stuck at a wish its sections cannot fit.
@@ -1240,6 +1249,33 @@ const assembleExpandedFloor = (
         appetite: new Map((regionLayout?.regions ?? []).map(region => [region.name, region.appetite])),
       })
     : undefined
+  // AN UNGATED SIDE SECTION IS CONTENT, NOT A BRANCH: a section whose entrance carries no door (no gate of its
+  // own, not sealed, not hidden), that hangs nothing off itself, ends in a chest or shop, holds no lever and
+  // is not named by a one-way, has its rooms stood on laid corridor and region nodes. A gated, keyed, sealed or
+  // hidden section stays a branch off laid ground, because a gate needs a branch to stand on.
+  const oneWayNames = new Set((config.oneWays ?? []).flatMap(way => [way.from, way.to]))
+  const isContentSection = (section: SideSection, i: number): boolean =>
+    plan !== undefined &&
+    !section.gate &&
+    !section.sealed &&
+    !section.hidden &&
+    !section.sideSections?.length &&
+    section.end === "treasure" &&
+    leverRooms(`s${i}`) === 0 &&
+    !oneWayNames.has(addresses.of.get(`s${i}`) ?? `s${i}`)
+  const contentSections = new Set(sideSections.flatMap((section, i) => (isContentSection(section, i) ? [i] : [])))
+  // The section hosting the key a floor-key gate waits on stands on ground no door shuts: nothing opens a door
+  // for the player to fetch the key that opens another.
+  const hostsKeys = (section: number) => gatedFloorKeyIdxs.length > 0 && ungatedIdxs[0] === section
+  const absorbedDemands: AbsorbedDemand[] = [...contentSections].map(section => ({
+    section,
+    kinds: [
+      ...Array.from({ length: sideSections[section].pathPuzzles }, (): ContentKind => "puzzle"),
+      "reward" as const,
+    ],
+    ...(hostsKeys(section) ? { open: true } : {}),
+  }))
+  const appetiteOfRegion = new Map((regionLayout?.regions ?? []).map(region => [region.name, region.appetite]))
   const lockCells = layPlan
     ? layPlan.regions.reduce((sum, region) => sum + Math.max(2, region.minNodes), 0) +
       layPlan.corridors.reduce((sum, corridor) => sum + corridor.minNodes + 1, 0)
@@ -1401,6 +1437,8 @@ const assembleExpandedFloor = (
   let carveDisagreement: CarveFault[] | undefined
   // The first laid plan no grid held, kept the same way.
   let lockNotLaid: { part: { kind: "region" | "corridor" | "drop"; id: string }; grid: number } | undefined
+  // The first laid floor whose content no lengthening could seat, kept the same way.
+  let contentNotLaid: ContentKind[] | undefined
   // Labeled so a gate reserved deep inside a chain's own content loop (below) can retry the WHOLE
   // attempt the same way every other shortfall here does, rather than only skipping the rest of one
   // chain's own content.
@@ -1435,17 +1473,52 @@ const assembleExpandedFloor = (
     // A LOCK FLOOR IS LAID BEFORE ANYTHING IS CARVED AROUND IT: the route, the arms, the junction, the drops and
     // every region stand on the lattice already, so what follows reads them rather than deriving them. The lay
     // has its own stream, so a floor without locks draws exactly what it always drew.
+    //
+    // THE FLOOR'S OWN CONTENT IS FILLED INTO WHAT IS LAID, and where the laid stretches are too short for it the
+    // plan asks the lay for more nodes on the cheapest stretch and lays again, rather than growing a branch.
     let laid: LaidFloor | undefined
+    let mainSteps: number[] | undefined
     if (layPlan && plan) {
-      const result = layLockPlan(layPlan, { seed: seed + attempt * LAY_SEED_STRIDE, n: N })
-      if (!result.ok) {
-        if (!lockNotLaid) lockNotLaid = result.refusal
-        continue
+      let lengthPlan = layPlan
+      const lengthened: LengtheningChoice[] = []
+      for (;;) {
+        const result = layLockPlan(lengthPlan, { seed: seed + attempt * LAY_SEED_STRIDE, n: N })
+        if (!result.ok) {
+          if (!lockNotLaid) lockNotLaid = result.refusal
+          continue attempt
+        }
+        N = result.laid.n
+        const seated = seatLaidFloor(plan, result.laid)
+        const mainContent = config.pathPuzzles + 1 /* goal */ + leverRooms(MAIN_SECTION_ADDRESS)
+        const onMain = placeContentOnRoute(seated, spreadContentIndices(mainContent, 1, seated.route.length), {
+          leverFirst: leverRooms(MAIN_SECTION_ADDRESS) === 1,
+          appetite: appetiteOfRegion,
+        })
+        if (onMain === undefined) continue attempt
+        const filled = fillLaidFloor(
+          seated,
+          new Set(onMain.map(step => `${seated.route[step][0]},${seated.route[step][1]}`)),
+          absorbedDemands,
+          appetiteOfRegion
+        )
+        if ("placed" in filled) {
+          mainSteps = onMain
+          laid = { ...seated, absorbed: filled.placed, lengthened }
+          break
+        }
+        const considered = lengtheningCandidates(lengthPlan, seated, filled.missing, appetiteOfRegion)
+        const [cheapest] = considered
+        if (cheapest === undefined || lengthened.length >= MAX_LENGTHENINGS) {
+          if (!contentNotLaid) contentNotLaid = filled.missing.map(({ kind }) => kind)
+          continue attempt
+        }
+        lengthened.push({ kind: cheapest.kind, id: cheapest.id, nodes: cheapest.nodes, considered })
+        lengthPlan = lengthenPlan(lengthPlan, seated, cheapest)
       }
-      N = result.laid.n
-      laid = seatLaidFloor(plan, result.laid)
-      onLaid?.(laid)
+      onLaid?.(laid!)
     }
+    // The laid nodes a section of the floor stands its rooms on: no mechanism's seat may take one.
+    const absorbedCell = new Set((laid?.absorbed ?? []).flatMap(({ cells }) => cells))
     const pkey = makePkey(N)
 
     // Pick entrance from edge cells (non-corner preferred for more connections).
@@ -1647,10 +1720,7 @@ const assembleExpandedFloor = (
     const contentIndices = spreadContentIndices(contentCount, 1, mainPath.length)
     // A laid floor places its content with the route's own doors, junction and seats in view, and in regions
     // whose appetite takes it.
-    const appetiteOfRegion = new Map((regionLayout?.regions ?? []).map(region => [region.name, region.appetite]))
-    const laidContent = laid
-      ? placeContentOnRoute(laid, contentIndices, { leverFirst: leverOnMain, appetite: appetiteOfRegion })
-      : undefined
+    const laidContent = mainSteps
     // A GATE ROOM AND A PUZZLE CANNOT BOTH STAND IN ONE CELL, and it is the content that moves: a
     // seam is where the regions actually change, while content is spread for rhythm and one node
     // either way is the kind of thing the carve already decides. Forward to the next free node, so
@@ -1834,7 +1904,8 @@ const assembleExpandedFloor = (
         mi !== leverIndex &&
         !gateIndices.has(mi) &&
         !barrierDoorOnMain.has(mi) &&
-        !forkJunctionIdx.has(mi)
+        !forkJunctionIdx.has(mi) &&
+        !absorbedCell.has(`${mainPath[mi][0]},${mainPath[mi][1]}`)
 
       let index: number | undefined
       for (let mi = 1; mi < mainPath.length - 1; mi++) {
@@ -1855,7 +1926,8 @@ const assembleExpandedFloor = (
               barrierDoorOnMain.has(shifted) ||
               placedContent.includes(shifted) ||
               takenByControl.has(shifted) ||
-              forkJunctionIdx.has(shifted))
+              forkJunctionIdx.has(shifted) ||
+              absorbedCell.has(`${mainPath[shifted][0]},${mainPath[shifted][1]}`))
           )
             shifted += 1
           if (shifted >= goalIndex) continue // nowhere to move this one — try the region's next content node
@@ -2137,11 +2209,9 @@ const assembleExpandedFloor = (
         : []),
       ...(section.end === "staircase" ? [] : (["reward"] as const)),
     ]
-    const hubGroupSize = sideSections.length >= 5 ? 3 : sideSections.length >= 2 ? 2 : 1
-    const sectionOrder = shuffle(
-      sideSections.map((_, i) => i),
-      rand
-    )
+    const branchSections = sideSections.map((_, i) => i).filter(i => !contentSections.has(i))
+    const hubGroupSize = branchSections.length >= 5 ? 3 : branchSections.length >= 2 ? 2 : 1
+    const sectionOrder = shuffle(branchSections, rand)
     // A `{ in }` fork's sections are a hub of their own, first, hung from its junction and nowhere else.
     const forkGroups = forkIns.map(fork => fork.sectionIdxs)
     const forkedSections = new Set(forkGroups.flat())
@@ -2332,8 +2402,16 @@ const assembleExpandedFloor = (
     const keyNodeIdMap = new Map<number, string>() // gated section idx → key node id
     const chainKeyColorMap = new Map<number, KeyColor[]>() // host section idx → key color(s) its end room holds
 
+    // A content section's end room stands on a laid node; it hosts a key the same way a branch's does.
+    const absorbedGroups: SectionGroup[] = (laid?.absorbed ?? []).map(({ section, cells }) => {
+      const nodes = cells.map(key => key.split(",").map(Number) as [number, number])
+      return { sectionIdx: section, cells: nodes, attachedAt: nodes[0] }
+    })
+    const groupOf = (idx: number) =>
+      sectionGroups.find(g => g.sectionIdx === idx) ?? absorbedGroups.find(g => g.sectionIdx === idx)
+
     if (chain.length > 0 && ungatedIdxs.length > 0) {
-      const hostGroup = sectionGroups.find(g => g.sectionIdx === ungatedIdxs[0])
+      const hostGroup = groupOf(ungatedIdxs[0])
       if (hostGroup) {
         let hostIdx = ungatedIdxs[0]
         let hostCell = hostGroup.cells[hostGroup.cells.length - 1]
@@ -2346,7 +2424,7 @@ const assembleExpandedFloor = (
           chainKeyColorMap.set(hostIdx, colors)
 
           if (!sideSections[idx].endReward) {
-            const group = sectionGroups.find(g => g.sectionIdx === idx)
+            const group = groupOf(idx)
             if (group) {
               hostIdx = idx
               hostCell = group.cells[group.cells.length - 1]
@@ -2428,7 +2506,70 @@ const assembleExpandedFloor = (
       mechanism: record,
       mechanismId: control.id,
     })
+    // THE ROOMS A SIDE SECTION IS MADE OF, written once for a branch and for a section filled into laid nodes.
+    const puzzleRoomSpec = (section: SideSection | SubSection, positional: string, pi: number): RoomSpec => {
+      const reward = section.rewards?.[pi]
+      const override = section.encountersByIndex?.[pi]
+      const family =
+        override !== undefined ? resolveEncounter(override, "puzzle") : resolveEncounter(section.encounter, "puzzle")
+      const requiredKeyIds = resolveKeyRequirements(family.familyId, {
+        ...floorRef,
+        pathIndex: pi,
+        encounterArgs: section.encounterArgs,
+      })
+      const boardIndex = resolveBoardIndex?.(family.familyId, { section: positional, pathIndex: pi })
+      return {
+        roomType: "encounter",
+        // Never inherits the floor's own tableau encounter — tableaus consume hieroglyph
+        // symbols the player may not have yet, so a side path stays sumplete (the "puzzle"
+        // tag's default) unless it explicitly opts into a different family itself.
+        family: family.familyId,
+        tags: family.tags,
+        pathIndex: pi,
+        ...(boardIndex !== undefined ? { boardIndex } : {}),
+        ...(section.encounterArgs !== undefined ? { encounterArgs: section.encounterArgs } : {}),
+        difficulty: section.difficulty,
+        ...(section.theme !== undefined ? { theme: section.theme } : {}),
+        ...(section.role !== undefined ? { role: section.role } : {}),
+        ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
+        ...(reward ? { reward } : {}),
+      }
+    }
+    const endRoomSpec = (
+      section: SideSection | SubSection,
+      positional: string,
+      keyHostColors: readonly KeyColor[],
+      [er, ec]: [number, number]
+    ): RoomSpec => {
+      if (keyHostColors.length > 0)
+        return {
+          roomType: "encounter",
+          family: treasureChest.familyId,
+          tags: treasureChest.tags,
+          reward: { type: "tombKey", keyId: nid(er, ec) },
+          ...(keyHostColors.length === 1 ? { keyColor: keyHostColors[0] } : {}),
+          ...(keyHostColors.length > 1 ? { keyColors: [...keyHostColors] } : {}),
+        }
+      if (section.end === "staircase" || typeof section.end === "object") {
+        const stairId = typeof section.end === "object" ? section.end.stairId : stairOnThisFloor(positional)
+        return { roomType: "portal", stairId }
+      }
+      // A shop is a chain whose resolved encounter is fez-shop (a pathPuzzles:0 node — no chain of
+      // its own, so `encounter` describes this end node). It renders its `rewards[]` as buyable
+      // stock; a plain end renders its single endReward. Shop-off → encounter didn't resolve to
+      // fez-shop → falls back to a treasure chest here.
+      const isShop =
+        section.encounter !== undefined && resolveEncounter(section.encounter, "treasure").familyId === fezShop.familyId
+      return {
+        roomType: "encounter",
+        family: isShop ? fezShop.familyId : treasureChest.familyId,
+        tags: isShop ? fezShop.tags : treasureChest.tags,
+        ...(isShop ? { stock: section.rewards ?? [] } : section.endReward ? { reward: section.endReward } : {}),
+      }
+    }
     const cellSectionHash = new Map<string, string>()
+    // The section hash a filled-in room carries, which is its section's and never the ground's it stands on.
+    const absorbedHash = new Map<string, { hash: string; legacy: string }>()
     /**
      * WHICH AUTHORED SECTION each cell belongs to — `main`, `s0`, `s0.1`. What the author steers, and
      * so what a save files the cell under: where the builder hangs a sidepath along the main walk, and
@@ -2785,6 +2926,32 @@ const assembleExpandedFloor = (
       return out
     }
 
+    // A SECTION FILLED INTO LAID NODES KEEPS ITS OWN IDENTITY ON ITS ROOMS: the section's address, its slots and
+    // its hash are the ones it would have as a branch, so a save filed under them survives a re-carve that
+    // moves the room to another node. The ground between the rooms stays the lock's.
+    for (const { section: idx, cells: nodes } of laid?.absorbed ?? []) {
+      const section = sideSections[idx]
+      const positional = `s${idx}`
+      const own = {
+        hash: computeSideSectionHash(section, idx, false, config, undefined),
+        legacy: computeLegacySideSectionHash(section, idx, undefined),
+      }
+      nodes.forEach((cellKey, i) => {
+        const [r, c] = cellKey.split(",").map(Number)
+        const spec =
+          i < section.pathPuzzles
+            ? puzzleRoomSpec(section, positional, i)
+            : endRoomSpec(section, positional, chainKeyColorMap.get(idx) ?? [], [r, c])
+        roomSpecs.set(cellKey, {
+          ...spec,
+          sectionAddress: addresses.of.get(positional) ?? positional,
+          difficulty: section.difficulty,
+        })
+        absorbedHash.set(cellKey, own)
+        cellDressing.set(cellKey, { props: section.decorations, wall: section.wallDecorations })
+      })
+    }
+
     // Main path nodes — spread across the full path per contentIndices/goalIndex above;
     // everything else along mainPath is left unassigned and falls through to plain corridor.
     // The goal-room fallback here is defensive only: every real config sets mainEndReward
@@ -3030,6 +3197,7 @@ const assembleExpandedFloor = (
           chainRegionAt(i) === control.in &&
           !chainGateIndices.has(i) &&
           !laidDoorIdx.has(i) &&
+          !absorbedCell.has(posKey(cells[i][0], cells[i][1])) &&
           i !== leverIndexInChain &&
           !takenByChainControl.has(i)
 
@@ -3114,66 +3282,14 @@ const assembleExpandedFloor = (
 
       for (let pi = 0; pi < section.pathPuzzles; pi++) {
         const [r, c] = cells[contentIndices[pi]]
-        const reward = section.rewards?.[pi]
-        const override = section.encountersByIndex?.[pi]
-        const family =
-          override !== undefined ? resolveEncounter(override, "puzzle") : resolveEncounter(section.encounter, "puzzle")
-        const requiredKeyIds = resolveKeyRequirements(family.familyId, {
-          ...floorRef,
-          pathIndex: pi,
-          encounterArgs: section.encounterArgs,
-        })
-        const boardIndex = resolveBoardIndex?.(family.familyId, { section: positional, pathIndex: pi })
-        roomSpecs.set(posKey(r, c), {
-          roomType: "encounter",
-          // Never inherits the floor's own tableau encounter — tableaus consume hieroglyph
-          // symbols the player may not have yet, so a side path stays sumplete (the "puzzle"
-          // tag's default) unless it explicitly opts into a different family itself.
-          family: family.familyId,
-          tags: family.tags,
-          pathIndex: pi,
-          ...(boardIndex !== undefined ? { boardIndex } : {}),
-          ...(section.encounterArgs !== undefined ? { encounterArgs: section.encounterArgs } : {}),
-          difficulty: section.difficulty,
-          ...(section.theme !== undefined ? { theme: section.theme } : {}),
-          ...(section.role !== undefined ? { role: section.role } : {}),
-          ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
-          ...(reward ? { reward } : {}),
-        })
+        roomSpecs.set(posKey(r, c), puzzleRoomSpec(section, positional, pi))
       }
 
       // A stretch a lock laid ends with the lock's own room, or in none.
       if (laidChain) continue
 
-      // End node
       const [er, ec] = cells[cells.length - 1]
-      if (keyHostColors.length > 0) {
-        roomSpecs.set(posKey(er, ec), {
-          roomType: "encounter",
-          family: treasureChest.familyId,
-          tags: treasureChest.tags,
-          reward: { type: "tombKey", keyId: nid(er, ec) },
-          ...(keyHostColors.length === 1 ? { keyColor: keyHostColors[0] } : {}),
-          ...(keyHostColors.length > 1 ? { keyColors: keyHostColors } : {}),
-        })
-      } else if (section.end === "staircase" || typeof section.end === "object") {
-        const stairId = typeof section.end === "object" ? section.end.stairId : stairOnThisFloor(positional)
-        roomSpecs.set(posKey(er, ec), { roomType: "portal", stairId })
-      } else {
-        // A shop is a chain whose resolved encounter is fez-shop (a pathPuzzles:0 node — no chain of
-        // its own, so `encounter` describes this end node). It renders its `rewards[]` as buyable
-        // stock; a plain end renders its single endReward. Shop-off → encounter didn't resolve to
-        // fez-shop → falls back to a treasure chest here.
-        const isShop =
-          section.encounter !== undefined &&
-          resolveEncounter(section.encounter, "treasure").familyId === fezShop.familyId
-        roomSpecs.set(posKey(er, ec), {
-          roomType: "encounter",
-          family: isShop ? fezShop.familyId : treasureChest.familyId,
-          tags: isShop ? fezShop.tags : treasureChest.tags,
-          ...(isShop ? { stock: section.rewards ?? [] } : section.endReward ? { reward: section.endReward } : {}),
-        })
-      }
+      roomSpecs.set(posKey(er, ec), endRoomSpec(section, positional, keyHostColors, [er, ec]))
     }
 
     // Two shortfalls, reported under the SAME names the main-path search above uses — a control that
@@ -3490,8 +3606,8 @@ const assembleExpandedFloor = (
           // their own. The spread below still wins, so a room authored at its own tier keeps it.
           ...(cellDifficulty.get(cellKey) ? { difficulty: cellDifficulty.get(cellKey) } : {}),
           sectionAddress,
-          sectionHash,
-          legacySectionHash,
+          sectionHash: absorbedHash.get(cellKey)?.hash ?? sectionHash,
+          legacySectionHash: absorbedHash.get(cellKey)?.legacy ?? legacySectionHash,
           ...(cellOrdinal.get(cellKey) ? { ordinal: cellOrdinal.get(cellKey) } : {}),
           ...(hidden ? { hidden } : {}),
           ...(region !== undefined ? { region } : {}),
@@ -4193,6 +4309,7 @@ const assembleExpandedFloor = (
     // asks for is an authoring mistake, and "no layout" alone would send the reader after the maze.
     reasons: [
       ...(lockNotLaid ? [{ type: "lockNotLaid" as const, ...lockNotLaid }] : []),
+      ...(contentNotLaid ? [{ type: "contentNotLaid" as const, kinds: contentNotLaid }] : []),
       ...(forkSeamShortfall
         ? [
             {
