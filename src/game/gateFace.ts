@@ -29,6 +29,8 @@ export type SequenceFace = {
  * the owners; nobody authors it. */
 export type GateFace = { markers: readonly GateMarker[]; sequences?: readonly SequenceFace[] }
 
+const NO_KEYS: ReadonlySet<string> = new Set()
+
 type Owner = { id: string; family: string; mechanism: MechanismRecord; at: readonly [number, number] }
 
 const ownersOf = (grid: FloorGrid, gateKeyId: string): Owner[] => {
@@ -47,8 +49,9 @@ const ownersOf = (grid: FloorGrid, gateKeyId: string): Owner[] => {
 // A face is owed only where operating an owner can change nothing visible: an `and` door with more than
 // one owner. A single owner teaches by consequence, and an `any` door opens on the first owner touched.
 // A door a sequence opens or resets at is owed one besides: nothing else says what order it waits on.
-const needsFace = (owners: readonly Owner[], gateKeyId: string): boolean =>
-  owners.length > 1 && !owners.some(o => o.mechanism.positions.some(p => p.gateKeyId === gateKeyId && p.mode === "any"))
+const needsFace = (owners: readonly Owner[], keyCount: number, gateKeyId: string): boolean =>
+  owners.length + keyCount > 1 &&
+  !owners.some(o => o.mechanism.positions.some(p => p.gateKeyId === gateKeyId && p.mode === "any"))
 
 type SequenceHome = { id: string; mechanism: MechanismRecord; at: readonly [number, number] }
 
@@ -74,7 +77,12 @@ const isGateDoor = (cell: GridCell): cell is RoomCell & { requiredKeyId: string 
  * Idempotent, so the runtime calls it again with the live positions to relight a face the assembler
  * wrote from the initial ones.
  */
-export const withGateFaces = (grid: FloorGrid, floor: number, positions: ReadonlyMap<string, string>): FloorGrid => {
+export const withGateFaces = (
+  grid: FloorGrid,
+  floor: number,
+  positions: ReadonlyMap<string, string>,
+  heldKeys: ReadonlySet<string> = NO_KEYS
+): FloorGrid => {
   let changed = false
   const homes = sequencesOf(grid)
   const cells = grid.cells.map((row, r) =>
@@ -87,7 +95,9 @@ export const withGateFaces = (grid: FloorGrid, floor: number, positions: Readonl
         ({ id, mechanism }) =>
           mechanism.positions.some(p => p.gateKeyId === key) || cell.worksMechanism?.mechanismId === id
       )
-      if (!needsFace(owners, key) && sequences.length === 0) return cell
+      // A floor key the door lists beside its gate key owns it too, lit while the key is held.
+      const floorKeys = cell.requiredKeyIds ?? []
+      if (!needsFace(owners, floorKeys.length, key) && sequences.length === 0) return cell
       const markers = owners.map(({ id, family, mechanism, at }): GateMarker => {
         const address = cellAddress(grid, floor, at[0], at[1])
         const state = (address ? positions.get(address) : undefined) ?? mechanism.initial
@@ -97,6 +107,7 @@ export const withGateFaces = (grid: FloorGrid, floor: number, positions: Readonl
           lit: mechanism.positions.some(p => p.gateKeyId === key && p.state === state),
         }
       })
+      for (const keyId of floorKeys) markers.push({ id: keyId, icon: { kind: "key" }, lit: heldKeys.has(keyId) })
       const orders = sequences.map(({ id, mechanism, at }): SequenceFace => {
         const address = cellAddress(grid, floor, at[0], at[1])
         const state = (address ? positions.get(address) : undefined) ?? mechanism.initial

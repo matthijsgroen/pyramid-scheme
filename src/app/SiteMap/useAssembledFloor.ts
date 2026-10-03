@@ -11,6 +11,7 @@ import { boardIndexesForFloor } from "./boardIndexes"
 import { cellKey, cellSlot, findByAddress, floorOfAddress, walkPosition } from "./cellIdentity"
 
 const NO_OPEN_GATES: ReadonlySet<string> = new Set()
+const NO_HELD_KEYS: ReadonlySet<string> = new Set()
 
 // A node's own key requirements, resolved from whichever family declares them (a tableau's
 // hieroglyphs, etc.) — the same dispatch world-gen uses, but off the app-side family registry so
@@ -383,17 +384,14 @@ export const useAssembledFloor = (
 
   // Which gates the floor's own mechanisms currently hold open — read once so the carve (below) and
   // the fog restore (applyExplored) agree on the same set rather than each asking openDoorsFor its own.
+  const heldKeys = useMemo(
+    () => (baseGrid ? heldFloorKeys(baseGrid, currentFloor, exploredCells) : NO_HELD_KEYS),
+    [baseGrid, currentFloor, exploredCells]
+  )
   const openGateKeys = useMemo(
     () =>
-      baseGrid
-        ? openDoorsFor(
-            baseGrid,
-            currentFloor,
-            mechanismPositions ?? NO_POSITIONS,
-            heldFloorKeys(baseGrid, currentFloor, exploredCells)
-          )
-        : NO_OPEN_GATES,
-    [baseGrid, currentFloor, mechanismPositions, exploredCells]
+      baseGrid ? openDoorsFor(baseGrid, currentFloor, mechanismPositions ?? NO_POSITIONS, heldKeys) : NO_OPEN_GATES,
+    [baseGrid, currentFloor, mechanismPositions, heldKeys]
   )
 
   // The carve as the floor's own switches have left it — what everything below reads as "the floor". A
@@ -404,10 +402,11 @@ export const useAssembledFloor = (
         ? withGateFaces(
             sealWaysOut(openWaysOut(baseGrid, openGateKeys)),
             currentFloor,
-            mechanismPositions ?? NO_POSITIONS
+            mechanismPositions ?? NO_POSITIONS,
+            heldKeys
           )
         : null,
-    [baseGrid, openGateKeys, currentFloor, mechanismPositions]
+    [baseGrid, openGateKeys, currentFloor, mechanismPositions, heldKeys]
   )
 
   // Standing in the doorway is having been there: the entrance reads explored whether or not the save

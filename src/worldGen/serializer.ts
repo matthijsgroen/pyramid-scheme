@@ -1,6 +1,6 @@
 import type { FloorConfig, SideSection, SiteConfig, TreasureReward } from "./types"
 import type { PlacedContainer } from "@/game/regions"
-import { isForkSwitch, isSequence, type Control, type Obstacle } from "@/game/obstacles"
+import { isForkSwitch, isSequence, type Control, type GateTerms, type Obstacle } from "@/game/obstacles"
 import { WORLD_SEED } from "./data"
 
 // Extra top-level exports a mod wants baked into the generated world file (name → JSON-serializable
@@ -96,13 +96,30 @@ const serializeObject = (o: object): string =>
     .map(([k, v]) => `${k}: ${typeof v === "string" || Array.isArray(v) ? serializeEncounter(v) : serializeValue(v)}`)
     .join(", ")} }`
 
+const strings = (list: readonly string[]): string => `[${list.map(s => JSON.stringify(s)).join(", ")}]`
+
+// One emitter per gate field, keyed by the field itself: a field added to `GateTerms` without an entry
+// here is a compile error, so a gate term can never be dropped from the bake without a word.
+const GATE_TERMS: { [K in keyof Required<GateTerms>]: (v: NonNullable<GateTerms[K]>) => string } = {
+  mode: v => JSON.stringify(v),
+  owners: strings,
+  floorKeys: strings,
+}
+
 // `at` nests one layer deep (`{ on, between }` or `{ on, region }`), which `serializeObject` cannot reach.
 const serializeObstacle = (o: Obstacle): string => {
   const at =
     o.at.on === "region"
       ? `region: ${JSON.stringify(o.at.region)}`
       : `between: [${o.at.between.map(s => JSON.stringify(s)).join(", ")}]`
-  return `{ id: ${JSON.stringify(o.id)}, kind: ${JSON.stringify(o.kind)}, at: { on: ${JSON.stringify(o.at.on)}, ${at} }${o.kind === "gate" && o.owners ? `, owners: [${o.owners.map(s => JSON.stringify(s)).join(", ")}]` : ""} }`
+  const terms =
+    o.kind === "gate"
+      ? (Object.keys(GATE_TERMS) as (keyof GateTerms)[])
+          .filter(k => o[k] !== undefined)
+          .map(k => `, ${k}: ${(GATE_TERMS[k] as (v: unknown) => string)(o[k])}`)
+          .join("")
+      : ""
+  return `{ id: ${JSON.stringify(o.id)}, kind: ${JSON.stringify(o.kind)}, at: { on: ${JSON.stringify(o.at.on)}, ${at} }${terms} }`
 }
 
 // `opens` is a Record<state, obstacleId[]>, which `serializeObject` cannot reach either.

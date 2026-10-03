@@ -16,7 +16,7 @@ import type { ForkDemand } from "./siteTypes"
  * mod points AT the layout by region name and never hangs anything on it.
  */
 /** What every gate carries, whatever it bars. */
-type GateTerms = {
+export type GateTerms = {
   /** THE GATE'S OWN OPENING CONDITION, asked of every control that names it in any state. Absent: it
    * stands open only while EVERY such control is in a state naming it (`and`). `"any"`: while one is
    * (`or`). The same reading as `LockGate.mode` (lockWalk.ts), which the soundness walk folds by. */

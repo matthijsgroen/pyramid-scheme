@@ -315,3 +315,51 @@ describe("generateFile — a sequence survives the bake", () => {
     )
   })
 })
+
+describe("generateFile — every term of a gate survives the bake", () => {
+  const gate = {
+    id: "vaultDoor",
+    kind: "gate" as const,
+    at: { on: "connection" as const, between: ["hall", "vault"] as const },
+    mode: "any" as const,
+    owners: ["Y"],
+    floorKeys: ["pocket"],
+  }
+  const floorWith = (obstacles: unknown[]) => ({
+    pathPuzzles: 0,
+    difficulty: "starter" as const,
+    end: "treasure" as const,
+    exitOrStaircase: "exit" as const,
+    sideSections: [],
+    obstacles,
+  })
+
+  it("emits mode, owners and floorKeys of an edge gate, and each key of the gate is named in the output", () => {
+    const emitted = generateFile({ testJourney: [[floorWith([gate]) as never]] })
+    expect(emitted).toContain(
+      'obstacles: [{ id: "vaultDoor", kind: "gate", at: { on: "connection", between: ["hall", "vault"] }, mode: "any", owners: ["Y"], floorKeys: ["pocket"] }]'
+    )
+    for (const key of Object.keys(gate)) expect(emitted, `dropped ${key}`).toContain(`${key}:`)
+  })
+
+  it("emits the same terms on a region gate", () => {
+    const region = { ...gate, at: { on: "region" as const, region: "hall" } }
+    const emitted = generateFile({ testJourney: [[floorWith([region]) as never]] })
+    expect(emitted).toContain(
+      'at: { on: "region", region: "hall" }, mode: "any", owners: ["Y"], floorKeys: ["pocket"] }'
+    )
+  })
+
+  it("emits a one-way as it always did, and a gate without terms with none", () => {
+    const oneWay = {
+      id: "drop",
+      kind: "oneWay" as const,
+      at: { on: "connection" as const, between: ["a", "b"] as const },
+    }
+    const bare = { id: "d", kind: "gate" as const, at: { on: "region" as const, region: "hall" } }
+    const emitted = generateFile({ testJourney: [[floorWith([oneWay, bare]) as never]] })
+    expect(emitted).toContain(
+      'obstacles: [{ id: "drop", kind: "oneWay", at: { on: "connection", between: ["a", "b"] } }, { id: "d", kind: "gate", at: { on: "region", region: "hall" } }]'
+    )
+  })
+})
