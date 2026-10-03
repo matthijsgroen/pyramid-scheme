@@ -34,6 +34,9 @@ const carveAtAnySeed = (config: FloorConfig, siteId: string, seed?: number): Car
 
 const JUNIOR_2 = "junior_2"
 const JUNIOR_2_LEVEL = 2
+// The store only writes for a journey the shipped data knows, and the dev journey is baked only for a
+// playtest build; these scenarios hand the floors in, so any shipped journey can hold their progress.
+const STORE_JOURNEY = JUNIOR_2
 
 /** The shipped pyramid-2 floor of junior_2, at its real seed, with its own switch bound to `encounter`. */
 const realJunior2Floor = (encounter: string): FloorGrid => {
@@ -90,7 +93,7 @@ const swapTorchAndLever = (encounter: string | undefined) => (encounter === "tor
 const scenarios: Scenario[] = [
   {
     name: "a torch and a lever owning one door",
-    journeyId: "dev_topology",
+    journeyId: STORE_JOURNEY,
     levelNr: 1,
     before: () => carveAtAnySeed(andDoorFloor(), "site-slot", 3).grid,
     after: () =>
@@ -109,7 +112,7 @@ const scenarios: Scenario[] = [
   },
   {
     name: "a fork-switch beside the doubleBack's controls",
-    journeyId: "dev_topology",
+    journeyId: STORE_JOURNEY,
     levelNr: 1,
     before: () => forkSwitchCarve().grid,
     after: () => {

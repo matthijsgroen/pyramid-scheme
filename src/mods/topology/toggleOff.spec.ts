@@ -1,4 +1,4 @@
-import { beforeAll, describe, it, expect } from "vitest"
+import { afterAll, beforeAll, describe, it, expect } from "vitest"
 import { dropUnownedAuthoring } from "@/worldGen/modOwnedAuthoring"
 import { assembleFloor, type ResolveEncounter } from "@/game/siteAssembler"
 import { resolveEncounterMeta } from "@/mods/allFamilyMeta"
@@ -11,7 +11,24 @@ import {
   type Outcome,
 } from "@/game/testSupport/modOff"
 import type { FloorConfig as GameFloorConfig, RoomCell } from "@/game/siteTypes"
-import { allFloors, resolveKeyRequirements } from "@/app/SiteMap/worldFloors.testing"
+import { allFloors, resolveKeyRequirements, type Floor } from "@/app/SiteMap/worldFloors.testing"
+import { buildConfigs } from "@/worldGen/configBuilder"
+import { DEV_JOURNEY_ID } from "@/worldGen/data"
+import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
+// Same sanctioned exception devJourney.spec.ts takes: the dev journey is only buildable from the real,
+// mod-owned currencies and registries.
+import { ALL_CURRENCY_DISTRIBUTIONS } from "@/mods/allCurrencyDistributions"
+import {
+  CAPPED_CURRENCIES,
+  DYNAMIC_DISTRIBUTIONS,
+  MOD_WORLD_VALIDATORS,
+  MOD_REACHABILITY_SUPPORT,
+  MOD_TOMB_TREASURE_RESOLVER,
+  MOD_SHOP_STOCK,
+  MOD_RESERVED_TREASURE_INDICES,
+  REGISTERED_MOD_IDS,
+} from "@/mods/registeredMods"
+import { familyPriorityFor, familyCapacityFor, familyIsTrap, allocateEncounterSpread } from "@/mods/allFamilyMeta"
 import { resolveEncounter } from "@/app/families/familyRegistry"
 import { validateSite } from "@/game/siteValidator"
 import type { ValidationReason, ValidationResult } from "@/game/siteTypes"
@@ -467,7 +484,8 @@ describe("a switch whose family's mod is toggled off", () => {
 // mod leaving the build. Compared by each cell's `dirs`, never its `type`: standing a switch in a
 // junction turns the corridor cell it closes into a door, which is a room where a corridor was
 // without one wall having moved, and comparing types would call that a difference.
-// Asked of the world as it is baked, one junction added to every authored floor, rather than of a
+// Asked of the shipped world plus the dev journey (a playtest build bakes it, CI's bake does not, so it is
+// built here), one junction added to every authored floor, rather than of a
 // floor invented to make the point: what a shipped floor's carve does under an unregistered mod is
 // the thing saves depend on.
 const FORKS = [{ exits: 2, count: 1 }]
@@ -488,8 +506,44 @@ describe("the carve a floor authoring forks gets", () => {
   // Assembling every authored floor three times is a few hundred maze carves, well past the default
   // 5s budget — paid once here rather than by whichever test happens to run first.
   const carves: Carve[] = []
+  const devFloors = (): Floor[] => {
+    process.env.INCLUDE_DEV = "1"
+    const dev = buildConfigs(
+      resolveKeyRequirements,
+      ALL_CURRENCY_DISTRIBUTIONS,
+      CAPPED_CURRENCIES,
+      DYNAMIC_DISTRIBUTIONS,
+      MOD_WORLD_VALIDATORS,
+      familyPriorityFor,
+      0,
+      allocateEncounterSpread,
+      MOD_REACHABILITY_SUPPORT,
+      MOD_TOMB_TREASURE_RESOLVER,
+      familyCapacityFor,
+      MOD_SHOP_STOCK,
+      MOD_RESERVED_TREASURE_INDICES,
+      familyIsTrap,
+      REGISTERED_MOD_IDS,
+      resolveEncounterMeta
+    )[DEV_JOURNEY_ID]
+    const siteSeed = persistentInteriorSeed(DEV_JOURNEY_ID)
+    return dev.flatMap((site, levelIndex) =>
+      site.map((config, floorIndex) => ({
+        label: `${DEV_JOURNEY_ID} level ${levelIndex + 1} floor ${floorIndex}`,
+        config: config as unknown as GameFloorConfig,
+        seed: floorAssemblySeed(siteSeed, levelIndex + 1, floorIndex),
+        floorIndex,
+        journeyId: DEV_JOURNEY_ID,
+        levelIndex,
+      }))
+    )
+  }
+  afterAll(() => {
+    delete process.env.INCLUDE_DEV
+  })
   beforeAll(() => {
-    for (const floor of allFloors()) {
+    const world = allFloors().filter(floor => floor.journeyId !== DEV_JOURNEY_ID)
+    for (const floor of [...world, ...devFloors()]) {
       const withForks = { ...floor.config, forks: FORKS }
       const authored = { ...withForks, switches: SWITCHES }
       const opts = (resolve: ResolveEncounter, config: GameFloorConfig, off = false) =>
@@ -549,7 +603,7 @@ describe("the carve a floor authoring forks gets", () => {
     expect(disagreed.map(carve => carve.label)).toEqual([])
   })
 
-  it("refuses with the mod off only floors that author a mechanic, which in the baked world is the dev journey", () => {
+  it("refuses with the mod off only floors that author a mechanic, which in the shipped world is the dev journey", () => {
     const refused = carves.filter(carve => carve.modOffRefused && carve.forksOnly !== null)
     expect(refused.length).toBeGreaterThan(0)
     expect(refused.filter(carve => !carve.label.startsWith("dev_topology")).map(carve => carve.label)).toEqual([])
