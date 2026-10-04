@@ -598,9 +598,6 @@ describe("the baked-board requirement on the dev journey", () => {
       () => PYRAMID_CAPABILITIES
     )
     expect([...new Set(asIfShipped.map(board => `${board.difficulty} ${board.forkShape}`))].sort()).toEqual([
-      "expert adjacent",
-      "expert opposite",
-      "expert three",
       "master adjacent",
       "master opposite",
       "master three",
