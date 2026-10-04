@@ -50,3 +50,12 @@ describe("drawLock", () => {
     expect(draw("in -[H]- >> hall\nhall -- out\nH toggle @in")).toContain("in -[■H:b]- >> hall")
   })
 })
+
+describe("drawLock, with stones", () => {
+  it("shows plates and where the stones start", () => {
+    const art = draw("in -- yard\nyard -[door]- out\ndoor plate @yard\nA stone @yard\nB stone @door")
+    expect(art).toContain("⊙door")
+    expect(art).toContain("●A")
+    expect(art).toContain("□door")
+  })
+})

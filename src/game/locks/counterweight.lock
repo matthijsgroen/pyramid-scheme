@@ -1,0 +1,12 @@
+// master, not buildable yet (stones). Giza's counterweight: the zipline takes you down only empty
+// handed, and the lift opens from below. Weigh it down there, then bring the other stone by lift.
+
+in -- gallery
+gallery -[unladen]- >> chamber
+gallery -[low]- chamber
+chamber -[q+low]- out
+low plate @chamber
+q plate @chamber
+A stone @gallery
+B stone @chamber
+gallery *

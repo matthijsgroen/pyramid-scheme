@@ -15,5 +15,5 @@ exports[`drawLock > draws doubleBack 1`] = `
   ▼   │
 → [in · Y]──────────────■S2:b───────────────[out] →
 
-■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   Name:state opens it"
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ● stone   Name:state opens it"
 `;

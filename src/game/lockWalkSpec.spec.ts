@@ -114,3 +114,47 @@ describe("readable", () => {
     )
   })
 })
+
+describe("weights", () => {
+  const TWO_STONES = `
+    in -- yard
+    yard -[door]- vault
+    yard -[e1+e2]- out
+    door plate @yard
+    e1 plate @yard
+    e2 plate @yard
+    A stone @yard
+    B stone @vault
+  `
+
+  it("walks the two-stone vault sound: one stone holds the door while the other is fetched", () => {
+    expect(walkLock(compiled(TWO_STONES))).toEqual({ sound: true, states: expect.any(Number) })
+  })
+
+  it("can never bring both stones out when the vault's plate stands inside it", () => {
+    const inside = TWO_STONES.replace("door plate @yard", "door plate @vault").replace("A stone @yard", "A stone @door")
+    expect(walkLock(compiled(inside))).toEqual({ sound: false, failure: { type: "unsolvable" } })
+  })
+
+  it("lets nobody through a narrow passage with a stone in hand", () => {
+    const found = reachableStates(
+      compiled("in -[unladen]- hall\nhall -- out\nin -[p]- out\np plate @hall\nA stone @in")
+    )
+    if (found === "tooLarge") throw new Error("expected a walkable lock")
+    expect(
+      found.order.some(state => state.region === "hall" && /A@hand/.test(Object.values(state.config).join()))
+    ).toBe(false)
+  })
+
+  it("never lets a stone leave by the way out", () => {
+    const found = reachableStates(compiled("in -- out\nA stone @in"))
+    if (found === "tooLarge") throw new Error("expected a walkable lock")
+    expect(found.order.some(state => state.region === "out" && /A@hand/.test(Object.values(state.config).join()))).toBe(
+      false
+    )
+  })
+
+  it("opens a plate's gate at the start when a stone already rests on it", () => {
+    expect(openAtStart(parseLock("in -[p]- out\np plate @in\nA stone @p").lock)).toEqual(["in-out"])
+  })
+})

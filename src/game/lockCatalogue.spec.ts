@@ -124,6 +124,39 @@ describe("what the newer locks' tricks rest on", () => {
   })
 })
 
+describe("what the stone locks' tricks rest on", () => {
+  it("twoStones: a stone spent twice — the first holds the vault, then presses the exit", () => {
+    expect(solveLock(walkSpecOf(LOCK_CATALOGUE.twoStones.lock))!.steps.filter(step => step === "lift A")).toHaveLength(
+      2
+    )
+  })
+
+  it("twoStones: with the vault's plate inside, both stones can never be out", () => {
+    const inside = edited("twoStones", "door plate @yard", "door plate @vault").replace(
+      "A stone @yard",
+      "A stone @door"
+    )
+    expect(walkText(inside)).toEqual({ sound: false, failure: { type: "unsolvable" } })
+  })
+
+  it("masonsRamp: without the narrow passage nobody climbs back from the workshop", () => {
+    expect(walkText(edited("masonsRamp", "yard -[unladen]- workshop", "")).sound).toBe(false)
+  })
+
+  it("masonsRamp: a passage wide enough for a stone needs no ramp at all", () => {
+    expect(
+      lockQuality(parseLock(edited("masonsRamp", "yard -[unladen]- workshop", "yard -- workshop")).lock)
+    ).toContain("gate yard-chute does nothing")
+  })
+
+  it("counterweight: without the zipline the lift never opens", () => {
+    expect(walkText(edited("counterweight", "gallery -[unladen]- >> chamber", ""))).toEqual({
+      sound: false,
+      failure: { type: "unsolvable" },
+    })
+  })
+})
+
 describe.each(Object.entries(LESSONS))("lesson %s", (_, { lock, drafts }) => {
   it("walks sound, reaching every region, in under two actions", () => {
     expect(drafts).toEqual([])

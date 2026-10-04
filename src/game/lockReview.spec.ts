@@ -59,3 +59,9 @@ describe("solveLock, past a stretch", () => {
     ])
   })
 })
+
+describe("solveLock, with stones", () => {
+  it("reads lifting and setting a stone as actions", () => {
+    expect(solveLock(spec("in -[p]- out\np plate @in\nA stone @in"))?.steps).toEqual(["in", "lift A", "A on p", "out"])
+  })
+})

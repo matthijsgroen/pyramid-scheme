@@ -37,6 +37,7 @@ lock, not a sampler.
 | a door that waits for several | `doorWaitsForTwo` | twoLamps, seesaw, lamplighter, observatory, relay, clockwork |
 | water (region gate) — not buildable yet | `waterMoves` | sluice, tide |
 | tiles in order (sequence) — not buildable yet | `tilesInOrder` | plates |
+| stones on plates, and where a stone cannot go — a proposal | `stoneOnAPlate` | twoStones, masonsRamp, counterweight |
 
 ## The lessons
 
@@ -50,6 +51,7 @@ lock, not a sampler.
 | `doorWaitsForTwo` | expert | a door shows the marks it waits for, and opens on the last |
 | `waterMoves` | expert, once buildable | one lever drains a hall |
 | `tilesInOrder` | expert, once buildable | two tiles, in order |
+| `stoneOnAPlate` | expert, once buildable | a stone on a plate holds its door; lift it and the door shuts |
 
 ## The locks
 
@@ -69,6 +71,9 @@ lock, not a sampler.
 | tide | master, once buildable | carry the key home against the water |
 | sluice | master, once buildable | drain the hall for the gold, then the vault for the way out |
 | plates | master, once buildable | four tiles across three rooms; the door resets them |
+| twoStones | expert, once buildable | one stone holds the vault while you fetch the second, then presses the exit: a stone spent twice |
+| masonsRamp | master, once buildable | one stone holds the chute door for the other; you squeeze back up the narrow passage, where no stone fits |
+| counterweight | master, once buildable | the zipline takes you down empty-handed; weigh the lift down from below, then bring the other stone by lift |
 
 ## Where they go
 
@@ -108,7 +113,28 @@ What fills a region, and what dresses each mechanic — a lever or a lightswitch
 is said where the lock is placed (`regions-and-containers.md`, `mechanic-contract.md` §5). Two
 doubleBacks in two journeys can play differently while the lock stays one file.
 
+## Stones
+
+A stone is carried and set down; a plate holds its door open while a stone rests on it. The player's own
+weight never presses a plate — arriving at a node never acts (`node-actions.md`) — so a door on two plates
+needs two stones, and the tool refuses one that asks for more stones than the lock has.
+
+- **One stone in hand.** It is set down only on an empty plate or back on its own starting spot, never
+  just anywhere, so where the stones are is always one of a few arrangements the walk can prove.
+- **What a stone cannot pass is written in the lock**, as `-[unladen]-` (empty hands only: a narrow
+  passage, a zipline) or `-[laden]-` (only while carrying). It is never a property of the art, because a
+  realisation may not change what the walk sees (`mechanic-contract.md` §1).
+- **A stone never leaves its floor.** The way out takes empty hands, so a return visit always finds every
+  stone where it was set down, and the walk proves the lock from every arrangement, leaving and
+  returning included.
+
+Natural homes: Djoser's building site (masonsRamp), Giza's counterweights (counterweight), the Book of the
+Dead's weighing (twoStones).
+
 ## Not yet true
+
+- **Stones and plates are a proposal**, carried beside the shared `Lock` type as `weights`. They need a
+  contract addition and engine work before they bake.
 
 - **Region gates and sequences are `built: no`** (`mechanic-contract.md` §6). `waterMoves`,
   `tilesInOrder`, tide, sluice and plates validate and walk, and cannot bake.

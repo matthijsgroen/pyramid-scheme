@@ -4,6 +4,7 @@
 import type { Lock } from "./lockAuthoring"
 import { barriersOf, isRegionGate, joinOf } from "./lockAuthoring"
 import { openAtStart } from "./lockWalkSpec"
+import type { DraftLock } from "./lockNotation"
 
 type Sketch = {
   regions: string[]
@@ -232,7 +233,8 @@ const drawSketch = (sketch: Sketch): string => {
   while (rows[0] === "") rows.shift()
   while (rows[rows.length - 1] === "") rows.pop()
   const indent = Math.min(...rows.filter(Boolean).map(row => row.length - row.trimStart().length))
-  const legend = "■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   Name:state opens it"
+  const legend =
+    "■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ● stone   Name:state opens it"
   return [
     ...rows.map(row => row.slice(indent)),
     "",
@@ -248,7 +250,9 @@ const sketchOf = (lock: Lock, drafts: readonly string[]): Sketch => {
     const gate = lock.gates[id]
     const owner = (name: string) => {
       const m = lock.mechanics[name]
-      if (!m || drafts.includes(name)) return `${name}?`
+      if (drafts.includes(name)) return `${name}?`
+      // A plate, or a condition on what the player carries.
+      if (!m) return name
       if (m.control === "fork-switch" || m.control === "sequence") return name
       return `${name}:${Object.keys(m.opens)
         .filter(state => m.opens[state].includes(id))
@@ -279,11 +283,18 @@ const sketchOf = (lock: Lock, drafts: readonly string[]): Sketch => {
       const steps = Object.entries(lock.mechanics).flatMap(([id, m]) =>
         m.control === "sequence" ? m.steps.flatMap((step, k) => (step.in === region ? [`${id}${k + 1}`] : [])) : []
       )
+      const weights = (lock as DraftLock).weights
+      const plates = Object.entries(weights?.plates ?? {}).flatMap(([id, plate]) =>
+        plate.in === region ? [`⊙${id}`] : []
+      )
+      const stones = Object.entries(weights?.stones ?? {}).flatMap(([id, stone]) =>
+        (weights!.plates[stone.at]?.in ?? stone.at) === region ? [`●${id}`] : []
+      )
       const barred = Object.entries(lock.gates)
         .filter(([, gate]) => isRegionGate(gate) && gate.region === region)
         .map(([id]) => ` ${open.has(id) ? "░" : "▒"}${condition(id)}`)
         .join("")
-      return [region, `[${[region, ...standing, ...steps].join(" · ")}${barred}]`]
+      return [region, `[${[region, ...standing, ...steps, ...plates, ...stones].join(" · ")}${barred}]`]
     })
   )
   return { regions: Object.keys(lock.regions), edges, drops, boxes, notes, in: lock.in, out: lock.out }

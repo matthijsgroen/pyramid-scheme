@@ -141,3 +141,44 @@ describe("parseLock", () => {
     expect(() => parseLock(text)).toThrow(message)
   })
 })
+
+describe("weights", () => {
+  const TWO_STONES = `
+    in -- yard
+    yard -[door]- vault
+    yard -[e1+e2]- out
+    door plate @yard
+    e1 plate @yard
+    e2 plate @yard
+    A stone @yard
+    B stone @vault
+  `
+
+  it("reads plates and stones beside the Lock, and plates on gates are not drafts", () => {
+    const { lock, drafts } = parseLock(TWO_STONES)
+    expect(drafts).toEqual([])
+    expect(lock.weights).toEqual({
+      plates: { door: { in: "yard" }, e1: { in: "yard" }, e2: { in: "yard" } },
+      stones: { A: { at: "yard" }, B: { at: "vault" } },
+    })
+    expect(lock.gates["yard-out"]).toEqual({ from: "yard", to: "out", owners: ["e1", "e2"] })
+  })
+
+  it("reads unladen and laden as conditions on the stones, not as owners to place", () => {
+    const { drafts } = parseLock("in -[unladen]- hall\nhall -[laden]- out\nA stone @in")
+    expect(drafts).toEqual([])
+  })
+
+  it.each([
+    [
+      "in -[p1+p2]- out\np1 plate @in\np2 plate @in\nA stone @in",
+      "line 1: in-out needs stones on 2 plates, the lock has 1",
+    ],
+    ["in -- out\nA stone @cellar", "line 2: no corridor reaches cellar"],
+    ["in -- out\np plate @in", "line 2: p owns no gate"],
+    ["in -[unladen]- out", "line 1: unladen asks about stones, and the lock has none"],
+    ["in -- out\nA stone @in\nA stone @out", "line 3: A is placed twice"],
+  ])("refuses %j", (text, message) => {
+    expect(() => parseLock(text)).toThrow(message)
+  })
+})

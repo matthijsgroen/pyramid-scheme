@@ -1,0 +1,12 @@
+// master, not buildable yet (stones). Djoser's building site: one stone holds the chute door so the
+// other can slide down to the workshop; you squeeze back up the narrow passage, where no stone fits.
+
+in -- yard
+yard -[unladen]- workshop
+yard -[r]- chute >> workshop
+yard -[p]- out
+r plate @yard
+p plate @workshop
+A stone @yard
+B stone @yard
+chute *

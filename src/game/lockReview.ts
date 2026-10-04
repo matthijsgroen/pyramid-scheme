@@ -1,7 +1,7 @@
 // WHAT A LOCK COSTS AND WHAT IT COULD DO WITHOUT, measured by walking it compiled.
 import type { Lock } from "./lockAuthoring"
 import { barriersOf, isRegionGate, joinOf } from "./lockAuthoring"
-import { walkSpecOf, isStretch } from "./lockWalkSpec"
+import { WEIGHTS, walkSpecOf, isStretch } from "./lockWalkSpec"
 import { openGates, reachableStates, walkLock } from "./lockWalk"
 import type { LockSpec } from "./lockWalk"
 
@@ -48,7 +48,7 @@ export const solveLock = (spec: LockSpec): { steps: string[]; actions: number } 
     const [a, b] = [order[path[i - 1]], order[path[i]]]
     if (a.region === b.region) {
       const id = Object.keys(b.config).find(m => b.config[m] !== a.config[m])!
-      steps.push(`${id}:${b.config[id]}`)
+      steps.push(id === WEIGHTS ? stoneMove(a.config[id], b.config[id]) : `${id}:${b.config[id]}`)
       actions++
       continue
     }
@@ -62,6 +62,16 @@ export const solveLock = (spec: LockSpec): { steps: string[]; actions: number } 
     dropped = false
   }
   return { steps, actions }
+}
+
+// "A@yard B@hand" to "A@yard B@p": the one stone that moved, said as the player did it.
+const stoneMove = (before: string, after: string) => {
+  const was = new Set(before.split(" "))
+  const [stone, at] = after
+    .split(" ")
+    .find(place => !was.has(place))!
+    .split("@")
+  return at === "hand" ? `lift ${stone}` : `${stone} on ${at}`
 }
 
 /** The regions no order of moves ever stands the player in, stretches aside. */
