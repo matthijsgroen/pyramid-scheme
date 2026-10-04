@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Levers and ziplines are drawn at every difficulty, not only in expert pyramids.
 - A zipline's gap has a floor under it again, so the drop reads as a hole in the floor instead of hanging in the dark.
 - Pressing an arrow or a corner dot now walks you there. A corridor bend only lifted its fog before, and left you standing where you were.
 - A fork with a puzzle standing in it now wears a forking mark of its own on the map, so you can tell it from an ordinary puzzle room before you walk in.

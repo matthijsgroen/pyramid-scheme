@@ -5,8 +5,6 @@ import {
   findMispairedStairs,
   findStrandingLocks,
   findUnbakedSwitchBoards,
-  findUndrawnHandles,
-  findUndrawnOneWays,
   findUnwalkedLocks,
   validateRewardCounts,
 } from "./validate"
@@ -271,67 +269,6 @@ describe("findUnbakedSwitchBoards", () => {
     expect(findUnbakedSwitchBoards({ [shipped]: [[floor()]] }, [seedable], {})).toEqual([])
     const live: FamilyMeta = { ...seedable, seedable: undefined }
     expect(findUnbakedSwitchBoards({ [shipped]: [[switchFloor("junior")]] }, [live], {})).toEqual([])
-  })
-})
-
-describe("findUndrawnOneWays", () => {
-  const shipped = PYRAMID_JOURNEYS[0].id
-  const dropFloor = () =>
-    floor({
-      sideSections: [
-        { pathPuzzles: 1, difficulty: "starter", end: "treasure", label: "ledge" },
-        { pathPuzzles: 1, difficulty: "starter", end: "treasure", label: "sink" },
-      ],
-      oneWays: [{ from: "ledge", to: "sink" }],
-    })
-
-  it("names the floor a drop stands on, and the passage it authored", () => {
-    expect(findUndrawnOneWays({ [shipped]: [[floor()], [floor(), dropFloor()]] })).toEqual([
-      { journeyId: shipped, levelNr: 2, floorIndex: 1, from: "ledge", to: "sink" },
-    ])
-  })
-
-  it("excuses a site whose capabilities say it may stand one", () => {
-    // Said with both presets, because an exemption that excuses nothing would pass the first line
-    // alone: the same floor is refused under a shipped site's capabilities.
-    const configs = { [shipped]: [[dropFloor()]] }
-    expect(findUndrawnOneWays(configs, () => DEV_CAPABILITIES)).toEqual([])
-    expect(findUndrawnOneWays(configs, () => PYRAMID_CAPABILITIES)).toHaveLength(1)
-  })
-
-  it("refuses a site nothing knows about, which nothing cleared either", () => {
-    expect(findUndrawnOneWays({ unknown: [[dropFloor()]] })).toHaveLength(1)
-  })
-
-  it("says nothing about a floor that authors no drop", () => {
-    expect(findUndrawnOneWays({ [shipped]: [[floor()]] })).toEqual([])
-  })
-
-  it("names the drops a lock floor compiles to, as it names authored ones", () => {
-    expect(findUndrawnOneWays({ [shipped]: [[lockFloor()]] })).toEqual([
-      { journeyId: shipped, levelNr: 1, floorIndex: 0, from: "doubleBack.s1", to: "doubleBack.leftLower" },
-      { journeyId: shipped, levelNr: 1, floorIndex: 0, from: "doubleBack.leftLower", to: "doubleBack.in" },
-    ])
-    expect(findUndrawnOneWays({ [shipped]: [[lockFloor()]] }, () => DEV_CAPABILITIES)).toEqual([])
-  })
-})
-
-describe("findUndrawnHandles", () => {
-  const shipped = PYRAMID_JOURNEYS[0].id
-
-  it("names the levers a lock floor compiles to, as it names authored ones", () => {
-    expect(findUndrawnHandles({ [shipped]: [[lockFloor()]] })).toEqual([
-      {
-        journeyId: shipped,
-        levelNr: 1,
-        floorIndex: 0,
-        in: "doubleBack.s1",
-        left: ["doubleBack.rightLower-s1"],
-        right: ["doubleBack.leftLower-s2"],
-      },
-      { journeyId: shipped, levelNr: 1, floorIndex: 0, in: "doubleBack.s2", left: [], right: ["doubleBack.in-out"] },
-    ])
-    expect(findUndrawnHandles({ [shipped]: [[lockFloor()]] }, () => DEV_CAPABILITIES)).toEqual([])
   })
 })
 

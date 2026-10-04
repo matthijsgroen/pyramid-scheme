@@ -5,7 +5,6 @@ import {
   findEmptyChests,
   findStrandingLocks,
   findUnbakedSwitchBoards,
-  findUndrawnOneWays,
   findUnwalkedLocks,
   type FloorRef,
   type StrandingLock,
@@ -550,18 +549,6 @@ describe("what the dev journey authors", () => {
     const result = walkFloorLock({ ...grid, cells })
     if (!result || result.sound) throw new Error("expected the floor to be unsolvable without the second drop")
     expect(result.failure.type).toBe("unsolvable")
-  })
-
-  // The develop-only boundary is what keeps an undrawn drop off a floor a player will meet, and it is
-  // the capability that grants it — not the journey's id. Said here as well as on the guard itself,
-  // because this is the journey the exemption exists for.
-  // Three drops owed: the one authored longhand and the two doubleBack compiles to.
-  it("is the only journey whose capabilities let a drop stand on it", () => {
-    expect(findUndrawnOneWays(withDev).filter(drop => drop.journeyId === DEV_JOURNEY_ID)).toEqual([])
-    expect(findUndrawnOneWays(withDev)).toEqual(findUndrawnOneWays(plain))
-    expect(findUndrawnOneWays({ [DEV_JOURNEY_ID]: withDev[DEV_JOURNEY_ID] }, () => PYRAMID_CAPABILITIES)).toHaveLength(
-      3
-    )
   })
 })
 

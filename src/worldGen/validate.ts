@@ -1,7 +1,6 @@
 import type { SideSection, SiteConfig, SubSection, TreasureReward, MapPieceReward } from "./types"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FamilyMeta } from "@/game/families/familyMeta"
-import { expandFloorLocks } from "@/game/floorLocks"
 import { FORK_SHAPES, type ForkShape } from "@/game/forkShape"
 import { configHash } from "@/game/seeds/configHash"
 import { switchFamilies } from "@/game/seeds/enumerateConfigs"
@@ -161,13 +160,6 @@ export const findEmptyChests = (
   return empties
 }
 
-/** A floor with its locks compiled into obstacles and controls, so a guard reads a lock floor as it reads an authored one; a lock that will not compile is the assembler's to refuse. */
-const compiledFloor = (floor: SiteConfig[number]): GameFloorConfig => {
-  const authored = floor as GameFloorConfig
-  const expanded = expandFloorLocks(authored)
-  return expanded.ok ? expanded.config : authored
-}
-
 /**
  * A switch a site requiring baked boards authors at a shape and tier no seed list covers.
  *
@@ -223,99 +215,6 @@ export const findUnbakedSwitchBoards = (
     )
   }
   return missing
-}
-
-/**
- * A one-way drop authored on a floor whose site may not stand one.
- *
- * The map draws the passage from both sides, so until it is drawn as a drop a player meeting one reads
- * an ordinary corridor and falls. A playtest floor is excused by its capabilities
- * (capabilities.ts's standOneWayDrops), never by its id — and a site nothing grants it to fails the
- * build with its floor named rather than leaning on the author remembering.
- */
-export type UndrawnOneWay = { journeyId: string; levelNr: number; floorIndex: number; from: string; to: string }
-
-export const findUndrawnOneWays = (
-  configs: Record<string, SiteConfig[]>,
-  /** Injected so a caller can ask what a site WOULD owe under other capabilities — which is the only
-   * way to see that an exemption is excusing something rather than nothing. */
-  capabilities: (siteId: string) => SiteCapabilities | undefined = capabilitiesFor
-): UndrawnOneWay[] => {
-  const found: UndrawnOneWay[] = []
-  for (const [journeyId, sites] of Object.entries(configs)) {
-    // Granted, never merely "not refused": a site nothing knows about is a site nothing cleared.
-    if (capabilities(journeyId)?.standOneWayDrops) continue
-    sites.forEach((site, siteIdx) =>
-      site.forEach((authored, floorIndex) => {
-        const floor = compiledFloor(authored)
-        for (const oneWay of floor.oneWays ?? [])
-          found.push({ journeyId, levelNr: siteIdx + 1, floorIndex, from: oneWay.from, to: oneWay.to })
-        for (const obstacle of floor.obstacles ?? [])
-          if (obstacle.kind === "oneWay")
-            found.push({
-              journeyId,
-              levelNr: siteIdx + 1,
-              floorIndex,
-              from: obstacle.at.between[0],
-              to: obstacle.at.between[1],
-            })
-      })
-    )
-  }
-  return found
-}
-
-/**
- * A floor standing a handle the site it belongs to may not hold one on.
- *
- * Same line as the one-way drop above, and drawn for the same reason: the lever's room and the doors
- * it owns are carved but not painted, so a player meeting one reads a room with nothing in it and a
- * door nothing on the floor holds the key to. A playtest floor is excused by its capabilities
- * (capabilities.ts's standHandles), never by its id.
- */
-export type UndrawnHandle = {
-  journeyId: string
-  levelNr: number
-  floorIndex: number
-  in: string
-  left: string[]
-  right: string[]
-}
-
-export const findUndrawnHandles = (
-  configs: Record<string, SiteConfig[]>,
-  capabilities: (siteId: string) => SiteCapabilities | undefined = capabilitiesFor
-): UndrawnHandle[] => {
-  const found: UndrawnHandle[] = []
-  for (const [journeyId, sites] of Object.entries(configs)) {
-    if (capabilities(journeyId)?.standHandles) continue
-    sites.forEach((site, siteIdx) =>
-      site.forEach((authored, floorIndex) => {
-        const floor = compiledFloor(authored)
-        for (const handle of floor.handles ?? [])
-          found.push({
-            journeyId,
-            levelNr: siteIdx + 1,
-            floorIndex,
-            in: handle.in,
-            left: handle.left,
-            right: handle.right,
-          })
-        // A stateful control is dressed as a lever whichever family its room runs, so it is a handle here.
-        for (const control of floor.controls ?? [])
-          if (!control.control)
-            found.push({
-              journeyId,
-              levelNr: siteIdx + 1,
-              floorIndex,
-              in: control.in,
-              left: control.opens[control.states[0]] ?? [],
-              right: control.opens[control.states[1]] ?? [],
-            })
-      })
-    )
-  }
-  return found
 }
 
 /**

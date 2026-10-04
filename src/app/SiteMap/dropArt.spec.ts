@@ -91,6 +91,16 @@ describe("a one-way drop draws its art across its obstacle", () => {
     expect(drops[0].mirrored).toBe(false)
   })
 
+  it("draws the same art at every rank", () => {
+    const { grid } = dropAlong("e")
+    for (const difficulty of ["starter", "junior", "master", "wizard"] as const)
+      expect(
+        nodeSpritesFor(grid, buildRoomClaims(grid), difficulty)
+          .filter(s => s.key.startsWith("drop:"))
+          .map(s => s.url)
+      ).toEqual([dropEastUrl])
+  })
+
   it("draws the same asset mirrored for a west-going drop", () => {
     const { grid, last } = dropAlong("w")
     const drops = dropsIn(grid)
@@ -133,7 +143,7 @@ describe("a north-south drop draws its own art", () => {
     ["s", "dropSouth"],
   ] as const)("holds exactly the pixels a %s drop shows, none stretched to fill its run", (travel, name) => {
     const [drop] = dropsIn(dropAlong(travel).grid)
-    expect(pixelsOf(`src/assets/tiles/expert/${name}.png`)).toEqual({ w: drop.w! * 2, h: drop.h! * 2 })
+    expect(pixelsOf(`src/assets/tiles/default/${name}.png`)).toEqual({ w: drop.w! * 2, h: drop.h! * 2 })
   })
 
   it.each([["n"], ["s"]] as const)(
@@ -159,7 +169,7 @@ const pixelsOf = (path: string): { w: number; h: number } => {
 describe("a drop is drawn at the scale it was painted, inside its obstacle", () => {
   it("is drawn at two pixels to a unit: the tile holds exactly the pixels it shows, none stretched", () => {
     const [drop] = dropsIn(dropAlong("e").grid)
-    expect(pixelsOf("src/assets/tiles/expert/dropEast.png")).toEqual({ w: drop.w! * 2, h: drop.h! * 2 })
+    expect(pixelsOf("src/assets/tiles/default/dropEast.png")).toEqual({ w: drop.w! * 2, h: drop.h! * 2 })
   })
 
   it("is narrower than its three-cell obstacle, centred on it, with its bottom edge on the corridor's floor edge", () => {

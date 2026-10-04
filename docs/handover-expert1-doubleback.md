@@ -34,13 +34,9 @@ states with no dead region. The release resets progress, so the reshaped floor n
 
 ## What is needed next, in order
 
-1. **Designer decision — drops and levers on a shipped pyramid.** `PYRAMID_CAPABILITIES`
-   (`src/worldGen/capabilities.ts`) has `standOneWayDrops: false` and `standHandles: false`, so
-   `generate-world` stops on this floor's two ziplines and two levers. Zipline and lever art exist at
-   expert. Options put to the designer: **(a)** grant both per tier where the art exists (expert) —
-   recommended; **(b)** grant them everywhere and accept the fallback drawing. Implement the chosen one
-   with a test that a drop/lever at a tier without art is still refused (a) or drawn as the stated
-   fallback (b).
+1. **Done — levers and ziplines are not tied to difficulty.** Their art lives in `tiles/default/` and
+   draws at every rank; `standOneWayDrops`/`standHandles` and the `findUndrawnOneWays`/`findUndrawnHandles`
+   guards are gone, since nothing is left undrawn.
 2. **The designer bakes**, plain (no `INCLUDE_DEV`), on this branch — back up the local playtest build in
    `src/data/generatedWorld.ts` / `src/data/carveLedger.json` first if it is to be kept:
    ```
