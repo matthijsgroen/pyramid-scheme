@@ -121,10 +121,10 @@ needs two stones, and the tool refuses one that asks for more stones than the lo
 
 - **One stone in hand.** It is set down only on an empty plate or back on its own starting spot, never
   just anywhere, so where the stones are is always one of a few arrangements the walk can prove.
-- **What a stone cannot pass is written in the lock**, as `-[unladen]-` (empty hands only: a narrow
-  passage, a zipline) or `-[laden]-` (only while carrying). It is never a property of the art, because a
-  realisation may not change what the walk sees (`mechanic-contract.md` §1).
-- **A stone never leaves its floor.** The way out takes empty hands, so a return visit always finds every
+- **A zipline and a narrow passage cannot be passed with a stone.** The lock writes it as `-[unladen]-`,
+  and binding either realisation where the lock lets a stone through is refused: a realisation may not
+  change what the walk sees (`mechanic-contract.md`, "Three layers").
+- **A stone never leaves its floor.** The stairs and the way out take empty hands, so a return visit always finds every
   stone where it was set down, and the walk proves the lock from every arrangement, leaving and
   returning included.
 

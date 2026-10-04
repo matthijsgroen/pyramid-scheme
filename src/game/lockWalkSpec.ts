@@ -35,11 +35,10 @@ const startPositions = (weights: Weights): Positions =>
 const isWeightTerm = (weights: Weights | undefined, owner: string) =>
   weights !== undefined && (owner in weights.plates || (CARRY_TERMS as readonly string[]).includes(owner))
 
-/** Whether one condition on the stones holds: a plate pressed, empty hands, or a stone carried. */
+/** Whether one condition on the stones holds: a plate pressed, or empty hands. */
 const weightSays = (term: string, positions: Positions) => {
   const at = Object.values(positions)
   if (term === "unladen") return !at.includes(HAND)
-  if (term === "laden") return at.includes(HAND)
   return at.includes(term)
 }
 

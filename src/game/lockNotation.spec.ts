@@ -164,8 +164,8 @@ describe("weights", () => {
     expect(lock.gates["yard-out"]).toEqual({ from: "yard", to: "out", owners: ["e1", "e2"] })
   })
 
-  it("reads unladen and laden as conditions on the stones, not as owners to place", () => {
-    const { drafts } = parseLock("in -[unladen]- hall\nhall -[laden]- out\nA stone @in")
+  it("reads unladen as a condition on the stones, not as an owner to place", () => {
+    const { drafts } = parseLock("in -[unladen]- hall\nhall -- out\nA stone @in")
     expect(drafts).toEqual([])
   })
 

@@ -2,7 +2,7 @@
 
 For the engine session. The design is in `docs/game-design/lock-curriculum.md` ("Stones"); the tool side
 (`yarn lock`, `src/game/lockNotation.ts`, `src/game/lockWalkSpec.ts`) already reads, walks and draws it.
-Scope is the full proposal: stones, doors on several plates, and `unladen`/`laden` passages, with
+Scope is the full proposal: stones, doors on several plates, and passages a stone cannot pass, with
 stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
 
 ## The rules, in one place
@@ -10,16 +10,17 @@ stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
 - A **stone** lies loose on its own spot, rests on a plate, or is in the player's hand.
 - **One stone in hand.** It is set down only on an empty plate or back on its own spot. Nowhere else.
 - A **plate** presses its gates while a stone rests on it. The player's own weight never presses a plate.
-- A gate owner may be a plate, `unladen` (empty hands) or `laden` (a stone in hand), alongside levers and
-  the rest, under `and` or `any`.
-- **A stone never leaves its floor.** Every way off the floor (the way out, a staircase) takes empty
-  hands.
+- A gate owner may be a plate or `unladen` (empty hands), alongside levers and the rest, under `and` or
+  `any`.
+- **Some ways cannot be taken with a stone in hand:** a zipline, a narrow passage, a staircase and the
+  way out. The first two are written in the lock as `-[unladen]-`; the stairs and the way out always take
+  empty hands, so a stone never leaves its floor.
 
 ## 1. Contract
 
 - [ ] The shared `Lock` holds `weights?: { plates: Record<id, { in: RegionId }>, stones: Record<id, { at: RegionId | plateId }> }`,
       and `mechanic-contract.md` gets a section for it, beside the other controls.
-- [ ] Gate owners accept plate ids, `unladen` and `laden`.
+- [ ] Gate owners accept plate ids and `unladen`.
 - [ ] The engine refuses a lock where a gate needs stones on more plates than the lock has stones, where a
       plate owns no gate, or where a stone starts somewhere no corridor reaches. These are the refusals
       `parseLock` already makes.
@@ -38,8 +39,11 @@ stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
 ## 3. Carve and bake
 
 - [ ] Each plate and each stone's own spot is a node in its region.
-- [ ] An `unladen` or `laden` passage binds to a realisation like any gate (`mechanic-contract.md`, "Binding
-      a realisation"): a narrow passage or a zipline for `unladen`.
+- [ ] An `unladen` passage binds to a realisation like any gate (`mechanic-contract.md`, "Binding a
+      realisation"): a zipline, or a **narrow passage**, which is a new realisation with its own art.
+- [ ] On a floor with stones, binding a zipline or a narrow passage where the lock lets a stone through
+      (no `unladen` on that passage) is refused. The art never decides what the walk sees; the binding
+      makes it match.
 - [ ] With the realisation mod off, the carve is identical: bare nodes, open corridors.
 - [ ] The four stone locks and the stoneOnAPlate lesson bake on the dev floor (`src/worldGen/spec/dev.ts`),
       and the world bake stays byte-identical for every floor that has no stones.
@@ -57,8 +61,7 @@ All through node actions (`node-actions.md`): arriving never acts, standing offe
 - [ ] No set-down is offered anywhere else, and no pick-up while already carrying.
 - [ ] The explorer is drawn carrying the stone while it is in hand.
 - [ ] A walk that crosses an `unladen` passage while carrying **stops on the near side** and says why
-      ("Too narrow to carry the stone through"; a zipline: "You need both hands for the zipline"). A `laden`
-      passage stops an empty-handed walk the same way, in its realisation's words.
+      ("Too narrow to carry the stone through"; a zipline: "You need both hands for the zipline").
 - [ ] The way out and every staircase stop a carrying walk the same way: "Set the stone down first".
 - [ ] A door held by plates shows its condition: how many plates it waits for and how many hold a stone
       (`mechanic-contract.md`, "A gate shows its own condition").

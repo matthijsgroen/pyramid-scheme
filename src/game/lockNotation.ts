@@ -18,7 +18,7 @@ export const LOCK_SYNTAX = `
   P sequence hall vault reset hall-vault   steps in order, reset at that gate; -[P]- opens when done
   p1 plate @hall                a plate: -[p1]- stands open while a stone rests on it
   A stone @hall   B stone @p1   a stone, lying loose in a region or resting on a plate
-  in -[unladen]- hall           only with empty hands (narrow passage, zipline) · -[laden]- only carrying
+  in -[unladen]- hall           only with empty hands: a zipline, a narrow passage
   hall *   s2 $   spare ?   corridor -     takes puzzles, a reward, anything, nothing
   // comment
 `.slice(1)
@@ -36,8 +36,8 @@ export type Weights = {
 export type DraftLock = Lock & { weights?: Weights }
 export type ParsedLock = { lock: DraftLock; drafts: string[] }
 
-/** Conditions on the stones rather than owners to place: empty hands, and a stone in hand. */
-export const CARRY_TERMS = ["unladen", "laden"] as const
+/** A condition on the stones rather than an owner to place: empty hands. */
+export const CARRY_TERMS = ["unladen"] as const
 
 const EDGE = /\s*(--|>>|-\[[^\]]*\]-)\s*/
 const NAME = /^\w+$/
