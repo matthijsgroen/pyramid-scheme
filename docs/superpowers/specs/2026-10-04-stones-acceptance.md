@@ -59,13 +59,54 @@ All through node actions (`node-actions.md`): arriving never acts, standing offe
       else still holds them.
 - [ ] On the carried stone's own spot: **"Put the stone back"**.
 - [ ] No set-down is offered anywhere else, and no pick-up while already carrying.
-- [ ] The explorer is drawn carrying the stone while it is in hand.
+- [ ] The explorer is drawn carrying the stone while it is in hand (see "The carrying explorer").
 - [ ] A walk that crosses an `unladen` passage while carrying **stops on the near side** and says why
       ("Too narrow to carry the stone through"; a zipline: "You need both hands for the zipline").
 - [ ] The way out and every staircase stop a carrying walk the same way: "Set the stone down first".
 - [ ] A door held by plates shows its condition: how many plates it waits for and how many hold a stone
       (`mechanic-contract.md`, "A gate shows its own condition").
 - [ ] Plates and loose stones are seen on the floor map from anywhere, once their room has been seen.
+
+## The carrying explorer
+
+New walking art, the same person in a new pose: **the stone hugged to the chest in both arms, the torch
+tucked over the shoulder into the pack strap, still burning.** Both hands are full, which is what the
+zipline line says.
+
+- [ ] Three facings beside the plain ones in `src/assets/tiles/default/`: `explorer-carry-s-<n>`,
+      `explorer-carry-n-<n>`, `explorer-carry-e-<n>`, at 40 × 70 and bottom-anchored like the plain set
+      (`spritesheet-renderer-prep.md`, "The explorer"). West is east mirrored.
+- [ ] `ExplorerDot` reads `sharedTileFrames("explorer-carry-<facing>")` while a stone is in hand. A facing
+      with no carry art falls back to the plain explorer, so the mechanic ships before the art does.
+- [ ] Walking and standing still use the carry frames the same way the plain frames work: the walk cycle
+      runs on distance, and standing still shows frame 1.
+- [ ] The light around the explorer does not change while carrying: the torch is still lit.
+- [ ] The **Facings story** shows the carrying set beside the plain one at 1:1 and 3x, over limestone and
+      granite. At 1:1 the stone reads as a stone, and the figure reads as the same person.
+- [ ] The sheet's master is kept at `art/masters/props/default/explorer-carry.webp`, and its cut and
+      import lines are in `art/rebuild.sh`.
+
+Make the sheet the way the plain set was made (`starter-art-prompts.md`, "When it comes back as a sheet"):
+give the generator a current `explorer-s-1`, `explorer-n-1` and `explorer-e-1` as the reference, and ask for
+the same character, outfit and palette in three rows (front, back, side), with margin around the sheet and
+a flat magenta background. Then:
+
+```
+yarn cut-sheet art/masters/props/default/explorer-carry.webp --out=/tmp/carry --rows=front,back,side --min=0.8
+yarn import-tile /tmp/carry/front-1.png --tier=default --name=explorer-carry-s-1 --slot=explorer --filter=smooth
+# one import per frame: front-<n> to explorer-carry-s-<n>, back-<n> to -n-<n>, side-<n> to -e-<n>
+```
+
+Prompt, beside the reference frames:
+
+```
+The same explorer as in the reference images, same hat, shirt, scarf, trousers, boots and pack, same
+palette and pixel scale. He carries a rough limestone block, about the size of a large loaf, hugged to
+his chest in both arms, leaning back slightly under its weight. His lit torch is tucked over his right
+shoulder into the pack strap, flame above his head. Walk cycle, three rows: front view, back view, side
+view facing right, four frames each. Wide margin around the whole sheet. Flat magenta #ff00ff background,
+no shadow.
+```
 
 ## 5. Save
 
