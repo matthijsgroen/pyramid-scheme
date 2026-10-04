@@ -36,7 +36,9 @@ states with no dead region. The release resets progress, so the reshaped floor n
 
 1. **Done — levers and ziplines are not tied to difficulty.** Their art lives in `tiles/default/` and
    draws at every rank; `standOneWayDrops`/`standHandles` and the `findUndrawnOneWays`/`findUndrawnHandles`
-   guards are gone, since nothing is left undrawn.
+   guards are gone, since nothing is left undrawn. A north/south drop now carves 1 obstacle cell
+   (`oneWayRunCells` in `src/game/carveConstants.ts`), east/west keeps 3; only `expert_1/4/0` and
+   `dev_topology/2/0` carve differently, so the bake below must follow it.
 2. **The designer bakes**, plain (no `INCLUDE_DEV`), on this branch — back up the local playtest build in
    `src/data/generatedWorld.ts` / `src/data/carveLedger.json` first if it is to be kept:
    ```
