@@ -1,5 +1,5 @@
 import { mulberry32, shuffle } from "./random"
-import { DEFAULT_PACKING, ONE_WAY_RUN_CELLS } from "./carveConstants"
+import { DEFAULT_PACKING, ONE_WAY_RUN_CELLS, oneWayReach, oneWayRunCells } from "./carveConstants"
 import { hashString } from "@/support/hashString"
 import { allocateMarks, type Mark, type MarkRequest } from "./mark"
 import { withGateFaces } from "./gateFace"
@@ -12,7 +12,7 @@ import {
 import type { OneWayRefusal, ResolveOneWayRealisation } from "./oneWayRealisation"
 
 export { defaultResolveEncounter }
-export { DEFAULT_PACKING, ONE_WAY_RUN_CELLS }
+export { DEFAULT_PACKING, ONE_WAY_RUN_CELLS, oneWayRunCells }
 import type {
   AssemblerFailure,
   AssemblerResult,
@@ -323,10 +323,6 @@ const CONNECTOR_DIRS: Array<[number, number, Direction]> = [
   [0, -NODE_STEP, "w"],
 ]
 const OPPOSITE: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
-
-/** Steps from the node a drop hangs off to the node it lands beside: launch, obstacle, landing, and the
- * step onto the far node. */
-const ONE_WAY_REACH = ONE_WAY_RUN_CELLS + 3
 
 type OneWayEdge = {
   from: string
@@ -2145,7 +2141,7 @@ const assembleExpandedFloor = (
     }
 
     /**
-     * Hangs a chain off a node of its mouth's region by a DROP: its first node stands `ONE_WAY_REACH`
+     * Hangs a chain off a node of its mouth's region by a DROP: its first node stands `oneWayReach`
      * steps along a straight line from the mouth's, every cell between them uncarved and held for the
      * run. No passage joins the two, so the only way between them is the drop, and it falls the way the
      * author wrote it. Nothing is claimed unless the whole run and the chain both fit.
@@ -2165,12 +2161,10 @@ const assembleExpandedFloor = (
         for (const [dr, dc, d] of shuffle(CONNECTOR_DIRS, rand)) {
           const ur = dr / NODE_STEP,
             uc = dc / NODE_STEP
-          const [fr, fc] = [ar + ur * ONE_WAY_REACH, ac + uc * ONE_WAY_REACH]
+          const reach = oneWayReach(d)
+          const [fr, fc] = [ar + ur * reach, ac + uc * reach]
           if (fr < 0 || fr >= N || fc < 0 || fc >= N) continue
-          const between = Array.from(
-            { length: ONE_WAY_REACH - 1 },
-            (_, k) => `${ar + ur * (k + 1)},${ac + uc * (k + 1)}`
-          )
+          const between = Array.from({ length: reach - 1 }, (_, k) => `${ar + ur * (k + 1)},${ac + uc * (k + 1)}`)
           const held = [...between, `${fr},${fc}`]
           if (held.some(cellKey => usedCells.has(cellKey))) continue
           for (const cellKey of held) usedCells.add(cellKey)
@@ -3443,7 +3437,7 @@ const assembleExpandedFloor = (
       }
 
     // ONE-WAY DROPS. Each authored passage needs a node of `from` and a node of `to` on one axis with
-    // exactly 2 + ONE_WAY_RUN_CELLS cells between them (a launch, the obstacle, a landing), every one of
+    // exactly 2 + oneWayRunCells(dir) cells between them (a launch, the obstacle, a landing), every one of
     // them uncarved — not a node, not a connector some chain walked, not a cell another drop already
     // holds. The reservation is made whole or not at all: a drop is never placed shorter, and never placed anywhere but between the
     // two ends it names. Picked here, off the same node set the grid below is built from, and sorted by
@@ -3504,15 +3498,14 @@ const assembleExpandedFloor = (
           // The reservation is the cells strictly between the two nodes, one unit step at a time.
           const ur = dr / NODE_STEP,
             uc = dc / NODE_STEP
-          const nr = r + ur * ONE_WAY_REACH,
-            nc = c + uc * ONE_WAY_REACH
+          const reach = oneWayReach(d)
+          const nr = r + ur * reach,
+            nc = c + uc * reach
           if (nr < 0 || nr >= N || nc < 0 || nc >= N) continue
           const toKey = posKey(nr, nc)
           if (toKey === exitKey) continue
           if (!demand.matchesTo(toKey)) continue
-          const between = Array.from({ length: ONE_WAY_REACH - 1 }, (_, k) =>
-            posKey(r + ur * (k + 1), c + uc * (k + 1))
-          )
+          const between = Array.from({ length: reach - 1 }, (_, k) => posKey(r + ur * (k + 1), c + uc * (k + 1)))
           if (between.some(cellKey => usedCells.has(cellKey) || takenRunCells.has(cellKey))) continue
           // A SECTION-ADDRESSED DROP MAY RUN INSIDE WHAT A DOOR SHUTS OFF, OR OUT OF IT, NEVER INTO
           // GROUND SHUT BY A DOOR THE PLAYER HAS NOT EARNED BY STANDING WHERE THEY FALL FROM. A
@@ -3743,7 +3736,7 @@ const assembleExpandedFloor = (
         const cell = cells2D[r][c]
         if (cell.type === "corridor") cells2D[r][c] = { ...cell, obstacle: { dir: edge.dir, kind: edge.realisation } }
       })
-      writeStub(edge.landing, edge.to, edge.from, new Set([edge.dir]), ONE_WAY_RUN_CELLS + 1)
+      writeStub(edge.landing, edge.to, edge.from, new Set([edge.dir]), oneWayRunCells(edge.dir) + 1)
       joinNode(edge.to, OPPOSITE[edge.dir])
     }
 
