@@ -16,7 +16,7 @@
 import { writeFileSync } from "fs"
 import { join, dirname } from "path"
 import { fileURLToPath } from "url"
-import { buildConfigs } from "../src/worldGen/configBuilder"
+import { buildWorldConfigs } from "../src/mods/buildWorldConfigs"
 import { generateFile, printStats } from "../src/worldGen/serializer"
 import { validateWorldSpec } from "../src/worldGen/validateWorldSpec"
 import {
@@ -45,30 +45,11 @@ import { floorHash, LEDGER_PATH, readLedger, sourceFingerprint, type CarveLedger
 import type { AssemblerResult, FloorGrid } from "../src/game/siteTypes"
 import type { FloorConfig } from "../src/worldGen/types"
 import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
-import {
-  resolveKeyRequirements,
-  familyPriorityFor,
-  familyCapacityFor,
-  familyIsTrap,
-  allocateEncounterSpread,
-  resolveEncounterMeta,
-  ALL_FAMILY_META,
-} from "../src/mods/allFamilyMeta"
+import { resolveKeyRequirements, resolveEncounterMeta, ALL_FAMILY_META } from "../src/mods/allFamilyMeta"
 import { puzzleSeeds } from "../src/data/puzzleSeeds"
-import { ALL_CURRENCY_DISTRIBUTIONS } from "../src/mods/allCurrencyDistributions"
 import { resolveOneWayRealisation } from "../src/mods/allOneWayRealisations"
 import { HIEROGLYPH_REQUIRED } from "../src/mods/hieroglyph/game/hieroglyphData"
 import { assignFragmentPieceIndices, hieroglyphCoverage } from "../src/mods/hieroglyph/game/fragmentFinalize"
-import {
-  CAPPED_CURRENCIES,
-  DYNAMIC_DISTRIBUTIONS,
-  MOD_WORLD_VALIDATORS,
-  MOD_REACHABILITY_SUPPORT,
-  MOD_TOMB_TREASURE_RESOLVER,
-  MOD_SHOP_STOCK,
-  MOD_RESERVED_TREASURE_INDICES,
-  REGISTERED_MOD_IDS,
-} from "../src/mods/registeredMods"
 
 // The share of loot-eligible slots deliberately left empty so found loot stays meaningful (no
 // 1-coin spam). A core world-gen knob (docs/mods/distribution-primitive-design.md); 0 = fill by
@@ -90,24 +71,7 @@ const validateOnly = process.argv.includes("--validate-only")
 // (the hieroglyph coverage guard among them) — not just the spec-shape check above. Skipping
 // buildConfigs here used to mean `yarn validate-world` could never catch a coverage shortfall;
 // it only skips the file write below.
-const configs = buildConfigs(
-  resolveKeyRequirements,
-  ALL_CURRENCY_DISTRIBUTIONS,
-  CAPPED_CURRENCIES,
-  DYNAMIC_DISTRIBUTIONS,
-  MOD_WORLD_VALIDATORS,
-  familyPriorityFor,
-  EMPTY_FRACTION,
-  allocateEncounterSpread,
-  MOD_REACHABILITY_SUPPORT,
-  MOD_TOMB_TREASURE_RESOLVER,
-  familyCapacityFor,
-  MOD_SHOP_STOCK,
-  MOD_RESERVED_TREASURE_INDICES,
-  familyIsTrap,
-  REGISTERED_MOD_IDS,
-  resolveEncounterMeta
-)
+const configs = buildWorldConfigs(EMPTY_FRACTION)
 // Hieroglyph finalize (mod-owned, §D): stamp each fragment's pieceIndex — hieroglyph-specific
 // logic the core serializer no longer owns. Every symbol's full required count is guaranteed
 // placed by this point (placeFragments.ts's completion pass + the hieroglyph coverage
@@ -286,7 +250,7 @@ if (unbakedSwitches.length > 0) {
         `${board.familyId} at ${board.difficulty}, ${board.forkShape} fork`
     )
   if (unbakedSwitches.length > 20) console.error(`    … and ${unbakedSwitches.length - 20} more`)
-  console.error("  Run `yarn generate-seeds` to fill them.")
+  console.error("  Run `yarn generate-seeds` (it reads the spec, not the bake), then `yarn generate-world` again.")
   process.exit(1)
 }
 
