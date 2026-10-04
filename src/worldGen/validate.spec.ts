@@ -5,6 +5,7 @@ import {
   findMispairedStairs,
   findStrandingLocks,
   findUnbakedSwitchBoards,
+  findUndrawnHandles,
   findUndrawnOneWays,
   findUnwalkedLocks,
   validateRewardCounts,
@@ -12,8 +13,9 @@ import {
 import { DEV_CAPABILITIES, PYRAMID_CAPABILITIES } from "./capabilities"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FamilyMeta, FamilyOptions } from "@/game/families/familyMeta"
-import type { ForkShape } from "@/game/forkShape"
+import { FORK_SHAPES, type ForkShape } from "@/game/forkShape"
 import { configHash } from "@/game/seeds/configHash"
+import { doubleBackLock } from "./spec/locks/doubleBack"
 import { WORLD_TARGETS } from "./worldSpec"
 import { PYRAMID_JOURNEYS } from "./data"
 import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
@@ -31,6 +33,14 @@ const floor = (overrides: Partial<FloorConfig> = {}): FloorConfig => ({
   sideSections: [],
   ...overrides,
 })
+
+// The designer's lock on a floor of its own: the drops, levers and fork-switch board exist only once it compiles.
+const lockFloor = (difficulty: Difficulty = "expert", fork: string = "lightbeamSwitch"): FloorConfig =>
+  floor({
+    difficulty,
+    locks: [{ lock: doubleBackLock() }],
+    realisations: { "fork-switch": fork, toggle: "handle", "one-way": "zipline" },
+  } as Partial<FloorConfig>)
 
 const fillFragments = (n: number): FloorConfig["sideSections"] =>
   Array.from({ length: n }, (_, i) => ({
@@ -246,6 +256,17 @@ describe("findUnbakedSwitchBoards", () => {
     expect(findUnbakedSwitchBoards(configs, [seedable], {}, () => PYRAMID_CAPABILITIES)).toHaveLength(3)
   })
 
+  it("owes a lock floor's fork-switch board all three shapes, which no list covers", () => {
+    const configs = { [shipped]: [[lockFloor("expert", "stub-switch")]] }
+    expect(
+      findUnbakedSwitchBoards(configs, [seedable], {}).map(
+        board => `${board.familyId} ${board.difficulty} ${board.forkShape}`
+      )
+    ).toEqual(["stub-switch expert adjacent", "stub-switch expert opposite", "stub-switch expert three"])
+    const covered = Object.fromEntries(FORK_SHAPES.map(shape => [bucket("expert", shape), [1]]))
+    expect(findUnbakedSwitchBoards(configs, [seedable], covered)).toEqual([])
+  })
+
   it("says nothing about a floor that authors no switch, or a family with no generator", () => {
     expect(findUnbakedSwitchBoards({ [shipped]: [[floor()]] }, [seedable], {})).toEqual([])
     const live: FamilyMeta = { ...seedable, seedable: undefined }
@@ -284,6 +305,33 @@ describe("findUndrawnOneWays", () => {
 
   it("says nothing about a floor that authors no drop", () => {
     expect(findUndrawnOneWays({ [shipped]: [[floor()]] })).toEqual([])
+  })
+
+  it("names the drops a lock floor compiles to, as it names authored ones", () => {
+    expect(findUndrawnOneWays({ [shipped]: [[lockFloor()]] })).toEqual([
+      { journeyId: shipped, levelNr: 1, floorIndex: 0, from: "doubleBack.s1", to: "doubleBack.leftLower" },
+      { journeyId: shipped, levelNr: 1, floorIndex: 0, from: "doubleBack.leftLower", to: "doubleBack.in" },
+    ])
+    expect(findUndrawnOneWays({ [shipped]: [[lockFloor()]] }, () => DEV_CAPABILITIES)).toEqual([])
+  })
+})
+
+describe("findUndrawnHandles", () => {
+  const shipped = PYRAMID_JOURNEYS[0].id
+
+  it("names the levers a lock floor compiles to, as it names authored ones", () => {
+    expect(findUndrawnHandles({ [shipped]: [[lockFloor()]] })).toEqual([
+      {
+        journeyId: shipped,
+        levelNr: 1,
+        floorIndex: 0,
+        in: "doubleBack.s1",
+        left: ["doubleBack.rightLower-s1"],
+        right: ["doubleBack.leftLower-s2"],
+      },
+      { journeyId: shipped, levelNr: 1, floorIndex: 0, in: "doubleBack.s2", left: [], right: ["doubleBack.in-out"] },
+    ])
+    expect(findUndrawnHandles({ [shipped]: [[lockFloor()]] }, () => DEV_CAPABILITIES)).toEqual([])
   })
 })
 

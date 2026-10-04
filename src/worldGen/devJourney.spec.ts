@@ -555,10 +555,12 @@ describe("what the dev journey authors", () => {
   // The develop-only boundary is what keeps an undrawn drop off a floor a player will meet, and it is
   // the capability that grants it — not the journey's id. Said here as well as on the guard itself,
   // because this is the journey the exemption exists for.
+  // Three drops owed: the one authored longhand and the two doubleBack compiles to.
   it("is the only journey whose capabilities let a drop stand on it", () => {
-    expect(findUndrawnOneWays(withDev)).toEqual([])
+    expect(findUndrawnOneWays(withDev).filter(drop => drop.journeyId === DEV_JOURNEY_ID)).toEqual([])
+    expect(findUndrawnOneWays(withDev)).toEqual(findUndrawnOneWays(plain))
     expect(findUndrawnOneWays({ [DEV_JOURNEY_ID]: withDev[DEV_JOURNEY_ID] }, () => PYRAMID_CAPABILITIES)).toHaveLength(
-      1
+      3
     )
   })
 })
@@ -622,11 +624,10 @@ describe("the baked-board requirement on the dev journey", () => {
   })
 
   it("lets the world build anyway, with nothing reported against the dev journey", () => {
-    expect(unbakedOn(withDev)).toEqual([])
+    expect(unbakedOn(withDev).filter(board => board.journeyId === DEV_JOURNEY_ID)).toEqual([])
   })
 
   it("holds every other journey to the requirement, dev journey present or not", () => {
-    expect(unbakedOn(plain)).toEqual([])
-    expect(unbakedOn(withoutDev(withDev))).toEqual([])
+    expect(unbakedOn(withoutDev(withDev))).toEqual(unbakedOn(plain))
   })
 })

@@ -1,10 +1,11 @@
 import type { SideSection, SiteConfig, SubSection, TreasureReward, MapPieceReward } from "./types"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FamilyMeta } from "@/game/families/familyMeta"
+import { expandFloorLocks } from "@/game/floorLocks"
 import { FORK_SHAPES, type ForkShape } from "@/game/forkShape"
 import { configHash } from "@/game/seeds/configHash"
 import { switchFamilies } from "@/game/seeds/enumerateConfigs"
-import type { FloorGrid as AssembledFloor } from "@/game/siteTypes"
+import type { FloorConfig as GameFloorConfig, FloorGrid as AssembledFloor } from "@/game/siteTypes"
 import { walkFloorLock, describeFloorWalkFailure, deadFloorRegions } from "@/game/floorLockWalk"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { WORLD_TARGETS } from "./worldSpec"
@@ -160,6 +161,13 @@ export const findEmptyChests = (
   return empties
 }
 
+/** A floor with its locks compiled into obstacles and controls, so a guard reads a lock floor as it reads an authored one; a lock that will not compile is the assembler's to refuse. */
+const compiledFloor = (floor: SiteConfig[number]): GameFloorConfig => {
+  const authored = floor as GameFloorConfig
+  const expanded = expandFloorLocks(authored)
+  return expanded.ok ? expanded.config : authored
+}
+
 /**
  * A switch a site requiring baked boards authors at a shape and tier no seed list covers.
  *
@@ -195,7 +203,7 @@ export const findUnbakedSwitchBoards = (
     if (capabilities(journeyId)?.requireBakedBoards === false) continue
     sites.forEach((site, siteIdx) =>
       site.forEach((floor, floorIndex) => {
-        for (const familyId of switchFamilies(floor).families) {
+        for (const familyId of switchFamilies(floor as GameFloorConfig).families) {
           const seedable = byId.get(familyId)?.seedable
           if (!seedable) continue
           for (const forkShape of FORK_SHAPES) {
@@ -238,9 +246,19 @@ export const findUndrawnOneWays = (
     // Granted, never merely "not refused": a site nothing knows about is a site nothing cleared.
     if (capabilities(journeyId)?.standOneWayDrops) continue
     sites.forEach((site, siteIdx) =>
-      site.forEach((floor, floorIndex) => {
+      site.forEach((authored, floorIndex) => {
+        const floor = compiledFloor(authored)
         for (const oneWay of floor.oneWays ?? [])
           found.push({ journeyId, levelNr: siteIdx + 1, floorIndex, from: oneWay.from, to: oneWay.to })
+        for (const obstacle of floor.obstacles ?? [])
+          if (obstacle.kind === "oneWay")
+            found.push({
+              journeyId,
+              levelNr: siteIdx + 1,
+              floorIndex,
+              from: obstacle.at.between[0],
+              to: obstacle.at.between[1],
+            })
       })
     )
   }
@@ -272,7 +290,8 @@ export const findUndrawnHandles = (
   for (const [journeyId, sites] of Object.entries(configs)) {
     if (capabilities(journeyId)?.standHandles) continue
     sites.forEach((site, siteIdx) =>
-      site.forEach((floor, floorIndex) => {
+      site.forEach((authored, floorIndex) => {
+        const floor = compiledFloor(authored)
         for (const handle of floor.handles ?? [])
           found.push({
             journeyId,
@@ -282,6 +301,17 @@ export const findUndrawnHandles = (
             left: handle.left,
             right: handle.right,
           })
+        // A stateful control is dressed as a lever whichever family its room runs, so it is a handle here.
+        for (const control of floor.controls ?? [])
+          if (!control.control)
+            found.push({
+              journeyId,
+              levelNr: siteIdx + 1,
+              floorIndex,
+              in: control.in,
+              left: control.opens[control.states[0]] ?? [],
+              right: control.opens[control.states[1]] ?? [],
+            })
       })
     )
   }
