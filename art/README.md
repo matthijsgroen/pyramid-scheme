@@ -184,15 +184,15 @@ yarn build-sheet /tmp/explorer.png explorer-s explorer-n explorer-e --from=art/m
 
 The walking masters are found, not redrawn: front and back are frames 1–2 and 1–4 of their rows on the
 first generated sheet, and the side is four hand-edited frames (the far leg darkened) cut from two later
-sheets. That later session came back darker and redder, so the side imports with `--gamma=0.65` and the
-front and back with no colour flag:
+sheets. That later session came back darker and redder, so the side masters have gamma 0.65 applied
+already, and every facing is on the same exposure. The masters look like what ships, and every pose
+imports the same way, with no colour flag:
 
 ```
-yarn import-tile art/masters/explorer/explorer-e-1.webp --tier=default --name=explorer-e-1 --slot=explorer --filter=smooth --gamma=0.65
-yarn import-tile art/masters/explorer/explorer-s-1.webp --tier=default --name=explorer-s-1 --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-e-1.webp --tier=default --name=explorer-e-1 --slot=explorer --filter=smooth
 ```
 
 A new pose then starts from the large sheet: build it, ask for the edit ("the same sheet, now carrying a
 stone hugged to his chest"), cut the return, and keep its cuts here as that pose's masters. A pose's
-import lines go in `rebuild.sh`. Check each new pose next to the walking set in the Facings story, side
-row included: an edit of the sheet keeps the side row's darker exposure, so it needs the same gamma.
+import lines go in `rebuild.sh`. Check each new pose next to the walking set in the Facings story. If a
+return comes back on a different exposure, correct the master once, not each import.
