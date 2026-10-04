@@ -182,21 +182,17 @@ can find again:
 yarn build-sheet /tmp/explorer.png explorer-s explorer-n explorer-e --from=art/masters/explorer
 ```
 
-**There are no large poses yet**, only the 40x70 imports. Make them once: build the sheet from the
-imports, have the generator redraw it at full detail, and cut it back into poses.
+The walking masters are found, not redrawn: front and back are frames 1–2 and 1–4 of their rows on the
+first generated sheet, and the side is four hand-edited frames (the far leg darkened) cut from two later
+sheets. That later session came back darker and redder, so the side imports with `--gamma=0.65` and the
+front and back with no colour flag:
 
 ```
-yarn build-sheet /tmp/explorer-small.png explorer-s explorer-n explorer-e --scale=8
-# generator: "Redraw this sprite sheet at full detail. Same character, same poses, same layout and
-#             spacing, same flat magenta background. Do not add or remove frames."
-yarn cut-sheet ~/Downloads/explorer-redrawn.png --out=/tmp/explorer --rows=front,back,side --min=0.8
-# keep each cut as art/masters/explorer/explorer-{s,n,e}-<n>.webp at quality 92, in the same frame order
+yarn import-tile art/masters/explorer/explorer-e-1.webp --tier=default --name=explorer-e-1 --slot=explorer --filter=smooth --gamma=0.65
+yarn import-tile art/masters/explorer/explorer-s-1.webp --tier=default --name=explorer-s-1 --slot=explorer --filter=smooth
 ```
 
 A new pose then starts from the large sheet: build it, ask for the edit ("the same sheet, now carrying a
-stone hugged to his chest"), cut the return, and keep its cuts here as that pose's masters. The 40x70
-tiles are imported from these masters with `--slot=explorer --filter=smooth`, and each import line goes
-in `rebuild.sh`.
-
-The redrawn walking poses replace the current tiles only if they look right in the Facings story. If
-they don't, they serve only as the base for edits, and the shipped walk stays as it is.
+stone hugged to his chest"), cut the return, and keep its cuts here as that pose's masters. A pose's
+import lines go in `rebuild.sh`. Check each new pose next to the walking set in the Facings story, side
+row included: an edit of the sheet keeps the side row's darker exposure, so it needs the same gamma.
