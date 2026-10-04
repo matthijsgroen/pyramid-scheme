@@ -40,28 +40,27 @@ pose puts it: `2026-10-04-stones-acceptance.md`, "The carrying explorer").
       the cable line where the zipline art draws it.
 - [ ] The Facings story shows the three beside the walking set, at 1:1 and 3x, over limestone and
       granite.
-- [ ] The sheet's master is kept at `art/masters/props/default/explorer-zip.webp`, and its cut and import
-      lines are in `art/rebuild.sh`.
+- [ ] Each riding pose is kept large as `art/masters/explorer/explorer-zip-<facing>.webp`, and its import
+      line is in `art/rebuild.sh`.
 
-Make it the way the carrying set is made: give the generator the current `explorer-s-1`, `explorer-n-1`
-and `explorer-e-1` as the reference, then:
-
-```
-yarn cut-sheet art/masters/props/default/explorer-zip.webp --out=/tmp/zip --rows=front,back,side --min=0.8
-yarn import-tile /tmp/zip/front-1.png --tier=default --name=explorer-zip-s --slot=explorer --filter=smooth
-yarn import-tile /tmp/zip/back-1.png  --tier=default --name=explorer-zip-n --slot=explorer --filter=smooth
-yarn import-tile /tmp/zip/side-1.png  --tier=default --name=explorer-zip-e --slot=explorer --filter=smooth
-```
-
-Prompt, beside the reference frames:
+Make it the way the carrying set is made, by editing a sheet (`art/README.md`, "The explorer"). It is
+one pose per facing, so build the sheet from the first walking frame of each:
 
 ```
-The same explorer as in the reference images, same hat, shirt, scarf, trousers, boots and pack, same
-palette and pixel scale. He hangs from a wooden zipline handle gripped in both raised hands, the handle
-at the very top of the frame, legs tucked up, body swung slightly back. His lit torch is tucked over his
-right shoulder into the pack strap, flame beside his head. No cable drawn. Three rows, one pose each:
-front view, back view, side view facing right. Wide margin around the whole sheet. Flat magenta #ff00ff
-background, no shadow.
+yarn build-sheet /tmp/one-each.png explorer-s-1 explorer-n-1 explorer-e-1 --from=art/masters/explorer
+# generator: the edit below, on /tmp/one-each.png
+yarn cut-sheet ~/Downloads/zip.png --out=/tmp/zip --rows=front,back,side --min=0.8
+# keep front-1, back-1, side-1 as art/masters/explorer/explorer-zip-{s,n,e}.webp, then import each:
+yarn import-tile art/masters/explorer/explorer-zip-s.webp --tier=default --name=explorer-zip-s --slot=explorer --filter=smooth
+```
+
+The edit:
+
+```
+Edit this sprite sheet. Keep the same character, outfit, palette, layout and spacing. Change only the
+pose: he hangs from a wooden zipline handle gripped in both raised hands, the handle at the very top of
+the frame, legs tucked up, body swung slightly back. His lit torch is tucked over his right shoulder into
+the pack strap, flame beside his head. No cable drawn. Same flat magenta background.
 ```
 
 ## Not in scope

@@ -83,29 +83,27 @@ zipline line says.
 - [ ] The light around the explorer does not change while carrying: the torch is still lit.
 - [ ] The **Facings story** shows the carrying set beside the plain one at 1:1 and 3x, over limestone and
       granite. At 1:1 the stone reads as a stone, and the figure reads as the same person.
-- [ ] The sheet's master is kept at `art/masters/props/default/explorer-carry.webp`, and its cut and
-      import lines are in `art/rebuild.sh`.
+- [ ] Each carrying pose is kept large as `art/masters/explorer/explorer-carry-<facing>-<n>.webp`, and its
+      import line is in `art/rebuild.sh`.
 
-Make the sheet the way the plain set was made (`starter-art-prompts.md`, "When it comes back as a sheet"):
-give the generator a current `explorer-s-1`, `explorer-n-1` and `explorer-e-1` as the reference, and ask for
-the same character, outfit and palette in three rows (front, back, side), with margin around the sheet and
-a flat magenta background. Then:
+Make it by editing the walking sheet, not by drawing him again (`art/README.md`, "The explorer"). This
+needs the large walking poses, which are made once.
 
 ```
-yarn cut-sheet art/masters/props/default/explorer-carry.webp --out=/tmp/carry --rows=front,back,side --min=0.8
-yarn import-tile /tmp/carry/front-1.png --tier=default --name=explorer-carry-s-1 --slot=explorer --filter=smooth
-# one import per frame: front-<n> to explorer-carry-s-<n>, back-<n> to -n-<n>, side-<n> to -e-<n>
+yarn build-sheet /tmp/walk.png explorer-s explorer-n explorer-e --from=art/masters/explorer
+# generator: the edit below, on /tmp/walk.png
+yarn cut-sheet ~/Downloads/carry.png --out=/tmp/carry --rows=front,back,side --min=0.8
+# keep each cut as art/masters/explorer/explorer-carry-{s,n,e}-<n>.webp, then import each:
+yarn import-tile art/masters/explorer/explorer-carry-s-1.webp --tier=default --name=explorer-carry-s-1 --slot=explorer --filter=smooth
 ```
 
-Prompt, beside the reference frames:
+The edit:
 
 ```
-The same explorer as in the reference images, same hat, shirt, scarf, trousers, boots and pack, same
-palette and pixel scale. He carries a rough limestone block, about the size of a large loaf, hugged to
-his chest in both arms, leaning back slightly under its weight. His lit torch is tucked over his right
-shoulder into the pack strap, flame above his head. Walk cycle, three rows: front view, back view, side
-view facing right, four frames each. Wide margin around the whole sheet. Flat magenta #ff00ff background,
-no shadow.
+Edit this sprite sheet. Keep the same character, outfit, palette, layout, spacing and number of frames,
+and keep each frame's leg pose. Change only this: he carries a rough limestone block, about the size of a
+large loaf, hugged to his chest in both arms, leaning back slightly under its weight. His lit torch is
+tucked over his right shoulder into the pack strap, flame above his head. Same flat magenta background.
 ```
 
 ## 5. Save

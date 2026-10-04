@@ -161,3 +161,42 @@ candidates (`sill.png`, `sillbig.png`), and the shipped tiles cannot decide betw
 `--repeat` and `--flatten` alter a source further than the candidates differ from each other, so the
 closest match by RMS is 13.6 against 14.5 and means nothing. Guessing would put a wrong master in the
 repository under a right-looking name, which is worse than the gap.
+
+## The explorer: one large master per pose, and a sheet built from them
+
+The explorer is the one sprite drawn in several poses, and a new pose (carrying a stone, riding a
+zipline) has to be the same person. A generator keeps a character far better when it is asked to EDIT a
+sheet of him than when it is asked to draw him again from reference images. So each pose is kept large,
+on its own, and a sheet is built from them whenever one is needed:
+
+```
+art/masters/explorer/explorer-<facing>-<n>.webp   one walking pose, large, on magenta
+art/masters/explorer/explorer-carry-<facing>-<n>.webp
+art/masters/explorer/explorer-zip-<facing>.webp
+```
+
+`yarn build-sheet` lays poses out in rows on flat magenta, one row per prefix, with gutters `cut-sheet`
+can find again:
+
+```
+yarn build-sheet /tmp/explorer.png explorer-s explorer-n explorer-e --from=art/masters/explorer
+```
+
+**There are no large poses yet**, only the 40x70 imports. Make them once: build the sheet from the
+imports, have the generator redraw it at full detail, and cut it back into poses.
+
+```
+yarn build-sheet /tmp/explorer-small.png explorer-s explorer-n explorer-e --scale=8
+# generator: "Redraw this sprite sheet at full detail. Same character, same poses, same layout and
+#             spacing, same flat magenta background. Do not add or remove frames."
+yarn cut-sheet ~/Downloads/explorer-redrawn.png --out=/tmp/explorer --rows=front,back,side --min=0.8
+# keep each cut as art/masters/explorer/explorer-{s,n,e}-<n>.webp at quality 92, in the same frame order
+```
+
+A new pose then starts from the large sheet: build it, ask for the edit ("the same sheet, now carrying a
+stone hugged to his chest"), cut the return, and keep its cuts here as that pose's masters. The 40x70
+tiles are imported from these masters with `--slot=explorer --filter=smooth`, and each import line goes
+in `rebuild.sh`.
+
+The redrawn walking poses replace the current tiles only if they look right in the Facings story. If
+they don't, they serve only as the base for edits, and the shipped walk stays as it is.
