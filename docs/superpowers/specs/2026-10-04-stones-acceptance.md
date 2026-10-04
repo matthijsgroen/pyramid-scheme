@@ -1,0 +1,84 @@
+# Stones on plates: acceptance criteria
+
+For the engine session. The design is in `docs/game-design/lock-curriculum.md` ("Stones"); the tool side
+(`yarn lock`, `src/game/lockNotation.ts`, `src/game/lockWalkSpec.ts`) already reads, walks and draws it.
+Scope is the full proposal: stones, doors on several plates, and `unladen`/`laden` passages, with
+stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
+
+## The rules, in one place
+
+- A **stone** lies loose on its own spot, rests on a plate, or is in the player's hand.
+- **One stone in hand.** It is set down only on an empty plate or back on its own spot. Nowhere else.
+- A **plate** presses its gates while a stone rests on it. The player's own weight never presses a plate.
+- A gate owner may be a plate, `unladen` (empty hands) or `laden` (a stone in hand), alongside levers and
+  the rest, under `and` or `any`.
+- **A stone never leaves its floor.** Every way off the floor (the way out, a staircase) takes empty
+  hands.
+
+## 1. Contract
+
+- [ ] The shared `Lock` holds `weights?: { plates: Record<id, { in: RegionId }>, stones: Record<id, { at: RegionId | plateId }> }`,
+      and `mechanic-contract.md` gets a section for it, beside the other controls.
+- [ ] Gate owners accept plate ids, `unladen` and `laden`.
+- [ ] The engine refuses a lock where a gate needs stones on more plates than the lock has stones, where a
+      plate owns no gate, or where a stone starts somewhere no corridor reaches. These are the refusals
+      `parseLock` already makes.
+- [ ] Every stone lock in `src/game/locks/` parses into a `Lock` the engine accepts without change.
+
+## 2. Solver
+
+- [ ] The engine's solver walks a stone arrangement as state: where each stone lies, at most one in hand.
+- [ ] For each stone lock in the catalogue, the engine's verdict (solvable, regions reached, dead ends)
+      equals `yarn lock`'s. A shared fixture test pins this.
+- [ ] Each stone lock fails the engine's solver when its load-bearing piece is taken away, as
+      `lockCatalogue.spec.ts` already does for the tool.
+- [ ] A floor is solvable from every arrangement the player can leave it in, so a return visit can never
+      soft-lock.
+
+## 3. Carve and bake
+
+- [ ] Each plate and each stone's own spot is a node in its region.
+- [ ] An `unladen` or `laden` passage binds to a realisation like any gate (`mechanic-contract.md`, "Binding
+      a realisation"): a narrow passage or a zipline for `unladen`.
+- [ ] With the realisation mod off, the carve is identical: bare nodes, open corridors.
+- [ ] The four stone locks and the stoneOnAPlate lesson bake on the dev floor (`src/worldGen/spec/dev.ts`),
+      and the world bake stays byte-identical for every floor that has no stones.
+
+## 4. Play
+
+All through node actions (`node-actions.md`): arriving never acts, standing offers.
+
+- [ ] On a stone's node, with empty hands: **"Pick up the stone"**.
+- [ ] On an empty plate, carrying: **"Set the stone on the plate"**. Every gate the plate opens does so at
+      once, visibly.
+- [ ] On a plate holding a stone, with empty hands: **"Lift the stone"**. Its gates shut unless something
+      else still holds them.
+- [ ] On the carried stone's own spot: **"Put the stone back"**.
+- [ ] No set-down is offered anywhere else, and no pick-up while already carrying.
+- [ ] The explorer is drawn carrying the stone while it is in hand.
+- [ ] A walk that crosses an `unladen` passage while carrying **stops on the near side** and says why
+      ("Too narrow to carry the stone through"; a zipline: "You need both hands for the zipline"). A `laden`
+      passage stops an empty-handed walk the same way, in its realisation's words.
+- [ ] The way out and every staircase stop a carrying walk the same way: "Set the stone down first".
+- [ ] A door held by plates shows its condition: how many plates it waits for and how many hold a stone
+      (`mechanic-contract.md`, "A gate shows its own condition").
+- [ ] Plates and loose stones are seen on the floor map from anywhere, once their room has been seen.
+
+## 5. Save
+
+- [ ] Where each stone lies is saved per floor, keyed by authoring address like other floor state, and
+      survives leaving the floor and reloading the app.
+- [ ] A stone in hand is saved too; a reload mid-carry resumes carrying.
+- [ ] A save without stone state reads as the authored start arrangement. The field is additive; no
+      reset.
+
+## Done when
+
+A player on the dev floor can take a stone to a plate and walk through its door. They can play
+twoStones, masonsRamp and counterweight to the end, leave mid-way, and come back to every stone where
+they set it.
+
+## Not in scope
+
+Pushing stones (rejected: a pushed stone can be cornered for good), throwing, stones as loot, stones that
+travel between floors, a plate the player presses by standing on it.

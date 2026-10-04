@@ -103,7 +103,8 @@ good.
 3. **One source for doubleBack.** Main holds it as TypeScript (`src/worldGen/spec/locks/doubleBack.ts`),
    this branch as `src/game/locks/doubleBack.lock`. Check whether the bake runs in Node so the world spec
    can read the `.lock` file; otherwise they will drift.
-4. Pitch the stone proposal (weights, `unladen`/`laden`) to the engine session as a contract addition.
+4. Pitch the stone proposal to the engine session: acceptance criteria in
+   `docs/superpowers/specs/2026-10-04-stones-acceptance.md`.
 5. Integrate the branch: PR or keep designing first.
 
 ## Working with the engine session

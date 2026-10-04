@@ -134,7 +134,8 @@ Dead's weighing (twoStones).
 ## Not yet true
 
 - **Stones and plates are a proposal**, carried beside the shared `Lock` type as `weights`. They need a
-  contract addition and engine work before they bake.
+  contract addition and engine work before they bake; the acceptance criteria are in
+  `docs/superpowers/specs/2026-10-04-stones-acceptance.md`.
 
 - **Region gates and sequences are `built: no`** (`mechanic-contract.md` §6). `waterMoves`,
   `tilesInOrder`, tide, sluice and plates validate and walk, and cannot bake.
