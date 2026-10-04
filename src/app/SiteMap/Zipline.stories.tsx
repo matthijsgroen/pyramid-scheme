@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { AXES, DROP_AT, addressed, dropGrid } from "./floorFixtures.testing"
+import { oneWayRunCells } from "@/game/siteAssembler"
+import { AXES, addressed, dropGrid } from "./floorFixtures.testing"
 import { SiteMapView } from "./SiteMapView"
 import "@/mods/registerModApps"
 
-// A zipline is a one-way drop: a launch, 3 obstacle cells, a landing, with `dropEast`,
+// A zipline is a one-way drop: a launch, its obstacle cells (3 along a row, 1 down the page), a landing, with `dropEast`,
 // `dropNorth` or `dropSouth` drawn across the obstacle. These stories stage it on the real `SiteMapView` path, in a bare corridor, so
 // the art is judged where it lives. The grid is `dropGrid`, the fixture the specs use (`dropArt.spec.ts`).
 //
@@ -11,7 +12,7 @@ import "@/mods/registerModApps"
 // holds a tile drawn 170 x 81 (`DROP_W` x `DROP_H`, 340 x 162 art pixels at 2px to a unit). The tile's
 // bottom edge is the corridor floor's bottom edge; the rest of it stands proud above the corridor.
 //
-// A vertical run is 224 units down the page. `dropNorth` (56 x 74.5) and `dropSouth` (56 x 67) are drawn at
+// A vertical run (launch, 1 obstacle cell, landing) is 224 units down the page. `dropNorth` (56 x 74.5) and `dropSouth` (56 x 67) are drawn at
 // the same scale, centred on it and never stretched, so the plain corridor shows at both ends of them.
 
 const FRAME = "h-[26rem] w-full"
@@ -21,11 +22,11 @@ const FRAME = "h-[26rem] w-full"
 // nobody on it. The fixture names its own indexes, so neither foot is counted by hand here.
 const stage = (travel: "e" | "w" | "n" | "s") => {
   const axis = AXES.find(a => a.travel === travel)!
-  const { grid, at } = dropGrid(axis, "room", "room", "visible")
+  const { grid, at, dropAt } = dropGrid(axis, "room", "room", "visible", "fromNode", oneWayRunCells(travel))
   return {
     grid: addressed({ ...grid, difficulty: "expert" }),
-    launch: at(DROP_AT.launch),
-    landing: at(DROP_AT.landing),
+    launch: at(dropAt.launch),
+    landing: at(dropAt.landing),
   }
 }
 
