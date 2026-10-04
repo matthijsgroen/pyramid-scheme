@@ -4,7 +4,6 @@ import type { BarrierOrder, Control, Obstacle } from "./obstacles"
 import type { OneWayRefusal } from "./oneWayRealisation"
 import type { CarveFault } from "./carveAgreement"
 import type { GateFace } from "./gateFace"
-import type { RealisationMissing } from "./mechanics/realisations"
 import type { LockNesting, LockNestingFault, PlacedLock } from "./floorLocks"
 import type { LockFault, RealisationBinding } from "./lockCompile"
 export type RoomType = "portal" | "fork" | "encounter"
@@ -527,8 +526,9 @@ export type FloorConfig = {
   oneWays?: { from: string; to: string }[]
   /** THE REALISATION EVERY ONE-WAY OF THIS FLOOR IS CROSSED THROUGH, bound here from outside the lock: the
    * id of a one-way realisation a registered mod declares, and what it declares is the prompt the
-   * player takes the crossing through. A floor with a one-way and no usable realisation is refused
-   * (`oneWayRealisationRefused`) before anything is carved; there is no default. */
+   * player takes the crossing through. A floor with a one-way bound to none is refused
+   * (`oneWayRealisationRefused`) before anything is carved; there is no default. One named but declared by
+   * no registered mod carves the same and the one-way is an ordinary passage. */
   oneWayRealisation?: string
   /** A LEVER STANDING IN ONE SECTION THAT OPENS A GATE ON OTHERS. `in` names the section the lever
    * stands in; `left` and `right` name the sections whose entrance gates each side of it owns. All
@@ -570,8 +570,7 @@ export type FloorConfig = {
    * pointing at `regionLayout` by region name (src/game/obstacles.ts). An obstacle is named once here
    * and referred to by id; a control names which obstacles each of its states opens, and is one of core's
    * control kinds (src/game/mechanics). Never dropped when a mod is not registered: the walls carve the same,
-   * and a floor whose controls need a realisation no registered mod provides is refused by name
-   * (`realisationMissing`). */
+   * and what no registered mod realises is taken off the finished carve (src/game/mechanics/realisations.ts). */
   obstacles?: Obstacle[]
   controls?: Control[]
   /** THE ORDER OF THE GATES ON ANY CONNECTION THAT CARRIES SEVERAL, from `between[0]` to `between[1]`
@@ -649,10 +648,6 @@ export type ValidationReason =
 export type ValidationResult = { valid: true } | { valid: false; reasons: ValidationReason[] }
 export type AssemblerReason =
   | ValidationReason
-  /** A mechanic of the floor needs a realisation no registered mod provides. Core owns the kinds and a mod
-   * dresses them, so with the mod gone the floor is refused rather than carved with another standing in.
-   * `mechanic` is the authored id, `kind` its control kind (or "door-face"), `realisation` what went unanswered. */
-  | RealisationMissing
   | { type: "noUngatedSectionForKey" }
   | { type: "layoutNotFound" }
   /** A section cannot be given a name a save could file it under: an authored `label` repeated, one
@@ -695,9 +690,9 @@ export type AssemblerReason =
    * not have, or every attempt ran out before it found two cells of the named ends a node apart with
    * an empty cell between them. */
   | { type: "oneWayUnsatisfied"; from: string; to: string }
-  /** A one-way has no realisation it can be crossed through: it names none (`unbound`), names one no
-   * registered mod declares (`unknown`), or names one that declares no prompt (`noPrompt`). `from`/`to`
-   * name the one-way as authored and `realisation` what it named. */
+  /** A one-way has no realisation it can be crossed through: it names none (`unbound`) or names one that
+   * declares no prompt (`noPrompt`). One no registered mod declares is not refused: it is an ordinary
+   * passage. `from`/`to` name the one-way as authored and `realisation` what it named. */
   | {
       type: "oneWayRealisationRefused"
       from: string

@@ -1,6 +1,7 @@
 import { tier, journey, tomb, wardChest, wardWing } from "../dsl"
 import type { Rule, PathEntry } from "../dsl"
 import { TOMB_ROOMS_PER_FLOOR } from "../data"
+import { doubleBackLock } from "./locks/doubleBack"
 
 // Expert's open side/hidden paths, as reusable arrays so a per-pyramid override can restate them
 // and ADD to them (pyramid-level sidePaths REPLACES the tier's, it doesn't merge).
@@ -287,5 +288,15 @@ export const expertRules: Rule[] = [
   // because its role is funerary and its brief says necropolis, and he is the necropolis. Sobek takes the
   // Nile Delta because that journey's brief already lists a crocodile.
   journey("expert_1").pyramid("last", { patron: "anubis" }),
+  // The Valley of the Kings' last pyramid opens on the designer's doubleBack: a mirror fork whose far side is
+  // reached by ziplines. The lock stands on the main floor and the pyramid's other content is untouched.
+  journey("expert_1").pyramid("last", {
+    floorLocks: {
+      0: {
+        locks: [{ lock: doubleBackLock() }],
+        realisations: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
+      },
+    },
+  }),
   journey("expert_3").pyramid("last", { patron: "sobek" }),
 ]

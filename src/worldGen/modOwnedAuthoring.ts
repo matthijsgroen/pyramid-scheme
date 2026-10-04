@@ -42,10 +42,10 @@ const keepSwitches = (
 
 // MECHANICS ARE CORE AUTHORING AND ARE NEVER DROPPED HERE. `obstacles`, `controls`, `barrierOrder`, `oneWays` and a
 // `{ in }` fork name core's control kinds (src/game/mechanics); only the realisation that dresses one is a mod's.
-// A floor whose mechanics need a realisation no registered mod provides is refused by name when it is assembled
-// (`realisationMissing`), never stripped into a floor that carves differently. `switches` is the one mechanic-like
-// field dropped above: it is a family standing in a junction `forks` already reserved, so dropping it leaves the
-// identical walls and a bare junction, which is what keeps the shipped world buildable with the mod off.
+// A mechanic whose realisation no registered mod provides is carved like any other and taken off the finished carve
+// when the floor is assembled (src/game/mechanics/realisations.ts): bare nodes, open corridors, the same walls.
+// `switches` is the one mechanic-like field dropped above: it is a family standing in a junction `forks` already
+// reserved, so dropping it leaves the identical walls and a bare junction.
 // The resolver is passed explicitly even where there is none, so a caller that has one and forgets to
 // hand it over is a type error rather than a floor whose switch quietly survives its mod.
 export const dropUnownedAuthoring = (

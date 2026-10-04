@@ -55,10 +55,16 @@ A mechanic is a state machine the player drives; how it looks and is operated is
 removed from it is refused with `unknownControlKind`, one added is honoured. The carve reads core authoring
 only, so no mod being present or absent moves a wall.
 
-With a realisation unregistered, `assembleFloor` refuses a floor that authors a mechanic needing it, by name and
-before carving: `realisationMissing` (`mechanic`, `kind`, `realisation`) for a control, a handle or a door that
-needs a face, `oneWayRealisationRefused` for a one-way. There is no default realisation and nothing is stripped.
-Only `switches` is dropped with its family: it fills a junction `forks` reserves, so dropping it leaves the same
+With a realisation unregistered, `assembleFloor` carves the floor exactly as it would with the mod, then takes
+what nothing realises off the finished carve (`degradeUnrealised`, `src/game/mechanics/realisations.ts`): a
+mechanism room is a bare node, a door only such mechanisms owned stands open as ground, a one-way is an
+ordinary two-way passage, a sequence's tiles are plain corridor, and a door whose face has no family wears none.
+The walls are the mod-on walls; only the cells of a drop gain the directions that join it. There is no default
+realisation: what a missing mod leaves is the carve without its mechanics, and the walk finds no lock on it.
+
+A role nobody bound is the author's mistake and is still refused by name, mod on or off: `unboundRole` for a
+lock's mechanism kind, `oneWayRealisationRefused` (`unbound`, `noPrompt`) for a one-way. Only `switches` is
+dropped with its family at build time: it fills a junction `forks` reserves, so dropping it leaves the same
 walls and a bare junction.
 
 ## Layers
