@@ -24,7 +24,7 @@ const holdChestA = (index: number) => wardChest({ tomb: "master_treasure_tomb", 
 // accompany every use (unrelated to this key choice — frees master's own spare index for the path
 // allocator, which would otherwise silently add a brand-new trapped master_a_5 chest). Trade-off:
 // wizard_b_1 is also wizard.ts's own holdChestB(0) key — verified empirically
-// (fragmentHoldback.spec.ts) that this doesn't starve wizard's own holdback balance;
+// (fragmentHoldback.verify.ts) that this doesn't starve wizard's own holdback balance;
 // wizard_treasure_tomb_c index 0 is the documented fallback (more contested — try _b first).
 const wizardWing = () => wardWing({ tomb: "wizard_treasure_tomb_b", index: 0, puzzles: 4 })
 
@@ -34,7 +34,7 @@ const wizardWing = () => wardWing({ tomb: "wizard_treasure_tomb_b", index: 0, pu
 // expert_a_1..4 is reachable well before expert's later tableau runs resolve, and expert_a_1 is
 // owned right after floor 1. Trade-off: expert_a_1 is ALSO expert.ts's own CHEST.master/WING.master
 // tease key (used across roughly half of expert's front-half pyramids) — verified empirically
-// (fragmentHoldback.spec.ts) that the extra competing candidate doesn't starve expert's own
+// (fragmentHoldback.verify.ts) that the extra competing candidate doesn't starve expert's own
 // holdback balance. Difficulty auto-derives to expert.
 const expertEcho = () => wardChest({ tomb: "expert_treasure_tomb", index: 0, puzzles: 1 })
 
@@ -46,7 +46,7 @@ const expertEcho = () => wardChest({ tomb: "expert_treasure_tomb", index: 0, puz
 // eligible, competing candidate for a real starter hieroglyph fragment, unlike starter_a_4 (only
 // reachable after all starter demand is already settled). Trade-off: starter_a_1 is also the key
 // starter.ts's own holdChest/HOLD_CYCLE holdback mechanism uses — verified empirically
-// (fragmentHoldback.spec.ts, golden guard) that the extra competing candidate doesn't starve
+// (fragmentHoldback.verify.ts, golden guard) that the extra competing candidate doesn't starve
 // anything.
 const starterEcho = () => wardChest({ tomb: "starter_treasure_tomb", index: 0, puzzles: 1, endReward: "hieroglyph" })
 

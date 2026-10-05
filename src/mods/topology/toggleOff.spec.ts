@@ -16,7 +16,7 @@ import { allFloors, resolveKeyRequirements, type Floor } from "@/app/SiteMap/wor
 import { buildConfigs } from "@/worldGen/configBuilder"
 import { DEV_JOURNEY_ID } from "@/worldGen/data"
 import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
-// Same sanctioned exception devJourney.spec.ts takes: the dev journey is only buildable from the real,
+// Same sanctioned exception devJourney.verify.ts takes: the dev journey is only buildable from the real,
 // mod-owned currencies and registries.
 import { ALL_CURRENCY_DISTRIBUTIONS } from "@/mods/allCurrencyDistributions"
 import {

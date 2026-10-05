@@ -278,7 +278,7 @@ export const placeFragments = (
         //
         // Tags belonging to ANOTHER GATING currency are deliberately NOT avoided: those compete on
         // the worklist's own terms, and holding back from them breaks the hieroglyph holdback
-        // guarantee (fragmentHoldback.spec.ts). Filler can't compete — it runs after — so only it
+        // guarantee (fragmentHoldback.verify.ts). Filler can't compete — it runs after — so only it
         // needs the reservation. Stable sort keeps the currency's own rank order within each group;
         // still falls back to a tagged slot if that's all that's reachable, so placement never fails
         // where it otherwise would.

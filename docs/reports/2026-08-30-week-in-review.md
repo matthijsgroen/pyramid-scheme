@@ -29,7 +29,7 @@ This closes the long-standing "crocodile needs a major redesign" item.
 - No two rooms in the world hand out the same puzzle; rooms are dealt boards instead of drawing at random.
 - Journeys are read against the catalogue they actually have; tomb journeys dress their puzzles as the tomb;
   the ibis migration draws water puzzles only; papyrus route authored; `prefer` weighting mode added.
-- A role is only authored if its pool can dress it (`rolePools.spec`, `faces.spec` guard this).
+- A role is only authored if its pool can dress it (`rolePools.verify`, `faces.spec` guard this).
 - The Great Pyramid of Giza draws on every puzzle kind, with a lean toward trading puzzles.
 - Seed pass keeps what it finds; `boardIndex` / `enumerateConfigs` added, and the suite stopped re-solving
   boards that already shipped.

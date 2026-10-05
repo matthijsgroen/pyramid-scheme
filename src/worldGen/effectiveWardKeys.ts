@@ -14,7 +14,7 @@ import type { Difficulty } from "../data/difficultyLevels"
 // The gap is not theoretical: a starter pyramid's ward path once opened a JUNIOR floor, so the
 // first key in the game paid out junior mosaic glass and junior fragments before the player had
 // seen a junior expedition (fixed in #171 by tying a ward staircase's target floor difficulty to
-// its key — wardGateInvariants.spec.ts). That check guards the one structural cause; this helper
+// its key — wardGateInvariants.verify.ts). That check guards the one structural cause; this helper
 // exists so a mod can assert the player-facing OUTCOME for its own currency — cross-tier loot is
 // never reachable without a key at least as hard as the loot — and so catch any future cause.
 //

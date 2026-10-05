@@ -24,7 +24,7 @@ const holdChest = (index: number) => wardChest({ tomb: "junior_treasure_tomb", i
 // enough to be a genuinely eligible, competing candidate for a real starter hieroglyph fragment,
 // unlike starter_a_4 (only reachable after all starter demand is already settled). Trade-off:
 // starter_a_1 is also the key starter.ts's own holdChest/HOLD_CYCLE holdback mechanism uses —
-// verified empirically (fragmentHoldback.spec.ts, golden guard) that the extra competing candidate
+// verified empirically (fragmentHoldback.verify.ts, golden guard) that the extra competing candidate
 // doesn't starve anything.
 const starterEcho = () => wardChest({ tomb: "starter_treasure_tomb", index: 0, puzzles: 1, endReward: "hieroglyph" })
 
@@ -37,7 +37,7 @@ const starterEcho = () => wardChest({ tomb: "starter_treasure_tomb", index: 0, p
 // tier. All five stone trinkets then shipped as one copy each on a single floor — one behind a ward
 // gate, one on a hidden path — so missing that floor left the Collection's stone row unfinishable.
 // Ungated on purpose: a gate would put the spread back behind a single key.
-// (lootEconomyInvariants.spec.ts guards both the ≥1-of-each and the spread.)
+// (lootEconomyInvariants.verify.ts guards both the ≥1-of-each and the spread.)
 const oldWorkings = () => sidePath({ puzzles: 1, tier: "starter", endReward: "junk" })
 
 // junior tier's own side-path settings (the tier() rule below) — named here so junior_2 pyramid

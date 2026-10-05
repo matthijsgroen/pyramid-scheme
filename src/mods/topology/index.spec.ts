@@ -39,7 +39,7 @@ describe("the topology mod", () => {
   })
 
   it('places the lightbeam switch only by id, while lightbeam serves the generic "puzzle" pool', () => {
-    // Same seam rolePools.spec.ts's poolForTag uses: the pool a role draws from is every registered
+    // Same seam rolePools.verify.ts's poolForTag uses: the pool a role draws from is every registered
     // family whose tags include it (src/mods/allFamilyMeta.ts's familyBag). A room authored to the
     // "puzzle" role must never be able to draw the switch — its answer is which way out opens, so the
     // board would stand somewhere with no fork under it and solving it would decide nothing. Lightbeam

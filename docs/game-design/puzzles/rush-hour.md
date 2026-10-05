@@ -148,7 +148,7 @@ first signal, the warm cedar is still only the second.
 **That face is what lets the family carry `trade`.** A tag says this family can DRESS as somewhere
 (`familyMeta.ts`'s `faces`), and coloured blocks in lanes are nowhere at all, so the claim waited for the
 art rather than being made on a promise. With rush hour in it, `trade` holds five families — above the four
-`rolePools.spec.ts` asks of any authored role — so a journey may now restrict to it. **None does yet**:
+`rolePools.verify.ts` asks of any authored role — so a journey may now restrict to it. **None does yet**:
 `master.ts` still holds the one-line change for the Great Pyramid of Giza next to the note explaining that
 what remains is a content decision about what that pyramid serves, not a gap in the pool.
 

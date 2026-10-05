@@ -15,7 +15,7 @@ import { MOSAIC_TIERS } from "./mosaicCurrency"
 // 2. A piece harder than the journey hosting it is behind a key at least as hard as the piece.
 //    This is the player-facing outcome, and it regressed for real: a starter pyramid's ward path
 //    opened a JUNIOR floor, so the first ward key in the game handed out junior glass before the
-//    player had set foot in a junior expedition (fixed in #171). `wardGateInvariants.spec.ts`
+//    player had set foot in a junior expedition (fixed in #171). `wardGateInvariants.verify.ts`
 //    guards the structural cause that produced it (a ward staircase's target floor must match its
 //    key's difficulty); this guards the consequence, so ANY future cause is caught — a mis-tiered
 //    loot pocket, a nested subsection, a longer staircase chain — not just that one mechanism.
@@ -30,7 +30,7 @@ const journeyTierOf = (journeyId: string): Difficulty | undefined =>
   difficulties.find(t => journeyId.startsWith(`${t}_`))
 
 // `TreasureReward` is deliberately open (`{ type: string } & Record<string, unknown>`), so a mod
-// narrows to its own reward shape with a predicate — same pattern as mosaicPlacement.spec.ts.
+// narrows to its own reward shape with a predicate — same pattern as mosaicPlacement.verify.ts.
 const isMosaic = (r: TreasureReward): r is TreasureReward & { tier: Difficulty } => r.type === "mosaicPiece"
 
 // Each piece with its own tier lifted out of mosaic's reward vocabulary (`{ type, tier }`).
