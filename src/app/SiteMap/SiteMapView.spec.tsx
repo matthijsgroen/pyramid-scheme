@@ -15,14 +15,13 @@ import { tierPalette } from "./tileMaterials"
 import type {
   CellState,
   DecorationKind,
+  FloorConfig,
   Direction,
   FloorGrid,
   GridCell,
   MechanismRecord,
   RoomCell,
 } from "@/game/siteTypes"
-import { authoredKindsFor } from "./authoredKinds"
-import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor } from "@/game/siteAssembler"
 import { registerFamily } from "@/app/families/familyRegistry"
 import "@/mods/registerModApps"
@@ -2233,19 +2232,6 @@ describe("a stair's pool of light lands on the side the flame is painted", () =>
   })
 })
 
-describe("a rank is dressed with what it is authored to hold", () => {
-  // Reported from play: a crystal — a wizard thing, the gods' vault — stood beside Anubis in the Valley
-  // of the Kings, which is expert. It was a COMPANION, the second prop placed beside one of the same
-  // purpose, and its guard asked only whether a FILE existed. Every kind has a placeholder, so every rank
-  // could reach the whole vocabulary. The world-wide sweep is in `worldFloorAssembly.verify`; this is the
-  // case that names the bug.
-  it("offers no companion the rank never authors, however well it agrees", () => {
-    const expert = authoredKindsFor("expert").props
-    expect(expert).not.toContain("crystal")
-    expect(authoredKindsFor("wizard").props).toContain("crystal")
-  })
-})
-
 describe("nothing on the map is rasterised at the size of the map", () => {
   // THE BUG THIS EXISTS FOR, and it shipped: a `clip-path` resolves in the element's own box, so an
   // element that spans the floor has to be rasterised at the floor's size. v0.43.1 drew the stone as 22
@@ -2253,11 +2239,23 @@ describe("nothing on the map is rasterised at the size of the map", () => {
   // ~350 MB each at a phone's three device pixels to the unit, and iOS Safari killed the tab on entry to
   // any floor. The stone went back to one `<svg>` (one surface the compositor tiles) and every clipped
   // element is now the size of its OWN shape.
+  // An expert-sized floor: a long main path, furnished side branches, a chest at every end.
+  const furnished = {
+    decorations: ["shelf", "jarRack", "offeringTable", "statue", "lamp", "shrine", "pillar", "brazier"],
+    wallDecorations: ["veil", "wallShrine", "sconce"],
+  } satisfies Pick<FloorConfig, "decorations" | "wallDecorations">
+  const branch = { pathPuzzles: 3, difficulty: "expert", end: "treasure", ...furnished } as const
+  const bigFloorConfig: FloorConfig = {
+    pathPuzzles: 6,
+    difficulty: "expert",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    ...furnished,
+    sideSections: [branch, branch, branch],
+  }
   const bigFloor = () => {
-    const floor = generatedWorldConfigs["expert_2"]?.flat()[0]
-    if (!floor) throw new Error("no expert_2 floor to measure")
-    const result = assembleFloor("expert_2", floor, 0)
-    if (!result.success) throw new Error("expert_2 floor did not assemble")
+    const result = assembleFloor("big-floor", bigFloorConfig, 0)
+    if (!result.success) throw new Error("the big floor did not assemble")
     return result.grid
   }
 
