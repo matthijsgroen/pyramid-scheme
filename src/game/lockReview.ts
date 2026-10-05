@@ -64,14 +64,12 @@ export const solveLock = (spec: LockSpec): { steps: string[]; actions: number } 
   return { steps, actions }
 }
 
-// "A@yard B@hand" to "A@yard B@p": the one stone that moved, said as the player did it.
+// "door e1" to "e1 + hand": the one plate that changed, said as the player did it.
 const stoneMove = (before: string, after: string) => {
-  const was = new Set(before.split(" "))
-  const [stone, at] = after
-    .split(" ")
-    .find(place => !was.has(place))!
-    .split("@")
-  return at === "hand" ? `lift ${stone}` : `${stone} on ${at}`
+  const plates = (key: string) => new Set(key.split(" ").filter(token => !["+", "hand", "none"].includes(token)))
+  const [was, is] = [plates(before), plates(after)]
+  const lifted = [...was].find(plate => !is.has(plate))
+  return lifted ? `lift from ${lifted}` : `stone on ${[...is].find(plate => !was.has(plate))}`
 }
 
 /** The regions no order of moves ever stands the player in, stretches aside. */

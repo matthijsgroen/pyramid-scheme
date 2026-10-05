@@ -7,8 +7,6 @@ yard -[r]- chute >> workshop
 yard -[p]- out
 r plate @yard
 p plate @workshop
-shelfA plate @yard
-A stone @shelfA
-shelfB plate @yard
-B stone @shelfB
+pile1 plate @yard stone
+pile2 plate @yard stone
 chute *

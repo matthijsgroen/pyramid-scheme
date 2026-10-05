@@ -7,7 +7,5 @@ yard -[e1+e2]- out
 door plate @yard
 e1 plate @yard
 e2 plate @yard
-shelfA plate @yard
-A stone @shelfA
-shelfB plate @vault
-B stone @shelfB
+ledge plate @yard stone
+alcove plate @vault stone

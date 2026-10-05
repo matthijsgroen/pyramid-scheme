@@ -234,7 +234,7 @@ const drawSketch = (sketch: Sketch): string => {
   while (rows[rows.length - 1] === "") rows.pop()
   const indent = Math.min(...rows.filter(Boolean).map(row => row.length - row.trimStart().length))
   const legend =
-    "■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ● stone   Name:state opens it"
+    "■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it"
   return [
     ...rows.map(row => row.slice(indent)),
     "",
@@ -285,16 +285,13 @@ const sketchOf = (lock: Lock, drafts: readonly string[]): Sketch => {
       )
       const weights = (lock as DraftLock).weights
       const plates = Object.entries(weights?.plates ?? {}).flatMap(([id, plate]) =>
-        plate.in === region ? [`⊙${id}`] : []
-      )
-      const stones = Object.entries(weights?.stones ?? {}).flatMap(([id, stone]) =>
-        weights!.plates[stone.on].in === region ? [`●${id}`] : []
+        plate.in === region ? [`${plate.stone ? "◉" : "⊙"}${id}`] : []
       )
       const barred = Object.entries(lock.gates)
         .filter(([, gate]) => isRegionGate(gate) && gate.region === region)
         .map(([id]) => ` ${open.has(id) ? "░" : "▒"}${condition(id)}`)
         .join("")
-      return [region, `[${[region, ...standing, ...steps, ...plates, ...stones].join(" · ")}${barred}]`]
+      return [region, `[${[region, ...standing, ...steps, ...plates].join(" · ")}${barred}]`]
     })
   )
   return { regions: Object.keys(lock.regions), edges, drops, boxes, notes, in: lock.in, out: lock.out }

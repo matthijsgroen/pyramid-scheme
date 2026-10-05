@@ -26,18 +26,20 @@ stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
 ## 1. Contract
 
 - [ ] The shared `Lock` holds
-      `weights?: { plates: Record<id, { in: RegionId, opens: { weighted: BarrierId[], empty: BarrierId[] } }>, stones: Record<id, { on: plateId }> }`.
-      A plate's `opens` has the same shape as a toggle's, keyed by the plate's two states.
+      `weights?: { plates: Record<id, { in: RegionId, stone: boolean, opens: { weighted: BarrierId[], empty: BarrierId[] } }> }`.
+      Stones are alike and have no ids: a stone is authored as the plate it starts on (`stone: true`). A
+      plate's `opens` has the same shape as a toggle's, keyed by the plate's two states.
       `mechanic-contract.md` gets a section for it, beside the other controls.
-- [ ] Gate owners accept plate ids and `unladen`.
+- [ ] Gate owners accept plate ids and `unladen`, on a gate between two regions or on a barred region.
 - [ ] The engine refuses a lock where a gate needs stones on more plates than the lock has stones, where
-      a stone rests on something that is not a plate, where two stones start on one plate, or where a plate
-      stands somewhere no corridor reaches. These are the refusals `parseLock` already makes.
+      a plate stands in the region it would bar, or where a plate stands somewhere no corridor reaches.
+      These are the refusals `parseLock` already makes.
 - [ ] Every stone lock in `src/game/locks/` parses into a `Lock` the engine accepts without change.
 
 ## 2. Solver
 
-- [ ] The engine's solver walks a stone arrangement as state: where each stone lies, at most one in hand.
+- [ ] The engine's solver walks a stone arrangement as state: which plates hold a stone, and whether the
+      hand holds one.
 - [ ] For each stone lock in the catalogue, the engine's verdict (solvable, regions reached, dead ends)
       equals `yarn lock`'s. A shared fixture test pins this.
 - [ ] Each stone lock fails the engine's solver when its load-bearing piece is taken away, as

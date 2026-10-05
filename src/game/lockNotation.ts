@@ -16,8 +16,8 @@ export const LOCK_SYNTAX = `
   T1 activator @hall            off then on, for good — a torch, or a floor key
   Y fork @in                    a fork puzzle: the gates naming it are its ways
   P sequence hall vault reset hall-vault   steps in order, reset at that gate; -[P]- opens when done
-  p1 plate @hall                a plate: -[p1]- open while a stone rests on it, -[p1:empty]- while none does
-  A stone @p1                   a stone, resting on a plate; a plate that opens nothing is a place to keep one
+  p1 plate @hall   p2 plate @hall stone   a plate, empty or with a stone on it; any stone presses any plate
+  in -[p1]- hall   in -[p1:empty]- hall    open while a stone rests on p1, or while none does
   in -[unladen]- hall           only with empty hands: a zipline, a narrow passage
   hall *   s2 $   spare ?   corridor -     takes puzzles, a reward, anything, nothing
   // comment
@@ -26,14 +26,14 @@ export const LOCK_SYNTAX = `
 /**
  * Stones the player carries and the plates they press — a PROPOSAL the shared Lock type does not hold
  * yet, carried beside it. A stone is always on a plate or in the hand, so lifting one is itself a move
- * that can open or shut a way. A plate is pressed by any stone; the player's own weight never presses
+ * that can open or shut a way. Stones are alike and any one presses any plate, so a stone is authored as
+ * the plate it starts on, not by a name of its own. The player's own weight never presses
  * one, since arriving at a node never acts (node-actions.md).
  */
 export type Weights = {
-  /** What each plate opens while a stone rests on it, and while none does. Both may be empty. */
-  plates: Record<string, { in: string; opens: { weighted: string[]; empty: string[] } }>
-  /** The plate each stone starts on. */
-  stones: Record<string, { on: string }>
+  /** Whether each plate starts with a stone, and what it opens while it holds one and while it holds
+   * none. Both may be empty: a plate that opens nothing is a shelf. */
+  plates: Record<string, { in: string; stone: boolean; opens: { weighted: string[]; empty: string[] } }>
 }
 export type DraftLock = Lock & { weights?: Weights }
 export type ParsedLock = { lock: DraftLock; drafts: string[] }
@@ -68,8 +68,7 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
   const oneWays: Record<string, LockOneWay> = {}
   const declared = new Map<string, Declared>()
   const takes: { region: string; appetite: RegionAppetite; n: number }[] = []
-  const plates = new Map<string, { in: string; n: number }>()
-  const stones = new Map<string, { on: string; n: number }>()
+  const plates = new Map<string, { in: string; stone: boolean; n: number }>()
   const plateOpens = new Map<string, { weighted: string[]; empty: string[] }>()
 
   const unique = (base: string) => {
@@ -116,7 +115,7 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
       })
     joins.push({ between: [from, to], barriers, n })
   }
-  const placed = (id: string) => declared.has(id) || plates.has(id) || stones.has(id)
+  const placed = (id: string) => declared.has(id) || plates.has(id)
   const declare = (n: number, id: string, what: Declared) => {
     if (placed(id)) fail(n, `${id} is placed twice`)
     declared.set(id, what)
@@ -136,10 +135,11 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
       declare(n, m[1], { control: "fork-switch", in: m[2], n })
     } else if ((m = line.match(/^(\w+)\s+sequence\s+((?:\w+\s+)+)reset\s+(\S+)$/))) {
       declare(n, m[1], { control: "sequence", steps: m[2].trim().split(/\s+/), resetAt: m[3], n })
-    } else if ((m = line.match(/^(\w+)\s+(plate|stone)\s+@(\w+)$/))) {
+    } else if ((m = line.match(/^(\w+)\s+plate\s+@(\w+)(\s+stone)?$/))) {
       if (placed(m[1])) fail(n, `${m[1]} is placed twice`)
-      if (m[2] === "plate") plates.set(m[1], { in: m[3], n })
-      else stones.set(m[1], { on: m[3], n })
+      plates.set(m[1], { in: m[2], stone: m[3] !== undefined, n })
+    } else if (/^\w+\s+stone\b/.test(line)) {
+      fail(n, "a stone is written on the plate it rests on: p plate @hall stone")
     } else if ((m = line.match(/^(\w+)\s+([$*?-])$/))) {
       takes.push({ region: m[1], appetite: APPETITE[m[2]], n })
     } else if ((m = line.match(/^(\w+)\s+-\[([^\]]*)\]$/))) {
@@ -171,6 +171,7 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
     regions.set(r, appetite)
   }
 
+  const stones = [...plates.values()].filter(plate => plate.stone).length
   const opens = new Map<string, Record<string, string[]>>()
   const drafts = new Set<string>()
   for (const [id, gate] of Object.entries(gates)) {
@@ -181,10 +182,12 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
     }
     for (const { owner, state } of list) {
       if ((CARRY_TERMS as readonly string[]).includes(owner)) {
-        if (stones.size === 0) fail(n, `${owner} asks about stones, and the lock has none`)
+        if (stones === 0) fail(n, `${owner} asks about stones, and the lock has none`)
         continue
       }
       if (plates.has(owner)) {
+        if ("region" in gate && plates.get(owner)!.in === gate.region)
+          fail(n, `${owner} stands in ${gate.region}, which it would bar`)
         const side = state ?? "weighted"
         if (side !== "weighted" && side !== "empty") fail(n, `plate ${owner} has no state ${side}`)
         const table = plateOpens.get(owner) ?? { weighted: [], empty: [] }
@@ -218,15 +221,10 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
   }
 
   for (const [, plate] of plates) if (!regions.has(plate.in)) fail(plate.n, `no corridor reaches ${plate.in}`)
-  for (const [id, stone] of stones) {
-    if (!plates.has(stone.on)) fail(stone.n, `${id} rests on ${stone.on}, which is no plate`)
-    const other = [...stones].find(([o, s]) => o !== id && s.on === stone.on)
-    if (other && other[1].n > stone.n) fail(other[1].n, `${other[0]} rests on ${stone.on}, which ${id} already holds`)
-  }
   for (const [id, gate] of Object.entries(gates)) {
     const pressed = gate.owners.filter(owner => plateOpens.get(owner)?.weighted.includes(id)).length
     const needed = gate.mode === "any" ? Math.min(pressed, 1) : pressed
-    if (needed > stones.size) fail(terms[id].n, `${id} needs stones on ${needed} plates, the lock has ${stones.size}`)
+    if (needed > stones) fail(terms[id].n, `${id} needs stones on ${needed} plates, the lock has ${stones}`)
   }
 
   const mechanics: Record<string, LockMechanic> = {}
@@ -267,16 +265,15 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
       gates,
       ...(Object.keys(oneWays).length > 0 ? { oneWays } : {}),
       mechanics,
-      ...(stones.size > 0
+      ...(plates.size > 0
         ? {
             weights: {
               plates: Object.fromEntries(
                 [...plates].map(([id, plate]) => [
                   id,
-                  { in: plate.in, opens: plateOpens.get(id) ?? { weighted: [], empty: [] } },
+                  { in: plate.in, stone: plate.stone, opens: plateOpens.get(id) ?? { weighted: [], empty: [] } },
                 ])
               ),
-              stones: Object.fromEntries([...stones].map(([id, stone]) => [id, { on: stone.on }])),
             },
           }
         : {}),

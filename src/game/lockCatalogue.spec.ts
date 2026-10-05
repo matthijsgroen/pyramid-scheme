@@ -126,15 +126,15 @@ describe("what the newer locks' tricks rest on", () => {
 
 describe("what the stone locks' tricks rest on", () => {
   it("twoStones: a stone spent twice — the first holds the vault, then presses the exit", () => {
-    expect(solveLock(walkSpecOf(LOCK_CATALOGUE.twoStones.lock))!.steps.filter(step => step === "lift A")).toHaveLength(
-      2
-    )
+    const steps = solveLock(walkSpecOf(LOCK_CATALOGUE.twoStones.lock))!.steps
+    expect(steps.indexOf("lift from door")).toBeGreaterThan(steps.indexOf("stone on door"))
+    expect(steps).toContain("lift from door")
   })
 
   it("twoStones: with the vault's plate inside, both stones can never be out", () => {
-    const inside = edited("twoStones", "door plate @yard", "door plate @vault").replace(
-      "A stone @yard",
-      "A stone @door"
+    const inside = edited("twoStones", "door plate @yard", "door plate @vault stone").replace(
+      "ledge plate @yard stone",
+      "ledge plate @yard"
     )
     expect(walkText(inside)).toEqual({ sound: false, failure: { type: "unsolvable" } })
   })

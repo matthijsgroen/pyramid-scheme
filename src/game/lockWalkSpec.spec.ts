@@ -123,52 +123,58 @@ describe("weights", () => {
     door plate @yard
     e1 plate @yard
     e2 plate @yard
-    shelf plate @yard
-    ledge plate @vault
-    A stone @shelf
-    B stone @ledge
+    ledge plate @yard stone
+    alcove plate @vault stone
   `
+  const carrying = (config: Record<string, string>) => /hand/.test(Object.values(config).join())
 
   it("walks the two-stone vault sound: one stone holds the door while the other is fetched", () => {
     expect(walkLock(compiled(TWO_STONES))).toEqual({ sound: true, states: expect.any(Number) })
   })
 
   it("can never bring both stones out when the vault's plate stands inside it", () => {
-    const inside = TWO_STONES.replace("door plate @yard", "door plate @vault").replace(
-      "A stone @shelf",
-      "A stone @door"
+    const inside = TWO_STONES.replace("door plate @yard", "door plate @vault stone").replace(
+      "ledge plate @yard stone",
+      "ledge plate @yard"
     )
     expect(walkLock(compiled(inside))).toEqual({ sound: false, failure: { type: "unsolvable" } })
   })
 
   it("lets nobody through a narrow passage with a stone in hand", () => {
     const found = reachableStates(
-      compiled("in -[unladen]- hall\nhall -- out\nin -[p]- out\np plate @hall\nshelf plate @in\nA stone @shelf")
+      compiled("in -[unladen]- hall\nhall -- out\nin -[p]- out\np plate @hall\nshelf plate @in stone")
     )
     if (found === "tooLarge") throw new Error("expected a walkable lock")
-    expect(
-      found.order.some(state => state.region === "hall" && /A@hand/.test(Object.values(state.config).join()))
-    ).toBe(false)
+    expect(found.order.some(state => state.region === "hall" && carrying(state.config))).toBe(false)
   })
 
   it("never lets a stone leave by the way out", () => {
-    const found = reachableStates(compiled("in -- out\nshelf plate @in\nA stone @shelf"))
+    const found = reachableStates(compiled("in -- out\nshelf plate @in stone"))
     if (found === "tooLarge") throw new Error("expected a walkable lock")
-    expect(found.order.some(state => state.region === "out" && /A@hand/.test(Object.values(state.config).join()))).toBe(
-      false
-    )
+    expect(found.order.some(state => state.region === "out" && carrying(state.config))).toBe(false)
   })
 
   it("opens an :empty way by lifting the stone off its plate, and keeps it shut while every plate is full", () => {
-    const idol = compiled("in -[p:empty]- out\np plate @in\nshelf plate @in\nA stone @p")
-    expect(walkLock(idol)).toEqual({ sound: true, states: expect.any(Number) })
-    expect(walkLock(compiled("in -[p:empty]- out\np plate @in\nshelf plate @in\nA stone @p\nB stone @shelf"))).toEqual({
+    expect(walkLock(compiled("in -[p:empty]- out\np plate @in stone\nshelf plate @in"))).toEqual({
+      sound: true,
+      states: expect.any(Number),
+    })
+    expect(walkLock(compiled("in -[p:empty]- out\np plate @in stone\nshelf plate @in stone"))).toEqual({
       sound: false,
       failure: { type: "unsolvable" },
     })
   })
 
+  it("opens a barred region while its plate holds a stone", () => {
+    const vault = "in -- hall\nhall -- vault\nvault -- out\nvault -[p]\np plate @hall\nshelf plate @in stone"
+    expect(walkLock(compiled(vault))).toEqual({ sound: true, states: expect.any(Number) })
+    expect(walkLock(compiled(vault.replace("vault -[p]", "vault -[p:empty]")))).toEqual({
+      sound: true,
+      states: expect.any(Number),
+    })
+  })
+
   it("opens a plate's gate at the start when a stone already rests on it", () => {
-    expect(openAtStart(parseLock("in -[p]- out\np plate @in\nA stone @p").lock)).toEqual(["in-out"])
+    expect(openAtStart(parseLock("in -[p]- out\np plate @in stone").lock)).toEqual(["in-out"])
   })
 })

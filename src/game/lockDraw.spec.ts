@@ -52,12 +52,10 @@ describe("drawLock", () => {
 })
 
 describe("drawLock, with stones", () => {
-  it("shows plates and where the stones start", () => {
-    const art = draw(
-      "in -- yard\nyard -[door]- out\ndoor plate @yard\nshelf plate @yard\nA stone @shelf\nB stone @door"
-    )
-    expect(art).toContain("⊙door")
-    expect(art).toContain("●A")
+  it("shows the plates, and which of them hold a stone", () => {
+    const art = draw("in -- yard\nyard -[door]- out\ndoor plate @yard stone\nshelf plate @yard")
+    expect(art).toContain("◉door")
+    expect(art).toContain("⊙shelf")
     expect(art).toContain("□door")
   })
 })
