@@ -1,4 +1,4 @@
-import type { Difficulty } from "@/data/difficultyLevels"
+import { difficulties, isDifficultyReleased, type Difficulty } from "@/data/difficultyLevels"
 import { TIER_UNLOCK_PERK_IDS } from "@/data/treasurePerks"
 import type { Journey } from "@/data/journeys"
 
@@ -13,12 +13,20 @@ import type { Journey } from "@/data/journeys"
 // Within a tier, journeys still open one at a time: the tier's first is available as soon as the
 // tier is, each later one when the pyramid before it has been completed.
 
-export const isTierUnlocked = (difficulty: Difficulty, heldKeys: ReadonlySet<string>): boolean => {
+const holdsTierKey = (difficulty: Difficulty, heldKeys: ReadonlySet<string>): boolean => {
   // The first tier has no entry key — nothing gates the start of the game.
   const keys = TIER_UNLOCK_PERK_IDS[difficulty]
   if (!keys) return true
   return keys.some(keyId => heldKeys.has(keyId))
 }
+
+export const isTierUnlocked = (difficulty: Difficulty, heldKeys: ReadonlySet<string>): boolean =>
+  isDifficultyReleased(difficulty) && holdsTierKey(difficulty, heldKeys)
+
+// The player earned the key to a tier this release doesn't ship yet — they've reached the end of
+// the content and should be told more is coming, not left wondering why nothing opened.
+export const comingSoonDifficulty = (heldKeys: ReadonlySet<string>): Difficulty | undefined =>
+  difficulties.find(d => !isDifficultyReleased(d) && holdsTierKey(d, heldKeys))
 
 export const availablePyramidJourneyIds = (
   journeys: readonly Journey[],
