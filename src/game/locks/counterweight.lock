@@ -7,6 +7,8 @@ gallery -[low]- chamber
 chamber -[q+low]- out
 low plate @chamber
 q plate @chamber
-A stone @gallery
-B stone @chamber
+shelfA plate @gallery
+A stone @shelfA
+shelfB plate @chamber
+B stone @shelfB
 gallery *

@@ -288,7 +288,7 @@ const sketchOf = (lock: Lock, drafts: readonly string[]): Sketch => {
         plate.in === region ? [`⊙${id}`] : []
       )
       const stones = Object.entries(weights?.stones ?? {}).flatMap(([id, stone]) =>
-        (weights!.plates[stone.at]?.in ?? stone.at) === region ? [`●${id}`] : []
+        weights!.plates[stone.on].in === region ? [`●${id}`] : []
       )
       const barred = Object.entries(lock.gates)
         .filter(([, gate]) => isRegionGate(gate) && gate.region === region)

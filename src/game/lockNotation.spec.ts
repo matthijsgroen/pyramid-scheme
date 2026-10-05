@@ -150,34 +150,52 @@ describe("weights", () => {
     door plate @yard
     e1 plate @yard
     e2 plate @yard
-    A stone @yard
-    B stone @vault
+    ledge plate @vault
+    A stone @door
+    B stone @ledge
   `
 
   it("reads plates and stones beside the Lock, and plates on gates are not drafts", () => {
     const { lock, drafts } = parseLock(TWO_STONES)
     expect(drafts).toEqual([])
     expect(lock.weights).toEqual({
-      plates: { door: { in: "yard" }, e1: { in: "yard" }, e2: { in: "yard" } },
-      stones: { A: { at: "yard" }, B: { at: "vault" } },
+      plates: {
+        door: { in: "yard", opens: { weighted: ["yard-vault"], empty: [] } },
+        e1: { in: "yard", opens: { weighted: ["yard-out"], empty: [] } },
+        e2: { in: "yard", opens: { weighted: ["yard-out"], empty: [] } },
+        ledge: { in: "vault", opens: { weighted: [], empty: [] } },
+      },
+      stones: { A: { on: "door" }, B: { on: "ledge" } },
     })
     expect(lock.gates["yard-out"]).toEqual({ from: "yard", to: "out", owners: ["e1", "e2"] })
   })
 
+  it("reads :empty as a way that opens while the plate holds no stone", () => {
+    const { lock } = parseLock("in -[p:empty]- out\np plate @in\nA stone @p")
+    expect(lock.weights!.plates.p.opens).toEqual({ weighted: [], empty: ["in-out"] })
+  })
+
+  it("keeps a plate that opens nothing, as a place to set a stone", () => {
+    const { lock } = parseLock("in -- out\nshelf plate @in\nA stone @shelf")
+    expect(lock.weights!.plates.shelf.opens).toEqual({ weighted: [], empty: [] })
+  })
+
   it("reads unladen as a condition on the stones, not as an owner to place", () => {
-    const { drafts } = parseLock("in -[unladen]- hall\nhall -- out\nA stone @in")
+    const { drafts } = parseLock("in -[unladen]- hall\nhall -- out\nshelf plate @in\nA stone @shelf")
     expect(drafts).toEqual([])
   })
 
   it.each([
     [
-      "in -[p1+p2]- out\np1 plate @in\np2 plate @in\nA stone @in",
+      "in -[p1+p2]- out\np1 plate @in\np2 plate @in\nshelf plate @in\nA stone @shelf",
       "line 1: in-out needs stones on 2 plates, the lock has 1",
     ],
-    ["in -- out\nA stone @cellar", "line 2: no corridor reaches cellar"],
-    ["in -- out\np plate @in", "line 2: p owns no gate"],
+    ["in -- out\nA stone @in", "line 2: A rests on in, which is no plate"],
+    ["in -- out\np plate @cellar", "line 2: no corridor reaches cellar"],
+    ["in -[p:held]- out\np plate @in\nA stone @p", "line 1: plate p has no state held"],
+    ["in -- out\np plate @in\nA stone @p\nB stone @p", "line 4: B rests on p, which A already holds"],
     ["in -[unladen]- out", "line 1: unladen asks about stones, and the lock has none"],
-    ["in -- out\nA stone @in\nA stone @out", "line 3: A is placed twice"],
+    ["in -- out\np plate @in\nA stone @p\nA stone @p", "line 4: A is placed twice"],
   ])("refuses %j", (text, message) => {
     expect(() => parseLock(text)).toThrow(message)
   })

@@ -3,4 +3,5 @@
 in -- yard
 yard -[p]- out
 p plate @yard
-A stone @yard
+shelfA plate @yard
+A stone @shelfA

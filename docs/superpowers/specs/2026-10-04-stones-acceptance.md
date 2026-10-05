@@ -7,23 +7,32 @@ stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
 
 ## The rules, in one place
 
-- A **stone** lies loose on its own spot, rests on a plate, or is in the player's hand.
-- **One stone in hand.** It is set down only on an empty plate or back on its own spot. Nowhere else.
-- A **plate** presses its gates while a stone rests on it. The player's own weight never presses a plate.
+- A **stone** rests on a plate or is in the player's hand. Nothing else: there is no loose stone.
+- **Lifting a stone empties its plate**, so picking one up is a move that can open or shut a way by
+  itself.
+- **One stone in hand.** It is set down only on an empty plate.
+- A **plate** is live. A way can open while it holds a stone (`-[p]-`) or while it holds none
+  (`-[p:empty]-`), and follows it both ways, never latching. The player's own weight never presses a
+  plate.
+- A plate may open nothing: a shelf or a pedestal, somewhere to keep a stone.
+- All plates look alike. A way shows the plates it waits for, and which state it wants.
 - A gate owner may be a plate or `unladen` (empty hands), alongside levers and the rest, under `and` or
   `any`.
+- **No swapping.** With a stone in hand, another stone cannot be lifted.
 - **Some ways cannot be taken with a stone in hand:** a zipline, a narrow passage, a staircase and the
   way out. The first two are written in the lock as `-[unladen]-`; the stairs and the way out always take
   empty hands, so a stone never leaves its floor.
 
 ## 1. Contract
 
-- [ ] The shared `Lock` holds `weights?: { plates: Record<id, { in: RegionId }>, stones: Record<id, { at: RegionId | plateId }> }`,
-      and `mechanic-contract.md` gets a section for it, beside the other controls.
+- [ ] The shared `Lock` holds
+      `weights?: { plates: Record<id, { in: RegionId, opens: { weighted: BarrierId[], empty: BarrierId[] } }>, stones: Record<id, { on: plateId }> }`.
+      A plate's `opens` has the same shape as a toggle's, keyed by the plate's two states.
+      `mechanic-contract.md` gets a section for it, beside the other controls.
 - [ ] Gate owners accept plate ids and `unladen`.
-- [ ] The engine refuses a lock where a gate needs stones on more plates than the lock has stones, where a
-      plate owns no gate, or where a stone starts somewhere no corridor reaches. These are the refusals
-      `parseLock` already makes.
+- [ ] The engine refuses a lock where a gate needs stones on more plates than the lock has stones, where
+      a stone rests on something that is not a plate, where two stones start on one plate, or where a plate
+      stands somewhere no corridor reaches. These are the refusals `parseLock` already makes.
 - [ ] Every stone lock in `src/game/locks/` parses into a `Lock` the engine accepts without change.
 
 ## 2. Solver
@@ -38,7 +47,7 @@ stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
 
 ## 3. Carve and bake
 
-- [ ] Each plate and each stone's own spot is a node in its region.
+- [ ] Each plate is a node in its region.
 - [ ] An `unladen` passage binds to a realisation like any gate (`mechanic-contract.md`, "Binding a
       realisation"): a zipline, or a **narrow passage**, which is a new realisation with its own art.
 - [ ] On a floor with stones, binding a zipline or a narrow passage where the lock lets a stone through
@@ -52,20 +61,19 @@ stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
 
 All through node actions (`node-actions.md`): arriving never acts, standing offers.
 
-- [ ] On a stone's node, with empty hands: **"Pick up the stone"**.
-- [ ] On an empty plate, carrying: **"Set the stone on the plate"**. Every gate the plate opens does so at
-      once, visibly.
-- [ ] On a plate holding a stone, with empty hands: **"Lift the stone"**. Its gates shut unless something
-      else still holds them.
-- [ ] On the carried stone's own spot: **"Put the stone back"**.
-- [ ] No set-down is offered anywhere else, and no pick-up while already carrying.
+- [ ] On a plate holding a stone, with empty hands: **"Lift the stone"**. The plate's ways change at once,
+      visibly: a way waiting for a stone shuts, a way waiting for an empty plate opens.
+- [ ] On an empty plate, carrying: **"Set the stone on the plate"**. The same ways change back.
+- [ ] No set-down is offered anywhere else, and no lift while already carrying.
 - [ ] The explorer is drawn carrying the stone while it is in hand (see "The carrying explorer").
 - [ ] A walk that crosses an `unladen` passage while carrying **stops on the near side** and says why
       ("Too narrow to carry the stone through"; a zipline: "You need both hands for the zipline").
 - [ ] The way out and every staircase stop a carrying walk the same way: "Set the stone down first".
-- [ ] A door held by plates shows its condition: how many plates it waits for and how many hold a stone
-      (`mechanic-contract.md`, "A gate shows its own condition").
-- [ ] Plates and loose stones are seen on the floor map from anywhere, once their room has been seen.
+- [ ] A door held by plates shows its condition: which plates it waits for, whether it wants each one
+      weighted or empty, and which already agree (`mechanic-contract.md`, "A gate shows its own
+      condition").
+- [ ] Plates and the stones on them are seen on the floor map from anywhere, once their room has been
+      seen.
 
 ## The carrying explorer
 

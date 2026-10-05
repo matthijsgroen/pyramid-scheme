@@ -29,8 +29,8 @@ in ▸ Y:in-west ▸ west ▸ A:b ▸ ⤓in ▸ Y:in-out ▸ out"
 `;
 
 exports[`counterweight > draws, with its cheapest way through 1`] = `
-"                                                                      ╭╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌▼
-→ [in]───────────────────────────────────────────────────[gallery · ●A]──────────────────■low──────────────────[chamber · ⊙low · ⊙q · ●B]───────────────────■q+low────────────────────[out] →
+"                                                                                               ╭╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌▼
+→ [in]──────────────────────────────────────────────────────────────────[gallery · ⊙shelfA · ●A]───────────────────────■low───────────────────────[chamber · ⊙low · ⊙q · ⊙shelfB · ●B]───────────────────────────■q+low───────────────────────────[out] →
 
 gallery -[□unladen]- >> chamber
 ■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ● stone   Name:state opens it
@@ -114,13 +114,13 @@ in ▸ Y:in-west ▸ west ▸ A:b ▸ ⤓east ▸ B:b ▸ out"
 `;
 
 exports[`masonsRamp > draws, with its cheapest way through 1`] = `
-"                                               [workshop · ⊙p]◀╌╌╌╌╌╌╌╌╌╌╌╌╌[chute]
-                                                      │                        │
-                                                      □unladen                 ■r
-                                                      │                        │
-                                                      ├────────────────────────┘
-                                                      │
-→ [in]──────────────────────────────────────[yard · ⊙r · ●A · ●B]─────────────────■p──────────────────[out] →
+"                                                                                       [workshop · ⊙p]◀╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌[chute]
+                                                                                              │                                            │
+                                                                                              □unladen                                     ■r
+                                                                                              │                                            │
+                                                                                              ├────────────────────────────────────────────┘
+                                                                                              │
+→ [in]────────────────────────────────────────────────────────────────────[yard · ⊙r · ⊙shelfA · ⊙shelfB · ●A · ●B]────────────────────────────────■p─────────────────────────────────[out] →
 
 ■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ● stone   Name:state opens it
 
@@ -271,13 +271,13 @@ in ▸ Y:in-west ▸ west ▸ A:b ▸ in ▸ Y:in-east ▸ east ▸ B:b ▸ in �
 `;
 
 exports[`twoStones > draws, with its cheapest way through 1`] = `
-"                                                                    [vault · ●B]
-                                                                          │
-                                                                          ■door
-                                                                          │
-                                                                          │
-                                                                          │
-→ [in]─────────────────────────────────────────────────────[yard · ⊙door · ⊙e1 · ⊙e2 · ●A]───────────────────────■e1+e2───────────────────────[out] →
+"                                                                                   [vault · ⊙shelfB · ●B]
+                                                                                              │
+                                                                                              ■door
+                                                                                              │
+                                                                                              │
+                                                                                              │
+→ [in]────────────────────────────────────────────────────────────────────[yard · ⊙door · ⊙e1 · ⊙e2 · ⊙shelfA · ●A]──────────────────────────────■e1+e2───────────────────────────────[out] →
 
 ■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ● stone   Name:state opens it
 

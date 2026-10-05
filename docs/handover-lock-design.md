@@ -48,8 +48,9 @@ counterweight ⚠. **9 lessons** in `locks/lessons/`. Each lock is held to a tes
 load-bearing piece (`lockCatalogue.spec.ts`). ⚠ = needs engine work: region gates (water), sequences
 (tiles), stones.
 
-**Stones (prototype, this branch only).** A stone is carried one at a time and set on a plate or back on
-its own spot; a plate holds its door while a stone rests on it; the player never presses a plate. A door
+**Stones (prototype, this branch only).** A stone rests on a plate or is carried, one at a time; lifting
+it empties the plate. A plate opens a way while weighted (`-[p]-`) or while empty (`-[p:empty]-`), or opens
+nothing (a shelf); the player never presses a plate. A door
 on two plates needs two stones (refused otherwise). `-[unladen]-` = empty hands only (narrow passage,
 zipline). A stone never leaves its floor (the stairs and the way out take empty hands), so
 return visits are proved by the walk. Carried beside the `Lock` as `weights` — **a proposal, not in the

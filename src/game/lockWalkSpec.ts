@@ -23,35 +23,37 @@ export const readable = (text: string) =>
 
 type Hop = { kind: "gate" | "oneWay" | "region"; id: string }
 
-// Where each stone lies, by stone: a plate's id, its own loose spot (its starting region), or the hand.
+// Where each stone lies, by stone: a plate's id, or the hand.
 type Positions = Record<string, string>
 const positionsKey = (positions: Positions) =>
   Object.entries(positions)
     .map(([stone, at]) => `${stone}@${at}`)
     .join(" ")
 const startPositions = (weights: Weights): Positions =>
-  Object.fromEntries(Object.entries(weights.stones).map(([id, s]) => [id, s.at]))
+  Object.fromEntries(Object.entries(weights.stones).map(([id, s]) => [id, s.on]))
 
 const isWeightTerm = (weights: Weights | undefined, owner: string) =>
   weights !== undefined && (owner in weights.plates || (CARRY_TERMS as readonly string[]).includes(owner))
 
-/** Whether one condition on the stones holds: a plate pressed, or empty hands. */
-const weightSays = (term: string, positions: Positions) => {
+/** Whether one condition on gate `id` holds: empty hands, or a plate weighted or empty as the gate asks. */
+const weightSays = (weights: Weights, id: string, term: string, positions: Positions) => {
   const at = Object.values(positions)
   if (term === "unladen") return !at.includes(HAND)
-  return at.includes(term)
+  return weights.plates[term].opens.empty.includes(id) ? !at.includes(term) : at.includes(term)
 }
 
 /** A gate's say from the stones: every condition on them, or one of them under any. Undefined when the
  * gate asks nothing of the stones. */
 const stonesSay = (
-  weights: Weights | undefined,
+  weights: Weights,
+  id: string,
   gate: { owners: readonly string[]; mode?: string },
   positions: Positions
 ) => {
   const terms = gate.owners.filter(owner => isWeightTerm(weights, owner))
   if (terms.length === 0) return undefined
-  return gate.mode === "any" ? terms.some(t => weightSays(t, positions)) : terms.every(t => weightSays(t, positions))
+  const says = (t: string) => weightSays(weights, id, t, positions)
+  return gate.mode === "any" ? terms.some(says) : terms.every(says)
 }
 
 export const walkSpecOf = (authored: Lock, drafts: readonly string[] = []): LockSpec => {
@@ -181,10 +183,9 @@ export const walkSpecOf = (authored: Lock, drafts: readonly string[] = []): Lock
   return { regions, gates, mechanisms, oneWays, in: lock.in, out: lock.out }
 }
 
-// Every arrangement of the stones the player can reach: one in hand at most, a stone set down only on an
-// empty plate or back on its own loose spot, lifted and set where it lies.
+// Every arrangement of the stones the player can reach: one in hand at most, lifted from its plate and set
+// down only on an empty one.
 const weightsMechanism = (lock: Lock, weights: Weights, opened: (ids: readonly string[]) => string[]): Mechanism => {
-  const regionOf = (stone: string, at: string) => weights.plates[at]?.in ?? weights.stones[stone].at
   const start = startPositions(weights)
   const states = new Map<string, Positions>([[positionsKey(start), start]])
   const transitions: Mechanism["transitions"] = []
@@ -193,11 +194,10 @@ const weightsMechanism = (lock: Lock, weights: Weights, opened: (ids: readonly s
     const carried = Object.keys(here).find(stone => here[stone] === HAND)
     const moves: [Positions, string][] = []
     if (carried) {
-      const home = weights.stones[carried].at
       const free = Object.keys(weights.plates).filter(plate => !Object.values(here).includes(plate))
-      for (const spot of [...free, ...(home in weights.plates ? [] : [home])])
-        moves.push([{ ...here, [carried]: spot }, regionOf(carried, spot)])
-    } else for (const stone of Object.keys(here)) moves.push([{ ...here, [stone]: HAND }, regionOf(stone, here[stone])])
+      for (const plate of free) moves.push([{ ...here, [carried]: plate }, weights.plates[plate].in])
+    } else
+      for (const stone of Object.keys(here)) moves.push([{ ...here, [stone]: HAND }, weights.plates[here[stone]].in])
     for (const [next, at] of moves) {
       const key = positionsKey(next)
       if (!states.has(key)) {
@@ -213,7 +213,7 @@ const weightsMechanism = (lock: Lock, weights: Weights, opened: (ids: readonly s
     opens: Object.fromEntries(
       [...states].map(([key, positions]) => [
         key,
-        opened(Object.keys(lock.gates).filter(id => stonesSay(weights, lock.gates[id], positions))),
+        opened(Object.keys(lock.gates).filter(id => stonesSay(weights, id, lock.gates[id], positions))),
       ])
     ),
     transitions,
@@ -227,7 +227,7 @@ export const openAtStart = (lock: Lock): string[] => {
   return Object.entries(lock.gates)
     .filter(([id, gate]) => {
       const says = gate.owners.map(owner => {
-        if (isWeightTerm(weights, owner)) return weightSays(owner, start)
+        if (isWeightTerm(weights, owner)) return weightSays(weights!, id, owner, start)
         const m = lock.mechanics[owner]
         return m !== undefined && "starts" in m && (m.opens[m.starts] ?? []).includes(id)
       })

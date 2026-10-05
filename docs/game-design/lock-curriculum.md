@@ -115,12 +115,15 @@ doubleBacks in two journeys can play differently while the lock stays one file.
 
 ## Stones
 
-A stone is carried and set down; a plate holds its door open while a stone rests on it. The player's own
-weight never presses a plate — arriving at a node never acts (`node-actions.md`) — so a door on two plates
-needs two stones, and the tool refuses one that asks for more stones than the lock has.
+A stone rests on a plate or is in the player's hand, never loose, so lifting one is a move of its own:
+it empties a plate. A plate is live and opens a way either while it holds a stone (`-[p]-`) or while it
+holds none (`-[p:empty]-`): lift the idol and the door moves. A plate that opens nothing is a shelf, a
+place to keep a stone. The player's own weight never presses a plate — arriving at a node never acts
+(`node-actions.md`) — so a door on two plates needs two stones, and the tool refuses one that asks for
+more stones than the lock has.
 
-- **One stone in hand.** It is set down only on an empty plate or back on its own starting spot, never
-  just anywhere, so where the stones are is always one of a few arrangements the walk can prove.
+- **One stone in hand, and no swapping.** It is set down only on an empty plate, so where the stones are
+  is always one of a few arrangements the walk can prove.
 - **A zipline and a narrow passage cannot be passed with a stone.** The lock writes it as `-[unladen]-`,
   and binding either realisation where the lock lets a stone through is refused: a realisation may not
   change what the walk sees (`mechanic-contract.md`, "Three layers").
