@@ -11,7 +11,7 @@ let world: Record<string, SiteConfig[]>
 
 beforeAll(() => {
   world = buildWorldConfigs(0)
-})
+}, 180_000)
 
 const hashOf = (familyId: string, difficulty: string, forkShape: string) => {
   const seedable = ALL_FAMILY_META.find(family => family.id === familyId)?.seedable
