@@ -306,6 +306,10 @@ export type RoomCell = {
    * from every other glyph on the floor). The sequence's one record sits on the tile of step 0; every
    * tile works the moves that record places at it through `worksMechanism`. */
   sequenceTile?: { id: string; step: number; glyph: number }
+  /** A PLATE OF A LOCK'S STONES (src/game/weightsPlates.ts). Whether a stone rests on it is the stones'
+   * mechanism state, never the cell's: the record sits on the lock's first plate, and every plate works the
+   * moves that record places at it through `worksMechanism`. */
+  plate?: { id: string }
   /** WHICH MECHANISM THIS ROOM BELONGS TO, said in a glyph on a coloured ground (src/app/SiteMap/mark.tsx).
    * A mechanism's room and every gate it owns carry the same pair, and that pairing is the only thing
    * on the floor that says which lever drives which door. Unset everywhere else. */
@@ -787,6 +791,8 @@ export type AssemblerReason =
   /** No carve found a free corridor node in the region a sequence's step names, for every step that
    * needs its own tile there. `id` is the sequence, `step` the first step left without a tile. */
   | { type: "sequenceTileNotPlaced"; id: string; step: number }
+  /** No carve found a free corridor node for a plate in its region. `plate` is the first plate left without one. */
+  | { type: "plateNotPlaced"; plate: string }
   /** The floor's mechanics (and sequence tiles) need more distinct glyphs than the six a mark can wear,
    * so a mark would be shared. `ids` are the ones left without a glyph, in authoring order. */
   | { type: "marksExhausted"; ids: string[] }

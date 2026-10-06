@@ -77,7 +77,7 @@ const walkGraphOf = (
 // A tile stands on a bare corridor node of its region that nothing walks round: ground the player walks onto,
 // with nothing else on it. Nodes only (even/even), since a connector between two nodes is not somewhere a
 // walk stops.
-const isCandidate = (cell: GridCell, r: number, c: number, region: string): boolean =>
+export const isCandidate = (cell: GridCell, r: number, c: number, region: string): boolean =>
   cell.type === "corridor" &&
   cell.region === region &&
   !cell.hidden &&
@@ -85,6 +85,22 @@ const isCandidate = (cell: GridCell, r: number, c: number, region: string): bool
   cell.dirs.size <= 2 &&
   r % 2 === 0 &&
   c % 2 === 0
+
+/** The encounter room a corridor node becomes when a mechanism's piece stands on it: `dirs` and the section's
+ * identity carried over, so no wall moves, plus the piece's own fields. */
+export const standOnCorridor = (cell: Extract<GridCell, { type: "corridor" }>, piece: Partial<RoomCell>): RoomCell => ({
+  type: "room",
+  roomType: "encounter",
+  dirs: cell.dirs,
+  state: cell.state,
+  sectionAddress: cell.sectionAddress,
+  sectionHash: cell.sectionHash,
+  legacySectionHash: cell.legacySectionHash,
+  ordinal: cell.ordinal,
+  difficulty: cell.difficulty,
+  region: cell.region,
+  ...piece,
+})
 
 /**
  * STANDS EVERY SEQUENCE'S TILES ON THE FINISHED CARVE, and changes no wall: a tile is a corridor node
@@ -158,21 +174,11 @@ export const placeSequences = (
     tiles.forEach(([r, c], step) => {
       const cell = cells[r][c]
       if (cell.type !== "corridor") throw new Error(`[siteAssembler] sequence ${id} tile ${step} is not on a corridor`)
-      const tile: RoomCell = {
-        type: "room",
-        roomType: "encounter",
-        dirs: cell.dirs,
-        state: cell.state,
-        sectionAddress: cell.sectionAddress,
-        sectionHash: cell.sectionHash,
-        legacySectionHash: cell.legacySectionHash,
-        ordinal: cell.ordinal,
-        difficulty: cell.difficulty,
-        region: cell.region,
+      const tile = standOnCorridor(cell, {
         sequenceTile: { id, step, glyph: glyphs[step] },
         worksMechanism: { mechanismId: id, transition: transitionAt([r, c]) },
         ...(step === 0 ? { mechanism: record, mechanismId: id } : {}),
-      }
+      })
       cells[r][c] = tile
     })
     const doorCell = cells[door[0]][door[1]]

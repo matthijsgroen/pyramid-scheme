@@ -70,6 +70,9 @@ export const cellSlot = (grid: FloorGrid, row: number, col: number): string | nu
   // A sequence's tile is named by the sequence, which is a kind of control with one state across several
   // cells, not a realisation: it carries no family.
   if (cell.sequenceTile) return `xsequence:${cell.sequenceTile.id}#${cell.sequenceTile.step}`
+  // A plate is named by its own authored id, so several plates in one section are told apart; the first holds
+  // the stones' one state.
+  if (cell.plate) return `xplate:${cell.plate.id}`
   if (cell.mechanismId !== undefined) return mechanismSlot(cell.mechanismId)
   // AN OBSTACLE'S GATE IS THE SAME KIND OF ROOM, ONE STEP OVER: a region layout can stand more than
   // one on the main path (one per connection its route crosses), and a control owns it so it carries no
@@ -99,7 +102,7 @@ export const cellSlot = (grid: FloorGrid, row: number, col: number): string | nu
  */
 export const legacyCellSlot = (grid: FloorGrid, row: number, col: number): string | null => {
   const cell = grid.cells[row]?.[col]
-  if (!cell || cell.type !== "room" || cell.pathIndex !== undefined || cell.sequenceTile) return null
+  if (!cell || cell.type !== "room" || cell.pathIndex !== undefined || cell.sequenceTile || cell.plate) return null
   if (isSwitchDoor(cell)) return "x?"
   if (cell.mechanismId === undefined) return null
   const family = cell.family ?? "?"

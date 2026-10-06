@@ -59,6 +59,7 @@ import {
 import type { EdgeGateObstacle, Obstacle, OneWayObstacle, StatefulControl } from "./obstacles"
 import { cellSlot, plainSwitchId } from "./cellSlot"
 import { placeSequences } from "./sequenceTiles"
+import { placeWeights } from "./weightsPlates"
 import { expandFloorLocks } from "./floorLocks"
 import { layLockPlan, startingGridSize } from "./layLocks"
 import {
@@ -1034,6 +1035,8 @@ const assembleExpandedFloor = (
   // A SEQUENCE IS NOT COMPILED HERE: its record places each move at a cell, and the cells only exist once
   // the carve has stood its tiles (`placeSequences`, last).
   const sequences = (authoredConfig.controls ?? []).filter(isSequence)
+  // Nor are a lock's stones: their moves are placed at the plates, which stand last too (`placeWeights`).
+  const weights = (authoredConfig.controls ?? []).filter(isWeights)
   const controlRecords = (authoredConfig.controls ?? []).flatMap(control =>
     isForkSwitch(control) || isSequence(control) || isWeights(control)
       ? []
@@ -1459,6 +1462,8 @@ const assembleExpandedFloor = (
   let controlNotSeated: string[] | undefined
   // The first sequence step no attempt could stand a tile for, kept the same way.
   let sequenceShortfall: { id: string; step: number } | undefined
+  // The first plate no attempt could stand on a node of its region, kept the same way.
+  let plateShortfall: { plate: string } | undefined
   // The first attempt's controls whose only candidate node already held a puzzle with no room to move
   // it, kept the same way — see the seating searches below (main path and chain alike).
   let controlPuzzleUndisplaceable: string[] | undefined
@@ -4309,6 +4314,29 @@ const assembleExpandedFloor = (
       if (tileDuplicate) return { success: false, reasons: [{ type: "duplicateCellSlot", slot: tileDuplicate }] }
     }
 
+    // A LOCK'S PLATES STAND ON THE FINISHED CARVE the same way, after the tiles, and move no wall either.
+    if (weights.length > 0) {
+      const unplaced = placeWeights(
+        cells2D,
+        weights.map(control => ({
+          control,
+          gate: (id: string) => {
+            const mode = obstacleMode(id)
+            return { gateKeyId: gateKeyOf(id), ...(mode ? { mode } : {}) }
+          },
+        })),
+        new Set(mainPath.map(([r, c]) => posKey(r, c))),
+        siteId,
+        new Set(reservedForks.flatMap(pk => freeWaysOut(pk).map(({ neighborKey }) => neighborKey)))
+      )
+      if (unplaced) {
+        if (!plateShortfall) plateShortfall = unplaced
+        continue
+      }
+      const plateDuplicate = duplicateSlot()
+      if (plateDuplicate) return { success: false, reasons: [{ type: "duplicateCellSlot", slot: plateDuplicate }] }
+    }
+
     // WHAT NO REGISTERED MOD REALISES IS TAKEN OFF THE FINISHED CARVE, never carved differently: a mechanism
     // room becomes a bare node, the doors only it owned stand open, a drop is an ordinary passage. Walls and
     // every address are the carve's own, so the floor is the one the mod on builds, minus its mechanics.
@@ -4353,6 +4381,7 @@ const assembleExpandedFloor = (
       ...(regionBarrierShort ? [{ type: "regionBarrierNotSeated" as const, ...regionBarrierShort }] : []),
       ...(controlNotSeated ? [{ type: "controlNotSeated" as const, ids: controlNotSeated }] : []),
       ...(sequenceShortfall ? [{ type: "sequenceTileNotPlaced" as const, ...sequenceShortfall }] : []),
+      ...(plateShortfall ? [{ type: "plateNotPlaced" as const, ...plateShortfall }] : []),
       ...(controlPuzzleUndisplaceable
         ? [{ type: "controlPuzzleUndisplaceable" as const, ids: controlPuzzleUndisplaceable }]
         : []),
