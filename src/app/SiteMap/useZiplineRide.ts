@@ -4,7 +4,7 @@ import { sharedTileFrames } from "./tileAssets"
 
 /** How long the rider takes per grid cell of the run. The one duration a ride has: the slide's length is
  * the ride's, and the crossing settles when it ends. */
-export const RIDE_MS_PER_CELL = 90
+export const RIDE_MS_PER_CELL = 200
 
 export type Ride = { traversal: Traversal; sprite: string; mirrored: boolean; ms: number; end: () => void }
 
