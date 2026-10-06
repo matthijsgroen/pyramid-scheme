@@ -251,32 +251,34 @@ chipped at one corner, much paler than the basalt under it.` Add to the material
 
 ---
 
-### Task 4: The torch, cold and lit
+### Task 4: The torch, unlit and lit
 
-`prim_brazier` already has a cold variant and a `--lit` one. The torch reuses it, unless the designer wants
-a standing torch instead.
-
-- [ ] **Step 1: Ask the designer:** "The torch (activator) as the existing brazier, cold and lit, or a new
-  standing torch?" Continue with the brazier unless they choose otherwise. A standing torch is a new prim,
-  built the way task 3 builds one.
+**Decided by the designer (2026-10-06):** a STANDING TORCH, not the brazier. A wooden torch stands upright in
+a stone floor holder; unlit, its head is dark pitch-soaked wrapping; lit, a steady flame rises from it. The
+two variants share one outline below the flame, so lighting it reads as a change of state.
 
 **Files:**
-- Modify: `docs/instructions/repaint-queue.md` (entries `expert/torchCold`, `expert/torchLit`)
-- Create: masters and tiles `torchCold`, `torchLit` (expert); `art/rebuild.sh`
-- Create: `src/app/SiteMap/Torch.stories.tsx` (`Topology/Torch`)
+- Modify: `scripts/renderProp.py` (a `prim_torch` with `--lit`, registered as `"torch"`. Read
+  `prim_sconce`, `prim_lamp` and `prim_brazier` for how flames and thin uprights are modelled and the lessons
+  in their docstrings: a flame is a NUB, never a sharp cone; a thin part needs to survive at 56 units.)
+- Modify: `docs/instructions/repaint-queue.md` (`expert/torchUnlit`, `expert/torchLit`)
+- Create: masters, tiles and `art/rebuild.sh` lines (`--tier=expert --slot=prop`)
+- Create: `src/app/SiteMap/Torch.stories.tsx` (`Topology/Torch`: unlit and lit side by side, with the explorer)
 
-- [ ] **Step 2: Scaffolds.** Render `--primitive=brazier` without `--lit` (cold) and with `--lit=1`, with the
-  identical parameters and the three renders each, as in task 3 step 2. Check that the outlines match
-  (review focus 4): overlay the two masks.
-- [ ] **Step 3: Queue entries**, from the brazier's existing entries if `repaint-queue.md` has one
-  (`grep -n brazier docs/instructions/repaint-queue.md`), at the expert rank. Cold: "cold grey ash in the
-  dish, one unburnt stick across the rim". Lit: "a small steady flame rising from the ash, ochre and
-  orange, the only warm colour in the picture".
-- [ ] **Step 4: 🧑 Generate** both with `yarn repaint expert/torchCold` and `yarn repaint expert/torchLit`.
+- [ ] **Step 1: Geometry.** A squat stone base (a short octagonal block or a stepped round foot), a wooden
+  shaft rising about waist-high on the explorer, and the head: a thicker wrapped band. `--lit` adds a flame
+  NUB on the head. Gate as in task 3 step 1: read "lands at WxH" against the explorer, and check the shaft
+  survives at slot size (thicken it if it drops under about 3 units wide).
+- [ ] **Step 2: Scaffolds**, from identical parameters for both variants, and check that the masks match
+  below the flame.
+- [ ] **Step 3: Queue entries.** Unlit: "the torch head is dark, pitch-soaked cloth wrapped round the
+  wood, cold, no flame and no smoke". Lit: "a small steady flame rises from the head, ochre and orange, the
+  only warm colour in the picture; the wood just below it darkened by heat". Use the rank material and light
+  lines as in task 3.
+- [ ] **Step 4: 🧑 Generate** both with `yarn repaint expert/torchUnlit` and `yarn repaint expert/torchLit`.
 - [ ] **Step 5: Import, gate and record**, as in task 3 step 5.
-- [ ] **Step 6: Stage** in `Topology/Torch`: cold and lit side by side, with the explorer. Screenshot it, and
-  **stop for the verdict.**
-- [ ] **Step 7: Commit** with `art: the torch, cold and lit`.
+- [ ] **Step 6: Stage** in `Topology/Torch`. Screenshot it, and **stop for the verdict.**
+- [ ] **Step 7: Commit** with `art: the torch, unlit and lit`.
 
 ---
 
