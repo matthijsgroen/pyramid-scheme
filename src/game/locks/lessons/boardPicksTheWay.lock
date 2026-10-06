@@ -1,0 +1,6 @@
+// LESSON, junior: a board in a junction decides which way opens.
+
+in -[Y]- left
+in -[Y]- out
+Y fork @in
+left $

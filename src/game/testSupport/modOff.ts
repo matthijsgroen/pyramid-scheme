@@ -1,9 +1,10 @@
 import { encounterFromMeta, type ResolveEncounter } from "@/game/siteAssembler"
 import type { ResolveOneWayRealisation } from "@/game/oneWayRealisation"
 import { oneWayRuns } from "@/game/gridNavigation"
+import type { ResolveRegionBarrierRealisation } from "@/game/regionBarrierRealisation"
 import type { AssemblerReason, AssemblerResult, FloorGrid } from "@/game/siteTypes"
 import { ALL_FAMILY_META, resolveEncounterMeta } from "@/mods/allFamilyMeta"
-import { MOD_ONE_WAY_REALISATIONS, REGISTERED_MOD_IDS } from "@/mods/registeredMods"
+import { MOD_ONE_WAY_REALISATIONS, MOD_REGION_BARRIER_REALISATIONS, REGISTERED_MOD_IDS } from "@/mods/registeredMods"
 
 /**
  * THE BUILD AS IT STANDS WITH THE TOPOLOGY MOD REMOVED FROM `registeredMods`: the registered ids, the family
@@ -22,12 +23,16 @@ const resolveWithout: ResolveEncounter = (encounter, defaultTag) => {
 const oneWayWithout: ResolveOneWayRealisation = id =>
   id === undefined ? undefined : MOD_ONE_WAY_REALISATIONS.find(r => r.id === id && r.ownerMod !== MOD)
 
+const regionBarrierWithout: ResolveRegionBarrierRealisation = id =>
+  id === undefined ? undefined : MOD_REGION_BARRIER_REALISATIONS.find(r => r.id === id && r.ownerMod !== MOD)
+
 export const TOPOLOGY_ON = { modIds: REGISTERED_MOD_IDS, resolveEncounter: resolveEncounterMeta }
 
 export const TOPOLOGY_OFF = {
   modIds: new Set([...REGISTERED_MOD_IDS].filter(id => id !== MOD)),
   resolveEncounter: resolveWithout,
   resolveOneWay: oneWayWithout,
+  resolveRegionBarrier: regionBarrierWithout,
 }
 
 /** A carve as its walls: each cell's `dirs`, never its type, since a door is a room where a corridor stood. */

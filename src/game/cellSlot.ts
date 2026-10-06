@@ -1,4 +1,4 @@
-import type { FloorGrid } from "./siteTypes"
+import type { FloorGrid, RoomCell } from "./siteTypes"
 
 /** How an obstacle's gate key is namespaced (gateKeyOf, siteAssembler.ts) — the one prefix that marks a
  * requiredKeyId as driven by a region layout's own control rather than a ward or a floor's own chest. */
@@ -9,6 +9,14 @@ export const OBSTACLE_KEY_PREFIX = "obstacle:"
  * and `-` (USABLE_LABEL in the assembler), so a switch never answers to the name of a control or handle. */
 const PLAIN_SWITCH_PREFIX = "switch:"
 export const plainSwitchId = (index: number): string => `${PLAIN_SWITCH_PREFIX}${index}`
+
+/** A room shut by a switch and filled by nothing: a way out of its fork, wearing a gate's bars (closeWaysOut). It
+ * answers to the way out's key and holds no family, mechanism or sequence tile. */
+const isSwitchDoor = (cell: RoomCell): cell is RoomCell & { ordinal: string } =>
+  cell.family === undefined &&
+  cell.ordinal !== undefined &&
+  cell.mechanismId === undefined &&
+  cell.requiredKeyId?.startsWith(PLAIN_SWITCH_PREFIX) === true
 
 /** What a mechanism's room is filed under. It names the mechanism and never the family that realises it,
  * so a mechanic bound to another realisation keeps its stored state and its explored mark. */
@@ -76,6 +84,10 @@ export const cellSlot = (grid: FloorGrid, row: number, col: number): string | nu
     // is what a re-carve cannot move.
     return cell.regionBarrier ? `xobstacle:${id}@${cell.regionBarrier.entrance}` : `xobstacle:${id}`
   }
+  // A SWITCH'S DOOR IS A ROOM NO AUTHOR NAMED: no family fills it and no chain position is its own, so what
+  // names it is the ordinal it stands at. Its key names only the way out, and two ways out of one fork can lead
+  // into one region (a lock's), so the key could not tell two doors of one section apart.
+  if (isSwitchDoor(cell)) return `xdoor:${cell.ordinal}`
   return `x${cell.family ?? "?"}`
 }
 
@@ -88,6 +100,7 @@ export const cellSlot = (grid: FloorGrid, row: number, col: number): string | nu
 export const legacyCellSlot = (grid: FloorGrid, row: number, col: number): string | null => {
   const cell = grid.cells[row]?.[col]
   if (!cell || cell.type !== "room" || cell.pathIndex !== undefined || cell.sequenceTile) return null
+  if (isSwitchDoor(cell)) return "x?"
   if (cell.mechanismId === undefined) return null
   const family = cell.family ?? "?"
   return cell.mechanismId.startsWith(PLAIN_SWITCH_PREFIX) ? `x${family}` : `x${family}:${cell.mechanismId}`

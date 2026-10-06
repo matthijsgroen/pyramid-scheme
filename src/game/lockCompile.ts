@@ -3,14 +3,15 @@ import { barriersOf, isRegionGate, joinOf } from "./lockAuthoring"
 import type { LooseMechanic, ResolveMechanicKind } from "./mechanics"
 import { resolveMechanicKind } from "./mechanics"
 import type { BarrierOrder, Control, Obstacle, TopologyFault } from "./obstacles"
-import { topologyFaults } from "./obstacles"
+import { isRegionGate as isRegionObstacle, topologyFaults } from "./obstacles"
+import { REGION_BARRIER_KIND } from "./regionBarrierRealisation"
 import type { RegionGraph } from "./regions"
 import type { ForkDemand } from "./siteTypes"
 
 /**
  * WHICH REALISATION EACH KIND OF CONTROL IS DRESSED AS, decided where a lock is placed and handed to the
  * compiler: the lock names none (docs/mods/mechanic-contract.md). Keyed by the control kind — "toggle",
- * "activator", "sequence", "fork-switch", "one-way" — because within one lock all roles of a kind take
+ * "activator", "sequence", "fork-switch", "one-way", and "region-barrier" for the lock's barred regions — because within one lock all roles of a kind take
  * the same realisation. A kind the lock uses and the binding omits is refused, never defaulted.
  */
 export type RealisationBinding = Readonly<Partial<Record<string, string>>>
@@ -24,6 +25,8 @@ export type LockFragment = {
   barrierOrder: BarrierOrder[]
   /** Absent when the lock has no one-way. */
   oneWayRealisation?: string
+  /** Absent when the lock bars no region, or its binding names no realisation for a region barrier. */
+  regionBarrierRealisation?: string
 }
 
 /** EVERY WAY A LOCK IS REFUSED, each naming what to fix. Authored names, not compiled ones. */
@@ -290,6 +293,7 @@ const translate = (
   })
 
   const oneWayRealisation = Object.keys(oneWays).length > 0 ? binding["one-way"] : undefined
+  const regionBarrierRealisation = obstacles.some(isRegionObstacle) ? binding[REGION_BARRIER_KIND] : undefined
   return {
     regionLayout: {
       regions: Object.entries(lock.regions).map(([region, { takes }]) => ({ name: name(region), appetite: takes })),
@@ -302,6 +306,7 @@ const translate = (
     controls,
     barrierOrder,
     ...(oneWayRealisation === undefined ? {} : { oneWayRealisation }),
+    ...(regionBarrierRealisation === undefined ? {} : { regionBarrierRealisation }),
   }
 }
 

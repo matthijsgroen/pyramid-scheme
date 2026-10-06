@@ -8,8 +8,10 @@ import {
   DOOR_FACE_ROLE,
   defaultResolveEncounter,
   defaultResolveOneWayRealisation,
+  defaultResolveRegionBarrierRealisation,
 } from "./encounterFallback"
 import type { OneWayRefusal, ResolveOneWayRealisation } from "./oneWayRealisation"
+import type { RegionBarrierRefusal, ResolveRegionBarrierRealisation } from "./regionBarrierRealisation"
 
 export { defaultResolveEncounter }
 export { DEFAULT_PACKING, ONE_WAY_RUN_CELLS, oneWayRunCells }
@@ -606,6 +608,9 @@ export type AssembleFloorKeyRequirements = {
    * passes the registry's, which binds a one-way that names none to nothing; absent (stories, specs, the
    * builder) the fallback catalogue answers. */
   resolveOneWay?: ResolveOneWayRealisation
+  /** Binds each region barrier to the realisation it names. Production passes the registry's, which binds a
+   * barrier that names none to nothing; absent (stories, specs, the builder) the fallback accepts any named one. */
+  resolveRegionBarrier?: ResolveRegionBarrierRealisation
   /** How many attempts the floor may take, at most ASSEMBLY_ATTEMPTS. The bake's seed search asks for 1:
    * it wants a seed that carves at the authored `packing`, and a seed that only carves after the ladder
    * widened the grid is one it has to reject, so it must not pay for the climb to learn that. */
@@ -736,6 +741,7 @@ const assembleExpandedFloor = (
     floorRef = { journeyId: siteId, floorIndex: 0 },
     resolveBoardIndex,
     resolveOneWay = defaultResolveOneWayRealisation,
+    resolveRegionBarrier = defaultResolveRegionBarrierRealisation,
     maxAttempts = ASSEMBLY_ATTEMPTS,
     onLaid,
   } = keyRequirements
@@ -850,12 +856,34 @@ const assembleExpandedFloor = (
         : undefined
     return why ? [{ type: "oneWayRealisationRefused" as const, from, to, realisation: named ?? null, why }] : []
   })
-  if (realisationRefusals.length > 0) return { success: false, reasons: realisationRefusals }
+  // A REGION BARRIER IS DRESSED BY A REALISATION BOUND FROM OUTSIDE. Unbound, it is refused by name (barrier and
+  // region), never carved with a default. Bound to one no registered mod provides, the carve is the same and the
+  // barrier's door is plain ground (`degradeUnrealised`).
+  const regionBarrierRefusals = (authoredConfig.obstacles ?? []).filter(isRegionGate).flatMap(barrier =>
+    authoredConfig.regionBarrierRealisation === undefined
+      ? [
+          {
+            type: "regionBarrierRealisationRefused" as const,
+            id: barrier.id,
+            region: barrier.at.region,
+            realisation: null,
+            why: "unbound" as RegionBarrierRefusal,
+          },
+        ]
+      : []
+  )
+  const realisationProblems = [...realisationRefusals, ...regionBarrierRefusals]
+  if (realisationProblems.length > 0) return { success: false, reasons: realisationProblems }
   const oneWaysUnrealised =
     authoredConfig.oneWayRealisation !== undefined && resolveOneWay(authoredConfig.oneWayRealisation) === undefined
-  // The realisation the one-ways carry on their span: the registered one, or the name an absent mod left unanswered.
+  const regionBarriersUnrealised =
+    authoredConfig.regionBarrierRealisation !== undefined &&
+    resolveRegionBarrier(authoredConfig.regionBarrierRealisation) === undefined
+  // The realisation a mechanic carries on the carve: the registered one, or the name an absent mod left unanswered.
   const boundRealisation = (): string =>
     resolveOneWay(authoredConfig.oneWayRealisation)?.id ?? authoredConfig.oneWayRealisation!
+  const boundRegionBarrier = (): string =>
+    resolveRegionBarrier(authoredConfig.regionBarrierRealisation)?.id ?? authoredConfig.regionBarrierRealisation!
 
   // A HANDLE'S REACH IS AUTHORED, SO WHAT IT CANNOT REACH IS ANSWERED BEFORE A WALL IS CARVED — the
   // same reasoning, and the same shape, as the one-way above: which sections exist and what each
@@ -2489,13 +2517,13 @@ const assembleExpandedFloor = (
     }
     // One entrance's door of a region barrier: a family-less gate room like any other, so it draws as bars
     // and `openWaysOut` hands its corridor back once its owners open it. `regionBarrier` is what tells it
-    // from an edge gate, and which of its barrier's doors it is.
+    // from an edge gate, which of its barrier's doors it is and what it was bound to.
     const regionBarrierDoorSpec = (id: string, region: string, entrance: string): RoomSpec => ({
       roomType: "encounter",
       tags: [...keyGate.tags, "region-barrier"],
       requiredKeyId: gateKeyOf(id),
       ...floorKeysOfGate(id),
-      regionBarrier: { region, entrance },
+      regionBarrier: { region, entrance, realisation: boundRegionBarrier() },
     })
     const controlRoomSpec = (control: StatefulControl, record: MechanismRecord): RoomSpec => ({
       roomType: "encounter",
@@ -4255,6 +4283,7 @@ const assembleExpandedFloor = (
     if (sequences.length > 0) {
       const unplaced = placeSequences(
         cells2D,
+        grid,
         sequences.map(sequence => ({
           id: sequence.id,
           regions: sequence.steps.map(step => step.in),
@@ -4265,8 +4294,8 @@ const assembleExpandedFloor = (
           }),
           doorKey: gateKeyOf(sequence.resetAt),
         })),
-        new Set(mainPath.map(([r, c]) => posKey(r, c))),
-        siteId
+        siteId,
+        new Set(reservedForks.flatMap(pk => freeWaysOut(pk).map(({ neighborKey }) => neighborKey)))
       )
       if (unplaced) {
         if (!sequenceShortfall) sequenceShortfall = unplaced
@@ -4282,6 +4311,7 @@ const assembleExpandedFloor = (
     const bare = degradeUnrealised(grid, resolveEncounter, {
       sequences: unrealisedSequences(authoredConfig.controls ?? [], resolveEncounter),
       oneWays: oneWaysUnrealised,
+      regionBarriers: regionBarriersUnrealised,
     })
 
     // A DOOR THAT WAITS ON SEVERAL OWNERS GAINS ITS FACE LAST, after every check above has read the carve:

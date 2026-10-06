@@ -182,6 +182,7 @@ const floorFieldEmitters: {
   forks: v => (v.length ? `forks: [${v.map(serializeObject).join(", ")}]` : null),
   oneWays: v => (v.length ? `oneWays: [${v.map(serializeObject).join(", ")}]` : null),
   oneWayRealisation: v => `oneWayRealisation: ${JSON.stringify(v)}`,
+  regionBarrierRealisation: v => `regionBarrierRealisation: ${JSON.stringify(v)}`,
   handles: v => (v.length ? `handles: [${v.map(serializeObject).join(", ")}]` : null),
   regionLayout: v => `regionLayout: ${serializeRegionGraph(v)}`,
   obstacles: v => (v.length ? `obstacles: [${v.map(serializeObstacle).join(", ")}]` : null),

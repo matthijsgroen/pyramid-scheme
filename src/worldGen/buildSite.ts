@@ -9,7 +9,7 @@ import { buildSideSections, type ResolveReward } from "./sideSections"
 import { stairIdAt } from "../game/stairAddress"
 import type { FloorConstraint, PyramidConstraint, RewardSpec } from "./dsl"
 import { resolveNodeSelectors } from "./dsl"
-import { ONE_WAY_KIND, declaredBinding, resolveBinding } from "./realisationBinding"
+import { ONE_WAY_KIND, declaredBinding, regionBarrierBinding, resolveBinding } from "./realisationBinding"
 
 // ── Per-pyramid randomized resolution ─────────────────────────────────────────
 
@@ -97,6 +97,7 @@ export type BuildFloorOptions = {
   forks?: FloorConfig["forks"]
   oneWays?: FloorConfig["oneWays"]
   oneWayRealisation?: FloorConfig["oneWayRealisation"]
+  regionBarrierRealisation?: FloorConfig["regionBarrierRealisation"]
   handles?: FloorConfig["handles"]
   regionLayout?: FloorConfig["regionLayout"]
   obstacles?: FloorConfig["obstacles"]
@@ -145,6 +146,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.forks ? { forks: opts.forks } : {}),
   ...(opts.oneWays ? { oneWays: opts.oneWays } : {}),
   ...(opts.oneWayRealisation ? { oneWayRealisation: opts.oneWayRealisation } : {}),
+  ...(opts.regionBarrierRealisation ? { regionBarrierRealisation: opts.regionBarrierRealisation } : {}),
   ...(opts.handles ? { handles: opts.handles } : {}),
   ...(opts.regionLayout ? { regionLayout: opts.regionLayout } : {}),
   ...(opts.obstacles ? { obstacles: opts.obstacles } : {}),
@@ -328,6 +330,9 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           oneWays: fc.oneWays ?? constraint.oneWays,
           // Bound from outside the lock; a floor that places locks carries the whole binding instead.
           oneWayRealisation: hasLocks ? undefined : floorBinding[ONE_WAY_KIND],
+          regionBarrierRealisation: hasLocks
+            ? undefined
+            : regionBarrierBinding(fc.obstacles ?? constraint.obstacles, floorBinding),
           handles: fc.handles ?? constraint.handles,
           regionLayout: fc.regionLayout ?? constraint.regionLayout,
           obstacles: fc.obstacles ?? constraint.obstacles,
@@ -389,6 +394,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             forks: constraint.forks,
             oneWays: constraint.oneWays,
             oneWayRealisation: declaredBinding(constraint)[ONE_WAY_KIND],
+            regionBarrierRealisation: regionBarrierBinding(constraint.obstacles, declaredBinding(constraint)),
             handles: constraint.handles,
             regionLayout: constraint.regionLayout,
             obstacles: constraint.obstacles,
@@ -446,6 +452,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           forks: constraint.forks,
           oneWays: constraint.oneWays,
           oneWayRealisation: declaredBinding(constraint)[ONE_WAY_KIND],
+          regionBarrierRealisation: regionBarrierBinding(constraint.obstacles, declaredBinding(constraint)),
           handles: constraint.handles,
           regionLayout: constraint.regionLayout,
           obstacles: constraint.obstacles,
@@ -541,6 +548,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             forks: constraint.forks,
             oneWays: constraint.oneWays,
             oneWayRealisation: declaredBinding(constraint)[ONE_WAY_KIND],
+            regionBarrierRealisation: regionBarrierBinding(constraint.obstacles, declaredBinding(constraint)),
             handles: constraint.handles,
             regionLayout: constraint.regionLayout,
             obstacles: constraint.obstacles,
@@ -620,6 +628,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     forks: constraint.forks,
     oneWays: constraint.oneWays,
     oneWayRealisation: declaredBinding(constraint)[ONE_WAY_KIND],
+    regionBarrierRealisation: regionBarrierBinding(constraint.obstacles, declaredBinding(constraint)),
     handles: constraint.handles,
     regionLayout: constraint.regionLayout,
     obstacles: constraint.obstacles,

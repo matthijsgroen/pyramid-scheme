@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { resolveOneWayRealisation } from "@/mods/allOneWayRealisations"
+import { resolveRegionBarrierRealisation } from "@/mods/allRegionBarrierRealisations"
 import { assembleFloor } from "@/game/siteAssembler"
 import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry"
 import { hashString } from "@/support/hashString"
@@ -24,6 +25,7 @@ describe("every room in the world builds the board its tap asks for", () => {
         resolveKeyRequirements,
         floorRef: { journeyId: floor.journeyId, floorIndex: floor.floorIndex },
         resolveOneWay: resolveOneWayRealisation,
+        resolveRegionBarrier: resolveRegionBarrierRealisation,
         resolveBoardIndex: boardIndexesForFloor(floor.journeyId, floor.levelIndex, floor.floorIndex),
       })
       if (!result.success) continue

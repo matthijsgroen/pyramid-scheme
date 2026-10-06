@@ -1,0 +1,7 @@
+// LESSON, expert: a door that waits for two; its face shows both marks.
+
+in -- a
+in -- b
+in -[T1+T2]- out
+T1 activator @a
+T2 activator @b

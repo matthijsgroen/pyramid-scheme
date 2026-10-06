@@ -155,7 +155,7 @@ describe("the dev journey's place in the generated world", () => {
   // comparison would pass while proving nothing at all.
   it("is built only when INCLUDE_DEV is set", () => {
     expect(plain[DEV_JOURNEY_ID]).toBeUndefined()
-    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(9)
+    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(10)
   })
 
   it("leaves every other journey exactly as it was", () => {
@@ -170,7 +170,7 @@ describe("the loot the dev journey contributes", () => {
 
   it("is none the solver could have placed either: it offers no slot", () => {
     // Counted first: a world with no dev journey would filter an empty list and prove nothing.
-    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(9)
+    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(10)
     const devSlots = collectSlots(withDev, familyPriorityFor).filter(s => s.journeyId === DEV_JOURNEY_ID)
     expect(devSlots).toEqual([])
   })
@@ -186,7 +186,7 @@ describe("the loot the dev journey contributes", () => {
   // Its chests hold nothing on purpose, and findEmptyChests knows a site outside the loot economy
   // has nothing to fill them with — so it reports none of them and the generator does not stop.
   it("leaves no empty chest for the generator to refuse", () => {
-    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(9)
+    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(10)
     const empties = findEmptyChests({ [DEV_JOURNEY_ID]: withDev[DEV_JOURNEY_ID] }, assembleAt)
     expect(empties).toEqual([])
   })
@@ -204,17 +204,18 @@ describe("what the dev journey authors", () => {
       "expert",
       "expert",
       "junior",
+      "expert",
     ])
   })
 
-  it("stands a switch in a reserved junction on every floor but the lever's, the gate's and doubleBack's, none of which needs one", () => {
+  it("stands a switch in a reserved junction on every floor but the lever's, the gate's, the sluice's, doubleBack's and the procession's, none of which needs one", () => {
     // Counted first, so a world that grew no dev journey fails here rather than walking an empty list.
     const floors = devFloors(withDev)
-    expect(floors).toHaveLength(9)
+    expect(floors).toHaveLength(10)
     // A switch decides which of its OWN ways out opens, so it needs a junction reserved for it; a
     // handle reaches across the floor to doors elsewhere, and a control (the lever's, or any of
-    // doubleBack's three) stands in its own region — all three ask for neither.
-    const noJunction = new Set([1, 6, 7])
+    // doubleBack's three, the sluice's or the procession's) stands in its own region — all of them ask for neither.
+    const noJunction = new Set([1, 3, 6, 7, 9])
     floors.forEach((floor, i) => {
       if (noJunction.has(i)) {
         expect(floor.forks).toBeUndefined()
@@ -230,14 +231,14 @@ describe("what the dev journey authors", () => {
   // a dev site sits at a position that would earn both. Its capability preset is what keeps them off
   // it, so the count of side sections is exactly what the spec authors: two branches on a switch
   // floor, three on the lever's — the room it stands in and the two doors it swaps — one on the
-  // gate's, which needs only somewhere for its control to stand, and none on doubleBack's, whose lock
+  // gate's, which needs only somewhere for its control to stand, and none on a lock floor's (doubleBack, the sluice, the procession), whose lock
   // is the whole floor.
   it("grows none of the branches the real economies inject by position", () => {
-    expect(devFloors(withDev).map(floor => floor.sideSections.length)).toEqual([2, 0, 2, 2, 2, 2, 3, 1, 2])
+    expect(devFloors(withDev).map(floor => floor.sideSections.length)).toEqual([2, 0, 2, 0, 2, 2, 3, 1, 2, 0])
   })
 
   it("carves every one of them at the seed the runtime hands it", () => {
-    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(9)
+    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(10)
     const failed: string[] = []
     withDev[DEV_JOURNEY_ID].forEach((site, levelIndex) =>
       site.forEach((floor, floorIndex) => {
@@ -556,7 +557,7 @@ describe("what the dev journey authors", () => {
 // own guard compares the walk against the floors the authoring owes it, which catches a walk that
 // stopped reaching them — but not an authoring that quietly stopped standing mechanisms, because then
 // both sides fall together. The counts are pinned here, where both worlds exist in one process: the
-// shipped world stands two mechanism floors and a plain build can only ever prove those, so the nine the
+// shipped world stands two mechanism floors and a plain build can only ever prove those, so the ten the
 // dev journey adds are provable nowhere else.
 describe("the floors the lock sweep walks", () => {
   it("walks the two mechanism floors the shipped world stands, and finds no strand", () => {
@@ -564,13 +565,13 @@ describe("the floors the lock sweep walks", () => {
     expect(plainSweep.stranding).toEqual([])
   })
 
-  it("walks eleven once the dev journey stands its nine, and finds no strand", () => {
-    expect(withDevSweep.walked).toHaveLength(11)
+  it("walks twelve once the dev journey stands its ten, and finds no strand", () => {
+    expect(withDevSweep.walked).toHaveLength(12)
     expect(withDevSweep.stranding).toEqual([])
   })
 
-  it("walks nine of them on the dev journey itself", () => {
-    expect(withDevSweep.walked.filter(ref => ref.journeyId === DEV_JOURNEY_ID)).toHaveLength(9)
+  it("walks ten of them on the dev journey itself", () => {
+    expect(withDevSweep.walked.filter(ref => ref.journeyId === DEV_JOURNEY_ID)).toHaveLength(10)
   })
 
   it("reaches every floor whose authoring owes it a lock, in both worlds", () => {

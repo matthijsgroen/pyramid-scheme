@@ -141,6 +141,15 @@ describe("taking off what no registered mod realises", () => {
     expect(degradeUnrealised(grid, resolveEncounterMeta, NOTHING)).toBe(grid)
   })
 
+  it("stands a region barrier's door as plain ground when its realisation is missing, and keeps it otherwise", () => {
+    const barrier = door({ regionBarrier: { region: "vault", entrance: "hall", realisation: "water" } })
+    const grid = rowGrid([ground(["e"]), barrier, ground(["w"])])
+
+    expect(degradeUnrealised(grid, resolveEncounterMeta, NOTHING)).toBe(grid)
+    const bare = degradeUnrealised(grid, resolveEncounterMeta, { ...NOTHING, regionBarriers: true })
+    expect(bare.cells[0][1]).toMatchObject({ type: "corridor", dirs: new Set(["w", "e"]) })
+  })
+
   it("joins a drop's launch, span and landing into a passage walked both ways", () => {
     const grid = rowGrid([
       ground(["e"]),
@@ -161,5 +170,12 @@ describe("taking off what no registered mod realises", () => {
       "ew",
       "w",
     ])
+  })
+})
+
+describe("the pressure plate that realises a sequence", () => {
+  it("is realised with its mod on and left as bare tiles with it off, never stood in by another family", () => {
+    expect([...unrealisedSequences([sequence("pressure-plate")], resolveEncounterMeta)]).toEqual([])
+    expect([...unrealisedSequences([sequence("pressure-plate")], TOPOLOGY_OFF.resolveEncounter)]).toEqual(["plates"])
   })
 })

@@ -1,0 +1,10 @@
+// expert. The lever that opens the exit shuts the bridge back; the drop lands
+// in a cell that holds its own key.
+
+in -[H:a]- ledge
+in -[blue]- cell
+in -[H]- out
+ledge >> cell
+H toggle @ledge
+blue activator @cell
+ledge *

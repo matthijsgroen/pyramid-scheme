@@ -12,6 +12,7 @@
     "compass": "Fragment compass (Lv {{level}})",
     "detection": "Hidden-corridor detector (Lv {{level}})",
     "tier-unlock": "Unlocks {{tier}} expeditions",
+    "tier-coming-soon": "{{tier}} expeditions arrive in a later update",
     "location-key": "Reveals another tomb"
   },
   "tiers": {

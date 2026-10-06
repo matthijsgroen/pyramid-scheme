@@ -44,6 +44,7 @@ describe("a compiled lock carves and walks sound", () => {
     ...(fragment.forks.length > 0 ? { forks: fragment.forks } : {}),
     ...(fragment.barrierOrder.length > 0 ? { barrierOrder: fragment.barrierOrder } : {}),
     ...(fragment.oneWayRealisation ? { oneWayRealisation: fragment.oneWayRealisation } : {}),
+    ...(fragment.regionBarrierRealisation ? { regionBarrierRealisation: fragment.regionBarrierRealisation } : {}),
   })
 
   const section = { pathPuzzles: 0, difficulty: "expert" as const, end: "treasure" as const }

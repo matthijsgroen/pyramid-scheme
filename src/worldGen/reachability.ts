@@ -3,6 +3,7 @@ import type { AssemblerResult, FloorConfig as GameFloorConfig } from "../game/si
 import type { ResolveEncounter, ResolveKeyRequirements } from "../game/siteAssembler"
 import { assembleFloor, defaultResolveEncounter } from "../game/siteAssembler"
 import type { ResolveOneWayRealisation } from "../game/oneWayRealisation"
+import type { ResolveRegionBarrierRealisation } from "../game/regionBarrierRealisation"
 import { collectReachableKeys } from "../game/siteValidator"
 import { mechanismGatesOf } from "../game/mechanismDoors"
 import { hashString } from "../support/hashString"
@@ -24,6 +25,8 @@ export type ReachabilitySupport = {
   thresholdFor?: (bucket: string) => number | undefined
   /** Binds each one-way to its realisation, so a floor binding none is refused here as it is in play. */
   resolveOneWay?: ResolveOneWayRealisation
+  /** Binds each region barrier to its realisation, refused here as in play when it has none. */
+  resolveRegionBarrier?: ResolveRegionBarrierRealisation
   bucketForReward?: (reward: TreasureReward) => string | undefined
   journeyEntryLock?: (journeyId: string) => { bucket: string; threshold: number } | undefined
   tierUnlockBucket?: (tier: Tier) => string[] | undefined
@@ -159,6 +162,7 @@ export const reachableFloorsInSite = (
         resolveKeyRequirements: resolveRequirements,
         floorRef: { journeyId: ref.journeyId, levelIndex: ref.levelIndex, floorIndex: i },
         ...(support.resolveOneWay ? { resolveOneWay: support.resolveOneWay } : {}),
+        ...(support.resolveRegionBarrier ? { resolveRegionBarrier: support.resolveRegionBarrier } : {}),
       })
       cache?.set(cacheKey, result)
     }

@@ -70,20 +70,21 @@ const bareJunction = (cell: RoomCell, dropped: ReadonlySet<string>): RoomCell =>
   return { ...rest, ...(cell.exits ? exitsWithout(cell, dropped) : {}) }
 }
 
-type Unrealised = { sequences: ReadonlySet<string>; oneWays: boolean }
+type Unrealised = { sequences: ReadonlySet<string>; oneWays: boolean; regionBarriers?: boolean }
 
 /**
  * TAKES THE MECHANICS NO REGISTERED MOD REALISES OFF A FINISHED CARVE, leaving every wall where it was:
  * - a mechanism room is a bare node (a junction stays a junction, empty), and a sequence's tiles are ground;
  * - a door that only such mechanisms owned stands open as plain ground, a region barrier's included;
  * - a door another owner still has (a mechanism that is realised, or a floor key) keeps standing;
- * - a one-way whose realisation is missing is an ordinary two-way passage.
+ * - a one-way whose realisation is missing is an ordinary two-way passage;
+ * - a region barrier whose realisation is missing is plain ground at its door.
  * Cells are read for what they hold, never re-derived, so the mod on and off share one carve.
  */
 export const degradeUnrealised = (
   grid: FloorGrid,
   resolve: ResolveEncounter,
-  { sequences, oneWays }: Unrealised
+  { sequences, oneWays, regionBarriers = false }: Unrealised
 ): FloorGrid => {
   const isBare = (cell: RoomCell): boolean =>
     cell.sequenceTile !== undefined
@@ -100,7 +101,8 @@ export const degradeUnrealised = (
       if (bare && cell.mechanismId !== undefined) droppedIds.add(cell.mechanismId)
       for (const { gateKeyId } of cell.mechanism?.positions ?? []) (bare ? droppedKeys : liveKeys).add(gateKeyId)
     }
-  if (droppedKeys.size === 0 && droppedIds.size === 0 && sequences.size === 0 && !oneWays) return grid
+  if (droppedKeys.size === 0 && droppedIds.size === 0 && sequences.size === 0 && !oneWays && !regionBarriers)
+    return grid
 
   const standsOpen = (cell: RoomCell): boolean =>
     (cell.tags?.includes("gate") ?? false) &&
@@ -113,7 +115,7 @@ export const degradeUnrealised = (
     row.map((cell): GridCell => {
       if (cell.type !== "room") return cell
       if (isBare(cell)) return cell.roomType === "fork" ? bareJunction(cell, droppedKeys) : groundOf(cell)
-      if (standsOpen(cell)) return groundOf(cell)
+      if (standsOpen(cell) || (regionBarriers && cell.regionBarrier !== undefined)) return groundOf(cell)
       const { worksMechanism, ...rest } = cell
       const works =
         worksMechanism !== undefined &&

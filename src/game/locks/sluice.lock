@@ -1,0 +1,12 @@
+// master, not buildable yet (region gate). Water moved from one room to
+// another: drain the hall for the gold, then the vault for the way out.
+
+in -- hub
+hub -- hall
+hub -- vault
+vault -[gold]- out
+hall -[S:hall]
+vault -[S:vault]
+S toggle @hub hall vault
+gold activator @hall
+vault $

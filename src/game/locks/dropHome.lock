@@ -1,0 +1,11 @@
+// expert. The lever that opens the exit shuts the door behind you;
+// the only way home is a drop.
+
+in -[Y]- hall -[H:a]- leverRoom
+in -[Y]- vault
+in -[H]- out
+leverRoom >> in
+Y fork @in
+H toggle @leverRoom
+hall *
+vault $

@@ -2,6 +2,7 @@ import type { Mark } from "./mark"
 import type { ContentKind, PlacedContainer } from "./regions"
 import type { BarrierOrder, Control, Obstacle } from "./obstacles"
 import type { OneWayRefusal } from "./oneWayRealisation"
+import type { RegionBarrierRefusal } from "./regionBarrierRealisation"
 import type { CarveFault } from "./carveAgreement"
 import type { GateFace } from "./gateFace"
 import type { LockNesting, LockNestingFault, PlacedLock } from "./floorLocks"
@@ -315,8 +316,9 @@ export type RoomCell = {
   gateFace?: GateFace
   /** THIS DOOR IS ONE ENTRANCE OF A REGION BARRIER (obstacles.ts, RegionGateObstacle): `region` is the
    * barred region it stands in, `entrance` the neighbouring region the player comes from, which is what
-   * tells this door from the barrier's others. A barrier has one door per entrance, all asking for one key. */
-  regionBarrier?: { region: string; entrance: string }
+   * tells this door from the barrier's others, `realisation` the id of the realisation (water, sand) the barrier was
+   * bound to. A barrier has one door per entrance, all asking for one key. */
+  regionBarrier?: { region: string; entrance: string; realisation: string }
 }
 export type GridCell = EmptyCell | CorridorCell | RoomCell
 
@@ -530,6 +532,11 @@ export type FloorConfig = {
    * (`oneWayRealisationRefused`) before anything is carved; there is no default. One named but declared by
    * no registered mod carves the same and the one-way is an ordinary passage. */
   oneWayRealisation?: string
+  /** THE REALISATION EVERY REGION BARRIER OF THIS FLOOR IS DRESSED AS (water, sand), bound here from outside the
+   * lock: the id of one a registered mod declares. A floor authoring `obstacles` directly names it here; a floor
+   * that places locks gets it from the `region-barrier` entry of `realisations`. A region barrier with no usable
+   * realisation is refused (`regionBarrierRealisationRefused`) before anything is carved; there is no default. */
+  regionBarrierRealisation?: string
   /** A LEVER STANDING IN ONE SECTION THAT OPENS A GATE ON OTHERS. `in` names the section the lever
    * stands in; `left` and `right` name the sections whose entrance gates each side of it owns. All
    * are section addresses — a `label` where a section has one, the positional `s0`/`s1.2` where it
@@ -581,7 +588,7 @@ export type FloorConfig = {
    * `regionLayout`, `obstacles`, `controls`, `forks` and `barrierOrder` where the floor is assembled, so a
    * floor authoring `locks` may not author those itself: the contradiction is refused by name. */
   locks?: PlacedLock[]
-  /** WHICH REALISATION EACH CONTROL KIND OF THE FLOOR'S LOCKS IS DRESSED AS, by kind, as the build resolved
+  /** WHICH REALISATION EACH CONTROL KIND OF THE FLOOR'S LOCKS IS DRESSED AS, by kind (`region-barrier` for barred regions), as the build resolved
    * them (floor over pyramid over journey over difficulty) and baked. The runtime reads this and never resolves from the levels. */
   realisations?: RealisationBinding
   /** A SWITCH: an encounter standing in one of the junctions `forks` reserved, closing that
@@ -699,6 +706,15 @@ export type AssemblerReason =
       to: string
       realisation: string | null
       why: OneWayRefusal
+    }
+  /** A region barrier has no realisation it can be dressed as: it names none (`unbound`) or one no registered mod
+   * declares (`unknown`). `id` is the barrier, `region` the region it bars, `realisation` what it named. */
+  | {
+      type: "regionBarrierRealisationRefused"
+      id: string
+      region: string
+      realisation: string | null
+      why: RegionBarrierRefusal
     }
   /** An authored handle (FloorConfig.handles) names a section it cannot have, and `address` is the
    * name that failed: `in` or a `left`/`right` entry naming no section of this floor, a driven

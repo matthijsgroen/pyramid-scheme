@@ -1,0 +1,285 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`cellar > draws, with its cheapest way through 1`] = `
+"[ledge · H]╌╌╌╌╌╌╌▶[cell · blue]
+     │                   │
+     □H:a                ■blue:on
+     │                   │
+     ├───────────────────┘
+     │
+ → [in]────────────────■H:b────────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it
+
+in ▸ ledge ▸ H:b ▸ ⤓cell ▸ blue:on ▸ in ▸ out"
+`;
+
+exports[`clockwork > draws, with its cheapest way through 1`] = `
+" [west · A]
+  ╎   │
+  ╎   ■Y+A:a
+  ╎   │
+  ╎   │
+  ▼   │
+→ [in · Y]──────────────■Y+A:b──────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it
+
+in ▸ Y:in-west ▸ west ▸ A:b ▸ ⤓in ▸ Y:in-out ▸ out"
+`;
+
+exports[`counterweight > draws, with its cheapest way through 1`] = `
+"                                                                                ╭╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌▼
+→ [in]─────────────────────────────────────────────────────────[gallery · ◉ledge]────────────────────■low────────────────────[chamber · ⊙low · ⊙q · ◉niche]──────────────────────■q+low───────────────────────[out] →
+
+gallery -[□unladen]- >> chamber
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it
+
+in ▸ gallery ▸ ⤓chamber ▸ lift from niche ▸ stone on low ▸ gallery ▸ lift from ledge ▸ chamber ▸ stone on q ▸ out"
+`;
+
+exports[`doubleBack > draws, with its cheapest way through 1`] = `
+"  [s2 · S2]           [s1 · S1]
+      │    ╭╌╌╌╌╌╌╌╌╌╌╯   │
+      ■S1:b╎              □S1:a
+      │    ╎              │
+      │    ╎              │
+      │    ▼              │
+ [leftLower]        [rightLower]
+  ╎   │                   │
+  ╎   ■Y                  ■Y
+  ╎   │                   │
+  ╎   ├───────────────────┘
+  ▼   │
+→ [in · Y]──────────────■S2:b───────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it
+
+in ▸ Y:in-rightLower ▸ rightLower ▸ s1 ▸ S1:b ▸ ⤓leftLower ▸ s2 ▸ S2:b ▸ leftLower ▸ ⤓in ▸ out"
+`;
+
+exports[`dropHome > draws, with its cheapest way through 1`] = `
+"[leverRoom · H]
+   ╎   │
+   ╎   □H:a
+   ╎   │
+   ╎   │
+   ╎   │
+   ╎[hall]              [vault]
+   ╎   │                   │
+   ╎   ■Y                  ■Y
+   ╎   │                   │
+   ╎   ├───────────────────┘
+   ▼   │
+ → [in · Y]───────────────■H:b───────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it
+
+in ▸ Y:in-hall ▸ hall ▸ leverRoom ▸ H:b ▸ ⤓in ▸ out"
+`;
+
+exports[`keyring > draws, with its cheapest way through 1`] = `
+"[redRoom · red]
+       │
+       ■H:b
+       │
+       │
+       │
+[leverRoom · H]      [greenRoom · green]
+       │                      │
+       □H:a                   ■red:on
+       │                      │
+       ├──────────────────────┘
+       │
+   → [in]────────────────■green:on─────────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it
+
+in ▸ leverRoom ▸ H:b ▸ redRoom ▸ red:on ▸ leverRoom ▸ H:a ▸ in ▸ greenRoom ▸ green:on ▸ in ▸ out"
+`;
+
+exports[`lamplighter > draws, with its cheapest way through 1`] = `
+" [west · A]
+      │   ╰╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╮
+      ■Y                                 ╎
+      │                                  ╎
+      │                                  ╎
+      │                                  ▼
+→ [in · Y]──────────────■Y───────────────[east · B]────────────■A:b+B:b─────────────[out] →
+         ▲╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╯
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it
+
+in ▸ Y:in-west ▸ west ▸ A:b ▸ ⤓east ▸ B:b ▸ out"
+`;
+
+exports[`masonsRamp > draws, with its cheapest way through 1`] = `
+"                                                               [workshop · ⊙p]◀╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌[chute]
+                                                                      │                                │
+                                                                      □unladen                         ■r
+                                                                      │                                │
+                                                                      ├────────────────────────────────┘
+                                                                      │
+→ [in]──────────────────────────────────────────────────[yard · ⊙r · ◉pile1 · ◉pile2]───────────────────────■p────────────────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it
+
+in ▸ yard ▸ lift from pile1 ▸ stone on r ▸ lift from pile2 ▸ chute ▸ ⤓workshop ▸ stone on p ▸ yard ▸ out"
+`;
+
+exports[`observatory > draws, with its cheapest way through 1`] = `
+" [west · L]◀╌╌╌╌╌╌╌╌╌[east · K]
+  ╎   │                   │
+  ╎   ■Y                  ■Y
+  ╎   │                   │
+  ╎   ├───────────────────┘
+  ▼   │
+→ [in · Y]───────────────■Y────────────────[north]────────────■L:on+K:on────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it
+
+in ▸ Y:in-east ▸ east ▸ K:on ▸ ⤓west ▸ L:on ▸ ⤓in ▸ Y:in-north ▸ north ▸ out"
+`;
+
+exports[`overlook > draws, with its cheapest way through 1`] = `
+"[s1 · S1]          ╭[middle]
+ ╎▲                ╎▲   │
+ ╎╎                ╎╎   ■S1:b
+ ╎╎                ╎╎   │
+ ╎╎                ╎╎   │
+ ╎╎   ╭╌╌╌╌╌╌╌╌╌╌╌╌┼╯   │
+ ╎[top]            ╎[s2 · S2]
+ ╎  │              ╎    │
+ ╎  │              ╎    ■S2:b
+ ╎  │              ╎    │
+ ╎  ├───────────────────┘
+ ╎  │▼╌╌╌╌╌╌╌╌╌╌╌╌╌╯
+→▶[in]───────────────■S2:b────────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it
+
+in ▸ top ▸ ⤓s1 ▸ S1:b ▸ ⤓in ▸ top ▸ ⤓middle ▸ s2 ▸ S2:b ▸ in ▸ out"
+`;
+
+exports[`plates > draws, with its cheapest way through 1`] = `
+"[a · P2]          [b · P1 · P4]         [c · P3]
+    │                   │                   │
+    │                   │                   │
+    │                   │                   │
+    ├───────────────────┴───────────────────┘
+    │
+→ [in]──────────────────────────■P↺───────────────────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it
+
+in ▸ b ▸ P:1 ▸ in ▸ a ▸ P:2 ▸ in ▸ c ▸ P:3 ▸ in ▸ b ▸ P:done ▸ in ▸ out"
+`;
+
+exports[`relay > draws, with its cheapest way through 1`] = `
+"╭[r3 · C]
+╎    │
+╎    ■B:on
+╎    │
+╎    │
+╎    │
+╎[r2 · B]
+╎    │
+╎    ■A:b+B:off
+╎    │
+╎    │
+╎    │
+╎[r1 · A]
+╎    │
+╎    □A:a
+╎    │
+╎    │
+╰╌╌▼ │
+ → [in]───────────────■C:on────────────────[out] →
+
+r3 -[■C:on]- >> in
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it
+
+in ▸ r1 ▸ A:b ▸ r2 ▸ B:on ▸ r3 ▸ C:on ▸ ⤓in ▸ out"
+`;
+
+exports[`seesaw > draws, with its cheapest way through 1`] = `
+"[west · A]╌╌╌╌╌╌╌╌╌▶[east · B]
+     │              ╎    │
+     □B:a           ╎    □A:a
+     │              ╎    │
+     ├───────────────────┘
+     │▼╌╌╌╌╌╌╌╌╌╌╌╌╌╯
+ → [in]──────────────■A:b+B:b──────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it
+
+in ▸ west ▸ A:b ▸ ⤓east ▸ B:b ▸ ⤓in ▸ out"
+`;
+
+exports[`sluice > draws, with its cheapest way through 1`] = `
+"                                            [hall · gold ░S:hall]
+                                                      │
+                                                      │
+                                                      │
+                                                      │
+                                                      │
+→ [in]────────────────────────────────────────────[hub · S]─────────────────────────────────────[vault ▒S:vault]────────────────■gold:on────────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it
+
+in ▸ hub ▸ hall ▸ gold:on ▸ hub ▸ S:vault ▸ vault ▸ out"
+`;
+
+exports[`tide > draws, with its cheapest way through 1`] = `
+"[hall2 · K ▒S:b]
+        │
+        │
+        │
+        │
+        │
+    [mid · S]
+        │
+        │
+        │
+        │
+        │
+  [hall1 ░S:a]
+        │
+        │
+        │
+        │
+        │
+    → [in]───────────────■K:on────────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it
+
+in ▸ hall1 ▸ mid ▸ S:b ▸ hall2 ▸ K:on ▸ mid ▸ S:a ▸ hall1 ▸ in ▸ out"
+`;
+
+exports[`twoLamps > draws, with its cheapest way through 1`] = `
+" [west · A]          [east · B]
+      │                   │
+      ■Y                  ■Y
+      │                   │
+      ├───────────────────┘
+      │
+→ [in · Y]─────────────■A:b+B:b─────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it
+
+in ▸ Y:in-west ▸ west ▸ A:b ▸ in ▸ Y:in-east ▸ east ▸ B:b ▸ in ▸ out"
+`;
+
+exports[`twoStones > draws, with its cheapest way through 1`] = `
+"                                                                          [vault · ◉alcove]
+                                                                                  │
+                                                                                  ■door
+                                                                                  │
+                                                                                  │
+                                                                                  │
+→ [in]───────────────────────────────────────────────────────────[yard · ⊙door · ⊙e1 · ⊙e2 · ◉ledge]──────────────────────────■e1+e2──────────────────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it
+
+in ▸ yard ▸ lift from ledge ▸ stone on door ▸ vault ▸ lift from alcove ▸ yard ▸ stone on e1 ▸ lift from door ▸ stone on e2 ▸ out"
+`;

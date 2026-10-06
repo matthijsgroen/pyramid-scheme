@@ -1,0 +1,5 @@
+// LESSON, junior: a lever elsewhere opens a door here.
+
+in -- side
+in -[H]- out
+H toggle @side

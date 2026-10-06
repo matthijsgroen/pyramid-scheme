@@ -349,9 +349,9 @@ example and 12 undoes a decision made the same afternoon.
     connection merges them into one region of the compiled lock. A sequence's tiles placed in separate
     regions collapse into one and the walk cannot see the order — which is exactly what §7's
     `connections` field was added for.
-13. **A step onto a tile is not optional.** `lockWalk` treats every transition as a move the player may
-    choose. Walking over a sequence tile happens whether they meant it or not, and a wrong step spoils
-    the run. The solver is optimistic here, and that is only sound while the reset is always reachable.
+13. **A step onto a tile is not optional.** A tile is a region of one cell on a cut of the walk, and the
+    solver makes its transition on entering that region (`Mechanism.entries`), never as a move the player
+    may decline; a floor no walk completes in order is refused naming the sequence (`Mechanism.goal`).
 14. **A mechanic's state may live across several cells.** `mechanismStates` is keyed by one cell
     address; a sequence has one state and many tiles.
 15. **A cell's slot must not embed the family.** It is `x<family>:<mechanismId>` today, so binding one

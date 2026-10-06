@@ -202,8 +202,9 @@ export type FloorConstraint<TExtra extends string = never> = {
    * `controls`, `forks` and `barrierOrder` when the floor is assembled, so authoring those beside `locks` is
    * refused. Floor-level only: a lock is placed on a floor, never inherited from the pyramid. */
   locks?: PlacedLock[]
-  /** The realisation each control kind of this floor's locks is dressed as, floor level: it wins, per kind, over the
-   * pyramid, journey and difficulty declarations. The built floor carries the resolved binding — see FloorConfig.realisations. */
+  /** The realisation each control kind of this floor's locks is dressed as, and `"region-barrier"` the one (water, sand)
+   * every barred region is dressed as, floor level: it wins, per kind, over the pyramid, journey and difficulty
+   * declarations. The built floor carries the resolved binding — see FloorConfig.realisations. */
   realisations?: RealisationBinding
   /** A SWITCH: `encounter` stands in a junction `forks` reserved and closes its free ways out, so the
    * player stands in the fork and what is in it decides which way opens. Between `min` and `max` of
