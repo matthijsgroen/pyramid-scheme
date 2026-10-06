@@ -366,3 +366,29 @@ it touches saves or fixtures, and say so.
   stage it in `nodeShapes.stories.tsx` (or the sequence story, if one exists) in all three states, with the
   explorer for scale. Screenshot it, and **stop for the designer's verdict.**
 - [ ] **Step 7: Commit** with `art: the sequence tile, carved into the floor`.
+
+---
+
+### Task 7: The brazier leaves the floor dressing
+
+**Decided by the designer (2026-10-06):** once a torch is something the player lights, a brazier standing in a
+room reads as one more thing to light. That is confusing, so the brazier is no longer used as dressing. The
+torch must not look like it either (task 4).
+
+The brazier is a decoration kind at every rank. It is used in `src/worldGen/spec/{starter,junior,expert,master}.ts`,
+`src/game/dressingTags.ts`, `src/game/siteTypes.ts`, `src/game/siteAssembler.ts` and
+`src/app/SiteMap/SiteMapView.tsx` (its lit variant is a light source). Its art is at five ranks
+(`src/assets/tiles/*/brazier.png`).
+
+**This changes the baked world** (`src/data/generatedWorld.ts`), because rooms that drew a brazier draw
+something else. Follow the stable-world rule:
+- capture the bake before the change;
+- remove the brazier from every dressing pool and spec;
+- re-bake, and show the designer the diff;
+- check that only dressing changed: no corridor, gate, loot or encounter moved
+  (`docs/game-design/world-spec-stability.md`, the free-vs-structural field lists, and the sweep in
+  `worldFloorAssembly.verify.ts`).
+
+**Open with the designer before starting:** what fills the brazier's place in each rank's pool (another
+existing prop, or nothing), and whether the brazier's light (`SiteMapView`) moves to another prop or goes.
+The art and the masters stay in the repository; only their use as dressing ends.
