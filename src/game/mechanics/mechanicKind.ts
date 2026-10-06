@@ -1,5 +1,5 @@
 import type { LockFault, RealisationBinding } from "../lockCompile"
-import type { LockMechanic, Opens } from "../lockAuthoring"
+import type { Lock, LockMechanic, Opens } from "../lockAuthoring"
 import type { Control } from "../obstacles"
 import type { ForkDemand } from "../siteTypes"
 
@@ -51,6 +51,8 @@ export type MechanicKind = {
   faults?: (id: string, mechanic: LooseMechanic) => LockFault[]
   /** How a mechanic of this kind becomes controls on the floor. Absent: the kind has no mechanic to compile. */
   compile?: (id: string, mechanic: LockMechanic, context: CompileContext) => Compiled
+  /** How a kind that belongs to the whole lock rather than to one mechanic becomes controls: the stones. */
+  compileLock?: (lock: Lock, context: CompileContext) => Compiled
   /** Where a floor control of this kind needs a node of its own, one entry per node, in order. Absent: it needs none. */
   seats?: (control: Control) => { region: string; seat: ControlSeatKind }[]
   /** An effect with no control of its own, compiled where the lock's gates and drops are (a one-way). */

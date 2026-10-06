@@ -381,6 +381,7 @@ describe("a lock using a mechanic that is not built yet", () => {
       "sequence",
       "fork-switch",
       "one-way",
+      "weights",
     ])
     expect(CORE_MECHANICS.every(kind => kind.built)).toBe(true)
   })
@@ -550,8 +551,36 @@ describe("a lock with stones", () => {
     ...overrides,
   })
 
-  it("takes a plate as a gate's owner", () => {
-    expect(checkLock(plateLock())).not.toContainEqual(expect.objectContaining({ type: "gateOwnerUnknown" }))
+  it("takes a plate as a gate's owner, and is checked whole", () => {
+    expect(checkLock(plateLock())).toEqual([])
+  })
+
+  it("compiles its stones into one weights control, every name in the lock's namespace", () => {
+    const fragment = fragmentOf(plateLock(), { ...BINDING, weights: "stonePlate" }, "a")
+    const control = fragment.controls.find(c => c.control === "weights")
+    expect(control).toMatchObject({
+      id: "a.stones",
+      control: "weights",
+      plates: [
+        { id: "a.p", in: "a.in", stone: false },
+        { id: "a.shelf", in: "a.in", stone: true },
+      ],
+      initial: "a.shelf",
+      encounter: "stonePlate",
+    })
+    expect(control!.opens["a.p"]).toEqual(["a.door"])
+  })
+
+  it("refuses stones in a build whose registry has no weights kind", () => {
+    const withoutWeights = mechanicRegistry(CORE_MECHANICS.filter(kind => kind.control !== "weights"))
+    expect(checkLock(plateLock(), withoutWeights)).toEqual([
+      { type: "unknownControlKind", mechanic: "stones", control: "weights" },
+    ])
+  })
+
+  it("asks a binding for the stones like any built kind", () => {
+    const result = compile(plateLock(), BINDING)
+    expect(result).toEqual({ ok: false, faults: [{ type: "unboundRole", kind: "weights", mechanics: ["stones"] }] })
   })
 
   it("refuses a plate standing in a region the lock does not have", () => {

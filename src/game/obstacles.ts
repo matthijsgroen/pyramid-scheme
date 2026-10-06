@@ -142,11 +142,34 @@ export type SequenceControl = {
   encounter?: string
 }
 
-export type Control = StatefulControl | ForkSwitchControl | SequenceControl
+/**
+ * A LOCK'S STONES AND PLATES, one control however many plates: its states are the arrangements of the stones
+ * (src/game/mechanics/weights.ts), `opens` names the gates each arrangement opens and `moves` every lift and
+ * set-down by the plate it is made at. Compiled from a lock, never authored longhand.
+ */
+export type WeightsControl = {
+  id: string
+  control: "weights"
+  plates: { id: string; in: string; stone: boolean }[]
+  states: string[]
+  initial: string
+  /** Gate ids (namespaced) each arrangement opens. */
+  opens: Record<string, string[]>
+  /** Moves by plate id (namespaced). */
+  moves: { from: string; to: string; plate: string }[]
+  /** The arrangements with a stone in hand. */
+  carrying: string[]
+  /** The realisation the plates are dressed as, bound where the lock is placed. */
+  encounter?: string
+}
+
+export type Control = StatefulControl | ForkSwitchControl | SequenceControl | WeightsControl
 
 export const isForkSwitch = (control: Control): control is ForkSwitchControl => control.control === "fork-switch"
 
 export const isSequence = (control: Control): control is SequenceControl => control.control === "sequence"
+
+export const isWeights = (control: Control): control is WeightsControl => control.control === "weights"
 
 /** The core control kind a floor control is an instance of (src/game/mechanics): a stateful one is a toggle where it
  * returns to its start and an activator where it does not. */
@@ -314,7 +337,11 @@ export const topologyFaults = (
           : { type: "obstacleNamesNoConnection", id: o.id }
       )
     for (const c of controls)
-      faults.push({ type: "controlUnsatisfied", id: c.id, what: isSequence(c) ? (c.steps[0]?.in ?? c.id) : c.in })
+      faults.push({
+        type: "controlUnsatisfied",
+        id: c.id,
+        what: isSequence(c) ? (c.steps[0]?.in ?? c.id) : isWeights(c) ? (c.plates[0]?.in ?? c.id) : c.in,
+      })
     return faults
   }
 
@@ -374,6 +401,17 @@ export const topologyFaults = (
     if (isSequence(control)) {
       faults.push(...sequenceFaults(control, layout, obstacleById, drops))
       for (const id of control.opens.done ?? []) owned.add(id)
+      continue
+    }
+    // The stones: every plate stands in a region of the floor, and every gate an arrangement opens is a gate.
+    if (isWeights(control)) {
+      for (const plate of control.plates)
+        if (!regions.has(plate.in)) faults.push({ type: "controlUnsatisfied", id: control.id, what: plate.in })
+      for (const id of new Set(Object.values(control.opens).flat())) {
+        const obstacle = obstacleById.get(id)
+        if (!obstacle || obstacle.kind !== "gate") faults.push({ type: "controlUnsatisfied", id: control.id, what: id })
+        owned.add(id)
+      }
       continue
     }
     if (!regions.has(control.in)) faults.push({ type: "controlUnsatisfied", id: control.id, what: control.in })

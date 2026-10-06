@@ -104,6 +104,7 @@ const kindsUsed = (lock: Lock): Map<string, string[]> => {
   const add = (kind: string, id: string) => used.set(kind, [...(used.get(kind) ?? []), id])
   for (const [id, mechanic] of Object.entries(lock.mechanics)) add(mechanic.control, id)
   for (const id of Object.keys(lock.oneWays ?? {})) add("one-way", id)
+  if (lock.weights) add("weights", "stones")
   return used
 }
 
@@ -214,6 +215,8 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
   for (const [region, mechanics] of regionHolders)
     if (mechanics.length > 1) faults.push({ type: "forkRegionShared", region, mechanics })
 
+  if (lock.weights && !kinds("weights"))
+    faults.push({ type: "unknownControlKind", mechanic: "stones", control: "weights" })
   if (Object.keys(oneWays).length > 0 && !kinds("one-way"))
     for (const id of Object.keys(oneWays)) faults.push({ type: "unknownControlKind", mechanic: id, control: "one-way" })
   return faults
@@ -223,7 +226,7 @@ const unbakeableFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] =
   [...kindsUsed(lock)].flatMap(([control, ids]): LockFault[] => {
     const meta = kinds(control)
     if (meta?.built === false) return ids.map(mechanic => ({ type: "unbuiltMechanic" as const, mechanic, control }))
-    if (meta?.built === true && !meta.compile && !meta.effectOnly)
+    if (meta?.built === true && !meta.compile && !meta.compileLock && !meta.effectOnly)
       return ids.map(mechanic => ({ type: "kindNotCompilable" as const, mechanic, control }))
     return []
   })
@@ -298,6 +301,7 @@ const translate = (
     controls.push(...(compiled?.controls ?? []))
     forks.push(...(compiled?.forks ?? []))
   }
+  if (lock.weights) controls.push(...(kinds("weights")?.compileLock?.(lock, { name, binding }).controls ?? []))
 
   const barrierOrder: BarrierOrder[] = lock.connections.flatMap(connection => {
     const barriers = barriersOf(connection)

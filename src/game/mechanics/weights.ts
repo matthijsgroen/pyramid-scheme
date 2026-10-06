@@ -1,5 +1,6 @@
 import type { Lock, Weights } from "../lockAuthoring"
 import { CARRY_TERMS, isWeightOwner } from "../lockAuthoring"
+import type { MechanicKind } from "./mechanicKind"
 
 export type StoneMove = { from: string; to: string; plate: string }
 export type Arrangements = {
@@ -75,4 +76,62 @@ export const stoneArrangements = (lock: Lock): Arrangements => {
     ),
     carrying: [...found].filter(([, stones]) => stones.hand).map(([key]) => key),
   }
+}
+
+/**
+ * THE STONES OF ONE LOCK AS ONE CONTROL. Every plate needs a node of its own in its region, as a sequence's
+ * tile does; the control is compiled from the whole lock, every plate, gate and region under its namespace.
+ */
+export const WEIGHTS: MechanicKind = {
+  control: "weights",
+  built: true,
+  gates: "opens",
+  seats: control =>
+    control.control === "weights" ? control.plates.map(plate => ({ region: plate.in, seat: "tile" as const })) : [],
+  compileLock: (lock, { name, binding }) => {
+    if (!lock.weights) return { controls: [] }
+    const { plates } = lock.weights
+    const renamed: Lock = {
+      ...lock,
+      gates: Object.fromEntries(
+        Object.entries(lock.gates).map(([id, gate]) => [
+          name(id),
+          { ...gate, owners: gate.owners.map(owner => (owner in plates ? name(owner) : owner)) },
+        ])
+      ),
+      weights: {
+        plates: Object.fromEntries(
+          Object.entries(plates).map(([id, plate]) => [
+            name(id),
+            {
+              in: name(plate.in),
+              stone: plate.stone,
+              opens: { weighted: plate.opens.weighted.map(name), empty: plate.opens.empty.map(name) },
+            },
+          ])
+        ),
+      },
+    }
+    const { states, initial, moves, opens, carrying } = stoneArrangements(renamed)
+    const encounter = binding.weights
+    return {
+      controls: [
+        {
+          id: name("stones"),
+          control: "weights",
+          plates: Object.entries(renamed.weights!.plates).map(([id, plate]) => ({
+            id,
+            in: plate.in,
+            stone: plate.stone,
+          })),
+          states,
+          initial,
+          moves,
+          opens,
+          carrying,
+          ...(encounter === undefined ? {} : { encounter }),
+        },
+      ],
+    }
+  },
 }

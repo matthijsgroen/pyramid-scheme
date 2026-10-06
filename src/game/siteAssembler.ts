@@ -50,6 +50,7 @@ import {
   isForkSwitch,
   isRegionGate,
   isSequence,
+  isWeights,
   seamIndexFor,
   seatBarrierDoors,
   seatBarrierRun,
@@ -1034,7 +1035,7 @@ const assembleExpandedFloor = (
   // the carve has stood its tiles (`placeSequences`, last).
   const sequences = (authoredConfig.controls ?? []).filter(isSequence)
   const controlRecords = (authoredConfig.controls ?? []).flatMap(control =>
-    isForkSwitch(control) || isSequence(control)
+    isForkSwitch(control) || isSequence(control) || isWeights(control)
       ? []
       : [{ control, record: compileMechanism(control, gateKeyOf, obstacleMode) }]
   )
@@ -1047,6 +1048,9 @@ const assembleExpandedFloor = (
   // it owns — stable across a re-carve and never an ordinal. A control that opens nothing names no
   // obstacle to pair with, so it gets no mark.
   for (const control of authoredConfig.controls ?? []) {
+    // The stones wear no mark: a door waiting on plates shows its plates itself (mechanic-contract.md, "A gate
+    // shows its own condition").
+    if (isWeights(control)) continue
     if (isForkSwitch(control)) {
       const owned = gatesOwnedBy(control.id)
         .map(gate => gate.id)
