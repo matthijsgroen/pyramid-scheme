@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest"
+import { parseLock } from "./lockNotation"
 import { resolveEncounterMeta, resolveKeyRequirements } from "@/mods/allFamilyMeta"
 import { expandFloorLocks, FLOOR_ENTRANCE, FLOOR_EXIT } from "./floorLocks"
 import type { PlacedLock } from "./floorLocks"
@@ -425,4 +426,26 @@ describe("a floor without nesting is walked exactly as it was", () => {
       }
     }
   )
+})
+
+describe("stones on a floor with nested locks", () => {
+  const stones = parseLock(
+    "in -- yard\nyard -- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nyard ?\nhall ?\nout ?",
+    "stones"
+  ).lock
+  const nested: PlacedLock[] = [
+    { lock: stones },
+    { lock: leverLock(), as: "inner", inside: { instance: "stones", region: "yard" } },
+  ]
+
+  it("is refused by the walk, which finds no dead region to report", () => {
+    const grids = carved({ ...floorOf(nested), realisations: { ...BINDING, weights: "stonePlate" } })
+    expect(grids.length).toBeGreaterThan(0)
+    for (const grid of grids) {
+      expect(walkFloorLock(grid)).toEqual({
+        sound: false,
+        failure: { type: "entangled", problem: "stones on a floor with nested locks" },
+      })
+    }
+  })
 })

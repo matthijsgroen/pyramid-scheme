@@ -84,7 +84,7 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
 
 - The §1 refusals "a gate needs more stones than the lock has", "a plate in the region it bars" and "a plate
   where no corridor reaches" do not exist yet; only `plateNamesNoRegion` and `carryWithoutStones` do.
-- `floorLockWalk.ts` compose drops `leaveWith`. It must carry it before any floor nests a stone lock (phase 6).
+- Any floor with `lockNesting` that holds stones is refused (`floorLockWalk.ts`) until phase 6.
 - masonsRamp, counterweight and stoneOnAPlate are not baked on the dev floor and are in no phase yet.
 - Gate faces (`gateFace.ts`) do not know plate homes yet (phase 2).
 

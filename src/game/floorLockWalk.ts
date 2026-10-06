@@ -288,6 +288,11 @@ const compose = (grid: FloorGrid, lock: LockSpec) => {
   }
 }
 
+// A nested level is built without the way out's `leaveWith`, so a floor that nests locks and holds stones cannot
+// be walked soundly: the walk refuses it, and the dead-region check, which has no failure to report, finds nothing.
+const holdsStones = (lock: LockSpec) => (lock.leaveWith ?? []).length > 0
+const STONES_NESTED: FloorWalkFailure = { type: "entangled", problem: "stones on a floor with nested locks" }
+
 /**
  * THE FLOOR'S LOCK WALKED: sound only when every nested lock is free by itself and the floor's own level is sound
  * with each nested lock as ground. Without nesting it is `walkLock` over the whole lock, unchanged. `undefined`
@@ -297,6 +302,7 @@ export const walkFloorLock = (grid: FloorGrid): FloorWalkResult | undefined => {
   const lock = floorLock(grid)
   if (!lock) return undefined
   if (!grid.lockNesting || grid.lockNesting.length === 0) return walkLock(lock)
+  if (holdsStones(lock)) return { sound: false, failure: STONES_NESTED }
   const composed = compose(grid, lock)
   if (!composed.ok) return { sound: false, failure: composed.failure }
   const walk = walkLock(composed.levels[composed.levels.length - 1].spec)
@@ -308,6 +314,7 @@ export const deadFloorRegions = (grid: FloorGrid): RegionId[] => {
   const lock = floorLock(grid)
   if (!lock) return []
   if (!grid.lockNesting || grid.lockNesting.length === 0) return deadRegions(lock)
+  if (holdsStones(lock)) return []
   const composed = compose(grid, lock)
   return composed.ok ? composed.levels.flatMap(level => deadRegions(level.spec)) : []
 }
