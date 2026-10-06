@@ -106,6 +106,8 @@ type Props = {
   explorerHidden?: boolean
   /** A zipline being ridden: drawn as one slide beside the explorer, who is hidden meanwhile. */
   ride?: Ride | null
+  /** Map units the rider hangs above the walking feet; unset uses the ZiplineRider default. A look, tuned in a story. */
+  rideHang?: number
   /** Current floor index. Keys the explorer dot so a floor switch remounts it (instant snap to the
    * new floor's entrance) instead of animating a walk from the previous floor's coordinates. */
   currentFloor?: number
@@ -1125,6 +1127,7 @@ export const SiteMapView = ({
   explorerPos,
   explorerHidden = false,
   ride,
+  rideHang,
   currentFloor,
   pendingCells,
   ownedKeys,
@@ -1733,7 +1736,7 @@ export const SiteMapView = ({
                   onArrive={() => setSettledExplorerPos(explorerPos)}
                 />
               )}
-              {ride && <ZiplineRider ride={ride} />}
+              {ride && <ZiplineRider ride={ride} hang={rideHang} />}
 
               <StandingLayer sprites={inFrontOfExplorer} />
 

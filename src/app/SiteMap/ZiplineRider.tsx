@@ -12,7 +12,7 @@ export const HANG = 18
  * Its end is the ride's end; taken off the map mid-slide, it ends the ride rather than leave the player
  * out of sight.
  */
-export const ZiplineRider = ({ ride }: { ride: Ride }) => {
+export const ZiplineRider = ({ ride, hang = HANG }: { ride: Ride; hang?: number }) => {
   const at = (cell: readonly [number, number]) => {
     const { cx, cy } = cellCenter(cell[0], cell[1])
     return { x: cx, y: cy }
@@ -51,7 +51,7 @@ export const ZiplineRider = ({ ride }: { ride: Ride }) => {
         style={{
           position: "absolute",
           left: -CHAR_W / 2,
-          top: CELL / 2 - CHAR_H - FOOT_LIFT - HANG,
+          top: CELL / 2 - CHAR_H - FOOT_LIFT - hang,
           width: CHAR_W,
           height: CHAR_H,
           transform: ride.mirrored ? "scaleX(-1)" : undefined,

@@ -17,7 +17,10 @@ const prefersReducedMotion = () =>
  * cannot draw — another kind of span, a facing with no riding art, a player who asked for less motion —
  * is crossed at once.
  */
-export const useZiplineRide = ({ reducedMotion = prefersReducedMotion() }: { reducedMotion?: boolean } = {}) => {
+export const useZiplineRide = ({
+  reducedMotion = prefersReducedMotion(),
+  msPerCell = RIDE_MS_PER_CELL,
+}: { reducedMotion?: boolean; msPerCell?: number } = {}) => {
   const [ride, setRide] = useState<Ride | null>(null)
   const ending = useRef<(() => void) | null>(null)
   const playTraversal: PlayTraversal = useCallback(
@@ -25,7 +28,7 @@ export const useZiplineRide = ({ reducedMotion = prefersReducedMotion() }: { red
       const sprite = sharedTileFrames(`explorer-zip-${traversal.dir === "w" ? "e" : traversal.dir}`)[0]
       if (traversal.kind !== "zipline" || !sprite || reducedMotion) return Promise.resolve()
       const cells = Math.abs(traversal.to[0] - traversal.from[0]) + Math.abs(traversal.to[1] - traversal.from[1])
-      const ms = cells * RIDE_MS_PER_CELL
+      const ms = cells * msPerCell
       return new Promise<void>(resolve => {
         const end = () => {
           if (ending.current !== end) return
@@ -40,7 +43,7 @@ export const useZiplineRide = ({ reducedMotion = prefersReducedMotion() }: { red
         setRide({ traversal, sprite, mirrored: traversal.dir === "w", ms, end })
       })
     },
-    [reducedMotion]
+    [reducedMotion, msPerCell]
   )
   return { ride, playTraversal }
 }
