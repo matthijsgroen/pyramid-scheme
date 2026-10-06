@@ -45,11 +45,21 @@ describe("placeWeights", () => {
     expect(plates(cells).every(cell => cell.worksMechanism?.mechanismId === control.id)).toBe(true)
   })
 
+  it("puts the record and the cells the same way whatever order the plates were declared in", () => {
+    const placed = (text: string) => {
+      const cells = corridorRow(4, "in")
+      placeWeights(cells, [{ control: controlOf(text), gate: id => ({ gateKeyId: `k:${id}` }) }], new Set(), "salt")
+      return plates(cells).map(cell => ({ id: cell.plate!.id, record: cell.mechanism !== undefined }))
+    }
+    const forward = placed("in -[b]- out\na plate @in stone\nb plate @in")
+    expect(placed("in -[b]- out\nb plate @in\na plate @in stone")).toEqual(forward)
+  })
+
   it("names the plate whose region has no free node", () => {
     const cells = corridorRow(1, "in")
     const control = controlOf(TWO_PLATES)
     expect(placeWeights(cells, [{ control, gate: id => ({ gateKeyId: `k:${id}` }) }], new Set(), "salt")).toEqual({
-      plate: "a",
+      plate: "b",
     })
   })
 
@@ -58,7 +68,7 @@ describe("placeWeights", () => {
     const control = controlOf(TWO_PLATES)
     expect(
       placeWeights(cells, [{ control, gate: id => ({ gateKeyId: `k:${id}` }) }], new Set(), "salt", new Set(["0,0"]))
-    ).toEqual({ plate: "a" })
+    ).toEqual({ plate: "b" })
   })
 
   it("stands a plate off the main path while its region has a node there", () => {

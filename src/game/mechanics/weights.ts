@@ -121,11 +121,13 @@ export const WEIGHTS: MechanicKind = {
         {
           id: name("stones"),
           control: "weights",
-          plates: Object.entries(renamed.weights!.plates).map(([id, plate]) => ({
-            id,
-            in: plate.in,
-            stone: plate.stone,
-          })),
+          plates: Object.entries(renamed.weights!.plates)
+            .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+            .map(([id, plate]) => ({
+              id,
+              in: plate.in,
+              stone: plate.stone,
+            })),
           states,
           initial,
           moves,
