@@ -97,10 +97,10 @@ const Ride = ({ travel }: { travel: Travel }) => {
         <Slider label="ms per cell" value={msPerCell} min={40} max={300} onChange={setMsPerCell} />
       </div>
       <div className="flex flex-wrap items-center gap-4 p-2 text-sm">
-        <Slider label="from.x" value={pose.from.x} min={-60} max={60} onChange={x => set({ from: { x } })} />
-        <Slider label="from.y" value={pose.from.y} min={-60} max={60} onChange={y => set({ from: { y } })} />
-        <Slider label="to.x" value={pose.to.x} min={-60} max={60} onChange={x => set({ to: { x } })} />
-        <Slider label="to.y" value={pose.to.y} min={-60} max={60} onChange={y => set({ to: { y } })} />
+        <Slider label="from.x" value={pose.from.x} min={-150} max={150} onChange={x => set({ from: { x } })} />
+        <Slider label="from.y" value={pose.from.y} min={-150} max={150} onChange={y => set({ from: { y } })} />
+        <Slider label="to.x" value={pose.to.x} min={-150} max={150} onChange={x => set({ to: { x } })} />
+        <Slider label="to.y" value={pose.to.y} min={-150} max={150} onChange={y => set({ to: { y } })} />
         <Slider label="scale" value={pose.scale} min={0.5} max={1.5} step={0.05} onChange={scale => set({ scale })} />
       </div>
       <pre className="p-2 text-sm" data-pose-line="">

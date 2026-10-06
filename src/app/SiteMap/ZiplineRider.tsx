@@ -9,6 +9,13 @@ const centre = (cell: readonly [number, number]) => {
   return { x: cx, y: cy }
 }
 
+/** Where the handle is at one end of a ride: the cell's centre plus the heading's pose. */
+const riderPoint = (ride: Ride, poses: RidePoses, end: "from" | "to") => {
+  const c = centre(ride.traversal[end])
+  const p = poseFor(ride.traversal.dir, poses)[end]
+  return { x: c.x + p.x, y: c.y + p.y }
+}
+
 /** The rider's light and sprite, hung from the handle point (the origin of the element they sit in). */
 const RiderBody = ({ ride, scale }: { ride: Ride; scale: number }) => {
   const w = CHAR_W * scale
@@ -56,19 +63,15 @@ export const RiderSprite = ({ ride, at, pose }: { ride: Ride; at: "from" | "to";
  */
 export const ZiplineRider = ({ ride, poses = RIDE_POSES }: { ride: Ride; poses?: RidePoses }) => {
   const pose = poseFor(ride.traversal.dir, poses)
-  const at = (end: "from" | "to") => {
-    const c = centre(ride.traversal[end])
-    return { x: c.x + pose[end].x, y: c.y + pose[end].y }
-  }
-  const [pos, setPos] = useState(at("from"))
+  const [pos, setPos] = useState(() => riderPoint(ride, poses, "from"))
   const el = useRef<HTMLDivElement>(null)
   // Start at the launch, then move on the next frame so the browser has a start to transition from.
   useLayoutEffect(() => {
     // Reading layout makes the browser compute the launch style, so the move to the landing transitions.
     void el.current?.offsetWidth
-    const frame = requestAnimationFrame(() => setPos(at("to")))
+    const frame = requestAnimationFrame(() => setPos(riderPoint(ride, poses, "to")))
     return () => cancelAnimationFrame(frame)
-  }, [ride])
+  }, [ride, poses])
   return (
     <div
       ref={el}

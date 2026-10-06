@@ -1424,7 +1424,11 @@ export const SiteMapView = ({
     const originY = mapRect.top - elRect.top + el.scrollTop
     // Cell coordinates are in unzoomed SVG units; the rendered map is `zoom` times that size.
     const zoom = zoomRef.current
-    const { cx, cy } = cellCenter(target[0], target[1])
+    // A still frame of a ride centres on the middle of the run, so the whole drop is in view.
+    const at = cellCenter(target[0], target[1])
+    const from = ride && rideFrame ? cellCenter(ride.traversal.from[0], ride.traversal.from[1]) : at
+    const cx = (at.cx + from.cx) / 2
+    const cy = (at.cy + from.cy) / 2
     const x = originX + cx * zoom
     const y = originY + cy * zoom
     el.scrollTo({ left: x - el.clientWidth / 2, top: y - el.clientHeight / 2, behavior: "smooth" })
@@ -1741,11 +1745,12 @@ export const SiteMapView = ({
                   onArrive={() => setSettledExplorerPos(explorerPos)}
                 />
               )}
-              {ride && rideFrame ? (
-                <RiderSprite ride={ride} at={rideFrame} pose={poseFor(ride.traversal.dir, ridePoses)} />
-              ) : (
-                ride && <ZiplineRider ride={ride} poses={ridePoses} />
-              )}
+              {ride &&
+                (rideFrame ? (
+                  <RiderSprite ride={ride} at={rideFrame} pose={poseFor(ride.traversal.dir, ridePoses)} />
+                ) : (
+                  <ZiplineRider ride={ride} poses={ridePoses} />
+                ))}
 
               <StandingLayer sprites={inFrontOfExplorer} />
 
