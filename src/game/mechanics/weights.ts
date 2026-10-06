@@ -98,7 +98,7 @@ export const WEIGHTS: MechanicKind = {
       gates: Object.fromEntries(
         Object.entries(lock.gates).map(([id, gate]) => [
           name(id),
-          { ...gate, owners: gate.owners.map(owner => (owner in plates ? name(owner) : owner)) },
+          { ...gate, owners: gate.owners.map(owner => (Object.hasOwn(plates, owner) ? name(owner) : owner)) },
         ])
       ),
       weights: {

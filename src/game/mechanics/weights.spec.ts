@@ -42,6 +42,13 @@ describe("stoneArrangements", () => {
     expect(any.opens["a + hand"]).toEqual(["in-out"])
   })
 
+  it("treats a lever named like an Object.prototype key as a mechanic, never a plate", () => {
+    const text = "in -[constructor+p]- out\np plate @in stone\nconstructor toggle @in"
+    const { opens } = stoneArrangements(lockOf(text))
+    expect(opens).toEqual({ p: ["in-out"], "+ hand": [] })
+    expect(controlOf(text).plates.map(plate => plate.id)).toEqual(["p"])
+  })
+
   it("keys an arrangement by sorted plate names whatever order the plates were declared in", () => {
     const { states, initial } = stoneArrangements(lockOf("in -[a+b]- out\nb plate @in stone\na plate @in stone"))
     expect(initial).toBe("a b")
@@ -87,8 +94,9 @@ describe("compileWeights", () => {
     expect(record.positions).toEqual([{ state: "a", gateKeyId: "k:in-out" }])
   })
 
-  it("lists a plate|lever gate under every arrangement where the plate term holds", () => {
-    const record = recordOf("in -[b|L]- out\nb plate @in\na plate @in stone\nL toggle @in", "any")
-    expect(record.positions.map(p => p.state)).toEqual(["b"])
+  it("lists a plate|plate|lever gate under every arrangement where either plate term holds", () => {
+    const record = recordOf("in -[a|b|L]- out\na plate @in stone\nb plate @in\nL toggle @in", "any")
+    expect(record.positions.map(p => p.state)).toEqual(["a", "b"])
+    expect(record.positions.every(p => p.mode === "any")).toBe(true)
   })
 })

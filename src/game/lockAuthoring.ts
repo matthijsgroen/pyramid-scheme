@@ -190,4 +190,4 @@ export const barriersOf = (connection: LockConnection): readonly BarrierId[] =>
 
 /** Whether a gate owner is a plate of the lock, or a condition on what the player carries. */
 export const isWeightOwner = (lock: Lock, owner: string): boolean =>
-  owner in (lock.weights?.plates ?? {}) || (CARRY_TERMS as readonly string[]).includes(owner)
+  Object.hasOwn(lock.weights?.plates ?? {}, owner) || (CARRY_TERMS as readonly string[]).includes(owner)
