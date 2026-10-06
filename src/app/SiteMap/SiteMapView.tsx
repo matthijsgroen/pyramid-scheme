@@ -11,7 +11,8 @@ import type {
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { isSealedWayOut, oneWayRuns, revealAll } from "../../game/gridNavigation"
 import { ExplorerDot, LightPool } from "./ExplorerDot"
-import { ZiplineRider } from "./ZiplineRider"
+import { RiderSprite, ZiplineRider } from "./ZiplineRider"
+import { poseFor, type RidePoses } from "./ridePoses"
 import type { Ride } from "./useZiplineRide"
 import { driftsFor, grassMatsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
@@ -106,8 +107,10 @@ type Props = {
   explorerHidden?: boolean
   /** A zipline being ridden: drawn as one slide beside the explorer, who is hidden meanwhile. */
   ride?: Ride | null
-  /** Map units the rider hangs above the walking feet; unset uses the ZiplineRider default. A look, tuned in a story. */
-  rideHang?: number
+  /** Where the rider hangs at each end of the ride and how big it is drawn; unset uses RIDE_POSES. A look, tuned in a story. */
+  ridePoses?: RidePoses
+  /** Draw the ride standing still at its first or last frame instead of sliding it: a story's way to tune the poses. */
+  rideFrame?: "from" | "to"
   /** Current floor index. Keys the explorer dot so a floor switch remounts it (instant snap to the
    * new floor's entrance) instead of animating a walk from the previous floor's coordinates. */
   currentFloor?: number
@@ -1127,7 +1130,8 @@ export const SiteMapView = ({
   explorerPos,
   explorerHidden = false,
   ride,
-  rideHang,
+  ridePoses,
+  rideFrame,
   currentFloor,
   pendingCells,
   ownedKeys,
@@ -1737,7 +1741,11 @@ export const SiteMapView = ({
                   onArrive={() => setSettledExplorerPos(explorerPos)}
                 />
               )}
-              {ride && <ZiplineRider ride={ride} hang={rideHang} />}
+              {ride && rideFrame ? (
+                <RiderSprite ride={ride} at={rideFrame} pose={poseFor(ride.traversal.dir, ridePoses)} />
+              ) : (
+                ride && <ZiplineRider ride={ride} poses={ridePoses} />
+              )}
 
               <StandingLayer sprites={inFrontOfExplorer} />
 
