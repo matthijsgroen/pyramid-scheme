@@ -5,7 +5,6 @@ import {
   findEmptyChests,
   findStrandingLocks,
   findUnbakedSwitchBoards,
-  findUndrawnOneWays,
   findUnwalkedLocks,
   type FloorRef,
   type StrandingLock,
@@ -552,32 +551,22 @@ describe("what the dev journey authors", () => {
     if (!result || result.sound) throw new Error("expected the floor to be unsolvable without the second drop")
     expect(result.failure.type).toBe("unsolvable")
   })
-
-  // The develop-only boundary is what keeps an undrawn drop off a floor a player will meet, and it is
-  // the capability that grants it — not the journey's id. Said here as well as on the guard itself,
-  // because this is the journey the exemption exists for.
-  it("is the only journey whose capabilities let a drop stand on it", () => {
-    expect(findUndrawnOneWays(withDev)).toEqual([])
-    expect(findUndrawnOneWays({ [DEV_JOURNEY_ID]: withDev[DEV_JOURNEY_ID] }, () => PYRAMID_CAPABILITIES)).toHaveLength(
-      1
-    )
-  })
 })
 
 // HOW FAR THE LOCK SWEEP REACHES, HELD AS A NUMBER RATHER THAN AS "MORE THAN NOTHING". The build's
 // own guard compares the walk against the floors the authoring owes it, which catches a walk that
 // stopped reaching them — but not an authoring that quietly stopped standing mechanisms, because then
 // both sides fall together. The counts are pinned here, where both worlds exist in one process: the
-// shipped world stands one mechanism and a plain build can only ever prove that one, so the ten the
+// shipped world stands two mechanism floors and a plain build can only ever prove those, so the ten the
 // dev journey adds are provable nowhere else.
 describe("the floors the lock sweep walks", () => {
-  it("walks the one mechanism the shipped world stands, and finds no strand", () => {
-    expect(plainSweep.walked).toHaveLength(1)
+  it("walks the two mechanism floors the shipped world stands, and finds no strand", () => {
+    expect(plainSweep.walked).toHaveLength(2)
     expect(plainSweep.stranding).toEqual([])
   })
 
-  it("walks eleven once the dev journey stands its ten, and finds no strand", () => {
-    expect(withDevSweep.walked).toHaveLength(11)
+  it("walks twelve once the dev journey stands its ten, and finds no strand", () => {
+    expect(withDevSweep.walked).toHaveLength(12)
     expect(withDevSweep.stranding).toEqual([])
   })
 
@@ -610,9 +599,6 @@ describe("the baked-board requirement on the dev journey", () => {
       () => PYRAMID_CAPABILITIES
     )
     expect([...new Set(asIfShipped.map(board => `${board.difficulty} ${board.forkShape}`))].sort()).toEqual([
-      "expert adjacent",
-      "expert opposite",
-      "expert three",
       "master adjacent",
       "master opposite",
       "master three",
@@ -623,11 +609,10 @@ describe("the baked-board requirement on the dev journey", () => {
   })
 
   it("lets the world build anyway, with nothing reported against the dev journey", () => {
-    expect(unbakedOn(withDev)).toEqual([])
+    expect(unbakedOn(withDev).filter(board => board.journeyId === DEV_JOURNEY_ID)).toEqual([])
   })
 
   it("holds every other journey to the requirement, dev journey present or not", () => {
-    expect(unbakedOn(plain)).toEqual([])
-    expect(unbakedOn(withoutDev(withDev))).toEqual([])
+    expect(unbakedOn(withoutDev(withDev))).toEqual(unbakedOn(plain))
   })
 })

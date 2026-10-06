@@ -1,7 +1,7 @@
 import { expect } from "vitest"
 import type { LaidLocks } from "../layLocks"
 import type { LockPlan } from "../lockPlan"
-import { ONE_WAY_RUN_CELLS } from "../siteAssembler"
+import { oneWayRunCells } from "../siteAssembler"
 
 const rc = (cell: string) => cell.split(",").map(Number) as [number, number]
 
@@ -83,13 +83,14 @@ export const expectLaidPlan = (plan: LockPlan, laid: LaidLocks): void => {
     expect(nodesOf(drop.landing)).toContain(laidDrop.to)
     const [fr, fc] = rc(laidDrop.from)
     const [tr, tc] = rc(laidDrop.to)
-    expect(Math.abs(fr - tr) + Math.abs(fc - tc)).toBe(ONE_WAY_RUN_CELLS + 3)
+    const runCells = oneWayRunCells(laidDrop.dir)
+    expect(Math.abs(fr - tr) + Math.abs(fc - tc)).toBe(runCells + 3)
     expect(fr === tr || fc === tc).toBe(true)
     const cells = [laidDrop.launchCell, ...laidDrop.run, laidDrop.landingCell]
-    expect(laidDrop.run).toHaveLength(ONE_WAY_RUN_CELLS)
+    expect(laidDrop.run).toHaveLength(runCells)
     for (const cell of cells) {
       const [r, c] = rc(cell)
-      expect(Math.abs(r - fr) + Math.abs(c - fc)).toBeLessThan(ONE_WAY_RUN_CELLS + 3)
+      expect(Math.abs(r - fr) + Math.abs(c - fc)).toBeLessThan(runCells + 3)
       expect(claimed.has(cell)).toBe(false)
       expect(touched.has(String(r * n + c))).toBe(false)
       expect(laid.held).toContain(cell)

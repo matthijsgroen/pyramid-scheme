@@ -2655,7 +2655,7 @@ cannot draw it: under this projection a down-facing face turns away from the cam
 underside is a back face and is never rendered. It is therefore the painter's job, and these three
 prompts ask for it outright.
 
-### `expert/dropNorth` — a launch at the near corner, riding away
+### `default/dropNorth` — a launch at the near corner, riding away
 
 **Attach:**
 
@@ -2702,11 +2702,11 @@ Then, once the return is in `~/Downloads`:
 
 ```sh
 scaffold pit --contents=dropNorth --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
-yarn import-tile art/masters/props/expert/dropNorth.webp --tier=expert --name=dropNorth --slot=prop \
+yarn import-tile art/masters/props/default/dropNorth.webp --tier=default --name=dropNorth --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 ```
 
-### `expert/dropSouth` — a launch at the far lip, riding toward the viewer
+### `default/dropSouth` — a launch at the far lip, riding toward the viewer
 
 **Attach:**
 
@@ -2753,7 +2753,7 @@ Then, once the return is in `~/Downloads`:
 
 ```sh
 scaffold pit --contents=dropSouth --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
-yarn import-tile art/masters/props/expert/dropSouth.webp --tier=expert --name=dropSouth --slot=prop \
+yarn import-tile art/masters/props/default/dropSouth.webp --tier=default --name=dropSouth --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 ```
 

@@ -1,6 +1,7 @@
 import { tier, journey, tomb, wardChest, wardWing } from "../dsl"
 import type { Rule, PathEntry } from "../dsl"
 import { TOMB_ROOMS_PER_FLOOR } from "../data"
+import { doubleBackLock } from "./locks/doubleBack"
 
 // Expert's open side/hidden paths, as reusable arrays so a per-pyramid override can restate them
 // and ADD to them (pyramid-level sidePaths REPLACES the tier's, it doesn't merge).
@@ -44,7 +45,7 @@ const holdChest = (index: number) => wardChest({ tomb: "expert_treasure_tomb_b",
 // eligible, competing candidate for a real junior hieroglyph fragment, unlike junior_a_6 (never in
 // any symbol's preferredWardKeys at all — the same class of bug already fixed for the starter
 // echoes). Trade-off: junior_a_1 is also the key junior.ts's own holdChest/WING.expert mechanism
-// uses — verified empirically (fragmentHoldback.spec.ts) that the extra competing candidate
+// uses — verified empirically (fragmentHoldback.verify.ts) that the extra competing candidate
 // doesn't starve anything. Difficulty auto-derives to junior.
 const juniorEcho = () => wardChest({ tomb: "junior_treasure_tomb", index: 0, puzzles: 1 })
 // journey id → 1-based pyramid number for the junior echo (front-half, non-`last` pyramids).
@@ -58,7 +59,7 @@ const JUNIOR_ECHO_AT: Record<string, number> = { expert_2: 2, expert_3: 3 }
 // owned right after floor 1 — early enough to be a genuinely eligible, competing candidate for a
 // real starter hieroglyph fragment, unlike starter_a_4 (only reachable after all starter demand is
 // already settled). Trade-off: starter_a_1 is also the key starter.ts's own holdChest/HOLD_CYCLE
-// holdback mechanism uses — verified empirically (fragmentHoldback.spec.ts, golden guard) that the
+// holdback mechanism uses — verified empirically (fragmentHoldback.verify.ts, golden guard) that the
 // extra competing candidate doesn't starve anything. Difficulty auto-derives to starter.
 const starterWing = () => wardWing({ tomb: "starter_treasure_tomb", index: 0, puzzles: 2, endReward: "hieroglyph" })
 // journey id → 1-based pyramid number for the starter wing (a back-half, non-`last` pyramid).
@@ -142,7 +143,7 @@ export const expertRules: Rule[] = [
   //
   // The generated half of that question is answered: authored, `water` draws all four of its families
   // across this journey's 37 sections — constellation 12, hidato 11, star-battle 8, twin stars 6, so a
-  // 32% top share, the same spread `sky` ships at. It clears rolePools.spec.ts and the world validates.
+  // 32% top share, the same spread `sky` ships at. It clears rolePools.verify.ts and the world validates.
   // What is untested is the only part paper cannot settle, which is whether four boards drawn for one
   // role read as four different ROOMS. Then this is the whole change:
   //
@@ -301,5 +302,15 @@ export const expertRules: Rule[] = [
   // because its role is funerary and its brief says necropolis, and he is the necropolis. Sobek takes the
   // Nile Delta because that journey's brief already lists a crocodile.
   journey("expert_1").pyramid("last", { patron: "anubis" }),
+  // The Valley of the Kings' last pyramid opens on the designer's doubleBack: a mirror fork whose far side is
+  // reached by ziplines. The lock stands on the main floor and the pyramid's other content is untouched.
+  journey("expert_1").pyramid("last", {
+    floorLocks: {
+      0: {
+        locks: [{ lock: doubleBackLock() }],
+        realisations: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
+      },
+    },
+  }),
   journey("expert_3").pyramid("last", { patron: "sobek" }),
 ]

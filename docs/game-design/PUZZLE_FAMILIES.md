@@ -938,7 +938,7 @@ room on a journey authored to a role draws from the families carrying that tag, 
 the pool _is_ the breadth of the journey. Nothing else notices a thin one: the world builds, every
 gate passes, and the tier table reads healthy. It shows up only by counting what shipped.
 
-**The floor is four families**, held by `rolePools.spec.ts` over the baked world. It is asserted on
+**The floor is four families**, held by `rolePools.verify.ts` over the baked world. It is asserted on
 the pool rather than on what a seed happened to draw, because the draw varies and the pool does not
 — and because it is the fact an author can check _before_ authoring rather than after regenerating.
 

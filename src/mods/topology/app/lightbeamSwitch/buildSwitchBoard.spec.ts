@@ -90,8 +90,14 @@ describe("the carved forks this file builds boards for", () => {
   })
 })
 
-// A switch is walked back into to change its mind, so assembleFloor refuses a floor whose switch family
-// closes behind the player. That refusal is the guard; this is the family passing it.
+// A switch is walked back into to change its mind, so assembleFloor refuses a floor whose registered switch family
+// closes behind the player. That refusal is the guard; this is the family passing it. The closing family is a
+// registered one, since a family nobody registers is a bare junction and not a refusal.
+const closesBehind: typeof resolveEncounter = (encounter, defaultTag) =>
+  encounter === "sumplete"
+    ? { familyId: "sumplete", tags: ["puzzle"], ownerMod: "puzzle" }
+    : resolveEncounter(encounter, defaultTag)
+
 describe("a floor standing this family in its fork", () => {
   it("assembles, where the same floor with a room that closes behind the player does not", () => {
     const assembled = assembleFloor("re-enterable", switchFloor, 0, resolveEncounter, {
@@ -102,7 +108,7 @@ describe("a floor standing this family in its fork", () => {
       "re-enterable",
       { ...switchFloor, switches: { encounter: "sumplete", min: 1, max: 1 } },
       0,
-      resolveEncounter,
+      closesBehind,
       { floorRef: { journeyId: "re-enterable", floorIndex: 0 } }
     )
     expect(sealed.success === false && sealed.reasons.map(reason => reason.type)).toEqual([

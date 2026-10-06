@@ -310,7 +310,7 @@ neighbours — which leaves a note on this face small, the honest cost of a text
 a sixth of a phone screen.
 
 The register is reached by the `scribe` role. A themed role needs four families in its
-pool before it is worth authoring a site for (`src/worldGen/rolePools.spec.ts`), and
+pool before it is worth authoring a site for (`src/worldGen/rolePools.verify.ts`), and
 `scribe` is short of that, so until the pool fills the register is reached in the
 puzzle lab and by a site naming the theme outright.
 

@@ -1,5 +1,5 @@
 import { mulberry32, shuffle } from "./random"
-import { DEFAULT_PACKING, ONE_WAY_RUN_CELLS } from "./carveConstants"
+import { DEFAULT_PACKING, ONE_WAY_RUN_CELLS, oneWayReach, oneWayRunCells } from "./carveConstants"
 import { hashString } from "@/support/hashString"
 import { allocateMarks, type Mark, type MarkRequest } from "./mark"
 import { withGateFaces } from "./gateFace"
@@ -14,7 +14,7 @@ import type { OneWayRefusal, ResolveOneWayRealisation } from "./oneWayRealisatio
 import type { RegionBarrierRefusal, ResolveRegionBarrierRealisation } from "./regionBarrierRealisation"
 
 export { defaultResolveEncounter }
-export { DEFAULT_PACKING, ONE_WAY_RUN_CELLS }
+export { DEFAULT_PACKING, ONE_WAY_RUN_CELLS, oneWayRunCells }
 import type {
   AssemblerFailure,
   AssemblerResult,
@@ -71,7 +71,7 @@ import {
 import type { AbsorbedDemand, LaidFloor, LengtheningChoice } from "./laidFloor"
 import { planLockFloor } from "./lockPlan"
 import type { LockPlan } from "./lockPlan"
-import { doorFacesMissing, realisationsMissing } from "./mechanics/realisations"
+import { degradeUnrealised, unrealisedSequences } from "./mechanics/realisations"
 import { adjacencyFaults, dropLandingFaults, gateDoorFaults } from "./carveAgreement"
 import type { CarveFault } from "./carveAgreement"
 import { stairIdAt } from "./stairAddress"
@@ -326,10 +326,6 @@ const CONNECTOR_DIRS: Array<[number, number, Direction]> = [
 ]
 const OPPOSITE: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
 
-/** Steps from the node a drop hangs off to the node it lands beside: launch, obstacle, landing, and the
- * step onto the far node. */
-const ONE_WAY_REACH = ONE_WAY_RUN_CELLS + 3
-
 type OneWayEdge = {
   from: string
   to: string
@@ -359,7 +355,7 @@ const DEFAULT_STRAIGHT_BIAS = 0.65
 // THE LADDER IS LOAD-BEARING FOR 31 OF THE 206 SHIPPED FLOORS. The bake searches every floor for the
 // smallest `packing` (from the authored one, in small steps) and a seed that carve on attempt 0
 // (worldGen/carveSeedSearch.ts), and bakes the pair, so 175 floors never leave attempt 0. The other 31
-// (expert, master and wizard main floors, listed in worldGen/bakedCarve.spec.ts) fail attempt 0 with
+// (expert, master and wizard main floors, listed in worldGen/bakedCarve.verify.ts) fail attempt 0 with
 // `layoutNotFound` at every seed and every `packing` up to PACKING_CEILING: the grid `deriveN` sizes
 // is too small for them, and only the rungs below that grow it (`N += 2`, then recovery's `carvedCells`
 // sizing) carve them. Without the ladder those 31 render "Site layout unavailable." for every player.
@@ -838,9 +834,11 @@ const assembleExpandedFloor = (
     }
   }
 
-  // EVERY ONE-WAY IS CROSSED THROUGH A REALISATION THAT OFFERS ITS PROMPT, answered before a wall is carved:
-  // the floor names one realisation for all of its one-ways, and a crossing with no prompt is one the player
-  // could take by accident. Refused by name, the whole list at once.
+  // A ONE-WAY IS CROSSED THROUGH A REALISATION THAT OFFERS ITS PROMPT, so a floor binding none, or one that
+  // declares no prompt, is refused by name before a wall is carved: a crossing with no prompt is one the
+  // player could take by accident, and nothing may stand in for the role an author forgot to bind. A
+  // realisation no registered mod declares is not a mistake in the floor: the carve is the same and the
+  // passage degrades to an ordinary two-way one (`degradeUnrealised`).
   const realisationRefusals = [
     ...(authoredConfig.oneWays ?? []),
     ...(authoredConfig.obstacles ?? []).flatMap(o =>
@@ -855,42 +853,37 @@ const assembleExpandedFloor = (
         : "noPrompt"
       : named === undefined
         ? "unbound"
-        : "unknown"
+        : undefined
     return why ? [{ type: "oneWayRealisationRefused" as const, from, to, realisation: named ?? null, why }] : []
   })
-  // EVERY CONTROL IS ONE OF CORE'S KINDS, DRESSED BY A MOD'S REALISATION, so a floor whose controls name one no
-  // registered mod provides is refused by name here, in the same list, rather than carved with another
-  // standing in: the carve depends on core alone, and a mod's absence cannot move a wall.
-  // A REGION BARRIER IS DRESSED BY A REALISATION BOUND FROM OUTSIDE, answered here too: unbound, or naming one
-  // no registered mod provides, it is refused by name (barrier and region), never carved with a default.
-  const regionBarrierRefusals = (authoredConfig.obstacles ?? []).filter(isRegionGate).flatMap(barrier => {
-    const named = authoredConfig.regionBarrierRealisation
-    const why: RegionBarrierRefusal | undefined = resolveRegionBarrier(named)
-      ? undefined
-      : named === undefined
-        ? "unbound"
-        : "unknown"
-    return why
+  // A REGION BARRIER IS DRESSED BY A REALISATION BOUND FROM OUTSIDE. Unbound, it is refused by name (barrier and
+  // region), never carved with a default. Bound to one no registered mod provides, the carve is the same and the
+  // barrier's door is plain ground (`degradeUnrealised`).
+  const regionBarrierRefusals = (authoredConfig.obstacles ?? []).filter(isRegionGate).flatMap(barrier =>
+    authoredConfig.regionBarrierRealisation === undefined
       ? [
           {
             type: "regionBarrierRealisationRefused" as const,
             id: barrier.id,
             region: barrier.at.region,
-            realisation: named ?? null,
-            why,
+            realisation: null,
+            why: "unbound" as RegionBarrierRefusal,
           },
         ]
       : []
-  })
-  const realisationProblems = [
-    ...realisationRefusals,
-    ...regionBarrierRefusals,
-    ...realisationsMissing(authoredConfig, resolveEncounter),
-  ]
+  )
+  const realisationProblems = [...realisationRefusals, ...regionBarrierRefusals]
   if (realisationProblems.length > 0) return { success: false, reasons: realisationProblems }
-  // Refused just above wherever the floor binds no usable realisation, so one resolves here.
-  const boundRealisation = (): string => resolveOneWay(authoredConfig.oneWayRealisation)!.id
-  const boundRegionBarrier = (): string => resolveRegionBarrier(authoredConfig.regionBarrierRealisation)!.id
+  const oneWaysUnrealised =
+    authoredConfig.oneWayRealisation !== undefined && resolveOneWay(authoredConfig.oneWayRealisation) === undefined
+  const regionBarriersUnrealised =
+    authoredConfig.regionBarrierRealisation !== undefined &&
+    resolveRegionBarrier(authoredConfig.regionBarrierRealisation) === undefined
+  // The realisation a mechanic carries on the carve: the registered one, or the name an absent mod left unanswered.
+  const boundRealisation = (): string =>
+    resolveOneWay(authoredConfig.oneWayRealisation)?.id ?? authoredConfig.oneWayRealisation!
+  const boundRegionBarrier = (): string =>
+    resolveRegionBarrier(authoredConfig.regionBarrierRealisation)?.id ?? authoredConfig.regionBarrierRealisation!
 
   // A HANDLE'S REACH IS AUTHORED, SO WHAT IT CANNOT REACH IS ANSWERED BEFORE A WALL IS CARVED — the
   // same reasoning, and the same shape, as the one-way above: which sections exist and what each
@@ -1173,7 +1166,9 @@ const assembleExpandedFloor = (
   // seed changes which family was authored.
   if (config.switches) {
     const switchFamily = resolveEncounter(config.switches.encounter, "puzzle")
-    if (!switchFamily.reEnterable)
+    // A family no registered mod provides leaves a bare junction (`degradeUnrealised`); one that IS provided
+    // and cannot be walked back into is the mistake.
+    if (switchFamily.ownerMod !== undefined && !switchFamily.reEnterable)
       return { success: false, reasons: [{ type: "switchFamilyNotReEnterable", family: switchFamily.familyId }] }
     // More switches than there are junctions held for them is a contradiction between the two
     // statements, which no seed can settle — so it is answered before a single wall is carved.
@@ -2174,7 +2169,7 @@ const assembleExpandedFloor = (
     }
 
     /**
-     * Hangs a chain off a node of its mouth's region by a DROP: its first node stands `ONE_WAY_REACH`
+     * Hangs a chain off a node of its mouth's region by a DROP: its first node stands `oneWayReach`
      * steps along a straight line from the mouth's, every cell between them uncarved and held for the
      * run. No passage joins the two, so the only way between them is the drop, and it falls the way the
      * author wrote it. Nothing is claimed unless the whole run and the chain both fit.
@@ -2194,12 +2189,10 @@ const assembleExpandedFloor = (
         for (const [dr, dc, d] of shuffle(CONNECTOR_DIRS, rand)) {
           const ur = dr / NODE_STEP,
             uc = dc / NODE_STEP
-          const [fr, fc] = [ar + ur * ONE_WAY_REACH, ac + uc * ONE_WAY_REACH]
+          const reach = oneWayReach(d)
+          const [fr, fc] = [ar + ur * reach, ac + uc * reach]
           if (fr < 0 || fr >= N || fc < 0 || fc >= N) continue
-          const between = Array.from(
-            { length: ONE_WAY_REACH - 1 },
-            (_, k) => `${ar + ur * (k + 1)},${ac + uc * (k + 1)}`
-          )
+          const between = Array.from({ length: reach - 1 }, (_, k) => `${ar + ur * (k + 1)},${ac + uc * (k + 1)}`)
           const held = [...between, `${fr},${fc}`]
           if (held.some(cellKey => usedCells.has(cellKey))) continue
           for (const cellKey of held) usedCells.add(cellKey)
@@ -3472,7 +3465,7 @@ const assembleExpandedFloor = (
       }
 
     // ONE-WAY DROPS. Each authored passage needs a node of `from` and a node of `to` on one axis with
-    // exactly 2 + ONE_WAY_RUN_CELLS cells between them (a launch, the obstacle, a landing), every one of
+    // exactly 2 + oneWayRunCells(dir) cells between them (a launch, the obstacle, a landing), every one of
     // them uncarved — not a node, not a connector some chain walked, not a cell another drop already
     // holds. The reservation is made whole or not at all: a drop is never placed shorter, and never placed anywhere but between the
     // two ends it names. Picked here, off the same node set the grid below is built from, and sorted by
@@ -3533,15 +3526,14 @@ const assembleExpandedFloor = (
           // The reservation is the cells strictly between the two nodes, one unit step at a time.
           const ur = dr / NODE_STEP,
             uc = dc / NODE_STEP
-          const nr = r + ur * ONE_WAY_REACH,
-            nc = c + uc * ONE_WAY_REACH
+          const reach = oneWayReach(d)
+          const nr = r + ur * reach,
+            nc = c + uc * reach
           if (nr < 0 || nr >= N || nc < 0 || nc >= N) continue
           const toKey = posKey(nr, nc)
           if (toKey === exitKey) continue
           if (!demand.matchesTo(toKey)) continue
-          const between = Array.from({ length: ONE_WAY_REACH - 1 }, (_, k) =>
-            posKey(r + ur * (k + 1), c + uc * (k + 1))
-          )
+          const between = Array.from({ length: reach - 1 }, (_, k) => posKey(r + ur * (k + 1), c + uc * (k + 1)))
           if (between.some(cellKey => usedCells.has(cellKey) || takenRunCells.has(cellKey))) continue
           // A SECTION-ADDRESSED DROP MAY RUN INSIDE WHAT A DOOR SHUTS OFF, OR OUT OF IT, NEVER INTO
           // GROUND SHUT BY A DOOR THE PLAYER HAS NOT EARNED BY STANDING WHERE THEY FALL FROM. A
@@ -3772,7 +3764,7 @@ const assembleExpandedFloor = (
         const cell = cells2D[r][c]
         if (cell.type === "corridor") cells2D[r][c] = { ...cell, obstacle: { dir: edge.dir, kind: edge.realisation } }
       })
-      writeStub(edge.landing, edge.to, edge.from, new Set([edge.dir]), ONE_WAY_RUN_CELLS + 1)
+      writeStub(edge.landing, edge.to, edge.from, new Set([edge.dir]), oneWayRunCells(edge.dir) + 1)
       joinNode(edge.to, OPPOSITE[edge.dir])
     }
 
@@ -4313,26 +4305,23 @@ const assembleExpandedFloor = (
       if (tileDuplicate) return { success: false, reasons: [{ type: "duplicateCellSlot", slot: tileDuplicate }] }
     }
 
-    // A DOOR THAT WAITS ON SEVERAL OWNERS GAINS ITS FACE LAST, after every check above has read the carve:
-    // only the door cell's family changes, so no wall, `dirs` or slot can have moved for it.
-    const faced = withGateFaces(
-      grid,
-      floorRef.floorIndex,
-      new Map(),
-      undefined,
-      resolveEncounter(undefined, DOOR_FACE_ROLE).familyId
-    )
-    // A door that owes a face and has no family to read it is refused by name, not left blank: the carve is
-    // done and identical, only what would stand in the door is missing.
-    const unfaced = grid.cells.flat()
-    const facedDoors = faced.cells.flat().flatMap((cell, i) => {
-      const before = unfaced[i]
-      return cell.type === "room" && cell.gateFace && !(before.type === "room" && before.gateFace)
-        ? [cell.requiredKeyId ?? ""]
-        : []
+    // WHAT NO REGISTERED MOD REALISES IS TAKEN OFF THE FINISHED CARVE, never carved differently: a mechanism
+    // room becomes a bare node, the doors only it owned stand open, a drop is an ordinary passage. Walls and
+    // every address are the carve's own, so the floor is the one the mod on builds, minus its mechanics.
+    const bare = degradeUnrealised(grid, resolveEncounter, {
+      sequences: unrealisedSequences(authoredConfig.controls ?? [], resolveEncounter),
+      oneWays: oneWaysUnrealised,
+      regionBarriers: regionBarriersUnrealised,
     })
-    const faceProblems = facedDoors.length > 0 ? doorFacesMissing(facedDoors, resolveEncounter) : []
-    if (faceProblems.length > 0) return { success: false, reasons: faceProblems }
+
+    // A DOOR THAT WAITS ON SEVERAL OWNERS GAINS ITS FACE LAST, after every check above has read the carve:
+    // only the door cell's family changes, so no wall, `dirs` or slot can have moved for it. Where nothing
+    // answers to the face role the door stays as its owners make it.
+    const faceFamily = resolveEncounter(undefined, DOOR_FACE_ROLE)
+    const faced =
+      faceFamily.ownerMod === undefined
+        ? bare
+        : withGateFaces(bare, floorRef.floorIndex, new Map(), undefined, faceFamily.familyId)
     return { success: true, grid: faced, attempt }
   }
 

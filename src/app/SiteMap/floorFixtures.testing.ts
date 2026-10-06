@@ -24,17 +24,24 @@ export const cellOf = (kind: Kind, dirs: Direction[], state: CellState): GridCel
  * cells, landing, to-node, in that order, `at(i)` being the i-th of them. The launch and the landing are
  * dead ends each naming only their own node, and each node names its end; the obstacle's cells name
  * nothing and carry the `obstacle` marker. Every cell starts as `state`; the entrance is whichever node the
- * walk is to start from. */
-export const DROP_AT = { fromNode: 0, launch: 1, landing: ONE_WAY_RUN_CELLS + 2, toNode: ONE_WAY_RUN_CELLS + 3 }
-export const obstacleIndexes = Array.from({ length: ONE_WAY_RUN_CELLS }, (_, k) => k + 2)
+ * walk is to start from. `runCells` defaults to the run along a row;
+ * a story passes `oneWayRunCells(axis.travel)` to lay a vertical drop at the carve's own length. The walk
+ * never reads the length, so the specs share the default. */
+const dropIndexes = (runCells: number) => ({
+  at: { fromNode: 0, launch: 1, landing: runCells + 2, toNode: runCells + 3 },
+  obstacle: Array.from({ length: runCells }, (_, k) => k + 2),
+})
+export const { at: DROP_AT, obstacle: obstacleIndexes } = dropIndexes(ONE_WAY_RUN_CELLS)
 export const dropGrid = (
   axis: Axis,
   fromNode: Kind,
   toNode: Kind,
   state: CellState = "fogged",
-  entrance: "fromNode" | "toNode" = "fromNode"
+  entrance: "fromNode" | "toNode" = "fromNode",
+  runCells: number = ONE_WAY_RUN_CELLS
 ) => {
-  const length = ONE_WAY_RUN_CELLS + 4
+  const { at: DROP_AT, obstacle: obstacleIndexes } = dropIndexes(runCells)
+  const length = runCells + 4
   // The line sits in the middle of a strip two cells wider than it on every side, so a reveal or a claim
   // has void to leak into, and the axis start is chosen so every index is in range for either sign.
   const size = length + 4
@@ -68,7 +75,7 @@ export const dropGrid = (
     staircases: {},
     cells,
   }
-  return { grid, at }
+  return { grid, at, dropAt: DROP_AT }
 }
 
 const MOVES: Record<Direction, readonly [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }

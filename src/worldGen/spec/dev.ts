@@ -210,8 +210,8 @@ export const devRules: Rule[] = [
     .floor(0, {
       locks: [{ lock: processionalLock() }],
       // Recorded from the bake's own carve search (searchCarvePair): at the default packing the first seed that carves
-      // on attempt 0, walks sound (75 states) and leaves no dead region is 5 past the floor's address seed. A dev
-      // floor has no baked output to carry the pin.
-      seed: 4293857872,
+      // on attempt 0, walks sound and leaves no dead region is 23 past the floor's address seed. A dev floor has
+      // no baked output to carry the pin.
+      seed: 4293857890,
     }),
 ]

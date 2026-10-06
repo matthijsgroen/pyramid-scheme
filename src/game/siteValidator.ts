@@ -1,4 +1,5 @@
 import type { FloorGrid, ValidationReason, ValidationResult, TombKeyReward } from "./siteTypes"
+import type { DoorMode } from "./doorOpen"
 
 type Pos = readonly [number, number]
 
@@ -18,13 +19,17 @@ const MOVES: Record<string, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 
 // by a room the player solves (RoomCell.keyIsAuthored) stands open, because the question then
 // asked is whether what lies beyond is ever obtainable, not whether it is open right now. Off by
 // default, so the walk gates on held keys alone.
+// `mechanismGates` names the gate keys a mechanism standing on this floor owns, with how that gate folds its
+// owners: the walk counts the mechanism's say as given (the floor's lock walk is sound, so it can be operated),
+// and a door under `any` needs nothing else, while one under `all` still needs every floor key it lists.
 export const reachableFrom = (
   grid: FloorGrid,
   startPos: Pos,
   ownedKeys: ReadonlySet<string> = new Set(),
   blockedPos?: Pos,
   blockedRequirements?: Set<string>,
-  authoredKeysHeld = false
+  authoredKeysHeld = false,
+  mechanismGates?: ReadonlyMap<string, DoorMode>
 ): Set<string> => {
   const [sr, sc] = startPos
   const startKey = posKey(sr, sc)
@@ -58,7 +63,15 @@ export const reachableFrom = (
       // its key is how the player gets past it, so what lies beyond is obtainable.
       const authoredDoorOpen = authoredKeysHeld && ncell.type === "room" && !!ncell.keyIsAuthored
 
-      if (!authoredDoorOpen && ncell.type === "room" && ncell.requiredKeyId && !ownedKeys.has(ncell.requiredKeyId)) {
+      const gateMode =
+        ncell.type === "room" && ncell.requiredKeyId ? mechanismGates?.get(ncell.requiredKeyId) : undefined
+      if (
+        !authoredDoorOpen &&
+        ncell.type === "room" &&
+        ncell.requiredKeyId &&
+        gateMode === undefined &&
+        !ownedKeys.has(ncell.requiredKeyId)
+      ) {
         // An authored key (RoomCell.keyIsAuthored) is minted by a room a player solves, never
         // placed by the world-gen loot solver — reporting it as a discovered lock would ask
         // placeFragments' winnability guard to prove a fact only gameplay resolves. The door
@@ -66,7 +79,12 @@ export const reachableFrom = (
         if (!ncell.keyIsAuthored) blockedRequirements?.add(ncell.requiredKeyId)
         continue
       }
-      if (!authoredDoorOpen && ncell.type === "room" && ncell.requiredKeyIds?.some(id => !ownedKeys.has(id))) {
+      if (
+        !authoredDoorOpen &&
+        gateMode !== "any" &&
+        ncell.type === "room" &&
+        ncell.requiredKeyIds?.some(id => !ownedKeys.has(id))
+      ) {
         // Authored keys are none of this solver's business here either — the single-key branch above
         // says why. No family asks for several of them today; the day one does, it reads the same.
         if (!ncell.keyIsAuthored)
@@ -93,14 +111,23 @@ export const collectReachableKeys = (
   grid: FloorGrid,
   startPos: Pos,
   initialKeys: ReadonlySet<string> = new Set(),
-  authoredKeysHeld = false
+  authoredKeysHeld = false,
+  mechanismGates?: ReadonlyMap<string, DoorMode>
 ): { reachable: Set<string>; keys: Set<string>; blockedRequirements: Set<string> } => {
   const collectedKeys = new Set(initialKeys)
   // Fresh set per pass — only the FINAL (post-fixed-point) pass's blocked requirements are
   // genuine discovered locks; an earlier pass's block may have been resolved by a tombKey
   // this same floor's fixed point went on to collect.
   let blockedRequirements = new Set<string>()
-  let reachable = reachableFrom(grid, startPos, collectedKeys, undefined, blockedRequirements, authoredKeysHeld)
+  let reachable = reachableFrom(
+    grid,
+    startPos,
+    collectedKeys,
+    undefined,
+    blockedRequirements,
+    authoredKeysHeld,
+    mechanismGates
+  )
   let changed = true
   while (changed) {
     changed = false
@@ -120,7 +147,15 @@ export const collectReachableKeys = (
     }
     if (changed) {
       blockedRequirements = new Set<string>()
-      reachable = reachableFrom(grid, startPos, collectedKeys, undefined, blockedRequirements, authoredKeysHeld)
+      reachable = reachableFrom(
+        grid,
+        startPos,
+        collectedKeys,
+        undefined,
+        blockedRequirements,
+        authoredKeysHeld,
+        mechanismGates
+      )
     }
   }
   return { reachable, keys: collectedKeys, blockedRequirements }

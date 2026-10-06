@@ -120,9 +120,7 @@ beforeAll(() => {
 }, 600_000)
 
 describe("a mechanism's room is drawn as its realisation, on real carved floors", () => {
-  it("a lever room wears the lever and a torch room the flame, on every floor, at a rank with art and one without", () => {
-    expect(hasLeverArt("expert")).toBe(true)
-    expect(hasLeverArt("junior")).toBe(false)
+  it("a lever room wears the lever at every rank, and a torch room the flame", () => {
     const seen = { torch: 0, handle: 0 }
     for (const [name, grid] of floors)
       for (const tier of ["expert", "junior"] as const)
@@ -141,9 +139,7 @@ describe("a mechanism's room is drawn as its realisation, on real carved floors"
               seen.handle++
               expect(drawn.kind, where).toBe("handle")
               expect(drawn.icon, where).toBeUndefined()
-              expect(hasLeverStack(container, r, c), `${where}: lever stack iff the rank has the art`).toBe(
-                tier === "expert"
-              )
+              expect(hasLeverStack(container, r, c), `${where}: lever stack`).toBe(true)
             }
           }
     expect(seen.torch).toBeGreaterThan(0)

@@ -210,6 +210,28 @@ export type BuildSiteContext<TExtra extends string = never> = {
   sideWallDecorations?: WallDecorationKind[]
 }
 
+// Lays `floorLocks` over floors the auto build made: the targeted floor gains its locks and the binding resolved
+// through the same cascade an explicit floor uses, every other field stays as built.
+const applyFloorLocks = (floors: FloorConfig[], constraint: PyramidConstraint, journeyId: string, i: number): void => {
+  const overlays = constraint.floorLocks
+  if (!overlays) return
+  const where = `journey=${journeyId} pyramid=${i + 1}`
+  for (const key of Object.keys(overlays)) {
+    const fi = Number(key)
+    if (!Number.isInteger(fi) || fi < 0 || fi >= floors.length)
+      throw new Error(
+        `buildSite: ${where} floorLocks names floor ${key}, but the pyramid builds ${floors.length} floor${floors.length === 1 ? "" : "s"}`
+      )
+    const overlay = overlays[fi]
+    const floorBinding = resolveBinding([constraint, overlay])
+    const floor = floors[fi]
+    floor.locks = overlay.locks
+    // The binding carries the one-way's realisation once a floor places locks, as in an explicit floor.
+    delete floor.oneWayRealisation
+    if (Object.keys(floorBinding).length > 0) floor.realisations = floorBinding
+  }
+}
+
 // Builds one site's floors (the 3 floor-shape branches: authored floors[], auto multi-floor
 // mainFloors+wardWings, or a single floor), then assigns puzzle-solve rewards across the
 // whole result (must run after ward wings/paths are appended, so their puzzles are eligible
@@ -236,6 +258,10 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     : { type: "fragmentSlot" }
 
   if (constraint.floors?.length) {
+    if (constraint.floorLocks)
+      throw new Error(
+        `buildSite: journey=${journeyId} pyramid=${i + 1} authors both floors and floorLocks; put the locks on the floors`
+      )
     // Multi-floor: build one FloorConfig per floors[] entry. Cast to the caller's own
     // TExtra reward vocabulary (e.g. a tomb's TombRewardHint) — resolveReward below
     // already understands it.
@@ -565,6 +591,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
       ]
     }
 
+    applyFloorLocks(floorConfigs, constraint, journeyId, i)
     initPuzzleChains(floorConfigs)
     return { floors: floorConfigs }
   }
@@ -623,6 +650,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     sealed: resolveSealed(constraint),
   })
 
+  applyFloorLocks([floor], constraint, journeyId, i)
   initPuzzleChains([floor])
   return { floors: [floor] }
 }

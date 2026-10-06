@@ -387,7 +387,7 @@ git commit -- src/game/siteTypes.ts src/game/siteAssembler.ts src/game/regionAut
 
 **Files:**
 - Modify: `src/worldGen/spec/dev.ts`
-- Test: `src/worldGen/devJourney.spec.ts`
+- Test: `src/worldGen/devJourney.verify.ts`
 
 **Interfaces:**
 - Consumes: everything from Tasks 1-3.
@@ -398,7 +398,7 @@ git commit -- src/game/siteTypes.ts src/game/siteAssembler.ts src/game/regionAut
 - [ ] **Step 1: Write the failing test**
 
 ```ts
-// src/worldGen/devJourney.spec.ts — add to the existing describe blocks
+// src/worldGen/devJourney.verify.ts — add to the existing describe blocks
 it("stands a layout on the topology bench, carried through world generation", () => {
   const floor = withDev[DEV_JOURNEY_ID][0][0]
 
@@ -408,11 +408,11 @@ it("stands a layout on the topology bench, carried through world generation", ()
 })
 ```
 
-`devJourney.spec.ts` already builds `withDev` in its `beforeAll`, and `withDev[DEV_JOURNEY_ID]` is 7 sites each holding its floors — so `withDev[DEV_JOURNEY_ID][0][0]` is dev pyramid 1, floor 0. `DEV_JOURNEY_ID` is already imported there.
+`devJourney.verify.ts` already builds `withDev` in its `beforeAll`, and `withDev[DEV_JOURNEY_ID]` is 7 sites each holding its floors — so `withDev[DEV_JOURNEY_ID][0][0]` is dev pyramid 1, floor 0. `DEV_JOURNEY_ID` is already imported there.
 
 - [ ] **Step 2: Run it and watch it fail**
 
-Run: `yarn vitest run src/worldGen/devJourney.spec.ts -t "stands a layout"`
+Run: `yarn vitest run src/worldGen/devJourney.verify.ts -t "stands a layout"`
 Expected: FAIL — `layout` is undefined.
 
 - [ ] **Step 3: Author the layout on dev pyramid 1**
@@ -439,7 +439,7 @@ In `src/worldGen/spec/dev.ts`, on the first dev pyramid only:
 
 - [ ] **Step 4: Run everything**
 
-Run: `yarn vitest run src/worldGen/devJourney.spec.ts` — expect PASS.
+Run: `yarn vitest run src/worldGen/devJourney.verify.ts` — expect PASS.
 Run: `yarn check-types` — expect clean.
 Run: `yarn validate-world` — expect `✓ World spec valid`, `Stair sweep: 111 …`, `Lock sweep: walked 1 of 1`.
 Run: `INCLUDE_DEV=1 yarn validate-world` — expect `✓ World spec valid`, `Lock sweep: walked 8 of 8`.
@@ -449,8 +449,8 @@ Run: `yarn test` — expect the full suite green.
 - [ ] **Step 5: Commit**
 
 ```bash
-yarn eslint src/worldGen/spec/dev.ts src/worldGen/devJourney.spec.ts
-git commit -- src/worldGen/spec/dev.ts src/worldGen/devJourney.spec.ts -m "feat: the bench stands a layout, to prove one survives the journey from authoring to build"
+yarn eslint src/worldGen/spec/dev.ts src/worldGen/devJourney.verify.ts
+git commit -- src/worldGen/spec/dev.ts src/worldGen/devJourney.verify.ts -m "feat: the bench stands a layout, to prove one survives the journey from authoring to build"
 ```
 
 ---

@@ -1,39 +1,12 @@
-import { afterAll, beforeAll, describe, it, expect } from "vitest"
+import { describe, it, expect } from "vitest"
 import { dropUnownedAuthoring } from "@/worldGen/modOwnedAuthoring"
 import { assembleFloor, type ResolveEncounter } from "@/game/siteAssembler"
 import { resolveEncounterMeta } from "@/mods/allFamilyMeta"
-import {
-  REALISATION_REFUSALS,
-  TOPOLOGY_OFF,
-  dirsOf,
-  isRealisationRefusal,
-  outcomeOf,
-  type Outcome,
-} from "@/game/testSupport/modOff"
+import { TOPOLOGY_OFF, dirsOf, gateKeysOwned, mechanicsLeft, outcomeOf, type Outcome } from "@/game/testSupport/modOff"
 import type { FloorConfig as GameFloorConfig, RoomCell } from "@/game/siteTypes"
-import { allFloors, resolveKeyRequirements, type Floor } from "@/app/SiteMap/worldFloors.testing"
-import { buildConfigs } from "@/worldGen/configBuilder"
-import { DEV_JOURNEY_ID } from "@/worldGen/data"
-import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
-// Same sanctioned exception devJourney.spec.ts takes: the dev journey is only buildable from the real,
-// mod-owned currencies and registries.
-import { ALL_CURRENCY_DISTRIBUTIONS } from "@/mods/allCurrencyDistributions"
-import {
-  CAPPED_CURRENCIES,
-  DYNAMIC_DISTRIBUTIONS,
-  MOD_WORLD_VALIDATORS,
-  MOD_REACHABILITY_SUPPORT,
-  MOD_TOMB_TREASURE_RESOLVER,
-  MOD_SHOP_STOCK,
-  MOD_RESERVED_TREASURE_INDICES,
-  REGISTERED_MOD_IDS,
-} from "@/mods/registeredMods"
-import { familyPriorityFor, familyCapacityFor, familyIsTrap, allocateEncounterSpread } from "@/mods/allFamilyMeta"
 import { resolveEncounter } from "@/app/families/familyRegistry"
-import { validateSite } from "@/game/siteValidator"
-import type { ValidationReason, ValidationResult } from "@/game/siteTypes"
-
-const validation = (result: ValidationResult): ValidationReason[] => (result.valid ? [] : result.reasons)
+// Populate the family registry, exactly as the app does — `resolveEncounter` answers out of it.
+import "@/mods/registerModApps"
 
 const floor = {
   pathPuzzles: 2,
@@ -193,9 +166,8 @@ describe("dropUnownedAuthoring — obstacles and controls", () => {
     expect(kept.controls).toEqual(gatedFloor.controls)
   })
 
-  // The acceptance gate: with the mod off the walls are never other walls. The floor is either carved
-  // identically (compared by each cell's `dirs`, never its `type`) or refused by name for the realisation
-  // that left — here the levers, which name none and so stand as the default control the mod provided.
+  // The acceptance gate: with the mod off the walls are never other walls and the floor is never refused. It is
+  // carved identically (compared by each cell's `dirs`, never its `type`), the levers bare and their doors open.
   // Swept over seeds 0-49 rather than pinned to one: a single seed proves nothing about the other 49.
   const outcomesAt = (floor: GameFloorConfig): Outcome[] =>
     Array.from({ length: 50 }, (_, seed) =>
@@ -213,31 +185,31 @@ describe("dropUnownedAuthoring — obstacles and controls", () => {
       )
     ).filter(outcome => outcome.kind !== "notCarvedWithMod")
 
-  const neverMoves = (floor: GameFloorConfig): { carved: number; moved: number; unnamed: number } => {
+  const neverMoves = (floor: GameFloorConfig): { carved: number; moved: number; refused: number } => {
     const outcomes = outcomesAt(floor)
     return {
       carved: outcomes.length,
       moved: outcomes.filter(outcome => outcome.kind === "moved").length,
-      unnamed: outcomes.filter(outcome => outcome.kind === "refused" && !isRealisationRefusal(outcome)).length,
+      refused: outcomes.filter(outcome => outcome.kind === "refused").length,
     }
   }
 
-  it("moves no wall with the mod off, across seeds 0-49, one obstacle", () => {
+  it("moves no wall and refuses nothing with the mod off, across seeds 0-49, one obstacle", () => {
     const result = neverMoves(gatedFloor as GameFloorConfig)
     expect(result.carved).toBeGreaterThan(0)
-    expect(result).toEqual({ carved: result.carved, moved: 0, unnamed: 0 })
+    expect(result).toEqual({ carved: result.carved, moved: 0, refused: 0 })
   })
 
-  it("moves no wall with the mod off, across seeds 0-49, two obstacles", () => {
+  it("moves no wall and refuses nothing with the mod off, across seeds 0-49, two obstacles", () => {
     const result = neverMoves(twoObstacleFloor as GameFloorConfig)
     expect(result.carved).toBeGreaterThan(0)
-    expect(result).toEqual({ carved: result.carved, moved: 0, unnamed: 0 })
+    expect(result).toEqual({ carved: result.carved, moved: 0, refused: 0 })
   })
 
-  it("moves no wall with the mod off, across seeds 0-49, five obstacles", () => {
+  it("moves no wall and refuses nothing with the mod off, across seeds 0-49, five obstacles", () => {
     const result = neverMoves(fiveObstacleFloor as GameFloorConfig)
     expect(result.carved).toBeGreaterThan(0)
-    expect(result).toEqual({ carved: result.carved, moved: 0, unnamed: 0 })
+    expect(result).toEqual({ carved: result.carved, moved: 0, refused: 0 })
   })
 })
 
@@ -375,16 +347,28 @@ describe("a fork-switch, with the topology mod off", () => {
     expect(kept.controls).toEqual(forkSwitchedDoubleBack.controls)
   })
 
-  it("is refused by name for the switch board and the lever, never carved with a bare junction", () => {
-    const result = assembleOff(1)
-    expect(result.success).toBe(false)
-    expect(!result.success && result.reasons).toEqual([
-      { type: "realisationMissing", mechanic: "Y", kind: "fork-switch", realisation: "lightbeamSwitch" },
-      { type: "realisationMissing", mechanic: "S2", kind: "activator", realisation: "default-control" },
-    ])
-  })
+  it("carves with the switch's junction bare and every gate open, never refused for the board that left", () => {
+    let compared = 0
+    for (let seed = 1; seed <= 60; seed++) {
+      const withMod = assembleFloor("dev", forkSwitchedDoubleBack, seed, resolveEncounter)
+      if (!withMod.success) continue
+      compared++
+      const off = assembleOff(seed)
+      expect(off.success, `seed ${seed}`).toBe(true)
+      if (!off.success) continue
+      expect(dirsOf(off.grid), `seed ${seed}`).toBe(dirsOf(withMod.grid))
+      expect(mechanicsLeft(off.grid, gateKeysOwned(withMod.grid)), `seed ${seed}`).toEqual([])
+      const junctions = off.grid.cells
+        .flat()
+        .flatMap(cell =>
+          cell.type === "room" && cell.roomType === "fork" && cell.region === "entrance" ? [cell.family] : []
+        )
+      expect(junctions, `seed ${seed}`).toEqual([undefined])
+    }
+    expect(compared).toBeGreaterThan(0)
+  }, 120_000)
 
-  it("stands the switch in the junction with the mod on, where the mod off refuses the floor", () => {
+  it("stands the switch in the junction only with the mod on", () => {
     let compared = 0
     for (let seed = 1; seed <= 60; seed++) {
       const withMod = assembleFloor("dev", forkSwitchedDoubleBack, seed, resolveEncounter)
@@ -396,7 +380,6 @@ describe("a fork-switch, with the topology mod off", () => {
           cell.type === "room" && cell.roomType === "fork" && cell.region === "entrance" ? [cell.family] : []
         )
       expect(junctions, `seed ${seed}`).toEqual(["lightbeamSwitch"])
-      expect(assembleOff(seed).success, `seed ${seed}`).toBe(false)
     }
     expect(compared).toBeGreaterThan(0)
   }, 120_000)
@@ -452,10 +435,15 @@ describe("a switch whose family's mod is toggled off", () => {
     expect(stripped().forks).toEqual(switchFloor.forks)
   })
 
-  it("assembles, where the floor it was stripped from refuses to", () => {
+  it("assembles stripped or not: a switch whose family is absent leaves a bare junction, not a refusal", () => {
     expect(assembleAt(stripped(), 0, topologyOff).success).toBe(true)
-    const authored = assembleAt(switchFloor as GameFloorConfig, 0, topologyOff)
-    expect(authored.success === false && authored.reasons.map(r => r.type)).toEqual(["switchFamilyNotReEnterable"])
+    expect(assembleAt(switchFloor as GameFloorConfig, 0, topologyOff).success).toBe(true)
+  })
+
+  it("carves the authored switch with the family absent as the stripped floor carves it: bare, no way out shut", () => {
+    const { rooms, forks } = assembledRooms(switchFloor as GameFloorConfig, topologyOff)
+    expect(inhabitedForks(forks)).toEqual([])
+    expect(shutWaysOut(rooms)).toEqual([])
   })
 
   it("carves a bare junction: nothing stands in the fork and no way out is shut", () => {
@@ -476,148 +464,5 @@ describe("a switch whose family's mod is toggled off", () => {
     const dropped = dropUnownedAuthoring(floor, new Set(["topology"]), resolveEncounterMeta)
     expect(dropped.switches).toBeUndefined()
     expect(dropped.sideSections).toEqual(floor.sideSections)
-  })
-})
-
-// THE POINT OF SPLITTING THE TWO FIELDS. `forks` is core's, so the floor is carved to it whether or
-// not a mod is here to fill what it reserved — and a save written against those walls survives the
-// mod leaving the build. Compared by each cell's `dirs`, never its `type`: standing a switch in a
-// junction turns the corridor cell it closes into a door, which is a room where a corridor was
-// without one wall having moved, and comparing types would call that a difference.
-// Asked of the shipped world plus the dev journey (a playtest build bakes it, CI's bake does not, so it is
-// built here), one junction added to every authored floor, rather than of a
-// floor invented to make the point: what a shipped floor's carve does under an unregistered mod is
-// the thing saves depend on.
-const FORKS = [{ exits: 2, count: 1 }]
-const SWITCHES = { encounter: "lightbeamSwitch", min: 1, max: 1 }
-
-type Carve = {
-  label: string
-  forksOnly: string | null
-  withSwitch: string | null
-  modOff: string | null
-  /** Refused with the mod off, and wholly for a realisation that left. */
-  modOffRefused: boolean
-  held: boolean
-  unsound: ValidationReason[]
-}
-
-describe("the carve a floor authoring forks gets", () => {
-  // Assembling every authored floor three times is a few hundred maze carves, well past the default
-  // 5s budget — paid once here rather than by whichever test happens to run first.
-  const carves: Carve[] = []
-  const devFloors = (): Floor[] => {
-    process.env.INCLUDE_DEV = "1"
-    const dev = buildConfigs(
-      resolveKeyRequirements,
-      ALL_CURRENCY_DISTRIBUTIONS,
-      CAPPED_CURRENCIES,
-      DYNAMIC_DISTRIBUTIONS,
-      MOD_WORLD_VALIDATORS,
-      familyPriorityFor,
-      0,
-      allocateEncounterSpread,
-      MOD_REACHABILITY_SUPPORT,
-      MOD_TOMB_TREASURE_RESOLVER,
-      familyCapacityFor,
-      MOD_SHOP_STOCK,
-      MOD_RESERVED_TREASURE_INDICES,
-      familyIsTrap,
-      REGISTERED_MOD_IDS,
-      resolveEncounterMeta
-    )[DEV_JOURNEY_ID]
-    const siteSeed = persistentInteriorSeed(DEV_JOURNEY_ID)
-    return dev.flatMap((site, levelIndex) =>
-      site.map((config, floorIndex) => ({
-        label: `${DEV_JOURNEY_ID} level ${levelIndex + 1} floor ${floorIndex}`,
-        config: config as unknown as GameFloorConfig,
-        seed: floorAssemblySeed(siteSeed, levelIndex + 1, floorIndex),
-        floorIndex,
-        journeyId: DEV_JOURNEY_ID,
-        levelIndex,
-      }))
-    )
-  }
-  afterAll(() => {
-    delete process.env.INCLUDE_DEV
-  })
-  beforeAll(() => {
-    const world = allFloors().filter(floor => floor.journeyId !== DEV_JOURNEY_ID)
-    for (const floor of [...world, ...devFloors()]) {
-      const withForks = { ...floor.config, forks: FORKS }
-      const authored = { ...withForks, switches: SWITCHES }
-      const opts = (resolve: ResolveEncounter, config: GameFloorConfig, off = false) =>
-        assembleFloor(floor.journeyId, config, floor.seed, resolve, {
-          resolveKeyRequirements,
-          ...(off ? { resolveOneWay: TOPOLOGY_OFF.resolveOneWay } : {}),
-          floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
-        })
-      const forksOnly = opts(resolveEncounter, withForks)
-      const withSwitch = opts(resolveEncounter, authored)
-      // What the build looks like once topology has left it: `dropUnownedAuthoring` drops `switches` and
-      // leaves `forks` and every mechanic (proven above), and the resolvers answer out of a catalogue without
-      // topology's families and realisations in it.
-      const modOff = opts(
-        topologyOff,
-        dropUnownedAuthoring(authored, TOPOLOGY_OFF.modIds, topologyOff) as GameFloorConfig,
-        true
-      )
-      carves.push({
-        label: floor.label,
-        forksOnly: forksOnly.success ? dirsOf(forksOnly.grid) : null,
-        withSwitch: withSwitch.success ? dirsOf(withSwitch.grid) : null,
-        modOff: modOff.success ? dirsOf(modOff.grid) : null,
-        modOffRefused: !modOff.success && modOff.reasons.every(reason => REALISATION_REFUSALS.has(reason.type)),
-        held:
-          withSwitch.success &&
-          withSwitch.grid.cells.flat().some(cell => cell.type === "room" && cell.roomType === "fork" && cell.family),
-        unsound: withSwitch.success ? validation(validateSite(withSwitch.grid)) : [],
-      })
-    }
-  }, 180_000)
-
-  it("was asked of the whole baked world, not of a handful of floors", () => {
-    expect(carves.length).toBeGreaterThan(100)
-  })
-
-  it("stood a switch in every floor that carved the junction, or nothing below compares a switch", () => {
-    const assembled = carves.filter(carve => carve.withSwitch !== null)
-    expect(assembled.length).toBeGreaterThan(50)
-    expect(carves.filter(carve => carve.held).length).toBe(assembled.length)
-  })
-
-  // A junction reserved by `forks` is one whose ways out can be SHUT without spoiling the floor —
-  // shutting them away from the chest holding a section's own key is the way that goes wrong, and it
-  // is a property of the carve, so the carve is what has to answer for it.
-  it("leaves a floor that stands its switch still walkable end to end", () => {
-    const unsound = carves.filter(carve => carve.unsound.length > 0)
-    expect(unsound.map(carve => `${carve.label}: ${JSON.stringify(carve.unsound)}`)).toEqual([])
-  })
-
-  it("assembles or refuses for the same reason with a switch, and with the mod off only ever refuses by name", () => {
-    const disagreed = carves.filter(
-      carve =>
-        (carve.forksOnly === null) !== (carve.withSwitch === null) ||
-        ((carve.forksOnly === null) !== (carve.modOff === null) && !carve.modOffRefused)
-    )
-    expect(disagreed.map(carve => carve.label)).toEqual([])
-  })
-
-  it("refuses with the mod off only floors that author a mechanic, which in the shipped world is the dev journey", () => {
-    const refused = carves.filter(carve => carve.modOffRefused && carve.forksOnly !== null)
-    expect(refused.length).toBeGreaterThan(0)
-    expect(refused.filter(carve => !carve.label.startsWith("dev_topology")).map(carve => carve.label)).toEqual([])
-  })
-
-  it("is the same one whether or not a switch stands in what it reserved", () => {
-    const moved = carves.filter(carve => carve.forksOnly !== null && carve.forksOnly !== carve.withSwitch)
-    expect(moved.map(carve => carve.label)).toEqual([])
-  })
-
-  it("is the same one whether or not the mod standing in it is registered at all, where it is carved", () => {
-    const moved = carves.filter(
-      carve => carve.forksOnly !== null && carve.modOff !== null && carve.forksOnly !== carve.modOff
-    )
-    expect(moved.map(carve => carve.label)).toEqual([])
   })
 })

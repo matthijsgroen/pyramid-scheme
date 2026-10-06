@@ -1197,7 +1197,7 @@ yarn import-tile art/masters/props/expert/pit.webp --tier=expert --name=pit --sl
 # head between them (`docs/authored-locks-roadmap.md`, "A one-way is a place"). One asset mirrored
 # left-right for `dropWest`.
 scaffold pit --contents=drop --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
-yarn import-tile art/masters/props/expert/dropEast.webp --tier=expert --name=dropEast --slot=prop --crop-below=1513 --tight=9.464 \
+yarn import-tile art/masters/props/default/dropEast.webp --tier=default --name=dropEast --slot=prop --crop-below=1513 --tight=9.464 \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 
 # The drop's two VERTICAL headings, each its own render: a vertical flip would swap which lip carries the
@@ -1213,13 +1213,13 @@ yarn import-tile art/masters/props/expert/dropEast.webp --tier=expert --name=dro
 # loses the projection in the paint — see the convergence rule at the head of docs/instructions/repaint-queue.md.
 # The paving left at the run's ends is the renderer's to stop drawing.
 scaffold pit --contents=dropNorth --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
-yarn import-tile art/masters/props/expert/dropNorth.webp --tier=expert --name=dropNorth --slot=prop --tight=15.375 \
+yarn import-tile art/masters/props/default/dropNorth.webp --tier=default --name=dropNorth --slot=prop --tight=15.375 \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 # South takes NO --mask AND NO --seat, and it is the one tile here cut by the chroma key alone. Its master
 # was stretched down the page by hand after painting, to carry more of the run than the painting gave it,
 # so the rendered silhouette no longer fits it: masking would crop the stretch straight back off. The key
 # is enough because the ink sits on clean magenta. The cost is the seated shadow north has and this has not.
-yarn import-tile art/masters/props/expert/dropSouth.webp --tier=expert --name=dropSouth --slot=prop --tight=21.18 \
+yarn import-tile art/masters/props/default/dropSouth.webp --tier=default --name=dropSouth --slot=prop --tight=21.18 \
   --filter=smooth --brightness=0.85
 
 # His CEDAR RELIC BOX, cord-bound with the seal unbroken. No grading flags at all.
@@ -1534,13 +1534,13 @@ yarn render-prop --primitive=lever --contents=baseBack --shadow=0 --background=n
   --colour=#a7b2be --floor=#8d98a5 --out="$HOME/tile-previews/leverBaseBack-expert-obj.png"
 yarn render-prop --primitive=lever --contents=baseFront --shadow=0 --background=none \
   --colour=#a7b2be --floor=#8d98a5 --out="$HOME/tile-previews/leverBaseFront-expert-obj.png"
-yarn import-tile art/masters/props/expert/leverBase.webp --tier=expert --name=leverBaseBack --slot=prop \
+yarn import-tile art/masters/props/default/leverBase.webp --tier=default --name=leverBaseBack --slot=prop \
   --filter=smooth --mask="$HOME/tile-previews/leverBaseBack-expert-obj.png" --seat="$SHADOW" --brightness=0.9 --no-trim
-yarn import-tile art/masters/props/expert/leverBase.webp --tier=expert --name=leverBaseFront --slot=prop \
+yarn import-tile art/masters/props/default/leverBase.webp --tier=default --name=leverBaseFront --slot=prop \
   --filter=smooth --mask="$HOME/tile-previews/leverBaseFront-expert-obj.png" --brightness=0.9 --no-trim
 
 scaffold lever --contents=arm --shadow=0 --colour=#a7b2be --floor=#8d98a5
-yarn import-tile art/masters/props/expert/leverArm.webp --tier=expert --name=leverArm --slot=prop \
+yarn import-tile art/masters/props/default/leverArm.webp --tier=default --name=leverArm --slot=prop \
   --filter=smooth --mask="$OBJ" --brightness=0.9 --no-trim
 
 # The overgrown POOL — the condition's second sprite per slot, so a floor is not overgrown with one weed.

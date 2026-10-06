@@ -1,5 +1,6 @@
 import { encounterFromMeta, type ResolveEncounter } from "@/game/siteAssembler"
 import type { ResolveOneWayRealisation } from "@/game/oneWayRealisation"
+import { oneWayRuns } from "@/game/gridNavigation"
 import type { ResolveRegionBarrierRealisation } from "@/game/regionBarrierRealisation"
 import type { AssemblerReason, AssemblerResult, FloorGrid } from "@/game/siteTypes"
 import { ALL_FAMILY_META, resolveEncounterMeta } from "@/mods/allFamilyMeta"
@@ -34,32 +35,76 @@ export const TOPOLOGY_OFF = {
   resolveRegionBarrier: regionBarrierWithout,
 }
 
-/** The reasons that mean "a mod that dresses this mechanic is not here", the only way a mod's absence may refuse a floor. */
-export const REALISATION_REFUSALS = new Set<AssemblerReason["type"]>([
-  "realisationMissing",
-  "oneWayRealisationRefused",
-  "regionBarrierRealisationRefused",
-])
-
 /** A carve as its walls: each cell's `dirs`, never its type, since a door is a room where a corridor stood. */
 export const dirsOf = (grid: FloorGrid): string =>
   grid.cells
     .map(row => row.map(cell => (cell.type === "empty" ? "" : [...cell.dirs].sort().join(""))).join("|"))
     .join("\n")
 
-/** What a mod's absence did to one floor: nothing to the walls, or a refusal by name. Never other walls. */
+/**
+ * A carve as its walls with the ground of every drop the mod-on carve `drops` stands left blank: the launch,
+ * the span and the landing of a one-way. Those cells are the one place a missing realisation joins what the
+ * mod on leaves apart, so they are named by the carve that has the drops and blanked in both.
+ */
+export const dirsApartFromDrops = (grid: FloorGrid, drops: FloorGrid): string => {
+  const blank = new Set(
+    oneWayRuns(drops).flatMap(run => [run.launch, ...run.cells, run.landing].map(at => at.join(",")))
+  )
+  return grid.cells
+    .map((row, r) =>
+      row
+        .map((cell, c) => (cell.type === "empty" || blank.has(`${r},${c}`) ? "" : [...cell.dirs].sort().join("")))
+        .join("|")
+    )
+    .join("\n")
+}
+
+/** What a mod's absence did to one floor: nothing to the walls, a refusal, or other walls. Only the first is right. */
 export type Outcome =
   | { kind: "identical" }
   | { kind: "refused"; reasons: AssemblerReason[] }
   | { kind: "moved" }
   | { kind: "notCarvedWithMod" }
 
+/** The walls count as identical when the same everywhere but along a drop the absent realisation turned into a passage. */
 export const outcomeOf = (withMod: AssemblerResult, without: AssemblerResult): Outcome => {
   if (!withMod.success) return { kind: "notCarvedWithMod" }
   if (!without.success) return { kind: "refused", reasons: without.reasons }
-  return dirsOf(without.grid) === dirsOf(withMod.grid) ? { kind: "identical" } : { kind: "moved" }
+  return dirsApartFromDrops(without.grid, withMod.grid) === dirsApartFromDrops(withMod.grid, withMod.grid)
+    ? { kind: "identical" }
+    : { kind: "moved" }
 }
 
-/** True where a refusal is wholly a missing realisation, so the mod's absence is the whole reason. */
-export const isRealisationRefusal = (outcome: Outcome): boolean =>
-  outcome.kind === "refused" && outcome.reasons.every(reason => REALISATION_REFUSALS.has(reason.type))
+/**
+ * Whatever of a mechanic is left on a grid, by kind and place: a mechanism or the tile of a sequence, a region
+ * barrier, a door face, a cell working a mechanism elsewhere, a drop's span and every door asking for a key a
+ * mechanism of `owned` named. Empty for a floor with its mechanics taken off.
+ */
+export const mechanicsLeft = (grid: FloorGrid, owned: ReadonlySet<string> = new Set()): string[] =>
+  grid.cells.flatMap((row, r) =>
+    row.flatMap((cell, c) => {
+      const at = `${r},${c}`
+      const found: string[] = []
+      if (cell.type === "corridor" && cell.obstacle) found.push(`${at} one-way`)
+      if (cell.type !== "room") return found
+      if (cell.mechanism) found.push(`${at} mechanism`)
+      if (cell.mechanismId) found.push(`${at} mechanismId`)
+      if (cell.sequenceTile) found.push(`${at} sequenceTile`)
+      if (cell.worksMechanism) found.push(`${at} worksMechanism`)
+      if (cell.regionBarrier) found.push(`${at} regionBarrier`)
+      if (cell.gateFace) found.push(`${at} gateFace`)
+      if (cell.requiredKeyId !== undefined && owned.has(cell.requiredKeyId)) found.push(`${at} shut door`)
+      for (const exit of cell.exits ?? []) if (exit.gateKeyId !== undefined) found.push(`${at} way out ${exit.dir}`)
+      return found
+    })
+  )
+
+/** Every gate key a mechanism of the grid names, for asking `mechanicsLeft` what stayed shut once they are gone. */
+export const gateKeysOwned = (grid: FloorGrid): Set<string> =>
+  new Set(
+    grid.cells.flatMap(row =>
+      row.flatMap(cell =>
+        cell.type === "room" ? (cell.mechanism?.positions ?? []).map(({ gateKeyId }) => gateKeyId) : []
+      )
+    )
+  )
