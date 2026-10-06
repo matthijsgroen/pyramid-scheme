@@ -2,6 +2,7 @@ import { journey, sidePath } from "../dsl"
 import type { Rule } from "../dsl"
 import type { Difficulty } from "../types"
 import { DEV_JOURNEY_ID } from "../data"
+import { catalogueLock, freeRegions } from "./locks/catalogue"
 import { doubleBackLock } from "./locks/doubleBack"
 import { processionalLock } from "./locks/processional"
 import { sluiceLock } from "./locks/sluice"
@@ -213,5 +214,22 @@ export const devRules: Rule[] = [
       // on attempt 0, walks sound and leaves no dead region is 23 past the floor's address seed. A dev floor has
       // no baked output to carry the pin.
       seed: 4293857890,
+    }),
+  // 11 — twoStones, read from its .lock file. One stone holds the vault open while the other is fetched, then
+  // both press the exit's two plates. Every region takes `free`, as on the other lock benches.
+  //
+  // Bound at the pyramid: the stones are stone plates.
+  journey(DEV_JOURNEY_ID)
+    .pyramid(11, {
+      difficulty: "expert",
+      pathPuzzles: 0,
+      realisations: { weights: "stonePlate" },
+    })
+    .floor(0, {
+      locks: [{ lock: freeRegions(catalogueLock("twoStones")) }],
+      // Recorded from the bake's own carve search (searchCarvePair): at the default packing the floor's own
+      // address seed carves on attempt 0, walks sound and leaves no dead region. A dev floor has no baked output
+      // to carry the pin.
+      seed: 111235356889676,
     }),
 ]

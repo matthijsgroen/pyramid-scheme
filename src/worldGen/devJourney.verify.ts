@@ -155,7 +155,7 @@ describe("the dev journey's place in the generated world", () => {
   // comparison would pass while proving nothing at all.
   it("is built only when INCLUDE_DEV is set", () => {
     expect(plain[DEV_JOURNEY_ID]).toBeUndefined()
-    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(10)
+    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(11)
   })
 
   it("leaves every other journey exactly as it was", () => {
@@ -170,7 +170,7 @@ describe("the loot the dev journey contributes", () => {
 
   it("is none the solver could have placed either: it offers no slot", () => {
     // Counted first: a world with no dev journey would filter an empty list and prove nothing.
-    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(10)
+    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(11)
     const devSlots = collectSlots(withDev, familyPriorityFor).filter(s => s.journeyId === DEV_JOURNEY_ID)
     expect(devSlots).toEqual([])
   })
@@ -186,7 +186,7 @@ describe("the loot the dev journey contributes", () => {
   // Its chests hold nothing on purpose, and findEmptyChests knows a site outside the loot economy
   // has nothing to fill them with — so it reports none of them and the generator does not stop.
   it("leaves no empty chest for the generator to refuse", () => {
-    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(10)
+    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(11)
     const empties = findEmptyChests({ [DEV_JOURNEY_ID]: withDev[DEV_JOURNEY_ID] }, assembleAt)
     expect(empties).toEqual([])
   })
@@ -205,17 +205,18 @@ describe("what the dev journey authors", () => {
       "expert",
       "junior",
       "expert",
+      "expert",
     ])
   })
 
   it("stands a switch in a reserved junction on every floor but the lever's, the gate's, the sluice's, doubleBack's and the procession's, none of which needs one", () => {
     // Counted first, so a world that grew no dev journey fails here rather than walking an empty list.
     const floors = devFloors(withDev)
-    expect(floors).toHaveLength(10)
+    expect(floors).toHaveLength(11)
     // A switch decides which of its OWN ways out opens, so it needs a junction reserved for it; a
     // handle reaches across the floor to doors elsewhere, and a control (the lever's, or any of
     // doubleBack's three, the sluice's or the procession's) stands in its own region — all of them ask for neither.
-    const noJunction = new Set([1, 3, 6, 7, 9])
+    const noJunction = new Set([1, 3, 6, 7, 9, 10])
     floors.forEach((floor, i) => {
       if (noJunction.has(i)) {
         expect(floor.forks).toBeUndefined()
@@ -234,11 +235,11 @@ describe("what the dev journey authors", () => {
   // gate's, which needs only somewhere for its control to stand, and none on a lock floor's (doubleBack, the sluice, the procession), whose lock
   // is the whole floor.
   it("grows none of the branches the real economies inject by position", () => {
-    expect(devFloors(withDev).map(floor => floor.sideSections.length)).toEqual([2, 0, 2, 0, 2, 2, 3, 1, 2, 0])
+    expect(devFloors(withDev).map(floor => floor.sideSections.length)).toEqual([2, 0, 2, 0, 2, 2, 3, 1, 2, 0, 0])
   })
 
   it("carves every one of them at the seed the runtime hands it", () => {
-    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(10)
+    expect(withDev[DEV_JOURNEY_ID]).toHaveLength(11)
     const failed: string[] = []
     withDev[DEV_JOURNEY_ID].forEach((site, levelIndex) =>
       site.forEach((floor, floorIndex) => {
@@ -565,13 +566,13 @@ describe("the floors the lock sweep walks", () => {
     expect(plainSweep.stranding).toEqual([])
   })
 
-  it("walks twelve once the dev journey stands its ten, and finds no strand", () => {
-    expect(withDevSweep.walked).toHaveLength(12)
+  it("walks thirteen once the dev journey stands its eleven, and finds no strand", () => {
+    expect(withDevSweep.walked).toHaveLength(13)
     expect(withDevSweep.stranding).toEqual([])
   })
 
-  it("walks ten of them on the dev journey itself", () => {
-    expect(withDevSweep.walked.filter(ref => ref.journeyId === DEV_JOURNEY_ID)).toHaveLength(10)
+  it("walks eleven of them on the dev journey itself", () => {
+    expect(withDevSweep.walked.filter(ref => ref.journeyId === DEV_JOURNEY_ID)).toHaveLength(11)
   })
 
   it("reaches every floor whose authoring owes it a lock, in both worlds", () => {

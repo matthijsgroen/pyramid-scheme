@@ -91,7 +91,7 @@ const asBefore = (grid: FloorGrid, lock: LockSpec): { lock: LockSpec; mechanisms
 
 describe("the dev journey's mechanisms, each working in one place", () => {
   it("reach exactly the states they reached before moves could be placed, on every dev floor", () => {
-    expect(dev).toHaveLength(10)
+    expect(dev).toHaveLength(11)
     let withMechanisms = 0
     const several: number[] = []
     dev.forEach((site, levelIndex) =>
@@ -100,10 +100,12 @@ describe("the dev journey's mechanisms, each working in one place", () => {
         expect(grid, `level ${levelIndex + 1} floor ${floorIndex} carves`).not.toBeNull()
         const lock = floorLock(grid!)
         if (!lock) return
-        // A sequence advances at each of its tiles, so it is not a mechanism working in one place.
+        // A sequence advances at each of its tiles and the stones move at each plate, so neither is a mechanism
+        // working in one place.
         if (
-          (floor.locks ?? []).some(({ lock: placed }) =>
-            Object.values(placed.mechanics).some(m => m.control === "sequence")
+          (floor.locks ?? []).some(
+            ({ lock: placed }) =>
+              placed.weights !== undefined || Object.values(placed.mechanics).some(m => m.control === "sequence")
           )
         ) {
           several.push(levelIndex + 1)
@@ -115,7 +117,7 @@ describe("the dev journey's mechanisms, each working in one place", () => {
         expect(reachableStates(lock), `level ${levelIndex + 1}`).toEqual(reachableStates(before.lock))
       })
     )
-    expect(several).toEqual([10])
+    expect(several).toEqual([10, 11])
     expect(withMechanisms).toBeGreaterThanOrEqual(9)
   })
 })
