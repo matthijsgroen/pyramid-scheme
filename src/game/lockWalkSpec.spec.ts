@@ -95,6 +95,8 @@ describe("what a lock starts as", () => {
     expect(notBuildable(parseLock("in -[H]- hall\nhall -- out\nout -- in\nH toggle @in").lock)).toEqual(["gate loop"])
     expect(notBuildable(parseLock("in -- hall\nhall -- out\nout >> in").lock)).toEqual([])
     expect(notBuildable(parseLock(DOUBLE_BACK).lock)).toEqual([])
+    expect(notBuildable(parseLock("in -[p]- out\np plate @in\nshelf plate @in stone").lock)).toEqual([])
+    expect(notBuildable(parseLock("in -[unladen]- out\nshelf plate @in stone").lock)).toEqual(["unladen passage"])
   })
 })
 
