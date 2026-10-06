@@ -18,18 +18,22 @@ export const ZiplineRider = ({ ride, hang = HANG }: { ride: Ride; hang?: number 
     return { x: cx, y: cy }
   }
   const [pos, setPos] = useState(at(ride.traversal.from))
+  const el = useRef<HTMLDivElement>(null)
   const end = useRef(ride.end)
   useLayoutEffect(() => {
     end.current = ride.end
   })
   // Start at the launch, then move on the next frame so the browser has a start to transition from.
   useLayoutEffect(() => {
+    // Reading layout makes the browser compute the launch style, so the move to the landing transitions.
+    void el.current?.offsetWidth
     const frame = requestAnimationFrame(() => setPos(at(ride.traversal.to)))
     return () => cancelAnimationFrame(frame)
   }, [ride])
   useEffect(() => () => end.current(), [])
   return (
     <div
+      ref={el}
       data-zipline-rider=""
       data-to={`${ride.traversal.to[0]},${ride.traversal.to[1]}`}
       onTransitionEnd={e => {

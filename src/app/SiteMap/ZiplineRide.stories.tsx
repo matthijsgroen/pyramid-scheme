@@ -21,8 +21,10 @@ const stage = (travel: Travel) => {
   }
 }
 
+const STAGES = { e: stage("e"), w: stage("w"), s: stage("s"), n: stage("n") }
+
 const Ride = ({ travel }: { travel: Travel }) => {
-  const { grid, launch, landing } = stage(travel)
+  const { grid, launch, landing } = STAGES[travel]
   const [hang, setHang] = useState(HANG)
   const [msPerCell, setMsPerCell] = useState(RIDE_MS_PER_CELL)
   const [landed, setLanded] = useState(false)
@@ -62,7 +64,7 @@ const Ride = ({ travel }: { travel: Travel }) => {
         explorerHidden={!!ride}
         ride={ride}
         rideHang={hang}
-        className={travel === "n" || travel === "s" ? "h-[40rem] w-full" : "h-[26rem] w-full"}
+        className={travel === "n" || travel === "s" ? "h-160 w-full" : "h-104 w-full"}
       />
     </div>
   )
