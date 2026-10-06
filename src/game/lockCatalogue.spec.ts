@@ -16,8 +16,9 @@ const edited = (name: string, line: string, replacement: string) => {
 const boardSolves = (name: string) =>
   solveLock(walkSpecOf(LOCK_CATALOGUE[name].lock))!.steps.filter(step => step.startsWith("Y:")).length
 
-describe.each(Object.entries(LOCK_CATALOGUE))("%s", (_, { lock, drafts }) => {
+describe.each(Object.entries(LOCK_CATALOGUE))("%s", (_, { lock, drafts, refused }) => {
   it("walks sound, reaching every region", () => {
+    expect(refused).toEqual([])
     expect(drafts).toEqual([])
     const spec = walkSpecOf(lock)
     expect(walkLock(spec)).toEqual({ sound: true, states: expect.any(Number) })

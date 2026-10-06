@@ -36,7 +36,9 @@ export type Weights = {
   plates: Record<string, { in: string; stone: boolean; opens: { weighted: string[]; empty: string[] } }>
 }
 export type DraftLock = Lock & { weights?: Weights }
-export type ParsedLock = { lock: DraftLock; drafts: string[] }
+/** `refused`: what is wrong with a lock that still reads whole, such as a lever opening nothing, so it can
+ * be drawn beside its errors. */
+export type ParsedLock = { lock: DraftLock; drafts: string[]; refused: string[] }
 
 /** A condition on the stones rather than an owner to place: empty hands. */
 export const CARRY_TERMS = ["unladen"] as const
@@ -174,6 +176,7 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
   const stones = [...plates.values()].filter(plate => plate.stone).length
   const opens = new Map<string, Record<string, string[]>>()
   const drafts = new Set<string>()
+  const refused: string[] = []
   for (const [id, gate] of Object.entries(gates)) {
     const { n, list } = terms[id]
     if ("region" in gate) {
@@ -231,7 +234,7 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
   for (const [id, what] of declared) {
     for (const r of what.control === "sequence" ? what.steps : [what.in])
       if (!regions.has(r)) fail(what.n, `no corridor reaches ${r}`)
-    if (!Object.values(gates).some(gate => gate.owners.includes(id))) fail(what.n, `${id} owns no gate`)
+    if (!Object.values(gates).some(gate => gate.owners.includes(id))) refused.push(`line ${what.n}: ${id} owns no gate`)
     const table = opens.get(id) ?? {}
     if (what.control === "fork-switch") mechanics[id] = { control: "fork-switch", in: what.in }
     else if (what.control === "sequence") {
@@ -281,5 +284,6 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
       out: "out",
     },
     drafts: [...drafts],
+    refused,
   }
 }

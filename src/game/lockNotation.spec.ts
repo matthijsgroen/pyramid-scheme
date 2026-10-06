@@ -16,6 +16,7 @@ describe("parseLock", () => {
   it("writes doubleBack as the shared Lock, a drop beside its fork gate included", () => {
     expect(parseLock(DOUBLE_BACK, "doubleBack")).toEqual({
       drafts: [],
+      refused: [],
       lock: {
         name: "doubleBack",
         regions: {
@@ -129,7 +130,6 @@ describe("parseLock", () => {
     ["// only a comment", "the lock never reaches in"],
     ["in -[H]- hall\nH toggle @in", "the lock never reaches out"],
     ["in -[H]- out\nH toggle @in\nH toggle @out", "line 3: H is placed twice"],
-    ["in -[H]- out\nH toggle @in\nG toggle @in", "line 3: G owns no gate"],
     ["in -[H]- out\nH toggle @cellar", "line 2: no corridor reaches cellar"],
     ["in -[A+B|C]- out", "line 1: -[A+B|C]- mixes + and |"],
     ["in -[H+H]- out\nH toggle @in", "line 1: -[H+H]- names H twice"],
@@ -139,6 +139,12 @@ describe("parseLock", () => {
     ["in -[Y]- in\nin -- out\nY fork @in", "line 1: a join leads from in to in"],
   ])("refuses %j", (text, message) => {
     expect(() => parseLock(text)).toThrow(message)
+  })
+
+  it("reads a lever that opens nothing whole, and says so beside it", () => {
+    const { lock, refused } = parseLock("in -[H]- out\nH toggle @in\nG toggle @in")
+    expect(refused).toEqual(["line 3: G owns no gate"])
+    expect(lock.mechanics.G).toEqual({ control: "toggle", in: "in", starts: "a", opens: { a: [], b: [] } })
   })
 })
 

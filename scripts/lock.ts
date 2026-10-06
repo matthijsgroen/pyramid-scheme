@@ -25,7 +25,7 @@ const watching = args.includes("--watch")
 const target = args.find(arg => !arg.startsWith("--"))
 const library: Record<string, ParsedLock> = LOCK_CATALOGUE
 
-const report = (name: string, { lock, drafts }: ParsedLock, withJson: boolean): boolean => {
+const report = (name: string, { lock, drafts, refused }: ParsedLock, withJson: boolean): boolean => {
   const spec = walkSpecOf(lock, drafts)
   const walked = walkLock(spec)
   const unreached = unreachedRegions(spec)
@@ -35,6 +35,7 @@ const report = (name: string, { lock, drafts }: ParsedLock, withJson: boolean): 
   const unbuilt = notBuildable(lock)
   const sequences = Object.entries(lock.mechanics).flatMap(([id, m]) => (m.control === "sequence" ? [id] : []))
   const checks = [
+    ...refused.map(problem => `✗ ${problem}`),
     ...(drafts.length > 0 ? [`✗ not placed yet: ${drafts.join(", ")}`] : []),
     reachable
       ? "✓ every region is reachable"
@@ -60,7 +61,7 @@ const report = (name: string, { lock, drafts }: ParsedLock, withJson: boolean): 
   )
   if (withJson) lines.push("", json)
   console.log(lines.join("\n") + "\n")
-  return drafts.length === 0 && reachable && walked.sound
+  return refused.length === 0 && drafts.length === 0 && reachable && walked.sound
 }
 
 const syntax = `${LOCK_SYNTAX}\n  catalogue: ${Object.keys(library).join(", ")}\n`
