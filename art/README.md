@@ -161,3 +161,38 @@ candidates (`sill.png`, `sillbig.png`), and the shipped tiles cannot decide betw
 `--repeat` and `--flatten` alter a source further than the candidates differ from each other, so the
 closest match by RMS is 13.6 against 14.5 and means nothing. Guessing would put a wrong master in the
 repository under a right-looking name, which is worse than the gap.
+
+## The explorer: one large master per pose, and a sheet built from them
+
+The explorer is the one sprite drawn in several poses, and a new pose (carrying a stone, riding a
+zipline) has to be the same person. A generator keeps a character far better when it is asked to EDIT a
+sheet of him than when it is asked to draw him again from reference images. So each pose is kept large,
+on its own, and a sheet is built from them whenever one is needed:
+
+```
+art/masters/explorer/explorer-<facing>-<n>.webp   one walking pose, large, on magenta
+art/masters/explorer/explorer-carry-<facing>-<n>.webp
+art/masters/explorer/explorer-zip-<facing>.webp
+```
+
+`yarn build-sheet` lays poses out in rows on flat magenta, one row per prefix, with gutters `cut-sheet`
+can find again:
+
+```
+yarn build-sheet /tmp/explorer.png explorer-s explorer-n explorer-e --from=art/masters/explorer
+```
+
+The walking masters are found, not redrawn: front and back are frames 1–2 and 1–4 of their rows on the
+first generated sheet, and the side is four hand-edited frames (the far leg darkened) cut from two later
+sheets. That later session came back darker and redder, so the side masters have gamma 0.65 applied
+already, and every facing is on the same exposure. The masters look like what ships, and every pose
+imports the same way, with no colour flag:
+
+```
+yarn import-tile art/masters/explorer/explorer-e-1.webp --tier=default --name=explorer-e-1 --slot=explorer --filter=smooth
+```
+
+A new pose then starts from the large sheet: build it, ask for the edit ("the same sheet, now carrying a
+stone hugged to his chest"), cut the return, and keep its cuts here as that pose's masters. A pose's
+import lines go in `rebuild.sh`. Check each new pose next to the walking set in the Facings story. If a
+return comes back on a different exposure, correct the master once, not each import.

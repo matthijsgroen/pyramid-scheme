@@ -1,0 +1,11 @@
+// master. A key chain behind an airlock: the lever opens the way in or the
+// red room, never both.
+
+in -[H:a]- leverRoom -[H]- redRoom
+in -[red]- greenRoom
+in -[green]- out
+H toggle @leverRoom
+red activator @redRoom
+green activator @greenRoom
+leverRoom *
+redRoom *

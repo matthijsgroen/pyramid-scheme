@@ -1,0 +1,9 @@
+// master. The exit wants the board pointing out AND the lever thrown, but the
+// lever stands behind the board's other way and throwing it shuts that way.
+
+in -[Y+A:a]- west
+in -[Y+A]- out
+west >> in
+Y fork @in
+A toggle @west
+west *

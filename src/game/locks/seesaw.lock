@@ -1,0 +1,11 @@
+// master. Two levers, and each one's throw shuts the way to the other.
+// Only the drops let both be thrown.
+
+in -[B:a]- west
+in -[A:a]- east
+in -[A+B]- out
+west >> east >> in
+A toggle @west
+B toggle @east
+west *
+east *

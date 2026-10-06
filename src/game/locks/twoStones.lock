@@ -1,0 +1,11 @@
+// expert, not buildable yet (stones). One stone holds the vault open while you fetch the second; then
+// the first is free to press the exit's other plate. Spend a stone twice.
+
+in -- yard
+yard -[door]- vault
+yard -[e1+e2]- out
+door plate @yard
+e1 plate @yard
+e2 plate @yard
+ledge plate @yard stone
+alcove plate @vault stone

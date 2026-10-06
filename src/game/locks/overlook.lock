@@ -1,0 +1,12 @@
+// expert. One room overlooks two drops; the drop out of the middle saves
+// whoever drops in before throwing S1.
+
+in -- top
+in -[S2]- s2 -[S1]- middle
+in -[S2]- out
+top >> s1 >> in
+top >> middle >> in
+S1 toggle @s1
+S2 toggle @s2
+top *
+middle *

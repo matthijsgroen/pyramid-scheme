@@ -1,0 +1,7 @@
+// LESSON, junior preview and expert: one lever swaps two doors, and can be
+// thrown back.
+
+in -[H:a]- left
+in -[H]- out
+H toggle @in
+left $
