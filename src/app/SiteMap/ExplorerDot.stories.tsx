@@ -75,32 +75,37 @@ export const Interactive: Story = {
 // cycle (a mirrored pose, a leg that does not swing) is visible as a break in its row.
 const STEPS = 4
 
-// The same figure carrying a stone, below the walking rows: it is not wired into ExplorerFigure, so the
-// story stands the frames in the same clip, at the same foot line and under the same light, itself.
-const CARRY_W = 40
-const CARRY_H = 70
-const CARRY_LIT = "brightness(1.1) saturate(1.14) drop-shadow(0 0 5px rgba(255,186,102,0.6))"
+// The same figure carrying a stone and riding a zipline, below the walking rows: neither is wired into
+// ExplorerFigure, so the story stands the frames in the same clip, at the same foot line and under the same
+// light, itself. A riding pose is one frame per facing, so it repeats across the steps.
+const POSE_W = 40
+const POSE_H = 70
+const POSE_LIT = "brightness(1.1) saturate(1.14) drop-shadow(0 0 5px rgba(255,186,102,0.6))"
 
-const CarryFigure = ({ facing, step }: { facing: Direction; step: number }) => {
-  const frames = sharedTileFrames(`explorer-carry-${facing === "w" ? "e" : facing}`)
+const PoseFigure = ({ prefix, facing, step }: { prefix: string; facing: Direction; step: number }) => {
+  const frames = sharedTileFrames(`${prefix}-${facing === "w" ? "e" : facing}`)
   if (frames.length === 0) return null
   return (
     <div
       style={{
         position: "absolute",
-        left: -CARRY_W / 2,
-        top: CELL / 2 - CARRY_H - 5,
-        width: CARRY_W,
-        height: CARRY_H,
+        left: -POSE_W / 2,
+        top: CELL / 2 - POSE_H - 5,
+        width: POSE_W,
+        height: POSE_H,
         overflow: "hidden",
         transform: facing === "w" ? "scaleX(-1)" : undefined,
-        filter: CARRY_LIT,
+        filter: POSE_LIT,
       }}
     >
-      <img src={frames[step % frames.length]} width={CARRY_W} height={CARRY_H} alt="" />
+      <img src={frames[step % frames.length]} width={POSE_W} height={POSE_H} alt="" />
     </div>
   )
 }
+
+const POSES = ["explorer-carry", "explorer-zip"]
+// The walking rows, then one block of rows per pose; each is a block of facings.
+const ROWS = FACINGS.length * (1 + POSES.length)
 
 export const Facings: Story = {
   args: { grid, pos: grid.entrancePos },
@@ -120,7 +125,7 @@ export const Facings: Story = {
                 key={scale}
                 style={{
                   width: STEPS * CELL * scale,
-                  height: FACINGS.length * 2 * rowH * scale,
+                  height: ROWS * rowH * scale,
                   background: ground,
                   imageRendering: ART_IMAGE_RENDERING,
                   overflow: "hidden",
@@ -130,7 +135,7 @@ export const Facings: Story = {
                   style={{
                     position: "relative",
                     width: STEPS * CELL,
-                    height: FACINGS.length * 2 * rowH,
+                    height: ROWS * rowH,
                     transform: `scale(${scale})`,
                     transformOrigin: "0 0",
                   }}
@@ -151,21 +156,23 @@ export const Facings: Story = {
                       </div>
                     ))
                   )}
-                  {FACINGS.map((facing, row) =>
-                    Array.from({ length: STEPS }, (_, step) => (
-                      <div
-                        key={`carry-${facing}-${step}`}
-                        style={{
-                          position: "absolute",
-                          left: step * CELL + CELL / 2,
-                          top: (FACINGS.length + row) * rowH + rowH - CELL / 2,
-                          width: 0,
-                          height: 0,
-                        }}
-                      >
-                        <CarryFigure facing={facing} step={step} />
-                      </div>
-                    ))
+                  {POSES.map((prefix, pose) =>
+                    FACINGS.map((facing, row) =>
+                      Array.from({ length: STEPS }, (_, step) => (
+                        <div
+                          key={`${prefix}-${facing}-${step}`}
+                          style={{
+                            position: "absolute",
+                            left: step * CELL + CELL / 2,
+                            top: ((pose + 1) * FACINGS.length + row) * rowH + rowH - CELL / 2,
+                            width: 0,
+                            height: 0,
+                          }}
+                        >
+                          <PoseFigure prefix={prefix} facing={facing} step={step} />
+                        </div>
+                      ))
+                    )
                   )}
                 </div>
               </div>

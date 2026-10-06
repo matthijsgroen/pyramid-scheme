@@ -1586,3 +1586,8 @@ yarn import-tile art/masters/explorer/explorer-carry-e-1.webp --tier=default --n
 yarn import-tile art/masters/explorer/explorer-carry-e-2.webp --tier=default --name=explorer-carry-e-2 --slot=explorer --filter=smooth
 yarn import-tile art/masters/explorer/explorer-carry-e-3.webp --tier=default --name=explorer-carry-e-3 --slot=explorer --filter=smooth
 yarn import-tile art/masters/explorer/explorer-carry-e-4.webp --tier=default --name=explorer-carry-e-4 --slot=explorer --filter=smooth
+
+# THE EXPLORER, RIDING
+yarn import-tile art/masters/explorer/explorer-zip-s.webp --tier=default --name=explorer-zip-s --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-zip-n.webp --tier=default --name=explorer-zip-n --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-zip-e.webp --tier=default --name=explorer-zip-e --slot=explorer --filter=smooth
