@@ -98,8 +98,12 @@ export const checkLockSpec = (spec: LockSpec): string | undefined => {
     }
   }
 
-  for (const { mechanism } of spec.leaveWith ?? [])
+  for (const { mechanism, notIn } of spec.leaveWith ?? []) {
     if (!spec.mechanisms[mechanism]) return `the way out waits on no mechanism: ${mechanism}`
+    for (const state of notIn)
+      if (!spec.mechanisms[mechanism].states.includes(state))
+        return `the way out refuses a state ${mechanism} does not have: ${state}`
+  }
   return undefined
 }
 

@@ -438,6 +438,12 @@ describe("leaveWith", () => {
     expect(walkLock(spec(true))).toEqual({ sound: true, states: 4 })
   })
 
+  it("refuses a way out refusing a state its mechanism does not have", () => {
+    expect(checkLockSpec({ ...spec(true), leaveWith: [{ mechanism: "hand", notIn: ["ghost"] }] })).toBe(
+      "the way out refuses a state hand does not have: ghost"
+    )
+  })
+
   it("refuses a way out waiting on a mechanism the lock does not have", () => {
     expect(checkLockSpec({ ...spec(true), leaveWith: [{ mechanism: "ghost", notIn: [] }] })).toBe(
       "the way out waits on no mechanism: ghost"
