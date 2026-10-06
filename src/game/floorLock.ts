@@ -3,6 +3,7 @@ import type { LockSpec, Mechanism, GateId, MechanismId, RegionId } from "./lockW
 import { nodeBeyond } from "./siteValidator"
 import { legalTargets, mechanismWorkedAt } from "./mechanismDoors"
 import { isObstacleCell, oneWayRuns } from "./gridNavigation"
+import { progressState } from "./sequence"
 
 type Pos = readonly [number, number]
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
@@ -28,6 +29,10 @@ const apart = (a: GridCell, b: GridCell): boolean =>
   a.region !== undefined &&
   b.region !== undefined &&
   a.region !== b.region
+
+// A SEQUENCE TILE IS GROUND NO ONE PASSES WITHOUT STEPPING ON IT, so it is a region of exactly one cell, like
+// a door: entering that region is the step.
+const isTile = (cell: GridCell | undefined): boolean => cell?.type === "room" && cell.sequenceTile !== undefined
 
 const dirsOf = (cell: GridCell): ReadonlySet<Direction> =>
   cell.type === "room" || cell.type === "corridor" ? cell.dirs : new Set<Direction>()
@@ -65,12 +70,13 @@ export const regionsOf = (
       const cell = grid.cells[r][c]
       if (!walkable(cell) || of.has(posKey(r, c))) continue
       const isDoor = doorKeysOf(cell).length > 0
-      const id = isDoor ? `door ${r},${c}` : `at ${r},${c}`
+      const solo = isDoor || isTile(cell)
+      const id = isDoor ? `door ${r},${c}` : isTile(cell) ? `tile ${r},${c}` : `at ${r},${c}`
       ids.push(id)
       const queue: Pos[] = [[r, c]]
       of.set(posKey(r, c), id)
-      // A door is a region of exactly one cell; everything else floods.
-      while (!isDoor && queue.length > 0) {
+      // A door and a tile are regions of exactly one cell; everything else floods.
+      while (!solo && queue.length > 0) {
         const [qr, qc] = queue.shift()!
         const from = grid.cells[qr][qc]
         for (const dir of dirsOf(from)) {
@@ -78,7 +84,7 @@ export const regionsOf = (
           const [nr, nc] = [qr + dr, qc + dc]
           const next = grid.cells[nr]?.[nc]
           if (!next || !walkable(next) || !dirsOf(next).has(OPPOSITE[dir])) continue
-          if (doorKeysOf(next).length > 0 || of.has(posKey(nr, nc))) continue
+          if (doorKeysOf(next).length > 0 || isTile(next) || of.has(posKey(nr, nc))) continue
           if (apart(from, next)) continue
           of.set(posKey(nr, nc), id)
           queue.push([nr, nc])
@@ -307,29 +313,47 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
     const { states, initial } = record
     const opens: Record<string, GateId[]> = Object.fromEntries(states.map(state => [state, [] as GateId[]]))
     for (const { state, gateIds } of byPosition) opens[state] = [...(opens[state] ?? []), ...gateIds]
+    // A MOVE PLACED AT A SEQUENCE TILE IS NO CHOICE: it is made by entering the tile's region, so it is an
+    // entry and never a transition the player may decline.
+    const transitions: Mechanism["transitions"] = []
+    const entries: NonNullable<Mechanism["entries"]> = []
+    for (const from of states)
+      for (const to of legalTargets(record, from)) {
+        // A move the record places is made in each place it names, in the region that cell stands in;
+        // one it does not place is made where the mechanism stands.
+        const placed = (record.transitions ?? []).filter(t => t.to === to && (t.from === undefined || t.from === from))
+        if (placed.length === 0) transitions.push({ from, to, at: of.get(at)! })
+        for (const {
+          at: [r, c],
+        } of placed) {
+          if (isTile(grid.cells[r]?.[c])) {
+            entries.push({ from, to, at: of.get(posKey(r, c))! })
+            continue
+          }
+          const regions = regionsToWorkFrom(r, c)
+          if (regions.length === 0)
+            throw new Error(
+              `floorLock: on site ${grid.siteId}, the mechanism at ${at} is worked at ${posKey(r, c)}, ` +
+                `which is no ground the walk can stand on`
+            )
+          for (const region of regions) transitions.push({ from, to, at: region })
+        }
+      }
+    // A sequence must be completable by some walk, and the refusal names it.
+    const tileCount = new Set(
+      (record.transitions ?? []).filter(t => isTile(grid.cells[t.at[0]]?.[t.at[1]])).map(t => posKey(t.at[0], t.at[1]))
+    ).size
+    const [homeRow, homeCol] = at.split(",").map(Number)
+    const home = grid.cells[homeRow][homeCol]
     mechanisms[id] = {
       states,
       initial,
       opens,
-      transitions: states.flatMap(from =>
-        legalTargets(record, from).flatMap(to => {
-          // A move the record places is made in each place it names, in the region that cell stands in;
-          // one it does not place is made where the mechanism stands.
-          const placed = (record.transitions ?? []).filter(
-            t => t.to === to && (t.from === undefined || t.from === from)
-          )
-          if (placed.length === 0) return [{ from, to, at: of.get(at)! }]
-          return placed.flatMap(({ at: [r, c] }) => {
-            const regions = regionsToWorkFrom(r, c)
-            if (regions.length === 0)
-              throw new Error(
-                `floorLock: on site ${grid.siteId}, the mechanism at ${at} is worked at ${posKey(r, c)}, ` +
-                  `which is no ground the walk can stand on`
-              )
-            return regions.map(region => ({ from, to, at: region }))
-          })
-        })
-      ),
+      transitions,
+      ...(entries.length > 0 ? { entries } : {}),
+      ...(tileCount > 0 && home.type === "room" && home.mechanismId
+        ? { goal: { state: progressState(tileCount), label: `sequence ${home.mechanismId}` } }
+        : {}),
     }
     for (const { gateIds, keyId, mode } of byPosition)
       for (const gateId of gateIds) {

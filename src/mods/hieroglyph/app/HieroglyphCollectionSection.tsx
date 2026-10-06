@@ -16,9 +16,10 @@ import type { CollectionSectionProps } from "@/app/pages/collectionSectionRegist
 // shown as an empty / partial ("Ra 1/3") / collected slot. Registered app-side and gated on the
 // mod (see ./collection), so it drops out of the shared Collection screen when the mod is off.
 
-type HieroglyphCategory = "deities" | "professions" | "animals" | "artifacts"
+type HieroglyphCategory = "deities" | "professions" | "animals" | "artifacts" | "signs"
 
-const CATEGORIES: HieroglyphCategory[] = ["deities", "professions", "animals", "artifacts"]
+// Signs last: they are the group that is not a noun, and there is one of them.
+const CATEGORIES: HieroglyphCategory[] = ["deities", "professions", "animals", "artifacts", "signs"]
 
 const CategoryGridSection: FC<{
   category: HieroglyphCategory

@@ -6,6 +6,7 @@ import type { ShopStockAssignment } from "@/worldGen/shopStock"
 import type { WorldValidator } from "@/worldGen/validate"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { OneWayRealisationMeta, ResolveOneWayRealisation } from "@/game/oneWayRealisation"
+import type { RegionBarrierRealisationMeta, ResolveRegionBarrierRealisation } from "@/game/regionBarrierRealisation"
 import type { ModDescriptor } from "./modDescriptor"
 import { puzzleMod } from "./puzzle"
 import { mosaicMod } from "./mosaic"
@@ -13,6 +14,7 @@ import { hieroglyphMod } from "./hieroglyph"
 import { trapMod } from "./trap"
 import { shopMod } from "./shop"
 import { tombTreasureMod } from "./tombTreasure"
+import { storyMod } from "./story"
 import { topologyMod } from "./topology"
 
 // The registered mods, in one list. A mod is "on" iff it appears here; toggle a mod off (for a
@@ -27,6 +29,7 @@ export const REGISTERED_MODS: ModDescriptor[] = [
   trapMod,
   shopMod,
   tombTreasureMod,
+  storyMod,
   topologyMod,
 ]
 
@@ -53,6 +56,15 @@ export const MOD_ONE_WAY_REALISATIONS: OneWayRealisationMeta[] = REGISTERED_MODS
 // nothing: there is no default, so it is refused where it is bound (siteAssembler).
 export const resolveOneWayRealisation: ResolveOneWayRealisation = id =>
   id === undefined ? undefined : MOD_ONE_WAY_REALISATIONS.find(realisation => realisation.id === id)
+
+// Every region-barrier realisation a registered mod declares. One that drops with its mod leaves a barrier naming it refused.
+export const MOD_REGION_BARRIER_REALISATIONS: RegionBarrierRealisationMeta[] = REGISTERED_MODS.flatMap(
+  m => m.regionBarrierRealisations ?? []
+)
+
+// A region barrier naming no realisation binds to nothing: there is no default, so it is refused (siteAssembler).
+export const resolveRegionBarrierRealisation: ResolveRegionBarrierRealisation = id =>
+  id === undefined ? undefined : MOD_REGION_BARRIER_REALISATIONS.find(realisation => realisation.id === id)
 
 // Every dynamic-loot distribution all enabled mods contribute, in registry order (trap consumables
 // before the shop money economy — consumables claim their expert+ puzzle slots first, then the shop
@@ -87,6 +99,7 @@ export const MOD_REACHABILITY_SUPPORT: ReachabilitySupport = {
   journeyEntryLock: journeyId => firstDefined(REACHABILITY_SUPPORTS.map(s => s.journeyEntryLock?.(journeyId))),
   tierUnlockBucket: tier => firstDefined(REACHABILITY_SUPPORTS.map(s => s.tierUnlockBucket?.(tier))),
   resolveOneWay: resolveOneWayRealisation,
+  resolveRegionBarrier: resolveRegionBarrierRealisation,
 }
 
 // The tomb-treasure content resolver (§E): maps a tomb's floor position → its `tombKey` reward, so

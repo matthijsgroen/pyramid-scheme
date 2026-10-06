@@ -211,9 +211,16 @@ export const expertRules: Rule[] = [
     // A crocodile capstone guards EVERY floor's treasure (see junior.ts for why `+ 1`).
     floors: [
       {
+        // Somebody is waiting on this floor: a room of its own, two from the end. The tableaus keep
+        // positions 1..n (their authored content is keyed by position), the crocodile keeps the last
+        // room, and the beat sits between them — so it is passed on the way to the floor's treasure
+        // and cannot be skipped by taking the stairs.
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 2,
+        nodes: [
+          { where: "last", encounter: "capstone" },
+          { where: TOMB_ROOMS_PER_FLOOR.expert + 1, encounter: "conversation" },
+        ],
         // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
@@ -244,9 +251,16 @@ export const expertRules: Rule[] = [
     // A crocodile capstone guards EVERY floor's treasure (see junior.ts for why `+ 1`).
     floors: [
       {
+        // Somebody is waiting on this floor: a room of its own, two from the end. The tableaus keep
+        // positions 1..n (their authored content is keyed by position), the crocodile keeps the last
+        // room, and the beat sits between them — so it is passed on the way to the floor's treasure
+        // and cannot be skipped by taking the stairs.
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 2,
+        nodes: [
+          { where: "last", encounter: "capstone" },
+          { where: TOMB_ROOMS_PER_FLOOR.expert + 1, encounter: "conversation" },
+        ],
         // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
