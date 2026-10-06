@@ -2814,16 +2814,42 @@ yarn import-tile art/masters/props/default/plate.webp --tier=default --name=plat
   --filter=smooth --seat="$SHADOW"
 ```
 
-### `default/plateStone` — the plate, a stone resting on it
+### `default/plateDown` — the plate, pressed
 
-An EDIT of the painted plate, not a fresh generation: a fresh roll painted a different plate, and the pair
-only swaps on one cell if everything outside the stone is the same paint. The attachment is the plate's
-master from the repo, and the prompt changes only the stone. Both tiles are imported unmasked: the painted
-kerb is larger than the scaffold's footprint, and the footprint mask clipped it.
+An EDIT of the painted plate, not a fresh generation, so the kerb, the slab and the light are the same paint
+and `plate` and `plateDown` swap on one cell (raised when empty, pressed while the explorer stands on it).
+The attachment is the plate's master from the repo. Imported exactly like `plate`: unmasked, same flags,
+same scale.
 
 **Attach:**
 
 1. `art/masters/props/default/plate.webp` — the painted plate, to be edited
+
+```
+Edit this painting. Keep everything exactly as it is — the kerb, the gap, the slab's colour and wear, the
+light, the framing and the magenta — and change only this: the slab has sunk down level with the top of the
+kerb, pressed in, so the dark gap round it is now only a thin dark line and the slab's front edge no longer
+shows.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold plate --drop=limestone --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/default/plateDown.webp --tier=default --name=plateDown --slot=prop \
+  --filter=smooth --seat="$SHADOW"
+```
+
+### `default/plateStone` — the pressed plate, a stone resting on it
+
+An EDIT of the painted `plateDown`, not a fresh generation: a fresh roll painted a different plate, and the
+tiles only swap on one cell if everything outside the stone is the same paint. The attachment is the
+`plateDown` master from the repo, and the prompt changes only the stone. Both tiles are imported unmasked: the painted
+kerb is larger than the scaffold's footprint, and the footprint mask clipped it.
+
+**Attach:**
+
+1. `art/masters/props/default/plateDown.webp` — the painted pressed plate, to be edited
 
 ```
 Edit this painting. Keep everything exactly as it is — the frame, the gap, the slab, the colours, the light,
@@ -2836,7 +2862,7 @@ round. It casts a short soft shadow on the slab in #3A342C.
 Then, once the return is in `~/Downloads`:
 
 ```sh
-scaffold plate --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+scaffold plate --drop=limestone --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/default/plateStone.webp --tier=default --name=plateStone --slot=prop \
   --filter=smooth --seat="$SHADOW"
 ```
@@ -2882,21 +2908,23 @@ yarn import-tile art/masters/props/default/torchUnlit.webp --tier=default --name
 
 ### `default/torchLit` — the same torch, burning
 
-An EDIT of the painted unlit torch, not a fresh generation, so the holder, collars and the wrapped head are
-the same paint in both and the pair swaps on one cell. The attachment is the unlit master from the repo.
-Both tiles are imported unmasked (the scaffold's mask clipped the painted head and collar edges).
+An EDIT of the painted unlit torch, not a fresh generation, so the holder, collars, shaft and the wrapped head
+are the same paint in both and the pair swaps on one cell. The attachment is the unlit master from the repo.
+Both tiles are imported unmasked (the scaffold's mask clipped the painted head and collar edges). The lit
+painting is a taller canvas (the flame), so it is imported at `--scale=0.6513` against the unlit's 0.5639:
+the importer fills a frame with the object's trimmed height, and the ratio of the two heights (2437 and 2110)
+puts both at the same pixels per master pixel.
 
 **Attach:**
 
 1. `art/masters/props/default/torchUnlit.webp` — the painted torch, to be edited
 
 ```
-Edit this painting. Keep everything exactly as it is — the stone base, the bronze collars, the wooden shaft,
-the wrapped head, the colours, the framing and the magenta background — and change only this: the torch is
-lit. A small, steady flame rises from the top of the wrapped head, about as tall as the head itself: ochre
-and orange, brightest at its root, the only warm colour in the picture, with no glow, no halo and no light
-spilling onto the magenta. The top of the wrapping just under the flame is scorched darker; nothing else
-changes.
+Edit this painting. Keep everything exactly as it is, pixel for pixel — the stone base, the bronze collars,
+the wooden shaft at exactly its current length, the wrapped head at exactly its current height and place,
+the colours, the framing and the magenta background — and change only this: a small, steady flame rises
+from the top of the wrapped head, about as tall as the head itself: ochre and orange, brightest at its root,
+no glow, no halo, nothing on the magenta. The top of the wrapping just under the flame is scorched darker.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -2904,7 +2932,7 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold torch --spin=15 --colour-cloth=#3e3731 --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/default/torchLit.webp --tier=default --name=torchLit --slot=prop \
-  --filter=smooth --seat="$SHADOW" --scale=0.6
+  --filter=smooth --seat="$SHADOW" --scale=0.6513
 ```
 
 ### `default/sequenceTile` — a flush floor tile, stepped on in order

@@ -4,15 +4,16 @@ import { CELL, PROP_H, WALL_H } from "./mapScale"
 import { ART_IMAGE_RENDERING, sharedTileUrl, tileUrl } from "./tileAssets"
 import { tierPalette } from "./tileMaterials"
 
-// The pressure plate is one painting, shared by every rank (`tiles/default/`), empty and with a limestone
-// block on it. Nothing in the app draws it yet; this story stages it the way the renderer will, on two
+// The pressure plate is one painting, shared by every rank (`tiles/default/`), in three looks: raised
+// (`plate`), pressed (`plateDown`, the explorer standing on it) and pressed with a limestone block on it
+// (`plateStone`). Nothing in the app draws it yet; this story stages it the way the renderer will, on two
 // ranks' floors, the explorer beside it for scale, because a generation that looks fine at 2000px can
 // still turn to mud at 56 (`PropSheet.stories.tsx`'s `Chamber`, as `Lever.stories.tsx` reuses it).
-// The two tiles share one frame, so swapping them on a cell must change only the stone.
+// The tiles share one frame, so swapping them on a cell must change only the slab and the stone.
 
 const EXPLORER_W = 40
 const EXPLORER_H = 70
-const CHAMBER_W = CELL * 4
+const CHAMBER_W = CELL * 5
 const CHAMBER_H = CELL * 2
 
 const PlateStage: FC<{ tier: "starter" | "expert"; zoom: number }> = ({ tier, zoom }) => {
@@ -22,6 +23,7 @@ const PlateStage: FC<{ tier: "starter" | "expert"; zoom: number }> = ({ tier, zo
   const explorer = tileUrl("starter", "explorer-s-1")
   const props = [
     { name: "plate", src: sharedTileUrl("plate") },
+    { name: "plateDown", src: sharedTileUrl("plateDown") },
     { name: "plateStone", src: sharedTileUrl("plateStone") },
   ]
   const floorLine = (WALL_H + CELL) * zoom
@@ -76,7 +78,7 @@ const PlateStage: FC<{ tier: "starter" | "expert"; zoom: number }> = ({ tier, zo
             alt="explorer"
             className="absolute"
             style={{
-              left: CELL * 3 * zoom,
+              left: CELL * 4.2 * zoom,
               top: floorLine - EXPLORER_H * zoom,
               width: EXPLORER_W * zoom,
               height: EXPLORER_H * zoom,
@@ -86,7 +88,7 @@ const PlateStage: FC<{ tier: "starter" | "expert"; zoom: number }> = ({ tier, zo
         )}
       </div>
       <figcaption className="text-[10px] text-white/70">
-        {tier} floor, {zoom}x: plate, plate with stone, explorer
+        {tier} floor, {zoom}x: plate (raised), plateDown (pressed), plateStone (pressed, with stone), explorer
       </figcaption>
     </figure>
   )
@@ -94,7 +96,7 @@ const PlateStage: FC<{ tier: "starter" | "expert"; zoom: number }> = ({ tier, zo
 
 const PlateSheet: FC<{ zoom: number }> = ({ zoom }) => (
   <div className="flex h-screen flex-col gap-4 overflow-auto bg-neutral-900 p-6">
-    <h2 className="m-0 text-sm text-white/80">pressure plate, empty and with a stone</h2>
+    <h2 className="m-0 text-sm text-white/80">pressure plate: raised, pressed, pressed with a stone</h2>
     <div className="flex flex-wrap gap-6">
       <PlateStage tier="starter" zoom={zoom} />
       <PlateStage tier="expert" zoom={zoom} />

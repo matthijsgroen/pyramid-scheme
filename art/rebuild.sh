@@ -1545,27 +1545,33 @@ yarn import-tile art/masters/props/default/leverArm.webp --tier=default --name=l
 
 # THE MECHANICS
 #
-# The pressure plate, SHARED across ranks (`tiles/default/`, drawn at every rank), empty and with its stone.
-# One render with and without the limestone block (`--drop=limestone`), so the two tiles swap on one cell
-# to the pixel. `plateStone` was painted as a Gemini EDIT of the painted plate master, so everything outside
-# the stone is the same paint; both are cut UNMASKED (the painted kerb is larger than the scaffold footprint, a mask clipped it).
+# The pressure plate, SHARED across ranks (`tiles/default/`, drawn at every rank), in three looks that swap
+# on one cell: `plate` (raised, empty), `plateDown` (the slab sunk level with its kerb, the explorer standing
+# on it) and `plateStone` (sunk, with the limestone block on it). `plateDown` is a Gemini EDIT of the plate
+# master and `plateStone` an EDIT of `plateDown`, so everything outside what changed is the same paint. All
+# three are cut UNMASKED, with the same flags and scale (the painted kerb is larger than the scaffold
+# footprint, a mask clipped it).
 scaffold plate --drop=limestone --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/default/plate.webp --tier=default --name=plate --slot=prop \
   --filter=smooth --seat="$SHADOW"
-scaffold plate --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/default/plateDown.webp --tier=default --name=plateDown --slot=prop \
+  --filter=smooth --seat="$SHADOW"
 yarn import-tile art/masters/props/default/plateStone.webp --tier=default --name=plateStone --slot=prop \
   --filter=smooth --seat="$SHADOW"
 
 # The standing torch, shared across ranks, unlit and lit. `torchLit` was painted as a Gemini EDIT of the
 # painted `torchUnlit`; the lit render is the same scaffold without `--drop=accent`. Both are cut UNMASKED
-# (the scaffold mask clipped the painted head and collar edges) and the unlit one at 0.6 x 2110/2245, the
-# ratio of the two paintings' drawn heights, so the holder and lower shaft sit on the same pixels.
+# (the scaffold mask clipped the painted head and collar edges). The importer scales an object so its
+# trimmed height fills the same frame, and the lit painting is taller (flame, 2437 px against 2110), so
+# each gets its own --scale: 0.5639 for the unlit and 0.6513 = 0.5639 x 2437/2110 for the lit one, which
+# puts both paintings at the same pixels per master pixel and lets the base, collars, shaft and head
+# coincide, so lighting it only adds the flame.
 scaffold torch --spin=15 --drop=accent --colour-cloth=#3e3731 --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/default/torchUnlit.webp --tier=default --name=torchUnlit --slot=prop \
   --filter=smooth --seat="$SHADOW" --scale=0.5639
 scaffold torch --spin=15 --colour-cloth=#3e3731 --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/default/torchLit.webp --tier=default --name=torchLit --slot=prop \
-  --filter=smooth --seat="$SHADOW" --scale=0.6
+  --filter=smooth --seat="$SHADOW" --scale=0.6513
 
 # The overgrown POOL — the condition's second sprite per slot, so a floor is not overgrown with one weed.
 # Flat tiles: no mesh, no mask, the magenta keyed (docs/instructions/repaint-queue.md, "Overgrown").
