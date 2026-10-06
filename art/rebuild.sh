@@ -1556,6 +1556,17 @@ scaffold plate --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/default/plateStone.webp --tier=default --name=plateStone --slot=prop \
   --filter=smooth --seat="$SHADOW"
 
+# The standing torch, shared across ranks, unlit and lit. `torchLit` was painted as a Gemini EDIT of the
+# painted `torchUnlit`; the lit render is the same scaffold without `--drop=accent`. Both are cut UNMASKED
+# (the scaffold mask clipped the painted head and collar edges) and the unlit one at 0.6 x 2110/2245, the
+# ratio of the two paintings' drawn heights, so the holder and lower shaft sit on the same pixels.
+scaffold torch --spin=15 --drop=accent --colour-cloth=#3e3731 --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/default/torchUnlit.webp --tier=default --name=torchUnlit --slot=prop \
+  --filter=smooth --seat="$SHADOW" --scale=0.5639
+scaffold torch --spin=15 --colour-cloth=#3e3731 --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/default/torchLit.webp --tier=default --name=torchLit --slot=prop \
+  --filter=smooth --seat="$SHADOW" --scale=0.6
+
 # The overgrown POOL — the condition's second sprite per slot, so a floor is not overgrown with one weed.
 # Flat tiles: no mesh, no mask, the magenta keyed (docs/instructions/repaint-queue.md, "Overgrown").
 # Saturation and brightness measured against `overgrown-plant`, which is the one these stand beside:

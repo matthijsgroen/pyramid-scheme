@@ -2768,8 +2768,10 @@ same as theirs, but each prompt closes on a rank-neutral material line rather th
 **Each pair is one render.** `plate` is `plateStone` with `--drop=limestone`, and `torchUnlit` is
 `torchLit` with `--drop=accent`, so the two tiles of a pair share one frame and one mask below the part
 that changes, and swap on a cell without moving. The torch is height-limited in its slot, so the unlit
-one is imported at a smaller `--scale` (the lit one's times the ratio of their drawn heights, 544/589)
-to keep its shaft the same height as the lit one's. See `prim_plate` and `prim_torch`.
+one is imported at a smaller `--scale` (the lit one's times the ratio of the two paintings' drawn heights,
+2110/2245 = 0.5639 against 0.6) so the holder and the lower shaft sit on the same pixels in both. Both
+tiles are cut UNMASKED: the scaffold's mask clipped the painted head and collar edges. See `prim_plate`
+and `prim_torch`.
 
 **The plate and the sequence tile must never be read for each other.** The plate is a RAISED slab in a
 black gap and carries no sign; the sequence tile lies FLUSH, has a fine groove cut round it near its edge,
@@ -2875,40 +2877,26 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold torch --spin=15 --drop=accent --colour-cloth=#3e3731 --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/default/torchUnlit.webp --tier=default --name=torchUnlit --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.5542
+  --filter=smooth --seat="$SHADOW" --scale=0.5639
 ```
 
 ### `default/torchLit` — the same torch, burning
 
+An EDIT of the painted unlit torch, not a fresh generation, so the holder, collars and the wrapped head are
+the same paint in both and the pair swaps on one cell. The attachment is the unlit master from the repo.
+Both tiles are imported unmasked (the scaffold's mask clipped the painted head and collar edges).
+
 **Attach:**
 
-1. `~/tile-previews/torchLit-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
+1. `art/masters/props/default/torchUnlit.webp` — the painted torch, to be edited
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a STANDING TORCH, one tall slender upright. At its foot a squat stepped octagonal HOLDER of
-dark basalt sits on the floor. Out of a bronze COLLAR on top of it rises one straight timber SHAFT. At the
-top of the shaft, above a bronze BAND, is the torch HEAD of dark pitch-soaked wrapping, and from it a small
-steady FLAME rises: the rounded shape on the very top, ochre and orange, the only bright warm colour in the
-picture. The wood just below the head is darkened by heat. It is not a lamp, not a brazier and not a bowl:
-nothing on it is a dish.
-
-The holder is basalt worn smooth, with pale natron dust settled into its steps. The shaft is old timber,
-dry and split along the grain. The bronze is dull and dark. The wrapping is black and tarry.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-Light it as one low lamp in a closed tomb. The edges turned toward that lamp may CATCH it — the holder's
-steps, the collar, one side of the shaft — and everything turned away from it falls into shadow. The flame
-is a flat warm colour: no glow, no rays and no halo round it.
-
-The shadow at the holder's foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No ground plane and no background: the object stands alone on the magenta. Old worn stone and timber, dust settled in every crack; nothing that belongs to one tomb more than another; no gold.
+Edit this painting. Keep everything exactly as it is — the stone base, the bronze collars, the wooden shaft,
+the wrapped head, the colours, the framing and the magenta background — and change only this: the torch is
+lit. A small, steady flame rises from the top of the wrapped head, about as tall as the head itself: ochre
+and orange, brightest at its root, the only warm colour in the picture, with no glow, no halo and no light
+spilling onto the magenta. The top of the wrapping just under the flame is scorched darker; nothing else
+changes.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -2916,7 +2904,7 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold torch --spin=15 --colour-cloth=#3e3731 --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/default/torchLit.webp --tier=default --name=torchLit --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.6
+  --filter=smooth --seat="$SHADOW" --scale=0.6
 ```
 
 ### `default/sequenceTile` — a flush floor tile, stepped on in order
