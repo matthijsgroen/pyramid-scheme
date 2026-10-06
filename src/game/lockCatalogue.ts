@@ -14,7 +14,7 @@ const textsIn = (folder: URL): Record<string, string> =>
 const parsedAll = (texts: Record<string, string>): Record<string, ParsedLock> =>
   Object.fromEntries(Object.entries(texts).map(([name, text]) => [name, parseLock(text, name)]))
 
-export const LOCK_TEXTS = textsIn(new URL("./locks/", import.meta.url))
+const LOCK_TEXTS = textsIn(new URL("./locks/", import.meta.url))
 export const LESSON_TEXTS = textsIn(new URL("./locks/lessons/", import.meta.url))
 export const LOCK_CATALOGUE = parsedAll(LOCK_TEXTS)
 export const LESSONS = parsedAll(LESSON_TEXTS)

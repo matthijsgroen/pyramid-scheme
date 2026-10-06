@@ -3,7 +3,7 @@
  * Draws a lock written in lockNotation.ts's notation, walks it, says what it could do without, and
  * prints the shared Lock JSON it reads into.
  *
- *   yarn lock                       every lock in the catalogue
+ *   yarn lock                       every lock and lesson in the catalogue
  *   yarn lock doubleBack            one of them, with its JSON
  *   yarn lock sketch.lock           a file
  *   yarn lock sketch.lock --watch   redrawn on every save; a new file starts with the notation
@@ -18,12 +18,12 @@ import { drawLock } from "../src/game/lockDraw"
 import { lockQuality, solveLock, unreachedRegions } from "../src/game/lockReview"
 import { LOCK_SYNTAX, parseLock } from "../src/game/lockNotation"
 import type { ParsedLock } from "../src/game/lockNotation"
-import { LOCK_CATALOGUE } from "../src/game/lockCatalogue"
+import { LESSONS, LOCK_CATALOGUE } from "../src/game/lockCatalogue"
 
 const args = process.argv.slice(2)
 const watching = args.includes("--watch")
 const target = args.find(arg => !arg.startsWith("--"))
-const library: Record<string, ParsedLock> = LOCK_CATALOGUE
+const library: Record<string, ParsedLock> = { ...LOCK_CATALOGUE, ...LESSONS }
 
 const report = (name: string, { lock, drafts, refused }: ParsedLock, withJson: boolean): boolean => {
   const spec = walkSpecOf(lock, drafts)
@@ -91,7 +91,7 @@ if (watching && target && target !== "-" && !(target in library) && !existsSync(
 if (args.includes("--help")) {
   console.log(syntax)
 } else if (!target) {
-  const sound = Object.entries(LOCK_CATALOGUE).map(([name, parsed]) => report(name, parsed, false))
+  const sound = Object.entries(library).map(([name, parsed]) => report(name, parsed, false))
   process.exitCode = sound.every(Boolean) ? 0 : 1
 } else if (target === "-") {
   process.exitCode = fromText("stdin", readFileSync(0, "utf8")) ? 0 : 1

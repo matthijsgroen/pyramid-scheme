@@ -60,6 +60,16 @@ describe("drawLock, with stones", () => {
   })
 })
 
+describe("drawLock, flat", () => {
+  it("routes a drop around a corridor rather than across it", () => {
+    const art = draw(
+      "in -- top\nin -[S2]- s2 -[S1]- middle\nin -[S2]- out\ntop >> s1 >> in\ntop >> middle >> in\nS1 toggle @s1\nS2 toggle @s2"
+    )
+    expect(art).not.toContain("┼")
+    expect(art).not.toContain("without crossing")
+  })
+})
+
 describe("drawLock, with a loop of gates", () => {
   it("draws the join that closes the loop, with its gate", () => {
     const art = draw("in -- hall\nhall -[H]- vault\nvault -[G]- in\nhall -- out\nH toggle @in\nG toggle @hall")
