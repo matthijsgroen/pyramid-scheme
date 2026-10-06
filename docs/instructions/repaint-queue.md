@@ -2765,13 +2765,14 @@ rank — a player must never relearn which thing is which when the tomb gets ric
 `tiles/default/`, like the lever and the drops. The scaffolds are rendered in the priest's stone, the
 same as theirs, but each prompt closes on a rank-neutral material line rather than the priest's.
 
-**Each pair is one render.** `plate` is `plateStone` with `--drop=limestone`, and `torchUnlit` is
-`torchLit` with `--drop=accent`, so the two tiles of a pair share one frame and one mask below the part
-that changes, and swap on a cell without moving. The torch is height-limited in its slot, so the unlit
-one is imported at a smaller `--scale` (the lit one's times the ratio of the two paintings' drawn heights,
-2110/2245 = 0.5639 against 0.6) so the holder and the lower shaft sit on the same pixels in both. Both
-tiles are cut UNMASKED: the scaffold's mask clipped the painted head and collar edges. See `prim_plate`
-and `prim_torch`.
+**Each variant is an edit of the one before.** The plate trio (`plate` → `plateDown` → `plateStone`) and the
+torch pair (`torchUnlit` → `torchLit`) share one frame because each is a Gemini EDIT of the previous master,
+so everything the edit leaves alone is the same paint and the tiles swap on a cell without moving. The torch
+is height-limited in its slot and the lit painting is taller (the flame), so `torchUnlit` imports at
+`--scale=0.5639` and `torchLit` at `--scale=0.6513`, the ratio of the two heads' drawn heights (2110 and
+2437 master px), which puts the holder, shaft and wrapped head on the same pixels in both. All of them are
+cut UNMASKED: the scaffold's mask clipped the painted kerb, head and collar edges. See `prim_plate` and
+`prim_torch`.
 
 **The plate and the sequence tile must never be read for each other.** The plate is a RAISED slab in a
 black gap and carries no sign; the sequence tile lies FLUSH, has a fine groove cut round it near its edge,
@@ -2844,8 +2845,9 @@ yarn import-tile art/masters/props/default/plateDown.webp --tier=default --name=
 
 An EDIT of the painted `plateDown`, not a fresh generation: a fresh roll painted a different plate, and the
 tiles only swap on one cell if everything outside the stone is the same paint. The attachment is the
-`plateDown` master from the repo, and the prompt changes only the stone. Both tiles are imported unmasked: the painted
-kerb is larger than the scaffold's footprint, and the footprint mask clipped it.
+`plateDown` master from the repo, and the prompt changes only the stone. All three plate tiles are imported
+unmasked: the painted kerb is larger than
+the scaffold's footprint, and the footprint mask clipped it.
 
 **Attach:**
 
