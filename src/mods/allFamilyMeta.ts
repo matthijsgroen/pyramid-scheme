@@ -82,7 +82,7 @@ export const familyIsTrap = (encounter: string | string[] | undefined, defaultTa
 // automatically — no core edit, no spec edit. This is the seam that makes puzzle types pluggable.
 // Roles every board can serve. A role list mixing one of these with a themed role is the PREFER mode
 // (`docs/game-design/journeys.md` §10): the structural tag re-admits every family, and the themed one says
-// what the journey would like the room to look like. Kept in step with `rolePools.spec.ts`'s copy, which
+// what the journey would like the room to look like. Kept in step with `rolePools.verify.ts`'s copy, which
 // skips the same tags when it checks pool sizes — a themed pool is a variety risk and a structural one is not.
 const STRUCTURAL_ROLES = new Set(["puzzle", "trap", "treasure", "gate", "shop", "capstone", "tomb-puzzle"])
 

@@ -59,6 +59,18 @@ export const openDoorsFor = (
   return open
 }
 
+// Every gate key some mechanism of the floor names, with how the gate folds its owners.
+export const mechanismGatesOf = (grid: FloorGrid): Map<string, DoorMode> => {
+  const gates = new Map<string, DoorMode>()
+  for (const row of grid.cells)
+    for (const cell of row) {
+      if (cell.type !== "room" || !cell.mechanism) continue
+      for (const { gateKeyId, mode } of cell.mechanism.positions)
+        gates.set(gateKeyId, mode === "any" || gates.get(gateKeyId) === "any" ? "any" : "all")
+    }
+  return gates
+}
+
 /** A mechanism as one cell sees it: where its record and its one stored state live (`home`), and which
  * of its placed transitions this cell works, when it is not the home itself. */
 export type WorkedMechanism = { home: [number, number]; record: MechanismRecord; transition?: number }

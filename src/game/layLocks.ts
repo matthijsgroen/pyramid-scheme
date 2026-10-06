@@ -1,6 +1,6 @@
 import type { LockPlan, PlanCorridor, PlanRegion } from "./lockPlan"
 import { mulberry32, shuffle } from "./random"
-import { DEFAULT_PACKING, ONE_WAY_RUN_CELLS } from "./carveConstants"
+import { DEFAULT_PACKING, oneWayReach, oneWayRunCells } from "./carveConstants"
 import type { Direction } from "./siteTypes"
 
 /** A cell of the lattice, "row,col", the way the assembler keys its cells. Nodes stand on even/even cells. */
@@ -99,7 +99,8 @@ export const startingGridSize = (plan: LockPlan): number => {
 export const LAY_GRID_CEILING = 25
 
 const GRID_STEP = 2
-const DROP_HOPS = (ONE_WAY_RUN_CELLS + 3) / 2
+// Lattice hops between a drop's two nodes, along lattice direction `d` (an index into DIRS).
+const dropHops = (d: number) => oneWayReach(DIRS[d][2]) / GRID_STEP
 // Work (candidate placements tried) one search may spend, how many reshuffled searches a grid gets per
 // allowance of lengthening, and the most extra nodes any one stretch may take.
 const WORK_BUDGET = 400
@@ -202,9 +203,10 @@ const search = (
   const dropsOf = (region: string) => plan.drops.filter(drop => drop.launch === region || drop.landing === region)
 
   /** Runs of a drop are straight and leave the cells between its two end nodes uncarved. */
-  const runUnits = (from: number, dir: number) => [step(from, dir), stepBy(from, dir, 2)]
+  const runUnits = (from: number, dir: number) =>
+    Array.from({ length: dropHops(dir) - 1 }, (_, k) => stepBy(from, dir, k + 1))
   const dropFits = (from: number, dir: number): boolean => {
-    const to = stepBy(from, dir, DROP_HOPS)
+    const to = stepBy(from, dir, dropHops(dir))
     return (
       to >= 0 &&
       sideFree(from, dir) &&
@@ -213,7 +215,7 @@ const search = (
     )
   }
   const layDrop = (id: string, from: number, dir: number) => {
-    const to = stepBy(from, dir, DROP_HOPS)
+    const to = stepBy(from, dir, dropHops(dir))
     for (const unit of runUnits(from, dir)) claim(unit, `run:${id}`)
     takeSide(from, dir)
     takeSide(to, opposite(dir))
@@ -266,7 +268,7 @@ const search = (
         for (const o of shuffle(regionNodes.get(pin.other)!, rand)) {
           if (o === guarded) continue
           for (const d of shuffle([0, 1, 2, 3], rand)) {
-            const t = stepBy(o, d, DROP_HOPS)
+            const t = stepBy(o, d, dropHops(d))
             if (t < 0 || occupied.has(t) || !dropFits(o, d)) continue
             yield {
               at: t,
@@ -416,7 +418,7 @@ const search = (
         const landing = new Set(regionNodes.get(drop.landing)!.filter(node => node !== junctionAt.get(drop.landing)))
         for (const q of shuffle(launchNodes, rand)) {
           for (const d of shuffle([0, 1, 2, 3], rand)) {
-            if (!landing.has(stepBy(q, d, DROP_HOPS)) || !dropFits(q, d)) continue
+            if (!landing.has(stepBy(q, d, dropHops(d))) || !dropFits(q, d)) continue
             if (spent()) return false
             const mark = trail.length
             layDrop(id, q, d)
@@ -524,11 +526,11 @@ const search = (
         launch: drop.launch,
         landing: drop.landing,
         from: cell(from),
-        to: cell(stepBy(from, dir, DROP_HOPS)),
+        to: cell(stepBy(from, dir, dropHops(dir))),
         dir: DIRS[dir][2],
         launchCell: along(1),
-        run: Array.from({ length: ONE_WAY_RUN_CELLS }, (_, k) => along(k + 2)),
-        landingCell: along(ONE_WAY_RUN_CELLS + 2),
+        run: Array.from({ length: oneWayRunCells(DIRS[dir][2]) }, (_, k) => along(k + 2)),
+        landingCell: along(oneWayRunCells(DIRS[dir][2]) + 2),
       }
     })
     const junctions: LaidJunction[] = plan.junctions.map(junction => {

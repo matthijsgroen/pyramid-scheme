@@ -70,28 +70,36 @@ describe("a region barrier with no realisation bound is refused by name, never g
   })
 })
 
-describe("a realisation no registered mod provides is refused by name", () => {
-  it("refuses one nobody declares, naming what was asked for", () => {
-    expect(reasonsOf(withRegistry(bound(onRouteSluiceFloor, "lava"), 1, TOPOLOGY_ON))).toEqual([
-      {
-        type: "regionBarrierRealisationRefused",
-        id: "floodedHall",
-        region: "hall",
-        realisation: "lava",
-        why: "unknown",
-      },
-    ])
+describe("a realisation no registered mod provides leaves the barrier as plain ground", () => {
+  const barrierDoors = (grid: FloorGrid): RoomCell[] =>
+    grid.cells.flat().flatMap(cell => (cell.type === "room" && cell.regionBarrier ? [cell] : []))
+  const carved = (config: FloorConfig, registry: typeof TOPOLOGY_ON | typeof TOPOLOGY_OFF): FloorGrid => {
+    const result = withRegistry(config, SEEDS[0], registry)
+    if (!result.success) throw new Error(`did not carve: ${JSON.stringify(result.reasons)}`)
+    return result.grid
+  }
+
+  it("carves one nobody declares with the same walls as water, and no barrier door standing", () => {
+    const water = carved(bound(onRouteSluiceFloor, "water"), TOPOLOGY_ON)
+    const lava = carved(bound(onRouteSluiceFloor, "lava"), TOPOLOGY_ON)
+
+    expect(barrierDoors(water).length).toBeGreaterThan(0)
+    expect(dirsOf(lava)).toBe(dirsOf(water))
+    expect(barrierDoors(lava)).toEqual([])
   })
 
-  it.each(["water", "sand"])("refuses %s with the topology mod off, and carves it with the mod on", realisation => {
-    const config = bound(onRouteSluiceFloor, realisation)
+  it.each(["water", "sand"])(
+    "carves %s with the topology mod off on the walls the mod on carves, its door plain ground",
+    realisation => {
+      const config = bound(onRouteSluiceFloor, realisation)
+      const on = carved(config, TOPOLOGY_ON)
+      const off = carved(config, TOPOLOGY_OFF)
 
-    expect(reasonsOf(withRegistry(config, 1, TOPOLOGY_OFF))).toEqual([
-      { type: "regionBarrierRealisationRefused", id: "floodedHall", region: "hall", realisation, why: "unknown" },
-      { type: "realisationMissing", mechanic: "sluice", kind: "toggle", realisation: "default-control" },
-    ])
-    expect(withRegistry(config, SEEDS[0], TOPOLOGY_ON).success).toBe(true)
-  })
+      expect(barrierDoors(on).length).toBeGreaterThan(0)
+      expect(dirsOf(off)).toBe(dirsOf(on))
+      expect(barrierDoors(off)).toEqual([])
+    }
+  )
 
   it("declares water and sand as the topology mod's", () => {
     expect(["water", "sand"].map(id => resolveRegionBarrierRealisation(id))).toEqual([

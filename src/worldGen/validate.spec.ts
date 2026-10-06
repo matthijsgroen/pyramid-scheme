@@ -5,15 +5,15 @@ import {
   findMispairedStairs,
   findStrandingLocks,
   findUnbakedSwitchBoards,
-  findUndrawnOneWays,
   findUnwalkedLocks,
   validateRewardCounts,
 } from "./validate"
 import { DEV_CAPABILITIES, PYRAMID_CAPABILITIES } from "./capabilities"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FamilyMeta, FamilyOptions } from "@/game/families/familyMeta"
-import type { ForkShape } from "@/game/forkShape"
+import { FORK_SHAPES, type ForkShape } from "@/game/forkShape"
 import { configHash } from "@/game/seeds/configHash"
+import { doubleBackLock } from "./spec/locks/doubleBack"
 import { WORLD_TARGETS } from "./worldSpec"
 import { PYRAMID_JOURNEYS } from "./data"
 import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
@@ -31,6 +31,14 @@ const floor = (overrides: Partial<FloorConfig> = {}): FloorConfig => ({
   sideSections: [],
   ...overrides,
 })
+
+// The designer's lock on a floor of its own: the drops, levers and fork-switch board exist only once it compiles.
+const lockFloor = (difficulty: Difficulty = "expert", fork: string = "lightbeamSwitch"): FloorConfig =>
+  floor({
+    difficulty,
+    locks: [{ lock: doubleBackLock() }],
+    realisations: { "fork-switch": fork, toggle: "handle", "one-way": "zipline" },
+  } as Partial<FloorConfig>)
 
 const fillFragments = (n: number): FloorConfig["sideSections"] =>
   Array.from({ length: n }, (_, i) => ({
@@ -246,44 +254,21 @@ describe("findUnbakedSwitchBoards", () => {
     expect(findUnbakedSwitchBoards(configs, [seedable], {}, () => PYRAMID_CAPABILITIES)).toHaveLength(3)
   })
 
+  it("owes a lock floor's fork-switch board all three shapes, which no list covers", () => {
+    const configs = { [shipped]: [[lockFloor("expert", "stub-switch")]] }
+    expect(
+      findUnbakedSwitchBoards(configs, [seedable], {}).map(
+        board => `${board.familyId} ${board.difficulty} ${board.forkShape}`
+      )
+    ).toEqual(["stub-switch expert adjacent", "stub-switch expert opposite", "stub-switch expert three"])
+    const covered = Object.fromEntries(FORK_SHAPES.map(shape => [bucket("expert", shape), [1]]))
+    expect(findUnbakedSwitchBoards(configs, [seedable], covered)).toEqual([])
+  })
+
   it("says nothing about a floor that authors no switch, or a family with no generator", () => {
     expect(findUnbakedSwitchBoards({ [shipped]: [[floor()]] }, [seedable], {})).toEqual([])
     const live: FamilyMeta = { ...seedable, seedable: undefined }
     expect(findUnbakedSwitchBoards({ [shipped]: [[switchFloor("junior")]] }, [live], {})).toEqual([])
-  })
-})
-
-describe("findUndrawnOneWays", () => {
-  const shipped = PYRAMID_JOURNEYS[0].id
-  const dropFloor = () =>
-    floor({
-      sideSections: [
-        { pathPuzzles: 1, difficulty: "starter", end: "treasure", label: "ledge" },
-        { pathPuzzles: 1, difficulty: "starter", end: "treasure", label: "sink" },
-      ],
-      oneWays: [{ from: "ledge", to: "sink" }],
-    })
-
-  it("names the floor a drop stands on, and the passage it authored", () => {
-    expect(findUndrawnOneWays({ [shipped]: [[floor()], [floor(), dropFloor()]] })).toEqual([
-      { journeyId: shipped, levelNr: 2, floorIndex: 1, from: "ledge", to: "sink" },
-    ])
-  })
-
-  it("excuses a site whose capabilities say it may stand one", () => {
-    // Said with both presets, because an exemption that excuses nothing would pass the first line
-    // alone: the same floor is refused under a shipped site's capabilities.
-    const configs = { [shipped]: [[dropFloor()]] }
-    expect(findUndrawnOneWays(configs, () => DEV_CAPABILITIES)).toEqual([])
-    expect(findUndrawnOneWays(configs, () => PYRAMID_CAPABILITIES)).toHaveLength(1)
-  })
-
-  it("refuses a site nothing knows about, which nothing cleared either", () => {
-    expect(findUndrawnOneWays({ unknown: [[dropFloor()]] })).toHaveLength(1)
-  })
-
-  it("says nothing about a floor that authors no drop", () => {
-    expect(findUndrawnOneWays({ [shipped]: [[floor()]] })).toEqual([])
   })
 })
 

@@ -71,18 +71,29 @@ rule and its refusals. They are always present and never toggled off. What a mod
 switch for a fork-switch, the zipline for a one-way, the gate face for the reader of a door.
 
 So the carve never depends on a mod. `obstacles`, `controls`, `barrierOrder`, `oneWays`, `handles` and a
-`{ in }` fork are core authoring and are never dropped when a mod is off; a floor carves from them alone.
-With the realisation missing, a floor that authors the mechanic is **refused by name before it is carved**
-(`realisationMissing`, or `oneWayRealisationRefused` for a one-way), never carved with a default standing
-in and never stripped into a floor with other walls. A floor that authors no mechanic is unaffected.
+`{ in }` fork are core authoring and are never dropped when a mod is off; a floor carves from them alone, and
+what the carve produces is the same with the mod on and off.
 
-Consequence for rule 1 with the topology mod removed from `registeredMods`: `yarn generate-world` still
-builds the **shipped** world, because no shipped journey authors a mechanic that needs a realisation. The
-one mechanic-like field it carries is junior_2's `switches`, a family standing in a junction `forks` already
-reserved: it is dropped with its family and leaves the identical walls and a bare junction. The **dev
-journey** (`INCLUDE_DEV`) with the mod off is refused by name on the four floors that author a mechanic
-(levels 2, 3, 7 and 8: the doubleBack, the one-way, the lever, the gate and its control) and carves the other
-five identically.
+A realisation no registered mod provides is **degraded on the finished carve**, never refused and never carved
+differently: the plugins have no realisation, so the mechanics are simply gone, the way a corridor of five
+puzzles has none when no puzzle is registered.
+
+- a mechanism room becomes a bare node: no family, no mechanism, nothing offered;
+- a door only such mechanisms owned stands open as plain ground, a region barrier included (no cover, no door,
+  nothing concealed); a door another owner still has (a realised mechanism, a floor key) keeps standing;
+- a one-way becomes an ordinary two-way passage: the launch, the span and the landing name the way along it and
+  back, and that is the only wall a missing realisation moves;
+- the tiles of a sequence are plain corridor; no tile state, no door face, the door open;
+- a door face whose family is missing is no face: the door follows its other owners.
+
+A role **no one bound** is a different thing: an authoring mistake, not a missing mod. It is refused by name,
+with the mod on and off alike, and nothing stands in for it (`unboundRole` for a lock, `oneWayRealisationRefused`
+with `unbound` for a one-way).
+
+Consequence for rule 1 with the topology mod removed from `registeredMods`: `yarn generate-world` builds the
+**whole** world, the shipped journeys and the dev journey, and the app runs it. Every floor carves with the
+walls the mod on carves; the floors that author a mechanic (junior_2's `switches`, expert_1's doubleBack floor,
+the dev journey's floors) stand with bare nodes and open corridors where the mechanics were.
 
 ## Approach
 

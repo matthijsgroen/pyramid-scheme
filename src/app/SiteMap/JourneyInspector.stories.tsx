@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { assembleFloor } from "../../game/siteAssembler"
+import { assembleInspectedFloor } from "../../game/assembleInspectedFloor"
 import { completeCell, getCell } from "../../game/gridNavigation"
 import type { FloorGrid, TreasureReward } from "../../game/siteTypes"
 import { generatedWorldConfigs } from "../../data/generatedWorld"
@@ -166,7 +166,7 @@ const JourneyInspector = ({ journeyType, tier, journeyIndex, pyramidNumber, seed
 
   const baseGrid = useMemo(
     () => {
-      const result = assembleFloor(journey.id, floorConfig, pyramidSeed + currentFloor)
+      const result = assembleInspectedFloor(journey.id, floorConfig, pyramidSeed, currentFloor)
       return result.success ? result.grid : null
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

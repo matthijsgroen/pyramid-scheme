@@ -118,12 +118,14 @@ such files racing for the same cores is what made the build red or green accordi
 world spec. It is deliberately not a CI job: a generator is worth re-checking when somebody changes one,
 not on every pull request.
 
-Today that is every family's `generate*.verify.ts`, `lightbeamConfig.verify.ts`, `puzzleSeeds.verify.ts`,
-and for the world `worldBoards.verify.ts`, `worldFloorAssembly.verify.ts` and
-`configBuilder.integration.verify.ts` — the sweeps that read the whole authored world, including the one
-holding the tenet that authoring an encounter never moves a wall
-(docs/game-design/world-spec-stability.md). Those answer a change to the WORLD SPEC, which is why they run
-when somebody makes one rather than on every pull request. A fixture-backed spec pairs with a `.verify.ts` that rebuilds
+**MECHANICS ARE TESTS, CONTENT IS VERIFIED.** A file whose checks read the built or baked world —
+`buildWorldConfigs`, `buildConfigs`, `generatedWorldConfigs`, the seed lists, `tierFingerprints.json` — is
+testing what was authored, not how the code behaves, so it is a `.verify.ts`. A mechanic is tested on a
+fixture or a small inline config, never on a real floor. That covers every family's `generate*.verify.ts`,
+`puzzleSeeds.verify.ts`, and the world sweeps (`worldFloorAssembly.verify.ts`, `bakedCarve.verify.ts`,
+`devJourney.verify.ts`, and the rest), including the one holding the tenet that authoring an encounter never
+moves a wall (docs/game-design/world-spec-stability.md). Those answer a change to the WORLD SPEC, which is
+why they run when somebody makes one rather than on every pull request. A fixture-backed spec pairs with a `.verify.ts` that rebuilds
 the fixture and compares it with `toStrictEqual` — without that the split is a lie, since a stored board
 that has drifted lets the whole spec pass while every board the game deals is broken.
 

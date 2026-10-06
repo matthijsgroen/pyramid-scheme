@@ -42,18 +42,12 @@ import { writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 import { Worker } from "node:worker_threads"
-import { worldLevelSites } from "../src/data/worldLevels"
+import { buildWorldConfigs } from "../src/mods/buildWorldConfigs"
+import { seedDemandOf } from "../src/worldGen/seedDemand"
 import { puzzleSeeds } from "../src/data/puzzleSeeds"
 import type { Grade } from "../src/game/families/familyMeta"
 import type { FoundSeed } from "../src/game/seeds/findSeeds"
-import {
-  enumerateConfigs,
-  seedTarget,
-  seedFloor,
-  SEED_CAP,
-  demandLabel,
-  type ConfigDemand,
-} from "../src/game/seeds/enumerateConfigs"
+import { seedTarget, seedFloor, SEED_CAP, demandLabel, type ConfigDemand } from "../src/game/seeds/enumerateConfigs"
 import { ALL_FAMILY_META } from "../src/mods/allFamilyMeta"
 import type { SeedTask, SeedWorkerMessage } from "./seedProtocol"
 
@@ -79,7 +73,9 @@ const CHUNK = 128
 const only = flag("family")?.split(",")
 const rebuild = argv.includes("--rebuild")
 
-const allDemands = enumerateConfigs(worldLevelSites, ALL_FAMILY_META)
+// The world as the spec builds it, not the committed bake: a floor the spec added needs its seeds
+// before the bake that would list it can exist. generate-world takes EMPTY_FRACTION 0 too.
+const allDemands = seedDemandOf(buildWorldConfigs(0), ALL_FAMILY_META)
 const demands = allDemands.filter(demand => !only || only.includes(demand.familyId))
 const targetFor = (demand: ConfigDemand) => seedTarget(demand, CAP)
 const describe = (demand: ConfigDemand) => `${demandLabel(demand)} (${demand.rooms} rooms)`

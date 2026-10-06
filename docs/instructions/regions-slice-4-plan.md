@@ -150,18 +150,18 @@ git commit -m "fix: a route with more regions than the path has steps is refused
 ### Task 2: A generated floor's cells carry their region
 
 **Files:**
-- Test: `src/worldGen/devJourney.spec.ts`
+- Test: `src/worldGen/devJourney.verify.ts`
 
 **Interfaces:**
 - Consumes: the `region` labelling from slice 3 and the dev bench's authored layout.
 - Produces: nothing — a test only.
 
-**The gap, from slice 3's final review:** the carry-through of `regionLayout` is proven as far as the CONFIG. `validate-world` walks the dev floor without refusing, and `devJourney.spec.ts` asserts the whole layout round-trips. But nothing reads a carved cell's `region` on a real generated floor, so "every carved cell knows its region" is pinned only by unit tests against hand-built floors.
+**The gap, from slice 3's final review:** the carry-through of `regionLayout` is proven as far as the CONFIG. `validate-world` walks the dev floor without refusing, and `devJourney.verify.ts` asserts the whole layout round-trips. But nothing reads a carved cell's `region` on a real generated floor, so "every carved cell knows its region" is pinned only by unit tests against hand-built floors.
 
 - [ ] **Step 1: Write the failing test**
 
 ```ts
-// append to src/worldGen/devJourney.spec.ts, in the describe that already reaches built dev floors
+// append to src/worldGen/devJourney.verify.ts, in the describe that already reaches built dev floors
 // The unit tests pin this against hand-built floors; this is the only place it is asserted on a floor
 // that came through world generation, which is what the bench exists to prove.
 it("carves the bench floor with every cell knowing its region", () => {
@@ -187,7 +187,7 @@ it("carves the bench floor with every cell knowing its region", () => {
 
 - [ ] **Step 2: Run it and watch it fail or pass, and say which**
 
-Run: `yarn vitest run src/worldGen/devJourney.spec.ts -t "every cell knowing its region"`
+Run: `yarn vitest run src/worldGen/devJourney.verify.ts -t "every cell knowing its region"`
 
 This one may pass immediately — slice 3 already labels the cells, and this test exists to PIN that, not to drive new behaviour. That is legitimate here, but you must prove it is not vacuous: temporarily make the labelling conditional on something false in `siteAssembler.ts` (or author the bench with no `regionLayout`), confirm this test goes red, and restore. Quote the verbatim failure.
 
@@ -198,8 +198,8 @@ Run: `yarn check-types`, `yarn test`, and `INCLUDE_DEV=1 yarn validate-world`.
 - [ ] **Step 4: Commit**
 
 ```bash
-yarn eslint src/worldGen/devJourney.spec.ts
-git commit -m "test: the bench floor's cells come back knowing their regions" -- src/worldGen/devJourney.spec.ts
+yarn eslint src/worldGen/devJourney.verify.ts
+git commit -m "test: the bench floor's cells come back knowing their regions" -- src/worldGen/devJourney.verify.ts
 ```
 
 ---

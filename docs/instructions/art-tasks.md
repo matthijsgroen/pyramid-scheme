@@ -287,8 +287,6 @@ full of — `--contents` on what exists rather than a new model. `prim_niche`, `
   needed. A patron is `statue-2.png` beside `statue.png`, and the same for `shrine`, `wallShrine`, `stela`
   and `mask`. No new kinds, no pool edits, no world regeneration, and art can arrive one file at a time.
 - **Torch (`torch` family) — no art at any rank.** A torch room is drawn as its marker carrying the flame icon; wanted per rank (starter, junior, expert, master, wizard) is a painted torch the three-state spent look can ease back, declared by setting `drawing.art` on the torch meta once it exists.
-- **Lever (`leverBaseBack`, `leverArm`, `leverBaseFront`) — painted at expert only.** Starter, junior, master and wizard draw the lever-glyph marker alone; a rank with only some of the three draws none.
-- **Drop (`dropEast`, `dropNorth`, `dropSouth`) — painted at expert only.** The other four ranks draw no drop furniture, the way the map draws one-ways today.
 - **A sequence tile (pressure plate)** is a vector slab with its glyph (`PlateShape`) in three looks (unwalked, walked in order, walked out of order); a painted plate is wanted in the same three states.
 
 **Built since this list was written**, and noted because the list claimed otherwise for a while:

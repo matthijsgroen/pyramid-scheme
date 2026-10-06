@@ -1,6 +1,8 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FamilyGenerationCtx, FamilyMeta } from "@/game/families/familyMeta"
+import { expandFloorLocks } from "@/game/floorLocks"
 import { FORK_SHAPES } from "@/game/forkShape"
+import { isForkSwitch } from "@/game/obstacles"
 import type { FloorConfig, SiteConfig, SubSection } from "@/game/siteTypes"
 import { configHash } from "./configHash"
 
@@ -67,19 +69,24 @@ const sectionsOf = (section: SubSection & { sideSections?: SubSection[] }): SubS
 /**
  * The switches a floor can end up holding: which families may stand in one, and how many junctions can
  * carry one. `forks` reserves the junctions and `switches.max` says how many are filled, so the smaller
- * of the two is what any carve of this floor produces (siteAssembler.ts). An array of encounters survives
+ * of the two is what any carve of this floor produces (siteAssembler.ts). A fork-switch control, authored or
+ * compiled from a lock, stands one board in its own junction and owes the same boards. An array of encounters survives
  * baking where the authoring named a pool, so every candidate owes the boards.
  */
-export const switchFamilies = (
-  floor: Pick<FloorConfig, "switches" | "forks">
-): { families: string[]; count: number } => {
-  const switches = floor.switches
-  if (!switches) return { families: [], count: 0 }
-  const junctions = (floor.forks ?? []).reduce((sum, fork) => sum + ("in" in fork ? 0 : fork.count), 0)
-  return {
-    families: Array.isArray(switches.encounter) ? switches.encounter : [switches.encounter],
-    count: Math.min(switches.max, junctions),
+export const switchFamilies = (floor: FloorConfig): { families: string[]; count: number } => {
+  const expanded = expandFloorLocks(floor)
+  const config = expanded.ok ? expanded.config : floor
+  const owed = new Map<string, number>()
+  const switches = config.switches
+  if (switches) {
+    const junctions = (config.forks ?? []).reduce((sum, fork) => sum + ("in" in fork ? 0 : fork.count), 0)
+    const count = Math.min(switches.max, junctions)
+    for (const family of Array.isArray(switches.encounter) ? switches.encounter : [switches.encounter])
+      owed.set(family, count)
   }
+  for (const control of config.controls ?? [])
+    if (isForkSwitch(control)) owed.set(control.encounter, (owed.get(control.encounter) ?? 0) + 1)
+  return { families: [...owed.keys()], count: Math.max(0, ...owed.values()) }
 }
 
 /**

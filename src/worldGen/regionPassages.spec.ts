@@ -1,60 +1,17 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest"
-import { buildConfigs } from "./configBuilder"
-import { DEV_JOURNEY_ID } from "./data"
-import type { FloorConfig, SiteConfig } from "./types"
+import { describe, expect, it } from "vitest"
 import { assembleFloor } from "../game/siteAssembler"
-import type { FloorConfig as GameFloorConfig, FloorGrid, GridCell, MechanismRecord } from "../game/siteTypes"
-import { floorAssemblySeed, persistentInteriorSeed } from "../game/siteSeed"
-import { floorLock, regionsOf } from "../game/floorLock"
-import { reachableStates, walkLock, type LockSpec } from "../game/lockWalk"
+import type { FloorConfig as GameFloorConfig, FloorGrid, MechanismRecord } from "../game/siteTypes"
+import { floorLock } from "../game/floorLock"
+import { reachableStates } from "../game/lockWalk"
 import { offRouteSluiceFloor, onRouteSluiceFloor } from "../game/testSupport/regionBarrierFixtures"
-import { ALL_CURRENCY_DISTRIBUTIONS } from "../mods/allCurrencyDistributions"
+import { floorWithHandle, nestedFloorWithHandle } from "../game/testSupport/handleFixtures"
 import {
-  CAPPED_CURRENCIES,
-  DYNAMIC_DISTRIBUTIONS,
-  MOD_WORLD_VALIDATORS,
-  MOD_REACHABILITY_SUPPORT,
-  MOD_TOMB_TREASURE_RESOLVER,
-  MOD_SHOP_STOCK,
-  MOD_RESERVED_TREASURE_INDICES,
-  REGISTERED_MOD_IDS,
-} from "../mods/registeredMods"
-import {
-  resolveKeyRequirements,
-  familyPriorityFor,
-  familyCapacityFor,
-  familyIsTrap,
-  allocateEncounterSpread,
-  resolveEncounterMeta,
-} from "../mods/allFamilyMeta"
-
-let dev: SiteConfig[]
-
-beforeAll(() => {
-  process.env.INCLUDE_DEV = "1"
-  dev = buildConfigs(
-    resolveKeyRequirements,
-    ALL_CURRENCY_DISTRIBUTIONS,
-    CAPPED_CURRENCIES,
-    DYNAMIC_DISTRIBUTIONS,
-    MOD_WORLD_VALIDATORS,
-    familyPriorityFor,
-    0,
-    allocateEncounterSpread,
-    MOD_REACHABILITY_SUPPORT,
-    MOD_TOMB_TREASURE_RESOLVER,
-    familyCapacityFor,
-    MOD_SHOP_STOCK,
-    MOD_RESERVED_TREASURE_INDICES,
-    familyIsTrap,
-    REGISTERED_MOD_IDS,
-    resolveEncounterMeta
-  )[DEV_JOURNEY_ID]
-}, 180_000)
-
-afterAll(() => {
-  delete process.env.INCLUDE_DEV
-})
+  authoredByCompiled,
+  authoredPairOf,
+  authoredRegionOf,
+  failureOf,
+  withoutLayout,
+} from "./regionPassages.testing"
 
 const SEEDS = Array.from({ length: 12 }, (_, n) => (n + 1) * 7919)
 
@@ -63,54 +20,6 @@ const carved = (config: () => GameFloorConfig): FloorGrid[] =>
     const result = assembleFloor("test", config(), seed)
     return result.success ? [result.grid] : []
   })
-
-const assembleDevAt = (floor: FloorConfig, levelNr: number, floorIndex: number): FloorGrid | null => {
-  const seed = floorAssemblySeed(persistentInteriorSeed(DEV_JOURNEY_ID), levelNr, floorIndex)
-  const result = assembleFloor(DEV_JOURNEY_ID, floor as GameFloorConfig, seed, resolveEncounterMeta, {
-    resolveKeyRequirements,
-    floorRef: { journeyId: DEV_JOURNEY_ID, floorIndex },
-  })
-  return result.success ? result.grid : null
-}
-
-const authoredRegionOf = (cell: GridCell | undefined): string | undefined =>
-  cell && (cell.type === "room" || cell.type === "corridor") ? cell.region : undefined
-
-// The authored regions each compiled region holds ground of, door regions left out: a door is a gate's
-// own region and stands on a boundary rather than inside a region.
-const authoredByCompiled = (grid: FloorGrid): Map<string, Set<string>> => {
-  const { of } = regionsOf(grid)
-  const held = new Map<string, Set<string>>()
-  for (const [key, id] of of) {
-    if (id.startsWith("door ")) continue
-    const [r, c] = key.split(",").map(Number)
-    const region = authoredRegionOf(grid.cells[r][c])
-    if (region === undefined) continue
-    held.set(id, (held.get(id) ?? new Set()).add(region))
-  }
-  return held
-}
-
-const authoredPairOf = (held: Map<string, Set<string>>, a: string, b: string): string =>
-  [...(held.get(a) ?? []), ...(held.get(b) ?? [])].sort().join("|")
-
-// The same floor read as if the author had written no regions: the flood is the one it ran before an
-// authored region bounded it.
-const withoutLayout = (grid: FloorGrid): FloorGrid => ({
-  ...grid,
-  cells: grid.cells.map(row =>
-    row.map(cell => {
-      if (cell.type !== "room" && cell.type !== "corridor") return cell
-      const { region: _region, ...rest } = cell
-      return rest as GridCell
-    })
-  ),
-})
-
-const failureOf = (lock: LockSpec) => {
-  const result = walkLock(lock)
-  return result.sound ? "sound" : result.failure.type
-}
 
 describe("regions the author wrote separately", () => {
   const FLOORS = [
@@ -157,19 +66,6 @@ describe("regions the author wrote separately", () => {
       }
     }
   )
-
-  it("stay separate on the dev pyramid's bare mouth, hall and vault, joined by a passage each", () => {
-    const grid = assembleDevAt(dev[0][0], 1, 0)!
-    const held = authoredByCompiled(grid)
-    const lock = floorLock(grid)!
-
-    for (const authored of held.values()) expect(authored.size).toBe(1)
-    expect([...new Set([...held.values()].map(set => [...set].join()))].sort()).toEqual(["hall", "mouth", "vault"])
-    expect([...new Set((lock.passages ?? []).map(({ a, b }) => authoredPairOf(held, a, b)))].sort()).toEqual([
-      "hall|mouth",
-      "hall|vault",
-    ])
-  })
 })
 
 // A move of the sluice made at a cell of `region` as well as at the sluice itself.
@@ -240,36 +136,17 @@ describe("compiling regions apart", () => {
       }
   })
 
-  it("leaves the verdict of every dev journey floor as it was with the regions flooded together", () => {
-    let walked = 0
-    dev.forEach((site, levelIndex) =>
-      site.forEach((floor, floorIndex) => {
-        const grid = assembleDevAt(floor, levelIndex + 1, floorIndex)
-        const lock = grid && floorLock(grid)
-        if (!grid || !lock) return
-        walked++
-        expect(failureOf(lock), `level ${levelIndex + 1} floor ${floorIndex}`).toBe(
-          failureOf(floorLock(withoutLayout(grid))!)
-        )
-      })
-    )
-    expect(walked).toBeGreaterThanOrEqual(9)
-  })
-
   it("compiles a floor with no layout to exactly the lock it compiled to before, with no passage", () => {
-    let walked = 0
-    dev.forEach((site, levelIndex) =>
-      site.forEach((floor, floorIndex) => {
-        // A floor placing locks carries the layout those locks compile into, so it authors one all the same.
-        if ((floor as GameFloorConfig).regionLayout || floor.locks?.length) return
-        const grid = assembleDevAt(floor, levelIndex + 1, floorIndex)
-        const lock = grid && floorLock(grid)
-        if (!grid || !lock) return
-        walked++
-        expect(lock.passages).toBeUndefined()
-        expect(lock).toEqual(floorLock(withoutLayout(grid)))
-      })
-    )
-    expect(walked).toBeGreaterThan(0)
+    const grids = [
+      floorWithHandle({ in: "lever", left: ["vault"], right: ["pocket"] }).grid,
+      nestedFloorWithHandle({ in: "branch", left: ["s0.0"], right: ["s0.1"] }).grid,
+    ]
+    for (const grid of grids) {
+      expect(grid.cells.flat().filter(cell => authoredRegionOf(cell) !== undefined)).toEqual([])
+      const lock = floorLock(grid)!
+      expect(Object.keys(lock.mechanisms).length).toBeGreaterThan(0)
+      expect(lock.passages).toBeUndefined()
+      expect(lock).toEqual(floorLock(withoutLayout(grid)))
+    }
   })
 })

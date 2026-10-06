@@ -298,7 +298,8 @@ collapse into one and the order cannot be seen.
 mod off moves the floor.
 
 **Acceptance**
-1. Every floor carves identically with the topology mod on and off; only what stands in the rooms differs.
+1. Every floor carves identically with the topology mod on and off; only what stands in the rooms differs. A
+   missing realisation degrades on the finished carve to bare nodes and open corridors, never a refusal.
 2. This holds for a floor authoring a fork-switch on authored seams (T2).
 
 **Carve moves: no** if already true; the task is to prove it and fix it if not. **Saves: no.**

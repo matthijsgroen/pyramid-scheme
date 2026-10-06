@@ -1342,7 +1342,7 @@ git commit -m "fix: the fog does not come back through a gate that is shut" -- s
 
 **Files:**
 - Modify: `src/worldGen/types.ts`, `src/worldGen/dsl.ts`, `src/worldGen/buildSite.ts`, `src/worldGen/serializer.ts`, `src/worldGen/modOwnedAuthoring.ts`, `src/worldGen/spec/dev.ts`
-- Test: `src/worldGen/dsl.spec.ts`, `src/worldGen/devJourney.spec.ts`, `src/mods/topology/toggleOff.spec.ts`
+- Test: `src/worldGen/dsl.spec.ts`, `src/worldGen/devJourney.verify.ts`, `src/mods/topology/toggleOff.spec.ts`
 
 **Interfaces:**
 - Consumes: Task 1's `Obstacle` and `Control` types.
@@ -1444,7 +1444,7 @@ In `src/worldGen/spec/dev.ts`, after pyramid 7:
 
 Read the file header first: **this journey authors no reward, and puzzles default to zero.** Keep both.
 
-Add to `src/worldGen/devJourney.spec.ts`, in the style of its existing `regionLayout` and `handles` assertions (`:254`, `:294`), one test asserting pyramid 8's `obstacles` and one asserting its `controls` — the whole arrays, deep-equal.
+Add to `src/worldGen/devJourney.verify.ts`, in the style of its existing `regionLayout` and `handles` assertions (`:254`, `:294`), one test asserting pyramid 8's `obstacles` and one asserting its `controls` — the whole arrays, deep-equal.
 
 - [ ] **Step 4: Prove the round trip**
 
@@ -1457,7 +1457,7 @@ Run: `yarn generate-world && md5 -q src/data/generatedWorld.ts` → `84c181cda6e
 
 - [ ] **Step 5: Types, lint, suite, report**
 
-Run: `yarn check-types && yarn eslint src/worldGen/types.ts src/worldGen/dsl.ts src/worldGen/buildSite.ts src/worldGen/serializer.ts src/worldGen/modOwnedAuthoring.ts src/worldGen/spec/dev.ts src/worldGen/dsl.spec.ts src/worldGen/devJourney.spec.ts src/mods/topology/toggleOff.spec.ts && yarn test`
+Run: `yarn check-types && yarn eslint src/worldGen/types.ts src/worldGen/dsl.ts src/worldGen/buildSite.ts src/worldGen/serializer.ts src/worldGen/modOwnedAuthoring.ts src/worldGen/spec/dev.ts src/worldGen/dsl.spec.ts src/worldGen/devJourney.verify.ts src/mods/topology/toggleOff.spec.ts && yarn test`
 
 ```bash
 git commit -m "feat: a gate on a connection is authorable, and drops with its mod" -- src/worldGen src/mods/topology/toggleOff.spec.ts

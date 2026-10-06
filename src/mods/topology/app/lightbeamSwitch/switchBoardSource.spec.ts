@@ -59,14 +59,11 @@ describe("where a switch board comes from", () => {
 
     // Starter sits in the split too, below the debut a floor may author a switch at: no journey stands
     // one there, so nothing bakes it, and the generator answers anyway.
-    it("is every tier but the one the shipped world authors", () => {
+    it("is every tier but the ones the shipped world authors", () => {
       expect(unlisted.map(key)).toEqual([
         "starter adjacent",
         "starter opposite",
         "starter three",
-        "expert adjacent",
-        "expert opposite",
-        "expert three",
         "master adjacent",
         "master opposite",
         "master three",

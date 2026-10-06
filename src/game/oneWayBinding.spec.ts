@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import type { OneWayRealisationMeta, ResolveOneWayRealisation } from "./oneWayRealisation"
 import { assembleFloor } from "./siteAssembler"
+import { oneWayRuns } from "./gridNavigation"
 import type { FloorConfig } from "./siteTypes"
 import { designerDoubleBack } from "./testSupport/forkSwitchFixtures"
 import en from "../../public/locales/en/common.json"
@@ -56,13 +57,17 @@ describe("binding a one-way to its realisation", () => {
     })
   })
 
-  it("refuses a realisation no registered mod declares, as a mod that is off would leave it", () => {
-    expect(bind(sectioned, "headwind")).toEqual({
-      success: false,
-      reasons: [
-        { type: "oneWayRealisationRefused", from: "upper", to: "lower", realisation: "headwind", why: "unknown" },
-      ],
-    })
+  it("carves a realisation no registered mod declares as an ordinary passage, as a mod that is off would leave it", () => {
+    const grids = Array.from({ length: 60 }, (_, i) =>
+      assembleFloor("spec:binding", { ...sectioned, oneWayRealisation: "headwind" }, i + 1, undefined, {
+        resolveOneWay: resolve,
+      })
+    ).flatMap(result => (result.success ? [result.grid] : []))
+    expect(grids.length).toBeGreaterThan(0)
+    expect(grids.flatMap(grid => oneWayRuns(grid))).toEqual([])
+    expect(grids.flatMap(grid => grid.cells.flat().filter(cell => cell.type === "corridor" && cell.obstacle))).toEqual(
+      []
+    )
   })
 
   it("binds a realisation that declares its prompt", () => {

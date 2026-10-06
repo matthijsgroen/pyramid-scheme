@@ -34,10 +34,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - A junior pyramid's fork now has a mirror puzzle standing in it, and the way that stands open is the one you route the beam to. Change your mind and the other way opens as that one shuts. The fork and its doors wear one mark on the map.
+- The last pyramid of the Valley of the Kings opens on a mirror fork with ziplines: throw the levers, route the beam, and drop from ledge to ledge to get back.
 - A torch is a switch you can only light, drawn as a flame. Once it burns there is no prompt to touch it again, and you walk past it like any other floor.
 
 ### Fixed
 
+- Levers and ziplines are drawn at every difficulty, not only in expert pyramids.
 - A zipline's gap has a floor under it again, so the drop reads as a hole in the floor instead of hanging in the dark.
 - Pressing an arrow or a corner dot now walks you there. A corridor bend only lifted its fog before, and left you standing where you were.
 - A fork with a puzzle standing in it now wears a forking mark of its own on the map, so you can tell it from an ordinary puzzle room before you walk in.

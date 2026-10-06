@@ -9,7 +9,7 @@ import {
   revealAll,
   walkableFrom,
 } from "./gridNavigation"
-import { assembleFloor, ONE_WAY_RUN_CELLS } from "./siteAssembler"
+import { assembleFloor, ONE_WAY_RUN_CELLS, oneWayRunCells } from "./siteAssembler"
 import type { Direction, FloorConfig, FloorGrid, GridCell } from "./siteTypes"
 
 // Simple 1×3 grid: [entrance room -e- corridor -e- exit room]
@@ -214,7 +214,9 @@ describe(completeCell, () => {
         checked++
         const [fr, fc] = [run.launch[0] - MOVE[run.dir][0], run.launch[1] - MOVE[run.dir][1]]
         const after = completeCell(result.grid, fr, fc)
-        expect(run.cells.map(([r, c]) => stateOf(after.cells[r][c]))).toEqual(Array(ONE_WAY_RUN_CELLS).fill("visible"))
+        expect(run.cells.map(([r, c]) => stateOf(after.cells[r][c]))).toEqual(
+          Array(oneWayRunCells(run.dir)).fill("visible")
+        )
         expect(stateOf(after.cells[run.landing[0]][run.landing[1]])).toBe("fogged")
       }
     }
@@ -232,7 +234,9 @@ describe(completeCell, () => {
         checked++
         const [tr, tc] = [run.landing[0] + MOVE[run.dir][0], run.landing[1] + MOVE[run.dir][1]]
         const after = completeCell(result.grid, tr, tc)
-        expect(run.cells.map(([r, c]) => stateOf(after.cells[r][c]))).toEqual(Array(ONE_WAY_RUN_CELLS).fill("visible"))
+        expect(run.cells.map(([r, c]) => stateOf(after.cells[r][c]))).toEqual(
+          Array(oneWayRunCells(run.dir)).fill("visible")
+        )
         expect(stateOf(after.cells[run.launch[0]][run.launch[1]])).toBe("fogged")
       }
     }

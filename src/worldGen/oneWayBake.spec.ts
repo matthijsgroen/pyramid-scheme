@@ -27,8 +27,17 @@ describe("a bake binds one-ways through the registry, as play does", () => {
     expect(() => walk(floor(), 1)).toThrow(/oneWayRealisationRefused.*"from":"upper","to":"lower".*"why":"unbound"/)
   })
 
-  it("refuses a realisation no registered mod declares", () => {
-    expect(() => walk(floor("headwind"), 1)).toThrow(/"realisation":"headwind","why":"unknown"/)
+  it("builds a floor whose one-way names a realisation no registered mod declares, as an ordinary passage", () => {
+    const outcomes = Array.from({ length: 60 }, (_, seed) => {
+      try {
+        walk(floor("headwind"), seed + 1)
+        return "assembled"
+      } catch (error) {
+        return String(error)
+      }
+    })
+    expect(outcomes).toContain("assembled")
+    expect(outcomes.filter(outcome => outcome.includes("oneWayRealisationRefused"))).toEqual([])
   })
 
   it("lets a one-way bound to a declared realisation through to the carve", () => {

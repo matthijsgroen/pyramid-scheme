@@ -473,7 +473,7 @@ git commit -m "feat: a floor's one-ways reach the walk"
 **Files:**
 
 - Modify: `src/worldGen/spec/dev.ts`
-- Test: `src/worldGen/devJourney.spec.ts`
+- Test: `src/worldGen/devJourney.verify.ts`
 
 **Interfaces:**
 
@@ -485,7 +485,7 @@ Pyramid 3 of the develop journey is already reserved for this — its comment re
 
 - [ ] **Step 1: Write the failing test**
 
-Add to `src/worldGen/devJourney.spec.ts`:
+Add to `src/worldGen/devJourney.verify.ts`:
 
 ```ts
 it("stands a one-way drop on the floor that was waiting for one", () => {
@@ -499,7 +499,7 @@ Match `devFloors` to whatever that spec already uses to read a dev pyramid's bui
 
 - [ ] **Step 2: Run it and watch it fail**
 
-Run: `yarn test src/worldGen/devJourney.spec.ts`
+Run: `yarn test src/worldGen/devJourney.verify.ts`
 Expected: FAIL — pyramid 3 authors no `oneWays`.
 
 - [ ] **Step 3: Implement**
@@ -524,7 +524,7 @@ Replace the `devSite(3, "expert")` entry with it, and update that entry's commen
 
 - [ ] **Step 4: Run the tests and watch them pass**
 
-Run: `yarn test src/worldGen/devJourney.spec.ts src/worldGen/oneWayAuthoring.spec.ts`
+Run: `yarn test src/worldGen/devJourney.verify.ts src/worldGen/oneWayAuthoring.spec.ts`
 Expected: PASS.
 
 - [ ] **Step 5: Ask the whole world**
@@ -537,7 +537,7 @@ This is the controlling session's to run, and the task's report should say it is
 - [ ] **Step 6: Commit**
 
 ```bash
-git add src/worldGen/spec/dev.ts src/worldGen/devJourney.spec.ts
+git add src/worldGen/spec/dev.ts src/worldGen/devJourney.verify.ts
 git commit -m "feat: the develop journey stands a one-way drop"
 ```
 

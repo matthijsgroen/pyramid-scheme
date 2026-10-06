@@ -190,7 +190,7 @@ describe("the procession on dev pyramid 10", { timeout: 120_000 }, () => {
   it("is authored as the production lock, bound at the pyramid, with a recorded pin", () => {
     expect(procession.locks).toEqual([{ lock: processionalLock() }])
     expect(procession.realisations).toEqual({ sequence: "pressure-plate", "one-way": "zipline" })
-    expect(procession.seed).toBe(4293857872)
+    expect(procession.seed).toBe(4293857890)
     expect(procession.packing).toBeUndefined()
   })
 

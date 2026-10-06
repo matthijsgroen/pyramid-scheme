@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { assembleFloor, defaultResolveEncounter, ONE_WAY_RUN_CELLS } from "./siteAssembler"
+import { assembleFloor, defaultResolveEncounter, oneWayRunCells } from "./siteAssembler"
 import type { ResolveEncounter } from "./siteAssembler"
 import type { Direction, FloorConfig, FloorGrid, GridCell, RoomCell } from "./siteTypes"
 import { walkLock } from "./lockWalk"
@@ -136,7 +136,7 @@ const OPPOSITE: Record<string, Direction> = { n: "s", s: "n", e: "w", w: "e" }
 // order from the launch, and the launch and landing cells either side. A witness of its own, duplicated
 // from src/game/oneWayCarve.spec.ts's reading for the same reason `regionsExcludingDoors` above is:
 // asking floorLock itself where a drop lies would check the compiler against its own output.
-type Drop = { launch: [number, number]; cells: [number, number][]; landing: [number, number] }
+type Drop = { launch: [number, number]; cells: [number, number][]; landing: [number, number]; dir: Direction }
 const dropsOn = (grid: FloorGrid): Drop[] => {
   const marker = (r: number, c: number) => {
     const cell = grid.cells[r]?.[c]
@@ -155,7 +155,7 @@ const dropsOn = (grid: FloorGrid): Drop[] => {
         cells.push([er, ec])
         ;[er, ec] = [er + dr, ec + dc]
       }
-      drops.push({ launch: [r - dr, c - dc], cells, landing: [er, ec] })
+      drops.push({ launch: [r - dr, c - dc], cells, landing: [er, ec], dir: first.dir })
     }
   return drops
 }
@@ -613,7 +613,7 @@ describe("floorLock", () => {
     expect(checked).toBeGreaterThan(0)
   })
 
-  // An obstacle of ONE_WAY_RUN_CELLS cells is one move for the walk, not one per cell: the compiled lock
+  // An obstacle of several cells is one move for the walk, not one per cell: the compiled lock
   // has to match the floor the author wrote, and the author wrote one drop.
   it("compiles one authored drop to exactly one one-way, between the regions its launch and its landing stand in", () => {
     let checked = 0
@@ -643,7 +643,7 @@ describe("floorLock", () => {
         },
       ])
       // The obstacle's cells are walls to the flood: none of them is a region of its own.
-      expect(drop.cells).toHaveLength(ONE_WAY_RUN_CELLS)
+      expect(drop.cells).toHaveLength(oneWayRunCells(drop.dir))
       for (const [r, c] of drop.cells) expect(lock.regions).not.toContain(`at ${posKey(r, c)}`)
     }
     expect(checked).toBeGreaterThan(0)

@@ -627,7 +627,7 @@ main path would dress almost nothing. It is a free field: the world sweep passes
 **Which prop a room draws is picked by WHERE the room is** — `hashString(siteId:decoration:row,col)`
 modulo the pool. A per-pool counter reads as equivalent and is not: the generated world gives every
 section its own pool literal, so each counter restarted at zero and every fork in the world held a
-crate. `propPlacement.spec.ts` guards both halves — that props land at all, and that no single kind
+crate. `propPlacement.verify.ts` guards both halves — that props land at all, and that no single kind
 takes more than 60% of them.
 
 `wallDecoration` is authored the same way, from its own `wallDecorations` pool: a second optional
@@ -637,7 +637,7 @@ because the stela, the goods niche and the star shaft are the signature items of
 ranks, and none of them can be painted into art.
 
 Every rank authors a wall pool of two or three items, from the Walls table's own Items column — a
-merchant hangs a niche of goods and a tally board, the gods hang a star shaft. `propPlacement.spec.ts`
+merchant hangs a niche of goods and a tally board, the gods hang a star shaft. `propPlacement.verify.ts`
 guards the wall items the same way it guards the props, plus that each one lands inside its own room's
 footprint.
 
@@ -679,8 +679,8 @@ Build order, each step visible on its own:
   ward-chest teasers are junior — a floor built of two ranks. `WorldFloorUnexplored` is the same floor
   part-explored, for judging what the fog gives away. `WorldFloorMaster` is the dark end of the ladder.
 - The specs that hold the invariants, rather than the details: `tileRegions.spec.ts` (which rectangle
-  is floor and which is wall), `floorMaterial.spec.ts` (a floor is built of its sections' ranks),
-  `propPlacement.spec.ts` (props land, spread across the pool, never in a walkway) and
+  is floor and which is wall), `floorMaterial.verify.ts` (a floor is built of its sections' ranks),
+  `propPlacement.verify.ts` (props land, spread across the pool, never in a walkway) and
   `clickTargets.spec.tsx` (every target the map offers is standable AND walkable, over eight seeds and
   a forty-step walk). The last one is the harness that found the tap bug; reach for it first when the
   map offers something it should not.

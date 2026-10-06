@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { assembleFloor, defaultResolveEncounter, ONE_WAY_RUN_CELLS } from "./siteAssembler"
+import { assembleFloor, defaultResolveEncounter, ONE_WAY_RUN_CELLS, oneWayRunCells } from "./siteAssembler"
 import type { ResolveEncounter } from "./siteAssembler"
 import type { Direction, FloorConfig, FloorGrid, GridCell } from "./siteTypes"
 import { nodeBeyond } from "./siteValidator"
@@ -183,8 +183,9 @@ describe("a floor that authors a one-way", () => {
     expect(oneWayEdges(grid)).toEqual([])
   })
 
-  it("declares three obstacle cells, the odd count nearest the art's measured 2.76", () => {
+  it("runs three obstacle cells along a row and one down the page, both odd", () => {
     expect(ONE_WAY_RUN_CELLS).toBe(3)
+    expect((["e", "w", "n", "s"] as const).map(oneWayRunCells)).toEqual([3, 3, 1, 1])
   })
 
   it("carves the launch, every obstacle cell and the landing, each as the design says", () => {
@@ -205,13 +206,14 @@ describe("a floor that authors a one-way", () => {
       const [dr, dc] = MOVES[dir]
       const [fr, fc] = drop.source.split(",").map(Number)
       const at = (steps: number): [number, number] => [fr + dr * steps, fc + dc * steps]
+      const runCells = oneWayRunCells(dir)
 
       // The far node stands 2 + x + 1 steps from the near one.
-      expect(drop.landing).toBe(posKey(...at(ONE_WAY_RUN_CELLS + 3)))
-      expect(drop.run).toHaveLength(ONE_WAY_RUN_CELLS)
+      expect(drop.landing).toBe(posKey(...at(runCells + 3)))
+      expect(drop.run).toHaveLength(runCells)
       // The near node names the way to the launch; the far node names the way to the landing.
       expect(dirsAt(grid, at(0)).has(dir)).toBe(true)
-      expect(dirsAt(grid, at(ONE_WAY_RUN_CELLS + 3)).has(OPPOSITE[dir])).toBe(true)
+      expect(dirsAt(grid, at(runCells + 3)).has(OPPOSITE[dir])).toBe(true)
 
       // The launch: standable, reached from the near node, names nothing toward the obstacle.
       expect(drop.launch).toBe(posKey(...at(1)))
@@ -230,9 +232,9 @@ describe("a floor that authors a one-way", () => {
       })
 
       // The landing: standable, reached from the far node, names nothing back toward the obstacle.
-      expect(drop.landingCell).toBe(posKey(...at(ONE_WAY_RUN_CELLS + 2)))
-      expect(grid.cells[at(ONE_WAY_RUN_CELLS + 2)[0]][at(ONE_WAY_RUN_CELLS + 2)[1]].type).toBe("corridor")
-      expect([...dirsAt(grid, at(ONE_WAY_RUN_CELLS + 2))]).toEqual([dir])
+      expect(drop.landingCell).toBe(posKey(...at(runCells + 2)))
+      expect(grid.cells[at(runCells + 2)[0]][at(runCells + 2)[1]].type).toBe("corridor")
+      expect([...dirsAt(grid, at(runCells + 2))]).toEqual([dir])
     }
     expect(checked).toBeGreaterThan(0)
   })
@@ -248,8 +250,9 @@ describe("a floor that authors a one-way", () => {
       if (!result.success) continue
       checked++
       const grid = result.grid
-      const obstacle = new Set(dropPairs(grid).flatMap(drop => drop.run))
-      expect(obstacle.size).toBe(ONE_WAY_RUN_CELLS)
+      const drops = dropPairs(grid)
+      const obstacle = new Set(drops.flatMap(drop => drop.run))
+      expect(obstacle.size).toBe(oneWayRunCells(drops[0].dir))
       expect(edgesOf(grid).filter(edge => obstacle.has(posKey(edge.to[0], edge.to[1])))).toEqual([])
       expect(edgesOf(grid).filter(edge => obstacle.has(posKey(edge.from[0], edge.from[1])))).toEqual([])
     }
@@ -265,7 +268,7 @@ describe("a floor that authors a one-way", () => {
     const [fr, fc] = pair.source.split(",").map(Number)
     const source = grid.cells[fr][fc]
     if (source.type === "empty") throw new Error("the drop is not carved")
-    expect(pair.run).toHaveLength(ONE_WAY_RUN_CELLS)
+    expect(pair.run).toHaveLength(oneWayRunCells(pair.dir))
     for (const cellKey of [pair.launch, ...pair.run]) {
       const [r, c] = cellKey.split(",").map(Number)
       const connector = grid.cells[r][c]
@@ -312,7 +315,7 @@ describe("a floor that authors a one-way", () => {
           ? undefined
           : `${cell.sectionAddress}#${cell.ordinal}`
       }
-      expect(pair.run).toHaveLength(ONE_WAY_RUN_CELLS)
+      expect(pair.run).toHaveLength(oneWayRunCells(pair.dir))
       for (const runKey of [pair.launch, ...pair.run, pair.landingCell]) {
         const [mr, mc] = runKey.split(",").map(Number)
         const identity = identityAt(mr, mc)
@@ -396,7 +399,7 @@ describe("a floor that authors a one-way", () => {
 
   it("refuses, by name and on every seed, more runs than the floor has room to reserve", () => {
     // Never a shorter drop, never one placed somewhere else: where the next run does not fit, the floor
-    // says which drop it could not place. Each drop reserves 2 + ONE_WAY_RUN_CELLS cells of its own, so a
+    // says which drop it could not place. Each drop reserves 2 + oneWayRunCells(dir) cells of its own, so a
     // small floor asked for far more drops than it has ground for runs out whatever the seed.
     const crowded: FloorConfig = {
       pathPuzzles: 0,
@@ -415,22 +418,22 @@ describe("a floor that authors a one-way", () => {
     }
   })
 
-  it("refuses, on every seed, the sixth drop this floor has no room for, though five carve on some seeds", () => {
-    // Five drops of 2 + x cells carve on this floor (three of forty seeds do); a sixth leaves no room on
+  it("refuses, on every seed, the seventh drop this floor has no room for, though six carve on some seeds", () => {
+    // Six drops carve on this floor (three of forty seeds do); a seventh leaves no room on
     // any seed, and the floor says which drop it could not place.
-    const six: FloorConfig = {
+    const seven: FloorConfig = {
       pathPuzzles: 0,
       difficulty: "junior",
       end: "treasure",
       exitOrStaircase: "exit",
       sideSections: [{ pathPuzzles: 0, difficulty: "junior", end: "treasure", label: "only" }],
-      oneWays: Array.from({ length: 6 }, () => ({ from: "only", to: "main" })),
+      oneWays: Array.from({ length: 7 }, () => ({ from: "only", to: "main" })),
     }
     for (let seed = 0; seed < 40; seed++) {
-      const result = assembleFloor("spec:1", six, seed, undefined, {
+      const result = assembleFloor("spec:1", seven, seed, undefined, {
         floorRef: { journeyId: "spec", levelIndex: 0, floorIndex: 0 },
       })
-      if (result.success) throw new Error(`seed ${seed} carved six drops of 2 + x cells where none fit`)
+      if (result.success) throw new Error(`seed ${seed} carved seven drops where none fit`)
       expect(result.reasons).toContainEqual({ type: "oneWayUnsatisfied", from: "only", to: "main" })
     }
   })
