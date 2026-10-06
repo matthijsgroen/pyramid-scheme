@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import type { PlayTraversal, Traversal } from "./obstacleTraversal"
 import { sharedTileFrames } from "./tileAssets"
 
@@ -18,11 +18,15 @@ const prefersReducedMotion = () =>
  * is crossed at once.
  */
 export const useZiplineRide = ({
-  reducedMotion = prefersReducedMotion(),
+  reducedMotion: asked,
   msPerCell = RIDE_MS_PER_CELL,
 }: { reducedMotion?: boolean; msPerCell?: number } = {}) => {
+  const [systemReduced] = useState(prefersReducedMotion)
+  const reducedMotion = asked ?? systemReduced
   const [ride, setRide] = useState<Ride | null>(null)
   const ending = useRef<(() => void) | null>(null)
+  // A ride taken off the map still lands the player. At mount nothing rides, so StrictMode's simulated unmount is a no-op.
+  useEffect(() => () => ending.current?.(), [])
   const playTraversal: PlayTraversal = useCallback(
     traversal => {
       const sprite = sharedTileFrames(`explorer-zip-${traversal.dir === "w" ? "e" : traversal.dir}`)[0]

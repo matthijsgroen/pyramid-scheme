@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { act, fireEvent, render } from "@testing-library/react"
+import { StrictMode } from "react"
 import { describe, expect, it, vi } from "vitest"
 import { cellCenter } from "./mapScale"
 import type { Ride } from "./useZiplineRide"
@@ -37,10 +38,14 @@ describe("ZiplineRider", () => {
     expect(r.end).not.toHaveBeenCalled()
   })
 
-  it("ends the ride if it is taken off the map mid-slide", () => {
+  it("does not end the ride on StrictMode's simulated unmount", () => {
     const r = ride()
-    render(<ZiplineRider ride={r} />).unmount()
-    expect(r.end).toHaveBeenCalled()
+    render(
+      <StrictMode>
+        <ZiplineRider ride={r} />
+      </StrictMode>
+    )
+    expect(r.end).not.toHaveBeenCalled()
   })
 
   it("mirrors the sprite, never the light, riding west", () => {

@@ -1410,7 +1410,8 @@ export const SiteMapView = ({
   const { scrollRef, sizerRef, mapRef, zoomRef, scrollHandlers } = useMapZoom(svgWidth, svgHeight)
 
   useEffect(() => {
-    if (!explorerPos || !scrollRef.current || !sizerRef.current) return
+    const target = ride?.traversal.to ?? explorerPos
+    if (!target || !scrollRef.current || !sizerRef.current) return
     const el = scrollRef.current
     const elRect = el.getBoundingClientRect()
     const mapRect = sizerRef.current.getBoundingClientRect()
@@ -1419,12 +1420,12 @@ export const SiteMapView = ({
     const originY = mapRect.top - elRect.top + el.scrollTop
     // Cell coordinates are in unzoomed SVG units; the rendered map is `zoom` times that size.
     const zoom = zoomRef.current
-    const { cx, cy } = cellCenter(explorerPos[0], explorerPos[1])
+    const { cx, cy } = cellCenter(target[0], target[1])
     const x = originX + cx * zoom
     const y = originY + cy * zoom
     el.scrollTo({ left: x - el.clientWidth / 2, top: y - el.clientHeight / 2, behavior: "smooth" })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [explorerPos?.[0], explorerPos?.[1]])
+  }, [explorerPos?.[0], explorerPos?.[1], ride?.traversal.to[0], ride?.traversal.to[1]])
 
   return (
     /* The map's window, and the frame the air hangs in: the scrolling box is what MOVES, so a weather

@@ -64,4 +64,28 @@ describe("useZiplineRide", () => {
     await act(async () => vi.advanceTimersByTime(result.current.ride!.ms + 250))
     expect(landed).toBe(true)
   })
+
+  it("ends a ride that is taken off the map mid-slide", async () => {
+    const useZiplineRide = await hookWith({ "explorer-zip-e": ["e.png"] })
+    const { result, unmount } = renderHook(() => useZiplineRide())
+    let landed = false
+    act(() => void result.current.playTraversal(ride()).then(() => (landed = true)))
+    unmount()
+    await act(async () => {})
+    expect(landed).toBe(true)
+  })
+
+  it("settles once when end is called twice", async () => {
+    const useZiplineRide = await hookWith({ "explorer-zip-e": ["e.png"] })
+    const { result } = renderHook(() => useZiplineRide())
+    let landed = 0
+    act(() => void result.current.playTraversal(ride()).then(() => landed++))
+    const { end } = result.current.ride!
+    await act(async () => {
+      end()
+      end()
+    })
+    expect(landed).toBe(1)
+    expect(result.current.ride).toBeNull()
+  })
 })

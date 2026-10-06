@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { StrictMode, useState } from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { AXES, DROP_AT, addressed, dropGrid } from "./floorFixtures.testing"
 import { SiteMapView } from "./SiteMapView"
@@ -74,6 +74,14 @@ const meta = {
   title: "Topology/Zipline ride",
   component: Ride,
   parameters: { layout: "fullscreen" },
+  // The app renders in StrictMode; so does the ride here, or a mount-time cleanup would go unseen.
+  decorators: [
+    Story => (
+      <StrictMode>
+        <Story />
+      </StrictMode>
+    ),
+  ],
 } satisfies Meta<typeof Ride>
 
 export default meta
