@@ -306,3 +306,51 @@ phase 3's plan records it.
 - **Not here:** wiring the tiles into the renderer is phases 2 (plate, explorer carrying), 3 (narrow
   passage) and the zipline glide phase (riding frames). The torch's tiles are wired when the torch family
   gets `drawing.art`. That is a small follow-up, recorded in `docs/instructions/art-tasks.md` §9.
+
+---
+
+### Task 6: The sequence tile
+
+**Decided by the designer (2026-10-06):** the sequence tile and the pressure plate are two distinct objects,
+so the player never confuses them:
+- **sequence tile:** stepped on in order. A flush floor tile cut into the paving, with a glyph carved in it.
+- **pressure plate:** takes a stone. A raised slab with a dark gap all round, with no glyph (task 3).
+
+Today the sequence tile is a vector slab with a text glyph (`PlateShape`, `src/app/SiteMap/nodeShapes.tsx`),
+coloured by `plateLook` (`src/app/SiteMap/plateLook.ts`). It has three states: `unwalked`; `inOrder`, with a
+tick; and `outOfOrder`, with a cross.
+
+**One painted tile serves every glyph and every state.** The glyph stays drawn by code on top, so a single
+tile covers all of them. The states stay as the tint, the stroke and the tick or cross on top: shapes, so
+they read without colour.
+
+**Names:** the code calls the sequence tile a "pressure plate" (`PlateShape`, `plateLook`, the "plate" shape
+kind), while phase 1 adds `RoomCell.plate` for the stones' plates. When this task wires the art, rename the
+sequence tile's drawing to `SequenceTileShape` / `sequenceTileLook`. Keep the shape kind's string if renaming
+it touches saves or fixtures, and say so.
+
+**Files:**
+- Modify: `scripts/renderProp.py` (a `prim_sequencetile`: a square slab set FLUSH in the paving, about 0.8 of
+  a cell, with a fine incised border and a shallow recessed square where the glyph is carved. Not spun, like
+  `pit`, so it agrees with the paving.)
+- Modify: `docs/instructions/repaint-queue.md` (`expert/sequenceTile`)
+- Create: master, tile and `art/rebuild.sh` line (`--tier=expert --name=sequenceTile --slot=prop` or a floor
+  slot; pick the slot whose seating lets a flush tile lie on the floor, and check `importTile.ts` SLOTS)
+- Modify: `src/app/SiteMap/nodeShapes.tsx` (draw the painted tile under the glyph via `tileOrPlaceholder`,
+  falling back to today's vector slab; keep the tick, cross and tint), plus the rename above
+- Test: the existing `nodeShapes` or `sequence` render tests must stay green. Add one test that the glyph
+  still renders over the painted tile.
+
+- [ ] **Step 1: Geometry**, gated as in task 3 step 1. It must read as part of the floor at 56 units, not as
+  a raised object: the opposite of the pressure plate.
+- [ ] **Step 2: Scaffolds, masks and shadows**, as in task 3 step 2.
+- [ ] **Step 3: Queue entry** `### \`expert/sequenceTile\` — a carved floor tile, stepped on in order`. The
+  prompt names: a square basalt tile flush with the paving; a fine incised border; a shallow square
+  recess in its centre, LEFT EMPTY ("the carving is added later; leave the recess plain"); worn smooth where
+  feet have crossed; natron dust in the border line. Same rank material and light lines as task 3.
+- [ ] **Step 4: 🧑 Generate** with `yarn repaint expert/sequenceTile`.
+- [ ] **Step 5: Import, gate and record**, as in task 3 step 5.
+- [ ] **Step 6: Wire it** in `PlateShape` → `SequenceTileShape`, TDD for the glyph-over-tile test, and
+  stage it in `nodeShapes.stories.tsx` (or the sequence story, if one exists) in all three states, with the
+  explorer for scale. Screenshot it, and **stop for the designer's verdict.**
+- [ ] **Step 7: Commit** with `art: the sequence tile, carved into the floor`.
