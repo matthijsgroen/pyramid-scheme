@@ -155,7 +155,7 @@ The starter tomb section 1 requires 4 hieroglyphs × 2 fragments = 8 finds — a
   scoring leaves open. This fixes a real defect: ranking ties used to resolve
   earliest-journey-first, so junior_1+junior_2 held 74% of junior's 39 fragments while
   junior_3+junior_4 held 3 each — a tier's LAST pyramid was reliably its emptiest. Guarded by
-  `fragmentSpread.spec.ts` over the real generated world.
+  `fragmentSpread.verify.ts` over the real generated world.
   - Adding authored side-path capacity to later journeys was tried as a second lever and
     **dropped**: measured against the tie-break alone it moved fragment counts by ~±1 per journey
     while growing the world by 74 side-sections (+9%), and cost `starter_4` most of its mosaic
@@ -173,7 +173,7 @@ The starter tomb section 1 requires 4 hieroglyphs × 2 fragments = 8 finds — a
   fixed at authoring time; widening preference over the SAME fixed set of authored gated slots
   just shifts which symbol wins the contention, and it left some symbols with zero gated fragments
   at all — a regression of the existing "at least one fragment behind a preferred key"
-  guarantee (`fragmentHoldback.spec.ts`). Raising the gated share safely needs more AUTHORED gated
+  guarantee (`fragmentHoldback.verify.ts`). Raising the gated share safely needs more AUTHORED gated
   capacity (more `wardChest`/`wardWing` sections per key) — left as follow-up work.
 
 **Collection screen:** 58 slots, 4 categories. Incomplete hieroglyphs show a silhouette with fragment progress (Ra: 1/2). Completing a hieroglyph is a visible moment — the silhouette fills in.

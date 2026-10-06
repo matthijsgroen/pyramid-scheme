@@ -107,7 +107,7 @@ export const starterRules: Rule[] = [
 
   // **The papyrus route is a market, so it draws only from trade.** The second journey in the game that
   // can be restricted outright rather than merely preferred, and it became one the day `trade` reached
-  // four families (`rolePools.spec.ts`'s floor): balance scale weighs the goods, constellation lays the
+  // four families (`rolePools.verify.ts`'s floor): balance scale weighs the goods, constellation lays the
   // haul road, canisters measures the wine and the oil, procession walks the day at the quay. Thirteen
   // sections over that pool is 3.3 turns each, well inside the 4.8 the least varied journey already ships
   // (docs/game-design/journeys.md §10).

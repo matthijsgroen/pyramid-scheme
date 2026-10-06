@@ -49,7 +49,7 @@ states with no dead region. The release resets progress, so the reshaped floor n
    Commit the regenerated `generatedWorld.ts`, `carveLedger.json` and seed data.
 3. That turns **`src/data/tierFingerprints.spec.ts` green** — its 5 failures are expected: it hashes the
    BAKED world, while `src/data/tierFingerprints.json` already holds the spec's new expert hash
-   `730bd316da87d67b` (`newFamilyIsNoOp.spec.ts` checks the spec side and is green).
+   `730bd316da87d67b` (`newFamilyIsNoOp.verify.ts` checks the spec side and is green).
 4. Run the full gate in a **clean worktree** (see below), open the PR, watch CI.
 
 ## Decisions made this session (also in memory)

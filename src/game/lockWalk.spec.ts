@@ -242,7 +242,7 @@ const doubleBack = (): LockSpec => ({
 // `doubleBack` is authored for real on the develop journey (src/worldGen/spec/dev.ts, pyramid 9),
 // and its own soundness — walkLock sound over the assembled floor, deadRegions silent, the early
 // drop's strand surviving the carve — is proven there against the real compiled lock
-// (src/worldGen/devJourney.spec.ts). What stays here is what a hand-built LockSpec can show that a
+// (src/worldGen/devJourney.verify.ts). What stays here is what a hand-built LockSpec can show that a
 // carved floor cannot: the exact state a failure names, and a one-shot fork no authored `Control`
 // can express (its transitions are not the full state graph `floorLock` always compiles).
 describe("walkLock", () => {

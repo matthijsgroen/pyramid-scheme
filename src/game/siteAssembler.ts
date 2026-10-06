@@ -355,7 +355,7 @@ const DEFAULT_STRAIGHT_BIAS = 0.65
 // THE LADDER IS LOAD-BEARING FOR 31 OF THE 206 SHIPPED FLOORS. The bake searches every floor for the
 // smallest `packing` (from the authored one, in small steps) and a seed that carve on attempt 0
 // (worldGen/carveSeedSearch.ts), and bakes the pair, so 175 floors never leave attempt 0. The other 31
-// (expert, master and wizard main floors, listed in worldGen/bakedCarve.spec.ts) fail attempt 0 with
+// (expert, master and wizard main floors, listed in worldGen/bakedCarve.verify.ts) fail attempt 0 with
 // `layoutNotFound` at every seed and every `packing` up to PACKING_CEILING: the grid `deriveN` sizes
 // is too small for them, and only the rungs below that grow it (`N += 2`, then recovery's `carvedCells`
 // sizing) carve them. Without the ladder those 31 render "Site layout unavailable." for every player.

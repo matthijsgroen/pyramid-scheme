@@ -25,7 +25,7 @@ const holdChestC = (index: number) => wardChest({ tomb: "wizard_treasure_tomb_c"
 // FIRST floor key) rather than the last (expert_b_4, never in any symbol's preferredWardKeys).
 // Trade-off, bigger than the other echoes: expert_b_1 is already expert.ts's own MOST-CONTESTED
 // holdback key (6 expert_b symbols are first needed on this exact floor — see expert.ts's own
-// holdChest comment) — verified empirically (fragmentHoldback.spec.ts, one test per expert_b
+// holdChest comment) — verified empirically (fragmentHoldback.verify.ts, one test per expert_b
 // symbol) that this doesn't starve expert's own holdback balance; expert_b_2 (index 1) is the
 // documented fallback if it ever does. Difficulty auto-derives to expert.
 const expertEcho = () => wardChest({ tomb: "expert_treasure_tomb_b", index: 0, puzzles: 1 })
@@ -37,7 +37,7 @@ const expertEcho = () => wardChest({ tomb: "expert_treasure_tomb_b", index: 0, p
 // owned right after floor 1 — early enough to be a genuinely eligible, competing candidate for a
 // real starter hieroglyph fragment, unlike starter_a_4 (only reachable after all starter demand is
 // already settled). Trade-off: starter_a_1 is also the key starter.ts's own holdChest/HOLD_CYCLE
-// holdback mechanism uses — verified empirically (fragmentHoldback.spec.ts, golden guard) that the
+// holdback mechanism uses — verified empirically (fragmentHoldback.verify.ts, golden guard) that the
 // extra competing candidate doesn't starve anything. Difficulty auto-derives to starter.
 const starterWing = () => wardWing({ tomb: "starter_treasure_tomb", index: 0, puzzles: 3, endReward: "hieroglyph" })
 

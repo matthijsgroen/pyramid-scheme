@@ -25,7 +25,7 @@ import {
   resolveEncounterMeta,
 } from "../mods/allFamilyMeta"
 
-// The real world with the dev journey in it, built the way devJourney.spec.ts builds it.
+// The real world with the dev journey in it, built the way devJourney.verify.ts builds it.
 let world: Record<string, SiteConfig[]>
 
 beforeAll(() => {

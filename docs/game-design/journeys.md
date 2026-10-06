@@ -25,7 +25,7 @@ live, so the numbers here are a snapshot to read, not a thing to keep true by ha
 - **If restricted to it** — how often one family would come back if the journey drew only from that role's
   pool: `sections ÷ pool size`, against the 4.8× bar (§10). It is the cost of dressing the journey outright,
   and the reason most of them prefer instead. "pool of 3" means the pool is under the four-family floor
-  `rolePools.spec.ts` enforces, so restricting is refused whatever the ratio.
+  `rolePools.verify.ts` enforces, so restricting is refused whatever the ratio.
 
 ## 2. The role is the place, the theme is the hour
 
@@ -77,7 +77,7 @@ Four readings of that table before authoring anything:
 
 - **`water`, `agriculture` and `scribe` are fully dressed.** Every family in those pools has a face of its
   own, so one authored word changes every room it reaches.
-- **But a pool has to clear four members before a journey may restrict to it** (`rolePools.spec.ts`), and
+- **But a pool has to clear four members before a journey may restrict to it** (`rolePools.verify.ts`), and
   two sit one short: `scribe` and `light` are at three. `trade` was the third and procession closed it at
   four. The short pools can still be PREFERRED — the `["<role>", "puzzle"]` form of §10 skips the floor by
   design — they just cannot be the whole pool a pyramid draws from.
@@ -341,7 +341,7 @@ Logic**:
 - **Constellation** — an Egyptian tomb ceiling is a painted starred sky, and Nefertari's is the famous one.
   That face is also `master_4`'s own brief, which asks for a fresco in queen's blue.
 
-**Four is exactly the floor `rolePools.spec.ts` enforces**, so the role becomes authorable the moment the
+**Four is exactly the floor `rolePools.verify.ts` enforces**, so the role becomes authorable the moment the
 fourth face lands — the same position `water` was in before hidato and twin stars joined it. Which also
 means `wizard_3` belongs to this cluster rather than to cosmos: Ma'at is judgement, and its brief names the
 scales outright. Cosmos is left with `wizard_4` alone.
@@ -367,7 +367,7 @@ journey("expert_1").pyramid("1-4", { encounter: "funerary" })
 The list is a union, so the Book of the Dead still draws from all four families and clears the floor; the
 narrow word only decides the dressing, and the resolver takes the first role a family has a face for. The
 scale turns up wearing the scales; every other family wears its funerary face. That is the lighthouse
-pattern (§5) with the pools one size larger, and the reason `rolePools.spec.ts` had to start measuring an
+pattern (§5) with the pools one size larger, and the reason `rolePools.verify.ts` had to start measuring an
 authored role whole rather than tag by tag — a one-family narrow tag is only ever legible as half of a
 list.
 
@@ -413,7 +413,7 @@ journey changed; the thing they are compared to did.
 ### Reading the tier tables' last column
 
 Every journey carries its own cost in §4–§8. Two things decide whether it may restrict at all: the pool has
-to clear four members (`rolePools.spec.ts`), and `sections ÷ pool` has to land under the bar.
+to clear four members (`rolePools.verify.ts`), and `sections ÷ pool` has to land under the bar.
 
 - **`junior_1` is authored and restricted** — `water`, a pool of six, 2.8 turns each. All 22 of its puzzle
   rooms are drawn from that pool and its families turn up across them; its two trap rooms sit outside, as a

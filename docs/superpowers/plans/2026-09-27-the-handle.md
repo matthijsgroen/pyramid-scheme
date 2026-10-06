@@ -979,7 +979,7 @@ git commit -m "feat: a lever is thrown one way or the other, and the doors swap 
 
 **Files:**
 - Modify: `src/worldGen/spec/dev.ts`, `src/worldGen/data.ts:71`
-- Test: `src/worldGen/devJourney.spec.ts`
+- Test: `src/worldGen/devJourney.verify.ts`
 
 **Interfaces:**
 - Consumes: everything above.
@@ -987,7 +987,7 @@ git commit -m "feat: a lever is thrown one way or the other, and the doors swap 
 
 - [ ] **Step 1: Write the failing test**
 
-In `src/worldGen/devJourney.spec.ts`:
+In `src/worldGen/devJourney.verify.ts`:
 
 ```typescript
 it("stands a lever on pyramid 7, driving a gate on a section it does not stand in", () => {
@@ -999,7 +999,7 @@ it("stands a lever on pyramid 7, driving a gate on a section it does not stand i
 
 - [ ] **Step 2: Run it and watch it fail**
 
-Run: `yarn vitest run src/worldGen/devJourney.spec.ts`
+Run: `yarn vitest run src/worldGen/devJourney.verify.ts`
 Expected: FAIL — index 6 is undefined.
 
 - [ ] **Step 3: Author the floor**

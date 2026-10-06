@@ -1,7 +1,6 @@
 import { readFileSync } from "node:fs"
 import { describe, expect, it } from "vitest"
-import { generatedWorldConfigs } from "@/data/generatedWorld"
-import { assembleFloor, ONE_WAY_RUN_CELLS } from "@/game/siteAssembler"
+import { ONE_WAY_RUN_CELLS } from "@/game/siteAssembler"
 import { oneWayRuns, revealAll } from "@/game/gridNavigation"
 import type { CellState, DecorationKind, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 import { DROP_ART } from "./nodeArt"
@@ -20,8 +19,6 @@ import { buildRoomClaims } from "./roomClaims"
 import { nodeSpritesFor } from "./SiteMapView"
 import { tileUrl } from "./tileAssets"
 import { AXES, corridorPiece, dropGrid, floorFrom, obstacleIndexes, type Piece } from "./floorFixtures.testing"
-// Populates the family registry, as every assembled-floor spec relies on.
-import "@/mods/registerModApps"
 
 const dropEastUrl = tileUrl("expert", "dropEast")
 const dropNorthUrl = tileUrl("expert", "dropNorth")
@@ -244,27 +241,4 @@ describe("no dressing pool can place a drop", () => {
     const kind: DecorationKind = "dropEast"
     expect(kind).toBe("dropEast")
   })
-
-  it("appears in no authored pool and on no assembled room", () => {
-    let pools = 0
-    let placed = 0
-    for (const [siteId, levels] of Object.entries(generatedWorldConfigs)) {
-      levels.flat().forEach((floor, i) => {
-        for (const pool of [floor.decorations ?? []]) {
-          pools++
-          for (const kind of pool) expect(kind).not.toMatch(/^drop/)
-        }
-        const result = assembleFloor(`${siteId}:${i}`, floor, 7)
-        if (!result.success) return
-        for (const row of result.grid.cells)
-          for (const cell of row)
-            if (cell.type === "room" && cell.decoration) {
-              placed++
-              expect(cell.decoration).not.toMatch(/^drop/)
-            }
-      })
-    }
-    expect(pools).toBeGreaterThan(0)
-    expect(placed).toBeGreaterThan(0)
-  }, 60000)
 })

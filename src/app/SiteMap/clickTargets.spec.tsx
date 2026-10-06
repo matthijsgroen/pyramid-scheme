@@ -1,7 +1,6 @@
 // @vitest-environment jsdom
 import { render, fireEvent } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
-import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor } from "@/game/siteAssembler"
 import { completeCell, findPath, revealAll, walkableFrom } from "@/game/gridNavigation"
 import { buildOfferContext, clickTargetAt, markerAt, offerContextFrom, offeredTargets } from "./clickTargets"
@@ -19,10 +18,84 @@ Element.prototype.scrollTo = Element.prototype.scrollTo ?? (() => {})
 // explorer off the drawn map, and the only thing that brings it back is the unstandable-position
 // guard in useAssembledFloor putting the player at the entrance — which reads as the dot leaping out
 // of the map and walking home.
-const arrivedAtEntrance = (siteId: string): { grid: FloorGrid; at: readonly [number, number] } => {
-  const floor = generatedWorldConfigs[siteId]?.flat()[0]
-  if (!floor) throw new Error(`no ${siteId} floor to read`)
-  const result = assembleFloor(`${siteId}:0`, floor, 7)
+//
+// Floors of the shapes the carve makes — branches off a bare main path, wards, a floor-key door, hidden
+// and sealed branches, a staircase at a branch's end — each assembled from its config here.
+const FLOORS = {
+  "a starter floor of branches": {
+    pathPuzzles: 0,
+    difficulty: "starter",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: [
+      {
+        pathPuzzles: 1,
+        difficulty: "starter",
+        end: { stairId: "branches:s0" },
+        gate: { type: "tomb-key", wardKeyId: "ward:a" },
+      },
+      { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
+      { pathPuzzles: 4, difficulty: "starter", end: "treasure", hidden: true, sealed: true },
+      { pathPuzzles: 1, difficulty: "junior", end: "treasure", gate: { type: "tomb-key", wardKeyId: "ward:b" } },
+      { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
+    ],
+  },
+  "a starter floor behind wards": {
+    pathPuzzles: 1,
+    difficulty: "starter",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: [
+      {
+        pathPuzzles: 1,
+        difficulty: "junior",
+        end: { stairId: "wards:s0" },
+        gate: { type: "tomb-key", wardKeyId: "ward:a" },
+      },
+      { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
+      { pathPuzzles: 2, difficulty: "master", end: "treasure", gate: { type: "tomb-key", wardKeyId: "ward:b" } },
+      { pathPuzzles: 1, difficulty: "starter", end: "treasure", gate: { type: "tomb-key", wardKeyId: "ward:c" } },
+    ],
+  },
+  "a junior floor with hidden branches": {
+    pathPuzzles: 2,
+    difficulty: "junior",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: [
+      { pathPuzzles: 1, difficulty: "junior", end: "treasure", gate: { type: "tomb-key", wardKeyId: "ward:a" } },
+      { pathPuzzles: 1, difficulty: "starter", end: "treasure", gate: { type: "tomb-key", wardKeyId: "ward:b" } },
+      { pathPuzzles: 1, difficulty: "junior", end: "treasure" },
+      { pathPuzzles: 1, difficulty: "junior", end: "treasure" },
+      { pathPuzzles: 0, difficulty: "junior", end: "treasure", hidden: true },
+      { pathPuzzles: 2, difficulty: "junior", end: "treasure", hidden: true, sealed: true },
+    ],
+  },
+  "a long master floor": {
+    pathPuzzles: 6,
+    difficulty: "master",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: [
+      { pathPuzzles: 1, difficulty: "master", end: "treasure", gate: { type: "tomb-key", wardKeyId: "ward:a" } },
+      { pathPuzzles: 1, difficulty: "master", end: "treasure" },
+      { pathPuzzles: 2, difficulty: "master", end: "treasure" },
+      { pathPuzzles: 1, difficulty: "master", end: "treasure", gate: { type: "floor-key", color: "blue" } },
+      { pathPuzzles: 2, difficulty: "master", end: "treasure", hidden: true, sealed: true },
+      {
+        pathPuzzles: 1,
+        difficulty: "master",
+        end: { stairId: "master:s0" },
+        gate: { type: "tomb-key", wardKeyId: "ward:b" },
+      },
+    ],
+  },
+} satisfies Record<string, FloorConfig>
+type FloorName = keyof typeof FLOORS
+const FLOOR_NAMES = Object.keys(FLOORS) as FloorName[]
+
+const arrivedAtEntrance = (name: FloorName): { grid: FloorGrid; at: readonly [number, number] } => {
+  const result = assembleFloor(`${name}:0`, FLOORS[name], 7)
   if (!result.success) throw new Error("assembly failed")
   const [er, ec] = result.grid.entrancePos
   // What the player sees on arrival: the entrance walked, its neighbours revealed by the game's own
@@ -41,9 +114,9 @@ const clickEveryTarget = (grid: FloorGrid, at: readonly [number, number]) => {
 }
 
 describe("what the map offers to click", () => {
-  for (const siteId of ["starter_1", "starter_2", "junior_1", "master_2"]) {
-    it(`only leads somewhere standable on ${siteId}`, () => {
-      const { grid, at } = arrivedAtEntrance(siteId)
+  for (const name of FLOOR_NAMES) {
+    it(`only leads somewhere standable on ${name}`, () => {
+      const { grid, at } = arrivedAtEntrance(name)
       const clicks = clickEveryTarget(grid, at)
 
       const unstandable = clicks.filter(([r, c]) => {
@@ -74,9 +147,7 @@ describe("what the map offers while walking a floor", () => {
   it.each([1, 3, 7, 11, 19, 23, 31, 47, 53, 61, 71, 83, 97, 101, 103, 107])(
     "never offers a target it cannot honour, seed %i",
     seed => {
-      const floor = generatedWorldConfigs["starter_1"]?.flat()[0]
-      if (!floor) throw new Error("no starter_1 floor to read")
-      const assembled = assembleFloor("starter_1:0", floor, seed)
+      const assembled = assembleFloor("walk:0", FLOORS["a starter floor of branches"], seed)
       if (!assembled.success) throw new Error("assembly failed")
 
       let grid = assembled.grid
@@ -122,9 +193,9 @@ describe("what the map offers while walking a floor", () => {
 describe("the map taps exactly what the rule offers", () => {
   const sorted = (pairs: readonly (readonly [number, number])[]) => [...pairs].map(([r, c]) => `${r},${c}`).sort()
 
-  for (const siteId of ["starter_1", "starter_2", "junior_1", "master_2"]) {
-    it(`agrees with the drawn map on ${siteId}`, () => {
-      const { grid, at } = arrivedAtEntrance(siteId)
+  for (const name of FLOOR_NAMES) {
+    it(`agrees with the drawn map on ${name}`, () => {
+      const { grid, at } = arrivedAtEntrance(name)
 
       const tapped = clickEveryTarget(grid, at)
       const offered = [...offeredTargets(grid, buildRoomClaims(grid), at).values()]
@@ -140,7 +211,7 @@ describe("the map taps exactly what the rule offers", () => {
 // to hand back a straight line and the explorer crossed the stone between.
 describe("a tap is a walk", () => {
   it("does not move the player somewhere with no walkable route", () => {
-    const { grid } = arrivedAtEntrance("starter_1")
+    const { grid } = arrivedAtEntrance("a starter floor of branches")
     // Somewhere lit and standable, but with nothing walked between here and there: the far corner of
     // the floor, revealed by hand rather than reached.
     const far = grid.cells.flatMap((row, r) =>
@@ -164,9 +235,9 @@ describe("a tap is a walk", () => {
 // A corner offered but unreachable is a tap that does nothing, where a plain dead end would have told
 // the truth — so the marker and the pointer are gated on the same walk the click has to make.
 describe("what the map offers", () => {
-  for (const siteId of ["starter_1", "junior_1"]) {
-    it(`is never a target it cannot walk to on ${siteId}`, () => {
-      const { grid, at } = arrivedAtEntrance(siteId)
+  for (const name of ["a starter floor of branches", "a junior floor with hidden branches"] as const) {
+    it(`is never a target it cannot walk to on ${name}`, () => {
+      const { grid, at } = arrivedAtEntrance(name)
       const clicks = clickEveryTarget(grid, at)
 
       const unwalkable = clicks.filter(([r, c]) => findPath(grid, at, [r, c]).length === 0)
@@ -414,7 +485,7 @@ describe("the map in mid-glide taps what the one builder offers", () => {
   }
 
   it("offers no run arrows while the dot is travelling", () => {
-    const { grid, at: settled } = arrivedAtEntrance("junior_1")
+    const { grid, at: settled } = arrivedAtEntrance("a junior floor with hidden branches")
     const live = grid.cells
       .flatMap((row, r) => row.map((cell, c) => ({ cell, r, c })))
       .filter(

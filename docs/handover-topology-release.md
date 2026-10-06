@@ -727,7 +727,7 @@ its doc comment) or by a narrowly-scoped, commented exemption. Prefer moving.
 
 ## 3. A guard that can barely fail
 
-**DONE** `17276d95`. `sweepMissedASwitch` NO LONGER EXISTS — it is subsumed. The build now fails on `findUnwalkedLocks`, a derived list that names the floors it never walked and scales with authoring; `devJourney.spec.ts` pins 1 and 8, catching the case the build cannot see (authoring losing its mechanisms, where owed and walked fall together).
+**DONE** `17276d95`. `sweepMissedASwitch` NO LONGER EXISTS — it is subsumed. The build now fails on `findUnwalkedLocks`, a derived list that names the floors it never walked and scales with authoring; `devJourney.verify.ts` pins 1 and 8, catching the case the build cannot see (authoring losing its mechanisms, where owed and walked fall together).
 
 `sweepMissedASwitch` fires only when `walked === 0`, and `validate-world` never prints how many locks it
 walked. A regression taking the sweep from 8 locks to 1 would pass green. This is the branch's signature
@@ -1169,7 +1169,7 @@ tests untouched. `explorerPos` resolves standing, then position, then the entran
 | --- | --- |
 | `movementInvariant.spec.ts` | Reachable implies named; taking an offer moves you; every tap draws something. Walks hand-built fixtures per mechanic, not content. |
 | `tierFingerprints.spec.ts` | A tier's SHAPE and LOOT are stable. Which puzzle stands in a room is not. |
-| `newFamilyIsNoOp.spec.ts` | Registering a puzzle family moves neither structure nor loot. |
+| `newFamilyIsNoOp.verify.ts` | Registering a puzzle family moves neither structure nor loot. |
 | `allFamilyMeta.spec.ts` | A family cannot join a pool with a loot signature that would displace it. |
 | `boardIndexOrder.spec.ts` | A higher tier never takes a board ordinal before a lower one. |
 | `gateBoundary.spec.ts` | A gate sits on the boundary it names — `it.fails` for the one case where it does not. |
