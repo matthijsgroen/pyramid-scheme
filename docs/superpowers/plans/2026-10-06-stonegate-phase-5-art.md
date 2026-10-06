@@ -329,9 +329,9 @@ as lying on the tile (inlaid or painted), not floating over it. The state is the
 - **light blue** when it was walked in order;
 - **red** when it was walked out of order.
 
-Open with the designer: keep a small tick and cross beside the glyph, so in order and out of order also read
-apart without colour (red against light blue is a hard pair for colour-blind players). Until they answer,
-keep the tick and cross.
+No tick and no cross (designer, 2026-10-06): the colour is the state. Red and light blue sit on the
+blue–yellow axis that most colour blindness keeps, so pick the two far apart in lightness as well. Remove
+the tick and cross paths from the shape.
 
 **Names:** the code calls the sequence tile a "pressure plate" (`PlateShape`, `plateLook`, the "plate" shape
 kind), while phase 1 adds `RoomCell.plate` for the stones' plates. When this task wires the art, rename the
