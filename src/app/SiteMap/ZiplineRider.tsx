@@ -32,7 +32,9 @@ export const ZiplineRider = ({ ride }: { ride: Ride }) => {
     <div
       data-zipline-rider=""
       data-to={`${ride.traversal.to[0]},${ride.traversal.to[1]}`}
-      onTransitionEnd={() => ride.end()}
+      onTransitionEnd={e => {
+        if (e.target === e.currentTarget) ride.end()
+      }}
       style={{
         position: "absolute",
         left: pos.x,
@@ -45,6 +47,7 @@ export const ZiplineRider = ({ ride }: { ride: Ride }) => {
     >
       <TorchGlow />
       <div
+        data-zipline-sprite=""
         style={{
           position: "absolute",
           left: -CHAR_W / 2,

@@ -30,6 +30,13 @@ describe("ZiplineRider", () => {
     expect(r.end).toHaveBeenCalledTimes(1)
   })
 
+  it("ignores a transition that bubbles up from inside the rider", () => {
+    const r = ride()
+    const { container } = render(<ZiplineRider ride={r} />)
+    fireEvent.transitionEnd(container.querySelector("img")!)
+    expect(r.end).not.toHaveBeenCalled()
+  })
+
   it("ends the ride if it is taken off the map mid-slide", () => {
     const r = ride()
     render(<ZiplineRider ride={r} />).unmount()
@@ -38,6 +45,6 @@ describe("ZiplineRider", () => {
 
   it("mirrors the sprite, never the light, riding west", () => {
     const { container } = render(<ZiplineRider ride={ride({ mirrored: true })} />)
-    expect((container.querySelector("img")!.parentElement as HTMLElement).style.transform).toContain("scaleX(-1)")
+    expect((container.querySelector("[data-zipline-sprite]") as HTMLElement).style.transform).toContain("scaleX(-1)")
   })
 })
