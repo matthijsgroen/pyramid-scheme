@@ -4,7 +4,7 @@ import { assembleFloor } from "../../game/siteAssembler"
 import { completeCell } from "../../game/gridNavigation"
 import type { Direction, FloorGrid } from "../../game/siteTypes"
 import { CELL } from "./mapScale"
-import { ART_IMAGE_RENDERING } from "./tileAssets"
+import { ART_IMAGE_RENDERING, sharedTileFrames } from "./tileAssets"
 import { ExplorerDot, ExplorerFigure } from "./ExplorerDot"
 import { SiteMapView } from "./SiteMapView"
 
@@ -75,6 +75,33 @@ export const Interactive: Story = {
 // cycle (a mirrored pose, a leg that does not swing) is visible as a break in its row.
 const STEPS = 4
 
+// The same figure carrying a stone, below the walking rows: it is not wired into ExplorerFigure, so the
+// story stands the frames in the same clip, at the same foot line and under the same light, itself.
+const CARRY_W = 40
+const CARRY_H = 70
+const CARRY_LIT = "brightness(1.1) saturate(1.14) drop-shadow(0 0 5px rgba(255,186,102,0.6))"
+
+const CarryFigure = ({ facing, step }: { facing: Direction; step: number }) => {
+  const frames = sharedTileFrames(`explorer-carry-${facing === "w" ? "e" : facing}`)
+  if (frames.length === 0) return null
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: -CARRY_W / 2,
+        top: CELL / 2 - CARRY_H - 5,
+        width: CARRY_W,
+        height: CARRY_H,
+        overflow: "hidden",
+        transform: facing === "w" ? "scaleX(-1)" : undefined,
+        filter: CARRY_LIT,
+      }}
+    >
+      <img src={frames[step % frames.length]} width={CARRY_W} height={CARRY_H} alt="" />
+    </div>
+  )
+}
+
 export const Facings: Story = {
   args: { grid, pos: grid.entrancePos },
   render: () => {
@@ -93,7 +120,7 @@ export const Facings: Story = {
                 key={scale}
                 style={{
                   width: STEPS * CELL * scale,
-                  height: FACINGS.length * rowH * scale,
+                  height: FACINGS.length * 2 * rowH * scale,
                   background: ground,
                   imageRendering: ART_IMAGE_RENDERING,
                   overflow: "hidden",
@@ -103,7 +130,7 @@ export const Facings: Story = {
                   style={{
                     position: "relative",
                     width: STEPS * CELL,
-                    height: FACINGS.length * rowH,
+                    height: FACINGS.length * 2 * rowH,
                     transform: `scale(${scale})`,
                     transformOrigin: "0 0",
                   }}
@@ -121,6 +148,22 @@ export const Facings: Story = {
                         }}
                       >
                         <ExplorerFigure facing={facing} step={step} />
+                      </div>
+                    ))
+                  )}
+                  {FACINGS.map((facing, row) =>
+                    Array.from({ length: STEPS }, (_, step) => (
+                      <div
+                        key={`carry-${facing}-${step}`}
+                        style={{
+                          position: "absolute",
+                          left: step * CELL + CELL / 2,
+                          top: (FACINGS.length + row) * rowH + rowH - CELL / 2,
+                          width: 0,
+                          height: 0,
+                        }}
+                      >
+                        <CarryFigure facing={facing} step={step} />
                       </div>
                     ))
                   )}

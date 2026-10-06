@@ -1574,3 +1574,15 @@ yarn import-tile art/masters/surfaces/overgrown-curtain.webp --tier=default --na
 yarn drift-mask --out="$OBJ" --seed=grass --size=504 --peak=1 --core=0.92 --lobes=5 --blur=1
 yarn import-tile art/masters/surfaces/overgrown-grass.webp --tier=default --name=overgrown-grass --slot=drift \
   --filter=smooth --mask="$OBJ" --brightness=0.7
+
+# THE EXPLORER, CARRYING
+yarn import-tile art/masters/explorer/explorer-carry-s-1.webp --tier=default --name=explorer-carry-s-1 --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-carry-s-2.webp --tier=default --name=explorer-carry-s-2 --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-carry-n-1.webp --tier=default --name=explorer-carry-n-1 --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-carry-n-2.webp --tier=default --name=explorer-carry-n-2 --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-carry-n-3.webp --tier=default --name=explorer-carry-n-3 --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-carry-n-4.webp --tier=default --name=explorer-carry-n-4 --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-carry-e-1.webp --tier=default --name=explorer-carry-e-1 --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-carry-e-2.webp --tier=default --name=explorer-carry-e-2 --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-carry-e-3.webp --tier=default --name=explorer-carry-e-3 --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-carry-e-4.webp --tier=default --name=explorer-carry-e-4 --slot=explorer --filter=smooth
