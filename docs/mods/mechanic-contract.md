@@ -101,9 +101,8 @@ waiting for, the way a ward gate already shows the key it wants.
 - **Binding.** The binding key is `weights`; its realisation is `stonePlate` (topology mod), which draws
   nothing of its own: plates are read from the cell's `plate`. A plate needs a free node in its region, and
   placement refuses naming the plate when there is none.
-- **With the topology mod off** the plates are bare ground and the carve is otherwise identical; the doors
-  that only a held stone opens stay shut, and the doors that stand open with no stone held (`unladen`,
-  `:empty` on an empty plate) stand open.
+- **With the topology mod off** the plates are bare ground and the carve is otherwise identical. Every door
+  the plates govern stands open, unless another live control still holds it, so the walk is unobstructed.
 
 ### Impassable regions
 

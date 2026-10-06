@@ -1,7 +1,8 @@
 # Stones on plates: acceptance criteria
 
-Built in phases; see the roadmap. The design is in `docs/game-design/lock-curriculum.md` ("Stones"); the tool side
-(`yarn lock`, `src/game/lockNotation.ts`, `src/game/lockWalkSpec.ts`) already reads, walks and draws it.
+Built in phases; see the roadmap. The design is in `docs/game-design/lock-curriculum.md` ("Stones"); the
+tool side (`yarn lock`, `src/game/lockNotation.ts`, `src/game/lockWalkSpec.ts`) already reads, walks and
+draws it.
 Scope is the full proposal: stones, doors on several plates, and passages a stone cannot pass, with
 stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
 
