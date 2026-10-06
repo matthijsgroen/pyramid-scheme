@@ -296,6 +296,7 @@ export const ExplorerFigure = ({
   walking = false,
   cellMs = 180,
   color = "#ffd060",
+  carrying = false,
 }: {
   facing: Direction
   /** Which frame to stand on when NOT walking. Taken modulo this facing's own frame count. */
@@ -305,9 +306,13 @@ export const ExplorerFigure = ({
   /** How long one grid cell takes to walk, in ms. The frame rate follows from it and the frame count. */
   cellMs?: number
   color?: string
+  /** A stone in hand: the carrying frames of this facing, or the plain ones while it has none drawn. */
+  carrying?: boolean
 }) => {
   // Three directions of art, not four: facing west is facing east mirrored.
-  const frames = sharedTileFrames(`explorer-${facing === "w" ? "e" : facing}`)
+  const direction = facing === "w" ? "e" : facing
+  const carried = carrying ? sharedTileFrames(`explorer-carry-${direction}`) : []
+  const frames = carried.length > 0 ? carried : sharedTileFrames(`explorer-${direction}`)
   // However many frames this facing was drawn with, they share out the same two cells of ground.
   const frameMs = (cellMs * CELLS_PER_CYCLE) / Math.max(frames.length, 1)
   if (frames.length === 0)
