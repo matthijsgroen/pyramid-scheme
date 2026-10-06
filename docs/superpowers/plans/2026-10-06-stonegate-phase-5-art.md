@@ -313,16 +313,25 @@ phase 3's plan records it.
 
 **Decided by the designer (2026-10-06):** the sequence tile and the pressure plate are two distinct objects,
 so the player never confuses them:
-- **sequence tile:** stepped on in order. A flush floor tile cut into the paving, with a glyph carved in it.
+- **sequence tile:** stepped on in order. A flush floor tile set into the paving, with a plain top on which
+  the renderer draws the glyph.
 - **pressure plate:** takes a stone. A raised slab with a dark gap all round, with no glyph (task 3).
 
 Today the sequence tile is a vector slab with a text glyph (`PlateShape`, `src/app/SiteMap/nodeShapes.tsx`),
 coloured by `plateLook` (`src/app/SiteMap/plateLook.ts`). It has three states: `unwalked`; `inOrder`, with a
 tick; and `outOfOrder`, with a cross.
 
-**One painted tile serves every glyph and every state.** The glyph stays drawn by code on top, so a single
-tile covers all of them. The states stay as the tint, the stroke and the tick or cross on top: shapes, so
-they read without colour.
+**One painted tile serves every glyph and every state.** The painted tile has a PLAIN top surface: no
+recess, no carving, no glyph. The renderer draws the glyph on it in the floor's own projection, so it reads
+as lying on the tile (inlaid or painted), not floating over it. The state is the glyph's colour (designer,
+2026-10-06):
+- **dark** when the tile has not been walked;
+- **light blue** when it was walked in order;
+- **red** when it was walked out of order.
+
+Open with the designer: keep a small tick and cross beside the glyph, so in order and out of order also read
+apart without colour (red against light blue is a hard pair for colour-blind players). Until they answer,
+keep the tick and cross.
 
 **Names:** the code calls the sequence tile a "pressure plate" (`PlateShape`, `plateLook`, the "plate" shape
 kind), while phase 1 adds `RoomCell.plate` for the stones' plates. When this task wires the art, rename the
@@ -331,13 +340,14 @@ it touches saves or fixtures, and say so.
 
 **Files:**
 - Modify: `scripts/renderProp.py` (a `prim_sequencetile`: a square slab set FLUSH in the paving, about 0.8 of
-  a cell, with a fine incised border and a shallow recessed square where the glyph is carved. Not spun, like
-  `pit`, so it agrees with the paving.)
+  a cell, with a fine incised border and a plain flat top. Not spun, like `pit`, so it agrees with the
+  paving.)
 - Modify: `docs/instructions/repaint-queue.md` (`expert/sequenceTile`)
 - Create: master, tile and `art/rebuild.sh` line (`--tier=expert --name=sequenceTile --slot=prop` or a floor
   slot; pick the slot whose seating lets a flush tile lie on the floor, and check `importTile.ts` SLOTS)
 - Modify: `src/app/SiteMap/nodeShapes.tsx` (draw the painted tile under the glyph via `tileOrPlaceholder`,
-  falling back to today's vector slab; keep the tick, cross and tint), plus the rename above
+  falling back to today's vector slab; the glyph on the tile's top face in the floor projection, coloured by
+  state from `sequenceTileLook`), plus the rename above
 - Test: the existing `nodeShapes` or `sequence` render tests must stay green. Add one test that the glyph
   still renders over the painted tile.
 
@@ -345,9 +355,9 @@ it touches saves or fixtures, and say so.
   a raised object: the opposite of the pressure plate.
 - [ ] **Step 2: Scaffolds, masks and shadows**, as in task 3 step 2.
 - [ ] **Step 3: Queue entry** `### \`expert/sequenceTile\` — a carved floor tile, stepped on in order`. The
-  prompt names: a square basalt tile flush with the paving; a fine incised border; a shallow square
-  recess in its centre, LEFT EMPTY ("the carving is added later; leave the recess plain"); worn smooth where
-  feet have crossed; natron dust in the border line. Same rank material and light lines as task 3.
+  prompt names: a square basalt tile flush with the paving; a fine incised border; a PLAIN, flat, smooth
+  top surface with nothing carved or painted on it ("leave the top plain: a sign is added later"); worn
+  smooth where feet have crossed; natron dust in the border line. Same rank material and light lines as task 3.
 - [ ] **Step 4: 🧑 Generate** with `yarn repaint expert/sequenceTile`.
 - [ ] **Step 5: Import, gate and record**, as in task 3 step 5.
 - [ ] **Step 6: Wire it** in `PlateShape` → `SequenceTileShape`, TDD for the glyph-over-tile test, and
