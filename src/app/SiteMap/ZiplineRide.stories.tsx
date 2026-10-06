@@ -1,6 +1,7 @@
 import { StrictMode, useMemo, useState } from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { AXES, DROP_AT, addressed, dropGrid } from "./floorFixtures.testing"
+import { oneWayRunCells } from "@/game/siteAssembler"
+import { AXES, addressed, dropGrid } from "./floorFixtures.testing"
 import { SiteMapView } from "./SiteMapView"
 import { RIDE_POSES, type RidePose, type RidePoses } from "./ridePoses"
 import { RIDE_MS_PER_CELL, useZiplineRide, type Ride as RideState } from "./useZiplineRide"
@@ -15,11 +16,12 @@ type Travel = "e" | "w" | "n" | "s"
 
 const stage = (travel: Travel) => {
   const axis = AXES.find(a => a.travel === travel)!
-  const { grid, at } = dropGrid(axis, "room", "room", "visible")
+  // A drop down the page has a shorter gap than one along a row, as the carve lays them (`oneWayRunCells`).
+  const { grid, at, dropAt } = dropGrid(axis, "room", "room", "visible", "fromNode", oneWayRunCells(travel))
   return {
     grid: addressed({ ...grid, difficulty: "expert" }),
-    launch: at(DROP_AT.launch),
-    landing: at(DROP_AT.landing),
+    launch: at(dropAt.launch),
+    landing: at(dropAt.landing),
   }
 }
 

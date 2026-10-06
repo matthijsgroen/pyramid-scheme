@@ -10,7 +10,7 @@ export type RidePoses = Record<"e" | "n" | "s", RidePose>
 export const RIDE_POSES: RidePoses = {
   e: { from: { x: 112, y: -46 }, to: { x: -65, y: -25 }, scale: 0.75 },
   n: { from: { x: 0, y: -40 }, to: { x: 0, y: -40 }, scale: 1 },
-  s: { from: { x: 0, y: -40 }, to: { x: 0, y: -40 }, scale: 1 },
+  s: { from: { x: 3, y: 25 }, to: { x: 16, y: -55 }, scale: 0.75 },
 }
 
 /** The pose for a heading: west is east with x negated. */

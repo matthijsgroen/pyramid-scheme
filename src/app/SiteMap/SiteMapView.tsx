@@ -1282,8 +1282,16 @@ export const SiteMapView = ({
   const isGate = (s: StandingSprite) => s.key.startsWith("gate:")
   const gateSprites = standing.filter(isGate)
   const seated = standing.filter(s => !isGate(s))
-  const behindExplorer = seated.filter(s => s.baseY < explorerBaseY || (s.baseY === explorerBaseY && !s.atExplorer))
-  const inFrontOfExplorer = seated.filter(s => s.baseY > explorerBaseY || (s.baseY === explorerBaseY && s.atExplorer))
+  // A RIDER HANGS FROM THE CABLE, so while a ride is drawn the zipline art is behind him whatever its floor
+  // line: sorted against the launch, a drop running down the page would otherwise cover the rider on it.
+  // ponytail: every drop, not only the one ridden; a floor showing two drops at once can match by run.
+  const underRider = (s: StandingSprite) => !!ride && s.key.startsWith("drop:")
+  const behindExplorer = seated.filter(
+    s => underRider(s) || s.baseY < explorerBaseY || (s.baseY === explorerBaseY && !s.atExplorer)
+  )
+  const inFrontOfExplorer = seated.filter(
+    s => !underRider(s) && (s.baseY > explorerBaseY || (s.baseY === explorerBaseY && s.atExplorer))
+  )
   const doorways = useMemo(() => doorwaysFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   // Where the arches are, in the same terms the wall bands are built in, with the stone each one is cut
   // from — the sill in that gap is drawn to match it (see TileLayers.archedGaps).

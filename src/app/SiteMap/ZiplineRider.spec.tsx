@@ -8,6 +8,9 @@ import type { Ride } from "./useZiplineRide"
 import type { RidePose } from "./ridePoses"
 import { ZiplineRider } from "./ZiplineRider"
 
+// jsdom has no scrollTo; the map scrolls itself to the explorer on mount.
+Element.prototype.scrollTo = Element.prototype.scrollTo ?? (() => {})
+
 const ride = (over: Partial<Ride> = {}): Ride => ({
   traversal: { kind: "zipline", from: [0, 0], to: [0, 6], dir: "e" },
   sprite: "e.png",
@@ -83,5 +86,33 @@ describe("ZiplineRider", () => {
   it("mirrors the sprite, never the light, riding west", () => {
     const { container } = render(<ZiplineRider ride={ride({ mirrored: true })} />)
     expect((container.querySelector("[data-zipline-sprite]") as HTMLElement).style.transform).toContain("scaleX(-1)")
+  })
+})
+
+describe("ZiplineRider on the map", () => {
+  // A drop running down the page sorts after a rider still filed at the launch; the rider hangs from its
+  // cable, so the art must come first in the DOM, which is the drawing order.
+  it("draws the zipline art behind the rider, on a ride down the page", async () => {
+    const { AXES, addressed, dropGrid } = await import("./floorFixtures.testing")
+    const { oneWayRunCells } = await import("@/game/siteAssembler")
+    const { SiteMapView } = await import("./SiteMapView")
+    const axis = AXES.find(a => a.travel === "s")!
+    const { grid, at, dropAt } = dropGrid(axis, "room", "room", "visible", "fromNode", oneWayRunCells("s"))
+    const launch = at(dropAt.launch)
+    const landing = at(dropAt.landing)
+    const southRide = ride({ traversal: { kind: "zipline", from: launch, to: landing, dir: "s" } })
+    const { container } = render(
+      <SiteMapView
+        grid={addressed({ ...grid, difficulty: "expert" })}
+        explorerPos={launch}
+        explorerHidden
+        ride={southRide}
+      />
+    )
+    const drop = container.querySelector('[data-node-sprite^="drop:"]')
+    const rider = container.querySelector("[data-zipline-rider]")
+    expect(drop).not.toBeNull()
+    expect(rider).not.toBeNull()
+    expect(drop!.compareDocumentPosition(rider!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 })
