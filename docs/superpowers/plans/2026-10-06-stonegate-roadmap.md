@@ -34,20 +34,35 @@ arrangements: which plates hold a stone, and whether the hand holds one. For exa
 | # | Phase | Ships | Depends on |
 | --- | --- | --- | --- |
 | 1 | **Stones in the engine** | `weights` in the shared `Lock`; compiled to one weights control; plates placed on the carve with the record; `floorLock` walks it; a `.lock` file read at bake; twoStones (no gate loop) baked on the dev floor | — |
-| 2 | **Play with stones** | "Lift the stone" / "Set the stone on the plate" prompts; plate drawn empty or full (placeholder art); a blocked walk says why (narrow passage, stairs, way out); door shows its plates; explorer `carrying` with frame fallback | 1 |
+| 2 | **Play with stones** | the Lock playground story; "Lift the stone" / "Set the stone on the plate" prompts; plate drawn empty or full (placeholder art); a blocked walk says why (narrow passage, stairs, way out); door shows its plates; explorer `carrying` with frame fallback | 1 |
 | 3 | **Narrow passage** | a realisation for `unladen` gates (registry beside `oneWayRealisation`), drawn as a narrow passage; a zipline or narrow passage where a stone could pass is refused | 1 |
 | 4 | **Gate loops in the carve** | `topologyFaults`, `offRouteChains` and the fork seams accept a gated join that closes a loop; stoneGate bakes on the dev floor | 1 |
 | 5 | **Art** | painted plate (empty, with stone), narrow passage, torch; explorer carrying frames | runs beside 1–4; wiring needs 2–3 |
+| 7 | **Zipline glide** | the ride: explorer hidden, a riding sprite slides launch to landing by CSS, behind `PlayTraversal` (`docs/superpowers/specs/2026-10-04-zipline-ride-acceptance.md`); its art is phase 5 task 2. The zipline's own art stays as it is | 5 (art), independent of the stones |
 | 6 | **Djoser** | stoneGate on an `expert_4` floor through `floorLocks`; save impact settled | #315 merged, 1–5 |
 
 **Start:** phase 1 begins from `main` after PR #315 (`world/authoring-locks`) is merged, since it changes the
 realisation code phase 1 builds on (`degradeUnrealised`, the binding cascade, `floorLocks`).
 
-**Phase plans:** [phase 1, stones in the engine](2026-10-06-stonegate-phase-1-engine.md).
+**Phase plans:** [phase 1, stones in the engine](2026-10-06-stonegate-phase-1-engine.md) · [phase 5, art](2026-10-06-stonegate-phase-5-art.md).
 
 Phases 2, 3 and 4 only need phase 1, so they can run side by side in separate worktrees. Phase 5 starts at
 once: the prompts and scaffolds need no code. Each art item is wired in as soon as its phase lands, and
 until then the drawing falls back to placeholder art.
+
+## Judged in Storybook
+
+Every mechanic is shown in Storybook, so its art and its feel are judged there before any pyramid gets it.
+
+- **Lock playground** (`Topology/Lock playground`): pick any catalogue lock (`src/game/locks/**/*.lock`,
+  loaded with `import.meta.glob(…, { query: "?raw" })` and `parseLock`, which is pure) and its realisations;
+  the floor carves and plays with the real navigation, prompts and in-memory save, as
+  `sequenceHarness.testing.tsx` already wires them. Built as phase 2's first task. It works at once for
+  levers, torches, ziplines and sequences, and each later phase makes its own mechanic playable there.
+- **Art staging stories**, one per new piece, in the style of `Lever.stories.tsx`: a plate empty and with a
+  stone, the torch unlit and lit, the narrow passage across each direction, all on each rank's floor with the
+  explorer for scale. The explorer's carrying frames go in the `Facings` story next to the walking ones.
+- **A phase is done when its mechanic can be played in the playground** and its art is staged.
 
 ## Decisions taken
 
