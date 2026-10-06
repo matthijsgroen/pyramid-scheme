@@ -136,6 +136,28 @@ export type ForkSwitch = { readonly control: "fork-switch"; readonly in: RegionI
 export type LockMechanic = Toggle | Activator | Sequence | ForkSwitch
 
 /**
+ * STONES ON PLATES, the one lock-wide control that is not a mechanic. A stone rests on a plate or is in the
+ * player's hand; stones are alike, so a stone is written as the plate it starts on. A plate opens its
+ * `weighted` gates while a stone rests on it and its `empty` gates while none does; both may be empty, which
+ * makes it a shelf. See docs/superpowers/specs/2026-10-04-stones-acceptance.md.
+ */
+export type Weights = {
+  readonly plates: Readonly<
+    Record<
+      string,
+      {
+        readonly in: RegionId
+        readonly stone: boolean
+        readonly opens: { readonly weighted: readonly BarrierId[]; readonly empty: readonly BarrierId[] }
+      }
+    >
+  >
+}
+
+/** Gate owners that are conditions on the stones rather than something placed: empty hands. */
+export const CARRY_TERMS = ["unladen"] as const
+
+/**
  * One lock. Reusable: the same one is placed on several floors without being copied, and it does not
  * know which floor it will lie on. One instance per floor — two of the same thing on one floor is a
  * clone with its own names — so a name is unique within its lock and a lock within its floor.
@@ -150,6 +172,7 @@ export type Lock = {
   readonly gates: Readonly<Record<BarrierId, LockGate>>
   readonly oneWays?: Readonly<Record<BarrierId, LockOneWay>>
   readonly mechanics: Readonly<Record<MechanicId, LockMechanic>>
+  readonly weights?: Weights
   readonly in: RegionId
   readonly out: RegionId
 }
@@ -164,3 +187,7 @@ export const joinOf = (connection: LockConnection): readonly [RegionId, RegionId
 /** What stands on a connection, in order from its first region to its second. */
 export const barriersOf = (connection: LockConnection): readonly BarrierId[] =>
   "between" in connection ? (connection.barriers ?? []) : []
+
+/** Whether a gate owner is a plate of the lock, or a condition on what the player carries. */
+export const isWeightOwner = (lock: Lock, owner: string): boolean =>
+  owner in (lock.weights?.plates ?? {}) || (CARRY_TERMS as readonly string[]).includes(owner)

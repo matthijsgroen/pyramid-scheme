@@ -531,3 +531,37 @@ describe("a lock compiles into the floor's vocabulary", () => {
     expect(fragment.obstacles).toEqual([{ id: "chute", kind: "oneWay", at: { on: "connection", between: ["a", "b"] } }])
   })
 })
+
+describe("a lock with stones", () => {
+  const plateLock = (overrides: Partial<Lock> = {}): Lock => ({
+    name: "plate",
+    regions: { in: { takes: "free" }, out: { takes: "free" } },
+    connections: [{ between: ["in", "out"], barriers: ["door"] }],
+    gates: { door: { from: "in", to: "out", owners: ["p"] } },
+    mechanics: {},
+    weights: {
+      plates: {
+        p: { in: "in", stone: false, opens: { weighted: ["door"], empty: [] } },
+        shelf: { in: "in", stone: true, opens: { weighted: [], empty: [] } },
+      },
+    },
+    in: "in",
+    out: "out",
+    ...overrides,
+  })
+
+  it("takes a plate as a gate's owner", () => {
+    expect(checkLock(plateLock())).not.toContainEqual(expect.objectContaining({ type: "gateOwnerUnknown" }))
+  })
+
+  it("refuses a plate standing in a region the lock does not have", () => {
+    const lock = plateLock()
+    const weights = { plates: { ...lock.weights!.plates, p: { ...lock.weights!.plates.p, in: "cellar" } } }
+    expect(checkLock({ ...lock, weights })).toContainEqual({ type: "plateNamesNoRegion", plate: "p", region: "cellar" })
+  })
+
+  it("refuses unladen on a lock without stones", () => {
+    const lock = plateLock({ gates: { door: { from: "in", to: "out", owners: ["unladen"] } }, weights: undefined })
+    expect(checkLock(lock)).toContainEqual({ type: "carryWithoutStones", barrier: "door" })
+  })
+})

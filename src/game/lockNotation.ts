@@ -1,5 +1,6 @@
 // A LOCK WRITTEN AS TEXT, one line per join, read into the shared Lock type (lockAuthoring.ts). The
 // notation is LOCK_SYNTAX, which `yarn lock` also prints so nobody has to remember it.
+import { CARRY_TERMS } from "./lockAuthoring"
 import type { Lock, LockConnection, LockGate, LockMechanic, LockOneWay } from "./lockAuthoring"
 import type { RegionAppetite } from "./regions"
 
@@ -23,25 +24,10 @@ export const LOCK_SYNTAX = `
   // comment
 `.slice(1)
 
-/**
- * Stones the player carries and the plates they press — a PROPOSAL the shared Lock type does not hold
- * yet, carried beside it. A stone is always on a plate or in the hand, so lifting one is itself a move
- * that can open or shut a way. Stones are alike and any one presses any plate, so a stone is authored as
- * the plate it starts on, not by a name of its own. The explorer's weight presses a plate too, but never
- * while he passes the way it opens (a plate is never that way's cell), so the walk models stones only.
- */
-export type Weights = {
-  /** Whether each plate starts with a stone, and what it opens while it holds one and while it holds
-   * none. Both may be empty: a plate that opens nothing is a shelf. */
-  plates: Record<string, { in: string; stone: boolean; opens: { weighted: string[]; empty: string[] } }>
-}
-export type DraftLock = Lock & { weights?: Weights }
+export type DraftLock = Lock
 /** `refused`: what is wrong with a lock that still reads whole, such as a lever opening nothing, so it can
  * be drawn beside its errors. */
 export type ParsedLock = { lock: DraftLock; drafts: string[]; refused: string[] }
-
-/** A condition on the stones rather than an owner to place: empty hands. */
-export const CARRY_TERMS = ["unladen"] as const
 
 const EDGE = /\s*(--|>>|-\[[^\]]*\]-)\s*/
 const NAME = /^\w+$/

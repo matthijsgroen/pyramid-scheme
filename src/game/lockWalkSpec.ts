@@ -1,10 +1,9 @@
 // A LOCK AS THE WALK SEES IT. walkSpecOf turns the shared Lock into the LockSpec walkLock proves, with
 // every move the player has; the facts an author cannot read off the document are derived here too.
-import type { Lock, LockMechanic } from "./lockAuthoring"
-import { barriersOf, isRegionGate, joinOf } from "./lockAuthoring"
+import type { Lock, LockMechanic, Weights } from "./lockAuthoring"
+import { barriersOf, CARRY_TERMS, isRegionGate, joinOf } from "./lockAuthoring"
 import type { LockSpec, Mechanism } from "./lockWalk"
-import { CARRY_TERMS } from "./lockNotation"
-import type { DraftLock, Weights } from "./lockNotation"
+import type { DraftLock } from "./lockNotation"
 
 const OPEN = "·"
 const REST = "rest"

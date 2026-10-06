@@ -1,5 +1,5 @@
 import type { Lock, LockMechanic } from "./lockAuthoring"
-import { barriersOf, isRegionGate, joinOf } from "./lockAuthoring"
+import { barriersOf, CARRY_TERMS, isRegionGate, isWeightOwner, joinOf } from "./lockAuthoring"
 import type { LooseMechanic, ResolveMechanicKind } from "./mechanics"
 import { resolveMechanicKind } from "./mechanics"
 import type { BarrierOrder, Control, Obstacle, TopologyFault } from "./obstacles"
@@ -48,6 +48,10 @@ export type LockFault =
   /** A one-way stands on a connection beside another barrier, which the floor vocabulary cannot say. */
   | { type: "oneWaySharesConnection"; between: [string, string]; barriers: string[] }
   | { type: "gateOwnerUnknown"; barrier: string; owner: string }
+  /** A plate stands in a region the lock does not have. */
+  | { type: "plateNamesNoRegion"; plate: string; region: string }
+  /** A gate asks for empty hands on a lock with no stones. */
+  | { type: "carryWithoutStones"; barrier: string }
   /** A gate lists an owner whose `opens` never names it. */
   | { type: "ownerNamesNoGate"; barrier: string; owner: string }
   | { type: "opensUnknownBarrier"; mechanic: string; state: string; barrier: string }
@@ -151,8 +155,14 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
   const owners = new Map<string, readonly string[]>()
   for (const [id, gate] of Object.entries(lock.gates)) {
     owners.set(id, gate.owners)
-    for (const owner of gate.owners)
+    for (const owner of gate.owners) {
+      if (isWeightOwner(lock, owner)) {
+        if (!lock.weights && (CARRY_TERMS as readonly string[]).includes(owner))
+          faults.push({ type: "carryWithoutStones", barrier: id })
+        continue
+      }
       if (!(owner in lock.mechanics)) faults.push({ type: "gateOwnerUnknown", barrier: id, owner })
+    }
     if (isRegionGate(gate)) {
       need(`gate ${id}`, gate.region)
       continue
@@ -162,6 +172,8 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
     if (!declared.has(keyOf(gate.from, gate.to))) faults.push({ type: "gateOnNoConnection", barrier: id })
     else if (!namedOn.has(id)) faults.push({ type: "edgeGateUnnamed", barrier: id })
   }
+  for (const [plate, { in: region }] of Object.entries(lock.weights?.plates ?? {}))
+    if (!(region in lock.regions)) faults.push({ type: "plateNamesNoRegion", plate, region })
   for (const [id, oneWay] of Object.entries(oneWays)) {
     need(`oneWay ${id}`, oneWay.from)
     need(`oneWay ${id}`, oneWay.to)
@@ -254,7 +266,9 @@ const translate = (
 
   const obstacles: Obstacle[] = []
   for (const [id, gate] of Object.entries(lock.gates)) {
-    const forkOwners = gate.owners.filter(owner => kinds(lock.mechanics[owner].control)?.gates === "owns").map(name)
+    const forkOwners = gate.owners
+      .filter(owner => !isWeightOwner(lock, owner) && kinds(lock.mechanics[owner].control)?.gates === "owns")
+      .map(name)
     const terms = {
       ...(gate.mode === "any" ? { mode: "any" as const } : {}),
       ...(forkOwners.length > 0 ? { owners: forkOwners } : {}),
