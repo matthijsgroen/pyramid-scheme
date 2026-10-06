@@ -63,7 +63,7 @@ export const HandleComponent: FamilyPlugin["Component"] = ({ ctx, journeys, onSo
           )
         })}
       </div>
-      <button onClick={onSolved} className="text-sm text-stone-400 hover:text-stone-200">
+      <button onClick={() => onSolved()} className="text-sm text-stone-400 hover:text-stone-200">
         {t("ui.backToMap")}
       </button>
     </div>

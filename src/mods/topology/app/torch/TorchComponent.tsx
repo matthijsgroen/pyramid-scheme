@@ -26,7 +26,7 @@ export const TorchComponent: FamilyPlugin["Component"] = ({ ctx, journeys, onSol
           {t("torch.invitation")}
         </button>
       )}
-      <button onClick={onSolved} className="text-sm text-stone-400 hover:text-stone-200">
+      <button onClick={() => onSolved()} className="text-sm text-stone-400 hover:text-stone-200">
         {t("ui.backToMap")}
       </button>
     </div>
