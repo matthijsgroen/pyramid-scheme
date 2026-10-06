@@ -44,8 +44,8 @@ multi-step items; a single board choice is a switch fork.
 
 **18 locks** in `src/game/locks/`: dropHome, cellar, twoLamps, overlook, doubleBack, seesaw, lamplighter,
 keyring, relay, clockwork, observatory, tide ⚠, sluice ⚠, plates ⚠, twoStones ⚠, masonsRamp ⚠,
-counterweight ⚠. **9 lessons** in `locks/lessons/`. Each lock is held to a test that takes away its
-load-bearing piece (`lockCatalogue.spec.ts`). ⚠ = needs engine work: region gates (water), sequences
+counterweight ⚠. **9 lessons** in `locks/lessons/`. `yarn lock` is the check on every lock and lesson; no
+unit test pins a lock's contents. ⚠ = needs engine work: region gates (water), sequences
 (tiles), stones.
 
 **Stones (prototype, this branch only).** A plate is placed with or without a stone

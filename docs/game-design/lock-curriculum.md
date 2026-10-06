@@ -5,8 +5,8 @@ it: wizard gets sand puzzles, which `mechanic-contract.md` §8 parks outside the
 
 The locks and lessons themselves are files: `src/game/locks/*.lock` and `src/game/locks/lessons/*.lock`,
 in the notation of `src/game/lockNotation.ts`. `yarn lock <file>` draws one, walks it and says what it
-could do without; `yarn lock` walks the whole catalogue. `src/game/lockCatalogue.spec.ts` holds every
-lock to a test that takes its load-bearing piece away.
+could do without; `yarn lock` walks the whole catalogue, lessons included, and is the check on them: no unit
+test pins what a lock contains.
 
 ## The rule
 

@@ -40,10 +40,9 @@ stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
 
 - [ ] The engine's solver walks a stone arrangement as state: which plates hold a stone, and whether the
       hand holds one.
-- [ ] For each stone lock in the catalogue, the engine's verdict (solvable, regions reached, dead ends)
-      equals `yarn lock`'s. A shared fixture test pins this.
-- [ ] Each stone lock fails the engine's solver when its load-bearing piece is taken away, as
-      `lockCatalogue.spec.ts` already does for the tool.
+- [ ] The engine's solver follows the same stone rules as the tool's walk (lifting, setting down, `:empty`,
+      `unladen`, no stone past the stairs or the way out), each tested on a small made-up lock. No test
+      pins a catalogue lock; `yarn lock` checks those.
 - [ ] A floor is solvable from every arrangement the player can leave it in, so a return visit can never
       soft-lock.
 
