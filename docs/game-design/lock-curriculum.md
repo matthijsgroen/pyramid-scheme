@@ -74,6 +74,7 @@ lock, not a sampler.
 | twoStones | expert, once buildable | one stone holds the vault while you fetch the second, then presses the exit: a stone spent twice |
 | masonsRamp | master, once buildable | one stone holds the chute door for the other; you squeeze back up the narrow passage, where no stone fits |
 | counterweight | master, once buildable | the zipline takes you down empty-handed; weigh the lift down from below, then bring the other stone by lift |
+| stoneGate | not placed yet, once buildable | lifting the idol opens the back way and shuts the way in; park a stone on a shelf to fit through the narrow passage; both stones spent twice |
 
 ## Where they go
 

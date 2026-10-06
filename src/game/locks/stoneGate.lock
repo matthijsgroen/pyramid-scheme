@@ -1,0 +1,30 @@
+// not placed yet, not buildable yet (stones, gate loop). Lifting the altar's idol opens the back way and
+// shuts the door you came in by. Park a stone on the backroom shelf to fit through the narrow passage,
+// and spend both stones twice.
+
+in -- passage -[P1+P2]- out
+
+in -- hall
+
+hall -[P3]- hall2 -[P4]- altar
+
+P1 plate @passage stone
+P2 plate @passage
+
+P3 plate @hall
+
+P4 plate @altar stone
+
+altar -[P4:empty]- backroom
+
+P5 plate @backroom
+
+backroom -- hall3
+
+hall3 -[unladen]- hall2
+
+hall2 -[P4:empty]- hall5
+
+S1 toggle @hall5
+
+hall3 -[S1]- passage

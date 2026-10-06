@@ -230,6 +230,33 @@ exports[`sluice > draws, with its cheapest way through 1`] = `
 in ▸ hub ▸ hall ▸ gold:on ▸ hub ▸ S:vault ▸ vault ▸ out"
 `;
 
+exports[`stoneGate > draws, with its cheapest way through 1`] = `
+"            ┌─────────────■P4:empty─────────────┐
+[altar · ◉P4]            [hall5 · S1]           │
+      │                        │                │
+      □P4                      ■P4:empty        │
+      │                        │                │
+      ├────────────────────────┘                │
+      │                                         │
+   [hall2]                                      [backroom · ⊙P5]
+      │  │                                              │
+      ■P3│                                              │
+      │  │                                              │
+      │  │                                              │
+      │  └─────────────────□unladen──────────────────┐  │
+[hall · ⊙P3]                                         [hall3]
+      │                                                 │
+      │                                                 ■S1:b
+      │                                                 │
+      │                                                 │
+      │                                                 │
+  → [in]──────────────────────────────────────[passage · ◉P1 · ⊙P2]───────────────■P1+P2────────────────[out] →
+
+■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it
+
+in ▸ passage ▸ lift from P1 ▸ in ▸ hall ▸ stone on P3 ▸ hall2 ▸ altar ▸ lift from P4 ▸ backroom ▸ stone on P5 ▸ hall3 ▸ hall2 ▸ hall5 ▸ S1:b ▸ hall2 ▸ hall ▸ lift from P3 ▸ in ▸ passage ▸ stone on P1 ▸ hall3 ▸ backroom ▸ lift from P5 ▸ hall3 ▸ passage ▸ stone on P2 ▸ out"
+`;
+
 exports[`tide > draws, with its cheapest way through 1`] = `
 "[hall2 · K ▒S:b]
         │
