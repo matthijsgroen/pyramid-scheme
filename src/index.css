@@ -585,6 +585,19 @@ body {
     }
   }
 
+  /* A region barrier's cover going when the barrier opens. The DURATION is the element's own
+     (`animation-duration`, set from REGION_COVER_FADE_OUT_MS next to the timer that removes the layer),
+     so the two cannot drift apart. Reduced motion never reaches here: the layer is not kept at all. */
+  --animate-region-cover-out: region-cover-out ease-out both;
+  @keyframes region-cover-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
   --spacing-safe-top: env(safe-area-inset-top);
   --spacing-safe-bottom: env(safe-area-inset-bottom);
   --spacing-safe-left: env(safe-area-inset-left);

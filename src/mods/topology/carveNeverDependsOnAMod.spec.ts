@@ -142,7 +142,7 @@ describe("every floor of the real world, the dev journey included", () => {
 
   it("was asked of the whole world, not of a handful of floors", () => {
     expect(carved.length).toBeGreaterThan(200)
-    expect(carved.filter(c => c.dev)).toHaveLength(9)
+    expect(carved.filter(c => c.dev)).toHaveLength(10)
   })
 
   it("carves other walls with the mod off on no floor", () => {
@@ -165,12 +165,14 @@ describe("every floor of the real world, the dev journey included", () => {
     expect(refused).toEqual([
       "dev_topology level 2 floor 0",
       "dev_topology level 3 floor 0",
+      "dev_topology level 4 floor 0",
       "dev_topology level 7 floor 0",
       "dev_topology level 8 floor 0",
+      "dev_topology level 10 floor 0",
     ])
     const rest = carved.filter(c => c.dev && c.outcome.kind !== "refused")
     expect(rest.map(c => c.outcome.kind)).toEqual(Array(rest.length).fill("identical"))
-    expect(rest).toHaveLength(5)
+    expect(rest).toHaveLength(4)
   })
 })
 

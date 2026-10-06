@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react"
 import { assembleFloor, type ResolveKeyRequirements } from "@/game/siteAssembler"
 import { resolveOneWayRealisation } from "@/mods/allOneWayRealisations"
+import { resolveRegionBarrierRealisation } from "@/mods/allRegionBarrierRealisations"
 import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
 import { journeys as journeyData } from "@/data/journeys"
 import { getFamilyPlugin, resolveEncounter } from "@/app/families/familyRegistry"
@@ -29,6 +30,7 @@ export const assemblerFor = (journeyId: string): AssembleFor => {
         resolveKeyRequirements,
         floorRef: { journeyId, levelIndex: levelNr - 1, floorIndex },
         resolveOneWay: resolveOneWayRealisation,
+        resolveRegionBarrier: resolveRegionBarrierRealisation,
         resolveBoardIndex: boardIndexesForFloor(journeyId, levelNr - 1, floorIndex),
       }
     )

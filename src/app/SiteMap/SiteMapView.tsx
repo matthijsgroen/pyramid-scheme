@@ -64,6 +64,9 @@ import {
 } from "./lighting"
 import { BeamLight, BeamShafts } from "./MapBeams"
 import { TileLayers } from "./tileLayers"
+import { regionBarrierCovers } from "@/game/regionBarrierCover"
+import { RegionBarrierCovers } from "./RegionBarrierCovers"
+import { useRegionBarrierCovers } from "./useRegionBarrierCovers"
 import { buildOfferContext, clickTargetAt, markerAt, type OfferContext, type OfferMarker } from "./clickTargets"
 import {
   FACE_SHADOW,
@@ -120,9 +123,6 @@ type Props = {
  * tile rather than guessed: the flame's own pixels land 24 units to one side of centre. WHICH side is a
  * fact about the file — see `flameOnRight` where the flights are placed. */
 const STAIR_FLAME_DX = CELL * 0.43
-
-/** The prop a shut region barrier is drawn as. */
-const REGION_BLOCKAGE = "rubblePile"
 
 /** Anything standing on the floor, with the line it stands on — a room's own furniture and a node's.
  *
@@ -449,15 +449,12 @@ export const nodeSpritesFor = (
           light: { x: ex, y: ey + CELL * 0.12, r: LAMP_POOL_RADIUS },
         })
       } else if (kind === "gate" && cell.regionBarrier) {
-        // A REGION BARRIER IS A BLOCKAGE FILLING THE PASSAGE, NOT A DOOR HUNG IN IT: it stands on the
-        // cell itself, centred, with nothing to step round. Its owner's mark rides on it, being the one
-        // thing tying it to its mechanism. Rubble is the stand-in until a blockage per theme is painted.
-        const url = tileOrPlaceholder(tier, REGION_BLOCKAGE)
-        if (!url) continue
+        // A REGION BARRIER IS THE COVER ITSELF, NOT A DOOR HUNG IN THE PASSAGE: the water or sand is drawn
+        // under the floor's light (RegionBarrierCovers), and this sprite is only the seat for the owner's
+        // mark, the one thing tying the blockage to its mechanism, so it stands above the cover.
         out.push({
           footprint,
           key: `blockage:${r},${c}`,
-          url,
           x: cx - CELL / 2,
           y: cy + CELL / 2 - PROP_H,
           mirrored: false,
@@ -1135,6 +1132,8 @@ export const SiteMapView = ({
   const tier = useMemo(() => floorTier(grid), [grid])
   const regions = useMemo(() => tileRegionsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
+  const covers = useMemo(() => regionBarrierCovers(grid), [grid])
+  const barrierCovers = useRegionBarrierCovers(covers, `${grid.siteId}:${currentFloor ?? 0}`)
   const nodeSprites = useMemo(
     () => nodeSpritesFor(grid, claims, tier, pendingCells, mechanismStates, currentFloor ?? 0),
     [grid, claims, tier, pendingCells, mechanismStates, currentFloor]
@@ -1159,26 +1158,28 @@ export const SiteMapView = ({
       atExplorer: standingOn !== null && !sprite.key.startsWith("drop:") && sprite.footprint.includes(standingOn),
       node: (
         <Fragment key={sprite.key}>
-          <Sprite
-            data-node-sprite={sprite.key}
-            url={sprite.url}
-            x={sprite.x}
-            y={sprite.y}
-            w={sprite.w ?? CELL}
-            h={sprite.h ?? PROP_H}
-            mirrored={sprite.mirrored}
-            filter={STANDING_RELIEF[tier]}
-            // ITS OWN ROOM AND NOT THE WHOLE FLOOR: furniture stands off-centre and a sprite is a cell
-            // wide, so it reaches past its cell. See NodeSprite.footprint.
-            clipTo={footprintRects(sprite.footprint)}
-            opacity={
-              standingOn && sprite.fadeAt?.includes(standingOn)
-                ? OCCLUDER_FADE
-                : sprite.badge === "taken" || sprite.spent
-                  ? LOOTED_OPACITY
-                  : undefined
-            }
-          />
+          {sprite.url && (
+            <Sprite
+              data-node-sprite={sprite.key}
+              url={sprite.url}
+              x={sprite.x}
+              y={sprite.y}
+              w={sprite.w ?? CELL}
+              h={sprite.h ?? PROP_H}
+              mirrored={sprite.mirrored}
+              filter={STANDING_RELIEF[tier]}
+              // ITS OWN ROOM AND NOT THE WHOLE FLOOR: furniture stands off-centre and a sprite is a cell
+              // wide, so it reaches past its cell. See NodeSprite.footprint.
+              clipTo={footprintRects(sprite.footprint)}
+              opacity={
+                standingOn && sprite.fadeAt?.includes(standingOn)
+                  ? OCCLUDER_FADE
+                  : sprite.badge === "taken" || sprite.spent
+                    ? LOOTED_OPACITY
+                    : undefined
+              }
+            />
+          )}
           {/* THE STACKING ORDER IS THE POINT, and it is in DOM order (map-rendering.md: depth is DOM
               order, no z-index): the far half above is already painted; the arm rides between it and
               the near half so it rises OUT of the mound rather than sitting on it — see
@@ -1524,6 +1525,16 @@ export const SiteMapView = ({
               }}
             />
             <WallItems items={wallItems} patron={grid.patron} />
+
+            {/* THE WATER OR SAND OVER A SHUT REGION BARRIER, under the shade and the lamp so the floor's
+                own light is what tints it, and under the markers and everything standing so a mark on the
+                blockage reads above it. */}
+            <RegionBarrierCovers
+              grid={grid}
+              tier={tier}
+              standing={barrierCovers.standing}
+              leaving={barrierCovers.leaving}
+            />
 
             {/* The dark, and then the light in it: the place the explorer is standing is the hole the
               lamp burns in the shade, so it has to be laid over the shade rather than under it. */}
