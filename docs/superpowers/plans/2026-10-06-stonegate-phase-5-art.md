@@ -395,3 +395,24 @@ something else. Follow the stable-world rule:
 **Open with the designer before starting:** what fills the brazier's place in each rank's pool (another
 existing prop, or nothing), and whether the brazier's light (`SiteMapView`) moves to another prop or goes.
 The art and the masters stay in the repository; only their use as dressing ends.
+
+---
+
+### Task 3b: The plate pressed, and the stone on the pressed plate
+
+**Decided by the designer (2026-10-06):** a plate has three looks:
+- **raised**: empty, nobody on it (`plate`, done);
+- **pressed**: the slab sunk level with its kerb, which is how it looks while the explorer stands on it
+  (`plateDown`, new);
+- **pressed with a stone** (`plateStone`, re-made from `plateDown` so the stone sits on a sunk slab).
+
+Each is an EDIT of the painted plate, so the three swap on one cell:
+1. `plateDown`: attach the plate master and ask "Edit this painting. Keep everything exactly as it is —
+   the kerb, the gap, the slab's colour and wear, the light, the framing and the magenta — and change only
+   this: the slab has sunk down level with the top of the kerb, pressed in, so the dark gap round it is
+   now only a thin dark line and the slab's front edge no longer shows."
+2. `plateStone`: attach the `plateDown` master and use the limestone edit prompt from the
+   `default/plateStone` queue entry.
+
+Import, record, re-stage in `Topology/Plate` with all three looks, as in task 3. Fix the minors from task
+3's review on the way: in the `art/rebuild.sh` comment, drop "to the pixel" and "one render".

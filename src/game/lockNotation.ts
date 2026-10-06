@@ -27,8 +27,8 @@ export const LOCK_SYNTAX = `
  * Stones the player carries and the plates they press — a PROPOSAL the shared Lock type does not hold
  * yet, carried beside it. A stone is always on a plate or in the hand, so lifting one is itself a move
  * that can open or shut a way. Stones are alike and any one presses any plate, so a stone is authored as
- * the plate it starts on, not by a name of its own. The player's own weight never presses
- * one, since arriving at a node never acts (node-actions.md).
+ * the plate it starts on, not by a name of its own. The explorer's weight presses a plate too, but never
+ * while he passes the way it opens (a plate is never that way's cell), so the walk models stones only.
  */
 export type Weights = {
   /** Whether each plate starts with a stone, and what it opens while it holds one and while it holds

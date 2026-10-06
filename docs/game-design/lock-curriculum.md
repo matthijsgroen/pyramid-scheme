@@ -120,9 +120,10 @@ A stone rests on a plate or is in the player's hand, never loose, so lifting one
 it empties a plate. Stones are alike, so a lock places plates, each with or without a stone
 (`p plate @hall stone`). A plate is live and opens a way, or bars a region, either while it holds a stone
 (`-[p]-`) or while it holds none (`-[p:empty]-`): lift a stone off its plate and the door moves. A plate that opens
-nothing is a shelf, a place to keep a stone. The player's own weight never presses a plate — arriving at a node never acts
-(`node-actions.md`) — so a door on two plates needs two stones, and the tool refuses one that asks for
-more stones than the lock has.
+nothing is a shelf, a place to keep a stone. The explorer's own weight presses a plate while he stands on it, which teaches that weight is what counts,
+but it never lets him through: a plate is never the cell of the way it opens, so stepping off lifts his
+weight first. Passing a door on two plates therefore takes two stones, and the tool refuses a lock that
+asks for more stones than it has.
 
 - **One stone in hand, and no swapping.** It is set down only on an empty plate, so where the stones are
   is always one of a few arrangements the walk can prove.

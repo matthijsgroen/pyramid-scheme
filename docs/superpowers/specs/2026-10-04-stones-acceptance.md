@@ -12,8 +12,12 @@ stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
   itself.
 - **One stone in hand.** It is set down only on an empty plate.
 - A **plate** is live. A way can open while it holds a stone (`-[p]-`) or while it holds none
-  (`-[p:empty]-`), and follows it both ways, never latching. The player's own weight never presses a
-  plate.
+  (`-[p:empty]-`), and follows it both ways, never latching.
+- **The explorer's weight presses a plate too**, while he stands on it (designer, 2026-10-06): the plate
+  sinks and its ways move, which teaches that weight is what counts. It never lets him through: a plate
+  and a way it opens are never one cell, so stepping off to reach the way lifts his weight and the way
+  moves back. Only a stone holds a way while he walks through it, so the walk and the solver need no
+  player-weight rule at all.
 - A plate may open nothing: a shelf or a pedestal, somewhere to keep a stone.
 - All plates look alike. A way shows the plates it waits for, and which state it wants.
 - A gate owner may be a plate or `unladen` (empty hands), alongside levers and the rest, under `and` or
@@ -66,6 +70,14 @@ All through node actions (`node-actions.md`): arriving never acts, standing offe
       visibly: a way waiting for a stone shuts, a way waiting for an empty plate opens.
 - [ ] On an empty plate, carrying: **"Set the stone on the plate"**. The same ways change back.
 - [ ] No set-down is offered anywhere else, and no lift while already carrying.
+- [ ] Standing on a plate presses it: the plate is drawn pressed and its ways move while the explorer
+      stands there, and move back when he steps off.
+- [ ] A way held only by the explorer's weight is never on a route: the map draws it as it is while he
+      stands on the plate, but route-finding treats it as it will be once he steps off, so a tap beyond it
+      is not offered. Test: stand on a plate whose way is otherwise shut, and the cell behind that way is
+      not walkable.
+- [ ] A plate has three looks: raised (empty, nobody on it), pressed (the explorer on it), and pressed
+      with a stone.
 - [ ] The explorer is drawn carrying the stone while it is in hand (see "The carrying explorer").
 - [ ] A walk that crosses an `unladen` passage while carrying **stops on the near side** and says why
       ("Too narrow to carry the stone through"; a zipline: "You need both hands for the zipline").
@@ -133,4 +145,4 @@ counterweight play the same way.
 ## Not in scope
 
 Pushing stones (rejected: a pushed stone can be cornered for good), throwing, stones as loot, stones that
-travel between floors, a plate the player presses by standing on it.
+travel between floors.
