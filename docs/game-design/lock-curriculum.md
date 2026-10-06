@@ -74,7 +74,7 @@ lock, not a sampler.
 | twoStones | expert, once buildable | one stone holds the vault while you fetch the second, then presses the exit: a stone spent twice |
 | masonsRamp | master, once buildable | one stone holds the chute door for the other; you squeeze back up the narrow passage, where no stone fits |
 | counterweight | master, once buildable | the zipline takes you down empty-handed; weigh the lift down from below, then bring the other stone by lift |
-| stoneGate | not placed yet, once buildable | lifting the idol opens the back way and shuts the way in; park a stone on a shelf to fit through the narrow passage; both stones spent twice |
+| stoneGate | not placed yet, once buildable | lifting the stone off the altar opens the back way and shuts the way in; park a stone on a shelf to fit through the narrow passage; both stones spent twice |
 
 ## Where they go
 
@@ -119,7 +119,7 @@ doubleBacks in two journeys can play differently while the lock stays one file.
 A stone rests on a plate or is in the player's hand, never loose, so lifting one is a move of its own:
 it empties a plate. Stones are alike, so a lock places plates, each with or without a stone
 (`p plate @hall stone`). A plate is live and opens a way, or bars a region, either while it holds a stone
-(`-[p]-`) or while it holds none (`-[p:empty]-`): lift the idol and the door moves. A plate that opens
+(`-[p]-`) or while it holds none (`-[p:empty]-`): lift a stone off its plate and the door moves. A plate that opens
 nothing is a shelf, a place to keep a stone. The player's own weight never presses a plate — arriving at a node never acts
 (`node-actions.md`) — so a door on two plates needs two stones, and the tool refuses one that asks for
 more stones than the lock has.

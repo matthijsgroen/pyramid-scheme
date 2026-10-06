@@ -126,7 +126,7 @@ tucked over his right shoulder into the pack strap, flame above his head. Same f
 ## Done when
 
 A player on the dev floor can play **stoneGate** (`src/game/locks/stoneGate.lock`) to the end: lift the
-idol, park a stone on the shelf, squeeze through the narrow passage, and spend both stones twice. They
+stone off the altar, park a stone on the shelf, squeeze through the narrow passage, and spend both stones twice. They
 can leave mid-way and come back to every stone where they set it. twoStones, masonsRamp and
 counterweight play the same way.
 
