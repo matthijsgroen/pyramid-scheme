@@ -83,6 +83,8 @@
     "sacredSealBroken": "The sacred seal is broken",
     "newExpeditionUnlocked": "A new expedition is now unlocked",
     "newTombUnlocked": "A new tomb is now unlocked",
+    "tierComingSoonTitle": "{{tier}} expeditions are on their way",
+    "tierComingSoon": "You hold the key, but the {{tier}} pyramids are still being built. They arrive in a later update — until then, your key opens more of the pyramids you already know.",
     "startJourney": "Start {{name}}",
     "answerNow": "The answer is: ",
     "footer": "©️ {{year}} Matthijs Groen, v{{version}}",

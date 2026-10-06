@@ -1,0 +1,12 @@
+// master. A three-way board and two prizes; going east first, the drop to west
+// saves a board solve.
+
+in -[Y]- west
+in -[Y]- north -[L+K]- out
+in -[Y]- east
+east >> west
+west >> in
+Y fork @in
+L activator @west
+K activator @east
+north *

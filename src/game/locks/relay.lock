@@ -1,0 +1,11 @@
+// master. A chain of airlocks: each switch shuts the door behind you, and the
+// drop home opens only once the last torch is lit.
+
+in -[A:a]- r1 -[A+B:off]- r2 -[B]- r3
+r3 -[C]- >> in
+in -[C]- out
+A toggle @r1
+B activator @r2
+C activator @r3
+r1 *
+r2 *

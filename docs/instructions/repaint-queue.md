@@ -2756,3 +2756,52 @@ scaffold pit --contents=dropSouth --colour=#a7b2be --floor=#8d98a5 --colour-deep
 yarn import-tile art/masters/props/expert/dropSouth.webp --tier=expert --name=dropSouth --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 ```
+
+## Region barrier covers — two
+
+A shut region barrier is drawn as a cover lying over its region: water or sand, one seamless texture each,
+shared by every rank (`tiles/default/`) and laid under the floor's own light. Until a file lands the map
+draws the realisation's flat fallback colour (`src/mods/topology/game/regionBarrier/meta.ts`), so nothing
+here blocks anything. **Neither is an object**: there is no scaffold and no mask, the return is a
+full-bleed texture like the floor megatile, and the code tints it with the floor's light, so the paint
+must carry value and surface only — no colour cast, no glow, nothing lit.
+
+### `default/regionWater` — still water over a flooded passage
+
+**Attach:** nothing — a full-bleed texture has no geometry to hold. Start a new chat.
+
+```
+A seamless, tileable texture of still shallow water, painted in flat matte gouache. Square, seen straight down from directly above, filling the whole frame edge to edge with no border, no vignette and no background.
+
+The surface is murky and opaque, the dull grey-green of water standing in a closed stone passage — you cannot see the floor beneath it. Across it run broad, slow, low-contrast ripples drawn as soft overlapping bands, a few darker patches of silt where it is deepest and a few paler streaks where it is thinnest. Count about six ripple bands across the width, none of them stronger than the rest.
+
+Nothing floats on it and nothing stands in it: no leaves, no debris, no reeds, no stones breaking the surface, no foam, no reflections of anything, no highlights, no sparkle, no glow. No single distinctive mark that would repeat as a pattern when the texture is tiled — the edges must run on into the opposite edges without a seam. Matte throughout, mid-value, low saturation and neutral in hue, so a lamp can warm it or the dark can cool it.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn make-seamless ~/Downloads/regionWater.png
+yarn import-tile art/masters/surfaces/regionWater.webp --tier=default --name=regionWater --slot=floor \
+  --filter=smooth --key=none
+```
+
+### `default/regionSand` — drifted sand lying over a buried passage
+
+**Attach:** nothing — a full-bleed texture has no geometry to hold. Start a new chat.
+
+```
+A seamless, tileable texture of drifted desert sand, painted in flat matte gouache. Square, seen straight down from directly above, filling the whole frame edge to edge with no border, no vignette and no background.
+
+Fine, dry, pale sand blown into a smooth bed: long, shallow wind ripples running in one direction, closely spaced and low, with a very faint soft shadow in the lee of each ripple and a faintly paler crest. Count about twelve ripples across the width, none of them stronger than the rest, with a little fine grain between them.
+
+Nothing lies in it and nothing stands in it: no footprints, no stones, no sherds, no plants, no tracks, no highlights, no sparkle, no glow. No single distinctive mark that would repeat as a pattern when the texture is tiled — the edges must run on into the opposite edges without a seam. Matte throughout, mid-value, low saturation and nearly neutral in hue, so a lamp can warm it or the dark can cool it.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn make-seamless ~/Downloads/regionSand.png
+yarn import-tile art/masters/surfaces/regionSand.webp --tier=default --name=regionSand --slot=floor \
+  --filter=smooth --key=none
+```

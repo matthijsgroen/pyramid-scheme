@@ -1,0 +1,9 @@
+// master, not buildable yet (region gate). The lever floods one hall and drains
+// the other; carry the key home against the water.
+
+in -- hall1 -- mid -- hall2
+in -[K]- out
+hall1 -[S:a]
+hall2 -[S:b]
+S toggle @mid
+K activator @hall2

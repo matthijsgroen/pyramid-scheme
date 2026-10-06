@@ -91,20 +91,31 @@ const asBefore = (grid: FloorGrid, lock: LockSpec): { lock: LockSpec; mechanisms
 
 describe("the dev journey's mechanisms, each working in one place", () => {
   it("reach exactly the states they reached before moves could be placed, on every dev floor", () => {
-    expect(dev).toHaveLength(9)
+    expect(dev).toHaveLength(10)
     let withMechanisms = 0
+    const several: number[] = []
     dev.forEach((site, levelIndex) =>
       site.forEach((floor, floorIndex) => {
         const grid = assembleAt(floor, levelIndex + 1, floorIndex)
         expect(grid, `level ${levelIndex + 1} floor ${floorIndex} carves`).not.toBeNull()
         const lock = floorLock(grid!)
         if (!lock) return
+        // A sequence advances at each of its tiles, so it is not a mechanism working in one place.
+        if (
+          (floor.locks ?? []).some(({ lock: placed }) =>
+            Object.values(placed.mechanics).some(m => m.control === "sequence")
+          )
+        ) {
+          several.push(levelIndex + 1)
+          return
+        }
         const before = asBefore(grid!, lock)
         withMechanisms += before.mechanisms
         expect(lock.mechanisms, `level ${levelIndex + 1}`).toEqual(before.lock.mechanisms)
         expect(reachableStates(lock), `level ${levelIndex + 1}`).toEqual(reachableStates(before.lock))
       })
     )
+    expect(several).toEqual([10])
     expect(withMechanisms).toBeGreaterThanOrEqual(9)
   })
 })

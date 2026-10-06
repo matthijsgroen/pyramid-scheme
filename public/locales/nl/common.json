@@ -83,6 +83,8 @@
     "sacredSealBroken": "Het heilige zegel is verbroken",
     "newExpeditionUnlocked": "Een nieuwe expeditie is nu ontgrendeld",
     "newTombUnlocked": "Een nieuwe tombe is nu ontgrendeld",
+    "tierComingSoonTitle": "{{tier}}-expedities zijn onderweg",
+    "tierComingSoon": "Je hebt de sleutel, maar aan de {{tier}}-piramides wordt nog gebouwd. Ze komen in een latere update — tot die tijd opent je sleutel meer van de piramides die je al kent.",
     "startJourney": "Start {{name}}",
     "answerNow": "Het antwoord is: ",
     "footer": "©️ {{year}} Matthijs Groen, v{{version}}",

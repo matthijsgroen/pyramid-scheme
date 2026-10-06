@@ -5,6 +5,7 @@ import { walkLock } from "../game/lockWalk"
 import { assembleFloor } from "../game/siteAssembler"
 import type { FloorConfig as GameFloorConfig, FloorGrid } from "../game/siteTypes"
 import { leverLock } from "../game/testSupport/floorLockFixtures"
+import { onRouteSluiceFloor } from "../game/testSupport/regionBarrierFixtures"
 import { resolveEncounterMeta, resolveKeyRequirements } from "../mods/allFamilyMeta"
 import { buildSite } from "./buildSite"
 import { resolvePyramidConstraint } from "./constraintResolver"
@@ -239,5 +240,68 @@ describe("the one-way's single-name spelling is the one-way entry of the same ca
     expect(() => buildFloors(noLocks({ pyramid: { "one-way": "a" }, pyramidOneWay: "b" }))).toThrow(
       'one level binds the one-way to "b" (oneWayRealisation) and to "a" (realisations)'
     )
+  })
+})
+
+describe("a region barrier's realisation is bound outside the lock, through the same cascade", () => {
+  const KIND = "region-barrier"
+
+  it.each<[string, Declared, RealisationBinding]>([
+    ["difficulty alone", { difficulty: { [KIND]: "water" } }, { [KIND]: "water" }],
+    ["journey over difficulty", { difficulty: { [KIND]: "water" }, journey: { [KIND]: "sand" } }, { [KIND]: "sand" }],
+    [
+      "pyramid over journey over difficulty",
+      { difficulty: { [KIND]: "d" }, journey: { [KIND]: "j" }, pyramid: { [KIND]: "p" } },
+      { [KIND]: "p" },
+    ],
+    [
+      "floor over all three",
+      {
+        difficulty: { [KIND]: "d" },
+        journey: { [KIND]: "j" },
+        pyramid: { [KIND]: "p" },
+        floor: { [KIND]: "f" },
+      },
+      { [KIND]: "f" },
+    ],
+    [
+      "the barrier at one level and the controls at another, on one floor",
+      { difficulty: { toggle: "d", [KIND]: "d" }, pyramid: { toggle: "p" }, floor: { activator: "f" } },
+      { toggle: "p", [KIND]: "d", activator: "f" },
+    ],
+  ])("%s", (_, declared, expected) => {
+    expect(buildFloors(rulesDeclaring(declared))[0].realisations).toEqual(expected)
+  })
+
+  const { regionLayout, obstacles, controls } = onRouteSluiceFloor()
+  const unlocked: FloorConstraint = { locks: [], regionLayout, obstacles, controls }
+  const barredFloor = (declared: Declared): FloorConfig => buildFloors(rulesDeclaring(declared, unlocked))[0]
+
+  it("resolves the most specific level for a floor that bars a region without locks, and bakes no binding there", () => {
+    const floor = barredFloor({ difficulty: { [KIND]: "d" }, pyramid: { [KIND]: "p" }, floor: { [KIND]: "f" } })
+
+    expect(floor.regionBarrierRealisation).toBe("f")
+    expect("realisations" in floor).toBe(false)
+  })
+
+  it("carries no region-barrier realisation on a floor that bars no region", () => {
+    const floor = buildFloors(rulesDeclaring({ difficulty: { [KIND]: "water" } }, { locks: [] }))[0]
+
+    expect("regionBarrierRealisation" in floor).toBe(false)
+  })
+
+  it("reads the realisation back from the baked file after the pyramid's declaration has changed", () => {
+    const declared: Declared = { difficulty: { [KIND]: "water" }, pyramid: { [KIND]: "sand" } }
+    const baked = loaded(placed([barredFloor(declared)]))[0]
+    const rebuilt = barredFloor({ ...declared, pyramid: { [KIND]: "water" } })
+
+    expect(baked.regionBarrierRealisation).toBe("sand")
+    expect(rebuilt.regionBarrierRealisation).toBe("water")
+  })
+
+  it("reads a placed lock's binding back from the baked file with the barrier's entry in it", () => {
+    const floors = placed(buildFloors(rulesDeclaring({ pyramid: { toggle: "handle", [KIND]: "sand" } })))
+
+    expect(loaded(floors)[0].realisations).toEqual({ toggle: "handle", [KIND]: "sand" })
   })
 })

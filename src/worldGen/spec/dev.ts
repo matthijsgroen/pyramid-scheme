@@ -3,6 +3,8 @@ import type { Rule } from "../dsl"
 import type { Difficulty } from "../types"
 import { DEV_JOURNEY_ID } from "../data"
 import { doubleBackLock } from "./locks/doubleBack"
+import { processionalLock } from "./locks/processional"
+import { sluiceLock } from "./locks/sluice"
 
 /**
  * The dev journey's world spec — one site per floor-topology feature, so each mechanic can be
@@ -123,8 +125,25 @@ export const devRules: Rule[] = [
     oneWays: [{ from: "ledge", to: "sink" }],
     oneWayRealisation: "zipline",
   }),
-  // 4 — waterline. Waiting for the level that closes the floor's lower rooms until it is dropped.
-  devSite(4, "expert"),
+  // 4 — the sluice. One lever floods the hall (and the annex behind it) while the vault is dry, and the vault
+  // while the hall is dry: the cover fades in from the ways in, the blockage stands, what lies beyond is
+  // concealed, and throwing the lever drains it. The lock's regions are all `free`; what this bench holds is
+  // the cover, not what sits in each region.
+  //
+  // Bound at the pyramid like pyramid 2's: a toggle is a handle, a barred region is water.
+  journey(DEV_JOURNEY_ID)
+    .pyramid(4, {
+      difficulty: "expert",
+      pathPuzzles: 0,
+      realisations: { toggle: "handle", "region-barrier": "water" },
+    })
+    .floor(0, {
+      locks: [{ lock: sluiceLock() }],
+      // Recorded from the bake's own carve search (searchCarvePair): at the default packing the floor's own
+      // address seed carves on attempt 0, walks sound (16 states) and leaves no dead region, so no packing is
+      // authored. A dev floor has no baked output to carry the pin.
+      seed: 111235356889669,
+    }),
   // 5 — cosmicDust. Waiting for the drift that re-lays which rooms a corridor connects.
   devSite(5, "master"),
   // 6 — hourglass. Waiting for the run the floor has to be crossed inside before it re-seals.
@@ -177,4 +196,22 @@ export const devRules: Rule[] = [
   }),
   // 9 — sequenceLock. Waiting for the family that only opens once its rooms are met in order.
   devSite(9, "junior"),
+  // 10 — the procession. Three tiles walked cellar, east, west, with the door onward showing the order and the
+  // reset. The cellar is entered by a drop from the hall and also lies behind the east tile, so the walk has to be
+  // thought through: crossing east first spoils the run, and only the drop steps on the cellar before it.
+  //
+  // Bound at the pyramid: a sequence is pressure plates, a one-way is a zipline.
+  journey(DEV_JOURNEY_ID)
+    .pyramid(10, {
+      difficulty: "expert",
+      pathPuzzles: 0,
+      realisations: { sequence: "pressure-plate", "one-way": "zipline" },
+    })
+    .floor(0, {
+      locks: [{ lock: processionalLock() }],
+      // Recorded from the bake's own carve search (searchCarvePair): at the default packing the first seed that carves
+      // on attempt 0, walks sound (75 states) and leaves no dead region is 5 past the floor's address seed. A dev
+      // floor has no baked output to carry the pin.
+      seed: 4293857872,
+    }),
 ]

@@ -59,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Master and wizard expeditions stay closed until their content is ready; earning their key now says they are on their way.
 - Daylight now falls into some chambers through a hole in the roof, lighting the room and what stands in it without a torch.
 
 ### Changed

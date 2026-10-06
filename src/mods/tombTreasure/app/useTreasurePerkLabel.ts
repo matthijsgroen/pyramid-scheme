@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next"
 import { useMergedPerkContributions } from "@/app/SiteMap/perkContributions"
+import { isDifficultyReleased } from "@/data/difficultyLevels"
 import { TREASURE_PERKS } from "../game/treasurePerks"
 
 // What a tomb treasure does for you, in one line: an owned stat/detector perk speaks for itself
@@ -16,7 +17,10 @@ export const useTreasurePerkLabel = () => {
     const owned = describe(perk)
     if (owned) return owned.label
     if (perk.type === "tier-unlock")
-      return t("perks.tier-unlock", { ns: "treasures", tier: t(`difficulty.${perk.tier}`, { ns: "common" }) })
+      return t(isDifficultyReleased(perk.tier) ? "perks.tier-unlock" : "perks.tier-coming-soon", {
+        ns: "treasures",
+        tier: t(`difficulty.${perk.tier}`, { ns: "common" }),
+      })
     if (perk.type === "location-key") return t("perks.location-key", { ns: "treasures" })
     return undefined
   }

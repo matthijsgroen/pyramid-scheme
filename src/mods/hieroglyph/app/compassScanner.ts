@@ -5,6 +5,7 @@ import type { CompassScanner } from "@/app/SiteMap/detectorScanners"
 import { assembleFloor } from "@/game/siteAssembler"
 import { resolveEncounter } from "@/app/families/familyRegistry"
 import { resolveOneWayRealisation } from "@/mods/allOneWayRealisations"
+import { resolveRegionBarrierRealisation } from "@/mods/allRegionBarrierRealisations"
 import { generateNewSeed } from "@/game/random"
 import { hashString } from "@/support/hashString"
 import { useHieroglyphProgress } from "./useHieroglyphProgress"
@@ -122,7 +123,7 @@ export const useHieroglyphCompassScanner = (): CompassScanner => {
                       floor,
                       floorSeed(journeyId, levelIdx, floorIdx),
                       resolveEncounter,
-                      { resolveOneWay: resolveOneWayRealisation }
+                      { resolveOneWay: resolveOneWayRealisation, resolveRegionBarrier: resolveRegionBarrierRealisation }
                     )
                     return r.success ? r.grid : undefined
                   })()

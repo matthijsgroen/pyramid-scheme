@@ -1,0 +1,7 @@
+// LESSON, expert, not buildable yet (region gate): one lever drains a hall.
+
+in -- hub
+hub -- hall
+hall -- out
+hall -[S]
+S toggle @hub
