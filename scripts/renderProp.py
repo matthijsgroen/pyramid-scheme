@@ -1372,34 +1372,42 @@ def prim_plate():
 
 
 def prim_sequencetile():
-    """A sequence tile: a square slab set FLUSH in the paving, a fine incised line round its edge and a
-    plain top. The renderer draws the glyph on that top, so nothing is carved there.
+    """A sequence tile: a square slab set FLUSH in the paving, a fine groove cut into its top a little in
+    from the edge, and a plain top inside it. The renderer draws the glyph on that top, so nothing is
+    carved there, and the groove hugs the edge so the glyph keeps 86% of the tile's width clear.
 
     It is the pressure plate's opposite, and the two must never be read for each other: the plate stands
     proud on a dark gap and takes a stone; this lies level with the floor and is walked on. So nothing
     here may be lifted by the shear — `prim_mat`'s rule that a floor-lying sheet's own thickness draws as
     a dark band and reads as RAISED is the whole design constraint, and the slab is as thin as the mesh
-    allows. What says "tile" rather than "floor" is the border: a line inset from the edge, standing
-    a hair proud of the top (the laws table: a recess sunk flush vanishes into the stone).
+    allows.
 
-    The line is marked `deep`, not VOID: an incised groove is shadowed stone, and black is the plate's
-    gap — the one mark that must stay the plate's alone.
+    THE GROOVE IS REALLY CUT, not a recess sunk inside a solid slab (the laws table: that vanishes into the
+    stone). The slab is a thin base with the top built round the groove as separate pieces — a centre
+    square and four border bars — so the groove is an opening the camera can see down into. Its floor is
+    marked `deep`, and under z + k*y the far wall of the near and far runs faces the viewer, so all four
+    runs draw as a thin dark line. Not VOID: a groove is shadowed stone, and black is the plate's gap —
+    the one mark that must stay the plate's alone.
 
     No `--seat`: like the pool's coping, nothing stands above the floor, so nothing casts. Not spun, like
     `pit`: it is cut to the paving's grid. Lands 56x40 at --scale=1 and is imported at 0.8, 47x33 units:
-    the line is 1.2 units wide there, fine but whole on all four sides."""
-    t, h = 0.80, 0.012
-    inset, line = 0.06, 0.018
-    mark(box(t, t, h, z=h / 2), "body")
-    inner = t - 2 * inset
-    z = h + 0.001
-    for sx, sy, x, y in (
-        (inner, line, 0, -(inner - line) / 2),
-        (inner, line, 0, (inner - line) / 2),
-        (line, inner, -(inner - line) / 2, 0),
-        (line, inner, (inner - line) / 2, 0),
-    ):
-        mark(box(sx, sy, 0.002, x=x, y=y, z=z), "deep")
+    the groove is about one unit wide there, fine but whole on all four sides."""
+    t, h, cut = 0.80, 0.012, 0.007  # the tile, its thickness, and how deep the groove is cut
+    rim, line = 0.04, 0.016  # the border outside the groove, and the groove's width
+    base = h - cut
+    mark(box(t, t, base, z=base / 2), "body")
+    zt = base + cut / 2
+    # The border round the groove: near and far bars full width, the sides between them.
+    for sx, sy, x, y in ((t, rim, 0, -(t - rim) / 2), (t, rim, 0, (t - rim) / 2),
+                         (rim, t - 2 * rim, -(t - rim) / 2, 0), (rim, t - 2 * rim, (t - rim) / 2, 0)):
+        mark(box(sx, sy, cut, x=x, y=y, z=zt), "body")
+    centre = t - 2 * (rim + line)
+    mark(box(centre, centre, cut, z=zt), "body")
+    # The groove's floor, a skin on the base inside the opening, well below the top.
+    g = t - 2 * rim  # the groove's outer edge
+    for sx, sy, x, y in ((g, line, 0, -(g - line) / 2), (g, line, 0, (g - line) / 2),
+                         (line, g - 2 * line, -(g - line) / 2, 0), (line, g - 2 * line, (g - line) / 2, 0)):
+        mark(box(sx, sy, 0.001, x=x, y=y, z=base + 0.0005), "deep")
     return join_all()
 
 

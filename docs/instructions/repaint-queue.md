@@ -2763,7 +2763,7 @@ The pieces a player reads to solve a floor: a pressure plate that takes a stone,
 lit or not, and a sequence tile stepped on in order. They are MECHANICS, so they look the same at every
 rank — a player must never relearn which thing is which when the tomb gets richer — and live in
 `tiles/default/`, like the lever and the drops. The scaffolds are rendered in the priest's stone, the
-same as theirs.
+same as theirs, but each prompt closes on a rank-neutral material line rather than the priest's.
 
 **Each pair is one render.** `plate` is `plateStone` with `--drop=limestone`, and `torchUnlit` is
 `torchLit` with `--drop=accent`, so the two tiles of a pair share one frame and one mask below the part
@@ -2772,8 +2772,8 @@ one is imported at a smaller `--scale` (the lit one's times the ratio of their d
 to keep its shaft the same height as the lit one's. See `prim_plate` and `prim_torch`.
 
 **The plate and the sequence tile must never be read for each other.** The plate is a RAISED slab in a
-black gap and carries no sign; the sequence tile lies FLUSH, has a fine incised line round it, and its
-top is left plain because the renderer draws the glyph on it.
+black gap and carries no sign; the sequence tile lies FLUSH, has a fine groove cut round it near its edge,
+and its top is left plain because the renderer draws the glyph on it.
 
 ### `default/plate` — a pressure plate set into the floor
 
@@ -2788,8 +2788,7 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a PRESSURE PLATE set into a tomb floor, seen from above. One square SLAB of dark basalt stands a
-finger's width above the paving, its top worn smooth and slightly dished in the middle where it has been
-stepped on for centuries. All round it runs a narrow black GAP, the slot it sinks into: a clean dark line on
+finger's width above the paving, its top flat and worn smooth where it has been stepped on for centuries. All round it runs a narrow black GAP, the slot it sinks into: a clean dark line on
 every side, unbroken, that says this slab moves. No carving, no glyph and no handle on it.
 
 Basalt worn dark and faintly polished on the slab's top, with pale natron dust settled into the gap and into
@@ -2802,7 +2801,7 @@ darkest thing in the picture.
 
 The shadow is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
 
-No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope.
+No ground plane and no background: the object stands alone on the magenta. Old worn stone and timber, dust settled in every crack; nothing that belongs to one tomb more than another; no gold.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -2826,8 +2825,7 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: a PRESSURE PLATE set into a tomb floor, seen from above. One square SLAB of dark basalt stands a
-finger's width above the paving, its top worn smooth and slightly dished in the middle where it has been
-stepped on for centuries. All round it runs a narrow black GAP, the slot it sinks into: a clean dark line on
+finger's width above the paving, its top flat and worn smooth where it has been stepped on for centuries. All round it runs a narrow black GAP, the slot it sinks into: a clean dark line on
 every side, unbroken, that says this slab moves. On the slab rests one rough block of pale LIMESTONE, about
 the size of a large loaf, set down at a slight angle: chisel-marked, chipped at one corner, much paler than
 the basalt under it. No carving, no glyph and no handle on the slab.
@@ -2842,7 +2840,7 @@ darkest thing in the picture.
 
 The shadow is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
 
-No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope.
+No ground plane and no background: the object stands alone on the magenta. Old worn stone and timber, dust settled in every crack; nothing that belongs to one tomb more than another; no gold.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -2881,7 +2879,7 @@ steps, the collar, one side of the shaft — and everything turned away from it 
 
 The shadow at the holder's foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
 
-No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope.
+No ground plane and no background: the object stands alone on the magenta. Old worn stone and timber, dust settled in every crack; nothing that belongs to one tomb more than another; no gold.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -2922,7 +2920,7 @@ is a flat warm colour: no glow, no rays and no halo round it.
 
 The shadow at the holder's foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
 
-No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope.
+No ground plane and no background: the object stands alone on the magenta. Old worn stone and timber, dust settled in every crack; nothing that belongs to one tomb more than another; no gold.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -2933,7 +2931,7 @@ yarn import-tile art/masters/props/default/torchLit.webp --tier=default --name=t
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.6
 ```
 
-### `default/sequenceTile` — a carved floor tile, stepped on in order
+### `default/sequenceTile` — a flush floor tile, stepped on in order
 
 **No `--seat`:** the tile lies flush, so nothing on it stands above the floor to cast, and a footprint
 under a flat thing reads as a second step (the pool's coping is the same case). `--scale=0.8` makes it
@@ -2950,21 +2948,21 @@ A wall-less product shot of a single object, painted in flat matte gouache, no b
 Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
 
 The object: one square floor TILE of dark basalt, seen from above, set flush with the paving it belongs to:
-it does not stand up and nothing about it is raised. A fine incised LINE runs round it a little in from its
-edge, one thin groove cut into the stone on all four sides. Inside that line the top is PLAIN, flat and
-smooth, with nothing carved or painted on it — leave the top plain: a sign is added later.
+it does not stand up and nothing about it is raised. A fine GROOVE is cut into its top just in from the
+edge, one thin dark line running unbroken round all four sides. Inside that groove the top is PLAIN, flat
+and smooth, with nothing carved or painted on it — leave the top plain: a sign is added later.
 
 Basalt worn smooth and faintly polished where feet have crossed it, with pale natron dust settled into the
-incised line. No cracks across the top and no marks on it.
+groove. No cracks across the top and no marks on it.
 
 Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
 
-Light it as one low lamp in a closed tomb. The tile's top takes it evenly; the incised line stays a thin
-dark thread round it.
+Light it as one low lamp in a closed tomb. The tile's top takes it evenly; the groove stays a thin dark
+thread round it.
 
 The shadow is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
 
-No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope.
+No ground plane and no background: the object stands alone on the magenta. Old worn stone and timber, dust settled in every crack; nothing that belongs to one tomb more than another; no gold.
 ```
 
 Then, once the return is in `~/Downloads`:
