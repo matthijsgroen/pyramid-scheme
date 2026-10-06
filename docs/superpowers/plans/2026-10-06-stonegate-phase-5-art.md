@@ -21,9 +21,12 @@ in `art/rebuild.sh`. The explorer's poses are edits of his walking sheet (`yarn 
 
 ## Global Constraints
 
-- **Tier:** the props are painted for the **expert** rank first (`--tier=expert`), since Djoser and stoneGate
-  are expert. That is the priest's material: dark basalt worn smooth, pale natron dust, bronze and old rope.
-  The other ranks follow later as their own items. The explorer is shared art: `--tier=default`, never per rank.
+- **Tier: every mechanic piece is shared art, `--tier=default`, the same at every difficulty** (designer,
+  2026-10-06). A player never relearns per rank what a plate, a stone, a torch, a sequence tile or a narrow
+  passage looks like. Rank-dressed props (the brazier, task 7) are decor; mechanics are not, as #315 already
+  did for the lever and the zipline. Material: the rank-neutral wording the existing `default/` mechanic
+  entries in `repaint-queue.md` use. Queue keys are `default/<name>`. Where a task below still says
+  `--tier=expert` or `expert/<name>`, read `default`. The explorer is shared art too.
 - **Prompt rules:** from `repaint-queue.md` l.1-110 and `prop-pipeline.md` l.537-560:
   - background magenta `#FF00FF`;
   - frame named ("Portrait, two units wide by three tall… Do not re-compose it into a square");
