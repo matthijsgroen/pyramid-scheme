@@ -8,7 +8,7 @@ export type RidePoses = Record<"e" | "n" | "s", RidePose>
 /** Read off the drop art, then tuned by eye in the Zipline ride story. The handle is the sprite's top edge.
  * North and south are not read off their art yet. */
 export const RIDE_POSES: RidePoses = {
-  e: { from: { x: 112, y: -46 }, to: { x: -65, y: -22 }, scale: 1 },
+  e: { from: { x: 112, y: -46 }, to: { x: -65, y: -25 }, scale: 0.75 },
   n: { from: { x: 0, y: -40 }, to: { x: 0, y: -40 }, scale: 1 },
   s: { from: { x: 0, y: -40 }, to: { x: 0, y: -40 }, scale: 1 },
 }
