@@ -1,6 +1,6 @@
 # Stones on plates: acceptance criteria
 
-For the engine session. The design is in `docs/game-design/lock-curriculum.md` ("Stones"); the tool side
+Built in phases; see the roadmap. The design is in `docs/game-design/lock-curriculum.md` ("Stones"); the tool side
 (`yarn lock`, `src/game/lockNotation.ts`, `src/game/lockWalkSpec.ts`) already reads, walks and draws it.
 Scope is the full proposal: stones, doors on several plates, and passages a stone cannot pass, with
 stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
@@ -29,12 +29,12 @@ stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
 
 ## 1. Contract
 
-- [ ] The shared `Lock` holds
+- [x] The shared `Lock` holds
       `weights?: { plates: Record<id, { in: RegionId, stone: boolean, opens: { weighted: BarrierId[], empty: BarrierId[] } }> }`.
       Stones are alike and have no ids: a stone is authored as the plate it starts on (`stone: true`). A
       plate's `opens` has the same shape as a toggle's, keyed by the plate's two states.
       `mechanic-contract.md` gets a section for it, beside the other controls.
-- [ ] Gate owners accept plate ids and `unladen`, on a gate between two regions or on a barred region.
+- [x] Gate owners accept plate ids and `unladen`, on a gate between two regions or on a barred region.
 - [ ] The engine refuses a lock where a gate needs stones on more plates than the lock has stones, where
       a plate stands in the region it would bar, or where a plate stands somewhere no corridor reaches.
       These are the refusals `parseLock` already makes.
@@ -42,9 +42,9 @@ stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
 
 ## 2. Solver
 
-- [ ] The engine's solver walks a stone arrangement as state: which plates hold a stone, and whether the
+- [x] The engine's solver walks a stone arrangement as state: which plates hold a stone, and whether the
       hand holds one.
-- [ ] The engine's solver follows the same stone rules as the tool's walk (lifting, setting down, `:empty`,
+- [x] The engine's solver follows the same stone rules as the tool's walk (lifting, setting down, `:empty`,
       `unladen`, no stone past the stairs or the way out), each tested on a small made-up lock. No test
       pins a catalogue lock; `yarn lock` checks those.
 - [ ] A floor is solvable from every arrangement the player can leave it in, so a return visit can never
@@ -52,13 +52,13 @@ stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
 
 ## 3. Carve and bake
 
-- [ ] Each plate is a node in its region.
+- [x] Each plate is a node in its region.
 - [ ] An `unladen` passage binds to a realisation like any gate (`mechanic-contract.md`, "Binding a
       realisation"): a zipline, or a **narrow passage**, which is a new realisation with its own art.
 - [ ] On a floor with stones, binding a zipline or a narrow passage where the lock lets a stone through
       (no `unladen` on that passage) is refused. The art never decides what the walk sees; the binding
       makes it match.
-- [ ] With the realisation mod off, the carve is identical: bare nodes, open corridors.
+- [x] With the realisation mod off, the carve is identical: bare nodes, open corridors.
 - [ ] The four stone locks and the stoneOnAPlate lesson bake on the dev floor (`src/worldGen/spec/dev.ts`),
       and the world bake stays byte-identical for every floor that has no stones.
 
@@ -129,8 +129,9 @@ tucked over his right shoulder into the pack strap, flame above his head. Same f
 
 ## 5. Save
 
-- [ ] Where each stone lies is saved per floor, keyed by authoring address like other floor state, and
-      survives leaving the floor and reloading the app.
+- [ ] The arrangement is the weights mechanism's state in `journey.mechanismStates`, filed under the first
+      plate's slot (`xplate:<id>`), which also saves a stone in hand, so there is no new field. It survives
+      leaving the floor and reloading the app.
 - [ ] A stone in hand is saved too; a reload mid-carry resumes carrying.
 - [ ] A save without stone state reads as the authored start arrangement. The field is additive; no
       reset.

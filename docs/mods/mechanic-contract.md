@@ -34,6 +34,7 @@ control; it is another control.
 | **activator** | two, no way back | the torch; also a floor key, whose operation is taking it from a chest |
 | **sequence** | progress 0..n, with a reset | tiles walked in the right order; see §3.1 |
 | **fork-switch** | rest, plus one per exit of its fork | governs its own fork; see §4 |
+| **weights** | one per stone arrangement | the stones on plates; see §3.2 |
 
 **one-way** is an effect with no control: always on, directed, and **always taken through a prompt** so
 the player never crosses by accident and finds they cannot come back. Every realisation of it must
@@ -79,6 +80,30 @@ waiting for, the way a ward gate already shows the key it wants.
 - The reset is operated **at the door, not where the mechanic stands.** `LockSpec` already carries an
   `at` per transition, so the advance steps happen at each tile's region and the reset at the gate's —
   see §9.
+
+### 3.2 Stones on plates
+
+- **The lock's `weights` field** lists its plates: each has a region, whether a stone starts on it, and the
+  gates it opens while weighted or while empty. Stones are alike and have no ids; a stone is authored as the
+  plate it starts on. A gate owner is a plate id, or `unladen` (empty hands), under `and` or `any`.
+- **One control per lock.** `compileLock` turns the whole `weights` field into one control, id
+  `<namespace>.stones`, because a lift and a set-down move one shared arrangement, not one plate. Its states
+  are the arrangements (`stoneArrangements`): which plates hold a stone, and whether the hand holds one.
+- **The record is built like a sequence's.** Placed-only: a plate works only the moves made at its own cell.
+  The record stands on the first plate, and every plate carries `worksMechanism` pointing at it, so the
+  arrangement is one state saved once.
+- **Gates read the arrangement.** A gate is open under every arrangement where its stone terms hold, and the
+  door folds in its other owners by the gate's mode. `unladen` holds in every arrangement without a stone in
+  hand.
+- **The way out is left with empty hands.** `leaveWith` on the walk spec names the states that forbid
+  leaving: the way-out region may be entered carrying, only leaving (and finishing) needs empty hands. A
+  stone never leaves its floor, and `yarn lock` never reports a route that ends with one in hand.
+- **Binding.** The binding key is `weights`; its realisation is `stonePlate` (topology mod), which draws
+  nothing of its own: plates are read from the cell's `plate`. A plate needs a free node in its region, and
+  placement refuses naming the plate when there is none.
+- **With the topology mod off** the plates are bare ground and the carve is otherwise identical; the doors
+  that only a held stone opens stay shut, and the doors that stand open with no stone held (`unladen`,
+  `:empty` on an empty plate) stand open.
 
 ### Impassable regions
 

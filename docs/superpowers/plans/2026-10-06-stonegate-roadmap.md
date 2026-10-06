@@ -33,7 +33,7 @@ arrangements: which plates hold a stone, and whether the hand holds one. For exa
 
 | # | Phase | Ships | Depends on |
 | --- | --- | --- | --- |
-| 1 | **Stones in the engine** (plan verified 2026-10-06; includes the `stonePlate` realisation and mod-off stripping) | `weights` in the shared `Lock`; compiled to one weights control; plates placed on the carve with the record; `floorLock` walks it; a `.lock` file read at bake; twoStones (no gate loop) baked on the dev floor | — |
+| 1 | **Stones in the engine** (done; also ships the `stonePlate` realisation and plates left bare with the mod off, pulled forward from phase 3 because the dev bake's toggle-off sweep needs it) | `weights` in the shared `Lock`; compiled to one weights control; plates placed on the carve with the record; `floorLock` walks it; a `.lock` file read at bake; twoStones (no gate loop) baked on the dev floor | — |
 | 2 | **Play with stones** | the Lock playground story; "Lift the stone" / "Set the stone on the plate" prompts; plate drawn empty or full (placeholder art); a blocked walk says why (narrow passage, stairs, way out); door shows its plates; explorer `carrying` with frame fallback | 1 |
 | 3 | **Narrow passage** | a realisation for `unladen` gates (registry beside `oneWayRealisation`), drawn as a narrow passage; a zipline or narrow passage where a stone could pass is refused | 1 |
 | 4 | **Gate loops in the carve** | `topologyFaults`, `offRouteChains` and the fork seams accept a gated join that closes a loop; stoneGate bakes on the dev floor | 1 |
@@ -79,6 +79,14 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
 - **Placement is Djoser, `expert_4`** (designer, 2026-10-06). It needs `floorLocks` from PR #315 (branch
   `world/authoring-locks`, not merged yet). A shipped floor that changes shape falls under the
   save-migration rules: phase 6 decides between a migration and the world reshape release.
+
+## Open after phase 1
+
+- The §1 refusals "a gate needs more stones than the lock has", "a plate in the region it bars" and "a plate
+  where no corridor reaches" do not exist yet; only `plateNamesNoRegion` and `carryWithoutStones` do.
+- `floorLockWalk.ts` compose drops `leaveWith`. It must carry it before any floor nests a stone lock (phase 6).
+- masonsRamp, counterweight and stoneOnAPlate are not baked on the dev floor and are in no phase yet.
+- Gate faces (`gateFace.ts`) do not know plate homes yet (phase 2).
 
 ## Open per phase
 
