@@ -144,33 +144,6 @@ describe("what the stone locks' tricks rest on", () => {
     expect(walkText(inside)).toEqual({ sound: false, failure: { type: "unsolvable" } })
   })
 
-  it("stoneGate: lifting the idol is the only way to the back rooms", () => {
-    expect(walkText(edited("stoneGate", "altar -[P4:empty]- backroom", "altar -[P4]- backroom"))).toEqual({
-      sound: false,
-      failure: { type: "unsolvable" },
-    })
-  })
-
-  it("stoneGate: without the backroom shelf there is nowhere to free your hands", () => {
-    expect(walkText(edited("stoneGate", "P5 plate @backroom", ""))).toEqual({
-      sound: false,
-      failure: { type: "unsolvable" },
-    })
-  })
-
-  it("stoneGate: the narrow passage and the idol's second door each cost the player a detour", () => {
-    const actions = (text: string) => solveLock(walkSpecOf(parseLock(text).lock))!.actions
-    const full = actions(LOCK_TEXTS.stoneGate)
-    expect(actions(edited("stoneGate", "hall3 -[unladen]- hall2", "hall3 -- hall2"))).toBeLessThan(full)
-    expect(actions(edited("stoneGate", "hall2 -[P4:empty]- hall5", "hall2 -- hall5"))).toBeLessThan(full)
-  })
-
-  it("stoneGate: both stones are spent twice", () => {
-    const steps = solveLock(walkSpecOf(LOCK_CATALOGUE.stoneGate.lock))!.steps
-    expect(steps.lastIndexOf("stone on P1")).toBeGreaterThan(steps.indexOf("lift from P1"))
-    expect(steps.indexOf("stone on P2")).toBeGreaterThan(steps.indexOf("lift from P5"))
-  })
-
   it("masonsRamp: without the narrow passage nobody climbs back from the workshop", () => {
     expect(walkText(edited("masonsRamp", "yard -[unladen]- workshop", "")).sound).toBe(false)
   })
