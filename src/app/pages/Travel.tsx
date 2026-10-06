@@ -20,7 +20,7 @@ import { SaveTransfer } from "@/app/dev/SaveTransfer"
 
 import { journeyCardSlots } from "./journeyCardSlots"
 import "@/mods/registerModApps" // populate the journey-card slot registry, as Collection does for its sections
-import { availablePyramidJourneyIds } from "./journeyAvailability"
+import { availablePyramidJourneyIds, comingSoonDifficulty } from "./journeyAvailability"
 import { useMergedJourneyContributions } from "./journeyContributions"
 
 export const TravelPage: FC<{
@@ -138,6 +138,8 @@ export const TravelPage: FC<{
         : availablePyramidJourneyIds(journeys, heldKeys, id => (getJourney(id)?.completionCount ?? 0) > 0),
     [journeys, heldKeys, getJourney, isDevelopMode]
   )
+  const comingSoonTier = comingSoonDifficulty(heldKeys)
+
   // The newest one open to the player — the card that shows its details expanded.
   const newestAvailableId = useMemo(
     () => journeys.filter(j => availableJourneyIds.has(j.id)).at(-1)?.id,
@@ -327,6 +329,16 @@ export const TravelPage: FC<{
                   </JourneyCard>
                 )
               })}
+              {comingSoonTier && (
+                <div className="rounded-lg border-2 border-dashed border-amber-400 bg-amber-50 p-4 text-left">
+                  <div className="mb-2 font-pyramid text-lg font-bold text-amber-800">
+                    🚧 {t("ui.tierComingSoonTitle", { tier: t(`difficulty.${comingSoonTier}`) })}
+                  </div>
+                  <p className="text-sm text-amber-900">
+                    {t("ui.tierComingSoon", { tier: t(`difficulty.${comingSoonTier}`) })}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
