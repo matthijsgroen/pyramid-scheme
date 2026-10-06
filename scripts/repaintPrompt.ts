@@ -10,8 +10,10 @@
  * money, so the prompt is pasted by hand. What that leaves worth automating is the fetching — finding the
  * right block in a 950-line document, and locating two files in a folder of two hundred renders.
  *
- * `docs/instructions/repaint-queue.md` is the single source: this parses it rather than holding a second
- * copy of anything, so a prompt edited there is the prompt that gets pasted.
+ * Two queues feed it, because the two kinds of art are owed in the same sense and a person with an hour
+ * at the generator wants one list: `docs/instructions/repaint-queue.md` for tiles, and
+ * `docs/game-design/story/character-art-prompts.md` for the story's people. Both are parsed rather than
+ * copied, so a prompt edited there is the prompt that gets pasted.
  */
 
 import { execFileSync } from "child_process"
@@ -20,8 +22,25 @@ import { homedir } from "os"
 import { join } from "path"
 
 const QUEUE = "docs/instructions/repaint-queue.md"
+const CHARACTERS = "docs/game-design/story/character-art-prompts.md"
+/** Attached to every character prompt: the style and scale both of them are drawn against. */
+const ANCHOR = "src/assets/fez-250.png"
 
-type Entry = { key: string; title: string; attachments: string[]; prompt: string }
+type Entry = {
+  key: string
+  title: string
+  attachments: string[]
+  prompt: string
+  /** Where the finished file goes, and what turns the download into it. */
+  out: string
+  importedBy: string
+  /** Already on disk. Off the owed list, still fetchable by key — a landed file can need rolling again. */
+  drawn?: boolean
+  /** Why the landed file is not good enough. Set by a `**Re-roll:**` line, and puts it BACK on the list. */
+  reroll?: string
+  /** The generator return this was imported from, kept because it cannot be generated again. */
+  master?: string
+}
 
 /** Every `### n. \`tier/kind\` — title` block, with its attachment list and its first fenced block. */
 const parse = (md: string): Entry[] =>
@@ -33,10 +52,100 @@ const parse = (md: string): Entry[] =>
       const prompt = /```\n([\s\S]*?)\n```/.exec(block)?.[1]
       if (!key || !prompt) return []
       const attachments = [...block.matchAll(/`(~\/[^`]+\.png)`/g)].map(m => m[1].replace("~", homedir()))
-      return [{ key, title: (block.split("\n")[0] ?? key).trim(), attachments, prompt }]
+      return [
+        {
+          key,
+          title: (block.split("\n")[0] ?? key).trim(),
+          attachments,
+          prompt,
+          out: join("src/assets/tiles", key.split("/")[0], `${key.split("/")[1]}.png`),
+          importedBy: `yarn import-tile <file> --tier=${key.split("/")[0]} --name=${key.split("/")[1]} --slot=prop`,
+        },
+      ]
     })
 
-const entries = parse(readFileSync(QUEUE, "utf8"))
+/** A blockquote's text, unquoted. One per entry, and one per preamble. */
+const quoted = (block: string): string =>
+  block
+    .split("\n")
+    .filter(line => line.startsWith(">"))
+    .map(line => line.replace(/^>\s?/, ""))
+    .join("\n")
+    .trim()
+
+/**
+ * The character prompts, composed.
+ *
+ * That document states its preamble once and has every entry open with `[preamble]` — which is right for
+ * reading it and useless for pasting it, so the token is substituted here. An entry whose file already
+ * exists is not owed and does not appear; the queue is what is left to draw.
+ *
+ * **Attachments are the anchor plus the last file in the set that exists**, which is the loop the document
+ * asks for: one at a time, and the accepted file becomes the reference for the next.
+ *
+ * An entry whose file exists is marked `drawn` rather than dropped: it leaves the owed list, and
+ * `yarn repaint <key>` still hands it over. The explorer's three came back off-palette and had to be rolled
+ * again, which is not a state a queue should have no way to express.
+ *
+ * A `**Re-roll:**` line puts a drawn entry BACK on the list with its reason beside it. Landing a file the
+ * set cannot keep otherwise looks exactly like landing a good one, and the only thing tracking the
+ * difference is whoever remembers — which is not a queue.
+ */
+const parseCharacters = (md: string): Entry[] => {
+  const sections = md.split(/^## /m)
+  const section = (n: string) => sections.find(s => s.startsWith(n)) ?? ""
+  const preamble = quoted(section("0."))
+  // The measured fills, so "cream cargo trousers" stops being the generator's to interpret.
+  const palette = quoted(section("1.").split(/^### /m)[0])
+  const ghostPreamble = quoted(section("2.").split(/^### /m)[0]).replace(/^\*\*Ghost preamble\*\*[^:]*:\s*/, "")
+  const groups = [
+    { group: "portrait", body: section("1.") },
+    { group: "ghost", body: section("2.") },
+  ]
+  const drawn: Entry[] = []
+  for (const { group, body } of groups)
+    for (const block of body.split(/^### /m).slice(1)) {
+      const file = /^`([\w-]+)-250\.png`/.exec(block)?.[1]
+      if (!file) continue
+      const name = file.replace(/^ghost-/, "")
+      const out = join("src/assets", `${file}-250.png`)
+      // An entry may name its own references in backticks; most want the default pair.
+      const named = [...block.matchAll(/`((?:art|src)\/[^`]+\.(?:jpe?g|png))`/g)].map(m => m[1])
+      const reroll = /\*\*Re-roll:\*\*\s*([^\n]+)/.exec(block)?.[1]?.trim()
+      drawn.push({
+        key: `${group}/${name}`,
+        reroll,
+        title: (block.split("\n")[0] ?? file).trim(),
+        // Filled in below when the entry names none: the newest file that exists BEFORE it in this order.
+        attachments: named,
+        // The token is followed by the entry's own first sentence, so the break goes in with it: run
+        // together, the preamble's last rule reads as part of the subject. Bold markers go — they are
+        // for whoever reads the document, and the generator is handed plain text.
+        prompt: quoted(block)
+          .replace(/\[preamble \+ ghost preamble\]\s*/, `${preamble}\n\n${ghostPreamble}\n\n`)
+          .replace(/\[preamble\]\s*/, `${preamble}\n\n`)
+          .replace(/\[palette\]\s*/, palette ? `${palette}\n\n` : "")
+          .replace(/\*\*/g, "")
+          .trim(),
+        out,
+        master: join("art/masters/characters", `${file}.jpeg`),
+        importedBy: `yarn import-portrait art/masters/characters/${file}.jpeg --name=${file}`,
+      })
+    }
+  let reference: string | undefined
+  const withReferences: Entry[] = []
+  for (const entry of drawn) {
+    const landed = existsSync(entry.out)
+    const attachments = entry.attachments.length > 0 ? entry.attachments : [ANCHOR, ...(reference ? [reference] : [])]
+    withReferences.push({ ...entry, attachments, drawn: landed })
+    // Hand over the MASTER where there is one: the sprite is 250px wide, and a reference that small is
+    // most of the detail gone before the generator sees it (art/README.md).
+    if (landed) reference = entry.master && existsSync(entry.master) ? entry.master : entry.out
+  }
+  return withReferences
+}
+
+const entries = [...parse(readFileSync(QUEUE, "utf8")), ...parseCharacters(readFileSync(CHARACTERS, "utf8"))]
 const wanted = process.argv[2]
 
 /** Rank order, poorest tomb first, which is the order the ranks were painted in and the order the
@@ -49,20 +158,21 @@ if (!wanted) {
   // for free, until the patron entries arrived: those are one section covering five ranks, because what
   // orders them is rooms rather than whose tomb they are. Working a rank at a time is how the ranks
   // actually get finished, and it is also how the material reference stays the same between pastes.
-  console.log(`${entries.length} prompts owed — \`yarn repaint <key>\` for one of:\n`)
+  const owed = entries.filter(e => !e.drawn || e.reroll)
+  console.log(`${owed.length} prompts owed — \`yarn repaint <key>\` for one of:\n`)
   const rank = (key: string) => {
     const at = TIERS.indexOf(key.split("/")[0])
     return at < 0 ? TIERS.length : at
   }
   let last = ""
-  for (const e of [...entries].sort((a, b) => rank(a.key) - rank(b.key))) {
+  for (const e of [...owed].sort((a, b) => rank(a.key) - rank(b.key))) {
     const tier = e.key.split("/")[0]
     if (tier !== last) console.log(`${last ? "\n" : ""}  ${tier}`)
     last = tier
     // The heading repeats the key, and under a rank header printing it twice more is noise: the column
     // gives the name and the rest of the line says what the thing is.
     const what = e.title.replace(/`/g, "").replace(/^\S+\s+—\s+/, "")
-    console.log(`    ${(e.key.split("/")[1] ?? e.key).padEnd(22)} ${what}`)
+    console.log(`    ${(e.key.split("/")[1] ?? e.key).padEnd(22)} ${e.reroll ? `RE-ROLL: ${e.reroll}` : what}`)
   }
   process.exit(0)
 }
@@ -88,7 +198,11 @@ if (!check) {
   execFileSync("pbcopy", { input: entry.prompt })
 }
 console.log(
-  `${entry.key} — ${check ? `${entry.prompt.split("\n").length} lines` : `prompt copied to the clipboard (${entry.prompt.split("\n").length} lines)`}\n`
+  `${entry.key}${entry.drawn ? " (already drawn — this is a re-roll)" : ""} — ${
+    check
+      ? `${entry.prompt.split("\n").length} lines`
+      : `prompt copied to the clipboard (${entry.prompt.split("\n").length} lines)`
+  }\n`
 )
 
 const missing = entry.attachments.filter(p => !existsSync(p))
@@ -102,5 +216,5 @@ if (missing.length > 0) {
   console.log("\nBoth revealed in the Finder — drag them in, paste, and put the download in ~/Downloads.")
 }
 
-const out = join("src/assets/tiles", entry.key.split("/")[0], `${entry.key.split("/")[1]}.png`)
-console.log(`\nWhen it lands I import it and measure it; the tile is ${out}.`)
+console.log(`\nWhen it lands I import it and measure it; the file is ${entry.out}.`)
+console.log(`  ${entry.importedBy}`)

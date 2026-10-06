@@ -8,6 +8,7 @@ import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { ProgressionAPI } from "@/app/state/useProgression"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import type { useInventory } from "@/app/Inventory/useInventory"
+import type { SolveOutcome } from "@/app/reactions/reactionContributions"
 
 // The one registry for every encounter family (puzzle, trap, shop, treasure). Lives in
 // src/app/ (not src/game/) because Component needs ProgressionAPI/JourneyAPI — FamilyMeta
@@ -95,7 +96,7 @@ export type FamilyPlugin<T = unknown> = {
     journeys: JourneyAPI
     inventory: InventoryAPI
     applyReward: (reward: TreasureReward) => void
-    onSolved: () => void
+    onSolved: (outcome?: SolveOutcome) => void
     onCancel: () => void
   }>
 }

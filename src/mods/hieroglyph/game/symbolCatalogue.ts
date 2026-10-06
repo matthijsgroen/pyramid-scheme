@@ -359,7 +359,31 @@ export const egyptianArtifacts = [
   },
 ]
 
-export const allItems = [...egyptianDeities, ...egyptianProfessions, ...egyptianAnimals, ...egyptianArtifacts]
+/**
+ * Sounds, not things — the one group that is not a noun.
+ *
+ * Every other sign in the catalogue names something: a god, a trade, an animal, a jar. These spell.
+ * They are never tableau symbols (nothing in `objectsForStories` reaches them), so they carry no
+ * fragment spread and no arithmetic — a sign here is granted whole by one authored chest, and its
+ * only use is reading a wall. See `src/mods/story/game/reading/walls.ts`.
+ */
+export const egyptianSigns = [
+  {
+    id: "s1",
+    name: "Reed Leaf",
+    symbol: "𓇋",
+    description:
+      "A single reed, standing for the sound i. Added to a god's name it makes a man's: Horus becomes Hori, he of Horus.",
+  },
+]
+
+export const allItems = [
+  ...egyptianDeities,
+  ...egyptianProfessions,
+  ...egyptianAnimals,
+  ...egyptianArtifacts,
+  ...egyptianSigns,
+]
 // Helper function to get inventory item by ID
 export const getInventoryItemById = (id: string) => {
   return allItems.find(item => item.id === id)

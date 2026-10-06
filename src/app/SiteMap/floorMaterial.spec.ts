@@ -7,7 +7,8 @@ import { ALL_STATES } from "./tileRegions"
 
 // A floor is not all one tier. starter_1's ward-chest teasers are authored at junior on purpose
 // (spec/starter.ts), so its first floor is starter stone with a junior pocket gated behind a junior
-// key — and walking through that gate has to say so, in the material.
+// key — and walking through that gate has to say so, in the material. The same floor also holds the
+// Sphinx, whose pocket is wizard: the last stone in the game, cut into the first pyramid.
 const starterFloorOne = () => {
   const floor = generatedWorldConfigs["starter_1"]?.flat()[0]
   if (!floor) throw new Error("no starter_1 floor to read")
@@ -33,7 +34,7 @@ describe("a floor is built of the tiers its sections were authored at", () => {
     // A corridor used to carry no tier at all, so a passage into a junior pocket had no way to say
     // which stone it was cut through.
     expect(untiered).toBe(0)
-    expect([...tiers].sort()).toEqual(["junior", "starter"])
+    expect([...tiers].sort()).toEqual(["junior", "starter", "wizard"])
   })
 
   it("gives the gated pocket its own stone, rooms as well as corridors", () => {
@@ -42,7 +43,7 @@ describe("a floor is built of the tiers its sections were authored at", () => {
     const grid = revealAll(starterFloorOne())
     const regions = tileRegionsFor(grid, buildRoomClaims(grid))
 
-    expect([...regions.keys()].sort()).toEqual(["junior", "starter"])
+    expect([...regions.keys()].sort()).toEqual(["junior", "starter", "wizard"])
 
     const junior = regions.get("junior")!
     const rects = (part: Record<string, unknown[]>) => ALL_STATES.flatMap(state => part[state] ?? [])

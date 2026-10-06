@@ -18,6 +18,10 @@ export const useExpeditionIntro = ({ isTomb, hasBlockedBlocks, showConversation 
       showConversation("tombTutorial")
       return
     }
+    // Only the teaching. The journey's own arrival beat is about the PLACE and plays on the map as
+    // the player sets off (`useJourneyArrival`) — here it landed over a board of numbered blocks,
+    // in whichever of the journey's pyramids happened to be opened first. `pyramidIntro` is about
+    // this board, plays once ever, and is the only thing that explains the arithmetic.
     showConversation("pyramidIntro")
     if (hasBlockedBlocks) showConversation("pyramidBlockedBlocks")
   }, [isTomb, showConversation, hasBlockedBlocks])

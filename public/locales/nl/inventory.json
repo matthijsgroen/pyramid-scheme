@@ -208,7 +208,7 @@
     },
     "art6": {
       "name": "Canopische Kruik",
-      "description": "Heilige kruik met een beschermerskop als deksel \u2014 er stonden er vier rond een kist, op wacht."
+      "description": "Heilige kruik met een beschermerskop als deksel — er stonden er vier rond een kist, op wacht."
     },
     "art7": {
       "name": "Scepter",
@@ -237,6 +237,12 @@
     "art15": {
       "name": "Uraeuskroon",
       "description": "Koninklijke hoofdtooi met de beschermende cobra, gedragen door farao's als goddelijke bescherming."
+    }
+  },
+  "signs": {
+    "s1": {
+      "name": "Rietblad",
+      "description": "Eén riet, voor de klank i. Achter de naam van een god maakt het de naam van een mens: Horus wordt Hori, hij van Horus."
     }
   }
 }
