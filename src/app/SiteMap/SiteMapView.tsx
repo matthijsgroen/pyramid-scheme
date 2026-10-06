@@ -11,6 +11,8 @@ import type {
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { isSealedWayOut, oneWayRuns, revealAll } from "../../game/gridNavigation"
 import { ExplorerDot, LightPool } from "./ExplorerDot"
+import { ZiplineRider } from "./ZiplineRider"
+import type { Ride } from "./useZiplineRide"
 import { driftsFor, grassMatsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
 import {
@@ -102,6 +104,8 @@ type Props = {
   explorerPos?: readonly [number, number]
   /** The explorer is mid-span and drawn nowhere until he lands. */
   explorerHidden?: boolean
+  /** A zipline being ridden: drawn as one slide beside the explorer, who is hidden meanwhile. */
+  ride?: Ride | null
   /** Current floor index. Keys the explorer dot so a floor switch remounts it (instant snap to the
    * new floor's entrance) instead of animating a walk from the previous floor's coordinates. */
   currentFloor?: number
@@ -1120,6 +1124,7 @@ export const SiteMapView = ({
   freeWalk = false,
   explorerPos,
   explorerHidden = false,
+  ride,
   currentFloor,
   pendingCells,
   ownedKeys,
@@ -1728,6 +1733,7 @@ export const SiteMapView = ({
                   onArrive={() => setSettledExplorerPos(explorerPos)}
                 />
               )}
+              {ride && <ZiplineRider ride={ride} />}
 
               <StandingLayer sprites={inFrontOfExplorer} />
 
