@@ -60,17 +60,23 @@ The art plan is `docs/superpowers/plans/2026-10-06-stonegate-phase-5-art.md`. It
 ## Open questions for the designer
 
 - Is the torch's size (waist-high, slim) big enough at map scale?
-- Is the plate's size (51.5 units tall, stone about 25 units wide) right?
 - Brazier retirement (task 7): what replaces it in each rank's pool, and does its light move or go?
 - Riding side pose: draw the handle end-on? Should depth and light follow north/south rides?
 
-## Building overnight (designer's wish: "you can do the building when I sleep if we refine the tasks well")
+## Building overnight
 
-Phase 1 is the candidate. Before running it unattended:
-1. Re-read its plan against the code as it is now. Since it was written, #315 merged (`floorLocks`,
-   `degradeUnrealised`) and the weight rule changed. The rule doesn't touch phase 1's walk or solver, as
-   the stone spec explains.
-2. Settle every guided spot the plan flags: the `carveLockFloor` fixture, the dev seed search, and the
-   `Control` switch sites.
-3. Run it with superpowers:subagent-driven-development. Commit and push freely on this branch; stop only for
-   the four classes the skill names.
+Phase 1's plan is **verified and ready** (`92323c94`). A dry run built every task in a throwaway copy:
+- tsc and eslint were clean, and the unit tests passed apart from files the copy lacked;
+- `yarn lock` output was unchanged;
+- the INCLUDE_DEV bake carved twoStones sound;
+- the plain bake left `generatedWorld.ts` byte-identical.
+
+Two scope changes went into the plan:
+- the `stonePlate` realisation and plate stripping with the mod off are now in phase 1, since the
+  mod-off verify sweep needs them;
+- a carrying explorer may enter the way-out region, and only leaving is refused, as the spec says.
+
+Three `puzzleSeeds.verify.ts` tests already fail on this branch; leave them alone.
+
+Run it with superpowers:subagent-driven-development. Commit and push freely on this branch; stop only for the
+four classes the skill names.

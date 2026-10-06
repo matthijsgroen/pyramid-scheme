@@ -33,7 +33,7 @@ arrangements: which plates hold a stone, and whether the hand holds one. For exa
 
 | # | Phase | Ships | Depends on |
 | --- | --- | --- | --- |
-| 1 | **Stones in the engine** | `weights` in the shared `Lock`; compiled to one weights control; plates placed on the carve with the record; `floorLock` walks it; a `.lock` file read at bake; twoStones (no gate loop) baked on the dev floor | — |
+| 1 | **Stones in the engine** (plan verified 2026-10-06; includes the `stonePlate` realisation and mod-off stripping) | `weights` in the shared `Lock`; compiled to one weights control; plates placed on the carve with the record; `floorLock` walks it; a `.lock` file read at bake; twoStones (no gate loop) baked on the dev floor | — |
 | 2 | **Play with stones** | the Lock playground story; "Lift the stone" / "Set the stone on the plate" prompts; plate drawn empty or full (placeholder art); a blocked walk says why (narrow passage, stairs, way out); door shows its plates; explorer `carrying` with frame fallback | 1 |
 | 3 | **Narrow passage** | a realisation for `unladen` gates (registry beside `oneWayRealisation`), drawn as a narrow passage; a zipline or narrow passage where a stone could pass is refused | 1 |
 | 4 | **Gate loops in the carve** | `topologyFaults`, `offRouteChains` and the fork seams accept a gated join that closes a loop; stoneGate bakes on the dev floor | 1 |
