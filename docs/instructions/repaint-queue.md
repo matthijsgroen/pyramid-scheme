@@ -2757,6 +2757,224 @@ yarn import-tile art/masters/props/default/dropSouth.webp --tier=default --name=
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 ```
 
+## Stone gate mechanics — five, shared by every rank
+
+The pieces a player reads to solve a floor: a pressure plate that takes a stone, a standing torch that is
+lit or not, and a sequence tile stepped on in order. They are MECHANICS, so they look the same at every
+rank — a player must never relearn which thing is which when the tomb gets richer — and live in
+`tiles/default/`, like the lever and the drops. The scaffolds are rendered in the priest's stone, the
+same as theirs.
+
+**Each pair is one render.** `plate` is `plateStone` with `--drop=limestone`, and `torchUnlit` is
+`torchLit` with `--drop=accent`, so the two tiles of a pair share one frame and one mask below the part
+that changes, and swap on a cell without moving. The torch is height-limited in its slot, so the unlit
+one is imported at a smaller `--scale` (the lit one's times the ratio of their drawn heights, 544/589)
+to keep its shaft the same height as the lit one's. See `prim_plate` and `prim_torch`.
+
+**The plate and the sequence tile must never be read for each other.** The plate is a RAISED slab in a
+black gap and carries no sign; the sequence tile lies FLUSH, has a fine incised line round it, and its
+top is left plain because the renderer draws the glyph on it.
+
+### `default/plate` — a pressure plate set into the floor
+
+**Attach:**
+
+1. `~/tile-previews/plate-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a PRESSURE PLATE set into a tomb floor, seen from above. One square SLAB of dark basalt stands a
+finger's width above the paving, its top worn smooth and slightly dished in the middle where it has been
+stepped on for centuries. All round it runs a narrow black GAP, the slot it sinks into: a clean dark line on
+every side, unbroken, that says this slab moves. No carving, no glyph and no handle on it.
+
+Basalt worn dark and faintly polished on the slab's top, with pale natron dust settled into the gap and into
+the slab's corners.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+Light it as one low lamp in a closed tomb. The slab's raised near edge may CATCH it; the gap stays the
+darkest thing in the picture.
+
+The shadow is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold plate --drop=limestone --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/default/plate.webp --tier=default --name=plate --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `default/plateStone` — the plate, a stone resting on it
+
+**Attach:**
+
+1. `~/tile-previews/plateStone-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a PRESSURE PLATE set into a tomb floor, seen from above. One square SLAB of dark basalt stands a
+finger's width above the paving, its top worn smooth and slightly dished in the middle where it has been
+stepped on for centuries. All round it runs a narrow black GAP, the slot it sinks into: a clean dark line on
+every side, unbroken, that says this slab moves. On the slab rests one rough block of pale LIMESTONE, about
+the size of a large loaf, set down at a slight angle: chisel-marked, chipped at one corner, much paler than
+the basalt under it. No carving, no glyph and no handle on the slab.
+
+Basalt worn dark and faintly polished on the slab's top, with pale natron dust settled into the gap and into
+the slab's corners. The limestone is cream and chalky, dusty, its edges knocked round.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+Light it as one low lamp in a closed tomb. The slab's raised near edge may CATCH it; the gap stays the
+darkest thing in the picture.
+
+The shadow is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold plate --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/default/plateStone.webp --tier=default --name=plateStone --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `default/torchUnlit` — a standing torch, cold
+
+**Attach:**
+
+1. `~/tile-previews/torchUnlit-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a STANDING TORCH, one tall slender upright. At its foot a squat stepped octagonal HOLDER of
+dark basalt sits on the floor. Out of a bronze COLLAR on top of it rises one straight timber SHAFT. At the
+top of the shaft, above a bronze BAND, is the torch HEAD: dark, pitch-soaked cloth wrapped round the wood,
+cold, with no flame and no smoke. It is not a lamp, not a brazier and not a bowl: nothing on it is a dish.
+
+The holder is basalt worn smooth, with pale natron dust settled into its steps. The shaft is old timber,
+dry and split along the grain. The bronze is dull and dark. The wrapping is black and tarry, its folds
+just visible.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+Light it as one low lamp in a closed tomb. The edges turned toward that lamp may CATCH it — the holder's
+steps, the collar, one side of the shaft — and everything turned away from it falls into shadow.
+
+The shadow at the holder's foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold torch --spin=15 --drop=accent --colour-cloth=#3e3731 --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/default/torchUnlit.webp --tier=default --name=torchUnlit --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.5542
+```
+
+### `default/torchLit` — the same torch, burning
+
+**Attach:**
+
+1. `~/tile-previews/torchLit-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a STANDING TORCH, one tall slender upright. At its foot a squat stepped octagonal HOLDER of
+dark basalt sits on the floor. Out of a bronze COLLAR on top of it rises one straight timber SHAFT. At the
+top of the shaft, above a bronze BAND, is the torch HEAD of dark pitch-soaked wrapping, and from it a small
+steady FLAME rises: the rounded shape on the very top, ochre and orange, the only bright warm colour in the
+picture. The wood just below the head is darkened by heat. It is not a lamp, not a brazier and not a bowl:
+nothing on it is a dish.
+
+The holder is basalt worn smooth, with pale natron dust settled into its steps. The shaft is old timber,
+dry and split along the grain. The bronze is dull and dark. The wrapping is black and tarry.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+Light it as one low lamp in a closed tomb. The edges turned toward that lamp may CATCH it — the holder's
+steps, the collar, one side of the shaft — and everything turned away from it falls into shadow. The flame
+is a flat warm colour: no glow, no rays and no halo round it.
+
+The shadow at the holder's foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold torch --spin=15 --colour-cloth=#3e3731 --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/default/torchLit.webp --tier=default --name=torchLit --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.6
+```
+
+### `default/sequenceTile` — a carved floor tile, stepped on in order
+
+**No `--seat`:** the tile lies flush, so nothing on it stands above the floor to cast, and a footprint
+under a flat thing reads as a second step (the pool's coping is the same case). `--scale=0.8` makes it
+about four fifths of a cell.
+
+**Attach:**
+
+1. `~/tile-previews/sequenceTile-expert.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: one square floor TILE of dark basalt, seen from above, set flush with the paving it belongs to:
+it does not stand up and nothing about it is raised. A fine incised LINE runs round it a little in from its
+edge, one thin groove cut into the stone on all four sides. Inside that line the top is PLAIN, flat and
+smooth, with nothing carved or painted on it — leave the top plain: a sign is added later.
+
+Basalt worn smooth and faintly polished where feet have crossed it, with pale natron dust settled into the
+incised line. No cracks across the top and no marks on it.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+Light it as one low lamp in a closed tomb. The tile's top takes it evenly; the incised line stays a thin
+dark thread round it.
+
+The shadow is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No ground plane and no background: the object stands alone on the magenta. The priest's tomb: dark basalt worn smooth, pale natron dust settled into every crack, bronze and old rope gone dull with age. No gold at this rank — stone, dust and rope.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold sequenceTile --shadow=0 --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/default/sequenceTile.webp --tier=default --name=sequenceTile --slot=prop \
+  --filter=smooth --mask="$OBJ" --scale=0.8
+```
+
 ## Region barrier covers — two
 
 A shut region barrier is drawn as a cover lying over its region: water or sand, one seamless texture each,
