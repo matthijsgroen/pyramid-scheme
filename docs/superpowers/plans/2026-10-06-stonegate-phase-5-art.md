@@ -416,3 +416,9 @@ Each is an EDIT of the painted plate, so the three swap on one cell:
 
 Import, record, re-stage in `Topology/Plate` with all three looks, as in task 3. Fix the minors from task
 3's review on the way: in the `art/rebuild.sh` comment, drop "to the pixel" and "one render".
+
+**Task 6 amendment (designer, 2026-10-06):** the sequence tile is a lighter, sandstone-coloured stone, so a
+dark glyph reads on it and it stands apart from the dark pressure plate. It is made as an edit of the first
+(basalt) painting: "the tile is warm, pale SANDSTONE instead of dark basalt, honey and buff, faint grain,
+worn smooth; dust in the groove; the top stays plain". Record the edit route in the queue entry, as
+`default/plateStone` does.
