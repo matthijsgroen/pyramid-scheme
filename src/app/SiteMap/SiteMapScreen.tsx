@@ -17,6 +17,7 @@ import { useFloorExplorationRecorder } from "./useFloorExplorationRecorder"
 import { useEncounter } from "./useEncounter"
 import { useRewardOffer } from "./useRewardOffer"
 import { useSiteExit } from "./useSiteExit"
+import { useZiplineRide } from "./useZiplineRide"
 import { useSiteNavigation, type ArrivalPrompt, type ArrivalPromptKind } from "./useSiteNavigation"
 import { RewardFlow } from "./RewardFlow"
 import { EncounterModal } from "./EncounterModal"
@@ -183,6 +184,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
 
   const exit = useSiteExit()
 
+  const { ride, playTraversal } = useZiplineRide()
+
   const { onCellClick, prompt, explorerHidden } = useSiteNavigation({
     journeys,
     journeyId,
@@ -194,6 +197,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
     onEncounter: encounter.open,
     onSkippedConsumable: rewardOffer.offerSkipped,
     onExitReached: exit.arrived,
+    playTraversal,
   })
 
   // What the prompt beside the explorer says when the floor itself is what is offered. Written out
@@ -231,6 +235,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
           onCellClick={onCellClick}
           explorerPos={explorerPos}
           explorerHidden={explorerHidden}
+          ride={ride}
           currentFloor={currentFloor}
           pendingCells={pendingConsumableCells}
           ownedKeys={ownedKeys}

@@ -317,6 +317,38 @@ describe(SiteMapScreen, () => {
       expect(goInPrompt(container).textContent).toBe("ui.prompt.zipline")
     })
 
+    it("rides a taken zipline: the explorer is hidden, a rider is drawn, and the landing returns him when the slide ends", async () => {
+      const obstacle: GridCell = {
+        type: "corridor",
+        dirs: new Set(),
+        state: "completed",
+        obstacle: { dir: "e", kind: "zipline" },
+      }
+      const launch: GridCell = { type: "corridor", dirs: new Set(["w"]), state: "completed" }
+      const landing: GridCell = { type: "corridor", dirs: new Set(["e"]), state: "completed" }
+      grid = gridOf([entrance, launch, ...Array.from({ length: 5 }, () => obstacle), landing, exitRoom])
+
+      const { container } = await renderScreen()
+      fireEvent.click(nodeAt(container, 1))
+      await act(async () => {
+        vi.advanceTimersByTime(1000)
+      })
+      expect(container.querySelector("[data-zipline-rider]")).toBeNull()
+
+      fireEvent.click(goInPrompt(container))
+      await settle()
+
+      expect(container.querySelector("[data-explorer]")).toBeNull()
+      const rider = container.querySelector("[data-zipline-rider]")!
+      expect(rider).not.toBeNull()
+
+      fireEvent.transitionEnd(rider)
+      await settle()
+
+      expect(container.querySelector("[data-zipline-rider]")).toBeNull()
+      expect(container.querySelector("[data-explorer]")).not.toBeNull()
+    })
+
     it("still offers the stairs as the walk they are", async () => {
       expect(await promptAtCol1(roomOf({ type: "room", roomType: "portal", stairId: "s1", state: "reachable" }))).toBe(
         "ui.prompt.stairs"
