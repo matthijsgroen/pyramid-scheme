@@ -431,3 +431,67 @@ Commit with `feat(sitemap): the zipline ride in Storybook, with its hang and spe
 - **"The map follows the ride the same way it follows a walk":** the map scrolls to `explorerPos`, which
   changes at landing. Following mid-ride is out of scope; if the run leaves the viewport, the story shows
   it and the designer decides.
+
+---
+
+### Task 5: The rider follows the cable, and its first and last frame are tuned by eye
+
+**Asked by the designer (2026-10-06):** "the rider should descend along the cable's slope. I would like to
+see the first frame and last frame of the animation so that I can steer size and position."
+
+The cable art slopes down from the tall post at the launch to the short one at the landing. The rider slides
+from a **start pose** to an **end pose**, each a position relative to its cell's centre, so the slope comes
+from the two points. Each direction has its own poses and a size.
+
+**Files:**
+- Modify: `src/app/SiteMap/ZiplineRider.tsx` (a `RIDE_POSES` table; an exported `RiderSprite` that draws
+  the rider at one pose; `ZiplineRider` slides between the two poses)
+- Modify: `src/app/SiteMap/ZiplineRider.spec.tsx`
+- Modify: `src/app/SiteMap/ZiplineRide.stories.tsx` (first frame, last frame and live ride side by side,
+  sliders per value, and the table line to copy)
+
+**Interfaces:**
+- Produces:
+
+```ts
+/** Map units from the cell's centre: where the sprite's handle hangs at the start and end of a ride, and
+ * how big the sprite is drawn (1 = the walking figure's 40×70). West is east mirrored. */
+export type RidePose = { from: { x: number; y: number }; to: { x: number; y: number }; scale: number }
+export const RIDE_POSES: Record<"e" | "n" | "s", RidePose>
+export const poseFor = (dir: Direction, poses?: Record<"e" | "n" | "s", RidePose>): RidePose  // w = e with x negated
+export const RiderSprite = (props: { ride: Ride; at: "from" | "to"; pose: RidePose }) => JSX.Element
+```
+
+`ZiplineRider` takes an optional `poses` prop (default `RIDE_POSES`). It replaces `hang` / `HANG` and
+`SiteMapView`'s `rideHang`, which are removed. The handle of the sprite is its top edge (the
+zipline-ride spec's top-anchoring criterion), so a pose's `y` places the sprite box's top.
+
+Start values, until the designer tunes them: `e: { from: { x: 0, y: -40 }, to: { x: 0, y: -22 }, scale: 1 }`,
+`n` and `s`: `{ from: { x: 0, y: -40 }, to: { x: 0, y: -40 }, scale: 1 }`. Read the drop art
+(`src/app/SiteMap/nodeArt.ts` `DROP_ART`, and the `dropEast` / `dropNorth` / `dropSouth` tiles) to put the
+start near the top of the tall post and the end near the short post. The designer corrects the numbers.
+
+- [ ] **Step 1: Failing tests** in `ZiplineRider.spec.tsx`:
+  - the rider starts at the launch cell's centre plus `from` and ends at the landing's centre plus `to`;
+  - riding west negates both `x` values;
+  - `scale` multiplies the sprite box's width and height.
+
+  Use a made-up `poses` prop with distinct numbers, never the shipped table.
+- [ ] **Step 2:** run them, see them fail.
+- [ ] **Step 3: Implement.**
+  - `RiderSprite` draws `TorchGlow` and the sprite box (mirrored for west) at a given pose's point, with the
+    box's top at `y` and its width and height `CHAR_W * scale` / `CHAR_H * scale`.
+  - `ZiplineRider` puts the same content at `from` and slides `left`/`top` to `to`, keeping the forced
+    reflow and the own-target `transitionend` guard.
+  - Delete `HANG` and `rideHang`.
+- [ ] **Step 4: The story.** For each direction, show three panels on one stage:
+  1. **first frame**: `RiderSprite at="from"` with the explorer hidden;
+  2. **last frame**: `RiderSprite at="to"`;
+  3. **live ride**: the Ride/Back buttons and the speed slider, as now.
+
+  Add sliders for `from.x`, `from.y`, `to.x`, `to.y` (-60…60) and `scale` (0.5…1.5, step 0.05), all
+  driving the three panels. Below them, print the line to paste into `RIDE_POSES` for that direction:
+  `e: { from: { x: 0, y: -40 }, to: { x: 0, y: -22 }, scale: 1 },`. Keep the StrictMode decorator.
+- [ ] **Step 5: Look.** Screenshot the first and last frame panels for each direction into the
+  workspace. Run tsc, eslint and prettier, and `yarn vitest run src/app/SiteMap`.
+- [ ] **Step 6: Commit** with `feat(sitemap): the zipline rider follows the cable, tuned per direction`.
