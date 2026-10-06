@@ -5,7 +5,7 @@ import { completeCell } from "../../game/gridNavigation"
 import type { Direction, FloorGrid } from "../../game/siteTypes"
 import { CELL } from "./mapScale"
 import { ART_IMAGE_RENDERING, sharedTileFrames } from "./tileAssets"
-import { ExplorerDot, ExplorerFigure } from "./ExplorerDot"
+import { ExplorerDot, ExplorerFigure, FootShadow, TorchGlow } from "./ExplorerDot"
 import { SiteMapView } from "./SiteMapView"
 
 const getGrid = (): FloorGrid => {
@@ -86,20 +86,24 @@ const PoseFigure = ({ prefix, facing, step }: { prefix: string; facing: Directio
   const frames = sharedTileFrames(`${prefix}-${facing === "w" ? "e" : facing}`)
   if (frames.length === 0) return null
   return (
-    <div
-      style={{
-        position: "absolute",
-        left: -POSE_W / 2,
-        top: CELL / 2 - POSE_H - 5,
-        width: POSE_W,
-        height: POSE_H,
-        overflow: "hidden",
-        transform: facing === "w" ? "scaleX(-1)" : undefined,
-        filter: POSE_LIT,
-      }}
-    >
-      <img src={frames[step % frames.length]} width={POSE_W} height={POSE_H} alt="" />
-    </div>
+    <>
+      <TorchGlow />
+      {prefix !== "explorer-zip" && <FootShadow />}
+      <div
+        style={{
+          position: "absolute",
+          left: -POSE_W / 2,
+          top: CELL / 2 - POSE_H - 5,
+          width: POSE_W,
+          height: POSE_H,
+          overflow: "hidden",
+          transform: facing === "w" ? "scaleX(-1)" : undefined,
+          filter: POSE_LIT,
+        }}
+      >
+        <img src={frames[step % frames.length]} width={POSE_W} height={POSE_H} alt="" />
+      </div>
+    </>
   )
 }
 

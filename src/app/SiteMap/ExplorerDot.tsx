@@ -239,7 +239,7 @@ const FOOT_SHADOW_FILL = `radial-gradient(closest-side, ${tierPalette.starter.ou
  * than in front of it — centred on the line it would puddle, hung below it, trail behind them. Drawn
  * over the torch pool and under the figure: a shadow is not lit by the pool it lies in, and the person
  * casting it is in front of it. */
-const FootShadow = () => (
+export const FootShadow = () => (
   <div
     data-foot-shadow=""
     style={{
@@ -279,7 +279,7 @@ export const LightPool = ({ r, cx = 0, cy = 0 }: { r: number; cx?: number; cy?: 
   />
 )
 
-const TorchGlow = () => <LightPool r={TORCH_RADIUS} cy={CELL * 0.22 - FOOT_LIFT} />
+export const TorchGlow = () => <LightPool r={TORCH_RADIUS} cy={CELL * 0.22 - FOOT_LIFT} />
 
 /**
  * The explorer as drawn, in cell-local units around the centre of the cell it stands on. Separate from the
