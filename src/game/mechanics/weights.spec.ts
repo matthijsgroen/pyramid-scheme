@@ -39,4 +39,11 @@ describe("stoneArrangements", () => {
     const any = stoneArrangements(lockOf("in -[a|b]- out\na plate @in stone\nb plate @in stone"))
     expect(any.opens["a + hand"]).toEqual(["in-out"])
   })
+
+  it("keys an arrangement by sorted plate names whatever order the plates were declared in", () => {
+    const { states, initial } = stoneArrangements(lockOf("in -[a+b]- out\nb plate @in stone\na plate @in stone"))
+    expect(initial).toBe("a b")
+    expect(states).toHaveLength(3)
+    expect(new Set(states)).toEqual(new Set(["a b", "a + hand", "b + hand"]))
+  })
 })
