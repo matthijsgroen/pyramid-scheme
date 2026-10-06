@@ -73,7 +73,7 @@ import {
 import type { AbsorbedDemand, LaidFloor, LengtheningChoice } from "./laidFloor"
 import { planLockFloor } from "./lockPlan"
 import type { LockPlan } from "./lockPlan"
-import { degradeUnrealised, unrealisedSequences } from "./mechanics/realisations"
+import { degradeUnrealised, unrealisedSequences, unrealisedWeights } from "./mechanics/realisations"
 import { adjacencyFaults, dropLandingFaults, gateDoorFaults } from "./carveAgreement"
 import type { CarveFault } from "./carveAgreement"
 import { stairIdAt } from "./stairAddress"
@@ -4342,6 +4342,7 @@ const assembleExpandedFloor = (
     // every address are the carve's own, so the floor is the one the mod on builds, minus its mechanics.
     const bare = degradeUnrealised(grid, resolveEncounter, {
       sequences: unrealisedSequences(authoredConfig.controls ?? [], resolveEncounter),
+      weights: unrealisedWeights(authoredConfig.controls ?? [], resolveEncounter),
       oneWays: oneWaysUnrealised,
       regionBarriers: regionBarriersUnrealised,
     })

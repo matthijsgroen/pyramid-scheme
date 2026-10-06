@@ -19,8 +19,9 @@ describe("the topology mod", () => {
       "torch",
       "gate-face",
       "pressure-plate",
+      "stonePlate",
     ])
-    expect(topologyMod.families?.map(f => f.ownerMod)).toEqual(Array(6).fill("topology"))
+    expect(topologyMod.families?.map(f => f.ownerMod)).toEqual(Array(7).fill("topology"))
   })
 
   // The door's reader is a realisation like the handle: with this mod out of the build nothing answers to
