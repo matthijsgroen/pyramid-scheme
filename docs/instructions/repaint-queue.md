@@ -2809,38 +2809,26 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold plate --drop=limestone --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/default/plate.webp --tier=default --name=plate --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+  --filter=smooth --seat="$SHADOW"
 ```
 
 ### `default/plateStone` — the plate, a stone resting on it
 
+An EDIT of the painted plate, not a fresh generation: a fresh roll painted a different plate, and the pair
+only swaps on one cell if everything outside the stone is the same paint. The attachment is the plate's
+master from the repo, and the prompt changes only the stone. Both tiles are imported unmasked: the painted
+kerb is larger than the scaffold's footprint, and the footprint mask clipped it.
+
 **Attach:**
 
-1. `~/tile-previews/plateStone-expert.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
+1. `art/masters/props/default/plate.webp` — the painted plate, to be edited
 
 ```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
-
-Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a PRESSURE PLATE set into a tomb floor, seen from above. One square SLAB of dark basalt stands a
-finger's width above the paving, its top flat and worn smooth where it has been stepped on for centuries. All round it runs a narrow black GAP, the slot it sinks into: a clean dark line on
-every side, unbroken, that says this slab moves. On the slab rests one rough block of pale LIMESTONE, about
-the size of a large loaf, set down at a slight angle: chisel-marked, chipped at one corner, much paler than
-the basalt under it. No carving, no glyph and no handle on the slab.
-
-Basalt worn dark and faintly polished on the slab's top, with pale natron dust settled into the gap and into
-the slab's corners. The limestone is cream and chalky, dusty, its edges knocked round.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-Light it as one low lamp in a closed tomb. The slab's raised near edge may CATCH it; the gap stays the
-darkest thing in the picture.
-
-The shadow is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
-
-No ground plane and no background: the object stands alone on the magenta. Old worn stone and timber, dust settled in every crack; nothing that belongs to one tomb more than another; no gold.
+Edit this painting. Keep everything exactly as it is — the frame, the gap, the slab, the colours, the light,
+the framing and the magenta background — and change only this: one rough block of pale LIMESTONE, about the
+size of a large loaf, rests on the slab, set down at a slight angle, a little left of centre: chisel-marked,
+chipped at one corner, much paler than the dark stone under it, cream and chalky with its edges knocked
+round. It casts a short soft shadow on the slab in #3A342C.
 ```
 
 Then, once the return is in `~/Downloads`:
@@ -2848,7 +2836,7 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold plate --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/default/plateStone.webp --tier=default --name=plateStone --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+  --filter=smooth --seat="$SHADOW"
 ```
 
 ### `default/torchUnlit` — a standing torch, cold

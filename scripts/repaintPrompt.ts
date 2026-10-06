@@ -51,7 +51,10 @@ const parse = (md: string): Entry[] =>
       const key = /`([a-z]+\/[A-Za-z0-9-]+)`/.exec(block)?.[1]
       const prompt = /```\n([\s\S]*?)\n```/.exec(block)?.[1]
       if (!key || !prompt) return []
-      const attachments = [...block.matchAll(/`(~\/[^`]+\.png)`/g)].map(m => m[1].replace("~", homedir()))
+      // A render in `~/tile-previews`, or a master kept in the repo (an edit of a painted tile attaches that).
+      const attachments = [...block.matchAll(/`((?:~\/[^`]+\.png|art\/masters\/[^`]+\.(?:webp|png|jpe?g)))`/g)].map(m =>
+        m[1].replace(/^~/, homedir())
+      )
       return [
         {
           key,
