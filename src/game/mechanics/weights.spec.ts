@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest"
+import { compileLock } from "../lockCompile"
 import { parseLock } from "../lockNotation"
-import { stoneArrangements } from "./weights"
+import { isWeights } from "../obstacles"
+import { compileWeights, stoneArrangements } from "./weights"
 
 const lockOf = (text: string) => parseLock(text).lock
 
@@ -45,5 +47,48 @@ describe("stoneArrangements", () => {
     expect(initial).toBe("a b")
     expect(states).toHaveLength(3)
     expect(new Set(states)).toEqual(new Set(["a b", "a + hand", "b + hand"]))
+  })
+})
+
+const controlOf = (text: string) => {
+  const result = compileLock(parseLock(text).lock, { weights: "stonePlate", toggle: "handle" })
+  if (!result.ok) throw new Error(JSON.stringify(result.faults))
+  return result.fragment.controls.find(isWeights)!
+}
+const cells: Record<string, [number, number]> = { a: [0, 0], b: [0, 2] }
+const recordOf = (text: string, mode?: "any") =>
+  compileWeights(
+    controlOf(text),
+    p => cells[p],
+    id => ({ gateKeyId: `k:${id}`, ...(mode ? { mode } : {}) })
+  )
+
+describe("compileWeights", () => {
+  it("places every lift and set-down at its plate's cell, from the arrangement it leaves", () => {
+    const record = recordOf("in -[b]- out\nb plate @in\na plate @in stone")
+    expect(record).toMatchObject({ initial: "a", returnsToInitial: true, placedOnly: true })
+    expect(record.transitions).toContainEqual({ from: "+ hand", to: "b", at: [0, 2] })
+    expect(record.positions).toEqual([{ state: "b", gateKeyId: "k:in-out" }])
+  })
+
+  it("stands an :empty gate open in the arrangement the floor starts in", () => {
+    const record = recordOf("in -[b:empty]- out\nb plate @in\na plate @in stone")
+    expect(record.initial).toBe("a")
+    expect(record.positions).toContainEqual({ state: record.initial, gateKeyId: "k:in-out" })
+  })
+
+  it("keeps a gate's mode, so the door folds the stones with a lever by it", () => {
+    const record = recordOf("in -[b|L]- out\nb plate @in\na plate @in stone\nL toggle @in", "any")
+    expect(record.positions).toEqual([{ state: "b", gateKeyId: "k:in-out", mode: "any" }])
+  })
+
+  it("lists a plate+lever gate under every arrangement its plate holds, whatever the lever says", () => {
+    const record = recordOf("in -[a+L]- out\na plate @in stone\nb plate @in\nL toggle @in")
+    expect(record.positions).toEqual([{ state: "a", gateKeyId: "k:in-out" }])
+  })
+
+  it("lists a plate|lever gate under every arrangement where the plate term holds", () => {
+    const record = recordOf("in -[b|L]- out\nb plate @in\na plate @in stone\nL toggle @in", "any")
+    expect(record.positions.map(p => p.state)).toEqual(["b"])
   })
 })

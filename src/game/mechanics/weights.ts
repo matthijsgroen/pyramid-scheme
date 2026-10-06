@@ -1,5 +1,7 @@
 import type { Lock, Weights } from "../lockAuthoring"
 import { CARRY_TERMS, isWeightOwner } from "../lockAuthoring"
+import type { WeightsControl } from "../obstacles"
+import type { MechanismRecord } from "../siteTypes"
 import type { MechanicKind } from "./mechanicKind"
 
 export type StoneMove = { from: string; to: string; plate: string }
@@ -135,3 +137,22 @@ export const WEIGHTS: MechanicKind = {
     }
   },
 }
+
+/**
+ * THE STONES AS THE RECORD A FLOOR CELL CARRIES: every arrangement a state, every lift and set-down a move
+ * placed at its plate's cell, and each arrangement's gates its positions. A gate is listed under every
+ * arrangement where its stone terms hold, and the door folds in its other owners by the gate's mode.
+ * Placed-only, so a plate works only the moves made at it; every move can be undone, so it returns to its initial.
+ */
+export const compileWeights = (
+  control: WeightsControl,
+  cellOf: (plate: string) => readonly [number, number],
+  gate: (id: string) => { gateKeyId: string; mode?: "any" }
+): MechanismRecord => ({
+  states: control.states,
+  initial: control.initial,
+  returnsToInitial: true,
+  placedOnly: true,
+  positions: control.states.flatMap(state => control.opens[state].map(id => ({ state, ...gate(id) }))),
+  transitions: control.moves.map(({ from, to, plate }) => ({ from, to, at: cellOf(plate) })),
+})
