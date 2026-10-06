@@ -3,6 +3,9 @@ import { compileLock } from "./lockCompile"
 import { parseLock } from "./lockNotation"
 import { isWeights } from "./obstacles"
 import type { Direction, GridCell, RoomCell } from "./siteTypes"
+import { floorLock } from "./floorLock"
+import { walkFloorLock } from "./floorLockWalk"
+import { carveLockFloor } from "./testSupport/lockFixtures"
 import { placeWeights } from "./weightsPlates"
 
 const controlOf = (text: string) => {
@@ -73,5 +76,20 @@ describe("placeWeights", () => {
       "salt"
     )
     expect(plates(cells).some(cell => cell === cells[0][6])).toBe(true)
+  })
+})
+
+describe("a stone lock on a floor", () => {
+  // Every region takes `free`, so the carve has nothing to seat but the lock.
+  const STONES = "in -- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nhall ?\nout ?"
+
+  it("carves, and the engine's walk of it is sound", () => {
+    const grid = carveLockFloor(parseLock(STONES, "stones").lock, { weights: "stonePlate" })
+    expect(walkFloorLock(grid)).toMatchObject({ sound: true })
+  })
+
+  it("leaves the floor only with empty hands", () => {
+    const grid = carveLockFloor(parseLock(STONES, "stones").lock, { weights: "stonePlate" })
+    expect(floorLock(grid)!.leaveWith).toEqual([{ mechanism: expect.any(String), notIn: ["+ hand"] }])
   })
 })

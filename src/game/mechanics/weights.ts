@@ -155,4 +155,5 @@ export const compileWeights = (
   placedOnly: true,
   positions: control.states.flatMap(state => control.opens[state].map(id => ({ state, ...gate(id) }))),
   transitions: control.moves.map(({ from, to, plate }) => ({ from, to, at: cellOf(plate) })),
+  carrying: control.carrying,
 })

@@ -281,6 +281,9 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
     ]
   }
 
+  // A stone never leaves its floor: the way out waits for every mechanism holding one to put it down.
+  const leaveWith: NonNullable<LockSpec["leaveWith"]> = []
+
   // A MECHANISM: the position it stands in until it is worked, then a state per set of gates it can
   // open, and re-workable from any state into any other — which is what lets a player change their
   // mind, and the only reason the doors it shut are not a trap.
@@ -355,6 +358,7 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
         ? { goal: { state: progressState(tileCount), label: `sequence ${home.mechanismId}` } }
         : {}),
     }
+    if (record.carrying && record.carrying.length > 0) leaveWith.push({ mechanism: id, notIn: record.carrying })
     for (const { gateIds, keyId, mode } of byPosition)
       for (const gateId of gateIds) {
         claim(gateId, keyId, id)
@@ -408,6 +412,7 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
     mechanisms,
     ...(oneWays.length > 0 ? { oneWays } : {}),
     ...(passages.length > 0 ? { passages } : {}),
+    ...(leaveWith.length > 0 ? { leaveWith } : {}),
     in: of.get(posKey(grid.entrancePos[0], grid.entrancePos[1]))!,
     out: of.get(posKey(grid.exitPos[0], grid.exitPos[1]))!,
   }

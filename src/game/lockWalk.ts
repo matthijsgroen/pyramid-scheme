@@ -48,6 +48,8 @@ export type LockSpec = {
   /** Where the player arrives, and where they leave for. */
   in: RegionId
   out: RegionId
+  /** The way out is left only in a config outside every `notIn`: a stone never leaves its floor. */
+  leaveWith?: { mechanism: MechanismId; notIn: StateId[] }[]
 }
 
 // EVERY ID IN A LOCK IS A REFERENCE INTO ANOTHER TABLE, and a misspelled one is the failure that does
@@ -96,8 +98,14 @@ export const checkLockSpec = (spec: LockSpec): string | undefined => {
     }
   }
 
+  for (const { mechanism } of spec.leaveWith ?? [])
+    if (!spec.mechanisms[mechanism]) return `the way out waits on no mechanism: ${mechanism}`
   return undefined
 }
+
+/** Whether the way out may be left in this config: no mechanism it waits on is in a state it refuses. */
+const mayLeave = (spec: LockSpec, config: LockConfig): boolean =>
+  (spec.leaveWith ?? []).every(({ mechanism, notIn }) => !notIn.includes(config[mechanism]))
 
 // WHETHER A DOOR STANDS OPEN IS ASKED OF ITS OWNERS, NEVER ASSUMED FROM A STATE. A board opens one
 // gate per state and a sequence opens its gate only in the last, so a state is not "which gate is
@@ -149,7 +157,7 @@ const movesFrom = (spec: LockSpec, state: LockState): LockState[] => {
     for (const transition of mechanism.transitions)
       if (transition.at === region && config[id] === transition.from)
         moves.push({ region, config: { ...config, [id]: transition.to } })
-  if (region === spec.out) moves.push({ region: spec.in, config })
+  if (region === spec.out && mayLeave(spec, config)) moves.push({ region: spec.in, config })
 
   return moves.map(move => entering(spec, region, move))
 }
@@ -236,7 +244,7 @@ export const walkLock = (spec: LockSpec): LockWalkResult => {
   const finishes = new Set<number>()
   const queue: number[] = []
   order.forEach((state, n) => {
-    if (state.region !== spec.out) return
+    if (state.region !== spec.out || !mayLeave(spec, state.config)) return
     finishes.add(n)
     queue.push(n)
   })

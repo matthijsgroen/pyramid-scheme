@@ -66,7 +66,7 @@ const recordOf = (text: string, mode?: "any") =>
 describe("compileWeights", () => {
   it("places every lift and set-down at its plate's cell, from the arrangement it leaves", () => {
     const record = recordOf("in -[b]- out\nb plate @in\na plate @in stone")
-    expect(record).toMatchObject({ initial: "a", returnsToInitial: true, placedOnly: true })
+    expect(record).toMatchObject({ initial: "a", returnsToInitial: true, placedOnly: true, carrying: ["+ hand"] })
     expect(record.transitions).toContainEqual({ from: "+ hand", to: "b", at: [0, 2] })
     expect(record.positions).toEqual([{ state: "b", gateKeyId: "k:in-out" }])
   })

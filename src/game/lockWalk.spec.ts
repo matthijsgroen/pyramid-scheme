@@ -411,3 +411,36 @@ describe("deadRegions", () => {
     expect(deadRegions(spec)).toEqual([])
   })
 })
+
+describe("leaveWith", () => {
+  const spec = (handEmpties: boolean): LockSpec => ({
+    regions: ["in", "out"],
+    gates: { g: { from: "in", to: "out", owners: ["open"] } },
+    mechanisms: {
+      open: { states: ["o"], initial: "o", opens: { o: ["g"] }, transitions: [] },
+      hand: {
+        states: ["full", "empty"],
+        initial: "full",
+        opens: { full: [], empty: [] },
+        transitions: handEmpties ? [{ from: "full", to: "empty", at: "in" }] : [],
+      },
+    },
+    in: "in",
+    out: "out",
+    leaveWith: [{ mechanism: "hand", notIn: ["full"] }],
+  })
+
+  it("does not count the way out reached with a stone in hand", () => {
+    expect(walkLock(spec(false))).toEqual({ sound: false, failure: { type: "unsolvable" } })
+  })
+
+  it("counts it once the hands are empty", () => {
+    expect(walkLock(spec(true))).toEqual({ sound: true, states: 4 })
+  })
+
+  it("refuses a way out waiting on a mechanism the lock does not have", () => {
+    expect(checkLockSpec({ ...spec(true), leaveWith: [{ mechanism: "ghost", notIn: [] }] })).toBe(
+      "the way out waits on no mechanism: ghost"
+    )
+  })
+})

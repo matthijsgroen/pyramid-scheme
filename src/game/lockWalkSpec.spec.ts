@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { checkLockSpec, reachableStates, walkLock } from "./lockWalk"
-import { walkSpecOf, isStretch, needsFace, notBuildable, openAtStart, readable } from "./lockWalkSpec"
+import { walkSpecOf, isStretch, WEIGHTS, needsFace, notBuildable, openAtStart, readable } from "./lockWalkSpec"
 import { parseLock } from "./lockNotation"
 
 const compiled = (text: string) => {
@@ -150,10 +150,12 @@ describe("weights", () => {
     expect(found.order.some(state => state.region === "hall" && carrying(state.config))).toBe(false)
   })
 
-  it("never lets a stone leave by the way out", () => {
-    const found = reachableStates(compiled("in -- out\nshelf plate @in stone"))
-    if (found === "tooLarge") throw new Error("expected a walkable lock")
-    expect(found.order.some(state => state.region === "out" && carrying(state.config))).toBe(false)
+  it("never lets a stone leave by the way out, so a drop into it with a stone in hand strands", () => {
+    expect(compiled("in -- out\nshelf plate @in stone").leaveWith).toEqual([{ mechanism: WEIGHTS, notIn: ["+ hand"] }])
+    expect(walkLock(compiled("in -- hall\nhall >> out\nshelf plate @hall stone"))).toMatchObject({
+      sound: false,
+      failure: { type: "strands", at: { region: "out" } },
+    })
   })
 
   it("opens an :empty way by lifting the stone off its plate, and keeps it shut while every plate is full", () => {

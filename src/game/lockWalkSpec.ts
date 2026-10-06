@@ -1,7 +1,7 @@
 // A LOCK AS THE WALK SEES IT. walkSpecOf turns the shared Lock into the LockSpec walkLock proves, with
 // every move the player has; the facts an author cannot read off the document are derived here too.
 import type { Lock, LockMechanic } from "./lockAuthoring"
-import { barriersOf, CARRY_TERMS, isRegionGate, isWeightOwner, joinOf } from "./lockAuthoring"
+import { barriersOf, isRegionGate, isWeightOwner, joinOf } from "./lockAuthoring"
 import type { LockSpec, Mechanism } from "./lockWalk"
 import { stoneArrangements } from "./mechanics/weights"
 
@@ -21,17 +21,10 @@ export const readable = (text: string) =>
 
 type Hop = { kind: "gate" | "oneWay" | "region"; id: string }
 
-export const walkSpecOf = (authored: Lock, drafts: readonly string[] = []): LockSpec => {
-  const weights = authored.weights
-  // A stone never leaves its floor: the way out takes empty hands, held on the last step into it.
-  const lock: Lock = weights
-    ? {
-        ...authored,
-        gates: { ...authored.gates, [`${authored.out}:unladen`]: { region: authored.out, owners: [...CARRY_TERMS] } },
-      }
-    : authored
+export const walkSpecOf = (lock: Lock, drafts: readonly string[] = []): LockSpec => {
+  const { weights } = lock
   const ownersOf = (owners: readonly string[]) => {
-    const kept = owners.filter(owner => !isWeightOwner(authored, owner))
+    const kept = owners.filter(owner => !isWeightOwner(lock, owner))
     return kept.length < owners.length ? [...kept, WEIGHTS] : kept
   }
   const regions = Object.keys(lock.regions)
@@ -145,7 +138,9 @@ export const walkSpecOf = (authored: Lock, drafts: readonly string[] = []): Lock
     mechanisms[OPEN] = { states: ["open"], initial: "open", opens: { open: plain }, transitions: [] }
   if (weights) mechanisms[WEIGHTS] = weightsMechanism(lock, opened)
 
-  return { regions, gates, mechanisms, oneWays, in: lock.in, out: lock.out }
+  // A stone never leaves its floor: the way out is left only with empty hands.
+  const leaveWith = weights ? [{ mechanism: WEIGHTS, notIn: stoneArrangements(lock).carrying }] : undefined
+  return { regions, gates, mechanisms, oneWays, in: lock.in, out: lock.out, ...(leaveWith ? { leaveWith } : {}) }
 }
 
 // Every arrangement of the stones the player can reach, as one mechanism; each move is made in its plate's region.

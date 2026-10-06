@@ -419,6 +419,8 @@ export type MechanismRecord = {
    * where otherwise it is made in the mechanism's own room. A sequence is the one that needs it, because
    * most pairs of its states are not moves at all (progress cannot skip a tile). */
   placedOnly?: true
+  /** The states with a stone in hand: the way out is not left in them. */
+  carrying?: string[]
 }
 export type GateConfig =
   | {
