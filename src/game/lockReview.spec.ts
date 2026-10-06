@@ -69,4 +69,9 @@ describe("solveLock, with stones", () => {
       "out",
     ])
   })
+
+  it("ends a route only with empty hands: the stone is set down before the way out", () => {
+    const stones = spec("in -[shelf:empty]- out\nshelf plate @in stone\nq plate @out")
+    expect(solveLock(stones)).toEqual({ steps: ["in", "lift from shelf", "out", "stone on q"], actions: 2 })
+  })
 })

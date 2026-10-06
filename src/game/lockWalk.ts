@@ -107,6 +107,10 @@ export const checkLockSpec = (spec: LockSpec): string | undefined => {
 const mayLeave = (spec: LockSpec, config: LockConfig): boolean =>
   (spec.leaveWith ?? []).every(({ mechanism, notIn }) => !notIn.includes(config[mechanism]))
 
+/** Whether a state ends the walk: in the way out, with hands that may leave it. */
+export const finished = (spec: LockSpec, state: LockState): boolean =>
+  state.region === spec.out && mayLeave(spec, state.config)
+
 // WHETHER A DOOR STANDS OPEN IS ASKED OF ITS OWNERS, NEVER ASSUMED FROM A STATE. A board opens one
 // gate per state and a sequence opens its gate only in the last, so a state is not "which gate is
 // open" — it is a key into each owner's own mapping, folded by the gate's mode.
@@ -244,7 +248,7 @@ export const walkLock = (spec: LockSpec): LockWalkResult => {
   const finishes = new Set<number>()
   const queue: number[] = []
   order.forEach((state, n) => {
-    if (state.region !== spec.out || !mayLeave(spec, state.config)) return
+    if (!finished(spec, state)) return
     finishes.add(n)
     queue.push(n)
   })

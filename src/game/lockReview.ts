@@ -2,7 +2,7 @@
 import type { Lock } from "./lockAuthoring"
 import { barriersOf, isRegionGate, joinOf } from "./lockAuthoring"
 import { WEIGHTS, walkSpecOf, isStretch } from "./lockWalkSpec"
-import { openGates, reachableStates, walkLock } from "./lockWalk"
+import { finished, openGates, reachableStates, walkLock } from "./lockWalk"
 import type { LockSpec } from "./lockWalk"
 
 /**
@@ -26,7 +26,7 @@ export const solveLock = (spec: LockSpec): { steps: string[]; actions: number } 
       if (!done.has(n) && cost[n] < Infinity && (at < 0 || cost[n] < cost[at])) at = n
     })
     if (at < 0) return undefined
-    if (order[at].region === spec.out) {
+    if (finished(spec, order[at])) {
       end = at
       break
     }
@@ -141,8 +141,8 @@ const lockCosts = (lock: Lock, drafts: readonly string[]) => {
   const acts = (a: number, b: number) => (order[a].region === order[b].region ? 1 : 0)
   const backwards: number[][] = order.map(() => [])
   edges.forEach((tos, from) => tos.forEach(to => backwards[to].push(from)))
-  const left = order.map(state => (state.region === spec.out ? 0 : Infinity))
-  const deque = order.flatMap((state, n) => (state.region === spec.out ? [n] : []))
+  const left = order.map(state => (finished(spec, state) ? 0 : Infinity))
+  const deque = order.flatMap((state, n) => (finished(spec, state) ? [n] : []))
   while (deque.length > 0) {
     const at = deque.shift()!
     for (const from of backwards[at]) {
@@ -165,7 +165,7 @@ const lockCosts = (lock: Lock, drafts: readonly string[]) => {
   while (queue.length > 0) {
     const [at, mask, cost] = queue.shift()!
     if (cost > (best.get(`${at},${mask}`) ?? Infinity)) continue
-    if (order[at].region === spec.out && mask === full) rewarded = Math.min(rewarded, cost)
+    if (finished(spec, order[at]) && mask === full) rewarded = Math.min(rewarded, cost)
     for (const to of edges[at]) {
       const next: [number, number, number] = [to, mark(mask, to), cost + acts(at, to)]
       const key = `${next[0]},${next[1]}`
