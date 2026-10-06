@@ -1,16 +1,15 @@
 // A LOCK AS THE WALK SEES IT. walkSpecOf turns the shared Lock into the LockSpec walkLock proves, with
 // every move the player has; the facts an author cannot read off the document are derived here too.
-import type { Lock, LockMechanic, Weights } from "./lockAuthoring"
-import { barriersOf, CARRY_TERMS, isRegionGate, joinOf } from "./lockAuthoring"
+import type { Lock, LockMechanic } from "./lockAuthoring"
+import { barriersOf, CARRY_TERMS, isRegionGate, isWeightOwner, joinOf } from "./lockAuthoring"
 import type { LockSpec, Mechanism } from "./lockWalk"
-import type { DraftLock } from "./lockNotation"
+import { stoneArrangements } from "./mechanics/weights"
 
 const OPEN = "·"
 const REST = "rest"
 const DRAFT = "draft"
 /** The one mechanism every stone on a floor compiles into: its state is where each stone lies. */
 export const WEIGHTS = "⚖"
-const HAND = "hand"
 
 /** A walk-only stretch between two barriers on one join: never in the JSON, the drawing or a route. */
 export const isStretch = (region: string) => region.includes("|")
@@ -22,51 +21,17 @@ export const readable = (text: string) =>
 
 type Hop = { kind: "gate" | "oneWay" | "region"; id: string }
 
-// Where the stones are: the plates holding one, and whether the hand holds one. Stones are alike, so
-// nothing tells one from another.
-type Stones = { weighted: ReadonlySet<string>; hand: boolean }
-/** "door e1" or "door + hand": the plates holding a stone, by name, then the hand. */
-export const stonesKey = ({ weighted, hand }: Stones) =>
-  [...[...weighted].sort(), ...(hand ? [`+ ${HAND}`] : [])].join(" ") || "none"
-const startStones = (weights: Weights): Stones => ({
-  weighted: new Set(Object.keys(weights.plates).filter(plate => weights.plates[plate].stone)),
-  hand: false,
-})
-
-const isWeightTerm = (weights: Weights | undefined, owner: string) =>
-  weights !== undefined && (owner in weights.plates || (CARRY_TERMS as readonly string[]).includes(owner))
-
-/** Whether one condition on gate `id` holds: empty hands, or a plate weighted or empty as the gate asks. */
-const weightSays = (weights: Weights, id: string, term: string, stones: Stones) => {
-  if (term === "unladen") return !stones.hand
-  return weights.plates[term].opens.empty.includes(id) ? !stones.weighted.has(term) : stones.weighted.has(term)
-}
-
-/** A gate's say from the stones: every condition on them, or one of them under any. Undefined when the
- * gate asks nothing of the stones. */
-const stonesSay = (
-  weights: Weights,
-  id: string,
-  gate: { owners: readonly string[]; mode?: string },
-  stones: Stones
-) => {
-  const terms = gate.owners.filter(owner => isWeightTerm(weights, owner))
-  if (terms.length === 0) return undefined
-  const says = (t: string) => weightSays(weights, id, t, stones)
-  return gate.mode === "any" ? terms.some(says) : terms.every(says)
-}
-
 export const walkSpecOf = (authored: Lock, drafts: readonly string[] = []): LockSpec => {
-  const weights = (authored as DraftLock).weights
+  const weights = authored.weights
   // A stone never leaves its floor: the way out takes empty hands, held on the last step into it.
   const lock: Lock = weights
     ? {
         ...authored,
-        gates: { ...authored.gates, [`${authored.out}:unladen`]: { region: authored.out, owners: ["unladen"] } },
+        gates: { ...authored.gates, [`${authored.out}:unladen`]: { region: authored.out, owners: [...CARRY_TERMS] } },
       }
     : authored
   const ownersOf = (owners: readonly string[]) => {
-    const kept = owners.filter(owner => !isWeightTerm(weights, owner))
+    const kept = owners.filter(owner => !isWeightOwner(authored, owner))
     return kept.length < owners.length ? [...kept, WEIGHTS] : kept
   }
   const regions = Object.keys(lock.regions)
@@ -178,60 +143,37 @@ export const walkSpecOf = (authored: Lock, drafts: readonly string[] = []): Lock
   for (const id of drafts) mechanisms[id] = { states: [DRAFT], initial: DRAFT, opens: { [DRAFT]: [] }, transitions: [] }
   if (plain.length > 0)
     mechanisms[OPEN] = { states: ["open"], initial: "open", opens: { open: plain }, transitions: [] }
-  if (weights) mechanisms[WEIGHTS] = weightsMechanism(lock, weights, opened)
+  if (weights) mechanisms[WEIGHTS] = weightsMechanism(lock, opened)
 
   return { regions, gates, mechanisms, oneWays, in: lock.in, out: lock.out }
 }
 
-// Every arrangement of the stones the player can reach: one in hand at most, lifted from its plate and set
-// down only on an empty one.
-const weightsMechanism = (lock: Lock, weights: Weights, opened: (ids: readonly string[]) => string[]): Mechanism => {
-  const start = startStones(weights)
-  const states = new Map<string, Stones>([[stonesKey(start), start]])
-  const transitions: Mechanism["transitions"] = []
-  for (const queue = [start]; queue.length > 0;) {
-    const here = queue.shift()!
-    const moves: [Stones, string][] = Object.keys(weights.plates)
-      .filter(plate => here.weighted.has(plate) !== here.hand)
-      .map(plate => {
-        const weighted = new Set(here.weighted)
-        if (here.hand) weighted.add(plate)
-        else weighted.delete(plate)
-        return [{ weighted, hand: !here.hand }, weights.plates[plate].in]
-      })
-    for (const [next, at] of moves) {
-      const key = stonesKey(next)
-      if (!states.has(key)) {
-        states.set(key, next)
-        queue.push(next)
-      }
-      transitions.push({ from: stonesKey(here), to: key, at })
-    }
-  }
+// Every arrangement of the stones the player can reach, as one mechanism; each move is made in its plate's region.
+const weightsMechanism = (lock: Lock, opened: (ids: readonly string[]) => string[]): Mechanism => {
+  const { states, initial, moves, opens } = stoneArrangements(lock)
   return {
-    states: [...states.keys()],
-    initial: stonesKey(start),
-    opens: Object.fromEntries(
-      [...states].map(([key, stones]) => [
-        key,
-        opened(Object.keys(lock.gates).filter(id => stonesSay(weights, id, lock.gates[id], stones))),
-      ])
-    ),
-    transitions,
+    states,
+    initial,
+    opens: Object.fromEntries(states.map(state => [state, opened(opens[state])])),
+    transitions: moves.map(({ from, to, plate }) => ({ from, to, at: lock.weights!.plates[plate].in })),
   }
 }
 
 /** The barriers standing open before the player has touched anything — derived, never authored. */
 export const openAtStart = (lock: Lock): string[] => {
-  const weights = (lock as DraftLock).weights
-  const start = weights ? startStones(weights) : { weighted: new Set<string>(), hand: false }
+  const stones = lock.weights ? stoneArrangements(lock) : undefined
   return Object.entries(lock.gates)
     .filter(([id, gate]) => {
-      const says = gate.owners.map(owner => {
-        if (isWeightTerm(weights, owner)) return weightSays(weights!, id, owner, start)
-        const m = lock.mechanics[owner]
-        return m !== undefined && "starts" in m && (m.opens[m.starts] ?? []).includes(id)
-      })
+      const terms = gate.owners.filter(owner => isWeightOwner(lock, owner))
+      const says = [
+        ...(stones && terms.length > 0 ? [stones.opens[stones.initial].includes(id)] : []),
+        ...gate.owners
+          .filter(owner => !terms.includes(owner))
+          .map(owner => {
+            const m = lock.mechanics[owner]
+            return m !== undefined && "starts" in m && (m.opens[m.starts] ?? []).includes(id)
+          }),
+      ]
       return gate.mode === "any" ? says.some(Boolean) : says.every(Boolean)
     })
     .map(([id]) => id)
@@ -259,7 +201,7 @@ const hasGateLoop = (lock: Lock) => {
 
 /** What the engine cannot build yet (mechanic-contract.md, "What a mechanic declares": built: no). */
 export const notBuildable = (lock: Lock): string[] => [
-  ...((lock as DraftLock).weights ? ["stones and plates (a proposal, not in the contract yet)"] : []),
+  ...(lock.weights ? ["stones and plates (a proposal, not in the contract yet)"] : []),
   ...(Object.values(lock.mechanics).some(m => m.control === "sequence") ? ["sequence"] : []),
   ...(Object.values(lock.gates).some(isRegionGate) ? ["region gate"] : []),
   ...(hasGateLoop(lock) ? ["gate loop"] : []),
