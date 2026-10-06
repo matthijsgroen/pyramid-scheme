@@ -245,9 +245,23 @@ export const needsFace = (lock: Lock) =>
     .filter(([, gate]) => gate.mode !== "any" && gate.owners.length > 1)
     .map(([gate, { owners }]) => ({ gate, owners }))
 
+/** Whether the joins with no one-way on them close a loop, which the carve cannot lay out yet. */
+const hasGateLoop = (lock: Lock) => {
+  const root = new Map<string, string>()
+  const find = (r: string): string => ((root.get(r) ?? r) === r ? r : find(root.get(r)!))
+  return lock.connections.some(connection => {
+    if (barriersOf(connection).some(id => id in (lock.oneWays ?? {}))) return false
+    const [a, b] = joinOf(connection).map(find)
+    if (a === b) return true
+    root.set(a, b)
+    return false
+  })
+}
+
 /** What the engine cannot build yet (mechanic-contract.md, "What a mechanic declares": built: no). */
 export const notBuildable = (lock: Lock): string[] => [
   ...((lock as DraftLock).weights ? ["stones and plates (a proposal, not in the contract yet)"] : []),
   ...(Object.values(lock.mechanics).some(m => m.control === "sequence") ? ["sequence"] : []),
   ...(Object.values(lock.gates).some(isRegionGate) ? ["region gate"] : []),
+  ...(hasGateLoop(lock) ? ["gate loop"] : []),
 ]

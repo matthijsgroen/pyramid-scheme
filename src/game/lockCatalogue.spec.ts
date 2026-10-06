@@ -25,6 +25,10 @@ describe.each(Object.entries(LOCK_CATALOGUE))("%s", (_, { lock, drafts, refused 
     expect(unreachedRegions(spec)).toEqual([])
   })
 
+  it("draws flat: no line crosses another, and every join finds room", () => {
+    expect(drawLock(lock)).not.toMatch(/┼|without crossing/)
+  })
+
   it("draws, with its cheapest way through", () => {
     expect(`${drawLock(lock)}\n\n${solveLock(walkSpecOf(lock))!.steps.join(" ▸ ")}`).toMatchSnapshot()
   })

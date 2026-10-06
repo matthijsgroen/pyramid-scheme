@@ -59,3 +59,12 @@ describe("drawLock, with stones", () => {
     expect(art).toContain("□door")
   })
 })
+
+describe("drawLock, with a loop of gates", () => {
+  it("draws the join that closes the loop, with its gate", () => {
+    const art = draw("in -- hall\nhall -[H]- vault\nvault -[G]- in\nhall -- out\nH toggle @in\nG toggle @hall")
+    expect(art).toContain("■H:b")
+    expect(art).toContain("■G:b")
+    expect(art).not.toContain("without crossing")
+  })
+})

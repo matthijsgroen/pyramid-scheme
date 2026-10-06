@@ -142,18 +142,18 @@ in ▸ Y:in-east ▸ east ▸ K:on ▸ ⤓west ▸ L:on ▸ ⤓in ▸ Y:in-north
 `;
 
 exports[`overlook > draws, with its cheapest way through 1`] = `
-"[s1 · S1]          ╭[middle]
- ╎▲                ╎▲   │
- ╎╎                ╎╎   ■S1:b
- ╎╎                ╎╎   │
- ╎╎                ╎╎   │
- ╎╎   ╭╌╌╌╌╌╌╌╌╌╌╌╌┼╯   │
- ╎[top]            ╎[s2 · S2]
- ╎  │              ╎    │
- ╎  │              ╎    ■S2:b
- ╎  │              ╎    │
- ╎  ├───────────────────┘
- ╎  │▼╌╌╌╌╌╌╌╌╌╌╌╌╌╯
+"[s1 · S1]           [middle]
+ ╎▲                 ▲   │  ╰╌╮
+ ╎╎                 ╎   ■S1:b╎
+ ╎╎                 ╎   │    ╎
+ ╎╎                 ╎   │    ╎
+ ╎╎   ╭╌╌╌╌╌╌╌╌╌╌╌╌╌╯   │    ╎
+ ╎[top]             [s2 · S2]╎
+ ╎  │                   │    ╎
+ ╎  │                   ■S2:b╎
+ ╎  │                   │    ╎
+ ╎  ├───────────────────┘    ╎
+ ╎  │▼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╯
 →▶[in]───────────────■S2:b────────────────[out] →
 
 ■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it
@@ -204,11 +204,11 @@ in ▸ r1 ▸ A:b ▸ r2 ▸ B:on ▸ r3 ▸ C:on ▸ ⤓in ▸ out"
 
 exports[`seesaw > draws, with its cheapest way through 1`] = `
 "[west · A]╌╌╌╌╌╌╌╌╌▶[east · B]
-     │              ╎    │
-     □B:a           ╎    □A:a
-     │              ╎    │
-     ├───────────────────┘
-     │▼╌╌╌╌╌╌╌╌╌╌╌╌╌╯
+     │                   │   ╎
+     □B:a                □A:a╎
+     │                   │   ╎
+     ├───────────────────┘   ╎
+     │▼╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╯
  → [in]──────────────■A:b+B:b──────────────[out] →
 
 ■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it

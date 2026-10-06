@@ -51,8 +51,8 @@ const drawSketch = (sketch: Sketch): string => {
   const gateToken = (edge: string) => sketch.edges[edge].token
   const boxLabel = (region: string) => sketch.boxes[region]
 
-  // The gate tree, rooted at the way in. Gates must form a tree (the design's buildable rule), so a
-  // breadth-first parent is the only parent.
+  // The gate tree, rooted at the way in: a breadth-first parent for every region. A join that closes a
+  // loop is not part of it, and is routed afterwards, like a drop.
   const links = new Map<string, { to: string; gate: string }[]>()
   for (const [gate, { from, to }] of Object.entries(sketch.edges)) {
     links.set(from, [...(links.get(from) ?? []), { to, gate }])
@@ -152,15 +152,10 @@ const drawSketch = (sketch: Sketch): string => {
   const out = boxSpan.get(sketch.out)!
   write(out.x + out.w + 1, out.y, "→")
 
-  // A drop is routed cheapest-first around everything drawn: it may pass under a straight corridor or
-  // another drop, never along one, never through a box or a label.
+  // Drops and joins closing a loop are routed cheapest-first around everything drawn, and never cross a
+  // line: the floor they stand for is flat, and a corridor has no bridge over another.
   const free = (x: number, y: number) =>
     x >= 0 && y >= 0 && x < width && y < height && text[y][x] === undefined && solid[y][x] === 0 && drop[y][x] === 0
-  const crossable = (x: number, y: number, step: (typeof STEPS)[number]) => {
-    if (x < 0 || y < 0 || x >= width || y >= height || text[y][x] !== undefined) return false
-    const lines = solid[y][x] | drop[y][x]
-    return lines === (step.dx === 0 ? L | R : U | D)
-  }
   const touching = (region: string) => {
     const { x, y, w } = boxSpan.get(region)!
     const cells: [number, number][] = [
@@ -171,55 +166,83 @@ const drawSketch = (sketch: Sketch): string => {
     return cells.filter(([cx, cy]) => free(cx, cy))
   }
   const unrouted: string[] = []
-  for (const { from, to } of sketch.drops) {
+  type Node = { x: number; y: number; dir: number; cost: number; prev?: Node }
+  const route = (from: string, to: string): Node[] | undefined => {
     const goals = new Set(touching(to).map(([x, y]) => `${x},${y}`))
     // ponytail: linear-scan Dijkstra; the canvas is a few thousand cells, a heap if locks grow large.
-    type Node = { x: number; y: number; dir: number; cost: number; prev?: Node }
     const open: Node[] = touching(from).map(([x, y]) => ({ x, y, dir: -1, cost: 0 }))
     const best = new Map<string, number>()
-    let found: Node | undefined
     while (open.length > 0) {
       open.sort((a, b) => a.cost - b.cost)
       const node = open.shift()!
       const key = `${node.x},${node.y},${node.dir}`
       if ((best.get(key) ?? Infinity) <= node.cost) continue
       best.set(key, node.cost)
-      if (goals.has(`${node.x},${node.y}`) && free(node.x, node.y)) {
-        found = node
-        break
+      if (goals.has(`${node.x},${node.y}`)) {
+        const path: Node[] = []
+        for (let n: Node | undefined = node; n; n = n.prev) path.unshift(n)
+        return path
       }
-      const onLine = !free(node.x, node.y)
       STEPS.forEach((step, dir) => {
-        if (onLine && dir !== node.dir) return
         const [nx, ny] = [node.x + step.dx, node.y + step.dy]
         const turn = node.dir !== -1 && node.dir !== dir ? 4 : 0
         if (free(nx, ny)) open.push({ x: nx, y: ny, dir, cost: node.cost + 1 + turn, prev: node })
-        else if (crossable(nx, ny, step) && !turn) open.push({ x: nx, y: ny, dir, cost: node.cost + 6, prev: node })
       })
     }
-    if (!found) {
+    return undefined
+  }
+  const outOf = (n: Node, region: string) => {
+    const { x, y, w } = boxSpan.get(region)!
+    return STEPS.find(s => {
+      const [bx, by] = [n.x + s.dx, n.y + s.dy]
+      return by === y && bx >= x && bx < x + w
+    })!
+  }
+  const trace = (path: Node[], layer: number[][]) =>
+    path.forEach((n, i) => {
+      for (const neighbour of [path[i - 1], path[i + 1]]) {
+        if (!neighbour) continue
+        layer[n.y][n.x] |= STEPS.find(s => s.dx === neighbour.x - n.x && s.dy === neighbour.y - n.y)!.out
+      }
+    })
+
+  // A join closing a loop: a corridor routed around what is drawn, its gate written on the longest
+  // straight stretch that has room for it, or in a note when none does.
+  for (const [gate, { from, to }] of Object.entries(sketch.edges)) {
+    if (parent.get(to)?.gate === gate || parent.get(from)?.gate === gate) continue
+    const path = route(from, to)
+    if (!path) {
+      unrouted.push(`${from} -[${gateToken(gate)}]- ${to}`)
+      continue
+    }
+    trace(path, solid)
+    const [first, last] = [path[0], path[path.length - 1]]
+    solid[first.y][first.x] |= outOf(first, from).out
+    solid[last.y][last.x] |= outOf(last, to).out
+    const token = gateToken(gate)
+    let spot: { x: number; y: number } | undefined
+    for (let i = 0; i < path.length && !spot; i++) {
+      let j = i
+      while (j + 1 < path.length && path[j + 1].y === path[i].y) j++
+      if (j - i + 1 < token.length + 2) continue
+      spot = {
+        x: Math.min(path[i].x, path[j].x) + Math.floor((Math.abs(path[j].x - path[i].x) + 1 - token.length) / 2),
+        y: path[i].y,
+      }
+    }
+    if (spot) write(spot.x, spot.y, token)
+    else sketch.notes.push(`${from} -[${token}]- ${to}`)
+  }
+
+  for (const { from, to } of sketch.drops) {
+    const path = route(from, to)
+    if (!path) {
       unrouted.push(`${from} ╌▶ ${to}`)
       continue
     }
-    const path: Node[] = []
-    for (let n: Node | undefined = found; n; n = n.prev) path.unshift(n)
-    path.forEach((n, i) => {
-      if (!free(n.x, n.y) && drop[n.y][n.x] === 0 && solid[n.y][n.x] !== 0) return // passes under
-      const next = path[i + 1]
-      for (const neighbour of [path[i - 1], next]) {
-        if (!neighbour) continue
-        drop[n.y][n.x] |= STEPS.find(s => s.dx === neighbour.x - n.x && s.dy === neighbour.y - n.y)!.out
-      }
-    })
+    trace(path, drop)
     // Both ends are drawn: where the drop leaves its region, and an arrow where it lands.
     const [first, last] = [path[0], path[path.length - 1]]
-    const outOf = (n: Node, region: string) => {
-      const { x, y, w } = boxSpan.get(region)!
-      return STEPS.find(s => {
-        const [bx, by] = [n.x + s.dx, n.y + s.dy]
-        return by === y && bx >= x && bx < x + w
-      })!
-    }
     if (path.length > 1) drop[first.y][first.x] |= outOf(first, from).out
     text[last.y][last.x] = outOf(last, to).arrow
   }
@@ -240,7 +263,7 @@ const drawSketch = (sketch: Sketch): string => {
     "",
     ...sketch.notes,
     legend,
-    ...unrouted.map(u => `unrouted drop: ${u}`),
+    ...unrouted.map(u => `no room to draw without crossing: ${u}`),
   ].join("\n")
 }
 
@@ -251,8 +274,8 @@ const sketchOf = (lock: Lock, drafts: readonly string[]): Sketch => {
     const owner = (name: string) => {
       const m = lock.mechanics[name]
       if (drafts.includes(name)) return `${name}?`
-      // A plate, or a condition on what the player carries.
-      if (!m) return name
+      // A plate, named with :empty when that is what it asks; or a condition on what the player carries.
+      if (!m) return (lock as DraftLock).weights?.plates[name]?.opens.empty.includes(id) ? `${name}:empty` : name
       if (m.control === "fork-switch" || m.control === "sequence") return name
       return `${name}:${Object.keys(m.opens)
         .filter(state => m.opens[state].includes(id))

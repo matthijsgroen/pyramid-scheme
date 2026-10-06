@@ -695,13 +695,10 @@ else".
 
 ### The rules that keep a lock buildable
 
-**The gates must form a tree. One-ways may add any edge on top.**
-
-Strip the one-ways from the worked example and the gate graph is a tree — which is the existing
-section model, a main path with sections hanging off it and gates on section boundaries, and a tree
-the carve lays out by construction. A cycle made of _gates_ would need a carve that closes a loop
-through locked boundaries, and it is rarely a puzzle in any case: a loop walkable both ways through
-two locks is a room with two doors. An authored gate cycle stops the build and names itself.
+**Gates may form loops.** A loop of gated joins is a puzzle in its own right: with plates and
+`:empty` conditions, the way round one side opens as the other shuts. The walk proves a loop like any
+other lock. The carve lays a lock out as a tree of sections, so a gated join that closes a loop is not
+laid out yet; until it is, a lock with a gate loop validates and walks, and cannot bake.
 
 **A container's soundness may not depend on anything outside itself.** That is what makes placing one
 anywhere safe, and it decides what each kind of lock may do inside a container:
@@ -896,7 +893,7 @@ a spec. Six rows below are that second kind, and say so.
 | An exit is pruned when the node it leads to is hidden           | `maskHiddenCells`, which checks the hidden set two cells out, not `dirs` — fires on every floor, switch or not: prunes 76 exits across 61 of 206 authored floors                                                           |
 | A hidden way out stays one-way under any tool                   | **nothing yet**, and no tool exists to break it                                                                                                                                                                            |
 | A lock is solvable, and no order of moves strands the player    | `walkLock`, over the lock `floorLock` reads off each assembled floor, swept by `findStrandingLocks` — runs on every floor standing a switch, which is one floor in the world today                                         |
-| A lock's gates form a tree                                      | **nothing yet** — the builder's rule, arriving with the region tree                                                                                                                                                        |
+| A gated join closing a loop is carved                           | **nothing yet** — the carve lays a lock out as a tree of sections                                                                                                                                                            |
 | An authored gate's key is minted by whoever owns it             | for a switch fork, unrepresentable — the assembler writes gate and key from one expression. For a hand-authored gate, **nothing generic**: the two the world has are pinned by name in `configBuilder.integration.spec.ts` |
 | Every collection's target count is reachable                    | the mosaic mod's `worldValidator`, per register, over the permissive walk                                                                                                                                                  |
 
