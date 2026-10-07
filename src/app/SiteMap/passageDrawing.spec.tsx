@@ -1,13 +1,15 @@
 // @vitest-environment jsdom
+import { render } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
 import { revealAll } from "@/game/gridNavigation"
 import { parseLock } from "@/game/lockNotation"
-import type { Direction, RoomCell } from "@/game/siteTypes"
+import type { Direction, FloorGrid, RoomCell } from "@/game/siteTypes"
 import { carveLockFloor } from "@/game/testSupport/lockFixtures"
 import { CRACK, PASSAGE_BINDING, passageAt } from "@/game/testSupport/stoneFixtures"
 import { passageArtUrl, passageTile } from "./passageArt"
 import { buildRoomClaims } from "./roomClaims"
-import { nodeSpritesFor } from "./SiteMapView"
+import { nodeSpritesFor, SiteMapView } from "./SiteMapView"
+import { cellCenter, CELL } from "./mapScale"
 import { sharedTileUrl } from "./tileAssets"
 import "@/mods/registerModApps"
 
@@ -55,5 +57,38 @@ describe("a passage on the map", () => {
 
   it("fades while the explorer stands behind it", () => {
     expect(sprites.find(sprite => sprite.key === `passage:${r},${c}`)?.fadeAt).toEqual([`${r},${c}`, `${r - 1},${c}`])
+  })
+})
+
+describe("a passage no registered mod paints", () => {
+  const painted = revealAll(carveLockFloor(parseLock(CRACK, "stones").lock, PASSAGE_BINDING, SEEDS))
+  const [r, c] = passageAt(painted)
+  const grid: FloorGrid = {
+    ...painted,
+    cells: painted.cells.map((row, ri) =>
+      row.map((cell, ci) =>
+        ri === r && ci === c && cell.type === "room" ? { ...cell, passage: { realisation: "lava" } } : cell
+      )
+    ),
+  }
+  const sprites = nodeSpritesFor(grid, buildRoomClaims(grid), "expert", undefined, new Map(), 0)
+
+  it("is drawn as the shut gate it is to the walk", () => {
+    expect(sprites.map(sprite => sprite.key)).toContain(`wall:${r},${c}`)
+    expect(sprites.map(sprite => sprite.key)).not.toContain(`passage:${r},${c}`)
+  })
+})
+
+describe("a passage's cell", () => {
+  it("shows no node marker: the wall is the node", () => {
+    const grid = revealAll(carveLockFloor(parseLock(CRACK, "stones").lock, PASSAGE_BINDING, SEEDS))
+    const [r, c] = passageAt(grid)
+    const { container } = render(<SiteMapView grid={grid} currentFloor={0} />)
+    const { cx, cy } = cellCenter(r, c)
+    const marker = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
+      el => parseFloat(el.style.left) === cx - CELL / 2 && parseFloat(el.style.top) === cy - CELL / 2
+    )
+    const shapes = Array.from(marker?.querySelectorAll("[data-shape-kind]") ?? [])
+    expect(shapes.filter(shape => shape.getAttribute("opacity") !== "0")).toEqual([])
   })
 })

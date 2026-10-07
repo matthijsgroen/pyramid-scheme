@@ -1,11 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import type { FC, ReactNode } from "react"
-import type { Direction } from "@/game/siteTypes"
+import type { Direction, RoomCell } from "@/game/siteTypes"
 import { ExplorerFigure, FOOT_LIFT } from "./ExplorerDot"
 import { OCCLUDER_FADE } from "./htmlLayers"
 import { CELL, PROP_H, WALL_H } from "./mapScale"
+import { passageArtUrl, passageTile } from "./passageArt"
 import { SqueezeFigure } from "./SqueezeRider"
-import { ART_IMAGE_RENDERING, sharedTileUrl, tileUrl } from "./tileAssets"
+import { ART_IMAGE_RENDERING, tileUrl } from "./tileAssets"
 import { tierPalette } from "./tileMaterials"
 
 // The narrow passage is one painting per orientation, shared by every rank (`tiles/default/`): `narrowAcross`, the
@@ -15,17 +16,25 @@ import { tierPalette } from "./tileMaterials"
 // sides of each wall (the wall faded while he stands behind it, as the map fades it), then the squeezing poses.
 
 type Explorer = { at: readonly [number, number]; facing: Direction }
-const STAGES: { name: string; wall: "narrowAcross" | "narrowAlong"; explorer: Explorer; behind: boolean }[] = [
-  {
-    name: "across, explorer north (behind)",
-    wall: "narrowAcross",
-    explorer: { at: [0, 1], facing: "s" },
-    behind: true,
-  },
-  { name: "across, explorer south", wall: "narrowAcross", explorer: { at: [2, 1], facing: "n" }, behind: false },
-  { name: "along, explorer west", wall: "narrowAlong", explorer: { at: [1, 0], facing: "e" }, behind: false },
-  { name: "along, explorer east", wall: "narrowAlong", explorer: { at: [1, 2], facing: "w" }, behind: false },
+type Ways = readonly [Direction, Direction]
+const NORTH_SOUTH: Ways = ["n", "s"]
+const EAST_WEST: Ways = ["e", "w"]
+const STAGES: { name: string; ways: Ways; explorer: Explorer; behind: boolean }[] = [
+  { name: "across, explorer north (behind)", ways: NORTH_SOUTH, explorer: { at: [0, 1], facing: "s" }, behind: true },
+  { name: "across, explorer south", ways: NORTH_SOUTH, explorer: { at: [2, 1], facing: "n" }, behind: false },
+  { name: "along, explorer west", ways: EAST_WEST, explorer: { at: [1, 0], facing: "e" }, behind: false },
+  { name: "along, explorer east", ways: EAST_WEST, explorer: { at: [1, 2], facing: "w" }, behind: false },
 ]
+
+// The passage's own cell, so the story draws whichever painting the map would for these ways.
+const passageCell = (ways: Ways): RoomCell => ({
+  type: "room",
+  roomType: "encounter",
+  dirs: new Set(ways),
+  state: "reachable",
+  tags: ["gate"],
+  passage: { realisation: "narrowPassage" },
+})
 
 // One cell's centre on the patch: rows a cell apart under a wall band, as the Plate story lays them.
 const centre = ([r, c]: readonly [number, number]) => ({ x: CELL * (c + 0.5), y: WALL_H + CELL * (r + 0.5) })
@@ -70,8 +79,9 @@ const Patch: FC<{ tier: "starter" | "expert"; zoom: number; children: ReactNode;
   )
 }
 
-const Wall: FC<{ name: string; faded: boolean }> = ({ name, faded }) => {
-  const src = sharedTileUrl(name)
+const Wall: FC<{ ways: Ways; faded: boolean }> = ({ ways, faded }) => {
+  const src = passageArtUrl(passageCell(ways))
+  const name = passageTile(passageCell(ways))
   const { x, y } = centre([1, 1])
   return src ? (
     <img
@@ -114,10 +124,10 @@ const PassageSheet: FC<{ zoom: number }> = ({ zoom }) => (
       <div key={tier} className="flex flex-col gap-2">
         <h2 className="m-0 text-sm text-white/80">{tier}: the wall, the explorer either side</h2>
         <div className="flex flex-wrap gap-4">
-          {STAGES.map(({ name, wall, explorer, behind }) => (
+          {STAGES.map(({ name, ways, explorer, behind }) => (
             <Patch key={name} tier={tier} zoom={zoom} caption={name}>
               {behind && <Standing {...explorer} />}
-              <Wall name={wall} faded={behind} />
+              <Wall ways={ways} faded={behind} />
               {!behind && <Standing {...explorer} />}
             </Patch>
           ))}
@@ -126,7 +136,7 @@ const PassageSheet: FC<{ zoom: number }> = ({ zoom }) => (
         <div className="flex flex-wrap gap-4">
           {(["n", "s", "e", "w"] as const).map(dir => (
             <Patch key={dir} tier={tier} zoom={zoom} caption={`squeezing ${dir}`}>
-              <Wall name={dir === "n" || dir === "s" ? "narrowAcross" : "narrowAlong"} faded={false} />
+              <Wall ways={dir === "n" || dir === "s" ? NORTH_SOUTH : EAST_WEST} faded={false} />
               <Squeezing dir={dir} />
             </Patch>
           ))}

@@ -1272,6 +1272,11 @@ export const SiteMapView = ({
   // the line it stands on. Split at the explorer's own floor line so he is drawn in the middle.
   const standing = useMemo((): StandingSprite[] => {
     const standingOn = explorerPos ? `${explorerPos[0]},${explorerPos[1]}` : null
+    // A SQUEEZER IS IN THE CRACK, drawn over the wall he passes: fading it for the side he set out from would ghost the
+    // wall he is seen squeezing through.
+    const squeezing = squeeze && `${squeeze.traversal.via[0]},${squeeze.traversal.via[1]}`
+    const fades = (sprite: NodeSprite) =>
+      !!standingOn && !!sprite.fadeAt?.includes(standingOn) && sprite.key.split(":").pop() !== squeezing
     const sprites: StandingSprite[] = nodeSprites.map(sprite => ({
       key: sprite.key,
       // A drop is sorted by its run's floor line, not its bottom edge: the art hangs below the floor, and
@@ -1302,11 +1307,7 @@ export const SiteMapView = ({
               // wide, so it reaches past its cell. See NodeSprite.footprint.
               clipTo={footprintRects(sprite.footprint)}
               opacity={
-                standingOn && sprite.fadeAt?.includes(standingOn)
-                  ? OCCLUDER_FADE
-                  : sprite.badge === "taken" || sprite.spent
-                    ? LOOTED_OPACITY
-                    : undefined
+                fades(sprite) ? OCCLUDER_FADE : sprite.badge === "taken" || sprite.spent ? LOOTED_OPACITY : undefined
               }
             />
           )}
@@ -1383,7 +1384,7 @@ export const SiteMapView = ({
       })
     }
     return sprites.sort((a, b) => a.baseY - b.baseY)
-  }, [grid, claims, tier, nodeSprites, explorerPos])
+  }, [grid, claims, tier, nodeSprites, explorerPos, squeeze])
 
   // The line the player stands on. A sprite lower than it is nearer the viewer and is drawn after him;
   // one level with it loses the tie, because the actor belongs in front of the furniture he shares a

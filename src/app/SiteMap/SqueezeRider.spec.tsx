@@ -6,6 +6,7 @@ import { parseLock } from "@/game/lockNotation"
 import { passageSides } from "@/game/passages"
 import { carveLockFloor } from "@/game/testSupport/lockFixtures"
 import { CRACK, PASSAGE_BINDING, passageAt } from "@/game/testSupport/stoneFixtures"
+import { OCCLUDER_FADE } from "./htmlLayers"
 import { SqueezeRider, squeezeFoot } from "./SqueezeRider"
 import { sharedTileFrames } from "./tileAssets"
 import type { Squeeze } from "./useSqueeze"
@@ -118,5 +119,32 @@ describe("SqueezeRider on the map", () => {
     expect(wallSprite).toBeDefined()
     const rider = container.querySelector("[data-squeeze-rider]")!
     expect(wallSprite!.compareDocumentPosition(rider) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it("keeps the wall solid behind him while he squeezes from the side it fades for", async () => {
+    const { SiteMapView } = await import("./SiteMapView")
+    const grid = revealAll(carveLockFloor(parseLock(CRACK, "stones").lock, PASSAGE_BINDING, SEEDS))
+    const wall = passageAt(grid)
+    const sides = passageSides(grid, wall[0], wall[1])!
+    const north = sides.find(([r]) => r < wall[0])!
+    const other = sides.find(side => side !== north)!
+    const wallOpacity = (container: HTMLElement) =>
+      (container.querySelector(`[data-node-sprite="passage:${wall[0]},${wall[1]}"]`) as HTMLElement).style.opacity
+    const waiting = render(<SiteMapView grid={grid} explorerPos={north} />)
+    expect(wallOpacity(waiting.container)).toBe(String(OCCLUDER_FADE))
+    waiting.unmount()
+    const { container } = render(
+      <SiteMapView
+        grid={grid}
+        explorerPos={north}
+        explorerHidden
+        squeeze={{
+          traversal: { kind: "narrowPassage", from: north, via: wall, to: other, dir: "s" },
+          msPerLeg: 350,
+          end: () => {},
+        }}
+      />
+    )
+    expect(wallOpacity(container)).not.toBe(String(OCCLUDER_FADE))
   })
 })
