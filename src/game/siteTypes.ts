@@ -388,7 +388,6 @@ export type WeightTerm = { kind: "plate"; plate: string; wants: "stone" | "empty
  * mechanism offers is a fact about the mechanism, not about its family: assuming a shape for a kind
  * hands the walk a move the player does not have, or takes one they do.
  */
-
 export type MechanismRecord = {
   /** Every position this mechanism has, including ones that open nothing. Declared rather than derived
    * from `positions`: a lever hangs left or right whether or not either side names a gate, so a walk
