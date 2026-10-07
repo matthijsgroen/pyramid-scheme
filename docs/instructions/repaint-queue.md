@@ -3094,17 +3094,18 @@ with the walking one. Build it first if it is missing:
 
 ```
 Edit this sprite sheet. Keep the same character, outfit, palette, layout, spacing and number of frames.
-Change only the pose: he is SIDE-STEPPING through a gap barely wider than his body, shoulders lined up
-with the way he is going, squeezed flat between two stone faces that are not drawn. He STRETCHES UP as
-tall and thin as he can, up on the balls of his feet, his chest flat and his BELLY SUCKED IN hard, his
-back straight as a board. His head is turned to look over his FORWARD shoulder, the way he is going. He
-looks STRESSED: eyebrows up, eyes wide, teeth gritted, a bead of sweat on his temple. His leading arm
-is pressed flat along the stone ahead of him at shoulder height, palm flat; his trailing arm hangs
-straight down behind him holding the lit torch UPRIGHT, flame on top, by his hip. In the front row he
-goes TOWARD the viewer, so we see him in PROFILE. In the back row he goes AWAY, also in profile. In the
-side row he goes to the RIGHT, so we see him FRONT-ON, chest to the viewer, side-stepping right, head
-turned right. Not arms crossed, not relaxed, not reaching into the air, no torch in the pack, the torch
-never upside down. No wall and no crack drawn. Same flat magenta background.
+Change only the pose: he SHIMMIES SIDEWAYS the way a climber edges along a narrow ledge on a ravine
+wall: his BACK PRESSED FLAT against a stone wall that is not drawn, BOTH ARMS SPREAD WIDE along that wall
+at shoulder height, palms flat on the stone, heels together, edging along in small side steps. He
+stretches up tall and thin on the balls of his feet, chest flat, BELLY SUCKED IN hard. His head is turned
+to look along the wall the way he is going, over his leading arm. He looks STRESSED: eyebrows up, eyes
+wide, teeth gritted, a bead of sweat on his temple. His trailing hand holds the lit torch UPRIGHT, flame
+on top, pressed against the wall beside him. In the front row he goes TOWARD the viewer, so we see him
+in PROFILE, his outspread arms foreshortened along the wall. In the back row he goes AWAY, also in
+profile. In the side row he goes to the RIGHT, so we see him FRONT-ON, back to the wall behind him, chest
+to the viewer, arms spread left and right, head turned right. Not crouching, not arms crossed, not
+relaxed, no torch in the pack, the torch never upside down. No wall, no ledge and no crack drawn. Same
+flat magenta background.
 ```
 
 Save the DOWNLOAD as explorer-squeeze.png in ~/Downloads, cut it, and keep the first frame of each row (front,
