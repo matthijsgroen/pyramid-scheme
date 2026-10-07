@@ -376,6 +376,9 @@ export type HandleSide = (typeof HANDLE_SIDES)[number]
  * `Mark` in src/game/mark.ts. */
 export const MECHANISM_AT_REST = "rest"
 
+/** One condition a gate puts on a lock's stones: a plate holding a stone or left empty, or empty hands. */
+export type WeightTerm = { kind: "plate"; plate: string; wants: "stone" | "empty" } | { kind: "unladen" }
+
 /**
  * A MECHANISM'S WHOLE STATE MACHINE, said once on the cell it stands in: the positions it has, the one
  * it starts in, whether it can be put back there, and which gate each position opens.
@@ -385,8 +388,6 @@ export const MECHANISM_AT_REST = "rest"
  * mechanism offers is a fact about the mechanism, not about its family: assuming a shape for a kind
  * hands the walk a move the player does not have, or takes one they do.
  */
-/** One condition a gate puts on a lock's stones: a plate holding a stone or left empty, or empty hands. */
-export type WeightTerm = { kind: "plate"; plate: string; wants: "stone" | "empty" } | { kind: "unladen" }
 
 export type MechanismRecord = {
   /** Every position this mechanism has, including ones that open nothing. Declared rather than derived
