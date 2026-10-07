@@ -23,7 +23,9 @@ played, and open an issue or a task for anything that plays wrong.
 
 ## #304 — the story arrives
 
-- Enter pyramids from each act (a starter, a junior, an expert, a wizard site) and read the arrival.
-- Both languages: English and Dutch.
+- Every beat can be read first in Storybook, `Mods/Story/Beats`: arrivals, tomb scenes, bonds, readings, and the
+  beats nothing fires yet, each with where it lands in the game and whether it needs a room in a level. Switch
+  English and Dutch in the toolbar.
+- In the game: set off for a journey from each act on the travel screen and read its arrival.
 - Two speakers: the portrait and the bubble swap sides when the speaker changes.
 - With tutorials turned off the arrival still plays.
