@@ -174,7 +174,7 @@ on its own, and a sheet is built from them whenever one is needed:
 art/masters/explorer/explorer-<facing>-<n>.webp   one walking pose, large, on magenta
 art/masters/explorer/explorer-carry-<facing>-<n>.webp
 art/masters/explorer/explorer-zip-<facing>.webp
-art/masters/explorer/explorer-squeeze-<facing>.webp   e is kept; s and n come from the explorerSqueezeProfile roll
+art/masters/explorer/explorer-squeeze-<facing>.webp   e is kept; s and n come from the explorerSqueezeClean roll (raw: explorer-squeeze-s-raw)
 art/masters/explorer/spare/                       whole sheets not in use yet
 ```
 
