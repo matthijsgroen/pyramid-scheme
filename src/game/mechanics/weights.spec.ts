@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 import { compileLock } from "../lockCompile"
 import { parseLock } from "../lockNotation"
 import { isWeights } from "../obstacles"
-import { compileWeights, stoneArrangements } from "./weights"
+import { arrangementOf, compileWeights, stoneArrangements } from "./weights"
 
 const lockOf = (text: string) => parseLock(text).lock
 
@@ -98,5 +98,23 @@ describe("compileWeights", () => {
     const record = recordOf("in -[a|b|L]- out\na plate @in stone\nb plate @in\nL toggle @in", "any")
     expect(record.positions.map(p => p.state)).toEqual(["a", "b"])
     expect(record.positions.every(p => p.mode === "any")).toBe(true)
+  })
+})
+
+describe("arrangementOf", () => {
+  it("reads back every key stoneArrangements writes", () => {
+    const { states } = stoneArrangements(lockOf("in -[a+b]- out\na plate @in stone\nb plate @in stone\nc plate @in"))
+    for (const key of states) {
+      const { weighted, hand } = arrangementOf(key)
+      const rewritten = [...weighted.sort(), ...(hand ? ["+ hand"] : [])].join(" ") || "none"
+      expect(rewritten).toBe(key)
+    }
+  })
+
+  it("names the plates holding a stone and whether the hand holds one", () => {
+    expect(arrangementOf("a.p a.q + hand")).toEqual({ weighted: ["a.p", "a.q"], hand: true })
+    expect(arrangementOf("+ hand")).toEqual({ weighted: [], hand: true })
+    expect(arrangementOf("a.p")).toEqual({ weighted: ["a.p"], hand: false })
+    expect(arrangementOf("none")).toEqual({ weighted: [], hand: false })
   })
 })

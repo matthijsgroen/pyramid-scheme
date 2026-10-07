@@ -16,6 +16,8 @@ export const usePromptLabel = (): ((prompt: ArrivalPrompt) => string) => {
         case "obstacle":
           // A crossing's words are its realisation's own; one no mod declares still says it cannot be undone.
           return prompt.invitation ? t(prompt.invitation) : t("ui.prompt.oneWay")
+        case "plate":
+          return prompt.stone === "lift" ? t("ui.prompt.liftStone") : t("ui.prompt.setStone")
         case "stairs":
           return t("ui.prompt.stairs")
         case "exit":

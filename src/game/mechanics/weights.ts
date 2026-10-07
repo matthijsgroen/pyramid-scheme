@@ -24,6 +24,15 @@ type Stones = { weighted: ReadonlySet<string>; hand: boolean }
 const keyOf = ({ weighted, hand }: Stones) =>
   [...[...weighted].sort(), ...(hand ? [`+ ${HAND}`] : [])].join(" ") || "none"
 
+const HAND_MARK = `+ ${HAND}`
+
+/** The inverse of an arrangement's key: the plates holding a stone, and whether the hand holds one. */
+export const arrangementOf = (key: string): { weighted: string[]; hand: boolean } => {
+  const hand = key === HAND_MARK || key.endsWith(` ${HAND_MARK}`)
+  const plates = hand ? key.slice(0, key.length - HAND_MARK.length).trim() : key === "none" ? "" : key
+  return { weighted: plates === "" ? [] : plates.split(" "), hand }
+}
+
 const says = (weights: Weights, gate: string, term: string, stones: Stones) => {
   if ((CARRY_TERMS as readonly string[]).includes(term)) return !stones.hand
   return weights.plates[term].opens.empty.includes(gate) ? !stones.weighted.has(term) : stones.weighted.has(term)

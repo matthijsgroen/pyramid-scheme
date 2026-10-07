@@ -44,7 +44,9 @@
       "stairs": "Take the stairs",
       "exit": "Leave this place",
       "zipline": "Ride the line — there is no way back",
-      "oneWay": "Cross over — there is no way back"
+      "oneWay": "Cross over — there is no way back",
+      "liftStone": "Lift the stone",
+      "setStone": "Set the stone on the plate"
     },
     "travel": "Travel",
     "chooseYourJourney": "Choose Your Journey",

@@ -44,7 +44,9 @@
       "stairs": "Neem de trap",
       "exit": "Deze plek verlaten",
       "zipline": "Glij langs de lijn — er is geen weg terug",
-      "oneWay": "Steek over — er is geen weg terug"
+      "oneWay": "Steek over — er is geen weg terug",
+      "liftStone": "Til de steen op",
+      "setStone": "Leg de steen op de plaat"
     },
     "travel": "Reizen",
     "chooseYourJourney": "Kies je Reis",

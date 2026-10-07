@@ -5,6 +5,7 @@ import { storedAtCell } from "@/game/cellAddress"
 import { dropLaunchedAt, findPath, getCell } from "@/game/gridNavigation"
 import { isSpent as mechanismIsSpent, throwMechanism } from "@/game/mechanismDoors"
 import { walkPresses } from "@/game/sequencePlay"
+import { stoneMoveAt } from "@/game/stonePlay"
 import type { FloorGrid, MechanismRecord, ObstacleKind, RoomCell, SiteConfig, TreasureReward } from "@/game/siteTypes"
 import { useTimeout } from "@/support/useTimeout"
 import type { JourneyAPI } from "@/app/state/useJourneys"
@@ -43,7 +44,7 @@ type NavigationArgs = {
  * `stairs`, `exit` and `obstacle` take the player somewhere; `room` opens what stands in the room he is
  * already in, whether that is a board or a stall, and moves nobody.
  */
-export type ArrivalPromptKind = "room" | "stairs" | "exit" | "obstacle"
+export type ArrivalPromptKind = "room" | "stairs" | "exit" | "obstacle" | "plate"
 
 export type ArrivalPrompt = {
   kind: ArrivalPromptKind
@@ -57,6 +58,8 @@ export type ArrivalPrompt = {
   /** Locale key of the prompt the span's realisation declared. Unset where none is registered, which reads
    * as the generic one-way prompt: a crossing is never taken without one. */
   invitation?: string
+  /** On a `plate` prompt, which move standing there offers: the stone lifted off it, or set on it. */
+  stone?: "lift" | "set"
   /** Takes what is offered — this does what arriving used to do on its own. */
   take: () => void
 }
@@ -103,7 +106,8 @@ export const useSiteNavigation = ({
       accept: () => void,
       familyId?: string,
       obstacleKind?: ObstacleKind,
-      invitation?: string
+      invitation?: string,
+      stone?: "lift" | "set"
     ) =>
       setPrompt({
         kind,
@@ -111,6 +115,7 @@ export const useSiteNavigation = ({
         familyId,
         obstacleKind,
         invitation,
+        ...(stone ? { stone } : {}),
         take: () => {
           setPrompt(null)
           accept()
@@ -263,6 +268,32 @@ export const useSiteNavigation = ({
             resolveOneWay(span.kind)?.prompt
           )
         )
+        return
+      }
+
+      // A PLATE IS GROUND THAT OFFERS ITS STONE: written down by standing on it, like a sequence tile, and asked
+      // before the completed-cell block because a plate is walked back to again and again. The move is read
+      // again when the prompt is taken, so it is always the one the floor allows then.
+      if (cell.type === "room" && cell.plate) {
+        journeys.markCellExplored(sectionHash, edgeId, address)
+        goHere()
+        const offered = stoneMoveAt(grid, currentFloor, row, col, journeys.getMechanismStates(journeyId))
+        if (offered)
+          scheduleArrival(walkDelay(row, col), () =>
+            offer(
+              "plate",
+              row,
+              col,
+              () => {
+                const move = stoneMoveAt(grid, currentFloor, row, col, journeys.getMechanismStates(journeyId))
+                if (move) journeys.setMechanismState(move.address, move.state)
+              },
+              undefined,
+              undefined,
+              undefined,
+              offered.move
+            )
+          )
         return
       }
 
