@@ -3108,11 +3108,51 @@ relaxed, no torch in the pack, the torch never upside down. No wall, no ledge an
 flat magenta background.
 ```
 
+**LANDED: the side row.** Its return is kept as `art/masters/explorer/explorer-squeeze-e.webp` and imported
+(front-on, back to the wall, arms spread, torch upright, side-stepping right; west is that frame mirrored, no
+master). The front and back rows did not come back right; they are rolled by `default/explorerSqueezeProfile`
+below, so do not re-roll them from this sheet.
+
 Save the DOWNLOAD as explorer-squeeze.png in ~/Downloads, cut it, and keep the first frame of each row (front,
 back, side) as `explorer-squeeze-{s,n,e}.webp` under `art/masters/explorer/`:
 
 ```sh
 yarn cut-sheet ~/Downloads/explorer-squeeze.png --out=/tmp/squeeze --rows=front,back,side --min=0.8
+```
+
+**Import:** `yarn import-tile art/masters/explorer/explorer-squeeze-<f>.webp --tier=default --name=explorer-squeeze-<f> --slot=explorer --filter=smooth`
+
+### `default/explorerSqueezeProfile` — the squeezing explorer in profile, for the front (south) frame
+
+An EDIT of the one approved squeeze frame (`explorer-squeeze-e`, the side-stepping front-on pose), turned a
+quarter turn. Rank-neutral, shared `default` art. One frame per roll: this entry yields
+`explorer-squeeze-s` (stepping TOWARD the viewer). The back frame `explorer-squeeze-n` is rolled the same
+way with "side-stepping AWAY from the viewer, seen from his RIGHT side" in place of the side-stepping
+sentence of the prompt (his right arm toward the viewer, the left away). Frame aspect: about 0.93:1
+(694x745 on the source cut), roughly square, one figure centred, feet near the bottom.
+
+**Attach:**
+
+1. `~/tile-previews/explorer-squeeze-e.png` — the approved frame on flat magenta: the explorer front-on,
+   back to a wall, arms spread, torch upright, side-stepping right
+
+```
+Edit this single sprite. Keep the same character, outfit, palette, pixel-art style, proportions, the same
+pose and the same STRESSED face (eyebrows up, eyes wide, teeth gritted, sweat on the temple). Change only
+the viewpoint: turn him a quarter turn so we see him from his LEFT SIDE, in PROFILE. His back is still
+pressed flat against a stone wall that is not drawn, and that wall now runs toward and away from the
+viewer. His arms are still spread wide along the wall at shoulder height: one arm reaches TOWARD the
+viewer, strongly foreshortened, the other reaches AWAY from the viewer. His trailing hand holds the lit
+torch UPRIGHT, flame on top, against the wall. He is side-stepping TOWARD the viewer, heels together,
+stretched up tall and thin, belly sucked in, head turned to look along the wall the way he is going. One
+frame only, the same size, the same flat magenta background. No wall, no ledge, no crack drawn.
+```
+
+Save the DOWNLOAD as explorer-squeeze-s.png in ~/Downloads, cut it (one frame) and keep it as
+`explorer-squeeze-s.webp` under `art/masters/explorer/`; the north roll is kept as `explorer-squeeze-n.webp`:
+
+```sh
+yarn cut-sheet ~/Downloads/explorer-squeeze-s.png --out=/tmp/squeeze-s --min=0.8
 ```
 
 **Import:** `yarn import-tile art/masters/explorer/explorer-squeeze-<f>.webp --tier=default --name=explorer-squeeze-<f> --slot=explorer --filter=smooth`
