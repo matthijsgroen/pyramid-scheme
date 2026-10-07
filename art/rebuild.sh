@@ -1656,5 +1656,6 @@ yarn import-portrait art/masters/characters/ghost-pharaoh.jpeg --name=ghost-phar
 yarn import-portrait art/masters/characters/ghost-other.jpeg --name=ghost-other --bust=0.55
 
 # THE EXPLORER, SQUEEZING (side frame e, profile frame s; north reuses s)
-yarn import-tile art/masters/explorer/explorer-squeeze-e.webp --tier=default --name=explorer-squeeze-e --slot=explorer --filter=smooth
+# --tight: the arms-spread frame is wider than the 40-unit slot, so a slot fit shrank the figure to 60% of the walking one; 18.3 master px to a unit puts his head at the walking size, and the tile is as wide as the pose needs (feet on the bottom edge)
+yarn import-tile art/masters/explorer/explorer-squeeze-e.webp --tier=default --name=explorer-squeeze-e --slot=explorer --filter=smooth --tight=18.3
 yarn import-tile art/masters/explorer/explorer-squeeze-s.webp --tier=default --name=explorer-squeeze-s --slot=explorer --filter=smooth
