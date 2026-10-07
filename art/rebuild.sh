@@ -1573,6 +1573,13 @@ scaffold torch --spin=15 --colour-cloth=#3e3731 --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/default/torchLit.webp --tier=default --name=torchLit --slot=prop \
   --filter=smooth --seat="$SHADOW" --scale=0.6513
 
+# The narrow passage, wall ACROSS a north-south corridor, SHARED across ranks. The crack is painted black
+# and kept (only the magenta is keyed); cut UNMASKED because the painted rubble spills past the scaffold
+# footprint, at the natural size.
+scaffold narrow --contents=across --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/default/narrowAcross.webp --tier=default --name=narrowAcross --slot=prop \
+  --filter=smooth --seat="$SHADOW"
+
 # The overgrown POOL — the condition's second sprite per slot, so a floor is not overgrown with one weed.
 # Flat tiles: no mesh, no mask, the magenta keyed (docs/instructions/repaint-queue.md, "Overgrown").
 # Saturation and brightness measured against `overgrown-plant`, which is the one these stand beside:

@@ -2982,6 +2982,9 @@ yarn import-tile art/masters/props/default/sequenceTile.webp --tier=default --na
 
 ### `default/narrowAcross` — a wall across a north-south passage, one crack in it
 
+LANDED. The crack is painted BLACK and stays black: the importer keys only the magenta, so the black is kept. Imported
+unmasked like the plate (the painted rubble spills past the scaffold footprint), at the natural size.
+
 The wall seen face-on, as the map shows a wall standing across a corridor that runs toward the viewer. The
 crack is the whole point of the tile, so it must read at 56 units: a dark upright SLIT up the middle, with
 a wider notch where it reaches the top. It is imported at its natural size (no `--scale`): the wall fills
@@ -3024,7 +3027,7 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold narrow --contents=across --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/default/narrowAcross.webp --tier=default --name=narrowAcross --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+  --filter=smooth --seat="$SHADOW"
 ```
 
 ### `default/narrowAlong` — a wall across an east-west passage, one crack in its top
