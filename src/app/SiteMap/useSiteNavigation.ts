@@ -2,7 +2,8 @@ import { useCallback, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import { cellAddress } from "./cellIdentity"
 import { storedAtCell } from "@/game/cellAddress"
-import { dropLaunchedAt, findPath, getCell } from "@/game/gridNavigation"
+import { dropLaunchedAt, findPath, getCell, walkableFrom } from "@/game/gridNavigation"
+import { headingOf, passageCrossing } from "@/game/passages"
 import { isSpent as mechanismIsSpent, throwMechanism } from "@/game/mechanismDoors"
 import { walkPresses } from "@/game/sequencePlay"
 import { isCarrying, stoneMoveAt } from "@/game/stonePlay"
@@ -17,6 +18,8 @@ import { stairPeerPosition } from "./stairTravel"
 import { crossAtOnce, type PlayTraversal, type Traversal } from "./obstacleTraversal"
 import type { ResolveOneWayRealisation } from "@/game/oneWayRealisation"
 import { resolveOneWayRealisation } from "@/mods/allOneWayRealisations"
+import type { ResolvePassageRealisation } from "@/game/passageRealisation"
+import { resolvePassageRealisation } from "@/mods/allPassageRealisations"
 
 type NavigationArgs = {
   journeys: JourneyAPI
@@ -36,6 +39,8 @@ type NavigationArgs = {
   playTraversal?: PlayTraversal
   /** Says what the realisation a span was bound to declares, namely the prompt its crossing is offered through. */
   resolveOneWay?: ResolveOneWayRealisation
+  /** Says what the passage a gate was dressed as declares: its prompt, and whether it takes both hands. */
+  resolvePassage?: ResolvePassageRealisation
 }
 
 /**
@@ -95,6 +100,7 @@ export const useSiteNavigation = ({
   onExitReached,
   playTraversal = crossAtOnce,
   resolveOneWay = resolveOneWayRealisation,
+  resolvePassage = resolvePassageRealisation,
 }: NavigationArgs): SiteNavigation => {
   const [scheduleArrival] = useTimeout()
   const [prompt, setPrompt] = useState<ArrivalPrompt | null>(null)
@@ -189,6 +195,44 @@ export const useSiteNavigation = ({
       // turned away moved nobody, so it leaves the standing offer alone.
       setPrompt(null)
       setNotice(null)
+
+      // A NARROW PASSAGE IS NEVER GROUND. A tap on its wall walks the explorer to the side he can reach and offers the
+      // crossing there; nothing else takes him through. It stands only on a gate empty hands alone open, so with a
+      // stone in hand it is shut, and a passage that takes both hands says why.
+      if (cell.type === "room" && cell.passage) {
+        const walkable = walkableFrom(grid, explorerPos)
+        const crossing = passageCrossing(grid, row, col, (r, c) => walkable.has(`${r},${c}`))
+        const near = crossing && getCell(grid, crossing.near[0], crossing.near[1])
+        if (!crossing || !near || near.type === "empty") return
+        const [nr, nc] = crossing.near
+        const nearEdge = encodeEdge(currentFloor, nr, nc)
+        const nearAddress = cellAddress(grid, currentFloor, nr, nc) ?? nearEdge
+        for (const press of walkPresses(
+          grid,
+          currentFloor,
+          findPath(grid, explorerPos, crossing.near),
+          journeys.getMechanismStates(journeyId)
+        ))
+          journeys.setMechanismState(press.address, press.state)
+        journeys.markCellExplored(near.sectionHash ?? "", nearEdge, nearAddress)
+        journeys.updatePosition(journeyId, nearAddress, nearEdge)
+        const passage = resolvePassage(crossing.realisation)
+        if (isCarrying(grid, currentFloor, journeys.getMechanismStates(journeyId))) {
+          if (passage?.handsFull) turnAway(nr, nc)
+          return
+        }
+        const traversal: Traversal = {
+          kind: crossing.realisation,
+          from: crossing.near,
+          to: crossing.far,
+          dir: headingOf(crossing.via, crossing.far),
+          via: crossing.via,
+        }
+        scheduleArrival(walkDelay(nr, nc), () =>
+          offer("obstacle", nr, nc, () => void takeSpan(traversal), undefined, crossing.realisation, passage?.prompt)
+        )
+        return
+      }
 
       const edgeId = encodeEdge(currentFloor, row, col)
       const sectionHash = cell.sectionHash ?? ""
@@ -424,6 +468,7 @@ export const useSiteNavigation = ({
       offer,
       takeSpan,
       resolveOneWay,
+      resolvePassage,
     ]
   )
 

@@ -1,6 +1,7 @@
 import type { Direction, FloorGrid } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
 import { dropEndsOf, walkableFrom } from "@/game/gridNavigation"
+import { passageCrossing } from "@/game/passages"
 import {
   NO_RUN_TARGETS,
   cellsAroundExplorer,
@@ -76,6 +77,15 @@ export const clickTargetAt = (
 
   if (cell.type === "empty" || cell.state === "fogged") return null
   if (cell.type === "corridor") return corridorOffer(cell, target, runTarget, ctx)
+
+  // A NARROW PASSAGE IS OFFERED AS ITSELF while a side of it is ground the player can walk to. The tap walks him to
+  // that side and offers the crossing there (`useSiteNavigation`); he never stands in it, so this is the one offer
+  // whose cell taking it does not put him on.
+  if (cell.passage)
+    return (cell.state === "reachable" || cell.state === "completed") &&
+      passageCrossing(grid, r, c, ctx.canWalkTo) !== undefined
+      ? ([r, c] as const)
+      : null
 
   // A room: soft-gated, so a locked gate is still a target — walking to it is how the player is told
   // what it wants. The exception answers itself through `canWalkTo`: a way out a switch shut is a wall

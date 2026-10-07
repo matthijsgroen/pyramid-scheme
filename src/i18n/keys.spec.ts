@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { readdirSync, readFileSync } from "node:fs"
 import { ALL_FAMILY_META } from "@/mods/allFamilyMeta"
+import { MOD_ONE_WAY_REALISATIONS, MOD_PASSAGE_REALISATIONS } from "@/mods/registeredMods"
 import { join } from "node:path"
 
 // **A key that exists in no locale file renders as itself**, so `canisters.claim` shipped as the word
@@ -68,5 +69,17 @@ describe("every translation key a screen asks for", () => {
     expect(naming.map(meta => meta.id)).not.toEqual([])
     expect(naming.filter(meta => !en.has(meta.invitation!)).map(meta => meta.id)).toEqual([])
     expect(naming.filter(meta => !nl.has(meta.invitation!)).map(meta => meta.id)).toEqual([])
+  })
+
+  /** **And so is the prompt a crossing names for itself**: a realisation's prompt reaches `t` as a variable too. */
+  it("covers the prompt every crossing names for itself", () => {
+    const en = shippedKeys("en")
+    const nl = shippedKeys("nl")
+    const prompts = [...MOD_ONE_WAY_REALISATIONS, ...MOD_PASSAGE_REALISATIONS].flatMap(meta =>
+      meta.prompt ? [meta.prompt] : []
+    )
+    expect(prompts).not.toEqual([])
+    expect(prompts.filter(key => !en.has(key))).toEqual([])
+    expect(prompts.filter(key => !nl.has(key))).toEqual([])
   })
 })

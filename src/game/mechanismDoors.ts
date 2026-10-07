@@ -200,6 +200,8 @@ export const openWaysOut = (grid: FloorGrid, open: ReadonlySet<string>): FloorGr
   const cells = grid.cells.map(row =>
     row.map((cell): GridCell => {
       if (cell.type !== "room" || (cell.family !== undefined && cell.gateFace === undefined)) return cell
+      // A NARROW PASSAGE IS NEVER GROUND: open, it is crossed by its prompt, never walked into (useSiteNavigation).
+      if (cell.passage) return cell
       if (!cell.tags?.includes("gate") || !cell.requiredKeyId || !open.has(cell.requiredKeyId)) return cell
       opened = true
       // Open, a region barrier's blockage is gone and its cell is ground: nothing is left to draw.

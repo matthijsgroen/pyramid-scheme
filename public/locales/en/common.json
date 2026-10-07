@@ -46,7 +46,8 @@
       "zipline": "Ride the line — there is no way back",
       "oneWay": "Cross over — there is no way back",
       "liftStone": "Lift the stone",
-      "setStone": "Set the stone on the plate"
+      "setStone": "Set the stone on the plate",
+      "squeeze": "Go through the crack"
     },
     "blocked": {
       "carrying": "Cannot pass with a stone"

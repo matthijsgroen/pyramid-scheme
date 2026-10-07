@@ -10,6 +10,8 @@ export type Traversal = {
   from: readonly [number, number]
   to: readonly [number, number]
   dir: Direction
+  /** The cell a crossing passes through on its way, where it is a wall's own (a narrow passage); unset for a span. */
+  via?: readonly [number, number]
 }
 
 /**

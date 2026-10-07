@@ -46,7 +46,8 @@
       "zipline": "Glij langs de lijn — er is geen weg terug",
       "oneWay": "Steek over — er is geen weg terug",
       "liftStone": "Til de steen op",
-      "setStone": "Leg de steen op de plaat"
+      "setStone": "Leg de steen op de plaat",
+      "squeeze": "Wurm je door de muur"
     },
     "blocked": {
       "carrying": "Niet te passeren met een steen"

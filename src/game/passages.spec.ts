@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest"
+import { openWaysOut } from "./mechanismDoors"
 import { headingOf, passageCrossing, passageSides, withPassages } from "./passages"
 import type { CorridorCell, Direction, FloorGrid, GridCell, RoomCell } from "./siteTypes"
 
@@ -92,5 +93,12 @@ describe("headingOf", () => {
     [[1, 1], [1, 0], "w"],
   ] as const)("goes from %j to %j heading %s", (from, to, dir) => {
     expect(headingOf(from, to)).toBe(dir)
+  })
+})
+
+describe("an open passage", () => {
+  it("stays a door, so no walk ever stands in it", () => {
+    const opened = openWaysOut(straight, new Set([KEY]))
+    expect(opened.cells[0][1]).toEqual(straight.cells[0][1])
   })
 })
