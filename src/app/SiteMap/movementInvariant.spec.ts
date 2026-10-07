@@ -19,7 +19,9 @@
 //      reaches must be some marker's click target; nothing offers a destination the player cannot
 //      actually reach.
 //   B. taking an offer moves the explorer there — clicking a target the map offered must leave the
-//      explorer standing on it.
+//      explorer standing on it. One exception: a narrow passage's wall is offered, and a tap on it leaves
+//      him on the side he can reach, holding the crossing, since he never stands inside the wall. The
+//      walked fixtures hold no passage; its own block at the end pins the exception.
 //   C. every tap draws something, except ground the player has already walked — see `markerViolations`.
 //
 // A drop's launch and landing are dead ends like any other, stopping points on their own side. The
@@ -1007,5 +1009,67 @@ describe("a drop's ends, stood beside", () => {
     ])
     click(landing[0], landing[1])
     expect(hook.result.current.explorerPos).toEqual(landing)
+  })
+})
+
+describe("a narrow passage, the one offer the explorer never stands on", () => {
+  afterEach(() => vi.useRealTimers())
+
+  // The wall's gate stands open from the start: what keeps it out of the walk is that it is a passage, not
+  // that it is shut.
+  const passage: Piece = dirs => ({ ...gate("a")(dirs), passage: { realisation: "narrowPassage" } })
+  const crack = floorFrom(["E.L.R.P.R"], {
+    L: lever({ ...leverOpening("a"), initial: "right" }),
+    P: passage,
+  })
+  const [wall, near, far] = [
+    [0, 6],
+    [0, 5],
+    [0, 7],
+  ] as const
+
+  const scene = () => {
+    vi.useFakeTimers()
+    const store = makeStore()
+    const hook = renderHook(buildHarness(crack, store).useHook)
+    const settle = () => {
+      act(() => void vi.advanceTimersByTime(5000))
+      hook.rerender()
+    }
+    const click = (r: number, c: number) => {
+      act(() => hook.result.current.onCellClick(r, c))
+      settle()
+    }
+    // Past the lever and the room before the wall, so the wall is in sight.
+    click(0, 2)
+    click(0, 3)
+    return { hook, click, settle }
+  }
+
+  it("leaves the explorer on the near side of the wall, holding the crossing, when the wall is tapped", () => {
+    const { hook, click } = scene()
+    const { grid, explorerPos } = hook.result.current
+    expect(offeredTargets(grid!, buildRoomClaims(grid!), explorerPos).get(`${wall[0]},${wall[1]}`)).toEqual(wall)
+
+    click(...wall)
+
+    expect(hook.result.current.explorerPos).toEqual(near)
+    expect(hook.result.current.prompt).toMatchObject({ kind: "obstacle", at: near, obstacleKind: "narrowPassage" })
+  })
+
+  it("reaches the far side only by taking the crossing", async () => {
+    const { hook, click, settle } = scene()
+    click(...wall)
+    expect(walkableFrom(hook.result.current.grid!, hook.result.current.explorerPos).has(`${far[0]},${far[1]}`)).toBe(
+      false
+    )
+    click(...far)
+    expect(hook.result.current.explorerPos).toEqual(near)
+
+    click(...wall)
+    await act(async () => (hook.result.current.prompt as { take: () => void }).take())
+    settle()
+
+    expect(hook.result.current.explorerPos).toEqual(far)
   })
 })

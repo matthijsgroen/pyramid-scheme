@@ -674,6 +674,9 @@ acceptance criteria like the two sets above, not an implementation detail of one
 1. **Every place you can walk to, the map names.** A stopping point `walkableFrom` reaches — a room, or
    a corridor corner — is some marker's click target. Nothing is reachable and unnamed.
 2. **Taking an offer moves you.** Clicking a target the map offered leaves the explorer standing on it.
+   One exception: a narrow passage's wall is offered, but nobody stands inside a wall, so a tap on it
+   leaves the explorer on the side he can reach, with the crossing offered there; only taking that
+   crossing puts him on the far side.
 3. **Every tap draws something**, except a corridor corner the player has already walked. That one
    exemption is deliberate: a walked corner is drawn ground they can see, so it needs no marker to be
    findable — which is exactly what is NOT true of a one-way mouth, `visible`, never walked, with
@@ -684,7 +687,7 @@ acceptance criteria like the two sets above, not an implementation detail of one
 | #   | Criterion                 | State                                                                                                                                                                                          |
 | --- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1   | reachable implies named   | holds: `offerViolations`, at every step of every fixture walk                                                                                                                                  |
-| 2   | taking an offer moves you | holds: asserted on every offer the walk takes, with a permanent guard test that no-ops the store's write                                                                                       |
+| 2   | taking an offer moves you | holds: asserted on every offer the walk takes, with a permanent guard test that no-ops the store's write; the narrow passage's exception has its own test |
 | 3   | every tap draws something | holds: `markerViolations` reads the rendered DOM, with a permanent guard test that drops the one-way mouth's marker and asserts the mouth alone is reported while a walked corner stays exempt |
 
 **Why these are worth stating.** Every regression that shipped green on this branch broke one of them
