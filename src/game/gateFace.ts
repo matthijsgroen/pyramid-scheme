@@ -1,5 +1,5 @@
 import { storedAtCell } from "./cellAddress"
-import { arrangementOf } from "./mechanics/weights"
+import { arrangementOf, termHolds } from "./mechanics/weights"
 import { arrangementIn } from "./stonePlay"
 import { pressAt } from "./mechanismDoors"
 import { DOOR_FACE_ROLE, defaultResolveEncounter } from "./encounterFallback"
@@ -98,15 +98,13 @@ const stoneMarkers = (
     const { weighted, hand } = arrangementOf(
       arrangementIn(mechanism, storedAtCell(grid, floor, at[0], at[1], positions))
     )
-    return entry.terms.map((term): GateMarker =>
-      term.kind === "plate"
-        ? {
-            id: term.plate,
-            icon: { kind: "plate", wants: term.wants },
-            lit: weighted.includes(term.plate) === (term.wants === "stone"),
-          }
-        : { id: "unladen", icon: { kind: "hands" }, lit: !hand }
-    )
+    const stones = { weighted: new Set(weighted), hand }
+    return entry.terms.map((term): GateMarker => ({
+      ...(term.kind === "plate"
+        ? { id: term.plate, icon: { kind: "plate", wants: term.wants } }
+        : { id: "unladen", icon: { kind: "hands" } }),
+      lit: termHolds(term, stones),
+    }))
   })
 
 const isGateDoor = (cell: GridCell): cell is RoomCell & { requiredKeyId: string } =>

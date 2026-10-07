@@ -1,5 +1,5 @@
-import type { Lock, Weights } from "../lockAuthoring"
-import { CARRY_TERMS, isWeightOwner } from "../lockAuthoring"
+import type { Lock } from "../lockAuthoring"
+import { isWeightOwner } from "../lockAuthoring"
 import type { WeightsControl } from "../obstacles"
 import type { MechanismRecord, WeightTerm } from "../siteTypes"
 import type { MechanicKind } from "./mechanicKind"
@@ -18,9 +18,12 @@ export type Arrangements = {
   /** For every arrangement and every plate empty in it, the gates open once the explorer's own weight presses that
    * plate. Only drawing reads it; the walk never does, so a way his weight alone holds is never on a route. */
   underfoot: { from: string; plate: string; opens: string[] }[]
+  /** Each gate's terms on the stones, for the gates the stones own any of. */
+  terms: Record<string, WeightTerm[]>
 }
 
 const HAND = "hand"
+/** Where the stones lie: the plates holding one, and whether the hand holds one. */
 type Stones = { weighted: ReadonlySet<string>; hand: boolean }
 
 /** "P1 P4" or "P4 + hand": the plates holding a stone, by name, then the hand; "none" when nothing holds one. */
@@ -36,10 +39,9 @@ export const arrangementOf = (key: string): { weighted: string[]; hand: boolean 
   return { weighted: plates === "" ? [] : plates.split(" "), hand }
 }
 
-const says = (weights: Weights, gate: string, term: string, stones: Stones) => {
-  if ((CARRY_TERMS as readonly string[]).includes(term)) return !stones.hand
-  return weights.plates[term].opens.empty.includes(gate) ? !stones.weighted.has(term) : stones.weighted.has(term)
-}
+/** Whether one term a gate puts on the stones holds where they lie. */
+export const termHolds = (term: WeightTerm, { weighted, hand }: Stones): boolean =>
+  term.kind === "plate" ? weighted.has(term.plate) === (term.wants === "stone") : !hand
 
 /**
  * EVERY ARRANGEMENT OF THE STONES THE PLAYER CAN REACH, and every move between them: one stone in hand at
@@ -71,13 +73,19 @@ export const stoneArrangements = (lock: Lock): Arrangements => {
     }
   }
   const gates = Object.entries(lock.gates).flatMap(([id, gate]) => {
-    const terms = gate.owners.filter(owner => isWeightOwner(lock, owner))
+    const terms = gate.owners
+      .filter(owner => isWeightOwner(lock, owner))
+      .map((owner): WeightTerm =>
+        Object.hasOwn(weights.plates, owner)
+          ? { kind: "plate", plate: owner, wants: weights.plates[owner].opens.empty.includes(id) ? "empty" : "stone" }
+          : { kind: "unladen" }
+      )
     return terms.length > 0 ? [{ id, terms, any: gate.mode === "any" }] : []
   })
   const opening = (stones: Stones) =>
     gates
-      .filter(({ id, terms, any }) =>
-        any ? terms.some(t => says(weights, id, t, stones)) : terms.every(t => says(weights, id, t, stones))
+      .filter(({ terms, any }) =>
+        any ? terms.some(t => termHolds(t, stones)) : terms.every(t => termHolds(t, stones))
       )
       .map(({ id }) => id)
   const plates = Object.keys(weights.plates).sort()
@@ -96,6 +104,7 @@ export const stoneArrangements = (lock: Lock): Arrangements => {
           opens: opening({ weighted: new Set([...stones.weighted, plate]), hand: stones.hand }),
         }))
     ),
+    terms: Object.fromEntries(gates.map(({ id, terms }) => [id, terms])),
   }
 }
 
@@ -133,28 +142,8 @@ export const WEIGHTS: MechanicKind = {
         ),
       },
     }
-    const { states, initial, moves, opens, carrying, underfoot } = stoneArrangements(renamed)
+    const { states, initial, moves, opens, carrying, underfoot, terms } = stoneArrangements(renamed)
     const encounter = binding.weights
-    const owned = renamed.weights!.plates
-    const terms = Object.fromEntries(
-      Object.entries(renamed.gates).flatMap(([id, gate]) => {
-        const own = gate.owners.filter(
-          owner => Object.hasOwn(owned, owner) || (CARRY_TERMS as readonly string[]).includes(owner)
-        )
-        return own.length === 0
-          ? []
-          : [
-              [
-                id,
-                own.map((owner): WeightTerm =>
-                  Object.hasOwn(owned, owner)
-                    ? { kind: "plate", plate: owner, wants: owned[owner].opens.empty.includes(id) ? "empty" : "stone" }
-                    : { kind: "unladen" }
-                ),
-              ],
-            ]
-      })
-    )
     return {
       controls: [
         {
