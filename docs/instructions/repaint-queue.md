@@ -3095,14 +3095,16 @@ with the walking one. Build it first if it is missing:
 ```
 Edit this sprite sheet. Keep the same character, outfit, palette, layout, spacing and number of frames.
 Change only the pose: he is SIDE-STEPPING through a gap barely wider than his body, shoulders lined up
-with the way he is going, his body flattened between two stone faces that are not drawn. His legs are
-apart in a side step, knees bent. His leading arm is stretched out ahead of him at shoulder height, palm
-flat as if feeling along the stone; his trailing arm hangs low behind him holding the lit torch down by
-his hip. His head is turned toward the way he is going. In the front row he goes TOWARD the viewer, so
-we see him in PROFILE, leading arm reaching down the picture. In the back row he goes AWAY, also in
-profile, leading arm reaching up the picture. In the side row he goes to the RIGHT, so we see him
-FRONT-ON, chest to the viewer, side-stepping right, leading arm reaching right. Not arms crossed, not
-standing at ease, no torch in the pack. No wall and no crack drawn. Same flat magenta background.
+with the way he is going, squeezed flat between two stone faces that are not drawn. He STRETCHES UP as
+tall and thin as he can, up on the balls of his feet, his chest flat and his BELLY SUCKED IN hard, his
+back straight as a board. His head is turned to look over his FORWARD shoulder, the way he is going. He
+looks STRESSED: eyebrows up, eyes wide, teeth gritted, a bead of sweat on his temple. His leading arm
+is pressed flat along the stone ahead of him at shoulder height, palm flat; his trailing arm hangs
+straight down behind him holding the lit torch UPRIGHT, flame on top, by his hip. In the front row he
+goes TOWARD the viewer, so we see him in PROFILE. In the back row he goes AWAY, also in profile. In the
+side row he goes to the RIGHT, so we see him FRONT-ON, chest to the viewer, side-stepping right, head
+turned right. Not arms crossed, not relaxed, not reaching into the air, no torch in the pack, the torch
+never upside down. No wall and no crack drawn. Same flat magenta background.
 ```
 
 Save the DOWNLOAD as explorer-squeeze.png in ~/Downloads, cut it, and keep the first frame of each row (front,
