@@ -3,6 +3,19 @@
 Merged work nobody has played yet. Each entry says where to go and what to look for; strike it when it has been
 played, and open an issue or a task for anything that plays wrong.
 
+## stoneGate phase 3 — the narrow passage
+
+- **Storybook, `Topology/Lock playground`, `SqueezeThrough`.** Tap the wall: the explorer walks beside it and "Go
+  through the crack" shows; take it and he squeezes through and stands on the far side. Tap the wall again to come
+  back, so both directions. Lift the stone first: he stops beside the wall and "Cannot pass with a stone" shows.
+- **Storybook, `Topology/NarrowPassage`.** Both walls at 1x and 3x on two ranks, the explorer either side, the four
+  squeezing headings. Judge the squeeze's size against the walking figure and whether drawing it in front of the
+  wall reads.
+- **The wall's fade while he stands behind it:** it should fade to the occluder level, and stay solid while he
+  squeezes through. Not seen live.
+- **The `narrowAlong` wall** pokes slightly above the corridor top.
+- **The squeeze's speed** (350 ms a leg) and its two legs at a corner: not seen live.
+
 ## stoneGate phase 2 — playing with stones
 
 - **Storybook, `Topology/Lock playground`, `twoStones`.** Lift a stone, set it on the vault plate, fetch the second,

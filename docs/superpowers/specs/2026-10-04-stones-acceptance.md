@@ -55,9 +55,9 @@ stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
 ## 3. Carve and bake
 
 - [x] Each plate is a node in its region.
-- [ ] An `unladen` passage binds to a realisation like any gate (`mechanic-contract.md`, "Binding a
+- [x] An `unladen` passage binds to a realisation like any gate (`mechanic-contract.md`, "Binding a
       realisation"): a zipline, or a **narrow passage**, which is a new realisation with its own art.
-- [ ] On a floor with stones, binding a zipline or a narrow passage where the lock lets a stone through
+- [x] On a floor with stones, binding a zipline or a narrow passage where the lock lets a stone through
       (no `unladen` on that passage) is refused. The art never decides what the walk sees; the binding
       makes it match.
 - [x] With the realisation mod off, the carve is identical: bare nodes, open corridors.
@@ -81,8 +81,8 @@ All through node actions (`node-actions.md`): arriving never acts, standing offe
 - [x] A plate has three looks: raised (empty, nobody on it), pressed (the explorer on it), and pressed
       with a stone.
 - [x] The explorer is drawn carrying the stone while it is in hand (see "The carrying explorer").
-- [ ] (phase 3: the narrow passage declares its refusal through `handsFull`) A walk that crosses an `unladen` passage while carrying **stops on the near side** and says why
-      ("Too narrow to carry the stone through"; a zipline: "You need both hands for the zipline").
+- [x] A walk that crosses an `unladen` passage while carrying **stops on the near side** and says why, in the one
+      blocked line every such place uses ("Cannot pass with a stone"; designer, 2026-10-07).
 - [x] The way out and every staircase stop a carrying walk the same way: "Cannot pass with a stone".
 - [x] A door held by plates shows its condition: which plates it waits for, whether it wants each one
       weighted or empty, and which already agree (`mechanic-contract.md`, "A gate shows its own

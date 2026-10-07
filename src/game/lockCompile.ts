@@ -12,7 +12,7 @@ import type { ForkDemand } from "./siteTypes"
 /**
  * WHICH REALISATION EACH KIND OF CONTROL IS DRESSED AS, decided where a lock is placed and handed to the
  * compiler: the lock names none (docs/mods/mechanic-contract.md). Keyed by the control kind — "toggle",
- * "activator", "sequence", "fork-switch", "one-way", and "region-barrier" for the lock's barred regions — because within one lock all roles of a kind take
+ * "activator", "sequence", "fork-switch", "one-way", "weights" for the stone plates, "unladen" for a narrow passage, and "region-barrier" for the lock's barred regions — because within one lock all roles of a kind take
  * the same realisation. A kind the lock uses and the binding omits is refused, never defaulted.
  */
 export type RealisationBinding = Readonly<Partial<Record<string, string>>>

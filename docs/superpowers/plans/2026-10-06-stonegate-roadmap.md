@@ -35,7 +35,7 @@ arrangements: which plates hold a stone, and whether the hand holds one. For exa
 | --- | --- | --- | --- |
 | 1 | **Stones in the engine** (done; also ships the `stonePlate` realisation and plates left bare with the mod off, pulled forward from phase 3 because the dev bake's toggle-off sweep needs it) | `weights` in the shared `Lock`; compiled to one weights control; plates placed on the carve with the record; `floorLock` walks it; a `.lock` file read at bake; twoStones (no gate loop) baked on the dev floor | — |
 | 2 | **Play with stones** (done 2026-10-07, [plan](2026-10-07-stonegate-phase-2-play.md)) | the Lock playground story; "Lift the stone" / "Set the stone on the plate" prompts; plate drawn empty or full (placeholder art); a blocked walk says why (narrow passage, stairs, way out); door shows its plates; explorer `carrying` with frame fallback | 1 |
-| 3 | **Narrow passage** | a realisation for `unladen` gates (registry beside `oneWayRealisation`), drawn as a narrow passage; a zipline or narrow passage where a stone could pass is refused | 1 |
+| 3 | **Narrow passage** (done 2026-10-08, [plan](2026-10-08-stonegate-phase-3-narrow-passage.md)) | a realisation for `unladen` gates (registry beside `oneWayRealisation`), drawn as a narrow passage; a zipline or narrow passage where a stone could pass is refused | 1 |
 | 4 | **Gate loops in the carve** | `topologyFaults`, `offRouteChains` and the fork seams accept a gated join that closes a loop; stoneGate bakes on the dev floor | 1 |
 | 5 | **Art** | painted plate (empty, with stone), narrow passage, torch; explorer carrying frames | runs beside 1–4; wiring needs 2–3 |
 | 7 | **Zipline glide** — done 2026-10-06 ([plan](2026-10-06-zipline-glide.md)) | the ride: explorer hidden, a riding sprite slides launch to landing by CSS, behind `PlayTraversal` (`docs/superpowers/specs/2026-10-04-zipline-ride-acceptance.md`); its art is phase 5 task 2. The zipline's own art stays as it is | 5 (art), independent of the stones |
@@ -97,26 +97,25 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
   playground shows "not buildable yet" for them.
 - The door face does not tell plates apart (by design: plates are all alike).
 
+## Open after phase 3
+
+- masonsRamp cannot bake: its chute is a drop a stone rides, and the only one-way realisation (the zipline) needs
+  both hands, so binding it is refused `stonePasses`. It needs a hands-free chute realisation, which no mod has.
+- counterweight: `yarn lock counterweight` now reports every region reachable, solvable and every piece bearing
+  load, with `gallery -[unladen]- >> chamber` compiling. It has not been baked on a floor.
+- A passage on a corner draws `narrowAcross`; there is no corner art.
+- The squeeze is drawn in front of the wall, not through it.
+- Where a gate loop makes both sides of a passage walkable (phase 4), the crossing starts from the first side in
+  the cell's `dirs`.
+- The `unladen` and `one-way` kinds are `effectOnly`: they can be declared as mechanics and compile to nothing.
+- `stonePasses` reads whether the floor holds stones, so it over-refuses a drop in another lock on the same floor.
+- Tapping the wall when the near side is itself a node bypasses that node's offer.
+
 ## Open per phase
 
-- **Phase 3:** Decided by the designer (2026-10-07): the narrow passage is a **door room**, a wall standing
-  in one corridor cell with a crack the explorer squeezes through. The explorer stands on the cells either
-  side, never inside the wall. The crossing plays like the zipline ride: the explorer is hidden and a
-  sideways-squeezing sprite slides through the crack. Art is in the phase 5 plan, task 5. Its prompt reads
-  en "Go through the crack", nl "Wurm je door de muur" (sentence case, as every other prompt). It declares
-  `handsFull` (built in phase 2), so a carrying walk stops before it with the one blocked line, "Cannot pass
-  with a stone" / "Niet te passeren met een steen". The crack is painted black, not keyed out: it reads as
-  depth, and the wall stays one solid sprite. Like a gate, the wall fades to `OCCLUDER_FADE` while the
-  explorer stands behind it (`fadeAt` on the cells it covers), so the far side never hides him.
-  The squeeze frames are in `src/assets/tiles/default/`. `explorer-squeeze-e` is 109x114, imported with
-  `--tight=18.3`, drawn at width/2 x height/2 units bottom-centred on the foot line (not the 40x70
-  explorer box). `explorer-squeeze-s` is 80x140. North reuses `s`; west mirrors `e`.
-  Play refuses carrying across a `handsFull` one-way, but the walk and the solver have no such rule: a lock
-  whose only solution carries a stone across a zipline carves sound and is unwinnable. Phase 3 adds that
-  rule to the walk (or a lock check that refuses such a lock).
 - **Phase 5:** the torch and the plate need `prim_*` geometry in `scripts/renderProp.py`, then the
   repaint pass (`docs/instructions/prop-pipeline.md`, `docs/instructions/repaint-queue.md`). The explorer
   carrying frames are an edit of the walking sheet (`art/README.md`, "The explorer"). Generating the images
   is done by hand in Gemini.
 - **Phase 6:** which `expert_4` pyramid and floor, and its realisations (torch for `activator`, narrow
-  passage for `unladen`).
+  passage: `unladen: "narrowPassage"`).

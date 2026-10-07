@@ -106,6 +106,13 @@ waiting for, the way a ward gate already shows the key it wants.
 - **The face.** The record's `weighs` lists each gate's stone terms. Each term counts as one owner in the face
   rule (a face only on a door with more than one owner that is not `any`), so a door one plate holds wears
   none. A plate's marker shows as a stone; plates are all alike, nothing tells one from another.
+- **A narrow passage.** A gate whose only owner is `unladen`, alone on its connection, binds under `unladen` to a
+  passage realisation (`narrowPassage`, topology mod), which draws it as a wall with a crack in one cell. It is a
+  gate to every walk and never ground in play: a tap on the wall walks the explorer to the side he can reach and
+  offers "Go through the crack"; a carrying walk stops there with the one blocked line. A gate `unladen` shares
+  with a plate or a mechanic stays a door, because the door's other owners decide how it looks.
+- **A drop that takes empty hands** is written `-[unladen]- >>`: the gate is the drop's own condition
+  (`OneWayObstacle.unladen`), and every walk takes such a drop only with empty hands, so solver and play agree.
 - **The way out is left with empty hands.** `leaveWith` on the walk spec names the states that forbid
   leaving: the way-out region may be entered carrying, only leaving (and finishing) needs empty hands. A
   stone never leaves its floor, and `yarn lock` never reports a route that ends with one in hand.
@@ -149,6 +156,10 @@ region straddles the door.
 
 A one-way realisation may declare `handsFull`: the crossing needs both hands, and a carrying walk is turned
 away at its launch.
+
+A passage realisation declares its prompt and may declare `handsFull` and its art. On a floor whose locks hold
+stones, a one-way realisation declaring `handsFull` bound to a drop the lock lets a stone ride is refused
+(`stonePasses`), so play never turns back a walk the solver takes.
 
 Within one lock, all roles of a kind take the same realisation for now. Per-role selectors are a later
 idea, not a current one.
