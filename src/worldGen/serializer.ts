@@ -104,6 +104,7 @@ const GATE_TERMS: { [K in keyof Required<GateTerms>]: (v: NonNullable<GateTerms[
   mode: v => JSON.stringify(v),
   owners: strings,
   floorKeys: strings,
+  passage: v => JSON.stringify(v),
 }
 
 // `at` nests one layer deep (`{ on, between }` or `{ on, region }`), which `serializeObject` cannot reach.

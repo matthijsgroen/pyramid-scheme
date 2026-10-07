@@ -1,3 +1,4 @@
+import type { RealisationBinding } from "@/game/lockCompile"
 import { parseLock } from "@/game/lockNotation"
 import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
 
@@ -30,4 +31,20 @@ export const plateNamed = (grid: FloorGrid, name: string): readonly [number, num
       if (cell.type === "room" && cell.plate?.id === `stones.${name}`) return [r, c]
     }
   throw new Error(`no plate ${name} on this floor`)
+}
+
+/** A stone on a shelf by the way in, and a narrow passage on to the way out: only empty hands go through. */
+export const CRACK = "in -[unladen]- out\nshelf plate @in stone\nin ?\nout ?"
+
+/** The stones as stone plates, a gate empty hands alone open as a narrow passage. */
+export const PASSAGE_BINDING: RealisationBinding = { weights: "stonePlate", unladen: "narrowPassage" }
+
+/** Where the floor's one narrow passage stands. */
+export const passageAt = (grid: FloorGrid): readonly [number, number] => {
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type === "room" && cell.passage) return [r, c]
+    }
+  throw new Error("no narrow passage on this floor")
 }

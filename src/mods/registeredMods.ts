@@ -6,6 +6,7 @@ import type { ShopStockAssignment } from "@/worldGen/shopStock"
 import type { WorldValidator } from "@/worldGen/validate"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { OneWayRealisationMeta, ResolveOneWayRealisation } from "@/game/oneWayRealisation"
+import type { PassageRealisationMeta, ResolvePassageRealisation } from "@/game/passageRealisation"
 import type { RegionBarrierRealisationMeta, ResolveRegionBarrierRealisation } from "@/game/regionBarrierRealisation"
 import type { ModDescriptor } from "./modDescriptor"
 import { puzzleMod } from "./puzzle"
@@ -66,6 +67,14 @@ export const MOD_REGION_BARRIER_REALISATIONS: RegionBarrierRealisationMeta[] = R
 export const resolveRegionBarrierRealisation: ResolveRegionBarrierRealisation = id =>
   id === undefined ? undefined : MOD_REGION_BARRIER_REALISATIONS.find(realisation => realisation.id === id)
 
+// Every passage realisation a registered mod declares. One that drops with its mod leaves its gate a plain door.
+export const MOD_PASSAGE_REALISATIONS: PassageRealisationMeta[] = REGISTERED_MODS.flatMap(
+  m => m.passageRealisations ?? []
+)
+
+export const resolvePassageRealisation: ResolvePassageRealisation = id =>
+  id === undefined ? undefined : MOD_PASSAGE_REALISATIONS.find(realisation => realisation.id === id)
+
 // Every dynamic-loot distribution all enabled mods contribute, in registry order (trap consumables
 // before the shop money economy — consumables claim their expert+ puzzle slots first, then the shop
 // takes what's left). A distribution drops when its mod leaves REGISTERED_MODS: shop off → no
@@ -100,6 +109,7 @@ export const MOD_REACHABILITY_SUPPORT: ReachabilitySupport = {
   tierUnlockBucket: tier => firstDefined(REACHABILITY_SUPPORTS.map(s => s.tierUnlockBucket?.(tier))),
   resolveOneWay: resolveOneWayRealisation,
   resolveRegionBarrier: resolveRegionBarrierRealisation,
+  resolvePassage: resolvePassageRealisation,
 }
 
 // The tomb-treasure content resolver (§E): maps a tomb's floor position → its `tombKey` reward, so

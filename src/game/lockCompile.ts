@@ -4,6 +4,7 @@ import type { LooseMechanic, ResolveMechanicKind } from "./mechanics"
 import { resolveMechanicKind } from "./mechanics"
 import type { BarrierOrder, Control, Obstacle, TopologyFault } from "./obstacles"
 import { isRegionGate as isRegionObstacle, topologyFaults } from "./obstacles"
+import { PASSAGE_KIND } from "./passageRealisation"
 import { REGION_BARRIER_KIND } from "./regionBarrierRealisation"
 import type { RegionGraph } from "./regions"
 import type { ForkDemand } from "./siteTypes"
@@ -105,6 +106,9 @@ const kindsUsed = (lock: Lock): Map<string, string[]> => {
   for (const [id, mechanic] of Object.entries(lock.mechanics)) add(mechanic.control, id)
   for (const id of Object.keys(lock.oneWays ?? {})) add("one-way", id)
   if (lock.weights) add("weights", "stones")
+  // A gate empty hands alone open is a passage to be dressed, unless it stands beside a drop that carries it.
+  for (const [id, gate] of Object.entries(absorbUnladen(lock).lock.gates))
+    if (isUnladenGate(gate)) add(PASSAGE_KIND, id)
   return used
 }
 
@@ -316,9 +320,11 @@ const translate = (
     const forkOwners = gate.owners
       .filter(owner => !isWeightOwner(lock, owner) && kinds(lock.mechanics[owner].control)?.gates === "owns")
       .map(name)
+    const passage = isUnladenGate(gate) ? binding[PASSAGE_KIND] : undefined
     const terms = {
       ...(gate.mode === "any" ? { mode: "any" as const } : {}),
       ...(forkOwners.length > 0 ? { owners: forkOwners } : {}),
+      ...(passage !== undefined ? { passage } : {}),
     }
     obstacles.push(
       isRegionGate(gate)

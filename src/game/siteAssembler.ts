@@ -8,9 +8,12 @@ import {
   DOOR_FACE_ROLE,
   defaultResolveEncounter,
   defaultResolveOneWayRealisation,
+  defaultResolvePassageRealisation,
   defaultResolveRegionBarrierRealisation,
 } from "./encounterFallback"
 import type { OneWayRefusal, ResolveOneWayRealisation } from "./oneWayRealisation"
+import type { ResolvePassageRealisation } from "./passageRealisation"
+import { withPassages } from "./passages"
 import type { RegionBarrierRefusal, ResolveRegionBarrierRealisation } from "./regionBarrierRealisation"
 
 export { defaultResolveEncounter }
@@ -613,6 +616,9 @@ export type AssembleFloorKeyRequirements = {
   /** Binds each region barrier to the realisation it names. Production passes the registry's, which binds a
    * barrier that names none to nothing; absent (stories, specs, the builder) the fallback accepts any named one. */
   resolveRegionBarrier?: ResolveRegionBarrierRealisation
+  /** Says which passage a gate empty hands alone open is dressed as. Production passes the registry's; absent
+   * (stories, specs, the builder) the fallback accepts any named one. One no registered mod declares leaves a door. */
+  resolvePassage?: ResolvePassageRealisation
   /** How many attempts the floor may take, at most ASSEMBLY_ATTEMPTS. The bake's seed search asks for 1:
    * it wants a seed that carves at the authored `packing`, and a seed that only carves after the ladder
    * widened the grid is one it has to reject, so it must not pay for the climb to learn that. */
@@ -744,6 +750,7 @@ const assembleExpandedFloor = (
     resolveBoardIndex,
     resolveOneWay = defaultResolveOneWayRealisation,
     resolveRegionBarrier = defaultResolveRegionBarrierRealisation,
+    resolvePassage = defaultResolvePassageRealisation,
     maxAttempts = ASSEMBLY_ATTEMPTS,
     onLaid,
   } = keyRequirements
@@ -915,6 +922,17 @@ const assembleExpandedFloor = (
   // a door it was never thrown for.
   const gateKeyOf = (id: string) =>
     `obstacle:${floorRef.journeyId}#${floorRef.levelIndex ?? 0}#${floorRef.floorIndex}:${id}`
+  // THE PASSAGES THIS FLOOR'S GATES WERE BOUND TO, by the key their doors ask for: only those a registered mod
+  // declares, so a passage whose mod is absent stays the door its owners make it.
+  const passageKeys = new Map(
+    (authoredConfig.obstacles ?? [])
+      .filter(isEdgeGate)
+      .flatMap(o =>
+        o.passage !== undefined && resolvePassage(o.passage) !== undefined
+          ? [[gateKeyOf(o.id), o.passage] as const]
+          : []
+      )
+  )
   // THE SHAPE BOTH AUTHORING PATHS COMPILE THROUGH: a handle is the two-state case of a control, so
   // the same four fields drive the same compile step whichever wrote them — `id` and `in` are a
   // control's own, not this compile step's business.
@@ -4365,6 +4383,9 @@ const assembleExpandedFloor = (
       oneWays: oneWaysUnrealised,
       regionBarriers: regionBarriersUnrealised,
     })
+    // A GATE EMPTY HANDS ALONE OPEN IS DRESSED AS ITS PASSAGE once the carve is final: only the door cell gains a
+    // field. A door the degrade made ground is no door, so it gains nothing.
+    const passed = withPassages(bare, passageKeys)
 
     // A DOOR THAT WAITS ON SEVERAL OWNERS GAINS ITS FACE LAST, after every check above has read the carve:
     // only the door cell's family changes, so no wall, `dirs` or slot can have moved for it. Where nothing
@@ -4372,8 +4393,8 @@ const assembleExpandedFloor = (
     const faceFamily = resolveEncounter(undefined, DOOR_FACE_ROLE)
     const faced =
       faceFamily.ownerMod === undefined
-        ? bare
-        : withGateFaces(bare, floorRef.floorIndex, new Map(), undefined, faceFamily.familyId)
+        ? passed
+        : withGateFaces(passed, floorRef.floorIndex, new Map(), undefined, faceFamily.familyId)
     return { success: true, grid: faced, attempt }
   }
 

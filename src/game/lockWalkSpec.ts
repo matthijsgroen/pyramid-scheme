@@ -1,7 +1,7 @@
 // A LOCK AS THE WALK SEES IT. walkSpecOf turns the shared Lock into the LockSpec walkLock proves, with
 // every move the player has; the facts an author cannot read off the document are derived here too.
 import type { Lock, LockMechanic } from "./lockAuthoring"
-import { barriersOf, CARRY_TERMS, isRegionGate, isWeightOwner, joinOf } from "./lockAuthoring"
+import { barriersOf, isRegionGate, isWeightOwner, joinOf } from "./lockAuthoring"
 import type { LockSpec, Mechanism } from "./lockWalk"
 import { stoneArrangements } from "./mechanics/weights"
 
@@ -196,11 +196,6 @@ const hasGateLoop = (lock: Lock) => {
 
 /** What the engine cannot build yet (mechanic-contract.md, "What a mechanic declares": built: no). */
 export const notBuildable = (lock: Lock): string[] => [
-  ...(Object.values(lock.gates).some(gate =>
-    gate.owners.some(owner => (CARRY_TERMS as readonly string[]).includes(owner))
-  )
-    ? ["unladen passage"]
-    : []),
   ...(Object.values(lock.mechanics).some(m => m.control === "sequence") ? ["sequence"] : []),
   ...(Object.values(lock.gates).some(isRegionGate) ? ["region gate"] : []),
   ...(hasGateLoop(lock) ? ["gate loop"] : []),

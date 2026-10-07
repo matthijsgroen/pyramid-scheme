@@ -20,6 +20,7 @@ export const REALISATION_CHOICES: Readonly<Record<string, readonly string[]>> = 
   "one-way": ["zipline"],
   "region-barrier": ["water", "sand"],
   weights: ["stonePlate"],
+  unladen: ["narrowPassage"],
 }
 
 export const defaultBinding = (): Record<string, string> =>

@@ -100,7 +100,7 @@ const assembleReal = (
     {
       resolveKeyRequirements,
       floorRef: { journeyId, floorIndex },
-      ...(off ? { resolveOneWay: TOPOLOGY_OFF.resolveOneWay } : {}),
+      ...(off ? { resolveOneWay: TOPOLOGY_OFF.resolveOneWay, resolvePassage: TOPOLOGY_OFF.resolvePassage } : {}),
     }
   )
 }
@@ -257,7 +257,11 @@ describe("the shipped world, built with the topology mod off", () => {
   }, 300_000)
 
   it("walks reachability over every site of the shipped world and the dev journey with the mod off, throwing on none", () => {
-    const support = { ...MOD_REACHABILITY_SUPPORT, resolveOneWay: TOPOLOGY_OFF.resolveOneWay }
+    const support = {
+      ...MOD_REACHABILITY_SUPPORT,
+      resolveOneWay: TOPOLOGY_OFF.resolveOneWay,
+      resolvePassage: TOPOLOGY_OFF.resolvePassage,
+    }
     const refused: string[] = []
     let walked = 0
     for (const [journeyId, sites] of Object.entries(off))

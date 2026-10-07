@@ -1,5 +1,6 @@
 import type { EncounterResolution, ResolveEncounter } from "./siteAssembler"
 import type { OneWayRealisationMeta, ResolveOneWayRealisation } from "./oneWayRealisation"
+import type { ResolvePassageRealisation } from "./passageRealisation"
 import type { ResolveRegionBarrierRealisation } from "./regionBarrierRealisation"
 
 /** The role a mechanism room stands as when its author names no realisation. A role, not a family: which
@@ -60,3 +61,8 @@ export const defaultResolveOneWayRealisation: ResolveOneWayRealisation = id =>
 // unnamed one is still refused, so no default stands in.
 export const defaultResolveRegionBarrierRealisation: ResolveRegionBarrierRealisation = id =>
   id === undefined ? undefined : { id, ownerMod: REGISTRY_LESS, fallback: "#808080" }
+
+// A caller with no registry accepts any passage a gate names, as it answers every encounter, and offers it with the
+// one prompt this catalogue knows. An unnamed one is no passage.
+export const defaultResolvePassageRealisation: ResolvePassageRealisation = id =>
+  id === undefined ? undefined : { id, ownerMod: REGISTRY_LESS, prompt: "ui.prompt.squeeze", handsFull: true }

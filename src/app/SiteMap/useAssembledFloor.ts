@@ -9,6 +9,7 @@ import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry
 import type { ResolveKeyRequirements } from "@/game/siteAssembler"
 import { OBSTACLE_KEY_PREFIX } from "@/game/cellSlot"
 import { resolveOneWayRealisation } from "@/mods/allOneWayRealisations"
+import { resolvePassageRealisation } from "@/mods/allPassageRealisations"
 import { resolveRegionBarrierRealisation } from "@/mods/allRegionBarrierRealisations"
 import { boardIndexesForFloor } from "./boardIndexes"
 import { cellKey, legacyCellKey, cellSlot, findByAddress, floorOfAddress, walkPosition } from "./cellIdentity"
@@ -354,6 +355,7 @@ export const assemblePlayedFloor = (
     resolveKeyRequirements,
     resolveOneWay: resolveOneWayRealisation,
     resolveRegionBarrier: resolveRegionBarrierRealisation,
+    resolvePassage: resolvePassageRealisation,
     floorRef: { journeyId, ...(levelIndex !== undefined ? { levelIndex } : {}), floorIndex: currentFloor },
     ...(levelIndex !== undefined
       ? { resolveBoardIndex: boardIndexesForFloor(journeyId, levelIndex, currentFloor) }

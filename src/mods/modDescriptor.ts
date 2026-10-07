@@ -7,6 +7,7 @@ import type { WorldValidator } from "@/worldGen/validate"
 import type { CurrencyMeta } from "@/game/ledger/currencyRegistry"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { OneWayRealisationMeta } from "@/game/oneWayRealisation"
+import type { PassageRealisationMeta } from "@/game/passageRealisation"
 import type { RegionBarrierRealisationMeta } from "@/game/regionBarrierRealisation"
 
 // A mod is a container registered as one unit in src/mods/registeredMods.ts's REGISTERED_MODS.
@@ -36,6 +37,9 @@ export type ModDescriptor = {
   // The region-barrier realisations this mod offers (water, sand). A barrier bound to one that drops with the
   // mod is refused by name.
   regionBarrierRealisations?: RegionBarrierRealisationMeta[]
+  // The passage realisations this mod offers (a narrow passage), each with the prompt its crossing is offered through.
+  // A passage bound to one that drops with the mod is a plain door.
+  passageRealisations?: PassageRealisationMeta[]
   // Currency display/ownership metadata for the ledger + collection UI — one or many.
   currencyMeta?: CurrencyMeta | CurrencyMeta[]
   // Dynamic-loot distributions this mod owns (the unified loot primitive): each claims slots by

@@ -383,6 +383,7 @@ describe("a lock using a mechanic that is not built yet", () => {
       "fork-switch",
       "one-way",
       "weights",
+      "unladen",
     ])
     expect(CORE_MECHANICS.every(kind => kind.built)).toBe(true)
   })

@@ -324,6 +324,9 @@ export type RoomCell = {
    * tells this door from the barrier's others, `realisation` the id of the realisation (water, sand) the barrier was
    * bound to. A barrier has one door per entrance, all asking for one key. */
   regionBarrier?: { region: string; entrance: string; realisation: string }
+  /** THIS DOOR IS A NARROW PASSAGE (src/game/passages.ts): a gate empty hands alone open, dressed as the realisation
+   * it was bound to. Nobody stands in it: the explorer waits on either side and is taken through by its prompt. */
+  passage?: { realisation: string }
 }
 export type GridCell = EmptyCell | CorridorCell | RoomCell
 

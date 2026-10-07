@@ -30,6 +30,9 @@ export type GateTerms = {
    * gate stands open only while the key is held too, under `any` the key alone is enough. Only a gate
    * some control owns takes one. */
   floorKeys?: string[]
+  /** THE PASSAGE THIS GATE IS DRESSED AS: the realisation a gate empty hands alone open was bound to (`unladen` in a
+   * binding). Only an edge gate takes one. */
+  passage?: string
 }
 
 /** A boundary a control can hold open or shut. `between` is unordered — a gate is passable from

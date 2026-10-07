@@ -1,5 +1,6 @@
 import { assembleFloor } from "@/game/siteAssembler"
 import { resolveOneWayRealisation } from "@/mods/allOneWayRealisations"
+import { resolvePassageRealisation } from "@/mods/allPassageRealisations"
 import { resolveRegionBarrierRealisation } from "@/mods/allRegionBarrierRealisations"
 import { resolveEncounter } from "@/app/families/familyRegistry"
 import type { SiteConfig } from "@/game/siteTypes"
@@ -31,6 +32,7 @@ export const stairPeerPosition = (
     const result = assembleFloor(journeyId, siteConfig[fi], seed + fi, resolveEncounter, {
       resolveOneWay: resolveOneWayRealisation,
       resolveRegionBarrier: resolveRegionBarrierRealisation,
+      resolvePassage: resolvePassageRealisation,
     })
     if (!result.success) continue
     const peerPos = result.grid.staircases[stairId]

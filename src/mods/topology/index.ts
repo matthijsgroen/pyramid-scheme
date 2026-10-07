@@ -2,6 +2,7 @@ import type { ModDescriptor } from "../modDescriptor"
 import { GATE_FACE_META } from "./game/gateFace/meta"
 import { LIGHTBEAM_META } from "./game/lightbeam/meta"
 import { LIGHTBEAM_SWITCH_META } from "./game/lightbeamSwitch/meta"
+import { NARROW_PASSAGE_META } from "./game/narrowPassage/meta"
 import { HANDLE_META } from "./game/handle/meta"
 import { TORCH_META } from "./game/torch/meta"
 import { PRESSURE_PLATE_META } from "./game/pressurePlate/meta"
@@ -18,8 +19,9 @@ import { ZIPLINE_META } from "./game/zipline/meta"
 //
 // The control KINDS are core's (src/game/mechanics) and stay when this mod is off. What this mod provides is
 // their REALISATIONS: the handle and torch dress a toggle and an activator, the lightbeam switch a fork-switch,
-// the pressure plate a sequence, the stone plate a lock's stones, the zipline a one-way, water and sand a region barrier, the gate face the reader of a door. A floor authoring a mechanic is refused by name
-// where none of these is registered.
+// the pressure plate a sequence, the stone plate a lock's stones, the zipline a one-way, water and sand a region
+// barrier, the narrow passage a gate empty hands alone open, the gate face the reader of a door. A floor authoring a
+// mechanic is refused by name where none of these is registered.
 //
 // Each family keeps its own folder under game/ and app/, so a family joining the mod is a new folder and
 // one more entry in the list below.
@@ -40,4 +42,5 @@ export const topologyMod: ModDescriptor = {
   ],
   oneWayRealisations: [ZIPLINE_META],
   regionBarrierRealisations: [WATER_META, SAND_META],
+  passageRealisations: [NARROW_PASSAGE_META],
 }
