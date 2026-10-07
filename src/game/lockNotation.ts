@@ -1,7 +1,8 @@
 // A LOCK WRITTEN AS TEXT, one line per join, read into the shared Lock type (lockAuthoring.ts). The
 // notation is LOCK_SYNTAX, which `yarn lock` also prints so nobody has to remember it.
-import { CARRY_TERMS } from "./lockAuthoring"
+import { CARRY_TERMS, isWeightOwner } from "./lockAuthoring"
 import type { Lock, LockConnection, LockGate, LockMechanic, LockOneWay } from "./lockAuthoring"
+import { stoneArrangements } from "./mechanics/weights"
 import type { RegionAppetite } from "./regions"
 
 export const LOCK_SYNTAX = `
@@ -215,6 +216,17 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
     const needed = gate.mode === "any" ? Math.min(pressed, 1) : pressed
     if (needed > stones) fail(terms[id].n, `${id} needs stones on ${needed} plates, the lock has ${stones}`)
   }
+  const weights =
+    plates.size > 0
+      ? {
+          plates: Object.fromEntries(
+            [...plates].map(([id, plate]) => [
+              id,
+              { in: plate.in, stone: plate.stone, opens: plateOpens.get(id) ?? { weighted: [], empty: [] } },
+            ])
+          ),
+        }
+      : undefined
 
   const mechanics: Record<string, LockMechanic> = {}
   for (const [id, what] of declared) {
@@ -246,30 +258,24 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
   const connections: LockConnection[] = joins.map(j =>
     j.barriers.length > 0 ? { between: j.between, barriers: j.barriers } : j.between
   )
-  return {
-    lock: {
-      name,
-      regions: Object.fromEntries([...regions].map(([r, appetite]) => [r, { takes: appetite }])),
-      connections,
-      gates,
-      ...(Object.keys(oneWays).length > 0 ? { oneWays } : {}),
-      mechanics,
-      ...(plates.size > 0
-        ? {
-            weights: {
-              plates: Object.fromEntries(
-                [...plates].map(([id, plate]) => [
-                  id,
-                  { in: plate.in, stone: plate.stone, opens: plateOpens.get(id) ?? { weighted: [], empty: [] } },
-                ])
-              ),
-            },
-          }
-        : {}),
-      in: "in",
-      out: "out",
-    },
-    drafts: [...drafts],
-    refused,
+  const lock: Lock = {
+    name,
+    regions: Object.fromEntries([...regions].map(([r, appetite]) => [r, { takes: appetite }])),
+    connections,
+    gates,
+    ...(Object.keys(oneWays).length > 0 ? { oneWays } : {}),
+    mechanics,
+    ...(weights ? { weights } : {}),
+    in: "in",
+    out: "out",
   }
+  // A door folds only the owners some position names, so a gate no arrangement opens would let its
+  // other owners open it alone in play, while the walk keeps it shut.
+  if (weights) {
+    const { opens: opened } = stoneArrangements(lock)
+    for (const [id, gate] of Object.entries(gates))
+      if (gate.owners.some(owner => isWeightOwner(lock, owner)) && !Object.values(opened).some(o => o.includes(id)))
+        fail(terms[id].n, `gate ${id}: its stones never open it`)
+  }
+  return { lock, drafts: [...drafts], refused }
 }

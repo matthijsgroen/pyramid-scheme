@@ -200,6 +200,11 @@ describe("weights", () => {
     ["in -[p:held]- out\np plate @in stone", "line 1: plate p has no state held"],
     ["in -- hall\nhall -- out\nhall -[p]\np plate @hall stone", "line 3: p stands in hall, which it would bar"],
     ["in -[unladen]- out", "line 1: unladen asks about stones, and the lock has none"],
+    [
+      "in -[p:empty+q:empty+L]- out\np plate @in stone\nq plate @in stone\nL toggle @in",
+      "line 1: gate in-out: its stones never open it",
+    ],
+    ["in -[p:empty+unladen+L]- out\np plate @in stone\nL toggle @in", "line 1: gate in-out: its stones never open it"],
     ["in -- out\np plate @in\np plate @out", "line 3: p is placed twice"],
   ])("refuses %j", (text, message) => {
     expect(() => parseLock(text)).toThrow(message)
