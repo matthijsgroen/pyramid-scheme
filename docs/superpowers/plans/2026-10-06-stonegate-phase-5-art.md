@@ -23,7 +23,7 @@ in `art/rebuild.sh`. The explorer's poses are edits of his walking sheet (`yarn 
 
 - **Tier: every mechanic piece is shared art, `--tier=default`, the same at every difficulty** (designer,
   2026-10-06). A player never relearns per rank what a plate, a stone, a torch, a sequence tile or a narrow
-  passage looks like. Rank-dressed props (the brazier, task 7) are decor; mechanics are not, as #315 already
+  passage looks like. Rank-dressed props (the brazier) are decor; mechanics are not, as #315 already
   did for the lever and the zipline. Material: the rank-neutral wording the existing `default/` mechanic
   entries in `repaint-queue.md` use. Queue keys are `default/<name>`. Where a task below still says
   `--tier=expert` or `expert/<name>`, read `default`. The explorer is shared art too.
@@ -379,29 +379,10 @@ it touches saves or fixtures, and say so.
 
 ---
 
-### Task 7: The brazier leaves the floor dressing
+### Task 7: The brazier stays (dropped)
 
-**Decided by the designer (2026-10-06):** once a torch is something the player lights, a brazier standing in a
-room reads as one more thing to light. That is confusing, so the brazier is no longer used as dressing. The
-torch must not look like it either (task 4).
-
-The brazier is a decoration kind at every rank. It is used in `src/worldGen/spec/{starter,junior,expert,master}.ts`,
-`src/game/dressingTags.ts`, `src/game/siteTypes.ts`, `src/game/siteAssembler.ts` and
-`src/app/SiteMap/SiteMapView.tsx` (its lit variant is a light source). Its art is at five ranks
-(`src/assets/tiles/*/brazier.png`).
-
-**This changes the baked world** (`src/data/generatedWorld.ts`), because rooms that drew a brazier draw
-something else. Follow the stable-world rule:
-- capture the bake before the change;
-- remove the brazier from every dressing pool and spec;
-- re-bake, and show the designer the diff;
-- check that only dressing changed: no corridor, gate, loot or encounter moved
-  (`docs/game-design/world-spec-stability.md`, the free-vs-structural field lists, and the sweep in
-  `worldFloorAssembly.verify.ts`).
-
-**Open with the designer before starting:** what fills the brazier's place in each rank's pool (another
-existing prop, or nothing), and whether the brazier's light (`SiteMapView`) moves to another prop or goes.
-The art and the masters stay in the repository; only their use as dressing ends.
+**Decided by the designer (2026-10-07):** the brazier stays in the floor dressing. The standing torch is its
+own object, unlike the brazier, so the player does not take a brazier for something to light. Nothing to do.
 
 ---
 

@@ -9,7 +9,7 @@ fresh session can carry on. Read the roadmap first:
 | Phase | State |
 | --- | --- |
 | 7 Zipline glide | **Done**, approved by the designer. Poses in `src/app/SiteMap/ridePoses.ts`, 200 ms a cell. Story `Topology/Zipline ride`. |
-| 5 Art | Explorer carrying (task 1) and riding (task 2) done. Plate, torch and sequence tile are being imported now (see below). Narrow passage (task 5) waits on phase 3. Brazier retirement (task 7) waits on two designer answers. |
+| 5 Art | Explorer carrying (task 1) and riding (task 2) done. Plate, torch and sequence tile are being imported now (see below). Narrow passage (task 5) waits on phase 3. |
 | 1 Stones in the engine | Plan written: `docs/superpowers/plans/2026-10-06-stonegate-phase-1-engine.md`. Not started. #315 is merged, so it can start. |
 | 2, 3, 4, 6 | Not planned in detail yet. |
 
@@ -47,7 +47,7 @@ The art plan is `docs/superpowers/plans/2026-10-06-stonegate-phase-5-art.md`. It
   - a plate has three looks: raised, pressed, and pressed with a stone.
 - **Gate loops are allowed by design.** The carve can't lay them out yet (phase 4).
 - **Every mechanic piece is shared `default` art,** the same at every difficulty, with rank-neutral prompts.
-  Decor that resembles a mechanic is retired: the brazier, task 7.
+  The brazier stays as decor: the standing torch is distinct enough (2026-10-07).
 - **The torch is a standing torch, not the brazier.**
 - **The sequence tile is sandstone,** with a plain top; its state is the glyph's colour.
 - **Art method:** a variant (lit, pressed, with a stone) is made as a Gemini EDIT of the painted master, not
@@ -60,7 +60,6 @@ The art plan is `docs/superpowers/plans/2026-10-06-stonegate-phase-5-art.md`. It
 ## Open questions for the designer
 
 - Is the torch's size (waist-high, slim) big enough at map scale?
-- Brazier retirement (task 7): what replaces it in each rank's pool, and does its light move or go?
 - Riding side pose: draw the handle end-on? Should depth and light follow north/south rides?
 
 ## Building overnight
