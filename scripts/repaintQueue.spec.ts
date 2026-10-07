@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import { readFileSync } from "fs"
 import { join } from "path"
 import { revealArgs } from "./repaintReveal"
+import { parse } from "./repaintQueue"
 
 /**
  * STATUES ARE THE EXCEPTION, and only statues — the rule the queue's own preamble states, and the one
@@ -124,5 +125,22 @@ describe("revealing an entry's attachments", () => {
 
   it("has nothing to reveal for an entry with no attachments, which `open -R` would reject", () => {
     expect(revealArgs([])).toBeUndefined()
+  })
+})
+
+describe("an entry's own Import line", () => {
+  const entry = (extra: string) =>
+    "### `default/madeUp` — a made-up pose\n\n1. `~/tile-previews/sheet.png` — the sheet\n\n```\nprompt\n```\n\n" +
+    extra
+
+  it("replaces the prop import and is never an attachment", () => {
+    const [e] = parse(entry("**Import:** `yarn import-tile art/masters/x/y.webp --slot=explorer`"))
+    expect(e.importedBy).toBe("yarn import-tile art/masters/x/y.webp --slot=explorer")
+    expect(e.attachments).toHaveLength(1)
+    expect(e.attachments[0]).toMatch(/tile-previews\/sheet\.png$/)
+  })
+
+  it("defaults to the prop import without one", () => {
+    expect(parse(entry(""))[0].importedBy).toContain("--slot=prop")
   })
 })

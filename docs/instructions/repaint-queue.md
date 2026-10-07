@@ -3078,6 +3078,40 @@ yarn import-tile art/masters/props/default/narrowAlong.webp --tier=default --nam
   --filter=smooth --seat="$SHADOW"
 ```
 
+## The explorer, squeezing — one
+
+### `default/explorerSqueeze` — the explorer sideways through a narrow crack, all three facings
+
+An EDIT of the walking sheet, the way the carrying and riding frames were made (`art/README.md`, "The
+explorer"): one sheet, one pose per row, so he stays the same person. Rank-neutral, shared `default` art.
+The sheet is built from the first walking frame of each facing, so each returned frame swaps on one cell
+with the walking one. Build it first if it is missing:
+`yarn build-sheet ~/tile-previews/explorer-one.png explorer-s-1 explorer-n-1 explorer-e-1 --from=art/masters/explorer`
+
+**Attach:**
+
+1. `~/tile-previews/explorer-one.png` — the walking sheet: front, back and side rows, one frame each
+
+```
+Edit this sprite sheet. Keep the same character, outfit, palette, layout, spacing and number of frames.
+Change only the pose: he is squeezing sideways through a narrow crack, his body turned side-on, his back
+held flat against the stone, his arms tight against his chest, his belly drawn in and his chin up, one
+foot just ahead of the other. In the front and back rows he is turned a quarter turn, one shoulder
+toward the viewer, still moving toward or away from it. In the side row his back is flat to the wall
+behind him, his chest toward the viewer and his face turned to the right, the way he is going. His lit
+torch is tucked over his right shoulder into the pack strap, flame beside his head. No wall and no
+crack drawn. Same flat magenta background.
+```
+
+Save the DOWNLOAD as explorer-squeeze.png in ~/Downloads, cut it, and keep the first frame of each row (front,
+back, side) as `explorer-squeeze-{s,n,e}.webp` under `art/masters/explorer/`:
+
+```sh
+yarn cut-sheet ~/Downloads/explorer-squeeze.png --out=/tmp/squeeze --rows=front,back,side --min=0.8
+```
+
+**Import:** `yarn import-tile art/masters/explorer/explorer-squeeze-<f>.webp --tier=default --name=explorer-squeeze-<f> --slot=explorer --filter=smooth`
+
 ## Region barrier covers — two
 
 A shut region barrier is drawn as a cover lying over its region: water or sand, one seamless texture each,

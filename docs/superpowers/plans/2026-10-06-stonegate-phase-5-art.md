@@ -333,23 +333,9 @@ Like every mechanic piece it is shared `default` art with a rank-neutral prompt.
 - [ ] **Step 6: The explorer squeezing.** One pose per facing, swapped on one cell like the ride; a
   crossing plays like the zipline ride (`2026-10-04-zipline-ride-acceptance.md`).
 
-  ```
-  yarn build-sheet ~/tile-previews/explorer-one.png explorer-s-1 explorer-n-1 explorer-e-1 --from=art/masters/explorer
-  ```
-
-  🧑 Generate: attach `~/tile-previews/explorer-one.png` in a new Gemini chat with this prompt, and save
-  the DOWNLOAD as `~/Downloads/explorer-squeeze.png`:
-
-  ```
-  Edit this sprite sheet. Keep the same character, outfit, palette, layout, spacing and number of frames.
-  Change only the pose: he is squeezing sideways through a narrow crack, his body turned side-on, his back
-  held flat against the stone, his arms tight against his chest, his belly drawn in and his chin up, one
-  foot just ahead of the other. In the front and back rows he is turned a quarter turn, one shoulder
-  toward the viewer, still moving toward or away from it. In the side row his back is flat to the wall
-  behind him, his chest toward the viewer and his face turned to the right, the way he is going. His lit
-  torch is tucked over his right shoulder into the pack strap, flame beside his head. No wall and no
-  crack drawn. Same flat magenta background.
-  ```
+  🧑 Generate: `yarn repaint default/explorerSqueeze` copies the prompt and reveals the walking sheet
+  (`~/tile-previews/explorer-one.png`; the entry says how to build it). Paste into a new Gemini chat with
+  that attached and save the DOWNLOAD as `~/Downloads/explorer-squeeze.png`.
 
   Cut and keep as for the ride: `yarn cut-sheet ~/Downloads/explorer-squeeze.png --out=/tmp/squeeze
   --rows=front,back,side --min=0.8`, keep `front-1`, `back-1` and `side-1` as
