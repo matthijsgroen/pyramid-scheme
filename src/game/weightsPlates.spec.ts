@@ -7,6 +7,8 @@ import { floorLock } from "./floorLock"
 import { walkFloorLock } from "./floorLockWalk"
 import { carveLockFloor } from "./testSupport/lockFixtures"
 import { placeWeights } from "./weightsPlates"
+import { assembleFloor } from "./siteAssembler"
+import type { FloorConfig } from "./siteTypes"
 
 const controlOf = (text: string) => {
   const result = compileLock(parseLock(text).lock, { weights: "stonePlate" })
@@ -101,5 +103,23 @@ describe("a stone lock on a floor", () => {
   it("leaves the floor only with empty hands", () => {
     const grid = carveLockFloor(parseLock(STONES, "stones").lock, { weights: "stonePlate" })
     expect(floorLock(grid)!.leaveWith).toEqual([{ mechanism: expect.any(String), notIn: ["+ hand"] }])
+  })
+
+  it("leaves by the stairs down only with empty hands, as by the way out", () => {
+    const config: FloorConfig = {
+      pathPuzzles: 0,
+      difficulty: "expert",
+      end: "treasure",
+      exitOrStaircase: "staircase",
+      sideSections: [],
+      locks: [{ lock: parseLock(STONES, "stones").lock }],
+      realisations: { weights: "stonePlate" },
+    }
+    const grid = Array.from({ length: 30 }, (_, seed) => assembleFloor("test", config, seed + 1)).find(r => r.success)
+    if (!grid?.success) throw new Error("no seed carved the stair floor")
+    const [er, ec] = grid.grid.exitPos
+    const exit = grid.grid.cells[er][ec]
+    expect(exit.type === "room" && exit.stairId).toBeTruthy()
+    expect(floorLock(grid.grid)!.leaveWith).toEqual([{ mechanism: expect.any(String), notIn: ["+ hand"] }])
   })
 })

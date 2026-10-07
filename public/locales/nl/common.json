@@ -48,6 +48,9 @@
       "liftStone": "Til de steen op",
       "setStone": "Leg de steen op de plaat"
     },
+    "blocked": {
+      "carrying": "Niet te passeren met een steen"
+    },
     "travel": "Reizen",
     "chooseYourJourney": "Kies je Reis",
     "backToMap": "Terug naar kaart",

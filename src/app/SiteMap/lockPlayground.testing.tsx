@@ -14,7 +14,7 @@ import { SiteMapView } from "./SiteMapView"
 import { useAssembledFloor } from "./useAssembledFloor"
 import { useEncounter } from "./useEncounter"
 import { useMechanismStates } from "./useMechanismStates"
-import { usePromptLabel } from "./usePromptLabel"
+import { useNoticeLabel, usePromptLabel } from "./usePromptLabel"
 import { useSiteNavigation } from "./useSiteNavigation"
 import { useZiplineRide } from "./useZiplineRide"
 import { PLAYGROUND_JOURNEY, REALISATION_CHOICES, carveStep, defaultBinding, playgroundFloor } from "./lockPlayground"
@@ -119,7 +119,7 @@ const PlayedFloor: FC<{ config: FloorConfig; seed: number; base: FloorGrid }> = 
     onReward: () => {},
   })
   const { ride, playTraversal } = useZiplineRide()
-  const { onCellClick, prompt, explorerHidden } = useSiteNavigation({
+  const { onCellClick, prompt, notice, explorerHidden } = useSiteNavigation({
     journeys,
     journeyId: PLAYGROUND_JOURNEY,
     siteConfig: [config],
@@ -133,6 +133,7 @@ const PlayedFloor: FC<{ config: FloorConfig; seed: number; base: FloorGrid }> = 
     playTraversal,
   })
   const promptLabel = usePromptLabel()
+  const noticeLabel = useNoticeLabel()
   // The walk reads the floor as carved: the playing grid has its open doors taken out, which no walk can read.
   const walk = useMemo(() => walkFloorLock(base), [base])
   if (!grid) return <p data-playground-refused="">the floor does not assemble</p>
@@ -158,6 +159,7 @@ const PlayedFloor: FC<{ config: FloorConfig; seed: number; base: FloorGrid }> = 
           ownedKeys={ownedKeys}
           mechanismStates={mechanismStates}
           prompt={prompt && { label: promptLabel(prompt), at: prompt.at, onTake: prompt.take }}
+          notice={notice && { label: noticeLabel, at: notice.at }}
           className="size-full"
         />
       </div>

@@ -5,7 +5,7 @@ import { storedAtCell } from "@/game/cellAddress"
 import { dropLaunchedAt, findPath, getCell } from "@/game/gridNavigation"
 import { isSpent as mechanismIsSpent, throwMechanism } from "@/game/mechanismDoors"
 import { walkPresses } from "@/game/sequencePlay"
-import { stoneMoveAt } from "@/game/stonePlay"
+import { isCarrying, stoneMoveAt } from "@/game/stonePlay"
 import type { FloorGrid, MechanismRecord, ObstacleKind, RoomCell, SiteConfig, TreasureReward } from "@/game/siteTypes"
 import { useTimeout } from "@/support/useTimeout"
 import type { JourneyAPI } from "@/app/state/useJourneys"
@@ -64,10 +64,16 @@ export type ArrivalPrompt = {
   take: () => void
 }
 
+/** Why the explorer stopped where he did: a stone in hand where it may not go. One line says so for every such
+ * place; nothing to take, and the next tap, which moves him on, clears it. */
+export type BlockedNotice = { at: readonly [number, number] }
+
 export type SiteNavigation = {
   onCellClick: (row: number, col: number) => void
   /** The way in the explorer is standing at, or null when he is standing at none. */
   prompt: ArrivalPrompt | null
+  /** Why the walk went no further, beside the explorer, or null. Never beside a prompt. */
+  notice: BlockedNotice | null
   /** The explorer is out of sight, in the middle of a span: drawn nowhere until he lands. */
   explorerHidden: boolean
 }
@@ -92,6 +98,7 @@ export const useSiteNavigation = ({
 }: NavigationArgs): SiteNavigation => {
   const [scheduleArrival] = useTimeout()
   const [prompt, setPrompt] = useState<ArrivalPrompt | null>(null)
+  const [notice, setNotice] = useState<BlockedNotice | null>(null)
   const [explorerHidden, setExplorerHidden] = useState(false)
   // A ref beside the state: a tap in the same tick as taking the span must already see it under way.
   const traversing = useRef(false)
@@ -128,6 +135,12 @@ export const useSiteNavigation = ({
     (row: number, col: number) =>
       grid ? Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100 : 0,
     [grid, explorerPos]
+  )
+  // A STONE NEVER LEAVES ITS FLOOR, and some crossings need both hands: such a walk ends where the player stands
+  // and says why, instead of offering the way on.
+  const turnAway = useCallback(
+    (row: number, col: number) => scheduleArrival(walkDelay(row, col), () => setNotice({ at: [row, col] })),
+    [scheduleArrival, walkDelay]
   )
   // Taking a span: out of sight, the traversal plays, and only then is the player written down at the
   // landing and drawn there. The hide is flushed so the dot unmounts before the traversal starts; batched,
@@ -175,6 +188,7 @@ export const useSiteNavigation = ({
       // Leaving where you stood takes the way in you were standing at with you. A tap this guard block
       // turned away moved nobody, so it leaves the standing offer alone.
       setPrompt(null)
+      setNotice(null)
 
       const edgeId = encodeEdge(currentFloor, row, col)
       const sectionHash = cell.sectionHash ?? ""
@@ -182,6 +196,7 @@ export const useSiteNavigation = ({
       // the assembler draws carries one, so the fallback is for grids built outside the world.
       const address = cellAddress(grid, currentFloor, row, col) ?? edgeId
       const goHere = () => journeys.updatePosition(journeyId, address, edgeId)
+      const carrying = isCarrying(grid, currentFloor, journeys.getMechanismStates(journeyId))
 
       // WALKING ONTO A SEQUENCE TILE WORKS IT: no prompt, no screen, no stop beyond the step. Every tile
       // on the route counts, not only the one tapped, since a tile on the way is stood on. Written now,
@@ -222,6 +237,7 @@ export const useSiteNavigation = ({
       if (cell.type === "room" && cell.roomType === "portal" && cell.stairId) {
         journeys.markCellExplored(sectionHash, edgeId, address)
         goHere()
+        if (carrying) return turnAway(row, col)
         const stairId = cell.stairId
         scheduleArrival(walkDelay(row, col), () =>
           offer("stairs", row, col, () => {
@@ -245,6 +261,7 @@ export const useSiteNavigation = ({
       ) {
         journeys.markCellExplored(sectionHash, edgeId, address)
         goHere()
+        if (carrying) return turnAway(row, col)
         scheduleArrival(walkDelay(row, col), () => offer("exit", row, col, onExitReached))
         return
       }
@@ -257,6 +274,7 @@ export const useSiteNavigation = ({
         journeys.markCellExplored(sectionHash, edgeId, address)
         goHere()
         const traversal: Traversal = { kind: span.kind, from: span.launch, to: span.landing, dir: span.dir }
+        if (carrying && resolveOneWay(span.kind)?.handsFull) return turnAway(row, col)
         scheduleArrival(walkDelay(row, col), () =>
           offer(
             "obstacle",
@@ -394,6 +412,7 @@ export const useSiteNavigation = ({
       currentFloor,
       explorerPos,
       walkDelay,
+      turnAway,
       scheduleArrival,
       seed,
       siteConfig,
@@ -406,5 +425,5 @@ export const useSiteNavigation = ({
     ]
   )
 
-  return { onCellClick, prompt, explorerHidden }
+  return { onCellClick, prompt, notice, explorerHidden }
 }

@@ -48,6 +48,9 @@
       "liftStone": "Lift the stone",
       "setStone": "Set the stone on the plate"
     },
+    "blocked": {
+      "carrying": "Cannot pass with a stone"
+    },
     "travel": "Travel",
     "chooseYourJourney": "Choose Your Journey",
     "backToMap": "Back to map",

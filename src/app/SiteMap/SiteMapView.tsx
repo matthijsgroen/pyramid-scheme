@@ -55,6 +55,7 @@ import { explorerWeight, isCarrying, plateLookAt, type ExplorerWeight } from "@/
 import { PLATE_TILE } from "./plateArt"
 import { drawingOf, familyIconOf, isLockedGate, isSpentAt, nodeRadius, shapeKindFor, staysOpen } from "./nodeKinds"
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
+import { MapNotice } from "@/ui/atoms/MapNotice"
 import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
 import { MarkArtBadge, type Mark } from "./mark"
 import { FloorShade, LitPlaces } from "./torchlight"
@@ -127,6 +128,8 @@ type Props = {
   mechanismStates?: ReadonlyMap<string, string>
   /** The way in the explorer is standing at, drawn as a button beside him — see `useSiteNavigation`. */
   prompt?: { label: string; at: readonly [number, number]; onTake: () => void } | null
+  /** Why the explorer stopped, drawn where the prompt is — see `useSiteNavigation`. */
+  notice?: { label: string; at: readonly [number, number] } | null
   className?: string
 }
 
@@ -1165,6 +1168,7 @@ export const SiteMapView = ({
   ownedKeys,
   mechanismStates,
   prompt,
+  notice,
   className,
 }: Props) => {
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
@@ -1895,6 +1899,19 @@ export const SiteMapView = ({
                   }}
                 >
                   <MapActionPrompt label={prompt.label} onClick={prompt.onTake} />
+                </div>
+              )}
+              {notice && (
+                <div
+                  data-map-notice=""
+                  style={{
+                    position: "absolute",
+                    left: cellCenter(notice.at[0], notice.at[1]).cx,
+                    top: cellCenter(notice.at[0], notice.at[1]).cy - CELL * 0.7,
+                    transform: "translate(-50%, -100%)",
+                  }}
+                >
+                  <MapNotice label={notice.label} />
                 </div>
               )}
             </div>

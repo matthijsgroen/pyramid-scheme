@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { act, cleanup } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { findPath, revealAll } from "@/game/gridNavigation"
+import { findPath, oneWayRuns, revealAll } from "@/game/gridNavigation"
 import { SHELF_AND_DOOR, TWO_STONES, plateNamed, stoneFloor } from "@/game/testSupport/stoneFixtures"
 import { carvePlayground } from "./lockPlayground"
 import { sequenceHarness } from "./sequenceHarness.testing"
@@ -31,7 +31,7 @@ describe("a plate offers its stone", () => {
   it("taking the lift puts the stone in hand, and the empty plate it stood on offers it back on a second tap", () => {
     const h = play(SHELF_AND_DOOR)
     const shelf = plateNamed(h.grid, "shelf")
-    h.walkTo(shelf)
+    h.tap(shelf[0], shelf[1])
     act(() => h.current().prompt!.take())
     h.settle()
     expect(Object.values(h.store.mechanismStates)).toEqual(["+ hand"])
@@ -89,5 +89,68 @@ describe("standing on a plate", () => {
     const { grid, openGateKeys } = h.current()
     expect(openGateKeys.size).toBe(0)
     expect(grid!.cells.flat().some(cell => cell.type === "room" && cell.tags?.includes("gate"))).toBe(true)
+  })
+})
+
+describe("a carrying walk", () => {
+  const OPEN = "in -- out\nshelf plate @in stone\nin ?\nout ?"
+  const lift = (h: ReturnType<typeof play>) => {
+    h.walkTo(plateNamed(h.grid, "shelf"))
+    act(() => h.current().prompt!.take())
+    h.settle()
+  }
+
+  it("is turned away at the way out: no prompt, the line that says why", () => {
+    const h = play(OPEN)
+    lift(h)
+    h.walkTo(h.grid.exitPos)
+    expect(h.current().prompt).toBeNull()
+    expect(h.current().notice).toEqual({ at: h.grid.exitPos })
+  })
+
+  it("is offered the way out again once the hands are empty", () => {
+    const h = play(OPEN)
+    lift(h)
+    const shelf = plateNamed(h.grid, "shelf")
+    h.tap(shelf[0], shelf[1])
+    act(() => h.current().prompt!.take())
+    h.settle()
+    expect(Object.values(h.store.mechanismStates)).not.toContain("+ hand")
+    h.walkTo(h.grid.exitPos)
+    expect(h.current().prompt).toMatchObject({ kind: "exit" })
+    expect(h.current().notice).toBeNull()
+  })
+
+  it("is turned away at the stairs back up, as at the way down", () => {
+    const config = stoneFloor(OPEN, { entrance: "stairhead" })
+    const carved = carvePlayground(config)
+    if (!carved.found) throw new Error(JSON.stringify(carved.reasons))
+    const h = { ...sequenceHarness(carved.seed, config), grid: carved.grid }
+    lift(h)
+    h.walkTo(h.grid.entrancePos)
+    expect(h.current().prompt).toBeNull()
+    expect(h.current().notice).toEqual({ at: h.grid.entrancePos })
+  })
+
+  it("is turned away at a zipline's launch, which needs both hands", () => {
+    const config = stoneFloor("in -- yard\nyard -- out\nout >> in\nshelf plate @yard stone\nin ?\nyard ?\nout ?", {
+      realisations: { weights: "stonePlate", "one-way": "zipline" },
+    })
+    const carved = carvePlayground(config)
+    if (!carved.found) throw new Error(JSON.stringify(carved.reasons))
+    const h = { ...sequenceHarness(carved.seed, config), grid: carved.grid }
+    lift(h)
+    const { launch } = oneWayRuns(h.grid)[0]
+    h.walkTo(launch)
+    expect(h.current().prompt).toBeNull()
+    expect(h.current().notice).toEqual({ at: launch })
+  })
+
+  it("forgets the line at the next tap, which moves the explorer on", () => {
+    const h = play(OPEN)
+    lift(h)
+    h.walkTo(h.grid.exitPos)
+    h.walkTo(plateNamed(h.grid, "shelf"))
+    expect(h.current().notice).toBeNull()
   })
 })

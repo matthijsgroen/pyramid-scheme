@@ -17,7 +17,7 @@ import { useEncounter } from "./useEncounter"
 import { useRewardOffer } from "./useRewardOffer"
 import { useSiteExit } from "./useSiteExit"
 import { useZiplineRide } from "./useZiplineRide"
-import { usePromptLabel } from "./usePromptLabel"
+import { useNoticeLabel, usePromptLabel } from "./usePromptLabel"
 import { useSiteNavigation } from "./useSiteNavigation"
 import { RewardFlow } from "./RewardFlow"
 import { EncounterModal } from "./EncounterModal"
@@ -186,7 +186,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
 
   const { ride, playTraversal } = useZiplineRide()
 
-  const { onCellClick, prompt, explorerHidden } = useSiteNavigation({
+  const { onCellClick, prompt, notice, explorerHidden } = useSiteNavigation({
     journeys,
     journeyId,
     siteConfig,
@@ -201,6 +201,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   })
 
   const promptLabel = usePromptLabel()
+  const noticeLabel = useNoticeLabel()
 
   const ActiveEncounterComponent = encounter.family?.Component ?? null
 
@@ -224,6 +225,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
           ownedKeys={ownedKeys}
           mechanismStates={mechanismStates}
           prompt={prompt && { label: promptLabel(prompt), at: prompt.at, onTake: prompt.take }}
+          notice={notice && { label: noticeLabel, at: notice.at }}
           className="size-full"
         />
       </div>
