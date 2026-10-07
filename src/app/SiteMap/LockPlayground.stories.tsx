@@ -14,7 +14,6 @@ const LOCKS = Object.fromEntries(
   ).map(([path, text]) => [path.replace(/^.*\/locks\//, "").replace(/\.lock$/, ""), text])
 )
 
-// Starts on a lesson that carves at once; a heavy lock (cellar) takes seconds per seed to carve.
 const meta = {
   title: "Topology/Lock playground",
   component: LockPlayground,
@@ -27,6 +26,8 @@ const meta = {
       </StrictMode>
     ),
   ],
+  // `initial` because the first lock alphabetically (cellar) takes seconds per seed to carve on the bench floor,
+  // which would freeze the story on load; a lesson carves at once.
   args: { locks: LOCKS, initial: "lessons/leverOpensADoor" },
 } satisfies Meta<typeof LockPlayground>
 

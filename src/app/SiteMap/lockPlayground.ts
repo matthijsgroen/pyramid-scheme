@@ -39,17 +39,30 @@ export const playgroundFloor = (lock: Lock, binding: RealisationBinding): FloorC
 /** How many seeds the search tries before it reports a refusal. */
 export const CARVE_BUDGET = 200
 
-/** The first seed below `budget` that play carves the floor at, with the grid it carves; otherwise the first
+export type CarveStep =
+  | { status: "found"; seed: number; grid: FloorGrid }
+  | { status: "carving"; tried: number; reasons: AssemblerReason[] }
+  | { status: "refused"; reasons: AssemblerReason[] }
+
+/** One seed of the search for the floor play carves: the one place a seed is judged, so the story (one seed per
+ * task) and the specs (the whole search) cannot pick different seeds. `reasons` is the first refusal so far. */
+export const carveStep = (config: FloorConfig, seed: number, reasons: AssemblerReason[] = []): CarveStep => {
+  const result = assemblePlayedFloor(PLAYGROUND_JOURNEY, config, seed, 0)
+  if (result.success) return { status: "found", seed, grid: result.grid }
+  const first = reasons.length > 0 ? reasons : result.reasons
+  return seed + 1 >= CARVE_BUDGET
+    ? { status: "refused", reasons: first }
+    : { status: "carving", tried: seed + 1, reasons: first }
+}
+
+/** The first seed below `CARVE_BUDGET` that play carves the floor at, with the grid it carves; otherwise the first
  * refusal, so the playground can say why. */
 export const carvePlayground = (
-  config: FloorConfig,
-  budget = CARVE_BUDGET
+  config: FloorConfig
 ): { found: true; seed: number; grid: FloorGrid } | { found: false; reasons: AssemblerReason[] } => {
-  let reasons: AssemblerReason[] = []
-  for (let seed = 0; seed < budget; seed++) {
-    const result = assemblePlayedFloor(PLAYGROUND_JOURNEY, config, seed, 0)
-    if (result.success) return { found: true, seed, grid: result.grid }
-    if (reasons.length === 0) reasons = result.reasons
-  }
-  return { found: false, reasons }
+  let step: CarveStep = { status: "carving", tried: 0, reasons: [] }
+  for (let seed = 0; step.status === "carving"; seed++) step = carveStep(config, seed, step.reasons)
+  return step.status === "found"
+    ? { found: true, seed: step.seed, grid: step.grid }
+    : { found: false, reasons: step.reasons }
 }

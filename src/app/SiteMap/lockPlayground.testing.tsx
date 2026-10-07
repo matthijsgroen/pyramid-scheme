@@ -16,15 +16,8 @@ import { useEncounter } from "./useEncounter"
 import { useMechanismStates } from "./useMechanismStates"
 import { usePromptLabel } from "./usePromptLabel"
 import { useSiteNavigation } from "./useSiteNavigation"
-import { assemblePlayedFloor } from "./useAssembledFloor"
 import { useZiplineRide } from "./useZiplineRide"
-import {
-  PLAYGROUND_JOURNEY,
-  REALISATION_CHOICES,
-  CARVE_BUDGET,
-  defaultBinding,
-  playgroundFloor,
-} from "./lockPlayground"
+import { PLAYGROUND_JOURNEY, REALISATION_CHOICES, carveStep, defaultBinding, playgroundFloor } from "./lockPlayground"
 
 // THE LOCK PLAYGROUND: any lock, carved and played with the game's own navigation, prompts and encounter screens
 // over a journey kept in memory. Nothing here decides what a move does; it only wires the hooks the site map uses.
@@ -75,28 +68,23 @@ type Carving =
   | { status: "found"; seed: number; base: FloorGrid }
   | { status: "refused"; reasons: AssemblerReason[] }
 
-/** The first seed play carves `config` at (the same search as `carvePlayground`), one seed per task so the page stays
- * responsive and a lock picked meanwhile cancels it: one seed of a lock the bench floor cannot hold takes seconds. */
-const useCarving = (config: FloorConfig | null): Carving | null => {
+/** The search of `carvePlayground` (through `carveStep`), one seed per task so the page stays responsive and a lock
+ * picked meanwhile cancels it: one seed of a lock the bench floor cannot hold takes seconds. Exported for its spec. */
+// eslint-disable-next-line react-refresh/only-export-components -- a hook exported so its spec can drive the search
+export const useCarving = (config: FloorConfig | null): Carving | null => {
   const [carving, setCarving] = useState<{ config: FloorConfig; state: Carving } | null>(null)
   useEffect(() => {
     if (!config) return
-    let cancelled = false
-    let firstReasons: AssemblerReason[] = []
-    const step = (seed: number) => {
-      if (cancelled) return
-      const result = assemblePlayedFloor(PLAYGROUND_JOURNEY, config, seed, 0)
-      if (result.success) return setCarving({ config, state: { status: "found", seed, base: result.grid } })
-      if (firstReasons.length === 0) firstReasons = result.reasons
-      if (seed + 1 >= CARVE_BUDGET) return setCarving({ config, state: { status: "refused", reasons: firstReasons } })
-      setCarving({ config, state: { status: "carving", tried: seed + 1 } })
-      setTimeout(() => step(seed + 1), 0)
+    let timer: ReturnType<typeof setTimeout> | undefined
+    const run = (seed: number, reasons: AssemblerReason[]) => {
+      const step = carveStep(config, seed, reasons)
+      if (step.status === "found") return setCarving({ config, state: { status: "found", seed, base: step.grid } })
+      if (step.status === "refused") return setCarving({ config, state: step })
+      setCarving({ config, state: { status: "carving", tried: step.tried } })
+      timer = setTimeout(() => run(seed + 1, step.reasons), 0)
     }
-    const timer = setTimeout(() => step(0), 0)
-    return () => {
-      cancelled = true
-      clearTimeout(timer)
-    }
+    timer = setTimeout(() => run(0, []), 0)
+    return () => clearTimeout(timer)
   }, [config])
   return config && carving?.config === config ? carving.state : null
 }
