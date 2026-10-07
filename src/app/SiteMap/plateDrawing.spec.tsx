@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { render } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
 import { revealAll } from "@/game/gridNavigation"
 import { parseLock } from "@/game/lockNotation"
@@ -9,7 +10,8 @@ import { cellAddress } from "@/game/cellAddress"
 import { openDoorsFor, openWaysOut } from "@/game/mechanismDoors"
 import { explorerWeight } from "@/game/stonePlay"
 import { buildRoomClaims } from "./roomClaims"
-import { nodeSpritesFor } from "./SiteMapView"
+import { SiteMapView, nodeSpritesFor } from "./SiteMapView"
+import { cellCenter, CELL } from "./mapScale"
 import { sharedTileUrl } from "./tileAssets"
 import { PLATE_TILE } from "./plateArt"
 import { shapeKindFor } from "./nodeKinds"
@@ -43,6 +45,37 @@ describe("a plate on the map", () => {
       ),
     }
     expect(spriteAt(dark, [pr, pc])).toBeUndefined()
+  })
+
+  it("keeps its marker where no plate art is drawn, and hides it where the art is", () => {
+    // The plate pointing at the record another plate carries; without its pointer play has no stones to read there.
+    const [sr, sc] = ["p", "shelf"]
+      .map(name => plateNamed(lit, name))
+      .find(([r, c]) => {
+        const cell = lit.cells[r][c]
+        return cell.type === "room" && !cell.mechanism
+      })!
+    const loose: FloorGrid = {
+      ...lit,
+      cells: lit.cells.map((row, r) =>
+        row.map((cell, c) => {
+          if (r !== sr || c !== sc || cell.type !== "room") return cell
+          const { worksMechanism: _, ...rest } = cell
+          return rest
+        })
+      ),
+    }
+    expect(spriteAt(loose, [sr, sc])).toBeUndefined()
+    const markerOpacity = (grid: FloorGrid, [r, c]: readonly [number, number]) => {
+      const { container } = render(<SiteMapView grid={grid} currentFloor={0} />)
+      const { cx, cy } = cellCenter(r, c)
+      const marker = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
+        el => parseFloat(el.style.left) === cx - CELL / 2 && parseFloat(el.style.top) === cy - CELL / 2
+      )
+      return marker?.querySelector("[data-shape-kind]")?.getAttribute("opacity")
+    }
+    expect(markerOpacity(lit, [sr, sc])).toBe("0")
+    expect(markerOpacity(loose, [sr, sc])).not.toBe("0")
   })
 
   it("is shaped as ground, the home plate and every other alike", () => {

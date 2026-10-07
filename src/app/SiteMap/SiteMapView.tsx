@@ -1210,6 +1210,10 @@ export const SiteMapView = ({
       ),
     [grid, claims, tier, pendingCells, mechanismStates, currentFloor, isTraveling, settledExplorerPos, weight]
   )
+  const drawnPlates = useMemo(
+    () => new Set(nodeSprites.flatMap(sprite => (sprite.key.startsWith("plate:") ? [sprite.key] : []))),
+    [nodeSprites]
+  )
   // The walkable floor, as rectangles: what a layer cut to the floor is cut to. The sand is the only one
   // left — everything else that used to share the map-wide clip now carries its own shape.
   const floorRects = useMemo(() => allFloorRects(regions), [regions])
@@ -1725,7 +1729,7 @@ export const SiteMapView = ({
                 // — so the vector has nothing left to say that the doorway does not say better.
                 const hasExit = shapeKind === "exit" && !!tileOrPlaceholder(cell.difficulty ?? tier, "exit")
                 // A PAINTED PLATE IS THE NODE, as a flight is: the vector slab underneath has nothing more to say.
-                const hasPlate = !!cell.plate && !!sharedTileUrl(PLATE_TILE.raised)
+                const hasPlate = drawnPlates.has(`plate:${r},${c}`)
                 const roomR = nodeRadius[shapeKind]
                 // A WAY A SWITCH SHUT IS A WALL, AND A WALL WEARS NO NODE. The bars standing in its doorway
                 // already say the way is closed; a gate marker on top of them offers a second reading — a
