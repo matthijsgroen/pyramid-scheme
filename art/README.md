@@ -174,6 +174,7 @@ on its own, and a sheet is built from them whenever one is needed:
 art/masters/explorer/explorer-<facing>-<n>.webp   one walking pose, large, on magenta
 art/masters/explorer/explorer-carry-<facing>-<n>.webp
 art/masters/explorer/explorer-zip-<facing>.webp
+art/masters/explorer/explorer-squeeze-<facing>.webp
 ```
 
 `yarn build-sheet` lays poses out in rows on flat magenta, one row per prefix, with gutters `cut-sheet`

@@ -304,9 +304,62 @@ The map shows a wall's top from the south, so one render per orientation covers 
 - `default/narrowAlong` (across an east-west corridor, the sideways wall): mostly the wall's top as a
   strip, the crack a darker spot in that top, rubble on both sides.
 
-Like every mechanic piece it is shared `default` art with a rank-neutral prompt. Steps (geometry, queue
-entries, generation, import, staging in `Topology/NarrowPassage` with the explorer on both sides) follow
-task 3. Wiring is phase 3.
+Like every mechanic piece it is shared `default` art with a rank-neutral prompt. Wiring is phase 3.
+
+**Files:**
+- Modify: `scripts/renderProp.py` (`prim_narrow`, registered as `"narrow"`, `--contents=across|along`)
+- Modify: `docs/instructions/repaint-queue.md` (`default/narrowAcross`, `default/narrowAlong`)
+- Create: `art/masters/props/default/narrowAcross.webp`, `narrowAlong.webp`;
+  `src/assets/tiles/default/narrowAcross.png`, `narrowAlong.png`
+- Create: `art/masters/explorer/explorer-squeeze-{s,n,e}.webp`;
+  `src/assets/tiles/default/explorer-squeeze-{s,n,e}.png`
+- Modify: `art/rebuild.sh`, `src/app/SiteMap/ExplorerDot.stories.tsx`
+- Create: `src/app/SiteMap/NarrowPassage.stories.tsx`
+
+- [x] **Step 1: Geometry.** `prim_narrow` lands 56x78 (`across`) and 47x84 (`along`) at `--scale=1`; the
+  slit is 5 units wide and the notch 11 at slot size, and the `along` crack is a dark spot 10 units wide.
+  Both read in the 3x contact image `~/tile-previews/narrow-default-contact.png`.
+- [x] **Step 2: Scaffolds, masks and shadows** for both orientations, in `~/tile-previews/`:
+  `narrowAcross-default.png`, `-obj.png`, `-shadow.png` and `narrowAlong-default.png`, `-obj.png`,
+  `-shadow.png`, from identical parameters.
+- [x] **Step 3: Queue entries** `default/narrowAcross` and `default/narrowAlong` are written and parse
+  (`yarn repaint default/narrowAcross`).
+- [ ] **Step 4: 🧑 Generate** both: `yarn repaint default/narrowAcross`, paste into a new Gemini chat with
+  the two attachments it reveals, and save the DOWNLOAD. Then the same for `default/narrowAlong`.
+- [ ] **Step 5: Import and gate.** Run each entry's `yarn import-tile` line, keep each master under
+  `art/masters/props/default/`, add its line to `art/rebuild.sh`, and run
+  `yarn tile-stats src/assets/tiles/default/narrowAcross.png --tier=default --slot=prop`. The crack must
+  still read at 56 units.
+- [ ] **Step 6: The explorer squeezing.** One pose per facing, swapped on one cell like the ride; a
+  crossing plays like the zipline ride (`2026-10-04-zipline-ride-acceptance.md`).
+
+  ```
+  yarn build-sheet ~/tile-previews/explorer-one.png explorer-s-1 explorer-n-1 explorer-e-1 --from=art/masters/explorer
+  ```
+
+  🧑 Generate: attach `~/tile-previews/explorer-one.png` in a new Gemini chat with this prompt, and save
+  the DOWNLOAD as `~/Downloads/explorer-squeeze.png`:
+
+  ```
+  Edit this sprite sheet. Keep the same character, outfit, palette, layout, spacing and number of frames.
+  Change only the pose: he is squeezing sideways through a narrow crack, his body turned side-on, his back
+  held flat against the stone, his arms tight against his chest, his belly drawn in and his chin up, one
+  foot just ahead of the other. In the front and back rows he is turned a quarter turn, one shoulder
+  toward the viewer, still moving toward or away from it. In the side row his back is flat to the wall
+  behind him, his chest toward the viewer and his face turned to the right, the way he is going. His lit
+  torch is tucked over his right shoulder into the pack strap, flame beside his head. No wall and no
+  crack drawn. Same flat magenta background.
+  ```
+
+  Cut and keep as for the ride: `yarn cut-sheet ~/Downloads/explorer-squeeze.png --out=/tmp/squeeze
+  --rows=front,back,side --min=0.8`, keep `front-1`, `back-1` and `side-1` as
+  `art/masters/explorer/explorer-squeeze-{s,n,e}.webp` (task 1's script and exposure check), then import
+  each with `yarn import-tile art/masters/explorer/explorer-squeeze-<f>.webp --tier=default
+  --name=explorer-squeeze-<f> --slot=explorer --filter=smooth` and append the lines to `art/rebuild.sh`
+  under `# THE EXPLORER, SQUEEZING`. Add a `Squeezing` row to `Facings`.
+- [ ] **Step 7: Stage it** in `Topology/NarrowPassage`: both walls on the expert floor with the explorer on
+  either side, at 1:1 and 3x. Screenshot it, and **stop for the designer's verdict.**
+- [ ] **Step 8: Commit** with `art: the narrow passage and the explorer squeezing`.
 
 ---
 

@@ -1411,6 +1411,81 @@ def prim_sequencetile():
     return join_all()
 
 
+def prim_narrow():
+    """The narrow passage: one plain wall standing across a corridor cell, with a crack in it a person
+    squeezes through sideways and a stone does not, and rubble lying on both sides of it.
+
+    `--contents=across` is the wall across a NORTH-SOUTH corridor, seen face-on: a slab nearly as wide as
+    the cell, the crack a dark upright slit with a wider notch in the top. `--contents=along` is the wall
+    across an EAST-WEST corridor: it runs away from the viewer, so what the map shows is its end and its
+    top as a strip, and the crack is a dark gap cut across that top. One render per orientation covers
+    both headings, because the map only ever shows a wall from the south.
+
+    THE CRACK IS WHAT THE TILE IS FOR, and it has to survive 56 units. `across`: a slit 0.09 wide (5
+    units) running up through the wall, opening to 0.20 (11 units) in the top third, where shoulders and
+    head go. It is a real opening cut through four blocks, and its back is closed with a thin VOID panel
+    flush with the wall's far face: an open gap would show the magenta behind, which is no crack but a
+    hole in the tile. `along`: the gap is 0.16 across the top, and a wall seen from the south hides its
+    own notch behind the near half's top, so what draws is the FAR half's face turned toward the viewer;
+    that face is marked VOID, so the crack is a dark spot in the strip of the top.
+
+    BLACK IS THE PLATE'S GAP AND THE PIT'S MOUTH, and the crack is allowed it: a crack in a wall is as
+    dark as a hole is. What keeps it from the plate is that the plate lies in the floor and this stands.
+
+    THE WALL IS PLAIN: no carving, no door frame, nothing that says a door. The crack is the only thing in
+    it that is not stone. Not spun, like `pit`: the wall sits across the cell's own grid. The rubble is
+    brick-sized pieces rolled off level, a few on each side, none touching the crack."""
+    kind = arg("contents", "across")
+    H, Hl = 1.0, 0.62  # the wall's height, and where the slit opens out into the notch
+    s, n = 0.09, 0.20  # the slit's width, and the notch's
+    if kind == "across":
+        W, d = 0.92, 0.20
+        for sign in (-1, 1):
+            xs = sign * (s / 2 + (W / 2 - s / 2) / 2)
+            mark(box(W / 2 - s / 2, d, Hl, x=xs, z=Hl / 2), "body")
+            xn = sign * (n / 2 + (W / 2 - n / 2) / 2)
+            mark(box(W / 2 - n / 2, d, H - Hl, x=xn, z=(Hl + H) / 2), "body")
+        back = d / 2 - 0.003
+        mark(box(s, 0.004, Hl, y=back, z=Hl / 2), VOID)
+        mark(box(s, d, 0.004, z=0.002), VOID)  # the slit's floor, or the magenta shows between the edges
+        mark(box(n, 0.004, H - Hl, y=back, z=(Hl + H) / 2), VOID)
+        pieces = (  # (sx, sy, sz, x, y, yaw, roll)
+            (0.20, 0.11, 0.07, -0.30, -0.22, -14, 5),
+            (0.15, 0.10, 0.06, -0.06, -0.27, 22, -6),
+            (0.22, 0.12, 0.08, 0.20, -0.23, 9, 7),
+            (0.12, 0.09, 0.05, 0.38, -0.20, -30, -4),
+            (0.13, 0.09, 0.05, -0.40, -0.14, 35, 6),
+            (0.18, 0.11, 0.07, -0.20, 0.24, 17, -5),
+            (0.21, 0.11, 0.08, 0.14, 0.26, -11, 6),
+            (0.12, 0.09, 0.05, 0.38, 0.22, 28, -7),
+        )
+    else:
+        W, t, gap = 0.90, 0.20, 0.16
+        for sign in (-1, 1):
+            ys = sign * (gap / 2 + (W / 2 - gap / 2) / 2)
+            mark(box(t, W / 2 - gap / 2, H, y=ys, z=H / 2), "body")
+        mark(box(t, gap, Hl, z=Hl / 2), "body")
+        mark(box(t, 0.004, H - Hl, y=gap / 2 - 0.001, z=(Hl + H) / 2), VOID)
+        pieces = (
+            (0.20, 0.11, 0.07, -0.20, -0.30, 12, 5),
+            (0.15, 0.10, 0.06, -0.26, -0.02, -22, -6),
+            (0.22, 0.12, 0.08, -0.22, 0.24, -8, 7),
+            (0.12, 0.09, 0.05, -0.38, 0.12, 30, -4),
+            (0.18, 0.11, 0.07, 0.20, -0.22, -17, -5),
+            (0.21, 0.12, 0.08, 0.24, 0.06, 6, 6),
+            (0.12, 0.09, 0.05, 0.38, -0.08, -28, -7),
+            (0.16, 0.10, 0.06, 0.22, 0.30, 20, 4),
+        )
+    for sx, sy, sz, x, y, yaw, roll in pieces:
+        # Built at the origin, turned, then placed (`turn`'s order): rolled off level so the pieces read as
+        # fallen, and resting on the floor wherever they sit.
+        piece = box(sx, sy, sz)
+        piece.rotation_euler = (0, math.radians(roll), math.radians(yaw))
+        piece.location = (x, y, sz / 2)
+        mark(piece, "body")
+    return join_all()
+
+
 def prim_rubbleheap():
     """A heap of broken mudbrick, one brick still whole — the ROOM's rubble, not the scatter's.
 
@@ -3618,6 +3693,7 @@ PRIMITIVES.update(
         "brazier": prim_brazier,
         "torch": prim_torch,
         "plate": prim_plate,
+        "narrow": prim_narrow,
         "sequenceTile": prim_sequencetile,
         "lamp": prim_lamp,
         "pillar": prim_pillar,

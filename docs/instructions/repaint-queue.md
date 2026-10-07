@@ -2757,10 +2757,11 @@ yarn import-tile art/masters/props/default/dropSouth.webp --tier=default --name=
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.85
 ```
 
-## Stone gate mechanics — five, shared by every rank
+## Stone gate mechanics — shared by every rank
 
 The pieces a player reads to solve a floor: a pressure plate that takes a stone, a standing torch that is
-lit or not, and a sequence tile stepped on in order. They are MECHANICS, so they look the same at every
+lit or not, a sequence tile stepped on in order, and a narrow passage a person squeezes through and a
+stone does not. They are MECHANICS, so they look the same at every
 rank — a player must never relearn which thing is which when the tomb gets richer — and live in
 `tiles/default/`, like the lever and the drops. The scaffolds are rendered in the priest's stone, the
 same as theirs, but each prompt closes on a rank-neutral material line rather than the priest's.
@@ -2977,6 +2978,98 @@ Then, once the return is in `~/Downloads`:
 scaffold sequenceTile --shadow=0 --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/default/sequenceTile.webp --tier=default --name=sequenceTile --slot=prop \
   --filter=smooth --mask="$OBJ" --scale=0.8
+```
+
+### `default/narrowAcross` — a wall across a north-south passage, one crack in it
+
+The wall seen face-on, as the map shows a wall standing across a corridor that runs toward the viewer. The
+crack is the whole point of the tile, so it must read at 56 units: a dark upright SLIT up the middle, with
+a wider notch where it reaches the top. It is imported at its natural size (no `--scale`): the wall fills
+the cell's width.
+
+**Attach:**
+
+1. `~/tile-previews/narrowAcross-default.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: one plain stone WALL standing across a passage, seen straight on from the front, as wide as
+the passage and a little taller than a person. It is built of large blocks of dark basalt, flat on the
+front, its top a narrow lighter strip. It has ONE CRACK: a narrow upright SLIT runs from the floor up
+through the whole wall, wide enough for a person to pass sideways and no wider, and near the top it
+opens into a wider NOTCH cut down into the wall's top. The inside of the crack is black and goes through
+the wall. Nothing else is cut, carved or painted on the wall: no door frame, no lintel, no glyph. At the
+wall's foot, on the near side and spilling past its ends, lie a few fallen blocks of RUBBLE, broken
+basalt and mudbrick, left where they fell.
+
+Basalt worn dark and faintly polished along the wall's top edge and the lips of the crack, with pale
+natron dust settled in the joints between the blocks and among the rubble.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+Light it as one low lamp in a closed tomb. The wall's top strip and the edges of the crack may CATCH it;
+the crack stays the darkest thing in the picture.
+
+The shadow at the wall's foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No ground plane and no background: the object stands alone on the magenta. Old worn stone and timber, dust settled in every crack; nothing that belongs to one tomb more than another; no gold.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold narrow --contents=across --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/default/narrowAcross.webp --tier=default --name=narrowAcross --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+```
+
+### `default/narrowAlong` — a wall across an east-west passage, one crack in its top
+
+The same wall for a corridor that runs sideways across the map. It runs away from the viewer, so the map
+shows its narrow end and its top as a long strip, and the crack is a dark gap cut across that top. Same
+material and the same crack as `narrowAcross`, painted to match it.
+
+**Attach:**
+
+1. `~/tile-previews/narrowAlong-default.png` — the scaffold
+2. `~/tile-previews/expert-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF.
+
+Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: one plain stone WALL standing across a passage and running away from the viewer, seen from its
+narrow END and from above. The end is a tall narrow face of dark basalt, flat and plain, and the wall's
+long TOP rises behind it as a lighter strip. About half way along, ONE CRACK is cut clean across the top:
+a short black gap, as wide as the wall is thick, which a person turned sideways can pass and a stone
+cannot. The inside of the crack is black. Nothing else is cut, carved or painted on the wall: no door
+frame, no glyph. On both sides of the wall, along its foot, lie a few fallen blocks of RUBBLE, broken
+basalt and mudbrick, left where they fell.
+
+Basalt worn dark and faintly polished along the wall's top edge and the lips of the crack, with pale
+natron dust settled in the joints between the blocks and among the rubble.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+Light it as one low lamp in a closed tomb. The wall's top strip and the edges of the crack may CATCH it;
+the crack stays the darkest thing in the picture.
+
+The shadow at the wall's foot is part of the picture: paint it #3A342C, with no pink and no purple in it at all.
+
+No ground plane and no background: the object stands alone on the magenta. Old worn stone and timber, dust settled in every crack; nothing that belongs to one tomb more than another; no gold.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold narrow --contents=along --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/default/narrowAlong.webp --tier=default --name=narrowAlong --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ## Region barrier covers — two
