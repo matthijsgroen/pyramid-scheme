@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import { parseLock } from "./lockNotation"
 import { carveLockFloor } from "./testSupport/lockFixtures"
 import { SHELF_AND_DOOR, TWO_STONES, plateNamed } from "./testSupport/stoneFixtures"
+import { cellAddress } from "./cellAddress"
 import { openDoorsFor } from "./mechanismDoors"
 import { explorerWeight, isCarrying, plateLookAt, plateLookOf, stoneMoveAt, stonesAt } from "./stonePlay"
 
@@ -120,5 +121,38 @@ describe("explorerWeight", () => {
     )
     const weight = explorerWeight(grid, 0, plateNamed(grid, "p"), new Map())
     expect(weight?.open).toEqual(new Set())
+  })
+
+  describe("a door the stones share with a lever", () => {
+    const leverFloor = (door: string) =>
+      carveLockFloor(
+        parseLock(`in -[${door}]- out\np plate @in\nshelf plate @in stone\nL toggle @in\nin ?\nout ?`, "stones").lock,
+        {
+          weights: "stonePlate",
+          toggle: "handle",
+        }
+      )
+    const leverThrown = (grid: ReturnType<typeof floorOf>) => {
+      for (let r = 0; r < grid.rows; r++)
+        for (let c = 0; c < grid.cols; c++) {
+          const cell = grid.cells[r][c]
+          if (cell.type === "room" && cell.mechanism?.states.length === 2 && !cell.plate)
+            return new Map([[cellAddress(grid, 0, r, c)!, cell.mechanism.states[1]]])
+        }
+      throw new Error("no lever on this floor")
+    }
+
+    it("shuts a door the lever holds open while he presses the plate it waits empty on", () => {
+      const grid = leverFloor("p:empty+L")
+      const thrown = leverThrown(grid)
+      const weight = explorerWeight(grid, 0, plateNamed(grid, "p"), thrown)
+      expect(weight?.shut).toContain(doorKeyOf(grid))
+    })
+
+    it("opens under his weight when either owner says yes, the lever still shut", () => {
+      const grid = leverFloor("p|L")
+      const weight = explorerWeight(grid, 0, plateNamed(grid, "p"), new Map())
+      expect(weight?.open).toEqual(new Set([doorKeyOf(grid)]))
+    })
   })
 })

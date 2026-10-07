@@ -35,3 +35,12 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Playground: Story = {}
+
+// A made-up lock for looking at the explorer's weight: the door beyond the entrance waits for a stone on `p`, so it
+// draws swung open while he stands on `p` and shut again once he steps off.
+export const WeightOpensTheDoor: Story = {
+  args: {
+    locks: { doorByPlate: "in -[p]- out\np plate @in\nshelf plate @in stone\nin ?\nout ?" },
+    initial: "doorByPlate",
+  },
+}

@@ -5,6 +5,8 @@ import { parseLock } from "@/game/lockNotation"
 import type { FloorGrid } from "@/game/siteTypes"
 import { carveLockFloor } from "@/game/testSupport/lockFixtures"
 import { SHELF_AND_DOOR, plateNamed } from "@/game/testSupport/stoneFixtures"
+import { cellAddress } from "@/game/cellAddress"
+import { openDoorsFor, openWaysOut } from "@/game/mechanismDoors"
 import { explorerWeight } from "@/game/stonePlay"
 import { buildRoomClaims } from "./roomClaims"
 import { nodeSpritesFor } from "./SiteMapView"
@@ -64,5 +66,33 @@ describe("a door under the explorer's weight", () => {
       )
     expect(leaf(explorerWeight(lit, 0, p, new Map()))?.url).toMatch(/gate-open/)
     expect(leaf(undefined)?.url).not.toMatch(/gate-open/)
+  })
+
+  it("draws a way the lever holds open shut while his weight shuts it, and open again once he steps off", () => {
+    const grid = revealAll(
+      carveLockFloor(
+        parseLock("in -[p:empty+L]- out\np plate @in\nshelf plate @in stone\nL toggle @in\nin ?\nout ?", "stones").lock,
+        {
+          weights: "stonePlate",
+          toggle: "handle",
+        }
+      )
+    )
+    const lever = grid.cells.flatMap((row, r) =>
+      row.flatMap((cell, c) =>
+        cell.type === "room" && cell.mechanism?.states.length === 2 && !cell.plate
+          ? [[r, c, cell.mechanism.states[1]] as const]
+          : []
+      )
+    )[0]
+    const thrown = new Map([[cellAddress(grid, 0, lever[0], lever[1])!, lever[2]]])
+    const opened = openWaysOut(grid, openDoorsFor(grid, 0, thrown))
+    const p = plateNamed(opened, "p")
+    const leaf = (weight?: ReturnType<typeof explorerWeight>) =>
+      nodeSpritesFor(opened, buildRoomClaims(opened), "expert", undefined, thrown, 0, p, weight).find(s =>
+        s.key.startsWith("gate:")
+      )
+    expect(leaf(undefined)?.url).toMatch(/gate-open/)
+    expect(leaf(explorerWeight(opened, 0, p, thrown))?.url).not.toMatch(/gate-open/)
   })
 })
