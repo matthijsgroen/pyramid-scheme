@@ -140,6 +140,15 @@ describe("an entry's own Import line", () => {
     expect(e.attachments[0]).toMatch(/tile-previews\/sheet\.png$/)
   })
 
+  it("keeps an attachment the Import line only contains inside a longer path", () => {
+    const [e] = parse(
+      entry(
+        "2. `art/masters/x/y.webp` — the reference\n\n**Import:** `yarn import-tile tmp/art/masters/x/y.webp --slot=explorer`"
+      )
+    )
+    expect(e.attachments).toEqual([expect.stringMatching(/tile-previews\/sheet\.png$/), "art/masters/x/y.webp"])
+  })
+
   it("defaults to the prop import without one", () => {
     expect(parse(entry(""))[0].importedBy).toContain("--slot=prop")
   })

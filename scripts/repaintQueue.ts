@@ -30,9 +30,10 @@ export const parse = (md: string): Entry[] =>
       // An entry that is not a prop (the explorer's sheet) gives its own `**Import:**` line, whose paths
       // are outputs and so never attachments.
       const importLine = /^\*\*Import:\*\*\s*`([^`]+)`/m.exec(block)?.[1]
+      const outputs = importLine?.split(/\s+/) ?? []
       const attachments = [...block.matchAll(/`((?:~\/[^`]+\.png|art\/masters\/[^`]+\.(?:webp|png|jpe?g)))`/g)]
         .map(m => m[1])
-        .filter(path => !importLine?.includes(path))
+        .filter(path => !outputs.includes(path))
         .map(path => path.replace(/^~/, homedir()))
       return [
         {
