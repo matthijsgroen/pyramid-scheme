@@ -16,7 +16,7 @@ import { useFloorExplorationRecorder } from "./useFloorExplorationRecorder"
 import { useEncounter } from "./useEncounter"
 import { useRewardOffer } from "./useRewardOffer"
 import { useSiteExit } from "./useSiteExit"
-import { useZiplineRide } from "./useZiplineRide"
+import { useCrossing } from "./useCrossing"
 import { useNoticeLabel, usePromptLabel } from "./usePromptLabel"
 import { useSiteNavigation } from "./useSiteNavigation"
 import { RewardFlow } from "./RewardFlow"
@@ -184,7 +184,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
 
   const exit = useSiteExit()
 
-  const { ride, playTraversal } = useZiplineRide()
+  const { ride, squeeze, playTraversal } = useCrossing()
 
   const { onCellClick, prompt, notice, explorerHidden } = useSiteNavigation({
     journeys,
@@ -220,6 +220,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
           explorerPos={explorerPos}
           explorerHidden={explorerHidden}
           ride={ride}
+          squeeze={squeeze}
           currentFloor={currentFloor}
           pendingCells={pendingConsumableCells}
           ownedKeys={ownedKeys}

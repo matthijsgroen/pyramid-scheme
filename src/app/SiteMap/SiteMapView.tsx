@@ -14,6 +14,8 @@ import { ExplorerDot, LightPool } from "./ExplorerDot"
 import { RiderSprite, ZiplineRider } from "./ZiplineRider"
 import { poseFor, type RidePoses } from "./ridePoses"
 import type { Ride } from "./useZiplineRide"
+import { SqueezeRider } from "./SqueezeRider"
+import type { Squeeze } from "./useSqueeze"
 import { driftsFor, grassMatsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
 import {
@@ -114,6 +116,8 @@ type Props = {
   ridePoses?: RidePoses
   /** Draw the ride standing still at its first or last frame instead of sliding it: a story's way to tune the poses. */
   rideFrame?: "from" | "to"
+  /** A narrow passage being squeezed through: drawn as two slides beside the explorer, who is hidden meanwhile. */
+  squeeze?: Squeeze | null
   /** Current floor index. Keys the explorer dot so a floor switch remounts it (instant snap to the
    * new floor's entrance) instead of animating a walk from the previous floor's coordinates. */
   currentFloor?: number
@@ -1190,6 +1194,7 @@ export const SiteMapView = ({
   ride,
   ridePoses,
   rideFrame,
+  squeeze,
   currentFloor,
   pendingCells,
   ownedKeys,
@@ -1380,7 +1385,11 @@ export const SiteMapView = ({
   // A RIDER HANGS FROM THE CABLE, so while a ride is drawn the zipline art is behind him whatever its floor
   // line: sorted against the launch, a drop running down the page would otherwise cover the rider on it.
   // ponytail: every drop, not only the one ridden; a floor showing two drops at once can match by run.
-  const underRider = (s: StandingSprite) => !!ride && s.key.startsWith("drop:")
+  // A SQUEEZER IS IN THE CRACK, so the wall he passes is behind him too: sorted against the side he set out from,
+  // a wall below that side would otherwise cover him all the way through.
+  const squeezedAt = squeeze && `${squeeze.traversal.via[0]},${squeeze.traversal.via[1]}`
+  const underRider = (s: StandingSprite) =>
+    (!!ride && s.key.startsWith("drop:")) || (!!squeezedAt && s.key.split(":").pop() === squeezedAt)
   const behindExplorer = seated.filter(
     s => underRider(s) || s.baseY < explorerBaseY || (s.baseY === explorerBaseY && !s.atExplorer)
   )
@@ -1852,6 +1861,7 @@ export const SiteMapView = ({
                 ) : (
                   <ZiplineRider ride={ride} poses={ridePoses} />
                 ))}
+              {squeeze && <SqueezeRider squeeze={squeeze} />}
 
               <StandingLayer sprites={inFrontOfExplorer} />
 

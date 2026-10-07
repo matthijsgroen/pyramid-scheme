@@ -16,7 +16,7 @@ import { useEncounter } from "./useEncounter"
 import { useMechanismStates } from "./useMechanismStates"
 import { useNoticeLabel, usePromptLabel } from "./usePromptLabel"
 import { useSiteNavigation } from "./useSiteNavigation"
-import { useZiplineRide } from "./useZiplineRide"
+import { useCrossing } from "./useCrossing"
 import {
   PLAYGROUND_JOURNEY,
   REALISATION_CHOICES,
@@ -124,7 +124,7 @@ const PlayedFloor: FC<{ config: FloorConfig; seed: number; base: FloorGrid }> = 
     ownedKeys,
     onReward: () => {},
   })
-  const { ride, playTraversal } = useZiplineRide()
+  const { ride, squeeze, playTraversal } = useCrossing()
   const { onCellClick, prompt, notice, explorerHidden } = useSiteNavigation({
     journeys,
     journeyId: PLAYGROUND_JOURNEY,
@@ -161,6 +161,7 @@ const PlayedFloor: FC<{ config: FloorConfig; seed: number; base: FloorGrid }> = 
           explorerPos={explorerPos}
           explorerHidden={explorerHidden}
           ride={ride}
+          squeeze={squeeze}
           currentFloor={0}
           ownedKeys={ownedKeys}
           mechanismStates={mechanismStates}
