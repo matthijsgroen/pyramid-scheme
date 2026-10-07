@@ -44,3 +44,12 @@ export const WeightOpensTheDoor: Story = {
     initial: "doorByPlate",
   },
 }
+
+// A made-up lock for the narrow passage: a stone on a shelf by the way in, and a crack in a wall on to the way out.
+// With empty hands, tap the wall to squeeze through; lift the stone first and the explorer stops beside the wall.
+export const SqueezeThrough: Story = {
+  args: {
+    locks: { crack: "in -[unladen]- out\nshelf plate @in stone\nin ?\nout ?" },
+    initial: "crack",
+  },
+}

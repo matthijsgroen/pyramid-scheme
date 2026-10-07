@@ -54,6 +54,7 @@ import {
 import { storedAtCell } from "@/game/cellAddress"
 import { tileStatusAt } from "@/game/sequencePlay"
 import { explorerWeight, isCarrying, plateLookAt, type ExplorerWeight } from "@/game/stonePlay"
+import { passageArtUrl } from "./passageArt"
 import { PLATE_TILE } from "./plateArt"
 import { drawingOf, familyIconOf, isLockedGate, isSpentAt, nodeRadius, shapeKindFor, staysOpen } from "./nodeKinds"
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
@@ -484,6 +485,23 @@ export const nodeSpritesFor = (
           mirrored: false,
           light: { x: ex, y: ey + CELL * 0.12, r: LAMP_POOL_RADIUS },
         })
+      } else if (kind === "gate" && cell.passage) {
+        // A NARROW PASSAGE IS A WALL STANDING IN ITS OWN CELL, a crack in it: drawn in the cell-wide prop frame like a
+        // plate, never hung on a seam like a gate's leaf, and the same at every rank. Nobody stands in it; it fades
+        // while the explorer waits on the cell behind it. Unpainted, it is drawn as the shut gate it is to the walk.
+        const url = passageArtUrl(cell)
+        if (url)
+          out.push({
+            footprint,
+            key: `passage:${r},${c}`,
+            url,
+            x: cx - CELL / 2,
+            y: cy + CELL / 2 - PROP_H,
+            mirrored: false,
+            fadeAt: [`${r},${c}`, `${r - 1},${c}`],
+            ...(cell.mark ? { mark: cell.mark } : {}),
+          })
+        else gateLeaf(r, c, tier, cell.dirs, { open: false, wall: true, mark: cell.mark })
       } else if (kind === "gate" && cell.regionBarrier) {
         // A REGION BARRIER IS THE COVER ITSELF, NOT A DOOR HUNG IN THE PASSAGE: the water or sand is drawn
         // under the floor's light (RegionBarrierCovers), and this sprite is only the seat for the owner's
