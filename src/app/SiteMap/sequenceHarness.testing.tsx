@@ -97,7 +97,7 @@ const journeyData = (id: string): TranslatedJourney =>
     lengthLabel: "short",
   }) as TranslatedJourney
 
-/** `resolveOneWay` replaces the navigation's registry for one-ways, never the carve's. */
+/** `resolveOneWay` overrides the navigation's registry for one-ways, never the carve's. */
 export const sequenceHarness = (
   seed: number,
   config: FloorConfig,

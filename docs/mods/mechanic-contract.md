@@ -96,9 +96,9 @@ waiting for, the way a ward gate already shows the key it wants.
   door folds in its other owners by the gate's mode. `unladen` holds in every arrangement without a stone in
   hand.
 - **Play.** A plate offers its move through a prompt (lift or set-down, `stoneMoveAt`); arriving never acts.
-  A carrying walk is turned away at every staircase and the way out, and at a one-way whose realisation
-  declares `handsFull`, with one line for all of them ("Cannot pass with a stone"), shown where the prompt
-  stands. One line because the player learns one rule, not which way refuses.
+  A carrying walk is turned away at every staircase and the way out, at a narrow passage, and at a one-way
+  whose realisation declares `handsFull`, with one line for all of them ("Cannot pass with a stone"), shown
+  where the prompt stands. One line because the player learns one rule, not which way refuses.
 - **A saved arrangement the lock no longer has** is read as the record's `initial` (`arrangementIn`), so the
   stones play on from the start instead of freezing.
 - **The explorer's weight** is the record's `underfoot`: per arrangement and empty plate, what pressing it
@@ -157,9 +157,10 @@ region straddles the door.
 A one-way realisation may declare `handsFull`: the crossing needs both hands, and a carrying walk is turned
 away at its launch.
 
-A passage realisation declares its prompt and may declare `handsFull` and its art. On a floor whose locks hold
-stones, a one-way realisation declaring `handsFull` bound to a drop the lock lets a stone ride is refused
-(`stonePasses`), so play never turns back a walk the solver takes.
+A passage realisation declares its prompt and its art, never `handsFull`: its gate is one only empty hands open,
+so the lock already shuts it to a carrying walk, and play turns that walk away at the wall whatever the
+realisation. On a floor whose locks hold stones, a one-way realisation declaring `handsFull` bound to a drop the
+lock lets a stone ride is refused (`stonePasses`), so play never turns back a walk the solver takes.
 
 Within one lock, all roles of a kind take the same realisation for now. Per-role selectors are a later
 idea, not a current one.

@@ -196,31 +196,36 @@ export const useSiteNavigation = ({
       setPrompt(null)
       setNotice(null)
 
+      // WALKING TO A CELL: every sequence tile on the route is stood on, so each works as it is passed. The cell's
+      // address is what every write about it is filed under; every cell the assembler draws carries one, so the
+      // fallback is for grids built outside the world.
+      const walkTo = (r: number, c: number) => {
+        for (const press of walkPresses(
+          grid,
+          currentFloor,
+          findPath(grid, explorerPos, [r, c]),
+          journeys.getMechanismStates(journeyId)
+        ))
+          journeys.setMechanismState(press.address, press.state)
+        const edgeId = encodeEdge(currentFloor, r, c)
+        const address = cellAddress(grid, currentFloor, r, c) ?? edgeId
+        return { edgeId, address, goHere: () => journeys.updatePosition(journeyId, address, edgeId) }
+      }
+
       // A NARROW PASSAGE IS NEVER GROUND. A tap on its wall walks the explorer to the side he can reach and offers the
       // crossing there; nothing else takes him through. It stands only on a gate empty hands alone open, so with a
-      // stone in hand it is shut, and a passage that takes both hands says why.
+      // stone in hand the lock has shut it, whatever realises it, and the wall says why.
       if (cell.type === "room" && cell.passage) {
         const walkable = walkableFrom(grid, explorerPos)
         const crossing = passageCrossing(grid, row, col, (r, c) => walkable.has(`${r},${c}`))
         const near = crossing && getCell(grid, crossing.near[0], crossing.near[1])
         if (!crossing || !near || near.type === "empty") return
         const [nr, nc] = crossing.near
-        const nearEdge = encodeEdge(currentFloor, nr, nc)
-        const nearAddress = cellAddress(grid, currentFloor, nr, nc) ?? nearEdge
-        for (const press of walkPresses(
-          grid,
-          currentFloor,
-          findPath(grid, explorerPos, crossing.near),
-          journeys.getMechanismStates(journeyId)
-        ))
-          journeys.setMechanismState(press.address, press.state)
-        journeys.markCellExplored(near.sectionHash ?? "", nearEdge, nearAddress)
-        journeys.updatePosition(journeyId, nearAddress, nearEdge)
+        const side = walkTo(nr, nc)
+        journeys.markCellExplored(near.sectionHash ?? "", side.edgeId, side.address)
+        side.goHere()
+        if (isCarrying(grid, currentFloor, journeys.getMechanismStates(journeyId))) return turnAway(nr, nc)
         const passage = resolvePassage(crossing.realisation)
-        if (isCarrying(grid, currentFloor, journeys.getMechanismStates(journeyId))) {
-          if (passage?.handsFull) turnAway(nr, nc)
-          return
-        }
         const traversal: Traversal = {
           kind: crossing.realisation,
           from: crossing.near,
@@ -234,25 +239,11 @@ export const useSiteNavigation = ({
         return
       }
 
-      const edgeId = encodeEdge(currentFloor, row, col)
       const sectionHash = cell.sectionHash ?? ""
-      // Where this cell sits in its section, which is what every write below files it under. Every cell
-      // the assembler draws carries one, so the fallback is for grids built outside the world.
-      const address = cellAddress(grid, currentFloor, row, col) ?? edgeId
-      const goHere = () => journeys.updatePosition(journeyId, address, edgeId)
       const carrying = isCarrying(grid, currentFloor, journeys.getMechanismStates(journeyId))
-
-      // WALKING ONTO A SEQUENCE TILE WORKS IT: no prompt, no screen, no stop beyond the step. Every tile
-      // on the route counts, not only the one tapped, since a tile on the way is stood on. Written now,
-      // beside the position and the exploration, so a tile never reads walked for a step the position
-      // does not hold.
-      for (const press of walkPresses(
-        grid,
-        currentFloor,
-        findPath(grid, explorerPos, [row, col]),
-        journeys.getMechanismStates(journeyId)
-      ))
-        journeys.setMechanismState(press.address, press.state)
+      // WALKING ONTO A SEQUENCE TILE WORKS IT: no prompt, no screen, no stop beyond the step. Written now, beside the
+      // position and the exploration, so a tile never reads walked for a step the position does not hold.
+      const { edgeId, address, goHere } = walkTo(row, col)
 
       // THROWING IT IS THE WHOLE VISIT (FamilyMeta.actsOnArrival): no screen opens for it, so this is
       // where a lever's position gets written — the same call its old modal made (`setMechanismState`),

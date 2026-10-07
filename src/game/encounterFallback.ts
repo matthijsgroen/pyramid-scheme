@@ -65,4 +65,4 @@ export const defaultResolveRegionBarrierRealisation: ResolveRegionBarrierRealisa
 // A caller with no registry accepts any passage a gate names, as it answers every encounter, and offers it with the
 // one prompt this catalogue knows. An unnamed one is no passage.
 export const defaultResolvePassageRealisation: ResolvePassageRealisation = id =>
-  id === undefined ? undefined : { id, ownerMod: REGISTRY_LESS, prompt: "ui.prompt.squeeze", handsFull: true }
+  id === undefined ? undefined : { id, ownerMod: REGISTRY_LESS, prompt: "ui.prompt.squeeze" }

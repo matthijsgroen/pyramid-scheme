@@ -106,12 +106,11 @@ describe("the narrow passage on a carved floor", () => {
     expect(compared).toBeGreaterThan(0)
   })
 
-  it("is declared by the topology mod, with its prompt, its art and both hands", () => {
+  it("is declared by the topology mod, with its prompt and its art", () => {
     expect(resolvePassageRealisation("narrowPassage")).toEqual({
       id: "narrowPassage",
       ownerMod: "topology",
       prompt: "ui.prompt.squeeze",
-      handsFull: true,
       art: { across: "narrowAcross", along: "narrowAlong" },
     })
   })
