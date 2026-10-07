@@ -18,7 +18,6 @@
 
 import { execFileSync } from "child_process"
 import { existsSync, readFileSync } from "fs"
-import { homedir } from "os"
 import { join } from "path"
 import { revealArgs } from "./repaintReveal"
 import { parse, type Entry } from "./repaintQueue"
