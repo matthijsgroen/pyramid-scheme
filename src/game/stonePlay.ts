@@ -6,9 +6,10 @@ import type { FloorGrid, MechanismRecord, RoomCell } from "./siteTypes"
 // THE STONES AS PLAY ASKS ABOUT THEM, read off the weights record a lock's first plate carries and never off a
 // second copy of the rules: a move is what `pressAt` makes at the plate, an arrangement is what its key says.
 
-/** THE ONE READING OF A STORED ARRANGEMENT: the key itself where the record has it, otherwise the authored start.
- * A save from a build whose lock changed plays on from the start: saves are migrated, never reset, and a puzzle
- * frozen in a key with no move out of it is worse. */
+/** THE READING OF A STORED ARRANGEMENT PLAY'S STONE QUESTIONS USE: the key itself where the record has it,
+ * otherwise the authored start. A save from a build whose lock changed plays on from the start: saves are
+ * migrated, never reset, and a puzzle frozen in a key with no move out of it is worse. Doors are not read through
+ * it: `openDoorsFor` asks the record's positions, which open nothing on a key the record lacks. */
 export const arrangementIn = (record: MechanismRecord, stored: string | undefined): string =>
   stored !== undefined && record.states.includes(stored) ? stored : record.initial
 
