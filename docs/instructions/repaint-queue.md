@@ -3190,6 +3190,9 @@ yarn import-tile art/masters/surfaces/regionWater.webp --tier=default --name=reg
   --filter=smooth --key=none
 ```
 
+LANDED. Kept as `art/masters/surfaces/regionWater.webp` and imported as tile `regionWater` (896x896, no mask, no
+recolour): matte blue-green with a loose net of pale caustic lines and a few ring ripples.
+
 ### `default/regionSand` — drifted sand lying over a buried passage
 
 **Attach:** nothing — a full-bleed texture has no geometry to hold. Start a new chat.

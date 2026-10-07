@@ -385,6 +385,10 @@ yarn drift-mask --out="$OBJ" --seed=fan --size=504 --peak=0.5
 yarn import-tile art/masters/surfaces/sand.webp --tier=default --name=sand --slot=drift \
   --filter=smooth --key=none --mask="$OBJ" --brightness=0.78
 
+# A shut region barrier's water cover: a full-bleed texture, no mask, shared by every rank.
+yarn import-tile art/masters/surfaces/regionWater.webp --tier=default --name=regionWater --slot=floor \
+  --filter=smooth --key=none
+
 # junior — the nobleman
 
 # THE STAIRS, and they are SHARED: `tiles/default/`, drawn at every rank. `tileUrl` falls back
