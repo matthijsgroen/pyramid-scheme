@@ -92,8 +92,10 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
 
 - **Phase 2:** the wording of the blocked-walk lines (the spec has drafts). Where the message shows: a new
   prompt kind next to `ArrivalPrompt`, since the site map has no "can't go there" message yet.
-- **Phase 3:** whether the narrow passage is a cell art on the corridor (like the zipline's run art) or a
-  door room.
+- **Phase 3:** decided by the designer (2026-10-07): the narrow passage is a **door room**, a wall standing
+  in one corridor cell with a crack the explorer squeezes through. The explorer stands on the cells either
+  side, never inside the wall. The crossing plays like the zipline ride: the explorer is hidden and a
+  sideways-squeezing sprite slides through the crack. Art is in the phase 5 plan, task 5.
 - **Phase 5:** the torch and the plate need `prim_*` geometry in `scripts/renderProp.py`, then the
   repaint pass (`docs/instructions/prop-pipeline.md`, `docs/instructions/repaint-queue.md`). The explorer
   carrying frames are an edit of the walking sheet (`art/README.md`, "The explorer"). Generating the images

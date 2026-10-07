@@ -260,6 +260,12 @@ chipped at one corner, much paler than the basalt under it.` Add to the material
 a stone floor holder; unlit, its head is dark pitch-soaked wrapping; lit, a steady flame rises from it. The
 two variants share one outline below the flame, so lighting it reads as a change of state.
 
+
+**Decided by the designer (2026-10-07):** lit, the torch casts a light circle on the floor around it, and
+the post's painted shadow is not drawn, since the flame now lights the floor it fell on. Both are the
+renderer's job, wired when the torch family gets `drawing.art`: the light circle through the map's own
+lighting (`torchlight.tsx`), and the shadow layer skipped in the lit state.
+
 **Files:**
 - Modify: `scripts/renderProp.py` (a `prim_torch` with `--lit`, registered as `"torch"`. Read
   `prim_sconce`, `prim_lamp` and `prim_brazier` for how flames and thin uprights are modelled and the lessons
@@ -287,19 +293,20 @@ two variants share one outline below the flame, so lighting it reads as a change
 
 ### Task 5: The narrow passage
 
-**Blocked on phase 3's decision:** whether the narrow passage is drawn as art across the corridor (like the
-zipline's `dropEast`/`dropNorth`/`dropSouth`, chosen by direction) or as a door room. Do not start until
-phase 3's plan records it.
+**Decided by the designer (2026-10-07):** a door room. A plain wall stands across the corridor in one cell,
+with a crack a person squeezes through sideways and a stone does not. Rubble lies on both sides of the wall.
+The explorer waits on the cell on either side and crosses like the zipline ride, so the explorer also needs
+a sideways-squeeze pose (an edit of the walking sheet, as the carrying frames were).
 
-- [ ] **Step 1:** read phase 3's decision. If it is cell art by direction, the tiles are
-  `expert/narrowEast` (west is it mirrored), `expert/narrowNorth` and `expert/narrowSouth`, drawn the way
-  `DROP_ART` draws the drops (`src/app/SiteMap/nodeArt.ts:132`).
-- [ ] **Step 2: Geometry.** Add a `prim_narrow` that takes `--contents=east|north|south`: two rough basalt
-  JAMBS pinching the corridor to a slot about a third of its width, a fallen block wedged high between them,
-  and nothing on the floor. A person passes sideways, and a stone does not. Gate it as in task 3 step 1: the
-  slot must read at 56 units.
-- [ ] **Steps 3–7:** queue entries, generation 🧑, import, staging in `Topology/NarrowPassage` (each
-  direction, with the explorer passing), and commit, following task 3.
+The map shows a wall's top from the south, so one render per orientation covers both headings:
+- `default/narrowAcross` (across a north-south corridor): the wall's front face, the crack a dark
+  vertical slit with a dark notch in the top, rubble at its foot on both sides;
+- `default/narrowAlong` (across an east-west corridor, the sideways wall): mostly the wall's top as a
+  strip, the crack a darker spot in that top, rubble on both sides.
+
+Like every mechanic piece it is shared `default` art with a rank-neutral prompt. Steps (geometry, queue
+entries, generation, import, staging in `Topology/NarrowPassage` with the explorer on both sides) follow
+task 3. Wiring is phase 3.
 
 ---
 
