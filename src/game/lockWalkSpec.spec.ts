@@ -152,6 +152,16 @@ describe("weights", () => {
     expect(found.order.some(state => state.region === "hall" && carrying(state.config))).toBe(false)
   })
 
+  it("reads empty hands beside a drop as the drop's condition, whichever side of it they are written", () => {
+    const drop = (connection: string) =>
+      compiled(`in -- yard\nyard -- out\n${connection}\nshelf plate @yard stone`)
+    const before = drop("out -[unladen]- >> in")
+    const after = drop("out >> -[unladen]- in")
+    expect(after).toEqual(before)
+    expect(after.oneWays).toEqual([{ from: "out", to: "in", unladen: true }])
+    expect(walkLock(after)).toEqual(walkLock(before))
+  })
+
   it("never lets a stone leave by the way out, so a drop into it with a stone in hand strands", () => {
     expect(compiled("in -- out\nshelf plate @in stone").leaveWith).toEqual([{ mechanism: WEIGHTS, notIn: ["+ hand"] }])
     expect(walkLock(compiled("in -- hall\nhall >> out\nshelf plate @hall stone"))).toMatchObject({

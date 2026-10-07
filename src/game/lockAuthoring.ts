@@ -203,3 +203,42 @@ export const freeRegions = (lock: Lock): Lock => ({
  * condition. A gate any plate or mechanic also owns is a door. */
 export const isUnladenGate = (gate: LockGate): boolean =>
   !isRegionGate(gate) && gate.owners.length > 0 && gate.owners.every(owner => owner === "unladen")
+
+/** The gates on a connection that are the condition of a drop standing on it: only empty hands open them. */
+export const dropConditionsOn = (lock: Lock, barriers: readonly string[]): string[] =>
+  barriers.some(barrier => barrier in (lock.oneWays ?? {}))
+    ? barriers.filter(barrier => barrier in lock.gates && isUnladenGate(lock.gates[barrier]))
+    : []
+
+/**
+ * A DROP THAT TAKES EMPTY HANDS: a gate only empty hands open, standing on a connection a one-way stands on, is that
+ * drop's own condition and never a door of its own. Returns the lock without those gates (and without their names
+ * on their connections), and the drops that carry them.
+ */
+export const absorbUnladen = (lock: Lock): { lock: Lock; unladen: ReadonlySet<string> } => {
+  const oneWays = lock.oneWays ?? {}
+  const absorbed = new Set<string>()
+  const unladen = new Set<string>()
+  for (const connection of lock.connections) {
+    const barriers = barriersOf(connection)
+    const drop = barriers.find(barrier => barrier in oneWays)
+    if (drop === undefined) continue
+    for (const barrier of dropConditionsOn(lock, barriers)) {
+      absorbed.add(barrier)
+      unladen.add(drop)
+    }
+  }
+  if (absorbed.size === 0) return { lock, unladen }
+  return {
+    lock: {
+      ...lock,
+      gates: Object.fromEntries(Object.entries(lock.gates).filter(([id]) => !absorbed.has(id))),
+      connections: lock.connections.map(connection =>
+        "between" in connection && connection.barriers
+          ? { ...connection, barriers: connection.barriers.filter(barrier => !absorbed.has(barrier)) }
+          : connection
+      ),
+    },
+    unladen,
+  }
+}

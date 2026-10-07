@@ -1,5 +1,14 @@
 import type { Lock, LockMechanic } from "./lockAuthoring"
-import { barriersOf, CARRY_TERMS, isRegionGate, isUnladenGate, isWeightOwner, joinOf } from "./lockAuthoring"
+import {
+  absorbUnladen,
+  barriersOf,
+  CARRY_TERMS,
+  dropConditionsOn,
+  isRegionGate,
+  isUnladenGate,
+  isWeightOwner,
+  joinOf,
+} from "./lockAuthoring"
 import type { LooseMechanic, ResolveMechanicKind } from "./mechanics"
 import { resolveMechanicKind } from "./mechanics"
 import type { BarrierOrder, Control, Obstacle, TopologyFault } from "./obstacles"
@@ -110,45 +119,6 @@ const kindsUsed = (lock: Lock): Map<string, string[]> => {
   for (const [id, gate] of Object.entries(absorbUnladen(lock).lock.gates))
     if (isUnladenGate(gate)) add(PASSAGE_KIND, id)
   return used
-}
-
-/** The gates on a connection that are the condition of a drop standing on it: only empty hands open them. */
-const dropConditionsOn = (lock: Lock, barriers: readonly string[]): string[] =>
-  barriers.some(barrier => barrier in (lock.oneWays ?? {}))
-    ? barriers.filter(barrier => barrier in lock.gates && isUnladenGate(lock.gates[barrier]))
-    : []
-
-/**
- * A DROP THAT TAKES EMPTY HANDS: a gate only empty hands open, standing on a connection a one-way stands on, is that
- * drop's own condition and never a door of its own. Returns the lock without those gates (and without their names
- * on their connections), and the drops that carry them.
- */
-const absorbUnladen = (lock: Lock): { lock: Lock; unladen: ReadonlySet<string> } => {
-  const oneWays = lock.oneWays ?? {}
-  const absorbed = new Set<string>()
-  const unladen = new Set<string>()
-  for (const connection of lock.connections) {
-    const barriers = barriersOf(connection)
-    const drop = barriers.find(barrier => barrier in oneWays)
-    if (drop === undefined) continue
-    for (const barrier of dropConditionsOn(lock, barriers)) {
-      absorbed.add(barrier)
-      unladen.add(drop)
-    }
-  }
-  if (absorbed.size === 0) return { lock, unladen }
-  return {
-    lock: {
-      ...lock,
-      gates: Object.fromEntries(Object.entries(lock.gates).filter(([id]) => !absorbed.has(id))),
-      connections: lock.connections.map(connection =>
-        "between" in connection && connection.barriers
-          ? { ...connection, barriers: connection.barriers.filter(barrier => !absorbed.has(barrier)) }
-          : connection
-      ),
-    },
-    unladen,
-  }
 }
 
 /** EVERY WAY A LOCK CONTRADICTS ITSELF, answered from the lock alone — no floor, no binding. */

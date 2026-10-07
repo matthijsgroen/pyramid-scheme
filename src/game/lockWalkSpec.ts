@@ -1,7 +1,7 @@
 // A LOCK AS THE WALK SEES IT. walkSpecOf turns the shared Lock into the LockSpec walkLock proves, with
 // every move the player has; the facts an author cannot read off the document are derived here too.
 import type { Lock, LockMechanic } from "./lockAuthoring"
-import { barriersOf, isRegionGate, isWeightOwner, joinOf } from "./lockAuthoring"
+import { absorbUnladen, barriersOf, isRegionGate, isWeightOwner, joinOf } from "./lockAuthoring"
 import type { LockSpec, Mechanism } from "./lockWalk"
 import { stoneArrangements } from "./mechanics/weights"
 
@@ -21,7 +21,9 @@ export const readable = (text: string) =>
 
 type Hop = { kind: "gate" | "oneWay" | "region"; id: string }
 
-export const walkSpecOf = (lock: Lock, drafts: readonly string[] = []): LockSpec => {
+export const walkSpecOf = (authored: Lock, drafts: readonly string[] = []): LockSpec => {
+  // Empty hands beside a drop are that drop's own condition, wherever on the connection they are written.
+  const { lock, unladen } = absorbUnladen(authored)
   const { weights } = lock
   const ownersOf = (owners: readonly string[]) => {
     const kept = owners.filter(owner => !isWeightOwner(lock, owner))
@@ -29,7 +31,7 @@ export const walkSpecOf = (lock: Lock, drafts: readonly string[] = []): LockSpec
   }
   const regions = Object.keys(lock.regions)
   const gates: LockSpec["gates"] = {}
-  const oneWays: { from: string; to: string }[] = []
+  const oneWays: LockSpec["oneWays"] & {} = []
   const expands = new Map<string, string[]>()
   const doorSides = new Map<string, [string, string]>()
   const plain: string[] = []
@@ -62,7 +64,8 @@ export const walkSpecOf = (lock: Lock, drafts: readonly string[] = []): LockSpec
     hops.forEach((hop, i) => {
       const [here, there] = [nodes[i], nodes[i + 1]]
       if (hop.kind === "oneWay") {
-        oneWays.push(lock.oneWays![hop.id].from === a ? { from: here, to: there } : { from: there, to: here })
+        const [from, to] = lock.oneWays![hop.id].from === a ? [here, there] : [there, here]
+        oneWays.push({ from, to, ...(unladen.has(hop.id) ? { unladen: true as const } : {}) })
         return
       }
       const gate = lock.gates[hop.id]
