@@ -2,7 +2,7 @@ import type { ResolveMechanicKind } from "./mechanics"
 import { resolveMechanicKind } from "./mechanics"
 import type { RegionGraph } from "./regions"
 import { offRouteChains, regionRoute } from "./regions"
-import type { ForkDemand } from "./siteTypes"
+import type { ForkDemand, WeightTerm } from "./siteTypes"
 
 /**
  * WHAT STANDS IN THE WAY, AND WHAT DECIDES WHETHER IT DOES — two separate things joined by an
@@ -161,6 +161,8 @@ export type WeightsControl = {
   carrying: string[]
   /** What the explorer's own weight opens, standing on a plate empty in `from`: gate ids (namespaced). */
   underfoot: { from: string; plate: string; opens: string[] }[]
+  /** Each gate's stone terms (namespaced gate id → terms), for the door's face. */
+  terms: Record<string, WeightTerm[]>
   /** The realisation the plates are dressed as, bound where the lock is placed. */
   encounter?: string
 }

@@ -385,6 +385,9 @@ export const MECHANISM_AT_REST = "rest"
  * mechanism offers is a fact about the mechanism, not about its family: assuming a shape for a kind
  * hands the walk a move the player does not have, or takes one they do.
  */
+/** One condition a gate puts on a lock's stones: a plate holding a stone or left empty, or empty hands. */
+export type WeightTerm = { kind: "plate"; plate: string; wants: "stone" | "empty" } | { kind: "unladen" }
+
 export type MechanismRecord = {
   /** Every position this mechanism has, including ones that open nothing. Declared rather than derived
    * from `positions`: a lever hangs left or right whether or not either side names a gate, so a walk
@@ -425,6 +428,9 @@ export type MechanismRecord = {
    * in `from`, the gates they then open. Read only to draw the floor while he stands there; the walk never reads
    * it, so a way his weight alone holds is never on a route. */
   underfoot?: { from: string; at: readonly [number, number]; opens: { gateKeyId: string; mode?: "any" }[] }[]
+  /** WHAT EACH GATE THE STONES GOVERN WAITS FOR, term by term, under the key its door asks for. Read by the door's
+   * face (src/game/gateFace.ts); the walk reads `positions`. */
+  weighs?: { gateKeyId: string; terms: WeightTerm[] }[]
 }
 export type GateConfig =
   | {

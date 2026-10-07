@@ -1,7 +1,7 @@
 import type { Lock, Weights } from "../lockAuthoring"
 import { CARRY_TERMS, isWeightOwner } from "../lockAuthoring"
 import type { WeightsControl } from "../obstacles"
-import type { MechanismRecord } from "../siteTypes"
+import type { MechanismRecord, WeightTerm } from "../siteTypes"
 import type { MechanicKind } from "./mechanicKind"
 
 export type StoneMove = { from: string; to: string; plate: string }
@@ -135,6 +135,26 @@ export const WEIGHTS: MechanicKind = {
     }
     const { states, initial, moves, opens, carrying, underfoot } = stoneArrangements(renamed)
     const encounter = binding.weights
+    const owned = renamed.weights!.plates
+    const terms = Object.fromEntries(
+      Object.entries(renamed.gates).flatMap(([id, gate]) => {
+        const own = gate.owners.filter(
+          owner => Object.hasOwn(owned, owner) || (CARRY_TERMS as readonly string[]).includes(owner)
+        )
+        return own.length === 0
+          ? []
+          : [
+              [
+                id,
+                own.map((owner): WeightTerm =>
+                  Object.hasOwn(owned, owner)
+                    ? { kind: "plate", plate: owner, wants: owned[owner].opens.empty.includes(id) ? "empty" : "stone" }
+                    : { kind: "unladen" }
+                ),
+              ],
+            ]
+      })
+    )
     return {
       controls: [
         {
@@ -153,6 +173,7 @@ export const WEIGHTS: MechanicKind = {
           opens,
           carrying,
           underfoot,
+          terms,
           ...(encounter === undefined ? {} : { encounter }),
         },
       ],
@@ -179,4 +200,5 @@ export const compileWeights = (
   transitions: control.moves.map(({ from, to, plate }) => ({ from, to, at: cellOf(plate) })),
   carrying: control.carrying,
   underfoot: control.underfoot.map(({ from, plate, opens }) => ({ from, at: cellOf(plate), opens: opens.map(gate) })),
+  weighs: Object.entries(control.terms).map(([id, terms]) => ({ gateKeyId: gate(id).gateKeyId, terms })),
 })

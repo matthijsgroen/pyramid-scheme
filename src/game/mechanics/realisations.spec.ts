@@ -191,6 +191,7 @@ describe("the stone plate that realises a lock's stones", () => {
     moves: [],
     carrying: ["+ hand"],
     underfoot: [],
+    terms: {},
     encounter,
   })
   const plate = (dirs: Direction[], id: string, home: boolean): RoomCell =>

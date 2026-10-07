@@ -1163,7 +1163,7 @@
     "hint": "Every sign must burn before this door will open.",
     "lit": "{{owner}}: lit",
     "unlit": "{{owner}}: not yet",
-    "owner": { "torch": "Torch", "handle": "Lever", "key": "Key", "other": "Mechanism" },
+    "owner": { "torch": "Torch", "handle": "Lever", "key": "Key", "plateStone": "A stone on a plate", "plateEmpty": "A plate left empty", "hands": "Empty hands", "other": "Mechanism" },
     "orderHint": "Walk the tiles in this order.",
     "reset": "Start again",
     "spoiled": "The run is spoiled: a tile was walked out of order.",

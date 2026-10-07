@@ -2,6 +2,9 @@ import { beforeAll, describe, expect, it } from "vitest"
 import { assembleFloor, defaultResolveEncounter, type ResolveEncounter } from "./siteAssembler"
 import { cellAddress } from "./cellAddress"
 import { withGateFaces } from "./gateFace"
+import { parseLock } from "./lockNotation"
+import { carveLockFloor } from "./testSupport/lockFixtures"
+import { SHELF_AND_DOOR } from "./testSupport/stoneFixtures"
 import { openDoorsFor, openWaysOut } from "./mechanismDoors"
 import type { FloorConfig, FloorGrid, GridCell, RoomCell } from "./siteTypes"
 import { designerDoubleBack, forkSwitchFloorConfig } from "./testSupport/forkSwitchFixtures"
@@ -210,5 +213,59 @@ describe("a gate that waits on several owners", () => {
       const door = doorsOf(grid).find(d => d.gateFace)!
       expect(door.dirs.size).toBeGreaterThan(0)
     })
+  })
+})
+
+describe("a door the stones hold", () => {
+  const stoneFloor = (text: string, more: Record<string, string> = {}) =>
+    carveLockFloor(parseLock(text, "stones").lock, { weights: "stonePlate", ...more })
+  const faceOf = (grid: FloorGrid, positions: ReadonlyMap<string, string> = new Map()) =>
+    withGateFaces(grid, 0, positions, undefined, GATE_FACE_FAMILY)
+      .cells.flat()
+      .find((cell): cell is RoomCell => cell.type === "room" && cell.gateFace !== undefined)
+  const homeAddress = (grid: FloorGrid) => {
+    const home = grid.cells.flat().findIndex(cell => cell.type === "room" && cell.mechanism && cell.plate)
+    return cellAddress(grid, 0, Math.floor(home / grid.cols), home % grid.cols)!
+  }
+  const TWO_PLATES = "in -[a+b]- out\na plate @in\nb plate @in\ns plate @in stone\nt plate @in stone\nin ?\nout ?"
+
+  it("wears no face with one plate, as a door with one owner wears none", () => {
+    const grid = stoneFloor(SHELF_AND_DOOR)
+    expect(withGateFaces(grid, 0, new Map(), undefined, GATE_FACE_FAMILY)).toBe(grid)
+  })
+
+  it("wears a face with two plates, one marker per plate, a stone wanted on each", () => {
+    const door = faceOf(stoneFloor(TWO_PLATES))
+    expect(door?.family).toBe(GATE_FACE_FAMILY)
+    expect(door?.gateFace?.markers).toEqual([
+      { id: "stones.a", icon: { kind: "plate", wants: "stone" }, lit: false },
+      { id: "stones.b", icon: { kind: "plate", wants: "stone" }, lit: false },
+    ])
+  })
+
+  it("lights a plate's marker once the plate agrees", () => {
+    const grid = stoneFloor(TWO_PLATES)
+    const lit = faceOf(grid, new Map([[homeAddress(grid), "stones.a stones.t"]]))?.gateFace?.markers
+    expect(lit?.map(m => m.lit)).toEqual([true, false])
+  })
+
+  it("marks a plate wanting none lit while it is empty, and empty hands lit while nothing is carried", () => {
+    const door = faceOf(stoneFloor("in -[p:empty+unladen]- out\np plate @in\nshelf plate @in stone\nin ?\nout ?"))
+    expect(door?.gateFace?.markers).toEqual([
+      { id: "stones.p", icon: { kind: "plate", wants: "empty" }, lit: true },
+      { id: "unladen", icon: { kind: "hands" }, lit: true },
+    ])
+  })
+
+  it("puts a plate beside a lever on one face, the lever's marker first", () => {
+    const grid = stoneFloor("in -[p+L]- out\np plate @in\nshelf plate @in stone\nL toggle @in\nin ?\nout ?", {
+      toggle: "handle",
+    })
+    expect(faceOf(grid)?.gateFace?.markers.map(m => m.icon.kind)).toEqual(["mechanism", "plate"])
+  })
+
+  it("wears no face on an `any` door, however many plates it lists", () => {
+    const grid = stoneFloor("in -[a|b]- out\na plate @in\nb plate @in\nshelf plate @in stone\nin ?\nout ?")
+    expect(withGateFaces(grid, 0, new Map(), undefined, GATE_FACE_FAMILY)).toBe(grid)
   })
 })

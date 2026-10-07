@@ -1,12 +1,19 @@
 import { storedAtCell } from "./cellAddress"
+import { arrangementOf } from "./mechanics/weights"
+import { arrangementIn } from "./stonePlay"
 import { pressAt } from "./mechanismDoors"
 import { DOOR_FACE_ROLE, defaultResolveEncounter } from "./encounterFallback"
 import { tileStatus, type TileStatus } from "./sequence"
 import type { FloorGrid, GridCell, KeyColor, MechanismRecord, RoomCell } from "./siteTypes"
 
 /** What an owner looks like on the face: a mechanism wears its own family's icon (a flame for a torch),
- * a floor key wears a key in its colour. */
-export type GateOwnerIcon = { kind: "mechanism"; family: string } | { kind: "key"; color?: KeyColor }
+ * a floor key wears a key in its colour; a plate the door waits on shows as a stone, or as the bare plate where
+ * the door wants it empty; empty hands wear hands. Plates are all alike: nothing tells one from another. */
+export type GateOwnerIcon =
+  | { kind: "mechanism"; family: string }
+  | { kind: "key"; color?: KeyColor }
+  | { kind: "plate"; wants: "stone" | "empty" }
+  | { kind: "hands" }
 
 /** One owner of the door, unlit until its current state names the door. */
 export type GateMarker = { id: string; icon: GateOwnerIcon; lit: boolean }
@@ -45,10 +52,11 @@ const ownersOf = (grid: FloorGrid, gateKeyId: string): Owner[] => {
 
 // A face is owed only where operating an owner can change nothing visible: an `and` door with more than
 // one owner. A single owner teaches by consequence, and an `any` door opens on the first owner touched.
+// Each term a door puts on a lock's stones (a plate, empty hands) is one owner here, so a door one plate
+// holds teaches by consequence as a single lever does.
 // A door a sequence opens or resets at is owed one besides: nothing else says what order it waits on.
-const needsFace = (owners: readonly Owner[], keyCount: number, gateKeyId: string): boolean =>
-  owners.length + keyCount > 1 &&
-  !owners.some(o => o.mechanism.positions.some(p => p.gateKeyId === gateKeyId && p.mode === "any"))
+const needsFace = (mechanisms: readonly MechanismRecord[], ownerCount: number, gateKeyId: string): boolean =>
+  ownerCount > 1 && !mechanisms.some(m => m.positions.some(p => p.gateKeyId === gateKeyId && p.mode === "any"))
 
 type SequenceHome = { id: string; mechanism: MechanismRecord; at: readonly [number, number] }
 
@@ -62,6 +70,44 @@ const sequencesOf = (grid: FloorGrid): SequenceHome[] => {
     }
   return homes.sort((a, b) => a.id.localeCompare(b.id))
 }
+
+type StoneHome = { mechanism: MechanismRecord; at: readonly [number, number] }
+
+const stoneHomesOf = (grid: FloorGrid): StoneHome[] => {
+  const homes: StoneHome[] = []
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type === "room" && cell.mechanism?.weighs) homes.push({ mechanism: cell.mechanism, at: [r, c] })
+    }
+  return homes
+}
+
+// One marker per term a door puts on the stones, lit while it holds. The arrangement is read as play reads it
+// (`arrangementIn`), so a stale save shows the start the plates are drawn in.
+const stoneMarkers = (
+  grid: FloorGrid,
+  floor: number,
+  homes: readonly StoneHome[],
+  gateKeyId: string,
+  positions: ReadonlyMap<string, string>
+): GateMarker[] =>
+  homes.flatMap(({ mechanism, at }) => {
+    const entry = mechanism.weighs!.find(w => w.gateKeyId === gateKeyId)
+    if (!entry) return []
+    const { weighted, hand } = arrangementOf(
+      arrangementIn(mechanism, storedAtCell(grid, floor, at[0], at[1], positions))
+    )
+    return entry.terms.map((term): GateMarker =>
+      term.kind === "plate"
+        ? {
+            id: term.plate,
+            icon: { kind: "plate", wants: term.wants },
+            lit: weighted.includes(term.plate) === (term.wants === "stone"),
+          }
+        : { id: "unladen", icon: { kind: "hands" }, lit: !hand }
+    )
+  })
 
 const isGateDoor = (cell: GridCell): cell is RoomCell & { requiredKeyId: string } =>
   cell.type === "room" && cell.requiredKeyId !== undefined && (cell.tags?.includes("gate") ?? false)
@@ -86,6 +132,7 @@ export const withGateFaces = (
 ): FloorGrid => {
   let changed = false
   const homes = sequencesOf(grid)
+  const stones = stoneHomesOf(grid)
   const cells = grid.cells.map((row, r) =>
     row.map((cell, c): GridCell => {
       if (!isGateDoor(cell)) return cell
@@ -98,7 +145,10 @@ export const withGateFaces = (
       )
       // A floor key the door lists beside its gate key owns it too, lit while the key is held.
       const floorKeys = cell.requiredKeyIds ?? []
-      if (!needsFace(owners, floorKeys.length, key) && sequences.length === 0) return cell
+      const weighed = stoneMarkers(grid, floor, stones, key, positions)
+      const governing = [...owners.map(o => o.mechanism), ...stones.map(s => s.mechanism)]
+      if (!needsFace(governing, owners.length + weighed.length + floorKeys.length, key) && sequences.length === 0)
+        return cell
       const markers = owners.map(({ id, family, mechanism, at }): GateMarker => {
         const state = storedAtCell(grid, floor, at[0], at[1], positions) ?? mechanism.initial
         return {
@@ -107,6 +157,7 @@ export const withGateFaces = (
           lit: mechanism.positions.some(p => p.gateKeyId === key && p.state === state),
         }
       })
+      markers.push(...weighed)
       for (const keyId of floorKeys) markers.push({ id: keyId, icon: { kind: "key" }, lit: heldKeys.has(keyId) })
       const orders = sequences.map(({ id, mechanism, at }): SequenceFace => {
         const state = storedAtCell(grid, floor, at[0], at[1], positions) ?? mechanism.initial

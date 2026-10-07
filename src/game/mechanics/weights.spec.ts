@@ -140,3 +140,21 @@ describe("the explorer's weight", () => {
     expect(underfoot).toContainEqual({ from: "a", plate: "b", opens: [] })
   })
 })
+
+describe("a gate's stone terms", () => {
+  it("names each plate a gate waits on and what it wants of it, and empty hands", () => {
+    const control = controlOf("in -[a+b:empty+unladen]- out\na plate @in stone\nb plate @in")
+    expect(control.terms).toEqual({
+      "in-out": [
+        { kind: "plate", plate: "a", wants: "stone" },
+        { kind: "plate", plate: "b", wants: "empty" },
+        { kind: "unladen" },
+      ],
+    })
+  })
+
+  it("is carried on the record under the key the door asks for", () => {
+    const record = recordOf("in -[b]- out\nb plate @in\na plate @in stone")
+    expect(record.weighs).toEqual([{ gateKeyId: "k:in-out", terms: [{ kind: "plate", plate: "b", wants: "stone" }] }])
+  })
+})
