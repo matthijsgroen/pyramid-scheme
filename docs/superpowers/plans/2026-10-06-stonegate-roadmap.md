@@ -34,7 +34,7 @@ arrangements: which plates hold a stone, and whether the hand holds one. For exa
 | # | Phase | Ships | Depends on |
 | --- | --- | --- | --- |
 | 1 | **Stones in the engine** (done; also ships the `stonePlate` realisation and plates left bare with the mod off, pulled forward from phase 3 because the dev bake's toggle-off sweep needs it) | `weights` in the shared `Lock`; compiled to one weights control; plates placed on the carve with the record; `floorLock` walks it; a `.lock` file read at bake; twoStones (no gate loop) baked on the dev floor | — |
-| 2 | **Play with stones** | the Lock playground story; "Lift the stone" / "Set the stone on the plate" prompts; plate drawn empty or full (placeholder art); a blocked walk says why (narrow passage, stairs, way out); door shows its plates; explorer `carrying` with frame fallback | 1 |
+| 2 | **Play with stones** (done 2026-10-07, [plan](2026-10-07-stonegate-phase-2-play.md)) | the Lock playground story; "Lift the stone" / "Set the stone on the plate" prompts; plate drawn empty or full (placeholder art); a blocked walk says why (narrow passage, stairs, way out); door shows its plates; explorer `carrying` with frame fallback | 1 |
 | 3 | **Narrow passage** | a realisation for `unladen` gates (registry beside `oneWayRealisation`), drawn as a narrow passage; a zipline or narrow passage where a stone could pass is refused | 1 |
 | 4 | **Gate loops in the carve** | `topologyFaults`, `offRouteChains` and the fork seams accept a gated join that closes a loop; stoneGate bakes on the dev floor | 1 |
 | 5 | **Art** | painted plate (empty, with stone), narrow passage, torch; explorer carrying frames | runs beside 1–4; wiring needs 2–3 |
@@ -86,13 +86,22 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
   where no corridor reaches" do not exist yet; only `plateNamesNoRegion` and `carryWithoutStones` do.
 - Any floor with `lockNesting` that holds stones is refused (`floorLockWalk.ts`) until phase 6.
 - masonsRamp, counterweight and stoneOnAPlate are not baked on the dev floor and are in no phase yet.
-- Gate faces (`gateFace.ts`) do not know plate homes yet (phase 2).
+
+## Open after phase 2
+
+- A barred region (water, sand) owned by a plate does not move under the explorer's weight; doors do.
+- A saved key the record lacks is read as `initial` by play and the face (`arrangementIn`), but `openDoorsFor`
+  opens nothing from it, so a stale save's stone-held doors stay shut until the first stone move writes a key
+  the record has.
+- Sequence locks (`tilesInOrder`) do not carve on the playground's bench floor in reasonable time; the
+  playground shows "not buildable yet" for them.
+- The door face does not tell plates apart (by design: plates are all alike).
 
 ## Open per phase
 
-- **Phase 2:** the wording of the blocked-walk lines (the spec has drafts). Where the message shows: a new
-  prompt kind next to `ArrivalPrompt`, since the site map has no "can't go there" message yet.
-- **Phase 3:** decided by the designer (2026-10-07): the narrow passage is a **door room**, a wall standing
+- **Phase 3:** the squeeze frames are in `src/assets/tiles/default/`. `explorer-squeeze-e` is 109x114,
+  imported with `--tight=18.3`, drawn at width/2 x height/2 units bottom-centred on the foot line (not the
+  40x70 explorer box). `explorer-squeeze-s` is 80x140. North reuses `s`; west mirrors `e`. Decided by the designer (2026-10-07): the narrow passage is a **door room**, a wall standing
   in one corridor cell with a crack the explorer squeezes through. The explorer stands on the cells either
   side, never inside the wall. The crossing plays like the zipline ride: the explorer is hidden and a
   sideways-squeezing sprite slides through the crack. Art is in the phase 5 plan, task 5. Its prompt reads

@@ -95,6 +95,17 @@ waiting for, the way a ward gate already shows the key it wants.
 - **Gates read the arrangement.** A gate is open under every arrangement where its stone terms hold, and the
   door folds in its other owners by the gate's mode. `unladen` holds in every arrangement without a stone in
   hand.
+- **Play.** A plate offers its move through a prompt (lift or set-down, `stoneMoveAt`); arriving never acts.
+  A carrying walk is turned away at every staircase and the way out, and at a one-way whose realisation
+  declares `handsFull`, with one line for all of them ("Cannot pass with a stone"), shown where the prompt
+  stands. One line because the player learns one rule, not which way refuses.
+- **A saved arrangement the lock no longer has** is read as the record's `initial` (`arrangementIn`), so the
+  stones play on from the start instead of freezing.
+- **The explorer's weight** is the record's `underfoot`: per arrangement and empty plate, what pressing it
+  opens. Only drawing reads it, so a way his weight alone holds is never on a route.
+- **The face.** The record's `weighs` lists each gate's stone terms. Each term counts as one owner in the face
+  rule (a face only on a door with more than one owner that is not `any`), so a door one plate holds wears
+  none. A plate's marker shows as a stone; plates are all alike, nothing tells one from another.
 - **The way out is left with empty hands.** `leaveWith` on the walk spec names the states that forbid
   leaving: the way-out region may be entered carrying, only leaving (and finishing) needs empty hands. A
   stone never leaves its floor, and `yarn lock` never reports a route that ends with one in hand.
@@ -135,6 +146,9 @@ region straddles the door.
 - **Resolved at bake time**, because space depends on the realisation and the carve has to know it before
   it searches.
 - **An unbound role is refused.** No default realisation.
+
+A one-way realisation may declare `handsFull`: the crossing needs both hands, and a carrying walk is turned
+away at its launch.
 
 Within one lock, all roles of a kind take the same realisation for now. Per-role selectors are a later
 idea, not a current one.

@@ -46,7 +46,7 @@ stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
 - [x] The engine's solver walks a stone arrangement as state: which plates hold a stone, and whether the
       hand holds one.
 - [x] The engine's solver follows the same stone rules as the tool's walk (lifting, setting down, `:empty`,
-      `unladen`, no stone past the stairs or the way out (way out only; stairs are phase 2)), each tested on a
+      `unladen`, no stone past the stairs or the way out (the stairs down are the way out of a staircase floor; every staircase turns a carrying walk away in play)), each tested on a
       small made-up lock. No test pins a catalogue lock; `yarn lock` checks those.
 - [ ] A floor is solvable from every arrangement the player can leave it in, so a return visit can never
       soft-lock.
@@ -67,26 +67,26 @@ stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
 
 All through node actions (`node-actions.md`): arriving never acts, standing offers.
 
-- [ ] On a plate holding a stone, with empty hands: **"Lift the stone"**. The plate's ways change at once,
+- [x] On a plate holding a stone, with empty hands: **"Lift the stone"**. The plate's ways change at once,
       visibly: a way waiting for a stone shuts, a way waiting for an empty plate opens.
-- [ ] On an empty plate, carrying: **"Set the stone on the plate"**. The same ways change back.
-- [ ] No set-down is offered anywhere else, and no lift while already carrying.
-- [ ] Standing on a plate presses it: the plate is drawn pressed and its ways move while the explorer
+- [x] On an empty plate, carrying: **"Set the stone on the plate"**. The same ways change back.
+- [x] No set-down is offered anywhere else, and no lift while already carrying.
+- [x] Standing on a plate presses it: the plate is drawn pressed and its ways move while the explorer
       stands there, and move back when he steps off.
-- [ ] A way held only by the explorer's weight is never on a route: the map draws it as it is while he
+- [x] A way held only by the explorer's weight is never on a route: the map draws it as it is while he
       stands on the plate, but route-finding treats it as it will be once he steps off, so a tap beyond it
       is not offered. Test: stand on a plate whose way is otherwise shut, and the cell behind that way is
       not walkable.
-- [ ] A plate has three looks: raised (empty, nobody on it), pressed (the explorer on it), and pressed
+- [x] A plate has three looks: raised (empty, nobody on it), pressed (the explorer on it), and pressed
       with a stone.
-- [ ] The explorer is drawn carrying the stone while it is in hand (see "The carrying explorer").
-- [ ] A walk that crosses an `unladen` passage while carrying **stops on the near side** and says why
+- [x] The explorer is drawn carrying the stone while it is in hand (see "The carrying explorer").
+- [ ] (phase 3: the narrow passage declares its refusal through `handsFull`) A walk that crosses an `unladen` passage while carrying **stops on the near side** and says why
       ("Too narrow to carry the stone through"; a zipline: "You need both hands for the zipline").
-- [ ] The way out and every staircase stop a carrying walk the same way: "Set the stone down first".
-- [ ] A door held by plates shows its condition: which plates it waits for, whether it wants each one
+- [x] The way out and every staircase stop a carrying walk the same way: "Cannot pass with a stone".
+- [x] A door held by plates shows its condition: which plates it waits for, whether it wants each one
       weighted or empty, and which already agree (`mechanic-contract.md`, "A gate shows its own
       condition").
-- [ ] Plates and the stones on them are seen on the floor map from anywhere, once their room has been
+- [x] Plates and the stones on them are seen on the floor map from anywhere, once their room has been
       seen.
 
 ## The carrying explorer
@@ -98,9 +98,9 @@ zipline line says.
 - [ ] Three facings beside the plain ones in `src/assets/tiles/default/`: `explorer-carry-s-<n>`,
       `explorer-carry-n-<n>`, `explorer-carry-e-<n>`, at 40 × 70 and bottom-anchored like the plain set
       (`spritesheet-renderer-prep.md`, "The explorer"). West is east mirrored.
-- [ ] `ExplorerDot` reads `sharedTileFrames("explorer-carry-<facing>")` while a stone is in hand. A facing
+- [x] `ExplorerDot` reads `sharedTileFrames("explorer-carry-<facing>")` while a stone is in hand. A facing
       with no carry art falls back to the plain explorer, so the mechanic ships before the art does.
-- [ ] Walking and standing still use the carry frames the same way the plain frames work: the walk cycle
+- [x] Walking and standing still use the carry frames the same way the plain frames work: the walk cycle
       runs on distance, and standing still shows frame 1.
 - [ ] The light around the explorer does not change while carrying: the torch is still lit.
 - [ ] The **Facings story** shows the carrying set beside the plain one at 1:1 and 3x, over limestone and
@@ -130,11 +130,11 @@ tucked over his right shoulder into the pack strap, flame above his head. Same f
 
 ## 5. Save
 
-- [ ] The arrangement is the weights mechanism's state in `journey.mechanismStates`, filed under the first
+- [x] The arrangement is the weights mechanism's state in `journey.mechanismStates`, filed under the first
       plate's slot (`xplate:<id>`), which also saves a stone in hand, so there is no new field. It survives
       leaving the floor and reloading the app.
-- [ ] A stone in hand is saved too; a reload mid-carry resumes carrying.
-- [ ] A save without stone state reads as the authored start arrangement. The field is additive; no
+- [x] A stone in hand is saved too; a reload mid-carry resumes carrying.
+- [x] A save without stone state reads as the authored start arrangement. The field is additive; no
       reset.
 
 ## Done when

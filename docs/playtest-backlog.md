@@ -3,6 +3,20 @@
 Merged work nobody has played yet. Each entry says where to go and what to look for; strike it when it has been
 played, and open an issue or a task for anything that plays wrong.
 
+## stoneGate phase 2 — playing with stones
+
+- **Storybook, `Topology/Lock playground`, `twoStones`.** Lift a stone, set it on the vault plate, fetch the second,
+  press both exit plates. Stand on an empty plate: it sinks and its door swings, and steps back when you leave.
+  Carry a stone to the way out: the explorer stops and "Cannot pass with a stone" shows where the prompt would.
+  Walk into the exit door: two stones on its face.
+- **Same story, walking `twoStones` to the exit door.** The door face has not been seen live with the walk.
+- **The vault door under the explorer's weight** (the `WeightOpensTheDoor` story): it should swing while he stands
+  on the plate. Not seen live.
+- **The plate/stone icon on a door face** is taller than its 40px ring and clips it at the bottom; the designer
+  chooses to fit it inside or crop it.
+- **The explorer in the exit's light shaft while carrying** looks washed out; judge it.
+- **Dev pyramid 11, floor 0.** The same lock in the game. Reload the app mid-carry: he is still carrying it.
+
 ## #313 — forced tile steps, and region barriers as water or sand
 
 - **Dev pyramid 4, the sluice.** A barred region drawn from outside as water: the cover fades in over two cells
