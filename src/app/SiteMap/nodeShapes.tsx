@@ -1,9 +1,10 @@
 import type { CellState, GateVariant, KeyColor } from "@/game/siteTypes"
 import type { TileStatus } from "@/game/sequence"
-import { plateLook } from "./plateLook"
+import { sequenceTileLook } from "./sequenceTileLook"
+import { ART_IMAGE_RENDERING, sharedTileUrl } from "./tileAssets"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { keyColorHex } from "@/ui/tokens/keyColors"
-import { NODE_RADIUS_FORK, NODE_RADIUS_LARGE, NODE_RADIUS_PUZZLE } from "./mapScale"
+import { CELL, NODE_RADIUS_FORK, NODE_RADIUS_LARGE, NODE_RADIUS_PUZZLE, PROP_H } from "./mapScale"
 import type { ShapeKind } from "./nodeKinds"
 import { type Mark, MarkBadge } from "./mark"
 
@@ -95,42 +96,52 @@ export type ShapeProps = {
   icon?: string
 }
 
-/** A pressure plate: ground with its glyph on it, stepped on rather than entered. */
-const PlateShape = ({ plate }: ShapeProps) => {
+// The painted tile is drawn in the prop frame a flush thing is seated in (`nodeSpritesFor`'s plate), so it
+// lies where its painting was cut to lie: bottom on the cell's floor line. Its plain top is centred
+// `TILE_TOP_Y` below the cell's centre, and the floor is seen at the scaffold's angle, which lands a square
+// tile 56 wide by 40 deep (`prim_sequencetile`), so the glyph is squashed by the same ratio to lie on it.
+const TILE_TOP_Y = 10.5
+const FLOOR_SQUASH = 40 / 56
+const GLYPH_OUTLINE = "#2b2116"
+
+/** A sequence tile: one shared painting for every glyph and state, the glyph drawn on its top face in the
+ * glyph's state colour (`sequenceTileLook`). Without the painting, a vector slab stands in. */
+const SequenceTileShape = ({ plate }: ShapeProps) => {
   const r = NODE_RADIUS_PUZZLE
   const status = plate?.status ?? "unwalked"
-  const look = plateLook[status]
+  const url = sharedTileUrl("sequenceTile")
   return (
     <g data-plate={plate?.glyph} data-status={status}>
-      <rect x={-r} y={-r} width={r * 2} height={r * 2} rx={2} fill={look.fill} stroke={look.stroke} strokeWidth={1.5} />
+      {url ? (
+        <image
+          href={url}
+          x={-CELL / 2}
+          y={CELL / 2 - PROP_H}
+          width={CELL}
+          height={PROP_H}
+          style={{ imageRendering: ART_IMAGE_RENDERING }}
+        />
+      ) : (
+        <rect x={-r} y={TILE_TOP_Y - r * FLOOR_SQUASH} width={r * 2} height={r * 2 * FLOOR_SQUASH} fill="#d9b98c" />
+      )}
       {plate && (
-        <text
+        <g
+          transform={`translate(0, ${TILE_TOP_Y}) scale(1, ${FLOOR_SQUASH})`}
           textAnchor="middle"
           dominantBaseline="central"
           fontSize={r * 1.1}
-          fill={look.ink}
+          strokeLinejoin="round"
           style={{ userSelect: "none" }}
         >
-          {String.fromCodePoint(plate.glyph)}
-        </text>
-      )}
-      {status === "inOrder" && (
-        <path
-          d={`M ${r - 12},${r - 6} l 3,3 l 6,-7`}
-          fill="none"
-          stroke={look.stroke}
-          strokeWidth={2}
-          strokeLinecap="round"
-        />
-      )}
-      {status === "outOfOrder" && (
-        <path
-          d={`M ${r - 13},${r - 13} l 8,8 m 0,-8 l -8,8`}
-          fill="none"
-          stroke={look.stroke}
-          strokeWidth={2}
-          strokeLinecap="round"
-        />
+          {/* The glyph is line art, so its ink is thickened by its own stroke and edged in dark under it:
+            light blue alone is as light as the sandstone and would vanish into it. */}
+          <text fill={GLYPH_OUTLINE} stroke={GLYPH_OUTLINE} strokeWidth={2.6}>
+            {String.fromCodePoint(plate.glyph)}
+          </text>
+          <text data-glyph-ink="" fill={sequenceTileLook[status]} stroke={sequenceTileLook[status]} strokeWidth={0.9}>
+            {String.fromCodePoint(plate.glyph)}
+          </text>
+        </g>
       )}
     </g>
   )
@@ -469,7 +480,7 @@ export const NodeShape = ({
     case "mechanism":
       return <MechanismShape {...p} />
     case "plate":
-      return <PlateShape {...p} />
+      return <SequenceTileShape {...p} />
     case "gate":
       return <GateNodeShape {...p} />
     case "treasure":

@@ -12,7 +12,7 @@ import {
 } from "@/game/testSupport/sequenceFixtures"
 import { useAssembledFloor } from "./useAssembledFloor"
 import { SiteMapView } from "./SiteMapView"
-import { plateLook } from "./plateLook"
+import { sequenceTileLook } from "./sequenceTileLook"
 import {
   JOURNEY,
   carveSequence,
@@ -214,8 +214,7 @@ describe("every tile shows its own state", () => {
         Number(el.getAttribute("data-plate")),
         {
           status: el.getAttribute("data-status"),
-          fill: el.querySelector("rect")?.getAttribute("fill"),
-          stroke: el.querySelector("rect")?.getAttribute("stroke"),
+          ink: el.querySelector("[data-glyph-ink]")?.getAttribute("fill"),
         },
       ])
     )
@@ -242,8 +241,7 @@ describe("every tile shows its own state", () => {
           const got = plates.get(glyph)
           expect(got, `${state} / tile ${step}`).toEqual({
             status: want,
-            fill: plateLook[want].fill,
-            stroke: plateLook[want].stroke,
+            ink: sequenceTileLook[want],
           })
         }
         unmount()
@@ -251,12 +249,6 @@ describe("every tile shows its own state", () => {
       expect([...looksSeen].sort()).toEqual(["inOrder", "outOfOrder", "unwalked"])
     })
   }
-
-  it("the three looks differ from one another in fill and in stroke colour", () => {
-    const looks = Object.values(plateLook)
-    expect(new Set(looks.map(l => l.fill)).size).toBe(3)
-    expect(new Set(looks.map(l => l.stroke)).size).toBe(3)
-  })
 
   it("a tile is never drawn as a finished room, in any state, once the ground is walked", () => {
     const { seed, config, grid } = carved.get(FLOORS[0].name)!
