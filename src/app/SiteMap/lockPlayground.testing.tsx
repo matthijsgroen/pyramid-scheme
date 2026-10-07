@@ -17,7 +17,13 @@ import { useMechanismStates } from "./useMechanismStates"
 import { useNoticeLabel, usePromptLabel } from "./usePromptLabel"
 import { useSiteNavigation } from "./useSiteNavigation"
 import { useZiplineRide } from "./useZiplineRide"
-import { PLAYGROUND_JOURNEY, REALISATION_CHOICES, carveStep, defaultBinding, playgroundFloor } from "./lockPlayground"
+import {
+  PLAYGROUND_JOURNEY,
+  REALISATION_CHOICES,
+  carveStep,
+  defaultBinding,
+  playgroundFloor,
+} from "./playgroundCarve.testing"
 
 // THE LOCK PLAYGROUND: any lock, carved and played with the game's own navigation, prompts and encounter screens
 // over a journey kept in memory. Nothing here decides what a move does; it only wires the hooks the site map uses.

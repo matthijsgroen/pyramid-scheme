@@ -3,7 +3,7 @@ import { act, cleanup, render, renderHook, screen, waitFor } from "@testing-libr
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest"
 import { parseLock } from "@/game/lockNotation"
 import { walkFloorLock } from "@/game/floorLockWalk"
-import { PLAYGROUND_JOURNEY, carvePlayground, defaultBinding, playgroundFloor } from "./lockPlayground"
+import { PLAYGROUND_JOURNEY, carvePlayground, defaultBinding, playgroundFloor } from "./playgroundCarve.testing"
 import { assemblePlayedFloor } from "./useAssembledFloor"
 import { LockPlayground, useCarving } from "./lockPlayground.testing"
 import "@/mods/registerModApps"
