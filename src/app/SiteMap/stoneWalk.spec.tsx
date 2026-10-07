@@ -81,3 +81,13 @@ describe("a plate offers its stone", () => {
     expect(h.store.mechanismStates).toEqual({})
   })
 })
+
+describe("standing on a plate", () => {
+  it("leaves the way it would open shut for the walk: the door is still a door and no gate key is held", () => {
+    const h = play(SHELF_AND_DOOR)
+    h.walkTo(plateNamed(h.grid, "p"))
+    const { grid, openGateKeys } = h.current()
+    expect(openGateKeys.size).toBe(0)
+    expect(grid!.cells.flat().some(cell => cell.type === "room" && cell.tags?.includes("gate"))).toBe(true)
+  })
+})

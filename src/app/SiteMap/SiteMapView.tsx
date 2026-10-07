@@ -51,7 +51,7 @@ import {
 } from "./tileAssets"
 import { storedAtCell } from "@/game/cellAddress"
 import { tileStatusAt } from "@/game/sequencePlay"
-import { isCarrying, plateLookAt } from "@/game/stonePlay"
+import { explorerWeight, isCarrying, plateLookAt, type ExplorerWeight } from "@/game/stonePlay"
 import { PLATE_TILE } from "./plateArt"
 import { drawingOf, familyIconOf, isLockedGate, isSpentAt, nodeRadius, shapeKindFor, staysOpen } from "./nodeKinds"
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
@@ -245,7 +245,9 @@ export const nodeSpritesFor = (
   mechanismStates?: ReadonlyMap<string, string>,
   floorIndex = 0,
   /** Where the explorer stands once his walk has settled, for the plate he presses; unset while he walks. */
-  standingAt?: readonly [number, number]
+  standingAt?: readonly [number, number],
+  /** What the explorer's weight moves while he stands on a plate: drawn so, never walked so. */
+  weight?: ExplorerWeight
 ): NodeSprite[] => {
   // Which cells belong to each room: the room's own, plus everything it claimed.
   const footprints = new Map<string, string[]>()
@@ -418,7 +420,12 @@ export const nodeSpritesFor = (
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
       if (cell.type === "corridor" && cell.openGate && cell.state !== "fogged") {
-        gateLeaf(r, c, cell.difficulty ?? floorTier, cell.dirs, { open: true, wall: false, mark: cell.openGate.mark })
+        // A way the explorer's weight shuts is drawn shut while he stands there; the walk still reads the corridor it is.
+        gateLeaf(r, c, cell.difficulty ?? floorTier, cell.dirs, {
+          open: !weight?.shut.has(cell.openGate.requiredKeyId ?? ""),
+          wall: false,
+          mark: cell.openGate.mark,
+        })
         continue
       }
       if (cell.type !== "room" || cell.state === "fogged") continue
@@ -477,7 +484,7 @@ export const nodeSpritesFor = (
         })
       } else if (kind === "gate") {
         gateLeaf(r, c, tier, cell.dirs, {
-          open: cell.state === "completed",
+          open: cell.state === "completed" || (weight?.open.has(cell.requiredKeyId ?? "") ?? false),
           wall: isSealedWayOut(cell),
           mark: cell.mark,
         })
@@ -1178,6 +1185,13 @@ export const SiteMapView = ({
     (explorerPos[0] !== settledExplorerPos[0] || explorerPos[1] !== settledExplorerPos[1])
   )
 
+  const weight = useMemo(
+    () =>
+      isTraveling || !settledExplorerPos
+        ? undefined
+        : explorerWeight(grid, currentFloor ?? 0, settledExplorerPos, mechanismStates ?? NO_STATES, ownedKeys),
+    [grid, currentFloor, settledExplorerPos, isTraveling, mechanismStates, ownedKeys]
+  )
   const nodeSprites = useMemo(
     () =>
       nodeSpritesFor(
@@ -1187,9 +1201,10 @@ export const SiteMapView = ({
         pendingCells,
         mechanismStates,
         currentFloor ?? 0,
-        isTraveling ? undefined : settledExplorerPos
+        isTraveling ? undefined : settledExplorerPos,
+        weight
       ),
-    [grid, claims, tier, pendingCells, mechanismStates, currentFloor, isTraveling, settledExplorerPos]
+    [grid, claims, tier, pendingCells, mechanismStates, currentFloor, isTraveling, settledExplorerPos, weight]
   )
   // The walkable floor, as rectangles: what a layer cut to the floor is cut to. The sand is the only one
   // left — everything else that used to share the map-wide clip now carries its own shape.

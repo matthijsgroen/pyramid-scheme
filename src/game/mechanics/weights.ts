@@ -15,6 +15,9 @@ export type Arrangements = {
   opens: Record<string, string[]>
   /** The arrangements with a stone in hand. */
   carrying: string[]
+  /** For every arrangement and every plate empty in it, the gates open once the explorer's own weight presses that
+   * plate. Only drawing reads it; the walk never does, so a way his weight alone holds is never on a route. */
+  underfoot: { from: string; plate: string; opens: string[] }[]
 }
 
 const HAND = "hand"
@@ -71,21 +74,28 @@ export const stoneArrangements = (lock: Lock): Arrangements => {
     const terms = gate.owners.filter(owner => isWeightOwner(lock, owner))
     return terms.length > 0 ? [{ id, terms, any: gate.mode === "any" }] : []
   })
+  const opening = (stones: Stones) =>
+    gates
+      .filter(({ id, terms, any }) =>
+        any ? terms.some(t => says(weights, id, t, stones)) : terms.every(t => says(weights, id, t, stones))
+      )
+      .map(({ id }) => id)
+  const plates = Object.keys(weights.plates).sort()
   return {
     states: [...found.keys()],
     initial: keyOf(start),
     moves,
-    opens: Object.fromEntries(
-      [...found].map(([key, stones]) => [
-        key,
-        gates
-          .filter(({ id, terms, any }) =>
-            any ? terms.some(t => says(weights, id, t, stones)) : terms.every(t => says(weights, id, t, stones))
-          )
-          .map(({ id }) => id),
-      ])
-    ),
+    opens: Object.fromEntries([...found].map(([key, stones]) => [key, opening(stones)])),
     carrying: [...found].filter(([, stones]) => stones.hand).map(([key]) => key),
+    underfoot: [...found].flatMap(([key, stones]) =>
+      plates
+        .filter(plate => !stones.weighted.has(plate))
+        .map(plate => ({
+          from: key,
+          plate,
+          opens: opening({ weighted: new Set([...stones.weighted, plate]), hand: stones.hand }),
+        }))
+    ),
   }
 }
 
@@ -123,7 +133,7 @@ export const WEIGHTS: MechanicKind = {
         ),
       },
     }
-    const { states, initial, moves, opens, carrying } = stoneArrangements(renamed)
+    const { states, initial, moves, opens, carrying, underfoot } = stoneArrangements(renamed)
     const encounter = binding.weights
     return {
       controls: [
@@ -142,6 +152,7 @@ export const WEIGHTS: MechanicKind = {
           moves,
           opens,
           carrying,
+          underfoot,
           ...(encounter === undefined ? {} : { encounter }),
         },
       ],
@@ -167,4 +178,5 @@ export const compileWeights = (
   positions: control.states.flatMap(state => control.opens[state].map(id => ({ state, ...gate(id) }))),
   transitions: control.moves.map(({ from, to, plate }) => ({ from, to, at: cellOf(plate) })),
   carrying: control.carrying,
+  underfoot: control.underfoot.map(({ from, plate, opens }) => ({ from, at: cellOf(plate), opens: opens.map(gate) })),
 })

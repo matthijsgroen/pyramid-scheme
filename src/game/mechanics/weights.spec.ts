@@ -118,3 +118,25 @@ describe("arrangementOf", () => {
     expect(arrangementOf("none")).toEqual({ weighted: [], hand: false })
   })
 })
+
+describe("the explorer's weight", () => {
+  it("lists, for every arrangement and every plate empty in it, what pressing that plate opens", () => {
+    const { underfoot } = stoneArrangements(lockOf("in -[b]- out\nb plate @in\na plate @in stone"))
+    expect(underfoot).toEqual([
+      { from: "a", plate: "b", opens: ["in-out"] },
+      { from: "+ hand", plate: "a", opens: [] },
+      { from: "+ hand", plate: "b", opens: ["in-out"] },
+      { from: "b", plate: "a", opens: ["in-out"] },
+    ])
+  })
+
+  it("is placed at the pressed plate's cell, each gate as its door asks for it", () => {
+    const record = recordOf("in -[b]- out\nb plate @in\na plate @in stone")
+    expect(record.underfoot).toContainEqual({ from: "a", at: [0, 2], opens: [{ gateKeyId: "k:in-out" }] })
+  })
+
+  it("shuts an :empty way while the plate it waits on is pressed", () => {
+    const { underfoot } = stoneArrangements(lockOf("in -[b:empty]- out\nb plate @in\na plate @in stone"))
+    expect(underfoot).toContainEqual({ from: "a", plate: "b", opens: [] })
+  })
+})

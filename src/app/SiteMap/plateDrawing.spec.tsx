@@ -5,6 +5,7 @@ import { parseLock } from "@/game/lockNotation"
 import type { FloorGrid } from "@/game/siteTypes"
 import { carveLockFloor } from "@/game/testSupport/lockFixtures"
 import { SHELF_AND_DOOR, plateNamed } from "@/game/testSupport/stoneFixtures"
+import { explorerWeight } from "@/game/stonePlay"
 import { buildRoomClaims } from "./roomClaims"
 import { nodeSpritesFor } from "./SiteMapView"
 import { sharedTileUrl } from "./tileAssets"
@@ -48,5 +49,20 @@ describe("a plate on the map", () => {
       const cell = lit.cells[r][c]
       expect(cell.type === "room" && shapeKindFor(lit, r, c, cell)).toBe("plate")
     }
+  })
+})
+
+describe("a door under the explorer's weight", () => {
+  it("draws its leaf swung open while he presses its plate, and shut once he steps off", () => {
+    const p = plateNamed(lit, "p")
+    const door = lit.cells.flatMap((row, r) =>
+      row.flatMap((cell, c) => (cell.type === "room" && cell.tags?.includes("gate") ? [[r, c] as const] : []))
+    )[0]
+    const leaf = (weight?: ReturnType<typeof explorerWeight>) =>
+      nodeSpritesFor(lit, buildRoomClaims(lit), "expert", undefined, new Map(), 0, p, weight).find(
+        s => s.key === `gate:${door[0]},${door[1]}` || s.key === `wall:${door[0]},${door[1]}`
+      )
+    expect(leaf(explorerWeight(lit, 0, p, new Map()))?.url).toMatch(/gate-open/)
+    expect(leaf(undefined)?.url).not.toMatch(/gate-open/)
   })
 })

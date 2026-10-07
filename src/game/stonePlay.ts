@@ -1,5 +1,5 @@
 import { storedAtCell } from "./cellAddress"
-import { mechanismAddress, mechanismWorkedAt, pressAt } from "./mechanismDoors"
+import { mechanismAddress, mechanismWorkedAt, openDoorsFor, pressAt } from "./mechanismDoors"
 import { arrangementOf } from "./mechanics/weights"
 import type { FloorGrid, MechanismRecord, RoomCell } from "./siteTypes"
 
@@ -80,4 +80,59 @@ export const plateLookAt = (
   if (!stones) return undefined
   const { plate } = grid.cells[row][col] as RoomCell & { plate: { id: string } }
   return plateLookOf(arrangementOf(stones.state).weighted.includes(plate.id), standing)
+}
+
+/** What the explorer's weight moves while he stands on a plate: the gate keys it opens and the ones it shuts. */
+export type ExplorerWeight = { plate: readonly [number, number]; open: ReadonlySet<string>; shut: ReadonlySet<string> }
+
+// The two positions the weighed record is read in: the arrangement his weight makes, and one nothing stands in.
+const WEIGHED = "weighed"
+const NEVER = "never"
+
+/**
+ * WHAT HIS WEIGHT DOES, standing at `at`: nothing off a plate or on one that holds a stone already. Otherwise the
+ * doors are folded twice by `openDoorsFor`, once as the stones stand and once as his weight makes them, and the
+ * difference is what moves. Every gate the stones name stays theirs under his weight, said no to under `NEVER`
+ * where the weighed arrangement does not open it, so a door they share with a lever is still theirs to refuse.
+ */
+export const explorerWeight = (
+  grid: FloorGrid,
+  floor: number,
+  at: readonly [number, number],
+  states: ReadonlyMap<string, string>,
+  heldKeys?: ReadonlySet<string>
+): ExplorerWeight | undefined => {
+  const [row, col] = at
+  const stones = stonesAt(grid, floor, row, col, states)
+  const worked = mechanismWorkedAt(grid, row, col)
+  if (!stones || !worked) return undefined
+  const pressed = worked.record.underfoot?.find(u => u.from === stones.state && u.at[0] === row && u.at[1] === col)
+  if (!pressed) return undefined
+  const named = new Map(worked.record.positions.map(p => [p.gateKeyId, p.mode]))
+  const record: MechanismRecord = {
+    ...worked.record,
+    positions: [
+      ...pressed.opens.map(open => ({ state: WEIGHED, ...open })),
+      ...[...named]
+        .filter(([gateKeyId]) => !pressed.opens.some(open => open.gateKeyId === gateKeyId))
+        .map(([gateKeyId, mode]) => ({ state: NEVER, gateKeyId, ...(mode ? { mode } : {}) })),
+    ],
+  }
+  const [hr, hc] = worked.home
+  const weighed: FloorGrid = {
+    ...grid,
+    cells: grid.cells.map((cells, r) =>
+      r !== hr
+        ? cells
+        : cells.map((cell, c) => (c === hc && cell.type === "room" ? { ...cell, mechanism: record } : cell))
+    ),
+  }
+  // Both folds read the arrangement `stonesAt` read, so a stale key is weighed as the start it is read as.
+  const before = openDoorsFor(grid, floor, new Map(states).set(stones.address, stones.state), heldKeys)
+  const after = openDoorsFor(weighed, floor, new Map(states).set(stones.address, WEIGHED), heldKeys)
+  return {
+    plate: at,
+    open: new Set([...after].filter(key => !before.has(key))),
+    shut: new Set([...before].filter(key => !after.has(key))),
+  }
 }

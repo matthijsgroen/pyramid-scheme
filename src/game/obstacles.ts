@@ -159,6 +159,8 @@ export type WeightsControl = {
   moves: { from: string; to: string; plate: string }[]
   /** The arrangements with a stone in hand. */
   carrying: string[]
+  /** What the explorer's own weight opens, standing on a plate empty in `from`: gate ids (namespaced). */
+  underfoot: { from: string; plate: string; opens: string[] }[]
   /** The realisation the plates are dressed as, bound where the lock is placed. */
   encounter?: string
 }

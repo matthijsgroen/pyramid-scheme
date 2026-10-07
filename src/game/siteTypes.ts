@@ -421,6 +421,10 @@ export type MechanismRecord = {
   placedOnly?: true
   /** The states with a stone in hand: the way out is not left in them. */
   carrying?: string[]
+  /** WHAT THE EXPLORER'S OWN WEIGHT MAKES OF AN ARRANGEMENT: standing at the empty plate `at` while the stones stand
+   * in `from`, the gates they then open. Read only to draw the floor while he stands there; the walk never reads
+   * it, so a way his weight alone holds is never on a route. */
+  underfoot?: { from: string; at: readonly [number, number]; opens: { gateKeyId: string; mode?: "any" }[] }[]
 }
 export type GateConfig =
   | {

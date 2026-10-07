@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest"
 import { parseLock } from "./lockNotation"
 import { carveLockFloor } from "./testSupport/lockFixtures"
 import { SHELF_AND_DOOR, TWO_STONES, plateNamed } from "./testSupport/stoneFixtures"
-import { isCarrying, plateLookAt, plateLookOf, stoneMoveAt, stonesAt } from "./stonePlay"
+import { openDoorsFor } from "./mechanismDoors"
+import { explorerWeight, isCarrying, plateLookAt, plateLookOf, stoneMoveAt, stonesAt } from "./stonePlay"
 
 const floorOf = (text: string) => carveLockFloor(parseLock(text, "stones").lock, { weights: "stonePlate" })
 
@@ -80,5 +81,44 @@ describe("a plate's look", () => {
     expect(plateLookAt(grid, 0, p[0], p[1], new Map(), true)).toBe("pressed")
     const { address } = stonesAt(grid, 0, shelf[0], shelf[1], new Map())!
     expect(plateLookAt(grid, 0, shelf[0], shelf[1], new Map([[address, "+ hand"]]), false)).toBe("raised")
+  })
+})
+
+describe("explorerWeight", () => {
+  const doorKeyOf = (grid: ReturnType<typeof floorOf>) =>
+    grid.cells
+      .flat()
+      .flatMap(cell => (cell.type === "room" && cell.tags?.includes("gate") ? [cell.requiredKeyId!] : []))[0]
+
+  it("opens a way waiting for a stone while he stands on its empty plate", () => {
+    const grid = floorOf(SHELF_AND_DOOR)
+    const weight = explorerWeight(grid, 0, plateNamed(grid, "p"), new Map())
+    expect(weight?.open).toEqual(new Set([doorKeyOf(grid)]))
+    expect(weight?.shut).toEqual(new Set())
+    expect(openDoorsFor(grid, 0, new Map()).has(doorKeyOf(grid))).toBe(false)
+  })
+
+  it("shuts a way waiting for an empty plate while he stands on it", () => {
+    const grid = floorOf("in -- hall\nhall -[p:empty]- out\np plate @hall\nshelf plate @in stone\nin ?\nhall ?\nout ?")
+    const weight = explorerWeight(grid, 0, plateNamed(grid, "p"), new Map())
+    expect(weight?.shut).toEqual(new Set([doorKeyOf(grid)]))
+  })
+
+  it("moves nothing on a plate that already holds a stone, nor off a plate", () => {
+    const grid = floorOf(SHELF_AND_DOOR)
+    expect(explorerWeight(grid, 0, plateNamed(grid, "shelf"), new Map())).toBeUndefined()
+    expect(explorerWeight(grid, 0, grid.entrancePos, new Map())).toBeUndefined()
+  })
+
+  it("leaves a lever its say: a plate-and-lever door stays shut while the lever is", () => {
+    const grid = carveLockFloor(
+      parseLock("in -[p+L]- out\np plate @in\nshelf plate @in stone\nL toggle @in\nin ?\nout ?", "stones").lock,
+      {
+        weights: "stonePlate",
+        toggle: "handle",
+      }
+    )
+    const weight = explorerWeight(grid, 0, plateNamed(grid, "p"), new Map())
+    expect(weight?.open).toEqual(new Set())
   })
 })
