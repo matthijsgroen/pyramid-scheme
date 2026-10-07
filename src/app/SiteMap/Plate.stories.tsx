@@ -3,10 +3,13 @@ import type { FC } from "react"
 import { CELL, PROP_H, WALL_H } from "./mapScale"
 import { ART_IMAGE_RENDERING, sharedTileUrl, tileUrl } from "./tileAssets"
 import { tierPalette } from "./tileMaterials"
+import { ExplorerFigure } from "./ExplorerDot"
+import { plateLookOf } from "@/game/stonePlay"
+import { PLATE_TILE } from "./plateArt"
 
 // The pressure plate is one painting, shared by every rank (`tiles/default/`), in three looks: raised
 // (`plate`), pressed (`plateDown`, the explorer standing on it) and pressed with a limestone block on it
-// (`plateStone`). Nothing in the app draws it yet; this story stages it the way the renderer will, on two
+// (`plateStone`). The map draws it (`nodeSpritesFor`); this story stages it the way the map does, on two
 // ranks' floors, the explorer beside it for scale, because a generation that looks fine at 2000px can
 // still turn to mud at 56 (`PropSheet.stories.tsx`'s `Chamber`, as `Lever.stories.tsx` reuses it).
 // The tiles share one frame, so swapping them on a cell must change only the slab and the stone.
@@ -94,6 +97,72 @@ const PlateStage: FC<{ tier: "starter" | "expert"; zoom: number }> = ({ tier, zo
   )
 }
 
+// The plate as play draws it: the look is chosen from state by the game's own `plateLookOf`, and the explorer
+// stands on the plate (walking frames, or carrying frames with a stone in hand) the way the map draws him.
+const CASES: { name: string; holdsStone: boolean; standing: boolean; carrying: boolean }[] = [
+  { name: "raised: empty, nobody on it", holdsStone: false, standing: false, carrying: false },
+  { name: "pressed: the explorer's weight", holdsStone: false, standing: true, carrying: false },
+  { name: "pressed: carrying, on an empty plate", holdsStone: false, standing: true, carrying: true },
+  { name: "with a stone: nobody on it", holdsStone: true, standing: false, carrying: false },
+  { name: "with a stone: the explorer on it", holdsStone: true, standing: true, carrying: false },
+]
+
+const InPlayStage: FC<{ tier: "starter" | "expert"; zoom: number }> = ({ tier, zoom }) => {
+  const palette = tierPalette[tier]
+  const floor = tileUrl(tier, "floor")
+  return (
+    <div className="flex flex-wrap gap-4">
+      {CASES.map(({ name, holdsStone, standing, carrying }) => {
+        const src = sharedTileUrl(PLATE_TILE[plateLookOf(holdsStone, standing)])
+        return (
+          <figure key={name} className="m-0 flex flex-col gap-1">
+            <div
+              className="relative overflow-hidden"
+              style={{
+                width: CELL * 2 * zoom,
+                height: (WALL_H + CELL * 2) * zoom,
+                background: floor ? `url(${floor})` : palette.slab,
+                backgroundSize: `${CELL * 8 * zoom}px ${CELL * 8 * zoom}px`,
+                imageRendering: ART_IMAGE_RENDERING,
+              }}
+            >
+              {/* One map cell, centred, drawn at map scale and zoomed as a whole, as the map draws it. */}
+              <div
+                className="absolute"
+                style={{
+                  left: 0,
+                  top: 0,
+                  width: CELL * 2,
+                  height: WALL_H + CELL * 2,
+                  transform: `scale(${zoom})`,
+                  transformOrigin: "0 0",
+                }}
+              >
+                {src && (
+                  <img
+                    src={src}
+                    alt=""
+                    className="absolute"
+                    style={{ left: CELL / 2, top: WALL_H + CELL * 1.5 - PROP_H, width: CELL, height: PROP_H }}
+                  />
+                )}
+                {standing && (
+                  <div className="absolute" style={{ left: CELL, top: WALL_H + CELL, width: 0, height: 0 }}>
+                    <ExplorerFigure facing="s" carrying={carrying} />
+                  </div>
+                )}
+              </div>
+            </div>
+            <figcaption className="text-[10px] text-white/70">
+              {tier}, {zoom}x: {name}
+            </figcaption>
+          </figure>
+        )
+      })}
+    </div>
+  )
+}
+
 const PlateSheet: FC<{ zoom: number }> = ({ zoom }) => (
   <div className="flex h-screen flex-col gap-4 overflow-auto bg-neutral-900 p-6">
     <h2 className="m-0 text-sm text-white/80">pressure plate: raised, pressed, pressed with a stone</h2>
@@ -101,6 +170,9 @@ const PlateSheet: FC<{ zoom: number }> = ({ zoom }) => (
       <PlateStage tier="starter" zoom={zoom} />
       <PlateStage tier="expert" zoom={zoom} />
     </div>
+    <h2 className="m-0 text-sm text-white/80">in play: the look chosen from state, the explorer on the plate</h2>
+    <InPlayStage tier="starter" zoom={zoom} />
+    <InPlayStage tier="expert" zoom={zoom} />
   </div>
 )
 

@@ -72,4 +72,16 @@ describe("ExplorerFigure, carrying", () => {
     const { container } = render(<Figure facing="n" carrying />)
     expect(container.querySelector("img")?.getAttribute("src")).toBe("walk.png")
   })
+
+  it("the walking explorer is drawn carrying while a stone is in hand", async () => {
+    vi.resetModules()
+    vi.doMock("./tileAssets", async original => ({
+      ...(await original<typeof import("./tileAssets")>()),
+      sharedTileFrames: (prefix: string) =>
+        ({ "explorer-s": ["walk.png"], "explorer-carry-s": ["carry.png"] })[prefix] ?? [],
+    }))
+    const { ExplorerDot: Dot } = await import("./ExplorerDot")
+    const { container } = render(<Dot grid={grid} pos={[0, 1]} carrying />)
+    expect(container.querySelector("img")?.getAttribute("src")).toBe("carry.png")
+  })
 })

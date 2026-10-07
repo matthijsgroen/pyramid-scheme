@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 import { parseLock } from "./lockNotation"
 import { carveLockFloor } from "./testSupport/lockFixtures"
 import { SHELF_AND_DOOR, TWO_STONES, plateNamed } from "./testSupport/stoneFixtures"
-import { isCarrying, stoneMoveAt, stonesAt } from "./stonePlay"
+import { isCarrying, plateLookAt, plateLookOf, stoneMoveAt, stonesAt } from "./stonePlay"
 
 const floorOf = (text: string) => carveLockFloor(parseLock(text, "stones").lock, { weights: "stonePlate" })
 
@@ -60,5 +60,25 @@ describe("the stones as play reads them", () => {
     expect(stonesAt(grid, 0, shelf[0], shelf[1], stale)?.state).toBe("stones.shelf")
     expect(stoneMoveAt(grid, 0, shelf[0], shelf[1], stale)).toMatchObject({ state: "+ hand", move: "lift" })
     expect(isCarrying(grid, 0, new Map([[address, "stones.gone + hand"]]))).toBe(false)
+  })
+})
+
+describe("a plate's look", () => {
+  it("is raised while empty and nobody stands on it, pressed while somebody does, and holds its stone either way", () => {
+    expect(plateLookOf(false, false)).toBe("raised")
+    expect(plateLookOf(false, true)).toBe("pressed")
+    expect(plateLookOf(true, false)).toBe("stone")
+    expect(plateLookOf(true, true)).toBe("stone")
+  })
+
+  it("is read off the arrangement the stones stand in", () => {
+    const grid = floorOf(SHELF_AND_DOOR)
+    const shelf = plateNamed(grid, "shelf")
+    const p = plateNamed(grid, "p")
+    expect(plateLookAt(grid, 0, shelf[0], shelf[1], new Map(), false)).toBe("stone")
+    expect(plateLookAt(grid, 0, p[0], p[1], new Map(), false)).toBe("raised")
+    expect(plateLookAt(grid, 0, p[0], p[1], new Map(), true)).toBe("pressed")
+    const { address } = stonesAt(grid, 0, shelf[0], shelf[1], new Map())!
+    expect(plateLookAt(grid, 0, shelf[0], shelf[1], new Map([[address, "+ hand"]]), false)).toBe("raised")
   })
 })

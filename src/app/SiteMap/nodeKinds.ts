@@ -25,7 +25,10 @@ export type ShapeKind =
 
 /** Everything a room's shape is read off and nothing else, so a caller holding a hand-built room can
  * ask without building a whole cell around it. */
-export type ShapeCell = Pick<RoomCell, "roomType" | "tags" | "stairId" | "family" | "sequenceTile" | "mechanism">
+export type ShapeCell = Pick<
+  RoomCell,
+  "roomType" | "tags" | "stairId" | "family" | "sequenceTile" | "mechanism" | "plate"
+>
 
 /** How the family standing in a room declares it is drawn; unset for a family that declares none, an
  * unregistered one, and a room with no family. */
@@ -54,8 +57,9 @@ export const shapeKindFor = (grid: FloorGrid, r: number, c: number, cell: ShapeC
     if (cell.stairId) return "stairhead"
     return r === grid.entrancePos[0] && c === grid.entrancePos[1] ? "entrance" : "exit"
   }
-  // A sequence tile is ground with a glyph on it, whatever else its cell says.
-  if (cell.sequenceTile) return "plate"
+  // A sequence tile and a stone's plate are ground stepped on, whatever else their cell says; the home plate's
+  // record makes it no mechanism room.
+  if (cell.sequenceTile || cell.plate) return "plate"
   // A MECHANISM'S ROOM IS DRAWN AS ITS REALISATION SAYS (`FamilyMeta.drawing`), never as a default: a lever
   // is a lever and a torch a torch, though both stand in an ordinary "encounter" room. A room working a
   // mechanism whose family declares no drawing — or whose mod is off — wears the family-icon marker, the one
@@ -127,7 +131,7 @@ export const isSpentAt = (
   mechanismStates: ReadonlyMap<string, string> | undefined
 ): boolean => {
   // A sequence's first tile holds the record but is no activator: the sequence is one mechanism that is
-  // never used up by a tile, and its tiles are ground.
-  if (!cell.mechanism || cell.sequenceTile) return false
+  // never used up by a tile, and its tiles are ground; nor are a lock's stones, which always have a move left.
+  if (!cell.mechanism || cell.sequenceTile || cell.plate) return false
   return isSpent(cell.mechanism, storedAtCell(grid, floorIndex, r, c, mechanismStates) || cell.mechanism.initial)
 }

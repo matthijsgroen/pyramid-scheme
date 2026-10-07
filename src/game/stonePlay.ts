@@ -1,7 +1,7 @@
 import { storedAtCell } from "./cellAddress"
 import { mechanismAddress, mechanismWorkedAt, pressAt } from "./mechanismDoors"
 import { arrangementOf } from "./mechanics/weights"
-import type { FloorGrid, MechanismRecord } from "./siteTypes"
+import type { FloorGrid, MechanismRecord, RoomCell } from "./siteTypes"
 
 // THE STONES AS PLAY ASKS ABOUT THEM, read off the weights record a lock's first plate carries and never off a
 // second copy of the rules: a move is what `pressAt` makes at the plate, an arrangement is what its key says.
@@ -58,4 +58,26 @@ export const isCarrying = (grid: FloorGrid, floor: number, states: ReadonlyMap<s
         return true
     }
   return false
+}
+
+/** A plate's three looks: raised (empty, nobody on it), pressed (somebody's weight on it, nothing else), and
+ * pressed with a stone. A stone presses it whoever stands there. */
+export type PlateLook = "raised" | "pressed" | "stone"
+
+export const plateLookOf = (holdsStone: boolean, standing: boolean): PlateLook =>
+  holdsStone ? "stone" : standing ? "pressed" : "raised"
+
+/** How the plate at a cell looks now; nothing off a plate. `standing` is whether the explorer stands on it. */
+export const plateLookAt = (
+  grid: FloorGrid,
+  floor: number,
+  row: number,
+  col: number,
+  states: ReadonlyMap<string, string>,
+  standing: boolean
+): PlateLook | undefined => {
+  const stones = stonesAt(grid, floor, row, col, states)
+  if (!stones) return undefined
+  const { plate } = grid.cells[row][col] as RoomCell & { plate: { id: string } }
+  return plateLookOf(arrangementOf(stones.state).weighted.includes(plate.id), standing)
 }

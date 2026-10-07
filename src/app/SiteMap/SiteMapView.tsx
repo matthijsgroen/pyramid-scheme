@@ -51,6 +51,8 @@ import {
 } from "./tileAssets"
 import { storedAtCell } from "@/game/cellAddress"
 import { tileStatusAt } from "@/game/sequencePlay"
+import { isCarrying, plateLookAt } from "@/game/stonePlay"
+import { PLATE_TILE } from "./plateArt"
 import { drawingOf, familyIconOf, isLockedGate, isSpentAt, nodeRadius, shapeKindFor, staysOpen } from "./nodeKinds"
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
 import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
@@ -221,6 +223,8 @@ const LEVER_CORRECTION_S = LEVER_SHEAR_K * LEVER_TILE_ASPECT // ≈ 0.4667
 const leverArmTransform = (angleDeg: number): string =>
   `scaleY(${1 / LEVER_CORRECTION_S}) rotate(${angleDeg}deg) scaleY(${LEVER_CORRECTION_S})`
 
+const NO_STATES: ReadonlyMap<string, string> = new Map()
+
 /** Every node's own furniture on one floor, in map space — chests beside treasure rooms, flights at
  * stairheads. See `NodeSprite` for why this is a list and not a child of each node's own `<g>`.
  *
@@ -239,7 +243,9 @@ export const nodeSpritesFor = (
    * state is stored under (`cellAddress`, `mechanismDoors.ts`). Absent for callers with no journey yet
    * (a story, a hand-built test grid): every control then draws at its own `initial` position. */
   mechanismStates?: ReadonlyMap<string, string>,
-  floorIndex = 0
+  floorIndex = 0,
+  /** Where the explorer stands once his walk has settled, for the plate he presses; unset while he walks. */
+  standingAt?: readonly [number, number]
 ): NodeSprite[] => {
   // Which cells belong to each room: the room's own, plus everything it claimed.
   const footprints = new Map<string, string[]>()
@@ -507,6 +513,21 @@ export const nodeSpritesFor = (
           y: cy + dy + CELL / 2 - PROP_H,
           mirrored: false,
           armStack: { armUrl: arm, frontUrl: front, angleDeg },
+        })
+      } else if (cell.plate) {
+        // A PLATE IS FLAT ON THE FLOOR, drawn in the cell-wide prop frame like an exit, in the look its stones and
+        // the explorer's weight give it now. The shared painting, never a rank's: a plate is the same at every rank.
+        const standing = standingAt !== undefined && standingAt[0] === r && standingAt[1] === c
+        const look = plateLookAt(grid, floorIndex, r, c, mechanismStates ?? NO_STATES, standing)
+        const url = look && sharedTileUrl(PLATE_TILE[look])
+        if (!url) continue
+        out.push({
+          footprint,
+          key: `plate:${r},${c}`,
+          url,
+          x: cx - CELL / 2,
+          y: cy + CELL / 2 - PROP_H,
+          mirrored: false,
         })
       } else if (kind === "stairhead") {
         const goesUp = r === grid.entrancePos[0] && c === grid.entrancePos[1]
@@ -1146,9 +1167,29 @@ export const SiteMapView = ({
   const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const covers = useMemo(() => regionBarrierCovers(grid), [grid])
   const barrierCovers = useRegionBarrierCovers(covers, `${grid.siteId}:${currentFloor ?? 0}`)
+  // Corridor-run markers track the explorer dot's visual position, not the logical one:
+  // hide them the instant a run target is clicked (the player has committed to a
+  // destination, so the old markers no longer apply), and don't show the new ones at the
+  // far end until the dot actually arrives there rather than while it's still gliding.
+  const [settledExplorerPos, setSettledExplorerPos] = useState(explorerPos)
+  const isTraveling = !!(
+    explorerPos &&
+    settledExplorerPos &&
+    (explorerPos[0] !== settledExplorerPos[0] || explorerPos[1] !== settledExplorerPos[1])
+  )
+
   const nodeSprites = useMemo(
-    () => nodeSpritesFor(grid, claims, tier, pendingCells, mechanismStates, currentFloor ?? 0),
-    [grid, claims, tier, pendingCells, mechanismStates, currentFloor]
+    () =>
+      nodeSpritesFor(
+        grid,
+        claims,
+        tier,
+        pendingCells,
+        mechanismStates,
+        currentFloor ?? 0,
+        isTraveling ? undefined : settledExplorerPos
+      ),
+    [grid, claims, tier, pendingCells, mechanismStates, currentFloor, isTraveling, settledExplorerPos]
   )
   // The walkable floor, as rectangles: what a layer cut to the floor is cut to. The sand is the only one
   // left — everything else that used to share the map-wide clip now carries its own shape.
@@ -1166,8 +1207,12 @@ export const SiteMapView = ({
       ...(sprite.light ? { light: sprite.light } : {}),
       // A drop is the exception: the player stands IN FRONT of it rather than working it, so on its own
       // mouth the general tie holds (he stands in front of what shares his floor line) and its parapet
-      // never covers him.
-      atExplorer: standingOn !== null && !sprite.key.startsWith("drop:") && sprite.footprint.includes(standingOn),
+      // never covers him. A plate is the other: he stands on it, so it is always under him.
+      atExplorer:
+        standingOn !== null &&
+        !sprite.key.startsWith("drop:") &&
+        !sprite.key.startsWith("plate:") &&
+        sprite.footprint.includes(standingOn),
       node: (
         <Fragment key={sprite.key}>
           {sprite.url && (
@@ -1384,17 +1429,6 @@ export const SiteMapView = ({
       new Map(doorways.map(({ row, col, tier: archTier }) => [`${cellLeft(col)},${cellTop(row) - WALL_H}`, archTier])),
     [doorways]
   )
-  // Corridor-run markers track the explorer dot's visual position, not the logical one:
-  // hide them the instant a run target is clicked (the player has committed to a
-  // destination, so the old markers no longer apply), and don't show the new ones at the
-  // far end until the dot actually arrives there rather than while it's still gliding.
-  const [settledExplorerPos, setSettledExplorerPos] = useState(explorerPos)
-  const isTraveling = !!(
-    explorerPos &&
-    settledExplorerPos &&
-    (explorerPos[0] !== settledExplorerPos[0] || explorerPos[1] !== settledExplorerPos[1])
-  )
-
   // One rule for what a tap does, asked per cell below — see `clickTargets.ts`. UNRESOLVED: two
   // positions feed it. Walkability (which corners and drop ends are offered) follows the LIVE explorer,
   // so mid-glide it is already reckoned from the destination; run arrows follow the SETTLED position
@@ -1442,6 +1476,11 @@ export const SiteMapView = ({
     el.scrollTo({ left: x - el.clientWidth / 2, top: y - el.clientHeight / 2, behavior: "smooth" })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [explorerPos?.[0], explorerPos?.[1], ride?.traversal.to[0], ride?.traversal.to[1]])
+
+  const carrying = useMemo(
+    () => isCarrying(grid, currentFloor ?? 0, mechanismStates ?? NO_STATES),
+    [grid, currentFloor, mechanismStates]
+  )
 
   return (
     /* The map's window, and the frame the air hangs in: the scrolling box is what MOVES, so a weather
@@ -1638,7 +1677,8 @@ export const SiteMapView = ({
                 const spent = isSpentAt(grid, currentFloor ?? 0, r, c, cell, mechanismStates)
                 // A SEQUENCE TILE SAYS HOW THE RUN STANDS ON IT, never "done": walked is its own look.
                 const plateStatus = tileStatusAt(grid, currentFloor ?? 0, r, c, mechanismStates)
-                const isCompleted = (state === "completed" && !staysOpen(cell) && !cell.sequenceTile) || spent
+                const isCompleted =
+                  (state === "completed" && !staysOpen(cell) && !cell.sequenceTile && !cell.plate) || spent
                 // Only ever a pending-loot marker for a treasure room with a consumable reward — this
                 // guards against stale coordinates in pendingCells (e.g. left over from before a site
                 // was regenerated) painting the badge onto whatever room now occupies that cell.
@@ -1665,6 +1705,8 @@ export const SiteMapView = ({
                 // a gate it carries no key colour and no state — a portal is a transition, never completed
                 // — so the vector has nothing left to say that the doorway does not say better.
                 const hasExit = shapeKind === "exit" && !!tileOrPlaceholder(cell.difficulty ?? tier, "exit")
+                // A PAINTED PLATE IS THE NODE, as a flight is: the vector slab underneath has nothing more to say.
+                const hasPlate = !!cell.plate && !!sharedTileUrl(PLATE_TILE.raised)
                 const roomR = nodeRadius[shapeKind]
                 // A WAY A SWITCH SHUT IS A WALL, AND A WALL WEARS NO NODE. The bars standing in its doorway
                 // already say the way is closed; a gate marker on top of them offers a second reading — a
@@ -1690,7 +1732,7 @@ export const SiteMapView = ({
                       <g
                         data-shape-kind={shapeKind}
                         opacity={
-                          sealedWay || hasStair || hasExit
+                          sealedWay || hasStair || hasExit || hasPlate
                             ? 0
                             : isCompleted && !isPending && !isPortal
                               ? 0.45
@@ -1750,6 +1792,7 @@ export const SiteMapView = ({
                   key={currentFloor}
                   grid={grid}
                   pos={explorerPos}
+                  carrying={carrying}
                   onArrive={() => setSettledExplorerPos(explorerPos)}
                 />
               )}

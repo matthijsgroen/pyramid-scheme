@@ -38,11 +38,20 @@ type Props = {
   /** Duration per grid-cell step in ms. Default 180 — and the walk cycle's frame rate follows it. */
   segmentDuration?: number
   color?: string
+  /** A stone in hand: drawn with the carrying frames, which fall back to the plain ones per facing. */
+  carrying?: boolean
   /** Fires once the dot visually settles at `pos` — on arrival, on an instant snap, and on mount. */
   onArrive?: () => void
 }
 
-export const ExplorerDot = ({ grid, pos, segmentDuration = 180, color = "#ffd060", onArrive }: Props) => {
+export const ExplorerDot = ({
+  grid,
+  pos,
+  segmentDuration = 180,
+  color = "#ffd060",
+  carrying = false,
+  onArrive,
+}: Props) => {
   // The map lays cells out on a stretched pitch so every wall has a place of its own — the dot walks
   // between floor-square centres, wherever those land.
   const toPixel = ([r, c]: readonly [number, number]): Point => {
@@ -167,7 +176,7 @@ export const ExplorerDot = ({ grid, pos, segmentDuration = 180, color = "#ffd060
       data-at={`${svgPos.x},${svgPos.y}`}
       style={{ position: "absolute", left: svgPos.x, top: svgPos.y, width: 0, height: 0, pointerEvents: "none" }}
     >
-      <ExplorerFigure facing={facing} walking={walking} cellMs={segmentDuration} color={color} />
+      <ExplorerFigure facing={facing} walking={walking} cellMs={segmentDuration} color={color} carrying={carrying} />
     </div>
   )
 }
