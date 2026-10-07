@@ -210,7 +210,7 @@ export const LockPlayground: FC<{ locks: Readonly<Record<string, string>>; initi
         ? JSON.stringify(carved.reasons)
         : undefined
   return (
-    <div className="flex h-screen flex-col gap-2 overflow-auto bg-neutral-900 p-4 text-white">
+    <div className="flex h-(--screen-height) flex-col gap-2 overflow-auto bg-neutral-900 p-4 text-white">
       <div className="flex flex-wrap gap-4 text-sm">
         <label>
           lock{" "}
