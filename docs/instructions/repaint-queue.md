@@ -3032,6 +3032,9 @@ yarn import-tile art/masters/props/default/narrowAcross.webp --tier=default --na
 
 ### `default/narrowAlong` — a wall across an east-west passage, one crack in its top
 
+LANDED. Imported unmasked like `narrowAcross` (the rubble spills past the scaffold footprint), at the natural size; the
+default keyer leaves no pink between the rubble blocks.
+
 The same wall for a corridor that runs sideways across the map. It runs away from the viewer, so the map
 shows its narrow end and its top as a long strip, and the crack is a dark gap cut across that top. Same
 material and the same crack as `narrowAcross`, painted to match it.
@@ -3072,7 +3075,7 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold narrow --contents=along --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/default/narrowAlong.webp --tier=default --name=narrowAlong --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+  --filter=smooth --seat="$SHADOW"
 ```
 
 ## Region barrier covers — two
