@@ -40,6 +40,23 @@ describe("a plate offers its stone", () => {
     expect(h.current().prompt).toMatchObject({ kind: "plate", stone: "set" })
   })
 
+  it("a stone set back down on its plate is offered again and lifts a second time", () => {
+    const h = play(SHELF_AND_DOOR)
+    const shelf = plateNamed(h.grid, "shelf")
+    h.tap(shelf[0], shelf[1])
+    act(() => h.current().prompt!.take())
+    h.settle()
+    h.tap(shelf[0], shelf[1])
+    act(() => h.current().prompt!.take())
+    h.settle()
+    expect(Object.values(h.store.mechanismStates)).toEqual(["stones.shelf"])
+    h.tap(shelf[0], shelf[1])
+    expect(h.current().prompt).toMatchObject({ kind: "plate", stone: "lift" })
+    act(() => h.current().prompt!.take())
+    h.settle()
+    expect(Object.values(h.store.mechanismStates)).toEqual(["+ hand"])
+  })
+
   it("setting the stone on the door's plate opens the door", () => {
     const h = play(SHELF_AND_DOOR)
     h.walkTo(plateNamed(h.grid, "shelf"))
@@ -79,6 +96,7 @@ describe("a plate offers its stone", () => {
     expect(crossing, "some route crosses plate a on its way to another plate").toBeDefined()
     h.walkTo(crossing!)
     expect(h.store.mechanismStates).toEqual({})
+    expect(h.current().prompt?.at).not.toEqual(a)
   })
 })
 
