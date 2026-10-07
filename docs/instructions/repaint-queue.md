@@ -2940,6 +2940,13 @@ yarn import-tile art/masters/props/default/torchLit.webp --tier=default --name=t
 
 ### `default/sequenceTile` — a flush floor tile, stepped on in order
 
+LANDED in SANDSTONE (designer, 2026-10-06), not the basalt the prompt below asks for, so the tile is never
+taken for the basalt pressure plate. The route was two steps: the prompt below over the scaffold returned a
+basalt tile (`Basalt Floor Tile Image.jpeg`), and a Gemini EDIT of that painting, attached as the only image,
+turned its stone to pale sandstone and kept the rest (`Sandstone Tile Painting Edit.jpeg`, the master). The
+top stays plain; the fine groove at the edge is approved as long as the glyph reads. Imported UNMASKED: the
+scaffold mask clipped the last row of the painted lip.
+
 **No `--seat`:** the tile lies flush, so nothing on it stands above the floor to cast, and a footprint
 under a flat thing reads as a second step (the pool's coping is the same case). `--scale=0.8` makes it
 about four fifths of a cell.
@@ -2977,7 +2984,7 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold sequenceTile --shadow=0 --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/default/sequenceTile.webp --tier=default --name=sequenceTile --slot=prop \
-  --filter=smooth --mask="$OBJ" --scale=0.8
+  --filter=smooth --scale=0.8
 ```
 
 ### `default/narrowAcross` — a wall across a north-south passage, one crack in it

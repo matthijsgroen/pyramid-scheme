@@ -1581,6 +1581,13 @@ scaffold torch --spin=15 --colour-cloth=#3e3731 --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/default/torchLit.webp --tier=default --name=torchLit --slot=prop \
   --filter=smooth --seat="$SHADOW" --scale=0.6513
 
+# The sequence tile, SHARED across ranks: a flush sandstone tile with a plain top, one tile for every glyph
+# and every state (the renderer draws the glyph on it and colours it by state). A Gemini EDIT of a basalt
+# painting over the `sequenceTile` scaffold, turned to sandstone so it is never taken for the pressure plate.
+# No --seat: it lies flush, so nothing on it casts. Cut UNMASKED: the mask clipped the painted lip's last row.
+yarn import-tile art/masters/props/default/sequenceTile.webp --tier=default --name=sequenceTile --slot=prop \
+  --filter=smooth --scale=0.8
+
 # The narrow passage, wall ACROSS a north-south corridor, SHARED across ranks. The crack is painted black
 # and kept (only the magenta is keyed); cut UNMASKED because the painted rubble spills past the scaffold
 # footprint, at the natural size.
