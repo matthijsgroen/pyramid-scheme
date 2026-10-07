@@ -49,6 +49,12 @@ describe("useSqueeze", () => {
   it.each([
     ["a span with no wall to pass", { "explorer-squeeze-e": ["e.png"] }, crack({ via: undefined }), {}],
     ["a heading with no squeezing art", {}, crack(), {}],
+    [
+      "a corner whose first leg has no squeezing art",
+      { "explorer-squeeze-e": ["e.png"] },
+      crack({ from: [-1, 1], via: [0, 1], to: [0, 2], dir: "e" }),
+      {},
+    ],
     ["reduced motion", { "explorer-squeeze-e": ["e.png"] }, crack(), { reducedMotion: true }],
   ])("crosses at once for %s", async (_, frames, traversal, options) => {
     const { useSqueeze } = await hookWith(frames)
@@ -62,7 +68,9 @@ describe("useSqueeze", () => {
     const { result } = renderHook(() => useSqueeze())
     let landed = false
     act(() => void result.current.playTraversal(crack()).then(() => (landed = true)))
-    await act(async () => vi.advanceTimersByTime(350 * 2 + 250))
+    await act(async () => vi.advanceTimersByTime(350 * 2 + 249))
+    expect(landed).toBe(false)
+    await act(async () => vi.advanceTimersByTime(1))
     expect(landed).toBe(true)
   })
 

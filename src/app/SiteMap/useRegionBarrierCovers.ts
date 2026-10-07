@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react"
 import type { RegionBarrierCover } from "@/game/regionBarrierCover"
+import { prefersReducedMotion } from "./reducedMotion"
 
 /** How long a cover takes to fade away once its barrier has opened in front of the player. */
 export const REGION_COVER_FADE_OUT_MS = 1000
-
-const prefersReducedMotion = () =>
-  typeof window !== "undefined" && !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
 
 type Seen = { floor: string; shape: string; covers: readonly RegionBarrierCover[] }
 
