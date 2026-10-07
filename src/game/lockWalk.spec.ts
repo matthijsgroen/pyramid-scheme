@@ -450,3 +450,40 @@ describe("leaveWith", () => {
     )
   })
 })
+
+describe("a drop that takes empty hands", () => {
+  const spec = (unladen: boolean): LockSpec => ({
+    regions: ["a", "b"],
+    gates: {},
+    mechanisms: {
+      stone: {
+        states: ["shelf", "+ hand"],
+        initial: "shelf",
+        opens: { shelf: [], "+ hand": [] },
+        transitions: [
+          { from: "shelf", to: "+ hand", at: "a" },
+          { from: "+ hand", to: "shelf", at: "a" },
+        ],
+      },
+    },
+    oneWays: [{ from: "a", to: "b", ...(unladen ? { unladen: true as const } : {}) }],
+    in: "a",
+    out: "b",
+    leaveWith: [{ mechanism: "stone", notIn: ["+ hand"] }],
+  })
+  const handsAt = (found: ReturnType<typeof reachableStates>, region: string) => {
+    if (found === "tooLarge") throw new Error("expected a walkable lock")
+    return found.order
+      .filter(state => state.region === region)
+      .map(state => state.config.stone)
+      .sort()
+  }
+
+  it("is taken only with empty hands", () => {
+    expect(handsAt(reachableStates(spec(true)), "b")).toEqual(["shelf"])
+  })
+
+  it("is taken carrying where the lock says nothing of hands", () => {
+    expect(handsAt(reachableStates(spec(false)), "b")).toEqual(["+ hand", "shelf"])
+  })
+})

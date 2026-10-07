@@ -17,5 +17,6 @@ export type OneWayRealisationMeta = {
  * that names none; production answers nothing, so an unbound one-way is refused. */
 export type ResolveOneWayRealisation = (id: string | undefined) => OneWayRealisationMeta | undefined
 
-/** Why a one-way cannot be bound: it names no realisation, or one with no prompt. */
-export type OneWayRefusal = "unbound" | "noPrompt"
+/** Why a one-way cannot be bound: it names no realisation, or one with no prompt, or one that needs both hands on a
+ * stone floor whose lock lets a stone ride the drop (play would turn back a walk the solver takes). */
+export type OneWayRefusal = "unbound" | "noPrompt" | "stonePasses"

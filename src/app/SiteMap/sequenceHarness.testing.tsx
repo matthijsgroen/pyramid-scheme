@@ -15,6 +15,7 @@ import { useSiteNavigation } from "./useSiteNavigation"
 import { buildRoomClaims } from "./roomClaims"
 import { offeredTargets } from "./clickTargets"
 import { encodeEdge } from "./edgeId"
+import type { ResolveOneWayRealisation } from "@/game/oneWayRealisation"
 
 // The real navigation hook, floor assembly and journeys API over one stored journey, so a spec plays a
 // carved sequence floor the way a player does and can mount it again from what was stored.
@@ -96,7 +97,12 @@ const journeyData = (id: string): TranslatedJourney =>
     lengthLabel: "short",
   }) as TranslatedJourney
 
-export const sequenceHarness = (seed: number, config: FloorConfig) => {
+/** `resolveOneWay` replaces the navigation's registry for one-ways, never the carve's. */
+export const sequenceHarness = (
+  seed: number,
+  config: FloorConfig,
+  { resolveOneWay }: { resolveOneWay?: ResolveOneWayRealisation } = {}
+) => {
   const store: Store = { exploredCells: {}, positionKey: null, standingKey: null, mechanismStates: {} }
   const encountered: Place[] = []
   const siteConfig: SiteConfig = [config]
@@ -164,6 +170,7 @@ export const sequenceHarness = (seed: number, config: FloorConfig) => {
         },
         onSkippedConsumable: () => {},
         onExitReached: () => {},
+        ...(resolveOneWay ? { resolveOneWay } : {}),
       })
       return { ...assembled, ...nav, journeys, mechanismStates }
     })

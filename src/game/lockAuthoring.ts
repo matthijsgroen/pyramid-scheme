@@ -198,3 +198,10 @@ export const freeRegions = (lock: Lock): Lock => ({
   ...lock,
   regions: Object.fromEntries(Object.keys(lock.regions).map(region => [region, { takes: "free" as const }])),
 })
+
+/** A gate that empty hands alone open: on its own connection a narrow passage, beside a drop the drop's own
+ * condition. A gate any plate or mechanic also owns is a door. */
+export const isUnladenGate = (gate: LockGate): boolean =>
+  !isRegionGate(gate) &&
+  gate.owners.length > 0 &&
+  gate.owners.every(owner => (CARRY_TERMS as readonly string[]).includes(owner))

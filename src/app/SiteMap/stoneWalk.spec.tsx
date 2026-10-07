@@ -6,6 +6,20 @@ import { SHELF_AND_DOOR, TWO_STONES, plateNamed, stoneFloor } from "@/game/testS
 import { carvePlayground } from "./playgroundCarve.testing"
 import { sequenceHarness } from "./sequenceHarness.testing"
 import "@/mods/registerModApps"
+import type { OneWayRealisationMeta } from "@/game/oneWayRealisation"
+
+// The registry's realisations with `handsFull` taken off, so each half of the launch guard is pinned alone: an
+// `unladen` drop turns a carrying walk away by the lock's word, a `handsFull` realisation by its own (handed to the
+// navigation only, where a stone floor's carve would refuse it as `stonePasses`).
+vi.mock("@/mods/allOneWayRealisations", async importOriginal => {
+  const real = await importOriginal<typeof import("@/mods/allOneWayRealisations")>()
+  return {
+    resolveOneWayRealisation: (id: string | undefined): OneWayRealisationMeta | undefined => {
+      const meta = real.resolveOneWayRealisation(id)
+      return meta && { id: meta.id, ownerMod: meta.ownerMod, ...(meta.prompt ? { prompt: meta.prompt } : {}) }
+    },
+  }
+})
 
 beforeEach(() => vi.useFakeTimers())
 afterEach(() => {
@@ -150,15 +164,33 @@ describe("a carrying walk", () => {
     expect(h.current().notice).toEqual({ at: h.grid.entrancePos })
   })
 
-  it("is turned away at a zipline's launch, which needs both hands", () => {
-    const config = stoneFloor("in -- yard\nyard -- out\nout >> in\nshelf plate @yard stone\nin ?\nyard ?\nout ?", {
+  const dropFloor = (drop: string) =>
+    stoneFloor(`in -- yard\nyard -- out\n${drop}\nshelf plate @yard stone\nin ?\nyard ?\nout ?`, {
       realisations: { weights: "stonePlate", "one-way": "zipline" },
     })
+
+  it("is turned away at the launch of a drop the lock takes with empty hands", () => {
+    const config = dropFloor("out -[unladen]- >> in")
     const carved = carvePlayground(config)
     if (!carved.found) throw new Error(JSON.stringify(carved.reasons))
     const h = { ...sequenceHarness(carved.seed, config), grid: carved.grid }
     lift(h)
     const { launch } = oneWayRuns(h.grid)[0]
+    h.walkTo(launch)
+    expect(h.current().prompt).toBeNull()
+    expect(h.current().notice).toEqual({ at: launch })
+  })
+
+  it("is turned away at a zipline's launch, which needs both hands", () => {
+    const config = dropFloor("out >> in")
+    const carved = carvePlayground(config)
+    if (!carved.found) throw new Error(JSON.stringify(carved.reasons))
+    const zipline = (id: string | undefined): OneWayRealisationMeta | undefined =>
+      id === "zipline" ? { id, ownerMod: "topology", prompt: "ui.prompt.zipline", handsFull: true } : undefined
+    const h = { ...sequenceHarness(carved.seed, config, { resolveOneWay: zipline }), grid: carved.grid }
+    lift(h)
+    const { launch } = oneWayRuns(h.grid)[0]
+    expect(oneWayRuns(h.grid)[0].unladen).toBeUndefined()
     h.walkTo(launch)
     expect(h.current().prompt).toBeNull()
     expect(h.current().notice).toEqual({ at: launch })

@@ -274,7 +274,7 @@ export const useSiteNavigation = ({
         journeys.markCellExplored(sectionHash, edgeId, address)
         goHere()
         const traversal: Traversal = { kind: span.kind, from: span.launch, to: span.landing, dir: span.dir }
-        if (carrying && resolveOneWay(span.kind)?.handsFull) return turnAway(row, col)
+        if (carrying && (span.unladen || resolveOneWay(span.kind)?.handsFull)) return turnAway(row, col)
         scheduleArrival(walkDelay(row, col), () =>
           offer(
             "obstacle",

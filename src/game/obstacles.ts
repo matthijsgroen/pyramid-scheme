@@ -74,6 +74,8 @@ export type OneWayObstacle = {
   id: string
   kind: "oneWay"
   at: { on: "connection"; between: readonly [string, string] }
+  /** Taken only with empty hands: the lock wrote `-[unladen]-` beside it, so no stone rides it (`absorbUnladen`). */
+  unladen?: true
 }
 
 /** WHAT STANDS IN THE WAY. One union, exhaustively checked, meant to grow. */

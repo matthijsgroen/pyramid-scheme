@@ -69,8 +69,9 @@ export type CorridorCell = {
   /** Set on a cell that is part of an obstacle (a one-way drop's span) rather than ground. `dir` runs
    * from the launch toward the landing, and `kind` is what the span is, which is what the launch offers
    * to do with it. Such a cell names no direction at all and no neighbour names it, so no walk enters
-   * it; the marker is what lets the art span it and the lock read the drop back. */
-  obstacle?: { dir: Direction; kind: ObstacleKind }
+   * it; the marker is what lets the art span it and the lock read the drop back. `unladen` says the drop is
+   * taken only with empty hands. */
+  obstacle?: { dir: Direction; kind: ObstacleKind; unladen?: true }
   /** A GATE A MECHANISM HOLDS OPEN, remembered on the ground it has become. It is a corridor to every
    * walk — no prompt, no stop, reveal runs through it — and this is all the map needs to keep drawing
    * the door, open, in the mark and colour it wore shut. Derived from the mechanism's position each

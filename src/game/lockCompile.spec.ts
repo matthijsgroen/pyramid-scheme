@@ -2,6 +2,7 @@ import { describe, expect, expectTypeOf, it } from "vitest"
 import { CORE_MECHANICS, mechanicRegistry, resolveMechanicKind } from "./mechanics"
 import type { Activator, ForkSwitch, Lock, LockMechanic, LockOneWay, Sequence, Toggle } from "./lockAuthoring"
 import { checkLock, compileLock, type LockFragment, type RealisationBinding } from "./lockCompile"
+import { parseLock } from "./lockNotation"
 import { BINDING, doubleBackLock, sluiceLock } from "./testSupport/lockFixtures"
 
 const kinds = resolveMechanicKind
@@ -592,5 +593,29 @@ describe("a lock with stones", () => {
   it("refuses unladen on a lock without stones", () => {
     const lock = plateLock({ gates: { door: { from: "in", to: "out", owners: ["unladen"] } }, weights: undefined })
     expect(checkLock(lock)).toContainEqual({ type: "carryWithoutStones", barrier: "door" })
+  })
+})
+
+describe("a drop that takes empty hands", () => {
+  const lock = () => parseLock("in -- yard\nyard -- out\nout -[unladen]- >> in\nshelf plate @yard stone", "drop").lock
+
+  it("is checked whole: empty hands beside a drop are the drop's own condition", () => {
+    expect(checkLock(lock())).toEqual([])
+  })
+
+  it("compiles empty hands into the drop, never into a door of its own", () => {
+    const fragment = fragmentOf(lock(), { weights: "stonePlate", "one-way": "zipline" })
+    expect(fragment.obstacles).toEqual([
+      { id: "out>in", kind: "oneWay", at: { on: "connection", between: ["out", "in"] }, unladen: true },
+    ])
+    expect(fragment.controls).toContainEqual(expect.objectContaining({ control: "weights", terms: {} }))
+  })
+
+  it("still refuses a drop beside a door anything else owns", () => {
+    const shared = parseLock(
+      "in -- yard\nyard -- out\nout -[p+unladen]- >> in\np plate @yard\nshelf plate @yard stone",
+      "drop"
+    ).lock
+    expect(checkLock(shared)).toContainEqual(expect.objectContaining({ type: "oneWaySharesConnection" }))
   })
 })

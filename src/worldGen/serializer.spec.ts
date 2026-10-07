@@ -270,6 +270,27 @@ describe("generateFile — a gate on a connection survives the bake", () => {
       'controls: [{ id: "Y", in: "entrance", control: "fork-switch", encounter: "lightbeamSwitch" }]'
     )
   })
+
+  it("keeps a drop's empty hands", () => {
+    const floor = {
+      pathPuzzles: 0,
+      difficulty: "starter" as const,
+      end: "treasure" as const,
+      exitOrStaircase: "exit" as const,
+      sideSections: [],
+      obstacles: [
+        {
+          id: "chute",
+          kind: "oneWay" as const,
+          at: { on: "connection" as const, between: ["a", "b"] as const },
+          unladen: true as const,
+        },
+      ],
+    }
+    expect(generateFile({ testJourney: [[floor]] })).toContain(
+      'obstacles: [{ id: "chute", kind: "oneWay", at: { on: "connection", between: ["a", "b"] }, unladen: true }]'
+    )
+  })
 })
 
 describe("generateFile — a region barrier survives the bake", () => {

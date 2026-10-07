@@ -121,12 +121,12 @@ export const regionsOf = (
 // believe a genuinely gated pocket has no way in at all and would refuse a floor that is perfectly sound.
 // A drop whose two ends land in the same region is skipped: a region is ground walked both ways, so the
 // two cells are ones the player already moves freely between.
-const oneWaysOf = (grid: FloorGrid, of: Map<string, RegionId>): { from: RegionId; to: RegionId }[] => {
-  const found: { from: RegionId; to: RegionId }[] = []
+const oneWaysOf = (grid: FloorGrid, of: Map<string, RegionId>): NonNullable<LockSpec["oneWays"]> => {
+  const found: NonNullable<LockSpec["oneWays"]> = []
   for (const run of oneWayRuns(grid)) {
     const from = of.get(posKey(run.launch[0], run.launch[1]))
     const to = of.get(posKey(run.landing[0], run.landing[1]))
-    if (from && to && from !== to) found.push({ from, to })
+    if (from && to && from !== to) found.push({ from, to, ...(run.unladen ? { unladen: true as const } : {}) })
   }
   return found
 }

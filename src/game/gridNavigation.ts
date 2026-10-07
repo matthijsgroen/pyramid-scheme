@@ -53,6 +53,7 @@ export const oneWayRuns = (
   landing: [number, number]
   dir: Direction
   kind: ObstacleKind
+  unladen?: true
 }[] => {
   const runs: ReturnType<typeof oneWayRuns> = []
   const continues = (r: number, c: number, dir: Direction): boolean => {
@@ -63,13 +64,20 @@ export const oneWayRuns = (
     for (let c = 0; c < grid.cols; c++) {
       const first = getCell(grid, r, c)
       if (!isObstacleCell(first)) continue
-      const { dir, kind } = first.obstacle
+      const { dir, kind, unladen } = first.obstacle
       const [dr, dc] = MOVES[dir]
       if (continues(r - dr, c - dc, dir)) continue
       const cells: [number, number][] = []
       for (let at = 0; continues(r + dr * at, c + dc * at, dir); at++) cells.push([r + dr * at, c + dc * at])
       const [lr, lc] = cells[cells.length - 1]
-      runs.push({ launch: [r - dr, c - dc], cells, landing: [lr + dr, lc + dc], dir, kind })
+      runs.push({
+        launch: [r - dr, c - dc],
+        cells,
+        landing: [lr + dr, lc + dc],
+        dir,
+        kind,
+        ...(unladen ? { unladen } : {}),
+      })
     }
   return runs
 }
