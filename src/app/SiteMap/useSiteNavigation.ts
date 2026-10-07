@@ -274,6 +274,8 @@ export const useSiteNavigation = ({
         journeys.markCellExplored(sectionHash, edgeId, address)
         goHere()
         const traversal: Traversal = { kind: span.kind, from: span.launch, to: span.landing, dir: span.dir }
+        // `handsFull` is a fallback for a carve and play that read different registries: a carved stone floor never
+        // binds a handsFull realisation to a drop without `unladen` (`stonePasses`).
         if (carrying && (span.unladen || resolveOneWay(span.kind)?.handsFull)) return turnAway(row, col)
         scheduleArrival(walkDelay(row, col), () =>
           offer(

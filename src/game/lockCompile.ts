@@ -108,6 +108,12 @@ const kindsUsed = (lock: Lock): Map<string, string[]> => {
   return used
 }
 
+/** The gates on a connection that are the condition of a drop standing on it: only empty hands open them. */
+const dropConditionsOn = (lock: Lock, barriers: readonly string[]): string[] =>
+  barriers.some(barrier => barrier in (lock.oneWays ?? {}))
+    ? barriers.filter(barrier => barrier in lock.gates && isUnladenGate(lock.gates[barrier]))
+    : []
+
 /**
  * A DROP THAT TAKES EMPTY HANDS: a gate only empty hands open, standing on a connection a one-way stands on, is that
  * drop's own condition and never a door of its own. Returns the lock without those gates (and without their names
@@ -121,11 +127,10 @@ const absorbUnladen = (lock: Lock): { lock: Lock; unladen: ReadonlySet<string> }
     const barriers = barriersOf(connection)
     const drop = barriers.find(barrier => barrier in oneWays)
     if (drop === undefined) continue
-    for (const barrier of barriers)
-      if (barrier in lock.gates && isUnladenGate(lock.gates[barrier])) {
-        absorbed.add(barrier)
-        unladen.add(drop)
-      }
+    for (const barrier of dropConditionsOn(lock, barriers)) {
+      absorbed.add(barrier)
+      unladen.add(drop)
+    }
   }
   if (absorbed.size === 0) return { lock, unladen }
   return {
@@ -182,10 +187,9 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
       }
     }
     // Empty hands beside a drop are the drop's own condition (`absorbUnladen`), not a second barrier on it.
+    const conditions = dropConditionsOn(lock, barriers)
     const standing = barriers.filter(
-      barrier =>
-        barrier in oneWays ||
-        (barrier in lock.gates && !(barriers.some(b => b in oneWays) && isUnladenGate(lock.gates[barrier])))
+      barrier => barrier in oneWays || (barrier in lock.gates && !conditions.includes(barrier))
     )
     if (standing.some(barrier => barrier in oneWays) && standing.length > 1)
       faults.push({ type: "oneWaySharesConnection", between: join, barriers: standing })
