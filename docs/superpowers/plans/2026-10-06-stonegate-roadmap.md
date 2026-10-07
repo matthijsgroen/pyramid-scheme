@@ -44,7 +44,7 @@ arrangements: which plates hold a stone, and whether the hand holds one. For exa
 **Start:** phase 1 begins from `main` after PR #315 (`world/authoring-locks`) is merged, since it changes the
 realisation code phase 1 builds on (`degradeUnrealised`, the binding cascade, `floorLocks`).
 
-**Phase plans:** [phase 1, stones in the engine](2026-10-06-stonegate-phase-1-engine.md) · [phase 5, art](2026-10-06-stonegate-phase-5-art.md).
+**Phase plans:** [phase 1, stones in the engine](2026-10-06-stonegate-phase-1-engine.md) · [phase 2, play with stones](2026-10-07-stonegate-phase-2-play.md) · [phase 5, art](2026-10-06-stonegate-phase-5-art.md).
 
 Phases 2, 3 and 4 only need phase 1, so they can run side by side in separate worktrees. Phase 5 starts at
 once: the prompts and scaffolds need no code. Each art item is wired in as soon as its phase lands, and
