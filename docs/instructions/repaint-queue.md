@@ -3175,11 +3175,11 @@ must carry value and surface only — no colour cast, no glow, nothing lit.
 **Attach:** nothing — a full-bleed texture has no geometry to hold. Start a new chat.
 
 ```
-A seamless, tileable texture of still shallow water, painted in flat matte gouache. Square, seen straight down from directly above, filling the whole frame edge to edge with no border, no vignette and no background.
+A seamless, tileable texture of shallow standing water, painted in flat matte gouache. Square, seen straight down from directly above, filling the whole frame edge to edge with no border, no vignette and no background.
 
-The surface is murky and opaque, the dull grey-green of water standing in a closed stone passage — you cannot see the floor beneath it. Across it run broad, slow, low-contrast ripples drawn as soft overlapping bands, a few darker patches of silt where it is deepest and a few paler streaks where it is thinnest. Count about six ripple bands across the width, none of them stronger than the rest.
+It reads at a glance as WATER, not sand or stone: a cool muted blue-green, a little deeper and darker in soft irregular patches. Over it lies a loose net of pale, thin, wobbly CAUSTIC light lines, the bright rippling pattern sunlight makes on the bottom of a shallow pool, broken into small irregular cells of different sizes. A few small soft ring ripples spread here and there. Painted soft and flat in gouache, not glossy and not photographic.
 
-Nothing floats on it and nothing stands in it: no leaves, no debris, no reeds, no stones breaking the surface, no foam, no reflections of anything, no highlights, no sparkle, no glow. No single distinctive mark that would repeat as a pattern when the texture is tiled — the edges must run on into the opposite edges without a seam. Matte throughout, mid-value, low saturation and neutral in hue, so a lamp can warm it or the dark can cool it.
+Not long parallel bands, not wave crests, not dunes, nothing that could read as wind-blown sand. Nothing floats on it: no leaves, no debris, no reeds, no stones breaking the surface, no foam, no reflections of objects. No single distinctive mark that would repeat as a pattern when the texture is tiled; the edges must run on into the opposite edges without a seam. Mid-value, so a lamp can warm it and the dark can cool it.
 ```
 
 Then, once the return is in `~/Downloads`:
