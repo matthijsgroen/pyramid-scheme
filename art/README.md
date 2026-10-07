@@ -175,7 +175,12 @@ art/masters/explorer/explorer-<facing>-<n>.webp   one walking pose, large, on ma
 art/masters/explorer/explorer-carry-<facing>-<n>.webp
 art/masters/explorer/explorer-zip-<facing>.webp
 art/masters/explorer/explorer-squeeze-<facing>.webp
+art/masters/explorer/spare/                       whole sheets not in use yet
 ```
+
+`spare/explorer-arms-crossed-sheet.webp` is a full front, back and side sheet of him with his arms crossed
+and the torch in his pack, standing at ease and pleased with himself. It came back from a squeeze roll and
+is kept for an idle or waiting pose; cut it with `yarn cut-sheet` when one is wanted.
 
 `yarn build-sheet` lays poses out in rows on flat magenta, one row per prefix, with gutters `cut-sheet`
 can find again:

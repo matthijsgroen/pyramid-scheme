@@ -3094,13 +3094,15 @@ with the walking one. Build it first if it is missing:
 
 ```
 Edit this sprite sheet. Keep the same character, outfit, palette, layout, spacing and number of frames.
-Change only the pose: he is squeezing sideways through a narrow crack, his body turned side-on, his back
-held flat against the stone, his arms tight against his chest, his belly drawn in and his chin up, one
-foot just ahead of the other. In the front and back rows he is turned a quarter turn, one shoulder
-toward the viewer, still moving toward or away from it. In the side row his back is flat to the wall
-behind him, his chest toward the viewer and his face turned to the right, the way he is going. His lit
-torch is tucked over his right shoulder into the pack strap, flame beside his head. No wall and no
-crack drawn. Same flat magenta background.
+Change only the pose: he is SIDE-STEPPING through a gap barely wider than his body, shoulders lined up
+with the way he is going, his body flattened between two stone faces that are not drawn. His legs are
+apart in a side step, knees bent. His leading arm is stretched out ahead of him at shoulder height, palm
+flat as if feeling along the stone; his trailing arm hangs low behind him holding the lit torch down by
+his hip. His head is turned toward the way he is going. In the front row he goes TOWARD the viewer, so
+we see him in PROFILE, leading arm reaching down the picture. In the back row he goes AWAY, also in
+profile, leading arm reaching up the picture. In the side row he goes to the RIGHT, so we see him
+FRONT-ON, chest to the viewer, side-stepping right, leading arm reaching right. Not arms crossed, not
+standing at ease, no torch in the pack. No wall and no crack drawn. Same flat magenta background.
 ```
 
 Save the DOWNLOAD as explorer-squeeze.png in ~/Downloads, cut it, and keep the first frame of each row (front,
