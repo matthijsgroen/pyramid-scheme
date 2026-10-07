@@ -191,3 +191,10 @@ export const barriersOf = (connection: LockConnection): readonly BarrierId[] =>
 /** Whether a gate owner is a plate of the lock, or a condition on what the player carries. */
 export const isWeightOwner = (lock: Lock, owner: string): boolean =>
   Object.hasOwn(lock.weights?.plates ?? {}, owner) || (CARRY_TERMS as readonly string[]).includes(owner)
+
+/** The same lock with every region taking `free`, for a bench floor: what it holds is the topology, and the
+ * carve seats none of a lock's `puzzles`/`nothing`/`reward` appetites on a floor with no content. */
+export const freeRegions = (lock: Lock): Lock => ({
+  ...lock,
+  regions: Object.fromEntries(Object.keys(lock.regions).map(region => [region, { takes: "free" as const }])),
+})

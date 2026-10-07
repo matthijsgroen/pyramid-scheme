@@ -12,10 +12,3 @@ export const catalogueLock = (name: string): Lock => {
     throw new Error(`lock ${name} is not finished: ${[...parsed.refused, ...parsed.drafts].join("; ")}`)
   return parsed.lock
 }
-
-/** The same lock with every region taking `free`, for a bench floor: what it holds is the topology, and the
- * carve seats none of a lock's `puzzles`/`nothing`/`reward` appetites on a floor with no content. */
-export const freeRegions = (lock: Lock): Lock => ({
-  ...lock,
-  regions: Object.fromEntries(Object.keys(lock.regions).map(region => [region, { takes: "free" as const }])),
-})

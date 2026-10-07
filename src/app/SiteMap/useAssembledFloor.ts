@@ -341,6 +341,25 @@ const maskHiddenCells = (
   return { masked: { ...grid, cells: newCells }, hiddenJunctions: junctions, hiddenSections, junctionSections }
 }
 
+/** THE FLOOR AS PLAY CARVES IT: the registry's realisations, their key requirements and the address every id is
+ * derived from. Whatever must agree with the floor the player walks carves through this. */
+export const assemblePlayedFloor = (
+  journeyId: string,
+  floorConfig: FloorConfig,
+  seed: number,
+  currentFloor: number,
+  levelIndex?: number
+) =>
+  assembleFloor(journeyId, floorConfig, seed + currentFloor, resolveEncounter, {
+    resolveKeyRequirements,
+    resolveOneWay: resolveOneWayRealisation,
+    resolveRegionBarrier: resolveRegionBarrierRealisation,
+    floorRef: { journeyId, ...(levelIndex !== undefined ? { levelIndex } : {}), floorIndex: currentFloor },
+    ...(levelIndex !== undefined
+      ? { resolveBoardIndex: boardIndexesForFloor(journeyId, levelIndex, currentFloor) }
+      : {}),
+  })
+
 export const useAssembledFloor = (
   journeyId: string,
   floorConfig: FloorConfig,
@@ -377,15 +396,7 @@ export const useAssembledFloor = (
   openGateKeys: ReadonlySet<string>
 } => {
   const baseGrid = useMemo(() => {
-    const result = assembleFloor(journeyId, floorConfig, seed + currentFloor, resolveEncounter, {
-      resolveKeyRequirements,
-      resolveOneWay: resolveOneWayRealisation,
-      resolveRegionBarrier: resolveRegionBarrierRealisation,
-      floorRef: { journeyId, ...(levelIndex !== undefined ? { levelIndex } : {}), floorIndex: currentFloor },
-      ...(levelIndex !== undefined
-        ? { resolveBoardIndex: boardIndexesForFloor(journeyId, levelIndex, currentFloor) }
-        : {}),
-    })
+    const result = assemblePlayedFloor(journeyId, floorConfig, seed, currentFloor, levelIndex)
     return result.success ? result.grid : null
   }, [journeyId, floorConfig, seed, currentFloor, levelIndex])
 

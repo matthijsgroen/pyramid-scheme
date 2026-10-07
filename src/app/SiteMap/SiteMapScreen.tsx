@@ -2,7 +2,6 @@ import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { getOwnedKeys } from "@/game/gridNavigation"
 import { concealShutGround } from "@/game/concealment"
-import { getFamilyPlugin } from "@/app/families/familyRegistry"
 import { floorKeyRing } from "@/game/floorKeys"
 import { useCorridorDetection } from "@/app/SiteMap/useCorridorDetection"
 import { useFoundCorridors } from "@/app/SiteMap/useFoundCorridors"
@@ -18,7 +17,8 @@ import { useEncounter } from "./useEncounter"
 import { useRewardOffer } from "./useRewardOffer"
 import { useSiteExit } from "./useSiteExit"
 import { useZiplineRide } from "./useZiplineRide"
-import { useSiteNavigation, type ArrivalPrompt, type ArrivalPromptKind } from "./useSiteNavigation"
+import { usePromptLabel } from "./usePromptLabel"
+import { useSiteNavigation } from "./useSiteNavigation"
 import { RewardFlow } from "./RewardFlow"
 import { EncounterModal } from "./EncounterModal"
 import { useApplyReward } from "./applyReward"
@@ -200,24 +200,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
     playTraversal,
   })
 
-  // What the prompt beside the explorer says when the floor itself is what is offered. Written out
-  // rather than looked up by a built key, so the locale guard can see every one of them. `here` is the
-  // room prompt for a family that names none of its own, and for a room left by a mod that is off: it
-  // claims nothing about what stands there or about having been there before.
-  const promptLabels: Record<Exclude<ArrivalPromptKind, "obstacle">, string> = {
-    room: t("ui.prompt.here"),
-    stairs: t("ui.prompt.stairs"),
-    exit: t("ui.prompt.exit"),
-  }
-
-  // A room's own words come from the family standing in it (FamilyMeta.invitation), read through the
-  // registry so core names no mod and an unregistered one simply has nothing to say.
-  const promptLabel = (prompt: ArrivalPrompt): string => {
-    // A crossing's words are its realisation's own; one no mod declares still says it cannot be undone.
-    if (prompt.kind === "obstacle") return prompt.invitation ? t(prompt.invitation) : t("ui.prompt.oneWay")
-    const invitation = prompt.familyId ? getFamilyPlugin(prompt.familyId)?.meta.invitation : undefined
-    return invitation ? t(invitation) : promptLabels[prompt.kind]
-  }
+  const promptLabel = usePromptLabel()
 
   const ActiveEncounterComponent = encounter.family?.Component ?? null
 
