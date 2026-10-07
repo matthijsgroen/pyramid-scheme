@@ -1655,5 +1655,6 @@ yarn import-portrait art/masters/characters/ghost-priest.jpeg --name=ghost-pries
 yarn import-portrait art/masters/characters/ghost-pharaoh.jpeg --name=ghost-pharaoh --bust=0.55
 yarn import-portrait art/masters/characters/ghost-other.jpeg --name=ghost-other --bust=0.55
 
-# THE EXPLORER, SQUEEZING (side frame; front and back come from explorerSqueezeProfile)
+# THE EXPLORER, SQUEEZING (side frame e, profile frame s; north reuses s)
 yarn import-tile art/masters/explorer/explorer-squeeze-e.webp --tier=default --name=explorer-squeeze-e --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-squeeze-s.webp --tier=default --name=explorer-squeeze-s --slot=explorer --filter=smooth

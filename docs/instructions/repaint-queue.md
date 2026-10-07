@@ -3124,9 +3124,9 @@ yarn cut-sheet ~/Downloads/explorer-squeeze.png --out=/tmp/squeeze --rows=front,
 
 ### `default/explorerSqueezeProfile` — the squeezing explorer in profile, for the front (south) frame
 
-**LANDED, with cleanup:** the profile came back as the designer's pick (belly in, stressed) but with a ghosted
-second torch and a detached floating hand. It is kept raw as `art/masters/explorer/explorer-squeeze-s-raw.webp`
-and not imported; `default/explorerSqueezeClean` below paints those two defects out. Do not re-roll this entry.
+**LANDED** as `art/masters/explorer/explorer-squeeze-s.webp`, imported as tile `explorer-squeeze-s` (belly in,
+stressed, in profile). North reuses this frame, mirrored if the walk needs it, so `explorer-squeeze-n` has no
+master of its own. Do not re-roll this entry.
 
 An EDIT of the one approved squeeze frame (`explorer-squeeze-e`, the side-stepping front-on pose), turned a
 quarter turn. Rank-neutral, shared `default` art. One frame per roll: this entry yields
@@ -3160,36 +3160,6 @@ yarn cut-sheet ~/Downloads/explorer-squeeze-s.png --out=/tmp/squeeze-s --min=0.8
 ```
 
 **Import:** `yarn import-tile art/masters/explorer/explorer-squeeze-<f>.webp --tier=default --name=explorer-squeeze-<f> --slot=explorer --filter=smooth`
-
-### `default/explorerSqueezeClean` — the profile squeeze with its ghost torch and floating hand removed
-
-An EDIT of the raw profile frame (`explorer-squeeze-s-raw`), the designer's pick for the north–south
-crossing. Rank-neutral, shared `default` art. The raw frame has two generation defects: a blurred, pink-tinted
-second torch beside the real one, and a detached, pink-tinted motion-blur hand floating to his right.
-Everything else is approved and must not move. Frame aspect: about 0.72:1 (726x1003 on the source cut).
-
-**Attach:**
-
-1. `~/tile-previews/explorer-squeeze-s-raw.png` — the raw profile frame on flat magenta, with the ghost torch
-   and the floating hand
-
-```
-Edit this single sprite. Keep everything exactly as it is: the character, the pose, the face, the
-expression, the colours, the size and the framing. Change only two things. Remove the blurred second torch
-beside the real torch, and remove the floating blurred hand to his right. Paint his right hand pressed flat
-against his own chest, against the wall, instead: no blur, no ghosting, no motion lines. Same flat magenta
-background, same single frame.
-```
-
-Save the DOWNLOAD as explorer-squeeze-s.png in ~/Downloads, cut it (one frame) and keep it as
-`explorer-squeeze-s.webp` under `art/masters/explorer/`. The north frame `explorer-squeeze-n` uses this same
-frame (mirrored if the walk needs it), so it needs no master of its own:
-
-```sh
-yarn cut-sheet ~/Downloads/explorer-squeeze-s.png --out=/tmp/squeeze-s --min=0.8
-```
-
-**Import:** `yarn import-tile art/masters/explorer/explorer-squeeze-s.webp --tier=default --name=explorer-squeeze-s --slot=explorer --filter=smooth`
 
 ## Region barrier covers — two
 
