@@ -99,9 +99,7 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
 
 ## Open per phase
 
-- **Phase 3:** the squeeze frames are in `src/assets/tiles/default/`. `explorer-squeeze-e` is 109x114,
-  imported with `--tight=18.3`, drawn at width/2 x height/2 units bottom-centred on the foot line (not the
-  40x70 explorer box). `explorer-squeeze-s` is 80x140. North reuses `s`; west mirrors `e`. Decided by the designer (2026-10-07): the narrow passage is a **door room**, a wall standing
+- **Phase 3:** Decided by the designer (2026-10-07): the narrow passage is a **door room**, a wall standing
   in one corridor cell with a crack the explorer squeezes through. The explorer stands on the cells either
   side, never inside the wall. The crossing plays like the zipline ride: the explorer is hidden and a
   sideways-squeezing sprite slides through the crack. Art is in the phase 5 plan, task 5. Its prompt reads
@@ -110,6 +108,12 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
   with a stone" / "Niet te passeren met een steen". The crack is painted black, not keyed out: it reads as
   depth, and the wall stays one solid sprite. Like a gate, the wall fades to `OCCLUDER_FADE` while the
   explorer stands behind it (`fadeAt` on the cells it covers), so the far side never hides him.
+  The squeeze frames are in `src/assets/tiles/default/`. `explorer-squeeze-e` is 109x114, imported with
+  `--tight=18.3`, drawn at width/2 x height/2 units bottom-centred on the foot line (not the 40x70
+  explorer box). `explorer-squeeze-s` is 80x140. North reuses `s`; west mirrors `e`.
+  Play refuses carrying across a `handsFull` one-way, but the walk and the solver have no such rule: a lock
+  whose only solution carries a stone across a zipline carves sound and is unwinnable. Phase 3 adds that
+  rule to the walk (or a lock check that refuses such a lock).
 - **Phase 5:** the torch and the plate need `prim_*` geometry in `scripts/renderProp.py`, then the
   repaint pass (`docs/instructions/prop-pipeline.md`, `docs/instructions/repaint-queue.md`). The explorer
   carrying frames are an edit of the walking sheet (`art/README.md`, "The explorer"). Generating the images

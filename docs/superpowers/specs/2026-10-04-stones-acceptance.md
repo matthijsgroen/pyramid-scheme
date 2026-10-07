@@ -46,8 +46,9 @@ stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
 - [x] The engine's solver walks a stone arrangement as state: which plates hold a stone, and whether the
       hand holds one.
 - [x] The engine's solver follows the same stone rules as the tool's walk (lifting, setting down, `:empty`,
-      `unladen`, no stone past the stairs or the way out (the stairs down are the way out of a staircase floor; every staircase turns a carrying walk away in play)), each tested on a
-      small made-up lock. No test pins a catalogue lock; `yarn lock` checks those.
+      `unladen`, no stone past the stairs or the way out (the stairs down are the way out of a staircase
+      floor; every staircase turns a carrying walk away in play)), each tested on a small made-up lock. No
+      test pins a catalogue lock; `yarn lock` checks those.
 - [ ] A floor is solvable from every arrangement the player can leave it in, so a return visit can never
       soft-lock.
 
