@@ -386,8 +386,12 @@ yarn import-tile art/masters/surfaces/sand.webp --tier=default --name=sand --slo
   --filter=smooth --key=none --mask="$OBJ" --brightness=0.78
 
 # A shut region barrier's water cover: a full-bleed texture, no mask, shared by every rank.
-yarn import-tile art/masters/surfaces/regionWater.webp --tier=default --name=regionWater --slot=floor \
+# The master is the painting as drawn; the import pushes its blue and softens the pale caustic net.
+WATER=$(mktemp -t regionwater).png
+scripts/recolourWater.sh art/masters/surfaces/regionWater.webp "$WATER" 230 26 0.45
+yarn import-tile "$WATER" --tier=default --name=regionWater --slot=floor \
   --filter=smooth --key=none
+rm -f "$WATER"
 
 # junior — the nobleman
 
