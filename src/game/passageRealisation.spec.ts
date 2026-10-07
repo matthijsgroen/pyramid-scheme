@@ -88,6 +88,24 @@ describe("the narrow passage on a carved floor", () => {
     expect(compared).toBeGreaterThan(0)
   })
 
+  it("gains no passage with the topology mod off, even under the fallback that dresses any named one", () => {
+    let compared = 0
+    for (const seed of SEEDS) {
+      const on = assembleFloor("test", crackFloor(), seed, TOPOLOGY_ON.resolveEncounter, {
+        resolvePassage: resolvePassageRealisation,
+      })
+      if (!on.success) continue
+      const off = assembleFloor("test", crackFloor(), seed, TOPOLOGY_OFF.resolveEncounter, {
+        resolveOneWay: TOPOLOGY_OFF.resolveOneWay,
+      })
+      expect(off.success, `seed ${seed}`).toBe(true)
+      if (!off.success) continue
+      expect(mechanicsLeft(off.grid, gateKeysOwned(on.grid))).toEqual([])
+      if (++compared >= 5) break
+    }
+    expect(compared).toBeGreaterThan(0)
+  })
+
   it("is declared by the topology mod, with its prompt, its art and both hands", () => {
     expect(resolvePassageRealisation("narrowPassage")).toEqual({
       id: "narrowPassage",

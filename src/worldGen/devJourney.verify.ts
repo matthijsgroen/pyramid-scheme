@@ -23,6 +23,7 @@ import { deadFloorRegions, walkFloorLock } from "../game/floorLockWalk"
 import { oneWayRuns } from "../game/gridNavigation"
 import { refusal } from "./carveSeedSearch"
 import { resolveOneWayRealisation } from "../mods/allOneWayRealisations"
+import { resolvePassageRealisation } from "../mods/allPassageRealisations"
 import { doubleBackLock } from "./spec/locks/doubleBack"
 // Same sanctioned exception configBuilder.integration.spec.ts takes: the claim here is about the
 // REAL, complete world, which only the real mod-owned currencies can build.
@@ -430,6 +431,7 @@ describe("what the dev journey authors", () => {
       {
         resolveKeyRequirements,
         resolveOneWay: resolveOneWayRealisation,
+        resolvePassage: resolvePassageRealisation,
         floorRef: { journeyId: DEV_JOURNEY_ID, levelIndex: 1, floorIndex: 0 },
         maxAttempts: 1,
       }

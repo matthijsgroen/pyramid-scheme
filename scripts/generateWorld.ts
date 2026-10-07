@@ -46,6 +46,7 @@ import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
 import { resolveKeyRequirements, resolveEncounterMeta, ALL_FAMILY_META } from "../src/mods/allFamilyMeta"
 import { puzzleSeeds } from "../src/data/puzzleSeeds"
 import { resolveOneWayRealisation } from "../src/mods/allOneWayRealisations"
+import { resolvePassageRealisation } from "../src/mods/allPassageRealisations"
 import { HIEROGLYPH_REQUIRED } from "../src/mods/hieroglyph/game/hieroglyphData"
 import { assignFragmentPieceIndices, hieroglyphCoverage } from "../src/mods/hieroglyph/game/fragmentFinalize"
 
@@ -139,7 +140,13 @@ const assembleOnce = (journeyId: string, floor: FloorConfig, levelNr: number, fl
         { ...floor, seed, packing: packing === authored ? floor.packing : packing },
         base,
         resolveEncounterMeta,
-        { resolveKeyRequirements, resolveOneWay: resolveOneWayRealisation, floorRef, maxAttempts }
+        {
+          resolveKeyRequirements,
+          resolveOneWay: resolveOneWayRealisation,
+          resolvePassage: resolvePassageRealisation,
+          floorRef,
+          maxAttempts,
+        }
       )
     // The floor as the runtime carves it when nothing is stamped: the ladder widens the grid when the
     // authored packing cannot carve it on the first attempt.

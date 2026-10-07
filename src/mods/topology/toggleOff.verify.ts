@@ -101,7 +101,7 @@ describe("the carve a floor authoring forks gets", () => {
       const opts = (resolve: ResolveEncounter, config: GameFloorConfig, off = false) =>
         assembleFloor(floor.journeyId, config, floor.seed, resolve, {
           resolveKeyRequirements,
-          ...(off ? { resolveOneWay: TOPOLOGY_OFF.resolveOneWay } : {}),
+          ...(off ? { resolveOneWay: TOPOLOGY_OFF.resolveOneWay, resolvePassage: TOPOLOGY_OFF.resolvePassage } : {}),
           floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
         })
       const forksOnly = opts(resolveEncounter, withForks)

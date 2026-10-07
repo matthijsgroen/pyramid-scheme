@@ -10,6 +10,7 @@
 import { generatedWorldConfigs } from "../src/data/generatedWorld"
 import { assembleFloor } from "../src/game/siteAssembler"
 import { resolveOneWayRealisation } from "../src/mods/allOneWayRealisations"
+import { resolvePassageRealisation } from "../src/mods/allPassageRealisations"
 import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
 import { floorLock } from "../src/game/floorLock"
 import { resolveKeyRequirements, resolveEncounterMeta } from "../src/mods/allFamilyMeta"
@@ -28,6 +29,7 @@ const result = assembleFloor(journeyId, floor, seed, resolveEncounterMeta, {
   resolveKeyRequirements,
   floorRef: { journeyId, floorIndex },
   resolveOneWay: resolveOneWayRealisation,
+  resolvePassage: resolvePassageRealisation,
 })
 if (!result.success) throw new Error(`floor will not carve: ${JSON.stringify(result.reasons)}`)
 
