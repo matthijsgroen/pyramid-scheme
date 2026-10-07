@@ -8,6 +8,7 @@ import { assembleFloor } from "@/game/siteAssembler"
 import { openDoorsFor } from "@/game/mechanismDoors"
 import { cellAddress } from "@/game/cellAddress"
 import { concealShutGround, concealedBehindBarriers } from "@/game/concealment"
+import { walkableFrom } from "@/game/gridNavigation"
 import { journeys as allKnownJourneys } from "@/data/journeys"
 import { resolveEncounter } from "@/app/families/familyRegistry"
 import { resolveKeyRequirements } from "@/mods/allFamilyMeta"
@@ -138,17 +139,31 @@ afterEach(() => {
 
 describe("a shut region barrier's region is covered by its realisation", { timeout: 60_000 }, () => {
   eachFloor((name, state) =>
-    it(`${name}, ${state}: every visible cell of each shut barrier's region carries the cover, and no other cell does`, () => {
-      const { grid, shut, realisation } = floorAt(name, state)
+    it(`${name}, ${state}: every visible cell of each shut barrier's region the explorer cannot walk to carries the cover, and no other cell does`, () => {
+      const { grid, from, shut, realisation } = floorAt(name, state)
       const { container } = render(<SiteMapView grid={grid} />)
-      const wanted = regionsOf(shut).flatMap(region => visibleRegion(grid, region))
+      const walkable = walkableFrom(grid, from)
+      const wanted = regionsOf(shut).flatMap(region => visibleRegion(grid, region).filter(key => !walkable.has(key)))
       expect(coverCells(container).map(keyOf).sort(), `${name} / ${state}`).toEqual(wanted.sort())
+      for (const { at } of visibleDoors(grid, shut))
+        expect(coverCells(container).map(keyOf), `${name} / ${state}: the blockage is covered`).toContain(at.join(","))
       for (const region of regionsOf(shut)) {
         const layer = container.querySelector(`[data-region-cover="${region}"]`)!
         expect(layer.getAttribute("data-realisation")).toBe(realisation)
       }
     })
   )
+
+  it("leaves some walkable cell of a shut region uncovered, so the explorer walks up to the water's edge", () => {
+    let dry = 0
+    for (const { name } of SCENARIOS)
+      for (const state of STATES) {
+        const { grid, from, shut } = floorAt(name, state)
+        const walkable = walkableFrom(grid, from)
+        for (const region of regionsOf(shut)) dry += visibleRegion(grid, region).filter(key => walkable.has(key)).length
+      }
+    expect(dry).toBeGreaterThan(0)
+  })
 
   it("shuts a region in some position of every floor, so the cases above are not empty", () => {
     for (const { name } of SCENARIOS)
@@ -197,56 +212,51 @@ describe("a shut region barrier's region is covered by its realisation", { timeo
   )
 })
 
-describe("the cover fades in across the first cell in and is full from the second", { timeout: 60_000 }, () => {
+describe("the cover fades in across the blockage and is full past it", { timeout: 60_000 }, () => {
   const MOVES = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] } as const
   const TOWARD = { n: "bottom", s: "top", w: "right", e: "left" } as const
-  /** The sides of a cell that open onto ground outside its region — read off the cells, apart from the code under test. */
-  const waysIn = (grid: FloorGrid, key: string, region: string) => {
+  /** The sides of a cell the explorer can step up to it from — read off the walk, apart from the code under test. */
+  const walkedUpFrom = (grid: FloorGrid, walkable: ReadonlySet<string>, key: string) => {
     const [r, c] = key.split(",").map(Number)
     const cell = grid.cells[r][c]
     if (cell.type === "empty") return []
-    return (["n", "e", "s", "w"] as const).filter(dir => {
-      const next = grid.cells[r + MOVES[dir][0]]?.[c + MOVES[dir][1]]
-      return cell.dirs.has(dir) && next !== undefined && next.type !== "empty" && next.region !== region
-    })
+    return (["n", "e", "s", "w"] as const).filter(
+      dir => cell.dirs.has(dir) && walkable.has(`${r + MOVES[dir][0]},${c + MOVES[dir][1]}`)
+    )
   }
 
   eachFloor((name, state) =>
-    it(`${name}, ${state}: a first cell in fades from its ways in, and every other cell, the blockage included, is full`, () => {
-      const { grid, shut } = floorAt(name, state)
+    it(`${name}, ${state}: a blockage fades from the sides the explorer walks up to it from, and every other covered cell is full`, () => {
+      const { grid, from, shut } = floorAt(name, state)
       const { container } = render(<SiteMapView grid={grid} />)
-      for (const region of regionsOf(shut)) {
-        const doors = new Set(shut.map(({ at }) => at.join(",")))
+      const walkable = walkableFrom(grid, from)
+      const doors = new Set(shut.map(({ at }) => at.join(",")))
+      for (const region of regionsOf(shut))
         for (const el of coverCells(container, region)) {
           const key = keyOf(el)
-          const from = doors.has(key) ? [] : waysIn(grid, key, region)
+          const sides = walkedUpFrom(grid, walkable, key)
+          if (!doors.has(key)) expect(sides, `${name} / ${key}: only a blockage borders walkable ground`).toEqual([])
           // "to bottom" is a gradient's default direction, and the style serialises it away.
-          const wanted = from
+          const wanted = sides
             .map(dir => `linear-gradient(to ${TOWARD[dir]}, transparent, black 56px)`.replace("to bottom, ", ""))
             .join(", ")
           expect(el.style.maskImage, `${name} / ${state} / ${region} / ${key}`).toBe(wanted)
           expect(el.style.opacity, `${name} / ${key}: no flat thinning`).toBe("")
         }
-      }
     })
   )
 
-  it("fades some cell and covers some cell other than the blockage in full, so the cases above are not empty", () => {
+  it("fades some blockage, so the cases above are not empty", () => {
     let faded = 0
-    let full = 0
     for (const { name } of SCENARIOS)
       for (const state of STATES) {
         const { grid, shut } = floorAt(name, state)
         const { container } = render(<SiteMapView grid={grid} />)
         const doors = new Set(shut.map(({ at }) => at.join(",")))
-        for (const el of coverCells(container)) {
-          if (el.style.maskImage) faded++
-          else if (!doors.has(keyOf(el))) full++
-        }
+        for (const el of coverCells(container)) if (el.style.maskImage && doors.has(keyOf(el))) faded++
         cleanup()
       }
     expect(faded).toBeGreaterThan(0)
-    expect(full).toBeGreaterThan(0)
   })
 })
 
@@ -408,7 +418,6 @@ describe("the owner's mark stays readable on the blockage", { timeout: 60_000 },
           const cover = coverCells(container).find(el => keyOf(el) === key)!
           const glyph = String.fromCodePoint(cell.mark!.glyph)
           const mark = marks.find(svg => svg.querySelector("text")?.textContent === glyph)!
-          expect(cover.style.maskImage, `${name} / ${key}: the blockage is full`).toBe("")
           expect(
             cover.compareDocumentPosition(mark) & Node.DOCUMENT_POSITION_FOLLOWING,
             `${name} / ${state} / ${key}: the mark is under the cover`

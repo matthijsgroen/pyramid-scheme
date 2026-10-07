@@ -8,14 +8,14 @@ const corridor = (dirs: Direction[], region?: string, state: CellState = "reacha
   state,
   ...(region ? { region } : {}),
 })
-const blockage = (dirs: Direction[]): GridCell => ({
+const blockage = (dirs: Direction[], entrance = "pumpRoom"): GridCell => ({
   type: "room",
   roomType: "encounter",
   dirs: new Set(dirs),
   state: "reachable",
   region: "hall",
   requiredKeyId: "sluice",
-  regionBarrier: { region: "hall", entrance: "pumpRoom", realisation: "water" },
+  regionBarrier: { region: "hall", entrance, realisation: "water" },
 })
 const empty: GridCell = { type: "empty" }
 
@@ -35,59 +35,96 @@ const coverOf = (g: FloorGrid) => {
   return new Map(covers[0].cells.map(cell => [cell.at.join(","), cell]))
 }
 
-describe("a region barrier's cover fades in over the first cell in and is full from the second", () => {
-  // pump room ─ hall ─ hall ─ hall ─ blockage
+describe("a region barrier's cover lies only where the explorer cannot walk", () => {
+  // pump room ─ hall ─ hall ─ blockage ─ hall ─ hall
   const row = grid([
     [
       corridor(["e"], "pumpRoom"),
       corridor(["w", "e"], "hall"),
       corridor(["w", "e"], "hall"),
+      blockage(["w", "e"]),
       corridor(["w", "e"], "hall"),
-      blockage(["w"]),
+      corridor(["w"], "hall"),
     ],
   ])
 
-  it("fades the first cell in from the side the way in is on", () => {
-    expect(coverOf(row).get("0,1")).toEqual({ at: [0, 1], fadeFrom: ["w"] })
+  it("leaves the region's ground before the blockage dry", () => {
+    const cells = coverOf(row)
+    expect(cells.has("0,1")).toBe(false)
+    expect(cells.has("0,2")).toBe(false)
   })
 
-  it("covers the second cell in, and every cell past it, in full", () => {
+  it("fades the blockage in from the side the explorer walks up to it from", () => {
+    expect(coverOf(row).get("0,3")).toEqual({ at: [0, 3], fadeFrom: ["w"] })
+  })
+
+  it("covers the ground past the blockage in full", () => {
     const cells = coverOf(row)
-    for (const key of ["0,2", "0,3", "0,4"]) expect(cells.get(key), key).toEqual({ at: key.split(",").map(Number) })
+    expect(cells.get("0,4")).toEqual({ at: [0, 4] })
+    expect(cells.get("0,5")).toEqual({ at: [0, 5] })
   })
 
   it("covers nothing outside the region", () => {
     expect(coverOf(row).has("0,0")).toBe(false)
   })
 
-  it("fades a first cell entered from two sides from both", () => {
+  it("fades a blockage on the region's edge from the ground outside it", () => {
+    const g = grid([[corridor(["e"], "pumpRoom"), blockage(["w", "e"]), corridor(["w"], "hall")]])
+    const cells = coverOf(g)
+    expect(cells.get("0,1")).toEqual({ at: [0, 1], fadeFrom: ["w"] })
+    expect(cells.get("0,2")).toEqual({ at: [0, 2] })
+  })
+
+  it("fades a blockage walked up to from two sides from both", () => {
     //            pumpRoom
     //               │
-    // gallery ─ hall ─ hall ─ blockage
+    // gallery ─ blockage ─ hall
     const g = grid([
-      [empty, corridor(["s"], "pumpRoom"), empty, empty],
-      [corridor(["e"], "gallery"), corridor(["n", "w", "e"], "hall"), corridor(["w", "e"], "hall"), blockage(["w"])],
+      [empty, corridor(["s"], "pumpRoom"), empty],
+      [corridor(["e"], "gallery"), blockage(["n", "w", "e"]), corridor(["w"], "hall")],
     ])
     expect(coverOf(g).get("1,1")?.fadeFrom).toEqual(["n", "w"])
   })
 
-  it("covers the blockage in full even where it is the first cell in", () => {
-    const g = grid([[corridor(["e"], "pumpRoom"), blockage(["w"])]])
-    expect(coverOf(g).get("0,1")).toEqual({ at: [0, 1] })
-  })
-
-  it("covers ground past the blockage in full, and fogged ground not at all", () => {
+  it("fades each door of a barrier with two entrances from its own side, and covers the ground between them in full", () => {
+    // pumpRoom ─ blockage ─ hall ─ blockage ─ gallery
     const g = grid([
       [
         corridor(["e"], "pumpRoom"),
+        blockage(["w", "e"]),
         corridor(["w", "e"], "hall"),
+        blockage(["w", "e"], "gallery"),
+        corridor(["w"], "gallery"),
+      ],
+    ])
+    const cells = coverOf(g)
+    expect(cells.get("0,1")).toEqual({ at: [0, 1], fadeFrom: ["w"] })
+    expect(cells.get("0,2")).toEqual({ at: [0, 2] })
+    expect(cells.get("0,3")).toEqual({ at: [0, 3], fadeFrom: ["e"] })
+  })
+
+  it("covers fogged ground past the blockage not at all", () => {
+    const g = grid([
+      [
+        corridor(["e"], "pumpRoom"),
         blockage(["w", "e"]),
         corridor(["w", "e"], "hall"),
         corridor(["w"], "hall", "fogged"),
       ],
     ])
     const cells = coverOf(g)
-    expect(cells.get("0,3")).toEqual({ at: [0, 3] })
-    expect(cells.has("0,4")).toBe(false)
+    expect(cells.get("0,2")).toEqual({ at: [0, 2] })
+    expect(cells.has("0,3")).toBe(false)
+  })
+
+  it("keeps a dry side branch of the region dry while the blockage beside it is covered", () => {
+    // pumpRoom ─ hall ─ blockage ─ hall
+    //             │
+    //            hall
+    const g = grid([
+      [corridor(["e"], "pumpRoom"), corridor(["w", "e", "s"], "hall"), blockage(["w", "e"]), corridor(["w"], "hall")],
+      [empty, corridor(["n"], "hall"), empty, empty],
+    ])
+    expect([...coverOf(g).keys()].sort()).toEqual(["0,2", "0,3"])
   })
 })

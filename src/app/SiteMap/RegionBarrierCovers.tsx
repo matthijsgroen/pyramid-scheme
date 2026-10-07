@@ -12,11 +12,11 @@ const TEXTURE_UNITS = CELL * 8
 
 type Fill = { url: string } | { color: string }
 
-/** The way a fade runs, from the side a way in is on to the far side of the cell. */
+/** The way a fade runs, from the side the explorer walks up from to the far side of the cell. */
 const TOWARD: Record<Direction, string> = { n: "bottom", s: "top", w: "right", e: "left" }
 
-/** A first cell in fades from nothing at each way in to full a cell's width on, so where its piece also
- * spans the gap to the next covered cell that gap is full. Several ways in each fade it, intersected. */
+/** A blockage fades from nothing at its walkable edge to full a cell's width on, so where its piece also
+ * spans the gap to the next covered cell that gap is full. Several walkable sides each fade it, intersected. */
 const fadeIn = (from: readonly Direction[]): CSSProperties => ({
   maskImage: from.map(dir => `linear-gradient(to ${TOWARD[dir]}, transparent, black ${CELL}px)`).join(", "),
   maskRepeat: "no-repeat",
