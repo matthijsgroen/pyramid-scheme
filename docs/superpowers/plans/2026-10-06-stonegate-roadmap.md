@@ -95,7 +95,10 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
 - **Phase 3:** decided by the designer (2026-10-07): the narrow passage is a **door room**, a wall standing
   in one corridor cell with a crack the explorer squeezes through. The explorer stands on the cells either
   side, never inside the wall. The crossing plays like the zipline ride: the explorer is hidden and a
-  sideways-squeezing sprite slides through the crack. Art is in the phase 5 plan, task 5.
+  sideways-squeezing sprite slides through the crack. Art is in the phase 5 plan, task 5. Its prompt reads
+  en "Go through the crack", nl "Wurm je door de muur" (sentence case, as every other prompt). It declares
+  `handsFull` (built in phase 2), so a carrying walk stops before it with the one blocked line, "Cannot pass
+  with a stone" / "Niet te passeren met een steen".
 - **Phase 5:** the torch and the plate need `prim_*` geometry in `scripts/renderProp.py`, then the
   repaint pass (`docs/instructions/prop-pipeline.md`, `docs/instructions/repaint-queue.md`). The explorer
   carrying frames are an edit of the walking sheet (`art/README.md`, "The explorer"). Generating the images

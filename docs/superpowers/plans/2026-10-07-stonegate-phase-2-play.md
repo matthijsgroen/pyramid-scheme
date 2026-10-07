@@ -30,53 +30,42 @@ after phase 1", "Open per phase").
 **Start from:** `topology/mechanics` at or after `4a370b2c`. The two untracked files at the repository root
 (`circle.lock`, `stoneGate.lock`) are the designer's scratch: never stage them.
 
-## Questions before running
+## Decided by the designer (2026-10-07)
 
-The plan is written assuming each recommendation. If the designer picks the alternative, only the named text or
-the one named function changes.
-
-1. **Where a blocked walk's line shows.** *Recommended:* a notice, not a button: a new atom `MapNotice`
-   (`src/ui/atoms/MapNotice.tsx`), drawn exactly where the prompt is drawn (over the explorer's cell), with no tap
-   action, cleared by the next tap on the map. Navigation returns it beside `prompt` as `notice`. *Alternative:*
-   the existing `MapActionPrompt` button with the line as its label, its tap only dismissing it (task 5: the
-   notice renders through `MapActionPrompt` with `onClick` clearing it; `MapNotice` is not created).
-2. **The wording.** *Recommended:* the spec's drafts, and for the prompts the spec's own words.
+1. **Where a blocked walk's line shows.** A notice in the prompt's spot (where the zipline's prompt stands, and
+   phase 3's narrow passage's), with no action button: a new atom `MapNotice` (`src/ui/atoms/MapNotice.tsx`),
+   drawn exactly where the prompt is drawn, over the explorer's cell. The player simply moves on: the next tap on
+   the map, which is what moves the explorer, clears it. Navigation returns it beside `prompt` as `notice`.
+2. **The wording.** One line for every blocked case (stairs, the way out, a zipline, phase 3's narrow passage):
+   `ui.blocked.carrying`. The prompts keep the spec's own words.
 
    | key | en | nl |
    | --- | --- | --- |
    | `ui.prompt.liftStone` | Lift the stone | Til de steen op |
    | `ui.prompt.setStone` | Set the stone on the plate | Leg de steen op de plaat |
-   | `ui.blocked.setStoneDown` | Set the stone down first | Leg eerst de steen neer |
-   | `ui.blocked.zipline` | You need both hands for the zipline | Je hebt beide handen nodig voor de lijn |
+   | `ui.blocked.carrying` | Cannot pass with a stone | Niet te passeren met een steen |
 
-   *Alternative:* the designer's own lines; only `public/locales/{en,nl}/common.json` change.
-3. **A zipline while carrying, before phase 3.** The spec says a zipline cannot be taken with a stone in hand,
-   but in phase 2 no lock writes `-[unladen]-` on a one-way (phase 3 refuses the binding that would disagree).
-   *Recommended:* the one-way realisation declares it: `OneWayRealisationMeta.handsFull` is the line a carrying
-   walk is stopped with, and the zipline sets it, so every zipline turns a carrying explorer away now. No stone
-   lock in the catalogue that carves in phase 2 has a zipline, so nothing the solver proved is contradicted.
-   *Alternative:* no zipline refusal until phase 3 (task 5 drops the span branch and the `handsFull` field).
-4. **Which plate doors wear a face.** Today a face is owed only by an `and` door with more than one owner, and a
-   stones home is no owner there (no family). *Recommended:* every door with a stone term wears a face, `any`
-   doors and single-plate doors included, because all plates look alike and nothing else on the floor says which
-   plate a door listens to. Consequence: such a door is no longer a sealed wall (`isSealedWayOut` needs no family)
-   but a door the player walks into and reads. *Alternative:* the same rule as other owners: a face only where the
-   door has more than one owner and is not `any` (task 6 counts stone terms into `needsFace`'s owner count instead
-   of forcing the face).
-5. **How the face tells plates apart.** *Recommended:* not in phase 2. The face shows one marker per stone term:
-   a plate wanting a stone or wanting none, and whether it agrees now. How many still disagree is what the player
-   needs; which plate is which is learned on the floor. *Alternative:* a glyph pair per plate, worn by the plate
-   and its marker (like `mark`); that needs the plates in `mark.ts`'s allocation and is a task of its own.
-6. **The narrow passage's line.** The narrow passage realisation is phase 3. *Recommended:* phase 2 builds the
-   mechanism (the notice and `handsFull` on a realisation) and phase 3's narrow passage declares
-   `"Too narrow to carry the stone through"` through it. A bare `unladen` door carved in phase 2 stays what it is
-   today, a door shut while carrying, and says nothing. *Alternative:* phase 2 also stops a carrying walk at a bare
-   `unladen` door, which needs a route found on the floor as it would be with empty hands; a task of its own.
-7. **A saved arrangement the lock no longer has.** A stored key that is not a state of the record freezes the
-   stones (`pressAt` finds no move out of it) and opens nothing. Only dev floors hold stones until phase 6.
-   *Recommended:* defer to phase 6, where a shipped floor's save impact is settled; record it in the roadmap's
-   "Open after phase 2". *Alternative:* read a key the record does not have as `initial` in `stonesAt` (task 2),
-   which a test then pins.
+3. **A zipline while carrying.** Refused now. The one-way realisation declares it:
+   `OneWayRealisationMeta.handsFull: true` says the crossing needs both hands, and the zipline sets it, so every
+   zipline turns a carrying explorer away with the one line. No stone lock in the catalogue that carves in phase 2
+   has a zipline, so nothing the solver proved is contradicted.
+4. **Which doors wear a face.** Today's rule stays: a face only where the door has more than one owner and is not
+   `any`. Each stone term a door puts on the stones (a plate, empty hands) counts as one owner there, so a door
+   held by one plate stays what it is today, and `-[e1+e2]-` or `-[p+L]-` wears a face. Task 6 adds a Storybook
+   story of door faces, every variant: plates, a sequence's symbols, empty hands, and mixed owners.
+5. **A plate on the face.** A pressure plate shows as a stone: the shared `plateStone` painting where the door
+   wants a stone (a plate the door wants left empty shows the bare `plate` painting, so the two are not mixed
+   up; judged in the door-face story). Sequence tiles show their symbols, as today. Plates are all alike on the
+   face: no glyph pairs, nothing tells one plate from another.
+6. **The narrow passage's line.** Phase 3. Phase 2 builds the mechanism (the notice and `handsFull` on a
+   realisation); phase 3's narrow passage declares `handsFull` and is refused with the same line. Its prompt
+   reads en "Go through the crack", nl "Wurm je door de muur", recorded in the roadmap's phase 3 decision. A bare
+   `unladen` door carved in phase 2 stays what it is today, a door shut while carrying, and says nothing.
+7. **A saved arrangement the lock no longer has.** Read as the record's `initial`: `arrangementIn` (task 2) is the
+   one reading of a stored key, used by `stonesAt`, `isCarrying` and the face, and `stoneMoveAt` hands `pressAt`
+   the arrangement it read, so the stones play on from the authored start instead of freezing. A test on a
+   made-up lock pins it. Saves are migrated, never reset; a frozen puzzle is worse. `openDoorsFor` keeps its
+   rule (a key the record lacks opens nothing) until the first move writes a key the record has.
 
 ## Global Constraints
 
@@ -127,6 +116,9 @@ the one named function changes.
    stone look, not the pressed one. Test in task 4.
 5. **The way back up.** A carrying explorer at the entrance stairhead of a deeper floor is turned away like at the
    way down; the stairs branch answers both because both are `portal` rooms with a `stairId`. Test in task 5.
+6. **A saved key the record does not have** must read as `initial` everywhere play reads the stones (`stonesAt`,
+   `stoneMoveAt`'s press, `isCarrying`, the face), never only in one of them. Test in task 2.
+7. **A door held by one plate** keeps today's look and behaviour: no face. Test in task 6.
 
 ---
 
@@ -700,6 +692,7 @@ Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
 - Consumes: `carvePlayground`, `PLAYGROUND_JOURNEY` (task 1); `sequenceHarness(seed, config)`, `roomsOf(grid)` from `src/app/SiteMap/sequenceHarness.testing.tsx` (generic despite its name; its `JOURNEY` is the same journey as `PLAYGROUND_JOURNEY`).
 - Produces: `arrangementOf(key: string): { weighted: string[]; hand: boolean }` in `weights.ts`.
 - Produces in `stonePlay.ts`:
+  - `arrangementIn(record: MechanismRecord, stored: string | undefined): string`
   - `stonesAt(grid: FloorGrid, floor: number, row: number, col: number, states: ReadonlyMap<string, string>): { address: string; state: string } | undefined`
   - `stoneMoveAt(grid, floor, row, col, states): { address: string; state: string; move: "lift" | "set" } | undefined`
   - `isCarrying(grid: FloorGrid, floor: number, states: ReadonlyMap<string, string>): boolean`
@@ -823,6 +816,16 @@ describe("the stones as play reads them", () => {
     const [r, c] = grid.entrancePos
     expect(stonesAt(grid, 0, r, c, new Map())).toBeUndefined()
     expect(stoneMoveAt(grid, 0, r, c, new Map())).toBeUndefined()
+  })
+
+  it("reads a saved arrangement the lock no longer has as the authored start, and plays on from it", () => {
+    const grid = floorOf(SHELF_AND_DOOR)
+    const shelf = plateNamed(grid, "shelf")
+    const { address } = stonesAt(grid, 0, shelf[0], shelf[1], new Map())!
+    const stale = new Map([[address, "stones.gone"]])
+    expect(stonesAt(grid, 0, shelf[0], shelf[1], stale)?.state).toBe("stones.shelf")
+    expect(stoneMoveAt(grid, 0, shelf[0], shelf[1], stale)).toMatchObject({ state: "+ hand", move: "lift" })
+    expect(isCarrying(grid, 0, new Map([[address, "stones.gone + hand"]]))).toBe(false)
   })
 })
 ```
@@ -949,13 +952,19 @@ Create `src/game/stonePlay.ts`:
 import { storedAtCell } from "./cellAddress"
 import { mechanismAddress, mechanismWorkedAt, pressAt } from "./mechanismDoors"
 import { arrangementOf } from "./mechanics/weights"
-import type { FloorGrid } from "./siteTypes"
+import type { FloorGrid, MechanismRecord } from "./siteTypes"
 
 // THE STONES AS PLAY ASKS ABOUT THEM, read off the weights record a lock's first plate carries and never off a
 // second copy of the rules: a move is what `pressAt` makes at the plate, an arrangement is what its key says.
 
+/** THE ONE READING OF A STORED ARRANGEMENT: the key itself where the record has it, otherwise the authored start.
+ * A save from a build whose lock changed plays on from the start: saves are migrated, never reset, and a puzzle
+ * frozen in a key with no move out of it is worse. */
+export const arrangementIn = (record: MechanismRecord, stored: string | undefined): string =>
+  stored !== undefined && record.states.includes(stored) ? stored : record.initial
+
 /** The arrangement the stones of a plate stand in, and the address it is filed under; nothing off a plate. A save
- * with no entry stands in the authored start. */
+ * with no entry, or with a key the record does not have, stands in the authored start. */
 export const stonesAt = (
   grid: FloorGrid,
   floor: number,
@@ -969,11 +978,12 @@ export const stonesAt = (
   const address = mechanismAddress(grid, floor, row, col)
   if (!worked || !address) return undefined
   const [hr, hc] = worked.home
-  return { address, state: storedAtCell(grid, floor, hr, hc, states) ?? worked.record.initial }
+  return { address, state: arrangementIn(worked.record, storedAtCell(grid, floor, hr, hc, states)) }
 }
 
 /** What standing on a plate offers: the lift off it or the set-down on it, as the write it makes. Nothing where the
- * plate has no move out of the current arrangement: an empty plate with empty hands, or a full one while carrying. */
+ * plate has no move out of the current arrangement: an empty plate with empty hands, or a full one while carrying.
+ * `pressAt` is handed the arrangement `stonesAt` read, so a stale key presses as the start it is read as. */
 export const stoneMoveAt = (
   grid: FloorGrid,
   floor: number,
@@ -983,7 +993,7 @@ export const stoneMoveAt = (
 ): { address: string; state: string; move: "lift" | "set" } | undefined => {
   const stones = stonesAt(grid, floor, row, col, states)
   if (!stones) return undefined
-  const press = pressAt(grid, floor, row, col, states)
+  const press = pressAt(grid, floor, row, col, new Map(states).set(stones.address, stones.state))
   if (!press || press.state === stones.state) return undefined
   return { ...press, move: arrangementOf(press.state).hand ? "lift" : "set" }
 }
@@ -995,8 +1005,8 @@ export const isCarrying = (grid: FloorGrid, floor: number, states: ReadonlyMap<s
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
       if (cell.type !== "room" || !cell.mechanism?.carrying?.length) continue
-      const state = storedAtCell(grid, floor, r, c, states) ?? cell.mechanism.initial
-      if (cell.mechanism.carrying.includes(state)) return true
+      if (cell.mechanism.carrying.includes(arrangementIn(cell.mechanism, storedAtCell(grid, floor, r, c, states))))
+        return true
     }
   return false
 }
@@ -1736,7 +1746,8 @@ export const explorerWeight = (
       r !== hr ? cells : cells.map((cell, c) => (c === hc && cell.type === "room" ? { ...cell, mechanism: record } : cell))
     ),
   }
-  const before = openDoorsFor(grid, floor, states, heldKeys)
+  // Both folds read the arrangement `stonesAt` read, so a stale key is weighed as the start it is read as.
+  const before = openDoorsFor(grid, floor, new Map(states).set(stones.address, stones.state), heldKeys)
   const after = openDoorsFor(weighed, floor, new Map(states).set(stones.address, WEIGHED), heldKeys)
   return {
     plate: at,
@@ -1833,18 +1844,17 @@ Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
 - Modify: `src/app/SiteMap/useSiteNavigation.ts` (`BlockedNotice`, `notice`; stairs, way out, span)
 - Create: `src/ui/atoms/MapNotice.tsx`, `src/ui/atoms/MapNotice.stories.tsx`
 - Modify: `src/app/SiteMap/SiteMapView.tsx` (`notice` prop drawn where the prompt is)
-- Modify: `src/app/SiteMap/usePromptLabel.ts` (`noticeLabel`)
+- Modify: `src/app/SiteMap/usePromptLabel.ts` (`useNoticeLabel`)
 - Modify: `src/app/SiteMap/SiteMapScreen.tsx`, `src/app/SiteMap/lockPlayground.testing.tsx` (pass the notice)
-- Modify: `public/locales/en/common.json`, `public/locales/nl/common.json` (`ui.blocked.*`)
-- Modify: `src/i18n/keys.spec.ts` (one-way realisations' declared lines are in both locales)
-- Test: `src/app/SiteMap/stoneWalk.spec.tsx`, `src/game/weightsPlates.spec.ts`, `src/i18n/keys.spec.ts`
+- Modify: `public/locales/en/common.json`, `public/locales/nl/common.json` (`ui.blocked.carrying`)
+- Test: `src/app/SiteMap/stoneWalk.spec.tsx`, `src/game/weightsPlates.spec.ts`
 
 **Interfaces:**
 - Consumes: `isCarrying` (task 2), `stoneFloor`, `plateNamed` (task 2), `carvePlayground` (task 1).
-- Produces: `OneWayRealisationMeta.handsFull?: string`.
-- Produces: `export type BlockedNotice = { at: readonly [number, number]; line?: string }` and `SiteNavigation.notice: BlockedNotice | null`.
+- Produces: `OneWayRealisationMeta.handsFull?: boolean`.
+- Produces: `export type BlockedNotice = { at: readonly [number, number] }` and `SiteNavigation.notice: BlockedNotice | null`.
 - Produces: `MapNotice: FC<{ label: string }>`; `SiteMapView` prop `notice?: { label: string; at: readonly [number, number] } | null`.
-- Produces: `usePromptLabel` returns the same function; a sibling hook `useNoticeLabel(): (notice: BlockedNotice) => string` in `usePromptLabel.ts`.
+- Produces: `usePromptLabel` returns the same function; a sibling hook `useNoticeLabel(): string` in `usePromptLabel.ts` (one line for every blocked walk).
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -1885,7 +1895,7 @@ describe("a carrying walk", () => {
     expect(h.current().notice).toEqual({ at: h.grid.entrancePos })
   })
 
-  it("is turned away at a zipline's launch with the line the zipline declares", () => {
+  it("is turned away at a zipline's launch, which needs both hands", () => {
     const config = stoneFloor("in -- yard\nyard >> out\nshelf plate @yard stone\nin ?\nyard ?\nout ?", {
       realisations: { weights: "stonePlate", "one-way": "zipline" },
     })
@@ -1896,10 +1906,10 @@ describe("a carrying walk", () => {
     const { launch } = oneWayRuns(h.grid)[0]
     h.walkTo(launch)
     expect(h.current().prompt).toBeNull()
-    expect(h.current().notice).toEqual({ at: launch, line: "ui.blocked.zipline" })
+    expect(h.current().notice).toEqual({ at: launch })
   })
 
-  it("forgets the line at the next tap", () => {
+  it("forgets the line at the next tap, which moves the explorer on", () => {
     const h = play(OPEN)
     lift(h)
     h.walkTo(h.grid.exitPos)
@@ -1932,23 +1942,9 @@ Append to `src/game/weightsPlates.spec.ts`, inside `describe("a stone lock on a 
   })
 ```
 
-Append to `src/i18n/keys.spec.ts`, inside the `describe` (add `import { MOD_ONE_WAY_REALISATIONS } from "@/mods/registeredMods"`):
-
-```ts
-  it("covers the lines every one-way realisation declares", () => {
-    const en = shippedKeys("en")
-    const nl = shippedKeys("nl")
-    const lines = MOD_ONE_WAY_REALISATIONS.flatMap(meta => [meta.prompt, meta.handsFull]).filter(
-      (key): key is string => key !== undefined
-    )
-    expect(lines).not.toEqual([])
-    expect(lines.filter(key => !en.has(key) || !nl.has(key))).toEqual([])
-  })
-```
-
 - [ ] **Step 2: Run them to see them fail**
 
-Run: `yarn vitest run src/app/SiteMap/stoneWalk.spec.tsx src/game/weightsPlates.spec.ts src/i18n/keys.spec.ts`
+Run: `yarn vitest run src/app/SiteMap/stoneWalk.spec.tsx src/game/weightsPlates.spec.ts`
 Expected: FAIL: `notice` is undefined and the exit and stairs still offer themselves. The stairs-down engine test
 passes at once (probed at `4a370b2c`); it stays as the pin that stairs are covered.
 
@@ -1957,13 +1953,13 @@ passes at once (probed at `4a370b2c`); it stays as the pin that stairs are cover
 In `src/game/oneWayRealisation.ts`, `OneWayRealisationMeta` gains after `prompt?: string`:
 
 ```ts
-  /** Locale key of the line a carrying walk is turned away with at the launch: this crossing needs both hands. Unset
-   * where a stone may be carried across. */
-  handsFull?: string
+  /** This crossing needs both hands: a carrying walk is turned away at the launch with the one blocked line
+   * (`ui.blocked.carrying`). Unset where a stone may be carried across. */
+  handsFull?: boolean
 ```
 
-In `src/mods/topology/game/zipline/meta.ts`, `ZIPLINE_META` gains `handsFull: "ui.blocked.zipline",` and its
-comment gains: "It needs both hands, so a stone is never carried across."
+In `src/mods/topology/game/zipline/meta.ts`, `ZIPLINE_META` gains `handsFull: true,` and its comment gains: "It
+needs both hands, so a stone is never carried across."
 
 - [ ] **Step 4: Navigation turns a carrying walk away**
 
@@ -1973,9 +1969,9 @@ In `src/app/SiteMap/useSiteNavigation.ts`:
 2. Add after `ArrivalPrompt`:
 
 ```ts
-/** Why the explorer stopped where he did: a stone in hand where it may not go. `line` is the locale key a
- * realisation declared; unset, it is the floor's own: set the stone down first. Nothing to take. */
-export type BlockedNotice = { at: readonly [number, number]; line?: string }
+/** Why the explorer stopped where he did: a stone in hand where it may not go. One line says so for every such
+ * place; nothing to take, and the next tap, which moves him on, clears it. */
+export type BlockedNotice = { at: readonly [number, number] }
 ```
 
 3. `SiteNavigation` gains
@@ -1992,8 +1988,7 @@ export type BlockedNotice = { at: readonly [number, number]; line?: string }
   // A STONE NEVER LEAVES ITS FLOOR, and some crossings need both hands: such a walk ends where the player stands
   // and says why, instead of offering the way on.
   const turnAway = useCallback(
-    (row: number, col: number, line?: string) =>
-      scheduleArrival(walkDelay(row, col), () => setNotice({ at: [row, col], ...(line ? { line } : {}) })),
+    (row: number, col: number) => scheduleArrival(walkDelay(row, col), () => setNotice({ at: [row, col] })),
     [scheduleArrival, walkDelay]
   )
 ```
@@ -2009,8 +2004,7 @@ export type BlockedNotice = { at: readonly [number, number]; line?: string }
    - span branch: after `goHere()` and the `traversal` const, insert
 
 ```ts
-        const handsFull = resolveOneWay(span.kind)?.handsFull
-        if (carrying && handsFull) return turnAway(row, col, handsFull)
+        if (carrying && resolveOneWay(span.kind)?.handsFull) return turnAway(row, col)
 ```
 
    Each `return turnAway(…)` returns `void` from a `void` callback, which TypeScript accepts; if lint objects to
@@ -2025,8 +2019,8 @@ Create `src/ui/atoms/MapNotice.tsx`:
 ```tsx
 import type { FC } from "react"
 
-// Why the explorer stopped, said beside him where a prompt would stand. A remark, not a button: there is nothing
-// to take, and the next tap on the map clears it.
+// Why the explorer stopped, said where a prompt would stand. A remark, not a button: there is nothing to take, and
+// the player simply moves on; the next tap on the map clears it.
 export const MapNotice: FC<{ label: string }> = ({ label }) => (
   <p
     role="status"
@@ -2058,9 +2052,9 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const SetTheStoneDown: Story = { args: { label: "Set the stone down first" } }
+export const CannotPass: Story = { args: { label: "Cannot pass with a stone" } }
 
-export const BothHands: Story = { args: { label: "You need both hands for the zipline" } }
+export const CannotPassDutch: Story = { args: { label: "Niet te passeren met een steen" } }
 ```
 
 In `src/app/SiteMap/SiteMapView.tsx`: import `MapNotice` from `@/ui/atoms/MapNotice`; `Props` gains
@@ -2088,22 +2082,20 @@ destructure `notice`, and after the `{prompt && (…)}` block add the same place
               )}
 ```
 
-In `src/app/SiteMap/usePromptLabel.ts` add (import `BlockedNotice` beside `ArrivalPrompt`):
+In `src/app/SiteMap/usePromptLabel.ts` add:
 
 ```ts
-/** WHAT A NOTICE SAYS: the line a realisation declared, or the floor's own. */
-export const useNoticeLabel = (): ((notice: BlockedNotice) => string) => {
+/** WHAT A NOTICE SAYS: one line for every walk a stone in hand stops (stairs, the way out, a crossing that needs
+ * both hands). */
+export const useNoticeLabel = (): string => {
   const { t } = useTranslation("common")
-  return useCallback(
-    (notice: BlockedNotice): string => (notice.line ? t(notice.line) : t("ui.blocked.setStoneDown")),
-    [t]
-  )
+  return t("ui.blocked.carrying")
 }
 ```
 
 In `SiteMapScreen.tsx` and in `PlayedFloor` (`lockPlayground.testing.tsx`): destructure `notice` from
 `useSiteNavigation`, `const noticeLabel = useNoticeLabel()`, and pass
-`notice={notice && { label: noticeLabel(notice), at: notice.at }}` to `SiteMapView`.
+`notice={notice && { label: noticeLabel, at: notice.at }}` to `SiteMapView`.
 
 - [ ] **Step 6: The words**
 
@@ -2111,8 +2103,7 @@ In `SiteMapScreen.tsx` and in `PlayedFloor` (`lockPlayground.testing.tsx`): dest
 
 ```json
     "blocked": {
-      "setStoneDown": "Set the stone down first",
-      "zipline": "You need both hands for the zipline"
+      "carrying": "Cannot pass with a stone"
     },
 ```
 
@@ -2120,8 +2111,7 @@ In `SiteMapScreen.tsx` and in `PlayedFloor` (`lockPlayground.testing.tsx`): dest
 
 ```json
     "blocked": {
-      "setStoneDown": "Leg eerst de steen neer",
-      "zipline": "Je hebt beide handen nodig voor de lijn"
+      "carrying": "Niet te passeren met een steen"
     },
 ```
 
@@ -2136,35 +2126,42 @@ Expected: clean.
 - [ ] **Step 8: Look at it**
 
 `UI/Atoms/MapNotice`, then the playground with `twoStones`: lift a stone and tap the way out; the explorer walks
-there and the line shows over him, not a button; tap elsewhere and it goes. Record it.
+there and "Cannot pass with a stone" shows where the prompt would, not a button; tap elsewhere and he moves on
+and it goes. Record it.
 
 - [ ] **Step 9: Commit**
 
 ```bash
-git add src/game/oneWayRealisation.ts src/mods/topology/game/zipline/meta.ts src/app/SiteMap/useSiteNavigation.ts src/ui/atoms/MapNotice.tsx src/ui/atoms/MapNotice.stories.tsx src/app/SiteMap/SiteMapView.tsx src/app/SiteMap/usePromptLabel.ts src/app/SiteMap/SiteMapScreen.tsx src/app/SiteMap/lockPlayground.testing.tsx public/locales/en/common.json public/locales/nl/common.json src/i18n/keys.spec.ts src/app/SiteMap/stoneWalk.spec.tsx src/game/weightsPlates.spec.ts
+git add src/game/oneWayRealisation.ts src/mods/topology/game/zipline/meta.ts src/app/SiteMap/useSiteNavigation.ts src/ui/atoms/MapNotice.tsx src/ui/atoms/MapNotice.stories.tsx src/app/SiteMap/SiteMapView.tsx src/app/SiteMap/usePromptLabel.ts src/app/SiteMap/SiteMapScreen.tsx src/app/SiteMap/lockPlayground.testing.tsx public/locales/en/common.json public/locales/nl/common.json src/app/SiteMap/stoneWalk.spec.tsx src/game/weightsPlates.spec.ts
 git commit -m "feat(stones): a stone never leaves its floor, and the walk says so" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
 ```
 
 ---
 
-### Task 6: A door shows the plates it waits for
+### Task 6: A door with several owners shows the plates it waits for
+
+Today's face rule stays (designer, 2026-10-07): a face only where the door has more than one owner and is not
+`any`. Each stone term (a plate, empty hands) counts as one owner, so `-[e1+e2]-` and `-[p+L]-` wear a face and a
+door one plate holds stays what it is today. On the face a plate shows as a stone; plates are all alike.
 
 **Files:**
 - Modify: `src/game/siteTypes.ts` (`WeightTerm`; `MechanismRecord.weighs`)
 - Modify: `src/game/obstacles.ts` (`WeightsControl.terms`)
 - Modify: `src/game/mechanics/weights.ts` (`WEIGHTS.compileLock` lists each gate's terms; `compileWeights` carries them)
 - Modify: `src/game/mechanics/realisations.spec.ts` (its literal gains `terms: {}`)
-- Modify: `src/game/gateFace.ts` (stone markers; a door with a stone term wears a face)
+- Modify: `src/game/gateFace.ts` (stone markers; stone terms count as owners in `needsFace`)
 - Modify: `src/mods/topology/app/gateFace/GateFaceComponent.tsx` (the plate and hands icons, their names)
+- Create: `src/mods/topology/app/gateFace/GateFaceComponent.stories.tsx` (`Topology/Door faces`, designer request)
 - Modify: `public/locales/en/common.json`, `public/locales/nl/common.json` (`gateFace.owner.*`)
-- Test: `src/game/mechanics/weights.spec.ts`, `src/game/gateFace.spec.ts`, `src/app/SiteMap/stoneWalk.spec.tsx`
+- Test: `src/game/mechanics/weights.spec.ts`, `src/game/gateFace.spec.ts`
 
 **Interfaces:**
-- Consumes: `arrangementOf` (task 2), `SHELF_AND_DOOR`, `plateNamed` (task 2).
+- Consumes: `arrangementOf`, `arrangementIn` (task 2), `SHELF_AND_DOOR` (task 2).
 - Produces: `type WeightTerm = { kind: "plate"; plate: string; wants: "stone" | "empty" } | { kind: "unladen" }` in `siteTypes.ts`.
 - Produces: `WeightsControl.terms: Record<string, WeightTerm[]>` (gate id → terms) and `MechanismRecord.weighs?: { gateKeyId: string; terms: WeightTerm[] }[]`.
-- Produces: `GateOwnerIcon` gains `{ kind: "plate"; wants: "stone" | "empty" } | { kind: "hands" }`; markers ids are plate ids or `"unladen"`.
+- Produces: `GateOwnerIcon` gains `{ kind: "plate"; wants: "stone" | "empty" } | { kind: "hands" }`; marker ids are plate ids or `"unladen"`.
+- Produces: `needsFace(mechanisms: readonly MechanismRecord[], ownerCount: number, gateKeyId: string): boolean` (module-private in `gateFace.ts`; it took `owners` and `keyCount`).
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -2194,23 +2191,36 @@ Append to `src/game/gateFace.spec.ts` (add imports: `import { parseLock } from "
 
 ```ts
 describe("a door the stones hold", () => {
-  const stoneFloor = (text: string) => carveLockFloor(parseLock(text, "stones").lock, { weights: "stonePlate" })
+  const stoneFloor = (text: string, more: Record<string, string> = {}) =>
+    carveLockFloor(parseLock(text, "stones").lock, { weights: "stonePlate", ...more })
   const faceOf = (grid: FloorGrid, positions: ReadonlyMap<string, string> = new Map()) =>
     withGateFaces(grid, 0, positions, undefined, GATE_FACE_FAMILY)
       .cells.flat()
       .find((cell): cell is RoomCell => cell.type === "room" && cell.gateFace !== undefined)
+  const homeAddress = (grid: FloorGrid) => {
+    const home = grid.cells.flat().findIndex(cell => cell.type === "room" && cell.mechanism && cell.plate)
+    return cellAddress(grid, 0, Math.floor(home / grid.cols), home % grid.cols)!
+  }
+  const TWO_PLATES = "in -[a+b]- out\na plate @in\nb plate @in\ns plate @in stone\nt plate @in stone\nin ?\nout ?"
 
-  it("wears a face even with one plate, one marker per plate saying what it wants", () => {
-    const door = faceOf(stoneFloor(SHELF_AND_DOOR))
+  it("wears no face with one plate, as a door with one owner wears none", () => {
+    const grid = stoneFloor(SHELF_AND_DOOR)
+    expect(withGateFaces(grid, 0, new Map(), undefined, GATE_FACE_FAMILY)).toBe(grid)
+  })
+
+  it("wears a face with two plates, one marker per plate, a stone wanted on each", () => {
+    const door = faceOf(stoneFloor(TWO_PLATES))
     expect(door?.family).toBe(GATE_FACE_FAMILY)
-    expect(door?.gateFace?.markers).toEqual([{ id: "stones.p", icon: { kind: "plate", wants: "stone" }, lit: false }])
+    expect(door?.gateFace?.markers).toEqual([
+      { id: "stones.a", icon: { kind: "plate", wants: "stone" }, lit: false },
+      { id: "stones.b", icon: { kind: "plate", wants: "stone" }, lit: false },
+    ])
   })
 
   it("lights a plate's marker once the plate agrees", () => {
-    const grid = stoneFloor(SHELF_AND_DOOR)
-    const home = grid.cells.flat().findIndex(cell => cell.type === "room" && cell.mechanism && cell.plate)
-    const address = cellAddress(grid, 0, Math.floor(home / grid.cols), home % grid.cols)!
-    expect(faceOf(grid, new Map([[address, "stones.p"]]))?.gateFace?.markers[0].lit).toBe(true)
+    const grid = stoneFloor(TWO_PLATES)
+    const lit = faceOf(grid, new Map([[homeAddress(grid), "stones.a stones.t"]]))?.gateFace?.markers
+    expect(lit?.map(m => m.lit)).toEqual([true, false])
   })
 
   it("marks a plate wanting none lit while it is empty, and empty hands lit while nothing is carried", () => {
@@ -2220,31 +2230,32 @@ describe("a door the stones hold", () => {
       { id: "unladen", icon: { kind: "hands" }, lit: true },
     ])
   })
-})
-```
 
-`grid.cols` indexes rows of equal length (`FloorGrid.cols`); the second test finds the home (the plate carrying
-the record) and files the arrangement under its address, as play does.
+  it("puts a plate beside a lever on one face, the lever's marker first", () => {
+    const grid = stoneFloor("in -[p+L]- out\np plate @in\nshelf plate @in stone\nL toggle @in\nin ?\nout ?", {
+      toggle: "handle",
+    })
+    expect(faceOf(grid)?.gateFace?.markers.map(m => m.icon.kind)).toEqual(["mechanism", "plate"])
+  })
 
-Append to `src/app/SiteMap/stoneWalk.spec.tsx`:
-
-```tsx
-describe("a door the stones hold", () => {
-  it("is walked up to and read, not a wall", () => {
-    const h = play(SHELF_AND_DOOR)
-    const door = h.grid.cells.flatMap((row, r) =>
-      row.flatMap((cell, c) => (cell.type === "room" && cell.tags?.includes("gate") ? [[r, c] as const] : []))
-    )[0]
-    h.walkTo(door)
-    expect(h.encountered).toContainEqual(door)
+  it("wears no face on an `any` door, however many plates it lists", () => {
+    const grid = stoneFloor("in -[a|b]- out\na plate @in\nb plate @in\nshelf plate @in stone\nin ?\nout ?")
+    expect(withGateFaces(grid, 0, new Map(), undefined, GATE_FACE_FAMILY)).toBe(grid)
   })
 })
 ```
 
+`grid.cols` indexes rows of equal length (`FloorGrid.cols`); `homeAddress` finds the home (the plate carrying the
+record) and files the arrangement under its address, as play does. `"stones.a stones.t"` is a state the record
+has (lift `s`, set it on `a`): an arrangement key lists the weighted plates sorted, space-joined. These made-up
+locks were not probed: if `carveLockFloor` refuses one, add what its walk needs (a stone, a corridor) and keep
+the assertion.
+
 - [ ] **Step 2: Run them to see them fail**
 
-Run: `yarn vitest run src/game/mechanics/weights.spec.ts src/game/gateFace.spec.ts src/app/SiteMap/stoneWalk.spec.tsx`
-Expected: FAIL: no `terms`, no `weighs`, no face on a plate door (it is a sealed wall the walk cannot enter).
+Run: `yarn vitest run src/game/mechanics/weights.spec.ts src/game/gateFace.spec.ts`
+Expected: FAIL: no `terms`, no `weighs`, no face on a two-plate door. The one-plate and `any` cases pass already
+(no stones home owns a face today); they stay as the pins that today's rule holds.
 
 - [ ] **Step 3: Compile each gate's terms**
 
@@ -2310,7 +2321,7 @@ In `src/game/mechanics/realisations.spec.ts`, the literal gains `terms: {},` aft
 
 In `src/game/gateFace.ts`:
 
-1. `import { arrangementOf } from "./mechanics/weights"`.
+1. `import { arrangementOf } from "./mechanics/weights"` and `import { arrangementIn } from "./stonePlay"`.
 2. `GateOwnerIcon` becomes
 
 ```ts
@@ -2321,9 +2332,22 @@ export type GateOwnerIcon =
   | { kind: "hands" }
 ```
 
-   and its comment gains: "a plate the door waits on wears the plate, with a stone or without as the door wants
-   it; empty hands wear hands."
-3. Below `sequencesOf`, add
+   and its comment gains: "a plate the door waits on shows as a stone, or as the bare plate where the door wants
+   it empty; empty hands wear hands. Plates are all alike: nothing tells one from another."
+3. `needsFace` becomes (the comment above it stays, with the stone sentence added):
+
+```ts
+// A face is owed only where operating an owner can change nothing visible: an `and` door with more than
+// one owner. A single owner teaches by consequence, and an `any` door opens on the first owner touched.
+// Each term a door puts on a lock's stones (a plate, empty hands) is one owner here, so a door one plate
+// holds teaches by consequence as a single lever does.
+// A door a sequence opens or resets at is owed one besides: nothing else says what order it waits on.
+const needsFace = (mechanisms: readonly MechanismRecord[], ownerCount: number, gateKeyId: string): boolean =>
+  ownerCount > 1 &&
+  !mechanisms.some(m => m.positions.some(p => p.gateKeyId === gateKeyId && p.mode === "any"))
+```
+
+4. Below `sequencesOf`, add
 
 ```ts
 type StoneHome = { mechanism: MechanismRecord; at: readonly [number, number] }
@@ -2338,8 +2362,8 @@ const stoneHomesOf = (grid: FloorGrid): StoneHome[] => {
   return homes
 }
 
-// ALL PLATES LOOK ALIKE, so nothing on the floor says which plate a door listens to: every door with a stone term
-// wears a face, whatever its mode and however many owners it has. One marker per term, lit while it agrees.
+// One marker per term a door puts on the stones, lit while it holds. The arrangement is read as play reads it
+// (`arrangementIn`), so a stale save shows the start the plates are drawn in.
 const stoneMarkers = (
   grid: FloorGrid,
   floor: number,
@@ -2350,7 +2374,7 @@ const stoneMarkers = (
   homes.flatMap(({ mechanism, at }) => {
     const entry = mechanism.weighs!.find(w => w.gateKeyId === gateKeyId)
     if (!entry) return []
-    const { weighted, hand } = arrangementOf(storedAtCell(grid, floor, at[0], at[1], positions) ?? mechanism.initial)
+    const { weighted, hand } = arrangementOf(arrangementIn(mechanism, storedAtCell(grid, floor, at[0], at[1], positions)))
     return entry.terms.map(
       (term): GateMarker =>
         term.kind === "plate"
@@ -2364,20 +2388,27 @@ const stoneMarkers = (
   })
 ```
 
-4. In `withGateFaces`: `const stones = stoneHomesOf(grid)` beside `const homes = sequencesOf(grid)`; per door,
+5. In `withGateFaces`: `const stones = stoneHomesOf(grid)` beside `const homes = sequencesOf(grid)`; per door,
    after `const floorKeys = …`:
 
 ```ts
       const weighed = stoneMarkers(grid, floor, stones, key, positions)
+      const governing = [...owners.map(o => o.mechanism), ...stones.map(s => s.mechanism)]
 ```
 
    the early return becomes
-   `if (!needsFace(owners, floorKeys.length, key) && sequences.length === 0 && weighed.length === 0) return cell`,
-   and the stone markers go between the owners' and the keys': after `const markers = owners.map(…)` add
-   `markers.push(...weighed)` before the floor-key loop.
 
-The withGateFaces doc comment's "Gives every door that needs one its face" line gains "(a door the stones hold
-always needs one)".
+```ts
+      if (
+        !needsFace(governing, owners.length + weighed.length + floorKeys.length, key) &&
+        sequences.length === 0
+      )
+        return cell
+```
+
+   and the stone markers go between the owners' and the keys': after `const markers = owners.map(…)` add
+   `markers.push(...weighed)` before the floor-key loop. A stones home whose record does not name this door
+   has no position for its key, so it adds nothing to `governing`'s `any` check.
 
 - [ ] **Step 5: The face draws them**
 
@@ -2390,7 +2421,8 @@ import { CELL, PROP_H } from "@/app/SiteMap/mapScale"
 const iconFor = (icon: GateOwnerIcon) => {
   if (icon.kind === "key") return <KeyIcon color={icon.color ?? "blue"} size={40} />
   if (icon.kind === "plate") {
-    // The plate as the floor shows it, with its stone where the door wants one: the shared painting.
+    // A plate shows as a stone, the floor's own painting of a stone on its plate; one the door wants left empty
+    // shows bare. Every plate alike: the face never tells one plate from another.
     const src = sharedTileUrl(icon.wants === "stone" ? "plateStone" : "plate")
     return src ? <img src={src} width={40} height={(40 * PROP_H) / CELL} alt="" /> : <span aria-hidden="true">▭</span>
   }
@@ -2414,25 +2446,109 @@ const ownerOf = (icon: GateOwnerIcon): string =>
 and in the component replace `` `gateFace.owner.${marker.icon.kind === "key" ? "key" : marker.icon.family}` `` with
 `` `gateFace.owner.${ownerOf(marker.icon)}` ``.
 
-Locales, `gateFace.owner` in `public/locales/en/common.json`:
+Locales: the `gateFace.owner` line in `public/locales/en/common.json` becomes
 
 ```json
-      "key": "Key",
-      "plateStone": "A plate, with a stone on it",
-      "plateEmpty": "A plate, left empty",
-      "hands": "Empty hands",
+    "owner": { "torch": "Torch", "handle": "Lever", "key": "Key", "plateStone": "A stone on a plate", "plateEmpty": "A plate left empty", "hands": "Empty hands", "other": "Mechanism" },
 ```
 
-and in `public/locales/nl/common.json`:
+and in `public/locales/nl/common.json`
 
 ```json
-      "key": "Sleutel",
-      "plateStone": "Een plaat, met een steen erop",
-      "plateEmpty": "Een plaat, leeg gelaten",
-      "hands": "Lege handen",
+    "owner": { "torch": "Fakkel", "handle": "Hendel", "key": "Sleutel", "plateStone": "Een steen op een plaat", "plateEmpty": "Een lege plaat", "hands": "Lege handen", "other": "Mechanisme" },
 ```
 
-- [ ] **Step 6: Run the tests, the sweeps, and the bake**
+(`yarn lint`'s formatter may break the line; keep what it writes.)
+
+- [ ] **Step 6: The door faces story** (designer request)
+
+Create `src/mods/topology/app/gateFace/GateFaceComponent.stories.tsx`. It draws the face with the face's own
+component, so the icons and words are the game's; only the `gateFace` the door would carry is written here.
+
+```tsx
+import type { ComponentProps, FC } from "react"
+import type { Meta, StoryObj } from "@storybook/react-vite"
+import type { GateFace } from "@/game/gateFace"
+import { GateFaceComponent } from "./GateFaceComponent"
+import "@/mods/registerModApps"
+
+// EVERY LOOK A DOOR'S FACE HAS: plates (a stone where the door wants one, bare where it wants none), a sequence's
+// symbols, empty hands, and owners of every kind on one door. The face reads only `ctx.gateFace`; the rest of the
+// family props are inert here.
+const DoorFace: FC<{ face: GateFace }> = ({ face }) => {
+  const props = {
+    ctx: { gateFace: face },
+    journeys: { setMechanismState: () => {} },
+    onCancel: () => {},
+  } as unknown as ComponentProps<typeof GateFaceComponent>
+  return <GateFaceComponent {...props} />
+}
+
+const stone = (id: string, lit: boolean) => ({ id, icon: { kind: "plate", wants: "stone" } as const, lit })
+
+const meta = {
+  title: "Topology/Door faces",
+  component: DoorFace,
+  parameters: { layout: "centered" },
+} satisfies Meta<typeof DoorFace>
+
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const TwoPlatesOneHeld: Story = {
+  args: { face: { markers: [stone("stones.e1", true), stone("stones.e2", false)] } },
+}
+
+export const PlateLeftEmpty: Story = {
+  args: {
+    face: {
+      markers: [stone("stones.a", false), { id: "stones.b", icon: { kind: "plate", wants: "empty" }, lit: true }],
+    },
+  },
+}
+
+export const EmptyHands: Story = {
+  args: { face: { markers: [stone("stones.p", true), { id: "unladen", icon: { kind: "hands" }, lit: false }] } },
+}
+
+export const SequenceSymbols: Story = {
+  args: {
+    face: {
+      markers: [],
+      sequences: [
+        {
+          id: "run",
+          tiles: [
+            { glyph: 0x13000, status: "inOrder" },
+            { glyph: 0x13050, status: "unwalked" },
+            { glyph: 0x13080, status: "unwalked" },
+          ],
+        },
+      ],
+    },
+  },
+}
+
+export const Mixed: Story = {
+  args: {
+    face: {
+      markers: [
+        { id: "L", icon: { kind: "mechanism", family: "handle" }, lit: true },
+        { id: "T", icon: { kind: "mechanism", family: "torch" }, lit: false },
+        stone("stones.p", true),
+        { id: "unladen", icon: { kind: "hands" }, lit: false },
+        { id: "k", icon: { kind: "key" }, lit: false },
+      ],
+      sequences: [{ id: "run", tiles: [{ glyph: 0x13000, status: "inOrder" }, { glyph: 0x13050, status: "outOfOrder" }] }],
+    },
+  },
+}
+```
+
+`handle` and `torch` are the family ids the face's locale already names (`gateFace.owner.handle`, `.torch`); if a
+family id differs, use the one `registerModApps` registers.
+
+- [ ] **Step 7: Run the tests, the sweeps, and the bake**
 
 Run: `yarn vitest run src/game/mechanics src/game/gateFace.spec.ts src/app/SiteMap/stoneWalk.spec.tsx src/mods/topology/app/gateFace src/i18n/keys.spec.ts`
 Expected: PASS.
@@ -2441,23 +2557,24 @@ Run: `yarn check-types && yarn lint`
 Expected: clean.
 
 Run: `yarn verify-content 2>&1 | grep -E "×|Test Files|Tests "`
-Expected: only the three known `src/mods/puzzleSeeds.verify.ts` failures. The dev floor's twoStones doors now wear
-faces; a sweep that pinned them as sealed walls is wrong to, and is fixed by reading what it asserts, never by
-dropping the face.
+Expected: only the three known `src/mods/puzzleSeeds.verify.ts` failures. On the dev floor's twoStones the exit
+door (`e1+e2`) now wears a face; the vault door (`door`, one plate) stays as it was. A sweep that pinned the exit
+door as a sealed wall is wrong to, and is fixed by reading what it asserts, never by dropping the face.
 
 Run: `yarn generate-world && git diff --exit-code src/data/generatedWorld.ts src/data/carveLedger.json; echo $?`
 Expected: `0`.
 
-- [ ] **Step 7: Look at it**
+- [ ] **Step 8: Look at it**
 
-Playground, `twoStones`: walk into the vault door and the exit door. Each shows its plates, with or without a
-stone as it wants them, lit as they agree. Record it.
+`Topology/Door faces`: every story, the plate drawn as its stone, the bare plate, hands, the symbols, the mixed
+door. Playground, `twoStones`: walk into the exit door: it shows two stones, lit as their plates hold one. The
+vault door behaves as before. Record it; the designer judges.
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 9: Commit**
 
 ```bash
-git add src/game/siteTypes.ts src/game/obstacles.ts src/game/mechanics/weights.ts src/game/mechanics/weights.spec.ts src/game/mechanics/realisations.spec.ts src/game/gateFace.ts src/game/gateFace.spec.ts src/mods/topology/app/gateFace/GateFaceComponent.tsx src/app/SiteMap/stoneWalk.spec.tsx public/locales/en/common.json public/locales/nl/common.json
-git commit -m "feat(stones): a door shows the plates it waits for" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+git add src/game/siteTypes.ts src/game/obstacles.ts src/game/mechanics/weights.ts src/game/mechanics/weights.spec.ts src/game/mechanics/realisations.spec.ts src/game/gateFace.ts src/game/gateFace.spec.ts src/mods/topology/app/gateFace/GateFaceComponent.tsx src/mods/topology/app/gateFace/GateFaceComponent.stories.tsx public/locales/en/common.json public/locales/nl/common.json
+git commit -m "feat(stones): a door with several owners shows the plates it waits for" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
 ```
 
@@ -2581,17 +2698,21 @@ Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
 - [ ] **Step 1: The contract.** In §3.2 add, in the voice of the surrounding bullets (current rule and why):
   - **Play.** A plate offers its move through a prompt (lift or set-down, `stoneMoveAt`); arriving never acts.
     A carrying walk is turned away at every staircase and the way out, and at a one-way whose realisation declares
-    `handsFull`.
+    `handsFull`, with one line for all of them ("Cannot pass with a stone"), shown where the prompt stands.
+  - **A saved arrangement the lock no longer has** is read as the record's `initial` (`arrangementIn`), so the
+    stones play on from the start instead of freezing.
   - **The explorer's weight** is the record's `underfoot`: per arrangement and empty plate, what pressing it opens.
     Only drawing reads it, so a way his weight alone holds is never on a route.
-  - **The face.** The record's `weighs` lists each gate's stone terms; every door with one wears a face, one marker
-    per term, because all plates look alike.
-  In §5 add that a one-way realisation may declare `handsFull`, the line a carrying walk is turned away with.
+  - **The face.** The record's `weighs` lists each gate's stone terms. Each term counts as one owner in the face
+    rule (a face only on a door with more than one owner that is not `any`), so a door one plate holds wears none.
+    A plate's marker shows as a stone; plates are all alike, nothing tells one from another.
+  In §5 add that a one-way realisation may declare `handsFull`: the crossing needs both hands, and a carrying walk
+  is turned away at its launch.
 
 - [ ] **Step 2: The spec.** Tick in §4 every box tasks 2–6 prove (lift, set-down, none elsewhere, standing
   presses, never on a route, three looks, explorer carrying, way out and stairs, door shows its condition, plates
   seen once their room is), leaving the `unladen` passage box open with "(phase 3: the narrow passage declares its
-  line through `handsFull`)". Tick §5's three boxes. In §2 replace "(way out only; stairs are phase 2)" with
+  refusal through `handsFull`)". Tick §5's three boxes. In §2 replace "(way out only; stairs are phase 2)" with
   "(the stairs down are the way out of a staircase floor; every staircase turns a carrying walk away in play)".
   In "The carrying explorer" tick the `ExplorerDot` and walking/standing boxes. Tick nothing the designer has not
   judged in Storybook if the step 10 looks of tasks 1–6 were not recorded.
@@ -2599,10 +2720,11 @@ Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
 - [ ] **Step 3: The roadmap.** Phase 2's row: done, linking this plan. Replace "Open after phase 1"'s line "Gate
   faces (`gateFace.ts`) do not know plate homes yet (phase 2)." with nothing (it is done) and add an "Open after
   phase 2" list:
-  - a saved arrangement the lock no longer has freezes the stones (question 7, settled in phase 6);
   - a barred region (water, sand) owned by a plate does not move under the explorer's weight; doors do;
-  - the face does not tell plates apart (question 5).
-  Drop "Phase 2" from "Open per phase".
+  - a saved key the record lacks is read as `initial` by play and the face, but `openDoorsFor` opens nothing from
+    it until the first stone move writes a key the record has.
+  Drop "Phase 2" from "Open per phase" (its wording and placement were decided, see this plan's "Decided by the
+  designer").
 
 - [ ] **Step 4: The playtest backlog.** Add at the top of `docs/playtest-backlog.md`:
 
@@ -2611,7 +2733,8 @@ Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
 
 - **Storybook, `Topology/Lock playground`, `twoStones`.** Lift a stone, set it on the vault plate, fetch the second,
   press both exit plates. Stand on an empty plate: it sinks and its door swings, and steps back when you leave.
-  Carry a stone to the way out: the explorer stops and says why.
+  Carry a stone to the way out: the explorer stops and "Cannot pass with a stone" shows where the prompt would.
+  Walk into the exit door: two stones on its face.
 - **Dev pyramid 11, floor 0.** The same lock in the game. Reload the app mid-carry: he is still carrying it.
 ```
 
@@ -2639,19 +2762,31 @@ Expected: all pass (`yarn verify` runs lint --fix, types, tests, betterer in its
 - **Spec coverage, §4 Play:** "Lift the stone" and "Set the stone on the plate", none elsewhere, no lift while
   carrying: task 2. Standing presses, ways move and move back: task 4 (doors), task 3 (the plate). Never on a
   route: task 4's walk test. Three looks: task 3. Explorer carrying: task 3. A carrying walk at an `unladen`
-  passage: the zipline in task 5; the narrow passage is phase 3 (question 6). Way out and every staircase: task 5.
-  A door shows its condition: task 6. Plates seen once their room is: task 3 (drawn on any cell not fogged).
-- **§5 Save:** task 7, no field and no migration; a stale arrangement is question 7.
+  passage: the zipline in task 5; the narrow passage is phase 3 (decision 6). Way out and every staircase: task 5,
+  one line for all (decision 2). A door shows its condition: task 6, on doors with more than one owner (decision
+  4). Plates seen once their room is: task 3 (drawn on any cell not fogged).
+- **§5 Save:** task 7, no field and no migration; a key the record lacks is read as `initial` (decision 7, task 2's
+  test).
 - **The carrying explorer:** the frames exist (`src/assets/tiles/default/explorer-carry-*`); `ExplorerFigure`
   already reads them with the fallback; task 3 wires `ExplorerDot` and the map. The Facings story already shows
   the carrying rows (phase 5).
 - **Roadmap phase 2 row:** playground (task 1), prompts (task 2), plate looks with the painted tiles (task 3),
-  blocked walk (task 5), door shows its plates (task 6), carrying (task 3). Designer request (2026-10-07): the
+  blocked walk (task 5), door shows its plates (task 6), carrying (task 3). Designer requests (2026-10-07): the
   explorer standing on an empty plate and carrying on a plate, looks chosen from state, in `Topology/Plate`
-  (task 3, step 6).
-- **Not covered:** the explorer's weight on a barred region (doors only); telling plates apart on the face;
-  a bare `unladen` door saying why (phase 3).
-- **Type consistency:** `stonesAt` / `stoneMoveAt` / `isCarrying` (task 2) → `plateLookAt` (task 3) →
-  `explorerWeight` (task 4); `nodeSpritesFor(…, floorIndex, standingAt, weight)` gains `standingAt` in task 3 and
-  `weight` in task 4; `WeightsControl` gains `underfoot` (task 4) then `terms` (task 6), and the one literal of it
-  (`realisations.spec.ts`) is edited in both.
+  (task 3, step 6); every door-face variant in `Topology/Door faces` (task 6, step 6).
+- **Decisions carried through:** 1 notice in the prompt's spot, no button, cleared by the next tap (task 5, steps 4
+  and 5); 2 `ui.blocked.carrying` the only blocked key, `BlockedNotice` has no `line` (task 5); 3 `handsFull: true`
+  on the zipline (task 5, step 3); 4 `needsFace` counts stone terms, single-plate and `any` doors pinned faceless
+  (task 6); 5 a plate marker drawn as `plateStone`, no glyph pairs (task 6, step 5); 6 the narrow passage's prompt
+  and refusal in the roadmap's phase 3 decision, no phase 2 task; 7 `arrangementIn` (task 2).
+- **Not covered:** the explorer's weight on a barred region (doors only); `openDoorsFor` on a key the record lacks
+  (opens nothing until the first move); a bare `unladen` door saying why (phase 3).
+- **Type consistency:** `arrangementIn` / `stonesAt` / `stoneMoveAt` / `isCarrying` (task 2) → `plateLookAt`
+  (task 3) → `explorerWeight` (task 4) → `stoneMarkers` in `gateFace.ts` (task 6, through `arrangementIn` and
+  `arrangementOf`); `nodeSpritesFor(…, floorIndex, standingAt, weight)` gains `standingAt` in task 3 and `weight`
+  in task 4; `WeightsControl` gains `underfoot` (task 4) then `terms` (task 6), and the one literal of it
+  (`realisations.spec.ts`) is edited in both; `OneWayRealisationMeta.handsFull` is a `boolean` and
+  `BlockedNotice` is `{ at }` in every use (navigation, `useNoticeLabel(): string`, both callers, the tests);
+  `needsFace` takes `(mechanisms, ownerCount, gateKeyId)` and its one caller passes the owners' and the stone
+  homes' records; `GateOwnerIcon`'s `plate` and `hands` kinds are read by `iconFor` and `ownerOf`, and written by
+  the story's `face` args.
