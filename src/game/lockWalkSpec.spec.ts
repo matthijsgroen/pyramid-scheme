@@ -153,8 +153,7 @@ describe("weights", () => {
   })
 
   it("reads empty hands beside a drop as the drop's condition, whichever side of it they are written", () => {
-    const drop = (connection: string) =>
-      compiled(`in -- yard\nyard -- out\n${connection}\nshelf plate @yard stone`)
+    const drop = (connection: string) => compiled(`in -- yard\nyard -- out\n${connection}\nshelf plate @yard stone`)
     const before = drop("out -[unladen]- >> in")
     const after = drop("out >> -[unladen]- in")
     expect(after).toEqual(before)
