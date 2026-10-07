@@ -20,6 +20,7 @@ import { execFileSync } from "child_process"
 import { existsSync, readFileSync } from "fs"
 import { homedir } from "os"
 import { join } from "path"
+import { revealArgs } from "./repaintReveal"
 
 const QUEUE = "docs/instructions/repaint-queue.md"
 const CHARACTERS = "docs/game-design/story/character-art-prompts.md"
@@ -212,11 +213,11 @@ const missing = entry.attachments.filter(p => !existsSync(p))
 for (const p of entry.attachments) console.log(`  attach  ${p}${existsSync(p) ? "" : "   MISSING"}`)
 if (missing.length > 0) {
   console.log(`\n${missing.length} missing — see "Regenerating the attachments" in ${QUEUE}.`)
-} else if (!check && process.platform === "darwin") {
+} else if (!check && process.platform === "darwin" && revealArgs(entry.attachments)) {
   // -R reveals rather than opens: a revealed file can be dragged straight into the browser, where an
   // opened one is a Preview window in the way.
-  execFileSync("open", ["-R", ...entry.attachments])
-  console.log("\nBoth revealed in the Finder — drag them in, paste, and put the download in ~/Downloads.")
+  execFileSync("open", revealArgs(entry.attachments)!)
+  console.log("\nRevealed in the Finder — drag them in, paste, and put the download in ~/Downloads.")
 }
 
 console.log(`\nWhen it lands I import it and measure it; the file is ${entry.out}.`)

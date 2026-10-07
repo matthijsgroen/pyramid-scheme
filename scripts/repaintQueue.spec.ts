@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { readFileSync } from "fs"
 import { join } from "path"
+import { revealArgs } from "./repaintReveal"
 
 /**
  * STATUES ARE THE EXCEPTION, and only statues — the rule the queue's own preamble states, and the one
@@ -114,4 +115,14 @@ describe("the repaint queue's other entries", () => {
       expect(block).toContain(STRICT)
     }
   )
+})
+
+describe("revealing an entry's attachments", () => {
+  it("reveals the files it has", () => {
+    expect(revealArgs(["/a.png", "/b.png"])).toEqual(["-R", "/a.png", "/b.png"])
+  })
+
+  it("has nothing to reveal for an entry with no attachments, which `open -R` would reject", () => {
+    expect(revealArgs([])).toBeUndefined()
+  })
 })
