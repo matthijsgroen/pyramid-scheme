@@ -14,8 +14,10 @@ import { andDoorFloor, threeOwnerDoorFloor } from "@/game/testSupport/gateFaceFi
 import { useAssembledFloor } from "./useAssembledFloor"
 import { useMechanismStates } from "./useMechanismStates"
 import { useSiteNavigation } from "./useSiteNavigation"
-import { SiteMapView } from "./SiteMapView"
-import { cellCenter, CELL } from "./mapScale"
+import { SiteMapView, nodeSpritesFor } from "./SiteMapView"
+import { buildRoomClaims } from "./roomClaims"
+import { sharedTileUrl } from "./tileAssets"
+import { cellCenter, CELL, PROP_H } from "./mapScale"
 import "@/mods/registerModApps"
 
 const JOURNEY = allKnownJourneys[0].id
@@ -110,7 +112,31 @@ describe("a spent activator says so on the map", () => {
       }
     })
 
-    it(`${name}: a torch hangs no lever furniture in any lighting, its used look being its marker alone`, () => {
+    it(`${name}: a torch is painted unlit until it is lit, and only a lit one lays light on the floor under its flame`, () => {
+      const { grid: base } = carved.get(name)!
+      const torches = torchesOf(base)
+      const grid = walked(base)
+      for (const { label, states } of everyLighting(base, torches)) {
+        const sprites = nodeSpritesFor(grid, buildRoomClaims(grid), "starter", undefined, states, 0)
+        for (const { at } of torches) {
+          const lit = states.get(cellAddress(base, 0, at[0], at[1])!) === "lit"
+          const where = `${name} / ${label} / torch at ${at}`
+          const sprite = sprites.find(s => s.key === `standingTorch:${at[0]},${at[1]}`)
+          expect(sprite?.url, `${where}: art`).toBe(sharedTileUrl(lit ? "torchLit" : "torchUnlit"))
+          expect(sprite?.spent, `${where}: never eased back, its flame says it is used`).toBeUndefined()
+          expect(sprite?.light !== undefined, `${where}: light`).toBe(lit)
+          if (sprite?.light) {
+            // Under the painted torch: inside the middle third of its frame, on the floor below the flame.
+            expect(sprite.light.x).toBeGreaterThan(sprite.x + CELL / 3)
+            expect(sprite.light.x).toBeLessThan(sprite.x + (CELL * 2) / 3)
+            expect(sprite.light.y).toBeGreaterThan(sprite.y + PROP_H - CELL / 2)
+            expect(sprite.light.y).toBeLessThanOrEqual(sprite.y + PROP_H)
+          }
+        }
+      }
+    })
+
+    it(`${name}: a torch hangs no lever furniture in any lighting and keeps its flame marker`, () => {
       const { grid: base } = carved.get(name)!
       const torches = torchesOf(base)
       for (const { label, states } of everyLighting(base, torches)) {

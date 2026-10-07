@@ -138,6 +138,13 @@ type Props = {
  * fact about the file — see `flameOnRight` where the flights are placed. */
 const STAIR_FLAME_DX = CELL * 0.43
 
+/** Where the standing torch's flame stands across its frame, measured off the painted tile: its pixels
+ * land 25 units from the left edge, a hair left of centre. */
+const TORCH_FLAME_X = CELL * 0.45
+/** How far behind its floor line the torch's foot stands: the middle of its painted base, so the pool sits
+ * round the foot rather than in front of it. */
+const TORCH_FOOT_DEPTH = CELL * 0.1
+
 /** Anything standing on the floor, with the line it stands on — a room's own furniture and a node's.
  *
  * One list so the PLAYER can be drawn in the middle of it. Two things stand on a map: the explorer and
@@ -523,6 +530,26 @@ export const nodeSpritesFor = (
           y: cy + dy + CELL / 2 - PROP_H,
           mirrored: false,
           armStack: { armUrl: arm, frontUrl: front, angleDeg },
+        })
+      } else if (drawingOf(cell)?.art === "standingTorch") {
+        // ONE SHARED PAINTING, lit or not by the control's own position. A lit torch is NOT eased back the way
+        // an emptied chest is: the flame is what says it is used, and a see-through post over its own pool of
+        // light reads as a ghost. Its marker still wears the ✓. The lit tile is imported with no seat shadow,
+        // because the pool laid at its foot lights the floor that shadow would have fallen on.
+        const spent = isSpentAt(grid, floorIndex, r, c, cell, mechanismStates)
+        const url = sharedTileUrl(spent ? "torchLit" : "torchUnlit")
+        if (!url) continue
+        const { dx, dy } = nodeArtOffset(cell.dirs)
+        const x = cx + dx - CELL / 2
+        const floorLine = cy + dy + CELL / 2
+        out.push({
+          footprint,
+          key: `standingTorch:${r},${c}`,
+          url,
+          x,
+          y: floorLine - PROP_H,
+          mirrored: false,
+          ...(spent ? { light: { x: x + TORCH_FLAME_X, y: floorLine - TORCH_FOOT_DEPTH, r: LAMP_POOL_RADIUS } } : {}),
         })
       } else if (cell.plate) {
         // A PLATE IS FLAT ON THE FLOOR, drawn in the cell-wide prop frame like an exit, in the look its stones and

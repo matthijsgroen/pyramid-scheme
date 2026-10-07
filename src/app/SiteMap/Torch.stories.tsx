@@ -1,13 +1,25 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import type { FC } from "react"
+import { resolveEncounter } from "@/app/families/familyRegistry"
+import { cellAddress } from "@/game/cellAddress"
+import { revealAll } from "@/game/gridNavigation"
+import { assembleFloor } from "@/game/siteAssembler"
+import type { Direction, FloorGrid } from "@/game/siteTypes"
+import { soloTorchDoorFloor } from "@/game/testSupport/gateFaceFixtures"
+import { journeys } from "@/data/journeys"
+import { resolveKeyRequirements } from "@/mods/allFamilyMeta"
+import { DIR_MOVES } from "./corridorRuns"
 import { CELL, PROP_H, WALL_H } from "./mapScale"
+import { SiteMapView } from "./SiteMapView"
 import { ART_IMAGE_RENDERING, sharedTileUrl, tileUrl } from "./tileAssets"
 import { tierPalette } from "./tileMaterials"
+import "@/mods/registerModApps"
 
-// The standing torch is one painting, shared by every rank (`tiles/default/`), unlit and lit.
-// Nothing in the app draws it yet; this story stages it the way the renderer will, on two
-// ranks' floors, the explorer beside it for scale, because a generation that looks fine at 2000px can
-// still turn to mud at 56 (`PropSheet.stories.tsx`'s `Chamber`, as `Lever.stories.tsx` reuses it).
+// The standing torch is one painting, shared by every rank (`tiles/default/`), unlit and lit. The sheet
+// stages the two tiles by hand on two ranks' floors, the explorer beside them for scale, because a
+// generation that looks fine at 2000px can still turn to mud at 56 (`PropSheet.stories.tsx`'s `Chamber`,
+// as `Lever.stories.tsx` reuses it). `OnTheFloor` is the map itself: a carved floor with one torch, drawn
+// unlit and lit by `SiteMapView`, where the lit one lays its pool on the floor and is cut with no shadow.
 // The two tiles share one frame, so swapping them on a cell must change only the flame.
 
 const EXPLORER_W = 40
@@ -118,3 +130,55 @@ export const MapScale: Story = { args: { zoom: 1 } }
 
 /** Three times map scale, to see the paint. */
 export const Zoomed: Story = { args: { zoom: 3 } }
+
+const JOURNEY = journeys[0].id
+
+/** The first seed that carves the one-torch floor, every cell lit, so only the torch's own state differs. */
+const torchFloor = (() => {
+  for (let seed = 0; seed < 120; seed++) {
+    const result = assembleFloor(JOURNEY, soloTorchDoorFloor(), seed, resolveEncounter, {
+      resolveKeyRequirements,
+      floorRef: { journeyId: JOURNEY, floorIndex: 0 },
+    })
+    if (!result.success) continue
+    const grid = revealAll(result.grid)
+    for (let r = 0; r < grid.rows; r++)
+      for (let c = 0; c < grid.cols; c++) {
+        const cell = grid.cells[r][c]
+        if (cell.type !== "room" || cell.family !== "torch") continue
+        // The explorer two steps out of the torch's room by its first way out, near enough for scale and far
+        // enough that the pool he carries does not fall on the torch's own.
+        const [dir] = [...cell.dirs] as Direction[]
+        const [dr, dc] = DIR_MOVES[dir]
+        const two = grid.cells[r + 2 * dr]?.[c + 2 * dc]
+        const steps = two && two.type !== "empty" ? 2 : 1
+        return { grid, at: [r, c] as const, beside: [r + steps * dr, c + steps * dc] as [number, number] }
+      }
+  }
+  throw new Error("no seed carved the torch floor")
+})()
+
+const statesFor = (grid: FloorGrid, lit: boolean) => {
+  const address = cellAddress(grid, 0, torchFloor.at[0], torchFloor.at[1])
+  return new Map(address ? [[address, lit ? "lit" : "unlit"]] : [])
+}
+
+const TorchOnFloor: FC = () => (
+  <div className="flex h-screen gap-2 bg-neutral-900 p-2">
+    {[false, true].map(lit => (
+      <figure key={String(lit)} className="m-0 flex flex-1 flex-col gap-1">
+        <SiteMapView
+          grid={torchFloor.grid}
+          currentFloor={0}
+          explorerPos={torchFloor.beside}
+          mechanismStates={statesFor(torchFloor.grid, lit)}
+          className="h-136 w-full"
+        />
+        <figcaption className="text-[10px] text-white/70">{lit ? "lit" : "unlit"}</figcaption>
+      </figure>
+    ))}
+  </div>
+)
+
+/** The map itself: one carved floor, the torch unlit and lit, the explorer beside it. */
+export const OnTheFloor: Story = { render: () => <TorchOnFloor /> }

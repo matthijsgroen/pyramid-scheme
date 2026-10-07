@@ -286,7 +286,7 @@ full of — `--contents` on what exists rather than a new model. `prim_niche`, `
 - **Patron gods** — designed, and now UNBLOCKED rather than unbuilt: `tileVariants` is the selector they
   needed. A patron is `statue-2.png` beside `statue.png`, and the same for `shrine`, `wallShrine`, `stela`
   and `mask`. No new kinds, no pool edits, no world regeneration, and art can arrive one file at a time.
-- **Torch (`torch` family) — no art at any rank.** A torch room is drawn as its marker carrying the flame icon; wanted per rank (starter, junior, expert, master, wizard) is a painted torch the three-state spent look can ease back, declared by setting `drawing.art` on the torch meta once it exists. Lit, it casts a light circle on the floor (`torchlight.tsx`) and its shadow layer is not drawn (designer, 2026-10-07).
+- **Torch (`torch` family) — drawn.** The standing torch is shared `default` art at every rank (`torchUnlit`, `torchLit`), declared as `drawing.art: "standingTorch"` on the torch meta and drawn beside its flame marker. Lit, it lays a light pool on the floor at its foot (the same `LightPool` a stair's cresset uses) and is not eased back; the lit tile is imported with no `--seat`, so it casts no shadow (designer, 2026-10-07).
 - **A sequence tile (pressure plate)** is a vector slab with its glyph (`PlateShape`) in three looks (unwalked, walked in order, walked out of order); a painted plate is wanted in the same three states.
 
 **Built since this list was written**, and noted because the list claimed otherwise for a while:

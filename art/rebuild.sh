@@ -1573,13 +1573,14 @@ yarn import-tile art/masters/props/default/plateStone.webp --tier=default --name
 # trimmed height fills the same frame, and the lit painting is taller (flame, 2437 px against 2110), so
 # each gets its own --scale: 0.5639 for the unlit and 0.6513 = 0.5639 x 2437/2110 for the lit one, which
 # puts both paintings at the same pixels per master pixel and lets the base, collars, shaft and head
-# coincide, so lighting it only adds the flame.
+# coincide, so lighting it only adds the flame. The lit one takes no --seat: its flame lights the floor
+# the shadow would fall on (the map lays a light pool there), and the shadow lies inside the object's own
+# trimmed box, so leaving it out moves nothing.
 scaffold torch --spin=15 --drop=accent --colour-cloth=#3e3731 --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/default/torchUnlit.webp --tier=default --name=torchUnlit --slot=prop \
   --filter=smooth --seat="$SHADOW" --scale=0.5639
-scaffold torch --spin=15 --colour-cloth=#3e3731 --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
 yarn import-tile art/masters/props/default/torchLit.webp --tier=default --name=torchLit --slot=prop \
-  --filter=smooth --seat="$SHADOW" --scale=0.6513
+  --filter=smooth --scale=0.6513
 
 # The sequence tile, SHARED across ranks: a flush sandstone tile with a plain top, one tile for every glyph
 # and every state (the renderer draws the glyph on it and colours it by state). A Gemini EDIT of a basalt

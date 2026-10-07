@@ -9,8 +9,9 @@ export const TORCH_META: FamilyMeta = {
   tags: ["torch"],
   icon: "🔥",
   color: "amber",
-  // No torch is painted at any rank, so the whole drawing is the marker carrying the flame.
-  drawing: { marker: "mechanism" },
+  // The standing torch is shared art, the same at every rank; the marker carrying the flame still says
+  // which room it is and whether it is lit.
+  drawing: { marker: "mechanism", art: "standingTorch" },
   rewardPriority: 0,
   invitation: "torch.invitation",
   // Re-enterable so a player who walked past it unlit can come back and light it; once lit it offers
