@@ -153,4 +153,5 @@ Dead's weighing (twoStones).
   meant to match.
 - **Placement is not authored.** This document says which journey site carries which layer; writing that
   into the world spec waits on the placement format, which binds the lock, its realisations and its
-  regions' contents at one site.
+  regions' contents at one site. The per-site table the designer fills in, and which mechanics each lock
+  combines, are in [`lock-placement.md`](lock-placement.md).

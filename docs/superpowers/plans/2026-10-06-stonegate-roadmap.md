@@ -10,6 +10,9 @@
 **Spec:** `docs/superpowers/specs/2026-10-04-stones-acceptance.md` (rules, contract, criteria). Read it with
 this roadmap; a phase plan argues from both.
 
+**Placement:** which lock stands on which junior and expert site, and which mechanics each lock combines, is
+[`docs/game-design/lock-placement.md`](../../game-design/lock-placement.md).
+
 ## The shape of the solution
 
 The stones are **one mechanism per lock**, built the way a sequence is. Its states are the stone
