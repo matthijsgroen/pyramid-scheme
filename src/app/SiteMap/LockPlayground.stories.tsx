@@ -45,6 +45,11 @@ export const WeightOpensTheDoor: Story = {
   },
 }
 
+// The water locks: a region gate bars a hall, dressed as water (pick sand in the region-barrier picker).
+export const WaterMoves: Story = { args: { initial: "lessons/waterMoves" } }
+export const Sluice: Story = { args: { initial: "sluice" } }
+export const Tide: Story = { args: { initial: "tide" } }
+
 // A made-up lock for the narrow passage: a stone on a shelf by the way in, and a crack in a wall on to the way out.
 // With empty hands, tap the wall to squeeze through; lift the stone first and the explorer stops beside the wall.
 export const SqueezeThrough: Story = {
