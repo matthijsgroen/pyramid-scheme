@@ -167,12 +167,16 @@ describe("the sluice on dev pyramid 4", { timeout: 120_000 }, () => {
   })
 
   it("conceals the annex behind the flooded hall while it is flooded, and shows it once the lever drains the hall", () => {
-    const annexFogged = (grid: FloorGrid) =>
+    // The hall's door, wherever the carve put it, lies under the water rather than in the fog.
+    const annexCells = (grid: FloorGrid) =>
       grid.cells
         .flat()
-        .filter(cell => cell.type !== "empty" && cell.region === "sluice.annex" && cell.state === "fogged")
-    const annexCells = (grid: FloorGrid) =>
-      grid.cells.flat().filter(cell => cell.type !== "empty" && cell.region === "sluice.annex")
+        .filter(
+          cell =>
+            cell.type !== "empty" && cell.region === "sluice.annex" && !(cell.type === "room" && cell.regionBarrier)
+        )
+    const annexFogged = (grid: FloorGrid) =>
+      annexCells(grid).filter(cell => cell.type !== "empty" && cell.state === "fogged")
 
     const dry = floorWhen("dry").grid
     expect(annexCells(dry).length).toBeGreaterThan(0)

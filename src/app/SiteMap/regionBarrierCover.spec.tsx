@@ -27,6 +27,9 @@ vi.mock("./tileAssets", async importOriginal => {
   return { ...actual, tileUrl: vi.fn(actual.tileUrl) }
 })
 
+// jsdom has no scrollTo; the map scrolls itself to the explorer on mount.
+Element.prototype.scrollTo = Element.prototype.scrollTo ?? (() => {})
+
 const COVER_TEXTURES = new Set(MOD_REGION_BARRIER_REALISATIONS.flatMap(r => (r.texture ? [r.texture] : [])))
 
 const JOURNEY = allKnownJourneys[0].id
@@ -90,7 +93,8 @@ const floorAt = (name: string, state: string) => {
   const live = revealed(result.current.grid!)
   const open = openDoorsFor(base, 0, positions)
   const shut = roomsOf(base).filter(({ cell }) => cell.regionBarrier && !open.has(cell.requiredKeyId!))
-  return { grid: concealShutGround(live, from), live, from, shut, realisation: scenario.realisation }
+  const unseen = concealShutGround(result.current.grid!, from)
+  return { grid: concealShutGround(live, from), live, unseen, from, shut, realisation: scenario.realisation }
 }
 
 const eachFloor = (run: (name: string, state: string) => void) => {
@@ -260,7 +264,7 @@ describe("the cover fades in across the blockage and is full past it", { timeout
   })
 })
 
-describe("the region past the blockage is concealed", { timeout: 60_000 }, () => {
+describe("the region past the blockage lies under water where seen, and in fog where not", { timeout: 60_000 }, () => {
   const drawnAt = (container: HTMLElement) => {
     const at = new Map<string, string>()
     for (let r = 0; r < 40; r++)
@@ -273,26 +277,46 @@ describe("the region past the blockage is concealed", { timeout: 60_000 }, () =>
     return drawn
   }
 
-  it("covers nothing and draws nothing of the region ground that only the shut barrier leads to", () => {
-    let hiddenRegionCells = 0
+  /** Every cell of a shut region only the shut barrier leads to, on each floor and position. */
+  const eachCutOff = (run: (name: string, state: string, key: string, region: string) => void) => {
     for (const { name } of SCENARIOS)
       for (const state of STATES) {
-        const { live, grid, from, shut } = floorAt(name, state)
-        const { container } = render(<SiteMapView grid={grid} />)
-        const drawn = drawnAt(container)
+        const { live, from, shut } = floorAt(name, state)
         const hidden = concealedBehindBarriers(live, from)
         for (const region of regionsOf(shut))
           for (const key of hidden) {
             const [r, c] = key.split(",").map(Number)
             const cell = live.cells[r][c]
-            if (cell.type === "empty" || cell.region !== region) continue
-            hiddenRegionCells++
-            expect(coverCells(container, region).map(keyOf), `${name} / ${state} / ${key}`).not.toContain(key)
-            expect(drawn.has(key), `${name} / ${state} / ${key} is drawn`).toBe(false)
+            if (cell.type !== "empty" && cell.region === region) run(name, state, key, region)
           }
-        cleanup()
       }
-    expect(hiddenRegionCells, "some region ground lies past a blockage").toBeGreaterThan(0)
+  }
+
+  it("covers every seen cell of the region ground only the shut barrier leads to", () => {
+    let covered = 0
+    eachCutOff((name, state, key, region) => {
+      const { grid, from } = floorAt(name, state)
+      const { container } = render(<SiteMapView grid={grid} explorerPos={from} />)
+      expect(coverCells(container, region).map(keyOf), `${name} / ${state} / ${key}`).toContain(key)
+      covered++
+      cleanup()
+    })
+    expect(covered, "some region ground lies past a blockage").toBeGreaterThan(0)
+  })
+
+  it("covers nothing and draws nothing of that ground while it has never been seen", () => {
+    let fogged = 0
+    eachCutOff((name, state, key, region) => {
+      const { unseen, from } = floorAt(name, state)
+      const [r, c] = key.split(",").map(Number)
+      if (unseen.cells[r][c].type === "empty" || (unseen.cells[r][c] as { state: string }).state !== "fogged") return
+      const { container } = render(<SiteMapView grid={unseen} explorerPos={from} />)
+      expect(coverCells(container, region).map(keyOf), `${name} / ${state} / ${key}`).not.toContain(key)
+      expect(drawnAt(container).has(key), `${name} / ${state} / ${key} is drawn`).toBe(false)
+      fogged++
+      cleanup()
+    })
+    expect(fogged, "some region ground past a blockage was never seen").toBeGreaterThan(0)
   })
 })
 

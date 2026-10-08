@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type FC } from "react"
 import { parseLock } from "@/game/lockNotation"
 import { notBuildable } from "@/game/lockWalkSpec"
 import { walkFloorLock } from "@/game/floorLockWalk"
+import { concealShutGround } from "@/game/concealment"
 import { getOwnedKeys } from "@/game/gridNavigation"
 import type { AssemblerReason, FloorConfig, FloorGrid } from "@/game/siteTypes"
 import { createJourneysV3Api, type JourneyAPI, type StoredJourneyStateV3 } from "@/app/state/useJourneys"
@@ -140,6 +141,8 @@ const PlayedFloor: FC<{ config: FloorConfig; seed: number; base: FloorGrid }> = 
   })
   const promptLabel = usePromptLabel()
   const noticeLabel = useNoticeLabel()
+  // Drawn as SiteMapScreen draws it: ground a shut barrier cuts off is concealed.
+  const drawnGrid = useMemo(() => (grid ? concealShutGround(grid, explorerPos) : null), [grid, explorerPos])
   // The walk reads the floor as carved: the playing grid has its open doors taken out, which no walk can read.
   const walk = useMemo(() => walkFloorLock(base), [base])
   if (!grid) return <p data-playground-refused="">the floor does not assemble</p>
@@ -156,7 +159,7 @@ const PlayedFloor: FC<{ config: FloorConfig; seed: number; base: FloorGrid }> = 
       </div>
       <div className="relative h-160 w-full">
         <SiteMapView
-          grid={grid}
+          grid={drawnGrid ?? grid}
           onCellClick={onCellClick}
           explorerPos={explorerPos}
           explorerHidden={explorerHidden}

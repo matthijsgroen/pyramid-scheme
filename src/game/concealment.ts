@@ -21,11 +21,14 @@ const isBarrier = (cell: GridCell, keys: ReadonlySet<string>): boolean =>
 
 /**
  * Every cell reachable from `from` along the grid's passages, ignoring what has been explored. A drop is
- * crossed launch to landing only, and its span is seen from either foot. A barrier is stood against, never
- * crossed, unless `passBarriers`.
+ * crossed launch to landing only, and its span is seen from either foot. A cell `stops` names is stood
+ * on, never crossed.
  */
-const reach = (grid: FloorGrid, from: readonly [number, number], passBarriers: boolean): Set<string> => {
-  const keys = mechanismKeysOf(grid)
+export const reachFrom = (
+  grid: FloorGrid,
+  from: readonly [number, number],
+  stops: (cell: GridCell) => boolean
+): Set<string> => {
   const runs = oneWayRuns(grid)
   const seen = new Set<string>()
   const queue: [number, number][] = [[from[0], from[1]]]
@@ -39,7 +42,7 @@ const reach = (grid: FloorGrid, from: readonly [number, number], passBarriers: b
   while (queue.length > 0) {
     const [r, c] = queue.shift()!
     const cell = grid.cells[r][c]
-    if (cell.type === "empty" || (!passBarriers && isBarrier(cell, keys))) continue
+    if (cell.type === "empty" || stops(cell)) continue
     for (const dir of cell.dirs) visit(r + MOVES[dir][0], c + MOVES[dir][1])
     for (const run of runs) if (run.launch[0] === r && run.launch[1] === c) visit(run.landing[0], run.landing[1])
   }
@@ -55,15 +58,27 @@ const reach = (grid: FloorGrid, from: readonly [number, number], passBarriers: b
  * it is not named. The barrier's own cell is reachable now, so it stays in view.
  */
 export const concealedBehindBarriers = (grid: FloorGrid, from: readonly [number, number]): ReadonlySet<string> => {
-  const now = reach(grid, from, false)
+  const keys = mechanismKeysOf(grid)
+  const now = reachFrom(grid, from, cell => isBarrier(cell, keys))
   const hidden = new Set<string>()
-  for (const key of reach(grid, from, true)) if (!now.has(key)) hidden.add(key)
+  for (const key of reachFrom(grid, from, () => false)) if (!now.has(key)) hidden.add(key)
   return hidden
 }
 
-/** The grid as drawn: concealed ground reads as fog. Derived on every draw and stored nowhere. */
+/** The grid as drawn: concealed ground reads as fog, except ground already seen in a region a shut barrier
+ * floods, which stays in view under its water (`regionBarrierCovers`). Derived on every draw and stored nowhere. */
 export const concealShutGround = (grid: FloorGrid, from: readonly [number, number]): FloorGrid => {
-  const hidden = concealedBehindBarriers(grid, from)
+  const flooded = new Set<string>()
+  for (const row of grid.cells)
+    for (const cell of row) if (cell.type === "room" && cell.regionBarrier) flooded.add(cell.regionBarrier.region)
+  const hidden = new Set(
+    [...concealedBehindBarriers(grid, from)].filter(key => {
+      const [r, c] = key.split(",").map(Number)
+      const cell = grid.cells[r][c]
+      const underWater = cell.type === "room" && cell.regionBarrier !== undefined
+      return cell.type === "empty" || cell.state === "fogged" || !(underWater || flooded.has(cell.region ?? ""))
+    })
+  )
   if (hidden.size === 0) return grid
   return {
     ...grid,

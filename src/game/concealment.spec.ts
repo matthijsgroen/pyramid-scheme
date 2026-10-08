@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import type { CorridorCell, FloorGrid, GridCell, RoomCell } from "./siteTypes"
-import { concealedBehindBarriers } from "./concealment"
+import { concealShutGround, concealedBehindBarriers } from "./concealment"
 
 const KEY = "obstacle:test:door"
 const way = (...dirs: ("w" | "e")[]): CorridorCell => ({ type: "corridor", dirs: new Set(dirs), state: "completed" })
@@ -66,5 +66,27 @@ describe("concealedBehindBarriers on a drop with a region barrier past it", () =
     const ward: RoomCell = { ...door, requiredKeyId: "ward:tomb" }
     const warded = { ...grid, cells: [row.map(cell => (cell === door ? ward : cell))] }
     expect(concealedBehindBarriers(warded, [0, 5]).size).toBe(0)
+  })
+})
+
+describe("concealShutGround keeps seen ground of a flooded region in view", () => {
+  const vault = (state: CorridorCell["state"]): CorridorCell => ({ ...way("w", "e"), region: "vault", state })
+  const drawn = (cell: CorridorCell) => {
+    const cells = [row.map((c, i) => (i === 7 ? cell : c))]
+    return concealShutGround({ ...grid, cells }, [0, 5]).cells[0].filter(
+      c => c.type !== "empty" && c.state === "fogged"
+    )
+  }
+
+  it("draws a seen cell of the flooded region as it is, and still hides ground past it outside the region", () => {
+    expect(drawn(vault("completed"))).toHaveLength(1)
+  })
+
+  it("keeps a never-seen cell of the flooded region as fog", () => {
+    expect(drawn(vault("fogged"))).toHaveLength(2)
+  })
+
+  it("hides seen ground outside the flooded region", () => {
+    expect(drawn(way("w", "e"))).toHaveLength(2)
   })
 })

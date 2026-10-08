@@ -1226,7 +1226,13 @@ export const SiteMapView = ({
   const tier = useMemo(() => floorTier(grid), [grid])
   const regions = useMemo(() => tileRegionsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
-  const covers = useMemo(() => regionBarrierCovers(grid), [grid])
+  // Reckoned from where the explorer stands: the water is what he cannot walk into from there.
+  const coverFrom = explorerPos ?? grid.entrancePos
+  const covers = useMemo(
+    () => regionBarrierCovers(grid, coverFrom),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- by value, so a fresh position tuple does not recompute
+    [grid, coverFrom[0], coverFrom[1]]
+  )
   const barrierCovers = useRegionBarrierCovers(covers, `${grid.siteId}:${currentFloor ?? 0}`)
   // Corridor-run markers track the explorer dot's visual position, not the logical one:
   // hide them the instant a run target is clicked (the player has committed to a

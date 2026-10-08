@@ -144,6 +144,20 @@ const independentlyCutOff = (name: string, state: string): Set<string> => {
 
 const statesOf = (name: string): string[] => mechanismOf(name).states
 
+/** Seen ground the water of a shut barrier lies on, which stays in view under it: a door, or a cell of a region
+ * one still bars. Read off the cells. */
+const underWater = (grid: FloorGrid, key: string): boolean => {
+  const [r, c] = key.split(",").map(Number)
+  const cell = grid.cells[r][c]
+  if (cell.type === "empty" || cell.state === "fogged") return false
+  const flooded = new Set(
+    grid.cells
+      .flat()
+      .flatMap(other => (other.type === "room" && other.regionBarrier ? [other.regionBarrier.region] : []))
+  )
+  return (cell.type === "room" && cell.regionBarrier !== undefined) || flooded.has(cell.region ?? "")
+}
+
 const cellsOf = (container: HTMLElement) => {
   const at = new Map<string, string>()
   for (let r = 0; r < 90; r++)
@@ -162,55 +176,65 @@ const cellsOf = (container: HTMLElement) => {
 
 afterEach(cleanup)
 
-describe("ground a shut region barrier cuts off is hidden, explored or not", { timeout: 30_000 }, () => {
-  for (const { name } of REGION_SCENARIOS)
-    it(`${name}: in every position the hidden set is exactly what the shut barriers cut off`, () => {
-      let hiddenSomewhere = false
-      for (const state of statesOf(name)) {
-        const { grid, from } = withState(name, state)
-        const expected = independentlyCutOff(name, state)
-        const hidden = concealedBehindBarriers(grid, from)
-        expect([...hidden].sort(), `${name} / ${state}`).toEqual([...expected].sort())
-        if (hidden.size > 0) hiddenSomewhere = true
-      }
-      expect(hiddenSomewhere, "some position shuts something off, so the equality above is not empty").toBe(true)
-    })
-
-  for (const { name } of REGION_SCENARIOS)
-    it(`${name}: whether the ground was explored makes no difference to what is hidden`, () => {
-      for (const state of statesOf(name)) {
-        const hook = floorFor(name, positionsAt(name, state))
-        const unexplored = hook.result.current.grid!
-        const { grid } = withState(name, state)
-        const from = hook.result.current.explorerPos
-        expect([...concealedBehindBarriers(unexplored, from)].sort(), `${name} / ${state}`).toEqual(
-          [...concealedBehindBarriers(grid, from)].sort()
-        )
-      }
-    })
-
-  for (const { name } of REGION_SCENARIOS)
-    it(`${name}: every hidden cell is drawn as fog and every other drawn cell stays as it was`, () => {
-      let drawnBeforeHidden = 0
-      for (const state of statesOf(name)) {
-        const { grid, from } = withState(name, state)
-        const hidden = concealedBehindBarriers(grid, from)
-        const plain = cellsOf(render(<SiteMapView grid={grid} />).container)
-        cleanup()
-        const concealed = cellsOf(render(<SiteMapView grid={concealShutGround(grid, from)} />).container)
-        cleanup()
-        for (const key of hidden) {
-          if (plain.has(key)) drawnBeforeHidden++
-          expect(concealed.has(key), `${name} / ${state} / ${key} is still drawn`).toBe(false)
+describe(
+  "ground a shut region barrier cuts off is hidden, explored or not, unless it is seen ground under its water",
+  { timeout: 30_000 },
+  () => {
+    for (const { name } of REGION_SCENARIOS)
+      it(`${name}: in every position the hidden set is exactly what the shut barriers cut off`, () => {
+        let hiddenSomewhere = false
+        for (const state of statesOf(name)) {
+          const { grid, from } = withState(name, state)
+          const expected = independentlyCutOff(name, state)
+          const hidden = concealedBehindBarriers(grid, from)
+          expect([...hidden].sort(), `${name} / ${state}`).toEqual([...expected].sort())
+          if (hidden.size > 0) hiddenSomewhere = true
         }
-        expect([...concealed].sort(), `${name} / ${state}`).toEqual([...plain].filter(key => !hidden.has(key)).sort())
-      }
-      expect(
-        drawnBeforeHidden,
-        "something hidden was drawn when open, so the check above is not empty"
-      ).toBeGreaterThan(0)
-    })
-})
+        expect(hiddenSomewhere, "some position shuts something off, so the equality above is not empty").toBe(true)
+      })
+
+    for (const { name } of REGION_SCENARIOS)
+      it(`${name}: whether the ground was explored makes no difference to what is hidden`, () => {
+        for (const state of statesOf(name)) {
+          const hook = floorFor(name, positionsAt(name, state))
+          const unexplored = hook.result.current.grid!
+          const { grid } = withState(name, state)
+          const from = hook.result.current.explorerPos
+          expect([...concealedBehindBarriers(unexplored, from)].sort(), `${name} / ${state}`).toEqual(
+            [...concealedBehindBarriers(grid, from)].sort()
+          )
+        }
+      })
+
+    for (const { name } of REGION_SCENARIOS)
+      it(`${name}: every hidden cell not under water is drawn as fog and every other drawn cell stays as it was`, () => {
+        let drawnBeforeHidden = 0
+        let keptUnderWater = 0
+        for (const state of statesOf(name)) {
+          const { grid, from } = withState(name, state)
+          const hidden = new Set([...concealedBehindBarriers(grid, from)].filter(key => !underWater(grid, key)))
+          const plain = cellsOf(render(<SiteMapView grid={grid} />).container)
+          cleanup()
+          const concealed = cellsOf(render(<SiteMapView grid={concealShutGround(grid, from)} />).container)
+          cleanup()
+          for (const key of hidden) {
+            if (plain.has(key)) drawnBeforeHidden++
+            expect(concealed.has(key), `${name} / ${state} / ${key} is still drawn`).toBe(false)
+          }
+          for (const key of concealedBehindBarriers(grid, from))
+            if (underWater(grid, key) && plain.has(key)) {
+              keptUnderWater++
+              expect(concealed.has(key), `${name} / ${state} / ${key} is drawn under water`).toBe(true)
+            }
+          expect([...concealed].sort(), `${name} / ${state}`).toEqual([...plain].filter(key => !hidden.has(key)).sort())
+        }
+        expect(
+          drawnBeforeHidden + keptUnderWater,
+          "something cut off was drawn when open, so the checks above are not empty"
+        ).toBeGreaterThan(0)
+      })
+  }
+)
 
 const stateOf = (grid: FloorGrid): string[] =>
   grid.cells.flatMap((row, r) =>
@@ -287,7 +311,8 @@ describe("hidden ground is kept, not erased, and opens again as it was left", { 
           const [r, c] = key.split(",").map(Number)
           const here = grid.cells[r][c]
           if (here.type !== "empty" && here.state !== "fogged") keptWhileShut++
-          expect((drawn.cells[r][c] as { state: string }).state, `${name} / ${state} / ${key}`).toBe("fogged")
+          const shown = underWater(grid, key) ? (here as { state: string }).state : "fogged"
+          expect((drawn.cells[r][c] as { state: string }).state, `${name} / ${state} / ${key}`).toBe(shown)
         }
         hook.rerender({ p: positionsAt(name, openState ?? states[0]), e: explored })
         expect(stateOf(draw().drawn), `${name} / ${state}, reopened`).toEqual(before)
