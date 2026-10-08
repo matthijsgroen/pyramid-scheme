@@ -117,3 +117,17 @@ describe("the playground's search for a seed", () => {
     expect(vi.mocked(assemblePlayedFloor)).toHaveBeenCalledTimes(1)
   })
 })
+
+describe("a lock nested in the playground's lock", () => {
+  it("is spliced into the picked lock's nest spot, every region free", () => {
+    const host = parseLock("in -&> hall\nhall -[L]- out\nL toggle @in\nin *\nhall ?\nout ?", "host").lock
+    const inner = parseLock("in -- out\nshelf plate @in stone\nin *\nout ?", "cell").lock
+    const config = playgroundFloor(host, defaultBinding(), inner)
+    expect(config.locks?.map(placed => [placed.as, placed.inside])).toEqual([
+      [undefined, undefined],
+      ["inner", { instance: "host" }],
+    ])
+    expect(Object.values(config.locks![1].lock.regions).every(region => region.takes === "free")).toBe(true)
+    expect(config.locks![0].lock.nestSpot).toEqual({ from: "in", to: "hall" })
+  })
+})

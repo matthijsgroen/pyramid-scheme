@@ -26,14 +26,19 @@ export const REALISATION_CHOICES: Readonly<Record<string, readonly string[]>> = 
 export const defaultBinding = (): Record<string, string> =>
   Object.fromEntries(Object.entries(REALISATION_CHOICES).map(([kind, [first]]) => [kind, first]))
 
-/** The lock alone on an expert floor with no puzzles, every region free, as the dev floors bench a lock. */
-export const playgroundFloor = (lock: Lock, binding: RealisationBinding): FloorConfig => ({
+/** The lock alone on an expert floor with no puzzles, every region free, as the dev floors bench a lock; `nest` is
+ * spliced into its nest spot. A lock with no spot is placed with `nest` anyway, so the floor refuses it by name
+ * (`noNestSpot`). */
+export const playgroundFloor = (lock: Lock, binding: RealisationBinding, nest?: Lock): FloorConfig => ({
   pathPuzzles: 0,
   difficulty: "expert",
   end: "treasure",
   exitOrStaircase: "exit",
   sideSections: [],
-  locks: [{ lock: freeRegions(lock) }],
+  locks: [
+    { lock: freeRegions(lock) },
+    ...(nest ? [{ lock: freeRegions(nest), as: "inner", inside: { instance: lock.name } }] : []),
+  ],
   realisations: binding,
 })
 

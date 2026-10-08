@@ -194,9 +194,10 @@ const PlayedFloor: FC<{ config: FloorConfig; seed: number; base: FloorGrid }> = 
 }
 
 /** Pick a lock and a realisation per control kind; the floor carves and plays as the game would. */
-export const LockPlayground: FC<{ locks: Readonly<Record<string, string>>; initial?: string }> = ({
+export const LockPlayground: FC<{ locks: Readonly<Record<string, string>>; initial?: string; nest?: string }> = ({
   locks,
   initial,
+  nest,
 }) => {
   const names = useMemo(() => Object.keys(locks).sort(), [locks])
   const [name, setName] = useState(initial && initial in locks ? initial : names[0])
@@ -208,17 +209,38 @@ export const LockPlayground: FC<{ locks: Readonly<Record<string, string>>; initi
       return { ok: false as const, message: (error as Error).message }
     }
   }, [locks, name])
-  const config = useMemo(() => (parsed.ok ? playgroundFloor(parsed.lock, binding) : null), [parsed, binding])
-  const unbuilt = useMemo(() => (parsed.ok ? [...parsed.drafts, ...notBuildable(parsed.lock)] : []), [parsed])
+  const inner = useMemo(() => {
+    if (!nest) return undefined
+    try {
+      return { ok: true as const, ...parseLock(locks[nest], nest) }
+    } catch (error) {
+      return { ok: false as const, message: (error as Error).message }
+    }
+  }, [locks, nest])
+  const config = useMemo(
+    () => (parsed.ok && (inner === undefined || inner.ok) ? playgroundFloor(parsed.lock, binding, inner?.lock) : null),
+    [parsed, inner, binding]
+  )
+  const unbuilt = useMemo(
+    () => [
+      ...(parsed.ok ? [...parsed.drafts, ...notBuildable(parsed.lock)] : []),
+      ...(inner?.ok ? [...inner.drafts, ...notBuildable(inner.lock)] : []),
+    ],
+    [parsed, inner]
+  )
+  const refused = [...(parsed.ok ? parsed.refused : []), ...(inner?.ok ? inner.refused : [])]
   // A lock the engine cannot build is not carved: its search does not end in a time worth waiting for.
   const carved = useCarving(unbuilt.length > 0 ? null : config)
-  const refusal = !parsed.ok
-    ? parsed.message
-    : parsed.refused.length > 0
-      ? parsed.refused.join("; ")
-      : carved?.status === "refused"
-        ? JSON.stringify(carved.reasons)
-        : undefined
+  const refusal =
+    inner && !inner.ok
+      ? inner.message
+      : !parsed.ok
+        ? parsed.message
+        : refused.length > 0
+          ? refused.join("; ")
+          : carved?.status === "refused"
+            ? JSON.stringify(carved.reasons)
+            : undefined
   return (
     <div className="flex h-(--screen-height) flex-col gap-2 overflow-auto bg-neutral-900 p-4 text-white">
       <div className="flex flex-wrap gap-4 text-sm">

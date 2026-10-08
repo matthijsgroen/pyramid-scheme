@@ -58,3 +58,27 @@ export const SqueezeThrough: Story = {
     initial: "crack",
   },
 }
+
+// MADE-UP LOCKS NESTED IN EACH OTHER, one story per stone case (stones spec, "Nested locks"). The picked lock is the
+// host; `nest` is spliced into its nest spot (`-&>`).
+const HOST_STONES =
+  "in -- yard\nyard -&> hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nyard ?\nhall ?\nout ?"
+const LEVER = "in -&> hall\nhall -[L]- out\nL toggle @in\nin ?\nhall ?\nout ?"
+const CELL = "in -- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nhall ?\nout ?"
+const GATED = "in -[s]- hall\nhall -- out\ns plate @in\nt plate @hall stone\nin ?\nhall ?\nout ?"
+
+// Park the stone, solve the lever inside, fetch the stone and carry it through to the door beyond.
+export const StonePassesThrough: Story = {
+  args: { locks: { host: HOST_STONES, lever: LEVER }, initial: "host", nest: "lever" },
+}
+
+// The stone lock inside keeps its stones by its own design: its door out opens only with the stone set on `p`, so
+// nothing is carried out by its way out; a stone may be carried back out by its way in.
+export const StoneStaysInside: Story = {
+  args: { locks: { lever: LEVER, cell: CELL }, initial: "lever", nest: "cell" },
+}
+
+// One pool: carry the host's stone in, set it on `s`, take the inner's own stone out to the door beyond.
+export const StonesShared: Story = {
+  args: { locks: { host: HOST_STONES, gated: GATED }, initial: "host", nest: "gated" },
+}
