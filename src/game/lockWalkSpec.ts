@@ -200,6 +200,5 @@ const hasGateLoop = (lock: Lock) => {
 /** What the engine cannot build yet (mechanic-contract.md, "What a mechanic declares": built: no). */
 export const notBuildable = (lock: Lock): string[] => [
   ...(Object.values(lock.mechanics).some(m => m.control === "sequence") ? ["sequence"] : []),
-  ...(Object.values(lock.gates).some(isRegionGate) ? ["region gate"] : []),
   ...(hasGateLoop(lock) ? ["gate loop"] : []),
 ]

@@ -157,7 +157,7 @@ but are still a proposal for the engine (`lock-curriculum.md`, "Stones").
 | doorWaitsForTwo | expert | torch, door-waits-for-two | solvable |
 | stoneOnAPlate | expert | stones & plates | solvable |
 | tilesInOrder | expert | sequence tiles | solvable; not buildable: sequence |
-| waterMoves | expert | lever, water/sand barrier | solvable; not buildable: region gate; under two actions |
+| waterMoves | expert | lever, water/sand barrier | solvable; under two actions |
 
 **Locks**
 
@@ -178,8 +178,8 @@ but are still a proposal for the engine (`lock-curriculum.md`, "Stones").
 | counterweight | master, stones | drop, door-waits-for-two, stones & plates | solvable |
 | masonsRamp | master, stones | drop, stones & plates, narrow passage | **not solvable**: `out` never reached (waits on a stone-only pipe) |
 | plates | master | sequence tiles | solvable; not buildable: sequence |
-| sluice | master | lever, torch, water/sand barrier | solvable; not buildable: region gate |
-| tide | master | lever, torch, water/sand barrier | solvable; not buildable: region gate |
+| sluice | master | lever, torch, water/sand barrier | solvable |
+| tide | master | lever, torch, water/sand barrier | solvable |
 | stoneGate | not placed yet, stones | torch, door-waits-for-two, stones & plates, narrow passage | solvable; not buildable: gate loop |
 
 The curriculum's "lever: all but plates" is wider than the files: twoStones, counterweight, masonsRamp,
@@ -203,10 +203,10 @@ holds. The diagonal is the mechanic alone.
 | **sequence** | | | | | | | | | *tilesInOrder*, plates |
 
 17 of the 36 pairs have no lock. Every one of them involves stones, the narrow passage, water/sand or sequence
-tiles; the five buildable mechanics (lever, board, torch, drop, door-waits-for-two) are combined pairwise
+tiles; lever, board, torch, drop and door-waits-for-two are combined pairwise
 throughout. Sequence tiles combine with nothing: plates is a sequence alone.
 
-Of those buildable pairs, three meet only at master: board × torch (observatory), drop × door-waits-for-two
+Of those pairs, three meet only at master: board × torch (observatory), drop × door-waits-for-two
 (clockwork, lamplighter, observatory, relay, seesaw; counterweight is master too), and torch × door-waits-for-two
 outside its lesson (observatory, relay; stoneGate is unplaced).
 
@@ -238,12 +238,11 @@ be carried, so its triples without stones are empty, and sequence tiles have no 
 
 *Suggestion, judged lightly:* the uncovered triples that look most natural for junior and expert.
 
-- **lever + board + torch.** All three are junior lessons and all are buildable today; the only triple of
-  buildable mechanics no lock holds.
+- **lever + board + torch.** All three are junior lessons; the only triple of lever, board, torch, drop and
+  door-waits-for-two that no lock holds.
 - **lever + door-waits-for-two + stones & plates.** A plate and a lever co-own one door: the step after
   stoneOnAPlate and doorWaitsForTwo, at Djoser before stoneGate.
-- **lever + drop + water/sand barrier.** Drop into a flooded hall that a lever drains: the Nile Delta's lock once
-  region gates build.
+- **lever + drop + water/sand barrier.** Drop into a flooded hall that a lever drains: the Nile Delta's lock.
 - **torch + drop + stones & plates.** Light the way back before going down, because a stone never rides a drop.
 
 ### Mechanics with no single-mechanic lesson

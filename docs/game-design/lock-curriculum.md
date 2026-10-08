@@ -35,7 +35,7 @@ lock, not a sampler.
 | torch or key (activator, once) | `torch` | cellar, keyring, relay, observatory, sluice, tide |
 | one-way drop | `dropDown` | dropHome, cellar, doubleBack, overlook, seesaw, lamplighter, observatory, relay, clockwork |
 | a door that waits for several | `doorWaitsForTwo` | twoLamps, seesaw, lamplighter, observatory, relay, clockwork |
-| water (region gate) — not buildable yet | `waterMoves` | sluice, tide |
+| water (region gate) | `waterMoves` | sluice, tide |
 | tiles in order (sequence) — not buildable yet | `tilesInOrder` | plates |
 | stones on plates, and where a stone cannot go — a proposal | `stoneOnAPlate` | twoStones, masonsRamp, counterweight |
 
@@ -49,7 +49,7 @@ lock, not a sampler.
 | `torch` | junior | a torch, lit for good, opens its door |
 | `leverSwapsDoors` | junior preview, expert | one lever swaps two doors, and can be thrown back |
 | `doorWaitsForTwo` | expert | a door shows the marks it waits for, and opens on the last |
-| `waterMoves` | expert, once buildable | one lever drains a hall |
+| `waterMoves` | expert | one lever drains a hall |
 | `tilesInOrder` | expert, once buildable | two tiles, in order |
 | `stoneOnAPlate` | expert, once buildable | a stone on a plate holds its door; lift it and the door shuts |
 
@@ -68,8 +68,8 @@ lock, not a sampler.
 | relay | master | a chain of airlocks; the drop home opens on the last torch |
 | clockwork | master | the board must point two ways, and the lever behind one of them shuts it |
 | observatory | master | a three-way board, two prizes, one shortcut |
-| tide | master, once buildable | carry the key home against the water |
-| sluice | master, once buildable | drain the hall for the gold, then the vault for the way out |
+| tide | master | carry the key home against the water |
+| sluice | master | drain the hall for the gold, then the vault for the way out |
 | plates | master, once buildable | four tiles across three rooms; the door resets them |
 | twoStones | expert, once buildable | one stone holds the vault while you fetch the second, then presses the exit: a stone spent twice |
 | masonsRamp | master, once buildable | one stone holds the chute door for the other; you squeeze back up the narrow passage, where no stone fits |
@@ -105,8 +105,8 @@ of the four.
 
 The 19 master sites take seesaw, lamplighter, keyring, relay, clockwork and observatory about twice each,
 replacing the floor-key gates being converted to locks (`floor-topology-design.md`: 56 of the world's 58
-are at master and wizard). tide, sluice and plates take master sites once the engine builds region gates
-and sequences; until then those sites keep their keys.
+are at master and wizard). tide and sluice take master sites too; plates takes one once the engine builds
+sequences, and until then that site keeps its key.
 
 ### A repeat is not the same floor twice
 
@@ -144,8 +144,8 @@ Dead's weighing (twoStones).
   contract addition and engine work before they bake; the acceptance criteria are in
   `docs/superpowers/specs/2026-10-04-stones-acceptance.md`.
 
-- **Region gates and sequences are `built: no`** (`mechanic-contract.md` §6). `waterMoves`,
-  `tilesInOrder`, tide, sluice and plates validate and walk, and cannot bake.
+- **Sequences are `built: no`** (`mechanic-contract.md` §6). `tilesInOrder` and plates validate and
+  walk, and cannot bake.
 - **A region only drops reach does not carve yet.** None of these needs one: every region is also joined
   by a connection or a gate.
 - **Two regions joined by a bare corridor stay one region in the engine's solver** until its T15 lands.
