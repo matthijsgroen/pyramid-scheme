@@ -21,6 +21,8 @@ export const LOCK_SYNTAX = `
   p1 plate @hall   p2 plate @hall stone   a plate, empty or with a stone on it; any stone presses any plate
   in -[p1]- hall   in -[p1:empty]- hall    open while a stone rests on p1, or while none does
   in -[unladen]- hall           a narrow passage, only with empty hands; written alone, never beside >>
+  in -&> hall                   the nest spot: another lock may be spliced in here, its in at in, its out at hall;
+                                one per lock, a plain corridor where nothing nests, ignored beside a barrier
   hall *   s2 $   spare ?   corridor -     takes puzzles, a reward, anything, nothing
   // comment
 `.slice(1)
@@ -30,7 +32,7 @@ export type DraftLock = Lock
  * be drawn beside its errors. */
 export type ParsedLock = { lock: DraftLock; drafts: string[]; refused: string[] }
 
-const EDGE = /\s*(--|>>|-\[[^\]]*\]-)\s*/
+const EDGE = /\s*(--|>>|-&>|-&-|<&-|-\[[^\]]*\]-)\s*/
 const NAME = /^\w+$/
 const DEFAULT_STATES = { toggle: ["a", "b"], activator: ["off", "on"] } as const
 const APPETITE: Record<string, RegionAppetite> = { "*": "puzzles", $: "reward", "?": "free", "-": "nothing" }
@@ -52,6 +54,7 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
 
   const regions = new Map<string, RegionAppetite>()
   const joins: { between: [string, string]; barriers: string[]; n: number }[] = []
+  const spots: { from: string; to: string; n: number }[] = []
   const gates: Record<string, LockGate> = {}
   const terms: Record<string, { n: number; list: Term[] }> = {}
   const oneWays: Record<string, LockOneWay> = {}
@@ -82,14 +85,17 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
     return { list, owners, mode: written.includes("|") ? ("any" as const) : undefined }
   }
   const join = (n: number, from: string, to: string, ops: string[]) => {
+    if (ops.some(op => op === "-&-" || op === "<&-"))
+      fail(n, "a nest spot is written a -&> b, from the nested lock's in to its out")
     if (from === to) fail(n, `a join leads from ${from} to ${to}`)
     if (ops.includes("--") && ops.length > 1) fail(n, "-- is a bare corridor and carries no barriers")
-    if (ops[0] === "--") {
+    if (ops.length === 1 && (ops[0] === "--" || ops[0] === "-&>")) {
       const twin = joins.find(j => j.barriers.length === 0 && [from, to].every(r => j.between.includes(r)))
       if (twin) fail(n, `${from} and ${to} are already joined by a corridor on line ${twin.n}`)
     }
+    if (ops.includes("-&>")) spots.push({ from, to, n })
     const barriers = ops
-      .filter(op => op !== "--")
+      .filter(op => op !== "--" && op !== "-&>")
       .map(op => {
         if (op === ">>") {
           const id = unique(`${from}>${to}`)
@@ -268,6 +274,7 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
     ...(weights ? { weights } : {}),
     in: "in",
     out: "out",
+    ...(spots.length > 0 ? { nestSpot: { from: spots[0].from, to: spots[0].to } } : {}),
   }
   // A door folds only the owners some position names, so a gate no arrangement opens would let its
   // other owners open it alone in play, while the walk keeps it shut.
@@ -280,6 +287,11 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
   for (const fault of unladenFaults(lock))
     refused.push(
       `line ${terms[fault.barrier].n}: ${fault.type === "unladenOnDrop" ? "a drop already takes empty hands" : "unladen stands alone, as a narrow passage"}`
+    )
+  // A LOCK HAS ONE NEST SPOT: only the text can say two, so only the parse refuses it.
+  for (const extra of spots.slice(1))
+    refused.push(
+      `line ${extra.n}: nestSpotsRepeated: a lock has one nest spot, and ${spots[0].from} -&> ${spots[0].to} is one already`
     )
   return { lock, drafts: [...drafts], refused }
 }

@@ -1,4 +1,4 @@
-import type { Lock, LockMechanic, UnladenFault } from "./lockAuthoring"
+import type { Lock, LockMechanic, NestSpotFault, UnladenFault } from "./lockAuthoring"
 import {
   barriersOf,
   CARRY_TERMS,
@@ -6,6 +6,7 @@ import {
   isUnladenGate,
   isWeightOwner,
   joinOf,
+  nestSpotFaults,
   unladenFaults,
 } from "./lockAuthoring"
 import type { LooseMechanic, ResolveMechanicKind } from "./mechanics"
@@ -58,6 +59,7 @@ export type LockFault =
   /** A one-way stands on a connection beside another barrier, which the floor vocabulary cannot say. */
   | { type: "oneWaySharesConnection"; between: [string, string]; barriers: string[] }
   | UnladenFault
+  | NestSpotFault
   | { type: "gateOwnerUnknown"; barrier: string; owner: string }
   /** A plate stands in a region the lock does not have. */
   | { type: "plateNamesNoRegion"; plate: string; region: string }
@@ -138,6 +140,7 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
 
   const unladen = unladenFaults(lock)
   faults.push(...unladen)
+  faults.push(...nestSpotFaults(lock))
   const emptyHandsOnDrop = new Set(unladen.flatMap(fault => (fault.type === "unladenOnDrop" ? [fault.barrier] : [])))
 
   const declared = new Set<string>()

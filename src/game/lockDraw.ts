@@ -2,7 +2,7 @@
 // bottom to the way out, every other region rising off the one it joins, and each drop routed around
 // what is drawn.
 import type { Lock } from "./lockAuthoring"
-import { barriersOf, isRegionGate, joinOf } from "./lockAuthoring"
+import { barriersOf, isRegionGate, joinOf, nestSpotOf } from "./lockAuthoring"
 import { openAtStart } from "./lockWalkSpec"
 import type { DraftLock } from "./lockNotation"
 
@@ -288,12 +288,15 @@ const sketchOf = (lock: Lock, drafts: readonly string[]): Sketch => {
   const edges: Sketch["edges"] = {}
   const drops: Sketch["drops"] = []
   const notes: string[] = []
+  // A busy spot is no spot (nestSpotOf), so it is drawn as its barriers.
+  const nest = nestSpotOf(lock)
   lock.connections.forEach((connection, c) => {
     const [a, b] = joinOf(connection)
     const barriers = barriersOf(connection)
     const drop = barriers.find(id => Object.hasOwn(lock.oneWays ?? {}, id))
     if (!drop) {
-      edges[String(c)] = { from: a, to: b, token: barriers.map(token).join(" ") }
+      const spot = nest && [a, b].includes(nest.from) && [a, b].includes(nest.to)
+      edges[String(c)] = { from: a, to: b, token: spot ? "&" : barriers.map(token).join(" ") }
       return
     }
     drops.push(lock.oneWays![drop])

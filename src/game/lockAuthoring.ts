@@ -176,6 +176,9 @@ export type Lock = {
   readonly weights?: Weights
   readonly in: RegionId
   readonly out: RegionId
+  /** The one connection another lock may be spliced into (written `a -&> b`): its `in` meets `from`, its `out`
+   * meets `to`. The connection stays in `connections` as a plain corridor, which is what it is where nothing nests. */
+  readonly nestSpot?: { readonly from: RegionId; readonly to: RegionId }
 }
 
 /** A gate barring a whole region rather than a join between two. */
@@ -224,3 +227,29 @@ export const unladenFaults = (lock: Lock): UnladenFault[] => {
       faults.push({ type: "unladenCombined", barrier })
   return faults
 }
+
+const spotConnection = (lock: Lock): LockConnection | undefined => {
+  if (!lock.nestSpot) return undefined
+  const { from, to } = lock.nestSpot
+  return lock.connections.find(c => {
+    const [a, b] = joinOf(c)
+    return (a === from && b === to) || (a === to && b === from)
+  })
+}
+
+/** The barriers that share the nest spot's connection: a spot on a busy connection is no spot (designer,
+ * 2026-10-08), and the connection carves as written. */
+export const nestSpotBusy = (lock: Lock): BarrierId[] => {
+  const connection = spotConnection(lock)
+  return connection ? [...barriersOf(connection)] : []
+}
+
+/** The connection another lock may be spliced into, or undefined: no spot written, or its connection is busy. */
+export const nestSpotOf = (lock: Lock): { from: RegionId; to: RegionId } | undefined =>
+  lock.nestSpot && spotConnection(lock) && nestSpotBusy(lock).length === 0 ? lock.nestSpot : undefined
+
+/** A nest spot naming a connection the lock does not have (a JSON lock's typo; the notation cannot write one). */
+export type NestSpotFault = { type: "nestSpotOnNoConnection"; from: RegionId; to: RegionId }
+
+export const nestSpotFaults = (lock: Lock): NestSpotFault[] =>
+  lock.nestSpot && !spotConnection(lock) ? [{ type: "nestSpotOnNoConnection", ...lock.nestSpot }] : []

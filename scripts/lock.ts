@@ -20,6 +20,8 @@ import { lockQuality, solveLock, unreachedRegions } from "../src/game/lockReview
 import { LOCK_SYNTAX, parseLock } from "../src/game/lockNotation"
 import type { ParsedLock } from "../src/game/lockNotation"
 import { LESSONS, LOCK_CATALOGUE } from "../src/game/lockCatalogue"
+import { nestSpotBusy, nestSpotOf } from "../src/game/lockAuthoring"
+import type { Lock } from "../src/game/lockAuthoring"
 
 const args = process.argv.slice(2)
 const watching = args.includes("--watch")
@@ -28,6 +30,16 @@ const library: Record<string, ParsedLock> = { ...LOCK_CATALOGUE, ...LESSONS }
 // A name without `.lock` is a file under src/game/locks; watching a new one starts it there.
 const inLocks = named && named !== "-" && !named.endsWith(".lock") ? `src/game/locks/${named}.lock` : undefined
 const target = inLocks && (existsSync(inLocks) || (watching && !(named! in library))) ? inLocks : named
+
+/** The nest spot, or why it is ignored: a spot on a busy connection is no spot, and says so (D9). */
+const nestSpotLines = (lock: Lock): string[] => {
+  const spot = nestSpotOf(lock)
+  if (spot) return [`nest spot: ${spot.from} -&> ${spot.to}`]
+  const busy = nestSpotBusy(lock)
+  return lock.nestSpot && busy.length > 0
+    ? [`nest spot ignored: ${lock.nestSpot.from} -&> ${lock.nestSpot.to} also carries ${busy.join(", ")}`]
+    : []
+}
 
 const report = (name: string, { lock, drafts, refused }: ParsedLock, withJson: boolean): boolean => {
   const spec = walkSpecOf(lock, drafts)
@@ -47,6 +59,7 @@ const report = (name: string, { lock, drafts, refused }: ParsedLock, withJson: b
     walked.sound || deadEnd ? "✓ solvable" : `✗ not solvable: ${readable(describeLockWalkFailure(walked.failure))}`,
     ...(deadEnd ? [`✗ a dead end: ${readable(describeLockWalkFailure(walked.failure))}`] : []),
     `at the start ${open.length > 0 ? `these gates stand open: ${open.join(", ")}` : "no gate stands open"}`,
+    ...nestSpotLines(lock),
     ...needsFace(lock).map(({ gate, owners }) => `${gate} shows what it waits for: ${owners.join(", ")}`),
     ...sequences.map(id => `⚠ sequence ${id}: done stays fired, tiles anywhere — contract §8 open`),
     ...(unbuilt.length > 0 ? [`⚠ not buildable yet: ${unbuilt.join(", ")}`] : []),
