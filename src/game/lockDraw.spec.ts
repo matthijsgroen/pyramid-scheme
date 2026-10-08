@@ -78,3 +78,19 @@ describe("drawLock, with a loop of gates", () => {
     expect(art).not.toContain("without crossing")
   })
 })
+
+describe("drawLock, with a barrier named like an object method", () => {
+  it("draws a gate called constructor as a gate, not a drop", () => {
+    const { lock, drafts } = parseLock("in -[T]- out\nT toggle @in")
+    const [[id, gate]] = Object.entries(lock.gates)
+    const renamed = {
+      ...lock,
+      gates: { constructor: gate },
+      connections: lock.connections.map(c =>
+        typeof c === "object" && "barriers" in c ? { ...c, barriers: ["constructor"] } : c
+      ),
+    }
+    expect(id).toBeDefined()
+    expect(drawLock(renamed as typeof lock, drafts)).toContain("■T")
+  })
+})

@@ -62,7 +62,7 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
 
   const unique = (base: string) => {
     let id = base
-    for (let k = 2; id in gates || id in oneWays; k++) id = `${base}#${k}`
+    for (let k = 2; Object.hasOwn(gates, id) || Object.hasOwn(oneWays, id); k++) id = `${base}#${k}`
     return id
   }
   const region = (n: number, written: string) => {

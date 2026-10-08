@@ -291,14 +291,16 @@ const sketchOf = (lock: Lock, drafts: readonly string[]): Sketch => {
   lock.connections.forEach((connection, c) => {
     const [a, b] = joinOf(connection)
     const barriers = barriersOf(connection)
-    const drop = barriers.find(id => id in (lock.oneWays ?? {}))
+    const drop = barriers.find(id => Object.hasOwn(lock.oneWays ?? {}, id))
     if (!drop) {
       edges[String(c)] = { from: a, to: b, token: barriers.map(token).join(" ") }
       return
     }
     drops.push(lock.oneWays![drop])
     if (barriers.length > 1)
-      notes.push(`${a} ${barriers.map(id => (id in lock.oneWays! ? ">>" : `-[${token(id)}]-`)).join(" ")} ${b}`)
+      notes.push(
+        `${a} ${barriers.map(id => (Object.hasOwn(lock.oneWays!, id) ? ">>" : `-[${token(id)}]-`)).join(" ")} ${b}`
+      )
   })
   const boxes = Object.fromEntries(
     Object.keys(lock.regions).map(region => {
