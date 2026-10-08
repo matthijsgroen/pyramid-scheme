@@ -233,4 +233,22 @@ export const devRules: Rule[] = [
       // to carry the pin.
       seed: 111235356889676,
     }),
+  // 12 — stoneGate, read from its .lock file. Lifting the stone off the altar opens the back way and shuts the door
+  // in; a stone parked on the backroom shelf lets the explorer squeeze through the narrow passage; both stones are
+  // spent twice. Its gated joins close loops. Every region takes `free`, as on the other lock benches.
+  //
+  // Bound at the pyramid: the stones are stone plates, the activator a torch, empty hands a narrow passage.
+  journey(DEV_JOURNEY_ID)
+    .pyramid(12, {
+      difficulty: "expert",
+      pathPuzzles: 0,
+      realisations: { weights: "stonePlate", activator: "torch", unladen: "narrowPassage" },
+    })
+    .floor(0, {
+      locks: [{ lock: freeRegions(catalogueLock("stoneGate")) }],
+      // Recorded from the bake's own carve search (searchCarvePair): at the default packing the floor's own
+      // address seed carves on attempt 0, walks sound and leaves no dead region. A dev floor has no baked output
+      // to carry the pin.
+      seed: 111235356889677,
+    }),
 ]

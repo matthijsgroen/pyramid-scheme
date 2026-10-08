@@ -89,7 +89,7 @@ describe("the journey inspector on lock floors", () => {
 
   it("assembles every lock floor the dev journey stands", () => {
     const dev = lockFloors({ [DEV_JOURNEY_ID]: withDev[DEV_JOURNEY_ID] })
-    expect(dev.map(({ pyramidNumber }) => pyramidNumber)).toEqual([2, 4, 10, 11])
+    expect(dev.map(({ pyramidNumber }) => pyramidNumber)).toEqual([2, 4, 10, 11, 12])
     expect(dev.filter(floor => !assembles(floor))).toEqual([])
   })
 })

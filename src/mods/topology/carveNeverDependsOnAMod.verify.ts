@@ -66,7 +66,7 @@ const OPPOSITE = { n: "s", s: "n", e: "w", w: "e" } as const
 const FLOORS_WITH_MECHANICS = [
   "junior_2 level 2 floor 0",
   "expert_1 level 4 floor 0",
-  ...Array.from({ length: 11 }, (_, n) => `dev_topology level ${n + 1} floor 0`),
+  ...Array.from({ length: 12 }, (_, n) => `dev_topology level ${n + 1} floor 0`),
 ]
 // The floors holding a one-way drop with every mod.
 const FLOORS_WITH_DROPS = [
@@ -144,7 +144,7 @@ describe("every floor of the real world, the dev journey included", () => {
 
   it("was asked of the whole world, not of a handful of floors", () => {
     expect(carved.length).toBeGreaterThan(200)
-    expect(carved.filter(c => c.dev)).toHaveLength(11)
+    expect(carved.filter(c => c.dev)).toHaveLength(12)
   })
 
   it("carves other walls with the mod off on no floor", () => {
@@ -164,7 +164,7 @@ describe("every floor of the real world, the dev journey included", () => {
 
   it("carves every dev floor identically with the mod off, the floors that author a mechanic included", () => {
     const dev = carved.filter(c => c.dev)
-    expect(dev).toHaveLength(11)
+    expect(dev).toHaveLength(12)
     expect(dev.map(c => c.outcome.kind)).toEqual(Array(dev.length).fill("identical"))
   })
 
@@ -247,7 +247,7 @@ describe("the shipped world, built with the topology mod off", () => {
 
   it("builds the dev journey whole too, every floor assembling", () => {
     const sites = off[DEV_JOURNEY_ID]
-    expect(sites).toHaveLength(11)
+    expect(sites).toHaveLength(12)
     const failed = sites.flatMap((site, siteIdx) =>
       site.flatMap((floor, floorIndex) =>
         assembleReal(DEV_JOURNEY_ID, floor, siteIdx + 1, floorIndex, true).success ? [] : [`level ${siteIdx + 1}`]
