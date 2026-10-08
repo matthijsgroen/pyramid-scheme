@@ -1,7 +1,8 @@
 import type { Lock } from "./lockAuthoring"
-import { nestSpotFaults, nestSpotOf } from "./lockAuthoring"
+import { joinOf, nestSpotFaults, nestSpotOf } from "./lockAuthoring"
 import { compileLock } from "./lockCompile"
 import type { LockFragment, RealisationBinding } from "./lockCompile"
+import { regionRoute } from "./regions"
 import type { Region } from "./regions"
 import type { AssemblerReason, FloorConfig } from "./siteTypes"
 
@@ -17,7 +18,31 @@ export type PlacedLock = { lock: Lock; as?: string; inside?: { instance: string 
 
 /** A LOCK NESTED IN THE NEST SPOT OF ANOTHER, as the expansion leaves it for the floor's walk: the inner instance,
  * its host instance, and the inner's own regions and ports under their floor (namespaced) names. */
-export type LockNesting = { instance: string; host: string; regions: string[]; in: string; out: string }
+export type LockNesting = {
+  instance: string
+  host: string
+  regions: string[]
+  in: string
+  out: string
+  /** Absent when neither it nor any lock it stands in holds stones. */
+  stones?: StoneNesting
+}
+
+/**
+ * HOW A NESTED LOCK'S STONES MEET THOSE OF THE LOCKS IT STANDS IN (stones spec, "Nested locks"), read against the
+ * nearest of them that holds stones, at any depth: a stone carried through a lock without stones reaches whatever
+ * stands inside that one too. `pool` is the outermost lock of that chain holding stones, whose level a shared
+ * nesting is walked in and whose control the pooled stones take.
+ */
+export type StoneNesting =
+  /** It holds none, and a lock it stands in does: a stone from outside is carried through it. `oneWays`: it holds a
+   * one-way (off its route; one on it is refused), so the walk takes it with its pool. */
+  | { case: "passThrough"; pool: string; oneWays?: true }
+  /** It holds stones, and no lock it stands in does: none is carried on through its way out; one may go back out by
+   * its way in. */
+  | { case: "contained" }
+  /** It holds stones, and so does a lock it stands in: one pool across them. */
+  | { case: "shared"; pool: string }
 
 /** A LOCK INSTANCE AS PLACED ON A FLOOR: its regions under their floor (namespaced) names and, when nested, its
  * host and the two regions of the host's nest spot it stands between, in the spot's direction. */
@@ -39,6 +64,9 @@ export type LockNestingFault =
   | { type: "cycle"; through: string[] }
   /** A spot holds one lock; `with` is the placement that got there first. */
   | { type: "nestSpotTaken"; host: string; with: string }
+  /** A lock without stones that stands in one with them lets a stone through, so no one-way stands on its own route
+   * from in to out: every one-way takes empty hands. `oneWays` names them. One off the route is allowed. */
+  | { type: "oneWayOnPassThroughRoute"; pool: string; oneWays: string[] }
 
 /** The floor's own ground before its first lock and after its last. Belongs to no lock, so the exit is outside every one. */
 export const FLOOR_ENTRANCE = "entrance"
@@ -110,6 +138,33 @@ const seatNested = (placements: PlacedLock[]): { reasons: AssemblerReason[]; sea
   return { reasons, seats }
 }
 
+/** The stone case of every nested placement that has one. Cycles are refused before this is asked
+ * (`seatNested`); the walk up stops at one anyway. */
+export const stoneNestings = (placements: readonly PlacedLock[]): Map<string, StoneNesting> => {
+  const byName = new Map(placements.map(placed => [instanceName(placed), placed]))
+  const found = new Map<string, StoneNesting>()
+  for (const placed of placements) {
+    if (!placed.inside) continue
+    const instance = instanceName(placed)
+    const seen = new Set([instance])
+    let pool: string | undefined
+    for (let at = byName.get(placed.inside.instance); at && !seen.has(instanceName(at));) {
+      seen.add(instanceName(at))
+      if (at.lock.weights) pool = instanceName(at)
+      at = at.inside ? byName.get(at.inside.instance) : undefined
+    }
+    const holds = placed.lock.weights !== undefined
+    const oneWays = Object.keys(placed.lock.oneWays ?? {}).length > 0
+    if (pool !== undefined)
+      found.set(
+        instance,
+        holds ? { case: "shared", pool } : { case: "passThrough", pool, ...(oneWays ? { oneWays: true as const } : {}) }
+      )
+    else if (holds) found.set(instance, { case: "contained" })
+  }
+  return found
+}
+
 /**
  * THE FLOOR'S LOCKS COMPILED INTO ITS OWN VOCABULARY, or every reason they cannot be. The one place a floor's
  * `locks` and its `realisations` binding are read; the carve sees only what comes out, so a floor with locks
@@ -145,6 +200,33 @@ export const expandFloorLocks = (
 
   const nested = seatNested(placements)
   reasons.push(...nested.reasons)
+
+  // A PASS-THROUGH LOCK LETS A STONE THROUGH (stones spec, "Nested locks"): every one-way takes empty hands, so a
+  // one-way on its own route from in to out would turn the host's stone away. One off the route is a side way the
+  // stone never has to take; the floor walk takes that lock fused with its pool's level (floorLockWalk.ts).
+  const stoneCases = stoneNestings(placements)
+  for (const placed of placements) {
+    const stones = stoneCases.get(instanceName(placed))
+    if (stones?.case !== "passThrough") continue
+    const { lock } = placed
+    const route = regionRoute({
+      regions: Object.keys(lock.regions).map((name): Region => ({ name, appetite: "free" })),
+      connections: lock.connections.map(joinOf),
+      in: lock.in,
+      out: lock.out,
+    })
+    const onRoute = (a: string, b: string) =>
+      route.some((r, i) => i > 0 && ((route[i - 1] === a && r === b) || (route[i - 1] === b && r === a)))
+    const oneWays = Object.entries(lock.oneWays ?? {})
+      .filter(([, { from, to }]) => onRoute(from, to))
+      .map(([id]) => id)
+    if (oneWays.length > 0)
+      reasons.push({
+        type: "lockNestingRefused",
+        instance: instanceName(placed),
+        fault: { type: "oneWayOnPassThroughRoute", pool: stones.pool, oneWays },
+      })
+  }
 
   const binding: RealisationBinding = config.realisations ?? {}
   const compiled: LockFragment[] = []
@@ -204,7 +286,15 @@ export const expandFloorLocks = (
   const regionBarrierRealisation = all.find(fragment => fragment.regionBarrierRealisation)?.regionBarrierRealisation
   const nesting: LockNesting[] = nested.seats.map(({ instance, host }) => {
     const layout = fragments.get(instance)!.regionLayout
-    return { instance, host, regions: layout.regions.map(region => region.name), in: layout.in, out: layout.out }
+    const stones = stoneCases.get(instance)
+    return {
+      instance,
+      host,
+      regions: layout.regions.map(region => region.name),
+      in: layout.in,
+      out: layout.out,
+      ...(stones ? { stones } : {}),
+    }
   })
   const placed: PlacedInstance[] = ordered.map(({ name, fragment }) => {
     const inside = insideOf.get(name)
