@@ -120,9 +120,7 @@ const serializeObstacle = (o: Obstacle): string => {
           .map(k => `, ${k}: ${(GATE_TERMS[k] as (v: unknown) => string)(o[k])}`)
           .join("")
       : ""
-  // A drop the lock takes with empty hands keeps saying so.
-  const unladen = o.kind === "oneWay" && o.unladen ? ", unladen: true" : ""
-  return `{ id: ${JSON.stringify(o.id)}, kind: ${JSON.stringify(o.kind)}, at: { on: ${JSON.stringify(o.at.on)}, ${at} }${terms}${unladen} }`
+  return `{ id: ${JSON.stringify(o.id)}, kind: ${JSON.stringify(o.kind)}, at: { on: ${JSON.stringify(o.at.on)}, ${at} }${terms} }`
 }
 
 // `opens` is a Record<state, obstacleId[]>, which `serializeObject` cannot reach either.

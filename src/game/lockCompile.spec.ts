@@ -610,26 +610,20 @@ describe("a lock with stones", () => {
   })
 })
 
-describe("a drop that takes empty hands", () => {
-  const lock = () => parseLock("in -- yard\nyard -- out\nout -[unladen]- >> in\nshelf plate @yard stone", "drop").lock
+describe("empty hands written on a drop", () => {
+  const STONES = "in -- yard\nyard -- out\nshelf plate @yard stone"
 
-  it("is checked whole: empty hands beside a drop are the drop's own condition", () => {
-    expect(checkLock(lock())).toEqual([])
-  })
-
-  it("compiles empty hands into the drop, never into a door of its own", () => {
-    const fragment = fragmentOf(lock(), { weights: "stonePlate", "one-way": "zipline" })
-    expect(fragment.obstacles).toEqual([
-      { id: "out>in", kind: "oneWay", at: { on: "connection", between: ["out", "in"] }, unladen: true },
+  it.each([
+    ["before", "out -[unladen]- >> in"],
+    ["after", "out >> -[unladen]- in"],
+  ])("is refused by name, written %s the drop: a drop already takes empty hands", (_, line) => {
+    expect(checkLock(parseLock(`${STONES}\n${line}`, "drop").lock)).toEqual([
+      { type: "unladenOnDrop", barrier: "out-in", oneWay: "out>in" },
     ])
-    expect(fragment.controls).toContainEqual(expect.objectContaining({ control: "weights", terms: {} }))
   })
 
   it("still refuses a drop beside a door anything else owns", () => {
-    const shared = parseLock(
-      "in -- yard\nyard -- out\nout -[p+unladen]- >> in\np plate @yard\nshelf plate @yard stone",
-      "drop"
-    ).lock
+    const shared = parseLock(`${STONES}\nout -[p+unladen]- >> in\np plate @yard`, "drop").lock
     expect(checkLock(shared)).toContainEqual(expect.objectContaining({ type: "oneWaySharesConnection" }))
   })
 })
@@ -648,7 +642,7 @@ describe("a mechanic of an effect-only kind", () => {
   })
 
   it("leaves the gate owner unladen and the drop one-way alone", () => {
-    const lock = parseLock("in -- yard\nyard -- out\nout -[unladen]- >> in\nshelf plate @yard stone", "drop").lock
+    const lock = parseLock("in -- yard\nyard -[unladen]- out\nout >> in\nshelf plate @yard stone", "drop").lock
     expect(checkLock(lock).map(fault => fault.type)).not.toContain("effectOnlyMechanic")
   })
 })

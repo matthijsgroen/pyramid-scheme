@@ -8,15 +8,11 @@ export type OneWayRealisationMeta = {
   /** Locale key of the crossing's prompt. It says the crossing cannot be undone and never where it lands.
    * A realisation that declares none is refused where a one-way is bound to it. */
   prompt?: string
-  /** This crossing needs both hands: a carrying walk is turned away at the launch with the one blocked line
-   * (`ui.blocked.carrying`). Unset where a stone may be carried across. */
-  handsFull?: boolean
 }
 
 /** Resolves the realisation a one-way names. Given `undefined` an answer means the caller binds a one-way
  * that names none; production answers nothing, so an unbound one-way is refused. */
 export type ResolveOneWayRealisation = (id: string | undefined) => OneWayRealisationMeta | undefined
 
-/** Why a one-way cannot be bound: it names no realisation, or one with no prompt, or one that needs both hands on a
- * stone floor whose lock lets a stone ride the drop (play would turn back a walk the solver takes). */
-export type OneWayRefusal = "unbound" | "noPrompt" | "stonePasses"
+/** Why a one-way cannot be bound: it names no realisation, or one with no prompt. */
+export type OneWayRefusal = "unbound" | "noPrompt"

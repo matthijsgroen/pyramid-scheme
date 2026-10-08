@@ -271,27 +271,6 @@ describe("generateFile — a gate on a connection survives the bake", () => {
     )
   })
 
-  it("keeps a drop's empty hands", () => {
-    const floor = {
-      pathPuzzles: 0,
-      difficulty: "starter" as const,
-      end: "treasure" as const,
-      exitOrStaircase: "exit" as const,
-      sideSections: [],
-      obstacles: [
-        {
-          id: "chute",
-          kind: "oneWay" as const,
-          at: { on: "connection" as const, between: ["a", "b"] as const },
-          unladen: true as const,
-        },
-      ],
-    }
-    expect(generateFile({ testJourney: [[floor]] })).toContain(
-      'obstacles: [{ id: "chute", kind: "oneWay", at: { on: "connection", between: ["a", "b"] }, unladen: true }]'
-    )
-  })
-
   it("keeps the passage a gate is bound to", () => {
     const floor = {
       pathPuzzles: 0,

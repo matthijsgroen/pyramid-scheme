@@ -49,7 +49,6 @@ const DEFAULT_ONE_WAY: OneWayRealisationMeta = {
   id: "zipline",
   ownerMod: "topology",
   prompt: "ui.prompt.zipline",
-  handsFull: true,
 }
 
 // The same fallback for a one-way: a caller with no registry binds a one-way that names none to the one

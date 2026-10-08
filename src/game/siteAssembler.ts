@@ -848,24 +848,18 @@ const assembleExpandedFloor = (
   // player could take by accident, and nothing may stand in for the role an author forgot to bind. A
   // realisation no registered mod declares is not a mistake in the floor: the carve is the same and the
   // passage degrades to an ordinary two-way one (`degradeUnrealised`).
-  // A STONE FLOOR'S DROP IS CROSSED WITH THE HANDS ITS LOCK ALLOWS: a realisation that needs both hands on a drop the
-  // lock lets a stone ride would turn back in play a walk the solver takes, so it is refused by name. The lock says
-  // empty hands with `-[unladen]- >>`, which the drop then carries (`OneWayObstacle.unladen`).
-  const holdsStones = (authoredConfig.controls ?? []).some(isWeights)
   const realisationRefusals = [
-    ...(authoredConfig.oneWays ?? []).map(({ from, to }) => ({ from, to, unladen: false })),
+    ...(authoredConfig.oneWays ?? []),
     ...(authoredConfig.obstacles ?? []).flatMap(o =>
-      o.kind === "oneWay" ? [{ from: o.at.between[0], to: o.at.between[1], unladen: o.unladen === true }] : []
+      o.kind === "oneWay" ? [{ from: o.at.between[0], to: o.at.between[1] }] : []
     ),
-  ].flatMap(({ from, to, unladen }) => {
+  ].flatMap(({ from, to }) => {
     const named = authoredConfig.oneWayRealisation
     const bound = resolveOneWay(named)
     const why: OneWayRefusal | undefined = bound
-      ? !bound.prompt
-        ? "noPrompt"
-        : holdsStones && bound.handsFull && !unladen
-          ? "stonePasses"
-          : undefined
+      ? bound.prompt
+        ? undefined
+        : "noPrompt"
       : named === undefined
         ? "unbound"
         : undefined
@@ -3775,11 +3769,6 @@ const assembleExpandedFloor = (
     // obstacle cells name none and nothing names them, so they are an island in the walk graph and the
     // launch's side and the landing's side share no edge through them. There is no check to forget:
     // the way across does not exist as data, and taking the drop is the one thing that joins the two ends.
-    //
-    // A drop the lock takes with empty hands says so on every cell of its span, which is where the walk reads it.
-    const unladenDrops = new Set(
-      (authoredConfig.obstacles ?? []).flatMap(o => (o.kind === "oneWay" && o.unladen ? [o.id] : []))
-    )
     for (const edge of oneWayEdges) {
       const writeStub = (cellKey: string, owner: string, other: string, dirs: Set<Direction>, index: number) => {
         const [r, c] = cellKey.split(",").map(Number)
@@ -3800,15 +3789,7 @@ const assembleExpandedFloor = (
         writeStub(cellKey, edge.from, edge.to, new Set(), k + 1)
         const [r, c] = cellKey.split(",").map(Number)
         const cell = cells2D[r][c]
-        if (cell.type === "corridor")
-          cells2D[r][c] = {
-            ...cell,
-            obstacle: {
-              dir: edge.dir,
-              kind: edge.realisation,
-              ...(edge.obstacleId !== undefined && unladenDrops.has(edge.obstacleId) ? { unladen: true as const } : {}),
-            },
-          }
+        if (cell.type === "corridor") cells2D[r][c] = { ...cell, obstacle: { dir: edge.dir, kind: edge.realisation } }
       })
       writeStub(edge.landing, edge.to, edge.from, new Set([edge.dir]), oneWayRunCells(edge.dir) + 1)
       joinNode(edge.to, OPPOSITE[edge.dir])

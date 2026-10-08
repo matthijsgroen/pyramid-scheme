@@ -2,7 +2,7 @@
 // handed, and the lift opens from below. Weigh it down there, then bring the other stone by lift.
 
 in -- gallery
-gallery -[unladen]- >> chamber
+gallery >> chamber
 gallery -[low]- chamber
 chamber -[q+low]- out
 low plate @chamber

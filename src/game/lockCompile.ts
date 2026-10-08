@@ -1,14 +1,5 @@
 import type { Lock, LockMechanic } from "./lockAuthoring"
-import {
-  absorbUnladen,
-  barriersOf,
-  CARRY_TERMS,
-  dropConditionsOn,
-  isRegionGate,
-  isUnladenGate,
-  isWeightOwner,
-  joinOf,
-} from "./lockAuthoring"
+import { barriersOf, CARRY_TERMS, isRegionGate, isUnladenGate, isWeightOwner, joinOf } from "./lockAuthoring"
 import type { LooseMechanic, ResolveMechanicKind } from "./mechanics"
 import { resolveMechanicKind } from "./mechanics"
 import type { BarrierOrder, Control, Obstacle, TopologyFault } from "./obstacles"
@@ -58,6 +49,8 @@ export type LockFault =
   | { type: "regionGateOnConnection"; barrier: string; between: [string, string] }
   /** A one-way stands on a connection beside another barrier, which the floor vocabulary cannot say. */
   | { type: "oneWaySharesConnection"; between: [string, string]; barriers: string[] }
+  /** Empty hands written on a drop's connection: a drop already takes empty hands. */
+  | { type: "unladenOnDrop"; barrier: string; oneWay: string }
   | { type: "gateOwnerUnknown"; barrier: string; owner: string }
   /** A plate stands in a region the lock does not have. */
   | { type: "plateNamesNoRegion"; plate: string; region: string }
@@ -118,9 +111,7 @@ const kindsUsed = (lock: Lock): Map<string, string[]> => {
   for (const [id, mechanic] of Object.entries(lock.mechanics)) add(mechanic.control, id)
   for (const id of Object.keys(lock.oneWays ?? {})) add("one-way", id)
   if (lock.weights) add("weights", "stones")
-  // A gate empty hands alone open is a passage to be dressed, unless it stands beside a drop that carries it.
-  for (const [id, gate] of Object.entries(absorbUnladen(lock).lock.gates))
-    if (isUnladenGate(gate)) add(PASSAGE_KIND, id)
+  for (const [id, gate] of Object.entries(lock.gates)) if (isUnladenGate(gate)) add(PASSAGE_KIND, id)
   return used
 }
 
@@ -164,14 +155,18 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
           faults.push({ type: "barrierOffItsConnection", barrier, between: join })
       }
     }
-    // Empty hands beside a drop are the drop's own condition (`absorbUnladen`), not a second barrier on it.
-    const conditions = dropConditionsOn(lock, barriers)
+    const drop = barriers.find(barrier => Object.hasOwn(oneWays, barrier))
+    if (drop === undefined) continue
+    // A drop already takes empty hands, so empty hands written beside it are refused by that name alone.
+    const emptyHands = barriers.filter(
+      barrier => Object.hasOwn(lock.gates, barrier) && isUnladenGate(lock.gates[barrier])
+    )
+    for (const barrier of emptyHands) faults.push({ type: "unladenOnDrop", barrier, oneWay: drop })
     const standing = barriers.filter(
       barrier =>
-        Object.hasOwn(oneWays, barrier) || (Object.hasOwn(lock.gates, barrier) && !conditions.includes(barrier))
+        Object.hasOwn(oneWays, barrier) || (Object.hasOwn(lock.gates, barrier) && !emptyHands.includes(barrier))
     )
-    if (standing.some(barrier => Object.hasOwn(oneWays, barrier)) && standing.length > 1)
-      faults.push({ type: "oneWaySharesConnection", between: join, barriers: standing })
+    if (standing.length > 1) faults.push({ type: "oneWaySharesConnection", between: join, barriers: standing })
   }
   for (const [barrier, count] of namedOn) if (count > 1) faults.push({ type: "barrierNamedTwice", barrier })
 
@@ -273,12 +268,11 @@ const unboundFaults = (lock: Lock, binding: RealisationBinding, kinds: ResolveMe
  * - sequence -> a sequence control; connection barriers -> `barrierOrder` where a connection has several.
  */
 const translate = (
-  authored: Lock,
+  lock: Lock,
   binding: RealisationBinding,
   namespace: string | undefined,
   kinds: ResolveMechanicKind
 ): LockFragment => {
-  const { lock, unladen } = absorbUnladen(authored)
   const name = (id: string) => (namespace === undefined ? id : `${namespace}.${id}`)
   const oneWays = lock.oneWays ?? {}
   const standsAlone = new Set(
@@ -318,7 +312,6 @@ const translate = (
       id: name(id),
       kind: "oneWay",
       at: { on: "connection", between: [name(oneWay.from), name(oneWay.to)] },
-      ...(unladen.has(id) ? { unladen: true as const } : {}),
     })
 
   const controls: Control[] = []

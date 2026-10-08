@@ -126,7 +126,7 @@ const oneWaysOf = (grid: FloorGrid, of: Map<string, RegionId>): NonNullable<Lock
   for (const run of oneWayRuns(grid)) {
     const from = of.get(posKey(run.launch[0], run.launch[1]))
     const to = of.get(posKey(run.landing[0], run.landing[1]))
-    if (from && to && from !== to) found.push({ from, to, ...(run.unladen ? { unladen: true as const } : {}) })
+    if (from && to && from !== to) found.push({ from, to })
   }
   return found
 }

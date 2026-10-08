@@ -41,9 +41,9 @@ export type LockSpec = {
   regions: RegionId[]
   gates: Record<GateId, LockGate>
   mechanisms: Record<MechanismId, Mechanism>
-  /** Directed, region to region: a drop the player takes one way. `unladen`: only with hands that may leave the
-   * floor, so no stone rides it. */
-  oneWays?: { from: RegionId; to: RegionId; unladen?: true }[]
+  /** Directed, region to region: a drop the player takes one way, and only with hands that may leave the floor, so
+   * no stone rides it. */
+  oneWays?: { from: RegionId; to: RegionId }[]
   /** Two regions that touch with nothing between them: walked freely, both ways. */
   passages?: { a: RegionId; b: RegionId }[]
   /** Where the player arrives, and where they leave for. */
@@ -108,7 +108,8 @@ export const checkLockSpec = (spec: LockSpec): string | undefined => {
   return undefined
 }
 
-/** Whether the way out may be left in this config: no mechanism it waits on is in a state it refuses. */
+/** Whether the hands are empty in this config, so the way out and every one-way take them: no mechanism the way out
+ * waits on is in a state it refuses. */
 const mayLeave = (spec: LockSpec, config: LockConfig): boolean =>
   (spec.leaveWith ?? []).every(({ mechanism, notIn }) => !notIn.includes(config[mechanism]))
 
@@ -158,7 +159,7 @@ const movesFrom = (spec: LockSpec, state: LockState): LockState[] => {
     if (gate.to === region) moves.push({ region: gate.from, config })
   }
   for (const oneWay of spec.oneWays ?? [])
-    if (oneWay.from === region && (!oneWay.unladen || mayLeave(spec, config))) moves.push({ region: oneWay.to, config })
+    if (oneWay.from === region && mayLeave(spec, config)) moves.push({ region: oneWay.to, config })
   for (const { a, b } of spec.passages ?? []) {
     if (a === region) moves.push({ region: b, config })
     if (b === region) moves.push({ region: a, config })
