@@ -114,6 +114,14 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
   the cell's `dirs`.
 - Tapping the wall when the near side is itself a node bypasses that node's offer.
 
+## Open after phase 4
+
+- The lay prunes a branch where a placed region has fewer free sides than corridors still to lay
+  (`src/game/layLocks.ts`), only on a plan with a cycle, so tree locks keep their baked layouts. Make it
+  unconditional: one lay path, faster for every lock. It moves lock floors already in the world (sluice 15/20
+  seeds, plates 16/20), so it comes with a re-bake and a check of what saved per-cell floor state does on a
+  moved layout (migrate if needed). Designer: fine either way, as long as it is done.
+
 ## Open per phase
 
 - **Phase 5:** the torch and the plate need `prim_*` geometry in `scripts/renderProp.py`, then the
