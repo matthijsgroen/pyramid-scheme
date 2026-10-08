@@ -250,27 +250,23 @@ describe("a door the stones hold", () => {
     expect(lit?.map(m => m.lit)).toEqual([true, false])
   })
 
-  it("marks a plate wanting none lit while it is empty, and empty hands lit while nothing is carried", () => {
-    const door = faceOf(stoneFloor("in -[p:empty+unladen]- out\np plate @in\nshelf plate @in stone\nin ?\nout ?"))
+  const EMPTY_AND_STONE = "in -[p:empty+q]- out\np plate @in\nq plate @in\nshelf plate @in stone\nin ?\nout ?"
+
+  it("marks a plate wanting none lit while it is empty", () => {
+    const door = faceOf(stoneFloor(EMPTY_AND_STONE))
     expect(door?.gateFace?.markers).toEqual([
       { id: "stones.p", icon: { kind: "plate", wants: "empty" }, lit: true },
-      { id: "unladen", icon: { kind: "hands" }, lit: true },
+      { id: "stones.q", icon: { kind: "plate", wants: "stone" }, lit: false },
     ])
   })
 
-  describe("on a door that wants an empty plate and empty hands", () => {
-    const EMPTY_AND_HANDS = "in -[p:empty+unladen]- out\np plate @in\nshelf plate @in stone\nin ?\nout ?"
+  describe("on a door that wants an empty plate and a stone on another", () => {
     const markersWith = (pick: (grid: FloorGrid, record: MechanismRecord) => string) => {
-      const grid = stoneFloor(EMPTY_AND_HANDS)
+      const grid = stoneFloor(EMPTY_AND_STONE)
       const record = grid.cells.flat().find(cell => cell.type === "room" && cell.mechanism?.weighs)!
       const state = pick(grid, (record as RoomCell).mechanism!)
       return faceOf(grid, new Map([[homeAddress(grid), state]]))?.gateFace?.markers.map(m => [m.id, m.lit])
     }
-
-    it("lights the hands no more once a stone is in hand", () => {
-      const markers = markersWith((_, record) => record.states.find(s => arrangementOf(s).hand)!)
-      expect(markers).toContainEqual(["unladen", false])
-    })
 
     it("lights an empty plate no more once a stone lies on it", () => {
       const markers = markersWith((_, record) =>
@@ -283,7 +279,7 @@ describe("a door the stones hold", () => {
       const markers = markersWith(() => "stones.p stones.nowhere")
       expect(markers).toEqual([
         ["stones.p", true],
-        ["unladen", true],
+        ["stones.q", false],
       ])
     })
   })

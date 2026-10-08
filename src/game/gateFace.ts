@@ -8,12 +8,11 @@ import type { FloorGrid, GridCell, KeyColor, MechanismRecord, RoomCell } from ".
 
 /** What an owner looks like on the face: a mechanism wears its own family's icon (a flame for a torch),
  * a floor key wears a key in its colour; a plate the door waits on shows as a stone, or as the bare plate where
- * the door wants it empty; empty hands wear hands. Plates are all alike: nothing tells one from another. */
+ * the door wants it empty. Plates are all alike: nothing tells one from another. */
 export type GateOwnerIcon =
   | { kind: "mechanism"; family: string }
   | { kind: "key"; color?: KeyColor }
   | { kind: "plate"; wants: "stone" | "empty" }
-  | { kind: "hands" }
 
 /** One owner of the door, unlit until its current state names the door. */
 export type GateMarker = { id: string; icon: GateOwnerIcon; lit: boolean }
@@ -52,7 +51,7 @@ const ownersOf = (grid: FloorGrid, gateKeyId: string): Owner[] => {
 
 // A face is owed only where operating an owner can change nothing visible: an `and` door with more than
 // one owner. A single owner teaches by consequence, and an `any` door opens on the first owner touched.
-// Each term a door puts on a lock's stones (a plate, empty hands) is one owner here, so a door one plate
+// Each plate a door waits on is one owner here, so a door one plate
 // holds teaches by consequence as a single lever does.
 // A door a sequence opens or resets at is owed one besides: nothing else says what order it waits on.
 const needsFace = (mechanisms: readonly MechanismRecord[], ownerCount: number, gateKeyId: string): boolean =>
@@ -83,7 +82,8 @@ const stoneHomesOf = (grid: FloorGrid): StoneHome[] => {
   return homes
 }
 
-// One marker per term a door puts on the stones, lit while it holds. The arrangement is read as play reads it
+// One marker per plate a door waits on, lit while it agrees: empty hands stand alone as a narrow passage, never on
+// a door's face. The arrangement is read as play reads it
 // (`arrangementIn`), so a stale save shows the start the plates are drawn in.
 const stoneMarkers = (
   grid: FloorGrid,
@@ -99,12 +99,11 @@ const stoneMarkers = (
       arrangementIn(mechanism, storedAtCell(grid, floor, at[0], at[1], positions))
     )
     const stones = { weighted: new Set(weighted), hand }
-    return entry.terms.map((term): GateMarker => ({
-      ...(term.kind === "plate"
-        ? { id: term.plate, icon: { kind: "plate", wants: term.wants } }
-        : { id: "unladen", icon: { kind: "hands" } }),
-      lit: termHolds(term, stones),
-    }))
+    return entry.terms.flatMap((term): GateMarker[] =>
+      term.kind === "plate"
+        ? [{ id: term.plate, icon: { kind: "plate", wants: term.wants }, lit: termHolds(term, stones) }]
+        : []
+    )
   })
 
 const isGateDoor = (cell: GridCell): cell is RoomCell & { requiredKeyId: string } =>

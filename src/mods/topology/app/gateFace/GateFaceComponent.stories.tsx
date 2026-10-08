@@ -5,7 +5,7 @@ import { GateFaceComponent } from "./GateFaceComponent"
 import "@/mods/registerModApps"
 
 // EVERY LOOK A DOOR'S FACE HAS: plates (a stone where the door wants one, bare where it wants none), a sequence's
-// symbols, empty hands, and owners of every kind on one door. The face reads only `ctx.gateFace`; the rest of the
+// symbols, and owners of every kind on one door. The face reads only `ctx.gateFace`; the rest of the
 // family props are inert here.
 const DoorFace: FC<{ face: GateFace }> = ({ face }) => {
   const props = {
@@ -39,10 +39,6 @@ export const PlateLeftEmpty: Story = {
   },
 }
 
-export const EmptyHands: Story = {
-  args: { face: { markers: [stone("stones.p", true), { id: "unladen", icon: { kind: "hands" }, lit: false }] } },
-}
-
 export const SequenceSymbols: Story = {
   args: {
     face: {
@@ -68,7 +64,6 @@ export const Mixed: Story = {
         { id: "L", icon: { kind: "mechanism", family: "handle" }, lit: true },
         { id: "T", icon: { kind: "mechanism", family: "torch" }, lit: false },
         stone("stones.p", true),
-        { id: "unladen", icon: { kind: "hands" }, lit: false },
         { id: "k", icon: { kind: "key" }, lit: false },
       ],
       sequences: [

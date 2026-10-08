@@ -154,7 +154,8 @@ export type Weights = {
   >
 }
 
-/** Gate owners that are conditions on the stones rather than something placed: empty hands. */
+/** Gate owners that are conditions on the stones rather than something placed: empty hands, which stand alone on
+ * their gate as a narrow passage. */
 export const CARRY_TERMS = ["unladen"] as const
 
 /**

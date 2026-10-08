@@ -51,6 +51,8 @@ export type LockFault =
   | { type: "oneWaySharesConnection"; between: [string, string]; barriers: string[] }
   /** Empty hands written on a drop's connection: a drop already takes empty hands. */
   | { type: "unladenOnDrop"; barrier: string; oneWay: string }
+  /** A gate names empty hands beside another owner: `unladen` is the narrow passage and stands alone. */
+  | { type: "unladenCombined"; barrier: string }
   | { type: "gateOwnerUnknown"; barrier: string; owner: string }
   /** A plate stands in a region the lock does not have. */
   | { type: "plateNamesNoRegion"; plate: string; region: string }
@@ -181,6 +183,9 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
       }
       if (!Object.hasOwn(lock.mechanics, owner)) faults.push({ type: "gateOwnerUnknown", barrier: id, owner })
     }
+    // Empty hands are the narrow passage's keyword: they stand alone, never beside another owner.
+    if (gate.owners.length > 1 && gate.owners.some(owner => (CARRY_TERMS as readonly string[]).includes(owner)))
+      faults.push({ type: "unladenCombined", barrier: id })
     if (isRegionGate(gate)) {
       need(`gate ${id}`, gate.region)
       continue

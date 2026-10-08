@@ -15,7 +15,6 @@ const iconFor = (icon: GateOwnerIcon) => {
     const src = sharedTileUrl(icon.wants === "stone" ? "plateStone" : "plate")
     return src ? <img src={src} width={40} height={(40 * PROP_H) / CELL} alt="" /> : <span aria-hidden="true">▭</span>
   }
-  if (icon.kind === "hands") return <span aria-hidden="true">🤲</span>
   return <span aria-hidden="true">{getFamilyPlugin(icon.family)?.meta.icon ?? "◇"}</span>
 }
 
@@ -27,9 +26,7 @@ const ownerOf = (icon: GateOwnerIcon): string =>
       ? icon.wants === "stone"
         ? "plateStone"
         : "plateEmpty"
-      : icon.kind === "hands"
-        ? "hands"
-        : icon.family
+      : icon.family
 
 // A door shows what it waits for: one marker per owner, lit as that owner stands, and the order of any
 // sequence, tile by tile. Reading changes no state; only the explicit start-again writes one, and the door

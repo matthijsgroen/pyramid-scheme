@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { resolvePassageRealisation } from "@/mods/allPassageRealisations"
-import { compileLock } from "./lockCompile"
+import { checkLock, compileLock } from "./lockCompile"
 import { parseLock } from "./lockNotation"
 import { assembleFloor } from "./siteAssembler"
 import type { FloorGrid, RoomCell } from "./siteTypes"
@@ -30,13 +30,12 @@ describe("a gate empty hands alone open", () => {
   })
 
   it.each([
-    ["every owner", "in -[p+unladen]- out"],
-    ["any owner", "in -[p|unladen]- out"],
-  ])("leaves a door that also waits on a plate (%s) a door", (_, line) => {
-    const lock = parseLock(`${line}\np plate @in\nshelf plate @in stone`, "stones").lock
-    const result = compileLock(lock, { weights: "stonePlate" })
-    if (!result.ok) throw new Error(JSON.stringify(result.faults))
-    expect(result.fragment.obstacles.filter(o => o.kind === "gate" && o.passage !== undefined)).toEqual([])
+    ["every owner, beside a plate", "in -[p+unladen]- out"],
+    ["any owner, beside a plate", "in -[p|unladen]- out"],
+    ["every owner, beside a lever", "in -[L+unladen]- out"],
+  ])("is refused by name when combined with another owner (%s): unladen stands alone", (_, line) => {
+    const lock = parseLock(`${line}\np plate @hall\nL toggle @in\nshelf plate @in stone\nin -- hall`, "stones").lock
+    expect(checkLock(lock)).toContainEqual({ type: "unladenCombined", barrier: "in-out" })
   })
 })
 

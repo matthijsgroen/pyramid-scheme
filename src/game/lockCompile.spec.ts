@@ -621,11 +621,6 @@ describe("empty hands written on a drop", () => {
       { type: "unladenOnDrop", barrier: "out-in", oneWay: "out>in" },
     ])
   })
-
-  it("still refuses a drop beside a door anything else owns", () => {
-    const shared = parseLock(`${STONES}\nout -[p+unladen]- >> in\np plate @yard`, "drop").lock
-    expect(checkLock(shared)).toContainEqual(expect.objectContaining({ type: "oneWaySharesConnection" }))
-  })
 })
 
 describe("a mechanic of an effect-only kind", () => {

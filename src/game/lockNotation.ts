@@ -10,7 +10,7 @@ export const LOCK_SYNTAX = `
   in -[S1]- hall                gate: open while S1 is in its second state
   in -[S1:a]- hall              gate: open while S1 is in state a
   in -[A+B]- hall               every owner   ·   -[A|B]- any owner
-  hall >> in                    one-way
+  hall >> in                    one-way, taken only with empty hands
   in -[Y]- >> hall              one join, several barriers, in order from the left region
   hall -[sluice:wet]            region gate: hall impassable unless sluice is wet
   S1 toggle @s1                 two states a b, back and forth, starts at a
@@ -20,7 +20,7 @@ export const LOCK_SYNTAX = `
   P sequence hall vault reset hall-vault   steps in order, reset at that gate; -[P]- opens when done
   p1 plate @hall   p2 plate @hall stone   a plate, empty or with a stone on it; any stone presses any plate
   in -[p1]- hall   in -[p1:empty]- hall    open while a stone rests on p1, or while none does
-  in -[unladen]- hall           only with empty hands: a zipline, a narrow passage
+  in -[unladen]- hall           a narrow passage, only with empty hands; written alone, never beside >>
   hall *   s2 $   spare ?   corridor -     takes puzzles, a reward, anything, nothing
   // comment
 `.slice(1)

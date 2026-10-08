@@ -204,7 +204,6 @@ describe("weights", () => {
       "in -[p:empty+q:empty+L]- out\np plate @in stone\nq plate @in stone\nL toggle @in",
       "line 1: gate in-out: its stones never open it",
     ],
-    ["in -[p:empty+unladen+L]- out\np plate @in stone\nL toggle @in", "line 1: gate in-out: its stones never open it"],
     ["in -- out\np plate @in\np plate @out", "line 3: p is placed twice"],
   ])("refuses %j", (text, message) => {
     expect(() => parseLock(text)).toThrow(message)

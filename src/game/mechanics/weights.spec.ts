@@ -142,13 +142,12 @@ describe("the explorer's weight", () => {
 })
 
 describe("a gate's stone terms", () => {
-  it("names each plate a gate waits on and what it wants of it, and empty hands", () => {
-    const control = controlOf("in -[a+b:empty+unladen]- out\na plate @in stone\nb plate @in")
+  it("names each plate a gate waits on and what it wants of it", () => {
+    const control = controlOf("in -[a+b:empty]- out\na plate @in stone\nb plate @in")
     expect(control.terms).toEqual({
       "in-out": [
         { kind: "plate", plate: "a", wants: "stone" },
         { kind: "plate", plate: "b", wants: "empty" },
-        { kind: "unladen" },
       ],
     })
   })
