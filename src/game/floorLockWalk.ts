@@ -16,11 +16,13 @@ import type { FloorGrid } from "./siteTypes"
 // The product of a host's states and a nested lock's states is what a nesting must not cost, so a nested lock is
 // checked on its own and the host walks over what the nested lock amounts to for it.
 //
-// STONES FOLLOW THE CUT where nothing inside a nested lock reads a hand: a nesting without stones, or a
-// pass-through with no one-way (floorLocks.ts refuses one on its route, and a narrow passage in it). Anywhere else
-// the nesting is walked fused with the level its stones reach: a shared one, and a pass-through with a one-way off
-// its route, in its pool's level; a contained one in the floor's own, since its stones may leave by its way in.
-// Every level that holds stones keeps `emptyHands`, so its drops take empty hands whatever its way out is.
+// A NESTED LOCK IS WALKED APART only when nothing in it reads a hand: it holds no stones and no one-way, or the floor
+// holds no stone at all. A lock without stones never holds a narrow passage (`carryWithoutStones` in compileLock),
+// so its one-ways are all that could read one. Anywhere else the nesting is walked fused with the level its stones
+// reach: a shared one, and a pass-through with a one-way off its route, in its pool's level; a contained one in the
+// floor's own, since its stones may leave by its way in; and a one-way in any other in the floor's own, since a
+// stone of any lock may be carried to it. Every level that holds stones keeps `emptyHands`, so its drops take empty
+// hands whatever its way out is.
 
 export type FloorWalkFailure =
   | LockWalkFailure
@@ -103,6 +105,15 @@ const cutOf = (grid: FloorGrid, lock: LockSpec): Cut => {
       if (!fusedInto.has(at)) fusedInto.set(at, into)
     }
   }
+  const { of } = regionsOf(grid)
+  const labels = new Map<RegionId, Set<string>>()
+  grid.cells.forEach((row, r) =>
+    row.forEach((cell, c) => {
+      const id = of.get(`${r},${c}`)
+      if (id === undefined || (cell.type !== "room" && cell.type !== "corridor") || cell.region === undefined) return
+      labels.set(id, (labels.get(id) ?? new Set()).add(cell.region))
+    })
+  )
   const pooledBy: string[] = []
   for (const { instance, stones } of nesting) {
     if (stones?.case === "shared" || (stones?.case === "passThrough" && stones.oneWays)) {
@@ -110,6 +121,15 @@ const cutOf = (grid: FloorGrid, lock: LockSpec): Cut => {
       pooledBy.push(stones.pool)
     } else if (stones?.case === "contained") fuse(instance, undefined)
   }
+  // ANY STONE ON THE FLOOR CAN BE CARRIED INTO ANY NESTED LOCK: a root lock's way out takes any hands, and a
+  // contained lock's stone may leave by its way in. So wherever the floor holds a stone, a nested lock with a one-way
+  // in it is walked in the floor's level, where the hand is.
+  if ((lock.emptyHands ?? []).length > 0)
+    for (const { instance, regions } of nesting) {
+      const own = new Set(regions)
+      const touches = (region: RegionId) => [...(labels.get(region) ?? [])].some(label => own.has(label))
+      if ((lock.oneWays ?? []).some(({ from, to }) => touches(from) || touches(to))) fuse(instance, undefined)
+    }
   // A pool nested in another lock is contained, so it is fused into the floor's level in turn: a lock fused into it
   // is walked where it ends up.
   const walkedAs = (instance: string): Owner => {
@@ -123,20 +143,11 @@ const cutOf = (grid: FloorGrid, lock: LockSpec): Cut => {
     const members = pools.get(level) ?? []
     if (!members.includes(instance)) pools.set(level, [...members, instance])
   }
-  const { of } = regionsOf(grid)
   const instanceOfLabel = new Map(
     nesting.flatMap(n => n.regions.map(region => [region, walkedAs(n.instance)] as const))
   )
   const hostOf = new Map<string, Owner>(nesting.map(n => [n.instance, nested.has(n.host) ? walkedAs(n.host) : FLOOR]))
 
-  const labels = new Map<RegionId, Set<string>>()
-  grid.cells.forEach((row, r) =>
-    row.forEach((cell, c) => {
-      const id = of.get(`${r},${c}`)
-      if (id === undefined || (cell.type !== "room" && cell.type !== "corridor") || cell.region === undefined) return
-      labels.set(id, (labels.get(id) ?? new Set()).add(cell.region))
-    })
-  )
   const isDoor = (region: RegionId) => region.startsWith("door ")
   const only = (owners: Set<Owner>, what: string): Owner | undefined => {
     if (owners.size > 1) throw new Entangled(`${what} belongs to more than one lock`)

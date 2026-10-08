@@ -122,7 +122,7 @@ describe("a nested lock's stones are read against the locks it stands in", () =>
     )
   })
 
-  it("leaves a nesting without stones unmarked, so the floor's nesting reads as it did", () => {
+  it("leaves a nesting without stones unmarked: its nesting carries no stones field", () => {
     const plain: PlacedLock[] = [
       { lock: leverLock() },
       { lock: leverLock(), as: "inner", inside: { instance: "lever" } },
@@ -309,6 +309,43 @@ describe("a nested floor with stones is walked where its stones reach", () => {
     const grids = carved(sibling)
     expect(grids.length).toBeGreaterThan(0)
     for (const grid of grids) expect(expectSound(grid).states).toBe(productStates(grid))
+  })
+
+  // A STONE FROM ANOTHER LOCK REACHES A NESTED LOCK THAT HOLDS NONE: a root lock's way out takes any hands, and a
+  // contained lock's stone may leave by its way in. Its drop takes empty hands, so the floor walks it in its level.
+  /** A lock without stones whose torch on a side ledge shuts the way back to the drop home: lit with a stone in
+   * hand, the drop refuses the player. */
+  const TRAP = "in -- out\nin -- mid\nmid -[T:off]- ledge\nledge >> in\nT activator @ledge\nin ?\nout ?\nmid ?\nledge ?"
+  it.each<[string, PlacedLock[], string[]]>([
+    [
+      "a sibling root lock",
+      [
+        { lock: stones("in -[p:empty]- out\np plate @in stone\nq plate @out\nin ?\nout ?", "quarry") },
+        { lock: leverLock() },
+        { lock: stones(TRAP, "trap"), as: "inner", inside: { instance: "lever" } },
+      ],
+      ["inner"],
+    ],
+    [
+      "a contained lock under a later root, back by its way in",
+      [
+        { lock: leverLock() },
+        { lock: stones(TRAP, "trap"), as: "inner", inside: { instance: "lever" } },
+        { lock: leverLock(), as: "later" },
+        { lock: stones(CELL, "cell"), as: "cell", inside: { instance: "later" } },
+      ],
+      ["cell", "inner"],
+    ],
+  ])("strands a stone carried from %s into a nested lock's drop", { timeout: 60_000 }, (_, locks, instances) => {
+    const grids = carved(locks)
+    expect(grids.length).toBeGreaterThan(0)
+    for (const grid of grids) {
+      expect(walkLock(floorLock(grid)!).sound).toBe(false)
+      expect(walkFloorLock(grid)).toMatchObject({
+        sound: false,
+        failure: { type: "pooled", instances, failure: { type: "strands" } },
+      })
+    }
   })
 
   // A POOL NESTED IN ANOTHER LOCK IS CONTAINED, so it walks in the floor's level, and so does every lock fused into it.
