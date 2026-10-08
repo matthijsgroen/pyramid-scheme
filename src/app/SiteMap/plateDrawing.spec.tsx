@@ -166,8 +166,8 @@ describe("a plate and the explorer on the map", () => {
   it("wears no dim once walked, where its marker is kept", () => {
     const loose: FloorGrid = {
       ...lit,
-      cells: lit.cells.map((row, r) =>
-        row.map((cell, c) => {
+      cells: lit.cells.map(row =>
+        row.map(cell => {
           if (cell.type !== "room" || !cell.plate || cell.mechanism) return cell
           const { worksMechanism: _, ...rest } = cell
           return { ...rest, state: "completed" as const }

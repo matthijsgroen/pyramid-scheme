@@ -26,7 +26,7 @@ describe("the stones in the save", () => {
     h.walkTo(plateNamed(h.grid, "shelf"))
     act(() => h.current().prompt!.take())
     h.settle()
-    expect(Object.keys(h.store.mechanismStates)).toEqual([expect.stringContaining("xplate:stones.p")])
+    expect(Object.keys(h.store.mechanismStates)).toEqual([expect.stringMatching(/xplate:stones\.p$/)])
   })
 
   it("keep a stone in hand through a reload: he still carries it and the empty plate offers the set-down", () => {
@@ -59,7 +59,7 @@ describe("the stones in the save", () => {
     expect(openGateKeys.size).toBe(1)
   })
 
-  it("read as the authored start where the save holds no entry", () => {
+  it("baseline: a save with no entry reads as the authored start (a stale key is pinned in stonePlay.spec)", () => {
     const h = play()
     const { grid, mechanismStates, openGateKeys } = h.current()
     const [r, c] = plateNamed(grid!, "shelf")

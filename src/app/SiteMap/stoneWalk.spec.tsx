@@ -150,6 +150,17 @@ describe("a carrying walk", () => {
     expect(h.current().notice).toEqual({ at: h.grid.entrancePos })
   })
 
+  it("is turned away at the stairs down, as at the way out", () => {
+    const config = stoneFloor(OPEN, { exitOrStaircase: "staircase" })
+    const carved = carvePlayground(config)
+    if (!carved.found) throw new Error(JSON.stringify(carved.reasons))
+    const h = { ...sequenceHarness(carved.seed, config), grid: carved.grid }
+    lift(h)
+    h.walkTo(h.grid.exitPos)
+    expect(h.current().prompt).toBeNull()
+    expect(h.current().notice).toEqual({ at: h.grid.exitPos })
+  })
+
   it("forgets the line at the next tap, which moves the explorer on", () => {
     const h = play(OPEN)
     lift(h)

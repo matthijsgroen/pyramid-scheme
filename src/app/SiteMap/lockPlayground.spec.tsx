@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { act, cleanup, render, renderHook, screen, waitFor } from "@testing-library/react"
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest"
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest"
 import { parseLock } from "@/game/lockNotation"
 import { walkFloorLock } from "@/game/floorLockWalk"
 import { PLAYGROUND_JOURNEY, carvePlayground, defaultBinding, playgroundFloor } from "./playgroundCarve.testing"
@@ -9,8 +9,12 @@ import { LockPlayground, useCarving } from "./lockPlayground.testing"
 import "@/mods/registerModApps"
 
 // jsdom has no layout, so the map's scroll-to-explorer has nothing to call.
+const realScrollTo = Element.prototype.scrollTo
 beforeAll(() => {
   Element.prototype.scrollTo = () => {}
+})
+afterAll(() => {
+  Element.prototype.scrollTo = realScrollTo
 })
 
 // Wraps the real carve so a spec can count how many seeds the search judges.
@@ -22,7 +26,8 @@ vi.mock("./useAssembledFloor", async importOriginal => {
 afterEach(() => {
   cleanup()
   vi.useRealTimers()
-  vi.mocked(assemblePlayedFloor).mockClear()
+  // A reset puts the real carve back, so a test that made it refuse does not hand the next one a refusing carve.
+  vi.mocked(assemblePlayedFloor).mockReset()
 })
 
 const LEVER = "in -[L]- out\nL toggle @in\nin *\nout *"
