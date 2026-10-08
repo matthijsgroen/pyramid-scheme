@@ -203,3 +203,24 @@ export const freeRegions = (lock: Lock): Lock => ({
 /** A gate that empty hands alone open: a narrow passage. A gate any plate or mechanic also owns is a door. */
 export const isUnladenGate = (gate: LockGate): boolean =>
   !isRegionGate(gate) && gate.owners.length > 0 && gate.owners.every(owner => owner === "unladen")
+
+/** Where a lock writes empty hands it may not: on a drop's connection (a drop already takes empty hands), or beside
+ * another owner (`unladen` is the narrow passage's keyword and stands alone). */
+export type UnladenFault =
+  { type: "unladenOnDrop"; barrier: BarrierId; oneWay: BarrierId } | { type: "unladenCombined"; barrier: BarrierId }
+
+export const unladenFaults = (lock: Lock): UnladenFault[] => {
+  const faults: UnladenFault[] = []
+  for (const connection of lock.connections) {
+    const barriers = barriersOf(connection)
+    const drop = barriers.find(barrier => Object.hasOwn(lock.oneWays ?? {}, barrier))
+    if (drop === undefined) continue
+    for (const barrier of barriers)
+      if (Object.hasOwn(lock.gates, barrier) && isUnladenGate(lock.gates[barrier]))
+        faults.push({ type: "unladenOnDrop", barrier, oneWay: drop })
+  }
+  for (const [barrier, gate] of Object.entries(lock.gates))
+    if (gate.owners.length > 1 && gate.owners.some(owner => (CARRY_TERMS as readonly string[]).includes(owner)))
+      faults.push({ type: "unladenCombined", barrier })
+  return faults
+}

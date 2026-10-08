@@ -39,7 +39,7 @@ type NavigationArgs = {
   playTraversal?: PlayTraversal
   /** Says what the realisation a span was bound to declares, namely the prompt its crossing is offered through. */
   resolveOneWay?: ResolveOneWayRealisation
-  /** Says what the passage a gate was dressed as declares: its prompt, and whether it takes both hands. */
+  /** Says what the passage a gate was dressed as declares: its prompt. Every passage takes empty hands. */
   resolvePassage?: ResolvePassageRealisation
 }
 
@@ -142,8 +142,8 @@ export const useSiteNavigation = ({
       grid ? Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100 : 0,
     [grid, explorerPos]
   )
-  // A STONE NEVER LEAVES ITS FLOOR, and some crossings need both hands: such a walk ends where the player stands
-  // and says why, instead of offering the way on.
+  // A STONE NEVER LEAVES ITS FLOOR, and every one-way and every passage takes empty hands: a carrying walk ends where
+  // the player stands and says why, instead of offering the way on.
   const turnAway = useCallback(
     (row: number, col: number) => scheduleArrival(walkDelay(row, col), () => setNotice({ at: [row, col] })),
     [scheduleArrival, walkDelay]

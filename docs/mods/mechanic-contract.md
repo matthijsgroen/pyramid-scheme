@@ -98,7 +98,8 @@ waiting for, the way a ward gate already shows the key it wants.
   without a stone in hand.
 - **Play.** A plate offers its move through a prompt (lift or set-down, `stoneMoveAt`); arriving never acts.
   A carrying walk is turned away at every staircase and the way out, at a narrow passage, and at every
-  one-way's launch, with one line for all of them ("Cannot pass with a stone"), shown where the prompt stands. One line because the player learns one rule, not which way refuses.
+  one-way's launch, with one line for all of them ("Cannot pass with a stone"), shown where the prompt stands.
+  One line because the player learns one rule, not which way refuses.
 - **A saved arrangement the lock no longer has** is read as the record's `initial` (`arrangementIn`), so the
   stones play on from the start instead of freezing.
 - **The explorer's weight** is the record's `underfoot`: per arrangement and empty plate, what pressing it

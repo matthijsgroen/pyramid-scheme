@@ -484,7 +484,7 @@ describe("a one-way", () => {
     expect(handsAt(reachableStates(spec([{ mechanism: "stone", notIn: ["+ hand"] }])), "b")).toEqual(["shelf"])
   })
 
-  it("is taken in any state of a mechanism that is never held in hand", () => {
+  it("is taken carrying when the lock has no stones (no leaveWith)", () => {
     expect(handsAt(reachableStates(spec(undefined)), "b")).toEqual(["+ hand", "shelf"])
   })
 })

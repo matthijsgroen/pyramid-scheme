@@ -1,6 +1,6 @@
 // A LOCK WRITTEN AS TEXT, one line per join, read into the shared Lock type (lockAuthoring.ts). The
 // notation is LOCK_SYNTAX, which `yarn lock` also prints so nobody has to remember it.
-import { CARRY_TERMS, isWeightOwner } from "./lockAuthoring"
+import { CARRY_TERMS, isWeightOwner, unladenFaults } from "./lockAuthoring"
 import type { Lock, LockConnection, LockGate, LockMechanic, LockOneWay } from "./lockAuthoring"
 import { stoneArrangements } from "./mechanics/weights"
 import type { RegionAppetite } from "./regions"
@@ -277,5 +277,9 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
       if (gate.owners.some(owner => isWeightOwner(lock, owner)) && !Object.values(opened).some(o => o.includes(id)))
         fail(terms[id].n, `gate ${id}: its stones never open it`)
   }
+  for (const fault of unladenFaults(lock))
+    refused.push(
+      `line ${terms[fault.barrier].n}: ${fault.type === "unladenOnDrop" ? "a drop already takes empty hands" : "unladen stands alone, as a narrow passage"}`
+    )
   return { lock, drafts: [...drafts], refused }
 }

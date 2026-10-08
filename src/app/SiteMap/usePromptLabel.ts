@@ -32,8 +32,8 @@ export const usePromptLabel = (): ((prompt: ArrivalPrompt) => string) => {
   )
 }
 
-/** WHAT A NOTICE SAYS: one line for every walk a stone in hand stops (stairs, the way out, a crossing that needs
- * both hands). */
+/** WHAT A NOTICE SAYS: one line for every walk a stone in hand stops (stairs, the way out, every one-way and every
+ * passage, which all take empty hands). */
 export const useNoticeLabel = (): string => {
   const { t } = useTranslation("common")
   return t("ui.blocked.carrying")

@@ -185,6 +185,14 @@ describe("weights", () => {
     expect(lock.weights!.plates.p.opens.weighted).toEqual(["hall:barred"])
   })
 
+  it.each([
+    ["on a drop", "in -- yard\nyard -- out\nout -[unladen]- >> in", "line 3: a drop already takes empty hands"],
+    ["beside a plate", "in -[p+unladen]- out\np plate @in", "line 1: unladen stands alone, as a narrow passage"],
+    ["beside a lever", "in -[L|unladen]- out\nL toggle @in", "line 1: unladen stands alone, as a narrow passage"],
+  ])("reads a lock with empty hands %s whole, and says why they are refused", (_, text, message) => {
+    expect(parseLock(`${text}\nshelf plate @in stone`).refused).toEqual([message])
+  })
+
   it("reads unladen as a condition on the stones, not as an owner to place", () => {
     const { drafts } = parseLock("in -[unladen]- hall\nhall -- out\nshelf plate @in stone")
     expect(drafts).toEqual([])

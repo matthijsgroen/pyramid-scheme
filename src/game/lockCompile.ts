@@ -1,5 +1,13 @@
-import type { Lock, LockMechanic } from "./lockAuthoring"
-import { barriersOf, CARRY_TERMS, isRegionGate, isUnladenGate, isWeightOwner, joinOf } from "./lockAuthoring"
+import type { Lock, LockMechanic, UnladenFault } from "./lockAuthoring"
+import {
+  barriersOf,
+  CARRY_TERMS,
+  isRegionGate,
+  isUnladenGate,
+  isWeightOwner,
+  joinOf,
+  unladenFaults,
+} from "./lockAuthoring"
 import type { LooseMechanic, ResolveMechanicKind } from "./mechanics"
 import { resolveMechanicKind } from "./mechanics"
 import type { BarrierOrder, Control, Obstacle, TopologyFault } from "./obstacles"
@@ -49,10 +57,7 @@ export type LockFault =
   | { type: "regionGateOnConnection"; barrier: string; between: [string, string] }
   /** A one-way stands on a connection beside another barrier, which the floor vocabulary cannot say. */
   | { type: "oneWaySharesConnection"; between: [string, string]; barriers: string[] }
-  /** Empty hands written on a drop's connection: a drop already takes empty hands. */
-  | { type: "unladenOnDrop"; barrier: string; oneWay: string }
-  /** A gate names empty hands beside another owner: `unladen` is the narrow passage and stands alone. */
-  | { type: "unladenCombined"; barrier: string }
+  | UnladenFault
   | { type: "gateOwnerUnknown"; barrier: string; owner: string }
   /** A plate stands in a region the lock does not have. */
   | { type: "plateNamesNoRegion"; plate: string; region: string }
@@ -131,6 +136,10 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
   for (const id of Object.keys(lock.gates))
     if (Object.hasOwn(oneWays, id)) faults.push({ type: "barrierIdRepeated", id })
 
+  const unladen = unladenFaults(lock)
+  faults.push(...unladen)
+  const emptyHandsOnDrop = new Set(unladen.flatMap(fault => (fault.type === "unladenOnDrop" ? [fault.barrier] : [])))
+
   const declared = new Set<string>()
   const namedOn = new Map<string, number>()
   for (const connection of lock.connections) {
@@ -157,16 +166,11 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
           faults.push({ type: "barrierOffItsConnection", barrier, between: join })
       }
     }
-    const drop = barriers.find(barrier => Object.hasOwn(oneWays, barrier))
-    if (drop === undefined) continue
-    // A drop already takes empty hands, so empty hands written beside it are refused by that name alone.
-    const emptyHands = barriers.filter(
-      barrier => Object.hasOwn(lock.gates, barrier) && isUnladenGate(lock.gates[barrier])
-    )
-    for (const barrier of emptyHands) faults.push({ type: "unladenOnDrop", barrier, oneWay: drop })
+    if (!barriers.some(barrier => Object.hasOwn(oneWays, barrier))) continue
+    // Empty hands written beside a drop are refused by that name alone (`unladenOnDrop`).
     const standing = barriers.filter(
       barrier =>
-        Object.hasOwn(oneWays, barrier) || (Object.hasOwn(lock.gates, barrier) && !emptyHands.includes(barrier))
+        Object.hasOwn(oneWays, barrier) || (Object.hasOwn(lock.gates, barrier) && !emptyHandsOnDrop.has(barrier))
     )
     if (standing.length > 1) faults.push({ type: "oneWaySharesConnection", between: join, barriers: standing })
   }
@@ -183,9 +187,6 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
       }
       if (!Object.hasOwn(lock.mechanics, owner)) faults.push({ type: "gateOwnerUnknown", barrier: id, owner })
     }
-    // Empty hands are the narrow passage's keyword: they stand alone, never beside another owner.
-    if (gate.owners.length > 1 && gate.owners.some(owner => (CARRY_TERMS as readonly string[]).includes(owner)))
-      faults.push({ type: "unladenCombined", barrier: id })
     if (isRegionGate(gate)) {
       need(`gate ${id}`, gate.region)
       continue
