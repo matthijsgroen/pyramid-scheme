@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { render, fireEvent } from "@testing-library/react"
+import { render, fireEvent, screen } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { SiteMapView, approachCells } from "./SiteMapView"
 import { allFloorRects, buildRoomClaims, tileRegionsFor } from "./roomClaims"
@@ -2673,5 +2673,20 @@ describe("the lever's arm — three stacked sprites, thrown to the control's own
     const explorer = container.querySelector("[data-explorer]")!
     const back = container.querySelector('[data-node-sprite="handle:1,0"]')!
     expect(explorer.compareDocumentPosition(back) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+})
+
+describe("SiteMapView — the notice", () => {
+  const grid = makeGrid([[room("reachable"), empty]])
+
+  it("stands in the page as a status region before it has anything to say, and the same one carries the text", () => {
+    const { rerender } = render(<SiteMapView grid={grid} />)
+    const region = screen.getByRole("status")
+    expect(region.textContent).toBe("")
+    rerender(<SiteMapView grid={grid} notice={{ label: "Cannot pass with a stone", at: [0, 0] }} />)
+    expect(screen.getByRole("status")).toBe(region)
+    expect(region.textContent).toBe("Cannot pass with a stone")
+    rerender(<SiteMapView grid={grid} notice={null} />)
+    expect(region.textContent).toBe("")
   })
 })

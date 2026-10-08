@@ -1961,19 +1961,24 @@ export const SiteMapView = ({
                   <MapActionPrompt label={prompt.label} onClick={prompt.onTake} />
                 </div>
               )}
-              {notice && (
-                <div
-                  data-map-notice=""
-                  style={{
-                    position: "absolute",
-                    left: cellCenter(notice.at[0], notice.at[1]).cx,
-                    top: cellCenter(notice.at[0], notice.at[1]).cy - CELL * 0.7,
-                    transform: "translate(-50%, -100%)",
-                  }}
-                >
-                  <MapNotice label={notice.label} />
-                </div>
-              )}
+              {/* THE LIVE REGION IS ALWAYS IN THE PAGE and only its text is swapped: a region inserted together with
+                  its text is not announced, one that was already there is. */}
+              <div
+                role="status"
+                data-map-notice=""
+                style={
+                  notice
+                    ? {
+                        position: "absolute",
+                        left: cellCenter(notice.at[0], notice.at[1]).cx,
+                        top: cellCenter(notice.at[0], notice.at[1]).cy - CELL * 0.7,
+                        transform: "translate(-50%, -100%)",
+                      }
+                    : { position: "absolute" }
+                }
+              >
+                {notice && <MapNotice label={notice.label} />}
+              </div>
             </div>
           </div>
         </div>
