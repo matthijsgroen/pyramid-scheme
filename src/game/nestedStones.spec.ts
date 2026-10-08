@@ -249,7 +249,7 @@ describe("a nested floor with stones is walked where its stones reach", () => {
     expect(grids.length).toBeGreaterThan(0)
     for (const grid of grids) {
       expect(walkLock(floorLock(grid)!).sound).toBe(false)
-      expect(walkFloorLock(grid)!.sound).toBe(false)
+      expect(walkFloorLock(grid)).toEqual({ sound: false, failure: { type: "unsolvable" } })
     }
   })
 
@@ -258,10 +258,11 @@ describe("a nested floor with stones is walked where its stones reach", () => {
   // the drop, so only that opens the door. Sound if a level dropped the rule, stranded while it holds.
   const RIDE =
     "in -- top\ntop -[p]- out\ntop >> low\nlow -[unladen]- mid\nmid -- in\np plate @low\nshelf plate @top stone\nin ?\ntop ?\nlow ?\nmid ?\nout ?"
-  it.each<[string, PlacedLock[]]>([
+  it.each<[string, PlacedLock[], string[]]>([
     [
       "a contained lock",
       [{ lock: leverLock() }, { lock: stones(RIDE, "ride"), as: "inner", inside: { instance: "lever" } }],
+      ["inner"],
     ],
     [
       "a shared pool",
@@ -269,13 +270,17 @@ describe("a nested floor with stones is walked where its stones reach", () => {
         { lock: stones(HOST_STONES, "host") },
         { lock: stones(RIDE, "ride"), as: "inner", inside: { instance: "host" } },
       ],
+      ["host", "inner"],
     ],
-  ])("never lets a stone ride a drop inside %s", { timeout: 60_000 }, (_, locks) => {
+  ])("never lets a stone ride a drop inside %s", { timeout: 60_000 }, (_, locks, instances) => {
     const grids = carved(locks)
     expect(grids.length).toBeGreaterThan(0)
     for (const grid of grids) {
       expect(walkLock(floorLock(grid)!).sound).toBe(false)
-      expect(walkFloorLock(grid)!.sound).toBe(false)
+      expect(walkFloorLock(grid)).toEqual({
+        sound: false,
+        failure: { type: "pooled", instances, failure: { type: "unsolvable" } },
+      })
     }
   })
 
@@ -294,6 +299,55 @@ describe("a nested floor with stones is walked where its stones reach", () => {
       if (!walk.sound) expect(describeFloorWalkFailure(walk.failure)).toMatch(/^a stone can be carried out of inner/)
     }
   })
+
+  it("lets another lock's stone be carried through a contained lock's way out", { timeout: 60_000 }, () => {
+    const sibling: PlacedLock[] = [
+      { lock: leverLock() },
+      { lock: stones(CELL, "cell"), as: "inner", inside: { instance: "lever" } },
+      { lock: stones(HOST_STONES, "host") },
+    ]
+    const grids = carved(sibling)
+    expect(grids.length).toBeGreaterThan(0)
+    for (const grid of grids) expect(expectSound(grid).states).toBe(productStates(grid))
+  })
+
+  // A POOL NESTED IN ANOTHER LOCK IS CONTAINED, so it walks in the floor's level, and so does every lock fused into it.
+  const NESTED_POOL = (deep: Lock): PlacedLock[] => [
+    { lock: leverLock() },
+    { lock: stones(HOST_STONES, "cell"), as: "mid", inside: { instance: "lever" } },
+    { lock: deep, as: "deep", inside: { instance: "mid" } },
+  ]
+
+  it(
+    "walks a pass-through fused into a nested pool in the floor's level, where its stranding torch counts",
+    { timeout: 60_000 },
+    () => {
+      // A torch that shuts the way on for good, and a drop off the route from a side ledge.
+      const torch = stones(
+        "in -[T:off]- out\nout -- ledge\nledge >> in\nT activator @in\nin ?\nout ?\nledge ?",
+        "torch"
+      )
+      const grids = carved(NESTED_POOL(torch))
+      expect(grids.length).toBeGreaterThan(0)
+      for (const grid of grids) {
+        expect(walkLock(floorLock(grid)!).sound).toBe(false)
+        expect(walkFloorLock(grid)).toMatchObject({
+          sound: false,
+          failure: { type: "pooled", instances: ["mid", "deep"], failure: { type: "strands" } },
+        })
+      }
+    }
+  )
+
+  it(
+    "walks a lock sharing a nested pool in the floor's level, with the pool's stones as one",
+    { timeout: 60_000 },
+    () => {
+      const grids = carved(NESTED_POOL(stones(GATED, "gated")))
+      expect(grids.length).toBeGreaterThan(0)
+      for (const grid of grids) expect(expectSound(grid).states).toBe(productStates(grid))
+    }
+  )
 
   it("names both locks of a pool when the pooled floor strands", { timeout: 60_000 }, () => {
     const stranding: PlacedLock[] = [

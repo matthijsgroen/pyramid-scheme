@@ -78,6 +78,7 @@ type Cut = {
   portOf: (label: string) => RegionId
   /** The compiled region a nested lock is left by through its way out. */
   wayOutOf: (nesting: LockNesting) => RegionId
+  mechanismsOf: (instance: string) => Set<string>
   within: (owner: Owner, node: Owner) => boolean
   /** A nested lock walked in another's level: its pool's, or the floor's. */
   fusedInto: Map<string, Owner>
@@ -90,7 +91,6 @@ const cutOf = (grid: FloorGrid, lock: LockSpec): Cut => {
   const nested = new Set(nesting.map(n => n.instance))
   const hostIn = new Map(nesting.map(n => [n.instance, n.host]))
   const fusedInto = new Map<string, Owner>()
-  const pools = new Map<Owner, string[]>()
   /** Walks `instance`, and every nested lock between it and `pool`, in `pool`'s level (the floor's when `pool` is
    * no nested lock, or undefined). */
   const fuse = (instance: string, pool: string | undefined) => {
@@ -100,16 +100,29 @@ const cutOf = (grid: FloorGrid, lock: LockSpec): Cut => {
       at !== undefined && at !== pool && nested.has(at);
       at = hostIn.get(at)
     ) {
-      if (fusedInto.has(at)) continue
-      fusedInto.set(at, into)
-      pools.set(into, [...(pools.get(into) ?? (pool === undefined ? [] : [pool])), at])
+      if (!fusedInto.has(at)) fusedInto.set(at, into)
     }
   }
+  const pooledBy: string[] = []
   for (const { instance, stones } of nesting) {
-    if (stones?.case === "shared" || (stones?.case === "passThrough" && stones.oneWays)) fuse(instance, stones.pool)
-    else if (stones?.case === "contained") fuse(instance, undefined)
+    if (stones?.case === "shared" || (stones?.case === "passThrough" && stones.oneWays)) {
+      fuse(instance, stones.pool)
+      pooledBy.push(stones.pool)
+    } else if (stones?.case === "contained") fuse(instance, undefined)
   }
-  const walkedAs = (instance: string): Owner => (fusedInto.has(instance) ? fusedInto.get(instance)! : instance)
+  // A pool nested in another lock is contained, so it is fused into the floor's level in turn: a lock fused into it
+  // is walked where it ends up.
+  const walkedAs = (instance: string): Owner => {
+    let at: Owner = instance
+    while (at !== FLOOR && fusedInto.has(at)) at = fusedInto.get(at)!
+    return at
+  }
+  const pools = new Map<Owner, string[]>()
+  for (const instance of [...pooledBy, ...fusedInto.keys()]) {
+    const level = nested.has(instance) ? walkedAs(instance) : FLOOR
+    const members = pools.get(level) ?? []
+    if (!members.includes(instance)) pools.set(level, [...members, instance])
+  }
   const { of } = regionsOf(grid)
   const instanceOfLabel = new Map(
     nesting.flatMap(n => n.regions.map(region => [region, walkedAs(n.instance)] as const))
@@ -179,7 +192,8 @@ const cutOf = (grid: FloorGrid, lock: LockSpec): Cut => {
     if (found.length !== 1) throw new Entangled(`${label} is not one region of the floor`)
     return found[0]
   }
-  // A way out behind a door stands as two regions, one each side of it: the one that touches the host's ground.
+  // A way out behind a door stands as two regions, one each side of it: the one that touches the host's ground. Any
+  // other count is refused rather than guessed.
   const wayOutOf = ({ out, regions }: LockNesting): RegionId => {
     const own = new Set(regions)
     const outside = (region: RegionId) => ![...(labels.get(region) ?? [])].some(label => own.has(label))
@@ -196,13 +210,29 @@ const cutOf = (grid: FloorGrid, lock: LockSpec): Cut => {
     if (found.length !== 1) throw new Entangled(`${out} is not one way out of the floor`)
     return found[0]
   }
+  // The mechanisms that stand wholly in `instance` or a lock nested beneath it, read off the authored labels, so a
+  // lock fused into another level still knows its own.
+  const mechanismsOf = (instance: string): Set<string> => {
+    const beneath = (at: string | undefined): boolean =>
+      at !== undefined && (at === instance || beneath(hostIn.get(at)))
+    const own = new Set(nesting.filter(n => beneath(n.instance)).flatMap(n => n.regions))
+    const inside = (region: RegionId) => [...(labels.get(region) ?? [])].some(label => own.has(label))
+    return new Set(
+      Object.entries(lock.mechanisms)
+        .filter(([, mechanism]) => {
+          const at = [...mechanism.transitions, ...(mechanism.entries ?? [])].map(t => t.at)
+          return at.length > 0 && at.every(inside)
+        })
+        .map(([id]) => id)
+    )
+  }
   const within = (owner: Owner, node: Owner): boolean => {
     for (let at: Owner | undefined = owner; at !== undefined; at = at === FLOOR ? undefined : hostOf.get(at)) {
       if (at === node) return true
     }
     return false
   }
-  return { lock, regionOwner, gateOwner, mechanismOwner, portOf, wayOutOf, within, fusedInto, pools }
+  return { lock, regionOwner, gateOwner, mechanismOwner, portOf, wayOutOf, mechanismsOf, within, fusedInto, pools }
 }
 
 // THE LOCKS UNDER ONE NODE AS A SPEC OF THEIR OWN. The node's own gates and mechanisms stay real. A lock nested
@@ -375,8 +405,14 @@ const levelsOf = (
     if (found !== "tooLarge")
       for (const nesting of contained) {
         const { instance } = nesting
+        const own = cut.mechanismsOf(instance)
+        // Only its own stones: a stone of another lock may pass through it.
+        const hands = {
+          ...floorSpec,
+          emptyHands: (floorSpec.emptyHands ?? []).filter(({ mechanism }) => own.has(mechanism)),
+        }
         const port = cut.wayOutOf(nesting)
-        const at = found.order.find(state => state.region === port && !handsEmpty(floorSpec, state.config))
+        const at = found.order.find(state => state.region === port && !handsEmpty(hands, state.config))
         if (at) return { ok: false, failure: { type: "stoneCrossesOut", instance, at } }
       }
   }
