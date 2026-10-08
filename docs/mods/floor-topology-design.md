@@ -700,8 +700,16 @@ else".
 
 **Gates may form loops.** A loop of gated joins is a puzzle in its own right: with plates and
 `:empty` conditions, the way round one side opens as the other shuts. The walk proves a loop like any
-other lock. The carve lays a lock out as a tree of sections, so a gated join that closes a loop is not
-laid out yet; until it is, a lock with a gate loop validates and walks, and cannot bake.
+other lock. A lock floor is laid before it is carved, and the lay stands a corridor on every join, so a
+gated join that closes a loop is laid like any other, and a fork's ways may meet again beyond it. A gate
+an open way goes round is refused by name (`gateBypassed`): its two sides are one ground, so no doorway
+holds it. A gate loop is the laid carve's job: a layout written longhand, without a lock, is carved as
+side chains and refuses a gate on a loop's second meeting (`obstacleOffRoute`). A corridor that circles
+back on ground of its own region, round no gate, is fine in every carve.
+
+**The carve is free where the layout is silent** (designer, 2026-10-08). The only constraint on where an
+obstacle stands in its corridor is that the corridor's obstacles keep their order; a corridor may circle
+back within its region. The more freedom the carve has, the more often it succeeds.
 
 **A container's soundness may not depend on anything outside itself.** That is what makes placing one
 anywhere safe, and it decides what each kind of lock may do inside a container:
@@ -896,7 +904,7 @@ a spec. Six rows below are that second kind, and say so.
 | An exit is pruned when the node it leads to is hidden           | `maskHiddenCells`, which checks the hidden set two cells out, not `dirs` — fires on every floor, switch or not: prunes 76 exits across 61 of 206 authored floors                                                           |
 | A hidden way out stays one-way under any tool                   | **nothing yet**, and no tool exists to break it                                                                                                                                                                            |
 | A lock is solvable, and no order of moves strands the player    | `walkLock`, over the lock `floorLock` reads off each assembled floor, swept by `findStrandingLocks` — runs on every floor standing a switch, which is one floor in the world today                                         |
-| A gated join closing a loop is carved                           | **nothing yet** — the carve lays a lock out as a tree of sections                                                                                                                                                          |
+| A gated join closing a loop is carved                           | `topologyFaults` on a laid floor seats every join and refuses `gateBypassed`; `gateDoorFaults` holds each door between two grounds; the walk proves the loop sound                                                         |
 | An authored gate's key is minted by whoever owns it             | for a switch fork, unrepresentable — the assembler writes gate and key from one expression. For a hand-authored gate, **nothing generic**: the two the world has are pinned by name in `configBuilder.integration.spec.ts` |
 | Every collection's target count is reachable                    | the mosaic mod's `worldValidator`, per register, over the permissive walk                                                                                                                                                  |
 

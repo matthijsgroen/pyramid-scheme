@@ -47,22 +47,30 @@ stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
 
 ### Nested locks (designer, 2026-10-08)
 
-A lock nested inside another sits on the outer lock's route. Which rule holds depends on which of the
-two uses stones:
+Each lock has a single spot for nesting (designer, 2026-10-08): a connection, written `a -&> b`, on the
+lock's route or off it. A lock nested inside another is spliced into that connection, its `in` at `a` and its
+`out` at `b`. A spot on a connection that also carries a barrier is ignored (the lock has no spot there, and
+`yarn lock` says so); a lock with two spots and the spellings `-&-` and `<&-` are refused by name. A spot
+nothing nests in is a plain corridor. Nesting is rare; a spot is where it can raise a lock's difficulty.
+Which rule holds depends on which of the two uses stones:
 
 - **Pass through: the outer uses stones, the inner does not.** The player parks the stone in the outer
   lock, solves the inner one, goes back for the stone and carries it through the solved inner lock to use
   it beyond. So once solved, the inner lock is passable from in to out and back with a stone in hand: no
-  `-[unladen]-` and no one-way stands on its route once it is solved.
+  `-[unladen]-` and no one-way stands on its route once it is solved. A one-way on the pass-through lock's
+  own route from in to out is refused by name (`oneWayOnPassThroughRoute`): every one-way takes empty hands.
+  One off its route is allowed.
 - **Contained: the inner uses stones, the outer does not.** Every inner stone is in use; the player
-  cannot leave the inner lock with a stone in hand (its way out takes empty hands, as a lock's way out
-  always does).
+  cannot leave the inner lock by its way out with a stone in hand (by its own design: the stones must be
+  placed to leave by its way out, and a nesting whose way out lets a stone through is refused by name,
+  `stoneCrossesOut`; carrying a stone back out by its way in is allowed, and the floor's own ways out still
+  take empty hands).
 - **Shared: both use stones.** The stones are one pool across both locks. A stone carried in from the
   outer lock may be set on an inner plate (stoneGate as the inner lock: walk in, set the stone in hand on
   its second plate, walk out); the player leaves the inner lock with a stone only by solving it for one.
   The inner lock's way out lets a stone through, because the outer lock still needs it; the floor's own
   ways out still take empty hands.
-- [ ] The solver walks a nested floor with its stones as one pool and proves each case above; a nesting
+- [x] The solver walks a nested floor with its stones as one pool and proves each case above; a nesting
       that breaks its rule is refused by name.
 
 ## 2. Solver
@@ -86,6 +94,7 @@ two uses stones:
 - [x] With the realisation mod off, the carve is identical: bare nodes, open corridors.
 - [ ] The four stone locks and the stoneOnAPlate lesson bake on the dev floor (`src/worldGen/spec/dev.ts`),
       and the world bake stays byte-identical for every floor that has no stones.
+      stoneGate bakes on the dev floor (pyramid 12), its gate loops laid like any join.
 
 ## 4. Play
 

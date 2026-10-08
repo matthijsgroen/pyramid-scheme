@@ -110,15 +110,30 @@ waiting for, the way a ward gate already shows the key it wants.
   are never on a face: they stand alone, as a narrow passage.
 - **A narrow passage.** `-[unladen]-`, wherever it stands, binds under `unladen` to a passage realisation
   (`narrowPassage`, topology mod), which draws it as a wall with a crack in one cell. It is a gate to every walk
-  and never ground in play: a tap on the wall walks the explorer to the side he can reach and offers "Go through
-  the crack"; a carrying walk stops there with the one blocked line.
+  and never ground in play: a tap on the wall walks the explorer to the side he can reach and offers "Squeeze
+  through" (nl "Wurm je er door"), and he squeezes from the side nearer him: head-on behind the wall's face, or
+  sideways along it; a carrying walk stops there with the one blocked line.
 - **Every one-way takes empty hands.** A drop, a zipline, any `>>`: every walk (the tool's, the engine's) and
   play take it only with empty hands, with nothing written in the lock, so solver and play agree whatever the
   realisation. `-[unladen]-` on a drop's connection is refused by name (`unladenOnDrop`): a drop already takes
   empty hands.
-- **The way out is left with empty hands.** `leaveWith` on the walk spec names the states that forbid
-  leaving: the way-out region may be entered carrying, only leaving (and finishing) needs empty hands. A
-  stone never leaves its floor, and `yarn lock` never reports a route that ends with one in hand.
+- **The way out is left with empty hands.** `emptyHands` on the walk spec names the states that are not empty
+  hands; every one-way and the way out read it, on every level of a nested floor: the way-out region may be
+  entered carrying, only leaving (and finishing) needs empty hands. A stone never leaves its floor, and
+  `yarn lock` never reports a route that ends with one in hand.
+- **Nested locks.** A lock nests only in its host's nest spot, spliced into that connection (§7). Each nesting
+  is read against the nearest lock it stands in that holds stones (`stoneNestings`, `LockNesting.stones`). A
+  **pass-through** lock (no stones of its own) lets a stone through, so nothing in it takes only empty hands: it
+  cannot write `-[unladen]-` (`carryWithoutStones`) and holds no one-way on its own route
+  (`oneWayOnPassThroughRoute`); one off its route is allowed, and the walk takes that lock fused with its
+  pool's level. A **contained** lock (stones, no lock around it holds any) keeps them by its own design: its way
+  out is never stood in with a stone in hand (the walk refuses it `stoneCrossesOut`), while a stone may be
+  carried back out by its way in; the walk takes it fused with the floor's own level. No invisible edge and no
+  play rule. A **shared** lock (stones, and so does a lock around it) pools them: one weights control,
+  `<pool>.stones` (`poolStones`), one hand, and a stone set on either lock's plates; the walk takes it fused
+  with its pool's level, so its way out lets a stone through. A fused level's failure is named `pooled`. Every
+  level keeps `emptyHands`: a drop inside any nested lock takes empty hands, and the floor's own ways out do in
+  every case.
 - **Binding.** The binding key is `weights`; its realisation is `stonePlate` (topology mod), which draws
   nothing of its own: plates are read from the cell's `plate`. A plate needs a free node in its region, and
   placement refuses naming the plate when there is none.
@@ -204,7 +219,7 @@ a lock and refuses to bake it, saying which mechanic is not ready.
 
 A lock is one JSON document. It names regions, how they join, the barriers on those joins, and the
 mechanics that work them. It never names a realisation: that is bound outside, where the lock is
-placed (§5), and so is nesting one lock inside another.
+placed (§5), and so is which lock nests in it, though only in its nest spot (below).
 
 ```json
 {
@@ -249,6 +264,20 @@ placed (§5), and so is nesting one lock inside another.
   "out": "out"
 }
 ```
+
+### The nest spot
+
+A lock marks at most one connection as its **nest spot**, `"nestSpot": { "from": "a", "to": "b" }`, written
+`a -&> b` in the notation (never `-&-` or `<&-`): the one place another lock may be nested in it, where it is
+placed. Nesting is rare, and a spot is where it can raise a lock's difficulty without the author guessing
+where a floor might put it. A nested lock is spliced into the connection: its `in` meets `from`, its `out`
+meets `to`, as the arrow points. The spot may be any connection of the lock, on its route or off it. A spot
+on a connection that also carries a gate, a drop or any other barrier is ignored: the lock has no nest spot,
+the connection carves as written, and `yarn lock` notes "nest spot ignored". In the notation a second spot is
+refused `nestSpotsRepeated`, and a spot on a pair that has another connection `nestSpotShared`, both when the
+lock is read (`yarn lock`); a JSON lock writes one spot, and repeats a pair only as `connectionRepeated`. A
+spot on no connection is refused `nestSpotOnNoConnection` (`compileLock`). The connection stays in
+`connections`, so where nothing nests the spot is a plain corridor.
 
 ### Connections
 

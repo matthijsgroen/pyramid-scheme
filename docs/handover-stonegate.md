@@ -7,21 +7,22 @@ over memory.
 
 ## Where things stand
 
-| Phase                          | State                                                                                                                                        |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1 Stones in the engine         | **Done.** Plan: `docs/superpowers/plans/2026-10-06-stonegate-phase-1-engine.md`.                                                             |
-| 2 Play with stones             | **Done.** Plan: `docs/superpowers/plans/2026-10-07-stonegate-phase-2-play.md`.                                                               |
-| 3 Narrow passage               | **Done.** Plan: `docs/superpowers/plans/2026-10-08-stonegate-phase-3-narrow-passage.md`.                                                     |
-| 4 Gate loops and nested stones | **Ready to run, not started.** Plan: `docs/superpowers/plans/2026-10-08-stonegate-phase-4-gate-loops.md` (14 tasks, every question settled). |
-| 5 Art                          | **Landed** (see below). The brazier stays as decor.                                                                                          |
-| 6 Djoser                       | **Not planned.** After phase 4: stoneGate on an `expert_4` floor through `floorLocks`; save impact settled.                                  |
-| 7 Zipline glide                | **Done.** Poses in `src/app/SiteMap/ridePoses.ts`, 200 ms a cell. Story `Topology/Zipline ride`.                                             |
+| Phase                          | State                                                                                              |
+| ------------------------------ | -------------------------------------------------------------------------------------------------- |
+| 1 Stones in the engine         | **Done.** Plan: `docs/superpowers/plans/2026-10-06-stonegate-phase-1-engine.md`.                   |
+| 2 Play with stones             | **Done.** Plan: `docs/superpowers/plans/2026-10-07-stonegate-phase-2-play.md`.                     |
+| 3 Narrow passage               | **Done.** Plan: `docs/superpowers/plans/2026-10-08-stonegate-phase-3-narrow-passage.md`.           |
+| 4 Gate loops and nested stones | **Done.** Plan: `docs/superpowers/plans/2026-10-08-stonegate-phase-4-gate-loops.md`.               |
+| 5 Art                          | **Landed** (see below). The brazier stays as decor.                                                |
+| 6 Djoser                       | **Next, not planned.** stoneGate on an `expert_4` floor through `floorLocks`; save impact settled. |
+| 7 Zipline glide                | **Done.** Poses in `src/app/SiteMap/ridePoses.ts`, 200 ms a cell. Story `Topology/Zipline ride`.   |
 
-Phase 4 covers gate loops in the carve (`topologyFaults`, `gateBypassed`, the fork seams), loops inside one region
-in every carve, stoneGate on dev pyramid 12, the squeeze starting from the nearer side, one nest spot per lock
-(`a -&> b`), and stones in nested locks (pass through, contained, shared). Its "Decisions (settled)" D1–D17 and
-"Rulings made without the designer" are binding: a task that meets something unexpected stops and reports, it never
-re-decides.
+Phase 4 gives gate loops in the carve on laid floors (`topologyFaults`, `gateBypassed`, the fork seams), loops
+inside one region in every carve, stoneGate on dev pyramid 12, the squeeze starting from the nearer side, one nest
+spot per lock (`a -&> b`), and stones in nested locks (pass through, contained, shared: `stoneNestings`,
+`poolStones`, the walk's `emptyHands`, `stoneCrossesOut`, `pooled`). The playground stories `Stone Passes Through`,
+`Stone Stays Inside` and `Stones Shared` show one case each. What it leaves open is the roadmap's "Open after
+phase 4"; its ledger is `.superpowers/sdd/2026-10-08-stonegate-phase-4-gate-loops/progress.md`.
 
 ### Built on top of phase 3
 
@@ -48,15 +49,17 @@ The art plan is `docs/superpowers/plans/2026-10-06-stonegate-phase-5-art.md`; it
 
 ## Next work, in order
 
-1. **Develop-mode "Solve" for puzzles.** Develop mode already has "Unlock everything" (`src/app/dev/useDevActions.ts`,
-   `src/app/dev/devActionContributions.ts`, `src/contexts/DevelopMode.tsx`). Add a way to skip or solve any
-   encounter board in develop mode, so the designer can start any journey or pyramid and walk straight to the locks.
-   Small: a brief plan, TDD, and show it working by looking (screenshot), not by reading code.
-2. **Run phase 4** with superpowers:subagent-driven-development: per task an implementer subagent and a task review,
-   then a final whole-branch review on the most capable model. Ledger in
-   `.superpowers/sdd/2026-10-08-stonegate-phase-4-gate-loops/progress.md` (create it with the skill's sdd-workspace
-   script). Commit and push freely on this branch.
-3. **Then phase 6 (Djoser placement).** Not planned yet; write its plan against what phase 4 built.
+1. **Lay pruning unconditional** (roadmap "Open after phase 4"): the lay in `src/game/layLocks.ts` prunes only on a
+   plan with a cycle; make it one lay path, re-bake the world (`generatedWorld.ts` and `carveLedger.json` move), no
+   save migration (designer). `yarn verify-content` stays green.
+2. **`lostRegions`** (roadmap "Open after phase 4"): every region ever reached stays reachable, leaving and
+   re-entering at `in` counting as a way back. Refused by name in `yarn lock` and the floor walk. A catalogue lock
+   or lesson it refuses is renamed `<name>-blocked.lock`, so the designer sees it needs fixing.
+3. **Phase 6 (Djoser placement).** Write its plan against what phase 4 built, pick the `expert_4` pyramid and floor
+   from `docs/game-design/lock-placement.md` and `lock-curriculum.md`, then run it.
+
+Each runs with superpowers:subagent-driven-development: per task an implementer subagent and a task review, then a
+final whole-branch review on the most capable model. Commit and push freely on this branch.
 
 ## Designer decisions to keep
 

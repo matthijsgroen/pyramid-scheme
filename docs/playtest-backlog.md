@@ -3,6 +3,18 @@
 Merged work nobody has played yet. Each entry says where to go and what to look for; strike it when it has been
 played, and open an issue or a task for anything that plays wrong.
 
+## stoneGate phase 4 — gate loops, nest spots
+
+- **Dev journey, pyramid 12 (stoneGate).** Play it to the end: lift the stone off the altar (the back way opens, the
+  door in shuts), park a stone on the backroom shelf, squeeze through the narrow passage, spend both stones twice,
+  leave by the way out. Leave mid-way and come back: every stone where you set it.
+- **The narrow passage on the loop.** Tap its wall from either side: the explorer walks to the nearer side and
+  squeezes through from there (head-on behind the wall's face, or sideways along it), never round the loop first.
+- **Nested stones (Storybook, `Topology/Lock playground`).** `Stone Passes Through`: park the stone, solve the lever
+  inside, carry the stone through. `Stone Stays Inside`: the inner lock's door out opens only with its stone placed;
+  carry the stone back out by its way in and in again — does a stone wandering into the outer lock read as fair?
+  `Stones Shared`: carry the host's stone in, set it on the inner plate, take the inner's stone out to the door.
+
 ## stoneGate phase 3 — the narrow passage
 
 - **Storybook, `Topology/Lock playground`, `SqueezeThrough`.** Tap the wall: the explorer walks beside it and "Go

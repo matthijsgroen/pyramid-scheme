@@ -40,7 +40,7 @@ arrangements: which plates hold a stone, and whether the hand holds one. For exa
 | 1 | **Stones in the engine** (done; also ships the `stonePlate` realisation and plates left bare with the mod off, pulled forward from phase 3 because the dev bake's toggle-off sweep needs it) | `weights` in the shared `Lock`; compiled to one weights control; plates placed on the carve with the record; `floorLock` walks it; a `.lock` file read at bake; twoStones (no gate loop) baked on the dev floor | — |
 | 2 | **Play with stones** (done 2026-10-07, [plan](2026-10-07-stonegate-phase-2-play.md)) | the Lock playground story; "Lift the stone" / "Set the stone on the plate" prompts; plate drawn empty or full (placeholder art); a blocked walk says why (narrow passage, stairs, way out); door shows its plates; explorer `carrying` with frame fallback | 1 |
 | 3 | **Narrow passage** (done 2026-10-08, [plan](2026-10-08-stonegate-phase-3-narrow-passage.md)) | a realisation for `unladen` gates (registry beside `oneWayRealisation`), drawn as a narrow passage; every one-way takes empty hands, and `unladen` on a drop or beside another owner is refused | 1 |
-| 4 | **Gate loops in the carve** | `topologyFaults`, `offRouteChains` and the fork seams accept a gated join that closes a loop; stoneGate bakes on the dev floor | 1 |
+| 4 | **Gate loops in the carve** (done 2026-10-09, [plan](2026-10-08-stonegate-phase-4-gate-loops.md)) | `topologyFaults`, `offRouteChains` and the fork seams accept a gated join that closes a loop; stoneGate bakes on the dev floor | 1 |
 | 5 | **Art** | painted plate (empty, with stone), narrow passage, torch; explorer carrying frames | runs beside 1–4; wiring needs 2–3 |
 | 7 | **Zipline glide** — done 2026-10-06 ([plan](2026-10-06-zipline-glide.md)) | the ride: explorer hidden, a riding sprite slides launch to landing by CSS, behind `PlayTraversal` (`docs/superpowers/specs/2026-10-04-zipline-ride-acceptance.md`); its art is phase 5 task 2. The zipline's own art stays as it is | 5 (art), independent of the stones |
 | 6 | **Djoser** | stoneGate on an `expert_4` floor through `floorLocks`; save impact settled | #315 merged, 1–5 |
@@ -83,12 +83,13 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
 - **Placement is Djoser, `expert_4`** (designer, 2026-10-06). It needs `floorLocks` from PR #315 (branch
   `world/authoring-locks`, not merged yet). A shipped floor that changes shape falls under the
   save-migration rules: phase 6 decides between a migration and the world reshape release.
+- **One nest spot per lock, on a connection** (designer, 2026-10-08): written `a -&> b`, the inner lock's `in`
+  at `a` and its `out` at `b`, on any connection without a barrier; a lock nests only there. Phase 4 builds it.
 
 ## Open after phase 1
 
 - The §1 refusals "a gate needs more stones than the lock has", "a plate in the region it bars" and "a plate
   where no corridor reaches" do not exist yet; only `plateNamesNoRegion` and `carryWithoutStones` do.
-- Any floor with `lockNesting` that holds stones is refused (`floorLockWalk.ts`) until the nesting rules land: pass through, contained, shared (spec, "Nested locks", designer 2026-10-08).
 - masonsRamp, counterweight and stoneOnAPlate are not baked on the dev floor and are in no phase yet.
 
 ## Open after phase 2
@@ -110,8 +111,6 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
   load, with `gallery >> chamber` (the zipline takes empty hands). It has not been baked on a floor.
 - A passage on a corner draws `narrowAcross`; there is no corner art.
 - The squeeze is drawn in front of the wall, not through it.
-- Where a gate loop makes both sides of a passage walkable (phase 4), the crossing starts from the first side in
-  the cell's `dirs`.
 - Tapping the wall when the near side is itself a node bypasses that node's offer.
 
 ## Open after phase 4
@@ -128,6 +127,19 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
   every region ever reached is reachable again, leaving and re-entering at `in` counting as a way back; one
   backward sweep per region over the reachable states. Refused by name in `yarn lock` and the floor walk. Every
   region, not only hosts of side or hidden paths. Measure the catalogue first and show the designer what fails.
+- A layout written longhand (no `locks`) still refuses a gate on a loop's second meeting: gate loops are the laid
+  carve's (D3); a loop inside one region is fine in every carve.
+- The side-chain carve cuts a cycle only at a branch spot from `RECOVERY_ATTEMPT` on; giving it more freedom from
+  the first attempt (D5) would move world floors, so it waits for the designer's word on a world reshape.
+- masonsRamp, counterweight and stoneOnAPlate are still not on the dev floor.
+- The Lock playground carves stoneGate on its bench floor at seed 0, and it walks sound.
+- No catalogue lock marks a nest spot yet. `yarn run lock` shows and checks a spot, but cannot say which stone
+  case a nesting is; that surfaces in the bake's lock sweep, the floor's refusals and the Lock playground (D16).
+- "On its route" for a pass-through lock is its own `regionRoute`; a lock with two equal routes is read on one.
+- Two stone locks placed one after the other (not nested) are two weights records, so play could hold a stone of
+  each; no floor places two.
+- A lock with a one-way on its only route from `in` to `out` does not carve (`layoutNotFound`), even alone, and
+  its carve can run synchronously for more than 20 s per seed.
 
 ## Open per phase
 
