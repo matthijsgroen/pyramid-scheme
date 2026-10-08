@@ -119,7 +119,6 @@ describe("laying a lock plan on the lattice", { timeout: 120_000 }, () => {
       content: [],
       appetite: new Map(),
     })
-    expect(plan.corridors.length).toBeGreaterThanOrEqual(plan.regions.length)
     const laidSeeds = SEEDS.slice(0, 10).flatMap(seed => {
       const result = layLockPlan(plan, { seed, n: startingGridSize(plan) })
       if (!result.ok) return []

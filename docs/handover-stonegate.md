@@ -49,13 +49,10 @@ The art plan is `docs/superpowers/plans/2026-10-06-stonegate-phase-5-art.md`; it
 
 ## Next work, in order
 
-1. **Lay pruning unconditional** (roadmap "Open after phase 4"): the lay in `src/game/layLocks.ts` prunes only on a
-   plan with a cycle; make it one lay path, re-bake the world (`generatedWorld.ts` and `carveLedger.json` move), no
-   save migration (designer). `yarn verify-content` stays green.
-2. **`lostRegions`** (roadmap "Open after phase 4"): every region ever reached stays reachable, leaving and
+1. **`lostRegions`** (roadmap "Open after phase 4"): every region ever reached stays reachable, leaving and
    re-entering at `in` counting as a way back. Refused by name in `yarn lock` and the floor walk. A catalogue lock
    or lesson it refuses is renamed `<name>-blocked.lock`, so the designer sees it needs fixing.
-3. **Phase 6 (Djoser placement).** Write its plan against what phase 4 built, pick the `expert_4` pyramid and floor
+2. **Phase 6 (Djoser placement).** Write its plan against what phase 4 built, pick the `expert_4` pyramid and floor
    from `docs/game-design/lock-placement.md` and `lock-curriculum.md`, then run it.
 
 Each runs with superpowers:subagent-driven-development: per task an implementer subagent and a task review, then a

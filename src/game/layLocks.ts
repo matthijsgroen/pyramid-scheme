@@ -569,10 +569,7 @@ const search = (
   // A loop-closing corridor joins two regions both laid without it in mind, and the search backtracks
   // chronologically, so a region walled in steps earlier is found only when the budget is gone. A placed
   // region needs a usable side (free, with an empty cell or a region it still joins behind it) for each
-  // corridor it has yet to lay; a branch short of that can never lay and is cut at once. Pruning changes
-  // which branches draw from `rand`, so the check runs only on a plan with a cycle: a tree-shaped plan lays
-  // each corridor the moment its child region is anchored and keeps the layout it always had.
-  const hasCycle = plan.corridors.length >= plan.regions.length
+  // corridor it has yet to lay; a branch short of that can never lay and is cut at once.
   const walledIn = (): boolean => {
     for (const [region, nodes] of regionNodes) {
       const pending = corridorsOf(region).filter(corridor => !corridorPath.has(corridor.id))
@@ -598,7 +595,7 @@ const search = (
       return true
     }
     deepest = Math.max(deepest, i)
-    if (hasCycle && walledIn()) return false
+    if (walledIn()) return false
     return steps[i].run(() => run(i + 1))
   }
   run(0)

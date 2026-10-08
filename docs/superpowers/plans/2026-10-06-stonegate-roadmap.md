@@ -115,10 +115,6 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
 
 ## Open after phase 4
 
-- The lay prunes a branch where a placed region has fewer free sides than corridors still to lay
-  (`src/game/layLocks.ts`), only on a plan with a cycle, so tree locks keep their baked layouts. Make it
-  unconditional: one lay path, faster for every lock. It moves lock floors already in the world (sluice 15/20
-  seeds, plates 16/20), so it comes with a re-bake and no save migration (designer's decision).
 - Every region stays reachable (designer, 2026-10-08): mechanism state is saved per floor, so a region the
   player could reach and a lock then seals for good can never be revisited, and a hidden corridor in it is lost.
   The walk checks only that every state reaches `out` (`strands`) and that no region is never reached

@@ -278,9 +278,9 @@ describe("a nested lock counts to the host as the ground it crosses, never as it
 
     expect(grids.length).toBe(SEEDS)
     const first = walkFloorLock(grids[0])
-    expect(productOf(grids[0])).toHaveLength(75)
-    expect(first).toEqual({ sound: true, states: 31, nested: { mid: 18, deep: 8 } })
-    expect(31).toBeLessThan(productOf(grids[0]).length)
+    expect(productOf(grids[0])).toHaveLength(73)
+    expect(first).toEqual({ sound: true, states: 29, nested: { mid: 18, deep: 8 } })
+    expect(29).toBeLessThan(productOf(grids[0]).length)
     for (const grid of grids) {
       const walk = walkFloorLock(grid)!
       if (!walk.sound) throw new Error(describeFloorWalkFailure(walk.failure))
