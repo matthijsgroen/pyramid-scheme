@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
+import { use, useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import clsx from "clsx"
 import { useTranslation } from "react-i18next"
 import { useTimeout } from "@/support/useTimeout"
 import { useVisibleElapsed } from "@/support/useVisibleElapsed"
 import { HINT_COOLDOWN_MS, useHintAvailability } from "./useHintAvailability"
 import type { SolveOutcome } from "@/app/reactions/reactionContributions"
+import { DevelopContext } from "@/contexts/DevelopMode"
+import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 
 export type PuzzleShellApi = {
   /** Call when the board reaches its solved state. */
@@ -120,6 +122,7 @@ export const PuzzleFamilyShell = ({
   children,
 }: Props) => {
   const { t } = useTranslation("common")
+  const { isDevelopMode } = use(DevelopContext)
   const [solvedBanner, setSolvedBanner] = useState(false)
   const [scheduleSolve, cancelSolve] = useTimeout()
   const { revealed, cooling, nudging, hintsUsed, reveal, reportInput } = useHintAvailability(idleMs)
@@ -185,6 +188,8 @@ export const PuzzleFamilyShell = ({
           ← {t("ui.backToMap")}
         </button>
         <div className="flex-1" />
+        {/* Finishes the board the way a real solve does, so what gets saved is a real solve's. */}
+        {isDevelopMode && <DeveloperButton onClick={handleSolved} label="Solve" />}
         {/* Reset is not a move on the board — it throws the whole board away — so it keeps company with the
             way out rather than with the controls a player uses to PLAY. Up here it is also out of reach of
             the thumb that is working the pad, which is exactly where the one irreversible button belongs. */}
