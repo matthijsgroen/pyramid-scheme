@@ -2,6 +2,8 @@ import type { Lock } from "./lockAuthoring"
 import { joinOf, nestSpotFaults, nestSpotOf } from "./lockAuthoring"
 import { compileLock } from "./lockCompile"
 import type { LockFragment, RealisationBinding } from "./lockCompile"
+import { poolStones } from "./mechanics/weights"
+import { isWeights } from "./obstacles"
 import { regionRoute } from "./regions"
 import type { Region } from "./regions"
 import type { AssemblerReason, FloorConfig } from "./siteTypes"
@@ -258,6 +260,33 @@ export const expandFloorLocks = (
         ),
       },
     })
+  }
+
+  // A SHARED NESTING'S STONES ARE ONE POOL: the weights controls of the pool and of every lock sharing it become one,
+  // under the pool's id, so play holds one stone at most across them and a stone moves from one lock's plates to the
+  // other's.
+  const members = new Map<string, string[]>()
+  for (const [instance, stones] of stoneCases)
+    if (stones.case === "shared") members.set(stones.pool, [...(members.get(stones.pool) ?? []), instance])
+  const anyGates = new Set(
+    [...fragments.values()].flatMap(fragment =>
+      fragment.obstacles.flatMap(obstacle => (obstacle.kind === "gate" && obstacle.mode === "any" ? [obstacle.id] : []))
+    )
+  )
+  for (const [pool, sharing] of members) {
+    const locks = [pool, ...sharing]
+    const pooled = poolStones(
+      `${pool}.stones`,
+      locks.flatMap(name => fragments.get(name)!.controls.filter(isWeights)),
+      anyGates
+    )
+    for (const name of locks) {
+      const fragment = fragments.get(name)!
+      fragments.set(name, {
+        ...fragment,
+        controls: [...fragment.controls.filter(control => !isWeights(control)), ...(name === pool ? [pooled] : [])],
+      })
+    }
   }
 
   const insideOf = new Map(placements.map(placed => [instanceName(placed), placed.inside]))

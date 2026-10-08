@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 import { compileLock } from "../lockCompile"
 import { parseLock } from "../lockNotation"
 import { isWeights } from "../obstacles"
-import { arrangementOf, compileWeights, stoneArrangements } from "./weights"
+import { arrangementOf, compileWeights, poolStones, stoneArrangements } from "./weights"
 
 const lockOf = (text: string) => parseLock(text).lock
 
@@ -155,5 +155,40 @@ describe("a gate's stone terms", () => {
   it("is carried on the record under the key the door asks for", () => {
     const record = recordOf("in -[b]- out\nb plate @in\na plate @in stone")
     expect(record.weighs).toEqual([{ gateKeyId: "k:in-out", terms: [{ kind: "plate", plate: "b", wants: "stone" }] }])
+  })
+})
+
+describe("poolStones", () => {
+  const controlOf = (text: string, namespace: string) => {
+    const result = compileLock(parseLock(text, namespace).lock, { weights: "stonePlate" }, { namespace })
+    if (!result.ok) throw new Error(JSON.stringify(result.faults))
+    return result.fragment.controls.filter(isWeights)[0]
+  }
+  const a = controlOf("in -[p]- out\np plate @in\nshelf plate @in stone\nin ?\nout ?", "a")
+  const b = controlOf("in -[q]- out\nq plate @in\nrest plate @in stone\nin ?\nout ?", "b")
+  const pooled = poolStones("a.stones", [a, b], new Set())
+
+  it("is each lock's own control where the pool holds one lock", () => {
+    expect(poolStones("a.stones", [a], new Set())).toEqual(a)
+  })
+
+  it("holds every plate of both locks, and both stones where they start", () => {
+    expect(pooled.plates.map(plate => plate.id)).toEqual(["a.p", "a.shelf", "b.q", "b.rest"])
+    expect(pooled.initial).toBe("a.shelf b.rest")
+  })
+
+  it("sets a stone lifted in one lock on a plate of the other", () => {
+    expect(pooled.moves).toContainEqual({ from: "a.shelf b.rest", to: "b.rest + hand", plate: "a.shelf" })
+    expect(pooled.moves).toContainEqual({ from: "b.rest + hand", to: "b.q b.rest", plate: "b.q" })
+  })
+
+  it("never lifts a second stone while one is in hand", () => {
+    const fromCarrying = pooled.moves.filter(move => pooled.carrying.includes(move.from))
+    expect(fromCarrying.length).toBeGreaterThan(0)
+    for (const move of fromCarrying) expect(pooled.carrying).not.toContain(move.to)
+  })
+
+  it("opens a lock's gate on a stone on its plate, wherever the stone came from", () => {
+    expect(pooled.opens["b.q b.rest"]).toEqual(["b.in-out"])
   })
 })

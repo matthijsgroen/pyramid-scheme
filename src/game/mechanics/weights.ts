@@ -43,22 +43,22 @@ export const arrangementOf = (key: string): { weighted: string[]; hand: boolean 
 export const termHolds = (term: WeightTerm, { weighted, hand }: Stones): boolean =>
   term.kind === "plate" ? weighted.has(term.plate) === (term.wants === "stone") : !hand
 
+/** A gate's terms on the stones, and whether one term is enough. */
+type StoneGate = { id: string; terms: WeightTerm[]; any: boolean }
+
 /**
  * EVERY ARRANGEMENT OF THE STONES THE PLAYER CAN REACH, and every move between them: one stone in hand at
  * most, lifted from its plate and set down only on an empty one. The one place the stone rules live; the
- * tool's walk and the engine's record are both built from it.
+ * tool's walk, the engine's record and a pool of several locks' stones are all built from it.
  */
-export const stoneArrangements = (lock: Lock): Arrangements => {
-  const weights = lock.weights!
-  const start: Stones = {
-    weighted: new Set(Object.keys(weights.plates).filter(plate => weights.plates[plate].stone)),
-    hand: false,
-  }
+const arrange = (plates: readonly { id: string; stone: boolean }[], gates: readonly StoneGate[]): Arrangements => {
+  const ids = plates.map(plate => plate.id).sort()
+  const start: Stones = { weighted: new Set(plates.filter(plate => plate.stone).map(plate => plate.id)), hand: false }
   const found = new Map<string, Stones>([[keyOf(start), start]])
   const moves: StoneMove[] = []
   for (const queue = [start]; queue.length > 0;) {
     const here = queue.shift()!
-    for (const plate of Object.keys(weights.plates).sort()) {
+    for (const plate of ids) {
       if (here.weighted.has(plate) === here.hand) continue
       const weighted = new Set(here.weighted)
       if (here.hand) weighted.add(plate)
@@ -72,7 +72,35 @@ export const stoneArrangements = (lock: Lock): Arrangements => {
       moves.push({ from: keyOf(here), to: key, plate })
     }
   }
-  const gates = Object.entries(lock.gates).flatMap(([id, gate]) => {
+  const opening = (stones: Stones) =>
+    gates
+      .filter(({ terms, any }) =>
+        any ? terms.some(t => termHolds(t, stones)) : terms.every(t => termHolds(t, stones))
+      )
+      .map(({ id }) => id)
+  return {
+    states: [...found.keys()],
+    initial: keyOf(start),
+    moves,
+    opens: Object.fromEntries([...found].map(([key, stones]) => [key, opening(stones)])),
+    carrying: [...found].filter(([, stones]) => stones.hand).map(([key]) => key),
+    underfoot: [...found].flatMap(([key, stones]) =>
+      ids
+        .filter(plate => !stones.weighted.has(plate))
+        .map(plate => ({
+          from: key,
+          plate,
+          opens: opening({ weighted: new Set([...stones.weighted, plate]), hand: stones.hand }),
+        }))
+    ),
+    terms: Object.fromEntries(gates.map(({ id, terms }) => [id, terms])),
+  }
+}
+
+/** The arrangements of one lock's stones. */
+export const stoneArrangements = (lock: Lock): Arrangements => {
+  const weights = lock.weights!
+  const gates = Object.entries(lock.gates).flatMap(([id, gate]): StoneGate[] => {
     const terms = gate.owners
       .filter(owner => isWeightOwner(lock, owner))
       .map((owner): WeightTerm =>
@@ -82,29 +110,33 @@ export const stoneArrangements = (lock: Lock): Arrangements => {
       )
     return terms.length > 0 ? [{ id, terms, any: gate.mode === "any" }] : []
   })
-  const opening = (stones: Stones) =>
+  return arrange(
+    Object.entries(weights.plates).map(([id, plate]) => ({ id, stone: plate.stone })),
     gates
-      .filter(({ terms, any }) =>
-        any ? terms.some(t => termHolds(t, stones)) : terms.every(t => termHolds(t, stones))
-      )
-      .map(({ id }) => id)
-  const plates = Object.keys(weights.plates).sort()
+  )
+}
+
+/**
+ * THE STONES OF SEVERAL LOCKS AS ONE POOL (stones spec, "Nested locks": shared): every plate of each, one hand, and
+ * each gate's terms read off the one arrangement. A stone lifted in one lock may be set down in the other. `any`
+ * names the gates whose mode is "any", which a compiled control does not carry.
+ */
+export const poolStones = (
+  id: string,
+  controls: readonly WeightsControl[],
+  any: ReadonlySet<string>
+): WeightsControl => {
+  const plates = controls.flatMap(control => control.plates).sort((x, y) => (x.id < y.id ? -1 : x.id > y.id ? 1 : 0))
+  const gates = controls.flatMap(control =>
+    Object.entries(control.terms).map(([gate, terms]) => ({ id: gate, terms, any: any.has(gate) }))
+  )
+  const encounter = controls.find(control => control.encounter !== undefined)?.encounter
   return {
-    states: [...found.keys()],
-    initial: keyOf(start),
-    moves,
-    opens: Object.fromEntries([...found].map(([key, stones]) => [key, opening(stones)])),
-    carrying: [...found].filter(([, stones]) => stones.hand).map(([key]) => key),
-    underfoot: [...found].flatMap(([key, stones]) =>
-      plates
-        .filter(plate => !stones.weighted.has(plate))
-        .map(plate => ({
-          from: key,
-          plate,
-          opens: opening({ weighted: new Set([...stones.weighted, plate]), hand: stones.hand }),
-        }))
-    ),
-    terms: Object.fromEntries(gates.map(({ id, terms }) => [id, terms])),
+    id,
+    control: "weights",
+    plates,
+    ...arrange(plates, gates),
+    ...(encounter === undefined ? {} : { encounter }),
   }
 }
 

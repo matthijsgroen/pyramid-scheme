@@ -4,6 +4,7 @@ import { expandFloorLocks, stoneNestings } from "./floorLocks"
 import type { PlacedLock } from "./floorLocks"
 import type { Lock } from "./lockAuthoring"
 import { parseLock } from "./lockNotation"
+import { isWeights } from "./obstacles"
 import { assembleFloor } from "./siteAssembler"
 import type { FloorConfig, FloorGrid } from "./siteTypes"
 import { leverLock } from "./testSupport/floorLockFixtures"
@@ -174,5 +175,18 @@ describe("a pass-through lock never turns a stone away", () => {
     expect(() =>
       expanded([{ lock: leverLock() }, { lock: stones(dropping, "drop"), as: "inner", inside: { instance: "lever" } }])
     ).not.toThrow()
+  })
+})
+
+describe("a shared nesting's stones are one pool", () => {
+  it("compiles one weights control for both locks, under the pool's id", () => {
+    const weights = (expanded(SHARED).config.controls ?? []).filter(isWeights)
+    expect(weights.map(control => control.id)).toEqual(["host.stones"])
+    expect(weights[0].plates.map(plate => plate.id)).toEqual(["host.p", "host.shelf", "inner.s", "inner.t"])
+  })
+
+  it("leaves a pass-through's and a contained lock's stones in their own control", () => {
+    expect((expanded(PASS_THROUGH).config.controls ?? []).filter(isWeights).map(c => c.id)).toEqual(["host.stones"])
+    expect((expanded(CONTAINED).config.controls ?? []).filter(isWeights).map(c => c.id)).toEqual(["inner.stones"])
   })
 })
