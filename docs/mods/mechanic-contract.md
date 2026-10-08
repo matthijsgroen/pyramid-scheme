@@ -12,11 +12,11 @@ build rather than substituting something near it.
 
 ## 1. Three layers
 
-| layer | what it says | examples |
-|---|---|---|
-| **control** | the state machine the player drives | back and forth, on only, in order, rest plus one per exit |
-| **effect** | what each state does to the map | these gates open, these regions impassable |
-| **realisation** | how it looks and is operated | zipline or headwind, lightswitch or another switch puzzle |
+| layer           | what it says                        | examples                                                  |
+| --------------- | ----------------------------------- | --------------------------------------------------------- |
+| **control**     | the state machine the player drives | back and forth, on only, in order, rest plus one per exit |
+| **effect**      | what each state does to the map     | these gates open, these regions impassable                |
+| **realisation** | how it looks and is operated        | zipline or headwind, lightswitch or another switch puzzle |
 
 A **lock** names controls and effects. It never names a realisation. A realisation is bound from
 **outside**, where the lock is placed, so one lock can be reused across pyramids with different themes:
@@ -28,13 +28,13 @@ control; it is another control.
 
 ## 2. The controls
 
-| control | states | notes |
-|---|---|---|
-| **toggle** | two, back and forth | the lever |
-| **activator** | two, no way back | the torch; also a floor key, whose operation is taking it from a chest |
-| **sequence** | progress 0..n, with a reset | tiles walked in the right order; see §3.1 |
-| **fork-switch** | rest, plus one per exit of its fork | governs its own fork; see §4 |
-| **weights** | one per stone arrangement | the stones on plates; see §3.2 |
+| control         | states                              | notes                                                                  |
+| --------------- | ----------------------------------- | ---------------------------------------------------------------------- |
+| **toggle**      | two, back and forth                 | the lever                                                              |
+| **activator**   | two, no way back                    | the torch; also a floor key, whose operation is taking it from a chest |
+| **sequence**    | progress 0..n, with a reset         | tiles walked in the right order; see §3.1                              |
+| **fork-switch** | rest, plus one per exit of its fork | governs its own fork; see §4                                           |
+| **weights**     | one per stone arrangement           | the stones on plates; see §3.2                                         |
 
 **one-way** is an effect with no control: always on, directed, and **always taken through a prompt** so
 the player never crosses by accident and finds they cannot come back. Every realisation of it must
@@ -211,33 +211,39 @@ placed (§5), and so is nesting one lock inside another.
 {
   "name": "doubleBack",
   "regions": {
-    "in":         { "takes": "puzzles" },
-    "leftLower":  { "takes": "nothing" },
+    "in": { "takes": "puzzles" },
+    "leftLower": { "takes": "nothing" },
     "rightLower": { "takes": "nothing" },
-    "s1":         { "takes": "nothing" },
-    "s2":         { "takes": "reward" },
-    "out":        { "takes": "nothing" }
+    "s1": { "takes": "nothing" },
+    "s2": { "takes": "reward" },
+    "out": { "takes": "nothing" }
   },
   "connections": [
-    ["in", "leftLower"], ["in", "rightLower"], ["rightLower", "s1"],
-    ["leftLower", "s2"], ["in", "out"]
+    ["in", "leftLower"],
+    ["in", "rightLower"],
+    ["rightLower", "s1"],
+    ["leftLower", "s2"],
+    ["in", "out"]
   ],
   "gates": {
-    "in-leftLower":  { "from": "in",         "to": "leftLower",  "owners": ["Y"] },
-    "in-rightLower": { "from": "in",         "to": "rightLower", "owners": ["Y"] },
-    "rightLower-s1": { "from": "rightLower", "to": "s1",         "owners": ["S1"] },
-    "leftLower-s2":  { "from": "leftLower",  "to": "s2",         "owners": ["S1"] },
-    "in-out":        { "from": "in",         "to": "out",        "owners": ["S2"] }
+    "in-leftLower": { "from": "in", "to": "leftLower", "owners": ["Y"] },
+    "in-rightLower": { "from": "in", "to": "rightLower", "owners": ["Y"] },
+    "rightLower-s1": { "from": "rightLower", "to": "s1", "owners": ["S1"] },
+    "leftLower-s2": { "from": "leftLower", "to": "s2", "owners": ["S1"] },
+    "in-out": { "from": "in", "to": "out", "owners": ["S2"] }
   },
   "mechanics": {
-    "Y":  { "control": "fork-switch", "in": "in" },
-    "S1": { "control": "toggle", "in": "s1", "starts": "a",
-            "opens": { "a": ["rightLower-s1"], "b": ["leftLower-s2"] } },
-    "S2": { "control": "toggle", "in": "s2", "starts": "a",
-            "opens": { "a": [], "b": ["in-out"] } }
+    "Y": { "control": "fork-switch", "in": "in" },
+    "S1": {
+      "control": "toggle",
+      "in": "s1",
+      "starts": "a",
+      "opens": { "a": ["rightLower-s1"], "b": ["leftLower-s2"] }
+    },
+    "S2": { "control": "toggle", "in": "s2", "starts": "a", "opens": { "a": [], "b": ["in-out"] } }
   },
   "oneWays": [
-    { "from": "s1",        "to": "leftLower" },
+    { "from": "s1", "to": "leftLower" },
     { "from": "leftLower", "to": "in" }
   ],
   "in": "in",
@@ -342,7 +348,7 @@ and nothing stops it.
 ### What the tool should show back
 
 The starting state is derived, so the author cannot read it off the document. The tool should report it:
-*"at the start these gates stand open"*. That catches a lock whose only open gate is one nobody can
+_"at the start these gates stand open"_. That catches a lock whose only open gate is one nobody can
 reach yet — which is what doubleBack does today.
 
 ## 8. Settled, and still open
