@@ -41,6 +41,26 @@ stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
       These are the refusals `parseLock` already makes.
 - [ ] Every stone lock in `src/game/locks/` parses into a `Lock` the engine accepts without change.
 
+### Nested locks (designer, 2026-10-08)
+
+A lock nested inside another sits on the outer lock's route. Which rule holds depends on which of the
+two uses stones:
+
+- **Pass through: the outer uses stones, the inner does not.** The player parks the stone in the outer
+  lock, solves the inner one, goes back for the stone and carries it through the solved inner lock to use
+  it beyond. So once solved, the inner lock is passable from in to out and back with a stone in hand: no
+  `-[unladen]-` stands on its route once it is solved.
+- **Contained: the inner uses stones, the outer does not.** Every inner stone is in use; the player
+  cannot leave the inner lock with a stone in hand (its way out takes empty hands, as a lock's way out
+  always does).
+- **Shared: both use stones.** The stones are one pool across both locks. A stone carried in from the
+  outer lock may be set on an inner plate (stoneGate as the inner lock: walk in, set the stone in hand on
+  its second plate, walk out); the player leaves the inner lock with a stone only by solving it for one.
+  The inner lock's way out lets a stone through, because the outer lock still needs it; the floor's own
+  ways out still take empty hands.
+- [ ] The solver walks a nested floor with its stones as one pool and proves each case above; a nesting
+      that breaks its rule is refused by name.
+
 ## 2. Solver
 
 - [x] The engine's solver walks a stone arrangement as state: which plates hold a stone, and whether the
