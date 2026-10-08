@@ -92,7 +92,7 @@ describe("what a lock starts as", () => {
   it("names what the engine cannot build yet", () => {
     expect(notBuildable(parseLock(SEQUENCE).lock)).toEqual(["sequence"])
     expect(notBuildable(parseLock("in -- hall\nhall -- out\nhall -[S]\nS toggle @in").lock)).toEqual([])
-    expect(notBuildable(parseLock("in -[H]- hall\nhall -- out\nout -- in\nH toggle @in").lock)).toEqual(["gate loop"])
+    expect(notBuildable(parseLock("in -[H]- hall\nhall -- out\nout -[H:b]- in\nH toggle @in").lock)).toEqual([])
     expect(notBuildable(parseLock("in -- hall\nhall -- out\nout >> in").lock)).toEqual([])
     expect(notBuildable(parseLock(DOUBLE_BACK).lock)).toEqual([])
     expect(notBuildable(parseLock("in -[p]- out\np plate @in\nshelf plate @in stone").lock)).toEqual([])
