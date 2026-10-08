@@ -121,6 +121,13 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
   unconditional: one lay path, faster for every lock. It moves lock floors already in the world (sluice 15/20
   seeds, plates 16/20), so it comes with a re-bake and a check of what saved per-cell floor state does on a
   moved layout (migrate if needed). Designer: fine either way, as long as it is done.
+- Every region stays reachable (designer, 2026-10-08): mechanism state is saved per floor, so a region the
+  player could reach and a lock then seals for good can never be revisited, and a hidden corridor in it is lost.
+  The walk checks only that every state reaches `out` (`strands`) and that no region is never reached
+  (`deadRegions`). Add `lostRegions` beside `deadRegions` (`src/game/lockWalk.ts`): from every reachable state,
+  every region ever reached is reachable again, leaving and re-entering at `in` counting as a way back; one
+  backward sweep per region over the reachable states. Refused by name in `yarn lock` and the floor walk. Every
+  region, not only hosts of side or hidden paths. Measure the catalogue first and show the designer what fails.
 
 ## Open per phase
 
