@@ -5,6 +5,7 @@
  *
  *   yarn lock                       every lock and lesson in the catalogue
  *   yarn lock doubleBack            one of them, with its JSON
+ *   yarn lock lessons/torch --watch src/game/locks/lessons/torch.lock, redrawn on every save
  *   yarn lock sketch.lock           a file
  *   yarn lock sketch.lock --watch   redrawn on every save; a new file starts with the notation
  *   yarn lock - < sketch.lock       standard input
@@ -22,8 +23,11 @@ import { LESSONS, LOCK_CATALOGUE } from "../src/game/lockCatalogue"
 
 const args = process.argv.slice(2)
 const watching = args.includes("--watch")
-const target = args.find(arg => !arg.startsWith("--"))
+const named = args.find(arg => !arg.startsWith("--"))
 const library: Record<string, ParsedLock> = { ...LOCK_CATALOGUE, ...LESSONS }
+// A name without `.lock` is a file under src/game/locks; watching a new one starts it there.
+const inLocks = named && named !== "-" && !named.endsWith(".lock") ? `src/game/locks/${named}.lock` : undefined
+const target = inLocks && (existsSync(inLocks) || (watching && !(named! in library))) ? inLocks : named
 
 const report = (name: string, { lock, drafts, refused }: ParsedLock, withJson: boolean): boolean => {
   const spec = walkSpecOf(lock, drafts)
