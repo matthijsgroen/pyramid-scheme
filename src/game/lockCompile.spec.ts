@@ -633,3 +633,22 @@ describe("a drop that takes empty hands", () => {
     expect(checkLock(shared)).toContainEqual(expect.objectContaining({ type: "oneWaySharesConnection" }))
   })
 })
+
+describe("a mechanic of an effect-only kind", () => {
+  const asMechanic = (control: string): Lock => {
+    const s = sluiceLock()
+    return {
+      ...s,
+      mechanics: { ...s.mechanics, x: { control, in: "annex" } } as unknown as Lock["mechanics"],
+    }
+  }
+
+  it.each(["unladen", "one-way"])("is refused when a lock declares %s as a mechanic", control => {
+    expect(checkLock(asMechanic(control))).toContainEqual({ type: "effectOnlyMechanic", mechanic: "x", control })
+  })
+
+  it("leaves the gate owner unladen and the drop one-way alone", () => {
+    const lock = parseLock("in -- yard\nyard -- out\nout -[unladen]- >> in\nshelf plate @yard stone", "drop").lock
+    expect(checkLock(lock).map(fault => fault.type)).not.toContain("effectOnlyMechanic")
+  })
+})

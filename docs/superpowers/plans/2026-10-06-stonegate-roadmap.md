@@ -107,7 +107,6 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
 - The squeeze is drawn in front of the wall, not through it.
 - Where a gate loop makes both sides of a passage walkable (phase 4), the crossing starts from the first side in
   the cell's `dirs`.
-- The `unladen` and `one-way` kinds are `effectOnly`: they can be declared as mechanics and compile to nothing.
 - `stonePasses` reads whether the floor holds stones, so it over-refuses a drop in another lock on the same floor.
 - Tapping the wall when the near side is itself a node bypasses that node's offer.
 

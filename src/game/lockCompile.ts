@@ -82,6 +82,8 @@ export type LockFault =
   | { type: "unbuiltMechanic"; mechanic: string; control: string }
   /** The kind is declared built, but its plug-in has no compile rule, so baking would drop it. */
   | { type: "kindNotCompilable"; mechanic: string; control: string }
+  /** The kind only shapes a gate or a drop (`unladen`, `one-way`), so a mechanic of it would own nothing and compile to nothing. */
+  | { type: "effectOnlyMechanic"; mechanic: string; control: string }
   /** The binding names no realisation for a kind the lock uses; `mechanics` are the ones that use it. */
   | { type: "unboundRole"; kind: string; mechanics: string[] }
   /** What the floor topology refuses of the compiled fragment, as it would on a floor. */
@@ -206,6 +208,7 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
     const kind = kinds(loose.control)
     for (const region of regionsOfMechanic(loose)) need(`mechanic ${id}`, region)
     if (!kind) faults.push({ type: "unknownControlKind", mechanic: id, control: loose.control })
+    if (kind?.effectOnly) faults.push({ type: "effectOnlyMechanic", mechanic: id, control: loose.control })
     if (kind?.oneToARegion && loose.in !== undefined)
       regionHolders.set(loose.in, [...(regionHolders.get(loose.in) ?? []), id])
     faults.push(...(kind?.faults?.(id, loose) ?? []))
