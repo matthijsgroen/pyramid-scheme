@@ -6,7 +6,8 @@ import { parseLock } from "./lockNotation"
 import { carveLockFloor } from "./testSupport/lockFixtures"
 import { SHELF_AND_DOOR } from "./testSupport/stoneFixtures"
 import { openDoorsFor, openWaysOut } from "./mechanismDoors"
-import type { FloorConfig, FloorGrid, GridCell, RoomCell } from "./siteTypes"
+import { arrangementOf } from "./mechanics/weights"
+import type { FloorConfig, FloorGrid, GridCell, MechanismRecord, RoomCell } from "./siteTypes"
 import { designerDoubleBack, forkSwitchFloorConfig } from "./testSupport/forkSwitchFixtures"
 import { handleFloorConfig } from "./testSupport/handleFixtures"
 import {
@@ -255,6 +256,36 @@ describe("a door the stones hold", () => {
       { id: "stones.p", icon: { kind: "plate", wants: "empty" }, lit: true },
       { id: "unladen", icon: { kind: "hands" }, lit: true },
     ])
+  })
+
+  describe("on a door that wants an empty plate and empty hands", () => {
+    const EMPTY_AND_HANDS = "in -[p:empty+unladen]- out\np plate @in\nshelf plate @in stone\nin ?\nout ?"
+    const markersWith = (pick: (grid: FloorGrid, record: MechanismRecord) => string) => {
+      const grid = stoneFloor(EMPTY_AND_HANDS)
+      const record = grid.cells.flat().find(cell => cell.type === "room" && cell.mechanism?.weighs)!
+      const state = pick(grid, (record as RoomCell).mechanism!)
+      return faceOf(grid, new Map([[homeAddress(grid), state]]))?.gateFace?.markers.map(m => [m.id, m.lit])
+    }
+
+    it("lights the hands no more once a stone is in hand", () => {
+      const markers = markersWith((_, record) => record.states.find(s => arrangementOf(s).hand)!)
+      expect(markers).toContainEqual(["unladen", false])
+    })
+
+    it("lights an empty plate no more once a stone lies on it", () => {
+      const markers = markersWith((_, record) =>
+        record.states.find(s => arrangementOf(s).weighted.includes("stones.p"))!
+      )
+      expect(markers).toContainEqual(["stones.p", false])
+    })
+
+    it("reads a saved key the record does not have as the start", () => {
+      const markers = markersWith(() => "stones.p stones.nowhere")
+      expect(markers).toEqual([
+        ["stones.p", true],
+        ["unladen", true],
+      ])
+    })
   })
 
   it("puts a plate beside a lever on one face, the lever's marker first", () => {

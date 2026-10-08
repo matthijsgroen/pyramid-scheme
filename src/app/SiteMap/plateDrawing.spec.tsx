@@ -1,14 +1,14 @@
 // @vitest-environment jsdom
 import { render } from "@testing-library/react"
-import { describe, expect, it } from "vitest"
+import { afterAll, beforeAll, describe, expect, it } from "vitest"
 import { revealAll } from "@/game/gridNavigation"
 import { parseLock } from "@/game/lockNotation"
-import type { FloorGrid } from "@/game/siteTypes"
+import type { FloorGrid, RoomCell } from "@/game/siteTypes"
 import { carveLockFloor } from "@/game/testSupport/lockFixtures"
 import { SHELF_AND_DOOR, plateNamed } from "@/game/testSupport/stoneFixtures"
 import { cellAddress } from "@/game/cellAddress"
 import { openDoorsFor, openWaysOut } from "@/game/mechanismDoors"
-import { explorerWeight } from "@/game/stonePlay"
+import { explorerWeight, stoneMoveAt } from "@/game/stonePlay"
 import { buildRoomClaims } from "./roomClaims"
 import { SiteMapView, nodeSpritesFor } from "./SiteMapView"
 import { cellCenter, CELL } from "./mapScale"
@@ -16,6 +16,15 @@ import { sharedTileUrl } from "./tileAssets"
 import { PLATE_TILE } from "./plateArt"
 import { shapeKindFor } from "./nodeKinds"
 import "@/mods/registerModApps"
+
+// jsdom has no layout, so the map's scroll-to-explorer has nothing to call; the stub is put back after.
+const realScrollTo = Element.prototype.scrollTo
+beforeAll(() => {
+  Element.prototype.scrollTo = () => {}
+})
+afterAll(() => {
+  Element.prototype.scrollTo = realScrollTo
+})
 
 const lit = revealAll(carveLockFloor(parseLock(SHELF_AND_DOOR, "stones").lock, { weights: "stonePlate" }))
 const sprites = (grid: FloorGrid, standingAt?: readonly [number, number]) =>
@@ -127,5 +136,64 @@ describe("a door under the explorer's weight", () => {
       )
     expect(leaf(undefined)?.url).toMatch(/gate-open/)
     expect(leaf(explorerWeight(opened, 0, p, thrown))?.url).not.toMatch(/gate-open/)
+  })
+})
+
+describe("a plate and the explorer on the map", () => {
+  const spriteEl = (container: HTMLElement, [r, c]: readonly [number, number]) =>
+    container.querySelector<HTMLElement>(`[data-node-sprite="plate:${r},${c}"]`)
+  const urlOf = (el: HTMLElement | null) => /url\(["']?(.*?)["']?\)/.exec(el?.style.backgroundImage ?? "")?.[1]
+  const shelf = plateNamed(lit, "shelf")
+  const p = plateNamed(lit, "p")
+
+  it("is drawn under him while he stands on it, never over", () => {
+    const { container } = render(<SiteMapView grid={lit} currentFloor={0} explorerPos={p} />)
+    const plate = spriteEl(container, p)!
+    const explorer = container.querySelector("[data-explorer]")!
+    expect(plate.compareDocumentPosition(explorer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it("is drawn raised, not pressed, while he is still walking to it", () => {
+    const { container, rerender } = render(<SiteMapView grid={lit} currentFloor={0} explorerPos={shelf} />)
+    rerender(<SiteMapView grid={lit} currentFloor={0} explorerPos={p} />)
+    expect(urlOf(spriteEl(container, p))).toBe(sharedTileUrl(PLATE_TILE.raised))
+  })
+
+  it("keeps the stone's look under him: a stone presses the plate whoever stands there", () => {
+    expect(spriteAt(lit, shelf, shelf)?.url).toBe(sharedTileUrl(PLATE_TILE.stone))
+  })
+
+  it("wears no dim once walked, where its marker is kept", () => {
+    const loose: FloorGrid = {
+      ...lit,
+      cells: lit.cells.map((row, r) =>
+        row.map((cell, c) => {
+          if (cell.type !== "room" || !cell.plate || cell.mechanism) return cell
+          const { worksMechanism: _, ...rest } = cell
+          return { ...rest, state: "completed" as const }
+        })
+      ),
+    }
+    const { container } = render(<SiteMapView grid={loose} currentFloor={0} />)
+    const [r, c] = [p, shelf].find(([r, c]) => !(loose.cells[r][c] as RoomCell).mechanism)!
+    const { cx, cy } = cellCenter(r, c)
+    const marker = Array.from(container.querySelectorAll<HTMLElement>("[data-marker-cell]")).find(
+      el => parseFloat(el.style.left) === cx - CELL / 2 && parseFloat(el.style.top) === cy - CELL / 2
+    )
+    expect(marker?.querySelector("[data-shape-kind]")?.getAttribute("opacity")).toBe("1")
+  })
+
+  it("has the explorer drawn with the carrying frames once a stone is in hand", () => {
+    const lift = stoneMoveAt(lit, 0, shelf[0], shelf[1], new Map())!
+    const frame = (states: Map<string, string>) => {
+      const { container, unmount } = render(
+        <SiteMapView grid={lit} currentFloor={0} explorerPos={p} mechanismStates={states} />
+      )
+      const src = container.querySelector("[data-explorer] img")?.getAttribute("src")
+      unmount()
+      return src
+    }
+    expect(frame(new Map([[lift.address, lift.state]]))).toMatch(/explorer-carry/)
+    expect(frame(new Map())).not.toMatch(/explorer-carry/)
   })
 })
