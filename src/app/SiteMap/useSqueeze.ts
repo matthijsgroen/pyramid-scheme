@@ -10,6 +10,18 @@ import { useHeldCrossing } from "./useHeldCrossing"
  * slide as long as both. */
 export const SQUEEZE_MS_PER_LEG = 350
 
+/** How long each half of a sideways squeeze takes: slower, as he slides along the wall's length behind it. */
+export const SQUEEZE_SIDEWAYS_MS_PER_LEG = 1000
+
+/** How long a whole squeeze takes, head-on or round a corner. */
+export const SQUEEZE_MS = SQUEEZE_MS_PER_LEG * 2
+
+/** How far a sideways squeeze is drawn above the foot line, in map units. */
+export const SQUEEZE_SIDEWAYS_LIFT = 10
+
+/** How long a whole sideways squeeze takes. */
+export const SQUEEZE_SIDEWAYS_MS = SQUEEZE_SIDEWAYS_MS_PER_LEG * 2
+
 /** How far a head-on squeeze slides inside the wall's cell: from in front of its face to behind it. */
 export const SQUEEZE_HEAD_ON_SLIDE = CELL / 4
 
@@ -25,6 +37,8 @@ export type Squeeze = {
   traversal: Traversal & { via: Place }
   way: SqueezeWay
   msPerLeg: number
+  /** The whole squeeze: both legs, or the one head-on slide. */
+  ms: number
   end: () => void
 }
 
@@ -51,19 +65,21 @@ export const squeezeSprite = (dir: Direction): { url: string; mirrored: boolean 
  */
 export const useSqueeze = ({
   reducedMotion,
-  msPerLeg = SQUEEZE_MS_PER_LEG,
+  msPerLeg: msPerLegOverride,
 }: { reducedMotion?: boolean; msPerLeg?: number } = {}) => {
   const build = useCallback(
     (traversal: Traversal) => {
       const { from, via, to } = traversal
       if (!via || !squeezeSprite(headingOf(from, via)) || !squeezeSprite(headingOf(via, to))) return undefined
       const way = squeezeWay({ from, via, to })
+      const msPerLeg = msPerLegOverride ?? (way === "sideways" ? SQUEEZE_SIDEWAYS_MS_PER_LEG : SQUEEZE_MS_PER_LEG)
+      const ms = msPerLeg * 2
       return {
-        ms: msPerLeg * 2,
-        held: (end: () => void): Squeeze => ({ traversal: { ...traversal, via }, way, msPerLeg, end }),
+        ms,
+        held: (end: () => void): Squeeze => ({ traversal: { ...traversal, via }, way, msPerLeg, ms, end }),
       }
     },
-    [msPerLeg]
+    [msPerLegOverride]
   )
   const { held: squeeze, playTraversal } = useHeldCrossing(build, reducedMotion)
   return { squeeze, playTraversal }

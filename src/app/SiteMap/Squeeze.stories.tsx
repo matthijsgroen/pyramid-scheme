@@ -5,7 +5,7 @@ import type { Direction, GridCell } from "@/game/siteTypes"
 import { floorFrom } from "./floorFixtures.testing"
 import { prefersReducedMotion } from "./reducedMotion"
 import { SiteMapView } from "./SiteMapView"
-import { SQUEEZE_MS_PER_LEG, useSqueeze } from "./useSqueeze"
+import { SQUEEZE_MS, SQUEEZE_SIDEWAYS_MS, SQUEEZE_SIDEWAYS_MS_PER_LEG, useSqueeze } from "./useSqueeze"
 import "@/mods/registerModApps"
 
 // The squeeze on the real `SiteMapView` path, one wall per direction: the explorer goes into the crack, out on the
@@ -22,6 +22,7 @@ const crack = (dirs: Direction[]): GridCell => ({
   dirs: new Set(dirs),
   state: "fogged",
   tags: ["gate"],
+  requiredKeyId: "crack",
   passage: { realisation: "narrowPassage" },
 })
 
@@ -74,8 +75,8 @@ const Squeeze = ({ travel }: { travel: Direction }) => {
         </button>
         <span data-timing="">
           {tall
-            ? `head-on: one slide in the wall's cell, ${SQUEEZE_MS_PER_LEG * 2} ms`
-            : `sideways, behind the wall: ${SQUEEZE_MS_PER_LEG} ms per leg, ${SQUEEZE_MS_PER_LEG * 2} ms in all`}
+            ? `head-on: one slide in the wall's cell, ${SQUEEZE_MS} ms`
+            : `sideways, behind the wall: ${SQUEEZE_SIDEWAYS_MS_PER_LEG} ms per leg, ${SQUEEZE_SIDEWAYS_MS} ms in all`}
           , then {PAUSE_MS} ms pauses
         </span>
         <span>{reduced ? "reduced motion: the crossing is at once" : `squeezed ${rounds} times`}</span>

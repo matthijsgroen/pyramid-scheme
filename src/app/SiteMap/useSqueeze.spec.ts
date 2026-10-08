@@ -33,7 +33,12 @@ describe("useSqueeze", () => {
     const { result } = renderHook(() => useSqueeze())
     let landed = false
     act(() => void result.current.playTraversal(crack()).then(() => (landed = true)))
-    expect(result.current.squeeze).toMatchObject({ traversal: { via: [0, 1] }, msPerLeg: 350, way: "sideways" })
+    expect(result.current.squeeze).toMatchObject({
+      traversal: { via: [0, 1] },
+      msPerLeg: 1000,
+      ms: 2000,
+      way: "sideways",
+    })
     await act(async () => result.current.squeeze!.end())
     expect(landed).toBe(true)
     expect(result.current.squeeze).toBeNull()
@@ -81,10 +86,28 @@ describe("useSqueeze", () => {
     const { result } = renderHook(() => useSqueeze())
     let landed = false
     act(() => void result.current.playTraversal(crack()).then(() => (landed = true)))
-    await act(async () => vi.advanceTimersByTime(350 * 2 + 249))
+    await act(async () => vi.advanceTimersByTime(2000 + 249))
     expect(landed).toBe(false)
     await act(async () => vi.advanceTimersByTime(1))
     expect(landed).toBe(true)
+  })
+
+  it("lands a head-on squeeze after 700 ms and a sideways one after 2000 ms", async () => {
+    const { useSqueeze } = await hookWith({ "explorer-squeeze-e": ["e.png"], "explorer-squeeze-s": ["s.png"] })
+    const headOn = crack({ from: [0, 1], via: [1, 1], to: [2, 1], dir: "s" })
+    for (const [traversal, ms] of [
+      [headOn, 700],
+      [crack(), 2000],
+    ] as const) {
+      const { result } = renderHook(() => useSqueeze())
+      let landed = false
+      act(() => void result.current.playTraversal(traversal).then(() => (landed = true)))
+      expect(result.current.squeeze?.ms).toBe(ms)
+      await act(async () => vi.advanceTimersByTime(ms + 249))
+      expect(landed).toBe(false)
+      await act(async () => vi.advanceTimersByTime(1))
+      expect(landed).toBe(true)
+    }
   })
 
   it("ends a squeeze that is taken off the map mid-slide", async () => {

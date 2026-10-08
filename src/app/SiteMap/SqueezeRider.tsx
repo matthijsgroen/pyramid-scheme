@@ -4,7 +4,7 @@ import type { Direction } from "@/game/siteTypes"
 import { FIGURE_LIT, FOOT_LIFT, TorchGlow } from "./ExplorerDot"
 import { OCCLUDER_FADE } from "./htmlLayers"
 import { CELL, cellCenter } from "./mapScale"
-import { SQUEEZE_HEAD_ON_SLIDE, squeezeSprite, type Squeeze } from "./useSqueeze"
+import { SQUEEZE_HEAD_ON_SLIDE, SQUEEZE_SIDEWAYS_LIFT, squeezeSprite, type Squeeze } from "./useSqueeze"
 
 /** Where the explorer's feet are on a cell: its centre, down to the line he stands on. */
 // eslint-disable-next-line react-refresh/only-export-components -- pure function, exported so tests can assert where the rider stands
@@ -62,7 +62,8 @@ const poseOf = ({ traversal: { from, via, to }, way }: Squeeze, leg: Leg): Pose 
       : { ...face, opacity: 1, dir }
   }
   const { x, y } = squeezeFoot(leg === "from" ? from : leg === "via" ? via : to)
-  return { x, y, opacity: 1, dir: leg === "to" ? headingOf(via, to) : headingOf(from, via) }
+  const lift = way === "sideways" ? SQUEEZE_SIDEWAYS_LIFT : 0
+  return { x, y: y - lift, opacity: 1, dir: leg === "to" ? headingOf(via, to) : headingOf(from, via) }
 }
 
 /**
@@ -81,7 +82,7 @@ export const SqueezeRider = ({ squeeze }: { squeeze: Squeeze }) => {
     return () => cancelAnimationFrame(frame)
   }, [squeeze])
   const headOn = squeeze.way === "headOn"
-  const ms = headOn ? squeeze.msPerLeg * 2 : squeeze.msPerLeg
+  const ms = headOn ? squeeze.ms : squeeze.msPerLeg
   const { x, y, opacity, dir } = poseOf(squeeze, leg)
   return (
     <div
