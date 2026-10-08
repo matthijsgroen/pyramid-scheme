@@ -566,6 +566,31 @@ const search = (
     }
   }
 
+  // A loop-closing corridor joins two regions both laid without it in mind, and the search backtracks
+  // chronologically, so a region walled in steps earlier is found only when the budget is gone. A placed
+  // region needs a usable side (free, with an empty cell or a region it still joins behind it) for each
+  // corridor it has yet to lay; a branch short of that can never lay and is cut at once. Pruning changes
+  // which branches draw from `rand`, so the check runs only on a plan with a cycle: a tree-shaped plan lays
+  // each corridor the moment its child region is anchored and keeps the layout it always had.
+  const hasCycle = plan.corridors.length >= plan.regions.length
+  const walledIn = (): boolean => {
+    for (const [region, nodes] of regionNodes) {
+      const pending = corridorsOf(region).filter(corridor => !corridorPath.has(corridor.id))
+      if (pending.length === 0) continue
+      const others = new Set(pending.map(corridor => (corridor.from === region ? corridor.to : corridor.from)))
+      let usable = 0
+      for (const node of nodes)
+        for (let d = 0; d < 4; d++) {
+          const next = step(node, d)
+          if (next < 0 || !sideFree(node, d)) continue
+          const owner = occupied.get(next)
+          if (owner === undefined || others.has(owner)) usable++
+        }
+      if (usable < pending.length) return true
+    }
+    return false
+  }
+
   let laid: LaidLocks | undefined
   const run = (i: number): boolean => {
     if (i === steps.length) {
@@ -573,6 +598,7 @@ const search = (
       return true
     }
     deepest = Math.max(deepest, i)
+    if (hasCycle && walledIn()) return false
     return steps[i].run(() => run(i + 1))
   }
   run(0)

@@ -8,21 +8,26 @@ import type { FloorConfig } from "./siteTypes"
 import { expectLaidPlan } from "./testSupport/laidLocksInvariants"
 import { leverLock, strandingLock } from "./testSupport/floorLockFixtures"
 import { BINDING, doubleBackLock, sluiceLock } from "./testSupport/lockFixtures"
+import { freeRegions } from "./lockAuthoring"
+import { parseLock } from "./lockNotation"
+import { planToLay } from "./laidFloor"
 
-const planOf = (locks: PlacedLock[]): LockPlan => {
+const planOf = (locks: PlacedLock[], realisations = BINDING): LockPlan => {
   const floor: FloorConfig = {
     pathPuzzles: 2,
     difficulty: "expert",
     end: "treasure",
     exitOrStaircase: "exit",
     sideSections: [],
-    realisations: BINDING,
+    realisations,
     locks,
   }
   const result = expandFloorLocks(floor)
   if (!result.ok) throw new Error(`refused: ${JSON.stringify(result.reasons)}`)
   return planLockFloor(result)!
 }
+
+const STONES = { ...BINDING, weights: "stonePlate" }
 
 const FIXTURES: Record<string, () => LockPlan> = {
   sluice: () => planOf([{ lock: sluiceLock() }]),
@@ -103,5 +108,24 @@ describe("laying a lock plan on the lattice", { timeout: 120_000 }, () => {
     expect(ids).toContain(result.refusal.part.id)
     expect(result.refusal.part.id).not.toBe(plan.route[0])
     expect(result.refusal.grid).toBe(3)
+  })
+
+  // A MADE-UP LOCK, never a catalogue one. `hub` takes four ways and sits on two loops (hub-a-b-c-hub and
+  // hall-hub-c-hall), so the ways that close them join regions both laid earlier, round a hub with no side to spare.
+  it("lays a plan whose ways close loops round a hub with no side to spare", () => {
+    const ROUND_THE_HUB =
+      "in -- hall -[p]- out\nhall -- hub\nhub -- a\na -- b\nb -- c\nc -- hub\nhub -- d\nc -- hall\np plate @d stone"
+    const plan = planToLay(planOf([{ lock: freeRegions(parseLock(ROUND_THE_HUB, "hub").lock) }], STONES), {
+      content: [],
+      appetite: new Map(),
+    })
+    expect(plan.corridors.length).toBeGreaterThanOrEqual(plan.regions.length)
+    const laidSeeds = SEEDS.slice(0, 10).flatMap(seed => {
+      const result = layLockPlan(plan, { seed, n: startingGridSize(plan) })
+      if (!result.ok) return []
+      expectLaidPlan(plan, result.laid)
+      return [seed]
+    })
+    expect(laidSeeds).toHaveLength(10)
   })
 })
