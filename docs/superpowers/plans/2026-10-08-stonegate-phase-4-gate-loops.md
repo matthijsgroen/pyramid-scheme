@@ -1,9 +1,23 @@
-# stoneGate Phase 4: Gate Loops in the Carve — Implementation Plan
+# stoneGate Phase 4: Gate Loops in the Carve, and Stones in Nested Locks — Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** a lock whose gated joins close a loop is accepted by the floor topology, carves, is proved sound by the
-floor walk, and stoneGate (`src/game/locks/stoneGate.lock`) bakes on the dev floor as pyramid 12.
+floor walk, and stoneGate (`src/game/locks/stoneGate.lock`) bakes on the dev floor as pyramid 12. Then a floor that
+nests locks may hold stones: each nesting is a pass-through, a contained or a shared one (spec, "Nested locks"), the
+floor walk proves it with the stones as one pool, and the blanket refusal `STONES_NESTED` goes (tasks 7-12).
+
+**Architecture (nested stones, tasks 7-12):** the expansion (`expandFloorLocks`, `src/game/floorLocks.ts`) classifies
+every nested placement against the locks it stands in (`stoneNestings`) and writes the case on `LockNesting.stones`.
+A shared nesting's stones are compiled into ONE weights control (`poolStones`, `src/game/mechanics/weights.ts`), so
+play has one hand and one arrangement across both locks. A contained lock's edge is a line a carrying walk does not
+cross: one pure function (`crossesContainedEdge`, new `src/game/stoneBounds.ts`) answers it for both the walk
+(`floorLock` tags the compiled passages and gates on that line `unladen`, and `movesFrom` honours the tag) and play
+(the navigation stops a carrying walk on the near side, "Cannot pass with a stone"). The composed walk
+(`src/game/floorLockWalk.ts`) gives every level the `leaveWith` of the stones it holds, walks a shared nesting fused
+with its pool's level (the product, since stones move between them), keeps the cut for pass-through and contained
+nestings (exact, because nothing outside a contained lock carries its stones and nothing inside a pass-through lock
+reads a hand), and names a pooled failure by its instances.
 
 **Architecture:** a lock floor is laid before it is carved (`layLockPlan`, `src/game/layLocks.ts`): every connection
 of the plan becomes a laid corridor, loops included, and the grown maze can never join two regions. What refuses a
@@ -17,17 +31,18 @@ what proves each carved loop sound. A floor carved as side chains (no `locks`) k
 
 **Tech Stack:** TypeScript, Vitest, `yarn run lock` (`scripts/lock.ts`), `yarn generate-world` (Node bake).
 
-**Spec:** `docs/superpowers/specs/2026-10-04-stones-acceptance.md` (§3 Carve and bake; "Done when").
+**Spec:** `docs/superpowers/specs/2026-10-04-stones-acceptance.md` (§3 Carve and bake; "Done when"; §1 "Nested locks
+(designer, 2026-10-08)", binding for tasks 7-12).
 **Roadmap:** `docs/superpowers/plans/2026-10-06-stonegate-roadmap.md` (phase 4 row; "Decisions taken": gate loops
 are allowed). **Design:** `docs/mods/floor-topology-design.md` ("The rules that keep a lock buildable": "Gates may
 form loops").
 
-**Written against `608a067e`** (branch `topology/mechanics`; phases 1 and 2 done, phase 3 planned and being
-implemented on this branch). Every path, symbol and line cited below was checked at that commit, except the phase 3
-names, which are marked **(phase 3)** and come from
-`docs/superpowers/plans/2026-10-08-stonegate-phase-3-narrow-passage.md`. The two untracked files at the repository
-root (`circle.lock`, `stoneGate.lock`) are the designer's scratch: never stage them. Stage strictly by path, never
-`git add -A` or `git add .`.
+**Written against `608a067e`, re-verified against `528979f7`** (branch `topology/mechanics`; phases 1, 2 and 3 done,
+phase 3's last commit `12df1203`). Every path, symbol and line cited below was checked at `528979f7`; line numbers
+drift as other work lands on the branch, so find each edit by the symbol named beside it. The two untracked files at
+the repository root (`circle.lock`, `stoneGate.lock`) are the designer's scratch: never stage them. Stage strictly by
+path, never `git add -A` or `git add .`. Other sessions commit to this branch: before each task, `git status --short`
+and leave files you did not touch alone.
 
 ## What was measured before writing this
 
@@ -45,31 +60,71 @@ Made-up locks carved through `assembleFloor` at `608a067e` (every region `?`, th
 
 ## Questions before running
 
-The designer answers these in the morning. The plan is written assuming each recommendation.
+The designer answers these before the run. The plan is written assuming each recommendation. (The earlier question
+"run after phase 3?" is settled: phase 3 is on the branch, so every task runs in order, task 5 binds `unladen:
+"narrowPassage"` and task 6 edits phase 3's `passageCrossing`.)
 
-1. **When does this run?** Recommendation: **after phase 3's last commit is on the branch.** stoneGate's
-   `hall3 -[unladen]- hall2` binds to the narrow passage only once phase 3 exists, and after phase 3 a lock with a
-   passage and no `unladen` binding is refused `unboundRole`; task 5 binds `unladen: "narrowPassage"` and task 6
-   edits phase 3's `passageCrossing`. Alternative: run tasks 1-4 now (they touch nothing phase 3 touches except
-   `notBuildable`, one line), bake stoneGate without an `unladen` binding (at `608a067e` an `unladen` gate compiles
-   as a door shut while carrying and needs no binding), and leave task 6 and the binding to a follow-up.
-2. **Only laid floors accept a gate loop; `offRouteChains` stays as it is.** Recommendation: yes. The roadmap row
+1. **Only laid floors accept a gate loop; `offRouteChains` stays as it is.** Recommendation: yes. The roadmap row
    names `offRouteChains`, but on a lock floor nothing carves from it: the lay reads the plan, and the only readers
    left are `topologyFaults`' seat test, the fork seams and `PlanRegion.mouth` (which the lay never reads). A floor
    written longhand (a `regionLayout` with no `locks`) is carved as side chains, which cannot stand the second meeting
    of a loop; it keeps `obstacleOffRoute`. Alternative: teach the side-chain carve to close loops, which has no
    consumer (no shipped or dev floor writes a layout longhand with a loop).
-3. **A gate an open loop goes round is refused by name before the carve (`gateBypassed`).** Recommendation: yes,
+2. **A gate an open loop goes round is refused by name before the carve (`gateBypassed`).** Recommendation: yes,
    on laid floors. Today such a lock fails every carve with `gateDoorMisplaced`, sixty attempts per seed, and the
    author reads a cell coordinate. Alternative: leave it to the carve's own check.
-4. **The crossing of a narrow passage starts from the nearer side (task 6).** Recommendation: yes. Phase 3 starts
+3. **The crossing of a narrow passage starts from the nearer side (task 6).** Recommendation: yes. Phase 3 starts
    it from the first side in the wall cell's `dirs` and handed the choice to phase 4; on stoneGate both sides of the
    passage between `hall3` and `hall2` are walkable, so a tap could send the explorer the long way round the loop
    only to squeeze back. Alternative: a playtest backlog line instead.
-5. **stoneGate takes dev pyramid 12, expert, every region `free`** (as twoStones on pyramid 11), bound
+4. **stoneGate takes dev pyramid 12, expert, every region `free`** (as twoStones on pyramid 11), bound
    `{ weights: "stonePlate", activator: "torch", unladen: "narrowPassage" }`. The comment at the top of
    `src/game/locks/stoneGate.lock` ("not placed yet, not buildable yet (stones, gate loop)") is the designer's and is
    left alone.
+
+The nested-stone questions (tasks 7-12):
+
+5. **How is a contained lock's edge kept?** The spec says a contained lock's way out "takes empty hands, as a lock's
+   way out always does". Nothing physical stands at a nested lock's ports today: its regions meet the host's along an
+   ordinary corridor. Recommendation: **an invisible edge, the floor exit's rule moved inward** (tasks 9 and 11). A
+   carrying walk that would cross the line between a contained lock's ground and the rest stops on the near side with
+   the one blocked line, "Cannot pass with a stone", exactly as the way out does; one function
+   (`crossesContainedEdge`) decides it for play and for the walk, read off the cells' authored region labels, so the
+   two cannot disagree. No carve change, no binding, no prompt. Alternatives: (a) the compile stands an `unladen` gate
+   (a narrow passage) on each of the contained lock's two port joins, which needs no new walk or play code but adds a
+   crack wall and a "Go through the crack" prompt every time the player enters or leaves the lock, changes the carve,
+   and needs `unladen` bound; (b) no play rule, and the walk refuses a contained nesting whose inner lock lets a stone
+   reach its edge at all, which refuses nearly every stone lock (a stone on a shelf by the way in already does).
+6. **"The player leaves the inner lock with a stone only by solving it for one" (shared).** Stones are alike, so a
+   state does not know whose stone is in hand, nor whether the inner was solved before. Recommendation: **read it as
+   design guidance that the pooled soundness walk proves through, with no extra check**: one pool (task 8), the inner's
+   way out lets a stone through (no edge, task 9), the floor's ways out take empty hands (`leaveWith` on the floor's
+   level, task 10), and if taking an inner stone out unsolved can strand the floor, the pooled walk refuses it, naming
+   both instances (`pooled`, task 10). Alternative: a memoryless count rule ("a stone leaves the inner by its way in
+   only while its plates hold at least the stones it was authored with, or while it stands open in to out"), which
+   over-refuses: a player who solves the inner, carries its stone back and later swaps it for the outer's breaks it.
+7. **How does the state space grow, and is a bound needed?** Pass-through and contained nestings keep the cut: the
+   host walks the inner as ground, so the host's states never multiply by the inner's (tested by counting states, task
+   10). A shared nesting is walked fused with its pool's level, which is the product of both locks' mechanisms; the
+   pooled arrangement count is C(P, S) + C(P, S - 1) for P plates and S stones (P = 8, S = 3: 84). Recommendation:
+   **no new bound**: `reachableStates` already refuses a level whose ceiling (regions × the product of every
+   mechanism's state count) passes `MAX_LOCK_STATES` (50 000), and a fused level that does is refused `tooLarge`
+   inside `pooled`, naming the instances (task 10 tests it). Alternative: a tighter per-pool ceiling, which has no
+   consumer yet.
+8. **Which locks join a pool?** Recommendation: **a nested lock is read against the nearest lock it stands in that
+   holds stones, at any depth** (`stoneNestings`, task 7). So in `A(stones) ⊃ B(none) ⊃ C(stones)` B is a
+   pass-through and C shares A's pool (A's stone is carried through B into C), and B is walked fused with A and C.
+   Read against the direct host only, C would be contained, and its edge would stop A's stone half-way through B,
+   breaking B's pass-through rule. Alternative: refuse a stone lock inside a pass-through lock by name.
+9. **Where does `yarn lock` surface the nesting rules?** No lock file can declare nesting: the notation has no nesting
+   line, and nesting is said where locks are placed (`PlacedLock.inside`). Recommendation: **nothing in `yarn lock`
+   now**; the case and each refusal surface where a nesting exists: the bake's lock sweep and `walkFloorLock`
+   (`describeFloorWalkFailure`), the floor's `AssemblerReason`s, and the Lock playground (task 12), which can nest one
+   catalogue lock in another. Recorded under "Open after phase 4". Alternative: a `yarn run lock <host> --nest
+   <inner>@<region>` that carves a bench floor and prints the case and the floor walk's verdict.
+10. **A dev floor for nested stones?** Recommendation: **no**: made-up test fixtures prove each case (task 10), and the
+   playground plays them (task 12). A dev floor would churn every dev-journey count again (task 5 already moves them
+   to 12) for no case the tests do not cover. Alternative: dev pyramid 13 with a shared nesting.
 
 ## Rulings made without the designer
 
@@ -85,7 +140,20 @@ The designer answers these in the morning. The plan is written assuming each rec
   floods (`twoWayNeighbours`; a drop is never ground), and the barrier's doors stand at every entrance. — Cost if
   wrong: a few more locks reach the carve and fail there as they do today.
 - **Ruling: no `CHANGELOG.md` entry and no save change.** — Why: stoneGate plays only on the dev journey and in
-  Storybook until phase 6; no world floor changes.
+  Storybook until phase 6; no world floor changes, and no world floor nests a lock (`grep -c lockNesting
+  src/data/generatedWorld.ts` is 0) or holds stones.
+- **Ruling: a pass-through needs no new check.** — Why: a lock without stones cannot write `unladen` (`lockFaults`
+  refuses it `carryWithoutStones` on the authored lock, drop conditions included), and on a floor that holds stones a
+  drop bound to a `handsFull` realisation without `unladen` is refused `stonePasses` (`siteAssembler.ts`, floor-wide).
+  With question 8, a stone lock inside it shares the pool and stands no edge. So nothing inside a pass-through lock
+  can turn a carrying walk away; task 11 pins both refusals in a nested floor so they stay its named refusals. —
+  Cost if wrong: one walk check.
+- **Ruling: the pooled control takes the pool instance's id, `<pool>.stones`, and the first plate's slot like any
+  weights record.** — Why: the record is filed under its first plate (`xplate:<id>`), so a pooled floor saves as one
+  arrangement with no new field. No shipped floor pools, so no save changes. — Cost if wrong: a rename.
+- **Ruling: the contained edge is read off authored region labels (`cell.region`), the way `regionsOf` already
+  splits compiled regions.** — Why: a compiled region holds one label, so a compiled passage or a door's gate crosses
+  the edge exactly when the two cells' labels do, and play reads the same labels. — Cost if wrong: one function.
 
 ## Global Constraints
 
@@ -95,16 +163,24 @@ The designer answers these in the morning. The plan is written assuming each rec
 - **No tests on authored content.** Tests use small made-up locks written inline. `yarn run lock` checks
   `src/game/locks/*.lock`. Never assert what stoneGate (or any catalogue lock) contains.
 - **Stable world:** a plain `yarn generate-world` leaves `src/data/generatedWorld.ts` byte-identical. This plan edits
-  files in the carve fingerprint (`src/game/obstacles.ts`, `src/game/regions.ts`, `src/game/siteAssembler.ts`), so
-  `src/data/carveLedger.json` changes in its `"hash"` lines only; that refresh is committed (task 5, again in task 7
-  if task 6 moved it).
+  files in the carve fingerprint (`src/game/obstacles.ts`, `src/game/regions.ts`, `src/game/siteAssembler.ts`, and in
+  tasks 7-11 `floorLocks.ts`, `mechanics/weights.ts`, `floorLock.ts`, `lockWalk.ts`, `floorLockWalk.ts`), so
+  `src/data/carveLedger.json` changes in its `"hash"` lines only; that refresh is committed (task 5, again in task
+  13). Where the world could move, and why it does not: `stoneArrangements` is refactored (task 8) and every stone
+  floor reads it, but no world floor holds stones and the dev floors' arrangement keys are pinned by
+  `weights.spec.ts`; `floorLock` tags edges only where `grid.lockNesting` names a contained lock, and no world floor
+  nests; `walkFloorLock` changes only for nested floors. A `"refusal"` line changing in the ledger means a world
+  floor's search ended differently: stop and find the task.
 - **Authoring encounters never changes corridor structure** (`docs/game-design/world-spec-stability.md`). Nothing
   here reads an encounter; the seat and seam questions read the layout and the obstacles only.
 - **Mod off = same carve, bare nodes, open corridors.** `topologyFaults` and `forkSeams` read core vocabulary only;
   the toggle-off sweeps (`src/mods/topology/toggleOff.verify.ts`, `carveNeverDependsOnAMod.verify.ts`) must stay
   green with stoneGate on the dev floor.
 - **Comments state the current rule and why**, never history ("replaces", "used to", "now").
-- **Count work, never wall-clock**, in tests: no duration assertions.
+- **Count work, never wall-clock**, in tests: no duration assertions. State-space claims are asserted as state
+  counts (`walk.states`, `reachableStates(...).order.length`).
+- **One source for each stone rule** (spec, "The rules"): the arrangement search lives in `weights.ts` only, the
+  contained edge in `stoneBounds.ts` only; walk and play both call them.
 - **Commits:** one short line, then the trailer lines exactly:
   ```
   git commit -m "<type(scope)>: <what changed>" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
@@ -131,14 +207,31 @@ The designer answers these in the morning. The plan is written assuming each rec
 5. **A stone carried round a loop.** The plate's two doors on one loop: the walk must find the way round with the
    stone and back to set it down. Test in task 1 (`ROUND_THE_ROOM`, walk sound, no dead region).
 
+Nested stones (tasks 7-12):
+
+6. **Two stones in hand.** A shared nesting compiled as two weights records would let the player lift in the inner
+   while carrying the outer's stone. The pooled floor must have exactly one weights control, and no arrangement may
+   name the hand twice. Test in task 8 ("one control for the pool") and the `poolStones` unit ("never two in hand").
+7. **Leaving the floor with a stone, through a nesting.** The cut built each level without `leaveWith`, so the floor's
+   level could finish while carrying. The floor's own level must keep it. Test in task 10 ("the floor's way out still
+   takes empty hands on a nested floor").
+8. **A contained stone carried out by a door the host owns.** A host gate re-pointed onto the inner's port join puts a
+   door cell on the edge; play and the walk must stop at the same step. Test in task 9 (every tagged edge has exactly
+   one side on the inner's ground; the door's gates included) and task 11 (the carrying walk stops on the inner's side).
+9. **A pooled level too large to walk.** It must be refused by name, not hang the bake. Test in task 10 (`tooLarge`
+   inside `pooled`, with a lowered ceiling handed in, never a timing).
+10. **A floor with no nesting.** Every change here must leave it walked exactly as before. The existing
+   `nestedLocks.spec.ts` "a floor without nesting is walked exactly as it was" stays green unchanged, and task 9
+   asserts `floorLock` tags nothing on a floor without a contained lock.
+
 ---
 
 ### Task 1: A laid floor seats a gate on every connection
 
 **Files:**
 - Modify: `src/game/obstacles.ts` (`topologyFaults`: options argument; `seatable` on a laid floor; doc comment)
-- Modify: `src/game/lockCompile.ts:331-336` (`topologyOf` passes `{ laid: true }`)
-- Modify: `src/game/siteAssembler.ts:814-820` (passes `{ laid: plan !== undefined }`; import `resolveMechanicKind`)
+- Modify: `src/game/lockCompile.ts:355-360` (`topologyOf` passes `{ laid: true }`)
+- Modify: `src/game/siteAssembler.ts:821-827` (passes `{ laid: plan !== undefined }`; import `resolveMechanicKind`)
 - Create: `src/game/gateLoops.spec.ts`
 - Test: `src/game/obstacles.spec.ts`
 
@@ -324,7 +417,7 @@ export const topologyFaults = (
 ): TopologyFault[] => {
 ```
 
-Replace the block that builds `seatable` (lines 354-360 at `608a067e`, from `const route = regionRoute(layout)` to
+Replace the block that builds `seatable` (lines 359-365 at `528979f7`, from `const route = regionRoute(layout)` to
 the end of the `for (const { mouth, regions } of offRouteChains(layout, drops))` loop) with:
 
 ```ts
@@ -354,7 +447,7 @@ const topologyOf = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
 ```
 
 In `src/game/siteAssembler.ts`, add `import { resolveMechanicKind } from "./mechanics"` beside the other `./`
-imports, and change the call at line 814:
+imports (it is not imported there yet), and change the call at line 821 (`const topologyProblems = topologyFaults(`):
 
 ```ts
   const topologyProblems = topologyFaults(
@@ -393,7 +486,7 @@ Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
 
 **Files:**
 - Modify: `src/game/obstacles.ts` (`TopologyFault` gains `gateBypassed`; the check in `topologyFaults`)
-- Modify: `src/game/siteTypes.ts` (the mirrored `AssemblerReason` member, beside `obstacleOffRoute` at line 768)
+- Modify: `src/game/siteTypes.ts` (the mirrored `AssemblerReason` member, beside `obstacleOffRoute` at line 772)
 - Test: `src/game/obstacles.spec.ts`, `src/game/gateLoops.spec.ts`
 
 **Interfaces:**
@@ -487,7 +580,7 @@ In `src/game/obstacles.ts`, add to `TopologyFault` after `obstacleOffRoute`:
   | { type: "gateBypassed"; id: string; between: [string, string] }
 ```
 
-In `src/game/siteTypes.ts`, add after `| { type: "obstacleOffRoute"; id: string }` (line 768):
+In `src/game/siteTypes.ts`, add after `| { type: "obstacleOffRoute"; id: string }` (line 772):
 
 ```ts
   | { type: "gateBypassed"; id: string; between: [string, string] }
@@ -557,7 +650,7 @@ Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
 **Files:**
 - Modify: `src/game/regions.ts` (`forkSeams`)
 - Modify: `src/game/obstacles.ts` (`seamsFor` in `topologyFaults` reads `forkSeams`)
-- Modify: `src/game/siteAssembler.ts:1142-1166` (a laid floor's `{ in }` fork takes `forkSeams(…, { laid: true })`)
+- Modify: `src/game/siteAssembler.ts:1165-1190` (a laid floor's `{ in }` fork takes `forkSeams(…, { laid: true })`)
 - Test: `src/game/regions.spec.ts`, `src/game/gateLoops.spec.ts`
 
 **Interfaces:**
@@ -681,7 +774,7 @@ export const forkSeams = (
 ```
 
 In `src/game/obstacles.ts`, import `forkSeams` beside `offRouteChains, regionRoute` from `./regions`, and replace the
-body of `seamsFor` (lines 450-463 at `608a067e`) with:
+body of `seamsFor` (lines 457-470 at `528979f7`) with:
 
 ```ts
   const seamsFor = (region: string): Set<string> => {
@@ -694,7 +787,9 @@ body of `seamsFor` (lines 450-463 at `608a067e`) with:
 ```
 
 In `src/game/siteAssembler.ts`, add `forkSeams` to the `./regions` import, and in the `{ in }` fork loop
-(line 1157 onward) replace the seam collection:
+(line 1181 onward, from `const seams: [string, string][] = []` to the end of `layoutChains.forEach`) replace the seam
+collection. At `528979f7` the loop already skips `sectionIdxs` on a laid floor (`if (!plan && i < …)`); the laid
+branch below never reaches it, so the side-chain branch drops the `!plan`:
 
 ```ts
       const seams: [string, string][] = []
@@ -755,16 +850,15 @@ Expected: FAIL, `["gate loop"]`.
 
 - [ ] **Step 2: Implement**
 
-In `src/game/lockWalkSpec.ts` delete `hasGateLoop` (its doc comment and the function, lines 184-195 at `608a067e`) and
-the `...(hasGateLoop(lock) ? ["gate loop"] : []),` line in `notBuildable`, leaving whatever entries phase 3 left
-(after phase 3: `sequence` and `region gate`). Then `grep -n "joinOf\|barriersOf" src/game/lockWalkSpec.ts`: drop from
+In `src/game/lockWalkSpec.ts` delete `hasGateLoop` (its doc comment and the function, ending at line 199 at `528979f7`) and
+the `...(hasGateLoop(lock) ? ["gate loop"] : []),` line in `notBuildable`, leaving `sequence` and `region gate`. Then `grep -n "joinOf\|barriersOf" src/game/lockWalkSpec.ts`: drop from
 the imports any name with no other use.
 
 Run: `yarn vitest run src/game/lockWalkSpec.spec.ts && yarn check-types && yarn lint`
 Expected: PASS, clean.
 
 Run: `yarn run lock stoneGate 2>&1 | head -8`
-Expected: no `⚠ not buildable yet` line (with phase 3 in; before it, `⚠ not buildable yet: unladen passage`).
+Expected: no `⚠ not buildable yet` line (at `528979f7` it prints `⚠ not buildable yet: gate loop`).
 
 - [ ] **Step 3: Commit**
 
@@ -790,14 +884,13 @@ Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
 
 **Interfaces:**
 - Consumes: `catalogueLock(name)` from `./locks/catalogue` and `freeRegions(lock)` from `@/game/lockAuthoring`
-  (both imported in `dev.ts` already); phase 3's binding key `unladen` and realisation `narrowPassage` **(phase 3)**.
+  (both imported in `dev.ts` already); phase 3's binding key `unladen` (`PASSAGE_KIND`) and realisation
+  `narrowPassage` (`src/mods/topology/game/narrowPassage/meta.ts`).
 
 - [ ] **Step 1: Check what this task stands on**
 
-Run: `git status --short src/data/ && grep -rn "narrowPassage" src/mods --include='*.ts' -l | head -3`
-Expected: the first prints nothing (no uncommitted playtest bake); the second lists phase 3's realisation. If it lists
-nothing, phase 3 is not in: drop `unladen: "narrowPassage"` from the binding below (question 1's alternative) and say
-so in the report.
+Run: `git status --short src/data/`
+Expected: nothing (no uncommitted playtest bake).
 
 Run: `yarn run lock stoneGate 2>&1 | head -4`
 Expected: `✓ every region is reachable` and `✓ solvable`. If not, the designer's lock changed: stop and report.
@@ -859,8 +952,8 @@ search now ends differently: stop and find which task moved it.
 
 - [ ] **Step 4: Update the dev journey's counts in the sweeps**
 
-One more floor, holding a lock with no drop and no switch. The numbers below are those at `608a067e`; if phase 3 or
-another commit moved one, add one to what is there.
+One more floor, holding a lock with no drop and no switch. The numbers below are those at `528979f7` (checked); if
+a later commit moved one, add one to what is there.
 
 `src/worldGen/devJourney.verify.ts`:
 - every `toHaveLength(11)` becomes `toHaveLength(12)`, including the one in `"walks eleven of them on the dev journey
@@ -902,26 +995,25 @@ Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
 
 ---
 
-### Task 6: The crossing starts from the nearer side **(phase 3)**
+### Task 6: The crossing starts from the nearer side
 
-Only with phase 3 in (question 1). Where a gate loop makes both sides of a passage walkable, the explorer walks to
+Where a gate loop makes both sides of a passage walkable, the explorer walks to
 the side nearer him and squeezes from there, never round the loop to the far one.
 
 **Files:**
-- Modify: `src/game/passages.ts` **(phase 3)** (`passageCrossing` takes an optional cost)
+- Modify: `src/game/passages.ts` (`passageCrossing` takes an optional cost)
 - Modify: `src/app/SiteMap/useSiteNavigation.ts` (the passage tap passes the path length)
-- Test: `src/game/passages.spec.ts` **(phase 3)**
+- Test: `src/game/passages.spec.ts`
 
 **Interfaces:**
-- Consumes **(phase 3)**: `passageCrossing(grid, row, col, canStand): PassageCrossing | undefined`,
-  `passageSides(grid, row, col)`; `findPath(grid, from, to)` (`src/game/gridNavigation.ts:207`).
+- Consumes: `passageCrossing(grid, row, col, canStand): PassageCrossing | undefined`,
+  `passageSides(grid, row, col)`; `findPath(grid, from, to)` (`src/game/gridNavigation.ts:215`).
 - Produces: `passageCrossing(grid, row, col, canStand, costOf?: (row: number, col: number) => number)`.
 
 - [ ] **Step 1: Check what this task stands on**
 
 Run: `grep -n "export const passageCrossing" -A14 src/game/passages.ts`
-Expected: phase 3's function, picking `near` with `sides.find(([r, c]) => canStand(r, c))`. If the file does not
-exist, skip this task and record it under "Open after phase 4" (task 7).
+Expected: phase 3's function, picking `near` with `sides.find(([r, c]) => canStand(r, c))` (checked at `528979f7`).
 
 - [ ] **Step 2: Write the failing test**
 
@@ -963,7 +1055,7 @@ export const passageCrossing = (
 }
 ```
 
-In `src/app/SiteMap/useSiteNavigation.ts`, in the passage branch of `onCellClick` **(phase 3)**:
+In `src/app/SiteMap/useSiteNavigation.ts`, in the passage branch of `onCellClick` (`const crossing = passageCrossing(`):
 
 ```ts
         const crossing = passageCrossing(
@@ -988,14 +1080,1338 @@ Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
 
 ---
 
-### Task 7: Look at it, say so, and the whole gate
+### Task 7: Each nesting knows its stone case
+
+Tasks 7-12 implement the spec's "Nested locks (designer, 2026-10-08)". They do not depend on tasks 1-6 and may run
+before them; they read the gate-loop work nowhere.
 
 **Files:**
-- Modify: `docs/mods/floor-topology-design.md` (lines 698-701, "Gates may form loops"; the table row at line 896)
-- Modify: `docs/superpowers/plans/2026-10-06-stonegate-roadmap.md` (phase 4 row; "Open after phase 4")
-- Modify: `docs/superpowers/specs/2026-10-04-stones-acceptance.md` (§3, a note under the bake bullet)
+- Modify: `src/game/floorLocks.ts` (`StoneNesting`, `stoneNestings`; `LockNesting.stones`; `expandFloorLocks` writes it)
+- Create: `src/game/nestedStones.spec.ts`
+
+**Interfaces:**
+- Produces, in `@/game/floorLocks`:
+  - `export type StoneNesting = { case: "passThrough"; pool: string } | { case: "contained" } | { case: "shared"; pool: string }`
+  - `export const stoneNestings = (placements: readonly PlacedLock[]): Map<string, StoneNesting>` (nested
+    placements only; a nesting with no stones on either side is absent)
+  - `LockNesting` gains `stones?: StoneNesting` (absent when neither side holds stones, so every nesting today reads
+    exactly as before). `FloorGrid.lockNesting` is `readonly LockNesting[]` (`siteTypes.ts:358`), so the grid carries
+    it with no further change.
+- Produces (test file, extended by tasks 8-11): `src/game/nestedStones.spec.ts` with `HOST_STONES`, `CELL`, `GATED`,
+  `STRANDING_HOST`, `NESTED_BINDING`, the placements `PASS_THROUGH`, `CONTAINED`, `SHARED`, and the helpers `carve`,
+  `carved`, `expanded`.
+
+- [ ] **Step 1: Write the failing test**
+
+Create `src/game/nestedStones.spec.ts`:
+
+```ts
+import { describe, expect, it } from "vitest"
+import { resolveEncounterMeta, resolveKeyRequirements } from "@/mods/allFamilyMeta"
+import { expandFloorLocks, stoneNestings } from "./floorLocks"
+import type { PlacedLock } from "./floorLocks"
+import { parseLock } from "./lockNotation"
+import { assembleFloor } from "./siteAssembler"
+import type { FloorConfig, FloorGrid } from "./siteTypes"
+import { leverLock } from "./testSupport/floorLockFixtures"
+import { BINDING } from "./testSupport/lockFixtures"
+
+// MADE-UP LOCKS NESTED IN EACH OTHER, never catalogue ones: a test pins the rule, `yarn run lock` checks the catalogue.
+// Every region takes `free`, so the floor holds the locks and nothing else.
+
+/** Stones around a free `yard` another lock nests in: a stone on the shelf by the way in, a door on that waits for a
+ * stone on `p`. */
+const HOST_STONES =
+  "in -- yard\nyard -- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nyard ?\nhall ?\nout ?"
+/** A stone lock to nest: its stone on a shelf by its way in, its door on waiting for it on `p`. */
+const CELL = "in -- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nhall ?\nout ?"
+/** A stone lock that opens only for a stone carried in: `s` by its way in opens the way on, its own stone lies
+ * beyond. Alone it cannot be solved; nested in a stone lock, the pool solves it. */
+const GATED = "in -[s]- hall\nhall -- out\ns plate @in\nt plate @hall stone\nin ?\nhall ?\nout ?"
+/** HOST_STONES with a torch by the way in that shuts the way on for good: a player who lights it first strands. */
+const STRANDING_HOST =
+  "in -[T:off]- yard\nyard -- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nT activator @in\nin ?\nyard ?\nhall ?\nout ?"
+
+const NESTED_BINDING = { ...BINDING, weights: "stonePlate" }
+
+const stones = (text: string, name: string) => parseLock(text, name).lock
+
+/** The outer lock holds stones, the inner none: the stone is carried through it. */
+const PASS_THROUGH: PlacedLock[] = [
+  { lock: stones(HOST_STONES, "host") },
+  { lock: leverLock(), as: "inner", inside: { instance: "host", region: "yard" } },
+]
+/** The inner lock holds stones, the outer none: they never leave it. */
+const CONTAINED: PlacedLock[] = [
+  { lock: leverLock() },
+  { lock: stones(CELL, "cell"), as: "inner", inside: { instance: "lever", region: "hall" } },
+]
+/** Both hold stones: one pool. */
+const SHARED: PlacedLock[] = [
+  { lock: stones(HOST_STONES, "host") },
+  { lock: stones(GATED, "gated"), as: "inner", inside: { instance: "host", region: "yard" } },
+]
+
+const floorOf = (locks: PlacedLock[]): FloorConfig => ({
+  pathPuzzles: 0,
+  difficulty: "expert",
+  end: "treasure",
+  exitOrStaircase: "exit",
+  sideSections: [],
+  realisations: NESTED_BINDING,
+  locks,
+})
+
+const carve = (locks: PlacedLock[], seed: number) =>
+  assembleFloor("nested-stones", floorOf(locks), seed, resolveEncounterMeta, {
+    resolveKeyRequirements,
+    floorRef: { journeyId: "nested-stones", floorIndex: 0 },
+  })
+
+const SEEDS = 12
+const carved = (locks: PlacedLock[]): FloorGrid[] =>
+  Array.from({ length: SEEDS }, (_, n) => carve(locks, n + 1)).flatMap(result => (result.success ? [result.grid] : []))
+
+const expanded = (locks: PlacedLock[]) => {
+  const result = expandFloorLocks(floorOf(locks))
+  if (!result.ok) throw new Error(`refused: ${JSON.stringify(result.reasons)}`)
+  return result
+}
+
+describe("a nested lock's stones are read against the locks it stands in", () => {
+  it("passes a stone through a lock without stones that stands in a lock with them", () => {
+    expect(stoneNestings(PASS_THROUGH)).toEqual(new Map([["inner", { case: "passThrough", pool: "host" }]]))
+  })
+
+  it("contains the stones of a lock no lock around it shares", () => {
+    expect(stoneNestings(CONTAINED)).toEqual(new Map([["inner", { case: "contained" }]]))
+  })
+
+  it("pools the stones of a lock standing in a lock with stones", () => {
+    expect(stoneNestings(SHARED)).toEqual(new Map([["inner", { case: "shared", pool: "host" }]]))
+  })
+
+  it("reads past a lock without stones to the nearest that has them, and pools with the outermost", () => {
+    const chain: PlacedLock[] = [
+      { lock: stones(HOST_STONES, "host") },
+      { lock: leverLock(), as: "middle", inside: { instance: "host", region: "yard" } },
+      { lock: stones(CELL, "cell"), as: "deep", inside: { instance: "middle", region: "hall" } },
+    ]
+    expect(stoneNestings(chain)).toEqual(
+      new Map([
+        ["middle", { case: "passThrough", pool: "host" }],
+        ["deep", { case: "shared", pool: "host" }],
+      ])
+    )
+  })
+
+  it("leaves a nesting without stones unmarked, so the floor's nesting reads as it did", () => {
+    const plain: PlacedLock[] = [{ lock: leverLock() }, { lock: leverLock(), as: "inner", inside: { instance: "lever", region: "hall" } }]
+    expect(stoneNestings(plain)).toEqual(new Map())
+    expect(expanded(plain).nesting?.[0]).not.toHaveProperty("stones")
+  })
+
+  it("writes the case on the floor's nesting", () => {
+    expect(expanded(SHARED).nesting?.[0].stones).toEqual({ case: "shared", pool: "host" })
+  })
+})
+```
+
+- [ ] **Step 2: Run it to see it fail**
+
+Run: `yarn vitest run src/game/nestedStones.spec.ts`
+Expected: FAIL, `stoneNestings` is not exported.
+
+- [ ] **Step 3: Implement**
+
+In `src/game/floorLocks.ts`, after `LockNesting`:
+
+```ts
+/**
+ * HOW A NESTED LOCK'S STONES MEET THOSE OF THE LOCKS IT STANDS IN (stones spec, "Nested locks"), read against the
+ * nearest of them that holds stones, at any depth: a stone carried through a lock without stones reaches whatever
+ * stands inside that one too. `pool` is the outermost lock of that chain holding stones, whose level a shared
+ * nesting is walked in and whose control the pooled stones take.
+ */
+export type StoneNesting =
+  /** It holds none, and a lock it stands in does: a stone from outside is carried through it. */
+  | { case: "passThrough"; pool: string }
+  /** It holds stones, and no lock it stands in does: they never leave it. */
+  | { case: "contained" }
+  /** It holds stones, and so does a lock it stands in: one pool across them. */
+  | { case: "shared"; pool: string }
+```
+
+Change `LockNesting` to:
+
+```ts
+export type LockNesting = {
+  instance: string
+  host: string
+  regions: string[]
+  in: string
+  out: string
+  /** Absent when neither it nor any lock it stands in holds stones. */
+  stones?: StoneNesting
+}
+```
+
+After `seatNested`, add:
+
+```ts
+/** The stone case of every nested placement that has one. Cycles are refused before this is asked
+ * (`seatNested`); the walk up stops at one anyway. */
+export const stoneNestings = (placements: readonly PlacedLock[]): Map<string, StoneNesting> => {
+  const byName = new Map(placements.map(placed => [instanceName(placed), placed]))
+  const found = new Map<string, StoneNesting>()
+  for (const placed of placements) {
+    if (!placed.inside) continue
+    const instance = instanceName(placed)
+    const seen = new Set([instance])
+    let pool: string | undefined
+    for (let at = byName.get(placed.inside.instance); at && !seen.has(instanceName(at)); ) {
+      seen.add(instanceName(at))
+      if (at.lock.weights) pool = instanceName(at)
+      at = at.inside ? byName.get(at.inside.instance) : undefined
+    }
+    const holds = placed.lock.weights !== undefined
+    if (pool !== undefined) found.set(instance, holds ? { case: "shared", pool } : { case: "passThrough", pool })
+    else if (holds) found.set(instance, { case: "contained" })
+  }
+  return found
+}
+```
+
+In `expandFloorLocks`, beside `const insideOf = …`, add `const stoneCases = stoneNestings(placements)`, and in the
+`nesting` map:
+
+```ts
+  const nesting: LockNesting[] = nested.seats.map(({ instance, host }) => {
+    const layout = fragments.get(instance)!.regionLayout
+    const stones = stoneCases.get(instance)
+    return {
+      instance,
+      host,
+      regions: layout.regions.map(region => region.name),
+      in: layout.in,
+      out: layout.out,
+      ...(stones ? { stones } : {}),
+    }
+  })
+```
+
+- [ ] **Step 4: Run it to see it pass, and the nesting specs stay green**
+
+Run: `yarn vitest run src/game/nestedStones.spec.ts src/game/nestedLocks.spec.ts && yarn check-types && yarn lint`
+Expected: PASS (the existing `nesting` `toEqual` in `nestedLocks.spec.ts` has no stones and gets no `stones` key), clean.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add src/game/floorLocks.ts src/game/nestedStones.spec.ts
+git commit -m "feat(locks): a nested lock knows whether its stones pass through, stay or share" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
+```
+
+---
+
+### Task 8: A shared nesting's stones are one pool
+
+**Files:**
+- Modify: `src/game/mechanics/weights.ts` (the arrangement search moves into `arrange`; `poolStones`)
+- Modify: `src/game/floorLocks.ts` (`expandFloorLocks` pools each shared nesting's weights controls)
+- Test: `src/game/mechanics/weights.spec.ts`, `src/game/nestedStones.spec.ts`
+
+**Interfaces:**
+- Consumes: `stoneNestings` (task 7); `compileLock(lock, binding, { namespace })` from `../lockCompile`.
+- Produces, in `@/game/mechanics/weights`: `export const poolStones = (id: string, controls: readonly WeightsControl[],
+  any: ReadonlySet<string>): WeightsControl` — every plate of each control, one hand, each gate's terms read off the
+  one arrangement; `any` names the gates whose mode is `"any"`. `stoneArrangements(lock)` keeps its signature and
+  output.
+- Produces: on a floor with a shared nesting, `config.controls` holds ONE weights control per pool, id `<pool>.stones`.
+
+- [ ] **Step 1: Write the failing tests**
+
+In `src/game/mechanics/weights.spec.ts`, add `poolStones` to the import from `./weights`, add
+`import { compileLock } from "../lockCompile"`, `import { parseLock } from "../lockNotation"` (if not imported
+already) and `import { isWeights } from "../obstacles"`, then append:
+
+```ts
+describe("poolStones", () => {
+  const controlOf = (text: string, namespace: string) => {
+    const result = compileLock(parseLock(text, namespace).lock, { weights: "stonePlate" }, { namespace })
+    if (!result.ok) throw new Error(JSON.stringify(result.faults))
+    return result.fragment.controls.filter(isWeights)[0]
+  }
+  const a = controlOf("in -[p]- out\np plate @in\nshelf plate @in stone\nin ?\nout ?", "a")
+  const b = controlOf("in -[q]- out\nq plate @in\nrest plate @in stone\nin ?\nout ?", "b")
+  const pooled = poolStones("a.stones", [a, b], new Set())
+
+  it("is each lock's own control where the pool holds one lock", () => {
+    expect(poolStones("a.stones", [a], new Set())).toEqual(a)
+  })
+
+  it("holds every plate of both locks, and both stones where they start", () => {
+    expect(pooled.plates.map(plate => plate.id)).toEqual(["a.p", "a.shelf", "b.q", "b.rest"])
+    expect(pooled.initial).toBe("a.shelf b.rest")
+  })
+
+  it("sets a stone lifted in one lock on a plate of the other", () => {
+    expect(pooled.moves).toContainEqual({ from: "a.shelf b.rest", to: "b.rest + hand", plate: "a.shelf" })
+    expect(pooled.moves).toContainEqual({ from: "b.rest + hand", to: "b.q b.rest", plate: "b.q" })
+  })
+
+  it("never lifts a second stone while one is in hand", () => {
+    const fromCarrying = pooled.moves.filter(move => pooled.carrying.includes(move.from))
+    expect(fromCarrying.length).toBeGreaterThan(0)
+    for (const move of fromCarrying) expect(pooled.carrying).not.toContain(move.to)
+  })
+
+  it("opens a lock's gate on a stone on its plate, wherever the stone came from", () => {
+    expect(pooled.opens["b.q b.rest"]).toEqual(["b.in-out"])
+  })
+})
+```
+
+In `src/game/nestedStones.spec.ts`, add `import { isWeights } from "./obstacles"` and append:
+
+```ts
+describe("a shared nesting's stones are one pool", () => {
+  it("compiles one weights control for both locks, under the pool's id", () => {
+    const weights = (expanded(SHARED).config.controls ?? []).filter(isWeights)
+    expect(weights.map(control => control.id)).toEqual(["host.stones"])
+    expect(weights[0].plates.map(plate => plate.id)).toEqual(["host.p", "host.shelf", "inner.s", "inner.t"])
+  })
+
+  it("leaves a pass-through's and a contained lock's stones in their own control", () => {
+    expect((expanded(PASS_THROUGH).config.controls ?? []).filter(isWeights).map(c => c.id)).toEqual(["host.stones"])
+    expect((expanded(CONTAINED).config.controls ?? []).filter(isWeights).map(c => c.id)).toEqual(["inner.stones"])
+  })
+})
+```
+
+- [ ] **Step 2: Run them to see them fail**
+
+Run: `yarn vitest run src/game/mechanics/weights.spec.ts src/game/nestedStones.spec.ts`
+Expected: FAIL: `poolStones` is not exported; the shared floor has two weights controls (`host.stones`,
+`inner.stones`). If a gate id prints differently from `b.in-out` (the notation names a gate `<from>-<to>`), use the
+id `compileLock` gives and say so in the report.
+
+- [ ] **Step 3: Implement**
+
+In `src/game/mechanics/weights.ts`, add `import type { WeightTerm } from "../siteTypes"` if it is not imported (it is,
+beside `MechanismRecord`), and replace `stoneArrangements` with the search taken out into `arrange`:
+
+```ts
+/** A gate's terms on the stones, and whether one term is enough. */
+type StoneGate = { id: string; terms: WeightTerm[]; any: boolean }
+
+/**
+ * EVERY ARRANGEMENT OF THE STONES THE PLAYER CAN REACH, and every move between them: one stone in hand at
+ * most, lifted from its plate and set down only on an empty one. The one place the stone rules live; the
+ * tool's walk, the engine's record and a pool of several locks' stones are all built from it.
+ */
+const arrange = (plates: readonly { id: string; stone: boolean }[], gates: readonly StoneGate[]): Arrangements => {
+  const ids = plates.map(plate => plate.id).sort()
+  const start: Stones = { weighted: new Set(plates.filter(plate => plate.stone).map(plate => plate.id)), hand: false }
+  const found = new Map<string, Stones>([[keyOf(start), start]])
+  const moves: StoneMove[] = []
+  for (const queue = [start]; queue.length > 0;) {
+    const here = queue.shift()!
+    for (const plate of ids) {
+      if (here.weighted.has(plate) === here.hand) continue
+      const weighted = new Set(here.weighted)
+      if (here.hand) weighted.add(plate)
+      else weighted.delete(plate)
+      const next = { weighted, hand: !here.hand }
+      const key = keyOf(next)
+      if (!found.has(key)) {
+        found.set(key, next)
+        queue.push(next)
+      }
+      moves.push({ from: keyOf(here), to: key, plate })
+    }
+  }
+  const opening = (stones: Stones) =>
+    gates
+      .filter(({ terms, any }) =>
+        any ? terms.some(t => termHolds(t, stones)) : terms.every(t => termHolds(t, stones))
+      )
+      .map(({ id }) => id)
+  return {
+    states: [...found.keys()],
+    initial: keyOf(start),
+    moves,
+    opens: Object.fromEntries([...found].map(([key, stones]) => [key, opening(stones)])),
+    carrying: [...found].filter(([, stones]) => stones.hand).map(([key]) => key),
+    underfoot: [...found].flatMap(([key, stones]) =>
+      ids
+        .filter(plate => !stones.weighted.has(plate))
+        .map(plate => ({
+          from: key,
+          plate,
+          opens: opening({ weighted: new Set([...stones.weighted, plate]), hand: stones.hand }),
+        }))
+    ),
+    terms: Object.fromEntries(gates.map(({ id, terms }) => [id, terms])),
+  }
+}
+
+/** The arrangements of one lock's stones. */
+export const stoneArrangements = (lock: Lock): Arrangements => {
+  const weights = lock.weights!
+  const gates = Object.entries(lock.gates).flatMap(([id, gate]): StoneGate[] => {
+    const terms = gate.owners
+      .filter(owner => isWeightOwner(lock, owner))
+      .map((owner): WeightTerm =>
+        Object.hasOwn(weights.plates, owner)
+          ? { kind: "plate", plate: owner, wants: weights.plates[owner].opens.empty.includes(id) ? "empty" : "stone" }
+          : { kind: "unladen" }
+      )
+    return terms.length > 0 ? [{ id, terms, any: gate.mode === "any" }] : []
+  })
+  return arrange(
+    Object.entries(weights.plates).map(([id, plate]) => ({ id, stone: plate.stone })),
+    gates
+  )
+}
+
+/**
+ * THE STONES OF SEVERAL LOCKS AS ONE POOL (stones spec, "Nested locks": shared): every plate of each, one hand, and
+ * each gate's terms read off the one arrangement. A stone lifted in one lock may be set down in the other. `any`
+ * names the gates whose mode is "any", which a compiled control does not carry.
+ */
+export const poolStones = (
+  id: string,
+  controls: readonly WeightsControl[],
+  any: ReadonlySet<string>
+): WeightsControl => {
+  const plates = controls.flatMap(control => control.plates).sort((x, y) => (x.id < y.id ? -1 : x.id > y.id ? 1 : 0))
+  const gates = controls.flatMap(control =>
+    Object.entries(control.terms).map(([gate, terms]) => ({ id: gate, terms, any: any.has(gate) }))
+  )
+  const encounter = controls.find(control => control.encounter !== undefined)?.encounter
+  return {
+    id,
+    control: "weights",
+    plates,
+    ...arrange(plates, gates),
+    ...(encounter === undefined ? {} : { encounter }),
+  }
+}
+```
+
+If `poolStones("a.stones", [a])` is not `toEqual(a)` only in key order of the returned object, that is no failure
+(`toEqual` ignores key order); a difference in `states`, `moves` or `opens` order is one: `arrange` must walk plates in
+sorted id order, as `stoneArrangements` did.
+
+In `src/game/floorLocks.ts`, import `isWeights` from `./obstacles` and `poolStones` from `./mechanics/weights`. After
+the `for (const { instance, host, region, near, far } of nested.seats) { … }` loop that re-points the joins, add:
+
+```ts
+  // A SHARED NESTING'S STONES ARE ONE POOL: the weights controls of the pool and of every lock sharing it become one,
+  // under the pool's id, so play holds one stone at most across them and a stone moves from one lock's plates to the
+  // other's.
+  const stoneCases = stoneNestings(placements)
+  const members = new Map<string, string[]>()
+  for (const [instance, stones] of stoneCases)
+    if (stones.case === "shared") members.set(stones.pool, [...(members.get(stones.pool) ?? []), instance])
+  const anyGates = new Set(
+    [...fragments.values()].flatMap(fragment =>
+      fragment.obstacles.flatMap(obstacle => (obstacle.kind === "gate" && obstacle.mode === "any" ? [obstacle.id] : []))
+    )
+  )
+  for (const [pool, sharing] of members) {
+    const locks = [pool, ...sharing]
+    const pooled = poolStones(
+      `${pool}.stones`,
+      locks.flatMap(name => fragments.get(name)!.controls.filter(isWeights)),
+      anyGates
+    )
+    for (const name of locks) {
+      const fragment = fragments.get(name)!
+      fragments.set(name, {
+        ...fragment,
+        controls: [...fragment.controls.filter(control => !isWeights(control)), ...(name === pool ? [pooled] : [])],
+      })
+    }
+  }
+```
+
+and use the same `stoneCases` in the `nesting` map (task 7's `const stoneCases` beside `insideOf` moves up here; keep
+one declaration).
+
+- [ ] **Step 4: Run them to see them pass, and every stone spec stays green**
+
+Run: `yarn vitest run src/game/mechanics/weights.spec.ts src/game/nestedStones.spec.ts src/game/weightsPlates.spec.ts src/game/stonePlay.spec.ts src/game/lockWalkSpec.spec.ts src/game/nestedLocks.spec.ts`
+Expected: PASS. A changed arrangement key or move order in an existing weights test means `arrange` is not the same
+search: fix `arrange`, never the test.
+
+Run: `yarn check-types && yarn lint`
+Expected: clean.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add src/game/mechanics/weights.ts src/game/mechanics/weights.spec.ts src/game/floorLocks.ts src/game/nestedStones.spec.ts
+git commit -m "feat(stones): a shared nesting's stones are one pool" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
+```
+
+---
+
+### Task 9: A contained lock's edge, for the walk
+
+**Files:**
+- Create: `src/game/stoneBounds.ts`
+- Modify: `src/game/lockWalk.ts` (`LockGate.unladen`, `passages[].unladen`; `movesFrom` honours both; `mayLeave`
+  exported)
+- Modify: `src/game/floorLock.ts` (`regionsOf` tags passages, `floorLock` tags door gates, `oneWaysOf` tags drops)
+- Test: `src/game/lockWalk.spec.ts`, `src/game/nestedStones.spec.ts`
+
+**Interfaces:**
+- Consumes: `LockNesting.stones` (task 7) on `grid.lockNesting`.
+- Produces, in `@/game/stoneBounds`:
+  - `containedGrounds(grid: FloorGrid): ReadonlySet<string>[]` — per contained lock, every region label it and the
+    locks inside it hold
+  - `crossesContainedEdge(grid: FloorGrid, a: GridCell | undefined, b: GridCell | undefined): boolean`
+  - `stopShort(grid: FloorGrid, path: ReadonlyArray<readonly [number, number]>): readonly [number, number] | undefined`
+    (task 11 reads it)
+- Produces, in `@/game/lockWalk`: `LockGate.unladen?: true`, `LockSpec.passages: { a; b; unladen?: true }[]`,
+  `export const mayLeave(spec, config): boolean`. Task 10 reads all three.
+
+- [ ] **Step 1: Write the failing tests**
+
+In `src/game/lockWalk.spec.ts` append (import `reachableStates` and `type LockSpec` from `./lockWalk` if missing):
+
+```ts
+describe("a way only empty hands take", () => {
+  // One stone, lifted in `a`; `a` and `b` touch, and so do `a` and the door region `d`.
+  const spec = (tag: "passage" | "gate"): LockSpec => ({
+    regions: ["a", "b"],
+    gates: tag === "gate" ? { g: { from: "a", to: "b", owners: ["open"], unladen: true } } : {},
+    mechanisms: {
+      stones: { states: ["down", "held"], initial: "down", opens: {}, transitions: [
+        { from: "down", to: "held", at: "a" },
+        { from: "held", to: "down", at: "a" },
+      ] },
+      open: { states: ["on"], initial: "on", opens: { on: tag === "gate" ? ["g"] : [] }, transitions: [] },
+    },
+    passages: tag === "passage" ? [{ a: "a", b: "b", unladen: true }] : [],
+    leaveWith: [{ mechanism: "stones", notIn: ["held"] }],
+    in: "a",
+    out: "b",
+  })
+
+  it.each(["passage", "gate"] as const)("is crossed by a %s with empty hands only", tag => {
+    const found = reachableStates(spec(tag))
+    if (found === "tooLarge") throw new Error("too large")
+    const at = found.order.map(state => `${state.region}:${state.config.stones}`)
+    expect(at).toContain("b:down")
+    expect(at).not.toContain("b:held")
+  })
+})
+```
+
+Append to `src/game/nestedStones.spec.ts` (import `floorLock`, `regionsOf` from `./floorLock` and
+`containedGrounds` from `./stoneBounds`):
+
+```ts
+/** The authored label of every compiled region, read off its cells. */
+const labelsOf = (grid: FloorGrid): Map<string, string | undefined> => {
+  const { of } = regionsOf(grid)
+  const labels = new Map<string, string | undefined>()
+  for (const [pos, region] of of) {
+    const [r, c] = pos.split(",").map(Number)
+    const cell = grid.cells[r][c]
+    labels.set(region, cell.type === "room" || cell.type === "corridor" ? cell.region : undefined)
+  }
+  return labels
+}
+
+describe("a contained lock's edge, as the walk reads it", () => {
+  it("marks every compiled way across the inner's edge for empty hands, and nothing else", { timeout: 60_000 }, () => {
+    const grids = carved(CONTAINED)
+    expect(grids.length).toBeGreaterThan(0)
+    for (const grid of grids) {
+      const [ground] = containedGrounds(grid)
+      const labels = labelsOf(grid)
+      const onGround = (region: string) => ground.has(labels.get(region) ?? "")
+      const lock = floorLock(grid)!
+      const ways = [
+        ...(lock.passages ?? []).map(({ a, b, unladen }) => ({ a, b, unladen })),
+        ...Object.values(lock.gates).map(({ from, to, unladen }) => ({ a: from, b: to, unladen })),
+      ]
+      expect(ways.some(way => way.unladen)).toBe(true)
+      for (const way of ways) expect(way.unladen === true).toBe(onGround(way.a) !== onGround(way.b))
+    }
+  })
+
+  it("marks nothing where no lock is contained", { timeout: 60_000 }, () => {
+    for (const grid of [...carved(PASS_THROUGH), ...carved(SHARED)]) {
+      const lock = floorLock(grid)!
+      expect([...(lock.passages ?? []), ...Object.values(lock.gates)].some(way => way.unladen)).toBe(false)
+    }
+  })
+})
+```
+
+- [ ] **Step 2: Run them to see them fail**
+
+Run: `yarn vitest run src/game/lockWalk.spec.ts src/game/nestedStones.spec.ts`
+Expected: FAIL: `b:held` is reached (the tag is ignored, and a type error on `unladen`); `./stoneBounds` does not
+exist. If `CONTAINED` carves at none of the twelve seeds, print the first refusal and stop: the carve, not this task,
+refuses it.
+
+- [ ] **Step 3: Implement**
+
+Create `src/game/stoneBounds.ts`:
+
+```ts
+import type { FloorGrid, GridCell } from "./siteTypes"
+
+// A CONTAINED LOCK KEEPS ITS STONES (stones spec, "Nested locks"): a stone lock nested where no lock around it holds
+// stones never lets one out, so a step across the edge of its ground is one a carrying walk does not take, as the way
+// out is. Its ground is its own regions and those of every lock nested in it. The line is read off the cells'
+// authored region labels, which is also where the walk's compiled regions split (`regionsOf`, floorLock.ts), so play
+// and the walk stop at the same step.
+
+const known = new WeakMap<FloorGrid, ReadonlySet<string>[]>()
+
+/** The ground of each contained lock on the floor: every region label it and the locks nested in it hold. */
+export const containedGrounds = (grid: FloorGrid): ReadonlySet<string>[] => {
+  const cached = known.get(grid)
+  if (cached) return cached
+  const nesting = grid.lockNesting ?? []
+  const hostOf = new Map(nesting.map(n => [n.instance, n.host]))
+  const within = (instance: string, ancestor: string): boolean => {
+    for (let at: string | undefined = instance; at !== undefined; at = hostOf.get(at)) if (at === ancestor) return true
+    return false
+  }
+  const grounds = nesting
+    .filter(n => n.stones?.case === "contained")
+    .map(contained => new Set(nesting.filter(n => within(n.instance, contained.instance)).flatMap(n => n.regions)))
+  known.set(grid, grounds)
+  return grounds
+}
+
+const labelOf = (cell: GridCell | undefined): string =>
+  (cell?.type === "room" || cell?.type === "corridor" ? cell.region : undefined) ?? ""
+
+/** Whether a step between two cells crosses the edge of a contained lock's ground: one stands on it, the other not. */
+export const crossesContainedEdge = (grid: FloorGrid, a: GridCell | undefined, b: GridCell | undefined): boolean =>
+  containedGrounds(grid).some(ground => ground.has(labelOf(a)) !== ground.has(labelOf(b)))
+
+/** Where a carrying walk along `path` stops: the last cell before its first step across a contained lock's edge, or
+ * undefined where it crosses none. */
+export const stopShort = (
+  grid: FloorGrid,
+  path: ReadonlyArray<readonly [number, number]>
+): readonly [number, number] | undefined => {
+  for (let i = 0; i + 1 < path.length; i++) {
+    const [[ar, ac], [br, bc]] = [path[i], path[i + 1]]
+    if (crossesContainedEdge(grid, grid.cells[ar]?.[ac], grid.cells[br]?.[bc])) return path[i]
+  }
+  return undefined
+}
+```
+
+In `src/game/lockWalk.ts`:
+- `LockGate` gains, after `mode`:
+  ```ts
+    /** Crossed only with hands that may leave the floor (`leaveWith`): the edge of a lock that keeps its stones. */
+    unladen?: true
+  ```
+- `LockSpec.passages` becomes `passages?: { a: RegionId; b: RegionId; unladen?: true }[]`, its doc comment adding
+  "`unladen`: only with hands that may leave the floor, as a gate's".
+- `const mayLeave` becomes `export const mayLeave`.
+- In `movesFrom`, read the hands once and honour the tag on gates and passages:
+  ```ts
+    const handsFree = mayLeave(spec, config)
+    for (const gateId of openGates(spec, config)) {
+      const gate = spec.gates[gateId]
+      if (gate.unladen && !handsFree) continue
+      if (gate.from === region) moves.push({ region: gate.to, config })
+      if (gate.to === region) moves.push({ region: gate.from, config })
+    }
+    for (const oneWay of spec.oneWays ?? [])
+      if (oneWay.from === region && (!oneWay.unladen || handsFree)) moves.push({ region: oneWay.to, config })
+    for (const { a, b, unladen } of spec.passages ?? []) {
+      if (unladen && !handsFree) continue
+      if (a === region) moves.push({ region: b, config })
+      if (b === region) moves.push({ region: a, config })
+    }
+  ```
+  and the last line's `mayLeave(spec, config)` becomes `handsFree`.
+
+In `src/game/floorLock.ts`, import `crossesContainedEdge` from `./stoneBounds`, then:
+- `regionsOf`'s return type: `passages: { a: RegionId; b: RegionId; unladen?: true }[]`, and the push:
+  ```ts
+          passages.push({ a, b, ...(crossesContainedEdge(grid, cell, next) ? { unladen: true as const } : {}) })
+  ```
+  (a compiled region holds one label, so the first pair of cells seen for `a|b` answers for all of them).
+- In the door loop of `floorLock` (`gates[gateId] = { from: beside, to: doorRegion, owners: [] }`):
+  ```ts
+          const besideCell = grid.cells[r + dr]?.[c + dc]
+          gates[gateId] = {
+            from: beside,
+            to: doorRegion,
+            owners: [],
+            ...(crossesContainedEdge(grid, cell, besideCell) ? { unladen: true as const } : {}),
+          }
+  ```
+- In `oneWaysOf`, a drop across the edge takes empty hands too:
+  ```ts
+      const crosses = crossesContainedEdge(
+        grid,
+        grid.cells[run.launch[0]]?.[run.launch[1]],
+        grid.cells[run.landing[0]]?.[run.landing[1]]
+      )
+      if (from && to && from !== to)
+        found.push({ from, to, ...(run.unladen || crosses ? { unladen: true as const } : {}) })
+  ```
+
+A floor whose `lockNesting` names no contained lock gets an empty `containedGrounds`, so `crossesContainedEdge` is
+always false there and its `LockSpec` is byte-for-byte what it was.
+
+- [ ] **Step 4: Run them to see them pass**
+
+Run: `yarn vitest run src/game/lockWalk.spec.ts src/game/nestedStones.spec.ts src/game/nestedLocks.spec.ts src/game/floorLock.spec.ts src/game/stonePlay.spec.ts`
+Expected: PASS. (`floorLock.spec.ts` may not exist under that name; run `ls src/game/floorLock*.spec.ts` and run what
+is there.)
+
+Run: `yarn check-types && yarn lint`
+Expected: clean.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add src/game/stoneBounds.ts src/game/lockWalk.ts src/game/lockWalk.spec.ts src/game/floorLock.ts src/game/nestedStones.spec.ts
+git commit -m "feat(stones): the walk takes a contained lock's edge with empty hands only" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
+```
+
+---
+
+### Task 10: The composed walk holds one stone pool; `STONES_NESTED` goes
+
+**Files:**
+- Modify: `src/game/floorLockWalk.ts` (`cutOf` fuses a shared nesting into its pool's level; `levelOf` keeps each
+  level's `leaveWith` and the `unladen` tag on opened gates; `nestedFree` reaches a terminal empty-handed where the
+  way out of it is tagged; `pooled` failure; `holdsStones`/`STONES_NESTED` deleted; a `maxStates` option)
+- Modify: `src/game/lockWalk.ts` (`reachableStates` and `walkLock` take an optional `maxStates`)
+- Modify: `src/game/nestedLocks.spec.ts` (the "stones on a floor with nested locks" describe goes: task 10's
+  pass-through tests replace it)
+- Test: `src/game/nestedStones.spec.ts`
+
+**Interfaces:**
+- Consumes: `LockNesting.stones` (task 7), the pooled control (task 8), `mayLeave` and the `unladen` tags (task 9).
+- Produces: `FloorWalkFailure` member `{ type: "pooled"; instances: string[]; failure: FloorWalkFailure }`;
+  `walkFloorLock(grid: FloorGrid, options?: { maxStates?: number }): FloorWalkResult | undefined`;
+  `reachableStates(spec, maxStates = MAX_LOCK_STATES)`, `walkLock(spec, maxStates = MAX_LOCK_STATES)`.
+
+- [ ] **Step 1: Write the failing tests**
+
+Append to `src/game/nestedStones.spec.ts` (import `deadFloorRegions`, `describeFloorWalkFailure`, `walkFloorLock` from
+`./floorLockWalk`, `deadRegions`, `reachableStates`, `walkLock` from `./lockWalk`; `floorLock` is imported already):
+
+```ts
+const productStates = (grid: FloorGrid): number => {
+  const found = reachableStates(floorLock(grid)!)
+  if (found === "tooLarge") throw new Error("product too large")
+  return found.order.length
+}
+
+const expectSound = (grid: FloorGrid) => {
+  const walk = walkFloorLock(grid)!
+  if (!walk.sound) throw new Error(describeFloorWalkFailure(walk.failure))
+  return walk
+}
+
+describe("a nested floor with stones is walked with them as one pool", () => {
+  it.each([
+    ["a pass-through", PASS_THROUGH],
+    ["a contained lock", CONTAINED],
+    ["a shared pool", SHARED],
+  ])("walks %s sound on every carve, as the product walk does", { timeout: 60_000 }, (_, locks) => {
+    const grids = carved(locks)
+    expect(grids.length).toBeGreaterThan(0)
+    for (const grid of grids) {
+      expectSound(grid)
+      expect(walkLock(floorLock(grid)!).sound).toBe(true)
+      expect(deadFloorRegions(grid)).toEqual(deadRegions(floorLock(grid)!))
+    }
+  })
+
+  it.each([
+    ["a pass-through", PASS_THROUGH],
+    ["a contained lock", CONTAINED],
+  ])("walks %s in fewer states than the product: the host walks the inner as ground", { timeout: 60_000 }, (_, locks) => {
+    for (const grid of carved(locks)) expect(expectSound(grid).states).toBeLessThan(productStates(grid))
+  })
+
+  it("walks a shared pool in its pool's level, which is the product", { timeout: 60_000 }, () => {
+    for (const grid of carved(SHARED)) expect(expectSound(grid).states).toBe(productStates(grid))
+  })
+
+  it("keeps the floor's way out for empty hands on a nested floor", { timeout: 60_000 }, () => {
+    // The door on waits for the shelf to be EMPTY: the only way past carries the stone, and the way out refuses it.
+    const carriedOut: PlacedLock[] = [
+      { lock: stones("in -[shelf:empty]- yard\nyard -- out\nshelf plate @in stone\nin ?\nyard ?\nout ?", "host") },
+      { lock: leverLock(), as: "inner", inside: { instance: "host", region: "yard" } },
+    ]
+    const grids = carved(carriedOut)
+    expect(grids.length).toBeGreaterThan(0)
+    for (const grid of grids) {
+      expect(walkLock(floorLock(grid)!).sound).toBe(false)
+      expect(walkFloorLock(grid)!.sound).toBe(false)
+    }
+  })
+
+  it("names both locks of a pool when the pooled floor strands", { timeout: 60_000 }, () => {
+    const stranding: PlacedLock[] = [
+      { lock: stones(STRANDING_HOST, "host") },
+      { lock: stones(GATED, "gated"), as: "inner", inside: { instance: "host", region: "yard" } },
+    ]
+    const grids = carved(stranding)
+    expect(grids.length).toBeGreaterThan(0)
+    for (const grid of grids) {
+      const walk = walkFloorLock(grid)!
+      expect(walk).toMatchObject({ sound: false, failure: { type: "pooled", instances: ["host", "inner"] } })
+      if (!walk.sound) expect(describeFloorWalkFailure(walk.failure)).toMatch(/^the stones host, inner share: /)
+    }
+  })
+
+  it("refuses a pooled level too large to walk by name, not by hanging", { timeout: 60_000 }, () => {
+    const [grid] = carved(SHARED)
+    expect(walkFloorLock(grid, { maxStates: 10 })).toEqual({
+      sound: false,
+      failure: { type: "pooled", instances: ["host", "inner"], failure: { type: "tooLarge" } },
+    })
+  })
+})
+```
+
+In `src/game/nestedLocks.spec.ts`, delete the whole `describe("stones on a floor with nested locks", …)` block (it
+pins the refusal this task lifts; the pass-through tests above are its replacement) and any import only it used.
+
+- [ ] **Step 2: Run them to see them fail**
+
+Run: `yarn vitest run src/game/nestedStones.spec.ts`
+Expected: FAIL: every nested stone floor gets `{ type: "entangled", problem: "stones on a floor with nested locks" }`;
+`maxStates` is not an option.
+
+- [ ] **Step 3: Implement**
+
+In `src/game/lockWalk.ts`: `reachableStates = (spec: LockSpec, maxStates = MAX_LOCK_STATES)` with
+`if (ceiling > maxStates) return "tooLarge"`; `walkLock = (spec: LockSpec, maxStates = MAX_LOCK_STATES)` passing it on.
+
+In `src/game/floorLockWalk.ts`:
+
+1. Import `mayLeave` beside `reachableStates` from `./lockWalk`. Add to `FloorWalkFailure`:
+   ```ts
+     /** The level of a stone pool several nested locks share fails; `instances` are the pool, then the locks sharing it. */
+     | { type: "pooled"; instances: string[]; failure: FloorWalkFailure }
+   ```
+   and to `describeFloorWalkFailure`:
+   ```ts
+       case "pooled":
+         return `the stones ${failure.instances.join(", ")} share: ${describeFloorWalkFailure(failure.failure)}`
+   ```
+2. The header comment gains a paragraph:
+   ```ts
+   // STONES FOLLOW THE CUT where they cannot cross it. A pass-through lock reads no hand, and a contained lock's edge
+   // takes empty hands only (stoneBounds.ts), so both are still walked apart from their host. A shared nesting moves
+   // stones between its locks, so it is walked fused with its pool's level: that level is the product of both.
+   ```
+3. `Cut` gains `fusedInto: Map<string, Owner>` (an instance walked in another's level) and `pools: Map<Owner,
+   string[]>` (a level's node → `[pool, ...instances fused into it]`), and `cutOf`
+   starts:
+   ```ts
+     const nesting = grid.lockNesting ?? []
+     const nested = new Set(nesting.map(n => n.instance))
+     const hostIn = new Map(nesting.map(n => [n.instance, n.host]))
+     // A SHARED NESTING IS WALKED IN ITS POOL'S LEVEL, with every lock between it and the pool: its stones move to and
+     // from the pool's plates, so the cut cannot take it apart. A pool no lock hosts is the floor's own level.
+     const fusedInto = new Map<string, Owner>()
+     const pools = new Map<Owner, string[]>()
+     for (const n of nesting) {
+       if (n.stones?.case !== "shared") continue
+       const { pool } = n.stones
+       const into: Owner = nested.has(pool) ? pool : FLOOR
+       for (let at: string | undefined = n.instance; at !== undefined && at !== pool; at = hostIn.get(at)) {
+         if (fusedInto.has(at)) continue
+         fusedInto.set(at, into)
+         pools.set(into, [...(pools.get(into) ?? [pool]), at])
+       }
+     }
+     const walkedAs = (instance: string): Owner => (fusedInto.has(instance) ? fusedInto.get(instance)! : instance)
+     const { of } = regionsOf(grid)
+     const instanceOfLabel = new Map(
+       nesting.flatMap(n => n.regions.map(region => [region, walkedAs(n.instance)] as const))
+     )
+     const hostOf = new Map<string, Owner>(
+       nesting.map(n => [n.instance, nested.has(n.host) ? walkedAs(n.host) : FLOOR])
+     )
+   ```
+   (`instanceOfLabel.get(label) ?? FLOOR` below still reads a FLOOR-fused label as the floor's: `null ?? null`.) Return
+   `fusedInto` and `pools` in the `Cut`.
+4. `levelOf`: an opened gate keeps its tag, and every level keeps the `leaveWith` of the stones it holds:
+   ```ts
+     const opened: { a: RegionId; b: RegionId; unladen?: true }[] = []
+     …
+       else opened.push({ a: gate.from, b: gate.to, ...(gate.unladen ? { unladen: true as const } : {}) })
+     …
+     const leaveWith = (lock.leaveWith ?? []).filter(({ mechanism }) => Object.hasOwn(mechanisms, mechanism))
+     return {
+       …,
+       ...(leaveWith.length > 0 ? { leaveWith } : {}),
+       in: port ?? lock.in,
+       out: port ?? lock.out,
+     }
+   ```
+5. `nestedFree(cut, instance, spec, maxStates)`: a terminal left only across a tagged way is reached with empty hands:
+   ```ts
+     const terminals = new Set<RegionId>([spec.in])
+     const freeExit = new Set<RegionId>()
+     const emptyExit = new Set<RegionId>()
+     const edge = (a: RegionId, b: RegionId, unladen?: true) => {
+       if (inside.has(a) === inside.has(b)) return
+       const terminal = inside.has(a) ? a : b
+       terminals.add(terminal)
+       ;(unladen ? emptyExit : freeExit).add(terminal)
+     }
+     for (const [id, gate] of Object.entries(cut.lock.gates)) {
+       if (cut.within(cut.gateOwner.get(id)!, instance)) {
+         for (const end of [gate.from, gate.to]) if (!inside.has(end)) {
+           terminals.add(end)
+           freeExit.add(end)
+         }
+       } else edge(gate.from, gate.to, gate.unladen)
+     }
+     for (const { a, b, unladen } of cut.lock.passages ?? []) edge(a, b, unladen)
+     for (const { from, to, unladen } of cut.lock.oneWays ?? []) edge(from, to, unladen)
+     // The port is where the host arrives; a contained lock's port is left across its tagged edge like any terminal.
+     if (!emptyExit.has(spec.in)) freeExit.add(spec.in)
+     const needsEmpty = (terminal: RegionId) => emptyExit.has(terminal) && !freeExit.has(terminal)
+   ```
+   Then `reachableStates(spec, maxStates)`, and in the backwards seed:
+   ```ts
+       order.forEach((state, n) => {
+         if (state.region !== terminal || (needsEmpty(terminal) && !mayLeave(spec, state.config))) return
+         seen.add(n)
+         queue.push(n)
+       })
+   ```
+   The `edge(gate.from, gate.to)`-style calls in the current body are replaced by the ones above; the `ground` check
+   below stays as it is.
+6. `levelsOf(grid, lock, maxStates)`: skip fused instances, wrap a pooled level's failure, and hand the wrapper back
+   so `walkFloorLock` wraps the floor level's failure too (its return type gains `pooled` on the `ok: true` side;
+   `compose` passes `maxStates` through):
+   ```ts
+     const pooled = (node: Owner, failure: FloorWalkFailure): FloorWalkFailure => {
+       const instances = cut.pools.get(node)
+       return instances ? { type: "pooled", instances, failure } : failure
+     }
+     for (const { instance } of grid.lockNesting ?? []) {
+       if (cut.fusedInto.has(instance)) continue
+       const spec = levelOf(cut, instance, grid.lockNesting)
+       const free = nestedFree(cut, instance, spec, maxStates)
+       if ("failure" in free)
+         return { ok: false, failure: { type: "nested", instance, failure: pooled(instance, free.failure) } }
+       counts[instance] = free.states
+       levels.push({ instance, spec })
+     }
+     levels.push({ instance: undefined, spec: levelOf(cut, FLOOR, grid.lockNesting) })
+     return { ok: true, levels, counts, pooled }
+   ```
+7. Delete `holdsStones` and `STONES_NESTED` and their comment. `walkFloorLock`:
+   ```ts
+   export const walkFloorLock = (
+     grid: FloorGrid,
+     { maxStates = MAX_LOCK_STATES }: { maxStates?: number } = {}
+   ): FloorWalkResult | undefined => {
+     const lock = floorLock(grid)
+     if (!lock) return undefined
+     if (!grid.lockNesting || grid.lockNesting.length === 0) return walkLock(lock, maxStates)
+     const composed = compose(grid, lock, maxStates)
+     if (!composed.ok) return { sound: false, failure: composed.failure }
+     const walk = walkLock(composed.levels[composed.levels.length - 1].spec, maxStates)
+     return walk.sound
+       ? { sound: true, states: walk.states, nested: composed.counts }
+       : { sound: false, failure: composed.pooled(FLOOR, walk.failure) }
+   }
+   ```
+   (import `MAX_LOCK_STATES` from `./lockWalk`). `deadFloorRegions` loses its `holdsStones` line.
+
+A `nested` count for a fused instance is absent from `FloorWalkResult.nested`; the existing nesting tests have no
+shared nesting, so their `toEqual`s are unchanged.
+
+- [ ] **Step 4: Run them to see them pass, and the nesting tests stay green**
+
+Run: `yarn vitest run src/game/nestedStones.spec.ts src/game/nestedLocks.spec.ts src/game/lockWalk.spec.ts src/game/gateLoops.spec.ts`
+Expected: PASS. If a pass-through or contained floor's walk and the product walk disagree, the cut is not exact for
+it: stop, report the floor's seed and both failures, and do not fuse the case to make them agree.
+(`gateLoops.spec.ts` exists only if tasks 1-3 have run; leave it out otherwise.)
+
+Run: `yarn check-types && yarn lint`
+Expected: clean.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add src/game/floorLockWalk.ts src/game/lockWalk.ts src/game/nestedLocks.spec.ts src/game/nestedStones.spec.ts
+git commit -m "feat(stones): a nested floor is walked with its stones as one pool" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
+```
+
+---
+
+### Task 11: Play stops a carrying walk at a contained lock's edge; each broken case is named
+
+**Files:**
+- Modify: `src/app/SiteMap/useSiteNavigation.ts` (a carrying walk stops short of a contained edge; a drop across one
+  is turned away)
+- Create: `src/app/SiteMap/containedStones.spec.tsx`
+- Test: `src/game/nestedStones.spec.ts` (the pass-through's named refusals)
+
+**Interfaces:**
+- Consumes: `stopShort`, `crossesContainedEdge` (task 9); `isCarrying` (`@/game/stonePlay`); `findPath`
+  (`@/game/gridNavigation`); `carvePlayground`, `sequenceHarness` (test support).
+
+- [ ] **Step 1: Write the failing tests**
+
+Create `src/app/SiteMap/containedStones.spec.tsx`:
+
+```tsx
+// @vitest-environment jsdom
+import { act, cleanup } from "@testing-library/react"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { parseLock } from "@/game/lockNotation"
+import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
+import { leverLock } from "@/game/testSupport/floorLockFixtures"
+import { BINDING } from "@/game/testSupport/lockFixtures"
+import { carvePlayground } from "./playgroundCarve.testing"
+import { sequenceHarness } from "./sequenceHarness.testing"
+import "@/mods/registerModApps"
+
+beforeEach(() => vi.useFakeTimers())
+afterEach(() => {
+  cleanup()
+  vi.useRealTimers()
+})
+
+// A MADE-UP STONE LOCK nested in the hall of a lever lock, whose stones nothing around it shares.
+const config: FloorConfig = {
+  pathPuzzles: 0,
+  difficulty: "expert",
+  end: "treasure",
+  exitOrStaircase: "exit",
+  sideSections: [],
+  realisations: { ...BINDING, weights: "stonePlate" },
+  locks: [
+    { lock: leverLock() },
+    {
+      lock: parseLock("in -- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nhall ?\nout ?", "cell").lock,
+      as: "inner",
+      inside: { instance: "lever", region: "hall" },
+    },
+  ],
+}
+
+const cellWhere = (grid: FloorGrid, test: (region: string | undefined, plate: string | undefined) => boolean) => {
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if ((cell.type === "room" || cell.type === "corridor") && test(cell.region, cell.type === "room" ? cell.plate?.id : undefined))
+        return [r, c] as const
+    }
+  throw new Error("no such cell")
+}
+
+const play = () => {
+  const carved = carvePlayground(config)
+  if (!carved.found) throw new Error(JSON.stringify(carved.reasons))
+  return { ...sequenceHarness(carved.seed, config), grid: carved.grid }
+}
+
+describe("a contained lock keeps its stones", () => {
+  it("stops a carrying walk on its own side of the edge, with the one blocked line", () => {
+    const h = play()
+    h.walkTo(cellWhere(h.grid, (_, plate) => plate === "inner.shelf"))
+    act(() => h.current().prompt!.take())
+    h.settle()
+    h.walkTo(cellWhere(h.grid, region => region === "lever.foyer"))
+    const notice = h.current().notice
+    expect(notice).not.toBeNull()
+    const [r, c] = notice!.at
+    const stopped = h.grid.cells[r][c]
+    expect(stopped.type === "room" || stopped.type === "corridor" ? stopped.region : undefined).toMatch(/^inner\./)
+  })
+
+  it("lets empty hands walk out", () => {
+    const h = play()
+    h.walkTo(cellWhere(h.grid, (_, plate) => plate === "inner.shelf"))
+    h.walkTo(cellWhere(h.grid, region => region === "lever.foyer"))
+    expect(h.current().notice).toBeNull()
+  })
+})
+```
+
+(Read `sequenceHarness.testing.tsx` before running: if `walkTo` or `current().notice` are shaped differently from
+`carryingDrop.spec.tsx`'s use of them, follow that file; it is the pattern.)
+
+Append to `src/game/nestedStones.spec.ts` (the pass-through rule holds by the lock's own refusals; these pin them on a
+nested floor):
+
+```ts
+describe("a pass-through lock never turns a stone away", () => {
+  it("refuses a lock without stones that asks for empty hands, naming the lock", () => {
+    const result = carve(
+      [
+        { lock: stones(HOST_STONES, "host") },
+        { lock: stones("in -[unladen]- out\nin ?\nout ?", "crack"), as: "inner", inside: { instance: "host", region: "yard" } },
+      ],
+      1
+    )
+    expect(result.success).toBe(false)
+    if (!result.success)
+      expect(result.reasons).toContainEqual({
+        type: "lockRefused",
+        instance: "inner",
+        fault: { type: "carryWithoutStones", barrier: "in-out" },
+      })
+  })
+
+  it("refuses a drop in it that needs both hands, naming the drop", () => {
+    const result = carve(
+      [
+        { lock: stones(HOST_STONES, "host") },
+        { lock: stones("in >> out\nin ?\nout ?", "chute"), as: "inner", inside: { instance: "host", region: "yard" } },
+      ],
+      1
+    )
+    expect(result.success).toBe(false)
+    if (!result.success)
+      expect(result.reasons).toContainEqual(
+        expect.objectContaining({ type: "oneWayRealisationRefused", from: "inner.in", to: "inner.out", why: "stonePasses" })
+      )
+  })
+})
+```
+
+If `parseLock` throws on `in -[unladen]- out` with no plate, write that lock as a `Lock` literal (one gate owned by
+`unladen`, no `weights`) instead; the fault is `compileLock`'s.
+
+- [ ] **Step 2: Run them to see them fail**
+
+Run: `yarn vitest run src/app/SiteMap/containedStones.spec.tsx src/game/nestedStones.spec.ts`
+Expected: FAIL: the carrying walk reaches the foyer with no notice. The two pass-through tests PASS already: they pin
+refusals that exist; if either fails, report the reason it got instead.
+
+- [ ] **Step 3: Implement**
+
+In `src/app/SiteMap/useSiteNavigation.ts`, import `crossesContainedEdge, stopShort` from `@/game/stoneBounds`. Right
+after `walkTo` is defined in `onCellClick`, add:
+
+```ts
+      // A CONTAINED LOCK KEEPS ITS STONES (stoneBounds.ts): a carrying walk that would cross its edge stops on the near
+      // side and says why, the one blocked line the way out uses. Asked of every walk, so no target is a way round it.
+      const stoppedShort = (r: number, c: number): boolean => {
+        if (!isCarrying(grid, currentFloor, journeys.getMechanismStates(journeyId))) return false
+        const stop = stopShort(grid, findPath(grid, explorerPos, [r, c]))
+        if (!stop) return false
+        const [sr, sc] = stop
+        const side = walkTo(sr, sc)
+        journeys.markCellExplored(getCell(grid, sr, sc)?.sectionHash ?? "", side.edgeId, side.address)
+        side.goHere()
+        turnAway(sr, sc)
+        return true
+      }
+```
+
+Then:
+- in the passage branch, after `const [nr, nc] = crossing.near`, add `if (stoppedShort(nr, nc)) return`;
+- directly after the passage branch, before `const sectionHash = …`, add `if (stoppedShort(row, col)) return`;
+- in the launch branch, the carrying guard also turns away a drop across the edge:
+  ```ts
+        if (
+          carrying &&
+          (span.unladen ||
+            resolveOneWay(span.kind)?.handsFull ||
+            crossesContainedEdge(grid, getCell(grid, ...span.launch), getCell(grid, ...span.landing)))
+        )
+          return turnAway(row, col)
+  ```
+  (adapt the spread to `getCell`'s signature, `getCell(grid, row, col)`).
+
+If the played grid does not carry `lockNesting` (the test's walk is then never stopped), find where play builds its
+grid from the assembled one (`assemblePlayedFloor`, `useAssembledFloor.ts`) and keep the field: it is the floor's own
+data, never the save's.
+
+- [ ] **Step 4: Run them to see them pass**
+
+Run: `yarn vitest run src/app/SiteMap/containedStones.spec.tsx src/app/SiteMap src/game/nestedStones.spec.ts`
+Expected: PASS, every existing SiteMap spec unchanged (no floor there has a contained lock, so `stopShort` finds
+nothing).
+
+Run: `yarn check-types && yarn lint`
+Expected: clean.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add src/app/SiteMap/useSiteNavigation.ts src/app/SiteMap/containedStones.spec.tsx src/game/nestedStones.spec.ts
+git commit -m "feat(map): a stone stays in the lock that contains it" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
+```
+
+---
+
+### Task 12: Nested stones in the Lock playground
+
+**Files:**
+- Modify: `src/app/SiteMap/playgroundCarve.testing.ts` (`playgroundFloor` takes an optional nested lock)
+- Modify: `src/app/SiteMap/lockPlayground.testing.tsx` (`LockPlayground` takes `nest`)
+- Modify: `src/app/SiteMap/LockPlayground.stories.tsx` (three stories, one per case)
+- Test: `src/app/SiteMap/lockPlayground.spec.tsx`
+
+**Interfaces:**
+- Produces: `playgroundFloor(lock: Lock, binding: RealisationBinding, nest?: { lock: Lock; region: string }):
+  FloorConfig`; `LockPlayground` prop `nest?: { lock: string; region: string }` (a key of `locks`, and the host
+  region it stands in; the picked lock is the host).
+
+- [ ] **Step 1: Write the failing test**
+
+In `src/app/SiteMap/lockPlayground.spec.tsx`, append (import `playgroundFloor`, `defaultBinding` from
+`./playgroundCarve.testing` and `parseLock` from `@/game/lockNotation` if missing):
+
+```ts
+describe("a lock nested in the playground's lock", () => {
+  it("stands in the named region of the picked lock, every region free", () => {
+    const host = parseLock("in -- hall\nhall -[L]- out\nL toggle @in\nin *\nhall ?\nout ?", "host").lock
+    const inner = parseLock("in -- out\nshelf plate @in stone\nin *\nout ?", "cell").lock
+    const config = playgroundFloor(host, defaultBinding(), { lock: inner, region: "hall" })
+    expect(config.locks?.map(placed => [placed.as, placed.inside])).toEqual([
+      [undefined, undefined],
+      ["inner", { instance: "host", region: "hall" }],
+    ])
+    expect(Object.values(config.locks![1].lock.regions).every(region => region.takes === "free")).toBe(true)
+  })
+})
+```
+
+Run: `yarn vitest run src/app/SiteMap/lockPlayground.spec.tsx`
+Expected: FAIL, one placement.
+
+- [ ] **Step 2: Implement**
+
+`src/app/SiteMap/playgroundCarve.testing.ts`:
+
+```ts
+/** The lock alone on an expert floor with no puzzles, every region free, as the dev floors bench a lock; `nest` stands
+ * a second lock in one of its regions. */
+export const playgroundFloor = (
+  lock: Lock,
+  binding: RealisationBinding,
+  nest?: { lock: Lock; region: string }
+): FloorConfig => ({
+  pathPuzzles: 0,
+  difficulty: "expert",
+  end: "treasure",
+  exitOrStaircase: "exit",
+  sideSections: [],
+  locks: [
+    { lock: freeRegions(lock) },
+    ...(nest ? [{ lock: freeRegions(nest.lock), as: "inner", inside: { instance: lock.name, region: nest.region } }] : []),
+  ],
+  realisations: binding,
+})
+```
+
+`src/app/SiteMap/lockPlayground.testing.tsx`, `LockPlayground`: the props type gains `nest?: { lock: string; region:
+string }`; beside `parsed`:
+
+```ts
+  const inner = useMemo(() => {
+    if (!nest) return undefined
+    try {
+      return { ok: true as const, ...parseLock(locks[nest.lock], nest.lock), region: nest.region }
+    } catch (error) {
+      return { ok: false as const, message: (error as Error).message }
+    }
+  }, [locks, nest])
+  const config = useMemo(
+    () =>
+      parsed.ok && (inner === undefined || inner.ok)
+        ? playgroundFloor(parsed.lock, binding, inner && { lock: inner.lock, region: inner.region })
+        : null,
+    [parsed, inner, binding]
+  )
+```
+
+and the refusal reads the inner's parse first: `inner && !inner.ok ? inner.message : !parsed.ok ? …` (the rest as it
+is). `unbuilt` adds the inner's `drafts` and `notBuildable(inner.lock)` when `inner?.ok`.
+
+`src/app/SiteMap/LockPlayground.stories.tsx`, append:
+
+```tsx
+// MADE-UP LOCKS NESTED IN EACH OTHER, one story per stone case (stones spec, "Nested locks"). The picked lock is the
+// host; `nest` stands the other in its `yard` or `hall`.
+const HOST_STONES =
+  "in -- yard\nyard -- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nyard ?\nhall ?\nout ?"
+const LEVER = "in -- hall\nhall -[L]- out\nL toggle @in\nin ?\nhall ?\nout ?"
+const CELL = "in -- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nhall ?\nout ?"
+const GATED = "in -[s]- hall\nhall -- out\ns plate @in\nt plate @hall stone\nin ?\nhall ?\nout ?"
+
+// Park the stone, solve the lever inside, fetch the stone and carry it through to the door beyond.
+export const StonePassesThrough: Story = {
+  args: { locks: { host: HOST_STONES, lever: LEVER }, initial: "host", nest: { lock: "lever", region: "yard" } },
+}
+
+// The stone lock inside keeps its stone: carry it toward the way in and the explorer stops at its edge.
+export const StoneStaysInside: Story = {
+  args: { locks: { lever: LEVER, cell: CELL }, initial: "lever", nest: { lock: "cell", region: "hall" } },
+}
+
+// One pool: carry the host's stone in, set it on `s`, take the inner's own stone out to the door beyond.
+export const StonesShared: Story = {
+  args: { locks: { host: HOST_STONES, gated: GATED }, initial: "host", nest: { lock: "gated", region: "yard" } },
+}
+```
+
+- [ ] **Step 3: Run and look**
+
+Run: `yarn vitest run src/app/SiteMap/lockPlayground.spec.tsx && yarn check-types && yarn lint`
+Expected: PASS, clean.
+
+Run `yarn storybook`, open `Topology/Lock playground` → `Stone Stays Inside`, and screenshot with `npx playwright
+screenshot` (the Playwright MCP is down). Read the screenshot back: the floor carves (no red refusal). Lift the stone
+and tap the lever lock's first room: the explorer stops inside the stone lock with "Cannot pass with a stone". Describe
+what you see in the report; if a story does not carve within `CARVE_BUDGET`, record its refusal under "Open after
+phase 4" (task 13) and leave the story in.
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add src/app/SiteMap/playgroundCarve.testing.ts src/app/SiteMap/lockPlayground.testing.tsx src/app/SiteMap/LockPlayground.stories.tsx src/app/SiteMap/lockPlayground.spec.tsx
+git commit -m "feat(playground): a lock nested in another, one story per stone case" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
+```
+
+---
+
+### Task 13: Look at it, say so, and the whole gate
+
+**Files:**
+- Modify: `docs/mods/floor-topology-design.md` (lines 701-704, "Gates may form loops"; the table row at line 899)
+- Modify: `docs/mods/mechanic-contract.md` (§3.2 "Stones on plates": a bullet for nested locks)
+- Modify: `docs/superpowers/plans/2026-10-06-stonegate-roadmap.md` (phase 4 row; "Open after phase 1"; "Open after
+  phase 3"; "Open after phase 4")
+- Modify: `docs/superpowers/specs/2026-10-04-stones-acceptance.md` (§1 "Nested locks" box; §3, a note under the bake
+  bullet)
 - Modify: `docs/playtest-backlog.md`
-- Modify: `src/data/carveLedger.json` (only if task 6 moved the fingerprint)
+- Modify: `src/data/carveLedger.json` (if tasks 6-12 moved the fingerprint)
 
 - [ ] **Step 1: Look at it**
 
@@ -1004,6 +2420,7 @@ Run: `INCLUDE_DEV=1 yarn generate-world` (never commit that bake), then `yarn st
 - `App/SiteMap/JourneyInspector` → `Inspector`, the dev journey, pyramid 12, floor 0: the floor's loops, five plates
   (two in `passage`), the torch, the narrow passage.
 - `Topology/Lock playground`, lock `stoneGate`: it carves, or "carving, N seeds tried" ends in a refusal.
+- (Task 12 already looked at the three nested stone stories; no second look here.)
 
 Read each screenshot back and describe it in the report. If the playground does not carve stoneGate within its
 budget (`CARVE_BUDGET = 200`, `playgroundCarve.testing.ts`), record that under "Open after phase 4" with the refusal
@@ -1011,7 +2428,7 @@ it shows; do not fix it here. Then restore the world: `yarn generate-world && gi
 
 - [ ] **Step 2: The design doc**
 
-`docs/mods/floor-topology-design.md`, "**Gates may form loops.**" paragraph (lines 698-701) becomes:
+`docs/mods/floor-topology-design.md`, "**Gates may form loops.**" paragraph (lines 701-704) becomes:
 
 ```markdown
 **Gates may form loops.** A loop of gated joins is a puzzle in its own right: with plates and
@@ -1023,9 +2440,23 @@ holds it. A layout written longhand, without a lock, is carved as side chains an
 on a loop's second meeting (`obstacleOffRoute`).
 ```
 
-The table row "A gated join closing a loop is carved" (line 896): its second cell becomes `` `topologyFaults` on a
+The table row "A gated join closing a loop is carved" (line 899): its second cell becomes `` `topologyFaults` on a
 laid floor seats every join and refuses `gateBypassed`; `gateDoorFaults` holds each door between two grounds; the walk
 proves the loop sound ``. Prettier reflows the table: edit the row by line and read the file back.
+
+`docs/mods/mechanic-contract.md` §3.2, after the "**The way out is left with empty hands.**" bullet:
+
+```markdown
+- **Nested locks.** Each nesting is read against the nearest lock it stands in that holds stones
+  (`stoneNestings`, `LockNesting.stones`). A **pass-through** lock (no stones of its own) lets a stone through:
+  a lock without stones cannot write `unladen` (`carryWithoutStones`), and a drop needing both hands on a stone
+  floor is refused (`stonePasses`). A **contained** lock (stones, no lock around it holds any) keeps them: a
+  carrying walk stops at the edge of its ground with the one blocked line, decided by `crossesContainedEdge`
+  (`stoneBounds.ts`) for play and for the walk, which takes the tagged ways with empty hands only. A **shared**
+  lock (stones, and so does a lock around it) pools them: one weights control, `<pool>.stones` (`poolStones`),
+  one hand, and a stone set on either lock's plates; the walk takes it fused with its pool's level and names a
+  failure there `pooled`. The floor's own ways out take empty hands in every case.
+```
 
 - [ ] **Step 3: The roadmap and the spec**
 
@@ -1036,9 +2467,21 @@ says "(done <date>, [plan](2026-10-08-stonegate-phase-4-gate-loops.md))" after *
   side-chain carve's grouping and is unchanged;
 - masonsRamp, counterweight and stoneOnAPlate are still not on the dev floor;
 - whether the lock playground carves stoneGate on its bench floor (from step 1);
-- task 6's outcome if it was skipped.
+- no lock file can declare nesting, so `yarn run lock` says nothing about the nested stone cases; they surface in
+  the bake's lock sweep, the floor's refusals and the Lock playground (question 9);
+- two stone locks placed one after the other (not nested) are two weights records, so play could hold a stone of
+  each; no floor places two;
+- `stonePasses` reads whether the floor holds stones, so it over-refuses a `handsFull` drop in the stone-free host
+  of a contained lock, where no stone is ever carried;
+- any playground nested-stone story that did not carve within `CARVE_BUDGET` (task 12 step 3).
 
-`docs/superpowers/specs/2026-10-04-stones-acceptance.md` §3: leave the box "The four stone locks and the stoneOnAPlate
+In the same file, delete the "Open after phase 1" bullet "Any floor with `lockNesting` that holds stones is refused
+…", and the "Open after phase 3" bullet "Where a gate loop makes both sides of a passage walkable (phase 4), the
+crossing starts from the first side in the cell's `dirs`." (task 6). Edit by line and read the file back.
+
+`docs/superpowers/specs/2026-10-04-stones-acceptance.md` §1, "Nested locks": tick the box "The solver walks a nested
+floor with its stones as one pool and proves each case above; a nesting that breaks its rule is refused by name."
+(tasks 7-11). §3: leave the box "The four stone locks and the stoneOnAPlate
 lesson bake on the dev floor" unticked and add under it an indented line: "stoneGate bakes on the dev floor (pyramid
 12), its gate loops laid like any join."
 
@@ -1052,13 +2495,17 @@ lesson bake on the dev floor" unticked and add under it an indented line: "stone
   leave by the way out. Leave mid-way and come back: every stone where you set it.
 - **The narrow passage on the loop.** Tap its wall from either side: the explorer walks to the nearer side and
   squeezes, never round the loop first.
+- **Nested stones (Storybook, `Topology/Lock playground`).** `Stone Passes Through`: park the stone, solve the lever
+  inside, carry the stone through. `Stone Stays Inside`: lift the inner stone and walk toward the way in; the explorer
+  stops at the inner lock's edge with "Cannot pass with a stone" — does an edge nobody can see read as fair?
+  `Stones Shared`: carry the host's stone in, set it on the inner plate, take the inner's stone out to the door.
 ```
 
 - [ ] **Step 5: Commit the docs**
 
 ```bash
-git add docs/mods/floor-topology-design.md docs/superpowers/plans/2026-10-06-stonegate-roadmap.md docs/superpowers/specs/2026-10-04-stones-acceptance.md docs/playtest-backlog.md
-git commit -m "docs: gate loops are laid like any join" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+git add docs/mods/floor-topology-design.md docs/mods/mechanic-contract.md docs/superpowers/plans/2026-10-06-stonegate-roadmap.md docs/superpowers/specs/2026-10-04-stones-acceptance.md docs/playtest-backlog.md
+git commit -m "docs: gate loops are laid like any join, and nested locks share their stones by rule" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
 ```
 
@@ -1072,7 +2519,7 @@ git diff --exit-code --stat src/data/generatedWorld.ts
 git diff -U0 src/data/carveLedger.json | grep -E '^[-+] ' | grep -vc '"hash"'
 ```
 
-Expected: the second prints nothing and exits 0; the third prints `0`. If the ledger moved (task 6 changed a
+Expected: the second prints nothing and exits 0; the third prints `0`. If the ledger moved (tasks 6-12 changed a
 fingerprinted file), commit it:
 
 ```bash
@@ -1096,18 +2543,35 @@ file, copy the change back, commit it ("style: lint") in the real worktree, and 
 ## Self-review notes
 
 - **Roadmap phase 4 row:** `topologyFaults` accepts a gated join closing a loop (task 1), the fork seams (task 3),
-  `offRouteChains` (question 2: unchanged, the lay does not read it; recorded in task 7); stoneGate bakes on the dev
+  `offRouteChains` (question 1: unchanged, the lay does not read it; recorded in task 13); stoneGate bakes on the dev
   floor (task 5).
 - **Spec §3:** "stoneGate bakes on the dev floor, and the world bake stays byte-identical for every floor that has
-  no stones" (task 5 steps 3-4, task 7 step 6). "With the realisation mod off, the carve is identical" for stoneGate
+  no stones" (task 5 steps 3-4, task 13 step 6). "With the realisation mod off, the carve is identical" for stoneGate
   (task 5 step 4, the toggle-off sweeps). "Done when" playing stoneGate on the dev floor: baked here, played by the
-  designer from the playtest backlog (task 7 step 4).
+  designer from the playtest backlog (task 13 step 4).
+- **Spec §1 "Nested locks":** classified (task 7); pass through: a stone crosses the solved inner lock both ways,
+  walked (task 10) and its only two ways to turn a stone away refused by name (task 11); contained: the inner's edge
+  takes empty hands in the walk (task 9) and in play (task 11); shared: one pool (task 8), the inner's way out lets a
+  stone through (no edge, task 9), the floor's ways out take empty hands (`leaveWith` per level, task 10), a stone
+  set on an inner plate (`poolStones` unit, task 8; `StonesShared` story, task 12); "the solver walks a nested floor
+  with its stones as one pool and proves each case" (task 10, every case agreeing with the product walk on every
+  carve); "refused by name" (`carryWithoutStones`, `stonePasses`, `nested`, `pooled`); `STONES_NESTED` lifted
+  (task 10). "Leaves the inner lock with a stone only by solving it for one" is read per question 6.
+- **Stable world for tasks 7-12:** no world floor nests or holds stones; the ledger's hash lines move (task 13 step 6).
+- **Count work:** state-space claims are state counts (task 10: fewer than the product for pass-through and contained,
+  equal for shared); the size bound is tested with a lowered `maxStates`, never a clock.
 - **Soundness:** every carved loop in the tests is walked (`expectSound` in tasks 1 and 3); stoneGate is walked by
   the bake's lock sweep (task 5 step 3) and `devJourney.verify.ts` (task 5 step 4).
-- **Review Focus → tests:** 1 task 2; 2 task 3; 3 task 1 and the existing longhand spec; 4 task 2; 5 task 1.
+- **Review Focus → tests:** 1 task 2; 2 task 3; 3 task 1 and the existing longhand spec; 4 task 2; 5 task 1; 6 task 8;
+  7 task 10; 8 tasks 9 and 11; 9 task 10; 10 the existing `nestedLocks.spec.ts` and task 9.
 - **Type consistency:** `TopologyOptions = { laid?: boolean }` (task 1) is read by tasks 2 and 3; `forkSeams(graph,
   region, oneWays, { laid })` returns `[region, other][]` (task 3), read by `seamsFor` as keys and by the assembler as
   `ForkIn.seams`; `gateBypassed` has the same shape in `TopologyFault` and `AssemblerReason` (task 2);
-  `passageCrossing`'s fifth argument (task 6) defaults so phase 3's callers compile unchanged.
+  `passageCrossing`'s fifth argument (task 6) defaults so phase 3's callers compile unchanged. `StoneNesting` (task 7)
+  is read by tasks 8 (`case`, `pool`), 9 (`containedGrounds`) and 10 (`cutOf`); `poolStones(id, controls, any)`
+  (task 8); `crossesContainedEdge(grid, a, b)` and `stopShort(grid, path)` (task 9) are read by `floorLock` and by
+  the navigation (task 11); `LockGate.unladen`, `passages[].unladen` and `mayLeave` (task 9) by `floorLockWalk`
+  (task 10); the `pooled` failure has one shape in task 10's type and tests.
 - **Not covered:** a gate loop inside a nested lock (no lock nests one); a loop closed by a drop (a drop is no
-  ground, so it never makes a gate bypassed, and the lay lays it as before).
+  ground, so it never makes a gate bypassed, and the lay lays it as before); two stone locks one after the other on a
+  floor (two hands; recorded in task 13); `yarn run lock` for a nesting (question 9).
