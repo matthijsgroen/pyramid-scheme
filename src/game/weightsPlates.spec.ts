@@ -102,7 +102,7 @@ describe("a stone lock on a floor", () => {
 
   it("leaves the floor only with empty hands", () => {
     const grid = carveLockFloor(parseLock(STONES, "stones").lock, { weights: "stonePlate" })
-    expect(floorLock(grid)!.leaveWith).toEqual([{ mechanism: expect.any(String), notIn: ["+ hand"] }])
+    expect(floorLock(grid)!.emptyHands).toEqual([{ mechanism: expect.any(String), notIn: ["+ hand"] }])
   })
 
   it("leaves by the stairs down only with empty hands, as by the way out", () => {
@@ -120,6 +120,6 @@ describe("a stone lock on a floor", () => {
     const [er, ec] = grid.grid.exitPos
     const exit = grid.grid.cells[er][ec]
     expect(exit.type === "room" && exit.stairId).toBeTruthy()
-    expect(floorLock(grid.grid)!.leaveWith).toEqual([{ mechanism: expect.any(String), notIn: ["+ hand"] }])
+    expect(floorLock(grid.grid)!.emptyHands).toEqual([{ mechanism: expect.any(String), notIn: ["+ hand"] }])
   })
 })

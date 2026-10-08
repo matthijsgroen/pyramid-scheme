@@ -412,7 +412,7 @@ describe("deadRegions", () => {
   })
 })
 
-describe("leaveWith", () => {
+describe("emptyHands", () => {
   const spec = (handEmpties: boolean): LockSpec => ({
     regions: ["in", "out"],
     gates: { g: { from: "in", to: "out", owners: ["open"] } },
@@ -427,7 +427,7 @@ describe("leaveWith", () => {
     },
     in: "in",
     out: "out",
-    leaveWith: [{ mechanism: "hand", notIn: ["full"] }],
+    emptyHands: [{ mechanism: "hand", notIn: ["full"] }],
   })
 
   it("does not count the way out reached with a stone in hand", () => {
@@ -439,21 +439,21 @@ describe("leaveWith", () => {
   })
 
   it("refuses a way out refusing a state its mechanism does not have", () => {
-    expect(checkLockSpec({ ...spec(true), leaveWith: [{ mechanism: "hand", notIn: ["ghost"] }] })).toBe(
-      "the way out refuses a state hand does not have: ghost"
+    expect(checkLockSpec({ ...spec(true), emptyHands: [{ mechanism: "hand", notIn: ["ghost"] }] })).toBe(
+      "empty hands refuse a state hand does not have: ghost"
     )
   })
 
   it("refuses a way out waiting on a mechanism the lock does not have", () => {
-    expect(checkLockSpec({ ...spec(true), leaveWith: [{ mechanism: "ghost", notIn: [] }] })).toBe(
-      "the way out waits on no mechanism: ghost"
+    expect(checkLockSpec({ ...spec(true), emptyHands: [{ mechanism: "ghost", notIn: [] }] })).toBe(
+      "empty hands wait on no mechanism: ghost"
     )
   })
 })
 
 describe("a one-way", () => {
-  // A stone lifted and set back in `a`; `leaveWith` says which of its states is a stone in hand.
-  const spec = (leaveWith: LockSpec["leaveWith"]): LockSpec => ({
+  // A stone lifted and set back in `a`; `emptyHands` says which of its states is a stone in hand.
+  const spec = (emptyHands: LockSpec["emptyHands"]): LockSpec => ({
     regions: ["a", "b"],
     gates: {},
     mechanisms: {
@@ -470,7 +470,7 @@ describe("a one-way", () => {
     oneWays: [{ from: "a", to: "b" }],
     in: "a",
     out: "b",
-    ...(leaveWith ? { leaveWith } : {}),
+    ...(emptyHands ? { emptyHands } : {}),
   })
   const handsAt = (found: ReturnType<typeof reachableStates>, region: string) => {
     if (found === "tooLarge") throw new Error("expected a walkable lock")
@@ -484,7 +484,7 @@ describe("a one-way", () => {
     expect(handsAt(reachableStates(spec([{ mechanism: "stone", notIn: ["+ hand"] }])), "b")).toEqual(["shelf"])
   })
 
-  it("is taken carrying when the lock has no stones (no leaveWith)", () => {
+  it("is taken carrying when the lock has no stones (no emptyHands)", () => {
     expect(handsAt(reachableStates(spec(undefined)), "b")).toEqual(["+ hand", "shelf"])
   })
 })

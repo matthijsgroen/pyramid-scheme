@@ -49,8 +49,10 @@ export type LockSpec = {
   /** Where the player arrives, and where they leave for. */
   in: RegionId
   out: RegionId
-  /** The way out is left only in a config outside every `notIn`: a stone never leaves its floor. */
-  leaveWith?: { mechanism: MechanismId; notIn: StateId[] }[]
+  /** The hands are empty only in a config outside every `notIn`. Every one-way and the way out take empty hands,
+   * so a stone never rides a drop and never leaves its floor. A level that is no floor still has its one-ways: it
+   * keeps this whenever it holds stones. */
+  emptyHands?: { mechanism: MechanismId; notIn: StateId[] }[]
 }
 
 // EVERY ID IN A LOCK IS A REFERENCE INTO ANOTHER TABLE, and a misspelled one is the failure that does
@@ -99,23 +101,22 @@ export const checkLockSpec = (spec: LockSpec): string | undefined => {
     }
   }
 
-  for (const { mechanism, notIn } of spec.leaveWith ?? []) {
-    if (!spec.mechanisms[mechanism]) return `the way out waits on no mechanism: ${mechanism}`
+  for (const { mechanism, notIn } of spec.emptyHands ?? []) {
+    if (!spec.mechanisms[mechanism]) return `empty hands wait on no mechanism: ${mechanism}`
     for (const state of notIn)
       if (!spec.mechanisms[mechanism].states.includes(state))
-        return `the way out refuses a state ${mechanism} does not have: ${state}`
+        return `empty hands refuse a state ${mechanism} does not have: ${state}`
   }
   return undefined
 }
 
-/** Whether the hands are empty in this config, so the way out and every one-way take them: no mechanism the way out
- * waits on is in a state it refuses. */
-const mayLeave = (spec: LockSpec, config: LockConfig): boolean =>
-  (spec.leaveWith ?? []).every(({ mechanism, notIn }) => !notIn.includes(config[mechanism]))
+/** Whether the hands are empty in this config: no mechanism `emptyHands` names is in a state it refuses. */
+export const handsEmpty = (spec: LockSpec, config: LockConfig): boolean =>
+  (spec.emptyHands ?? []).every(({ mechanism, notIn }) => !notIn.includes(config[mechanism]))
 
 /** Whether a state ends the walk: in the way out, with hands that may leave it. */
 export const finished = (spec: LockSpec, state: LockState): boolean =>
-  state.region === spec.out && mayLeave(spec, state.config)
+  state.region === spec.out && handsEmpty(spec, state.config)
 
 // WHETHER A DOOR STANDS OPEN IS ASKED OF ITS OWNERS, NEVER ASSUMED FROM A STATE. A board opens one
 // gate per state and a sequence opens its gate only in the last, so a state is not "which gate is
@@ -159,7 +160,7 @@ const movesFrom = (spec: LockSpec, state: LockState): LockState[] => {
     if (gate.to === region) moves.push({ region: gate.from, config })
   }
   for (const oneWay of spec.oneWays ?? [])
-    if (oneWay.from === region && mayLeave(spec, config)) moves.push({ region: oneWay.to, config })
+    if (oneWay.from === region && handsEmpty(spec, config)) moves.push({ region: oneWay.to, config })
   for (const { a, b } of spec.passages ?? []) {
     if (a === region) moves.push({ region: b, config })
     if (b === region) moves.push({ region: a, config })
@@ -168,7 +169,7 @@ const movesFrom = (spec: LockSpec, state: LockState): LockState[] => {
     for (const transition of mechanism.transitions)
       if (transition.at === region && config[id] === transition.from)
         moves.push({ region, config: { ...config, [id]: transition.to } })
-  if (region === spec.out && mayLeave(spec, config)) moves.push({ region: spec.in, config })
+  if (region === spec.out && handsEmpty(spec, config)) moves.push({ region: spec.in, config })
 
   return moves.map(move => entering(spec, region, move))
 }
@@ -190,10 +191,13 @@ export const entering = (spec: LockSpec, from: RegionId, arrived: LockState): Lo
 // order, so the first failure found later is also the shortest one to describe. `edges` is kept
 // because the second question walks the same graph backwards and re-deriving the moves would be the
 // same work twice.
-export const reachableStates = (spec: LockSpec): { order: LockState[]; edges: number[][] } | "tooLarge" => {
+export const reachableStates = (
+  spec: LockSpec,
+  maxStates = MAX_LOCK_STATES
+): { order: LockState[]; edges: number[][] } | "tooLarge" => {
   const ids = Object.keys(spec.mechanisms).sort()
   const ceiling = spec.regions.length * ids.reduce((n, id) => n * spec.mechanisms[id].states.length, 1)
-  if (ceiling > MAX_LOCK_STATES) return "tooLarge"
+  if (ceiling > maxStates) return "tooLarge"
 
   const start: LockState = {
     region: spec.in,
@@ -233,11 +237,11 @@ export type LockWalkResult = { sound: true; states: number } | { sound: false; f
 // at the way out; and does EVERY reachable state still reach it. The second is strictly stronger than
 // the permissive bracket over the same floor: that one answers whether a reward is ever obtainable,
 // which is no comfort to a player who cannot reach it by any legal sequence of moves.
-export const walkLock = (spec: LockSpec): LockWalkResult => {
+export const walkLock = (spec: LockSpec, maxStates = MAX_LOCK_STATES): LockWalkResult => {
   const problem = checkLockSpec(spec)
   if (problem) return { sound: false, failure: { type: "malformed", problem } }
 
-  const found = reachableStates(spec)
+  const found = reachableStates(spec, maxStates)
   if (found === "tooLarge") return { sound: false, failure: { type: "tooLarge" } }
   const { order, edges } = found
 

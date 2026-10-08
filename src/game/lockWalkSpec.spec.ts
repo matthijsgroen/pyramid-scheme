@@ -160,7 +160,7 @@ describe("weights", () => {
   })
 
   it("never lets a stone leave by the way out", () => {
-    expect(compiled("in -- out\nshelf plate @in stone").leaveWith).toEqual([{ mechanism: WEIGHTS, notIn: ["+ hand"] }])
+    expect(compiled("in -- out\nshelf plate @in stone").emptyHands).toEqual([{ mechanism: WEIGHTS, notIn: ["+ hand"] }])
   })
 
   it("opens an :empty way by lifting the stone off its plate, and keeps it shut while every plate is full", () => {

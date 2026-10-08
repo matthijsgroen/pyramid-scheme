@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest"
 import { resolveEncounterMeta, resolveKeyRequirements } from "@/mods/allFamilyMeta"
+import { floorLock } from "./floorLock"
+import { deadFloorRegions, describeFloorWalkFailure, walkFloorLock } from "./floorLockWalk"
 import { expandFloorLocks, stoneNestings } from "./floorLocks"
 import type { PlacedLock } from "./floorLocks"
 import type { Lock } from "./lockAuthoring"
+import { deadRegions, reachableStates, walkLock } from "./lockWalk"
 import { parseLock } from "./lockNotation"
 import { isWeights } from "./obstacles"
 import { assembleFloor } from "./siteAssembler"
@@ -15,19 +18,19 @@ import { BINDING } from "./testSupport/lockFixtures"
 
 /** Stones around a nest spot from `yard` to `hall`: a stone on the shelf by the way in, a door on that waits for a
  * stone on `p`. */
-export const HOST_STONES =
+const HOST_STONES =
   "in -- yard\nyard -&> hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nyard ?\nhall ?\nout ?"
 /** A stone lock to nest: its stone on a shelf by its way in, its door on waiting for it on `p`. */
-export const CELL = "in -- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nhall ?\nout ?"
+const CELL = "in -- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nhall ?\nout ?"
 /** A stone lock that opens only for a stone carried in: `s` by its way in opens the way on, its own stone lies
  * beyond. Alone it cannot be solved; nested in a stone lock, the pool solves it. */
-export const GATED = "in -[s]- hall\nhall -- out\ns plate @in\nt plate @hall stone\nin ?\nhall ?\nout ?"
+const GATED = "in -[s]- hall\nhall -- out\ns plate @in\nt plate @hall stone\nin ?\nhall ?\nout ?"
 /** HOST_STONES with a torch by the way in that shuts the way on for good: a player who lights it first strands. */
-export const STRANDING_HOST =
+const STRANDING_HOST =
   "in -[T:off]- yard\nyard -&> hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nT activator @in\nin ?\nyard ?\nhall ?\nout ?"
 /** A lock without stones whose route runs straight through, with a drop from a side ledge back to its way in: a
  * one-way off its route. */
-export const LEDGE = "in -- out\nin -- ledge\nledge -- top\ntop >> in\nin ?\nout ?\nledge ?\ntop ?"
+const LEDGE = "in -- out\nin -- ledge\nledge -- top\ntop >> in\nin ?\nout ?\nledge ?\ntop ?"
 
 /** A lock without stones whose one door opens only for empty hands. The notation refuses to write it, so it is
  * written out. */
@@ -41,9 +44,9 @@ const CRACK: Lock = {
   out: "out",
 }
 
-export const NESTED_BINDING = { ...BINDING, weights: "stonePlate" }
+const NESTED_BINDING = { ...BINDING, weights: "stonePlate", unladen: "narrowPassage" }
 
-export const stones = (text: string, name: string) => parseLock(text, name).lock
+const stones = (text: string, name: string) => parseLock(text, name).lock
 
 /** The outer lock holds stones, the inner none: the stone is carried through it. */
 const PASS_THROUGH: PlacedLock[] = [
@@ -60,6 +63,11 @@ const SHARED: PlacedLock[] = [
   { lock: stones(HOST_STONES, "host") },
   { lock: stones(GATED, "gated"), as: "inner", inside: { instance: "host" } },
 ]
+/** A pass-through lock with a one-way off its route: a side way back that the stone never has to take. */
+const PASS_BY_LEDGE: PlacedLock[] = [
+  { lock: stones(HOST_STONES, "host") },
+  { lock: stones(LEDGE, "ledge"), as: "inner", inside: { instance: "host" } },
+]
 
 const floorOf = (locks: PlacedLock[]): FloorConfig => ({
   pathPuzzles: 0,
@@ -71,17 +79,17 @@ const floorOf = (locks: PlacedLock[]): FloorConfig => ({
   locks,
 })
 
-export const carve = (locks: PlacedLock[], seed: number) =>
+const carve = (locks: PlacedLock[], seed: number) =>
   assembleFloor("nested-stones", floorOf(locks), seed, resolveEncounterMeta, {
     resolveKeyRequirements,
     floorRef: { journeyId: "nested-stones", floorIndex: 0 },
   })
 
 const SEEDS = 12
-export const carved = (locks: PlacedLock[]): FloorGrid[] =>
+const carved = (locks: PlacedLock[]): FloorGrid[] =>
   Array.from({ length: SEEDS }, (_, n) => carve(locks, n + 1)).flatMap(result => (result.success ? [result.grid] : []))
 
-export const expanded = (locks: PlacedLock[]) => {
+const expanded = (locks: PlacedLock[]) => {
   const result = expandFloorLocks(floorOf(locks))
   if (!result.ok) throw new Error(`refused: ${JSON.stringify(result.reasons)}`)
   return result
@@ -162,12 +170,8 @@ describe("a pass-through lock never turns a stone away", () => {
   })
 
   it("allows a one-way off its route: the stone passes by the corridor, the drop is a side way back", () => {
-    const placed: PlacedLock[] = [
-      { lock: stones(HOST_STONES, "host") },
-      { lock: stones(LEDGE, "ledge"), as: "inner", inside: { instance: "host" } },
-    ]
-    expect(() => expanded(placed)).not.toThrow()
-    expect(stoneNestings(placed).get("inner")).toEqual({ case: "passThrough", pool: "host", oneWays: true })
+    expect(() => expanded(PASS_BY_LEDGE)).not.toThrow()
+    expect(stoneNestings(PASS_BY_LEDGE).get("inner")).toEqual({ case: "passThrough", pool: "host", oneWays: true })
   })
 
   it("leaves a one-way in a contained lock to the walk, which takes it with empty hands", () => {
@@ -188,5 +192,128 @@ describe("a shared nesting's stones are one pool", () => {
   it("leaves a pass-through's and a contained lock's stones in their own control", () => {
     expect((expanded(PASS_THROUGH).config.controls ?? []).filter(isWeights).map(c => c.id)).toEqual(["host.stones"])
     expect((expanded(CONTAINED).config.controls ?? []).filter(isWeights).map(c => c.id)).toEqual(["inner.stones"])
+  })
+})
+
+const productStates = (grid: FloorGrid): number => {
+  const found = reachableStates(floorLock(grid)!)
+  if (found === "tooLarge") throw new Error("product too large")
+  return found.order.length
+}
+
+const expectSound = (grid: FloorGrid) => {
+  const walk = walkFloorLock(grid)!
+  if (!walk.sound) throw new Error(describeFloorWalkFailure(walk.failure))
+  return walk
+}
+
+describe("a nested floor with stones is walked where its stones reach", () => {
+  it.each([
+    ["a pass-through", PASS_THROUGH],
+    ["a pass-through with a one-way off its route", PASS_BY_LEDGE],
+    ["a contained lock", CONTAINED],
+    ["a shared pool", SHARED],
+  ])("walks %s sound on every carve, as the product walk does", { timeout: 60_000 }, (_, locks) => {
+    const grids = carved(locks)
+    expect(grids.length).toBeGreaterThan(0)
+    for (const grid of grids) {
+      expectSound(grid)
+      expect(walkLock(floorLock(grid)!).sound).toBe(true)
+      expect(deadFloorRegions(grid)).toEqual(deadRegions(floorLock(grid)!))
+    }
+  })
+
+  it(
+    "walks a pass-through holding no one-way in fewer states than the product: the host walks it as ground",
+    { timeout: 60_000 },
+    () => {
+      for (const grid of carved(PASS_THROUGH)) expect(expectSound(grid).states).toBeLessThan(productStates(grid))
+    }
+  )
+
+  it.each([
+    ["a pass-through with a one-way off its route", PASS_BY_LEDGE],
+    ["a contained lock, whose stones may leave by its way in", CONTAINED],
+    ["a shared pool", SHARED],
+  ])("walks %s fused, in the product's states", { timeout: 60_000 }, (_, locks) => {
+    for (const grid of carved(locks)) expect(expectSound(grid).states).toBe(productStates(grid))
+  })
+
+  it("keeps the floor's way out for empty hands on a nested floor", { timeout: 60_000 }, () => {
+    // The door on waits for the shelf to be EMPTY: the only way past carries the stone, and the way out refuses it.
+    const carriedOut: PlacedLock[] = [
+      { lock: stones("in -[shelf:empty]- yard\nyard -&> out\nshelf plate @in stone\nin ?\nyard ?\nout ?", "host") },
+      { lock: leverLock(), as: "inner", inside: { instance: "host" } },
+    ]
+    const grids = carved(carriedOut)
+    expect(grids.length).toBeGreaterThan(0)
+    for (const grid of grids) {
+      expect(walkLock(floorLock(grid)!).sound).toBe(false)
+      expect(walkFloorLock(grid)!.sound).toBe(false)
+    }
+  })
+
+  // EMPTY HANDS ARE ONE RULE FOR THE WAY OUT AND EVERY ONE-WAY: every level that holds stones keeps `emptyHands`.
+  // The plate lies below a drop, and the walk back up to it is a narrow passage: a stone reaches it only by riding
+  // the drop, so only that opens the door. Sound if a level dropped the rule, stranded while it holds.
+  const RIDE =
+    "in -- top\ntop -[p]- out\ntop >> low\nlow -[unladen]- mid\nmid -- in\np plate @low\nshelf plate @top stone\nin ?\ntop ?\nlow ?\nmid ?\nout ?"
+  it.each<[string, PlacedLock[]]>([
+    [
+      "a contained lock",
+      [{ lock: leverLock() }, { lock: stones(RIDE, "ride"), as: "inner", inside: { instance: "lever" } }],
+    ],
+    [
+      "a shared pool",
+      [
+        { lock: stones(HOST_STONES, "host") },
+        { lock: stones(RIDE, "ride"), as: "inner", inside: { instance: "host" } },
+      ],
+    ],
+  ])("never lets a stone ride a drop inside %s", { timeout: 60_000 }, (_, locks) => {
+    const grids = carved(locks)
+    expect(grids.length).toBeGreaterThan(0)
+    for (const grid of grids) {
+      expect(walkLock(floorLock(grid)!).sound).toBe(false)
+      expect(walkFloorLock(grid)!.sound).toBe(false)
+    }
+  })
+
+  // D12: A CONTAINED LOCK KEEPS ITS STONES BY ITS OWN DESIGN. Here nothing holds the stone in: its way out is open,
+  // so a stone can be carried through it.
+  it("refuses a contained lock whose way out lets a stone through, naming it", { timeout: 60_000 }, () => {
+    const leaky = "in -- hall\nhall -- out\nshelf plate @in stone\nin ?\nhall ?\nout ?"
+    const grids = carved([
+      { lock: leverLock() },
+      { lock: stones(leaky, "leaky"), as: "inner", inside: { instance: "lever" } },
+    ])
+    expect(grids.length).toBeGreaterThan(0)
+    for (const grid of grids) {
+      const walk = walkFloorLock(grid)!
+      expect(walk).toMatchObject({ sound: false, failure: { type: "stoneCrossesOut", instance: "inner" } })
+      if (!walk.sound) expect(describeFloorWalkFailure(walk.failure)).toMatch(/^a stone can be carried out of inner/)
+    }
+  })
+
+  it("names both locks of a pool when the pooled floor strands", { timeout: 60_000 }, () => {
+    const stranding: PlacedLock[] = [
+      { lock: stones(STRANDING_HOST, "host") },
+      { lock: stones(GATED, "gated"), as: "inner", inside: { instance: "host" } },
+    ]
+    const grids = carved(stranding)
+    expect(grids.length).toBeGreaterThan(0)
+    for (const grid of grids) {
+      const walk = walkFloorLock(grid)!
+      expect(walk).toMatchObject({ sound: false, failure: { type: "pooled", instances: ["host", "inner"] } })
+      if (!walk.sound) expect(describeFloorWalkFailure(walk.failure)).toMatch(/^the stones host, inner share: /)
+    }
+  })
+
+  it("refuses a pooled level too large to walk by name, not by hanging", { timeout: 60_000 }, () => {
+    const [grid] = carved(SHARED)
+    expect(walkFloorLock(grid, { maxStates: 10 })).toEqual({
+      sound: false,
+      failure: { type: "pooled", instances: ["host", "inner"], failure: { type: "tooLarge" } },
+    })
   })
 })

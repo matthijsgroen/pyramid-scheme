@@ -24,7 +24,7 @@ describe("a drop on a stone floor", () => {
     const found = reachableStates(spec)
     if (found === "tooLarge") throw new Error("expected a walkable floor")
     const carrying = (config: Record<string, string>) =>
-      (spec.leaveWith ?? []).some(({ mechanism, notIn }) => notIn.includes(config[mechanism]))
+      (spec.emptyHands ?? []).some(({ mechanism, notIn }) => notIn.includes(config[mechanism]))
     const landed = found.order.filter(state => state.region === drop.to)
     expect(landed.length).toBeGreaterThan(0)
     expect(landed.filter(state => carrying(state.config))).toEqual([])

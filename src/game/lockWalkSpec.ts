@@ -142,8 +142,8 @@ export const walkSpecOf = (lock: Lock, drafts: readonly string[] = []): LockSpec
   if (weights) mechanisms[WEIGHTS] = weightsMechanism(lock, opened)
 
   // A stone never leaves its floor: the way out is left only with empty hands.
-  const leaveWith = weights ? [{ mechanism: WEIGHTS, notIn: stoneArrangements(lock).carrying }] : undefined
-  return { regions, gates, mechanisms, oneWays, in: lock.in, out: lock.out, ...(leaveWith ? { leaveWith } : {}) }
+  const emptyHands = weights ? [{ mechanism: WEIGHTS, notIn: stoneArrangements(lock).carrying }] : undefined
+  return { regions, gates, mechanisms, oneWays, in: lock.in, out: lock.out, ...(emptyHands ? { emptyHands } : {}) }
 }
 
 // Every arrangement of the stones the player can reach, as one mechanism; each move is made in its plate's region.
