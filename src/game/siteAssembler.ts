@@ -76,6 +76,7 @@ import {
 import type { AbsorbedDemand, LaidFloor, LengtheningChoice } from "./laidFloor"
 import { planLockFloor } from "./lockPlan"
 import type { LockPlan } from "./lockPlan"
+import { resolveMechanicKind } from "./mechanics"
 import { degradeUnrealised, unrealisedSequences, unrealisedWeights } from "./mechanics/realisations"
 import { adjacencyFaults, dropLandingFaults, gateDoorFaults } from "./carveAgreement"
 import type { CarveFault } from "./carveAgreement"
@@ -823,7 +824,9 @@ const assembleExpandedFloor = (
     authoredConfig.obstacles ?? [],
     authoredConfig.controls ?? [],
     authoredConfig.forks ?? [],
-    authoredConfig.barrierOrder ?? []
+    authoredConfig.barrierOrder ?? [],
+    resolveMechanicKind,
+    { laid: plan !== undefined }
   )
   if (topologyProblems.length > 0) return { success: false, reasons: topologyProblems }
 

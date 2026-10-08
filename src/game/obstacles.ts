@@ -312,17 +312,20 @@ const sequenceFaults = (
   return faults
 }
 
+/** `laid`: the floor is laid from a lock plan (layLocks.ts), which stands a corridor on every connection. */
+export type TopologyOptions = { laid?: boolean }
+
 /**
  * EVERY WAY THE AUTHORED TOPOLOGY DOES NOT RESOLVE, answered from the config alone so it is refused
  * before a wall is carved. Nothing here depends on a seed: which regions exist, what joins them and
  * which route the main path threads are all fixed by the config.
  *
- * `obstacleOffRoute` is the honest limit of what the carve can actually stand a gate at: a seam is a
- * connection two adjacent cells meet along, and cells meet along the main path AND along a side
- * path's own chain — the mouth where it leaves its parent region, and every join within it
- * (offRouteChains, regions.ts, the same order `regionOfStep` distributes a chain's own cells in). A
- * connection genuinely off both is still refused: e.g. one touching a branch's SECOND meeting with the
- * route, which the carve never turns into a physical join (`offRouteChains` picks one mouth, not two).
+ * A SEAM IS A CONNECTION TWO ADJACENT CELLS MEET ALONG, and which connections have one depends on the carve. A
+ * floor laid from a lock plan (`laid`) stands a corridor on every connection, loops included, so every connection
+ * is a seam. A floor carved as side chains meets only along the main path and along each chain's own links (the
+ * mouth where it leaves its parent region, and every join within it: offRouteChains, regions.ts, the order
+ * `regionOfStep` distributes a chain's own cells in); a connection off both, such as a branch's SECOND meeting with
+ * the route, is refused `obstacleOffRoute`, because the side-chain carve never turns it into a physical join.
  */
 export const topologyFaults = (
   layout: RegionGraph | undefined,
@@ -330,7 +333,8 @@ export const topologyFaults = (
   controls: readonly Control[],
   forks: readonly ForkDemand[] = [],
   barrierOrder: readonly BarrierOrder[] = [],
-  kinds: ResolveMechanicKind = resolveMechanicKind
+  kinds: ResolveMechanicKind = resolveMechanicKind,
+  { laid = false }: TopologyOptions = {}
 ): TopologyFault[] => {
   const faults: TopologyFault[] = []
   if (obstacles.length === 0 && controls.length === 0 && barrierOrder.length === 0) return faults
@@ -354,12 +358,14 @@ export const topologyFaults = (
 
   const joined = new Set(layout.connections.map(([a, b]) => connectionKey(a, b)))
   const drops = obstacles.flatMap(o => (o.kind === "oneWay" ? [[o.at.between[0], o.at.between[1]] as const] : []))
-  const route = regionRoute(layout)
-  const seatable = new Set<string>()
-  for (let i = 0; i < route.length - 1; i++) seatable.add(connectionKey(route[i], route[i + 1]))
-  for (const { mouth, regions } of offRouteChains(layout, drops)) {
-    const ordered = [mouth, ...regions]
-    for (let i = 0; i < ordered.length - 1; i++) seatable.add(connectionKey(ordered[i], ordered[i + 1]))
+  const seatable = new Set<string>(laid ? joined : [])
+  if (!laid) {
+    const route = regionRoute(layout)
+    for (let i = 0; i < route.length - 1; i++) seatable.add(connectionKey(route[i], route[i + 1]))
+    for (const { mouth, regions } of offRouteChains(layout, drops)) {
+      const ordered = [mouth, ...regions]
+      for (let i = 0; i < ordered.length - 1; i++) seatable.add(connectionKey(ordered[i], ordered[i + 1]))
+    }
   }
   const regions = new Set(layout.regions.map(r => r.name))
 

@@ -364,3 +364,72 @@ describe("an edge that crosses no door", () => {
     expect(crossesNoDoor(behind("g1"), behind("g2"))).toBe(false)
   })
 })
+
+describe("a floor laid from a lock plan", () => {
+  // `cellar` meets the route twice, at `hall` and at `vault`. The lay stands a corridor on both joins.
+  const loop: RegionGraph = {
+    regions: [
+      { name: "mouth", appetite: "free" },
+      { name: "hall", appetite: "free" },
+      { name: "vault", appetite: "free" },
+      { name: "cellar", appetite: "free" },
+    ],
+    connections: [
+      ["mouth", "hall"],
+      ["hall", "vault"],
+      ["hall", "cellar"],
+      ["vault", "cellar"],
+    ],
+    in: "mouth",
+    out: "vault",
+  }
+  // `cellar` holds two branches, `attic` and `crypt`; a side chain is laid as one line, a lock plan as a tree.
+  const pendant: RegionGraph = {
+    regions: [
+      { name: "mouth", appetite: "free" },
+      { name: "hall", appetite: "free" },
+      { name: "vault", appetite: "free" },
+      { name: "cellar", appetite: "free" },
+      { name: "attic", appetite: "free" },
+      { name: "crypt", appetite: "free" },
+    ],
+    connections: [
+      ["mouth", "hall"],
+      ["hall", "vault"],
+      ["hall", "cellar"],
+      ["cellar", "attic"],
+      ["cellar", "crypt"],
+    ],
+    in: "mouth",
+    out: "vault",
+  }
+  const bothSides = [gate("g1", ["vault", "cellar"]), gate("g2", ["hall", "cellar"])]
+
+  it("seats a gate on the join that closes a loop", () => {
+    const faults = topologyFaults(loop, bothSides, [lever("s1", { left: ["g1"], right: ["g2"] })], [], [], undefined, {
+      laid: true,
+    })
+    expect(faults).toEqual([])
+  })
+
+  it("still refuses that gate on a floor carved as side chains", () => {
+    const faults = topologyFaults(loop, bothSides, [lever("s1", { left: ["g1"], right: ["g2"] })])
+    expect(faults).toEqual([{ type: "obstacleOffRoute", id: "g1" }])
+  })
+
+  it("seats a gate on the second branch of a pendant", () => {
+    const faults = topologyFaults(
+      pendant,
+      [gate("g1", ["cellar", "crypt"])],
+      [lever("s1", { left: ["g1"], right: [] })],
+      [],
+      [],
+      undefined,
+      { laid: true }
+    )
+    expect(faults).toEqual([])
+    expect(
+      topologyFaults(pendant, [gate("g1", ["cellar", "crypt"])], [lever("s1", { left: ["g1"], right: [] })])
+    ).toEqual([{ type: "obstacleOffRoute", id: "g1" }])
+  })
+})
