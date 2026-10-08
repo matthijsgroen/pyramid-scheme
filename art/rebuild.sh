@@ -393,6 +393,10 @@ yarn import-tile "$WATER" --tier=default --name=regionWater --slot=floor \
   --filter=smooth --key=none
 rm -f "$WATER"
 
+# A shut region barrier's sand cover: a full-bleed texture, no mask, shared by every rank.
+yarn import-tile art/masters/surfaces/regionSand.webp --tier=default --name=regionSand --slot=floor \
+  --filter=smooth --key=none
+
 # junior — the nobleman
 
 # THE STAIRS, and they are SHARED: `tiles/default/`, drawn at every rank. `tileUrl` falls back

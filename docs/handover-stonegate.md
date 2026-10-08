@@ -92,7 +92,6 @@ The art plan is `docs/superpowers/plans/2026-10-06-stonegate-phase-5-art.md`; it
 
 ## Waiting on the designer
 
-- **Paint sand:** `yarn repaint default/regionSand`, then import it the way water was.
 - **The stone pipe:** a hole in a wall where a stone is posted, another elsewhere where it comes out. Open: one-way
   or both; where it lands (a shelf plate, refused if full); telling paired holes apart. masonsRamp waits for it
   (unsolvable now: its chute sends a stone down a drop).

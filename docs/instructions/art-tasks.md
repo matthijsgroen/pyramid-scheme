@@ -234,10 +234,11 @@ original placeholder-generation commit: speculative art for a kind nobody added,
 report because no room asks for it and which anyone reading the tile folder would take for work in
 progress.
 
-**Region-barrier covers — owed, two textures.** A shut region barrier (a hall flooded, a vault buried) is drawn as
+**Region-barrier covers — both landed.** A shut region barrier (a hall flooded, a vault buried) is drawn as
 a cover over its region, from one seamless texture per realisation, shared by every rank: `default/regionWater`
-and `default/regionSand`, both in `repaint-queue.md`. Until they land the map draws each realisation's flat
-fallback colour; the owner's mark is drawn over the cover, so nothing in the texture needs to leave room for it.
+and `default/regionSand` (masters in `art/masters/surfaces/`, imports in `art/rebuild.sh`). A realisation
+without a texture draws its flat fallback colour; the owner's mark is drawn over the cover, so nothing in the
+texture needs to leave room for it.
 
 ## 6. Waiting on a scan
 

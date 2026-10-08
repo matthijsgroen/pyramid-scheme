@@ -3219,3 +3219,6 @@ yarn make-seamless ~/Downloads/regionSand.png
 yarn import-tile art/masters/surfaces/regionSand.webp --tier=default --name=regionSand --slot=floor \
   --filter=smooth --key=none
 ```
+
+LANDED. Kept as `art/masters/surfaces/regionSand.webp` and imported as tile `regionSand` (896x896, no mask, no
+recolour): pale warm-grey matte sand in long diagonal wind ripples, a soft shadow under each crest.
