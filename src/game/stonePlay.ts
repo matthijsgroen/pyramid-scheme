@@ -128,7 +128,9 @@ export const explorerWeight = (
         : cells.map((cell, c) => (c === hc && cell.type === "room" ? { ...cell, mechanism: record } : cell))
     ),
   }
-  // Both folds read the arrangement `stonesAt` read, so a stale key is weighed as the start it is read as.
+  // Both folds read the arrangement `stonesAt` read, so a stale key is weighed as the start it is read as. The walk
+  // does not: `openDoorsFor` reads the stored key, which opens nothing on a key the record lacks, so on a stale save
+  // the drawing can show a door swing that the walk keeps shut.
   const before = openDoorsFor(grid, floor, new Map(states).set(stones.address, stones.state), heldKeys)
   const after = openDoorsFor(weighed, floor, new Map(states).set(stones.address, WEIGHED), heldKeys)
   return {

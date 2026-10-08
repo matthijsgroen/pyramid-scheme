@@ -296,7 +296,7 @@ const STONES_NESTED: FloorWalkFailure = { type: "entangled", problem: "stones on
 /**
  * THE FLOOR'S LOCK WALKED: sound only when every nested lock is free by itself and the floor's own level is sound
  * with each nested lock as ground. Without nesting it is `walkLock` over the whole lock, unchanged. `undefined`
- * when the floor has no mechanism.
+ * when the floor has no mechanism. Takes the carved grid: the lock and its nesting are read off it, not handed in.
  */
 export const walkFloorLock = (grid: FloorGrid): FloorWalkResult | undefined => {
   const lock = floorLock(grid)
