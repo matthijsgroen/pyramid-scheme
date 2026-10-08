@@ -117,7 +117,7 @@ type Props = {
   ridePoses?: RidePoses
   /** Draw the ride standing still at its first or last frame instead of sliding it: a story's way to tune the poses. */
   rideFrame?: "from" | "to"
-  /** A narrow passage being squeezed through: drawn as two slides beside the explorer, who is hidden meanwhile. */
+  /** A narrow passage being squeezed through, drawn the way it is crossed (`SqueezeWay`); the explorer is hidden meanwhile. */
   squeeze?: Squeeze | null
   /** Current floor index. Keys the explorer dot so a floor switch remounts it (instant snap to the
    * new floor's entrance) instead of animating a walk from the previous floor's coordinates. */
@@ -1272,8 +1272,8 @@ export const SiteMapView = ({
   // the line it stands on. Split at the explorer's own floor line so he is drawn in the middle.
   const standing = useMemo((): StandingSprite[] => {
     const standingOn = explorerPos ? `${explorerPos[0]},${explorerPos[1]}` : null
-    // A SQUEEZER IS IN THE CRACK, drawn over the wall he passes: fading it for the side he set out from would ghost the
-    // wall he is seen squeezing through.
+    // A SQUEEZER IS IN THE CRACK, so the wall he passes stays solid until he lands: fading it for the side he set out
+    // from would ghost the wall he is seen squeezing through. Head-on his own fade says he is behind it.
     const squeezing = squeeze && `${squeeze.traversal.via[0]},${squeeze.traversal.via[1]}`
     const fades = (sprite: NodeSprite) =>
       !!standingOn && !!sprite.fadeAt?.includes(standingOn) && sprite.key.split(":").pop() !== squeezing
@@ -1404,16 +1404,19 @@ export const SiteMapView = ({
   // A RIDER HANGS FROM THE CABLE, so while a ride is drawn the zipline art is behind him whatever its floor
   // line: sorted against the launch, a drop running down the page would otherwise cover the rider on it.
   // ponytail: every drop, not only the one ridden; a floor showing two drops at once can match by run.
-  // A SQUEEZER IS IN THE CRACK, so the wall he passes is behind him too: sorted against the side he set out from,
-  // a wall below that side would otherwise cover him all the way through.
+  // A SQUEEZER IS IN THE CRACK, so the wall he passes is sorted by the way he crosses it, never against the side he set
+  // out from. Head-on and round a corner it is under him: he is drawn over its face and his own fade says when he is
+  // behind it. Sideways it is over him: he slides behind the wall from one side to the other.
   const squeezedAt = squeeze && `${squeeze.traversal.via[0]},${squeeze.traversal.via[1]}`
+  const squeezed = (s: StandingSprite) => !!squeezedAt && s.key.split(":").pop() === squeezedAt
   const underRider = (s: StandingSprite) =>
-    (!!ride && s.key.startsWith("drop:")) || (!!squeezedAt && s.key.split(":").pop() === squeezedAt)
+    (!!ride && s.key.startsWith("drop:")) || (squeezed(s) && squeeze?.way !== "sideways")
+  const overRider = (s: StandingSprite) => squeezed(s) && squeeze?.way === "sideways"
   const behindExplorer = seated.filter(
-    s => underRider(s) || s.baseY < explorerBaseY || (s.baseY === explorerBaseY && !s.atExplorer)
+    s => !overRider(s) && (underRider(s) || s.baseY < explorerBaseY || (s.baseY === explorerBaseY && !s.atExplorer))
   )
   const inFrontOfExplorer = seated.filter(
-    s => !underRider(s) && (s.baseY > explorerBaseY || (s.baseY === explorerBaseY && s.atExplorer))
+    s => overRider(s) || (!underRider(s) && (s.baseY > explorerBaseY || (s.baseY === explorerBaseY && s.atExplorer)))
   )
   const doorways = useMemo(() => doorwaysFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   // Where the arches are, in the same terms the wall bands are built in, with the stone each one is cut

@@ -3,40 +3,51 @@ import { act, fireEvent, render } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import { revealAll } from "@/game/gridNavigation"
 import { parseLock } from "@/game/lockNotation"
-import { passageSides } from "@/game/passages"
+import { passageSides, type Place } from "@/game/passages"
 import { carveLockFloor } from "@/game/testSupport/lockFixtures"
 import { CRACK, PASSAGE_BINDING, passageAt } from "@/game/testSupport/stoneFixtures"
+import { floorFrom, roomPiece } from "./floorFixtures.testing"
 import { OCCLUDER_FADE } from "./htmlLayers"
 import { SqueezeRider, squeezeFoot } from "./SqueezeRider"
 import { sharedTileFrames } from "./tileAssets"
-import type { Squeeze } from "./useSqueeze"
+import { SQUEEZE_HEAD_ON_SLIDE, squeezeWay, type Squeeze } from "./useSqueeze"
 
 // jsdom has no scrollTo; the map scrolls itself to the explorer on mount.
 Element.prototype.scrollTo = Element.prototype.scrollTo ?? (() => {})
 const SEEDS = Array.from({ length: 60 }, (_, n) => n)
 
-const squeeze = (over: Partial<Squeeze["traversal"]> = {}): Squeeze => ({
-  traversal: { kind: "narrowPassage", from: [1, 0], via: [1, 1], to: [1, 2], dir: "e", ...over },
-  msPerLeg: 350,
-  end: vi.fn(),
-})
+const squeeze = (over: Partial<Squeeze["traversal"]> = {}): Squeeze => {
+  const traversal: Squeeze["traversal"] = {
+    kind: "narrowPassage",
+    from: [1, 0],
+    via: [1, 1],
+    to: [1, 2],
+    dir: "e",
+    ...over,
+  }
+  return { traversal, way: squeezeWay(traversal), msPerLeg: 350, end: vi.fn() }
+}
+const GOING_NORTH = { from: [2, 1], via: [1, 1], to: [0, 1], dir: "n" } as const
+const GOING_SOUTH = { from: [0, 1], via: [1, 1], to: [2, 1], dir: "s" } as const
 const px = (v: string) => Number.parseFloat(v)
 const riderOf = (c: HTMLElement) => c.querySelector("[data-squeeze-rider]") as HTMLElement
+const figureOf = (c: HTMLElement) => c.querySelector("[data-squeeze-figure]") as HTMLElement
 const spriteOf = (c: HTMLElement) => c.querySelector("[data-squeeze-sprite]") as HTMLElement
 const at = (el: HTMLElement) => ({ x: px(el.style.left), y: px(el.style.top) })
+const nextFrame = () => act(async () => new Promise(requestAnimationFrame))
 
 describe("SqueezeRider", () => {
   it("starts on the near side's foot line, then moves into the wall's cell", async () => {
     const { container } = render(<SqueezeRider squeeze={squeeze()} />)
     expect(at(riderOf(container))).toEqual(squeezeFoot([1, 0]))
-    await act(async () => new Promise(requestAnimationFrame))
+    await nextFrame()
     expect(at(riderOf(container))).toEqual(squeezeFoot([1, 1]))
   })
 
   it("goes on to the far side when the first leg ends, and ends the crossing when the second does", async () => {
     const s = squeeze()
     const { container } = render(<SqueezeRider squeeze={s} />)
-    await act(async () => new Promise(requestAnimationFrame))
+    await nextFrame()
     fireEvent.transitionEnd(riderOf(container))
     expect(at(riderOf(container))).toEqual(squeezeFoot([1, 2]))
     expect(s.end).not.toHaveBeenCalled()
@@ -48,7 +59,7 @@ describe("SqueezeRider", () => {
     const s = squeeze({ from: [0, 1], via: [1, 1], to: [1, 2], dir: "e" })
     const { container } = render(<SqueezeRider squeeze={s} />)
     expect(spriteOf(container).dataset.squeezeSprite).toBe("s")
-    await act(async () => new Promise(requestAnimationFrame))
+    await nextFrame()
     fireEvent.transitionEnd(riderOf(container))
     expect(spriteOf(container).dataset.squeezeSprite).toBe("e")
   })
@@ -64,87 +75,131 @@ describe("SqueezeRider", () => {
   it("ignores a transition that bubbles up from inside the rider", async () => {
     const s = squeeze()
     const { container } = render(<SqueezeRider squeeze={s} />)
-    await act(async () => new Promise(requestAnimationFrame))
+    await nextFrame()
     fireEvent.transitionEnd(riderOf(container))
     fireEvent.transitionEnd(container.querySelector("img")!)
     expect(s.end).not.toHaveBeenCalled()
   })
+
+  it("is fully seen the whole way through a sideways crack", async () => {
+    const { container } = render(<SqueezeRider squeeze={squeeze()} />)
+    expect(figureOf(container).style.opacity).toBe("1")
+    await nextFrame()
+    expect(figureOf(container).style.opacity).toBe("1")
+  })
 })
+
+describe("SqueezeRider head-on", () => {
+  const face = squeezeFoot([1, 1])
+  const behind = { x: face.x, y: face.y - SQUEEZE_HEAD_ON_SLIDE }
+
+  it("going north: starts on the wall's face fully seen, then slides a bit north and fades behind it", async () => {
+    const { container } = render(<SqueezeRider squeeze={squeeze(GOING_NORTH)} />)
+    expect(at(riderOf(container))).toEqual(face)
+    expect(figureOf(container).style.opacity).toBe("1")
+    await nextFrame()
+    expect(at(riderOf(container))).toEqual(behind)
+    expect(figureOf(container).style.opacity).toBe(String(OCCLUDER_FADE))
+  })
+
+  it("going south: starts behind the wall half seen, then slides a bit south and comes out fully seen", async () => {
+    const { container } = render(<SqueezeRider squeeze={squeeze(GOING_SOUTH)} />)
+    expect(at(riderOf(container))).toEqual(behind)
+    expect(figureOf(container).style.opacity).toBe(String(OCCLUDER_FADE))
+    await nextFrame()
+    expect(at(riderOf(container))).toEqual(face)
+    expect(figureOf(container).style.opacity).toBe("1")
+  })
+
+  it.each([GOING_NORTH, GOING_SOUTH])("is one slide, the whole squeeze long, ending the crossing ($dir)", async way => {
+    const s = squeeze(way)
+    const { container } = render(<SqueezeRider squeeze={s} />)
+    await nextFrame()
+    expect(riderOf(container).style.transition).toContain(`top ${350 * 2}ms`)
+    expect(figureOf(container).style.transition).toContain(`opacity ${350 * 2}ms`)
+    fireEvent.transitionEnd(figureOf(container))
+    expect(s.end).not.toHaveBeenCalled()
+    fireEvent.transitionEnd(riderOf(container))
+    expect(s.end).toHaveBeenCalledTimes(1)
+  })
+})
+
+const carved = () => revealAll(carveLockFloor(parseLock(CRACK, "stones").lock, PASSAGE_BINDING, SEEDS))
+/** The carved crack's wall, and its sides north and south of it. */
+const acrossOf = () => {
+  const grid = carved()
+  const wall = passageAt(grid)
+  const sides = passageSides(grid, wall[0], wall[1])!
+  const north = sides.find(([r]) => r < wall[0])
+  const south = sides.find(side => side !== north)
+  expect(north, "the carve's passage has a side north of it").toBeDefined()
+  return { grid, wall, north: north!, south: south! }
+}
+// An east-west crack: the wall's cell between a room either side.
+const crackPiece = roomPiece({ tags: ["gate"], passage: { realisation: "narrowPassage" }, state: "reachable" })
+const alongOf = () => ({
+  grid: revealAll(floorFrom(["E.P.R"], { P: crackPiece })),
+  wall: [0, 2] as Place,
+  west: [0, 1] as Place,
+  east: [0, 3] as Place,
+})
+const wallSpriteOf = (container: HTMLElement, wall: Place) =>
+  container.querySelector(`[data-node-sprite="passage:${wall[0]},${wall[1]}"]`) as HTMLElement
+const drawnAfter = (first: Element, second: Element) =>
+  !!(first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING)
+
+const mapSqueezing = async (grid: ReturnType<typeof carved>, from: Place, via: Place, to: Place) => {
+  const { SiteMapView } = await import("./SiteMapView")
+  const traversal = { kind: "narrowPassage", from, via, to, dir: "e" } as const
+  return render(
+    <SiteMapView
+      grid={grid}
+      explorerPos={from}
+      explorerHidden
+      squeeze={{ traversal, way: squeezeWay(traversal), msPerLeg: 350, end: () => {} }}
+    />
+  )
+}
 
 describe("SqueezeRider on the map", () => {
   it("is drawn while a squeeze plays", async () => {
-    const { SiteMapView } = await import("./SiteMapView")
-    const grid = revealAll(carveLockFloor(parseLock(CRACK, "stones").lock, PASSAGE_BINDING, SEEDS))
-    const wall = passageAt(grid)
-    const [near, far] = passageSides(grid, wall[0], wall[1])!
-    const { container } = render(
-      <SiteMapView
-        grid={grid}
-        explorerPos={near}
-        explorerHidden
-        squeeze={{
-          traversal: { kind: "narrowPassage", from: near, via: wall, to: far, dir: "e" },
-          msPerLeg: 350,
-          end: () => {},
-        }}
-      />
-    )
+    const { grid, wall, north, south } = acrossOf()
+    const { container } = await mapSqueezing(grid, north, wall, south)
     expect(container.querySelector("[data-squeeze-rider]")).not.toBeNull()
   })
 
-  it("is drawn over the wall it squeezes through, coming from the side behind the wall", async () => {
+  it.each(["north", "south"] as const)(
+    "head-on, setting out %s of the wall: drawn over the wall, the wall fully seen",
+    async side => {
+      const { grid, wall, north, south } = acrossOf()
+      const [from, to] = side === "north" ? [north, south] : [south, north]
+      const { container } = await mapSqueezing(grid, from, wall, to)
+      const wallSprite = wallSpriteOf(container, wall)
+      expect(drawnAfter(wallSprite, container.querySelector("[data-squeeze-rider]")!)).toBe(true)
+      expect(wallSprite.style.opacity).not.toBe(String(OCCLUDER_FADE))
+    }
+  )
+
+  it("head-on, the wall fades once he stands north of it, and not south of it", async () => {
     const { SiteMapView } = await import("./SiteMapView")
-    const grid = revealAll(carveLockFloor(parseLock(CRACK, "stones").lock, PASSAGE_BINDING, SEEDS))
-    const wall = passageAt(grid)
-    const sides = passageSides(grid, wall[0], wall[1])!
-    // From the north the wall's floor line is lower than his, which alone would draw it over him.
-    const north = sides.find(([r]) => r < wall[0])
-    const other = sides.find(side => side !== north)
-    expect(north, "the carve's passage has a side north of it").toBeDefined()
-    const { container } = render(
-      <SiteMapView
-        grid={grid}
-        explorerPos={north}
-        explorerHidden
-        squeeze={{
-          traversal: { kind: "narrowPassage", from: north!, via: wall, to: other!, dir: "s" },
-          msPerLeg: 350,
-          end: () => {},
-        }}
-      />
-    )
-    const wallSprite = [...container.querySelectorAll("[data-node-sprite]")].find(
-      el => el.getAttribute("data-node-sprite")!.split(":").pop() === `${wall[0]},${wall[1]}`
-    )
-    expect(wallSprite).toBeDefined()
-    const rider = container.querySelector("[data-squeeze-rider]")!
-    expect(wallSprite!.compareDocumentPosition(rider) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    const { grid, wall, north, south } = acrossOf()
+    const landedNorth = render(<SiteMapView grid={grid} explorerPos={north} />)
+    expect(wallSpriteOf(landedNorth.container, wall).style.opacity).toBe(String(OCCLUDER_FADE))
+    landedNorth.unmount()
+    const landedSouth = render(<SiteMapView grid={grid} explorerPos={south} />)
+    expect(wallSpriteOf(landedSouth.container, wall).style.opacity).not.toBe(String(OCCLUDER_FADE))
   })
 
-  it("keeps the wall solid behind him while he squeezes from the side it fades for", async () => {
-    const { SiteMapView } = await import("./SiteMapView")
-    const grid = revealAll(carveLockFloor(parseLock(CRACK, "stones").lock, PASSAGE_BINDING, SEEDS))
-    const wall = passageAt(grid)
-    const sides = passageSides(grid, wall[0], wall[1])!
-    const north = sides.find(([r]) => r < wall[0])!
-    const other = sides.find(side => side !== north)!
-    const wallOpacity = (container: HTMLElement) =>
-      (container.querySelector(`[data-node-sprite="passage:${wall[0]},${wall[1]}"]`) as HTMLElement).style.opacity
-    const waiting = render(<SiteMapView grid={grid} explorerPos={north} />)
-    expect(wallOpacity(waiting.container)).toBe(String(OCCLUDER_FADE))
-    waiting.unmount()
-    const { container } = render(
-      <SiteMapView
-        grid={grid}
-        explorerPos={north}
-        explorerHidden
-        squeeze={{
-          traversal: { kind: "narrowPassage", from: north, via: wall, to: other, dir: "s" },
-          msPerLeg: 350,
-          end: () => {},
-        }}
-      />
-    )
-    expect(wallOpacity(container)).not.toBe(String(OCCLUDER_FADE))
-  })
+  it.each(["west", "east"] as const)(
+    "sideways, setting out %s of the wall: the wall is drawn over him, fully seen",
+    async side => {
+      const { grid, wall, west, east } = alongOf()
+      const [from, to] = side === "west" ? [west, east] : [east, west]
+      const { container } = await mapSqueezing(grid, from, wall, to)
+      const wallSprite = wallSpriteOf(container, wall)
+      expect(wallSprite).not.toBeNull()
+      expect(drawnAfter(container.querySelector("[data-squeeze-rider]")!, wallSprite)).toBe(true)
+      expect(wallSprite.style.opacity).not.toBe(String(OCCLUDER_FADE))
+    }
+  )
 })

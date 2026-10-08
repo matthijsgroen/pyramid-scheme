@@ -9,7 +9,8 @@ import { SQUEEZE_MS_PER_LEG, useSqueeze } from "./useSqueeze"
 import "@/mods/registerModApps"
 
 // The squeeze on the real `SiteMapView` path, one wall per direction: the explorer goes into the crack, out on the
-// far side, waits, and is put back, over and over. North-south walls are `narrowAcross`, east-west ones `narrowAlong`.
+// far side, waits, and is put back, over and over. North-south walls are `narrowAcross`, crossed head-on; east-west
+// ones `narrowAlong`, crossed sideways.
 // `useSqueeze` holds the crossing and `SiteMapView`'s `squeeze` prop draws it, as in play.
 
 const PAUSE_MS = 900
@@ -72,8 +73,10 @@ const Squeeze = ({ travel }: { travel: Direction }) => {
           Squeeze
         </button>
         <span data-timing="">
-          {SQUEEZE_MS_PER_LEG} ms per leg: into the crack, then out of it, {SQUEEZE_MS_PER_LEG * 2} ms in all, then{" "}
-          {PAUSE_MS} ms pauses
+          {tall
+            ? `head-on: one slide in the wall's cell, ${SQUEEZE_MS_PER_LEG * 2} ms`
+            : `sideways, behind the wall: ${SQUEEZE_MS_PER_LEG} ms per leg, ${SQUEEZE_MS_PER_LEG * 2} ms in all`}
+          , then {PAUSE_MS} ms pauses
         </span>
         <span>{reduced ? "reduced motion: the crossing is at once" : `squeezed ${rounds} times`}</span>
       </div>

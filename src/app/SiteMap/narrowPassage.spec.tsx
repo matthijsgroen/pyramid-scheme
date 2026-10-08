@@ -116,7 +116,7 @@ describe("a narrow passage", () => {
 })
 
 describe("a crossing under way", () => {
-  it("moves nobody on a tap until the crossing is over", async () => {
+  const underWay = (playTraversal: () => Promise<void>) => {
     const { seed, grid: base } = carved()
     const grid = revealAll(base)
     const { at, near } = sidesOf(grid)
@@ -128,7 +128,7 @@ describe("a crossing under way", () => {
       getMechanismStates: vi.fn(() => new Map<string, string>()),
       setMechanismState: vi.fn(),
     } as unknown as JourneyAPI
-    const playTraversal = vi.fn(() => new Promise<void>(() => {}))
+    const play = vi.fn(playTraversal)
     const hook = renderHook(() =>
       useSiteNavigation({
         journeys,
@@ -141,17 +141,33 @@ describe("a crossing under way", () => {
         onEncounter: () => {},
         onSkippedConsumable: () => {},
         onExitReached: () => {},
-        playTraversal,
+        playTraversal: play,
       })
     )
     act(() => hook.result.current.onCellClick(at[0], at[1]))
     act(() => void vi.advanceTimersByTime(5000))
-    await act(async () => hook.result.current.prompt!.take())
-    expect(playTraversal).toHaveBeenCalledWith(expect.objectContaining({ via: at }))
     vi.mocked(journeys.updatePosition).mockClear()
+    return { hook, journeys, play, at, near }
+  }
+
+  it("moves nobody on a tap until the crossing is over", async () => {
+    const { hook, journeys, play, at, near } = underWay(() => new Promise<void>(() => {}))
+    await act(async () => hook.result.current.prompt!.take())
+    expect(play).toHaveBeenCalledWith(expect.objectContaining({ via: at }))
     act(() => hook.result.current.onCellClick(near[0], near[1]))
     act(() => void vi.advanceTimersByTime(5000))
     expect(journeys.updatePosition).not.toHaveBeenCalled()
     expect(hook.result.current.explorerHidden).toBe(true)
+  })
+
+  it("writes where he lands once, when the squeeze is over", async () => {
+    let land = () => {}
+    const { hook, journeys } = underWay(() => new Promise<void>(resolve => (land = resolve)))
+    await act(async () => hook.result.current.prompt!.take())
+    act(() => void vi.advanceTimersByTime(5000))
+    expect(journeys.updatePosition).not.toHaveBeenCalled()
+    await act(async () => land())
+    act(() => void vi.advanceTimersByTime(5000))
+    expect(journeys.updatePosition).toHaveBeenCalledTimes(1)
   })
 })

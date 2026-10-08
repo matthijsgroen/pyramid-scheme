@@ -33,10 +33,23 @@ describe("useSqueeze", () => {
     const { result } = renderHook(() => useSqueeze())
     let landed = false
     act(() => void result.current.playTraversal(crack()).then(() => (landed = true)))
-    expect(result.current.squeeze).toMatchObject({ traversal: { via: [0, 1] }, msPerLeg: 350 })
+    expect(result.current.squeeze).toMatchObject({ traversal: { via: [0, 1] }, msPerLeg: 350, way: "sideways" })
     await act(async () => result.current.squeeze!.end())
     expect(landed).toBe(true)
     expect(result.current.squeeze).toBeNull()
+  })
+
+  it.each([
+    ["north", "headOn", crack({ from: [2, 1], via: [1, 1], to: [0, 1], dir: "n" })],
+    ["south", "headOn", crack({ from: [0, 1], via: [1, 1], to: [2, 1], dir: "s" })],
+    ["east", "sideways", crack()],
+    ["west", "sideways", crack({ from: [0, 2], to: [0, 0], dir: "w" })],
+    ["round a corner", "corner", crack({ from: [-1, 1], via: [0, 1], to: [0, 2], dir: "e" })],
+  ])("plays a crack crossed %s as a %s squeeze", async (_, way, traversal) => {
+    const { useSqueeze } = await hookWith({ "explorer-squeeze-e": ["e.png"], "explorer-squeeze-s": ["s.png"] })
+    const { result } = renderHook(() => useSqueeze())
+    act(() => void result.current.playTraversal(traversal))
+    expect(result.current.squeeze?.way).toBe(way)
   })
 
   it("draws west with the east pose mirrored, and north with the south pose", async () => {
