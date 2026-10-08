@@ -41,17 +41,20 @@ export type PassageCrossing = { near: Place; via: Place; far: Place; realisation
 
 /** The crossing of the passage at (row, col) from the first of its sides the explorer can stand on, through the wall's
  * own cell, to the other; undefined where he can stand on neither. Both are standable only where a gate closes a
- * loop; he starts from the first. */
+ * loop; he starts from the one `costOf` rates nearer, the first on a tie, and squeezes toward the other. */
 export const passageCrossing = (
   grid: FloorGrid,
   row: number,
   col: number,
-  canStand: (row: number, col: number) => boolean
+  canStand: (row: number, col: number) => boolean,
+  costOf: (row: number, col: number) => number = () => 0
 ): PassageCrossing | undefined => {
   const cell = grid.cells[row]?.[col]
   const sides = passageSides(grid, row, col)
   if (!sides || cell?.type !== "room" || !cell.passage) return undefined
-  const near = sides.find(([r, c]) => canStand(r, c))
+  const near = sides
+    .filter(([r, c]) => canStand(r, c))
+    .reduce<Place | undefined>((best, side) => (best && costOf(...best) <= costOf(...side) ? best : side), undefined)
   if (!near) return undefined
   return { near, via: [row, col], far: near === sides[0] ? sides[1] : sides[0], realisation: cell.passage.realisation }
 }

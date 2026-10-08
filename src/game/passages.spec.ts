@@ -80,6 +80,39 @@ describe("passageCrossing", () => {
     expect(passageCrossing(straight, 0, 1, () => true)?.near).toEqual([0, 0])
   })
 
+  it("starts on the nearer side where he can stand on both", () => {
+    expect(
+      passageCrossing(
+        straight,
+        0,
+        1,
+        () => true,
+        (_r, c) => (c === 2 ? 1 : 5)
+      )?.near
+    ).toEqual([0, 2])
+    expect(
+      passageCrossing(
+        straight,
+        0,
+        1,
+        () => true,
+        () => 3
+      )?.near
+    ).toEqual([0, 0])
+  })
+
+  it("squeezes away from the side he starts on, toward the other", () => {
+    const crossing = passageCrossing(
+      straight,
+      0,
+      1,
+      () => true,
+      (_r, c) => (c === 2 ? 1 : 5)
+    )!
+    expect(crossing.far).toEqual([0, 0])
+    expect(headingOf(crossing.via, crossing.far)).toBe("w")
+  })
+
   it("is no crossing where he can stand on neither side", () => {
     expect(passageCrossing(straight, 0, 1, () => false)).toBeUndefined()
   })

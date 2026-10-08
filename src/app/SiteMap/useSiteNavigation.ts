@@ -217,7 +217,13 @@ export const useSiteNavigation = ({
       // stone in hand the lock has shut it, whatever realises it, and the wall says why.
       if (cell.type === "room" && cell.passage) {
         const walkable = walkableFrom(grid, explorerPos)
-        const crossing = passageCrossing(grid, row, col, (r, c) => walkable.has(`${r},${c}`))
+        const crossing = passageCrossing(
+          grid,
+          row,
+          col,
+          (r, c) => walkable.has(`${r},${c}`),
+          (r, c) => findPath(grid, explorerPos, [r, c]).length
+        )
         const near = crossing && getCell(grid, crossing.near[0], crossing.near[1])
         if (!crossing || !near || near.type === "empty") return
         const [nr, nc] = crossing.near
