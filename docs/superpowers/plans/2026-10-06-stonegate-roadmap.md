@@ -40,7 +40,7 @@ arrangements: which plates hold a stone, and whether the hand holds one. For exa
 | 1 | **Stones in the engine** (done; also ships the `stonePlate` realisation and plates left bare with the mod off, pulled forward from phase 3 because the dev bake's toggle-off sweep needs it) | `weights` in the shared `Lock`; compiled to one weights control; plates placed on the carve with the record; `floorLock` walks it; a `.lock` file read at bake; twoStones (no gate loop) baked on the dev floor | — |
 | 2 | **Play with stones** (done 2026-10-07, [plan](2026-10-07-stonegate-phase-2-play.md)) | the Lock playground story; "Lift the stone" / "Set the stone on the plate" prompts; plate drawn empty or full (placeholder art); a blocked walk says why (narrow passage, stairs, way out); door shows its plates; explorer `carrying` with frame fallback | 1 |
 | 3 | **Narrow passage** (done 2026-10-08, [plan](2026-10-08-stonegate-phase-3-narrow-passage.md)) | a realisation for `unladen` gates (registry beside `oneWayRealisation`), drawn as a narrow passage; every one-way takes empty hands, and `unladen` on a drop or beside another owner is refused | 1 |
-| 4 | **Gate loops in the carve** (done 2026-10-09, [plan](2026-10-08-stonegate-phase-4-gate-loops.md)) | `topologyFaults`, `offRouteChains` and the fork seams accept a gated join that closes a loop; stoneGate bakes on the dev floor | 1 |
+| 4 | **Gate loops in the carve** (done 2026-10-09, [plan](2026-10-08-stonegate-phase-4-gate-loops.md)) | the laid carve accepts a gated join that closes a loop (`topologyFaults` and the fork seams); stoneGate bakes on the dev floor | 1 |
 | 5 | **Art** | painted plate (empty, with stone), narrow passage, torch; explorer carrying frames | runs beside 1–4; wiring needs 2–3 |
 | 7 | **Zipline glide** — done 2026-10-06 ([plan](2026-10-06-zipline-glide.md)) | the ride: explorer hidden, a riding sprite slides launch to landing by CSS, behind `PlayTraversal` (`docs/superpowers/specs/2026-10-04-zipline-ride-acceptance.md`); its art is phase 5 task 2. The zipline's own art stays as it is | 5 (art), independent of the stones |
 | 6 | **Djoser** | stoneGate on an `expert_4` floor through `floorLocks`; save impact settled | #315 merged, 1–5 |
@@ -118,8 +118,7 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
 - The lay prunes a branch where a placed region has fewer free sides than corridors still to lay
   (`src/game/layLocks.ts`), only on a plan with a cycle, so tree locks keep their baked layouts. Make it
   unconditional: one lay path, faster for every lock. It moves lock floors already in the world (sluice 15/20
-  seeds, plates 16/20), so it comes with a re-bake and a check of what saved per-cell floor state does on a
-  moved layout (migrate if needed). Designer: fine either way, as long as it is done.
+  seeds, plates 16/20), so it comes with a re-bake and no save migration (designer's decision).
 - Every region stays reachable (designer, 2026-10-08): mechanism state is saved per floor, so a region the
   player could reach and a lock then seals for good can never be revisited, and a hidden corridor in it is lost.
   The walk checks only that every state reaches `out` (`strands`) and that no region is never reached
