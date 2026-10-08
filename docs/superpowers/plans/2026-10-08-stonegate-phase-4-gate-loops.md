@@ -19,16 +19,18 @@ its region the route does not take (`forkSeams`), and a gate an open loop goes r
 walk already work on any graph and need no change; the walk is what proves each carved loop sound. A floor carved as
 side chains (no `locks`) keeps every refusal it has.
 
-**Architecture (one nest spot, tasks 7-8):** the notation gains a region appetite `&`, read into
-`takes: "nest"` (`LockAppetite = RegionAppetite | "nest"`, `src/game/lockAuthoring.ts`). The rules placement asks of
-a host region today (`seatNested`, `src/game/floorLocks.ts`: not a port, not barred, no mechanic in it, exactly two
-joins, one nearer the host's `in`) move into `lockAuthoring.ts` as `seatOf(lock, region)`, and `nestSpotFaults(lock)`
-asks them of the spot when the lock is authored: a second spot is refused `nestSpotsRepeated`, a spot no lock could
-stand in `nestSpotUnseatable`, by `parseLock` (so `yarn run lock`) and by `compileLock`. Placement refuses a nesting
-anywhere but the host's spot (`notNestSpot`) and seats it there exactly as today: the spot leaves the layout, its join
-nearer the host's `in` is re-pointed at the inner's `in`, the other at the inner's `out`. The compile reads an unused
-spot as `free`, so the carve never sees `nest`. `lockDraw` marks the spot `⊞nest` in its region's box and
-`yarn run lock` prints `nest spot: <region>`.
+**Architecture (one nest spot, tasks 7-8):** the spot is a CONNECTION, because a nested lock has an `in` and an
+`out` and is spliced into a corridor. The notation writes it `a -&> b`, the arrow pointing from the inner lock's `in`
+(at `a`) to its `out` (at `b`) as a one-way's does; `-&-` and `<&-` are refused by name. It reads into
+`Lock.nestSpot = { from, to }` (`src/game/lockAuthoring.ts`) while the connection stays in `connections` as a plain
+corridor, so a lock nothing nests in compiles and carves as if the spot were `--`. `nestSpotFaults(lock)` refuses a
+spot on a connection that carries any barrier (`nestSpotBarred`) or on none the lock has (`nestSpotOnNoConnection`),
+in `parseLock` (so `yarn run lock`) and in `compileLock`; `parseLock` refuses a second spot (`nestSpotsRepeated`). The
+spot may stand on any connection, on the in→out route or off it. Placement (`seatNested`, `expandFloorLocks`,
+`src/game/floorLocks.ts`) splices the inner into the host's spot: the spot's corridor gives way to `[from, inner.in]`
+and `[inner.out, to]`, the host keeps every region, and `PlacedLock.inside` names only the host. The floor walk needs
+no change for it: a nesting is still the inner's own regions and ports, walked as ground by the host. `lockDraw` draws
+the spot's corridor `&` and `yarn run lock` prints `nest spot: a -&> b`.
 
 **Architecture (nested stones, tasks 9-14):** the expansion (`expandFloorLocks`) classifies every nested placement
 against the locks it stands in (`stoneNestings`) and writes the case on `LockNesting.stones`; a pass-through lock
@@ -81,6 +83,7 @@ At `2afa135a`: no catalogue lock, dev floor or world floor nests a lock (`grep -
 src/data/generatedWorld.ts` is 0); the only nested placements are in tests (`nestedLocks.spec.ts`, `layLocks.spec.ts`,
 `lockPlan.spec.ts`), all in the `hall` of `leverLock`/`strandingLock` (`src/game/testSupport/floorLockFixtures.ts`)
 except the seat-refusal tests, which nest in `sluiceLock` (world spec content), `ringLock` and `middleLeverLock`.
+`PlanNesting` (`src/game/lockPlan.ts`) is read by its tests only.
 
 ## Questions before running
 
@@ -97,6 +100,11 @@ except the seat-refusal tests, which nest in `sluiceLock` (world spec content), 
   task brings one back.
 - **S3. Each lock has a single nest spot** (designer, 2026-10-08: "I don't expect a lot of nesting, but it could
   increase puzzle difficulty"). Tasks 7-8; the three nesting cases still apply (tasks 9-14).
+- **S4. The spot is a connection, written `a -&> b`, on any connection** (designer, 2026-10-08, binding). The arrow
+  points from the inner lock's `in` (at `a`) to its `out` (at `b`), as a one-way's does; `-&-` and `<&-` are refused
+  by name when the lock is read. The spot may sit on any connection of the lock, on the in→out route or off it: where
+  it goes is the designer's puzzle. At most one per lock (`nestSpotsRepeated`), and never on a connection that carries
+  a gate, a drop or any other barrier (`nestSpotBarred`).
 
 ### Open (the plan is written assuming each recommendation)
 
@@ -121,20 +129,11 @@ except the seat-refusal tests, which nest in `sluiceLock` (world spec content), 
    `{ weights: "stonePlate", activator: "torch", unladen: "narrowPassage" }`. The comment at the top of
    `src/game/locks/stoneGate.lock` ("not placed yet, not buildable yet (stones, gate loop)") is the designer's and is
    left alone.
-5. **The nest spot is written `&`.** Recommendation: `&` ("and a lock here"), on the takes line beside the others:
-   `hall *   s2 $   spare ?   corridor -   cell &`. It is free in the notation: `*` `$` `?` `-` are appetites, `@`
-   places a mechanic, `+` and `|` combine owners, `>>` is a one-way, `//` starts a comment. Alternative: `#` (a frame
-   another lock stands in). `@` is not offered: it already means "placed at".
-6. **A spot nothing nests in takes `free`.** Recommendation: the compile reads an unused spot as `free`, so marking a
-   spot never makes a lock poorer where nothing nests, and the carve never sees `nest`. Alternative: `nothing`, a bare
-   stretch the player walks through.
-7. **The spot's seat rules are asked when the lock is authored.** Recommendation: yes. `nestSpotUnseatable` names
-   the rule the spot breaks (`atPort`, `regionBarred`, `regionHoldsMechanic`, `notPassThrough`,
-   `directionAmbiguous`) in `yarn run lock` beside the drawing and in `compileLock`, through the same `seatOf` placement
-   uses, so a designer never finds out on a bake. Placement then refuses only what depends on the floor: an unknown
-   host or region, a region that is not the spot (`notNestSpot`), a spot already holding a lock (`regionShared`), a
-   cycle. Alternative: mark only, and keep every seat rule at placement as today.
-8. **A pass-through lock holds no one-way at all (`oneWayInPassThrough`, task 9).** The spec: "no `-[unladen]-` and
+5. **A spot nothing nests in is a plain corridor.** Recommendation: `a -&> b` with no lock spliced in carves as
+   `a -- b`: `Lock.nestSpot` names a connection that stays in `connections` with no barrier, so the compile and the
+   carve never see the spot (task 7 tests that the fragments are equal). Alternative: mark it on the floor (a room or
+   a sign where a lock could stand), which needs art and a node of its own for a spot the player cannot use.
+6. **A pass-through lock holds no one-way at all (`oneWayInPassThrough`, task 9).** The spec: "no `-[unladen]-` and
    no one-way stands on its route once it is solved". `-[unladen]-` in a lock without stones is already refused
    `carryWithoutStones`. Every one-way takes empty hands, so a drop in a pass-through lock turns the host's stone
    away; and the cut walks a pass-through without the host's stones, where the drop would let it ride, so the cut is
@@ -142,7 +141,7 @@ except the seat-refusal tests, which nest in `sluiceLock` (world spec content), 
    any lock between it and its pool), naming the drops, at placement. Alternative: refuse only a one-way on the
    inner's route, and walk a pass-through holding an off-route one-way fused with its pool's level, as a shared
    nesting is.
-9. **How is a contained lock's edge kept?** The spec says a contained lock's way out "takes empty hands, as a lock's
+7. **How is a contained lock's edge kept?** The spec says a contained lock's way out "takes empty hands, as a lock's
    way out always does". Nothing physical stands at a nested lock's ports today: its regions meet the host's along an
    ordinary corridor. Recommendation: **an invisible edge, the floor exit's rule moved inward** (tasks 11 and 13). A
    carrying walk that would cross the line between a contained lock's ground and the rest stops on the near side with
@@ -155,7 +154,7 @@ except the seat-refusal tests, which nest in `sluiceLock` (world spec content), 
    the lock, changes the carve, and needs `unladen` bound; (b) no play rule, and the walk refuses a contained nesting
    whose inner lock lets a stone reach its edge at all, which refuses nearly every stone lock (a stone on a shelf by
    the way in already does).
-10. **"The player leaves the inner lock with a stone only by solving it for one" (shared).** Stones are alike, so a
+8. **"The player leaves the inner lock with a stone only by solving it for one" (shared).** Stones are alike, so a
    state does not know whose stone is in hand, nor whether the inner was solved before. Recommendation: **read it as
    design guidance that the pooled soundness walk proves through, with no extra check**: one pool (task 10), the
    inner's way out lets a stone through (it is no edge: the inner is fused into its pool's level, task 12), the inner's
@@ -164,7 +163,7 @@ except the seat-refusal tests, which nest in `sluiceLock` (world spec content), 
    task 12). Alternative: a memoryless count rule ("a stone leaves the inner by its way in only while its plates hold
    at least the stones it was authored with, or while it stands open in to out"), which over-refuses: a player who
    solves the inner, carries its stone back and later swaps it for the outer's breaks it.
-11. **How does the state space grow, and is a bound needed?** Pass-through and contained nestings keep the cut: the
+9. **How does the state space grow, and is a bound needed?** Pass-through and contained nestings keep the cut: the
    host walks the inner as ground, so the host's states never multiply by the inner's (tested by counting states,
    task 12). A shared nesting is walked fused with its pool's level, which is the product of both locks' mechanisms;
    the pooled arrangement count is C(P, S) + C(P, S - 1) for P plates and S stones (P = 8, S = 3: 84).
@@ -172,19 +171,19 @@ except the seat-refusal tests, which nest in `sluiceLock` (world spec content), 
    every mechanism's state count) passes `MAX_LOCK_STATES` (50 000), and a fused level that does is refused `tooLarge`
    inside `pooled`, naming the instances (task 12 tests it). With one nest spot per lock, a pool grows by one lock per
    level of nesting, never by siblings. Alternative: a tighter per-pool ceiling, which has no consumer yet.
-12. **Which locks join a pool?** Recommendation: **a nested lock is read against the nearest lock it stands in that
+10. **Which locks join a pool?** Recommendation: **a nested lock is read against the nearest lock it stands in that
    holds stones, at any depth** (`stoneNestings`, task 9). So in `A(stones) ⊃ B(none) ⊃ C(stones)` B is a
    pass-through and C shares A's pool (A's stone is carried through B into C), and B is walked fused with A and C.
    Read against the direct host only, C would be contained, and its edge would stop A's stone half-way through B,
    breaking B's pass-through rule. Alternative: refuse a stone lock inside a pass-through lock by name.
-13. **Where does `yarn run lock` surface the nesting rules?** It now shows and checks the nest spot (task 7). It still
+11. **Where does `yarn run lock` surface the nesting rules?** It now shows and checks the nest spot (task 7). It still
    cannot say which stone case a nesting is: that depends on the inner lock, and nesting is said only where locks are
    placed (`PlacedLock.inside`). Recommendation: **nothing more in `yarn run lock` now**; the case and each refusal
    surface where a nesting exists: the bake's lock sweep and `walkFloorLock` (`describeFloorWalkFailure`), the floor's
    `AssemblerReason`s, and the Lock playground (task 14), which nests one catalogue lock in another's spot. Recorded
    under "Open after phase 4". Alternative: a `yarn run lock <host> --nest <inner>` that carves a bench floor with the
    inner in the host's spot and prints the case and the floor walk's verdict.
-14. **A dev floor for nested stones?** Recommendation: **no**: made-up test fixtures prove each case (task 12), and
+12. **A dev floor for nested stones?** Recommendation: **no**: made-up test fixtures prove each case (task 12), and
    the playground plays them (task 14). A dev floor would churn every dev-journey count again (task 5 already moves
    them to 12) for no case the tests do not cover. Alternative: dev pyramid 13 with a shared nesting.
 
@@ -204,15 +203,21 @@ except the seat-refusal tests, which nest in `sluiceLock` (world spec content), 
 - **Ruling: no `CHANGELOG.md` entry and no save change.** — Why: stoneGate plays only on the dev journey and in
   Storybook until phase 6; no world floor changes, and no world floor nests a lock or holds stones. The nest spot is
   authoring vocabulary no catalogue lock writes yet.
-- **Ruling: the seat rules move into `lockAuthoring.ts` (`seatOf`, `sidesOf`, `regionsHeldBy`).** — Why: they read
-  the lock alone, and both the authoring check (`nestSpotFaults`, read by `lockCompile.ts` and `lockNotation.ts`) and
-  placement (`floorLocks.ts`, which imports `lockCompile.ts`) need them; `lockAuthoring.ts` is imported by all three,
-  so no import cycle. — Cost if wrong: a file move.
-- **Ruling: the test fixtures `leverLock` and `strandingLock` mark `hall` as their nest spot.** — Why: every test
-  that nests one lock in another nests in their `hall`, and an unused spot compiles as `free`, exactly what `hall`
-  takes today, so every test that places them unnested carves the same floor. `sluiceLock`
-  (`src/worldGen/spec/locks/sluice`) is world content and is not touched: the two tests that nested in it, and the two
-  local `ringLock`/`middleLeverLock` ones, become authoring tests on made-up locks. — Cost if wrong: two fixture lines.
+- **Ruling: `PlacedLock.inside` becomes `{ instance }`, and `PlacedInstance.inside`/`PlanNesting` name the spot's
+  connection (`between`).** — Why: the spot says where a lock nests, so a region beside it would be a second statement
+  of one thing; `PlanNesting` has no reader but its tests. No world spec nests, so no authored placement changes. —
+  Cost if wrong: one field.
+- **Ruling: the seat rules placement asks of a region today (`atPort`, `regionBarred`, `regionHoldsMechanic`,
+  `notPassThrough`, `directionAmbiguous`, `regionUnknown`, `regionShared`) go, with `sidesOf` and `regionsHeldBy`.** —
+  Why: a splice into a barrier-free connection needs none of them: no region leaves the route, and the arrow says which
+  end is the inner's `in`. What is left is `noNestSpot`, `nestSpotTaken` and the cycle at placement, and
+  `nestSpotBarred`/`nestSpotOnNoConnection` when the lock is read. — Cost if wrong: a refusal re-added.
+- **Ruling: the test fixtures `leverLock` and `strandingLock` mark `foyer -&> hall` as their nest spot.** — Why:
+  every test that nests one lock in another nests in them, and the spot's corridor is the plain `["foyer", "hall"]`
+  they already have, so every test that places them unnested carves the same floor. A nested lock now stands between
+  `foyer` and `hall` instead of in `hall`'s place; tests that pin that layout change in task 8. `sluiceLock`
+  (`src/worldGen/spec/locks/sluice`) is world content and is not touched: the tests that nested in it go. — Cost if
+  wrong: two fixture lines.
 - **Ruling: the walk spec's `leaveWith` is renamed `emptyHands`, and `mayLeave` `handsEmpty` (task 11, before
   anything reads it per level).** — Why: it is read by the floor's way out AND every one-way (and, from task 11, every
   `keepsStones` way), so a level that relaxes the way out must keep it; a name that says "the way out" invites
@@ -256,8 +261,8 @@ except the seat-refusal tests, which nest in `sluiceLock` (world spec content), 
 - **Count work, never wall-clock**, in tests: no duration assertions. State-space claims are asserted as state
   counts (`walk.states`, `reachableStates(...).order.length`).
 - **One source for each rule** (spec, "The rules"): the arrangement search lives in `weights.ts` only, the contained
-  edge in `stoneBounds.ts` only, the seat rules in `lockAuthoring.ts` (`seatOf`) only; walk, play, authoring and
-  placement all call them.
+  edge in `stoneBounds.ts` only, the spot's rules in `lockAuthoring.ts` (`nestSpotFaults`) only; walk, play,
+  authoring and placement all call them.
 - **Commits:** one short line, then the trailer lines exactly:
   ```
   git commit -m "<type(scope)>: <what changed>" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
@@ -286,12 +291,13 @@ except the seat-refusal tests, which nest in `sluiceLock` (world spec content), 
 
 One nest spot (tasks 7-8):
 
-6. **A lock placed unnested that marks a spot.** It must carve exactly as the same lock with the spot written `?`.
-   Test in task 7 (`compileLock` gives the spot appetite `free`; the fragments are equal).
-7. **A designer marks two spots, or a spot at a port.** They must read the rule and the line in `yarn run lock`,
-   not a placement refusal on a bake. Test in task 7 (`parseLock` refused lines; `nestSpotFaults`).
+6. **A lock placed unnested that marks a spot.** It must carve exactly as the same lock with the spot written `--`.
+   Test in task 7 (the compiled fragments are equal).
+7. **A designer marks two spots, writes `-&-`, or puts the spot beside a gate or a drop.** They must read the rule and
+   the line in `yarn run lock`, not a placement refusal on a bake. Test in task 7 (`parseLock` refused lines and
+   throws; `nestSpotFaults`).
 8. **A bench floor (`freeRegions`) on a lock with a spot.** The playground and the dev floors free every region; the
-   spot must survive, or nothing can ever nest there. Test in task 7 (`freeRegions` keeps `nest`).
+   spot must survive, or nothing can ever nest there. Test in task 7 (`freeRegions` keeps `nestSpot`).
 
 Nested stones (tasks 9-14):
 
@@ -303,8 +309,8 @@ Nested stones (tasks 9-14):
    drop still turn a stone away") and task 9 (`oneWayInPassThrough`).
 11. **Leaving the floor with a stone, through a nesting.** The floor's own level must keep `emptyHands`. Test in task
    12 ("keeps the floor's way out for empty hands on a nested floor").
-12. **A contained stone carried out by a door the host owns.** A host gate re-pointed onto the inner's port join puts
-   a door cell on the edge; play and the walk must stop at the same step. Test in task 11 (every tagged edge has
+12. **A contained stone carried out by a door the host owns.** A gate of the inner's standing on a join at its port
+   puts a door cell beside the edge; play and the walk must stop at the same step. Test in task 11 (every tagged edge has
    exactly one side on the inner's ground; the door's gates included) and task 13 (the carrying walk stops on the
    inner's side).
 13. **A pooled level too large to walk.** It must be refused by name, not hang the bake. Test in task 12
@@ -1190,38 +1196,35 @@ Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
 
 ---
 
-### Task 7: A lock marks one nest spot
+### Task 7: A lock marks one nest spot, on a connection
 
-The designer's decision (2026-10-08): each lock has a single spot for nesting. The notation marks it on the takes
-line (`cell &`, question 5); a second spot, or a spot no lock could stand in, is refused by name when the lock is read
-(question 7). The seat rules move out of `floorLocks.ts` unchanged, so task 8 can ask the same function at placement.
+The designer's decision (2026-10-08, revised): each lock has a single spot for nesting, and it is a CONNECTION, not a
+region. A nested lock has an `in` and an `out`, so it is spliced into a corridor: `a -&> b` says another lock may stand
+between `a` and `b`, the arrow pointing from its `in` (at `a`) to its `out` (at `b`), as a one-way's arrow points (S4).
+`a -&- b` and `b <&- a` are refused by name when the lock is read: the spot has one spelling. Where
+nothing nests, the spot is the plain corridor `a -- b`. A second spot is refused (`nestSpotsRepeated`), and so is a
+spot on a connection that carries any barrier (`nestSpotBarred`): a gate, a drop or a narrow passage would stand
+across the splice with no side to stand on. The spot may be on any connection, on the route or off it (S4).
 
 **Files:**
-- Modify: `src/game/lockAuthoring.ts` (`LockAppetite`; `LockRegion.takes`; `regionsHeldBy` and `sidesOf` moved here
-  from `floorLocks.ts` and exported; `SeatFault`, `seatOf`, `nestSpotOf`, `NestSpotFault`, `nestSpotFaults`;
-  `freeRegions` keeps the spot)
-- Modify: `src/game/floorLocks.ts` (imports `regionsHeldBy`, `sidesOf` instead of defining them; no behaviour change)
-- Modify: `src/game/lockNotation.ts` (`APPETITE` gains `&`; `LOCK_SYNTAX`; the refused lines)
-- Modify: `src/game/lockCompile.ts` (`LockFault` gains `NestSpotFault`; `lockFaults` asks `nestSpotFaults`;
-  `translate` compiles the spot as `free`)
-- Modify: `src/game/lockDraw.ts` (the spot's box shows `⊞nest`)
-- Modify: `scripts/lock.ts` (prints `nest spot: <region>`)
+- Modify: `src/game/lockAuthoring.ts` (`Lock.nestSpot`; `NestSpotFault`, `nestSpotFaults`)
+- Modify: `src/game/lockNotation.ts` (`-&>` on a join; `LOCK_SYNTAX`; the refused lines)
+- Modify: `src/game/lockCompile.ts` (`LockFault` gains `NestSpotFault`; `lockFaults` asks `nestSpotFaults`)
+- Modify: `src/game/lockDraw.ts` (the spot's corridor is drawn `&`)
+- Modify: `scripts/lock.ts` (prints `nest spot: a -&> b`)
 - Create: `src/game/nestSpot.spec.ts`
 
 **Interfaces:**
 - Produces, in `@/game/lockAuthoring`:
-  - `export type LockAppetite = RegionAppetite | "nest"`; `LockRegion = { takes: LockAppetite }`
-  - `export type SeatFault = { type: "atPort"; region: string } | { type: "regionBarred"; region: string; barriers:
-    string[] } | { type: "regionHoldsMechanic"; region: string; mechanics: string[] } | { type: "notPassThrough";
-    region: string; joins: number } | { type: "directionAmbiguous"; region: string }`
-  - `export const seatOf = (lock: Lock, region: string): { faults: SeatFault[]; sides?: [string, string] }` (`sides`
-    only when `faults` is empty; nearer the lock's `in` first)
-  - `export const nestSpotOf = (lock: Lock): string | undefined`
-  - `export type NestSpotFault = { type: "nestSpotsRepeated"; regions: string[] } | { type: "nestSpotUnseatable";
-    region: string; fault: SeatFault }`; `export const nestSpotFaults = (lock: Lock): NestSpotFault[]`
-  - `regionsHeldBy(mechanic: LockMechanic): string[]`, `sidesOf(lock, region, neighbours): [string, string] |
-    undefined` (moved, exported)
-- Task 8 reads `nestSpotOf` and `seatOf`; task 14 reads `nestSpotOf`.
+  - `Lock` gains `readonly nestSpot?: { readonly from: RegionId; readonly to: RegionId }`: the connection another lock
+    may be spliced into, its `in` meeting `from` and its `out` meeting `to`. The connection itself stays in
+    `connections` as a plain corridor, so a lock nothing nests in compiles and carves exactly as if `-&>` were `--`.
+  - `export type NestSpotFault = { type: "nestSpotOnNoConnection"; from: string; to: string } | { type:
+    "nestSpotBarred"; from: string; to: string; barriers: string[] }`; `export const nestSpotFaults = (lock: Lock):
+    NestSpotFault[]`
+- `parseLock` refuses a second `-&>` (`nestSpotsRepeated`; a `Lock` holds one `nestSpot`, so only the text can say
+  two) and keeps the first.
+- Task 8 reads `Lock.nestSpot`; task 14 reads it through placement.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -1229,7 +1232,7 @@ Create `src/game/nestSpot.spec.ts`:
 
 ```ts
 import { describe, expect, it } from "vitest"
-import { freeRegions, nestSpotFaults, nestSpotOf, seatOf } from "./lockAuthoring"
+import { freeRegions, nestSpotFaults } from "./lockAuthoring"
 import { compileLock } from "./lockCompile"
 import { drawLock } from "./lockDraw"
 import { parseLock } from "./lockNotation"
@@ -1237,398 +1240,174 @@ import { BINDING } from "./testSupport/lockFixtures"
 
 // MADE-UP LOCKS WITH A NEST SPOT, never catalogue ones: a test pins the rule, `yarn run lock` checks the catalogue.
 
-/** A lever lock whose middle stretch, `hall`, is where another lock may stand. */
-const NESTING = "in -- hall\nhall -[L]- out\nL toggle @in\nin ?\nhall &\nout ?"
-const TWICE = "in -- a\na -- b\nb -- out\na &\nb &\nin ?\nout ?"
+/** A lever lock whose way from `in` to `hall` is where another lock may be spliced in. */
+const NESTING = "in -&> hall\nhall -[L]- out\nL toggle @in\nin ?\nhall ?\nout ?"
 
 describe("a lock's nest spot", () => {
-  it("is the one region written &", () => {
+  it("is the one connection written -&>, read from left to right", () => {
     const { lock, refused } = parseLock(NESTING, "nesting")
     expect(refused).toEqual([])
-    expect(lock.regions.hall).toEqual({ takes: "nest" })
-    expect(nestSpotOf(lock)).toBe("hall")
+    expect(lock.nestSpot).toEqual({ from: "in", to: "hall" })
+    expect(lock.connections).toContainEqual(["in", "hall"])
+  })
+
+  it.each(["in -&- hall", "hall <&- in"])("refuses %s by name: the spot is written with its arrow, in -&> hall", text => {
+    expect(() => parseLock(`${text}\nhall -- out`, "spelled")).toThrow("line 1: a nest spot is written a -&> b")
   })
 
   it("is absent from a lock that writes none", () => {
-    expect(nestSpotOf(parseLock("in -- hall\nhall -- out\nin ?\nhall ?\nout ?").lock)).toBeUndefined()
+    expect(parseLock("in -- hall\nhall -- out").lock.nestSpot).toBeUndefined()
   })
 
-  it("seats a lock between its two neighbours, the one nearer the way in first", () => {
-    expect(seatOf(parseLock(NESTING, "nesting").lock, "hall")).toEqual({ faults: [], sides: ["in", "out"] })
+  it("may stand off the route, where the designer puts it", () => {
+    const { lock, refused } = parseLock("in -- out\nin -&> side", "aside")
+    expect(refused).toEqual([])
+    expect(nestSpotFaults(lock)).toEqual([])
   })
 
-  it("is one per lock: a second is refused, naming both, on the second's line", () => {
-    const { lock, refused } = parseLock(TWICE, "twice")
-    expect(nestSpotFaults(lock)).toEqual([{ type: "nestSpotsRepeated", regions: ["a", "b"] }])
-    expect(refused).toEqual(["line 5: a lock has one nest spot, and a and b are written &"])
+  it("is one per lock: a second is refused on its own line, and the first is kept", () => {
+    const { lock, refused } = parseLock("in -&> a\na -&> b\nb -- out", "twice")
+    expect(refused).toEqual(["line 2: a lock has one nest spot, and in -&> a is one already"])
+    expect(lock.nestSpot).toEqual({ from: "in", to: "a" })
   })
 
   it.each([
-    ["the way in", "in -- hall\nhall -- out\nin &\nhall ?\nout ?", { type: "atPort", region: "in" }],
-    [
-      "a region barred as a whole",
-      "in -- hall\nhall -- out\nhall -[L]\nL toggle @in\nin ?\nhall &\nout ?",
-      { type: "regionBarred", region: "hall", barriers: ["hall:barred"] },
-    ],
-    [
-      "a region a mechanic stands in",
-      "in -- hall\nhall -[L]- out\nL toggle @hall\nin ?\nhall &\nout ?",
-      { type: "regionHoldsMechanic", region: "hall", mechanics: ["L"] },
-    ],
-    ["a region off the route", "in -- out\nin -- side\nin ?\nside &\nout ?", { type: "notPassThrough", region: "side", joins: 1 }],
-    [
-      "a region whose two neighbours are as far from the way in",
-      "in -- p\nin -- q\np -- r\nq -- r\np -- out\nin ?\np ?\nq ?\nr &\nout ?",
-      { type: "directionAmbiguous", region: "r" },
-    ],
-  ])("refuses a spot no lock could stand in: %s", (_, text, fault) => {
-    expect(nestSpotFaults(parseLock(text, "spot").lock)).toContainEqual({
-      type: "nestSpotUnseatable",
-      region: fault.region,
-      fault,
-    })
-  })
-
-  it("names the rule in yarn lock's words, on the spot's line", () => {
-    expect(parseLock("in -- hall\nhall -[L]- out\nL toggle @hall\nin ?\nhall &\nout ?", "spot").refused).toEqual([
-      "line 5: hall cannot hold a nested lock: L stands in it",
+    ["a gate", "in -&> -[L]- hall\nhall -- out\nL toggle @in", ["in-hall"]],
+    ["a drop", "in -&> >> hall\nhall -- out\nhall -- in2\nin2 -- in", ["in>hall"]],
+  ])("refuses a spot on a connection that carries %s, naming the barrier", (_, text, barriers) => {
+    expect(nestSpotFaults(parseLock(text, "barred").lock)).toEqual([
+      { type: "nestSpotBarred", from: "in", to: "hall", barriers },
     ])
   })
 
-  it("is refused by the compile too, so a placed lock is checked as yarn lock checks it", () => {
-    const result = compileLock(parseLock(TWICE, "twice").lock, BINDING)
-    expect(result.ok === false && result.faults).toContainEqual({ type: "nestSpotsRepeated", regions: ["a", "b"] })
+  it("names the barred spot in yarn lock's words, on the spot's line", () => {
+    expect(parseLock("in -&> -[L]- hall\nhall -- out\nL toggle @in", "barred").refused).toEqual([
+      "line 1: in -&> hall cannot hold a nested lock: in-hall stands on it",
+    ])
   })
 
-  it("compiles as free where nothing nests, so the lock carves as if it were written ?", () => {
+  it("refuses a spot naming a connection the lock does not have, as written in JSON", () => {
+    const lock = { ...parseLock(NESTING, "n").lock, nestSpot: { from: "in", to: "out" } }
+    expect(nestSpotFaults(lock)).toEqual([{ type: "nestSpotOnNoConnection", from: "in", to: "out" }])
+    const result = compileLock(lock, BINDING)
+    expect(result.ok === false && result.faults).toContainEqual({ type: "nestSpotOnNoConnection", from: "in", to: "out" })
+  })
+
+  it("compiles as a plain corridor where nothing nests, so the lock carves as if it were written --", () => {
     const spot = compileLock(parseLock(NESTING, "n").lock, BINDING, { namespace: "n" })
-    const free = compileLock(parseLock(NESTING.replace("hall &", "hall ?"), "n").lock, BINDING, { namespace: "n" })
-    expect(spot).toEqual(free)
+    const plain = compileLock(parseLock(NESTING.replace("-&>", "--"), "n").lock, BINDING, { namespace: "n" })
+    expect(spot).toEqual(plain)
   })
 
-  it("survives a bench floor, which frees every other region", () => {
-    expect(freeRegions(parseLock(NESTING.replace("in ?", "in *"), "n").lock).regions).toEqual({
-      in: { takes: "free" },
-      hall: { takes: "nest" },
-      out: { takes: "free" },
-    })
+  it("survives a bench floor, which frees every region", () => {
+    expect(freeRegions(parseLock(NESTING, "n").lock).nestSpot).toEqual({ from: "in", to: "hall" })
   })
 
-  it("is marked in the drawing", () => {
-    expect(drawLock(parseLock(NESTING, "n").lock)).toContain("[hall · ⊞nest]")
+  it("is drawn as & on its corridor", () => {
+    expect(drawLock(parseLock(NESTING, "n").lock)).toContain("&")
+    expect(drawLock(parseLock(NESTING.replace("-&>", "--"), "n").lock)).not.toContain("&")
   })
 })
 ```
 
-(If `parseLock` names the region gate other than `hall:barred`, use the id it gives and say so in the report.
-`toContainEqual` on the seat rules: a port with one join is also `notPassThrough`, and both are true.)
+(The gate and drop ids are the ones `parseLock` gives a join's barriers, `<from>-<to>` and `<from>><to>`; if it
+prints others, use those and say so. The drop lock gives `hall` a way back so the lock still reads whole.)
 
 - [ ] **Step 2: Run them to see them fail**
 
 Run: `yarn vitest run src/game/nestSpot.spec.ts`
-Expected: FAIL: `nestSpotFaults`, `nestSpotOf`, `seatOf` are not exported, and `parseLock` throws `cannot read
-"hall &"`.
-
-- [ ] **Step 3: Implement the authoring side**
-
-In `src/game/lockAuthoring.ts`, replace `export type LockRegion = { takes: RegionAppetite }` with:
-
-```ts
-/** What a region of a lock takes: a layout appetite, or `nest`, the one region another lock may stand in. A spot
- * nothing nests in compiles as `free`. */
-export type LockAppetite = RegionAppetite | "nest"
-export type LockRegion = { takes: LockAppetite }
-```
-
-Move `regionsHeldBy` and `sidesOf` from `src/game/floorLocks.ts` into `lockAuthoring.ts` verbatim, each with
-`export`, below `isUnladenGate` (they use `joinOf`, which `lockAuthoring.ts` defines). In `floorLocks.ts`, delete both
-and import them: `import { isRegionGate, joinOf, regionsHeldBy, sidesOf } from "./lockAuthoring"`.
-
-After them, add:
-
-```ts
-/** Why a lock nested in a region could not stand there. Authored names. */
-export type SeatFault =
-  /** The lock's `in` or `out`: a port cannot hold another lock. */
-  | { type: "atPort"; region: string }
-  /** The region is barred as a whole, so the inner lock would stand behind a wall of the host's. */
-  | { type: "regionBarred"; region: string; barriers: string[] }
-  | { type: "regionHoldsMechanic"; region: string; mechanics: string[] }
-  /** The region is not a stretch of the lock's route with exactly one way in and one way out. */
-  | { type: "notPassThrough"; region: string; joins: number }
-  /** Both neighbours are equally far from the lock's `in`, so which side the inner's `in` faces is not said. */
-  | { type: "directionAmbiguous"; region: string }
-
-/**
- * WHERE A LOCK NESTED IN `region` STANDS, or every reason it cannot: the region's two neighbours, the one nearer the
- * lock's `in` first. The inner's `in` takes the join on that side and its `out` the other, so the route walks host,
- * inner, host. The one place the seat rules live: the nest spot is checked by them when the lock is read
- * (`nestSpotFaults`), and placement seats by them (`seatNested`, floorLocks.ts).
- */
-export const seatOf = (lock: Lock, region: string): { faults: SeatFault[]; sides?: [string, string] } => {
-  const faults: SeatFault[] = []
-  if (region === lock.in || region === lock.out) faults.push({ type: "atPort", region })
-  const barriers = Object.entries(lock.gates)
-    .filter(([, gate]) => isRegionGate(gate) && gate.region === region)
-    .map(([id]) => id)
-  if (barriers.length > 0) faults.push({ type: "regionBarred", region, barriers })
-  const mechanics = Object.entries(lock.mechanics)
-    .filter(([, mechanic]) => regionsHeldBy(mechanic).includes(region))
-    .map(([id]) => id)
-  if (mechanics.length > 0) faults.push({ type: "regionHoldsMechanic", region, mechanics })
-  const neighbours = lock.connections
-    .map(joinOf)
-    .filter(([a, b]) => a === region || b === region)
-    .map(([a, b]) => (a === region ? b : a))
-  if (neighbours.length !== 2) faults.push({ type: "notPassThrough", region, joins: neighbours.length })
-  const sides = neighbours.length === 2 ? sidesOf(lock, region, [neighbours[0], neighbours[1]]) : undefined
-  if (neighbours.length === 2 && !sides) faults.push({ type: "directionAmbiguous", region })
-  return faults.length === 0 && sides ? { faults, sides } : { faults }
-}
-
-/** The one region another lock may stand in, written `&`; undefined when the lock has none. */
-export const nestSpotOf = (lock: Lock): string | undefined =>
-  Object.keys(lock.regions).find(region => lock.regions[region].takes === "nest")
-
-/** Where a lock's nest spot contradicts it: a second spot, or a spot no lock could stand in. */
-export type NestSpotFault =
-  | { type: "nestSpotsRepeated"; regions: string[] }
-  | { type: "nestSpotUnseatable"; region: string; fault: SeatFault }
-
-/** A LOCK HAS ONE NEST SPOT AT MOST (designer, 2026-10-08), and it is one a lock can stand in. */
-export const nestSpotFaults = (lock: Lock): NestSpotFault[] => {
-  const spots = Object.keys(lock.regions).filter(region => lock.regions[region].takes === "nest")
-  if (spots.length > 1) return [{ type: "nestSpotsRepeated", regions: spots }]
-  return spots.flatMap(region =>
-    seatOf(lock, region).faults.map((fault): NestSpotFault => ({ type: "nestSpotUnseatable", region, fault }))
-  )
-}
-```
-
-`freeRegions` keeps the spot (its doc comment gains "; the nest spot stays, or nothing could nest on the bench"):
-
-```ts
-export const freeRegions = (lock: Lock): Lock => ({
-  ...lock,
-  regions: Object.fromEntries(
-    Object.entries(lock.regions).map(([region, { takes }]): [string, LockRegion] => [
-      region,
-      { takes: takes === "nest" ? "nest" : "free" },
-    ])
-  ),
-})
-```
-
-In `src/game/lockNotation.ts`:
-- import `nestSpotFaults`, `type LockAppetite`, `type SeatFault` from `./lockAuthoring`;
-- `APPETITE` becomes `Record<string, LockAppetite>` with `"&": "nest"`; `regions` and `takes` are typed with
-  `LockAppetite`; the takes pattern becomes `/^(\w+)\s+([$*?&-])$/`;
-- `LOCK_SYNTAX` gains, after the takes line:
-  ```
-    cell &                        the nest spot: another lock may stand here; one per lock
-  ```
-- after the `unladenFaults` loop, before `return`:
-  ```ts
-  const takenOn = new Map(takes.map(({ region: r, n }) => [r, n]))
-  const listed = (names: string[]) => `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`
-  for (const fault of nestSpotFaults(lock))
-    refused.push(
-      fault.type === "nestSpotsRepeated"
-        ? `line ${takenOn.get(fault.regions[fault.regions.length - 1])}: a lock has one nest spot, and ${listed(fault.regions)} are written &`
-        : `line ${takenOn.get(fault.region)}: ${fault.region} cannot hold a nested lock: ${seatWords(fault.fault)}`
-    )
-  ```
-  with, above `parseLock`:
-  ```ts
-  /** A seat rule in the words `yarn lock` prints. */
-  const seatWords = (fault: SeatFault): string => {
-    switch (fault.type) {
-      case "atPort":
-        return "it is the way in or the way out"
-      case "regionBarred":
-        return `${fault.barriers.join(", ")} bars it as a whole`
-      case "regionHoldsMechanic":
-        return `${fault.mechanics.join(", ")} stands in it`
-      case "notPassThrough":
-        return `it has ${fault.joins} joins, not one way in and one way out`
-      case "directionAmbiguous":
-        return "its two neighbours are as far from the way in, so neither side is the nested lock's way in"
-    }
-  }
-  ```
-
-In `src/game/lockCompile.ts`:
-- import `nestSpotFaults` and `type NestSpotFault` from `./lockAuthoring`;
-- `LockFault` gains `| NestSpotFault` beside `| UnladenFault`;
-- in `lockFaults`, after `faults.push(...unladen)`: `faults.push(...nestSpotFaults(lock))`;
-- in `translate`'s `regionLayout.regions` (`appetite: takes`), the spot compiles as `free`:
-  ```ts
-      regions: Object.entries(lock.regions).map(([region, { takes }]) => ({
-        name: name(region),
-        // A spot nothing nests in is free ground; a lock nested there takes its place (expandFloorLocks).
-        appetite: takes === "nest" ? ("free" as const) : takes,
-      })),
-  ```
-
-In `src/game/lockDraw.ts`, `sketchOf`'s `boxes`: beside `standing`, add
-`const nest = lock.regions[region].takes === "nest" ? ["⊞nest"] : []`, and the box becomes
-`` `[${[region, ...nest, ...standing, ...steps, ...plates].join(" · ")}${barred}]` ``.
-
-In `scripts/lock.ts`, import `nestSpotOf` from `../src/game/lockAuthoring`, and in `checks`, after the
-`at the start …` line: `` ...(nestSpotOf(lock) ? [`nest spot: ${nestSpotOf(lock)}`] : []), ``.
-
-- [ ] **Step 4: Run them to see them pass, and every lock spec stays green**
-
-Run: `yarn vitest run src/game/nestSpot.spec.ts src/game/lockNotation.spec.ts src/game/lockDraw.spec.ts src/game/lockCompile.spec.ts src/game/nestedLocks.spec.ts src/game/floorLocks.spec.ts src/game/lockWalkSpec.spec.ts`
-Expected: PASS. `nestedLocks.spec.ts` is unchanged by this task and stays green (placement still asks its own rules
-until task 8).
-
-Run: `printf 'in -- hall\nhall -[L]- out\nL toggle @in\nin ?\nhall &\nout ?\n' | yarn run lock -`
-Expected: a `nest spot: hall` line, and the drawing's box `[hall · ⊞nest]`.
-
-Run: `yarn run lock 2>&1 | grep -c "nest spot"`
-Expected: `0` (no catalogue lock writes `&`).
-
-Run: `yarn check-types && yarn lint`
-Expected: clean. A type error where a `Lock`'s `takes` is read as a `RegionAppetite` is a reader this task missed:
-compile it as `free` there the way `translate` does, and say where in the report.
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add src/game/lockAuthoring.ts src/game/floorLocks.ts src/game/lockNotation.ts src/game/lockCompile.ts src/game/lockDraw.ts scripts/lock.ts src/game/nestSpot.spec.ts
-git commit -m "feat(lock): a lock marks one nest spot, written &" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
-Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
-```
-
----
-
-### Task 8: A lock nests only in its host's nest spot
-
-**Files:**
-- Modify: `src/game/floorLocks.ts` (`LockNestingFault`: `notNestSpot`; the seat members go; `seatNested` asks
-  `nestSpotOf` and `seatOf`)
-- Modify: `src/game/testSupport/floorLockFixtures.ts` (`leverLock` and `strandingLock`: `hall: { takes: "nest" }`)
-- Modify: `src/game/nestedLocks.spec.ts` (the seat refusals)
-- Test: `src/game/nestedLocks.spec.ts`; `src/game/layLocks.spec.ts`, `src/game/lockPlan.spec.ts` stay green unchanged
-
-**Interfaces:**
-- Consumes: `nestSpotOf`, `seatOf` (task 7).
-- Produces: `LockNestingFault` =
-  `{ type: "hostUnknown"; host } | { type: "regionUnknown"; host; region } | { type: "notNestSpot"; host; region;
-  spot: string | null } | { type: "cycle"; through } | { type: "regionShared"; host; region; with }` (task 9 adds
-  `oneWayInPassThrough`). A spot no lock could stand in is the host's own refusal: `lockRefused` with
-  `nestSpotUnseatable` (task 7).
-
-- [ ] **Step 1: Change the fixtures and the tests**
-
-`src/game/testSupport/floorLockFixtures.ts`: in `leverLock` and `strandingLock`, `hall: { takes: "free" }` becomes
-`hall: { takes: "nest" }` (their doc comments gain "; another lock may nest in `hall`").
-
-In `src/game/nestedLocks.spec.ts`, in `describe("a nesting that cannot be seated is refused by name", …)`:
-- `it.each(["foyer", "landing"])("refuses the host's own port, %s", …)` becomes:
-  ```ts
-  it.each(["foyer", "landing"])("refuses a region that is not the host's nest spot, %s, naming the spot", region => {
-    expect(refusedWith([{ lock: leverLock() }, inner({ instance: "lever", region })])).toEqual([
-      {
-        type: "lockNestingRefused",
-        instance: "inner",
-        fault: { type: "notNestSpot", host: "lever", region, spot: "hall" },
-      },
-    ])
-  })
-
-  it("refuses a host with no nest spot", () => {
-    const plain: Lock = { ...leverLock(), name: "plain", regions: { ...leverLock().regions, hall: { takes: "free" } } }
-    expect(refusedWith([{ lock: plain }, inner({ instance: "plain", region: "hall" })])).toEqual([
-      {
-        type: "lockNestingRefused",
-        instance: "inner",
-        fault: { type: "notNestSpot", host: "plain", region: "hall", spot: null },
-      },
-    ])
-  })
-  ```
-- "refuses a region the host bars as a whole, naming the barrier" and "refuses a region that is not a stretch of the
-  route, counting its joins" (both nest in `sluiceLock`, world content) and "refuses a region whose two neighbours are
-  equally far from the host's in" are deleted: task 7's `nestSpot.spec.ts` asks those rules of made-up locks. Delete
-  `ringLock`, and drop `sluiceLock` from the `./testSupport/lockFixtures` import if nothing else in the file uses it.
-- "refuses a region a host mechanic stands in, naming the mechanic" becomes the host's own refusal:
-  ```ts
-  it("leaves a spot no lock could stand in to the host's own refusal", () => {
-    const middle: Lock = { ...middleLeverLock(), regions: { ...middleLeverLock().regions, b: { takes: "nest" } } }
-    expect(refusedWith([{ lock: middle }, inner({ instance: "middle", region: "b" })])).toEqual([
-      {
-        type: "lockRefused",
-        instance: "middle",
-        fault: {
-          type: "nestSpotUnseatable",
-          region: "b",
-          fault: { type: "regionHoldsMechanic", region: "b", mechanics: ["lever"] },
-        },
-      },
-    ])
-  })
-  ```
-- "refuses a second lock in a region that already holds one, naming the first" and the two cycle tests stay as they
-  are (they nest in `hall`, the spot).
-- In `describe("stones on a floor with nested locks", …)` the stone lock's text ends `…\nin ?\nyard ?\nhall ?\nout ?`:
-  `yard ?` becomes `yard &`, so the lever is still seated in it and the floor still meets `STONES_NESTED` (task 12
-  deletes the block).
-
-- [ ] **Step 2: Run them to see them fail**
-
-Run: `yarn vitest run src/game/nestedLocks.spec.ts`
-Expected: FAIL: the port tests get `atPort` and `notPassThrough` (a port has one join), the plain host is seated, and the
-middle lock's refusal is `lockNestingRefused` `regionHoldsMechanic` beside the new `lockRefused`.
+Expected: FAIL: `nestSpotFaults` is not exported, and `parseLock` reads `-&>` as no edge (`cannot read "in -&> hall"`).
 
 - [ ] **Step 3: Implement**
 
-In `src/game/floorLocks.ts`, import `nestSpotOf` and `seatOf` from `./lockAuthoring` (beside `regionsHeldBy`,
-`sidesOf` from task 7, which this file no longer reads once `seatOf` seats: drop them from the import if unused), and
-replace `LockNestingFault` with:
+In `src/game/lockAuthoring.ts`, `Lock` gains, after `out`:
 
 ```ts
-/** EVERY WAY A NESTING IS REFUSED, naming the host, region or instance to fix. Authored names. A host's spot that no
- * lock could stand in is the host's own refusal (`nestSpotUnseatable`, compileLock), never a nesting's. */
-export type LockNestingFault =
-  | { type: "hostUnknown"; host: string }
-  | { type: "regionUnknown"; host: string; region: string }
-  /** A lock nests only in its host's nest spot (`&`); `spot` is the host's, null when it has none. */
-  | { type: "notNestSpot"; host: string; region: string; spot: string | null }
-  | { type: "cycle"; through: string[] }
-  /** The spot holds one lock; `with` is the placement that got there first. */
-  | { type: "regionShared"; host: string; region: string; with: string }
+  /** The one connection another lock may be spliced into (written `a -&> b`): its `in` meets `from`, its `out`
+   * meets `to`. The connection stays in `connections` as a plain corridor, which is what it is where nothing nests. */
+  readonly nestSpot?: { readonly from: RegionId; readonly to: RegionId }
 ```
 
-In `seatNested`, the loop body from `if (region === hostLock.in || region === hostLock.out)` to the end of the
-`seats.push` becomes:
+and, after `unladenFaults`:
 
 ```ts
-    // A LOCK NESTS ONLY IN ITS HOST'S NEST SPOT, the one region its author wrote `&`. Whether a lock can stand there
-    // at all is asked when the host is read (`nestSpotFaults`), so a spot that seats none is refused there, by name.
-    const spot = nestSpotOf(hostLock)
-    if (region !== spot) {
-      refuse(instance, { type: "notNestSpot", host, region, spot: spot ?? null })
-      continue
+/** Where a lock's nest spot contradicts it: on no connection the lock has, or on one that carries a barrier, which
+ * would stand across the splice with no side to stand on. */
+export type NestSpotFault =
+  | { type: "nestSpotOnNoConnection"; from: RegionId; to: RegionId }
+  | { type: "nestSpotBarred"; from: RegionId; to: RegionId; barriers: BarrierId[] }
+
+export const nestSpotFaults = (lock: Lock): NestSpotFault[] => {
+  if (!lock.nestSpot) return []
+  const { from, to } = lock.nestSpot
+  const connection = lock.connections.find(c => {
+    const [a, b] = joinOf(c)
+    return (a === from && b === to) || (a === to && b === from)
+  })
+  if (!connection) return [{ type: "nestSpotOnNoConnection", from, to }]
+  const barriers = barriersOf(connection)
+  return barriers.length > 0 ? [{ type: "nestSpotBarred", from, to, barriers: [...barriers] }] : []
+}
+```
+
+`freeRegions` spreads `...lock`, so it keeps `nestSpot` with no change.
+
+In `src/game/lockNotation.ts`:
+- `EDGE` becomes `/\s*(--|>>|-&>|-&-|<&-|-\[[^\]]*\]-)\s*/` (the two wrong spellings are read only to be refused);
+- in `join`, first: `if (ops.some(op => op === "-&-" || op === "<&-")) fail(n, "a nest spot is written a -&> b, from the nested lock's in to its out")`;
+- `LOCK_SYNTAX` gains, after the `-[unladen]-` line:
+  ```
+    in -&> hall                   the nest spot: another lock may be spliced in here, its in at in, its out at hall;
+                                  one per lock, a plain corridor where nothing nests, never beside a barrier
+  ```
+- beside `joins`: `const spots: { from: string; to: string; n: number }[] = []`;
+- in `join`, before `const barriers = ops`: `if (ops.includes("-&>")) spots.push({ from, to, n })`, and the barrier
+  filter skips it too: `.filter(op => op !== "--" && op !== "-&>")`;
+- the returned lock gains `...(spots.length > 0 ? { nestSpot: { from: spots[0].from, to: spots[0].to } } : {})`;
+- after the `unladenFaults` loop, before `return`:
+  ```ts
+  // A LOCK HAS ONE NEST SPOT (nestSpotsRepeated): only the text can say two, so only the parse refuses it.
+  for (const extra of spots.slice(1))
+    refused.push(`line ${extra.n}: a lock has one nest spot, and ${spots[0].from} -&> ${spots[0].to} is one already`)
+  for (const fault of nestSpotFaults(lock))
+    refused.push(
+      fault.type === "nestSpotBarred"
+        ? `line ${spots[0].n}: ${fault.from} -&> ${fault.to} cannot hold a nested lock: ${fault.barriers.join(", ")} stands on it`
+        : `line ${spots[0].n}: ${fault.from} -&> ${fault.to} is no connection of the lock`
+    )
+  ```
+  (import `nestSpotFaults` from `./lockAuthoring`).
+
+In `src/game/lockCompile.ts`: import `nestSpotFaults` and `type NestSpotFault` from `./lockAuthoring`; `LockFault`
+gains `| NestSpotFault` beside `| UnladenFault`; in `lockFaults`, after `faults.push(...unladen)`:
+`faults.push(...nestSpotFaults(lock))`. `translate` is unchanged: the spot is a plain connection.
+
+In `src/game/lockDraw.ts`, `sketchOf`'s connection loop: a connection without a drop whose pair is the lock's
+`nestSpot` gets the token `&` (it has no barriers, so its token is otherwise empty):
+
+```ts
+    const spot = lock.nestSpot && keyOf(a, b) === keyOf(lock.nestSpot.from, lock.nestSpot.to)
+    if (!drop) {
+      edges[String(c)] = { from: a, to: b, token: spot ? "&" : barriers.map(token).join(" ") }
+      return
     }
-    const first = taken.get(host)
-    if (first === undefined) taken.set(host, instance)
-    else refuse(instance, { type: "regionShared", host, region, with: first })
-    const { sides } = seatOf(hostLock, region)
-    if (sides) seats.push({ instance, host, region, near: sides[0], far: sides[1] })
 ```
 
-The cycle loop below it is unchanged. `expandFloorLocks`' doc comment ("A NESTED LOCK TAKES THE PLACE OF ONE REGION
-OF ITS HOST") becomes "A NESTED LOCK TAKES THE PLACE OF ITS HOST'S NEST SPOT", the rest as it is.
+(with a local `const keyOf = (a: string, b: string) => [a, b].sort().join("|")` if the file has none).
 
-- [ ] **Step 4: Run them to see them pass**
+In `scripts/lock.ts`, in `checks`, after the `at the start …` line:
+`` ...(lock.nestSpot ? [`nest spot: ${lock.nestSpot.from} -&> ${lock.nestSpot.to}`] : []), ``.
 
-Run: `yarn vitest run src/game/nestedLocks.spec.ts src/game/layLocks.spec.ts src/game/lockPlan.spec.ts src/game/floorLocks.spec.ts src/game/nestSpot.spec.ts`
-Expected: PASS; every nested floor carved in `nestedLocks.spec.ts` carves and walks as before (the spot is `hall`,
-compiled `free`). Run `yarn vitest run src/game` too: a test elsewhere that compares `leverLock()` or
-`strandingLock()` regions to a literal now reads `hall: { takes: "nest" }`; update that literal and name it in the
-report. A compiled layout still reads `appetite: "free"` for the spot.
+- [ ] **Step 4: Run them to see them pass, and every lock spec stays green**
+
+Run: `yarn vitest run src/game/nestSpot.spec.ts src/game/lockNotation.spec.ts src/game/lockDraw.spec.ts src/game/lockCompile.spec.ts src/game/nestedLocks.spec.ts src/game/lockWalkSpec.spec.ts`
+Expected: PASS (`nestedLocks.spec.ts` unchanged by this task: placement still seats in a region until task 8).
+
+Run: `printf 'in -&> hall\nhall -[L]- out\nL toggle @in\n' | yarn run lock -`
+Expected: a `nest spot: in -&> hall` line, and the drawing marks that corridor `&`.
+
+Run: `yarn run lock 2>&1 | grep -c "nest spot"`
+Expected: `0` (no catalogue lock writes `-&>`).
 
 Run: `yarn check-types && yarn lint`
 Expected: clean.
@@ -1636,8 +1415,222 @@ Expected: clean.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add src/game/floorLocks.ts src/game/testSupport/floorLockFixtures.ts src/game/nestedLocks.spec.ts
-git commit -m "feat(locks): a lock nests only in its host's nest spot" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+git add src/game/lockAuthoring.ts src/game/lockNotation.ts src/game/lockCompile.ts src/game/lockDraw.ts scripts/lock.ts src/game/nestSpot.spec.ts
+git commit -m "feat(lock): a lock marks one nest spot on a connection, written -&>" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
+```
+
+---
+
+### Task 8: A nested lock is spliced into its host's nest spot
+
+Placement stops seating a lock in a host region and splices it into the host's spot instead: the spot's connection
+`[host.from, host.to]` leaves the layout and two take its place, `[host.from, inner.in]` and `[inner.out, host.to]`.
+The host keeps every region, so the route walks host, inner, host whether the spot is on the route or off it. The spot
+carries no barrier (task 7), so no gate, drop or `barrierOrder` moves. `PlacedLock.inside` loses its `region`: the
+spot says where.
+
+**Files:**
+- Modify: `src/game/floorLocks.ts` (`PlacedLock.inside`, `PlacedInstance.inside`, `LockNestingFault`, `seatNested`,
+  the splice in `expandFloorLocks`; `regionsHeldBy` and `sidesOf` go, unread)
+- Modify: `src/game/lockPlan.ts` (`PlanNesting` names the spot's connection)
+- Modify: `src/game/testSupport/floorLockFixtures.ts` (`leverLock` and `strandingLock`: `nestSpot: { from: "foyer",
+  to: "hall" }`)
+- Modify: `src/game/nestedLocks.spec.ts`, `src/game/layLocks.spec.ts`, `src/game/lockPlan.spec.ts` (placements drop
+  `region`; the layout and refusal tests)
+
+**Interfaces:**
+- Consumes: `Lock.nestSpot`, `nestSpotFaults` (task 7).
+- Produces:
+  - `PlacedLock = { lock: Lock; as?: string; inside?: { instance: string } }`
+  - `PlacedInstance.inside?: { host: string; between: [string, string] }` and `PlanNesting = { host: string; between:
+    [string, string]; instance: string }`, both namespaced, `between` in the spot's direction (`[from, to]`)
+  - `LockNestingFault = { type: "hostUnknown"; host } | { type: "noNestSpot"; host } | { type: "cycle"; through } |
+    { type: "nestSpotTaken"; host; with }` (task 9 adds `oneWayInPassThrough`). A spot that contradicts its host is the
+    host's own refusal: `lockRefused` with `nestSpotOnNoConnection` / `nestSpotBarred` (task 7).
+
+- [ ] **Step 1: Change the fixtures and the tests**
+
+`src/game/testSupport/floorLockFixtures.ts`: `leverLock` and `strandingLock` gain `nestSpot: { from: "foyer", to:
+"hall" }` (their doc comments gain "; another lock may be spliced in between `foyer` and `hall`"). Their
+`connections` are unchanged: `["foyer", "hall"]` is the spot's plain corridor.
+
+Every test placement drops `region`: `inside: { instance: "x" }` becomes `inside: { instance: "x" }`
+(`grep -rn "region: \"" src/game/nestedLocks.spec.ts src/game/layLocks.spec.ts src/game/lockPlan.spec.ts` finds them;
+`insideHall(host)` in `nestedLocks.spec.ts` becomes `insideOf(host) => ({ instance: host })`, and the local
+`inner(inside)` helper takes `{ instance }`).
+
+In `src/game/nestedLocks.spec.ts`:
+- "takes the host region out of the layout and re-points its joins …" becomes:
+  ```ts
+  it("splices the inner into the host's nest spot: in at the spot's first region, out at its second", () => {
+    const { config, nesting } = expanded(leverInLever)
+
+    expect(config.regionLayout!.regions.map(region => region.name)).toEqual([
+      FLOOR_ENTRANCE,
+      "lever.foyer",
+      "lever.hall",
+      "lever.landing",
+      "inner.foyer",
+      "inner.hall",
+      "inner.landing",
+      FLOOR_EXIT,
+    ])
+    expect(config.regionLayout!.connections).toEqual([
+      [FLOOR_ENTRANCE, "lever.foyer"],
+      ["lever.foyer", "inner.foyer"],
+      ["inner.landing", "lever.hall"],
+      ["lever.hall", "lever.landing"],
+      ["inner.foyer", "inner.hall"],
+      ["inner.hall", "inner.landing"],
+      ["lever.landing", FLOOR_EXIT],
+    ])
+    expect(config.obstacles!.map(({ id, at }) => [id, at])).toEqual([
+      ["lever.hallDoor", { on: "connection", between: ["lever.hall", "lever.landing"] }],
+      ["inner.hallDoor", { on: "connection", between: ["inner.hall", "inner.landing"] }],
+    ])
+    expect(nesting).toEqual([
+      {
+        instance: "inner",
+        host: "lever",
+        regions: ["inner.foyer", "inner.hall", "inner.landing"],
+        in: "inner.foyer",
+        out: "inner.landing",
+      },
+    ])
+  })
+  ```
+- In `describe("a nesting that cannot be seated is refused by name", …)`: "names a host instance the floor does not
+  place" stays; "names a host region the host does not have", the port `it.each`, "refuses a region the host bars as a
+  whole", "refuses a region a host mechanic stands in", "refuses a region that is not a stretch of the route" and
+  "refuses a region whose two neighbours are equally far from the host's in" go (a nesting names no region; task 7
+  refuses a bad spot), with `ringLock`, `middleLeverLock` and, if nothing else uses it, the `sluiceLock` import. In
+  their place:
+  ```ts
+  it("refuses a host with no nest spot", () => {
+    const { nestSpot: _spot, ...plain } = { ...leverLock(), name: "plain" }
+    expect(refusedWith([{ lock: plain }, inner({ instance: "plain" })])).toEqual([
+      { type: "lockNestingRefused", instance: "inner", fault: { type: "noNestSpot", host: "plain" } },
+    ])
+  })
+
+  it("leaves a spot that contradicts its host to the host's own refusal", () => {
+    const barred: Lock = { ...leverLock(), name: "barred", nestSpot: { from: "hall", to: "landing" } }
+    expect(refusedWith([{ lock: barred }, inner({ instance: "barred" })])).toEqual([
+      {
+        type: "lockRefused",
+        instance: "barred",
+        fault: { type: "nestSpotBarred", from: "hall", to: "landing", barriers: ["hallDoor"] },
+      },
+    ])
+  })
+  ```
+- "refuses a second lock in a region that already holds one, naming the first" becomes "refuses a second lock in a
+  spot that already holds one, naming the first", expecting `fault: { type: "nestSpotTaken", host: "lever", with:
+  "first" }`. The cycle tests stay (with `insideOf`).
+- In `describe("stones on a floor with nested locks", …)` the stone lock's text `"in -- yard\nyard -- hall…"` becomes
+  `"in -- yard\nyard -&> hall…"`, so the lever is still spliced in and the floor still meets `STONES_NESTED` (task 12
+  deletes the block).
+
+In `src/game/lockPlan.spec.ts`, "lays a nested lock in its host's region, which gives up its place on the route"
+becomes "lays a nested lock in its host's nest spot, between the spot's two regions": its `nested` expectation becomes
+`[{ host: "lever", between: ["lever.foyer", "lever.hall"], instance: "inner" }]`, and its `route`/`corridors`
+expectations become what the plan prints once you have checked by hand that `lever.hall` is on the route after
+`inner.landing` and that no corridor joins `lever.foyer` to `lever.hall` directly. Name the changed lines in the report.
+
+- [ ] **Step 2: Run them to see them fail**
+
+Run: `yarn vitest run src/game/nestedLocks.spec.ts src/game/lockPlan.spec.ts src/game/layLocks.spec.ts`
+Expected: FAIL: a type error on `inside` without `region` (vitest runs on), `regionUnknown` for every placement, and
+the layout still drops `lever.hall`.
+
+- [ ] **Step 3: Implement**
+
+In `src/game/floorLocks.ts`:
+- `PlacedLock = { lock: Lock; as?: string; inside?: { instance: string } }`, its doc comment: "`inside` splices the
+  lock into the nest spot of another placement (`Lock.nestSpot`) instead of the floor's sequence. Neither lock knows:
+  the host is written exactly as it would be alone.";
+- `PlacedInstance.inside?: { host: string; between: [string, string] }`;
+- `LockNestingFault` becomes:
+  ```ts
+  /** EVERY WAY A NESTING IS REFUSED, naming the host or instance to fix. Authored names. A spot that contradicts its
+   * host is the host's own refusal (`nestSpotFaults`, compileLock), never a nesting's. */
+  export type LockNestingFault =
+    | { type: "hostUnknown"; host: string }
+    /** The host marks no nest spot (`-&>`), so nothing may nest in it. */
+    | { type: "noNestSpot"; host: string }
+    | { type: "cycle"; through: string[] }
+    /** A spot holds one lock; `with` is the placement that got there first. */
+    | { type: "nestSpotTaken"; host: string; with: string }
+  ```
+- `type Seat = { instance: string; host: string; from: string; to: string }`, and `seatNested`'s first loop body after
+  the `hostUnknown` check becomes:
+  ```ts
+    // A LOCK IS SPLICED INTO ITS HOST'S NEST SPOT, the one connection its author wrote `-&>`. Whether the spot can
+    // hold a lock is asked when the host is read (`nestSpotFaults`), so a spot that contradicts it is refused there.
+    const spot = hostLock.nestSpot
+    if (!spot) {
+      refuse(instance, { type: "noNestSpot", host })
+      continue
+    }
+    const first = taken.get(host)
+    if (first === undefined) taken.set(host, instance)
+    else refuse(instance, { type: "nestSpotTaken", host, with: first })
+    seats.push({ instance, host, from: spot.from, to: spot.to })
+  ```
+  (`taken` is keyed by host.) Delete `regionsHeldBy` and `sidesOf`, which nothing reads now, and any import only
+  they used.
+- in `expandFloorLocks`, the seat loop (`for (const { instance, host, region, near, far } of nested.seats)`) becomes
+  the splice:
+  ```ts
+  // A NESTED LOCK IS SPLICED INTO ITS HOST'S NEST SPOT: the spot's corridor gives way to two, from the spot's first
+  // region to the inner's `in` and from the inner's `out` to the spot's second. The spot carries no barrier, so
+  // nothing else of the host moves.
+  for (const { instance, host, from, to } of nested.seats) {
+    const inner = fragments.get(instance)!.regionLayout
+    const [a, b] = [`${host}.${from}`, `${host}.${to}`]
+    const hosted = fragments.get(host)!
+    fragments.set(host, {
+      ...hosted,
+      regionLayout: {
+        ...hosted.regionLayout,
+        connections: hosted.regionLayout.connections.flatMap(pair =>
+          (pair[0] === a && pair[1] === b) || (pair[0] === b && pair[1] === a)
+            ? [[a, inner.in] as const, [inner.out, b] as const]
+            : [pair]
+        ),
+      },
+    })
+  }
+  ```
+  and its doc comment's last paragraph becomes "A NESTED LOCK IS SPLICED INTO ITS HOST'S NEST SPOT: the spot's
+  corridor gives way to one from its first region to the inner's `in` and one from the inner's `out` to its second, so
+  the route walks host, inner, host. Nested locks are no part of the floor's sequence.";
+- `placed`'s `inside` becomes `{ host: seat.host, between: [`${seat.host}.${seat.from}`, `${seat.host}.${seat.to}`] }`.
+
+In `src/game/lockPlan.ts`: `PlanNesting = { host: string; between: [string, string]; instance: string }` (doc: "A lock
+spliced into its host's nest spot, between the spot's two regions."), and line 184's map reads
+`inside ? [{ host: inside.host, between: inside.between, instance }] : []`.
+
+The floor walk needs no change for the splice: a nesting is still the inner's own regions and ports
+(`LockNesting`), and the host's level walks it as ground between the spot's two regions.
+
+- [ ] **Step 4: Run them to see them pass**
+
+Run: `yarn vitest run src/game/nestedLocks.spec.ts src/game/layLocks.spec.ts src/game/lockPlan.spec.ts src/game/floorLocks.spec.ts src/game/nestSpot.spec.ts src/game`
+Expected: PASS. "walks the host, the inner and the host again along the main route of every carve" stays green as
+written (`[FLOOR_ENTRANCE, "lever", "inner", "lever", FLOOR_EXIT]`). A walk or state-count test that now fails moved
+because the inner stands before `hall` rather than in its place: read it, and if the new number is the host's states
+on the new layout, update it and name it in the report; if a walk turned unsound, stop and report.
+
+Run: `yarn check-types && yarn lint`
+Expected: clean.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add src/game/floorLocks.ts src/game/lockPlan.ts src/game/testSupport/floorLockFixtures.ts src/game/nestedLocks.spec.ts src/game/layLocks.spec.ts src/game/lockPlan.spec.ts
+git commit -m "feat(locks): a nested lock is spliced into its host's nest spot" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
 ```
 
@@ -1646,8 +1639,8 @@ Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
 ### Task 9: Each nesting knows its stone case; a pass-through lock holds no one-way
 
 Tasks 9-14 implement the spec's "Nested locks (designer, 2026-10-08)". They do not depend on tasks 1-6 (they read
-the gate-loop work nowhere) but do on tasks 7-8: every host below marks its nest spot `&`, and `leverLock`'s spot is
-`hall`.
+the gate-loop work nowhere) but do on tasks 7-8: every host below marks its nest spot `-&>`, and `leverLock`'s spot is
+`foyer -&> hall`.
 
 **Files:**
 - Modify: `src/game/floorLocks.ts` (`StoneNesting`, `stoneNestings`; `LockNesting.stones`; `LockNestingFault` gains
@@ -1655,7 +1648,7 @@ the gate-loop work nowhere) but do on tasks 7-8: every host below marks its nest
 - Create: `src/game/nestedStones.spec.ts`
 
 **Interfaces:**
-- Consumes: `notNestSpot` and the spot in `leverLock`'s `hall` (task 8).
+- Consumes: `inside: { instance }`, `noNestSpot` and `leverLock`'s spot `foyer -&> hall` (task 8).
 - Produces, in `@/game/floorLocks`:
   - `export type StoneNesting = { case: "passThrough"; pool: string } | { case: "contained" } | { case: "shared"; pool: string }`
   - `export const stoneNestings = (placements: readonly PlacedLock[]): Map<string, StoneNesting>` (nested
@@ -1687,11 +1680,12 @@ import { leverLock } from "./testSupport/floorLockFixtures"
 import { BINDING } from "./testSupport/lockFixtures"
 
 // MADE-UP LOCKS NESTED IN EACH OTHER, never catalogue ones: a test pins the rule, `yarn run lock` checks the catalogue.
-// Every region takes `free` but a host's nest spot, so the floor holds the locks and nothing else.
+// Every region takes `free`, so the floor holds the locks and nothing else.
 
-/** Stones around `yard`, the nest spot: a stone on the shelf by the way in, a door on that waits for a stone on `p`. */
+/** Stones around a nest spot from `yard` to `hall`: a stone on the shelf by the way in, a door on that waits for a
+ * stone on `p`. */
 const HOST_STONES =
-  "in -- yard\nyard -- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nyard &\nhall ?\nout ?"
+  "in -- yard\nyard -&> hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nyard ?\nhall ?\nout ?"
 /** A stone lock to nest: its stone on a shelf by its way in, its door on waiting for it on `p`. */
 const CELL = "in -- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nhall ?\nout ?"
 /** A stone lock that opens only for a stone carried in: `s` by its way in opens the way on, its own stone lies
@@ -1699,7 +1693,7 @@ const CELL = "in -- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\n
 const GATED = "in -[s]- hall\nhall -- out\ns plate @in\nt plate @hall stone\nin ?\nhall ?\nout ?"
 /** HOST_STONES with a torch by the way in that shuts the way on for good: a player who lights it first strands. */
 const STRANDING_HOST =
-  "in -[T:off]- yard\nyard -- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nT activator @in\nin ?\nyard &\nhall ?\nout ?"
+  "in -[T:off]- yard\nyard -&> hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nT activator @in\nin ?\nyard ?\nhall ?\nout ?"
 
 const NESTED_BINDING = { ...BINDING, weights: "stonePlate" }
 
@@ -1708,17 +1702,17 @@ const stones = (text: string, name: string) => parseLock(text, name).lock
 /** The outer lock holds stones, the inner none: the stone is carried through it. */
 const PASS_THROUGH: PlacedLock[] = [
   { lock: stones(HOST_STONES, "host") },
-  { lock: leverLock(), as: "inner", inside: { instance: "host", region: "yard" } },
+  { lock: leverLock(), as: "inner", inside: { instance: "host" } },
 ]
 /** The inner lock holds stones, the outer none: they never leave it. */
 const CONTAINED: PlacedLock[] = [
   { lock: leverLock() },
-  { lock: stones(CELL, "cell"), as: "inner", inside: { instance: "lever", region: "hall" } },
+  { lock: stones(CELL, "cell"), as: "inner", inside: { instance: "lever" } },
 ]
 /** Both hold stones: one pool. */
 const SHARED: PlacedLock[] = [
   { lock: stones(HOST_STONES, "host") },
-  { lock: stones(GATED, "gated"), as: "inner", inside: { instance: "host", region: "yard" } },
+  { lock: stones(GATED, "gated"), as: "inner", inside: { instance: "host" } },
 ]
 
 const floorOf = (locks: PlacedLock[]): FloorConfig => ({
@@ -1763,8 +1757,8 @@ describe("a nested lock's stones are read against the locks it stands in", () =>
   it("reads past a lock without stones to the nearest that has them, and pools with the outermost", () => {
     const chain: PlacedLock[] = [
       { lock: stones(HOST_STONES, "host") },
-      { lock: leverLock(), as: "middle", inside: { instance: "host", region: "yard" } },
-      { lock: stones(CELL, "cell"), as: "deep", inside: { instance: "middle", region: "hall" } },
+      { lock: leverLock(), as: "middle", inside: { instance: "host" } },
+      { lock: stones(CELL, "cell"), as: "deep", inside: { instance: "middle" } },
     ]
     expect(stoneNestings(chain)).toEqual(
       new Map([
@@ -1775,7 +1769,7 @@ describe("a nested lock's stones are read against the locks it stands in", () =>
   })
 
   it("leaves a nesting without stones unmarked, so the floor's nesting reads as it did", () => {
-    const plain: PlacedLock[] = [{ lock: leverLock() }, { lock: leverLock(), as: "inner", inside: { instance: "lever", region: "hall" } }]
+    const plain: PlacedLock[] = [{ lock: leverLock() }, { lock: leverLock(), as: "inner", inside: { instance: "lever" } }]
     expect(stoneNestings(plain)).toEqual(new Map())
     expect(expanded(plain).nesting?.[0]).not.toHaveProperty("stones")
   })
@@ -1791,7 +1785,7 @@ describe("a pass-through lock never turns a stone away", () => {
     const result = carve(
       [
         { lock: stones(HOST_STONES, "host") },
-        { lock: stones("in -[unladen]- out\nin ?\nout ?", "crack"), as: "inner", inside: { instance: "host", region: "yard" } },
+        { lock: stones("in -[unladen]- out\nin ?\nout ?", "crack"), as: "inner", inside: { instance: "host" } },
       ],
       1
     )
@@ -1808,7 +1802,7 @@ describe("a pass-through lock never turns a stone away", () => {
     const result = carve(
       [
         { lock: stones(HOST_STONES, "host") },
-        { lock: stones("in >> out\nin ?\nout ?", "chute"), as: "inner", inside: { instance: "host", region: "yard" } },
+        { lock: stones("in >> out\nin ?\nout ?", "chute"), as: "inner", inside: { instance: "host" } },
       ],
       1
     )
@@ -1824,7 +1818,7 @@ describe("a pass-through lock never turns a stone away", () => {
   it("leaves a one-way in a contained lock to the walk, which takes it with empty hands", () => {
     const dropping = "in -- hall\nhall >> out\nshelf plate @in stone\nin ?\nhall ?\nout ?"
     expect(() =>
-      expanded([{ lock: leverLock() }, { lock: stones(dropping, "drop"), as: "inner", inside: { instance: "lever", region: "hall" } }])
+      expanded([{ lock: leverLock() }, { lock: stones(dropping, "drop"), as: "inner", inside: { instance: "lever" } }])
     ).not.toThrow()
   })
 })
@@ -1875,7 +1869,7 @@ export type LockNesting = {
 }
 ```
 
-`LockNestingFault` gains, after `regionShared`:
+`LockNestingFault` gains, after `nestSpotTaken`:
 
 ```ts
   /** A lock without stones that stands in one with them lets a stone through, so it holds no one-way: every one-way
@@ -2535,8 +2529,8 @@ describe("a nested floor with stones is walked with them as one pool", () => {
   it("keeps the floor's way out for empty hands on a nested floor", { timeout: 60_000 }, () => {
     // The door on waits for the shelf to be EMPTY: the only way past carries the stone, and the way out refuses it.
     const carriedOut: PlacedLock[] = [
-      { lock: stones("in -[shelf:empty]- yard\nyard -- out\nshelf plate @in stone\nin ?\nyard &\nout ?", "host") },
-      { lock: leverLock(), as: "inner", inside: { instance: "host", region: "yard" } },
+      { lock: stones("in -[shelf:empty]- yard\nyard -&> out\nshelf plate @in stone\nin ?\nyard ?\nout ?", "host") },
+      { lock: leverLock(), as: "inner", inside: { instance: "host" } },
     ]
     const grids = carved(carriedOut)
     expect(grids.length).toBeGreaterThan(0)
@@ -2551,8 +2545,8 @@ describe("a nested floor with stones is walked with them as one pool", () => {
   // open the door: sound if a level dropped the rule, stranded while it holds.
   const RIDE = "in -- top\ntop >> low\nlow -[p]- out\np plate @low\nshelf plate @top stone\nin ?\ntop ?\nlow ?\nout ?"
   it.each<[string, PlacedLock[]]>([
-    ["a contained lock", [{ lock: leverLock() }, { lock: stones(RIDE, "ride"), as: "inner", inside: { instance: "lever", region: "hall" } }]],
-    ["a shared pool", [{ lock: stones(HOST_STONES, "host") }, { lock: stones(RIDE, "ride"), as: "inner", inside: { instance: "host", region: "yard" } }]],
+    ["a contained lock", [{ lock: leverLock() }, { lock: stones(RIDE, "ride"), as: "inner", inside: { instance: "lever" } }]],
+    ["a shared pool", [{ lock: stones(HOST_STONES, "host") }, { lock: stones(RIDE, "ride"), as: "inner", inside: { instance: "host" } }]],
   ])("never lets a stone ride a drop inside %s", { timeout: 60_000 }, (_, locks) => {
     const grids = carved(locks)
     expect(grids.length).toBeGreaterThan(0)
@@ -2565,7 +2559,7 @@ describe("a nested floor with stones is walked with them as one pool", () => {
   it("names both locks of a pool when the pooled floor strands", { timeout: 60_000 }, () => {
     const stranding: PlacedLock[] = [
       { lock: stones(STRANDING_HOST, "host") },
-      { lock: stones(GATED, "gated"), as: "inner", inside: { instance: "host", region: "yard" } },
+      { lock: stones(GATED, "gated"), as: "inner", inside: { instance: "host" } },
     ]
     const grids = carved(stranding)
     expect(grids.length).toBeGreaterThan(0)
@@ -2820,7 +2814,7 @@ const config: FloorConfig = {
     {
       lock: parseLock("in -- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nhall ?\nout ?", "cell").lock,
       as: "inner",
-      inside: { instance: "lever", region: "hall" },
+      inside: { instance: "lever" },
     },
   ],
 }
@@ -2923,9 +2917,8 @@ Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
 
 ### Task 14: Nested stones in the Lock playground
 
-The playground nests the second lock in the picked lock's nest spot: the spot says where, so the story names only
-which lock goes in it. A picked lock with no spot shows the floor's refusal (`notNestSpot`, `spot: null`), as any
-refusal shows.
+The playground splices the second lock into the picked lock's nest spot: the spot says where, so the story names
+only which lock goes in it. A picked lock with no spot shows the floor's refusal (`noNestSpot`), as any refusal shows.
 
 **Files:**
 - Modify: `src/app/SiteMap/playgroundCarve.testing.ts` (`playgroundFloor` takes an optional nested lock)
@@ -2934,9 +2927,9 @@ refusal shows.
 - Test: `src/app/SiteMap/lockPlayground.spec.tsx`
 
 **Interfaces:**
-- Consumes: `nestSpotOf` (task 7); `freeRegions` keeps the spot (task 7).
+- Consumes: `PlacedLock.inside: { instance }` (task 8); `freeRegions` keeps `nestSpot` (task 7).
 - Produces: `playgroundFloor(lock: Lock, binding: RealisationBinding, nest?: Lock): FloorConfig` (the nested lock
-  stands in `lock`'s spot, as instance `inner`); `LockPlayground` prop `nest?: string` (a key of `locks`; the picked
+  is spliced into `lock`'s spot, as instance `inner`); `LockPlayground` prop `nest?: string` (a key of `locks`; the picked
   lock is the host).
 
 - [ ] **Step 1: Write the failing test**
@@ -2946,16 +2939,16 @@ In `src/app/SiteMap/lockPlayground.spec.tsx`, append (import `playgroundFloor`, 
 
 ```ts
 describe("a lock nested in the playground's lock", () => {
-  it("stands in the picked lock's nest spot, every other region free", () => {
-    const host = parseLock("in -- hall\nhall -[L]- out\nL toggle @in\nin *\nhall &\nout ?", "host").lock
+  it("is spliced into the picked lock's nest spot, every region free", () => {
+    const host = parseLock("in -&> hall\nhall -[L]- out\nL toggle @in\nin *\nhall ?\nout ?", "host").lock
     const inner = parseLock("in -- out\nshelf plate @in stone\nin *\nout ?", "cell").lock
     const config = playgroundFloor(host, defaultBinding(), inner)
     expect(config.locks?.map(placed => [placed.as, placed.inside])).toEqual([
       [undefined, undefined],
-      ["inner", { instance: "host", region: "hall" }],
+      ["inner", { instance: "host" }],
     ])
     expect(Object.values(config.locks![1].lock.regions).every(region => region.takes === "free")).toBe(true)
-    expect(config.locks![0].lock.regions.hall).toEqual({ takes: "nest" })
+    expect(config.locks![0].lock.nestSpot).toEqual({ from: "in", to: "hall" })
   })
 })
 ```
@@ -2965,12 +2958,12 @@ Expected: FAIL, one placement.
 
 - [ ] **Step 2: Implement**
 
-`src/app/SiteMap/playgroundCarve.testing.ts` (import `nestSpotOf` beside `freeRegions` from `@/game/lockAuthoring`):
+`src/app/SiteMap/playgroundCarve.testing.ts`:
 
 ```ts
-/** The lock alone on an expert floor with no puzzles, every region free but its nest spot, as the dev floors bench a
- * lock; `nest` stands a second lock in that spot. A lock with no spot is placed with `nest` anyway, so the floor
- * refuses it by name (`notNestSpot`). */
+/** The lock alone on an expert floor with no puzzles, every region free, as the dev floors bench a lock; `nest` is
+ * spliced into its nest spot. A lock with no spot is placed with `nest` anyway, so the floor refuses it by name
+ * (`noNestSpot`). */
 export const playgroundFloor = (lock: Lock, binding: RealisationBinding, nest?: Lock): FloorConfig => ({
   pathPuzzles: 0,
   difficulty: "expert",
@@ -2980,15 +2973,13 @@ export const playgroundFloor = (lock: Lock, binding: RealisationBinding, nest?: 
   locks: [
     { lock: freeRegions(lock) },
     ...(nest
-      ? [{ lock: freeRegions(nest), as: "inner", inside: { instance: lock.name, region: nestSpotOf(lock) ?? lock.in } }]
+      ? [{ lock: freeRegions(nest), as: "inner", inside: { instance: lock.name } }]
       : []),
   ],
   realisations: binding,
 })
 ```
 
-(`lock.in` stands in for a missing spot only so the placement is written; the floor refuses it `notNestSpot` with
-`spot: null`.)
 
 `src/app/SiteMap/lockPlayground.testing.tsx`, `LockPlayground`: the props type gains `nest?: string`; beside
 `parsed`:
@@ -3019,10 +3010,10 @@ is; an inner's own `refused` lines join the picked lock's). `unbuilt` adds the i
 
 ```tsx
 // MADE-UP LOCKS NESTED IN EACH OTHER, one story per stone case (stones spec, "Nested locks"). The picked lock is the
-// host; `nest` stands the other in its nest spot (`&`).
+// host; `nest` is spliced into its nest spot (`-&>`).
 const HOST_STONES =
-  "in -- yard\nyard -- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nyard &\nhall ?\nout ?"
-const LEVER = "in -- hall\nhall -[L]- out\nL toggle @in\nin ?\nhall &\nout ?"
+  "in -- yard\nyard -&> hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nyard ?\nhall ?\nout ?"
+const LEVER = "in -&> hall\nhall -[L]- out\nL toggle @in\nin ?\nhall ?\nout ?"
 const CELL = "in -- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nhall ?\nout ?"
 const GATED = "in -[s]- hall\nhall -- out\ns plate @in\nt plate @hall stone\nin ?\nhall ?\nout ?"
 
@@ -3118,7 +3109,7 @@ proves the loop sound ``. Prettier reflows the table: edit the row by line and r
 - after that bullet:
 
 ```markdown
-- **Nested locks.** A lock nests only in its host's nest spot (§7). Each nesting is read against the nearest
+- **Nested locks.** A lock nests only in its host's nest spot, spliced into that connection (§7). Each nesting is read against the nearest
   lock it stands in that holds stones (`stoneNestings`, `LockNesting.stones`). A **pass-through** lock (no
   stones of its own) lets a stone through, so nothing in it takes only empty hands: it cannot write
   `-[unladen]-` (`carryWithoutStones`) and holds no one-way (`oneWayInPassThrough`). A **contained** lock
@@ -3138,29 +3129,31 @@ add:
 ```markdown
 ### The nest spot
 
-A lock marks at most one region as its **nest spot**, `"takes": "nest"` (written `&` in the notation): the
-one place another lock may be nested in it, where it is placed. Nesting is rare, and a spot is where it can
-raise a lock's difficulty without the author guessing where a floor might put it. The spot is a stretch of
-the lock's route: not its `in` or `out`, not barred as a whole, no mechanic in it, exactly two joins, one
-nearer `in`. A second spot is refused `nestSpotsRepeated`, a spot that breaks a rule `nestSpotUnseatable`,
-both when the lock is read (`yarn lock`, `compileLock`). A nested lock takes the spot's place: the join
-nearer the host's `in` meets the inner's `in`, the other its `out`. Where nothing nests, the spot is `free`
-ground.
+A lock marks at most one connection as its **nest spot**, `"nestSpot": { "from": "a", "to": "b" }`, written
+`a -&> b` in the notation (never `-&-` or `<&-`): the one place another lock may be nested in it, where it is
+placed. Nesting is rare, and a spot is where it can raise a lock's difficulty without the author guessing
+where a floor might put it. A nested lock is spliced into the connection: its `in` meets `from`, its `out`
+meets `to`, as the arrow points. The spot may be any connection of the lock, on its route or off it, but one
+that carries no barrier: a gate, a drop or a narrow passage there is refused `nestSpotBarred`, a spot on no
+connection `nestSpotOnNoConnection`, a second spot `nestSpotsRepeated`, all when the lock is read
+(`yarn lock`, `compileLock`). The connection stays in `connections`, so where nothing nests the spot is a
+plain corridor.
 ```
 
 - [ ] **Step 3: The roadmap and the spec**
 
 `docs/superpowers/plans/2026-10-06-stonegate-roadmap.md` (edit the table row by line and read it back): phase 4's row
 says "(done <date>, [plan](2026-10-08-stonegate-phase-4-gate-loops.md))" after **Gate loops in the carve**. Under
-"## Decisions taken", add: "- **One nest spot per lock** (designer, 2026-10-08): written `&`; a lock nests only
+"## Decisions taken", add: "- **One nest spot per lock, on a connection** (designer, 2026-10-08): written
+`a -&> b`, the inner lock's `in` at `a` and its `out` at `b`, on any connection without a barrier; a lock nests only
 there. Phase 4 builds it." Add an "## Open after phase 4" section above "## Open per phase":
 - a layout written longhand (no `locks`) still refuses a gate on a loop's second meeting; `offRouteChains` is the
   side-chain carve's grouping and is unchanged;
 - masonsRamp, counterweight and stoneOnAPlate are still not on the dev floor;
 - whether the lock playground carves stoneGate on its bench floor (from step 1);
 - no catalogue lock marks a nest spot yet; `yarn run lock` shows and checks a spot, but cannot say which stone case
-  a nesting is; that surfaces in the bake's lock sweep, the floor's refusals and the Lock playground (question 13);
-- a pass-through lock refuses any one-way, on its route or not (question 8);
+  a nesting is; that surfaces in the bake's lock sweep, the floor's refusals and the Lock playground (question 11);
+- a pass-through lock refuses any one-way, on its route or not (question 6);
 - two stone locks placed one after the other (not nested) are two weights records, so play could hold a stone of
   each; no floor places two;
 - any playground nested-stone story that did not carve within `CARVE_BUDGET` (task 14 step 3).
@@ -3170,10 +3163,11 @@ In the same file, delete the "Open after phase 1" bullet "Any floor with `lockNe
 crossing starts from the first side in the cell's `dirs`." (task 6). Edit by line and read the file back.
 
 `docs/superpowers/specs/2026-10-04-stones-acceptance.md` §1, "Nested locks":
-- after "A lock nested inside another sits on the outer lock's route.", add: "Each lock has a single spot for
-  nesting (designer, 2026-10-08), written `&` on its takes line; a lock nests only in its host's spot, and a lock
-  with two spots, or a spot no lock could stand in, is refused by name. Nesting is rare; a spot is where it can raise
-  a lock's difficulty."
+- "A lock nested inside another sits on the outer lock's route." becomes: "Each lock has a single spot for nesting
+  (designer, 2026-10-08): a connection, written `a -&> b`, on the lock's route or off it. A lock nested inside another
+  is spliced into that connection, its `in` at `a` and its `out` at `b`. A lock with two spots, a spot on a connection
+  that carries a barrier, and the spellings `-&-` and `<&-` are refused by name. Nesting is rare; a spot is where it
+  can raise a lock's difficulty."
 - the pass-through bullet's last sentence gains: "A one-way anywhere in a pass-through lock is refused by name
   (`oneWayInPassThrough`): every one-way takes empty hands."
 - tick the box "The solver walks a nested floor with its stones as one pool and proves each case above; a nesting
@@ -3251,8 +3245,8 @@ and check `gh pr checks` if a PR exists for the branch.
 - **Spec "The rules" (empty hands):** no task tags a one-way or reads `unladen` beside another owner; every one-way
   keeps its one rule through the rename (task 11) and on every nested level (task 12, "never lets a stone ride a
   drop"); play turns a carrier away at every launch unchanged (task 13).
-- **Designer decision, one nest spot:** marked `&` and checked when read (task 7), only nest spot accepted at
-  placement (task 8), shown by `lockDraw` and `yarn run lock` (task 7), used by the playground (task 14), recorded in
+- **Designer decision, one nest spot on a connection:** `a -&> b`, other spellings, a second spot and a barred spot
+  refused when read (task 7), the inner spliced into the host's spot at placement (task 8), shown by `lockDraw` and `yarn run lock` (task 7), used by the playground (task 14), recorded in
   the spec and the contract (task 15). The three cases ride on it unchanged (tasks 9-13).
 - **Spec §1 "Nested locks":** classified (task 9); pass through: a stone crosses the solved inner lock both ways,
   walked (task 12), and the two things that would turn a stone away in it refused by name (`carryWithoutStones`,
@@ -3261,9 +3255,9 @@ and check `gh pr checks` if a PR exists for the branch.
   inner's drops and the floor's ways out take empty hands (`emptyHands` per level, task 12), a stone set on an inner
   plate (`poolStones` unit, task 10; `StonesShared` story, task 14); "the solver walks a nested floor with its stones
   as one pool and proves each case" (task 12, every case agreeing with the product walk on every carve); "refused by
-  name" (`notNestSpot`, `nestSpotUnseatable`, `carryWithoutStones`, `oneWayInPassThrough`, `nested`, `pooled`);
+  name" (`noNestSpot`, `nestSpotTaken`, `nestSpotBarred`, `nestSpotsRepeated`, `carryWithoutStones`, `oneWayInPassThrough`, `nested`, `pooled`);
   `STONES_NESTED` lifted (task 12). "Leaves the inner lock with a stone only by solving it for one" is read per
-  question 10.
+  question 8.
 - **Reviewer note (two rules on one field):** `leaveWith` is renamed `emptyHands` (task 11) and no level drops it
   (task 12 step 3 item 4); the relaxed way out of a shared inner lock is the absence of an edge, never the absence of
   `emptyHands`; pinned by "never lets a stone ride a drop inside a contained lock / a shared pool" (task 12).
@@ -3279,8 +3273,9 @@ and check `gh pr checks` if a PR exists for the branch.
 - **Type consistency:** `TopologyOptions = { laid?: boolean }` (task 1) is read by tasks 2 and 3; `forkSeams(graph,
   region, oneWays, { laid })` returns `[region, other][]` (task 3), read by `seamsFor` as keys and by the assembler as
   `ForkIn.seams`; `gateBypassed` has the same shape in `TopologyFault` and `AssemblerReason` (task 2);
-  `passageCrossing`'s fifth argument (task 6) defaults so phase 3's callers compile unchanged. `LockAppetite`,
-  `seatOf(lock, region)`, `nestSpotOf(lock)`, `nestSpotFaults(lock)` (task 7) are read by tasks 8 and 14;
+  `passageCrossing`'s fifth argument (task 6) defaults so phase 3's callers compile unchanged. `Lock.nestSpot`
+  and `nestSpotFaults(lock)` (task 7) are read by tasks 8 and 14; `PlacedLock.inside: { instance }` (task 8) by every
+  later task's placements;
   `LockNestingFault` (task 8) gains `oneWayInPassThrough` (task 9). `StoneNesting` and `stoneCases` (task 9) are read
   by tasks 10 (`case`, `pool`), 11 (`containedGrounds`) and 12 (`cutOf`); `poolStones(id, controls, any)` (task 10);
   `crossesContainedEdge(grid, a, b)` and `stopShort(grid, path)` (task 11) are read by `floorLock` and by the
@@ -3288,5 +3283,5 @@ and check `gh pr checks` if a PR exists for the branch.
   (task 11) by `floorLockWalk` (task 12); the `pooled` failure has one shape in task 12's type and tests.
 - **Not covered:** a gate loop inside a nested lock (no lock nests one); a loop closed by a drop (a drop is no
   ground, so it never makes a gate bypassed, and the lay lays it as before); two stone locks one after the other on a
-  floor (two hands; recorded in task 15); `yarn run lock` for a nesting's stone case (question 13); a catalogue lock
+  floor (two hands; recorded in task 15); `yarn run lock` for a nesting's stone case (question 11); a catalogue lock
   with a nest spot (none writes one; the designer adds them).
