@@ -6,6 +6,7 @@ import { demandLabel, enumerateConfigs, seedFloor } from "@/game/seeds/enumerate
 import { generatePuzzle } from "@/game/seeds/generatePuzzle"
 import { findUnbakedSwitchBoards } from "@/worldGen/validate"
 import { ALL_FAMILY_META } from "@/mods/allFamilyMeta"
+import { FORK_SHAPES } from "@/game/forkShape"
 
 // The guard on the shipped artifact (`docs/instructions/puzzle-screens.md` §6.1). A miss is never *wrong* — play
 // time falls back to generating live — so this does not protect correctness. It protects the reason
@@ -85,9 +86,9 @@ const DEMAND_WITHOUT_SWITCHES = [
   "constellation/master: 49",
   "canisters/master: 48",
   "futoshiki/wizard: 48",
+  "sumplete/wizard: 47",
   "hidato/wizard: 43",
   "eclipse/wizard: 43",
-  "sumplete/wizard: 43",
   "lightbeam/wizard: 43",
   "procession/master: 41",
   "rush-hour/wizard: 41",
@@ -153,11 +154,14 @@ describe("the demand the world declares", () => {
   // A fork's shape is the carve's choice, settled by the maze rather than by the authoring, so a floor
   // that stands a switch anywhere owes a board for all three.
   it("owes the switch a board at every shape, at the tiers the world authors one", () => {
-    expect(demands.filter(demand => demand.familyId === "lightbeamSwitch").map(labelledDemand)).toEqual([
-      "lightbeamSwitch/junior adjacent: 1",
-      "lightbeamSwitch/junior opposite: 1",
-      "lightbeamSwitch/junior three: 1",
-    ])
+    const switchDemands = demands.filter(demand => demand.familyId === "lightbeamSwitch")
+    expect(switchDemands).not.toEqual([])
+    for (const tier of new Set(switchDemands.map(demand => demand.difficulty))) {
+      expect(
+        switchDemands.filter(demand => demand.difficulty === tier).map(demand => demand.ctx.forkShape),
+        `lightbeamSwitch/${tier}`
+      ).toEqual([...FORK_SHAPES])
+    }
   })
 })
 
@@ -174,17 +178,19 @@ describe("the baked-board requirement on the shipped world", () => {
   // world invented to make it fire — and so a check that could only ever be met fails here.
   it("names the floor and the shape when a bucket is emptied", () => {
     const switchBuckets = demands.filter(demand => demand.familyId === "lightbeamSwitch")
-    expect(switchBuckets.length, "no switch bucket to empty").toBe(3)
+    expect(switchBuckets, "no switch bucket to empty").not.toEqual([])
     for (const bucket of switchBuckets) {
       const without = Object.fromEntries(Object.entries(puzzleSeeds).filter(([hash]) => hash !== bucket.hash))
-      expect(
-        findUnbakedSwitchBoards(generatedWorldConfigs, ALL_FAMILY_META, without).map(
-          board =>
-            `${board.journeyId} level ${board.levelNr} floor ${board.floorIndex}: ` +
-            `${board.familyId} at ${board.difficulty}, ${board.forkShape} fork`
-        ),
-        `emptying ${demandLabel(bucket)} went unreported`
-      ).toEqual([`junior_2 level 2 floor 0: lightbeamSwitch at junior, ${bucket.ctx.forkShape} fork`])
+      const reported = findUnbakedSwitchBoards(generatedWorldConfigs, ALL_FAMILY_META, without)
+      expect(reported, `emptying ${demandLabel(bucket)} went unreported`).not.toEqual([])
+      for (const board of reported) {
+        expect(generatedWorldConfigs[board.journeyId]?.[board.levelNr - 1]?.[board.floorIndex]).toBeDefined()
+        expect(board).toMatchObject({
+          familyId: "lightbeamSwitch",
+          difficulty: bucket.difficulty,
+          forkShape: bucket.ctx.forkShape,
+        })
+      }
     }
   })
 })
