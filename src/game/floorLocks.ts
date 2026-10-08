@@ -106,7 +106,7 @@ const seatNested = (placements: PlacedLock[]): { reasons: AssemblerReason[]; sea
       refuse(instance, { type: "hostUnknown", host })
       continue
     }
-    if (!(region in hostLock.regions)) {
+    if (!Object.hasOwn(hostLock.regions, region)) {
       refuse(instance, { type: "regionUnknown", host, region })
       continue
     }

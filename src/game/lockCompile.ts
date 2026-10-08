@@ -133,7 +133,8 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
   need("port in", lock.in)
   need("port out", lock.out)
 
-  for (const id of Object.keys(lock.gates)) if (id in oneWays) faults.push({ type: "barrierIdRepeated", id })
+  for (const id of Object.keys(lock.gates))
+    if (Object.hasOwn(oneWays, id)) faults.push({ type: "barrierIdRepeated", id })
 
   const declared = new Set<string>()
   const namedOn = new Map<string, number>()
@@ -164,9 +165,10 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
     // Empty hands beside a drop are the drop's own condition (`absorbUnladen`), not a second barrier on it.
     const conditions = dropConditionsOn(lock, barriers)
     const standing = barriers.filter(
-      barrier => barrier in oneWays || (barrier in lock.gates && !conditions.includes(barrier))
+      barrier =>
+        Object.hasOwn(oneWays, barrier) || (Object.hasOwn(lock.gates, barrier) && !conditions.includes(barrier))
     )
-    if (standing.some(barrier => barrier in oneWays) && standing.length > 1)
+    if (standing.some(barrier => Object.hasOwn(oneWays, barrier)) && standing.length > 1)
       faults.push({ type: "oneWaySharesConnection", between: join, barriers: standing })
   }
   for (const [barrier, count] of namedOn) if (count > 1) faults.push({ type: "barrierNamedTwice", barrier })
@@ -180,7 +182,7 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
           faults.push({ type: "carryWithoutStones", barrier: id })
         continue
       }
-      if (!(owner in lock.mechanics)) faults.push({ type: "gateOwnerUnknown", barrier: id, owner })
+      if (!Object.hasOwn(lock.mechanics, owner)) faults.push({ type: "gateOwnerUnknown", barrier: id, owner })
     }
     if (isRegionGate(gate)) {
       need(`gate ${id}`, gate.region)
@@ -192,7 +194,7 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
     else if (!namedOn.has(id)) faults.push({ type: "edgeGateUnnamed", barrier: id })
   }
   for (const [plate, { in: region }] of Object.entries(lock.weights?.plates ?? {}))
-    if (!(region in lock.regions)) faults.push({ type: "plateNamesNoRegion", plate, region })
+    if (!Object.hasOwn(lock.regions, region)) faults.push({ type: "plateNamesNoRegion", plate, region })
   for (const [id, oneWay] of Object.entries(oneWays)) {
     need(`oneWay ${id}`, oneWay.from)
     need(`oneWay ${id}`, oneWay.to)
@@ -211,9 +213,9 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
     const unowned = new Set<string>()
     for (const [state, ids] of opensOf(loose)) {
       for (const barrier of ids) {
-        if (!(barrier in lock.gates)) {
+        if (!Object.hasOwn(lock.gates, barrier)) {
           faults.push(
-            barrier in oneWays
+            Object.hasOwn(oneWays, barrier)
               ? { type: "opensNotAGate", mechanic: id, state, barrier }
               : { type: "opensUnknownBarrier", mechanic: id, state, barrier }
           )
@@ -277,7 +279,7 @@ const translate = (
   const name = (id: string) => (namespace === undefined ? id : `${namespace}.${id}`)
   const oneWays = lock.oneWays ?? {}
   const standsAlone = new Set(
-    lock.connections.flatMap(connection => barriersOf(connection).filter(barrier => barrier in oneWays))
+    lock.connections.flatMap(connection => barriersOf(connection).filter(barrier => Object.hasOwn(oneWays, barrier)))
   )
   const connections = lock.connections
     .filter(connection => !barriersOf(connection).some(barrier => standsAlone.has(barrier)))

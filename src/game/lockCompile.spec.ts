@@ -129,6 +129,19 @@ describe("a lock refuses what contradicts itself, naming it", () => {
     ])
   })
 
+  it("reads a name as unknown when only Object.prototype has it: an owner or an opens named `constructor`", () => {
+    expect(
+      refused({ ...d, gates: { ...d.gates, "in-out": { from: "in", to: "out", owners: ["S2", "constructor"] } } })
+    ).toEqual([{ type: "gateOwnerUnknown", barrier: "in-out", owner: "constructor" }])
+    const S1 = d.mechanics.S1 as Toggle
+    expect(refused(withMechanic("S1", { ...S1, opens: { a: ["constructor"], b: ["leftLower-s2"] } }))).toContainEqual({
+      type: "opensUnknownBarrier",
+      mechanic: "S1",
+      state: "a",
+      barrier: "constructor",
+    })
+  })
+
   it("refuses an opens naming a barrier nothing defines, or a one-way", () => {
     const S1 = d.mechanics.S1 as Toggle
     expect(refused(withMechanic("S1", { ...S1, opens: { a: ["nope"], b: ["leftLower-s2"] } }))).toEqual([

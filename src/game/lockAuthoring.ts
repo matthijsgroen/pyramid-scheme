@@ -206,8 +206,8 @@ export const isUnladenGate = (gate: LockGate): boolean =>
 
 /** The gates on a connection that are the condition of a drop standing on it: only empty hands open them. */
 export const dropConditionsOn = (lock: Lock, barriers: readonly string[]): string[] =>
-  barriers.some(barrier => barrier in (lock.oneWays ?? {}))
-    ? barriers.filter(barrier => barrier in lock.gates && isUnladenGate(lock.gates[barrier]))
+  barriers.some(barrier => Object.hasOwn(lock.oneWays ?? {}, barrier))
+    ? barriers.filter(barrier => Object.hasOwn(lock.gates, barrier) && isUnladenGate(lock.gates[barrier]))
     : []
 
 /**
@@ -221,7 +221,7 @@ export const absorbUnladen = (lock: Lock): { lock: Lock; unladen: ReadonlySet<st
   const unladen = new Set<string>()
   for (const connection of lock.connections) {
     const barriers = barriersOf(connection)
-    const drop = barriers.find(barrier => barrier in oneWays)
+    const drop = barriers.find(barrier => Object.hasOwn(oneWays, barrier))
     if (drop === undefined) continue
     for (const barrier of dropConditionsOn(lock, barriers)) {
       absorbed.add(barrier)
