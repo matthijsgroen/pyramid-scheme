@@ -98,6 +98,11 @@ const carvedAdjacency = (cells: Cells): Map<string, [string, string]> => {
  * without a connection, or a connection no cells cross, are the floor not being the one drawn. Read as
  * "region attached through X, authored with Y" where a missing connection and a wrong one share an
  * end — the usual shape, since a side chain hanging off the wrong cell swaps one neighbour for another.
+ *
+ * THE CARVE IS FREE WHERE THE LAYOUT IS SILENT (designer, 2026-10-08): a corridor may circle back on ground of its own
+ * region, and an obstacle may stand anywhere along its corridor, so long as the corridor's obstacles keep their order.
+ * Only region adjacency and that order are the layout's; everything else is the carve's to choose, so it succeeds
+ * more often.
  */
 export const adjacencyFaults = (cells: Cells, layout: RegionGraph): CarveFault[] => {
   const carved = carvedAdjacency(cells)

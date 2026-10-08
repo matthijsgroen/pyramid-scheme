@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest"
 import { assembleFloor } from "./siteAssembler"
+import { adjacencyFaults } from "./carveAgreement"
+import { expandFloorLocks } from "./floorLocks"
 import { compileLock } from "./lockCompile"
 import { parseLock } from "./lockNotation"
 import { deadFloorRegions, describeFloorWalkFailure, walkFloorLock } from "./floorLockWalk"
 import { BINDING, carveLockFloor } from "./testSupport/lockFixtures"
 import { stoneFloor } from "./testSupport/stoneFixtures"
-import type { FloorConfig, FloorGrid } from "./siteTypes"
+import type { Direction, FloorConfig, FloorGrid } from "./siteTypes"
 
 // MADE-UP LOCKS WHOSE GATED JOINS CLOSE A LOOP, never catalogue ones: a test pins the rule, `yarn run lock` checks
 // the catalogue. Every region takes `free`, so the floor holds the lock and nothing else.
@@ -128,5 +130,73 @@ describe("a fork whose two ways meet again", () => {
     const junction = grid.cells.flat().find(cell => cell.type === "room" && cell.mechanismId === "armsRejoin.Y")
     expect(junction?.type === "room" && junction.exits?.filter(exit => exit.gateKeyId !== undefined)).toHaveLength(2)
     expectSound(grid)
+  })
+})
+
+const OPPOSITE = { n: "s", s: "n", e: "w", w: "e" } as const
+
+/** The grid with its first empty cell beside two corridors of one region made a corridor of that region, joined to
+ * both: a loop inside that region. Undefined where no empty cell stands beside two corridors of one region. */
+const withRegionLoop = (grid: FloorGrid): FloorGrid | undefined => {
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      if (grid.cells[r][c].type !== "empty") continue
+      const beside = (["n", "s", "e", "w"] as Direction[]).flatMap(dir => {
+        const [nr, nc] = [r + STEP[dir][0], c + STEP[dir][1]]
+        const cell = grid.cells[nr]?.[nc]
+        return cell?.type === "corridor" && cell.region !== undefined ? [{ dir, nr, nc, cell }] : []
+      })
+      const first = beside.find(one => beside.some(other => other !== one && other.cell.region === one.cell.region))
+      if (!first) continue
+      const second = beside.find(other => other !== first && other.cell.region === first.cell.region)!
+      const cells = grid.cells.map(row => [...row])
+      cells[r][c] = { ...first.cell, dirs: new Set([first.dir, second.dir]) }
+      for (const { dir, nr, nc, cell } of [first, second])
+        cells[nr][nc] = { ...cell, dirs: new Set([...cell.dirs, OPPOSITE[dir]]) }
+      return { ...grid, cells }
+    }
+  return undefined
+}
+
+const SIMPLE = "in -- hall\nhall -[L]- out\nL toggle @in\nin ?\nhall ?\nout ?"
+const configOf = (text: string, name: string) => ({
+  pathPuzzles: 0,
+  difficulty: "expert" as const,
+  end: "treasure" as const,
+  exitOrStaircase: "exit" as const,
+  sideSections: [],
+  realisations: BINDING,
+  locks: [{ lock: parseLock(text, name).lock }],
+})
+
+describe("a loop inside one region", () => {
+  it.each([
+    [
+      "laid from a lock",
+      () => carveLockFloor(parseLock(ROUND_THE_SIDE, "roundTheSide").lock, BINDING),
+      ROUND_THE_SIDE,
+      "roundTheSide",
+    ],
+    [
+      "carved as side chains",
+      () => {
+        // The same lock written longhand: its own expansion, with no `locks` left, which the side-chain carve takes.
+        const expanded = expandFloorLocks(configOf(SIMPLE, "simple"))
+        if (!expanded.ok) throw new Error(JSON.stringify(expanded.reasons))
+        return carveAtTwelveSeeds(expanded.config)
+      },
+      SIMPLE,
+      "simple",
+    ],
+  ] as const)("is fine on a floor %s: no adjacency fault, and the walk is unchanged", (_, carve, text, name) => {
+    const grid = carve()
+    const looped = withRegionLoop(grid)
+    if (!looped) throw new Error("no empty cell stands beside two corridors of one region")
+    const expanded = expandFloorLocks(configOf(text, name))
+    if (!expanded.ok) throw new Error(JSON.stringify(expanded.reasons))
+    const layout = expanded.config.regionLayout!
+    expect(adjacencyFaults(looped.cells, layout)).toEqual(adjacencyFaults(grid.cells, layout))
+    expectSound(looped)
+    expect(walkFloorLock(looped)).toEqual(walkFloorLock(grid))
   })
 })
