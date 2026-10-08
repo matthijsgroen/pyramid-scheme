@@ -39,7 +39,10 @@ export const walkSpecOf = (authored: Lock, drafts: readonly string[] = []): Lock
 
   lock.connections.forEach((connection, c) => {
     const [a, b] = joinOf(connection)
-    const hops: Hop[] = barriersOf(connection).map(id => ({ kind: id in (lock.oneWays ?? {}) ? "oneWay" : "gate", id }))
+    const hops: Hop[] = barriersOf(connection).map(id => ({
+      kind: Object.hasOwn(lock.oneWays ?? {}, id) ? "oneWay" : "gate",
+      id,
+    }))
     const towards = (hop: Hop, end: string) => hop.kind === "oneWay" && lock.oneWays![hop.id].to === end
     // A barred region holds the last step into it. When that step is a drop landing in the region, the
     // drop itself cannot be taken while the region is shut, so the hold stands just before it.
@@ -189,7 +192,7 @@ const hasGateLoop = (lock: Lock) => {
   const root = new Map<string, string>()
   const find = (r: string): string => ((root.get(r) ?? r) === r ? r : find(root.get(r)!))
   return lock.connections.some(connection => {
-    if (barriersOf(connection).some(id => id in (lock.oneWays ?? {}))) return false
+    if (barriersOf(connection).some(id => Object.hasOwn(lock.oneWays ?? {}, id))) return false
     const [a, b] = joinOf(connection).map(find)
     if (a === b) return true
     root.set(a, b)

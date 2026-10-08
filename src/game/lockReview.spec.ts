@@ -75,3 +75,20 @@ describe("solveLock, with stones", () => {
     expect(solveLock(stones)).toEqual({ steps: ["in", "lift from shelf", "out", "stone on q"], actions: 2 })
   })
 })
+
+describe("a gate named like an object method", () => {
+  const renamed = () => {
+    const { lock } = parseLock("in -[T]- out\nT toggle @in")
+    return JSON.parse(JSON.stringify(lock).replaceAll(Object.keys(lock.gates)[0], "constructor")) as typeof lock
+  }
+
+  it("is walked as a gate", () => {
+    const original = solveLock(spec("in -[T]- out\nT toggle @in"))?.steps
+    expect(original).toBeDefined()
+    expect(solveLock(walkSpecOf(renamed()))?.steps).toEqual(original)
+  })
+
+  it("is reviewed as a gate", () => {
+    expect(lockQuality(renamed())).toEqual(lockQuality(parseLock("in -[T]- out\nT toggle @in").lock))
+  })
+})

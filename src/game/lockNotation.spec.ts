@@ -210,3 +210,10 @@ describe("weights", () => {
     expect(() => parseLock(text)).toThrow(message)
   })
 })
+
+describe("parseLock, with a region named like an object method", () => {
+  it("keeps the name, without a spurious suffix", () => {
+    const { lock } = parseLock("in -[T]- constructor\nconstructor -- out\nT toggle @in")
+    expect(Object.keys(lock.gates)).toEqual(["in-constructor"])
+  })
+})

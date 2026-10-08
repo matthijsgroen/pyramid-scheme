@@ -119,7 +119,7 @@ const piecesOf = (lock: Lock): Piece[] => [
     )
     if (barriers.length === 0) return [{ name: `corridor ${a} -- ${b}`, without }]
     return barriers.map(id => {
-      if (id in (lock.oneWays ?? {})) return { name: `drop ${id}`, without }
+      if (Object.hasOwn(lock.oneWays ?? {}, id)) return { name: `drop ${id}`, without }
       const rest = barriers.filter(other => other !== id)
       const kept = lock.connections.map((other, k) =>
         k !== c ? other : rest.length > 0 ? { between: [a, b] as const, barriers: rest } : ([a, b] as const)
