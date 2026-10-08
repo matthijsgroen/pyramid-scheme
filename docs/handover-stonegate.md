@@ -46,7 +46,8 @@ Trust it, and `git log`, over memory.
 - **Placement is Djoser, `expert_4`** (2026-10-06).
 - **One source for a lock:** `src/game/locks/<name>.lock`, read at bake time through `parseLock`. No TypeScript
   copy of stoneGate exists.
-- **Contract:** the shared `Lock` gains `weights`; gate owners may name a plate or `unladen`. Approved 2026-10-05.
+- **Contract:** the shared `Lock` gains `weights`; gate owners may name a plate. `unladen` stands alone as the
+  narrow passage, and every one-way takes empty hands (designer, 2026-10-08).
 - **Every mechanic piece is shared `default` art,** the same at every difficulty, with rank-neutral prompts.
   The brazier stays as decor: the standing torch is distinct enough (2026-10-07).
 - **The torch is a standing torch, not the brazier.**
@@ -64,9 +65,9 @@ Trust it, and `git log`, over memory.
   the crossing's starting side, stoneGate on dev pyramid 12, the edge of a contained lock, shared stones, state
   bounds, which locks join a pool, `yarn lock` and nesting, a dev floor for nested stones).
 - **The roadmap's "Open after phase 2" and "Open after phase 3" lists:** barred regions under the explorer's
-  weight, stale saves and stone-held doors, sequence locks on the playground bench, masonsRamp's chute (a hands-free
-  one-way realisation), counterweight on a floor, corner passages, the squeeze drawn in front of the wall,
-  `stonePasses` over-refusing, and tapping a wall whose near side is a node.
+  weight, stale saves and stone-held doors, sequence locks on the playground bench, masonsRamp's chute (it waits
+  for the stone pipe), counterweight on a floor, corner passages, the squeeze drawn in front of the wall, and
+  tapping a wall whose near side is a node.
 - **`docs/playtest-backlog.md`:** the stoneGate phase 2 and 3 entries, notably the plate icon clipping a door face's
   ring and the explorer looking washed out in the exit's light shaft while carrying.
 - **Open art questions:** is the torch's size (waist-high, slim) big enough at map scale? Riding side pose: draw

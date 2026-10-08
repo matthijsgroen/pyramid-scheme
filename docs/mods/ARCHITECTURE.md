@@ -63,7 +63,7 @@ The walls are the mod-on walls; only the cells of a drop gain the directions tha
 realisation: what a missing mod leaves is the carve without its mechanics, and the walk finds no lock on it.
 
 A role nobody bound is the author's mistake and is still refused by name, mod on or off: `unboundRole` for a
-lock's mechanism kind, `oneWayRealisationRefused` (`unbound`, `noPrompt`, `stonePasses`) for a one-way. Only `switches` is
+lock's mechanism kind, `oneWayRealisationRefused` (`unbound`, `noPrompt`) for a one-way. Only `switches` is
 dropped with its family at build time: it fills a junction `forks` reserves, so dropping it leaves the same
 walls and a bare junction.
 

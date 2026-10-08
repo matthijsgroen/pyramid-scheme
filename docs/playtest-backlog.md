@@ -15,6 +15,8 @@ played, and open an issue or a task for anything that plays wrong.
   squeezes through. Not seen live.
 - **The `narrowAlong` wall** pokes slightly above the corridor top.
 - **The squeeze's speed** (350 ms a leg) and its two legs at a corner: not seen live.
+- **A zipline on a stone floor:** carry a stone to its launch: he stops there and "Cannot pass with a stone"
+  shows, as at the way out. Every one-way takes empty hands now, so no lock lets a stone ride a drop.
 - **Tapping the wall when the near side is itself a node** skips that node's offer: he walks onto it and the
   crossing is offered, not what stands there. Judge whether that reads.
 

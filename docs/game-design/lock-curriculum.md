@@ -127,9 +127,10 @@ asks for more stones than it has.
 
 - **One stone in hand, and no swapping.** It is set down only on an empty plate, so where the stones are
   is always one of a few arrangements the walk can prove.
-- **A zipline and a narrow passage cannot be passed with a stone.** The lock writes it as `-[unladen]-`,
-  and binding either realisation where the lock lets a stone through is refused: a realisation may not
-  change what the walk sees (`mechanic-contract.md`, "Three layers").
+- **No one-way and no narrow passage is passed with a stone.** Every `>>` (a drop, a zipline) takes
+  empty hands with nothing written; a narrow passage is written `-[unladen]-`, alone on its gate. Whatever
+  realises them, the walk sees the same: a realisation may not change it (`mechanic-contract.md`, "Three
+  layers").
 - **A stone never leaves its floor.** The stairs and the way out take empty hands, so a return visit always finds every
   stone where it was set down, and the walk proves the lock from every arrangement, leaving and
   returning included.

@@ -21,12 +21,15 @@ stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
   player-weight rule at all.
 - A plate may open nothing: a shelf or a pedestal, somewhere to keep a stone.
 - All plates look alike. A way shows the plates it waits for, and which state it wants.
-- A gate owner may be a plate or `unladen` (empty hands), alongside levers and the rest, under `and` or
-  `any`.
+- A gate owner may be a plate, in either state, alongside levers and the rest, under `and` or `any`.
+- `unladen` is the narrow passage's keyword, not a condition to combine: it stands alone, `-[unladen]-`. A
+  gate naming it beside another owner is refused by name (`unladenCombined`).
 - **No swapping.** With a stone in hand, another stone cannot be lifted.
-- **Some ways cannot be taken with a stone in hand:** a zipline, a narrow passage, a staircase and the
-  way out. The first two are written in the lock as `-[unladen]-`; the stairs and the way out always take
-  empty hands, so a stone never leaves its floor.
+- **Some ways cannot be taken with a stone in hand:** every one-way (`>>`: a drop, a zipline), a narrow
+  passage, a staircase and the way out. A narrow passage is written `-[unladen]-`; every one-way, the stairs
+  and the way out take empty hands with nothing written, so a stone never rides a drop and never leaves its
+  floor. `-[unladen]-` written on a drop's connection is refused by name: a drop already takes empty hands
+  (`unladenOnDrop`).
 
 ## 1. Contract
 
@@ -35,7 +38,8 @@ stoneOnAPlate, twoStones, masonsRamp and counterweight all baking.
       Stones are alike and have no ids: a stone is authored as the plate it starts on (`stone: true`). A
       plate's `opens` has the same shape as a toggle's, keyed by the plate's two states.
       `mechanic-contract.md` gets a section for it, beside the other controls.
-- [x] Gate owners accept plate ids and `unladen`, on a gate between two regions or on a barred region.
+- [x] Gate owners accept plate ids, on a gate between two regions or on a barred region; `unladen` stands
+      alone on a gate between two regions.
 - [ ] The engine refuses a lock where a gate needs stones on more plates than the lock has stones, where
       a plate stands in the region it would bar, or where a plate stands somewhere no corridor reaches.
       These are the refusals `parseLock` already makes.
@@ -49,7 +53,7 @@ two uses stones:
 - **Pass through: the outer uses stones, the inner does not.** The player parks the stone in the outer
   lock, solves the inner one, goes back for the stone and carries it through the solved inner lock to use
   it beyond. So once solved, the inner lock is passable from in to out and back with a stone in hand: no
-  `-[unladen]-` stands on its route once it is solved.
+  `-[unladen]-` and no one-way stands on its route once it is solved.
 - **Contained: the inner uses stones, the outer does not.** Every inner stone is in use; the player
   cannot leave the inner lock with a stone in hand (its way out takes empty hands, as a lock's way out
   always does).
@@ -66,7 +70,7 @@ two uses stones:
 - [x] The engine's solver walks a stone arrangement as state: which plates hold a stone, and whether the
       hand holds one.
 - [x] The engine's solver follows the same stone rules as the tool's walk (lifting, setting down, `:empty`,
-      `unladen`, no stone past the stairs or the way out (the stairs down are the way out of a staircase
+      `unladen`, no stone down a one-way, past the stairs or the way out (the stairs down are the way out of a staircase
       floor; every staircase turns a carrying walk away in play)), each tested on a small made-up lock. No
       test pins a catalogue lock; `yarn lock` checks those.
 - [ ] A floor is solvable from every arrangement the player can leave it in, so a return visit can never
@@ -76,10 +80,9 @@ two uses stones:
 
 - [x] Each plate is a node in its region.
 - [x] An `unladen` passage binds to a realisation like any gate (`mechanic-contract.md`, "Binding a
-      realisation"): a zipline, or a **narrow passage**, which is a new realisation with its own art.
-- [x] On a floor with stones, binding a zipline or a narrow passage where the lock lets a stone through
-      (no `unladen` on that passage) is refused. The art never decides what the walk sees; the binding
-      makes it match.
+      realisation"): the **narrow passage**, a realisation with its own art.
+- [x] A one-way binds to any one-way realisation on a floor with stones: every one-way takes empty hands in
+      every walk and in play, so no binding can let a stone ride. The art never decides what the walk sees.
 - [x] With the realisation mod off, the carve is identical: bare nodes, open corridors.
 - [ ] The four stone locks and the stoneOnAPlate lesson bake on the dev floor (`src/worldGen/spec/dev.ts`),
       and the world bake stays byte-identical for every floor that has no stones.
@@ -101,7 +104,7 @@ All through node actions (`node-actions.md`): arriving never acts, standing offe
 - [x] A plate has three looks: raised (empty, nobody on it), pressed (the explorer on it), and pressed
       with a stone.
 - [x] The explorer is drawn carrying the stone while it is in hand (see "The carrying explorer").
-- [x] A walk that crosses an `unladen` passage while carrying **stops on the near side** and says why, in the one
+- [x] A walk that crosses an `unladen` passage or reaches a one-way's launch while carrying **stops on the near side** and says why, in the one
       blocked line every such place uses ("Cannot pass with a stone"; designer, 2026-10-07).
 - [x] The way out and every staircase stop a carrying walk the same way: "Cannot pass with a stone".
 - [x] A door held by plates shows its condition: which plates it waits for, whether it wants each one
