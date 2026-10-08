@@ -42,6 +42,23 @@ describe("a lock's nest spot", () => {
     const { lock, refused } = parseLock("in -- out\nin -&> side", "aside")
     expect(refused).toEqual([])
     expect(nestSpotFaults(lock)).toEqual([])
+    expect(nestSpotOf(lock)).toEqual({ from: "in", to: "side" })
+  })
+
+  it.each([
+    ["after it", "in -&> hall\nin -[L]- hall\nhall -- out\nL toggle @in"],
+    ["before it", "in -[L]- hall\nin -&> hall\nhall -- out\nL toggle @in"],
+  ])("is refused by name where its pair has another connection %s", (_, text) => {
+    const line = text.split("\n").indexOf("in -&> hall") + 1
+    expect(parseLock(text, "shared").refused).toEqual([
+      `line ${line}: nestSpotShared: in and hall have another connection, and a nest spot is a corridor of its own`,
+    ])
+  })
+
+  it("refuses a JSON lock whose spot's pair has two connections as a repeated connection", () => {
+    const { lock } = parseLock("in -&> hall\nin -[L]- hall\nhall -- out\nL toggle @in", "shared")
+    const result = compileLock(lock, BINDING)
+    expect(result.ok === false && result.faults).toContainEqual(expect.objectContaining({ type: "connectionRepeated" }))
   })
 
   it("is one per lock: a second is refused by name on its own line, and the first is kept", () => {
@@ -92,8 +109,19 @@ describe("a lock's nest spot", () => {
     expect(freeRegions(parseLock(NESTING, "n").lock).nestSpot).toEqual({ from: "in", to: "hall" })
   })
 
+  it.each([
+    "in -&> hall\nin -[L]- hall\nhall -- out\nL toggle @in",
+    "in -[L]- hall\nin -&> hall\nhall -- out\nL toggle @in",
+  ])("is no spot where a gate shares its pair, in either order, and draws that gate: %j", text => {
+    const { lock } = parseLock(text, "shared")
+    expect(nestSpotOf(lock)).toBeUndefined()
+    expect(nestSpotBusy(lock)).toEqual(["in-hall"])
+    expect(drawLock(lock)).toContain("■L:b")
+    expect(drawLock(lock)).not.toContain("&")
+  })
+
   it("is drawn as & on its corridor", () => {
-    expect(drawLock(parseLock(NESTING, "n").lock)).toContain("&")
+    expect(drawLock(parseLock(NESTING, "n").lock)).toMatch(/\[in · L\]─+&─+\[hall\]/)
     expect(drawLock(parseLock(NESTING.replace("-&>", "--"), "n").lock)).not.toContain("&")
   })
 })

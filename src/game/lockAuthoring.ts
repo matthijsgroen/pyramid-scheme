@@ -228,28 +228,26 @@ export const unladenFaults = (lock: Lock): UnladenFault[] => {
   return faults
 }
 
-const spotConnection = (lock: Lock): LockConnection | undefined => {
-  if (!lock.nestSpot) return undefined
+/** Every connection joining the spot's pair: one in a lock that compiles, more in one refused `connectionRepeated`. */
+const spotConnections = (lock: Lock): LockConnection[] => {
+  if (!lock.nestSpot) return []
   const { from, to } = lock.nestSpot
-  return lock.connections.find(c => {
+  return lock.connections.filter(c => {
     const [a, b] = joinOf(c)
     return (a === from && b === to) || (a === to && b === from)
   })
 }
 
-/** The barriers that share the nest spot's connection: a spot on a busy connection is no spot (designer,
- * 2026-10-08), and the connection carves as written. */
-export const nestSpotBusy = (lock: Lock): BarrierId[] => {
-  const connection = spotConnection(lock)
-  return connection ? [...barriersOf(connection)] : []
-}
+/** The barriers on the nest spot's pair: a spot on a busy connection is no spot (designer, 2026-10-08), and the
+ * connection carves as written. */
+export const nestSpotBusy = (lock: Lock): BarrierId[] => spotConnections(lock).flatMap(c => [...barriersOf(c)])
 
 /** The connection another lock may be spliced into, or undefined: no spot written, or its connection is busy. */
 export const nestSpotOf = (lock: Lock): { from: RegionId; to: RegionId } | undefined =>
-  lock.nestSpot && spotConnection(lock) && nestSpotBusy(lock).length === 0 ? lock.nestSpot : undefined
+  lock.nestSpot && spotConnections(lock).length > 0 && nestSpotBusy(lock).length === 0 ? lock.nestSpot : undefined
 
 /** A nest spot naming a connection the lock does not have (a JSON lock's typo; the notation cannot write one). */
 export type NestSpotFault = { type: "nestSpotOnNoConnection"; from: RegionId; to: RegionId }
 
 export const nestSpotFaults = (lock: Lock): NestSpotFault[] =>
-  lock.nestSpot && !spotConnection(lock) ? [{ type: "nestSpotOnNoConnection", ...lock.nestSpot }] : []
+  lock.nestSpot && spotConnections(lock).length === 0 ? [{ type: "nestSpotOnNoConnection", ...lock.nestSpot }] : []

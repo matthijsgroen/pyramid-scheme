@@ -293,5 +293,11 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
     refused.push(
       `line ${extra.n}: nestSpotsRepeated: a lock has one nest spot, and ${spots[0].from} -&> ${spots[0].to} is one already`
     )
+  // The spot is the corridor another lock is spliced into, so its pair carries no second connection.
+  const kept = spots[0]
+  if (kept && joins.filter(j => [kept.from, kept.to].every(r => j.between.includes(r))).length > 1)
+    refused.push(
+      `line ${kept.n}: nestSpotShared: ${kept.from} and ${kept.to} have another connection, and a nest spot is a corridor of its own`
+    )
   return { lock, drafts: [...drafts], refused }
 }
