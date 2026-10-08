@@ -344,11 +344,18 @@ describe("the plan of a lock floor", () => {
     })
   })
 
-  it("lays a nested lock in its host's region, which gives up its place on the route", () => {
-    expect(
-      planOf([{ lock: leverLock() }, { lock: leverLock(), as: "inner", inside: { instance: "lever", region: "hall" } }])
-    ).toEqual({
-      route: ["entrance", "lever.foyer", "inner.foyer", "inner.hall", "inner.landing", "lever.landing", "exit"],
+  it("lays a nested lock in its host's nest spot, between the spot's two regions", () => {
+    expect(planOf([{ lock: leverLock() }, { lock: leverLock(), as: "inner", inside: { instance: "lever" } }])).toEqual({
+      route: [
+        "entrance",
+        "lever.foyer",
+        "inner.foyer",
+        "inner.hall",
+        "inner.landing",
+        "lever.hall",
+        "lever.landing",
+        "exit",
+      ],
       regions: [
         { id: "entrance", onRoute: true, seats: [], minNodes: 1 },
         {
@@ -358,6 +365,7 @@ describe("the plan of a lock floor", () => {
           seats: [{ for: "control", control: "lever.lever" }],
           minNodes: 1,
         },
+        { id: "lever.hall", owner: "lever", onRoute: true, seats: [], minNodes: 1 },
         { id: "lever.landing", owner: "lever", onRoute: true, seats: [], minNodes: 1 },
         {
           id: "inner.foyer",
@@ -381,8 +389,16 @@ describe("the plan of a lock floor", () => {
           minNodes: 0,
         },
         {
-          id: "inner.landing>lever.landing",
+          id: "inner.landing>lever.hall",
           from: "inner.landing",
+          to: "lever.hall",
+          onRoute: true,
+          barriers: [],
+          minNodes: 0,
+        },
+        {
+          id: "lever.hall>lever.landing",
+          from: "lever.hall",
           to: "lever.landing",
           onRoute: true,
           barriers: ["lever.hallDoor"],
@@ -408,7 +424,7 @@ describe("the plan of a lock floor", () => {
       ],
       junctions: [],
       drops: [],
-      nested: [{ host: "lever", region: "lever.hall", instance: "inner" }],
+      nested: [{ host: "lever", between: ["lever.foyer", "lever.hall"], instance: "inner" }],
     })
   })
 })

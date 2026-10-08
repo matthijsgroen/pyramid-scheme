@@ -10,7 +10,7 @@ import { deadRegions, reachableStates, walkLock } from "./lockWalk"
 import { assembleFloor } from "./siteAssembler"
 import type { CorridorCell, FloorConfig, FloorGrid, RoomCell } from "./siteTypes"
 import { leverLock, strandingLock } from "./testSupport/floorLockFixtures"
-import { BINDING, sluiceLock } from "./testSupport/lockFixtures"
+import { BINDING } from "./testSupport/lockFixtures"
 
 const carve = (config: FloorConfig, seed: number) =>
   assembleFloor("nested-locks", config, seed, resolveEncounterMeta, {
@@ -33,29 +33,29 @@ const SEEDS = 12
 const carved = (config: FloorConfig): FloorGrid[] =>
   Array.from({ length: SEEDS }, (_, n) => carve(config, n + 1)).flatMap(result => (result.success ? [result.grid] : []))
 
-const insideHall = (host: string) => ({ instance: host, region: "hall" })
+const insideOf = (host: string) => ({ instance: host })
 
-/** A lever lock placed in the hall of another lever lock. */
+/** A lever lock spliced into the nest spot of another lever lock. */
 const leverInLever: PlacedLock[] = [
   { lock: leverLock() },
-  { lock: leverLock(), as: "inner", inside: insideHall("lever") },
+  { lock: leverLock(), as: "inner", inside: insideOf("lever") },
 ]
 
-/** Three levers, each in the hall of the one before. */
+/** Three levers, each in the nest spot of the one before. */
 const leverChain: PlacedLock[] = [
   { lock: leverLock() },
-  { lock: leverLock(), as: "mid", inside: insideHall("lever") },
-  { lock: leverLock(), as: "deep", inside: insideHall("mid") },
+  { lock: leverLock(), as: "mid", inside: insideOf("lever") },
+  { lock: leverLock(), as: "deep", inside: insideOf("mid") },
 ]
 
 const strandingInLever: PlacedLock[] = [
   { lock: leverLock() },
-  { lock: strandingLock(), as: "inner", inside: insideHall("lever") },
+  { lock: strandingLock(), as: "inner", inside: insideOf("lever") },
 ]
 
 const leverInStranding: PlacedLock[] = [
   { lock: strandingLock() },
-  { lock: leverLock(), as: "inner", inside: insideHall("stranding") },
+  { lock: leverLock(), as: "inner", inside: insideOf("stranding") },
 ]
 
 const ownerOf = (label: string | undefined): string | undefined => label?.split(".")[0]
@@ -106,19 +106,20 @@ describe("a lock is nested where it is placed, and neither lock knows", () => {
   it("leaves the host lock exactly as written, with nothing in it naming the inner", () => {
     const host = leverLock()
     const before = JSON.stringify(host)
-    expandFloorLocks(floorOf([{ lock: host }, { lock: leverLock(), as: "inner", inside: insideHall("lever") }]))
+    expandFloorLocks(floorOf([{ lock: host }, { lock: leverLock(), as: "inner", inside: insideOf("lever") }]))
 
     expect(JSON.stringify(host)).toBe(before)
     expect(before).toBe(JSON.stringify(leverLock()))
     expect(before).not.toContain("inner")
   })
 
-  it("takes the host region out of the layout and re-points its joins at the inner's in on the near side and out on the far side", () => {
+  it("splices the inner into the host's nest spot: in at the spot's first region, out at its second", () => {
     const { config, nesting } = expanded(leverInLever)
 
     expect(config.regionLayout!.regions.map(region => region.name)).toEqual([
       FLOOR_ENTRANCE,
       "lever.foyer",
+      "lever.hall",
       "lever.landing",
       "inner.foyer",
       "inner.hall",
@@ -128,13 +129,14 @@ describe("a lock is nested where it is placed, and neither lock knows", () => {
     expect(config.regionLayout!.connections).toEqual([
       [FLOOR_ENTRANCE, "lever.foyer"],
       ["lever.foyer", "inner.foyer"],
-      ["inner.landing", "lever.landing"],
+      ["inner.landing", "lever.hall"],
+      ["lever.hall", "lever.landing"],
       ["inner.foyer", "inner.hall"],
       ["inner.hall", "inner.landing"],
       ["lever.landing", FLOOR_EXIT],
     ])
     expect(config.obstacles!.map(({ id, at }) => [id, at])).toEqual([
-      ["lever.hallDoor", { on: "connection", between: ["inner.landing", "lever.landing"] }],
+      ["lever.hallDoor", { on: "connection", between: ["lever.hall", "lever.landing"] }],
       ["inner.hallDoor", { on: "connection", between: ["inner.hall", "inner.landing"] }],
     ])
     expect(nesting).toEqual([
@@ -170,66 +172,45 @@ describe("a lock is nested where it is placed, and neither lock knows", () => {
 })
 
 describe("a nesting that cannot be seated is refused by name", () => {
-  const ringLock = (): Lock => ({
-    name: "ring",
-    regions: { in: { takes: "free" }, p: { takes: "free" }, q: { takes: "free" }, r: { takes: "free" } },
-    connections: [
-      ["in", "p"],
-      ["in", "q"],
-      ["p", "r"],
-      ["q", "r"],
-    ],
-    gates: {},
-    mechanics: {},
-    in: "in",
-    out: "p",
-  })
-  const middleLeverLock = (): Lock => ({
-    name: "middle",
-    regions: { a: { takes: "free" }, b: { takes: "free" }, c: { takes: "free" } },
-    connections: [
-      ["a", "b"],
-      ["b", "c"],
-    ],
-    gates: {},
-    mechanics: { lever: { control: "toggle", in: "b", starts: "shut", opens: { shut: [], open: [] } } },
-    in: "a",
-    out: "c",
-  })
-  const inner = (inside: { instance: string; region: string }): PlacedLock => ({
+  const inner = (inside: { instance: string }): PlacedLock => ({
     lock: leverLock(),
     as: "inner",
     inside,
   })
 
   it("names a host instance the floor does not place", () => {
-    expect(refusedWith([{ lock: leverLock() }, inner({ instance: "nowhere", region: "hall" })])).toEqual([
+    expect(refusedWith([{ lock: leverLock() }, inner({ instance: "nowhere" })])).toEqual([
       { type: "lockNestingRefused", instance: "inner", fault: { type: "hostUnknown", host: "nowhere" } },
     ])
   })
 
-  it("names a host region the host does not have", () => {
-    expect(refusedWith([{ lock: leverLock() }, inner({ instance: "lever", region: "attic" })])).toEqual([
+  it("refuses a host with no nest spot", () => {
+    const { nestSpot: _spot, ...plain } = { ...leverLock(), name: "plain" }
+    expect(refusedWith([{ lock: plain }, inner({ instance: "plain" })])).toEqual([
+      { type: "lockNestingRefused", instance: "inner", fault: { type: "noNestSpot", host: "plain" } },
+    ])
+  })
+
+  it("treats a spot on a busy connection as no spot", () => {
+    const busy: Lock = { ...leverLock(), name: "busy", nestSpot: { from: "hall", to: "landing" } }
+    expect(refusedWith([{ lock: busy }, inner({ instance: "busy" })])).toEqual([
+      { type: "lockNestingRefused", instance: "inner", fault: { type: "noNestSpot", host: "busy" } },
+    ])
+  })
+
+  it("refuses a spot on no connection once, as the host's own refusal", () => {
+    const astray: Lock = { ...leverLock(), name: "astray", nestSpot: { from: "foyer", to: "landing" } }
+    expect(refusedWith([{ lock: astray }, inner({ instance: "astray" })])).toEqual([
       {
-        type: "lockNestingRefused",
-        instance: "inner",
-        fault: { type: "regionUnknown", host: "lever", region: "attic" },
+        type: "lockRefused",
+        instance: "astray",
+        fault: { type: "nestSpotOnNoConnection", from: "foyer", to: "landing" },
       },
     ])
   })
 
-  it.each(["foyer", "landing"])("refuses the host's own port, %s", region => {
-    const reasons = refusedWith([{ lock: leverLock() }, inner({ instance: "lever", region })])
-
-    expect(reasons).toContainEqual({
-      type: "lockNestingRefused",
-      instance: "inner",
-      fault: { type: "atPort", host: "lever", region },
-    })
-  })
-
   it("refuses a lock nested in itself, naming the cycle", () => {
-    expect(refusedWith([{ lock: leverLock(), inside: insideHall("lever") }])).toEqual([
+    expect(refusedWith([{ lock: leverLock(), inside: insideOf("lever") }])).toEqual([
       { type: "lockNestingRefused", instance: "lever", fault: { type: "cycle", through: ["lever"] } },
     ])
   })
@@ -237,8 +218,8 @@ describe("a nesting that cannot be seated is refused by name", () => {
   it("refuses two locks each nested in the other, once from each instance", () => {
     expect(
       refusedWith([
-        { lock: leverLock(), as: "a", inside: insideHall("b") },
-        { lock: leverLock(), as: "b", inside: insideHall("a") },
+        { lock: leverLock(), as: "a", inside: insideOf("b") },
+        { lock: leverLock(), as: "b", inside: insideOf("a") },
       ])
     ).toEqual([
       { type: "lockNestingRefused", instance: "a", fault: { type: "cycle", through: ["a", "b"] } },
@@ -246,58 +227,18 @@ describe("a nesting that cannot be seated is refused by name", () => {
     ])
   })
 
-  it("refuses a second lock in a region that already holds one, naming the first", () => {
+  it("refuses a second lock in a spot that already holds one, naming the first", () => {
     expect(
       refusedWith([
         { lock: leverLock() },
-        { lock: leverLock(), as: "first", inside: insideHall("lever") },
-        { lock: leverLock(), as: "second", inside: insideHall("lever") },
+        { lock: leverLock(), as: "first", inside: insideOf("lever") },
+        { lock: leverLock(), as: "second", inside: insideOf("lever") },
       ])
     ).toEqual([
       {
         type: "lockNestingRefused",
         instance: "second",
-        fault: { type: "regionShared", host: "lever", region: "hall", with: "first" },
-      },
-    ])
-  })
-
-  it("refuses a region the host bars as a whole, naming the barrier", () => {
-    expect(refusedWith([{ lock: sluiceLock() }, inner({ instance: "sluice", region: "hall" })])).toEqual([
-      {
-        type: "lockNestingRefused",
-        instance: "inner",
-        fault: { type: "regionBarred", host: "sluice", region: "hall", barriers: ["floodedHall"] },
-      },
-    ])
-  })
-
-  it("refuses a region a host mechanic stands in, naming the mechanic", () => {
-    expect(refusedWith([{ lock: middleLeverLock() }, inner({ instance: "middle", region: "b" })])).toEqual([
-      {
-        type: "lockNestingRefused",
-        instance: "inner",
-        fault: { type: "regionHoldsMechanic", host: "middle", region: "b", mechanics: ["lever"] },
-      },
-    ])
-  })
-
-  it("refuses a region that is not a stretch of the route, counting its joins", () => {
-    expect(refusedWith([{ lock: sluiceLock() }, inner({ instance: "sluice", region: "annex" })])).toEqual([
-      {
-        type: "lockNestingRefused",
-        instance: "inner",
-        fault: { type: "notPassThrough", host: "sluice", region: "annex", joins: 1 },
-      },
-    ])
-  })
-
-  it("refuses a region whose two neighbours are equally far from the host's in", () => {
-    expect(refusedWith([{ lock: ringLock() }, inner({ instance: "ring", region: "r" })])).toEqual([
-      {
-        type: "lockNestingRefused",
-        instance: "inner",
-        fault: { type: "directionAmbiguous", host: "ring", region: "r" },
+        fault: { type: "nestSpotTaken", host: "lever", with: "first" },
       },
     ])
   })
@@ -311,9 +252,9 @@ describe("a nested lock counts to the host as the ground it crosses, never as it
     if (!result.success) throw new Error("did not carve")
     const walk = walkFloorLock(result.grid)
 
-    expect(productOf(result.grid)).toHaveLength(27)
-    expect(walk).toEqual({ sound: true, states: 17, nested: { inner: 8 } })
-    expect(17).toBeLessThan(productOf(result.grid).length)
+    expect(productOf(result.grid)).toHaveLength(31)
+    expect(walk).toEqual({ sound: true, states: 21, nested: { inner: 8 } })
+    expect(21).toBeLessThan(productOf(result.grid).length)
   })
 
   it(
@@ -338,9 +279,9 @@ describe("a nested lock counts to the host as the ground it crosses, never as it
 
     expect(grids.length).toBe(SEEDS)
     const first = walkFloorLock(grids[0])
-    expect(productOf(grids[0])).toHaveLength(65)
-    expect(first).toEqual({ sound: true, states: 25, nested: { mid: 14, deep: 8 } })
-    expect(25).toBeLessThan(productOf(grids[0]).length)
+    expect(productOf(grids[0])).toHaveLength(75)
+    expect(first).toEqual({ sound: true, states: 31, nested: { mid: 18, deep: 8 } })
+    expect(31).toBeLessThan(productOf(grids[0]).length)
     for (const grid of grids) {
       const walk = walkFloorLock(grid)!
       if (!walk.sound) throw new Error(describeFloorWalkFailure(walk.failure))
@@ -430,13 +371,10 @@ describe("a floor without nesting is walked exactly as it was", () => {
 
 describe("stones on a floor with nested locks", () => {
   const stones = parseLock(
-    "in -- yard\nyard -- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nyard ?\nhall ?\nout ?",
+    "in -- yard\nyard -&> hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nyard ?\nhall ?\nout ?",
     "stones"
   ).lock
-  const nested: PlacedLock[] = [
-    { lock: stones },
-    { lock: leverLock(), as: "inner", inside: { instance: "stones", region: "yard" } },
-  ]
+  const nested: PlacedLock[] = [{ lock: stones }, { lock: leverLock(), as: "inner", inside: { instance: "stones" } }]
 
   it("is refused by the walk, which finds no dead region to report", () => {
     const grids = carved({ ...floorOf(nested), realisations: { ...BINDING, weights: "stonePlate" } })

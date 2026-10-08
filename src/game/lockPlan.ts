@@ -49,13 +49,13 @@ export type PlanJunction = { region: string; control: string; arms: string[] }
 /** A DROP, run straight from a cell of its launch region to a cell of its landing region. */
 export type PlanDrop = { id: string; launch: string; landing: string }
 
-/** A lock standing in a region of its host, which gives up that region's place on the route. */
-export type PlanNesting = { host: string; region: string; instance: string }
+/** A lock spliced into its host's nest spot, between the spot's two regions. */
+export type PlanNesting = { host: string; between: [string, string]; instance: string }
 
 /**
  * WHAT A LOCK FLOOR OWES THE LATTICE, as data: the regions with the nodes they need, the corridors that join
  * them and the barriers on each, the junctions, the drops, the route `entrance -> ... -> exit` and the locks
- * nested in a host's region.
+ * nested in a host's nest spot.
  */
 export type LockPlan = {
   route: string[]
@@ -182,7 +182,7 @@ export const planLockFloor = (
     junctions,
     drops,
     nested: placed.flatMap(({ instance, inside }) =>
-      inside ? [{ host: inside.host, region: inside.region, instance }] : []
+      inside ? [{ host: inside.host, between: inside.between, instance }] : []
     ),
   }
 }

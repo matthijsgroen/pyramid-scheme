@@ -34,7 +34,7 @@ const FIXTURES: Record<string, () => LockPlan> = {
   lever: () => planOf([{ lock: leverLock() }]),
   "two locks in sequence": () => planOf([{ lock: leverLock() }, { lock: strandingLock() }]),
   "a lock nested in a lock": () =>
-    planOf([{ lock: leverLock() }, { lock: leverLock(), as: "inner", inside: { instance: "lever", region: "hall" } }]),
+    planOf([{ lock: leverLock() }, { lock: leverLock(), as: "inner", inside: { instance: "lever" } }]),
   doubleBack: () => planOf([{ lock: doubleBackLock() }]),
 }
 const SEEDS = Array.from({ length: 40 }, (_, i) => i + 1)

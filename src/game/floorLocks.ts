@@ -1,8 +1,7 @@
-import type { Lock, LockMechanic } from "./lockAuthoring"
-import { isRegionGate, joinOf } from "./lockAuthoring"
+import type { Lock } from "./lockAuthoring"
+import { nestSpotFaults, nestSpotOf } from "./lockAuthoring"
 import { compileLock } from "./lockCompile"
 import type { LockFragment, RealisationBinding } from "./lockCompile"
-import type { BarrierOrder, Obstacle } from "./obstacles"
 import type { Region } from "./regions"
 import type { AssemblerReason, FloorConfig } from "./siteTypes"
 
@@ -11,37 +10,35 @@ import type { AssemblerReason, FloorConfig } from "./siteTypes"
  * instance, defaulting to the lock's own name. Two placements of one lock on a floor are two instances, so the
  * second must say `as`.
  *
- * `inside` seats the lock in a region of another placement instead of in the floor's sequence. Neither lock
- * knows: the host is written exactly as it would be alone.
+ * `inside` splices the lock into the nest spot of another placement (`Lock.nestSpot`) instead of the floor's
+ * sequence. Neither lock knows: the host is written exactly as it would be alone.
  */
-export type PlacedLock = { lock: Lock; as?: string; inside?: { instance: string; region: string } }
+export type PlacedLock = { lock: Lock; as?: string; inside?: { instance: string } }
 
-/** A LOCK NESTED IN A REGION OF ANOTHER, as the expansion leaves it for the floor's walk: the inner instance,
+/** A LOCK NESTED IN THE NEST SPOT OF ANOTHER, as the expansion leaves it for the floor's walk: the inner instance,
  * its host instance, and the inner's own regions and ports under their floor (namespaced) names. */
 export type LockNesting = { instance: string; host: string; regions: string[]; in: string; out: string }
 
-/** A LOCK INSTANCE AS PLACED ON A FLOOR: its regions under their floor (namespaced) names, and the host region it stands in when nested. */
-export type PlacedInstance = { instance: string; regions: string[]; inside?: { host: string; region: string } }
+/** A LOCK INSTANCE AS PLACED ON A FLOOR: its regions under their floor (namespaced) names and, when nested, its
+ * host and the two regions of the host's nest spot it stands between, in the spot's direction. */
+export type PlacedInstance = {
+  instance: string
+  regions: string[]
+  inside?: { host: string; between: [string, string] }
+}
 
 /** What `expandFloorLocks` hands back for a floor that places locks: the config the carve sees, and what the planner reads beside it. */
 export type ExpandedFloor = { config: FloorConfig; nesting?: LockNesting[]; placed?: PlacedInstance[] }
 
-/** EVERY WAY A NESTING IS REFUSED, naming the host, region or instance to fix. Authored names. */
+/** EVERY WAY A NESTING IS REFUSED, naming the host or instance to fix. Authored names. A spot that contradicts its
+ * host is the host's own refusal (`nestSpotFaults`, compileLock), never a nesting's. */
 export type LockNestingFault =
   | { type: "hostUnknown"; host: string }
-  | { type: "regionUnknown"; host: string; region: string }
-  /** The host's `in` or `out`: a port cannot hold another lock. */
-  | { type: "atPort"; host: string; region: string }
+  /** The host has no nest spot: none written (`-&>`), or one on a busy connection, which is no spot. */
+  | { type: "noNestSpot"; host: string }
   | { type: "cycle"; through: string[] }
-  /** One host region holds one lock; `with` is the placement that got there first. */
-  | { type: "regionShared"; host: string; region: string; with: string }
-  /** The region is barred as a whole, so the inner lock would stand behind a wall of the host's. */
-  | { type: "regionBarred"; host: string; region: string; barriers: string[] }
-  | { type: "regionHoldsMechanic"; host: string; region: string; mechanics: string[] }
-  /** The region is not a stretch of the host's route with exactly one way in and one way out. */
-  | { type: "notPassThrough"; host: string; region: string; joins: number }
-  /** Both neighbours are equally far from the host's `in`, so which side the inner's `in` faces is not said. */
-  | { type: "directionAmbiguous"; host: string; region: string }
+  /** A spot holds one lock; `with` is the placement that got there first. */
+  | { type: "nestSpotTaken"; host: string; with: string }
 
 /** The floor's own ground before its first lock and after its last. Belongs to no lock, so the exit is outside every one. */
 export const FLOOR_ENTRANCE = "entrance"
@@ -64,28 +61,7 @@ const contradictions = (config: FloorConfig): string[] => [
 
 const instanceName = (placed: PlacedLock): string => placed.as ?? placed.lock.name
 
-const regionsHeldBy = (mechanic: LockMechanic): string[] =>
-  mechanic.control === "sequence" ? mechanic.steps.map(step => step.in) : [mechanic.in]
-
-/** The two regions a pass-through region joins, the one nearer the lock's `in` first; undefined when neither is nearer. */
-const sidesOf = (lock: Lock, region: string, neighbours: [string, string]): [string, string] | undefined => {
-  const joins = lock.connections.map(joinOf).filter(([a, b]) => a !== region && b !== region)
-  const distance = new Map<string, number>([[lock.in, 0]])
-  const queue = [lock.in]
-  for (let at = 0; at < queue.length; at++)
-    for (const [a, b] of joins) {
-      const from = queue[at]
-      const to = a === from ? b : b === from ? a : undefined
-      if (to === undefined || distance.has(to)) continue
-      distance.set(to, distance.get(from)! + 1)
-      queue.push(to)
-    }
-  const [first, second] = neighbours.map(name => distance.get(name) ?? Infinity)
-  if (first === second) return undefined
-  return first < second ? neighbours : [neighbours[1], neighbours[0]]
-}
-
-type Seat = { instance: string; host: string; region: string; near: string; far: string }
+type Seat = { instance: string; host: string; from: string; to: string }
 
 /** Every reason the nested placements cannot be seated, and the seats of those that can. */
 const seatNested = (placements: PlacedLock[]): { reasons: AssemblerReason[]; seats: Seat[] } => {
@@ -100,42 +76,24 @@ const seatNested = (placements: PlacedLock[]): { reasons: AssemblerReason[]; sea
   for (const placed of placements) {
     if (!placed.inside) continue
     const instance = instanceName(placed)
-    const { instance: host, region } = placed.inside
+    const { instance: host } = placed.inside
     const hostLock = byName.get(host)?.lock
     if (!hostLock) {
       refuse(instance, { type: "hostUnknown", host })
       continue
     }
-    if (!Object.hasOwn(hostLock.regions, region)) {
-      refuse(instance, { type: "regionUnknown", host, region })
+    // A LOCK IS SPLICED INTO ITS HOST'S NEST SPOT, the one connection its author wrote `-&>`. Whether the spot can
+    // hold a lock is asked when the host is read (`nestSpotFaults`), so a spot that contradicts it is refused there
+    // alone.
+    const spot = nestSpotOf(hostLock)
+    if (!spot) {
+      if (nestSpotFaults(hostLock).length === 0) refuse(instance, { type: "noNestSpot", host })
       continue
     }
-    if (region === hostLock.in || region === hostLock.out) refuse(instance, { type: "atPort", host, region })
-
-    const first = taken.get(`${host}|${region}`)
-    if (first === undefined) taken.set(`${host}|${region}`, instance)
-    else refuse(instance, { type: "regionShared", host, region, with: first })
-
-    const barriers = Object.entries(hostLock.gates)
-      .filter(([, gate]) => isRegionGate(gate) && gate.region === region)
-      .map(([id]) => id)
-    if (barriers.length > 0) refuse(instance, { type: "regionBarred", host, region, barriers })
-    const mechanics = Object.entries(hostLock.mechanics)
-      .filter(([, mechanic]) => regionsHeldBy(mechanic).includes(region))
-      .map(([id]) => id)
-    if (mechanics.length > 0) refuse(instance, { type: "regionHoldsMechanic", host, region, mechanics })
-
-    const neighbours = hostLock.connections
-      .map(joinOf)
-      .filter(([a, b]) => a === region || b === region)
-      .map(([a, b]) => (a === region ? b : a))
-    if (neighbours.length !== 2) {
-      refuse(instance, { type: "notPassThrough", host, region, joins: neighbours.length })
-      continue
-    }
-    const sides = sidesOf(hostLock, region, [neighbours[0], neighbours[1]])
-    if (!sides) refuse(instance, { type: "directionAmbiguous", host, region })
-    else seats.push({ instance, host, region, near: sides[0], far: sides[1] })
+    const first = taken.get(host)
+    if (first === undefined) taken.set(host, instance)
+    else refuse(instance, { type: "nestSpotTaken", host, with: first })
+    seats.push({ instance, host, from: spot.from, to: spot.to })
   }
 
   for (const placed of placements) {
@@ -162,10 +120,9 @@ const seatNested = (placements: PlacedLock[]): { reasons: AssemblerReason[]; sea
  * single container on a stretch of the main path and leaves the rest unlabelled; two locks in sequence need
  * the stretch between them to be a region of its own, so the sequence is composed directly instead.
  *
- * A NESTED LOCK TAKES THE PLACE OF ONE REGION OF ITS HOST: the region leaves the layout, the host join on its
- * near side (the one nearer the host's `in`) is re-pointed at the inner's `in` and the join on its far side at
- * the inner's `out`, so the route walks host, inner, host. Gates, drops and `barrierOrder` standing on those
- * joins move with them. Nested locks are no part of the floor's sequence.
+ * A NESTED LOCK IS SPLICED INTO ITS HOST'S NEST SPOT: the spot's corridor gives way to one from its first region
+ * to the inner's `in` and one from the inner's `out` to its second, so the route walks host, inner, host. Nested
+ * locks are no part of the floor's sequence.
  */
 export const expandFloorLocks = (
   config: FloorConfig
@@ -201,30 +158,23 @@ export const expandFloorLocks = (
 
   const names = placements.map(instanceName)
   const fragments = new Map<string, LockFragment>(names.map((name, i) => [name, compiled[i]]))
-  for (const { instance, host, region, near, far } of nested.seats) {
+  // A NESTED LOCK IS SPLICED INTO ITS HOST'S NEST SPOT: the spot's corridor gives way to two, from the spot's first
+  // region to the inner's `in` and from the inner's `out` to the spot's second. The spot carries no barrier, so
+  // nothing else of the host moves.
+  for (const { instance, host, from, to } of nested.seats) {
     const inner = fragments.get(instance)!.regionLayout
-    const at = `${host}.${region}`
-    const sides = [`${host}.${near}`, `${host}.${far}`]
-    const repoint = (pair: readonly [string, string]): readonly [string, string] => {
-      if (pair[0] !== at && pair[1] !== at) return pair
-      const other = pair[0] === at ? pair[1] : pair[0]
-      const port = other === sides[0] ? inner.in : inner.out
-      return pair[0] === at ? [port, pair[1]] : [pair[0], port]
-    }
+    const [a, b] = [`${host}.${from}`, `${host}.${to}`]
     const hosted = fragments.get(host)!
     fragments.set(host, {
       ...hosted,
       regionLayout: {
         ...hosted.regionLayout,
-        regions: hosted.regionLayout.regions.filter(r => r.name !== at),
-        connections: hosted.regionLayout.connections.map(repoint),
+        connections: hosted.regionLayout.connections.flatMap(pair =>
+          (pair[0] === a && pair[1] === b) || (pair[0] === b && pair[1] === a)
+            ? [[a, inner.in] as const, [inner.out, b] as const]
+            : [pair]
+        ),
       },
-      obstacles: hosted.obstacles.map((obstacle): Obstacle =>
-        obstacle.at.on === "connection"
-          ? { ...obstacle, at: { on: "connection", between: repoint(obstacle.at.between) } }
-          : obstacle
-      ),
-      barrierOrder: hosted.barrierOrder.map((order): BarrierOrder => ({ ...order, between: repoint(order.between) })),
     })
   }
 
@@ -262,7 +212,9 @@ export const expandFloorLocks = (
     return {
       instance: name,
       regions: fragment.regionLayout.regions.map(region => region.name),
-      ...(inside && seat ? { inside: { host: seat.host, region: `${seat.host}.${seat.region}` } } : {}),
+      ...(inside && seat
+        ? { inside: { host: seat.host, between: [`${seat.host}.${seat.from}`, `${seat.host}.${seat.to}`] } }
+        : {}),
     }
   })
   return {

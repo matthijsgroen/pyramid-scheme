@@ -1,6 +1,6 @@
 import type { Lock } from "@/game/lockAuthoring"
 
-/** A lever in the first room works the door between the hall and the way out: a gate on the main route. */
+/** A lever in the first room works the door between the hall and the way out: a gate on the main route; another lock may be spliced in between `foyer` and `hall`. */
 export const leverLock = (): Lock => ({
   name: "lever",
   regions: {
@@ -17,9 +17,10 @@ export const leverLock = (): Lock => ({
   },
   in: "foyer",
   out: "landing",
+  nestSpot: { from: "foyer", to: "hall" },
 })
 
-/** A torch in the foyer that holds the hall's door open until it is worked, and then for ever shuts it: a lock the player can strand themselves in. */
+/** A torch in the foyer that holds the hall's door open until it is worked, and then for ever shuts it: a lock the player can strand themselves in; another lock may be spliced in between `foyer` and `hall`. */
 export const strandingLock = (): Lock => ({
   name: "stranding",
   regions: {
@@ -36,4 +37,5 @@ export const strandingLock = (): Lock => ({
   },
   in: "foyer",
   out: "landing",
+  nestSpot: { from: "foyer", to: "hall" },
 })
