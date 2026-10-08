@@ -121,8 +121,11 @@ const seatNested = (placements: PlacedLock[]): { reasons: AssemblerReason[]; sea
       continue
     }
     const first = taken.get(host)
-    if (first === undefined) taken.set(host, instance)
-    else refuse(instance, { type: "nestSpotTaken", host, with: first })
+    if (first !== undefined) {
+      refuse(instance, { type: "nestSpotTaken", host, with: first })
+      continue
+    }
+    taken.set(host, instance)
     seats.push({ instance, host, from: spot.from, to: spot.to })
   }
 
@@ -326,12 +329,11 @@ export const expandFloorLocks = (
     }
   })
   const placed: PlacedInstance[] = ordered.map(({ name, fragment }) => {
-    const inside = insideOf.get(name)
     const seat = nested.seats.find(candidate => candidate.instance === name)
     return {
       instance: name,
       regions: fragment.regionLayout.regions.map(region => region.name),
-      ...(inside && seat
+      ...(seat
         ? { inside: { host: seat.host, between: [`${seat.host}.${seat.from}`, `${seat.host}.${seat.to}`] } }
         : {}),
     }
