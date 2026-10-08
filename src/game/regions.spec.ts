@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import {
   appetiteAccepts,
   fitContent,
+  forkSeams,
   mainPathRegions,
   offRouteChains,
   regionOfStep,
@@ -612,5 +613,51 @@ describe("grouping off-route regions as a tree over connections", () => {
       { mouth: "in", regions: ["rightLower", "s1Chamber"] },
       { mouth: "in", regions: ["leftLower", "s2Chamber"] },
     ])
+  })
+})
+
+describe("the seams a fork in a region has", () => {
+  it("are the first joins of the chains hanging off it, on a floor carved as side chains", () => {
+    const g = graph(
+      [
+        ["in", "out"],
+        ["in", "a"],
+        ["in", "b"],
+        ["a", "b"],
+      ],
+      ["in", "out", "a", "b"],
+      { in: "in", out: "out" }
+    )
+    expect(forkSeams(g, "in")).toEqual([["in", "a"]])
+  })
+
+  it("are every join of it the route does not take, on a laid floor, a loop's own included", () => {
+    const g = graph(
+      [
+        ["in", "out"],
+        ["in", "a"],
+        ["in", "b"],
+        ["a", "b"],
+      ],
+      ["in", "out", "a", "b"],
+      { in: "in", out: "out" }
+    )
+    expect(forkSeams(g, "in", [], { laid: true })).toEqual([
+      ["in", "a"],
+      ["in", "b"],
+    ])
+  })
+
+  it("are the same either way where nothing closes a loop", () => {
+    const g = graph(
+      [
+        ["in", "out"],
+        ["in", "a"],
+        ["in", "b"],
+      ],
+      ["in", "out", "a", "b"],
+      { in: "in", out: "out" }
+    )
+    expect(forkSeams(g, "in", [], { laid: true })).toEqual(forkSeams(g, "in"))
   })
 })

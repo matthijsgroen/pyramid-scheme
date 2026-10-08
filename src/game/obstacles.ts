@@ -1,7 +1,7 @@
 import type { ResolveMechanicKind } from "./mechanics"
 import { resolveMechanicKind } from "./mechanics"
 import type { RegionGraph } from "./regions"
-import { offRouteChains, regionRoute } from "./regions"
+import { forkSeams, offRouteChains, regionRoute } from "./regions"
 import type { ForkDemand, WeightTerm } from "./siteTypes"
 
 /**
@@ -498,13 +498,7 @@ export const topologyFaults = (
   const seamsFor = (region: string): Set<string> => {
     const known = seamsOf.get(region)
     if (known) return known
-    const seams = new Set(
-      offRouteChains(layout, drops)
-        .filter(
-          ({ mouth, regions: led }) => mouth === region && led.length > 0 && joined.has(connectionKey(region, led[0]))
-        )
-        .map(({ regions: led }) => connectionKey(region, led[0]))
-    )
+    const seams = new Set(forkSeams(layout, region, drops, { laid }).map(([a, b]) => connectionKey(a, b)))
     seamsOf.set(region, seams)
     return seams
   }

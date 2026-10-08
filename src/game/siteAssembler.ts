@@ -38,6 +38,7 @@ import type {
 import { HANDLE_SIDES, MECHANISM_AT_REST } from "./siteTypes"
 import {
   appetiteAccepts,
+  forkSeams,
   offRouteChains,
   regionOfStep,
   regionRoute,
@@ -1177,11 +1178,15 @@ const assembleExpandedFloor = (
       if (forkIns.some(other => other.region === region)) return refuse("repeated")
       const seams: [string, string][] = []
       const sectionIdxs: number[] = []
-      layoutChains.forEach((chain, i) => {
-        if (chain.mouth !== region || chain.regions.length === 0 || !joined(region, chain.regions[0])) return
-        seams.push([region, chain.regions[0]])
-        if (!plan && i < config.sideSections.length) sectionIdxs.push(i)
-      })
+      // A laid floor's junction is laid for its plan's arms, which may meet again beyond it; a floor carved as side
+      // chains matches each seam to the side section hosting its chain.
+      if (plan) seams.push(...forkSeams(regionLayout, region, drops, { laid: true }))
+      else
+        layoutChains.forEach((chain, i) => {
+          if (chain.mouth !== region || chain.regions.length === 0 || !joined(region, chain.regions[0])) return
+          seams.push([region, chain.regions[0]])
+          if (i < config.sideSections.length) sectionIdxs.push(i)
+        })
       if (seams.length < 2) return refuse("fewerThanTwoSeams")
       forkIns.push({ region, seams, sectionIdxs })
     }

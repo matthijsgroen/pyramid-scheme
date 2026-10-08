@@ -118,3 +118,15 @@ describe("a gate an open loop goes round", () => {
     })
   })
 })
+
+/** A fork whose two ways meet again beyond it. */
+const ARMS_REJOIN = "in -[Y]- a\nin -[Y]- b\na -- b\nin -- out\nY fork @in\nin ?\na ?\nb ?\nout ?"
+
+describe("a fork whose two ways meet again", () => {
+  it("carves its junction with a gated exit on each way, and walks sound", () => {
+    const grid = carveLockFloor(parseLock(ARMS_REJOIN, "armsRejoin").lock, BINDING)
+    const junction = grid.cells.flat().find(cell => cell.type === "room" && cell.mechanismId === "armsRejoin.Y")
+    expect(junction?.type === "room" && junction.exits?.filter(exit => exit.gateKeyId !== undefined)).toHaveLength(2)
+    expectSound(grid)
+  })
+})
