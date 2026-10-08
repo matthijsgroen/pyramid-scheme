@@ -2429,7 +2429,10 @@ describe("a gate on a connection off the threaded route", () => {
     const result = assembleFloor("site-doubleback-nowhere", config, 42)
 
     expect(result.success).toBe(false)
-    expect(result.success === false && result.reasons).toEqual([{ type: "obstacleOffRoute", id: "nowhere" }])
+    expect(result.success === false && result.reasons).toEqual([
+      { type: "obstacleOffRoute", id: "nowhere" },
+      { type: "gateBypassed", id: "nowhere", between: ["s1Chamber", "s2Chamber"] },
+    ])
   })
 
   // A gate is owned by the control that opens it and has no interaction of its own, so one no control

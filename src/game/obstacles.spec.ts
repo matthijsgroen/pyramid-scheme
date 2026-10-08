@@ -167,7 +167,10 @@ describe("authored topology that does not resolve", () => {
       [lever("s1", { left: ["g1"], right: [] })]
     )
 
-    expect(faults).toEqual([{ type: "obstacleOffRoute", id: "g1" }])
+    expect(faults).toEqual([
+      { type: "obstacleOffRoute", id: "g1" },
+      { type: "gateBypassed", id: "g1", between: ["vault", "cellar"] },
+    ])
   })
 
   it("names an obstacle no control opens in any state", () => {
@@ -431,5 +434,55 @@ describe("a floor laid from a lock plan", () => {
     expect(
       topologyFaults(pendant, [gate("g1", ["cellar", "crypt"])], [lever("s1", { left: ["g1"], right: [] })])
     ).toEqual([{ type: "obstacleOffRoute", id: "g1" }])
+  })
+
+  it("names a gate an open way goes round, since no doorway could hold it", () => {
+    const faults = topologyFaults(
+      loop,
+      [gate("g1", ["vault", "cellar"])],
+      [lever("s1", { left: ["g1"], right: [] })],
+      [],
+      [],
+      undefined,
+      { laid: true }
+    )
+    expect(faults).toEqual([{ type: "gateBypassed", id: "g1", between: ["vault", "cellar"] }])
+  })
+
+  it("names it on a floor carved as side chains too (D4)", () => {
+    const faults = topologyFaults(loop, [gate("g1", ["vault", "cellar"])], [lever("s1", { left: ["g1"], right: [] })])
+    expect(faults).toContainEqual({ type: "gateBypassed", id: "g1", between: ["vault", "cellar"] })
+  })
+
+  it("is no way round through a barred region", () => {
+    const ring: RegionGraph = {
+      regions: [
+        { name: "mouth", appetite: "free" },
+        { name: "hall", appetite: "free" },
+        { name: "vault", appetite: "free" },
+        { name: "cellar", appetite: "free" },
+        { name: "attic", appetite: "free" },
+      ],
+      connections: [
+        ["mouth", "hall"],
+        ["hall", "vault"],
+        ["vault", "cellar"],
+        ["cellar", "attic"],
+        ["attic", "hall"],
+      ],
+      in: "mouth",
+      out: "vault",
+    }
+    const flooded: Obstacle = { id: "flood", kind: "gate", at: { on: "region", region: "attic" } }
+    const faults = topologyFaults(
+      ring,
+      [gate("g1", ["vault", "cellar"]), flooded],
+      [lever("s1", { left: ["g1"], right: ["flood"] })],
+      [],
+      [],
+      undefined,
+      { laid: true }
+    )
+    expect(faults).toEqual([])
   })
 })

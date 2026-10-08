@@ -769,6 +769,7 @@ export type AssemblerReason =
   | { type: "obstacleNamesNoConnection"; id: string }
   | { type: "obstacleNamesNoRegion"; id: string }
   | { type: "obstacleOffRoute"; id: string }
+  | { type: "gateBypassed"; id: string; between: [string, string] }
   | { type: "obstacleUnowned"; id: string }
   | { type: "controlUnsatisfied"; id: string; what: string }
   | { type: "unknownControlKind"; id: string; control: string }

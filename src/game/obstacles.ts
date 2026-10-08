@@ -198,6 +198,10 @@ export type TopologyFault =
    * drop is for — so this is the only structural question left to ask of it. */
   | { type: "obstacleNamesNoRegion"; id: string }
   | { type: "obstacleOffRoute"; id: string }
+  /** A gate whose two regions an open way joins: no edge gate on it and no barred region along
+   * it, so its two sides are one ground and no carve can stand its door between two (gateDoorFaults,
+   * carveAgreement.ts). `id` is the gate. */
+  | { type: "gateBypassed"; id: string; between: [string, string] }
   | { type: "obstacleUnowned"; id: string }
   | { type: "controlUnsatisfied"; id: string; what: string }
   /** The build has no plug-in for this control kind (src/game/mechanics); `id` is the control or one-way. */
@@ -400,6 +404,39 @@ export const topologyFaults = (
     const key = connectionKey(a, b)
     if (!joined.has(key)) faults.push({ type: "obstacleNamesNoConnection", id: obstacle.id })
     else if (!seatable.has(key)) faults.push({ type: "obstacleOffRoute", id: obstacle.id })
+  }
+
+  // AN OPEN WAY ROUND A GATE, on any floor (every floor that can hold a loop is laid): the walk from one side of the
+  // gate to the other over joins that carry no edge gate and through no barred region. Its two sides are then one
+  // ground, so the carve would refuse its door at every seed; it is refused here by name instead.
+  const gatedJoins = new Set(
+    obstacles.flatMap(o => (isEdgeGate(o) ? [connectionKey(o.at.between[0], o.at.between[1])] : []))
+  )
+  const barred = new Set(obstacles.flatMap(o => (isRegionGate(o) ? [o.at.region] : [])))
+  const openNeighbours = new Map<string, string[]>()
+  for (const [a, b] of layout.connections) {
+    if (gatedJoins.has(connectionKey(a, b)) || barred.has(a) || barred.has(b)) continue
+    openNeighbours.set(a, [...(openNeighbours.get(a) ?? []), b])
+    openNeighbours.set(b, [...(openNeighbours.get(b) ?? []), a])
+  }
+  const openlyJoined = (from: string, to: string): boolean => {
+    const seen = new Set([from])
+    const queue = [from]
+    for (let at = 0; at < queue.length; at++)
+      for (const next of openNeighbours.get(queue[at]) ?? []) {
+        if (next === to) return true
+        if (!seen.has(next)) {
+          seen.add(next)
+          queue.push(next)
+        }
+      }
+    return false
+  }
+  for (const obstacle of obstacles) {
+    if (!isEdgeGate(obstacle)) continue
+    const [a, b] = obstacle.at.between
+    if (!joined.has(connectionKey(a, b)) || barred.has(a) || barred.has(b)) continue
+    if (openlyJoined(a, b)) faults.push({ type: "gateBypassed", id: obstacle.id, between: [a, b] })
   }
 
   const owned = new Set<string>()

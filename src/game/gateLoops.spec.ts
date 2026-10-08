@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { assembleFloor } from "./siteAssembler"
+import { compileLock } from "./lockCompile"
 import { parseLock } from "./lockNotation"
 import { deadFloorRegions, describeFloorWalkFailure, walkFloorLock } from "./floorLockWalk"
 import { BINDING, carveLockFloor } from "./testSupport/lockFixtures"
@@ -101,5 +102,19 @@ describe("a lock whose gates close a loop", () => {
     const grid = carveStones(ROUND_THE_ROOM)
     expect(doorCells(grid)).toHaveLength(2)
     expectSound(grid)
+  })
+})
+
+/** One door with an open way round it. */
+const OPEN_WAY_ROUND = "in -[L]- hall\nhall -- out\nin -- side\nside -- hall\nL toggle @in\nin ?\nhall ?\nout ?\nside ?"
+
+describe("a gate an open loop goes round", () => {
+  it("is refused by name before a wall is carved", () => {
+    const result = compileLock(parseLock(OPEN_WAY_ROUND, "openWayRound").lock, BINDING)
+    expect(result.ok).toBe(false)
+    expect(result.ok === false && result.faults).toContainEqual({
+      type: "topology",
+      fault: { type: "gateBypassed", id: "in-hall", between: ["in", "hall"] },
+    })
   })
 })
