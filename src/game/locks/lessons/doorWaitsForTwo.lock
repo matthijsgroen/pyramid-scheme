@@ -1,8 +1,7 @@
 // designed by: Claude
 // LESSON, expert: a door that waits for two; its face shows both marks.
 
-in -- a
-in -- b
-in -[T1+T2]- out
-T1 torch @a
-T2 torch @b
+in -- hall
+hall -[T1+T2]- out
+T1 torch @in
+T2 torch @hall

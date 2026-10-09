@@ -1,6 +1,6 @@
 // designed by: Claude
 // LESSON, junior: a torch, lit for good, opens its door.
 
-in -- alcove
-in -[T]- out
-T torch @alcove
+in -- hall
+hall -[T]- out
+T torch @in

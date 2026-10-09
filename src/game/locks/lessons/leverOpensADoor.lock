@@ -1,6 +1,6 @@
 // designed by: Claude
 // LESSON, junior: a lever elsewhere opens a door here.
 
-in -- side
-in -[H]- out
-H toggle @side
+in -- hall
+hall -[H]- out
+H toggle @in
