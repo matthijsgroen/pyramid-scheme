@@ -5,7 +5,7 @@ import type { StoredJourneyStateV3 } from "@/app/state/useJourneys"
 import type { RelaidPyramid } from "./relaidPyramids"
 import { useRelaidFloorsBackfill } from "./useRelaidFloorsBackfill"
 
-const RELAID: readonly RelaidPyramid[] = [{ journeyId: "made_up", levelNr: 2 }]
+const RELAID: readonly RelaidPyramid[] = [{ journeyId: "made_up", levelNr: 2, since: 1 }]
 
 const save = (journeyId: string, levelNr: number): StoredJourneyStateV3 => ({
   journeyId,

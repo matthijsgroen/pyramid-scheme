@@ -117,8 +117,9 @@ A filled row becomes a `floorLocks` entry on its pyramid in `src/worldGen/spec/j
 with `catalogueLock(name)` from `src/worldGen/spec/locks/catalogue.ts` reading the `.lock` file and
 `realisations` binding each control kind to what the player sees. `yarn generate-world` bakes it. A lock on a
 shipped floor re-carves that floor. Saves name rooms by authoring address, so exploration and loot carry across;
-only where a save stands does not, so the pyramid joins `RELAID_PYRAMIDS` (`src/app/SiteMap/relaidPyramids.ts`)
-and `RELAID_FLOORS_VERSION` goes up by one, and a save inside it resumes at its entrance once.
+only where a save stands does not, so `RELAID_FLOORS_VERSION` goes up by one and the pyramid joins `RELAID_PYRAMIDS`
+(`src/app/SiteMap/relaidPyramids.ts`) with `since` set to the new version, and a save inside it resumes at its
+entrance once.
 
 expert_1's doubleBack stands through the same `floorLocks` with its realisations bound (fork-switch
 `lightbeamSwitch`, toggle `handle`, one-way `zipline`), but reads the lock from `doubleBackLock()` in

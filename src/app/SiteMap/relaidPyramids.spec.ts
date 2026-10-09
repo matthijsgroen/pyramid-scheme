@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 import type { StoredJourneyStateV3 } from "@/app/state/useJourneys"
 import { standsInRelaidPyramid, type RelaidPyramid } from "./relaidPyramids"
 
-const RELAID: readonly RelaidPyramid[] = [{ journeyId: "made_up", levelNr: 2 }]
+const RELAID: readonly RelaidPyramid[] = [{ journeyId: "made_up", levelNr: 2, since: 1 }]
 
 const save = (overrides: Partial<StoredJourneyStateV3> = {}): StoredJourneyStateV3 => ({
   journeyId: "made_up",
@@ -40,5 +40,14 @@ describe("standsInRelaidPyramid", () => {
 
   it("does not hold for a save standing nowhere yet, which has no place to forget", () => {
     expect(standsInRelaidPyramid(save({ position: null, positionKey: null, standingKey: null }), RELAID)).toBe(false)
+  })
+
+  it("does not hold for a save already stamped with the version that re-laid the pyramid", () => {
+    expect(standsInRelaidPyramid(save({ relaidFloorsVersion: 1 }), RELAID)).toBe(false)
+  })
+
+  it("holds for a save stamped before the version that re-laid the pyramid", () => {
+    const later: readonly RelaidPyramid[] = [{ journeyId: "made_up", levelNr: 2, since: 2 }]
+    expect(standsInRelaidPyramid(save({ relaidFloorsVersion: 1 }), later)).toBe(true)
   })
 })

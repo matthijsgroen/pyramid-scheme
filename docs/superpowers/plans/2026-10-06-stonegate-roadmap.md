@@ -142,11 +142,11 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
   stoneOnAPlate at Djoser site 3 or 4 is the obvious place (designer's pick).
 - The header comment of `src/game/locks/stoneGate.lock` still says "not placed yet, not buildable yet"; it is the
   designer's text.
-- `RELAID_PYRAMIDS` lists expert_1 pyramid 4 and expert_4 pyramid 5 under `RELAID_FLOORS_VERSION` 1. A later lock on a
-  shipped floor adds its pyramid and bumps the version.
+- `RELAID_PYRAMIDS` lists expert_1 pyramid 4 and expert_4 pyramid 5, both `since: 1`. A later lock on a shipped floor
+  bumps `RELAID_FLOORS_VERSION` and adds its pyramid with `since` set to the new version; earlier entries stay as
+  they are, so a save stamped with an earlier version is cleared only for the new pyramid.
 - A save that never ran the re-key release (`cellKeyVersion` behind) and stands in a re-laid pyramid has its
   exploration translated against the re-laid carve; only its place is cleared.
-
 - A room-free lock region (no mechanism, plate or door, such as stoneGate's `hall3`) comes back fogged after a
   re-carve: it has no room to carry the fog mark. No loot, state or key lives there. Options: a door stands in a bare
   region it leads out of (changes lock-walk counts, `nestedLocks.spec.ts`), or a room-free region's fog is restored
