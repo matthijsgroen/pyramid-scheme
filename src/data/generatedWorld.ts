@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1014774907
+export const worldContentHash = 1529872083
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -5694,7 +5694,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
                 "leftLower-s2": { from: "leftLower", to: "s2", owners: ["S1"] },
                 "in-out": { from: "in", to: "out", owners: ["S2"] },
               },
-              oneWays: { dropToLeft: { from: "s1", to: "leftLower" }, dropToIn: { from: "leftLower", to: "in" } },
+              oneWays: {
+                dropToLeft: { from: "s1", to: "leftLower" },
+                dropToIn: { from: "leftLower", to: "in" },
+                dropToS1: { from: "s2", to: "s1" },
+              },
               mechanics: {
                 Y: { control: "fork-switch", in: "in" },
                 S1: { control: "toggle", in: "s1", starts: "a", opens: { a: ["rightLower-s1"], b: ["leftLower-s2"] } },
