@@ -1,3 +1,4 @@
+// designed by: Claude
 // master. Light west first and the board is solved once; light east first and
 // it is solved twice. The west-east drop is the optional shortcut.
 

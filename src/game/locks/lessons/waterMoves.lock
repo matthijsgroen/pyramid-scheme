@@ -1,4 +1,5 @@
-// LESSON, expert, not buildable yet (region gate): one lever drains a hall.
+// designed by: Claude
+// LESSON, expert: one lever drains a hall.
 
 in -- hall
 in >> passage

@@ -1,4 +1,5 @@
-// expert, not buildable yet (stones). One stone holds the vault open while you fetch the second; then
+// designed by: Claude
+// expert. One stone holds the vault open while you fetch the second; then
 // the first is free to press the exit's other plate. Spend a stone twice.
 
 in -- yard
