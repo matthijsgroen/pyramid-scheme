@@ -3,6 +3,7 @@
 
 in -[Y]- left
 in -[Y]- right
-in -- out
+in -[S]- out
 Y fork @in
-left $
+S toggle @left
+right $
