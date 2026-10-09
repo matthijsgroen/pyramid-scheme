@@ -654,3 +654,33 @@ describe(validateJourney, () => {
     }
   })
 })
+
+describe("reachableFrom across a drop", () => {
+  const drop = (dir: Direction): CorridorCell & { obstacle: { dir: Direction; kind: string } } => ({
+    ...corridor([]),
+    obstacle: { dir, kind: "zipline" },
+  })
+  // start(0,0) -e- launch(0,1) [span (0,2),(0,3)] landing(0,4) -e- far(0,5)
+  const grid = buildGrid(
+    [
+      [0, 0, room("puzzle", ["e"])],
+      [0, 1, corridor(["w"])],
+      [0, 2, drop("e")],
+      [0, 3, drop("e")],
+      [0, 4, corridor(["e"])],
+      [0, 5, room("treasure", ["w"], { reward: { type: "mosaicPiece" } })],
+    ],
+    [0, 0],
+    [0, 5]
+  )
+
+  it("reaches a room only a drop leads to", () => {
+    expect(reachableFrom(grid, [0, 0]).has("0,5")).toBe(true)
+  })
+
+  it("never walks a drop back from its landing", () => {
+    const reached = reachableFrom(grid, [0, 5])
+    expect(reached.has("0,4")).toBe(true)
+    expect(reached.has("0,0")).toBe(false)
+  })
+})

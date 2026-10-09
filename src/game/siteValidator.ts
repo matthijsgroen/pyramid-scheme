@@ -1,5 +1,6 @@
 import type { FloorGrid, ValidationReason, ValidationResult, TombKeyReward } from "./siteTypes"
 import type { DoorMode } from "./doorOpen"
+import { oneWayRuns } from "./gridNavigation"
 
 type Pos = readonly [number, number]
 
@@ -35,11 +36,24 @@ export const reachableFrom = (
   const startKey = posKey(sr, sc)
   const visited = new Set<string>([startKey])
   const queue: Pos[] = [[sr, sc]]
+  // A drop is crossed launch to landing and never back: its span names no direction in the cells' `dirs`, so
+  // the walk takes it as one step from the launch.
+  const landingOf = new Map(oneWayRuns(grid).map(run => [posKey(...run.launch), run.landing] as const))
 
   while (queue.length > 0) {
     const [r, c] = queue.shift()!
     const cell = grid.cells[r]?.[c]
     if (!cell || cell.type === "empty") continue
+
+    const landing = landingOf.get(posKey(r, c))
+    if (
+      landing &&
+      !visited.has(posKey(...landing)) &&
+      !(blockedPos && landing[0] === blockedPos[0] && landing[1] === blockedPos[1])
+    ) {
+      visited.add(posKey(...landing))
+      queue.push(landing)
+    }
 
     const dirs = cell.type === "room" || cell.type === "corridor" ? cell.dirs : new Set()
 
