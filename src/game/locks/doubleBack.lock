@@ -2,11 +2,16 @@
 // expert capstone. A lever that shuts the way you came and opens a branch you
 // drop onto; the drop off that branch is the only way home.
 
-in -[Y]- leftLower -[S1]- s2
-in -[Y]- rightLower -[S1:a]- s1
+in -[Y]- leftLower 
+in -[Y]- rightLower
 in -[S2]- out
-s1 >> leftLower >> in
-s2 >> s1
+
+leftLower -[S1]- s2
+
+rightLower >> s1
+s1 >> leftLower
+leftLower >> in
+
 Y fork @in
 S1 toggle @s1
 S2 toggle @s2
