@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1833990132
+export const worldContentHash = 1528773947
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -9323,6 +9323,64 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           undefined,
           undefined,
         ],
+        locks: [
+          {
+            lock: {
+              name: "stoneGate",
+              regions: {
+                in: { takes: "free" },
+                passage: { takes: "free" },
+                out: { takes: "free" },
+                hall: { takes: "free" },
+                hall2: { takes: "free" },
+                altar: { takes: "free" },
+                backroom: { takes: "free" },
+                hall3: { takes: "free" },
+                hall5: { takes: "free" },
+              },
+              connections: [
+                ["in", "passage"],
+                { between: ["passage", "out"], barriers: ["passage-out"] },
+                ["in", "hall"],
+                { between: ["hall", "hall2"], barriers: ["hall-hall2"] },
+                { between: ["hall2", "altar"], barriers: ["hall2-altar"] },
+                { between: ["altar", "backroom"], barriers: ["altar-backroom"] },
+                ["backroom", "hall3"],
+                { between: ["hall3", "hall2"], barriers: ["hall3-hall2"] },
+                { between: ["hall2", "hall5"], barriers: ["hall2-hall5"] },
+                { between: ["hall3", "passage"], barriers: ["hall3-passage"] },
+              ],
+              gates: {
+                "passage-out": { from: "passage", to: "out", owners: ["P1", "P2"] },
+                "hall-hall2": { from: "hall", to: "hall2", owners: ["P3"] },
+                "hall2-altar": { from: "hall2", to: "altar", owners: ["P4"] },
+                "altar-backroom": { from: "altar", to: "backroom", owners: ["P4"] },
+                "hall3-hall2": { from: "hall3", to: "hall2", owners: ["unladen"] },
+                "hall2-hall5": { from: "hall2", to: "hall5", owners: ["P4"] },
+                "hall3-passage": { from: "hall3", to: "passage", owners: ["S1"] },
+              },
+              mechanics: {
+                S1: { control: "activator", in: "hall5", starts: "off", opens: { off: [], on: ["hall3-passage"] } },
+              },
+              weights: {
+                plates: {
+                  P1: { in: "passage", stone: true, opens: { weighted: ["passage-out"], empty: [] } },
+                  P2: { in: "passage", stone: false, opens: { weighted: ["passage-out"], empty: [] } },
+                  P3: { in: "hall", stone: false, opens: { weighted: ["hall-hall2"], empty: [] } },
+                  P4: {
+                    in: "altar",
+                    stone: true,
+                    opens: { weighted: ["hall2-altar"], empty: ["altar-backroom", "hall2-hall5"] },
+                  },
+                  P5: { in: "backroom", stone: false, opens: { weighted: [], empty: [] } },
+                },
+              },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { weights: "stonePlate", activator: "torch", unladen: "narrowPassage" },
       },
       {
         pathPuzzles: 2,

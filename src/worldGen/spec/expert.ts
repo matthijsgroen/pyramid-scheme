@@ -2,6 +2,8 @@ import { tier, journey, tomb, wardChest, wardWing } from "../dsl"
 import type { Rule, PathEntry } from "../dsl"
 import { TOMB_ROOMS_PER_FLOOR } from "../data"
 import { doubleBackLock } from "./locks/doubleBack"
+import { freeRegions } from "@/game/lockAuthoring"
+import { catalogueLock } from "./locks/catalogue"
 
 // Expert's open side/hidden paths, as reusable arrays so a per-pyramid override can restate them
 // and ADD to them (pyramid-level sidePaths REPLACES the tier's, it doesn't merge).
@@ -309,6 +311,18 @@ export const expertRules: Rule[] = [
       0: {
         locks: [{ lock: doubleBackLock() }],
         realisations: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
+      },
+    },
+  }),
+  // Djoser's last pyramid opens on the designer's stoneGate, read from its .lock file: lifting the stone off the altar
+  // opens the back way and shuts the way in, a stone parked on the backroom shelf lets the explorer squeeze through
+  // the narrow passage, and both stones are spent twice. It stands on the main floor as the journey's capstone; the
+  // file marks no appetites, so every region takes `free` and the floor's own content goes where the carve puts it.
+  journey("expert_4").pyramid("last", {
+    floorLocks: {
+      0: {
+        locks: [{ lock: freeRegions(catalogueLock("stoneGate")) }],
+        realisations: { weights: "stonePlate", activator: "torch", unladen: "narrowPassage" },
       },
     },
   }),
