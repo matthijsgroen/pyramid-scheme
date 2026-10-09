@@ -191,8 +191,17 @@ describe("what re-authoring a floor costs a player", () => {
     const { explored, unexplored } = cost(floorWith(), placed)
 
     expect(unexplored).toEqual(["main/xobstacle:stones.hall-out", "main/xplate:stones.p", "main/xplate:stones.shelf"])
-    expect(explored).toEqual(
-      expect.arrayContaining(["main/p0", "main/p3", "main/xtreasure-chest", "s0/p1", "s0/xtreasure-chest"])
-    )
+    expect(explored).toEqual([
+      "main/entrance",
+      "main/exit",
+      "main/p0",
+      "main/p1",
+      "main/p2",
+      "main/p3",
+      "main/xtreasure-chest",
+      "s0/p0",
+      "s0/p1",
+      "s0/xtreasure-chest",
+    ])
   })
 })
