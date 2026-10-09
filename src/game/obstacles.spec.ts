@@ -737,11 +737,12 @@ describe("fork seams, sequences and orders read per corridor", () => {
     const obstacles = [gate("Ya", "a", { corridor: 1, owners: ["Y"] }), drop, gate("Yb", "b", { owners: ["Y"] })]
     const order: BarrierOrder[] = [{ between: ["in", "a"], barriers: ["Ya", "d"], corridor: 1 }]
     expect(laid(threeWays, obstacles, [fork], order)).toEqual([
+      { type: "gateOwnedOffSeam", id: "Ya", owner: "Y" },
       { type: "forkSwitchSeamUngated", id: "Y", between: ["in", "a"] },
     ])
   })
 
-  it("takes a fork gating a seam and the falling corridor beside it, not gating the seam twice", () => {
+  it("refuses a fork's gate on the falling corridor beside its seam: a fork's ways are layout corridors", () => {
     const obstacles = [
       gate("Ya", "a", { owners: ["Y"] }),
       gate("Yf", "a", { corridor: 1, owners: ["Y"] }),
@@ -749,23 +750,18 @@ describe("fork seams, sequences and orders read per corridor", () => {
       gate("Yb", "b", { owners: ["Y"] }),
     ]
     const order: BarrierOrder[] = [{ between: ["in", "a"], barriers: ["Yf", "d"], corridor: 1 }]
-    expect(laid(threeWays, obstacles, [fork], order)).toEqual([])
+    expect(laid(threeWays, obstacles, [fork], order)).toEqual([{ type: "gateOwnedOffSeam", id: "Yf", owner: "Y" }])
   })
 
-  it("refuses a fork's gate its falling corridor's order leaves out", () => {
-    const obstacles = [
-      gate("G1", "a", { owners: ["Y"] }),
-      gate("G2", "a", { owners: ["Y"] }),
-      drop,
-      gate("Yb", "b", { owners: ["Y"] }),
-    ]
+  it("refuses a gate its falling corridor's order leaves out", () => {
+    const obstacles = [gate("G1", "a"), gate("G2", "a"), drop, gate("Yb", "b", { owners: ["Y"] })]
     const twoWays = layout([
       ["in", "b"],
       ["in", "out"],
       ["out", "a"],
     ])
     const order: BarrierOrder[] = [{ between: ["in", "a"], barriers: ["G1", "d"] }]
-    expect(laid(twoWays, obstacles, [fork], order)).toEqual([
+    expect(laid(twoWays, obstacles, [fork, lever(["G1", "G2"])], order)).toEqual([
       { type: "barrierUnordered", id: "G2", between: ["in", "a"] },
     ])
   })

@@ -638,6 +638,17 @@ describe("corridors on a pair, and a drop among a corridor's items", () => {
     expect(own(parseLock("in -- out\nin -[A]- >> pit\npit -- out\nA toggle @in", "fall").lock)).toEqual([])
   })
 
+  it("refuses a fork-switch's gate on a falling corridor: a fork's ways are layout corridors", () => {
+    const lock = parseLock(
+      "in -[S]- out\nin -[Y]- a\nin -[Y]- b\nin -[Y]- >> c\nc >> in\nS toggle @c\nY fork @in",
+      "forkFall"
+    ).lock
+    expect(checkLock(lock, kinds)).toContainEqual({
+      type: "topology",
+      fault: { type: "gateOwnedOffSeam", id: "in-c", owner: "Y" },
+    })
+  })
+
   it("refuses two drops on one connection", () => {
     const base = parseLock("in -- hall\nhall -- out", "falls").lock
     const twice: Lock = {

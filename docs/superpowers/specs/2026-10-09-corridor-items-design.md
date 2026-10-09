@@ -174,6 +174,8 @@ that drop, which is exactly what it compiles to now. No JSON lock written so far
 The fork-switch rule keeps its form: a fork's gate is the first item on a corridor leaving the fork's region. Its
 alignment is read and never refused; the side toward the fork is always closed (section 5), so a centred fork gate
 gets room on its far side only.
+A fork's ways are layout corridors: a fork's gate on a falling corridor is refused `gateOwnedOffSeam`, because the
+floor builds the switch from its seams alone and such a gate would never be given a key.
 
 ## 3. Compile: the floor vocabulary
 

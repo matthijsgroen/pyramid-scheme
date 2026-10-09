@@ -48,6 +48,7 @@ import {
 import type { ContentKind, SideChain } from "./regions"
 import {
   barrierRuns,
+  corridorIndexOf,
   crossesNoDoor,
   doorsToEnterRegion,
   dropsLandingOnAStretch,
@@ -4190,12 +4191,15 @@ const assembleExpandedFloor = (
               return posKey(first[0], first[1])
             })()
         const [fr, fc] = wayKey.split(",").map(Number)
+        // The seam's own corridor: a layout corridor on this pair, never a falling one beside it.
+        const onSeam = ([a, b]: readonly [string, string]) => (a === from && b === to) || (a === to && b === from)
         const gate = gatesOwnedBy(control.id).find(
-          ({
-            at: {
-              between: [a, b],
-            },
-          }) => (a === from && b === to) || (a === to && b === from)
+          gate =>
+            onSeam(gate.at.between) &&
+            layoutCorridors.some(
+              corridor =>
+                onSeam(corridor.between) && corridor.index === corridorIndexOf(gate) && corridor.drop === undefined
+            )
         )!
         const door = cells2D[fr][fc]
         if (door.type !== "room" || door.requiredKeyId !== gateKeyOf(gate.id))

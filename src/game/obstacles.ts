@@ -672,8 +672,10 @@ export const topologyFaults = (
       gatesOwnedBy.set(owner, [...(gatesOwnedBy.get(owner) ?? []), obstacle])
       if (opensGate.has(obstacle.id)) faults.push({ type: "gateOwnedTwice", id: obstacle.id, owner })
       const key = connectionKey(obstacle.at.between[0], obstacle.at.between[1])
+      // A fork's ways are layout corridors: the floor builds its mechanism from the seams alone, so a gate it
+      // owns on a falling corridor would never be issued a key.
       const onFall = corridorAt.get(slotOf(key, corridorIndexOf(obstacle)))?.drop !== undefined
-      if (regions.has(fork.in) && joined.has(key) && !onFall && !seamsFor(fork.in).has(key))
+      if (onFall || (regions.has(fork.in) && joined.has(key) && !seamsFor(fork.in).has(key)))
         faults.push({ type: "gateOwnedOffSeam", id: obstacle.id, owner })
     }
   }
