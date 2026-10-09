@@ -314,7 +314,7 @@ if (unwalked.length > 0) {
 }
 
 if (stranding.length > 0) {
-  console.error(`✗ ${stranding.length} floor(s) hold a lock a player can be stranded in:`)
+  console.error(`✗ ${stranding.length} floor(s) hold a lock a player can be stranded in or lose a region of:`)
   for (const floor of stranding.slice(0, 20))
     console.error(`    ${floor.journeyId} level ${floor.levelNr} floor ${floor.floorIndex}: ${floor.problem}`)
   if (stranding.length > 20) console.error(`    … and ${stranding.length - 20} more`)

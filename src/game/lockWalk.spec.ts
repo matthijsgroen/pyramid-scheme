@@ -8,6 +8,7 @@ import {
   deadRegions,
   describeLockWalkFailure,
   type LockSpec,
+  type Mechanism,
 } from "./lockWalk"
 
 // A lock with one door and one key behind nothing: the smallest thing that reads.
@@ -486,5 +487,84 @@ describe("a one-way", () => {
 
   it("is taken carrying when the lock has no stones (no emptyHands)", () => {
     expect(handsAt(reachableStates(spec(undefined)), "b")).toEqual(["+ hand", "shelf"])
+  })
+})
+
+// A side room off the entrance behind a door a lever in the entrance works; the way out is a plain corridor on.
+const sideRoom = (lever: Mechanism["transitions"]): LockSpec => ({
+  regions: ["entrance", "side", "wayOut"],
+  gates: { sideDoor: { from: "entrance", to: "side", owners: ["lever"] } },
+  mechanisms: {
+    lever: { states: ["open", "shut"], initial: "open", opens: { open: ["sideDoor"], shut: [] }, transitions: lever },
+  },
+  passages: [{ a: "entrance", b: "wayOut" }],
+  in: "entrance",
+  out: "wayOut",
+})
+
+describe("every region stays reachable", () => {
+  it("refuses a lever that seals a side room for good, naming the room and the state", () => {
+    const result = walkLock(sideRoom([{ from: "open", to: "shut", at: "entrance" }]))
+    if (result.sound) throw new Error("expected the sealed side room to be refused")
+    expect(result.failure).toEqual({
+      type: "regionLost",
+      region: "side",
+      at: { region: "entrance", config: { lever: "shut" } },
+    })
+    expect(describeLockWalkFailure(result.failure)).toBe(
+      "from entrance, lever at shut, side can never be reached again"
+    )
+  })
+
+  it("calls the same side room sound when the lever toggles back", () => {
+    const toggle = [
+      { from: "open", to: "shut", at: "entrance" },
+      { from: "shut", to: "open", at: "entrance" },
+    ]
+    expect(walkLock(sideRoom(toggle))).toEqual({ sound: true, states: expect.any(Number) })
+  })
+
+  it("calls a drop into a dead-end pocket sound when a lever in the pocket opens the way back", () => {
+    const spec: LockSpec = {
+      regions: ["entrance", "pocket", "wayOut"],
+      gates: { climb: { from: "pocket", to: "entrance", owners: ["rope"] } },
+      mechanisms: {
+        rope: {
+          states: ["up", "down"],
+          initial: "up",
+          opens: { up: [], down: ["climb"] },
+          transitions: [{ from: "up", to: "down", at: "pocket" }],
+        },
+      },
+      oneWays: [{ from: "entrance", to: "pocket" }],
+      passages: [{ a: "entrance", b: "wayOut" }],
+      in: "entrance",
+      out: "wayOut",
+    }
+    expect(walkLock(spec)).toEqual({ sound: true, states: expect.any(Number) })
+  })
+
+  it("counts leaving and coming back in at the entrance as the way back", () => {
+    // The entrance is left by a drop and reached again only by leaving the floor and re-entering.
+    const spec: LockSpec = {
+      regions: ["entrance", "hall", "wayOut"],
+      gates: {},
+      mechanisms: {},
+      oneWays: [{ from: "entrance", to: "hall" }],
+      passages: [{ a: "hall", b: "wayOut" }],
+      in: "entrance",
+      out: "wayOut",
+    }
+    expect(walkLock(spec)).toEqual({ sound: true, states: 3 })
+  })
+
+  it("reports a strand before a lost region when both apply", () => {
+    const spec = sideRoom([{ from: "open", to: "shut", at: "entrance" }])
+    spec.passages = []
+    spec.gates.onward = { from: "entrance", to: "wayOut", owners: ["lever"] }
+    spec.mechanisms.lever.opens.open = ["sideDoor", "onward"]
+    const result = walkLock(spec)
+    if (result.sound) throw new Error("expected a refusal")
+    expect(result.failure.type).toBe("strands")
   })
 })

@@ -8,7 +8,7 @@ import type { Lock } from "./lockAuthoring"
 import { deadRegions, reachableStates, walkLock } from "./lockWalk"
 import { assembleFloor } from "./siteAssembler"
 import type { CorridorCell, FloorConfig, FloorGrid, RoomCell } from "./siteTypes"
-import { leverLock, strandingLock } from "./testSupport/floorLockFixtures"
+import { leverLock, sealingLock, strandingLock } from "./testSupport/floorLockFixtures"
 import { BINDING } from "./testSupport/lockFixtures"
 
 const carve = (config: FloorConfig, seed: number) =>
@@ -366,4 +366,32 @@ describe("a floor without nesting is walked exactly as it was", () => {
       }
     }
   )
+})
+
+describe("a region a lock seals for good is refused at every level", () => {
+  it("refuses the floor's own lock losing its side room", { timeout: 60_000 }, () => {
+    const grids = carved(floorOf([{ lock: sealingLock() }]))
+
+    expect(grids.length).toBeGreaterThan(0)
+    for (const grid of grids) {
+      const walk = walkFloorLock(grid)!
+      if (walk.sound) throw new Error("expected the sealed side room to be refused")
+      expect(walk.failure.type).toBe("regionLost")
+      expect(describeFloorWalkFailure(walk.failure)).toMatch(/can never be reached again$/)
+    }
+  })
+
+  it("refuses a nested lock losing its side room, naming the inner", { timeout: 60_000 }, () => {
+    const grids = carved(
+      floorOf([{ lock: leverLock() }, { lock: sealingLock(), as: "inner", inside: insideOf("lever") }])
+    )
+
+    expect(grids.length).toBeGreaterThan(0)
+    for (const grid of grids) {
+      const walk = walkFloorLock(grid)!
+      if (walk.sound) throw new Error("expected the nested sealed side room to be refused")
+      expect(walk.failure).toMatchObject({ type: "nested", instance: "inner", failure: { type: "regionLost" } })
+      expect(describeFloorWalkFailure(walk.failure)).toMatch(/^inside inner: from .* can never be reached again$/)
+    }
+  })
 })

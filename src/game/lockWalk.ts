@@ -271,6 +271,8 @@ export type LockWalkFailure =
   | { type: "unsolvable" }
   | { type: "goalUnreachable"; label: string }
   | { type: "strands"; at: LockState }
+  /** From `at`, the player can never stand in `region` again, though some walk stood there before. */
+  | { type: "regionLost"; region: RegionId; at: LockState }
 
 export type LockWalkResult = { sound: true; states: number } | { sound: false; failure: LockWalkFailure }
 
@@ -317,7 +319,45 @@ export const walkLock = (spec: LockSpec, maxStates = MAX_LOCK_STATES): LockWalkR
   const stranded = order.findIndex((_, n) => !finishes.has(n))
   if (stranded >= 0) return { sound: false, failure: { type: "strands", at: order[stranded] } }
 
+  const lost = lostRegion(spec, order, backwards)
+  if (lost) return { sound: false, failure: { type: "regionLost", ...lost } }
+
   return { sound: true, states: order.length }
+}
+
+// EVERY REGION THE PLAYER EVER STOOD IN STAYS REACHABLE. Mechanism state is saved per floor, so a region a lock
+// seals for good is gone for the rest of the game, and a hidden corridor or side path in it with it. Leaving and
+// coming back is one of the moves, so a region reached again only by re-entering at `in` is not lost. A mechanism
+// owned off the floor has no move here and never changes state, so it never loses a region: as in `deadRegions`,
+// what it does is the world's.
+//
+// One backward sweep per region from the states standing in it; a reachable state outside the sweep has lost it.
+// The first such state is breadth-first, so the fewest moves from the start, as `strands` reports.
+export const lostRegion = (
+  spec: LockSpec,
+  order: LockState[],
+  backwards: number[][]
+): { region: RegionId; at: LockState } | undefined => {
+  let first: { region: RegionId; index: number } | undefined
+  for (const region of spec.regions) {
+    const reaching = new Set<number>()
+    const queue: number[] = []
+    order.forEach((state, n) => {
+      if (state.region !== region) return
+      reaching.add(n)
+      queue.push(n)
+    })
+    if (queue.length === 0) continue
+    for (let at = 0; at < queue.length; at++)
+      for (const from of backwards[queue[at]])
+        if (!reaching.has(from)) {
+          reaching.add(from)
+          queue.push(from)
+        }
+    const index = order.findIndex((_, n) => !reaching.has(n))
+    if (index >= 0 && (first === undefined || index < first.index)) first = { region, index }
+  }
+  return first && { region: first.region, at: order[first.index] }
 }
 
 // A REGION NO REACHABLE STATE STANDS IN IS LOOT NOBODY CAN EVER COLLECT, and `walkLock` does not see
@@ -360,11 +400,12 @@ export const describeLockWalkFailure = (failure: LockWalkFailure): string => {
       return "no sequence of moves reaches the way out"
     case "goalUnreachable":
       return `${failure.label} is never completed: no walk keeps the order`
-    case "strands": {
-      const config = Object.entries(failure.at.config)
-        .map(([id, state]) => `${id} at ${state}`)
-        .join(", ")
-      return `from ${failure.at.region}, ${config}, nothing reaches the way out`
-    }
+    case "strands":
+      return `from ${describeState(failure.at)}, nothing reaches the way out`
+    case "regionLost":
+      return `from ${describeState(failure.at)}, ${failure.region} can never be reached again`
   }
 }
+
+const describeState = ({ region, config }: LockState): string =>
+  [region, ...Object.entries(config).map(([id, state]) => `${id} at ${state}`)].join(", ")

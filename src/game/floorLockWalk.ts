@@ -3,6 +3,7 @@ import {
   checkLockSpec,
   deadRegions,
   describeLockWalkFailure,
+  lostRegion,
   MAX_LOCK_STATES,
   reachableStates,
   walkLock,
@@ -329,6 +330,8 @@ const nestedFree = (
       if (reachable.has(terminal) && !reaching.get(terminal)!.has(n))
         return { failure: { type: "notFree", at: order[n], cannotReach: terminal } }
   }
+  const lost = lostRegion(spec, order, backwards)
+  if (lost) return { failure: { type: "regionLost", ...lost } }
   return { states: order.length }
 }
 

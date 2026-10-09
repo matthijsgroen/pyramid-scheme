@@ -26,6 +26,7 @@ export const lockChecks = ({ lock, drafts, refused }: ParsedLock) => {
   const unreached = unreachedRegions(spec)
   const reachable = Array.isArray(unreached) && unreached.length === 0
   const deadEnd = !walked.sound && walked.failure.type === "strands"
+  const lost = !walked.sound && walked.failure.type === "regionLost"
   const open = openAtStart(lock)
   const unbuilt = notBuildable(lock)
   const sequences = Object.entries(lock.mechanics).flatMap(([id, m]) => (m.control === "sequence" ? [id] : []))
@@ -35,8 +36,11 @@ export const lockChecks = ({ lock, drafts, refused }: ParsedLock) => {
     reachable
       ? "✓ every region is reachable"
       : `✗ ${unreached === "tooLarge" ? "too many states to walk" : `never reached: ${unreached.join(", ")}`}`,
-    walked.sound || deadEnd ? "✓ solvable" : `✗ not solvable: ${readable(describeLockWalkFailure(walked.failure))}`,
+    walked.sound || deadEnd || lost
+      ? "✓ solvable"
+      : `✗ not solvable: ${readable(describeLockWalkFailure(walked.failure))}`,
     ...(deadEnd ? [`✗ a dead end: ${readable(describeLockWalkFailure(walked.failure))}`] : []),
+    ...(lost ? [`✗ a region is lost: ${readable(describeLockWalkFailure(walked.failure))}`] : []),
     `at the start ${open.length > 0 ? `these gates stand open: ${open.join(", ")}` : "no gate stands open"}`,
     ...nestSpotLines(lock),
     ...needsFace(lock).map(({ gate, owners }) => `${gate} shows what it waits for: ${owners.join(", ")}`),

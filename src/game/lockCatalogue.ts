@@ -12,16 +12,18 @@ import type { ParsedLock } from "./lockNotation"
 // resolves against an http origin.
 const here = dirname(fileURLToPath(import.meta.url))
 
-const textsIn = (folder: string): Record<string, string> =>
+// A `<name>-blocked.lock` is a designer's lock the walk refuses, kept for them to fix: the catalogue, the world and
+// the tests never read it, and `yarn lock <path>` still draws it.
+export const lockTextsIn = (folder: string): Record<string, string> =>
   Object.fromEntries(
     readdirSync(folder)
-      .filter(file => file.endsWith(".lock"))
+      .filter(file => file.endsWith(".lock") && !file.endsWith("-blocked.lock"))
       .map(file => [file.slice(0, -".lock".length), readFileSync(join(folder, file), "utf8")])
   )
 const parsedAll = (texts: Record<string, string>): Record<string, ParsedLock> =>
   Object.fromEntries(Object.entries(texts).map(([name, text]) => [name, parseLock(text, name)]))
 
-const LOCK_TEXTS = textsIn(join(here, "locks"))
-export const LESSON_TEXTS = textsIn(join(here, "locks", "lessons"))
+const LOCK_TEXTS = lockTextsIn(join(here, "locks"))
+export const LESSON_TEXTS = lockTextsIn(join(here, "locks", "lessons"))
 export const LOCK_CATALOGUE = parsedAll(LOCK_TEXTS)
 export const LESSONS = parsedAll(LESSON_TEXTS)
