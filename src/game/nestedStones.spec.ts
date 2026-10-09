@@ -53,7 +53,7 @@ const PASS_THROUGH: PlacedLock[] = [
   { lock: stones(HOST_STONES, "host") },
   { lock: leverLock(), as: "inner", inside: { instance: "host" } },
 ]
-/** The inner lock holds stones, the outer none: none is carried on through its way out. */
+/** The inner lock holds stones, the outer none: its stones are its own. */
 const CONTAINED: PlacedLock[] = [
   { lock: leverLock() },
   { lock: stones(CELL, "cell"), as: "inner", inside: { instance: "lever" } },
@@ -233,7 +233,7 @@ describe("a nested floor with stones is walked where its stones reach", () => {
 
   it.each([
     ["a pass-through with a one-way off its route", PASS_BY_LEDGE],
-    ["a contained lock, whose stones may leave by its way in", CONTAINED],
+    ["a contained lock, whose stones may leave by its ways in and out", CONTAINED],
     ["a shared pool", SHARED],
   ])("walks %s fused, in the product's states", { timeout: 60_000 }, (_, locks) => {
     for (const grid of carved(locks)) expect(expectSound(grid).states).toBe(productStates(grid))
@@ -284,9 +284,7 @@ describe("a nested floor with stones is walked where its stones reach", () => {
     }
   })
 
-  // D12: A CONTAINED LOCK KEEPS ITS STONES BY ITS OWN DESIGN. Here nothing holds the stone in: its way out is open,
-  // so a stone can be carried through it.
-  it("refuses a contained lock whose way out lets a stone through, naming it", { timeout: 60_000 }, () => {
+  it("walks a contained lock whose way out lets a stone through, as the product walk does", { timeout: 60_000 }, () => {
     const leaky = "in -- hall\nhall -- out\nshelf plate @in stone\nin ?\nhall ?\nout ?"
     const grids = carved([
       { lock: leverLock() },
@@ -294,9 +292,8 @@ describe("a nested floor with stones is walked where its stones reach", () => {
     ])
     expect(grids.length).toBeGreaterThan(0)
     for (const grid of grids) {
-      const walk = walkFloorLock(grid)!
-      expect(walk).toMatchObject({ sound: false, failure: { type: "stoneCrossesOut", instance: "inner" } })
-      if (!walk.sound) expect(describeFloorWalkFailure(walk.failure)).toMatch(/^a stone can be carried out of inner/)
+      expect(walkFloorLock(grid)!.sound).toBe(walkLock(floorLock(grid)!).sound)
+      expect(expectSound(grid).states).toBe(productStates(grid))
     }
   })
 
@@ -312,7 +309,7 @@ describe("a nested floor with stones is walked where its stones reach", () => {
   })
 
   // A STONE FROM ANOTHER LOCK REACHES A NESTED LOCK THAT HOLDS NONE: a root lock's way out takes any hands, and a
-  // contained lock's stone may leave by its way in. Its drop takes empty hands, so the floor walks it in its level.
+  // contained lock's stone may leave by either way. Its drop takes empty hands, so the floor walks it in its level.
   /** A lock without stones whose torch on a side ledge shuts the way back to the drop home: lit with a stone in
    * hand, the drop refuses the player. */
   const TRAP = "in -- out\nin -- mid\nmid -[T:off]- ledge\nledge >> in\nT activator @ledge\nin ?\nout ?\nmid ?\nledge ?"
