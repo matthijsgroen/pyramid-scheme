@@ -26,16 +26,20 @@ Columns:
     junction's side seams, and the lesson's board owns the door on the way through, `in`–`out`.
   - **switch fork**: leverOpensADoor on junior_2's site 2. Beside the floor's authored switch fork the junction
     does not carve at the floor's address seed (`forksUnsatisfied`, `layoutNotFound`), so the world build stops.
+  - **no room**: leverOpensADoor, torch and doorWaitsForTwo. With every region `free` the carve puts no room in the
+    lesson's way in, a stretch of the main path, and a roomless section comes back fogged after a re-carve
+    (`carveIndependence.spec.ts`). The lesson's own appetites (way in `puzzles`, the rest `nothing`) do not carve,
+    and `puzzles` on the way in alone refuses the floor's reward (`regionWillNotTake`).
 
 ### Junior
 
 **junior_1 — Sacred Ibis Migration** (`water` role on pyramids 1-3, patron Thoth)
 
-| Site | Main floors | Wing floors | Authored         | Suggested        | Chosen lock      | Placed     |
-| ---- | ----------- | ----------- | ---------------- | ---------------- | ---------------- | ---------- |
-| 1    | 1           | 0           |                  | leverOpensADoor  | leverOpensADoor  | ✓          |
-| 2    | 1           | 0           |                  | dropDown         | dropDown         | no (drop)  |
-| 3    | 1           | 1           | expert ward wing | boardPicksTheWay | boardPicksTheWay | no (board) |
+| Site | Main floors | Wing floors | Authored         | Suggested        | Chosen lock      | Placed       |
+| ---- | ----------- | ----------- | ---------------- | ---------------- | ---------------- | ------------ |
+| 1    | 1           | 0           |                  | leverOpensADoor  | leverOpensADoor  | no (no room) |
+| 2    | 1           | 0           |                  | dropDown         | dropDown         | no (drop)    |
+| 3    | 1           | 1           | expert ward wing | boardPicksTheWay | boardPicksTheWay | no (board)   |
 
 **junior_2 — Valley of the Artisans**
 
@@ -43,27 +47,27 @@ Columns:
 | ---- | ----------- | ----------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------- |
 | 1    | 1           | 0           |                                                                              | boardPicksTheWay (the switch fork already authored at pyramid 2) | boardPicksTheWay (the switch fork already authored at pyramid 2) | no (board)       |
 | 2    | 1           | 0           | the world's one switch fork: a `lightbeamSwitch` board in a two-way junction | leverOpensADoor                                                  | leverOpensADoor                                                  | no (switch fork) |
-| 3    | 1           | 1           | master ward wing                                                             | torch                                                            | torch                                                            | ✓                |
+| 3    | 1           | 1           | master ward wing                                                             | torch                                                            | torch                                                            | no (no room)     |
 | 4    | 1           | 1           | wizard ward wing                                                             | dropDown                                                         | dropDown                                                         | no (drop)        |
 
 **junior_3 — Temple of Thoth** (patron Thoth)
 
-| Site | Main floors | Wing floors | Authored         | Suggested        | Chosen lock      | Placed     |
-| ---- | ----------- | ----------- | ---------------- | ---------------- | ---------------- | ---------- |
-| 1    | 1           | 0           |                  | leverOpensADoor  | leverOpensADoor  | ✓          |
-| 2    | 1           | 0           |                  | dropDown         | dropDown         | no (drop)  |
-| 3    | 1           | 1           | expert ward wing | torch            | torch            | ✓          |
-| 4    | 1           | 1           | master ward wing | boardPicksTheWay | boardPicksTheWay | no (board) |
+| Site | Main floors | Wing floors | Authored         | Suggested        | Chosen lock      | Placed       |
+| ---- | ----------- | ----------- | ---------------- | ---------------- | ---------------- | ------------ |
+| 1    | 1           | 0           |                  | leverOpensADoor  | leverOpensADoor  | no (no room) |
+| 2    | 1           | 0           |                  | dropDown         | dropDown         | no (drop)    |
+| 3    | 1           | 1           | expert ward wing | torch            | torch            | no (no room) |
+| 4    | 1           | 1           | master ward wing | boardPicksTheWay | boardPicksTheWay | no (board)   |
 
 **junior_4 — Lighthouse of Alexandria** (`light`/`sky` role and night theme on pyramids 1-5)
 
-| Site | Main floors | Wing floors | Authored         | Suggested        | Chosen lock      | Placed     |
-| ---- | ----------- | ----------- | ---------------- | ---------------- | ---------------- | ---------- |
-| 1    | 1           | 0           |                  | boardPicksTheWay | boardPicksTheWay | no (board) |
-| 2    | 1           | 0           |                  | leverOpensADoor  | leverOpensADoor  | ✓          |
-| 3    | 1           | 0           |                  | dropDown         | dropDown         | no (drop)  |
-| 4    | 1           | 1           | wizard ward wing | torch            | torch            | ✓          |
-| 5    | 1           | 1           | expert ward wing | leverSwapsDoors  | leverSwapsDoors  | ✓          |
+| Site | Main floors | Wing floors | Authored         | Suggested        | Chosen lock      | Placed       |
+| ---- | ----------- | ----------- | ---------------- | ---------------- | ---------------- | ------------ |
+| 1    | 1           | 0           |                  | boardPicksTheWay | boardPicksTheWay | no (board)   |
+| 2    | 1           | 0           |                  | leverOpensADoor  | leverOpensADoor  | no (no room) |
+| 3    | 1           | 0           |                  | dropDown         | dropDown         | no (drop)    |
+| 4    | 1           | 1           | wizard ward wing | torch            | torch            | no (no room) |
+| 5    | 1           | 1           | expert ward wing | leverSwapsDoors  | leverSwapsDoors  | ✓            |
 
 ### Expert
 
@@ -78,12 +82,12 @@ Columns:
 
 **expert_2 — Karnak Temple Complex**
 
-| Site | Main floors | Wing floors | Authored         | Suggested       | Chosen lock     | Placed |
-| ---- | ----------- | ----------- | ---------------- | --------------- | --------------- | ------ |
-| 1    | 1           | 0           |                  | doorWaitsForTwo | doorWaitsForTwo | ✓      |
-| 2    | 1           | 0           |                  | cellar          | cellar          |        |
-| 3    | 1           | 1           | master ward wing | twoLamps        | twoLamps        |        |
-| 4    | 1           | 1           | wizard ward wing | dropHome        | dropHome        |        |
+| Site | Main floors | Wing floors | Authored         | Suggested       | Chosen lock     | Placed       |
+| ---- | ----------- | ----------- | ---------------- | --------------- | --------------- | ------------ |
+| 1    | 1           | 0           |                  | doorWaitsForTwo | doorWaitsForTwo | no (no room) |
+| 2    | 1           | 0           |                  | cellar          | cellar          |              |
+| 3    | 1           | 1           | master ward wing | twoLamps        | twoLamps        |              |
+| 4    | 1           | 1           | wizard ward wing | dropHome        | dropHome        |              |
 
 **expert_3 — Nile Delta Expedition** (overgrown, growing from pyramid 2 to 5)
 
