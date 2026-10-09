@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A junior pyramid's fork now has a mirror puzzle standing in it, and the way that stands open is the one you route the beam to. Change your mind and the other way opens as that one shuts. The fork and its doors wear one mark on the map.
 - The last pyramid of the Valley of the Kings opens on a mirror fork with ziplines: throw the levers, route the beam, and drop from ledge to ledge to get back.
 - Djoser's last pyramid opens on a stone lock: lift the stone off the altar, park one on a shelf, and squeeze through the narrow passage.
+- Pyramids teach their mechanisms one at a time: a lever, a drop, a torch, a stone on a plate, each alone on its own floor.
 - A torch is a switch you can only light, drawn as a flame. Once it burns there is no prompt to touch it again, and you walk past it like any other floor.
 - Taking a zipline plays the ride: the explorer slides across the gap instead of appearing on the far side.
 

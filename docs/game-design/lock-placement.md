@@ -89,13 +89,13 @@ Columns:
 
 **expert_4 — Pyramid of Djoser**
 
-| Site | Main floors | Wing floors | Authored                                               | Suggested       | Chosen lock     | Placed |
-| ---- | ----------- | ----------- | ------------------------------------------------------ | --------------- | --------------- | ------ |
-| 1    | 1           | 0           |                                                        | doorWaitsForTwo | doorWaitsForTwo |        |
-| 2    | 1           | 0           | two floor-key colours, broad packing                   | twoLamps        | twoLamps        |        |
-| 3    | 1           | 0           |                                                        | cellar          | cellar          |        |
-| 4    | 1           | 1           | two floor-key colours, broad packing, master ward wing | overlook        | overlook        |        |
-| 5    | 1           | 1           | wizard ward wing                                       | **doubleBack**  | stoneGate       | ✓      |
+| Site | Main floors | Wing floors | Authored                                               | Suggested       | Chosen lock   | Placed |
+| ---- | ----------- | ----------- | ------------------------------------------------------ | --------------- | ------------- | ------ |
+| 1    | 1           | 0           |                                                        | doorWaitsForTwo | stoneOnAPlate | ✓      |
+| 2    | 1           | 0           | two floor-key colours, broad packing                   | twoLamps        | twoLamps      |        |
+| 3    | 1           | 0           |                                                        | cellar          | cellar        |        |
+| 4    | 1           | 1           | two floor-key colours, broad packing, master ward wing | overlook        | overlook      |        |
+| 5    | 1           | 1           | wizard ward wing                                       | **doubleBack**  | stoneGate     | ✓      |
 
 Site counts: junior 16 (3 + 4 + 4 + 5), expert 18 (4 + 4 + 5 + 5), the same as the curriculum's. Treasure
 tombs are not sites in this table.
@@ -107,8 +107,8 @@ tombs are not sites in this table.
   curriculum suggests leverOpensADoor. One of the two moves: the lesson to site 2, or the fork to site 1.
 - **Djoser.** stoneGate stands on Djoser's last pyramid (site 5, floor 0), where the curriculum suggests doubleBack:
   the journey's capstone, on the floor shape doubleBack already stands on in expert_1, and with no floor keys. The
-  curriculum has no stone lesson on any expert site yet, so the player meets stones and the narrow passage first in
-  stoneGate; stoneOnAPlate at site 3 or 4 would teach them first.
+  player meets the stone first at site 1, where stoneOnAPlate stands in place of the curriculum's doorWaitsForTwo;
+  the narrow passage is still met first in stoneGate.
 
 ### From a row to the world
 
@@ -127,6 +127,11 @@ expert_1's doubleBack stands through the same `floorLocks` with its realisations
 
 expert_4's stoneGate stands the same way, read from its `.lock` file with `catalogueLock` and every region `free`
 (`freeRegions`), bound `weights` `stonePlate`, `activator` `torch`, `unladen` `narrowPassage`.
+
+A lesson stands through `lessonOnMainFloor(name)` in `src/worldGen/spec/locks/lessons.ts`: the lesson's file read as
+`catalogueLock("lessons/<name>")`, every region `free`, and only the kinds the lesson uses bound (toggle `handle`,
+fork-switch `lightbeamSwitch`, one-way `zipline`, flame `torch`, weights `stonePlate`). The lessons raised no
+`RELAID_FLOORS_VERSION`, by the designer's call: a save standing inside one of their pyramids keeps its place.
 
 ## Part 2 — mechanics coverage
 

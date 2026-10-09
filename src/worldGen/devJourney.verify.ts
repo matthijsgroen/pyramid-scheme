@@ -11,6 +11,7 @@ import {
 } from "./validate"
 import { PYRAMID_CAPABILITIES } from "./capabilities"
 import { puzzleSeeds } from "../data/puzzleSeeds"
+import { generatedWorldConfigs } from "../data/generatedWorld"
 import { DEV_JOURNEY_ID } from "./data"
 import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
 import { assembleFloor } from "../game/siteAssembler"
@@ -111,10 +112,13 @@ const mosaicByTier = (configs: Record<string, SiteConfig[]>) =>
   )
 
 // The seed a player actually gets for that floor, which is the only one a claim about the carve can
-// be made at: a floor that carves at some other seed is not the floor anybody opens.
+// be made at: a floor that carves at some other seed is not the floor anybody opens. A shipped floor
+// carves at the (packing, seed) the bake stamped on it; a dev floor, never baked, at its own.
 const assembleAt = (journeyId: string, floor: FloorConfig, levelNr: number, floorIndex: number): FloorGrid | null => {
   const seed = floorAssemblySeed(persistentInteriorSeed(journeyId), levelNr, floorIndex)
-  const result = assembleFloor(journeyId, floor as GameFloorConfig, seed, resolveEncounterMeta, {
+  const baked = generatedWorldConfigs[journeyId]?.[levelNr - 1]?.[floorIndex]
+  const pinned = baked ? { ...floor, seed: baked.seed, packing: baked.packing } : floor
+  const result = assembleFloor(journeyId, pinned as GameFloorConfig, seed, resolveEncounterMeta, {
     resolveKeyRequirements,
     floorRef: { journeyId, floorIndex },
   })
@@ -564,16 +568,16 @@ describe("what the dev journey authors", () => {
 // own guard compares the walk against the floors the authoring owes it, which catches a walk that
 // stopped reaching them — but not an authoring that quietly stopped standing mechanisms, because then
 // both sides fall together. The counts are pinned here, where both worlds exist in one process: the
-// shipped world stands three mechanism floors and a plain build can only ever prove those, so the twelve the
+// shipped world stands four mechanism floors and a plain build can only ever prove those, so the twelve the
 // dev journey adds are provable nowhere else.
 describe("the floors the lock sweep walks", () => {
-  it("walks the three mechanism floors the shipped world stands, and finds no strand", () => {
-    expect(plainSweep.walked).toHaveLength(3)
+  it("walks the four mechanism floors the shipped world stands, and finds no strand", () => {
+    expect(plainSweep.walked).toHaveLength(4)
     expect(plainSweep.stranding).toEqual([])
   })
 
-  it("walks fifteen once the dev journey stands its twelve, and finds no strand", () => {
-    expect(withDevSweep.walked).toHaveLength(15)
+  it("walks sixteen once the dev journey stands its twelve, and finds no strand", () => {
+    expect(withDevSweep.walked).toHaveLength(16)
     expect(withDevSweep.stranding).toEqual([])
   })
 

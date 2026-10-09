@@ -4,6 +4,7 @@ import { TOMB_ROOMS_PER_FLOOR } from "../data"
 import { doubleBackLock } from "./locks/doubleBack"
 import { freeRegions } from "@/game/lockAuthoring"
 import { catalogueLock } from "./locks/catalogue"
+import { lessonOnMainFloor } from "./locks/lessons"
 
 // Expert's open side/hidden paths, as reusable arrays so a per-pyramid override can restate them
 // and ADD to them (pyramid-level sidePaths REPLACES the tier's, it doesn't merge).
@@ -327,4 +328,7 @@ export const expertRules: Rule[] = [
     },
   }),
   journey("expert_3").pyramid("last", { patron: "sobek" }),
+  // Djoser opens on the stone its capstone spends: a stone set on a plate holds a door open, lifted it shuts again
+  // (docs/game-design/lock-placement.md).
+  journey("expert_4").pyramid(1, lessonOnMainFloor("stoneOnAPlate")),
 ]

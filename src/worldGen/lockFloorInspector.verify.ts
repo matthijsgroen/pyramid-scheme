@@ -79,13 +79,14 @@ describe("the journey inspector on lock floors", () => {
   const assembles = ({ journeyId, pyramidNumber, floorIndex, floor }: LockFloor) =>
     assembleInspectedFloor(journeyId, floor, INSPECTOR_SEED + pyramidNumber, floorIndex).success
 
-  it("assembles the shipped world's lock floors, the first floor of expert_1 pyramid 4 and of expert_4 pyramid 5", () => {
+  it("assembles every lock floor the shipped world stands", () => {
     const shipped = lockFloors(plain)
     expect(shipped.map(({ journeyId, pyramidNumber, floorIndex }) => [journeyId, pyramidNumber, floorIndex])).toEqual([
       ["expert_1", 4, 0],
+      ["expert_4", 1, 0],
       ["expert_4", 5, 0],
     ])
-    expect(shipped.map(assembles)).toEqual([true, true])
+    expect(shipped.filter(floor => !assembles(floor))).toEqual([])
   })
 
   it("assembles every lock floor the dev journey stands", () => {

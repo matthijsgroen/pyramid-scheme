@@ -61,12 +61,12 @@ const build = (modIds: ReadonlySet<string>, resolveEncounter: typeof TOPOLOGY_ON
 
 const OPPOSITE = { n: "s", s: "n", e: "w", w: "e" } as const
 
-// The floors of the real world that stand a mechanic with every mod, whole sets: the shipped junior_2 switch, the
-// expert_1 pyramid whose first floor opens on the doubleBack, the expert_4 pyramid whose first floor opens on the
-// stoneGate, and every dev floor.
+// The floors of the real world that stand a mechanic with every mod, whole sets: the shipped junior_2 switch, every
+// floor a lesson or a lock stands on, and every dev floor.
 const FLOORS_WITH_MECHANICS = [
   "junior_2 level 2 floor 0",
   "expert_1 level 4 floor 0",
+  "expert_4 level 1 floor 0",
   "expert_4 level 5 floor 0",
   ...Array.from({ length: 12 }, (_, n) => `dev_topology level ${n + 1} floor 0`),
 ]

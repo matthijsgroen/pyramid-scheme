@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1529872083
+export const worldContentHash = 826396669
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -8332,8 +8332,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["veil", "wallShrine", "sconce"],
         role: "puzzle",
         encountersByIndex: { 0: "sumplete", 1: "eclipse", 2: "futoshiki", 3: "hidato" },
-        packing: 0.14,
-        seed: 202908735,
+        packing: 0.1,
+        seed: 202908665,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art6", pieceIndex: 1 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -8341,6 +8341,26 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           undefined,
           undefined,
         ],
+        locks: [
+          {
+            lock: {
+              name: "stoneOnAPlate",
+              regions: { in: { takes: "free" }, yard: { takes: "free" }, out: { takes: "free" } },
+              connections: [["in", "yard"], { between: ["yard", "out"], barriers: ["yard-out"] }],
+              gates: { "yard-out": { from: "yard", to: "out", owners: ["p"] } },
+              mechanics: {},
+              weights: {
+                plates: {
+                  p: { in: "yard", stone: false, opens: { weighted: ["yard-out"], empty: [] } },
+                  ledge: { in: "yard", stone: true, opens: { weighted: [], empty: [] } },
+                },
+              },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { weights: "stonePlate" },
       },
     ],
     [
