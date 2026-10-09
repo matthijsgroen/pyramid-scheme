@@ -164,6 +164,8 @@ export type JourneyAPI = {
   /** The mechanism at `address` now stands at `stateId`, replacing whatever position it stood at before
    * rather than joining it — see mechanismStates. */
   setMechanismState: (address: string, stateId: string) => void
+  /** Several mechanisms' new states in one write, so a move and what it causes are saved together. */
+  setMechanismStates: (writes: ReadonlyMap<string, string>) => void
   /** The position every mechanism on this level currently stands in, keyed by its cell address. */
   getMechanismStates: (journeyId: string) => ReadonlyMap<string, string>
   registerHiddenCorridors: (sectionAddresses: string[]) => void
@@ -608,17 +610,19 @@ export const createJourneysV3Api = ({
   const getPurchasedShopSlots = (journeyId: string): ReadonlySet<string> =>
     forThisLevel(journeyId, journeys.find(j => j.journeyId === journeyId)?.purchasedStock)
 
-  const setMechanismState = (address: string, stateId: string) => {
-    if (!activeJourneyId) return
-    const at = atLevel(address)
+  const setMechanismStates = (writes: ReadonlyMap<string, string>) => {
+    if (!activeJourneyId || writes.size === 0) return
+    const entries = [...writes].map(([address, stateId]) => [atLevel(address), stateId] as const)
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
-        if (j.mechanismStates?.[at] === stateId) return j
-        return { ...j, mechanismStates: { ...(j.mechanismStates ?? {}), [at]: stateId } }
+        if (entries.every(([at, stateId]) => j.mechanismStates?.[at] === stateId)) return j
+        return { ...j, mechanismStates: { ...(j.mechanismStates ?? {}), ...Object.fromEntries(entries) } }
       })
     )
   }
+
+  const setMechanismState = (address: string, stateId: string) => setMechanismStates(new Map([[address, stateId]]))
 
   const getMechanismStates = (journeyId: string): ReadonlyMap<string, string> =>
     forThisLevelMap(journeyId, journeys.find(j => j.journeyId === journeyId)?.mechanismStates)
@@ -737,6 +741,7 @@ export const createJourneysV3Api = ({
     markShopSlotPurchased,
     getPurchasedShopSlots,
     setMechanismState,
+    setMechanismStates,
     getMechanismStates,
     registerHiddenCorridors,
     markCorridorFound,

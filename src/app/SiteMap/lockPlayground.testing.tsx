@@ -13,6 +13,7 @@ import { PuzzleRoomContext } from "@/mods/core/app/puzzleState"
 import { EncounterModal } from "./EncounterModal"
 import { SiteMapView } from "./SiteMapView"
 import { useAssembledFloor } from "./useAssembledFloor"
+import { useDousedJourneys } from "./useDousedJourneys"
 import { useEncounter } from "./useEncounter"
 import { useMechanismStates } from "./useMechanismStates"
 import { useNoticeLabel, usePromptLabel } from "./usePromptLabel"
@@ -101,7 +102,7 @@ const PlayedFloor: FC<{ config: FloorConfig; seed: number; base: FloorGrid }> = 
   const progression = useProgression()
   const inventory = useInventory()
   const mechanismStates = useMechanismStates(journeys, PLAYGROUND_JOURNEY)
-  const { grid, explorerPos, openGateKeys } = useAssembledFloor(
+  const { grid, explorerPos, openGateKeys, baseGrid, heldKeys } = useAssembledFloor(
     PLAYGROUND_JOURNEY,
     config,
     seed,
@@ -114,9 +115,16 @@ const PlayedFloor: FC<{ config: FloorConfig; seed: number; base: FloorGrid }> = 
     mechanismStates,
     doc.standingKey
   )
+  const floorJourneys = useDousedJourneys({
+    journeys,
+    journeyId: PLAYGROUND_JOURNEY,
+    floor: baseGrid,
+    currentFloor: 0,
+    heldKeys,
+  })
   const ownedKeys = useMemo(() => new Set([...(grid ? getOwnedKeys(grid) : []), ...openGateKeys]), [grid, openGateKeys])
   const encounter = useEncounter({
-    journeys,
+    journeys: floorJourneys,
     journeyId: PLAYGROUND_JOURNEY,
     levelNr: 1,
     currentFloor: 0,
@@ -127,7 +135,7 @@ const PlayedFloor: FC<{ config: FloorConfig; seed: number; base: FloorGrid }> = 
   })
   const { ride, squeeze, playTraversal } = useCrossing()
   const { onCellClick, prompt, notice, explorerHidden } = useSiteNavigation({
-    journeys,
+    journeys: floorJourneys,
     journeyId: PLAYGROUND_JOURNEY,
     siteConfig: [config],
     seed,
@@ -180,7 +188,7 @@ const PlayedFloor: FC<{ config: FloorConfig; seed: number; base: FloorGrid }> = 
               puzzle={encounter.puzzle}
               ctx={encounter.ctx}
               progression={progression}
-              journeys={journeys}
+              journeys={floorJourneys}
               inventory={inventory}
               applyReward={() => {}}
               onSolved={encounter.solved}

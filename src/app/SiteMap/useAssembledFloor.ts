@@ -396,6 +396,10 @@ export const useAssembledFloor = (
    * every render, so a lever thrown back shuts a gate this set stops naming just as readily as it
    * opened one. */
   openGateKeys: ReadonlySet<string>
+  /** The floor as carved, before any mechanism state opens a door: what the douse reads (useDousedJourneys). */
+  baseGrid: FloorGrid | null
+  /** The floor keys held here, as `openDoorsFor` reads them. */
+  heldKeys: ReadonlySet<string>
 } => {
   const baseGrid = useMemo(() => {
     const result = assemblePlayedFloor(journeyId, floorConfig, seed, currentFloor, levelIndex)
@@ -491,5 +495,5 @@ export const useAssembledFloor = (
     return resolveStanding(standingKey) ?? resolveStanding(positionKey) ?? grid.entrancePos
   }, [grid, standingKey, positionKey, resolveStanding])
 
-  return { grid, explorerPos, hiddenJunctions, hiddenSections, junctionSections, openGateKeys }
+  return { grid, explorerPos, hiddenJunctions, hiddenSections, junctionSections, openGateKeys, baseGrid, heldKeys }
 }

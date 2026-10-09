@@ -10,6 +10,7 @@ import { useDetectorBand } from "@/app/SiteMap/useDetectorBand"
 import type { SiteConfig } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 import { useAssembledFloor } from "./useAssembledFloor"
+import { useDousedJourneys } from "./useDousedJourneys"
 import { floorOfPosition } from "./stairTravel"
 import { findByAddress, floorOfAddress } from "./cellIdentity"
 import { useFloorExplorationRecorder } from "./useFloorExplorationRecorder"
@@ -79,7 +80,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   const foundCorridors = useFoundCorridors(journeys, journeyId)
   const mechanismStates = useMechanismStates(journeys, journeyId)
 
-  const { grid, explorerPos, hiddenSections, junctionSections, openGateKeys } = useAssembledFloor(
+  const { grid, explorerPos, hiddenSections, junctionSections, openGateKeys, baseGrid, heldKeys } = useAssembledFloor(
     journeyId,
     floorConfig,
     seed,
@@ -92,6 +93,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
     mechanismStates,
     journeyState?.standingKey
   )
+  // Every mechanism write on this floor goes through here, so a flood's douse is saved with the move that caused it.
+  const floorJourneys = useDousedJourneys({ journeys, journeyId, floor: baseGrid, currentFloor, heldKeys })
 
   // Where a stored address sits on the floor the player is looking at. Only this floor is assembled,
   // so a hit anywhere else resolves to nothing and its readout stops at the floor (see ConsumableResult).
@@ -172,7 +175,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   const rewardOffer = useRewardOffer({ journeys, rewardContributions, applyReward })
 
   const encounter = useEncounter({
-    journeys,
+    journeys: floorJourneys,
     journeyId,
     levelNr: levelIndex + 1,
     currentFloor,
@@ -187,7 +190,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   const { ride, squeeze, playTraversal } = useCrossing()
 
   const { onCellClick, prompt, notice, explorerHidden } = useSiteNavigation({
-    journeys,
+    journeys: floorJourneys,
     journeyId,
     siteConfig,
     seed,
@@ -313,7 +316,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
               puzzle={encounter.puzzle}
               ctx={encounter.ctx}
               progression={progression}
-              journeys={journeys}
+              journeys={floorJourneys}
               inventory={inventory}
               applyReward={applyReward}
               onSolved={encounter.solved}

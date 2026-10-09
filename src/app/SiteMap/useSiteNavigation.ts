@@ -200,13 +200,14 @@ export const useSiteNavigation = ({
       // address is what every write about it is filed under; every cell the assembler draws carries one, so the
       // fallback is for grids built outside the world.
       const walkTo = (r: number, c: number) => {
-        for (const press of walkPresses(
+        const presses = walkPresses(
           grid,
           currentFloor,
           findPath(grid, explorerPos, [r, c]),
           journeys.getMechanismStates(journeyId)
-        ))
-          journeys.setMechanismState(press.address, press.state)
+        )
+        // One write for the whole walk, so the douse reads every tile it worked.
+        if (presses.length > 0) journeys.setMechanismStates(new Map(presses.map(press => [press.address, press.state])))
         const edgeId = encodeEdge(currentFloor, r, c)
         const address = cellAddress(grid, currentFloor, r, c) ?? edgeId
         return { edgeId, address, goHere: () => journeys.updatePosition(journeyId, address, edgeId) }
