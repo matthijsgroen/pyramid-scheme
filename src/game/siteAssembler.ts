@@ -50,6 +50,7 @@ import {
   barrierRuns,
   crossesNoDoor,
   doorsToEnterRegion,
+  dropsLandingOnAStretch,
   isEdgeGate,
   isForkSwitch,
   isRegionGate,
@@ -4292,8 +4293,16 @@ const assembleExpandedFloor = (
           id: o.id,
           between: o.at.between,
           key: gateKeyOf(o.id),
-          bounds: [...(i === 0 ? [run.between[0]] : []), ...(i === run.gates.length - 1 ? [run.between[1]] : [])],
+          // A gate on a falling corridor stands on a stretch of its own region and bounds no region a drop lands in.
+          bounds: run.falling
+            ? []
+            : [...(i === 0 ? [run.between[0]] : []), ...(i === run.gates.length - 1 ? [run.between[1]] : [])],
         }))
+      )
+      // A drop with a gate past it lands on its own stretch, laid for it, never in its region's ground.
+      const landsOnItsStretch = dropsLandingOnAStretch(
+        authoredConfig.obstacles ?? [],
+        authoredConfig.barrierOrder ?? []
       )
       const runCells = new Set(oneWayEdges.flatMap(edge => edge.run))
       const dropIdsWithRuns = oneWayObstacles.map(o => ({
@@ -4305,11 +4314,13 @@ const assembleExpandedFloor = (
         ...gateDoorFaults(cells2D, gateKeys, runCells),
         ...dropLandingFaults(
           cells2D,
-          dropIdsWithRuns.map(({ o, edge }) => ({
-            id: o.id,
-            region: o.at.between[1],
-            landing: edge.to.split(",").map(Number) as [number, number],
-          })),
+          dropIdsWithRuns
+            .filter(({ o }) => !landsOnItsStretch.has(o.id))
+            .map(({ o, edge }) => ({
+              id: o.id,
+              region: o.at.between[1],
+              landing: edge.to.split(",").map(Number) as [number, number],
+            })),
           gateKeys,
           runCells
         ),
