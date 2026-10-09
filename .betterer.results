@@ -61,7 +61,7 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/app/state/useProgression.ts:3396314902": [
       [5, 62, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/data/puzzleSeeds.ts:1834658950": [
+    "src/data/puzzleSeeds.ts:3261726424": [
       [4, 58, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/game/dressingTags.ts:3750709169": [
