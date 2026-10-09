@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest"
-import { crossesNoDoor, doorsToEnterRegion, seamIndexFor, topologyFaults } from "./obstacles"
-import type { Obstacle, StatefulControl } from "./obstacles"
+import { resolveMechanicKind } from "./mechanics"
+import {
+  crossesNoDoor,
+  doorsToEnterRegion,
+  fallingStretches,
+  floorCorridors,
+  seamIndexFor,
+  topologyFaults,
+} from "./obstacles"
+import type { BarrierOrder, Control, Obstacle, OneWayObstacle, StatefulControl } from "./obstacles"
 import type { RegionGraph } from "./regions"
 
 // A linear chain plus one connection the route does not take, so "on the layout" and "on the route"
@@ -484,5 +492,169 @@ describe("a floor laid from a lock plan", () => {
       { laid: true }
     )
     expect(faults).toEqual([])
+  })
+})
+
+describe("the corridors of a laid floor", () => {
+  const layout = (connections: [string, string][]): RegionGraph => ({
+    regions: ["in", "hall", "out"].map(name => ({ name, appetite: "free" as const })),
+    connections,
+    in: "in",
+    out: "out",
+  })
+  const lever = (opens: string[]): Control => ({
+    id: "S",
+    in: "in",
+    states: ["a", "b"],
+    initial: "a",
+    returnsToInitial: true,
+    opens: { a: [], b: opens },
+  })
+  const gate = (id: string, corridor?: number): Obstacle => ({
+    id,
+    kind: "gate",
+    at: { on: "connection", between: ["in", "hall"], ...(corridor === undefined ? {} : { corridor }) },
+  })
+  const fall: OneWayObstacle = { id: "fall", kind: "oneWay", at: { on: "connection", between: ["in", "hall"] } }
+  const laid = (l: RegionGraph, obstacles: Obstacle[], controls: Control[], order: BarrierOrder[] = []) =>
+    topologyFaults(l, obstacles, controls, [], order, resolveMechanicKind, { laid: true })
+
+  it("stands a gate on the second corridor of a pair", () => {
+    const twin = layout([
+      ["in", "hall"],
+      ["in", "hall"],
+      ["hall", "out"],
+    ])
+    expect(laid(twin, [gate("A"), gate("B", 1)], [lever(["A", "B"])])).toEqual([])
+  })
+
+  it("refuses a gate an open corridor beside it goes round", () => {
+    const twin = layout([
+      ["in", "hall"],
+      ["in", "hall"],
+      ["hall", "out"],
+    ])
+    expect(laid(twin, [gate("A")], [lever(["A"])])).toEqual([
+      { type: "gateBypassed", id: "A", between: ["in", "hall"] },
+    ])
+  })
+
+  it("refuses a gate on a corridor its pair does not have", () => {
+    expect(
+      laid(
+        layout([
+          ["in", "hall"],
+          ["hall", "out"],
+        ]),
+        [gate("A", 1)],
+        [lever(["A"])]
+      )
+    ).toEqual([{ type: "obstacleNamesNoConnection", id: "A" }])
+  })
+
+  it("stands a gate on a falling corridor the layout does not join", () => {
+    const order: BarrierOrder[] = [{ between: ["in", "hall"], barriers: ["A", "fall"] }]
+    expect(
+      laid(
+        layout([
+          ["in", "out"],
+          ["out", "hall"],
+        ]),
+        [gate("A"), fall],
+        [lever(["A"])],
+        order
+      )
+    ).toEqual([])
+  })
+
+  it("never counts a falling corridor as a way round a gate, nor the gate on it as bypassed", () => {
+    const order: BarrierOrder[] = [{ between: ["in", "hall"], barriers: ["A", "fall"], corridor: 1 }]
+    expect(
+      laid(
+        layout([
+          ["in", "hall"],
+          ["hall", "out"],
+        ]),
+        [gate("A", 1), fall],
+        [lever(["A"])],
+        order
+      )
+    ).toEqual([])
+  })
+
+  it("orders the gates of one corridor apart from those of the corridor beside it", () => {
+    const twin = layout([
+      ["in", "hall"],
+      ["in", "hall"],
+      ["hall", "out"],
+    ])
+    const order: BarrierOrder[] = [{ between: ["in", "hall"], barriers: ["A", "B"], corridor: 1 }]
+    expect(laid(twin, [gate("C"), gate("A", 1), gate("B", 1)], [lever(["A", "B", "C"])], order)).toEqual([])
+    expect(laid(twin, [gate("C"), gate("A", 1), gate("B", 1)], [lever(["A", "B", "C"])])).toEqual([
+      { type: "barrierUnordered", id: "A", between: ["in", "hall"] },
+      { type: "barrierUnordered", id: "B", between: ["in", "hall"] },
+    ])
+  })
+
+  it("numbers a pair's layout corridors round the index its falling corridor states", () => {
+    const corridors = floorCorridors(
+      layout([
+        ["in", "hall"],
+        ["in", "hall"],
+        ["hall", "out"],
+      ]),
+      [gate("A"), gate("B", 2), fall],
+      [{ between: ["in", "hall"], barriers: ["fall"], corridor: 1 }]
+    )
+    expect(corridors.map(c => [c.between.join("-"), c.index, c.drop, c.barriers])).toEqual([
+      ["in-hall", 0, undefined, ["A"]],
+      ["in-hall", 2, undefined, ["B"]],
+      ["hall-out", 0, undefined, []],
+      ["in-hall", 1, "fall", ["fall"]],
+    ])
+  })
+})
+
+describe("a falling corridor split at its drop", () => {
+  const drop = (from: string, to: string): OneWayObstacle => ({
+    id: "d",
+    kind: "oneWay",
+    at: { on: "connection", between: [from, to] },
+  })
+  it.each([
+    [
+      "a gate then a drop, written along the fall",
+      ["A", "d"],
+      ["in", "pit"],
+      { A: "right" },
+      { upstream: ["A"], downstream: [], align: { A: "right" } },
+    ],
+    [
+      "a drop then a gate, written along the fall",
+      ["d", "A"],
+      ["in", "pit"],
+      { A: "left" },
+      { upstream: [], downstream: ["A"], align: { A: "left" } },
+    ],
+    [
+      "a gate then a drop written against the fall (<<)",
+      ["A", "d"],
+      ["pit", "in"],
+      { A: "left" },
+      { upstream: [], downstream: ["A"], align: { A: "right" } },
+    ],
+    [
+      "gates on both sides, written against the fall",
+      ["A", "d", "B"],
+      ["pit", "in"],
+      { A: "center", B: "right" },
+      { upstream: ["B"], downstream: ["A"], align: { A: "center", B: "left" } },
+    ],
+  ] as const)("%s", (_, barriers, [from, to], align, expected) => {
+    expect(fallingStretches({ between: ["in", "pit"], barriers, align }, drop(from, to))).toEqual({
+      launch: from,
+      landing: to,
+      ...expected,
+    })
   })
 })
