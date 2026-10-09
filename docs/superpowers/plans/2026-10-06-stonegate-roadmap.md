@@ -35,20 +35,20 @@ arrangements: which plates hold a stone, and whether the hand holds one. For exa
 
 ## Phases
 
-| # | Phase | Ships | Depends on |
-| --- | --- | --- | --- |
-| 1 | **Stones in the engine** (done; also ships the `stonePlate` realisation and plates left bare with the mod off, pulled forward from phase 3 because the dev bake's toggle-off sweep needs it) | `weights` in the shared `Lock`; compiled to one weights control; plates placed on the carve with the record; `floorLock` walks it; a `.lock` file read at bake; twoStones (no gate loop) baked on the dev floor | — |
-| 2 | **Play with stones** (done 2026-10-07, [plan](2026-10-07-stonegate-phase-2-play.md)) | the Lock playground story; "Lift the stone" / "Set the stone on the plate" prompts; plate drawn empty or full (placeholder art); a blocked walk says why (narrow passage, stairs, way out); door shows its plates; explorer `carrying` with frame fallback | 1 |
-| 3 | **Narrow passage** (done 2026-10-08, [plan](2026-10-08-stonegate-phase-3-narrow-passage.md)) | a realisation for `unladen` gates (registry beside `oneWayRealisation`), drawn as a narrow passage; every one-way takes empty hands, and `unladen` on a drop or beside another owner is refused | 1 |
-| 4 | **Gate loops in the carve** (done 2026-10-09, [plan](2026-10-08-stonegate-phase-4-gate-loops.md)) | the laid carve accepts a gated join that closes a loop (`topologyFaults` and the fork seams); stoneGate bakes on the dev floor | 1 |
-| 5 | **Art** | painted plate (empty, with stone), narrow passage, torch; explorer carrying frames | runs beside 1–4; wiring needs 2–3 |
-| 7 | **Zipline glide** — done 2026-10-06 ([plan](2026-10-06-zipline-glide.md)) | the ride: explorer hidden, a riding sprite slides launch to landing by CSS, behind `PlayTraversal` (`docs/superpowers/specs/2026-10-04-zipline-ride-acceptance.md`); its art is phase 5 task 2. The zipline's own art stays as it is | 5 (art), independent of the stones |
-| 6 | **Djoser** | stoneGate on an `expert_4` floor through `floorLocks`; save impact settled | #315 merged, 1–5 |
+| #   | Phase                                                                                                                                                                                        | Ships                                                                                                                                                                                                                                                      | Depends on                         |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| 1   | **Stones in the engine** (done; also ships the `stonePlate` realisation and plates left bare with the mod off, pulled forward from phase 3 because the dev bake's toggle-off sweep needs it) | `weights` in the shared `Lock`; compiled to one weights control; plates placed on the carve with the record; `floorLock` walks it; a `.lock` file read at bake; twoStones (no gate loop) baked on the dev floor                                            | —                                  |
+| 2   | **Play with stones** (done 2026-10-07, [plan](2026-10-07-stonegate-phase-2-play.md))                                                                                                         | the Lock playground story; "Lift the stone" / "Set the stone on the plate" prompts; plate drawn empty or full (placeholder art); a blocked walk says why (narrow passage, stairs, way out); door shows its plates; explorer `carrying` with frame fallback | 1                                  |
+| 3   | **Narrow passage** (done 2026-10-08, [plan](2026-10-08-stonegate-phase-3-narrow-passage.md))                                                                                                 | a realisation for `unladen` gates (registry beside `oneWayRealisation`), drawn as a narrow passage; every one-way takes empty hands, and `unladen` on a drop or beside another owner is refused                                                            | 1                                  |
+| 4   | **Gate loops in the carve** (done 2026-10-09, [plan](2026-10-08-stonegate-phase-4-gate-loops.md))                                                                                            | the laid carve accepts a gated join that closes a loop (`topologyFaults` and the fork seams); stoneGate bakes on the dev floor                                                                                                                             | 1                                  |
+| 5   | **Art**                                                                                                                                                                                      | painted plate (empty, with stone), narrow passage, torch; explorer carrying frames                                                                                                                                                                         | runs beside 1–4; wiring needs 2–3  |
+| 7   | **Zipline glide** — done 2026-10-06 ([plan](2026-10-06-zipline-glide.md))                                                                                                                    | the ride: explorer hidden, a riding sprite slides launch to landing by CSS, behind `PlayTraversal` (`docs/superpowers/specs/2026-10-04-zipline-ride-acceptance.md`); its art is phase 5 task 2. The zipline's own art stays as it is                       | 5 (art), independent of the stones |
+| 6   | **Djoser** (done 2026-10-09, [plan](2026-10-09-stonegate-phase-6-djoser.md))                                                                                                                 | stoneGate on expert_4 pyramid 5, floor 0, through floorLocks; a save inside a re-laid pyramid resumes at its entrance                                                                                                                                      | #315 merged, 1–5                   |
 
 **Start:** phase 1 begins from `main` after PR #315 (`world/authoring-locks`) is merged, since it changes the
 realisation code phase 1 builds on (`degradeUnrealised`, the binding cascade, `floorLocks`).
 
-**Phase plans:** [phase 1, stones in the engine](2026-10-06-stonegate-phase-1-engine.md) · [phase 2, play with stones](2026-10-07-stonegate-phase-2-play.md) · [phase 3, the narrow passage](2026-10-08-stonegate-phase-3-narrow-passage.md) · [phase 4, gate loops in the carve](2026-10-08-stonegate-phase-4-gate-loops.md) · [phase 5, art](2026-10-06-stonegate-phase-5-art.md).
+**Phase plans:** [phase 1, stones in the engine](2026-10-06-stonegate-phase-1-engine.md) · [phase 2, play with stones](2026-10-07-stonegate-phase-2-play.md) · [phase 3, the narrow passage](2026-10-08-stonegate-phase-3-narrow-passage.md) · [phase 4, gate loops in the carve](2026-10-08-stonegate-phase-4-gate-loops.md) · [phase 5, art](2026-10-06-stonegate-phase-5-art.md) · [phase 6, Djoser](2026-10-09-stonegate-phase-6-djoser.md).
 
 Phases 2, 3 and 4 only need phase 1, so they can run side by side in separate worktrees. Phase 5 starts at
 once: the prompts and scaffolds need no code. Each art item is wired in as soon as its phase lands, and
@@ -136,11 +136,20 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
 - A lock with a one-way on its only route from `in` to `out` does not carve (`layoutNotFound`), even alone, and
   its carve can run synchronously for more than 20 s per seed.
 
+## Open after phase 6
+
+- No stone lesson stands before Djoser's capstone: the player meets stones and the narrow passage first in stoneGate.
+  stoneOnAPlate at Djoser site 3 or 4 is the obvious place (designer's pick).
+- The header comment of `src/game/locks/stoneGate.lock` still says "not placed yet, not buildable yet"; it is the
+  designer's text.
+- `RELAID_PYRAMIDS` lists expert_1 pyramid 4 and expert_4 pyramid 5 under `RELAID_FLOORS_VERSION` 1. A later lock on a
+  shipped floor adds its pyramid and bumps the version.
+- A save that never ran the re-key release (`cellKeyVersion` behind) and stands in a re-laid pyramid has its
+  exploration translated against the re-laid carve; only its place is cleared.
+
 ## Open per phase
 
 - **Phase 5:** the torch and the plate need `prim_*` geometry in `scripts/renderProp.py`, then the
   repaint pass (`docs/instructions/prop-pipeline.md`, `docs/instructions/repaint-queue.md`). The explorer
   carrying frames are an edit of the walking sheet (`art/README.md`, "The explorer"). Generating the images
   is done by hand in Gemini.
-- **Phase 6:** which `expert_4` pyramid and floor, and its realisations (torch for `activator`, narrow
-  passage: `unladen: "narrowPassage"`).

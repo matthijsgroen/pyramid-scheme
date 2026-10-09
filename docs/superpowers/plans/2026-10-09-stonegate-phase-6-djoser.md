@@ -13,8 +13,7 @@ passage; the plain bake changes that one floor and nothing else; and a save that
 lock has re-laid resumes at that pyramid's entrance instead of past a door it never opened.
 
 **Architecture:** placement is one world-spec rule in `src/worldGen/spec/expert.ts`, written exactly as the
-Valley of the Kings' doubleBack is (`journey("expert_1").pyramid("last", { floorLocks: { 0: { locks, realisations }
-} })`), reading the lock from its `.lock` file with `catalogueLock` and giving every region `free` with
+Valley of the Kings' doubleBack is (`journey("expert_1").pyramid("last", { floorLocks: { 0: { locks, realisations } } })`), reading the lock from its `.lock` file with `catalogueLock` and giving every region `free` with
 `freeRegions`, as every lock floor does today. `buildSite`'s `applyFloorLocks` overlays the lock on the auto-built
 floor and leaves its other content (rooms, side paths, the ward wing's stair) as authored; the bake's own carve
 search (`searchCarvePair`, `scripts/generateWorld.ts`) picks the seed and packing and writes them into
@@ -47,14 +46,14 @@ first step checks for that. Before each task run `git status --short` and leave 
 
 The expert_4 floors as baked at `b8ce20e7` (`src/data/generatedWorld.ts`), beside the world's one lock floor:
 
-| site | floors | floor 0 main rooms | floor 0 side sections | authored |
-| --- | --- | --- | --- | --- |
-| expert_4 pyramid 1 | 1 | 4 | 7 (two ward-gated chests, a hidden path) | — |
-| expert_4 pyramid 2 | 1 | 5 | 7 (a floor-key gate) | `keyColors: 2`, `packing: 0.2`, `FLOOR_KEY_PATH` |
-| expert_4 pyramid 3 | 1 | 5 | 7 | — |
-| expert_4 pyramid 4 | 2 | 6 | 9 (a floor-key gate, the ward wing's stair) | `keyColors: 2`, `packing: 0.2`, master ward wing |
-| **expert_4 pyramid 5** | 2 | 6 | 8 (two ward-gated chests, four junk paths, a hidden path, the ward wing's stair) | wizard ward wing, dense junk side paths (`isLast`) |
-| expert_1 pyramid 4 (doubleBack) | 2 | 5 | 9 (the same shape as expert_4 pyramid 5) | wizard ward wing, dense junk side paths, patron Anubis |
+| site                            | floors | floor 0 main rooms | floor 0 side sections                                                            | authored                                               |
+| ------------------------------- | ------ | ------------------ | -------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| expert_4 pyramid 1              | 1      | 4                  | 7 (two ward-gated chests, a hidden path)                                         | —                                                      |
+| expert_4 pyramid 2              | 1      | 5                  | 7 (a floor-key gate)                                                             | `keyColors: 2`, `packing: 0.2`, `FLOOR_KEY_PATH`       |
+| expert_4 pyramid 3              | 1      | 5                  | 7                                                                                | —                                                      |
+| expert_4 pyramid 4              | 2      | 6                  | 9 (a floor-key gate, the ward wing's stair)                                      | `keyColors: 2`, `packing: 0.2`, master ward wing       |
+| **expert_4 pyramid 5**          | 2      | 6                  | 8 (two ward-gated chests, four junk paths, a hidden path, the ward wing's stair) | wizard ward wing, dense junk side paths (`isLast`)     |
+| expert_1 pyramid 4 (doubleBack) | 2      | 5                  | 9 (the same shape as expert_4 pyramid 5)                                         | wizard ward wing, dense junk side paths, patron Anubis |
 
 `yarn run lock stoneGate`: `✓ every region is reachable`, `✓ solvable`, "every piece bears load", cheapest 9
 actions; nine regions, five plates (two stones), one torch (`S1 activator @hall5`), one narrow passage
@@ -66,8 +65,7 @@ A made-up stone lock (`SHELF_AND_DOOR`, `src/game/testSupport/stoneFixtures.ts`)
 `main/xtreasure-chest`, `s0/p0`, `s0/p1`, `s0/xtreasure-chest`, `main/entrance`, `main/exit`); unexplored are only
 the lock's own rooms, `main/xobstacle:stones.hall-out`, `main/xplate:stones.p`, `main/xplate:stones.shelf`.
 
-Where the player stands is read in `useAssembledFloor` (`explorerPos`): `resolveStanding(standingKey) ??
-resolveStanding(positionKey) ?? grid.entrancePos`, against the floor as it is carved now. `visitLevel`,
+Where the player stands is read in `useAssembledFloor` (`explorerPos`): `resolveStanding(standingKey) ?? resolveStanding(positionKey) ?? grid.entrancePos`, against the floor as it is carved now. `visitLevel`,
 `completeLevel` and `completeJourney` clear `position`, `positionKey` and `standingKey`, so a saved place survives
 only while the player stays inside one pyramid (a reload mid-floor, or a return from its ward wing).
 
@@ -96,7 +94,7 @@ Binding (designer, unless noted). Each names the task that builds it.
   list of re-laid pyramids.
 - **D7. Stable world:** the plain bake changes only the floor the lock stands on (task 1 proves it floor by floor).
 - **D8. The comment at the top of `src/game/locks/stoneGate.lock` is the designer's text** ("not placed yet, not
-  buildable yet"). It is left alone; the handover lists it for his yes (task 4).
+  buildable yet"). It is left alone; the handover lists it for their yes (task 4).
 
 ## Rulings made without the designer
 
@@ -116,10 +114,10 @@ Binding (designer, unless noted). Each names the task that builds it.
      walked yet. Pyramids 1 and 3 hold the curriculum's first lesson and first lock (doorWaitsForTwo, cellar).
   4. **It costs the least curriculum.** It displaces doubleBack, which still closes expert_1 and expert_3; Djoser's
      capstone becomes a stone lock, which suits "Djoser's building site" (`lock-curriculum.md`, "Stones").
-  — Cost if wrong: one rule moves to another pyramid and the bake runs again; the migration's list changes with it
-  (task 3).
+     — Cost if wrong: one rule moves to another pyramid and the bake runs again; the migration's list changes with it
+     (task 3).
 - **Ruling: stoneGate is placed without a stone lesson earlier in Djoser.** — Why: the placement is the designer's
-  (D1) and the lesson's site is his to choose; stoneOnAPlate at Djoser pyramid 3 or 4 is the obvious candidate
+  (D1) and the lesson's site is theirs to choose; stoneOnAPlate at Djoser pyramid 3 or 4 is the obvious candidate
   (`lock-placement.md`, "Where the curriculum and the world spec disagree"). — Cost if wrong: the first stone a
   player meets is in a four-mechanic lock until the lesson is placed; recorded under the roadmap's "Open after phase 6"
   (task 4).
@@ -131,6 +129,7 @@ Binding (designer, unless noted). Each names the task that builds it.
 - **Ruling: the binding sits on the overlay (`floorLocks[0].realisations`), not on the pyramid.** — Why: that is how
   doubleBack binds, and the wing floor places no lock. — Cost if wrong: one line moves.
 - **Ruling: a save migration, not the world reshape release.** The roadmap leaves phase 6 to choose. — Why:
+
   1. **Exploration and loot already carry across a re-carve.** A save names a room by its section's authoring
      address and its slot (`world-stability.md`, "Remembering a cell"); placing a lock keeps every section and every
      slot, and adds the lock's own rooms (`xplate:…`, `xobstacle:…`, `xmech:…`) as new ground. Measured above and
@@ -139,7 +138,7 @@ Binding (designer, unless noted). Each names the task that builds it.
      floor had no mechanism before: a save reads every plate, the torch and the stones at their authored start.
   3. **Where the player stands does not carry.** `positionKey`/`standingKey` resolve on the new carve, and there a
      room the player stood in can lie past a door the lock has not opened (beyond `P1+P2`, in `backroom` with the
-     altar's stone still down): he would skip the lock, or stand where no way back is open. This is the one thing
+     altar's stone still down): they would skip the lock, or stand where no way back is open. This is the one thing
      to migrate.
   4. **The reshape release is the wrong tool.** It resets in full only saves that skipped the capture release
      (`world-reshape-release.md`); every other save keeps everything. A lock placement is an ordinary re-authoring,
@@ -154,6 +153,7 @@ Binding (designer, unless noted). Each names the task that builds it.
   capture release (`cellKeyVersion` below 3) still re-keys its coordinates against the new carve, the reshape
   release's known gap, on these two floors as on every other. The floor summary that lights a pyramid on the travel
   map (`floorExploration`) is recomputed on the floor's next visit and is not re-derived here.
+
 - **Ruling: `RELAID_PYRAMIDS` holds expert_1 pyramid 4 as well as expert_4 pyramid 5.** — Why: doubleBack's
   placement (#315) is unreleased and re-lays a shipped floor in the same release, with the same stale place; one
   list, one stamp, one launch. — Cost if wrong: delete one line of the list before the release.
@@ -192,15 +192,15 @@ Binding (designer, unless noted). Each names the task that builds it.
 
 ## Review Focus
 
-1. **A player who reloads mid-floor in Djoser 5 after the release.** He resumes at the entrance, never inside the
-   lock's far side; his explored rooms and looted chests stay as they were. Test in task 3 (`setRelaidFloors`
+1. **A player who reloads mid-floor in Djoser 5 after the release.** They resume at the entrance, never inside the
+   lock's far side; their explored rooms and looted chests stay as they were. Test in task 3 (`setRelaidFloors`
    clears the three place fields, keeps `levelNr`, `interiorLevelNr`, `exploredCells`, `mechanismStates`) and task 2
    (the cost of placing a lock).
-2. **A player up Djoser 5's ward wing when the release lands.** His save names floor 1, and the wing comes down onto
-   the re-laid floor 0: he resumes at the pyramid's entrance too, because the step asks the pyramid, not the floor.
+2. **A player up Djoser 5's ward wing when the release lands.** Their save names floor 1, and the wing comes down onto
+   the re-laid floor 0: they resume at the pyramid's entrance too, because the step asks the pyramid, not the floor.
    Test in task 3 (a place on floor 1 of a re-laid pyramid is forgotten).
 3. **A save stamped once is never touched again,** and a journey started after the release is born stamped, so a
-   player who reaches Djoser 5 later and reloads there keeps his place. Test in task 3 (two tests).
+   player who reaches Djoser 5 later and reloads there keeps their place. Test in task 3 (two tests).
 4. **A save in a pyramid the release did not re-lay,** or one standing nowhere yet, is stamped and otherwise left
    exactly as it was. Test in task 3.
 5. **The re-laid floor's content.** Every room, chest, side path, hidden path and the wing's stair is still on the
@@ -212,6 +212,7 @@ Binding (designer, unless noted). Each names the task that builds it.
 ### Task 1: stoneGate on Djoser's last pyramid
 
 **Files:**
+
 - Modify: `src/worldGen/spec/expert.ts` (imports; a rule after doubleBack's in `expertRules`)
 - Modify: `src/data/generatedWorld.ts` (the plain bake)
 - Modify (the shipped world's lock floors, which these sweeps pin): `src/worldGen/devJourney.verify.ts`,
@@ -220,6 +221,7 @@ Binding (designer, unless noted). Each names the task that builds it.
   `yarn verify-content`, never a content assertion.
 
 **Interfaces:**
+
 - Consumes: `catalogueLock(name: string): Lock` from `./locks/catalogue`; `freeRegions(lock: Lock): Lock` from
   `@/game/lockAuthoring`; the binding keys `weights`, `activator`, `unladen` and realisations `stonePlate`, `torch`,
   `narrowPassage` (all used by dev pyramid 12 in `src/worldGen/spec/dev.ts`).
@@ -336,24 +338,22 @@ Expected: one hit in the `expert_4` block (the baked lock).
 The numbers below are those at `b8ce20e7`; if a later commit moved one, add the Djoser floor to what is there.
 
 `src/worldGen/devJourney.verify.ts` ("the floors the lock sweep walks"):
-- the header comment's "the shipped world stands two mechanism floors" becomes "three mechanism floors";
-- `"walks the two mechanism floors the shipped world stands, and finds no strand"` becomes `"walks the three
-  mechanism floors the shipped world stands, and finds no strand"`, with `expect(plainSweep.walked).toHaveLength(3)`;
-- `"walks fourteen once the dev journey stands its twelve, and finds no strand"` becomes `"walks fifteen once the dev
-  journey stands its twelve, and finds no strand"`, with `toHaveLength(15)`.
 
-`src/worldGen/lockFloorInspector.verify.ts`: the test `"assembles the shipped world's lock floor, expert pyramid 4's
-first floor"` becomes
+- the header comment's "the shipped world stands two mechanism floors" becomes "three mechanism floors";
+- `"walks the two mechanism floors the shipped world stands, and finds no strand"` becomes `"walks the three mechanism floors the shipped world stands, and finds no strand"`, with `expect(plainSweep.walked).toHaveLength(3)`;
+- `"walks fourteen once the dev journey stands its twelve, and finds no strand"` becomes `"walks fifteen once the dev journey stands its twelve, and finds no strand"`, with `toHaveLength(15)`.
+
+`src/worldGen/lockFloorInspector.verify.ts`: the test `"assembles the shipped world's lock floor, expert pyramid 4's first floor"` becomes
 
 ```ts
-  it("assembles the shipped world's lock floors, the first floor of expert_1 pyramid 4 and of expert_4 pyramid 5", () => {
-    const shipped = lockFloors(plain)
-    expect(shipped.map(({ journeyId, pyramidNumber, floorIndex }) => [journeyId, pyramidNumber, floorIndex])).toEqual([
-      ["expert_1", 4, 0],
-      ["expert_4", 5, 0],
-    ])
-    expect(shipped.map(assembles)).toEqual([true, true])
-  })
+it("assembles the shipped world's lock floors, the first floor of expert_1 pyramid 4 and of expert_4 pyramid 5", () => {
+  const shipped = lockFloors(plain)
+  expect(shipped.map(({ journeyId, pyramidNumber, floorIndex }) => [journeyId, pyramidNumber, floorIndex])).toEqual([
+    ["expert_1", 4, 0],
+    ["expert_4", 5, 0],
+  ])
+  expect(shipped.map(assembles)).toEqual([true, true])
+})
 ```
 
 `src/mods/topology/carveNeverDependsOnAMod.verify.ts`: the comment above `FLOORS_WITH_MECHANICS` becomes "The floors
@@ -384,9 +384,11 @@ Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
 ### Task 2: What placing a lock costs a save, pinned
 
 **Files:**
+
 - Modify: `src/app/SiteMap/authoringChangeCost.spec.ts` (one case in "what re-authoring a floor costs a player")
 
 **Interfaces:**
+
 - Consumes: `parseLock(text, name)` from `@/game/lockNotation`; `SHELF_AND_DOOR` from
   `@/game/testSupport/stoneFixtures` (a made-up lock); the file's own `floorWith`, `cost`.
 - Produces: the evidence the save ruling stands on; nothing later reads it.
@@ -406,18 +408,18 @@ import { SHELF_AND_DOOR } from "@/game/testSupport/stoneFixtures"
 Append inside `describe("what re-authoring a floor costs a player", …)`, after the last case:
 
 ```ts
-  it("costs only the lock's own rooms when a lock is placed on the floor", () => {
-    const placed = floorWith({
-      locks: [{ lock: parseLock(SHELF_AND_DOOR, "stones").lock }],
-      realisations: { weights: "stonePlate" },
-    })
-    const { explored, unexplored } = cost(floorWith(), placed)
-
-    expect(unexplored).toEqual(["main/xobstacle:stones.hall-out", "main/xplate:stones.p", "main/xplate:stones.shelf"])
-    expect(explored).toEqual(
-      expect.arrayContaining(["main/p0", "main/p3", "main/xtreasure-chest", "s0/p1", "s0/xtreasure-chest"])
-    )
+it("costs only the lock's own rooms when a lock is placed on the floor", () => {
+  const placed = floorWith({
+    locks: [{ lock: parseLock(SHELF_AND_DOOR, "stones").lock }],
+    realisations: { weights: "stonePlate" },
   })
+  const { explored, unexplored } = cost(floorWith(), placed)
+
+  expect(unexplored).toEqual(["main/xobstacle:stones.hall-out", "main/xplate:stones.p", "main/xplate:stones.shelf"])
+  expect(explored).toEqual(
+    expect.arrayContaining(["main/p0", "main/p3", "main/xtreasure-chest", "s0/p1", "s0/xtreasure-chest"])
+  )
+})
 ```
 
 - [ ] **Step 2: Run it**
@@ -439,6 +441,7 @@ Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
 ### Task 3: A save inside a re-laid pyramid resumes at its entrance
 
 **Files:**
+
 - Create: `src/app/SiteMap/relaidPyramids.ts`
 - Create: `src/app/SiteMap/relaidPyramids.spec.ts`
 - Create: `src/app/SiteMap/useRelaidFloorsBackfill.ts`
@@ -449,19 +452,18 @@ Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
 - Modify: `src/App.tsx` (mount the hook last)
 
 **Interfaces:**
+
 - Produces, in `@/app/SiteMap/relaidPyramids`:
   - `export type RelaidPyramid = { journeyId: string; levelNr: number }`
   - `export const RELAID_FLOORS_VERSION = 1`
   - `export const RELAID_PYRAMIDS: readonly RelaidPyramid[]`
-  - `export const standsInRelaidPyramid(stored: Pick<StoredJourneyStateV3, "journeyId" | "levelNr" | "position" |
-    "positionKey" | "standingKey">, relaid: readonly RelaidPyramid[]): boolean`
+  - `export const standsInRelaidPyramid(stored: Pick<StoredJourneyStateV3, "journeyId" | "levelNr" | "position" | "positionKey" | "standingKey">, relaid: readonly RelaidPyramid[]): boolean`
 - Produces, on `JourneyAPI` (`@/app/state/useJourneys`):
   - `journeysNeedingRelaidFloors: () => StoredJourneyStateV3[]`
   - `setRelaidFloors: (journeyId: string, resumeAtEntrance: boolean) => void`
   - `StoredJourneyStateV3.relaidFloorsVersion?: number`
 - Produces, in `@/app/SiteMap/useRelaidFloorsBackfill`:
-  `useRelaidFloorsBackfill(journeys: Pick<JourneyAPI, "journeysNeedingRelaidFloors" | "setRelaidFloors">, relaid:
-  readonly RelaidPyramid[] = RELAID_PYRAMIDS): void`
+  `useRelaidFloorsBackfill(journeys: Pick<JourneyAPI, "journeysNeedingRelaidFloors" | "setRelaidFloors">, relaid: readonly RelaidPyramid[] = RELAID_PYRAMIDS): void`
 
 - [ ] **Step 1: Write the failing tests for the pure part**
 
@@ -558,8 +560,7 @@ Expected: PASS, 6 tests.
 
 In `src/app/state/useJourneys.spec.ts`:
 
-1. In `describe("standingKey clears wherever positionKey does", …)`, the known-writers list in `"the writers it finds
-   are the ones known, so a probe gone blind or a new writer is noticed"` gains `"setRelaidFloors"` (the probe calls it
+1. In `describe("standingKey clears wherever positionKey does", …)`, the known-writers list in `"the writers it finds are the ones known, so a probe gone blind or a new writer is noticed"` gains `"setRelaidFloors"` (the probe calls it
    with `[REAL_ID, 2]`, a truthy second argument, so it is found).
 
 2. Add, after `describe("cellKeyVersion as a record of having been through this release", …)`:
@@ -682,22 +683,22 @@ In `startJourney`'s `newJourney`, after `mechanismSlotVersion: MECHANISM_SLOT_VE
 After `setMechanismSlotBackfill`'s definition:
 
 ```ts
-  // Stamped on every journey, standing or not, so the stamp is the exact record of which saves came through.
-  const journeysNeedingRelaidFloors = () => journeys.filter(j => j.relaidFloorsVersion !== RELAID_FLOORS_VERSION)
+// Stamped on every journey, standing or not, so the stamp is the exact record of which saves came through.
+const journeysNeedingRelaidFloors = () => journeys.filter(j => j.relaidFloorsVersion !== RELAID_FLOORS_VERSION)
 
-  const setRelaidFloors = (journeyId: string, resumeAtEntrance: boolean) => {
-    setJourneys(prev =>
-      prev.map(j =>
-        j.journeyId === journeyId
-          ? {
-              ...j,
-              ...(resumeAtEntrance ? { position: null, positionKey: null, standingKey: null } : {}),
-              relaidFloorsVersion: RELAID_FLOORS_VERSION,
-            }
-          : j
-      )
+const setRelaidFloors = (journeyId: string, resumeAtEntrance: boolean) => {
+  setJourneys(prev =>
+    prev.map(j =>
+      j.journeyId === journeyId
+        ? {
+            ...j,
+            ...(resumeAtEntrance ? { position: null, positionKey: null, standingKey: null } : {}),
+            relaidFloorsVersion: RELAID_FLOORS_VERSION,
+          }
+        : j
     )
-  }
+  )
+}
 ```
 
 In the object `createJourneysV3Api` returns, after `setMechanismSlotBackfill,`:
@@ -815,8 +816,8 @@ import { useRelaidFloorsBackfill } from "@/app/SiteMap/useRelaidFloorsBackfill"
 and after `useMechanismSlotBackfill(journeys)`:
 
 ```ts
-  // After the re-key: a place it derives for a save inside a re-laid pyramid is forgotten with the rest.
-  useRelaidFloorsBackfill(journeys)
+// After the re-key: a place it derives for a save inside a re-laid pyramid is forgotten with the rest.
+useRelaidFloorsBackfill(journeys)
 ```
 
 Run: `yarn vitest run src/app/SiteMap/useRelaidFloorsBackfill.spec.ts src/app/SiteMap/relaidPyramids.spec.ts src/app/state/useJourneys.spec.ts`
@@ -838,6 +839,7 @@ Claude-Session: https://claude.ai/code/session_018WV7pZwTJC84nRwPESXJfW"
 ### Task 4: Look at it, say so, and the whole gate
 
 **Files:**
+
 - Modify: `CHANGELOG.md` (`## Unreleased`, `### Added`)
 - Modify: `docs/game-design/lock-placement.md` (expert_4 site 5 row; "Where the curriculum and the world spec
   disagree", Djoser; "From a row to the world"; the stoneGate row of "Every lock and lesson"; the "Pairs" note on
@@ -888,6 +890,7 @@ opens on a mirror fork with ziplines: …":
 Prettier reflows markdown tables: edit table rows by line and read the file back after each edit.
 
 `docs/game-design/lock-placement.md`:
+
 - the expert_4 table, site 5's row becomes
   `| 5 | 1 | 1 | wizard ward wing | **doubleBack** | stoneGate | ✓ |`;
 - under "Where the curriculum and the world spec disagree", the **Djoser** bullet becomes: "**Djoser.** stoneGate
@@ -910,8 +913,8 @@ Prettier reflows markdown tables: edit table rows by line and read the file back
   Djoser's capstone".
 
 `docs/game-design/lock-curriculum.md`:
-- "The locks", the stoneGate row: `| stoneGate | expert capstone (Djoser) | lifting the stone off the altar opens the
-  back way and shuts the way in; park a stone on a shelf to fit through the narrow passage; both stones spent twice |`;
+
+- "The locks", the stoneGate row: `| stoneGate | expert capstone (Djoser) | lifting the stone off the altar opens the back way and shuts the way in; park a stone on a shelf to fit through the narrow passage; both stones spent twice |`;
 - "Expert", the expert_4 row: `| expert_4 (5) | doorWaitsForTwo · twoLamps · cellar · overlook · **stoneGate** |`;
 - the sentence under that table, "Every lock in a journey leans only on lessons that journey or junior has taught.
   doubleBack closes three of the four." becomes "Every lock in a journey leans only on lessons that journey or junior
@@ -924,15 +927,15 @@ Prettier reflows markdown tables: edit table rows by line and read the file back
 line, read back):
 
 ```markdown
-| A lock is placed on a floor                    | Only the lock's own rooms; a save inside that pyramid resumes at its entrance, once | No                                         |
+| A lock is placed on a floor | Only the lock's own rooms; a save inside that pyramid resumes at its entrance, once | No |
 ```
 
 - [ ] **Step 5: The roadmap and the handover**
 
 `docs/superpowers/plans/2026-10-06-stonegate-roadmap.md` (edit by line, read back):
+
 - the phase 6 row: `**Djoser**` becomes `**Djoser** (done <date>, [plan](2026-10-09-stonegate-phase-6-djoser.md))`, and
-  its "Ships" cell `stoneGate on expert_4 pyramid 5, floor 0, through floorLocks; a save inside a re-laid pyramid
-  resumes at its entrance`;
+  its "Ships" cell `stoneGate on expert_4 pyramid 5, floor 0, through floorLocks; a save inside a re-laid pyramid resumes at its entrance`;
 - the "Phase plans" line gains ` · [phase 6, Djoser](2026-10-09-stonegate-phase-6-djoser.md)`;
 - "Open per phase": delete the **Phase 6** bullet;
 - add above "## Open per phase":
@@ -949,8 +952,8 @@ line, read back):
 ```
 
 `docs/handover-stonegate.md`:
-- the table row `| 6 Djoser | **Next, not planned.** …` becomes `| 6 Djoser | **Done.** Plan:
-  \`docs/superpowers/plans/2026-10-09-stonegate-phase-6-djoser.md\`. stoneGate on expert_4 pyramid 5, floor 0. |`
+
+- the table row `| 6 Djoser | **Next, not planned.** …` becomes `| 6 Djoser | **Done.** Plan: \`docs/superpowers/plans/2026-10-09-stonegate-phase-6-djoser.md\`. stoneGate on expert_4 pyramid 5, floor 0. |`
   (edit by line; read back);
 - "Next work, in order": delete item 2 (Phase 6);
 - "Waiting on the designer", "Unanswered": add "- correct the header comment of `stoneGate.lock` (\"not placed yet,
@@ -1007,8 +1010,7 @@ reports moved line positions, run `yarn betterer:update` in the real worktree an
   wing); 3 task 3 ("leaves a save already stamped alone", "starts a new journey already stamped"); 4
   `relaidPyramids.spec.ts` (other pyramid, other journey, nowhere yet) and "only stamps a save that stands elsewhere";
   5 the bake and `yarn verify-content` (task 1), the look (task 4).
-- **Type consistency:** `RelaidPyramid`, `RELAID_FLOORS_VERSION`, `RELAID_PYRAMIDS`, `standsInRelaidPyramid(stored,
-  relaid)` (task 3 step 2) are read by `useJourneys.ts` (the version) and `useRelaidFloorsBackfill(journeys, relaid)`
+- **Type consistency:** `RelaidPyramid`, `RELAID_FLOORS_VERSION`, `RELAID_PYRAMIDS`, `standsInRelaidPyramid(stored, relaid)` (task 3 step 2) are read by `useJourneys.ts` (the version) and `useRelaidFloorsBackfill(journeys, relaid)`
   (step 6); `journeysNeedingRelaidFloors()` and `setRelaidFloors(journeyId, resumeAtEntrance)` (step 4) by the hook
   and its spec; `relaidFloorsVersion` on `StoredJourneyStateV3`.
 - **Not covered:** the fog a remembered room lifts beyond a shut door after any re-carve (cosmetic, every re-carve);

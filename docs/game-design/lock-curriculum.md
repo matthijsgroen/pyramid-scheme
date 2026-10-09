@@ -28,53 +28,53 @@ lock, not a sampler.
 
 ## What each lock leans on
 
-| mechanic | taught by | locks that need it |
-| --- | --- | --- |
-| board picks the way (fork-switch) | `boardPicksTheWay` | dropHome, twoLamps, doubleBack, lamplighter, observatory, clockwork |
-| lever (toggle, can go back) | `leverOpensADoor`, `leverSwapsDoors` | all but plates |
-| torch or key (activator, once) | `torch` | cellar, keyring, relay, observatory, sluice, tide |
-| one-way drop | `dropDown` | dropHome, cellar, doubleBack, overlook, seesaw, lamplighter, observatory, relay, clockwork |
-| a door that waits for several | `doorWaitsForTwo` | twoLamps, seesaw, lamplighter, observatory, relay, clockwork |
-| water (region gate) | `waterMoves` | sluice, tide |
-| tiles in order (sequence) — not buildable yet | `tilesInOrder` | plates |
-| stones on plates, and where a stone cannot go — a proposal | `stoneOnAPlate` | twoStones, masonsRamp, counterweight |
+| mechanic                                                   | taught by                            | locks that need it                                                                         |
+| ---------------------------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------ |
+| board picks the way (fork-switch)                          | `boardPicksTheWay`                   | dropHome, twoLamps, doubleBack, lamplighter, observatory, clockwork                        |
+| lever (toggle, can go back)                                | `leverOpensADoor`, `leverSwapsDoors` | all but plates                                                                             |
+| torch or key (activator, once)                             | `torch`                              | cellar, keyring, relay, observatory, sluice, tide                                          |
+| one-way drop                                               | `dropDown`                           | dropHome, cellar, doubleBack, overlook, seesaw, lamplighter, observatory, relay, clockwork |
+| a door that waits for several                              | `doorWaitsForTwo`                    | twoLamps, seesaw, lamplighter, observatory, relay, clockwork                               |
+| water (region gate)                                        | `waterMoves`                         | sluice, tide                                                                               |
+| tiles in order (sequence) — not buildable yet              | `tilesInOrder`                       | plates                                                                                     |
+| stones on plates, and where a stone cannot go — a proposal | `stoneOnAPlate`                      | twoStones, masonsRamp, counterweight                                                       |
 
 ## The lessons
 
-| lesson | tier | what the player learns |
-| --- | --- | --- |
-| `boardPicksTheWay` | junior | a board in a junction decides which way opens |
-| `leverOpensADoor` | junior | a lever elsewhere opens a door here |
-| `dropDown` | junior | a drop is a way down, never back |
-| `torch` | junior | a torch, lit for good, opens its door |
-| `leverSwapsDoors` | junior preview, expert | one lever swaps two doors, and can be thrown back |
-| `doorWaitsForTwo` | expert | a door shows the marks it waits for, and opens on the last |
-| `waterMoves` | expert | one lever drains a hall |
-| `tilesInOrder` | expert, once buildable | two tiles, in order |
-| `stoneOnAPlate` | expert, once buildable | a stone on a plate holds its door; lift it and the door shuts |
+| lesson             | tier                   | what the player learns                                        |
+| ------------------ | ---------------------- | ------------------------------------------------------------- |
+| `boardPicksTheWay` | junior                 | a board in a junction decides which way opens                 |
+| `leverOpensADoor`  | junior                 | a lever elsewhere opens a door here                           |
+| `dropDown`         | junior                 | a drop is a way down, never back                              |
+| `torch`            | junior                 | a torch, lit for good, opens its door                         |
+| `leverSwapsDoors`  | junior preview, expert | one lever swaps two doors, and can be thrown back             |
+| `doorWaitsForTwo`  | expert                 | a door shows the marks it waits for, and opens on the last    |
+| `waterMoves`       | expert                 | one lever drains a hall                                       |
+| `tilesInOrder`     | expert, once buildable | two tiles, in order                                           |
+| `stoneOnAPlate`    | expert, once buildable | a stone on a plate holds its door; lift it and the door shuts |
 
 ## The locks
 
-| lock | tier | trick |
-| --- | --- | --- |
-| dropHome | expert | the lever that opens the exit shuts the door behind you; a drop is the way home |
-| cellar | expert | the drop lands in a cell that holds its own key |
-| twoLamps | expert | the exit wants both lamps, the board reaches one at a time |
-| overlook | expert | one room overlooks two drops; the second saves the early dropper |
-| doubleBack | expert capstone | a lever shuts the way you came and opens a branch you drop onto |
-| seesaw | master | each lever's throw shuts the way to the other |
-| lamplighter | master | a drop that saves a board solve, for whoever lights west first |
-| keyring | master | a key chain behind an airlock |
-| relay | master | a chain of airlocks; the drop home opens on the last torch |
-| clockwork | master | the board must point two ways, and the lever behind one of them shuts it |
-| observatory | master | a three-way board, two prizes, one shortcut |
-| tide | master | carry the key home against the water |
-| sluice | master | drain the hall for the gold, then the vault for the way out |
-| plates | master, once buildable | four tiles across three rooms; the door resets them |
-| twoStones | expert, once buildable | one stone holds the vault while you fetch the second, then presses the exit: a stone spent twice |
-| masonsRamp | master, once buildable | one stone holds the chute door for the other; you squeeze back up the narrow passage, where no stone fits |
-| counterweight | master, once buildable | the zipline takes you down empty-handed; weigh the lift down from below, then bring the other stone by lift |
-| stoneGate | not placed yet, once buildable | lifting the stone off the altar opens the back way and shuts the way in; park a stone on a shelf to fit through the narrow passage; both stones spent twice |
+| lock          | tier                     | trick                                                                                                                                                       |
+| ------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| dropHome      | expert                   | the lever that opens the exit shuts the door behind you; a drop is the way home                                                                             |
+| cellar        | expert                   | the drop lands in a cell that holds its own key                                                                                                             |
+| twoLamps      | expert                   | the exit wants both lamps, the board reaches one at a time                                                                                                  |
+| overlook      | expert                   | one room overlooks two drops; the second saves the early dropper                                                                                            |
+| doubleBack    | expert capstone          | a lever shuts the way you came and opens a branch you drop onto                                                                                             |
+| seesaw        | master                   | each lever's throw shuts the way to the other                                                                                                               |
+| lamplighter   | master                   | a drop that saves a board solve, for whoever lights west first                                                                                              |
+| keyring       | master                   | a key chain behind an airlock                                                                                                                               |
+| relay         | master                   | a chain of airlocks; the drop home opens on the last torch                                                                                                  |
+| clockwork     | master                   | the board must point two ways, and the lever behind one of them shuts it                                                                                    |
+| observatory   | master                   | a three-way board, two prizes, one shortcut                                                                                                                 |
+| tide          | master                   | carry the key home against the water                                                                                                                        |
+| sluice        | master                   | drain the hall for the gold, then the vault for the way out                                                                                                 |
+| plates        | master, once buildable   | four tiles across three rooms; the door resets them                                                                                                         |
+| twoStones     | expert, once buildable   | one stone holds the vault while you fetch the second, then presses the exit: a stone spent twice                                                            |
+| masonsRamp    | master, once buildable   | one stone holds the chute door for the other; you squeeze back up the narrow passage, where no stone fits                                                   |
+| counterweight | master, once buildable   | the zipline takes you down empty-handed; weigh the lift down from below, then bring the other stone by lift                                                 |
+| stoneGate     | expert capstone (Djoser) | lifting the stone off the altar opens the back way and shuts the way in; park a stone on a shelf to fit through the narrow passage; both stones spent twice |
 
 ## Where they go
 
@@ -82,24 +82,24 @@ Site counts are the shipped world's (junior 16, expert 18, master 19).
 
 ### Junior — the lessons, each about four times
 
-| journey (sites) | layers, in site order |
-| --- | --- |
-| junior_1 (3) | leverOpensADoor · dropDown · boardPicksTheWay |
-| junior_2 (4) | boardPicksTheWay (the switch fork already authored at pyramid 2) · leverOpensADoor · torch · dropDown |
-| junior_3 (4) | leverOpensADoor · dropDown · torch · boardPicksTheWay |
-| junior_4 (5) | boardPicksTheWay · leverOpensADoor · dropDown · torch · leverSwapsDoors |
+| journey (sites) | layers, in site order                                                                                 |
+| --------------- | ----------------------------------------------------------------------------------------------------- |
+| junior_1 (3)    | leverOpensADoor · dropDown · boardPicksTheWay                                                         |
+| junior_2 (4)    | boardPicksTheWay (the switch fork already authored at pyramid 2) · leverOpensADoor · torch · dropDown |
+| junior_3 (4)    | leverOpensADoor · dropDown · torch · boardPicksTheWay                                                 |
+| junior_4 (5)    | boardPicksTheWay · leverOpensADoor · dropDown · torch · leverSwapsDoors                               |
 
 ### Expert — a lesson opens each journey, then the first locks
 
-| journey (sites) | layers, in site order |
-| --- | --- |
-| expert_1 (4) | leverSwapsDoors · dropHome · twoLamps · **doubleBack** |
-| expert_2 (4) | doorWaitsForTwo · cellar · twoLamps · dropHome |
-| expert_3 (5) | leverSwapsDoors · dropHome · cellar · overlook · **doubleBack** |
-| expert_4 (5) | doorWaitsForTwo · twoLamps · cellar · overlook · **doubleBack** |
+| journey (sites) | layers, in site order                                           |
+| --------------- | --------------------------------------------------------------- |
+| expert_1 (4)    | leverSwapsDoors · dropHome · twoLamps · **doubleBack**          |
+| expert_2 (4)    | doorWaitsForTwo · cellar · twoLamps · dropHome                  |
+| expert_3 (5)    | leverSwapsDoors · dropHome · cellar · overlook · **doubleBack** |
+| expert_4 (5)    | doorWaitsForTwo · twoLamps · cellar · overlook · **stoneGate**  |
 
-Every lock in a journey leans only on lessons that journey or junior has taught. doubleBack closes three
-of the four.
+Every lock in a journey leans only on lessons that journey or junior has taught, but one: stoneGate, which closes
+expert_4, meets stones and the narrow passage before any lesson does. doubleBack closes expert_1 and expert_3.
 
 ### Master — the remaining combinations
 
@@ -120,8 +120,8 @@ A stone rests on a plate or is in the player's hand, never loose, so lifting one
 it empties a plate. Stones are alike, so a lock places plates, each with or without a stone
 (`p plate @hall stone`). A plate is live and opens a way, or bars a region, either while it holds a stone
 (`-[p]-`) or while it holds none (`-[p:empty]-`): lift a stone off its plate and the door moves. A plate that opens
-nothing is a shelf, a place to keep a stone. The explorer's own weight presses a plate while he stands on it, which teaches that weight is what counts,
-but it never lets him through: a plate is never the cell of the way it opens, so stepping off lifts his
+nothing is a shelf, a place to keep a stone. The explorer's own weight presses a plate while the player stands on it, which teaches that weight is what counts,
+but it never lets them through: a plate is never the cell of the way it opens, so stepping off lifts their
 weight first. Passing a door on two plates therefore takes two stones, and the tool refuses a lock that
 asks for more stones than it has.
 

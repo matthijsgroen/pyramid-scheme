@@ -172,24 +172,25 @@ The one thing a change of address does not carry is the unfinished board of the 
 
 ## What resets and what doesn't
 
-| Change                                         | Resets exploration?                                      | Dupes/erases loot?                         |
-| ---------------------------------------------- | -------------------------------------------------------- | ------------------------------------------ |
-| Path length, straightness or packing changes   | No — the carve moves, the authoring does not             | No                                         |
-| Puzzle count changes in a section              | Only the rooms added or removed                          | No                                         |
-| Which puzzle a room serves changes             | No — traps included                                      | No                                         |
-| Difficulty changes                             | No — same rooms, different boards behind them            | No                                         |
-| Loot in a chest changes                        | No                                                       | No — inventory-as-truth                    |
-| A chest's reward is swapped                    | No                                                       | No — inventory-as-truth                    |
-| A section's `endReward` is removed             | No — but which sections host floor keys moves            | No                                         |
-| Ward key reassigned                            | No                                                       | No                                         |
-| Ward gate added or removed                     | Only the gate room                                       | No                                         |
-| Floor-key gate added                           | The gate room, and the key host it conjures              | No                                         |
-| A section is sealed                            | No — it only re-carves                                   | No                                         |
-| A section is hidden                            | No, but it must be found again before it can be walked   | No                                         |
-| Section added (new side path)                  | Itself only — unless inserted ahead of an unlabelled one | No                                         |
-| Section removed                                | N/A — its stale entries are ignored                      | No                                         |
-| A sidepath is labelled, relabelled, unlabelled | Yes, that section — the name is its identity             | No                                         |
-| Fragment re-ordered across chests              | No                                                       | No — piece index is stable per world build |
+| Change                                         | Resets exploration?                                                                 | Dupes/erases loot?                         |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------ |
+| Path length, straightness or packing changes   | No — the carve moves, the authoring does not                                        | No                                         |
+| Puzzle count changes in a section              | Only the rooms added or removed                                                     | No                                         |
+| Which puzzle a room serves changes             | No — traps included                                                                 | No                                         |
+| Difficulty changes                             | No — same rooms, different boards behind them                                       | No                                         |
+| Loot in a chest changes                        | No                                                                                  | No — inventory-as-truth                    |
+| A chest's reward is swapped                    | No                                                                                  | No — inventory-as-truth                    |
+| A section's `endReward` is removed             | No — but which sections host floor keys moves                                       | No                                         |
+| Ward key reassigned                            | No                                                                                  | No                                         |
+| Ward gate added or removed                     | Only the gate room                                                                  | No                                         |
+| Floor-key gate added                           | The gate room, and the key host it conjures                                         | No                                         |
+| A section is sealed                            | No — it only re-carves                                                              | No                                         |
+| A section is hidden                            | No, but it must be found again before it can be walked                              | No                                         |
+| A lock is placed on a floor                    | Only the lock's own rooms; a save inside that pyramid resumes at its entrance, once | No                                         |
+| Section added (new side path)                  | Itself only — unless inserted ahead of an unlabelled one                            | No                                         |
+| Section removed                                | N/A — its stale entries are ignored                                                 | No                                         |
+| A sidepath is labelled, relabelled, unlabelled | Yes, that section — the name is its identity                                        | No                                         |
+| Fragment re-ordered across chests              | No                                                                                  | No — piece index is stable per world build |
 
 Every row is a case in `src/app/SiteMap/authoringChangeCost.spec.ts`, which walks a floor, re-authors it and asserts what comes back.
 

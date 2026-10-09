@@ -3,6 +3,18 @@
 Merged work nobody has played yet. Each entry says where to go and what to look for; strike it when it has been
 played, and open an issue or a task for anything that plays wrong.
 
+## stoneGate phase 6 — Djoser
+
+- **Pyramid of Djoser, pyramid 5 (develop mode to jump there).** The main floor opens on stoneGate among its own
+  rooms and side paths: play it to the end and leave by the way out. Do the plates, the torch and the passage read
+  at a glance on a full floor? Leave mid-way, take the ward wing's stair and come back down: every stone where you
+  set it.
+- **A save from before this release, standing inside that pyramid** (or the Valley of the Kings' last): it resumes
+  at the entrance, with every room it had explored still explored.
+- **A save that never ran the re-key release, standing in a re-laid pyramid:** its old coordinates are translated
+  against the re-laid carve, so some explored rooms may come back unexplored or land on the wrong room; only its
+  place is cleared. Rare (it skipped two releases); judge whether it needs more than that.
+
 ## stoneGate phase 4 — gate loops, nest spots
 
 - **Dev journey, pyramid 12 (stoneGate).** Play it to the end: lift the stone off the altar (the back way opens, the
@@ -18,18 +30,18 @@ played, and open an issue or a task for anything that plays wrong.
 ## stoneGate phase 3 — the narrow passage
 
 - **Storybook, `Topology/Lock playground`, `SqueezeThrough`.** Tap the wall: the explorer walks beside it and "Squeeze
-  through" shows; take it and he squeezes through and stands on the far side. Tap the wall again to come
-  back, so both directions. Lift the stone first: he stops beside the wall and "Cannot pass with a stone" shows.
+  through" shows; take it and the explorer squeezes through and stands on the far side. Tap the wall again to come
+  back, so both directions. Lift the stone first: the explorer stops beside the wall and "Cannot pass with a stone" shows.
 - **Storybook, `Topology/NarrowPassage`.** Both walls at 1x and 3x on two ranks, the explorer either side, the four
   squeezing headings. Judge the squeeze's size against the walking figure and whether drawing it in front of the
   wall reads.
-- **The wall's fade while he stands behind it:** it should fade to the occluder level, and stay solid while he
-  squeezes through. Not seen live.
+- **The wall's fade while the explorer stands behind it:** it should fade to the occluder level, and stay solid while they
+  squeeze through. Not seen live.
 - **The `narrowAlong` wall** pokes slightly above the corridor top.
 - **The squeeze's speed** (350 ms a leg) and its two legs at a corner: not seen live.
-- **A zipline on a stone floor:** carry a stone to its launch: he stops there and "Cannot pass with a stone"
+- **A zipline on a stone floor:** carry a stone to its launch: the explorer stops there and "Cannot pass with a stone"
   shows, as at the way out. Every one-way takes empty hands now, so no lock lets a stone ride a drop.
-- **Tapping the wall when the near side is itself a node** skips that node's offer: he walks onto it and the
+- **Tapping the wall when the near side is itself a node** skips that node's offer: the explorer walks onto it and the
   crossing is offered, not what stands there. Judge whether that reads.
 
 ## stoneGate phase 2 — playing with stones
@@ -39,12 +51,12 @@ played, and open an issue or a task for anything that plays wrong.
   Carry a stone to the way out: the explorer stops and "Cannot pass with a stone" shows where the prompt would.
   Walk into the exit door: two stones on its face.
 - **Same story, walking `twoStones` to the exit door.** The door face has not been seen live with the walk.
-- **The vault door under the explorer's weight** (the `WeightOpensTheDoor` story): it should swing while he stands
-  on the plate. Not seen live.
+- **The vault door under the explorer's weight** (the `WeightOpensTheDoor` story): it should swing while the explorer
+  stands on the plate. Not seen live.
 - **The plate/stone icon on a door face** is taller than its 40px ring and clips it at the bottom; the designer
   chooses to fit it inside or crop it.
 - **The explorer in the exit's light shaft while carrying** looks washed out; judge it.
-- **Dev pyramid 11, floor 0.** The same lock in the game. Reload the app mid-carry: he is still carrying it.
+- **Dev pyramid 11, floor 0.** The same lock in the game. Reload the app mid-carry: the explorer is still carrying it.
 
 ## #313 — forced tile steps, and region barriers as water or sand
 

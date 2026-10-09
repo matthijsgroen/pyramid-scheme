@@ -7,15 +7,15 @@ over memory.
 
 ## Where things stand
 
-| Phase                          | State                                                                                              |
-| ------------------------------ | -------------------------------------------------------------------------------------------------- |
-| 1 Stones in the engine         | **Done.** Plan: `docs/superpowers/plans/2026-10-06-stonegate-phase-1-engine.md`.                   |
-| 2 Play with stones             | **Done.** Plan: `docs/superpowers/plans/2026-10-07-stonegate-phase-2-play.md`.                     |
-| 3 Narrow passage               | **Done.** Plan: `docs/superpowers/plans/2026-10-08-stonegate-phase-3-narrow-passage.md`.           |
-| 4 Gate loops and nested stones | **Done.** Plan: `docs/superpowers/plans/2026-10-08-stonegate-phase-4-gate-loops.md`.               |
-| 5 Art                          | **Landed** (see below). The brazier stays as decor.                                                |
-| 6 Djoser                       | **Next, not planned.** stoneGate on an `expert_4` floor through `floorLocks`; save impact settled. |
-| 7 Zipline glide                | **Done.** Poses in `src/app/SiteMap/ridePoses.ts`, 200 ms a cell. Story `Topology/Zipline ride`.   |
+| Phase                          | State                                                                                                                      |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| 1 Stones in the engine         | **Done.** Plan: `docs/superpowers/plans/2026-10-06-stonegate-phase-1-engine.md`.                                           |
+| 2 Play with stones             | **Done.** Plan: `docs/superpowers/plans/2026-10-07-stonegate-phase-2-play.md`.                                             |
+| 3 Narrow passage               | **Done.** Plan: `docs/superpowers/plans/2026-10-08-stonegate-phase-3-narrow-passage.md`.                                   |
+| 4 Gate loops and nested stones | **Done.** Plan: `docs/superpowers/plans/2026-10-08-stonegate-phase-4-gate-loops.md`.                                       |
+| 5 Art                          | **Landed** (see below). The brazier stays as decor.                                                                        |
+| 6 Djoser                       | **Done.** Plan: `docs/superpowers/plans/2026-10-09-stonegate-phase-6-djoser.md`. stoneGate on expert_4 pyramid 5, floor 0. |
+| 7 Zipline glide                | **Done.** Poses in `src/app/SiteMap/ridePoses.ts`, 200 ms a cell. Story `Topology/Zipline ride`.                           |
 
 Phase 4 gives gate loops in the carve on laid floors (`topologyFaults`, `gateBypassed`, the fork seams), loops
 inside one region in every carve, stoneGate on dev pyramid 12, the squeeze starting from the nearer side, one nest
@@ -27,7 +27,7 @@ phase 4"; its ledger is `.superpowers/sdd/2026-10-08-stonegate-phase-4-gate-loop
 ### Built on top of phase 3
 
 - **Squeeze choreography.** Head-on (N–S): the sprite is drawn over the opaque wall, fades behind it going north and
-  emerges going south, 700 ms. Sideways (E–W): the wall is drawn over him, 2000 ms, lifted 10. Story
+  emerges going south, 700 ms. Sideways (E–W): the wall is drawn over the explorer, 2000 ms, lifted 10. Story
   `App/Topology/Squeeze`.
 - **Water covers every cell it bars.** A seen cell shows water, an unseen one fog; the playground conceals like the
   game.
@@ -51,9 +51,8 @@ The art plan is `docs/superpowers/plans/2026-10-06-stonegate-phase-5-art.md`; it
 
 1. **`lostRegions`** (roadmap "Open after phase 4"): every region ever reached stays reachable, leaving and
    re-entering at `in` counting as a way back. Refused by name in `yarn lock` and the floor walk. A catalogue lock
-   or lesson it refuses is renamed `<name>-blocked.lock`, so the designer sees it needs fixing.
-2. **Phase 6 (Djoser placement).** Write its plan against what phase 4 built, pick the `expert_4` pyramid and floor
-   from `docs/game-design/lock-placement.md` and `lock-curriculum.md`, then run it.
+   or lesson it refuses is renamed `<name>-blocked.lock`, so the designer sees it needs fixing. Parked: it waits on
+   the designer (below).
 
 Each runs with superpowers:subagent-driven-development: per task an implementer subagent and a task review, then a
 final whole-branch review on the most capable model. Commit and push freely on this branch.
@@ -63,8 +62,8 @@ final whole-branch review on the most capable model. Commit and push freely on t
 - **Stones** (spec, "The rules"):
   - a stone is always on a plate or in the hand; stones have no ids; one in hand, no swapping;
   - a plate is written `p plate @r [stone]`; its states `-[p]-` and `-[p:empty]-` combine freely with other owners;
-  - **the explorer's weight presses a plate** while he stands on it; it never lets him through, and route-finding
-    treats a door held only by his weight as shut;
+  - **the explorer's weight presses a plate** while the player stands on it; it never lets them through, and
+    route-finding treats a door held only by their weight as shut;
   - a plate has three looks: raised, pressed, and pressed with a stone.
 - **Every `>>` (drop, zipline) takes empty hands**, with nothing written; so do the stairs and the way out. A stone
   never leaves its floor.
@@ -96,8 +95,20 @@ final whole-branch review on the most capable model. Commit and push freely on t
   or both; where it lands (a shelf plate, refused if full); telling paired holes apart. masonsRamp waits for it
   (unsolvable now: its chute sends a stone down a drop).
 - **Lock placement:** where stones, the narrow passage, water and sequences enter junior and expert, and variety for
-  repeats. Worked from `docs/game-design/lock-placement.md` (and `lock-curriculum.md`).
+  repeats. Worked from `docs/game-design/lock-placement.md` (and `lock-curriculum.md`). stoneOnAPlate before Djoser's
+  capstone (site 3 or 4): no stone lesson stands before it yet.
+- **`lostRegions` is parked.** The check is built and tested but not committed; the patch is
+  `.superpowers/sdd/overnight-queue/item3-wip.patch` (report beside it, `item3-report.md`). It refuses six catalogue
+  locks, one region each: cellar/ledge, clockwork/west, doubleBack/s1, dropHome/leverRoom, relay/r1, seesaw/west.
+  doubleBack is placed in the world (expert_1 pyramid 4), so with the check in place `yarn generate-world` fails.
+  doubleBack's S1 is one-shot and shuts the only way into its chamber: the designed point of no return. Options:
+  narrow the rule (for example to regions that host a side path, hidden corridor or loot), change doubleBack's S1 or
+  its chamber, or pull doubleBack from the world.
+- **doubleBack's TypeScript twin:** the world and the dev floor read `doubleBackLock()` from
+  `src/worldGen/spec/locks/doubleBack.ts`, not `src/game/locks/doubleBack.lock`, against the "one source for a lock"
+  rule. Which one stays is the designer's pick.
 - **Unanswered:**
+  - correct the header comment of `stoneGate.lock` ("not placed yet, not buildable yet") now it stands in Djoser?
   - should `yarn lock` show every `checkLock` fault (e.g. `connectionRepeated`)?
   - correct the stale header comments in `waterMoves`/`sluice`/`tide`/`stoneOnAPlate`/`twoStones` `.lock` files?
     (They are the designer's text: do not touch without a yes.)
