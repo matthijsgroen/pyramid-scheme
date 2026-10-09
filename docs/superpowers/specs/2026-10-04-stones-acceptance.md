@@ -60,11 +60,10 @@ Which rule holds depends on which of the two uses stones:
   `-[unladen]-` and no one-way stands on its route once it is solved. A one-way on the pass-through lock's
   own route from in to out is refused by name (`oneWayOnPassThroughRoute`): every one-way takes empty hands.
   One off its route is allowed.
-- **Contained: the inner uses stones, the outer does not.** Every inner stone is in use; the player
-  cannot leave the inner lock by its way out with a stone in hand (by its own design: the stones must be
-  placed to leave by its way out, and a nesting whose way out lets a stone through is refused by name,
-  `stoneCrossesOut`; carrying a stone back out by its way in is allowed, and the floor's own ways out still
-  take empty hands).
+- **Contained: the inner uses stones, the outer does not.** A nested lock's way out is not a floor exit:
+  a stone may be carried out of the inner lock by its way out as well as by its way in, and roam the floor.
+  The floor's own ways out still take empty hands, so the floor is walked with the inner lock's stones in
+  its own level.
 - **Shared: both use stones.** The stones are one pool across both locks. A stone carried in from the
   outer lock may be set on an inner plate (stoneGate as the inner lock: walk in, set the stone in hand on
   its second plate, walk out); the player leaves the inner lock with a stone only by solving it for one.

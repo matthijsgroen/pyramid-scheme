@@ -126,9 +126,9 @@ waiting for, the way a ward gate already shows the key it wants.
   **pass-through** lock (no stones of its own) lets a stone through, so nothing in it takes only empty hands: it
   cannot write `-[unladen]-` (`carryWithoutStones`) and holds no one-way on its own route
   (`oneWayOnPassThroughRoute`); one off its route is allowed, and the walk takes that lock fused with its
-  pool's level. A **contained** lock (stones, no lock around it holds any) keeps them by its own design: its way
-  out is never stood in with a stone in hand (the walk refuses it `stoneCrossesOut`), while a stone may be
-  carried back out by its way in; the walk takes it fused with the floor's own level. No invisible edge and no
+  pool's level. A **contained** lock (stones, no lock around it holds any) lets them out by its way in and its way
+  out alike, since a nested lock's way out is not a floor exit; the walk takes it fused with the floor's own
+  level, where its stones may roam. No invisible edge and no
   play rule. A **shared** lock (stones, and so does a lock around it) pools them: one weights control,
   `<pool>.stones` (`poolStones`), one hand, and a stone set on either lock's plates; the walk takes it fused
   with its pool's level, so its way out lets a stone through. A fused level's failure is named `pooled`. Every

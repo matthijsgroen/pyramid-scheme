@@ -20,7 +20,7 @@ over memory.
 Phase 4 gives gate loops in the carve on laid floors (`topologyFaults`, `gateBypassed`, the fork seams), loops
 inside one region in every carve, stoneGate on dev pyramid 12, the squeeze starting from the nearer side, one nest
 spot per lock (`a -&> b`), and stones in nested locks (pass through, contained, shared: `stoneNestings`,
-`poolStones`, the walk's `emptyHands`, `stoneCrossesOut`, `pooled`). The playground stories `Stone Passes Through`,
+`poolStones`, the walk's `emptyHands`, `pooled`). The playground stories `Stone Passes Through`,
 `Stone Stays Inside` and `Stones Shared` show one case each. What it leaves open is the roadmap's "Open after
 phase 4"; its ledger is `.superpowers/sdd/2026-10-08-stonegate-phase-4-gate-loops/progress.md`.
 
@@ -65,12 +65,13 @@ final whole-branch review on the most capable model. Commit and push freely on t
   - **the explorer's weight presses a plate** while the player stands on it; it never lets them through, and
     route-finding treats a door held only by their weight as shut;
   - a plate has three looks: raised, pressed, and pressed with a stone.
-- **Every `>>` (drop, zipline) takes empty hands**, with nothing written; so do the stairs and the way out. A stone
-  never leaves its floor.
+- **Every `>>` (drop, zipline) takes empty hands**, with nothing written; so do the stairs and the floor's way
+  out. A stone never leaves its floor.
 - **`-[unladen]-` is a keyword: the narrow passage.** It stands alone on its gate. Beside `>>` it is refused
   `unladenOnDrop`, beside another owner `unladenCombined`, when the lock is read.
 - **The passage prompt** is "Squeeze through" / "Wurm je er door".
-- **Nested locks:** pass through, contained, shared (spec, "Nested locks", 2026-10-08).
+- **Nested locks:** pass through, contained, shared (spec, "Nested locks", 2026-10-08). A stone may leave a
+  nested lock by its way out: that is not a floor exit (2026-10-09).
 - **Nest spot:** `a -&> b` on any connection, one per lock (`nestSpotsRepeated`). On a busy connection (a gate, drop
   or barrier on it) it is ignored, with a `yarn lock` note. An unused spot is a plain corridor.
 - **Carve flexibility:** as much freedom as the layout allows; the only constraint is that a corridor's obstacles
