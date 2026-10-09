@@ -3,7 +3,8 @@
 // it is solved twice. The west-east drop is the optional shortcut.
 
 in -[Y]- west
-in -[Y]- east -[A+B]- out
+in -[Y]- east
+in -[A+B]- out
 west >> east >> in
 Y fork @in
 A toggle @west

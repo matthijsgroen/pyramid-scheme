@@ -1,11 +1,14 @@
 // designed by: Claude
-// master. The exit wants the board pointing out AND the lever thrown, but the
-// lever stands behind the board's other way and throwing it shuts that way.
+// master. The exit wants the lever thrown, and the lever stands behind the
+// board: throwing it shuts the board's way behind you, so only a drop takes
+// you home.
 
-in -[Y+A:a]- west
-in -[Y+A]- out
+in -[Y]- -[A:a]- west
+in -[Y]- east
+in -[A]- out
 west >> in
 out >> west
 Y fork @in
 A toggle @west
 west *
+east *
