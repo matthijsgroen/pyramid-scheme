@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { parseLock } from "./lockNotation"
+import { corridorLine, parseLock } from "./lockNotation"
 
 const DOUBLE_BACK = `
   in -[Y]- leftLower -[S1]- s2
@@ -250,19 +250,19 @@ describe("a torch line", () => {
 
 describe("a corridor's items", () => {
   it.each([
-    ["-[A]-", undefined],
+    ["-[A]-", "free"],
     ["--[A]--", "center"],
     ["---[A]---", "center"],
     ["-[A]--", "left"],
     ["-[A]---", "left"],
     ["---[A]-", "right"],
     ["--[A]---", "left"],
-  ])("reads %s as aligned %s", (gate, side) => {
+  ])("reads %s as %s", (gate, side) => {
     const { lock } = parseLock(`in ${gate} out\nA toggle @in`)
     expect(lock.connections[0]).toEqual({
       between: ["in", "out"],
       barriers: ["in-out"],
-      ...(side ? { align: { "in-out": side } } : {}),
+      ...(side !== "free" ? { align: { "in-out": side } } : {}),
     })
   })
 
@@ -275,6 +275,15 @@ describe("a corridor's items", () => {
   it("reads a gate before a << drop as standing beside the region the drop leads to", () => {
     const { lock } = parseLock("in -[Y]- << hall\nin -- out\nhall -- out\nY toggle @in")
     expect(lock.connections[0]).toEqual({ between: ["in", "hall"], barriers: ["in-hall", "hall>in"] })
+  })
+
+  it("reads a gate aligned beside a << drop, the drop leading to the region on its left", () => {
+    const { lock } = parseLock("in --[Y]-- << hall\nin -- out\nhall -- out\nY toggle @in")
+    expect(lock.connections[0]).toEqual({
+      between: ["in", "hall"],
+      barriers: ["in-hall", "hall>in"],
+      align: { "in-hall": "center" },
+    })
   })
 
   it("reads two lines on one pair as two connections, the first written first", () => {
@@ -331,7 +340,29 @@ describe("a corridor's items", () => {
     ["in -<<- out", 'line 1: cannot read "-<<-" on a corridor: an item is -[…]-, >>, << or -&>'],
     ["in >> -[A]- >> out\nA toggle @in", "line 1: a corridor falls once: put a region between two drops"],
     ["in >> << out", "line 1: a corridor falls once: put a region between two drops"],
+    ["in --&> out", 'line 1: cannot read "--&>" on a corridor: an item is -[…]-, >>, << or -&>; items stand apart'],
+    ["in -&>- out", 'line 1: cannot read "-&>-" on a corridor: an item is -[…]-, >>, << or -&>; items stand apart'],
+    ["in >> a-b", 'line 1: cannot read a region called "a-b"'],
+    ["in -[[A]]- out\nA toggle @in", "line 1: a gate holds its owners in single brackets: write -[A]-"],
   ])("refuses %j", (text, message) => {
     expect(() => parseLock(text)).toThrow(message)
+  })
+})
+
+describe("a corridor written back", () => {
+  const MECHANICS = "S toggle @in\nG toggle @in wet dry\nT torch @in\np plate @in stone\nY fork @in"
+  it.each([
+    "in -[S]--- >> hall",
+    "in ---[S:a]- hall",
+    "in --[G:wet]-- -[T]- hall",
+    "in -[S|T]- << hall",
+    "in -[p:empty]- -[S+T]- hall",
+    "in -[Y]- -[S]- hall",
+  ])("reads %s back to the same connection", line => {
+    const text = `${line}\nin -- out\nhall -- out\nin -[Y]- out2\nout2 -- out\n${MECHANICS}`
+    const { lock } = parseLock(text, "back")
+    const written = corridorLine(lock, lock.connections[0])
+    expect(written).toBe(line)
+    expect(parseLock(text.replace(line, written), "back").lock).toEqual(lock)
   })
 })

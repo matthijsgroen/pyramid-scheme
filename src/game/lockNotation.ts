@@ -1,6 +1,6 @@
 // A LOCK WRITTEN AS TEXT, one line per join, read into the shared Lock type (lockAuthoring.ts). The
 // notation is LOCK_SYNTAX, which `yarn lock` also prints so nobody has to remember it.
-import { CARRY_TERMS, isWeightOwner, unladenFaults } from "./lockAuthoring"
+import { CARRY_TERMS, alignOf, barriersOf, isWeightOwner, joinOf, unladenFaults } from "./lockAuthoring"
 import type { Alignment, Lock, LockConnection, LockGate, LockMechanic, LockOneWay } from "./lockAuthoring"
 import { TORCH_STATES } from "./mechanics/torch"
 import { stoneArrangements } from "./mechanics/weights"
@@ -53,7 +53,7 @@ type Piece = { spaced: boolean; text: string } & (
 // A gate with its dash runs, the nest spot and its two misspellings, a drop, a dash run, a word, a bracket missing a
 // dash run, anything else.
 const PIECE = /(-+)\[([^\]]*)\](-+)|-&>|-&-|<&-|>>|<<|-+|\w+|-*\[([^\]]*)\]-*|\S/y
-const HYPHENATED = /(?:^|\s)(\w+(?:-\w+)+)(?=\s|$)/
+const HYPHENATED = /(?:^|[\s<>])(\w+(?:-\w+)+)(?=[\s<>]|$)/
 const TOUCHING = /\[([^\]]*)\]-*\[([^\]]*)\]/
 const ITEMS = "an item is -[…]-, >>, << or -&>"
 
@@ -68,6 +68,12 @@ const alignmentOf = (left: number, right: number): Alignment | undefined =>
 const readJoins = (line: string, fail: (message: string) => never): { regions: string[]; corridors: Item[][] } => {
   const hyphenated = line.match(HYPHENATED)
   if (hyphenated) fail(`cannot read a region called "${hyphenated[1]}"`)
+  const nested = line.match(/\[\s*\[([^\]]*)\]\s*\]/)
+  if (nested) fail(`a gate holds its owners in single brackets: write -[${nested[1]}]-`)
+  for (const [token] of line.matchAll(/\S*&>\S*/g)) {
+    const core = token.replace(/^\w+/, "").replace(/\w+$/, "")
+    if (core !== "-&>") fail(`cannot read "${core}" on a corridor: ${ITEMS}; items stand apart`)
+  }
   const touching = line.match(TOUCHING)
   if (touching) fail(`items on a corridor stand apart: write -[${touching[1]}]- -[${touching[2]}]-`)
   const pieces: Piece[] = []
@@ -407,4 +413,38 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
       `line ${kept.n}: nestSpotShared: ${kept.from} and ${kept.to} have another connection, and a nest spot is a corridor of its own`
     )
   return { lock, drafts: [...drafts], refused }
+}
+
+/** A gate's condition as the notation writes it: an owner bare where its second state (or a plate's stone, a fork,
+ * a sequence) opens it, otherwise `owner:state`. */
+const conditionText = (lock: Lock, id: string): string => {
+  const gate = lock.gates[id]
+  return gate.owners
+    .map(owner => {
+      const plate = lock.weights?.plates[owner]
+      if (plate) return plate.opens.empty.includes(id) ? `${owner}:empty` : owner
+      const m = lock.mechanics[owner]
+      if (!m || m.control === "fork-switch" || m.control === "sequence") return owner
+      const states = Object.keys(m.opens)
+      const opening = states.find(state => m.opens[state].includes(id))
+      return opening === undefined || opening === states[1] ? owner : `${owner}:${opening}`
+    })
+    .join(gate.mode === "any" ? "|" : "+")
+}
+
+const DASHES: Record<Alignment, [number, number]> = { left: [1, 3], right: [3, 1], center: [2, 2] }
+
+/** A connection written back in the notation, its items in order with their alignment: reading it gives the same corridor. */
+export const corridorLine = (lock: Lock, connection: LockConnection): string => {
+  const [a, b] = joinOf(connection)
+  const align = alignOf(connection)
+  const items = barriersOf(connection).map(id => {
+    const drop = lock.oneWays?.[id]
+    if (drop) return drop.from === a ? ">>" : "<<"
+    const [left, right] = align[id] ? DASHES[align[id]] : [1, 1]
+    return `${"-".repeat(left)}[${conditionText(lock, id)}]${"-".repeat(right)}`
+  })
+  const spot = lock.nestSpot?.from === a && lock.nestSpot.to === b ? ["-&>"] : []
+  const all = [...items, ...spot]
+  return `${a} ${all.length > 0 ? all.join(" ") : "--"} ${b}`
 }

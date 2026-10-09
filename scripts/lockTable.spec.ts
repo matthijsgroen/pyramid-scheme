@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { parseLock } from "../src/game/lockNotation"
-import { formatLockTable, lockRow } from "./lockTable"
+import { corridorLines, formatLockTable, lockChecks, lockRow } from "./lockTable"
 
 const solvable = parseLock(["in -[L]- mid -[T]- out", "L toggle @in", "T torch @mid"].join("\n"), "made")
 const cutOff = parseLock(["in -[K]- out", "K activator @out"].join("\n"), "cut")
@@ -32,5 +32,26 @@ describe("the catalogue table", () => {
     const table = formatLockTable([lockRow("zz", solvable), lockRow("lessons/cut", cutOff)]).split("\n")
     expect(table.map(line => line.split(/\s{2,}/)[0])).toEqual(["lock", "lessons/cut", "zz"])
     expect(new Set(table.map(line => line.indexOf(line.split(/\s{2,}/)[1])))).toHaveProperty("size", 1)
+  })
+})
+
+describe("the compile verdict and the corridors", () => {
+  const forkOnRoute = parseLock(["in -[Y]- west", "in -[Y]- out", "Y fork @in"].join("\n"), "forked")
+
+  it("says ✓ compiles of a lock that compiles", () => {
+    expect(lockChecks(solvable).checks).toContain("✓ compiles")
+  })
+
+  it("refuses by name a lock that walks and does not compile, and calls it unsound", () => {
+    const row = lockRow("forked", forkOnRoute)
+    expect(row).toMatchObject({ checks: "✗ refused: gateOwnedOffSeam id=in-out owner=Y", sound: false })
+  })
+
+  it("writes back every corridor with several items, an alignment, or a pair it shares", () => {
+    const { lock } = parseLock(
+      "in -[A]--- >> hall\nin -[B]- hall\nhall -- out\nin -[A]- out\nA toggle @in\nB toggle @in",
+      "c"
+    )
+    expect(corridorLines(lock)).toEqual(["in -[A]--- >> hall", "in -[B]- hall"])
   })
 })

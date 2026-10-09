@@ -6,7 +6,17 @@ import { describeLockWalkFailure, walkLock } from "../src/game/lockWalk"
 import { walkSpecOf, needsFace, notBuildable, openAtStart, readable } from "../src/game/lockWalkSpec"
 import { solveLock, unreachedRegions } from "../src/game/lockReview"
 import type { ParsedLock } from "../src/game/lockNotation"
-import { isRegionGate, isUnladenGate, nestSpotBusy, nestSpotOf } from "../src/game/lockAuthoring"
+import { checkLock, describeLockFault } from "../src/game/lockCompile"
+import { corridorLine } from "../src/game/lockNotation"
+import {
+  alignOf,
+  barriersOf,
+  isRegionGate,
+  isUnladenGate,
+  joinOf,
+  nestSpotBusy,
+  nestSpotOf,
+} from "../src/game/lockAuthoring"
 import type { Lock, LockMechanic } from "../src/game/lockAuthoring"
 
 /** The nest spot, or why it is ignored: a spot on a busy connection is no spot, and says so (D9). */
@@ -29,10 +39,13 @@ export const lockChecks = ({ lock, drafts, refused }: ParsedLock) => {
   const lost = !walked.sound && walked.failure.type === "regionLost"
   const open = openAtStart(lock)
   const unbuilt = notBuildable(lock)
+  const faults = checkLock(lock)
+  const compiles = faults.length === 0
   const sequences = Object.entries(lock.mechanics).flatMap(([id, m]) => (m.control === "sequence" ? [id] : []))
   const checks = [
     ...refused.map(problem => `✗ ${problem}`),
     ...(drafts.length > 0 ? [`✗ not placed yet: ${drafts.join(", ")}`] : []),
+    compiles ? "✓ compiles" : `✗ refused: ${describeLockFault(faults[0])}`,
     reachable
       ? "✓ every region is reachable"
       : `✗ ${unreached === "tooLarge" ? "too many states to walk" : `never reached: ${unreached.join(", ")}`}`,
@@ -47,8 +60,24 @@ export const lockChecks = ({ lock, drafts, refused }: ParsedLock) => {
     ...sequences.map(id => `⚠ sequence ${id}: done stays fired, tiles anywhere — contract §8 open`),
     ...(unbuilt.length > 0 ? [`⚠ not buildable yet: ${unbuilt.join(", ")}`] : []),
   ]
-  const sound = refused.length === 0 && drafts.length === 0 && reachable && walked.sound
+  const sound = refused.length === 0 && drafts.length === 0 && compiles && reachable && walked.sound
   return { spec, walked, checks, sound }
+}
+
+/** Every corridor worth writing back: one with several items, an aligned gate, or a pair it shares. */
+export const corridorLines = (lock: Lock): string[] => {
+  const pairKey = (connection: Lock["connections"][number]) => [...joinOf(connection)].sort().join("|")
+  const perPair = new Map<string, number>()
+  for (const connection of lock.connections)
+    perPair.set(pairKey(connection), (perPair.get(pairKey(connection)) ?? 0) + 1)
+  return lock.connections
+    .filter(
+      connection =>
+        barriersOf(connection).length > 1 ||
+        Object.keys(alignOf(connection)).length > 0 ||
+        (perPair.get(pairKey(connection)) ?? 0) > 1
+    )
+    .map(connection => corridorLine(lock, connection))
 }
 
 const CONTROL_WORDS: Record<LockMechanic["control"], string> = {
@@ -94,7 +123,7 @@ export const lockRow = (path: string, parsed: ParsedLock): LockRow => {
     lock: path,
     mechanisms: mechanismsOf(parsed.lock).join(", "),
     steps: solved ? String(solved.actions) : "–",
-    checks: sound ? "✓" : (failed ?? "✗"),
+    checks: sound ? "✓" : failed ?? "✗",
     sound,
   }
 }

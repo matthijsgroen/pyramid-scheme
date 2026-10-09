@@ -414,3 +414,12 @@ export const compileLock = (lock: Lock, binding: RealisationBinding, options: Co
   if (faults.length > 0) return { ok: false, faults }
   return { ok: true, fragment: translate(lock, binding, options.namespace, kinds) }
 }
+
+/** A fault in one line, its type then the names it carries: `gateOwnedOffSeam id=in-out owner=Y`. */
+export const describeLockFault = (fault: LockFault): string => {
+  const { type, ...rest } = fault.type === "topology" ? fault.fault : fault
+  const names = Object.entries(rest).map(
+    ([key, value]) => `${key}=${Array.isArray(value) ? value.join(",") : String(value)}`
+  )
+  return [type, ...names].join(" ")
+}

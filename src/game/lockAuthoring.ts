@@ -270,7 +270,7 @@ const spotConnections = (lock: Lock): LockConnection[] => {
  * connection carves as written. */
 export const nestSpotBusy = (lock: Lock): BarrierId[] => spotConnections(lock).flatMap(c => [...barriersOf(c)])
 
-/** The connection another lock may be spliced into, or undefined: no spot written, or its connection is busy. */
+/** The connection another lock may be spliced into, or undefined: no spot written, its connection is busy, or its pair has other connections. */
 export const nestSpotOf = (lock: Lock): { from: RegionId; to: RegionId } | undefined =>
   lock.nestSpot && spotConnections(lock).length === 1 && nestSpotBusy(lock).length === 0 ? lock.nestSpot : undefined
 

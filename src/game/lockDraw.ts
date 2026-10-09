@@ -250,7 +250,7 @@ const drawSketch = (sketch: Sketch): string => {
     const [first, last] = [path[0], path[path.length - 1]]
     if (path.length > 1) drop[first.y][first.x] |= outOf(first, from).out
     text[last.y][last.x] = outOf(last, to).arrow
-    if (token !== undefined && !placeToken(path, token)) sketch.notes.push(`${from} -[${token}]- >> ${to}`)
+    if (token !== undefined && !placeToken(path, token)) sketch.notes.push(`${from} >> -[${token}]- ${to}`)
   }
 
   const rows = text.map((row, y) =>

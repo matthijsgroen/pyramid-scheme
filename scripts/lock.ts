@@ -18,7 +18,7 @@ import { lockQuality, solveLock } from "../src/game/lockReview"
 import { LOCK_SYNTAX, parseLock } from "../src/game/lockNotation"
 import type { ParsedLock } from "../src/game/lockNotation"
 import { LESSONS, LOCK_CATALOGUE } from "../src/game/lockCatalogue"
-import { formatLockTable, lockChecks, lockRow } from "./lockTable"
+import { corridorLines, formatLockTable, lockChecks, lockRow } from "./lockTable"
 
 const args = process.argv.slice(2)
 const watching = args.includes("--watch")
@@ -32,6 +32,8 @@ const report = (name: string, parsed: ParsedLock, withJson: boolean): boolean =>
   const { lock, drafts } = parsed
   const { spec, walked, checks, sound } = lockChecks(parsed)
   const lines = [`## ${name}`, "", ...checks, "", drawLock(lock, drafts)]
+  const corridors = corridorLines(lock)
+  if (corridors.length > 0) lines.push("", "corridors:", ...corridors.map(line => `  ${line}`))
   const solved = solveLock(spec)
   if (solved) lines.push("", `cheapest: ${solved.actions} actions — ${solved.steps.join(" ▸ ")}`)
   const notes = lockQuality(lock, drafts)
