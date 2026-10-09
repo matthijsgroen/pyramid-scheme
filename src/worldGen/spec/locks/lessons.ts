@@ -5,7 +5,7 @@ import { catalogueLock } from "./catalogue"
 // What a lesson's controls look like wherever the world places one: a lever is a handle, a board a lightbeam switch,
 // a drop a zipline, a flame the standing torch, a weight a stone plate. Each lesson binds only the kinds it uses.
 const LESSON_BINDINGS = {
-  boardPicksTheWay: { "fork-switch": "lightbeamSwitch" },
+  boardPicksTheWay: { "fork-switch": "lightbeamSwitch", toggle: "handle" },
   leverOpensADoor: { toggle: "handle" },
   leverSwapsDoors: { toggle: "handle" },
   dropDown: { toggle: "handle", "one-way": "zipline" },
