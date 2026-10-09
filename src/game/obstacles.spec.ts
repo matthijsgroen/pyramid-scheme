@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { resolveMechanicKind } from "./mechanics"
 import {
+  barrierRuns,
   crossesNoDoor,
   doorsToEnterRegion,
   fallingStretches,
@@ -603,14 +604,29 @@ describe("the corridors of a laid floor", () => {
         ["in", "hall"],
         ["hall", "out"],
       ]),
-      [gate("A"), gate("B", 2), fall],
-      [{ between: ["in", "hall"], barriers: ["fall"], corridor: 1 }]
+      [gate("A"), gate("B", 2), gate("C", 1), fall],
+      [{ between: ["in", "hall"], barriers: ["C", "fall"], corridor: 1 }]
     )
     expect(corridors.map(c => [c.between.join("-"), c.index, c.drop, c.barriers])).toEqual([
       ["in-hall", 0, undefined, ["A"]],
       ["in-hall", 2, undefined, ["B"]],
       ["hall-out", 0, undefined, []],
-      ["in-hall", 1, "fall", ["fall"]],
+      ["in-hall", 1, "fall", ["C", "fall"]],
+    ])
+  })
+
+  it("takes no corridor for an order naming a drop alone", () => {
+    const corridors = floorCorridors(
+      layout([
+        ["in", "hall"],
+        ["hall", "out"],
+      ]),
+      [gate("A"), fall],
+      [{ between: ["in", "hall"], barriers: ["fall"] }]
+    )
+    expect(corridors.map(c => [c.between.join("-"), c.index, c.drop])).toEqual([
+      ["in-hall", 0, undefined],
+      ["hall-out", 0, undefined],
     ])
   })
 })
@@ -656,5 +672,190 @@ describe("a falling corridor split at its drop", () => {
       landing: to,
       ...expected,
     })
+  })
+})
+
+describe("fork seams, sequences and orders read per corridor", () => {
+  const layout = (connections: [string, string][]): RegionGraph => ({
+    regions: ["in", "a", "b", "out"].map(name => ({ name, appetite: "free" as const })),
+    connections,
+    in: "in",
+    out: "out",
+  })
+  const gate = (id: string, to: string, extra: { corridor?: number; owners?: string[] } = {}): Obstacle => ({
+    id,
+    kind: "gate",
+    at: {
+      on: "connection",
+      between: ["in", to],
+      ...(extra.corridor === undefined ? {} : { corridor: extra.corridor }),
+    },
+    ...(extra.owners ? { owners: extra.owners } : {}),
+  })
+  const drop: OneWayObstacle = { id: "d", kind: "oneWay", at: { on: "connection", between: ["in", "a"] } }
+  const fork: Control = { id: "Y", in: "in", control: "fork-switch", encounter: "junction" }
+  const lever = (opens: string[]): Control => ({
+    id: "S",
+    in: "in",
+    states: ["a", "b"],
+    initial: "a",
+    returnsToInitial: true,
+    opens: { a: [], b: opens },
+  })
+  const laid = (l: RegionGraph, obstacles: Obstacle[], controls: Control[], order: BarrierOrder[] = []) =>
+    topologyFaults(l, obstacles, controls, [{ in: "in" }], order, resolveMechanicKind, { laid: true })
+  const threeWays = layout([
+    ["in", "a"],
+    ["in", "b"],
+    ["in", "out"],
+  ])
+
+  it("refuses a fork seam gated only on the falling corridor beside it", () => {
+    const obstacles = [gate("Ya", "a", { corridor: 1, owners: ["Y"] }), drop, gate("Yb", "b", { owners: ["Y"] })]
+    const order: BarrierOrder[] = [{ between: ["in", "a"], barriers: ["Ya", "d"], corridor: 1 }]
+    expect(laid(threeWays, obstacles, [fork], order)).toEqual([
+      { type: "forkSwitchSeamUngated", id: "Y", between: ["in", "a"] },
+    ])
+  })
+
+  it("takes a fork gating a seam and the falling corridor beside it, not gating the seam twice", () => {
+    const obstacles = [
+      gate("Ya", "a", { owners: ["Y"] }),
+      gate("Yf", "a", { corridor: 1, owners: ["Y"] }),
+      drop,
+      gate("Yb", "b", { owners: ["Y"] }),
+    ]
+    const order: BarrierOrder[] = [{ between: ["in", "a"], barriers: ["Yf", "d"], corridor: 1 }]
+    expect(laid(threeWays, obstacles, [fork], order)).toEqual([])
+  })
+
+  it("refuses a fork's gate its falling corridor's order leaves out", () => {
+    const obstacles = [
+      gate("G1", "a", { owners: ["Y"] }),
+      gate("G2", "a", { owners: ["Y"] }),
+      drop,
+      gate("Yb", "b", { owners: ["Y"] }),
+    ]
+    const twoWays = layout([
+      ["in", "b"],
+      ["in", "out"],
+      ["out", "a"],
+    ])
+    const order: BarrierOrder[] = [{ between: ["in", "a"], barriers: ["G1", "d"] }]
+    expect(laid(twoWays, obstacles, [fork], order)).toEqual([
+      { type: "barrierUnordered", id: "G2", between: ["in", "a"] },
+    ])
+  })
+
+  const sequence = (opens: string, step: string): Control => ({
+    id: "Q",
+    control: "sequence",
+    steps: [{ in: "in" }, { in: step }],
+    resetAt: opens,
+    opens: { done: [opens] },
+  })
+
+  it("refuses a sequence step reached only past its own gate on a falling corridor", () => {
+    const order: BarrierOrder[] = [{ between: ["in", "a"], barriers: ["A", "d"] }]
+    expect(laid(layout([["in", "out"]]), [gate("A", "a"), drop], [sequence("A", "a")], order)).toEqual([
+      { type: "sequenceStepBehindOwnDoor", id: "Q", step: 1 },
+    ])
+  })
+
+  it("reaches a sequence step by the corridor beside the one its gate shuts", () => {
+    const twin = layout([
+      ["in", "a"],
+      ["in", "a"],
+      ["a", "out"],
+    ])
+    expect(laid(twin, [gate("C", "a"), gate("A", "a", { corridor: 1 })], [lever(["C"]), sequence("A", "a")])).toEqual(
+      []
+    )
+  })
+
+  it("refuses a gate standing where only a drop's order is written", () => {
+    const order: BarrierOrder[] = [{ between: ["in", "a"], barriers: ["d"] }]
+    expect(
+      laid(
+        layout([
+          ["in", "out"],
+          ["out", "a"],
+        ]),
+        [gate("A", "a"), drop],
+        [lever(["A"])],
+        order
+      )
+    ).toEqual([
+      { type: "obstacleNamesNoConnection", id: "A" },
+      { type: "barrierOrderNamesNoConnection", between: ["in", "a"] },
+    ])
+    expect(
+      laid(
+        layout([
+          ["in", "a"],
+          ["a", "out"],
+        ]),
+        [gate("A", "a"), drop],
+        [lever(["A"])],
+        order
+      )
+    ).toEqual([{ type: "barrierNotOnConnection", id: "d", between: ["in", "a"] }])
+  })
+
+  it("refuses a second falling order on one corridor as repeated, and only that", () => {
+    const order: BarrierOrder[] = [
+      { between: ["in", "a"], barriers: ["A", "d"] },
+      { between: ["in", "a"], barriers: ["A", "d2"] },
+    ]
+    expect(
+      laid(
+        layout([
+          ["in", "out"],
+          ["out", "a"],
+        ]),
+        [gate("A", "a"), drop, { ...drop, id: "d2" }],
+        [lever(["A"])],
+        order
+      )
+    ).toEqual([{ type: "barrierOrderRepeated", between: ["in", "a"] }])
+  })
+
+  it("seats a side-chain floor's gates on a pair's first layout corridor only", () => {
+    const twin = layout([
+      ["in", "out"],
+      ["in", "out"],
+      ["out", "a"],
+    ])
+    const onOut = (id: string, corridor?: number): Obstacle => ({
+      id,
+      kind: "gate",
+      at: { on: "connection", between: ["in", "out"], ...(corridor === undefined ? {} : { corridor }) },
+    })
+    const unlaid = (obstacles: Obstacle[], order: BarrierOrder[] = []) =>
+      topologyFaults(twin, obstacles, [lever(obstacles.flatMap(o => (o.kind === "gate" ? [o.id] : [])))], [], order)
+    expect(unlaid([onOut("A"), onOut("B", 1)])).toEqual([{ type: "obstacleOffRoute", id: "B" }])
+    expect(unlaid([gate("F", "a"), drop], [{ between: ["in", "a"], barriers: ["F", "d"] }])).toEqual([
+      { type: "obstacleOffRoute", id: "F" },
+    ])
+  })
+
+  it("marks a run falling only where its order names a drop beside its gates", () => {
+    const runs = barrierRuns(
+      [gate("F", "a", { corridor: 1 }), drop, gate("B", "b")],
+      [{ between: ["in", "a"], barriers: ["F", "d"], corridor: 1 }]
+    )
+    expect(runs.map(run => [run.gates.map(g => g.id), run.falling])).toEqual([
+      [["F"], true],
+      [["B"], undefined],
+    ])
+  })
+
+  it("reads an order written from the other end of its layout corridor turned round, alignment included", () => {
+    const [corridor] = floorCorridors(
+      layout([["a", "in"]]),
+      [gate("A", "a"), gate("B", "a")],
+      [{ between: ["in", "a"], barriers: ["A", "B"], align: { A: "left", B: "center" } }]
+    )
+    expect(corridor).toMatchObject({ between: ["a", "in"], barriers: ["B", "A"], align: { A: "right", B: "center" } })
   })
 })
