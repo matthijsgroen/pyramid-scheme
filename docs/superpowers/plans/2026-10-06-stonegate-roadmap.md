@@ -147,6 +147,11 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
 - A save that never ran the re-key release (`cellKeyVersion` behind) and stands in a re-laid pyramid has its
   exploration translated against the re-laid carve; only its place is cleared.
 
+- A room-free lock region (no mechanism, plate or door, such as stoneGate's `hall3`) comes back fogged after a
+  re-carve: it has no room to carry the fog mark. No loot, state or key lives there. Options: a door stands in a bare
+  region it leads out of (changes lock-walk counts, `nestedLocks.spec.ts`), or a room-free region's fog is restored
+  with its neighbours'.
+
 ## Open per phase
 
 - **Phase 5:** the torch and the plate need `prim_*` geometry in `scripts/renderProp.py`, then the

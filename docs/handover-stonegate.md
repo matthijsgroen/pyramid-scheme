@@ -94,6 +94,10 @@ final whole-branch review on the most capable model. Commit and push freely on t
 - **The stone pipe:** a hole in a wall where a stone is posted, another elsewhere where it comes out. Open: one-way
   or both; where it lands (a shelf plate, refused if full); telling paired holes apart. masonsRamp waits for it
   (unsolvable now: its chute sends a stone down a drop).
+- **Fog of a room-free lock region:** a lock region with no mechanism, plate or door (stoneGate's `hall3`) comes back
+  fogged after a re-carve, because it has no room to carry the fog mark. No loot, state or key lives there. Options: a
+  door stands in a bare region it leads out of (changes lock-walk counts, `nestedLocks.spec.ts`), or a room-free
+  region's fog is restored with its neighbours'.
 - **Lock placement:** where stones, the narrow passage, water and sequences enter junior and expert, and variety for
   repeats. Worked from `docs/game-design/lock-placement.md` (and `lock-curriculum.md`). stoneOnAPlate before Djoser's
   capstone (site 3 or 4): no stone lesson stands before it yet.

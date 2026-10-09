@@ -112,8 +112,9 @@ A save names a cell by what the floor was AUTHORED from — its **slot** (`cellI
 | the two plain portals        | `entrance` / `exit`                               |
 | corridor, fork               | none — see below                                  |
 
-Measured over the baked world: 5250 slots, no two alike inside a (section, floor), and all 1303 sections
-hold at least one. Re-carved at two different seeds, four floors across four tiers and a tomb kept every
+Measured over the baked world: 5250 slots, no two alike inside a (section, floor), and every section holds
+at least one, except a lock region that holds no mechanism, plate or door: a corridor, a junction, a place to
+stand (stoneGate's `hall3`). Nothing lives there, so a re-carve costs it only its fog (see below). Re-carved at two different seeds, four floors across four tiers and a tomb kept every
 slot, with the same family, board and reward behind it.
 
 The full address is `${sectionAddress}#${floor}/${slot}`. **The floor is in it** because a section
@@ -131,6 +132,9 @@ deliberately resolves to nothing once the floor moves.
 What comes back after a re-carve is the **high-water mark**: the furthest ROOM of each section the save
 names, measured along the new walk, with every corridor up to it restored with it. A section is a linear
 chain, so how far along it the player got is a fact that outlives the carve.
+
+A room-free lock region has no room to hang a mark on, so its few cells come back fogged after a re-carve.
+No loot, state or key lives there, and a place saved on one of its cells falls back to the last named room.
 
 A room is never restored by the mark, only by its own entry. A looted room is remembered by nothing else,
 so a chest must never come back opened because something past it was reached.

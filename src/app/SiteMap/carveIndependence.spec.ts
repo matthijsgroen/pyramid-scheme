@@ -3,6 +3,8 @@ import { assembleFloor, type ResolveKeyRequirements } from "@/game/siteAssembler
 import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry"
 import { journeys } from "@/data/journeys"
 import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
+import { expandFloorLocks } from "@/game/floorLocks"
+import { planLockFloor } from "@/game/lockPlan"
 import type { FloorGrid } from "@/game/siteTypes"
 import { boardIndexesForFloor } from "./boardIndexes"
 import { cellAddress, cellSlot, findByAddress, floorOfAddress } from "./cellIdentity"
@@ -173,6 +175,21 @@ describe("a save survives the floor being carved somewhere else", () => {
   })
 })
 
+/** The sections of a floor's lock regions that hold no mechanism or plate and no door: a corridor, a junction, a
+ * place to stand. Read off the plan, so a region that should hold a room and lost it still counts as roomless. */
+const roomFreeLockSections = (journeyId: string, levelNr: number, floorIndex: number): Set<string> => {
+  const journey = journeys.find(j => j.id === journeyId)!
+  const expanded = expandFloorLocks((journey.siteConfigs![levelNr - 1] ?? journey.siteConfigs![0])[floorIndex])
+  const plan = expanded.ok ? planLockFloor(expanded) : undefined
+  if (!plan) return new Set()
+  const doored = new Set(plan.corridors.filter(corridor => corridor.barriers.length > 0).map(corridor => corridor.to))
+  return new Set(
+    plan.regions
+      .filter(region => region.owner !== undefined && region.seats.length === 0 && !doored.has(region.id))
+      .map(region => `lock:${region.id}`)
+  )
+}
+
 describe("the room slot, across the whole authored world", () => {
   const everyFloor = () =>
     journeys.flatMap(journey =>
@@ -187,7 +204,7 @@ describe("the room slot, across the whole authored world", () => {
         : []
     )
 
-  it("names every room exactly once per floor, and every section holds at least one", () => {
+  it("names every room exactly once per floor, and every section but a room-free lock region holds at least one", () => {
     let slots = 0
     const collisions: string[] = []
     const roomless: string[] = []
@@ -207,9 +224,10 @@ describe("the room slot, across the whole authored world", () => {
         seen.set(address, (seen.get(address) ?? 0) + 1)
       }
       for (const [address, n] of seen) if (n > 1) collisions.push(`${journeyId} L${levelNr} ${address} x${n}`)
-      // A section with no room has nothing to hang a high-water mark on, so its corridors could never
-      // come back after a re-carve.
-      for (const section of sections) if (!withRoom.has(section)) roomless.push(`${journeyId} L${levelNr} ${section}`)
+      // A roomless section's corridors come back fogged after a re-carve: allowed only where the design leaves it empty.
+      const roomFree = roomFreeLockSections(journeyId, levelNr, floorIndex)
+      for (const section of sections)
+        if (!withRoom.has(section) && !roomFree.has(section)) roomless.push(`${journeyId} L${levelNr} ${section}`)
     }
 
     expect(slots).toBeGreaterThan(3500)
