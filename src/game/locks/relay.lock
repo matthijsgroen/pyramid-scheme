@@ -6,7 +6,7 @@ in -[A:a]- r1 -[A+B:off]- r2 -[B]- r3
 r3 -[C]- >> in
 in -[C]- out
 A toggle @r1
-B activator @r2
-C activator @r3
+B torch @r2
+C torch @r3
 r1 *
 r2 *

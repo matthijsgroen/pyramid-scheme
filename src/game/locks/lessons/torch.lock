@@ -3,4 +3,4 @@
 
 in -- alcove
 in -[T]- out
-T activator @alcove
+T torch @alcove

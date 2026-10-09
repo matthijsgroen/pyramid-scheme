@@ -1749,9 +1749,9 @@ export const SiteMapView = ({
                 const state = cell.state
                 // Reached, and done with. A room its family keeps open is reached and never done with, so it
                 // is left out of everything below that says finished — the dim and the ✓ alike.
-                // A USED ACTIVATOR IS DONE, THOUGH ITS ROOM STAYS OPEN: a lit torch has nothing left to offer, so
+                // A USED ACTIVATOR OR A LIT TORCH IS DONE, THOUGH ITS ROOM STAYS OPEN: it has no move left, so
                 // it wears the dim and the ✓ a finished room does. Read off the mechanism's position, so it
-                // shows without the player touching it; an unlit one wears neither.
+                // shows without the player touching it; an unlit or doused torch wears neither.
                 const spent = isSpentAt(grid, currentFloor ?? 0, r, c, cell, mechanismStates)
                 // A SEQUENCE TILE SAYS HOW THE RUN STANDS ON IT, never "done": walked is its own look.
                 const plateStatus = tileStatusAt(grid, currentFloor ?? 0, r, c, mechanismStates)

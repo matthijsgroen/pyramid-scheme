@@ -1,8 +1,8 @@
 import type { FamilyMeta } from "@/game/families/familyMeta"
 
-// A TORCH IS A SWITCH THAT CAN ONLY BE LIT: the same mechanism a lever is (`FloorConfig.controls`, states
-// `["unlit", "lit"]`, `returnsToInitial: false`), asked for by `encounter: "torch"`. A family of its own
-// only because the arrival prompt's words belong to the family: lighting is not throwing.
+// THE STANDING TORCH dresses two control kinds: the flame (off until lit; water or sand over its region puts it out)
+// and the activator (off then on for good). States `off` and `on`, asked for by `encounter: "torch"`. A family of its
+// own only because the arrival prompt's words belong to the family: lighting is not throwing.
 export const TORCH_META: FamilyMeta = {
   id: "torch",
   ownerMod: "topology",

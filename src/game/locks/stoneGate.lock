@@ -26,6 +26,6 @@ hall3 -[unladen]- hall2
 
 hall2 -[P4:empty]- hall5
 
-S1 activator @hall5
+S1 torch @hall5
 
 hall3 -[S1]- passage

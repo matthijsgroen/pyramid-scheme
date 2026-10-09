@@ -322,7 +322,7 @@ export const expertRules: Rule[] = [
     floorLocks: {
       0: {
         locks: [{ lock: freeRegions(catalogueLock("stoneGate")) }],
-        realisations: { weights: "stonePlate", activator: "torch", unladen: "narrowPassage" },
+        realisations: { weights: "stonePlate", flame: "torch", unladen: "narrowPassage" },
       },
     },
   }),

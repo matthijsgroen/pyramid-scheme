@@ -237,12 +237,12 @@ export const devRules: Rule[] = [
   // in; a stone parked on the backroom shelf lets the explorer squeeze through the narrow passage; both stones are
   // spent twice. Its gated joins close loops. Every region takes `free`, as on the other lock benches.
   //
-  // Bound at the pyramid: the stones are stone plates, the activator a torch, empty hands a narrow passage.
+  // Bound at the pyramid: the stones are stone plates, the flame the standing torch, empty hands a narrow passage.
   journey(DEV_JOURNEY_ID)
     .pyramid(12, {
       difficulty: "expert",
       pathPuzzles: 0,
-      realisations: { weights: "stonePlate", activator: "torch", unladen: "narrowPassage" },
+      realisations: { weights: "stonePlate", flame: "torch", unladen: "narrowPassage" },
     })
     .floor(0, {
       locks: [{ lock: freeRegions(catalogueLock("stoneGate")) }],

@@ -4,5 +4,5 @@
 in -- a
 in -- b
 in -[T1+T2]- out
-T1 activator @a
-T2 activator @b
+T1 torch @a
+T2 torch @b

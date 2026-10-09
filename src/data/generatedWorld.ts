@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1528773947
+export const worldContentHash = 1014774907
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -9360,7 +9360,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
                 "hall3-passage": { from: "hall3", to: "passage", owners: ["S1"] },
               },
               mechanics: {
-                S1: { control: "activator", in: "hall5", starts: "off", opens: { off: [], on: ["hall3-passage"] } },
+                S1: { control: "flame", in: "hall5", starts: "off", opens: { off: [], on: ["hall3-passage"] } },
               },
               weights: {
                 plates: {
@@ -9380,7 +9380,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             },
           },
         ],
-        realisations: { weights: "stonePlate", activator: "torch", unladen: "narrowPassage" },
+        realisations: { weights: "stonePlate", flame: "torch", unladen: "narrowPassage" },
       },
       {
         pathPuzzles: 2,
