@@ -1,4 +1,5 @@
 import type { CellKey, LaidDrop, LaidLocks } from "./layLocks"
+import type { Alignment } from "./lockAuthoring"
 import type { LockPlan, PlanCorridor } from "./lockPlan"
 import { appetiteAccepts } from "./regions"
 import type { ContentKind, RegionAppetite } from "./regions"
@@ -6,6 +7,55 @@ import type { ContentKind, RegionAppetite } from "./regions"
 type Cell = [number, number]
 
 const rc = (cell: CellKey): Cell => cell.split(",").map(Number) as Cell
+
+/**
+ * WHERE EACH OF A CORRIDOR'S ITEMS STANDS AMONG ITS `k` NODES. Its `k - m` spare nodes fall into `m + 1` gaps: before
+ * the first item, between each two, after the last. A gap is closed when the item after it is aligned left, the item
+ * before it is aligned right, or it touches the junction end. Each centred item first takes one spare node into each
+ * open gap beside it (a shared gap once); the rest go to the default gap — after the last item, or before the first
+ * when the junction is at the end — or, closed, to the nearest open gap, or, every gap closed, to it anyway. With
+ * nothing aligned this is where the carve has always stood a corridor's doors.
+ */
+export const seatItems = (
+  k: number,
+  aligns: ReadonlyArray<Alignment | undefined>,
+  junction?: "start" | "end"
+): number[] => {
+  const m = aligns.length
+  const gaps = Array<number>(m + 1).fill(0)
+  const closed = gaps.map(
+    (_, g) =>
+      aligns[g] === "left" ||
+      aligns[g - 1] === "right" ||
+      (g === 0 && junction === "start") ||
+      (g === m && junction === "end")
+  )
+  let spare = k - m
+  const filled = new Set<number>()
+  aligns.forEach((align, j) => {
+    if (align !== "center") return
+    for (const g of [j, j + 1])
+      if (!closed[g] && !filled.has(g) && spare > 0) {
+        gaps[g]++
+        filled.add(g)
+        spare--
+      }
+  })
+  const preferred = junction === "end" ? 0 : m
+  const open = gaps.map((_, g) => g).filter(g => !closed[g])
+  const into =
+    closed[preferred] && open.length > 0
+      ? open.reduce((best, g) => (Math.abs(g - preferred) < Math.abs(best - preferred) ? g : best))
+      : preferred
+  gaps[into] += spare
+  const at: number[] = []
+  let node = gaps[0]
+  for (let j = 0; j < m; j++) {
+    at.push(node)
+    node += 1 + gaps[j + 1]
+  }
+  return at
+}
 
 /** The doors a corridor carries, nearest its `from` end first: the doors of a region barrier standing at each end of it, with the corridor's own gates between. */
 type CorridorDoor = { kind: "gate"; id: string } | { kind: "region"; barrier: string; region: string; entrance: string }
