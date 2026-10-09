@@ -26,11 +26,12 @@ describe("a lock's nest spot", () => {
   )
 
   it.each(["in -- hall\nin -&> hall", "in -&> hall\nin -- hall"])(
-    "is a corridor, so a second corridor beside it is refused: %j",
+    "is a corridor of its own, so a second corridor beside it is refused nestSpotShared: %j",
     text => {
-      expect(() => parseLock(`${text}\nhall -- out`, "twin")).toThrow(
-        "line 2: in and hall are already joined by a corridor on line 1"
-      )
+      const line = text.split("\n").indexOf("in -&> hall") + 1
+      expect(parseLock(`${text}\nhall -- out`, "twin").refused).toEqual([
+        `line ${line}: nestSpotShared: in and hall have another connection, and a nest spot is a corridor of its own`,
+      ])
     }
   )
 

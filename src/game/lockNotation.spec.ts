@@ -112,7 +112,6 @@ describe("parseLock", () => {
   })
 
   it.each([
-    ["in -- out\nout -- in", "line 2: out and in are already joined by a corridor on line 1"],
     ["in -[S1:c]- out\nS1 toggle @in", "line 1: S1 has no state c"],
     ["in -[Y:x]- out\nY fork @in", "line 1: a fork's way is the gate itself: write -[Y]-"],
     ["in -- hall\nhall -[Y]- out\nY fork @in", "line 2: fork Y's gate must be the first thing on a join leaving in"],
@@ -133,7 +132,7 @@ describe("parseLock", () => {
     ["in -[H]- out\nH toggle @cellar", "line 2: no corridor reaches cellar"],
     ["in -[A+B|C]- out", "line 1: -[A+B|C]- mixes + and |"],
     ["in -[H+H]- out\nH toggle @in", "line 1: -[H+H]- names H twice"],
-    ["in -- -[H]- out", "line 1: -- is a bare corridor and carries no barriers"],
+    ["in -- -[H]- out", "line 1: -- is a bare corridor, exactly two dashes, and carries no items"],
     ["in -[Y]- >>", "line 1: a line starts and ends with a region"],
     ["in => out", 'line 1: cannot read "in => out"'],
     ["in -[Y]- in\nin -- out\nY fork @in", "line 1: a join leads from in to in"],
@@ -246,5 +245,93 @@ describe("a torch line", () => {
       starts: "off",
       opens: { off: [], on: ["in-out"] },
     })
+  })
+})
+
+describe("a corridor's items", () => {
+  it.each([
+    ["-[A]-", undefined],
+    ["--[A]--", "center"],
+    ["---[A]---", "center"],
+    ["-[A]--", "left"],
+    ["-[A]---", "left"],
+    ["---[A]-", "right"],
+    ["--[A]---", "left"],
+  ])("reads %s as aligned %s", (gate, side) => {
+    const { lock } = parseLock(`in ${gate} out\nA toggle @in`)
+    expect(lock.connections[0]).toEqual({
+      between: ["in", "out"],
+      barriers: ["in-out"],
+      ...(side ? { align: { "in-out": side } } : {}),
+    })
+  })
+
+  it("reads << as a drop from the region on its right, named by its direction of travel", () => {
+    const { lock } = parseLock("in -- out\nin << pit\npit -- out")
+    expect(lock.oneWays).toEqual({ "pit>in": { from: "pit", to: "in" } })
+    expect(lock.connections[1]).toEqual({ between: ["in", "pit"], barriers: ["pit>in"] })
+  })
+
+  it("reads a gate before a << drop as standing beside the region the drop leads to", () => {
+    const { lock } = parseLock("in -[Y]- << hall\nin -- out\nhall -- out\nY toggle @in")
+    expect(lock.connections[0]).toEqual({ between: ["in", "hall"], barriers: ["in-hall", "hall>in"] })
+  })
+
+  it("reads two lines on one pair as two connections, the first written first", () => {
+    const { lock, refused } = parseLock("in -[Y]- hall\nhall >> in\nhall -- out\nY toggle @in")
+    expect(refused).toEqual([])
+    expect(lock.connections.slice(0, 2)).toEqual([
+      { between: ["in", "hall"], barriers: ["in-hall"] },
+      { between: ["hall", "in"], barriers: ["hall>in"] },
+    ])
+  })
+
+  it("reads two bare lines on one pair as two open corridors", () => {
+    expect(parseLock("in -- out\nout -- in").lock.connections).toEqual([
+      ["in", "out"],
+      ["out", "in"],
+    ])
+  })
+
+  it("reads a chain as two connections joined at the region between", () => {
+    const { lock } = parseLock("in -- out\nin -- west\nwest >> east >> in")
+    expect(lock.connections.slice(2)).toEqual([
+      { between: ["west", "east"], barriers: ["west>east"] },
+      { between: ["east", "in"], barriers: ["east>in"] },
+    ])
+  })
+
+  it("reads a chain that comes back to a region as a second corridor on its pair", () => {
+    const { lock } = parseLock("in -[X]- out -[Y]- in\nX toggle @in\nY toggle @in")
+    expect(lock.connections).toEqual([
+      { between: ["in", "out"], barriers: ["in-out"] },
+      { between: ["out", "in"], barriers: ["out-in"] },
+    ])
+  })
+
+  it("reads a line with no space between a region and an item as one with spaces", () => {
+    expect(parseLock("in-[S]- >>hall\nhall -- out\nS toggle @in").lock).toEqual(
+      parseLock("in -[S]- >> hall\nhall -- out\nS toggle @in").lock
+    )
+  })
+
+  it("writes no align on a lock that aligns nothing", () => {
+    const { lock } = parseLock("in -[A]- hall -[B]- out\nhall >> in\nA toggle @in\nB toggle @hall")
+    expect(lock.connections.some(c => "between" in c && c.align !== undefined)).toBe(false)
+  })
+
+  it.each([
+    ["in -[A]---[B]- out\nA toggle @in\nB toggle @in", "line 1: items on a corridor stand apart: write -[A]- -[B]-"],
+    ["in -[A]->> out\nA toggle @in", "line 1: items on a corridor stand apart: write -[A]- >>"],
+    ["in [A] out\nA toggle @in", "line 1: a gate stands between dashes: write -[A]-"],
+    ["in -[A] out\nA toggle @in", "line 1: a gate stands between dashes: write -[A]-"],
+    ["in -[A]- -- out\nA toggle @in", "line 1: -- is a bare corridor, exactly two dashes, and carries no items"],
+    ["in --- out", "line 1: -- is a bare corridor, exactly two dashes, and carries no items"],
+    ["in ->> out", 'line 1: cannot read "->>" on a corridor: an item is -[…]-, >>, << or -&>'],
+    ["in -<<- out", 'line 1: cannot read "-<<-" on a corridor: an item is -[…]-, >>, << or -&>'],
+    ["in >> -[A]- >> out\nA toggle @in", "line 1: a corridor falls once: put a region between two drops"],
+    ["in >> << out", "line 1: a corridor falls once: put a region between two drops"],
+  ])("refuses %j", (text, message) => {
+    expect(() => parseLock(text)).toThrow(message)
   })
 })

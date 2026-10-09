@@ -1,7 +1,7 @@
 // A LOCK WRITTEN AS TEXT, one line per join, read into the shared Lock type (lockAuthoring.ts). The
 // notation is LOCK_SYNTAX, which `yarn lock` also prints so nobody has to remember it.
 import { CARRY_TERMS, isWeightOwner, unladenFaults } from "./lockAuthoring"
-import type { Lock, LockConnection, LockGate, LockMechanic, LockOneWay } from "./lockAuthoring"
+import type { Alignment, Lock, LockConnection, LockGate, LockMechanic, LockOneWay } from "./lockAuthoring"
 import { TORCH_STATES } from "./mechanics/torch"
 import { stoneArrangements } from "./mechanics/weights"
 import type { RegionAppetite } from "./regions"
@@ -11,8 +11,11 @@ export const LOCK_SYNTAX = `
   in -[S1]- hall                gate: open while S1 is in its second state
   in -[S1:a]- hall              gate: open while S1 is in state a
   in -[A+B]- hall               every owner   ·   -[A|B]- any owner
-  hall >> in                    one-way, taken only with empty hands
-  in -[Y]- >> hall              one join, several barriers, in order from the left region
+  hall >> in   in << hall       a drop, one-way along the arrow, taken only with empty hands
+  in -[Y]- >> hall              one corridor, its items in order from the left region, apart by spaces
+  in -[A]--- hall   in ---[A]- hall   aligned left: right after what stands left of it; aligned right: right before
+  in --[A]-- hall               centred: room for puzzles either side   ·   -[A]- free: the carve decides
+  in -[Y]- hall   hall >> in    two lines on one pair: two corridors side by side
   hall -[sluice:wet]            region gate: hall impassable unless sluice is wet
   S1 toggle @s1                 two states a b, back and forth, starts at a
   sluice toggle @hall dry wet   the same, its states named
@@ -23,9 +26,9 @@ export const LOCK_SYNTAX = `
   P sequence hall vault reset hall-vault   steps in order, reset at that gate; -[P]- opens when done
   p1 plate @hall   p2 plate @hall stone   a plate, empty or with a stone on it; any stone presses any plate
   in -[p1]- hall   in -[p1:empty]- hall    open while a stone rests on p1, or while none does
-  in -[unladen]- hall           a narrow passage, only with empty hands; written alone, never beside >>
+  in -[unladen]- hall           a narrow passage, only with empty hands; never on a corridor with a drop
   in -&> hall                   the nest spot: another lock may be spliced in here, its in at in, its out at hall;
-                                one per lock, a plain corridor where nothing nests, ignored beside a barrier
+                                one per lock, a plain corridor where nothing nests, ignored beside other items
   hall *   s2 $   spare ?   corridor -     takes puzzles, a reward, anything, nothing
   // comment
 `.slice(1)
@@ -35,10 +38,110 @@ export type DraftLock = Lock
  * be drawn beside its errors. */
 export type ParsedLock = { lock: DraftLock; drafts: string[]; refused: string[] }
 
-const EDGE = /\s*(--|>>|-&>|-&-|<&-|-\[[^\]]*\]-)\s*/
 const NAME = /^\w+$/
 const DEFAULT_STATES = { toggle: ["a", "b"], activator: ["off", "on"] } as const
 const APPETITE: Record<string, RegionAppetite> = { "*": "puzzles", $: "reward", "?": "free", "-": "nothing" }
+
+type Item =
+  | { kind: "gate"; condition: string; left: number; right: number }
+  | { kind: "drop"; arrow: ">>" | "<<" }
+  | { kind: "nest" }
+type Piece = { spaced: boolean; text: string } & (
+  { kind: "region"; name: string } | { kind: "dashes"; count: number } | { kind: "item"; item: Item }
+)
+
+// A gate with its dash runs, the nest spot and its two misspellings, a drop, a dash run, a word, a bracket missing a
+// dash run, anything else.
+const PIECE = /(-+)\[([^\]]*)\](-+)|-&>|-&-|<&-|>>|<<|-+|\w+|-*\[([^\]]*)\]-*|\S/y
+const HYPHENATED = /(?:^|\s)(\w+(?:-\w+)+)(?=\s|$)/
+const TOUCHING = /\[([^\]]*)\]-*\[([^\]]*)\]/
+const ITEMS = "an item is -[…]-, >>, << or -&>"
+
+const written = (item: Item) =>
+  item.kind === "gate" ? `-[${item.condition}]-` : item.kind === "drop" ? item.arrow : "-&>"
+
+/** Equal runs of one are free, equal runs of two or more centre, and unequal runs align toward the shorter side. */
+const alignmentOf = (left: number, right: number): Alignment | undefined =>
+  left === right ? (left === 1 ? undefined : "center") : left < right ? "left" : "right"
+
+/** One connection line as its regions and, between each two, the corridor's items in the order written. */
+const readJoins = (line: string, fail: (message: string) => never): { regions: string[]; corridors: Item[][] } => {
+  const hyphenated = line.match(HYPHENATED)
+  if (hyphenated) fail(`cannot read a region called "${hyphenated[1]}"`)
+  const touching = line.match(TOUCHING)
+  if (touching) fail(`items on a corridor stand apart: write -[${touching[1]}]- -[${touching[2]}]-`)
+  const pieces: Piece[] = []
+  let spaced = true
+  for (let at = 0; at < line.length;) {
+    if (/\s/.test(line[at])) {
+      spaced = true
+      at++
+      continue
+    }
+    PIECE.lastIndex = at
+    const m = PIECE.exec(line)!
+    at = PIECE.lastIndex
+    const text = m[0]
+    if (text === "-&-" || text === "<&-") fail("a nest spot is written a -&> b, from the nested lock's in to its out")
+    if (m[4] !== undefined) fail(`a gate stands between dashes: write -[${m[4]}]-`)
+    const piece: Piece | undefined =
+      m[1] !== undefined
+        ? { spaced, text, kind: "item", item: { kind: "gate", condition: m[2], left: m[1].length, right: m[3].length } }
+        : text === ">>" || text === "<<"
+          ? { spaced, text, kind: "item", item: { kind: "drop", arrow: text } }
+          : text === "-&>"
+            ? { spaced, text, kind: "item", item: { kind: "nest" } }
+            : /^-+$/.test(text)
+              ? { spaced, text, kind: "dashes", count: text.length }
+              : /^\w+$/.test(text)
+                ? { spaced, text, kind: "region", name: text }
+                : undefined
+    if (!piece) fail(`cannot read "${line}"`)
+    pieces.push(piece)
+    spaced = false
+  }
+  // A dash touching a drop belongs to no gate.
+  pieces.forEach((piece, i) => {
+    if (piece.kind !== "item" || piece.item.kind !== "drop") return
+    let [from, to] = [i, i]
+    while (from > 0 && !pieces[from].spaced && pieces[from - 1].kind === "dashes") from--
+    while (to + 1 < pieces.length && !pieces[to + 1].spaced && pieces[to + 1].kind === "dashes") to++
+    if (from < i || to > i)
+      fail(
+        `cannot read "${pieces
+          .slice(from, to + 1)
+          .map(p => p.text)
+          .join("")}" on a corridor: ${ITEMS}`
+      )
+  })
+  const regions: string[] = []
+  const corridors: Item[][] = []
+  let items: Item[] = []
+  let dashes: number[] = []
+  pieces.forEach((piece, i) => {
+    if (piece.kind === "region") {
+      if (regions.length > 0) {
+        if (items.length === 0 && dashes.length === 0) fail(`cannot read "${line}"`)
+        if (dashes.length > 0 && (items.length > 0 || dashes.length > 1 || dashes[0] !== 2))
+          fail("-- is a bare corridor, exactly two dashes, and carries no items")
+        corridors.push(items)
+      }
+      regions.push(piece.name)
+      items = []
+      dashes = []
+      return
+    }
+    if (regions.length === 0) fail("a line starts and ends with a region")
+    const before = pieces[i - 1]
+    if (piece.kind === "item" && before.kind === "item" && !piece.spaced)
+      fail(`items on a corridor stand apart: write ${written(before.item)} ${written(piece.item)}`)
+    if (piece.kind === "item") items.push(piece.item)
+    else dashes.push(piece.count)
+  })
+  if (items.length > 0 || dashes.length > 0) fail("a line starts and ends with a region")
+  if (regions.length < 2) fail(`cannot read "${line}"`)
+  return { regions, corridors }
+}
 
 type Declared =
   | { control: "toggle" | "activator"; in: string; states: readonly [string, string]; n: number }
@@ -57,7 +160,7 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
     .filter(({ line }) => line !== "")
 
   const regions = new Map<string, RegionAppetite>()
-  const joins: { between: [string, string]; barriers: string[]; n: number }[] = []
+  const joins: { between: [string, string]; barriers: string[]; align: Record<string, Alignment>; n: number }[] = []
   const spots: { from: string; to: string; n: number }[] = []
   const gates: Record<string, LockGate> = {}
   const terms: Record<string, { n: number; list: Term[] }> = {}
@@ -88,31 +191,29 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
     if (twice) fail(n, `-[${written}]- names ${twice} twice`)
     return { list, owners, mode: written.includes("|") ? ("any" as const) : undefined }
   }
-  const join = (n: number, from: string, to: string, ops: string[]) => {
-    if (ops.some(op => op === "-&-" || op === "<&-"))
-      fail(n, "a nest spot is written a -&> b, from the nested lock's in to its out")
+  const join = (n: number, from: string, to: string, items: Item[]) => {
     if (from === to) fail(n, `a join leads from ${from} to ${to}`)
-    if (ops.includes("--") && ops.length > 1) fail(n, "-- is a bare corridor and carries no barriers")
-    if (ops.length === 1 && (ops[0] === "--" || ops[0] === "-&>")) {
-      const twin = joins.find(j => j.barriers.length === 0 && [from, to].every(r => j.between.includes(r)))
-      if (twin) fail(n, `${from} and ${to} are already joined by a corridor on line ${twin.n}`)
-    }
-    if (ops.includes("-&>")) spots.push({ from, to, n })
-    const barriers = ops
-      .filter(op => op !== "--" && op !== "-&>")
-      .map(op => {
-        if (op === ">>") {
-          const id = unique(`${from}>${to}`)
-          oneWays[id] = { from, to }
-          return id
-        }
-        const { list, owners, mode } = condition(n, op.slice(2, -2))
-        const id = unique(`${from}-${to}`)
-        gates[id] = { from, to, owners, ...(mode ? { mode } : {}) }
-        terms[id] = { n, list }
-        return id
-      })
-    joins.push({ between: [from, to], barriers, n })
+    if (items.filter(item => item.kind === "drop").length > 1)
+      fail(n, "a corridor falls once: put a region between two drops")
+    if (items.some(item => item.kind === "nest")) spots.push({ from, to, n })
+    const align: Record<string, Alignment> = {}
+    const barriers = items.flatMap(item => {
+      if (item.kind === "nest") return []
+      if (item.kind === "drop") {
+        const [launch, landing] = item.arrow === ">>" ? [from, to] : [to, from]
+        const id = unique(`${launch}>${landing}`)
+        oneWays[id] = { from: launch, to: landing }
+        return [id]
+      }
+      const { list, owners, mode } = condition(n, item.condition)
+      const id = unique(`${from}-${to}`)
+      gates[id] = { from, to, owners, ...(mode ? { mode } : {}) }
+      terms[id] = { n, list }
+      const side = alignmentOf(item.left, item.right)
+      if (side) align[id] = side
+      return [id]
+    })
+    joins.push({ between: [from, to], barriers, align, n })
   }
   const placed = (id: string) => declared.has(id) || plates.has(id)
   const declare = (n: number, id: string, what: Declared) => {
@@ -152,20 +253,8 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
       gates[id] = { region: m[1], owners, ...(mode ? { mode } : {}) }
       terms[id] = { n, list }
     } else {
-      const parts = line.split(EDGE)
-      if (parts.length < 3) fail(n, `cannot read "${line}"`)
-      if (parts[0] === "" || parts[parts.length - 1] === "") fail(n, "a line starts and ends with a region")
-      // Nothing between two barriers means they stand on one join.
-      for (let i = 0; i < parts.length - 1;) {
-        const ops = [parts[i + 1]]
-        let j = i + 2
-        while (parts[j] === "") {
-          ops.push(parts[j + 1])
-          j += 2
-        }
-        join(n, region(n, parts[i]), region(n, parts[j]), ops)
-        i = j
-      }
+      const { regions: names, corridors } = readJoins(line, message => fail(n, message))
+      corridors.forEach((items, i) => join(n, region(n, names[i]), region(n, names[i + 1]), items))
     }
   }
 
@@ -278,7 +367,9 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
   }
 
   const connections: LockConnection[] = joins.map(j =>
-    j.barriers.length > 0 ? { between: j.between, barriers: j.barriers } : j.between
+    j.barriers.length > 0
+      ? { between: j.between, barriers: j.barriers, ...(Object.keys(j.align).length > 0 ? { align: j.align } : {}) }
+      : j.between
   )
   const lock: Lock = {
     name,

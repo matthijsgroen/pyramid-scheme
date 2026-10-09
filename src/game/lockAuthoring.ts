@@ -20,21 +20,32 @@ export type RegionId = string
 export type BarrierId = string
 export type MechanicId = string
 
+/**
+ * Where an author stands a gate on its corridor, written with dashes: `left` right after what is written left of it
+ * (a region or another item), `right` right before what is written right of it, `center` with room for puzzles on
+ * both sides. A gate it does not name is free: the carve decides. It is a preference: it never refuses a lock and
+ * never lengthens a corridor.
+ */
+export type Alignment = "left" | "right" | "center"
+
 /** What a region is willing to hold — content, a reward, nothing. The carve fills it accordingly. */
 export type LockRegion = { takes: RegionAppetite }
 
 /**
- * A join between two regions. Bare, it is a passage the player walks: that is what lets two regions be
- * distinct PLACES with nothing between them, which a sequence needs to put its tiles somewhere the
- * author chose.
+ * A CORRIDOR between two regions. Bare, it is a passage the player walks: that is what lets two regions be distinct
+ * PLACES with nothing between them, which a sequence needs to put its tiles somewhere the author chose.
  *
- * `barriers` is what stands on it, IN ORDER from the first region to the second. The author decides the
- * order; the carve decides the distances, and may leave a gate halfway along a corridor. A fork puzzle's
- * gate is always first on its connection — checked, not authored.
+ * `barriers` are its items IN ORDER from the first region to the second: gates and at most one drop, by one id space.
+ * The carve decides the distances; `align` names the gates the author placed. Two connections on one pair are two
+ * corridors, the first written first. A fork puzzle's gate is always first on its connection — checked, not authored.
  */
 export type LockConnection =
   | readonly [RegionId, RegionId]
-  | { readonly between: readonly [RegionId, RegionId]; readonly barriers?: readonly BarrierId[] }
+  | {
+      readonly between: readonly [RegionId, RegionId]
+      readonly barriers?: readonly BarrierId[]
+      readonly align?: Readonly<Record<BarrierId, Alignment>>
+    }
 
 /**
  * HOW A DOOR WITH SEVERAL OWNERS IS ANSWERED. Default is every owner: each must name the gate in its
@@ -75,10 +86,10 @@ export type LockGate = EdgeGate | RegionGate
  * A DIRECTED PASSAGE WITH NO CONTROL: it is always on, and nothing owns or reverses it. It counts as a
  * way there and never as a way back.
  *
- * It carries an id because a connection names its barriers in order, and a one-way may share a join with
- * a gate. Every realisation of it is taken THROUGH A PROMPT, whatever it is dressed as, so the player
- * never crosses by accident and finds they cannot return. The prompt says it cannot be recrossed; it
- * does not say where it lands.
+ * It carries an id because it is an item of the corridor it stands on, named in that connection's `barriers` where it
+ * stands, and may share the corridor with gates. An entry no connection names is a corridor of its own carrying only
+ * that drop. Every realisation of it is taken THROUGH A PROMPT, whatever it is dressed as, so the player never crosses
+ * by accident and finds they cannot return. The prompt says it cannot be recrossed; it does not say where it lands.
  */
 export type LockOneWay = { readonly from: RegionId; readonly to: RegionId }
 
@@ -204,6 +215,10 @@ export const joinOf = (connection: LockConnection): readonly [RegionId, RegionId
 /** What stands on a connection, in order from its first region to its second. */
 export const barriersOf = (connection: LockConnection): readonly BarrierId[] =>
   "between" in connection ? (connection.barriers ?? []) : []
+
+/** The gates a connection's author aligned; a gate it does not name is free. */
+export const alignOf = (connection: LockConnection): Readonly<Record<BarrierId, Alignment>> =>
+  "between" in connection ? (connection.align ?? {}) : {}
 
 /** Whether a gate owner is a plate of the lock, or a condition on what the player carries. */
 export const isWeightOwner = (lock: Lock, owner: string): boolean =>
