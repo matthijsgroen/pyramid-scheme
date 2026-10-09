@@ -104,7 +104,7 @@ thrown on arrival, a stone lifted or set), `HandleComponent.tsx`, `TorchComponen
 
 Binding (designer, unless noted). Each names the task that builds it.
 
-- **D1. The torch is a core control kind**, `torch`, two fixed states `off`/`on`; the player only lights it; it may
+- **D1. The flame is a core control kind**, `flame`, two fixed states `off`/`on`; the player only lights it; it may
   start lit (`lit`); a covering region barrier douses it; it can be lit again once uncovered (spec, "The rules";
   tasks 3-7).
 - **D2. One pure function**, `douseTorches` in `mechanismDoors.ts`, used by the walk, the floor's solver and play
@@ -116,8 +116,8 @@ Binding (designer, unless noted). Each names the task that builds it.
 - **D5. Authorship:** doubleBack and stoneGate are the designer's; every other `.lock` is Claude's. Every `.lock`
   under `src/game/locks/**` gets a `// designed by:` line. A stale header comment is corrected on Claude's locks
   only; the designer's two headers stay as they are (task 1).
-- **D6. Bindings:** `torch: "torch"` replaces `activator: "torch"` in `dev.ts` (pyramid 12) and `expert.ts`
-  (`expert_4`); the playground offers `torch: ["torch"]` and keeps `activator: ["torch"]` (task 5).
+- **D6. Bindings:** `flame: "torch"` replaces `activator: "torch"` in `dev.ts` (pyramid 12) and `expert.ts`
+  (`expert_4`); the playground offers `flame: ["torch"]` and keeps `activator: ["torch"]` (task 5).
 - **D7. No save migration** (spec §4): a state is filed under the mechanism's cell address and the torch's states
   are the activator's own.
 - **D8. Mod off:** same carve, the torch a bare node, no region covered, nothing doused or written (spec §5; task 6).

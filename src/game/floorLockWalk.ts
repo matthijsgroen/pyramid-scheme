@@ -229,7 +229,8 @@ const levelOf = (cut: Cut, node: Owner, nesting: FloorGrid["lockNesting"]): Lock
   const port = own ? cut.portOf(own.in) : undefined
   // Every one-way reads these, not only the way out.
   const emptyHands = (lock.emptyHands ?? []).filter(({ mechanism }) => Object.hasOwn(mechanisms, mechanism))
-  // A torch is walked in the level its mechanism is; a covering gate that is ground at this level stands open.
+  // A torch is walked in the level its mechanism is. A covering gate not in this level's gates is dropped; a gate
+  // owned by a parent lock can't be one today, as a torch and its barrier come from one lock.
   const torches = (lock.torches ?? [])
     .filter(({ mechanism }) => Object.hasOwn(mechanisms, mechanism))
     .map(({ mechanism, coveredBy }) => ({ mechanism, coveredBy: coveredBy.filter(gate => Object.hasOwn(gates, gate)) }))

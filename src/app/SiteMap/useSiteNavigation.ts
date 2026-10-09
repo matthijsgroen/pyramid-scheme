@@ -206,7 +206,8 @@ export const useSiteNavigation = ({
           findPath(grid, explorerPos, [r, c]),
           journeys.getMechanismStates(journeyId)
         )
-        // One write for the whole walk, so the douse reads every tile it worked.
+        // One write for the whole walk, so the douse reads every tile it worked. One douse at the end of the walk
+        // equals one after each tile: a sequence opens a gate only at `done`, which stays fired.
         if (presses.length > 0) journeys.setMechanismStates(new Map(presses.map(press => [press.address, press.state])))
         const edgeId = encodeEdge(currentFloor, r, c)
         const address = cellAddress(grid, currentFloor, r, c) ?? edgeId

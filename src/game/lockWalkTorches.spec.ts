@@ -2,18 +2,9 @@ import { describe, expect, it } from "vitest"
 import { checkLockSpec, reachableStates, walkLock } from "./lockWalk"
 import { walkSpecOf } from "./lockWalkSpec"
 import { parseLock } from "./lockNotation"
+import { TWO_TORCHES } from "./testSupport/torchFloodFixtures"
 
 const specOf = (text: string) => walkSpecOf(parseLock(text, "flood").lock)
-
-// B burns and A does not; the door wants the opposite. Flooding the hall puts B out.
-const TWO_TORCHES = `
-in -- hub -- hall
-hub -[A+B:off]- out
-hall -[S:a]
-S toggle @hub
-B torch @hall lit
-A torch @hall
-`
 
 describe("the lock walk with torches and a flood", () => {
   it("proves the two-torch lock: flood the hall, let the water go, light A", () => {
