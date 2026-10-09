@@ -341,6 +341,29 @@ describe("the doors a region stands behind", () => {
     expect(doors.get("vault")).toEqual(new Set())
   })
 
+  it("names no gate on one corridor of a pair whose other corridor walks round it", () => {
+    const twice: RegionGraph = { ...layout, connections: [...layout.connections, ["hall", "vault"]] }
+    const second: Obstacle = {
+      id: "g2",
+      kind: "gate",
+      at: { on: "connection", between: ["hall", "vault"], corridor: 1 },
+    }
+    const doors = doorsToEnterRegion(twice, [gate("g1", ["hall", "vault"]), second])
+
+    expect(doors.get("vault")).toEqual(new Set())
+  })
+
+  it("names the gate of the corridor it stands on, a falling corridor holding the pair's first place", () => {
+    const gates: Obstacle[] = [
+      gate("g0", ["hall", "vault"]),
+      { id: "g1", kind: "gate", at: { on: "connection", between: ["hall", "vault"], corridor: 1 } },
+    ]
+    const order: BarrierOrder[] = [{ between: ["hall", "vault"], barriers: ["g0", "drop"] }]
+    const corridors = floorCorridors(layout, [oneWay("drop", ["hall", "vault"]), ...gates], order)
+
+    expect(doorsToEnterRegion(layout, gates, corridors).get("vault")).toEqual(new Set(["g1"]))
+  })
+
   it("gives every declared region an entry, so a caller never has to guess at an absent one", () => {
     const doors = doorsToEnterRegion(layout, [gate("g1", ["hall", "vault"])])
 

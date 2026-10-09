@@ -51,6 +51,7 @@ import {
   crossesNoDoor,
   doorsToEnterRegion,
   dropsLandingOnAStretch,
+  floorCorridors,
   isEdgeGate,
   isForkSwitch,
   isRegionGate,
@@ -61,7 +62,7 @@ import {
   seatBarrierRun,
   topologyFaults,
 } from "./obstacles"
-import type { EdgeGateObstacle, Obstacle, OneWayObstacle, StatefulControl } from "./obstacles"
+import type { EdgeGateObstacle, FloorCorridor, Obstacle, OneWayObstacle, StatefulControl } from "./obstacles"
 import { cellSlot, plainSwitchId } from "./cellSlot"
 import { placeSequences } from "./sequenceTiles"
 import { placeWeights } from "./weightsPlates"
@@ -2924,7 +2925,10 @@ const assembleExpandedFloor = (
     // `between` is typically not even a real connection of the layout, so asking `doorsToEnterRegion`
     // to remove it would at best be a no-op and at worst — where a drop's ends happen to coincide with
     // a real connection — misread a shortcut as a door nothing on the floor actually bars.
-    const regionDoors = regionLayout ? doorsToEnterRegion(regionLayout, gateObstacles) : undefined
+    const layoutCorridors = regionLayout
+      ? floorCorridors(regionLayout, authoredConfig.obstacles ?? [], authoredConfig.barrierOrder ?? [])
+      : []
+    const regionDoors = regionLayout ? doorsToEnterRegion(regionLayout, gateObstacles, layoutCorridors) : undefined
     if (regionDoors)
       for (const [cellKey, region] of cellRegion) {
         for (const id of regionDoors.get(region) ?? []) {
@@ -2937,13 +2941,17 @@ const assembleExpandedFloor = (
     // stray edges whether or not the topology mod is in the build. `id` is a seam's own name, never
     // an authored obstacle's — it never reaches `gateKeyOf` or a room's `requiredKeyId`, only
     // `standsBehindSeam`'s set-equality check.
-    const asSeamObstacle = ([a, b]: readonly [string, string]): Obstacle => ({
-      id: `seam:${a}::${b}`,
+    const asSeamObstacle = ({ between: [a, b], index }: FloorCorridor): Obstacle => ({
+      id: index === 0 ? `seam:${a}::${b}` : `seam:${a}::${b}#${index}`,
       kind: "gate",
-      at: { on: "connection", between: [a, b] },
+      at: { on: "connection", between: [a, b], corridor: index },
     })
     const regionSeamDoors = regionLayout
-      ? doorsToEnterRegion(regionLayout, regionLayout.connections.map(asSeamObstacle))
+      ? doorsToEnterRegion(
+          regionLayout,
+          layoutCorridors.filter(corridor => corridor.drop === undefined).map(asSeamObstacle),
+          layoutCorridors
+        )
       : undefined
     if (regionSeamDoors)
       for (const [cellKey, region] of cellRegion) {

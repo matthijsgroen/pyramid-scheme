@@ -884,14 +884,22 @@ const reachableOver = (connections: ReadonlyArray<readonly [string, string]>, fr
  * Every declared region gets an entry, empty where nothing bounds it, so a caller never has to decide
  * what an absent one means.
  */
-export const doorsToEnterRegion = (layout: RegionGraph, obstacles: readonly Obstacle[]): Map<string, Set<string>> => {
+export const doorsToEnterRegion = (
+  layout: RegionGraph,
+  obstacles: readonly Obstacle[],
+  corridors: readonly FloorCorridor[] = floorCorridors(layout, obstacles, [])
+): Map<string, Set<string>> => {
   const doors = new Map(layout.regions.map(r => [r.name, new Set<string>()]))
+  // Only the corridor an obstacle stands on is taken away: another corridor on its pair still walks round it. A
+  // falling corridor is no way in to walk.
+  const walked = corridors.filter(corridor => corridor.drop === undefined)
   for (const obstacle of obstacles) {
     // A region barrier stands inside its region rather than on a connection, so no connection is its to take away.
     if (isRegionGate(obstacle)) continue
-    const without = layout.connections.filter(
-      ([a, b]) => connectionKey(a, b) !== connectionKey(obstacle.at.between[0], obstacle.at.between[1])
-    )
+    const own = slotOf(connectionKey(...obstacle.at.between), isEdgeGate(obstacle) ? corridorIndexOf(obstacle) : 0)
+    const without = walked
+      .filter(corridor => slotOf(corridor.key, corridor.index) !== own)
+      .map(corridor => corridor.between)
     const arrived = reachableOver(without, layout.in)
     for (const { name } of layout.regions) if (!arrived.has(name)) doors.get(name)!.add(obstacle.id)
   }
