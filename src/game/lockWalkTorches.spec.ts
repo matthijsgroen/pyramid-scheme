@@ -34,9 +34,16 @@ describe("the lock walk with torches and a flood", () => {
 
   it("lights a doused torch again once its region is uncovered", () => {
     const found = reachableStates(specOf(TWO_TORCHES))
-    expect(
-      found !== "tooLarge" && found.order.some(s => s.config.S === "a" && s.config.B === "on" && s.config.A === "on")
-    ).toBe(true)
+    if (found === "tooLarge") throw new Error("too large")
+    const { order, edges } = found
+    const relit = order.some(
+      (s, n) => s.config.S === "a" && s.config.B === "off" && edges[n].some(to => order[to].config.B === "on")
+    )
+    expect(relit).toBe(true)
+  })
+
+  it("keeps every torch out while its region is covered", () => {
+    const found = reachableStates(specOf(TWO_TORCHES))
     expect(
       found !== "tooLarge" && found.order.some(s => s.config.S === "b" && (s.config.A === "on" || s.config.B === "on"))
     ).toBe(false)
@@ -68,6 +75,10 @@ describe("the lock walk with torches and a flood", () => {
     )
     expect(checkLockSpec({ ...spec, torches: [{ mechanism: "A", coveredBy: ["nowhere"] }] })).toBe(
       "torch A is covered by no such gate: nowhere"
+    )
+    const doused = { ...spec.mechanisms.A, transitions: [{ from: "on", to: "off", at: "hall" }] }
+    expect(checkLockSpec({ ...spec, mechanisms: { ...spec.mechanisms, A: doused } })).toBe(
+      "torch A has a move other than lighting it: on to off"
     )
   })
 })

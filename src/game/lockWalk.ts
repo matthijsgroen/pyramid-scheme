@@ -1,5 +1,6 @@
 import { doorOpen, type DoorMode } from "./doorOpen"
 import { douseTorches } from "./mechanismDoors"
+import { TORCH_OFF, TORCH_ON } from "./mechanics/torch"
 
 // A LOCK IS A GRAPH OF PLACES AND THE THINGS THAT CHANGE WHICH OF THEM JOIN UP. Nothing here knows
 // about grids, families or mods: a beam board, a lever, a sequence and a floor key are one shape with
@@ -115,8 +116,12 @@ export const checkLockSpec = (spec: LockSpec): string | undefined => {
   for (const { mechanism, coveredBy } of spec.torches ?? []) {
     const torch = spec.mechanisms[mechanism]
     if (!torch) return `a torch names no mechanism: ${mechanism}`
-    if (!torch.states.includes("off") || !torch.states.includes("on"))
+    if (!torch.states.includes(TORCH_OFF) || !torch.states.includes(TORCH_ON))
       return `torch ${mechanism} has no states off and on`
+    // Lighting is a torch's only move, so a step that changes a torch any other way is a douse, never the move made.
+    for (const { from, to } of [...torch.transitions, ...(torch.entries ?? [])])
+      if (from !== TORCH_OFF || to !== TORCH_ON)
+        return `torch ${mechanism} has a move other than lighting it: ${from} to ${to}`
     for (const gate of coveredBy) if (!spec.gates[gate]) return `torch ${mechanism} is covered by no such gate: ${gate}`
   }
   return undefined
@@ -146,7 +151,7 @@ export const openGates = (spec: LockSpec, config: LockConfig): Set<GateId> => {
  * start, and every state a move reaches after the entries it works. The same config when nothing is doused. */
 export const dousedConfig = (spec: LockSpec, config: LockConfig): LockConfig => {
   const torches = spec.torches ?? []
-  if (torches.length === 0) return config
+  if (torches.every(({ mechanism }) => config[mechanism] !== TORCH_ON)) return config
   const covered = (states: ReadonlyMap<MechanismId, StateId>) => {
     const open = openGates(spec, Object.fromEntries(states))
     return new Set(torches.filter(({ coveredBy }) => coveredBy.some(gate => !open.has(gate))).map(t => t.mechanism))
