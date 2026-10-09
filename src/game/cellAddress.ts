@@ -24,9 +24,9 @@ import { cellSlot, legacyCellSlot } from "./cellSlot"
  * - a chest, shop or gate is its section's one `end` or `gate` — named by the family that fills it
  * - a staircase is its `stairId`; the two plain portals are the entrance and the exit
  *
- * Measured over the baked world: 5250 such slots, no two alike inside a (section, floor), and every section
- * holds at least one but a lock region with no mechanism, plate or door. Re-carved at two different seeds, four floors across four tiers and a
- * tomb kept every slot.
+ * Measured over the baked world: no two slots alike inside a (section, floor), and every section holds at
+ * least one but a lock region with no mechanism, plate or door. Re-carved at two different seeds, four floors
+ * across four tiers and a tomb kept every slot.
  *
  * Cells with no slot — corridors and bare forks — are addressed by `~${ordinal}`, which resolves inside
  * one carve and deliberately resolves to nothing after the floor moves. Their fog comes back by the
