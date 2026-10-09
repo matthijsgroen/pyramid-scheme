@@ -133,7 +133,7 @@ export default defineConfig({
       exclude: /apple-(splash|touch-icon)|maskable-icon|pwa-\d+x\d+/,
     }),
   ],
-  base: "/pyramid-scheme/",
+  base: process.env.VITE_BASE ?? "/pyramid-scheme/",
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),

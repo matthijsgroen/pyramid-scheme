@@ -1,0 +1,47 @@
+name: Preview
+
+on:
+  push:
+    branches: [topology/mechanics]
+  workflow_dispatch:
+
+concurrency:
+  group: preview
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: topology/mechanics
+      - name: Enable Corepack
+        run: corepack enable
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22.x"
+          cache: "yarn"
+      - name: Install dependencies
+        run: yarn
+      - name: Generate world with dev content
+        run: INCLUDE_DEV=1 yarn generate-world
+      - name: Build
+        run: yarn build
+        env:
+          VITE_BASE: /pyramid-scheme-preview/
+          VITE_STORAGE_PREFIX: "preview:"
+      - name: Add .nojekyll
+        run: touch dist/.nojekyll
+      - name: Publish to pyramid-scheme-preview
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.PREVIEW_DEPLOY_TOKEN }}
+          external_repository: matthijsgroen/pyramid-scheme-preview
+          publish_branch: gh-pages
+          publish_dir: ./dist
+          force_orphan: true
