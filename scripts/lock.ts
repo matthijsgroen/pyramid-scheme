@@ -3,7 +3,7 @@
  * Draws a lock written in lockNotation.ts's notation, walks it, says what it could do without, and
  * prints the shared Lock JSON it reads into.
  *
- *   yarn lock                       every lock and lesson in the catalogue
+ *   yarn lock                       the catalogue as one table: mechanisms, shortest solution, checks
  *   yarn lock doubleBack            one of them, with its JSON
  *   yarn lock lessons/torch --watch src/game/locks/lessons/torch.lock, redrawn on every save
  *   yarn lock sketch.lock           a file
@@ -13,15 +13,12 @@
  */
 import { existsSync, readFileSync, watch, writeFileSync } from "node:fs"
 import { basename, dirname } from "node:path"
-import { describeLockWalkFailure, walkLock } from "../src/game/lockWalk"
-import { walkSpecOf, needsFace, notBuildable, openAtStart, readable } from "../src/game/lockWalkSpec"
 import { drawLock } from "../src/game/lockDraw"
-import { lockQuality, solveLock, unreachedRegions } from "../src/game/lockReview"
+import { lockQuality, solveLock } from "../src/game/lockReview"
 import { LOCK_SYNTAX, parseLock } from "../src/game/lockNotation"
 import type { ParsedLock } from "../src/game/lockNotation"
 import { LESSONS, LOCK_CATALOGUE } from "../src/game/lockCatalogue"
-import { nestSpotBusy, nestSpotOf } from "../src/game/lockAuthoring"
-import type { Lock } from "../src/game/lockAuthoring"
+import { formatLockTable, lockChecks, lockRow } from "./lockTable"
 
 const args = process.argv.slice(2)
 const watching = args.includes("--watch")
@@ -31,39 +28,9 @@ const library: Record<string, ParsedLock> = { ...LOCK_CATALOGUE, ...LESSONS }
 const inLocks = named && named !== "-" && !named.endsWith(".lock") ? `src/game/locks/${named}.lock` : undefined
 const target = inLocks && (existsSync(inLocks) || (watching && !(named! in library))) ? inLocks : named
 
-/** The nest spot, or why it is ignored: a spot on a busy connection is no spot, and says so (D9). */
-const nestSpotLines = (lock: Lock): string[] => {
-  const spot = nestSpotOf(lock)
-  if (spot) return [`nest spot: ${spot.from} -&> ${spot.to}`]
-  const busy = nestSpotBusy(lock)
-  return lock.nestSpot && busy.length > 0
-    ? [`nest spot ignored: ${lock.nestSpot.from} -&> ${lock.nestSpot.to} also carries ${busy.join(", ")}`]
-    : []
-}
-
-const report = (name: string, { lock, drafts, refused }: ParsedLock, withJson: boolean): boolean => {
-  const spec = walkSpecOf(lock, drafts)
-  const walked = walkLock(spec)
-  const unreached = unreachedRegions(spec)
-  const reachable = Array.isArray(unreached) && unreached.length === 0
-  const deadEnd = !walked.sound && walked.failure.type === "strands"
-  const open = openAtStart(lock)
-  const unbuilt = notBuildable(lock)
-  const sequences = Object.entries(lock.mechanics).flatMap(([id, m]) => (m.control === "sequence" ? [id] : []))
-  const checks = [
-    ...refused.map(problem => `✗ ${problem}`),
-    ...(drafts.length > 0 ? [`✗ not placed yet: ${drafts.join(", ")}`] : []),
-    reachable
-      ? "✓ every region is reachable"
-      : `✗ ${unreached === "tooLarge" ? "too many states to walk" : `never reached: ${unreached.join(", ")}`}`,
-    walked.sound || deadEnd ? "✓ solvable" : `✗ not solvable: ${readable(describeLockWalkFailure(walked.failure))}`,
-    ...(deadEnd ? [`✗ a dead end: ${readable(describeLockWalkFailure(walked.failure))}`] : []),
-    `at the start ${open.length > 0 ? `these gates stand open: ${open.join(", ")}` : "no gate stands open"}`,
-    ...nestSpotLines(lock),
-    ...needsFace(lock).map(({ gate, owners }) => `${gate} shows what it waits for: ${owners.join(", ")}`),
-    ...sequences.map(id => `⚠ sequence ${id}: done stays fired, tiles anywhere — contract §8 open`),
-    ...(unbuilt.length > 0 ? [`⚠ not buildable yet: ${unbuilt.join(", ")}`] : []),
-  ]
+const report = (name: string, parsed: ParsedLock, withJson: boolean): boolean => {
+  const { lock, drafts } = parsed
+  const { spec, walked, checks, sound } = lockChecks(parsed)
   const lines = [`## ${name}`, "", ...checks, "", drawLock(lock, drafts)]
   const solved = solveLock(spec)
   if (solved) lines.push("", `cheapest: ${solved.actions} actions — ${solved.steps.join(" ▸ ")}`)
@@ -78,7 +45,7 @@ const report = (name: string, { lock, drafts, refused }: ParsedLock, withJson: b
   )
   if (withJson) lines.push("", json)
   console.log(lines.join("\n") + "\n")
-  return refused.length === 0 && drafts.length === 0 && reachable && walked.sound
+  return sound
 }
 
 const syntax = `${LOCK_SYNTAX}\n  catalogue: ${Object.keys(library).join(", ")}\n`
@@ -108,8 +75,12 @@ if (watching && target && target !== "-" && !(target in library) && !existsSync(
 if (args.includes("--help")) {
   console.log(syntax)
 } else if (!target) {
-  const sound = Object.entries(library).map(([name, parsed]) => report(name, parsed, false))
-  process.exitCode = sound.every(Boolean) ? 0 : 1
+  const rows = [
+    ...Object.entries(LOCK_CATALOGUE).map(([name, parsed]) => lockRow(name, parsed)),
+    ...Object.entries(LESSONS).map(([name, parsed]) => lockRow(`lessons/${name}`, parsed)),
+  ]
+  console.log(formatLockTable(rows))
+  process.exitCode = rows.every(row => row.sound) ? 0 : 1
 } else if (target === "-") {
   process.exitCode = fromText("stdin", readFileSync(0, "utf8")) ? 0 : 1
 } else if (existsSync(target)) {
