@@ -115,6 +115,10 @@ export type CombinedJourneyState = StoredJourneyStateV3 & {
   journey: TranslatedJourney
 }
 
+/** Mechanism states to save: the writes, or what to write given the states saved when the write lands. */
+export type MechanismWrites =
+  ReadonlyMap<string, string> | ((stored: ReadonlyMap<string, string>) => ReadonlyMap<string, string>)
+
 export type JourneyAPI = {
   activeJourneyId: string | undefined
   maxDifficulty: Difficulty
@@ -165,7 +169,7 @@ export type JourneyAPI = {
    * rather than joining it — see mechanismStates. */
   setMechanismState: (address: string, stateId: string) => void
   /** Several mechanisms' new states in one write, so a move and what it causes are saved together. */
-  setMechanismStates: (writes: ReadonlyMap<string, string>) => void
+  setMechanismStates: (writes: MechanismWrites) => void
   /** The position every mechanism on this level currently stands in, keyed by its cell address. */
   getMechanismStates: (journeyId: string) => ReadonlyMap<string, string>
   registerHiddenCorridors: (sectionAddresses: string[]) => void
@@ -187,6 +191,16 @@ export type JourneyAPI = {
 }
 
 const knownJourneyIds = journeyData.map(j => j.id)
+
+/** A level's entries of a level-keyed record, by the address under the level. */
+const atLevelMap = (levelNr: number, entries: Record<string, string> | undefined): Map<string, string> => {
+  const prefix = `${levelNr}:`
+  return new Map(
+    Object.entries(entries ?? {})
+      .filter(([key]) => key.startsWith(prefix))
+      .map(([key, value]) => [key.slice(prefix.length), value])
+  )
+}
 
 // Module constants, not inline literals: a fresh literal on every render makes every consumer of
 // useOfflineStorage look like a different default to anything comparing by identity.
@@ -544,13 +558,7 @@ export const createJourneysV3Api = ({
     entries: Record<string, string> | undefined
   ): ReadonlyMap<string, string> => {
     const j = journeys.find(j => j.journeyId === journeyId)
-    if (!j) return new Map()
-    const prefix = `${j.levelNr}:`
-    return new Map(
-      Object.entries(entries ?? {})
-        .filter(([key]) => key.startsWith(prefix))
-        .map(([key, value]) => [key.slice(prefix.length), value])
-    )
+    return j ? atLevelMap(j.levelNr, entries) : new Map()
   }
 
   const markTrapDisabled = (address: string) => {
@@ -610,12 +618,15 @@ export const createJourneysV3Api = ({
   const getPurchasedShopSlots = (journeyId: string): ReadonlySet<string> =>
     forThisLevel(journeyId, journeys.find(j => j.journeyId === journeyId)?.purchasedStock)
 
-  const setMechanismStates = (writes: ReadonlyMap<string, string>) => {
-    if (!activeJourneyId || writes.size === 0) return
-    const entries = [...writes].map(([address, stateId]) => [atLevel(address), stateId] as const)
+  const setMechanismStates = (writes: MechanismWrites) => {
+    if (!activeJourneyId || (typeof writes !== "function" && writes.size === 0)) return
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
+        // Read off the save as this write finds it, so writes made in one tick compose rather than each reading the
+        // snapshot this API was built over.
+        const resolved = typeof writes === "function" ? writes(atLevelMap(j.levelNr, j.mechanismStates)) : writes
+        const entries = [...resolved].map(([address, stateId]) => [`${j.levelNr}:${address}`, stateId] as const)
         if (entries.every(([at, stateId]) => j.mechanismStates?.[at] === stateId)) return j
         return { ...j, mechanismStates: { ...(j.mechanismStates ?? {}), ...Object.fromEntries(entries) } }
       })
