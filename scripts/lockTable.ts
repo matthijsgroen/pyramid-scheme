@@ -123,7 +123,7 @@ export const lockRow = (path: string, parsed: ParsedLock): LockRow => {
     lock: path,
     mechanisms: mechanismsOf(parsed.lock).join(", "),
     steps: solved ? String(solved.actions) : "–",
-    checks: sound ? "✓" : failed ?? "✗",
+    checks: sound ? "✓" : (failed ?? "✗"),
     sound,
   }
 }
