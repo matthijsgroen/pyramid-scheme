@@ -135,9 +135,10 @@ final whole-branch review on the most capable model. Commit and push freely on t
 
 ## Next session
 
-Placement count: 6/34 (`docs/instructions/agent-work.md` finish line). Goal: placing locks and lessons: queue items 6
-and 7 in `.superpowers/sdd/overnight-queue/QUEUE.md` (fix the three lessons whose way in gets no room and the dropDown
-carve hang; the lock editor on the preview).
+Placement count: 19/34 (`docs/instructions/agent-work.md` finish line). Every junior lesson but three stands; the
+expert locks (dropHome, cellar, twoLamps, overlook, doubleBack) are next. Still open: boardPicksTheWay on junior_2 and
+junior_4 site 1 (below), leverOpensADoor beside junior_2's switch fork (a laid floor carves no plain junction for
+`forks`), and the lock editor on the preview (queue item 7 in `.superpowers/sdd/overnight-queue/QUEUE.md`).
 
 ## Waiting on the designer
 
@@ -155,8 +156,9 @@ carve hang; the lock editor on the preview).
 - **doubleBack lays on about 1 seed in 200:** s1 is reached only through three chained drops. The Valley's last
   pyramid and the dev bench carve it at a pinned seed, so it is fragile: if its floor is ever re-carved, or the lay
   changes, that floor can fall to `layoutNotFound`. The lay-rate verifies measure a made-up mirrorFork instead.
-- **boardPicksTheWay needs a lever:** its `S toggle` is bound to the handle. Whether a junior fork lesson may also
-  teach the lever (the curriculum teaches each mechanic alone first) is the designer's call.
+- **boardPicksTheWay needs a lever:** its `S toggle` is bound to the handle. It stands where its journey taught the lever
+  first (junior_1 site 3, junior_3 site 4); on junior_2 and junior_4 it is the journey's first site. Whether a junior
+  fork lesson may also teach the lever there is the designer's call.
 - **Unanswered:**
   - correct the header comment of `stoneGate.lock` ("not placed yet, not buildable yet") now it stands in Djoser?
   - delete the "nothing else moved" test in `src/mods/puzzleSeeds.verify.ts`? It pins authored counts.
