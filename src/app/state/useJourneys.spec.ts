@@ -3,6 +3,7 @@ import { createJourneysV3Api, MECHANISM_AT_REST, type StoredJourneyStateV3 } fro
 import type { TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { journeys as allJourneys } from "@/data/journeys"
 import { migrateJourneyToCarveIndependent } from "@/app/SiteMap/cellIdentity"
+import { RELAID_FLOORS_VERSION } from "@/app/SiteMap/relaidPyramids"
 
 // completeJourney checks against knownJourneyIds (the real journey list), so we
 // need a real journey ID — use the first pyramid entry from the data.
@@ -216,6 +217,7 @@ describe("standingKey clears wherever positionKey does", () => {
         "completeJourney",
         "completeLevel",
         "setCarveIndependentState",
+        "setRelaidFloors",
         "setRepairedExploration",
         "startJourney",
         "updatePosition",
@@ -760,5 +762,78 @@ describe("cellKeyVersion as a record of having been through this release", () =>
     const api = makeApi([makeStoredJourney({ cellKeyVersion: 3 })])
 
     expect(api.journeysNeedingReKey()).toEqual([])
+  })
+})
+
+describe("the re-laid pyramids step", () => {
+  const stateful = (stored: StoredJourneyStateV3) => {
+    let state = [stored]
+    const api = createJourneysV3Api({
+      journeys: state,
+      setJourneys: updater => {
+        state = typeof updater === "function" ? updater(state) : updater
+      },
+      journeyData: [makeJourneyData(REAL_ID)],
+    })
+    return { api, current: () => state[0] }
+  }
+
+  const standing = makeStoredJourney({
+    levelNr: 2,
+    interiorLevelNr: 2,
+    position: "0:1,2",
+    positionKey: "main#0/p2",
+    standingKey: "main#0/~7",
+    exploredCells: { "2:main": ["0/p0", "0/p2"] },
+    mechanismStates: { "2:main#0/xmech:lever": "open" },
+  })
+
+  it("offers every save not yet stamped, standing anywhere or nowhere", () => {
+    const api = makeApi([makeStoredJourney()])
+
+    expect(api.journeysNeedingRelaidFloors().map(j => j.journeyId)).toEqual([REAL_ID])
+  })
+
+  it("leaves a save already stamped alone", () => {
+    const api = makeApi([makeStoredJourney({ relaidFloorsVersion: RELAID_FLOORS_VERSION })])
+
+    expect(api.journeysNeedingRelaidFloors()).toEqual([])
+  })
+
+  it("forgets where a save inside a re-laid pyramid stands, and keeps its level, its exploration and its mechanisms", () => {
+    const { api, current } = stateful(standing)
+
+    api.setRelaidFloors(REAL_ID, true)
+
+    expect(current()).toEqual({
+      ...standing,
+      position: null,
+      positionKey: null,
+      standingKey: null,
+      relaidFloorsVersion: RELAID_FLOORS_VERSION,
+    })
+  })
+
+  it("only stamps a save that stands elsewhere", () => {
+    const { api, current } = stateful(standing)
+
+    api.setRelaidFloors(REAL_ID, false)
+
+    expect(current()).toEqual({ ...standing, relaidFloorsVersion: RELAID_FLOORS_VERSION })
+  })
+
+  it("starts a new journey already stamped, so a place taken after the release is kept", async () => {
+    let state: StoredJourneyStateV3[] = []
+    const api = createJourneysV3Api({
+      journeys: state,
+      setJourneys: updater => {
+        state = typeof updater === "function" ? updater(state) : updater
+      },
+      journeyData: [makeJourneyData(REAL_ID)],
+    })
+
+    await api.startJourney({ id: REAL_ID, levelCount: REAL_LEVEL_COUNT } as Parameters<typeof api.startJourney>[0])
+
+    expect(state[0].relaidFloorsVersion).toBe(RELAID_FLOORS_VERSION)
   })
 })

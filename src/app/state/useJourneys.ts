@@ -9,6 +9,7 @@ import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 import { isPlaceAddress, keyOfAddress, sectionOfAddress, type CarveIndependentState } from "@/app/SiteMap/cellIdentity"
 import type { RepairedExploration } from "@/app/SiteMap/repairFloorExploration"
 import type { MechanismSlotBackfill } from "@/app/SiteMap/backfillMechanismSlots"
+import { RELAID_FLOORS_VERSION } from "@/app/SiteMap/relaidPyramids"
 
 /** Bumped whenever a stored cell key changes shape. 2 named cells by their authored slot and floor
  * rather than by their step along the carved walk. 3 named their SECTION by its authoring address
@@ -102,6 +103,9 @@ export type StoredJourneyStateV3 = {
   floorExplorationVersion?: number
   /** Which mechanism-slot copy this save has been through, so the backfill runs once per save. */
   mechanismSlotVersion?: number
+  /** Which re-laying of shipped pyramids this save has been through (RELAID_FLOORS_VERSION), so the step that
+   *  forgets a place on a re-laid floor runs once per save. */
+  relaidFloorsVersion?: number
 }
 
 export type CombinedJourneyState = StoredJourneyStateV3 & {
@@ -137,6 +141,11 @@ export type JourneyAPI = {
   /** Saves whose mechanism rooms may still be filed under their earlier address — see useMechanismSlotBackfill. */
   journeysNeedingMechanismSlots: () => StoredJourneyStateV3[]
   setMechanismSlotBackfill: (journeyId: string, copied: MechanismSlotBackfill) => void
+  /** Saves not yet through the current re-laying of shipped pyramids — see useRelaidFloorsBackfill. */
+  journeysNeedingRelaidFloors: () => StoredJourneyStateV3[]
+  /** Stamps the save; with `resumeAtEntrance` it also forgets where the save stands, as visitLevel does, and keeps
+   *  the level it is on. */
+  setRelaidFloors: (journeyId: string, resumeAtEntrance: boolean) => void
   /** This level's exploration, by section: the cell keys the map restores from. */
   getExploredCells: (journeyId: string) => Record<string, string[]>
   /** Records `address` as the live cell the player is standing on (`standingKey`), and — unless it
@@ -296,6 +305,7 @@ export const createJourneysV3Api = ({
       // Born current: a journey started under this release has never been keyed any other way.
       cellKeyVersion: CELL_KEY_VERSION,
       mechanismSlotVersion: MECHANISM_SLOT_VERSION,
+      relaidFloorsVersion: RELAID_FLOORS_VERSION,
     }
     return Promise.resolve(setJourneys(prev => [...prev, newJourney]))
   }
@@ -453,6 +463,23 @@ export const createJourneysV3Api = ({
           mechanismSlotVersion: MECHANISM_SLOT_VERSION,
         }
       })
+    )
+  }
+
+  // Stamped on every journey, standing or not, so the stamp is the exact record of which saves came through.
+  const journeysNeedingRelaidFloors = () => journeys.filter(j => j.relaidFloorsVersion !== RELAID_FLOORS_VERSION)
+
+  const setRelaidFloors = (journeyId: string, resumeAtEntrance: boolean) => {
+    setJourneys(prev =>
+      prev.map(j =>
+        j.journeyId === journeyId
+          ? {
+              ...j,
+              ...(resumeAtEntrance ? { position: null, positionKey: null, standingKey: null } : {}),
+              relaidFloorsVersion: RELAID_FLOORS_VERSION,
+            }
+          : j
+      )
     )
   }
 
@@ -721,5 +748,7 @@ export const createJourneysV3Api = ({
     setRepairedExploration,
     journeysNeedingMechanismSlots,
     setMechanismSlotBackfill,
+    journeysNeedingRelaidFloors,
+    setRelaidFloors,
   }
 }

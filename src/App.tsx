@@ -5,6 +5,7 @@ import { useJourneys } from "@/app/state/useJourneys"
 import { useCarveIndependentBackfill } from "@/app/SiteMap/useCarveIndependentBackfill"
 import { useFloorExplorationBackfill } from "@/app/SiteMap/useFloorExplorationBackfill"
 import { useMechanismSlotBackfill } from "@/app/SiteMap/useMechanismSlotBackfill"
+import { useRelaidFloorsBackfill } from "@/app/SiteMap/useRelaidFloorsBackfill"
 import { FezCompanion } from "./app/fez/FezCompanion"
 import { DevelopModeProvider } from "./contexts/DevelopMode"
 import PWABadge from "./PWABadge"
@@ -21,6 +22,8 @@ function App() {
   useFloorExplorationBackfill(journeys)
   // Last, because it merges into what the two above have just written.
   useMechanismSlotBackfill(journeys)
+  // After the re-key: a place it derives for a save inside a re-laid pyramid is forgotten with the rest.
+  useRelaidFloorsBackfill(journeys)
 
   const journeyInfo = activeJourneyId ? getJourney(activeJourneyId) : null
 
