@@ -4,6 +4,7 @@ import { DEV_JOURNEY_ID } from "./data"
 import type { SiteConfig } from "./types"
 import type { FloorConfig as GameFloorConfig } from "../game/siteTypes"
 import { expandFloorLocks } from "../game/floorLocks"
+import { mirrorForkLock } from "../game/testSupport/lockFixtures"
 import { layLockPlan, startingGridSize } from "../game/layLocks"
 import { planLockFloor } from "../game/lockPlan"
 import { expectLaidPlan } from "../game/testSupport/laidLocksInvariants"
@@ -55,25 +56,28 @@ afterAll(() => {
   delete process.env.INCLUDE_DEV
 })
 
-describe("laying the dev pyramid's doubleBack plan", () => {
+// A made-up mirrorFork on the dev pyramid's doubleBack floor: the lay rate is measured on a lock that lays well,
+// so a regression in the lay shows as a drop below the bar. doubleBack itself is carved at its pinned seed in
+// laidCarveWorld.verify.
+describe("laying a mirrorFork plan on the dev pyramid's doubleBack floor", () => {
   it(
-    "lays on at least one of 200 seeds, with its junction, drops, walls and route intact",
-    { timeout: 400_000 },
+    "lays on at least 30 of 40 seeds, each with its junction, drops, walls and route intact",
+    { timeout: 120_000 },
     () => {
-      const floor = Object.entries(world)
+      const devFloor = Object.entries(world)
         .filter(([id]) => id === DEV_JOURNEY_ID)
         .flatMap(([, sites]) => sites.flat() as unknown as GameFloorConfig[])
         .find(candidate => candidate.locks?.[0]?.lock.name === "doubleBack")!
-      const expanded = expandFloorLocks(floor)
+      const expanded = expandFloorLocks({ ...devFloor, locks: [{ lock: mirrorForkLock() }] })
       if (!expanded.ok) throw new Error(`refused: ${JSON.stringify(expanded.reasons)}`)
       const plan = planLockFloor(expanded)!
-      const laidSeeds = Array.from({ length: 200 }, (_, i) => i + 1).flatMap(seed => {
+      const laidSeeds = Array.from({ length: 40 }, (_, i) => i + 1).flatMap(seed => {
         const result = layLockPlan(plan, { seed, n: startingGridSize(plan) })
         if (!result.ok) return []
         expectLaidPlan(plan, result.laid)
         return [seed]
       })
-      expect(laidSeeds.length).toBeGreaterThanOrEqual(1)
+      expect(laidSeeds.length).toBeGreaterThanOrEqual(30)
     }
   )
 })
