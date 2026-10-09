@@ -175,8 +175,21 @@ export const juniorRules: Rule[] = [
   journey("junior_4").pyramid(2, { sideSections: [holdChest(1)] }),
   journey("junior_4").pyramid(3, { sideSections: [holdChest(2), oldWorkings()] }),
 
-  // The Lighthouse's last pyramid previews the expert lever: one lever swaps two doors and can be thrown back
-  // (docs/game-design/lock-placement.md).
+  // THE LESSONS: a junior pyramid's main floor teaches one control alone — a lever, a torch — so the expert
+  // locks that combine them meet a player who knows each (docs/game-design/lock-placement.md). The
+  // Lighthouse's last pyramid previews the expert lever: one lever swaps two doors and can be thrown back.
+  journey("junior_1").pyramid(1, lessonOnMainFloor("leverOpensADoor")),
+  journey("junior_1").pyramid(2, lessonOnMainFloor("dropDown")),
+  journey("junior_1").pyramid(3, lessonOnMainFloor("boardPicksTheWay")),
+  journey("junior_2").pyramid(3, lessonOnMainFloor("torch")),
+  journey("junior_2").pyramid(4, lessonOnMainFloor("dropDown")),
+  journey("junior_3").pyramid(1, lessonOnMainFloor("leverOpensADoor")),
+  journey("junior_3").pyramid(2, lessonOnMainFloor("dropDown")),
+  journey("junior_3").pyramid(3, lessonOnMainFloor("torch")),
+  journey("junior_3").pyramid(4, lessonOnMainFloor("boardPicksTheWay")),
+  journey("junior_4").pyramid(2, lessonOnMainFloor("leverOpensADoor")),
+  journey("junior_4").pyramid(3, lessonOnMainFloor("dropDown")),
+  journey("junior_4").pyramid(4, lessonOnMainFloor("torch")),
   journey("junior_4").pyramid(5, lessonOnMainFloor("leverSwapsDoors")),
 
   tomb("junior_treasure_tomb", {
