@@ -5,6 +5,7 @@
 in -[Y+A:a]- west
 in -[Y+A]- out
 west >> in
+out >> west
 Y fork @in
 A toggle @west
 west *

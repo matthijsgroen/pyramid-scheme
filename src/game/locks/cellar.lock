@@ -6,6 +6,7 @@ in -[H:a]- ledge
 in -[blue]- cell
 in -[H]- out
 ledge >> cell
+out >> ledge
 H toggle @ledge
 blue activator @cell
 ledge *

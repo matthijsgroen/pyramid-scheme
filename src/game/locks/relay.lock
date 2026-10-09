@@ -5,6 +5,8 @@
 in -[A:a]- r1 -[A+B:off]- r2 -[B]- r3
 r3 -[C]- >> in
 in -[C]- out
+out >> r1
+out >> r3
 A toggle @r1
 B torch @r2
 C torch @r3

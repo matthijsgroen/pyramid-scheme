@@ -6,6 +6,7 @@ in -[B:a]- west
 in -[A:a]- east
 in -[A+B]- out
 west >> east >> in
+out >> west
 A toggle @west
 B toggle @east
 west *

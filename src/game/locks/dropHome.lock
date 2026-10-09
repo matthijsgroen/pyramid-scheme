@@ -6,6 +6,7 @@ in -[Y]- hall -[H:a]- leverRoom
 in -[Y]- vault
 in -[H]- out
 leverRoom >> in
+out >> leverRoom
 Y fork @in
 H toggle @leverRoom
 hall *
