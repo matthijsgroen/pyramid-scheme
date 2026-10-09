@@ -814,6 +814,24 @@ describe("the re-laid pyramids step", () => {
     })
   })
 
+  it("forgets the place the re-key derived in the same launch", () => {
+    const { api, current } = stateful({ ...standing, positionKey: null, cellKeyVersion: undefined })
+
+    api.setCarveIndependentState(REAL_ID, {
+      exploredCells: { "2:main": ["0/p0", "0/p2"] },
+      positionKey: "main#0/p2",
+      standingKey: null,
+      disabledTraps: [],
+      skippedConsumables: [],
+      purchasedStock: [],
+      knownHiddenCorridors: [],
+      foundHiddenCorridors: [],
+    })
+    api.setRelaidFloors(REAL_ID, true)
+
+    expect(current()).toMatchObject({ positionKey: null, position: null, standingKey: null, cellKeyVersion: 3 })
+  })
+
   it("only stamps a save that stands elsewhere", () => {
     const { api, current } = stateful(standing)
 
