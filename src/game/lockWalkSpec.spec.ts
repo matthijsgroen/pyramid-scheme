@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest"
 import { checkLockSpec, reachableStates, walkLock } from "./lockWalk"
 import { walkSpecOf, isStretch, WEIGHTS, needsFace, notBuildable, openAtStart, readable } from "./lockWalkSpec"
 import { parseLock } from "./lockNotation"
+import { solveLock } from "./lockReview"
+import { barriersOf } from "./lockAuthoring"
 
 const compiled = (text: string) => {
   const { lock, drafts } = parseLock(text)
@@ -72,6 +74,47 @@ describe("walkSpecOf", () => {
     const spec = compiled("in -[G]- out")
     expect(spec.mechanisms.G).toEqual({ states: ["draft"], initial: "draft", opens: { draft: [] }, transitions: [] })
     expect(walkLock(spec)).toEqual({ sound: false, failure: { type: "unsolvable" } })
+  })
+
+  it("never climbs a gate-then-drop corridor from below: the stretch past the gate only falls", () => {
+    const spec = compiled("in -- out\nin -[H]- >> pit\npit -- out\nH toggle @in")
+    expect(spec.oneWays).toEqual([{ from: "in|pit#1.1", to: "pit" }])
+    expect(Object.values(spec.gates).filter(gate => gate.from === "pit" || gate.to === "pit")).toEqual([
+      expect.objectContaining({ from: "pit", to: "out" }),
+    ])
+  })
+
+  it("walks a << corridor one way, from the region on the right onto the stretch beside its gate", () => {
+    const spec = compiled("in -- out\nin -[H]- << pit\npit -- out\nH toggle @in")
+    expect(spec.oneWays).toEqual([{ from: "pit", to: "in|pit#1.1" }])
+    expect(spec.gates["in-pit"]).toMatchObject({ from: "in", to: "in|pit#1.1" })
+  })
+
+  it("walks two gated corridors on one pair as two ways", () => {
+    const spec = compiled("in -[A]- out\nin -[B]- out\nA toggle @in\nB toggle @in")
+    expect(spec.gates["in-out"]).toMatchObject({ from: "in", to: "out", owners: ["A"] })
+    expect(spec.gates["in-out#2"]).toMatchObject({ from: "in", to: "out", owners: ["B"] })
+    expect(solveLock(spec)!.actions).toBe(1)
+  })
+
+  it("walks a drop no connection names as a corridor of its own, so the pit it falls into strands", () => {
+    const { lock } = parseLock("in -- out\nin >> pit")
+    const unnamed = { ...lock, connections: lock.connections.filter(connection => !("between" in connection)) }
+    expect(unnamed.connections).toHaveLength(1)
+    expect(walkLock(walkSpecOf(unnamed))).toMatchObject({ sound: false, failure: { type: "strands" } })
+  })
+
+  it("holds a drop no connection names before a barred region it lands in", () => {
+    const { lock } = parseLock("in -- out\nin >> hall\nhall -[S]\nS toggle @in")
+    const unnamed = {
+      ...lock,
+      connections: lock.connections.filter(connection => !barriersOf(connection).some(id => id in lock.oneWays!)),
+    }
+    const found = reachableStates(walkSpecOf(unnamed))
+    if (found === "tooLarge") throw new Error("expected a walkable lock")
+    const inHall = found.order.filter(state => state.region === "hall")
+    expect(inHall.length).toBeGreaterThan(0)
+    expect(inHall.every(state => state.config.S === "b")).toBe(true)
   })
 
   it("names a stretch by the two regions it lies between", () => {

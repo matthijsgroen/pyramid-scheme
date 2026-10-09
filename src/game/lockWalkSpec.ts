@@ -1,6 +1,6 @@
 // A LOCK AS THE WALK SEES IT. walkSpecOf turns the shared Lock into the LockSpec walkLock proves, with
 // every move the player has; the facts an author cannot read off the document are derived here too.
-import type { Lock, LockMechanic } from "./lockAuthoring"
+import type { Lock, LockConnection, LockMechanic } from "./lockAuthoring"
 import { barriersOf, isRegionGate, isWeightOwner, joinOf } from "./lockAuthoring"
 import type { LockSpec, Mechanism } from "./lockWalk"
 import { TORCH_OFF, TORCH_ON } from "./mechanics/torch"
@@ -36,7 +36,12 @@ export const walkSpecOf = (lock: Lock, drafts: readonly string[] = []): LockSpec
   const plain: string[] = []
   const regionGates = Object.entries(lock.gates).filter(([, gate]) => isRegionGate(gate))
 
-  lock.connections.forEach((connection, c) => {
+  // A drop no connection names is a corridor of its own carrying only that drop, as compile reads it.
+  const named = new Set(lock.connections.flatMap(connection => barriersOf(connection)))
+  const ownCorridors: LockConnection[] = Object.entries(lock.oneWays ?? {}).flatMap(([id, { from, to }]) =>
+    named.has(id) ? [] : [{ between: [from, to], barriers: [id] }]
+  )
+  ;[...lock.connections, ...ownCorridors].forEach((connection, c) => {
     const [a, b] = joinOf(connection)
     const hops: Hop[] = barriersOf(connection).map(id => ({
       kind: Object.hasOwn(lock.oneWays ?? {}, id) ? "oneWay" : "gate",
