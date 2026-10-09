@@ -127,7 +127,17 @@ final whole-branch review on the most capable model. Commit and push freely on t
 - **Art method:** a variant (lit, pressed, with a stone) is a Gemini EDIT of the painted master, not a fresh roll.
   Imports are unmasked with `--seat` when the scaffold mask clips the paint.
 - **No unit tests on authored content.** `yarn lock` checks the locks; tests use made-up locks.
+- **Corridors carry items** (2026-10-09): a corridor carries gates and one drop in order, dashes align a gate, two
+  lines on one pair are two corridors, `<<` reads right to left. doubleBack is read from its `.lock` file; clockwork,
+  lamplighter, observatory and boardPicksTheWay were fixed so their forks stay off the route. The placement walk
+  crosses a drop launch to landing. Plan: `docs/superpowers/plans/2026-10-09-corridor-items.md`.
 - **Stable world:** without `INCLUDE_DEV=1` the bake stays byte-identical. Saves are migrated, never reset.
+
+## Next session
+
+Placement count: 6/34 (`docs/instructions/agent-work.md` finish line). Goal: placing locks and lessons: queue items 6
+and 7 in `.superpowers/sdd/overnight-queue/QUEUE.md` (fix the three lessons whose way in gets no room and the dropDown
+carve hang; the lock editor on the preview).
 
 ## Waiting on the designer
 
@@ -142,14 +152,8 @@ final whole-branch review on the most capable model. Commit and push freely on t
   repeats. Worked from `docs/game-design/lock-placement.md` (and `lock-curriculum.md`). stoneOnAPlate before Djoser's
   capstone (site 3 or 4): no stone lesson stands before it yet.
 - **doubleBack-blocked:** `src/game/locks/doubleBack-blocked.lock` is the old doubleBack, kept for the designer.
-- **doubleBack's TypeScript twin cannot fold yet.** `catalogueLock("doubleBack")` does not compile for the carve:
-  `.lock` writes `leftLower >> in` as a connection of its own beside `in -[Y]- leftLower`, and `compileLock`
-  refuses the pair `connectionRepeated` (the twin's drops join no connection). The world and the dev floor still
-  read `doubleBackLock()` from `src/worldGen/spec/locks/doubleBack.ts`. Open: should `parseLock` write a drop beside
-  a gate as a drop with no connection, or should `compileLock` take a pair joined by a gate and a drop?
 - **Unanswered:**
   - correct the header comment of `stoneGate.lock` ("not placed yet, not buildable yet") now it stands in Djoser?
-  - should `yarn lock` show every `checkLock` fault (e.g. `connectionRepeated`)?
   - delete the "nothing else moved" test in `src/mods/puzzleSeeds.verify.ts`? It pins authored counts.
 - **Not asked yet:** the corner squeeze, still the old two-leg slide.
 - **A lit torch in the dark:** in fog a lit torch differs from an unlit one only by its pool of light; the torch

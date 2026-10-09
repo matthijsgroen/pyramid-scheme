@@ -249,23 +249,66 @@ placed (§5), and so is which lock nests in it, though only in its nest spot (be
     "in": { "takes": "puzzles" },
     "leftLower": { "takes": "nothing" },
     "rightLower": { "takes": "nothing" },
-    "s1": { "takes": "nothing" },
+    "out": { "takes": "nothing" },
     "s2": { "takes": "reward" },
-    "out": { "takes": "nothing" }
+    "s1": { "takes": "nothing" }
   },
   "connections": [
-    ["in", "leftLower"],
-    ["in", "rightLower"],
-    ["rightLower", "s1"],
-    ["leftLower", "s2"],
-    ["in", "out"]
+    {
+      "between": ["in", "leftLower"],
+      "barriers": ["in-leftLower"]
+    },
+    {
+      "between": ["in", "rightLower"],
+      "barriers": ["in-rightLower"]
+    },
+    {
+      "between": ["in", "out"],
+      "barriers": ["in-out"]
+    },
+    {
+      "between": ["leftLower", "s2"],
+      "barriers": ["leftLower-s2"]
+    },
+    {
+      "between": ["rightLower", "s1"],
+      "barriers": ["rightLower>s1"]
+    },
+    {
+      "between": ["s1", "leftLower"],
+      "barriers": ["s1>leftLower"]
+    },
+    {
+      "between": ["leftLower", "in"],
+      "barriers": ["leftLower>in"]
+    }
   ],
   "gates": {
-    "in-leftLower": { "from": "in", "to": "leftLower", "owners": ["Y"] },
-    "in-rightLower": { "from": "in", "to": "rightLower", "owners": ["Y"] },
-    "rightLower-s1": { "from": "rightLower", "to": "s1", "owners": ["S1"] },
-    "leftLower-s2": { "from": "leftLower", "to": "s2", "owners": ["S1"] },
-    "in-out": { "from": "in", "to": "out", "owners": ["S2"] }
+    "in-leftLower": {
+      "from": "in",
+      "to": "leftLower",
+      "owners": ["Y"]
+    },
+    "in-rightLower": {
+      "from": "in",
+      "to": "rightLower",
+      "owners": ["Y"]
+    },
+    "in-out": {
+      "from": "in",
+      "to": "out",
+      "owners": ["S2"]
+    },
+    "leftLower-s2": {
+      "from": "leftLower",
+      "to": "s2",
+      "owners": ["S1"]
+    }
+  },
+  "oneWays": {
+    "rightLower>s1": { "from": "rightLower", "to": "s1" },
+    "s1>leftLower": { "from": "s1", "to": "leftLower" },
+    "leftLower>in": { "from": "leftLower", "to": "in" }
   },
   "mechanics": {
     "Y": { "control": "fork-switch", "in": "in" },
@@ -273,14 +316,21 @@ placed (§5), and so is which lock nests in it, though only in its nest spot (be
       "control": "toggle",
       "in": "s1",
       "starts": "a",
-      "opens": { "a": ["rightLower-s1"], "b": ["leftLower-s2"] }
+      "opens": {
+        "a": [],
+        "b": ["leftLower-s2"]
+      }
     },
-    "S2": { "control": "toggle", "in": "s2", "starts": "a", "opens": { "a": [], "b": ["in-out"] } }
+    "S2": {
+      "control": "toggle",
+      "in": "s2",
+      "starts": "a",
+      "opens": {
+        "a": [],
+        "b": ["in-out"]
+      }
+    }
   },
-  "oneWays": [
-    { "from": "s1", "to": "leftLower" },
-    { "from": "leftLower", "to": "in" }
-  ],
   "in": "in",
   "out": "out"
 }
@@ -296,21 +346,30 @@ meets `to`, as the arrow points. The spot may be any connection of the lock, on 
 on a connection that also carries a gate, a drop or any other barrier is ignored: the lock has no nest spot,
 the connection carves as written, and `yarn lock` notes "nest spot ignored". In the notation a second spot is
 refused `nestSpotsRepeated`, and a spot on a pair that has another connection `nestSpotShared`, both when the
-lock is read (`yarn lock`); a JSON lock writes one spot, and repeats a pair only as `connectionRepeated`. A
+lock is read (`yarn lock`); `compileLock` refuses a JSON lock's spot on a pair with another connection `nestSpotShared` too. A
 spot on no connection is refused `nestSpotOnNoConnection` (`compileLock`). The connection stays in
 `connections`, so where nothing nests the spot is a plain corridor.
 
 ### Connections
 
-`connections` is the whole shape of the lock: every pair of regions that join. A connection with nothing
-on it is a passage the player simply walks, which is what lets two regions be distinct places without a
+`connections` is the whole shape of the lock. A connection is a **corridor** between two regions; with nothing
+on it, it is a passage the player simply walks, which is what lets two regions be distinct places without a
 barrier between them — needed to put a sequence's tiles in different regions that nothing separates.
 
-An edge gate stands ON a connection, so every `from`/`to` gate must name one that exists. Topology is
-written once, in `connections`; `gates` says which of them are barred. A gate naming a connection that
-was never declared is an error rather than a new passage.
+`barriers` are the corridor's **items, in order** from `between[0]` to `between[1]`: gates and at most one drop, one id
+space. A drop stays an entry in `oneWays` (`from`/`to`, its direction of travel) and is named in its connection's
+`barriers` where it stands; it makes the corridor one-way from where it stands, and a corridor falls once
+(`corridorFallsTwice`). A `oneWays` entry no connection names is a corridor of its own carrying only that drop.
 
-A region gate needs no connection: it bars a region rather than an edge.
+`align` names the gates the author placed (`-[A]---` left, `---[A]-` right, `--[A]--` centre in the notation): left
+stands a gate right after what is written before it, right right before what follows, centre leaves room for puzzles
+either side. It is a preference to the carve: it never refuses a lock and never lengthens a corridor. A gate it does
+not name is free; a drop is never aligned (`alignOnDrop`), and an alignment names only its connection's own gates
+(`alignOffConnection`).
+
+**Two connections on one pair are two corridors**, the first written first. An edge gate stands ON a connection, so
+every `from`/`to` gate must name a pair that is declared; a gate naming a pair that was never declared is an error
+rather than a new passage. A region gate needs no connection: it bars a region rather than an edge.
 
 ### Gates
 

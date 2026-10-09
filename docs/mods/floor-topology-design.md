@@ -390,6 +390,10 @@ oneWays: [
 ]
 ```
 
+A drop is an item of its corridor: a corridor may carry gates and one drop, in order (`in -[Y]- >> hall`). The stretch
+either side of the drop is walked both ways and the drop only along its arrow; on the floor it is a **falling
+corridor**, a drop with a stretch hung from each region for the items on that side.
+
 **What a one-way guarantees.** These are the contract, not notes about one floor: a drop is an
 ingredient, and every lock that ever stands one inherits all of it.
 
@@ -457,7 +461,7 @@ it looks like on the grid.
 
 **What the builder may do with the shape**
 
-6. **A connecting corridor may absorb side paths.**
+6. **A connecting corridor may absorb side paths.** Where on it they can go is the author's alignment: a gate aligned against a region or an item leaves no node between them.
 7. **The site builder may carve side paths off a lock's connecting corridors** when it has a lot of
    content to place.
 8. **A lock may stand anywhere in a larger map** — side sections may hang before its `in` and after
