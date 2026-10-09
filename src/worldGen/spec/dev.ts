@@ -4,7 +4,6 @@ import type { Difficulty } from "../types"
 import { DEV_JOURNEY_ID } from "../data"
 import { freeRegions } from "@/game/lockAuthoring"
 import { catalogueLock } from "./locks/catalogue"
-import { doubleBackLock } from "./locks/doubleBack"
 import { processionalLock } from "./locks/processional"
 import { sluiceLock } from "./locks/sluice"
 
@@ -87,7 +86,7 @@ export const devRules: Rule[] = [
       out: "vault",
     },
   }),
-  // 2 — doubleBack. The designer's lock, placed whole: Y is a fork-switch operating its own fork on the
+  // 2 — doubleBack. The designer's lock, read from its .lock file and placed whole: Y is a fork-switch operating its own fork on the
   // lock's seams, S1 and S2 are toggles, and two drops fall out of the off-route chain. The lock's regions
   // are all `free`: its puzzles/nothing/reward appetites carve 0 of 60 seeds on this layout, and what this
   // bench holds is the topology, not what sits in each region.
@@ -101,12 +100,12 @@ export const devRules: Rule[] = [
       realisations: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
     })
     .floor(0, {
-      locks: [{ lock: doubleBackLock() }],
+      locks: [{ lock: freeRegions(catalogueLock("doubleBack")) }],
       // Recorded from the bake's own carve search (searchCarvePair): at the default packing the floor's own
       // address seed carves on attempt 0, walks sound and leaves no dead region, so no packing is
       // authored and the seed is stamped only so the carve does not move with the seed formula. A dev floor has
       // no baked output to carry the pin.
-      seed: 111235356889667,
+      seed: 4293857875,
     }),
   // 3 — the one-way drop. The ledge's own way on is a fall into the sink, and the sink has no way
   // back up it: the passage is drawn from both sides today, which is why this stands here and on no

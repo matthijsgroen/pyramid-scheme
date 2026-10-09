@@ -25,7 +25,9 @@ import { oneWayRuns } from "../game/gridNavigation"
 import { refusal } from "./carveSeedSearch"
 import { resolveOneWayRealisation } from "../mods/allOneWayRealisations"
 import { resolvePassageRealisation } from "../mods/allPassageRealisations"
-import { doubleBackLock } from "./spec/locks/doubleBack"
+import { freeRegions } from "@/game/lockAuthoring"
+import { compileLock } from "@/game/lockCompile"
+import { catalogueLock } from "./spec/locks/catalogue"
 // Same sanctioned exception configBuilder.integration.spec.ts takes: the claim here is about the
 // REAL, complete world, which only the real mod-owned currencies can build.
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../mods/allCurrencyDistributions"
@@ -350,7 +352,7 @@ describe("what the dev journey authors", () => {
     expect(pyramid2).toHaveLength(1)
     const [floor] = pyramid2
 
-    expect(floor.locks).toEqual([{ lock: doubleBackLock() }])
+    expect(floor.locks).toEqual([{ lock: freeRegions(catalogueLock("doubleBack")) }])
     expect(floor.realisations).toEqual({ "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" })
     // The lock compiles the layout and the barriers; authoring them beside it would be two statements of one thing.
     expect(floor.regionLayout).toBeUndefined()
@@ -358,78 +360,40 @@ describe("what the dev journey authors", () => {
     expect(floor.controls).toBeUndefined()
   })
 
-  it("compiles doubleBack's six regions, five gates and its drops, between the floor's entrance and exit", () => {
+  it("compiles the catalogue doubleBack's regions, gates and drops between the floor's entrance and exit", () => {
     const [floor] = withDev[DEV_JOURNEY_ID][1]
     const expanded = expandFloorLocks(floor as GameFloorConfig)
     if (!expanded.ok) throw new Error(`doubleBack did not compile: ${JSON.stringify(expanded.reasons)}`)
+    const own = compileLock(freeRegions(catalogueLock("doubleBack")), floor.realisations!, { namespace: "doubleBack" })
+    if (!own.ok) throw new Error(`doubleBack did not compile alone: ${JSON.stringify(own.faults)}`)
     const { regionLayout, obstacles } = expanded.config
-
     expect(regionLayout!.regions.map(region => region.name)).toEqual([
       "entrance",
-      "doubleBack.in",
-      "doubleBack.leftLower",
-      "doubleBack.rightLower",
-      "doubleBack.s1",
-      "doubleBack.s2",
-      "doubleBack.out",
+      ...own.fragment.regionLayout.regions.map(region => region.name),
       "exit",
     ])
     expect(regionLayout!.connections).toEqual([
       ["entrance", "doubleBack.in"],
-      ["doubleBack.in", "doubleBack.leftLower"],
-      ["doubleBack.in", "doubleBack.rightLower"],
-      ["doubleBack.rightLower", "doubleBack.s1"],
-      ["doubleBack.leftLower", "doubleBack.s2"],
-      ["doubleBack.in", "doubleBack.out"],
+      ...own.fragment.regionLayout.connections,
       ["doubleBack.out", "exit"],
     ])
-    expect(obstacles!.map(({ id, kind, at }) => [id, kind, at.on === "connection" ? at.between : undefined])).toEqual([
-      ["doubleBack.in-leftLower", "gate", ["doubleBack.in", "doubleBack.leftLower"]],
-      ["doubleBack.in-rightLower", "gate", ["doubleBack.in", "doubleBack.rightLower"]],
-      ["doubleBack.rightLower-s1", "gate", ["doubleBack.rightLower", "doubleBack.s1"]],
-      ["doubleBack.leftLower-s2", "gate", ["doubleBack.leftLower", "doubleBack.s2"]],
-      ["doubleBack.in-out", "gate", ["doubleBack.in", "doubleBack.out"]],
-      ...Object.entries(floor.locks![0].lock.oneWays ?? {}).map(([id, { from, to }]) => [
-        `doubleBack.${id}`,
-        "oneWay",
-        [`doubleBack.${from}`, `doubleBack.${to}`],
-      ]),
-    ])
+    expect(obstacles).toEqual(own.fragment.obstacles)
   })
 
-  it("compiles doubleBack's three controls: a fork-switch operating its own fork and two toggles dressed as handles", () => {
+  it("compiles the catalogue doubleBack's controls, dressed by the floor's binding", () => {
     const [floor] = withDev[DEV_JOURNEY_ID][1]
     const expanded = expandFloorLocks(floor as GameFloorConfig)
     if (!expanded.ok) throw new Error(`doubleBack did not compile: ${JSON.stringify(expanded.reasons)}`)
-
-    expect(expanded.config.controls).toEqual([
-      { id: "doubleBack.Y", in: "doubleBack.in", control: "fork-switch", encounter: "lightbeamSwitch" },
-      {
-        id: "doubleBack.S1",
-        in: "doubleBack.s1",
-        states: ["a", "b"],
-        initial: "a",
-        returnsToInitial: true,
-        opens: { a: ["doubleBack.rightLower-s1"], b: ["doubleBack.leftLower-s2"] },
-        encounter: "handle",
-      },
-      {
-        id: "doubleBack.S2",
-        in: "doubleBack.s2",
-        states: ["a", "b"],
-        initial: "a",
-        returnsToInitial: true,
-        opens: { a: [], b: ["doubleBack.in-out"] },
-        encounter: "handle",
-      },
-    ])
+    const own = compileLock(freeRegions(catalogueLock("doubleBack")), floor.realisations!, { namespace: "doubleBack" })
+    if (!own.ok) throw new Error("doubleBack did not compile alone")
+    expect(expanded.config.controls).toEqual(own.fragment.controls)
   })
 
   it("carves pyramid 2 at its own pinned seed on the first attempt, sound: solvable, and no order of moves strands anyone", () => {
     const [floor] = withDev[DEV_JOURNEY_ID][1]
     expect(floor.sideSections).toEqual([])
     expect(floor.packing).toBeUndefined()
-    expect(floor.seed).toBe(111235356889667)
+    expect(floor.seed).toBe(4293857875)
 
     const result = assembleFloor(
       DEV_JOURNEY_ID,

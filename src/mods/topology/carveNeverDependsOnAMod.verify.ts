@@ -32,6 +32,7 @@ import {
   type Outcome,
 } from "@/game/testSupport/modOff"
 import { reachableFloorsInSite } from "@/worldGen/reachability"
+import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { walkFloorLock } from "@/game/floorLockWalk"
 import { oneWayRuns } from "@/game/gridNavigation"
 
@@ -97,9 +98,12 @@ const assembleReal = (
   off: boolean
 ): AssemblerResult => {
   const world = off ? TOPOLOGY_OFF : TOPOLOGY_ON
+  // A shipped floor carves at the (packing, seed) the bake stamped on it, the pair a player gets.
+  const baked = generatedWorldConfigs[journeyId]?.[levelNr - 1]?.[floorIndex]
+  const pinned = baked ? { ...floor, seed: baked.seed, packing: baked.packing } : floor
   return assembleFloor(
     journeyId,
-    floor as unknown as FloorConfig,
+    pinned as unknown as FloorConfig,
     floorAssemblySeed(persistentInteriorSeed(journeyId), levelNr, floorIndex),
     world.resolveEncounter,
     {

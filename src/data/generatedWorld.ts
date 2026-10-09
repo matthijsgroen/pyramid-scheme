@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1289375971
+export const worldContentHash = 1835265982
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -5699,7 +5699,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: ["funerary", "puzzle"],
         encountersByIndex: { 0: "hidato", 1: "canisters", 2: "sudoku", 3: "constellation", 4: "procession" },
         packing: 0.1,
-        seed: 2816278010141109,
+        seed: 3529644493,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d3", pieceIndex: 0 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -5716,32 +5716,33 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
                 in: { takes: "free" },
                 leftLower: { takes: "free" },
                 rightLower: { takes: "free" },
-                s1: { takes: "free" },
-                s2: { takes: "free" },
                 out: { takes: "free" },
+                s2: { takes: "free" },
+                s1: { takes: "free" },
               },
               connections: [
                 { between: ["in", "leftLower"], barriers: ["in-leftLower"] },
                 { between: ["in", "rightLower"], barriers: ["in-rightLower"] },
-                { between: ["rightLower", "s1"], barriers: ["rightLower-s1"] },
-                { between: ["leftLower", "s2"], barriers: ["leftLower-s2"] },
                 { between: ["in", "out"], barriers: ["in-out"] },
+                { between: ["leftLower", "s2"], barriers: ["leftLower-s2"] },
+                { between: ["rightLower", "s1"], barriers: ["rightLower>s1"] },
+                { between: ["s1", "leftLower"], barriers: ["s1>leftLower"] },
+                { between: ["leftLower", "in"], barriers: ["leftLower>in"] },
               ],
               gates: {
                 "in-leftLower": { from: "in", to: "leftLower", owners: ["Y"] },
                 "in-rightLower": { from: "in", to: "rightLower", owners: ["Y"] },
-                "rightLower-s1": { from: "rightLower", to: "s1", owners: ["S1"] },
-                "leftLower-s2": { from: "leftLower", to: "s2", owners: ["S1"] },
                 "in-out": { from: "in", to: "out", owners: ["S2"] },
+                "leftLower-s2": { from: "leftLower", to: "s2", owners: ["S1"] },
               },
               oneWays: {
-                dropToLeft: { from: "s1", to: "leftLower" },
-                dropToIn: { from: "leftLower", to: "in" },
-                dropToS1: { from: "s2", to: "s1" },
+                "rightLower>s1": { from: "rightLower", to: "s1" },
+                "s1>leftLower": { from: "s1", to: "leftLower" },
+                "leftLower>in": { from: "leftLower", to: "in" },
               },
               mechanics: {
                 Y: { control: "fork-switch", in: "in" },
-                S1: { control: "toggle", in: "s1", starts: "a", opens: { a: ["rightLower-s1"], b: ["leftLower-s2"] } },
+                S1: { control: "toggle", in: "s1", starts: "a", opens: { a: [], b: ["leftLower-s2"] } },
                 S2: { control: "toggle", in: "s2", starts: "a", opens: { a: [], b: ["in-out"] } },
               },
               in: "in",

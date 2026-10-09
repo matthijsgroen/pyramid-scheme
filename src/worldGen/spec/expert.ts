@@ -1,7 +1,6 @@
 import { tier, journey, tomb, wardChest, wardWing } from "../dsl"
 import type { Rule, PathEntry } from "../dsl"
 import { TOMB_ROOMS_PER_FLOOR } from "../data"
-import { doubleBackLock } from "./locks/doubleBack"
 import { freeRegions } from "@/game/lockAuthoring"
 import { catalogueLock } from "./locks/catalogue"
 import { lessonOnMainFloor } from "./locks/lessons"
@@ -305,12 +304,13 @@ export const expertRules: Rule[] = [
   // because its role is funerary and its brief says necropolis, and he is the necropolis. Sobek takes the
   // Nile Delta because that journey's brief already lists a crocodile.
   journey("expert_1").pyramid("last", { patron: "anubis" }),
-  // The Valley of the Kings' last pyramid opens on the designer's doubleBack: a mirror fork whose far side is
-  // reached by ziplines. The lock stands on the main floor and the pyramid's other content is untouched.
+  // The Valley of the Kings' last pyramid opens on the designer's doubleBack, read from its .lock file: a mirror fork
+  // whose far side is reached by ziplines. Every region takes `free`, so the floor's own content goes where the carve
+  // puts it; the lock stands on the main floor and the pyramid's other content is untouched.
   journey("expert_1").pyramid("last", {
     floorLocks: {
       0: {
-        locks: [{ lock: doubleBackLock() }],
+        locks: [{ lock: freeRegions(catalogueLock("doubleBack")) }],
         realisations: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
       },
     },

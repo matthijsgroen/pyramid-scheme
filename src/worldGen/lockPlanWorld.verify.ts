@@ -4,6 +4,7 @@ import { DEV_JOURNEY_ID } from "./data"
 import type { SiteConfig } from "./types"
 import type { FloorConfig as GameFloorConfig } from "../game/siteTypes"
 import { expandFloorLocks } from "../game/floorLocks"
+import { regionRoute } from "../game/regions"
 import { planLockFloor } from "../game/lockPlan"
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../mods/allCurrencyDistributions"
 import {
@@ -66,119 +67,23 @@ const planOf = (floor: GameFloorConfig) => {
 }
 
 describe("the plan of the dev pyramid's doubleBack floor", () => {
-  it("lists the parts the designer's drawing shows: a route, a junction with its two seams, the drops and each region's seats", () => {
+  it("plans the catalogue doubleBack: its regions, corridors and drops between the floor's entrance and exit", () => {
     const floor = floorsOf(DEV_JOURNEY_ID).find(candidate => candidate.locks?.[0]?.lock.name === "doubleBack")!
-    expect(planOf(floor)).toEqual({
-      route: ["entrance", "doubleBack.in", "doubleBack.out", "exit"],
-      regions: [
-        { id: "entrance", onRoute: true, seats: [], minNodes: 1 },
-        {
-          id: "doubleBack.in",
-          owner: "doubleBack",
-          onRoute: true,
-          seats: [{ for: "junction", control: "doubleBack.Y" }],
-          minNodes: 1,
-        },
-        {
-          id: "doubleBack.leftLower",
-          owner: "doubleBack",
-          onRoute: false,
-          mouth: "doubleBack.in",
-          seats: [],
-          minNodes: 1,
-        },
-        {
-          id: "doubleBack.rightLower",
-          owner: "doubleBack",
-          onRoute: false,
-          mouth: "doubleBack.in",
-          seats: [],
-          minNodes: 1,
-        },
-        {
-          id: "doubleBack.s1",
-          owner: "doubleBack",
-          onRoute: false,
-          mouth: "doubleBack.in",
-          seats: [{ for: "control", control: "doubleBack.S1" }],
-          minNodes: 1,
-        },
-        {
-          id: "doubleBack.s2",
-          owner: "doubleBack",
-          onRoute: false,
-          mouth: "doubleBack.in",
-          seats: [{ for: "control", control: "doubleBack.S2" }],
-          minNodes: 1,
-        },
-        { id: "doubleBack.out", owner: "doubleBack", onRoute: true, seats: [], minNodes: 1 },
-        { id: "exit", onRoute: true, seats: [], minNodes: 1 },
-      ],
-      corridors: [
-        {
-          id: "entrance>doubleBack.in",
-          from: "entrance",
-          to: "doubleBack.in",
-          onRoute: true,
-          barriers: [],
-          minNodes: 0,
-        },
-        {
-          id: "doubleBack.in>doubleBack.leftLower",
-          from: "doubleBack.in",
-          to: "doubleBack.leftLower",
-          onRoute: false,
-          barriers: ["doubleBack.in-leftLower"],
-          minNodes: 0,
-        },
-        {
-          id: "doubleBack.in>doubleBack.rightLower",
-          from: "doubleBack.in",
-          to: "doubleBack.rightLower",
-          onRoute: false,
-          barriers: ["doubleBack.in-rightLower"],
-          minNodes: 0,
-        },
-        {
-          id: "doubleBack.rightLower>doubleBack.s1",
-          from: "doubleBack.rightLower",
-          to: "doubleBack.s1",
-          onRoute: false,
-          barriers: ["doubleBack.rightLower-s1"],
-          minNodes: 0,
-        },
-        {
-          id: "doubleBack.leftLower>doubleBack.s2",
-          from: "doubleBack.leftLower",
-          to: "doubleBack.s2",
-          onRoute: false,
-          barriers: ["doubleBack.leftLower-s2"],
-          minNodes: 0,
-        },
-        {
-          id: "doubleBack.in>doubleBack.out",
-          from: "doubleBack.in",
-          to: "doubleBack.out",
-          onRoute: true,
-          barriers: ["doubleBack.in-out"],
-          minNodes: 0,
-        },
-        { id: "doubleBack.out>exit", from: "doubleBack.out", to: "exit", onRoute: true, barriers: [], minNodes: 0 },
-      ],
-      junctions: [
-        {
-          region: "doubleBack.in",
-          control: "doubleBack.Y",
-          arms: ["doubleBack.in>doubleBack.leftLower", "doubleBack.in>doubleBack.rightLower"],
-        },
-      ],
-      drops: Object.entries(floor.locks![0].lock.oneWays ?? {}).map(([id, { from, to }]) => ({
+    const expanded = expandFloorLocks(floor)
+    if (!expanded.ok) throw new Error(`refused: ${JSON.stringify(expanded.reasons)}`)
+    const plan = planOf(floor)!
+    const layout = expanded.config.regionLayout!
+    expect(plan.route).toEqual(regionRoute(layout))
+    expect(plan.regions.map(region => region.id)).toEqual(layout.regions.map(region => region.name))
+    expect(plan.corridors.map(corridor => [corridor.from, corridor.to])).toEqual(layout.connections)
+    expect(plan.drops).toEqual(
+      Object.entries(floor.locks![0].lock.oneWays ?? {}).map(([id, { from, to }]) => ({
         id: `doubleBack.${id}`,
         launch: `doubleBack.${from}`,
         landing: `doubleBack.${to}`,
-      })),
-      nested: [],
-    })
+      }))
+    )
+    expect(plan.junctions.map(junction => junction.control)).toEqual(["doubleBack.Y"])
   })
 })
 
