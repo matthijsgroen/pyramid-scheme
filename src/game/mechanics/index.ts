@@ -3,6 +3,7 @@ import type { MechanicKind, ResolveMechanicKind } from "./mechanicKind"
 import { ONE_WAY } from "./oneWay"
 import { SEQUENCE } from "./sequence"
 import { ACTIVATOR, TOGGLE } from "./toggle"
+import { FLAME } from "./torch"
 import { UNLADEN } from "./unladen"
 import { WEIGHTS } from "./weights"
 
@@ -19,6 +20,7 @@ export type {
 export const CORE_MECHANICS: readonly MechanicKind[] = [
   TOGGLE,
   ACTIVATOR,
+  FLAME,
   SEQUENCE,
   FORK_SWITCH,
   ONE_WAY,

@@ -35,7 +35,7 @@ export type ControlSeatKind = "control" | "tile" | "junction"
  * entry rather than a branch in the compiler, so a new one is added by writing one.
  */
 export type MechanicKind = {
-  /** The `control` a lock names: "toggle", "activator", "sequence", "fork-switch", or "one-way". */
+  /** The `control` a lock names: "toggle", "activator", "flame", "sequence", "fork-switch", or "one-way". */
   control: string
   /** Whether the engine can build it. A lock using an unbuilt kind is written and checked, and refused at the bake. */
   built: boolean

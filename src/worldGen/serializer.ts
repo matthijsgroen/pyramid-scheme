@@ -133,6 +133,7 @@ const serializeControl = (c: Control): string => {
     return `{ id: ${JSON.stringify(c.id)}, in: ${JSON.stringify(c.in)}, control: "fork-switch", encounter: ${JSON.stringify(c.encounter)} }`
   const parts = [
     `id: ${JSON.stringify(c.id)}`,
+    ...(c.control === "flame" ? [`control: "flame"`] : []),
     `in: ${JSON.stringify(c.in)}`,
     `states: [${c.states.map(s => JSON.stringify(s)).join(", ")}]`,
     `initial: ${JSON.stringify(c.initial)}`,

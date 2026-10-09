@@ -224,3 +224,27 @@ describe("parseLock, with a region named like an object method", () => {
     expect(Object.keys(lock.gates)).toEqual(["in-constructor"])
   })
 })
+
+describe("a torch line", () => {
+  it("reads a torch off until lit, and one lit from the start", () => {
+    const { lock } = parseLock("in -[A+B:off]- out\nA torch @in\nB torch @in lit")
+    expect(lock.mechanics.A).toEqual({ control: "flame", in: "in", starts: "off", opens: { off: [], on: ["in-out"] } })
+    expect(lock.mechanics.B).toEqual({ control: "flame", in: "in", starts: "on", opens: { off: ["in-out"], on: [] } })
+  })
+
+  it.each(["B torch @in burning", "B torch @in lit lit", "B torch @in off on"])("refuses %s, naming the form", line => {
+    expect(() => parseLock(`in -[B]- out\n${line}`)).toThrow(
+      "a torch is off or lit at the start: write B torch @in lit"
+    )
+  })
+
+  it("reads an activator line as an activator", () => {
+    const { lock } = parseLock("in -[T]- out\nT activator @in")
+    expect(lock.mechanics.T).toEqual({
+      control: "activator",
+      in: "in",
+      starts: "off",
+      opens: { off: [], on: ["in-out"] },
+    })
+  })
+})

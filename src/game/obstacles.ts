@@ -89,8 +89,9 @@ export type Obstacle = GateObstacle | OneWayObstacle
  */
 export type StatefulControl = {
   id: string
-  /** Absent: this is a control with states of its own, not a `ForkSwitchControl`. */
-  control?: undefined
+  /** Absent: a toggle or an activator. `"flame"`: a torch, states `off` and `on`, which a covering region barrier
+   * puts out (`douseTorches`, mechanismDoors.ts). Never another kind: those have controls of their own. */
+  control?: "flame"
   /** The region the control stands in. A region, not a section address: the mod points at the layout. */
   in: string
   states: string[]
@@ -178,8 +179,8 @@ export const isSequence = (control: Control): control is SequenceControl => cont
 
 export const isWeights = (control: Control): control is WeightsControl => control.control === "weights"
 
-/** The core control kind a floor control is an instance of (src/game/mechanics): a stateful one is a toggle where it
- * returns to its start and an activator where it does not. */
+/** The core control kind a floor control is an instance of (src/game/mechanics): a torch says `flame`, and an unnamed
+ * stateful one is a toggle where it returns to its start and an activator where it does not. */
 export const controlKindOf = (control: Control): string =>
   control.control ?? (control.returnsToInitial ? "toggle" : "activator")
 

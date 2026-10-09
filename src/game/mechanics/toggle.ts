@@ -41,7 +41,7 @@ export const TOGGLE: MechanicKind = {
   seats: control => (control.control === undefined ? [{ region: control.in, seat: "control" }] : []),
 }
 
-/** Two states, no way back: the torch. A floor key is the same state machine, worked by taking it from a chest. */
+/** Two states, no way back: a floor key, or a prize taken once. Water and sand never touch it. */
 export const ACTIVATOR: MechanicKind = {
   control: "activator",
   built: true,

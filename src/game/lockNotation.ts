@@ -2,6 +2,7 @@
 // notation is LOCK_SYNTAX, which `yarn lock` also prints so nobody has to remember it.
 import { CARRY_TERMS, isWeightOwner, unladenFaults } from "./lockAuthoring"
 import type { Lock, LockConnection, LockGate, LockMechanic, LockOneWay } from "./lockAuthoring"
+import { TORCH_STATES } from "./mechanics/torch"
 import { stoneArrangements } from "./mechanics/weights"
 import type { RegionAppetite } from "./regions"
 
@@ -15,7 +16,9 @@ export const LOCK_SYNTAX = `
   hall -[sluice:wet]            region gate: hall impassable unless sluice is wet
   S1 toggle @s1                 two states a b, back and forth, starts at a
   sluice toggle @hall dry wet   the same, its states named
-  T1 activator @hall            off then on, for good — a torch, or a floor key
+  T1 activator @hall            off then on, for good: a floor key, or a prize; water and sand never touch it
+  T torch @hall   T torch @hall lit   off until lit, or lit from the start; water or sand over its region
+                                puts it out, and it can be lit again
   Y fork @in                    a fork puzzle: the gates naming it are its ways
   P sequence hall vault reset hall-vault   steps in order, reset at that gate; -[P]- opens when done
   p1 plate @hall   p2 plate @hall stone   a plate, empty or with a stone on it; any stone presses any plate
@@ -39,6 +42,7 @@ const APPETITE: Record<string, RegionAppetite> = { "*": "puzzles", $: "reward", 
 
 type Declared =
   | { control: "toggle" | "activator"; in: string; states: readonly [string, string]; n: number }
+  | { control: "flame"; in: string; states: readonly [string, string]; lit: boolean; n: number }
   | { control: "fork-switch"; in: string; n: number }
   | { control: "sequence"; steps: string[]; resetAt: string; n: number }
 type Term = { owner: string; state?: string }
@@ -118,7 +122,12 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
 
   for (const { n, line } of lines) {
     let m: RegExpMatchArray | null
-    if ((m = line.match(/^(\w+)\s+(toggle|activator)\s+@(\w+)((?:\s+\w+)*)$/))) {
+    if ((m = line.match(/^(\w+)\s+torch\s+@(\w+)((?:\s+\w+)*)$/))) {
+      const words = m[3].trim().split(/\s+/).filter(Boolean)
+      if (words.length > 1 || (words.length === 1 && words[0] !== "lit"))
+        fail(n, `a torch is off or lit at the start: write ${m[1]} torch @${m[2]} lit`)
+      declare(n, m[1], { control: "flame", in: m[2], states: TORCH_STATES, lit: words.length === 1, n })
+    } else if ((m = line.match(/^(\w+)\s+(toggle|activator)\s+@(\w+)((?:\s+\w+)*)$/))) {
       const control = m[2] as "toggle" | "activator"
       const names = m[4].trim().split(/\s+/).filter(Boolean)
       if (names.length !== 0 && names.length !== 2) fail(n, `a ${control} has two states, not ${names.length}`)
@@ -249,6 +258,13 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
         steps: what.steps.map(step => ({ in: step })),
         resetAt: what.resetAt,
         opens: table,
+      }
+    } else if (what.control === "flame") {
+      mechanics[id] = {
+        control: "flame",
+        in: what.in,
+        starts: what.lit ? "on" : "off",
+        opens: { off: table.off ?? [], on: table.on ?? [] },
       }
     } else {
       const [first, second] = what.states

@@ -94,13 +94,26 @@ export type Toggle = {
 }
 
 /**
- * Two states, no way back; the second is for good. The torch, and a floor key — the same control with
- * another realisation, taken from a chest and carried to the door rather than worked where it stands.
+ * Two states, no way back; the second is for good. A floor key, or a prize taken once: water and sand never touch
+ * it, and no flood takes a floor key back.
  */
 export type Activator = {
   readonly control: "activator"
   readonly in: RegionId
   readonly starts: string
+  readonly opens: Opens
+}
+
+/**
+ * A torch, the core kind `flame` (the notation writes `torch`): off until the player lights it, or lit from the
+ * start (`starts: "on"`). Its states are always `off` and `on`. Water or sand over its region puts it out, and it
+ * can be lit again once the region is uncovered (`douseTorches`, mechanismDoors.ts). Nothing the player does puts
+ * it out.
+ */
+export type Flame = {
+  readonly control: "flame"
+  readonly in: RegionId
+  readonly starts: "off" | "on"
   readonly opens: Opens
 }
 
@@ -133,7 +146,7 @@ export type Sequence = {
  */
 export type ForkSwitch = { readonly control: "fork-switch"; readonly in: RegionId }
 
-export type LockMechanic = Toggle | Activator | Sequence | ForkSwitch
+export type LockMechanic = Toggle | Activator | Flame | Sequence | ForkSwitch
 
 /**
  * STONES ON PLATES, the one lock-wide control that is not a mechanic. A stone rests on a plate or is in the

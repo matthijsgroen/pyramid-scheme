@@ -21,9 +21,9 @@ import type { ForkDemand } from "./siteTypes"
 /**
  * WHICH REALISATION EACH KIND OF CONTROL IS DRESSED AS, decided where a lock is placed and handed to the
  * compiler: the lock names none (docs/mods/mechanic-contract.md). Keyed by the control kind — "toggle",
- * "activator", "sequence", "fork-switch", "one-way", "weights" for the stone plates, "unladen" for a narrow
- * passage, and "region-barrier" for the lock's barred regions — because within one lock all roles of a kind
- * take the same realisation. A kind the lock uses and the binding omits is refused, never defaulted.
+ * "activator", "flame", "sequence", "fork-switch", "one-way", "weights" for the stone plates, "unladen" for a
+ * narrow passage, and "region-barrier" for the lock's barred regions — because within one lock all roles of a
+ * kind take the same realisation. A kind the lock uses and the binding omits is refused, never defaulted.
  */
 export type RealisationBinding = Readonly<Partial<Record<string, string>>>
 
@@ -74,6 +74,8 @@ export type LockFault =
   | { type: "opensGateNotOwned"; mechanic: string; barrier: string }
   | { type: "startsNotAState"; mechanic: string; starts: string }
   | { type: "statesNotTwo"; mechanic: string; states: string[] }
+  /** A torch whose states are not `off` and `on`, or whose start is neither. */
+  | { type: "flameStates"; mechanic: string; states: string[]; starts: string }
   /** A sequence's only state that opens anything is `done`. */
   | { type: "sequenceStateNotDone"; mechanic: string; state: string }
   /** Two fork-switches stand in one region, so one junction would have two operators. */
@@ -272,7 +274,8 @@ const unboundFaults = (lock: Lock, binding: RealisationBinding, kinds: ResolveMe
  *   one-way stands on it, which is then a drop `from -> to` the layout does not join.
  * - an edge gate -> an edge obstacle, a region gate -> a region obstacle, `mode: "any"` kept as written; owners
  *   that are fork-switches go on the obstacle, every other owner names the gate in its `opens`.
- * - toggle / activator -> a two-state control (back and forth / no way back), `starts` its initial state.
+ * - toggle / activator / flame -> a two-state control (back and forth / no way back / lit until a flood puts it
+ *   out), `starts` its initial state.
  * - fork-switch -> a fork-switch control and the `forks` entry that lays its junction.
  * - sequence -> a sequence control; connection barriers -> `barrierOrder` where a connection has several.
  */

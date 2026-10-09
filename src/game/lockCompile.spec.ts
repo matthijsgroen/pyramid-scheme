@@ -392,6 +392,7 @@ describe("a lock using a mechanic that is not built yet", () => {
     expect(CORE_MECHANICS.map(kind => kind.control)).toEqual([
       "toggle",
       "activator",
+      "flame",
       "sequence",
       "fork-switch",
       "one-way",
