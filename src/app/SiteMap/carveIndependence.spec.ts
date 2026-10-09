@@ -175,8 +175,9 @@ describe("a save survives the floor being carved somewhere else", () => {
   })
 })
 
-/** The sections of a floor's lock regions that hold no mechanism or plate and no door: a corridor, a junction, a
- * place to stand. Read off the plan, so a region that should hold a room and lost it still counts as roomless. */
+/** The sections of a floor's off-route lock regions that hold no mechanism or plate and no door: a corridor, a
+ * junction, a place to stand. A region on the route takes floor content, so it is never exempt. Read off the plan, so
+ * a region that should hold a room and lost it still counts as roomless. */
 const roomFreeLockSections = (journeyId: string, levelNr: number, floorIndex: number): Set<string> => {
   const journey = journeys.find(j => j.id === journeyId)!
   const expanded = expandFloorLocks((journey.siteConfigs![levelNr - 1] ?? journey.siteConfigs![0])[floorIndex])
@@ -185,7 +186,9 @@ const roomFreeLockSections = (journeyId: string, levelNr: number, floorIndex: nu
   const doored = new Set(plan.corridors.filter(corridor => corridor.barriers.length > 0).map(corridor => corridor.to))
   return new Set(
     plan.regions
-      .filter(region => region.owner !== undefined && region.seats.length === 0 && !doored.has(region.id))
+      .filter(
+        region => region.owner !== undefined && !region.onRoute && region.seats.length === 0 && !doored.has(region.id)
+      )
       .map(region => `lock:${region.id}`)
   )
 }
