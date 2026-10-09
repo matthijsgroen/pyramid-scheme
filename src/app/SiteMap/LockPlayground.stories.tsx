@@ -50,6 +50,19 @@ export const WaterMoves: Story = { args: { initial: "lessons/waterMoves" } }
 export const Sluice: Story = { args: { initial: "sluice" } }
 export const Tide: Story = { args: { initial: "tide" } }
 
+// A made-up lock for the torch and the flood: B burns and A does not, and the door wants the opposite. Throw S and
+// the hall floods, putting B out; throw it back, light A, and the door opens. Lighting A first costs nothing: the
+// flood puts both out.
+export const TorchAndFlood: Story = {
+  args: {
+    locks: {
+      torchAndFlood:
+        "in -- hub -- hall\nhub -[A+B:off]- out\nhall -[S:a]\nS toggle @hub\nB torch @hall lit\nA torch @hall\nin ?\nhub ?\nhall ?\nout ?",
+    },
+    initial: "torchAndFlood",
+  },
+}
+
 // A made-up lock for the narrow passage: a stone on a shelf by the way in, and a crack in a wall on to the way out.
 // With empty hands, tap the wall to squeeze through; lift the stone first and the explorer stops beside the wall.
 export const SqueezeThrough: Story = {
