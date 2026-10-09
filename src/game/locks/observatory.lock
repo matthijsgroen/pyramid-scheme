@@ -1,14 +1,15 @@
 // designed by: Claude
-// master. A three-way board and two prizes; going east first, the drop to west
-// saves a board solve.
+// master. A three-way board with an activator behind each way; going east first,
+// the drop to west saves a board solve.
 
 in -[Y]- west
 in -[Y]- north
-in -[L+K]- out
+in -[L+K+M]- out
 in -[Y]- east
 east >> west
 west >> in
 Y fork @in
 L activator @west
 K activator @east
+M activator @north
 north *
