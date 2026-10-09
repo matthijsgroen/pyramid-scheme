@@ -169,9 +169,12 @@ region as it is covered either, since the control that covers it may not stand i
 ### Telling a torch from a key
 
 Today every activator is drawn by the torch family, because the activator kind has no other realisation, so
-no binding tells a torch from a key. The lock's own words do: **an activator stays an activator where its
-lock's header comment or its row in `lock-curriculum.md` names it as something taken (a key, gold, a prize);
-every other activator is a torch.** By that rule:
+no binding tells a torch from a key. What the mechanic is does: **an activator stays an activator where it is
+something taken (a key, gold, a prize); every other activator is a torch.** The header comments quoted below are
+evidence of what each lock means, not the ruling: every catalogue lock but doubleBack and stoneGate was designed by
+Claude, so those comments are Claude's words. The designer settled the table on 2026-10-09, tide's `K` and
+sluice's `gold` staying activators on merit (a key and a prize, not flames). Every `.lock` file names its designer
+in a `// designed by:` line (the plan's first task). By that rule:
 
 | lock                           | ids        | becomes   | because                                               |
 | ------------------------------ | ---------- | --------- | ----------------------------------------------------- |
@@ -185,8 +188,10 @@ every other activator is a torch.** By that rule:
 | `sluice.lock`                  | gold       | activator | "drain the hall for the gold"                         |
 | `observatory.lock`             | L, K       | activator | "two prizes"                                          |
 
-In each torch row the keyword on the mechanic's line changes from `activator` to `torch` and nothing else
-changes in the file: no id, no gate, no comment, no blank line. No migrated torch starts lit, so none gains
+In each torch row the keyword on the mechanic's line changes from `activator` to `torch` and the migration
+changes nothing else in the file: no id, no gate, no comment, no blank line. The `// designed by:` line, and the
+correction of a stale header on a lock Claude designed, are the plan's first task, apart from the migration; the
+designer's own headers, doubleBack's and stoneGate's, are never touched. No migrated torch starts lit, so none gains
 `lit`.
 
 ### Bindings
