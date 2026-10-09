@@ -1,8 +1,10 @@
 // @vitest-environment jsdom
 import { renderHook } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
+import { parseLock } from "@/game/lockNotation"
 import { assembleFloor } from "@/game/siteAssembler"
 import type { FloorConfig, FloorGrid, SideSection } from "@/game/siteTypes"
+import { SHELF_AND_DOOR } from "@/game/testSupport/stoneFixtures"
 import { useAssembledFloor } from "./useAssembledFloor"
 import { cellKey, cellSlot } from "./cellIdentity"
 import "@/mods/registerModApps"
@@ -179,5 +181,18 @@ describe("what re-authoring a floor costs a player", () => {
     expect(explored).toContain("burial-antechamber/p0")
     expect(unexplored.every(room => room.startsWith("s0/"))).toBe(true)
     expect(unexplored.length).toBeGreaterThan(0)
+  })
+
+  it("costs only the lock's own rooms when a lock is placed on the floor", () => {
+    const placed = floorWith({
+      locks: [{ lock: parseLock(SHELF_AND_DOOR, "stones").lock }],
+      realisations: { weights: "stonePlate" },
+    })
+    const { explored, unexplored } = cost(floorWith(), placed)
+
+    expect(unexplored).toEqual(["main/xobstacle:stones.hall-out", "main/xplate:stones.p", "main/xplate:stones.shelf"])
+    expect(explored).toEqual(
+      expect.arrayContaining(["main/p0", "main/p3", "main/xtreasure-chest", "s0/p1", "s0/xtreasure-chest"])
+    )
   })
 })
