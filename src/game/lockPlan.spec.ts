@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest"
 import { expandFloorLocks } from "./floorLocks"
 import type { PlacedLock } from "./floorLocks"
 import type { Lock } from "./lockAuthoring"
+import { freeRegions } from "./lockAuthoring"
 import { planLockFloor } from "./lockPlan"
 import type { LockPlan } from "./lockPlan"
+import { parseLock } from "./lockNotation"
 import type { FloorConfig } from "./siteTypes"
 import { leverLock, strandingLock } from "./testSupport/floorLockFixtures"
 import { BINDING, sluiceLock } from "./testSupport/lockFixtures"
@@ -426,5 +428,90 @@ describe("the plan of a lock floor", () => {
       drops: [],
       nested: [{ host: "lever", between: ["lever.foyer", "lever.hall"], instance: "inner" }],
     })
+  })
+})
+
+describe("corridors that share a pair, and corridors that fall", () => {
+  const plan = (text: string, name: string) => planOf([{ lock: freeRegions(parseLock(text, name).lock) }])!
+
+  it("makes a corridor of each connection on a pair, the first keeping its id and the route", () => {
+    const p = plan("in -[A]- out\nin -[B]- out\nA toggle @in\nB toggle @in", "twin")
+    expect(p.corridors.filter(c => c.barriers.length > 0)).toEqual([
+      {
+        id: "twin.in>twin.out",
+        from: "twin.in",
+        to: "twin.out",
+        onRoute: true,
+        barriers: ["twin.in-out"],
+        minNodes: 0,
+      },
+      {
+        id: "twin.in>twin.out~1",
+        from: "twin.in",
+        to: "twin.out",
+        onRoute: false,
+        barriers: ["twin.in-out#2"],
+        minNodes: 0,
+      },
+    ])
+  })
+
+  it("plans a gate then a drop as a stretch to a ledge of its own, the drop leaving the ledge", () => {
+    const p = plan("in -- out\nin -[A]- >> pit\npit -- out\nA toggle @in", "fall")
+    expect(p.regions).toContainEqual({
+      id: "fall.in>pit:ledge",
+      owner: "fall",
+      onRoute: false,
+      answersTo: "fall.in",
+      seats: [],
+      minNodes: 1,
+    })
+    expect(p.corridors).toContainEqual({
+      id: "fall.in>fall.in>pit:ledge",
+      from: "fall.in",
+      to: "fall.in>pit:ledge",
+      onRoute: false,
+      barriers: ["fall.in-pit"],
+      minNodes: 0,
+    })
+    expect(p.drops).toEqual([{ id: "fall.in>pit", launch: "fall.in>pit:ledge", landing: "fall.pit" }])
+  })
+
+  it("plans a drop then a gate as a landing of its own on a stretch hung from the region it leads to", () => {
+    const p = plan("in -- out\nin >> -[A]- pit\npit -- out\nA toggle @in", "fall")
+    expect(p.regions).toContainEqual({
+      id: "fall.in>pit:landing",
+      owner: "fall",
+      onRoute: false,
+      answersTo: "fall.pit",
+      seats: [],
+      minNodes: 1,
+    })
+    expect(p.corridors).toContainEqual({
+      id: "fall.in>pit:landing>fall.pit",
+      from: "fall.in>pit:landing",
+      to: "fall.pit",
+      onRoute: false,
+      barriers: ["fall.in-pit"],
+      minNodes: 0,
+    })
+    expect(p.drops).toEqual([{ id: "fall.in>pit", launch: "fall.in", landing: "fall.in>pit:landing" }])
+  })
+
+  it("carries a corridor's alignment, turned to the way it is laid", () => {
+    const p = plan("in -[A]--- -[B]- hall\nhall -- out\nA toggle @in\nB toggle @in", "aligned")
+    expect(p.corridors.find(c => c.id === "aligned.in>aligned.hall")).toMatchObject({
+      barriers: ["aligned.in-hall", "aligned.in-hall#2"],
+      align: { "aligned.in-hall": "left" },
+    })
+  })
+
+  it("gives a barred region a door on each corridor from one neighbour", () => {
+    const p = plan("in -- hall\nin -- hall\nhall -- out\nhall -[S]\nS toggle @in", "barred")
+    expect(p.regions.find(r => r.id === "barred.hall")!.seats).toEqual([
+      { for: "door", barrier: "barred.hall:barred", entrance: "barred.in", corridor: "barred.in>barred.hall" },
+      { for: "door", barrier: "barred.hall:barred", entrance: "barred.in", corridor: "barred.in>barred.hall~1" },
+      { for: "door", barrier: "barred.hall:barred", entrance: "barred.out" },
+    ])
   })
 })

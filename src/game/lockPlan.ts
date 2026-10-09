@@ -1,8 +1,9 @@
 import type { ExpandedFloor } from "./floorLocks"
+import type { Alignment } from "./lockAuthoring"
 import type { ResolveMechanicKind } from "./mechanics"
 import { resolveMechanicKind } from "./mechanics"
-import type { Control, EdgeGateObstacle } from "./obstacles"
-import { controlKindOf, isEdgeGate, isForkSwitch, isRegionGate } from "./obstacles"
+import type { Control, OneWayObstacle } from "./obstacles"
+import { controlKindOf, fallingStretches, floorCorridors, isForkSwitch, isRegionGate } from "./obstacles"
 import { offRouteChains, regionRoute } from "./regions"
 
 /** What a region must hold a node for. A door is a region barrier's: one stands in from each entrance. */
@@ -10,7 +11,8 @@ export type PlanSeat =
   | { for: "control"; control: string }
   | { for: "tile"; control: string; step: number }
   | { for: "junction"; control: string }
-  | { for: "door"; barrier: string; entrance: string }
+  /** `corridor`: the corridor it stands on, named where its pair has more than one. */
+  | { for: "door"; barrier: string; entrance: string; corridor?: string }
 
 /**
  * A REGION AS A STRETCH OF NODES THE CARVE MUST LAY. `minNodes` is a floor, never a target: one node per
@@ -24,6 +26,8 @@ export type PlanRegion = {
   onRoute: boolean
   /** The on-route region an off-route region hangs off, as the carve seats it. */
   mouth?: string
+  /** A falling corridor's ledge or landing: one node the layout does not name, answering to this region. */
+  answersTo?: string
   seats: PlanSeat[]
   minNodes: number
 }
@@ -40,6 +44,8 @@ export type PlanCorridor = {
   to: string
   onRoute: boolean
   barriers: string[]
+  /** The aligned gates, read from `from` to `to`; a gate it does not name is free. */
+  align?: Record<string, Alignment>
   minNodes: number
 }
 
@@ -93,46 +99,98 @@ export const planLockFloor = (
   const obstacles = config.obstacles ?? []
   const controls = config.controls ?? []
 
-  const drops = obstacles.flatMap(obstacle =>
-    obstacle.kind === "oneWay"
-      ? [{ id: obstacle.id, launch: obstacle.at.between[0], landing: obstacle.at.between[1] }]
-      : []
+  const regionDrops = obstacles.flatMap(obstacle =>
+    obstacle.kind === "oneWay" ? [[obstacle.at.between[0], obstacle.at.between[1]] as const] : []
   )
   const route = regionRoute(layout)
   const onRoute = new Set(route)
   const routeLinks = new Set(route.slice(1).map((region, i) => keyOf(route[i], region)))
   const mouthOf = new Map<string, string>()
-  for (const { mouth, regions } of offRouteChains(
-    layout,
-    drops.map(drop => [drop.launch, drop.landing] as const)
-  ))
+  for (const { mouth, regions } of offRouteChains(layout, regionDrops))
     for (const region of regions) mouthOf.set(region, mouth)
   const ownerOf = new Map(placed.flatMap(({ instance, regions }) => regions.map(region => [region, instance] as const)))
 
-  const gatesOn = new Map<string, EdgeGateObstacle[]>()
-  for (const obstacle of obstacles) {
-    if (!isEdgeGate(obstacle)) continue
-    const key = keyOf(...obstacle.at.between)
-    gatesOn.set(key, [...(gatesOn.get(key) ?? []), obstacle])
+  const pick = (align: Readonly<Record<string, Alignment>>, ids: readonly string[]) => {
+    const kept = Object.fromEntries(ids.flatMap(id => (align[id] ? [[id, align[id]] as const] : [])))
+    return Object.keys(kept).length > 0 ? { align: kept } : {}
   }
-  const corridors: PlanCorridor[] = layout.connections.map(([from, to]) => {
-    const key = keyOf(from, to)
-    const gates = gatesOn.get(key) ?? []
-    const stated = (config.barrierOrder ?? []).find(order => keyOf(...order.between) === key)
-    const barriers = stated
-      ? stated.between[0] === from
-        ? [...stated.barriers]
-        : [...stated.barriers].reverse()
-      : gates.map(gate => gate.id)
-    return {
-      id: corridorId(from, to),
-      from,
-      to,
-      onRoute: routeLinks.has(key),
-      barriers,
-      minNodes: Math.max(0, barriers.length - 1),
+  const corridors: PlanCorridor[] = []
+  const stretchEnds: PlanRegion[] = []
+  const ends = new Map<string, { launch: string; landing: string }>()
+  const firstOfPair = new Set<string>()
+  const pairCount = new Map<string, number>()
+  const floor = floorCorridors(layout, obstacles, config.barrierOrder ?? [])
+  for (const corridor of floor)
+    if (corridor.drop === undefined) pairCount.set(corridor.key, (pairCount.get(corridor.key) ?? 0) + 1)
+  const layoutCorridors: { corridor: PlanCorridor; repeated: boolean }[] = []
+  for (const corridor of floor) {
+    if (corridor.drop === undefined) {
+      const [from, to] = corridor.between
+      const first = !firstOfPair.has(corridor.key)
+      firstOfPair.add(corridor.key)
+      const planned: PlanCorridor = {
+        id: first ? corridorId(from, to) : `${corridorId(from, to)}~${corridor.index}`,
+        from,
+        to,
+        onRoute: first && routeLinks.has(corridor.key),
+        barriers: [...corridor.barriers],
+        minNodes: Math.max(0, corridor.barriers.length - 1),
+        ...pick(corridor.align, corridor.barriers),
+      }
+      corridors.push(planned)
+      layoutCorridors.push({ corridor: planned, repeated: (pairCount.get(corridor.key) ?? 0) > 1 })
+      continue
     }
-  })
+    // A FALLING CORRIDOR: its drop, with a stretch hung from each region it joins for the items on that side.
+    const drop = obstacles.find(o => o.id === corridor.drop) as OneWayObstacle
+    const { launch, landing, upstream, downstream, align } = fallingStretches(corridor, drop)
+    const end = (id: string, answersTo: string): PlanRegion => ({
+      id,
+      ...(ownerOf.get(answersTo) === undefined ? {} : { owner: ownerOf.get(answersTo) }),
+      onRoute: false,
+      answersTo,
+      seats: [],
+      minNodes: 1,
+    })
+    const ledge = upstream.length > 0 ? `${drop.id}:ledge` : launch
+    const lands = downstream.length > 0 ? `${drop.id}:landing` : landing
+    if (upstream.length > 0) {
+      stretchEnds.push(end(ledge, launch))
+      corridors.push({
+        id: corridorId(launch, ledge),
+        from: launch,
+        to: ledge,
+        onRoute: false,
+        barriers: upstream,
+        minNodes: upstream.length - 1,
+        ...pick(align, upstream),
+      })
+    }
+    if (downstream.length > 0) {
+      stretchEnds.push(end(lands, landing))
+      corridors.push({
+        id: corridorId(lands, landing),
+        from: lands,
+        to: landing,
+        onRoute: false,
+        barriers: downstream,
+        minNodes: downstream.length - 1,
+        ...pick(align, downstream),
+      })
+    }
+    ends.set(drop.id, { launch: ledge, landing: lands })
+  }
+  const drops: PlanDrop[] = obstacles.flatMap(obstacle =>
+    obstacle.kind === "oneWay"
+      ? [
+          {
+            id: obstacle.id,
+            launch: ends.get(obstacle.id)?.launch ?? obstacle.at.between[0],
+            landing: ends.get(obstacle.id)?.landing ?? obstacle.at.between[1],
+          },
+        ]
+      : []
+  )
 
   const seatsIn = new Map<string, PlanSeat[]>()
   const seat = (region: string, entry: PlanSeat) => seatsIn.set(region, [...(seatsIn.get(region) ?? []), entry])
@@ -140,24 +198,32 @@ export const planLockFloor = (
   for (const obstacle of obstacles) {
     if (!isRegionGate(obstacle)) continue
     const { region } = obstacle.at
-    for (const [a, b] of layout.connections)
-      if (a === region || b === region)
-        seat(region, { for: "door", barrier: obstacle.id, entrance: a === region ? b : a })
+    for (const { corridor, repeated } of layoutCorridors)
+      if (corridor.from === region || corridor.to === region)
+        seat(region, {
+          for: "door",
+          barrier: obstacle.id,
+          entrance: corridor.from === region ? corridor.to : corridor.from,
+          ...(repeated ? { corridor: corridor.id } : {}),
+        })
   }
 
-  const regions: PlanRegion[] = layout.regions.map(({ name }) => {
-    const seats = seatsIn.get(name) ?? []
-    const owner = ownerOf.get(name)
-    const mouth = mouthOf.get(name)
-    return {
-      id: name,
-      ...(owner === undefined ? {} : { owner }),
-      onRoute: onRoute.has(name),
-      ...(mouth === undefined ? {} : { mouth }),
-      seats,
-      minNodes: Math.max(1, seats.length),
-    }
-  })
+  const regions: PlanRegion[] = [
+    ...layout.regions.map(({ name }): PlanRegion => {
+      const seats = seatsIn.get(name) ?? []
+      const owner = ownerOf.get(name)
+      const mouth = mouthOf.get(name)
+      return {
+        id: name,
+        ...(owner === undefined ? {} : { owner }),
+        onRoute: onRoute.has(name),
+        ...(mouth === undefined ? {} : { mouth }),
+        seats,
+        minNodes: Math.max(1, seats.length),
+      }
+    }),
+    ...stretchEnds,
+  ]
 
   const junctions: PlanJunction[] = (config.forks ?? []).flatMap(fork => {
     if (!("in" in fork)) return []
