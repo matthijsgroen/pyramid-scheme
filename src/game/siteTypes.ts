@@ -425,6 +425,10 @@ export type MechanismRecord = {
    * where otherwise it is made in the mechanism's own room. A sequence is the one that needs it, because
    * most pairs of its states are not moves at all (progress cannot skip a tile). */
   placedOnly?: true
+  /** A TORCH, and the region it stands in (the floor's own name, namespaced as a region barrier's door names it): a
+   * covering region barrier puts it out (`douseFloor`, mechanismDoors.ts). Absent on every other mechanism, an
+   * activator included. */
+  torch?: { region: string }
   /** The states with a stone in hand: the way out is not left in them. */
   carrying?: string[]
   /** WHAT THE EXPLORER'S OWN WEIGHT MAKES OF AN ARRANGEMENT: standing at the empty plate `at` while the stones stand

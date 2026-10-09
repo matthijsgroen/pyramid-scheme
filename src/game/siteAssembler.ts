@@ -78,6 +78,7 @@ import type { AbsorbedDemand, LaidFloor, LengtheningChoice } from "./laidFloor"
 import { planLockFloor } from "./lockPlan"
 import type { LockPlan } from "./lockPlan"
 import { resolveMechanicKind } from "./mechanics"
+import { torchRecord } from "./mechanics/torch"
 import { degradeUnrealised, unrealisedSequences, unrealisedWeights } from "./mechanics/realisations"
 import { adjacencyFaults, dropLandingFaults, gateDoorFaults } from "./carveAgreement"
 import type { CarveFault } from "./carveAgreement"
@@ -2560,10 +2561,14 @@ const assembleExpandedFloor = (
       ...floorKeysOfGate(id),
       regionBarrier: { region, entrance, realisation: boundRegionBarrier() },
     })
-    const controlRoomSpec = (control: StatefulControl, record: MechanismRecord): RoomSpec => ({
+    const controlRoomSpec = (
+      control: StatefulControl,
+      record: MechanismRecord,
+      at: readonly [number, number]
+    ): RoomSpec => ({
       roomType: "encounter",
       ...mechanismRoom(resolveEncounter(control.encounter, DEFAULT_CONTROL_ROLE)),
-      mechanism: record,
+      mechanism: control.control === "flame" ? torchRecord(record, control.in, at) : record,
       mechanismId: control.id,
     })
     // THE ROOMS A SIDE SECTION IS MADE OF, written once for a branch and for a section filled into laid nodes.
@@ -3052,7 +3057,7 @@ const assembleExpandedFloor = (
         roomSpecs.set(posKey(r, c), leverSpec(MAIN_SECTION_ADDRESS))
       } else if (controlAtIndex.has(mi)) {
         const { control, record } = controlAtIndex.get(mi)!
-        roomSpecs.set(posKey(r, c), controlRoomSpec(control, record))
+        roomSpecs.set(posKey(r, c), controlRoomSpec(control, record, [r, c]))
       } else if (puzzleRole.has(mi)) {
         const k = puzzleRole.get(mi)!
         // Per-node override (authored `nodes` selectors, e.g. the last room's capstone) if this
@@ -3292,7 +3297,10 @@ const assembleExpandedFloor = (
         if (seatIndex === undefined) continue // this chain hosts none of this control's region — try the next chain
         chainControlSeated.add(control.id)
         takenByChainControl.add(seatIndex)
-        roomSpecs.set(posKey(cells[seatIndex][0], cells[seatIndex][1]), controlRoomSpec(control, record))
+        roomSpecs.set(
+          posKey(cells[seatIndex][0], cells[seatIndex][1]),
+          controlRoomSpec(control, record, cells[seatIndex])
+        )
       }
 
       // The doors a lock laid on this stretch stand where it laid them.

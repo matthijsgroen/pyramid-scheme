@@ -121,9 +121,10 @@ export const legalTargets = (
   { states, initial, returnsToInitial, transitions, placedOnly }: MechanismShape,
   from: string
 ): string[] => {
-  // A mechanism that places every move has only the moves it places, out of the state it is in.
+  // The moves placed out of the state it is in.
   const placed = new Set((transitions ?? []).filter(t => t.from === undefined || t.from === from).map(({ to }) => to))
-  return states.filter(to => to !== from && (returnsToInitial || to !== initial) && (!placedOnly || placed.has(to)))
+  // A mechanism that places every move has exactly the moves it places; the rule about its start is for the rest.
+  return states.filter(to => to !== from && (placedOnly ? placed.has(to) : returnsToInitial || to !== initial))
 }
 
 /**
@@ -150,9 +151,9 @@ export const douseTorches = <K>(
 
 /**
  * A SPENT MECHANISM: one with nowhere left to go, so a press would do nothing. Of the contract's kinds
- * that is the activator once used (a lit torch, a thrown one-way switch) and nothing else: a mechanism
- * that returns to its start, or a one-way one with a position still ahead of it, can always be pressed.
- * Navigation reads it to offer nothing and the map to draw the used appearance, so the two agree.
+ * that is an activator once used (a thrown one-way switch, a taken key) or a torch while it burns, and
+ * nothing else: a mechanism that returns to its start, or a one-way one with a position still ahead of it, can
+ * always be pressed. Navigation reads it to offer nothing and the map to draw the used appearance, so the two agree.
  */
 export const isSpent = (mechanism: MechanismShape, state: string): boolean =>
   legalTargets(mechanism, state).length === 0

@@ -15,6 +15,7 @@ export const PLAYGROUND_JOURNEY = allKnownJourneys[0].id
 export const REALISATION_CHOICES: Readonly<Record<string, readonly string[]>> = {
   toggle: ["handle"],
   activator: ["torch"],
+  flame: ["torch"],
   sequence: ["pressure-plate"],
   "fork-switch": ["lightbeamSwitch"],
   "one-way": ["zipline"],

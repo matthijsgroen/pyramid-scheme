@@ -223,6 +223,8 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
   const gatesOfDoorKey = new Map<string, GateId[]>()
   /** Every gate any door named with a key id — what the chest that mints that key opens. */
   const gatesByKeyId = new Map<string, GateId[]>()
+  /** The gates of every region barrier's doors, by the region they bar: what covers a torch there. */
+  const barrierGates = new Map<string, GateId[]>()
 
   /** Gates the author said one owner is enough for; every other gate answers to all its owners. */
   const anyGates = new Set<GateId>()
@@ -251,6 +253,8 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
         if (!beside || beside === doorRegion) continue
         const gateId = `${doorRegion}|${beside}`
         gates[gateId] = { from: beside, to: doorRegion, owners: [] }
+        if (cell.type === "room" && cell.regionBarrier)
+          barrierGates.set(cell.regionBarrier.region, [...(barrierGates.get(cell.regionBarrier.region) ?? []), gateId])
         unopened.set(gateId, new Set(keyIds))
         if (ward) continue
         for (const keyId of keyIds) {
@@ -283,6 +287,7 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
 
   // A stone never leaves its floor: the way out waits for every mechanism holding one to put it down.
   const emptyHands: NonNullable<LockSpec["emptyHands"]> = []
+  const torches: NonNullable<LockSpec["torches"]> = []
 
   // A MECHANISM: the position it stands in until it is worked, then a state per set of gates it can
   // open, and re-workable from any state into any other — which is what lets a player change their
@@ -359,6 +364,7 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
         : {}),
     }
     if (record.carrying && record.carrying.length > 0) emptyHands.push({ mechanism: id, notIn: record.carrying })
+    if (record.torch) torches.push({ mechanism: id, coveredBy: barrierGates.get(record.torch.region) ?? [] })
     for (const { gateIds, keyId, mode } of byPosition)
       for (const gateId of gateIds) {
         claim(gateId, keyId, id)
@@ -413,6 +419,7 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
     ...(oneWays.length > 0 ? { oneWays } : {}),
     ...(passages.length > 0 ? { passages } : {}),
     ...(emptyHands.length > 0 ? { emptyHands } : {}),
+    ...(torches.length > 0 ? { torches } : {}),
     in: of.get(posKey(grid.entrancePos[0], grid.entrancePos[1]))!,
     out: of.get(posKey(grid.exitPos[0], grid.exitPos[1]))!,
   }

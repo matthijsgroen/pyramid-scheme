@@ -229,6 +229,10 @@ const levelOf = (cut: Cut, node: Owner, nesting: FloorGrid["lockNesting"]): Lock
   const port = own ? cut.portOf(own.in) : undefined
   // Every one-way reads these, not only the way out.
   const emptyHands = (lock.emptyHands ?? []).filter(({ mechanism }) => Object.hasOwn(mechanisms, mechanism))
+  // A torch is walked in the level its mechanism is; a covering gate that is ground at this level stands open.
+  const torches = (lock.torches ?? [])
+    .filter(({ mechanism }) => Object.hasOwn(mechanisms, mechanism))
+    .map(({ mechanism, coveredBy }) => ({ mechanism, coveredBy: coveredBy.filter(gate => Object.hasOwn(gates, gate)) }))
   return {
     regions: lock.regions.filter(region => regions.has(region)),
     gates,
@@ -236,6 +240,7 @@ const levelOf = (cut: Cut, node: Owner, nesting: FloorGrid["lockNesting"]): Lock
     oneWays: (lock.oneWays ?? []).filter(({ from, to }) => scope.has(from) && scope.has(to)),
     passages: [...(lock.passages ?? []).filter(({ a, b }) => scope.has(a) && scope.has(b)), ...opened],
     ...(emptyHands.length > 0 ? { emptyHands } : {}),
+    ...(torches.length > 0 ? { torches } : {}),
     in: port ?? lock.in,
     out: port ?? lock.out,
   }

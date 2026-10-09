@@ -1,5 +1,6 @@
 import type { LockFault } from "../lockCompile"
 import type { LooseMechanic, MechanicKind } from "./mechanicKind"
+import type { MechanismRecord } from "../siteTypes"
 
 /** A torch is off or lit; the names are fixed, so a gate says `-[B]-` for lit and `-[B:off]-` for out. */
 export const TORCH_OFF = "off"
@@ -45,3 +46,16 @@ export const FLAME: MechanicKind = {
   },
   seats: control => (control.control === "flame" ? [{ region: control.in, seat: "control" }] : []),
 }
+
+/** A torch's floor record: the region it stands in, and its one move, off to on, made where it stands. Placed, so it
+ * can be lit again after a flood whatever it started in. */
+export const torchRecord = (
+  record: MechanismRecord,
+  region: string,
+  home: readonly [number, number]
+): MechanismRecord => ({
+  ...record,
+  torch: { region },
+  placedOnly: true,
+  transitions: [{ from: TORCH_OFF, to: TORCH_ON, at: home }],
+})
