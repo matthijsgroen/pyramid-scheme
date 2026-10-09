@@ -47,7 +47,10 @@ export const solveLock = (spec: LockSpec): { steps: string[]; actions: number } 
   for (let i = 1; i < path.length; i++) {
     const [a, b] = [order[path[i - 1]], order[path[i]]]
     if (a.region === b.region) {
-      const id = Object.keys(b.config).find(m => b.config[m] !== a.config[m])!
+      // The step is the move the player made; a torch a flood put out in the same step is its consequence.
+      const id = Object.keys(b.config).find(m =>
+        spec.mechanisms[m].transitions.some(t => t.at === a.region && t.from === a.config[m] && t.to === b.config[m])
+      )!
       steps.push(id === WEIGHTS ? stoneMove(a.config[id], b.config[id]) : `${id}:${b.config[id]}`)
       actions++
       continue

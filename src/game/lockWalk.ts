@@ -1,4 +1,5 @@
 import { doorOpen, type DoorMode } from "./doorOpen"
+import { douseTorches } from "./mechanismDoors"
 
 // A LOCK IS A GRAPH OF PLACES AND THE THINGS THAT CHANGE WHICH OF THEM JOIN UP. Nothing here knows
 // about grids, families or mods: a beam board, a lever, a sequence and a floor key are one shape with
@@ -53,6 +54,9 @@ export type LockSpec = {
    * so a stone never rides a drop and never leaves its floor. A level that is no floor still has its one-ways: it
    * keeps this whenever it holds stones. */
   emptyHands?: { mechanism: MechanismId; notIn: StateId[] }[]
+  /** Each torch, with the gates whose shutting covers its region (a region gate's entry hops): a lit torch in a
+   * covered region is out, in every state the walk reaches (`dousedConfig`). */
+  torches?: { mechanism: MechanismId; coveredBy: GateId[] }[]
 }
 
 // EVERY ID IN A LOCK IS A REFERENCE INTO ANOTHER TABLE, and a misspelled one is the failure that does
@@ -107,6 +111,14 @@ export const checkLockSpec = (spec: LockSpec): string | undefined => {
       if (!spec.mechanisms[mechanism].states.includes(state))
         return `empty hands refuse a state ${mechanism} does not have: ${state}`
   }
+
+  for (const { mechanism, coveredBy } of spec.torches ?? []) {
+    const torch = spec.mechanisms[mechanism]
+    if (!torch) return `a torch names no mechanism: ${mechanism}`
+    if (!torch.states.includes("off") || !torch.states.includes("on"))
+      return `torch ${mechanism} has no states off and on`
+    for (const gate of coveredBy) if (!spec.gates[gate]) return `torch ${mechanism} is covered by no such gate: ${gate}`
+  }
   return undefined
 }
 
@@ -130,6 +142,25 @@ export const openGates = (spec: LockSpec, config: LockConfig): Set<GateId> => {
   return open
 }
 
+/** A config with every lit torch in a covered region put out (`douseTorches`, the rule play douses by): the walk's
+ * start, and every state a move reaches after the entries it works. The same config when nothing is doused. */
+export const dousedConfig = (spec: LockSpec, config: LockConfig): LockConfig => {
+  const torches = spec.torches ?? []
+  if (torches.length === 0) return config
+  const covered = (states: ReadonlyMap<MechanismId, StateId>) => {
+    const open = openGates(spec, Object.fromEntries(states))
+    return new Set(torches.filter(({ coveredBy }) => coveredBy.some(gate => !open.has(gate))).map(t => t.mechanism))
+  }
+  const doused = douseTorches(
+    new Map(Object.entries(config)),
+    torches.map(t => t.mechanism),
+    covered
+  )
+  return torches.every(({ mechanism }) => doused.get(mechanism) === config[mechanism])
+    ? config
+    : Object.fromEntries(doused)
+}
+
 /** Where the player stands, and what every mechanism is set to. */
 export type LockState = { region: RegionId; config: LockConfig }
 
@@ -150,6 +181,7 @@ const stateKey = (ids: readonly MechanismId[], state: LockState): string =>
 // Reaching another floor means reaching the staircase. So this is the move that makes shutting your
 // own way back after passing the staircase a state rather than an argument, and it is NOT an escape
 // from a chamber a mechanism has sealed.
+// Every move ends with the douse: a move, the entries its arrival works, then the torches a flood puts out.
 const movesFrom = (spec: LockSpec, state: LockState): LockState[] => {
   const { region, config } = state
   const moves: LockState[] = []
@@ -171,7 +203,11 @@ const movesFrom = (spec: LockSpec, state: LockState): LockState[] => {
         moves.push({ region, config: { ...config, [id]: transition.to } })
   if (region === spec.out && handsEmpty(spec, config)) moves.push({ region: spec.in, config })
 
-  return moves.map(move => entering(spec, region, move))
+  return moves.map(move => {
+    const arrived = entering(spec, region, move)
+    const config = dousedConfig(spec, arrived.config)
+    return config === arrived.config ? arrived : { region: arrived.region, config }
+  })
 }
 
 // STEPPING INTO A REGION WORKS ITS ENTRIES: the player cannot arrive without the move having been made.
@@ -201,7 +237,7 @@ export const reachableStates = (
 
   const start: LockState = {
     region: spec.in,
-    config: Object.fromEntries(ids.map(id => [id, spec.mechanisms[id].initial])),
+    config: dousedConfig(spec, Object.fromEntries(ids.map(id => [id, spec.mechanisms[id].initial]))),
   }
   const index = new Map<string, number>([[stateKey(ids, start), 0]])
   const order: LockState[] = [start]

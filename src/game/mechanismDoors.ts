@@ -128,8 +128,9 @@ export const legalTargets = (
 
 /**
  * THE ONE RULE FOR A FLOOD AND A TORCH, shared by the lock walk, the floor's solver and play: a lit torch in a covered
- * region is out. `covered` answers, for a set of states, which torches stand in a region a shut region gate bars;
- * every lit one it names goes `off`, and it is asked again, since a doused torch may own a region gate of its own.
+ * region is out. A region is covered while any of its region gates is shut; `covered` answers, for a set of states,
+ * which torches stand in a covered region; every lit one it names goes `off`, and it is asked again, since a doused
+ * torch may own a region gate of its own.
  * It only ever puts torches out, so it ends, and a second call changes nothing. It never lights a torch and never
  * touches a key that is not in `torches`.
  */

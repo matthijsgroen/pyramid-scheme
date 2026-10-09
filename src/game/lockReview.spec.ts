@@ -92,3 +92,10 @@ describe("a gate named like an object method", () => {
     expect(lockQuality(renamed())).toEqual(lockQuality(parseLock("in -[T]- out\nT toggle @in").lock))
   })
 })
+
+describe("solveLock, with a flood", () => {
+  it("names the lever thrown, not the torch its flood puts out", () => {
+    const flood = spec("in -- hub -- hall\nhub -[B:off]- out\nhall -[S:a]\nS toggle @hub\nB torch @hall lit")
+    expect(solveLock(flood)?.steps).toEqual(["in", "hub", "S:b", "out"])
+  })
+})

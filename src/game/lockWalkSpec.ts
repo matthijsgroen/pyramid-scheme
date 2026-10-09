@@ -3,6 +3,7 @@
 import type { Lock, LockMechanic } from "./lockAuthoring"
 import { barriersOf, isRegionGate, isWeightOwner, joinOf } from "./lockAuthoring"
 import type { LockSpec, Mechanism } from "./lockWalk"
+import { TORCH_OFF, TORCH_ON } from "./mechanics/torch"
 import { stoneArrangements } from "./mechanics/weights"
 
 const OPEN = "·"
@@ -117,6 +118,14 @@ export const walkSpecOf = (lock: Lock, drafts: readonly string[] = []): LockSpec
         transitions,
       }
     }
+    // A torch's one move is lighting it, whatever it starts in: a lit torch put out by a flood can be lit again.
+    if (m.control === "flame")
+      return {
+        states: [TORCH_OFF, TORCH_ON],
+        initial: m.starts,
+        opens: { [TORCH_OFF]: opened(m.opens[TORCH_OFF]), [TORCH_ON]: opened(m.opens[TORCH_ON]) },
+        transitions: [{ from: TORCH_OFF, to: TORCH_ON, at: m.in }],
+      }
     const states = Object.keys(m.opens)
     const other = states.find(state => state !== m.starts)!
     return {
@@ -143,7 +152,29 @@ export const walkSpecOf = (lock: Lock, drafts: readonly string[] = []): LockSpec
 
   // A stone never leaves its floor: the way out is left only with empty hands.
   const emptyHands = weights ? [{ mechanism: WEIGHTS, notIn: stoneArrangements(lock).carrying }] : undefined
-  return { regions, gates, mechanisms, oneWays, in: lock.in, out: lock.out, ...(emptyHands ? { emptyHands } : {}) }
+  // A region gate's hops open and shut together, so the region is covered while any of them is shut.
+  const torches = Object.entries(lock.mechanics).flatMap(([id, m]) =>
+    m.control === "flame"
+      ? [
+          {
+            mechanism: id,
+            coveredBy: regionGates.flatMap(([gate, g]) =>
+              isRegionGate(g) && g.region === m.in ? (expands.get(gate) ?? []) : []
+            ),
+          },
+        ]
+      : []
+  )
+  return {
+    regions,
+    gates,
+    mechanisms,
+    oneWays,
+    in: lock.in,
+    out: lock.out,
+    ...(emptyHands ? { emptyHands } : {}),
+    ...(torches.length > 0 ? { torches } : {}),
+  }
 }
 
 // Every arrangement of the stones the player can reach, as one mechanism; each move is made in its plate's region.
