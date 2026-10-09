@@ -679,4 +679,45 @@ describe("corridors on a pair, and a drop among a corridor's items", () => {
     const unnamed: Lock = { ...named, connections: named.connections.filter(c => !("between" in c)) }
     expect(fragmentOf(unnamed)).toEqual(fragmentOf(named))
   })
+
+  it("compiles two corridors on one pair, the second's gate and order carrying its index", () => {
+    const f = fragmentOf(
+      parseLock("in -[A]- hall\nin -[B]- -[C]- hall\nhall -- out\nA toggle @in\nB toggle @in\nC toggle @in", "pair")
+        .lock
+    )
+    expect(f.regionLayout.connections.filter(([a, b]) => a === "in" && b === "hall")).toHaveLength(2)
+    expect(f.obstacles.filter(o => o.kind === "gate").map(o => [o.id, o.at])).toEqual([
+      ["in-hall", { on: "connection", between: ["in", "hall"] }],
+      ["in-hall#2", { on: "connection", between: ["in", "hall"], corridor: 1 }],
+      ["in-hall#3", { on: "connection", between: ["in", "hall"], corridor: 1 }],
+    ])
+    expect(f.barrierOrder).toEqual([{ between: ["in", "hall"], barriers: ["in-hall#2", "in-hall#3"], corridor: 1 }])
+  })
+
+  it("refuses a gate an open corridor beside it goes round", () => {
+    expect(checkLock(parseLock("in -[S]- hall\nin -- hall\nhall -- out\nS toggle @in", "round").lock, kinds)).toEqual([
+      { type: "topology", fault: { type: "gateBypassed", id: "in-hall", between: ["in", "hall"] } },
+    ])
+  })
+
+  it("compiles a gate and a drop on one corridor to a falling corridor: a drop, its gate, an order and no layout join", () => {
+    const f = fragmentOf(parseLock("in -- out\nin -[A]- >> pit\npit -- out\nA toggle @in", "fall").lock)
+    expect(f.regionLayout.connections).toEqual([
+      ["in", "out"],
+      ["pit", "out"],
+    ])
+    expect(f.barrierOrder).toEqual([{ between: ["in", "pit"], barriers: ["in-pit", "in>pit"] }])
+    expect(f.obstacles.map(o => o.id).sort()).toEqual(["in-pit", "in>pit"])
+  })
+
+  it("writes an aligned gate's order, alone on its corridor", () => {
+    const f = fragmentOf(parseLock("in ---[A]- hall\nhall -- out\nA toggle @in", "aligned").lock)
+    expect(f.barrierOrder).toEqual([{ between: ["in", "hall"], barriers: ["in-hall"], align: { "in-hall": "right" } }])
+  })
+
+  it("compiles a lock that repeats no pair and aligns nothing with no corridor field anywhere", () => {
+    const f = fragmentOf(parseLock("in -[A]- hall -[B]- out\nhall >> in\nA toggle @in\nB toggle @hall", "plain").lock)
+    expect(JSON.stringify(f)).not.toContain('"corridor"')
+    expect(JSON.stringify(f)).not.toContain('"align"')
+  })
 })

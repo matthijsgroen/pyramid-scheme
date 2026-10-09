@@ -1,4 +1,4 @@
-import type { Lock, LockMechanic, NestSpotFault, UnladenFault } from "./lockAuthoring"
+import type { Lock, LockConnection, LockMechanic, NestSpotFault, UnladenFault } from "./lockAuthoring"
 import {
   alignOf,
   barriersOf,
@@ -268,14 +268,15 @@ const unboundFaults = (lock: Lock, binding: RealisationBinding, kinds: ResolveMe
  * The realisation of a kind is read from the binding and nowhere else; an absent one leaves the field empty,
  * which `compileLock` refuses before anyone sees the result.
  *
- * - region -> region of the layout, `takes` -> appetite; a connection -> a layout connection, unless a
- *   one-way stands on it, which is then a drop `from -> to` the layout does not join.
+ * - region -> region of the layout, `takes` -> appetite; a corridor -> a layout connection, unless it carries a drop:
+ *   a drop alone is the drop, a drop with gates a falling corridor (the drop, its gates and its order, no layout join).
+ *   A gate on a pair's corridor `k > 0` carries `at.corridor: k`.
  * - an edge gate -> an edge obstacle, a region gate -> a region obstacle, `mode: "any"` kept as written; owners
  *   that are fork-switches go on the obstacle, every other owner names the gate in its `opens`.
  * - toggle / activator / flame -> a two-state control (back and forth / no way back / lit until a flood puts it
  *   out), `starts` its initial state.
  * - fork-switch -> a fork-switch control and the `forks` entry that lays its junction.
- * - sequence -> a sequence control; connection barriers -> `barrierOrder` where a connection has several.
+ * - sequence -> a sequence control; a corridor's items -> barrierOrder where it has several or an aligned one.
  */
 const translate = (
   lock: Lock,
@@ -285,11 +286,23 @@ const translate = (
 ): LockFragment => {
   const name = (id: string) => (namespace === undefined ? id : `${namespace}.${id}`)
   const oneWays = lock.oneWays ?? {}
-  const standsAlone = new Set(
-    lock.connections.flatMap(connection => barriersOf(connection).filter(barrier => Object.hasOwn(oneWays, barrier)))
-  )
+  const isDrop = (id: string) => Object.hasOwn(oneWays, id)
+  // A corridor's index is its place among the corridors of its pair the floor keeps (layout connections and falling
+  // corridors), in written order; a corridor carrying only a drop compiles to the drop and takes none.
+  const counted = new Map<string, number>()
+  const indexOf = new Map<LockConnection, number>()
+  for (const connection of lock.connections) {
+    const barriers = barriersOf(connection)
+    if (barriers.length === 1 && isDrop(barriers[0])) continue
+    const key = keyOf(...joinOf(connection))
+    indexOf.set(connection, counted.get(key) ?? 0)
+    counted.set(key, (counted.get(key) ?? 0) + 1)
+  }
+  const corridorOfGate = new Map<string, number>()
+  for (const [connection, index] of indexOf)
+    for (const id of barriersOf(connection)) if (!isDrop(id)) corridorOfGate.set(id, index)
   const connections = lock.connections
-    .filter(connection => !barriersOf(connection).some(barrier => standsAlone.has(barrier)))
+    .filter(connection => !barriersOf(connection).some(isDrop))
     .map(connection => {
       const [a, b] = joinOf(connection)
       return [name(a), name(b)] as const
@@ -312,7 +325,11 @@ const translate = (
         : {
             id: name(id),
             kind: "gate",
-            at: { on: "connection", between: [name(gate.from), name(gate.to)] },
+            at: {
+              on: "connection",
+              between: [name(gate.from), name(gate.to)],
+              ...((corridorOfGate.get(id) ?? 0) > 0 ? { corridor: corridorOfGate.get(id)! } : {}),
+            },
             ...terms,
           }
     )
@@ -335,9 +352,19 @@ const translate = (
 
   const barrierOrder: BarrierOrder[] = lock.connections.flatMap(connection => {
     const barriers = barriersOf(connection)
-    return barriers.length > 1
-      ? [{ between: [name(joinOf(connection)[0]), name(joinOf(connection)[1])] as const, barriers: barriers.map(name) }]
-      : []
+    const align = alignOf(connection)
+    const aligned = Object.keys(align).length > 0
+    if (barriers.length < 2 && !aligned) return []
+    const [a, b] = joinOf(connection)
+    const index = indexOf.get(connection) ?? 0
+    return [
+      {
+        between: [name(a), name(b)] as const,
+        barriers: barriers.map(name),
+        ...(index > 0 ? { corridor: index } : {}),
+        ...(aligned ? { align: Object.fromEntries(Object.entries(align).map(([id, side]) => [name(id), side])) } : {}),
+      },
+    ]
   })
 
   const oneWayRealisation = Object.keys(oneWays).length > 0 ? binding["one-way"] : undefined
