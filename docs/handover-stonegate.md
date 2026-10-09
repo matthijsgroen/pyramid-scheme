@@ -152,6 +152,11 @@ carve hang; the lock editor on the preview).
   repeats. Worked from `docs/game-design/lock-placement.md` (and `lock-curriculum.md`). stoneOnAPlate before Djoser's
   capstone (site 3 or 4): no stone lesson stands before it yet.
 - **doubleBack-blocked:** `src/game/locks/doubleBack-blocked.lock` is the old doubleBack, kept for the designer.
+- **doubleBack lays on about 1 seed in 200:** s1 is reached only through three chained drops. The Valley's last
+  pyramid and the dev bench carve it at a pinned seed, so it is fragile: if its floor is ever re-carved, or the lay
+  changes, that floor can fall to `layoutNotFound`. The lay-rate verifies measure a made-up mirrorFork instead.
+- **boardPicksTheWay needs a lever:** its `S toggle` is bound to the handle. Whether a junior fork lesson may also
+  teach the lever (the curriculum teaches each mechanic alone first) is the designer's call.
 - **Unanswered:**
   - correct the header comment of `stoneGate.lock` ("not placed yet, not buildable yet") now it stands in Djoser?
   - delete the "nothing else moved" test in `src/mods/puzzleSeeds.verify.ts`? It pins authored counts.
