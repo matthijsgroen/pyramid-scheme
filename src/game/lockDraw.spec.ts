@@ -46,8 +46,25 @@ describe("drawLock", () => {
     expect(draw("in -[G]- out")).toContain("■G?")
   })
 
-  it("lists a drop that carries a gate under the map", () => {
-    expect(draw("in -[H]- >> hall\nhall -- out\nH toggle @in")).toContain("in -[■H:b]- >> hall")
+  it("writes a falling corridor's gate on its drop line", () => {
+    const art = draw("in -[H]- >> hall\nhall -- out\nH toggle @in")
+    expect(art).toContain("■H:b")
+    expect(art).not.toContain("no room to draw")
+  })
+})
+
+describe("drawLock, with corridors that share a pair", () => {
+  it("draws both corridors and both gates", () => {
+    const art = draw("in -[S]- hall\nin -[T]- hall\nhall -- out\nS toggle @in\nT toggle @in")
+    expect(art).toContain("■S:b")
+    expect(art).toContain("■T:b")
+    expect(art).not.toContain("no room to draw")
+  })
+
+  it("draws a drop no connection names", () => {
+    const { lock } = parseLock("in -- hall\nhall >> in\nhall -- out")
+    const unnamed = { ...lock, connections: lock.connections.filter(c => !("between" in c)) }
+    expect(drawLock(unnamed)).toMatch(/[▲▶▼◀]/)
   })
 })
 

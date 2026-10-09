@@ -9,7 +9,7 @@ import type { DraftLock } from "./lockNotation"
 type Sketch = {
   regions: string[]
   edges: Record<string, { from: string; to: string; token: string }>
-  drops: { from: string; to: string }[]
+  drops: { from: string; to: string; token?: string }[]
   boxes: Record<string, string>
   notes: string[]
   in: string
@@ -206,8 +206,23 @@ const drawSketch = (sketch: Sketch): string => {
       }
     })
 
-  // A join closing a loop: a corridor routed around what is drawn, its gate written on the longest
-  // straight stretch that has room for it, or in a note when none does.
+  // A token goes on the first straight stretch of a path with room for it; a path with none gets a note.
+  const placeToken = (path: Node[], token: string): boolean => {
+    for (let i = 0; i < path.length; i++) {
+      let j = i
+      while (j + 1 < path.length && path[j + 1].y === path[i].y) j++
+      if (j - i + 1 < token.length + 2) continue
+      write(
+        Math.min(path[i].x, path[j].x) + Math.floor((Math.abs(path[j].x - path[i].x) + 1 - token.length) / 2),
+        path[i].y,
+        token
+      )
+      return true
+    }
+    return false
+  }
+
+  // A join closing a loop: a corridor routed around what is drawn, its gate written on a straight stretch.
   for (const [gate, { from, to }] of Object.entries(sketch.edges)) {
     if (parent.get(to)?.gate === gate || parent.get(from)?.gate === gate) continue
     const path = route(from, to)
@@ -220,21 +235,11 @@ const drawSketch = (sketch: Sketch): string => {
     solid[first.y][first.x] |= outOf(first, from).out
     solid[last.y][last.x] |= outOf(last, to).out
     const token = gateToken(gate)
-    let spot: { x: number; y: number } | undefined
-    for (let i = 0; i < path.length && !spot; i++) {
-      let j = i
-      while (j + 1 < path.length && path[j + 1].y === path[i].y) j++
-      if (j - i + 1 < token.length + 2) continue
-      spot = {
-        x: Math.min(path[i].x, path[j].x) + Math.floor((Math.abs(path[j].x - path[i].x) + 1 - token.length) / 2),
-        y: path[i].y,
-      }
-    }
-    if (spot) write(spot.x, spot.y, token)
-    else sketch.notes.push(`${from} -[${token}]- ${to}`)
+    if (!placeToken(path, token)) sketch.notes.push(`${from} -[${token}]- ${to}`)
   }
 
-  for (const { from, to } of sketch.drops) {
+  // A falling corridor's gates are written on its drop line.
+  for (const { from, to, token } of sketch.drops) {
     const path = route(from, to)
     if (!path) {
       unrouted.push(`${from} ╌▶ ${to}`)
@@ -245,6 +250,7 @@ const drawSketch = (sketch: Sketch): string => {
     const [first, last] = [path[0], path[path.length - 1]]
     if (path.length > 1) drop[first.y][first.x] |= outOf(first, from).out
     text[last.y][last.x] = outOf(last, to).arrow
+    if (token !== undefined && !placeToken(path, token)) sketch.notes.push(`${from} -[${token}]- >> ${to}`)
   }
 
   const rows = text.map((row, y) =>
@@ -299,12 +305,12 @@ const sketchOf = (lock: Lock, drafts: readonly string[]): Sketch => {
       edges[String(c)] = { from: a, to: b, token: spot ? "&" : barriers.map(token).join(" ") }
       return
     }
-    drops.push(lock.oneWays![drop])
-    if (barriers.length > 1)
-      notes.push(
-        `${a} ${barriers.map(id => (Object.hasOwn(lock.oneWays!, id) ? ">>" : `-[${token(id)}]-`)).join(" ")} ${b}`
-      )
+    const others = barriers.filter(id => id !== drop)
+    drops.push({ ...lock.oneWays![drop], ...(others.length > 0 ? { token: others.map(token).join(" ") } : {}) })
   })
+  // A drop no connection names is a corridor of its own, drawn like any other.
+  const named = new Set(lock.connections.flatMap(connection => barriersOf(connection)))
+  for (const [id, oneWay] of Object.entries(lock.oneWays ?? {})) if (!named.has(id)) drops.push(oneWay)
   const boxes = Object.fromEntries(
     Object.keys(lock.regions).map(region => {
       const standing = Object.entries(lock.mechanics).flatMap(([id, m]) => ("in" in m && m.in === region ? [id] : []))
