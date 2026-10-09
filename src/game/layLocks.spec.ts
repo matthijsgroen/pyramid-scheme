@@ -110,6 +110,54 @@ describe("laying a lock plan on the lattice", { timeout: 120_000 }, () => {
     expect(result.refusal.grid).toBe(3)
   })
 
+  // A MADE-UP PLAN, as a floor's lengthening handed it to the lay: a drop from a long `in` stretch onto `path`, and
+  // a door back from `ledge`. At this seed one search's corridor has no path of any of its lengths, and looking
+  // down every self-avoiding walk for one never ended.
+  it("gives up a search that cannot find a corridor's path, and lays on a later one", () => {
+    const region = (id: string, onRoute: boolean, minNodes: number, extra: object = {}) => ({
+      id,
+      onRoute,
+      seats: [],
+      minNodes,
+      ...extra,
+    })
+    const corridor = (from: string, to: string, onRoute: boolean, barriers: string[], minNodes: number) => ({
+      id: `${from}>${to}`,
+      from,
+      to,
+      onRoute,
+      barriers,
+      minNodes,
+    })
+    const plan = {
+      route: ["entrance", "in", "out", "exit"],
+      regions: [
+        region("entrance", true, 1),
+        region("in", true, 3, { owner: "made" }),
+        region("path", false, 1, { owner: "made", mouth: "in" }),
+        {
+          ...region("ledge", false, 1, { owner: "made", mouth: "in" }),
+          seats: [{ for: "control", control: "made.G" }],
+        },
+        region("out", true, 1, { owner: "made" }),
+        region("exit", true, 1),
+      ],
+      corridors: [
+        corridor("entrance", "in", true, [], 0),
+        corridor("path", "ledge", false, [], 0),
+        corridor("ledge", "in", false, ["ledge-in"], 1),
+        corridor("in", "out", true, ["in-out"], 1),
+        corridor("out", "exit", true, [], 0),
+      ],
+      junctions: [],
+      drops: [{ id: "in>path", launch: "in", landing: "path" }],
+      nested: [],
+    } as unknown as LockPlan
+    const result = layLockPlan(plan, { seed: 3205065431912577, n: 21 })
+    expect(result.ok).toBe(true)
+    if (result.ok) expectLaidPlan(plan, result.laid)
+  })
+
   // A MADE-UP LOCK, never a catalogue one. `hub` takes four ways and sits on two loops (hub-a-b-c-hub and
   // hall-hub-c-hall), so the ways that close them join regions both laid earlier, round a hub with no side to spare.
   it("lays a plan whose ways close loops round a hub with no side to spare", () => {

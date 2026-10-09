@@ -104,6 +104,9 @@ const dropHops = (d: number) => oneWayReach(DIRS[d][2]) / GRID_STEP
 // Work (candidate placements tried) one search may spend, how many reshuffled searches a grid gets per
 // allowance of lengthening, and the most extra nodes any one stretch may take.
 const WORK_BUDGET = 400
+// Lattice steps one search may take looking for a stretch's walk or a corridor's path. A walk or a path that does
+// not exist is otherwise looked for down every self-avoiding walk of its length, which on a crowded grid never ends.
+const STEP_BUDGET = 250_000
 const RESTARTS = 10
 const MAX_EXTRA_NODES = 1
 const MAX_EXTRA_PER_REGION = 2
@@ -160,6 +163,9 @@ const search = (
   const trail: Array<() => void> = []
   let extraLeft = extraNodes
   let work = 0
+  let stepsTaken = 0
+  // A search that has taken its last lattice step looks no further: every generator stops and every step refuses.
+  const outOfSteps = () => ++stepsTaken > STEP_BUDGET
   let deepest = -1
 
   const undoTo = (mark: number) => {
@@ -191,7 +197,7 @@ const search = (
     extraLeft -= count
     trail.push(() => (extraLeft += count))
   }
-  const spent = () => ++work > WORK_BUDGET
+  const spent = () => ++work > WORK_BUDGET || stepsTaken > STEP_BUDGET
   const dirBetween = (a: number, b: number) => DIRS.findIndex((_, d) => step(a, d) === b)
 
   const regionById = new Map(plan.regions.map(region => [region.id, region]))
@@ -294,6 +300,7 @@ const search = (
       let found = 0
       const path: number[] = []
       function* grow(at: number, left: number): Generator<number[]> {
+        if (outOfSteps()) return
         if (left === 0) {
           found++
           yield [...path]
@@ -345,7 +352,7 @@ const search = (
                   trail.push(() => placed.delete(region.id))
                   if (next()) return true
                   undoTo(inner)
-                  if (work > WORK_BUDGET) return false
+                  if (work > WORK_BUDGET || stepsTaken > STEP_BUDGET) return false
                 }
               }
             }
@@ -362,6 +369,7 @@ const search = (
       let found = 0
       const path = [s]
       function* walk(at: number, left: number): Generator<number[]> {
+        if (outOfSteps()) return
         for (const d of shuffle([0, 1, 2, 3], rand)) {
           if (found >= PATHS_PER_LENGTH) return
           if (at === s && !sideFree(s, d)) continue
