@@ -250,7 +250,9 @@ A corridor laid with `k` nodes and `m` items that need a node has `k - m` spare 
 first item, between each two, after the last. The spare nodes are dealt out like this:
 
 1. **Closed gaps.** A gap is closed when the item after it is aligned left, or the item before it is aligned right.
-   The gap between a fork's junction and its gate is always closed.
+   The gap at a junction's end of a corridor is always closed, on every corridor touching the junction's region (a
+   fork's arms and any other corridor leaving it): that is where the carve stands those doors, so the laid floor
+   stays byte-identical.
 2. **Centred items first.** Each centred item takes one spare node into each open gap beside it, in item order from
    the corridor's start, while spare nodes last. A gap two centred items share is filled once.
 3. **The rest goes to the default gap**: the gap after the last item, or the gap before the first when the corridor

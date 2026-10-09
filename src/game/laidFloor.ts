@@ -82,6 +82,8 @@ const labelOf = (plan: LockPlan, id: string): string => plan.regions.find(region
 /**
  * WHERE A CORRIDOR OF `k` NODES STANDS ITS DOORS (`seatItems`, its junction end closed) and how it is split between
  * its two regions: the nodes before its first door answer to `from`, the rest to `to`; with no door, halfway.
+ * The junction end is closed on every corridor touching a junction's region, a fork's arms and any other corridor
+ * leaving it alike: that is where the carve has always stood their doors, so a corridor of free items lays as before.
  */
 const corridorSeats = (plan: LockPlan, corridor: PlanCorridor, k: number): { doors: number[]; split: number } => {
   const junctionRegions = new Set(plan.junctions.map(junction => junction.region))

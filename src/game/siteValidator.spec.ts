@@ -683,4 +683,25 @@ describe("reachableFrom across a drop", () => {
     expect(reached.has("0,4")).toBe(true)
     expect(reached.has("0,0")).toBe(false)
   })
+
+  it("crosses every drop launched from one cell", () => {
+    // launch(0,1) drops east onto (0,4) and south onto (3,1)
+    const twoDrops = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, corridor(["w"])],
+        [0, 2, drop("e")],
+        [0, 3, drop("e")],
+        [0, 4, room("treasure", [], { reward: { type: "mosaicPiece" } })],
+        [1, 1, drop("s")],
+        [2, 1, drop("s")],
+        [3, 1, room("exit", [])],
+      ],
+      [0, 0],
+      [3, 1]
+    )
+    const reached = reachableFrom(twoDrops, [0, 0])
+    expect(reached.has("0,4")).toBe(true)
+    expect(reached.has("3,1")).toBe(true)
+  })
 })

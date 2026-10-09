@@ -4336,6 +4336,27 @@ const assembleExpandedFloor = (
           gateKeys,
           runCells
         ),
+        // A drop landing on its stretch lands on ground reaching the door of the first gate past it.
+        ...dropLandingFaults(
+          cells2D,
+          dropIdsWithRuns.flatMap(({ o, edge }) =>
+            landsOnItsStretch.has(o.id)
+              ? [
+                  {
+                    id: o.id,
+                    region: `${o.id}:landing`,
+                    landing: edge.to.split(",").map(Number) as [number, number],
+                  },
+                ]
+              : []
+          ),
+          [...landsOnItsStretch].map(([drop, gate]) => ({
+            id: gate,
+            between: [`${drop}:landing`, `${drop}:landing`] as [string, string],
+            key: gateKeyOf(gate),
+          })),
+          runCells
+        ),
       ]
       if (disagreement.length > 0) {
         if (!carveDisagreement) carveDisagreement = disagreement

@@ -440,13 +440,16 @@ describe("doors on corridors that carry items", { timeout: 60_000 }, () => {
   it("stands a door aligned right on the node beside the region after it", () => {
     const base = planFor("in ---[A]- hall\nhall -- out\nA toggle @in", "aligned")
     const plan = { ...base, corridors: base.corridors.map(c => ({ ...c, minNodes: c.minNodes + 2 })) }
+    let laid = 0
     for (const seed of SEEDS) {
       const toLay = planToLay(plan, WANTS)
       const result = layLockPlan(toLay, { seed, n: startingGridSize(toLay) })
       if (!result.ok) continue
+      laid++
       const floor = seatLaidFloor(plan, result.laid)
       const nodes = result.laid.corridors.find(c => c.id === "aligned.in>aligned.hall")!.nodes
       expect(floor.gateDoor.get("aligned.in-hall")).toBe(nodes[nodes.length - 1])
     }
+    expect(laid).toBeGreaterThanOrEqual(6)
   })
 })

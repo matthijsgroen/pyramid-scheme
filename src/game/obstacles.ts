@@ -377,18 +377,21 @@ export const fallingStretches = (
   }
 }
 
-/** The drops whose falling corridor carries a gate past them: each lands on its own stretch, not in its region's ground. */
+/**
+ * The drops whose falling corridor carries a gate past them, each with the first such gate: each lands on its own
+ * stretch, the ground before that gate, not in its region's ground.
+ */
 export const dropsLandingOnAStretch = (
   obstacles: readonly Obstacle[],
   barrierOrder: readonly BarrierOrder[]
-): Set<string> => {
+): Map<string, string> => {
   const drops = new Map(obstacles.flatMap(o => (o.kind === "oneWay" ? [[o.id, o] as const] : [])))
-  const found = new Set<string>()
+  const found = new Map<string, string>()
   for (const order of barrierOrder) {
     const id = fallsAt(order, drops)
     if (id === undefined) continue
     const { downstream } = fallingStretches({ ...order, align: order.align ?? {} }, drops.get(id)!)
-    if (downstream.length > 0) found.add(id)
+    if (downstream.length > 0) found.set(id, downstream[0])
   }
   return found
 }

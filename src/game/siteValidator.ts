@@ -37,23 +37,26 @@ export const reachableFrom = (
   const visited = new Set<string>([startKey])
   const queue: Pos[] = [[sr, sc]]
   // A drop is crossed launch to landing and never back: its span names no direction in the cells' `dirs`, so
-  // the walk takes it as one step from the launch.
-  const landingOf = new Map(oneWayRuns(grid).map(run => [posKey(...run.launch), run.landing] as const))
+  // the walk takes it as one step from the launch. Every cell reached counts as one ground, keys past a drop with
+  // no way back included: a player holding such a key re-enters the floor from its entrance and walks up to the
+  // gate it opens, which a persistent floor allows.
+  const landingsOf = new Map<string, Pos[]>()
+  for (const run of oneWayRuns(grid))
+    landingsOf.set(posKey(...run.launch), [...(landingsOf.get(posKey(...run.launch)) ?? []), run.landing])
 
   while (queue.length > 0) {
     const [r, c] = queue.shift()!
     const cell = grid.cells[r]?.[c]
     if (!cell || cell.type === "empty") continue
 
-    const landing = landingOf.get(posKey(r, c))
-    if (
-      landing &&
-      !visited.has(posKey(...landing)) &&
-      !(blockedPos && landing[0] === blockedPos[0] && landing[1] === blockedPos[1])
-    ) {
-      visited.add(posKey(...landing))
-      queue.push(landing)
-    }
+    for (const landing of landingsOf.get(posKey(r, c)) ?? [])
+      if (
+        !visited.has(posKey(...landing)) &&
+        !(blockedPos && landing[0] === blockedPos[0] && landing[1] === blockedPos[1])
+      ) {
+        visited.add(posKey(...landing))
+        queue.push(landing)
+      }
 
     const dirs = cell.type === "room" || cell.type === "corridor" ? cell.dirs : new Set()
 
