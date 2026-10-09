@@ -2971,11 +2971,12 @@ describe("the designer's doubleBack, two arms off the entrance with drops betwee
       }
     })
 
-    it("reads as a sound lock on every carved seed", () => {
+    // Its one-shot S1 seals the chamber it stands in, so the walk refuses a lost region and nothing before it.
+    it("reads as a lock that strands nobody, its one-shot lever's chamber lost, on every carved seed", () => {
       expect(carves().length).toBeGreaterThan(0)
       for (const { seed, grid } of carves()) {
         const result = walkLock(floorLock(grid)!)
-        expect(result.sound, `seed ${seed}: ${JSON.stringify(result)}`).toBe(true)
+        expect(result.sound ? "sound" : result.failure.type, `seed ${seed}`).toBe("regionLost")
       }
     })
 

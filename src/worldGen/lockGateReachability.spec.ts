@@ -3,7 +3,7 @@ import { assembleFloor } from "../game/siteAssembler"
 import type { FloorConfig as GameFloorConfig, FloorGrid, RoomCell } from "../game/siteTypes"
 import { mechanismGatesOf } from "../game/mechanismDoors"
 import { collectReachableKeys, reachableFrom } from "../game/siteValidator"
-import { BINDING, doubleBackLock } from "../game/testSupport/lockFixtures"
+import { BINDING, mirrorForkLock } from "../game/testSupport/lockFixtures"
 import { torchAndFloorKeyDoorFloor } from "../game/testSupport/mixedDoorFixtures"
 import { resolveEncounterMeta, resolveKeyRequirements } from "../mods/allFamilyMeta"
 import { computeReachability, floorKey, reachableFloorsInSite, type ReachabilitySupport } from "./reachability"
@@ -19,7 +19,7 @@ const support: ReachabilitySupport = {
 const WING_KEY = "wing-key"
 const ARM_KEY = "arm-key"
 
-// Floor 0 is plain and its stair is key gated; floor 1 stands doubleBack, with one open arm and one arm behind a key gate.
+// Floor 0 is plain and its stair is key gated; floor 1 stands mirrorFork, with one open arm and one arm behind a key gate.
 const site = (): SiteConfig => [
   {
     pathPuzzles: 0,
@@ -53,7 +53,7 @@ const site = (): SiteConfig => [
         gate: { type: "tomb-key", wardKeyId: ARM_KEY },
       },
     ],
-    locks: [{ lock: doubleBackLock() }],
+    locks: [{ lock: mirrorForkLock() }],
     realisations: BINDING,
   } as SiteConfig[number],
 ]

@@ -172,10 +172,11 @@ describe("the plan of the dev pyramid's doubleBack floor", () => {
           arms: ["doubleBack.in>doubleBack.leftLower", "doubleBack.in>doubleBack.rightLower"],
         },
       ],
-      drops: [
-        { id: "doubleBack.dropToLeft", launch: "doubleBack.s1", landing: "doubleBack.leftLower" },
-        { id: "doubleBack.dropToIn", launch: "doubleBack.leftLower", landing: "doubleBack.in" },
-      ],
+      drops: Object.entries(floor.locks![0].lock.oneWays ?? {}).map(([id, { from, to }]) => ({
+        id: `doubleBack.${id}`,
+        launch: `doubleBack.${from}`,
+        landing: `doubleBack.${to}`,
+      })),
       nested: [],
     })
   })

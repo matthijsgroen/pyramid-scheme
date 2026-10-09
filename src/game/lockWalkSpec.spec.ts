@@ -8,11 +8,12 @@ const compiled = (text: string) => {
   return walkSpecOf(lock, drafts)
 }
 
-const DOUBLE_BACK = `
+const MIRROR_FORK = `
   in -[Y]- leftLower -[S1]- s2
   in -[Y]- rightLower -[S1:a]- s1
   in -[S2]- out
   s1 >> leftLower >> in
+  s2 >> s1
   Y fork @in
   S1 toggle @s1
   S2 toggle @s2
@@ -29,9 +30,9 @@ const LANTERNS = `
 const SEQUENCE = "in -- hall\nhall -[P]- out\nP sequence in hall in reset hall-out"
 
 describe("walkSpecOf", () => {
-  it("compiles doubleBack to a well-formed lock that walks sound", () => {
-    expect(checkLockSpec(compiled(DOUBLE_BACK))).toBeUndefined()
-    expect(walkLock(compiled(DOUBLE_BACK))).toEqual({ sound: true, states: expect.any(Number) })
+  it("compiles a mirror fork to a well-formed lock that walks sound", () => {
+    expect(checkLockSpec(compiled(MIRROR_FORK))).toBeUndefined()
+    expect(walkLock(compiled(MIRROR_FORK))).toEqual({ sound: true, states: expect.any(Number) })
   })
 
   it("walks a gate before a drop sound, and strands whoever drops before a shut gate", () => {
@@ -62,7 +63,7 @@ describe("walkSpecOf", () => {
   })
 
   it("gives a fork rest plus one state per gate, any to any", () => {
-    const Y = compiled(DOUBLE_BACK).mechanisms.Y
+    const Y = compiled(MIRROR_FORK).mechanisms.Y
     expect(Y.states).toEqual(["rest", "in-leftLower", "in-rightLower"])
     expect(Y.transitions).toHaveLength(6)
   })
@@ -80,7 +81,7 @@ describe("walkSpecOf", () => {
 
 describe("what a lock starts as", () => {
   it("reports the gates open at the start", () => {
-    expect(openAtStart(parseLock(DOUBLE_BACK).lock)).toEqual(["rightLower-s1"])
+    expect(openAtStart(parseLock(MIRROR_FORK).lock)).toEqual(["rightLower-s1"])
     expect(openAtStart(parseLock(LANTERNS).lock)).toEqual([])
   })
 
@@ -94,7 +95,7 @@ describe("what a lock starts as", () => {
     expect(notBuildable(parseLock("in -- hall\nhall -- out\nhall -[S]\nS toggle @in").lock)).toEqual([])
     expect(notBuildable(parseLock("in -[H]- hall\nhall -- out\nout -[H:b]- in\nH toggle @in").lock)).toEqual([])
     expect(notBuildable(parseLock("in -- hall\nhall -- out\nout >> in").lock)).toEqual([])
-    expect(notBuildable(parseLock(DOUBLE_BACK).lock)).toEqual([])
+    expect(notBuildable(parseLock(MIRROR_FORK).lock)).toEqual([])
     expect(notBuildable(parseLock("in -[p]- out\np plate @in\nshelf plate @in stone").lock)).toEqual([])
     expect(notBuildable(parseLock("in -[unladen]- out\nshelf plate @in stone").lock)).toEqual([])
   })

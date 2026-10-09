@@ -13,7 +13,7 @@ import type { Difficulty } from "@/data/difficultyLevels"
 import type { FamilyMeta, FamilyOptions } from "@/game/families/familyMeta"
 import { FORK_SHAPES, type ForkShape } from "@/game/forkShape"
 import { configHash } from "@/game/seeds/configHash"
-import { doubleBackLock } from "./spec/locks/doubleBack"
+import { mirrorForkLock } from "../game/testSupport/lockFixtures"
 import { WORLD_TARGETS } from "./worldSpec"
 import { PYRAMID_JOURNEYS } from "./data"
 import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
@@ -32,11 +32,11 @@ const floor = (overrides: Partial<FloorConfig> = {}): FloorConfig => ({
   ...overrides,
 })
 
-// The designer's lock on a floor of its own: the drops, levers and fork-switch board exist only once it compiles.
+// A made-up lock on a floor of its own: the drops, levers and fork-switch board exist only once it compiles.
 const lockFloor = (difficulty: Difficulty = "expert", fork: string = "lightbeamSwitch"): FloorConfig =>
   floor({
     difficulty,
-    locks: [{ lock: doubleBackLock() }],
+    locks: [{ lock: mirrorForkLock() }],
     realisations: { "fork-switch": fork, toggle: "handle", "one-way": "zipline" },
   } as Partial<FloorConfig>)
 

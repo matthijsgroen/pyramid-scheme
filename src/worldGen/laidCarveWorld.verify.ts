@@ -236,10 +236,11 @@ describe("the dev pyramid's doubleBack, authored without a side path", { timeout
         return cell.type === "empty" ? undefined : cell.region
       }
       const runs = oneWayRuns(grid)
-      expect(runs.map(run => [regionAt(run.launch), regionAt(run.landing)]).sort(), `seed ${seed}: the drops`).toEqual([
-        ["doubleBack.leftLower", "doubleBack.in"],
-        ["doubleBack.s1", "doubleBack.leftLower"],
-      ])
+      expect(runs.map(run => [regionAt(run.launch), regionAt(run.landing)]).sort(), `seed ${seed}: the drops`).toEqual(
+        Object.values(devDoubleBack.locks![0].lock.oneWays ?? {})
+          .map(({ from, to }) => [`doubleBack.${from}`, `doubleBack.${to}`])
+          .sort()
+      )
       // Each landing stands on ground reaching the door of every gate bounding its region: leftLower's landing
       // between in-leftLower and leftLower-s2, the junction region's beside its three.
       const doorKeys = new Map(

@@ -103,7 +103,7 @@ export const devRules: Rule[] = [
     .floor(0, {
       locks: [{ lock: doubleBackLock() }],
       // Recorded from the bake's own carve search (searchCarvePair): at the default packing the floor's own
-      // address seed carves on attempt 0, walks sound (71 states) and leaves no dead region, so no packing is
+      // address seed carves on attempt 0, walks sound and leaves no dead region, so no packing is
       // authored and the seed is stamped only so the carve does not move with the seed formula. A dev floor has
       // no baked output to carry the pin.
       seed: 111235356889667,

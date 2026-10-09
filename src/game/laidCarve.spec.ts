@@ -18,7 +18,7 @@ import {
 } from "./testSupport/laidCarveChecks"
 import type { LaidCarve } from "./testSupport/laidCarveChecks"
 import { leverLock, strandingLock } from "./testSupport/floorLockFixtures"
-import { BINDING, doubleBackLock, sluiceLock } from "./testSupport/lockFixtures"
+import { BINDING, mirrorForkLock, sluiceLock } from "./testSupport/lockFixtures"
 
 const SEEDS = Array.from({ length: 40 }, (_, i) => i + 1)
 
@@ -133,14 +133,14 @@ const FIXTURES: Record<string, Fixture> = {
     minimum: 20,
   },
   "sequence lock": { floor: floorOf([{ lock: platesLock() }]), registry: false, sound: "some", minimum: 30 },
-  "doubleBack without side paths": {
-    floor: floorOf([{ lock: doubleBackLock() }], { pathPuzzles: 0 }),
+  "mirrorFork without side paths": {
+    floor: floorOf([{ lock: mirrorForkLock() }], { pathPuzzles: 0 }),
     registry: true,
     sound: true,
     minimum: 30,
   },
-  "doubleBack with side paths": {
-    floor: floorOf([{ lock: doubleBackLock() }], { pathPuzzles: 0, sideSections: SIDES }),
+  "mirrorFork with side paths": {
+    floor: floorOf([{ lock: mirrorForkLock() }], { pathPuzzles: 0, sideSections: SIDES }),
     registry: true,
     sound: true,
     minimum: 30,
@@ -181,14 +181,14 @@ const FIXTURES: Record<string, Fixture> = {
     sound: true,
     minimum: 30,
   },
-  "doubleBack with two ungated side paths": {
-    floor: floorOf([{ lock: doubleBackLock() }], { pathPuzzles: 0, sideSections: UNGATED }),
+  "mirrorFork with two ungated side paths": {
+    floor: floorOf([{ lock: mirrorForkLock() }], { pathPuzzles: 0, sideSections: UNGATED }),
     registry: true,
     sound: true,
     minimum: 30,
   },
-  "doubleBack with one ungated and one floor-key-gated side path": {
-    floor: floorOf([{ lock: doubleBackLock() }], { pathPuzzles: 0, sideSections: MIXED }),
+  "mirrorFork with one ungated and one floor-key-gated side path": {
+    floor: floorOf([{ lock: mirrorForkLock() }], { pathPuzzles: 0, sideSections: MIXED }),
     registry: true,
     sound: true,
     minimum: 20,
@@ -279,8 +279,8 @@ describe("a lock floor is carved from the structure laid for it", { timeout: 300
     })
   }
 
-  it("stands doubleBack's fork-switch with the lightbeam family, rest and one state for each seam", () => {
-    for (const { grid } of carvedOf("doubleBack without side paths")) {
+  it("stands mirrorFork's fork-switch with the lightbeam family, rest and one state for each seam", () => {
+    for (const { grid } of carvedOf("mirrorFork without side paths")) {
       const junction = expectForkSwitchRoom(grid, "lightbeamSwitch")
       expect(junction.exits!.filter(exit => exit.gateKeyId !== undefined)).toHaveLength(2)
     }
@@ -313,7 +313,7 @@ const CONTENT_FIXTURES = [
   "lever with ungated side paths",
   "two locks in a chain with ungated side paths",
   "sluice with ungated side paths",
-  "doubleBack with two ungated side paths",
+  "mirrorFork with two ungated side paths",
 ]
 
 describe("an ungated side path of a laid floor is content standing on laid nodes", { timeout: 300_000 }, () => {
@@ -366,7 +366,7 @@ describe("an ungated side path of a laid floor is content standing on laid nodes
   })
 
   it("files an absorbed side path's rooms under the same addresses whichever seed carves them", () => {
-    const name = "doubleBack with two ungated side paths"
+    const name = "mirrorFork with two ungated side paths"
     const filed = (grid: FloorGrid) =>
       grid.cells
         .flatMap((row, r) =>
@@ -387,7 +387,7 @@ describe("an ungated side path of a laid floor is content standing on laid nodes
 })
 
 describe("a gated side path of a laid floor stays a branch off laid ground", { timeout: 300_000 }, () => {
-  const mixed = () => carvedOf("doubleBack with one ungated and one floor-key-gated side path")
+  const mixed = () => carvedOf("mirrorFork with one ungated and one floor-key-gated side path")
 
   it("hangs the gated path off laid ground as a branch of its own and fills only the ungated one in", () => {
     for (const { grid, laid } of mixed()) {

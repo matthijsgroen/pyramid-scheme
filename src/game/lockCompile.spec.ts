@@ -3,7 +3,7 @@ import { CORE_MECHANICS, mechanicRegistry, resolveMechanicKind } from "./mechani
 import type { Activator, ForkSwitch, Lock, LockMechanic, LockOneWay, Sequence, Toggle } from "./lockAuthoring"
 import { checkLock, compileLock, type LockFragment, type RealisationBinding } from "./lockCompile"
 import { parseLock } from "./lockNotation"
-import { BINDING, doubleBackLock, sluiceLock } from "./testSupport/lockFixtures"
+import { BINDING, mirrorForkLock, sluiceLock } from "./testSupport/lockFixtures"
 
 const kinds = resolveMechanicKind
 const compile = (lock: Lock, binding: RealisationBinding = BINDING, namespace?: string) =>
@@ -16,12 +16,12 @@ const fragmentOf = (lock: Lock, binding: RealisationBinding = BINDING, namespace
 
 describe("a lock stands on its own", () => {
   it("is checked with no floor, no binding and no seed", () => {
-    expect(checkLock(doubleBackLock(), kinds)).toEqual([])
+    expect(checkLock(mirrorForkLock(), kinds)).toEqual([])
     expect(checkLock(sluiceLock(), kinds)).toEqual([])
   })
 
   it("compiles with no floor to place it on", () => {
-    expect(compile(doubleBackLock()).ok).toBe(true)
+    expect(compile(mirrorForkLock()).ok).toBe(true)
     expect(compile(sluiceLock()).ok).toBe(true)
   })
 
@@ -31,15 +31,15 @@ describe("a lock stands on its own", () => {
       ...f.obstacles.map(o => o.id),
       ...f.controls.map(c => c.id),
     ]
-    const left = ids(fragmentOf(doubleBackLock(), BINDING, "left"))
-    const right = ids(fragmentOf(doubleBackLock(), BINDING, "right"))
+    const left = ids(fragmentOf(mirrorForkLock(), BINDING, "left"))
+    const right = ids(fragmentOf(mirrorForkLock(), BINDING, "right"))
     expect(left.filter(id => right.includes(id))).toEqual([])
     expect(left.every(id => id.startsWith("left."))).toBe(true)
   })
 })
 
 describe("a lock refuses what contradicts itself, naming it", () => {
-  const d = doubleBackLock()
+  const d = mirrorForkLock()
   const refused = (lock: Lock) => checkLock(lock, kinds)
   const connectionsWith = (last: Lock["connections"][number]) => [...d.connections.slice(0, 4), last]
   const withMechanic = (id: string, mechanic: LockMechanic): Lock => ({
@@ -283,8 +283,8 @@ describe("a lock names roles, never realisations", () => {
       ...rest,
       controls: controls.map(({ encounter: _encounter, ...control }) => control),
     })
-    const one = fragmentOf(doubleBackLock(), BINDING)
-    const two = fragmentOf(doubleBackLock(), other)
+    const one = fragmentOf(mirrorForkLock(), BINDING)
+    const two = fragmentOf(mirrorForkLock(), other)
 
     expect(bare(two)).toEqual(bare(one))
     expect(one.controls.map(c => [c.id, c.encounter])).toEqual([
@@ -301,16 +301,16 @@ describe("a lock names roles, never realisations", () => {
   })
 
   it("refuses a kind the binding leaves out, naming the kind and who uses it, with no default", () => {
-    expect(compile(doubleBackLock(), {})).toEqual({
+    expect(compile(mirrorForkLock(), {})).toEqual({
       ok: false,
       faults: [
         { type: "unboundRole", kind: "fork-switch", mechanics: ["Y"] },
         { type: "unboundRole", kind: "toggle", mechanics: ["S1", "S2"] },
-        { type: "unboundRole", kind: "one-way", mechanics: ["dropToLeft", "dropToIn"] },
+        { type: "unboundRole", kind: "one-way", mechanics: ["dropToLeft", "dropToIn", "dropToS1"] },
       ],
     })
     const { toggle: _toggle, ...withoutToggle } = BINDING
-    expect(compile(doubleBackLock(), withoutToggle)).toEqual({
+    expect(compile(mirrorForkLock(), withoutToggle)).toEqual({
       ok: false,
       faults: [{ type: "unboundRole", kind: "toggle", mechanics: ["S1", "S2"] }],
     })
@@ -372,7 +372,8 @@ describe("a lock using a mechanic that is not built yet", () => {
   })
 
   it("refuses every kind the registry no longer holds, naming each mechanic", () => {
-    expect(checkLock(doubleBackLock(), () => undefined).map(fault => fault.type)).toEqual([
+    expect(checkLock(mirrorForkLock(), () => undefined).map(fault => fault.type)).toEqual([
+      "unknownControlKind",
       "unknownControlKind",
       "unknownControlKind",
       "unknownControlKind",
@@ -404,8 +405,8 @@ describe("a lock using a mechanic that is not built yet", () => {
 })
 
 describe("a lock compiles into the floor's vocabulary", () => {
-  it("writes the doubleBack as layout, drops, fork and controls", () => {
-    expect(fragmentOf(doubleBackLock())).toEqual({
+  it("writes the mirrorFork as layout, drops, fork and controls", () => {
+    expect(fragmentOf(mirrorForkLock())).toEqual({
       regionLayout: {
         regions: ["in", "leftLower", "rightLower", "s1", "s2", "out"].map(name => ({ name, appetite: "free" })),
         connections: [
@@ -427,6 +428,7 @@ describe("a lock compiles into the floor's vocabulary", () => {
         { id: "in-out", kind: "gate", at: { on: "connection", between: ["in", "out"] } },
         { id: "dropToLeft", kind: "oneWay", at: { on: "connection", between: ["s1", "leftLower"] } },
         { id: "dropToIn", kind: "oneWay", at: { on: "connection", between: ["leftLower", "in"] } },
+        { id: "dropToS1", kind: "oneWay", at: { on: "connection", between: ["s2", "s1"] } },
       ],
       controls: [
         { id: "Y", in: "in", control: "fork-switch", encounter: "lightbeamSwitch" },

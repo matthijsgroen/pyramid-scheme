@@ -30,6 +30,7 @@ export const doubleBackLock = (): Lock => ({
   oneWays: {
     dropToLeft: { from: "s1", to: "leftLower" },
     dropToIn: { from: "leftLower", to: "in" },
+    dropToS1: { from: "s2", to: "s1" },
   },
   mechanics: {
     Y: { control: "fork-switch", in: "in" },

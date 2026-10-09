@@ -7,7 +7,7 @@ import type { LockPlan } from "./lockPlan"
 import type { FloorConfig } from "./siteTypes"
 import { expectLaidPlan } from "./testSupport/laidLocksInvariants"
 import { leverLock, strandingLock } from "./testSupport/floorLockFixtures"
-import { BINDING, doubleBackLock, sluiceLock } from "./testSupport/lockFixtures"
+import { BINDING, mirrorForkLock, sluiceLock } from "./testSupport/lockFixtures"
 import { freeRegions } from "./lockAuthoring"
 import { parseLock } from "./lockNotation"
 import { planToLay } from "./laidFloor"
@@ -35,7 +35,7 @@ const FIXTURES: Record<string, () => LockPlan> = {
   "two locks in sequence": () => planOf([{ lock: leverLock() }, { lock: strandingLock() }]),
   "a lock nested in a lock": () =>
     planOf([{ lock: leverLock() }, { lock: leverLock(), as: "inner", inside: { instance: "lever" } }]),
-  doubleBack: () => planOf([{ lock: doubleBackLock() }]),
+  mirrorFork: () => planOf([{ lock: mirrorForkLock() }]),
 }
 const SEEDS = Array.from({ length: 40 }, (_, i) => i + 1)
 
@@ -49,12 +49,12 @@ describe("laying a lock plan on the lattice", { timeout: 120_000 }, () => {
         expectLaidPlan(plan, result.laid)
         return [seed]
       })
-      const minimum = name === "doubleBack" ? 30 : 40
+      const minimum = name === "mirrorFork" ? 30 : 40
       expect(laidSeeds.length).toBeGreaterThanOrEqual(minimum)
     })
 
   it("lays the same floor for the same seed", () => {
-    const plan = FIXTURES.doubleBack()
+    const plan = FIXTURES.mirrorFork()
     const lay = () => layLockPlan(plan, { seed: 7, n: startingGridSize(plan) })
     expect(lay()).toEqual(lay())
   })
@@ -71,7 +71,7 @@ describe("laying a lock plan on the lattice", { timeout: 120_000 }, () => {
   })
 
   it("grows the grid past the size it was asked for when the plan does not fit there", () => {
-    const plan = FIXTURES.doubleBack()
+    const plan = FIXTURES.mirrorFork()
     const asked = startingGridSize(plan)
     const sizes = SEEDS.map(seed => {
       const result = layLockPlan(plan, { seed, n: asked })

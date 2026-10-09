@@ -16,7 +16,7 @@ import type { LockPlan } from "./lockPlan"
 import type { RegionAppetite } from "./regions"
 import type { FloorConfig } from "./siteTypes"
 import { leverLock } from "./testSupport/floorLockFixtures"
-import { BINDING, doubleBackLock, sluiceLock } from "./testSupport/lockFixtures"
+import { BINDING, mirrorForkLock, sluiceLock } from "./testSupport/lockFixtures"
 
 const planOf = (locks: PlacedLock[]): LockPlan => {
   const floor: FloorConfig = {
@@ -49,7 +49,7 @@ const apart = (a: string, b: string) => Math.abs(rc(a)[0] - rc(b)[0]) + Math.abs
 
 describe("the plan the carve asks to be laid", () => {
   it("holds a node on a corridor for each door on it and none for a corridor that carries none", () => {
-    const plan = planToLay(planOf([{ lock: doubleBackLock() }]), WANTS)
+    const plan = planToLay(planOf([{ lock: mirrorForkLock() }]), WANTS)
     for (const corridor of plan.corridors) expect(corridor.minNodes).toBe(corridor.barriers.length)
   })
 
@@ -88,10 +88,10 @@ describe("the plan the carve asks to be laid", () => {
   })
 })
 
-// Each test seats the doubleBack at several seeds, ~2.5s here; CI runs 2-3x slower than the 5s default allows.
+// Each test seats the mirrorFork at several seeds, ~2.5s here; CI runs 2-3x slower than the 5s default allows.
 describe("the laid floor as the carve seats rooms on it", { timeout: 60_000 }, () => {
   it("stands every door of a gate on a node of its own corridor, strictly between the two stretches it shuts", () => {
-    const plan = planOf([{ lock: doubleBackLock() }])
+    const plan = planOf([{ lock: mirrorForkLock() }])
     for (const seed of SEEDS) {
       const floor = seated(plan, seed)
       const chain = (cell: string) => floor.label.get(cell)
@@ -106,7 +106,7 @@ describe("the laid floor as the carve seats rooms on it", { timeout: 60_000 }, (
   })
 
   it("puts the door of each arm on the cell beside the junction", () => {
-    const plan = planOf([{ lock: doubleBackLock() }])
+    const plan = planOf([{ lock: mirrorForkLock() }])
     for (const seed of SEEDS) {
       const floor = seated(plan, seed)
       const [junction] = floor.junctions
@@ -133,7 +133,7 @@ describe("the laid floor as the carve seats rooms on it", { timeout: 60_000 }, (
   })
 
   it("labels the route by the regions it threads, in the plan's order, and reserves its doors and junction", () => {
-    const plan = planOf([{ lock: doubleBackLock() }])
+    const plan = planOf([{ lock: mirrorForkLock() }])
     for (const seed of SEEDS) {
       const floor = seated(plan, seed)
       expect(floor.routeLabels.filter((label, i, all) => label !== all[i - 1])).toEqual(plan.route)
@@ -147,7 +147,7 @@ describe("the laid floor as the carve seats rooms on it", { timeout: 60_000 }, (
   })
 
   it("keeps every off-route node in exactly one chain, hung from a node that is already laid", () => {
-    const plan = planOf([{ lock: doubleBackLock() }])
+    const plan = planOf([{ lock: mirrorForkLock() }])
     for (const seed of SEEDS) {
       const floor = seated(plan, seed)
       const route = new Set(floor.route.map(([r, c]) => `${r},${c}`))
@@ -163,7 +163,7 @@ describe("the laid floor as the carve seats rooms on it", { timeout: 60_000 }, (
   })
 
   it("splits ground at every door and at every change of region, so a leftover maze edge cannot cross either", () => {
-    const plan = planOf([{ lock: doubleBackLock() }])
+    const plan = planOf([{ lock: mirrorForkLock() }])
     for (const seed of SEEDS) {
       const floor = seated(plan, seed)
       const labelled = new Map<string, Set<string>>()

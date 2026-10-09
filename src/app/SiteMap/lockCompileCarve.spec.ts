@@ -8,7 +8,7 @@ import { walkLock } from "@/game/lockWalk"
 import { assembleFloor } from "@/game/siteAssembler"
 import type { FloorConfig } from "@/game/siteTypes"
 import type { Lock } from "@/game/lockAuthoring"
-import { BINDING, doubleBackLock, sluiceLock } from "@/game/testSupport/lockFixtures"
+import { BINDING, mirrorForkLock, sluiceLock } from "@/game/testSupport/lockFixtures"
 
 const fragmentOf = (lock: Lock): LockFragment => {
   const result = compileLock(lock, BINDING, { kinds: resolveMechanicKind })
@@ -49,8 +49,8 @@ describe("a compiled lock carves and walks sound", () => {
 
   const section = { pathPuzzles: 0, difficulty: "expert" as const, end: "treasure" as const }
 
-  it("walks the doubleBack's carves sound on every seed that carves, and some do", { timeout: 120_000 }, () => {
-    const walks = sweep(floorOf(fragmentOf(doubleBackLock()), { packing: 7, sideSections: [section, section] }), 60)
+  it("walks the mirrorFork's carves sound on every seed that carves, and some do", { timeout: 120_000 }, () => {
+    const walks = sweep(floorOf(fragmentOf(mirrorForkLock()), { packing: 9, sideSections: [section, section] }), 60)
 
     expect(walks.length).toBeGreaterThan(0)
     expect(walks.every(walk => walk.sound)).toBe(true)

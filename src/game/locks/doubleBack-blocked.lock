@@ -6,7 +6,6 @@ in -[Y]- leftLower -[S1]- s2
 in -[Y]- rightLower -[S1:a]- s1
 in -[S2]- out
 s1 >> leftLower >> in
-s2 >> s1
 Y fork @in
 S1 toggle @s1
 S2 toggle @s2

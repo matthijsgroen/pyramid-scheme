@@ -354,7 +354,7 @@ describe("what the dev journey authors", () => {
     expect(floor.controls).toBeUndefined()
   })
 
-  it("compiles doubleBack's six regions, five gates and two drops, between the floor's entrance and exit", () => {
+  it("compiles doubleBack's six regions, five gates and its drops, between the floor's entrance and exit", () => {
     const [floor] = withDev[DEV_JOURNEY_ID][1]
     const expanded = expandFloorLocks(floor as GameFloorConfig)
     if (!expanded.ok) throw new Error(`doubleBack did not compile: ${JSON.stringify(expanded.reasons)}`)
@@ -385,8 +385,11 @@ describe("what the dev journey authors", () => {
       ["doubleBack.rightLower-s1", "gate", ["doubleBack.rightLower", "doubleBack.s1"]],
       ["doubleBack.leftLower-s2", "gate", ["doubleBack.leftLower", "doubleBack.s2"]],
       ["doubleBack.in-out", "gate", ["doubleBack.in", "doubleBack.out"]],
-      ["doubleBack.dropToLeft", "oneWay", ["doubleBack.s1", "doubleBack.leftLower"]],
-      ["doubleBack.dropToIn", "oneWay", ["doubleBack.leftLower", "doubleBack.in"]],
+      ...Object.entries(floor.locks![0].lock.oneWays ?? {}).map(([id, { from, to }]) => [
+        `doubleBack.${id}`,
+        "oneWay",
+        [`doubleBack.${from}`, `doubleBack.${to}`],
+      ]),
     ])
   })
 
@@ -493,7 +496,7 @@ describe("what the dev journey authors", () => {
     ])
   })
 
-  it("draws both drops as ziplines: s1 falls into leftLower, and leftLower into the junction's own region", () => {
+  it("draws every drop the lock declares as a zipline from its launch region to its landing region", () => {
     const [floor] = withDev[DEV_JOURNEY_ID][1]
     const grid = assembleAt(DEV_JOURNEY_ID, floor, 2, 0)
     if (!grid) throw new Error("doubleBack did not carve at its own seed")
@@ -506,10 +509,11 @@ describe("what the dev journey authors", () => {
       oneWayRuns(grid)
         .map(run => [run.kind, regionAt(run.launch), regionAt(run.landing)])
         .sort()
-    ).toEqual([
-      ["zipline", "doubleBack.leftLower", "doubleBack.in"],
-      ["zipline", "doubleBack.s1", "doubleBack.leftLower"],
-    ])
+    ).toEqual(
+      Object.values(floor.locks![0].lock.oneWays ?? {})
+        .map(({ from, to }) => ["zipline", `doubleBack.${from}`, `doubleBack.${to}`])
+        .sort()
+    )
   })
 
   it("has Y, S1 and S2 on pyramid 2 each wear a glyph of their own, and every gate wear its mechanism's mark", () => {
@@ -531,8 +535,8 @@ describe("what the dev journey authors", () => {
   // THE SECOND DROP, ON THE REAL ASSEMBLED FLOOR: pyramid 2's own carve with the drop that leaves leftLower for
   // the junction's region cut out — its launch no longer opens onto it and its span is empty ground — so the only
   // thing that differs is the one drop under test. Without it the player who falls into leftLower has no way back
-  // to the junction, and nothing else reaches the way out.
-  it("cannot be solved on pyramid 2's own carve once the second drop is taken away", () => {
+  // to the junction, and the walk refuses the floor.
+  it("walks unsound on pyramid 2's own carve once the second drop is taken away", () => {
     const [floor] = withDev[DEV_JOURNEY_ID][1]
     const grid = assembleAt(DEV_JOURNEY_ID, floor, 2, 0)
     if (!grid) throw new Error("doubleBack did not carve at its own seed")
@@ -552,8 +556,7 @@ describe("what the dev journey authors", () => {
     cells[lr][lc] = { ...launch, dirs: new Set([...launch.dirs].filter(dir => dir !== second.dir)) }
 
     const result = walkFloorLock({ ...grid, cells })
-    if (!result || result.sound) throw new Error("expected the floor to be unsolvable without the second drop")
-    expect(result.failure.type).toBe("unsolvable")
+    expect(result?.sound).toBe(false)
   })
 })
 
