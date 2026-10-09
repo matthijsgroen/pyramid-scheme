@@ -828,11 +828,14 @@ way.
 throwing a switch that stands in the region the player occupies; or leaving the site and coming back,
 which puts the player at `in` with every mechanism as they left it.
 
-**Two questions, breadth-first from the start state:**
+**Three questions, breadth-first from the start state:**
 
 1. **Does any reachable state reach `out`?** The lock can be solved at all. An author who builds a
    lock with no way through is told so in those words, rather than discovering it as missing loot.
 2. **Does _every_ reachable state reach `out`?** No order of moves strands anyone.
+3. **Does every region stay reachable?** From every reachable state, every region some state stood in can be
+   reached again, leaving and coming back at `in` included: mechanism state is saved per floor, so a region
+   sealed for good is lost for the rest of the game (`regionLost`).
 
 The second earns its keep. It finds traps nobody would think to look for — not "is there a drop from
 `s1Chamber`" but "is there any sequence that paints the player into a corner", including sequences

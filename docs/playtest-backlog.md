@@ -3,6 +3,12 @@
 Merged work nobody has played yet. Each entry says where to go and what to look for; strike it when it has been
 played, and open an issue or a task for anything that plays wrong.
 
+## Every region stays reachable
+
+- **expert_1 pyramid 4, floor 0** (the Valley of the Kings' last pyramid). doubleBack has a new zipline from s2
+  (S2's chamber) back into s1 (S1's chamber). Solve it as before: does the drop back read as a way to s1, and does
+  it make the lock too easy (throw S1 back, walk home by the right arm)? Does the floor still fit on screen?
+
 ## The torch and the flood
 
 - **Storybook, Topology/Lock playground → Torch and flood.** Flood the hall: does the lit torch go out where you

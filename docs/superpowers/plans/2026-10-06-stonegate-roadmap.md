@@ -115,13 +115,6 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
 
 ## Open after phase 4
 
-- Every region stays reachable (designer, 2026-10-08): mechanism state is saved per floor, so a region the
-  player could reach and a lock then seals for good can never be revisited, and a hidden corridor in it is lost.
-  The walk checks only that every state reaches `out` (`strands`) and that no region is never reached
-  (`deadRegions`). Add `lostRegions` beside `deadRegions` (`src/game/lockWalk.ts`): from every reachable state,
-  every region ever reached is reachable again, leaving and re-entering at `in` counting as a way back; one
-  backward sweep per region over the reachable states. Refused by name in `yarn lock` and the floor walk. Every
-  region, not only hosts of side or hidden paths. Measure the catalogue first and show the designer what fails.
 - A layout written longhand (no `locks`) still refuses a gate on a loop's second meeting: gate loops are the laid
   carve's (D3); a loop inside one region is fine in every carve.
 - The side-chain carve cuts a cycle only at a branch spot from `RECOVERY_ATTEMPT` on; giving it more freedom from
