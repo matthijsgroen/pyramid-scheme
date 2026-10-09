@@ -3198,7 +3198,7 @@ yarn import-tile art/masters/surfaces/regionWater.webp --tier=default --name=reg
 ```
 
 LANDED. Kept as `art/masters/surfaces/regionWater.webp` and imported as tile `regionWater` (896x896, no mask): matte blue-green with a loose net of pale caustic lines and a few ring ripples.
-The import (`scripts/recolourWater.sh`, called from `art/rebuild.sh`) recolours it to a muted blue and softens the pale lines; the master stays as painted.
+The import (`scripts/recolourSurface.sh`, called from `art/rebuild.sh`) recolours it to a muted blue and softens the pale lines; the master stays as painted.
 
 ### `default/regionSand` — drifted sand lying over a buried passage
 
