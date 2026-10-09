@@ -3,6 +3,14 @@
 Merged work nobody has played yet. Each entry says where to go and what to look for; strike it when it has been
 played, and open an issue or a task for anything that plays wrong.
 
+## The torch and the flood
+
+- **Storybook, Topology/Lock playground → Torch and flood.** Flood the hall: does the lit torch go out where you
+  can see it? Drain it: does the torch read as unlit and offer to be lit? Light A and leave: does the door's face
+  show the flame it wants and the one it wants out?
+- **A lit torch in the dark.** In fog a lit torch differs from an unlit one only by its pool of light; the flame
+  icon on its tile looks the same. Can you tell them apart? (Art question for the designer.)
+
 ## stoneGate phase 6 — Djoser
 
 - **Pyramid of Djoser, pyramid 5 (develop mode to jump there).** The main floor opens on stoneGate among its own

@@ -16,6 +16,7 @@ over memory.
 | 5 Art                          | **Landed** (see below). The brazier stays as decor.                                                                        |
 | 6 Djoser                       | **Done.** Plan: `docs/superpowers/plans/2026-10-09-stonegate-phase-6-djoser.md`. stoneGate on expert_4 pyramid 5, floor 0. |
 | 7 Zipline glide                | **Done.** Poses in `src/app/SiteMap/ridePoses.ts`, 200 ms a cell. Story `Topology/Zipline ride`.                           |
+| Torch and flood                | **Done.** Plan: `docs/superpowers/plans/2026-10-09-torch-douse.md`. Story `Topology/Lock playground` → Torch and flood.    |
 
 Phase 4 gives gate loops in the carve on laid floors (`topologyFaults`, `gateBypassed`, the fork seams), loops
 inside one region in every carve, stoneGate on dev pyramid 12, the squeeze starting from the nearer side, one nest
@@ -34,6 +35,22 @@ phase 4"; its ledger is `.superpowers/sdd/2026-10-08-stonegate-phase-4-gate-loop
 - **Region gates are buildable.** waterMoves, sluice and tide play in the Lock playground; story
   `Topology/Region barrier`.
 - **`yarn verify-content` is fully green.**
+
+### The torch and the flood
+
+The torch is a core control kind, `flame` (`.lock` keyword `torch`, `B torch @hall lit` for one burning from the
+start). The player only lights it; a region barrier covering its region douses it, and it can be lit again once
+uncovered. One pure function, `douseTorches` (`src/game/mechanismDoors.ts`), serves the lock walk, the floor's
+solver and play; play writes a move and every douse it causes in one journeys write (`useDousedJourneys`). Four
+locks light torches: `lessons/torch`, `lessons/doorWaitsForTwo`, `relay` and `stoneGate`, bound `flame: "torch"`.
+The contract is `docs/mods/mechanic-contract.md` §3.3; the ledger is `.superpowers/sdd/2026-10-09-torch-douse/`.
+
+The migration of the four locks (plan task 8) touched `src/game/locks/lessons/torch.lock`,
+`src/game/locks/lessons/doorWaitsForTwo.lock`, `src/game/locks/relay.lock`, `src/game/locks/stoneGate.lock`,
+`src/worldGen/spec/dev.ts`, `src/worldGen/spec/expert.ts`, `src/mods/topology/index.ts`,
+`src/mods/topology/game/torch/meta.ts`, `src/app/SiteMap/SiteMapView.tsx`, `src/data/generatedWorld.ts`,
+`src/data/carveLedger.json` and `src/data/tierFingerprints.json`. The plain bake changed stoneGate's floor
+(`expert_4` pyramid 5, floor 0) and the hashes, nothing else.
 
 ### Art that landed
 
@@ -80,7 +97,11 @@ final whole-branch review on the most capable model. Commit and push freely on t
 - **The dev floor is for testing lock mechanisms.** stoneGate takes dev pyramid 12.
 - **Placement of stoneGate is Djoser, `expert_4`** (2026-10-06).
 - **One source for a lock:** `src/game/locks/<name>.lock`, read at bake time through `parseLock`. No TypeScript copy.
-  Header comments in `.lock` files are the designer's text.
+  Every `.lock` file names its designer on its first line (`// designed by: Matthijs` or `// designed by: Claude`).
+  The designer's headers (doubleBack, stoneGate) are their text; a stale header on a lock Claude designed may be
+  corrected.
+- **The torch is a control kind of its own** (2026-10-09): a flood douses it; an activator is a floor key or a prize
+  and no flood touches it. Plan: `docs/superpowers/plans/2026-10-09-torch-douse.md`.
 - **Every mechanic piece is shared `default` art,** the same at every difficulty, with rank-neutral prompts. The
   brazier stays as decor; the torch is a standing torch.
 - **The sequence tile is sandstone,** plain top; its state is the glyph's colour: dark when not walked, light blue in
@@ -115,10 +136,10 @@ final whole-branch review on the most capable model. Commit and push freely on t
 - **Unanswered:**
   - correct the header comment of `stoneGate.lock` ("not placed yet, not buildable yet") now it stands in Djoser?
   - should `yarn lock` show every `checkLock` fault (e.g. `connectionRepeated`)?
-  - correct the stale header comments in `waterMoves`/`sluice`/`tide`/`stoneOnAPlate`/`twoStones` `.lock` files?
-    (They are the designer's text: do not touch without a yes.)
   - delete the "nothing else moved" test in `src/mods/puzzleSeeds.verify.ts`? It pins authored counts.
 - **Not asked yet:** the corner squeeze, still the old two-leg slide.
+- **A lit torch in the dark:** in fog a lit torch differs from an unlit one only by its pool of light; the torch
+  tile's flame icon looks the same either way. An art question. A doused torch is drawn by its unlit drawing.
 - **`docs/playtest-backlog.md`:** the stoneGate phase 2 and 3 entries (plate icon clipping a door face's ring, the
   explorer washed out in the exit's light shaft while carrying, tapping a wall whose near side is a node).
 - **Roadmap "Open after phase 2/3" lists** for the rest (barred regions under the explorer's weight, stale saves

@@ -11,8 +11,8 @@ tool side is `src/game/lockNotation.ts`, `src/game/lockWalkSpec.ts` and `src/gam
 
 ## The rules, in one place
 
-- A **torch** is a core control kind of its own, `torch`, beside `activator`. It has two fixed states,
-  `off` and `on`.
+- A **torch** is a core control kind of its own, `flame` (written `torch` in a `.lock` file), beside `activator`.
+  It has two fixed states, `off` and `on`.
 - The player's one move with a torch is to **light it**: `off` to `on`, standing in its region. Nothing the
   player does puts a torch out.
 - A torch **may start lit**. A lit torch offers no move until something douses it.
@@ -63,17 +63,17 @@ can douse is allowed; it is a lit torch the player never touches, and the walk j
 
 ### The shared Lock
 
-A torch mechanic is `{ control: "torch", in: RegionId, starts: "off" | "on", opens: { off: BarrierId[], on: BarrierId[] } }`: the toggle's shape with its state names fixed. `lit` in the notation is `starts: "on"`. A
+A torch mechanic is `{ control: "flame", in: RegionId, starts: "off" | "on", opens: { off: BarrierId[], on: BarrierId[] } }`: the toggle's shape with its state names fixed. `lit` in the notation is `starts: "on"`. A
 torch whose `opens` names other states, or whose `starts` is neither, is refused by the kind's own fault
-(`torchStates`), beside `statesNotTwo` and `startsNotAState`. Every rule that holds for any mechanic holds for
+(`flameStates`), beside `statesNotTwo` and `startsNotAState`. Every rule that holds for any mechanic holds for
 a torch: it owns the gates it opens, it may not stand in a region it bars (`mechanicStandsInBarredRegion`),
 and it takes part in `+` and `|` conditions like any owner.
 
 ### The kind
 
-`torch` is a core plug-in in `src/game/mechanics`, registered with the others: `built: true`, gates by
+`flame` is a core plug-in in `src/game/mechanics/torch.ts`, registered with the others: `built: true`, gates by
 `opens`, seated like an activator (one control node in its region). Its compiled floor control says it is a
-torch (as a fork-switch, a sequence and the stones say what they are), so `controlKindOf` answers `torch`
+torch (as a fork-switch, a sequence and the stones say what they are), so `controlKindOf` answers `flame`
 and the record on the floor tells play and the floor's solver which mechanisms douse. Its record lists its
 one move, `off` to `on`, as its placed transition (`placedOnly`), so `legalTargets` answers `on` from `off`
 whether the torch started lit or not, and `isSpent` is true exactly while it burns. The record also carries
@@ -86,7 +86,7 @@ torch art dresses both (below).
 
 `docs/mods/mechanic-contract.md` changes in these places, in present tense:
 
-- **"The controls" table:** a `torch` row (two states, lit by the player, put out by a covering region
+- **"The controls" table:** a `flame` row (the torch) (two states, lit by the player, put out by a covering region
   barrier, lit again once uncovered) and the `activator` row reads "two, no way back: a floor key, or a prize
   taken once; water and sand never touch it".
 - **The floor-key paragraph** keeps "a floor key is an activator" and drops "the only difference from a torch".
@@ -94,8 +94,8 @@ torch art dresses both (below).
 - **A new section beside "Stones on plates", "Torches and floods"**, carrying "The rules, in one place" above,
   the definition of covered (section 2), the shared function's name and its three callers, and the mod-off
   behaviour (section 5).
-- **"What a mechanic declares":** `mechanic torch` reads `control torch`.
-- **"Mechanics, one small example each":** the `brazier` example becomes a torch (`"control": "torch"`,
+- **"What a mechanic declares":** `mechanic torch` reads `control flame`.
+- **"Mechanics, one small example each":** the `brazier` example becomes a torch (`"control": "flame"`,
   `"starts": "off"`, states `off`/`on`), and a sentence says an activator is the floor key's control.
 - **"Settled, and still open":** the controls list includes the torch.
 
@@ -196,14 +196,14 @@ designer's own headers, doubleBack's and stoneGate's, are never touched. No migr
 
 ### Bindings
 
-The torch kind's binding key is `torch`, and its realisation is the existing torch family, also named `torch`
-(`TORCH_META`, topology mod): `realisations: { torch: "torch" }`. The same family keeps dressing the activator,
+The torch kind's binding key is `flame`, and its realisation is the existing torch family, also named `torch`
+(`TORCH_META`, topology mod): `realisations: { flame: "torch" }`. The same family keeps dressing the activator,
 which stays exactly as it is.
 
 - `src/worldGen/spec/dev.ts` (pyramid 12, stoneGate) and `src/worldGen/spec/expert.ts` (`expert_4`, the last
-  pyramid, stoneGate): `activator: "torch"` becomes `torch: "torch"`. stoneGate holds no activator after the
+  pyramid, stoneGate): `activator: "torch"` becomes `flame: "torch"`. stoneGate holds no activator after the
   migration, so neither binding keeps an activator entry.
-- `src/app/SiteMap/playgroundCarve.testing.ts`: `REALISATION_CHOICES` gains `torch: ["torch"]` and keeps
+- `src/app/SiteMap/playgroundCarve.testing.ts`: `REALISATION_CHOICES` gains `flame: ["torch"]` and keeps
   `activator: ["torch"]`, so a key-activator lock still binds in the playground.
 - Test fixtures that bind an activator for a made-up lock stay as they are; any that mean a torch move to the
   torch kind with their lock.
@@ -212,12 +212,12 @@ The comments that call the activator "the torch" are rewritten to say what holds
 (`src/game/mechanics/toggle.ts`), `src/game/lockAuthoring.ts`, `src/game/lockCompile.ts`,
 `src/mods/topology/index.ts` ("the handle and torch dress a toggle, a torch and an activator"), and
 `TORCH_META`'s own comment. The implementer finds the rest with `grep -rn activator src docs` and lists in the
-PR description **every file the migration touches**.
+handover (`docs/handover-stonegate.md`) **every file the migration touches**.
 
 ### The bake
 
 The world is re-baked. stoneGate on `expert_4` is the only placed floor with a migrated lock, so the bake
-changes there and nowhere else: its spec carries `control: "torch"` and the `torch` binding, its torch record
+changes there and nowhere else: its spec carries `control: "flame"` and the `flame` binding, its torch record
 says it is a torch, and the carve ledger's hashes for it are refreshed. The carve itself, its walls, nodes and
 seed, is the same: the kind changes no seat and no space. Before the bake, capture the baked world; after it,
 diff, and every floor but stoneGate's is byte-identical.
@@ -309,7 +309,7 @@ other bare; an unbound role is refused by name (`unboundRole`) as it is today.
 
 - [ ] `B torch @hall lit` and `A torch @hall` parse into torch mechanics; `LOCK_SYNTAX` carries the torch
       line and the activator line without the torch.
-- [ ] The `torch` kind is registered in core, compiles to a control that says it is a torch, and its record's
+- [ ] The `flame` kind is registered in core, compiles to a control that says it is a torch, and its record's
       one move is `off` to `on` whatever it starts in.
 - [ ] `douseTorches` stands in `mechanismDoors.ts` beside `legalTargets`, and the lock walk, `floorLock` and play
       all douse through it.
@@ -317,7 +317,7 @@ other bare; an unbound role is refused by name (`unboundRole`) as it is today.
 - [ ] Play writes a move and its douses in one write, and douses on arriving on a floor.
 - [ ] An activator, and a floor key, are never doused.
 - [ ] The four torch locks of the migration table carry `torch`, and nothing else in them changed; the world
-      specs and the playground bind `torch: "torch"`; the PR lists every touched file.
+      specs and the playground bind `flame: "torch"`; the handover lists every touched file.
 - [ ] `yarn lock` passes the catalogue, with any refused file renamed `-blocked` and listed.
 - [ ] The re-bake changes stoneGate's floor and no other; its walls are unchanged.
 - [ ] With the topology mod off the carve is identical and nothing is doused.

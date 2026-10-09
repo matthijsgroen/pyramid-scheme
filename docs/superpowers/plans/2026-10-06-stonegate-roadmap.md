@@ -152,6 +152,19 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
   region it leads out of (changes lock-walk counts, `nestedLocks.spec.ts`), or a room-free region's fog is restored
   with its neighbours'.
 
+## Open after the torch and the flood
+
+- Taking a stone off a plate recomputes its stone move from the snapshot of the render the click came from. It
+  matters only if a walk's presses change a plate's stone move on the way.
+- The mod-off torch test should also assert `floorTorches(grid)` is non-empty in the same `it`, so it cannot pass
+  on a floor with no torch.
+- No lesson teaches that water puts a torch out; the designer places the first torch-and-flood lock (no world floor
+  floods a torch yet), and the changelog entry comes with it.
+- The torch-and-flood fixtures live twice (`torchFlood.spec.ts`, `useDousedJourneys.spec.ts`); move them to one
+  `*.testing.ts` if a third spec needs them.
+- `lessons/torch`'s header says "lit for good": true of the lesson, which has no flood; revisit if a flood lesson
+  joins it.
+
 ## Open per phase
 
 - **Phase 5:** the torch and the plate need `prim_*` geometry in `scripts/renderProp.py`, then the

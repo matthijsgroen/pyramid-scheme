@@ -32,7 +32,8 @@ lock, not a sampler.
 | ---------------------------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------ |
 | board picks the way (fork-switch)                          | `boardPicksTheWay`                   | dropHome, twoLamps, doubleBack, lamplighter, observatory, clockwork                        |
 | lever (toggle, can go back)                                | `leverOpensADoor`, `leverSwapsDoors` | all but plates                                                                             |
-| torch or key (activator, once)                             | `torch`                              | cellar, keyring, relay, observatory, sluice, tide                                          |
+| torch (lit by the player, put out by a flood)              | `torch`                              | relay, stoneGate                                                                           |
+| key or prize (activator, once)                             | — (a floor key, met in the world)    | cellar, keyring, observatory, sluice, tide                                                 |
 | one-way drop                                               | `dropDown`                           | dropHome, cellar, doubleBack, overlook, seesaw, lamplighter, observatory, relay, clockwork |
 | a door that waits for several                              | `doorWaitsForTwo`                    | twoLamps, seesaw, lamplighter, observatory, relay, clockwork                               |
 | water (region gate)                                        | `waterMoves`                         | sluice, tide                                                                               |

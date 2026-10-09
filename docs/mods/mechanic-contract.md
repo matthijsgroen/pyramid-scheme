@@ -28,21 +28,22 @@ control; it is another control.
 
 ## 2. The controls
 
-| control         | states                              | notes                                                                  |
-| --------------- | ----------------------------------- | ---------------------------------------------------------------------- |
-| **toggle**      | two, back and forth                 | the lever                                                              |
-| **activator**   | two, no way back                    | the torch; also a floor key, whose operation is taking it from a chest |
-| **sequence**    | progress 0..n, with a reset         | tiles walked in the right order; see §3.1                              |
-| **fork-switch** | rest, plus one per exit of its fork | governs its own fork; see §4                                           |
-| **weights**     | one per stone arrangement           | the stones on plates; see §3.2                                         |
+| control         | states                              | notes                                                                                                                                       |
+| --------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| **toggle**      | two, back and forth                 | the lever                                                                                                                                   |
+| **activator**   | two, no way back                    | a floor key, or a prize taken once; water and sand never touch it                                                                           |
+| **flame**       | two, `off` and `on`                 | the torch (`.lock` keyword `torch`); lit by the player; put out by a region barrier covering its region; lit again once uncovered; see §3.3 |
+| **sequence**    | progress 0..n, with a reset         | tiles walked in the right order; see §3.1                                                                                                   |
+| **fork-switch** | rest, plus one per exit of its fork | governs its own fork; see §4                                                                                                                |
+| **weights**     | one per stone arrangement           | the stones on plates; see §3.2                                                                                                              |
 
 **one-way** is an effect with no control: always on, directed, and **always taken through a prompt** so
 the player never crosses by accident and finds they cannot come back. Every realisation of it must
 offer that prompt, including ones that would otherwise be passive.
 
 A **floor key is an activator.** The solver already models it as `absent -> held` with no return; the
-only difference from a torch is how the player works it. It can therefore own gates and take part in
-conditions like any other control.
+player works it by taking it from a chest. It can therefore own gates and take part in conditions like any
+other control.
 
 ## 3. Effects
 
@@ -55,7 +56,7 @@ A target is either:
 - **a region** — made impassable
 
 A gate may name more than one owner, with `and` (every owner must name it) or `any` (one is enough).
-Four torches opening one gate is four activators owning one gate with `and`.
+Four torches opening one gate is four torches owning one gate with `and`.
 
 ### A gate shows its own condition
 
@@ -140,6 +141,26 @@ waiting for, the way a ward gate already shows the key it wants.
 - **With the topology mod off** the plates are bare ground and the carve is otherwise identical. Every door
   the plates govern stands open, unless another live control still holds it, so the walk is unobstructed.
 
+### 3.3 Torches and floods
+
+- A **torch** (`control: "flame"`, written `torch` in a `.lock` file) has two fixed states, `off` and `on`. The
+  player's one move is to light it, standing in its region. Nothing the player does puts it out. It may start
+  lit (`B torch @hall lit`); a lit torch offers no move until something douses it.
+- A **region barrier** (water or sand) always covers its whole region. A region is **covered** while a region gate
+  barring it is shut: its owners, folded by its mode, do not open it. A region no region gate bars is never
+  covered; an edge gate covers nothing.
+- **A lit torch in a covered region is doused**: it goes to `off`, whatever it started as, and every door it held
+  open on its own shuts with it. **A doused torch can be lit again** once its region is uncovered; while covered it
+  cannot be reached.
+- **An activator is untouched**: no flood changes an activator, and no flood takes a floor key back.
+- **One rule, one function**: `douseTorches` (`src/game/mechanismDoors.ts`). The lock walk douses its start state
+  and every state a move reaches, after the entries it works (`dousedConfig`, `lockWalk.ts`); the floor's solver
+  lists each torch with the gates of its region's barrier doors (`floorLock`); play writes a move and every douse it
+  causes in one journeys write, and douses on arriving (`useDousedJourneys`).
+- **With the topology mod off** a torch's room is a bare node and a region barrier is plain ground at its door, so
+  no region is ever covered and nothing is doused or written; turning the mod back on finds the stored states as
+  they were.
+
 ### Impassable regions
 
 A region made impassable behaves as a gate that presents differently: the player can see the first
@@ -197,7 +218,7 @@ mechanic lever
   built      yes
 
 mechanic torch
-  control    activator
+  control    flame
   governs    edges, regions
   built      yes
 
@@ -319,15 +340,16 @@ can contradict each other, so the mechanic is the only one.
         "opens": { "a": ["rightLower-s1"], "b": ["leftLower-s2"] } }
 ```
 
-**activator** — two states, no way back. The torch; a floor key is the same control with another
-realisation.
+**activator** — two states, no way back. A floor key, or a prize taken once.
+
+**flame** — the torch: `off` and `on`, lit by the player, put out by a flood over its region (§3.3).
 
 ```json
-"brazier": { "control": "activator", "in": "hall", "starts": "unlit",
-             "opens": { "unlit": [], "lit": ["hall-vault"] } }
+"brazier": { "control": "flame", "in": "hall", "starts": "off",
+             "opens": { "off": [], "on": ["hall-vault"] } }
 ```
 
-Four of them on one door is four activators and the default `and`:
+Four of them on one door is four torches and the default `and`:
 
 ```json
 "hall-vault": { "from": "hall", "to": "vault",
@@ -381,8 +403,9 @@ reach yet — which is what doubleBack does today.
 
 ## 8. Settled, and still open
 
-**Settled.** The three layers. The four controls plus one-way. Targets are edges or regions. `and`/`any`
-conditions. A floor key is an activator. The fork-switch governs its own fork. Realisations are bound
+**Settled.** The three layers. The five controls (toggle, activator, flame, sequence, fork-switch) plus
+one-way and the stones. Targets are edges or regions. `and`/`any` conditions. A floor key is an activator.
+A flood puts out a torch and never an activator. The fork-switch governs its own fork. Realisations are bound
 from outside, most specific wins, at bake time, refused when unbound. A realisation may not change what
 the solver sees. Impassable conceals, and conceals what was explored, without erasing it.
 

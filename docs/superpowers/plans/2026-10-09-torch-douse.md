@@ -109,7 +109,7 @@ Binding (designer, unless noted). Each names the task that builds it.
   tasks 3-7).
 - **D2. One pure function**, `douseTorches` in `mechanismDoors.ts`, used by the walk, the floor's solver and play
   (spec §2; tasks 2, 4, 5, 6, 7).
-- **D3. An activator is untouched**, and no flood takes a floor key back (spec "The rules"; tests in tasks 4, 7).
+- **D3. An activator is untouched**, and no flood takes a floor key back (spec "The rules"; tests in tasks 4 and 5).
 - **D4. Migration:** torch — `lessons/torch` T, `lessons/doorWaitsForTwo` T1 T2, `relay` B C, `stoneGate` S1;
   activator — cellar, keyring, tide, sluice, observatory. Tide's `K` and sluice's `gold` stay activators on merit
   (designer, 2026-10-09). In a migrated file only the keyword changes (task 8).
@@ -117,7 +117,7 @@ Binding (designer, unless noted). Each names the task that builds it.
   under `src/game/locks/**` gets a `// designed by:` line. A stale header comment is corrected on Claude's locks
   only; the designer's two headers stay as they are (task 1).
 - **D6. Bindings:** `torch: "torch"` replaces `activator: "torch"` in `dev.ts` (pyramid 12) and `expert.ts`
-  (`expert_4`); the playground offers `torch: ["torch"]` and keeps `activator: ["torch"]` (tasks 5, 8).
+  (`expert_4`); the playground offers `torch: ["torch"]` and keeps `activator: ["torch"]` (task 5).
 - **D7. No save migration** (spec §4): a state is filed under the mechanism's cell address and the torch's states
   are the activator's own.
 - **D8. Mod off:** same carve, the torch a bare node, no region covered, nothing doused or written (spec §5; task 6).
