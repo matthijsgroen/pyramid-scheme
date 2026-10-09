@@ -256,7 +256,7 @@ export const unladenFaults = (lock: Lock): UnladenFault[] => {
   return faults
 }
 
-/** Every connection joining the spot's pair: one in a lock that compiles, more in one refused `connectionRepeated`. */
+/** Every connection joining the spot's pair: one in a lock that compiles, more in one refused nestSpotShared. */
 const spotConnections = (lock: Lock): LockConnection[] => {
   if (!lock.nestSpot) return []
   const { from, to } = lock.nestSpot
@@ -272,10 +272,17 @@ export const nestSpotBusy = (lock: Lock): BarrierId[] => spotConnections(lock).f
 
 /** The connection another lock may be spliced into, or undefined: no spot written, or its connection is busy. */
 export const nestSpotOf = (lock: Lock): { from: RegionId; to: RegionId } | undefined =>
-  lock.nestSpot && spotConnections(lock).length > 0 && nestSpotBusy(lock).length === 0 ? lock.nestSpot : undefined
+  lock.nestSpot && spotConnections(lock).length === 1 && nestSpotBusy(lock).length === 0 ? lock.nestSpot : undefined
 
-/** A nest spot naming a connection the lock does not have (a JSON lock's typo; the notation cannot write one). */
-export type NestSpotFault = { type: "nestSpotOnNoConnection"; from: RegionId; to: RegionId }
+/** A nest spot naming a connection the lock does not have (a JSON lock's typo; the notation cannot write one), or a
+ * pair with another connection beside the spot, which is a corridor of its own. */
+export type NestSpotFault =
+  | { type: "nestSpotOnNoConnection"; from: RegionId; to: RegionId }
+  | { type: "nestSpotShared"; from: RegionId; to: RegionId }
 
-export const nestSpotFaults = (lock: Lock): NestSpotFault[] =>
-  lock.nestSpot && spotConnections(lock).length === 0 ? [{ type: "nestSpotOnNoConnection", ...lock.nestSpot }] : []
+export const nestSpotFaults = (lock: Lock): NestSpotFault[] => {
+  if (!lock.nestSpot) return []
+  const count = spotConnections(lock).length
+  if (count === 0) return [{ type: "nestSpotOnNoConnection", ...lock.nestSpot }]
+  return count > 1 ? [{ type: "nestSpotShared", ...lock.nestSpot }] : []
+}

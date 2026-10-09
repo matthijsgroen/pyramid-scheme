@@ -1,5 +1,6 @@
 import type { Lock, LockMechanic, NestSpotFault, UnladenFault } from "./lockAuthoring"
 import {
+  alignOf,
   barriersOf,
   CARRY_TERMS,
   isRegionGate,
@@ -44,7 +45,6 @@ export type LockFragment = {
 export type LockFault =
   /** `at` says where the unknown region was written: a port, a connection, a gate, a mechanic, a one-way. */
   | { type: "namesNoRegion"; at: string; region: string }
-  | { type: "connectionRepeated"; between: [string, string] }
   /** A gate and a one-way share an id; a connection names its barriers by one id space. */
   | { type: "barrierIdRepeated"; id: string }
   | { type: "barrierUndefined"; between: [string, string]; barrier: string }
@@ -56,8 +56,12 @@ export type LockFault =
   /** An edge gate's connection is declared, but names no barrier. */
   | { type: "edgeGateUnnamed"; barrier: string }
   | { type: "regionGateOnConnection"; barrier: string; between: [string, string] }
-  /** A one-way stands on a connection beside another barrier, which the floor vocabulary cannot say. */
-  | { type: "oneWaySharesConnection"; between: [string, string]; barriers: string[] }
+  /** Two drops stand on one connection: a corridor falls once, and a region between them makes two corridors. */
+  | { type: "corridorFallsTwice"; between: [string, string]; barriers: string[] }
+  /** `align` names a barrier its connection does not carry. */
+  | { type: "alignOffConnection"; between: [string, string]; barrier: string }
+  /** `align` names a drop, which is never aligned. */
+  | { type: "alignOnDrop"; barrier: string }
   | UnladenFault
   | NestSpotFault
   | { type: "gateOwnerUnknown"; barrier: string; owner: string }
@@ -143,7 +147,6 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
   const unladen = unladenFaults(lock)
   faults.push(...unladen)
   faults.push(...nestSpotFaults(lock))
-  const emptyHandsOnDrop = new Set(unladen.flatMap(fault => (fault.type === "unladenOnDrop" ? [fault.barrier] : [])))
 
   const declared = new Set<string>()
   const namedOn = new Map<string, number>()
@@ -153,10 +156,6 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
     need(`connection ${a}-${b}`, a)
     need(`connection ${a}-${b}`, b)
     const key = keyOf(a, b)
-    if (declared.has(key)) {
-      faults.push({ type: "connectionRepeated", between: join })
-      continue
-    }
     declared.add(key)
     const barriers = barriersOf(connection)
     for (const barrier of barriers) {
@@ -171,13 +170,12 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
           faults.push({ type: "barrierOffItsConnection", barrier, between: join })
       }
     }
-    if (!barriers.some(barrier => Object.hasOwn(oneWays, barrier))) continue
-    // Empty hands written beside a drop are refused by that name alone (`unladenOnDrop`).
-    const standing = barriers.filter(
-      barrier =>
-        Object.hasOwn(oneWays, barrier) || (Object.hasOwn(lock.gates, barrier) && !emptyHandsOnDrop.has(barrier))
-    )
-    if (standing.length > 1) faults.push({ type: "oneWaySharesConnection", between: join, barriers: standing })
+    const drops = barriers.filter(barrier => Object.hasOwn(oneWays, barrier))
+    if (drops.length > 1) faults.push({ type: "corridorFallsTwice", between: join, barriers: drops })
+    for (const barrier of Object.keys(alignOf(connection))) {
+      if (!barriers.includes(barrier)) faults.push({ type: "alignOffConnection", between: join, barrier })
+      else if (Object.hasOwn(oneWays, barrier)) faults.push({ type: "alignOnDrop", barrier })
+    }
   }
   for (const [barrier, count] of namedOn) if (count > 1) faults.push({ type: "barrierNamedTwice", barrier })
 

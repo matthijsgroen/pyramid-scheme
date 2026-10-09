@@ -56,10 +56,11 @@ describe("a lock's nest spot", () => {
     ])
   })
 
-  it("refuses a JSON lock whose spot's pair has two connections as a repeated connection", () => {
+  it("refuses a JSON lock whose spot's pair has two connections nestSpotShared, as the notation does", () => {
     const { lock } = parseLock("in -&> hall\nin -[L]- hall\nhall -- out\nL toggle @in", "shared")
     const result = compileLock(lock, BINDING)
-    expect(result.ok === false && result.faults).toContainEqual(expect.objectContaining({ type: "connectionRepeated" }))
+    expect(result.ok === false && result.faults).toContainEqual({ type: "nestSpotShared", from: "in", to: "hall" })
+    expect(nestSpotOf(lock)).toBeUndefined()
   })
 
   it("is one per lock: a second is refused by name on its own line, and the first is kept", () => {

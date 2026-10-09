@@ -94,29 +94,9 @@ describe("a lock refuses what contradicts itself, naming it", () => {
     ])
   })
 
-  it("refuses one connection declared twice", () => {
-    expect(refused({ ...d, connections: [...d.connections, ["leftLower", "in"]] })).toEqual([
-      { type: "connectionRepeated", between: ["leftLower", "in"] },
-    ])
-  })
-
   it("refuses a gate and a one-way sharing an id", () => {
     expect(refused({ ...d, oneWays: { ...d.oneWays, "in-out": { from: "s1", to: "in" } } })).toEqual([
       { type: "barrierIdRepeated", id: "in-out" },
-    ])
-  })
-
-  it("refuses a one-way standing on a connection beside a gate, which the floor cannot say", () => {
-    expect(
-      refused({
-        ...d,
-        connections: [
-          { between: ["in", "leftLower"], barriers: ["in-leftLower", "dropToIn"] },
-          ...d.connections.slice(1),
-        ],
-      })
-    ).toEqual([
-      { type: "oneWaySharesConnection", between: ["in", "leftLower"], barriers: ["in-leftLower", "dropToIn"] },
     ])
   })
 
@@ -642,5 +622,61 @@ describe("a mechanic of an effect-only kind", () => {
   it("leaves the gate owner unladen and the drop one-way alone", () => {
     const lock = parseLock("in -- yard\nyard -[unladen]- out\nout >> in\nshelf plate @yard stone", "drop").lock
     expect(checkLock(lock).map(fault => fault.type)).not.toContain("effectOnlyMechanic")
+  })
+})
+
+describe("corridors on a pair, and a drop among a corridor's items", () => {
+  const own = (lock: Lock) => checkLock(lock, kinds).filter(fault => fault.type !== "topology")
+
+  it("takes a gate corridor and a drop-only corridor on one pair", () => {
+    expect(checkLock(parseLock("in -[S]- hall\nhall >> in\nhall -- out\nS toggle @hall", "pair").lock, kinds)).toEqual(
+      []
+    )
+  })
+
+  it("takes a drop beside a gate on one corridor, with nothing of the lock's own to refuse", () => {
+    expect(own(parseLock("in -- out\nin -[A]- >> pit\npit -- out\nA toggle @in", "fall").lock)).toEqual([])
+  })
+
+  it("refuses two drops on one connection", () => {
+    const base = parseLock("in -- hall\nhall -- out", "falls").lock
+    const twice: Lock = {
+      ...base,
+      connections: [{ between: ["in", "hall"], barriers: ["in>hall", "in>hall#2"] }, ["hall", "out"]],
+      oneWays: { "in>hall": { from: "in", to: "hall" }, "in>hall#2": { from: "in", to: "hall" } },
+    }
+    expect(own(twice)).toEqual([
+      { type: "corridorFallsTwice", between: ["in", "hall"], barriers: ["in>hall", "in>hall#2"] },
+    ])
+  })
+
+  it("refuses an alignment naming a barrier its connection does not carry", () => {
+    const { lock } = parseLock("in -[A]- hall\nhall -[B]- out\nA toggle @in\nB toggle @hall", "aligned")
+    const off: Lock = {
+      ...lock,
+      connections: [
+        { between: ["in", "hall"], barriers: ["in-hall"], align: { "hall-out": "left" } },
+        lock.connections[1],
+      ],
+    }
+    expect(own(off)).toEqual([{ type: "alignOffConnection", between: ["in", "hall"], barrier: "hall-out" }])
+  })
+
+  it("refuses an alignment naming a drop", () => {
+    const { lock } = parseLock("in -[A]- >> hall\nhall -- out\nA toggle @in", "aligned")
+    const onDrop: Lock = {
+      ...lock,
+      connections: [
+        { between: ["in", "hall"], barriers: ["in-hall", "in>hall"], align: { "in>hall": "left" } },
+        lock.connections[1],
+      ],
+    }
+    expect(own(onDrop)).toEqual([{ type: "alignOnDrop", barrier: "in>hall" }])
+  })
+
+  it("compiles a drop no connection names to the fragment of one its own connection names", () => {
+    const named = parseLock("in -- hall\nhall >> in\nhall -- out", "drop").lock
+    const unnamed: Lock = { ...named, connections: named.connections.filter(c => !("between" in c)) }
+    expect(fragmentOf(unnamed)).toEqual(fragmentOf(named))
   })
 })
