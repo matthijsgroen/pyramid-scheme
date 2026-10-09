@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 826396669
+export const worldContentHash = 1222953363
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -1996,13 +1996,27 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["stela", "niche", "sconce"],
         role: "water",
         encountersByIndex: { 0: "hidato", 1: "constellation" },
-        packing: 0.16,
-        seed: 1902847392,
+        packing: 0.1,
+        seed: 3205065412912519,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art12", pieceIndex: 1 },
         rewards: [
           { type: "money", amount: 1 },
           { type: "money", amount: 1 },
         ],
+        locks: [
+          {
+            lock: {
+              name: "leverOpensADoor",
+              regions: { in: { takes: "free" }, side: { takes: "free" }, out: { takes: "free" } },
+              connections: [["in", "side"], { between: ["in", "out"], barriers: ["in-out"] }],
+              gates: { "in-out": { from: "in", to: "out", owners: ["H"] } },
+              mechanics: { H: { control: "toggle", in: "side", starts: "a", opens: { a: [], b: ["in-out"] } } },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { toggle: "handle" },
       },
     ],
     [
@@ -2905,6 +2919,20 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { type: "money", amount: 1 },
           { type: "money", amount: 1 },
         ],
+        locks: [
+          {
+            lock: {
+              name: "torch",
+              regions: { in: { takes: "free" }, alcove: { takes: "free" }, out: { takes: "free" } },
+              connections: [["in", "alcove"], { between: ["in", "out"], barriers: ["in-out"] }],
+              gates: { "in-out": { from: "in", to: "out", owners: ["T"] } },
+              mechanics: { T: { control: "flame", in: "alcove", starts: "off", opens: { off: [], on: ["in-out"] } } },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { flame: "torch" },
       },
       {
         pathPuzzles: 2,
@@ -3310,6 +3338,20 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { type: "money", amount: 1 },
           { type: "money", amount: 2 },
         ],
+        locks: [
+          {
+            lock: {
+              name: "leverOpensADoor",
+              regions: { in: { takes: "free" }, side: { takes: "free" }, out: { takes: "free" } },
+              connections: [["in", "side"], { between: ["in", "out"], barriers: ["in-out"] }],
+              gates: { "in-out": { from: "in", to: "out", owners: ["H"] } },
+              mechanics: { H: { control: "toggle", in: "side", starts: "a", opens: { a: [], b: ["in-out"] } } },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { toggle: "handle" },
       },
     ],
     [
@@ -3816,9 +3858,23 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: "puzzle",
         encountersByIndex: { 0: "futoshiki", 1: "balance-scale", 2: "constellation", 3: "hidato", 4: "sudoku" },
         packing: 0.1,
-        seed: 1401747206,
+        seed: 390963684767488,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p11", pieceIndex: 1 },
         rewards: [undefined, undefined, undefined, undefined, undefined],
+        locks: [
+          {
+            lock: {
+              name: "torch",
+              regions: { in: { takes: "free" }, alcove: { takes: "free" }, out: { takes: "free" } },
+              connections: [["in", "alcove"], { between: ["in", "out"], barriers: ["in-out"] }],
+              gates: { "in-out": { from: "in", to: "out", owners: ["T"] } },
+              mechanics: { T: { control: "flame", in: "alcove", starts: "off", opens: { off: [], on: ["in-out"] } } },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { flame: "torch" },
       },
       {
         pathPuzzles: 1,
@@ -4295,6 +4351,20 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 625093932,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art2", pieceIndex: 2 },
         rewards: [undefined, undefined, undefined, undefined],
+        locks: [
+          {
+            lock: {
+              name: "leverOpensADoor",
+              regions: { in: { takes: "free" }, side: { takes: "free" }, out: { takes: "free" } },
+              connections: [["in", "side"], { between: ["in", "out"], barriers: ["in-out"] }],
+              gates: { "in-out": { from: "in", to: "out", owners: ["H"] } },
+              mechanics: { H: { control: "toggle", in: "side", starts: "a", opens: { a: [], b: ["in-out"] } } },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { toggle: "handle" },
       },
     ],
     [
@@ -4523,6 +4593,20 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 625093922,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p11", pieceIndex: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined],
+        locks: [
+          {
+            lock: {
+              name: "torch",
+              regions: { in: { takes: "free" }, alcove: { takes: "free" }, out: { takes: "free" } },
+              connections: [["in", "alcove"], { between: ["in", "out"], barriers: ["in-out"] }],
+              gates: { "in-out": { from: "in", to: "out", owners: ["T"] } },
+              mechanics: { T: { control: "flame", in: "alcove", starts: "off", opens: { off: [], on: ["in-out"] } } },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { flame: "torch" },
       },
       {
         pathPuzzles: 2,
@@ -4649,6 +4733,26 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 625093928,
         mainEndReward: { type: "money", amount: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined],
+        locks: [
+          {
+            lock: {
+              name: "leverSwapsDoors",
+              regions: { in: { takes: "free" }, left: { takes: "free" }, out: { takes: "free" } },
+              connections: [
+                { between: ["in", "left"], barriers: ["in-left"] },
+                { between: ["in", "out"], barriers: ["in-out"] },
+              ],
+              gates: {
+                "in-left": { from: "in", to: "left", owners: ["H"] },
+                "in-out": { from: "in", to: "out", owners: ["H"] },
+              },
+              mechanics: { H: { control: "toggle", in: "in", starts: "a", opens: { a: ["in-left"], b: ["in-out"] } } },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { toggle: "handle" },
       },
       {
         pathPuzzles: 1,
@@ -4902,6 +5006,26 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { type: "consumable", consumable: "oil" },
           { type: "consumable", consumable: "trapTool" },
         ],
+        locks: [
+          {
+            lock: {
+              name: "leverSwapsDoors",
+              regions: { in: { takes: "free" }, left: { takes: "free" }, out: { takes: "free" } },
+              connections: [
+                { between: ["in", "left"], barriers: ["in-left"] },
+                { between: ["in", "out"], barriers: ["in-out"] },
+              ],
+              gates: {
+                "in-left": { from: "in", to: "left", owners: ["H"] },
+                "in-out": { from: "in", to: "out", owners: ["H"] },
+              },
+              mechanics: { H: { control: "toggle", in: "in", starts: "a", opens: { a: ["in-left"], b: ["in-out"] } } },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { toggle: "handle" },
       },
     ],
     [
@@ -5968,7 +6092,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: "puzzle",
         encountersByIndex: { 0: "procession", 1: "eclipse", 2: "hidato", 3: "twin-stars" },
         packing: 0.1,
-        seed: 5207779554184527,
+        seed: 2858765652,
         mainEndReward: { type: "mapPiece", tombId: "expert_treasure_tomb_b" },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -5976,6 +6100,23 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { type: "consumable", consumable: "bandage" },
           { type: "money", amount: 2 },
         ],
+        locks: [
+          {
+            lock: {
+              name: "doorWaitsForTwo",
+              regions: { in: { takes: "free" }, a: { takes: "free" }, b: { takes: "free" }, out: { takes: "free" } },
+              connections: [["in", "a"], ["in", "b"], { between: ["in", "out"], barriers: ["in-out"] }],
+              gates: { "in-out": { from: "in", to: "out", owners: ["T1", "T2"] } },
+              mechanics: {
+                T1: { control: "flame", in: "a", starts: "off", opens: { off: [], on: ["in-out"] } },
+                T2: { control: "flame", in: "b", starts: "off", opens: { off: [], on: ["in-out"] } },
+              },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { flame: "torch" },
       },
     ],
     [
@@ -7047,6 +7188,26 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           undefined,
           undefined,
         ],
+        locks: [
+          {
+            lock: {
+              name: "leverSwapsDoors",
+              regions: { in: { takes: "free" }, left: { takes: "free" }, out: { takes: "free" } },
+              connections: [
+                { between: ["in", "left"], barriers: ["in-left"] },
+                { between: ["in", "out"], barriers: ["in-out"] },
+              ],
+              gates: {
+                "in-left": { from: "in", to: "left", owners: ["H"] },
+                "in-out": { from: "in", to: "out", owners: ["H"] },
+              },
+              mechanics: { H: { control: "toggle", in: "in", starts: "a", opens: { a: ["in-left"], b: ["in-out"] } } },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { toggle: "handle" },
       },
     ],
     [

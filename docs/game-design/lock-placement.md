@@ -18,44 +18,52 @@ Columns:
 - **Suggested**: the curriculum's layer for the site, copied from `lock-curriculum.md`.
 - **Chosen lock**: the designer's pick, pre-filled with the suggestion.
 - **Placed**: ✓ where the world spec places it today.
+  "no" names why a chosen lesson is not placed:
+  - **drop**: dropDown. On junior_1's site 2 its floor carved in the bake, but the same floor with one two-way
+    junction added (`toggleOff.verify.ts` adds one to every floor) hangs inside a single carve attempt, so no
+    dropDown site is placed until the carve is bounded.
+  - **board**: boardPicksTheWay. The lock compiles refused (`gateOwnedOffSeam`): a board's gates are its
+    junction's side seams, and the lesson's board owns the door on the way through, `in`–`out`.
+  - **switch fork**: leverOpensADoor on junior_2's site 2. Beside the floor's authored switch fork the junction
+    does not carve at the floor's address seed (`forksUnsatisfied`, `layoutNotFound`), so the world build stops.
 
 ### Junior
 
 **junior_1 — Sacred Ibis Migration** (`water` role on pyramids 1-3, patron Thoth)
 
-| Site | Main floors | Wing floors | Authored         | Suggested        | Chosen lock      | Placed |
-| ---- | ----------- | ----------- | ---------------- | ---------------- | ---------------- | ------ |
-| 1    | 1           | 0           |                  | leverOpensADoor  | leverOpensADoor  |        |
-| 2    | 1           | 0           |                  | dropDown         | dropDown         |        |
-| 3    | 1           | 1           | expert ward wing | boardPicksTheWay | boardPicksTheWay |        |
+| Site | Main floors | Wing floors | Authored         | Suggested        | Chosen lock      | Placed     |
+| ---- | ----------- | ----------- | ---------------- | ---------------- | ---------------- | ---------- |
+| 1    | 1           | 0           |                  | leverOpensADoor  | leverOpensADoor  | ✓          |
+| 2    | 1           | 0           |                  | dropDown         | dropDown         | no (drop)  |
+| 3    | 1           | 1           | expert ward wing | boardPicksTheWay | boardPicksTheWay | no (board) |
 
 **junior_2 — Valley of the Artisans**
 
-| Site | Main floors | Wing floors | Authored                                                                     | Suggested                                                        | Chosen lock                                                      | Placed |
-| ---- | ----------- | ----------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------- | ------ |
-| 1    | 1           | 0           |                                                                              | boardPicksTheWay (the switch fork already authored at pyramid 2) | boardPicksTheWay (the switch fork already authored at pyramid 2) |        |
-| 2    | 1           | 0           | the world's one switch fork: a `lightbeamSwitch` board in a two-way junction | leverOpensADoor                                                  | leverOpensADoor                                                  |        |
-| 3    | 1           | 1           | master ward wing                                                             | torch                                                            | torch                                                            |        |
-| 4    | 1           | 1           | wizard ward wing                                                             | dropDown                                                         | dropDown                                                         |        |
+| Site | Main floors | Wing floors | Authored                                                                     | Suggested                                                        | Chosen lock                                                      | Placed           |
+| ---- | ----------- | ----------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------- |
+| 1    | 1           | 0           |                                                                              | boardPicksTheWay (the switch fork already authored at pyramid 2) | boardPicksTheWay (the switch fork already authored at pyramid 2) | no (board)       |
+| 2    | 1           | 0           | the world's one switch fork: a `lightbeamSwitch` board in a two-way junction | leverOpensADoor                                                  | leverOpensADoor                                                  | no (switch fork) |
+| 3    | 1           | 1           | master ward wing                                                             | torch                                                            | torch                                                            | ✓                |
+| 4    | 1           | 1           | wizard ward wing                                                             | dropDown                                                         | dropDown                                                         | no (drop)        |
 
 **junior_3 — Temple of Thoth** (patron Thoth)
 
-| Site | Main floors | Wing floors | Authored         | Suggested        | Chosen lock      | Placed |
-| ---- | ----------- | ----------- | ---------------- | ---------------- | ---------------- | ------ |
-| 1    | 1           | 0           |                  | leverOpensADoor  | leverOpensADoor  |        |
-| 2    | 1           | 0           |                  | dropDown         | dropDown         |        |
-| 3    | 1           | 1           | expert ward wing | torch            | torch            |        |
-| 4    | 1           | 1           | master ward wing | boardPicksTheWay | boardPicksTheWay |        |
+| Site | Main floors | Wing floors | Authored         | Suggested        | Chosen lock      | Placed     |
+| ---- | ----------- | ----------- | ---------------- | ---------------- | ---------------- | ---------- |
+| 1    | 1           | 0           |                  | leverOpensADoor  | leverOpensADoor  | ✓          |
+| 2    | 1           | 0           |                  | dropDown         | dropDown         | no (drop)  |
+| 3    | 1           | 1           | expert ward wing | torch            | torch            | ✓          |
+| 4    | 1           | 1           | master ward wing | boardPicksTheWay | boardPicksTheWay | no (board) |
 
 **junior_4 — Lighthouse of Alexandria** (`light`/`sky` role and night theme on pyramids 1-5)
 
-| Site | Main floors | Wing floors | Authored         | Suggested        | Chosen lock      | Placed |
-| ---- | ----------- | ----------- | ---------------- | ---------------- | ---------------- | ------ |
-| 1    | 1           | 0           |                  | boardPicksTheWay | boardPicksTheWay |        |
-| 2    | 1           | 0           |                  | leverOpensADoor  | leverOpensADoor  |        |
-| 3    | 1           | 0           |                  | dropDown         | dropDown         |        |
-| 4    | 1           | 1           | wizard ward wing | torch            | torch            |        |
-| 5    | 1           | 1           | expert ward wing | leverSwapsDoors  | leverSwapsDoors  |        |
+| Site | Main floors | Wing floors | Authored         | Suggested        | Chosen lock      | Placed     |
+| ---- | ----------- | ----------- | ---------------- | ---------------- | ---------------- | ---------- |
+| 1    | 1           | 0           |                  | boardPicksTheWay | boardPicksTheWay | no (board) |
+| 2    | 1           | 0           |                  | leverOpensADoor  | leverOpensADoor  | ✓          |
+| 3    | 1           | 0           |                  | dropDown         | dropDown         | no (drop)  |
+| 4    | 1           | 1           | wizard ward wing | torch            | torch            | ✓          |
+| 5    | 1           | 1           | expert ward wing | leverSwapsDoors  | leverSwapsDoors  | ✓          |
 
 ### Expert
 
@@ -63,7 +71,7 @@ Columns:
 
 | Site | Main floors | Wing floors | Authored                            | Suggested       | Chosen lock     | Placed |
 | ---- | ----------- | ----------- | ----------------------------------- | --------------- | --------------- | ------ |
-| 1    | 1           | 0           |                                     | leverSwapsDoors | leverSwapsDoors |        |
+| 1    | 1           | 0           |                                     | leverSwapsDoors | leverSwapsDoors | ✓      |
 | 2    | 1           | 0           |                                     | dropHome        | dropHome        |        |
 | 3    | 1           | 2           | master ward wing, starter ward wing | twoLamps        | twoLamps        |        |
 | 4    | 1           | 1           | wizard ward wing, patron Anubis     | **doubleBack**  | doubleBack      | ✓      |
@@ -72,7 +80,7 @@ Columns:
 
 | Site | Main floors | Wing floors | Authored         | Suggested       | Chosen lock     | Placed |
 | ---- | ----------- | ----------- | ---------------- | --------------- | --------------- | ------ |
-| 1    | 1           | 0           |                  | doorWaitsForTwo | doorWaitsForTwo |        |
+| 1    | 1           | 0           |                  | doorWaitsForTwo | doorWaitsForTwo | ✓      |
 | 2    | 1           | 0           |                  | cellar          | cellar          |        |
 | 3    | 1           | 1           | master ward wing | twoLamps        | twoLamps        |        |
 | 4    | 1           | 1           | wizard ward wing | dropHome        | dropHome        |        |
@@ -81,7 +89,7 @@ Columns:
 
 | Site | Main floors | Wing floors | Authored                                    | Suggested       | Chosen lock     | Placed |
 | ---- | ----------- | ----------- | ------------------------------------------- | --------------- | --------------- | ------ |
-| 1    | 1           | 0           |                                             | leverSwapsDoors | leverSwapsDoors |        |
+| 1    | 1           | 0           |                                             | leverSwapsDoors | leverSwapsDoors | ✓      |
 | 2    | 1           | 0           | overgrown 0.2                               | dropHome        | dropHome        |        |
 | 3    | 1           | 0           | overgrown 0.4                               | cellar          | cellar          |        |
 | 4    | 1           | 1           | overgrown 0.65, wizard ward wing            | overlook        | overlook        |        |

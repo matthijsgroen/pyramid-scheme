@@ -328,6 +328,11 @@ export const expertRules: Rule[] = [
     },
   }),
   journey("expert_3").pyramid("last", { patron: "sobek" }),
+  // An expert journey's first pyramid teaches one control alone before its locks combine them
+  // (docs/game-design/lock-placement.md).
+  journey("expert_1").pyramid(1, lessonOnMainFloor("leverSwapsDoors")),
+  journey("expert_2").pyramid(1, lessonOnMainFloor("doorWaitsForTwo")),
+  journey("expert_3").pyramid(1, lessonOnMainFloor("leverSwapsDoors")),
   // Djoser opens on the stone its capstone spends: a stone set on a plate holds a door open, lifted it shuts again
   // (docs/game-design/lock-placement.md).
   journey("expert_4").pyramid(1, lessonOnMainFloor("stoneOnAPlate")),

@@ -1,6 +1,7 @@
 import { tier, journey, tomb, sidePath, wardWing, wardChest } from "../dsl"
 import type { Rule, PathSettings } from "../dsl"
 import { TOMB_ROOMS_PER_FLOOR } from "../data"
+import { lessonOnMainFloor } from "./locks/lessons"
 
 // Varied "come back stronger" ward wings, mixed into the back-half pyramids of each junior
 // journey (where the auto tier-unlock gate already sits). Each is a bonus floor gated by a later
@@ -173,6 +174,16 @@ export const juniorRules: Rule[] = [
   journey("junior_4").pyramid(1, { sideSections: [holdChest(0)] }),
   journey("junior_4").pyramid(2, { sideSections: [holdChest(1)] }),
   journey("junior_4").pyramid(3, { sideSections: [holdChest(2), oldWorkings()] }),
+
+  // THE LESSONS: a junior pyramid's main floor teaches one control alone — a lever, a torch — so the expert
+  // locks that combine them meet a player who knows each (docs/game-design/lock-placement.md).
+  journey("junior_1").pyramid(1, lessonOnMainFloor("leverOpensADoor")),
+  journey("junior_2").pyramid(3, lessonOnMainFloor("torch")),
+  journey("junior_3").pyramid(1, lessonOnMainFloor("leverOpensADoor")),
+  journey("junior_3").pyramid(3, lessonOnMainFloor("torch")),
+  journey("junior_4").pyramid(2, lessonOnMainFloor("leverOpensADoor")),
+  journey("junior_4").pyramid(4, lessonOnMainFloor("torch")),
+  journey("junior_4").pyramid(5, lessonOnMainFloor("leverSwapsDoors")),
 
   tomb("junior_treasure_tomb", {
     encounter: "tomb-puzzle",
