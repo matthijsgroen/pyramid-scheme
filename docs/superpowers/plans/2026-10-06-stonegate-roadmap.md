@@ -160,8 +160,6 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
   on a floor with no torch.
 - No lesson teaches that water puts a torch out; the designer places the first torch-and-flood lock (no world floor
   floods a torch yet), and the changelog entry comes with it.
-- The torch-and-flood fixtures live twice (`torchFlood.spec.ts`, `useDousedJourneys.spec.ts`); move them to one
-  `*.testing.ts` if a third spec needs them.
 - `lessons/torch`'s header says "lit for good": true of the lesson, which has no flood; revisit if a flood lesson
   joins it.
 
