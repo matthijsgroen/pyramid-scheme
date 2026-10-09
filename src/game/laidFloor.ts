@@ -63,7 +63,9 @@ type CorridorDoor = { kind: "gate"; id: string } | { kind: "region"; barrier: st
 const doorsOnCorridor = (plan: LockPlan, corridor: PlanCorridor): CorridorDoor[] => {
   const regionDoors = (region: string, entrance: string): CorridorDoor[] =>
     (plan.regions.find(candidate => candidate.id === region)?.seats ?? []).flatMap(seat =>
-      seat.for === "door" && seat.entrance === entrance
+      seat.for === "door" &&
+      seat.entrance === entrance &&
+      (seat.corridor === undefined || seat.corridor === corridor.id)
         ? [{ kind: "region" as const, barrier: seat.barrier, region, entrance }]
         : []
     )
@@ -74,21 +76,27 @@ const doorsOnCorridor = (plan: LockPlan, corridor: PlanCorridor): CorridorDoor[]
   ]
 }
 
+/** The region a plan region's nodes answer to: a ledge's or a landing's own region, otherwise itself. */
+const labelOf = (plan: LockPlan, id: string): string => plan.regions.find(region => region.id === id)?.answersTo ?? id
+
 /**
- * HOW A CORRIDOR OF `k` NODES IS SPLIT BETWEEN ITS TWO REGIONS: the first `split` nodes answer to `from`, the
- * rest to `to`, and `firstDoor` is the node its nearest door stands on. A corridor ending at a junction's
- * region has its nearest door beside the junction, at its far end.
+ * WHERE A CORRIDOR OF `k` NODES STANDS ITS DOORS (`seatItems`, its junction end closed) and how it is split between
+ * its two regions: the nodes before its first door answer to `from`, the rest to `to`; with no door, halfway.
  */
-const corridorSplit = (plan: LockPlan, corridor: PlanCorridor, k: number): { split: number; firstDoor: number } => {
+const corridorSeats = (plan: LockPlan, corridor: PlanCorridor, k: number): { doors: number[]; split: number } => {
   const junctionRegions = new Set(plan.junctions.map(junction => junction.region))
-  const m = doorsOnCorridor(plan, corridor).length
-  const firstDoor = junctionRegions.has(corridor.to) && !junctionRegions.has(corridor.from) ? k - m : 0
-  return { split: m > 0 ? firstDoor : Math.ceil(k / 2), firstDoor }
+  const end = junctionRegions.has(corridor.from) ? "start" : junctionRegions.has(corridor.to) ? "end" : undefined
+  const doors = seatItems(
+    k,
+    doorsOnCorridor(plan, corridor).map(door => (door.kind === "gate" ? corridor.align?.[door.id] : undefined)),
+    end
+  )
+  return { doors, split: doors.length > 0 ? doors[0] : Math.ceil(k / 2) }
 }
 
 const corridorLabels = (plan: LockPlan, corridor: PlanCorridor, k: number): string[] => {
-  const { split } = corridorSplit(plan, corridor, k)
-  return Array.from({ length: k }, (_, i) => (i < split ? corridor.from : corridor.to))
+  const { split } = corridorSeats(plan, corridor, k)
+  return Array.from({ length: k }, (_, i) => labelOf(plan, i < split ? corridor.from : corridor.to))
 }
 
 /**
@@ -200,7 +208,7 @@ const decodePassage = (key: string, n: number): [CellKey, CellKey] => {
 /** READS THE LAID STRUCTURE INTO THE FORM THE CARVE SEATS ROOMS ON. Pure: no draw is made, so one laid plan always reads the same way. */
 export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
   const label = new Map<CellKey, string>()
-  for (const region of laid.regions) for (const node of region.nodes) label.set(node, region.id)
+  for (const region of laid.regions) for (const node of region.nodes) label.set(node, labelOf(plan, region.id))
 
   const gateDoor = new Map<string, CellKey>()
   const regionDoors: LaidRegionDoor[] = []
@@ -210,10 +218,10 @@ export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
     const doors = doorsOnCorridor(plan, corridor)
     const k = laidCorridor.nodes.length
     const labels = corridorLabels(plan, corridor, k)
-    const { firstDoor } = corridorSplit(plan, corridor, k)
+    const { doors: at } = corridorSeats(plan, corridor, k)
     laidCorridor.nodes.forEach((node, i) => label.set(node, labels[i]))
     doors.forEach((door, j) => {
-      const cell = laidCorridor.nodes[firstDoor + j]
+      const cell = laidCorridor.nodes[at[j]]
       doorCells.add(cell)
       if (door.kind === "gate") gateDoor.set(door.id, cell)
       else regionDoors.push({ barrier: door.barrier, region: door.region, entrance: door.entrance, cell })
@@ -340,7 +348,11 @@ export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
     regionDoors,
     doors: doorCells,
     reserved,
-    seatDemand: new Map(plan.regions.map(region => [region.id, nodesForSeats(plan, region)])),
+    seatDemand: new Map(
+      plan.regions
+        .filter(region => region.answersTo === undefined)
+        .map(region => [region.id, nodesForSeats(plan, region)])
+    ),
     junctions,
     chains,
     drops: laid.drops,
@@ -539,7 +551,8 @@ export const lengtheningCandidates = (
       ],
     })
   }
-  for (const region of plan.regions) consider("region", region.id, region.id, region.onRoute)
+  for (const region of plan.regions)
+    if (region.answersTo === undefined) consider("region", region.id, region.id, region.onRoute)
   for (const corridor of plan.corridors) {
     const k = floor.stretches.get(`corridor:${corridor.id}`)?.length ?? 0
     const before = corridorLabels(plan, corridor, k)

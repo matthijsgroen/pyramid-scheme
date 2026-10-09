@@ -314,7 +314,10 @@ const search = (
     return {
       part: { kind: "region", id: region.id },
       run: next => {
-        const reserve = entrance || region.id === plan.route[plan.route.length - 1] ? 0 : MAX_EXTRA_PER_REGION
+        const reserve =
+          entrance || region.id === plan.route[plan.route.length - 1] || region.answersTo !== undefined
+            ? 0
+            : MAX_EXTRA_PER_REGION
         for (let extra = 0; extra <= Math.min(extraLeft, reserve); extra++) {
           for (const { at, pinned } of anchors()) {
             if (spent()) return false

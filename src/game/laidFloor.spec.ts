@@ -13,6 +13,8 @@ import type { LaidFloor } from "./laidFloor"
 import { layLockPlan, startingGridSize } from "./layLocks"
 import { planLockFloor } from "./lockPlan"
 import type { LockPlan } from "./lockPlan"
+import { freeRegions } from "./lockAuthoring"
+import { parseLock } from "./lockNotation"
 import type { RegionAppetite } from "./regions"
 import type { FloorConfig } from "./siteTypes"
 import { leverLock } from "./testSupport/floorLockFixtures"
@@ -414,5 +416,37 @@ describe("the stretch the carve lengthens when the laid nodes cannot take the co
     expect(grown.regions.map(found => found.minNodes)).toEqual([1, 1, 1])
     const region = lengthenPlan(plan, laid(FLAT), { kind: "region", id: "C", nodes: 1 })
     expect(region.regions.map(found => found.minNodes)).toEqual([1, 1, 3])
+  })
+})
+
+describe("doors on corridors that carry items", { timeout: 60_000 }, () => {
+  const planFor = (text: string, name: string) => planOf([{ lock: freeRegions(parseLock(text, name).lock) }])
+
+  it("labels a falling corridor's stretches and ledge by the region each hangs from, and stands its door on them", () => {
+    const plan = planFor("in -- out\nin -[A]- >> -[A]- pit\npit -- out\nA toggle @in", "fall")
+    for (const seed of SEEDS) {
+      const floor = seated(plan, seed)
+      const up = floor.gateDoor.get("fall.in-pit")!
+      const down = floor.gateDoor.get("fall.in-pit#2")!
+      expect(floor.label.get(up)).toBe("fall.in")
+      expect(floor.label.get(down)).toBe("fall.pit")
+      const [drop] = floor.drops
+      expect(floor.label.get(drop.from)).toBe("fall.in")
+      expect(floor.label.get(drop.to)).toBe("fall.pit")
+      expect(floor.seatDemand.has("fall.in>pit:ledge")).toBe(false)
+    }
+  })
+
+  it("stands a door aligned right on the node beside the region after it", () => {
+    const base = planFor("in ---[A]- hall\nhall -- out\nA toggle @in", "aligned")
+    const plan = { ...base, corridors: base.corridors.map(c => ({ ...c, minNodes: c.minNodes + 2 })) }
+    for (const seed of SEEDS) {
+      const toLay = planToLay(plan, WANTS)
+      const result = layLockPlan(toLay, { seed, n: startingGridSize(toLay) })
+      if (!result.ok) continue
+      const floor = seatLaidFloor(plan, result.laid)
+      const nodes = result.laid.corridors.find(c => c.id === "aligned.in>aligned.hall")!.nodes
+      expect(floor.gateDoor.get("aligned.in-hall")).toBe(nodes[nodes.length - 1])
+    }
   })
 })

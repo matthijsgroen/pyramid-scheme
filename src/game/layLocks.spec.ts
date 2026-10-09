@@ -128,3 +128,52 @@ describe("laying a lock plan on the lattice", { timeout: 120_000 }, () => {
     expect(laidSeeds).toHaveLength(10)
   })
 })
+
+describe("laying corridors that share a pair, and corridors that fall", { timeout: 120_000 }, () => {
+  const planFor = (text: string, name: string) =>
+    planToLay(planOf([{ lock: freeRegions(parseLock(text, name).lock) }]), { content: [], appetite: new Map() })
+  const nodesOf = (laid: { regions: { id: string; nodes: string[] }[] }, id: string) =>
+    laid.regions.find(region => region.id === id)!.nodes
+  const layAll = (plan: ReturnType<typeof planFor>) =>
+    SEEDS.slice(0, 20).flatMap(seed => {
+      const result = layLockPlan(plan, { seed, n: startingGridSize(plan) })
+      if (!result.ok) return []
+      expectLaidPlan(plan, result.laid)
+      return [result.laid]
+    })
+
+  it("lays both corridors of one pair, only the first on the route", () => {
+    const plan = planFor("in -[A]- hall\nin -[B]- hall\nhall -- out\nA toggle @in\nB toggle @in", "twin")
+    const laid = layAll(plan)
+    expect(laid.length).toBeGreaterThanOrEqual(15)
+    for (const floor of laid) {
+      const second = floor.corridors.find(c => c.id === "twin.in>twin.hall~1")!
+      expect(nodesOf(floor, "twin.in")).toContain(second.start)
+      expect(nodesOf(floor, "twin.hall")).toContain(second.end)
+      expect(second.nodes.some(node => floor.route.includes(node))).toBe(false)
+    }
+  })
+
+  it("lays a falling corridor's door, its ledge, and a drop from the ledge landing on a node of its region", () => {
+    const plan = planFor("in -- out\nin -[A]- >> pit\npit -- out\nA toggle @in", "fall")
+    const laid = layAll(plan)
+    expect(laid.length).toBeGreaterThanOrEqual(15)
+    for (const floor of laid) {
+      const drop = floor.drops.find(d => d.id === "fall.in>pit")!
+      expect(nodesOf(floor, "fall.in>pit:ledge")).toEqual([drop.from])
+      expect(nodesOf(floor, "fall.pit")).toContain(drop.to)
+      expect(floor.corridors.find(c => c.id === "fall.in>fall.in>pit:ledge")!.nodes.length).toBeGreaterThanOrEqual(1)
+    }
+  })
+
+  it("lands a drop with items on both sides on its downstream stretch", () => {
+    const plan = planFor("in -- out\nin -[A]- >> -[A]- pit\npit -- out\nA toggle @in", "fall")
+    const laid = layAll(plan)
+    expect(laid.length).toBeGreaterThanOrEqual(15)
+    for (const floor of laid) {
+      const drop = floor.drops.find(d => d.id === "fall.in>pit")!
+      expect(nodesOf(floor, "fall.in>pit:landing")).toEqual([drop.to])
+      expect(nodesOf(floor, "fall.in>pit:ledge")).toEqual([drop.from])
+    }
+  })
+})
