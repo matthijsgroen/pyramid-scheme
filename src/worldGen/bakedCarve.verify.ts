@@ -10,7 +10,6 @@ import { resolveEncounterMeta, resolveKeyRequirements } from "@/mods/allFamilyMe
 const NEEDS_THE_LADDER = new Set([
   "expert_1#2#0",
   "expert_1#3#0",
-  "expert_2#1#0",
   "expert_2#2#0",
   "expert_2#3#0",
   "expert_2#4#0",

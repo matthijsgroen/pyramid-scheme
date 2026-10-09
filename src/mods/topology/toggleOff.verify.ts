@@ -56,7 +56,8 @@ type Carve = {
 
 describe("the carve a floor authoring forks gets", () => {
   // Assembling every authored floor three times is a few hundred maze carves, well past the default
-  // 5s budget — paid once here rather than by whichever test happens to run first.
+  // 5s budget — paid once here rather than by whichever test happens to run first. A floor whose lock is laid
+  // carves no plain junction, so it refuses the added one only after its whole ladder: minutes, under load.
   const carves: Carve[] = []
   const devFloors = (): Floor[] => {
     process.env.INCLUDE_DEV = "1"
@@ -127,7 +128,7 @@ describe("the carve a floor authoring forks gets", () => {
         unsound: withSwitch.success ? validation(validateSite(withSwitch.grid)) : [],
       })
     }
-  }, 180_000)
+  }, 400_000)
 
   it("was asked of the whole baked world, not of a handful of floors", () => {
     expect(carves.length).toBeGreaterThan(100)
