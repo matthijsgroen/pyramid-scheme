@@ -504,16 +504,7 @@ export const nodeSpritesFor = (
         else gateLeaf(r, c, tier, cell.dirs, { open: false, wall: true, mark: cell.mark })
       } else if (kind === "gate" && cell.regionBarrier) {
         // A REGION BARRIER IS THE COVER ITSELF, NOT A DOOR HUNG IN THE PASSAGE: the water or sand is drawn
-        // under the floor's light (RegionBarrierCovers), and this sprite is only the seat for the owner's
-        // mark, the one thing tying the blockage to its mechanism, so it stands above the cover.
-        out.push({
-          footprint,
-          key: `blockage:${r},${c}`,
-          x: cx - CELL / 2,
-          y: cy + CELL / 2 - PROP_H,
-          mirrored: false,
-          ...(cell.mark ? { mark: cell.mark } : {}),
-        })
+        // under the floor's light (RegionBarrierCovers), and the cell carries no sprite and no marker.
       } else if (kind === "gate") {
         gateLeaf(r, c, tier, cell.dirs, {
           open: cell.state === "completed" || (weight?.open.has(cell.requiredKeyId ?? "") ?? false),

@@ -427,28 +427,29 @@ describe("a barrier opening while the player watches fades its cover away", { ti
   })
 })
 
-describe("the owner's mark stays readable on the blockage", { timeout: 60_000 }, () => {
-  it("is drawn after, so above, the cover's cell on the blockage", () => {
+describe("a region barrier's blockage carries no marker", { timeout: 60_000 }, () => {
+  const markCount = (grid: FloorGrid) => {
+    const { container } = render(<SiteMapView grid={grid} />)
+    const count = Array.from(container.querySelectorAll("svg")).filter(
+      svg => svg.getAttribute("viewBox") === "-12 -12 24 24"
+    ).length
+    cleanup()
+    return count
+  }
+
+  it("draws the same markers whether or not the blockage cells carry a mark", () => {
     let checked = 0
     for (const { name } of SCENARIOS)
       for (const state of STATES) {
         const { grid, shut } = floorAt(name, state)
-        const { container } = render(<SiteMapView grid={grid} />)
-        const marks = Array.from(container.querySelectorAll("svg")).filter(
-          svg => svg.getAttribute("viewBox") === "-12 -12 24 24"
-        )
-        for (const { at, cell } of visibleDoors(grid, shut)) {
-          const key = at.join(",")
-          const cover = coverCells(container).find(el => keyOf(el) === key)!
-          const glyph = String.fromCodePoint(cell.mark!.glyph)
-          const mark = marks.find(svg => svg.querySelector("text")?.textContent === glyph)!
-          expect(
-            cover.compareDocumentPosition(mark) & Node.DOCUMENT_POSITION_FOLLOWING,
-            `${name} / ${state} / ${key}: the mark is under the cover`
-          ).toBeTruthy()
-          checked++
+        const bare: FloorGrid = {
+          ...grid,
+          cells: grid.cells.map(row =>
+            row.map(cell => (cell.type === "room" && cell.regionBarrier ? { ...cell, mark: undefined } : cell))
+          ),
         }
-        cleanup()
+        expect(markCount(grid), `${name} / ${state}`).toBe(markCount(bare))
+        checked += shut.length
       }
     expect(checked).toBeGreaterThan(0)
   })
