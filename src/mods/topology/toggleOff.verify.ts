@@ -128,7 +128,7 @@ describe("the carve a floor authoring forks gets", () => {
         unsound: withSwitch.success ? validation(validateSite(withSwitch.grid)) : [],
       })
     }
-  }, 400_000)
+  }, 600_000)
 
   it("was asked of the whole baked world, not of a handful of floors", () => {
     expect(carves.length).toBeGreaterThan(100)

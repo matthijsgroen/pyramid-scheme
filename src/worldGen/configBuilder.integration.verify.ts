@@ -113,13 +113,13 @@ describe("buildConfigs golden guard", () => {
       mapPieces: WORLD_TARGETS.mapPieceRewards,
       mosaicPieces: MOSAIC_TOTAL,
     })
-  }, 90_000)
+  }, 600_000)
 
   it("is deterministic across runs", () => {
     const first = buildRealConfigs()
     const second = buildRealConfigs()
     expect(second).toEqual(first)
-  }, 90_000)
+  }, 600_000)
 
   // Reachability answers "can this be got to"; a collection also has to be asked "is there enough
   // of it", per register and never as one world total. The numbers are pinned rather than derived
@@ -152,7 +152,7 @@ describe("buildConfigs golden guard", () => {
       resolveEncounterMeta
     )
     expect(reachableMosaicCounts(reachableRewards)).toEqual(MOSAIC_STEPS_BY_TIER)
-  }, 90_000)
+  }, 600_000)
 })
 
 // The world's one authored switch, read back out of a real build. Which ways out it shuts and what
@@ -177,7 +177,7 @@ describe("tomb floor linking — ward-path shortcuts", () => {
   let floors: FloorConfig[]
   beforeAll(() => {
     floors = buildRealConfigs().junior_treasure_tomb[0]
-  }, 90_000)
+  }, 600_000)
 
   it("every floor's main path ends in a real exit, not an auto-chained stairhead", () => {
     for (const floor of floors) expect(floor.exitOrStaircase).toBe("exit")

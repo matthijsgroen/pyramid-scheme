@@ -1,5 +1,5 @@
 import { tier, journey, tomb, wardChest, wardWing } from "../dsl"
-import type { Rule, PathEntry } from "../dsl"
+import type { Rule, PathEntry, PyramidConstraint } from "../dsl"
 import { TOMB_ROOMS_PER_FLOOR } from "../data"
 import { freeRegions } from "@/game/lockAuthoring"
 import { catalogueLock } from "./locks/catalogue"
@@ -17,6 +17,20 @@ const EXPERT_SIDE_PATHS: PathEntry[] = [
 const EXPERT_HIDDEN_PATHS: PathEntry[] = [{ density: "low", pathPuzzles: 2, end: "mosaic", encounter: "trap" }]
 // A floor-key-gated fragment side path — find a colored key on the floor to open it.
 const FLOOR_KEY_PATH: PathEntry = { density: "low", pathPuzzles: 1, end: "fragment", gate: "floor-key" }
+
+// What an expert lock's controls look like on the floor: a lever is a handle, a board a lightbeam switch, a drop a
+// zipline, an activator the standing torch. Each lock binds only the kinds it uses.
+const LOCK_BINDINGS = {
+  dropHome: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
+  twoLamps: { "fork-switch": "lightbeamSwitch", toggle: "handle" },
+  cellar: { toggle: "handle", activator: "torch", "one-way": "zipline" },
+  doubleBack: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
+} as const
+
+/** A catalogue lock on the main floor of a pyramid, every region `free`: the floor's own content goes where the carve puts it. */
+const lockOnMainFloor = (name: keyof typeof LOCK_BINDINGS): Pick<PyramidConstraint, "floorLocks"> => ({
+  floorLocks: { 0: { locks: [{ lock: freeRegions(catalogueLock(name)) }], realisations: LOCK_BINDINGS[name] } },
+})
 
 // Expert is the first tier with ward content on EVERY pyramid (chests up front, wings on the
 // back half), varied to tease the two harder tiers (master/wizard), plus the first VISIBLE
@@ -336,4 +350,16 @@ export const expertRules: Rule[] = [
   // Djoser opens on the stone its capstone spends: a stone set on a plate holds a door open, lifted it shuts again
   // (docs/game-design/lock-placement.md).
   journey("expert_4").pyramid(1, lessonOnMainFloor("stoneOnAPlate")),
+  // The expert locks between a journey's lesson and its capstone, each read from its .lock file with every region
+  // `free` (docs/game-design/lock-placement.md).
+  journey("expert_1").pyramid(2, lockOnMainFloor("dropHome")),
+  journey("expert_1").pyramid(3, lockOnMainFloor("twoLamps")),
+  journey("expert_2").pyramid(2, lockOnMainFloor("cellar")),
+  journey("expert_2").pyramid(3, lockOnMainFloor("twoLamps")),
+  journey("expert_2").pyramid(4, lockOnMainFloor("dropHome")),
+  journey("expert_3").pyramid(2, lockOnMainFloor("dropHome")),
+  journey("expert_3").pyramid(3, lockOnMainFloor("cellar")),
+  // doubleBack lays on few seeds; at the default packing the journey inspector's default seed carves it on no attempt.
+  journey("expert_3").pyramid(5, { ...lockOnMainFloor("doubleBack"), packing: 0.15 }),
+  journey("expert_4").pyramid(3, lockOnMainFloor("cellar")),
 ]

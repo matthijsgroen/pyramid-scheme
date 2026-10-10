@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1008494153
+export const worldContentHash = 669788547
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -5409,7 +5409,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: ["funerary", "puzzle"],
         encountersByIndex: { 0: "hidato", 1: "procession", 2: "constellation", 3: "sudoku" },
         packing: 0.16,
-        seed: 2816278010141107,
+        seed: 3529644475,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p2", pieceIndex: 0 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -5417,6 +5417,45 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { type: "consumable", consumable: "trapTool" },
           { type: "money", amount: 2 },
         ],
+        locks: [
+          {
+            lock: {
+              name: "dropHome",
+              regions: {
+                in: { takes: "free" },
+                hall: { takes: "free" },
+                leverRoom: { takes: "free" },
+                vault: { takes: "free" },
+                out: { takes: "free" },
+              },
+              connections: [
+                { between: ["in", "hall"], barriers: ["in-hall"] },
+                { between: ["hall", "leverRoom"], barriers: ["hall-leverRoom"] },
+                { between: ["in", "vault"], barriers: ["in-vault"] },
+                { between: ["in", "out"], barriers: ["in-out"] },
+                { between: ["leverRoom", "in"], barriers: ["leverRoom>in"] },
+                { between: ["out", "leverRoom"], barriers: ["out>leverRoom"] },
+              ],
+              gates: {
+                "in-hall": { from: "in", to: "hall", owners: ["Y"] },
+                "hall-leverRoom": { from: "hall", to: "leverRoom", owners: ["H"] },
+                "in-vault": { from: "in", to: "vault", owners: ["Y"] },
+                "in-out": { from: "in", to: "out", owners: ["H"] },
+              },
+              oneWays: {
+                "leverRoom>in": { from: "leverRoom", to: "in" },
+                "out>leverRoom": { from: "out", to: "leverRoom" },
+              },
+              mechanics: {
+                Y: { control: "fork-switch", in: "in" },
+                H: { control: "toggle", in: "leverRoom", starts: "a", opens: { a: ["hall-leverRoom"], b: ["in-out"] } },
+              },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
       },
     ],
     [
@@ -5661,7 +5700,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: ["funerary", "puzzle"],
         encountersByIndex: { 0: "star-battle", 1: "procession", 2: "eclipse", 3: "canisters" },
         packing: 0.16,
-        seed: 2816278010141108,
+        seed: 3529644472,
         mainEndReward: { type: "mosaicPiece", tier: "expert" },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -5669,6 +5708,37 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { type: "consumable", consumable: "trapTool" },
           { type: "money", amount: 1 },
         ],
+        locks: [
+          {
+            lock: {
+              name: "twoLamps",
+              regions: {
+                in: { takes: "free" },
+                west: { takes: "free" },
+                east: { takes: "free" },
+                out: { takes: "free" },
+              },
+              connections: [
+                { between: ["in", "west"], barriers: ["in-west"] },
+                { between: ["in", "east"], barriers: ["in-east"] },
+                { between: ["in", "out"], barriers: ["in-out"] },
+              ],
+              gates: {
+                "in-west": { from: "in", to: "west", owners: ["Y"] },
+                "in-east": { from: "in", to: "east", owners: ["Y"] },
+                "in-out": { from: "in", to: "out", owners: ["A", "B"] },
+              },
+              mechanics: {
+                Y: { control: "fork-switch", in: "in" },
+                A: { control: "toggle", in: "west", starts: "a", opens: { a: [], b: ["in-out"] } },
+                B: { control: "toggle", in: "east", starts: "a", opens: { a: [], b: ["in-out"] } },
+              },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { "fork-switch": "lightbeamSwitch", toggle: "handle" },
       },
       {
         pathPuzzles: 2,
@@ -6552,7 +6622,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: "puzzle",
         encountersByIndex: { 0: "lightbeam", 1: "sumplete", 2: "rush-hour", 3: "hidato", 4: "eclipse" },
         packing: 0.1,
-        seed: 5207779554184528,
+        seed: 2858765649,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d9", pieceIndex: 2 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -6561,6 +6631,39 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { type: "money", amount: 3 },
           { type: "money", amount: 3 },
         ],
+        locks: [
+          {
+            lock: {
+              name: "cellar",
+              regions: {
+                in: { takes: "free" },
+                ledge: { takes: "free" },
+                cell: { takes: "free" },
+                out: { takes: "free" },
+              },
+              connections: [
+                { between: ["in", "ledge"], barriers: ["in-ledge"] },
+                { between: ["in", "cell"], barriers: ["in-cell"] },
+                { between: ["in", "out"], barriers: ["in-out"] },
+                { between: ["ledge", "cell"], barriers: ["ledge>cell"] },
+                { between: ["out", "ledge"], barriers: ["out>ledge"] },
+              ],
+              gates: {
+                "in-ledge": { from: "in", to: "ledge", owners: ["H"] },
+                "in-cell": { from: "in", to: "cell", owners: ["blue"] },
+                "in-out": { from: "in", to: "out", owners: ["H"] },
+              },
+              oneWays: { "ledge>cell": { from: "ledge", to: "cell" }, "out>ledge": { from: "out", to: "ledge" } },
+              mechanics: {
+                H: { control: "toggle", in: "ledge", starts: "a", opens: { a: ["in-ledge"], b: ["in-out"] } },
+                blue: { control: "activator", in: "cell", starts: "off", opens: { off: [], on: ["in-cell"] } },
+              },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { toggle: "handle", activator: "torch", "one-way": "zipline" },
       },
     ],
     [
@@ -6813,6 +6916,37 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { type: "money", amount: 3 },
           { type: "money", amount: 3 },
         ],
+        locks: [
+          {
+            lock: {
+              name: "twoLamps",
+              regions: {
+                in: { takes: "free" },
+                west: { takes: "free" },
+                east: { takes: "free" },
+                out: { takes: "free" },
+              },
+              connections: [
+                { between: ["in", "west"], barriers: ["in-west"] },
+                { between: ["in", "east"], barriers: ["in-east"] },
+                { between: ["in", "out"], barriers: ["in-out"] },
+              ],
+              gates: {
+                "in-west": { from: "in", to: "west", owners: ["Y"] },
+                "in-east": { from: "in", to: "east", owners: ["Y"] },
+                "in-out": { from: "in", to: "out", owners: ["A", "B"] },
+              },
+              mechanics: {
+                Y: { control: "fork-switch", in: "in" },
+                A: { control: "toggle", in: "west", starts: "a", opens: { a: [], b: ["in-out"] } },
+                B: { control: "toggle", in: "east", starts: "a", opens: { a: [], b: ["in-out"] } },
+              },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { "fork-switch": "lightbeamSwitch", toggle: "handle" },
       },
       {
         pathPuzzles: 2,
@@ -7097,7 +7231,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           5: "hidato",
         },
         packing: 0.16,
-        seed: 5207779554184530,
+        seed: 2858765656,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art14", pieceIndex: 1 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -7107,6 +7241,45 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           undefined,
           undefined,
         ],
+        locks: [
+          {
+            lock: {
+              name: "dropHome",
+              regions: {
+                in: { takes: "free" },
+                hall: { takes: "free" },
+                leverRoom: { takes: "free" },
+                vault: { takes: "free" },
+                out: { takes: "free" },
+              },
+              connections: [
+                { between: ["in", "hall"], barriers: ["in-hall"] },
+                { between: ["hall", "leverRoom"], barriers: ["hall-leverRoom"] },
+                { between: ["in", "vault"], barriers: ["in-vault"] },
+                { between: ["in", "out"], barriers: ["in-out"] },
+                { between: ["leverRoom", "in"], barriers: ["leverRoom>in"] },
+                { between: ["out", "leverRoom"], barriers: ["out>leverRoom"] },
+              ],
+              gates: {
+                "in-hall": { from: "in", to: "hall", owners: ["Y"] },
+                "hall-leverRoom": { from: "hall", to: "leverRoom", owners: ["H"] },
+                "in-vault": { from: "in", to: "vault", owners: ["Y"] },
+                "in-out": { from: "in", to: "out", owners: ["H"] },
+              },
+              oneWays: {
+                "leverRoom>in": { from: "leverRoom", to: "in" },
+                "out>leverRoom": { from: "out", to: "leverRoom" },
+              },
+              mechanics: {
+                Y: { control: "fork-switch", in: "in" },
+                H: { control: "toggle", in: "leverRoom", starts: "a", opens: { a: ["hall-leverRoom"], b: ["in-out"] } },
+              },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
       },
       {
         pathPuzzles: 2,
@@ -7599,6 +7772,45 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           undefined,
           undefined,
         ],
+        locks: [
+          {
+            lock: {
+              name: "dropHome",
+              regions: {
+                in: { takes: "free" },
+                hall: { takes: "free" },
+                leverRoom: { takes: "free" },
+                vault: { takes: "free" },
+                out: { takes: "free" },
+              },
+              connections: [
+                { between: ["in", "hall"], barriers: ["in-hall"] },
+                { between: ["hall", "leverRoom"], barriers: ["hall-leverRoom"] },
+                { between: ["in", "vault"], barriers: ["in-vault"] },
+                { between: ["in", "out"], barriers: ["in-out"] },
+                { between: ["leverRoom", "in"], barriers: ["leverRoom>in"] },
+                { between: ["out", "leverRoom"], barriers: ["out>leverRoom"] },
+              ],
+              gates: {
+                "in-hall": { from: "in", to: "hall", owners: ["Y"] },
+                "hall-leverRoom": { from: "hall", to: "leverRoom", owners: ["H"] },
+                "in-vault": { from: "in", to: "vault", owners: ["Y"] },
+                "in-out": { from: "in", to: "out", owners: ["H"] },
+              },
+              oneWays: {
+                "leverRoom>in": { from: "leverRoom", to: "in" },
+                "out>leverRoom": { from: "out", to: "leverRoom" },
+              },
+              mechanics: {
+                Y: { control: "fork-switch", in: "in" },
+                H: { control: "toggle", in: "leverRoom", starts: "a", opens: { a: ["hall-leverRoom"], b: ["in-out"] } },
+              },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
       },
     ],
     [
@@ -7881,6 +8093,39 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           undefined,
           undefined,
         ],
+        locks: [
+          {
+            lock: {
+              name: "cellar",
+              regions: {
+                in: { takes: "free" },
+                ledge: { takes: "free" },
+                cell: { takes: "free" },
+                out: { takes: "free" },
+              },
+              connections: [
+                { between: ["in", "ledge"], barriers: ["in-ledge"] },
+                { between: ["in", "cell"], barriers: ["in-cell"] },
+                { between: ["in", "out"], barriers: ["in-out"] },
+                { between: ["ledge", "cell"], barriers: ["ledge>cell"] },
+                { between: ["out", "ledge"], barriers: ["out>ledge"] },
+              ],
+              gates: {
+                "in-ledge": { from: "in", to: "ledge", owners: ["H"] },
+                "in-cell": { from: "in", to: "cell", owners: ["blue"] },
+                "in-out": { from: "in", to: "out", owners: ["H"] },
+              },
+              oneWays: { "ledge>cell": { from: "ledge", to: "cell" }, "out>ledge": { from: "out", to: "ledge" } },
+              mechanics: {
+                H: { control: "toggle", in: "ledge", starts: "a", opens: { a: ["in-ledge"], b: ["in-out"] } },
+                blue: { control: "activator", in: "cell", starts: "off", opens: { off: [], on: ["in-cell"] } },
+              },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { toggle: "handle", activator: "torch", "one-way": "zipline" },
       },
     ],
     [
@@ -8412,8 +8657,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           5: "sumplete",
           6: "sudoku",
         },
-        packing: 0.1,
-        seed: 7816500863991683,
+        packing: 0.15,
+        seed: 3982655414,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p12", pieceIndex: 1 },
         rewards: [
           { type: "consumable", consumable: "trapTool" },
@@ -8424,6 +8669,49 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           undefined,
           undefined,
         ],
+        locks: [
+          {
+            lock: {
+              name: "doubleBack",
+              regions: {
+                in: { takes: "free" },
+                leftLower: { takes: "free" },
+                rightLower: { takes: "free" },
+                out: { takes: "free" },
+                s2: { takes: "free" },
+                s1: { takes: "free" },
+              },
+              connections: [
+                { between: ["in", "leftLower"], barriers: ["in-leftLower"] },
+                { between: ["in", "rightLower"], barriers: ["in-rightLower"] },
+                { between: ["in", "out"], barriers: ["in-out"] },
+                { between: ["leftLower", "s2"], barriers: ["leftLower-s2"] },
+                { between: ["rightLower", "s1"], barriers: ["rightLower>s1"] },
+                { between: ["s1", "leftLower"], barriers: ["s1>leftLower"] },
+                { between: ["leftLower", "in"], barriers: ["leftLower>in"] },
+              ],
+              gates: {
+                "in-leftLower": { from: "in", to: "leftLower", owners: ["Y"] },
+                "in-rightLower": { from: "in", to: "rightLower", owners: ["Y"] },
+                "in-out": { from: "in", to: "out", owners: ["S2"] },
+                "leftLower-s2": { from: "leftLower", to: "s2", owners: ["S1"] },
+              },
+              oneWays: {
+                "rightLower>s1": { from: "rightLower", to: "s1" },
+                "s1>leftLower": { from: "s1", to: "leftLower" },
+                "leftLower>in": { from: "leftLower", to: "in" },
+              },
+              mechanics: {
+                Y: { control: "fork-switch", in: "in" },
+                S1: { control: "toggle", in: "s1", starts: "a", opens: { a: [], b: ["leftLower-s2"] } },
+                S2: { control: "toggle", in: "s2", starts: "a", opens: { a: [], b: ["in-out"] } },
+              },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
       },
       {
         pathPuzzles: 2,
@@ -9152,6 +9440,39 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           undefined,
           undefined,
         ],
+        locks: [
+          {
+            lock: {
+              name: "cellar",
+              regions: {
+                in: { takes: "free" },
+                ledge: { takes: "free" },
+                cell: { takes: "free" },
+                out: { takes: "free" },
+              },
+              connections: [
+                { between: ["in", "ledge"], barriers: ["in-ledge"] },
+                { between: ["in", "cell"], barriers: ["in-cell"] },
+                { between: ["in", "out"], barriers: ["in-out"] },
+                { between: ["ledge", "cell"], barriers: ["ledge>cell"] },
+                { between: ["out", "ledge"], barriers: ["out>ledge"] },
+              ],
+              gates: {
+                "in-ledge": { from: "in", to: "ledge", owners: ["H"] },
+                "in-cell": { from: "in", to: "cell", owners: ["blue"] },
+                "in-out": { from: "in", to: "out", owners: ["H"] },
+              },
+              oneWays: { "ledge>cell": { from: "ledge", to: "cell" }, "out>ledge": { from: "out", to: "ledge" } },
+              mechanics: {
+                H: { control: "toggle", in: "ledge", starts: "a", opens: { a: ["in-ledge"], b: ["in-out"] } },
+                blue: { control: "activator", in: "cell", starts: "off", opens: { off: [], on: ["in-cell"] } },
+              },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { toggle: "handle", activator: "torch", "one-way": "zipline" },
       },
     ],
     [

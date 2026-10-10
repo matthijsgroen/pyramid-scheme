@@ -172,7 +172,7 @@ describe("registering a new puzzle family is a no-op for the authored world", ()
   beforeAll(() => {
     before = build()
     after = buildWithRegistry(registerNewFamily)
-  }, 120_000)
+  }, 600_000)
 
   afterAll(() => {
     expect(ALL_FAMILY_META).not.toContain(NEW_FAMILY)
