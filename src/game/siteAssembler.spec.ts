@@ -13,6 +13,8 @@ import { cellAddress } from "./cellAddress"
 import { cellSlot } from "./cellSlot"
 import { floorLock } from "./floorLock"
 import { walkLock } from "./lockWalk"
+import { freeRegions } from "./lockAuthoring"
+import { parseLock } from "./lockNotation"
 // The real registry, for the one spec that has to prove the refusal against a family that
 // genuinely lacks reEnterable rather than against the fallback resolver, which claims it for none.
 import "@/mods/registerModApps"
@@ -1834,6 +1836,25 @@ describe("a switch fork", () => {
       count: 1,
       carved: 0,
     })
+  })
+
+  it("holds a junction on a floor a lock is laid on, its switch choosing between two of the ungated paths", () => {
+    const chest = { pathPuzzles: 1, difficulty: "junior" as const, end: "treasure" as const }
+    const config: FloorConfig = {
+      ...switchConfig(ONE_SWITCH),
+      sideSections: [chest, chest, chest, chest],
+      realisations: { toggle: "handle" },
+      locks: [{ lock: freeRegions(parseLock("in -- hall\nhall -[G]- out\nG toggle @in", "laidLesson").lock) }],
+    }
+    const results = [1, 2, 3].map(seed => assembleAt(`site-switch-laid-${seed}`, config, seed))
+
+    expect(results.map(result => result.success)).toEqual([true, true, true])
+    for (const result of results) {
+      if (!result.success) continue
+      const at = findRoom(result.grid, cell => cell.roomType === "fork" && cell.family === "sumplete")
+      expect(at?.cell.exits?.filter(exit => exit.gateKeyId !== undefined)).toHaveLength(2)
+      expect(validateSite(result.grid)).toEqual({ valid: true })
+    }
   })
 
   // Asked before a wall is carved, because no seed can settle it: there are two junctions to fill and

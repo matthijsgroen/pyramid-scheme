@@ -1327,10 +1327,20 @@ const assembleExpandedFloor = (
     section.end === "treasure" &&
     leverRooms(`s${i}`) === 0 &&
     !oneWayNames.has(addresses.of.get(`s${i}`) ?? `s${i}`)
-  const contentSections = new Set(sideSections.flatMap((section, i) => (isContentSection(section, i) ? [i] : [])))
   // The section hosting the key a floor-key gate waits on stands on ground no door shuts: nothing opens a door
   // for the player to fetch the key that opens another.
   const hostsKeys = (section: number) => gatedFloorKeyIdxs.length > 0 && ungatedIdxs[0] === section
+  // A JUNCTION `forks` HOLDS ON A LAID FLOOR CHOOSES BETWEEN BRANCHES: every node the lay gives holds a room, so
+  // the last ungated sections, as many as the junctions have ways out, stay branches and hang from a bare node
+  // of the route as a hub of their own (`junctionGroups` below).
+  const contentCandidates = sideSections.flatMap((section, i) =>
+    isContentSection(section, i) && !hostsKeys(i) ? [i] : []
+  )
+  const junctionWays = plan ? forkDemands.reduce((sum, exits) => sum + exits, 0) : 0
+  const junctionSections = junctionWays > 0 ? contentCandidates.slice(-junctionWays) : []
+  const contentSections = new Set(
+    sideSections.flatMap((section, i) => (isContentSection(section, i) && !junctionSections.includes(i) ? [i] : []))
+  )
   const absorbedDemands: AbsorbedDemand[] = [...contentSections].map(section => ({
     section,
     kinds: [
@@ -2274,13 +2284,33 @@ const assembleExpandedFloor = (
       ...(section.end === "staircase" ? [] : (["reward"] as const)),
     ]
     const branchSections = sideSections.map((_, i) => i).filter(i => !contentSections.has(i))
+    // A route node nothing stands on: no content, control, door, seam, junction, drop end or absorbed room.
+    const dropEnds = new Set((laid?.drops ?? []).flatMap(drop => [drop.from, drop.to]))
+    const bareRouteStep = (mi: number) =>
+      mi > 0 &&
+      mi < mainPath.length - 1 &&
+      !placedContent.includes(mi) &&
+      !takenByControl.has(mi) &&
+      !gateIndices.has(mi) &&
+      !barrierDoorOnMain.has(mi) &&
+      !regionSeamIndices.has(mi) &&
+      !forkJunctionIdx.has(mi) &&
+      !laid?.reserved.has(mi) &&
+      !absorbedCell.has(`${mainPath[mi][0]},${mainPath[mi][1]}`) &&
+      !dropEnds.has(`${mainPath[mi][0]},${mainPath[mi][1]}`)
     const hubGroupSize = branchSections.length >= 5 ? 3 : branchSections.length >= 2 ? 2 : 1
     const sectionOrder = shuffle(branchSections, rand)
     // A `{ in }` fork's sections are a hub of their own, first, hung from its junction and nowhere else.
     const forkGroups = forkIns.map(fork => fork.sectionIdxs)
-    const forkedSections = new Set(forkGroups.flat())
+    // Then, on a laid floor, each junction `forks` holds: its branches, hung from one bare node of the route.
+    const junctionGroups = forkDemands.flatMap((exits, k) => {
+      const at = forkDemands.slice(0, k).reduce((sum, ways) => sum + ways, 0)
+      const group = junctionSections.slice(at, at + exits)
+      return group.length > 0 ? [group] : []
+    })
+    const forkedSections = new Set([...forkGroups, ...junctionGroups].flat())
     const looseSections = sectionOrder.filter(si => !forkedSections.has(si))
-    const hubGroups: number[][] = [...forkGroups]
+    const hubGroups: number[][] = [...forkGroups, ...junctionGroups]
     for (let i = 0; i < looseSections.length; i += hubGroupSize) {
       hubGroups.push(looseSections.slice(i, i + hubGroupSize))
     }
@@ -2307,6 +2337,7 @@ const assembleExpandedFloor = (
       let hubCell: [number, number] | null = null
       const ownSlice = mainZoneSlices[sliceOrder[groupIdx]]
       const junctionCell = groupIdx < forkIns.length ? mainPath[junctionIdxOf[groupIdx]] : undefined
+      const holdsJunction = groupIdx >= forkIns.length && groupIdx < forkIns.length + junctionGroups.length
 
       for (const si of group) {
         // Try the shared hub first (if this group already has one), then this group's own
@@ -2316,9 +2347,13 @@ const assembleExpandedFloor = (
         // not only subsequent ones.
         const everywhere: Array<[number, number]> = junctionCell
           ? [junctionCell]
-          : hubCell
-            ? [hubCell, ...ownSlice, ...shuffledMainZoneCandidates, ...shuffledCandidates]
-            : [...ownSlice, ...shuffledMainZoneCandidates, ...shuffledCandidates]
+          : holdsJunction
+            ? hubCell
+              ? [hubCell]
+              : scoreCandidates(mainPath.filter((_, mi) => bareRouteStep(mi)))
+            : hubCell
+              ? [hubCell, ...ownSlice, ...shuffledMainZoneCandidates, ...shuffledCandidates]
+              : [...ownSlice, ...shuffledMainZoneCandidates, ...shuffledCandidates]
         // On a laid floor a path hangs only where its region takes everything the path holds.
         const candidateSources = laid
           ? everywhere.filter(([cr, cc]) =>
