@@ -4,7 +4,7 @@
 
 in -- top
 top -[S1]- s1
-middle -[S1]- s2
+s2 -[S1]- middle
 top -[S2]- out
 top >> s1
 top >> middle >> in
