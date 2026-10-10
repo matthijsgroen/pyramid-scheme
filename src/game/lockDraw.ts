@@ -38,7 +38,8 @@ const STEPS = [
 ]
 
 // Lower levels of the tree are drawn lower; a level is a box row plus the corridor rising off it.
-const LEVEL_ROWS = 6
+const LEVEL_ROWS = 5
+const MIN_GAP = 4
 const MARGIN = 3
 
 /**
@@ -103,12 +104,40 @@ const drawSketch = (sketch: Sketch): string => {
     lay(root, 0)
   })
 
-  const labels = [...sketch.regions.map(boxLabel), ...Object.keys(sketch.edges).map(gateToken)]
-  const colWidth = Math.max(16, ...labels.map(label => label.length)) + 4
   const maxLevel = Math.max(...[...place.values()].map(p => p.level))
-  const width = nextCol * colWidth + 2 * MARGIN + 2
+  // Each column is as wide as the widest box in it; the gap beside it is as wide as the longest gate
+  // drawn on a corridor crossing it, with two dashes either side.
+  const cols = nextCol
+  const colW = Array<number>(cols).fill(0)
+  for (const region of sketch.regions) {
+    const { col } = place.get(region)!
+    colW[col] = Math.max(colW[col], boxLabel(region).length)
+  }
+  const gap = Array<number>(cols).fill(MIN_GAP)
+  const alongMain = [...parent].filter(([region, { of }]) => place.get(region)!.level === place.get(of)!.level)
+  const colX = (c: number) => MARGIN + 2 + colW.slice(0, c).reduce((sum, w, i) => sum + w + gap[i], 0)
+  const centreX = (region: string) => {
+    const { col } = place.get(region)!
+    return colX(col) + Math.floor(colW[col] / 2)
+  }
+  const spanOf = (region: string) => {
+    const w = boxLabel(region).length
+    return { x: centreX(region) - Math.floor(w / 2), w }
+  }
+  for (let moved = true; moved;) {
+    moved = false
+    for (const [region, { of, gate }] of alongMain) {
+      const [a, b] = [spanOf(of), spanOf(region)]
+      const [left, right] = a.x <= b.x ? [a, b] : [b, a]
+      const short = gateToken(gate).length + 4 - (right.x - (left.x + left.w))
+      if (short <= 0) continue
+      const [ca, cb] = [place.get(of)!.col, place.get(region)!.col]
+      gap[Math.max(Math.min(ca, cb), Math.max(ca, cb) - 1)] += short
+      moved = true
+    }
+  }
+  const width = colX(cols) + MARGIN + 2
   const height = maxLevel * LEVEL_ROWS + 1 + 2 * MARGIN
-  const centreX = (region: string) => MARGIN + 2 + place.get(region)!.col * colWidth + Math.floor(colWidth / 2)
   const rowY = (region: string) => MARGIN + (maxLevel - place.get(region)!.level) * LEVEL_ROWS
 
   const text: (string | undefined)[][] = Array.from({ length: height }, () => Array(width).fill(undefined))
