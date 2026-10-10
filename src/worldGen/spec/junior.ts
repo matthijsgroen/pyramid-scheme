@@ -1,7 +1,7 @@
 import { tier, journey, tomb, sidePath, wardWing, wardChest } from "../dsl"
 import type { Rule, PathSettings } from "../dsl"
 import { TOMB_ROOMS_PER_FLOOR } from "../data"
-import { lessonOnMainFloor } from "./locks/lessons"
+import { lessonFloor, lessonOnMainFloor } from "./locks/lessons"
 
 // Varied "come back stronger" ward wings, mixed into the back-half pyramids of each junior
 // journey (where the auto tier-unlock gate already sits). Each is a bonus floor gated by a later
@@ -159,6 +159,7 @@ export const juniorRules: Rule[] = [
     .floor(0, {
       forks: SWITCH_FORK,
       switches: SWITCH_BOARD,
+      ...lessonFloor("leverOpensADoor"),
       sidePaths: [
         { density: "medium", ...JUNIOR_FRAGMENT_PATH },
         { density: "low", ...JUNIOR_VISIBLE_MOSAIC_PATH },

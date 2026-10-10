@@ -23,12 +23,6 @@ Columns:
     bound to the handle), and on junior_2 and junior_4 the board comes before the journey's lever lesson, so the site
     would teach two mechanics at once. Placed where the lever was taught first (junior_1 site 3, junior_3 site 4);
     whether a fork lesson may also teach the lever is the designer's call.
-  - **switch fork**: leverOpensADoor on junior_2's site 2. The switch fork chooses between two ungated branches
-    (`switchBranch`), and a laid floor stands an ungated chest-ending section's rooms on its laid nodes instead of
-    growing it as a branch, so nothing branches where `forks` could reserve a junction (`forksUnsatisfied` with none
-    carved). Every node of the laid route holds a room, so no route node has the two free ways out a junction needs.
-    Kept as branches, the nine sections find no room on the grid the lay sizes for the lock (`layoutNotFound` on every
-    seed tried). The lay would have to reserve a junction node and grow the grid for its branches: assembler work.
 
 ### Junior
 
@@ -45,7 +39,7 @@ Columns:
 | Site | Main floors | Wing floors | Authored                                                                     | Suggested                                                        | Chosen lock                                                      | Placed           |
 | ---- | ----------- | ----------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------- |
 | 1    | 1           | 0           |                                                                              | boardPicksTheWay (the switch fork already authored at pyramid 2) | boardPicksTheWay (the switch fork already authored at pyramid 2) | no (board first) |
-| 2    | 1           | 0           | the world's one switch fork: a `lightbeamSwitch` board in a two-way junction | leverOpensADoor                                                  | leverOpensADoor                                                  | no (switch fork) |
+| 2    | 1           | 0           | the world's one switch fork: a `lightbeamSwitch` board in a two-way junction | leverOpensADoor                                                  | leverOpensADoor                                                  | ✓                |
 | 3    | 1           | 1           | master ward wing                                                             | torch                                                            | torch                                                            | ✓                |
 | 4    | 1           | 1           | wizard ward wing                                                             | dropDown                                                         | dropDown                                                         | ✓                |
 
@@ -135,6 +129,11 @@ entrance once.
 expert_1's doubleBack stands through the same `floorLocks` with its realisations bound (fork-switch
 `lightbeamSwitch`, toggle `handle`, one-way `zipline`), but reads the lock from `doubleBackLock()` in
 `src/worldGen/spec/locks/doubleBack.ts` rather than from its `.lock` file.
+
+junior_2's site 2 authors its own `.floor(0)` for the switch fork, so its lesson goes into that floor with
+`lessonFloor("leverOpensADoor")` rather than `lessonOnMainFloor`: a `floorLocks` entry beside an explicit floor
+rebuilds the pyramid. On a laid floor every node holds a room, so the last ungated sections, as many as the
+junction has ways out, stay branches and hang from a bare node of the route, which is the junction `forks` holds.
 
 expert_4's stoneGate stands the same way, read from its `.lock` file with `catalogueLock` and every region `free`
 (`freeRegions`), bound `weights` `stonePlate`, `activator` `torch`, `unladen` `narrowPassage`.

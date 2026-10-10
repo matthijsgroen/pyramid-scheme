@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 207415064
+export const worldContentHash = 1383901146
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -2748,8 +2748,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["stela", "niche", "sconce"],
         role: "puzzle",
         encountersByIndex: { 0: "eclipse", 1: "futoshiki", 2: "sumplete", 3: "constellation" },
-        packing: 0.2,
-        seed: 458394307,
+        packing: 0.1,
+        seed: 458394291,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art7", pieceIndex: 1 },
         rewards: [
           { type: "money", amount: 1 },
@@ -2758,6 +2758,20 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { type: "money", amount: 2 },
         ],
         forks: [{ exits: 2, count: 1 }],
+        locks: [
+          {
+            lock: {
+              name: "leverOpensADoor",
+              regions: { in: { takes: "free" }, hall: { takes: "free" }, out: { takes: "free" } },
+              connections: [["in", "hall"], { between: ["hall", "out"], barriers: ["hall-out"] }],
+              gates: { "hall-out": { from: "hall", to: "out", owners: ["H"] } },
+              mechanics: { H: { control: "toggle", in: "in", starts: "a", opens: { a: [], b: ["hall-out"] } } },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { toggle: "handle" },
         switches: { encounter: "lightbeamSwitch", min: 1, max: 1 },
       },
     ],

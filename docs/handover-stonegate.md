@@ -135,10 +135,10 @@ final whole-branch review on the most capable model. Commit and push freely on t
 
 ## Next session
 
-Placement count: 31/34 (`docs/instructions/agent-work.md` finish line). Every expert lock stands, and every junior
-lesson but three. Still open: boardPicksTheWay on junior_2 and junior_4 site 1 (below), leverOpensADoor beside
-junior_2's switch fork (a laid floor grows no branches for `forks` to reserve a junction between; the lay would have
-to reserve one, see `lock-placement.md`). Switch boards are dealt like room boards now (`boardIndex.ts`), so
+Placement count: 32/34 (`docs/instructions/agent-work.md` finish line). Every expert lock stands, and every junior
+lesson but two. Still open: boardPicksTheWay on junior_2 and junior_4 site 1 (below). leverOpensADoor stands beside
+junior_2's switch fork: on a laid floor that authors `forks`, the last ungated sections stay branches and hang from a
+bare route node, the junction the switch stands in (`siteAssembler.ts`, `junctionGroups`). Switch boards are dealt like room boards now (`boardIndex.ts`), so
 no two switches in one tier share a board while the list covers them; every switch floor shows a different board
 than before, so a half-solved switch comes back on a new board (fine before release).
 
