@@ -5,9 +5,12 @@ import { modScreens } from "@/app/pages/screenRegistry"
 import "@/mods/registerModApps"
 import { use, useEffect } from "react"
 import { FezContext } from "./fez/context"
+import { DevelopContext } from "@/contexts/DevelopMode"
+import { LockEditorHost } from "@/app/dev/LockEditorHost"
 
 export const Base = ({ startGame }: { startGame: () => void }) => {
   const { showConversation } = use(FezContext)
+  const { isDevelopMode } = use(DevelopContext)
 
   useEffect(() => {
     showConversation("welcome")
@@ -25,6 +28,7 @@ export const Base = ({ startGame }: { startGame: () => void }) => {
           <Component key={id} />
         ))}
       </div>
+      {isDevelopMode && <LockEditorHost />}
     </div>
   )
 }

@@ -3,9 +3,9 @@ import { act, cleanup, render, renderHook, screen, waitFor } from "@testing-libr
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest"
 import { parseLock } from "@/game/lockNotation"
 import { walkFloorLock } from "@/game/floorLockWalk"
-import { PLAYGROUND_JOURNEY, carvePlayground, defaultBinding, playgroundFloor } from "./playgroundCarve.testing"
+import { PLAYGROUND_JOURNEY, carvePlayground, defaultBinding, playgroundFloor } from "./playgroundCarve"
 import { assemblePlayedFloor } from "./useAssembledFloor"
-import { LockPlayground, useCarving } from "./lockPlayground.testing"
+import { LockPlayground, useCarving } from "./lockPlayground"
 import "@/mods/registerModApps"
 
 // jsdom has no layout, so the map's scroll-to-explorer has nothing to call.

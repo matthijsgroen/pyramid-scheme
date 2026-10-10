@@ -1169,5 +1169,6 @@
     "reset": "Start again",
     "spoiled": "The run is spoiled: a tile was walked out of order.",
     "tile": { "unwalked": "Step {{step}}: not yet walked", "inOrder": "Step {{step}}: walked in order", "outOfOrder": "Step {{step}}: walked out of order" }
-  }
+  },
+  "devLockEditor": {"title":"Lock editor","notation":"Lock notation","checks":"Checks","drawing":"Drawing","carveAndPlay":"Carve and play","copyLink":"Copy link","copied":"Link copied","failed":"Could not copy; the link is in the address bar","backToEditor":"← Editor","close":"Close","open":"Lock editor"}
 }

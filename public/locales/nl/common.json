@@ -1169,5 +1169,6 @@
     "reset": "Opnieuw beginnen",
     "spoiled": "De reeks is verpest: een tegel is in de verkeerde volgorde betreden.",
     "tile": { "unwalked": "Stap {{step}}: nog niet betreden", "inOrder": "Stap {{step}}: in volgorde betreden", "outOfOrder": "Stap {{step}}: in verkeerde volgorde betreden" }
-  }
+  },
+  "devLockEditor": {"title":"Slot-editor","notation":"Slotnotatie","checks":"Controles","drawing":"Tekening","carveAndPlay":"Uithouwen en spelen","copyLink":"Link kopiëren","copied":"Link gekopieerd","failed":"Kopiëren mislukt; de link staat in de adresbalk","backToEditor":"← Editor","close":"Sluiten","open":"Slot-editor"}
 }

@@ -1,6 +1,6 @@
 import { StrictMode } from "react"
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { LockPlayground } from "./lockPlayground.testing"
+import { LockPlayground } from "./lockPlayground"
 import "@/mods/registerModApps"
 
 // Every catalogue lock, read the way `yarn lock` reads it: the file is the lock. Named by its path under

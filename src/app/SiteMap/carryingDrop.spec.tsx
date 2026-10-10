@@ -3,7 +3,7 @@ import { act, cleanup } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { oneWayRuns } from "@/game/gridNavigation"
 import { plateNamed, stoneFloor } from "@/game/testSupport/stoneFixtures"
-import { carvePlayground } from "./playgroundCarve.testing"
+import { carvePlayground } from "./playgroundCarve"
 import { sequenceHarness } from "./sequenceHarness.testing"
 import "@/mods/registerModApps"
 

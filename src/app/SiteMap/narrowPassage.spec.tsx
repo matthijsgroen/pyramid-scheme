@@ -8,7 +8,7 @@ import { CRACK, PASSAGE_BINDING, passageAt, plateNamed, stoneFloor } from "@/gam
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { buildRoomClaims } from "./roomClaims"
 import { offeredTargets } from "./clickTargets"
-import { PLAYGROUND_JOURNEY, carvePlayground } from "./playgroundCarve.testing"
+import { PLAYGROUND_JOURNEY, carvePlayground } from "./playgroundCarve"
 import { sequenceHarness } from "./sequenceHarness.testing"
 import { useSiteNavigation } from "./useSiteNavigation"
 import "@/mods/registerModApps"

@@ -7,7 +7,7 @@ import { douseFloor, floorTorches, legalTargets, withDouse } from "@/game/mechan
 import { assembleFloor } from "@/game/siteAssembler"
 import { dirsOf, TOPOLOGY_OFF } from "@/game/testSupport/modOff"
 import { homeOf, TWO_TORCHES } from "@/game/testSupport/torchFloodFixtures"
-import { PLAYGROUND_JOURNEY } from "./playgroundCarve.testing"
+import { PLAYGROUND_JOURNEY } from "./playgroundCarve"
 import { carved } from "./torchFlood.testing"
 
 describe("a torch on a floor", () => {

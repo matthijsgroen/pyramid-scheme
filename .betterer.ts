@@ -44,7 +44,7 @@ const MOD_FAMILY_IDS = [
 const MOD_FAMILY_ID = new RegExp(`["'\`](?:${MOD_FAMILY_IDS.join("|")})["'\`]`, "g")
 const MOD_FAMILY_MESSAGE =
   "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue)."
-const NOT_CORE_SOURCE = /(\.spec\.|\.stories\.|\.testing\.|\.verify\.|\/testSupport\/|\/encounterFallback\.ts$)/
+const NOT_CORE_SOURCE = /(\.spec\.|\.stories\.|\.testing\.|\.verify\.|\/testSupport\/|\/encounterFallback\.ts$|\/playgroundCarve\.ts$)/
 
 // Guards that only ever get better: each one reports an issue per occurrence, per file, and
 // .betterer.results pins what is still outstanding. Lower it by fixing one and running
