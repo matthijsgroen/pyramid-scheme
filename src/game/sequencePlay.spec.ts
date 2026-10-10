@@ -58,7 +58,7 @@ describe("the writes a walk makes to a sequence", () => {
     expect(walkPresses(lit(grid), 0, [a, b], new Map())).toEqual([{ address: home(), state: spoiledState(0, 1) }])
   })
 
-  it("a tile still in fog does not register, however the route reaches it", () => {
+  it("a tile still in fog registers when the route walks over it", () => {
     const [a, b] = tiles(grid)
     const fogged: FloorGrid = {
       ...lit(grid),
@@ -69,7 +69,8 @@ describe("the writes a walk makes to a sequence", () => {
       ),
     }
     expect(walkPresses(fogged, 0, [[0, 0], a.at, b.at], new Map())).toEqual([
-      { address: home(), state: spoiledState(0, 1) },
+      { address: home(), state: progressState(1) },
+      { address: home(), state: progressState(2) },
     ])
   })
 
