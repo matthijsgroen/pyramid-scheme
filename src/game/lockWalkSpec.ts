@@ -5,6 +5,7 @@ import { barriersOf, isRegionGate, isWeightOwner, joinOf } from "./lockAuthoring
 import type { LockSpec, Mechanism } from "./lockWalk"
 import { TORCH_OFF, TORCH_ON } from "./mechanics/torch"
 import { stoneArrangements } from "./mechanics/weights"
+import { progressState, resettableStates, sequenceStates, tileMoves } from "./sequence"
 
 const OPEN = "·"
 const REST = "rest"
@@ -101,26 +102,21 @@ export const walkSpecOf = (lock: Lock, drafts: readonly string[] = []): LockSpec
         transitions: states.flatMap(from => states.filter(to => to !== from).map(to => ({ from, to, at: m.in }))),
       }
     }
+    // A tile is stepped on by entering its region, never by choice, under the rule play keeps (sequence.ts); the
+    // reset is made beside the door it is named for, and a walk that never finishes the order is refused naming it.
     if (m.control === "sequence") {
       const n = m.steps.length
-      const states = [...Array.from({ length: n }, (_, k) => String(k)), "done", "spoiled"]
-      const transitions: Mechanism["transitions"] = []
-      const add = (t: Mechanism["transitions"][number]) => {
-        if (!transitions.some(o => o.from === t.from && o.to === t.to && o.at === t.at)) transitions.push(t)
-      }
-      m.steps.forEach((step, k) => {
-        add({ from: String(k), to: k + 1 === n ? "done" : String(k + 1), at: step.in })
-        m.steps.forEach((other, j) => {
-          if (j !== k) add({ from: String(k), to: "spoiled", at: other.in })
-        })
-      })
-      for (const side of doorSides.get(m.resetAt) ?? [])
-        for (const from of states) if (from !== "done" && from !== "0") add({ from, to: "0", at: side })
+      const states = sequenceStates(n)
+      const done = progressState(n)
       return {
         states,
-        initial: "0",
-        opens: Object.fromEntries(states.map(state => [state, state === "done" ? opened(m.opens.done) : []])),
-        transitions,
+        initial: progressState(0),
+        opens: Object.fromEntries(states.map(state => [state, state === done ? opened(m.opens.done) : []])),
+        transitions: (doorSides.get(m.resetAt) ?? []).flatMap(side =>
+          resettableStates(n).map(from => ({ from, to: progressState(0), at: side }))
+        ),
+        entries: tileMoves(m.steps.map(step => step.in)),
+        goal: { state: done, label: `sequence ${id}` },
       }
     }
     // A torch's one move is lighting it, whatever it starts in: a lit torch put out by a flood can be lit again.

@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest"
-import { checkLockSpec, reachableStates, walkLock } from "./lockWalk"
+import { checkLockSpec, entering, reachableStates, walkLock } from "./lockWalk"
 import { walkSpecOf, isStretch, WEIGHTS, needsFace, openAtStart, readable } from "./lockWalkSpec"
 import { parseLock } from "./lockNotation"
 import { solveLock } from "./lockReview"
 import { barriersOf } from "./lockAuthoring"
+import { progressState, spoiledState } from "./sequence"
 
 const compiled = (text: string) => {
   const { lock, drafts } = parseLock(text)
@@ -52,16 +53,44 @@ describe("walkSpecOf", () => {
     expect(inHall.every(state => state.config.S === "b")).toBe(true)
   })
 
-  it("advances a sequence in order, spoils it on a wrong tile, resets only at its door, and keeps done", () => {
+  it("steps on a tile by entering its region, resets only beside its door, and keeps done", () => {
     const P = compiled(SEQUENCE).mechanisms.P
-    expect(P.transitions).toContainEqual({ from: "0", to: "1", at: "in" })
-    expect(P.transitions).toContainEqual({ from: "1", to: "2", at: "hall" })
-    expect(P.transitions).toContainEqual({ from: "2", to: "done", at: "in" })
-    expect(P.transitions).toContainEqual({ from: "0", to: "spoiled", at: "hall" })
-    expect(P.transitions).toContainEqual({ from: "spoiled", to: "0", at: "hall" })
-    expect(P.transitions.filter(t => t.from === "done")).toEqual([])
-    expect(new Set(P.transitions.filter(t => t.to === "0").map(t => t.at))).toEqual(new Set(["hall", "out"]))
+    expect(P.entries).toContainEqual({ from: progressState(0), to: progressState(1), at: "in" })
+    expect(P.entries).toContainEqual({ from: progressState(1), to: progressState(2), at: "hall" })
+    expect(P.entries).toContainEqual({ from: progressState(2), to: progressState(3), at: "in" })
+    expect(P.entries).toContainEqual({ from: progressState(0), to: spoiledState(0, 1), at: "hall" })
+    expect(P.transitions).toContainEqual({ from: spoiledState(0, 1), to: progressState(0), at: "hall" })
+    expect([...P.transitions, ...P.entries!].filter(t => t.from === progressState(3))).toEqual([])
+    expect(new Set(P.transitions.map(t => t.at))).toEqual(new Set(["hall", "out"]))
     expect(walkLock(compiled(SEQUENCE)).sound).toBe(true)
+  })
+
+  const TWO_ROOMS = "in -- a\nin -- b\nin -[P]- out\nP sequence a b reset in-out"
+
+  it("does nothing when a tile already walked in order is entered again", () => {
+    const spec = compiled(TWO_ROOMS)
+    const again = entering(spec, "in", { region: "a", config: { P: progressState(1) } })
+    expect(again.config.P).toBe(progressState(1))
+  })
+
+  it("spoils the run when a tile ahead of the one due is entered", () => {
+    const spec = compiled(TWO_ROOMS)
+    expect(entering(spec, "in", { region: "b", config: { P: progressState(0) } }).config.P).toBe(spoiledState(0, 1))
+  })
+
+  it("never steps on the tile of the region the walk starts in until it is entered", () => {
+    const found = reachableStates(compiled("in -- a\nin -[P]- out\nP sequence in a reset in-out"))
+    if (found === "tooLarge") throw new Error("expected a walkable lock")
+    expect(found.order[0].config.P).toBe(progressState(0))
+    expect(found.order.some(state => state.region === "a" && state.config.P === spoiledState(0, 1))).toBe(true)
+  })
+
+  it("steps on every tile a route passes through, so a far tile behind a later one is never walked in order", () => {
+    expect(walkLock(compiled("in -- mid\nmid -- far\nin -[P]- out\nP sequence mid far reset in-out")).sound).toBe(true)
+    expect(walkLock(compiled("in -- mid\nmid -- far\nin -[P]- out\nP sequence far mid reset in-out"))).toEqual({
+      sound: false,
+      failure: { type: "goalUnreachable", label: "sequence P" },
+    })
   })
 
   it("gives a fork rest plus one state per gate, any to any", () => {

@@ -73,6 +73,16 @@ waiting for, the way a ward gate already shows the key it wants.
 
 - The lock expresses **order** only. The carve picks the hieroglyphs, from a set, **unique within a
   floor** so two sequences never share a symbol.
+- **Walking is stepping.** Entering a tile's region steps on its tile; there is no choice, and the region the
+  walk starts in is not entered until the player comes back to it. A tile still in fog counts too when it is
+  walked over.
+- **A tile already walked in order does nothing** when stepped on again: the run stays correct, because the
+  ground to the tiles ahead may run across it.
+- **Only a tile ahead of the one due spoils the run.** The reset at the door clears a spoiled run; a done run
+  stays done.
+- Players explore, may step on tiles by accident, read the order on the door, reset, then walk it. The lock
+  tool (`walkSpecOf`), the floor walk (`floorLock`) and play (`walkPresses`) keep this one rule, from
+  `sequence.ts`.
 - Each tile shows its own state: not yet walked, walked in the right order, walked in the wrong order.
 - A wrong step **registers** rather than doing nothing, so the player can see they have spoiled the run.
 - **Progress survives leaving.** It is an ordinary state like any other, and only the reset clears it.

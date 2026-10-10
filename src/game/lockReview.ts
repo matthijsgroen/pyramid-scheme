@@ -3,7 +3,11 @@ import type { Lock } from "./lockAuthoring"
 import { barriersOf, isRegionGate, joinOf } from "./lockAuthoring"
 import { WEIGHTS, walkSpecOf, isStretch } from "./lockWalkSpec"
 import { finished, openGates, reachableStates, walkLock } from "./lockWalk"
-import type { LockSpec } from "./lockWalk"
+import type { LockSpec, LockState } from "./lockWalk"
+
+/** Whether a move did something: worked a mechanism where the player stood, or stepped on a tile on the way in. */
+const acted = (a: LockState, b: LockState) =>
+  a.region === b.region || Object.keys(b.config).some(id => a.config[id] !== b.config[id])
 
 /**
  * The cheapest way through, where every action (a board solved, a lever thrown, a key taken) costs more
@@ -32,7 +36,7 @@ export const solveLock = (spec: LockSpec): { steps: string[]; actions: number } 
     }
     done.add(at)
     for (const to of edges[at]) {
-      const next = cost[at] + (order[to].region === order[at].region ? 1000 : 1)
+      const next = cost[at] + (acted(order[at], order[to]) ? 1000 : 1)
       if (next >= cost[to]) continue
       cost[to] = next
       prev[to] = at
@@ -63,6 +67,14 @@ export const solveLock = (spec: LockSpec): { steps: string[]; actions: number } 
     if (isStretch(b.region)) continue
     steps.push(dropped ? `⤓${b.region}` : b.region)
     dropped = false
+    // A tile stepped on by walking in is an action as much as a lever thrown.
+    const stepped = Object.keys(b.config).find(m =>
+      (spec.mechanisms[m].entries ?? []).some(t => t.at === b.region && t.from === a.config[m] && t.to === b.config[m])
+    )
+    if (stepped) {
+      steps.push(`${stepped}:${b.config[stepped]}`)
+      actions++
+    }
   }
   return { steps, actions }
 }
@@ -141,7 +153,7 @@ const lockCosts = (lock: Lock, drafts: readonly string[]) => {
   const found = reachableStates(spec)
   if (found === "tooLarge") return undefined
   const { order, edges } = found
-  const acts = (a: number, b: number) => (order[a].region === order[b].region ? 1 : 0)
+  const acts = (a: number, b: number) => (acted(order[a], order[b]) ? 1 : 0)
   const backwards: number[][] = order.map(() => [])
   edges.forEach((tos, from) => tos.forEach(to => backwards[to].push(from)))
   const left = order.map(state => (finished(spec, state) ? 0 : Infinity))

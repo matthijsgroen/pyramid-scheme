@@ -40,6 +40,25 @@ export const tileStatus = (state: string, step: number): TileStatus => {
 }
 
 /**
+ * THE MOVES A SEQUENCE'S TILES MAKE, each at its tile's place: the advance when the tile is due, and the spoil of
+ * every run that has not reached it yet. A tile already walked in order has no move, so stepping on it again does
+ * nothing, and a spoiled or done run has none either. A place's advance comes before its spoils.
+ */
+export const tileMoves = <P>(tiles: readonly P[]): { from: string; to: string; at: P }[] =>
+  tiles.flatMap((at, step) => [
+    { from: progressState(step), to: progressState(step + 1), at },
+    ...Array.from({ length: step }, (_, walked) => ({
+      from: progressState(walked),
+      to: spoiledState(walked, step),
+      at,
+    })),
+  ])
+
+/** The states the reset at the door takes back to the start: every one but the start and done. */
+export const resettableStates = (tiles: number): string[] =>
+  sequenceStates(tiles).filter(state => state !== progressState(0) && state !== progressState(tiles))
+
+/**
  * THE RECORD OF ONE SEQUENCE, with its moves placed where they are made: advancing and spoiling at the
  * tiles, resetting at the door. Every move is placed (`placedOnly`), so the solver and play offer exactly
  * these and no other; the reset is offered out of every state but the first and the last.
@@ -52,27 +71,18 @@ export const compileSequence = ({
   tiles: readonly Place[]
   door: Place
   gates: readonly { gateKeyId: string; mode?: "any" }[]
-}): MechanismRecord => {
-  const done = progressState(tiles.length)
-  const states = sequenceStates(tiles.length)
-  return {
-    states,
-    initial: progressState(0),
-    returnsToInitial: true,
-    positions: gates.map(({ gateKeyId, mode }) => ({ state: done, gateKeyId, ...(mode ? { mode } : {}) })),
-    placedOnly: true,
-    transitions: [
-      ...tiles.flatMap((at, step) => [
-        { from: progressState(step), to: progressState(step + 1), at },
-        ...Array.from({ length: step }, (_, walked) => ({
-          from: progressState(walked),
-          to: spoiledState(walked, step),
-          at,
-        })),
-      ]),
-      ...states
-        .filter(from => from !== progressState(0) && from !== done)
-        .map(from => ({ from, to: progressState(0), at: door })),
-    ],
-  }
-}
+}): MechanismRecord => ({
+  states: sequenceStates(tiles.length),
+  initial: progressState(0),
+  returnsToInitial: true,
+  positions: gates.map(({ gateKeyId, mode }) => ({
+    state: progressState(tiles.length),
+    gateKeyId,
+    ...(mode ? { mode } : {}),
+  })),
+  placedOnly: true,
+  transitions: [
+    ...tileMoves(tiles),
+    ...resettableStates(tiles.length).map(from => ({ from, to: progressState(0), at: door })),
+  ],
+})
