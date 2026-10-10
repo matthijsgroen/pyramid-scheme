@@ -135,12 +135,12 @@ final whole-branch review on the most capable model. Commit and push freely on t
 
 ## Next session
 
-Placement count: 28/34 (`docs/instructions/agent-work.md` finish line). Every junior lesson but three stands, and
-every expert lock but three: overlook on expert_3 and expert_4 site 4 (the world build's reachability carve, at its
-own seed, never lays it) and twoLamps on expert_4 site 2 (its switch board would repeat expert_1 site 4's; see
-`lock-placement.md`). Still open: boardPicksTheWay on junior_2 and
-junior_4 site 1 (below), leverOpensADoor beside junior_2's switch fork (a laid floor carves no plain junction for
-`forks`), and the lock editor on the preview (queue item 7 in `.superpowers/sdd/overnight-queue/QUEUE.md`).
+Placement count: 31/34 (`docs/instructions/agent-work.md` finish line). Every expert lock stands, and every junior
+lesson but three. Still open: boardPicksTheWay on junior_2 and junior_4 site 1 (below), leverOpensADoor beside
+junior_2's switch fork (a laid floor grows no branches for `forks` to reserve a junction between; the lay would have
+to reserve one, see `lock-placement.md`), and the lock editor on the preview (queue item 7 in
+`.superpowers/sdd/overnight-queue/QUEUE.md`). Switch boards are dealt like room boards now (`boardIndex.ts`), so
+no two switches in one tier share a board while the list covers them.
 
 ## Waiting on the designer
 

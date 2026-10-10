@@ -23,17 +23,12 @@ Columns:
     bound to the handle), and on junior_2 and junior_4 the board comes before the journey's lever lesson, so the site
     would teach two mechanics at once. Placed where the lever was taught first (junior_1 site 3, junior_3 site 4);
     whether a fork lesson may also teach the lever is the designer's call.
-  - **reachability seed**: overlook on expert_3 and expert_4 site 4. The world build carves every floor at a seed of its
-    own (`reachability.ts`, the site's hash) before any baked pair exists, and at that seed overlook's drops are laid on
-    no attempt of the ladder (`lockNotLaid`, `s1 >> in` or `middle >> in`), at any packing tried (0.1 to 0.5 on
-    expert_3; on expert_4 only below the authored broad packing of 0.2). The bake itself finds a pair for both.
-  - **board repeats**: twoLamps on expert_4's site 2. A switch board is picked by a hash of its gate key over the
-    bucket's seed list, and with six expert boards of one fork shape on a list of twelve (the seed pass fills to 1.5×
-    the rooms), this one draws the same board as expert_1 site 4's doubleBack (`worldFloorAssembly.verify.ts`). Dealing
-    switch boards like room boards, or a deeper list, would place it.
-  - **switch fork**: leverOpensADoor on junior_2's site 2. A floor whose lock is laid carves no plain junction for
-    `forks` to reserve (`forksUnsatisfied` with none carved, at any packing), so the authored switch fork and a lesson
-    cannot share the floor until the lay offers a junction of its own.
+  - **switch fork**: leverOpensADoor on junior_2's site 2. The switch fork chooses between two ungated branches
+    (`switchBranch`), and a laid floor stands an ungated chest-ending section's rooms on its laid nodes instead of
+    growing it as a branch, so nothing branches where `forks` could reserve a junction (`forksUnsatisfied` with none
+    carved). Every node of the laid route holds a room, so no route node has the two free ways out a junction needs.
+    Kept as branches, the nine sections find no room on the grid the lay sizes for the lock (`layoutNotFound` on every
+    seed tried). The lay would have to reserve a junction node and grow the grid for its branches: assembler work.
 
 ### Junior
 
@@ -100,7 +95,7 @@ Columns:
 | 1    | 1           | 0           |                                             | leverSwapsDoors | leverSwapsDoors | ✓                      |
 | 2    | 1           | 0           | overgrown 0.2                               | dropHome        | dropHome        | ✓                      |
 | 3    | 1           | 0           | overgrown 0.4                               | cellar          | cellar          | ✓                      |
-| 4    | 1           | 1           | overgrown 0.65, wizard ward wing            | overlook        | overlook        | no (reachability seed) |
+| 4    | 1           | 1           | overgrown 0.65, wizard ward wing            | overlook        | overlook        | ✓                      |
 | 5    | 1           | 1           | overgrown 1, master ward wing, patron Sobek | **doubleBack**  | doubleBack      | ✓                      |
 
 **expert_4 — Pyramid of Djoser**
@@ -108,9 +103,9 @@ Columns:
 | Site | Main floors | Wing floors | Authored                                               | Suggested       | Chosen lock   | Placed                 |
 | ---- | ----------- | ----------- | ------------------------------------------------------ | --------------- | ------------- | ---------------------- |
 | 1    | 1           | 0           |                                                        | doorWaitsForTwo | stoneOnAPlate | ✓                      |
-| 2    | 1           | 0           | two floor-key colours, broad packing                   | twoLamps        | twoLamps      | no (board repeats)     |
+| 2    | 1           | 0           | two floor-key colours, broad packing                   | twoLamps        | twoLamps      | ✓                      |
 | 3    | 1           | 0           |                                                        | cellar          | cellar        | ✓                      |
-| 4    | 1           | 1           | two floor-key colours, broad packing, master ward wing | overlook        | overlook      | no (reachability seed) |
+| 4    | 1           | 1           | two floor-key colours, broad packing, master ward wing | overlook        | overlook      | ✓                      |
 | 5    | 1           | 1           | wizard ward wing                                       | **doubleBack**  | stoneGate     | ✓                      |
 
 Site counts: junior 16 (3 + 4 + 4 + 5), expert 18 (4 + 4 + 5 + 5), the same as the curriculum's. Treasure
@@ -199,7 +194,7 @@ but are still a proposal for the engine (`lock-curriculum.md`, "Stones").
 | dropHome      | expert                             | lever, board, drop                                         | solvable                                                           |
 | cellar        | expert                             | lever, torch, drop                                         | solvable                                                           |
 | twoLamps      | expert                             | lever, board, door-waits-for-two                           | solvable                                                           |
-| overlook      | expert                             | lever, drop                                                | solvable; gate in-s2 does nothing                                  |
+| overlook      | expert                             | lever, drop                                                | solvable                                                           |
 | doubleBack    | expert capstone                    | lever, board, drop                                         | solvable                                                           |
 | twoStones     | expert, stones                     | door-waits-for-two, stones & plates                        | solvable                                                           |
 | seesaw        | master                             | lever, drop, door-waits-for-two                            | solvable                                                           |
