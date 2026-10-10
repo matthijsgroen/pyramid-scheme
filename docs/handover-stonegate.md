@@ -138,9 +138,14 @@ final whole-branch review on the most capable model. Commit and push freely on t
 Placement count: 31/34 (`docs/instructions/agent-work.md` finish line). Every expert lock stands, and every junior
 lesson but three. Still open: boardPicksTheWay on junior_2 and junior_4 site 1 (below), leverOpensADoor beside
 junior_2's switch fork (a laid floor grows no branches for `forks` to reserve a junction between; the lay would have
-to reserve one, see `lock-placement.md`), and the lock editor on the preview (queue item 7 in
-`.superpowers/sdd/overnight-queue/QUEUE.md`). Switch boards are dealt like room boards now (`boardIndex.ts`), so
-no two switches in one tier share a board while the list covers them.
+to reserve one, see `lock-placement.md`). Switch boards are dealt like room boards now (`boardIndex.ts`), so
+no two switches in one tier share a board while the list covers them; every switch floor shows a different board
+than before, so a half-solved switch comes back on a new board (fine before release).
+
+The preview build of this branch is https://matthijsgroen.github.io/pyramid-scheme-preview/ (`.github/workflows/preview.yml`
+pushes the build output to the `pyramid-scheme-preview` repo; its saves use their own store). In develop mode
+(7 taps on the title) the Travel screen has a "Lock editor": type a lock, see `yarn lock`'s checks and the drawing,
+"Carve and play" it, and "Copy link" to share it (the lock text rides in the URL).
 
 ## Waiting on the designer
 
@@ -152,9 +157,7 @@ no two switches in one tier share a board while the list covers them.
   door stands in a bare region it leads out of (changes lock-walk counts, `nestedLocks.spec.ts`), or a room-free
   region's fog is restored with its neighbours'.
 - **Lock placement:** where stones, the narrow passage, water and sequences enter junior and expert, and variety for
-  repeats. Worked from `docs/game-design/lock-placement.md` (and `lock-curriculum.md`). stoneOnAPlate before Djoser's
-  capstone (site 3 or 4): no stone lesson stands before it yet.
-- **doubleBack-blocked:** `src/game/locks/doubleBack-blocked.lock` is the old doubleBack, kept for the designer.
+  repeats. Worked from `docs/game-design/lock-placement.md` (and `lock-curriculum.md`).
 - **doubleBack lays on about 1 seed in 200:** s1 is reached only through three chained drops. The Valley's last
   pyramid and the dev bench carve it at a pinned seed, so it is fragile: if its floor is ever re-carved, or the lay
   changes, that floor can fall to `layoutNotFound`. The lay-rate verifies measure a made-up mirrorFork instead.
