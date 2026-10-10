@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 669788547
+export const worldContentHash = 1314499020
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -8358,7 +8358,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           5: "hidato",
           6: "balance-scale",
         },
-        packing: 0.28,
+        packing: 0.1,
         seed: 7816500863991682,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p3", pieceIndex: 2 },
         rewards: [
@@ -8370,6 +8370,47 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           undefined,
           undefined,
         ],
+        locks: [
+          {
+            lock: {
+              name: "overlook",
+              regions: {
+                in: { takes: "free" },
+                top: { takes: "free" },
+                s1: { takes: "free" },
+                middle: { takes: "free" },
+                s2: { takes: "free" },
+                out: { takes: "free" },
+              },
+              connections: [
+                ["in", "top"],
+                { between: ["in", "s1"], barriers: ["in-s1"] },
+                { between: ["middle", "s2"], barriers: ["middle-s2"] },
+                { between: ["in", "out"], barriers: ["in-out"] },
+                { between: ["top", "s1"], barriers: ["top>s1"] },
+                { between: ["top", "middle"], barriers: ["top>middle"] },
+                { between: ["middle", "in"], barriers: ["middle>in"] },
+              ],
+              gates: {
+                "in-s1": { from: "in", to: "s1", owners: ["S1"] },
+                "middle-s2": { from: "middle", to: "s2", owners: ["S1"] },
+                "in-out": { from: "in", to: "out", owners: ["S2"] },
+              },
+              oneWays: {
+                "top>s1": { from: "top", to: "s1" },
+                "top>middle": { from: "top", to: "middle" },
+                "middle>in": { from: "middle", to: "in" },
+              },
+              mechanics: {
+                S1: { control: "toggle", in: "s1", starts: "a", opens: { a: [], b: ["in-s1", "middle-s2"] } },
+                S2: { control: "toggle", in: "s2", starts: "a", opens: { a: [], b: ["in-out"] } },
+              },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { toggle: "handle", "one-way": "zipline" },
       },
       {
         pathPuzzles: 2,
@@ -9210,7 +9251,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: "puzzle",
         encountersByIndex: { 0: "star-battle", 1: "lightbeam", 2: "sumplete", 3: "rush-hour", 4: "eclipse" },
         packing: 0.2,
-        seed: 7907893988303842,
+        seed: 202908643,
         mainEndReward: { type: "money", amount: 1 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -9219,6 +9260,37 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           undefined,
           undefined,
         ],
+        locks: [
+          {
+            lock: {
+              name: "twoLamps",
+              regions: {
+                in: { takes: "free" },
+                west: { takes: "free" },
+                east: { takes: "free" },
+                out: { takes: "free" },
+              },
+              connections: [
+                { between: ["in", "west"], barriers: ["in-west"] },
+                { between: ["in", "east"], barriers: ["in-east"] },
+                { between: ["in", "out"], barriers: ["in-out"] },
+              ],
+              gates: {
+                "in-west": { from: "in", to: "west", owners: ["Y"] },
+                "in-east": { from: "in", to: "east", owners: ["Y"] },
+                "in-out": { from: "in", to: "out", owners: ["A", "B"] },
+              },
+              mechanics: {
+                Y: { control: "fork-switch", in: "in" },
+                A: { control: "toggle", in: "west", starts: "a", opens: { a: [], b: ["in-out"] } },
+                B: { control: "toggle", in: "east", starts: "a", opens: { a: [], b: ["in-out"] } },
+              },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { "fork-switch": "lightbeamSwitch", toggle: "handle" },
       },
     ],
     [
@@ -9732,7 +9804,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         },
         corridorStraightness: 0.35,
         packing: 0.2,
-        seed: 7907893988303844,
+        seed: 202908646,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art3", pieceIndex: 2 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -9742,6 +9814,47 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           undefined,
           undefined,
         ],
+        locks: [
+          {
+            lock: {
+              name: "overlook",
+              regions: {
+                in: { takes: "free" },
+                top: { takes: "free" },
+                s1: { takes: "free" },
+                middle: { takes: "free" },
+                s2: { takes: "free" },
+                out: { takes: "free" },
+              },
+              connections: [
+                ["in", "top"],
+                { between: ["in", "s1"], barriers: ["in-s1"] },
+                { between: ["middle", "s2"], barriers: ["middle-s2"] },
+                { between: ["in", "out"], barriers: ["in-out"] },
+                { between: ["top", "s1"], barriers: ["top>s1"] },
+                { between: ["top", "middle"], barriers: ["top>middle"] },
+                { between: ["middle", "in"], barriers: ["middle>in"] },
+              ],
+              gates: {
+                "in-s1": { from: "in", to: "s1", owners: ["S1"] },
+                "middle-s2": { from: "middle", to: "s2", owners: ["S1"] },
+                "in-out": { from: "in", to: "out", owners: ["S2"] },
+              },
+              oneWays: {
+                "top>s1": { from: "top", to: "s1" },
+                "top>middle": { from: "top", to: "middle" },
+                "middle>in": { from: "middle", to: "in" },
+              },
+              mechanics: {
+                S1: { control: "toggle", in: "s1", starts: "a", opens: { a: [], b: ["in-s1", "middle-s2"] } },
+                S2: { control: "toggle", in: "s2", starts: "a", opens: { a: [], b: ["in-out"] } },
+              },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { toggle: "handle", "one-way": "zipline" },
       },
       {
         pathPuzzles: 2,

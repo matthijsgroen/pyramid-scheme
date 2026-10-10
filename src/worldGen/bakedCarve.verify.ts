@@ -8,8 +8,6 @@ import { resolveEncounterMeta, resolveKeyRequirements } from "@/mods/allFamilyMe
 // attempt (the bake lists them as unsatisfiable); only the ladder's wider grid carves them. Each is
 // `journey#level#floor`. A floor leaves this list when it starts carving at attempt 0, and joins it never.
 const NEEDS_THE_LADDER = new Set([
-  "expert_4#2#0",
-  "expert_4#4#0",
   "master_1#1#0",
   "master_1#2#0",
   "master_1#3#0",

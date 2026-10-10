@@ -24,12 +24,18 @@ const LOCK_BINDINGS = {
   dropHome: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
   twoLamps: { "fork-switch": "lightbeamSwitch", toggle: "handle" },
   cellar: { toggle: "handle", activator: "torch", "one-way": "zipline" },
+  overlook: { toggle: "handle", "one-way": "zipline" },
   doubleBack: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
 } as const
 
 /** A catalogue lock on the main floor of a pyramid, every region `free`: the floor's own content goes where the carve puts it. */
-const lockOnMainFloor = (name: keyof typeof LOCK_BINDINGS): Pick<PyramidConstraint, "floorLocks"> => ({
-  floorLocks: { 0: { locks: [{ lock: freeRegions(catalogueLock(name)) }], realisations: LOCK_BINDINGS[name] } },
+const lockOnMainFloor = (
+  name: keyof typeof LOCK_BINDINGS,
+  floor: { packing?: number } = {}
+): Pick<PyramidConstraint, "floorLocks"> => ({
+  floorLocks: {
+    0: { locks: [{ lock: freeRegions(catalogueLock(name)) }], realisations: LOCK_BINDINGS[name], ...floor },
+  },
 })
 
 // Expert is the first tier with ward content on EVERY pyramid (chests up front, wings on the
@@ -360,6 +366,9 @@ export const expertRules: Rule[] = [
   journey("expert_3").pyramid(2, lockOnMainFloor("dropHome")),
   journey("expert_3").pyramid(3, lockOnMainFloor("cellar")),
   // doubleBack lays on few seeds; at the default packing the journey inspector's default seed carves it on no attempt.
-  journey("expert_3").pyramid(5, { ...lockOnMainFloor("doubleBack"), packing: 0.15 }),
+  journey("expert_3").pyramid(4, lockOnMainFloor("overlook")),
+  journey("expert_3").pyramid(5, lockOnMainFloor("doubleBack", { packing: 0.15 })),
+  journey("expert_4").pyramid(2, lockOnMainFloor("twoLamps")),
   journey("expert_4").pyramid(3, lockOnMainFloor("cellar")),
+  journey("expert_4").pyramid(4, lockOnMainFloor("overlook")),
 ]

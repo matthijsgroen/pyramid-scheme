@@ -226,6 +226,7 @@ const applyFloorLocks = (floors: FloorConfig[], constraint: PyramidConstraint, j
     const floorBinding = resolveBinding([constraint, overlay])
     const floor = floors[fi]
     floor.locks = overlay.locks
+    if (overlay.packing !== undefined) floor.packing = overlay.packing
     // The binding carries the one-way's realisation once a floor places locks, as in an explicit floor.
     delete floor.oneWayRealisation
     if (Object.keys(floorBinding).length > 0) floor.realisations = floorBinding
