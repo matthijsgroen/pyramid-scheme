@@ -23,7 +23,7 @@ export const LOCK_SYNTAX = `
   T torch @hall   T torch @hall lit   off until lit, or lit from the start; water or sand over its region
                                 puts it out, and it can be lit again
   Y fork @in                    a fork puzzle: the gates naming it are its ways
-  P sequence hall vault reset hall-vault   steps in order, reset at that gate; -[P]- opens when done
+  P sequence hall vault [reset hall-vault]   steps in order; -[P]- opens when done and resets it; reset names the corridor when P opens several
   p1 plate @hall   p2 plate @hall stone   a plate, empty or with a stone on it; any stone presses any plate
   in -[p1]- hall   in -[p1:empty]- hall    open while a stone rests on p1, or while none does
   in -[unladen]- hall           a narrow passage, only with empty hands; never on a corridor with a drop
@@ -153,7 +153,7 @@ type Declared =
   | { control: "toggle" | "activator"; in: string; states: readonly [string, string]; n: number }
   | { control: "flame"; in: string; states: readonly [string, string]; lit: boolean; n: number }
   | { control: "fork-switch"; in: string; n: number }
-  | { control: "sequence"; steps: string[]; resetAt: string; n: number }
+  | { control: "sequence"; steps: string[]; resetAt: string | undefined; n: number }
 type Term = { owner: string; state?: string }
 
 export const parseLock = (text: string, name = "lock"): ParsedLock => {
@@ -244,7 +244,7 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
     } else if ((m = line.match(/^(\w+)\s+fork\s+@(\w+)(.*)$/))) {
       if (m[3].trim() !== "") fail(n, `a fork's states are its ways; write ${m[1]} fork @${m[2]}`)
       declare(n, m[1], { control: "fork-switch", in: m[2], n })
-    } else if ((m = line.match(/^(\w+)\s+sequence\s+((?:\w+\s+)+)reset\s+(\S+)$/))) {
+    } else if ((m = line.match(/^(\w+)\s+sequence\s+(\w+(?:\s+\w+)*?)(?:\s+reset\s+(\S+))?$/))) {
       declare(n, m[1], { control: "sequence", steps: m[2].trim().split(/\s+/), resetAt: m[3], n })
     } else if ((m = line.match(/^(\w+)\s+plate\s+@(\w+)(\s+stone)?$/))) {
       if (placed(m[1])) fail(n, `${m[1]} is placed twice`)
@@ -346,12 +346,27 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
     const table = opens.get(id) ?? {}
     if (what.control === "fork-switch") mechanics[id] = { control: "fork-switch", in: what.in }
     else if (what.control === "sequence") {
-      const reset = gates[what.resetAt]
-      if (!reset || "region" in reset) fail(what.n, `reset ${what.resetAt} names no gate between two regions`)
+      const own = (table.done ?? []).filter(g => "from" in gates[g])
+      let resetAt: string
+      if (what.resetAt === undefined) {
+        if (own.length !== 1)
+          fail(what.n, `${id} opens ${own.length === 0 ? "no corridor gate" : "several gates"}: write reset a-b`)
+        resetAt = own[0]
+      } else {
+        const reset = gates[what.resetAt]
+        if (!reset || "region" in reset) fail(what.n, `reset ${what.resetAt} names no gate between two regions`)
+        const onPair = Object.keys(gates).filter(g => g === what.resetAt || g.startsWith(`${what.resetAt}#`))
+        resetAt = what.resetAt
+        if (onPair.length > 1) {
+          resetAt =
+            onPair.find(g => own.includes(g)) ??
+            fail(what.n, `reset ${what.resetAt}: the corridor carries several gates; ${id} opens none of them`)
+        }
+      }
       mechanics[id] = {
         control: "sequence",
         steps: what.steps.map(step => ({ in: step })),
-        resetAt: what.resetAt,
+        resetAt,
         opens: table,
       }
     } else if (what.control === "flame") {

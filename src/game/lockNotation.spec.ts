@@ -96,6 +96,33 @@ describe("parseLock", () => {
     })
   })
 
+  it("binds a sequence's reset on a two-gate corridor to the gate it opens", () => {
+    const { lock } = parseLock("in -- hall\nhall -[Y]- -[P]- out\nY toggle @in\nP sequence in hall reset hall-out")
+    expect(lock.mechanics.P).toMatchObject({ resetAt: "hall-out#2", opens: { done: ["hall-out#2"] } })
+  })
+
+  it("leaves the reset alone when the sequence's gate is the first on the corridor", () => {
+    const { lock } = parseLock("in -- hall\nhall -[P]- -[Y]- out\nY toggle @in\nP sequence in hall reset hall-out")
+    expect(lock.mechanics.P).toMatchObject({ resetAt: "hall-out" })
+  })
+
+  it("refuses a reset on a several-gate corridor the sequence opens none of", () => {
+    expect(() =>
+      parseLock(
+        "in -- hall\nhall -[Y]- -[Z]- out\nin -[P]- hall\nY toggle @in\nZ toggle @in\nP sequence in hall reset hall-out"
+      )
+    ).toThrow("reset hall-out: the corridor carries several gates; P opens none of them")
+  })
+
+  it("resets a sequence at the one gate it opens when no reset is written", () => {
+    const { lock } = parseLock("in -- hall\nhall -[Y]- -[P]- out\nY toggle @in\nP sequence in hall")
+    expect(lock.mechanics.P).toMatchObject({ resetAt: "hall-out#2" })
+  })
+
+  it("asks for a reset when the sequence opens several gates", () => {
+    expect(() => parseLock("in -[P]- hall\nhall -[P]- out\nP sequence in hall")).toThrow("write reset a-b")
+  })
+
   it("keeps an owner nothing places as a draft, out of the mechanics", () => {
     expect(parseLock("in -[G]- out")).toMatchObject({ drafts: ["G"], lock: { mechanics: {} } })
   })
