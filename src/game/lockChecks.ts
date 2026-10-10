@@ -47,7 +47,7 @@ export const lockChecks = ({ lock, drafts, refused }: ParsedLock) => {
     `at the start ${open.length > 0 ? `these gates stand open: ${open.join(", ")}` : "no gate stands open"}`,
     ...nestSpotLines(lock),
     ...needsFace(lock).map(({ gate, owners }) => `${gate} shows what it waits for: ${owners.join(", ")}`),
-    ...sequences.map(id => `⚠ sequence ${id}: done stays fired, tiles anywhere — contract §8 open`),
+    ...sequences.map(id => `⚠ sequence ${id}: its tiles may stand in any region — contract §8 open`),
   ]
   const sound = refused.length === 0 && drafts.length === 0 && compiles && reachable && walked.sound
   return { spec, walked, checks, sound }

@@ -468,13 +468,13 @@ A flood puts out a torch and never an activator. The fork-switch governs its own
 from outside, most specific wins, at bake time, refused when unbound. A realisation may not change what
 the solver sees. Impassable conceals, and conceals what was explored, without erasing it.
 
-A gate may show its own condition, and a sequence's reset is at its door.
+A gate may show its own condition, and a sequence's reset is at its door. A sequence is solved once: when
+it is done, it stays done. On a door it shares with other owners, those can still switch or reset, and the door
+follows them, while the sequence's part stays met.
 
 **Open.**
 
-- The sequence: whether its tiles may span regions and so interact with another lock, and whether it
-  stays fired once fired.
-- The sand barrier: parked. A wizard-pyramid idea that may not belong to the lock model at all.
+- The sequence: whether its tiles may span regions and so interact with another lock.
 - Whether a realisation may demand anything of placement beyond space.
 
 ## 9. What this requires of the engine
