@@ -1034,7 +1034,7 @@ exports[`core names no mod family id`] = {
     "src/game/families/familyMeta.ts:2478666269": [
       [19, 10, 8, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "1887827023"]
     ],
-    "src/game/siteAssembler.ts:2760433655": [
+    "src/game/siteAssembler.ts:2645207187": [
       [1152, 41, 16, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "2791014258"],
       [1152, 59, 16, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "2791014258"],
       [1153, 35, 10, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "1854886293"],

@@ -4324,11 +4324,21 @@ const assembleExpandedFloor = (
         o,
         edge: oneWayEdges.find(edge => edge.obstacleId === o.id)!,
       }))
+      // Asked of the walls as `forks` carved them: a switch's doors are no part of the layout, so whether a mod
+      // stands one in a reserved junction cannot change what this accepts.
+      const asCarved = cells2D.map(row => [...row])
+      for (const [n, ways] of opened.entries())
+        if (n < switchesPlaced)
+          for (const [cellKey, cell] of ways) {
+            if (cellKey === reservedForks[n]) continue
+            const [r, c] = cellKey.split(",").map(Number)
+            asCarved[r][c] = cell
+          }
       const disagreement = [
-        ...adjacencyFaults(cells2D, regionLayout),
-        ...gateDoorFaults(cells2D, gateKeys, runCells),
+        ...adjacencyFaults(asCarved, regionLayout),
+        ...gateDoorFaults(asCarved, gateKeys, runCells),
         ...dropLandingFaults(
-          cells2D,
+          asCarved,
           dropIdsWithRuns
             .filter(({ o }) => !landsOnItsStretch.has(o.id))
             .map(({ o, edge }) => ({
@@ -4341,7 +4351,7 @@ const assembleExpandedFloor = (
         ),
         // A drop landing on its stretch lands on ground reaching the door of the first gate past it.
         ...dropLandingFaults(
-          cells2D,
+          asCarved,
           dropIdsWithRuns.flatMap(({ o, edge }) =>
             landsOnItsStretch.has(o.id)
               ? [
