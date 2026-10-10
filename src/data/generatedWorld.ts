@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1314499020
+export const worldContentHash = 623331380
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -8359,7 +8359,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           6: "balance-scale",
         },
         packing: 0.1,
-        seed: 7816500863991682,
+        seed: 3982655363,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p3", pieceIndex: 2 },
         rewards: [
           { type: "consumable", consumable: "trapTool" },
@@ -8384,17 +8384,17 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               },
               connections: [
                 ["in", "top"],
-                { between: ["in", "s1"], barriers: ["in-s1"] },
+                { between: ["top", "s1"], barriers: ["top-s1"] },
                 { between: ["middle", "s2"], barriers: ["middle-s2"] },
-                { between: ["in", "out"], barriers: ["in-out"] },
+                { between: ["top", "out"], barriers: ["top-out"] },
                 { between: ["top", "s1"], barriers: ["top>s1"] },
                 { between: ["top", "middle"], barriers: ["top>middle"] },
                 { between: ["middle", "in"], barriers: ["middle>in"] },
               ],
               gates: {
-                "in-s1": { from: "in", to: "s1", owners: ["S1"] },
+                "top-s1": { from: "top", to: "s1", owners: ["S1"] },
                 "middle-s2": { from: "middle", to: "s2", owners: ["S1"] },
-                "in-out": { from: "in", to: "out", owners: ["S2"] },
+                "top-out": { from: "top", to: "out", owners: ["S2"] },
               },
               oneWays: {
                 "top>s1": { from: "top", to: "s1" },
@@ -8402,8 +8402,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
                 "middle>in": { from: "middle", to: "in" },
               },
               mechanics: {
-                S1: { control: "toggle", in: "s1", starts: "a", opens: { a: [], b: ["in-s1", "middle-s2"] } },
-                S2: { control: "toggle", in: "s2", starts: "a", opens: { a: [], b: ["in-out"] } },
+                S1: { control: "toggle", in: "s1", starts: "a", opens: { a: [], b: ["top-s1", "middle-s2"] } },
+                S2: { control: "toggle", in: "s2", starts: "a", opens: { a: [], b: ["top-out"] } },
               },
               in: "in",
               out: "out",
@@ -9804,7 +9804,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         },
         corridorStraightness: 0.35,
         packing: 0.2,
-        seed: 202908646,
+        seed: 202908645,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art3", pieceIndex: 2 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -9828,17 +9828,17 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
               },
               connections: [
                 ["in", "top"],
-                { between: ["in", "s1"], barriers: ["in-s1"] },
+                { between: ["top", "s1"], barriers: ["top-s1"] },
                 { between: ["middle", "s2"], barriers: ["middle-s2"] },
-                { between: ["in", "out"], barriers: ["in-out"] },
+                { between: ["top", "out"], barriers: ["top-out"] },
                 { between: ["top", "s1"], barriers: ["top>s1"] },
                 { between: ["top", "middle"], barriers: ["top>middle"] },
                 { between: ["middle", "in"], barriers: ["middle>in"] },
               ],
               gates: {
-                "in-s1": { from: "in", to: "s1", owners: ["S1"] },
+                "top-s1": { from: "top", to: "s1", owners: ["S1"] },
                 "middle-s2": { from: "middle", to: "s2", owners: ["S1"] },
-                "in-out": { from: "in", to: "out", owners: ["S2"] },
+                "top-out": { from: "top", to: "out", owners: ["S2"] },
               },
               oneWays: {
                 "top>s1": { from: "top", to: "s1" },
@@ -9846,8 +9846,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
                 "middle>in": { from: "middle", to: "in" },
               },
               mechanics: {
-                S1: { control: "toggle", in: "s1", starts: "a", opens: { a: [], b: ["in-s1", "middle-s2"] } },
-                S2: { control: "toggle", in: "s2", starts: "a", opens: { a: [], b: ["in-out"] } },
+                S1: { control: "toggle", in: "s1", starts: "a", opens: { a: [], b: ["top-s1", "middle-s2"] } },
+                S2: { control: "toggle", in: "s2", starts: "a", opens: { a: [], b: ["top-out"] } },
               },
               in: "in",
               out: "out",

@@ -3,9 +3,9 @@
 // whoever drops in before throwing S1.
 
 in -- top
-in -[S1]- s1
+top -[S1]- s1
 middle -[S1]- s2
-in -[S2]- out
+top -[S2]- out
 top >> s1
 top >> middle >> in
 S1 toggle @s1
