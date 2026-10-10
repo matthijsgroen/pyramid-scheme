@@ -265,7 +265,8 @@ describe("translating a save written in coordinates", () => {
 })
 
 describe("the authoring address is the identity, not the structural hash", () => {
-  const grid = floorOf(3, 0)
+  // A wing floor, which no lock stands on: a laid lock's own sections are addressed by the lock, not by a side path.
+  const grid = floorOf(3, 1)
 
   it("names sections the way the author steers them", () => {
     const addresses = new Set(
@@ -284,7 +285,7 @@ describe("the authoring address is the identity, not the structural hash", () =>
    */
   it("does not move when the floor's carve knobs are retuned, though the hash does", () => {
     const journey = journeys.find(j => j.id === "expert_1")!
-    const authored = journey.siteConfigs![2][0]
+    const authored = journey.siteConfigs![2][1]
     // Whatever a compaction pass settles on, it moves these two. Take the first retune that carves.
     const retuned = [0.9, 0.7, 0.5, 0.3, 0.1]
       .flatMap(packing => [0.9, 0.5, 0.1].map(corridorStraightness => ({ packing, corridorStraightness })))
@@ -295,12 +296,12 @@ describe("the authoring address is the identity, not the structural hash", () =>
         assembleFloor(
           journey.id,
           { ...authored, ...knobs },
-          floorAssemblySeed(persistentInteriorSeed(journey.id), 3, 0),
+          floorAssemblySeed(persistentInteriorSeed(journey.id), 3, 1),
           resolveEncounter,
           {
             resolveKeyRequirements,
-            floorRef: { journeyId: journey.id, floorIndex: 0 },
-            resolveBoardIndex: boardIndexesForFloor(journey.id, 2, 0),
+            floorRef: { journeyId: journey.id, floorIndex: 1 },
+            resolveBoardIndex: boardIndexesForFloor(journey.id, 2, 1),
           }
         )
       )
