@@ -2029,6 +2029,75 @@ describe("a side path seating a chain of regions", () => {
       regions: ["rightLower", "s1Chamber"],
     })
   })
+
+  // A switch's ways out are closed on the grid, so the layout check must read the walls `forks` carved and not
+  // the doors a switch minted: a carve's refusals are the same with the switch standing as without it.
+  it("answers the layout check the same with a plain switch standing in the reserved junction as without one", () => {
+    const resolve: ResolveEncounter = (encounter, defaultTag) => ({
+      ...defaultResolveEncounter(encounter, defaultTag),
+      reEnterable: true,
+    })
+    const outcome = (config: FloorConfig, seed: number) => {
+      const result = assembleFloor("site-diamond-switch", config, seed, resolve)
+      return result.success
+        ? "carved"
+        : result.reasons.map(reason => reason.type).filter(type => type !== "layoutNotFound")
+    }
+    const plain: FloorConfig = {
+      ...diamondConfig(),
+      pathPuzzles: 2,
+      regionLayout: {
+        regions: [
+          { name: "entrance", appetite: "free" },
+          { name: "leftLower", appetite: "free" },
+          { name: "rightLower", appetite: "free" },
+          { name: "leftDeep", appetite: "free" },
+          { name: "out", appetite: "free" },
+        ],
+        connections: [
+          ["entrance", "leftLower"],
+          ["entrance", "rightLower"],
+          ["leftLower", "leftDeep"],
+          ["entrance", "out"],
+        ],
+        in: "entrance",
+        out: "out",
+      },
+      oneWayRealisation: "zipline",
+      obstacles: [
+        { id: "deepGate", kind: "gate", at: { on: "connection", between: ["leftLower", "leftDeep"] } },
+        { id: "mouthGate", kind: "gate", at: { on: "connection", between: ["entrance", "leftLower"] } },
+        { id: "dropHome", kind: "oneWay", at: { on: "connection", between: ["leftDeep", "entrance"] } },
+      ],
+      controls: [
+        {
+          id: "L",
+          in: "entrance",
+          states: ["unset", "open"],
+          initial: "unset",
+          returnsToInitial: false,
+          opens: { unset: [], open: ["deepGate", "mouthGate"] },
+        },
+      ],
+      sideSections: [
+        { pathPuzzles: 1, difficulty: "starter", end: "treasure", sealed: true },
+        { pathPuzzles: 1, difficulty: "starter", end: "treasure", sealed: true },
+      ],
+      forks: [{ exits: 2, count: 1 }],
+    }
+    const switched: FloorConfig = { ...plain, switches: { encounter: "sumplete", min: 1, max: 1 } }
+    const differing: string[] = []
+    let carved = 0
+    for (let seed = 1; seed <= 40; seed++) {
+      const without = outcome(plain, seed)
+      if (without === "carved") carved++
+      const withSwitch = outcome(switched, seed)
+      if (JSON.stringify(without) !== JSON.stringify(withSwitch))
+        differing.push(`seed ${seed}: ${JSON.stringify(without)} vs ${JSON.stringify(withSwitch)}`)
+    }
+    expect(carved).toBeGreaterThan(0)
+    expect(differing).toEqual([])
+  }, 120_000)
 })
 
 describe("a control seated in an off-route region", () => {

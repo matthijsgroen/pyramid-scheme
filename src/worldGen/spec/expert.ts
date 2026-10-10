@@ -366,6 +366,7 @@ export const expertRules: Rule[] = [
   journey("expert_3").pyramid(2, lockOnMainFloor("dropHome")),
   journey("expert_3").pyramid(3, lockOnMainFloor("cellar")),
   // doubleBack lays on few seeds; at the default packing the journey inspector's default seed carves it on no attempt.
+  // overlook lays at the inspector's seed only because of its corridor write order; lockFloorInspector.verify.ts is the tripwire.
   journey("expert_3").pyramid(4, lockOnMainFloor("overlook")),
   journey("expert_3").pyramid(5, lockOnMainFloor("doubleBack", { packing: 0.15 })),
   journey("expert_4").pyramid(2, lockOnMainFloor("twoLamps")),
