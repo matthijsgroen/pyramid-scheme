@@ -98,8 +98,6 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
 - A saved key the record lacks is read as `initial` by play and the face (`arrangementIn`), but `openDoorsFor`
   opens nothing from it, so a stale save's stone-held doors stay shut until the first stone move writes a key
   the record has.
-- Sequence locks (`tilesInOrder`) do not carve on the playground's bench floor in reasonable time; the
-  playground shows "not buildable yet" for them.
 - The door face does not tell plates apart (by design: plates are all alike).
 
 ## Open after phase 3

@@ -1,5 +1,5 @@
 // designed by: Claude
-// master, not buildable yet (sequence). Four tiles in order across three
+// master. Four tiles in order across three
 // rooms; a wrong tile spoils the run, the door resets it.
 
 in -- a

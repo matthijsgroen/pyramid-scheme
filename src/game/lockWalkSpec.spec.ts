@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { checkLockSpec, reachableStates, walkLock } from "./lockWalk"
-import { walkSpecOf, isStretch, WEIGHTS, needsFace, notBuildable, openAtStart, readable } from "./lockWalkSpec"
+import { walkSpecOf, isStretch, WEIGHTS, needsFace, openAtStart, readable } from "./lockWalkSpec"
 import { parseLock } from "./lockNotation"
 import { solveLock } from "./lockReview"
 import { barriersOf } from "./lockAuthoring"
@@ -131,16 +131,6 @@ describe("what a lock starts as", () => {
   it("asks a face of an every-gate with several owners, and of nothing else", () => {
     expect(needsFace(parseLock(LANTERNS).lock)).toEqual([{ gate: "in-out", owners: ["L1", "L2", "L3", "L4"] }])
     expect(needsFace(parseLock("in -[A|B]- out\nA toggle @in\nB toggle @in").lock)).toEqual([])
-  })
-
-  it("names what the engine cannot build yet", () => {
-    expect(notBuildable(parseLock(SEQUENCE).lock)).toEqual(["sequence"])
-    expect(notBuildable(parseLock("in -- hall\nhall -- out\nhall -[S]\nS toggle @in").lock)).toEqual([])
-    expect(notBuildable(parseLock("in -[H]- hall\nhall -- out\nout -[H:b]- in\nH toggle @in").lock)).toEqual([])
-    expect(notBuildable(parseLock("in -- hall\nhall -- out\nout >> in").lock)).toEqual([])
-    expect(notBuildable(parseLock(MIRROR_FORK).lock)).toEqual([])
-    expect(notBuildable(parseLock("in -[p]- out\np plate @in\nshelf plate @in stone").lock)).toEqual([])
-    expect(notBuildable(parseLock("in -[unladen]- out\nshelf plate @in stone").lock)).toEqual([])
   })
 })
 

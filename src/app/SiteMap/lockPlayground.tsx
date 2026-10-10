@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState, type FC } from "react"
 import { parseLock } from "@/game/lockNotation"
-import { notBuildable } from "@/game/lockWalkSpec"
 import { walkFloorLock } from "@/game/floorLockWalk"
 import { concealShutGround } from "@/game/concealment"
 import { getOwnedKeys } from "@/game/gridNavigation"
@@ -224,10 +223,7 @@ export const LockPlayground: FC<{ locks: Readonly<Record<string, string>>; initi
     [parsed, inner, binding]
   )
   const unbuilt = useMemo(
-    () => [
-      ...(parsed.ok ? [...parsed.drafts, ...notBuildable(parsed.lock)] : []),
-      ...(inner?.ok ? [...inner.drafts, ...notBuildable(inner.lock)] : []),
-    ],
+    () => [...(parsed.ok ? [...parsed.drafts] : []), ...(inner?.ok ? [...inner.drafts] : [])],
     [parsed, inner]
   )
   const refused = [...(parsed.ok ? parsed.refused : []), ...(inner?.ok ? inner.refused : [])]
@@ -269,7 +265,7 @@ export const LockPlayground: FC<{ locks: Readonly<Record<string, string>>; initi
           </label>
         ))}
       </div>
-      {unbuilt.length > 0 && <p className="text-xs text-amber-300">not buildable yet: {unbuilt.join(", ")}</p>}
+      {unbuilt.length > 0 && <p className="text-xs text-amber-300">drafts, not buildable: {unbuilt.join(", ")}</p>}
       {carved?.status === "carving" && <p className="text-xs text-white/60">carving, {carved.tried} seeds tried</p>}
       {refusal !== undefined ? (
         <pre data-playground-refused="" className="text-xs whitespace-pre-wrap text-red-300">

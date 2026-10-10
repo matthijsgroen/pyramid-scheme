@@ -37,7 +37,7 @@ lock, not a sampler.
 | one-way drop                                               | `dropDown`                           | dropHome, cellar, doubleBack, overlook, seesaw, lamplighter, observatory, relay, clockwork |
 | a door that waits for several                              | `doorWaitsForTwo`                    | twoLamps, seesaw, lamplighter, observatory, relay, clockwork                               |
 | water (region gate)                                        | `waterMoves`                         | sluice, tide                                                                               |
-| tiles in order (sequence) — not buildable yet              | `tilesInOrder`                       | plates                                                                                     |
+| tiles in order (sequence)                                  | `tilesInOrder`                       | plates                                                                                     |
 | stones on plates, and where a stone cannot go — a proposal | `stoneOnAPlate`                      | twoStones, masonsRamp, counterweight                                                       |
 
 ## The lessons
@@ -51,7 +51,7 @@ lock, not a sampler.
 | `leverSwapsDoors`  | junior preview, expert | one lever swaps two doors, and can be thrown back             |
 | `doorWaitsForTwo`  | expert                 | a door shows the marks it waits for, and opens on the last    |
 | `waterMoves`       | expert                 | one lever drains a hall                                       |
-| `tilesInOrder`     | expert, once buildable | two tiles, in order                                           |
+| `tilesInOrder`     | expert                 | two tiles, in order                                           |
 | `stoneOnAPlate`    | expert, once buildable | a stone on a plate holds its door; lift it and the door shuts |
 
 ## The locks
@@ -71,7 +71,7 @@ lock, not a sampler.
 | observatory   | master                   | a three-way board, two prizes, one shortcut                                                                                                                 |
 | tide          | master                   | carry the key home against the water                                                                                                                        |
 | sluice        | master                   | drain the hall for the gold, then the vault for the way out                                                                                                 |
-| plates        | master, once buildable   | four tiles across three rooms; the door resets them                                                                                                         |
+| plates        | master                    | four tiles across three rooms; the door resets them                                                                                                         |
 | twoStones     | expert, once buildable   | one stone holds the vault while you fetch the second, then presses the exit: a stone spent twice                                                            |
 | masonsRamp    | master, once buildable   | one stone holds the chute door for the other; you squeeze back up the narrow passage, where no stone fits                                                   |
 | counterweight | master, once buildable   | the zipline takes you down empty-handed; weigh the lift down from below, then bring the other stone by lift                                                 |
@@ -106,8 +106,7 @@ expert_4, meets stones and the narrow passage before any lesson does. doubleBack
 
 The 19 master sites take seesaw, lamplighter, keyring, relay, clockwork and observatory about twice each,
 replacing the floor-key gates being converted to locks (`floor-topology-design.md`: 56 of the world's 58
-are at master and wizard). tide and sluice take master sites too; plates takes one once the engine builds
-sequences, and until then that site keeps its key.
+are at master and wizard). tide and sluice take master sites too; plates takes one.
 
 ### A repeat is not the same floor twice
 
@@ -145,8 +144,7 @@ Dead's weighing (twoStones).
   contract addition and engine work before they bake; the acceptance criteria are in
   `docs/superpowers/specs/2026-10-04-stones-acceptance.md`.
 
-- **Sequences are `built: no`** (`mechanic-contract.md` §6). `tilesInOrder` and plates validate and
-  walk, and cannot bake.
+- **Sequences are built.** `tilesInOrder` and plates carve on the playground bench.
 - **A region only drops reach does not carve yet.** None of these needs one: every region is also joined
   by a connection or a gate.
 - **Two regions joined by a bare corridor stay one region in the engine's solver** until its T15 lands.

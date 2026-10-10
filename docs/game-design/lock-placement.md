@@ -183,7 +183,7 @@ but are still a proposal for the engine (`lock-curriculum.md`, "Stones").
 | leverSwapsDoors  | junior preview and expert | lever                     | solvable; under two actions       |
 | doorWaitsForTwo  | expert                    | torch, door-waits-for-two | solvable                          |
 | stoneOnAPlate    | expert                    | stones & plates           | solvable                          |
-| tilesInOrder     | expert                    | sequence tiles            | solvable; not buildable: sequence |
+| tilesInOrder     | expert                    | sequence tiles            | solvable                          |
 | waterMoves       | expert                    | lever, water/sand barrier | solvable; under two actions       |
 
 **Locks**
@@ -204,7 +204,7 @@ but are still a proposal for the engine (`lock-curriculum.md`, "Stones").
 | observatory   | master                             | board, torch, drop, door-waits-for-two                     | solvable; drop east>west is an optional shortcut                   |
 | counterweight | master, stones                     | drop, door-waits-for-two, stones & plates                  | solvable                                                           |
 | masonsRamp    | master, stones                     | drop, stones & plates, narrow passage                      | **not solvable**: `out` never reached (waits on a stone-only pipe) |
-| plates        | master                             | sequence tiles                                             | solvable; not buildable: sequence                                  |
+| plates        | master                             | sequence tiles                                             | solvable                                                           |
 | sluice        | master                             | lever, torch, water/sand barrier                           | solvable                                                           |
 | tide          | master                             | lever, torch, water/sand barrier                           | solvable                                                           |
 | stoneGate     | expert capstone (Djoser 5), stones | torch, door-waits-for-two, stones & plates, narrow passage | solvable                                                           |

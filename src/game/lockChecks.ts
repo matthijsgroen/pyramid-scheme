@@ -3,7 +3,7 @@
  * it solves, and what it needs of the build.
  */
 import { describeLockWalkFailure, walkLock } from "./lockWalk"
-import { walkSpecOf, needsFace, notBuildable, openAtStart, readable } from "./lockWalkSpec"
+import { walkSpecOf, needsFace, openAtStart, readable } from "./lockWalkSpec"
 import { unreachedRegions } from "./lockReview"
 import type { ParsedLock } from "./lockNotation"
 import { checkLock, describeLockFault } from "./lockCompile"
@@ -29,7 +29,6 @@ export const lockChecks = ({ lock, drafts, refused }: ParsedLock) => {
   const deadEnd = !walked.sound && walked.failure.type === "strands"
   const lost = !walked.sound && walked.failure.type === "regionLost"
   const open = openAtStart(lock)
-  const unbuilt = notBuildable(lock)
   const faults = checkLock(lock)
   const compiles = faults.length === 0
   const sequences = Object.entries(lock.mechanics).flatMap(([id, m]) => (m.control === "sequence" ? [id] : []))
@@ -49,7 +48,6 @@ export const lockChecks = ({ lock, drafts, refused }: ParsedLock) => {
     ...nestSpotLines(lock),
     ...needsFace(lock).map(({ gate, owners }) => `${gate} shows what it waits for: ${owners.join(", ")}`),
     ...sequences.map(id => `⚠ sequence ${id}: done stays fired, tiles anywhere — contract §8 open`),
-    ...(unbuilt.length > 0 ? [`⚠ not buildable yet: ${unbuilt.join(", ")}`] : []),
   ]
   const sound = refused.length === 0 && drafts.length === 0 && compiles && reachable && walked.sound
   return { spec, walked, checks, sound }
