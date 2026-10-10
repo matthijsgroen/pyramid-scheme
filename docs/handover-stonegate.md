@@ -135,8 +135,10 @@ final whole-branch review on the most capable model. Commit and push freely on t
 
 ## Next session
 
-Placement count: 19/34 (`docs/instructions/agent-work.md` finish line). Every junior lesson but three stands; the
-expert locks (dropHome, cellar, twoLamps, overlook, doubleBack) are next. Still open: boardPicksTheWay on junior_2 and
+Placement count: 28/34 (`docs/instructions/agent-work.md` finish line). Every junior lesson but three stands, and
+every expert lock but three: overlook on expert_3 and expert_4 site 4 (the world build's reachability carve, at its
+own seed, never lays it) and twoLamps on expert_4 site 2 (its switch board would repeat expert_1 site 4's; see
+`lock-placement.md`). Still open: boardPicksTheWay on junior_2 and
 junior_4 site 1 (below), leverOpensADoor beside junior_2's switch fork (a laid floor carves no plain junction for
 `forks`), and the lock editor on the preview (queue item 7 in `.superpowers/sdd/overnight-queue/QUEUE.md`).
 

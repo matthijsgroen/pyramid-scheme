@@ -23,6 +23,14 @@ Columns:
     bound to the handle), and on junior_2 and junior_4 the board comes before the journey's lever lesson, so the site
     would teach two mechanics at once. Placed where the lever was taught first (junior_1 site 3, junior_3 site 4);
     whether a fork lesson may also teach the lever is the designer's call.
+  - **reachability seed**: overlook on expert_3 and expert_4 site 4. The world build carves every floor at a seed of its
+    own (`reachability.ts`, the site's hash) before any baked pair exists, and at that seed overlook's drops are laid on
+    no attempt of the ladder (`lockNotLaid`, `s1 >> in` or `middle >> in`), at any packing tried (0.1 to 0.5 on
+    expert_3; on expert_4 only below the authored broad packing of 0.2). The bake itself finds a pair for both.
+  - **board repeats**: twoLamps on expert_4's site 2. A switch board is picked by a hash of its gate key over the
+    bucket's seed list, and with six expert boards of one fork shape on a list of twelve (the seed pass fills to 1.5×
+    the rooms), this one draws the same board as expert_1 site 4's doubleBack (`worldFloorAssembly.verify.ts`). Dealing
+    switch boards like room boards, or a deeper list, would place it.
   - **switch fork**: leverOpensADoor on junior_2's site 2. A floor whose lock is laid carves no plain junction for
     `forks` to reserve (`forksUnsatisfied` with none carved, at any packing), so the authored switch fork and a lesson
     cannot share the floor until the lay offers a junction of its own.
@@ -72,8 +80,8 @@ Columns:
 | Site | Main floors | Wing floors | Authored                            | Suggested       | Chosen lock     | Placed |
 | ---- | ----------- | ----------- | ----------------------------------- | --------------- | --------------- | ------ |
 | 1    | 1           | 0           |                                     | leverSwapsDoors | leverSwapsDoors | ✓      |
-| 2    | 1           | 0           |                                     | dropHome        | dropHome        |        |
-| 3    | 1           | 2           | master ward wing, starter ward wing | twoLamps        | twoLamps        |        |
+| 2    | 1           | 0           |                                     | dropHome        | dropHome        | ✓      |
+| 3    | 1           | 2           | master ward wing, starter ward wing | twoLamps        | twoLamps        | ✓      |
 | 4    | 1           | 1           | wizard ward wing, patron Anubis     | **doubleBack**  | doubleBack      | ✓      |
 
 **expert_2 — Karnak Temple Complex**
@@ -81,29 +89,29 @@ Columns:
 | Site | Main floors | Wing floors | Authored         | Suggested       | Chosen lock     | Placed |
 | ---- | ----------- | ----------- | ---------------- | --------------- | --------------- | ------ |
 | 1    | 1           | 0           |                  | doorWaitsForTwo | doorWaitsForTwo | ✓      |
-| 2    | 1           | 0           |                  | cellar          | cellar          |        |
-| 3    | 1           | 1           | master ward wing | twoLamps        | twoLamps        |        |
-| 4    | 1           | 1           | wizard ward wing | dropHome        | dropHome        |        |
+| 2    | 1           | 0           |                  | cellar          | cellar          | ✓      |
+| 3    | 1           | 1           | master ward wing | twoLamps        | twoLamps        | ✓      |
+| 4    | 1           | 1           | wizard ward wing | dropHome        | dropHome        | ✓      |
 
 **expert_3 — Nile Delta Expedition** (overgrown, growing from pyramid 2 to 5)
 
-| Site | Main floors | Wing floors | Authored                                    | Suggested       | Chosen lock     | Placed |
-| ---- | ----------- | ----------- | ------------------------------------------- | --------------- | --------------- | ------ |
-| 1    | 1           | 0           |                                             | leverSwapsDoors | leverSwapsDoors | ✓      |
-| 2    | 1           | 0           | overgrown 0.2                               | dropHome        | dropHome        |        |
-| 3    | 1           | 0           | overgrown 0.4                               | cellar          | cellar          |        |
-| 4    | 1           | 1           | overgrown 0.65, wizard ward wing            | overlook        | overlook        |        |
-| 5    | 1           | 1           | overgrown 1, master ward wing, patron Sobek | **doubleBack**  | doubleBack      |        |
+| Site | Main floors | Wing floors | Authored                                    | Suggested       | Chosen lock     | Placed                 |
+| ---- | ----------- | ----------- | ------------------------------------------- | --------------- | --------------- | ---------------------- |
+| 1    | 1           | 0           |                                             | leverSwapsDoors | leverSwapsDoors | ✓                      |
+| 2    | 1           | 0           | overgrown 0.2                               | dropHome        | dropHome        | ✓                      |
+| 3    | 1           | 0           | overgrown 0.4                               | cellar          | cellar          | ✓                      |
+| 4    | 1           | 1           | overgrown 0.65, wizard ward wing            | overlook        | overlook        | no (reachability seed) |
+| 5    | 1           | 1           | overgrown 1, master ward wing, patron Sobek | **doubleBack**  | doubleBack      | ✓                      |
 
 **expert_4 — Pyramid of Djoser**
 
-| Site | Main floors | Wing floors | Authored                                               | Suggested       | Chosen lock   | Placed |
-| ---- | ----------- | ----------- | ------------------------------------------------------ | --------------- | ------------- | ------ |
-| 1    | 1           | 0           |                                                        | doorWaitsForTwo | stoneOnAPlate | ✓      |
-| 2    | 1           | 0           | two floor-key colours, broad packing                   | twoLamps        | twoLamps      |        |
-| 3    | 1           | 0           |                                                        | cellar          | cellar        |        |
-| 4    | 1           | 1           | two floor-key colours, broad packing, master ward wing | overlook        | overlook      |        |
-| 5    | 1           | 1           | wizard ward wing                                       | **doubleBack**  | stoneGate     | ✓      |
+| Site | Main floors | Wing floors | Authored                                               | Suggested       | Chosen lock   | Placed                 |
+| ---- | ----------- | ----------- | ------------------------------------------------------ | --------------- | ------------- | ---------------------- |
+| 1    | 1           | 0           |                                                        | doorWaitsForTwo | stoneOnAPlate | ✓                      |
+| 2    | 1           | 0           | two floor-key colours, broad packing                   | twoLamps        | twoLamps      | no (board repeats)     |
+| 3    | 1           | 0           |                                                        | cellar          | cellar        | ✓                      |
+| 4    | 1           | 1           | two floor-key colours, broad packing, master ward wing | overlook        | overlook      | no (reachability seed) |
+| 5    | 1           | 1           | wizard ward wing                                       | **doubleBack**  | stoneGate     | ✓                      |
 
 Site counts: junior 16 (3 + 4 + 4 + 5), expert 18 (4 + 4 + 5 + 5), the same as the curriculum's. Treasure
 tombs are not sites in this table.
@@ -135,6 +143,12 @@ expert_1's doubleBack stands through the same `floorLocks` with its realisations
 
 expert_4's stoneGate stands the same way, read from its `.lock` file with `catalogueLock` and every region `free`
 (`freeRegions`), bound `weights` `stonePlate`, `activator` `torch`, `unladen` `narrowPassage`.
+
+The expert locks between a journey's lesson and its capstone (dropHome, twoLamps, cellar, and doubleBack on expert_3)
+stand through `lockOnMainFloor(name)` in `src/worldGen/spec/expert.ts`: the lock read with `catalogueLock`, every
+region `free`, and only the kinds it uses bound (fork-switch `lightbeamSwitch`, toggle `handle`, one-way `zipline`,
+activator `torch`). expert_3's doubleBack pyramid authors `packing: 0.15`: at the default packing its floor carves at
+the inspector's default seed on no attempt. No `RELAID_FLOORS_VERSION`, by the designer's call.
 
 A lesson stands through `lessonOnMainFloor(name)` in `src/worldGen/spec/locks/lessons.ts`: the lesson's file read as
 `catalogueLock("lessons/<name>")`, every region `free`, and only the kinds the lesson uses bound (toggle `handle`,
