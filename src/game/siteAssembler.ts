@@ -87,7 +87,7 @@ import { adjacencyFaults, dropLandingFaults, gateDoorFaults } from "./carveAgree
 import type { CarveFault } from "./carveAgreement"
 import { stairIdAt } from "./stairAddress"
 import { footprintSize } from "./roomFootprint"
-import type { ResolveBoardIndex } from "./seeds/boardIndex"
+import { switchAddress, type ResolveBoardIndex } from "./seeds/boardIndex"
 import { validateSite } from "./siteValidator"
 import { rolesOfProp, rolesOfWallItem } from "./dressingTags"
 import type { FamilyMeta } from "./families/familyMeta"
@@ -4145,12 +4145,12 @@ const assembleExpandedFloor = (
           family: family.familyId,
           tags: family.tags,
           mechanismId: plainSwitchId(n),
-          // THE BOARD HAS TO STAND STILL WHILE THE JUNCTION MOVES. Having no chain position, a switch
-          // gets no entry from the world's board dealer, and `generatePuzzle` then falls back to a seed
-          // hashed from the cell's COORDINATE — which the next carve changes, under a save slot that
-          // does not, so a half-solved switch would come back on a different board. Hashed from the
-          // same authoring address its gates are named from instead.
-          boardIndex: hashString(`${stemFor(n)}|${family.familyId}`),
+          // THE BOARD HAS TO STAND STILL WHILE THE JUNCTION MOVES, so it is never read off the cell's
+          // coordinate, which the next carve changes under a save slot that does not. The world's dealer
+          // names it by its mechanism; a floor outside the world hashes the address its gates are named from.
+          boardIndex:
+            resolveBoardIndex?.(family.familyId, switchAddress(plainSwitchId(n))) ??
+            hashString(`${stemFor(n)}|${family.familyId}`),
           ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
           difficulty: config.difficulty,
           ...(config.theme !== undefined ? { theme: config.theme } : {}),
@@ -4212,8 +4212,11 @@ const assembleExpandedFloor = (
         family: family.familyId,
         tags: family.tags,
         mechanismId: control.id,
-        // Hashed from the authored id, so the board stands still while a re-carve moves the junction.
-        boardIndex: hashString(`${gateKeyOf(control.id)}|${family.familyId}`),
+        // Dealt by the authored id (hashed from it outside the world), so the board stands still while a
+        // re-carve moves the junction.
+        boardIndex:
+          resolveBoardIndex?.(family.familyId, switchAddress(control.id)) ??
+          hashString(`${gateKeyOf(control.id)}|${family.familyId}`),
         exits: junction.exits?.map(exit => {
           const gateKeyId = gateKeyByDir.get(exit.dir)
           return gateKeyId ? { ...exit, gateKeyId } : exit

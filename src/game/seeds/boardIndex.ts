@@ -2,7 +2,11 @@ import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { EncounterResolution, ResolveEncounter } from "@/game/siteAssembler"
 import type { FloorConfig, SiteConfig, SubSection } from "@/game/siteTypes"
+import { plainSwitchId } from "@/game/cellSlot"
+import { expandFloorLocks } from "@/game/floorLocks"
+import { isForkSwitch } from "@/game/obstacles"
 import { configHash } from "./configHash"
+import { switchFamilies } from "./enumerateConfigs"
 
 /**
  * Where a room sits in the AUTHORING — which chain, and which room along it. Not a maze position:
@@ -59,6 +63,32 @@ export const chainsOf = (floor: FloorConfig): Array<{ section: SubSection | Floo
   ]),
 ]
 
+/** A switch's address: it stands in a junction, not on a chain, so it is named by its mechanism. */
+export const switchAddress = (mechanismId: string): RoomAddress => ({
+  section: `mechanism:${mechanismId}`,
+  pathIndex: 0,
+})
+
+/**
+ * Every switch a floor can hold, as its mechanism id and the encounter that fills it: the authored `switches`
+ * up to the junctions that can carry one, then each fork-switch control, a lock's included.
+ */
+const switchesOf = (floor: FloorConfig): Array<{ mechanismId: string; encounter: string | string[] | undefined }> => {
+  const expanded = expandFloorLocks(floor)
+  const config = expanded.ok ? expanded.config : floor
+  const switches = config.switches
+  const plain = switches
+    ? Array.from({ length: switchFamilies({ ...config, controls: [] }).count }, (_unused, n) => ({
+        mechanismId: plainSwitchId(n),
+        encounter: switches.encounter,
+      }))
+    : []
+  const controls = (config.controls ?? [])
+    .filter(isForkSwitch)
+    .map(control => ({ mechanismId: control.id, encounter: control.encounter }))
+  return [...plain, ...controls]
+}
+
 /** Every journey id of `world`, lowest tier first; ties break alphabetically so the order never rides on
  * the generated file's key order. */
 export const journeysInDealOrder = (
@@ -100,6 +130,16 @@ export const buildBoardIndexes = (
               ordinal
             )
           }
+        // A switch's bucket also reads its junction's shape, which only the carve settles, so its ordinal is
+        // dealt per family and tier: every shape's list then holds each switch of that tier at its own entry.
+        for (const { mechanismId, encounter } of switchesOf(floor)) {
+          const { familyId }: EncounterResolution = resolveEncounter(encounter, "puzzle")
+          if (!byId.get(familyId)?.seedable) continue
+          const bucket = `switch|${familyId}|${floor.difficulty}`
+          const ordinal = nextInBucket.get(bucket) ?? 0
+          nextInBucket.set(bucket, ordinal + 1)
+          indexes.set(addressKey(journeyId, levelIndex, floorIndex, familyId, switchAddress(mechanismId)), ordinal)
+        }
       })
     )
 

@@ -29,7 +29,7 @@ const floorOf = (levelNr: number, floorIndex: number) => {
     resolveEncounter,
     {
       resolveKeyRequirements,
-      floorRef: { journeyId: journey.id, floorIndex },
+      floorRef: { journeyId: journey.id, levelIndex: levelNr - 1, floorIndex },
       resolveBoardIndex: boardIndexesForFloor(journey.id, levelNr - 1, floorIndex),
     }
   )

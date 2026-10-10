@@ -1654,6 +1654,16 @@ describe("a switch fork", () => {
     expect([second.r, second.c]).not.toEqual([first.r, first.c])
   })
 
+  it("serves the board the world deals its mechanism, where a dealer is given", () => {
+    const result = assembleFloor("site-switch-dealt", switchConfig(ONE_SWITCH), 7, reEnterableFamilies, {
+      floorRef: FLOOR_REF,
+      resolveBoardIndex: (_familyId, address) => (address.section === "mechanism:switch:0" ? 41 : undefined),
+    })
+    if (!result.success) throw new Error("seed 7 must carve a switch")
+    const room = findRoom(result.grid, cell => cell.roomType === "fork" && cell.family !== undefined)
+    expect(room?.cell.boardIndex).toBe(41)
+  })
+
   // Walks the grid the way a player without a single key does: through open cells, never into a gate.
   const reachesWithoutGates = (grid: FloorGrid, from: readonly [number, number], to: readonly [number, number]) => {
     const seen = new Set([`${from[0]},${from[1]}`])
@@ -2926,6 +2936,16 @@ describe("the designer's doubleBack, two arms off the entrance with drops betwee
         expect(junction.mechanismId, `seed ${seed}`).toBe("Y")
       }
       expect(new Set(carves().map(({ junction }) => junction.boardIndex)).size).toBe(1)
+    })
+
+    it("serves the board the world deals its control, where a dealer is given", () => {
+      const { seed } = carves()[0]
+      const result = assembleFloor(SITE, forkSwitched(), seed, resolveEncounter, {
+        resolveBoardIndex: (_familyId, address) => (address.section === "mechanism:Y" ? 3 : undefined),
+      })
+      if (!result.success) throw new Error(`seed ${seed} carved before`)
+      const junction = result.grid.cells.flat().find(cell => cell.type === "room" && cell.mechanismId === "Y")
+      expect(junction?.type === "room" && junction.boardIndex).toBe(3)
     })
 
     it("opens no exit of the junction in rest, and each state opens only its own, on every carved seed", () => {

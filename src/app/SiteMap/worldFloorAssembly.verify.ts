@@ -29,7 +29,7 @@ describe("every authored floor assembles at its runtime seed", () => {
       .map(floor => {
         const result = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, {
           resolveKeyRequirements,
-          floorRef: { journeyId: floor.journeyId, floorIndex: floor.floorIndex },
+          floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
         })
         return result.success ? null : `${floor.label} (seed ${floor.seed}): ${JSON.stringify(result.reasons)}`
       })
@@ -47,7 +47,7 @@ describe("every authored floor assembles at its runtime seed", () => {
       if (floor.config.difficulty !== "wizard") return []
       const result = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, {
         resolveKeyRequirements,
-        floorRef: { journeyId: floor.journeyId, floorIndex: floor.floorIndex },
+        floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
       })
       if (!result.success) return []
       return result.grid.cells.flat().filter(c => c.type === "room" && c.difficulty === "starter")
@@ -110,7 +110,7 @@ describe("no encounter can move a wall", () => {
       for (const floor of allFloors()) {
         const opts = {
           resolveKeyRequirements,
-          floorRef: { journeyId: floor.journeyId, floorIndex: floor.floorIndex },
+          floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
         }
         const before = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, opts)
         const after = assembleFloor(floor.journeyId, rethemed(floor.config, family), floor.seed, resolveEncounter, opts)
@@ -174,7 +174,10 @@ describe("what a world-spec setting may and may not move", () => {
     const wallsMoved: string[] = []
     const reshapedWithoutRehashing: string[] = []
     for (const floor of sampled()) {
-      const opts = { resolveKeyRequirements, floorRef: { journeyId: floor.journeyId, floorIndex: floor.floorIndex } }
+      const opts = {
+        resolveKeyRequirements,
+        floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
+      }
       // A mutation can be unauthorable on a given floor — an extra room on a tomb floor asks for a
       // tableau nobody wrote, and that family throws rather than inventing one. Not a finding; skip.
       let before, after
@@ -323,7 +326,7 @@ describe("no two rooms in the world serve the same board", () => {
     allFloors().flatMap(floor => {
       const result = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, {
         resolveKeyRequirements,
-        floorRef: { journeyId: floor.journeyId, floorIndex: floor.floorIndex },
+        floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
         resolveBoardIndex: boardIndexesForFloor(floor.journeyId, floor.levelIndex, floor.floorIndex),
       })
       if (!result.success) return []
@@ -387,7 +390,7 @@ describe("a rank is dressed with what it is authored to hold", () => {
     for (const floor of allFloors()) {
       const result = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, {
         resolveKeyRequirements,
-        floorRef: { journeyId: floor.journeyId, floorIndex: floor.floorIndex },
+        floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
       })
       if (!result.success) continue
       const tier = result.grid.difficulty ?? "starter"
@@ -464,7 +467,7 @@ describe("a room marked explored on arrival holds no reward", () => {
     const arrivalMarked = allFloors().flatMap(floor => {
       const result = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, {
         resolveKeyRequirements,
-        floorRef: { journeyId: floor.journeyId, floorIndex: floor.floorIndex },
+        floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
       })
       if (!result.success) return []
       return result.grid.cells.flatMap((row, r) =>

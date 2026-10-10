@@ -24,7 +24,7 @@ describe("every room in the world builds the board its tap asks for", () => {
     for (const floor of allFloors()) {
       const result = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, {
         resolveKeyRequirements,
-        floorRef: { journeyId: floor.journeyId, floorIndex: floor.floorIndex },
+        floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
         resolveOneWay: resolveOneWayRealisation,
         resolveRegionBarrier: resolveRegionBarrierRealisation,
         resolvePassage: resolvePassageRealisation,

@@ -4,7 +4,10 @@ import { difficulties, difficultyCompare, type Difficulty } from "@/data/difficu
 import { PYRAMID_STRUCTURES, TOMB_STRUCTURES } from "@/data/journeyStructure"
 import { worldLevelSites } from "@/data/worldLevels"
 import { ALL_FAMILY_META } from "@/mods/allFamilyMeta"
-import { buildBoardIndexes, chainsOf, journeysInDealOrder } from "@/game/seeds/boardIndex"
+import { buildBoardIndexes, chainsOf, journeysInDealOrder, switchAddress } from "@/game/seeds/boardIndex"
+import { plainSwitchId } from "@/game/cellSlot"
+import type { FloorConfig } from "@/game/siteTypes"
+import { forkSwitchFloorConfig } from "@/game/testSupport/forkSwitchFixtures"
 import { configHash } from "@/game/seeds/configHash"
 
 const tierById = new Map<string, Difficulty>(
@@ -119,5 +122,29 @@ describe("journeysInDealOrder", () => {
       id => id.split("_")[0] as Difficulty
     )
     expect(order).toEqual(["starter_a", "expert_a", "master_a"])
+  })
+})
+
+describe("buildBoardIndexes over switches", () => {
+  const forkSwitchFloor = (): FloorConfig => forkSwitchFloorConfig()
+  const plainSwitchFloor = (): FloorConfig => ({
+    pathPuzzles: 0,
+    difficulty: "expert",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    sideSections: [{ pathPuzzles: 0, difficulty: "expert", end: "treasure" }],
+    forks: [{ exits: 2, count: 1 }],
+    switches: { encounter: "lightbeamSwitch", min: 1, max: 1 },
+  })
+  const world = { made_up_a: [[forkSwitchFloor()]], made_up_b: [[plainSwitchFloor(), forkSwitchFloor()]] }
+  const indexes = buildBoardIndexes(world, ALL_FAMILY_META, resolveEncounter, () => "expert")
+
+  it("deals every switch of one family and tier its own ordinal, a plain switch and a fork-switch alike", () => {
+    const dealt = [
+      indexes("made_up_a", 0, 0, "lightbeamSwitch", switchAddress("Y")),
+      indexes("made_up_b", 0, 0, "lightbeamSwitch", switchAddress(plainSwitchId(0))),
+      indexes("made_up_b", 0, 1, "lightbeamSwitch", switchAddress("Y")),
+    ]
+    expect(dealt).toEqual([0, 1, 2])
   })
 })
