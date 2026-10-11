@@ -1023,7 +1023,7 @@ exports[`core names no mod family id`] = {
     "src/app/SiteMap/nodeKinds.ts:4164385530": [
       [17, 4, 8, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "1887827023"]
     ],
-    "src/app/SiteMap/nodeShapes.tsx:1447430880": [
+    "src/app/SiteMap/nodeShapes.tsx:645600408": [
       [477, 9, 8, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "1887827023"]
     ],
     "src/app/SiteMap/torchlight.tsx:871021629": [
