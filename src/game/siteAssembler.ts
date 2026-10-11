@@ -65,11 +65,13 @@ import {
 } from "./obstacles"
 import type { EdgeGateObstacle, FloorCorridor, Obstacle, OneWayObstacle, StatefulControl } from "./obstacles"
 import { cellSlot, plainSwitchId } from "./cellSlot"
+import { roomlessRouteStubs } from "./routeStubs"
 import { placeSequences } from "./sequenceTiles"
 import { placeWeights } from "./weightsPlates"
 import { expandFloorLocks } from "./floorLocks"
 import { layLockPlan, startingGridSize } from "./layLocks"
 import {
+  answerBareStubs,
   fillLaidFloor,
   lengthenPlan,
   lengtheningCandidates,
@@ -748,7 +750,8 @@ const assembleExpandedFloor = (
   addressSeed: number,
   resolveEncounter: ResolveEncounter = defaultResolveEncounter,
   keyRequirements: AssembleFloorKeyRequirements = {},
-  plan?: LockPlan
+  plan?: LockPlan,
+  answerStubs = false
 ): AssemblerResult => {
   const {
     resolveKeyRequirements = defaultResolveKeyRequirements,
@@ -1302,6 +1305,9 @@ const assembleExpandedFloor = (
   const mainPathCells =
     1 /* entrance */ + config.pathPuzzles + 1 /* goal */ + 1 /* exit/stairhead */ + leverRooms(MAIN_SECTION_ADDRESS)
 
+  // A junction `forks` holds on a laid floor hangs its branches from a route node no room takes, so the route is laid
+  // one node longer for each.
+  const junctionNodes = plan ? forkDemands.length : 0
   // A lock floor is laid before anything grows around it, so its stretches and corridors take room the
   // authored sections do not.
   const layPlan = plan
@@ -1309,6 +1315,7 @@ const assembleExpandedFloor = (
         content: [
           ...Array.from({ length: config.pathPuzzles + leverRooms(MAIN_SECTION_ADDRESS) }, (): ContentKind => "puzzle"),
           "reward",
+          ...Array.from({ length: junctionNodes }, (): ContentKind => "puzzle"),
         ],
         appetite: new Map((regionLayout?.regions ?? []).map(region => [region.name, region.appetite])),
       })
@@ -1566,20 +1573,35 @@ const assembleExpandedFloor = (
         N = result.laid.n
         const seated = seatLaidFloor(plan, result.laid)
         const mainContent = config.pathPuzzles + 1 /* goal */ + leverRooms(MAIN_SECTION_ADDRESS)
-        const onMain = placeContentOnRoute(seated, spreadContentIndices(mainContent, 1, seated.route.length), {
-          leverFirst: leverRooms(MAIN_SECTION_ADDRESS) === 1,
-          appetite: appetiteOfRegion,
-        })
+        // Each junction `forks` holds keeps a route node inside its region (no seam) that no room takes.
+        const kept: number[] = []
+        for (let k = 0; k < junctionNodes; k++) {
+          const step = seated.route.findIndex(
+            (_, i) =>
+              i > 0 &&
+              i < seated.route.length - 1 &&
+              !seated.reserved.has(i) &&
+              !kept.includes(i) &&
+              seated.routeLabels[i] === seated.routeLabels[i - 1]
+          )
+          if (step >= 0) kept.push(step)
+        }
+        const onMain = placeContentOnRoute(
+          kept.length > 0 ? { ...seated, reserved: new Set([...seated.reserved, ...kept]) } : seated,
+          spreadContentIndices(mainContent, 1, seated.route.length),
+          { leverFirst: leverRooms(MAIN_SECTION_ADDRESS) === 1, appetite: appetiteOfRegion }
+        )
         if (onMain === undefined) continue attempt
         const filled = fillLaidFloor(
           seated,
-          new Set(onMain.map(step => `${seated.route[step][0]},${seated.route[step][1]}`)),
+          new Set([...onMain, ...kept].map(step => `${seated.route[step][0]},${seated.route[step][1]}`)),
           absorbedDemands,
           appetiteOfRegion
         )
         if ("placed" in filled) {
           mainSteps = onMain
           laid = { ...seated, absorbed: filled.placed, lengthened }
+          if (answerStubs) laid = answerBareStubs(plan, laid, absorbedDemands, appetiteOfRegion)
           break
         }
         const considered = lengtheningCandidates(lengthPlan, seated, filled.missing, appetiteOfRegion)
@@ -4541,14 +4563,13 @@ export const assembleFloor = (
 ): AssemblerResult => {
   const expanded = expandFloorLocks(authoredConfig)
   if (!expanded.ok) return { success: false, reasons: expanded.reasons }
-  const result = assembleExpandedFloor(
-    siteId,
-    expanded.config,
-    addressSeed,
-    resolveEncounter,
-    keyRequirements,
-    planLockFloor(expanded)
-  )
+  const plan = planLockFloor(expanded)
+  const carve = (answerStubs: boolean) =>
+    assembleExpandedFloor(siteId, expanded.config, addressSeed, resolveEncounter, keyRequirements, plan, answerStubs)
+  // A carve leaving a route region's stub with no room is carved again with such stubs answering to the region their
+  // corridor leads to (`answerBareStubs`), so every floor whose stubs hold a room carves as it always has.
+  const first = carve(false)
+  const result = plan && first.success && roomlessRouteStubs(first.grid).length > 0 ? carve(true) : first
   if (!result.success || !expanded.nesting) return result
   return { ...result, grid: { ...result.grid, lockNesting: expanded.nesting } }
 }

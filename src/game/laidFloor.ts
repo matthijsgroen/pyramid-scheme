@@ -265,6 +265,44 @@ const decodePassage = (key: string, n: number): [CellKey, CellKey] => {
   return [`${Math.floor(x / n)},${x % n}`, `${Math.floor(y / n)},${y % n}`]
 }
 
+const neighboursOf = (passages: readonly string[], n: number): Map<CellKey, CellKey[]> => {
+  const neighbours = new Map<CellKey, CellKey[]>()
+  for (const key of passages) {
+    const [a, b] = decodePassage(key, n)
+    neighbours.set(a, [...(neighbours.get(a) ?? []), b])
+    neighbours.set(b, [...(neighbours.get(b) ?? []), a])
+  }
+  for (const list of neighbours.values()) list.sort()
+  return neighbours
+}
+
+/** A door is a ground of its own; elsewhere ground is walked both ways inside one label. */
+const groundOf = (
+  label: ReadonlyMap<CellKey, string>,
+  doorCells: ReadonlySet<CellKey>,
+  neighbours: ReadonlyMap<CellKey, CellKey[]>
+): Map<CellKey, string> => {
+  const ground = new Map<CellKey, string>()
+  for (const node of [...label.keys()].sort()) {
+    if (ground.has(node)) continue
+    if (doorCells.has(node)) {
+      ground.set(node, `door ${node}`)
+      continue
+    }
+    const stack = [node]
+    ground.set(node, `at ${node}`)
+    while (stack.length > 0) {
+      const at = stack.pop()!
+      for (const next of neighbours.get(at) ?? []) {
+        if (ground.has(next) || doorCells.has(next) || label.get(next) !== label.get(at)) continue
+        ground.set(next, `at ${node}`)
+        stack.push(next)
+      }
+    }
+  }
+  return ground
+}
+
 /** READS THE LAID STRUCTURE INTO THE FORM THE CARVE SEATS ROOMS ON. Pure: no draw is made, so one laid plan always reads the same way. */
 export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
   const label = new Map<CellKey, string>()
@@ -326,13 +364,7 @@ export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
     }
   })
 
-  const neighbours = new Map<CellKey, CellKey[]>()
-  for (const key of laid.passages) {
-    const [a, b] = decodePassage(key, laid.n)
-    neighbours.set(a, [...(neighbours.get(a) ?? []), b])
-    neighbours.set(b, [...(neighbours.get(b) ?? []), a])
-  }
-  for (const list of neighbours.values()) list.sort()
+  const neighbours = neighboursOf(laid.passages, laid.n)
 
   const depth = new Map<CellKey, number>([[laid.route[0], 0]])
   const queue = [laid.route[0]]
@@ -389,25 +421,7 @@ export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
     chains.push({ cells })
   }
 
-  // A door is a ground of its own; elsewhere ground is walked both ways inside one label.
-  const ground = new Map<CellKey, string>()
-  for (const node of [...label.keys()].sort()) {
-    if (ground.has(node)) continue
-    if (doorCells.has(node)) {
-      ground.set(node, `door ${node}`)
-      continue
-    }
-    const stack = [node]
-    ground.set(node, `at ${node}`)
-    while (stack.length > 0) {
-      const at = stack.pop()!
-      for (const next of neighbours.get(at) ?? []) {
-        if (ground.has(next) || doorCells.has(next) || label.get(next) !== label.get(at)) continue
-        ground.set(next, `at ${node}`)
-        stack.push(next)
-      }
-    }
-  }
+  const ground = groundOf(label, doorCells, neighbours)
 
   return {
     n: laid.n,
@@ -654,4 +668,56 @@ export const lengthenPlan = (plan: LockPlan, floor: Pick<LaidFloor, "stretches">
         : corridor
     ),
   }
+}
+
+/**
+ * A ROUTE REGION'S STUB OFF THE ROUTE THAT WOULD HOLD NO ROOM ANSWERS TO THE REGION ITS CORRIDOR LEADS TO. A doorless
+ * corridor is split halfway between its two regions, so a corridor from a route region to one off the route grows
+ * the route region a stub. The rooms filled into it keep their own section, so a stub with a node no room took, no
+ * door, tile, drop end or junction, and no mechanic's seat in its region would be a stretch of ground holding no room,
+ * whose fog a re-carve loses. Where every such node lies on doorless corridors leading off the route, and their far
+ * regions take the rooms filled into them, those corridors answer wholly to their far regions. Any other floor is
+ * returned as it is.
+ */
+export const answerBareStubs = (
+  plan: LockPlan,
+  floor: LaidFloor,
+  demands: readonly AbsorbedDemand[],
+  appetite: ReadonlyMap<string, RegionAppetite>
+): LaidFloor => {
+  const routeKeys = new Set(floor.route.map(([r, c]) => `${r},${c}`))
+  const kindAt = new Map<CellKey, ContentKind>()
+  for (const { section, cells } of floor.absorbed) {
+    const kinds = demands.find(demand => demand.section === section)?.kinds ?? []
+    cells.forEach((cell, i) => kindAt.set(cell, kinds[i]))
+  }
+  const roomed = new Set<CellKey>([
+    ...floor.doors,
+    ...floor.thresholds,
+    ...floor.junctions.map(junction => junction.cell),
+    ...floor.drops.flatMap(drop => [drop.from, drop.to]),
+  ])
+  const onRoute = new Set(plan.regions.filter(region => region.onRoute).map(region => region.id))
+  const label = new Map(floor.label)
+  for (const region of new Set(floor.routeLabels)) {
+    const stub = [...floor.label].flatMap(([key, of]) => (of === region && !routeKeys.has(key) ? [key] : []))
+    if (stub.length === 0) continue
+    if (stub.some(key => roomed.has(key)) || (floor.seatDemand.get(region) ?? 0) > 0) continue
+    const answers = new Map<CellKey, string>()
+    for (const corridor of plan.corridors) {
+      const near = [corridor.from, corridor.to].find(end => labelOf(plan, end) === region)
+      const far = near === corridor.from ? corridor.to : corridor.from
+      if (near === undefined || corridor.onRoute || onRoute.has(far) || labelOf(plan, far) === region) continue
+      for (const key of floor.stretches.get(`corridor:${corridor.id}`) ?? [])
+        if (floor.label.get(key) === region) answers.set(key, labelOf(plan, far))
+    }
+    const covered = stub.every(key => answers.has(key))
+    const takes = [...answers].every(([key, to]) => {
+      const kind = kindAt.get(key)
+      return kind === undefined || appetiteAccepts(appetite.get(to) ?? "free", kind)
+    })
+    if (covered && takes) for (const [key, to] of answers) label.set(key, to)
+  }
+  if ([...label].every(([key, of]) => floor.label.get(key) === of)) return floor
+  return { ...floor, label, ground: groundOf(label, floor.doors, neighboursOf(floor.passages, floor.n)) }
 }

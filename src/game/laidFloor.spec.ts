@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import { expandFloorLocks } from "./floorLocks"
 import type { PlacedLock } from "./floorLocks"
 import {
+  answerBareStubs,
   fillLaidFloor,
   lengthenPlan,
   lengtheningCandidates,
@@ -452,5 +453,53 @@ describe("doors on corridors that carry items", { timeout: 60_000 }, () => {
       expect(floor.gateDoor.get("aligned.in-hall")).toBe(nodes[nodes.length - 1])
     }
     expect(laid).toBeGreaterThanOrEqual(6)
+  })
+})
+
+describe("a route region's stub off the route with no room in it", () => {
+  const nook = (control: "hall" | "nook") =>
+    planOf([
+      { lock: freeRegions(parseLock(`in -- hall\nhall -[H]- out\nhall -- nook\nH toggle @${control}\n`, "nook").lock) },
+    ])
+  // The doorless corridor into the nook laid long, its near half answering to the hall as the split gives it.
+  const STUB = ["40,40", "40,42"]
+  const withStub = (plan: LockPlan): LaidFloor => {
+    const floor = seated(plan, 1)
+    const corridor = plan.corridors.find(candidate => candidate.to.endsWith("nook") || candidate.from.endsWith("nook"))!
+    const hall = plan.regions.find(region => region.id.endsWith("hall"))!.id
+    return {
+      ...floor,
+      label: new Map([...floor.label, ...STUB.map(key => [key, hall] as const)]),
+      stretches: new Map([...floor.stretches, [`corridor:${corridor.id}`, STUB]]),
+    }
+  }
+
+  it("answers to the region its doorless corridor leads to, and the route keeps its labels", () => {
+    const plan = nook("nook")
+    const floor = withStub(plan)
+    const answered = answerBareStubs(plan, floor, [], FREE)
+    const nookRegion = plan.regions.find(region => region.id.endsWith("nook"))!.id
+    expect(STUB.map(key => answered.label.get(key))).toEqual([nookRegion, nookRegion])
+    expect(answered.routeLabels).toEqual(floor.routeLabels)
+  })
+
+  it("keeps the stub where a mechanic of its region may seat in it", () => {
+    const plan = nook("hall")
+    const floor = withStub(plan)
+    expect(answerBareStubs(plan, floor, [], FREE)).toBe(floor)
+  })
+
+  it("keeps the stub where a door stands in it", () => {
+    const plan = nook("nook")
+    const floor = { ...withStub(plan), doors: new Set([STUB[1]]) }
+    expect(answerBareStubs(plan, floor, [], FREE)).toBe(floor)
+  })
+
+  it("keeps the stub where its far region refuses a room filled into it", () => {
+    const plan = nook("nook")
+    const nookRegion = plan.regions.find(region => region.id.endsWith("nook"))!.id
+    const floor = { ...withStub(plan), absorbed: [{ section: 0, cells: [STUB[0]] }] }
+    const refusing = new Map<string, RegionAppetite>([[nookRegion, "reward"]])
+    expect(answerBareStubs(plan, floor, [{ section: 0, kinds: ["puzzle", "reward"] }], refusing)).toBe(floor)
   })
 })
