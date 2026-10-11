@@ -1,7 +1,9 @@
 // designed by: Claude
-// LESSON, expert: a stone set on a plate holds its door open; lift it and the door shuts.
+// LESSON, expert: a stone set on a plate holds its door open; lift it and the door shuts. The shut door comes
+// first, in the yard; the plate and a stone on a shelf wait in a side room, so the player goes looking for them.
 
 in -- yard
 yard -[p]- out
-p plate @yard
-ledge plate @yard stone
+yard -- side
+p plate @side
+ledge plate @side stone

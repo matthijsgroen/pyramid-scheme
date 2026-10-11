@@ -1,5 +1,7 @@
 // designed by: Claude
-// LESSON, junior: a board in a junction decides which way opens.
+// LESSON, junior: a board in a junction decides which way opens. The shut door to the way out stands at the
+// entrance; its lever waits behind one of the board's ways, the reward behind the other. The lever is needed: a
+// board on the way out itself is refused (gateOwnedOffSeam).
 
 in -[Y]- left
 in -[Y]- right

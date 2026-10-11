@@ -1,7 +1,7 @@
 import { tier, journey, tomb, sidePath, wardWing, wardChest } from "../dsl"
 import type { Rule, PathSettings } from "../dsl"
 import { TOMB_ROOMS_PER_FLOOR } from "../data"
-import { lessonFloor, lessonOnMainFloor } from "./locks/lessons"
+import { lessonOnMainFloor } from "./locks/lessons"
 
 // Varied "come back stronger" ward wings, mixed into the back-half pyramids of each junior
 // journey (where the auto tier-unlock gate already sits). Each is a bonus floor gated by a later
@@ -153,13 +153,13 @@ export const juniorRules: Rule[] = [
   // shut until the player walks back in and sends the light another way. Every main-path room is
   // left to the ordinary pool; what the junction chooses between is the branches below. The tier's
   // own sidePaths/hiddenPaths are re-declared (from the shared JUNIOR_* constants above, not a hand
-  // copy) because this floor's own `.floor()` bypasses the pyramid-level tier cascade for them.
+  // copy) because this floor's own `.floor()` bypasses the pyramid-level tier cascade for them. No lesson stands
+  // here: leverOpensADoor's side room leaves the lay no bare route node for the switch's junction.
   journey("junior_2")
     .pyramid(2, {})
     .floor(0, {
       forks: SWITCH_FORK,
       switches: SWITCH_BOARD,
-      ...lessonFloor("leverOpensADoor"),
       sidePaths: [
         { density: "medium", ...JUNIOR_FRAGMENT_PATH },
         { density: "low", ...JUNIOR_VISIBLE_MOSAIC_PATH },

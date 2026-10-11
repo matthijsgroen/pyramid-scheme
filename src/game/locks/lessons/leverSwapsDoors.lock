@@ -1,8 +1,10 @@
 // designed by: Claude
-// LESSON, junior preview and expert: one lever swaps two doors, and can be
-// thrown back.
+// LESSON, junior preview and expert: one lever swaps two doors, and can be thrown back. The hall shows a shut
+// door and an open one; the lever waits in a side room, and throwing it opens the way out and shuts the other.
 
-in -[H:a]- left
-in -[H]- out
-H toggle @in
+in -- hall
+hall -[H:a]- left
+hall -[H]- out
+hall -- side
+H toggle @side
 left $

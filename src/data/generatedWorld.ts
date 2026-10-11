@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1383901146
+export const worldContentHash = 512734664
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -2007,10 +2007,15 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             lock: {
               name: "leverOpensADoor",
-              regions: { in: { takes: "free" }, hall: { takes: "free" }, out: { takes: "free" } },
-              connections: [["in", "hall"], { between: ["hall", "out"], barriers: ["hall-out"] }],
+              regions: {
+                in: { takes: "free" },
+                hall: { takes: "free" },
+                out: { takes: "free" },
+                side: { takes: "free" },
+              },
+              connections: [["in", "hall"], { between: ["hall", "out"], barriers: ["hall-out"] }, ["hall", "side"]],
               gates: { "hall-out": { from: "hall", to: "out", owners: ["H"] } },
-              mechanics: { H: { control: "toggle", in: "in", starts: "a", opens: { a: [], b: ["hall-out"] } } },
+              mechanics: { H: { control: "toggle", in: "side", starts: "a", opens: { a: [], b: ["hall-out"] } } },
               in: "in",
               out: "out",
             },
@@ -2748,8 +2753,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["stela", "niche", "sconce"],
         role: "puzzle",
         encountersByIndex: { 0: "eclipse", 1: "futoshiki", 2: "sumplete", 3: "constellation" },
-        packing: 0.1,
-        seed: 458394291,
+        packing: 0.2,
+        seed: 458394307,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art7", pieceIndex: 1 },
         rewards: [
           { type: "money", amount: 1 },
@@ -2758,20 +2763,6 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { type: "money", amount: 2 },
         ],
         forks: [{ exits: 2, count: 1 }],
-        locks: [
-          {
-            lock: {
-              name: "leverOpensADoor",
-              regions: { in: { takes: "free" }, hall: { takes: "free" }, out: { takes: "free" } },
-              connections: [["in", "hall"], { between: ["hall", "out"], barriers: ["hall-out"] }],
-              gates: { "hall-out": { from: "hall", to: "out", owners: ["H"] } },
-              mechanics: { H: { control: "toggle", in: "in", starts: "a", opens: { a: [], b: ["hall-out"] } } },
-              in: "in",
-              out: "out",
-            },
-          },
-        ],
-        realisations: { toggle: "handle" },
         switches: { encounter: "lightbeamSwitch", min: 1, max: 1 },
       },
     ],
@@ -2997,10 +2988,15 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             lock: {
               name: "torch",
-              regions: { in: { takes: "free" }, hall: { takes: "free" }, out: { takes: "free" } },
-              connections: [["in", "hall"], { between: ["hall", "out"], barriers: ["hall-out"] }],
+              regions: {
+                in: { takes: "free" },
+                hall: { takes: "free" },
+                out: { takes: "free" },
+                side: { takes: "free" },
+              },
+              connections: [["in", "hall"], { between: ["hall", "out"], barriers: ["hall-out"] }, ["hall", "side"]],
               gates: { "hall-out": { from: "hall", to: "out", owners: ["T"] } },
-              mechanics: { T: { control: "flame", in: "in", starts: "off", opens: { off: [], on: ["hall-out"] } } },
+              mechanics: { T: { control: "flame", in: "side", starts: "off", opens: { off: [], on: ["hall-out"] } } },
               in: "in",
               out: "out",
             },
@@ -3446,10 +3442,15 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             lock: {
               name: "leverOpensADoor",
-              regions: { in: { takes: "free" }, hall: { takes: "free" }, out: { takes: "free" } },
-              connections: [["in", "hall"], { between: ["hall", "out"], barriers: ["hall-out"] }],
+              regions: {
+                in: { takes: "free" },
+                hall: { takes: "free" },
+                out: { takes: "free" },
+                side: { takes: "free" },
+              },
+              connections: [["in", "hall"], { between: ["hall", "out"], barriers: ["hall-out"] }, ["hall", "side"]],
               gates: { "hall-out": { from: "hall", to: "out", owners: ["H"] } },
-              mechanics: { H: { control: "toggle", in: "in", starts: "a", opens: { a: [], b: ["hall-out"] } } },
+              mechanics: { H: { control: "toggle", in: "side", starts: "a", opens: { a: [], b: ["hall-out"] } } },
               in: "in",
               out: "out",
             },
@@ -3999,10 +4000,15 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             lock: {
               name: "torch",
-              regions: { in: { takes: "free" }, hall: { takes: "free" }, out: { takes: "free" } },
-              connections: [["in", "hall"], { between: ["hall", "out"], barriers: ["hall-out"] }],
+              regions: {
+                in: { takes: "free" },
+                hall: { takes: "free" },
+                out: { takes: "free" },
+                side: { takes: "free" },
+              },
+              connections: [["in", "hall"], { between: ["hall", "out"], barriers: ["hall-out"] }, ["hall", "side"]],
               gates: { "hall-out": { from: "hall", to: "out", owners: ["T"] } },
-              mechanics: { T: { control: "flame", in: "in", starts: "off", opens: { off: [], on: ["hall-out"] } } },
+              mechanics: { T: { control: "flame", in: "side", starts: "off", opens: { off: [], on: ["hall-out"] } } },
               in: "in",
               out: "out",
             },
@@ -4519,10 +4525,15 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             lock: {
               name: "leverOpensADoor",
-              regions: { in: { takes: "free" }, hall: { takes: "free" }, out: { takes: "free" } },
-              connections: [["in", "hall"], { between: ["hall", "out"], barriers: ["hall-out"] }],
+              regions: {
+                in: { takes: "free" },
+                hall: { takes: "free" },
+                out: { takes: "free" },
+                side: { takes: "free" },
+              },
+              connections: [["in", "hall"], { between: ["hall", "out"], barriers: ["hall-out"] }, ["hall", "side"]],
               gates: { "hall-out": { from: "hall", to: "out", owners: ["H"] } },
-              mechanics: { H: { control: "toggle", in: "in", starts: "a", opens: { a: [], b: ["hall-out"] } } },
+              mechanics: { H: { control: "toggle", in: "side", starts: "a", opens: { a: [], b: ["hall-out"] } } },
               in: "in",
               out: "out",
             },
@@ -4791,10 +4802,15 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             lock: {
               name: "torch",
-              regions: { in: { takes: "free" }, hall: { takes: "free" }, out: { takes: "free" } },
-              connections: [["in", "hall"], { between: ["hall", "out"], barriers: ["hall-out"] }],
+              regions: {
+                in: { takes: "free" },
+                hall: { takes: "free" },
+                out: { takes: "free" },
+                side: { takes: "free" },
+              },
+              connections: [["in", "hall"], { between: ["hall", "out"], barriers: ["hall-out"] }, ["hall", "side"]],
               gates: { "hall-out": { from: "hall", to: "out", owners: ["T"] } },
-              mechanics: { T: { control: "flame", in: "in", starts: "off", opens: { off: [], on: ["hall-out"] } } },
+              mechanics: { T: { control: "flame", in: "side", starts: "off", opens: { off: [], on: ["hall-out"] } } },
               in: "in",
               out: "out",
             },
@@ -4931,16 +4947,26 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             lock: {
               name: "leverSwapsDoors",
-              regions: { in: { takes: "free" }, left: { takes: "free" }, out: { takes: "free" } },
+              regions: {
+                in: { takes: "free" },
+                hall: { takes: "free" },
+                left: { takes: "free" },
+                out: { takes: "free" },
+                side: { takes: "free" },
+              },
               connections: [
-                { between: ["in", "left"], barriers: ["in-left"] },
-                { between: ["in", "out"], barriers: ["in-out"] },
+                ["in", "hall"],
+                { between: ["hall", "left"], barriers: ["hall-left"] },
+                { between: ["hall", "out"], barriers: ["hall-out"] },
+                ["hall", "side"],
               ],
               gates: {
-                "in-left": { from: "in", to: "left", owners: ["H"] },
-                "in-out": { from: "in", to: "out", owners: ["H"] },
+                "hall-left": { from: "hall", to: "left", owners: ["H"] },
+                "hall-out": { from: "hall", to: "out", owners: ["H"] },
               },
-              mechanics: { H: { control: "toggle", in: "in", starts: "a", opens: { a: ["in-left"], b: ["in-out"] } } },
+              mechanics: {
+                H: { control: "toggle", in: "side", starts: "a", opens: { a: ["hall-left"], b: ["hall-out"] } },
+              },
               in: "in",
               out: "out",
             },
@@ -5204,16 +5230,26 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             lock: {
               name: "leverSwapsDoors",
-              regions: { in: { takes: "free" }, left: { takes: "free" }, out: { takes: "free" } },
+              regions: {
+                in: { takes: "free" },
+                hall: { takes: "free" },
+                left: { takes: "free" },
+                out: { takes: "free" },
+                side: { takes: "free" },
+              },
               connections: [
-                { between: ["in", "left"], barriers: ["in-left"] },
-                { between: ["in", "out"], barriers: ["in-out"] },
+                ["in", "hall"],
+                { between: ["hall", "left"], barriers: ["hall-left"] },
+                { between: ["hall", "out"], barriers: ["hall-out"] },
+                ["hall", "side"],
               ],
               gates: {
-                "in-left": { from: "in", to: "left", owners: ["H"] },
-                "in-out": { from: "in", to: "out", owners: ["H"] },
+                "hall-left": { from: "hall", to: "left", owners: ["H"] },
+                "hall-out": { from: "hall", to: "out", owners: ["H"] },
               },
-              mechanics: { H: { control: "toggle", in: "in", starts: "a", opens: { a: ["in-left"], b: ["in-out"] } } },
+              mechanics: {
+                H: { control: "toggle", in: "side", starts: "a", opens: { a: ["hall-left"], b: ["hall-out"] } },
+              },
               in: "in",
               out: "out",
             },
@@ -6369,12 +6405,23 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             lock: {
               name: "doorWaitsForTwo",
-              regions: { in: { takes: "free" }, hall: { takes: "free" }, out: { takes: "free" } },
-              connections: [["in", "hall"], { between: ["hall", "out"], barriers: ["hall-out"] }],
+              regions: {
+                in: { takes: "free" },
+                hall: { takes: "free" },
+                out: { takes: "free" },
+                east: { takes: "free" },
+                west: { takes: "free" },
+              },
+              connections: [
+                ["in", "hall"],
+                { between: ["hall", "out"], barriers: ["hall-out"] },
+                ["hall", "east"],
+                ["hall", "west"],
+              ],
               gates: { "hall-out": { from: "hall", to: "out", owners: ["T1", "T2"] } },
               mechanics: {
-                T1: { control: "flame", in: "in", starts: "off", opens: { off: [], on: ["hall-out"] } },
-                T2: { control: "flame", in: "hall", starts: "off", opens: { off: [], on: ["hall-out"] } },
+                T1: { control: "flame", in: "east", starts: "off", opens: { off: [], on: ["hall-out"] } },
+                T2: { control: "flame", in: "west", starts: "off", opens: { off: [], on: ["hall-out"] } },
               },
               in: "in",
               out: "out",
@@ -7560,16 +7607,26 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             lock: {
               name: "leverSwapsDoors",
-              regions: { in: { takes: "free" }, left: { takes: "free" }, out: { takes: "free" } },
+              regions: {
+                in: { takes: "free" },
+                hall: { takes: "free" },
+                left: { takes: "free" },
+                out: { takes: "free" },
+                side: { takes: "free" },
+              },
               connections: [
-                { between: ["in", "left"], barriers: ["in-left"] },
-                { between: ["in", "out"], barriers: ["in-out"] },
+                ["in", "hall"],
+                { between: ["hall", "left"], barriers: ["hall-left"] },
+                { between: ["hall", "out"], barriers: ["hall-out"] },
+                ["hall", "side"],
               ],
               gates: {
-                "in-left": { from: "in", to: "left", owners: ["H"] },
-                "in-out": { from: "in", to: "out", owners: ["H"] },
+                "hall-left": { from: "hall", to: "left", owners: ["H"] },
+                "hall-out": { from: "hall", to: "out", owners: ["H"] },
               },
-              mechanics: { H: { control: "toggle", in: "in", starts: "a", opens: { a: ["in-left"], b: ["in-out"] } } },
+              mechanics: {
+                H: { control: "toggle", in: "side", starts: "a", opens: { a: ["hall-left"], b: ["hall-out"] } },
+              },
               in: "in",
               out: "out",
             },
@@ -9018,7 +9075,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: "puzzle",
         encountersByIndex: { 0: "sumplete", 1: "eclipse", 2: "futoshiki", 3: "hidato" },
         packing: 0.1,
-        seed: 202908665,
+        seed: 202908645,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art6", pieceIndex: 1 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -9030,14 +9087,19 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           {
             lock: {
               name: "stoneOnAPlate",
-              regions: { in: { takes: "free" }, yard: { takes: "free" }, out: { takes: "free" } },
-              connections: [["in", "yard"], { between: ["yard", "out"], barriers: ["yard-out"] }],
+              regions: {
+                in: { takes: "free" },
+                yard: { takes: "free" },
+                out: { takes: "free" },
+                side: { takes: "free" },
+              },
+              connections: [["in", "yard"], { between: ["yard", "out"], barriers: ["yard-out"] }, ["yard", "side"]],
               gates: { "yard-out": { from: "yard", to: "out", owners: ["p"] } },
               mechanics: {},
               weights: {
                 plates: {
-                  p: { in: "yard", stone: false, opens: { weighted: ["yard-out"], empty: [] } },
-                  ledge: { in: "yard", stone: true, opens: { weighted: [], empty: [] } },
+                  p: { in: "side", stone: false, opens: { weighted: ["yard-out"], empty: [] } },
+                  ledge: { in: "side", stone: true, opens: { weighted: [], empty: [] } },
                 },
               },
               in: "in",

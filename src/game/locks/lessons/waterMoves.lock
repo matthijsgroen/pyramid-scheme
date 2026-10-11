@@ -1,10 +1,9 @@
 // designed by: Claude
-// LESSON, expert: one lever drains a hall.
+// LESSON, expert: one lever drains a hall. The player arrives beside the flooded hall that stands between them
+// and the way out; the lever waits in a side room.
 
 in -- hall
-in >> passage
 hall -[S]
-passage -- hall
-passage -[G]- out
-S toggle @passage
-G toggle @hall
+hall -- out
+in -- side
+S toggle @side
