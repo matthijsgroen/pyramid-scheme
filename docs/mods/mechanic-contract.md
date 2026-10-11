@@ -93,6 +93,9 @@ waiting for, the way a ward gate already shows the key it wants.
   `sequence.ts`: every tile of a step works that step.
 - Because the reset is made inside the door's room, a step k > 0 in that room strands the run when an earlier
   step lies outside it: walking out after the reset steps on it out of order. The walks refuse such a lock.
+- **A sequence is walkable when it is walkable from its reset.** A lucky start (a step pressed by arriving in
+  `in`) proves nothing: from the reset at the door the whole order must still be walkable. The walks check this
+  through `strands`, since a spoiled run is a reachable state and must still finish.
 - Each tile shows its own state: not yet walked, walked in the right order, walked in the wrong order.
 - A wrong step **registers** rather than doing nothing, so the player can see they have spoiled the run.
 - **Progress survives leaving.** It is an ordinary state like any other, and only the reset clears it.
