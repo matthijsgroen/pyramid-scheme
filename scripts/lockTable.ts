@@ -11,6 +11,9 @@ import type { Lock, LockMechanic } from "../src/game/lockAuthoring"
 
 export { lockChecks }
 
+/** A lock under `lessons/` teaches one mechanic, so it is held to the lesson's checks. */
+export const isLessonPath = (path: string) => /(^|\/)lessons\//.test(path)
+
 /** Every corridor worth writing back: one with several items, an aligned gate, or a pair it shares. */
 export const corridorLines = (lock: Lock): string[] => {
   const pairKey = (connection: Lock["connections"][number]) => [...joinOf(connection)].sort().join("|")
@@ -61,9 +64,9 @@ export const mechanismsOf = (lock: Lock): string[] => {
 
 export type LockRow = { lock: string; mechanisms: string; steps: string; checks: string; sound: boolean }
 
-/** One table row: `path` is the name `yarn lock <name>` takes. */
+/** One table row: `path` is the name `yarn lock <name>` takes; one under `lessons/` is checked as a lesson. */
 export const lockRow = (path: string, parsed: ParsedLock): LockRow => {
-  const { spec, checks, sound } = lockChecks(parsed)
+  const { spec, checks, sound } = lockChecks(parsed, { lesson: isLessonPath(path) })
   const solved = solveLock(spec)
   const failed = checks.find(check => check.startsWith("✗"))
   return {

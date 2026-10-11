@@ -18,7 +18,7 @@ import { lockQuality, solveLock } from "../src/game/lockReview"
 import { LOCK_SYNTAX, parseLock } from "../src/game/lockNotation"
 import type { ParsedLock } from "../src/game/lockNotation"
 import { LESSONS, LOCK_CATALOGUE } from "../src/game/lockCatalogue"
-import { corridorLines, formatLockTable, lockChecks, lockRow } from "./lockTable"
+import { corridorLines, formatLockTable, isLessonPath, lockChecks, lockRow } from "./lockTable"
 
 const args = process.argv.slice(2)
 const watching = args.includes("--watch")
@@ -28,9 +28,9 @@ const library: Record<string, ParsedLock> = { ...LOCK_CATALOGUE, ...LESSONS }
 const inLocks = named && named !== "-" && !named.endsWith(".lock") ? `src/game/locks/${named}.lock` : undefined
 const target = inLocks && (existsSync(inLocks) || (watching && !(named! in library))) ? inLocks : named
 
-const report = (name: string, parsed: ParsedLock, withJson: boolean): boolean => {
+const report = (name: string, parsed: ParsedLock, withJson: boolean, lesson: boolean): boolean => {
   const { lock, drafts } = parsed
-  const { spec, walked, checks, sound } = lockChecks(parsed)
+  const { spec, walked, checks, sound } = lockChecks(parsed, { lesson })
   const lines = [`## ${name}`, "", ...checks, "", drawLock(lock, drafts)]
   const corridors = corridorLines(lock)
   if (corridors.length > 0) lines.push("", "corridors:", ...corridors.map(line => `  ${line}`))
@@ -52,10 +52,10 @@ const report = (name: string, parsed: ParsedLock, withJson: boolean): boolean =>
 
 const syntax = `${LOCK_SYNTAX}\n  catalogue: ${Object.keys(library).join(", ")}\n`
 
-const fromText = (name: string, text: string): boolean => {
+const fromText = (name: string, text: string, lesson = false): boolean => {
   try {
     // Watching is for designing; the JSON is for when the design is done.
-    return report(name, parseLock(text, name.replace(/\.lock$/, "")), !watching)
+    return report(name, parseLock(text, name.replace(/\.lock$/, "")), !watching, lesson)
   } catch (error) {
     // A watched file carries the syntax in its own comments.
     console.log(`## ${name}\n\n✗ ${(error as Error).message}\n${watching ? "" : `\n${syntax}`}`)
@@ -91,7 +91,7 @@ if (args.includes("--help")) {
     if (!existsSync(target)) return false
     // Screen, scrollback, cursor home: console.clear() leaves the previous draw in the scrollback.
     if (watching) process.stdout.write("\x1b[2J\x1b[3J\x1b[H")
-    const sound = fromText(basename(target), readFileSync(target, "utf8"))
+    const sound = fromText(basename(target), readFileSync(target, "utf8"), isLessonPath(target))
     if (watching) console.log(`watching ${target} — save to redraw, ctrl-c to stop`)
     return sound
   }
@@ -106,7 +106,7 @@ if (args.includes("--help")) {
       pending = setTimeout(run, 50)
     })
 } else if (target in library) {
-  process.exitCode = report(target, library[target], true) ? 0 : 1
+  process.exitCode = report(target, library[target], true, target in LESSONS && !(target in LOCK_CATALOGUE)) ? 0 : 1
 } else {
   console.error(`no file or catalogue lock called ${target}; the catalogue has ${Object.keys(library).join(", ")}`)
   process.exitCode = 1
