@@ -85,7 +85,6 @@ export const lockChecks = ({ lock, drafts, refused }: ParsedLock, { lesson = fal
   const faults = checkLock(lock)
   const compiles = faults.length === 0
   const late = walked.sound ? doorsSeenLate(lock, spec) : "tooLarge"
-  const sequences = Object.entries(lock.mechanics).flatMap(([id, m]) => (m.control === "sequence" ? [id] : []))
   const checks = [
     ...refused.map(problem => `✗ ${problem}`),
     ...(drafts.length > 0 ? [`✗ not placed yet: ${drafts.join(", ")}`] : []),
@@ -102,7 +101,6 @@ export const lockChecks = ({ lock, drafts, refused }: ParsedLock, { lesson = fal
     ...doorLines(late, lesson),
     ...nestSpotLines(lock),
     ...needsFace(lock).map(({ gate, owners }) => `${gate} shows what it waits for: ${owners.join(", ")}`),
-    ...sequences.map(id => `⚠ sequence ${id}: its tiles may stand in any region — contract §8 open`),
   ]
   const sound =
     refused.length === 0 &&

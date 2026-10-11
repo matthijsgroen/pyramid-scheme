@@ -494,11 +494,11 @@ the solver sees. Impassable conceals, and conceals what was explored, without er
 
 A gate may show its own condition, and a sequence's reset is at its door. A sequence is solved once: when
 it is done, it stays done. On a door it shares with other owners, those can still switch or reset, and the door
-follows them, while the sequence's part stays met.
+follows them, while the sequence's part stays met. A sequence's tiles may stand in any region, so they may
+share ground with another lock.
 
 **Open.**
 
-- The sequence: whether its tiles may span regions and so interact with another lock.
 - Whether a realisation may demand anything of placement beyond space.
 
 ## 9. What this requires of the engine
