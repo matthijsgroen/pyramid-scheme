@@ -59,6 +59,8 @@ export type LockSpec = {
   /** Each torch, with the gates whose shutting covers its region (a region gate's entry hops): a lit torch in a
    * covered region is out, in every state the walk reaches (`dousedConfig`). */
   torches?: { mechanism: MechanismId; coveredBy: GateId[] }[]
+  /** Regions that are only a way across, a door's own node: nothing stands on one, so it is never lost. */
+  crossings?: RegionId[]
 }
 
 // EVERY ID IN A LOCK IS A REFERENCE INTO ANOTHER TABLE, and a misspelled one is the failure that does
@@ -361,7 +363,9 @@ export const lostRegion = (
   backwards: number[][]
 ): { region: RegionId; at: LockState } | undefined => {
   let first: { region: RegionId; index: number } | undefined
+  const crossings = new Set(spec.crossings ?? [])
   for (const region of spec.regions) {
+    if (crossings.has(region)) continue
     const reaching = new Set<number>()
     const queue: number[] = []
     order.forEach((state, n) => {

@@ -235,6 +235,7 @@ const levelOf = (cut: Cut, node: Owner, nesting: FloorGrid["lockNesting"]): Lock
   const torches = (lock.torches ?? [])
     .filter(({ mechanism }) => Object.hasOwn(mechanisms, mechanism))
     .map(({ mechanism, coveredBy }) => ({ mechanism, coveredBy: coveredBy.filter(gate => Object.hasOwn(gates, gate)) }))
+  const crossings = (lock.crossings ?? []).filter(region => regions.has(region))
   return {
     regions: lock.regions.filter(region => regions.has(region)),
     gates,
@@ -243,6 +244,7 @@ const levelOf = (cut: Cut, node: Owner, nesting: FloorGrid["lockNesting"]): Lock
     passages: [...(lock.passages ?? []).filter(({ a, b }) => scope.has(a) && scope.has(b)), ...opened],
     ...(emptyHands.length > 0 ? { emptyHands } : {}),
     ...(torches.length > 0 ? { torches } : {}),
+    ...(crossings.length > 0 ? { crossings } : {}),
     in: port ?? lock.in,
     out: port ?? lock.out,
   }

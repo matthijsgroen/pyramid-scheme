@@ -516,6 +516,33 @@ describe("every region stays reachable", () => {
     )
   })
 
+  it("never calls a crossing lost: a door's own node shut for good after the player went through it", () => {
+    // A one-shot lever in the hall shuts the door node for good; the hall stays reachable round by the way out.
+    const spec: LockSpec = {
+      regions: ["entrance", "door", "hall", "wayOut"],
+      gates: {
+        near: { from: "entrance", to: "door", owners: ["lever"] },
+        far: { from: "hall", to: "door", owners: ["lever"] },
+      },
+      mechanisms: {
+        lever: {
+          states: ["open", "shut"],
+          initial: "open",
+          opens: { open: ["near", "far"], shut: [] },
+          transitions: [{ from: "open", to: "shut", at: "hall" }],
+        },
+      },
+      passages: [
+        { a: "hall", b: "wayOut" },
+        { a: "entrance", b: "wayOut" },
+      ],
+      in: "entrance",
+      out: "wayOut",
+    }
+    expect(walkLock(spec)).toMatchObject({ sound: false, failure: { type: "regionLost", region: "door" } })
+    expect(walkLock({ ...spec, crossings: ["door"] })).toEqual({ sound: true, states: expect.any(Number) })
+  })
+
   it("calls the same side room sound when the lever toggles back", () => {
     const toggle = [
       { from: "open", to: "shut", at: "entrance" },

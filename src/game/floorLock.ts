@@ -414,6 +414,7 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
   }
 
   const oneWays = oneWaysOf(grid, of)
+  const crossings = ids.filter(id => id.startsWith("door "))
 
   return {
     regions: ids,
@@ -423,6 +424,7 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
     ...(passages.length > 0 ? { passages } : {}),
     ...(emptyHands.length > 0 ? { emptyHands } : {}),
     ...(torches.length > 0 ? { torches } : {}),
+    ...(crossings.length > 0 ? { crossings } : {}),
     in: of.get(posKey(grid.entrancePos[0], grid.entrancePos[1]))!,
     out: of.get(posKey(grid.exitPos[0], grid.exitPos[1]))!,
   }
