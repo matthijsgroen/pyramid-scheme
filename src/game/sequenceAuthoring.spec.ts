@@ -8,7 +8,7 @@ const faultsOf = (config: FloorConfig, controls: Control[], obstacles: Obstacle[
   topologyFaults(config.regionLayout, obstacles, controls, config.forks)
 
 const sequence = (overrides: Partial<SequenceControl> = {}): SequenceControl =>
-  ({ ...sequenceControl(["hall", "annex", "hall"]), ...overrides }) as SequenceControl
+  ({ ...sequenceControl(["hall", "annex", "mouth"]), ...overrides }) as SequenceControl
 
 describe("a sequence as an author writes it", () => {
   const config = hallAnnexSequenceFloor()
@@ -24,8 +24,14 @@ describe("a sequence as an author writes it", () => {
     ])
   })
 
+  it("refuses a step naming a region an earlier step names, naming both steps", () => {
+    expect(faultsOf(config, [sequence({ steps: [{ in: "hall" }, { in: "annex" }, { in: "hall" }] })])).toEqual([
+      { type: "sequenceRegionRepeated", id: "plates", step: 2, earlier: 0 },
+    ])
+  })
+
   it("refuses a step naming a region the layout does not have, naming the step", () => {
-    expect(faultsOf(config, [sequence({ steps: [{ in: "hall" }, { in: "nowhere" }, { in: "hall" }] })])).toEqual([
+    expect(faultsOf(config, [sequence({ steps: [{ in: "hall" }, { in: "nowhere" }, { in: "mouth" }] })])).toEqual([
       { type: "sequenceStepNamesNoRegion", id: "plates", step: 1 },
     ])
   })

@@ -1501,7 +1501,7 @@ const assembleExpandedFloor = (
   // both grow across the attempt budget.
   let controlNotSeated: string[] | undefined
   // The first sequence step no attempt could stand a tile for, kept the same way.
-  let sequenceShortfall: { id: string; step: number } | undefined
+  let sequenceShortfall: { id: string; step: number; reason: string } | undefined
   // The first plate no attempt could stand on a node of its region, kept the same way.
   let plateShortfall: { plate: string } | undefined
   // The first attempt's controls whose only candidate node already held a puzzle with no room to move
@@ -1981,7 +1981,8 @@ const assembleExpandedFloor = (
         !gateIndices.has(mi) &&
         !barrierDoorOnMain.has(mi) &&
         !forkJunctionIdx.has(mi) &&
-        !absorbedCell.has(`${mainPath[mi][0]},${mainPath[mi][1]}`)
+        !absorbedCell.has(`${mainPath[mi][0]},${mainPath[mi][1]}`) &&
+        !laid?.thresholds.has(`${mainPath[mi][0]},${mainPath[mi][1]}`)
 
       let index: number | undefined
       for (let mi = 1; mi < mainPath.length - 1; mi++) {
@@ -2127,7 +2128,12 @@ const assembleExpandedFloor = (
     // Side paths hang off the ground a lock laid as well as off the route, never off a door.
     for (const chain of laid?.chains ?? [])
       for (const [pr, pc] of chain.cells)
-        if (!laid!.doors.has(`${pr},${pc}`) && rawFreeNeighbors(pr, pc).length > 0) branchCandidates.push([pr, pc])
+        if (
+          !laid!.doors.has(`${pr},${pc}`) &&
+          !laid!.thresholds.has(`${pr},${pc}`) &&
+          rawFreeNeighbors(pr, pc).length > 0
+        )
+          branchCandidates.push([pr, pc])
     // Prefer branch points that sit next to a genuinely large contiguous empty pocket —
     // this is where the fork ends up, and its later multi-cell footprint (the claiming
     // pass below) floods outward through exactly this kind of pocket. A handful of
@@ -3308,6 +3314,7 @@ const assembleExpandedFloor = (
           !chainGateIndices.has(i) &&
           !laidDoorIdx.has(i) &&
           !absorbedCell.has(posKey(cells[i][0], cells[i][1])) &&
+          !laid?.thresholds.has(posKey(cells[i][0], cells[i][1])) &&
           i !== leverIndexInChain &&
           !takenByChainControl.has(i)
 
@@ -4413,8 +4420,8 @@ const assembleExpandedFloor = (
     }
 
     // A SEQUENCE'S TILES STAND ON THE FINISHED CARVE and move no wall, so a floor authoring none is carved as
-    // it always was. A tile the carve has no free node for in its step's region fails the attempt: a
-    // longer path may have one, and the last attempt names the sequence and the step.
+    // it always was. A step whose region has no free node on some way in fails the attempt: a longer path
+    // may have one, and the last attempt names the sequence, the step and why.
     if (sequences.length > 0) {
       const unplaced = placeSequences(
         cells2D,
@@ -4429,7 +4436,6 @@ const assembleExpandedFloor = (
           }),
           doorKey: gateKeyOf(sequence.resetAt),
         })),
-        siteId,
         new Set(reservedForks.flatMap(pk => freeWaysOut(pk).map(({ neighborKey }) => neighborKey)))
       )
       if (unplaced) {

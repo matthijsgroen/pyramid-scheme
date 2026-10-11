@@ -11,12 +11,11 @@ import {
   hallAnnexSequenceFloor,
   hiddenAnnexSequenceFloor,
   offRouteSequenceFloor,
-  oneRegionSequenceFloor,
+  twoAnnexSequenceFloor,
   tooManyTilesSequenceFloor,
 } from "./testSupport/sequenceFixtures"
 
 const SEEDS = Array.from({ length: 12 }, (_, n) => (n + 1) * 7919)
-const DOOR_KEY = "obstacle:test#0#0:vaultDoor"
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 
 const carved = (make: () => FloorConfig): FloorGrid[] =>
@@ -33,47 +32,90 @@ const tilesOf = (grid: FloorGrid) =>
     .filter(({ cell }) => cell.sequenceTile)
     .sort((a, b) => a.cell.sequenceTile!.step - b.cell.sequenceTile!.step)
 
-const doorOf = (grid: FloorGrid) => rooms(grid).filter(({ cell }) => cell.requiredKeyId === DOOR_KEY)
+// The door the sequence opens and resets at: the one room that works it and is no tile.
+const doorOf = (grid: FloorGrid) =>
+  rooms(grid).filter(({ cell }) => cell.requiredKeyId !== undefined && cell.worksMechanism && !cell.sequenceTile)
 
-const FLOORS: { name: string; make: () => FloorConfig; regions: string[] }[] = [
+const FLOORS: { name: string; make: () => FloorConfig; regions: string[]; id: string }[] = [
   {
-    name: "tiles in the hall, an annex and the hall again",
+    name: "steps in an annex and at the mouth",
     make: hallAnnexSequenceFloor,
-    regions: ["hall", "annex", "hall"],
+    regions: ["annex", "mouth"],
+    id: "plates",
   },
-  { name: "all tiles in one region", make: oneRegionSequenceFloor, regions: ["hall", "hall", "hall"] },
   {
-    name: "tiles spread across off-route regions",
+    name: "a step in a hub and one in each of its annexes, laid from a lock",
     make: offRouteSequenceFloor,
-    regions: ["east", "west", "hall", "east"],
+    regions: ["plates.hall", "plates.east", "plates.west"],
+    id: "plates.plates",
   },
 ]
 
-describe.each(FLOORS)("a sequence over $name", ({ make, regions }) => {
+const isNodeOf = (grid: FloorGrid, key: string, region: string) => {
+  const [r, c] = key.split(",").map(Number)
+  const cell = grid.cells[r]?.[c]
+  return (cell?.type === "room" || cell?.type === "corridor") && cell.region === region && !cell.hidden
+}
+
+// Every room of `region` the ground outside it reaches without stepping on a tile of `step`, the entrance counted
+// as outside.
+const roomsReachedRound = (grid: FloorGrid, region: string, step: number): string[] => {
+  const entrance = `${grid.entrancePos[0]},${grid.entrancePos[1]}`
+  const blocked = new Set(
+    tilesOf(grid)
+      .filter(({ cell }) => cell.sequenceTile!.step === step)
+      .map(({ r, c }) => `${r},${c}`)
+  )
+  const inside = (key: string) => key !== entrance && isNodeOf(grid, key, region)
+  const queue = grid.cells.flatMap((row, r) =>
+    row.flatMap((cell, c) =>
+      (cell.type === "room" || cell.type === "corridor") && !cell.hidden && !inside(`${r},${c}`) ? [`${r},${c}`] : []
+    )
+  )
+  const seen = new Set([...queue, ...blocked])
+  const reached: string[] = []
+  for (let at = 0; at < queue.length; at++) {
+    const [r, c] = queue[at].split(",").map(Number)
+    const cell = grid.cells[r][c]
+    if (cell.type !== "room" && cell.type !== "corridor") continue
+    for (const dir of cell.dirs as ReadonlySet<Direction>) {
+      const next = `${r + MOVES[dir][0]},${c + MOVES[dir][1]}`
+      const there = grid.cells[r + MOVES[dir][0]]?.[c + MOVES[dir][1]]
+      if (seen.has(next) || !there || (there.type !== "room" && there.type !== "corridor") || there.hidden) continue
+      seen.add(next)
+      queue.push(next)
+      if (inside(next) && there.type === "room") reached.push(next)
+    }
+  }
+  return reached
+}
+
+describe.each(FLOORS)("a sequence over $name", ({ make, regions, id: sequenceId }) => {
   const grids = carved(make)
 
   it("carves on at least one seed", () => {
     expect(grids.length).toBeGreaterThan(0)
   })
 
-  it("stands exactly one tile per step, each in the region its step names", () => {
+  it("stands every step's tiles in the region its step names, on every way into it", () => {
     for (const grid of grids) {
       const tiles = tilesOf(grid)
-      expect(tiles.map(({ cell }) => cell.sequenceTile!.step)).toEqual(regions.map((_, step) => step))
-      expect(tiles.map(({ cell }) => cell.region)).toEqual(regions)
+      expect([...new Set(tiles.map(({ cell }) => cell.sequenceTile!.step))]).toEqual(regions.map((_, step) => step))
+      for (const { cell } of tiles) expect(cell.region).toBe(regions[cell.sequenceTile!.step])
+      for (const [step, region] of regions.entries()) expect(roomsReachedRound(grid, region, step)).toEqual([])
     }
   })
 
-  it("puts two steps in one region on two distinct cells", () => {
+  it("gives every step a glyph of its own, worn by each of its tiles, distinct from every mark on the floor", () => {
     for (const grid of grids) {
-      const places = tilesOf(grid).map(({ r, c }) => `${r},${c}`)
-      expect(new Set(places).size).toBe(regions.length)
-    }
-  })
-
-  it("gives every tile a glyph of its own, distinct from every mark on the floor", () => {
-    for (const grid of grids) {
-      const glyphs = tilesOf(grid).map(({ cell }) => cell.sequenceTile!.glyph)
+      const glyphOf = new Map<number, Set<number>>()
+      for (const { cell } of tilesOf(grid))
+        glyphOf.set(
+          cell.sequenceTile!.step,
+          (glyphOf.get(cell.sequenceTile!.step) ?? new Set()).add(cell.sequenceTile!.glyph)
+        )
+      for (const worn of glyphOf.values()) expect(worn.size).toBe(1)
+      const glyphs = [...glyphOf.values()].flatMap(worn => [...worn])
       const marks = rooms(grid).flatMap(({ cell }) => (cell.mark ? [cell.mark.glyph] : []))
       expect(new Set(glyphs).size).toBe(regions.length)
       for (const glyph of glyphs) expect(MARK_GLYPHS).toContain(glyph)
@@ -85,12 +127,12 @@ describe.each(FLOORS)("a sequence over $name", ({ make, regions }) => {
   it("is one mechanism: one record on the floor, and every tile works that record's one state", () => {
     for (const grid of grids) {
       const records = rooms(grid).filter(({ cell }) => cell.mechanism)
-      expect(records.map(({ cell }) => cell.mechanismId)).toEqual(["plates"])
+      expect(records.map(({ cell }) => cell.mechanismId)).toEqual([sequenceId])
       const [home] = records
       const addresses = tilesOf(grid).map(({ r, c }) => mechanismAddress(grid, 0, r, c))
       expect(new Set(addresses).size).toBe(1)
       for (const { r, c, cell } of tilesOf(grid)) {
-        expect(cell.worksMechanism?.mechanismId).toBe("plates")
+        expect(cell.worksMechanism?.mechanismId).toBe(sequenceId)
         expect(mechanismWorkedAt(grid, r, c)?.home).toEqual([home.r, home.c])
       }
     }
@@ -132,7 +174,14 @@ describe.each(FLOORS)("a sequence over $name", ({ make, regions }) => {
       const [home] = rooms(grid).filter(({ cell }) => cell.mechanism)
       const id = `obstacle ${home.r},${home.c}`
       const { of } = regionsOf(grid)
-      const tileRegion = tilesOf(grid).map(({ r, c }) => of.get(`${r},${c}`)!)
+      const tileRegions = regions.map(
+        (_, step) =>
+          new Set(
+            tilesOf(grid)
+              .filter(({ cell }) => cell.sequenceTile!.step === step)
+              .map(({ r, c }) => of.get(`${r},${c}`)!)
+          )
+      )
       const [door] = doorOf(grid)
       const doorSides = new Set(
         [...(door.cell.dirs as ReadonlySet<Direction>)]
@@ -155,11 +204,11 @@ describe.each(FLOORS)("a sequence over $name", ({ make, regions }) => {
           const region = order[from].region
           const entered = order[to].region
           const walked = Number(before)
-          const advance = after === progressState(walked + 1) && entered === tileRegion[walked]
+          const advance = after === progressState(walked + 1) && tileRegions[walked].has(entered)
           const spoil =
             /^\d+$/.test(before) &&
             Array.from({ length: n - walked - 1 }, (_, j) => walked + 1 + j).some(
-              wrong => after === spoiledState(walked, wrong) && entered === tileRegion[wrong]
+              wrong => after === spoiledState(walked, wrong) && tileRegions[wrong].has(entered)
             )
           const reset = after === progressState(0) && before !== progressState(n) && doorSides.has(region)
           expect(advance || spoil || reset, `${before} -> ${after} in ${region}`).toBe(true)
@@ -177,7 +226,12 @@ describe("a sequence the carve cannot stand as written", () => {
     expect(result).toEqual({
       success: false,
       reasons: [
-        { type: "sequenceTileNotPlaced", id: "plates", step: 0 },
+        {
+          type: "sequenceTileNotPlaced",
+          id: "plates",
+          step: 0,
+          reason: "no free node of annex stands on its way in from hall",
+        },
         { type: "regionsNotJoined", between: ["hall", "annex"] },
         { type: "layoutNotFound" },
       ],
@@ -203,7 +257,7 @@ describe("a sequence the carve cannot stand as written", () => {
 // A switch fills a junction the floor reserves with `forks`, so standing one there may not move the carve: the
 // tiles go where they go whether or not a switch has shut that junction's ways out.
 describe("a sequence over off-route regions, on a floor that reserves a fork", () => {
-  const make = offRouteSequenceFloor
+  const make = twoAnnexSequenceFloor
   const reEnterable: ResolveEncounter = (encounter, tag) => ({
     ...defaultResolveEncounter(encounter, tag),
     reEnterable: true,

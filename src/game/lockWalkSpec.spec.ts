@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { checkLockSpec, entering, reachableStates, walkLock } from "./lockWalk"
+import { checkLockSpec, entering, leaving, reachableStates, walkLock } from "./lockWalk"
 import { walkSpecOf, isStretch, WEIGHTS, needsFace, openAtStart, readable } from "./lockWalkSpec"
 import { parseLock } from "./lockNotation"
 import { solveLock } from "./lockReview"
@@ -30,7 +30,7 @@ const LANTERNS = `
   L3 activator @north
   L4 activator @east
 `
-const SEQUENCE = "in -- hall\nhall -[P]- out\nP sequence in hall in reset hall-out"
+const SEQUENCE = "in -- hall\nhall -- far\nhall -[P]- out\nP sequence hall far in reset hall-out"
 
 describe("walkSpecOf", () => {
   it("compiles a mirror fork to a well-formed lock that walks sound", () => {
@@ -55,10 +55,10 @@ describe("walkSpecOf", () => {
 
   it("steps on a tile by entering its region, resets only beside its door, and keeps done", () => {
     const P = compiled(SEQUENCE).mechanisms.P
-    expect(P.entries).toContainEqual({ from: progressState(0), to: progressState(1), at: "in" })
-    expect(P.entries).toContainEqual({ from: progressState(1), to: progressState(2), at: "hall" })
+    expect(P.entries).toContainEqual({ from: progressState(0), to: progressState(1), at: "hall" })
+    expect(P.entries).toContainEqual({ from: progressState(1), to: progressState(2), at: "far" })
     expect(P.entries).toContainEqual({ from: progressState(2), to: progressState(3), at: "in" })
-    expect(P.entries).toContainEqual({ from: progressState(0), to: spoiledState(0, 1), at: "hall" })
+    expect(P.entries).toContainEqual({ from: progressState(0), to: spoiledState(0, 1), at: "far" })
     expect(P.transitions).toContainEqual({ from: spoiledState(0, 1), to: progressState(0), at: "hall" })
     expect([...P.transitions, ...P.entries!].filter(t => t.from === progressState(3))).toEqual([])
     expect(new Set(P.transitions.map(t => t.at))).toEqual(new Set(["hall", "out"]))
@@ -78,11 +78,29 @@ describe("walkSpecOf", () => {
     expect(entering(spec, "in", { region: "b", config: { P: progressState(0) } }).config.P).toBe(spoiledState(0, 1))
   })
 
-  it("never steps on the tile of the region the walk starts in until it is entered", () => {
+  it("steps on the tile of the region the walk starts in as it arrives from the floor's entrance", () => {
     const found = reachableStates(compiled("in -- a\nin -[P]- out\nP sequence in a reset in-out"))
     if (found === "tooLarge") throw new Error("expected a walkable lock")
-    expect(found.order[0].config.P).toBe(progressState(0))
-    expect(found.order.some(state => state.region === "a" && state.config.P === spoiledState(0, 1))).toBe(true)
+    expect(found.order[0].config.P).toBe(progressState(1))
+  })
+
+  it("spoils a run at the start when the way in holds a later step, and the reset at the door recovers it", () => {
+    const spec = compiled("in -- a\na -[P]- out\nP sequence a in reset a-out")
+    const found = reachableStates(spec)
+    if (found === "tooLarge") throw new Error("expected a walkable lock")
+    expect(found.order[0].config.P).toBe(spoiledState(0, 1))
+    expect(walkLock(spec).sound).toBe(true)
+  })
+
+  it("steps on a room's tile on the way out of it too, so a room between the way in and an earlier step spoils it", () => {
+    const spec = compiled(TWO_ROOMS)
+    expect(leaving(spec, "a", { region: "in", config: { P: progressState(0) } }).config.P).toBe(progressState(1))
+    expect(walkLock(compiled("in -- hall\nhall -- east\nhall -[P]- out\nP sequence east hall reset hall-out"))).toEqual(
+      {
+        sound: false,
+        failure: { type: "goalUnreachable", label: "sequence P" },
+      }
+    )
   })
 
   it("steps on every tile a route passes through, so a far tile behind a later one is never walked in order", () => {

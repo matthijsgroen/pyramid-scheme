@@ -194,7 +194,7 @@ describe("the procession on dev pyramid 10", { timeout: 120_000 }, () => {
   it("is authored as the production lock, bound at the pyramid, with a recorded pin", () => {
     expect(procession.locks).toEqual([{ lock: processionalLock() }])
     expect(procession.realisations).toEqual({ sequence: "pressure-plate", "one-way": "zipline" })
-    expect(procession.seed).toBe(4293857890)
+    expect(procession.seed).toBe(4293857870)
     expect(procession.packing).toBeUndefined()
   })
 
@@ -205,22 +205,22 @@ describe("the procession on dev pyramid 10", { timeout: 120_000 }, () => {
     expect(walkFloorLock(result.grid)).toEqual({ sound: true, states: expect.any(Number) })
   })
 
-  it("stands three tiles, one in each region its steps name, in the order cellar, east, west", () => {
+  it("stands the tiles of its three steps in the regions they name, in the order cellar, east, west", () => {
     const tiles = tilesOf(carvedAt(procession, PROCESSION_LEVEL))
-    expect(tiles.map(({ cell }) => cell.sequenceTile!.step)).toEqual([0, 1, 2])
-    expect(tiles.map(({ cell }) => cell.region)).toEqual([
-      "processional.cellar",
-      "processional.east",
-      "processional.west",
-    ])
+    expect([...new Set(tiles.map(({ cell }) => cell.sequenceTile!.step))]).toEqual([0, 1, 2])
+    const regionOf = ["processional.cellar", "processional.east", "processional.west"]
+    for (const { cell } of tiles) expect(cell.region).toBe(regionOf[cell.sequenceTile!.step])
   })
 
-  it("stands every tile where it cannot be walked round: nothing joins its two sides without it", () => {
+  it("stands a step's tile on every way into its region: no room of it is reached round them", () => {
     const grid = carvedAt(procession, PROCESSION_LEVEL)
     const drops = oneWayRuns(grid)
-    const joined = (from: [number, number], without: string): Set<string> => {
-      const seen = new Set<string>([without, `${from[0]},${from[1]}`])
-      const queue = [from]
+    const entrance = `${grid.entrancePos[0]},${grid.entrancePos[1]}`
+    for (const step of [0, 1, 2]) {
+      const ofStep = tilesOf(grid).filter(({ cell }) => cell.sequenceTile!.step === step)
+      const region = ofStep[0].cell.region
+      const seen = new Set<string>([entrance, ...ofStep.map(({ at }) => `${at[0]},${at[1]}`)])
+      const queue: [number, number][] = [grid.entrancePos as [number, number]]
       const visit = (r: number, c: number) => {
         const next = grid.cells[r]?.[c]
         if (!next || next.type === "empty" || seen.has(`${r},${c}`)) return
@@ -231,28 +231,21 @@ describe("the procession on dev pyramid 10", { timeout: 120_000 }, () => {
         const [r, c] = queue[at]
         const cell = grid.cells[r][c]
         if (cell.type === "empty") continue
+        expect(cell.type === "room" && cell.region === region && !cell.sequenceTile, `step ${step} at ${r},${c}`).toBe(
+          false
+        )
         for (const dir of cell.dirs) visit(r + MOVES[dir][0], c + MOVES[dir][1])
-        for (const run of drops) {
-          if (run.launch[0] === r && run.launch[1] === c) visit(run.landing[0], run.landing[1])
-        }
+        for (const run of drops) if (run.launch[0] === r && run.launch[1] === c) visit(run.landing[0], run.landing[1])
       }
-      return seen
-    }
-    for (const { cell, at } of tilesOf(grid)) {
-      const own = `${at[0]},${at[1]}`
-      const [a, b] = [...cell.dirs].map(dir => [at[0] + MOVES[dir][0], at[1] + MOVES[dir][1]] as [number, number])
-      expect(cell.dirs.size).toBe(2)
-      expect(
-        joined(a, own).has(`${b[0]},${b[1]}`) || joined(b, own).has(`${a[0]},${a[1]}`),
-        `tile ${cell.sequenceTile!.step}`
-      ).toBe(false)
     }
   })
 
   it("draws the order and the reset on its door: the glyphs in step order, and the way to start again once the run is spoiled", () => {
     const base = carvedAt(procession, PROCESSION_LEVEL)
-    const tiles = tilesOf(base)
-    const [home] = tiles
+    const tiles = tilesOf(base).filter(
+      ({ cell }, n, all) => all.findIndex(other => other.cell.sequenceTile!.step === cell.sequenceTile!.step) === n
+    )
+    const home = tilesOf(base).find(({ cell }) => cell.mechanism)!
     const address = cellAddress(base, 0, home.at[0], home.at[1])!
     const faceAt = (state: string) => {
       const { grid } = assembledWith(procession, PROCESSION_LEVEL, new Map([[address, state]]))

@@ -60,15 +60,17 @@ export const resettableStates = (tiles: number): string[] =>
 
 /**
  * THE RECORD OF ONE SEQUENCE, with its moves placed where they are made: advancing and spoiling at the
- * tiles, resetting at the door. Every move is placed (`placedOnly`), so the solver and play offer exactly
- * these and no other; the reset is offered out of every state but the first and the last.
+ * tiles, resetting at the door. `tiles` holds every cell of each step, in step order: a step stands a tile on
+ * each way into its region, and each of them makes that step's moves. Every move is placed (`placedOnly`), so
+ * the solver and play offer exactly these and no other; the reset is offered out of every state but the first
+ * and the last.
  */
 export const compileSequence = ({
   tiles,
   door,
   gates,
 }: {
-  tiles: readonly Place[]
+  tiles: readonly (readonly Place[])[]
   door: Place
   gates: readonly { gateKeyId: string; mode?: "any" }[]
 }): MechanismRecord => ({
@@ -82,7 +84,7 @@ export const compileSequence = ({
   })),
   placedOnly: true,
   transitions: [
-    ...tileMoves(tiles),
+    ...tileMoves(tiles).flatMap(({ at, ...move }) => at.map(place => ({ ...move, at: place }))),
     ...resettableStates(tiles.length).map(from => ({ from, to: progressState(0), at: door })),
   ],
 })

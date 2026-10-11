@@ -40,7 +40,7 @@ const platesLock = (): Lock => ({
   mechanics: {
     plates: {
       control: "sequence",
-      steps: [{ in: "hall" }, { in: "annex" }, { in: "hall" }],
+      steps: [{ in: "hall" }, { in: "annex" }, { in: "mouth" }],
       resetAt: "vaultDoor",
       opens: { done: ["vaultDoor"] },
     },
@@ -194,28 +194,31 @@ describe("the plan of a lock floor", () => {
     })
   })
 
-  it("seats one tile per step of a sequence, two in a region where it steps there twice", () => {
+  it("seats a threshold for each step of a sequence in the region the step names", () => {
     expect(planOf([{ lock: platesLock() }])).toEqual({
       route: ["entrance", "plates.mouth", "plates.hall", "plates.vault", "exit"],
       regions: [
         { id: "entrance", onRoute: true, seats: [], minNodes: 1 },
-        { id: "plates.mouth", owner: "plates", onRoute: true, seats: [], minNodes: 1 },
+        {
+          id: "plates.mouth",
+          owner: "plates",
+          onRoute: true,
+          seats: [{ for: "threshold", control: "plates.plates", step: 2 }],
+          minNodes: 1,
+        },
         {
           id: "plates.hall",
           owner: "plates",
           onRoute: true,
-          seats: [
-            { for: "tile", control: "plates.plates", step: 0 },
-            { for: "tile", control: "plates.plates", step: 2 },
-          ],
-          minNodes: 2,
+          seats: [{ for: "threshold", control: "plates.plates", step: 0 }],
+          minNodes: 1,
         },
         {
           id: "plates.annex",
           owner: "plates",
           onRoute: false,
           mouth: "plates.hall",
-          seats: [{ for: "tile", control: "plates.plates", step: 1 }],
+          seats: [{ for: "threshold", control: "plates.plates", step: 1 }],
           minNodes: 1,
         },
         { id: "plates.vault", owner: "plates", onRoute: true, seats: [], minNodes: 1 },

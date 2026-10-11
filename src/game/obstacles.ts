@@ -243,6 +243,9 @@ export type TopologyFault =
   | { type: "sequenceTooShort"; id: string }
   /** A sequence's step names a region this floor's layout does not declare. */
   | { type: "sequenceStepNamesNoRegion"; id: string; step: number }
+  /** Two steps name one region. A step's tile stands on every way into its region, so one crossing would step on
+   * both. `step` is the later one, `earlier` the step it repeats. */
+  | { type: "sequenceRegionRepeated"; id: string; step: number; earlier: number }
   /** A sequence's `opens` names something that is not a gate of this floor; `gate` is what it named. */
   | { type: "sequenceOpensNotAGate"; id: string; gate: string }
   /** A sequence's `resetAt` is not an edge gate, so there is no one door to start again at. */
@@ -415,6 +418,8 @@ const sequenceFaults = (
   if (steps.length < 2) faults.push({ type: "sequenceTooShort", id })
   steps.forEach((step, n) => {
     if (!regions.has(step.in)) faults.push({ type: "sequenceStepNamesNoRegion", id, step: n })
+    const earlier = steps.findIndex(other => other.in === step.in)
+    if (earlier < n) faults.push({ type: "sequenceRegionRepeated", id, step: n, earlier })
   })
   const shutByThis = new Set<string>()
   const barredByThis = new Set<string>()

@@ -454,7 +454,7 @@ describe("a lock compiles into the floor's vocabulary", () => {
       two: { control: "activator", in: "annex", starts: "unlit", opens: { unlit: [], lit: ["door"] } },
       plates: {
         control: "sequence",
-        steps: [{ in: "hall" }, { in: "annex" }, { in: "hall" }],
+        steps: [{ in: "hall" }, { in: "annex" }, { in: "in" }],
         resetAt: "grate",
         opens: { done: ["grate"] },
       },
@@ -486,7 +486,7 @@ describe("a lock compiles into the floor's vocabulary", () => {
     expect(fragmentOf(hallLock()).controls[2]).toEqual({
       id: "plates",
       control: "sequence",
-      steps: [{ in: "hall" }, { in: "annex" }, { in: "hall" }],
+      steps: [{ in: "hall" }, { in: "annex" }, { in: "in" }],
       resetAt: "grate",
       opens: { done: ["grate"] },
       encounter: "plates",

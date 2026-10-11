@@ -242,6 +242,7 @@ const straight = (labels: string[]) => {
     depth: new Map(keys.map((key, i) => [key, i])),
     open: new Set(keys),
     doors: new Set<string>(),
+    thresholds: new Set<string>(),
     junctions: [],
     drops: [],
     seatDemand: new Map<string, number>(),

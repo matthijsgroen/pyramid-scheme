@@ -34,8 +34,8 @@ const mechanismSlot = (mechanismId: string): string => `xmech:${mechanismId}`
  *   never the family — binding the mechanism to another realisation must not move its progress
  * - an obstacle's gate carries its own authored id — a region layout can stand more than one on the
  *   SAME main path, so family alone would not tell them apart
- * - a sequence's tile is the sequence's authored id plus its step in the order, so every tile has a name of
- *   its own and the first tile's is the one its single state is filed under
+ * - a sequence's tile is the sequence's authored id plus its step in the order and the region its way in comes
+ *   from, so every tile has a name of its own; the first tile of step 0 is the one its single state is filed under
  * - a region barrier has one door per entrance, all asking for one key, so each is named by the authored id
  *   PLUS the neighbouring region it is the entrance from
  * - a staircase is its `stairId`; the two plain portals are the entrance and the exit
@@ -69,7 +69,8 @@ export const cellSlot = (grid: FloorGrid, row: number, col: number): string | nu
   // (RoomCell.mechanismId).
   // A sequence's tile is named by the sequence, which is a kind of control with one state across several
   // cells, not a realisation: it carries no family.
-  if (cell.sequenceTile) return `xsequence:${cell.sequenceTile.id}#${cell.sequenceTile.step}`
+  if (cell.sequenceTile)
+    return `xsequence:${cell.sequenceTile.id}#${cell.sequenceTile.step}@${cell.sequenceTile.entrance}`
   // A plate is named by its own authored id, so several plates in one section are told apart; the first holds
   // the stones' one state.
   if (cell.plate) return `xplate:${cell.plate.id}`

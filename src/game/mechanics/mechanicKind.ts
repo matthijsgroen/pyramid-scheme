@@ -25,8 +25,9 @@ export type CompileContext = {
 /** What one mechanic becomes on a floor: its controls, and the junctions it asks the carve to lay. */
 export type Compiled = { controls: Control[]; forks?: ForkDemand[] }
 
-/** What a control needs a node for: its own board, one tile of a sequence, or the cell a fork is operated from. */
-export type ControlSeatKind = "control" | "tile" | "junction"
+/** What a control needs a node for: its own board, one tile (a plate), a node on every way into the region (a
+ * sequence's step), or the cell a fork is operated from. */
+export type ControlSeatKind = "control" | "tile" | "threshold" | "junction"
 
 /**
  * ONE KIND OF CONTROL, a plug-in OF CORE (docs/mods/mechanic-contract.md): the state machine a player drives,

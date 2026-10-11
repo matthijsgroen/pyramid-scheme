@@ -10,6 +10,8 @@ import { offRouteChains, regionRoute } from "./regions"
 export type PlanSeat =
   | { for: "control"; control: string }
   | { for: "tile"; control: string; step: number }
+  /** A sequence's step: a node on every corridor arriving in the region, at the region's end (laidFloor.ts). */
+  | { for: "threshold"; control: string; step: number }
   | { for: "junction"; control: string }
   /** `corridor`: the corridor it stands on, named where its pair has more than one. */
   | { for: "door"; barrier: string; entrance: string; corridor?: string }
@@ -80,8 +82,8 @@ const seatsOf = (control: Control, kinds: ResolveMechanicKind) =>
   (kinds(controlKindOf(control))?.seats?.(control) ?? []).map(({ region, seat }, step) => ({
     region,
     seat:
-      seat === "tile"
-        ? ({ for: "tile", control: control.id, step } as const)
+      seat === "tile" || seat === "threshold"
+        ? ({ for: seat, control: control.id, step } as const)
         : ({ for: seat, control: control.id } as const),
   }))
 

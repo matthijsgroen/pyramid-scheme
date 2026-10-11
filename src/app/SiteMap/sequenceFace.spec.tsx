@@ -5,7 +5,7 @@ import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
 import { cellAddress } from "@/game/cellAddress"
 import { findPath } from "@/game/gridNavigation"
 import { progressState, sequenceStates, spoiledState, tileStatus } from "@/game/sequence"
-import { hallAnnexSequenceFloor, oneRegionSequenceFloor } from "@/game/testSupport/sequenceFixtures"
+import { offRouteSequenceFloor } from "@/game/testSupport/sequenceFixtures"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { useEncounter } from "./useEncounter"
 import { SiteMapView } from "./SiteMapView"
@@ -18,6 +18,7 @@ import {
   routesAreClean,
   sequenceHarness,
   tilesOf,
+  allTilesOf,
   type Place,
 } from "./sequenceHarness.testing"
 import "@/mods/registerModApps"
@@ -30,8 +31,7 @@ vi.mock("react-i18next", () => ({
 }))
 
 const FLOORS: { name: string; make: () => FloorConfig }[] = [
-  { name: "tiles in the hall, an annex and the hall again", make: hallAnnexSequenceFloor },
-  { name: "all tiles in one region", make: oneRegionSequenceFloor },
+  { name: "a step in a hub and one in each of its annexes", make: offRouteSequenceFloor },
 ]
 
 const carved = new Map<string, { seed: number; grid: FloorGrid; config: FloorConfig }>()
@@ -174,7 +174,7 @@ describe.each(FLOORS)("the door of a sequence over $name", ({ name }) => {
       <SiteMapView grid={revealed(h.current().grid!)} currentFloor={0} mechanismStates={h.current().mechanismStates} />
     )
     const looks = Array.from(container.querySelectorAll("[data-plate]")).map(el => el.getAttribute("data-status"))
-    expect(looks).toHaveLength(tilesOf(grid).length)
+    expect(looks).toHaveLength(allTilesOf(grid).length)
     expect(new Set(looks)).toEqual(new Set(["unwalked"]))
   })
 

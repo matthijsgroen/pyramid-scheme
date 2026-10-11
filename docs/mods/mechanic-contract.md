@@ -71,18 +71,28 @@ waiting for, the way a ward gate already shows the key it wants.
 
 ### 3.1 The sequence
 
-- The lock expresses **order** only. The carve picks the hieroglyphs, from a set, **unique within a
-  floor** so two sequences never share a symbol.
-- **Walking is stepping.** Entering a tile's region steps on its tile; there is no choice, and the region the
-  walk starts in is not entered until the player comes back to it. A tile still in fog counts too when it is
-  walked over.
+- The lock expresses **order** only. The carve picks the hieroglyphs, from a set, one per **step**, **unique
+  within a floor** so two steps and two sequences never share a symbol.
+- **A step lives in a room** (a region). Its tile stands on **every way into that room**: one tile cell per
+  entrance corridor, at the room's threshold, all the same step wearing the same glyph. A hub entered three ways
+  has three tiles of one step. Entering the room from any side crosses the step's tile, and so does walking out
+  of it, except by a drop. Two steps of one sequence never name one room (`sequenceRegionRepeated`): one
+  crossing would step on both.
+- **Walking is stepping.** Crossing into a step's room steps on its tile, and so does crossing out of it; there
+  is no choice. A tile still in fog counts too when it is walked over.
+- **The floor's entrance comes before the lock.** Arriving in the lock's `in` from the floor's start is an entry,
+  so a step in `in` is stepped on at the start; a run spoiled there is recovered by the reset at the door. On the
+  floor the entrance counts as outside the room it stands in, so that room's tile stands on the way out of the
+  start and the first step off the entrance crosses it: play presses only cells walked over.
 - **A tile already walked in order does nothing** when stepped on again: the run stays correct, because the
   ground to the tiles ahead may run across it.
 - **Only a tile ahead of the one due spoils the run.** The reset at the door clears a spoiled run; a done run
   stays done.
 - Players explore, may step on tiles by accident, read the order on the door, reset, then walk it. The lock
   tool (`walkSpecOf`), the floor walk (`floorLock`) and play (`walkPresses`) keep this one rule, from
-  `sequence.ts`.
+  `sequence.ts`: every tile of a step works that step.
+- Because the reset is made inside the door's room, a step k > 0 in that room strands the run when an earlier
+  step lies outside it: walking out after the reset steps on it out of order. The walks refuse such a lock.
 - Each tile shows its own state: not yet walked, walked in the right order, walked in the wrong order.
 - A wrong step **registers** rather than doing nothing, so the player can see they have spoiled the run.
 - **Progress survives leaving.** It is an ordinary state like any other, and only the reset clears it.
@@ -425,12 +435,13 @@ Four of them on one door is four torches and the default `and`:
                 "owners": ["brazier1", "brazier2", "brazier3", "brazier4"] }
 ```
 
-**sequence** — tiles walked in order, with a reset at the door. Each step names its own region, so the
-author places them; the carve picks the hieroglyphs, distinct within a floor.
+**sequence** — tiles walked in order, with a reset at the door. Each step names its own region, a different one
+for every step, so the author places them; the carve stands each step's tile on every way into its region and
+picks one hieroglyph per step, distinct within a floor.
 
 ```json
 "plates": { "control": "sequence", "in": "hall",
-            "steps":   [{ "in": "hall" }, { "in": "vault" }, { "in": "hall" }],
+            "steps":   [{ "in": "hall" }, { "in": "vault" }, { "in": "mouth" }],
             "resetAt": "hall-vault",
             "opens":   { "done": ["hall-vault"] } }
 ```
@@ -497,7 +508,8 @@ Each is measured in `topology-status.md` §6.
 3. **An open gate keeps its symbol and colour**, or the player cannot reason that it will shut when
    another opens.
 4. **Two mechanics on one floor never share a mark**, and the same assignment must give a sequence's
-   tiles distinct hieroglyphs — a repeated symbol does not merely confuse, it makes the order unreadable.
+   steps distinct hieroglyphs (every tile of one step wears its step's) — a repeated symbol does not merely
+   confuse, it makes the order unreadable.
 5. **A realisation decides the drawing**, which `encounter` does not do today.
 6. **`openDoorsFor` and `floorLock` must agree on a door naming more than one key.** This was documented
    and left alone on 2026-10-01, correctly, because nothing could author such a door. Floor keys taking
@@ -525,9 +537,9 @@ example and 12 undoes a decision made the same afternoon.
     connection merges them into one region of the compiled lock. A sequence's tiles placed in separate
     regions collapse into one and the walk cannot see the order — which is exactly what §7's
     `connections` field was added for.
-13. **A step onto a tile is not optional.** A tile is a region of one cell on a cut of the walk, and the
-    solver makes its transition on entering that region (`Mechanism.entries`), never as a move the player
-    may decline; a floor no walk completes in order is refused naming the sequence (`Mechanism.goal`).
+13. **A step onto a tile is not optional.** A tile is a region of one cell on a way into its step's room, and
+    the solver makes its transition on crossing into or out of that region (`Mechanism.entries`), never as a
+    move the player may decline; a floor no walk completes in order is refused naming the sequence (`Mechanism.goal`).
 14. **A mechanic's state may live across several cells.** `mechanismStates` is keyed by one cell
     address; a sequence has one state and many tiles.
 15. **A cell's slot must not embed the family.** It is `x<family>:<mechanismId>` today, so binding one

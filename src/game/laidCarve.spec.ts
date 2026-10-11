@@ -22,7 +22,7 @@ import { BINDING, mirrorForkLock, sluiceLock } from "./testSupport/lockFixtures"
 
 const SEEDS = Array.from({ length: 40 }, (_, i) => i + 1)
 
-/** Tiles in the hall, an annex off it and the hall again; the sequence opens the way on to the vault. */
+/** Tiles in the hall, an annex off it and the mouth; the sequence opens the way on to the vault. */
 const platesLock = (): Lock => ({
   name: "plates",
   regions: { mouth: { takes: "free" }, hall: { takes: "free" }, annex: { takes: "free" }, vault: { takes: "free" } },
@@ -31,7 +31,7 @@ const platesLock = (): Lock => ({
   mechanics: {
     plates: {
       control: "sequence",
-      steps: [{ in: "hall" }, { in: "annex" }, { in: "hall" }],
+      steps: [{ in: "hall" }, { in: "annex" }, { in: "mouth" }],
       resetAt: "vaultDoor",
       opens: { done: ["vaultDoor"] },
     },

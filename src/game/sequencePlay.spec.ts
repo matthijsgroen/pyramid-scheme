@@ -5,14 +5,14 @@ import { cellAddress } from "./cellAddress"
 import { withGateFaces } from "./gateFace"
 import { progressState, spoiledState } from "./sequence"
 import { tileStatusAt, walkPresses } from "./sequencePlay"
-import { hallAnnexSequenceFloor } from "./testSupport/sequenceFixtures"
+import { offRouteSequenceFloor } from "./testSupport/sequenceFixtures"
 
 type Place = readonly [number, number]
 
 let grid: FloorGrid
 beforeAll(() => {
   for (let seed = 1; seed < 60; seed++) {
-    const result = assembleFloor("test", hallAnnexSequenceFloor(), seed)
+    const result = assembleFloor("test", offRouteSequenceFloor(), seed)
     if (result.success) {
       grid = result.grid
       return
@@ -21,15 +21,23 @@ beforeAll(() => {
   throw new Error("no seed carved")
 })
 
-const tiles = (g: FloorGrid) =>
+const stepOf = (cell: GridCell) => (cell.type === "room" ? cell.sequenceTile!.step : -1)
+
+// Every tile, a step standing one on each way into its region.
+const allTiles = (g: FloorGrid) =>
   g.cells
     .flatMap((row, r) => row.map((cell, c) => ({ cell, at: [r, c] as Place })))
     .filter(({ cell }) => cell.type === "room" && cell.sequenceTile)
-    .sort(
-      (a, b) =>
-        (a.cell as { sequenceTile: { step: number } }).sequenceTile.step -
-        (b.cell as { sequenceTile: { step: number } }).sequenceTile.step
+
+// One tile per step, in step order: step 0's the one holding the record.
+const tiles = (g: FloorGrid) =>
+  allTiles(g)
+    .filter(
+      ({ cell }, n, all) =>
+        cell.type === "room" &&
+        (stepOf(cell) === 0 ? cell.mechanism !== undefined : all.findIndex(t => stepOf(t.cell) === stepOf(cell)) === n)
     )
+    .sort((a, b) => stepOf(a.cell) - stepOf(b.cell))
 
 const lit = (g: FloorGrid): FloorGrid => ({
   ...g,
@@ -49,6 +57,16 @@ describe("the writes a walk makes to a sequence", () => {
     const writes = walkPresses(lit(grid), 0, [[0, 0], a, b, c], new Map())
     expect(writes.map(w => w.state)).toEqual([progressState(1), progressState(2), progressState(3)])
     expect(new Set(writes.map(w => w.address))).toEqual(new Set([home()]))
+  })
+
+  it("any tile of a step works that step", () => {
+    const ofStep = (step: number) => allTiles(grid).filter(({ cell }) => stepOf(cell) === step)
+    expect(ofStep(0).length).toBeGreaterThan(1)
+    for (const { at } of ofStep(0))
+      expect(walkPresses(lit(grid), 0, [[0, 0], at], new Map())).toEqual([{ address: home(), state: progressState(1) }])
+    for (const first of ofStep(0))
+      for (const second of ofStep(1))
+        expect(walkPresses(lit(grid), 0, [[0, 0], first.at, second.at], new Map()).at(-1)?.state).toBe(progressState(2))
   })
 
   it("the cell the walk starts on is not stepped onto", () => {

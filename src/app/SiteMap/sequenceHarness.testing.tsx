@@ -43,10 +43,18 @@ export const roomsOf = (grid: FloorGrid): { cell: RoomCell; at: Place }[] =>
     row.flatMap((cell, c) => (cell.type === "room" ? [{ cell, at: [r, c] as Place }] : []))
   )
 
-/** The sequence's tiles in step order, with where each stands. */
+/** Every tile of the sequence: a step stands one on each way into its region. */
+export const allTilesOf = (grid: FloorGrid) => roomsOf(grid).filter(({ cell }) => cell.sequenceTile)
+
+/** One tile per step, in step order, with where it stands: step 0's the one holding the record, every other the
+ * first on the floor. */
 export const tilesOf = (grid: FloorGrid) =>
-  roomsOf(grid)
-    .filter(({ cell }) => cell.sequenceTile)
+  allTilesOf(grid)
+    .filter(({ cell }, n, all) =>
+      cell.sequenceTile!.step === 0
+        ? cell.mechanism !== undefined
+        : all.findIndex(other => other.cell.sequenceTile!.step === cell.sequenceTile!.step) === n
+    )
     .sort((a, b) => a.cell.sequenceTile!.step - b.cell.sequenceTile!.step)
 
 /** The tile cell the sequence's record lives on. */
@@ -74,7 +82,7 @@ export const routesAreClean = (grid: FloorGrid): boolean => {
       path.length > 0 &&
       path
         .slice(1, -1)
-        .every(([r, c]) => !tiles.some(t => t.cell.sequenceTile!.step >= k && t.at[0] === r && t.at[1] === c))
+        .every(([r, c]) => !allTilesOf(grid).some(t => t.cell.sequenceTile!.step > k && t.at[0] === r && t.at[1] === c))
     )
   })
 }

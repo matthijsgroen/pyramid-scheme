@@ -349,7 +349,10 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
       }
     // A sequence must be completable by some walk, and the refusal names it.
     const tileCount = new Set(
-      (record.transitions ?? []).filter(t => isTile(grid.cells[t.at[0]]?.[t.at[1]])).map(t => posKey(t.at[0], t.at[1]))
+      (record.transitions ?? []).flatMap(t => {
+        const tile = grid.cells[t.at[0]]?.[t.at[1]]
+        return tile?.type === "room" && tile.sequenceTile ? [tile.sequenceTile.step] : []
+      })
     ).size
     const [homeRow, homeCol] = at.split(",").map(Number)
     const home = grid.cells[homeRow][homeCol]

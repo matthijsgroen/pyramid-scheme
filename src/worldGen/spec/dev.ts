@@ -210,10 +210,10 @@ export const devRules: Rule[] = [
     })
     .floor(0, {
       locks: [{ lock: processionalLock() }],
-      // Recorded from the bake's own carve search (searchCarvePair): at the default packing the first seed that carves
-      // on attempt 0, walks sound and leaves no dead region is 23 past the floor's address seed. A dev floor has
+      // Recorded from the bake's own carve search (searchCarvePair): at the default packing the first stamped seed that carves
+      // on attempt 0, walks sound and leaves no dead region is 3 past the floor's address seed. A dev floor has
       // no baked output to carry the pin.
-      seed: 4293857890,
+      seed: 4293857870,
     }),
   // 11 — twoStones, read from its .lock file. One stone holds the vault open while the other is fetched, then
   // both press the exit's two plates. Every region takes `free`, as on the other lock benches.

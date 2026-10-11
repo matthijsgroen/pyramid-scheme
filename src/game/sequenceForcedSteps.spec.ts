@@ -8,20 +8,24 @@ import { walkFloorLock } from "./floorLockWalk"
 import { progressState, spoiledState } from "./sequence"
 import { walkPresses } from "./sequencePlay"
 import { cellAddress } from "./cellAddress"
-import { hallAnnexSequenceFloor, offRouteSequenceFloor, oneRegionSequenceFloor } from "./testSupport/sequenceFixtures"
+import { freeRegions } from "./lockAuthoring"
+import { parseLock } from "./lockNotation"
+import { BINDING, carveLockFloor } from "./testSupport/lockFixtures"
+import { hallAnnexSequenceFloor, offRouteSequenceFloor } from "./testSupport/sequenceFixtures"
 
 const SEEDS = Array.from({ length: 40 }, (_, n) => (n + 1) * 7919)
 const TIMEOUT = 120_000
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 const key = (r: number, c: number) => `${r},${c}`
 
-// minSound is the least of 40 seeds that carve and walk sound; carving 40, 40 and 32 of them, these walked
-// sound on 16, 28 and 16; with tiles seated
-// at random among the cuts, on 6, 28 and 9.
+// minSound is the least of 40 seeds that carve and walk sound; both carved and walked sound on all 40.
 const FLOORS: { name: string; make: () => FloorConfig; minSound: number }[] = [
-  { name: "tiles in the hall, an annex and the hall again", make: hallAnnexSequenceFloor, minSound: 10 },
-  { name: "all tiles in one region", make: oneRegionSequenceFloor, minSound: 15 },
-  { name: "tiles spread across off-route regions", make: offRouteSequenceFloor, minSound: 12 },
+  { name: "steps in an annex and at the mouth", make: hallAnnexSequenceFloor, minSound: 35 },
+  {
+    name: "a step in a hub and one in each of its annexes, laid from a lock",
+    make: offRouteSequenceFloor,
+    minSound: 35,
+  },
 ]
 
 const carved = (make: () => FloorConfig): FloorGrid[] =>
@@ -77,15 +81,29 @@ describe.each(FLOORS)("forced steps over $name", ({ make, minSound }) => {
   )
 
   it(
-    "stands every tile on a cell whose two sides nothing joins without it",
+    "stands every tile on a corridor node of two ways at most, and the rooms of its region are reached only across a tile of its step",
     () => {
       for (const grid of grids)
-        for (const { r, c, cell } of tilesOf(grid)) {
-          const [a, b] = [...(cell.dirs as ReadonlySet<Direction>)].map(
-            dir => [r + MOVES[dir][0], c + MOVES[dir][1]] as [number, number]
+        for (const { cell } of tilesOf(grid)) {
+          expect(cell.dirs.size).toBeLessThanOrEqual(2)
+          const step = cell.sequenceTile!.step
+          const ofStep = new Set(
+            tilesOf(grid)
+              .filter(tile => tile.cell.sequenceTile!.step === step)
+              .map(({ r, c }) => key(r, c))
           )
-          expect(cell.dirs.size).toBe(2)
-          expect(flood(grid, a, new Set([key(r, c)]), true).has(key(...b))).toBe(false)
+          const reached = flood(grid, grid.entrancePos, ofStep, true)
+          const rooms = grid.cells.flatMap((row, r) =>
+            row.flatMap((room, c) =>
+              room.type === "room" &&
+              room.region === cell.region &&
+              !room.sequenceTile &&
+              key(r, c) !== key(...grid.entrancePos)
+                ? [key(r, c)]
+                : []
+            )
+          )
+          for (const room of rooms) expect(reached.has(room), `room ${room} of ${cell.region}`).toBe(false)
         }
     },
     TIMEOUT
@@ -116,7 +134,8 @@ describe.each(FLOORS)("forced steps over $name", ({ make, minSound }) => {
         if (found === "tooLarge") throw new Error("too large")
         const cellsOf = (region: string) => [...of.entries()].filter(([, id]) => id === region).map(([place]) => place)
         const entrance = grid.entrancePos
-        for (const [step, { r, c }] of tilesOf(grid).entries()) {
+        for (const { r, c, cell } of tilesOf(grid)) {
+          const step = cell.sequenceTile!.step
           const beyond = new Set(
             [...of.keys()].filter(place => !flood(grid, entrance, new Set([key(r, c)]), true).has(place))
           )
@@ -142,9 +161,8 @@ describe.each(FLOORS)("forced steps over $name", ({ make, minSound }) => {
   )
 
   it(
-    "refuses a floor no walk walks sound, and passes one that does",
+    "passes a floor that walks sound, and refuses any that does not",
     () => {
-      let unsound = 0
       let kept = 0
       for (const grid of grids) {
         const walk = walkFloorLock(grid)!
@@ -152,13 +170,9 @@ describe.each(FLOORS)("forced steps over $name", ({ make, minSound }) => {
         if (walk.sound) {
           kept++
           expect(refused).toBeNull()
-        } else {
-          unsound++
-          expect(refused?.criterion).toBe("lock walks sound")
-        }
+        } else expect(refused?.criterion).toBe("lock walks sound")
       }
       expect(kept).toBeGreaterThan(0)
-      expect(unsound).toBeGreaterThan(0)
     },
     TIMEOUT
   )
@@ -257,16 +271,14 @@ describe("a floor on which no walk keeps the order", () => {
   it(
     "is refused before it is baked, naming the sequence",
     () => {
-      const unkept = carved(oneRegionSequenceFloor).filter(grid => {
-        const walk = walkFloorLock(grid)
-        return walk && !walk.sound && walk.failure.type === "goalUnreachable"
-      })
-      expect(unkept.length).toBeGreaterThan(0)
-      for (const grid of unkept) {
-        const refused = refusal({ success: true, grid, attempt: 0 })
-        expect(refused?.criterion).toBe("lock walks sound")
-        expect(refused?.detail).toContain("sequence plates")
-      }
+      // The way to the first step's room crosses the second's, so the second is always stepped on first.
+      const lock = parseLock("in -- mid\nmid -- far\nin -[P]- out\nP sequence far mid reset in-out", "order").lock
+      const grid = carveLockFloor(freeRegions(lock), BINDING)
+      const walk = walkFloorLock(grid)
+      expect(walk && !walk.sound && walk.failure.type).toBe("goalUnreachable")
+      const refused = refusal({ success: true, grid, attempt: 0 })
+      expect(refused?.criterion).toBe("lock walks sound")
+      expect(refused?.detail).toContain("sequence order.P")
     },
     TIMEOUT
   )

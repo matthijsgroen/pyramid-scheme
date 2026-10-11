@@ -302,10 +302,11 @@ export type RoomCell = {
    * can work a mechanism there is one entry for it. Unset on every room that works nothing remote. */
   worksMechanism?: { mechanismId: string; transition: number }
   /** THIS ROOM IS ONE TILE OF A SEQUENCE (obstacles.ts, SequenceControl): `id` is the sequence, `step` the
-   * place of this tile in its order, `glyph` the hieroglyph it wears (mark.ts allocates it, distinct
-   * from every other glyph on the floor). The sequence's one record sits on the tile of step 0; every
-   * tile works the moves that record places at it through `worksMechanism`. */
-  sequenceTile?: { id: string; step: number; glyph: number }
+   * place of this tile's step in its order, `glyph` the hieroglyph its step wears (mark.ts allocates it,
+   * distinct from every other glyph on the floor). A step stands a tile on every way into its region,
+   * `entrance` naming the region that way comes from. The sequence's one record sits on the first tile of
+   * step 0; every tile works the moves that record places at it through `worksMechanism`. */
+  sequenceTile?: { id: string; step: number; glyph: number; entrance: string }
   /** A PLATE OF A LOCK'S STONES (src/game/weightsPlates.ts). Whether a stone rests on it is the stones'
    * mechanism state, never the cell's: the record sits on the lock's first plate, and every plate works the
    * moves that record places at it through `worksMechanism`. */
@@ -789,6 +790,7 @@ export type AssemblerReason =
   | { type: "regionBarrierDropLands"; id: string; region: string; drop: string }
   | { type: "sequenceTooShort"; id: string }
   | { type: "sequenceStepNamesNoRegion"; id: string; step: number }
+  | { type: "sequenceRegionRepeated"; id: string; step: number; earlier: number }
   | { type: "sequenceOpensNotAGate"; id: string; gate: string }
   | { type: "sequenceResetNotAGate"; id: string; gate: string }
   | { type: "sequenceResetNotOpened"; id: string; gate: string }
@@ -808,9 +810,9 @@ export type AssemblerReason =
    * with a stretch of the region in front of it, so the barrier is refused rather than set elsewhere.
    * `id` is the barrier. */
   | { type: "regionBarrierNotSeated"; id: string; region: string }
-  /** No carve found a free corridor node in the region a sequence's step names, for every step that
-   * needs its own tile there. `id` is the sequence, `step` the first step left without a tile. */
-  | { type: "sequenceTileNotPlaced"; id: string; step: number }
+  /** No carve found a free corridor node on every way into the region a sequence's step names. `id` is the
+   * sequence, `step` the first step left without its tiles, `reason` what stood in the way. */
+  | { type: "sequenceTileNotPlaced"; id: string; step: number; reason: string }
   /** No carve found a free corridor node for a plate in its region. `plate` is the first plate left without one. */
   | { type: "plateNotPlaced"; plate: string }
   /** The floor's mechanics (and sequence tiles) need more distinct glyphs than the six a mark can wear,

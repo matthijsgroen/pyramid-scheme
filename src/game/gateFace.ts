@@ -161,6 +161,7 @@ export const withGateFaces = (
         const tiles = grid.cells
           .flat()
           .flatMap(tile => (tile.type === "room" && tile.sequenceTile?.id === id ? [tile.sequenceTile] : []))
+          .filter((tile, n, all) => all.findIndex(other => other.step === tile.step) === n)
           .sort((a, b) => a.step - b.step)
           .map(({ step, glyph }): SequenceFaceTile => ({ glyph, status: tileStatus(state, step) }))
         const press = cell.worksMechanism?.mechanismId === id ? pressAt(grid, floor, r, c, positions) : undefined

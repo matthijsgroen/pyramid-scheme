@@ -31,8 +31,9 @@ export type Mechanism = {
   /** The moves the player makes: standing in `at`, this mechanism goes from one state to another. */
   transitions: { from: StateId; to: StateId; at: RegionId }[]
   /**
-   * Moves the walk makes by ENTERING `at`, never as a choice: arriving in the region from any other puts the
-   * mechanism from `from` to `to`; in any other state, entering does nothing. A sequence's tile works so.
+   * Moves the walk makes by CROSSING INTO OR OUT OF `at`, never as a choice: walking into the region from any other,
+   * or out of it into another, puts the mechanism from `from` to `to`; in any other state the crossing does nothing.
+   * A sequence's step works so: its tile stands on every way into its room, and so on every way out but a drop.
    */
   entries?: { from: StateId; to: StateId; at: RegionId }[]
   /** A state some walk has to reach, or the lock is refused naming `label`: the order of a sequence kept. */
@@ -189,42 +190,61 @@ const stateKey = (ids: readonly MechanismId[], state: LockState): string =>
 // Every move ends with the douse: a move, the entries its arrival works, then the torches a flood puts out.
 const movesFrom = (spec: LockSpec, state: LockState): LockState[] => {
   const { region, config } = state
-  const moves: LockState[] = []
+  // `walked`: the move walks out of the region over its own ground, so it crosses the way out. A drop falls from
+  // inside the region, and coming back to the way in starts the floor afresh.
+  const moves: (LockState & { walked: boolean })[] = []
 
   for (const gateId of openGates(spec, config)) {
     const gate = spec.gates[gateId]
-    if (gate.from === region) moves.push({ region: gate.to, config })
-    if (gate.to === region) moves.push({ region: gate.from, config })
+    if (gate.from === region) moves.push({ region: gate.to, config, walked: true })
+    if (gate.to === region) moves.push({ region: gate.from, config, walked: true })
   }
   for (const oneWay of spec.oneWays ?? [])
-    if (oneWay.from === region && handsEmpty(spec, config)) moves.push({ region: oneWay.to, config })
+    if (oneWay.from === region && handsEmpty(spec, config)) moves.push({ region: oneWay.to, config, walked: false })
   for (const { a, b } of spec.passages ?? []) {
-    if (a === region) moves.push({ region: b, config })
-    if (b === region) moves.push({ region: a, config })
+    if (a === region) moves.push({ region: b, config, walked: true })
+    if (b === region) moves.push({ region: a, config, walked: true })
   }
   for (const [id, mechanism] of Object.entries(spec.mechanisms))
     for (const transition of mechanism.transitions)
       if (transition.at === region && config[id] === transition.from)
-        moves.push({ region, config: { ...config, [id]: transition.to } })
-  if (region === spec.out && handsEmpty(spec, config)) moves.push({ region: spec.in, config })
+        moves.push({ region, config: { ...config, [id]: transition.to }, walked: true })
+  if (region === spec.out && handsEmpty(spec, config)) moves.push({ region: spec.in, config, walked: false })
 
-  return moves.map(move => {
-    const arrived = entering(spec, region, move)
+  return moves.map(({ walked, ...move }) => {
+    const arrived = walked
+      ? entering(spec, region, leaving(spec, region, move))
+      : entering(spec, move.region === region ? region : undefined, move)
     const config = dousedConfig(spec, arrived.config)
     return config === arrived.config ? arrived : { region: arrived.region, config }
   })
 }
 
-// STEPPING INTO A REGION WORKS ITS ENTRIES: the player cannot arrive without the move having been made.
-export const entering = (spec: LockSpec, from: RegionId, arrived: LockState): LockState => {
-  if (arrived.region === from) return arrived
-  let config = arrived.config
+// The entries of `region` worked once against `config`: at most one move per mechanism.
+const crossing = (spec: LockSpec, region: RegionId, config: LockConfig): LockConfig => {
+  let crossed = config
   for (const [id, mechanism] of Object.entries(spec.mechanisms))
     for (const entry of mechanism.entries ?? [])
-      if (entry.at === arrived.region && config[id] === entry.from) {
-        config = { ...config, [id]: entry.to }
+      if (entry.at === region && crossed[id] === entry.from) {
+        crossed = { ...crossed, [id]: entry.to }
         break
       }
+  return crossed
+}
+
+// STEPPING INTO A REGION WORKS ITS ENTRIES: the player cannot arrive without the move having been made.
+export const entering = (spec: LockSpec, from: RegionId | undefined, arrived: LockState): LockState => {
+  if (arrived.region === from) return arrived
+  const config = crossing(spec, arrived.region, arrived.config)
+  return config === arrived.config ? arrived : { region: arrived.region, config }
+}
+
+// WALKING OUT OF A REGION WORKS ITS ENTRIES TOO, before the region walked into: the way out is a way in, walked the
+// other way. Working a tile again changes nothing it has already changed, so a floor's one-cell tile regions
+// read the same either way.
+export const leaving = (spec: LockSpec, from: RegionId, arrived: LockState): LockState => {
+  if (arrived.region === from) return arrived
+  const config = crossing(spec, from, arrived.config)
   return config === arrived.config ? arrived : { region: arrived.region, config }
 }
 
@@ -240,10 +260,12 @@ export const reachableStates = (
   const ceiling = spec.regions.length * ids.reduce((n, id) => n * spec.mechanisms[id].states.length, 1)
   if (ceiling > maxStates) return "tooLarge"
 
-  const start: LockState = {
+  // The floor's entrance comes before the lock, so arriving in the way in is an entry like any other.
+  const arrived = entering(spec, undefined, {
     region: spec.in,
-    config: dousedConfig(spec, Object.fromEntries(ids.map(id => [id, spec.mechanisms[id].initial]))),
-  }
+    config: Object.fromEntries(ids.map(id => [id, spec.mechanisms[id].initial])),
+  })
+  const start: LockState = { region: spec.in, config: dousedConfig(spec, arrived.config) }
   const index = new Map<string, number>([[stateKey(ids, start), 0]])
   const order: LockState[] = [start]
   const edges: number[][] = [[]]
