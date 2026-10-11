@@ -2,7 +2,7 @@
 
 Which lock or lesson stands on which site, as a table the designer fills in, and which mechanics each lock in
 the catalogue combines. The curriculum it starts from is `lock-curriculum.md`; the locks are the files in
-`src/game/locks/*.lock` and `src/game/locks/lessons/*.lock`.
+`src/game/locks/{junior,expert,master,wizard}/**/*.lock` (lessons in `junior/lessons/`).
 
 ## Part 1 — the placement table
 
@@ -158,6 +158,82 @@ A lesson stands through `lessonOnMainFloor(name)` in `src/worldGen/spec/locks/le
 `catalogueLock("lessons/<name>")`, every region `free`, and only the kinds the lesson uses bound (toggle `handle`,
 fork-switch `lightbeamSwitch`, one-way `zipline`, flame `torch`, weights `stonePlate`). The lessons raised no
 `RELAID_FLOORS_VERSION`, by the designer's call: a save standing inside one of their pyramids keeps its place.
+
+## Proposal: one puzzle per floor
+
+A proposal, not a placement: nothing here is baked, and the Part 1 table above stays as it is. Every one of the 34
+junior and expert floors (floor 0 of each site) gets one lock, and no lock is used twice. The tier folders hold
+16 junior locks (9 lessons and cellar, dropHome, overlook, seesaw, sluice, lamplighter, tide) for the 16 junior
+floors, and 10 expert locks for 18 expert floors. bathHouse and masonsRamp are master: masonsRamp is not placeable
+until the stone pipe exists, and master sites keep their floor keys.
+
+Rules the table follows: a journey opens with lessons, in the curriculum's order (lever, drop, board, torch,
+swaps, then waterMoves, doorWaitsForTwo, tilesInOrder, stoneOnAPlate); a lock comes only after the lessons it
+leans on (`lock-curriculum.md`, "What each lock leans on"); a site that today carries a lock or lesson that stays
+there says "kept". Everything else is a re-carve: a hall-shaped lesson (leverOpensADoor, torch, leverSwapsDoors,
+doorWaitsForTwo) may meet the bare-hall refusal on a first site, in which case the fallback is dropDown,
+boardPicksTheWay or tilesInOrder, which have no hall stub.
+
+### The three unplaced lessons
+
+- **leverOpensADoor** (junior_1 site 1, junior_2 site 2) is one lesson, so one site: junior_1 site 2, where today's
+  dropDown moves to site 1 (no hall stub, so no bare hall). Fallback: junior_3 site 1, where it already carves.
+  junior_2's site 2 keeps its switch fork and no lesson.
+- **leverSwapsDoors** (expert_1 site 1) moves to junior_2 site 2, a junior lesson. Fallback: junior_4 site 5,
+  where it already carves. expert_1 site 1 gets an expert lock.
+- **boardPicksTheWay** (junior_2 site 1, junior_4 site 1, "board first") stays on junior_1 site 3, kept, after
+  the lever.
+
+### Junior (16 floors, 16 existing locks, none to design)
+
+| Site | Proposed         | Today                 | Note                                                  |
+| ---- | ---------------- | --------------------- | ----------------------------------------------------- |
+| j1.1 | dropDown         | leverOpensADoor (no)  | opens with a hall-less lesson                         |
+| j1.2 | leverOpensADoor  | dropDown              | first lever; the unplaced lesson's new site           |
+| j1.3 | boardPicksTheWay | boardPicksTheWay      | kept                                                  |
+| j2.1 | torch            | boardPicksTheWay (no) |                                                       |
+| j2.2 | leverSwapsDoors  | leverOpensADoor (no)  | the switch fork floor; the unplaced lesson's new site |
+| j2.3 | waterMoves       | torch                 |                                                       |
+| j2.4 | sluice           | dropDown              | leans on waterMoves                                   |
+| j3.1 | doorWaitsForTwo  | leverOpensADoor       |                                                       |
+| j3.2 | tilesInOrder     | dropDown              |                                                       |
+| j3.3 | dropHome         | torch                 | leans on board, lever, drop                           |
+| j3.4 | cellar           | boardPicksTheWay      | leans on lever, drop, a floor key                     |
+| j4.1 | stoneOnAPlate    | boardPicksTheWay (no) | before the stone locks of expert                      |
+| j4.2 | overlook         | leverOpensADoor       |                                                       |
+| j4.3 | seesaw           | dropDown              | leans on doorWaitsForTwo                              |
+| j4.4 | lamplighter      | torch                 | leans on board, doorWaitsForTwo                       |
+| j4.5 | tide             | leverSwapsDoors       | leans on waterMoves                                   |
+
+### Expert (18 floors, 10 existing locks, 8 to design)
+
+stoneGate closes expert_4 (kept); doubleBack is late, closing expert_3 (kept); twoLamps stays on expert_1 site 3
+(kept). relay and doubleBack take three actions, below the expert 4-6, but the designer put them in expert.
+
+| Site | Proposed                        | Today                | Note                                      |
+| ---- | ------------------------------- | -------------------- | ----------------------------------------- |
+| e1.1 | plates                          | leverSwapsDoors (no) | leans on tilesInOrder                     |
+| e1.2 | keyring                         | dropHome             |                                           |
+| e1.3 | twoLamps                        | twoLamps             | kept                                      |
+| e1.4 | to design (expert, 4-6 actions) | doubleBack           | doubleBack moves to expert_3              |
+| e2.1 | clockwork                       | doorWaitsForTwo      | leans on board, doorWaitsForTwo           |
+| e2.2 | relay                           | cellar               | leans on torch, doorWaitsForTwo           |
+| e2.3 | to design (expert, 4-6 actions) | twoLamps             |                                           |
+| e2.4 | to design (expert, 4-6 actions) | dropHome             |                                           |
+| e3.1 | counterweight                   | leverSwapsDoors      | leans on stoneOnAPlate; not yet buildable |
+| e3.2 | observatory                     | dropHome             |                                           |
+| e3.3 | to design (expert, 4-6 actions) | cellar               |                                           |
+| e3.4 | to design (expert, 4-6 actions) | overlook             |                                           |
+| e3.5 | doubleBack                      | doubleBack           | kept                                      |
+| e4.1 | twoStones                       | stoneOnAPlate        | leans on stoneOnAPlate; not yet buildable |
+| e4.2 | to design (expert, 4-6 actions) | twoLamps             |                                           |
+| e4.3 | to design (expert, 4-6 actions) | cellar               |                                           |
+| e4.4 | to design (expert, 4-6 actions) | overlook             |                                           |
+| e4.5 | stoneGate                       | stoneGate            | kept                                      |
+
+Counts: 26 floors get an existing lock (16 junior, 10 expert), 8 expert slots are "to design", no junior slot is.
+Kept as placed today: junior_1 site 3, expert_1 site 3, expert_3 site 5, expert_4 site 5; the other 22 re-carve.
+Wizard has no locks and no floors here.
 
 ## Part 2 — mechanics coverage
 
