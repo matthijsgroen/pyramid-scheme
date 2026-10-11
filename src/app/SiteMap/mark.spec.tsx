@@ -48,14 +48,23 @@ describe("a mark", () => {
 
   // The pairing is only readable if BOTH ends of it are drawn: a mark on the lever alone says nothing
   // about which door answers to it.
-  it.each(["handle", "gate"] as const)("is worn by a %s node on the map", kind => {
+  it("is worn by a handle node on the map", () => {
     const mark = markFor(2)
     const { container } = render(
       <svg>
-        <NodeShape type={kind} state="reachable" mark={mark} />
+        <NodeShape type="handle" state="reachable" mark={mark} />
       </svg>
     )
     expect(container.textContent).toContain(String.fromCodePoint(mark.glyph))
+  })
+
+  it("is not worn by a gate: the board it opens names its owners", () => {
+    const { container } = render(
+      <svg>
+        <NodeShape type="gate" state="reachable" mark={markFor(2)} />
+      </svg>
+    )
+    expect(container.querySelector("text")).toBeNull()
   })
 
   it("stays off a node the player has not seen yet", () => {
