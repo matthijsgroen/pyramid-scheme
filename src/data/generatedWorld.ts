@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 568420922
+export const worldContentHash = 1009983559
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -6836,7 +6836,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: "puzzle",
         encountersByIndex: { 0: "lightbeam", 1: "sumplete", 2: "rush-hour", 3: "hidato", 4: "eclipse" },
         packing: 0.1,
-        seed: 2858765649,
+        seed: 5207779554184528,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d9", pieceIndex: 2 },
         rewards: [
           { type: "consumable", consumable: "bandage" },

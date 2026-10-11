@@ -655,14 +655,12 @@ export const layLockPlan = (plan: LockPlan, { seed, n, ceiling = LAY_GRID_CEILIN
     refusal = { part: furthest.part ?? { kind: "region", id: plan.route[0] }, grid }
   }
   // Only a plan no search laid is searched again with its drops looked ahead to, so every plan that lays without
-  // it lays as it always has.
+  // it lays as it always has. The look-ahead cuts dead branches early, so one search per grid is enough.
   if (plan.drops.length > 0)
     for (let grid = n; grid <= Math.max(n, ceiling); grid += GRID_STEP)
-      for (let extra = 0; extra <= MAX_EXTRA_NODES; extra++)
-        for (let restart = 0; restart < RESTARTS; restart++) {
-          const rand = mulberry32(seed + grid * 7919 + extra * 104729 + restart * 15485863)
-          const { laid } = search(plan, grid, rand, extra, true)
-          if (laid) return { ok: true, laid }
-        }
+      for (let extra = 0; extra <= MAX_EXTRA_NODES; extra++) {
+        const { laid } = search(plan, grid, mulberry32(seed + grid * 7919 + extra * 104729), extra, true)
+        if (laid) return { ok: true, laid }
+      }
   return { ok: false, refusal: refusal! }
 }
