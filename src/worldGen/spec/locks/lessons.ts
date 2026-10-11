@@ -12,6 +12,7 @@ const LESSON_BINDINGS = {
   torch: { flame: "torch" },
   doorWaitsForTwo: { flame: "torch" },
   stoneOnAPlate: { weights: "stonePlate" },
+  waterMoves: { toggle: "handle", "region-barrier": "water" },
 } as const
 
 export type PlacedLesson = keyof typeof LESSON_BINDINGS

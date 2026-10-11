@@ -152,16 +152,15 @@ walkable only from its reset at the door (the walk's `strands` checks it); its t
 (contract §8 settled). bathHouse (master, the designer's, untracked) walks in 14 actions but is still
 `✗ gateOwnedOffSeam`: fork Y's gates stand on the route.
 
-Placement count: 29/34 (`docs/instructions/agent-work.md` finish line). Still open: boardPicksTheWay on junior_2 and
-junior_4 site 1 (below), leverOpensADoor on junior_1 site 1 and beside junior_2's switch fork, and leverSwapsDoors on
-expert_1 site 1. Every lesson shows its shut door before its control (`lock-curriculum.md`, "A lesson shows the
-problem first"; `yarn lock` refuses a lesson that does not, `doorsSeenLate` in `src/game/lockChecks.ts`). The
-door-first lessons put the control in a side room off the door's hall. On junior_2 site 2 the lay then leaves no bare
-route node for the switch's junction (`siteAssembler.ts`, `junctionGroups`, `bareRouteStep`; 0 of 160 seeds and
-packings carve). The hall's stub off the route holds no room unless absorbed content lands there, and a roomless stub
-loses its fog on a re-carve, so the bake now refuses such a seed (`roomlessRouteStubs`, criterion "every stub holds a
-room"); on junior_1 site 1 and expert_1 site 1 no seed passes, so they are unplaced. Junior_1 now meets the lever
-first in dropDown (site 2): the designer may want leverOpensADoor moved, or the carve to seat a room in a bare stub. Switch boards are dealt like room boards now (`boardIndex.ts`), so
+Placement count: 33/34 (`docs/instructions/agent-work.md` finish line). The designer adopted the one-puzzle-per-floor
+proposal (2026-10-11) and it is baked (`lock-placement.md`, Part 1 says which floors hold a stand-in and why). Still
+open: expert_1 site 1 has no lock, because tilesInOrder does not carve there (0 of 200 seeds, `layoutNotFound`);
+plates (expert_1 site 4), relay (expert_2 site 2) and observatory (expert_3 site 2) do not carve either, so their
+floors keep today's lock as a stand-in; counterweight (expert_3 site 1) and twoStones (expert_4 site 1) are not
+buildable, so their floors keep a stand-in too; 1 junior and 7 expert slots wait for the designer's new locks, and
+their stand-ins repeat locks placed elsewhere. Every lesson shows its shut door before its control
+(`lock-curriculum.md`, "A lesson shows the problem first"; `yarn lock` refuses a lesson that does not,
+`doorsSeenLate` in `src/game/lockChecks.ts`). Switch boards are dealt like room boards now (`boardIndex.ts`), so
 no two switches in one tier share a board while the list covers them; every switch floor shows a different board
 than before, so a half-solved switch comes back on a new board (fine before release).
 
@@ -184,11 +183,9 @@ pushes the build output to the `pyramid-scheme-preview` repo; its saves use thei
 - **doubleBack lays on about 1 seed in 200:** s1 is reached only through three chained drops. The Valley's last
   pyramid and the dev bench carve it at a pinned seed, so it is fragile: if its floor is ever re-carved, or the lay
   changes, that floor can fall to `layoutNotFound`. The lay-rate verifies measure a made-up mirrorFork instead.
-- **boardPicksTheWay needs a lever:** its `S toggle` is bound to the handle. It stands where its journey taught the lever
-  first (junior_1 site 3, junior_3 site 4); on junior_2 and junior_4 it is the journey's first site. Whether a junior
-  fork lesson may also teach the lever there is the designer's call.
+- **boardPicksTheWay needs a lever:** its `S toggle` is bound to the handle. It stands on junior_1 site 3, after the lever
+  lesson at site 2.
 - **Unanswered:**
-  - adopt the one-puzzle-per-floor proposal (`lock-placement.md`)?
   - relay and doubleBack (3 actions): stay expert or move to junior?
   - bathHouse fork Y: a lever swap, or real branches?
   - leverSwapsDoors: its `hall-left` gate never stops anyone; a two-lever version would make the swap needed.

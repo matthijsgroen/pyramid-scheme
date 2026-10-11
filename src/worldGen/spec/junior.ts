@@ -1,7 +1,8 @@
 import { tier, journey, tomb, sidePath, wardWing, wardChest } from "../dsl"
 import type { Rule, PathSettings } from "../dsl"
 import { TOMB_ROOMS_PER_FLOOR } from "../data"
-import { lessonOnMainFloor } from "./locks/lessons"
+import { lessonFloor, lessonOnMainFloor } from "./locks/lessons"
+import { lockOnMainFloor } from "./locks/onFloor"
 
 // Varied "come back stronger" ward wings, mixed into the back-half pyramids of each junior
 // journey (where the auto tier-unlock gate already sits). Each is a bonus floor gated by a later
@@ -153,8 +154,8 @@ export const juniorRules: Rule[] = [
   // shut until the player walks back in and sends the light another way. Every main-path room is
   // left to the ordinary pool; what the junction chooses between is the branches below. The tier's
   // own sidePaths/hiddenPaths are re-declared (from the shared JUNIOR_* constants above, not a hand
-  // copy) because this floor's own `.floor()` bypasses the pyramid-level tier cascade for them. No lesson stands
-  // here: leverOpensADoor's side room leaves the lay no bare route node for the switch's junction.
+  // copy) because this floor's own `.floor()` bypasses the pyramid-level tier cascade for them. The lesson,
+  // leverSwapsDoors, is placed on the floor itself (`lessonFloor`), not through `floorLocks`, which would rebuild the pyramid.
   journey("junior_2")
     .pyramid(2, {})
     .floor(0, {
@@ -169,6 +170,7 @@ export const juniorRules: Rule[] = [
         { density: "low", ...JUNIOR_HIDDEN_TRAP_PATH },
       ],
       sideSections: [holdChest(1), oldWorkings(), switchBranch(), switchBranch()],
+      ...lessonFloor("leverSwapsDoors"),
     }),
   journey("junior_3").pyramid(1, { sideSections: [holdChest(0)] }),
   journey("junior_3").pyramid(2, { sideSections: [holdChest(2), oldWorkings()] }),
@@ -176,22 +178,24 @@ export const juniorRules: Rule[] = [
   journey("junior_4").pyramid(2, { sideSections: [holdChest(1)] }),
   journey("junior_4").pyramid(3, { sideSections: [holdChest(2), oldWorkings()] }),
 
-  // THE LESSONS: a junior pyramid's main floor teaches one control alone — a lever, a torch — so the expert
-  // locks that combine them meet a player who knows each (docs/game-design/lock-placement.md). The
-  // Lighthouse's last pyramid previews the expert lever: one lever swaps two doors and can be thrown back.
-  // junior_1 pyramid 1 stands no lesson: no seed gives leverOpensADoor's hall a room off the route.
-  journey("junior_1").pyramid(2, lessonOnMainFloor("dropDown")),
+  // THE PLACEMENT: one lock per junior floor, as the adopted proposal says (docs/game-design/lock-placement.md). A journey
+  // opens on lessons, each control alone, and the locks that combine them follow. Every region `free`.
+  // junior_3 site 2 stands in for a lock still to design.
+  journey("junior_1").pyramid(1, lessonOnMainFloor("dropDown")),
+  journey("junior_1").pyramid(2, lessonOnMainFloor("leverOpensADoor")),
   journey("junior_1").pyramid(3, lessonOnMainFloor("boardPicksTheWay")),
-  journey("junior_2").pyramid(3, lessonOnMainFloor("torch")),
-  journey("junior_2").pyramid(4, lessonOnMainFloor("dropDown")),
-  journey("junior_3").pyramid(1, lessonOnMainFloor("leverOpensADoor")),
+  journey("junior_2").pyramid(1, lessonOnMainFloor("torch")),
+  journey("junior_2").pyramid(3, lessonOnMainFloor("waterMoves")),
+  journey("junior_2").pyramid(4, lockOnMainFloor("sluice")),
+  journey("junior_3").pyramid(1, lessonOnMainFloor("doorWaitsForTwo")),
   journey("junior_3").pyramid(2, lessonOnMainFloor("dropDown")),
-  journey("junior_3").pyramid(3, lessonOnMainFloor("torch")),
-  journey("junior_3").pyramid(4, lessonOnMainFloor("boardPicksTheWay")),
-  journey("junior_4").pyramid(2, lessonOnMainFloor("leverOpensADoor")),
-  journey("junior_4").pyramid(3, lessonOnMainFloor("dropDown")),
-  journey("junior_4").pyramid(4, lessonOnMainFloor("torch")),
-  journey("junior_4").pyramid(5, lessonOnMainFloor("leverSwapsDoors")),
+  journey("junior_3").pyramid(3, lockOnMainFloor("dropHome")),
+  journey("junior_3").pyramid(4, lockOnMainFloor("cellar")),
+  journey("junior_4").pyramid(1, lessonOnMainFloor("stoneOnAPlate")),
+  journey("junior_4").pyramid(2, lockOnMainFloor("overlook")),
+  journey("junior_4").pyramid(3, lockOnMainFloor("seesaw")),
+  journey("junior_4").pyramid(4, lockOnMainFloor("lamplighter")),
+  journey("junior_4").pyramid(5, lockOnMainFloor("tide")),
 
   tomb("junior_treasure_tomb", {
     encounter: "tomb-puzzle",

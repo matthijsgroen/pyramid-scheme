@@ -16,109 +16,110 @@ Columns:
 - **Wing floors**: extra floors up a ward-gated stair (`wardWings`), off the main path.
 - **Authored**: what the world spec already says about the site, where it says something.
 - **Suggested**: the curriculum's layer for the site, copied from `lock-curriculum.md`.
-- **Chosen lock**: the designer's pick, pre-filled with the suggestion.
-- **Placed**: ✓ where the world spec places it today.
-  "no" names why a chosen lesson is not placed:
-  - **board first**: boardPicksTheWay on a journey's first site. The lesson's door is opened by a lever (`S toggle`,
-    bound to the handle), and on junior_2 and junior_4 the board comes before the journey's lever lesson, so the site
-    would teach two mechanics at once. Placed where the lever was taught first (junior_1 site 3, junior_3 site 4);
-    whether a fork lesson may also teach the lever is the designer's call.
-  - **no junction**: leverOpensADoor beside junior_2's switch fork. The switch hangs its branches from a bare node
-    of the route; with the lesson's side room (the lever off the obvious path) the lay leaves none, and no seed or
-    packing carves it (0 of 160 tried, 2026-10-11). The lesson keeps its door-first shape; the carve has to give the
-    junction a node before it stands here.
-  - **bare hall**: the lesson's hall (the door's near side, where the side room branches off) holds no room on any
-    seed (4646 tried, up to packing 1). A room is what keeps a stretch's fog when the floor is carved again, so the
-    bake refuses a seed that leaves a route region's stub bare ("every stub holds a room", `carveSeedSearch.ts`).
-    junior_1 site 1 (leverOpensADoor) and expert_1 site 1 (leverSwapsDoors), 2026-10-11. On junior_1 the lever is
-    then first met in dropDown at site 2.
+- **Chosen lock**: the lock on the floor now, as the adopted proposal (below, 2026-10-11) says.
+- **Placed**: ✓ where the world spec places it today. "✓ stand-in" is a lock that holds the floor until the proposed
+  one exists: the slot is still to design, the proposed lock is not buildable yet, or it does not carve (the reason
+  follows). A stand-in may repeat a lock placed elsewhere; the designer replaces it. "no" is a floor with no lock.
+
+Placed: 33 of 34 (2026-10-11).
 
 ### Junior
 
 **junior_1 — Sacred Ibis Migration** (`water` role on pyramids 1-3, patron Thoth)
 
-| Site | Main floors | Wing floors | Authored         | Suggested        | Chosen lock      | Placed         |
-| ---- | ----------- | ----------- | ---------------- | ---------------- | ---------------- | -------------- |
-| 1    | 1           | 0           |                  | leverOpensADoor  | leverOpensADoor  | no (bare hall) |
-| 2    | 1           | 0           |                  | dropDown         | dropDown         | ✓              |
-| 3    | 1           | 1           | expert ward wing | boardPicksTheWay | boardPicksTheWay | ✓              |
+| Site | Main floors | Wing floors | Authored         | Chosen lock      | Placed |
+| ---- | ----------- | ----------- | ---------------- | ---------------- | ------ |
+| 1    | 1           | 0           |                  | dropDown         | ✓      |
+| 2    | 1           | 0           |                  | leverOpensADoor  | ✓      |
+| 3    | 1           | 1           | expert ward wing | boardPicksTheWay | ✓      |
 
 **junior_2 — Valley of the Artisans**
 
-| Site | Main floors | Wing floors | Authored                                                                     | Suggested                                                        | Chosen lock                                                      | Placed           |
-| ---- | ----------- | ----------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------- |
-| 1    | 1           | 0           |                                                                              | boardPicksTheWay (the switch fork already authored at pyramid 2) | boardPicksTheWay (the switch fork already authored at pyramid 2) | no (board first) |
-| 2    | 1           | 0           | the world's one switch fork: a `lightbeamSwitch` board in a two-way junction | leverOpensADoor                                                  | leverOpensADoor                                                  | no (no junction) |
-| 3    | 1           | 1           | master ward wing                                                             | torch                                                            | torch                                                            | ✓                |
-| 4    | 1           | 1           | wizard ward wing                                                             | dropDown                                                         | dropDown                                                         | ✓                |
+| Site | Main floors | Wing floors | Authored                                                                     | Chosen lock     | Placed |
+| ---- | ----------- | ----------- | ---------------------------------------------------------------------------- | --------------- | ------ |
+| 1    | 1           | 0           |                                                                              | torch           | ✓      |
+| 2    | 1           | 0           | the world's one switch fork: a `lightbeamSwitch` board in a two-way junction | leverSwapsDoors | ✓      |
+| 3    | 1           | 1           | master ward wing                                                             | waterMoves      | ✓      |
+| 4    | 1           | 1           | wizard ward wing                                                             | sluice          | ✓      |
 
 **junior_3 — Temple of Thoth** (patron Thoth)
 
-| Site | Main floors | Wing floors | Authored         | Suggested        | Chosen lock      | Placed |
-| ---- | ----------- | ----------- | ---------------- | ---------------- | ---------------- | ------ |
-| 1    | 1           | 0           |                  | leverOpensADoor  | leverOpensADoor  | ✓      |
-| 2    | 1           | 0           |                  | dropDown         | dropDown         | ✓      |
-| 3    | 1           | 1           | expert ward wing | torch            | torch            | ✓      |
-| 4    | 1           | 1           | master ward wing | boardPicksTheWay | boardPicksTheWay | ✓      |
+| Site | Main floors | Wing floors | Authored         | Chosen lock     | Placed                                  |
+| ---- | ----------- | ----------- | ---------------- | --------------- | --------------------------------------- |
+| 1    | 1           | 0           |                  | doorWaitsForTwo | ✓                                       |
+| 2    | 1           | 0           |                  | dropDown        | ✓ stand-in (a junior lock to design)    |
+| 3    | 1           | 1           | expert ward wing | dropHome        | ✓                                       |
+| 4    | 1           | 1           | master ward wing | cellar          | ✓                                       |
 
 **junior_4 — Lighthouse of Alexandria** (`light`/`sky` role and night theme on pyramids 1-5)
 
-| Site | Main floors | Wing floors | Authored         | Suggested        | Chosen lock      | Placed           |
-| ---- | ----------- | ----------- | ---------------- | ---------------- | ---------------- | ---------------- |
-| 1    | 1           | 0           |                  | boardPicksTheWay | boardPicksTheWay | no (board first) |
-| 2    | 1           | 0           |                  | leverOpensADoor  | leverOpensADoor  | ✓                |
-| 3    | 1           | 0           |                  | dropDown         | dropDown         | ✓                |
-| 4    | 1           | 1           | wizard ward wing | torch            | torch            | ✓                |
-| 5    | 1           | 1           | expert ward wing | leverSwapsDoors  | leverSwapsDoors  | ✓                |
+| Site | Main floors | Wing floors | Authored         | Chosen lock   | Placed |
+| ---- | ----------- | ----------- | ---------------- | ------------- | ------ |
+| 1    | 1           | 0           |                  | stoneOnAPlate | ✓      |
+| 2    | 1           | 0           |                  | overlook      | ✓      |
+| 3    | 1           | 0           |                  | seesaw        | ✓      |
+| 4    | 1           | 1           | wizard ward wing | lamplighter   | ✓      |
+| 5    | 1           | 1           | expert ward wing | tide          | ✓      |
 
 ### Expert
 
 **expert_1 — Valley of the Kings** (`funerary` role on pyramids 1-4)
 
-| Site | Main floors | Wing floors | Authored                            | Suggested       | Chosen lock     | Placed         |
-| ---- | ----------- | ----------- | ----------------------------------- | --------------- | --------------- | -------------- |
-| 1    | 1           | 0           |                                     | leverSwapsDoors | leverSwapsDoors | no (bare hall) |
-| 2    | 1           | 0           |                                     | dropHome        | dropHome        | ✓              |
-| 3    | 1           | 2           | master ward wing, starter ward wing | twoLamps        | twoLamps        | ✓              |
-| 4    | 1           | 1           | wizard ward wing, patron Anubis     | **doubleBack**  | doubleBack      | ✓              |
+| Site | Main floors | Wing floors | Authored                            | Chosen lock | Placed                                              |
+| ---- | ----------- | ----------- | ----------------------------------- | ----------- | --------------------------------------------------- |
+| 1    | 1           | 0           |                                     | none        | no (tilesInOrder does not carve: 0 of 200 seeds)    |
+| 2    | 1           | 0           |                                     | keyring     | ✓                                                   |
+| 3    | 1           | 2           | master ward wing, starter ward wing | twoLamps    | ✓                                                   |
+| 4    | 1           | 1           | wizard ward wing, patron Anubis     | doubleBack  | ✓ stand-in (plates does not carve: 0 of 200 seeds)  |
 
 **expert_2 — Karnak Temple Complex**
 
-| Site | Main floors | Wing floors | Authored         | Suggested       | Chosen lock     | Placed |
-| ---- | ----------- | ----------- | ---------------- | --------------- | --------------- | ------ |
-| 1    | 1           | 0           |                  | doorWaitsForTwo | doorWaitsForTwo | ✓      |
-| 2    | 1           | 0           |                  | cellar          | cellar          | ✓      |
-| 3    | 1           | 1           | master ward wing | twoLamps        | twoLamps        | ✓      |
-| 4    | 1           | 1           | wizard ward wing | dropHome        | dropHome        | ✓      |
+| Site | Main floors | Wing floors | Authored         | Chosen lock | Placed                                              |
+| ---- | ----------- | ----------- | ---------------- | ----------- | --------------------------------------------------- |
+| 1    | 1           | 0           |                  | clockwork   | ✓                                                   |
+| 2    | 1           | 0           |                  | cellar      | ✓ stand-in (relay does not carve: 0 of 200 seeds)   |
+| 3    | 1           | 1           | master ward wing | twoLamps    | ✓ stand-in (an expert lock to design)               |
+| 4    | 1           | 1           | wizard ward wing | dropHome    | ✓ stand-in (an expert lock to design)               |
 
 **expert_3 — Nile Delta Expedition** (overgrown, growing from pyramid 2 to 5)
 
-| Site | Main floors | Wing floors | Authored                                    | Suggested       | Chosen lock     | Placed |
-| ---- | ----------- | ----------- | ------------------------------------------- | --------------- | --------------- | ------ |
-| 1    | 1           | 0           |                                             | leverSwapsDoors | leverSwapsDoors | ✓      |
-| 2    | 1           | 0           | overgrown 0.2                               | dropHome        | dropHome        | ✓      |
-| 3    | 1           | 0           | overgrown 0.4                               | cellar          | cellar          | ✓      |
-| 4    | 1           | 1           | overgrown 0.65, wizard ward wing            | overlook        | overlook        | ✓      |
-| 5    | 1           | 1           | overgrown 1, master ward wing, patron Sobek | **doubleBack**  | doubleBack      | ✓      |
+| Site | Main floors | Wing floors | Authored                                    | Chosen lock     | Placed                                                    |
+| ---- | ----------- | ----------- | ------------------------------------------- | --------------- | --------------------------------------------------------- |
+| 1    | 1           | 0           |                                             | leverSwapsDoors | ✓ stand-in (counterweight is not buildable yet)           |
+| 2    | 1           | 0           | overgrown 0.2                               | dropHome        | ✓ stand-in (observatory does not carve: 0 of 200 seeds)  |
+| 3    | 1           | 0           | overgrown 0.4                               | cellar          | ✓ stand-in (an expert lock to design)                     |
+| 4    | 1           | 1           | overgrown 0.65, wizard ward wing            | overlook        | ✓ stand-in (an expert lock to design)                     |
+| 5    | 1           | 1           | overgrown 1, master ward wing, patron Sobek | doubleBack      | ✓                                                         |
 
 **expert_4 — Pyramid of Djoser**
 
-| Site | Main floors | Wing floors | Authored                                               | Suggested       | Chosen lock   | Placed |
-| ---- | ----------- | ----------- | ------------------------------------------------------ | --------------- | ------------- | ------ |
-| 1    | 1           | 0           |                                                        | doorWaitsForTwo | stoneOnAPlate | ✓      |
-| 2    | 1           | 0           | two floor-key colours, broad packing                   | twoLamps        | twoLamps      | ✓      |
-| 3    | 1           | 0           |                                                        | cellar          | cellar        | ✓      |
-| 4    | 1           | 1           | two floor-key colours, broad packing, master ward wing | overlook        | overlook      | ✓      |
-| 5    | 1           | 1           | wizard ward wing                                       | **doubleBack**  | stoneGate     | ✓      |
+| Site | Main floors | Wing floors | Authored                                               | Chosen lock   | Placed                                           |
+| ---- | ----------- | ----------- | ------------------------------------------------------ | ------------- | ------------------------------------------------ |
+| 1    | 1           | 0           |                                                        | stoneOnAPlate | ✓ stand-in (twoStones is not buildable yet)     |
+| 2    | 1           | 0           | two floor-key colours, broad packing                   | twoLamps      | ✓ stand-in (an expert lock to design)            |
+| 3    | 1           | 0           |                                                        | cellar        | ✓ stand-in (an expert lock to design)            |
+| 4    | 1           | 1           | two floor-key colours, broad packing, master ward wing | overlook      | ✓ stand-in (an expert lock to design)            |
+| 5    | 1           | 1           | wizard ward wing                                       | stoneGate     | ✓                                                |
 
 Site counts: junior 16 (3 + 4 + 4 + 5), expert 18 (4 + 4 + 5 + 5), the same as the curriculum's. Treasure
 tombs are not sites in this table.
 
+Duplicates among the stand-ins, until the designer replaces them: dropDown (junior_1 site 1 and junior_3 site 2),
+leverSwapsDoors (junior_2 site 2 and expert_3 site 1), stoneOnAPlate (junior_4 site 1 and expert_4 site 1), cellar
+(junior_3 site 4, expert_2 site 2, expert_3 site 3, expert_4 site 3), dropHome (junior_3 site 3, expert_2 site 4,
+expert_3 site 2), twoLamps (expert_1 site 3, expert_2 site 3, expert_4 site 2), overlook (junior_4 site 2, expert_3
+site 4, expert_4 site 4), doubleBack (expert_1 site 4, expert_3 site 5).
+
+**Open:** tilesInOrder (expert_1 site 1), plates (expert_1 site 4), relay (expert_2 site 2) and observatory (expert_3
+site 2) do not carve at any of 200 seeds at the default packing (`layoutNotFound`, or a corridor or region the lay
+cannot place); counterweight and twoStones are not buildable. expert_1 site 1 has no lock: its old lesson,
+leverSwapsDoors, moved to junior_2 site 2.
+
 ### Where the curriculum and the world spec disagree
 
 - **The junior switch fork.** The curriculum puts boardPicksTheWay on junior_2's first site and says the
-  switch fork is "already authored at pyramid 2", but the world spec authors it on pyramid 2 (site 2), where the
-  curriculum suggests leverOpensADoor. One of the two moves: the lesson to site 2, or the fork to site 1.
+  switch fork is "already authored at pyramid 2", but the world spec authors it on pyramid 2 (site 2). The adopted
+  proposal puts leverSwapsDoors there, on the fork floor.
 - **Djoser.** stoneGate stands on Djoser's last pyramid (site 5, floor 0), where the curriculum suggests doubleBack:
   the journey's capstone, on the floor shape doubleBack already stands on in expert_1, and with no floor keys. The
   player meets the stone first at site 1, where stoneOnAPlate stands in place of the curriculum's doorWaitsForTwo;
@@ -135,21 +136,15 @@ only where a save stands does not, so `RELAID_FLOORS_VERSION` goes up by one and
 (`src/app/SiteMap/relaidPyramids.ts`) with `since` set to the new version, and a save inside it resumes at its
 entrance once.
 
-expert_1's doubleBack stands through the same `floorLocks` with its realisations bound (fork-switch
-`lightbeamSwitch`, toggle `handle`, one-way `zipline`), but reads the lock from `doubleBackLock()` in
-`src/worldGen/spec/locks/doubleBack.ts` rather than from its `.lock` file.
-
-junior_2's site 2 authors its own `.floor(0)` for the switch fork, so a lesson goes into that floor with
-`lessonFloor("leverOpensADoor")` rather than `lessonOnMainFloor`: a `floorLocks` entry beside an explicit floor
-rebuilds the pyramid. On a laid floor every node holds a room, so the last ungated sections, as many as the
-junction has ways out, stay branches and hang from a bare node of the route, which is the junction `forks` holds.
-The door-first leverOpensADoor leaves no such node, so no lesson stands there today ("no junction" above).
+junior_2's site 2 authors its own `.floor(0)` for the switch fork, so its lesson, leverSwapsDoors, goes into that
+floor with `lessonFloor("leverSwapsDoors")` rather than `lessonOnMainFloor`: a `floorLocks` entry beside an explicit
+floor rebuilds the pyramid.
 
 expert_4's stoneGate stands the same way, read from its `.lock` file with `catalogueLock` and every region `free`
 (`freeRegions`), bound `weights` `stonePlate`, `activator` `torch`, `unladen` `narrowPassage`.
 
-The expert locks between a journey's lesson and its capstone (dropHome, twoLamps, cellar, and doubleBack on expert_3)
-stand through `lockOnMainFloor(name)` in `src/worldGen/spec/expert.ts`: the lock read with `catalogueLock`, every
+The locks between a journey's lessons and its capstone stand through `lockOnMainFloor(name)` in
+`src/worldGen/spec/locks/onFloor.ts`: the lock read with `catalogueLock`, every
 region `free`, and only the kinds it uses bound (fork-switch `lightbeamSwitch`, toggle `handle`, one-way `zipline`,
 activator `torch`). expert_3's doubleBack pyramid authors `packing: 0.15`: at the default packing its floor carves at
 the inspector's default seed on no attempt. No `RELAID_FLOORS_VERSION`, by the designer's call.
@@ -161,7 +156,7 @@ fork-switch `lightbeamSwitch`, one-way `zipline`, flame `torch`, weights `stoneP
 
 ## Proposal: one puzzle per floor
 
-A proposal, not a placement: nothing here is baked, and the Part 1 table above stays as it is. Every one of the 34
+Adopted 2026-10-11, and baked as far as it carves (Part 1 says where a stand-in holds a floor). Every one of the 34
 junior and expert floors (floor 0 of each site) gets one lock, and no lock is used twice. The tier folders hold
 16 junior locks (9 lessons and cellar, dropHome, overlook, seesaw, sluice, lamplighter, tide) for the 16 junior
 floors, and 10 expert locks for 18 expert floors. bathHouse and masonsRamp are master: masonsRamp is not placeable
