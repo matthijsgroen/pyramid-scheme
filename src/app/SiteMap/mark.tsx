@@ -57,3 +57,17 @@ export const MarkChip = ({ mark, size = 24 }: { mark: Mark; size?: number }) => 
     <MarkFace mark={mark} />
   </svg>
 )
+
+/**
+ * THE MARK WORN BY A CONTROL'S ART, small and at its foot, so the player can match a torch or lever to the
+ * owner it has on a door's board. Placed by its CENTRE, in map units, inside the map's HTML layer.
+ */
+export const MarkArtBadge = ({ mark, x, y, r = 7 }: { mark: Mark; x: number; y: number; r?: number }) => (
+  <svg
+    aria-hidden="true"
+    viewBox="-12 -12 24 24"
+    style={{ position: "absolute", left: x - r, top: y - r, width: r * 2, height: r * 2, overflow: "visible" }}
+  >
+    <MarkFace mark={mark} />
+  </svg>
+)

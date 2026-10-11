@@ -2533,7 +2533,8 @@ describe("the arch over a shut way out is drawn in front of its bars", () => {
   })
 })
 
-// A DOOR WEARS NO MARKS ON ITS LEAF: the marks of its controls are on the board the door opens (GateFaceComponent).
+// A DOOR WEARS NO MARKS ON ITS LEAF: the marks of its controls are on the board the door opens (GateFaceComponent),
+// and on the control's art as a small chip (MarkArtBadge), which this counts apart from the marker square.
 describe("a lever and the doors it drives", () => {
   const handleGrid = floorWithHandle({ in: "lever", left: ["vault"], right: ["pocket"] }).grid
 
@@ -2541,6 +2542,7 @@ describe("a lever and the doors it drives", () => {
     Array.from(container.querySelectorAll("text"))
       .filter(text => /\p{Script=Egyptian_Hieroglyphs}/u.test(text.textContent ?? ""))
       .filter(text => !text.closest('[opacity="0"]'))
+      .filter(text => !text.closest("svg[aria-hidden]"))
       .map(text => text.textContent)
 
   it("draws no mark square under the painted lever and none on the doors it drives", () => {

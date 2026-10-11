@@ -59,6 +59,7 @@ import { PLATE_TILE } from "./plateArt"
 import { drawingOf, familyIconOf, isLockedGate, isSpentAt, nodeRadius, shapeKindFor, staysOpen } from "./nodeKinds"
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
 import { MapNotice } from "@/ui/atoms/MapNotice"
+import { MarkArtBadge } from "./mark"
 import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
 import { FloorShade, LitPlaces } from "./torchlight"
 import {
@@ -532,6 +533,7 @@ export const nodeSpritesFor = (
           key: `handle:${r},${c}`,
           ...(isSpentAt(grid, floorIndex, r, c, cell, mechanismStates) ? { spent: true } : {}),
           url: back,
+          ...(cell.mark ? { mark: cell.mark } : {}),
           x: cx + dx - CELL / 2,
           y: cy + dy + CELL / 2 - PROP_H,
           mirrored: false,
@@ -552,6 +554,7 @@ export const nodeSpritesFor = (
           footprint,
           key: `standingTorch:${r},${c}`,
           url,
+          ...(cell.mark ? { mark: cell.mark } : {}),
           x,
           y: floorLine - PROP_H,
           mirrored: false,
@@ -1343,6 +1346,9 @@ export const SiteMapView = ({
               where the eye already is. */}
           {sprite.badge && (
             <NodeBadge kind={sprite.badge} x={sprite.x + CELL / 2} y={sprite.y + PROP_H - CELL * 0.62} />
+          )}
+          {sprite.mark && (
+            <MarkArtBadge mark={sprite.mark} x={sprite.x + CELL / 2} y={sprite.y + PROP_H - CELL * 0.16} />
           )}
         </Fragment>
       ),

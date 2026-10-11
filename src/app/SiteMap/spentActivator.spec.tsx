@@ -5,6 +5,7 @@ import type { FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
 import { assembleFloor } from "@/game/siteAssembler"
 import { cellAddress } from "@/game/cellAddress"
 import { isSpent } from "@/game/mechanismDoors"
+import { withGateFaces, withoutUnpairedMarks } from "@/game/gateFace"
 import { createJourneysV3Api, type JourneyAPI, type StoredJourneyStateV3 } from "@/app/state/useJourneys"
 import { journeys as allKnownJourneys } from "@/data/journeys"
 import type { TranslatedJourney } from "@/app/translations/useJourneyTranslations"
@@ -112,6 +113,23 @@ describe("a spent activator says so on the map", () => {
         for (const { at } of levers)
           expect(tickedOff(markerOf(container, at[0], at[1])), `${state} at ${at}`).toBe(false)
         unmount()
+      }
+    })
+
+    it(`${name}: a torch or lever wears the mark its door's board shows for it, and none where no board does`, () => {
+      const { grid: base } = carved.get(name)!
+      const grid = withoutUnpairedMarks(withGateFaces(walked(base), 0, new Map()))
+      const sprites = nodeSpritesFor(grid, buildRoomClaims(grid), "starter", undefined, new Map(), 0)
+      const boardMarks = grid.cells
+        .flat()
+        .flatMap(cell => (cell.type === "room" ? (cell.gateFace?.markers ?? []) : []))
+        .flatMap(({ mark }) => (mark ? [mark] : []))
+      for (const { at } of [...torchesOf(base), ...leversOf(base)]) {
+        const cell = grid.cells[at[0]][at[1]]
+        const sprite = sprites.find(s => s.key.endsWith(`:${at[0]},${at[1]}`))
+        const mark = cell.type === "room" ? cell.mark : undefined
+        const onBoard = mark !== undefined && boardMarks.some(m => m.color === mark.color && m.glyph === mark.glyph)
+        expect(sprite?.mark, `${name} at ${at}`).toEqual(onBoard ? mark : undefined)
       }
     })
 

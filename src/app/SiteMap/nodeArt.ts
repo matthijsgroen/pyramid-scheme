@@ -1,4 +1,5 @@
 import type { Direction } from "@/game/siteTypes"
+import type { Mark } from "./mark"
 import { CELL } from "./mapScale"
 
 /** How far a node's own furniture stands out of the way of its marker, across and up the cell.
@@ -100,6 +101,8 @@ export type NodeSprite = {
   /** A control that has been used up: its furniture eases back as an emptied chest does. Its
    * marker, which stands beside the art and not under it, wears the ✓ itself. */
   spent?: boolean
+  /** The pair a torch or lever wears (RoomCell.mark), set only where its door has a board to match it against. */
+  mark?: Mark
   /** A CONTROL'S ARM AND NEAR HALF, riding between `url` (the far half, `leverBaseBack`) and the floor —
    * set only where a lever stands, so `url` alone still draws every other kind.
    *
