@@ -154,6 +154,20 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
 - `lessons/torch`'s header says "lit for good": true of the lesson, which has no flood; revisit if a flood lesson
   joins it.
 
+## Designed, not built: the procession door
+
+A realisation of the `sequence` control (designer, 2026-10-11). The door carries a procession board (the
+procession puzzle family) instead of showing the order outright:
+
+1. Stepping on a tile once unlocks its bar on the board; a bar stays unlocked, a spoiled run included.
+2. Each bar carries its tile's glyph, the same glyph as the tile, so a bar names its room.
+3. The board's one solution orders the bars along the track in the sequence's order: solving it teaches the order.
+4. The door opens only when the board is solved AND the rooms are walked in that order.
+
+The lock walk does not change: it reads the sequence as it is. What is new is the board's locked-bar state fed by
+the tiles, a procession generator that makes a board whose unique solution ranks given bars in a given order, and
+the door's two conditions. Meant for master and wizard locks.
+
 ## Open per phase
 
 - **Phase 5:** the torch and the plate need `prim_*` geometry in `scripts/renderProp.py`, then the
