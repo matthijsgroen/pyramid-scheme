@@ -87,7 +87,12 @@ The art plan is `docs/superpowers/plans/2026-10-06-stonegate-phase-5-art.md`; it
 
 ## Next work, in order
 
-1. **Fold doubleBack's twin** once the designer answers how a drop beside a gate compiles (below).
+1. **Placement by the proposal**, once the designer says yes: `lock-placement.md`, "Proposal: one puzzle per
+   floor" (26 of 34 floors get an existing lock, 8 expert slots "to design"; 22 floors would re-carve). Carve-test
+   each proposed site under `timeout` first; no proposed site has been tried.
+2. **Design the 8 missing expert locks** (4–6 actions), one per open slot.
+3. **The procession door** (roadmap, "Designed, not built"), after placement.
+4. **Fold doubleBack's twin** once the designer answers how a drop beside a gate compiles (below).
 
 Each runs with superpowers:subagent-driven-development: per task an implementer subagent and a task review, then a
 final whole-branch review on the most capable model. Commit and push freely on this branch.
@@ -135,6 +140,17 @@ final whole-branch review on the most capable model. Commit and push freely on t
 
 ## Next session
 
+**Locks live in tier folders** by action count (`src/game/locks/{junior,expert,master,wizard}/`, lessons in
+`junior/lessons/`): junior 1–3 actions, expert 4–6 (doubleBack and relay take 3 but stay expert, as listed; the
+designer has been asked), master bathHouse-sized (bathHouse, masonsRamp), wizard empty. A lock resolves by bare
+name, `tier/name` or path; a duplicate bare name is refused. One unique puzzle per floor is the aim.
+
+**Sequence tiles (B′, decided 2026-10-10/11):** a step's tile stands on every way into its room, so walking in or
+out presses it, not by a drop; a repeated step region is refused (`sequenceRegionRepeated`); a sequence counts as
+walkable only from its reset at the door (the walk's `strands` checks it); its tiles may stand in any region
+(contract §8 settled). bathHouse (master, the designer's, untracked) walks in 14 actions but is still
+`✗ gateOwnedOffSeam`: fork Y's gates stand on the route.
+
 Placement count: 29/34 (`docs/instructions/agent-work.md` finish line). Still open: boardPicksTheWay on junior_2 and
 junior_4 site 1 (below), leverOpensADoor on junior_1 site 1 and beside junior_2's switch fork, and leverSwapsDoors on
 expert_1 site 1. Every lesson shows its shut door before its control (`lock-curriculum.md`, "A lesson shows the
@@ -171,6 +187,10 @@ pushes the build output to the `pyramid-scheme-preview` repo; its saves use thei
   first (junior_1 site 3, junior_3 site 4); on junior_2 and junior_4 it is the journey's first site. Whether a junior
   fork lesson may also teach the lever there is the designer's call.
 - **Unanswered:**
+  - adopt the one-puzzle-per-floor proposal (`lock-placement.md`)?
+  - relay and doubleBack (3 actions): stay expert or move to junior?
+  - bathHouse fork Y: a lever swap, or real branches?
+  - leverSwapsDoors: its `hall-left` gate never stops anyone; a two-lever version would make the swap needed.
   - correct the header comment of `stoneGate.lock` ("not placed yet, not buildable yet") now it stands in Djoser?
   - delete the "nothing else moved" test in `src/mods/puzzleSeeds.verify.ts`? It pins authored counts.
 - **Not asked yet:** the corner squeeze, still the old two-leg slide.
