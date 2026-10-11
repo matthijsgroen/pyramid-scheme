@@ -2,6 +2,7 @@ import { beforeAll, describe, expect, it } from "vitest"
 import { assembleFloor, defaultResolveEncounter, type ResolveEncounter } from "./siteAssembler"
 import { cellAddress } from "./cellAddress"
 import { withGateFaces } from "./gateFace"
+import type { Mark } from "./mark"
 import { parseLock } from "./lockNotation"
 import { carveLockFloor } from "./testSupport/lockFixtures"
 import { SHELF_AND_DOOR } from "./testSupport/stoneFixtures"
@@ -294,5 +295,27 @@ describe("a door the stones hold", () => {
   it("wears no face on an `any` door, however many plates it lists", () => {
     const grid = stoneFloor("in -[a|b]- out\na plate @in\nb plate @in\nshelf plate @in stone\nin ?\nout ?")
     expect(withGateFaces(grid, 0, new Map(), undefined, GATE_FACE_FAMILY)).toBe(grid)
+  })
+})
+
+describe("the marks a door shows", () => {
+  it("are one per control on a door with several, each its own owner's pair, and none on any other door", () => {
+    for (const { name } of floors) {
+      const grid = carved.get(name)
+      if (!grid) continue
+      for (const door of doorsOf(grid)) {
+        const marks = (door.gateFace?.markers ?? []).flatMap(({ mark }) => (mark ? [mark] : []))
+        const owners = ownerRooms(grid).filter(({ cell }) =>
+          cell.mechanism!.positions.some(p => p.gateKeyId === door.requiredKeyId)
+        )
+        const several = owners.length > 1 && !(name.startsWith("an any door") || name.startsWith("a floor-key"))
+        if (several && door.gateFace) {
+          const byGlyph = (list: readonly (Mark | undefined)[]) => list.map(mark => mark?.glyph).sort()
+          expect(byGlyph(marks), `${name}: ${door.requiredKeyId}`).toEqual(byGlyph(owners.map(({ cell }) => cell.mark)))
+          expect(new Set(marks.map(mark => mark.glyph)).size, `${name}: two owners, one glyph`).toBe(marks.length)
+        } else if (door.gateFace === undefined || door.gateFace.sequences === undefined)
+          expect(marks, `${name}: ${door.requiredKeyId} shows marks with a single control`).toEqual([])
+      }
+    }
   })
 })

@@ -101,12 +101,9 @@ export type NodeSprite = {
   /** A control that has been used up: its furniture eases back as an emptied chest does. Its
    * marker, which stands beside the art and not under it, wears the ✓ itself. */
   spent?: boolean
-  /** Which mechanism this node belongs to (RoomCell.mark), for art that covers its own marker.
-   *
-   * A door a lever drives is drawn as a leaf of stone and its marker is hidden outright (a way a switch
-   * shut is a wall, `isSealedWayOut`) — so the pair the lever wears would have been worn at one end
-   * only, which tells a player nothing. Same move as `badge` above, for the same reason. */
-  mark?: Mark
+  /** The pairs of the controls a door waits on (GateMarker.mark), worn on the leaf because a door drawn as stone
+   * hides its own marker. Set only on a door with several controls. */
+  marks?: readonly Mark[]
   /** A CONTROL'S ARM AND NEAR HALF, riding between `url` (the far half, `leverBaseBack`) and the floor —
    * set only where a lever stands, so `url` alone still draws every other kind.
    *

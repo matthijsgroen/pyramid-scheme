@@ -78,7 +78,10 @@ export type CorridorCell = {
   openGate?: OpenGate
 }
 /** What an open gate keeps of the room it was: the fields that say it is a gate and whose. */
-export type OpenGate = Pick<RoomCell, "tags" | "gateVariant" | "keyIsAuthored" | "keyColor" | "keyColors" | "mark"> & {
+export type OpenGate = Pick<
+  RoomCell,
+  "tags" | "gateVariant" | "keyIsAuthored" | "keyColor" | "keyColors" | "mark" | "gateFace"
+> & {
   requiredKeyId: string
 }
 /** What an obstacle's span is: the id of the one-way realisation it was bound to, whose declared prompt the

@@ -60,7 +60,7 @@ import { drawingOf, familyIconOf, isLockedGate, isSpentAt, nodeRadius, shapeKind
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
 import { MapNotice } from "@/ui/atoms/MapNotice"
 import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
-import { MarkArtBadge, type Mark } from "./mark"
+import { MarkArtBadges, marksOfFace, type Mark } from "./mark"
 import { FloorShade, LitPlaces } from "./torchlight"
 import {
   SEATING_PASS,
@@ -341,7 +341,7 @@ export const nodeSpritesFor = (
     c: number,
     tier: Difficulty,
     dirs: ReadonlySet<Direction>,
-    { open, wall, mark }: { open: boolean; wall: boolean; mark: Mark | undefined }
+    { open, wall, marks }: { open: boolean; wall: boolean; marks: readonly Mark[] }
   ): void => {
     // `gate` is shut and `gate-open` is the same leaf swung back or sunk into the floor; a rank with
     // neither draws the marker alone, exactly as a stairhead did before its flights were painted.
@@ -428,7 +428,7 @@ export const nodeSpritesFor = (
       mirrored: false,
       // ON THE LEAF, NOT ON THE MARKER: a way a lever shut hides its marker entirely, so the pair
       // its lever wears has to be worn by the stone the player is actually looking at.
-      ...(mark ? { mark } : {}),
+      ...(marks.length > 0 ? { marks } : {}),
     })
   }
   for (let r = 0; r < grid.rows; r++) {
@@ -439,7 +439,7 @@ export const nodeSpritesFor = (
         gateLeaf(r, c, cell.difficulty ?? floorTier, cell.dirs, {
           open: !weight?.shut.has(cell.openGate.requiredKeyId ?? ""),
           wall: false,
-          mark: cell.openGate.mark,
+          marks: marksOfFace(cell.openGate.gateFace),
         })
         continue
       }
@@ -499,9 +499,8 @@ export const nodeSpritesFor = (
             y: cy + CELL / 2 - PROP_H,
             mirrored: false,
             fadeAt: [`${r},${c}`, `${r - 1},${c}`],
-            ...(cell.mark ? { mark: cell.mark } : {}),
           })
-        else gateLeaf(r, c, tier, cell.dirs, { open: false, wall: true, mark: cell.mark })
+        else gateLeaf(r, c, tier, cell.dirs, { open: false, wall: true, marks: marksOfFace(cell.gateFace) })
       } else if (kind === "gate" && cell.regionBarrier) {
         // A REGION BARRIER IS THE COVER ITSELF, NOT A DOOR HUNG IN THE PASSAGE: the water or sand is drawn
         // under the floor's light (RegionBarrierCovers), and the cell carries no sprite and no marker.
@@ -509,7 +508,7 @@ export const nodeSpritesFor = (
         gateLeaf(r, c, tier, cell.dirs, {
           open: cell.state === "completed" || (weight?.open.has(cell.requiredKeyId ?? "") ?? false),
           wall: isSealedWayOut(cell),
-          mark: cell.mark,
+          marks: marksOfFace(cell.gateFace),
         })
       } else if (drawingOf(cell)?.art === "lever") {
         // BLOCKED UNTIL ALL THREE TILES EXIST, AND NEVER PLACEHOLDER: `tileUrl`, not `tileOrPlaceholder`
@@ -1352,8 +1351,8 @@ export const SiteMapView = ({
             <NodeBadge kind={sprite.badge} x={sprite.x + CELL / 2} y={sprite.y + PROP_H - CELL * 0.62} />
           )}
           {/* ON THE LEAF, for the same reason: a door a lever drives has no marker left to wear it. */}
-          {sprite.mark && (
-            <MarkArtBadge mark={sprite.mark} x={sprite.x + CELL / 2} y={sprite.y + PROP_H - CELL * 0.62} />
+          {sprite.marks && (
+            <MarkArtBadges marks={sprite.marks} x={sprite.x + CELL / 2} y={sprite.y + PROP_H - CELL * 0.62} />
           )}
         </Fragment>
       ),
@@ -1785,6 +1784,8 @@ export const SiteMapView = ({
                 const hasExit = shapeKind === "exit" && !!tileOrPlaceholder(cell.difficulty ?? tier, "exit")
                 // A PAINTED PLATE IS THE NODE, as a flight is: the vector slab underneath has nothing more to say.
                 const hasPlate = drawnPlates.has(`plate:${r},${c}`)
+                // A STANDING TORCH IS THE NODE, as a plate is: the flame square under it would put a second torch on the tile.
+                const hasTorch = drawingOf(cell)?.art === "standingTorch" && !!sharedTileUrl("torchUnlit")
                 const roomR = nodeRadius[shapeKind]
                 // A WAY A SWITCH SHUT IS A WALL, AND A WALL WEARS NO NODE. The bars standing in its doorway
                 // already say the way is closed; a gate marker on top of them offers a second reading — a
@@ -1810,7 +1811,7 @@ export const SiteMapView = ({
                       <g
                         data-shape-kind={shapeKind}
                         opacity={
-                          sealedWay || hasStair || hasExit || hasPlate
+                          sealedWay || hasStair || hasExit || hasPlate || hasTorch
                             ? 0
                             : isCompleted && !isPending && !isPortal
                               ? 0.45

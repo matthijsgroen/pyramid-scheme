@@ -4,6 +4,7 @@ import { arrangementIn } from "./stonePlay"
 import { pressAt } from "./mechanismDoors"
 import { DOOR_FACE_ROLE, defaultResolveEncounter } from "./encounterFallback"
 import { tileStatus, type TileStatus } from "./sequence"
+import type { Mark } from "./mark"
 import type { FloorGrid, GridCell, KeyColor, MechanismRecord, RoomCell } from "./siteTypes"
 
 /** What an owner looks like on the face: a mechanism wears its own family's icon (a flame for a torch),
@@ -15,7 +16,9 @@ export type GateOwnerIcon =
   | { kind: "plate"; wants: "stone" | "empty" }
 
 /** One owner of the door, unlit until its current state names the door. */
-export type GateMarker = { id: string; icon: GateOwnerIcon; lit: boolean }
+/** `mark` is the pair a mechanism owner wears (mark.ts), set only on a door that needs a face: the map draws it
+ * on the door, and a door with one control wears none. */
+export type GateMarker = { id: string; icon: GateOwnerIcon; lit: boolean; mark?: Mark }
 
 /** One tile of a sequence as the door lists it: the glyph it wears and how the run stands on it. */
 export type SequenceFaceTile = { glyph: number; status: TileStatus }
@@ -34,7 +37,13 @@ export type GateFace = { markers: readonly GateMarker[]; sequences?: readonly Se
 
 const NO_KEYS: ReadonlySet<string> = new Set()
 
-type Owner = { id: string; family: string; mechanism: MechanismRecord; at: readonly [number, number] }
+type Owner = {
+  id: string
+  family: string
+  mechanism: MechanismRecord
+  at: readonly [number, number]
+  mark?: Mark
+}
 
 const ownersOf = (grid: FloorGrid, gateKeyId: string): Owner[] => {
   const owners: Owner[] = []
@@ -43,7 +52,13 @@ const ownersOf = (grid: FloorGrid, gateKeyId: string): Owner[] => {
       const cell = grid.cells[r][c]
       if (cell.type !== "room" || !cell.mechanism || cell.family === undefined) continue
       if (!cell.mechanism.positions.some(p => p.gateKeyId === gateKeyId)) continue
-      owners.push({ id: cell.mechanismId ?? `${r},${c}`, family: cell.family, mechanism: cell.mechanism, at: [r, c] })
+      owners.push({
+        id: cell.mechanismId ?? `${r},${c}`,
+        family: cell.family,
+        mechanism: cell.mechanism,
+        at: [r, c],
+        ...(cell.mark ? { mark: cell.mark } : {}),
+      })
     }
   // By id, so the markers keep their order when a re-carve moves the owners about the floor.
   return owners.sort((a, b) => a.id.localeCompare(b.id))
@@ -144,14 +159,15 @@ export const withGateFaces = (
       const floorKeys = cell.requiredKeyIds ?? []
       const weighed = stoneMarkers(grid, floor, stones, key, positions)
       const governing = [...owners.map(o => o.mechanism), ...stones.map(s => s.mechanism)]
-      if (!needsFace(governing, owners.length + weighed.length + floorKeys.length, key) && sequences.length === 0)
-        return cell
-      const markers = owners.map(({ id, family, mechanism, at }): GateMarker => {
+      const faced = needsFace(governing, owners.length + weighed.length + floorKeys.length, key)
+      if (!faced && sequences.length === 0) return cell
+      const markers = owners.map(({ id, family, mechanism, at, mark }): GateMarker => {
         const state = storedAtCell(grid, floor, at[0], at[1], positions) ?? mechanism.initial
         return {
           id,
           icon: { kind: "mechanism", family },
           lit: mechanism.positions.some(p => p.gateKeyId === key && p.state === state),
+          ...(mark && faced ? { mark } : {}),
         }
       })
       markers.push(...weighed)
@@ -173,6 +189,33 @@ export const withGateFaces = (
         family: faceFamily,
         gateFace: { markers, ...(orders.length > 0 ? { sequences: orders } : {}) },
       }
+    })
+  )
+  return changed ? { ...grid, cells } : grid
+}
+
+const markKey = (mark: Mark): string => `${mark.color}:${mark.glyph}`
+
+/**
+ * A mechanism's room keeps its mark only where some door shows it: a door one control opens wears none, so
+ * the pair on that control would point at nothing. Rooms that own a way out (a fork-switch's junction) draw
+ * their doorways with the marks themselves and keep theirs.
+ */
+export const withoutUnpairedMarks = (grid: FloorGrid): FloorGrid => {
+  const shown = new Set(
+    grid.cells
+      .flat()
+      .flatMap(cell => (cell.type === "room" ? (cell.gateFace?.markers ?? []) : []))
+      .flatMap(({ mark }) => (mark ? [markKey(mark)] : []))
+  )
+  let changed = false
+  const cells = grid.cells.map(row =>
+    row.map((cell): GridCell => {
+      if (cell.type !== "room" || !cell.mark || !cell.mechanism || cell.exits || shown.has(markKey(cell.mark)))
+        return cell
+      changed = true
+      const { mark: _mark, ...rest } = cell
+      return rest
     })
   )
   return changed ? { ...grid, cells } : grid

@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react"
 import { assembleFloor } from "@/game/siteAssembler"
 import { openDoorsFor, openWaysOut } from "@/game/mechanismDoors"
-import { withGateFaces } from "@/game/gateFace"
+import { withGateFaces, withoutUnpairedMarks } from "@/game/gateFace"
 import { DOOR_FACE_ROLE } from "@/game/encounterFallback"
 import { completeCell, isSealedWayOut } from "@/game/gridNavigation"
 import type { Direction, FloorConfig, FloorGrid, GridCell, TombKeyReward } from "@/game/siteTypes"
@@ -423,12 +423,14 @@ export const useAssembledFloor = (
   const carvedGrid = useMemo(
     () =>
       baseGrid
-        ? withGateFaces(
-            sealWaysOut(openWaysOut(baseGrid, openGateKeys)),
-            currentFloor,
-            mechanismPositions ?? NO_POSITIONS,
-            heldKeys,
-            resolveEncounter(undefined, DOOR_FACE_ROLE).familyId
+        ? withoutUnpairedMarks(
+            withGateFaces(
+              sealWaysOut(openWaysOut(baseGrid, openGateKeys)),
+              currentFloor,
+              mechanismPositions ?? NO_POSITIONS,
+              heldKeys,
+              resolveEncounter(undefined, DOOR_FACE_ROLE).familyId
+            )
           )
         : null,
     [baseGrid, openGateKeys, currentFloor, mechanismPositions, heldKeys]

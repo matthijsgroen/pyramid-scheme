@@ -4315,8 +4315,13 @@ const assembleExpandedFloor = (
         if (cell.type !== "room") continue
         // A mechanism is found by the keys its own positions carry, a door by the key it asks for. A
         // switch's mechanism and an authored gate's key are not in the map, so they stay unmarked.
+        // A door is found by the key it asks for. The map draws its marks off its face (`withGateFaces`), where
+        // each owner of a door with several keeps its own pair, so a mechanism's room is marked by its own id.
         const key = cell.mechanism?.positions[0]?.gateKeyId ?? cell.requiredKeyId
-        const mark = key === undefined ? undefined : markByGateKey.get(key)
+        const own = cell.mechanismId
+          ? (allocation.marks.get(cell.mechanismId) ?? allocation.marks.get(`handle:${cell.mechanismId}`))
+          : undefined
+        const mark = own ?? (key === undefined ? undefined : markByGateKey.get(key))
         if (mark) cells2D[r][c] = { ...cell, mark }
         // Each way out a fork-switch owns carries what its own gate wears, which is what the board draws.
         const marked = cells2D[r][c]

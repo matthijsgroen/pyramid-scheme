@@ -2533,9 +2533,8 @@ describe("the arch over a shut way out is drawn in front of its bars", () => {
   })
 })
 
-// A MARK ON ONE END OF THE PAIR BUYS NOTHING. A lever's room keeps its marker, but a door it drives is
-// a way a switch shut (`isSealedWayOut`) and so is drawn as stone with its marker hidden — so the mark
-// has to ride the ART there, the same move the emptied-chest ✓ already makes (`NodeSprite.badge`).
+// A DOOR WEARS THE MARKS OF ITS CONTROLS ONLY WHERE IT HAS SEVERAL: a door drawn as stone has its marker hidden, so the
+// marks ride the ART (`NodeSprite.marks`), the same move the emptied-chest ✓ makes. A door one lever drives wears none.
 describe("a lever and the doors it drives", () => {
   const handleGrid = floorWithHandle({ in: "lever", left: ["vault"], right: ["pocket"] }).grid
 
@@ -2545,13 +2544,13 @@ describe("a lever and the doors it drives", () => {
       .filter(text => !text.closest('[opacity="0"]'))
       .map(text => text.textContent)
 
-  it("wear the same mark, and every one of them is drawn where the player can see it", () => {
+  it("draws the lever's mark and none on the doors it drives alone", () => {
     const { container } = render(<SiteMapView grid={handleGrid} revealAllCells />)
     const lever = handleGrid.cells.flat().find(cell => cell.type === "room" && cell.family === "handle")
     if (lever?.type !== "room" || !lever.mark) throw new Error("the lever wears no mark")
     const glyph = String.fromCodePoint(lever.mark.glyph)
 
-    expect(markGlyphsOnScreen(container)).toEqual([glyph, glyph, glyph])
+    expect(markGlyphsOnScreen(container)).toEqual([glyph])
   })
 })
 

@@ -14,7 +14,6 @@ import { resolveEncounter } from "@/app/families/familyRegistry"
 import { resolveKeyRequirements } from "@/mods/allFamilyMeta"
 import { handleFloorConfig } from "@/game/testSupport/handleFixtures"
 import { forkSwitchFloorConfig } from "@/game/testSupport/forkSwitchFixtures"
-import { keyColorHex } from "@/ui/tokens/keyColors"
 import { applyExplored, sealWaysOut, useAssembledFloor } from "./useAssembledFloor"
 import { useMechanismStates } from "./useMechanismStates"
 import { useSiteNavigation } from "./useSiteNavigation"
@@ -353,14 +352,13 @@ describe("an open gate keeps its symbol and colour", () => {
         }))
 
     forEachScenarioState((name, wanted) => {
-      it(`${name}: in ${wanted}, each open gate draws the open leaf with its mark, each shut one the shut leaf`, () => {
+      it(`${name}: in ${wanted}, each open gate draws the open leaf, each shut one the shut leaf, none wearing a mark`, () => {
         const state = resolveState(name, wanted)
         const grid = revealed(hookGrid(name, state))
         const { container } = render(<SiteMapView grid={grid} />)
         const badges = badgesOf(container)
         let openSeen = 0
         let shutSeen = 0
-        let marked = 0
         grid.cells.forEach((row, r) =>
           row.forEach((cell, c) => {
             const open = cell.type === "corridor" ? cell.openGate : undefined
@@ -375,13 +373,9 @@ describe("an open gate keeps its symbol and colour", () => {
               openSeen++
               expect(leaf, `${where}: the open gate drew no leaf`).not.toBeNull()
               expect(urlOf(leaf!), where).toMatch(/gate-open/)
-              const mark = open.mark!
-              const badge = badges.find(
-                b =>
-                  b.glyph === String.fromCodePoint(mark.glyph) && Math.abs(b.left - (leftOf(leaf!) + CELL / 2)) < 0.01
-              )
-              expect(badge, `${where}: the open leaf wears no mark`).toBeDefined()
-              expect(badge!.fill).toBe(keyColorHex[mark.color].reachable)
+              // One control opens it, so it shows no marks.
+              const badge = badges.find(b => Math.abs(b.left - (leftOf(leaf!) + CELL / 2)) < 0.01)
+              expect(badge, `${where}: a door one control opens wears a mark`).toBeUndefined()
             } else if (shut) {
               shutSeen++
               // A way a switch or lever shut is a wall painted with the stone: the shut bars, keyed `wall:`,
@@ -390,18 +384,12 @@ describe("an open gate keeps its symbol and colour", () => {
               expect(leaf, `${where}: a shut way hung a leaf`).toBeNull()
               expect(wall, `${where}: the shut way drew no bars`).not.toBeNull()
               expect(urlOf(wall!), where).toMatch(/\/gate(-side)?\.png$/)
-              const worn = badges.some(
-                badge =>
-                  badge.left === leftOf(wall!) + CELL / 2 &&
-                  badge.glyph === (shut.mark && String.fromCodePoint(shut.mark.glyph))
-              )
-              expect(worn, `${where}: the shut bars wear ${shut.mark ? "no" : "a"} mark`).toBe(shut.mark !== undefined)
-              if (shut.mark) marked++
+              const worn = badges.some(badge => badge.left === leftOf(wall!) + CELL / 2)
+              expect(worn, `${where}: the bars of a door one control shuts wear a mark`).toBe(false)
             }
           })
         )
         expect(openSeen + shutSeen).toBeGreaterThan(0)
-        expect(marked, "some shut way wears a mark").toBeGreaterThan(0)
       })
     })
   })

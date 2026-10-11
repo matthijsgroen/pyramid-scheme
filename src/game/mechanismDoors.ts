@@ -320,6 +320,7 @@ export const openWaysOut = (grid: FloorGrid, open: ReadonlySet<string>): FloorGr
             keyColor: cell.keyColor,
             keyColors: cell.keyColors,
             mark: cell.mark,
+            ...(cell.gateFace ? { gateFace: cell.gateFace } : {}),
           },
         }),
       }

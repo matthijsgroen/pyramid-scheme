@@ -1,4 +1,5 @@
 import type { CellState } from "@/game/siteTypes"
+import type { GateFace } from "@/game/gateFace"
 import type { Mark } from "@/game/mark"
 import { keyColorHex } from "@/ui/tokens/keyColors"
 
@@ -75,3 +76,19 @@ export const MarkArtBadge = ({ mark, x, y, r = 11 }: { mark: Mark; x: number; y:
     <MarkFace mark={mark} />
   </svg>
 )
+
+/** The pairs a door shows: one per control it waits on, and none for a door that needs no face. */
+export const marksOfFace = (face: GateFace | undefined): Mark[] =>
+  (face?.markers ?? []).flatMap(({ mark }) => (mark ? [mark] : []))
+
+/** The pairs side by side, centred on the leaf, shrinking as they grow in number so they stay inside it. */
+export const MarkArtBadges = ({ marks, x, y }: { marks: readonly Mark[]; x: number; y: number }) => {
+  const r = marks.length > 2 ? 7 : 9
+  return (
+    <>
+      {marks.map((mark, n) => (
+        <MarkArtBadge key={n} mark={mark} x={x + (n - (marks.length - 1) / 2) * r * 2.2} y={y} r={r} />
+      ))}
+    </>
+  )
+}

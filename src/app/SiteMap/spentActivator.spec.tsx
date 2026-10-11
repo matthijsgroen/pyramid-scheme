@@ -79,7 +79,7 @@ const tickedOff = (marker: HTMLElement | undefined) => marker?.textContent?.incl
 
 describe("a spent activator says so on the map", () => {
   for (const name of Object.keys(FLOORS)) {
-    it(`${name}: every torch wears the used appearance when lit and the unused one when not, in every combination`, () => {
+    it(`${name}: every torch shows the used appearance when lit and the unused one when not, its own marker hidden under the art, in every combination`, () => {
       const { grid: base } = carved.get(name)!
       const torches = torchesOf(base)
       expect(torches.length, "the floor has torches").toBeGreaterThan(0)
@@ -91,7 +91,10 @@ describe("a spent activator says so on the map", () => {
           const where = `${name} / ${label} / torch at ${at}`
           const marker = markerOf(container, at[0], at[1])
           expect(tickedOff(marker), `${where}: ✓`).toBe(lit)
-          expect(marker?.querySelector("g[opacity]")?.getAttribute("opacity"), `${where}: dim`).toBe(lit ? "0.45" : "1")
+          expect(
+            marker?.querySelector("g[opacity]")?.getAttribute("opacity"),
+            `${where}: the torch art is the node`
+          ).toBe("0")
         }
         unmount()
       }
