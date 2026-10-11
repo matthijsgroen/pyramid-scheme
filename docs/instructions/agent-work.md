@@ -9,6 +9,13 @@ The lock work is done when every junior and expert floor has a puzzle baked in. 
 session starts and ends by stating that count. Work that does not move it (new mechanics, notation polish,
 refactors) waits until the designer asks for it or a placement is blocked by it.
 
+## Who does what
+
+- **The designer designs the puzzles:** every new `.lock`, its shape and its trick. Claude does not design
+  locks or reshape a designed one's trick; it may propose, and says where a lock fails a check.
+- **Claude builds the mechanics** a design needs (notation, walks, carve, play, art hookup) **and places** locks
+  on floors (`lock-placement.md`), carving and baking them.
+
 ## A session
 
 - One goal per session, taken from `docs/handover-stonegate.md`. At the end, update the handover and start
