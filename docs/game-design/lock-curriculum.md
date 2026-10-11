@@ -72,7 +72,7 @@ lock, not a sampler.
 | `leverSwapsDoors`  | junior                 | one lever swaps two doors, and can be thrown back             |
 | `doorWaitsForTwo`  | junior                 | a door shows the marks it waits for, and opens on the last    |
 | `waterMoves`       | junior                 | one lever drains a hall                                       |
-| `tilesInOrder`     | junior                 | two tiles, in order                                           |
+| `tilesInOrder`     | expert                 | two tiles, in order                                           |
 | `stoneOnAPlate`    | junior, once buildable | a stone on a plate holds its door; lift it and the door shuts |
 
 ## The locks
