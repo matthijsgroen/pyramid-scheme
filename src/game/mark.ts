@@ -53,7 +53,8 @@ export type MarkAllocation = {
  * Gives every request on a floor its own glyph — a mechanic and its gates wear one mark, two mechanics
  * never share a glyph, and a sequence's tiles never wear a mechanic's. A request keeps the glyph its seed
  * prefers when it is free; otherwise it takes the next free one, so earlier requests (authoring order,
- * mechanics before tiles) are never moved by a later one. Colour stays what the seed alone derives.
+ * mechanics before tiles) are never moved by a later one. Colour works the same way over the five grounds, so two
+ * mechanics on one floor differ in colour too until a sixth has to share one.
  */
 export const allocateMarks = (
   mechanics: readonly MarkRequest[],
@@ -63,6 +64,16 @@ export const allocateMarks = (
   const marks = new Map<string, Mark>()
   const tileGlyphs = new Map<string, number>()
   const unmarked: string[] = []
+  const takenColors = new Set<number>()
+  const takeColor = (seed: number) => {
+    for (let step = 0; step < KEY_COLORS.length; step++) {
+      const index = (seed + step) % KEY_COLORS.length
+      if (takenColors.has(index)) continue
+      takenColors.add(index)
+      return KEY_COLORS[index]
+    }
+    return markFor(seed).color
+  }
   const take = (seed: number): number | undefined => {
     for (let step = 0; step < MARK_GLYPHS.length; step++) {
       const index = (seed + step) % MARK_GLYPHS.length
@@ -75,7 +86,7 @@ export const allocateMarks = (
   for (const { id, seed } of mechanics) {
     const index = take(seed)
     if (index === undefined) unmarked.push(id)
-    else marks.set(id, { color: markFor(seed).color, glyph: MARK_GLYPHS[index] })
+    else marks.set(id, { color: takeColor(seed), glyph: MARK_GLYPHS[index] })
   }
   for (const { id, seed } of tiles) {
     const index = take(seed)

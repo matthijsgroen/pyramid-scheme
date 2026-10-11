@@ -14,6 +14,14 @@ describe("allocating the marks of one floor", () => {
     expect(new Set(glyphsOf(marks)).size).toBe(2)
   })
 
+  it("gives two mechanics that prefer the same colour a colour each", () => {
+    const { marks } = allocateMarks([
+      { id: "a", seed: 0 },
+      { id: "b", seed: 30 },
+    ])
+    expect(marks.get("a")!.color).not.toBe(marks.get("b")!.color)
+  })
+
   it("lets the earlier-authored mechanic keep the glyph both prefer", () => {
     const { marks } = allocateMarks([
       { id: "first", seed: 4 },
