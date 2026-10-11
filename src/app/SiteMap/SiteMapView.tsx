@@ -60,8 +60,6 @@ import { drawingOf, familyIconOf, isLockedGate, isSpentAt, nodeRadius, shapeKind
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
 import { MapNotice } from "@/ui/atoms/MapNotice"
 import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
-import { MarkArtBadges, type Mark } from "./mark"
-import { marksOfFace } from "@/game/gateFace"
 import { FloorShade, LitPlaces } from "./torchlight"
 import {
   SEATING_PASS,
@@ -342,7 +340,7 @@ export const nodeSpritesFor = (
     c: number,
     tier: Difficulty,
     dirs: ReadonlySet<Direction>,
-    { open, wall, marks }: { open: boolean; wall: boolean; marks: readonly Mark[] }
+    { open, wall }: { open: boolean; wall: boolean }
   ): void => {
     // `gate` is shut and `gate-open` is the same leaf swung back or sunk into the floor; a rank with
     // neither draws the marker alone, exactly as a stairhead did before its flights were painted.
@@ -427,9 +425,6 @@ export const nodeSpritesFor = (
       x: left,
       y: base - PROP_H,
       mirrored: false,
-      // ON THE LEAF, NOT ON THE MARKER: a way a lever shut hides its marker entirely, so the pair
-      // its lever wears has to be worn by the stone the player is actually looking at.
-      ...(marks.length > 0 ? { marks } : {}),
     })
   }
   for (let r = 0; r < grid.rows; r++) {
@@ -440,7 +435,6 @@ export const nodeSpritesFor = (
         gateLeaf(r, c, cell.difficulty ?? floorTier, cell.dirs, {
           open: !weight?.shut.has(cell.openGate.requiredKeyId ?? ""),
           wall: false,
-          marks: marksOfFace(cell.openGate.gateFace),
         })
         continue
       }
@@ -501,7 +495,7 @@ export const nodeSpritesFor = (
             mirrored: false,
             fadeAt: [`${r},${c}`, `${r - 1},${c}`],
           })
-        else gateLeaf(r, c, tier, cell.dirs, { open: false, wall: true, marks: marksOfFace(cell.gateFace) })
+        else gateLeaf(r, c, tier, cell.dirs, { open: false, wall: true })
       } else if (kind === "gate" && cell.regionBarrier) {
         // A REGION BARRIER IS THE COVER ITSELF, NOT A DOOR HUNG IN THE PASSAGE: the water or sand is drawn
         // under the floor's light (RegionBarrierCovers), and the cell carries no sprite and no marker.
@@ -509,7 +503,6 @@ export const nodeSpritesFor = (
         gateLeaf(r, c, tier, cell.dirs, {
           open: cell.state === "completed" || (weight?.open.has(cell.requiredKeyId ?? "") ?? false),
           wall: isSealedWayOut(cell),
-          marks: marksOfFace(cell.gateFace),
         })
       } else if (drawingOf(cell)?.art === "lever") {
         // BLOCKED UNTIL ALL THREE TILES EXIST, AND NEVER PLACEHOLDER: `tileUrl`, not `tileOrPlaceholder`
@@ -1350,10 +1343,6 @@ export const SiteMapView = ({
               where the eye already is. */}
           {sprite.badge && (
             <NodeBadge kind={sprite.badge} x={sprite.x + CELL / 2} y={sprite.y + PROP_H - CELL * 0.62} />
-          )}
-          {/* ON THE LEAF, for the same reason: a door a lever drives has no marker left to wear it. */}
-          {sprite.marks && (
-            <MarkArtBadges marks={sprite.marks} x={sprite.x + CELL / 2} y={sprite.y + PROP_H - CELL * 0.62} />
           )}
         </Fragment>
       ),

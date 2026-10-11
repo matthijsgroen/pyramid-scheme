@@ -16,8 +16,8 @@ export type GateOwnerIcon =
   | { kind: "plate"; wants: "stone" | "empty" }
 
 /** One owner of the door, unlit until its current state names the door. */
-/** `mark` is the pair a mechanism owner wears (mark.ts), set only on a door that needs a face: the map draws it
- * on the door, and a door with one control wears none. */
+/** `mark` is the pair a mechanism owner wears (mark.ts), set only on a door that needs a face: its board draws it
+ * beside the owner's icon, and a door with one control wears none. */
 export type GateMarker = { id: string; icon: GateOwnerIcon; lit: boolean; mark?: Mark }
 
 /** One tile of a sequence as the door lists it: the glyph it wears and how the run stands on it. */
@@ -220,7 +220,3 @@ export const withoutUnpairedMarks = (grid: FloorGrid): FloorGrid => {
   )
   return changed ? { ...grid, cells } : grid
 }
-
-/** The pairs a door shows: one per control it waits on, and none for a door that needs no face. */
-export const marksOfFace = (face: GateFace | undefined): Mark[] =>
-  (face?.markers ?? []).flatMap(({ mark }) => (mark ? [mark] : []))

@@ -57,33 +57,3 @@ export const MarkChip = ({ mark, size = 24 }: { mark: Mark; size?: number }) => 
     <MarkFace mark={mark} />
   </svg>
 )
-
-/**
- * THE MARK WORN BY THE ART RATHER THAN BY THE MARKER, for the half of the pair that has no marker to
- * wear it: a door a lever drives is a way a switch shut (`isSealedWayOut`), which the map draws as a
- * leaf of stone with its node marker hidden outright. The badge moves onto the leaf, exactly as the
- * emptied-chest ✓ moves onto the lid (`NodeSprite.badge`) and for the same reason.
- *
- * Placed by its CENTRE, in map units, inside the map's HTML layer.
- */
-export const MarkArtBadge = ({ mark, x, y, r = 11 }: { mark: Mark; x: number; y: number; r?: number }) => (
-  <svg
-    aria-hidden="true"
-    viewBox="-12 -12 24 24"
-    style={{ position: "absolute", left: x - r, top: y - r, width: r * 2, height: r * 2, overflow: "visible" }}
-  >
-    <MarkFace mark={mark} />
-  </svg>
-)
-
-/** The pairs side by side, centred on the leaf, shrinking as they grow in number so they stay inside it. */
-export const MarkArtBadges = ({ marks, x, y }: { marks: readonly Mark[]; x: number; y: number }) => {
-  const r = marks.length > 2 ? 7 : 9
-  return (
-    <>
-      {marks.map((mark, n) => (
-        <MarkArtBadge key={n} mark={mark} x={x + (n - (marks.length - 1) / 2) * r * 2.2} y={y} r={r} />
-      ))}
-    </>
-  )
-}

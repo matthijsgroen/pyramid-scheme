@@ -2533,8 +2533,7 @@ describe("the arch over a shut way out is drawn in front of its bars", () => {
   })
 })
 
-// A DOOR WEARS THE MARKS OF ITS CONTROLS ONLY WHERE IT HAS SEVERAL: a door drawn as stone has its marker hidden, so the
-// marks ride the ART (`NodeSprite.marks`), the same move the emptied-chest ✓ makes. A door one lever drives wears none.
+// A DOOR WEARS NO MARKS ON ITS LEAF: the marks of its controls are on the board the door opens (GateFaceComponent).
 describe("a lever and the doors it drives", () => {
   const handleGrid = floorWithHandle({ in: "lever", left: ["vault"], right: ["pocket"] }).grid
 
@@ -2548,9 +2547,7 @@ describe("a lever and the doors it drives", () => {
     const { container } = render(<SiteMapView grid={handleGrid} revealAllCells />)
     const lever = handleGrid.cells.flat().find(cell => cell.type === "room" && cell.family === "handle")
     if (lever?.type !== "room" || !lever.mark) throw new Error("the lever wears no mark")
-    const glyph = String.fromCodePoint(lever.mark.glyph)
-
-    expect(markGlyphsOnScreen(container)).toEqual([glyph])
+    expect(markGlyphsOnScreen(container)).toEqual([String.fromCodePoint(lever.mark.glyph)])
   })
 })
 

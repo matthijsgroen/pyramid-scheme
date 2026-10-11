@@ -6,6 +6,8 @@ export type GateFaceMarker = {
   /** The owner's own icon, drawn by the caller. */
   icon: ReactNode
   lit: boolean
+  /** The owner's mark, so one torch can be told from another; drawn by the caller. */
+  badge?: ReactNode
   /** What the marker says to a screen reader, lit or not. */
   label: string
 }
@@ -65,13 +67,14 @@ export const GateFacePanel: FC<GateFacePanelProps> = ({
             aria-label={marker.label}
             data-lit={marker.lit}
             className={clsx(
-              "flex size-16 items-center justify-center rounded-full border-2 text-4xl",
+              "relative flex size-16 items-center justify-center rounded-full border-2 text-4xl",
               marker.lit
                 ? "border-amber-300 bg-amber-900/60 shadow-[0_0_14px_rgba(252,211,77,0.6)]"
                 : "border-stone-600 bg-stone-900 opacity-40 grayscale"
             )}
           >
             {marker.icon}
+            {marker.badge && <span className="absolute -top-1 -left-1">{marker.badge}</span>}
           </li>
         ))}
       </ul>

@@ -3,6 +3,7 @@ import type { FamilyPlugin } from "@/app/families/familyRegistry"
 import { getFamilyPlugin } from "@/app/families/familyRegistry"
 import type { GateOwnerIcon } from "@/game/gateFace"
 import { GateFacePanel } from "@/ui/atoms/GateFacePanel"
+import { MarkChip } from "@/app/SiteMap/mark"
 import { KeyIcon } from "@/ui/atoms/KeyIcon"
 import { sharedTileUrl } from "@/app/SiteMap/tileAssets"
 import { CELL, PROP_H } from "@/app/SiteMap/mapScale"
@@ -46,6 +47,7 @@ export const GateFaceComponent: FamilyPlugin["Component"] = ({ ctx, journeys, on
           id: marker.id,
           icon: iconFor(marker.icon),
           lit: marker.lit,
+          ...(marker.mark ? { badge: <MarkChip mark={marker.mark} size={22} /> } : {}),
           label: t(marker.lit ? "gateFace.lit" : "gateFace.unlit", { owner: name }),
         }
       })}
