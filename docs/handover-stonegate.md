@@ -135,13 +135,16 @@ final whole-branch review on the most capable model. Commit and push freely on t
 
 ## Next session
 
-Placement count: 31/34 (`docs/instructions/agent-work.md` finish line). Every expert lock stands, and every junior
-lesson but three. Still open: boardPicksTheWay on junior_2 and junior_4 site 1 (below), and leverOpensADoor beside
-junior_2's switch fork. Every lesson shows its shut door before its control (`lock-curriculum.md`, "A lesson shows the
+Placement count: 29/34 (`docs/instructions/agent-work.md` finish line). Still open: boardPicksTheWay on junior_2 and
+junior_4 site 1 (below), leverOpensADoor on junior_1 site 1 and beside junior_2's switch fork, and leverSwapsDoors on
+expert_1 site 1. Every lesson shows its shut door before its control (`lock-curriculum.md`, "A lesson shows the
 problem first"; `yarn lock` refuses a lesson that does not, `doorsSeenLate` in `src/game/lockChecks.ts`). The
-door-first leverOpensADoor puts its lever in a side room, and on junior_2 site 2 the lay then leaves no bare route
-node for the switch's junction (`siteAssembler.ts`, `junctionGroups`, `bareRouteStep`): 0 of 160 seeds and packings
-carve it, so it is unplaced until the carve gives the junction a node. Switch boards are dealt like room boards now (`boardIndex.ts`), so
+door-first lessons put the control in a side room off the door's hall. On junior_2 site 2 the lay then leaves no bare
+route node for the switch's junction (`siteAssembler.ts`, `junctionGroups`, `bareRouteStep`; 0 of 160 seeds and
+packings carve). The hall's stub off the route holds no room unless absorbed content lands there, and a roomless stub
+loses its fog on a re-carve, so the bake now refuses such a seed (`roomlessRouteStubs`, criterion "every stub holds a
+room"); on junior_1 site 1 and expert_1 site 1 no seed passes, so they are unplaced. Junior_1 now meets the lever
+first in dropDown (site 2): the designer may want leverOpensADoor moved, or the carve to seat a room in a bare stub. Switch boards are dealt like room boards now (`boardIndex.ts`), so
 no two switches in one tier share a board while the list covers them; every switch floor shows a different board
 than before, so a half-solved switch comes back on a new board (fine before release).
 

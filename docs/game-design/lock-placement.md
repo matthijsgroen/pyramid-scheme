@@ -27,16 +27,21 @@ Columns:
     of the route; with the lesson's side room (the lever off the obvious path) the lay leaves none, and no seed or
     packing carves it (0 of 160 tried, 2026-10-11). The lesson keeps its door-first shape; the carve has to give the
     junction a node before it stands here.
+  - **bare hall**: the lesson's hall (the door's near side, where the side room branches off) holds no room on any
+    seed (4646 tried, up to packing 1). A room is what keeps a stretch's fog when the floor is carved again, so the
+    bake refuses a seed that leaves a route region's stub bare ("every stub holds a room", `carveSeedSearch.ts`).
+    junior_1 site 1 (leverOpensADoor) and expert_1 site 1 (leverSwapsDoors), 2026-10-11. On junior_1 the lever is
+    then first met in dropDown at site 2.
 
 ### Junior
 
 **junior_1 — Sacred Ibis Migration** (`water` role on pyramids 1-3, patron Thoth)
 
-| Site | Main floors | Wing floors | Authored         | Suggested        | Chosen lock      | Placed |
-| ---- | ----------- | ----------- | ---------------- | ---------------- | ---------------- | ------ |
-| 1    | 1           | 0           |                  | leverOpensADoor  | leverOpensADoor  | ✓      |
-| 2    | 1           | 0           |                  | dropDown         | dropDown         | ✓      |
-| 3    | 1           | 1           | expert ward wing | boardPicksTheWay | boardPicksTheWay | ✓      |
+| Site | Main floors | Wing floors | Authored         | Suggested        | Chosen lock      | Placed         |
+| ---- | ----------- | ----------- | ---------------- | ---------------- | ---------------- | -------------- |
+| 1    | 1           | 0           |                  | leverOpensADoor  | leverOpensADoor  | no (bare hall) |
+| 2    | 1           | 0           |                  | dropDown         | dropDown         | ✓              |
+| 3    | 1           | 1           | expert ward wing | boardPicksTheWay | boardPicksTheWay | ✓              |
 
 **junior_2 — Valley of the Artisans**
 
@@ -70,12 +75,12 @@ Columns:
 
 **expert_1 — Valley of the Kings** (`funerary` role on pyramids 1-4)
 
-| Site | Main floors | Wing floors | Authored                            | Suggested       | Chosen lock     | Placed |
-| ---- | ----------- | ----------- | ----------------------------------- | --------------- | --------------- | ------ |
-| 1    | 1           | 0           |                                     | leverSwapsDoors | leverSwapsDoors | ✓      |
-| 2    | 1           | 0           |                                     | dropHome        | dropHome        | ✓      |
-| 3    | 1           | 2           | master ward wing, starter ward wing | twoLamps        | twoLamps        | ✓      |
-| 4    | 1           | 1           | wizard ward wing, patron Anubis     | **doubleBack**  | doubleBack      | ✓      |
+| Site | Main floors | Wing floors | Authored                            | Suggested       | Chosen lock     | Placed         |
+| ---- | ----------- | ----------- | ----------------------------------- | --------------- | --------------- | -------------- |
+| 1    | 1           | 0           |                                     | leverSwapsDoors | leverSwapsDoors | no (bare hall) |
+| 2    | 1           | 0           |                                     | dropHome        | dropHome        | ✓              |
+| 3    | 1           | 2           | master ward wing, starter ward wing | twoLamps        | twoLamps        | ✓              |
+| 4    | 1           | 1           | wizard ward wing, patron Anubis     | **doubleBack**  | doubleBack      | ✓              |
 
 **expert_2 — Karnak Temple Complex**
 
