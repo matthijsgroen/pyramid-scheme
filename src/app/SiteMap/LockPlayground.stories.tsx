@@ -4,14 +4,14 @@ import { LockPlayground } from "./lockPlayground"
 import "@/mods/registerModApps"
 
 // Every catalogue lock, read the way `yarn lock` reads it: the file is the lock. Named by its path under
-// src/game/locks, so a lesson reads as "lessons/torch".
+// its tier folder, so a lesson reads as "lessons/torch".
 const LOCKS = Object.fromEntries(
   Object.entries(
     import.meta.glob("../../game/locks/**/*.lock", { query: "?raw", import: "default", eager: true }) as Record<
       string,
       string
     >
-  ).map(([path, text]) => [path.replace(/^.*\/locks\//, "").replace(/\.lock$/, ""), text])
+  ).map(([path, text]) => [path.replace(/^.*\/locks\/[^/]+\//, "").replace(/\.lock$/, ""), text])
 )
 
 const meta = {

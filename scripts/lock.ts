@@ -4,8 +4,8 @@
  * prints the shared Lock JSON it reads into.
  *
  *   yarn lock                       the catalogue as one table: mechanisms, shortest solution, checks
- *   yarn lock doubleBack            one of them, with its JSON
- *   yarn lock lessons/torch --watch src/game/locks/lessons/torch.lock, redrawn on every save
+ *   yarn lock doubleBack            one of them, with its JSON (also `expert/doubleBack`)
+ *   yarn lock lessons/torch --watch src/game/locks/junior/lessons/torch.lock, redrawn on every save
  *   yarn lock sketch.lock           a file
  *   yarn lock sketch.lock --watch   redrawn on every save; a new file starts with the notation
  *   yarn lock - < sketch.lock       standard input
@@ -17,16 +17,23 @@ import { drawLock } from "../src/game/lockDraw"
 import { lockQuality, solveLock } from "../src/game/lockReview"
 import { LOCK_SYNTAX, parseLock } from "../src/game/lockNotation"
 import type { ParsedLock } from "../src/game/lockNotation"
-import { LESSONS, LOCK_CATALOGUE } from "../src/game/lockCatalogue"
+import { LESSONS, LOCK_CATALOGUE, LOCK_ENTRIES, LOCK_TIERS, findLockEntry } from "../src/game/lockCatalogue"
 import { corridorLines, formatLockTable, isLessonPath, lockChecks, lockRow } from "./lockTable"
 
 const args = process.argv.slice(2)
 const watching = args.includes("--watch")
 const named = args.find(arg => !arg.startsWith("--"))
 const library: Record<string, ParsedLock> = { ...LOCK_CATALOGUE, ...LESSONS }
-// A name without `.lock` is a file under src/game/locks; watching a new one starts it there.
-const inLocks = named && named !== "-" && !named.endsWith(".lock") ? `src/game/locks/${named}.lock` : undefined
-const target = inLocks && (existsSync(inLocks) || (watching && !(named! in library))) ? inLocks : named
+// A name without `.lock` is a catalogue lock by any name it answers to; watching a new one starts it in its tier
+// folder (`expert/sketch`), or under junior without one.
+const isName = named && named !== "-" && !named.endsWith(".lock")
+const entry = isName ? findLockEntry(named) : undefined
+const inLocks = isName
+  ? entry
+    ? `src/game/locks/${entry.tier}/${entry.path}.lock`
+    : `src/game/locks/${LOCK_TIERS.some(tier => named.startsWith(`${tier}/`)) ? "" : "junior/"}${named}.lock`
+  : undefined
+const target = inLocks && (existsSync(inLocks) || (watching && !entry)) ? inLocks : named
 
 const report = (name: string, parsed: ParsedLock, withJson: boolean, lesson: boolean): boolean => {
   const { lock, drafts } = parsed
@@ -64,7 +71,7 @@ const fromText = (name: string, text: string, lesson = false): boolean => {
 }
 
 // A new file to design in starts with the syntax as comments, so it never has to be remembered.
-if (watching && target && target !== "-" && !(target in library) && !existsSync(target)) {
+if (watching && target && target !== "-" && !entry && !existsSync(target)) {
   const help = syntax.split("\n").map(line => `//${line}`.trimEnd())
   writeFileSync(
     target,
@@ -77,10 +84,7 @@ if (watching && target && target !== "-" && !(target in library) && !existsSync(
 if (args.includes("--help")) {
   console.log(syntax)
 } else if (!target) {
-  const rows = [
-    ...Object.entries(LOCK_CATALOGUE).map(([name, parsed]) => lockRow(name, parsed)),
-    ...Object.entries(LESSONS).map(([name, parsed]) => lockRow(`lessons/${name}`, parsed)),
-  ]
+  const rows = LOCK_ENTRIES.map(e => lockRow(`${e.tier}/${e.path}`, (e.lesson ? LESSONS : LOCK_CATALOGUE)[e.name]))
   console.log(formatLockTable(rows))
   process.exitCode = rows.every(row => row.sound) ? 0 : 1
 } else if (target === "-") {
@@ -105,8 +109,8 @@ if (args.includes("--help")) {
       clearTimeout(pending)
       pending = setTimeout(run, 50)
     })
-} else if (target in library) {
-  process.exitCode = report(target, library[target], true, target in LESSONS && !(target in LOCK_CATALOGUE)) ? 0 : 1
+} else if (entry) {
+  process.exitCode = report(entry.name, library[entry.name], true, entry.lesson) ? 0 : 1
 } else {
   console.error(`no file or catalogue lock called ${target}; the catalogue has ${Object.keys(library).join(", ")}`)
   process.exitCode = 1

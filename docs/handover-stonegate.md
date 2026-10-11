@@ -45,8 +45,8 @@ solver and play; play writes a move and every douse it causes in one journeys wr
 locks light torches: `lessons/torch`, `lessons/doorWaitsForTwo`, `relay` and `stoneGate`, bound `flame: "torch"`.
 The contract is `docs/mods/mechanic-contract.md` §3.3; the ledger is `.superpowers/sdd/2026-10-09-torch-douse/`.
 
-The migration of the four locks (plan task 8) touched `src/game/locks/lessons/torch.lock`,
-`src/game/locks/lessons/doorWaitsForTwo.lock`, `src/game/locks/relay.lock`, `src/game/locks/stoneGate.lock`,
+The migration of the four locks (plan task 8) touched `src/game/locks/junior/lessons/torch.lock`,
+`src/game/locks/junior/lessons/doorWaitsForTwo.lock`, `src/game/locks/expert/relay.lock`, `src/game/locks/expert/stoneGate.lock`,
 `src/worldGen/spec/dev.ts`, `src/worldGen/spec/expert.ts`, `src/mods/topology/index.ts`,
 `src/mods/topology/game/torch/meta.ts`, `src/app/SiteMap/SiteMapView.tsx`, `src/data/generatedWorld.ts`,
 `src/data/carveLedger.json` and `src/data/tierFingerprints.json`. The plain bake changed stoneGate's floor
@@ -60,7 +60,7 @@ floor walk refuses it per level (`nestedFree`), `yarn lock` prints `✗ a region
 the stranding floors. The catalogue, the table, the world and the tests skip a `<name>-blocked.lock` file
 (`lockTextsIn`); `yarn lock src/game/locks/<name>-blocked.lock` still draws one.
 
-- **doubleBack** (designer, 2026-10-09): the old shape is `src/game/locks/doubleBack-blocked.lock`, unchanged, for
+- **doubleBack** (designer, 2026-10-09): the old shape is `src/game/locks/expert/doubleBack-blocked.lock`, unchanged, for
   the designer to fix or bring back. `doubleBack.lock` adds one line, `s2 >> s1`: S1 shuts the way into s1 and stands
   in s1, so s1 was sealed for good. A drop from s2 back into s1 keeps the lever shutting the way you came and the
   drop onto the branch. The cost: after the drop back the player can throw S1 back and walk home by rightLower, so
@@ -114,7 +114,7 @@ final whole-branch review on the most capable model. Commit and push freely on t
 - **Gate loops are allowed by design** (2026-10-06).
 - **The dev floor is for testing lock mechanisms.** stoneGate takes dev pyramid 12.
 - **Placement of stoneGate is Djoser, `expert_4`** (2026-10-06).
-- **One source for a lock:** `src/game/locks/<name>.lock`, read at bake time through `parseLock`. No TypeScript copy.
+- **One source for a lock:** `src/game/locks/<tier>/<name>.lock`, read at bake time through `parseLock`. No TypeScript copy.
   Every `.lock` file names its designer on its first line (`// designed by: Matthijs` or `// designed by: Claude`).
   The designer's headers (doubleBack, stoneGate) are their text; a stale header on a lock Claude designed may be
   corrected.

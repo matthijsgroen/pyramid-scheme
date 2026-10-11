@@ -4,6 +4,7 @@
  */
 import { solveLock } from "../src/game/lockReview"
 import type { ParsedLock } from "../src/game/lockNotation"
+import { LOCK_TIERS } from "../src/game/lockCatalogue"
 import { lockChecks } from "../src/game/lockChecks"
 import { corridorLine } from "../src/game/lockNotation"
 import { alignOf, barriersOf, isRegionGate, isUnladenGate, joinOf } from "../src/game/lockAuthoring"
@@ -78,9 +79,13 @@ export const lockRow = (path: string, parsed: ParsedLock): LockRow => {
   }
 }
 
-/** The rows as a table, sorted by path, with a header. */
+/** The rows as a table, grouped by tier (junior, expert, master, wizard) and sorted by path, with a header. */
 export const formatLockTable = (rows: readonly LockRow[]): string => {
-  const sorted = [...rows].sort((a, b) => a.lock.localeCompare(b.lock))
+  const rank = (lock: string) => {
+    const at = LOCK_TIERS.findIndex(tier => lock.startsWith(`${tier}/`))
+    return at < 0 ? LOCK_TIERS.length : at
+  }
+  const sorted = [...rows].sort((a, b) => rank(a.lock) - rank(b.lock) || a.lock.localeCompare(b.lock))
   const lockWidth = Math.max(4, ...sorted.map(row => row.lock.length))
   const mechWidth = Math.max(10, ...sorted.map(row => row.mechanisms.length))
   const line = (lock: string, mechanisms: string, steps: string, checks: string) =>
