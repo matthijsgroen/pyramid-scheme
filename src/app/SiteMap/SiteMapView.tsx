@@ -1776,6 +1776,12 @@ export const SiteMapView = ({
                 const hasPlate = drawnPlates.has(`plate:${r},${c}`)
                 // A STANDING TORCH IS THE NODE, as a plate is: the flame square under it would put a second torch on the tile.
                 const hasTorch = drawingOf(cell)?.art === "standingTorch" && !!sharedTileUrl("torchUnlit")
+                // A PAINTED LEVER IS THE NODE, as a torch is: the marker square under it would put a second lever on the tile.
+                const hasLever =
+                  drawingOf(cell)?.art === "lever" &&
+                  !!tileUrl(cell.difficulty ?? tier, "leverBaseBack") &&
+                  !!tileUrl(cell.difficulty ?? tier, "leverArm") &&
+                  !!tileUrl(cell.difficulty ?? tier, "leverBaseFront")
                 const roomR = nodeRadius[shapeKind]
                 // A WAY A SWITCH SHUT IS A WALL, AND A WALL WEARS NO NODE. The bars standing in its doorway
                 // already say the way is closed; a gate marker on top of them offers a second reading — a
@@ -1801,7 +1807,7 @@ export const SiteMapView = ({
                       <g
                         data-shape-kind={shapeKind}
                         opacity={
-                          sealedWay || hasStair || hasExit || hasPlate || hasTorch
+                          sealedWay || hasStair || hasExit || hasPlate || hasTorch || hasLever
                             ? 0
                             : isCompleted && !isPending && !isPortal
                               ? 0.45

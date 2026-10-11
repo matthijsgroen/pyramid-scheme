@@ -2543,11 +2543,10 @@ describe("a lever and the doors it drives", () => {
       .filter(text => !text.closest('[opacity="0"]'))
       .map(text => text.textContent)
 
-  it("draws the lever's mark and none on the doors it drives alone", () => {
+  it("draws no mark square under the painted lever and none on the doors it drives", () => {
     const { container } = render(<SiteMapView grid={handleGrid} revealAllCells />)
-    const lever = handleGrid.cells.flat().find(cell => cell.type === "room" && cell.family === "handle")
-    if (lever?.type !== "room" || !lever.mark) throw new Error("the lever wears no mark")
-    expect(markGlyphsOnScreen(container)).toEqual([String.fromCodePoint(lever.mark.glyph)])
+
+    expect(markGlyphsOnScreen(container)).toEqual([])
   })
 })
 
