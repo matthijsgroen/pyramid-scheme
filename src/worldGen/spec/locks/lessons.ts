@@ -13,6 +13,7 @@ const LESSON_BINDINGS = {
   doorWaitsForTwo: { flame: "torch" },
   stoneOnAPlate: { weights: "stonePlate" },
   waterMoves: { toggle: "handle", "region-barrier": "water" },
+  tilesInOrder: { sequence: "pressure-plate" },
 } as const
 
 export type PlacedLesson = keyof typeof LESSON_BINDINGS

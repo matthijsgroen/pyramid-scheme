@@ -320,15 +320,14 @@ export const expertRules: Rule[] = [
   journey("expert_3").pyramid("last", { patron: "sobek" }),
   // THE PLACEMENT: one lock per expert floor, as the adopted proposal says (docs/game-design/lock-placement.md). Every
   // region `free`, and only the kinds a lock uses bound.
-  // expert_1 site 1 stands no lesson: neither leverSwapsDoors (no seed gives its hall a room off the route) nor
-  // tilesInOrder (0 of 200 seeds carve) lays there.
+  journey("expert_1").pyramid(1, lessonOnMainFloor("tilesInOrder")),
   journey("expert_1").pyramid(2, lockOnMainFloor("keyring")),
   journey("expert_1").pyramid(3, lockOnMainFloor("twoLamps")),
-  // Stand-ins, each for a lock not yet placed: expert_1 site 4 (plates does not carve), expert_2 sites 2 (relay does not
-  // carve), 3 and 4, expert_3 site 2 (observatory does not carve) and site 3, expert_4 sites 2 to 4 (locks still to design).
-  journey("expert_1").pyramid(4, lockOnMainFloor("doubleBack")),
+  // Stand-ins, each for a lock not yet placed: expert_2 sites 3 and 4, expert_3 site 2 (observatory does not lay) and
+  // site 3, expert_4 sites 2 to 4 (locks still to design).
+  journey("expert_1").pyramid(4, lockOnMainFloor("plates")),
   journey("expert_2").pyramid(1, lockOnMainFloor("clockwork")),
-  journey("expert_2").pyramid(2, lockOnMainFloor("cellar")),
+  journey("expert_2").pyramid(2, lockOnMainFloor("relay")),
   journey("expert_2").pyramid(3, lockOnMainFloor("twoLamps")),
   journey("expert_2").pyramid(4, lockOnMainFloor("dropHome")),
   // expert_3 site 1 stands in for counterweight, which cannot be built yet.

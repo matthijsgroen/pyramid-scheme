@@ -152,11 +152,14 @@ walkable only from its reset at the door (the walk's `strands` checks it); its t
 (contract §8 settled). bathHouse (master, the designer's, untracked) walks in 14 actions but is still
 `✗ gateOwnedOffSeam`: fork Y's gates stand on the route.
 
-Placement count: 33/34 (`docs/instructions/agent-work.md` finish line). The designer adopted the one-puzzle-per-floor
-proposal (2026-10-11) and it is baked (`lock-placement.md`, Part 1 says which floors hold a stand-in and why). Still
-open: expert_1 site 1 has no lock, because tilesInOrder does not carve there (0 of 200 seeds, `layoutNotFound`);
-plates (expert_1 site 4), relay (expert_2 site 2) and observatory (expert_3 site 2) do not carve either, so their
-floors keep today's lock as a stand-in; counterweight (expert_3 site 1) and twoStones (expert_4 site 1) are not
+Placement count: 34/34 (`docs/instructions/agent-work.md` finish line). The designer adopted the one-puzzle-per-floor
+proposal (2026-10-11) and it is baked (`lock-placement.md`, Part 1 says which floors hold a stand-in and why).
+tilesInOrder (expert_1 site 1), plates (expert_1 site 4) and relay (expert_2 site 2) stand where proposed since three
+carve fixes: lengthening skips a corridor into a sequence step's region (its nodes are all kept bare), a lay that fails
+is searched again looking ahead to each region's drops, and the floor walk never calls a door's own node lost (a
+`crossings` region). Still open: observatory (expert_3 site 2) does not lay anywhere: its three-way board stands in a
+region the route runs through, so its node would need five ways; it needs the board off the route (carve change) or
+the designer's reshape, and its floor keeps dropHome as a stand-in; counterweight (expert_3 site 1) and twoStones (expert_4 site 1) are not
 buildable, so their floors keep a stand-in too; 1 junior and 7 expert slots wait for the designer's new locks, and
 their stand-ins repeat locks placed elsewhere. Every lesson shows its shut door before its control
 (`lock-curriculum.md`, "A lesson shows the problem first"; `yarn lock` refuses a lesson that does not,

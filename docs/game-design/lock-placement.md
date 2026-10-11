@@ -21,7 +21,7 @@ Columns:
   one exists: the slot is still to design, the proposed lock is not buildable yet, or it does not carve (the reason
   follows). A stand-in may repeat a lock placed elsewhere; the designer replaces it. "no" is a floor with no lock.
 
-Placed: 33 of 34 (2026-10-11).
+Placed: 34 of 34 (2026-10-11).
 
 ### Junior
 
@@ -44,12 +44,12 @@ Placed: 33 of 34 (2026-10-11).
 
 **junior_3 — Temple of Thoth** (patron Thoth)
 
-| Site | Main floors | Wing floors | Authored         | Chosen lock     | Placed                                  |
-| ---- | ----------- | ----------- | ---------------- | --------------- | --------------------------------------- |
-| 1    | 1           | 0           |                  | doorWaitsForTwo | ✓                                       |
-| 2    | 1           | 0           |                  | dropDown        | ✓ stand-in (a junior lock to design)    |
-| 3    | 1           | 1           | expert ward wing | dropHome        | ✓                                       |
-| 4    | 1           | 1           | master ward wing | cellar          | ✓                                       |
+| Site | Main floors | Wing floors | Authored         | Chosen lock     | Placed                               |
+| ---- | ----------- | ----------- | ---------------- | --------------- | ------------------------------------ |
+| 1    | 1           | 0           |                  | doorWaitsForTwo | ✓                                    |
+| 2    | 1           | 0           |                  | dropDown        | ✓ stand-in (a junior lock to design) |
+| 3    | 1           | 1           | expert ward wing | dropHome        | ✓                                    |
+| 4    | 1           | 1           | master ward wing | cellar          | ✓                                    |
 
 **junior_4 — Lighthouse of Alexandria** (`light`/`sky` role and night theme on pyramids 1-5)
 
@@ -65,55 +65,55 @@ Placed: 33 of 34 (2026-10-11).
 
 **expert_1 — Valley of the Kings** (`funerary` role on pyramids 1-4)
 
-| Site | Main floors | Wing floors | Authored                            | Chosen lock | Placed                                              |
-| ---- | ----------- | ----------- | ----------------------------------- | ----------- | --------------------------------------------------- |
-| 1    | 1           | 0           |                                     | none        | no (tilesInOrder does not carve: 0 of 200 seeds)    |
-| 2    | 1           | 0           |                                     | keyring     | ✓                                                   |
-| 3    | 1           | 2           | master ward wing, starter ward wing | twoLamps    | ✓                                                   |
-| 4    | 1           | 1           | wizard ward wing, patron Anubis     | doubleBack  | ✓ stand-in (plates does not carve: 0 of 200 seeds)  |
+| Site | Main floors | Wing floors | Authored                            | Chosen lock  | Placed |
+| ---- | ----------- | ----------- | ----------------------------------- | ------------ | ------ |
+| 1    | 1           | 0           |                                     | tilesInOrder | ✓      |
+| 2    | 1           | 0           |                                     | keyring      | ✓      |
+| 3    | 1           | 2           | master ward wing, starter ward wing | twoLamps     | ✓      |
+| 4    | 1           | 1           | wizard ward wing, patron Anubis     | plates       | ✓      |
 
 **expert_2 — Karnak Temple Complex**
 
-| Site | Main floors | Wing floors | Authored         | Chosen lock | Placed                                              |
-| ---- | ----------- | ----------- | ---------------- | ----------- | --------------------------------------------------- |
-| 1    | 1           | 0           |                  | clockwork   | ✓                                                   |
-| 2    | 1           | 0           |                  | cellar      | ✓ stand-in (relay does not carve: 0 of 200 seeds)   |
-| 3    | 1           | 1           | master ward wing | twoLamps    | ✓ stand-in (an expert lock to design)               |
-| 4    | 1           | 1           | wizard ward wing | dropHome    | ✓ stand-in (an expert lock to design)               |
+| Site | Main floors | Wing floors | Authored         | Chosen lock | Placed                                |
+| ---- | ----------- | ----------- | ---------------- | ----------- | ------------------------------------- |
+| 1    | 1           | 0           |                  | clockwork   | ✓                                     |
+| 2    | 1           | 0           |                  | relay       | ✓                                     |
+| 3    | 1           | 1           | master ward wing | twoLamps    | ✓ stand-in (an expert lock to design) |
+| 4    | 1           | 1           | wizard ward wing | dropHome    | ✓ stand-in (an expert lock to design) |
 
 **expert_3 — Nile Delta Expedition** (overgrown, growing from pyramid 2 to 5)
 
-| Site | Main floors | Wing floors | Authored                                    | Chosen lock     | Placed                                                    |
-| ---- | ----------- | ----------- | ------------------------------------------- | --------------- | --------------------------------------------------------- |
-| 1    | 1           | 0           |                                             | leverSwapsDoors | ✓ stand-in (counterweight is not buildable yet)           |
-| 2    | 1           | 0           | overgrown 0.2                               | dropHome        | ✓ stand-in (observatory does not carve: 0 of 200 seeds)  |
-| 3    | 1           | 0           | overgrown 0.4                               | cellar          | ✓ stand-in (an expert lock to design)                     |
-| 4    | 1           | 1           | overgrown 0.65, wizard ward wing            | overlook        | ✓ stand-in (an expert lock to design)                     |
-| 5    | 1           | 1           | overgrown 1, master ward wing, patron Sobek | doubleBack      | ✓                                                         |
+| Site | Main floors | Wing floors | Authored                                    | Chosen lock     | Placed                                                           |
+| ---- | ----------- | ----------- | ------------------------------------------- | --------------- | ---------------------------------------------------------------- |
+| 1    | 1           | 0           |                                             | leverSwapsDoors | ✓ stand-in (counterweight is not buildable yet)                  |
+| 2    | 1           | 0           | overgrown 0.2                               | dropHome        | ✓ stand-in (observatory does not lay: its board needs five ways) |
+| 3    | 1           | 0           | overgrown 0.4                               | cellar          | ✓ stand-in (an expert lock to design)                            |
+| 4    | 1           | 1           | overgrown 0.65, wizard ward wing            | overlook        | ✓ stand-in (an expert lock to design)                            |
+| 5    | 1           | 1           | overgrown 1, master ward wing, patron Sobek | doubleBack      | ✓                                                                |
 
 **expert_4 — Pyramid of Djoser**
 
-| Site | Main floors | Wing floors | Authored                                               | Chosen lock   | Placed                                           |
-| ---- | ----------- | ----------- | ------------------------------------------------------ | ------------- | ------------------------------------------------ |
-| 1    | 1           | 0           |                                                        | stoneOnAPlate | ✓ stand-in (twoStones is not buildable yet)     |
-| 2    | 1           | 0           | two floor-key colours, broad packing                   | twoLamps      | ✓ stand-in (an expert lock to design)            |
-| 3    | 1           | 0           |                                                        | cellar        | ✓ stand-in (an expert lock to design)            |
-| 4    | 1           | 1           | two floor-key colours, broad packing, master ward wing | overlook      | ✓ stand-in (an expert lock to design)            |
-| 5    | 1           | 1           | wizard ward wing                                       | stoneGate     | ✓                                                |
+| Site | Main floors | Wing floors | Authored                                               | Chosen lock   | Placed                                      |
+| ---- | ----------- | ----------- | ------------------------------------------------------ | ------------- | ------------------------------------------- |
+| 1    | 1           | 0           |                                                        | stoneOnAPlate | ✓ stand-in (twoStones is not buildable yet) |
+| 2    | 1           | 0           | two floor-key colours, broad packing                   | twoLamps      | ✓ stand-in (an expert lock to design)       |
+| 3    | 1           | 0           |                                                        | cellar        | ✓ stand-in (an expert lock to design)       |
+| 4    | 1           | 1           | two floor-key colours, broad packing, master ward wing | overlook      | ✓ stand-in (an expert lock to design)       |
+| 5    | 1           | 1           | wizard ward wing                                       | stoneGate     | ✓                                           |
 
 Site counts: junior 16 (3 + 4 + 4 + 5), expert 18 (4 + 4 + 5 + 5), the same as the curriculum's. Treasure
 tombs are not sites in this table.
 
 Duplicates among the stand-ins, until the designer replaces them: dropDown (junior_1 site 1 and junior_3 site 2),
 leverSwapsDoors (junior_2 site 2 and expert_3 site 1), stoneOnAPlate (junior_4 site 1 and expert_4 site 1), cellar
-(junior_3 site 4, expert_2 site 2, expert_3 site 3, expert_4 site 3), dropHome (junior_3 site 3, expert_2 site 4,
+(junior_3 site 4, expert_3 site 3, expert_4 site 3), dropHome (junior_3 site 3, expert_2 site 4,
 expert_3 site 2), twoLamps (expert_1 site 3, expert_2 site 3, expert_4 site 2), overlook (junior_4 site 2, expert_3
-site 4, expert_4 site 4), doubleBack (expert_1 site 4, expert_3 site 5).
+site 4, expert_4 site 4).
 
-**Open:** tilesInOrder (expert_1 site 1), plates (expert_1 site 4), relay (expert_2 site 2) and observatory (expert_3
-site 2) do not carve at any of 200 seeds at the default packing (`layoutNotFound`, or a corridor or region the lay
-cannot place); counterweight and twoStones are not buildable. expert_1 site 1 has no lock: its old lesson,
-leverSwapsDoors, moved to junior_2 site 2.
+**Open:** observatory (expert_3 site 2) does not lay on any floor: its three-way board stands in `in`, a region the
+route runs through, so the board's node would need five ways (three arms, the way in, the way on) and a lattice node
+has four. It needs the board off the route (a carve change: the carve seats a junction on a route step) or a reshape
+by the designer. counterweight and twoStones are not buildable.
 
 ### Where the curriculum and the world spec disagree
 

@@ -106,6 +106,7 @@ describe("the journey inspector on lock floors", () => {
       ["junior_4", 3, 0],
       ["junior_4", 4, 0],
       ["junior_4", 5, 0],
+      ["expert_1", 1, 0],
       ["expert_1", 2, 0],
       ["expert_1", 3, 0],
       ["expert_1", 4, 0],

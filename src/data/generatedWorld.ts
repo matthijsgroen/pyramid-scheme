@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1938791332
+export const worldContentHash = 568420922
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -5382,14 +5382,35 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["veil", "wallShrine", "sconce"],
         role: ["funerary", "puzzle"],
         encountersByIndex: { 0: "futoshiki", 1: "eclipse", 2: "hidato" },
-        packing: 0.22,
-        seed: 3529644521,
+        packing: 0.1,
+        seed: 3529644467,
         mainEndReward: { type: "mapPiece", tombId: "expert_treasure_tomb_b" },
         rewards: [
           { type: "consumable", consumable: "bandage" },
           { type: "consumable", consumable: "oil" },
           { type: "consumable", consumable: "trapTool" },
         ],
+        locks: [
+          {
+            lock: {
+              name: "tilesInOrder",
+              regions: { in: { takes: "free" }, a: { takes: "free" }, b: { takes: "free" }, out: { takes: "free" } },
+              connections: [["in", "a"], ["in", "b"], { between: ["in", "out"], barriers: ["in-out"] }],
+              gates: { "in-out": { from: "in", to: "out", owners: ["P"] } },
+              mechanics: {
+                P: {
+                  control: "sequence",
+                  steps: [{ in: "a" }, { in: "b" }],
+                  resetAt: "in-out",
+                  opens: { done: ["in-out"] },
+                },
+              },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: { sequence: "pressure-plate" },
       },
     ],
     [
@@ -6229,46 +6250,37 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         locks: [
           {
             lock: {
-              name: "doubleBack",
+              name: "plates",
               regions: {
                 in: { takes: "free" },
-                leftLower: { takes: "free" },
-                rightLower: { takes: "free" },
+                a: { takes: "free" },
+                b: { takes: "free" },
+                c: { takes: "free" },
+                d: { takes: "free" },
                 out: { takes: "free" },
-                s2: { takes: "free" },
-                s1: { takes: "free" },
               },
               connections: [
-                { between: ["in", "leftLower"], barriers: ["in-leftLower"] },
-                { between: ["in", "rightLower"], barriers: ["in-rightLower"] },
+                ["in", "a"],
+                ["in", "b"],
+                ["in", "c"],
+                ["in", "d"],
                 { between: ["in", "out"], barriers: ["in-out"] },
-                { between: ["leftLower", "s2"], barriers: ["leftLower-s2"] },
-                { between: ["rightLower", "s1"], barriers: ["rightLower>s1"] },
-                { between: ["s1", "leftLower"], barriers: ["s1>leftLower"] },
-                { between: ["leftLower", "in"], barriers: ["leftLower>in"] },
               ],
-              gates: {
-                "in-leftLower": { from: "in", to: "leftLower", owners: ["Y"] },
-                "in-rightLower": { from: "in", to: "rightLower", owners: ["Y"] },
-                "in-out": { from: "in", to: "out", owners: ["S2"] },
-                "leftLower-s2": { from: "leftLower", to: "s2", owners: ["S1"] },
-              },
-              oneWays: {
-                "rightLower>s1": { from: "rightLower", to: "s1" },
-                "s1>leftLower": { from: "s1", to: "leftLower" },
-                "leftLower>in": { from: "leftLower", to: "in" },
-              },
+              gates: { "in-out": { from: "in", to: "out", owners: ["P"] } },
               mechanics: {
-                Y: { control: "fork-switch", in: "in" },
-                S1: { control: "toggle", in: "s1", starts: "a", opens: { a: [], b: ["leftLower-s2"] } },
-                S2: { control: "toggle", in: "s2", starts: "a", opens: { a: [], b: ["in-out"] } },
+                P: {
+                  control: "sequence",
+                  steps: [{ in: "b" }, { in: "a" }, { in: "d" }, { in: "c" }],
+                  resetAt: "in-out",
+                  opens: { done: ["in-out"] },
+                },
               },
               in: "in",
               out: "out",
             },
           },
         ],
-        realisations: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
+        realisations: { sequence: "pressure-plate" },
       },
       {
         pathPuzzles: 2,
@@ -6836,36 +6848,46 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         locks: [
           {
             lock: {
-              name: "cellar",
+              name: "relay",
               regions: {
                 in: { takes: "free" },
-                ledge: { takes: "free" },
-                cell: { takes: "free" },
+                r1: { takes: "free" },
+                r2: { takes: "free" },
+                r3: { takes: "free" },
                 out: { takes: "free" },
               },
               connections: [
-                { between: ["in", "ledge"], barriers: ["in-ledge"] },
-                { between: ["in", "cell"], barriers: ["in-cell"] },
+                { between: ["in", "r1"], barriers: ["in-r1"] },
+                { between: ["r1", "r2"], barriers: ["r1-r2"] },
+                { between: ["r2", "r3"], barriers: ["r2-r3"] },
+                { between: ["r3", "in"], barriers: ["r3-in", "r3>in"] },
                 { between: ["in", "out"], barriers: ["in-out"] },
-                { between: ["ledge", "cell"], barriers: ["ledge>cell"] },
-                { between: ["out", "ledge"], barriers: ["out>ledge"] },
+                { between: ["out", "r1"], barriers: ["out>r1"] },
+                { between: ["out", "r3"], barriers: ["out>r3"] },
               ],
               gates: {
-                "in-ledge": { from: "in", to: "ledge", owners: ["H"] },
-                "in-cell": { from: "in", to: "cell", owners: ["blue"] },
-                "in-out": { from: "in", to: "out", owners: ["H"] },
+                "in-r1": { from: "in", to: "r1", owners: ["A"] },
+                "r1-r2": { from: "r1", to: "r2", owners: ["A", "B"] },
+                "r2-r3": { from: "r2", to: "r3", owners: ["B"] },
+                "r3-in": { from: "r3", to: "in", owners: ["C"] },
+                "in-out": { from: "in", to: "out", owners: ["C"] },
               },
-              oneWays: { "ledge>cell": { from: "ledge", to: "cell" }, "out>ledge": { from: "out", to: "ledge" } },
+              oneWays: {
+                "r3>in": { from: "r3", to: "in" },
+                "out>r1": { from: "out", to: "r1" },
+                "out>r3": { from: "out", to: "r3" },
+              },
               mechanics: {
-                H: { control: "toggle", in: "ledge", starts: "a", opens: { a: ["in-ledge"], b: ["in-out"] } },
-                blue: { control: "activator", in: "cell", starts: "off", opens: { off: [], on: ["in-cell"] } },
+                A: { control: "toggle", in: "r1", starts: "a", opens: { a: ["in-r1"], b: ["r1-r2"] } },
+                B: { control: "flame", in: "r2", starts: "off", opens: { off: ["r1-r2"], on: ["r2-r3"] } },
+                C: { control: "flame", in: "r3", starts: "off", opens: { off: [], on: ["r3-in", "in-out"] } },
               },
               in: "in",
               out: "out",
             },
           },
         ],
-        realisations: { toggle: "handle", activator: "torch", "one-way": "zipline" },
+        realisations: { toggle: "handle", flame: "torch", "one-way": "zipline" },
       },
     ],
     [
