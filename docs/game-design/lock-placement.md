@@ -23,6 +23,10 @@ Columns:
     bound to the handle), and on junior_2 and junior_4 the board comes before the journey's lever lesson, so the site
     would teach two mechanics at once. Placed where the lever was taught first (junior_1 site 3, junior_3 site 4);
     whether a fork lesson may also teach the lever is the designer's call.
+  - **no junction**: leverOpensADoor beside junior_2's switch fork. The switch hangs its branches from a bare node
+    of the route; with the lesson's side room (the lever off the obvious path) the lay leaves none, and no seed or
+    packing carves it (0 of 160 tried, 2026-10-11). The lesson keeps its door-first shape; the carve has to give the
+    junction a node before it stands here.
 
 ### Junior
 
@@ -39,7 +43,7 @@ Columns:
 | Site | Main floors | Wing floors | Authored                                                                     | Suggested                                                        | Chosen lock                                                      | Placed           |
 | ---- | ----------- | ----------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------- |
 | 1    | 1           | 0           |                                                                              | boardPicksTheWay (the switch fork already authored at pyramid 2) | boardPicksTheWay (the switch fork already authored at pyramid 2) | no (board first) |
-| 2    | 1           | 0           | the world's one switch fork: a `lightbeamSwitch` board in a two-way junction | leverOpensADoor                                                  | leverOpensADoor                                                  | ✓                |
+| 2    | 1           | 0           | the world's one switch fork: a `lightbeamSwitch` board in a two-way junction | leverOpensADoor                                                  | leverOpensADoor                                                  | no (no junction) |
 | 3    | 1           | 1           | master ward wing                                                             | torch                                                            | torch                                                            | ✓                |
 | 4    | 1           | 1           | wizard ward wing                                                             | dropDown                                                         | dropDown                                                         | ✓                |
 
@@ -84,23 +88,23 @@ Columns:
 
 **expert_3 — Nile Delta Expedition** (overgrown, growing from pyramid 2 to 5)
 
-| Site | Main floors | Wing floors | Authored                                    | Suggested       | Chosen lock     | Placed                 |
-| ---- | ----------- | ----------- | ------------------------------------------- | --------------- | --------------- | ---------------------- |
-| 1    | 1           | 0           |                                             | leverSwapsDoors | leverSwapsDoors | ✓                      |
-| 2    | 1           | 0           | overgrown 0.2                               | dropHome        | dropHome        | ✓                      |
-| 3    | 1           | 0           | overgrown 0.4                               | cellar          | cellar          | ✓                      |
-| 4    | 1           | 1           | overgrown 0.65, wizard ward wing            | overlook        | overlook        | ✓                      |
-| 5    | 1           | 1           | overgrown 1, master ward wing, patron Sobek | **doubleBack**  | doubleBack      | ✓                      |
+| Site | Main floors | Wing floors | Authored                                    | Suggested       | Chosen lock     | Placed |
+| ---- | ----------- | ----------- | ------------------------------------------- | --------------- | --------------- | ------ |
+| 1    | 1           | 0           |                                             | leverSwapsDoors | leverSwapsDoors | ✓      |
+| 2    | 1           | 0           | overgrown 0.2                               | dropHome        | dropHome        | ✓      |
+| 3    | 1           | 0           | overgrown 0.4                               | cellar          | cellar          | ✓      |
+| 4    | 1           | 1           | overgrown 0.65, wizard ward wing            | overlook        | overlook        | ✓      |
+| 5    | 1           | 1           | overgrown 1, master ward wing, patron Sobek | **doubleBack**  | doubleBack      | ✓      |
 
 **expert_4 — Pyramid of Djoser**
 
-| Site | Main floors | Wing floors | Authored                                               | Suggested       | Chosen lock   | Placed                 |
-| ---- | ----------- | ----------- | ------------------------------------------------------ | --------------- | ------------- | ---------------------- |
-| 1    | 1           | 0           |                                                        | doorWaitsForTwo | stoneOnAPlate | ✓                      |
-| 2    | 1           | 0           | two floor-key colours, broad packing                   | twoLamps        | twoLamps      | ✓                      |
-| 3    | 1           | 0           |                                                        | cellar          | cellar        | ✓                      |
-| 4    | 1           | 1           | two floor-key colours, broad packing, master ward wing | overlook        | overlook      | ✓                      |
-| 5    | 1           | 1           | wizard ward wing                                       | **doubleBack**  | stoneGate     | ✓                      |
+| Site | Main floors | Wing floors | Authored                                               | Suggested       | Chosen lock   | Placed |
+| ---- | ----------- | ----------- | ------------------------------------------------------ | --------------- | ------------- | ------ |
+| 1    | 1           | 0           |                                                        | doorWaitsForTwo | stoneOnAPlate | ✓      |
+| 2    | 1           | 0           | two floor-key colours, broad packing                   | twoLamps        | twoLamps      | ✓      |
+| 3    | 1           | 0           |                                                        | cellar          | cellar        | ✓      |
+| 4    | 1           | 1           | two floor-key colours, broad packing, master ward wing | overlook        | overlook      | ✓      |
+| 5    | 1           | 1           | wizard ward wing                                       | **doubleBack**  | stoneGate     | ✓      |
 
 Site counts: junior 16 (3 + 4 + 4 + 5), expert 18 (4 + 4 + 5 + 5), the same as the curriculum's. Treasure
 tombs are not sites in this table.
@@ -130,10 +134,11 @@ expert_1's doubleBack stands through the same `floorLocks` with its realisations
 `lightbeamSwitch`, toggle `handle`, one-way `zipline`), but reads the lock from `doubleBackLock()` in
 `src/worldGen/spec/locks/doubleBack.ts` rather than from its `.lock` file.
 
-junior_2's site 2 authors its own `.floor(0)` for the switch fork, so its lesson goes into that floor with
+junior_2's site 2 authors its own `.floor(0)` for the switch fork, so a lesson goes into that floor with
 `lessonFloor("leverOpensADoor")` rather than `lessonOnMainFloor`: a `floorLocks` entry beside an explicit floor
 rebuilds the pyramid. On a laid floor every node holds a room, so the last ungated sections, as many as the
 junction has ways out, stay branches and hang from a bare node of the route, which is the junction `forks` holds.
+The door-first leverOpensADoor leaves no such node, so no lesson stands there today ("no junction" above).
 
 expert_4's stoneGate stands the same way, read from its `.lock` file with `catalogueLock` and every region `free`
 (`freeRegions`), bound `weights` `stonePlate`, `activator` `torch`, `unladen` `narrowPassage`.
@@ -174,17 +179,17 @@ but are still a proposal for the engine (`lock-curriculum.md`, "Stones").
 
 **Lessons**
 
-| lesson           | tier                      | mechanics                 | yarn lock                         |
-| ---------------- | ------------------------- | ------------------------- | --------------------------------- |
-| boardPicksTheWay | junior                    | board                     | solvable; under two actions       |
-| leverOpensADoor  | junior                    | lever                     | solvable; under two actions       |
-| dropDown         | junior                    | drop                      | solvable; under two actions       |
-| torch            | junior                    | torch                     | solvable; under two actions       |
-| leverSwapsDoors  | junior preview and expert | lever                     | solvable; under two actions       |
-| doorWaitsForTwo  | expert                    | torch, door-waits-for-two | solvable                          |
-| stoneOnAPlate    | expert                    | stones & plates           | solvable                          |
-| tilesInOrder     | expert                    | sequence tiles            | solvable                          |
-| waterMoves       | expert                    | lever, water/sand barrier | solvable; under two actions       |
+| lesson           | tier                      | mechanics                 | yarn lock                   |
+| ---------------- | ------------------------- | ------------------------- | --------------------------- |
+| boardPicksTheWay | junior                    | board                     | solvable; under two actions |
+| leverOpensADoor  | junior                    | lever                     | solvable; under two actions |
+| dropDown         | junior                    | drop                      | solvable; under two actions |
+| torch            | junior                    | torch                     | solvable; under two actions |
+| leverSwapsDoors  | junior preview and expert | lever                     | solvable; under two actions |
+| doorWaitsForTwo  | expert                    | torch, door-waits-for-two | solvable                    |
+| stoneOnAPlate    | expert                    | stones & plates           | solvable                    |
+| tilesInOrder     | expert                    | sequence tiles            | solvable                    |
+| waterMoves       | expert                    | lever, water/sand barrier | solvable; under two actions |
 
 **Locks**
 

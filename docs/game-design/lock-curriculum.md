@@ -23,6 +23,15 @@ So each mechanic is taught in three beats:
 3. **In a lock, with at most one mechanic the player has not combined before.** The first locks pair
    exactly two taught lessons.
 
+**A lesson shows the problem first.** The player reaches and sees the shut door before its control is
+reachable: the control stands off the obvious path, in a side room or behind them, so they go looking for it
+and come back. A lever beside its door, or in the room the player starts in, teaches nothing. `yarn lock`
+checks it ("every shut door is seen before its control"): from `in`, the door of each gate shut at the start
+is reached without entering a region any of its controls stands in. A board stands in its own junction, so it
+counts as no room to come to. It refuses a lesson (`src/game/locks/lessons/`) and warns of any other lock. A
+carve that will not take a door-first lesson is fixed in the carve, or the lesson is not placed there; the
+order is never traded for carve convenience.
+
 One layer per site, never per floor (`floor-as-puzzle-brainstorm.md`): a site carries one lesson or one
 lock, not a sampler.
 
@@ -71,7 +80,7 @@ lock, not a sampler.
 | observatory   | master                   | a three-way board, two prizes, one shortcut                                                                                                                 |
 | tide          | master                   | carry the key home against the water                                                                                                                        |
 | sluice        | master                   | drain the hall for the gold, then the vault for the way out                                                                                                 |
-| plates        | master                    | four tiles across three rooms; the door resets them                                                                                                         |
+| plates        | master                   | four tiles across three rooms; the door resets them                                                                                                         |
 | twoStones     | expert, once buildable   | one stone holds the vault while you fetch the second, then presses the exit: a stone spent twice                                                            |
 | masonsRamp    | master, once buildable   | one stone holds the chute door for the other; you squeeze back up the narrow passage, where no stone fits                                                   |
 | counterweight | master, once buildable   | the zipline takes you down empty-handed; weigh the lift down from below, then bring the other stone by lift                                                 |
