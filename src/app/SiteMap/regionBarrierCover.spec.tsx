@@ -242,7 +242,7 @@ describe("the cover fades in across the blockage and is full past it", { timeout
           if (!doors.has(key)) expect(sides, `${name} / ${key}: only a blockage borders walkable ground`).toEqual([])
           // "to bottom" is a gradient's default direction, and the style serialises it away.
           const wanted = sides
-            .map(dir => `linear-gradient(to ${TOWARD[dir]}, transparent, black 56px)`.replace("to bottom, ", ""))
+            .map(dir => `linear-gradient(to ${TOWARD[dir]}, rgba(0, 0, 0, 0.5), black 28px)`.replace("to bottom, ", ""))
             .join(", ")
           expect(el.style.maskImage, `${name} / ${state} / ${region} / ${key}`).toBe(wanted)
           expect(el.style.opacity, `${name} / ${key}: no flat thinning`).toBe("")

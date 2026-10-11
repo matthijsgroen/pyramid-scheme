@@ -15,10 +15,11 @@ type Fill = { url: string } | { color: string }
 /** The way a fade runs, from the side the explorer walks up from to the far side of the cell. */
 const TOWARD: Record<Direction, string> = { n: "bottom", s: "top", w: "right", e: "left" }
 
-/** A blockage fades from nothing at its walkable edge to full a cell's width on, so where its piece also
- * spans the gap to the next covered cell that gap is full. Several walkable sides each fade it, intersected. */
+/** A blockage starts half dense at its walkable edge and is full half a cell on, so the floor is mostly hidden even in the
+ * cell beside the explorer, and where its piece also spans the gap to the next covered cell that gap is full. Several
+ * walkable sides each fade it, intersected. */
 const fadeIn = (from: readonly Direction[]): CSSProperties => ({
-  maskImage: from.map(dir => `linear-gradient(to ${TOWARD[dir]}, transparent, black ${CELL}px)`).join(", "),
+  maskImage: from.map(dir => `linear-gradient(to ${TOWARD[dir]}, rgba(0, 0, 0, 0.5), black ${CELL / 2}px)`).join(", "),
   maskRepeat: "no-repeat",
   ...(from.length > 1 ? { maskComposite: "intersect" } : {}),
 })
