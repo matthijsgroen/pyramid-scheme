@@ -60,7 +60,8 @@ import { drawingOf, familyIconOf, isLockedGate, isSpentAt, nodeRadius, shapeKind
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
 import { MapNotice } from "@/ui/atoms/MapNotice"
 import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
-import { MarkArtBadges, marksOfFace, type Mark } from "./mark"
+import { MarkArtBadges, type Mark } from "./mark"
+import { marksOfFace } from "@/game/gateFace"
 import { FloorShade, LitPlaces } from "./torchlight"
 import {
   SEATING_PASS,

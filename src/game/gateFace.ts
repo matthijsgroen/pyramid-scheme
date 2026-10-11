@@ -220,3 +220,7 @@ export const withoutUnpairedMarks = (grid: FloorGrid): FloorGrid => {
   )
   return changed ? { ...grid, cells } : grid
 }
+
+/** The pairs a door shows: one per control it waits on, and none for a door that needs no face. */
+export const marksOfFace = (face: GateFace | undefined): Mark[] =>
+  (face?.markers ?? []).flatMap(({ mark }) => (mark ? [mark] : []))
