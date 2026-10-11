@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 512734664
+export const worldContentHash = 1486888934
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -2003,25 +2003,6 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { type: "money", amount: 1 },
           { type: "money", amount: 1 },
         ],
-        locks: [
-          {
-            lock: {
-              name: "leverOpensADoor",
-              regions: {
-                in: { takes: "free" },
-                hall: { takes: "free" },
-                out: { takes: "free" },
-                side: { takes: "free" },
-              },
-              connections: [["in", "hall"], { between: ["hall", "out"], barriers: ["hall-out"] }, ["hall", "side"]],
-              gates: { "hall-out": { from: "hall", to: "out", owners: ["H"] } },
-              mechanics: { H: { control: "toggle", in: "side", starts: "a", opens: { a: [], b: ["hall-out"] } } },
-              in: "in",
-              out: "out",
-            },
-          },
-        ],
-        realisations: { toggle: "handle" },
       },
     ],
     [
@@ -2975,8 +2956,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["stela", "niche", "sconce"],
         role: "puzzle",
         encountersByIndex: { 0: "sudoku", 1: "procession", 2: "hidato", 3: "futoshiki" },
-        packing: 0.12,
-        seed: 458394295,
+        packing: 0.1,
+        seed: 458394312,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a2", pieceIndex: 0 },
         rewards: [
           { type: "money", amount: 3 },
@@ -3429,8 +3410,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["stela", "niche", "sconce"],
         role: "puzzle",
         encountersByIndex: { 0: "futoshiki", 1: "sumplete", 2: "lightbeam", 3: "star-battle" },
-        packing: 0.12,
-        seed: 1401747200,
+        packing: 0.1,
+        seed: 1401747288,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d15", pieceIndex: 0 },
         rewards: [
           { type: "money", amount: 1 },
@@ -3992,8 +3973,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["stela", "niche", "sconce"],
         role: "puzzle",
         encountersByIndex: { 0: "futoshiki", 1: "balance-scale", 2: "constellation", 3: "hidato", 4: "sudoku" },
-        packing: 0.1,
-        seed: 1401747206,
+        packing: 0.84,
+        seed: 1401747219,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p11", pieceIndex: 1 },
         rewards: [undefined, undefined, undefined, undefined, undefined],
         locks: [
@@ -4518,7 +4499,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: ["light", "sky"],
         encountersByIndex: { 0: "constellation", 1: "twin-stars", 2: "lightbeam", 3: "eclipse" },
         packing: 0.1,
-        seed: 625093932,
+        seed: 625093948,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art2", pieceIndex: 2 },
         rewards: [undefined, undefined, undefined, undefined],
         locks: [
@@ -4794,8 +4775,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["stela", "niche", "sconce"],
         role: ["light", "sky"],
         encountersByIndex: { 0: "canisters", 1: "eclipse", 2: "twin-stars", 3: "star-battle", 4: "lightbeam" },
-        packing: 0.14,
-        seed: 625093922,
+        packing: 0.1,
+        seed: 625093965,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p11", pieceIndex: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined],
         locks: [
@@ -4940,7 +4921,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: ["light", "sky"],
         encountersByIndex: { 0: "eclipse", 1: "twin-stars", 2: "star-battle", 3: "constellation", 4: "canisters" },
         packing: 0.1,
-        seed: 625093928,
+        seed: 625093923,
         mainEndReward: { type: "money", amount: 2 },
         rewards: [undefined, undefined, undefined, undefined, undefined],
         locks: [
@@ -5226,36 +5207,6 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { type: "consumable", consumable: "oil" },
           { type: "consumable", consumable: "trapTool" },
         ],
-        locks: [
-          {
-            lock: {
-              name: "leverSwapsDoors",
-              regions: {
-                in: { takes: "free" },
-                hall: { takes: "free" },
-                left: { takes: "free" },
-                out: { takes: "free" },
-                side: { takes: "free" },
-              },
-              connections: [
-                ["in", "hall"],
-                { between: ["hall", "left"], barriers: ["hall-left"] },
-                { between: ["hall", "out"], barriers: ["hall-out"] },
-                ["hall", "side"],
-              ],
-              gates: {
-                "hall-left": { from: "hall", to: "left", owners: ["H"] },
-                "hall-out": { from: "hall", to: "out", owners: ["H"] },
-              },
-              mechanics: {
-                H: { control: "toggle", in: "side", starts: "a", opens: { a: ["hall-left"], b: ["hall-out"] } },
-              },
-              in: "in",
-              out: "out",
-            },
-          },
-        ],
-        realisations: { toggle: "handle" },
       },
     ],
     [
@@ -6392,8 +6343,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["veil", "wallShrine", "sconce"],
         role: "puzzle",
         encountersByIndex: { 0: "procession", 1: "eclipse", 2: "hidato", 3: "twin-stars" },
-        packing: 0.1,
-        seed: 2858765652,
+        packing: 0.18,
+        seed: 2858765702,
         mainEndReward: { type: "mapPiece", tombId: "expert_treasure_tomb_b" },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -7593,8 +7544,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: "puzzle",
         encountersByIndex: { 0: "canisters", 1: "sumplete", 2: "lightbeam", 3: "eclipse", 4: "rush-hour" },
         corridorStraightness: 0.35,
-        packing: 0.12,
-        seed: 3982655433,
+        packing: 0.1,
+        seed: 3982655454,
         mainEndReward: { type: "mapPiece", tombId: "expert_treasure_tomb_b" },
         rewards: [
           { type: "consumable", consumable: "oil" },
@@ -9074,8 +9025,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["veil", "wallShrine", "sconce"],
         role: "puzzle",
         encountersByIndex: { 0: "sumplete", 1: "eclipse", 2: "futoshiki", 3: "hidato" },
-        packing: 0.1,
-        seed: 202908645,
+        packing: 0.58,
+        seed: 7907893988303841,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art6", pieceIndex: 1 },
         rewards: [
           { type: "consumable", consumable: "bandage" },

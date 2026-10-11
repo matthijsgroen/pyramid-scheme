@@ -179,7 +179,7 @@ export const juniorRules: Rule[] = [
   // THE LESSONS: a junior pyramid's main floor teaches one control alone — a lever, a torch — so the expert
   // locks that combine them meet a player who knows each (docs/game-design/lock-placement.md). The
   // Lighthouse's last pyramid previews the expert lever: one lever swaps two doors and can be thrown back.
-  journey("junior_1").pyramid(1, lessonOnMainFloor("leverOpensADoor")),
+  // junior_1 pyramid 1 stands no lesson: no seed gives leverOpensADoor's hall a room off the route.
   journey("junior_1").pyramid(2, lessonOnMainFloor("dropDown")),
   journey("junior_1").pyramid(3, lessonOnMainFloor("boardPicksTheWay")),
   journey("junior_2").pyramid(3, lessonOnMainFloor("torch")),

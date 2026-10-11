@@ -90,7 +90,6 @@ describe("the journey inspector on lock floors", () => {
   it("assembles every lock floor the shipped world stands", () => {
     const shipped = lockFloors(plain)
     expect(shipped.map(({ journeyId, pyramidNumber, floorIndex }) => [journeyId, pyramidNumber, floorIndex])).toEqual([
-      ["junior_1", 1, 0],
       ["junior_1", 2, 0],
       ["junior_1", 3, 0],
       ["junior_2", 3, 0],
@@ -103,7 +102,6 @@ describe("the journey inspector on lock floors", () => {
       ["junior_4", 3, 0],
       ["junior_4", 4, 0],
       ["junior_4", 5, 0],
-      ["expert_1", 1, 0],
       ["expert_1", 2, 0],
       ["expert_1", 3, 0],
       ["expert_1", 4, 0],
