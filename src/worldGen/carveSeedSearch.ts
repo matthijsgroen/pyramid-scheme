@@ -1,8 +1,15 @@
 import { walkFloorLock, describeFloorWalkFailure, deadFloorRegions } from "@/game/floorLockWalk"
 import type { AssemblerResult, FloorGrid } from "@/game/siteTypes"
+import { cellSlot } from "@/game/cellSlot"
 
 /** The checks a seed must pass, in the order they are asked. A seed that fails one is never asked the next. */
-export const CARVE_CRITERIA = ["carves", "attempt 0", "lock walks sound", "no dead region"] as const
+export const CARVE_CRITERIA = [
+  "carves",
+  "attempt 0",
+  "lock walks sound",
+  "no dead region",
+  "every stub holds a room",
+] as const
 export type CarveCriterion = (typeof CARVE_CRITERIA)[number]
 
 export type CarvePairFound = {
@@ -40,6 +47,27 @@ export const STAMPED_SEED_RANGE = 2 ** 32
 export const seedAtOffset = (base: number, offset: number): number =>
   offset === 0 ? base : ((base % STAMPED_SEED_RANGE) + offset) % STAMPED_SEED_RANGE
 
+/**
+ * The sections of route regions that hold no room: the stub a region the route crosses grows off the route toward a
+ * branch. A room is what keeps a section's fog when the floor is carved again, so a seed leaving such a stub bare is
+ * passed over.
+ */
+export const roomlessRouteStubs = (grid: FloorGrid): string[] => {
+  const onRoute = new Set<string>()
+  const roomed = new Map<string, boolean>()
+  grid.cells.forEach((row, r) =>
+    row.forEach((cell, c) => {
+      if (cell.type === "empty") return
+      if (cell.sectionAddress === "main" && cell.region) onRoute.add(cell.region)
+      if (!cell.sectionAddress?.startsWith("lock:")) return
+      roomed.set(cell.sectionAddress, (roomed.get(cell.sectionAddress) ?? false) || cellSlot(grid, r, c) !== null)
+    })
+  )
+  return [...roomed].flatMap(([section, room]) =>
+    !room && onRoute.has(section.slice("lock:".length)) ? [section] : []
+  )
+}
+
 /** Why `result` is not acceptable, or null when it is. */
 export const refusal = (result: AssemblerResult): { criterion: CarveCriterion; detail: string } | null => {
   if (!result.success) return { criterion: "carves", detail: JSON.stringify(result.reasons) }
@@ -50,6 +78,8 @@ export const refusal = (result: AssemblerResult): { criterion: CarveCriterion; d
   if (!walk.sound) return { criterion: "lock walks sound", detail: describeFloorWalkFailure(walk.failure) }
   const dead = deadFloorRegions(result.grid)
   if (dead.length > 0) return { criterion: "no dead region", detail: dead.join(", ") }
+  const bare = roomlessRouteStubs(result.grid)
+  if (bare.length > 0) return { criterion: "every stub holds a room", detail: bare.join(", ") }
   return null
 }
 

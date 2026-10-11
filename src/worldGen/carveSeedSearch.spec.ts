@@ -3,6 +3,7 @@ import type { AssemblerResult, FloorConfig, FloorGrid } from "@/game/siteTypes"
 import { assembleFloor, PACKING_CEILING } from "@/game/siteAssembler"
 import {
   packingAtRung,
+  roomlessRouteStubs,
   searchCarvePair,
   seedAtOffset,
   verifyCarvePair,
@@ -238,5 +239,32 @@ describe(verifyCarvePair, () => {
     const base = STAMPED_SEED_RANGE * 3 + 5
     const seed = seedAtOffset(base, 7)
     expect(verifyCarvePair(base, { seed, packing: 0.1 }, () => carvedAt(0), ladder)).toMatchObject({ offset: 7 })
+  })
+})
+
+describe(roomlessRouteStubs, () => {
+  const corridor = (sectionAddress: string, region: string) => ({ type: "corridor", sectionAddress, region })
+  const room = (sectionAddress: string, region: string, pathIndex: number) => ({
+    type: "room",
+    roomType: "encounter",
+    sectionAddress,
+    region,
+    pathIndex,
+  })
+  const floor = (...cells: object[]) => ({ cells: [cells], entrancePos: [9, 9] }) as unknown as FloorGrid
+
+  it("names the stub of a route region that holds no room", () => {
+    const grid = floor(corridor("main", "l.hall"), corridor("lock:l.hall", "l.hall"), room("lock:l.side", "l.side", 0))
+    expect(roomlessRouteStubs(grid)).toEqual(["lock:l.hall"])
+  })
+
+  it("passes a stub holding a room, and a roomless region the route never crosses", () => {
+    const grid = floor(
+      corridor("main", "l.hall"),
+      corridor("lock:l.hall", "l.hall"),
+      room("lock:l.hall", "l.hall", 0),
+      corridor("lock:l.path", "l.path")
+    )
+    expect(roomlessRouteStubs(grid)).toEqual([])
   })
 })
