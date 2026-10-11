@@ -100,6 +100,11 @@ final whole-branch review on the most capable model. Commit and push freely on t
 
 ## Designer decisions to keep
 
+- **Who does what** (2026-10-11): the designer designs every lock; Claude builds the mechanics and places them.
+- **Marks** (2026-10-11): no door shows a mark. A door with several controls opens a board (`GateFacePanel`) with
+  each owner's icon and mark; a torch or lever owning such a door wears a small chip at its foot; painted controls
+  (torch, lever, plate) draw no marker square. Floors must not be littered with icons.
+- **Water** is dense: the floor under a flooded cell is mostly hidden.
 - **Stones** (spec, "The rules"):
   - a stone is always on a plate or in the hand; stones have no ids; one in hand, no swapping;
   - a plate is written `p plate @r [stone]`; its states `-[p]-` and `-[p:empty]-` combine freely with other owners;
