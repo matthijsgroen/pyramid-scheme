@@ -1,9 +1,10 @@
 // designed by: Claude
-// master. Four tiles in order across three
+// master. Four tiles in order across four
 // rooms; a wrong tile spoils the run, the door resets it.
 
 in -- a
 in -- b
 in -- c
+in -- d
 in -[P]- out
-P sequence b a c b reset in-out
+P sequence b a d c reset in-out
