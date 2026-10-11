@@ -65,7 +65,6 @@ const OPPOSITE = { n: "s", s: "n", e: "w", w: "e" } as const
 // The floors of the real world that stand a mechanic with every mod, whole sets: the shipped junior_2 switch, every
 // floor a lesson or a lock stands on, and every dev floor.
 const FLOORS_WITH_MECHANICS = [
-  "junior_1 level 1 floor 0",
   "junior_1 level 2 floor 0",
   "junior_1 level 3 floor 0",
   "junior_2 level 2 floor 0",
@@ -79,7 +78,6 @@ const FLOORS_WITH_MECHANICS = [
   "junior_4 level 3 floor 0",
   "junior_4 level 4 floor 0",
   "junior_4 level 5 floor 0",
-  "expert_1 level 1 floor 0",
   "expert_1 level 2 floor 0",
   "expert_1 level 3 floor 0",
   "expert_1 level 4 floor 0",

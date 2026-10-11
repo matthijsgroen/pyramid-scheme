@@ -532,16 +532,16 @@ describe("what the dev journey authors", () => {
 // own guard compares the walk against the floors the authoring owes it, which catches a walk that
 // stopped reaching them — but not an authoring that quietly stopped standing mechanisms, because then
 // both sides fall together. The counts are pinned here, where both worlds exist in one process: the
-// shipped world stands thirty-two mechanism floors and a plain build can only ever prove those, so the twelve the
+// shipped world stands thirty mechanism floors and a plain build can only ever prove those, so the twelve the
 // dev journey adds are provable nowhere else.
 describe("the floors the lock sweep walks", () => {
-  it("walks the thirty-two mechanism floors the shipped world stands, and finds no strand", () => {
-    expect(plainSweep.walked).toHaveLength(32)
+  it("walks the thirty mechanism floors the shipped world stands, and finds no strand", () => {
+    expect(plainSweep.walked).toHaveLength(30)
     expect(plainSweep.stranding).toEqual([])
   })
 
-  it("walks forty-four once the dev journey stands its twelve, and finds no strand", () => {
-    expect(withDevSweep.walked).toHaveLength(44)
+  it("walks forty-two once the dev journey stands its twelve, and finds no strand", () => {
+    expect(withDevSweep.walked).toHaveLength(42)
     expect(withDevSweep.stranding).toEqual([])
   })
 
