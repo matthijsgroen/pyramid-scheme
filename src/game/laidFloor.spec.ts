@@ -412,6 +412,18 @@ describe("the stretch the carve lengthens when the laid nodes cannot take the co
     expect(ids(found)).toEqual(["region:A"])
   })
 
+  it("never offers a corridor into a sequence step's region, whose every node is kept bare for the tile", () => {
+    const stepped: LockPlan = {
+      ...plan,
+      regions: plan.regions.map(found =>
+        found.id === "C" ? { ...found, seats: [{ for: "threshold" as const, control: "P", step: 0 }] } : found
+      ),
+    }
+    const found = lengtheningCandidates(stepped, laid(FLAT), puzzle, new Map())
+    expect(ids(found)).not.toContain("corridor:B>C")
+    expect(ids(found)).toContain("region:C")
+  })
+
   it("asks the lay for the laid length of a stretch plus the nodes wanted, and no other stretch for more", () => {
     const grown = lengthenPlan(plan, laid({ ...FLAT, "corridor:B>C": 4 }), { kind: "corridor", id: "B>C", nodes: 2 })
     expect(grown.corridors.map(found => found.minNodes)).toEqual([0, 6])

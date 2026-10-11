@@ -175,6 +175,22 @@ describe("laying a lock plan on the lattice", { timeout: 120_000 }, () => {
     })
     expect(laidSeeds).toHaveLength(10)
   })
+  // A MADE-UP LOCK, never a catalogue one. `out` is one node whose four sides are its two route corridors and its two
+  // drops, so a lay that crowds one side is dead long before the drops are reached.
+  it("lays a plan whose route region launches two drops from a node with no side to spare", () => {
+    const TWO_DROPS = "in -[A]- p -[B]- q\nin -[C]- out\nout >> p\nout >> q\nA toggle @in\nB toggle @p\nC toggle @q"
+    const plan = planToLay(planOf([{ lock: freeRegions(parseLock(TWO_DROPS, "twoDrops").lock) }]), {
+      content: ["puzzle", "puzzle", "reward"],
+      appetite: new Map(),
+    })
+    const laidSeeds = SEEDS.slice(0, 10).flatMap(seed => {
+      const result = layLockPlan(plan, { seed, n: startingGridSize(plan) })
+      if (!result.ok) return []
+      expectLaidPlan(plan, result.laid)
+      return [seed]
+    })
+    expect(laidSeeds).toHaveLength(10)
+  })
 })
 
 describe("laying corridors that share a pair, and corridors that fall", { timeout: 120_000 }, () => {

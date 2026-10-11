@@ -126,12 +126,14 @@ type Part = LayRefusal["part"]
 type Step = { part: Part; run: (next: () => boolean) => boolean }
 type DropAt = { from: number; dir: number }
 
-/** One search at one grid size, with so many extra nodes to give out: the laid floor, or how far it got. */
+/** One search at one grid size, with so many extra nodes to give out: the laid floor, or how far it got. With
+ * `dropsAhead`, a branch is cut as soon as a laid region can no longer launch or land a drop it still owes. */
 const search = (
   plan: LockPlan,
   n: number,
   rand: () => number,
-  extraNodes: number
+  extraNodes: number,
+  dropsAhead = false
 ): { laid?: LaidLocks; deepest: number; parts: Part[] } => {
   const M = (n + 1) / 2
   const coords = (i: number): [number, number] => [Math.floor(i / M), i % M]
@@ -580,21 +582,41 @@ const search = (
   // A loop-closing corridor joins two regions both laid without it in mind, and the search backtracks
   // chronologically, so a region walled in steps earlier is found only when the budget is gone. A placed
   // region needs a usable side (free, with an empty cell or a region it still joins behind it) for each
-  // corridor it has yet to lay; a branch short of that can never lay and is cut at once.
+  // corridor it has yet to lay; a branch short of that can never lay and is cut at once. With `dropsAhead` the same
+  // holds for its drops: each needs a side whose straight run is clear and lands on empty ground or on its other
+  // region, and the corridors and drops together need as many different sides.
   const walledIn = (): boolean => {
     for (const [region, nodes] of regionNodes) {
       const pending = corridorsOf(region).filter(corridor => !corridorPath.has(corridor.id))
-      if (pending.length === 0) continue
+      const owed = dropsAhead ? dropsOf(region).filter(drop => !dropAt.has(drop.id)) : []
+      if (pending.length === 0 && owed.length === 0) continue
       const others = new Set(pending.map(corridor => (corridor.from === region ? corridor.to : corridor.from)))
-      let usable = 0
+      const usable = new Set<number>()
       for (const node of nodes)
         for (let d = 0; d < 4; d++) {
           const next = step(node, d)
           if (next < 0 || !sideFree(node, d)) continue
           const owner = occupied.get(next)
-          if (owner === undefined || others.has(owner)) usable++
+          if (owner === undefined || others.has(owner)) usable.add(node * 4 + d)
         }
-      if (usable < pending.length) return true
+      if (usable.size < pending.length) return true
+      for (const drop of owed) {
+        const other = drop.launch === region ? drop.landing : drop.launch
+        const otherNodes = regionNodes.get(other)
+        const lands = (at: number) =>
+          otherNodes ? otherNodes.includes(at) && at !== junctionAt.get(other) : !occupied.has(at)
+        let fits = false
+        for (const node of nodes) {
+          if (node === junctionAt.get(region)) continue
+          for (let d = 0; d < 4; d++)
+            if (dropFits(node, d) && lands(stepBy(node, d, dropHops(d)))) {
+              fits = true
+              usable.add(node * 4 + d)
+            }
+        }
+        if (!fits) return true
+      }
+      if (usable.size < pending.length + owed.length) return true
     }
     return false
   }
@@ -632,5 +654,15 @@ export const layLockPlan = (plan: LockPlan, { seed, n, ceiling = LAY_GRID_CEILIN
       }
     refusal = { part: furthest.part ?? { kind: "region", id: plan.route[0] }, grid }
   }
+  // Only a plan no search laid is searched again with its drops looked ahead to, so every plan that lays without
+  // it lays as it always has.
+  if (plan.drops.length > 0)
+    for (let grid = n; grid <= Math.max(n, ceiling); grid += GRID_STEP)
+      for (let extra = 0; extra <= MAX_EXTRA_NODES; extra++)
+        for (let restart = 0; restart < RESTARTS; restart++) {
+          const rand = mulberry32(seed + grid * 7919 + extra * 104729 + restart * 15485863)
+          const { laid } = search(plan, grid, rand, extra, true)
+          if (laid) return { ok: true, laid }
+        }
   return { ok: false, refusal: refusal! }
 }

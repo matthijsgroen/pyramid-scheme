@@ -642,6 +642,8 @@ export const lengtheningCandidates = (
     if (region.answersTo === undefined) consider("region", region.id, region.id, region.onRoute)
   for (const corridor of plan.corridors) {
     const k = floor.stretches.get(`corridor:${corridor.id}`)?.length ?? 0
+    // A corridor arriving in a step's region keeps every node bare, so a node more there seats nothing.
+    if (corridorSeats(plan, corridor, k + 1).thresholds.length > 0) continue
     const before = corridorLabels(plan, corridor, k)
     const after = corridorLabels(plan, corridor, k + 1)
     const gained = after.filter(label => after.filter(l => l === label).length > before.filter(l => l === label).length)
