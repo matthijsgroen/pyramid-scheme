@@ -69,6 +69,22 @@ describe("allocating the marks of one floor", () => {
     expect(withTiles.marks.get("lever")).toEqual(alone.marks.get("lever"))
   })
 
+  it("marks four mechanics and a six-step sequence on one floor, every glyph its own", () => {
+    const mechanics = ["Y", "Gate", "Drain", "T"].map((id, seed) => ({ id, seed: seed * 5 }))
+    const tiles = Array.from({ length: 6 }, (_, step) => ({ id: `Gate#${step}`, seed: step * 3 }))
+    const { marks, tileGlyphs, unmarked } = allocateMarks(mechanics, tiles)
+    expect(unmarked).toEqual([])
+    expect(new Set([...glyphsOf(marks), ...tileGlyphs.values()]).size).toBe(10)
+  })
+
+  it("keeps a floor of six requests or fewer on the first six glyphs, so growing the set re-marks none", () => {
+    for (let seed = 0; seed < 24; seed++) {
+      const requests = Array.from({ length: 6 }, (_, i) => ({ id: `m${i}`, seed: seed + i * 7 }))
+      const { marks } = allocateMarks(requests)
+      expect(glyphsOf(marks).every(glyph => MARK_GLYPHS.indexOf(glyph) < 6)).toBe(true)
+    }
+  })
+
   it("names the requests that found no glyph left, and reuses none", () => {
     const requests = Array.from({ length: MARK_GLYPHS.length + 2 }, (_, i) => ({ id: `m${i}`, seed: 0 }))
     const { marks, unmarked } = allocateMarks(requests)

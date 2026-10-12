@@ -30,9 +30,9 @@ describe("a mark", () => {
     expect(`${a.color}/${a.glyph}`).not.toBe(`${b.color}/${b.glyph}`)
   })
 
-  it("hands out thirty pairs before it repeats one", () => {
-    const pairs = Array.from({ length: 30 }, (_, n) => markFor(n)).map(mark => `${mark.color}/${mark.glyph}`)
-    expect(new Set(pairs).size).toBe(30)
+  it("hands out sixty pairs before it repeats one", () => {
+    const pairs = Array.from({ length: 60 }, (_, n) => markFor(n)).map(mark => `${mark.color}/${mark.glyph}`)
+    expect(new Set(pairs).size).toBe(60)
   })
 
   it("draws the glyph on its own key colour, lit when the node is reachable", () => {

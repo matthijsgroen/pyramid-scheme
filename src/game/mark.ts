@@ -16,22 +16,29 @@ import { KEY_COLORS } from "./siteTypes"
 export type Mark = { color: KeyColor; glyph: number }
 
 /**
- * Picked out of HIEROGLYPHS_IN_FONT for reading as six different SHAPES at marker size — 𓅃 falcon,
- * 𓋹 ankh, 𓆗 cobra, 𓂀 eye, 𓆣 scarab, 𓈖 water — rather than for meaning anything: a bird and a
- * standing man are one blob at 20px, which is the size this is worn at.
+ * Picked out of HIEROGLYPHS_IN_FONT for reading as twelve different SHAPES at marker size — 𓅃 falcon,
+ * 𓋹 ankh, 𓆗 cobra, 𓂀 eye, 𓆣 scarab, 𓈖 water, 𓇳 sun disc, 𓉐 house, 𓊽 djed pillar, 𓂻 legs,
+ * 𓉴 pyramid, 𓌳 sickle — rather than for meaning anything: a bird and a standing man are one blob at
+ * 20px, which is the size this is worn at.
  *
  * Guarded by mark.spec.tsx against the generated list, because a code point the subset does not carry
  * draws as an empty box on every device with no hieroglyph font of its own.
  *
  * THE LITERALS ABOVE ARE LOAD-BEARING, not decoration. The subset sweep (scripts/hieroglyphUsage.ts)
  * reads raw file text and matches CHARACTERS, so the code points below are invisible to it — without
- * the literals these six signs stay in the font only as long as some other file happens to draw them,
- * and two of those files are mod-owned. Emptying the hieroglyph mod would drop the cobra at the next
+ * the literals these signs stay in the font only as long as some other file happens to draw them,
+ * and some of those files are mod-owned. Emptying the hieroglyph mod would drop the cobra at the next
  * `yarn generate-font` and take a core map feature to boxes.
  */
-export const MARK_GLYPHS: readonly number[] = [0x13143, 0x132f9, 0x13197, 0x13080, 0x131a3, 0x13216]
+export const MARK_GLYPHS: readonly number[] = [
+  0x13143, 0x132f9, 0x13197, 0x13080, 0x131a3, 0x13216, 0x131f3, 0x13250, 0x132bd, 0x130bb, 0x13274, 0x13333,
+]
 
-/** Five grounds against six glyphs, which are coprime: thirty pairs before any floor sees one twice. */
+/** The glyphs a request's seed picks its preference among; the rest are taken only once these are gone, so a
+ * floor that fits in these keeps its marks however many glyphs follow them. */
+const PREFERRED_GLYPHS = 6
+
+/** Five grounds against twelve glyphs, which are coprime: sixty pairs before any floor sees one twice. */
 export const markFor = (index: number): Mark => ({
   color: KEY_COLORS[index % KEY_COLORS.length],
   glyph: MARK_GLYPHS[index % MARK_GLYPHS.length],
@@ -45,7 +52,7 @@ export type MarkAllocation = {
   marks: Map<string, Mark>
   /** The glyph each sequence tile wears, by request id — a glyph no mechanic's mark on the floor uses. */
   tileGlyphs: Map<string, number>
-  /** Requests left without a glyph because all six were taken, in request order. */
+  /** Requests left without a glyph because every one was taken, in request order. */
   unmarked: string[]
 }
 
@@ -76,7 +83,7 @@ export const allocateMarks = (
   }
   const take = (seed: number): number | undefined => {
     for (let step = 0; step < MARK_GLYPHS.length; step++) {
-      const index = (seed + step) % MARK_GLYPHS.length
+      const index = step < PREFERRED_GLYPHS ? (seed + step) % PREFERRED_GLYPHS : step
       if (taken.has(index)) continue
       taken.add(index)
       return index
