@@ -36,15 +36,18 @@ describe("the catalogue table", () => {
 })
 
 describe("the compile verdict and the corridors", () => {
-  const forkOnRoute = parseLock(["in -[Y]- west", "in -[Y]- out", "Y fork @in"].join("\n"), "forked")
+  const forkOnAFall = parseLock(
+    ["in -[Y]- west", "in -[Y]- >> mid", "mid -- out", "in -- out", "Y fork @in"].join("\n"),
+    "forked"
+  )
 
   it("says ✓ compiles of a lock that compiles", () => {
     expect(lockChecks(solvable).checks).toContain("✓ compiles")
   })
 
   it("refuses by name a lock that walks and does not compile, and calls it unsound", () => {
-    const row = lockRow("forked", forkOnRoute)
-    expect(row).toMatchObject({ checks: "✗ refused: gateOwnedOffSeam id=in-out owner=Y", sound: false })
+    const row = lockRow("forked", forkOnAFall)
+    expect(row).toMatchObject({ checks: "✗ refused: gateOwnedOffSeam id=in-mid owner=Y", sound: false })
   })
 
   it("writes back every corridor with several items, an alignment, or a pair it shares", () => {
