@@ -6,6 +6,7 @@ import type { Lock } from "./lockAuthoring"
 import { cellSlot } from "./cellSlot"
 import { mechanismAddress, openDoorsFor } from "./mechanismDoors"
 import { assembleFloor } from "./siteAssembler"
+import { armDoor } from "./siteValidator"
 import type { FloorConfig, FloorGrid, RoomCell, SideSection } from "./siteTypes"
 import { MECHANISM_AT_REST } from "./siteTypes"
 import {
@@ -96,6 +97,28 @@ const wayOnLock = (): Lock => ({
   out: "out",
 })
 
+/** The board's own hall is the sequence's first step, the side room its second; finishing opens the way on. */
+const stepInBoardLock = (): Lock => ({
+  name: "stepInBoard",
+  regions: { foyer: { takes: "free" }, hall: { takes: "free" }, side: { takes: "free" }, out: { takes: "free" } },
+  connections: [
+    ["foyer", "hall"],
+    { between: ["hall", "side"], barriers: ["toSide"] },
+    { between: ["hall", "out"], barriers: ["wayOn", "done"], align: { wayOn: "left" } },
+  ],
+  gates: {
+    toSide: { from: "hall", to: "side", owners: ["Y"] },
+    wayOn: { from: "hall", to: "out", owners: ["Y"] },
+    done: { from: "hall", to: "out", owners: ["P"] },
+  },
+  mechanics: {
+    Y: { control: "fork-switch", in: "hall" },
+    P: { control: "sequence", steps: [{ in: "hall" }, { in: "side" }], resetAt: "done", opens: { done: ["done"] } },
+  },
+  in: "foyer",
+  out: "out",
+})
+
 /** The lever lock with an appetite in every region: nothing in the foyer, puzzles in the hall, a reward at the landing. */
 const hungryLock = (): Lock => ({
   ...leverLock(),
@@ -171,6 +194,15 @@ const FIXTURES: Record<string, Fixture> = {
   },
   "a board owning the way on": {
     floor: floorOf([{ lock: wayOnLock() }], { pathPuzzles: 0 }),
+    registry: true,
+    sound: true,
+    minimum: 30,
+  },
+  "a sequence step in the board's region": {
+    floor: floorOf([{ lock: stepInBoardLock() }], {
+      pathPuzzles: 0,
+      realisations: { ...BINDING, sequence: "pressure-plate" },
+    }),
     registry: true,
     sound: true,
     minimum: 30,
@@ -332,6 +364,27 @@ describe("a lock floor is carved from the structure laid for it", { timeout: 300
       expect(opens(MECHANISM_AT_REST)).toBe(false)
       expect(opens(side.gateKeyId!)).toBe(false)
       expect(opens(wayOn.gateKeyId!)).toBe(true)
+    }
+  })
+
+  it("stands the board's step tile as the hall's first cell on each arm, the arm's door on the seam beyond it", () => {
+    const MOVE = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] } as const
+    for (const { grid } of carvedOf("a sequence step in the board's region")) {
+      const junction = expectForkSwitchRoom(grid, "lightbeamSwitch")
+      const r = grid.cells.findIndex(row => row.includes(junction))
+      const c = grid.cells[r].indexOf(junction)
+      const arms = junction.exits!.filter(exit => exit.gateKeyId !== undefined)
+      expect(arms).toHaveLength(2)
+      for (const arm of arms) {
+        const [dr, dc] = MOVE[arm.dir]
+        const tile = grid.cells[r + 2 * dr][c + 2 * dc]
+        expect(tile.type === "room" && tile.sequenceTile?.step).toBe(0)
+        expect(tile.type === "room" && tile.region).toBe(junction.region)
+        const [tr, tc] = armDoor(grid, [r, c], arm.dir)!
+        const door = grid.cells[tr][tc]
+        expect(Math.abs(tr - (r + 2 * dr)) + Math.abs(tc - (c + 2 * dc))).toBe(2)
+        expect(door.type === "room" && door.requiredKeyId).toBe(arm.gateKeyId)
+      }
     }
   })
 

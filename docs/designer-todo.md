@@ -34,10 +34,8 @@ Part 1.
   so the board's node would need five ways. Put the board off the route.
 - **leverSwapsDoors** (junior_2 site 2): `yarn lock` says gate `hall-left` never stops anyone, so the swap is not
   needed to finish.
-- **bathHouse** (master): compiles and walks now (a board may own the route's way on). It still does not carve:
-  `marksExhausted` (Gate#2–#5): six glyphs, and four mechanics (Y, Gate, Drain, T) plus Gate's six tiles want ten.
-  Also, a sequence step in the board's own region (`hall`) puts its tile between the junction and the board's doors,
-  which the carve cannot build yet. A shorter Gate that skips `hall` carves 20 of 20.
+- **bathHouse** (master): carves now, 200 of 200 in the playground (twelve glyphs; `hall`'s tile stands between the
+  board and its gates). Nothing to reshape; it waits for a master floor to stand on.
 
 ## Questions only the designer can answer
 

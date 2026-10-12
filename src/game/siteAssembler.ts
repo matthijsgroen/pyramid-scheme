@@ -4269,7 +4269,13 @@ const assembleExpandedFloor = (
                 .cells[0]
               return posKey(first[0], first[1])
             })()
-        const [fr, fc] = wayKey.split(",").map(Number)
+        // A step in the board's region stands its tile as the room's first cell on the arm, so the arm's door is the
+        // node beyond it, on the seam.
+        const steps = laid?.thresholds.has(wayKey)
+          ? nodeExitsOf(wayKey).filter(({ neighborKey }) => neighborKey !== junctionKey)
+          : []
+        const doorKey = steps.length === 1 ? steps[0].neighborKey : wayKey
+        const [fr, fc] = doorKey.split(",").map(Number)
         // The seam's own corridor: a layout corridor on this pair, never a falling one beside it.
         const onSeam = ([a, b]: readonly [string, string]) => (a === from && b === to) || (a === to && b === from)
         const gate = gatesOwnedBy(control.id).find(
@@ -4282,7 +4288,7 @@ const assembleExpandedFloor = (
         )!
         const door = cells2D[fr][fc]
         if (door.type !== "room" || door.requiredKeyId !== gateKeyOf(gate.id))
-          throw new Error(`[siteAssembler] gate ${gate.id} does not stand beside the junction of ${control.id}`)
+          throw new Error(`[siteAssembler] gate ${gate.id} does not stand on the seam of ${control.id}'s arm`)
         gateKeyByDir.set(dirOfWay.get(wayKey)!, gateKeyOf(gate.id))
       })
       const family = resolveEncounter(control.encounter, "puzzle")

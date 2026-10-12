@@ -193,6 +193,18 @@ export const nodeBeyond = (grid: FloorGrid, from: Pos, dir: string): Pos | undef
   return undefined
 }
 
+const BACK: Record<string, string> = { n: "s", s: "n", e: "w", w: "e" }
+
+// The door a gated way out of a fork stands on: the next room along it, or, when that room is a sequence tile (a step
+// in the fork's own region stands its tile as the room's first cell, inside the door), the room past the tile.
+export const armDoor = (grid: FloorGrid, from: Pos, dir: string): Pos | undefined => {
+  const next = nodeBeyond(grid, from, dir)
+  const cell = next && grid.cells[next[0]][next[1]]
+  if (!next || cell?.type !== "room" || cell.sequenceTile === undefined) return next
+  const onward = [...cell.dirs].filter(way => way !== BACK[dir])
+  return onward.length === 1 ? nodeBeyond(grid, next, onward[0]) : undefined
+}
+
 export const validateSite = (grid: FloorGrid): ValidationResult => {
   const reasons: ValidationReason[] = []
 
@@ -223,7 +235,7 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
       for (const exit of cell.exits ?? []) {
         if (exit.gateKeyId === undefined) continue
         allKeyIds.add(exit.gateKeyId)
-        const gatePos = nodeBeyond(grid, [r, c], exit.dir)
+        const gatePos = armDoor(grid, [r, c], exit.dir)
         if (!gatePos) continue
         claim(gatePos[0], gatePos[1], exit.gateKeyId)
         switchGates.push({ switchPos: [r, c], gatePos })

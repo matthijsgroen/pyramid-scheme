@@ -1,6 +1,7 @@
 import type { FloorConfig } from "@/game/siteTypes"
 import { freeRegions } from "@/game/lockAuthoring"
 import { parseLock } from "@/game/lockNotation"
+import { MARK_GLYPHS } from "@/game/mark"
 
 type Control = NonNullable<FloorConfig["controls"]>[number]
 type Layout = NonNullable<FloorConfig["regionLayout"]>
@@ -111,25 +112,20 @@ export const hiddenAnnexSequenceFloor = (): FloorConfig => {
   return { ...base, sideSections: base.sideSections.map(section => ({ ...section, hidden: true })) }
 }
 
-/** Six steps, which with the sequence's own mark need seven glyphs where six exist. */
-export const tooManyTilesSequenceFloor = (): FloorConfig =>
-  floor(
+/** As many steps as there are glyphs, which with the sequence's own mark need one glyph more than exist. */
+export const tooManyTilesSequenceFloor = (): FloorConfig => {
+  const annexes = Array.from({ length: MARK_GLYPHS.length - 2 }, (_, i) => `a${i + 1}`)
+  return floor(
     {
-      regions: ["mouth", "hall", "a1", "a2", "a3", "a4", "vault"].map(region),
-      connections: [
-        ["mouth", "hall"],
-        ["hall", "a1"],
-        ["hall", "a2"],
-        ["hall", "a3"],
-        ["hall", "a4"],
-        ["hall", "vault"],
-      ],
+      regions: ["mouth", "hall", ...annexes, "vault"].map(region),
+      connections: [["mouth", "hall"], ...annexes.map((annex): [string, string] => ["hall", annex]), ["hall", "vault"]],
       in: "mouth",
       out: "vault",
     },
-    [plates(["mouth", "hall", "a1", "a2", "a3", "a4"])],
-    [1, 1, 1, 1],
+    [plates(["mouth", "hall", ...annexes])],
+    annexes.map(() => 1),
     ["hall", "vault"]
   )
+}
 
 export { plates as sequenceControl, floor as sequenceFloor }

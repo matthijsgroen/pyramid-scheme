@@ -241,7 +241,7 @@ describe("a sequence the carve cannot stand as written", () => {
   it("refuses a floor needing more distinct glyphs than exist, naming the tile left without one", () => {
     expect(assembleFloor("test", tooManyTilesSequenceFloor(), SEEDS[0])).toEqual({
       success: false,
-      reasons: [{ type: "marksExhausted", ids: ["plates#5"] }],
+      reasons: [{ type: "marksExhausted", ids: [`plates#${MARK_GLYPHS.length - 1}`] }],
     })
   })
 

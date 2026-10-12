@@ -73,10 +73,11 @@ waiting for, the way a ward gate already shows the key it wants.
 
 - The lock expresses **order** only. The carve picks the hieroglyphs, from a set, one per **step**, **unique
   within a floor** so two steps and two sequences never share a symbol.
-- **A step lives in a room** (a region). Its tile stands on **every way into that room**: one tile cell per
-  entrance corridor, at the room's threshold, all the same step wearing the same glyph. A hub entered three ways
-  has three tiles of one step. Entering the room from any side crosses the step's tile, and so does walking out
-  of it, except by a drop. Two steps of one sequence never name one room (`sequenceRegionRepeated`): one
+- **A step lives in a room** (a region). Its tile stands on **every way into that room**: one tile per way in,
+  the **first cell inside the room**, all the same step wearing the same glyph. A gate on that way stays on the
+  seam to the corridor, outside the tile; a fork board's gate too, so a step in the board's own room stands its
+  tile between the board and that gate. A hub entered three ways has three tiles of one step. Entering the room
+  from any side crosses the step's tile, and so does walking out of it, except by a drop. Two steps of one sequence never name one room (`sequenceRegionRepeated`): one
   crossing would step on both.
 - **Walking is stepping.** Crossing into a step's room steps on its tile, and so does crossing out of it; there
   is no choice. A tile still in fog counts too when it is walked over.

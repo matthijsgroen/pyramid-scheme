@@ -1,6 +1,6 @@
 import type { Direction, FloorGrid, GridCell, MechanismRecord, TombKeyReward } from "./siteTypes"
 import type { LockSpec, Mechanism, GateId, MechanismId, RegionId } from "./lockWalk"
-import { nodeBeyond } from "./siteValidator"
+import { armDoor } from "./siteValidator"
 import { legalTargets, mechanismWorkedAt } from "./mechanismDoors"
 import { isObstacleCell, oneWayRuns } from "./gridNavigation"
 import { progressState } from "./sequence"
@@ -172,7 +172,7 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
       if (cell.type !== "room") continue
       for (const exit of cell.exits ?? []) {
         if (exit.gateKeyId === undefined) continue
-        const door = nodeBeyond(grid, [r, c], exit.dir)
+        const door = armDoor(grid, [r, c], exit.dir)
         // A way out that names a gate and leads nowhere this compiler can find would otherwise be a
         // corridor with no gate on it at all — the floor would read as more open than it is.
         if (!door)
