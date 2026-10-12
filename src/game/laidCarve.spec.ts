@@ -4,8 +4,10 @@ import type { PlacedLock } from "./floorLocks"
 import { deadFloorRegions, describeFloorWalkFailure, walkFloorLock } from "./floorLockWalk"
 import type { Lock } from "./lockAuthoring"
 import { cellSlot } from "./cellSlot"
+import { mechanismAddress, openDoorsFor } from "./mechanismDoors"
 import { assembleFloor } from "./siteAssembler"
 import type { FloorConfig, FloorGrid, RoomCell, SideSection } from "./siteTypes"
+import { MECHANISM_AT_REST } from "./siteTypes"
 import {
   CARVE_FAULT_TYPES,
   carveOnce,
@@ -70,6 +72,28 @@ const ringLock = (): Lock => ({
   mechanics: {},
   in: "in",
   out: "p",
+})
+
+/** A board in the hall picks the side room or the way out; a lever in the side room works the way out's second door. */
+const wayOnLock = (): Lock => ({
+  name: "wayOn",
+  regions: { foyer: { takes: "free" }, hall: { takes: "free" }, side: { takes: "free" }, out: { takes: "free" } },
+  connections: [
+    ["foyer", "hall"],
+    { between: ["hall", "side"], barriers: ["toSide"] },
+    { between: ["hall", "out"], barriers: ["wayOn", "second"] },
+  ],
+  gates: {
+    toSide: { from: "hall", to: "side", owners: ["Y"] },
+    wayOn: { from: "hall", to: "out", owners: ["Y"] },
+    second: { from: "hall", to: "out", owners: ["lever"] },
+  },
+  mechanics: {
+    Y: { control: "fork-switch", in: "hall" },
+    lever: { control: "toggle", in: "side", starts: "shut", opens: { shut: [], open: ["second"] } },
+  },
+  in: "foyer",
+  out: "out",
 })
 
 /** The lever lock with an appetite in every region: nothing in the foyer, puzzles in the hall, a reward at the landing. */
@@ -141,6 +165,12 @@ const FIXTURES: Record<string, Fixture> = {
   },
   "mirrorFork with side paths": {
     floor: floorOf([{ lock: mirrorForkLock() }], { pathPuzzles: 0, sideSections: SIDES }),
+    registry: true,
+    sound: true,
+    minimum: 30,
+  },
+  "a board owning the way on": {
+    floor: floorOf([{ lock: wayOnLock() }], { pathPuzzles: 0 }),
     registry: true,
     sound: true,
     minimum: 30,
@@ -283,6 +313,25 @@ describe("a lock floor is carved from the structure laid for it", { timeout: 300
     for (const { grid } of carvedOf("mirrorFork without side paths")) {
       const junction = expectForkSwitchRoom(grid, "lightbeamSwitch")
       expect(junction.exits!.filter(exit => exit.gateKeyId !== undefined)).toHaveLength(2)
+    }
+  })
+
+  it("shuts the way on until the board picks it, its own door first and the lever's after", () => {
+    const MOVE = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] } as const
+    for (const { grid } of carvedOf("a board owning the way on")) {
+      const junction = expectForkSwitchRoom(grid, "lightbeamSwitch")
+      const wayOn = junction.exits!.find(exit => exit.kind === "main" && exit.gateKeyId !== undefined)!
+      const side = junction.exits!.find(exit => exit.kind === "side" && exit.gateKeyId !== undefined)!
+      const r = grid.cells.findIndex(row => row.includes(junction))
+      const c = grid.cells[r].indexOf(junction)
+      const [dr, dc] = MOVE[wayOn.dir]
+      const firstDoor = grid.cells[r + 2 * dr][c + 2 * dc]
+      expect(firstDoor.type === "room" && firstDoor.requiredKeyId).toBe(wayOn.gateKeyId)
+      const opens = (state: string) =>
+        openDoorsFor(grid, 0, new Map([[mechanismAddress(grid, 0, r, c)!, state]])).has(wayOn.gateKeyId!)
+      expect(opens(MECHANISM_AT_REST)).toBe(false)
+      expect(opens(side.gateKeyId!)).toBe(false)
+      expect(opens(wayOn.gateKeyId!)).toBe(true)
     }
   })
 

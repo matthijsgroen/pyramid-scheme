@@ -450,7 +450,8 @@ picks one hieroglyph per step, distinct within a floor.
 ```
 
 **fork-switch** — operates its own fork, so it names no targets. The gates name it instead, and every
-one of them must be a seam leaving the region it stands in (§4). The tool checks that.
+one of them must be a seam leaving the region it stands in (§4), or the route's way on out of that region,
+never a falling corridor. The tool checks that.
 
 ```json
 "Y": { "control": "fork-switch", "in": "in" }

@@ -303,7 +303,8 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
             const isPuzzleLike =
               bcell.roomType === "encounter" &&
               (bcell.tags?.includes("puzzle") || bcell.tags?.includes("tomb-puzzle") || bcell.tags?.includes("trap"))
-            const isGate = bcell.tags?.includes("gate")
+            // A door is something to reach whatever it wears: a lock's own doors carry no tags until their face.
+            const isGate = bcell.tags?.includes("gate") || bcell.requiredKeyId !== undefined
             if (isGate || bcell.roomType === "portal" || isTreasureLike) hasInteresting = true
             else if (isPuzzleLike || bcell.roomType === "fork") {
               // traverse through puzzles/forks to find what's at the end of the branch

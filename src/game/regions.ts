@@ -399,6 +399,16 @@ export const forkSeams = (
 }
 
 /**
+ * THE ROUTE'S WAY ON OUT OF `region`, as `[region, next]`: a laid junction may own it as one of its ways besides its
+ * seams. None for a region off the route or at its end.
+ */
+export const forkOnward = (graph: RegionGraph, region: string): [string, string] | undefined => {
+  const route = regionRoute(graph)
+  const at = route.indexOf(region)
+  return at >= 0 && at < route.length - 1 ? [region, route[at + 1]] : undefined
+}
+
+/**
  * WHICH REGION EACH STEP OF THE MAIN PATH STANDS IN, one entry per step.
  *
  * The steps are dealt evenly along the route, and where they do not divide the earlier regions take

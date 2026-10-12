@@ -38,6 +38,7 @@ import type {
 import { HANDLE_SIDES, MECHANISM_AT_REST } from "./siteTypes"
 import {
   appetiteAccepts,
+  forkOnward,
   forkSeams,
   offRouteChains,
   regionOfStep,
@@ -1187,8 +1188,17 @@ const assembleExpandedFloor = (
       const sectionIdxs: number[] = []
       // A laid floor's junction is laid for its plan's arms, which may meet again beyond it; a floor carved as side
       // chains matches each seam to the side section hosting its chain.
-      if (plan) seams.push(...forkSeams(regionLayout, region, drops, { laid: true }))
-      else
+      if (plan) {
+        seams.push(...forkSeams(regionLayout, region, drops, { laid: true }))
+        // The route's way on is one of its ways too when the switch owns a gate on it.
+        const onward = forkOnward(regionLayout, region)
+        const arms = plan.junctions.find(junction => junction.region === region)?.arms ?? []
+        if (
+          onward &&
+          plan.corridors.some(c => c.onRoute && arms.includes(c.id) && onward.includes(c.from) && onward.includes(c.to))
+        )
+          seams.push(onward)
+      } else
         layoutChains.forEach((chain, i) => {
           if (chain.mouth !== region || chain.regions.length === 0 || !joined(region, chain.regions[0])) return
           seams.push([region, chain.regions[0]])
@@ -3031,6 +3041,8 @@ const assembleExpandedFloor = (
       ...(laid?.chains ?? []).flatMap(chain =>
         chain.attachedAt ? [posKey(chain.attachedAt[0], chain.attachedAt[1])] : []
       ),
+      // A laid junction whose only side arm closes a loop hangs no chain of its own.
+      ...(laid?.junctions ?? []).map(junction => junction.cell),
     ])
     // A fork always sits ON the main path (attachedAt is always a mainPath cell — see the
     // candidateSources above), so this is how a fork tells its two main-path neighbours from
@@ -3499,9 +3511,11 @@ const assembleExpandedFloor = (
     forkIns.forEach((fork, k) => {
       const junctionIndex = junctionIdxOf[k]
       const pk = posKey(mainPath[junctionIndex][0], mainPath[junctionIndex][1])
+      // An arm on the main path is the route's way on, which leaves by the next step.
+      const onward = laid?.junctions[k].arms.filter(arm => mainPathIndexByKey.has(arm.first)) ?? []
       const wanted = new Set(
         laid
-          ? laid.junctions[k].arms.map(arm => arm.first)
+          ? laid.junctions[k].arms.filter(arm => !mainPathIndexByKey.has(arm.first)).map(arm => arm.first)
           : fork.sectionIdxs.map(si => {
               const first = chains.find(chain => chain.parentIdx === undefined && chain.idx === si)!.cells[0]
               return posKey(first[0], first[1])
@@ -3515,6 +3529,7 @@ const assembleExpandedFloor = (
         })
       const exact =
         roomSpecs.get(pk)?.roomType === "fork" &&
+        onward.every(arm => mainPathIndexByKey.get(arm.first) === junctionIndex + 1) &&
         sideWays.length === wanted.size &&
         sideWays.every(neighborKey => wanted.has(neighborKey))
       if (!exact) {
@@ -4233,8 +4248,8 @@ const assembleExpandedFloor = (
     }
 
     // A FORK-SWITCH IS THE JUNCTION A `{ in }` FORK LAID, with its encounter standing in it. Only the seams
-    // are its doors — the gates its `owners` put on the first cell of each chain — so the main path onward
-    // stays open, and its states follow from those seams: rest, plus one per exit.
+    // are its doors — the gates its `owners` put on the first cell of each arm — so the main path onward
+    // stays open unless it owns a gate there too, and its states follow from those seams: rest, plus one per exit.
     for (const control of forkSwitches) {
       const k = forkIns.findIndex(fork => fork.region === control.in)
       const fork = forkIns[k]

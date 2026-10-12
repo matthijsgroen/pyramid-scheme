@@ -2,7 +2,7 @@ import type { Alignment } from "./lockAuthoring"
 import type { ResolveMechanicKind } from "./mechanics"
 import { resolveMechanicKind } from "./mechanics"
 import type { RegionGraph } from "./regions"
-import { forkSeams, offRouteChains, regionRoute } from "./regions"
+import { forkOnward, forkSeams, offRouteChains, regionRoute } from "./regions"
 import type { ForkDemand, WeightTerm } from "./siteTypes"
 
 /**
@@ -681,9 +681,11 @@ export const topologyFaults = (
       if (opensGate.has(obstacle.id)) faults.push({ type: "gateOwnedTwice", id: obstacle.id, owner })
       const key = connectionKey(obstacle.at.between[0], obstacle.at.between[1])
       // A fork's ways are layout corridors: the floor builds its mechanism from the seams alone, so a gate it
-      // owns on a falling corridor would never be issued a key.
+      // owns on a falling corridor would never be issued a key. A laid junction may also own the route's way on.
       const onFall = corridorAt.get(slotOf(key, corridorIndexOf(obstacle)))?.drop !== undefined
-      if (onFall || (regions.has(fork.in) && joined.has(key) && !seamsFor(fork.in).has(key)))
+      const onward = laid ? forkOnward(layout, fork.in) : undefined
+      const isOnward = onward !== undefined && key === connectionKey(...onward)
+      if (onFall || (regions.has(fork.in) && joined.has(key) && !seamsFor(fork.in).has(key) && !isOnward))
         faults.push({ type: "gateOwnedOffSeam", id: obstacle.id, owner })
     }
   }

@@ -753,6 +753,40 @@ describe("fork seams, sequences and orders read per corridor", () => {
     expect(laid(threeWays, obstacles, [fork], order)).toEqual([{ type: "gateOwnedOffSeam", id: "Yf", owner: "Y" }])
   })
 
+  const sideAndOnward = layout([
+    ["in", "a"],
+    ["in", "out"],
+  ])
+  const ownsOnward = [gate("Ya", "a", { owners: ["Y"] }), gate("Yo", "out", { owners: ["Y"] })]
+
+  it("lets a laid fork own the route's way on out of its region as one of its ways", () => {
+    expect(laid(sideAndOnward, ownsOnward, [fork])).toEqual([])
+  })
+
+  it("refuses the fork owning the route's way on on a floor carved as side chains", () => {
+    expect(topologyFaults(sideAndOnward, ownsOnward, [fork], [{ in: "in" }])).toContainEqual({
+      type: "gateOwnedOffSeam",
+      id: "Yo",
+      owner: "Y",
+    })
+  })
+
+  it("refuses a fork's gate on the falling corridor beside the route's way on", () => {
+    const fall: OneWayObstacle = { id: "f", kind: "oneWay", at: { on: "connection", between: ["in", "out"] } }
+    const onFall = gate("Yf", "out", { corridor: 1, owners: ["Y"] })
+    const order: BarrierOrder[] = [{ between: ["in", "out"], barriers: ["Yf", "f"], corridor: 1 }]
+    const besideAFall = layout([
+      ["in", "a"],
+      ["in", "out"],
+      ["in", "out"],
+    ])
+    expect(laid(besideAFall, [...ownsOnward, onFall, fall], [fork], order)).toContainEqual({
+      type: "gateOwnedOffSeam",
+      id: "Yf",
+      owner: "Y",
+    })
+  })
+
   it("refuses a gate its falling corridor's order leaves out", () => {
     const obstacles = [gate("G1", "a"), gate("G2", "a"), drop, gate("Yb", "b", { owners: ["Y"] })]
     const twoWays = layout([

@@ -84,7 +84,8 @@ const stretchLength = (plan: LockPlan, region: PlanRegion): number => {
     plan.corridors.filter(corridor => corridor.from === region.id || corridor.to === region.id).length +
     plan.drops.filter(drop => drop.launch === region.id || drop.landing === region.id).length
   const junction = plan.junctions.find(candidate => candidate.region === region.id)
-  const joint = junction && ways - junction.arms.length > 2 ? 2 : 1
+  const sideArms = junction?.arms.filter(id => !plan.corridors.find(corridor => corridor.id === id)?.onRoute) ?? []
+  const joint = junction && ways - sideArms.length > 2 ? 2 : 1
   return Math.max(region.minNodes, Math.ceil((ways - 2) / 2), joint)
 }
 
@@ -259,6 +260,8 @@ const search = (
   const regionStep = (region: PlanRegion, pin: { drop: string; other: string } | undefined): Step => {
     const entrance = region.id === plan.route[0]
     const junction = junctionOf.get(region.id)
+    const ownsOnward =
+      junction?.arms.some(id => plan.corridors.find(corridor => corridor.id === id)?.onRoute === true) ?? false
     const base = stretchLength(plan, region)
 
     function* anchors(): Generator<{ at: number; pinned?: { id: string; from: number; dir: number } }> {
@@ -337,9 +340,12 @@ const search = (
               for (const flipped of base + extra > 1 ? [false, true] : [false]) {
                 const chain = flipped ? [...walk].reverse().concat(at) : [at, ...walk]
                 const anchorIdx = chain.indexOf(at)
+                // A junction owning the route's way on stands where that corridor leaves: the stretch's last node.
                 const joints = junction
                   ? shuffle(
-                      chain.map((_, i) => i).filter(i => !(pinned && i === anchorIdx)),
+                      chain
+                        .map((_, i) => i)
+                        .filter(i => !(pinned && i === anchorIdx) && (!ownsOnward || i === chain.length - 1)),
                       rand
                     )
                   : [-1]
