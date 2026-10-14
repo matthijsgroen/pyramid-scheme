@@ -325,3 +325,23 @@ difference is explained in the step's report.
 - The carve's family queries (`treasure-chest`, `fez-shop`, `key-gate`) are `CARVE_FAMILY_QUERIES` in
   `encounterFallback.ts`, the one file core may name a mod family in.
 - `pass(name, reads, writes, run)` declares a pass; running one that reads a key no earlier pass wrote throws.
+
+## Notes from building step 5
+
+- `lay` is `null` on a floor that lays no lock: the pass wrapper reads `undefined` as "no earlier pass wrote it".
+- `regions.stepRegion` is `(string | undefined)[]`: `regionsAlongPath` leaves a step past the route's end unnamed.
+- `pass()` takes its key types from the `reads`/`writes` lists alone (`NoInfer` on the run), so a pass whose own
+  type reads a key its list leaves out does not compile. A write the list leaves out is not caught: the written keys
+  are optional.
+- `layFloor` also reads `attempt` (the lay's seed); `seatGateRuns`, `seatMainBarrierDoors` and `seatMainControls`
+  also read `maze` (the path's length). `hangBranches` reads `rung.recovery` where today asks
+  `attempt >= RECOVERY_ATTEMPT`, the same thing.
+- The exit trim (S1) runs in `growMaze` only on a path of two nodes or more; a shorter one is refused by
+  `placeMainContent` before anything reads `passages`.
+- `gateIndices` is the seam gates' steps ∪ the run gates' steps, and `gateIndexOf` lets a run's step win: a run
+  re-seats its nearest gate, and today's set kept both steps while the map kept the run's.
+- `branches.seamDrops` is today's `dropSeamEdges` whole: the drops the lock laid, then the ones `attachByDrop` hung.
+- `carve/grid.ts` holds the lattice (`DIRS`, `DIRS2`, `CONNECTOR_DIRS`, `OPPOSITE`, `makePkey`) and
+  `spreadContentIndices`; `buildMaze`/`growMazeAround` live in `growMaze.ts`, `extendPath` in `hangBranches.ts`.
+- Checked with a throwaway probe: on all 206 shipped floors, passes 1–11 get through at the attempt the old engine
+  carves on, so none refuses earlier than today.
