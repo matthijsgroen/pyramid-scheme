@@ -5,7 +5,9 @@ import type { FloorConfig } from "../siteTypes"
 import { firstRung } from "./ladder"
 import { PASSES } from "./passes"
 import { prepareFloor } from "./prepareFloor"
-import type { CarveState, FloorPrep } from "./state"
+import type { StatefulControl } from "../obstacles"
+import type { PlacedContainer } from "../regions"
+import type { CarveState, Cell, FloorPrep } from "./state"
 
 /** A plain floor's config, with what a test sets on it. */
 export const plainFloor = (overrides: Partial<FloorConfig> = {}): FloorConfig => ({
@@ -42,4 +44,35 @@ export const stateBefore = (prep: FloorPrep, name: string, attempt = 0) => {
     if (refusal) return { state, refusal }
   }
   throw new Error(`no pass named ${name}`)
+}
+
+/** hall → mid → vault along the route. */
+export const hallMidVault: PlacedContainer = {
+  regions: [
+    { name: "hall", appetite: "free" },
+    { name: "mid", appetite: "free" },
+    { name: "vault", appetite: "free" },
+  ],
+  connections: [
+    ["hall", "mid"],
+    ["mid", "vault"],
+  ],
+  in: "hall",
+  out: "vault",
+}
+
+/** A lever standing in `in` that opens every one of `opens`. */
+export const leverOpening = (opens: string[], id = "lever", inRegion = "hall"): StatefulControl => ({
+  id,
+  in: inRegion,
+  states: ["shut", "open"],
+  initial: "shut",
+  returnsToInitial: false,
+  opens: { shut: [], open: opens },
+})
+
+/** A main path of `steps` nodes in a straight row, with no passage between them. */
+export const straightWalk = (steps: number) => {
+  const mainPath = Array.from({ length: steps }, (_, i): Cell => [0, i * 2])
+  return { n: steps * 2 + 1, entrance: mainPath[0], exit: mainPath[steps - 1], mainPath, passages: new Set<string>() }
 }
