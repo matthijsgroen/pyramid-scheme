@@ -1,7 +1,8 @@
 import { expandFloorLocks } from "../floorLocks"
 import { planLockFloor } from "../lockPlan"
 import { mulberry32 } from "../random"
-import type { FloorConfig } from "../siteTypes"
+import type { FloorConfig, FloorGrid } from "../siteTypes"
+import { carveFloor } from "./carveFloor"
 import { firstRung } from "./ladder"
 import { PASSES } from "./passes"
 import { prepareFloor } from "./prepareFloor"
@@ -35,17 +36,6 @@ export const freshState = (prep: FloorPrep, attempt = 0): CarveState => ({
   rand: mulberry32(prep.input.seed + attempt * 7919),
 })
 
-/** The state once every pass before `name` has run, or the refusal one of them gave. */
-export const stateBefore = (prep: FloorPrep, name: string, attempt = 0) => {
-  const state = freshState(prep, attempt)
-  for (const entry of PASSES) {
-    if (entry.name === name) return { state }
-    const refusal = entry.run(prep, state)
-    if (refusal) return { state, refusal }
-  }
-  throw new Error(`no pass named ${name}`)
-}
-
 /** hall → mid → vault along the route. */
 export const hallMidVault: PlacedContainer = {
   regions: [
@@ -75,4 +65,15 @@ export const leverOpening = (opens: string[], id = "lever", inRegion = "hall"): 
 export const straightWalk = (steps: number) => {
   const mainPath = Array.from({ length: steps }, (_, i): Cell => [0, i * 2])
   return { n: steps * 2 + 1, entrance: mainPath[0], exit: mainPath[steps - 1], mainPath, passages: new Set<string>() }
+}
+
+/** The state of the first attempt, climbing the ladder as the loop does, whose every pass holds. */
+export const firstCarved = (prep: FloorPrep): CarveState => {
+  let carved: CarveState | undefined
+  carveFloor(prep, PASSES, (_, state) => {
+    carved ??= state
+    return { rows: 0, cols: 0 } as unknown as FloorGrid
+  })
+  if (!carved) throw new Error("no attempt got through every pass")
+  return carved
 }
