@@ -26,6 +26,7 @@ import { requireReads } from "./state"
 import type { Finish, PassEntry } from "./state"
 import { shutSwitchGround } from "./shutSwitchGround"
 import { standForkSwitches } from "./standForkSwitches"
+import { standPieces } from "./standPieces"
 import { standSwitches } from "./standSwitches"
 
 /**
@@ -59,7 +60,7 @@ export const PASSES: readonly PassEntry[] = [
   standForkSwitches,
 ]
 
-/** What the tail reads: every key `render` and `settle` take from the passes, each checked as a pass's are. */
+/** What the tail reads: every key `render`, `settle` and `standPieces` take from the passes, each checked as a pass's are. */
 export const TAIL_READS = [
   "maze",
   "branches",
@@ -79,11 +80,11 @@ export const TAIL_READS = [
 ] as const satisfies readonly (keyof SettleState)[]
 
 /**
- * THE TAIL OF AN ATTEMPT, once every pass holds: render writes the grid from the decisions, settle writes what
- * is still left to write onto it and asks the grid's checks, finish dresses the carve that passes them.
+ * THE TAIL OF AN ATTEMPT, once every pass holds: render writes the grid from the decisions, settle asks the
+ * grid's checks, the pieces a walk steps on stand on it, and finish dresses the carve that passes them.
  */
 export const finishAttempt: Finish = (prep, state) => {
   const decided = requireReads("render", TAIL_READS, state)
   const grid = render(prep, decided)
-  return settle(prep, decided, grid) ?? finish(prep, grid)
+  return settle(prep, decided, grid) ?? standPieces(prep, decided, grid) ?? finish(prep, grid)
 }

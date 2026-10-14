@@ -2,11 +2,9 @@ import { adjacencyFaults, dropLandingFaults, gateDoorFaults } from "../carveAgre
 import { cellSlot } from "../cellSlot"
 import { appetiteAccepts } from "../regions"
 import type { ContentKind } from "../regions"
-import { placeSequences } from "../sequenceTiles"
+import type { FloorGrid } from "../siteTypes"
 import { validateSite } from "../siteValidator"
-import { placeWeights } from "../weightsPlates"
-import { keyOf } from "./derive"
-import { gateKeyOf, obstacleMode } from "./ids"
+import { gateKeyOf } from "./ids"
 import { renderGround, renderShut } from "./render"
 import type { RenderState, WritableGrid } from "./render"
 import { MAIN_SECTION_ADDRESS } from "./sections"
@@ -21,34 +19,32 @@ const at = (pk: string): [number, number] => {
 }
 
 /**
- * THE CHECKS THAT READ THE RENDERED GRID, and the sequence tiles and plates still written onto it, in the order
- * the carve has always asked them: the carve with its reserved junctions open and with them all shut, the
- * switches' names, what each region will take, the carve against its layout, then tiles and plates.
+ * Two rooms of one section that a save cannot tell apart is a data-loss bug in the AUTHORING, so it fails the
+ * floor outright: every seed produces it.
+ */
+export const duplicateSlot = (grid: FloorGrid): Refusal | undefined => {
+  const slotsSeen = new Set<string>()
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const slot = cellSlot(grid, r, c)
+      if (!slot) continue
+      const cell = grid.cells[r][c]
+      const named = `${(cell.type !== "empty" && cell.sectionAddress) || MAIN_SECTION_ADDRESS}/${slot}`
+      if (slotsSeen.has(named)) return { fatal: [{ type: "duplicateCellSlot", slot: named }] }
+      slotsSeen.add(named)
+    }
+  return undefined
+}
+
+/**
+ * THE CHECKS THAT READ THE RENDERED GRID, in the order the carve has always asked them: the carve with its
+ * reserved junctions open and with them all shut, the switches' names, what each region will take, and the
+ * carve against its layout.
  */
 export const settle = (prep: FloorPrep, state: SettleState, grid: WritableGrid): Refusal | void => {
-  const { siteId, floorRef } = prep.input
-  const { config, authored } = prep.config
-  const { allocation } = prep.marks
+  const { floorRef } = prep.input
+  const { config } = prep.config
   const ground = renderGround(prep, state)
-  const { mainPath } = state.maze
-  const cells2D = grid.cells
-  const N = grid.rows
-
-  // Two rooms of one section that a save cannot tell apart is a data-loss bug in the AUTHORING, so it fails the
-  // floor outright: every seed produces it.
-  const duplicateSlot = (view: WritableGrid = grid): Refusal | undefined => {
-    const slotsSeen = new Set<string>()
-    for (let r = 0; r < N; r++)
-      for (let c = 0; c < N; c++) {
-        const slot = cellSlot(view, r, c)
-        if (!slot) continue
-        const cell = view.cells[r][c]
-        const named = `${(cell.type !== "empty" && cell.sectionAddress) || MAIN_SECTION_ADDRESS}/${slot}`
-        if (slotsSeen.has(named)) return { fatal: [{ type: "duplicateCellSlot", slot: named }] }
-        slotsSeen.add(named)
-      }
-    return undefined
-  }
 
   const bareDuplicate = duplicateSlot(ground)
   if (bareDuplicate) return bareDuplicate
@@ -61,13 +57,13 @@ export const settle = (prep: FloorPrep, state: SettleState, grid: WritableGrid):
 
   // Asked again, because a switch's name only exists once a family is in the junction.
   if (config.switches) {
-    const switchedDuplicate = duplicateSlot()
+    const switchedDuplicate = duplicateSlot(grid)
     if (switchedDuplicate) return switchedDuplicate
   }
 
   // Asked again, because a fork-switch's name only exists once its encounter stands in the junction.
   if (prep.mechanisms.forkSwitches.length > 0) {
-    const standingDuplicate = duplicateSlot()
+    const standingDuplicate = duplicateSlot(grid)
     if (standingDuplicate) return standingDuplicate
   }
 
@@ -77,7 +73,7 @@ export const settle = (prep: FloorPrep, state: SettleState, grid: WritableGrid):
     // chain position, a reward is a room holding treasure or stock; a mechanism room is neither.
     const appetiteOf = new Map(regionLayout.regions.map(r => [r.name, r.appetite]))
     const willNotTake = new Map<string, { region: string; kind: ContentKind }>()
-    for (const row of cells2D)
+    for (const row of grid.cells)
       for (const cell of row) {
         if (cell.type !== "room" || cell.region === undefined) continue
         const appetite = appetiteOf.get(cell.region)
@@ -126,46 +122,5 @@ export const settle = (prep: FloorPrep, state: SettleState, grid: WritableGrid):
       ),
     ]
     if (faults.length > 0) return { retry: [{ type: "carveDisagreement", faults }] }
-  }
-
-  const shutWays = () => new Set(state.switchWays.flatMap(ways => ways.map(({ cell }) => cell)))
-  const gateOf = (id: string) => {
-    const mode = obstacleMode(authored, id)
-    return { gateKeyId: gateKeyOf(floorRef, id), ...(mode ? { mode } : {}) }
-  }
-
-  // A SEQUENCE'S TILES STAND ON THE FINISHED CARVE and move no wall. A step whose region has no free node on some
-  // way in fails the attempt: a longer path may have one.
-  const { sequences, weights } = prep.mechanisms
-  if (sequences.length > 0) {
-    const unplaced = placeSequences(
-      cells2D,
-      grid,
-      sequences.map(sequence => ({
-        id: sequence.id,
-        regions: sequence.steps.map(step => step.in),
-        glyphs: sequence.steps.map((_, step) => allocation.tileGlyphs.get(`${sequence.id}#${step}`)!),
-        gates: sequence.opens.done.map(gateOf),
-        doorKey: gateKeyOf(floorRef, sequence.resetAt),
-      })),
-      shutWays()
-    )
-    if (unplaced) return { retry: [{ type: "sequenceTileNotPlaced", ...unplaced }] }
-    const tileDuplicate = duplicateSlot()
-    if (tileDuplicate) return tileDuplicate
-  }
-
-  // A LOCK'S PLATES STAND ON THE FINISHED CARVE the same way, after the tiles.
-  if (weights.length > 0) {
-    const unplaced = placeWeights(
-      cells2D,
-      weights.map(control => ({ control, gate: gateOf })),
-      new Set(mainPath.map(keyOf)),
-      siteId,
-      shutWays()
-    )
-    if (unplaced) return { retry: [{ type: "plateNotPlaced", ...unplaced }] }
-    const plateDuplicate = duplicateSlot()
-    if (plateDuplicate) return plateDuplicate
   }
 }
