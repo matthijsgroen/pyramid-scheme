@@ -180,7 +180,6 @@ export const juniorRules: Rule[] = [
 
   // THE PLACEMENT: one lock per junior floor, as the adopted proposal says (docs/game-design/lock-placement.md). A journey
   // opens on lessons, each control alone, and the locks that combine them follow. Every region `free`.
-  // junior_3 site 2 stands in for a lock still to design.
   journey("junior_1").pyramid(1, lessonOnMainFloor("dropDown")),
   journey("junior_1").pyramid(2, lessonOnMainFloor("leverOpensADoor")),
   journey("junior_1").pyramid(3, lessonOnMainFloor("boardPicksTheWay")),
@@ -188,7 +187,7 @@ export const juniorRules: Rule[] = [
   journey("junior_2").pyramid(3, lessonOnMainFloor("waterMoves")),
   journey("junior_2").pyramid(4, lockOnMainFloor("sluice")),
   journey("junior_3").pyramid(1, lessonOnMainFloor("doorWaitsForTwo")),
-  journey("junior_3").pyramid(2, lessonOnMainFloor("dropDown")),
+  journey("junior_3").pyramid(2, lockOnMainFloor("beforeYouJump")),
   journey("junior_3").pyramid(3, lockOnMainFloor("dropHome")),
   journey("junior_3").pyramid(4, lockOnMainFloor("cellar")),
   journey("junior_4").pyramid(1, lessonOnMainFloor("stoneOnAPlate")),

@@ -19,6 +19,7 @@ const LOCK_BINDINGS = {
   clockwork: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
   plates: { sequence: "pressure-plate" },
   relay: { toggle: "handle", flame: "torch", "one-way": "zipline" },
+  beforeYouJump: { toggle: "handle", "one-way": "zipline" },
 } as const
 
 /** A catalogue lock on the main floor of a pyramid, every region `free`: the floor's own content goes where the carve puts it. */

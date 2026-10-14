@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1009983559
+export const worldContentHash = 1669464982
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -3772,26 +3772,31 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         locks: [
           {
             lock: {
-              name: "dropDown",
+              name: "beforeYouJump",
               regions: {
                 in: { takes: "free" },
-                path: { takes: "free" },
+                hall: { takes: "free" },
+                side: { takes: "free" },
                 ledge: { takes: "free" },
+                pit: { takes: "free" },
                 out: { takes: "free" },
               },
               connections: [
-                { between: ["in", "path"], barriers: ["in>path"] },
-                ["path", "ledge"],
-                { between: ["ledge", "in"], barriers: ["ledge-in"] },
-                { between: ["in", "out"], barriers: ["in-out"] },
+                ["in", "hall"],
+                ["hall", "side"],
+                ["hall", "ledge"],
+                { between: ["ledge", "pit"], barriers: ["ledge>pit"] },
+                { between: ["pit", "hall"], barriers: ["pit-hall"] },
+                { between: ["pit", "out"], barriers: ["pit-out"] },
               ],
               gates: {
-                "ledge-in": { from: "ledge", to: "in", owners: ["G"] },
-                "in-out": { from: "in", to: "out", owners: ["G"] },
+                "pit-hall": { from: "pit", to: "hall", owners: ["B"] },
+                "pit-out": { from: "pit", to: "out", owners: ["A", "B"] },
               },
-              oneWays: { "in>path": { from: "in", to: "path" } },
+              oneWays: { "ledge>pit": { from: "ledge", to: "pit" } },
               mechanics: {
-                G: { control: "toggle", in: "ledge", starts: "a", opens: { a: [], b: ["ledge-in", "in-out"] } },
+                A: { control: "toggle", in: "side", starts: "a", opens: { a: [], b: ["pit-out"] } },
+                B: { control: "toggle", in: "pit", starts: "a", opens: { a: [], b: ["pit-hall", "pit-out"] } },
               },
               in: "in",
               out: "out",
