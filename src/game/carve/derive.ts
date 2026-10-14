@@ -1,4 +1,4 @@
-import type { CarveState, Cell } from "./state"
+import type { CarveState, Cell, FloorPrep } from "./state"
 
 /** The lookups that follow from what passes decided: functions over state, never layers of their own. */
 
@@ -38,3 +38,28 @@ export const contentNow = (
 /** The gate a lock laid on each cell, by the cell it stands on. */
 export const gateAtCell = (lay: CarveState["lay"]): ReadonlyMap<string, string> =>
   new Map([...(lay?.laid.gateDoor ?? [])].map(([id, cell]) => [cell, id] as const))
+
+/** Where each main-path control stands, by its step. */
+export const controlAtIndex = (
+  prep: Pick<FloorPrep, "mechanisms">,
+  mainControls: Required<CarveState>["mainControls"]
+): ReadonlyMap<number, FloorPrep["mechanisms"]["controlRecords"][number]> =>
+  new Map(
+    prep.mechanisms.controlRecords.flatMap(entry => {
+      const step = mainControls.at.get(entry.control.id)
+      return step === undefined ? [] : [[step, entry] as const]
+    })
+  )
+
+/**
+ * Every junction a branch hangs from, in the order the rooms are written: the route's, then a laid chain's,
+ * then a laid junction whose only side arm closes a loop and so hangs no chain of its own.
+ */
+export const forkPositions = (state: Pick<Required<CarveState>, "branches" | "lay">): ReadonlySet<string> => {
+  const laid = state.lay?.laid
+  return new Set([
+    ...state.branches.groups.map(g => keyOf(g.attachedAt)),
+    ...(laid?.chains ?? []).flatMap(chain => (chain.attachedAt ? [keyOf(chain.attachedAt)] : [])),
+    ...(laid?.junctions ?? []).map(junction => junction.cell),
+  ])
+}

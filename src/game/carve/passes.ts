@@ -4,6 +4,7 @@ import { hangBranches } from "./hangBranches"
 import { isolate } from "./isolate"
 import { labelCells } from "./labelCells"
 import { layFloor } from "./layFloor"
+import { mainRooms } from "./mainRooms"
 import { relayKeys } from "./relayKeys"
 import { seatChainGates } from "./seatChainGates"
 import { seatGateRuns } from "./seatGateRuns"
@@ -63,6 +64,12 @@ export const PASSES: readonly PassEntry[] = [
   pass("seatChainGates", ["keys", "lay"], ["chainGates"], seatChainGates),
   pass("checkChainsSeated", ["labels", "chainGates", "keys", "lay", "seamGates", "runGates"], [], checkChainsSeated),
   pass("isolate", ["maze", "keys", "labels", "lay"], ["doors"], isolate),
+  pass(
+    "mainRooms",
+    ["maze", "content", "mainControls", "seamGates", "runGates", "mainBarrierDoors", "keys", "lay", "branches"],
+    ["mainRooms"],
+    mainRooms
+  ),
 ]
 
 /** Writes the grid from an attempt's settled state. No pass renders one yet, so no attempt yields a grid. */
