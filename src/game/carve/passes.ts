@@ -1,5 +1,6 @@
 import { growMaze } from "./growMaze"
 import { layFloor } from "./layFloor"
+import { seatGateRuns } from "./seatGateRuns"
 import { seatRouteRegions } from "./seatRouteRegions"
 import { seatSeamGates } from "./seatSeamGates"
 import { placeJunctions } from "./placeJunctions"
@@ -18,6 +19,7 @@ export const PASSES: readonly PassEntry[] = [
   pass("seatSeamGates", ["regions", "lay", "maze"], ["seamGates"], seatSeamGates),
   pass("placeMainContent", ["maze", "regions", "lay"], ["content"], placeMainContent),
   pass("placeJunctions", ["maze", "regions", "content", "lay", "rand"], ["junctions"], placeJunctions),
+  pass("seatGateRuns", ["maze", "regions", "content", "junctions", "seamGates", "lay"], ["runGates"], seatGateRuns),
 ]
 
 /** Writes the grid from an attempt's settled state. No pass renders one yet, so no attempt yields a grid. */

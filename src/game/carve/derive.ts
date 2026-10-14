@@ -8,3 +8,11 @@ export const routeStepOf = (maze: Pick<Required<CarveState>["maze"], "mainPath">
 
 /** A cell's key, `r,c`. */
 export const keyOf = ([r, c]: Cell) => `${r},${c}`
+
+/** Where each main-path gate stands: on its seam, or where its run seated it, the run's word winning. */
+export const gateIndexOf = (state: Pick<Required<CarveState>, "seamGates" | "runGates">): ReadonlyMap<string, number> =>
+  new Map([...state.seamGates, ...state.runGates])
+
+/** Every main-path step a gate took, the seam's and the run's alike. */
+export const gateIndices = (state: Pick<Required<CarveState>, "seamGates" | "runGates">): ReadonlySet<number> =>
+  new Set([...state.seamGates.values(), ...state.runGates.values()])
