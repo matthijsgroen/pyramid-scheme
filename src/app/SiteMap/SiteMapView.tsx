@@ -53,9 +53,10 @@ import {
 } from "./tileAssets"
 import { storedAtCell } from "@/game/cellAddress"
 import { tileStatusAt } from "@/game/sequencePlay"
-import { explorerWeight, isCarrying, plateLookAt, type ExplorerWeight } from "@/game/stonePlay"
+import { explorerWeight, holeLookAt, isCarrying, plateLookAt, type ExplorerWeight } from "@/game/stonePlay"
 import { passageArtUrl } from "./passageArt"
 import { PLATE_TILE } from "./plateArt"
+import { pipeHoleArtUrl } from "./pipeHoleArt"
 import { drawingOf, familyIconOf, isLockedGate, isSpentAt, nodeRadius, shapeKindFor, staysOpen } from "./nodeKinds"
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
 import { MapNotice } from "@/ui/atoms/MapNotice"
@@ -573,6 +574,21 @@ export const nodeSpritesFor = (
           url,
           x: cx - CELL / 2,
           y: cy + CELL / 2 - PROP_H,
+          mirrored: false,
+        })
+      } else if (cell.pipeHole) {
+        // A PIPE'S HOLE IS IN THE BACK WALL of its node, drawn on the wall band above the floor square in the look
+        // its stones give it. The shared painting, or its stand-in until the painting lands.
+        const look = holeLookAt(grid, floorIndex, r, c, mechanismStates ?? NO_STATES)
+        if (!look) continue
+        out.push({
+          footprint,
+          key: `pipeHole:${r},${c}`,
+          url: pipeHoleArtUrl(look),
+          x: cx - CELL / 2,
+          y: cellTop(r) - WALL_H,
+          w: CELL,
+          h: WALL_H,
           mirrored: false,
         })
       } else if (kind === "stairhead") {
@@ -1254,7 +1270,14 @@ export const SiteMapView = ({
     [grid, claims, tier, pendingCells, mechanismStates, currentFloor, isTraveling, settledExplorerPos, weight]
   )
   const drawnPlates = useMemo(
-    () => new Set(nodeSprites.flatMap(sprite => (sprite.key.startsWith("plate:") ? [sprite.key] : []))),
+    () =>
+      new Set(
+        nodeSprites.flatMap(sprite =>
+          sprite.key.startsWith("plate:") || sprite.key.startsWith("pipeHole:")
+            ? [sprite.key.replace(/^pipeHole:/, "plate:")]
+            : []
+        )
+      ),
     [nodeSprites]
   )
   // The walkable floor, as rectangles: what a layer cut to the floor is cut to. The sand is the only one
@@ -1751,7 +1774,8 @@ export const SiteMapView = ({
                 // A SEQUENCE TILE SAYS HOW THE RUN STANDS ON IT, never "done": walked is its own look.
                 const plateStatus = tileStatusAt(grid, currentFloor ?? 0, r, c, mechanismStates)
                 const isCompleted =
-                  (state === "completed" && !staysOpen(cell) && !cell.sequenceTile && !cell.plate) || spent
+                  (state === "completed" && !staysOpen(cell) && !cell.sequenceTile && !cell.plate && !cell.pipeHole) ||
+                  spent
                 // Only ever a pending-loot marker for a treasure room with a consumable reward — this
                 // guards against stale coordinates in pendingCells (e.g. left over from before a site
                 // was regenerated) painting the badge onto whatever room now occupies that cell.

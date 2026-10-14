@@ -47,6 +47,8 @@
       "oneWay": "Steek over — er is geen weg terug",
       "liftStone": "Til de steen op",
       "setStone": "Leg de steen op de plaat",
+      "postStone": "Schuif de steen erin",
+      "takeStone": "Pak de steen",
       "squeeze": "Wurm je er door"
     },
     "blocked": {

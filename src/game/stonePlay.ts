@@ -1,10 +1,16 @@
 import { storedAtCell } from "./cellAddress"
 import { mechanismAddress, mechanismWorkedAt, openDoorsFor, pressAt } from "./mechanismDoors"
+import { holeOf } from "./lockAuthoring"
 import { arrangementOf } from "./mechanics/weights"
+import type { StoneMove } from "./mechanics/weights"
+
+/** A move of the stones, as the player makes it. */
+export type StoneMoveKind = StoneMove["kind"]
 import type { FloorGrid, MechanismRecord, RoomCell } from "./siteTypes"
 
-// THE STONES AS PLAY ASKS ABOUT THEM, read off the weights record a lock's first plate carries and never off a
-// second copy of the rules: a move is what `pressAt` makes at the plate, an arrangement is what its key says.
+// THE STONES AS PLAY ASKS ABOUT THEM, read off the weights record a lock's first plate (or hole) carries and never off
+// a second copy of the rules: a move is what `pressAt` makes at the plate or the pipe's hole, an arrangement is what
+// its key says.
 
 /** THE READING OF A STORED ARRANGEMENT PLAY'S STONE QUESTIONS USE: the key itself where the record has it,
  * otherwise the authored start. A save from a build whose lock changed plays on from the start: saves are
@@ -13,8 +19,8 @@ import type { FloorGrid, MechanismRecord, RoomCell } from "./siteTypes"
 export const arrangementIn = (record: MechanismRecord, stored: string | undefined): string =>
   stored !== undefined && record.states.includes(stored) ? stored : record.initial
 
-/** The arrangement the stones of a plate stand in, and the address it is filed under; nothing off a plate. A save
- * with no entry, or with a key the record does not have, stands in the authored start. */
+/** The arrangement the stones of a plate or a pipe's hole stand in, and the address it is filed under; nothing off
+ * one. A save with no entry, or with a key the record does not have, stands in the authored start. */
 export const stonesAt = (
   grid: FloorGrid,
   floor: number,
@@ -23,7 +29,7 @@ export const stonesAt = (
   states: ReadonlyMap<string, string>
 ): { address: string; state: string } | undefined => {
   const cell = grid.cells[row]?.[col]
-  if (cell?.type !== "room" || !cell.plate) return undefined
+  if (cell?.type !== "room" || (!cell.plate && !cell.pipeHole)) return undefined
   const worked = mechanismWorkedAt(grid, row, col)
   const address = mechanismAddress(grid, floor, row, col)
   if (!worked || !address) return undefined
@@ -31,21 +37,41 @@ export const stonesAt = (
   return { address, state: arrangementIn(worked.record, storedAtCell(grid, floor, hr, hc, states)) }
 }
 
-/** What standing on a plate offers: the lift off it or the set-down on it, as the write it makes. Nothing where the
- * plate has no move out of the current arrangement: an empty plate with empty hands, or a full one while carrying.
- * `pressAt` is handed the arrangement `stonesAt` read, so a stale key presses as the start it is read as. */
+/** What standing on a plate offers: the lift off it or the set-down on it, as the write it makes; at a pipe's hole,
+ * the post into it or the take out of it. Nothing where there is no move out of the current arrangement: an empty
+ * plate with empty hands, a full one while carrying, a post while either hole holds a stone, a take from an empty
+ * hole. `pressAt` is handed the arrangement `stonesAt` read, so a stale key presses as the start it is read as. */
 export const stoneMoveAt = (
   grid: FloorGrid,
   floor: number,
   row: number,
   col: number,
   states: ReadonlyMap<string, string>
-): { address: string; state: string; move: "lift" | "set" } | undefined => {
+): { address: string; state: string; move: StoneMoveKind } | undefined => {
   const stones = stonesAt(grid, floor, row, col, states)
   if (!stones) return undefined
   const press = pressAt(grid, floor, row, col, new Map(states).set(stones.address, stones.state))
   if (!press || press.state === stones.state) return undefined
-  return { ...press, move: arrangementOf(press.state).hand ? "lift" : "set" }
+  const carrying = arrangementOf(press.state).hand
+  const atHole = (grid.cells[row][col] as RoomCell).pipeHole !== undefined
+  return { ...press, move: atHole ? (carrying ? "take" : "post") : carrying ? "lift" : "set" }
+}
+
+/** A pipe's hole's two looks: empty, or with a stone lying in it. */
+export type HoleLook = "empty" | "stone"
+
+/** How the pipe's hole at a cell looks now; nothing off a hole. */
+export const holeLookAt = (
+  grid: FloorGrid,
+  floor: number,
+  row: number,
+  col: number,
+  states: ReadonlyMap<string, string>
+): HoleLook | undefined => {
+  const stones = stonesAt(grid, floor, row, col, states)
+  const hole = (grid.cells[row][col] as RoomCell).pipeHole
+  if (!stones || !hole) return undefined
+  return arrangementOf(stones.state).holes.includes(holeOf(hole.pipe, hole.region)) ? "stone" : "empty"
 }
 
 /** Whether a stone is in hand on this floor: some lock's stones stand in an arrangement its record lists as

@@ -33,6 +33,16 @@ export const plateNamed = (grid: FloorGrid, name: string): readonly [number, num
   throw new Error(`no plate ${name} on this floor`)
 }
 
+/** Where the pipe hole in the region authored as `region` stands. */
+export const holeIn = (grid: FloorGrid, region: string): readonly [number, number] => {
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type === "room" && cell.pipeHole?.region === `stones.${region}`) return [r, c]
+    }
+  throw new Error(`no pipe hole in ${region} on this floor`)
+}
+
 /** A stone on a shelf by the way in, and a narrow passage on to the way out: only empty hands go through. */
 export const CRACK = "in -[unladen]- out\nshelf plate @in stone\nin ?\nout ?"
 

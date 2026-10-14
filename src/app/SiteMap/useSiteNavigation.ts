@@ -6,7 +6,7 @@ import { dropLaunchedAt, findPath, getCell, walkableFrom } from "@/game/gridNavi
 import { headingOf, passageCrossing } from "@/game/passages"
 import { isSpent as mechanismIsSpent, throwMechanism } from "@/game/mechanismDoors"
 import { walkPresses } from "@/game/sequencePlay"
-import { isCarrying, stoneMoveAt } from "@/game/stonePlay"
+import { isCarrying, stoneMoveAt, type StoneMoveKind } from "@/game/stonePlay"
 import type { FloorGrid, MechanismRecord, ObstacleKind, RoomCell, SiteConfig, TreasureReward } from "@/game/siteTypes"
 import { useTimeout } from "@/support/useTimeout"
 import type { JourneyAPI } from "@/app/state/useJourneys"
@@ -63,8 +63,9 @@ export type ArrivalPrompt = {
   /** Locale key of the prompt the span's realisation declared. Unset where none is registered, which reads
    * as the generic one-way prompt: a crossing is never taken without one. */
   invitation?: string
-  /** On a `plate` prompt, which move standing there offers: the stone lifted off it, or set on it. */
-  stone?: "lift" | "set"
+  /** On a `plate` prompt, which move standing there offers: the stone lifted off it or set on it; at a pipe's hole,
+   * posted into it or taken out. */
+  stone?: StoneMoveKind
   /** Takes what is offered — this does what arriving used to do on its own. */
   take: () => void
 }
@@ -120,7 +121,7 @@ export const useSiteNavigation = ({
       familyId?: string,
       obstacleKind?: ObstacleKind,
       invitation?: string,
-      stone?: "lift" | "set"
+      stone?: StoneMoveKind
     ) =>
       setPrompt({
         kind,
@@ -334,9 +335,10 @@ export const useSiteNavigation = ({
       }
 
       // A PLATE IS GROUND THAT OFFERS ITS STONE: written down by standing on it, like a sequence tile, and asked
-      // before the completed-cell block because a plate is walked back to again and again. The move is read
-      // again when the prompt is taken, so it is always the one the floor allows then.
-      if (cell.type === "room" && cell.plate) {
+      // before the completed-cell block because a plate is walked back to again and again. A pipe's hole offers
+      // the post or the take the same way. The move is read again when the prompt is taken, so it is always the one
+      // the floor allows then.
+      if (cell.type === "room" && (cell.plate || cell.pipeHole)) {
         journeys.markCellExplored(sectionHash, edgeId, address)
         goHere()
         const offered = stoneMoveAt(grid, currentFloor, row, col, journeys.getMechanismStates(journeyId))

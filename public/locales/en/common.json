@@ -47,6 +47,8 @@
       "oneWay": "Cross over — there is no way back",
       "liftStone": "Lift the stone",
       "setStone": "Set the stone on the plate",
+      "postStone": "Post the stone",
+      "takeStone": "Take the stone",
       "squeeze": "Squeeze through"
     },
     "blocked": {

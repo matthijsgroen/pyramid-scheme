@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- A stone pipe in the walls carries a stone where you cannot: post it at one hole and take it out of the other.
 - A junior pyramid's fork now has a mirror puzzle standing in it, and the way that stands open is the one you route the beam to. Change your mind and the other way opens as that one shuts. The fork and its doors wear one mark on the map.
 - The last pyramid of the Valley of the Kings opens on a mirror fork with ziplines: throw the levers, route the beam, and drop from ledge to ledge to get back.
 - Djoser's last pyramid opens on a stone lock: lift the stone off the altar, park one on a shelf, and squeeze through the narrow passage.

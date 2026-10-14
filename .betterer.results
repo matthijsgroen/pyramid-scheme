@@ -1020,7 +1020,7 @@ exports[`design doc references name a file, not a paragraph`] = {
 
 exports[`core names no mod family id`] = {
   value: `{
-    "src/app/SiteMap/nodeKinds.ts:4164385530": [
+    "src/app/SiteMap/nodeKinds.ts:151041311": [
       [17, 4, 8, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "1887827023"]
     ],
     "src/app/SiteMap/nodeShapes.tsx:645600408": [

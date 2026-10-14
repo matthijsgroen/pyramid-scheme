@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest"
 import { parseLock } from "./lockNotation"
 import { carveLockFloor } from "./testSupport/lockFixtures"
-import { SHELF_AND_DOOR, TWO_STONES, plateNamed } from "./testSupport/stoneFixtures"
+import { PIPE_BINDING, PIPED, SHELF_AND_DOOR, TWO_STONES, holeIn, plateNamed } from "./testSupport/stoneFixtures"
 import { cellAddress } from "./cellAddress"
 import { openDoorsFor } from "./mechanismDoors"
-import { explorerWeight, isCarrying, plateLookAt, plateLookOf, stoneMoveAt, stonesAt } from "./stonePlay"
+import { explorerWeight, holeLookAt, isCarrying, plateLookAt, plateLookOf, stoneMoveAt, stonesAt } from "./stonePlay"
 
 const floorOf = (text: string) => carveLockFloor(parseLock(text, "stones").lock, { weights: "stonePlate" })
 
@@ -62,6 +62,47 @@ describe("the stones as play reads them", () => {
     expect(stonesAt(grid, 0, shelf[0], shelf[1], stale)?.state).toBe("stones.shelf")
     expect(stoneMoveAt(grid, 0, shelf[0], shelf[1], stale)).toMatchObject({ state: "+ hand", move: "lift" })
     expect(isCarrying(grid, 0, new Map([[address, "stones.gone + hand"]]))).toBe(false)
+  })
+})
+
+describe("a pipe's holes in play", () => {
+  const grid = carveLockFloor(parseLock(PIPED, "stones").lock, PIPE_BINDING)
+  const near = holeIn(grid, "in")
+  const far = holeIn(grid, "hall")
+  const shelf = plateNamed(grid, "shelf")
+  const lifted = stoneMoveAt(grid, 0, shelf[0], shelf[1], new Map())!
+  const carrying = new Map([[lifted.address, lifted.state]])
+
+  it("offers a post at a hole while carrying with both holes empty, laying the stone in the far one", () => {
+    const post = stoneMoveAt(grid, 0, near[0], near[1], carrying)
+    expect(post).toMatchObject({ address: lifted.address, state: "stones.P@stones.hall", move: "post" })
+    const posted = new Map([[lifted.address, post!.state]])
+    expect(isCarrying(grid, 0, posted)).toBe(false)
+    expect(holeLookAt(grid, 0, far[0], far[1], posted)).toBe("stone")
+    expect(holeLookAt(grid, 0, near[0], near[1], posted)).toBe("empty")
+  })
+
+  it("offers the take only at the hole holding the stone, with empty hands", () => {
+    const posted = new Map([[lifted.address, "stones.P@stones.hall"]])
+    expect(stoneMoveAt(grid, 0, far[0], far[1], posted)).toMatchObject({ state: "+ hand", move: "take" })
+    expect(stoneMoveAt(grid, 0, near[0], near[1], posted)).toBeUndefined()
+  })
+
+  it("offers nothing at a hole with empty hands and both holes empty", () => {
+    expect(stoneMoveAt(grid, 0, near[0], near[1], new Map())).toBeUndefined()
+    expect(holeLookAt(grid, 0, near[0], near[1], new Map())).toBe("empty")
+  })
+
+  it("offers no post while a stone lies in either hole", () => {
+    const pooled = carveLockFloor(parseLock(`${PIPED}\nrest plate @in stone`, "stones").lock, PIPE_BINDING)
+    const [hr, hc] = holeIn(pooled, "in")
+    const { address } = stonesAt(pooled, 0, hr, hc, new Map())!
+    const holding = new Map([[address, "stones.P@stones.hall + hand"]])
+    expect(stoneMoveAt(pooled, 0, hr, hc, holding)).toBeUndefined()
+  })
+
+  it("reads nothing as a hole off a cell that is no hole", () => {
+    expect(holeLookAt(grid, 0, shelf[0], shelf[1], new Map())).toBeUndefined()
   })
 })
 

@@ -72,6 +72,19 @@ export const SqueezeThrough: Story = {
   },
 }
 
+// A made-up lock for the stone pipe: a stone on a shelf by the way in, a narrow passage to a hall whose door waits for
+// a stone on `p`. Lift the stone, post it at the hole by the way in, squeeze through with empty hands, take it out of
+// the hole in the hall and set it on `p`.
+export const StonePipe: Story = {
+  name: "Stone pipe",
+  args: {
+    locks: {
+      pipe: "in -[unladen]- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nP pipe @in @hall\nin ?\nhall ?\nout ?",
+    },
+    initial: "pipe",
+  },
+}
+
 // MADE-UP LOCKS NESTED IN EACH OTHER, one story per stone case (stones spec, "Nested locks"). The picked lock is the
 // host; `nest` is spliced into its nest spot (`-&>`).
 const HOST_STONES =
