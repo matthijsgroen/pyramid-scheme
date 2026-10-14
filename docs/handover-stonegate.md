@@ -92,7 +92,7 @@ The art plan is `docs/superpowers/plans/2026-10-06-stonegate-phase-5-art.md`; it
    each proposed site under `timeout` first; no proposed site has been tried.
 2. **The designer's new locks:** the designer designs the puzzles (the 8 open expert slots included). Claude
    builds the mechanics they need and places them.
-3. **The procession door** (roadmap, "Designed, not built"), after placement.
+3. **The procession door**, after placement: plan in `docs/instructions/procession-door.md` (designer decisions of 2026-10-14 in it; its questions for tonight still open).
 4. **Fold doubleBack's twin** once the designer answers how a drop beside a gate compiles (below).
 5. **Carve passes refactor: done.** Plan in `docs/instructions/carve-passes.md`. `assembleFloor` runs the pass
    engine in `src/game/carve/`; `siteAssembler.ts` keeps only the public types and re-exports. Passes decide,
