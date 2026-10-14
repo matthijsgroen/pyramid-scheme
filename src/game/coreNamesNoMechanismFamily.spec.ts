@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs"
+import { readdirSync, readFileSync } from "node:fs"
 import { describe, expect, it } from "vitest"
 
 // The mechanism path of core: how a control's room is made, how a door gets its face, how a room is
@@ -6,6 +6,9 @@ import { describe, expect, it } from "vitest"
 // them is encounterFallback.ts, for callers with no registry.
 const MECHANISM_PATH = [
   "src/game/siteAssembler.ts",
+  ...readdirSync("src/game/carve")
+    .filter(file => /^[^.]+\.ts$/.test(file))
+    .map(file => `src/game/carve/${file}`),
   "src/game/gateFace.ts",
   "src/game/mechanismDoors.ts",
   "src/app/SiteMap/nodeKinds.ts",
