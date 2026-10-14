@@ -345,3 +345,29 @@ difference is explained in the step's report.
   `spreadContentIndices`; `buildMaze`/`growMazeAround` live in `growMaze.ts`, `extendPath` in `hangBranches.ts`.
 - Checked with a throwaway probe: on all 206 shipped floors, passes 1–11 get through at the attempt the old engine
   carves on, so none refuses earlier than today.
+
+## Notes from building step 6
+
+- None of passes 12–20 draws, so their `rand()` order is moot.
+- What each pass reads beyond the table: `seatChainGates` reads only `keys` and `lay`, dealing a hosted chain's
+  regions with `regionOfStep` itself rather than reading `labels`; `checkChainsSeated` also reads `lay`,
+  `seamGates` and `runGates` (on a laid floor the off-route gates are those not on the route); `mainRooms` reads
+  `mainControls`, `seamGates`, `runGates`, `mainBarrierDoors` and `branches` (for `forkPositions`), not `doors`;
+  `chainRooms` also reads `maze` and `mainBarrierDoors` (the main path's barrier doors count toward a barrier's
+  hosting); `reserveJunctions` reads `maze`, `junctions`, `keys`, `lay`, `branches`, `doors` and both room maps,
+  and settles `switchesPlaced` off `config.switches`; `shutSwitchGround` reads `labels`, `maze`, `lay` and both
+  room maps (through `freeWaysOut`); `placeDrops` reads `maze` and `lay`.
+- `standsBehind`, `edgeAllowed`, `nodeExitsOf` and `freeWaysOut` take an optional `switchDoors`.
+  `reserveJunctions` passes none; `shutSwitchGround` passes the map it is filling, so each walk sees the doors
+  the walks before it shut; `placeDrops` passes `state.switchDoors`.
+- A switch's doors join `behind` only, never `gated`, as today (3596 writes `doorsToEnter` alone): they change
+  `edgeAllowed` only between cells an authored door already gates.
+- `rooms(state)` is `new Map([...mainRooms, ...chainRooms])`: a chain's room wins on a shared cell, and each
+  cell keeps the place its first write gave it. Render iterates `roomSpecs` (3915), so it iterates `rooms(state)`.
+- `checkChainsSeated`'s three refusals and `chainRooms`' two `continue attempt`s return in order, the first
+  ending the attempt; old `forEach`/loops that ran on after recording a shortfall add nothing a discarded
+  attempt keeps.
+- The pass is named `chainRooms`, as is the room-count function in `ids.ts`; nothing imports both.
+- `dropEnds` stays local to `hangBranches`, and `exitKindOf` waits for render, its only reader.
+- Checked with a throwaway probe: on all 206 shipped floors, the first attempt to get through passes 1–20 is the
+  attempt the old engine carves on, and no floor refuses fatally before it.
