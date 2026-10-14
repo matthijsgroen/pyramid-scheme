@@ -21,6 +21,11 @@ describe("the catalogue table", () => {
     expect(lockRow("piped", piped).mechanisms).toBe("stones, pipe, narrow passage")
   })
 
+  it("names a procession apart from a sequence", () => {
+    const led = parseLock("in -- hall\nhall -- side\nhall -[P]- out\nP procession in side hall", "led")
+    expect(lockRow("led", led).mechanisms).toBe("procession")
+  })
+
   it("shows – for no solution and the first failing check", () => {
     expect(lockRow("lessons/cut", cutOff)).toMatchObject({
       steps: "–",

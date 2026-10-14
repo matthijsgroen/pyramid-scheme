@@ -36,6 +36,8 @@ IN A REGION (items: placed @region)
                                 puts it out, and it can be lit again
   Y fork @in                    a fork puzzle: the gates naming it are its ways
   P sequence hall vault [reset hall-vault]   steps in order; -[P]- opens when done and resets it; reset names the corridor when P opens several
+  P procession hall vault [reset hall-vault]   a sequence whose door is a procession board: a tile unlocks its bar;
+                                solve the board, then walk the order it shows
   p1 plate @hall   p2 plate @hall stone   a plate, empty or with a stone on it; any stone presses any plate
   P pipe @hall @vault [stone]   a stone pipe: post a stone at one hole, it lies in the other; one stone in it at a time
   hall -[sluice:wet]            region gate: hall impassable unless sluice is wet
@@ -78,12 +80,13 @@ export const syntaxSections = (): SyntaxSection[] => {
 
 /** The words that place a control, by the mechanic they build. Typed on LockMechanic's kinds, so a control the
  * parser gains must be named here, and the spec holds LOCK_SYNTAX to mentioning each word. */
-export const CONTROL_WORDS: Record<LockMechanic["control"] | "plate" | "pipe", RegExp> = {
+export const CONTROL_WORDS: Record<LockMechanic["control"] | "plate" | "pipe" | "procession", RegExp> = {
   toggle: /\btoggle\b/,
   activator: /\bactivator\b/,
   flame: /\btorch\b/,
   "fork-switch": /\bfork\b/,
   sequence: /\bsequence\b/,
+  procession: /\bprocession\b/,
   plate: /\bplate\b/,
   pipe: /\bpipe\b/,
 }
@@ -218,7 +221,7 @@ type Declared =
   | { control: "toggle" | "activator"; in: string; states: readonly [string, string]; n: number }
   | { control: "flame"; in: string; states: readonly [string, string]; lit: boolean; n: number }
   | { control: "fork-switch"; in: string; n: number }
-  | { control: "sequence"; steps: string[]; resetAt: string | undefined; n: number }
+  | { control: "sequence"; steps: string[]; resetAt: string | undefined; procession: boolean; n: number }
 type Term = { owner: string; state?: string }
 
 export const parseLock = (text: string, name = "lock"): ParsedLock => {
@@ -310,8 +313,9 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
     } else if ((m = line.match(/^(\w+)\s+fork\s+@(\w+)(.*)$/))) {
       if (m[3].trim() !== "") fail(n, `a fork's states are its ways; write ${m[1]} fork @${m[2]}`)
       declare(n, m[1], { control: "fork-switch", in: m[2], n })
-    } else if ((m = line.match(/^(\w+)\s+sequence\s+(\w+(?:\s+\w+)*?)(?:\s+reset\s+(\S+))?$/))) {
-      declare(n, m[1], { control: "sequence", steps: m[2].trim().split(/\s+/), resetAt: m[3], n })
+    } else if ((m = line.match(/^(\w+)\s+(sequence|procession)\s+(\w+(?:\s+\w+)*?)(?:\s+reset\s+(\S+))?$/))) {
+      const procession = m[2] === "procession"
+      declare(n, m[1], { control: "sequence", steps: m[3].trim().split(/\s+/), resetAt: m[4], procession, n })
     } else if ((m = line.match(/^(\w+)\s+plate\s+@(\w+)(\s+stone)?$/))) {
       if (placed(m[1])) fail(n, `${m[1]} is placed twice`)
       plates.set(m[1], { in: m[2], stone: m[3] !== undefined, n })
@@ -460,6 +464,7 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
         steps: what.steps.map(step => ({ in: step })),
         resetAt,
         opens: table,
+        ...(what.procession ? { procession: true as const } : {}),
       }
     } else if (what.control === "flame") {
       mechanics[id] = {

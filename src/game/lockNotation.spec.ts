@@ -96,6 +96,17 @@ describe("parseLock", () => {
     })
   })
 
+  it("reads a procession as a sequence whose door carries a procession board", () => {
+    const { lock } = parseLock("in -- hall\nhall -[P]- out\nP procession in hall in reset hall-out")
+    expect(lock.mechanics.P).toEqual({
+      control: "sequence",
+      steps: [{ in: "in" }, { in: "hall" }, { in: "in" }],
+      resetAt: "hall-out",
+      opens: { done: ["hall-out"] },
+      procession: true,
+    })
+  })
+
   it("binds a sequence's reset on a two-gate corridor to the gate it opens", () => {
     const { lock } = parseLock("in -- hall\nhall -[Y]- -[P]- out\nY toggle @in\nP sequence in hall reset hall-out")
     expect(lock.mechanics.P).toMatchObject({ resetAt: "hall-out#2", opens: { done: ["hall-out#2"] } })

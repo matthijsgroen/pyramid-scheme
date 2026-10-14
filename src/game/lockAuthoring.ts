@@ -144,6 +144,12 @@ export type Sequence = {
   readonly steps: readonly { readonly in: RegionId }[]
   readonly resetAt: BarrierId
   readonly opens: Opens
+  /**
+   * The door carries a procession board instead of showing the order: a tile walked unlocks its bar, and the door
+   * opens once the board is solved and the order walked. The word changes the puzzle, not the look, so it binds
+   * the realisation itself (`procession-door`) and no floor binding may name another.
+   */
+  readonly procession?: true
 }
 
 /**

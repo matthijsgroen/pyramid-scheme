@@ -43,6 +43,7 @@ const MECHANISM_ORDER = [
   "torch",
   "activator",
   "sequence",
+  "procession",
   "fork",
   "stones",
   "pipe",
@@ -54,7 +55,9 @@ const MECHANISM_ORDER = [
 /** The kinds of mechanism a lock is built from, in the author's words, each once. */
 export const mechanismsOf = (lock: Lock): string[] => {
   const used = new Set([
-    ...Object.values(lock.mechanics).map(m => CONTROL_WORDS[m.control]),
+    ...Object.values(lock.mechanics).map(m =>
+      m.control === "sequence" && m.procession ? "procession" : CONTROL_WORDS[m.control]
+    ),
     ...(Object.keys(lock.weights?.plates ?? {}).length > 0 ? ["stones"] : []),
     ...(Object.keys(lock.weights?.pipes ?? {}).length > 0 ? ["pipe"] : []),
     ...Object.values(lock.gates).flatMap(gate =>

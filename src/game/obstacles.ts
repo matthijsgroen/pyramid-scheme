@@ -147,6 +147,8 @@ export type SequenceControl = {
   opens: { done: string[] }
   /** The realisation the sequence is dressed as, bound where its lock is placed. Absent on a floor authored longhand. */
   encounter?: string
+  /** Written `procession` in its lock: `encounter` is then the procession door, whatever the floor binds. */
+  procession?: true
 }
 
 /**

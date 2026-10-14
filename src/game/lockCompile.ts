@@ -13,6 +13,7 @@ import {
 import type { LooseMechanic, ResolveMechanicKind } from "./mechanics"
 import { resolveMechanicKind } from "./mechanics"
 import { PIPE_KIND } from "./mechanics/weights"
+import { PROCESSION_REALISATION, PROCESSION_ROLE } from "./mechanics/sequence"
 import type { BarrierOrder, Control, Obstacle, TopologyFault } from "./obstacles"
 import { isRegionGate as isRegionObstacle, topologyFaults } from "./obstacles"
 import { PASSAGE_KIND } from "./passageRealisation"
@@ -25,7 +26,8 @@ import type { ForkDemand } from "./siteTypes"
  * compiler: the lock names none (docs/mods/mechanic-contract.md). Keyed by the control kind — "toggle",
  * "activator", "flame", "sequence", "fork-switch", "one-way", "weights" for the stone plates, "pipe" for a stone
  * pipe's holes, "unladen" for a narrow passage, and "region-barrier" for the lock's barred regions — because within one lock all roles of a
- * kind take the same realisation. A kind the lock uses and the binding omits is refused, never defaulted.
+ * kind take the same realisation. A kind the lock uses and the binding omits is refused, never defaulted. The one
+ * exception is a sequence written `procession`: the word binds it to the procession door, so it needs no entry.
  */
 export type RealisationBinding = Readonly<Partial<Record<string, string>>>
 
@@ -97,6 +99,9 @@ export type LockFault =
   | { type: "effectOnlyMechanic"; mechanic: string; control: string }
   /** The binding names no realisation for a kind the lock uses; `mechanics` are the ones that use it. */
   | { type: "unboundRole"; kind: string; mechanics: string[] }
+  /** The binding names `realisation` for a procession, or the procession door for a plain sequence: the lock word
+   * alone decides which door a sequence has. */
+  | { type: "processionRebound"; kind: string; realisation: string; mechanics: string[] }
   /** What the floor topology refuses of the compiled fragment, as it would on a floor. */
   | { type: "topology"; fault: TopologyFault }
 
@@ -126,7 +131,8 @@ const regionsOfMechanic = (mechanic: LooseMechanic): string[] => [
 const kindsUsed = (lock: Lock): Map<string, string[]> => {
   const used = new Map<string, string[]>()
   const add = (kind: string, id: string) => used.set(kind, [...(used.get(kind) ?? []), id])
-  for (const [id, mechanic] of Object.entries(lock.mechanics)) add(mechanic.control, id)
+  for (const [id, mechanic] of Object.entries(lock.mechanics))
+    add(mechanic.control === "sequence" && mechanic.procession ? PROCESSION_ROLE : mechanic.control, id)
   for (const id of Object.keys(lock.oneWays ?? {})) add("one-way", id)
   if (lock.weights) add("weights", "stones")
   for (const id of Object.keys(lock.weights?.pipes ?? {})) add(PIPE_KIND, id)
@@ -269,6 +275,27 @@ const unboundFaults = (lock: Lock, binding: RealisationBinding, kinds: ResolveMe
   [...kindsUsed(lock)].flatMap(([kind, mechanics]) =>
     kinds(kind)?.built === true && !binding[kind] ? [{ type: "unboundRole" as const, kind, mechanics }] : []
   )
+
+/** A binding that would dress a sequence other than its lock wrote it: the word `procession` is the only way to a
+ * procession door, and a procession is never anything else. */
+const reboundFaults = (lock: Lock, binding: RealisationBinding): LockFault[] => {
+  const used = kindsUsed(lock)
+  const rebound = (kind: string, realisation: string | undefined, mechanics: string[] | undefined): LockFault[] =>
+    realisation !== undefined && mechanics ? [{ type: "processionRebound", kind, realisation, mechanics }] : []
+  const procession = binding[PROCESSION_ROLE]
+  return [
+    ...rebound(
+      PROCESSION_ROLE,
+      procession === PROCESSION_REALISATION ? undefined : procession,
+      used.get(PROCESSION_ROLE)
+    ),
+    ...rebound(
+      "sequence",
+      binding.sequence === PROCESSION_REALISATION ? binding.sequence : undefined,
+      used.get("sequence")
+    ),
+  ]
+}
 
 /**
  * THE LOCK IN THE FLOOR'S OWN VOCABULARY. Only called on a lock `lockFaults` passed, with every kind built.
@@ -417,7 +444,12 @@ export const checkLock = (lock: Lock, kinds: ResolveMechanicKind = resolveMechan
  */
 export const compileLock = (lock: Lock, binding: RealisationBinding, options: CompileOptions = {}): CompileResult => {
   const kinds = options.kinds ?? resolveMechanicKind
-  const faults = [...checkLock(lock, kinds), ...unbakeableFaults(lock, kinds), ...unboundFaults(lock, binding, kinds)]
+  const faults = [
+    ...checkLock(lock, kinds),
+    ...unbakeableFaults(lock, kinds),
+    ...unboundFaults(lock, binding, kinds),
+    ...reboundFaults(lock, binding),
+  ]
   if (faults.length > 0) return { ok: false, faults }
   return { ok: true, fragment: translate(lock, binding, options.namespace, kinds) }
 }
