@@ -371,3 +371,22 @@ difference is explained in the step's report.
 - `dropEnds` stays local to `hangBranches`, and `exitKindOf` waits for render, its only reader.
 - Checked with a throwaway probe: on all 206 shipped floors, the first attempt to get through passes 1–20 is the
   attempt the old engine carves on, and no floor refuses fatally before it.
+
+## Notes from building steps 7–8
+
+- `render` returns a `WritableGrid` (a `FloorGrid` with mutable `cells`): `FloorGrid.cells` is readonly, and
+  `settle` still writes into the grid until step 11 moves its writes out.
+- `render` reads `maze`, `branches`, `doors`, `lay`, `labels`, both room maps, `switchDoors` (its edges see the
+  switch ground) and `drops`; `exitKindOf` lives in it, over `forkPositions`, `rooms` and `routeStepOf`. The
+  patron and dressing rules (`PATRON_KINDS`, `PATRON_PER_FLOOR`, `wallSuiting`) are copied into `render.ts`;
+  the originals go with `assembleExpandedFloor` at step 9.
+- `settle` also reads `forks`, `junctions.order` (today's `junctionIdxOf`, the fork-switch's junction),
+  `keys.chains` and `drops`; `closeWaysOut` and the fork-switch read `freeWaysOut`/`nodeExitsOf` with
+  `switchDoors`, as today. `validateSite` open or closed failing is `retry: []`; every `duplicateSlot` is
+  `fatal`.
+- S8: `settle` keeps the switch marks in a map of its own and G7 reads prep's `markByGateKey`, then that map.
+  It moves no shipped floor: a junction an earlier attempt shut and left switchless is reopened to the cells
+  it had, so no stale switch key ever stands on a later grid.
+- Harness: 206 of 206 floors identical. A throwaway probe comparing every result whole (JSON of the grid with
+  decorations, exits, mechanisms, ordinals, hashes and board indices) also found 206 of 206 byte-identical, so
+  neither S8 nor the early `noUngatedSectionForKey` refusal changes a shipped floor.
