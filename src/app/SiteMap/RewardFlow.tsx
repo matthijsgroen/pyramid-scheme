@@ -20,7 +20,7 @@ type Props = {
   onDismiss: () => void
 }
 
-// A floor key is a structural, floor-local thing core itself places (siteAssembler), and its colour
+// A floor key is a structural, floor-local thing core itself places (carve/relayKeys.ts), and its colour
 // lives on the chest cell rather than in the reward payload — so core owns this popup content, the
 // same way it owns the pack-full chrome below. Without it a found floor key read as a generic "Tomb
 // Key" with no hint of which door it opens.

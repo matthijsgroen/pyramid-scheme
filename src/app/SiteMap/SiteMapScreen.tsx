@@ -140,7 +140,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   // own precondition, the map's locked/unlocked gate coloring and the key ring below.
   //
   // A thrown lever is "held" in exactly this sense — the player may pass what it opens now — but it
-  // mints nothing a chest could also hold: `openGateKeys` carries no colour (siteAssembler never sets
+  // mints nothing a chest could also hold: `openGateKeys` carries no colour (the carve never sets
   // one on an authored gate), so the union changes what is passable without adding a key to go find.
   const ownedKeys = useMemo(
     () => new Set([...(grid ? getOwnedKeys(grid) : []), ...wardKeys, ...openGateKeys]),

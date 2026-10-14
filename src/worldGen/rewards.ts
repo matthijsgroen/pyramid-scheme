@@ -54,7 +54,7 @@ export const specToGate = (spec: GateSpec | undefined): SubSection["gate"] => {
   if (typeof spec === "string") return spec === "floor-key" ? { type: "floor-key", color: "blue" } : undefined
   // An authored keyId's key comes from a room, not a chest this floor grows — defaulting a
   // colour here would point the HUD key ring (src/game/floorKeys.ts) at a chest that doesn't
-  // exist, the same reason siteAssembler.ts leaves it out. Only an unauthored gate gets one.
+  // exist, the same reason the carve (carve/mainRooms.ts) leaves it out. Only an unauthored gate gets one.
   if (spec.type === "floor-key") return spec.keyId ? spec : { ...spec, color: spec.color ?? "blue" }
   const wardKeyId = TOMB_PERK_IDS[spec.tombId]?.[spec.index]
   if (!wardKeyId) return undefined

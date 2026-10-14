@@ -54,7 +54,7 @@ export const MOD_ONE_WAY_REALISATIONS: OneWayRealisationMeta[] = REGISTERED_MODS
 )
 
 // Domain-only, so the app and world-gen read the same declarations. A one-way naming no realisation binds to
-// nothing: there is no default, so it is refused where it is bound (siteAssembler).
+// nothing: there is no default, so it is refused where it is bound (carve/prepareFloor.ts).
 export const resolveOneWayRealisation: ResolveOneWayRealisation = id =>
   id === undefined ? undefined : MOD_ONE_WAY_REALISATIONS.find(realisation => realisation.id === id)
 
@@ -63,7 +63,7 @@ export const MOD_REGION_BARRIER_REALISATIONS: RegionBarrierRealisationMeta[] = R
   m => m.regionBarrierRealisations ?? []
 )
 
-// A region barrier naming no realisation binds to nothing: there is no default, so it is refused (siteAssembler).
+// A region barrier naming no realisation binds to nothing: there is no default, so it is refused (carve/prepareFloor.ts).
 export const resolveRegionBarrierRealisation: ResolveRegionBarrierRealisation = id =>
   id === undefined ? undefined : MOD_REGION_BARRIER_REALISATIONS.find(realisation => realisation.id === id)
 

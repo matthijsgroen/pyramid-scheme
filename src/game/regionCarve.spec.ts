@@ -115,7 +115,7 @@ describe("a region no attempt seats", () => {
   // deciding quietly, which is the one thing it may not do.
   it("refuses a route with more regions than the path has steps, naming the ones left unseated", () => {
     // A route longer than the path must stay unseated across every attempt, not just the first — the
-    // carve's own recovery re-attempts at ever-wider packing (see siteAssembler's ASSEMBLY_ATTEMPTS
+    // carve's own recovery re-attempts at ever-wider packing (see carve/ladder.ts's ASSEMBLY_ATTEMPTS
     // loop), and `floor()`'s main path (pathPuzzles: 2, no lever) was measured climbing from 9 steps at
     // attempt 0 to 31 at this SEED once packing hits its ceiling in recovery. A route of only 12
     // regions is seated in full well before that ceiling, so it no longer proves this refusal — 60

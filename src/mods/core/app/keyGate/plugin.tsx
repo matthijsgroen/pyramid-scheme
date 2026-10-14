@@ -9,7 +9,7 @@ import { KeyIcon } from "@/ui/atoms/KeyIcon"
 type KeyGatePuzzle = { satisfied: boolean }
 
 // A gate has no content of its own — its only "puzzle" is the key precondition already
-// carried on FamilyContext (requiredKeyId/ownedKeys, set by siteAssembler/SiteMapScreen).
+// carried on FamilyContext (requiredKeyId/ownedKeys, set by the carve and SiteMapScreen).
 // Soft-gated like every other encounter: always clickable, refuses to solve until satisfied.
 const generate = (_seed: number, ctx: FamilyContext): KeyGatePuzzle => ({
   satisfied: !ctx.requiredKeyId || (ctx.ownedKeys?.has(ctx.requiredKeyId) ?? false),

@@ -12,7 +12,7 @@ import { cellSlot, legacyCellSlot } from "./cellSlot"
  *
  * A coordinate is an accident of the carve, and so — this is the part that took measuring — is the
  * ordinal. A cell's `ordinal` is its step along the CARVED walk, and how many steps that walk takes is
- * the carve's own choice (`targetDistance` in siteAssembler). Re-carving one expert floor at a
+ * the carve's own choice (`targetDistance` in carve/growMaze.ts). Re-carving one expert floor at a
  * neighbouring seed took it from 685 cells to 668 and moved the main chain's forks from steps
  * 26/49/58 to 5/6/13/22/29/50: everything past the first divergence renumbers. An ordinal survives a
  * floor being re-SHUFFLED; it does not survive one being re-LENGTHENED, which is what compacting the

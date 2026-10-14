@@ -6,7 +6,7 @@ import { hashUnit } from "@/support/hashString"
  * A SECOND piece of furniture in a room, agreeing with the first.
  *
  * `RoomCell.decoration` is one kind, and the assembler's rule is that a room serves ONE PURPOSE — the prop
- * is the room's statement and the wall item follows it (`siteAssembler`, `wallSuiting`). A room with a
+ * is the room's statement and the wall item follows it (`carve/render.ts`, `wallSuiting`). A room with a
  * market table in it says "this is where they sold", and a market says it louder with the baskets beside
  * the table: two objects of the SAME purpose are that rule kept rather than broken. What would break it is
  * two objects of different purposes, and that is exactly what this refuses to place.

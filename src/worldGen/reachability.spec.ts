@@ -153,7 +153,7 @@ const twoSiblingWingsSite = (): SiteConfig => [
 ]
 
 // A floor carrying an authored switch — assembleFloor refuses this unconditionally unless
-// its resolver claims the switch family is reEnterable (siteAssembler.ts's own check), so this
+// its resolver claims the switch family is reEnterable (carve/prepareFloor.ts's own check), so this
 // exercises the resolveEncounter hand-off reachableFloorsInSite/computeReachability thread down
 // to assembleFloor, same as the resolveRequirements hand-off tested elsewhere in this file.
 const switchSite = (): SiteConfig => [

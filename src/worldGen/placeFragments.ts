@@ -231,7 +231,7 @@ export const placeFragments = (
       queued.delete(bucket)
       if (satisfied.has(bucket)) continue
 
-      // Nobody claims this bucket (e.g. a ward-key/tombKey gate resolved by siteAssembler's
+      // Nobody claims this bucket (e.g. a ward-key/tombKey gate resolved by the carve's
       // own construction-time key chain, not a currency this module places) — leave it; it
       // either resolves itself via harvestedCounts once the right site becomes reachable, or
       // it's a gate the fine-grained validator's own checks are responsible for catching.

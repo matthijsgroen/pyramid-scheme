@@ -391,11 +391,11 @@ describe(SiteMapScreen, () => {
   })
 
   describe("a gate a mechanism opens", () => {
-    // Shaped exactly as siteAssembler builds an obstacle gate on the main path (see
+    // Shaped exactly as the carve builds an obstacle gate on the main path (see
     // `regionGates.spec.ts`): family always set (it wears bars and is tapped, unlike a switch's own
     // shut fork exit), no key colour (the key is authored — no chest on this floor grows it), the
     // requiredKeyId a control's `positions[].gateKeyId` names, and no `gateVariant`/`keyIsAuthored` —
-    // that obstacle-gate branch (siteAssembler.ts) sets neither; both are a side-section gate's own
+    // that obstacle-gate branch (carve/mainRooms.ts) sets neither; both are a side-section gate's own
     // fields (and unread here regardless, see useEncounter.ts/nodeShapes.tsx).
     const mechanismGate: GridCell = {
       type: "room",

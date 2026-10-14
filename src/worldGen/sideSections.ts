@@ -86,7 +86,7 @@ const buildDslSection = <TExtra extends string>(
 // `pathPrefix` is what this level of nesting spells before a section's own index: `s` at the top of
 // a floor, `s3.` below the section that sits at s3. `startIndex` is how many sections the caller has
 // already pushed ahead of these, so the addresses continue the floor's numbering rather than
-// restarting at 0 — which is also exactly what the assembler counts (siteAssembler.ts's Chain).
+// restarting at 0 — which is also exactly what the assembler counts (carve/state.ts's Chain).
 const buildDslSections = <TExtra extends string>(
   constraintSections: SideSectionConstraint<TExtra>[] | undefined,
   difficulty: Difficulty,

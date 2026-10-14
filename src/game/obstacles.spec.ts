@@ -287,7 +287,7 @@ describe("seamIndexFor", () => {
   })
 
   // The gap-free layout `regionOfStep` produces today never reaches this case (see the comment above
-  // this refusal in siteAssembler.ts) — but the question is answered honestly regardless of what
+  // this refusal in carve/prepareFloor.ts) — but the question is answered honestly regardless of what
   // built `stepRegion`, which is what lets "no seam" be pinned down here rather than only inferred.
   it("answers undefined when the two regions are both present but not adjacent", () => {
     const gapped = ["mouth", "hall", "cellar", "vault"]

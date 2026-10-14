@@ -92,7 +92,7 @@ describe("isolate", () => {
 describe("carved through assembleFloor", () => {
   it("gated sections have no back-door — removing the gate room cuts off its whole chain", () => {
     // Reproduces a real bug: a leftover edge from buildMaze's whole-grid spanning tree
-    // (see the "Gate isolation" comment in siteAssembler.ts) could connect a gated
+    // (see the "Gate isolation" comment in carve/isolate.ts) could connect a gated
     // section's interior straight back to the ungated backbone or another section,
     // letting a player reach gated content — even the exit — without ever passing
     // the gate. Sweep several seeds/configs; the gate room must be the section's only

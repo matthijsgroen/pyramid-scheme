@@ -382,7 +382,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         // Non-last main floor (wizard's mainFloors:2 today): give it a real mainEndReward
         // (routed through the same fragmentSlot/assignFragments budget pipeline as every
         // other unset reward) instead of leaving it unset — an unset mainEndReward falls
-        // back to a free, uncounted mosaicPiece at assembly time (siteAssembler.ts), which
+        // back to a free, uncounted mosaicPiece at assembly time (carve/mainRooms.ts), which
         // this fixes.
         floorConfigs.push(
           buildFloor({

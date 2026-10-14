@@ -264,7 +264,7 @@ export type RoomCell = {
   /** A fork room's own ways out, each with what lies down it: `main` continues the main path,
    * `side` reaches an attached section, `ward` is a side gated by a tomb-key, and `fork` leads
    * straight to another fork room. Read off the neighbour node two grid cells away (NODE_STEP in
-   * siteAssembler.ts) in each of the cell's own `dirs`. Unset off fork rooms — nothing needs it yet.
+   * carve/grid.ts) in each of the cell's own `dirs`. Unset off fork rooms — nothing needs it yet.
    *
    * `gateKeyId` is set on the ways out a SWITCH closed, and is how the builder reports which ones it
    * chose: whatever stands in the switch reads them off the room it is in rather than guessing the

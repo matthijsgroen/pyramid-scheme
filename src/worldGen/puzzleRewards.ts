@@ -5,7 +5,7 @@ import type { FloorConfig, SubSection } from "./types"
 // unified slot pool. Splitting creation from fill is what lets puzzle-chain positions BE slots
 // collectSlots emits — see distribution-primitive-design.md, "core allocates, the mod fills".
 
-// A trapped chain's puzzle slots render as trap rooms, not puzzle rooms (siteAssembler.ts) —
+// A trapped chain's puzzle slots render as trap rooms, not puzzle rooms (carve/chainRooms.ts) —
 // excluded here so a reward is never assigned somewhere it can't be delivered.
 const isTrapEncounter = (encounter: string | string[] | undefined): boolean => {
   const tags = Array.isArray(encounter) ? encounter : [encounter]

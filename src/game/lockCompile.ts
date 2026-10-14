@@ -387,7 +387,7 @@ const translate = (
 
 const topologyOf = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
   const { regionLayout, obstacles, controls, forks, barrierOrder } = translate(lock, {}, undefined, kinds)
-  // A lock is always laid from its plan when it is baked (siteAssembler.ts, layLockPlan).
+  // A lock is always laid from its plan when it is baked (carve/layFloor.ts, layLockPlan).
   return topologyFaults(regionLayout, obstacles, controls, forks, barrierOrder, kinds, { laid: true })
     .filter(fault => fault.type !== "forkSwitchNoEncounter")
     .map(fault => ({ type: "topology", fault }))

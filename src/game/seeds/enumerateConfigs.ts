@@ -69,7 +69,7 @@ const sectionsOf = (section: SubSection & { sideSections?: SubSection[] }): SubS
 /**
  * The switches a floor can end up holding: which families may stand in one, and how many junctions can
  * carry one. `forks` reserves the junctions and `switches.max` says how many are filled, so the smaller
- * of the two is what any carve of this floor produces (siteAssembler.ts). A fork-switch control, authored or
+ * of the two is what any carve of this floor produces (the carve). A fork-switch control, authored or
  * compiled from a lock, stands one board in its own junction and owes the same boards. An array of encounters survives
  * baking where the authoring named a pool, so every candidate owes the boards.
  */

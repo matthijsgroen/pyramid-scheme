@@ -309,7 +309,7 @@ const cellAt = (grid: FloorGrid, requiredKeyId: string): string => {
 // runs, so a passing test here proves nothing — the same small floor still passes with the
 // gatedCellKeys/needsDoor registration commented out (checked by hand while building this test). A
 // bigger floor is what gives the maze's leftover tree edges (see the "Gate isolation" comment in
-// siteAssembler.ts) somewhere else to land a vault-region node next to a non-vault one.
+// the carve) somewhere else to land a vault-region node next to a non-vault one.
 //
 // This fixture (10 main-path puzzles, 4 side sections, same three-region layout/obstacle/control as
 // `gatedFloor()`) was swept over seeds 0-59 with the registration commented out: 20 of 60 seeds carved
