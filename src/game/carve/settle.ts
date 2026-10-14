@@ -1,13 +1,12 @@
 import { adjacencyFaults, dropLandingFaults, gateDoorFaults } from "../carveAgreement"
 import { cellSlot } from "../cellSlot"
-import type { Mark } from "../mark"
 import { appetiteAccepts } from "../regions"
 import type { ContentKind } from "../regions"
 import { placeSequences } from "../sequenceTiles"
 import { validateSite } from "../siteValidator"
 import { placeWeights } from "../weightsPlates"
 import { keyOf } from "./derive"
-import { gateKeyOf, obstacleMode, switchMark } from "./ids"
+import { gateKeyOf, obstacleMode } from "./ids"
 import { renderGround, renderShut } from "./render"
 import type { RenderState, WritableGrid } from "./render"
 import { MAIN_SECTION_ADDRESS } from "./sections"
@@ -22,29 +21,18 @@ const at = (pk: string): [number, number] => {
 }
 
 /**
- * WHAT IS STILL WRITTEN ONTO THE FINISHED GRID, and the checks that read it, in the order the carve has always
- * asked them: the carve with its reserved junctions open and with them all shut, switches and fork-switches stood in their junctions, marks
- * painted, what each region will take, the carve against its layout, then sequence tiles and plates. Each write
- * here waits to become a pass's decision and a write in `render`; until then this is the one step that both
- * decides and writes.
- *
- * A switch's marks are this attempt's own: a door minted on a junction another attempt reserved is no door here.
+ * THE CHECKS THAT READ THE RENDERED GRID, and the sequence tiles and plates still written onto it, in the order
+ * the carve has always asked them: the carve with its reserved junctions open and with them all shut, the
+ * switches' names, what each region will take, the carve against its layout, then tiles and plates.
  */
 export const settle = (prep: FloorPrep, state: SettleState, grid: WritableGrid): Refusal | void => {
   const { siteId, floorRef } = prep.input
   const { config, authored } = prep.config
-  const { allocation, markByGateKey } = prep.marks
-  const { switchesPlaced } = state.forks
+  const { allocation } = prep.marks
   const ground = renderGround(prep, state)
   const { mainPath } = state.maze
   const cells2D = grid.cells
   const N = grid.rows
-  const switchMarks = new Map<string, Mark>(
-    state.switchWays
-      .slice(0, switchesPlaced)
-      .flatMap((ways, n) => ways.map(({ gateKeyId }) => [gateKeyId, switchMark(prep, n)] as const))
-  )
-  const markOf = (gateKeyId: string) => markByGateKey.get(gateKeyId) ?? switchMarks.get(gateKeyId)
 
   // Two rooms of one section that a save cannot tell apart is a data-loss bug in the AUTHORING, so it fails the
   // floor outright: every seed produces it.
@@ -82,30 +70,6 @@ export const settle = (prep: FloorPrep, state: SettleState, grid: WritableGrid):
     const standingDuplicate = duplicateSlot()
     if (standingDuplicate) return standingDuplicate
   }
-
-  // WHICH MECHANISM DRIVES WHICH DOOR IS ONLY READABLE IF BOTH ENDS SAY SO: the mark goes on the mechanism's room
-  // and on every door it owns, found by the key its positions carry or the key the door asks for.
-  for (let r = 0; r < N; r++)
-    for (let c = 0; c < N; c++) {
-      const cell = cells2D[r][c]
-      if (cell.type !== "room") continue
-      const key = cell.mechanism?.positions[0]?.gateKeyId ?? cell.requiredKeyId
-      const own = cell.mechanismId
-        ? (allocation.marks.get(cell.mechanismId) ?? allocation.marks.get(`handle:${cell.mechanismId}`))
-        : undefined
-      const mark = own ?? (key === undefined ? undefined : markOf(key))
-      if (mark) cells2D[r][c] = { ...cell, mark }
-      // Each way out a fork-switch owns carries what its own gate wears, which is what the board draws.
-      const marked = cells2D[r][c]
-      if (marked.type === "room" && marked.exits?.some(exit => exit.gateKeyId && markOf(exit.gateKeyId)))
-        cells2D[r][c] = {
-          ...marked,
-          exits: marked.exits.map(exit => {
-            const wayMark = exit.gateKeyId ? markOf(exit.gateKeyId) : undefined
-            return wayMark ? { ...exit, mark: wayMark } : exit
-          }),
-        }
-    }
 
   const { regionLayout } = prep.layout
   if (regionLayout) {

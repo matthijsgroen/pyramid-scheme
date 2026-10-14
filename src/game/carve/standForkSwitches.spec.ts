@@ -25,7 +25,7 @@ describe("standForkSwitches", () => {
     throw new Error("no seed carved")
   })()
   const rerun = (state: CarveState) => {
-    const fresh = { ...state, forkSwitchRooms: undefined }
+    const fresh: CarveState = { ...state, forkSwitchRooms: undefined }
     standForkSwitches.run(prep, fresh)
     return fresh.forkSwitchRooms!
   }

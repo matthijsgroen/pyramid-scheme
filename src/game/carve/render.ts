@@ -14,6 +14,7 @@ import type {
 import { MECHANISM_AT_REST } from "../siteTypes"
 import { edgeAllowed, forkPositions, rooms, routeStepOf } from "./derive"
 import { CONNECTOR_DIRS, OPPOSITE } from "./grid"
+import { switchMark } from "./ids"
 import { MAIN_SECTION_ADDRESS } from "./sections"
 import type { CarveState, FloorPrep } from "./state"
 
@@ -392,6 +393,42 @@ const shutJunctions = (prep: FloorPrep, state: RenderState, cells: GridCell[][],
   }
 }
 
+/**
+ * WHICH MECHANISM DRIVES WHICH DOOR IS ONLY READABLE IF BOTH ENDS SAY SO: the mark goes on the mechanism's room
+ * and on every door it owns, found by the key its positions carry or the key the door asks for. A switch's
+ * marks are this attempt's own: a door minted on a junction another attempt reserved is no door here.
+ */
+const paintMarks = (prep: FloorPrep, state: RenderState, cells: GridCell[][]) => {
+  const { allocation, markByGateKey } = prep.marks
+  const switchMarks = new Map(
+    state.switchWays
+      .slice(0, state.forks.switchesPlaced)
+      .flatMap((ways, n) => ways.map(({ gateKeyId }) => [gateKeyId, switchMark(prep, n)] as const))
+  )
+  const markOf = (gateKeyId: string) => markByGateKey.get(gateKeyId) ?? switchMarks.get(gateKeyId)
+  for (let r = 0; r < cells.length; r++)
+    for (let c = 0; c < cells[r].length; c++) {
+      const cell = cells[r][c]
+      if (cell.type !== "room") continue
+      const key = cell.mechanism?.positions[0]?.gateKeyId ?? cell.requiredKeyId
+      const own = cell.mechanismId
+        ? (allocation.marks.get(cell.mechanismId) ?? allocation.marks.get(`handle:${cell.mechanismId}`))
+        : undefined
+      const mark = own ?? (key === undefined ? undefined : markOf(key))
+      if (mark) cells[r][c] = { ...cell, mark }
+      // Each way out a fork-switch owns carries what its own gate wears, which is what the board draws.
+      const marked = cells[r][c]
+      if (marked.type === "room" && marked.exits?.some(exit => exit.gateKeyId && markOf(exit.gateKeyId)))
+        cells[r][c] = {
+          ...marked,
+          exits: marked.exits.map(exit => {
+            const wayMark = exit.gateKeyId ? markOf(exit.gateKeyId) : undefined
+            return wayMark ? { ...exit, mark: wayMark } : exit
+          }),
+        }
+    }
+}
+
 /** The ground with every reserved junction shut, switch or no switch: the carve is checked against it too. */
 export const renderShut = (prep: FloorPrep, state: RenderState): WritableGrid => {
   const grid = renderGround(prep, state)
@@ -401,7 +438,8 @@ export const renderShut = (prep: FloorPrep, state: RenderState): WritableGrid =>
 
 /**
  * THE GRID, WRITTEN ONCE FROM WHAT THE PASSES DECIDED: the ground, then the doors of every junction a switch
- * stands in, the switch itself, and each `{ in }` fork's switch in the junction laid for it. A door nothing mints the key for is not a door, so a reserved junction with
+ * stands in, the switch itself, each `{ in }` fork's switch in the junction laid for it, and last the marks
+ * tying each mechanism to its doors. A door nothing mints the key for is not a door, so a reserved junction with
  * no switch stays open.
  */
 export const render = (prep: FloorPrep, state: RenderState): WritableGrid => {
@@ -427,5 +465,6 @@ export const render = (prep: FloorPrep, state: RenderState): WritableGrid => {
       }),
     }
   }
+  paintMarks(prep, state, cells)
   return grid
 }
