@@ -97,6 +97,9 @@ export type Chain = {
 /** One way out of a reserved junction: the node it leads to, and the key the switch's door there asks for. */
 export type SwitchWay = { dir: Direction; cell: string; gateKeyId: string }
 
+/** A fork-switch's encounter in its junction, and the gate key each of the junction's exits now names. */
+export type ForkSwitchRoom = { room: Partial<RoomSpec>; gateKeyByDir: ReadonlyMap<Direction, string> }
+
 /** A top-level side section hung off the route: the cells it took and the route cell it hangs from. */
 export type SectionGroup = { sectionIdx: number; cells: Cell[]; attachedAt: Cell }
 
@@ -324,6 +327,8 @@ export type CarveState = {
   switchWays?: ReadonlyArray<ReadonlyArray<SwitchWay>>
   /** The encounter standing in each junction a switch fills, by the junction's cell. */
   switchRooms?: ReadonlyMap<string, Partial<RoomSpec>>
+  /** The encounter standing in each `{ in }` fork's junction, by the junction's cell. */
+  forkSwitchRooms?: ReadonlyMap<string, ForkSwitchRoom>
   /** Every one-way edge, seam drops first. */
   drops?: OneWayEdge[]
 }

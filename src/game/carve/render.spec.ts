@@ -57,6 +57,7 @@ describe("render", () => {
       forks: { reserved: [], inFork: new Set<string>(), switchesPlaced: 0 },
       switchWays: [],
       switchRooms: new Map(),
+      forkSwitchRooms: new Map(),
     })
   }
 
@@ -120,6 +121,7 @@ describe("a reserved junction", () => {
     drops: [],
     forks: { reserved: ["0,2"], inFork: new Set<string>(), switchesPlaced },
     switchWays: [[{ dir: "s" as const, cell: "2,2", gateKeyId: "switch:way" }]],
+    forkSwitchRooms: new Map(),
     switchRooms: new Map(switchesPlaced > 0 ? [["0,2", { family: "sumplete", mechanismId: "switch:0" }]] : []),
   })
 

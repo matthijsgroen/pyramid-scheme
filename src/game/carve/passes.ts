@@ -25,6 +25,7 @@ import type { SettleState } from "./settle"
 import { requireReads } from "./state"
 import type { Finish, PassEntry } from "./state"
 import { shutSwitchGround } from "./shutSwitchGround"
+import { standForkSwitches } from "./standForkSwitches"
 import { standSwitches } from "./standSwitches"
 
 /**
@@ -55,6 +56,7 @@ export const PASSES: readonly PassEntry[] = [
   placeDrops,
   nameSwitchWays,
   standSwitches,
+  standForkSwitches,
 ]
 
 /** What the tail reads: every key `render` and `settle` take from the passes, each checked as a pass's are. */
@@ -73,6 +75,7 @@ export const TAIL_READS = [
   "keys",
   "switchWays",
   "switchRooms",
+  "forkSwitchRooms",
 ] as const satisfies readonly (keyof SettleState)[]
 
 /**

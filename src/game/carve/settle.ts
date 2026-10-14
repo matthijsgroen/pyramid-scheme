@@ -1,21 +1,15 @@
-import { hashString } from "@/support/hashString"
 import { adjacencyFaults, dropLandingFaults, gateDoorFaults } from "../carveAgreement"
 import { cellSlot } from "../cellSlot"
 import type { Mark } from "../mark"
-import { corridorIndexOf } from "../obstacles"
 import { appetiteAccepts } from "../regions"
 import type { ContentKind } from "../regions"
-import { switchAddress } from "../seeds/boardIndex"
 import { placeSequences } from "../sequenceTiles"
-import { MECHANISM_AT_REST } from "../siteTypes"
-import type { Direction } from "../siteTypes"
 import { validateSite } from "../siteValidator"
 import { placeWeights } from "../weightsPlates"
-import { keyOf, nodeExitsOf } from "./derive"
-import { gateKeyOf, gatesOwnedBy, obstacleMode, switchMark } from "./ids"
+import { keyOf } from "./derive"
+import { gateKeyOf, obstacleMode, switchMark } from "./ids"
 import { renderGround, renderShut } from "./render"
 import type { RenderState, WritableGrid } from "./render"
-import { encounterStyle } from "./roomSpecs"
 import { MAIN_SECTION_ADDRESS } from "./sections"
 import type { CarveState, FloorPrep, Refusal } from "./state"
 
@@ -37,16 +31,14 @@ const at = (pk: string): [number, number] => {
  * A switch's marks are this attempt's own: a door minted on a junction another attempt reserved is no door here.
  */
 export const settle = (prep: FloorPrep, state: SettleState, grid: WritableGrid): Refusal | void => {
-  const { siteId, floorRef, resolveEncounter, resolveBoardIndex } = prep.input
+  const { siteId, floorRef } = prep.input
   const { config, authored } = prep.config
   const { allocation, markByGateKey } = prep.marks
   const { switchesPlaced } = state.forks
   const ground = renderGround(prep, state)
   const { mainPath } = state.maze
-  const laid = state.lay?.laid
   const cells2D = grid.cells
   const N = grid.rows
-  const exitsOf = nodeExitsOf(state, state.switchDoors)
   const switchMarks = new Map<string, Mark>(
     state.switchWays
       .slice(0, switchesPlaced)
@@ -79,78 +71,13 @@ export const settle = (prep: FloorPrep, state: SettleState, grid: WritableGrid):
   if (!validateSite(ground).valid) return { retry: [] }
   if (!validateSite(renderShut(prep, state)).valid) return { retry: [] }
 
-  const placeStyle = encounterStyle(prep.config)
-
   // Asked again, because a switch's name only exists once a family is in the junction.
   if (config.switches) {
     const switchedDuplicate = duplicateSlot()
     if (switchedDuplicate) return switchedDuplicate
   }
 
-  // A FORK-SWITCH IS THE JUNCTION A `{ in }` FORK LAID, with its encounter standing in it. Only the seams are its
-  // doors — the gates its `owners` put on the first cell of each arm — and its states follow from them.
-  const { forkIns } = prep.forks
-  for (const control of prep.mechanisms.forkSwitches) {
-    const k = forkIns.findIndex(fork => fork.region === control.in)
-    const fork = forkIns[k]
-    const junctionKey = keyOf(mainPath[state.junctions.order[k]])
-    const [sr, sc] = at(junctionKey)
-    const junction = cells2D[sr][sc]
-    if (junction.type !== "room") throw new Error(`[siteAssembler] fork-switch junction ${junctionKey} is not a room`)
-    const dirOfWay = new Map(exitsOf(junctionKey).map(({ dir, neighborKey }) => [neighborKey, dir]))
-    const gateKeyByDir = new Map<Direction, string>()
-    fork.seams.forEach(([from, to], j) => {
-      const wayKey = laid
-        ? laid.junctions[k].arms.find(
-            arm => (arm.seam[0] === from && arm.seam[1] === to) || (arm.seam[0] === to && arm.seam[1] === from)
-          )!.first
-        : keyOf(
-            state.keys.chains.find(chain => chain.parentIdx === undefined && chain.idx === fork.sectionIdxs[j])!
-              .cells[0]
-          )
-      // A step in the board's region stands its tile as the arm's first room, so the door is the node beyond it.
-      const steps = laid?.thresholds.has(wayKey)
-        ? exitsOf(wayKey).filter(({ neighborKey }) => neighborKey !== junctionKey)
-        : []
-      const doorKey = steps.length === 1 ? steps[0].neighborKey : wayKey
-      const [fr, fc] = at(doorKey)
-      // The seam's own corridor: a layout corridor on this pair, never a falling one beside it.
-      const onSeam = ([a, b]: readonly [string, string]) => (a === from && b === to) || (a === to && b === from)
-      const gate = gatesOwnedBy(authored, control.id).find(
-        gate =>
-          onSeam(gate.at.between) &&
-          prep.layout.layoutCorridors.some(
-            corridor =>
-              onSeam(corridor.between) && corridor.index === corridorIndexOf(gate) && corridor.drop === undefined
-          )
-      )!
-      const door = cells2D[fr][fc]
-      if (door.type !== "room" || door.requiredKeyId !== gateKeyOf(floorRef, gate.id))
-        throw new Error(`[siteAssembler] gate ${gate.id} does not stand on the seam of ${control.id}'s arm`)
-      gateKeyByDir.set(dirOfWay.get(wayKey)!, gateKeyOf(floorRef, gate.id))
-    })
-    const family = resolveEncounter(control.encounter, "puzzle")
-    cells2D[sr][sc] = {
-      ...junction,
-      family: family.familyId,
-      tags: family.tags,
-      mechanismId: control.id,
-      boardIndex:
-        resolveBoardIndex?.(family.familyId, switchAddress(control.id)) ??
-        hashString(`${gateKeyOf(floorRef, control.id)}|${family.familyId}`),
-      exits: junction.exits?.map(exit => {
-        const gateKeyId = gateKeyByDir.get(exit.dir)
-        return gateKeyId ? { ...exit, gateKeyId } : exit
-      }),
-      mechanism: {
-        states: [MECHANISM_AT_REST, ...gateKeyByDir.values()],
-        initial: MECHANISM_AT_REST,
-        returnsToInitial: true,
-        positions: [...gateKeyByDir.values()].map(gateKeyId => ({ state: gateKeyId, gateKeyId })),
-      },
-      ...placeStyle,
-    }
-  }
+  // Asked again, because a fork-switch's name only exists once its encounter stands in the junction.
   if (prep.mechanisms.forkSwitches.length > 0) {
     const standingDuplicate = duplicateSlot()
     if (standingDuplicate) return standingDuplicate
