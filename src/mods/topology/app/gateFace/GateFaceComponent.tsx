@@ -1,33 +1,8 @@
 import { useTranslation } from "react-i18next"
 import type { FamilyPlugin } from "@/app/families/familyRegistry"
-import { getFamilyPlugin } from "@/app/families/familyRegistry"
-import type { GateOwnerIcon } from "@/game/gateFace"
 import { GateFacePanel } from "@/ui/atoms/GateFacePanel"
 import { MarkChip } from "@/app/SiteMap/mark"
-import { KeyIcon } from "@/ui/atoms/KeyIcon"
-import { sharedTileUrl } from "@/app/SiteMap/tileAssets"
-import { CELL, PROP_H } from "@/app/SiteMap/mapScale"
-
-const iconFor = (icon: GateOwnerIcon) => {
-  if (icon.kind === "key") return <KeyIcon color={icon.color ?? "blue"} size={40} />
-  if (icon.kind === "plate") {
-    // A plate shows as a stone, the floor's own painting of a stone on its plate; one the door wants left empty
-    // shows bare. Every plate alike: the face never tells one plate from another.
-    const src = sharedTileUrl(icon.wants === "stone" ? "plateStone" : "plate")
-    return src ? <img src={src} width={40} height={(40 * PROP_H) / CELL} alt="" /> : <span aria-hidden="true">▭</span>
-  }
-  return <span aria-hidden="true">{getFamilyPlugin(icon.family)?.meta.icon ?? "◇"}</span>
-}
-
-/** The name a marker is read out by, under gateFace.owner. */
-const ownerOf = (icon: GateOwnerIcon): string =>
-  icon.kind === "key"
-    ? "key"
-    : icon.kind === "plate"
-      ? icon.wants === "stone"
-        ? "plateStone"
-        : "plateEmpty"
-      : icon.family
+import { gateOwnerIcon, gateOwnerName } from "@/app/SiteMap/gateOwnerIcon"
 
 // A door shows what it waits for: one marker per owner, lit as that owner stands, and the order of any
 // sequence, tile by tile. Reading changes no state; only the explicit start-again writes one, and the door
@@ -40,12 +15,12 @@ export const GateFaceComponent: FamilyPlugin["Component"] = ({ ctx, journeys, on
       title={t("gateFace.title")}
       hint={t(markers.length === 0 ? "gateFace.orderHint" : "gateFace.hint")}
       markers={markers.map(marker => {
-        const name = t(`gateFace.owner.${ownerOf(marker.icon)}`, {
+        const name = t(`gateFace.owner.${gateOwnerName(marker.icon)}`, {
           defaultValue: t("gateFace.owner.other"),
         })
         return {
           id: marker.id,
-          icon: iconFor(marker.icon),
+          icon: gateOwnerIcon(marker.icon),
           lit: marker.lit,
           ...(marker.mark ? { badge: <MarkChip mark={marker.mark} size={22} /> } : {}),
           label: t(marker.lit ? "gateFace.lit" : "gateFace.unlit", { owner: name }),

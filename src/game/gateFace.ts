@@ -1,4 +1,5 @@
-import { storedAtCell } from "./cellAddress"
+import { cellAddress, storedAtCell } from "./cellAddress"
+import { orderRead, type SequenceRead } from "./sequenceReads"
 import { arrangementOf, termHolds } from "./mechanics/weights"
 import { arrangementIn } from "./stonePlay"
 import { pressAt } from "./mechanismDoors"
@@ -29,6 +30,13 @@ export type SequenceFace = {
   id: string
   tiles: readonly SequenceFaceTile[]
   reset?: { address: string; state: string }
+  /**
+   * A SEQUENCE WHOSE DOOR HIDES ITS ORDER (MechanismRecord.hidesOrder): the door's own reader draws it, never as an
+   * order. `tiles` keep their glyphs in step order, so the reader can dress what it shows, and every status reads
+   * unwalked; `walked` is each step's tile ever crossed, `read` whether the order was read, and `address` where the
+   * sequence's state and reads are filed. The reset is offered only once read.
+   */
+  hidden?: { address: string; read: boolean; walked: readonly boolean[] }
 }
 
 /** WHAT A DOOR WAITS FOR, one marker per owner, plus the order of each sequence it waits on. Derived from
@@ -36,6 +44,7 @@ export type SequenceFace = {
 export type GateFace = { markers: readonly GateMarker[]; sequences?: readonly SequenceFace[] }
 
 const NO_KEYS: ReadonlySet<string> = new Set()
+const NO_READS: ReadonlyMap<string, SequenceRead> = new Map()
 
 type Owner = {
   id: string
@@ -140,7 +149,8 @@ export const withGateFaces = (
   floor: number,
   positions: ReadonlyMap<string, string>,
   heldKeys: ReadonlySet<string> = NO_KEYS,
-  faceFamily: string = defaultResolveEncounter(undefined, DOOR_FACE_ROLE).familyId
+  faceFamily: string = defaultResolveEncounter(undefined, DOOR_FACE_ROLE).familyId,
+  reads: ReadonlyMap<string, SequenceRead> = NO_READS
 ): FloorGrid => {
   let changed = false
   const homes = sequencesOf(grid)
@@ -174,19 +184,38 @@ export const withGateFaces = (
       for (const keyId of floorKeys) markers.push({ id: keyId, icon: { kind: "key" }, lit: heldKeys.has(keyId) })
       const orders = sequences.map(({ id, mechanism, at }): SequenceFace => {
         const state = storedAtCell(grid, floor, at[0], at[1], positions) ?? mechanism.initial
-        const tiles = grid.cells
+        const steps = grid.cells
           .flat()
           .flatMap(tile => (tile.type === "room" && tile.sequenceTile?.id === id ? [tile.sequenceTile] : []))
           .filter((tile, n, all) => all.findIndex(other => other.step === tile.step) === n)
           .sort((a, b) => a.step - b.step)
-          .map(({ step, glyph }): SequenceFaceTile => ({ glyph, status: tileStatus(state, step) }))
         const press = cell.worksMechanism?.mechanismId === id ? pressAt(grid, floor, r, c, positions) : undefined
-        return { id, tiles, ...(press && press.state !== state ? { reset: press } : {}) }
+        const reset = press && press.state !== state ? { reset: press } : {}
+        if (!mechanism.hidesOrder)
+          return {
+            id,
+            tiles: steps.map(({ step, glyph }): SequenceFaceTile => ({ glyph, status: tileStatus(state, step) })),
+            ...reset,
+          }
+        const entry = storedAtCell(grid, floor, at[0], at[1], reads)
+        const read = orderRead(mechanism, state, entry)
+        return {
+          id,
+          tiles: steps.map(({ glyph }): SequenceFaceTile => ({ glyph, status: "unwalked" })),
+          ...(read ? reset : {}),
+          hidden: {
+            address: cellAddress(grid, floor, at[0], at[1]) ?? id,
+            read,
+            walked: steps.map(({ step }) => entry?.walked.includes(step) ?? false),
+          },
+        }
       })
+      // A door whose sequence hides its order is drawn by the one who reads it there (a procession board).
+      const reader = sequences.find(({ mechanism }) => mechanism.hidesOrder)?.mechanism.orderReader
       changed = true
       return {
         ...cell,
-        family: faceFamily,
+        family: reader ?? faceFamily,
         gateFace: { markers, ...(orders.length > 0 ? { sequences: orders } : {}) },
       }
     })

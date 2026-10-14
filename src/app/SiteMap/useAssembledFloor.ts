@@ -435,11 +435,12 @@ export const useAssembledFloor = (
               currentFloor,
               mechanismPositions ?? NO_POSITIONS,
               heldKeys,
-              resolveEncounter(undefined, DOOR_FACE_ROLE).familyId
+              resolveEncounter(undefined, DOOR_FACE_ROLE).familyId,
+              sequenceReads
             )
           )
         : null,
-    [baseGrid, openGateKeys, currentFloor, mechanismPositions, heldKeys]
+    [baseGrid, openGateKeys, currentFloor, mechanismPositions, heldKeys, sequenceReads]
   )
 
   // Standing in the doorway is having been there: the entrance reads explored whether or not the save

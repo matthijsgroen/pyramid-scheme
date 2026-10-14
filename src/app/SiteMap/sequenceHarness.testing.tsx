@@ -11,6 +11,8 @@ import { resolveEncounter } from "@/app/families/familyRegistry"
 import { resolveKeyRequirements } from "@/mods/allFamilyMeta"
 import { useAssembledFloor } from "./useAssembledFloor"
 import { useMechanismStates } from "./useMechanismStates"
+import { useSequenceReads } from "./useSequenceReads"
+import type { SequenceRead } from "@/game/sequenceReads"
 import { useSiteNavigation } from "./useSiteNavigation"
 import { buildRoomClaims } from "./roomClaims"
 import { offeredTargets } from "./clickTargets"
@@ -92,6 +94,7 @@ type Store = {
   positionKey: string | null
   standingKey: string | null
   mechanismStates: Record<string, string>
+  sequenceReads: Record<string, SequenceRead>
 }
 
 const journeyData = (id: string): TranslatedJourney =>
@@ -111,7 +114,13 @@ export const sequenceHarness = (
   config: FloorConfig,
   { resolveOneWay }: { resolveOneWay?: ResolveOneWayRealisation } = {}
 ) => {
-  const store: Store = { exploredCells: {}, positionKey: null, standingKey: null, mechanismStates: {} }
+  const store: Store = {
+    exploredCells: {},
+    positionKey: null,
+    standingKey: null,
+    mechanismStates: {},
+    sequenceReads: {},
+  }
   const encountered: Place[] = []
   const siteConfig: SiteConfig = [config]
   const doc = (): StoredJourneyStateV3 => ({
@@ -126,6 +135,7 @@ export const sequenceHarness = (
     standingKey: store.standingKey,
     interiorLevelNr: null,
     mechanismStates: store.mechanismStates,
+    sequenceReads: store.sequenceReads,
   })
   const mount = () =>
     renderHook(() => {
@@ -141,6 +151,7 @@ export const sequenceHarness = (
             store.positionKey = next[0]?.positionKey ?? null
             store.standingKey = next[0]?.standingKey ?? null
             store.mechanismStates = next[0]?.mechanismStates ?? {}
+            store.sequenceReads = next[0]?.sequenceReads ?? {}
           },
           journeyData: [journeyData(JOURNEY)],
         }),
@@ -148,6 +159,7 @@ export const sequenceHarness = (
         getSkippedConsumables: () => new Set<string>(),
       } as unknown as JourneyAPI
       const mechanismStates = useMechanismStates(journeys, JOURNEY)
+      const sequenceReads = useSequenceReads(journeys, JOURNEY)
       const assembled = useAssembledFloor(
         JOURNEY,
         config,
@@ -159,7 +171,8 @@ export const sequenceHarness = (
         undefined,
         undefined,
         mechanismStates,
-        store.standingKey
+        store.standingKey,
+        sequenceReads
       )
       const nav = useSiteNavigation({
         journeys,

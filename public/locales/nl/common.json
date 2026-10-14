@@ -1105,6 +1105,12 @@
         "span_one": "Van de eerste start tot het laatste einde is {{count}} uur.",
         "span_other": "Van de eerste start tot het laatste einde is {{count}} uur."
       }
+    },
+    "door": {
+      "title": "De processiedeur",
+      "hint": "Elke tegel waar je op stapt maakt zijn bezigheid vrij. Orden de dag en loop dan de tegels in die volgorde.",
+      "read": "De dag is gelezen. Loop de tegels in deze volgorde, vanaf de eerste.",
+      "hintButton": "Hint"
     }
   },
   "story": {

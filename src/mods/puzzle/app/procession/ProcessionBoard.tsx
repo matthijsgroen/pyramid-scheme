@@ -19,6 +19,10 @@ type Props = {
   hintTick?: number
   solved?: boolean
   onSlide: (index: number, start: number) => void
+  /** Rows the player cannot move yet: greyed, the sign dimmed but readable, standing where they are. */
+  locked?: readonly boolean[]
+  /** Which of the skin's doings each row is, where it is not the row's own index (a procession door). */
+  casting?: readonly number[]
 }
 
 /**
@@ -40,8 +44,12 @@ export const ProcessionBoard: FC<Props> = ({
   hintTick,
   solved,
   onSlide,
+  locked,
+  casting,
 }) => {
   const { t } = useTranslation("common")
+  const cast = (row: number) => casting?.[row] ?? row
+  const isLocked = (row: number) => locked?.[row] ?? false
   const frame = useRef<HTMLDivElement>(null)
   const [drag, setDrag] = useState<{ index: number; from: number; origin: number } | undefined>()
 
@@ -56,7 +64,7 @@ export const ProcessionBoard: FC<Props> = ({
    * its article ("the fire", "het vuur") and still open a sentence.
    */
   const sentence = (mark: Mark): string => {
-    const name = (row: number) => t(`procession.events.${skin.name}.${row % skin.glyphs.length}`)
+    const name = (row: number) => t(`procession.events.${skin.name}.${cast(row) % skin.glyphs.length}`)
     // **The frames are place-neutral, so one set serves every face.** `puzzle-screens.md` §4.3 warns off a
     // shared template with a noun in its slot, and the case it warns about is a verb that changes with the
     // noun — a line is drawn, a road is laid, a channel is dug. Nothing changes here but the subject:
@@ -103,7 +111,14 @@ export const ProcessionBoard: FC<Props> = ({
                   hardest thing on the board to see — small, unlit, and carrying none of the colour its own
                   row is known by — and a player scanning for the row a sentence names was matching a white
                   shape against a white shape. On its colour it is found by hue first and read second. */}
-              <Swatch skin={skin} index={index} size="row" ringed={about(index)} />
+              <Swatch
+                skin={skin}
+                index={index}
+                sign={cast(index)}
+                size="row"
+                ringed={about(index)}
+                dim={isLocked(index)}
+              />
             </div>
           ))}
         </div>
@@ -151,13 +166,17 @@ export const ProcessionBoard: FC<Props> = ({
                 <div
                   role="button"
                   aria-label={`bar ${index + 1}`}
+                  aria-disabled={isLocked(index) || undefined}
+                  data-locked={isLocked(index) || undefined}
                   onPointerDown={event => {
+                    if (isLocked(index)) return
                     event.currentTarget.setPointerCapture(event.pointerId)
                     onFocus(undefined)
                     setDrag({ index, from: event.clientX, origin: start })
                   }}
                   className={clsx(
-                    "absolute inset-y-0.5 cursor-grab rounded border-2 transition-[left] duration-100",
+                    "absolute inset-y-0.5 rounded border-2 transition-[left] duration-100",
+                    isLocked(index) ? "cursor-not-allowed opacity-40 grayscale" : "cursor-grab",
                     skin.bars[index % skin.bars.length],
                     about(index) && `ring-2 ${skin.focus}`,
                     hintBar === index && `ring-2 ${skin.focus}`,
@@ -205,7 +224,7 @@ export const ProcessionBoard: FC<Props> = ({
               )}
             >
               <span className="flex min-h-9 shrink-0 items-center gap-1">
-                <MarkGlyph mark={mark} skin={skin} bars={puzzle.bars.length} />
+                <MarkGlyph mark={mark} skin={skin} bars={puzzle.bars.length} cast={cast} />
               </span>
               <span className="first-letter:uppercase">{sentence(mark)}</span>
             </button>
@@ -230,16 +249,21 @@ const Swatch: FC<{
   /** `row` is the badge beside the track; `mark` is the one inside a sentence. */
   size?: "row" | "mark"
   ringed?: boolean
-}> = ({ skin, index, wide, size = "mark", ringed }) => (
+  /** Which doing the row is, where it is not its index; its colour stays the row's. */
+  sign?: number
+  /** A row not yet free to move: its sign stays readable, so it still says which room is unvisited. */
+  dim?: boolean
+}> = ({ skin, index, wide, size = "mark", ringed, sign, dim }) => (
   <span
     className={clsx(
       "inline-flex items-center justify-center rounded border leading-none",
       size === "row" ? "size-10 p-1" : wide ? "h-6 w-8 p-0.5" : "size-6 p-0.5",
       skin.bars[index % skin.bars.length],
-      ringed && `ring-2 ${skin.focus}`
+      ringed && `ring-2 ${skin.focus}`,
+      dim && "opacity-50 grayscale"
     )}
   >
-    <Glyph sign={skin.glyphs[index % skin.glyphs.length]} />
+    <Glyph sign={skin.glyphs[(sign ?? index) % skin.glyphs.length]} />
   </span>
 )
 
@@ -290,7 +314,12 @@ const Glyph: FC<{ sign: string }> = ({ sign }) => {
  * on top of each other is "at the same time". The numerals are the only content, and a numeral reads the
  * same in every language.
  */
-const MarkGlyph: FC<{ mark: Mark; skin: ProcessionSkin; bars: number }> = ({ mark, skin, bars }) => {
+const MarkGlyph: FC<{ mark: Mark; skin: ProcessionSkin; bars: number; cast: (row: number) => number }> = ({
+  mark,
+  skin,
+  bars,
+  cast,
+}) => {
   switch (mark.kind) {
     // **A pin gets a chip like everything else, even though the track already shows its notch.** The
     // notch says WHICH TICK; the chip says which row, and without it the pin is the one line under the
@@ -299,42 +328,42 @@ const MarkGlyph: FC<{ mark: Mark; skin: ProcessionSkin; bars: number }> = ({ mar
     case "pin":
       return (
         <>
-          <Swatch skin={skin} index={mark.a} />
+          <Swatch skin={skin} index={mark.a} sign={cast(mark.a)} />
           <span className="px-0.5 text-xs tabular-nums">{mark.tick}</span>
         </>
       )
     case "link":
       return (
         <>
-          <Swatch skin={skin} index={mark.a} />
+          <Swatch skin={skin} index={mark.a} sign={cast(mark.a)} />
           <span className="px-0.5 text-xs tabular-nums">{mark.gap}</span>
-          <Swatch skin={skin} index={mark.b} />
+          <Swatch skin={skin} index={mark.b} sign={cast(mark.b)} />
         </>
       )
     case "before":
       return (
         <>
-          <Swatch skin={skin} index={mark.a} />
+          <Swatch skin={skin} index={mark.a} sign={cast(mark.a)} />
           <span className="text-sm">›</span>
-          <Swatch skin={skin} index={mark.b} />
+          <Swatch skin={skin} index={mark.b} sign={cast(mark.b)} />
         </>
       )
     case "apart":
       return (
         <>
-          <Swatch skin={skin} index={mark.a} />
+          <Swatch skin={skin} index={mark.a} sign={cast(mark.a)} />
           <span className="text-sm">‹›</span>
-          <Swatch skin={skin} index={mark.b} />
+          <Swatch skin={skin} index={mark.b} sign={cast(mark.b)} />
         </>
       )
     case "together":
       return (
         <span className="relative inline-block h-5 w-7">
           <span className="absolute top-0 left-0">
-            <Swatch skin={skin} index={mark.a} />
+            <Swatch skin={skin} index={mark.a} sign={cast(mark.a)} />
           </span>
           <span className="absolute bottom-0 left-2">
-            <Swatch skin={skin} index={mark.b} />
+            <Swatch skin={skin} index={mark.b} sign={cast(mark.b)} />
           </span>
         </span>
       )
@@ -343,7 +372,7 @@ const MarkGlyph: FC<{ mark: Mark; skin: ProcessionSkin; bars: number }> = ({ mar
         <span className="flex items-center gap-1">
           <span className="flex flex-col gap-px">
             {Array.from({ length: Math.min(bars, 3) }, (_, row) => (
-              <Swatch key={row} skin={skin} index={row} wide />
+              <Swatch key={row} skin={skin} index={row} sign={cast(row)} wide />
             ))}
           </span>
           <span className="text-xs tabular-nums">{mark.ticks}</span>

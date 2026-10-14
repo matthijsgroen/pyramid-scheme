@@ -1105,6 +1105,12 @@
         "span_one": "First start to last finish is {{count}} hour.",
         "span_other": "First start to last finish is {{count}} hours."
       }
+    },
+    "door": {
+      "title": "The Procession Door",
+      "hint": "Each tile you step on frees its doing. Order the day, then walk the tiles in that order.",
+      "read": "The day is read. Walk its tiles in this order, from the first.",
+      "hintButton": "Hint"
     }
   },
   "story": {
