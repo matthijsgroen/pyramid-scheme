@@ -42,6 +42,9 @@ import {
   resolveEncounterMeta,
 } from "@/mods/allFamilyMeta"
 import { useAssembledFloor } from "./useAssembledFloor"
+import { encodeEdge } from "./edgeId"
+import { getFamilyPlugin, type FamilyContext } from "@/app/families/familyRegistry"
+import { hashString } from "@/support/hashString"
 import { SiteMapView } from "./SiteMapView"
 import "@/mods/registerModApps"
 
@@ -281,6 +284,19 @@ describe("the procession on dev pyramid 10", { timeout: 120_000 }, () => {
     expect(doorAt(spoiledState(0, 1), { walked: [1] })?.gateFace?.sequences?.[0].reset).toBeUndefined()
     const read: SequenceRead = { walked: [0, 1, 2], read: true }
     expect(doorAt(spoiledState(0, 1), read)?.gateFace?.sequences?.[0].reset).toBeDefined()
+  })
+
+  it("deals its door a board of three bars, built as the encounter builds it", () => {
+    const { grid } = assembledWith(procession, PROCESSION_LEVEL, new Map())
+    const door = roomsOf(grid!).find(({ cell }) => cell.gateFace)!
+    const plugin = getFamilyPlugin(door.cell.family!)!
+    const ctx = {
+      difficulty: door.cell.difficulty ?? procession.difficulty,
+      boardIndex: door.cell.boardIndex,
+      gateFace: door.cell.gateFace,
+    } as FamilyContext
+    const board = plugin.generate(hashString(DEV_JOURNEY_ID + encodeEdge(0, ...door.at)), ctx) as { bars: unknown[] }
+    expect(board.bars).toHaveLength(3)
   })
 
   it("drops from the hall into the cellar as the zipline its pyramid binds, and by no other way", () => {
