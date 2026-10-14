@@ -1,6 +1,6 @@
 import { seedable, type FamilyMeta } from "@/game/families/familyMeta"
 import { generateProcession, gradeProcession } from "./generateProcession"
-import { PROCESSION_CONFIG } from "./processionConfig"
+import { processionOptions } from "./processionConfig"
 
 /**
  * The ordered hours: a day, the things that happen in it, and when each one happens.
@@ -34,7 +34,7 @@ export const PROCESSION_META: FamilyMeta = {
   color: "teal",
   rewardPriority: 60, // a puzzle room like any other — fills once treasure's guaranteed slots are spoken for
   seedable: seedable({
-    resolveOptions: ({ difficulty }) => PROCESSION_CONFIG[difficulty ?? "starter"],
+    resolveOptions: ({ difficulty, variant }) => processionOptions(difficulty ?? "starter", variant),
     generate: generateProcession,
     grade: gradeProcession,
   }),

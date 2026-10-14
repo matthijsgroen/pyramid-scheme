@@ -32,6 +32,11 @@ export type ProcessionOptions = {
    */
   minSplits: number
   maxSplits: number
+  /**
+   * Every bar starts on a different tick in the answer, so the start order is one order with no ties. Set by
+   * a procession door, whose bars are the steps of a sequence and whose answer is read as that sequence.
+   */
+  distinctStarts?: boolean
 }
 
 /**
@@ -56,6 +61,7 @@ const rollDay = (random: () => number, options: ProcessionOptions) => {
   // statement about nothing in particular. Rolled again rather than nudged: a roll costs nothing.
   const first = Math.min(...starts)
   const last = Math.max(...starts.map((start, index) => start + lens[index]))
+  if (options.distinctStarts && new Set(starts).size < starts.length) return undefined
   return first <= 1 && last >= options.ticks - 1 ? { lens, starts } : undefined
 }
 
@@ -173,5 +179,6 @@ export const gradeProcession = (puzzle: ProcessionPuzzle, options: ProcessionOpt
   if (rungIndex(ladder.rung) < rungIndex(options.minRung)) return null
   if (rungIndex(ladder.rung) > rungIndex(options.maxRung)) return null
   if (ladder.splits < options.minSplits || ladder.splits > options.maxSplits) return null
+  if (options.distinctStarts && new Set(ladder.starts).size < ladder.starts.length) return null
   return { steps: ladder.steps, deepest: ladder.rung }
 }

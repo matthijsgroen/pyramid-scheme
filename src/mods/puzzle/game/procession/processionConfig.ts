@@ -89,3 +89,19 @@ export const PROCESSION_CONFIG: Record<Difficulty, ProcessionOptions> = {
     maxSplits: 20,
   },
 }
+
+/** The variant a procession door asks for: `door<n>`, one bar per step of its sequence. */
+export const doorVariant = (steps: number) => `door${steps}`
+
+/**
+ * The options a board is built from. A door's board is the tier's, sized by its sequence and with no two bars
+ * starting together, so its answer reads as one order (`docs/game-design/puzzles/procession.md`, "At a door").
+ */
+export const processionOptions = (difficulty: Difficulty, variant?: string): ProcessionOptions => {
+  const steps = variant?.match(/^door(\d+)$/)?.[1]
+  const tier = PROCESSION_CONFIG[difficulty]
+  return steps ? { ...tier, bars: Number(steps), distinctStarts: true } : tier
+}
+
+/** How many steps a procession door's sequence may have: one bar each, and six is one cast's glyphs. */
+export const PROCESSION_DOOR_STEPS = [3, 4, 5, 6] as const
