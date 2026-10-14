@@ -7,6 +7,7 @@ import { labelCells } from "./labelCells"
 import { layFloor } from "./layFloor"
 import { mainRooms } from "./mainRooms"
 import { relayKeys } from "./relayKeys"
+import { reserveJunctions } from "./reserveJunctions"
 import { seatChainGates } from "./seatChainGates"
 import { seatGateRuns } from "./seatGateRuns"
 import { seatMainBarrierDoors } from "./seatMainBarrierDoors"
@@ -72,6 +73,12 @@ export const PASSES: readonly PassEntry[] = [
     mainRooms
   ),
   pass("chainRooms", ["keys", "labels", "chainGates", "lay", "maze", "mainBarrierDoors"], ["chainRooms"], chainRooms),
+  pass(
+    "reserveJunctions",
+    ["maze", "junctions", "keys", "labels", "lay", "branches", "doors", "mainRooms", "chainRooms"],
+    ["forks"],
+    reserveJunctions
+  ),
 ]
 
 /** Writes the grid from an attempt's settled state. No pass renders one yet, so no attempt yields a grid. */
