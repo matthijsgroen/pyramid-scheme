@@ -5,6 +5,7 @@ import {
   findMispairedStairs,
   findStrandingLocks,
   findUnbakedSwitchBoards,
+  findUnseededDoorBoards,
   findUnwalkedLocks,
   validateRewardCounts,
 } from "./validate"
@@ -14,6 +15,12 @@ import type { FamilyMeta, FamilyOptions } from "@/game/families/familyMeta"
 import { FORK_SHAPES, type ForkShape } from "@/game/forkShape"
 import { configHash } from "@/game/seeds/configHash"
 import { mirrorForkLock } from "../game/testSupport/lockFixtures"
+import {
+  lockFloor as notationFloor,
+  PROCESSION_LOCK,
+  STUB_BOARD,
+  STUB_DOOR,
+} from "../game/testSupport/processionFixtures"
 import { WORLD_TARGETS } from "./worldSpec"
 import { PYRAMID_JOURNEYS } from "./data"
 import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
@@ -269,6 +276,31 @@ describe("findUnbakedSwitchBoards", () => {
     expect(findUnbakedSwitchBoards({ [shipped]: [[floor()]] }, [seedable], {})).toEqual([])
     const live: FamilyMeta = { ...seedable, seedable: undefined }
     expect(findUnbakedSwitchBoards({ [shipped]: [[switchFloor("junior")]] }, [live], {})).toEqual([])
+  })
+})
+
+describe("findUnseededDoorBoards", () => {
+  const shipped = PYRAMID_JOURNEYS[0].id
+  const configs = { [shipped]: [[notationFloor(PROCESSION_LOCK, { difficulty: "master" }) as FloorConfig]] }
+  const bucket = configHash(STUB_BOARD.seedable!.resolveOptions({ difficulty: "master", variant: "door3" }))
+
+  it("names the tier and the step count of a door no list covers", () => {
+    expect(findUnseededDoorBoards(configs, [STUB_BOARD, STUB_DOOR], {})).toEqual([
+      {
+        journeyId: shipped,
+        levelNr: 1,
+        floorIndex: 0,
+        mechanismId: "door.P",
+        familyId: STUB_BOARD.id,
+        difficulty: "master",
+        steps: 3,
+      },
+    ])
+    expect(findUnseededDoorBoards(configs, [STUB_BOARD, STUB_DOOR], { [bucket]: [7] })).toEqual([])
+  })
+
+  it("excuses a site whose capabilities say its boards are not baked", () => {
+    expect(findUnseededDoorBoards(configs, [STUB_BOARD, STUB_DOOR], {}, () => DEV_CAPABILITIES)).toEqual([])
   })
 })
 

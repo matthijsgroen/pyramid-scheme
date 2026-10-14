@@ -1,3 +1,5 @@
+import { hashString } from "@/support/hashString"
+import { switchAddress } from "../seeds/boardIndex"
 import { placeSequences } from "../sequenceTiles"
 import { placeWeights } from "../weightsPlates"
 import { keyOf } from "./derive"
@@ -26,6 +28,12 @@ export const standPieces = (prep: FloorPrep, state: PiecesState, grid: WritableG
     return { gateKeyId: gateKeyOf(floorRef, id), ...(mode ? { mode } : {}) }
   }
 
+  // A door's board is dealt by its sequence's address, as a switch's is; off the baked world, by its door's key.
+  const boardIndexOf = (id: string, board: string | undefined) =>
+    board === undefined
+      ? undefined
+      : (prep.input.resolveBoardIndex?.(board, switchAddress(id)) ?? hashString(`${gateKeyOf(floorRef, id)}|${board}`))
+
   // A step whose region has no free node on some way in fails the attempt: a longer path may have one.
   if (sequences.length > 0) {
     const unplaced = placeSequences(
@@ -38,6 +46,7 @@ export const standPieces = (prep: FloorPrep, state: PiecesState, grid: WritableG
           sequenceSigns.get(sequence.id)?.glyphs ??
           sequence.steps.map((_, step) => allocation.tileGlyphs.get(`${sequence.id}#${step}`)!),
         orderReader: sequenceSigns.get(sequence.id)?.orderReader,
+        boardIndex: boardIndexOf(sequence.id, sequenceSigns.get(sequence.id)?.board),
         gates: sequence.opens.done.map(gateOf),
         doorKey: gateKeyOf(floorRef, sequence.resetAt),
       })),

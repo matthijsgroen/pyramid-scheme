@@ -25,6 +25,7 @@ import {
   findMispairedStairs,
   findStrandingLocks,
   findUnbakedSwitchBoards,
+  findUnseededDoorBoards,
   findUnwalkedLocks,
   floorsOwingALock,
 } from "../src/worldGen/validate"
@@ -256,6 +257,21 @@ if (unbakedSwitches.length > 0) {
     )
   if (unbakedSwitches.length > 20) console.error(`    … and ${unbakedSwitches.length - 20} more`)
   console.error("  Run `yarn generate-seeds` (it reads the spec, not the bake), then `yarn generate-world` again.")
+  process.exit(1)
+}
+
+const unseededDoors = findUnseededDoorBoards(configs, ALL_FAMILY_META, puzzleSeeds)
+if (unseededDoors.length > 0) {
+  console.error(`✗ ${unseededDoors.length} door board(s) have no seed list:`)
+  for (const door of unseededDoors)
+    console.error(
+      `    ${door.familyId}BoardUnseeded tier=${door.difficulty} steps=${door.steps}: ` +
+        `${door.journeyId} level ${door.levelNr} floor ${door.floorIndex}, ${door.mechanismId}`
+    )
+  console.error(
+    "  Run `yarn generate-seeds`, then `yarn generate-world` again. A tier and step count it finds no seed for needs a\n" +
+      "  band of its own (yarn tsx scripts/processionDoorSeeds.ts prints the table)."
+  )
   process.exit(1)
 }
 

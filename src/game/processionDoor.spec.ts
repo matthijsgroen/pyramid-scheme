@@ -70,6 +70,8 @@ describe("a sequence written procession", () => {
     expect(marks(on.result.grid).filter(glyph => cast.has(glyph) || glyph === WATER_MARK)).toEqual([])
     const record = rooms(on.result.grid).find(cell => cell.mechanismId === "door.P")?.mechanism
     expect(record).toEqual(expect.objectContaining({ hidesOrder: true, orderReader: PROCESSION_REALISATION }))
+    const door = rooms(on.result.grid).find(cell => cell.worksMechanism?.mechanismId === "door.P" && !cell.sequenceTile)
+    expect(door?.boardIndex).toEqual(expect.any(Number))
   })
 
   it("leaves a pressure-plate sequence's record showing its order, its tiles wearing mark glyphs", () => {

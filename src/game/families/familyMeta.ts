@@ -138,8 +138,15 @@ export type FamilyMeta = {
    * them out. `hidesOrder` withholds the door until the player has read the order elsewhere (the procession
    * door's board), which the door record carries as `hidesOrder` and `orderReader` (this family's id).
    * `resembles` are mark glyphs that read as one of `glyphs` at marker size, left out of the marks as well.
+   * `board` is the seedable family whose board the door carries, asked at the floor's tier with `variant(steps)`:
+   * the world owes one list entry per door (src/game/seeds/enumerateConfigs.ts).
    */
-  sequence?: { glyphs: readonly number[]; hidesOrder: true; resembles?: readonly number[] }
+  sequence?: {
+    glyphs: readonly number[]
+    hidesOrder: true
+    resembles?: readonly number[]
+    board?: { family: string; variant: (steps: number) => string }
+  }
 }
 
 // --- Offline seed lists (`docs/instructions/puzzle-screens.md` §6.1) -----------------------------------------

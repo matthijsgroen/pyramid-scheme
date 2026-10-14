@@ -14,6 +14,8 @@ export type SequenceDemand = {
   doorKey: string
   /** The realisation that reads the order at the door instead of showing it (a procession door). */
   orderReader?: string
+  /** Which entry of its board's seed list the door deals (src/game/seeds/boardIndex.ts), where it carries one. */
+  boardIndex?: number
 }
 
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
@@ -185,7 +187,7 @@ export const placeSequences = (
     picked.set(id, steps)
   }
 
-  for (const { id, glyphs, gates, doorKey, orderReader } of sequences) {
+  for (const { id, glyphs, gates, doorKey, orderReader, boardIndex } of sequences) {
     const steps = picked.get(id)!
     const doors = cells.flatMap((row, r) =>
       row.flatMap((cell, c): Place[] => (cell.type === "room" && cell.requiredKeyId === doorKey ? [[r, c]] : []))
@@ -208,7 +210,11 @@ export const placeSequences = (
     )
     const doorCell = cells[door[0]][door[1]]
     if (doorCell.type === "room")
-      cells[door[0]][door[1]] = { ...doorCell, worksMechanism: { mechanismId: id, transition: transitionAt(door) } }
+      cells[door[0]][door[1]] = {
+        ...doorCell,
+        worksMechanism: { mechanismId: id, transition: transitionAt(door) },
+        ...(boardIndex === undefined ? {} : { boardIndex }),
+      }
   }
   return undefined
 }

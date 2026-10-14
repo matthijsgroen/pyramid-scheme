@@ -6,7 +6,7 @@ import { plainSwitchId } from "@/game/cellSlot"
 import { expandFloorLocks } from "@/game/floorLocks"
 import { isForkSwitch } from "@/game/obstacles"
 import { configHash } from "./configHash"
-import { switchFamilies } from "./enumerateConfigs"
+import { doorBoardsOf, switchFamilies } from "./enumerateConfigs"
 
 /**
  * Where a room sits in the AUTHORING — which chain, and which room along it. Not a maze position:
@@ -136,6 +136,15 @@ export const buildBoardIndexes = (
           const { familyId }: EncounterResolution = resolveEncounter(encounter, "puzzle")
           if (!byId.get(familyId)?.seedable) continue
           const bucket = `switch|${familyId}|${floor.difficulty}`
+          const ordinal = nextInBucket.get(bucket) ?? 0
+          nextInBucket.set(bucket, ordinal + 1)
+          indexes.set(addressKey(journeyId, levelIndex, floorIndex, familyId, switchAddress(mechanismId)), ordinal)
+        }
+        // A door's board is addressed by its sequence, as a switch is by its mechanism.
+        for (const { mechanismId, familyId, ctx } of doorBoardsOf(floor, families)) {
+          const seedable = byId.get(familyId)?.seedable
+          if (!seedable) continue
+          const bucket = configHash(seedable.resolveOptions(ctx))
           const ordinal = nextInBucket.get(bucket) ?? 0
           nextInBucket.set(bucket, ordinal + 1)
           indexes.set(addressKey(journeyId, levelIndex, floorIndex, familyId, switchAddress(mechanismId)), ordinal)

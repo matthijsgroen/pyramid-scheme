@@ -1,5 +1,7 @@
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import { castGlyphs } from "@/mods/puzzle/game/procession/casts"
+import { PROCESSION_META } from "@/mods/puzzle/game/procession/meta"
+import { doorVariant } from "@/mods/puzzle/game/procession/processionConfig"
 import { PROCESSION_REALISATION } from "@/game/mechanics/sequence"
 
 export const PROCESSION_DOOR_FAMILY = PROCESSION_REALISATION
@@ -16,5 +18,10 @@ export const PROCESSION_DOOR_META: FamilyMeta = {
   color: "teal",
   rewardPriority: 0,
   // 𓈖, the mark "water", reads as the cast's water carried (𓈗) at marker size.
-  sequence: { glyphs: castGlyphs("default"), hidesOrder: true, resembles: ["𓈖".codePointAt(0)!] },
+  sequence: {
+    glyphs: castGlyphs("default"),
+    hidesOrder: true,
+    resembles: ["𓈖".codePointAt(0)!],
+    board: { family: PROCESSION_META.id, variant: doorVariant },
+  },
 }

@@ -6,8 +6,9 @@ import { mulberry32, shuffle } from "./random"
 import type { ResolveEncounter } from "./siteAssembler"
 import type { AssemblerFailure } from "./siteTypes"
 
-/** The signs of one sequence whose realisation brings its own: the glyph each step wears, and who reads its order. */
-export type SequenceSigns = { glyphs: number[]; orderReader: string }
+/** The signs of one sequence whose realisation brings its own: the glyph each step wears, who reads its order, and the
+ * family of the board its door carries. */
+export type SequenceSigns = { glyphs: number[]; orderReader: string; board?: string }
 
 export type SequenceSignsResult =
   | { ok: true; signs: ReadonlyMap<string, SequenceSigns>; excludedMarks: ReadonlySet<number> }
@@ -48,6 +49,7 @@ export const sequenceSigns = (
     signs.set(sequence.id, {
       glyphs: sequence.steps.map((_, step) => own.glyphs[order[step]]),
       orderReader: realised.familyId,
+      ...(own.board ? { board: own.board.family } : {}),
     })
     for (const glyph of [...own.glyphs, ...(own.resembles ?? [])]) excludedMarks.add(glyph)
   }
