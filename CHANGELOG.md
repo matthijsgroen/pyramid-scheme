@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The Temple of Thoth's second pyramid has its own puzzle: two levers, one on each side of a drop.
 - A door with several controls opens a board showing each one with its mark, and a painted lever no longer has a square under it.
 - A torch stands painted on the floor, and once lit it lights the floor around it.
 - The Valley of the Kings' last pyramid has a zipline back into the lever chamber, so no room there is shut for good.
