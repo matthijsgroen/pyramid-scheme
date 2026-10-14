@@ -41,6 +41,7 @@ export type RenderState = Pick<
   | "drops"
   | "forks"
   | "switchWays"
+  | "switchRooms"
 >
 
 /**
@@ -399,10 +400,18 @@ export const renderShut = (prep: FloorPrep, state: RenderState): WritableGrid =>
 
 /**
  * THE GRID, WRITTEN ONCE FROM WHAT THE PASSES DECIDED: the ground, then the doors of every junction a switch
- * stands in. A door nothing mints the key for is not a door, so a reserved junction with no switch stays open.
+ * stands in and the switch itself. A door nothing mints the key for is not a door, so a reserved junction with
+ * no switch stays open.
  */
 export const render = (prep: FloorPrep, state: RenderState): WritableGrid => {
   const grid = renderGround(prep, state)
-  shutJunctions(prep, state, grid.cells, state.forks.switchesPlaced)
+  const cells = grid.cells
+  shutJunctions(prep, state, cells, state.forks.switchesPlaced)
+  for (const [pk, room] of state.switchRooms) {
+    const [r, c] = at(pk)
+    const junction = cells[r][c]
+    if (junction.type !== "room") throw new Error(`[siteAssembler] reserved fork ${pk} is not a room`)
+    cells[r][c] = { ...junction, ...room }
+  }
   return grid
 }

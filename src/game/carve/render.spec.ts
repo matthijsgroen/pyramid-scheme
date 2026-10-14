@@ -56,6 +56,7 @@ describe("render", () => {
       drops,
       forks: { reserved: [], inFork: new Set<string>(), switchesPlaced: 0 },
       switchWays: [],
+      switchRooms: new Map(),
     })
   }
 
@@ -119,14 +120,17 @@ describe("a reserved junction", () => {
     drops: [],
     forks: { reserved: ["0,2"], inFork: new Set<string>(), switchesPlaced },
     switchWays: [[{ dir: "s" as const, cell: "2,2", gateKeyId: "switch:way" }]],
+    switchRooms: new Map(switchesPlaced > 0 ? [["0,2", { family: "sumplete", mechanismId: "switch:0" }]] : []),
   })
 
-  it("shuts its way out and names the key on the junction's exit where a switch stands in it", () => {
+  it("stands the switch in its junction, shuts its way out and names the key on the junction's exit", () => {
     const grid = render(prep, junctionState(1))
     expect(grid.cells[2][2]).toMatchObject({ type: "room", requiredKeyId: "switch:way", keyIsAuthored: true })
     expect(grid.cells[0][2]).toMatchObject({
       exits: expect.arrayContaining([{ dir: "s", kind: "side", gateKeyId: "switch:way" }]),
       mechanism: { initial: "rest", states: ["rest", "switch:way"] },
+      family: "sumplete",
+      mechanismId: "switch:0",
     })
   })
 

@@ -150,3 +150,13 @@ export const endRoomSpec = (
     ...(isShop ? { stock: section.rewards ?? [] } : section.endReward ? { reward: section.endReward } : {}),
   }
 }
+
+/** What the floor dresses an encounter standing in one of its junctions in: its args, tier, theme and so on. */
+export const encounterStyle = ({ config }: FloorPrep["config"]): Partial<RoomSpec> => ({
+  ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
+  difficulty: config.difficulty,
+  ...(config.theme !== undefined ? { theme: config.theme } : {}),
+  ...(config.condition !== undefined ? { condition: config.condition } : {}),
+  ...(config.patron !== undefined ? { patron: config.patron } : {}),
+  ...(config.role !== undefined ? { role: config.role } : {}),
+})

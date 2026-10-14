@@ -1,6 +1,6 @@
 import { hashString } from "@/support/hashString"
 import { adjacencyFaults, dropLandingFaults, gateDoorFaults } from "../carveAgreement"
-import { cellSlot, plainSwitchId } from "../cellSlot"
+import { cellSlot } from "../cellSlot"
 import type { Mark } from "../mark"
 import { corridorIndexOf } from "../obstacles"
 import { appetiteAccepts } from "../regions"
@@ -12,9 +12,10 @@ import type { Direction } from "../siteTypes"
 import { validateSite } from "../siteValidator"
 import { placeWeights } from "../weightsPlates"
 import { keyOf, nodeExitsOf } from "./derive"
-import { gateKeyOf, gatesOwnedBy, obstacleMode, switchMark, switchStem } from "./ids"
+import { gateKeyOf, gatesOwnedBy, obstacleMode, switchMark } from "./ids"
 import { renderGround, renderShut } from "./render"
 import type { RenderState, WritableGrid } from "./render"
+import { encounterStyle } from "./roomSpecs"
 import { MAIN_SECTION_ADDRESS } from "./sections"
 import type { CarveState, FloorPrep, Refusal } from "./state"
 
@@ -39,7 +40,7 @@ export const settle = (prep: FloorPrep, state: SettleState, grid: WritableGrid):
   const { siteId, floorRef, resolveEncounter, resolveBoardIndex } = prep.input
   const { config, authored } = prep.config
   const { allocation, markByGateKey } = prep.marks
-  const { reserved: reservedForks, switchesPlaced } = state.forks
+  const { switchesPlaced } = state.forks
   const ground = renderGround(prep, state)
   const { mainPath } = state.maze
   const laid = state.lay?.laid
@@ -78,35 +79,10 @@ export const settle = (prep: FloorPrep, state: SettleState, grid: WritableGrid):
   if (!validateSite(ground).valid) return { retry: [] }
   if (!validateSite(renderShut(prep, state)).valid) return { retry: [] }
 
-  const placeStyle = {
-    ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
-    difficulty: config.difficulty,
-    ...(config.theme !== undefined ? { theme: config.theme } : {}),
-    ...(config.condition !== undefined ? { condition: config.condition } : {}),
-    ...(config.patron !== undefined ? { patron: config.patron } : {}),
-    ...(config.role !== undefined ? { role: config.role } : {}),
-  }
+  const placeStyle = encounterStyle(prep.config)
 
-  // A switch is a fork AND its encounter: the room keeps `roomType: "fork"` and gains the encounter's fields. Its
-  // board is dealt by its mechanism, never by the junction's coordinate, which a re-carve moves.
+  // Asked again, because a switch's name only exists once a family is in the junction.
   if (config.switches) {
-    const family = resolveEncounter(config.switches.encounter, "puzzle")
-    for (let n = 0; n < switchesPlaced; n++) {
-      const [sr, sc] = at(reservedForks[n])
-      const junction = cells2D[sr][sc]
-      if (junction.type !== "room") throw new Error(`[siteAssembler] reserved fork ${reservedForks[n]} is not a room`)
-      cells2D[sr][sc] = {
-        ...junction,
-        family: family.familyId,
-        tags: family.tags,
-        mechanismId: plainSwitchId(n),
-        boardIndex:
-          resolveBoardIndex?.(family.familyId, switchAddress(plainSwitchId(n))) ??
-          hashString(`${switchStem(floorRef, n)}|${family.familyId}`),
-        ...placeStyle,
-      }
-    }
-    // Asked again, because a switch's name only exists once a family is in the junction.
     const switchedDuplicate = duplicateSlot()
     if (switchedDuplicate) return switchedDuplicate
   }

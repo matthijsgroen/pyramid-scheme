@@ -322,6 +322,8 @@ export type CarveState = {
   switchDoors?: ReadonlyMap<string, ReadonlySet<string>>
   /** Each reserved junction's free ways out, in reserve order: the door a switch standing there shuts on each. */
   switchWays?: ReadonlyArray<ReadonlyArray<SwitchWay>>
+  /** The encounter standing in each junction a switch fills, by the junction's cell. */
+  switchRooms?: ReadonlyMap<string, Partial<RoomSpec>>
   /** Every one-way edge, seam drops first. */
   drops?: OneWayEdge[]
 }

@@ -25,6 +25,7 @@ import type { SettleState } from "./settle"
 import { requireReads } from "./state"
 import type { Finish, PassEntry } from "./state"
 import { shutSwitchGround } from "./shutSwitchGround"
+import { standSwitches } from "./standSwitches"
 
 /**
  * EVERY PASS AN ATTEMPT RUNS, IN ORDER. The order is the order of `rand()` draws, so moving a pass that
@@ -53,6 +54,7 @@ export const PASSES: readonly PassEntry[] = [
   shutSwitchGround,
   placeDrops,
   nameSwitchWays,
+  standSwitches,
 ]
 
 /** What the tail reads: every key `render` and `settle` take from the passes, each checked as a pass's are. */
@@ -70,6 +72,7 @@ export const TAIL_READS = [
   "junctions",
   "keys",
   "switchWays",
+  "switchRooms",
 ] as const satisfies readonly (keyof SettleState)[]
 
 /**
