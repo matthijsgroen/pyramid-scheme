@@ -45,6 +45,7 @@ const MECHANISM_ORDER = [
   "sequence",
   "fork",
   "stones",
+  "pipe",
   "narrow passage",
   "water/sand",
   "drop",
@@ -55,6 +56,7 @@ export const mechanismsOf = (lock: Lock): string[] => {
   const used = new Set([
     ...Object.values(lock.mechanics).map(m => CONTROL_WORDS[m.control]),
     ...(Object.keys(lock.weights?.plates ?? {}).length > 0 ? ["stones"] : []),
+    ...(Object.keys(lock.weights?.pipes ?? {}).length > 0 ? ["pipe"] : []),
     ...Object.values(lock.gates).flatMap(gate =>
       isRegionGate(gate) ? ["water/sand"] : isUnladenGate(gate) ? ["narrow passage"] : []
     ),

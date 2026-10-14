@@ -13,6 +13,14 @@ describe("the catalogue table", () => {
     expect(row.steps).toMatch(/^\d+$/)
   })
 
+  it("names a pipe after the stones", () => {
+    const piped = parseLock(
+      "in -[unladen]- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nP pipe @in @hall",
+      "piped"
+    )
+    expect(lockRow("piped", piped).mechanisms).toBe("stones, pipe, narrow passage")
+  })
+
   it("shows – for no solution and the first failing check", () => {
     expect(lockRow("lessons/cut", cutOff)).toMatchObject({
       steps: "–",

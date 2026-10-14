@@ -869,6 +869,9 @@ export type AssemblerReason =
   | { type: "locksContradictFloor"; fields: string[] }
   /** Two locks of one floor answer to one instance name, so their ids would collide; the second must say `as`. */
   | { type: "lockInstanceRepeated"; instance: string }
+  /** Two locks of one floor each carry a stone pipe. A floor holds one pipe until its holes wear marks that pair
+   * them; `instances` are the locks carrying one. */
+  | { type: "pipesOnOneFloor"; instances: string[] }
   /** A placed lock is refused, by the instance it was placed as and the fault of the lock itself. */
   | { type: "lockRefused"; instance: string; fault: LockFault }
   /** A placed lock cannot be seated inside the region of another lock it names. */

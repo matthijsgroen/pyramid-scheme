@@ -158,8 +158,8 @@ fork-switch `lightbeamSwitch`, one-way `zipline`, flame `torch`, weights `stoneP
 Adopted 2026-10-11, and baked as far as it carves (Part 1 says where a stand-in holds a floor). Every one of the 34
 junior and expert floors (floor 0 of each site) gets one lock, and no lock is used twice. The tier folders hold
 16 junior locks (9 lessons and cellar, dropHome, overlook, seesaw, sluice, lamplighter, tide) for the 16 junior
-floors, and 10 expert locks for 18 expert floors. bathHouse and masonsRamp are master: masonsRamp is not placeable
-until the stone pipe exists, and master sites keep their floor keys.
+floors, and 10 expert locks for 18 expert floors. bathHouse and masonsRamp are master: masonsRamp solves with the
+stone pipe and waits for a master floor, and master sites keep their floor keys.
 
 Rules the table follows: a journey opens with lessons, in the curriculum's order (lever, drop, board, torch,
 swaps, then waterMoves, doorWaitsForTwo, tilesInOrder, stoneOnAPlate); a lock comes only after the lessons it
@@ -268,27 +268,27 @@ but are still a proposal for the engine (`lock-curriculum.md`, "Stones").
 
 **Locks**
 
-| lock          | tier                               | mechanics                                                  | yarn lock                                                          |
-| ------------- | ---------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------ |
-| dropHome      | expert                             | lever, board, drop                                         | solvable                                                           |
-| cellar        | expert                             | lever, torch, drop                                         | solvable                                                           |
-| twoLamps      | expert                             | lever, board, door-waits-for-two                           | solvable                                                           |
-| overlook      | expert                             | lever, drop                                                | solvable                                                           |
-| doubleBack    | expert capstone                    | lever, board, drop                                         | solvable                                                           |
-| twoStones     | expert, stones                     | door-waits-for-two, stones & plates                        | solvable                                                           |
-| seesaw        | master                             | lever, drop, door-waits-for-two                            | solvable                                                           |
-| keyring       | master                             | lever, torch                                               | solvable                                                           |
-| relay         | master                             | lever, torch, drop, door-waits-for-two                     | solvable                                                           |
-| beforeYouJump | junior                             | lever, drop, door-waits-for-two                            | solvable; control reached before its door is seen: pit-out         |
-| clockwork     | master                             | lever, board, drop, door-waits-for-two                     | solvable                                                           |
-| lamplighter   | master                             | lever, board, drop, door-waits-for-two                     | solvable; drop west>east is an optional shortcut                   |
-| observatory   | master                             | board, torch, drop, door-waits-for-two                     | solvable; drop east>west is an optional shortcut                   |
-| counterweight | master, stones                     | drop, door-waits-for-two, stones & plates                  | solvable                                                           |
-| masonsRamp    | master, stones                     | drop, stones & plates, narrow passage                      | **not solvable**: `out` never reached (waits on a stone-only pipe) |
-| plates        | master                             | sequence tiles                                             | solvable                                                           |
-| sluice        | master                             | lever, torch, water/sand barrier                           | solvable                                                           |
-| tide          | master                             | lever, torch, water/sand barrier                           | solvable                                                           |
-| stoneGate     | expert capstone (Djoser 5), stones | torch, door-waits-for-two, stones & plates, narrow passage | solvable                                                           |
+| lock          | tier                               | mechanics                                                  | yarn lock                                                  |
+| ------------- | ---------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------- |
+| dropHome      | expert                             | lever, board, drop                                         | solvable                                                   |
+| cellar        | expert                             | lever, torch, drop                                         | solvable                                                   |
+| twoLamps      | expert                             | lever, board, door-waits-for-two                           | solvable                                                   |
+| overlook      | expert                             | lever, drop                                                | solvable                                                   |
+| doubleBack    | expert capstone                    | lever, board, drop                                         | solvable                                                   |
+| twoStones     | expert, stones                     | door-waits-for-two, stones & plates                        | solvable                                                   |
+| seesaw        | master                             | lever, drop, door-waits-for-two                            | solvable                                                   |
+| keyring       | master                             | lever, torch                                               | solvable                                                   |
+| relay         | master                             | lever, torch, drop, door-waits-for-two                     | solvable                                                   |
+| beforeYouJump | junior                             | lever, drop, door-waits-for-two                            | solvable; control reached before its door is seen: pit-out |
+| clockwork     | master                             | lever, board, drop, door-waits-for-two                     | solvable                                                   |
+| lamplighter   | master                             | lever, board, drop, door-waits-for-two                     | solvable; drop west>east is an optional shortcut           |
+| observatory   | master                             | board, torch, drop, door-waits-for-two                     | solvable; drop east>west is an optional shortcut           |
+| counterweight | master, stones                     | drop, door-waits-for-two, stones & plates                  | solvable                                                   |
+| masonsRamp    | master, stones                     | drop, stones & plates, stone pipe, narrow passage          | solvable; drop chute>workshop is an optional shortcut      |
+| plates        | master                             | sequence tiles                                             | solvable                                                   |
+| sluice        | master                             | lever, torch, water/sand barrier                           | solvable                                                   |
+| tide          | master                             | lever, torch, water/sand barrier                           | solvable                                                   |
+| stoneGate     | expert capstone (Djoser 5), stones | torch, door-waits-for-two, stones & plates, narrow passage | solvable                                                   |
 
 The curriculum's "lever: all but plates" is wider than the files: twoStones, counterweight, masonsRamp,
 observatory and stoneGate have no lever either.

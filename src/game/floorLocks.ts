@@ -203,6 +203,10 @@ export const expandFloorLocks = (
   }
   for (const instance of repeated) reasons.push({ type: "lockInstanceRepeated", instance })
 
+  // ONE PIPE TO A FLOOR: a hole wears no mark, so two pipes' holes could not be told apart.
+  const piped = placements.filter(placed => Object.keys(placed.lock.weights?.pipes ?? {}).length > 0).map(instanceName)
+  if (piped.length > 1) reasons.push({ type: "pipesOnOneFloor", instances: piped })
+
   const nested = seatNested(placements)
   reasons.push(...nested.reasons)
 

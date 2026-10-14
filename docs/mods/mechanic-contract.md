@@ -164,6 +164,21 @@ waiting for, the way a ward gate already shows the key it wants.
   placement refuses naming the plate when there is none.
 - **With the topology mod off** the plates are bare ground and the carve is otherwise identical. Every door
   the plates govern stands open, unless another live control still holds it, so the walk is unobstructed.
+- **A stone pipe.** `P pipe @hall @vault [stone]` joins two regions through the walls, one pipe to a lock and to a
+  floor (`pipesRepeated`, `pipesOnOneFloor`) until marks pair two pipes' holes. It has a HOLE in each region,
+  `P@hall` and `P@vault`, and `stone` after a hole starts a stone in it. A hole is a place a stone lies, like a
+  plate, and part of the same arrangement: its key lists the holes holding a stone after the plates, so a lock
+  without a pipe keeps its keys. Two moves, each one action: a **post** at a hole, with a stone in hand and both
+  holes empty, leaves the hand empty and the stone in the OTHER hole; a **take** at a hole holding a stone, with
+  empty hands, puts it in hand. The pipe carries one stone at a time: no post while either hole holds one. It
+  needs no walk between its regions, and posting leaves the hands empty, so the empty-hands rule is untouched.
+  A hole is no plate: a stone in it presses nothing, a gate cannot name a pipe (`pipeOwnsGate`), and the
+  explorer's weight does nothing there. Refused besides: both holes in one region (`pipeInOneRegion`) and a
+  pipe on a lock with no stone (`pipeWithoutStones`). The carve stands a hole in the back wall of a bare node of
+  its region, never the entrance, the exit, a junction or a node beside another region, off the main path where
+  it can (`placePipeHoles`); the lay gives each hole two nodes of its region so one stands clear of its ways in.
+  Play offers "Post the stone" and "Take the stone" at the hole. The binding key is `pipe`; its realisation is
+  `stonePipe` (topology mod). With the mod off the holes are bare nodes and the carve is identical.
 
 ### 3.3 Torches and floods
 
@@ -489,7 +504,7 @@ reach yet — which is what doubleBack does today.
 ## 8. Settled, and still open
 
 **Settled.** The three layers. The five controls (toggle, activator, flame, sequence, fork-switch) plus
-one-way and the stones. Targets are edges or regions. `and`/`any` conditions. A floor key is an activator.
+one-way and the stones, a stone pipe among them. Targets are edges or regions. `and`/`any` conditions. A floor key is an activator.
 A flood puts out a torch and never an activator. The fork-switch governs its own fork. Realisations are bound
 from outside, most specific wins, at bake time, refused when unbound. A realisation may not change what
 the solver sees. Impassable conceals, and conceals what was explored, without erasing it.

@@ -5,7 +5,7 @@
 > runs under `timeout`.
 
 **Goal:** a stone crosses between two regions through a pipe in the walls, so a lock can move a stone where the
-player cannot carry it. masonsRamp (`src/game/locks/master/masonsRamp.lock`, the designer's; never edited) waits
+player cannot carry it. masonsRamp (`src/game/locks/master/masonsRamp.lock`, designed by Claude) waits
 for it.
 
 ## Designer decisions (2026-10-14)
@@ -127,9 +127,8 @@ unchanged. `lockWalk.spec.ts`: two regions joined only by a narrow passage, a pl
 a pipe, solvable with one, and the shortest walk posts and takes. `nestedStones.spec.ts`: a shared pool carries a
 pipe's stone across locks. `lockReview.spec.ts`: the step names.
 
-**`yarn lock masonsRamp`** stays `✗ never reached: out`: the lock declares no pipe, and Claude never edits it.
-With the designer's line (question 7) it would read `✓ solvable` in six stone moves; task 9 checks this on a
-scratch copy, never on the file.
+**`yarn lock masonsRamp`** reads `✓ solvable` in six stone moves once it has question 7's line, which Claude
+adds (the lock is Claude's).
 
 ### 3. Lock checks — Sonnet (may go with task 1)
 
@@ -216,8 +215,7 @@ until question 6 is answered; one pipe wears no mark, as painted controls wear n
 - Floor-by-floor proof: no placed lock uses a pipe, so `src/data/generatedWorld.ts`, `src/data/carveLedger.json`
   and `src/data/tierFingerprints.json` keep every floor. Ledger hashes move with the carve sources; keys and
   refusal strings must not. Any other change is a fault to explain before going on.
-- `yarn lock`: every placed lock as before. Report masonsRamp (still `never reached: out`), and its result on a
-  scratch copy with question 7's line, in the handover.
+- `yarn lock`: every placed lock as before, and masonsRamp `✓ solvable`; report it in the handover.
 - Gate in a clean worktree: `yarn verify`, `yarn verify-content`, `yarn build`; then `gh pr checks` after push.
 
 ## Review

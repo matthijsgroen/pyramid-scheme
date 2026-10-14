@@ -1,6 +1,6 @@
 // designed by: Claude
-// master, unsolvable until the stone pipe. Djoser's building site: one stone holds the chute door so the
-// other can slide down to the workshop; you squeeze back up the narrow passage, where no stone fits.
+// master. Djoser's building site: one stone holds the chute door so the other can go down the pipe to the
+// workshop; you follow with empty hands, down the chute or through the narrow passage.
 
 in -- yard
 yard -[unladen]- workshop
@@ -10,4 +10,5 @@ r plate @yard
 p plate @workshop
 pile1 plate @yard stone
 pile2 plate @yard stone
+P pipe @chute @workshop
 chute *

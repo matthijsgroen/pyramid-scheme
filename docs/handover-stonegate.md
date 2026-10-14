@@ -17,6 +17,7 @@ over memory.
 | 6 Djoser                       | **Done.** Plan: `docs/superpowers/plans/2026-10-09-stonegate-phase-6-djoser.md`. stoneGate on expert_4 pyramid 5, floor 0. |
 | 7 Zipline glide                | **Done.** Poses in `src/app/SiteMap/ridePoses.ts`, 200 ms a cell. Story `Topology/Zipline ride`.                           |
 | Torch and flood                | **Done.** Plan: `docs/superpowers/plans/2026-10-09-torch-douse.md`. Story `Topology/Lock playground` → Torch and flood.    |
+| Stone pipe                     | **Done.** Plan: `docs/instructions/stone-pipe.md`. Story `Topology/Lock playground` → Stone pipe.                          |
 
 Phase 4 gives gate loops in the carve on laid floors (`topologyFaults`, `gateBypassed`, the fork seams), loops
 inside one region in every carve, stoneGate on dev pyramid 12, the squeeze starting from the nearer side, one nest
@@ -86,6 +87,13 @@ The art plan is `docs/superpowers/plans/2026-10-06-stonegate-phase-5-art.md`; it
 `.superpowers/sdd/2026-10-06-stonegate-phase-5-art/progress.md`.
 
 ## Next work, in order
+
+The stone pipe is built: `P pipe @a @b [stone]`, a hole in each region's back wall, post and take, one stone in it at
+a time, bound `pipe: "stonePipe"`. masonsRamp has its pipe line (`P pipe @chute @workshop`) and solves in six stone
+moves (lift, set on r, lift, post, take, set on p); its drop `chute>workshop` is now an optional shortcut
+(`yarn lock`: "does nothing"). It is placed on no floor, so no shipped floor moved. The hole is drawn as a flat
+stand-in until `default/pipeHole` and `default/pipeHoleStone` are painted (repaint queue). Each hole takes two
+nodes of its region in the lay, so one stands clear of the region's ways in.
 
 1. **Placement by the proposal**, once the designer says yes: `lock-placement.md`, "Proposal: one puzzle per
    floor" (26 of 34 floors get an existing lock, 8 expert slots "to design"; 22 floors would re-carve). Carve-test
@@ -182,9 +190,6 @@ pushes the build output to the `pyramid-scheme-preview` repo; its saves use thei
 
 ## Waiting on the designer
 
-- **The stone pipe:** plan in `docs/instructions/stone-pipe.md`, its open questions at the top. Decided
-  (2026-10-14): two-way; both ends are a hole in the wall, one sprite of its own; a posted stone lies in the far
-  hole until taken out. masonsRamp waits for it (unsolvable now: its chute sends a stone down a drop).
 - **Fog of a room-free lock region:** a lock region with no mechanism, plate or door (stoneGate's `hall3`) comes back
   fogged after a re-carve, because it has no room to carry the fog mark. No loot, state or key lives there. Options: a
   door stands in a bare region it leads out of (changes lock-walk counts, `nestedLocks.spec.ts`), or a room-free

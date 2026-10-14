@@ -35,6 +35,8 @@ designer's work. junior_3 site 2 is placed: beforeYouJump (Claude, 2026-10-14).
   so the board's node would need five ways. Put the board off the route.
 - **leverSwapsDoors** (junior_2 site 2): `yarn lock` says gate `hall-left` never stops anyone, so the swap is not
   needed to finish.
+- **masonsRamp** (master, Claude's): solvable with the stone pipe, six stone moves; its drop `chute>workshop` is now an
+  optional shortcut. It waits for a master floor.
 - **bathHouse** (master): carves now, 200 of 200 in the playground (twelve glyphs; `hall`'s tile stands between the
   board and its gates). Nothing to reshape; it waits for a master floor to stand on.
 
@@ -43,8 +45,6 @@ designer's work. junior_3 site 2 is placed: beforeYouJump (Claude, 2026-10-14).
 - relay and doubleBack take 3 actions: stay expert (as now) or move to junior?
 - doubleBack: how should a drop beside a gate compile (needed to fold its TypeScript twin)?
 - stoneGate.lock header says "not placed yet, not buildable yet", but it stands in Djoser: correct it?
-- The stone pipe (masonsRamp waits for it): plan and its questions in `docs/instructions/stone-pipe.md`. Decided:
-  two-way; both ends are a hole in the wall, one sprite of its own; a posted stone lies in the far hole until taken.
 - Fog of a room-free lock region (stoneGate's `hall3` comes back fogged after a re-carve): a door in the bare
   region, or restore its fog from its neighbours?
 - The corner squeeze is still the old two-leg slide: keep or redo?
