@@ -179,7 +179,7 @@ export type JourneyAPI = {
   /** The position every mechanism on this level currently stands in, keyed by its cell address. */
   getMechanismStates: (journeyId: string) => ReadonlyMap<string, string>
   /** Steps a walk crossed of sequences that hide their order, by the sequence's address. */
-  recordWalkedSteps: (walked: readonly { address: string; steps: readonly number[] }[]) => void
+  recordWalkedSteps: (walked: readonly { address: string; steps: readonly number[]; atDone?: boolean }[]) => void
   /** The order of the sequence at `address` was read at its door: it stays read, and the run starts again from its
    * first step, both in one write. A second read writes nothing. */
   readSequence: (address: string) => void
@@ -651,16 +651,16 @@ export const createJourneysV3Api = ({
   const getMechanismStates = (journeyId: string): ReadonlyMap<string, string> =>
     forThisLevelMap(journeyId, journeys.find(j => j.journeyId === journeyId)?.mechanismStates)
 
-  const recordWalkedSteps = (walked: readonly { address: string; steps: readonly number[] }[]) => {
+  const recordWalkedSteps = (walked: readonly { address: string; steps: readonly number[]; atDone?: boolean }[]) => {
     if (!activeJourneyId || walked.length === 0) return
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
         const reads = { ...(j.sequenceReads ?? {}) }
         let changed = false
-        for (const { address, steps } of walked) {
+        for (const { address, steps, atDone } of walked) {
           const key = `${j.levelNr}:${address}`
-          const next = withWalked(reads[key], steps)
+          const next = withWalked(reads[key], steps, atDone)
           if (next === reads[key]) continue
           reads[key] = next
           changed = true

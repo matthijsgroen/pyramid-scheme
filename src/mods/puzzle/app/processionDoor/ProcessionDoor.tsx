@@ -104,7 +104,8 @@ export const ProcessionDoor: FC<Props> = ({
           {t(`procession.hint.default.${hint.rung}`)} {t("procession.hint.default.move")}
         </p>
       )}
-      {!solved && !hinted && (
+      {/* A hint can name any bar, so it waits until none is locked. */}
+      {!solved && !hinted && locked.every(lock => !lock) && (
         <button onClick={() => setHinted(true)} className="text-sm text-amber-200 hover:text-amber-100">
           {t("procession.door.hintButton")}
         </button>

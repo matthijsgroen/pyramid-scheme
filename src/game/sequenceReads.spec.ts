@@ -157,28 +157,90 @@ describe("the steps a walk crosses", () => {
 
   it("adds every step crossed, in fog, out of order and again, by the sequence's address", () => {
     const grid = tileRow(true)
-    const crossed = walkedSteps(grid, 0, [
-      [1, 1],
-      [0, 2],
-      [0, 1],
-      [0, 2],
-      [0, 0],
-    ])
-    expect(crossed).toEqual([{ address: expect.any(String), steps: [0, 1, 2] }])
+    const crossed = walkedSteps(
+      grid,
+      0,
+      [
+        [1, 1],
+        [0, 2],
+        [0, 1],
+        [0, 2],
+        [0, 0],
+      ],
+      new Map()
+    )
+    expect(crossed).toEqual([{ address: expect.any(String), steps: [0, 1, 2], atDone: false }])
+  })
+
+  it("keeps a door open at done with nothing on record open after a walk crosses one tile", () => {
+    const grid = tileRow(true)
+    const [{ address }] = walkedSteps(
+      grid,
+      0,
+      [
+        [1, 1],
+        [0, 0],
+      ],
+      new Map()
+    )
+    const states = new Map([[address, DONE]])
+    const [crossed] = walkedSteps(
+      grid,
+      0,
+      [
+        [1, 1],
+        [0, 1],
+      ],
+      states
+    )
+    expect(crossed.atDone).toBe(true)
+    expect(
+      opens(
+        floorOf(sequenceRecord(true)),
+        [[SEQUENCE, DONE]],
+        [[SEQUENCE, withWalked(undefined, crossed.steps, crossed.atDone)]]
+      )
+    ).toBe(true)
+  })
+
+  it("records a first walk short of done unread", () => {
+    const grid = tileRow(true)
+    const [crossed] = walkedSteps(
+      grid,
+      0,
+      [
+        [1, 1],
+        [0, 0],
+      ],
+      new Map()
+    )
+    const entry = withWalked(undefined, crossed.steps, crossed.atDone)
+    expect(entry).toEqual({ walked: [0] })
+    expect(orderRead(sequenceRecord(true), progressState(1), entry)).toBe(false)
   })
 
   it("does not count the cell the walk starts on, nor a sequence that shows its order", () => {
     expect(
-      walkedSteps(tileRow(true), 0, [
-        [0, 2],
-        [1, 1],
-      ])
+      walkedSteps(
+        tileRow(true),
+        0,
+        [
+          [0, 2],
+          [1, 1],
+        ],
+        new Map()
+      )
     ).toEqual([])
     expect(
-      walkedSteps(tileRow(false), 0, [
-        [1, 1],
-        [0, 1],
-      ])
+      walkedSteps(
+        tileRow(false),
+        0,
+        [
+          [1, 1],
+          [0, 1],
+        ],
+        new Map()
+      )
     ).toEqual([])
   })
 })

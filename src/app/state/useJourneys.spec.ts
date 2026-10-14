@@ -494,6 +494,16 @@ describe("sequences that hide their order", () => {
     expect(read.api.getSequenceReads(REAL_ID).get("s0#0/p1")).toEqual({ walked: [0, 1], read: true })
   })
 
+  it("records a save's first walk at done as read, and a first walk short of done unread", () => {
+    const atDone = run(
+      a => a.recordWalkedSteps([{ address: "s0#0/p1", steps: [1], atDone: true }]),
+      makeStoredJourney({ mechanismStates: { "1:s0#0/p1": "3" } })
+    )
+    expect(atDone.api.getSequenceReads(REAL_ID).get("s0#0/p1")).toEqual({ walked: [1], read: true })
+    const fresh = run(a => a.recordWalkedSteps([{ address: "s0#0/p1", steps: [0], atDone: false }]))
+    expect(fresh.api.getSequenceReads(REAL_ID).get("s0#0/p1")).toEqual({ walked: [0] })
+  })
+
   it("starts the run again from its first step when the order is read, from done included", () => {
     const { api } = run(a => a.readSequence("s0#0/p1"), makeStoredJourney({ mechanismStates: { "1:s0#0/p1": "3" } }))
     expect(api.getMechanismStates(REAL_ID).get("s0#0/p1")).toBe("0")

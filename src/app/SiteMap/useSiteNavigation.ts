@@ -202,12 +202,13 @@ export const useSiteNavigation = ({
       // fallback is for grids built outside the world.
       const walkTo = (r: number, c: number) => {
         const path = findPath(grid, explorerPos, [r, c])
-        const presses = walkPresses(grid, currentFloor, path, journeys.getMechanismStates(journeyId))
+        const before = journeys.getMechanismStates(journeyId)
+        const presses = walkPresses(grid, currentFloor, path, before)
         // One write for the whole walk, so the douse reads every tile it worked. One douse at the end of the walk
         // equals one after each tile: a sequence opens a gate only at `done`, which stays fired.
         if (presses.length > 0) journeys.setMechanismStates(new Map(presses.map(press => [press.address, press.state])))
         // A hiding sequence's steps unlock their bars on the door's board whatever the crossing did to the run.
-        const walked = walkedSteps(grid, currentFloor, path)
+        const walked = walkedSteps(grid, currentFloor, path, before)
         if (walked.length > 0) journeys.recordWalkedSteps(walked)
         const edgeId = encodeEdge(currentFloor, r, c)
         const address = cellAddress(grid, currentFloor, r, c) ?? edgeId

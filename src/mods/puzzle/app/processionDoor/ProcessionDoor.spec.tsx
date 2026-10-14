@@ -104,6 +104,14 @@ describe("a procession door's board", () => {
     expect(container.querySelectorAll("[data-status]")).toHaveLength(0)
   })
 
+  it("offers the hint only once every bar is unlocked", () => {
+    door({ face: faceOf([true, false, true]) })
+    expect(screen.queryByRole("button", { name: "procession.door.hintButton" })).toBeNull()
+    cleanup()
+    door()
+    expect(screen.getByRole("button", { name: "procession.door.hintButton" })).toBeTruthy()
+  })
+
   it("dresses each bar in the sign of the step it is, in the answer's order", () => {
     const { container } = door()
     const rows = Array.from(container.querySelectorAll("svg text"))

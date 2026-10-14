@@ -10,9 +10,12 @@ export type SequenceRead = { readonly walked: readonly number[]; readonly read?:
 
 const NOTHING: SequenceRead = { walked: [] }
 
-/** `entry` with `steps` walked as well; the same entry when none of them is new. */
-export const withWalked = (entry: SequenceRead | undefined, steps: readonly number[]): SequenceRead => {
-  const known = entry ?? NOTHING
+/**
+ * `entry` with `steps` walked as well; the same entry when none of them is new. A first entry made while the run
+ * stands at `done` (`atDone`) is read: the door `orderRead` held open for a save with no entry stays open.
+ */
+export const withWalked = (entry: SequenceRead | undefined, steps: readonly number[], atDone = false): SequenceRead => {
+  const known = entry ?? (atDone ? { ...NOTHING, read: true } : NOTHING)
   const added = steps.filter(step => !known.walked.includes(step))
   if (added.length === 0 && entry) return entry
   return { ...known, walked: [...new Set([...known.walked, ...added])].sort((a, b) => a - b) }
