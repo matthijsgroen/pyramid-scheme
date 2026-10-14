@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { CONTROL_WORDS, LOCK_EXAMPLE, LOCK_SYNTAX, corridorLine, parseLock, syntaxRows } from "./lockNotation"
+import { CONTROL_WORDS, LOCK_EXAMPLE, LOCK_SYNTAX, corridorLine, parseLock, syntaxSections } from "./lockNotation"
 
 const DOUBLE_BACK = `
   in -[Y]- leftLower -[S1]- s2
@@ -398,8 +398,11 @@ describe("LOCK_SYNTAX", () => {
   it.each(Object.entries(CONTROL_WORDS))("explains the %s control", (_kind, word) => {
     expect(LOCK_SYNTAX).toMatch(word)
   })
-  it("splits every line into notation and meaning", () => {
-    const rows = syntaxRows()
+  it("splits every line into notation and meaning, each under a section", () => {
+    const sections = syntaxSections()
+    expect(sections).toHaveLength(4)
+    expect(sections.every(section => section.rows.length > 0)).toBe(true)
+    const rows = sections.flatMap(section => section.rows)
     expect(rows.every(row => row.syntax !== "" && row.meaning !== "")).toBe(true)
     expect(rows.find(row => row.syntax === "in -[A+B]- hall")?.meaning).toContain("any owner")
   })

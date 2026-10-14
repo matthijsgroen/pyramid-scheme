@@ -6,17 +6,29 @@ import { TORCH_STATES } from "./mechanics/torch"
 import { stoneArrangements } from "./mechanics/weights"
 import type { RegionAppetite } from "./regions"
 
+// A heading stands at the margin, its lines indented two; a line indented far past its notation continues the
+// meaning above. A new section or control is written here once: `yarn lock` prints it and the Lock editor's help
+// modal reads it through syntaxSections().
 export const LOCK_SYNTAX = `
-  in -- hall                    corridor, nothing on it; in and out are the way in and the way out
+THE BASIS
+  in -- hall                    a lock is regions joined by corridors; in and out are the way in and the way out
+  in -- hall -- out             one line may chain regions, a corridor between each two
+
+IN A CORRIDOR (obstacles: between the dashes, or in place of them)
   in -[S1]- hall                gate: open while S1 is in its second state
   in -[S1:a]- hall              gate: open while S1 is in state a
   in -[A+B]- hall               every owner   ·   -[A|B]- any owner
   hall >> in   in << hall       a drop, one-way along the arrow, taken only with empty hands
+  in -[unladen]- hall           a narrow passage, only with empty hands; never on a corridor with a drop
+  in -[p1]- hall   in -[p1:empty]- hall    open while a stone rests on p1, or while none does
+  in -&> hall                   the nest spot: another lock may be spliced in here, its in at in, its out at hall;
+                                one per lock, a plain corridor where nothing nests, ignored beside other items
   in -[Y]- >> hall              one corridor, its items in order from the left region, apart by spaces
   in -[A]--- hall   in ---[A]- hall   aligned left: right after what stands left of it; aligned right: right before
   in --[A]-- hall               centred: room for puzzles either side   ·   -[A]- free: the carve decides
   in -[Y]- hall   hall >> in    two lines on one pair: two corridors side by side
-  hall -[sluice:wet]            region gate: hall impassable unless sluice is wet
+
+IN A REGION (items: placed @region)
   S1 toggle @s1                 two states a b, back and forth, starts at a
   sluice toggle @hall dry wet   the same, its states named
   T1 activator @hall            off then on, for good: a floor key, or a prize; water and sand never touch it
@@ -25,36 +37,42 @@ export const LOCK_SYNTAX = `
   Y fork @in                    a fork puzzle: the gates naming it are its ways
   P sequence hall vault [reset hall-vault]   steps in order; -[P]- opens when done and resets it; reset names the corridor when P opens several
   p1 plate @hall   p2 plate @hall stone   a plate, empty or with a stone on it; any stone presses any plate
-  in -[p1]- hall   in -[p1:empty]- hall    open while a stone rests on p1, or while none does
-  in -[unladen]- hall           a narrow passage, only with empty hands; never on a corridor with a drop
-  in -&> hall                   the nest spot: another lock may be spliced in here, its in at in, its out at hall;
-                                one per lock, a plain corridor where nothing nests, ignored beside other items
+  hall -[sluice:wet]            region gate: hall impassable unless sluice is wet
   hall *   s2 $   spare ?   corridor -     takes puzzles, a reward, anything, nothing
+
+COMMENTS
   // comment                    ignored to the end of the line; a lock's file opens with // designed by: name
 `.slice(1)
 
-/** LOCK_SYNTAX as rows of notation and meaning, for a narrow screen: the meaning starts after the last gap of
+export type SyntaxSection = { heading: string; rows: { syntax: string; meaning: string }[] }
+
+/** LOCK_SYNTAX as sections of notation and meaning, for a narrow screen: the meaning starts after the last gap of
  * three spaces that is not a "·" separator, and a line indented past the notation continues the row above. */
-export const syntaxRows = (): { syntax: string; meaning: string }[] => {
-  const rows: { syntax: string; meaning: string }[] = []
+export const syntaxSections = (): SyntaxSection[] => {
+  const sections: SyntaxSection[] = []
   for (const line of LOCK_SYNTAX.split("\n")) {
     if (line.trim() === "") continue
+    if (!line.startsWith(" ")) {
+      sections.push({ heading: line, rows: [] })
+      continue
+    }
+    const { rows } = sections[sections.length - 1]
     if (/^ {20,}\S/.test(line)) {
       rows[rows.length - 1].meaning += ` ${line.trim()}`
       continue
     }
-    const gaps = [...line.trim().matchAll(/ {3,}/g)].filter(
-      gap => line.trim()[gap.index! + gap[0].length] !== "·" && line.trim()[gap.index! - 1] !== "·"
+    const text = line.trim()
+    const gaps = [...text.matchAll(/ {3,}/g)].filter(
+      gap => text[gap.index + gap[0].length] !== "·" && text[gap.index - 1] !== "·"
     )
     const at = gaps.at(-1)
-    const text = line.trim()
     rows.push(
       at
-        ? { syntax: text.slice(0, at.index), meaning: text.slice(at.index! + at[0].length) }
+        ? { syntax: text.slice(0, at.index), meaning: text.slice(at.index + at[0].length) }
         : { syntax: text, meaning: "" }
     )
   }
-  return rows
+  return sections
 }
 
 /** The words that place a control, by the mechanic they build. Typed on LockMechanic's kinds, so a control the

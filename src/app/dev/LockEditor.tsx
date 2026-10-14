@@ -1,6 +1,6 @@
 import { useDeferredValue, useEffect, useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
-import { LOCK_EXAMPLE, syntaxRows } from "@/game/lockNotation"
+import { LOCK_EXAMPLE, syntaxSections } from "@/game/lockNotation"
 import { LockPlayground } from "@/app/SiteMap/lockPlayground"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import { encodeLockHash, initialLockText } from "./lockEditorUrl"
@@ -11,7 +11,7 @@ const checkTone = (check: string) =>
 
 const SyntaxHelp: FC<{ onUse: () => void; onClose: () => void }> = ({ onUse, onClose }) => {
   const { t } = useTranslation()
-  const rows = useMemo(() => syntaxRows(), [])
+  const sections = useMemo(() => syntaxSections(), [])
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose()
     window.addEventListener("keydown", onKey)
@@ -31,13 +31,18 @@ const SyntaxHelp: FC<{ onUse: () => void; onClose: () => void }> = ({ onUse, onC
           <DeveloperButton label={t("devLockEditor.close")} onClick={onClose} />
         </div>
         <div className="flex flex-col gap-2 overflow-y-auto">
-          {rows.map(row => (
-            <div key={row.syntax} className="sm:grid sm:grid-cols-[2fr_3fr] sm:gap-3">
-              <code className="block font-mono text-xs break-words whitespace-pre-wrap text-amber-200">
-                {row.syntax}
-              </code>
-              <p className="text-xs text-white/80">{row.meaning}</p>
-            </div>
+          {sections.map(section => (
+            <section key={section.heading} className="flex flex-col gap-2">
+              <h3 className="mt-1 text-xs font-bold text-red-300 uppercase">{section.heading}</h3>
+              {section.rows.map(row => (
+                <div key={row.syntax} className="sm:grid sm:grid-cols-[2fr_3fr] sm:gap-3">
+                  <code className="block font-mono text-xs break-words whitespace-pre-wrap text-amber-200">
+                    {row.syntax}
+                  </code>
+                  <p className="text-xs text-white/80">{row.meaning}</p>
+                </div>
+              ))}
+            </section>
           ))}
           <h3 className="text-xs font-bold text-white/60 uppercase">{t("devLockEditor.example")}</h3>
           <pre className="overflow-x-auto rounded-md bg-stone-950 p-2 font-mono text-xs">{LOCK_EXAMPLE}</pre>
