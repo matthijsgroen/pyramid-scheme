@@ -33,6 +33,30 @@ export const LOCK_SYNTAX = `
   // comment                    ignored to the end of the line; a lock's file opens with // designed by: name
 `.slice(1)
 
+/** LOCK_SYNTAX as rows of notation and meaning, for a narrow screen: the meaning starts after the last gap of
+ * three spaces that is not a "·" separator, and a line indented past the notation continues the row above. */
+export const syntaxRows = (): { syntax: string; meaning: string }[] => {
+  const rows: { syntax: string; meaning: string }[] = []
+  for (const line of LOCK_SYNTAX.split("\n")) {
+    if (line.trim() === "") continue
+    if (/^ {20,}\S/.test(line)) {
+      rows[rows.length - 1].meaning += ` ${line.trim()}`
+      continue
+    }
+    const gaps = [...line.trim().matchAll(/ {3,}/g)].filter(
+      gap => line.trim()[gap.index! + gap[0].length] !== "·" && line.trim()[gap.index! - 1] !== "·"
+    )
+    const at = gaps.at(-1)
+    const text = line.trim()
+    rows.push(
+      at
+        ? { syntax: text.slice(0, at.index), meaning: text.slice(at.index! + at[0].length) }
+        : { syntax: text, meaning: "" }
+    )
+  }
+  return rows
+}
+
 /** The words that place a control, by the mechanic they build. Typed on LockMechanic's kinds, so a control the
  * parser gains must be named here, and the spec holds LOCK_SYNTAX to mentioning each word. */
 export const CONTROL_WORDS: Record<LockMechanic["control"] | "plate", RegExp> = {

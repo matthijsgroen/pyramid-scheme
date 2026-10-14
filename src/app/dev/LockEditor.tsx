@@ -1,6 +1,6 @@
-import { useDeferredValue, useMemo, useState, type FC } from "react"
+import { useDeferredValue, useEffect, useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
-import { LOCK_EXAMPLE, LOCK_SYNTAX } from "@/game/lockNotation"
+import { LOCK_EXAMPLE, syntaxRows } from "@/game/lockNotation"
 import { LockPlayground } from "@/app/SiteMap/lockPlayground"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import { encodeLockHash, initialLockText } from "./lockEditorUrl"
@@ -8,6 +8,47 @@ import { lockReport } from "./lockReport"
 
 const checkTone = (check: string) =>
   check.startsWith("✗") ? "text-red-300" : check.startsWith("⚠") ? "text-amber-300" : "text-white/80"
+
+const SyntaxHelp: FC<{ onUse: () => void; onClose: () => void }> = ({ onUse, onClose }) => {
+  const { t } = useTranslation()
+  const rows = useMemo(() => syntaxRows(), [])
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose()
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [onClose])
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3">
+      <div className="absolute inset-0 bg-black/70" onClick={onClose} />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={t("devLockEditor.syntax")}
+        className="relative flex max-h-full w-full max-w-2xl flex-col gap-3 rounded-lg border border-red-400 bg-neutral-900 p-3 text-white shadow-xl"
+      >
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="text-sm font-bold tracking-wide text-red-300 uppercase">{t("devLockEditor.syntax")}</h2>
+          <DeveloperButton label={t("devLockEditor.close")} onClick={onClose} />
+        </div>
+        <div className="flex flex-col gap-2 overflow-y-auto">
+          {rows.map(row => (
+            <div key={row.syntax} className="sm:grid sm:grid-cols-[2fr_3fr] sm:gap-3">
+              <code className="block font-mono text-xs break-words whitespace-pre-wrap text-amber-200">
+                {row.syntax}
+              </code>
+              <p className="text-xs text-white/80">{row.meaning}</p>
+            </div>
+          ))}
+          <h3 className="text-xs font-bold text-white/60 uppercase">{t("devLockEditor.example")}</h3>
+          <pre className="overflow-x-auto rounded-md bg-stone-950 p-2 font-mono text-xs">{LOCK_EXAMPLE}</pre>
+          <div>
+            <DeveloperButton label={t("devLockEditor.useExample")} onClick={onUse} />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 // Designing a lock on a phone: the notation, the checks `yarn lock` runs, its drawing, and a floor carved from it.
 // The text lives in the URL hash, so a copied link reproduces the lock.
@@ -18,6 +59,7 @@ export const LockEditor: FC<{ initialText?: string; onClose?: () => void }> = ({
   const { t } = useTranslation()
   const [text, setText] = useState(initialText)
   const [playing, setPlaying] = useState(false)
+  const [helping, setHelping] = useState(false)
   const [copied, setCopied] = useState<"copied" | "failed" | null>(null)
   // The walk can take a while on a big lock: typing stays responsive and the checks catch up.
   const shown = useDeferredValue(text)
@@ -51,8 +93,20 @@ export const LockEditor: FC<{ initialText?: string; onClose?: () => void }> = ({
     <div className="flex h-(--screen-height) flex-col gap-3 overflow-y-auto bg-neutral-900 p-4 text-white">
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-sm font-bold tracking-wide text-red-300 uppercase">{t("devLockEditor.title")}</h2>
-        {onClose && <DeveloperButton label={t("devLockEditor.close")} onClick={onClose} />}
+        <div className="flex gap-2">
+          <DeveloperButton label={t("devLockEditor.syntax")} onClick={() => setHelping(true)} />
+          {onClose && <DeveloperButton label={t("devLockEditor.close")} onClick={onClose} />}
+        </div>
       </div>
+      {helping && (
+        <SyntaxHelp
+          onUse={() => {
+            edit(LOCK_EXAMPLE)
+            setHelping(false)
+          }}
+          onClose={() => setHelping(false)}
+        />
+      )}
       <textarea
         aria-label={t("devLockEditor.notation")}
         value={text}
@@ -73,13 +127,6 @@ export const LockEditor: FC<{ initialText?: string; onClose?: () => void }> = ({
           </span>
         )}
       </div>
-      <details className="rounded-md border border-white/20 p-2">
-        <summary className="cursor-pointer text-sm font-bold text-red-300">{t("devLockEditor.syntax")}</summary>
-        <pre className="mt-2 overflow-x-auto font-mono text-xs whitespace-pre text-white/90">{LOCK_SYNTAX}</pre>
-        <h3 className="mt-3 mb-1 text-xs font-bold text-white/60 uppercase">{t("devLockEditor.example")}</h3>
-        <pre className="mb-2 overflow-x-auto rounded-md bg-stone-950 p-2 font-mono text-xs">{LOCK_EXAMPLE}</pre>
-        <DeveloperButton label={t("devLockEditor.useExample")} onClick={() => edit(LOCK_EXAMPLE)} />
-      </details>
       <section aria-label={t("devLockEditor.checks")}>
         <h3 className="mb-1 text-xs font-bold text-white/60 uppercase">{t("devLockEditor.checks")}</h3>
         <ul className="font-mono text-sm">
