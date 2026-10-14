@@ -7,6 +7,7 @@ import { HANDLE_META } from "./game/handle/meta"
 import { TORCH_META } from "./game/torch/meta"
 import { PRESSURE_PLATE_META } from "./game/pressurePlate/meta"
 import { STONE_PLATE_META } from "./game/stonePlate/meta"
+import { STONE_PIPE_META } from "./game/stonePipe/meta"
 import { SAND_META, WATER_META } from "./game/regionBarrier/meta"
 import { ZIPLINE_META } from "./game/zipline/meta"
 
@@ -19,7 +20,7 @@ import { ZIPLINE_META } from "./game/zipline/meta"
 //
 // The control KINDS are core's (src/game/mechanics) and stay when this mod is off. What this mod provides is
 // their REALISATIONS: the handle and torch dress a toggle, a flame and an activator, the lightbeam switch a
-// fork-switch, the pressure plate a sequence, the stone plate a lock's stones, the zipline a one-way, water and sand a
+// fork-switch, the pressure plate a sequence, the stone plate a lock's stones, the stone pipe a lock's pipe, the zipline a one-way, water and sand a
 // region barrier, the narrow passage a gate empty hands alone open, the gate face the reader of a door. A floor
 // authoring a mechanic is refused by name where none of these is registered.
 //
@@ -39,6 +40,7 @@ export const topologyMod: ModDescriptor = {
     GATE_FACE_META,
     PRESSURE_PLATE_META,
     STONE_PLATE_META,
+    STONE_PIPE_META,
   ],
   oneWayRealisations: [ZIPLINE_META],
   regionBarrierRealisations: [WATER_META, SAND_META],

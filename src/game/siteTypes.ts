@@ -314,6 +314,10 @@ export type RoomCell = {
    * mechanism state, never the cell's: the record sits on the lock's first plate, and every plate works the
    * moves that record places at it through `worksMechanism`. */
   plate?: { id: string }
+  /** A HOLE OF A LOCK'S STONE PIPE, in the back wall of this node: `pipe` is the pipe's id, `region` the region it
+   * stands in (`${pipe}@${region}` is the hole's id). Whether a stone lies in it is the stones' mechanism state,
+   * as for a plate; the hole works the moves made at it through `worksMechanism`. */
+  pipeHole?: { pipe: string; region: string }
   /** WHICH MECHANISM THIS ROOM BELONGS TO, said in a glyph on a coloured ground (src/app/SiteMap/mark.tsx).
    * A mechanism's room and every gate it owns carry the same pair, and that pairing is the only thing
    * on the floor that says which lever drives which door. Unset everywhere else. */

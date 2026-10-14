@@ -1,6 +1,6 @@
 import { DOOR_FACE_ROLE } from "../encounterFallback"
 import { withGateFaces } from "../gateFace"
-import { degradeUnrealised, unrealisedSequences, unrealisedWeights } from "../mechanics/realisations"
+import { degradeUnrealised, unrealisedPipes, unrealisedSequences, unrealisedWeights } from "../mechanics/realisations"
 import { withPassages } from "../passages"
 import type { FloorGrid } from "../siteTypes"
 import type { FloorPrep } from "./state"
@@ -18,6 +18,7 @@ export const finish = (prep: FloorPrep, grid: FloorGrid): FloorGrid => {
   const bare = degradeUnrealised(grid, resolveEncounter, {
     sequences: unrealisedSequences(controls, resolveEncounter),
     weights: unrealisedWeights(controls, resolveEncounter),
+    pipes: unrealisedPipes(controls, resolveEncounter),
     oneWays: prep.realisation.oneWaysUnrealised,
     regionBarriers: prep.realisation.regionBarriersUnrealised,
   })

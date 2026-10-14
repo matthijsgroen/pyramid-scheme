@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest"
 import { resolveEncounterMeta } from "@/mods/allFamilyMeta"
 import { TOPOLOGY_OFF } from "@/game/testSupport/modOff"
 import { oneWayRuns } from "../gridNavigation"
-import type { Control } from "../obstacles"
+import type { Control, WeightsControl } from "../obstacles"
 import type { CorridorCell, Direction, FloorGrid, GridCell, RoomCell } from "../siteTypes"
-import { degradeUnrealised, unrealisedSequences, unrealisedWeights } from "./realisations"
+import { degradeUnrealised, unrealisedPipes, unrealisedSequences, unrealisedWeights } from "./realisations"
 
 const sequence = (encounter?: string): Control => ({
   id: "plates",
@@ -216,6 +216,26 @@ describe("the stone plate that realises a lock's stones", () => {
   it("is realised with its mod on and unrealised with it off", () => {
     expect([...unrealisedWeights([stones("stonePlate")], resolveEncounterMeta)]).toEqual([])
     expect([...unrealisedWeights([stones("stonePlate")], TOPOLOGY_OFF.resolveEncounter)]).toEqual(["a.stones"])
+  })
+
+  it("realises a pipe with its mod on, and leaves its holes as ground with it off", () => {
+    const piped: WeightsControl = {
+      ...(stones("stonePlate") as WeightsControl),
+      pipes: [{ id: "a.P", ends: ["a.in", "a.out"] }],
+      pipeEncounter: "stonePipe",
+    }
+    expect([...unrealisedPipes([piped], resolveEncounterMeta)]).toEqual([])
+    expect([...unrealisedPipes([piped], TOPOLOGY_OFF.resolveEncounter)]).toEqual(["a.stones"])
+    expect([...unrealisedPipes([stones("stonePlate")], TOPOLOGY_OFF.resolveEncounter)]).toEqual([])
+    const hole = room(["e"], {
+      pipeHole: { pipe: "a.P", region: "a.in" },
+      worksMechanism: { mechanismId: "a.stones", transition: 0 },
+    })
+    const bare = degradeUnrealised(rowGrid([hole, ground(["w"])]), TOPOLOGY_OFF.resolveEncounter, {
+      ...NOTHING,
+      pipes: new Set(["a.stones"]),
+    })
+    expect(bare.cells[0][0]).toMatchObject({ type: "corridor", dirs: new Set(["e"]) })
   })
 
   it("leaves every plate as ground, and the doors only the stones held stand open as ground", () => {

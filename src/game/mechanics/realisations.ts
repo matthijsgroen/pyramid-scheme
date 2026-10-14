@@ -40,6 +40,17 @@ export const unrealisedWeights = (controls: readonly Control[], resolve: Resolve
       .map(control => control.id)
   )
 
+/** THE LOCKS' PIPES WHOSE REALISATION THE BUILD CANNOT ANSWER, by the stones' control id: their holes are left as
+ * ground. */
+export const unrealisedPipes = (controls: readonly Control[], resolve: ResolveEncounter): ReadonlySet<string> =>
+  new Set(
+    controls
+      .filter(isWeights)
+      .filter(control => (control.pipes ?? []).length > 0)
+      .filter(control => !answered(resolve, control.pipeEncounter, DEFAULT_CONTROL_ROLE))
+      .map(control => control.id)
+  )
+
 /** What a corridor keeps of the room it was: its place in the carve and nothing the room held. */
 const groundOf = (cell: RoomCell): CorridorCell => ({
   type: "corridor",
@@ -82,13 +93,16 @@ const bareJunction = (cell: RoomCell, dropped: ReadonlySet<string>): RoomCell =>
 type Unrealised = {
   sequences: ReadonlySet<string>
   weights?: ReadonlySet<string>
+  /** The stones whose pipe no mod realises: its holes are ground. */
+  pipes?: ReadonlySet<string>
   oneWays: boolean
   regionBarriers?: boolean
 }
 
 /**
  * TAKES THE MECHANICS NO REGISTERED MOD REALISES OFF A FINISHED CARVE, leaving every wall where it was:
- * - a mechanism room is a bare node (a junction stays a junction, empty), and a sequence's tiles and a lock's plates are ground;
+ * - a mechanism room is a bare node (a junction stays a junction, empty), and a sequence's tiles, a lock's plates and
+ *   its pipe's holes are ground;
  * - a door that only such mechanisms owned stands open as plain ground, a region barrier's included;
  * - a door another owner still has (a mechanism that is realised, or a floor key) keeps standing;
  * - a one-way whose realisation is missing is an ordinary two-way passage;
@@ -98,14 +112,16 @@ type Unrealised = {
 export const degradeUnrealised = (
   grid: FloorGrid,
   resolve: ResolveEncounter,
-  { sequences, weights = new Set(), oneWays, regionBarriers = false }: Unrealised
+  { sequences, weights = new Set(), pipes = new Set(), oneWays, regionBarriers = false }: Unrealised
 ): FloorGrid => {
   const isBare = (cell: RoomCell): boolean =>
     cell.sequenceTile !== undefined
       ? sequences.has(cell.sequenceTile.id)
       : cell.plate !== undefined
         ? weights.has(cell.worksMechanism?.mechanismId ?? "")
-        : cell.mechanism !== undefined && cell.family !== undefined && !answered(resolve, cell.family, cell.family)
+        : cell.pipeHole !== undefined
+          ? weights.has(cell.worksMechanism?.mechanismId ?? "") || pipes.has(cell.worksMechanism?.mechanismId ?? "")
+          : cell.mechanism !== undefined && cell.family !== undefined && !answered(resolve, cell.family, cell.family)
 
   const droppedKeys = new Set<string>()
   const liveKeys = new Set<string>()
@@ -122,6 +138,7 @@ export const degradeUnrealised = (
     droppedIds.size === 0 &&
     sequences.size === 0 &&
     weights.size === 0 &&
+    pipes.size === 0 &&
     !oneWays &&
     !regionBarriers
   )

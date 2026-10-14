@@ -21,6 +21,7 @@ export const REALISATION_CHOICES: Readonly<Record<string, readonly string[]>> = 
   "one-way": ["zipline"],
   "region-barrier": ["water", "sand"],
   weights: ["stonePlate"],
+  pipe: ["stonePipe"],
   unladen: ["narrowPassage"],
 }
 
