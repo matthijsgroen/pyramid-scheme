@@ -8,10 +8,7 @@ import { gateKeyOf } from "./ids"
 import { renderGround, renderShut } from "./render"
 import type { RenderState, WritableGrid } from "./render"
 import { MAIN_SECTION_ADDRESS } from "./sections"
-import type { CarveState, FloorPrep, Refusal } from "./state"
-
-/** What settling reads beyond the renderer: the reserved junctions, the `{ in }` forks' junctions and the chains. */
-export type SettleState = RenderState & Pick<Required<CarveState>, "forks" | "junctions" | "keys">
+import type { FloorPrep, Refusal } from "./state"
 
 const at = (pk: string): [number, number] => {
   const [r, c] = pk.split(",").map(Number)
@@ -37,17 +34,13 @@ export const duplicateSlot = (grid: FloorGrid): Refusal | undefined => {
 }
 
 /**
- * THE CHECKS THAT READ THE RENDERED GRID, in the order the carve has always asked them: the carve with its
- * reserved junctions open and with them all shut, the switches' names, what each region will take, and the
- * carve against its layout.
+ * THE CHECKS THAT READ THE RENDERED GRID, writing no cell: the carve with its reserved junctions open and with
+ * them all shut, no two rooms of a section under one name, what each region will take, and the carve against
+ * its layout. The first two read views of their own, rendered from the same decisions.
  */
-export const settle = (prep: FloorPrep, state: SettleState, grid: WritableGrid): Refusal | void => {
+export const validate = (prep: FloorPrep, state: RenderState, grid: WritableGrid): Refusal | void => {
   const { floorRef } = prep.input
-  const { config } = prep.config
   const ground = renderGround(prep, state)
-
-  const bareDuplicate = duplicateSlot(ground)
-  if (bareDuplicate) return bareDuplicate
 
   // A CARVE HAS TO SURVIVE ITS RESERVED JUNCTIONS BEING CLOSED, AND SURVIVE THEM BEING OPEN — neither asked of
   // `switches`, so a mod being absent cannot change which attempt is kept. Each is a view of its own: the grid
@@ -55,17 +48,8 @@ export const settle = (prep: FloorPrep, state: SettleState, grid: WritableGrid):
   if (!validateSite(ground).valid) return { retry: [] }
   if (!validateSite(renderShut(prep, state)).valid) return { retry: [] }
 
-  // Asked again, because a switch's name only exists once a family is in the junction.
-  if (config.switches) {
-    const switchedDuplicate = duplicateSlot(grid)
-    if (switchedDuplicate) return switchedDuplicate
-  }
-
-  // Asked again, because a fork-switch's name only exists once its encounter stands in the junction.
-  if (prep.mechanisms.forkSwitches.length > 0) {
-    const standingDuplicate = duplicateSlot(grid)
-    if (standingDuplicate) return standingDuplicate
-  }
+  const duplicate = duplicateSlot(grid)
+  if (duplicate) return duplicate
 
   const { regionLayout } = prep.layout
   if (regionLayout) {

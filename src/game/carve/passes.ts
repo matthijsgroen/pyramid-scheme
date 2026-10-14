@@ -13,6 +13,7 @@ import { placeJunctions } from "./placeJunctions"
 import { placeMainContent } from "./placeMainContent"
 import { relayKeys } from "./relayKeys"
 import { render } from "./render"
+import type { RenderState } from "./render"
 import { reserveJunctions } from "./reserveJunctions"
 import { seatChainGates } from "./seatChainGates"
 import { seatGateRuns } from "./seatGateRuns"
@@ -20,11 +21,10 @@ import { seatMainBarrierDoors } from "./seatMainBarrierDoors"
 import { seatMainControls } from "./seatMainControls"
 import { seatRouteRegions } from "./seatRouteRegions"
 import { seatSeamGates } from "./seatSeamGates"
-import { settle } from "./settle"
-import type { SettleState } from "./settle"
 import { requireReads } from "./state"
 import type { Finish, PassEntry } from "./state"
 import { shutSwitchGround } from "./shutSwitchGround"
+import { validate } from "./validate"
 import { standForkSwitches } from "./standForkSwitches"
 import { standPieces } from "./standPieces"
 import { standSwitches } from "./standSwitches"
@@ -60,7 +60,7 @@ export const PASSES: readonly PassEntry[] = [
   standForkSwitches,
 ]
 
-/** What the tail reads: every key `render`, `settle` and `standPieces` take from the passes, each checked as a pass's are. */
+/** What the tail reads: every key `render`, `validate` and `standPieces` take from the passes, each checked as a pass's are. */
 export const TAIL_READS = [
   "maze",
   "branches",
@@ -72,19 +72,17 @@ export const TAIL_READS = [
   "switchDoors",
   "drops",
   "forks",
-  "junctions",
-  "keys",
   "switchWays",
   "switchRooms",
   "forkSwitchRooms",
-] as const satisfies readonly (keyof SettleState)[]
+] as const satisfies readonly (keyof RenderState)[]
 
 /**
- * THE TAIL OF AN ATTEMPT, once every pass holds: render writes the grid from the decisions, settle asks the
- * grid's checks, the pieces a walk steps on stand on it, and finish dresses the carve that passes them.
+ * THE TAIL OF AN ATTEMPT, once every pass holds: render writes the grid from the decisions, validate asks
+ * the grid's checks, the pieces a walk steps on stand on it, and finish dresses the carve that passes them.
  */
 export const finishAttempt: Finish = (prep, state) => {
   const decided = requireReads("render", TAIL_READS, state)
   const grid = render(prep, decided)
-  return settle(prep, decided, grid) ?? standPieces(prep, decided, grid) ?? finish(prep, grid)
+  return validate(prep, decided, grid) ?? standPieces(prep, decided, grid) ?? finish(prep, grid)
 }

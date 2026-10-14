@@ -1,10 +1,16 @@
 import { describe, expect, it } from "vitest"
-import { freshState, noLabels, plainFloor, prepOf, DIR_MOVE, findRoom } from "./carveFixtures"
+import { defaultResolveEncounter } from "../encounterFallback"
+import type { ResolveEncounter } from "../siteAssembler"
+import { firstCarved, freshState, noLabels, plainFloor, prepOf, DIR_MOVE, findRoom } from "./carveFixtures"
 import { makePkey } from "./grid"
+import { switchMark } from "./ids"
+import { prepareFloor } from "./prepareFloor"
 import { render, renderShut } from "./render"
+import type { RenderState } from "./render"
+import { validate } from "./validate"
 import { assembleFloor } from "./assembleFloor"
 import type { Cell, OneWayEdge, RoomSpec } from "./state"
-import type { Direction, FloorConfig, FloorGrid, RoomCell } from "../siteTypes"
+import type { Direction, FloorConfig, FloorGrid, GridCell, RoomCell } from "../siteTypes"
 // A walk of three nodes along row 0 (0,0 → 0,2 → 0,4), the entrance and exit rooms at its ends, and a node at
 // 4,4 a vertical drop below the exit.
 describe("render", () => {
@@ -186,5 +192,61 @@ describe("fork exits", () => {
     // every fork the carve produces owns both its main-path directions and exactly one side.
     expect(expected.filter(e => e.kind === "main").length).toBe(2)
     expect(expected.filter(e => e.kind === "side").length).toBe(1)
+  })
+})
+
+// A switch needs a family the player can walk back into, which these specs grant without the registry.
+const reEnterable: ResolveEncounter = (encounter, defaultTag) => ({
+  ...defaultResolveEncounter(encounter, defaultTag),
+  reEnterable: true,
+})
+
+const switchFloor = (switches?: FloorConfig["switches"]): FloorConfig => ({
+  pathPuzzles: 2,
+  difficulty: "junior",
+  end: "treasure",
+  exitOrStaircase: "exit",
+  sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure" }],
+  forks: [{ exits: 2, count: 1 }],
+  ...(switches ? { switches } : {}),
+})
+
+/** The first seed whose first carved attempt passes the grid's checks, with its prep and grid. */
+const checked = (config: FloorConfig) => {
+  for (let seed = 0; seed < 40; seed++) {
+    const prepared = prepareFloor(`site-${seed}`, config, seed, {
+      resolveEncounter: reEnterable,
+      floorRef: { journeyId: "render-spec", levelIndex: 0, floorIndex: 0 },
+    })
+    if (!prepared.ok) throw new Error(JSON.stringify(prepared.reasons))
+    const { prep } = prepared
+    const state = firstCarved(prep) as RenderState
+    const grid = render(prep, state)
+    if (validate(prep, state, grid) === undefined) return { prep, state, grid }
+  }
+  throw new Error("no seed passed")
+}
+
+const roomsOf = (cells: readonly (readonly GridCell[])[]) =>
+  cells.flat().filter((cell): cell is RoomCell => cell.type === "room")
+
+describe("a switch on a carved floor", () => {
+  it("stands the switch in its junction, and marks it and its doors with the attempt's own switch mark", () => {
+    const { prep, state, grid } = checked(switchFloor({ encounter: "sumplete", min: 1, max: 1 }))
+    const [r, c] = state.forks.reserved[0].split(",").map(Number)
+    const mark = switchMark(prep, 0)
+    expect(grid.cells[r][c]).toMatchObject({ roomType: "fork", family: "sumplete", mark })
+    const doors = roomsOf(grid.cells).filter(cell => cell.requiredKeyId?.startsWith("switch:"))
+    expect(doors.length).toBeGreaterThan(0)
+    for (const door of doors) expect(door.mark).toEqual(mark)
+    expect([...prep.marks.markByGateKey.keys()].filter(key => key.startsWith("switch:"))).toEqual([])
+  })
+
+  it("opens a reserved junction again where no switch stands in it", () => {
+    const { state, grid } = checked(switchFloor())
+    const [r, c] = state.forks.reserved[0].split(",").map(Number)
+    expect(grid.cells[r][c]).toMatchObject({ roomType: "fork" })
+    expect(grid.cells[r][c]).not.toHaveProperty("mechanism")
+    expect(roomsOf(grid.cells).filter(cell => cell.requiredKeyId?.startsWith("switch:"))).toEqual([])
   })
 })

@@ -14,7 +14,7 @@ const runPasses = (prep: FloorPrep, state: CarveState, passes: readonly PassEntr
 
 /**
  * THE ATTEMPT LOOP: each attempt climbs the ladder, runs every pass over a fresh state and then the
- * tail (`finishAttempt`: render, settle, finish), until one carves or the budget is spent. The rung and the shortfalls are all it carries from one
+ * tail (`finishAttempt`: render, validate, the pieces, finish), until one carves or the budget is spent. The rung and the shortfalls are all it carries from one
  * attempt to the next.
  */
 export const carveFloor = (prep: FloorPrep, passes: readonly PassEntry[], finishAttempt: Finish): AssemblerResult => {

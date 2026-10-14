@@ -3,7 +3,7 @@ import { placeWeights } from "../weightsPlates"
 import { keyOf } from "./derive"
 import { gateKeyOf, obstacleMode } from "./ids"
 import type { WritableGrid } from "./render"
-import { duplicateSlot } from "./settle"
+import { duplicateSlot } from "./validate"
 import type { CarveState, FloorPrep, Refusal } from "./state"
 
 /** What standing the pieces reads beyond the grid: the route, and every reserved junction's ways out. */
