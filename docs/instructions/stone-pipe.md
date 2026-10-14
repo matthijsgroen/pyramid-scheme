@@ -16,9 +16,9 @@ for it.
 - **A hole holds the stone that arrived.** Posting a stone: it leaves the hands and lies in the far hole. The hole
   posted into stays empty. The player takes it out of the far hole.
 
-## Questions for tonight
+## Questions answered (2026-10-14)
 
-Each has a proposed default; the plan builds the default unless the designer says otherwise.
+The designer took every proposed default, and Claude adds question 7's line to masonsRamp.
 
 1. **Post while a stone lies in either hole?** Proposed: no. The pipe carries one stone at a time; take it out
    first. This also refuses a post into a full far hole (the stone stays in hand).

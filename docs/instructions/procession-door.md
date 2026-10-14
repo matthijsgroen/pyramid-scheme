@@ -29,9 +29,13 @@ The lock walk does not change.
 - **Glyphs:** the door's tiles wear the procession family's glyphs, the bars' own. Tile and bar show the same
   procession glyph; the mark glyphs are not used for these tiles.
 
-## Questions for tonight
+## Questions answered (2026-10-14)
 
-Each has a proposed default; the plan builds the default unless the designer says otherwise.
+The designer took every proposed default, with one change: **the lock names it.** `P procession hall vault [reset hall-vault]`
+is a sequence whose door is a procession board; `sequence` stays the pressure-plate door. The word compiles to
+the `sequence` control with `procession: true`, and the carve binds that role to `procession-door` itself, so no
+floor binding is needed (a floor binding that names another realisation for it is refused, `processionRebound`).
+Contract §1 gains this one exception: the word changes the puzzle, not the look.
 
 1. **Do the floor tiles still turn blue and red?** Today a tile shows in order / out of order. Under a procession
    door that lets a player find the order by trial (step, look, reset). Proposed: keep it. Walking between rooms
@@ -129,8 +133,8 @@ A unique arrangement with distinct starts has a unique start order, so **no new 
 - **Mod off:** the realisation is unregistered, so the sequence is unrealised (`degradeUnrealised`): tiles are
   ground, a door only it owned stands open, walls unchanged. Marks on that floor may differ from mod-on
   (question 8's exclusion needs the cast); walls may not.
-- **Binding**, like every realisation: `realisations: { sequence: "procession-door" }` per floor. No lock keyword:
-  a lock never names a realisation (contract §1).
+- **Binding:** the lock word `procession` binds the role to `procession-door`; no per-floor binding (see Questions
+  answered).
 
 ## Tasks
 
