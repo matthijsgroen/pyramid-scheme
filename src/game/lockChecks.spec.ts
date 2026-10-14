@@ -83,3 +83,12 @@ describe("the door check in the lock's verdict", () => {
     expect(sound).toBe(true)
   })
 })
+
+describe("the pipe in the lock's verdict", () => {
+  it("prints the regions a pipe joins", () => {
+    const { checks } = lockChecks(
+      parsed("in -[unladen]- hall", "hall -[p]- out", "p plate @hall", "shelf plate @in stone", "P pipe @in @hall")
+    )
+    expect(checks).toContain("pipe P: in ⇄ hall")
+  })
+})

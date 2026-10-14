@@ -110,3 +110,12 @@ describe("drawLock, with a barrier named like an object method", () => {
     expect(drawLock(renamed as typeof lock, drafts)).toContain("■T")
   })
 })
+
+describe("a stone pipe in the drawing", () => {
+  it("draws a hole in each region it joins, full where a stone starts, and names it in the legend", () => {
+    const drawn = drawLock(parseLock("in -[unladen]- hall\nhall -[p]- out\np plate @hall\nP pipe @in @hall stone").lock)
+    expect(drawn).toContain("[in · ○P]")
+    expect(drawn).toContain("●P]")
+    expect(drawn).toContain("○ pipe hole   ● hole with a stone")
+  })
+})

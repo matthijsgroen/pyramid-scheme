@@ -5,7 +5,7 @@ import { SEQUENCE } from "./sequence"
 import { ACTIVATOR, TOGGLE } from "./toggle"
 import { FLAME } from "./torch"
 import { UNLADEN } from "./unladen"
-import { WEIGHTS } from "./weights"
+import { PIPE, WEIGHTS } from "./weights"
 
 export type {
   Compiled,
@@ -25,6 +25,7 @@ export const CORE_MECHANICS: readonly MechanicKind[] = [
   FORK_SWITCH,
   ONE_WAY,
   WEIGHTS,
+  PIPE,
   UNLADEN,
 ]
 

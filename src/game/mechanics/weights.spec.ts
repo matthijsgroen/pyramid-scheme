@@ -16,10 +16,10 @@ describe("stoneArrangements", () => {
   it("lifts only with empty hands and sets down only on an empty plate", () => {
     const { moves } = stoneArrangements(lockOf("in -[b]- out\nb plate @in\na plate @in stone"))
     expect(moves).toEqual([
-      { from: "a", to: "+ hand", plate: "a" },
-      { from: "+ hand", to: "a", plate: "a" },
-      { from: "+ hand", to: "b", plate: "b" },
-      { from: "b", to: "+ hand", plate: "b" },
+      { from: "a", to: "+ hand", kind: "lift", plate: "a" },
+      { from: "+ hand", to: "a", kind: "set", plate: "a" },
+      { from: "+ hand", to: "b", kind: "set", plate: "b" },
+      { from: "b", to: "+ hand", kind: "lift", plate: "b" },
     ])
   })
 
@@ -58,7 +58,7 @@ describe("stoneArrangements", () => {
 })
 
 const controlOf = (text: string) => {
-  const result = compileLock(parseLock(text).lock, { weights: "stonePlate", toggle: "handle" })
+  const result = compileLock(parseLock(text).lock, { weights: "stonePlate", toggle: "handle", pipe: "stonePipe" })
   if (!result.ok) throw new Error(JSON.stringify(result.faults))
   return result.fragment.controls.find(isWeights)!
 }
@@ -112,10 +112,10 @@ describe("arrangementOf", () => {
   })
 
   it("names the plates holding a stone and whether the hand holds one", () => {
-    expect(arrangementOf("a.p a.q + hand")).toEqual({ weighted: ["a.p", "a.q"], hand: true })
-    expect(arrangementOf("+ hand")).toEqual({ weighted: [], hand: true })
-    expect(arrangementOf("a.p")).toEqual({ weighted: ["a.p"], hand: false })
-    expect(arrangementOf("none")).toEqual({ weighted: [], hand: false })
+    expect(arrangementOf("a.p a.q + hand")).toEqual({ weighted: ["a.p", "a.q"], holes: [], hand: true })
+    expect(arrangementOf("+ hand")).toEqual({ weighted: [], holes: [], hand: true })
+    expect(arrangementOf("a.p")).toEqual({ weighted: ["a.p"], holes: [], hand: false })
+    expect(arrangementOf("none")).toEqual({ weighted: [], holes: [], hand: false })
   })
 })
 
@@ -178,8 +178,8 @@ describe("poolStones", () => {
   })
 
   it("sets a stone lifted in one lock on a plate of the other", () => {
-    expect(pooled.moves).toContainEqual({ from: "a.shelf b.rest", to: "b.rest + hand", plate: "a.shelf" })
-    expect(pooled.moves).toContainEqual({ from: "b.rest + hand", to: "b.q b.rest", plate: "b.q" })
+    expect(pooled.moves).toContainEqual({ from: "a.shelf b.rest", to: "b.rest + hand", kind: "lift", plate: "a.shelf" })
+    expect(pooled.moves).toContainEqual({ from: "b.rest + hand", to: "b.q b.rest", kind: "set", plate: "b.q" })
   })
 
   it("never lifts a second stone while one is in hand", () => {
@@ -190,5 +190,62 @@ describe("poolStones", () => {
 
   it("opens a lock's gate on a stone on its plate, wherever the stone came from", () => {
     expect(pooled.opens["b.q b.rest"]).toEqual(["b.in-out"])
+  })
+})
+
+describe("a stone pipe", () => {
+  const PIPED = "in -- hall\nin -[q]- out\nshelf plate @in stone\nq plate @hall\nP pipe @in @hall"
+  const { states, moves, initial } = stoneArrangements(lockOf(PIPED))
+
+  it("posts a stone in hand at one hole and lays it in the other, leaving the hand empty", () => {
+    expect(moves).toContainEqual({ from: "+ hand", to: "P@hall", kind: "post", hole: "P@in" })
+    expect(moves).toContainEqual({ from: "+ hand", to: "P@in", kind: "post", hole: "P@hall" })
+  })
+
+  it("takes a stone out of the hole it lies in, with empty hands", () => {
+    expect(moves).toContainEqual({ from: "P@hall", to: "+ hand", kind: "take", hole: "P@hall" })
+    expect(moves.filter(move => move.from === "P@hall" && move.kind === "take")).toHaveLength(1)
+  })
+
+  it("posts nothing while either hole holds a stone", () => {
+    const two = stoneArrangements(lockOf(`${PIPED}\nrest plate @in stone`))
+    const posts = two.moves.filter(move => move.kind === "post")
+    expect(posts.length).toBeGreaterThan(0)
+    expect(posts.every(move => !arrangementOf(move.from).holes.length)).toBe(true)
+    expect(two.states).toContain("rest P@hall")
+    expect(two.states).toContain("P@hall + hand")
+    expect(two.moves.filter(move => move.from === "P@hall + hand" && move.kind === "post")).toEqual([])
+  })
+
+  it("never creates or loses a stone: plates, holes and hand add up to the lock's stones in every arrangement", () => {
+    const two = stoneArrangements(lockOf(`${PIPED}\nrest plate @in stone`))
+    for (const key of two.states) {
+      const { weighted, holes, hand } = arrangementOf(key)
+      expect(weighted.length + holes.length + Number(hand)).toBe(2)
+    }
+    expect(states.every(key => arrangementOf(key).holes.length <= 1)).toBe(true)
+  })
+
+  it("starts a stone in the hole the line names", () => {
+    const started = stoneArrangements(lockOf("in -- hall\nin -[q]- out\nq plate @in\nP pipe @in @hall stone"))
+    expect(started.initial).toBe("P@hall")
+    expect(started.moves).toContainEqual({ from: "P@hall", to: "+ hand", kind: "take", hole: "P@hall" })
+  })
+
+  it("leaves a pipe-free lock's arrangements as they were", () => {
+    const plain = stoneArrangements(lockOf("in -[b]- out\nb plate @in\na plate @in stone"))
+    expect(plain.states).toEqual(["a", "+ hand", "b"])
+    expect(initial).toBe("shelf")
+  })
+
+  it("places a hole's moves at its hole's cell", () => {
+    const control = controlOf(PIPED)
+    const record = compileWeights(
+      control,
+      place => (place === "P@hall" ? [4, 4] : place === "P@in" ? [2, 2] : [0, 0]),
+      id => ({ gateKeyId: `k:${id}` })
+    )
+    expect(record.transitions).toContainEqual({ from: "P@hall", to: "+ hand", at: [4, 4] })
+    expect(record.transitions).toContainEqual({ from: "+ hand", to: "P@hall", at: [2, 2] })
   })
 })

@@ -72,6 +72,10 @@ const doorLines = (late: string[] | "tooLarge", lesson: boolean): string[] => {
   return [`${lesson ? "✗" : "⚠"} its control is reached before its door is seen: ${late.join(", ")}`]
 }
 
+/** The lock's pipe, by the regions its holes join. */
+const pipeLines = (lock: Lock): string[] =>
+  Object.entries(lock.weights?.pipes ?? {}).map(([id, { ends }]) => `pipe ${id}: ${ends[0]} ⇄ ${ends[1]}`)
+
 /** Every check the detail view prints, and whether the lock passes them all. A lesson must also show each shut
  * door before its control. */
 export const lockChecks = ({ lock, drafts, refused }: ParsedLock, { lesson = false } = {}) => {
@@ -100,6 +104,7 @@ export const lockChecks = ({ lock, drafts, refused }: ParsedLock, { lesson = fal
     `at the start ${open.length > 0 ? `these gates stand open: ${open.join(", ")}` : "no gate stands open"}`,
     ...doorLines(late, lesson),
     ...nestSpotLines(lock),
+    ...pipeLines(lock),
     ...needsFace(lock).map(({ gate, owners }) => `${gate} shows what it waits for: ${owners.join(", ")}`),
   ]
   const sound =

@@ -378,6 +378,7 @@ describe("a lock using a mechanic that is not built yet", () => {
       "fork-switch",
       "one-way",
       "weights",
+      "pipe",
       "unladen",
     ])
     expect(CORE_MECHANICS.every(kind => kind.built)).toBe(true)
@@ -585,6 +586,30 @@ describe("a lock with stones", () => {
     const lock = plateLock()
     const weights = { plates: { ...lock.weights!.plates, p: { ...lock.weights!.plates.p, in: "cellar" } } }
     expect(checkLock({ ...lock, weights })).toContainEqual({ type: "plateNamesNoRegion", plate: "p", region: "cellar" })
+  })
+
+  it("refuses a pipe whose hole stands in a region the lock does not have", () => {
+    const lock = plateLock()
+    const weights = { ...lock.weights!, pipes: { P: { ends: ["in", "cellar"] as const } } }
+    expect(checkLock({ ...lock, weights })).toContainEqual({ type: "pipeNamesNoRegion", pipe: "P", region: "cellar" })
+  })
+
+  it("asks a binding for a pipe's holes under pipe, and carries the namespaced pipe", () => {
+    const lock = plateLock()
+    const piped = {
+      ...lock,
+      weights: { ...lock.weights!, pipes: { P: { ends: ["in", "out"] as const, stone: "out" } } },
+    }
+    expect(compile(piped, { ...BINDING, weights: "stonePlate" })).toEqual({
+      ok: false,
+      faults: [{ type: "unboundRole", kind: "pipe", mechanics: ["P"] }],
+    })
+    const fragment = fragmentOf(piped, { ...BINDING, weights: "stonePlate", pipe: "stonePipe" }, "a")
+    expect(fragment.controls.find(c => c.control === "weights")).toMatchObject({
+      pipes: [{ id: "a.P", ends: ["a.in", "a.out"], stone: "a.out" }],
+      initial: "a.shelf a.P@a.out",
+      pipeEncounter: "stonePipe",
+    })
   })
 
   it("refuses unladen on a lock without stones", () => {

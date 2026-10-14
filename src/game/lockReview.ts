@@ -2,6 +2,7 @@
 import type { Lock } from "./lockAuthoring"
 import { barriersOf, isRegionGate, joinOf } from "./lockAuthoring"
 import { WEIGHTS, walkSpecOf, isStretch } from "./lockWalkSpec"
+import { arrangementOf } from "./mechanics/weights"
 import { finished, openGates, reachableStates, walkLock } from "./lockWalk"
 import type { LockSpec, LockState } from "./lockWalk"
 
@@ -55,7 +56,7 @@ export const solveLock = (spec: LockSpec): { steps: string[]; actions: number } 
       const id = Object.keys(b.config).find(m =>
         spec.mechanisms[m].transitions.some(t => t.at === a.region && t.from === a.config[m] && t.to === b.config[m])
       )!
-      steps.push(id === WEIGHTS ? stoneMove(a.config[id], b.config[id]) : `${id}:${b.config[id]}`)
+      steps.push(id === WEIGHTS ? stoneMove(a.config[id], b.config[id], a.region) : `${id}:${b.config[id]}`)
       actions++
       continue
     }
@@ -79,12 +80,13 @@ export const solveLock = (spec: LockSpec): { steps: string[]; actions: number } 
   return { steps, actions }
 }
 
-// "door e1" to "e1 + hand": the one plate that changed, said as the player did it.
-const stoneMove = (before: string, after: string) => {
-  const plates = (key: string) => new Set(key.split(" ").filter(token => !["+", "hand", "none"].includes(token)))
-  const [was, is] = [plates(before), plates(after)]
-  const lifted = [...was].find(plate => !is.has(plate))
-  return lifted ? `lift from ${lifted}` : `stone on ${[...is].find(plate => !was.has(plate))}`
+// "door e1" to "e1 + hand": the one plate that changed, or the pipe worked in `region`, said as the player did it.
+const stoneMove = (before: string, after: string, region: string) => {
+  const [was, is] = [arrangementOf(before), arrangementOf(after)]
+  if (was.holes.some(hole => !is.holes.includes(hole))) return `take at ${region}`
+  if (is.holes.some(hole => !was.holes.includes(hole))) return `post at ${region}`
+  const lifted = was.weighted.find(plate => !is.weighted.includes(plate))
+  return lifted ? `lift from ${lifted}` : `stone on ${is.weighted.find(plate => !was.weighted.includes(plate))}`
 }
 
 /** The regions no order of moves ever stands the player in, stretches aside. */

@@ -176,7 +176,19 @@ export type Weights = {
       }
     >
   >
+  /** Stone pipes, by id: see `Pipe`. At most one per lock. */
+  readonly pipes?: Readonly<Record<string, Pipe>>
 }
+
+/**
+ * A STONE PIPE joins two regions through the walls: a stone posted at one hole lies in the other, and the pipe holds
+ * one stone at a time. `stone` names the end whose hole holds a stone at the start. A hole is no plate: it presses
+ * nothing and opens nothing (docs/instructions/stone-pipe.md).
+ */
+export type Pipe = { readonly ends: readonly [RegionId, RegionId]; readonly stone?: RegionId }
+
+/** The id of a pipe's hole in one region, which an arrangement, a walk step and the carve name it by. */
+export const holeOf = (pipe: string, region: RegionId): string => `${pipe}@${region}`
 
 /** Gate owners that are conditions on the stones rather than something placed: empty hands, which stand alone on
  * their gate as a narrow passage. */

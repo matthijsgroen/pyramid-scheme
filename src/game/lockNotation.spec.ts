@@ -394,6 +394,48 @@ describe("a corridor written back", () => {
   })
 })
 
+describe("a stone pipe", () => {
+  const BASE = "in -- hall\nhall -[q]- out\nq plate @hall\nshelf plate @in stone"
+
+  it.each([
+    ["P pipe @in @hall", {}],
+    ["P pipe @in @hall stone", { stone: "hall" }],
+    ["P pipe @in stone @hall", { stone: "in" }],
+  ])("reads %j as a pipe between two regions", (line, stone) => {
+    const { lock, drafts, refused } = parseLock(`${BASE}\n${line}`)
+    expect(lock.weights!.pipes).toEqual({ P: { ends: ["in", "hall"], ...stone } })
+    expect(drafts).toEqual([])
+    expect(refused).toEqual([])
+  })
+
+  it("makes the lock's stones exist on its own", () => {
+    const { lock } = parseLock("in -- hall\nhall -[unladen]- out\nP pipe @in @hall stone")
+    expect(lock.weights).toEqual({ plates: {}, pipes: { P: { ends: ["in", "hall"], stone: "hall" } } })
+  })
+
+  it("counts a stone starting in a hole among the lock's stones", () => {
+    expect(() => parseLock("in -[p1+p2]- out\np1 plate @in\np2 plate @in stone\nP pipe @in @out stone")).not.toThrow()
+  })
+
+  it.each([
+    ["pipeInOneRegion", `${BASE}\nP pipe @hall @hall`, "line 5: pipeInOneRegion"],
+    ["pipeWithoutStones", "in -- hall\nhall -- out\nq plate @hall\nP pipe @in @hall", "line 4: pipeWithoutStones"],
+    ["pipeOwnsGate", `in -- hall\nhall -[P]- out\nshelf plate @in stone\nP pipe @in @hall`, "line 2: pipeOwnsGate"],
+    ["pipesRepeated", `${BASE}\nP pipe @in @hall\nQ pipe @in @hall`, "line 6: pipesRepeated"],
+  ])("refuses %s by name", (_name, text, message) => {
+    expect(parseLock(text).refused.some(line => line.startsWith(message))).toBe(true)
+  })
+
+  it.each([
+    [`${BASE}\nP pipe @in stone @hall stone`, "line 5: a pipe holds one stone at a time"],
+    [`${BASE}\nP pipe @in @cellar`, "line 5: no corridor reaches cellar"],
+    [`${BASE}\nP pipe @in`, "line 5: a pipe joins two regions"],
+    [`${BASE}\nq pipe @in @hall`, "line 5: q is placed twice"],
+  ])("refuses %j", (text, message) => {
+    expect(() => parseLock(text)).toThrow(message)
+  })
+})
+
 describe("LOCK_SYNTAX", () => {
   it.each(Object.entries(CONTROL_WORDS))("explains the %s control", (_kind, word) => {
     expect(LOCK_SYNTAX).toMatch(word)

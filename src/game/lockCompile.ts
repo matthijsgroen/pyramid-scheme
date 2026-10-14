@@ -12,6 +12,7 @@ import {
 } from "./lockAuthoring"
 import type { LooseMechanic, ResolveMechanicKind } from "./mechanics"
 import { resolveMechanicKind } from "./mechanics"
+import { PIPE_KIND } from "./mechanics/weights"
 import type { BarrierOrder, Control, Obstacle, TopologyFault } from "./obstacles"
 import { isRegionGate as isRegionObstacle, topologyFaults } from "./obstacles"
 import { PASSAGE_KIND } from "./passageRealisation"
@@ -22,8 +23,8 @@ import type { ForkDemand } from "./siteTypes"
 /**
  * WHICH REALISATION EACH KIND OF CONTROL IS DRESSED AS, decided where a lock is placed and handed to the
  * compiler: the lock names none (docs/mods/mechanic-contract.md). Keyed by the control kind — "toggle",
- * "activator", "flame", "sequence", "fork-switch", "one-way", "weights" for the stone plates, "unladen" for a
- * narrow passage, and "region-barrier" for the lock's barred regions — because within one lock all roles of a
+ * "activator", "flame", "sequence", "fork-switch", "one-way", "weights" for the stone plates, "pipe" for a stone
+ * pipe's holes, "unladen" for a narrow passage, and "region-barrier" for the lock's barred regions — because within one lock all roles of a
  * kind take the same realisation. A kind the lock uses and the binding omits is refused, never defaulted.
  */
 export type RealisationBinding = Readonly<Partial<Record<string, string>>>
@@ -67,6 +68,8 @@ export type LockFault =
   | { type: "gateOwnerUnknown"; barrier: string; owner: string }
   /** A plate stands in a region the lock does not have. */
   | { type: "plateNamesNoRegion"; plate: string; region: string }
+  /** A pipe's hole stands in a region the lock does not have. */
+  | { type: "pipeNamesNoRegion"; pipe: string; region: string }
   /** A gate asks for empty hands on a lock with no stones. */
   | { type: "carryWithoutStones"; barrier: string }
   /** A gate lists an owner whose `opens` never names it. */
@@ -126,6 +129,7 @@ const kindsUsed = (lock: Lock): Map<string, string[]> => {
   for (const [id, mechanic] of Object.entries(lock.mechanics)) add(mechanic.control, id)
   for (const id of Object.keys(lock.oneWays ?? {})) add("one-way", id)
   if (lock.weights) add("weights", "stones")
+  for (const id of Object.keys(lock.weights?.pipes ?? {})) add(PIPE_KIND, id)
   for (const [id, gate] of Object.entries(lock.gates)) if (isUnladenGate(gate)) add(PASSAGE_KIND, id)
   return used
 }
@@ -201,6 +205,9 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
   }
   for (const [plate, { in: region }] of Object.entries(lock.weights?.plates ?? {}))
     if (!Object.hasOwn(lock.regions, region)) faults.push({ type: "plateNamesNoRegion", plate, region })
+  for (const [pipe, { ends }] of Object.entries(lock.weights?.pipes ?? {}))
+    for (const region of ends)
+      if (!Object.hasOwn(lock.regions, region)) faults.push({ type: "pipeNamesNoRegion", pipe, region })
   for (const [id, oneWay] of Object.entries(oneWays)) {
     need(`oneWay ${id}`, oneWay.from)
     need(`oneWay ${id}`, oneWay.to)

@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest"
+import { parseLock } from "./lockNotation"
+import { walkSpecOf } from "./lockWalkSpec"
 import {
   checkLockSpec,
   openGates,
@@ -593,5 +595,15 @@ describe("every region stays reachable", () => {
     const result = walkLock(spec)
     if (result.sound) throw new Error("expected a refusal")
     expect(result.failure.type).toBe("strands")
+  })
+})
+
+describe("a stone pipe in the walk", () => {
+  const BEYOND = "in -[unladen]- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone"
+  const walked = (text: string) => walkLock(walkSpecOf(parseLock(text).lock))
+
+  it("joins two regions only a narrow passage joins: unsolvable without it, solvable with it", () => {
+    expect(walked(BEYOND).sound).toBe(false)
+    expect(walked(`${BEYOND}\nP pipe @in @hall`).sound).toBe(true)
   })
 })

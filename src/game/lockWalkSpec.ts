@@ -4,7 +4,7 @@ import type { Lock, LockConnection, LockMechanic } from "./lockAuthoring"
 import { barriersOf, isRegionGate, isWeightOwner, joinOf } from "./lockAuthoring"
 import type { LockSpec, Mechanism } from "./lockWalk"
 import { TORCH_OFF, TORCH_ON } from "./mechanics/torch"
-import { stoneArrangements } from "./mechanics/weights"
+import { holeRegion, stoneArrangements } from "./mechanics/weights"
 import { progressState, resettableStates, sequenceStates, tileMoves } from "./sequence"
 
 const OPEN = "·"
@@ -178,14 +178,19 @@ export const walkSpecOf = (lock: Lock, drafts: readonly string[] = []): LockSpec
   }
 }
 
-// Every arrangement of the stones the player can reach, as one mechanism; each move is made in its plate's region.
+// Every arrangement of the stones the player can reach, as one mechanism; each move is made in its plate's region, or
+// its hole's.
 const weightsMechanism = (lock: Lock, opened: (ids: readonly string[]) => string[]): Mechanism => {
   const { states, initial, moves, opens } = stoneArrangements(lock)
   return {
     states,
     initial,
     opens: Object.fromEntries(states.map(state => [state, opened(opens[state])])),
-    transitions: moves.map(({ from, to, plate }) => ({ from, to, at: lock.weights!.plates[plate].in })),
+    transitions: moves.map(move => ({
+      from: move.from,
+      to: move.to,
+      at: "plate" in move ? lock.weights!.plates[move.plate].in : holeRegion(move.hole),
+    })),
   }
 }
 

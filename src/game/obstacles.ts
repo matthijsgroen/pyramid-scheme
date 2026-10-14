@@ -1,5 +1,6 @@
 import type { Alignment } from "./lockAuthoring"
 import type { ResolveMechanicKind } from "./mechanics"
+import type { StoneMove, StonePipe } from "./mechanics/weights"
 import { resolveMechanicKind } from "./mechanics"
 import type { RegionGraph } from "./regions"
 import { forkOnward, forkSeams, offRouteChains, regionRoute } from "./regions"
@@ -157,12 +158,14 @@ export type WeightsControl = {
   id: string
   control: "weights"
   plates: { id: string; in: string; stone: boolean }[]
+  /** The lock's stone pipes, namespaced; absent where it has none. */
+  pipes?: StonePipe[]
   states: string[]
   initial: string
   /** Gate ids (namespaced) each arrangement opens. */
   opens: Record<string, string[]>
-  /** Moves by plate id (namespaced). */
-  moves: { from: string; to: string; plate: string }[]
+  /** Moves by plate or hole id (namespaced). */
+  moves: StoneMove[]
   /** The arrangements with a stone in hand. */
   carrying: string[]
   /** What the explorer's own weight opens, standing on a plate empty in `from`: gate ids (namespaced). */
@@ -171,6 +174,8 @@ export type WeightsControl = {
   terms: Record<string, WeightTerm[]>
   /** The realisation the plates are dressed as, bound where the lock is placed. */
   encounter?: string
+  /** The realisation a pipe's holes are dressed as, bound under `pipe` where the lock is placed. */
+  pipeEncounter?: string
 }
 
 export type Control = StatefulControl | ForkSwitchControl | SequenceControl | WeightsControl

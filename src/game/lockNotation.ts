@@ -1,7 +1,7 @@
 // A LOCK WRITTEN AS TEXT, one line per join, read into the shared Lock type (lockAuthoring.ts). The
 // notation is LOCK_SYNTAX, which `yarn lock` also prints so nobody has to remember it.
 import { CARRY_TERMS, alignOf, barriersOf, isWeightOwner, joinOf, unladenFaults } from "./lockAuthoring"
-import type { Alignment, Lock, LockConnection, LockGate, LockMechanic, LockOneWay } from "./lockAuthoring"
+import type { Alignment, Lock, LockConnection, LockGate, LockMechanic, LockOneWay, Pipe } from "./lockAuthoring"
 import { TORCH_STATES } from "./mechanics/torch"
 import { stoneArrangements } from "./mechanics/weights"
 import type { RegionAppetite } from "./regions"
@@ -37,6 +37,7 @@ IN A REGION (items: placed @region)
   Y fork @in                    a fork puzzle: the gates naming it are its ways
   P sequence hall vault [reset hall-vault]   steps in order; -[P]- opens when done and resets it; reset names the corridor when P opens several
   p1 plate @hall   p2 plate @hall stone   a plate, empty or with a stone on it; any stone presses any plate
+  P pipe @hall @vault [stone]   a stone pipe: post a stone at one hole, it lies in the other; one stone in it at a time
   hall -[sluice:wet]            region gate: hall impassable unless sluice is wet
   hall *   s2 $   spare ?   corridor -     takes puzzles, a reward, anything, nothing
 
@@ -77,13 +78,14 @@ export const syntaxSections = (): SyntaxSection[] => {
 
 /** The words that place a control, by the mechanic they build. Typed on LockMechanic's kinds, so a control the
  * parser gains must be named here, and the spec holds LOCK_SYNTAX to mentioning each word. */
-export const CONTROL_WORDS: Record<LockMechanic["control"] | "plate", RegExp> = {
+export const CONTROL_WORDS: Record<LockMechanic["control"] | "plate" | "pipe", RegExp> = {
   toggle: /\btoggle\b/,
   activator: /\bactivator\b/,
   flame: /\btorch\b/,
   "fork-switch": /\bfork\b/,
   sequence: /\bsequence\b/,
   plate: /\bplate\b/,
+  pipe: /\bpipe\b/,
 }
 
 /** One whole lock, shown beside LOCK_SYNTAX: a lever in a side room opens the door out. */
@@ -238,6 +240,7 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
   const takes: { region: string; appetite: RegionAppetite; n: number }[] = []
   const plates = new Map<string, { in: string; stone: boolean; n: number }>()
   const plateOpens = new Map<string, { weighted: string[]; empty: string[] }>()
+  const pipes: { id: string; ends: [string, string]; stone: string | undefined; n: number }[] = []
 
   const unique = (base: string) => {
     let id = base
@@ -284,7 +287,7 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
     })
     joins.push({ between: [from, to], barriers, align, n })
   }
-  const placed = (id: string) => declared.has(id) || plates.has(id)
+  const placed = (id: string) => declared.has(id) || plates.has(id) || pipes.some(pipe => pipe.id === id)
   const declare = (n: number, id: string, what: Declared) => {
     if (placed(id)) fail(n, `${id} is placed twice`)
     declared.set(id, what)
@@ -312,6 +315,12 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
     } else if ((m = line.match(/^(\w+)\s+plate\s+@(\w+)(\s+stone)?$/))) {
       if (placed(m[1])) fail(n, `${m[1]} is placed twice`)
       plates.set(m[1], { in: m[2], stone: m[3] !== undefined, n })
+    } else if ((m = line.match(/^(\w+)\s+pipe\s+@(\w+)(\s+stone)?\s+@(\w+)(\s+stone)?$/))) {
+      if (placed(m[1])) fail(n, `${m[1]} is placed twice`)
+      if (m[3] && m[5]) fail(n, `a pipe holds one stone at a time: write stone after one hole of ${m[1]}`)
+      pipes.push({ id: m[1], ends: [m[2], m[4]], stone: m[3] ? m[2] : m[5] ? m[4] : undefined, n })
+    } else if (/^\w+\s+pipe\b/.test(line)) {
+      fail(n, "a pipe joins two regions: P pipe @hall @vault, stone after the hole holding one")
     } else if (/^\w+\s+stone\b/.test(line)) {
       fail(n, "a stone is written on the plate it rests on: p plate @hall stone")
     } else if ((m = line.match(/^(\w+)\s+([$*?-])$/))) {
@@ -328,15 +337,19 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
   }
 
   for (const port of ["in", "out"]) if (!regions.has(port)) throw new Error(`the lock never reaches ${port}`)
+  const refused: string[] = []
   for (const { region: r, appetite, n } of takes) {
     if (!regions.has(r)) fail(n, `no corridor reaches ${r}`)
     regions.set(r, appetite)
   }
 
-  const stones = [...plates.values()].filter(plate => plate.stone).length
+  // A LOCK HAS ONE PIPE for now: marks to pair two pipes' holes come when a lock wants two.
+  const pipe = pipes[0]
+  for (const extra of pipes.slice(1))
+    refused.push(`line ${extra.n}: pipesRepeated: a lock has one pipe, and ${pipe.id} is one already`)
+  const stones = [...plates.values()].filter(plate => plate.stone).length + (pipe?.stone !== undefined ? 1 : 0)
   const opens = new Map<string, Record<string, string[]>>()
   const drafts = new Set<string>()
-  const refused: string[] = []
   for (const [id, gate] of Object.entries(gates)) {
     const { n, list } = terms[id]
     if ("region" in gate) {
@@ -346,6 +359,11 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
     for (const { owner, state } of list) {
       if ((CARRY_TERMS as readonly string[]).includes(owner)) {
         if (stones === 0) fail(n, `${owner} asks about stones, and the lock has none`)
+        continue
+      }
+      if (pipe?.id === owner) {
+        refused.push(`line ${n}: pipeOwnsGate: a pipe opens nothing, and ${id} names ${owner}`)
+        drafts.add(owner)
         continue
       }
       if (plates.has(owner)) {
@@ -384,13 +402,23 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
   }
 
   for (const [, plate] of plates) if (!regions.has(plate.in)) fail(plate.n, `no corridor reaches ${plate.in}`)
+  if (pipe) {
+    for (const end of pipe.ends) if (!regions.has(end)) fail(pipe.n, `no corridor reaches ${end}`)
+    if (pipe.ends[0] === pipe.ends[1])
+      refused.push(`line ${pipe.n}: pipeInOneRegion: ${pipe.id}'s holes are both in ${pipe.ends[0]}`)
+    if (stones === 0)
+      refused.push(`line ${pipe.n}: pipeWithoutStones: ${pipe.id} carries stones, and the lock has none`)
+  }
   for (const [id, gate] of Object.entries(gates)) {
     const pressed = gate.owners.filter(owner => plateOpens.get(owner)?.weighted.includes(id)).length
     const needed = gate.mode === "any" ? Math.min(pressed, 1) : pressed
     if (needed > stones) fail(terms[id].n, `${id} needs stones on ${needed} plates, the lock has ${stones}`)
   }
+  const pipeRecord: Record<string, Pipe> = pipe
+    ? { [pipe.id]: { ends: pipe.ends, ...(pipe.stone !== undefined ? { stone: pipe.stone } : {}) } }
+    : {}
   const weights =
-    plates.size > 0
+    plates.size > 0 || pipe
       ? {
           plates: Object.fromEntries(
             [...plates].map(([id, plate]) => [
@@ -398,6 +426,7 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
               { in: plate.in, stone: plate.stone, opens: plateOpens.get(id) ?? { weighted: [], empty: [] } },
             ])
           ),
+          ...(pipe ? { pipes: pipeRecord } : {}),
         }
       : undefined
 

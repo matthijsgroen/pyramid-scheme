@@ -76,6 +76,21 @@ describe("solveLock, with stones", () => {
   })
 })
 
+describe("solveLock, with a pipe", () => {
+  const BEYOND = "in -[unladen]- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone"
+
+  it("cannot carry a stone past a narrow passage without a pipe", () => {
+    expect(solveLock(spec(BEYOND))).toBeUndefined()
+  })
+
+  it("posts the stone through the pipe and takes it out beyond, each one action", () => {
+    expect(solveLock(spec(`${BEYOND}\nP pipe @in @hall`))).toEqual({
+      steps: ["in", "lift from shelf", "post at in", "hall", "take at hall", "stone on p", "out"],
+      actions: 4,
+    })
+  })
+})
+
 describe("a gate named like an object method", () => {
   const renamed = () => {
     const { lock } = parseLock("in -[T]- out\nT toggle @in")

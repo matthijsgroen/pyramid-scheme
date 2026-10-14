@@ -14,6 +14,8 @@ type Sketch = {
   notes: string[]
   in: string
   out: string
+  /** The lock has a stone pipe, so the legend names its holes. */
+  pipe?: true
 }
 
 const U = 1,
@@ -291,8 +293,9 @@ const drawSketch = (sketch: Sketch): string => {
   while (rows[0] === "") rows.shift()
   while (rows[rows.length - 1] === "") rows.pop()
   const indent = Math.min(...rows.filter(Boolean).map(row => row.length - row.trimStart().length))
-  const legend =
-    "■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   Name:state opens it"
+  const legend = `■ shut at the start   □ open   ▒ region barred   ╌▶ one-way   ↺ reset   ⊙ plate   ◉ plate with a stone   ${
+    sketch.pipe ? "○ pipe hole   ● hole with a stone   " : ""
+  }Name:state opens it`
   return [
     ...rows.map(row => row.slice(indent)),
     "",
@@ -350,14 +353,27 @@ const sketchOf = (lock: Lock, drafts: readonly string[]): Sketch => {
       const plates = Object.entries(weights?.plates ?? {}).flatMap(([id, plate]) =>
         plate.in === region ? [`${plate.stone ? "◉" : "⊙"}${id}`] : []
       )
+      const holes = Object.entries(weights?.pipes ?? {}).flatMap(([id, pipe]) =>
+        pipe.ends.includes(region) ? [`${pipe.stone === region ? "●" : "○"}${id}`] : []
+      )
       const barred = Object.entries(lock.gates)
         .filter(([, gate]) => isRegionGate(gate) && gate.region === region)
         .map(([id]) => ` ${open.has(id) ? "░" : "▒"}${condition(id)}`)
         .join("")
-      return [region, `[${[region, ...standing, ...steps, ...plates].join(" · ")}${barred}]`]
+      return [region, `[${[region, ...standing, ...steps, ...plates, ...holes].join(" · ")}${barred}]`]
     })
   )
-  return { regions: Object.keys(lock.regions), edges, drops, boxes, notes, in: lock.in, out: lock.out }
+  const pipe = Object.keys((lock as DraftLock).weights?.pipes ?? {}).length > 0
+  return {
+    regions: Object.keys(lock.regions),
+    edges,
+    drops,
+    boxes,
+    notes,
+    in: lock.in,
+    out: lock.out,
+    ...(pipe ? { pipe: true as const } : {}),
+  }
 }
 
 export const drawLock = (lock: Lock, drafts: readonly string[] = []): string => drawSketch(sketchOf(lock, drafts))

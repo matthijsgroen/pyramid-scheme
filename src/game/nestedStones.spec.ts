@@ -44,7 +44,7 @@ const CRACK: Lock = {
   out: "out",
 }
 
-const NESTED_BINDING = { ...BINDING, weights: "stonePlate", unladen: "narrowPassage" }
+const NESTED_BINDING = { ...BINDING, weights: "stonePlate", unladen: "narrowPassage", pipe: "stonePipe" }
 
 const stones = (text: string, name: string) => parseLock(text, name).lock
 
@@ -187,6 +187,21 @@ describe("a shared nesting's stones are one pool", () => {
     const weights = (expanded(SHARED).config.controls ?? []).filter(isWeights)
     expect(weights.map(control => control.id)).toEqual(["host.stones"])
     expect(weights[0].plates.map(plate => plate.id)).toEqual(["host.p", "host.shelf", "inner.s", "inner.t"])
+  })
+
+  it("carries a pipe's stone across the locks: a stone of one lock is posted through the other's pipe", () => {
+    const piped: PlacedLock[] = [
+      { lock: stones(HOST_STONES, "host") },
+      { lock: stones(`${GATED}\nP pipe @in @hall`, "gated"), as: "inner", inside: { instance: "host" } },
+    ]
+    const [pool] = (expanded(piped).config.controls ?? []).filter(isWeights)
+    expect(pool.pipes).toEqual([{ id: "inner.P", ends: ["inner.in", "inner.hall"] }])
+    expect(pool.moves).toContainEqual({
+      from: "inner.t + hand",
+      to: "inner.t inner.P@inner.hall",
+      kind: "post",
+      hole: "inner.P@inner.in",
+    })
   })
 
   it("leaves a pass-through's and a contained lock's stones in their own control", () => {
