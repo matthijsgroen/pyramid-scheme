@@ -94,6 +94,8 @@ The art plan is `docs/superpowers/plans/2026-10-06-stonegate-phase-5-art.md`; it
    builds the mechanics they need and places them.
 3. **The procession door** (roadmap, "Designed, not built"), after placement.
 4. **Fold doubleBack's twin** once the designer answers how a drop beside a gate compiles (below).
+5. **Carve passes refactor:** the carve engine as passes over a frozen prep and a per-attempt state, built beside
+   `siteAssembler.ts`; plan in `docs/instructions/carve-passes.md`.
 
 Each runs with superpowers:subagent-driven-development: per task an implementer subagent and a task review, then a
 final whole-branch review on the most capable model. Commit and push freely on this branch.
