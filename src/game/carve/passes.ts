@@ -14,6 +14,7 @@ import { seatMainBarrierDoors } from "./seatMainBarrierDoors"
 import { seatMainControls } from "./seatMainControls"
 import { seatRouteRegions } from "./seatRouteRegions"
 import { seatSeamGates } from "./seatSeamGates"
+import { shutSwitchGround } from "./shutSwitchGround"
 import { placeJunctions } from "./placeJunctions"
 import { placeMainContent } from "./placeMainContent"
 import { pass } from "./state"
@@ -78,6 +79,12 @@ export const PASSES: readonly PassEntry[] = [
     ["maze", "junctions", "keys", "labels", "lay", "branches", "doors", "mainRooms", "chainRooms"],
     ["forks"],
     reserveJunctions
+  ),
+  pass(
+    "shutSwitchGround",
+    ["forks", "maze", "branches", "doors", "lay", "labels", "mainRooms", "chainRooms"],
+    ["switchDoors"],
+    shutSwitchGround
   ),
 ]
 
