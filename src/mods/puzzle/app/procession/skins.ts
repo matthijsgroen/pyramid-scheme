@@ -1,4 +1,5 @@
 import { PROCESSION_META } from "@/mods/puzzle/game/procession/meta"
+import { PROCESSION_CASTS } from "@/mods/puzzle/game/procession/casts"
 import { faceFor, withAmbience } from "../faceFor"
 
 /**
@@ -14,7 +15,7 @@ import { faceFor, withAmbience } from "../faceFor"
  * they take the row's own colour (an emoji is painted and cannot), they are drawn from the subset this
  * game already ships (`ui/tokens/hieroglyphFont.generated.ts`, so no device is trusted to own a face), and
  * the vocabulary reaches things emoji has never heard of — a coffin, an offering table, an irrigation
- * basin. Anything used here must be a literal in a `.ts` file for `yarn generate-font` to see it.
+ * basin. The signs are the casts' (`game/procession/casts.ts`), which a procession door's tiles wear too.
  */
 export type ProcessionSkin = {
   /** Which place this is, as its own name — the title, the goal and the doings are keyed on it. */
@@ -71,39 +72,9 @@ const GROUND = {
 
 const cast = (name: string, glyphs: readonly string[]): ProcessionSkin => ({ name, glyphs, ...GROUND })
 
-const SKINS: Record<string, ProcessionSkin> = {
-  /**
-   * **A day's work**, and the face a room wears when its site asked for nothing in particular: a fire,
-   * water carried, bread baked, a boat worked, oxen driven, a watch kept through the night.
-   */
-  default: cast("default", ["𓊮", "𓈗", "𓏏", "𓊛", "𓃒", "𓇹"]),
-  /**
-   * **A day cutting a tomb** — the workmen's valley, and the largest pool in the game: the wall plastered,
-   * the grid drawn on it, the relief carved, the colour laid in, the gold leaf, the door hung.
-   *
-   * **Craft rather than rites, and that is a rule of the family and not a squeamishness.** §8 asks a cast to
-   * imply no order of its own, because the generator decides what happens when and a set carrying its own
-   * story tells a lie on every board whose answer runs the other way. A burial has exactly one order — you
-   * cannot seal before you wrap — so those six were the one cast that could not keep the promise. A
-   * workshop's day can be arranged any way round and stays true. It also puts a child in the room with the
-   * people who MADE the place, which is the better half of the subject.
-   */
-  funerary: cast("funerary", ["𓉐", "𓏞", "𓍋", "𓏊", "𓋞", "𓊃"]),
-  /**
-   * **A night of the sky** — decans and lights crossing it, each visible for its own stretch. This is the
-   * face `wizard_4` has been waiting for: the one journey no pool serves (`journeys.md` §9).
-   */
-  cosmos: cast("cosmos", ["𓇳", "𓇼", "𓇹", "𓇯", "𓈍", "𓆳"]),
-  /**
-   * **A day on the flood plain**: the water let in, the channel, the basin, the field, the ferrying, the
-   * reaping.
-   */
-  water: cast("water", ["𓈗", "𓈘", "𓈙", "𓈇", "𓊛", "𓌳"]),
-  /**
-   * **A day at the quay**: goods, bread, beer, the ferry, the hauling, and the tally that says what moved.
-   */
-  trade: cast("trade", ["𓎟", "𓏏", "𓏊", "𓊛", "𓂻", "𓏛"]),
-}
+const SKINS: Record<string, ProcessionSkin> = Object.fromEntries(
+  Object.entries(PROCESSION_CASTS).map(([name, glyphs]) => [name, cast(name, glyphs)])
+)
 
 export const skinFor = (role?: string | string[], theme?: string, room?: string): ProcessionSkin =>
   withAmbience(

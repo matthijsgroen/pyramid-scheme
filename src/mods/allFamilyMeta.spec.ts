@@ -167,3 +167,13 @@ describe("a family joining a pool must not displace its loot or shape", () => {
     for (const violation of violations) expect(violation).toContain("fake")
   })
 })
+
+describe("the procession door", () => {
+  it("is listed as the puzzle mod's sequence realisation, and no puzzle room draws it", () => {
+    const door = ALL_FAMILY_META.find(meta => meta.id === "procession-door")
+    expect(door?.ownerMod).toBe("puzzle")
+    expect(door?.sequence?.hidesOrder).toBe(true)
+    expect(door?.sequence?.glyphs).toHaveLength(6)
+    expect(Object.keys(draw("puzzle", 400))).not.toContain("procession-door")
+  })
+})

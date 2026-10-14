@@ -130,6 +130,15 @@ export type FamilyMeta = {
   // How this family builds a board, and how it judges one (`docs/instructions/puzzle-screens.md` §6.1). Unset means
   // the family generates live on every open, which is what every family did before there were lists.
   seedable?: SeedableFamily
+  /**
+   * What a realisation of the `sequence` control tells core about its tiles and its door. Unset: the tiles wear
+   * mark glyphs and the door shows the order (the pressure plate).
+   *
+   * `glyphs` are the signs the steps wear, one per step, in place of mark glyphs; the floor's marks then leave
+   * them out. `hidesOrder` withholds the door until the player has read the order elsewhere (the procession
+   * door's board), which the door record carries as `hidesOrder` and `orderReader` (this family's id).
+   */
+  sequence?: { glyphs: readonly number[]; hidesOrder: true }
 }
 
 // --- Offline seed lists (`docs/instructions/puzzle-screens.md` §6.1) -----------------------------------------

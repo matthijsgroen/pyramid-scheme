@@ -11,6 +11,7 @@ import { CANISTERS_META } from "./game/canisters/meta"
 import { SUDOKU_META } from "./game/sudoku/meta"
 import { RUSH_HOUR_META } from "./game/rushHour/meta"
 import { PROCESSION_META } from "./game/procession/meta"
+import { PROCESSION_DOOR_META } from "./game/processionDoor/meta"
 
 // The puzzle mod descriptor. Owns the general math-puzzle families (sumplete, balance-scale, futoshiki,
 // eclipse, constellation, star battle, twin stars, hidato, sudoku). A root mod: it stays on in
@@ -22,7 +23,8 @@ import { PROCESSION_META } from "./game/procession/meta"
 //
 // This list IS the world switch: a family here enters the gen-time encounter pool for its tag at or
 // above its minTier, and the world file is regenerated with the ids it allocates. A family left out
-// is playable in the puzzle lab and nowhere else.
+// is playable in the puzzle lab and nowhere else. The procession door is the exception: it realises a lock's
+// sequence, its tag names no role, and only the lock word `procession` places it.
 //
 // Game-side only (no React). The puzzle room Components register via the puzzle app entrypoint
 // (src/mods/puzzle/app, pulled in by registerModApps), each gated on this mod being enabled.
@@ -41,5 +43,6 @@ export const puzzleMod: ModDescriptor = {
     SUDOKU_META,
     RUSH_HOUR_META,
     PROCESSION_META,
+    PROCESSION_DOOR_META,
   ],
 }
