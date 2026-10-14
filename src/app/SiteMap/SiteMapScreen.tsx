@@ -6,6 +6,7 @@ import { floorKeyRing } from "@/game/floorKeys"
 import { useCorridorDetection } from "@/app/SiteMap/useCorridorDetection"
 import { useFoundCorridors } from "@/app/SiteMap/useFoundCorridors"
 import { useMechanismStates } from "@/app/SiteMap/useMechanismStates"
+import { useSequenceReads } from "@/app/SiteMap/useSequenceReads"
 import { useDetectorBand } from "@/app/SiteMap/useDetectorBand"
 import type { SiteConfig } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
@@ -79,6 +80,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
 
   const foundCorridors = useFoundCorridors(journeys, journeyId)
   const mechanismStates = useMechanismStates(journeys, journeyId)
+  const sequenceReads = useSequenceReads(journeys, journeyId)
 
   const { grid, explorerPos, hiddenSections, junctionSections, openGateKeys, baseGrid, heldKeys } = useAssembledFloor(
     journeyId,
@@ -91,7 +93,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
     foundCorridors,
     levelIndex,
     mechanismStates,
-    journeyState?.standingKey
+    journeyState?.standingKey,
+    sequenceReads
   )
   // Every mechanism write on this floor goes through here, so a flood's douse is saved with the move that caused it.
   const floorJourneys = useDousedJourneys({ journeys, journeyId, floor: baseGrid, currentFloor, heldKeys })

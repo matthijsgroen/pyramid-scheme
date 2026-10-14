@@ -5,7 +5,7 @@ import { storedAtCell } from "@/game/cellAddress"
 import { dropLaunchedAt, findPath, getCell, walkableFrom } from "@/game/gridNavigation"
 import { headingOf, passageCrossing } from "@/game/passages"
 import { isSpent as mechanismIsSpent, throwMechanism } from "@/game/mechanismDoors"
-import { walkPresses } from "@/game/sequencePlay"
+import { walkedSteps, walkPresses } from "@/game/sequencePlay"
 import { isCarrying, stoneMoveAt, type StoneMoveKind } from "@/game/stonePlay"
 import type { FloorGrid, MechanismRecord, ObstacleKind, RoomCell, SiteConfig, TreasureReward } from "@/game/siteTypes"
 import { useTimeout } from "@/support/useTimeout"
@@ -201,15 +201,14 @@ export const useSiteNavigation = ({
       // address is what every write about it is filed under; every cell the assembler draws carries one, so the
       // fallback is for grids built outside the world.
       const walkTo = (r: number, c: number) => {
-        const presses = walkPresses(
-          grid,
-          currentFloor,
-          findPath(grid, explorerPos, [r, c]),
-          journeys.getMechanismStates(journeyId)
-        )
+        const path = findPath(grid, explorerPos, [r, c])
+        const presses = walkPresses(grid, currentFloor, path, journeys.getMechanismStates(journeyId))
         // One write for the whole walk, so the douse reads every tile it worked. One douse at the end of the walk
         // equals one after each tile: a sequence opens a gate only at `done`, which stays fired.
         if (presses.length > 0) journeys.setMechanismStates(new Map(presses.map(press => [press.address, press.state])))
+        // A hiding sequence's steps unlock their bars on the door's board whatever the crossing did to the run.
+        const walked = walkedSteps(grid, currentFloor, path)
+        if (walked.length > 0) journeys.recordWalkedSteps(walked)
         const edgeId = encodeEdge(currentFloor, r, c)
         const address = cellAddress(grid, currentFloor, r, c) ?? edgeId
         return { edgeId, address, goHere: () => journeys.updatePosition(journeyId, address, edgeId) }

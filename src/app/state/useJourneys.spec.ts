@@ -463,6 +463,56 @@ describe("mechanism positions", () => {
   })
 })
 
+describe("sequences that hide their order", () => {
+  const run = (steps: (api: ReturnType<typeof makeApi>) => void, start = makeStoredJourney()) => {
+    let state = [start]
+    const set = (updater: unknown) => {
+      state =
+        typeof updater === "function"
+          ? (updater as (p: unknown) => StoredJourneyStateV3[])(state)
+          : (updater as StoredJourneyStateV3[])
+    }
+    steps(createJourneysV3Api({ journeys: state, setJourneys: set, journeyData: [makeJourneyData(REAL_ID)] }))
+    // A reload: the save as storage would hand it back.
+    const reloaded = JSON.parse(JSON.stringify(state)) as StoredJourneyStateV3[]
+    return {
+      state,
+      api: createJourneysV3Api({ journeys: reloaded, setJourneys: set, journeyData: [makeJourneyData(REAL_ID)] }),
+    }
+  }
+
+  it("keeps the steps walked and the read across a reload", () => {
+    const { api } = run(a => {
+      a.recordWalkedSteps([{ address: "s0#0/p1", steps: [2, 0] }])
+      a.recordWalkedSteps([{ address: "s0#0/p1", steps: [1] }])
+    })
+    expect(api.getSequenceReads(REAL_ID).get("s0#0/p1")).toEqual({ walked: [0, 1, 2] })
+    const read = run(
+      a => a.readSequence("s0#0/p1"),
+      makeStoredJourney({ sequenceReads: { "1:s0#0/p1": { walked: [0, 1] } } })
+    )
+    expect(read.api.getSequenceReads(REAL_ID).get("s0#0/p1")).toEqual({ walked: [0, 1], read: true })
+  })
+
+  it("starts the run again from its first step when the order is read, from done included", () => {
+    const { api } = run(a => a.readSequence("s0#0/p1"), makeStoredJourney({ mechanismStates: { "1:s0#0/p1": "3" } }))
+    expect(api.getMechanismStates(REAL_ID).get("s0#0/p1")).toBe("0")
+  })
+
+  it("writes nothing on a second read, so a run walked after the first is kept", () => {
+    const start = makeStoredJourney({
+      mechanismStates: { "1:s0#0/p1": "3" },
+      sequenceReads: { "1:s0#0/p1": { walked: [0, 1, 2], read: true } },
+    })
+    const { state } = run(a => a.readSequence("s0#0/p1"), start)
+    expect(state[0]).toBe(start)
+  })
+
+  it("reads an absent record as nothing walked and nothing read", () => {
+    expect(makeApi([makeStoredJourney()]).getSequenceReads(REAL_ID).size).toBe(0)
+  })
+})
+
 // ── corridor detector: known / found / outstanding (§7.2 P4) ────────────────────
 
 describe("hidden corridor tracking", () => {

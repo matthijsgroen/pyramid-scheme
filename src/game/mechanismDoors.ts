@@ -2,8 +2,10 @@ import type { FloorGrid, GridCell, MechanismRecord } from "./siteTypes"
 import { cellAddress, storedAtCell } from "./cellAddress"
 import { doorOpen, type DoorMode } from "./doorOpen"
 import { TORCH_OFF, TORCH_ON } from "./mechanics/torch"
+import { orderRead, type SequenceRead } from "./sequenceReads"
 
 const NO_KEYS: ReadonlySet<string> = new Set()
+const NO_READS: ReadonlyMap<string, SequenceRead> = new Map()
 
 // WHICH DOORS STAND OPEN IS ASKED OF EACH MECHANISM'S OWN MAPPING, NEVER STORED. The save holds the
 // position; the floor holds what that position opens. Keeping the mapping here rather than in the save
@@ -14,11 +16,15 @@ const NO_KEYS: ReadonlySet<string> = new Set()
 // whether its CURRENT state names it, and every floor key a door cell lists beside that gate key
 // (`requiredKeyIds`), each asked whether it is held. An owner nothing on the floor can supply (a key no
 // chest mints) is never held, so under `and` it keeps the door shut and under `any` it stands aside.
+//
+// A SEQUENCE THAT HIDES ITS ORDER (`hidesOrder`, a procession door) says no until its order is read (`orderRead`):
+// `reads` holds what play keeps about it, by the same address as its position.
 export const openDoorsFor = (
   grid: FloorGrid,
   floor: number,
   positions: ReadonlyMap<string, string>,
-  heldKeys: ReadonlySet<string> = NO_KEYS
+  heldKeys: ReadonlySet<string> = NO_KEYS,
+  reads: ReadonlyMap<string, SequenceRead> = NO_READS
 ): Set<string> => {
   const owners = new Map<string, { says: boolean[]; mode: DoorMode; floorKeys: Set<string> }>()
   for (let r = 0; r < grid.rows; r++)
@@ -33,9 +39,11 @@ export const openDoorsFor = (
       // A position this build no longer has simply opens nothing — the only safe answer: guessing at
       // the nearest position would open a door nobody threw the lever for.
       const { positions: named } = cell.mechanism
+      const withheld =
+        cell.mechanism.hidesOrder === true && !orderRead(cell.mechanism, state, storedAtCell(grid, floor, r, c, reads))
       for (const gateKeyId of new Set(named.map(p => p.gateKeyId))) {
         const gate = owners.get(gateKeyId) ?? { says: [], mode: "all", floorKeys: new Set() }
-        gate.says.push(named.some(p => p.gateKeyId === gateKeyId && p.state === state))
+        gate.says.push(!withheld && named.some(p => p.gateKeyId === gateKeyId && p.state === state))
         if (named.some(p => p.gateKeyId === gateKeyId && p.mode === "any")) gate.mode = "any"
         owners.set(gateKeyId, gate)
       }
@@ -175,7 +183,8 @@ export const douseFloor = (
   grid: FloorGrid,
   floor: number,
   stored: ReadonlyMap<string, string>,
-  heldKeys: ReadonlySet<string> = NO_KEYS
+  heldKeys: ReadonlySet<string> = NO_KEYS,
+  reads: ReadonlyMap<string, SequenceRead> = NO_READS
 ): Map<string, string> => {
   const torches = floorTorches(grid, floor)
   if (torches.length === 0) return new Map()
@@ -191,7 +200,7 @@ export const douseFloor = (
   for (const torch of torches)
     now.set(torch.address, storedAtCell(grid, floor, torch.at[0], torch.at[1], stored) ?? torch.initial)
   const covered = (states: ReadonlyMap<string, string>) => {
-    const open = openDoorsFor(grid, floor, states, heldKeys)
+    const open = openDoorsFor(grid, floor, states, heldKeys, reads)
     return new Set(
       torches
         .filter(torch => [...(barrierKeys.get(torch.region) ?? [])].some(key => !open.has(key)))
@@ -214,10 +223,11 @@ export const withDouse = (
   floor: number,
   stored: ReadonlyMap<string, string>,
   moves: ReadonlyMap<string, string>,
-  heldKeys: ReadonlySet<string> = NO_KEYS
+  heldKeys: ReadonlySet<string> = NO_KEYS,
+  reads: ReadonlyMap<string, SequenceRead> = NO_READS
 ): Map<string, string> => {
   const after = new Map([...stored, ...moves])
-  return new Map([...moves, ...douseFloor(grid, floor, after, heldKeys)])
+  return new Map([...moves, ...douseFloor(grid, floor, after, heldKeys, reads)])
 }
 
 /**

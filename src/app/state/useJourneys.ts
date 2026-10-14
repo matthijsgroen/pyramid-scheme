@@ -2,6 +2,8 @@ import { useEffect, useMemo } from "react"
 import { useGameStorage } from "@/support/useGameStorage"
 import { journeys as journeyData, type Journey } from "@/data/journeys"
 import { generateNewSeed } from "@/game/random"
+import { progressState } from "@/game/sequence"
+import { withWalked, type SequenceRead } from "@/game/sequenceReads"
 import { persistentInteriorSeed } from "@/game/siteSeed"
 import { useJourneyTranslations, type TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { hashString } from "@/support/hashString"
@@ -85,6 +87,10 @@ export type StoredJourneyStateV3 = {
    * The address is the mechanism's own cell address — authored, so a re-carve moves the cell and takes
    * the entry with it. Exactly one entry per mechanism, which is what a map gives for free. */
   mechanismStates?: Record<string, string>
+  /** What play keeps beside a sequence whose door hides its order (src/game/sequenceReads.ts), keyed
+   * `${levelNr}:${mechanismAddress}` as its position is: the steps ever walked, and whether the order was read.
+   * Absent reads as nothing walked and nothing read. */
+  sequenceReads?: Record<string, SequenceRead>
   // Corridor detector (§7.2, found = noticed via proximity): both keyed `${levelNr}:${sectionAddress}`.
   // `known` = hidden corridors on floors the player has viewed; `found` = ones the detector stopped
   // them at. Outstanding (known \ found) drives the L3 pyramid + L4 travel "unexplored corridor" markers.
@@ -172,6 +178,13 @@ export type JourneyAPI = {
   setMechanismStates: (writes: MechanismWrites) => void
   /** The position every mechanism on this level currently stands in, keyed by its cell address. */
   getMechanismStates: (journeyId: string) => ReadonlyMap<string, string>
+  /** Steps a walk crossed of sequences that hide their order, by the sequence's address. */
+  recordWalkedSteps: (walked: readonly { address: string; steps: readonly number[] }[]) => void
+  /** The order of the sequence at `address` was read at its door: it stays read, and the run starts again from its
+   * first step, both in one write. A second read writes nothing. */
+  readSequence: (address: string) => void
+  /** What play keeps beside each hiding sequence on this level, keyed by its address. */
+  getSequenceReads: (journeyId: string) => ReadonlyMap<string, SequenceRead>
   registerHiddenCorridors: (sectionAddresses: string[]) => void
   markCorridorFound: (sectionAddress: string) => void
   getFoundHiddenCorridors: (journeyId: string) => ReadonlySet<string>
@@ -638,6 +651,53 @@ export const createJourneysV3Api = ({
   const getMechanismStates = (journeyId: string): ReadonlyMap<string, string> =>
     forThisLevelMap(journeyId, journeys.find(j => j.journeyId === journeyId)?.mechanismStates)
 
+  const recordWalkedSteps = (walked: readonly { address: string; steps: readonly number[] }[]) => {
+    if (!activeJourneyId || walked.length === 0) return
+    setJourneys(prev =>
+      prev.map(j => {
+        if (j.journeyId !== activeJourneyId) return j
+        const reads = { ...(j.sequenceReads ?? {}) }
+        let changed = false
+        for (const { address, steps } of walked) {
+          const key = `${j.levelNr}:${address}`
+          const next = withWalked(reads[key], steps)
+          if (next === reads[key]) continue
+          reads[key] = next
+          changed = true
+        }
+        return changed ? { ...j, sequenceReads: reads } : j
+      })
+    )
+  }
+
+  const readSequence = (address: string) => {
+    if (!activeJourneyId) return
+    setJourneys(prev =>
+      prev.map(j => {
+        if (j.journeyId !== activeJourneyId) return j
+        const key = `${j.levelNr}:${address}`
+        const entry = j.sequenceReads?.[key]
+        if (entry?.read) return j
+        return {
+          ...j,
+          sequenceReads: { ...(j.sequenceReads ?? {}), [key]: { walked: entry?.walked ?? [], read: true } },
+          mechanismStates: { ...(j.mechanismStates ?? {}), [key]: progressState(0) },
+        }
+      })
+    )
+  }
+
+  const getSequenceReads = (journeyId: string): ReadonlyMap<string, SequenceRead> => {
+    const j = journeys.find(j => j.journeyId === journeyId)
+    if (!j) return new Map()
+    const prefix = `${j.levelNr}:`
+    return new Map(
+      Object.entries(j.sequenceReads ?? {})
+        .filter(([key]) => key.startsWith(prefix))
+        .map(([key, entry]) => [key.slice(prefix.length), entry])
+    )
+  }
+
   // Corridor detector: hidden sections become "known" the moment the player views the floor
   // holding them; keyed by levelNr like exploration so a multi-level pyramid keeps them apart.
   const registerHiddenCorridors = (sectionAddresses: string[]) => {
@@ -754,6 +814,9 @@ export const createJourneysV3Api = ({
     setMechanismState,
     setMechanismStates,
     getMechanismStates,
+    recordWalkedSteps,
+    readSequence,
+    getSequenceReads,
     registerHiddenCorridors,
     markCorridorFound,
     getFoundHiddenCorridors,

@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react"
 import { assembleFloor } from "@/game/siteAssembler"
 import { openDoorsFor, openWaysOut } from "@/game/mechanismDoors"
+import type { SequenceRead } from "@/game/sequenceReads"
 import { withGateFaces, withoutUnpairedMarks } from "@/game/gateFace"
 import { DOOR_FACE_ROLE } from "@/game/encounterFallback"
 import { completeCell, isSealedWayOut } from "@/game/gridNavigation"
@@ -382,7 +383,10 @@ export const useAssembledFloor = (
    * for where to draw the explorer, since it names every cell walked onto and `positionKey` only the
    * last authored place. Appended last so a caller that has not been touched by this fix (a fixture
    * built before `standingKey` existed) still resolves exactly as it always has, via `positionKey`. */
-  standingKey?: string | null
+  standingKey?: string | null,
+  /** What play keeps beside each sequence that hides its order (useSequenceReads), keyed as its position: its door
+   * stays shut until the order is read (openDoorsFor). */
+  sequenceReads?: ReadonlyMap<string, SequenceRead>
 ): {
   grid: FloorGrid | null
   explorerPos: readonly [number, number]
@@ -414,8 +418,10 @@ export const useAssembledFloor = (
   )
   const openGateKeys = useMemo(
     () =>
-      baseGrid ? openDoorsFor(baseGrid, currentFloor, mechanismPositions ?? NO_POSITIONS, heldKeys) : NO_OPEN_GATES,
-    [baseGrid, currentFloor, mechanismPositions, heldKeys]
+      baseGrid
+        ? openDoorsFor(baseGrid, currentFloor, mechanismPositions ?? NO_POSITIONS, heldKeys, sequenceReads)
+        : NO_OPEN_GATES,
+    [baseGrid, currentFloor, mechanismPositions, heldKeys, sequenceReads]
   )
 
   // The carve as the floor's own switches have left it — what everything below reads as "the floor". A

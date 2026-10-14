@@ -15,6 +15,7 @@ import { useAssembledFloor } from "./useAssembledFloor"
 import { useDousedJourneys } from "./useDousedJourneys"
 import { useEncounter } from "./useEncounter"
 import { useMechanismStates } from "./useMechanismStates"
+import { useSequenceReads } from "./useSequenceReads"
 import { useNoticeLabel, usePromptLabel } from "./usePromptLabel"
 import { useSiteNavigation } from "./useSiteNavigation"
 import { useCrossing } from "./useCrossing"
@@ -95,6 +96,7 @@ const PlayedFloor: FC<{ config: FloorConfig; seed: number; base: FloorGrid }> = 
   const progression = useProgression()
   const inventory = useInventory()
   const mechanismStates = useMechanismStates(journeys, PLAYGROUND_JOURNEY)
+  const sequenceReads = useSequenceReads(journeys, PLAYGROUND_JOURNEY)
   const { grid, explorerPos, openGateKeys, baseGrid, heldKeys } = useAssembledFloor(
     PLAYGROUND_JOURNEY,
     config,
@@ -106,7 +108,8 @@ const PlayedFloor: FC<{ config: FloorConfig; seed: number; base: FloorGrid }> = 
     undefined,
     undefined,
     mechanismStates,
-    doc.standingKey
+    doc.standingKey,
+    sequenceReads
   )
   const floorJourneys = useDousedJourneys({
     journeys,

@@ -3,6 +3,7 @@ import type { JourneyAPI, MechanismWrites } from "@/app/state/useJourneys"
 import { douseFloor, withDouse } from "@/game/mechanismDoors"
 import type { FloorGrid } from "@/game/siteTypes"
 import { useMechanismStates } from "./useMechanismStates"
+import { useSequenceReads } from "./useSequenceReads"
 
 /** The journeys API a floor hands down: every mechanism write saves the torches it puts out with it, read off the
  * live save, and a lit torch a flood covers is written out on arriving. */
@@ -22,20 +23,21 @@ export const useDousedJourneys = ({
   heldKeys: ReadonlySet<string>
 }): JourneyAPI => {
   const stored = useMechanismStates(journeys, journeyId)
+  const reads = useSequenceReads(journeys, journeyId)
   useEffect(() => {
-    if (!floor || douseFloor(floor, currentFloor, stored, heldKeys).size === 0) return
-    journeys.setMechanismStates(live => douseFloor(floor, currentFloor, live, heldKeys))
-  }, [floor, currentFloor, stored, heldKeys, journeys])
+    if (!floor || douseFloor(floor, currentFloor, stored, heldKeys, reads).size === 0) return
+    journeys.setMechanismStates(live => douseFloor(floor, currentFloor, live, heldKeys, reads))
+  }, [floor, currentFloor, stored, heldKeys, journeys, reads])
   return useMemo(() => {
     if (!floor) return journeys
     const write = (writes: MechanismWrites) =>
       journeys.setMechanismStates(live =>
-        withDouse(floor, currentFloor, live, typeof writes === "function" ? writes(live) : writes, heldKeys)
+        withDouse(floor, currentFloor, live, typeof writes === "function" ? writes(live) : writes, heldKeys, reads)
       )
     return {
       ...journeys,
       setMechanismState: (address: string, stateId: string) => write(new Map([[address, stateId]])),
       setMechanismStates: write,
     }
-  }, [journeys, floor, currentFloor, heldKeys])
+  }, [journeys, floor, currentFloor, heldKeys, reads])
 }

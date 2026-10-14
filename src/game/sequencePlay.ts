@@ -31,6 +31,26 @@ export const walkPresses = (
   return writes
 }
 
+/**
+ * THE STEPS A WALK CROSSES OF SEQUENCES THAT HIDE THEIR ORDER, by the sequence's address: every tile stepped onto, in
+ * fog or not, whatever the crossing does to the run — a spoiled run and a tile already walked count. The cell the
+ * walker starts on is not stepped onto. Each step once per sequence.
+ */
+export const walkedSteps = (
+  grid: FloorGrid,
+  floor: number,
+  path: readonly Place[]
+): { address: string; steps: number[] }[] => {
+  const crossed = new Map<string, Set<number>>()
+  for (const [r, c] of path.slice(1)) {
+    const cell = grid.cells[r]?.[c]
+    if (cell?.type !== "room" || !cell.sequenceTile || !mechanismWorkedAt(grid, r, c)?.record.hidesOrder) continue
+    const address = mechanismAddress(grid, floor, r, c)
+    if (address) crossed.set(address, (crossed.get(address) ?? new Set()).add(cell.sequenceTile.step))
+  }
+  return [...crossed].map(([address, steps]) => ({ address, steps: [...steps].sort((a, b) => a - b) }))
+}
+
 /** How the sequence tile at a cell stands in its sequence's current state; nothing for any other cell. */
 export const tileStatusAt = (
   grid: FloorGrid,
