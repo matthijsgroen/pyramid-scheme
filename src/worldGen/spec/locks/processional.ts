@@ -1,7 +1,8 @@
 import type { Lock } from "../../../game/lockAuthoring"
 
 /** Three tiles walked cellar, east, west. The cellar is entered by a drop from the hall and also lies behind the
- * east tile, so the one way to step on it first is the drop; the door onward carries the reset. */
+ * east tile, so the one way to step on it first is the drop; the door onward carries the reset, and a procession
+ * board that teaches the order. */
 export const processionalLock = (): Lock => ({
   name: "processional",
   regions: {
@@ -31,6 +32,7 @@ export const processionalLock = (): Lock => ({
       steps: [{ in: "cellar" }, { in: "east" }, { in: "west" }],
       resetAt: "vaultDoor",
       opens: { done: ["vaultDoor"] },
+      procession: true,
     },
   },
   in: "in",

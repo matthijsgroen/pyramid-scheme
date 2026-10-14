@@ -14,6 +14,7 @@ import { concealShutGround } from "@/game/concealment"
 import { openDoorsFor } from "@/game/mechanismDoors"
 import { oneWayRuns } from "@/game/gridNavigation"
 import { spoiledState } from "@/game/sequence"
+import type { SequenceRead } from "@/game/sequenceReads"
 import { buildConfigs } from "@/worldGen/configBuilder"
 import { DEV_JOURNEY_ID } from "@/worldGen/data"
 import type { SiteConfig } from "@/worldGen/types"
@@ -111,9 +112,27 @@ const revealed = (grid: FloorGrid): FloorGrid => ({
 })
 
 // The floor as the screen builds it, the mechanism standing in `state`.
-const assembledWith = (floor: FloorConfig, levelNr: number, positions: ReadonlyMap<string, string>) =>
+const assembledWith = (
+  floor: FloorConfig,
+  levelNr: number,
+  positions: ReadonlyMap<string, string>,
+  reads?: ReadonlyMap<string, SequenceRead>
+) =>
   renderHook(() =>
-    useAssembledFloor(DEV_JOURNEY_ID, floor, addressSeed(levelNr), 0, {}, null, 0, undefined, levelNr - 1, positions)
+    useAssembledFloor(
+      DEV_JOURNEY_ID,
+      floor,
+      addressSeed(levelNr),
+      0,
+      {},
+      null,
+      0,
+      undefined,
+      levelNr - 1,
+      positions,
+      undefined,
+      reads
+    )
   ).result.current
 
 describe("the sluice on dev pyramid 4", { timeout: 120_000 }, () => {
@@ -240,23 +259,28 @@ describe("the procession on dev pyramid 10", { timeout: 120_000 }, () => {
     }
   })
 
-  it("draws the order and the reset on its door: the glyphs in step order, and the way to start again once the run is spoiled", () => {
+  it("carries a procession board on its door: the steps' signs, and the way to start again only once it is read", () => {
     const base = carvedAt(procession, PROCESSION_LEVEL)
     const tiles = tilesOf(base).filter(
       ({ cell }, n, all) => all.findIndex(other => other.cell.sequenceTile!.step === cell.sequenceTile!.step) === n
     )
     const home = tilesOf(base).find(({ cell }) => cell.mechanism)!
     const address = cellAddress(base, 0, home.at[0], home.at[1])!
-    const faceAt = (state: string) => {
-      const { grid } = assembledWith(procession, PROCESSION_LEVEL, new Map([[address, state]]))
-      const door = roomsOf(grid!).find(({ cell }) => cell.gateFace)
-      return door?.cell.gateFace?.sequences?.[0]
+    const doorAt = (state: string, read?: SequenceRead) => {
+      const reads = new Map(read ? [[address, read]] : [])
+      const { grid } = assembledWith(procession, PROCESSION_LEVEL, new Map([[address, state]]), reads)
+      return roomsOf(grid!).find(({ cell }) => cell.gateFace)?.cell
     }
 
-    const rest = faceAt("0")
-    expect(rest?.tiles.map(tile => tile.glyph)).toEqual(tiles.map(({ cell }) => cell.sequenceTile!.glyph))
-    expect(rest?.reset).toBeUndefined()
-    expect(faceAt(spoiledState(0, 1))?.reset).toBeDefined()
+    const rest = doorAt("0")
+    expect(rest?.family).toBe("procession-door")
+    expect(rest?.gateFace?.sequences?.[0].tiles.map(tile => tile.glyph)).toEqual(
+      tiles.map(({ cell }) => cell.sequenceTile!.glyph)
+    )
+    expect(rest?.gateFace?.sequences?.[0].hidden?.read).toBe(false)
+    expect(doorAt(spoiledState(0, 1), { walked: [1] })?.gateFace?.sequences?.[0].reset).toBeUndefined()
+    const read: SequenceRead = { walked: [0, 1, 2], read: true }
+    expect(doorAt(spoiledState(0, 1), read)?.gateFace?.sequences?.[0].reset).toBeDefined()
   })
 
   it("drops from the hall into the cellar as the zipline its pyramid binds, and by no other way", () => {
