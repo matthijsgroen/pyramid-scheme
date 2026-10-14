@@ -34,3 +34,7 @@ export const contentNow = (
   }
   return { placed, puzzleRole }
 }
+
+/** The gate a lock laid on each cell, by the cell it stands on. */
+export const gateAtCell = (lay: CarveState["lay"]): ReadonlyMap<string, string> =>
+  new Map([...(lay?.laid.gateDoor ?? [])].map(([id, cell]) => [cell, id] as const))
