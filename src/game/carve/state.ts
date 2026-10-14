@@ -368,12 +368,16 @@ export type PassEntry = {
   run: (prep: FloorPrep, state: CarveState) => Refusal | void
 }
 
-/** Declares a pass: a key it reads that no earlier pass wrote is a mistake in the pass order, so it throws. */
+/**
+ * Declares a pass: a key it reads that no earlier pass wrote is a mistake in the pass order, so it throws.
+ * The keys are taken from the lists alone, so a pass whose own type reads or writes a key its lists leave
+ * out does not compile.
+ */
 export const pass = <R extends keyof CarveState, W extends keyof CarveState>(
   name: string,
   reads: readonly R[],
   writes: readonly W[],
-  run: Pass<R, W>
+  run: Pass<NoInfer<R>, NoInfer<W>>
 ): PassEntry => ({
   name,
   reads,
