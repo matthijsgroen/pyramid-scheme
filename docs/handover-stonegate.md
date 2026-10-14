@@ -94,9 +94,10 @@ The art plan is `docs/superpowers/plans/2026-10-06-stonegate-phase-5-art.md`; it
    builds the mechanics they need and places them.
 3. **The procession door** (roadmap, "Designed, not built"), after placement.
 4. **Fold doubleBack's twin** once the designer answers how a drop beside a gate compiles (below).
-5. **Carve passes refactor:** plan in `docs/instructions/carve-passes.md`. Steps 1–10 done: `assembleFloor` runs
-   the pass engine in `src/game/carve/`, `siteAssembler.ts` keeps only the public types and re-exports, and all
-   206 shipped floors carve byte-identically to the old engine. `siteAssembler.spec.ts` is split into per-pass specs beside the passes. Next: step 11 (one renderer: G4–G9 out of `settle`, one step per write).
+5. **Carve passes refactor: done.** Plan in `docs/instructions/carve-passes.md`. `assembleFloor` runs the pass
+   engine in `src/game/carve/`; `siteAssembler.ts` keeps only the public types and re-exports. Passes decide,
+   `render` writes the grid, `validate` only checks it, and `standPieces` (sequence tiles, plates) is the one
+   write after render, because it reads the rendered walk. All 206 shipped floors carve byte-identically.
 
 Each runs with superpowers:subagent-driven-development: per task an implementer subagent and a task review, then a
 final whole-branch review on the most capable model. Commit and push freely on this branch.

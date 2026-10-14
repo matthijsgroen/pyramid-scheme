@@ -122,6 +122,9 @@ Flat keys, so `Pick` types each pass. Optional until its pass runs.
 | `forks`            | `{ reserved: string[], inFork: Set<string>, switchesPlaced }`                                       | `reserveJunctions`     |
 | `switchDoors`      | `Map<cell, Set<door>>`                                                                              | `shutSwitchGround`     |
 | `drops`            | `OneWayEdge[]`, seam drops first                                                                    | `placeDrops`           |
+| `switchWays`       | per reserved junction: `{ dir, cell, gateKeyId }[]`, the doors its switch would shut                | `nameSwitchWays`       |
+| `switchRooms`      | `Map<junction, Partial<RoomSpec>>`: the switch's encounter                                          | `standSwitches`        |
+| `forkSwitchRooms`  | `Map<junction, { room, gateKeyByDir }>`: a `{ in }` fork's encounter                                | `standForkSwitches`    |
 
 **Derived, in `carve/derive.ts`** (today's locals that are lookups, not decisions): `routeStepOf` and
 `mainPathIndexByKey` (one function), `absorbedCell`, `dropEnds`, `regionDoorAt`, `gateAtCell`,
@@ -143,31 +146,35 @@ order kept: the junction sort at 3550 is stable), `standsBehind` (`doors.behind`
 The order is today's order, and it is the order of `rand()` draws. A pass that draws is marked 🎲. Reordering one
 moves every floor after it.
 
-| #   | File                       | Reads                                                    | Writes             | From                                                                |
-| --- | -------------------------- | -------------------------------------------------------- | ------------------ | ------------------------------------------------------------------- |
-| 1   | `layFloor.ts`              | `rung`; prep `layPlan`, `plan`, sizing, sections         | `lay`              | 1566–1627                                                           |
-| 2   | `growMaze.ts` 🎲           | `rung`, `lay`, `rand`                                    | `maze`             | 1628–1649, 2088–2103                                                |
-| 3   | `seatRouteRegions.ts`      | `maze`, `lay`                                            | `regions`          | 1651–1675, 1797–1806                                                |
-| 4   | `seatSeamGates.ts`         | `regions`, `lay`, `maze`                                 | `seamGates`        | 1765–1795                                                           |
-| 5   | `placeMainContent.ts`      | `maze`, `regions`, `lay`                                 | `content`          | 1813–1872                                                           |
-| 6   | `placeJunctions.ts` 🎲     | `maze`, `regions`, `content`, `lay`                      | `junctions`        | 1874–1910                                                           |
-| 7   | `seatGateRuns.ts`          | `regions`, `content`, `junctions`, `seamGates`           | `runGates`         | 1912–1939                                                           |
-| 8   | `seatMainBarrierDoors.ts`  | `regions`, `content`, `junctions`, gates, `lay`          | `mainBarrierDoors` | 1941–1970                                                           |
-| 9   | `seatMainControls.ts`      | everything above                                         | `mainControls`     | 1972–2077                                                           |
-| 10  | `hangBranches.ts` 🎲       | everything above                                         | `branches`         | 2079–2525                                                           |
-| 11  | `relayKeys.ts` 🎲          | `branches`, `lay`                                        | `keys`             | 2527–2610                                                           |
-| 12  | `labelCells.ts`            | `maze`, `regions`, `keys`, `lay`                         | `labels`           | 2711–2738, 2850–2950 (not 2911–2938), 3082–3103 hashes and dressing |
-| 13  | `seatChainGates.ts`        | `keys`, `labels`, `lay`                                  | `chainGates`       | 2869, 2886–2887, 2911–2938                                          |
-| 14  | `checkChainsSeated.ts`     | `labels`, `chainGates`, `keys`                           | —                  | 2952–2992                                                           |
-| 15  | `isolate.ts`               | `maze`, `keys`, `labels`, `lay`                          | `doors`            | 2741–2828, 2994–3036                                                |
-| 16  | `mainRooms.ts`             | `maze`, `content`, controls, gates, doors, `keys`, `lay` | `mainRooms`        | 3038–3192                                                           |
-| 17  | `chainRooms.ts`            | `keys`, `labels`, `chainGates`, `lay`                    | `chainRooms`       | 3194–3471                                                           |
-| 18  | `reserveJunctions.ts`      | `forkPositions`, `roomAt`, `nodeExitsOf`, `labels`       | `forks`            | 3473–3568                                                           |
-| 19  | `shutSwitchGround.ts`      | `forks`, `branches.used`, `nodeExitsOf`                  | `switchDoors`      | 3570–3597                                                           |
-| 20  | `placeDrops.ts`            | `branches`, `labels`, `standsBehind`                     | `drops`            | 3599–3718                                                           |
-| —   | `render.ts`                | all                                                      | grid               | 3720–4101                                                           |
-| —   | `settle.ts` (transitional) | state, grid                                              | grid               | 4103–4518                                                           |
-| —   | `finish.ts`                | prep, grid                                               | grid               | 4520–4541                                                           |
+| #   | File                      | Reads                                                    | Writes             | From                                                                |
+| --- | ------------------------- | -------------------------------------------------------- | ------------------ | ------------------------------------------------------------------- |
+| 1   | `layFloor.ts`             | `rung`; prep `layPlan`, `plan`, sizing, sections         | `lay`              | 1566–1627                                                           |
+| 2   | `growMaze.ts` 🎲          | `rung`, `lay`, `rand`                                    | `maze`             | 1628–1649, 2088–2103                                                |
+| 3   | `seatRouteRegions.ts`     | `maze`, `lay`                                            | `regions`          | 1651–1675, 1797–1806                                                |
+| 4   | `seatSeamGates.ts`        | `regions`, `lay`, `maze`                                 | `seamGates`        | 1765–1795                                                           |
+| 5   | `placeMainContent.ts`     | `maze`, `regions`, `lay`                                 | `content`          | 1813–1872                                                           |
+| 6   | `placeJunctions.ts` 🎲    | `maze`, `regions`, `content`, `lay`                      | `junctions`        | 1874–1910                                                           |
+| 7   | `seatGateRuns.ts`         | `regions`, `content`, `junctions`, `seamGates`           | `runGates`         | 1912–1939                                                           |
+| 8   | `seatMainBarrierDoors.ts` | `regions`, `content`, `junctions`, gates, `lay`          | `mainBarrierDoors` | 1941–1970                                                           |
+| 9   | `seatMainControls.ts`     | everything above                                         | `mainControls`     | 1972–2077                                                           |
+| 10  | `hangBranches.ts` 🎲      | everything above                                         | `branches`         | 2079–2525                                                           |
+| 11  | `relayKeys.ts` 🎲         | `branches`, `lay`                                        | `keys`             | 2527–2610                                                           |
+| 12  | `labelCells.ts`           | `maze`, `regions`, `keys`, `lay`                         | `labels`           | 2711–2738, 2850–2950 (not 2911–2938), 3082–3103 hashes and dressing |
+| 13  | `seatChainGates.ts`       | `keys`, `labels`, `lay`                                  | `chainGates`       | 2869, 2886–2887, 2911–2938                                          |
+| 14  | `checkChainsSeated.ts`    | `labels`, `chainGates`, `keys`                           | —                  | 2952–2992                                                           |
+| 15  | `isolate.ts`              | `maze`, `keys`, `labels`, `lay`                          | `doors`            | 2741–2828, 2994–3036                                                |
+| 16  | `mainRooms.ts`            | `maze`, `content`, controls, gates, doors, `keys`, `lay` | `mainRooms`        | 3038–3192                                                           |
+| 17  | `chainRooms.ts`           | `keys`, `labels`, `chainGates`, `lay`                    | `chainRooms`       | 3194–3471                                                           |
+| 18  | `reserveJunctions.ts`     | `forkPositions`, `roomAt`, `nodeExitsOf`, `labels`       | `forks`            | 3473–3568                                                           |
+| 19  | `shutSwitchGround.ts`     | `forks`, `branches.used`, `nodeExitsOf`                  | `switchDoors`      | 3570–3597                                                           |
+| 20  | `placeDrops.ts`           | `branches`, `labels`, `standsBehind`                     | `drops`            | 3599–3718                                                           |
+| 21  | `nameSwitchWays.ts`       | `forks`, `switchDoors`, `freeWaysOut`                    | `switchWays`       | G4's decision                                                       |
+| 22  | `standSwitches.ts`        | `forks`                                                  | `switchRooms`      | G5's decision                                                       |
+| 23  | `standForkSwitches.ts`    | `junctions`, `keys`, `lay`, `nodeExitsOf`, `rooms`       | `forkSwitchRooms`  | G6's decision                                                       |
+| —   | `render.ts`               | all                                                      | grid               | 3720–4101, then G4–G7's writes                                      |
+| —   | `validate.ts`             | state, grid, its open and shut views                     | —                  | 4103–4467's checks                                                  |
+| —   | `standPieces.ts`          | `maze`, `switchWays`, grid                               | grid               | G8, G9 (4470–4518)                                                  |
+| —   | `finish.ts`               | prep, grid                                               | grid               | 4520–4541                                                           |
 
 Notes the port must keep:
 
@@ -203,18 +210,18 @@ The layer split removes each of these. None changes a grid, given the read order
 
 These decide where "passes decide, one renderer writes" could change a floor.
 
-| #   | Lines     | Write                                                                                  | Read back by                                              | In the new engine        |
-| --- | --------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------- | ------------------------ |
-| G1  | 3877–3901 | drops over the fill; `joinNode` reads node `dirs`                                      | itself, dressing                                          | inside `render`; stays   |
-| G2  | 3903–3908 | entrance `reachable`                                                                   | validate                                                  | inside `render`; stays   |
-| G3  | 3910–4077 | dressing and patron read `dirs` and `footprintSize` off the grid                       | itself                                                    | inside `render`; stays   |
-| G4  | 4138–4209 | `closeWaysOut` shuts every reserved junction, then reopens those past `switchesPlaced` | `validateSite` (closed), G5, G6, G7, agreement (`opened`) | `settle`; **move later** |
-| G5  | 4216–4248 | switch family, board, tier on the junction                                             | `duplicateSlot`, G7 (`mechanismId`)                       | `settle`; **move later** |
-| G6  | 4253–4327 | fork-switch junction; asserts the door cell's `requiredKeyId` (4289)                   | `duplicateSlot`, G7                                       | `settle`; **move later** |
-| G7  | 4333–4358 | marks painted off `mechanism`, `requiredKeyId`, `mechanismId`, `exits`                 | `withGateFaces`                                           | `settle`; **move later** |
-| G8  | 4473–4495 | `placeSequences` finds free nodes on the grid and writes tiles                         | G9, `duplicateSlot`, degrade                              | `settle`; **move later** |
-| G9  | 4497–4518 | `placeWeights`, same                                                                   | `duplicateSlot`, degrade, faces                           | `settle`; **move later** |
-| G10 | 4523–4540 | degrade, passages, faces: grid to grid                                                 | —                                                         | `finish`; stays          |
+| #   | Lines     | Write                                                                                  | Read back by                                              | In the new engine                                             |
+| --- | --------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------- |
+| G1  | 3877–3901 | drops over the fill; `joinNode` reads node `dirs`                                      | itself, dressing                                          | inside `render`; stays                                        |
+| G2  | 3903–3908 | entrance `reachable`                                                                   | validate                                                  | inside `render`; stays                                        |
+| G3  | 3910–4077 | dressing and patron read `dirs` and `footprintSize` off the grid                       | itself                                                    | inside `render`; stays                                        |
+| G4  | 4138–4209 | `closeWaysOut` shuts every reserved junction, then reopens those past `switchesPlaced` | `validateSite` (closed), G5, G6, G7, agreement (`opened`) | `nameSwitchWays`; doors in `render`, all shut in `renderShut` |
+| G5  | 4216–4248 | switch family, board, tier on the junction                                             | `duplicateSlot`, G7 (`mechanismId`)                       | `standSwitches`; written in `render`                          |
+| G6  | 4253–4327 | fork-switch junction; asserts the door cell's `requiredKeyId` (4289)                   | `duplicateSlot`, G7                                       | `standForkSwitches`; written in `render`                      |
+| G7  | 4333–4358 | marks painted off `mechanism`, `requiredKeyId`, `mechanismId`, `exits`                 | `withGateFaces`                                           | `render`'s last write                                         |
+| G8  | 4473–4495 | `placeSequences` finds free nodes on the grid and writes tiles                         | G9, `duplicateSlot`, degrade                              | `standPieces`, after `validate`                               |
+| G9  | 4497–4518 | `placeWeights`, same                                                                   | `duplicateSlot`, degrade, faces                           | `standPieces`, after the tiles                                |
+| G10 | 4523–4540 | degrade, passages, faces: grid to grid                                                 | —                                                         | `finish`; stays                                               |
 
 Checks that read the grid stay checks on the grid: `duplicateSlot` (4123, 4245, 4324, 4493, 4516), `validateSite`
 (4201, 4203), appetite (4370–4389), carve agreement (4396–4467).
@@ -297,11 +304,10 @@ difference is explained in the step's report.
 
     Check: the test count does not drop; `yarn verify` green.
 
-11. **One renderer** (later, one step per write). Move G4–G9 out of `settle` into decisions in passes plus writes in
-    `render`, in this order: G7 marks (render's last write), G5 switch families, G6 fork-switch, G4 switch doors
-    (validation then needs the grid twice: switch doors open and all shut), G8 tiles, G9 plates. Each may move
-    floors: the `duplicateSlot` and `validateSite` order changes. Gate per step: the step-9 gate, the harness report
-    explained, re-bake, commit. Delete `settle.ts` with the last one.
+11. **One renderer.** Done. G4–G7 became decisions in passes 21–23 plus writes in `render`, in the order G4, G5,
+    G6, G7 (marks can only be painted once the switch doors and junctions they mark are written). G8 and G9 moved
+    to `standPieces`, a step after `validate`; `settle.ts` became `validate.ts`, which writes no cell. Every
+    shipped floor stayed byte-identical.
 
 ## Decisions
 
@@ -390,3 +396,21 @@ difference is explained in the step's report.
 - Harness: 206 of 206 floors identical. A throwaway probe comparing every result whole (JSON of the grid with
   decorations, exits, mechanisms, ordinals, hashes and board indices) also found 206 of 206 byte-identical, so
   neither S8 nor the early `noUngatedSectionForKey` refusal changes a shipped floor.
+
+## Notes from building step 11
+
+- `render` is `renderGround` (the old renderer) plus the switch doors, the switches, the fork-switches and the
+  marks. `validate` asks `validateSite` of two views rendered from the same state: `renderGround` (every
+  reserved junction open, nothing stood in one) and `renderShut` (every reserved junction shut). The agreement
+  reads `renderGround` too: it reads walls, doors and regions, which the switch's encounter and the marks never
+  change, so it sees what the old `asCarved` copy saw. The two views cost one floor sweep no measurable time.
+- **The one write after `render`: `standPieces`.** Where a sequence tile may stand is every way into its region,
+  read off the walk the rendered grid draws (`dirs`, doors, drops, hidden ground); a plate takes a bare node the
+  tiles left, with its `dirs` as drawn. Deriving that walk from state would be a second renderer, so the pieces
+  stand on the grid after `validate`, as they did after the old checks. They move no wall. Its refusals and
+  duplicate checks keep their place.
+- `validate` asks `duplicateSlot` once, after both `validateSite` views, of the full grid. Before, a bare check
+  came first and a switched one after the views. Only a fatal can turn into a retry by this, never the other way,
+  and no shipped floor ever met a fatal.
+- The fork-switch's door check reads the door's room spec (`rooms(state)`), not the grid: the grid's room there
+  is written from that spec, and a switch door (never specced) fails it the same way.
