@@ -101,6 +101,7 @@ export const mechanicsLeft = (grid: FloorGrid, owned: ReadonlySet<string> = new 
       if (cell.mechanismId) found.push(`${at} mechanismId`)
       if (cell.sequenceTile) found.push(`${at} sequenceTile`)
       if (cell.plate) found.push(`${at} plate`)
+      if (cell.pipeHole) found.push(`${at} pipeHole`)
       if (cell.worksMechanism) found.push(`${at} worksMechanism`)
       if (cell.regionBarrier) found.push(`${at} regionBarrier`)
       if (cell.passage) found.push(`${at} passage`)

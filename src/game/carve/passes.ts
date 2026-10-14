@@ -11,6 +11,7 @@ import { nameSwitchWays } from "./nameSwitchWays"
 import { placeDrops } from "./placeDrops"
 import { placeJunctions } from "./placeJunctions"
 import { placeMainContent } from "./placeMainContent"
+import { placePipeHoles } from "./placePipeHoles"
 import { relayKeys } from "./relayKeys"
 import { render } from "./render"
 import type { RenderState } from "./render"
@@ -58,6 +59,7 @@ export const PASSES: readonly PassEntry[] = [
   nameSwitchWays,
   standSwitches,
   standForkSwitches,
+  placePipeHoles,
 ]
 
 /** What the tail reads: every key `render`, `validate` and `standPieces` take from the passes, each checked as a pass's are. */
@@ -75,6 +77,7 @@ export const TAIL_READS = [
   "switchWays",
   "switchRooms",
   "forkSwitchRooms",
+  "pipeHoles",
 ] as const satisfies readonly (keyof RenderState)[]
 
 /**

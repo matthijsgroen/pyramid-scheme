@@ -125,6 +125,7 @@ Flat keys, so `Pick` types each pass. Optional until its pass runs.
 | `switchWays`       | per reserved junction: `{ dir, cell, gateKeyId }[]`, the doors its switch would shut                | `nameSwitchWays`       |
 | `switchRooms`      | `Map<junction, Partial<RoomSpec>>`: the switch's encounter                                          | `standSwitches`        |
 | `forkSwitchRooms`  | `Map<junction, { room, gateKeyByDir }>`: a `{ in }` fork's encounter                                | `standForkSwitches`    |
+| `pipeHoles`        | `Map<hole, { cell }>`: the node each pipe's hole stands on                                          | `placePipeHoles`       |
 
 **Derived, in `carve/derive.ts`** (today's locals that are lookups, not decisions): `routeStepOf` and
 `mainPathIndexByKey` (one function), `absorbedCell`, `dropEnds`, `regionDoorAt`, `gateAtCell`,
@@ -171,9 +172,10 @@ moves every floor after it.
 | 21  | `nameSwitchWays.ts`       | `forks`, `switchDoors`, `freeWaysOut`                    | `switchWays`       | G4's decision                                                       |
 | 22  | `standSwitches.ts`        | `forks`                                                  | `switchRooms`      | G5's decision                                                       |
 | 23  | `standForkSwitches.ts`    | `junctions`, `keys`, `lay`, `nodeExitsOf`, `rooms`       | `forkSwitchRooms`  | G6's decision                                                       |
+| 24  | `placePipeHoles.ts`       | `labels`, `rooms`, `edgeAllowed`, `drops`, `switchWays`  | `pipeHoles`        | the stone pipe (stone-pipe.md); draws nothing                       |
 | —   | `render.ts`               | all                                                      | grid               | 3720–4101, then G4–G7's writes                                      |
 | —   | `validate.ts`             | state, grid, its open and shut views                     | —                  | 4103–4467's checks                                                  |
-| —   | `standPieces.ts`          | `maze`, `switchWays`, grid                               | grid               | G8, G9 (4470–4518)                                                  |
+| —   | `standPieces.ts`          | `maze`, `switchWays`, `pipeHoles`, grid                  | grid               | G8, G9 (4470–4518)                                                  |
 | —   | `finish.ts`               | prep, grid                                               | grid               | 4520–4541                                                           |
 
 Notes the port must keep:

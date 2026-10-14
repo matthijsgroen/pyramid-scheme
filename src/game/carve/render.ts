@@ -12,6 +12,8 @@ import type {
   WallDecorationKind,
 } from "../siteTypes"
 import { MECHANISM_AT_REST } from "../siteTypes"
+import { holeRegion } from "../mechanics/weights"
+import { standOnCorridor } from "../sequenceTiles"
 import { edgeAllowed, forkPositions, rooms, routeStepOf } from "./derive"
 import { CONNECTOR_DIRS, OPPOSITE } from "./grid"
 import { switchMark } from "./ids"
@@ -44,6 +46,7 @@ export type RenderState = Pick<
   | "switchWays"
   | "switchRooms"
   | "forkSwitchRooms"
+  | "pipeHoles"
 >
 
 /**
@@ -438,7 +441,7 @@ export const renderShut = (prep: FloorPrep, state: RenderState): WritableGrid =>
 
 /**
  * THE GRID, WRITTEN ONCE FROM WHAT THE PASSES DECIDED: the ground, then the doors of every junction a switch
- * stands in, the switch itself, each `{ in }` fork's switch in the junction laid for it, and last the marks
+ * stands in, the switch itself, each `{ in }` fork's switch in the junction laid for it, each pipe's hole, and last the marks
  * tying each mechanism to its doors. A door nothing mints the key for is not a door, so a reserved junction with
  * no switch stays open.
  */
@@ -464,6 +467,14 @@ export const render = (prep: FloorPrep, state: RenderState): WritableGrid => {
         return gateKeyId ? { ...exit, gateKeyId } : exit
       }),
     }
+  }
+  // A pipe's hole is its node become a room, `dirs` untouched and nothing dressed on it.
+  for (const [hole, { cell }] of state.pipeHoles) {
+    const [r, c] = at(cell)
+    const node = cells[r][c]
+    if (node.type !== "corridor") throw new Error(`[siteAssembler] pipe hole ${hole} is not on a corridor`)
+    const region = holeRegion(hole)
+    cells[r][c] = standOnCorridor(node, { pipeHole: { pipe: hole.slice(0, hole.length - region.length - 1), region } })
   }
   paintMarks(prep, state, cells)
   return grid

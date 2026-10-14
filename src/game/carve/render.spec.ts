@@ -15,7 +15,7 @@ import type { Direction, FloorConfig, FloorGrid, GridCell, RoomCell } from "../s
 // 4,4 a vertical drop below the exit.
 describe("render", () => {
   const prep = prepOf(plainFloor())
-  const drawn = (drops: OneWayEdge[]) => {
+  const drawn = (drops: OneWayEdge[], pipeHoles = new Map<string, { cell: string }>()) => {
     const mainPath: Cell[] = [
       [0, 0],
       [0, 2],
@@ -64,6 +64,7 @@ describe("render", () => {
       switchWays: [],
       switchRooms: new Map(),
       forkSwitchRooms: new Map(),
+      pipeHoles,
     })
   }
 
@@ -73,6 +74,17 @@ describe("render", () => {
     expect(grid.cells[0][1]).toMatchObject({ type: "corridor", ordinal: "0|1", dirs: new Set(["e", "w"]) })
     expect(grid.cells[0][0]).toMatchObject({ state: "reachable", dirs: new Set(["e"]) })
     expect(grid.cells[0][4]).toMatchObject({ state: "fogged", dirs: new Set(["w"]) })
+  })
+
+  it("turns a pipe's hole node into a room that keeps its dirs and wears no dressing", () => {
+    const grid = drawn([], new Map([["a.P@a.hall", { cell: "0,2" }]]))
+    expect(grid.cells[0][2]).toMatchObject({
+      type: "room",
+      dirs: new Set(["e", "w"]),
+      pipeHole: { pipe: "a.P", region: "a.hall" },
+    })
+    expect(grid.cells[0][2]).not.toHaveProperty("decoration")
+    expect(grid.cells[0][2]).not.toHaveProperty("wallDecoration")
   })
 
   it("writes a drop's run with no way across, joining each end to its own stub", () => {
@@ -128,6 +140,7 @@ describe("a reserved junction", () => {
     forks: { reserved: ["0,2"], inFork: new Set<string>(), switchesPlaced },
     switchWays: [[{ dir: "s" as const, cell: "2,2", gateKeyId: "switch:way" }]],
     forkSwitchRooms: new Map(),
+    pipeHoles: new Map(),
     switchRooms: new Map(switchesPlaced > 0 ? [["0,2", { family: "sumplete", mechanismId: "switch:0" }]] : []),
   })
 

@@ -822,6 +822,8 @@ export type AssemblerReason =
   | { type: "sequenceTileNotPlaced"; id: string; step: number; reason: string }
   /** No carve found a free corridor node for a plate in its region. `plate` is the first plate left without one. */
   | { type: "plateNotPlaced"; plate: string }
+  /** No carve found a back-walled bare node for a pipe's hole in its region. `hole` is the first left without one. */
+  | { type: "pipeHoleNotPlaced"; hole: string }
   /** The floor's mechanics (and sequence tiles) need more distinct glyphs than the six a mark can wear,
    * so a mark would be shared. `ids` are the ones left without a glyph, in authoring order. */
   | { type: "marksExhausted"; ids: string[] }

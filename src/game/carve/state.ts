@@ -331,6 +331,8 @@ export type CarveState = {
   forkSwitchRooms?: ReadonlyMap<string, ForkSwitchRoom>
   /** Every one-way edge, seam drops first. */
   drops?: OneWayEdge[]
+  /** The node each pipe's hole stands on, by the hole's id (`pipe@region`); empty on a floor without a pipe. */
+  pipeHoles?: ReadonlyMap<string, { cell: string }>
 }
 
 type ReasonOf<T extends AssemblerReason["type"]> = Extract<AssemblerReason, { type: T }>
@@ -349,6 +351,7 @@ export type Shortfall =
   | ReasonOf<"controlPuzzleUndisplaceable">
   | ReasonOf<"sequenceTileNotPlaced">
   | ReasonOf<"plateNotPlaced">
+  | ReasonOf<"pipeHoleNotPlaced">
   | { type: "regionWillNotTake"; mismatch: { region: string; kind: ContentKind }[] }
   | { type: "carveDisagreement"; faults: CarveFault[] }
   | ReasonOf<"lockNotLaid">

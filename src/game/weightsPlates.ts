@@ -1,4 +1,5 @@
 import { hashString } from "@/support/hashString"
+import { holeOf } from "./lockAuthoring"
 import { compileWeights } from "./mechanics/weights"
 import type { WeightsControl } from "./obstacles"
 import { isCandidate, standOnCorridor } from "./sequenceTiles"
@@ -16,14 +17,17 @@ export type WeightsDemand = { control: WeightsControl; gate: (id: string) => { g
  * main path first; a region with no free node refuses the whole placement, naming the plate. The stones'
  * record goes on the first plate, and every plate works the moves the record places at it.
  *
- * `reserved` are cells a plate may never take, as for `placeSequences`.
+ * `reserved` are cells a plate may never take, as for `placeSequences`. `holes` are where each pipe's hole stands
+ * (the carve put them there, `placePipeHoles`): a hole works the moves the record places at it, and holds the record
+ * itself on a lock with no plate.
  */
 export const placeWeights = (
   cells: GridCell[][],
   demands: readonly WeightsDemand[],
   onMainPath: ReadonlySet<string>,
   salt: string,
-  reserved: ReadonlySet<string> = new Set()
+  reserved: ReadonlySet<string> = new Set(),
+  holes: ReadonlyMap<string, Place> = new Map()
 ): { plate: string } | undefined => {
   const taken = new Set<string>()
   const placed: { demand: WeightsDemand; at: Map<string, Place> }[] = []
@@ -47,18 +51,28 @@ export const placeWeights = (
 
   for (const { demand, at } of placed) {
     const { control, gate } = demand
-    const record = compileWeights(control, plate => at.get(plate)!, gate)
+    const record = compileWeights(control, place => at.get(place) ?? holes.get(place)!, gate)
+    const works = (r: number, c: number) => ({
+      mechanismId: control.id,
+      transition: record.transitions!.findIndex(t => t.at[0] === r && t.at[1] === c),
+    })
+    const home = { mechanism: record, mechanismId: control.id }
+    ;(control.pipes ?? [])
+      .flatMap(pipe => pipe.ends.map(region => holeOf(pipe.id, region)))
+      .forEach((hole, n) => {
+        const [r, c] = holes.get(hole)!
+        const cell = cells[r][c]
+        if (cell.type !== "room" || !cell.pipeHole) throw new Error(`[siteAssembler] hole ${hole} is not a pipe hole`)
+        cells[r][c] = { ...cell, worksMechanism: works(r, c), ...(n === 0 && control.plates.length === 0 ? home : {}) }
+      })
     control.plates.forEach((plate, n) => {
       const [r, c] = at.get(plate.id)!
       const cell = cells[r][c]
       if (cell.type !== "corridor") throw new Error(`[siteAssembler] plate ${plate.id} is not on a corridor`)
       cells[r][c] = standOnCorridor(cell, {
         plate: { id: plate.id },
-        worksMechanism: {
-          mechanismId: control.id,
-          transition: record.transitions!.findIndex(t => t.at[0] === r && t.at[1] === c),
-        },
-        ...(n === 0 ? { mechanism: record, mechanismId: control.id } : {}),
+        worksMechanism: works(r, c),
+        ...(n === 0 ? home : {}),
       })
     })
   }

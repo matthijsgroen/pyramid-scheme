@@ -11,7 +11,11 @@ import { assembleFloor } from "./siteAssembler"
 import type { FloorConfig } from "./siteTypes"
 
 const controlOf = (text: string) => {
-  const result = compileLock(parseLock(text).lock, { weights: "stonePlate" })
+  const result = compileLock(parseLock(text).lock, {
+    weights: "stonePlate",
+    pipe: "stonePipe",
+    unladen: "narrowPassage",
+  })
   if (!result.ok) throw new Error(JSON.stringify(result.faults))
   return result.fragment.controls.find(isWeights)!
 }
@@ -91,12 +95,67 @@ describe("placeWeights", () => {
   })
 })
 
+describe("a pipe's holes", () => {
+  // Plates on row 0's free nodes, all of region in; the holes already stand at 0,4 and 0,6, as the carve put them.
+  const holed = (text: string) => {
+    const cells = corridorRow(4, "in")
+    for (const [c, region] of [
+      [4, "in"],
+      [6, "hall"],
+    ] as const) {
+      const cell = cells[0][c]
+      if (cell.type === "corridor")
+        cells[0][c] = { ...cell, type: "room", roomType: "encounter", pipeHole: { pipe: "P", region } }
+    }
+    const control = controlOf(text)
+    const holes = new Map<string, [number, number]>([
+      ["P@in", [0, 4]],
+      ["P@hall", [0, 6]],
+    ])
+    placeWeights(cells, [{ control, gate: id => ({ gateKeyId: `k:${id}` }) }], new Set(), "salt", new Set(), holes)
+    return cells
+  }
+  const record = (cells: GridCell[][]) =>
+    cells.flat().flatMap(cell => (cell.type === "room" && cell.mechanism ? [cell.mechanism] : []))[0]
+
+  it("works the moves made at each hole, placed at its cell", () => {
+    const cells = holed("in -- hall\nhall -[p]- out\np plate @in\nshelf plate @in stone\nP pipe @in @hall")
+    const { transitions } = record(cells)
+    expect(transitions).toContainEqual({ from: "+ hand", to: "P@hall", at: [0, 4] })
+    expect(transitions).toContainEqual({ from: "P@hall", to: "+ hand", at: [0, 6] })
+    const hole = cells[0][6] as RoomCell
+    expect(transitions![hole.worksMechanism!.transition].at).toEqual([0, 6])
+    expect(hole.mechanism).toBeUndefined()
+  })
+
+  it("holds the record on the first hole of a lock with no plate", () => {
+    const cells = holed("in -- hall\nhall -[unladen]- out\nP pipe @in @hall stone")
+    expect((cells[0][4] as RoomCell).mechanism?.initial).toBe("P@hall")
+  })
+})
+
 describe("a stone lock on a floor", () => {
   // Every region takes `free`, so the carve has nothing to seat but the lock.
   const STONES = "in -- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nin ?\nhall ?\nout ?"
 
   it("carves, and the engine's walk of it is sound", () => {
     const grid = carveLockFloor(parseLock(STONES, "stones").lock, { weights: "stonePlate" })
+    expect(walkFloorLock(grid)).toMatchObject({ sound: true })
+  })
+
+  it("carves a pipe's holes in their regions, and the walk of it is sound", () => {
+    const piped =
+      "in -[unladen]- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nP pipe @in @hall\nin ?\nhall ?\nout ?"
+    const grid = carveLockFloor(parseLock(piped, "piped").lock, {
+      weights: "stonePlate",
+      unladen: "narrowPassage",
+      pipe: "stonePipe",
+    })
+    const holes = grid.cells.flat().flatMap(cell => (cell.type === "room" && cell.pipeHole ? [cell] : []))
+    expect(holes.map(cell => [cell.pipeHole!.region, cell.region]).sort()).toEqual([
+      ["piped.hall", "piped.hall"],
+      ["piped.in", "piped.in"],
+    ])
     expect(walkFloorLock(grid)).toMatchObject({ sound: true })
   })
 

@@ -210,7 +210,12 @@ export const WEIGHTS: MechanicKind = {
     control.control === "weights"
       ? [
           ...control.plates.map(plate => ({ region: plate.in, seat: "tile" as const })),
-          ...(control.pipes ?? []).flatMap(pipe => pipe.ends.map(region => ({ region, seat: "tile" as const }))),
+          ...(control.pipes ?? []).flatMap(pipe =>
+            pipe.ends.flatMap(region => [
+              { region, seat: "tile" as const },
+              { region, seat: "tile" as const },
+            ])
+          ),
         ]
       : [],
   compileLock: (lock, { name, binding }) => {

@@ -39,6 +39,14 @@ export const CRACK = "in -[unladen]- out\nshelf plate @in stone\nin ?\nout ?"
 /** The stones as stone plates, a gate empty hands alone open as a narrow passage. */
 export const PASSAGE_BINDING: RealisationBinding = { weights: "stonePlate", unladen: "narrowPassage" }
 
+/** A stone on a shelf by the way in, a narrow passage to a hall whose door waits for a stone on `p`, and a pipe from
+ * the way in to the hall: the stone crosses by the pipe. */
+export const PIPED =
+  "in -[unladen]- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nP pipe @in @hall\nin ?\nhall ?\nout ?"
+
+/** The stones as stone plates, the pipe as a stone pipe, the narrow passage as itself. */
+export const PIPE_BINDING: RealisationBinding = { ...PASSAGE_BINDING, pipe: "stonePipe" }
+
 /** Where the floor's one narrow passage stands. */
 export const passageAt = (grid: FloorGrid): readonly [number, number] => {
   for (let r = 0; r < grid.rows; r++)

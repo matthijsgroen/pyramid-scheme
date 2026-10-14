@@ -7,7 +7,7 @@ import { duplicateSlot } from "./validate"
 import type { CarveState, FloorPrep, Refusal } from "./state"
 
 /** What standing the pieces reads beyond the grid: the route, and every reserved junction's ways out. */
-export type PiecesState = Pick<Required<CarveState>, "maze" | "switchWays">
+export type PiecesState = Pick<Required<CarveState>, "maze" | "switchWays" | "pipeHoles">
 
 /**
  * THE PIECES A WALK STEPS ON, STOOD ON THE RENDERED GRID: sequence tiles, then plates. The one write after
@@ -45,14 +45,18 @@ export const standPieces = (prep: FloorPrep, state: PiecesState, grid: WritableG
     if (tileDuplicate) return tileDuplicate
   }
 
-  // A plate stands on a bare node the tiles left free.
+  // A plate stands on a bare node the tiles left free; a pipe's holes stand where the carve put them.
   if (weights.length > 0) {
+    const holes = new Map(
+      [...state.pipeHoles].map(([hole, { cell }]) => [hole, cell.split(",").map(Number) as [number, number]] as const)
+    )
     const unplaced = placeWeights(
       grid.cells,
       weights.map(control => ({ control, gate: gateOf })),
       new Set(state.maze.mainPath.map(keyOf)),
       siteId,
-      shutWays()
+      shutWays(),
+      holes
     )
     if (unplaced) return { retry: [{ type: "plateNotPlaced", ...unplaced }] }
     const plateDuplicate = duplicateSlot(grid)
