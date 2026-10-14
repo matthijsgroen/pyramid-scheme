@@ -2,16 +2,15 @@ import { describe, expect, it } from "vitest"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { assembleFloor as assembleWithSiteAssembler } from "@/game/siteAssembler"
 import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
-import { expandFloorLocks } from "@/game/floorLocks"
-import { planLockFloor } from "@/game/lockPlan"
-import type { AssemblerReason, AssemblerResult, FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
+import type { AssemblerResult, FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
 import { resolveEncounterMeta, resolveKeyRequirements } from "@/mods/allFamilyMeta"
-import { prepareFloor } from "./prepareFloor"
+import { assembleFloor as assembleWithPasses } from "./assembleFloor"
 
 // A REPORT, NOT A GATE: it carves every shipped floor with siteAssembler.ts and with the pass engine and
 // says, per floor, `identical` or what differs, so each difference is read and explained. It never fails
 // on a difference. The floors are generatedWorldConfigs at their runtime seeds — the world `allFloors()`
-// walks, read here because the domain may not reach the app.
+// walks, read here because the domain may not reach the app. The report is the test's stdout, which only
+// `yarn verify-content src/game/carve/compareEngines --reporter=verbose` prints for a passing test.
 
 type Floor = { label: string; journeyId: string; levelIndex: number; floorIndex: number; config: FloorConfig }
 
@@ -35,22 +34,6 @@ const resolversOf = (floor: Floor) => ({
   resolveKeyRequirements,
   floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
 })
-
-/** What the pass engine says of a floor: until it renders, whether its prep refuses and why. */
-type PassEngineOutcome = { refused: AssemblerReason[] } | { prepared: true }
-
-const passEngine = (floor: Floor): PassEngineOutcome => {
-  const expanded = expandFloorLocks(floor.config)
-  if (!expanded.ok) return { refused: expanded.reasons }
-  const prepared = prepareFloor(
-    floor.journeyId,
-    expanded.config,
-    seedOf(floor),
-    { ...resolversOf(floor), resolveEncounter: resolveEncounterMeta },
-    planLockFloor(expanded)
-  )
-  return prepared.ok ? { prepared: true } : { refused: prepared.reasons }
-}
 
 const cellsOf = (grid: FloorGrid) => grid.cells.flatMap((row, r) => row.map((cell, c) => ({ at: `${r},${c}`, cell })))
 
@@ -113,26 +96,25 @@ const resultDifferences = (before: AssemblerResult, after: AssemblerResult): str
 describe("the pass engine against siteAssembler.ts", () => {
   it("reports every shipped floor: identical, or what differs", () => {
     const all = floors()
-    let agree = 0
+    const counts = { identical: 0, differ: 0, refusedBeforeCarving: 0 }
     const lines = all.map(floor => {
       const old = assembleWithSiteAssembler(floor.journeyId, floor.config, seedOf(floor), resolveEncounterMeta, {
         ...resolversOf(floor),
       })
-      const outcome = passEngine(floor)
-      // Until the passes render, the prep's refusals are what can be compared: a floor siteAssembler.ts
-      // carves must prepare, and one it refuses before carving must be refused alike.
-      const verdict =
-        "prepared" in outcome
-          ? old.success
-            ? "prepared; siteAssembler carves"
-            : `prepared; siteAssembler refuses ${JSON.stringify(old.reasons)}`
-          : old.success
-            ? `prep refuses ${JSON.stringify(outcome.refused)}; siteAssembler carves at attempt ${old.attempt}`
-            : resultDifferences(old, { success: false, reasons: outcome.refused }).join("; ") || "refused alike"
-      if (verdict === "prepared; siteAssembler carves" || verdict === "refused alike") agree++
-      return `${floor.label}: ${verdict}`
+      const next = assembleWithPasses(floor.journeyId, floor.config, seedOf(floor), resolveEncounterMeta, {
+        ...resolversOf(floor),
+      })
+      const differences = resultDifferences(old, next)
+      if (differences.length === 0) counts.identical++
+      else counts.differ++
+      // Every refusal the attempts reach ends in `layoutNotFound`; one without it came from before the first.
+      if (!next.success && !next.reasons.some(reason => reason.type === "layoutNotFound")) counts.refusedBeforeCarving++
+      return `${floor.label}: ${differences.length === 0 ? "identical" : differences.join("; ")}`
     })
-    console.log([...lines, `${agree} of ${all.length} floors agree, ${all.length - agree} differ`].join("\n"))
+    const summary =
+      `${counts.identical} identical, ${counts.differ} differ of ${all.length} floors; ` +
+      `the pass engine refused ${counts.refusedBeforeCarving} before carving`
+    console.log([...lines, summary].join("\n"))
     expect(lines).toHaveLength(all.length)
   })
 })

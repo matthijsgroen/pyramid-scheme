@@ -45,27 +45,28 @@ for each attempt: rung = ladder(prep, attempt, rung); state = fresh(rung); for (
 ### Refusal and the loop's memory
 
 ```ts
-type Refusal = { retry: Shortfall | null } | { fatal: AssemblerFailure["reasons"] }
+type Refusal = { retry: readonly Shortfall[] } | { fatal: AssemblerFailure["reasons"] }
 type Shortfall = // one per today's shortfall let (1496–1534)
   | { type: "forksUnsatisfied"; exits; count; carved } | { type: "forkSeamsNotLaid"; fork: ForkIn }
   | { type: "oneWayUnsatisfied"; from; to } | { type: "regionNotSeated"; regions }
-  | { type: "obstacleSeamNotCarved"; ids } | { type: "barriersNotSeated"; between; barriers }
+  | { type: "obstacleSeamNotCarved"; ids; onChain? } | { type: "barriersNotSeated"; between; barriers }
   | { type: "regionBarrierNotSeated"; id; region } | { type: "controlNotSeated"; ids }
   | { type: "controlPuzzleUndisplaceable"; ids } | { type: "sequenceTileNotPlaced"; … } | { type: "plateNotPlaced"; plate }
   | { type: "regionWillNotTake"; mismatch } | { type: "carveDisagreement"; faults } | { type: "lockNotLaid"; … }
   | { type: "contentNotLaid"; kinds }
 ```
 
-`retry: null` is today's bare `continue` that records nothing (content short, `failed` branches, `chainGateCrowdsEnd`,
+`retry: []` is today's bare `continue` that records nothing (content short, `failed` branches, `chainGateCrowdsEnd`,
 switch duplicate-free checks). `carve/shortfalls.ts` keeps the first of each type, except `forksUnsatisfied`, which
 keeps the one with the most `carved` (3556). It builds the final reasons in today's order (4544–4578).
 
 ### The ladder
 
 The ladder is neither prep nor state: it carries across attempts. `carve/ladder.ts` ports 1414–1480 and 1538–1562:
-`Rung = { n, packing, targetDistance, chainPacking, recovery }`. `N` compounds (`N += 2`), and the lay pass grows it
-(`N = result.laid.n`, 1583), even on a failed attempt. So `layFloor` writes `lay.n`, and the loop folds it into the
-next rung.
+`Rung = { n, startingN, packing, targetDistance, chainPacking, recovery }`, `startingN` being the grid the last
+widening settled on, which recovery never sizes below. `N` compounds (`N += 2`), and the lay pass grows it
+(`N = result.laid.n`, 1583), even on a failed attempt. So `layFloor` writes `laidN`, even when it refuses, and the
+loop folds it into the next rung.
 
 ## FloorPrep
 
@@ -101,7 +102,8 @@ Flat keys, so `Pick` types each pass. Optional until its pass runs.
 | ------------------ | --------------------------------------------------------------------------------------------------- | ---------------------- |
 | `rand`             | `() => number`, one stream (`mulberry32(seed + attempt * 7919)`)                                    | loop                   |
 | `attempt`, `rung`  | number, `Rung`                                                                                      | loop                   |
-| `lay`              | `{ laid: LaidFloor; mainSteps: number[]; n }`                                                       | `layFloor`             |
+| `laidN`            | number, written even when the lay refuses                                                           | `layFloor`             |
+| `lay`              | `{ laid: LaidFloor; mainSteps: number[] }`                                                          | `layFloor`             |
 | `maze`             | `{ n, entrance, exit, mainPath, passages }`, exit already a dead end                                | `growMaze`             |
 | `regions`          | `{ stepRegion, seams: Set<number> }`                                                                | `seatRouteRegions`     |
 | `seamGates`        | `Map<obstacleId, step>`                                                                             | `seatSeamGates`        |
@@ -195,7 +197,7 @@ The layer split removes each of these. None changes a grid, given the read order
 | S5  | 2297      | `attachByDrop` pushes onto `dropSeamEdges`                        | `branches.seamDrops`                                |
 | S6  | 3101      | absorbed rooms overwrite `cellDressing`                           | end of `labelCells`                                 |
 | S7  | 3596      | switch walk adds to `doorsToEnter`                                | `switchDoors`                                       |
-| S8  | 4148      | `closeWaysOut` sets phase-1 `markByGateKey`, kept across attempts | per-attempt switch marks (open question 3)          |
+| S8  | 4148      | `closeWaysOut` sets phase-1 `markByGateKey`, kept across attempts | per-attempt switch marks (decision 3)               |
 
 ### Grid writes a later step reads back
 
@@ -301,12 +303,25 @@ difference is explained in the step's report.
     floors: the `duplicateSlot` and `validateSite` order changes. Gate per step: the step-9 gate, the harness report
     explained, re-bake, commit. Delete `settle.ts` with the last one.
 
-## Open questions
+## Decisions
 
 1. **The ladder lives in the loop**, outside `FloorPrep` and `CarveState`, because `N` carries across attempts and
-   the lay grows it. Agreed?
-2. **Shortfall quirks:** `barriersShort` suppresses a later `gateSeamMissing` (2978); a fork shortfall keeps the
-   most carved (3556). Port them as they are, or simplify to "first of each kind" (changes only failure reasons,
-   and with them ledger `refusal` text)?
-3. **Switch marks outlive a failed attempt** (S8): `closeWaysOut` writes into the phase-1 `markByGateKey`. Make them
-   per attempt? No floor is expected to move; the harness will say.
+   the lay grows it.
+2. **Shortfall quirks are ported as they are:** `barriersShort` suppresses a later off-route `gateSeamMissing`
+   (2978), so that shortfall carries `onChain` (the main-path one at 1790 is never suppressed); a fork shortfall
+   keeps the most carved (3556). Simplifying them is a possible later step, not part of this build.
+3. **Switch marks are per attempt** (S8): the new engine does not write them into the phase-1 `markByGateKey`. The
+   harness report shows any effect.
+
+## Notes from building steps 1–4
+
+- One attempt can note several shortfalls (a control with no candidate and another whose puzzle would not move, at
+  2070–2072), so `retry` is a list. A short chain run (`chainGates.runShort`) is folded in by the loop before the
+  attempt's own refusal, as 2934 records it before 2978.
+- The sub-section `noUngatedSectionForKey` refusal is asked of every top-level section in `prepareFloor`, not only of
+  the ones an attempt hung: the old engine names it only once a carve gets that far.
+- The harness walks `generatedWorldConfigs` at the runtime seeds, as `bakedCarve.verify.ts` does: a domain file may
+  not import `allFloors()` from `src/app`.
+- The carve's family queries (`treasure-chest`, `fez-shop`, `key-gate`) are `CARVE_FAMILY_QUERIES` in
+  `encounterFallback.ts`, the one file core may name a mod family in.
+- `pass(name, reads, writes, run)` declares a pass; running one that reads a key no earlier pass wrote throws.

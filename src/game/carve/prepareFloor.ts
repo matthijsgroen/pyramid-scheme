@@ -1,4 +1,5 @@
 import { DEFAULT_PACKING } from "../carveConstants"
+import { ASSEMBLY_ATTEMPTS } from "./ladder"
 import { hashString } from "@/support/hashString"
 import { allocateMarks, type Mark, type MarkRequest } from "../mark"
 import {
@@ -46,9 +47,6 @@ import { chainRooms, gateKeyOf, gatesOwnedBy, handleStem, leverRooms, obstacleMo
 import type { AgreementGate, DropSeam, FloorPrep, ForkIn, OneWayDemand, SubSectionsOf } from "./state"
 
 const defaultResolveKeyRequirements: ResolveKeyRequirements = () => undefined
-
-/** The most attempts a floor may take. */
-export const ASSEMBLY_ATTEMPTS = 60
 
 // How often the maze continues in the same direction instead of turning, when it can. A plain
 // random-direction DFS maze is very serpentine (every step is a coin flip); biasing toward straight runs

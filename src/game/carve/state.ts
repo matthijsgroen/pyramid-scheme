@@ -8,6 +8,7 @@ import type {
   AssemblerFailure,
   AssemblerReason,
   DecorationKind,
+  FloorGrid,
   Difficulty,
   Direction,
   FloorConfig,
@@ -357,3 +358,31 @@ export type Pass<R extends keyof CarveState, W extends keyof CarveState> = (
   prep: FloorPrep,
   state: PassState<R, W>
 ) => Refusal | void
+
+/** A pass as the loop runs it, with the keys it reads and writes named so the order can be checked. */
+export type PassEntry = {
+  name: string
+  reads: readonly (keyof CarveState)[]
+  writes: readonly (keyof CarveState)[]
+  run: (prep: FloorPrep, state: CarveState) => Refusal | void
+}
+
+/** Declares a pass: a key it reads that no earlier pass wrote is a mistake in the pass order, so it throws. */
+export const pass = <R extends keyof CarveState, W extends keyof CarveState>(
+  name: string,
+  reads: readonly R[],
+  writes: readonly W[],
+  run: Pass<R, W>
+): PassEntry => ({
+  name,
+  reads,
+  writes,
+  run: (prep, state) => {
+    for (const key of reads)
+      if (state[key] === undefined) throw new Error(`[carve] ${name} reads ${key}, which no earlier pass wrote`)
+    return run(prep, state as PassState<R, W>)
+  },
+})
+
+/** What an attempt yields once every pass holds: the grid, or a refusal the grid's own checks raised. */
+export type Finish = (prep: FloorPrep, state: CarveState) => Refusal | FloorGrid
