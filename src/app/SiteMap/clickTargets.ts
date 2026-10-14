@@ -53,7 +53,10 @@ const corridorOffer = (
   // A drop's launch and landing are stopping points whatever their shape: the player must be able to walk
   // to either from its own side.
   const dropEnd = ctx.dropEnds.has(`${target[0]},${target[1]}`)
-  return ctx.freeWalk || (stoppingPoint && (corner || dropEnd)) || !!runTarget ? target : null
+  // The far end of a run is offered as itself too: the map hands a tap on in its resolved form, and the end of a
+  // run that stops in front of a shut door is a straight cell nothing else would offer.
+  const runEnd = [...ctx.runTargets.values()].some(end => end.row === target[0] && end.col === target[1])
+  return ctx.freeWalk || (stoppingPoint && (corner || dropEnd)) || !!runTarget || runEnd ? target : null
 }
 
 export const clickTargetAt = (

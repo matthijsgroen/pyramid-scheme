@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { assembleFloor } from "@/game/siteAssembler"
 import { resolveEncounter } from "@/app/families/familyRegistry"
 import { revealAll } from "@/game/gridNavigation"
-import type { FloorGrid } from "@/game/siteTypes"
+import type { FloorGrid, GridCell } from "@/game/siteTypes"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { buildRoomClaims } from "./roomClaims"
 import { offeredTargets } from "./clickTargets"
@@ -101,4 +101,60 @@ describe("a tap on a carved floor goes through the offer layer", () => {
     expect(offered).toBeGreaterThan(20)
     expect(redirected).toBeGreaterThan(0)
   }, 120_000)
+})
+
+// A player's room, three straight corridor cells, then a door with no board of its own: shut bars, or a narrow
+// passage with ground beyond it. Either way the run up the corridor ends in front of the door.
+const corridorToDoor = (door: "shut" | "passage"): FloorGrid => {
+  const cells: GridCell[] = [{ type: "room", roomType: "encounter", dirs: new Set(["e"]), state: "completed" }]
+  for (let i = 0; i < 3; i++) cells.push({ type: "corridor", dirs: new Set(["e", "w"]), state: "reachable" })
+  cells.push({
+    type: "room",
+    roomType: "encounter",
+    dirs: new Set(door === "passage" ? ["w", "e"] : ["w"]),
+    state: "reachable",
+    requiredKeyId: "door",
+    tags: ["gate"],
+    ...(door === "passage" ? { passage: { realisation: "narrowPassage" } } : {}),
+  })
+  if (door === "passage") cells.push({ type: "room", roomType: "encounter", dirs: new Set(["w"]), state: "fogged" })
+  return {
+    siteId: "t",
+    rows: 1,
+    cols: cells.length,
+    entrancePos: [0, 0],
+    exitPos: [0, 0],
+    staircases: {},
+    cells: [cells],
+  }
+}
+
+describe("the arrow up a corridor that ends at a door", () => {
+  beforeEach(() => vi.useFakeTimers())
+  afterEach(() => vi.useRealTimers())
+
+  it.each(["shut", "passage"] as const)("walks the explorer up to a %s door, handed on as the map hands it", door => {
+    const grid = corridorToDoor(door)
+    const journeys = stubJourneys()
+    const hook = renderHook(() =>
+      useSiteNavigation({
+        journeys,
+        journeyId: "t",
+        siteConfig: [],
+        seed: 0,
+        currentFloor: 0,
+        grid,
+        explorerPos: [0, 0],
+        onEncounter: () => {},
+        onSkippedConsumable: () => {},
+        onExitReached: () => {},
+      })
+    )
+    // The map attaches the tap on the arrow to the cell the offer resolves to, and hands that cell on.
+    const target = offeredTargets(grid, buildRoomClaims(grid), [0, 0]).get("0,1")
+    expect(target).toEqual([0, 3])
+    act(() => hook.result.current.onCellClick(target![0], target![1]))
+    act(() => void vi.runAllTimers())
+    expect(vi.mocked(journeys.updatePosition).mock.calls.map(call => call[2])).toEqual([encodeEdge(0, 0, 3)])
+  })
 })
