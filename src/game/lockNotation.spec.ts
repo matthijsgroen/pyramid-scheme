@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { corridorLine, parseLock } from "./lockNotation"
+import { CONTROL_WORDS, LOCK_EXAMPLE, LOCK_SYNTAX, corridorLine, parseLock } from "./lockNotation"
 
 const DOUBLE_BACK = `
   in -[Y]- leftLower -[S1]- s2
@@ -391,5 +391,14 @@ describe("a corridor written back", () => {
     const written = corridorLine(lock, lock.connections[0])
     expect(written).toBe(line)
     expect(parseLock(text.replace(line, written), "back").lock).toEqual(lock)
+  })
+})
+
+describe("LOCK_SYNTAX", () => {
+  it.each(Object.entries(CONTROL_WORDS))("explains the %s control", (_kind, word) => {
+    expect(LOCK_SYNTAX).toMatch(word)
+  })
+  it("shows an example that reads whole", () => {
+    expect(parseLock(LOCK_EXAMPLE).refused).toEqual([])
   })
 })

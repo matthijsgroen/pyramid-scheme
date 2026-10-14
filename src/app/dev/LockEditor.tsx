@@ -1,5 +1,6 @@
 import { useDeferredValue, useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
+import { LOCK_EXAMPLE, LOCK_SYNTAX } from "@/game/lockNotation"
 import { LockPlayground } from "@/app/SiteMap/lockPlayground"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import { encodeLockHash, initialLockText } from "./lockEditorUrl"
@@ -72,6 +73,13 @@ export const LockEditor: FC<{ initialText?: string; onClose?: () => void }> = ({
           </span>
         )}
       </div>
+      <details className="rounded-md border border-white/20 p-2">
+        <summary className="cursor-pointer text-sm font-bold text-red-300">{t("devLockEditor.syntax")}</summary>
+        <pre className="mt-2 overflow-x-auto font-mono text-xs whitespace-pre text-white/90">{LOCK_SYNTAX}</pre>
+        <h3 className="mt-3 mb-1 text-xs font-bold text-white/60 uppercase">{t("devLockEditor.example")}</h3>
+        <pre className="mb-2 overflow-x-auto rounded-md bg-stone-950 p-2 font-mono text-xs">{LOCK_EXAMPLE}</pre>
+        <DeveloperButton label={t("devLockEditor.useExample")} onClick={() => edit(LOCK_EXAMPLE)} />
+      </details>
       <section aria-label={t("devLockEditor.checks")}>
         <h3 className="mb-1 text-xs font-bold text-white/60 uppercase">{t("devLockEditor.checks")}</h3>
         <ul className="font-mono text-sm">

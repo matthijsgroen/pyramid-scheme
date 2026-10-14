@@ -30,7 +30,28 @@ export const LOCK_SYNTAX = `
   in -&> hall                   the nest spot: another lock may be spliced in here, its in at in, its out at hall;
                                 one per lock, a plain corridor where nothing nests, ignored beside other items
   hall *   s2 $   spare ?   corridor -     takes puzzles, a reward, anything, nothing
-  // comment
+  // comment                    ignored to the end of the line; a lock's file opens with // designed by: name
+`.slice(1)
+
+/** The words that place a control, by the mechanic they build. Typed on LockMechanic's kinds, so a control the
+ * parser gains must be named here, and the spec holds LOCK_SYNTAX to mentioning each word. */
+export const CONTROL_WORDS: Record<LockMechanic["control"] | "plate", RegExp> = {
+  toggle: /\btoggle\b/,
+  activator: /\bactivator\b/,
+  flame: /\btorch\b/,
+  "fork-switch": /\bfork\b/,
+  sequence: /\bsequence\b/,
+  plate: /\bplate\b/,
+}
+
+/** One whole lock, shown beside LOCK_SYNTAX: a lever in a side room opens the door out. */
+export const LOCK_EXAMPLE = `
+// designed by: you
+in -- hall
+hall -[H]- out
+hall -- side
+H toggle @side
+side ?
 `.slice(1)
 
 export type DraftLock = Lock
