@@ -1,7 +1,8 @@
 # Designer to-do
 
-Puzzle work waiting on the designer. Claude builds mechanics and places locks; the designer designs them. When a
-lock is ready, say "place <lock> on <site>" and Claude carves, bakes and gates it.
+Puzzle work waiting on the designer. The designer mainly writes the master and wizard locks; Claude may propose and
+write junior and expert locks, builds mechanics and places locks. When a lock is ready, say "place <lock> on <site>"
+and Claude carves, bakes and gates it.
 
 ## How to work on a lock
 
@@ -15,11 +16,11 @@ lock is ready, say "place <lock> on <site>" and Claude carves, bakes and gates i
 ## New locks for the open slots
 
 Each slot holds a stand-in today (it repeats a lock placed elsewhere). Site details: `docs/game-design/lock-placement.md`
-Part 1.
+Part 1. These are junior and expert slots, so Claude can propose locks for them; master and wizard locks stay the
+designer's work. junior_3 site 2 is placed: beforeYouJump (Claude, 2026-10-14).
 
 | Site            | Tier   | Stand-in today | Floor notes                                            |
 | --------------- | ------ | -------------- | ------------------------------------------------------ |
-| junior_3 site 2 | junior | dropDown       |                                                        |
 | expert_2 site 3 | expert | twoLamps       | master ward wing                                       |
 | expert_2 site 4 | expert | dropHome       | wizard ward wing                                       |
 | expert_3 site 3 | expert | cellar         | overgrown 0.4                                          |

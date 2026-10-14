@@ -49,17 +49,17 @@ lock, not a sampler.
 
 ## What each lock leans on
 
-| mechanic                                                   | taught by                            | locks that need it                                                                         |
-| ---------------------------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------ |
-| board picks the way (fork-switch)                          | `boardPicksTheWay`                   | dropHome, twoLamps, doubleBack, lamplighter, observatory, clockwork                        |
-| lever (toggle, can go back)                                | `leverOpensADoor`, `leverSwapsDoors` | all but plates                                                                             |
-| torch (lit by the player, put out by a flood)              | `torch`                              | relay, stoneGate                                                                           |
-| key or prize (activator, once)                             | — (a floor key, met in the world)    | cellar, keyring, observatory, sluice, tide                                                 |
-| one-way drop                                               | `dropDown`                           | dropHome, cellar, doubleBack, overlook, seesaw, lamplighter, observatory, relay, clockwork |
-| a door that waits for several                              | `doorWaitsForTwo`                    | twoLamps, seesaw, lamplighter, observatory, relay, clockwork                               |
-| water (region gate)                                        | `waterMoves`                         | sluice, tide                                                                               |
-| tiles in order (sequence)                                  | `tilesInOrder`                       | plates                                                                                     |
-| stones on plates, and where a stone cannot go — a proposal | `stoneOnAPlate`                      | twoStones, masonsRamp, counterweight                                                       |
+| mechanic                                                   | taught by                            | locks that need it                                                                                        |
+| ---------------------------------------------------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| board picks the way (fork-switch)                          | `boardPicksTheWay`                   | dropHome, twoLamps, doubleBack, lamplighter, observatory, clockwork                                       |
+| lever (toggle, can go back)                                | `leverOpensADoor`, `leverSwapsDoors` | all but plates                                                                                            |
+| torch (lit by the player, put out by a flood)              | `torch`                              | relay, stoneGate                                                                                          |
+| key or prize (activator, once)                             | — (a floor key, met in the world)    | cellar, keyring, observatory, sluice, tide                                                                |
+| one-way drop                                               | `dropDown`                           | beforeYouJump, dropHome, cellar, doubleBack, overlook, seesaw, lamplighter, observatory, relay, clockwork |
+| a door that waits for several                              | `doorWaitsForTwo`                    | beforeYouJump, twoLamps, seesaw, lamplighter, observatory, relay, clockwork                               |
+| water (region gate)                                        | `waterMoves`                         | sluice, tide                                                                                              |
+| tiles in order (sequence)                                  | `tilesInOrder`                       | plates                                                                                                    |
+| stones on plates, and where a stone cannot go — a proposal | `stoneOnAPlate`                      | twoStones, masonsRamp, counterweight                                                                      |
 
 ## The lessons
 
@@ -80,6 +80,7 @@ lock, not a sampler.
 | lock          | tier                     | trick                                                                                                                                                       |
 | ------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | dropHome      | junior                   | the lever that opens the exit shuts the door behind you; a drop is the way home                                                                             |
+| beforeYouJump | junior                   | the way out waits for two levers, one above a drop and one below; throw the upper one before you jump                                                       |
 | cellar        | junior                   | the drop lands in a cell that holds its own key                                                                                                             |
 | twoLamps      | expert                   | the exit wants both lamps, the board reaches one at a time                                                                                                  |
 | overlook      | junior                   | one room overlooks two drops; the second saves the early dropper                                                                                            |

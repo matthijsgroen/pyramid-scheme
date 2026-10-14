@@ -11,8 +11,10 @@ refactors) waits until the designer asks for it or a placement is blocked by it.
 
 ## Who does what
 
-- **The designer designs the puzzles:** every new `.lock`, its shape and its trick. Claude does not design
-  locks or reshape a designed one's trick; it may propose, and says where a lock fails a check.
+- **The designer mainly writes the master and wizard locks.** Claude never reshapes the trick of a lock the designer
+  wrote; it may propose, and says where a lock fails a check.
+- **Claude may write junior and expert locks:** it proposes ideas, and writes the chosen one with
+  `// designed by: Claude` as its first line.
 - **Claude builds the mechanics** a design needs (notation, walks, carve, play, art hookup) **and places** locks
   on floors (`lock-placement.md`), carving and baking them.
 

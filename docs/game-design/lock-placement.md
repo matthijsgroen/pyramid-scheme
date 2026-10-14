@@ -21,7 +21,7 @@ Columns:
   one exists: the slot is still to design, the proposed lock is not buildable yet, or it does not carve (the reason
   follows). A stand-in may repeat a lock placed elsewhere; the designer replaces it. "no" is a floor with no lock.
 
-Placed: 34 of 34 (2026-10-11).
+Placed: 34 of 34 (2026-10-14).
 
 ### Junior
 
@@ -44,12 +44,12 @@ Placed: 34 of 34 (2026-10-11).
 
 **junior_3 — Temple of Thoth** (patron Thoth)
 
-| Site | Main floors | Wing floors | Authored         | Chosen lock     | Placed                               |
-| ---- | ----------- | ----------- | ---------------- | --------------- | ------------------------------------ |
-| 1    | 1           | 0           |                  | doorWaitsForTwo | ✓                                    |
-| 2    | 1           | 0           |                  | dropDown        | ✓ stand-in (a junior lock to design) |
-| 3    | 1           | 1           | expert ward wing | dropHome        | ✓                                    |
-| 4    | 1           | 1           | master ward wing | cellar          | ✓                                    |
+| Site | Main floors | Wing floors | Authored         | Chosen lock     | Placed |
+| ---- | ----------- | ----------- | ---------------- | --------------- | ------ |
+| 1    | 1           | 0           |                  | doorWaitsForTwo | ✓      |
+| 2    | 1           | 0           |                  | beforeYouJump   | ✓      |
+| 3    | 1           | 1           | expert ward wing | dropHome        | ✓      |
+| 4    | 1           | 1           | master ward wing | cellar          | ✓      |
 
 **junior_4 — Lighthouse of Alexandria** (`light`/`sky` role and night theme on pyramids 1-5)
 
@@ -104,8 +104,7 @@ Placed: 34 of 34 (2026-10-11).
 Site counts: junior 16 (3 + 4 + 4 + 5), expert 18 (4 + 4 + 5 + 5), the same as the curriculum's. Treasure
 tombs are not sites in this table.
 
-Duplicates among the stand-ins, until the designer replaces them: dropDown (junior_1 site 1 and junior_3 site 2),
-leverSwapsDoors (junior_2 site 2 and expert_3 site 1), stoneOnAPlate (junior_4 site 1 and expert_4 site 1), cellar
+Duplicates among the stand-ins, until they are replaced: leverSwapsDoors (junior_2 site 2 and expert_3 site 1), stoneOnAPlate (junior_4 site 1 and expert_4 site 1), cellar
 (junior_3 site 4, expert_3 site 3, expert_4 site 3), dropHome (junior_3 site 3, expert_2 site 4,
 expert_3 site 2), twoLamps (expert_1 site 3, expert_2 site 3, expert_4 site 2), overlook (junior_4 site 2, expert_3
 site 4, expert_4 site 4).
@@ -179,26 +178,26 @@ boardPicksTheWay or tilesInOrder, which have no hall stub.
 - **boardPicksTheWay** (junior_2 site 1, junior_4 site 1, "board first") stays on junior_1 site 3, kept, after
   the lever.
 
-### Junior (16 floors, 15 existing locks, 1 to design)
+### Junior (16 floors, 16 existing locks)
 
-| Site | Proposed                        | Today                 | Note                                                  |
-| ---- | ------------------------------- | --------------------- | ----------------------------------------------------- |
-| j1.1 | dropDown                        | leverOpensADoor (no)  | opens with a hall-less lesson                         |
-| j1.2 | leverOpensADoor                 | dropDown              | first lever; the unplaced lesson's new site           |
-| j1.3 | boardPicksTheWay                | boardPicksTheWay      | kept                                                  |
-| j2.1 | torch                           | boardPicksTheWay (no) |                                                       |
-| j2.2 | leverSwapsDoors                 | leverOpensADoor (no)  | the switch fork floor; the unplaced lesson's new site |
-| j2.3 | waterMoves                      | torch                 |                                                       |
-| j2.4 | sluice                          | dropDown              | leans on waterMoves                                   |
-| j3.1 | doorWaitsForTwo                 | leverOpensADoor       |                                                       |
-| j3.2 | to design (junior, 1-3 actions) | dropDown              | tilesInOrder moved to expert (designer, 2026-10-11)   |
-| j3.3 | dropHome                        | torch                 | leans on board, lever, drop                           |
-| j3.4 | cellar                          | boardPicksTheWay      | leans on lever, drop, a floor key                     |
-| j4.1 | stoneOnAPlate                   | boardPicksTheWay (no) | before the stone locks of expert                      |
-| j4.2 | overlook                        | leverOpensADoor       |                                                       |
-| j4.3 | seesaw                          | dropDown              | leans on doorWaitsForTwo                              |
-| j4.4 | lamplighter                     | torch                 | leans on board, doorWaitsForTwo                       |
-| j4.5 | tide                            | leverSwapsDoors       | leans on waterMoves                                   |
+| Site | Proposed         | Today                 | Note                                                         |
+| ---- | ---------------- | --------------------- | ------------------------------------------------------------ |
+| j1.1 | dropDown         | leverOpensADoor (no)  | opens with a hall-less lesson                                |
+| j1.2 | leverOpensADoor  | dropDown              | first lever; the unplaced lesson's new site                  |
+| j1.3 | boardPicksTheWay | boardPicksTheWay      | kept                                                         |
+| j2.1 | torch            | boardPicksTheWay (no) |                                                              |
+| j2.2 | leverSwapsDoors  | leverOpensADoor (no)  | the switch fork floor; the unplaced lesson's new site        |
+| j2.3 | waterMoves       | torch                 |                                                              |
+| j2.4 | sluice           | dropDown              | leans on waterMoves                                          |
+| j3.1 | doorWaitsForTwo  | leverOpensADoor       |                                                              |
+| j3.2 | beforeYouJump    | dropDown              | written by Claude (2026-10-14); tilesInOrder moved to expert |
+| j3.3 | dropHome         | torch                 | leans on board, lever, drop                                  |
+| j3.4 | cellar           | boardPicksTheWay      | leans on lever, drop, a floor key                            |
+| j4.1 | stoneOnAPlate    | boardPicksTheWay (no) | before the stone locks of expert                             |
+| j4.2 | overlook         | leverOpensADoor       |                                                              |
+| j4.3 | seesaw           | dropDown              | leans on doorWaitsForTwo                                     |
+| j4.4 | lamplighter      | torch                 | leans on board, doorWaitsForTwo                              |
+| j4.5 | tide             | leverSwapsDoors       | leans on waterMoves                                          |
 
 ### Expert (18 floors, 11 existing locks, 7 to design)
 
@@ -226,7 +225,7 @@ stoneGate closes expert_4 (kept); doubleBack is late, closing expert_3 (kept); t
 | e4.4 | to design (expert, 4-6 actions) | overlook             |                                                     |
 | e4.5 | stoneGate                       | stoneGate            | kept                                                |
 
-Counts: 26 floors get an existing lock (15 junior, 11 expert); 7 expert slots and 1 junior slot are "to design".
+Counts: 27 floors get an existing lock (16 junior, 11 expert); 7 expert slots are "to design".
 Kept as placed today: junior_1 site 3, expert_1 site 3, expert_3 site 5, expert_4 site 5; the other 22 re-carve.
 Wizard has no locks and no floors here.
 
@@ -280,6 +279,7 @@ but are still a proposal for the engine (`lock-curriculum.md`, "Stones").
 | seesaw        | master                             | lever, drop, door-waits-for-two                            | solvable                                                           |
 | keyring       | master                             | lever, torch                                               | solvable                                                           |
 | relay         | master                             | lever, torch, drop, door-waits-for-two                     | solvable                                                           |
+| beforeYouJump | junior                             | lever, drop, door-waits-for-two                            | solvable; control reached before its door is seen: pit-out         |
 | clockwork     | master                             | lever, board, drop, door-waits-for-two                     | solvable                                                           |
 | lamplighter   | master                             | lever, board, drop, door-waits-for-two                     | solvable; drop west>east is an optional shortcut                   |
 | observatory   | master                             | board, torch, drop, door-waits-for-two                     | solvable; drop east>west is an optional shortcut                   |
@@ -298,48 +298,47 @@ observatory and stoneGate have no lever either.
 Which locks combine each pair (_italic_ = a lesson). A cell names every lock that holds both, whatever else it
 holds. The diagonal is the mechanic alone.
 
-|                   | lever                                | board                                                  | torch                                | drop                                                                          | waits-for-two                                                     | stones                              | narrow                | water/sand                 | sequence               |
-| ----------------- | ------------------------------------ | ------------------------------------------------------ | ------------------------------------ | ----------------------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------- | --------------------- | -------------------------- | ---------------------- |
-| **lever**         | _leverOpensADoor_, _leverSwapsDoors_ | clockwork, doubleBack, dropHome, lamplighter, twoLamps | cellar, keyring, relay, sluice, tide | cellar, clockwork, doubleBack, dropHome, lamplighter, overlook, relay, seesaw | clockwork, lamplighter, relay, seesaw, twoLamps                   | **— gap —**                         | **— gap —**           | _waterMoves_, sluice, tide | **— gap —**            |
-| **board**         |                                      | _boardPicksTheWay_                                     | observatory                          | clockwork, doubleBack, dropHome, lamplighter, observatory                     | clockwork, lamplighter, observatory, twoLamps                     | **— gap —**                         | **— gap —**           | **— gap —**                | **— gap —**            |
-| **torch**         |                                      |                                                        | _torch_                              | cellar, observatory, relay                                                    | _doorWaitsForTwo_, observatory, relay, stoneGate                  | stoneGate                           | stoneGate             | sluice, tide               | **— gap —**            |
-| **drop**          |                                      |                                                        |                                      | _dropDown_                                                                    | clockwork, counterweight, lamplighter, observatory, relay, seesaw | counterweight, masonsRamp           | masonsRamp            | **— gap —**                | **— gap —**            |
-| **waits-for-two** |                                      |                                                        |                                      |                                                                               | no lesson alone                                                   | counterweight, stoneGate, twoStones | stoneGate             | **— gap —**                | **— gap —**            |
-| **stones**        |                                      |                                                        |                                      |                                                                               |                                                                   | _stoneOnAPlate_                     | masonsRamp, stoneGate | **— gap —**                | **— gap —**            |
-| **narrow**        |                                      |                                                        |                                      |                                                                               |                                                                   |                                     | no lesson alone       | **— gap —**                | **— gap —**            |
-| **water/sand**    |                                      |                                                        |                                      |                                                                               |                                                                   |                                     |                       | no lesson alone            | **— gap —**            |
-| **sequence**      |                                      |                                                        |                                      |                                                                               |                                                                   |                                     |                       |                            | _tilesInOrder_, plates |
+|                   | lever                                | board                                                  | torch                                | drop                                                                                         | waits-for-two                                                                    | stones                              | narrow                | water/sand                 | sequence               |
+| ----------------- | ------------------------------------ | ------------------------------------------------------ | ------------------------------------ | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ----------------------------------- | --------------------- | -------------------------- | ---------------------- |
+| **lever**         | _leverOpensADoor_, _leverSwapsDoors_ | clockwork, doubleBack, dropHome, lamplighter, twoLamps | cellar, keyring, relay, sluice, tide | beforeYouJump, cellar, clockwork, doubleBack, dropHome, lamplighter, overlook, relay, seesaw | beforeYouJump, clockwork, lamplighter, relay, seesaw, twoLamps                   | **— gap —**                         | **— gap —**           | _waterMoves_, sluice, tide | **— gap —**            |
+| **board**         |                                      | _boardPicksTheWay_                                     | observatory                          | clockwork, doubleBack, dropHome, lamplighter, observatory                                    | clockwork, lamplighter, observatory, twoLamps                                    | **— gap —**                         | **— gap —**           | **— gap —**                | **— gap —**            |
+| **torch**         |                                      |                                                        | _torch_                              | cellar, observatory, relay                                                                   | _doorWaitsForTwo_, observatory, relay, stoneGate                                 | stoneGate                           | stoneGate             | sluice, tide               | **— gap —**            |
+| **drop**          |                                      |                                                        |                                      | _dropDown_                                                                                   | beforeYouJump, clockwork, counterweight, lamplighter, observatory, relay, seesaw | counterweight, masonsRamp           | masonsRamp            | **— gap —**                | **— gap —**            |
+| **waits-for-two** |                                      |                                                        |                                      |                                                                                              | no lesson alone                                                                  | counterweight, stoneGate, twoStones | stoneGate             | **— gap —**                | **— gap —**            |
+| **stones**        |                                      |                                                        |                                      |                                                                                              |                                                                                  | _stoneOnAPlate_                     | masonsRamp, stoneGate | **— gap —**                | **— gap —**            |
+| **narrow**        |                                      |                                                        |                                      |                                                                                              |                                                                                  |                                     | no lesson alone       | **— gap —**                | **— gap —**            |
+| **water/sand**    |                                      |                                                        |                                      |                                                                                              |                                                                                  |                                     |                       | no lesson alone            | **— gap —**            |
+| **sequence**      |                                      |                                                        |                                      |                                                                                              |                                                                                  |                                     |                       |                            | _tilesInOrder_, plates |
 
 17 of the 36 pairs have no lock. Every one of them involves stones, the narrow passage, water/sand or sequence
 tiles; lever, board, torch, drop and door-waits-for-two are combined pairwise
 throughout. Sequence tiles combine with nothing: plates is a sequence alone.
 
-Of those pairs, three meet only at master: board × torch (observatory), drop × door-waits-for-two
-(clockwork, lamplighter, observatory, relay, seesaw; counterweight is master too), and torch × door-waits-for-two
+Of those pairs, two meet only at master: board × torch (observatory) and torch × door-waits-for-two
 outside its lesson (observatory, relay), and stoneGate at Djoser's capstone.
 
 ### Triples
 
 Every three-mechanic combination that at least one lock holds (16 of the 84):
 
-| triple                                                | locks                                        |
-| ----------------------------------------------------- | -------------------------------------------- |
-| lever + board + drop                                  | clockwork, doubleBack, dropHome, lamplighter |
-| lever + board + door-waits-for-two                    | clockwork, lamplighter, twoLamps             |
-| lever + torch + drop                                  | cellar, relay                                |
-| lever + torch + door-waits-for-two                    | relay                                        |
-| lever + torch + water/sand barrier                    | sluice, tide                                 |
-| lever + drop + door-waits-for-two                     | clockwork, lamplighter, relay, seesaw        |
-| board + torch + drop                                  | observatory                                  |
-| board + torch + door-waits-for-two                    | observatory                                  |
-| board + drop + door-waits-for-two                     | clockwork, lamplighter, observatory          |
-| torch + drop + door-waits-for-two                     | observatory, relay                           |
-| torch + door-waits-for-two + stones & plates          | stoneGate                                    |
-| torch + door-waits-for-two + narrow passage           | stoneGate                                    |
-| torch + stones & plates + narrow passage              | stoneGate                                    |
-| drop + door-waits-for-two + stones & plates           | counterweight                                |
-| drop + stones & plates + narrow passage               | masonsRamp                                   |
-| door-waits-for-two + stones & plates + narrow passage | stoneGate                                    |
+| triple                                                | locks                                                |
+| ----------------------------------------------------- | ---------------------------------------------------- |
+| lever + board + drop                                  | clockwork, doubleBack, dropHome, lamplighter         |
+| lever + board + door-waits-for-two                    | clockwork, lamplighter, twoLamps                     |
+| lever + torch + drop                                  | cellar, relay                                        |
+| lever + torch + door-waits-for-two                    | relay                                                |
+| lever + torch + water/sand barrier                    | sluice, tide                                         |
+| lever + drop + door-waits-for-two                     | beforeYouJump, clockwork, lamplighter, relay, seesaw |
+| board + torch + drop                                  | observatory                                          |
+| board + torch + door-waits-for-two                    | observatory                                          |
+| board + drop + door-waits-for-two                     | clockwork, lamplighter, observatory                  |
+| torch + drop + door-waits-for-two                     | observatory, relay                                   |
+| torch + door-waits-for-two + stones & plates          | stoneGate                                            |
+| torch + door-waits-for-two + narrow passage           | stoneGate                                            |
+| torch + stones & plates + narrow passage              | stoneGate                                            |
+| drop + door-waits-for-two + stones & plates           | counterweight                                        |
+| drop + stones & plates + narrow passage               | masonsRamp                                           |
+| door-waits-for-two + stones & plates + narrow passage | stoneGate                                            |
 
 68 triples are uncovered. Many are not worth a lock: the narrow passage only means something where a stone can
 be carried, so its triples without stones are empty, and sequence tiles have no pair yet to grow a triple from.
