@@ -63,3 +63,7 @@ export const forkPositions = (state: Pick<Required<CarveState>, "branches" | "la
     ...(laid?.junctions ?? []).map(junction => junction.cell),
   ])
 }
+
+/** The region-barrier door a lock laid on each cell, by the cell it stands on. */
+export const regionDoorAt = (lay: CarveState["lay"]) =>
+  new Map((lay?.laid.regionDoors ?? []).map(door => [door.cell, door] as const))

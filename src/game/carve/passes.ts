@@ -1,3 +1,4 @@
+import { chainRooms } from "./chainRooms"
 import { checkChainsSeated } from "./checkChainsSeated"
 import { growMaze } from "./growMaze"
 import { hangBranches } from "./hangBranches"
@@ -70,6 +71,7 @@ export const PASSES: readonly PassEntry[] = [
     ["mainRooms"],
     mainRooms
   ),
+  pass("chainRooms", ["keys", "labels", "chainGates", "lay", "maze", "mainBarrierDoors"], ["chainRooms"], chainRooms),
 ]
 
 /** Writes the grid from an attempt's settled state. No pass renders one yet, so no attempt yields a grid. */
