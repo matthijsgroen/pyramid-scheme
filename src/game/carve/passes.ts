@@ -2,6 +2,7 @@ import { growMaze } from "./growMaze"
 import { layFloor } from "./layFloor"
 import { seatGateRuns } from "./seatGateRuns"
 import { seatMainBarrierDoors } from "./seatMainBarrierDoors"
+import { seatMainControls } from "./seatMainControls"
 import { seatRouteRegions } from "./seatRouteRegions"
 import { seatSeamGates } from "./seatSeamGates"
 import { placeJunctions } from "./placeJunctions"
@@ -26,6 +27,12 @@ export const PASSES: readonly PassEntry[] = [
     ["maze", "regions", "content", "junctions", "seamGates", "runGates", "lay"],
     ["mainBarrierDoors"],
     seatMainBarrierDoors
+  ),
+  pass(
+    "seatMainControls",
+    ["maze", "regions", "content", "junctions", "seamGates", "runGates", "mainBarrierDoors", "lay"],
+    ["mainControls"],
+    seatMainControls
   ),
 ]
 
