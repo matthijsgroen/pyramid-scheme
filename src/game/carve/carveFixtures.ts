@@ -8,7 +8,7 @@ import { PASSES } from "./passes"
 import { prepareFloor } from "./prepareFloor"
 import type { StatefulControl } from "../obstacles"
 import type { PlacedContainer } from "../regions"
-import type { CarveState, Cell, FloorPrep } from "./state"
+import type { CarveState, Cell, CellLabels, FloorPrep } from "./state"
 
 /** A plain floor's config, with what a test sets on it. */
 export const plainFloor = (overrides: Partial<FloorConfig> = {}): FloorConfig => ({
@@ -77,3 +77,35 @@ export const firstCarved = (prep: FloorPrep): CarveState => {
   if (!carved) throw new Error("no attempt got through every pass")
   return carved
 }
+
+/** The route runs entrance → leftLower → out; rightLower and s1Chamber hang off it as one chain. */
+export const diamond: PlacedContainer = {
+  regions: [
+    { name: "entrance", appetite: "free" },
+    { name: "rightLower", appetite: "free" },
+    { name: "s1Chamber", appetite: "free" },
+    { name: "leftLower", appetite: "free" },
+    { name: "out", appetite: "free" },
+  ],
+  connections: [
+    ["entrance", "leftLower"],
+    ["entrance", "rightLower"],
+    ["rightLower", "s1Chamber"],
+    ["leftLower", "out"],
+  ],
+  in: "entrance",
+  out: "out",
+}
+
+/** Labels with nothing filed yet, for a test to fill what its pass reads. */
+export const noLabels = (): CellLabels => ({
+  sectionHash: new Map(),
+  legacySectionHash: new Map(),
+  address: new Map(),
+  ordinal: new Map(),
+  hidden: new Set(),
+  dressing: new Map(),
+  difficulty: new Map(),
+  region: new Map(),
+  absorbedHash: new Map(),
+})

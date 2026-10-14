@@ -1,3 +1,4 @@
+import { checkChainsSeated } from "./checkChainsSeated"
 import { growMaze } from "./growMaze"
 import { hangBranches } from "./hangBranches"
 import { labelCells } from "./labelCells"
@@ -59,6 +60,7 @@ export const PASSES: readonly PassEntry[] = [
   pass("relayKeys", ["branches", "lay", "rand"], ["keys"], relayKeys),
   pass("labelCells", ["maze", "regions", "keys", "lay"], ["labels"], labelCells),
   pass("seatChainGates", ["keys", "lay"], ["chainGates"], seatChainGates),
+  pass("checkChainsSeated", ["labels", "chainGates", "keys", "lay", "seamGates", "runGates"], [], checkChainsSeated),
 ]
 
 /** Writes the grid from an attempt's settled state. No pass renders one yet, so no attempt yields a grid. */

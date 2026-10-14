@@ -1,27 +1,7 @@
 import { describe, expect, it } from "vitest"
-import type { PlacedContainer } from "../regions"
-import { freshState, leverOpening, plainFloor, prepOf } from "./carveFixtures"
+import { diamond, freshState, leverOpening, plainFloor, prepOf } from "./carveFixtures"
 import { seatChainGates } from "./seatChainGates"
 import type { Cell, Chain } from "./state"
-
-// The route runs entrance → leftLower → out; rightLower and s1Chamber hang off it as one chain.
-const diamond: PlacedContainer = {
-  regions: [
-    { name: "entrance", appetite: "free" },
-    { name: "rightLower", appetite: "free" },
-    { name: "s1Chamber", appetite: "free" },
-    { name: "leftLower", appetite: "free" },
-    { name: "out", appetite: "free" },
-  ],
-  connections: [
-    ["entrance", "leftLower"],
-    ["entrance", "rightLower"],
-    ["rightLower", "s1Chamber"],
-    ["leftLower", "out"],
-  ],
-  in: "entrance",
-  out: "out",
-}
 
 const gate = (id: string) => ({
   id,
