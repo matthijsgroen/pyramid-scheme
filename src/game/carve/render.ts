@@ -1,0 +1,333 @@
+import { hashString } from "@/support/hashString"
+import { oneWayRunCells } from "../carveConstants"
+import { rolesOfProp, rolesOfWallItem } from "../dressingTags"
+import { footprintSize } from "../roomFootprint"
+import type {
+  CorridorCell,
+  DecorationKind,
+  Direction,
+  FloorGrid,
+  GridCell,
+  RoomCell,
+  WallDecorationKind,
+} from "../siteTypes"
+import { edgeAllowed, forkPositions, rooms, routeStepOf } from "./derive"
+import { CONNECTOR_DIRS, OPPOSITE } from "./grid"
+import { MAIN_SECTION_ADDRESS } from "./sections"
+import type { CarveState, FloorPrep } from "./state"
+
+/** The five kinds a god can be DEPICTED on, as `tileAssets.ts`'s resolver reads them: a patron reaches the map
+ * through these and nothing else. Copied rather than imported for the reason `artCensus.ts` gives — that module
+ * pulls in the app's PNG imports. */
+const PATRON_KINDS = new Set<string>(["statue", "shrine", "wallShrine", "stela", "mask"])
+/** How many rooms per floor a dedicated site gives to its god: a guaranteed count, not a raised probability. */
+const PATRON_PER_FLOOR = 1
+
+/** A grid whose cells `settle` may still write. */
+export type WritableGrid = Omit<FloorGrid, "cells"> & { cells: GridCell[][] }
+
+/** What the renderer reads: every pass's decision but the ladder's. */
+export type RenderState = Pick<
+  Required<CarveState>,
+  "maze" | "branches" | "doors" | "lay" | "labels" | "mainRooms" | "chainRooms" | "switchDoors" | "drops"
+>
+
+/**
+ * A room serves one purpose: what hangs on its wall agrees with what stands in it. The prop leads, and the wall
+ * pool narrows to the prop's purposes only where that still leaves a choice: a single survivor would hang the
+ * identical thing in every room of that purpose.
+ */
+const wallSuiting = (pool: WallDecorationKind[], prop: DecorationKind | undefined) => {
+  const purposes = prop ? rolesOfProp(prop) : undefined
+  if (!purposes?.length) return pool
+  const fits = pool.filter(k => rolesOfWallItem(k)?.some(role => purposes.includes(role)))
+  return fits.length >= 2 ? fits : pool
+}
+
+/**
+ * THE GRID, WRITTEN ONCE FROM WHAT THE PASSES DECIDED. Every used node becomes a room where a pass specced one
+ * and a corridor where none did, every allowed edge its connector, every drop its launch, run and landing; then
+ * the entrance opens and the forks and dead ends are dressed. It decides nothing a pass could: what it reads
+ * back off the grid (a node's `dirs` for a drop's join and a room's footprint for its dressing) is what it
+ * itself just wrote.
+ */
+export const render = (prep: FloorPrep, state: RenderState): WritableGrid => {
+  const { siteId } = prep.input
+  const { config } = prep.config
+  const { mainSectionHash, legacyMainSectionHash } = prep.hashes
+  const { n: N, entrance, exit } = state.maze
+  const [entR, entC] = entrance
+  const [exR, exC] = exit
+  const { used } = state.branches
+  const labels = state.labels
+  const roomSpecs = rooms(state)
+  const allowed = edgeAllowed(state, state.switchDoors)
+  const forks = forkPositions(state)
+  const stepOf = routeStepOf(state.maze)
+
+  // What lies one node away, read off the NEIGHBOUR's own kind rather than inferred from this cell.
+  const exitKindOf = (cellKey: string, neighborKey: string): "main" | "side" | "ward" | "fork" => {
+    if (forks.has(neighborKey)) return "fork"
+    if (roomSpecs.get(neighborKey)?.gateVariant === "tomb-key") return "ward"
+    const mi = stepOf.get(cellKey)
+    const neighborMi = stepOf.get(neighborKey)
+    return mi !== undefined && neighborMi !== undefined && Math.abs(mi - neighborMi) === 1 ? "main" : "side"
+  }
+
+  const cells2D: GridCell[][] = Array.from({ length: N }, () =>
+    Array.from({ length: N }, (): GridCell => ({ type: "empty" }))
+  )
+
+  // Every used node, a room or a corridor. A fork also names what each of its own dirs leads to.
+  for (const cellKey of used) {
+    const [r, c] = cellKey.split(",").map(Number)
+    const spec = roomSpecs.get(cellKey)
+    const dirs = new Set<Direction>()
+    const exits: RoomCell["exits"] = spec?.roomType === "fork" ? [] : undefined
+    for (const [dr, dc, d] of CONNECTOR_DIRS) {
+      const nr = r + dr,
+        nc = c + dc
+      if (nr >= 0 && nr < N && nc >= 0 && nc < N && used.has(`${nr},${nc}`) && allowed(r, c, nr, nc)) {
+        dirs.add(d)
+        if (exits) exits.push({ dir: d, kind: exitKindOf(cellKey, `${nr},${nc}`) })
+      }
+    }
+
+    const sectionHash = labels.sectionHash.get(cellKey) ?? mainSectionHash
+    const sectionAddress = labels.address.get(cellKey) ?? MAIN_SECTION_ADDRESS
+    const legacySectionHash = labels.legacySectionHash.get(cellKey) ?? legacyMainSectionHash
+    const hidden = labels.hidden.has(cellKey) || undefined
+    // No default: a floor that authors no regionLayout leaves every cell's region absent.
+    const region = labels.region.get(cellKey)
+    const ordinal = labels.ordinal.get(cellKey)
+    const tier = labels.difficulty.get(cellKey)
+    if (spec) {
+      // The spec spreads whole, so a future RoomCell field cannot go missing here; the section's tier first, so a
+      // room authored at its own tier keeps it.
+      const roomCell: RoomCell = {
+        type: "room",
+        dirs,
+        state: "fogged",
+        ...(tier ? { difficulty: tier } : {}),
+        sectionAddress,
+        sectionHash: labels.absorbedHash.get(cellKey)?.hash ?? sectionHash,
+        legacySectionHash: labels.absorbedHash.get(cellKey)?.legacy ?? legacySectionHash,
+        ...(ordinal ? { ordinal } : {}),
+        ...(hidden ? { hidden } : {}),
+        ...(region !== undefined ? { region } : {}),
+        ...spec,
+        ...(exits ? { exits } : {}),
+      }
+      cells2D[r][c] = roomCell
+    } else {
+      const corridorCell: CorridorCell = {
+        type: "corridor",
+        dirs,
+        state: "fogged",
+        sectionAddress,
+        sectionHash,
+        legacySectionHash,
+        ...(ordinal ? { ordinal } : {}),
+        ...(tier ? { difficulty: tier } : {}),
+        ...(hidden ? { hidden } : {}),
+        ...(region !== undefined ? { region } : {}),
+      }
+      cells2D[r][c] = corridorCell
+    }
+  }
+
+  // THE PLAIN 1-WIDE CORRIDOR CELL BETWEEN TWO NODES, built the one way for a two-way passage and a drop alike.
+  // `owner` is the node it answers to: its section, hash, tier and region, which for a drop is the node it falls
+  // FROM. It is hidden only when both ends are, so the corridor into a hidden section stays visible. A drop's far
+  // end belongs to another section, so its ordinal names that section too: the bare pair would collide with the
+  // owner's own connector between the same two step numbers.
+  const connectorBetween = (
+    owner: string,
+    other: string,
+    dirs: Set<Direction>,
+    drop = false,
+    runIndex = 0
+  ): CorridorCell => {
+    const ownerOrdinal = labels.ordinal.get(owner)
+    const otherOrdinal = labels.ordinal.get(other)
+    const otherLabel =
+      drop && otherOrdinal !== undefined
+        ? `${labels.address.get(other) ?? MAIN_SECTION_ADDRESS}:${otherOrdinal}`
+        : otherOrdinal
+    const tier = labels.difficulty.get(owner)
+    return {
+      type: "corridor",
+      dirs,
+      state: "fogged",
+      sectionAddress: labels.address.get(owner) ?? MAIN_SECTION_ADDRESS,
+      sectionHash: labels.sectionHash.get(owner) ?? mainSectionHash,
+      legacySectionHash: labels.legacySectionHash.get(owner) ?? legacyMainSectionHash,
+      // A connector is named by the two cells it joins: sorted for an ordinary one, directional for a drop.
+      ...(ownerOrdinal && otherLabel
+        ? {
+            ordinal: drop ? `${ownerOrdinal}|${otherLabel}#${runIndex}` : [ownerOrdinal, otherLabel].sort().join("|"),
+          }
+        : {}),
+      ...(tier ? { difficulty: tier } : {}),
+      ...(labels.hidden.has(owner) && labels.hidden.has(other) ? { hidden: true } : {}),
+      ...(labels.region.get(owner) !== undefined ? { region: labels.region.get(owner) } : {}),
+    }
+  }
+
+  // The connector of every allowed edge between two used nodes, each written once from its lower end.
+  for (const cellKey of used) {
+    const [r, c] = cellKey.split(",").map(Number)
+    for (const [dr, dc, d] of CONNECTOR_DIRS) {
+      const nr = r + dr,
+        nc = c + dc
+      if (nr < 0 || nr >= N || nc < 0 || nc >= N) continue
+      if (!used.has(`${nr},${nc}`) || !allowed(r, c, nr, nc)) continue
+      if (r * N + c > nr * N + nc) continue
+      cells2D[(r + nr) / 2][(c + nc) / 2] = connectorBetween(cellKey, `${nr},${nc}`, new Set([d, OPPOSITE[d]]))
+    }
+  }
+
+  // THE DROPS: launch, obstacle, landing along `dir`, each cell written once. The obstacle cells name no direction
+  // and nothing names them, so the walk graph has no way across: taking the drop is the one thing joining the ends.
+  for (const edge of state.drops) {
+    const writeStub = (cellKey: string, owner: string, other: string, dirs: Set<Direction>, index: number) => {
+      const [r, c] = cellKey.split(",").map(Number)
+      if (cells2D[r][c].type !== "empty")
+        throw new Error(`[siteAssembler] one-way from ${edge.from} ran into a carved cell at ${cellKey}`)
+      cells2D[r][c] = connectorBetween(owner, other, dirs, true, index)
+    }
+    const joinNode = (nodeKey: string, dir: Direction) => {
+      const [r, c] = nodeKey.split(",").map(Number)
+      const node = cells2D[r][c]
+      if (node.type === "empty")
+        throw new Error(`[siteAssembler] one-way from ${edge.from} landed on an uncarved cell at ${nodeKey}`)
+      cells2D[r][c] = { ...node, dirs: new Set([...node.dirs, dir]) }
+    }
+    joinNode(edge.from, edge.dir)
+    writeStub(edge.launch, edge.from, edge.to, new Set([OPPOSITE[edge.dir]]), 0)
+    edge.run.forEach((cellKey, k) => {
+      writeStub(cellKey, edge.from, edge.to, new Set(), k + 1)
+      const [r, c] = cellKey.split(",").map(Number)
+      const cell = cells2D[r][c]
+      if (cell.type === "corridor") cells2D[r][c] = { ...cell, obstacle: { dir: edge.dir, kind: edge.realisation } }
+    })
+    writeStub(edge.landing, edge.to, edge.from, new Set([edge.dir]), oneWayRunCells(edge.dir) + 1)
+    joinNode(edge.to, OPPOSITE[edge.dir])
+  }
+
+  const entranceCell = cells2D[entR][entC]
+  if (entranceCell.type === "room") cells2D[entR][entC] = { ...entranceCell, state: "reachable" }
+
+  // DRESSING: forks and dead-end rooms (treasure, shop, stairhead, exit — never the entrance) may show a prop and
+  // a wall item from their section's pools, picked by WHERE the room is so every kind in a pool gets used.
+  const endpointPositions = new Set<string>()
+  for (const [pk, spec] of roomSpecs) {
+    const [r, c] = pk.split(",").map(Number)
+    const isTreasureLike =
+      spec.roomType === "encounter" && (spec.tags?.includes("treasure") || spec.tags?.includes("shop"))
+    const isPortalEndpoint = spec.roomType === "portal" && !(r === entR && c === entC)
+    if (!isTreasureLike && !isPortalEndpoint) continue
+    const cell = cells2D[r][c]
+    if (cell.type === "room" && cell.dirs.size === 1) endpointPositions.add(pk)
+  }
+  const pickDressing = <T>(pool: T[] | undefined, pk: string, salt: string): T | undefined =>
+    pool?.length ? pool[hashString(`${siteId}:${salt}:${pk}`) % pool.length] : undefined
+  const dressedPositions = [...new Set([...forks, ...endpointPositions])]
+
+  // A DEDICATED FLOOR SHOWS ITS GOD AT LEAST ONCE, in the chamber it is organised around: a fork first, then the
+  // biggest room by the floor it draws (`footprintSize`, the renderer's own claim rule), hash breaking ties. Never
+  // a portal, and only a room whose own pool can carry a patron.
+  const patronRooms = new Set<string>()
+  if (config.patron !== undefined && PATRON_PER_FLOOR > 0) {
+    const claimGrid: FloorGrid = {
+      cells: cells2D,
+      rows: N,
+      cols: N,
+      entrancePos: [entR, entC],
+      exitPos: [exR, exC],
+      siteId,
+      staircases: {},
+    }
+    const rowCol = (pk: string): [number, number] => {
+      const [r, c] = pk.split(",").map(Number)
+      return [r, c]
+    }
+    const isFork = (pk: string): boolean => {
+      const [r, c] = rowCol(pk)
+      const cell = cells2D[r][c]
+      return cell.type === "room" && cell.roomType === "fork"
+    }
+    const eligible = dressedPositions
+      .filter(pk => (labels.dressing.get(pk)?.props ?? []).some(k => PATRON_KINDS.has(k)))
+      .filter(pk => {
+        const [r, c] = rowCol(pk)
+        const cell = cells2D[r][c]
+        return cell.type === "room" && cell.roomType !== "portal"
+      })
+      .sort(
+        (a, b) =>
+          Number(isFork(b)) - Number(isFork(a)) ||
+          footprintSize(claimGrid, ...rowCol(b)) - footprintSize(claimGrid, ...rowCol(a)) ||
+          hashString(`${siteId}:patronPick:${a}`) - hashString(`${siteId}:patronPick:${b}`) ||
+          a.localeCompare(b)
+      )
+    for (const pk of eligible.slice(0, PATRON_PER_FLOOR)) patronRooms.add(pk)
+  }
+
+  for (const pk of dressedPositions) {
+    const pools = labels.dressing.get(pk)
+    // The god's room draws from the god-bearing kinds, a statue first where the pool has one.
+    const patronProps = pools?.props?.filter(k => PATRON_KINDS.has(k))
+    const godProps = patronProps?.includes("statue") ? (["statue"] as DecorationKind[]) : patronProps
+    const propPool = patronRooms.has(pk) ? godProps : pools?.props
+    const picked = pickDressing(propPool, pk, "decoration")
+    // No pit beside a way down: re-picked rather than filtered, so the pool's length moves no other room.
+    const [r, c] = pk.split(",").map(Number)
+    const owner = cells2D[r][c]
+    const besideStair = owner.type === "room" && owner.roomType === "portal" && owner.stairId !== undefined
+    const decoration =
+      picked === "pit" && besideStair
+        ? pickDressing(
+            propPool?.filter(k => k !== "pit"),
+            pk,
+            "decoration:not-a-pit"
+          )
+        : picked
+    // The god's room takes a god's wall item too, which is how the renderer finds it.
+    const patronWall = patronRooms.has(pk) ? pools?.wall?.filter(k => PATRON_KINDS.has(k)) : undefined
+    const wallDecoration = pickDressing(
+      patronWall?.length ? patronWall : pools?.wall ? wallSuiting(pools.wall, decoration) : undefined,
+      pk,
+      "wallDecoration"
+    )
+    if (!decoration && !wallDecoration) continue
+    if (owner.type === "room")
+      cells2D[r][c] = {
+        ...owner,
+        ...(decoration ? { decoration } : {}),
+        ...(wallDecoration ? { wallDecoration } : {}),
+        ...(patronRooms.has(pk) && decoration ? { patronRoom: true } : {}),
+      }
+  }
+
+  const staircases: Record<string, readonly [number, number]> = {}
+  for (let r = 0; r < N; r++)
+    for (let c = 0; c < N; c++) {
+      const cell = cells2D[r][c]
+      if (cell.type === "room" && cell.stairId) staircases[cell.stairId] = [r, c]
+    }
+
+  return {
+    cells: cells2D,
+    difficulty: config.difficulty,
+    ...(config.theme !== undefined ? { theme: config.theme } : {}),
+    ...(config.condition !== undefined ? { condition: config.condition } : {}),
+    ...(config.patron !== undefined ? { patron: config.patron } : {}),
+    rows: N,
+    cols: N,
+    entrancePos: [entR, entC],
+    exitPos: [exR, exC],
+    siteId,
+    staircases,
+  }
+}

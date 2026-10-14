@@ -18,6 +18,9 @@ import { shutSwitchGround } from "./shutSwitchGround"
 import { placeJunctions } from "./placeJunctions"
 import { placeDrops } from "./placeDrops"
 import { placeMainContent } from "./placeMainContent"
+import { validateSite } from "../siteValidator"
+import { render } from "./render"
+import type { RenderState } from "./render"
 import { pass } from "./state"
 import type { Finish, PassEntry } from "./state"
 
@@ -90,5 +93,8 @@ export const PASSES: readonly PassEntry[] = [
   pass("placeDrops", ["branches", "labels", "doors", "switchDoors", "maze", "lay"], ["drops"], placeDrops),
 ]
 
-/** Writes the grid from an attempt's settled state. No pass renders one yet, so no attempt yields a grid. */
-export const finishAttempt: Finish = () => ({ retry: [] })
+/** Writes the grid from an attempt's decisions; an attempt whose grid the walk cannot finish is retried. */
+export const finishAttempt: Finish = (prep, state) => {
+  const grid = render(prep, state as RenderState)
+  return validateSite(grid).valid ? grid : { retry: [] }
+}
