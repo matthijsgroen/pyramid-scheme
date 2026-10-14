@@ -3,6 +3,13 @@
 Merged work nobody has played yet. Each entry says where to go and what to look for; strike it when it has been
 played, and open an issue or a task for anything that plays wrong.
 
+## The procession door
+
+- **Dev pyramid 10, floor 0** (`processional`, after an `INCLUDE_DEV=1` bake). Walk a tile or two, open the door:
+  are the walked bars free and the others greyed with their sign readable? Free every bar, solve the board: does
+  the run start again and the reset appear? Walk the order it shows: does the door open? On a phone: does the board
+  fit under the door's title, and can a bar be dragged?
+
 ## Every region stays reachable
 
 - **expert_1 pyramid 4, floor 0** (the Valley of the Kings' last pyramid). doubleBack has a new zipline from s2

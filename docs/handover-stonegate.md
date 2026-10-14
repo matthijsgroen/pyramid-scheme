@@ -18,6 +18,7 @@ over memory.
 | 7 Zipline glide                | **Done.** Poses in `src/app/SiteMap/ridePoses.ts`, 200 ms a cell. Story `Topology/Zipline ride`.                           |
 | Torch and flood                | **Done.** Plan: `docs/superpowers/plans/2026-10-09-torch-douse.md`. Story `Topology/Lock playground` → Torch and flood.    |
 | Stone pipe                     | **Done.** Plan: `docs/instructions/stone-pipe.md`. Story `Topology/Lock playground` → Stone pipe.                          |
+| Procession door                | **Done.** Plan: `docs/instructions/procession-door.md`. Dev pyramid 10 (`processional`) plays it.                         |
 
 Phase 4 gives gate loops in the carve on laid floors (`topologyFaults`, `gateBypassed`, the fork seams), loops
 inside one region in every carve, stoneGate on dev pyramid 12, the squeeze starting from the nearer side, one nest
@@ -100,7 +101,12 @@ nodes of its region in the lay, so one stands clear of the region's ways in.
    each proposed site under `timeout` first; no proposed site has been tried.
 2. **The designer's new locks:** the designer designs the puzzles (the 8 open expert slots included). Claude
    builds the mechanics they need and places them.
-3. **The procession door**, after placement: plan in `docs/instructions/procession-door.md` (designer decisions of 2026-10-14 in it; its questions for tonight still open).
+3. **The procession door: built.** `P procession hall vault [reset hall-vault]`; rules in the contract ("The
+   procession door"), the board in `procession.md` ("At a door"). No shipped floor uses one, so no shipped floor
+   moved; dev pyramid 10's `processional` is one (an `INCLUDE_DEV=1` bake). Master and wizard boards with three steps
+   have no seed (`designer-todo.md` has the table), so a lock asking for one is refused at bake until the designer
+   gives the pair a band. A dev door's board has no seed list (dev rooms never do) and builds live. Left: a
+   playtest of the board at the door on a phone (`docs/playtest-backlog.md`).
 4. **Fold doubleBack's twin** once the designer answers how a drop beside a gate compiles (below).
 5. **Carve passes refactor: done.** Plan in `docs/instructions/carve-passes.md`. `assembleFloor` runs the pass
    engine in `src/game/carve/`; `siteAssembler.ts` keeps only the public types and re-exports. Passes decide,

@@ -38,7 +38,26 @@ designer's work. junior_3 site 2 is placed: beforeYouJump (Claude, 2026-10-14).
 - **masonsRamp** (master, Claude's): solvable with the stone pipe, six stone moves; its drop `chute>workshop` is now an
   optional shortcut. It waits for a master floor.
 - **bathHouse** (master): carves now, 200 of 200 in the playground (twelve glyphs; `hall`'s tile stands between the
-  board and its gates). Nothing to reshape; it waits for a master floor to stand on.
+  board and its gates). Nothing to reshape; it waits for a master floor to stand on. Its six-step `Gate` can become a
+  procession door by writing `procession` for `sequence` on its line (your file; not touched).
+
+## The procession door
+
+Built: `P procession hall vault [reset hall-vault]` is a sequence whose door is a procession board (contract,
+"The procession door"). Three to six steps. One thing to settle before a master or wizard lock uses one with three
+steps: no seed of 2000 gives a board at master 3 or wizard 3, so those pairs are refused at bake
+(`processionBoardUnseeded`) until you give them a band. Seeds found per 2000, first attempt
+(`yarn tsx scripts/processionDoorSeeds.ts`):
+
+| tier    | 3 steps | 4 steps | 5 steps | 6 steps |
+| ------- | ------- | ------- | ------- | ------- |
+| starter | 121     | 208     | 136     | 64      |
+| junior  | 67      | 201     | 195     | 106     |
+| expert  | 21      | 36      | 19      | 11      |
+| master  | 0       | 7       | 16      | 16      |
+| wizard  | 0       | 6       | 10      | 24      |
+
+Playtest it on dev pyramid 10 (`processional`, three steps, expert) after an `INCLUDE_DEV=1` bake.
 
 ## Questions only the designer can answer
 
