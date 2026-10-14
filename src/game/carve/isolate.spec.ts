@@ -46,7 +46,7 @@ describe("isolate", () => {
       labels,
       keys: { chains, hostColors: new Map() },
     }
-    isolate(prep, state)
+    isolate.run(prep, state)
     return state.doors!
   }
   const pkey = makePkey(7)

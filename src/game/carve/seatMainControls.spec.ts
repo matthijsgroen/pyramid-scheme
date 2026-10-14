@@ -31,13 +31,13 @@ describe("seatMainControls", () => {
 
   it("stands a control on a free node of its region", () => {
     const state = onWalk([2, 5, 6])
-    expect(seatMainControls(prep, state)).toBeUndefined()
+    expect(seatMainControls.run(prep, state)).toBeUndefined()
     expect(state.mainControls).toEqual({ at: new Map([["lever", 1]]), moves: [] })
   })
 
   it("takes a content node only when none is free, moving its puzzle past the gate with its ordinal", () => {
     const state = onWalk([1, 2, 6])
-    expect(seatMainControls(prep, state)).toBeUndefined()
+    expect(seatMainControls.run(prep, state)).toBeUndefined()
     expect(state.mainControls).toEqual({ at: new Map([["lever", 1]]), moves: [[1, 4]] })
     expect(contentNow({ content: state.content, mainControls: state.mainControls! })).toEqual({
       placed: [4, 2, 6],
@@ -49,13 +49,13 @@ describe("seatMainControls", () => {
   })
 
   it("names a control whose only candidates hold puzzles with nowhere to go before the goal", () => {
-    expect(seatMainControls(prep, onWalk([1, 2, 4]))).toEqual({
+    expect(seatMainControls.run(prep, onWalk([1, 2, 4]))).toEqual({
       retry: [{ type: "controlPuzzleUndisplaceable", ids: ["lever"] }],
     })
   })
 
   it("names a control its region gives no node at all", () => {
     const state = onWalk([4, 6], ["hall", "hall", "hall", "vault", "vault", "vault", "vault"])
-    expect(seatMainControls(prep, state)).toEqual({ retry: [{ type: "controlNotSeated", ids: ["lever"] }] })
+    expect(seatMainControls.run(prep, state)).toEqual({ retry: [{ type: "controlNotSeated", ids: ["lever"] }] })
   })
 })

@@ -18,11 +18,11 @@ describe("placeJunctions", () => {
 
   it("stands a fork's junction on a node of its region that is no seam and holds no content", () => {
     const state = onWalk([3, 6])
-    expect(placeJunctions(prep, state)).toBeUndefined()
+    expect(placeJunctions.run(prep, state)).toBeUndefined()
     expect(state.junctions!.order).toEqual([4])
   })
 
   it("retries where the region has no free node, naming the fork", () => {
-    expect(placeJunctions(prep, onWalk([3, 4]))).toEqual({ retry: [{ type: "forkSeamsNotLaid", fork }] })
+    expect(placeJunctions.run(prep, onWalk([3, 4]))).toEqual({ retry: [{ type: "forkSeamsNotLaid", fork }] })
   })
 })

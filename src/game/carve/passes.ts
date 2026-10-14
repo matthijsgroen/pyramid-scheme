@@ -1,12 +1,17 @@
 import { chainRooms } from "./chainRooms"
 import { checkChainsSeated } from "./checkChainsSeated"
+import { finish } from "./finish"
 import { growMaze } from "./growMaze"
 import { hangBranches } from "./hangBranches"
 import { isolate } from "./isolate"
 import { labelCells } from "./labelCells"
 import { layFloor } from "./layFloor"
 import { mainRooms } from "./mainRooms"
+import { placeDrops } from "./placeDrops"
+import { placeJunctions } from "./placeJunctions"
+import { placeMainContent } from "./placeMainContent"
 import { relayKeys } from "./relayKeys"
+import { render } from "./render"
 import { reserveJunctions } from "./reserveJunctions"
 import { seatChainGates } from "./seatChainGates"
 import { seatGateRuns } from "./seatGateRuns"
@@ -14,92 +19,62 @@ import { seatMainBarrierDoors } from "./seatMainBarrierDoors"
 import { seatMainControls } from "./seatMainControls"
 import { seatRouteRegions } from "./seatRouteRegions"
 import { seatSeamGates } from "./seatSeamGates"
-import { shutSwitchGround } from "./shutSwitchGround"
-import { placeJunctions } from "./placeJunctions"
-import { placeDrops } from "./placeDrops"
-import { placeMainContent } from "./placeMainContent"
-import { finish } from "./finish"
-import { render } from "./render"
 import { settle } from "./settle"
 import type { SettleState } from "./settle"
-import { pass } from "./state"
+import { requireReads } from "./state"
 import type { Finish, PassEntry } from "./state"
+import { shutSwitchGround } from "./shutSwitchGround"
 
 /**
  * EVERY PASS AN ATTEMPT RUNS, IN ORDER. The order is the order of `rand()` draws, so moving a pass that
- * draws moves every floor carved after it. See docs/instructions/carve-passes.md for the list it grows to.
+ * draws moves every floor carved after it. Each pass declares its own reads and writes beside its code. See
+ * docs/instructions/carve-passes.md for the list it grows to.
  */
 export const PASSES: readonly PassEntry[] = [
-  pass("layFloor", ["rung", "attempt"], ["lay", "laidN"], layFloor),
-  pass("growMaze", ["rung", "lay", "rand"], ["maze"], growMaze),
-  pass("seatRouteRegions", ["maze", "lay"], ["regions"], seatRouteRegions),
-  pass("seatSeamGates", ["regions", "lay", "maze"], ["seamGates"], seatSeamGates),
-  pass("placeMainContent", ["maze", "regions", "lay"], ["content"], placeMainContent),
-  pass("placeJunctions", ["maze", "regions", "content", "lay", "rand"], ["junctions"], placeJunctions),
-  pass("seatGateRuns", ["maze", "regions", "content", "junctions", "seamGates", "lay"], ["runGates"], seatGateRuns),
-  pass(
-    "seatMainBarrierDoors",
-    ["maze", "regions", "content", "junctions", "seamGates", "runGates", "lay"],
-    ["mainBarrierDoors"],
-    seatMainBarrierDoors
-  ),
-  pass(
-    "seatMainControls",
-    ["maze", "regions", "content", "junctions", "seamGates", "runGates", "mainBarrierDoors", "lay"],
-    ["mainControls"],
-    seatMainControls
-  ),
-  pass(
-    "hangBranches",
-    [
-      "maze",
-      "regions",
-      "content",
-      "junctions",
-      "seamGates",
-      "runGates",
-      "mainBarrierDoors",
-      "mainControls",
-      "lay",
-      "rand",
-      "rung",
-    ],
-    ["branches"],
-    hangBranches
-  ),
-  pass("relayKeys", ["branches", "lay", "rand"], ["keys"], relayKeys),
-  pass("labelCells", ["maze", "regions", "keys", "lay"], ["labels"], labelCells),
-  pass("seatChainGates", ["keys", "lay"], ["chainGates"], seatChainGates),
-  pass("checkChainsSeated", ["labels", "chainGates", "keys", "lay", "seamGates", "runGates"], [], checkChainsSeated),
-  pass("isolate", ["maze", "keys", "labels", "lay"], ["doors"], isolate),
-  pass(
-    "mainRooms",
-    ["maze", "content", "mainControls", "seamGates", "runGates", "mainBarrierDoors", "keys", "lay", "branches"],
-    ["mainRooms"],
-    mainRooms
-  ),
-  pass("chainRooms", ["keys", "labels", "chainGates", "lay", "maze", "mainBarrierDoors"], ["chainRooms"], chainRooms),
-  pass(
-    "reserveJunctions",
-    ["maze", "junctions", "keys", "labels", "lay", "branches", "doors", "mainRooms", "chainRooms"],
-    ["forks"],
-    reserveJunctions
-  ),
-  pass(
-    "shutSwitchGround",
-    ["forks", "maze", "branches", "doors", "lay", "labels", "mainRooms", "chainRooms"],
-    ["switchDoors"],
-    shutSwitchGround
-  ),
-  pass("placeDrops", ["branches", "labels", "doors", "switchDoors", "maze", "lay"], ["drops"], placeDrops),
+  layFloor,
+  growMaze,
+  seatRouteRegions,
+  seatSeamGates,
+  placeMainContent,
+  placeJunctions,
+  seatGateRuns,
+  seatMainBarrierDoors,
+  seatMainControls,
+  hangBranches,
+  relayKeys,
+  labelCells,
+  seatChainGates,
+  checkChainsSeated,
+  isolate,
+  mainRooms,
+  chainRooms,
+  reserveJunctions,
+  shutSwitchGround,
+  placeDrops,
 ]
 
+/** What the tail reads: every key `render` and `settle` take from the passes, each checked as a pass's are. */
+export const TAIL_READS = [
+  "maze",
+  "branches",
+  "doors",
+  "lay",
+  "labels",
+  "mainRooms",
+  "chainRooms",
+  "switchDoors",
+  "drops",
+  "forks",
+  "junctions",
+  "keys",
+] as const satisfies readonly (keyof SettleState)[]
+
 /**
- * Writes the grid from an attempt's decisions, settles what is still written onto it and asks its checks, then
- * dresses the carve that passes them.
+ * THE TAIL OF AN ATTEMPT, once every pass holds: render writes the grid from the decisions, settle writes what
+ * is still left to write onto it and asks the grid's checks, finish dresses the carve that passes them.
  */
 export const finishAttempt: Finish = (prep, state) => {
-  const settled = state as SettleState
-  const grid = render(prep, settled)
-  return settle(prep, settled, grid) ?? finish(prep, grid)
+  const decided = requireReads("render", TAIL_READS, state)
+  const grid = render(prep, decided)
+  return settle(prep, decided, grid) ?? finish(prep, grid)
 }

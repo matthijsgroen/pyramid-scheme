@@ -13,17 +13,17 @@ const runPasses = (prep: FloorPrep, state: CarveState, passes: readonly PassEntr
 }
 
 /**
- * THE ATTEMPT LOOP: each attempt climbs the ladder, runs every pass over a fresh state and finishes the
- * grid, until one carves or the budget is spent. The rung and the shortfalls are all it carries from one
+ * THE ATTEMPT LOOP: each attempt climbs the ladder, runs every pass over a fresh state and then the
+ * tail (`finishAttempt`: render, settle, finish), until one carves or the budget is spent. The rung and the shortfalls are all it carries from one
  * attempt to the next.
  */
-export const carveFloor = (prep: FloorPrep, passes: readonly PassEntry[], finish: Finish): AssemblerResult => {
+export const carveFloor = (prep: FloorPrep, passes: readonly PassEntry[], finishAttempt: Finish): AssemblerResult => {
   let rung = firstRung(prep)
   let memory = noShortfalls
   for (let attempt = 0; attempt < Math.min(prep.input.maxAttempts, ASSEMBLY_ATTEMPTS); attempt++) {
     rung = climb(prep, attempt, rung)
     const state: CarveState = { attempt, rung, rand: mulberry32(prep.input.seed + attempt * 7919) }
-    const outcome = runPasses(prep, state, passes) ?? finish(prep, state)
+    const outcome = runPasses(prep, state, passes) ?? finishAttempt(prep, state)
     // The lay grows the grid even on an attempt it then fails, and the next rung starts from it.
     if (state.laidN !== undefined) rung = { ...rung, n: state.laidN }
     if ("fatal" in outcome) return { success: false, reasons: outcome.fatal }

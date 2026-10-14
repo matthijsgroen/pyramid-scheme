@@ -2,10 +2,11 @@ import { shuffle } from "../random"
 import type { KeyColor, SideSection } from "../siteTypes"
 import { nid } from "./ids"
 import { doorsShutting } from "./sections"
-import type { Cell, Chain, Pass, SectionGroup } from "./state"
+import { pass } from "./state"
+import type { Cell, Chain, SectionGroup } from "./state"
 
 // Where the chains of a laid lock count from, so no index of theirs is one of an authored section.
-export const LAID_CHAIN_IDX = 10000
+const LAID_CHAIN_IDX = 10000
 
 /**
  * THE KEY CHAIN, and every carved path off the main walk as a chain. Only FREE (no endReward) treasure-end
@@ -20,7 +21,7 @@ export const LAID_CHAIN_IDX = 10000
  * main path, then the paths off those. What each of them was authored as and what the carve gave it, so
  * nothing downstream asks which level it came from.
  */
-export const relayKeys: Pass<"branches" | "lay" | "rand", "keys"> = (prep, state) => {
+export const relayKeys = pass("relayKeys", ["branches", "lay", "rand"], ["keys"], (prep, state) => {
   const { siteId } = prep.input
   const { sideSections, ungatedIdxs, gatedTreasureIdxs, gatedStaircaseIdxs } = prep.sections
   const { groups, subChains } = state.branches
@@ -97,4 +98,4 @@ export const relayKeys: Pass<"branches" | "lay" | "rand", "keys"> = (prep, state
     ...subChains,
   ]
   state.keys = { chains, hostColors }
-}
+})

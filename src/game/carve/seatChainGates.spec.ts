@@ -47,7 +47,7 @@ describe("seatChainGates", () => {
       keyHostColors: [],
     }
     const state = { ...freshState(prep), lay: null, keys: { chains: [chain], hostColors: new Map() } }
-    seatChainGates(prep, state)
+    seatChainGates.run(prep, state)
     return state.chainGates!
   }
 

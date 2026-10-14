@@ -76,7 +76,7 @@ export const hasPassage = (state: Pick<Required<CarveState>, "maze" | "branches"
   state.maze.passages.has(key) || state.branches.carved.has(key)
 
 /** The doors a reserved junction's switch shuts, by the cells behind them, once `shutSwitchGround` has run. */
-export type SwitchDoors = ReadonlyMap<string, ReadonlySet<string>>
+type SwitchDoors = ReadonlyMap<string, ReadonlySet<string>>
 
 const NOTHING: ReadonlySet<string> = new Set()
 
@@ -94,7 +94,7 @@ export const standsBehind =
   }
 
 /** The seams between the way in and a cell, gated or not. */
-export const standsBehindSeam =
+const standsBehindSeam =
   (doors: Required<CarveState>["doors"]) =>
   (cellKey: string): ReadonlySet<string> =>
     doors.seamBehind.get(cellKey) ?? NOTHING

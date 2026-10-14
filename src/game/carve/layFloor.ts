@@ -9,7 +9,7 @@ import {
 } from "../laidFloor"
 import type { LengtheningChoice } from "../laidFloor"
 import { spreadContentIndices } from "./grid"
-import type { Pass } from "./state"
+import { pass } from "./state"
 
 // What separates the lay of one attempt from the next.
 const LAY_SEED_STRIDE = 1000003
@@ -26,12 +26,13 @@ const MAX_LENGTHENINGS = 12
  *
  * Every lay that holds grows the grid, and the next attempt starts from it even when this one refuses.
  */
-export const layFloor: Pass<"rung" | "attempt", "lay" | "laidN"> = (prep, state) => {
+export const layFloor = pass("layFloor", ["rung", "attempt"], ["lay", "laidN"], (prep, state) => {
   const { layPlan, junctionNodes, contentCount, leverOnMain } = prep.sizing
   const { plan, seed, answerStubs, onLaid } = prep.input
   const { absorbedDemands, appetiteOfRegion } = prep.sections
   if (!layPlan || !plan) {
     state.lay = null
+    state.laidN = state.rung.n
     return
   }
   let n = state.rung.n
@@ -82,4 +83,4 @@ export const layFloor: Pass<"rung" | "attempt", "lay" | "laidN"> = (prep, state)
     lengthened.push({ kind: cheapest.kind, id: cheapest.id, nodes: cheapest.nodes, considered })
     lengthPlan = lengthenPlan(lengthPlan, seated, cheapest)
   }
-}
+})

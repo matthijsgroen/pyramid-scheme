@@ -1,6 +1,6 @@
 import { seamIndexFor } from "../obstacles"
 import { routeStepOf } from "./derive"
-import type { Pass } from "./state"
+import { pass } from "./state"
 
 /**
  * WHERE ONE REGION STOPS AND THE NEXT BEGINS, the gate nearest the way in stands: the route threads the
@@ -18,7 +18,7 @@ import type { Pass } from "./state"
  * route out as a gap-free concatenation, so with today's carve a route-adjacent obstacle's two regions
  * are never "both seated but not adjacent", and `mainPath.length` GROWS across the attempt budget.
  */
-export const seatSeamGates: Pass<"regions" | "lay" | "maze", "seamGates"> = (prep, state) => {
+export const seatSeamGates = pass("seatSeamGates", ["regions", "lay", "maze"], ["seamGates"], (prep, state) => {
   const { mainPathRuns } = prep.obstacles
   const { stepRegion } = state.regions
   const laid = state.lay?.laid
@@ -45,4 +45,4 @@ export const seatSeamGates: Pass<"regions" | "lay" | "maze", "seamGates"> = (pre
     return { retry: [{ type: "obstacleSeamNotCarved", ids }] }
   }
   state.seamGates = seamGates
-}
+})

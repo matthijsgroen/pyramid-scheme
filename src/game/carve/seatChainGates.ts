@@ -1,7 +1,7 @@
 import { seamIndexFor, seatBarrierRun } from "../obstacles"
 import { regionOfStep } from "../regions"
 import { gateAtCell, keyOf } from "./derive"
-import type { Pass } from "./state"
+import { pass } from "./state"
 
 /**
  * WHERE EACH OFF-ROUTE GATE STANDS ON ITS CHAIN, by the chain's index and the cell along it. A lock laid its
@@ -17,7 +17,7 @@ import type { Pass } from "./state"
  * (`runShort`, the first only) and the attempt goes on: whether it fails is `checkChainsSeated`'s call, and a
  * wider chain may seat it.
  */
-export const seatChainGates: Pass<"keys" | "lay", "chainGates"> = (prep, state) => {
+export const seatChainGates = pass("seatChainGates", ["keys", "lay"], ["chainGates"], (prep, state) => {
   const { chainRegionsBySectionIdx } = prep.layout
   const { offRouteRuns } = prep.obstacles
   const laid = state.lay?.laid
@@ -53,4 +53,4 @@ export const seatChainGates: Pass<"keys" | "lay", "chainGates"> = (prep, state) 
     }
   }
   state.chainGates = runShort ? { at, runShort } : { at }
-}
+})

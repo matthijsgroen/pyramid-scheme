@@ -8,7 +8,7 @@ describe("growMaze", () => {
   const prep = prepOf(plainFloor({ pathPuzzles: 3 }))
   const grown = (attempt: number) => {
     const state = { ...freshState(prep, attempt), lay: null }
-    growMaze(prep, state)
+    growMaze.run(prep, state)
     return state.maze!
   }
 

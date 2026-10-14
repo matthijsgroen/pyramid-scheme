@@ -2,7 +2,8 @@ import { gateKeyOf } from "./ids"
 import { keyOf } from "./derive"
 import { makePkey } from "./grid"
 import { MAIN_SECTION_ADDRESS } from "./sections"
-import type { Cell, Pass } from "./state"
+import { pass } from "./state"
+import type { Cell } from "./state"
 
 /**
  * GATE ISOLATION: which maze edges a chain walked, and which doors must be earned to stand on each cell.
@@ -28,7 +29,7 @@ import type { Cell, Pass } from "./state"
  * gates that seam. Kept apart rather than folded into `behind` for that reason: merging them would make an
  * UNGATED seam look, to the drop check, like a real door nothing has been earned toward.
  */
-export const isolate: Pass<"maze" | "keys" | "labels" | "lay", "doors"> = (prep, state) => {
+export const isolate = pass("isolate", ["maze", "keys", "labels", "lay"], ["doors"], (prep, state) => {
   const { mainIsolated } = prep.hashes
   const { regionDoors, regionSeamDoors } = prep.layout
   const { n: N, mainPath } = state.maze
@@ -111,4 +112,4 @@ export const isolate: Pass<"maze" | "keys" | "labels" | "lay", "doors"> = (prep,
       }
 
   state.doors = { intended, gated, behind, ground, seamGated, seamBehind }
-}
+})

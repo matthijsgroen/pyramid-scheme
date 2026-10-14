@@ -1,5 +1,6 @@
 import { absorbedCell, gateIndices } from "./derive"
-import type { Pass, Shortfall } from "./state"
+import { pass } from "./state"
+import type { Shortfall } from "./state"
 
 /**
  * A CONTROL STANDS IN A REGION, so its room is A NODE OF THAT STRETCH — any main-path node, not only a
@@ -38,85 +39,87 @@ import type { Pass, Shortfall } from "./state"
  * shift into), so it is retried the same way, just named for what actually went wrong. Both retried rather
  * than refused: `mainPath.length` GROWS across the attempt budget.
  */
-export const seatMainControls: Pass<
-  "maze" | "regions" | "content" | "junctions" | "seamGates" | "runGates" | "mainBarrierDoors" | "lay",
-  "mainControls"
-> = (prep, state) => {
-  const { mainPath } = state.maze
-  const { stepRegion } = state.regions
-  const { goal, lever } = state.content
-  const laid = state.lay?.laid
-  const gated = gateIndices(state)
-  const absorbed = absorbedCell(state.lay)
-  const doors = state.mainBarrierDoors
-  const junctions = state.junctions.steps
-  // The content as the controls seated so far have left it: a later control's search sees an earlier one's move.
-  const placed = [...state.content.placed]
-  const at = new Map<string, number>()
-  const moves: [number, number][] = []
-  const takenByControl = new Set<number>()
-  // A control that reached the content-fallback search at all, whether or not it found room to displace
-  // what it found there — tells "no candidate at all" apart from "a candidate stood, but nothing had room
-  // for the puzzle it held".
-  const sawContentCandidate = new Set<string>()
-  const cellKeyAt = (mi: number) => `${mainPath[mi][0]},${mainPath[mi][1]}`
-  for (const { control } of prep.mechanisms.mainPathControls) {
-    const inRegion = (mi: number) =>
-      stepRegion[mi] === control.in &&
-      !takenByControl.has(mi) &&
-      mi !== goal &&
-      mi !== lever &&
-      !gated.has(mi) &&
-      !doors.has(mi) &&
-      !junctions.has(mi) &&
-      !absorbed.has(cellKeyAt(mi)) &&
-      !laid?.thresholds.has(cellKeyAt(mi))
+export const seatMainControls = pass(
+  "seatMainControls",
+  ["maze", "regions", "content", "junctions", "seamGates", "runGates", "mainBarrierDoors", "lay"],
+  ["mainControls"],
+  (prep, state) => {
+    const { mainPath } = state.maze
+    const { stepRegion } = state.regions
+    const { goal, lever } = state.content
+    const laid = state.lay?.laid
+    const gated = gateIndices(state)
+    const absorbed = absorbedCell(state.lay)
+    const doors = state.mainBarrierDoors
+    const junctions = state.junctions.steps
+    // The content as the controls seated so far have left it: a later control's search sees an earlier one's move.
+    const placed = [...state.content.placed]
+    const at = new Map<string, number>()
+    const moves: [number, number][] = []
+    const takenByControl = new Set<number>()
+    // A control that reached the content-fallback search at all, whether or not it found room to displace
+    // what it found there — tells "no candidate at all" apart from "a candidate stood, but nothing had room
+    // for the puzzle it held".
+    const sawContentCandidate = new Set<string>()
+    const cellKeyAt = (mi: number) => `${mainPath[mi][0]},${mainPath[mi][1]}`
+    for (const { control } of prep.mechanisms.mainPathControls) {
+      const inRegion = (mi: number) =>
+        stepRegion[mi] === control.in &&
+        !takenByControl.has(mi) &&
+        mi !== goal &&
+        mi !== lever &&
+        !gated.has(mi) &&
+        !doors.has(mi) &&
+        !junctions.has(mi) &&
+        !absorbed.has(cellKeyAt(mi)) &&
+        !laid?.thresholds.has(cellKeyAt(mi))
 
-    let index: number | undefined
-    for (let mi = 1; mi < mainPath.length - 1; mi++) {
-      if (inRegion(mi) && !placed.includes(mi)) {
-        index = mi
-        break
-      }
-    }
-
-    if (index === undefined) {
+      let index: number | undefined
       for (let mi = 1; mi < mainPath.length - 1; mi++) {
-        if (!inRegion(mi) || !placed.includes(mi)) continue
-        sawContentCandidate.add(control.id)
-        let shifted = mi + 1
-        while (
-          shifted < goal &&
-          (gated.has(shifted) ||
-            doors.has(shifted) ||
-            placed.includes(shifted) ||
-            takenByControl.has(shifted) ||
-            junctions.has(shifted) ||
-            absorbed.has(cellKeyAt(shifted)))
-        )
-          shifted += 1
-        if (shifted >= goal) continue // nowhere to move this one — try the region's next content node
-        placed[placed.indexOf(mi)] = shifted
-        moves.push([mi, shifted])
-        index = mi
-        break
+        if (inRegion(mi) && !placed.includes(mi)) {
+          index = mi
+          break
+        }
       }
-    }
 
-    if (index === undefined) continue
-    at.set(control.id, index)
-    takenByControl.add(index)
+      if (index === undefined) {
+        for (let mi = 1; mi < mainPath.length - 1; mi++) {
+          if (!inRegion(mi) || !placed.includes(mi)) continue
+          sawContentCandidate.add(control.id)
+          let shifted = mi + 1
+          while (
+            shifted < goal &&
+            (gated.has(shifted) ||
+              doors.has(shifted) ||
+              placed.includes(shifted) ||
+              takenByControl.has(shifted) ||
+              junctions.has(shifted) ||
+              absorbed.has(cellKeyAt(shifted)))
+          )
+            shifted += 1
+          if (shifted >= goal) continue // nowhere to move this one — try the region's next content node
+          placed[placed.indexOf(mi)] = shifted
+          moves.push([mi, shifted])
+          index = mi
+          break
+        }
+      }
+
+      if (index === undefined) continue
+      at.set(control.id, index)
+      takenByControl.add(index)
+    }
+    const { mainPathControls } = prep.mechanisms
+    if (at.size < mainPathControls.length) {
+      const stillUnseated = mainPathControls.filter(({ control }) => !at.has(control.id))
+      const bare = stillUnseated.filter(({ control }) => !sawContentCandidate.has(control.id))
+      const displaceable = stillUnseated.filter(({ control }) => sawContentCandidate.has(control.id))
+      const retry: Shortfall[] = []
+      if (bare.length > 0) retry.push({ type: "controlNotSeated", ids: bare.map(({ control }) => control.id) })
+      if (displaceable.length > 0)
+        retry.push({ type: "controlPuzzleUndisplaceable", ids: displaceable.map(({ control }) => control.id) })
+      return { retry }
+    }
+    state.mainControls = { at, moves }
   }
-  const { mainPathControls } = prep.mechanisms
-  if (at.size < mainPathControls.length) {
-    const stillUnseated = mainPathControls.filter(({ control }) => !at.has(control.id))
-    const bare = stillUnseated.filter(({ control }) => !sawContentCandidate.has(control.id))
-    const displaceable = stillUnseated.filter(({ control }) => sawContentCandidate.has(control.id))
-    const retry: Shortfall[] = []
-    if (bare.length > 0) retry.push({ type: "controlNotSeated", ids: bare.map(({ control }) => control.id) })
-    if (displaceable.length > 0)
-      retry.push({ type: "controlPuzzleUndisplaceable", ids: displaceable.map(({ control }) => control.id) })
-    return { retry }
-  }
-  state.mainControls = { at, moves }
-}
+)

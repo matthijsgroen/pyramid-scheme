@@ -19,12 +19,12 @@ describe("seatSeamGates", () => {
 
   it("stands a connection's gate on the first step of the far region", () => {
     const state = withRegions(["hall", "mid", "mid", "vault", "vault"])
-    expect(seatSeamGates(prep, state)).toBeUndefined()
+    expect(seatSeamGates.run(prep, state)).toBeUndefined()
     expect(state.seamGates).toEqual(new Map([["bars", 3]]))
   })
 
   it("retries where the path never crosses the gate's connection", () => {
     const state = withRegions(["hall", "mid", "mid"])
-    expect(seatSeamGates(prep, state)).toEqual({ retry: [{ type: "obstacleSeamNotCarved", ids: ["bars"] }] })
+    expect(seatSeamGates.run(prep, state)).toEqual({ retry: [{ type: "obstacleSeamNotCarved", ids: ["bars"] }] })
   })
 })

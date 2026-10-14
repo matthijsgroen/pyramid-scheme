@@ -349,9 +349,7 @@ export type Shortfall =
 export type Refusal = { retry: readonly Shortfall[] } | { fatal: AssemblerFailure["reasons"] }
 
 /** The state a pass sees: what it reads, present and read-only, and what it writes. */
-export type PassState<R extends keyof CarveState, W extends keyof CarveState> = Readonly<
-  Pick<Required<CarveState>, R>
-> &
+type PassState<R extends keyof CarveState, W extends keyof CarveState> = Readonly<Pick<Required<CarveState>, R>> &
   Pick<CarveState, W>
 
 /** One step of an attempt: decides from prep and what earlier passes wrote, writes its own keys or refuses. */
@@ -368,10 +366,23 @@ export type PassEntry = {
   run: (prep: FloorPrep, state: CarveState) => Refusal | void
 }
 
+/** Throws when a key `name` reads is still unwritten: a mistake in the pass order, not in a floor. */
+export const requireReads = <K extends keyof CarveState>(
+  name: string,
+  reads: readonly K[],
+  state: CarveState
+): Readonly<Pick<Required<CarveState>, K>> => {
+  for (const key of reads)
+    if (state[key] === undefined) throw new Error(`[carve] ${name} reads ${key}, which no earlier pass wrote`)
+  return state as Pick<Required<CarveState>, K>
+}
+
 /**
- * Declares a pass: a key it reads that no earlier pass wrote is a mistake in the pass order, so it throws.
- * The keys are taken from the lists alone, so a pass whose own type reads or writes a key its lists leave
- * out does not compile.
+ * Declares a pass, and guards its keys as it runs: a key it reads that no earlier pass wrote, a key it writes
+ * that an earlier pass already wrote, and a key it leaves unwritten after it did not refuse, are mistakes in
+ * the passes, so each throws. A pass with nothing to write says so with an explicit null or no-op value. The
+ * keys are taken from the lists alone, so a pass whose own type reads or writes a key its lists leave out does
+ * not compile.
  */
 export const pass = <R extends keyof CarveState, W extends keyof CarveState>(
   name: string,
@@ -383,9 +394,12 @@ export const pass = <R extends keyof CarveState, W extends keyof CarveState>(
   reads,
   writes,
   run: (prep, state) => {
-    for (const key of reads)
-      if (state[key] === undefined) throw new Error(`[carve] ${name} reads ${key}, which no earlier pass wrote`)
-    return run(prep, state as PassState<R, W>)
+    requireReads(name, reads, state)
+    for (const key of writes)
+      if (state[key] !== undefined) throw new Error(`[carve] ${name} writes ${key}, which an earlier pass wrote`)
+    const refusal = run(prep, state as PassState<R, W>)
+    if (refusal) return refusal
+    for (const key of writes) if (state[key] === undefined) throw new Error(`[carve] ${name} did not write ${key}`)
   },
 })
 

@@ -24,7 +24,7 @@ describe("seatMainBarrierDoors", () => {
 
   it("stands a door inside the region at each of its entrances, past the nodes content holds", () => {
     const state = onWalk(["hall", "mid", "mid", "mid", "mid", "mid", "vault"], [2])
-    expect(seatMainBarrierDoors(prep, state)).toBeUndefined()
+    expect(seatMainBarrierDoors.run(prep, state)).toBeUndefined()
     expect(state.mainBarrierDoors).toEqual(
       new Map([
         [3, { id: "flood", region: "mid", entrance: "hall" }],
@@ -35,7 +35,7 @@ describe("seatMainBarrierDoors", () => {
 
   it("retries where the region has no free node for a door, naming the barrier", () => {
     const state = onWalk(["hall", "mid", "mid", "mid", "vault"], [2])
-    expect(seatMainBarrierDoors(prep, state)).toEqual({
+    expect(seatMainBarrierDoors.run(prep, state)).toEqual({
       retry: [{ type: "regionBarrierNotSeated", id: "flood", region: "mid" }],
     })
   })

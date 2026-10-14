@@ -1,5 +1,5 @@
 import { regionsAlongPath } from "../regions"
-import type { Pass } from "./state"
+import { pass } from "./state"
 
 /**
  * WHICH REGION EACH MAIN-PATH STEP STANDS IN, where the floor authors one — absent everywhere on a floor
@@ -20,7 +20,7 @@ import type { Pass } from "./state"
  * keyed off the seams reserves the same physical stretch whether the mod that might gate it is even in
  * the build.
  */
-export const seatRouteRegions: Pass<"maze" | "lay", "regions"> = (prep, state) => {
+export const seatRouteRegions = pass("seatRouteRegions", ["maze", "lay"], ["regions"], (prep, state) => {
   const { regionLayout, route, onRouteSet } = prep.layout
   const { mainPath } = state.maze
   const stepRegion = state.lay
@@ -35,4 +35,4 @@ export const seatRouteRegions: Pass<"maze" | "lay", "regions"> = (prep, state) =
   const seams = new Set<number>()
   for (let step = 1; step < stepRegion.length; step++) if (stepRegion[step] !== stepRegion[step - 1]) seams.add(step)
   state.regions = { stepRegion, seams }
-}
+})

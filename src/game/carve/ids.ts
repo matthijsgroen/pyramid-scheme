@@ -45,7 +45,7 @@ export const leverRooms = (leverAtPositional: ReadonlySet<string>, positional: s
 
 // Every room a chain has to hold: its own content, its terminal room, its gate where it has one, and
 // the lever where one stands in it.
-export const chainRooms = (
+export const chainRoomCount = (
   leverAtPositional: ReadonlySet<string>,
   section: SideSection | SubSection,
   positional: string
@@ -106,10 +106,10 @@ export const carvedCells = (
     prep.sizing.mainPathCells +
     prep.sizing.lockCells +
     prep.sections.sideSections.reduce((sum, sec, idx) => {
-      const secCells = paddedChainLength(chainPacking, chainRooms(leverAtPositional, sec, `s${idx}`))
+      const secCells = paddedChainLength(chainPacking, chainRoomCount(leverAtPositional, sec, `s${idx}`))
       const subCells = (sec.sideSections ?? []).reduce(
         (s2, sub, subIdx) =>
-          s2 + paddedChainLength(chainPacking, chainRooms(leverAtPositional, sub, `s${idx}.${subIdx}`)),
+          s2 + paddedChainLength(chainPacking, chainRoomCount(leverAtPositional, sub, `s${idx}.${subIdx}`)),
         0
       )
       return sum + secCells + subCells

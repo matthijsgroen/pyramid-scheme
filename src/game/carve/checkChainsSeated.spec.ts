@@ -25,7 +25,7 @@ describe("checkChainsSeated", () => {
   const checked = (regions: string[], at: Map<string, { idx: number; cellIndex: number }>) => {
     const labels = noLabels()
     regions.forEach((region, i) => labels.region.set(`${i},0`, region))
-    return checkChainsSeated(prep, {
+    return checkChainsSeated.run(prep, {
       ...freshState(prep),
       lay: null,
       labels,

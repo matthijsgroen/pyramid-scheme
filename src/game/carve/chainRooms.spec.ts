@@ -66,7 +66,7 @@ describe("chainRooms", () => {
       chainGates: { at: new Map() },
       mainBarrierDoors: new Map(),
     }
-    expect(chainRooms(prep, state)).toEqual({ retry: [] })
+    expect(chainRooms.run(prep, state)).toEqual({ retry: [] })
     expect(state.chainRooms).toBeUndefined()
   })
 })

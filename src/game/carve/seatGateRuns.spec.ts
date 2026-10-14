@@ -26,7 +26,7 @@ describe("seatGateRuns", () => {
 
   it("stands the run's later gates past the seam, on nodes no content holds", () => {
     const state = onWalk(["hall", "mid", "mid", "vault", "vault", "vault", "vault"], [4])
-    expect(seatGateRuns(prep, state)).toBeUndefined()
+    expect(seatGateRuns.run(prep, state)).toBeUndefined()
     expect(state.runGates).toEqual(
       new Map([
         ["first", 3],
@@ -37,7 +37,7 @@ describe("seatGateRuns", () => {
 
   it("retries where the far region has no free node for the run, naming the connection", () => {
     const state = onWalk(["hall", "mid", "mid", "vault", "vault"], [4])
-    expect(seatGateRuns(prep, state)).toEqual({
+    expect(seatGateRuns.run(prep, state)).toEqual({
       retry: [{ type: "barriersNotSeated", between: ["mid", "vault"], barriers: ["first", "second"] }],
     })
   })

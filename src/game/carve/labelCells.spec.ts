@@ -34,7 +34,7 @@ describe("labelCells", () => {
       regions: { stepRegion: ["hall", "mid", "mid"], seams: new Set<number>() },
       keys: { chains: [chain], hostColors: new Map() },
     }
-    labelCells(prep, state)
+    labelCells.run(prep, state)
     return state.labels!
   }
 

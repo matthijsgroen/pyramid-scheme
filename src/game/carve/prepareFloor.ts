@@ -43,7 +43,7 @@ import {
   sectionsTooDeep,
   withHandleGates,
 } from "./sections"
-import { chainRooms, gateKeyOf, gatesOwnedBy, handleStem, leverRooms, obstacleMode, switchStem } from "./ids"
+import { chainRoomCount, gateKeyOf, gatesOwnedBy, handleStem, leverRooms, obstacleMode, switchStem } from "./ids"
 import type { AgreementGate, DropSeam, FloorPrep, ForkIn, OneWayDemand, SubSectionsOf } from "./state"
 
 const defaultResolveKeyRequirements: ResolveKeyRequirements = () => undefined
@@ -54,11 +54,14 @@ const defaultResolveKeyRequirements: ResolveKeyRequirements = () => undefined
 // click-to-reveal stops on first traversal. Overridable per floor via FloorConfig.corridorStraightness.
 const DEFAULT_STRAIGHT_BIAS = 0.65
 
-export type PrepareFloorResult = { ok: false; reasons: AssemblerFailure["reasons"] } | { ok: true; prep: FloorPrep }
+type PrepareFloorResult = { ok: false; reasons: AssemblerFailure["reasons"] } | { ok: true; prep: FloorPrep }
 
 const refuse = (reasons: AssemblerFailure["reasons"]): PrepareFloorResult => ({ ok: false, reasons })
 
-/** Each group is frozen, so a pass that tries to change what the config decided throws. */
+/**
+ * Each group, and the object holding them, is frozen one level deep, so a pass that replaces a group or a
+ * field of one throws. Nothing deeper is frozen: the `Readonly` types guard the values inside.
+ */
 const frozen = <T extends Record<string, object>>(groups: T): Readonly<T> => {
   for (const group of Object.values(groups)) Object.freeze(group)
   return Object.freeze(groups)
@@ -633,9 +636,9 @@ export const prepareFloor = (
     mainPathCells +
     lockCells +
     sideSections.reduce((sum, sec, idx) => {
-      const secCells = chainRooms(leverAtPositional, sec, `s${idx}`)
+      const secCells = chainRoomCount(leverAtPositional, sec, `s${idx}`)
       const subCells = (sec.sideSections ?? []).reduce(
-        (s2, sub, subIdx) => s2 + chainRooms(leverAtPositional, sub, `s${idx}.${subIdx}`),
+        (s2, sub, subIdx) => s2 + chainRoomCount(leverAtPositional, sub, `s${idx}.${subIdx}`),
         0
       )
       return sum + secCells + subCells

@@ -47,7 +47,7 @@ describe("placeDrops", () => {
       },
       switchDoors: new Map(),
     }
-    return { refusal: placeDrops(prep, state), drops: state.drops }
+    return { refusal: placeDrops.run(prep, state), drops: state.drops }
   }
 
   it("drops between the two named sections across the uncarved cells between them", () => {

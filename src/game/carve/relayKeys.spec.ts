@@ -40,7 +40,7 @@ describe("relayKeys", () => {
       lay: null,
       branches: { used: new Set<string>(), groups, subChains: [], seamDrops: [], carved: new Set<string>() },
     }
-    relayKeys(prep, state)
+    relayKeys.run(prep, state)
     return state.keys!
   }
 

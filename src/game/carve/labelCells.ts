@@ -3,7 +3,8 @@ import { regionOfStep } from "../regions"
 import { keyOf } from "./derive"
 import { computeLegacySideSectionHash, computeSideSectionHash } from "./sectionHash"
 import { MAIN_SECTION_ADDRESS } from "./sections"
-import type { CellLabels, DressingPools, Pass } from "./state"
+import { pass } from "./state"
+import type { CellLabels, DressingPools } from "./state"
 
 /**
  * WHAT EVERY CARVED CELL IS FILED UNDER: its section's hash and address, how far along its section's walk it
@@ -28,7 +29,7 @@ import type { CellLabels, DressingPools, Pass } from "./state"
  * The DRESSING is which section's authored pools a footprint room draws from — what stands on its floor and
  * what hangs on its wall, both keyed on the cell so a claimed footprint keeps its own section's pools.
  */
-export const labelCells: Pass<"maze" | "regions" | "keys" | "lay", "labels"> = (prep, state) => {
+export const labelCells = pass("labelCells", ["maze", "regions", "keys", "lay"], ["labels"], (prep, state) => {
   const { config, addressOf } = prep.config
   const { chainRegionsBySectionIdx } = prep.layout
   const { mainSectionHash, legacyMainSectionHash } = prep.hashes
@@ -128,4 +129,4 @@ export const labelCells: Pass<"maze" | "regions" | "keys" | "lay", "labels"> = (
   }
 
   state.labels = labels
-}
+})

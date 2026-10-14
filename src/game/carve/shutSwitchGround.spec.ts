@@ -47,7 +47,7 @@ describe("shutSwitchGround", () => {
       chainRooms: new Map(),
       forks: { reserved: ["0,2"], inFork: new Set<string>(), switchesPlaced: 1 },
     }
-    shutSwitchGround(prep, state)
+    shutSwitchGround.run(prep, state)
     return state.switchDoors!
   }
 

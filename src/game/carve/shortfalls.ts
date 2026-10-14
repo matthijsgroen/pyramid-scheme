@@ -5,7 +5,7 @@ type Kind = Shortfall["type"]
 type OfKind<K extends Kind> = Extract<Shortfall, { type: K }>
 
 /** What the attempts came up short on so far: one shortfall per kind, so the failure can name it. */
-export type ShortfallMemory = { readonly [K in Kind]?: OfKind<K> }
+type ShortfallMemory = { readonly [K in Kind]?: OfKind<K> }
 
 export const noShortfalls: ShortfallMemory = {}
 

@@ -1,5 +1,5 @@
 import { spreadContentIndices } from "./grid"
-import type { Pass } from "./state"
+import { pass } from "./state"
 
 /**
  * THE MAIN PATH'S CONTENT, before any control moves a piece of it. The exit stands at the main path's end.
@@ -28,7 +28,7 @@ import type { Pass } from "./state"
  * A path with no free node left for every piece of content is retried rather than refused: the path
  * lengthens across the attempt budget.
  */
-export const placeMainContent: Pass<"maze" | "regions" | "lay", "content"> = (prep, state) => {
+export const placeMainContent = pass("placeMainContent", ["maze", "regions", "lay"], ["content"], (prep, state) => {
   const { contentCount, leverOnMain } = prep.sizing
   const { mainPath } = state.maze
   const { seams } = state.regions
@@ -59,4 +59,4 @@ export const placeMainContent: Pass<"maze" | "regions" | "lay", "content"> = (pr
     lever: leverOnMain ? placed[0] : -1,
     puzzleRole,
   }
-}
+})

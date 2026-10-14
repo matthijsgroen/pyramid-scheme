@@ -1,6 +1,7 @@
 import type { LaidFloor } from "../laidFloor"
 import { DIRS2, NODE_STEP, makePkey } from "./grid"
-import type { Cell, Pass } from "./state"
+import { pass } from "./state"
+import type { Cell } from "./state"
 
 // Generate a perfect DFS maze on an N×N grid starting from (entR, entC).
 // Returns the BFS path from entrance to the chosen main-path endpoint, and the passages set.
@@ -136,7 +137,7 @@ const growMazeAround = (N: number, laid: LaidFloor, rand: () => number, straight
  * visit the moment it's stepped on. Every passage incident to the exit except the one to its main-path
  * predecessor is dropped here, before any branch is hung, so nothing branches through or beside it.
  */
-export const growMaze: Pass<"rung" | "lay" | "rand", "maze"> = (prep, state) => {
+export const growMaze = pass("growMaze", ["rung", "lay", "rand"], ["maze"], (prep, state) => {
   const laid = state.lay?.laid
   const { rand } = state
   const N = laid ? laid.n : state.rung.n
@@ -171,4 +172,4 @@ export const growMaze: Pass<"rung" | "lay" | "rand", "maze"> = (prep, state) => 
     }
   }
   state.maze = { n: N, entrance: [entR, entC], exit, mainPath, passages }
-}
+})

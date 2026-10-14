@@ -15,7 +15,7 @@ describe("placeMainContent", () => {
 
   it("spreads the puzzles along the walk and puts the goal last, before the exit", () => {
     const state = onWalk(9)
-    expect(placeMainContent(prep, state)).toBeUndefined()
+    expect(placeMainContent.run(prep, state)).toBeUndefined()
     const { placed, goal, puzzleRole } = state.content!
     expect(goal).toBe(Math.max(...placed))
     expect(goal).toBeLessThan(8)
@@ -24,15 +24,15 @@ describe("placeMainContent", () => {
 
   it("moves content forward off a seam", () => {
     const bare = onWalk(9)
-    placeMainContent(prep, bare)
+    placeMainContent.run(prep, bare)
     const [first] = bare.content!.placed
     const seamed = onWalk(9, [first])
-    placeMainContent(prep, seamed)
+    placeMainContent.run(prep, seamed)
     expect(seamed.content!.placed).not.toContain(first)
   })
 
   it("retries a walk too short for its content and a distinct exit", () => {
-    expect(placeMainContent(prep, onWalk(4))).toEqual({ retry: [] })
+    expect(placeMainContent.run(prep, onWalk(4))).toEqual({ retry: [] })
   })
 })
 
