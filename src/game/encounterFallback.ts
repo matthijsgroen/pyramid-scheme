@@ -10,6 +10,14 @@ export const DEFAULT_CONTROL_ROLE = "default-control"
 /** The role of the family that stands in a door to tell the player what it waits on. */
 export const DOOR_FACE_ROLE = "door-face"
 
+/** The families the carve asks for by id: the chest a key or reward stands in, the shop a side path may
+ * end in, and the gate whose tags a region barrier's door wears. The resolver says who answers. */
+export const CARVE_FAMILY_QUERIES = {
+  treasureChest: "treasure-chest",
+  fezShop: "fez-shop",
+  keyGate: "key-gate",
+} as const
+
 // THE ONE FILE CORE NAMES MOD FAMILIES IN: the catalogue a caller with no registry (tests, stories)
 // resolves through. Production passes the registry's own resolver, so nothing here reaches a player.
 // `.betterer.ts` ratchets the ids named here, per file.
