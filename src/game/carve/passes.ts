@@ -16,6 +16,7 @@ import { seatRouteRegions } from "./seatRouteRegions"
 import { seatSeamGates } from "./seatSeamGates"
 import { shutSwitchGround } from "./shutSwitchGround"
 import { placeJunctions } from "./placeJunctions"
+import { placeDrops } from "./placeDrops"
 import { placeMainContent } from "./placeMainContent"
 import { pass } from "./state"
 import type { Finish, PassEntry } from "./state"
@@ -86,6 +87,7 @@ export const PASSES: readonly PassEntry[] = [
     ["switchDoors"],
     shutSwitchGround
   ),
+  pass("placeDrops", ["branches", "labels", "doors", "switchDoors", "maze", "lay"], ["drops"], placeDrops),
 ]
 
 /** Writes the grid from an attempt's settled state. No pass renders one yet, so no attempt yields a grid. */
