@@ -1609,6 +1609,16 @@ scaffold narrow --contents=along --colour=#a7b2be --floor=#8d98a5 --colour-deep=
 yarn import-tile art/masters/props/default/narrowAlong.webp --tier=default --name=narrowAlong --slot=prop \
   --filter=smooth --seat="$SHADOW"
 
+# The stone pipe's mouth, SHARED across ranks, empty and with a stone in it: a wall item with depth, so it is
+# rendered at half shear like the niche, and imported into the wall slot. `pipeHoleStone` is a Gemini EDIT of the
+# painted `pipeHole`, so the two swap on one wall. Not painted yet: uncomment once the masters are in
+# art/masters/props/default/ (docs/instructions/repaint-queue.md, `default/pipeHole`).
+# scaffold pipeHole --shear=0.5 --width=448 --height=224 --sun=0 --colour=#a7b2be --colour-deep=#5f6b77
+# yarn import-tile art/masters/props/default/pipeHole.webp --tier=default --name=pipeHole --slot=wall \
+#   --filter=smooth
+# yarn import-tile art/masters/props/default/pipeHoleStone.webp --tier=default --name=pipeHoleStone --slot=wall \
+#   --filter=smooth
+
 # The overgrown POOL — the condition's second sprite per slot, so a floor is not overgrown with one weed.
 # Flat tiles: no mesh, no mask, the magenta keyed (docs/instructions/repaint-queue.md, "Overgrown").
 # Saturation and brightness measured against `overgrown-plant`, which is the one these stand beside:

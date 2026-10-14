@@ -3680,6 +3680,36 @@ def prim_statue():
     return join_all()
 
 
+def prim_pipehole():
+    """A stone pipe's mouth in a wall: one round hole, dark inside, and with `--contents=stone` a stone in it.
+
+    A WALL ITEM WITH DEPTH, so it is modelled like `prim_niche` and rendered at `--shear=0.5`: the mouth is
+    a bore going back into the wall, and drawn at half depth its far end shows above its front lip, which
+    is what makes it read as a hole rather than a disc painted on the face. Landscape two by one, as the
+    wall band it is drawn on.
+
+    The same mouth at every rank: a pipe is a mechanic, and a player must never relearn it when the tomb
+    gets richer. The stone is the plate's limestone block, so the stone a player posted is the one he sees.
+    """
+    w, d, h = 1.62, 0.34, 0.81
+    r = 0.22
+    # The wall face round the mouth: a slab with the bore's front lip on it. Nothing else stands on the face.
+    mark(box(w, 0.06, h, y=-d / 2 + 0.03, z=h / 2), "body")
+    # The bore: a dark cylinder running back into the wall along y, its front flush with the face.
+    bore = cyl(r, d, y=0.0, z=h * 0.48, verts=32)
+    bore.rotation_euler = (math.pi / 2, 0.0, 0.0)
+    bpy.ops.object.transform_apply(rotation=True)
+    mark(bore, VOID)
+    if arg("contents", "empty") == "stone":
+        # The stone lies in the mouth, resting on the bore's floor, a little proud of the face.
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=16, ring_count=10, radius=r * 0.78, location=(0.0, -d / 2, h * 0.43))
+        stone = bpy.context.object
+        stone.scale = (1.1, 0.8, 0.85)
+        bpy.ops.object.transform_apply(scale=True)
+        mark(stone, "limestone")
+    return join_all()
+
+
 PRIMITIVES.update(
     {
         "statue": prim_statue,
@@ -3701,6 +3731,7 @@ PRIMITIVES.update(
         "mat": prim_mat,
         "rubblePile": prim_rubbleheap,
         "niche": prim_niche,
+        "pipeHole": prim_pipehole,
         "pit": prim_pit,
         "lever": prim_lever,
         "spikes": prim_spikes,
