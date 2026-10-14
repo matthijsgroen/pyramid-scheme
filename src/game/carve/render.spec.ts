@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { freshState, noLabels, plainFloor, prepOf, DIR_MOVE, findRoom } from "./carveFixtures"
 import { makePkey } from "./grid"
-import { render } from "./render"
+import { render, renderShut } from "./render"
 import { assembleFloor } from "./assembleFloor"
 import type { Cell, OneWayEdge, RoomSpec } from "./state"
 import type { Direction, FloorConfig, FloorGrid, RoomCell } from "../siteTypes"
@@ -54,6 +54,8 @@ describe("render", () => {
       chainRooms: new Map(),
       switchDoors: new Map(),
       drops,
+      forks: { reserved: [], inFork: new Set<string>(), switchesPlaced: 0 },
+      switchWays: [],
     })
   }
 
@@ -74,6 +76,63 @@ describe("render", () => {
     expect(grid.cells[3][4]).toMatchObject({ dirs: new Set(["s"]) })
     expect(grid.cells[0][4]).toMatchObject({ dirs: new Set(["w", "s"]) })
     expect(grid.cells[4][4]).toMatchObject({ dirs: new Set(["n"]) })
+  })
+})
+
+// entrance 0,0 → junction 0,2 → exit 0,4, with a branch node 2,2 off the junction, reserved for a switch.
+describe("a reserved junction", () => {
+  const prep = prepOf(plainFloor())
+  const pkey = makePkey(5)
+  const passages = new Set([pkey(0, 0, 0, 2), pkey(0, 2, 0, 4), pkey(0, 2, 2, 2)])
+  const mainPath: Cell[] = [
+    [0, 0],
+    [0, 2],
+    [0, 4],
+  ]
+  const junctionState = (switchesPlaced: number) => ({
+    ...freshState(prep),
+    lay: null,
+    maze: { n: 5, entrance: mainPath[0], exit: mainPath[2], mainPath, passages },
+    branches: {
+      used: new Set(["0,0", "0,2", "0,4", "2,2"]),
+      groups: [],
+      subChains: [],
+      seamDrops: [],
+      carved: new Set<string>(),
+    },
+    labels: noLabels(),
+    doors: {
+      intended: passages,
+      gated: new Set<string>(),
+      behind: new Map(),
+      ground: new Map(),
+      seamGated: new Set<string>(),
+      seamBehind: new Map(),
+    },
+    mainRooms: new Map<string, RoomSpec>([
+      ["0,0", { roomType: "portal" }],
+      ["0,2", { roomType: "fork" }],
+      ["0,4", { roomType: "portal" }],
+    ]),
+    chainRooms: new Map(),
+    switchDoors: new Map(),
+    drops: [],
+    forks: { reserved: ["0,2"], inFork: new Set<string>(), switchesPlaced },
+    switchWays: [[{ dir: "s" as const, cell: "2,2", gateKeyId: "switch:way" }]],
+  })
+
+  it("shuts its way out and names the key on the junction's exit where a switch stands in it", () => {
+    const grid = render(prep, junctionState(1))
+    expect(grid.cells[2][2]).toMatchObject({ type: "room", requiredKeyId: "switch:way", keyIsAuthored: true })
+    expect(grid.cells[0][2]).toMatchObject({
+      exits: expect.arrayContaining([{ dir: "s", kind: "side", gateKeyId: "switch:way" }]),
+      mechanism: { initial: "rest", states: ["rest", "switch:way"] },
+    })
+  })
+
+  it("leaves it open where no switch stands in it, and shuts it in the view the carve is checked against", () => {
+    expect(render(prep, junctionState(0)).cells[2][2]).toMatchObject({ type: "corridor" })
+    expect(renderShut(prep, junctionState(0)).cells[2][2]).toMatchObject({ requiredKeyId: "switch:way" })
   })
 })
 

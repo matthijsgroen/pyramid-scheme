@@ -7,6 +7,7 @@ import { isolate } from "./isolate"
 import { labelCells } from "./labelCells"
 import { layFloor } from "./layFloor"
 import { mainRooms } from "./mainRooms"
+import { nameSwitchWays } from "./nameSwitchWays"
 import { placeDrops } from "./placeDrops"
 import { placeJunctions } from "./placeJunctions"
 import { placeMainContent } from "./placeMainContent"
@@ -51,6 +52,7 @@ export const PASSES: readonly PassEntry[] = [
   reserveJunctions,
   shutSwitchGround,
   placeDrops,
+  nameSwitchWays,
 ]
 
 /** What the tail reads: every key `render` and `settle` take from the passes, each checked as a pass's are. */
@@ -67,6 +69,7 @@ export const TAIL_READS = [
   "forks",
   "junctions",
   "keys",
+  "switchWays",
 ] as const satisfies readonly (keyof SettleState)[]
 
 /**

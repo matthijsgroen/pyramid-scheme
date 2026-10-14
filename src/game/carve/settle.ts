@@ -8,11 +8,12 @@ import type { ContentKind } from "../regions"
 import { switchAddress } from "../seeds/boardIndex"
 import { placeSequences } from "../sequenceTiles"
 import { MECHANISM_AT_REST } from "../siteTypes"
-import type { Direction, GridCell } from "../siteTypes"
+import type { Direction } from "../siteTypes"
 import { validateSite } from "../siteValidator"
 import { placeWeights } from "../weightsPlates"
-import { freeWaysOut, keyOf, nodeExitsOf } from "./derive"
+import { keyOf, nodeExitsOf } from "./derive"
 import { gateKeyOf, gatesOwnedBy, obstacleMode, switchMark, switchStem } from "./ids"
+import { renderGround, renderShut } from "./render"
 import type { RenderState, WritableGrid } from "./render"
 import { MAIN_SECTION_ADDRESS } from "./sections"
 import type { CarveState, FloorPrep, Refusal } from "./state"
@@ -27,7 +28,7 @@ const at = (pk: string): [number, number] => {
 
 /**
  * WHAT IS STILL WRITTEN ONTO THE FINISHED GRID, and the checks that read it, in the order the carve has always
- * asked them: the reserved junctions shut and opened, switches and fork-switches stood in their junctions, marks
+ * asked them: the carve with its reserved junctions open and with them all shut, switches and fork-switches stood in their junctions, marks
  * painted, what each region will take, the carve against its layout, then sequence tiles and plates. Each write
  * here waits to become a pass's decision and a write in `render`; until then this is the one step that both
  * decides and writes.
@@ -39,24 +40,28 @@ export const settle = (prep: FloorPrep, state: SettleState, grid: WritableGrid):
   const { config, authored } = prep.config
   const { allocation, markByGateKey } = prep.marks
   const { reserved: reservedForks, switchesPlaced } = state.forks
+  const ground = renderGround(prep, state)
   const { mainPath } = state.maze
   const laid = state.lay?.laid
   const cells2D = grid.cells
   const N = grid.rows
-  const waysOut = freeWaysOut(state, state.switchDoors)
   const exitsOf = nodeExitsOf(state, state.switchDoors)
-  const switchMarks = new Map<string, Mark>()
+  const switchMarks = new Map<string, Mark>(
+    state.switchWays
+      .slice(0, switchesPlaced)
+      .flatMap((ways, n) => ways.map(({ gateKeyId }) => [gateKeyId, switchMark(prep, n)] as const))
+  )
   const markOf = (gateKeyId: string) => markByGateKey.get(gateKeyId) ?? switchMarks.get(gateKeyId)
 
   // Two rooms of one section that a save cannot tell apart is a data-loss bug in the AUTHORING, so it fails the
   // floor outright: every seed produces it.
-  const duplicateSlot = (): Refusal | undefined => {
+  const duplicateSlot = (view: WritableGrid = grid): Refusal | undefined => {
     const slotsSeen = new Set<string>()
     for (let r = 0; r < N; r++)
       for (let c = 0; c < N; c++) {
-        const slot = cellSlot(grid, r, c)
+        const slot = cellSlot(view, r, c)
         if (!slot) continue
-        const cell = cells2D[r][c]
+        const cell = view.cells[r][c]
         const named = `${(cell.type !== "empty" && cell.sectionAddress) || MAIN_SECTION_ADDRESS}/${slot}`
         if (slotsSeen.has(named)) return { fatal: [{ type: "duplicateCellSlot", slot: named }] }
         slotsSeen.add(named)
@@ -64,67 +69,14 @@ export const settle = (prep: FloorPrep, state: SettleState, grid: WritableGrid):
     return undefined
   }
 
-  const bareDuplicate = duplicateSlot()
+  const bareDuplicate = duplicateSlot(ground)
   if (bareDuplicate) return bareDuplicate
 
-  // Closes one reserved junction's ways out: the corridor each leads to becomes a door named by the switch's stem
-  // and the authoring address beyond it, and the junction reports the key it now wants on that exit. Returns what
-  // it overwrote, so a junction nothing ends up standing in can be opened again.
-  const closeWaysOut = (n: number, pk: string): Map<string, GridCell> => {
-    const overwritten = new Map<string, GridCell>()
-    const [sr, sc] = at(pk)
-    const junction = cells2D[sr][sc]
-    if (junction.type !== "room") throw new Error(`[siteAssembler] reserved fork ${pk} is not a room`)
-    overwritten.set(pk, junction)
-    const gateKeyByDir = new Map<Direction, string>()
-    for (const { dir, neighborKey } of waysOut(pk)) {
-      const gateKeyId = `${switchStem(floorRef, n)}:${state.labels.address.get(neighborKey) ?? MAIN_SECTION_ADDRESS}`
-      gateKeyByDir.set(dir, gateKeyId)
-      if (n < switchesPlaced) switchMarks.set(gateKeyId, switchMark(prep, n))
-      const [gr, gc] = at(neighborKey)
-      const wayOut = cells2D[gr][gc]
-      if (wayOut.type !== "corridor") throw new Error(`[siteAssembler] way out ${neighborKey} is not a corridor`)
-      overwritten.set(neighborKey, wayOut)
-      // The way is shut and that is the whole of it: a ward gate's bars, no family, and a key nothing mints —
-      // the id names the way out, so the board in the fork can say which way it left open.
-      cells2D[gr][gc] = {
-        ...wayOut,
-        type: "room",
-        roomType: "encounter",
-        tags: prep.families.keyGate.tags,
-        requiredKeyId: gateKeyId,
-        gateVariant: "floor-key",
-        keyIsAuthored: true,
-      }
-    }
-    cells2D[sr][sc] = {
-      ...junction,
-      exits: junction.exits?.map(exit => {
-        const gateKeyId = gateKeyByDir.get(exit.dir)
-        return gateKeyId ? { ...exit, gateKeyId } : exit
-      }),
-      mechanism: {
-        states: [MECHANISM_AT_REST, ...gateKeyByDir.values()],
-        initial: MECHANISM_AT_REST,
-        returnsToInitial: true,
-        positions: [...gateKeyByDir.values()].map(gateKeyId => ({ state: gateKeyId, gateKeyId })),
-      },
-    }
-    return overwritten
-  }
-
   // A CARVE HAS TO SURVIVE ITS RESERVED JUNCTIONS BEING CLOSED, AND SURVIVE THEM BEING OPEN — neither asked of
-  // `switches`, so a mod being absent cannot change which attempt is kept. The doors are then opened again
-  // wherever no switch stands: a door nothing mints the key for is not a door.
-  if (!validateSite(grid).valid) return { retry: [] }
-  const opened = reservedForks.map((pk, n) => closeWaysOut(n, pk))
-  const closedValid = validateSite(grid).valid
-  for (let n = switchesPlaced; n < opened.length; n++)
-    for (const [pk, cell] of opened[n]) {
-      const [r, c] = at(pk)
-      cells2D[r][c] = cell
-    }
-  if (!closedValid) return { retry: [] }
+  // `switches`, so a mod being absent cannot change which attempt is kept. Each is a view of its own: the grid
+  // itself shuts only the junctions a switch stands in.
+  if (!validateSite(ground).valid) return { retry: [] }
+  if (!validateSite(renderShut(prep, state)).valid) return { retry: [] }
 
   const placeStyle = {
     ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
@@ -280,14 +232,7 @@ export const settle = (prep: FloorPrep, state: SettleState, grid: WritableGrid):
       o,
       edge: state.drops.find(edge => edge.obstacleId === o.id)!,
     }))
-    const asCarved = cells2D.map(row => [...row])
-    for (const [n, ways] of opened.entries())
-      if (n < switchesPlaced)
-        for (const [cellKey, cell] of ways) {
-          if (cellKey === reservedForks[n]) continue
-          const [r, c] = at(cellKey)
-          asCarved[r][c] = cell
-        }
+    const asCarved = ground.cells
     const faults = [
       ...adjacencyFaults(asCarved, regionLayout),
       ...gateDoorFaults(asCarved, gateKeys, runCells),
@@ -316,7 +261,7 @@ export const settle = (prep: FloorPrep, state: SettleState, grid: WritableGrid):
     if (faults.length > 0) return { retry: [{ type: "carveDisagreement", faults }] }
   }
 
-  const shutWays = () => new Set(reservedForks.flatMap(pk => waysOut(pk).map(({ neighborKey }) => neighborKey)))
+  const shutWays = () => new Set(state.switchWays.flatMap(ways => ways.map(({ cell }) => cell)))
   const gateOf = (id: string) => {
     const mode = obstacleMode(authored, id)
     return { gateKeyId: gateKeyOf(floorRef, id), ...(mode ? { mode } : {}) }

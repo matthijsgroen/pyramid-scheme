@@ -11,6 +11,7 @@ import type {
   RoomCell,
   WallDecorationKind,
 } from "../siteTypes"
+import { MECHANISM_AT_REST } from "../siteTypes"
 import { edgeAllowed, forkPositions, rooms, routeStepOf } from "./derive"
 import { CONNECTOR_DIRS, OPPOSITE } from "./grid"
 import { MAIN_SECTION_ADDRESS } from "./sections"
@@ -23,13 +24,23 @@ const PATRON_KINDS = new Set<string>(["statue", "shrine", "wallShrine", "stela",
 /** How many rooms per floor a dedicated site gives to its god: a guaranteed count, not a raised probability. */
 const PATRON_PER_FLOOR = 1
 
-/** A grid whose cells `settle` may still write. */
+/** A grid whose cells are still being written. */
 export type WritableGrid = Omit<FloorGrid, "cells"> & { cells: GridCell[][] }
 
 /** What the renderer reads: every pass's decision but the ladder's. */
 export type RenderState = Pick<
   Required<CarveState>,
-  "maze" | "branches" | "doors" | "lay" | "labels" | "mainRooms" | "chainRooms" | "switchDoors" | "drops"
+  | "maze"
+  | "branches"
+  | "doors"
+  | "lay"
+  | "labels"
+  | "mainRooms"
+  | "chainRooms"
+  | "switchDoors"
+  | "drops"
+  | "forks"
+  | "switchWays"
 >
 
 /**
@@ -45,13 +56,13 @@ const wallSuiting = (pool: WallDecorationKind[], prop: DecorationKind | undefine
 }
 
 /**
- * THE GRID, WRITTEN ONCE FROM WHAT THE PASSES DECIDED. Every used node becomes a room where a pass specced one
- * and a corridor where none did, every allowed edge its connector, every drop its launch, run and landing; then
- * the entrance opens and the forks and dead ends are dressed. It decides nothing a pass could: what it reads
- * back off the grid (a node's `dirs` for a drop's join and a room's footprint for its dressing) is what it
- * itself just wrote.
+ * THE GROUND, WRITTEN FROM WHAT THE PASSES DECIDED, every reserved junction still open. Every used node becomes
+ * a room where a pass specced one and a corridor where none did, every allowed edge its connector, every drop
+ * its launch, run and landing; then the entrance opens and the forks and dead ends are dressed. It decides
+ * nothing a pass could: what it reads back off the grid (a node's `dirs` for a drop's join and a room's
+ * footprint for its dressing) is what it itself just wrote. The carve is checked against this view open.
  */
-export const render = (prep: FloorPrep, state: RenderState): WritableGrid => {
+export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid => {
   const { siteId } = prep.input
   const { config } = prep.config
   const { mainSectionHash, legacyMainSectionHash } = prep.hashes
@@ -330,4 +341,68 @@ export const render = (prep: FloorPrep, state: RenderState): WritableGrid => {
     siteId,
     staircases,
   }
+}
+
+const at = (pk: string): [number, number] => {
+  const [r, c] = pk.split(",").map(Number)
+  return [r, c]
+}
+
+/**
+ * SHUTS THE FIRST `count` RESERVED JUNCTIONS' WAYS OUT: each becomes a door, a ward gate's bars with no family
+ * and a key nothing mints, and the junction reports the key it now wants on that exit.
+ */
+const shutJunctions = (prep: FloorPrep, state: RenderState, cells: GridCell[][], count: number) => {
+  for (let n = 0; n < count; n++) {
+    const pk = state.forks.reserved[n]
+    const [sr, sc] = at(pk)
+    const junction = cells[sr][sc]
+    if (junction.type !== "room") throw new Error(`[siteAssembler] reserved fork ${pk} is not a room`)
+    const gateKeyByDir = new Map<Direction, string>()
+    for (const { dir, cell, gateKeyId } of state.switchWays[n]) {
+      gateKeyByDir.set(dir, gateKeyId)
+      const [gr, gc] = at(cell)
+      const wayOut = cells[gr][gc]
+      if (wayOut.type !== "corridor") throw new Error(`[siteAssembler] way out ${cell} is not a corridor`)
+      cells[gr][gc] = {
+        ...wayOut,
+        type: "room",
+        roomType: "encounter",
+        tags: prep.families.keyGate.tags,
+        requiredKeyId: gateKeyId,
+        gateVariant: "floor-key",
+        keyIsAuthored: true,
+      }
+    }
+    cells[sr][sc] = {
+      ...junction,
+      exits: junction.exits?.map(exit => {
+        const gateKeyId = gateKeyByDir.get(exit.dir)
+        return gateKeyId ? { ...exit, gateKeyId } : exit
+      }),
+      mechanism: {
+        states: [MECHANISM_AT_REST, ...gateKeyByDir.values()],
+        initial: MECHANISM_AT_REST,
+        returnsToInitial: true,
+        positions: [...gateKeyByDir.values()].map(gateKeyId => ({ state: gateKeyId, gateKeyId })),
+      },
+    }
+  }
+}
+
+/** The ground with every reserved junction shut, switch or no switch: the carve is checked against it too. */
+export const renderShut = (prep: FloorPrep, state: RenderState): WritableGrid => {
+  const grid = renderGround(prep, state)
+  shutJunctions(prep, state, grid.cells, state.forks.reserved.length)
+  return grid
+}
+
+/**
+ * THE GRID, WRITTEN ONCE FROM WHAT THE PASSES DECIDED: the ground, then the doors of every junction a switch
+ * stands in. A door nothing mints the key for is not a door, so a reserved junction with no switch stays open.
+ */
+export const render = (prep: FloorPrep, state: RenderState): WritableGrid => {
+  const grid = renderGround(prep, state)
+  shutJunctions(prep, state, grid.cells, state.forks.switchesPlaced)
+  return grid
 }
