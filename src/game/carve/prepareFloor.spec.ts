@@ -1,10 +1,15 @@
+import "@/mods/registerModApps"
 import { describe, expect, it } from "vitest"
 import { defaultResolveEncounter } from "../encounterFallback"
+import { prepareFloor } from "./prepareFloor"
+import { assembleFloor } from "./assembleFloor"
+import { validateSite } from "../siteValidator"
+import { resolveEncounter } from "@/app/families/familyRegistry"
+import { isGateRoom, findRoom, ONE_SWITCH, assembleAt, switchConfig, offRouteDoubleBackConfig } from "./carveFixtures"
 import type { ResolveEncounter } from "../siteAssembler"
 import type { FloorConfig, SideSection } from "../siteTypes"
 import type { PlacedContainer } from "../regions"
-import { prepareFloor } from "./prepareFloor"
-
+import type { StatefulControl } from "../obstacles"
 const plain = (overrides: Partial<FloorConfig> = {}): FloorConfig => ({
   pathPuzzles: 1,
   difficulty: "starter",
@@ -266,5 +271,90 @@ describe("prepareFloor", () => {
         ungatedIdxs: [1],
       })
     })
+  })
+})
+
+describe("carved through assembleFloor", () => {
+  it("auto-injects an ungated section when all sections are gated with floor-key", () => {
+    const config: FloorConfig = {
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [{ pathPuzzles: 0, difficulty: "starter", end: "treasure", gate: { type: "floor-key" } }],
+    }
+    const result = assembleFloor("site-1", config, 42)
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(findRoom(result.grid, isGateRoom)).not.toBeNull()
+      expect(findRoom(result.grid, c => c.reward?.type === "tombKey")).not.toBeNull()
+      expect(validateSite(result.grid)).toEqual({ valid: true })
+    }
+  })
+
+  // Asked before a wall is carved, because no seed can settle it: there are two junctions to fill and
+  // one held for them.
+  it("refuses a floor asking for more switches than its forks reserve junctions", () => {
+    const result = assembleAt("site-switch-crowded", switchConfig({ encounter: "sumplete", min: 2, max: 2 }), 3)
+
+    expect(result.success).toBe(false)
+    expect(result.success === false && result.reasons).toEqual([{ type: "switchesExceedForks", min: 2, forks: 1 }])
+  })
+
+  // A switch opens one way out and leaves the others shut. Keys accumulate, so spending the choice on a
+  // side branch costs a walk back to the switch and a second choice — unless its room shut behind the
+  // player, and then the main path onward is a door they can never open.
+  //
+  // Against the real registry, not the fallback stub: the fallback never claims `reEnterable` for
+  // anyone, so it would refuse a switch whether or not this check still worked. Sumplete genuinely
+  // has no `reEnterable` in its own FamilyMeta, so the real registry's refusal is the one this spec
+  // names.
+  it("refuses a switch whose room cannot be walked back into", () => {
+    const result = assembleAt("site-switch-oneshot", switchConfig(ONE_SWITCH), 0, resolveEncounter)
+
+    expect(result.success).toBe(false)
+    expect(result.success === false && result.reasons).toEqual([
+      { type: "switchFamilyNotReEnterable", family: "sumplete" },
+    ])
+  })
+
+  // A gate is owned by the control that opens it and has no interaction of its own, so one no control
+  // opens can never be passed: a wall the player is shown as a door. Each gate in turn is left out of
+  // every control's `opens`, and the floor is refused naming that gate.
+  it("refuses every gate that no control opens, naming it", () => {
+    const base = offRouteDoubleBackConfig()
+    for (const orphan of base.obstacles!.map(o => o.id)) {
+      const config: FloorConfig = {
+        ...base,
+        controls: (base.controls as StatefulControl[]).map(control => ({
+          ...control,
+          opens: Object.fromEntries(
+            Object.entries(control.opens).map(([state, ids]) => [state, ids.filter(id => id !== orphan)])
+          ),
+        })),
+      }
+      const result = assembleFloor(`site-doubleback-orphan-${orphan}`, config, 42)
+
+      expect(result.success).toBe(false)
+      expect(result.success === false && result.reasons).toEqual([{ type: "obstacleUnowned", id: orphan }])
+    }
+  })
+
+  // `forkRight` stands on the chain's own MOUTH (entrance → rightLower), which always resolves to
+  // `cells[0]` (regionOfStep always seats the first-declared hosted region from the front) — the same
+  // cell a floor-key/tomb-key gate always claims. Watched failing before this refusal existed: the
+  // floor-key write silently overwrote `forkRight`'s room, and `forkRight`'s own control was left
+  // opening a door no cell carried any more, with nothing said.
+  it("refuses a side section that hosts a mouth-gated chain and also authors its own gate", () => {
+    const config: FloorConfig = {
+      ...offRouteDoubleBackConfig(),
+      sideSections: [{ pathPuzzles: 0, difficulty: "starter", end: "treasure", gate: { type: "floor-key" } }],
+    }
+    const result = assembleFloor("site-doubleback-collision", config, 42)
+
+    expect(result.success).toBe(false)
+    expect(result.success === false && result.reasons).toEqual([
+      { type: "chainGateCollidesWithSectionGate", address: "s0", obstacleId: "forkRight" },
+    ])
   })
 })

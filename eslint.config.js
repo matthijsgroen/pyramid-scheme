@@ -106,10 +106,10 @@ export default tseslint.config(
       },
     },
     {
-      // THE ONE DOMAIN FILE THAT REACHES THE APP ON PURPOSE: this spec proves the assembler refuses a
-      // switch family whose room cannot be re-entered, and only the real registry has a family that
+      // THE DOMAIN SPECS THAT REACH THE APP ON PURPOSE: these prove the assembler refuses a switch
+      // family whose room cannot be re-entered, and only the real registry has a family that
       // genuinely lacks `reEnterable` — the fallback resolver claims it for none.
-      files: ["src/game/siteAssembler.spec.ts"],
+      files: ["src/game/carve/assembleFloor.spec.ts", "src/game/carve/prepareFloor.spec.ts"],
       rules: {
         "@typescript-eslint/no-restricted-imports": ["error", { patterns: [NO_MOD_NAMES, REACT_AND_UI_STAY_OUT] }],
       },

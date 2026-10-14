@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest"
-import { freshState, noLabels, plainFloor, prepOf } from "./carveFixtures"
+import { freshState, noLabels, plainFloor, prepOf, DIR_MOVE, findRoom } from "./carveFixtures"
 import { makePkey } from "./grid"
 import { render } from "./render"
+import { assembleFloor } from "./assembleFloor"
 import type { Cell, OneWayEdge, RoomSpec } from "./state"
-
+import type { Direction, FloorConfig, FloorGrid, RoomCell } from "../siteTypes"
 // A walk of three nodes along row 0 (0,0 → 0,2 → 0,4), the entrance and exit rooms at its ends, and a node at
 // 4,4 a vertical drop below the exit.
 describe("render", () => {
@@ -73,5 +74,52 @@ describe("render", () => {
     expect(grid.cells[3][4]).toMatchObject({ dirs: new Set(["s"]) })
     expect(grid.cells[0][4]).toMatchObject({ dirs: new Set(["w", "s"]) })
     expect(grid.cells[4][4]).toMatchObject({ dirs: new Set(["n"]) })
+  })
+})
+
+describe("fork exits", () => {
+  it("names each exit's compass direction and what lies down it", () => {
+    const config: FloorConfig = {
+      pathPuzzles: 2,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure" }],
+    }
+    let found: { r: number; c: number; cell: RoomCell; grid: FloorGrid } | null = null
+    for (let seed = 0; seed < 60 && !found; seed++) {
+      const result = assembleFloor(`site-fork-exits-${seed}`, config, seed)
+      if (!result.success) continue
+      const fork = findRoom(result.grid, cell => cell.roomType === "fork")
+      if (fork) found = { ...fork, grid: result.grid }
+    }
+    if (!found) throw new Error("no seed produced a fork room")
+    const { r, c, cell, grid } = found
+
+    // What lies down each of the fork's own dirs, read off the neighbour node two grid cells
+    // away (NODE_STEP) — never a hand-written direction, since the carve picks them, not this test.
+    const [entR, entC] = grid.entrancePos
+    const mainAddress = grid.cells[entR][entC].type !== "empty" ? grid.cells[entR][entC].sectionAddress : undefined
+    const expectedKind = (nr: number, nc: number): "main" | "side" | "ward" | "fork" => {
+      const neighbor = grid.cells[nr][nc]
+      if (neighbor.type === "room" && neighbor.roomType === "fork") return "fork"
+      if (neighbor.type === "room" && neighbor.gateVariant === "tomb-key") return "ward"
+      if (neighbor.type !== "empty" && neighbor.sectionAddress === mainAddress) return "main"
+      return "side"
+    }
+    const byDir = (a: { dir: Direction }, b: { dir: Direction }) => a.dir.localeCompare(b.dir)
+    const expected = [...cell.dirs]
+      .map(dir => {
+        const [dr, dc] = DIR_MOVE[dir]
+        return { dir, kind: expectedKind(r + dr * 2, c + dc * 2) }
+      })
+      .sort(byDir)
+
+    expect(cell.exits).toBeDefined()
+    expect([...(cell.exits ?? [])].sort(byDir)).toEqual(expected)
+    // This config attaches one ungated side section to a main path with room to spare, so
+    // every fork the carve produces owns both its main-path directions and exactly one side.
+    expect(expected.filter(e => e.kind === "main").length).toBe(2)
+    expect(expected.filter(e => e.kind === "side").length).toBe(1)
   })
 })
