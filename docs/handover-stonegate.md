@@ -182,9 +182,9 @@ pushes the build output to the `pyramid-scheme-preview` repo; its saves use thei
 
 ## Waiting on the designer
 
-- **The stone pipe:** a hole in a wall where a stone is posted, another elsewhere where it comes out. Open: one-way
-  or both; where it lands (a shelf plate, refused if full); telling paired holes apart. masonsRamp waits for it
-  (unsolvable now: its chute sends a stone down a drop).
+- **The stone pipe:** plan in `docs/instructions/stone-pipe.md`, its open questions at the top. Decided
+  (2026-10-14): two-way; both ends are a hole in the wall, one sprite of its own; a posted stone lies in the far
+  hole until taken out. masonsRamp waits for it (unsolvable now: its chute sends a stone down a drop).
 - **Fog of a room-free lock region:** a lock region with no mechanism, plate or door (stoneGate's `hall3`) comes back
   fogged after a re-carve, because it has no room to carry the fog mark. No loot, state or key lives there. Options: a
   door stands in a bare region it leads out of (changes lock-walk counts, `nestedLocks.spec.ts`), or a room-free
