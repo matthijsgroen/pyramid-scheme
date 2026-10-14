@@ -8,8 +8,9 @@ import type { MechanicKind } from "./mechanicKind"
  */
 export const PROCESSION_REALISATION = "procession-door"
 
-/** The binding key a floor would name a procession's realisation under, which only `PROCESSION_REALISATION` may fill. */
-export const PROCESSION_ROLE = "procession"
+/** The lock word, which is also the binding key a floor would name a procession's realisation under, and which only
+ * `PROCESSION_REALISATION` may fill: the door's id without its `-door`. */
+export const PROCESSION_ROLE = PROCESSION_REALISATION.replace(/-door$/, "")
 
 /** How many steps a procession may have: one bar each, a two-bar board is read rather than solved, and one cast has
  * six signs. */

@@ -154,19 +154,14 @@ Every mechanic is shown in Storybook, so its art and its feel are judged there b
 - `lessons/torch`'s header says "lit for good": true of the lesson, which has no flood; revisit if a flood lesson
   joins it.
 
-## Designed, not built: the procession door
+## Built: the procession door
 
-A realisation of the `sequence` control (designer, 2026-10-11). The door carries a procession board (the
-procession puzzle family) instead of showing the order outright:
-
-1. Stepping on a tile once unlocks its bar on the board; a bar stays unlocked, a spoiled run included.
-2. Each bar carries its tile's glyph, the same glyph as the tile, so a bar names its room.
-3. The board's one solution orders the bars along the track in the sequence's order: solving it teaches the order.
-4. The door opens only when the board is solved AND the rooms are walked in that order.
-
-The lock walk does not change: it reads the sequence as it is. What is new is the board's locked-bar state fed by
-the tiles, a procession generator that makes a board whose unique solution ranks given bars in a given order, and
-the door's two conditions. Meant for master and wizard locks.
+A sequence written `procession` in its lock (`P procession hall vault [reset hall-vault]`) carries a procession board
+on its door instead of showing the order: a tile walked unlocks its bar, the board solved once teaches the order and
+puts the run back to its first step, and the door opens when that order is walked. The word binds the realisation
+`procession-door` (puzzle mod); the lock walk is unchanged. Rules in `docs/mods/mechanic-contract.md`, "The
+procession door"; the board in `docs/game-design/puzzles/procession.md`, "At a door"; the plan in
+`docs/instructions/procession-door.md`.
 
 ## Open per phase
 

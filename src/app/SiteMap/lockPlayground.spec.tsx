@@ -3,6 +3,7 @@ import { act, cleanup, render, renderHook, screen, waitFor } from "@testing-libr
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest"
 import { parseLock } from "@/game/lockNotation"
 import { walkFloorLock } from "@/game/floorLockWalk"
+import { PROCESSION_LOCK } from "@/game/testSupport/processionFixtures"
 import { PLAYGROUND_JOURNEY, carvePlayground, defaultBinding, playgroundFloor } from "./playgroundCarve"
 import { assemblePlayedFloor } from "./useAssembledFloor"
 import { LockPlayground, useCarving } from "./lockPlayground"
@@ -49,6 +50,15 @@ describe("the playground's floor", () => {
     const again = assemblePlayedFloor(PLAYGROUND_JOURNEY, config, carved.seed, 0)
     expect(again.success && again.grid).toEqual(carved.grid)
     expect(carvePlayground(config)).toEqual(carved)
+  })
+})
+
+describe("a procession lock in the playground", () => {
+  it("carves with the default binding, its door read by the procession board", () => {
+    const carved = carvePlayground(playgroundFloor(parseLock(PROCESSION_LOCK, "door").lock, defaultBinding()))
+    if (!carved.found) throw new Error(JSON.stringify(carved.reasons))
+    const door = carved.grid.cells.flat().find(cell => cell.type === "room" && cell.gateFace?.sequences)
+    expect(door?.type === "room" && door.family).toBe("procession-door")
   })
 })
 

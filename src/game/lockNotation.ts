@@ -2,6 +2,7 @@
 // notation is LOCK_SYNTAX, which `yarn lock` also prints so nobody has to remember it.
 import { CARRY_TERMS, alignOf, barriersOf, isWeightOwner, joinOf, unladenFaults } from "./lockAuthoring"
 import type { Alignment, Lock, LockConnection, LockGate, LockMechanic, LockOneWay, Pipe } from "./lockAuthoring"
+import { PROCESSION_ROLE } from "./mechanics/sequence"
 import { TORCH_STATES } from "./mechanics/torch"
 import { stoneArrangements } from "./mechanics/weights"
 import type { RegionAppetite } from "./regions"
@@ -80,13 +81,13 @@ export const syntaxSections = (): SyntaxSection[] => {
 
 /** The words that place a control, by the mechanic they build. Typed on LockMechanic's kinds, so a control the
  * parser gains must be named here, and the spec holds LOCK_SYNTAX to mentioning each word. */
-export const CONTROL_WORDS: Record<LockMechanic["control"] | "plate" | "pipe" | "procession", RegExp> = {
+export const CONTROL_WORDS: Record<LockMechanic["control"] | "plate" | "pipe" | typeof PROCESSION_ROLE, RegExp> = {
   toggle: /\btoggle\b/,
   activator: /\bactivator\b/,
   flame: /\btorch\b/,
   "fork-switch": /\bfork\b/,
   sequence: /\bsequence\b/,
-  procession: /\bprocession\b/,
+  [PROCESSION_ROLE]: /\bprocession\b/,
   plate: /\bplate\b/,
   pipe: /\bpipe\b/,
 }
@@ -314,7 +315,7 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
       if (m[3].trim() !== "") fail(n, `a fork's states are its ways; write ${m[1]} fork @${m[2]}`)
       declare(n, m[1], { control: "fork-switch", in: m[2], n })
     } else if ((m = line.match(/^(\w+)\s+(sequence|procession)\s+(\w+(?:\s+\w+)*?)(?:\s+reset\s+(\S+))?$/))) {
-      const procession = m[2] === "procession"
+      const procession = m[2] === PROCESSION_ROLE
       declare(n, m[1], { control: "sequence", steps: m[3].trim().split(/\s+/), resetAt: m[4], procession, n })
     } else if ((m = line.match(/^(\w+)\s+plate\s+@(\w+)(\s+stone)?$/))) {
       if (placed(m[1])) fail(n, `${m[1]} is placed twice`)

@@ -26,6 +26,15 @@ the same one-way is a zipline in one pyramid and a strong headwind in another.
 the drawing and the operation differ. Something that adds a state is not another realisation of that
 control; it is another control.
 
+**A realisation may withhold a door behind a reading**, when that reading is always possible where the
+control's reset is made: the solver's states and edges stay the same, and play holds the door shut until the
+reading is done. The procession door is the one (§3.1).
+
+**The one word that changes the puzzle.** A lock never names a realisation, with one exception: a sequence
+written `procession` is a sequence whose door is a procession board. The word binds the realisation
+(`procession-door`) itself, and a floor binding that names another one for it is refused (`processionRebound`).
+It changes the puzzle, not the look.
+
 ## 2. The controls
 
 | control         | states                              | notes                                                                                                                                       |
@@ -67,7 +76,8 @@ waiting for, the way a ward gate already shows the key it wants.
   flames; three torches and a floor key are three flames and a key. The icons come from the owners, so
   nothing special is needed for a mixed condition.
 - **A sequence door shows the order**, and carries the **reset**. The door is where the player learns
-  what the order is, so it is where they must be able to start again.
+  what the order is, so it is where they must be able to start again. A procession door is the exception: it
+  carries a procession board instead, and shows the order only once that board is solved (§3.1).
 
 ### 3.1 The sequence
 
@@ -105,6 +115,30 @@ waiting for, the way a ward gate already shows the key it wants.
 - The reset is operated **at the door, not where the mechanic stands.** `LockSpec` already carries an
   `at` per transition, so the advance steps happen at each tile's region and the reset at the gate's —
   see §9.
+
+#### The procession door
+
+A sequence written `procession` (`P procession hall vault [reset hall-vault]`) keeps every rule above; its door
+carries a procession board (`docs/game-design/puzzles/procession.md`, "At a door") instead of showing the order.
+
+- **Two facts beside the run**, kept by play and never seen by the walk: the **steps walked** (every step whose tile
+  was ever crossed, from any state, a spoiled run and a tile already walked included) and **read** (the board was
+  solved once, and stays solved).
+- **One bar per step.** A bar is locked until its step is walked; the board cannot be solved until every bar is
+  free. Its one answer starts the bars in the sequence's order, no two together.
+- **The first solve resets the run** to its first step, from any state, `done` included: what was walked before it
+  does not count. A second solve does nothing. The reset is offered only once read.
+- **The door opens when the run is `done` and read.** Other owners fold in as on any door (`and`/`any`). A save
+  `done` with nothing walked on record predates the door and reads as read.
+- **Why the walk does not change:** finishing the run walks every tile, so the board can always be solved when the
+  run can finish, and the solve lands in the reset's own state at the reset's own place, from where the walks
+  already prove the order walkable. `sequenceDoor.verify.ts` walks this from player-reachable states.
+- **Glyphs:** the tiles wear the default cast's signs, the bars' own, shuffled per sequence so they say nothing of
+  the order; the mark glyphs are not used for them. On such a floor the marks leave those signs out, and 𓈖, which
+  reads as the cast's 𓈗.
+- **Refused before a wall is carved:** fewer than three steps or more than six (`processionStepsOutOfRange`), and a
+  second procession door on one floor (`processionDoorsRepeated`). A tier and step count no seed list covers is
+  refused at bake (`processionBoardUnseeded`).
 
 ### 3.2 Stones on plates
 
@@ -512,7 +546,8 @@ the solver sees. Impassable conceals, and conceals what was explored, without er
 A gate may show its own condition, and a sequence's reset is at its door. A sequence is solved once: when
 it is done, it stays done. On a door it shares with other owners, those can still switch or reset, and the door
 follows them, while the sequence's part stays met. A sequence's tiles may stand in any region, so they may
-share ground with another lock.
+share ground with another lock. A sequence written `procession` is the one word that binds its realisation: its
+door is a procession board, and opens once read and walked.
 
 **Open.**
 

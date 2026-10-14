@@ -1,5 +1,5 @@
 /**
- * The doings a day is made of, six hieroglyphs a place (`docs/game-design/puzzles/procession.md` §8). A row of
+ * The doings a day is made of, six hieroglyphs a place (`docs/game-design/puzzles/procession.md`, theming). A row of
  * the board wears one; the names live in the locale files, aligned by index, because a name is language and a
  * sign is not.
  *
@@ -16,7 +16,7 @@ export const PROCESSION_CASTS = {
    * **A day cutting a tomb** — the workmen's valley, and the largest pool in the game: the wall plastered,
    * the grid drawn on it, the relief carved, the colour laid in, the gold leaf, the door hung.
    *
-   * **Craft rather than rites, and that is a rule of the family and not a squeamishness.** §8 asks a cast to
+   * **Craft rather than rites, and that is a rule of the family and not a squeamishness.** The family asks a cast to
    * imply no order of its own, because the generator decides what happens when and a set carrying its own
    * story tells a lie on every board whose answer runs the other way. A burial has exactly one order — you
    * cannot seal before you wrap — so those six were the one cast that could not keep the promise. A
@@ -26,7 +26,7 @@ export const PROCESSION_CASTS = {
   funerary: ["𓉐", "𓏞", "𓍋", "𓏊", "𓋞", "𓊃"],
   /**
    * **A night of the sky** — decans and lights crossing it, each visible for its own stretch. This is the
-   * face `wizard_4` has been waiting for: the one journey no pool serves (`journeys.md` §9).
+   * face `wizard_4` has been waiting for: the one journey no pool serves (`docs/game-design/journeys.md`).
    */
   cosmos: ["𓇳", "𓇼", "𓇹", "𓇯", "𓈍", "𓆳"],
   /**
