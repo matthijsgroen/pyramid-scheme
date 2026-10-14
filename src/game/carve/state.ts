@@ -278,7 +278,8 @@ export type CarveState = {
   rand: () => number
   /** The grid the lay grew to, written even when the lay refuses: the next rung starts from it. */
   laidN?: number
-  lay?: { laid: LaidFloor; mainSteps: number[] }
+  /** The lock the floor lays and the route steps its content takes; null where the floor lays none. */
+  lay?: { laid: LaidFloor; mainSteps: readonly number[] } | null
   /** The maze around the route, its exit already a dead end. */
   maze?: { n: number; entrance: Cell; exit: Cell; mainPath: Cell[]; passages: ReadonlySet<string> }
   regions?: { stepRegion: string[]; seams: ReadonlySet<number> }
