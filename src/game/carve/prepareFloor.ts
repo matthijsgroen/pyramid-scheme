@@ -2,6 +2,7 @@ import { DEFAULT_PACKING } from "../carveConstants"
 import { ASSEMBLY_ATTEMPTS } from "./ladder"
 import { hashString } from "@/support/hashString"
 import { allocateMarks, type Mark, type MarkRequest } from "../mark"
+import { sequenceSigns } from "../sequenceSigns"
 import {
   CARVE_FAMILY_QUERIES,
   defaultResolveEncounter,
@@ -481,13 +482,18 @@ export const prepareFloor = (
     markedMechanics.push({ id: `switch:${n}`, seed: hashString(switchStem(floorRef, n)), gateKeys: [] })
   // MORE MECHANICS THAN THERE ARE GLYPHS IS ANSWERED HERE, BEFORE A WALL IS CARVED: the count is fixed by
   // the config, and a mark shared between two mechanics would say one drives the other's door.
-  const tileRequests: MarkRequest[] = sequences.flatMap(sequence =>
-    sequence.steps.map((_, step) => ({
-      id: `${sequence.id}#${step}`,
-      seed: hashString(`sequence|${sequence.id}|${step}`),
-    }))
-  )
-  const allocation = allocateMarks(markedMechanics, tileRequests)
+  // A sequence whose realisation brings its own signs asks no tile a mark glyph, and its signs leave the marks.
+  const signed = sequenceSigns(sequences, resolveEncounter)
+  if (!signed.ok) return refuse(signed.reasons)
+  const tileRequests: MarkRequest[] = sequences
+    .filter(sequence => !signed.signs.has(sequence.id))
+    .flatMap(sequence =>
+      sequence.steps.map((_, step) => ({
+        id: `${sequence.id}#${step}`,
+        seed: hashString(`sequence|${sequence.id}|${step}`),
+      }))
+    )
+  const allocation = allocateMarks(markedMechanics, tileRequests, signed.excludedMarks)
   if (allocation.unmarked.length > 0) return refuse([{ type: "marksExhausted", ids: allocation.unmarked }])
   for (const mechanic of markedMechanics)
     for (const gateKeyId of mechanic.gateKeys) markByGateKey.set(gateKeyId, allocation.marks.get(mechanic.id)!)
@@ -856,7 +862,7 @@ export const prepareFloor = (
         landsOnItsStretch,
         oneWayDemands,
       },
-      marks: { allocation, markByGateKey },
+      marks: { allocation, markByGateKey, sequenceSigns: signed.signs },
       families: { treasureChest, fezShop, keyGate },
       forks: { forkDemands, forkIns, forkGroups, junctionGroups },
       sections: {

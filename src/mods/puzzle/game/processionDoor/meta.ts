@@ -1,7 +1,8 @@
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import { castGlyphs } from "@/mods/puzzle/game/procession/casts"
+import { PROCESSION_REALISATION } from "@/game/mechanics/sequence"
 
-export const PROCESSION_DOOR_FAMILY = "procession-door"
+export const PROCESSION_DOOR_FAMILY = PROCESSION_REALISATION
 
 // A PROCESSION DOOR IS A SEQUENCE WHOSE DOOR CARRIES A PROCESSION BOARD: each tile wears a doing of the default cast,
 // stepping on it unlocks its bar, and the door opens once the board is solved and the rooms are walked in the
@@ -14,5 +15,6 @@ export const PROCESSION_DOOR_META: FamilyMeta = {
   icon: "⏳",
   color: "teal",
   rewardPriority: 0,
-  sequence: { glyphs: castGlyphs("default"), hidesOrder: true },
+  // 𓈖, the mark "water", reads as the cast's water carried (𓈗) at marker size.
+  sequence: { glyphs: castGlyphs("default"), hidesOrder: true, resembles: ["𓈖".codePointAt(0)!] },
 }

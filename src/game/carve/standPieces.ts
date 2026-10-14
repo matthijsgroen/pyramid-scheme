@@ -18,7 +18,7 @@ export type PiecesState = Pick<Required<CarveState>, "maze" | "switchWays" | "pi
 export const standPieces = (prep: FloorPrep, state: PiecesState, grid: WritableGrid): Refusal | void => {
   const { siteId, floorRef } = prep.input
   const { authored } = prep.config
-  const { allocation } = prep.marks
+  const { allocation, sequenceSigns } = prep.marks
   const { sequences, weights } = prep.mechanisms
   const shutWays = () => new Set(state.switchWays.flatMap(ways => ways.map(({ cell }) => cell)))
   const gateOf = (id: string) => {
@@ -34,7 +34,10 @@ export const standPieces = (prep: FloorPrep, state: PiecesState, grid: WritableG
       sequences.map(sequence => ({
         id: sequence.id,
         regions: sequence.steps.map(step => step.in),
-        glyphs: sequence.steps.map((_, step) => allocation.tileGlyphs.get(`${sequence.id}#${step}`)!),
+        glyphs:
+          sequenceSigns.get(sequence.id)?.glyphs ??
+          sequence.steps.map((_, step) => allocation.tileGlyphs.get(`${sequence.id}#${step}`)!),
+        orderReader: sequenceSigns.get(sequence.id)?.orderReader,
         gates: sequence.opens.done.map(gateOf),
         doorKey: gateKeyOf(floorRef, sequence.resetAt),
       })),

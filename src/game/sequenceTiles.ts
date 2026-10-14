@@ -12,6 +12,8 @@ export type SequenceDemand = {
   glyphs: readonly number[]
   gates: readonly { gateKeyId: string; mode?: "any" }[]
   doorKey: string
+  /** The realisation that reads the order at the door instead of showing it (a procession door). */
+  orderReader?: string
 }
 
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
@@ -183,14 +185,14 @@ export const placeSequences = (
     picked.set(id, steps)
   }
 
-  for (const { id, glyphs, gates, doorKey } of sequences) {
+  for (const { id, glyphs, gates, doorKey, orderReader } of sequences) {
     const steps = picked.get(id)!
     const doors = cells.flatMap((row, r) =>
       row.flatMap((cell, c): Place[] => (cell.type === "room" && cell.requiredKeyId === doorKey ? [[r, c]] : []))
     )
     if (doors.length !== 1) throw new Error(`[siteAssembler] sequence ${id} resets at ${doors.length} doors, not one`)
     const [door] = doors
-    const record = compileSequence({ tiles: steps.map(places => places.map(({ at }) => at)), door, gates })
+    const record = compileSequence({ tiles: steps.map(places => places.map(({ at }) => at)), door, gates, orderReader })
     const transitionAt = ([r, c]: Place) => record.transitions!.findIndex(t => t.at[0] === r && t.at[1] === c)
     steps.forEach((places, step) =>
       places.forEach(({ at: [r, c], entrance }, way) => {

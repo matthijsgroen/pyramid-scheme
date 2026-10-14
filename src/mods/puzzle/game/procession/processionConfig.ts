@@ -1,4 +1,5 @@
 import type { Difficulty } from "@/data/difficultyLevels"
+import { PROCESSION_STEPS } from "@/game/mechanics/sequence"
 import type { ProcessionOptions } from "./generateProcession"
 
 /**
@@ -104,4 +105,7 @@ export const processionOptions = (difficulty: Difficulty, variant?: string): Pro
 }
 
 /** How many steps a procession door's sequence may have: one bar each, and six is one cast's glyphs. */
-export const PROCESSION_DOOR_STEPS = [3, 4, 5, 6] as const
+export const PROCESSION_DOOR_STEPS: readonly number[] = Array.from(
+  { length: PROCESSION_STEPS.max - PROCESSION_STEPS.min + 1 },
+  (_, index) => PROCESSION_STEPS.min + index
+)

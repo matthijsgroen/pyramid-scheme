@@ -20,6 +20,7 @@ import type {
   WallDecorationKind,
 } from "../siteTypes"
 import type { MarkAllocation, Mark } from "../mark"
+import type { SequenceSigns } from "../sequenceSigns"
 import type {
   BarrierRun,
   EdgeGateObstacle,
@@ -201,6 +202,8 @@ export type FloorPrep = Readonly<{
     allocation: MarkAllocation
     /** The mark each authored mechanic's gate key wears. A switch's doors are minted per attempt. */
     markByGateKey: ReadonlyMap<string, Mark>
+    /** The sequences whose realisation brings its own signs (a procession door), by id: their tiles wear these. */
+    sequenceSigns: ReadonlyMap<string, SequenceSigns>
   }>
   families: Readonly<{
     treasureChest: EncounterResolution

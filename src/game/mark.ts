@@ -62,10 +62,14 @@ export type MarkAllocation = {
  * prefers when it is free; otherwise it takes the next free one, so earlier requests (authoring order,
  * mechanics before tiles) are never moved by a later one. Colour works the same way over the five grounds, so two
  * mechanics on one floor differ in colour too until a sixth has to share one.
+ *
+ * `excluded` glyphs are never handed out: signs the floor already shows elsewhere (a procession door's tiles), which
+ * a mark wearing one would seem to name.
  */
 export const allocateMarks = (
   mechanics: readonly MarkRequest[],
-  tiles: readonly MarkRequest[] = []
+  tiles: readonly MarkRequest[] = [],
+  excluded: ReadonlySet<number> = new Set()
 ): MarkAllocation => {
   const taken = new Set<number>()
   const marks = new Map<string, Mark>()
@@ -84,7 +88,7 @@ export const allocateMarks = (
   const take = (seed: number): number | undefined => {
     for (let step = 0; step < MARK_GLYPHS.length; step++) {
       const index = step < PREFERRED_GLYPHS ? (seed + step) % PREFERRED_GLYPHS : step
-      if (taken.has(index)) continue
+      if (taken.has(index) || excluded.has(MARK_GLYPHS[index])) continue
       taken.add(index)
       return index
     }

@@ -18,13 +18,18 @@ import {
  * is out of its list, without editing that list.
  */
 const MOD = "topology"
-const WITHOUT = ALL_FAMILY_META.filter(meta => meta.ownerMod !== MOD)
 
-const resolveWithout: ResolveEncounter = (encounter, defaultTag) => {
-  const value = (Array.isArray(encounter) ? encounter[0] : encounter) ?? defaultTag
-  const meta = WITHOUT.find(m => m.id === value) ?? WITHOUT.find(m => m.tags.includes(value))
-  return encounterFromMeta(meta, value)
+/** What resolves once `mod` is out of the build: the families the other mods contribute. */
+export const resolveEncounterWithout = (mod: string): ResolveEncounter => {
+  const left = ALL_FAMILY_META.filter(meta => meta.ownerMod !== mod)
+  return (encounter, defaultTag) => {
+    const value = (Array.isArray(encounter) ? encounter[0] : encounter) ?? defaultTag
+    const meta = left.find(m => m.id === value) ?? left.find(m => m.tags.includes(value))
+    return encounterFromMeta(meta, value)
+  }
 }
+
+const resolveWithout = resolveEncounterWithout(MOD)
 
 const oneWayWithout: ResolveOneWayRealisation = id =>
   id === undefined ? undefined : MOD_ONE_WAY_REALISATIONS.find(r => r.id === id && r.ownerMod !== MOD)

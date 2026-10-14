@@ -137,8 +137,9 @@ export type FamilyMeta = {
    * `glyphs` are the signs the steps wear, one per step, in place of mark glyphs; the floor's marks then leave
    * them out. `hidesOrder` withholds the door until the player has read the order elsewhere (the procession
    * door's board), which the door record carries as `hidesOrder` and `orderReader` (this family's id).
+   * `resembles` are mark glyphs that read as one of `glyphs` at marker size, left out of the marks as well.
    */
-  sequence?: { glyphs: readonly number[]; hidesOrder: true }
+  sequence?: { glyphs: readonly number[]; hidesOrder: true; resembles?: readonly number[] }
 }
 
 // --- Offline seed lists (`docs/instructions/puzzle-screens.md` §6.1) -----------------------------------------

@@ -446,6 +446,10 @@ export type MechanismRecord = {
   /** WHAT EACH GATE THE STONES GOVERN WAITS FOR, term by term, under the key its door asks for. Read by the door's
    * face (src/game/gateFace.ts); the walk reads `positions`. */
   weighs?: { gateKeyId: string; terms: WeightTerm[] }[]
+  /** A SEQUENCE WHOSE DOOR DOES NOT SHOW ITS ORDER: `orderReader` (a procession door) reads it there instead, and play
+   * holds the door shut until it is read (mechanismDoors.ts). The walk reads neither. */
+  hidesOrder?: true
+  orderReader?: string
 }
 export type GateConfig =
   | {
@@ -827,6 +831,10 @@ export type AssemblerReason =
   /** The floor's mechanics (and sequence tiles) need more distinct glyphs than the six a mark can wear,
    * so a mark would be shared. `ids` are the ones left without a glyph, in authoring order. */
   | { type: "marksExhausted"; ids: string[] }
+  /** A sequence written `procession` has fewer steps than three or more than six. */
+  | { type: "processionStepsOutOfRange"; id: string; steps: number }
+  /** A floor holds more than one procession door; `ids` are its sequences. */
+  | { type: "processionDoorsRepeated"; ids: string[] }
   /** A side section matched to an off-route chain (offRouteChains, regions.ts) hosts that chain's
    * regions across its own cells, cells[0] included — and an obstacle standing on the chain's own
    * MOUTH connection always seats there too (seamIndexFor, obstacles.ts: the mouth's far region

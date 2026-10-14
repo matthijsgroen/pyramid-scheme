@@ -69,11 +69,15 @@ export const compileSequence = ({
   tiles,
   door,
   gates,
+  orderReader,
 }: {
   tiles: readonly (readonly Place[])[]
   door: Place
   gates: readonly { gateKeyId: string; mode?: "any" }[]
+  /** Who reads the order at the door instead of the door showing it; the walk ignores it. */
+  orderReader?: string
 }): MechanismRecord => ({
+  ...(orderReader === undefined ? {} : { hidesOrder: true as const, orderReader }),
   states: sequenceStates(tiles.length),
   initial: progressState(0),
   returnsToInitial: true,

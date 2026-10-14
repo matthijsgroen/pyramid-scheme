@@ -21,7 +21,14 @@ export { assembleFloor } from "./carve/assembleFloor"
 // `ownerMod` names the mod that contributed the resolved family, and is absent exactly when no family
 // answered the query — which is how a caller holding only this resolution tells a room whose mod left
 // the build from one a mod that is here still stands in.
-export type EncounterResolution = { familyId: string; tags: string[]; reEnterable?: boolean; ownerMod?: string }
+export type EncounterResolution = {
+  familyId: string
+  tags: string[]
+  reEnterable?: boolean
+  ownerMod?: string
+  /** What a sequence realisation says about its tiles and door (FamilyMeta.sequence). */
+  sequence?: FamilyMeta["sequence"]
+}
 export type ResolveEncounter = (encounter: string | string[] | undefined, defaultTag: string) => EncounterResolution
 
 // The one place a resolved FamilyMeta becomes an EncounterResolution — shared by
@@ -38,6 +45,7 @@ export const encounterFromMeta = (meta: FamilyMeta | undefined, fallback: string
     tags: meta.tags,
     ownerMod: meta.ownerMod,
     ...(meta.reEnterable ? { reEnterable: true } : {}),
+    ...(meta.sequence ? { sequence: meta.sequence } : {}),
   }
 }
 

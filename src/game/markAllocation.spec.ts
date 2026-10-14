@@ -100,4 +100,13 @@ describe("allocating the marks of one floor", () => {
     ])
     expect(unmarked).toEqual(["t1"])
   })
+
+  it("never hands out an excluded glyph, and hands out what it did before when nothing is excluded", () => {
+    const requests = Array.from({ length: 8 }, (_, i) => ({ id: `m${i}`, seed: i * 7 }))
+    const excluded = new Set([MARK_GLYPHS[0], MARK_GLYPHS[3]])
+    const { marks, unmarked } = allocateMarks(requests, [], excluded)
+    expect(unmarked).toEqual([])
+    expect(glyphsOf(marks).filter(glyph => excluded.has(glyph))).toEqual([])
+    expect(allocateMarks(requests, [], new Set())).toEqual(allocateMarks(requests))
+  })
 })
