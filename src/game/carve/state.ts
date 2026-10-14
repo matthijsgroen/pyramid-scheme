@@ -282,7 +282,7 @@ export type CarveState = {
   lay?: { laid: LaidFloor; mainSteps: readonly number[] } | null
   /** The maze around the route, its exit already a dead end. */
   maze?: { n: number; entrance: Cell; exit: Cell; mainPath: Cell[]; passages: ReadonlySet<string> }
-  regions?: { stepRegion: string[]; seams: ReadonlySet<number> }
+  regions?: { stepRegion: ReadonlyArray<string | undefined>; seams: ReadonlySet<number> }
   seamGates?: ReadonlyMap<string, number>
   /** The main path's content before any control moves it. */
   content?: { placed: number[]; goal: number; lever: number; puzzleRole: ReadonlyMap<number, number> }
