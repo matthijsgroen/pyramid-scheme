@@ -135,7 +135,8 @@ const isGateDoor = (cell: GridCell): cell is RoomCell & { requiredKeyId: string 
 
 /**
  * `faceFamily` is the family that stands in such a door (it reads and never opens: `openWaysOut` opens the
- * door by its condition being met), handed in by whoever holds the registry.
+ * door by its condition being met), handed in by whoever holds the registry; null where none is registered, and then
+ * only a door whose sequence hides its order is faced, by its reader.
  *
  * Gives every door that needs one its face, lit by where each owner stands in `positions` (keyed by the
  * owner's cell address; an owner with no entry stands in its initial state).
@@ -149,7 +150,7 @@ export const withGateFaces = (
   floor: number,
   positions: ReadonlyMap<string, string>,
   heldKeys: ReadonlySet<string> = NO_KEYS,
-  faceFamily: string = defaultResolveEncounter(undefined, DOOR_FACE_ROLE).familyId,
+  faceFamily: string | null = defaultResolveEncounter(undefined, DOOR_FACE_ROLE).familyId,
   reads: ReadonlyMap<string, SequenceRead> = NO_READS
 ): FloorGrid => {
   let changed = false
@@ -171,6 +172,10 @@ export const withGateFaces = (
       const governing = [...owners.map(o => o.mechanism), ...stones.map(s => s.mechanism)]
       const faced = needsFace(governing, owners.length + weighed.length + floorKeys.length, key)
       if (!faced && sequences.length === 0) return cell
+      // A door whose sequence hides its order is drawn by the one who reads it there (a procession board), and is
+      // faced even where nothing stands in a door's face: without its board it could never be read.
+      const reader = sequences.find(({ mechanism }) => mechanism.hidesOrder)?.mechanism.orderReader
+      if (reader === undefined && faceFamily === null) return cell
       const markers = owners.map(({ id, family, mechanism, at, mark }): GateMarker => {
         const state = storedAtCell(grid, floor, at[0], at[1], positions) ?? mechanism.initial
         return {
@@ -210,12 +215,10 @@ export const withGateFaces = (
           },
         }
       })
-      // A door whose sequence hides its order is drawn by the one who reads it there (a procession board).
-      const reader = sequences.find(({ mechanism }) => mechanism.hidesOrder)?.mechanism.orderReader
       changed = true
       return {
         ...cell,
-        family: reader ?? faceFamily,
+        family: (reader ?? faceFamily)!,
         gateFace: { markers, ...(orders.length > 0 ? { sequences: orders } : {}) },
       }
     })

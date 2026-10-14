@@ -24,7 +24,11 @@ export const finish = (prep: FloorPrep, grid: FloorGrid): FloorGrid => {
   })
   const passed = withPassages(bare, prep.realisation.passageKeys)
   const faceFamily = resolveEncounter(undefined, DOOR_FACE_ROLE)
-  return faceFamily.ownerMod === undefined
-    ? passed
-    : withGateFaces(passed, floorRef.floorIndex, new Map(), undefined, faceFamily.familyId)
+  return withGateFaces(
+    passed,
+    floorRef.floorIndex,
+    new Map(),
+    undefined,
+    faceFamily.ownerMod === undefined ? null : faceFamily.familyId
+  )
 }

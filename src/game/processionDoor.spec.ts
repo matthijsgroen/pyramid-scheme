@@ -161,6 +161,14 @@ describe("the face of a procession door", () => {
     expect(faceOf("2", { walked: [0, 1, 2], read: true }).face.reset).toEqual({ address: home, state: "0" })
   })
 
+  it("is faced by its board with the topology mod off, where no other door has a face", () => {
+    const off = carved(lockFloor(PROCESSION_LOCK), resolveEncounterWithout("topology")).find(
+      ({ result }) => result.success
+    )!.result
+    if (!off.success) throw new Error("no carve")
+    expect(rooms(off.grid).find(cell => cell.gateFace)?.family).toBe(PROCESSION_REALISATION)
+  })
+
   it("leaves a pressure-plate door's face showing its order", () => {
     const plain = carved(
       lockFloor(PROCESSION_LOCK.replace("procession", "sequence"), { realisations: { sequence: "pressure-plate" } })

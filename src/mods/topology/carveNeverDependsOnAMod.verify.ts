@@ -101,6 +101,23 @@ const FLOORS_WITH_MECHANICS = [
   "expert_4 level 5 floor 0",
   ...Array.from({ length: 12 }, (_, n) => `dev_topology level ${n + 1} floor 0`),
 ]
+// The floors whose mechanic another mod realises, so it stands with the topology mod off: dev pyramid 10's procession
+// door is the puzzle mod's.
+const FLOORS_WITH_OTHER_MODS_MECHANICS = ["dev_topology level 10 floor 0"]
+
+/** The cells of a procession door, which the puzzle mod realises: its tiles and the door they work. */
+const processionPieces = (grid: FloorGrid): Set<string> =>
+  new Set(
+    grid.cells.flatMap((row, r) =>
+      row.flatMap((cell, c) =>
+        cell.type === "room" &&
+        (cell.sequenceTile !== undefined || (cell.worksMechanism !== undefined && cell.family === "procession-door"))
+          ? [`${r},${c}`]
+          : []
+      )
+    )
+  )
+
 // The floors holding a one-way drop with every mod.
 const FLOORS_WITH_DROPS = [
   "junior_1 level 1 floor 0",
@@ -219,14 +236,26 @@ describe("every floor of the real world, the dev journey included", () => {
     expect(dev.map(c => c.outcome.kind)).toEqual(Array(dev.length).fill("identical"))
   })
 
-  it("leaves no mechanism, tile, cover, door face, way out or shut door standing on any floor with the mod off", () => {
+  it("leaves no mechanism, tile, cover, door face, way out or shut door of its own standing on any floor with the mod off", () => {
     const left = carved.flatMap(c =>
       c.withMod.success && c.without.success
         ? [{ label: c.label, left: mechanicsLeft(c.without.grid, gateKeysOwned(c.withMod.grid)) }]
         : []
     )
     expect(left.length).toBeGreaterThan(200)
-    expect(left.filter(floor => floor.left.length > 0)).toEqual([])
+    const other = new Set(FLOORS_WITH_OTHER_MODS_MECHANICS)
+    expect(left.filter(floor => floor.left.length > 0 && !other.has(floor.label))).toEqual([])
+    // What another mod realises stays, and nothing of topology's beside it.
+    for (const c of carved.filter(floor => other.has(floor.label))) {
+      if (!c.withMod.success || !c.without.success) throw new Error(`${c.label} did not carve`)
+      const pieces = processionPieces(c.without.grid)
+      const left = mechanicsLeft(c.without.grid, gateKeysOwned(c.withMod.grid))
+      expect(left.length, c.label).toBeGreaterThan(0)
+      expect(
+        left.filter(entry => !pieces.has(entry.split(" ")[0])),
+        c.label
+      ).toEqual([])
+    }
   })
 
   it("takes the mechanics off every floor that stands one, which is exactly these floors", () => {
@@ -258,7 +287,7 @@ describe("every floor of the real world, the dev journey included", () => {
     }
   })
 
-  it("finds no lock to walk on a floor with the mod off, where the mod on walks one on exactly these floors", () => {
+  it("finds no lock to walk on a floor with the mod off but one another mod realises, where the mod on walks one on exactly these floors", () => {
     const walked = (pick: "withMod" | "without") =>
       carved
         .filter(c => {
@@ -267,7 +296,7 @@ describe("every floor of the real world, the dev journey included", () => {
         })
         .map(c => c.label)
     expect(walked("withMod")).toEqual(FLOORS_WITH_MECHANICS)
-    expect(walked("without")).toEqual([])
+    expect(walked("without")).toEqual(FLOORS_WITH_OTHER_MODS_MECHANICS)
   })
 })
 
