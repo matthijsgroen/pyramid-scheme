@@ -455,14 +455,16 @@ describe("a region barrier's blockage carries no marker", { timeout: 60_000 }, (
   })
 })
 
-describe("the textures the covers are owed are queued for painting", () => {
-  const queue = readFileSync(join(__dirname, "..", "..", "..", "docs", "instructions", "repaint-queue.md"), "utf8")
+describe("the textures the covers are owed are painted or queued for painting", () => {
+  const root = join(__dirname, "..", "..", "..")
+  const queue = readFileSync(join(root, "docs", "instructions", "repaint-queue.md"), "utf8")
+  const rebuild = readFileSync(join(root, "art", "rebuild.sh"), "utf8")
 
-  it("names a repaint entry and an import line for every texture a realisation declares", () => {
+  it("names an import line in the rebuild, or a repaint entry, for every texture a realisation declares", () => {
     expect([...COVER_TEXTURES].sort()).toEqual(["regionSand", "regionWater"])
     for (const texture of COVER_TEXTURES) {
-      expect(queue, texture).toContain(`### \`default/${texture}\``)
-      expect(queue, texture).toContain(`--tier=default --name=${texture} --slot=floor`)
+      const importLine = new RegExp(`^yarn import-tile .*--tier=default --name=${texture} --slot=floor`, "m")
+      expect(importLine.test(rebuild) || queue.includes(`### \`default/${texture}\``), texture).toBe(true)
     }
   })
 })
