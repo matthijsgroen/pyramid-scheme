@@ -663,7 +663,7 @@ exports[`design doc references name a file, not a paragraph`] = {
       [5, 61, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [16, 92, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/puzzle/game/procession/processionConfig.ts:260480246": [
+    "src/mods/puzzle/game/procession/processionConfig.ts:3206462331": [
       [5, 70, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [78, 30, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],

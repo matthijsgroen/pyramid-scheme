@@ -46,10 +46,10 @@ Contract §1 gains this one exception: the word changes the puzzle, not the look
    markers. The door is where the reset is, and where the player comes back to.
 4. **The reset button before the first solve.** Proposed: hidden. The solve is the reset; a reset before it
    changes nothing that counts.
-5. **Difficulty for a given step count.** The size is the sequence's; the rest is the floor's tier: ticks, mark
-   kinds, rung and split band from `PROCESSION_CONFIG[tier]`, with `bars` set to the step count. Task 1 measures
-   every (tier, steps) pair. Proposed: a pair whose seed search finds nothing is refused at bake
-   (`processionBoardUnseeded`, naming tier and steps); the table goes to the designer for a band per pair.
+5. **Difficulty for a given step count.** (Revised 2026-10-15.) The door lives outside the tier system: the step count
+   alone sets the board, and the floor's tier is not read. A door takes the config whose own board has that many bars:
+   3 starter, 4 junior, 5 expert, 6 wizard, each with `distinctStarts`. The seed bucket is keyed by those options, so
+   bake and play agree on it from the steps alone. Seeds per 2000: 121, 201, 19, 24 for 3 to 6 steps.
 6. **Step counts.** Proposed: 3 to 6. Six is the most glyphs one cast has and the 16-tick phone ceiling; a two-bar
    board is read, not solved. Outside that: refused `processionStepsOutOfRange`. bathHouse's `Gate` has 6.
 7. **Which cast.** Proposed: the `default` cast (fire, water carrying, baking, boat, oxen, night watch) on every
@@ -118,10 +118,9 @@ A unique arrangement with distinct starts has a unique start order, so **no new 
   before thinning, so they cost microseconds).
 - **Cost.** An attempt costs 1–2 ms (procession §5). Pass rates at today's sizes: master 1.4%, wizard 2.4% (5 and
   6 bars), so ~70 attempts and ~0.1 s per seed offline. Play time builds one listed seed with one attempt: ~2 ms.
-  Other step counts at a tier are unmeasured; task 1 measures them (question 5).
 - **Seeds are listed like every seedable family.** The door asks the procession family with
-  `{ difficulty: tier, variant: "door<n>" }`; `resolveOptions` answers the tier config with `bars: n` and
-  `distinctStarts: true`. The board is dealt by `boardIndex` as a fork board is.
+  `{ variant: "door<n>" }`; `resolveOptions` answers the config whose board has n bars (3 starter,
+  4 junior, 5 expert, 6 wizard) with `distinctStarts: true`, whatever the floor's tier. The board is dealt by `boardIndex` as a fork board is.
 
 ## Mod and core
 

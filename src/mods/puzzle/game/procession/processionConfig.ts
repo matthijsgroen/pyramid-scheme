@@ -95,13 +95,18 @@ export const PROCESSION_CONFIG: Record<Difficulty, ProcessionOptions> = {
 export const doorVariant = (steps: number) => `door${steps}`
 
 /**
- * The options a board is built from. A door's board is the tier's, sized by its sequence and with no two bars
- * starting together, so its answer reads as one order (`docs/game-design/puzzles/procession.md`, "At a door").
+ * The options a procession door's board is built from. The door lives outside the tier system: its step count
+ * alone sets how hard it is, so it takes the config whose own board has that many bars (3 starter, 4 junior,
+ * 5 expert, 6 wizard) whatever the floor's tier, with no two bars starting together so its answer reads as one
+ * order (`docs/game-design/puzzles/procession.md`, "At a door"). A room's board is its tier's.
  */
 export const processionOptions = (difficulty: Difficulty, variant?: string): ProcessionOptions => {
   const steps = variant?.match(/^door(\d+)$/)?.[1]
-  const tier = PROCESSION_CONFIG[difficulty]
-  return steps ? { ...tier, bars: Number(steps), distinctStarts: true } : tier
+  if (!steps) return PROCESSION_CONFIG[difficulty]
+  const bars = Number(steps)
+  const config =
+    Object.values(PROCESSION_CONFIG).find(options => options.bars === bars) ?? PROCESSION_CONFIG[difficulty]
+  return { ...config, bars, distinctStarts: true }
 }
 
 /** How many steps a procession door's sequence may have: one bar each, and six is one cast's glyphs. */

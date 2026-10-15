@@ -22,10 +22,13 @@ describe("a door's board", () => {
     expect(gradeProcession(pinnedAt([5, 2, 0]), { ...chain, distinctStarts: true })).not.toBeNull()
   })
 
-  it("is the tier's board sized by the steps, with distinct starts", () => {
-    expect(processionOptions("master", doorVariant(3))).toEqual({
-      ...PROCESSION_CONFIG.master,
-      bars: 3,
+  it.each(difficulties)("a %s floor's door board is set by its steps alone", tier => {
+    expect(processionOptions(tier, doorVariant(3))).toEqual({
+      ...PROCESSION_CONFIG.starter,
+      distinctStarts: true,
+    })
+    expect(processionOptions(tier, doorVariant(6))).toEqual({
+      ...PROCESSION_CONFIG.wizard,
       distinctStarts: true,
     })
   })

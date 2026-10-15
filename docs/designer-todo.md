@@ -44,18 +44,13 @@ designer's work. junior_3 site 2 is placed: beforeYouJump (Claude, 2026-10-14).
 ## The procession door
 
 Built: `P procession hall vault [reset hall-vault]` is a sequence whose door is a procession board (contract,
-"The procession door"). Three to six steps. One thing to settle before a master or wizard lock uses one with three
-steps: no seed of 2000 gives a board at master 3 or wizard 3, so those pairs are refused at bake
-(`processionBoardUnseeded`) until you give them a band. Seeds found per 2000, first attempt
+"The procession door"). Three to six steps. The step count alone sets the board and the floor's tier is not read: 3 steps is a starter board, 4
+junior, 5 expert, 6 wizard (distinct starts). Every count seeds. Seeds found per 2000, first attempt
 (`yarn tsx scripts/processionDoorSeeds.ts`):
 
-| tier    | 3 steps | 4 steps | 5 steps | 6 steps |
-| ------- | ------- | ------- | ------- | ------- |
-| starter | 121     | 208     | 136     | 64      |
-| junior  | 67      | 201     | 195     | 106     |
-| expert  | 21      | 36      | 19      | 11      |
-| master  | 0       | 7       | 16      | 16      |
-| wizard  | 0       | 6       | 10      | 24      |
+| steps | 3   | 4   | 5   | 6   |
+| ----- | --- | --- | --- | --- |
+| seeds | 121 | 201 | 19  | 24  |
 
 Playtest it on dev pyramid 10 (`processional`, three steps, expert) after an `INCLUDE_DEV=1` bake.
 
