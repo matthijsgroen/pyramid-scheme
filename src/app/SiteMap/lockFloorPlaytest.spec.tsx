@@ -1,13 +1,11 @@
 // @vitest-environment jsdom
 //
-// THE DEVELOP-ONLY FLOORS A DESIGNER PLAYTESTS: the sluice (pyramid 4) and the procession (pyramid 10),
-// built and assembled exactly as the bake builds them, never read back from the committed world.
+// THE SLUICE AND A PROCESSION, THE FLOORS A DESIGNER PLAYS FROM THE LOCK EDITOR: made-up locks carved the way
+// the editor carves them, then drawn and walked as the map does.
 import { cleanup, render, renderHook } from "@testing-library/react"
-import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest"
+import { afterEach, beforeAll, describe, expect, it } from "vitest"
 import type { Direction, FloorConfig, FloorGrid, GridCell, RoomCell } from "@/game/siteTypes"
 import { assembleFloor } from "@/game/siteAssembler"
-import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
-import { refusal } from "@/worldGen/carveSeedSearch"
 import { walkFloorLock } from "@/game/floorLockWalk"
 import { cellAddress } from "@/game/cellAddress"
 import { concealShutGround } from "@/game/concealment"
@@ -15,32 +13,11 @@ import { openDoorsFor } from "@/game/mechanismDoors"
 import { oneWayRuns } from "@/game/gridNavigation"
 import { spoiledState } from "@/game/sequence"
 import type { SequenceRead } from "@/game/sequenceReads"
-import { buildConfigs } from "@/worldGen/configBuilder"
-import { DEV_JOURNEY_ID } from "@/worldGen/data"
-import type { SiteConfig } from "@/worldGen/types"
+import type { Lock } from "@/game/lockAuthoring"
 import { sluiceLock } from "@/worldGen/spec/locks/sluice"
-import { processionalLock } from "@/worldGen/spec/locks/processional"
-import { ALL_CURRENCY_DISTRIBUTIONS } from "@/mods/allCurrencyDistributions"
 import { resolveOneWayRealisation } from "@/mods/allOneWayRealisations"
 import { resolveRegionBarrierRealisation } from "@/mods/allRegionBarrierRealisations"
-import {
-  CAPPED_CURRENCIES,
-  DYNAMIC_DISTRIBUTIONS,
-  MOD_WORLD_VALIDATORS,
-  MOD_REACHABILITY_SUPPORT,
-  MOD_TOMB_TREASURE_RESOLVER,
-  MOD_SHOP_STOCK,
-  MOD_RESERVED_TREASURE_INDICES,
-  REGISTERED_MOD_IDS,
-} from "@/mods/registeredMods"
-import {
-  resolveKeyRequirements,
-  familyPriorityFor,
-  familyCapacityFor,
-  familyIsTrap,
-  allocateEncounterSpread,
-  resolveEncounterMeta,
-} from "@/mods/allFamilyMeta"
+import { resolveKeyRequirements, resolveEncounterMeta } from "@/mods/allFamilyMeta"
 import { useAssembledFloor } from "./useAssembledFloor"
 import { encodeEdge } from "./edgeId"
 import { getFamilyPlugin, type FamilyContext } from "@/app/families/familyRegistry"
@@ -48,57 +25,83 @@ import { hashString } from "@/support/hashString"
 import { SiteMapView } from "./SiteMapView"
 import "@/mods/registerModApps"
 
-const SLUICE_LEVEL = 4
-const PROCESSION_LEVEL = 10
+const JOURNEY_ID = "test"
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
 
-let sluice: FloorConfig
-let procession: FloorConfig
-
-beforeAll(() => {
-  process.env.INCLUDE_DEV = "1"
-  const world: Record<string, SiteConfig[]> = buildConfigs(
-    resolveKeyRequirements,
-    ALL_CURRENCY_DISTRIBUTIONS,
-    CAPPED_CURRENCIES,
-    DYNAMIC_DISTRIBUTIONS,
-    MOD_WORLD_VALIDATORS,
-    familyPriorityFor,
-    0,
-    allocateEncounterSpread,
-    MOD_REACHABILITY_SUPPORT,
-    MOD_TOMB_TREASURE_RESOLVER,
-    familyCapacityFor,
-    MOD_SHOP_STOCK,
-    MOD_RESERVED_TREASURE_INDICES,
-    familyIsTrap,
-    REGISTERED_MOD_IDS,
-    resolveEncounterMeta
-  )
-  const dev = world[DEV_JOURNEY_ID] as unknown as FloorConfig[][]
-  sluice = dev[SLUICE_LEVEL - 1][0]
-  procession = dev[PROCESSION_LEVEL - 1][0]
-}, 180_000)
-
-afterAll(() => {
-  delete process.env.INCLUDE_DEV
+// Three tiles walked cellar, east, west. The cellar is entered by a drop from the hall and also lies behind the
+// east tile; the door onward carries the reset and a procession board.
+const procession = (): Lock => ({
+  name: "processional",
+  regions: {
+    in: { takes: "free" },
+    hall: { takes: "free" },
+    west: { takes: "free" },
+    east: { takes: "free" },
+    cellar: { takes: "free" },
+    out: { takes: "free" },
+  },
+  connections: [
+    ["in", "hall"],
+    ["hall", "west"],
+    ["hall", "east"],
+    ["east", "cellar"],
+    { between: ["hall", "out"], barriers: ["vaultDoor"] },
+  ],
+  gates: { vaultDoor: { from: "hall", to: "out", owners: ["plates"] } },
+  oneWays: { dropToCellar: { from: "hall", to: "cellar" } },
+  mechanics: {
+    plates: {
+      control: "sequence",
+      steps: [{ in: "cellar" }, { in: "east" }, { in: "west" }],
+      resetAt: "vaultDoor",
+      opens: { done: ["vaultDoor"] },
+      procession: true,
+    },
+  },
+  in: "in",
+  out: "out",
 })
-afterEach(cleanup)
 
-const addressSeed = (levelNr: number) => floorAssemblySeed(persistentInteriorSeed(DEV_JOURNEY_ID), levelNr, 0)
+const floorOf = (lock: Lock, realisations: FloorConfig["realisations"]): FloorConfig => ({
+  pathPuzzles: 0,
+  difficulty: "expert",
+  end: "treasure",
+  exitOrStaircase: "exit",
+  sideSections: [],
+  locks: [{ lock }],
+  realisations,
+})
 
-const assembleAtPin = (floor: FloorConfig, levelNr: number) =>
-  assembleFloor(DEV_JOURNEY_ID, floor, addressSeed(levelNr), resolveEncounterMeta, {
+const assembleAt = (floor: FloorConfig, seed: number) =>
+  assembleFloor(JOURNEY_ID, floor, seed, resolveEncounterMeta, {
     resolveKeyRequirements,
     resolveOneWay: resolveOneWayRealisation,
     resolveRegionBarrier: resolveRegionBarrierRealisation,
-    floorRef: { journeyId: DEV_JOURNEY_ID, levelIndex: levelNr - 1, floorIndex: 0 },
+    floorRef: { journeyId: JOURNEY_ID, levelIndex: 0, floorIndex: 0 },
     maxAttempts: 1,
   })
 
-const carvedAt = (floor: FloorConfig, levelNr: number): FloorGrid => {
-  const result = assembleAtPin(floor, levelNr)
-  if (!result.success) throw new Error(`level ${levelNr} did not carve: ${JSON.stringify(result.reasons)}`)
+type Stand = { floor: FloorConfig; seed: number }
+
+// The first seed the floor carves at on attempt 0, as the editor's Carve and play finds one.
+const standing = (floor: FloorConfig): Stand => {
+  for (let n = 1; n <= 60; n++) if (assembleAt(floor, n * 7919).success) return { floor, seed: n * 7919 }
+  throw new Error(`${floor.locks?.[0]?.lock.name} carved at none of 60 seeds`)
+}
+
+let sluice: Stand
+let proc: Stand
+
+beforeAll(() => {
+  sluice = standing(floorOf(sluiceLock(), { toggle: "handle", "region-barrier": "water" }))
+  proc = standing(floorOf(procession(), { sequence: "pressure-plate", "one-way": "zipline" }))
+}, 180_000)
+
+afterEach(cleanup)
+
+const carvedAt = ({ floor, seed }: Stand): FloorGrid => {
+  const result = assembleAt(floor, seed)
+  if (!result.success) throw new Error(`did not carve: ${JSON.stringify(result.reasons)}`)
   return result.grid
 }
 
@@ -116,45 +119,23 @@ const revealed = (grid: FloorGrid): FloorGrid => ({
 
 // The floor as the screen builds it, the mechanism standing in `state`.
 const assembledWith = (
-  floor: FloorConfig,
-  levelNr: number,
+  { floor, seed }: Stand,
   positions: ReadonlyMap<string, string>,
   reads?: ReadonlyMap<string, SequenceRead>
 ) =>
   renderHook(() =>
-    useAssembledFloor(
-      DEV_JOURNEY_ID,
-      floor,
-      addressSeed(levelNr),
-      0,
-      {},
-      null,
-      0,
-      undefined,
-      levelNr - 1,
-      positions,
-      undefined,
-      reads
-    )
+    useAssembledFloor(JOURNEY_ID, floor, seed, 0, {}, null, 0, undefined, 0, positions, undefined, reads)
   ).result.current
 
-describe("the sluice on dev pyramid 4", { timeout: 120_000 }, () => {
-  it("is authored as the production lock, bound to water and a handle at the pyramid, with a recorded pin", () => {
-    expect(sluice.locks).toEqual([{ lock: sluiceLock() }])
-    expect(sluice.realisations).toEqual({ toggle: "handle", "region-barrier": "water" })
-    expect(sluice.seed).toBe(111235356889669)
-    expect(sluice.packing).toBeUndefined()
-  })
-
-  it("carves at its pinned seed on attempt 0, walks sound and leaves no dead region", () => {
-    const result = assembleAtPin(sluice, SLUICE_LEVEL)
-    expect(refusal(result)).toBeNull()
-    if (!result.success) throw new Error("unreachable: a refusal-free result carved")
+describe("a sluice floor", { timeout: 120_000 }, () => {
+  it("carves on attempt 0, walks sound and leaves no dead region", () => {
+    const result = assembleAt(sluice.floor, sluice.seed)
+    if (!result.success) throw new Error("did not carve")
     expect(walkFloorLock(result.grid)).toEqual({ sound: true, states: expect.any(Number) })
   })
 
   it("stamps every door of both flooded regions with water", () => {
-    const doors = roomsOf(carvedAt(sluice, SLUICE_LEVEL)).filter(({ cell }) => cell.regionBarrier)
+    const doors = roomsOf(carvedAt(sluice)).filter(({ cell }) => cell.regionBarrier)
     expect([...new Set(doors.map(({ cell }) => cell.regionBarrier!.region))].sort()).toEqual([
       "sluice.hall",
       "sluice.vault",
@@ -164,13 +145,13 @@ describe("the sluice on dev pyramid 4", { timeout: 120_000 }, () => {
 
   // Every cell is lit so the cover and the concealment, not exploration, decide what the map shows.
   const floorWhen = (state: "dry" | "wet") => {
-    const base = carvedAt(sluice, SLUICE_LEVEL)
+    const base = carvedAt(sluice)
     const lever = roomsOf(base).find(({ cell }) => cell.mechanism)!.at
     const positions = new Map([[cellAddress(base, 0, lever[0], lever[1])!, state]])
     const open = openDoorsFor(base, 0, positions)
     const shut = roomsOf(base).filter(({ cell }) => cell.regionBarrier && !open.has(cell.requiredKeyId!))
-    const live = revealed(assembledWith(sluice, SLUICE_LEVEL, positions).grid!)
-    const from = assembledWith(sluice, SLUICE_LEVEL, positions).explorerPos
+    const live = revealed(assembledWith(sluice, positions).grid!)
+    const from = assembledWith(sluice, positions).explorerPos
     return { shut, grid: concealShutGround(live, from) }
   }
 
@@ -207,35 +188,27 @@ describe("the sluice on dev pyramid 4", { timeout: 120_000 }, () => {
   })
 })
 
-describe("the procession on dev pyramid 10", { timeout: 120_000 }, () => {
+describe("a procession floor", { timeout: 120_000 }, () => {
   const tilesOf = (grid: FloorGrid) =>
     roomsOf(grid)
       .filter(({ cell }) => cell.sequenceTile)
       .sort((a, b) => a.cell.sequenceTile!.step - b.cell.sequenceTile!.step)
 
-  it("is authored as the production lock, bound at the pyramid, with a recorded pin", () => {
-    expect(procession.locks).toEqual([{ lock: processionalLock() }])
-    expect(procession.realisations).toEqual({ sequence: "pressure-plate", "one-way": "zipline" })
-    expect(procession.seed).toBe(4293857870)
-    expect(procession.packing).toBeUndefined()
-  })
-
-  it("carves at its pinned seed on attempt 0, and the forced-step walk finds the order keepable and the reset in reach", () => {
-    const result = assembleAtPin(procession, PROCESSION_LEVEL)
-    expect(refusal(result)).toBeNull()
-    if (!result.success) throw new Error("unreachable: a refusal-free result carved")
+  it("carves on attempt 0, and the forced-step walk finds the order keepable and the reset in reach", () => {
+    const result = assembleAt(proc.floor, proc.seed)
+    if (!result.success) throw new Error("did not carve")
     expect(walkFloorLock(result.grid)).toEqual({ sound: true, states: expect.any(Number) })
   })
 
   it("stands the tiles of its three steps in the regions they name, in the order cellar, east, west", () => {
-    const tiles = tilesOf(carvedAt(procession, PROCESSION_LEVEL))
+    const tiles = tilesOf(carvedAt(proc))
     expect([...new Set(tiles.map(({ cell }) => cell.sequenceTile!.step))]).toEqual([0, 1, 2])
     const regionOf = ["processional.cellar", "processional.east", "processional.west"]
     for (const { cell } of tiles) expect(cell.region).toBe(regionOf[cell.sequenceTile!.step])
   })
 
   it("stands a step's tile on every way into its region: no room of it is reached round them", () => {
-    const grid = carvedAt(procession, PROCESSION_LEVEL)
+    const grid = carvedAt(proc)
     const drops = oneWayRuns(grid)
     const entrance = `${grid.entrancePos[0]},${grid.entrancePos[1]}`
     for (const step of [0, 1, 2]) {
@@ -263,7 +236,7 @@ describe("the procession on dev pyramid 10", { timeout: 120_000 }, () => {
   })
 
   it("carries a procession board on its door: the steps' signs, and the way to start again only once it is read", () => {
-    const base = carvedAt(procession, PROCESSION_LEVEL)
+    const base = carvedAt(proc)
     const tiles = tilesOf(base).filter(
       ({ cell }, n, all) => all.findIndex(other => other.cell.sequenceTile!.step === cell.sequenceTile!.step) === n
     )
@@ -271,7 +244,7 @@ describe("the procession on dev pyramid 10", { timeout: 120_000 }, () => {
     const address = cellAddress(base, 0, home.at[0], home.at[1])!
     const doorAt = (state: string, read?: SequenceRead) => {
       const reads = new Map(read ? [[address, read]] : [])
-      const { grid } = assembledWith(procession, PROCESSION_LEVEL, new Map([[address, state]]), reads)
+      const { grid } = assembledWith(proc, new Map([[address, state]]), reads)
       return roomsOf(grid!).find(({ cell }) => cell.gateFace)?.cell
     }
 
@@ -287,20 +260,20 @@ describe("the procession on dev pyramid 10", { timeout: 120_000 }, () => {
   })
 
   it("deals its door a board of three bars, built as the encounter builds it", () => {
-    const { grid } = assembledWith(procession, PROCESSION_LEVEL, new Map())
+    const { grid } = assembledWith(proc, new Map())
     const door = roomsOf(grid!).find(({ cell }) => cell.gateFace)!
     const plugin = getFamilyPlugin(door.cell.family!)!
     const ctx = {
-      difficulty: door.cell.difficulty ?? procession.difficulty,
+      difficulty: door.cell.difficulty ?? proc.floor.difficulty,
       boardIndex: door.cell.boardIndex,
       gateFace: door.cell.gateFace,
     } as FamilyContext
-    const board = plugin.generate(hashString(DEV_JOURNEY_ID + encodeEdge(0, ...door.at)), ctx) as { bars: unknown[] }
+    const board = plugin.generate(hashString(JOURNEY_ID + encodeEdge(0, ...door.at)), ctx) as { bars: unknown[] }
     expect(board.bars).toHaveLength(3)
   })
 
   it("drops from the hall into the cellar as the zipline its pyramid binds, and by no other way", () => {
-    const grid = carvedAt(procession, PROCESSION_LEVEL)
+    const grid = carvedAt(proc)
     expect(oneWayRuns(grid).map(run => run.kind)).toEqual(["zipline"])
     const cellar = (r: number, c: number) => {
       const cell = grid.cells[r][c]

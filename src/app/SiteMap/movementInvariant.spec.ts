@@ -31,7 +31,7 @@
 // WHAT IS WALKED IS A MECHANIC, NOT A FLOOR. Each fixture below is a dozen cells drawn by hand
 // (`floorFrom`) around one mechanism — a plain corridor, a lever and its gates, a drop — and is walked
 // through every (position × mechanism state) a player can reach. A failure names the mechanic. The
-// authored world is checked for soundness by `INCLUDE_DEV=1 yarn validate-world`, not here.
+// authored world is checked for soundness by `yarn validate-world`, not here.
 //
 // Built at the hook level — `useAssembledFloor` + `useSiteNavigation` + `clickTargets` +
 // `walkableFrom` — so it runs in the normal suite and stays fast; a browser is not needed to see two

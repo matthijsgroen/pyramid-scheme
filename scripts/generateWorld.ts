@@ -246,7 +246,7 @@ console.log(`  Stair sweep: ${paired} stair id(s), each wired exactly twice`)
 // A board the offline pass never proved would be searched for on the player's device instead, which is
 // the very thing the lists replaced — and it would happen quietly. So an authored switch whose shape and
 // tier no list covers stops the build with its floor named: bake the list (`yarn generate-seeds`), or do
-// not author the room. The playtest journey is excused by its capabilities, not by its id.
+// not author the room.
 const unbakedSwitches = findUnbakedSwitchBoards(configs, ALL_FAMILY_META, puzzleSeeds)
 if (unbakedSwitches.length > 0) {
   console.error(`✗ ${unbakedSwitches.length} authored switch board(s) have no baked seed list:`)

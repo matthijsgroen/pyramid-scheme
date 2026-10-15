@@ -28,7 +28,7 @@ export const REALISATION_CHOICES: Readonly<Record<string, readonly string[]>> = 
 export const defaultBinding = (): Record<string, string> =>
   Object.fromEntries(Object.entries(REALISATION_CHOICES).map(([kind, [first]]) => [kind, first]))
 
-/** The lock alone on an expert floor with no puzzles, every region free, as the dev floors bench a lock; `nest` is
+/** The lock alone on an expert floor with no puzzles, every region free; `nest` is
  * spliced into its nest spot. A lock with no spot is placed with `nest` anyway, so the floor refuses it by name
  * (`noNestSpot`). */
 export const playgroundFloor = (lock: Lock, binding: RealisationBinding, nest?: Lock): FloorConfig => ({

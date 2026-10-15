@@ -41,8 +41,8 @@ describe("a floor authoring a handle", () => {
       initial: "left",
       returnsToInitial: true,
       positions: [
-        { state: "left", gateKeyId: "handle:dev_topology#0#0#0:vault" },
-        { state: "right", gateKeyId: "handle:dev_topology#0#0#0:pocket" },
+        { state: "left", gateKeyId: "handle:test_site#0#0#0:vault" },
+        { state: "right", gateKeyId: "handle:test_site#0#0#0:pocket" },
       ],
     })
   })
@@ -62,10 +62,10 @@ describe("a floor authoring a handle", () => {
       initial: "right",
       returnsToInitial: true,
       positions: [
-        { state: "left", gateKeyId: "handle:dev_topology#0#0#0:vault" },
-        { state: "left", gateKeyId: "handle:dev_topology#0#0#0:pocket" },
-        { state: "right", gateKeyId: "handle:dev_topology#0#0#0:vault2" },
-        { state: "right", gateKeyId: "handle:dev_topology#0#0#0:pocket2" },
+        { state: "left", gateKeyId: "handle:test_site#0#0#0:vault" },
+        { state: "left", gateKeyId: "handle:test_site#0#0#0:pocket" },
+        { state: "right", gateKeyId: "handle:test_site#0#0#0:vault2" },
+        { state: "right", gateKeyId: "handle:test_site#0#0#0:pocket2" },
       ],
     })
 
@@ -74,7 +74,7 @@ describe("a floor authoring a handle", () => {
       states: ["left", "right"],
       initial: "left",
       returnsToInitial: true,
-      positions: [{ state: "left", gateKeyId: "handle:dev_topology#0#0#0:s0.1" }],
+      positions: [{ state: "left", gateKeyId: "handle:test_site#0#0#0:s0.1" }],
     })
   })
 
@@ -113,8 +113,8 @@ describe("a floor authoring a handle", () => {
     const { grid } = floorWithHandle({ in: "lever", left: ["vault"], right: ["pocket"] })
     const gates = tagged(grid, "gate")
     expect(gates.map(gate => gate.requiredKeyId).sort()).toEqual([
-      "handle:dev_topology#0#0#0:pocket",
-      "handle:dev_topology#0#0#0:vault",
+      "handle:test_site#0#0#0:pocket",
+      "handle:test_site#0#0#0:vault",
     ])
     expect(gates.map(gate => gate.sectionAddress).sort()).toEqual(["pocket", "vault"])
   })
@@ -162,7 +162,7 @@ describe("a floor authoring a handle", () => {
     expect(tagged(grid, "handle")[0].sectionAddress).toBe("s0.0")
     const gate = tagged(grid, "gate")[0]
     expect(gate.sectionAddress).toBe("s0.1")
-    expect(gate.requiredKeyId).toBe("handle:dev_topology#0#0#0:s0.1")
+    expect(gate.requiredKeyId).toBe("handle:test_site#0#0#0:s0.1")
   })
 
   it("carves two handles on one floor, whose four familyless doors a save still tells apart", () => {

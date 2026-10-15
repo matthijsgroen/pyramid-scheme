@@ -18,10 +18,10 @@ over memory.
 | 7 Zipline glide                | **Done.** Poses in `src/app/SiteMap/ridePoses.ts`, 200 ms a cell. Story `Topology/Zipline ride`.                           |
 | Torch and flood                | **Done.** Plan: `docs/superpowers/plans/2026-10-09-torch-douse.md`. Story `Topology/Lock playground` → Torch and flood.    |
 | Stone pipe                     | **Done.** Plan: `docs/instructions/stone-pipe.md`. Story `Topology/Lock playground` → Stone pipe.                          |
-| Procession door                | **Done.** Plan: `docs/instructions/procession-door.md`. Dev pyramid 10 (`processional`) plays it.                          |
+| Procession door                | **Done.** Plan: `docs/instructions/procession-door.md`. Lock editor, Carve and play, plays it.                             |
 
 Phase 4 gives gate loops in the carve on laid floors (`topologyFaults`, `gateBypassed`, the fork seams), loops
-inside one region in every carve, stoneGate on dev pyramid 12, the squeeze starting from the nearer side, one nest
+inside one region in every carve, stoneGate in the Lock editor, the squeeze starting from the nearer side, one nest
 spot per lock (`a -&> b`), and stones in nested locks (pass through, contained, shared: `stoneNestings`,
 `poolStones`, the walk's `emptyHands`, `pooled`). The playground stories `Stone Passes Through`,
 `Stone Stays Inside` and `Stones Shared` show one case each. What it leaves open is the roadmap's "Open after
@@ -49,7 +49,7 @@ The contract is `docs/mods/mechanic-contract.md` §3.3; the ledger is `.superpow
 
 The migration of the four locks (plan task 8) touched `src/game/locks/junior/lessons/torch.lock`,
 `src/game/locks/junior/lessons/doorWaitsForTwo.lock`, `src/game/locks/expert/relay.lock`, `src/game/locks/expert/stoneGate.lock`,
-`src/worldGen/spec/dev.ts`, `src/worldGen/spec/expert.ts`, `src/mods/topology/index.ts`,
+`src/worldGen/spec/expert.ts`, `src/mods/topology/index.ts`,
 `src/mods/topology/game/torch/meta.ts`, `src/app/SiteMap/SiteMapView.tsx`, `src/data/generatedWorld.ts`,
 `src/data/carveLedger.json` and `src/data/tierFingerprints.json`. The plain bake changed stoneGate's floor
 (`expert_4` pyramid 5, floor 0) and the hashes, nothing else.
@@ -103,9 +103,9 @@ nodes of its region in the lay, so one stands clear of the region's ways in.
    builds the mechanics they need and places them.
 3. **The procession door: built.** `P procession hall vault [reset hall-vault]`; rules in the contract ("The
    procession door"), the board in `procession.md` ("At a door"). No shipped floor uses one, so no shipped floor
-   moved; dev pyramid 10's `processional` is one (an `INCLUDE_DEV=1` bake). Master and wizard boards with three steps
+   moved. Master and wizard boards with three steps
    have no seed (`designer-todo.md` has the table), so a lock asking for one is refused at bake until the designer
-   gives the pair a band. A dev door's board has no seed list (dev rooms never do) and builds live. Left: a
+   gives the pair a band. A door in the Lock editor has no seed list and builds live. Left: a
    playtest of the board at the door on a phone (`docs/playtest-backlog.md`).
 4. **Fold doubleBack's twin** once the designer answers how a drop beside a gate compiles (below).
 5. **Carve passes refactor: done.** Plan in `docs/instructions/carve-passes.md`. `assembleFloor` runs the pass
@@ -141,7 +141,7 @@ final whole-branch review on the most capable model. Commit and push freely on t
 - **Carve flexibility:** as much freedom as the layout allows; the only constraint is that a corridor's obstacles
   keep their order. A loop inside one region is fine in any carve; a loop that goes round a gate is `gateBypassed`.
 - **Gate loops are allowed by design** (2026-10-06).
-- **The dev floor is for testing lock mechanisms.** stoneGate takes dev pyramid 12.
+- **The Lock editor's Carve and play is for testing lock mechanisms.** stoneGate is played there.
 - **Placement of stoneGate is Djoser, `expert_4`** (2026-10-06).
 - **One source for a lock:** `src/game/locks/<tier>/<name>.lock`, read at bake time through `parseLock`. No TypeScript copy.
   Every `.lock` file names its designer on its first line (`// designed by: Matthijs` or `// designed by: Claude`).
@@ -160,7 +160,7 @@ final whole-branch review on the most capable model. Commit and push freely on t
   lines on one pair are two corridors, `<<` reads right to left. doubleBack is read from its `.lock` file; clockwork,
   lamplighter, observatory and boardPicksTheWay were fixed so their forks stay off the route. The placement walk
   crosses a drop launch to landing. Plan: `docs/superpowers/plans/2026-10-09-corridor-items.md`.
-- **Stable world:** without `INCLUDE_DEV=1` the bake stays byte-identical. Saves are migrated, never reset.
+- **Stable world:** the bake stays byte-identical. Saves are migrated, never reset.
 
 ## Next session
 
@@ -203,7 +203,7 @@ pushes the build output to the `pyramid-scheme-preview` repo; its saves use thei
 - **Lock placement:** where stones, the narrow passage, water and sequences enter junior and expert, and variety for
   repeats. Worked from `docs/game-design/lock-placement.md` (and `lock-curriculum.md`).
 - **doubleBack lays on about 1 seed in 200:** s1 is reached only through three chained drops. The Valley's last
-  pyramid and the dev bench carve it at a pinned seed, so it is fragile: if its floor is ever re-carved, or the lay
+  pyramid carves it at a pinned seed, so it is fragile: if its floor is ever re-carved, or the lay
   changes, that floor can fall to `layoutNotFound`. The lay-rate verifies measure a made-up mirrorFork instead.
 - **boardPicksTheWay needs a lever:** its `S toggle` is bound to the handle. It stands on junior_1 site 3, after the lever
   lesson at site 2.

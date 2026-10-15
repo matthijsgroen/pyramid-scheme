@@ -1,13 +1,13 @@
 // @vitest-environment jsdom
 //
-// A WAY OPEN OUT OF THE PLAYER'S OWN CELL ALWAYS OFFERS SOMETHING TO WALK TO. Walked on the real dev
-// pyramid-2 floor (doubleBack, ziplines) from the entrance, the way `movementInvariant.spec.ts` walks
+// A WAY OPEN OUT OF THE PLAYER'S OWN CELL ALWAYS OFFERS SOMETHING TO WALK TO. Walked on a carved
+// made-up lock floor (a fork-switch, toggles, ziplines) from the entrance, the way `movementInvariant.spec.ts` walks
 // a hand-drawn one: take every offer, reveal as the player goes, visit every position. At each one,
 // each way open from the player's cell that leads to a walkable cell must have an offer pointing that
-// way. The fixtures there are a dozen cells; this is the floor a player reported a missing arrow on.
+// way. The fixtures there are a dozen cells; this is a carved floor.
 import { renderHook, act } from "@testing-library/react"
 import { useState } from "react"
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 import type { Direction, FloorConfig, FloorGrid, SiteConfig } from "@/game/siteTypes"
 import { dropEndsOf, walkableFrom } from "@/game/gridNavigation"
 import { cellAddress } from "@/game/cellAddress"
@@ -27,30 +27,7 @@ import { buildRoomClaims } from "./roomClaims"
 import { markerAt, offerContextFrom, offeredTargets } from "./clickTargets"
 import { DIR_MOVES } from "./corridorRuns"
 import { encodeEdge } from "./edgeId"
-import { buildConfigs } from "@/worldGen/configBuilder"
-import { DEV_JOURNEY_ID } from "@/worldGen/data"
-import { assembleFloor } from "@/game/siteAssembler"
-import type { FloorConfig as GameFloorConfig } from "@/game/siteTypes"
-import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
-import { ALL_CURRENCY_DISTRIBUTIONS } from "@/mods/allCurrencyDistributions"
-import {
-  CAPPED_CURRENCIES,
-  DYNAMIC_DISTRIBUTIONS,
-  MOD_WORLD_VALIDATORS,
-  MOD_REACHABILITY_SUPPORT,
-  MOD_TOMB_TREASURE_RESOLVER,
-  MOD_SHOP_STOCK,
-  MOD_RESERVED_TREASURE_INDICES,
-  REGISTERED_MOD_IDS,
-} from "@/mods/registeredMods"
-import {
-  resolveKeyRequirements,
-  familyPriorityFor,
-  familyCapacityFor,
-  familyIsTrap,
-  allocateEncounterSpread,
-  resolveEncounterMeta,
-} from "@/mods/allFamilyMeta"
+import { BINDING, carveLockFloor, mirrorForkLock } from "@/game/testSupport/lockFixtures"
 import "@/mods/registerModApps"
 
 // Populates the family registry, the same side effect every other assembled-floor spec relies on.
@@ -341,45 +318,8 @@ const walkFloor = async (
   return { violations, steps }
 }
 
-const build = () =>
-  buildConfigs(
-    resolveKeyRequirements,
-    ALL_CURRENCY_DISTRIBUTIONS,
-    CAPPED_CURRENCIES,
-    DYNAMIC_DISTRIBUTIONS,
-    MOD_WORLD_VALIDATORS,
-    familyPriorityFor,
-    0,
-    allocateEncounterSpread,
-    MOD_REACHABILITY_SUPPORT,
-    MOD_TOMB_TREASURE_RESOLVER,
-    familyCapacityFor,
-    MOD_SHOP_STOCK,
-    MOD_RESERVED_TREASURE_INDICES,
-    familyIsTrap,
-    REGISTERED_MOD_IDS,
-    resolveEncounterMeta
-  )
-
-let pyramid2: FloorGrid
-
-beforeAll(() => {
-  process.env.INCLUDE_DEV = "1"
-  const withDev = build()
-  delete process.env.INCLUDE_DEV
-  const [floor] = withDev[DEV_JOURNEY_ID][1]
-  const seed = floorAssemblySeed(persistentInteriorSeed(DEV_JOURNEY_ID), 2, 0)
-  const result = assembleFloor(DEV_JOURNEY_ID, floor as unknown as GameFloorConfig, seed, resolveEncounterMeta, {
-    resolveKeyRequirements,
-    floorRef: { journeyId: DEV_JOURNEY_ID, floorIndex: 0 },
-  })
-  if (!result.success) throw new Error("dev pyramid 2 did not carve")
-  pyramid2 = result.grid
-}, 180_000)
-
-afterAll(() => {
-  delete process.env.INCLUDE_DEV
-})
+// A fork-switch, two toggles and three drops: a floor whose ways out are gated and fall.
+const lockGrid: FloorGrid = carveLockFloor(mirrorForkLock(), BINDING)
 
 const NAMES: Record<Direction, string> = { n: "north", s: "south", e: "east", w: "west" }
 
@@ -411,10 +351,10 @@ const wayOutViolations = (grid: FloorGrid, at: readonly [number, number]): strin
   return out
 }
 
-describe("a way open out of the player's cell, on the real dev pyramid 2", () => {
+describe("a way open out of the player's cell, on a carved lock floor", () => {
   it("always offers something to walk to, and draws it", async () => {
     const stood = new Set<string>()
-    const { violations, steps } = await walkFloor(pyramid2, (grid, at) => {
+    const { violations, steps } = await walkFloor(lockGrid, (grid, at) => {
       stood.add(`${at[0]},${at[1]}`)
       return wayOutViolations(grid, at)
     })
@@ -422,7 +362,7 @@ describe("a way open out of the player's cell, on the real dev pyramid 2", () =>
     expect([...new Set(violations)]).toEqual([])
     expect(steps).toBeGreaterThan(20) // a walk this short would prove nothing was exercised
     // The report this guards stood on a drop's landing, so the walk must have stood on one.
-    const dropEnds = [...dropEndsOf(pyramid2).keys()]
+    const dropEnds = [...dropEndsOf(lockGrid).keys()]
     expect(dropEnds.filter(key => stood.has(key)).length).toBeGreaterThan(0)
   }, 170_000)
 })

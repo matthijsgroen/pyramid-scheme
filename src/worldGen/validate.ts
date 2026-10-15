@@ -166,8 +166,7 @@ export const findEmptyChests = (
  * The fallback that would otherwise cover it — searching on the player's device — is exactly what
  * pre-seeding exists to stop, and it covers silently. So a site whose capabilities say its boards are
  * baked (capabilities.ts's requireBakedBoards) makes this an authoring error with a floor named on it,
- * and the playtest journey, which stands the mechanic at tiers nobody has baked yet, is excused by the
- * same seam rather than by its id.
+ * and a site that does not require them is excused by the same seam rather than by its id.
  *
  * All three shapes are owed, because which one a junction gets is the carve's choice rather than the
  * author's.

@@ -52,7 +52,7 @@ junior, 5 expert, 6 wizard (distinct starts). Every count seeds. Seeds found per
 | ----- | --- | --- | --- | --- |
 | seeds | 121 | 201 | 19  | 24  |
 
-Playtest it on dev pyramid 10 (`processional`, three steps, expert) after an `INCLUDE_DEV=1` bake.
+Playtest it in the Lock editor with Carve and play, on a lock with a three-step procession door.
 
 ## Questions only the designer can answer
 

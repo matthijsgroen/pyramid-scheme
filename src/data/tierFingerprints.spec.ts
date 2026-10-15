@@ -128,14 +128,6 @@ describe("tier fingerprints", () => {
     it("hashes the same whatever order the journeys are listed in", () => {
       expect(tierFingerprints([...shipped].reverse(), world())).toEqual(actual)
     })
-
-    it("hashes the same with the playtesting journey present and its config baked", () => {
-      const devId = "dev_topology"
-      const configs = world()
-      const withDev = { ...configs, [devId]: configs[shipped[0].id] }
-      const devJourney = { id: devId, difficulty: "wizard" as const, dev: true }
-      expect(tierFingerprints([...shipped, devJourney], withDev)).toEqual(actual)
-    })
   })
 
   describe("a tier that cannot be fingerprinted", () => {

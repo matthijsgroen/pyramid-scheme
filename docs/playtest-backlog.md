@@ -5,7 +5,7 @@ played, and open an issue or a task for anything that plays wrong.
 
 ## The procession door
 
-- **Dev pyramid 10, floor 0** (`processional`, after an `INCLUDE_DEV=1` bake). Walk a tile or two, open the door:
+- **Lock editor, Carve and play, a lock with a procession door** (`P procession …`; the lesson `tilesInOrder` and `plates` carry a plain sequence). Walk a tile or two, open the door:
   are the walked bars free and the others greyed with their sign readable? Free every bar, solve the board: does
   the run start again and the reset appear? Walk the order it shows: does the door open? On a phone: does the board
   fit under the door's title, and can a bar be dragged?
@@ -38,7 +38,7 @@ played, and open an issue or a task for anything that plays wrong.
 
 ## stoneGate phase 4 — gate loops, nest spots
 
-- **Dev journey, pyramid 12 (stoneGate).** Play it to the end: lift the stone off the altar (the back way opens, the
+- **Lock editor, Carve and play, `stoneGate`.** Play it to the end: lift the stone off the altar (the back way opens, the
   door in shuts), park a stone on the backroom shelf, squeeze through the narrow passage, spend both stones twice,
   leave by the way out. Leave mid-way and come back: every stone where you set it.
 - **The narrow passage on the loop.** Tap its wall from either side: the explorer walks to the nearer side and
@@ -77,13 +77,13 @@ played, and open an issue or a task for anything that plays wrong.
 - **The plate/stone icon on a door face** is taller than its 40px ring and clips it at the bottom; the designer
   chooses to fit it inside or crop it.
 - **The explorer in the exit's light shaft while carrying** looks washed out; judge it.
-- **Dev pyramid 11, floor 0.** The same lock in the game. Reload the app mid-carry: the explorer is still carrying it.
+- **Lock editor, Carve and play, `twoStones`.** The same lock in the game. Reload the app mid-carry: the explorer is still carrying it.
 
 ## #313 — forced tile steps, and region barriers as water or sand
 
-- **Dev pyramid 4, the sluice.** A barred region drawn from outside as water: the cover fades in over two cells
+- **Lock editor, Carve and play, `sluice`.** A barred region drawn from outside as water: the cover fades in over two cells
   from each way in, and fades out in about a second when the lever opens it.
-- **Dev pyramid 10, the procession.** Three pressure plates walked cellar, east, west; the cellar is reached by the
+- **Lock editor, Carve and play, a procession lock.** Three pressure plates walked cellar, east, west; the cellar is reached by the
   zipline from the hall. Check that a tile cannot be walked round, that crossing east first spoils the run, and
   that the door onward shows the order and the way to reset.
 - The water and sand textures are not painted yet: expect a flat fill.

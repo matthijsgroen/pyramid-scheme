@@ -915,3 +915,13 @@ describe("the re-laid pyramids step", () => {
     expect(state[0].relaidFloorsVersion).toBe(RELAID_FLOORS_VERSION)
   })
 })
+
+describe("a save holding a journey the build no longer has", () => {
+  const gone = makeStoredJourney({ journeyId: "no_such_journey", active: true })
+
+  it("has no active journey, and still answers for the journeys it does have", () => {
+    const api = makeApi([gone, makeStoredJourney({ journeyId: REAL_ID, active: false })])
+    expect(api.activeJourneyId).toBeUndefined()
+    expect(api.getJourney(REAL_ID)).toBeDefined()
+  })
+})

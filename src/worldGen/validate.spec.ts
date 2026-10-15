@@ -9,7 +9,9 @@ import {
   findUnwalkedLocks,
   validateRewardCounts,
 } from "./validate"
-import { DEV_CAPABILITIES, PYRAMID_CAPABILITIES } from "./capabilities"
+import { PYRAMID_CAPABILITIES } from "./capabilities"
+
+const UNBAKED_CAPABILITIES = { ...PYRAMID_CAPABILITIES, requireBakedBoards: false }
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FamilyMeta, FamilyOptions } from "@/game/families/familyMeta"
 import { FORK_SHAPES, type ForkShape } from "@/game/forkShape"
@@ -257,7 +259,7 @@ describe("findUnbakedSwitchBoards", () => {
 
   it("excuses a site whose capabilities say its boards are not baked", () => {
     const configs = { [shipped]: [[switchFloor("junior")]] }
-    expect(findUnbakedSwitchBoards(configs, [seedable], {}, () => DEV_CAPABILITIES)).toEqual([])
+    expect(findUnbakedSwitchBoards(configs, [seedable], {}, () => UNBAKED_CAPABILITIES)).toEqual([])
     expect(findUnbakedSwitchBoards(configs, [seedable], {}, () => PYRAMID_CAPABILITIES)).toHaveLength(3)
   })
 
@@ -300,7 +302,7 @@ describe("findUnseededDoorBoards", () => {
   })
 
   it("excuses a site whose capabilities say its boards are not baked", () => {
-    expect(findUnseededDoorBoards(configs, [STUB_BOARD, STUB_DOOR], {}, () => DEV_CAPABILITIES)).toEqual([])
+    expect(findUnseededDoorBoards(configs, [STUB_BOARD, STUB_DOOR], {}, () => UNBAKED_CAPABILITIES)).toEqual([])
   })
 })
 

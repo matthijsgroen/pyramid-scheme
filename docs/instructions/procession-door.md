@@ -69,8 +69,7 @@ Contract §1 gains this one exception: the word changes the puzzle, not the look
     sequence is rebound later, proposed: a saved run already `done` with no walked-step record (it predates the
     door) reads as solved, so a door the player opened stays open. A new player cannot reach `done` without walked
     steps being recorded.
-13. **The dev floor.** Proposed: dev pyramid 10's `processional` lock (three steps, expert) binds `procession-door`, so it can
-    be played. Only an `INCLUDE_DEV=1` bake moves.
+13. **Playing it.** A lock with a procession door is played from the Lock editor's Carve and play; no baked floor moves.
 
 ## Semantics
 
@@ -237,8 +236,6 @@ made; §8 Settled. `docs/game-design/puzzles/procession.md` gains a short "At a 
   `src/data/carveLedger.json`, `src/data/tierFingerprints.json` and the puzzle seed lists keep every floor and
   bucket. Ledger hashes move with the carve sources; keys and refusal strings must not. Any other change is a fault
   to explain before going on.
-- `INCLUDE_DEV=1` bake: only the dev floor carrying `processional` moves (question 13); `yarn generate-seeds`
-  lists its door bucket.
 - `yarn lock`: every placed lock as before.
 - Gate in a clean worktree: `yarn verify`, `yarn verify-content`, `yarn build`; then `gh pr checks` after push.
 

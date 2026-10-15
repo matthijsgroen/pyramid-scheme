@@ -1,6 +1,5 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest"
+import { beforeAll, describe, expect, it } from "vitest"
 import { buildConfigs } from "./configBuilder"
-import { DEV_JOURNEY_ID } from "./data"
 import type { SiteConfig } from "./types"
 import type { FloorConfig as GameFloorConfig } from "../game/siteTypes"
 import { assembleInspectedFloor } from "../game/assembleInspectedFloor"
@@ -62,19 +61,10 @@ const lockFloors = (configs: Record<string, SiteConfig[]>): LockFloor[] =>
   )
 
 let plain: Record<string, SiteConfig[]>
-let withDev: Record<string, SiteConfig[]>
 
 beforeAll(() => {
-  delete process.env.INCLUDE_DEV
   plain = build()
-  process.env.INCLUDE_DEV = "1"
-  withDev = build()
-  delete process.env.INCLUDE_DEV
 }, 600_000)
-
-afterAll(() => {
-  delete process.env.INCLUDE_DEV
-})
 
 describe("the journey inspector on lock floors", () => {
   // The inspector carries no family registry, so it refuses a floor that stands a switch before carving it
@@ -126,11 +116,5 @@ describe("the journey inspector on lock floors", () => {
       ["expert_4", 5, 0],
     ])
     expect(shipped.filter(floor => !assembles(floor))).toEqual([])
-  })
-
-  it("assembles every lock floor the dev journey stands", () => {
-    const dev = lockFloors({ [DEV_JOURNEY_ID]: withDev[DEV_JOURNEY_ID] })
-    expect(dev.map(({ pyramidNumber }) => pyramidNumber)).toEqual([2, 4, 10, 11, 12])
-    expect(dev.filter(floor => !assembles(floor))).toEqual([])
   })
 })

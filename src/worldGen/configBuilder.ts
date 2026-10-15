@@ -1,9 +1,9 @@
 import type { Difficulty, SiteConfig, Tier, TreasureReward } from "./types"
-import { DEV_JOURNEYS, PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
+import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import type { JourneyDef } from "./types"
 import { resolvePyramidConstraintWithProvenance } from "./constraintResolver"
 import type { Provenance } from "./constraintResolver"
-import { devSpec, worldSpec } from "./worldSpec"
+import { worldSpec } from "./worldSpec"
 import type {
   PyramidConstraint,
   FloorConstraint,
@@ -66,13 +66,6 @@ export type PyramidPlan = {
   provenance: Provenance
 }
 
-// The playtest journey is a BUILD-TIME opt-in: `INCLUDE_DEV=1 yarn generate-world` grows it, a plain
-// run does not, and the committed world is the plain run's. Read here rather than in data.ts because
-// this module is the generator's alone — data.ts is in the app bundle, where `process.env` is not a
-// thing. Same escape-hatch shape as the shop's SKIP_ECONOMY_GUARD, and for the same reason: an env
-// var, not a config knob anything ships with.
-const includeDev = (): boolean => !!process.env.INCLUDE_DEV
-
 const planFor = (journeys: readonly JourneyDef[], spec: typeof worldSpec): PyramidPlan[] =>
   journeys.flatMap(j =>
     Array.from({ length: j.levelCount }, (_, i) => {
@@ -103,10 +96,7 @@ const planFor = (journeys: readonly JourneyDef[], spec: typeof worldSpec): Pyram
     })
   )
 
-const buildPlan = (): PyramidPlan[] => [
-  ...planFor(PYRAMID_JOURNEYS, worldSpec),
-  ...planFor(includeDev() ? DEV_JOURNEYS : [], devSpec),
-]
+const buildPlan = (): PyramidPlan[] => planFor(PYRAMID_JOURNEYS, worldSpec)
 
 // ── Phase 4: Build SiteConfigs from plan ──────────────────────────────────────
 

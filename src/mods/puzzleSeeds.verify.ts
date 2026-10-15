@@ -166,7 +166,7 @@ describe("the demand the world declares", () => {
 })
 
 // THE RULING THIS FILE'S LISTS EXIST FOR: a board's quality stops being bounded by what a phone can
-// find in the moment. Live generation is still the mechanism — it is the playtest journey's path and
+// find in the moment. Live generation is still the mechanism — it is the Lock editor's path and
 // the safety net — but for a SHIPPED authored switch it would silently give that ruling back, so
 // `yarn generate-world` stops and names the floor instead (scripts/generateWorld.ts).
 describe("the baked-board requirement on the shipped world", () => {
