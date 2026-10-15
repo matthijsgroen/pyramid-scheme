@@ -288,7 +288,7 @@ full of — `--contents` on what exists rather than a new model. `prim_niche`, `
   needed. A patron is `statue-2.png` beside `statue.png`, and the same for `shrine`, `wallShrine`, `stela`
   and `mask`. No new kinds, no pool edits, no world regeneration, and art can arrive one file at a time.
 - **Torch (`torch` family) — drawn.** The standing torch is shared `default` art at every rank (`torchUnlit`, `torchLit`), declared as `drawing.art: "standingTorch"` on the torch meta and drawn beside its flame marker. Lit, it lays a light pool on the floor at its foot (the same `LightPool` a stair's cresset uses) and is not eased back; the lit tile is imported with no `--seat`, so it casts no shadow (designer, 2026-10-07).
-- **The stone pipe’s hole** is a flat stand-in drawn in code (`PIPE_HOLE_PLACEHOLDER`, a dark mouth, a grey stone in it) on its node’s back wall, until `default/pipeHole` and `default/pipeHoleStone` are painted (repaint queue, "Stone gate mechanics"; `prim_pipehole`; the import lines wait commented in `art/rebuild.sh`).
+- **The stone pipe’s hole** is painted empty (`default/pipeHole`, cut to `pipeHole-mask.png` so only the mouth lands). The hole with a stone in it is a flat stand-in drawn in code (`PIPE_HOLE_PLACEHOLDER`) until `default/pipeHoleStone` is painted as an edit of it (repaint queue, "Stone gate mechanics"; its import line waits commented in `art/rebuild.sh`).
 - **A sequence tile (pressure plate)** is a vector slab with its glyph (`PlateShape`) in three looks (unwalked, walked in order, walked out of order); a painted plate is wanted in the same three states.
 
 **Built since this list was written**, and noted because the list claimed otherwise for a while:

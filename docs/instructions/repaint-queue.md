@@ -2569,53 +2569,16 @@ yarn import-tile art/masters/props/master/statue-horus.webp --tier=master --name
 
 ## Stone gate mechanics
 
-The mouth of a stone pipe, the piece a stone is posted through. It is a MECHANIC, so it looks the same at every
+The mouth of a stone pipe with a stone lying in it; the empty mouth (`pipeHole`) is painted. It is a MECHANIC, so it looks the same at every
 rank — a player must never relearn which thing is which when the tomb gets richer — and lives in
 `tiles/default/`. The scaffolds are rendered in the priest's stone, but each prompt closes on a rank-neutral
 material line rather than the priest's.
 
-### `default/pipeHole` — a stone pipe's mouth in a wall
-
-The hole a stone is posted into and taken out of: one round mouth in a wall, dark inside. A wall item with depth,
-so it is rendered at half shear like the niche (`prim_pipehole`). The same at every rank, and never mistaken for a
-niche: no surround, no sill, nothing set in it.
-
-**Attach:**
-
-1. `~/tile-previews/pipeHole-default.png` — the scaffold
-2. `~/tile-previews/expert-plain.png` — the material reference
-
-```
-A wall-less product shot of a hole cut into a wall, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: one round MOUTH of a stone pipe, cut straight into a plain wall of dressed stone, about a forearm
-across. Inside, the bore runs back into the wall and goes black within a hand's depth. Its lip is worn smooth
-and slightly rounded where stones have been pushed through it for centuries. Nothing else is cut, carved or
-painted on the wall: no frame, no sill, no glyph.
-
-Dark basalt blocks with fine joints, worn faintly polished round the lip, with pale natron dust settled in the
-joints and on the bottom of the bore's lip.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-Light it as one low lamp in a closed tomb. The lip may CATCH it; the inside of the bore stays the darkest thing in the picture.
-
-No ground plane and no background: the object stands alone on the magenta. Old worn stone, dust settled in every crack; nothing that belongs to one tomb more than another; no gold.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold pipeHole --shear=0.5 --width=448 --height=224 --sun=0 --colour=#a7b2be --colour-deep=#5f6b77
-yarn import-tile art/masters/props/default/pipeHole.webp --tier=default --name=pipeHole --slot=wall \
-  --filter=smooth
-```
-
 ### `default/pipeHoleStone` — the pipe's mouth, a stone lying in it
 
 An EDIT of the painted `pipeHole`, not a fresh generation, so the two swap on one wall without moving: everything
-outside the stone is the same paint. Both are cut UNMASKED, as the plate trio is, so they are cut alike. The stone is the plate's limestone block, so the stone the player posted is
-the one he sees.
+outside the stone is the same paint. Both are cut to the same `pipeHole-mask.png` (an ellipse round the lip), so they are cut alike and only the mouth lands. The stone is the plate's limestone block, so the stone the player posted is
+the one they see.
 
 **Attach:**
 
@@ -2629,5 +2592,5 @@ Then, once the return is in `~/Downloads`:
 
 ```sh
 yarn import-tile art/masters/props/default/pipeHoleStone.webp --tier=default --name=pipeHoleStone --slot=wall \
-  --filter=smooth
+  --filter=smooth --mask=art/masters/props/default/pipeHole-mask.png
 ```
