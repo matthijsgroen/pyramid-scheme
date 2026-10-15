@@ -9,7 +9,7 @@ import { PIPE_BINDING, PIPED, holeIn } from "@/game/testSupport/stoneFixtures"
 import { buildRoomClaims } from "./roomClaims"
 import { nodeSpritesFor } from "./SiteMapView"
 import { cellTop, WALL_H } from "./mapScale"
-import { PIPE_HOLE_PLACEHOLDER, PIPE_HOLE_TILE, pipeHoleArtUrl } from "./pipeHoleArt"
+import { PIPE_HOLE_TILE } from "./pipeHoleArt"
 import { sharedTileUrl } from "./tileAssets"
 import "@/mods/registerModApps"
 
@@ -18,16 +18,22 @@ const spriteAt = (grid: FloorGrid, [r, c]: readonly [number, number], states = n
   nodeSpritesFor(grid, buildRoomClaims(grid), "expert", undefined, states, 0).find(s => s.key === `pipeHole:${r},${c}`)
 
 describe("a pipe's hole on the map", () => {
-  it("draws its placeholder in both looks until the painting lands", () => {
-    for (const look of ["empty", "stone"] as const)
-      expect(pipeHoleArtUrl(look)).toBe(sharedTileUrl(PIPE_HOLE_TILE[look]) ?? PIPE_HOLE_PLACEHOLDER[look])
-    expect(PIPE_HOLE_PLACEHOLDER.empty).not.toBe(PIPE_HOLE_PLACEHOLDER.stone)
+  it("has a painting for both looks", () => {
+    expect(sharedTileUrl(PIPE_HOLE_TILE.empty)).toBeDefined()
+    expect(sharedTileUrl(PIPE_HOLE_TILE.stone)).toBeDefined()
+    expect(sharedTileUrl(PIPE_HOLE_TILE.empty)).not.toBe(sharedTileUrl(PIPE_HOLE_TILE.stone))
   })
 
   it("is drawn on its node's back wall, empty, and with the stone once one lies in it", () => {
     const far = holeIn(lit, "hall")
-    expect(spriteAt(lit, far)).toMatchObject({ url: pipeHoleArtUrl("empty"), y: cellTop(far[0]) - WALL_H, h: WALL_H })
+    expect(spriteAt(lit, far)).toMatchObject({
+      url: sharedTileUrl(PIPE_HOLE_TILE.empty),
+      y: cellTop(far[0]) - WALL_H,
+      h: WALL_H,
+    })
     const { address } = stonesAt(lit, 0, far[0], far[1], new Map())!
-    expect(spriteAt(lit, far, new Map([[address, "stones.P@stones.hall"]]))?.url).toBe(pipeHoleArtUrl("stone"))
+    expect(spriteAt(lit, far, new Map([[address, "stones.P@stones.hall"]]))?.url).toBe(
+      sharedTileUrl(PIPE_HOLE_TILE.stone)
+    )
   })
 })

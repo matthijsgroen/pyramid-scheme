@@ -56,7 +56,7 @@ import { tileStatusAt } from "@/game/sequencePlay"
 import { explorerWeight, holeLookAt, isCarrying, plateLookAt, type ExplorerWeight } from "@/game/stonePlay"
 import { passageArtUrl } from "./passageArt"
 import { PLATE_TILE } from "./plateArt"
-import { pipeHoleArtUrl } from "./pipeHoleArt"
+import { PIPE_HOLE_TILE } from "./pipeHoleArt"
 import { drawingOf, familyIconOf, isLockedGate, isSpentAt, nodeRadius, shapeKindFor, staysOpen } from "./nodeKinds"
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
 import { MapNotice } from "@/ui/atoms/MapNotice"
@@ -578,13 +578,14 @@ export const nodeSpritesFor = (
         })
       } else if (cell.pipeHole) {
         // A PIPE'S HOLE IS IN THE BACK WALL of its node, drawn on the wall band above the floor square in the look
-        // its stones give it. The shared painting, or its stand-in until the painting lands.
+        // its stones give it. The shared painting, never a rank's.
         const look = holeLookAt(grid, floorIndex, r, c, mechanismStates ?? NO_STATES)
-        if (!look) continue
+        const url = look && sharedTileUrl(PIPE_HOLE_TILE[look])
+        if (!url) continue
         out.push({
           footprint,
           key: `pipeHole:${r},${c}`,
-          url: pipeHoleArtUrl(look),
+          url,
           x: cx - CELL / 2,
           y: cellTop(r) - WALL_H,
           w: CELL,
