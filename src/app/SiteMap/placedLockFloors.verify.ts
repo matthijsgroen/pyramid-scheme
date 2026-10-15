@@ -162,3 +162,22 @@ describe("a drop that keeps every region reachable, on a carved floor", () => {
     expect(walkFloorLock({ ...grid, cells })?.sound).toBe(false)
   })
 })
+
+describe("the marks on a shipped floor", () => {
+  const markedMechanisms = (grid: FloorGrid) =>
+    grid.cells
+      .flat()
+      .flatMap(cell => (cell.type === "room" && cell.mechanismId !== undefined && cell.mark ? [cell] : []))
+
+  it("are never shared by two mechanisms of one floor", () => {
+    const floors = carved.map(c => ({ ...c, marked: markedMechanisms(c.grid) })).filter(c => c.marked.length > 1)
+    expect(floors.length).toBeGreaterThan(5)
+    const collisions = floors.flatMap(({ label, marked }) => {
+      const byGlyph = new Map<string, string[]>()
+      for (const room of marked)
+        byGlyph.set(room.mark!.glyph, [...(byGlyph.get(room.mark!.glyph) ?? []), room.mechanismId!])
+      return [...byGlyph].filter(([, ids]) => new Set(ids).size > 1).map(([glyph, ids]) => `${label}: ${glyph} ${ids}`)
+    })
+    expect(collisions).toEqual([])
+  })
+})
