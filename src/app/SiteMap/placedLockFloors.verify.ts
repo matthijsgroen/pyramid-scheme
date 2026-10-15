@@ -173,7 +173,7 @@ describe("the marks on a shipped floor", () => {
     const floors = carved.map(c => ({ ...c, marked: markedMechanisms(c.grid) })).filter(c => c.marked.length > 1)
     expect(floors.length).toBeGreaterThan(5)
     const collisions = floors.flatMap(({ label, marked }) => {
-      const byGlyph = new Map<string, string[]>()
+      const byGlyph = new Map<number, string[]>()
       for (const room of marked)
         byGlyph.set(room.mark!.glyph, [...(byGlyph.get(room.mark!.glyph) ?? []), room.mechanismId!])
       return [...byGlyph].filter(([, ids]) => new Set(ids).size > 1).map(([glyph, ids]) => `${label}: ${glyph} ${ids}`)
