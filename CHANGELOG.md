@@ -14,9 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A door with several controls opens a board showing each one with its mark, and a painted lever no longer has a square under it.
 - A torch stands painted on the floor, and once lit it lights the floor around it.
 - The Valley of the Kings' last pyramid has a zipline back into the lever chamber, so no room there is shut for good.
-- The first pyramids are lit: their rooms show their colour instead of sinking into the dark.
 - The first pyramids' rooms are lit instead of sinking into the dark.
 - Difficulty now has one colour, its metal: stone, copper, silver, gold and emerald.
+- A journey card names the place; the joke waits for the arrival.
 - Turning tutorials off no longer silences the story — only the teaching.
 - Fez has someone to talk to: a conversation can carry two speakers, and the explorer answers from the other side of the screen.
 - Every pyramid in the world now greets you in its own voice.
