@@ -950,8 +950,8 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/ui/molecules/CollectibleSlot.tsx:3438544410": [
       [10, 68, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/ui/organisms/JourneyCard.tsx:3559186348": [
-      [21, 27, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/ui/organisms/JourneyCard.tsx:4113105157": [
+      [22, 27, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/worldGen/buildSite.ts:4021085128": [
       [174, 3, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
@@ -1021,8 +1021,8 @@ exports[`core names no mod family id`] = {
     "src/app/SiteMap/nodeKinds.ts:151041311": [
       [17, 4, 8, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "1887827023"]
     ],
-    "src/app/SiteMap/nodeShapes.tsx:645600408": [
-      [477, 9, 8, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "1887827023"]
+    "src/app/SiteMap/nodeShapes.tsx:209511653": [
+      [478, 9, 8, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "1887827023"]
     ],
     "src/app/SiteMap/torchlight.tsx:871021629": [
       [121, 11, 7, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "880952199"],
