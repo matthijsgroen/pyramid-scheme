@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Seven expert pyramids at Karnak, the Nile Delta and Djoser have puzzles of their own: a procession door, an hourglass of sand, floods, a canal lock and the stone pipe.
 - The Temple of Thoth's second pyramid has its own puzzle: two levers, one on each side of a drop.
 - A door with several controls opens a board showing each one with its mark, and a painted lever no longer has a square under it.
 - A torch stands painted on the floor, and once lit it lights the floor around it.

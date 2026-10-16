@@ -1,0 +1,11 @@
+// designed by: Claude
+// LESSON, expert: the stone pipe. The shut door comes first, in the yard; the plate that opens it lies behind a
+// narrow passage no stone is carried through. Post the stone through the wall, squeeze after it, set it on the plate.
+
+in -- yard
+yard -[p]- out
+yard -[unladen]- workshop
+yard -- store
+p plate @workshop
+pile plate @store stone
+P pipe @yard @workshop

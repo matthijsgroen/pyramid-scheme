@@ -1,0 +1,14 @@
+// designed by: Claude
+// expert. A canal lock: three basins in a row and two winches, each flooding one basin as it drains the next. Walk
+// to the key and back like a boat, the water moved around you basin by basin.
+
+in -- b1 -- quay1 -- b2 -- quay2 -- b3 -- vault
+quay1 -- winch1
+quay2 -- winch2
+in -[K]- out
+b1 -[A:a]
+b2 -[A+B:a]
+b3 -[B]
+A toggle @winch1
+B toggle @winch2
+K activator @vault

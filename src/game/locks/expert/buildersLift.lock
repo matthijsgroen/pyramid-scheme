@@ -1,0 +1,14 @@
+// designed by: Claude
+// expert. Djoser's builders' lift: the plate that opens the way out lies in the workshop below, down a hatch no
+// stone rides. The stone goes down the pipe and you jump after it, then ride the lift back up. The stone beside
+// the hatch props it open: post that one and the hatch shuts until another stone holds it.
+
+in -- yard
+yard -[p]- out
+yard -- store
+yard -[h|p]- >> workshop
+workshop >> yard
+h plate @yard stone
+p plate @workshop
+pile plate @store stone
+P pipe @yard @workshop

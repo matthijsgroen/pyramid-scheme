@@ -15,19 +15,21 @@ and Claude carves, bakes and gates it.
 
 ## New locks for the open slots
 
-Each slot holds a stand-in today (it repeats a lock placed elsewhere). Site details: `docs/game-design/lock-placement.md`
-Part 1. These are junior and expert slots, so Claude can propose locks for them; master and wizard locks stay the
-designer's work. junior_3 site 2 is placed: beforeYouJump (Claude, 2026-10-14).
+Every junior and expert slot holds its own lock now; the last seven expert slots took Claude's locks (2026-10-16), all
+yours to playtest and reshape. Site details: `docs/game-design/lock-placement.md` Part 1.
 
-| Site            | Tier   | Stand-in today | Floor notes                                            |
-| --------------- | ------ | -------------- | ------------------------------------------------------ |
-| expert_2 site 3 | expert | twoLamps       | master ward wing                                       |
-| expert_2 site 4 | expert | dropHome       | wizard ward wing                                       |
-| expert_3 site 3 | expert | cellar         | overgrown 0.4                                          |
-| expert_3 site 4 | expert | overlook       | overgrown 0.65, wizard ward wing                       |
-| expert_4 site 2 | expert | twoLamps       | two floor-key colours, broad packing                   |
-| expert_4 site 3 | expert | cellar         |                                                        |
-| expert_4 site 4 | expert | overlook       | two floor-key colours, broad packing, master ward wing |
+| Site            | Lock               | Trick                                                                                   |
+| --------------- | ------------------ | --------------------------------------------------------------------------------------- |
+| expert_2 site 3 | festivalProcession | the first procession door, four shrines; one lever opens one side of the hall at a time |
+| expert_2 site 4 | hourglass          | sand: one lever buries one hall and clears the other; a lit torch burns on under it     |
+| expert_3 site 3 | highWater          | the key's cellar is dry only while the torch's hall floods: key first, torch second     |
+| expert_3 site 4 | lockChamber        | three basins, two winches: walk to the key and back like a boat through a canal lock    |
+| expert_4 site 2 | throughTheWall     | the stone pipe's lesson: post the stone through the wall, squeeze after it              |
+| expert_4 site 3 | scaffold           | the quarry's stone out first; lift the prop first and the quarry shuts on it            |
+| expert_4 site 4 | buildersLift       | the stone goes down the pipe, you down the hatch; post the hatch's prop and it shuts    |
+
+Still stand-ins: expert_3 site 1 (counterweight, not buildable), expert_3 site 2 (observatory, does not lay) and
+expert_4 site 1 (twoStones, not buildable).
 
 ## Reshapes
 

@@ -1,0 +1,12 @@
+// designed by: Claude
+// expert. A stone on the yard's plate holds the quarry open, and the way out wants two stones. Bring the quarry's
+// stone out first: lift the scaffold's stone first and the quarry shuts on the other.
+
+in -- yard
+yard -[p1]- quarry
+yard -[p2+p3]- out
+yard -- dais
+p1 plate @yard stone
+p2 plate @dais
+p3 plate @dais
+shelf plate @quarry stone

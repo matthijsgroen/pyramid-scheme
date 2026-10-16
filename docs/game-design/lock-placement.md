@@ -21,7 +21,7 @@ Columns:
   one exists: the slot is still to design, the proposed lock is not buildable yet, or it does not carve (the reason
   follows). A stand-in may repeat a lock placed elsewhere; the designer replaces it. "no" is a floor with no lock.
 
-Placed: 34 of 34 (2026-10-14).
+Placed: 34 of 34 (2026-10-16): 31 with their chosen lock, 3 stand-ins.
 
 ### Junior
 
@@ -74,12 +74,12 @@ Placed: 34 of 34 (2026-10-14).
 
 **expert_2 — Karnak Temple Complex**
 
-| Site | Main floors | Wing floors | Authored         | Chosen lock | Placed                                |
-| ---- | ----------- | ----------- | ---------------- | ----------- | ------------------------------------- |
-| 1    | 1           | 0           |                  | clockwork   | ✓                                     |
-| 2    | 1           | 0           |                  | relay       | ✓                                     |
-| 3    | 1           | 1           | master ward wing | twoLamps    | ✓ stand-in (an expert lock to design) |
-| 4    | 1           | 1           | wizard ward wing | dropHome    | ✓ stand-in (an expert lock to design) |
+| Site | Main floors | Wing floors | Authored         | Chosen lock        | Placed |
+| ---- | ----------- | ----------- | ---------------- | ------------------ | ------ |
+| 1    | 1           | 0           |                  | clockwork          | ✓      |
+| 2    | 1           | 0           |                  | relay              | ✓      |
+| 3    | 1           | 1           | master ward wing | festivalProcession | ✓      |
+| 4    | 1           | 1           | wizard ward wing | hourglass          | ✓      |
 
 **expert_3 — Nile Delta Expedition** (overgrown, growing from pyramid 2 to 5)
 
@@ -87,27 +87,25 @@ Placed: 34 of 34 (2026-10-14).
 | ---- | ----------- | ----------- | ------------------------------------------- | --------------- | ---------------------------------------------------------------- |
 | 1    | 1           | 0           |                                             | leverSwapsDoors | ✓ stand-in (counterweight is not buildable yet)                  |
 | 2    | 1           | 0           | overgrown 0.2                               | dropHome        | ✓ stand-in (observatory does not lay: its board needs five ways) |
-| 3    | 1           | 0           | overgrown 0.4                               | cellar          | ✓ stand-in (an expert lock to design)                            |
-| 4    | 1           | 1           | overgrown 0.65, wizard ward wing            | overlook        | ✓ stand-in (an expert lock to design)                            |
+| 3    | 1           | 0           | overgrown 0.4                               | highWater       | ✓                                                                |
+| 4    | 1           | 1           | overgrown 0.65, wizard ward wing            | lockChamber     | ✓                                                                |
 | 5    | 1           | 1           | overgrown 1, master ward wing, patron Sobek | doubleBack      | ✓                                                                |
 
 **expert_4 — Pyramid of Djoser**
 
-| Site | Main floors | Wing floors | Authored                                               | Chosen lock   | Placed                                      |
-| ---- | ----------- | ----------- | ------------------------------------------------------ | ------------- | ------------------------------------------- |
-| 1    | 1           | 0           |                                                        | stoneOnAPlate | ✓ stand-in (twoStones is not buildable yet) |
-| 2    | 1           | 0           | two floor-key colours, broad packing                   | twoLamps      | ✓ stand-in (an expert lock to design)       |
-| 3    | 1           | 0           |                                                        | cellar        | ✓ stand-in (an expert lock to design)       |
-| 4    | 1           | 1           | two floor-key colours, broad packing, master ward wing | overlook      | ✓ stand-in (an expert lock to design)       |
-| 5    | 1           | 1           | wizard ward wing                                       | stoneGate     | ✓                                           |
+| Site | Main floors | Wing floors | Authored                                               | Chosen lock    | Placed                                      |
+| ---- | ----------- | ----------- | ------------------------------------------------------ | -------------- | ------------------------------------------- |
+| 1    | 1           | 0           |                                                        | stoneOnAPlate  | ✓ stand-in (twoStones is not buildable yet) |
+| 2    | 1           | 0           | two floor-key colours, broad packing                   | throughTheWall | ✓                                           |
+| 3    | 1           | 0           |                                                        | scaffold       | ✓                                           |
+| 4    | 1           | 1           | two floor-key colours, broad packing, master ward wing | buildersLift   | ✓                                           |
+| 5    | 1           | 1           | wizard ward wing                                       | stoneGate      | ✓                                           |
 
 Site counts: junior 16 (3 + 4 + 4 + 5), expert 18 (4 + 4 + 5 + 5), the same as the curriculum's. Treasure
 tombs are not sites in this table.
 
-Duplicates among the stand-ins, until they are replaced: leverSwapsDoors (junior_2 site 2 and expert_3 site 1), stoneOnAPlate (junior_4 site 1 and expert_4 site 1), cellar
-(junior_3 site 4, expert_3 site 3, expert_4 site 3), dropHome (junior_3 site 3, expert_2 site 4,
-expert_3 site 2), twoLamps (expert_1 site 3, expert_2 site 3, expert_4 site 2), overlook (junior_4 site 2, expert_3
-site 4, expert_4 site 4).
+Duplicates among the stand-ins, until they are replaced: leverSwapsDoors (junior_2 site 2 and expert_3 site 1),
+stoneOnAPlate (junior_4 site 1 and expert_4 site 1), dropHome (junior_3 site 3 and expert_3 site 2).
 
 **Open:** observatory (expert_3 site 2) does not lay on any floor: its three-way board stands in `in`, a region the
 route runs through, so the board's node would need five ways (three arms, the way in, the way on) and a lattice node
@@ -204,28 +202,29 @@ boardPicksTheWay or tilesInOrder, which have no hall stub.
 stoneGate closes expert_4 (kept); doubleBack is late, closing expert_3 (kept); twoLamps stays on expert_1 site 3
 (kept). relay and doubleBack take three actions, below the expert 4-6, but the designer put them in expert.
 
-| Site | Proposed                        | Today                | Note                                                |
-| ---- | ------------------------------- | -------------------- | --------------------------------------------------- |
-| e1.1 | tilesInOrder                    | leverSwapsDoors (no) | the sequence lesson opens expert                    |
-| e1.2 | keyring                         | dropHome             |                                                     |
-| e1.3 | twoLamps                        | twoLamps             | kept                                                |
-| e1.4 | plates                          | doubleBack           | leans on tilesInOrder; doubleBack moves to expert_3 |
-| e2.1 | clockwork                       | doorWaitsForTwo      | leans on board, doorWaitsForTwo                     |
-| e2.2 | relay                           | cellar               | leans on torch, doorWaitsForTwo                     |
-| e2.3 | to design (expert, 4-6 actions) | twoLamps             |                                                     |
-| e2.4 | to design (expert, 4-6 actions) | dropHome             |                                                     |
-| e3.1 | counterweight                   | leverSwapsDoors      | leans on stoneOnAPlate; not yet buildable           |
-| e3.2 | observatory                     | dropHome             |                                                     |
-| e3.3 | to design (expert, 4-6 actions) | cellar               |                                                     |
-| e3.4 | to design (expert, 4-6 actions) | overlook             |                                                     |
-| e3.5 | doubleBack                      | doubleBack           | kept                                                |
-| e4.1 | twoStones                       | stoneOnAPlate        | leans on stoneOnAPlate; not yet buildable           |
-| e4.2 | to design (expert, 4-6 actions) | twoLamps             |                                                     |
-| e4.3 | to design (expert, 4-6 actions) | cellar               |                                                     |
-| e4.4 | to design (expert, 4-6 actions) | overlook             |                                                     |
-| e4.5 | stoneGate                       | stoneGate            | kept                                                |
+| Site | Proposed           | Today                | Note                                                |
+| ---- | ------------------ | -------------------- | --------------------------------------------------- |
+| e1.1 | tilesInOrder       | leverSwapsDoors (no) | the sequence lesson opens expert                    |
+| e1.2 | keyring            | dropHome             |                                                     |
+| e1.3 | twoLamps           | twoLamps             | kept                                                |
+| e1.4 | plates             | doubleBack           | leans on tilesInOrder; doubleBack moves to expert_3 |
+| e2.1 | clockwork          | doorWaitsForTwo      | leans on board, doorWaitsForTwo                     |
+| e2.2 | relay              | cellar               | leans on torch, doorWaitsForTwo                     |
+| e2.3 | festivalProcession | twoLamps             |                                                     |
+| e2.4 | hourglass          | dropHome             |                                                     |
+| e3.1 | counterweight      | leverSwapsDoors      | leans on stoneOnAPlate; not yet buildable           |
+| e3.2 | observatory        | dropHome             |                                                     |
+| e3.3 | highWater          | cellar               |                                                     |
+| e3.4 | lockChamber        | overlook             |                                                     |
+| e3.5 | doubleBack         | doubleBack           | kept                                                |
+| e4.1 | twoStones          | stoneOnAPlate        | leans on stoneOnAPlate; not yet buildable           |
+| e4.2 | throughTheWall     | twoLamps             |                                                     |
+| e4.3 | scaffold           | cellar               |                                                     |
+| e4.4 | buildersLift       | overlook             |                                                     |
+| e4.5 | stoneGate          | stoneGate            | kept                                                |
 
-Counts: 27 floors get an existing lock (16 junior, 11 expert); 7 expert slots are "to design".
+Counts: 27 floors get a lock that existed when this was adopted (16 junior, 11 expert); the 7 expert slots that were
+"to design" hold Claude's locks (2026-10-16).
 Kept as placed today: junior_1 site 3, expert_1 site 3, expert_3 site 5, expert_4 site 5; the other 22 re-carve.
 Wizard has no locks and no floors here.
 

@@ -323,24 +323,22 @@ export const expertRules: Rule[] = [
   journey("expert_1").pyramid(1, lessonOnMainFloor("tilesInOrder")),
   journey("expert_1").pyramid(2, lockOnMainFloor("keyring")),
   journey("expert_1").pyramid(3, lockOnMainFloor("twoLamps")),
-  // Stand-ins, each for a lock not yet placed: expert_2 sites 3 and 4, expert_3 site 2 (observatory does not lay) and
-  // site 3, expert_4 sites 2 to 4 (locks still to design).
   journey("expert_1").pyramid(4, lockOnMainFloor("plates")),
   journey("expert_2").pyramid(1, lockOnMainFloor("clockwork")),
   journey("expert_2").pyramid(2, lockOnMainFloor("relay")),
-  journey("expert_2").pyramid(3, lockOnMainFloor("twoLamps")),
-  journey("expert_2").pyramid(4, lockOnMainFloor("dropHome")),
+  journey("expert_2").pyramid(3, lockOnMainFloor("festivalProcession")),
+  journey("expert_2").pyramid(4, lockOnMainFloor("hourglass")),
   // expert_3 site 1 stands in for counterweight, which cannot be built yet.
   journey("expert_3").pyramid(1, lessonOnMainFloor("leverSwapsDoors")),
+  // expert_3 site 2 stands in for observatory, which does not lay.
   journey("expert_3").pyramid(2, lockOnMainFloor("dropHome")),
-  journey("expert_3").pyramid(3, lockOnMainFloor("cellar")),
+  journey("expert_3").pyramid(3, lockOnMainFloor("highWater")),
   // doubleBack lays on few seeds; at the default packing the journey inspector's default seed carves it on no attempt.
-  // overlook lays at the inspector's seed only because of its corridor write order; lockFloorInspector.verify.ts is the tripwire.
-  journey("expert_3").pyramid(4, lockOnMainFloor("overlook")),
+  journey("expert_3").pyramid(4, lockOnMainFloor("lockChamber")),
   journey("expert_3").pyramid(5, lockOnMainFloor("doubleBack", { packing: 0.15 })),
   // expert_4 site 1 stands in for twoStones, which cannot be built yet.
   journey("expert_4").pyramid(1, lessonOnMainFloor("stoneOnAPlate")),
-  journey("expert_4").pyramid(2, lockOnMainFloor("twoLamps")),
-  journey("expert_4").pyramid(3, lockOnMainFloor("cellar")),
-  journey("expert_4").pyramid(4, lockOnMainFloor("overlook")),
+  journey("expert_4").pyramid(2, lessonOnMainFloor("throughTheWall")),
+  journey("expert_4").pyramid(3, lockOnMainFloor("scaffold")),
+  journey("expert_4").pyramid(4, lockOnMainFloor("buildersLift")),
 ]

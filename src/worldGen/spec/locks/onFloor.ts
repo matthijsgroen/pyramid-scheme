@@ -3,8 +3,8 @@ import type { PyramidConstraint } from "../../dsl"
 import { catalogueLock } from "./catalogue"
 
 // What a catalogue lock's controls look like on the floor: a lever is a handle, a board a lightbeam switch, a drop a
-// zipline, an activator or a flame the standing torch, a flood water, a sequence pressure plates. Each lock binds only the
-// kinds it uses.
+// zipline, an activator or a flame the standing torch, a region barrier water or sand, a sequence pressure plates, a
+// weight a stone plate, a pipe the stone pipe. A procession door binds itself. Each lock binds only the kinds it uses.
 const LOCK_BINDINGS = {
   dropHome: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
   twoLamps: { "fork-switch": "lightbeamSwitch", toggle: "handle" },
@@ -20,6 +20,12 @@ const LOCK_BINDINGS = {
   plates: { sequence: "pressure-plate" },
   relay: { toggle: "handle", flame: "torch", "one-way": "zipline" },
   beforeYouJump: { toggle: "handle", "one-way": "zipline" },
+  festivalProcession: { toggle: "handle" },
+  hourglass: { toggle: "handle", flame: "torch", "region-barrier": "sand" },
+  highWater: { toggle: "handle", flame: "torch", activator: "torch", "region-barrier": "water" },
+  lockChamber: { toggle: "handle", activator: "torch", "region-barrier": "water" },
+  scaffold: { weights: "stonePlate" },
+  buildersLift: { weights: "stonePlate", pipe: "stonePipe", "one-way": "zipline" },
 } as const
 
 /** A catalogue lock on the main floor of a pyramid, every region `free`: the floor's own content goes where the carve puts it. */

@@ -1,0 +1,14 @@
+// designed by: Claude
+// expert. The Nile in flood: the key lies past a cellar that is dry only while the torch's hall is under water, and
+// the water puts the torch out. Fetch the key first, then drain the hall and light the torch; lit first, it drowns.
+
+in -- hall
+hall -[K+T]- out
+hall -- torchHall
+hall -- cellar -- vault
+hall -- sluice
+torchHall -[S:a]
+cellar -[S:b]
+S toggle @sluice
+T torch @torchHall
+K activator @vault

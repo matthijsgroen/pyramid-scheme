@@ -174,7 +174,7 @@ out presses it, not by a drop; a repeated step region is refused (`sequenceRegio
 walkable only from its reset at the door (the walk's `strands` checks it); its tiles may stand in any region
 (contract §8 settled). bathHouse (master, the designer's, untracked) walks in 14 actions and carves; it waits for a master floor.
 
-Placement count: 24 placed ✓ + 10 expert stand-ins of 34 (`docs/instructions/agent-work.md` finish line). The designer adopted the one-puzzle-per-floor
+Placement count: 31 placed ✓ + 3 expert stand-ins of 34 (`docs/instructions/agent-work.md` finish line). The designer adopted the one-puzzle-per-floor
 proposal (2026-10-11) and it is baked (`lock-placement.md`, Part 1 says which floors hold a stand-in and why).
 tilesInOrder (expert_1 site 1), plates (expert_1 site 4) and relay (expert_2 site 2) stand where proposed since three
 carve fixes: lengthening skips a corridor into a sequence step's region (its nodes are all kept bare), a lay that fails
@@ -182,8 +182,9 @@ is searched again looking ahead to each region's drops, and the floor walk never
 `crossings` region). Still open: observatory (expert_3 site 2) does not lay anywhere: its three-way board stands in a
 region the route runs through, so its node would need five ways; it needs the board off the route (carve change) or
 the designer's reshape, and its floor keeps dropHome as a stand-in; counterweight (expert_3 site 1) and twoStones (expert_4 site 1) are not
-buildable, so their floors keep a stand-in too; 7 expert slots wait for new locks (Claude may propose and write junior/expert locks; j3.2 holds beforeYouJump), and
-their stand-ins repeat locks placed elsewhere. Every lesson shows its shut door before its control
+buildable, so their floors keep a stand-in too, each repeating a lock placed elsewhere. The 7 expert slots that waited
+for new locks hold Claude's (2026-10-16): festivalProcession, hourglass, highWater, lockChamber, throughTheWall,
+scaffold and buildersLift. Every lesson shows its shut door before its control
 (`lock-curriculum.md`, "A lesson shows the problem first"; `yarn lock` refuses a lesson that does not,
 `doorsSeenLate` in `src/game/lockChecks.ts`). Switch boards are dealt like room boards now (`boardIndex.ts`), so
 no two switches in one tier share a board while the list covers them; every switch floor shows a different board

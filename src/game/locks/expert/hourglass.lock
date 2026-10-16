@@ -1,0 +1,14 @@
+// designed by: Claude
+// expert. An hourglass: one lever buries one hall in sand and clears the other. A torch stands behind each hall,
+// and a lit torch burns on under the sand: light one, turn the glass, light the other, and turn it back to leave.
+
+in -- hall
+hall -- west -- westShrine
+hall -- east -- eastShrine
+hall -- glass
+west -[T1+T2]- out
+west -[S:a]
+east -[S:b]
+S toggle @glass
+T1 torch @westShrine
+T2 torch @eastShrine

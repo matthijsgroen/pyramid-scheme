@@ -3,7 +3,7 @@ import type { FloorConstraint, PyramidConstraint } from "../../dsl"
 import { catalogueLock } from "./catalogue"
 
 // What a lesson's controls look like wherever the world places one: a lever is a handle, a board a lightbeam switch,
-// a drop a zipline, a flame the standing torch, a weight a stone plate. Each lesson binds only the kinds it uses.
+// a drop a zipline, a flame the standing torch, a weight a stone plate, a pipe the stone pipe. Each lesson binds only the kinds it uses.
 const LESSON_BINDINGS = {
   boardPicksTheWay: { "fork-switch": "lightbeamSwitch", toggle: "handle" },
   leverOpensADoor: { toggle: "handle" },
@@ -14,6 +14,7 @@ const LESSON_BINDINGS = {
   stoneOnAPlate: { weights: "stonePlate" },
   waterMoves: { toggle: "handle", "region-barrier": "water" },
   tilesInOrder: { sequence: "pressure-plate" },
+  throughTheWall: { weights: "stonePlate", pipe: "stonePipe", unladen: "narrowPassage" },
 } as const
 
 export type PlacedLesson = keyof typeof LESSON_BINDINGS

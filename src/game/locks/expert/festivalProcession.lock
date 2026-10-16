@@ -1,0 +1,13 @@
+// designed by: Claude
+// expert. Karnak's festival procession: the door's board tells the order of four shrines, two on each side of the
+// hall, and one lever opens one side at a time, so the walk throws it back and forth on the way.
+
+in -- hall
+hall -[P]- out
+hall -[L:a]- north1
+hall -[L:a]- north2
+hall -[L]- south1
+hall -[L]- south2
+hall -- shrine
+L toggle @shrine
+P procession north1 south1 south2 north2
