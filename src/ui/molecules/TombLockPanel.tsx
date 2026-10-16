@@ -17,11 +17,8 @@ export const TombLockPanel: FC<{
   <div className="order-2 mb-6 animate-slide-down">
     <form
       onSubmit={onSubmit}
-      className={clsx(
-        "flex flex-col items-center rounded-b-lg p-4",
-        difficultyMaterialFlat[difficulty],
-        lockState === "error" && "animate-shake"
-      )}
+      className={clsx("flex flex-col items-center rounded-b-lg p-4", lockState === "error" && "animate-shake")}
+      style={difficultyMaterialFlat[difficulty]}
     >
       <NumberLock
         state={lockState}

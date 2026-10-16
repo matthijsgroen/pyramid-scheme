@@ -2,7 +2,8 @@ import type { CellState, GateVariant, KeyColor } from "@/game/siteTypes"
 import type { TileStatus } from "@/game/sequence"
 import { sequenceTileLook } from "./sequenceTileLook"
 import { ART_IMAGE_RENDERING, sharedTileUrl } from "./tileAssets"
-import type { Difficulty } from "@/data/difficultyLevels"
+import { type Difficulty, difficulties } from "@/data/difficultyLevels"
+import { METALS } from "@/ui/tokens/metalPalette"
 import { keyColorHex } from "@/ui/tokens/keyColors"
 import { CELL, NODE_RADIUS_FORK, NODE_RADIUS_LARGE, NODE_RADIUS_PUZZLE, PROP_H } from "./mapScale"
 import type { ShapeKind } from "./nodeKinds"
@@ -566,16 +567,11 @@ const tombGateStroke: Record<CellState, string> = {
   completed: "#7060c0",
 }
 
-// Ward (tomb-key) gate tint per difficulty tier — `visible` is the dimmer locked hue, `reachable`
-// the brighter one (also used for `completed`). Hues track the tier material palette
-// (difficultyColors.ts): stone / amber / slate / gold / emerald.
-const DIFFICULTY_GATE_ACCENT: Record<Difficulty, { visible: string; reachable: string }> = {
-  starter: { visible: "#8a857e", reachable: "#c4bcb2" },
-  junior: { visible: "#c2740e", reachable: "#f59e0b" },
-  expert: { visible: "#586274", reachable: "#94a3b8" },
-  master: { visible: "#c2a10b", reachable: "#eab308" },
-  wizard: { visible: "#0e9268", reachable: "#10b981" },
-}
+// A ward gate is drawn in its key's metal: the plain metal while it is only seen, its light surface once
+// it can be reached.
+const DIFFICULTY_GATE_ACCENT: Record<Difficulty, { visible: string; reachable: string }> = Object.fromEntries(
+  difficulties.map(tier => [tier, { visible: METALS[tier].material, reachable: METALS[tier].light }])
+) as Record<Difficulty, { visible: string; reachable: string }>
 
 const treasureFill: Record<CellState, string> = {
   fogged: "#1a1208",
