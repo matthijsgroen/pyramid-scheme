@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1485410362
+export const worldContentHash = 269173869
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -10087,7 +10087,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         },
         corridorStraightness: 0.35,
         packing: 0.2,
-        seed: 202908677,
+        seed: 202908704,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art3", pieceIndex: 2 },
         rewards: [
           { type: "consumable", consumable: "bandage" },
@@ -10116,7 +10116,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
                 { between: ["workshop", "yard"], barriers: ["workshop>yard"] },
               ],
               gates: {
-                "yard-out": { from: "yard", to: "out", owners: ["p"] },
+                "yard-out": { from: "yard", to: "out", owners: ["p", "q"] },
                 "yard-workshop": { from: "yard", to: "workshop", owners: ["h", "p"], mode: "any" },
               },
               oneWays: {
@@ -10128,6 +10128,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
                 plates: {
                   h: { in: "yard", stone: true, opens: { weighted: ["yard-workshop"], empty: [] } },
                   p: { in: "workshop", stone: false, opens: { weighted: ["yard-out", "yard-workshop"], empty: [] } },
+                  q: { in: "store", stone: false, opens: { weighted: ["yard-out"], empty: [] } },
                   pile: { in: "store", stone: true, opens: { weighted: [], empty: [] } },
                 },
                 pipes: { P: { ends: ["yard", "workshop"] } },
