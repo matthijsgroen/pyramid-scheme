@@ -253,18 +253,18 @@ its places are pyramids, their sections and the outside inputs of their floor lo
 activators minting keys held from outside the floor. Under it is one mechanism, a door whose key is held from
 outside, written in two places:
 
-- **Inside a lock, as an outside input.** `A outside` declares one; the lock names it bare on corridor gates
-  like any owner, `-[A]-`, `-[A+S]-`, `-[A|S]-`, and the web binds it to an activator. Never `A:state` (it
-  would shut on arrival), never on a region barrier (a missing input would douse a torch there, and the floor's
-  water would get a second opener).
+- **Inside a lock, as an outside input.** `A outside` declares one; the lock names it bare like any owner, on
+  corridor gates (`-[A]-`, `-[A+S]-`, `-[A|S]-`) or a region barrier (`hall -[A]`), and the web binds it to an
+  activator. Never `A:state`: it would shut on arrival. At most three per lock.
 - **On ground no lock owns, as section sand:** a side section's mouth, or a floor's main path just past its
   arrival.
-- **A web key only arrives**, and every door naming it is monotone in it. So the floor walk takes every web key
-  on the floor as held, and every state the player reaches while some are still missing is a state of that
-  walk. One held walk proves every order of arrival.
+- **A web key only arrives.** In the floor walk it is a one-way mechanism, `missing → held`, whose move is an
+  arrival offered from every state. So the walk holds every order of arrival: a torch doused under buried
+  ground and the ground then cleared is a state it walks, and relights.
 - **An input's door shows a marker per owner**, the floor owners' floor marks and the input's web mark. Web marks
   come from a glyph set of their own, so two mechanics on one floor still never share a mark.
-- **One sand per site.** Where a site carries a web door, the floor lock's region barriers bind to water.
+- **One sand per site.** Where a site carries a web door, region barriers owned only by floor controls bind to
+  water; a region barrier naming an input is web sand.
 
 ## 4. The fork-switch governs its own fork
 
@@ -562,8 +562,8 @@ one-way and the stones, a stone pipe among them. Targets are edges or regions. `
 A flood puts out a torch and never an activator. The fork-switch governs its own fork. Realisations are bound
 from outside, most specific wins, at bake time, refused when unbound. A realisation may not change what
 the solver sees. Impassable conceals, and conceals what was explored, without erasing it. A web lock's sand is a door whose key is held from outside the floor:
-an outside input a lock declares on its corridor gates, or a section gate on ground no lock owns, opened once
-and never shut by the input.
+an outside input a lock declares on its gates, or a section gate on ground no lock owns, arriving once and
+never shut by the input.
 
 A gate may show its own condition, and a sequence's reset is at its door. A sequence is solved once: when
 it is done, it stays done. On a door it shares with other owners, those can still switch or reset, and the door

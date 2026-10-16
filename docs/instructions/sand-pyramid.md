@@ -68,25 +68,40 @@ A outside                       an outside input: held or not, never on this flo
 in -[A]- court                  open once A is held
 court -[R|A]- east              the lever or the input
 scale -[p1+A]- out              a stone on p1 and the input
+hall -[A]                       a buried region: hall impassable until A is held
 ```
 
 **The rules, each refused by name when broken:**
 
 1. **An input is named bare.** `-[A:off]-` would open while the input is missing and shut when it arrives,
    which makes arrival a loss. Refused: `outsideState`.
-2. **An input owns corridor gates only, never a region barrier.** A region barrier covers its region while
-   shut and douses a torch there (`douseTorches`, `src/game/mechanismDoors.ts`; `torches.coveredBy` in
-   `src/game/lockWalk.ts`). A torch put out because an input was still missing is a state no walk with the
-   input held reaches, so the proof below would not cover it. And a region barrier is drawn by the floor's
-   realisation (water, at a web site); an outside owner would be a second opener on that drawing. Refused:
-   `outsideOnRegion`. To bury a whole region the lock puts the input on each corridor into it.
-3. **An input owns at least one gate** (the existing "owns no gate" refusal).
-4. **An input is not a draft.** An owner nothing declares stays a draft, refused as "not placed yet", as today;
+2. **An input owns at least one gate** (the existing "owns no gate" refusal).
+3. **An input is not a draft.** An owner nothing declares stays a draft, refused as "not placed yet", as today;
    `outside` is the declaration that says the owner is meant to come from off the floor.
+4. **A lock declares at most three inputs.** Each doubles the walk's states (below). Refused: `outsideTooMany`.
 
-In the walk an input is a mechanism with one state, `held`, that opens every gate naming it, and no move: the
-held walk (`walkSpecOf`, `src/game/lockWalkSpec.ts`). `deadRegions` already reads an owner with no move as
-off-floor, so a region behind an input is never called dead.
+An input may own a region barrier, `hall -[A]`: the region is buried until the input arrives. While it lies, a
+torch in the region is doused (`douseTorches`, `src/game/mechanismDoors.ts`), as under water; once the sand
+clears the torch can be lit again. The walk below models that, so it needs no rule of its own.
+
+**In the walk an input is a one-way mechanism**: states `missing` and `held`, starting `missing`, opening its
+gates in `held`. Its one move, `missing → held`, is an **arrival**: a move the walk may make from every state,
+wherever the player stands, never a choice made in a region. That is exact. A key arrives while the player is
+elsewhere, and the player comes back to the state they left: between journeys the save keeps the position, and
+a pyramid re-entered from the travel map comes back at its entrance, which re-entry models (below). An arrival
+mid-visit, from an activator on another floor of the same pyramid, is a state the player left too.
+
+So the walk has every order of arrival in it, and every check runs over all of it: a torch doused under sand and
+then the sand cleared is a state like any other, and from it the way out must still be reachable and no region
+lost. The walk counts an arrival as a way out of a state: a pocket whose way out waits on a missing input is not
+a strand on the floor. Whether that input can be fetched without finishing this pyramid is the web's question
+(below).
+
+**The cost.** A lock's states are its regions times the product of its mechanisms' states, so n inputs
+multiply them by 2ⁿ: three inputs, eight times. `MAX_LOCK_STATES` (50,000, `src/game/lockWalk.ts`) still
+caps the walk and reports `tooLarge`; rule 4 keeps a wizard lock well inside it. A section gate on the same
+floor is an input of the floor's compiled lock too, and counts against the floor walk's ceiling, not the
+lock's rule.
 
 A lock with inputs is placed only where a web binds every one of them, which today is the wizard tier.
 
@@ -94,16 +109,18 @@ A lock with inputs is placed only where a web binds every one of them, which tod
 
 ```
 ✓ compiles
-✓ every region is reachable          (with every input held)
+✓ every region is reachable
 ✓ solvable
-inputs: A, B, C, walked held
-✓ every input's door is in reach while that input is missing: A at in, B at court, C at scale
+inputs: A, B, C, arriving in any order
+✓ every shut door is seen before its control: A at in, B at court, C at scale
 ```
 
-The last line walks the lock once per input, with that input missing and the others held, and asks whether
-some state stands beside a door naming it. A lock whose input door is in reach only once the input is held is
-warned about (`⚠ C: its door is reached only once C is held`), refused on a lesson, as `doorsSeenLate` is. The
-order between inputs is the web's question, answered on the baked floors (below).
+`doorsSeenLate` (`src/game/lockChecks.ts`) answers the input doors too, in the same walk. Inputs start
+missing, so a door naming one is shut at the start, and the check's own rule (reach the door from `in` while
+its owners are unchanged) means reaching it while its input is still missing; other inputs may arrive on the
+way. An input has no control region on the floor, so nothing is forbidden but its arrival. A lock whose input
+door is in reach only once the input has arrived is warned about (`⚠ C: its door is reached only once C is held`), refused on a lesson. The order between levers across pyramids is the web's question, answered on the
+baked floors (below).
 
 ## The web side: the web lock
 
@@ -273,8 +290,9 @@ the web's gates and bindings. Before a bake, `yarn lock` on each wizard lock giv
 already visited. Every pyramid needs one visit, so the cost the web adds is its revisits. The walk is
 breadth-first over the states (held web keys, each journey's cursor), one move per visit.
 
-**What a visit can do under held keys H** comes from the floor walks of that pyramid with exactly H held,
-memoised per pyramid and per H (a pyramid's own web keys are few, so the subsets are few):
+**What a visit can do under held keys H** comes from the floor walks of that pyramid with arrivals limited to
+the keys in H, memoised per pyramid and per H (a pyramid's own web keys are few, so the subsets are few). A
+state of that walk holds any part of H, since a key held now may have arrived at any point of earlier visits:
 
 - **finishes** if, from every state the floor walks reach under H, the exit is still reachable under H;
 - **takes an activator** if, from every such state, the activator's cell is still reachable;
@@ -314,8 +332,8 @@ What each line means:
   pyramid, is refused, naming the floor and the key.
 - **seen before pulled.** For each web door there is an order in which the player sees its face (in reach
   and shut) before its activator is taken. A face of a section gate is the section's mouth; a face of an
-  input is a door of the lock naming it, so the lock-level check above is this one, with the held set the web
-  actually reaches. A lever whose door cannot be seen first is a warning naming the place
+  input is a door of the lock naming it, so the lock-level check above is this one, with only the keys the web
+  actually holds by then allowed to arrive. A lever whose door cannot be seen first is a warning naming the place
   (`⚠ w3p1.f1.scales.C: its door is reached only once star is pulled`), as on a lock that is not a lesson. A
   lever pulled before its sand is reached is not lost: the travel screen lights the buried pyramid once a
   visit has been made and the key is held.
@@ -329,34 +347,35 @@ What each line means:
 - **cheapest.** The fewest visits to finish every journey, and the fewest to clear everything, with one
   cheapest route. A failed check prints `✗` and the chain it found, as `yarn lock` does.
 
-## Why the held walk is enough
+## Why the walk is exact
 
-The floor's soundness gate is **one walk with every web key on the floor held**, plus today's checks
-(solvable, no strand, no region lost, no dead region). The claim: every state the player can reach while some
-keys are still missing is a state of that walk, so the held walk's no-strand check covers every order of
-arrival, stones left in regions that later clear included.
+The floor's soundness gate is **one walk in which every web key on the floor is a one-way mechanism**,
+`missing → held`, arriving from any state, plus today's checks (solvable, no strand, no region lost, no dead
+region). It does not argue that the states with keys missing are covered by some other walk: it walks them.
+Every order of arrival, at every point of play, is a path in it.
 
-**The argument.** A walk state is the player's region and every mechanism's state. A missing key only shuts
-doors: under `+` and `|` alike, a door's openness never falls when an owner it names bare goes from missing to
-held (rule 1). So every move made with some keys missing (a step through an open door, a drop, a lever thrown,
-a tile crossed, a stone set down) is a move the held walk also has, from the same state to the same state.
-A key arriving changes no mechanism's state and moves nobody; it only opens doors. So a play history with keys
-arriving at any moments is a walk of the held floor, state by state.
+**Checked case by case:**
 
-**Checked against what could break it:**
+| Case                                        | Exact?  | Why                                                                                                                                                                                   |
+| ------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Toggles on the same door (`-[A+S]-`)        | yes     | the door folds the input's state with the toggle's, both in the config                                                                                                                |
+| `\|` and `+` combinations                   | yes     | `openGates` folds every owner by the gate's mode, an input like any other                                                                                                             |
+| `-[A:off]-`                                 | refused | it opens while the input is missing and shuts on arrival, which makes a lever pulled elsewhere a loss. Rule 1                                                                         |
+| A region barrier naming an input            | yes     | while the input is missing the region is covered and a torch in it is doused (`dousedConfig` after every move); after the arrival it can be lit again. Both states are walked         |
+| A stone left in a region that later clears  | yes     | the stone's place is in the config; the arrival changes only the input                                                                                                                |
+| Drops                                       | yes     | a drop is a move like any other. A pocket whose way out waits on a missing input leaves by an arrival; the web's "every state" reading refuses one whose key lies behind this pyramid |
+| The procession reset                        | yes     | a reset is a transition at the door; what play keeps beside it (`sequenceReads`) only grows and is outside the walk                                                                   |
+| Mechanism state kept between visits         | yes     | the saved config is a walk state; web keys are not in it (`mechanismStates` holds positions only), and the arrival move is what happens to the floor while the player is away         |
+| Keys arriving between visits, or during one | yes     | an arrival is offered from every state, so both are paths of the walk                                                                                                                 |
+| Coming back at the entrance                 | **no**  | see below; the re-entry rule fixes it                                                                                                                                                 |
 
-| Case                                        | Holds? | Why                                                                                                                                                                                                                                                      |
-| ------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A toggle on the same door (`-[A+S]-`)       | yes    | the toggle can shut the door, never the input; the door is still monotone in the input                                                                                                                                                                   |
-| `\|` and `+` combinations                   | yes    | both folds are monotone in every bare owner (`doorOpen`)                                                                                                                                                                                                 |
-| `-[A:off]-`                                 | **no** | opens while the input is missing and shuts on arrival. Rule 1 refuses it                                                                                                                                                                                 |
-| A region barrier naming an input            | **no** | while the input is missing the region is covered, so a torch in it is doused, a state the held walk need not reach. Rule 2 refuses it                                                                                                                    |
-| Region barriers owned by floor controls     | yes    | the douse follows floor mechanisms only, the same in both walks                                                                                                                                                                                          |
-| Drops                                       | yes    | a drop is a move both walks have. A player who drops into a pocket whose way out waits on a missing key is in a state of the held walk, which reaches the exit; the web's "every state" reading catches a pocket that waits on a key behind this pyramid |
-| The procession reset                        | yes    | a reset is a transition at the door, a move both walks have; what play keeps beside it (`sequenceReads`) only grows and is outside the walk                                                                                                              |
-| Mechanism state kept between visits         | yes    | the saved config is a walk state; web keys are not in it (`mechanismStates` holds positions only), so a key arriving while away changes nothing saved                                                                                                    |
-| Keys arriving between visits, or during one | yes    | the argument does not depend on when a key arrives                                                                                                                                                                                                       |
-| Coming back at the entrance                 | **no** | see below                                                                                                                                                                                                                                                |
+**Arrivals and the checks.** An arrival counts as a way out of a state for "no strand" and "no region lost": a
+player waiting on a lever is not stuck, since leaving keeps the floor. That is only true if the lever can be
+pulled without finishing this pyramid, which the web walk proves. A state stranded with every input held
+stays a strand.
+
+**The cost.** n inputs multiply the floor's states by 2ⁿ. Rule 4 holds a lock to three; a floor with section
+gates as well counts those too, and `MAX_LOCK_STATES` reports `tooLarge` past its ceiling as today.
 
 **Coming back at the entrance.** The walk has one way of leaving and coming back: from the way out to the way
 in, because "re-entering a site puts the player back where they stood" (`movesFrom`, `src/game/lockWalk.ts`).
@@ -371,26 +390,24 @@ it also brings the player back to the pyramid they were in at its entrance.
 from every reachable state, the state at `in` with the same config (a stone in hand stays in hand, as the save
 keeps it). The new states must pass every check like any other. The backward sweep for strands and lost
 regions does not use the re-entry edges, so a chamber a mechanism sealed is still a strand: re-entry is a way
-to start again, not a way out of a trap. Whether the rule belongs on every floor, or the save should keep a
-position per pyramid instead, is open question 8.
+to start again, not a way out of a trap. Arrivals and re-entry are independent moves, so a key that arrives
+while the player is away and a return at the entrance are both walked, in either order. Whether the rule
+belongs on every floor, or the save should keep a position per pyramid instead, is open question 7.
 
 **Sand cannot trap a floor lock.** Web keys only arrive, the player can always leave a pyramid with the floor's
-state kept, the held walk proves every state finishes once the keys arrive, and the web walk proves each key is
-obtainable without finishing the pyramid that waits on it.
+state kept, the walk proves every state finishes once the keys it waits on arrive, and the web walk proves each
+key is obtainable without finishing the pyramid that waits on it.
 
 ## Seen before its control, across the layers
 
-`doorsSeenLate` (`src/game/lockChecks.ts`) skips a gate open at the start, and in the held walk an
-input-only gate is open from the start. So an input's door gets its own check:
-
-- **On the lock** (`yarn lock <file>`): one walk per input, that input missing and the others held, asking
-  whether some state stands beside a door naming it. Reported per input on the inputs line; a warning, refused
-  on a lesson.
-- **On the web** (`yarn lock <web>`): the same question under the held set the web actually reaches before the
-  input's activator is taken, which accounts for inputs that wait on each other (C's door behind A's).
-  Reported on "every buried place is seen before its lever is pulled", naming `w3p1.f1.scales.C`.
-- **A door with an input and a floor control** (`-[p1+C]-`) is checked both ways: before its floor control, as
-  `doorsSeenLate` does in the held walk; and while its input is missing, as above.
+- **On the lock** (`yarn lock <file>`): `doorsSeenLate` in the one walk, input doors included, because an input
+  starts missing and its door is shut at the start. Reaching the door with its owners unchanged means reaching
+  it before its input arrives; other inputs may arrive on the way. No separate walk per input is needed.
+- **On the web** (`yarn lock <web>`): the same question with only the keys the web holds before this lever
+  allowed to arrive, which accounts for doors that wait on each other across pyramids. Reported on "every
+  buried place is seen before its lever is pulled", naming `w3p1.f1.scales.C`.
+- **A door with an input and a floor control** (`-[p1+C]-`) is one gate with two owners; `doorsSeenLate` asks
+  for it to be reached before either is worked or arrives.
 
 ## Marks and the look of an input's door
 
@@ -400,10 +417,11 @@ input's web mark. Web marks are the activators' (below), from a glyph set disjoi
 mechanics on one floor still never share a mark and `allocateMarks` (`src/game/mark.ts`) never sees a web key.
 
 A door naming an input is drawn as the web's: web sand at a wizard_3 site, a web seal elsewhere, with its
-markers on it. A section gate is drawn the same way.
+markers on it. A section gate is drawn the same way. A region barrier naming an input is web sand over the
+region, and conceals what was explored under it as every region barrier does.
 
-**One sand per site.** On a pyramid carrying any web door, floor-lock region barriers bind to water, so sand on
-that site means one thing. The illustration's flood is water already.
+**One sand per site.** On a pyramid carrying any web door, region barriers owned only by floor controls bind to
+water, so sand on that site always means a lever elsewhere. The illustration's flood is water already.
 
 ## What the bake checks, to tie the web to the real floors
 
@@ -417,8 +435,8 @@ that site means one thing. The illustration's flood is water already.
    for `web:<id>`. Every input's gates are laid asking for `web:<activator>` beside their floor owners' keys,
    under the gate's mode. No other door asks for a web key.
 5. Every activator is the end reward of the section it names, one per id, and opens at least one door.
-6. Rules 1 and 2 of the lock side, on every placed lock; one gate per section mouth.
-7. Every floor carrying a web door walks sound in the held walk, with re-entry.
+6. The lock-side rules on every placed lock; one gate per section mouth.
+7. Every floor carrying a web door walks sound with its web keys arriving, and with re-entry.
 8. The world solver, run with web keys as positional keys and the order inside each journey, agrees with
    the web walk: every activator reachable, every door opened, every journey finished. No activator needs a
    key from outside the web (a ward key, a map piece), so the web walk's assumptions are exact.
@@ -442,12 +460,15 @@ that checks `heldKeys.has(id)` then works unchanged, and a door with floor owner
 
 ## What the floor compiler needs
 
-`floorLock` takes the held web keys. Today a door key that no mechanism and no chest on the floor supplies is
-`sealed`: an owner with one state that opens nothing. A key under the `web:` stem becomes an owner
-`outside <key>` instead, one state, opening its gates when the key is in the held set and nothing when it is
-not. So the held walk, a walk with one input missing, and a walk under any held set H are one compile with a
-different set. A floor whose only gates are web doors compiles too (today `floorLock` returns nothing for a
-floor with no mechanism), so the web walk can ask it what is in reach.
+Today a door key that no mechanism and no chest on the floor supplies is `sealed` in `floorLock`: an owner
+with one state that opens nothing. A key under the `web:` stem becomes an owner `outside <key>` instead, with
+states `missing` and `held`, opening its gates in `held`. Its one move is an arrival, which `LockSpec` carries
+as a field of its own (`arrivals`, a mechanism and the move), because a transition is made standing in a region
+and an arrival is not; `movesFrom` offers each arrival from every state. `floorLock` takes the keys allowed to
+arrive (all of the floor's for the soundness walk, H for the web walk) and starts each in `missing`. A region
+barrier carrying a web key covers its region through `barrierGates` as any region barrier does, so its torches
+are doused by the walk unchanged. A floor whose only gates are web doors compiles too (today `floorLock`
+returns nothing for a floor with no mechanism), so the web walk can ask it what is in reach.
 
 `openDoorsFor` and `floorLock` must agree on a door naming several keys (`../mods/mechanic-contract.md` §9,
 item 6); an input's door is such a door, so that agreement is tested here.
@@ -558,9 +579,9 @@ pyramid is an ordinary pyramid. Free order between journeys is core progression 
 | System        | What changes                                                                                                                         | Files                                                                                                                                                                |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Progression   | a free-order flag per tier; skip the "previous completed" check; the "next journey" offer                                            | `src/app/pages/journeyAvailability.ts`, `src/data/difficultyLevels.ts` or `journeyStructure.ts`                                                                      |
-| Lock notation | `X outside`; rules 1 to 3 as refusals; the held walk; one walk per missing input; the inputs line                                    | `src/game/lockNotation.ts`, `src/game/lockAuthoring.ts`, `src/game/lockWalkSpec.ts`, `src/game/lockChecks.ts`, `src/game/lockCompile.ts`                             |
-| Web format    | the `.web` notation with bindings, its compiler, the walk over baked floors under held sets, the report                              | new `src/game/webNotation.ts`, `src/game/webWalk.ts`, `scripts/lock.ts`                                                                                              |
-| Floor walk    | `web:` keys as outside owners under a held set; floors with only web doors compile; re-entry states                                  | `src/game/floorLock.ts`, `src/game/lockWalk.ts`, `src/game/floorLockWalk.ts`, `src/worldGen/validate.ts`                                                             |
+| Lock notation | `X outside`; the refusals; inputs as one-way arrivals; `doorsSeenLate` on input doors; the inputs line                               | `src/game/lockNotation.ts`, `src/game/lockAuthoring.ts`, `src/game/lockWalkSpec.ts`, `src/game/lockChecks.ts`, `src/game/lockCompile.ts`                             |
+| Web format    | the `.web` notation with bindings, its compiler, the walk over baked floors with arrivals limited to H, the report                   | new `src/game/webNotation.ts`, `src/game/webWalk.ts`, `scripts/lock.ts`                                                                                              |
+| Floor walk    | `web:` keys as arriving owners; `LockSpec.arrivals`; floors with only web doors compile; re-entry states                             | `src/game/floorLock.ts`, `src/game/lockWalk.ts`, `src/game/floorLockWalk.ts`, `src/worldGen/validate.ts`                                                             |
 | Keys / save   | `webKeys` in topology mod state; a held-keys provider giving `web:<id>`                                                              | `src/mods/topology/app/`, `src/app/SiteMap/keyProviders.ts`                                                                                                          |
 | World-gen DSL | a `web-key` section gate; a main-path gate at the arrival; a `webKey` end reward; input gates laid with their web key; the web bound | `src/worldGen/dsl.ts`, `src/worldGen/rewards.ts`, `src/worldGen/buildSite.ts`, `src/game/carve/chainRooms.ts`, `src/game/layLocks.ts`, `src/worldGen/spec/wizard.ts` |
 | World solver  | web keys as positional keys; the order inside a journey; agreement with the web walk                                                 | `src/worldGen/reachability.ts`, `src/worldGen/placeFragments.ts`, topology mod descriptor                                                                            |
@@ -581,7 +602,7 @@ pyramid is an ordinary pyramid. Free order between journeys is core progression 
 - **Sections the web buries that carry a ward gate today** lose it to another place in the journey, at the
   designer's say (open question 2).
 - **No other tier moves.** Re-entry states change no carve; if they are turned on for every floor (open
-  question 8), they may refuse floors that bake today, which is why that is measured first.
+  question 7), they may refuse floors that bake today, which is why that is measured first.
 
 ### Risks
 
@@ -608,23 +629,26 @@ Rough sizes: S is about a day, M two to three days, L a week.
 1. **Free order between journeys (S).** The tier flag, the availability check, the next-journey offer. Tests
    freeze: in a free-order tier every journey opens with the tier key; in any other tier the
    previous-completed rule holds; the offer never names a closed journey.
-2. **Outside inputs in the lock notation (M, Opus).** `X outside`, the refusals, the held walk, one walk per
-   missing input, the inputs line. Tests freeze, on made-up locks: a gate naming a declared input is open in
-   the held walk and shut with the input missing; `-[X:off]-` is refused as `outsideState`; an input on a
-   region barrier is refused as `outsideOnRegion`; an input owning no gate is refused; an undeclared owner is
-   still a draft; for every subset of a made-up lock's inputs, every state reachable is a state of the held
-   walk; an input whose door is in reach only once it is held is warned about, and refused on a lesson.
-3. **`floorLock` with held web keys (M, Opus).** `web:` keys as outside owners, a floor with only web doors
-   compiling. Tests freeze, on made-up floors: a web door is open in the compile with its key held and shut
-   without; a door with a web key and a lever under `all` opens only with both, under `any` with either;
-   `openDoorsFor` and `floorLock` give the same open doors for every held set and lever position.
+2. **Outside inputs in the lock notation (M, Opus).** `X outside`, the refusals, inputs as one-way arrivals
+   (`LockSpec.arrivals`), `doorsSeenLate` on input doors, the inputs line. Tests freeze, on made-up locks: a
+   gate naming a declared input is shut before its arrival and open after; an arrival is offered from every
+   state; `-[X:off]-` is refused as `outsideState`; a fourth input is refused as `outsideTooMany`; an input
+   owning no gate is refused; an undeclared owner is still a draft; a lit torch in a region an input bars is
+   out until the arrival and can be lit after it; a lock that strands only after a torch was doused under sand
+   and the sand cleared is refused; a pocket left only by an arrival is not a strand; an input whose door is in
+   reach only once it has arrived is warned about, and refused on a lesson.
+3. **`floorLock` with arriving web keys (M, Opus).** `web:` keys as arriving owners, limited to a given set, a
+   floor with only web doors compiling. Tests freeze, on made-up floors: a web door is shut before its key
+   arrives and open after; a key outside the given set never arrives; a door with a web key and a lever under
+   `all` opens only with both, under `any` with either; a region barrier carrying a web key douses a torch in
+   its region; `openDoorsFor` and `floorLock` give the same open doors for every held set and lever position.
 4. **Re-entry states (M, Opus).** The re-entry move on floors of web journeys. First a measurement: how many
    catalogue locks and baked floors fail with re-entry on, reported as a number and a list, with no conclusion
    it did not measure. Tests freeze: a made-up floor that strands only after coming back at the entrance is
    refused; a chamber a mechanism sealed is still a strand with re-entry on; a floor sound today and sound
    with re-entry reports the same.
-5. **The web format and its walk (M).** Notation with bindings, compile, the walk over baked floors under held
-   sets, the report. Tests freeze, on made-up webs over a made-up world: pyramids in one journey open in order
+5. **The web format and its walk (M).** Notation with bindings, compile, the walk over baked floors with
+   arrivals limited to the held set, the report. Tests freeze, on made-up webs over a made-up world: pyramids in one journey open in order
    and journeys in any order; an unbound input and a binding naming no input are each refused by name; an
    activator behind its own sand is refused by name; a two-key cycle is refused naming the chain; a web with
    anything but activators, sections and bindings is refused; a floor that can be played into waiting on a
@@ -660,13 +684,9 @@ Rough sizes: S is about a day, M two to three days, L a week.
 4. **One arrival or two?** wizard_3's arrival (Fez and the scale) and the buried-pyramid arrival ("It is full")
    happen in the same place. Play both in order, merge them, or move the scale to the clearing?
 5. **Does a pull show anything where it is pulled?** A Fez line, or the sand channel emptying and nothing said.
-6. **A buried region:** an input on a region barrier (`hall -[A]`) is refused, because it would douse a torch
-   in the region and stand a second opener on the floor's water. Is an input on each corridor into the region
-   enough, or should a region barrier take an input where the region holds no torch, as sand that conceals
-   what lies under it?
-7. **Outputs as well as inputs:** may a lock declare where a web activator stands inside it (a lock's `$`
+6. **Outputs as well as inputs:** may a lock declare where a web activator stands inside it (a lock's `$`
    region holding the web's key), so the web names it as it names an input? Today an activator stands at a
    section's end, and whether that section lies inside the lock is the carve's choice.
-8. **Coming back at the entrance:** re-entry states fix a gap every floor has today, the web only makes it
+7. **Coming back at the entrance:** re-entry states fix a gap every floor has today, the web only makes it
    common. Turn them on for every floor once the measurement in slice 4 is in, keep them to web journeys, or
    change the save so a revisit resumes where the player stood in that pyramid?
