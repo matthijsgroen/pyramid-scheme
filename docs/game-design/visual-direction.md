@@ -57,20 +57,22 @@ gold, divine → emerald), and the one the hieroglyph tiles already wear.
 What each rank is made of beyond its colours. **Tier theme**, not _theme_: in the code a `theme` is a
 floor's hour or weather (`journeys.md` §2), and the two must not share a word.
 
-| Tier                             | Motifs and ornament                                                            | Signature props                                                                          | Air and life                                                                                     |
-| -------------------------------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| **starter · stone** storehouse   | tally marks, merchants' seals, basket weave, ochre bands                       | jars on shelves, a striped awning cloth (hanging), a grain bin (basin)                   | warm sunlit dust and chaff; **a cat and mice** — Ipi's cats were _for the grain_                 |
-| **junior · copper** noble house  | lotus and papyrus, rosettes, banquet friezes, a painted dado                   | copper vessels with verdigris (basin), lotus pillars, an offering table with flowers     | scented incense haze, drifting petals; **a goose** — Henut's, in the place an owl belongs        |
-| **expert · silver** clean temple | ceiling stars, djed and was pillars, sunk-relief text columns, a crescent moon | **satin curtains** (hanging), silver lamps, a basin of still water, a shut naos (shrine) | clear and cool, one slow thread of incense; **now and then an ibis**, Thoth's. Otherwise nothing |
-| **master · gold** galleries      | cartouches, the winged sun disc, uraeus cobras, a kheker frieze                | gilded statues, a gold-inlaid sarcophagus, a gilded shrine, braziers                     | still and ceremonial, gold dust catching the shafts; **now and then a cobra**                    |
-| **wizard · emerald** the gods    | stars (Nut), ankh, the Eye of Horus, Ma'at's feather                           | crystals, a shrine that is a window on the cosmos, seams of light in the floor           | motes of light rising **upward** instead of settling, an emerald glow; **no animals**            |
+| Tier                             | Motifs and ornament                                                                                                     | Signature props                                                                          | Air and life                                                                          |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| **starter · stone** storehouse   | tally marks, merchants' seals, basket weave, ochre bands; **cats** painted by the grain — Ipi's were _for the grain_    | jars on shelves, a striped awning cloth (hanging), a grain bin (basin)                   | warm sunlit dust and chaff; **scarabs and mice**                                      |
+| **junior · copper** noble house  | lotus and papyrus, rosettes, banquet friezes, a painted dado; **a goose** in the frieze — Henut's, where an owl belongs | copper vessels with verdigris (basin), lotus pillars, an offering table with flowers     | scented incense haze, drifting petals; **scarabs**                                    |
+| **expert · silver** clean temple | ceiling stars, djed and was pillars, sunk-relief text columns, a crescent moon, **Thoth's ibis**                        | **satin curtains** (hanging), silver lamps, a basin of still water, a shut naos (shrine) | clear and cool, one slow thread of incense; nothing living                            |
+| **master · gold** galleries      | cartouches, the winged sun disc, uraeus cobras, a kheker frieze                                                         | gilded statues, a gold-inlaid sarcophagus, a gilded shrine, braziers                     | still and ceremonial, gold dust catching the shafts; nothing living                   |
+| **wizard · emerald** the gods    | stars (Nut), ankh, the Eye of Horus, Ma'at's feather                                                                    | crystals, a shrine that is a window on the cosmos, seams of light in the floor           | motes of light rising **upward** instead of settling, an emerald glow; nothing living |
 
 Every signature prop is a rank's drawing of a kind the brief already has (§2, thirteen kinds), so a tier
 theme adds no kind. The air extends `RANK_MOOD` in `moodSettings.ts`, which today carries a tint, drifting
 motes, scarabs and the odds of a shaft; the motes' direction (wizard's rise) is new.
 
-**The animals are new art.** `life` draws scarabs only today: a cat, mice, a goose, an ibis and a cobra
-are five small sprites, budgeted below.
+**Nothing lives in a tomb but vermin.** The sites are thousands of years shut, so the only living things
+are what gets into a cellar: scarabs and mice, in the two shallow ranks — the deeper ones are too sealed
+and too cold, as `RANK_MOOD` already has it. Every other animal is a **depiction**: painted, carved or a
+statue, part of the motifs. Mice are the one new sprite, drawn and moved the way the scarabs are.
 
 ## One palette, three readers
 
@@ -152,8 +154,8 @@ brief before copper starts.
 
 The game precaches everything for offline play (`story/review.md` § The art budget: 5.4 MB today). A repaint
 replaces tiles rather than adding them, so the total holds; each rank's imports are checked against the
-files they replace, and webp is the lever if texture makes them heavier. The tier themes' five animals are
-the one addition: small floor sprites, a few kB each.
+files they replace, and webp is the lever if texture makes them heavier. The mouse is the one addition: a
+small floor sprite of a few kB.
 
 ## Out of scope
 
