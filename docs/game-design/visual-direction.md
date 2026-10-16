@@ -105,16 +105,15 @@ legible:
 ## Light and the map code
 
 - **Night washes** fall to 0.2 or less at every rank (`tierPalette[tier].shade`).
-- **Shafts** are re-solved so the patch of sun lands above the new floor. Today's numbers in `lighting.ts`
-  (ray L\* 44.8, sun 66.6) were measured against an unlit floor at L\* 27.
-- **The click marker** takes each rank's counter-accent — lapis on gold, gold on emerald — because a gold
-  marker vanishes on a floor full of gold props. It holds 3:1 against the floor at every rank.
+- **Shafts** are re-solved so the patch of sun lands above the new floor. The numbers in `lighting.ts`
+  (ray L\* 65.5, sun 70.1) are measured on the lit starter floor, over an unlit floor of about L\* 35.
+- **The click marker** stays one gold fill in a dark ring at every rank (`markerColours.ts`): the ring already makes one shape read on light and dark stone. `yarn rank-colour` holds it to 3:1 against every floor.
 - **The state washes** (visited, completed) are checked on the lighter grounds and kept if they still read.
 
 ## Measuring
 
 The method is the one in `docs/instructions/map-rendering.md` § Measuring: off the art composited through
-the renderer's own operators, read as L\*, chroma and hue angle. One script samples each rank's rendered
+the renderer's own operators, read as L\*, chroma and hue angle. `yarn rank-colour` (`scripts/rankColour.ts`) samples each rank's rendered
 Storybook floor and prints, per rank:
 
 - the metal's chroma after the wash
@@ -127,6 +126,36 @@ wash, its ground-to-metal contrast is at least master's, the marker holds 3:1, p
 floor at least as well as today's 2.08 — and the user signs it off on screenshots of a real floor in the
 game, not on loose tiles.
 
+Baseline, all ranks at their shipped night:
+
+```
+┌─────────┬──────────┬──────────┬────────────┬──────────────┬──────────┬───────────┬───────────┬──────────────────┬─────────────┐
+│ (index) │ floor L* │ floor C* │ metal C*   │ ground→metal │ marker   │ prop      │ face step │ solved faceNight │ hue to next │
+├─────────┼──────────┼──────────┼────────────┼──────────────┼──────────┼───────────┼───────────┼──────────────────┼─────────────┤
+│ starter │ 27.5     │ 7        │ '34.3 LOW' │ '1.6 LOW'    │ '7.4 ok' │ '1.4 LOW' │ 8.9       │ 0.09             │ 18.1        │
+│ junior  │ 29.8     │ 20       │ '26.1 LOW' │ '9.1 LOW'    │ '6.8 ok' │ '1.1 LOW' │ 10.4      │ 0                │ 157.9       │
+│ expert  │ 29       │ 5.8      │ '7.3 LOW'  │ '0.6 LOW'    │ '7 ok'   │ '1 LOW'   │ 10.2      │ 0.09             │ 178         │
+│ master  │ 25.3     │ 5.8      │ '47.5 ok'  │ '31.8 ok'    │ '8 ok'   │ '3.2 ok'  │ 8         │ 0.13             │ 80.1        │
+│ wizard  │ 28       │ 12.9     │ '22.9 LOW' │ '2 LOW'      │ '7.2 ok' │ '1.2 LOW' │ 10        │ 0.22             │ ''          │
+└─────────┴──────────┴──────────┴────────────┴──────────────┴──────────┴───────────┴───────────┴──────────────────┴─────────────┘
+```
+
+After starter's night falls to 0.2:
+
+```
+┌─────────┬──────────┬──────────┬────────────┬──────────────┬──────────┬───────────┬───────────┬──────────────────┬─────────────┐
+│ (index) │ floor L* │ floor C* │ metal C*   │ ground→metal │ marker   │ prop      │ face step │ solved faceNight │ hue to next │
+├─────────┼──────────┼──────────┼────────────┼──────────────┼──────────┼───────────┼───────────┼──────────────────┼─────────────┤
+│ starter │ 33.9     │ 7.8      │ '46.1 LOW' │ '0.9 LOW'    │ '5.9 ok' │ '1.7 LOW' │ 7.8       │ 0                │ 18.6        │
+│ junior  │ 29.8     │ 20       │ '26.1 LOW' │ '9.1 LOW'    │ '6.8 ok' │ '1.1 LOW' │ 10.4      │ 0                │ 157.9       │
+│ expert  │ 29       │ 5.8      │ '7.3 LOW'  │ '0.6 LOW'    │ '7 ok'   │ '1 LOW'   │ 10.2      │ 0.09             │ 178         │
+│ master  │ 25.3     │ 5.8      │ '47.5 ok'  │ '31.8 ok'    │ '8 ok'   │ '3.2 ok'  │ 8         │ 0.13             │ 80.1        │
+│ wizard  │ 28       │ 12.9     │ '22.9 LOW' │ '2 LOW'      │ '7.2 ok' │ '1.2 LOW' │ 10        │ 0.22             │ ''          │
+└─────────┴──────────┴──────────┴────────────┴──────────────┴──────────┴───────────┴───────────┴──────────────────┴─────────────┘
+```
+
+The game's floor 0 moved from L\* 34.8 to 42.3: lighter, not yet more colourful, because the starter art is still the brown cellar. Colour arrives with the surface repaint.
+
 ## Starter first
 
 Stone is the rank every player sees first, so it is the pilot. The work splits as the pipeline already
@@ -134,7 +163,9 @@ does: Claude writes prompts, imports, sets tokens and measures; the user generat
 `yarn repaint <key>`.
 
 1. **Tokens first** — starter's ground, metal and a wash of 0.2, viewed with the existing tiles in
-   Storybook and on floor 0. The direction is visible before anything is generated.
+   Storybook and on floor 0. The direction is visible before anything is generated. The ground tokens
+   (`slab`, `wall`, `wallBase`, `outline`) describe the ground art and are `tile-stats`' targets for it,
+   so they move with the surfaces in item 2, not here.
 2. **Surfaces** — floor, wall face, sill, arch: four prompts in
    [starter-art-prompts.md](starter-art-prompts.md) and the repaint queue. They decide most of the frame.
 3. **Props** — the remaining starter tiles, in batches.
