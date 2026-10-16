@@ -5,7 +5,7 @@
   },
   "starter_2": {
     "name": "Papyrus Merchant's Route",
-    "description": "Papyrus went up the Nile by this road, and the merchants wrote down who owed what. The receipts outlasted the cargo."
+    "description": "A trading road along the Nile, lined with the merchants' storehouses. A few were never emptied."
   },
   "starter_3": {
     "name": "Temple of Bastet",
@@ -13,7 +13,7 @@
   },
   "starter_4": {
     "name": "Scribe's Academy",
-    "description": "The scribes' school. They cut their hieroglyphs into broken pottery, because papyrus was far too dear for children."
+    "description": "The scribes' school, where Egypt learned to write. The classrooms are still under the sand."
   },
   "starter_treasure_tomb": {
     "name": "Forgotten Merchant's Cache",

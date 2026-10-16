@@ -104,8 +104,7 @@ yarn storybook    # Component docs at http://localhost:6006
 
 Run `yarn verify` before considering a change complete. The ORDER is the reason it exists: `lint --fix`
 reformats files, and `.betterer.results` records a content hash per file, so a betterer run made before
-the formatting records hashes the formatting then invalidates — green locally, `Unexpected changes
-detected while running in CI mode` on the build machine.
+the formatting records hashes the formatting then invalidates — green locally, `Unexpected changes detected while running in CI mode` on the build machine.
 
 `yarn betterer` holds the backlogs that a lint rule cannot express, in `.betterer.ts`. Each guard
 reports one issue per occurrence per file and `.betterer.results` records them, so a new occurrence
@@ -259,6 +258,7 @@ Deeper design docs live in `docs/`:
 | [`docs/instructions/repaint-queue.md`](docs/instructions/repaint-queue.md)                   | Every prompt still owed to the image generator, with its attachments and its import line                                                                                                                                                                                         |
 | [`docs/instructions/art-tasks.md`](docs/instructions/art-tasks.md)                           | The art ledger — what each remaining gap is waiting on, which a census cannot know                                                                                                                                                                                               |
 | [`docs/game-design/tile-art-brief.md`](docs/game-design/tile-art-brief.md)                   | What every tile IS, per rank: the authority on subject, which the pipeline defers to                                                                                                                                                                                             |
+| [`docs/game-design/visual-direction.md`](docs/game-design/visual-direction.md)               | **Read before changing a palette, a wash or a rank's art** — painted and vivid, ground plus one metal per rank (stone → emerald), master as the bar; supersedes the brief's colour rules where they disagree                                                                     |
 | [`docs/mods/ARCHITECTURE.md`](docs/mods/ARCHITECTURE.md)                                     | **Mod architecture reference** — the two invariants, the systems mods plug into (descriptor/registry, ledger, family/reward/perk registries, placement pipeline, mod state), the build/boot/per-encounter lifecycle, and the mod inventory. The live anchor for design citations |
 | [`docs/mods/app-plugins-design.md`](docs/mods/app-plugins-design.md)                         | **Design** — app-side mod-plugin seams for a _clean cut_: screen/HUD/reward-effect registries + a per-mod `app.tsx` entrypoint, so core UI names/imports no mod                                                                                                                  |
 | [`docs/mods/TARGET.md`](docs/mods/TARGET.md)                                                 | **Mod-architecture goals + the two rules** — mod-agnostic core + mod containers + toggle-off gate + DSL-authoring tenet. Per-slice steps in `docs/mods/SLICE-CHECKLIST.md`                                                                                                       |

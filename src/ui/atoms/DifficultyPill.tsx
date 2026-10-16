@@ -1,6 +1,6 @@
 import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
-import { difficultyRank } from "@/ui/tokens/difficultyColors"
+import { METALS } from "@/ui/tokens/metalPalette"
 
 type DifficultyPillProps = {
   difficulty: Difficulty
@@ -11,8 +11,17 @@ type DifficultyPillProps = {
 export const DifficultyPill: FC<DifficultyPillProps> = ({ difficulty, label, disabled = false }) => (
   <span
     className={`rounded-full border px-2 py-1 text-xs font-bold ${
-      disabled ? "border-gray-400 bg-gray-200 text-gray-600" : difficultyRank[difficulty]
+      disabled ? "border-gray-400 bg-gray-200 text-gray-600" : ""
     }`}
+    style={
+      disabled
+        ? undefined
+        : {
+            backgroundColor: METALS[difficulty].light,
+            borderColor: METALS[difficulty].material,
+            color: METALS[difficulty].shade,
+          }
+    }
   >
     {label.toUpperCase()}
   </span>

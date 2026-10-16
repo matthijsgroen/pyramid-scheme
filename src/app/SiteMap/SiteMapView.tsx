@@ -93,6 +93,7 @@ import { DIR_MOVES } from "./corridorRuns"
 import { footprintRects, hasWallFace } from "./tileRegions"
 import type { Rect } from "./tileRegions"
 import type { FloorAt } from "./tileRegions"
+import { MARKER_FILL, MARKER_OUTLINE } from "./markerColours"
 
 // Cells one step outside the grid are still real void for claiming purposes — a fork or
 // endpoint sitting on the map's edge shouldn't look artificially clipped next to one
@@ -1122,13 +1123,6 @@ const ArchShadows = ({ doorways }: { doorways: readonly Doorway[] }) => {
 // has exactly one direction (the first step out of the player's own cell), so it renders
 // as an arrow instead of a dot to hint which way it leads.
 const DIR_ROTATION: Record<Direction, number> = { n: 0, e: 90, s: 180, w: 270 }
-
-// Both markers are outlined and fully opaque, because they have to read on any floor the game has:
-// a translucent gold dot was legible against the near-black map this replaced, and disappears into
-// pale limestone. The ring is what makes one mark work on light stone and dark granite alike, so the
-// player learns a single shape rather than a per-tier one.
-const MARKER_FILL = "#ffd766"
-const MARKER_OUTLINE = "#161009"
 
 const ReachableDot = () => <circle r={MARKER_RADIUS} fill={MARKER_FILL} stroke={MARKER_OUTLINE} strokeWidth={2} />
 

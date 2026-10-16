@@ -44,7 +44,7 @@ const BEAM_FILL: LightFill = [154, 149, 141]
  * IT FADES ON THE WAY DOWN, but nowhere near to nothing. A ray that dies before it lands is a smear of
  * floor with nothing overhead to have cast it, which is what a foot alpha of 0.03 drew; the ray has to
  * survive all the way into the pool for the eye to follow it there. Sampled off the rendered page, a ray
- * mid-air lands at L* 44.8 over a beamed floor of 38.8 — present, and well under the 66.6 of the patch it
+ * mid-air reads L* 65.5 over an unlit floor of about 35 — present, and under the 70.1 of the patch it
  * ends on, so the landing still wins. */
 const DUST = "230,223,211"
 const DUST_AT_SLOT = 0.3
@@ -56,7 +56,7 @@ const DUST_AT_FLOOR = 0.14
  * shaft whose middle outshines its own landing reads as an object lit from within. The volume thins on
  * the way down (`DUST_AT_FLOOR`) and this takes over at the bottom of it — so the eye follows the
  * rays down to where they end, which is the one place the beam touches the room. Sampled off the rendered
- * page it lands at L* 66.6 against the room it sits in at 38.8 and an unlit floor at 27.1.
+ * page it lands at L* 70.1 against a ray at 65.5, torch-lit floor at 65.9 and an unlit floor at about 35.
  *
  * An ellipse, not the parallelogram the geometry says: a hard-edged patch of sun on stone is a decal, and
  * the light arrives through a ragged hole anyway. Wider than tall, because a slanted beam meets the floor
