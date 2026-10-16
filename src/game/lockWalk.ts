@@ -1,4 +1,6 @@
 import { doorOpen, type DoorMode } from "./doorOpen"
+import { douseTorches } from "./mechanismDoors"
+import { TORCH_OFF, TORCH_ON } from "./mechanics/torch"
 
 // A LOCK IS A GRAPH OF PLACES AND THE THINGS THAT CHANGE WHICH OF THEM JOIN UP. Nothing here knows
 // about grids, families or mods: a beam board, a lever, a sequence and a floor key are one shape with
@@ -29,8 +31,9 @@ export type Mechanism = {
   /** The moves the player makes: standing in `at`, this mechanism goes from one state to another. */
   transitions: { from: StateId; to: StateId; at: RegionId }[]
   /**
-   * Moves the walk makes by ENTERING `at`, never as a choice: arriving in the region from any other puts the
-   * mechanism from `from` to `to`; in any other state, entering does nothing. A sequence's tile works so.
+   * Moves the walk makes by CROSSING INTO OR OUT OF `at`, never as a choice: walking into the region from any other,
+   * or out of it into another, puts the mechanism from `from` to `to`; in any other state the crossing does nothing.
+   * A sequence's step works so: its tile stands on every way into its room, and so on every way out but a drop.
    */
   entries?: { from: StateId; to: StateId; at: RegionId }[]
   /** A state some walk has to reach, or the lock is refused naming `label`: the order of a sequence kept. */
@@ -41,13 +44,23 @@ export type LockSpec = {
   regions: RegionId[]
   gates: Record<GateId, LockGate>
   mechanisms: Record<MechanismId, Mechanism>
-  /** Directed, region to region: a drop the player takes one way. */
+  /** Directed, region to region: a drop the player takes one way, and only with hands that may leave the floor, so
+   * no stone rides it. */
   oneWays?: { from: RegionId; to: RegionId }[]
   /** Two regions that touch with nothing between them: walked freely, both ways. */
   passages?: { a: RegionId; b: RegionId }[]
   /** Where the player arrives, and where they leave for. */
   in: RegionId
   out: RegionId
+  /** The hands are empty only in a config outside every `notIn`. Every one-way and the way out take empty hands,
+   * so a stone never rides a drop and never leaves its floor. A level that is no floor still has its one-ways: it
+   * keeps this whenever it holds stones. */
+  emptyHands?: { mechanism: MechanismId; notIn: StateId[] }[]
+  /** Each torch, with the gates whose shutting covers its region (a region gate's entry hops): a lit torch in a
+   * covered region is out, in every state the walk reaches (`dousedConfig`). */
+  torches?: { mechanism: MechanismId; coveredBy: GateId[] }[]
+  /** Regions that are only a way across, a door's own node: nothing stands on one, so it is never lost. */
+  crossings?: RegionId[]
 }
 
 // EVERY ID IN A LOCK IS A REFERENCE INTO ANOTHER TABLE, and a misspelled one is the failure that does
@@ -96,8 +109,34 @@ export const checkLockSpec = (spec: LockSpec): string | undefined => {
     }
   }
 
+  for (const { mechanism, notIn } of spec.emptyHands ?? []) {
+    if (!spec.mechanisms[mechanism]) return `empty hands wait on no mechanism: ${mechanism}`
+    for (const state of notIn)
+      if (!spec.mechanisms[mechanism].states.includes(state))
+        return `empty hands refuse a state ${mechanism} does not have: ${state}`
+  }
+
+  for (const { mechanism, coveredBy } of spec.torches ?? []) {
+    const torch = spec.mechanisms[mechanism]
+    if (!torch) return `a torch names no mechanism: ${mechanism}`
+    if (!torch.states.includes(TORCH_OFF) || !torch.states.includes(TORCH_ON))
+      return `torch ${mechanism} has no states off and on`
+    // Lighting is a torch's only move, so a step that changes a torch any other way is a douse, never the move made.
+    for (const { from, to } of [...torch.transitions, ...(torch.entries ?? [])])
+      if (from !== TORCH_OFF || to !== TORCH_ON)
+        return `torch ${mechanism} has a move other than lighting it: ${from} to ${to}`
+    for (const gate of coveredBy) if (!spec.gates[gate]) return `torch ${mechanism} is covered by no such gate: ${gate}`
+  }
   return undefined
 }
+
+/** Whether the hands are empty in this config: no mechanism `emptyHands` names is in a state it refuses. */
+export const handsEmpty = (spec: LockSpec, config: LockConfig): boolean =>
+  (spec.emptyHands ?? []).every(({ mechanism, notIn }) => !notIn.includes(config[mechanism]))
+
+/** Whether a state ends the walk: in the way out, with hands that may leave it. */
+export const finished = (spec: LockSpec, state: LockState): boolean =>
+  state.region === spec.out && handsEmpty(spec, state.config)
 
 // WHETHER A DOOR STANDS OPEN IS ASKED OF ITS OWNERS, NEVER ASSUMED FROM A STATE. A board opens one
 // gate per state and a sequence opens its gate only in the last, so a state is not "which gate is
@@ -109,6 +148,25 @@ export const openGates = (spec: LockSpec, config: LockConfig): Set<GateId> => {
     if (doorOpen(says, gate.mode)) open.add(gateId)
   }
   return open
+}
+
+/** A config with every lit torch in a covered region put out (`douseTorches`, the rule play douses by): the walk's
+ * start, and every state a move reaches after the entries it works. The same config when nothing is doused. */
+export const dousedConfig = (spec: LockSpec, config: LockConfig): LockConfig => {
+  const torches = spec.torches ?? []
+  if (torches.every(({ mechanism }) => config[mechanism] !== TORCH_ON)) return config
+  const covered = (states: ReadonlyMap<MechanismId, StateId>) => {
+    const open = openGates(spec, Object.fromEntries(states))
+    return new Set(torches.filter(({ coveredBy }) => coveredBy.some(gate => !open.has(gate))).map(t => t.mechanism))
+  }
+  const doused = douseTorches(
+    new Map(Object.entries(config)),
+    torches.map(t => t.mechanism),
+    covered
+  )
+  return torches.every(({ mechanism }) => doused.get(mechanism) === config[mechanism])
+    ? config
+    : Object.fromEntries(doused)
 }
 
 /** Where the player stands, and what every mechanism is set to. */
@@ -131,39 +189,64 @@ const stateKey = (ids: readonly MechanismId[], state: LockState): string =>
 // Reaching another floor means reaching the staircase. So this is the move that makes shutting your
 // own way back after passing the staircase a state rather than an argument, and it is NOT an escape
 // from a chamber a mechanism has sealed.
+// Every move ends with the douse: a move, the entries its arrival works, then the torches a flood puts out.
 const movesFrom = (spec: LockSpec, state: LockState): LockState[] => {
   const { region, config } = state
-  const moves: LockState[] = []
+  // `walked`: the move walks out of the region over its own ground, so it crosses the way out. A drop falls from
+  // inside the region, and coming back to the way in starts the floor afresh.
+  const moves: (LockState & { walked: boolean })[] = []
 
   for (const gateId of openGates(spec, config)) {
     const gate = spec.gates[gateId]
-    if (gate.from === region) moves.push({ region: gate.to, config })
-    if (gate.to === region) moves.push({ region: gate.from, config })
+    if (gate.from === region) moves.push({ region: gate.to, config, walked: true })
+    if (gate.to === region) moves.push({ region: gate.from, config, walked: true })
   }
-  for (const oneWay of spec.oneWays ?? []) if (oneWay.from === region) moves.push({ region: oneWay.to, config })
+  for (const oneWay of spec.oneWays ?? [])
+    if (oneWay.from === region && handsEmpty(spec, config)) moves.push({ region: oneWay.to, config, walked: false })
   for (const { a, b } of spec.passages ?? []) {
-    if (a === region) moves.push({ region: b, config })
-    if (b === region) moves.push({ region: a, config })
+    if (a === region) moves.push({ region: b, config, walked: true })
+    if (b === region) moves.push({ region: a, config, walked: true })
   }
   for (const [id, mechanism] of Object.entries(spec.mechanisms))
     for (const transition of mechanism.transitions)
       if (transition.at === region && config[id] === transition.from)
-        moves.push({ region, config: { ...config, [id]: transition.to } })
-  if (region === spec.out) moves.push({ region: spec.in, config })
+        moves.push({ region, config: { ...config, [id]: transition.to }, walked: true })
+  if (region === spec.out && handsEmpty(spec, config)) moves.push({ region: spec.in, config, walked: false })
 
-  return moves.map(move => entering(spec, region, move))
+  return moves.map(({ walked, ...move }) => {
+    const arrived = walked
+      ? entering(spec, region, leaving(spec, region, move))
+      : entering(spec, move.region === region ? region : undefined, move)
+    const config = dousedConfig(spec, arrived.config)
+    return config === arrived.config ? arrived : { region: arrived.region, config }
+  })
+}
+
+// The entries of `region` worked once against `config`: at most one move per mechanism.
+const crossing = (spec: LockSpec, region: RegionId, config: LockConfig): LockConfig => {
+  let crossed = config
+  for (const [id, mechanism] of Object.entries(spec.mechanisms))
+    for (const entry of mechanism.entries ?? [])
+      if (entry.at === region && crossed[id] === entry.from) {
+        crossed = { ...crossed, [id]: entry.to }
+        break
+      }
+  return crossed
 }
 
 // STEPPING INTO A REGION WORKS ITS ENTRIES: the player cannot arrive without the move having been made.
-export const entering = (spec: LockSpec, from: RegionId, arrived: LockState): LockState => {
+export const entering = (spec: LockSpec, from: RegionId | undefined, arrived: LockState): LockState => {
   if (arrived.region === from) return arrived
-  let config = arrived.config
-  for (const [id, mechanism] of Object.entries(spec.mechanisms))
-    for (const entry of mechanism.entries ?? [])
-      if (entry.at === arrived.region && config[id] === entry.from) {
-        config = { ...config, [id]: entry.to }
-        break
-      }
+  const config = crossing(spec, arrived.region, arrived.config)
+  return config === arrived.config ? arrived : { region: arrived.region, config }
+}
+
+// WALKING OUT OF A REGION WORKS ITS ENTRIES TOO, before the region walked into: the way out is a way in, walked the
+// other way. Working a tile again changes nothing it has already changed, so a floor's one-cell tile regions
+// read the same either way.
+export const leaving = (spec: LockSpec, from: RegionId, arrived: LockState): LockState => {
+  if (arrived.region === from) return arrived
+  const config = crossing(spec, from, arrived.config)
   return config === arrived.config ? arrived : { region: arrived.region, config }
 }
 
@@ -171,15 +254,20 @@ export const entering = (spec: LockSpec, from: RegionId, arrived: LockState): Lo
 // order, so the first failure found later is also the shortest one to describe. `edges` is kept
 // because the second question walks the same graph backwards and re-deriving the moves would be the
 // same work twice.
-export const reachableStates = (spec: LockSpec): { order: LockState[]; edges: number[][] } | "tooLarge" => {
+export const reachableStates = (
+  spec: LockSpec,
+  maxStates = MAX_LOCK_STATES
+): { order: LockState[]; edges: number[][] } | "tooLarge" => {
   const ids = Object.keys(spec.mechanisms).sort()
   const ceiling = spec.regions.length * ids.reduce((n, id) => n * spec.mechanisms[id].states.length, 1)
-  if (ceiling > MAX_LOCK_STATES) return "tooLarge"
+  if (ceiling > maxStates) return "tooLarge"
 
-  const start: LockState = {
+  // The floor's entrance comes before the lock, so arriving in the way in is an entry like any other.
+  const arrived = entering(spec, undefined, {
     region: spec.in,
     config: Object.fromEntries(ids.map(id => [id, spec.mechanisms[id].initial])),
-  }
+  })
+  const start: LockState = { region: spec.in, config: dousedConfig(spec, arrived.config) }
   const index = new Map<string, number>([[stateKey(ids, start), 0]])
   const order: LockState[] = [start]
   const edges: number[][] = [[]]
@@ -207,6 +295,8 @@ export type LockWalkFailure =
   | { type: "unsolvable" }
   | { type: "goalUnreachable"; label: string }
   | { type: "strands"; at: LockState }
+  /** From `at`, the player can never stand in `region` again, though some walk stood there before. */
+  | { type: "regionLost"; region: RegionId; at: LockState }
 
 export type LockWalkResult = { sound: true; states: number } | { sound: false; failure: LockWalkFailure }
 
@@ -214,11 +304,11 @@ export type LockWalkResult = { sound: true; states: number } | { sound: false; f
 // at the way out; and does EVERY reachable state still reach it. The second is strictly stronger than
 // the permissive bracket over the same floor: that one answers whether a reward is ever obtainable,
 // which is no comfort to a player who cannot reach it by any legal sequence of moves.
-export const walkLock = (spec: LockSpec): LockWalkResult => {
+export const walkLock = (spec: LockSpec, maxStates = MAX_LOCK_STATES): LockWalkResult => {
   const problem = checkLockSpec(spec)
   if (problem) return { sound: false, failure: { type: "malformed", problem } }
 
-  const found = reachableStates(spec)
+  const found = reachableStates(spec, maxStates)
   if (found === "tooLarge") return { sound: false, failure: { type: "tooLarge" } }
   const { order, edges } = found
 
@@ -236,7 +326,7 @@ export const walkLock = (spec: LockSpec): LockWalkResult => {
   const finishes = new Set<number>()
   const queue: number[] = []
   order.forEach((state, n) => {
-    if (state.region !== spec.out) return
+    if (!finished(spec, state)) return
     finishes.add(n)
     queue.push(n)
   })
@@ -253,7 +343,47 @@ export const walkLock = (spec: LockSpec): LockWalkResult => {
   const stranded = order.findIndex((_, n) => !finishes.has(n))
   if (stranded >= 0) return { sound: false, failure: { type: "strands", at: order[stranded] } }
 
+  const lost = lostRegion(spec, order, backwards)
+  if (lost) return { sound: false, failure: { type: "regionLost", ...lost } }
+
   return { sound: true, states: order.length }
+}
+
+// EVERY REGION THE PLAYER EVER STOOD IN STAYS REACHABLE. Mechanism state is saved per floor, so a region a lock
+// seals for good is gone for the rest of the game, and a hidden corridor or side path in it with it. Leaving and
+// coming back is one of the moves, so a region reached again only by re-entering at `in` is not lost. A mechanism
+// owned off the floor has no move here and never changes state, so it never loses a region: as in `deadRegions`,
+// what it does is the world's.
+//
+// One backward sweep per region from the states standing in it; a reachable state outside the sweep has lost it.
+// The first such state is breadth-first, so the fewest moves from the start, as `strands` reports.
+export const lostRegion = (
+  spec: LockSpec,
+  order: LockState[],
+  backwards: number[][]
+): { region: RegionId; at: LockState } | undefined => {
+  let first: { region: RegionId; index: number } | undefined
+  const crossings = new Set(spec.crossings ?? [])
+  for (const region of spec.regions) {
+    if (crossings.has(region)) continue
+    const reaching = new Set<number>()
+    const queue: number[] = []
+    order.forEach((state, n) => {
+      if (state.region !== region) return
+      reaching.add(n)
+      queue.push(n)
+    })
+    if (queue.length === 0) continue
+    for (let at = 0; at < queue.length; at++)
+      for (const from of backwards[queue[at]])
+        if (!reaching.has(from)) {
+          reaching.add(from)
+          queue.push(from)
+        }
+    const index = order.findIndex((_, n) => !reaching.has(n))
+    if (index >= 0 && (first === undefined || index < first.index)) first = { region, index }
+  }
+  return first && { region: first.region, at: order[first.index] }
 }
 
 // A REGION NO REACHABLE STATE STANDS IN IS LOOT NOBODY CAN EVER COLLECT, and `walkLock` does not see
@@ -296,11 +426,12 @@ export const describeLockWalkFailure = (failure: LockWalkFailure): string => {
       return "no sequence of moves reaches the way out"
     case "goalUnreachable":
       return `${failure.label} is never completed: no walk keeps the order`
-    case "strands": {
-      const config = Object.entries(failure.at.config)
-        .map(([id, state]) => `${id} at ${state}`)
-        .join(", ")
-      return `from ${failure.at.region}, ${config}, nothing reaches the way out`
-    }
+    case "strands":
+      return `from ${describeState(failure.at)}, nothing reaches the way out`
+    case "regionLost":
+      return `from ${describeState(failure.at)}, ${failure.region} can never be reached again`
   }
 }
+
+const describeState = ({ region, config }: LockState): string =>
+  [region, ...Object.entries(config).map(([id, state]) => `${id} at ${state}`)].join(", ")

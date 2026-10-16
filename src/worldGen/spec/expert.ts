@@ -1,7 +1,10 @@
 import { tier, journey, tomb, wardChest, wardWing } from "../dsl"
 import type { Rule, PathEntry } from "../dsl"
 import { TOMB_ROOMS_PER_FLOOR } from "../data"
-import { doubleBackLock } from "./locks/doubleBack"
+import { freeRegions } from "@/game/lockAuthoring"
+import { catalogueLock } from "./locks/catalogue"
+import { lessonOnMainFloor } from "./locks/lessons"
+import { lockOnMainFloor } from "./locks/onFloor"
 
 // Expert's open side/hidden paths, as reusable arrays so a per-pyramid override can restate them
 // and ADD to them (pyramid-level sidePaths REPLACES the tier's, it doesn't merge).
@@ -302,15 +305,40 @@ export const expertRules: Rule[] = [
   // because its role is funerary and its brief says necropolis, and he is the necropolis. Sobek takes the
   // Nile Delta because that journey's brief already lists a crocodile.
   journey("expert_1").pyramid("last", { patron: "anubis" }),
-  // The Valley of the Kings' last pyramid opens on the designer's doubleBack: a mirror fork whose far side is
-  // reached by ziplines. The lock stands on the main floor and the pyramid's other content is untouched.
-  journey("expert_1").pyramid("last", {
+  // Djoser's last pyramid opens on the designer's stoneGate, read from its .lock file: lifting the stone off the altar
+  // opens the back way and shuts the way in, a stone parked on the backroom shelf lets the explorer squeeze through
+  // the narrow passage, and both stones are spent twice. It stands on the main floor as the journey's capstone; the
+  // file marks no appetites, so every region takes `free` and the floor's own content goes where the carve puts it.
+  journey("expert_4").pyramid("last", {
     floorLocks: {
       0: {
-        locks: [{ lock: doubleBackLock() }],
-        realisations: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
+        locks: [{ lock: freeRegions(catalogueLock("stoneGate")) }],
+        realisations: { weights: "stonePlate", flame: "torch", unladen: "narrowPassage" },
       },
     },
   }),
   journey("expert_3").pyramid("last", { patron: "sobek" }),
+  // THE PLACEMENT: one lock per expert floor, as the adopted proposal says (docs/game-design/lock-placement.md). Every
+  // region `free`, and only the kinds a lock uses bound.
+  journey("expert_1").pyramid(1, lessonOnMainFloor("tilesInOrder")),
+  journey("expert_1").pyramid(2, lockOnMainFloor("keyring")),
+  journey("expert_1").pyramid(3, lockOnMainFloor("twoLamps")),
+  journey("expert_1").pyramid(4, lockOnMainFloor("plates")),
+  journey("expert_2").pyramid(1, lockOnMainFloor("clockwork")),
+  journey("expert_2").pyramid(2, lockOnMainFloor("relay")),
+  journey("expert_2").pyramid(3, lockOnMainFloor("festivalProcession")),
+  journey("expert_2").pyramid(4, lockOnMainFloor("hourglass")),
+  // expert_3 site 1 stands in for counterweight, which cannot be built yet.
+  journey("expert_3").pyramid(1, lessonOnMainFloor("leverSwapsDoors")),
+  // expert_3 site 2 stands in for observatory, which does not lay.
+  journey("expert_3").pyramid(2, lockOnMainFloor("dropHome")),
+  journey("expert_3").pyramid(3, lockOnMainFloor("highWater")),
+  // doubleBack lays on few seeds; at the default packing the journey inspector's default seed carves it on no attempt.
+  journey("expert_3").pyramid(4, lockOnMainFloor("lockChamber")),
+  journey("expert_3").pyramid(5, lockOnMainFloor("doubleBack", { packing: 0.15 })),
+  // expert_4 site 1 stands in for twoStones, which cannot be built yet.
+  journey("expert_4").pyramid(1, lessonOnMainFloor("stoneOnAPlate")),
+  journey("expert_4").pyramid(2, lessonOnMainFloor("throughTheWall")),
+  journey("expert_4").pyramid(3, lockOnMainFloor("scaffold")),
+  journey("expert_4").pyramid(4, lockOnMainFloor("buildersLift")),
 ]

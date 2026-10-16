@@ -104,7 +104,7 @@ const twoObstacleFloor = {
 // Five gates in sequence over six ON-ROUTE regions — the same shape as `gatedFloor`/`twoObstacleFloor`
 // above, widened to the count `doubleBack` authors (`lockWalk.spec.ts`'s `doubleBack` fixture: six
 // regions, five gates). NOT `doubleBack`'s own layout: two of its five gates (`forkRight`, `greenRight`)
-// seat on an OFF-ROUTE chain (`siteAssembler.spec.ts`'s "a gate on a connection off the threaded
+// seat on an OFF-ROUTE chain (`carve/seatChainGates.spec.ts`'s "a gate on a connection off the threaded
 // route"), which this file's fix does not reach — see this suite's own comment below, and the report,
 // for why that residual is real and left open rather than patched here.
 const fiveObstacleFloor = {

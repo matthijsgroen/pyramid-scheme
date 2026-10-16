@@ -1,8 +1,10 @@
+import type { Alignment } from "./lockAuthoring"
 import type { ResolveMechanicKind } from "./mechanics"
+import type { StoneMove, StonePipe } from "./mechanics/weights"
 import { resolveMechanicKind } from "./mechanics"
 import type { RegionGraph } from "./regions"
-import { offRouteChains, regionRoute } from "./regions"
-import type { ForkDemand } from "./siteTypes"
+import { forkOnward, forkSeams, offRouteChains, regionRoute } from "./regions"
+import type { ForkDemand, WeightTerm } from "./siteTypes"
 
 /**
  * WHAT STANDS IN THE WAY, AND WHAT DECIDES WHETHER IT DOES — two separate things joined by an
@@ -30,6 +32,9 @@ export type GateTerms = {
    * gate stands open only while the key is held too, under `any` the key alone is enough. Only a gate
    * some control owns takes one. */
   floorKeys?: string[]
+  /** THE PASSAGE THIS GATE IS DRESSED AS: the realisation a gate empty hands alone open was bound to (`unladen` in a
+   * binding). Only an edge gate takes one. */
+  passage?: string
 }
 
 /** A boundary a control can hold open or shut. `between` is unordered — a gate is passable from
@@ -38,7 +43,8 @@ export type GateTerms = {
 export type EdgeGateObstacle = GateTerms & {
   id: string
   kind: "gate"
-  at: { on: "connection"; between: readonly [string, string] }
+  /** `corridor`: which of the corridors joining `between` it stands on, by its place among them; absent, the first. */
+  at: { on: "connection"; between: readonly [string, string]; corridor?: number }
 }
 
 /** A barrier over a whole region — flooded, buried — rather than over a boundary. The carve stands it
@@ -86,8 +92,9 @@ export type Obstacle = GateObstacle | OneWayObstacle
  */
 export type StatefulControl = {
   id: string
-  /** Absent: this is a control with states of its own, not a `ForkSwitchControl`. */
-  control?: undefined
+  /** Absent: a toggle or an activator. `"flame"`: a torch, states `off` and `on`, which a covering region barrier
+   * puts out (`douseTorches`, mechanismDoors.ts). Never another kind: those have controls of their own. */
+  control?: "flame"
   /** The region the control stands in. A region, not a section address: the mod points at the layout. */
   in: string
   states: string[]
@@ -140,25 +147,65 @@ export type SequenceControl = {
   opens: { done: string[] }
   /** The realisation the sequence is dressed as, bound where its lock is placed. Absent on a floor authored longhand. */
   encounter?: string
+  /** Written `procession` in its lock: `encounter` is then the procession door, whatever the floor binds. */
+  procession?: true
 }
 
-export type Control = StatefulControl | ForkSwitchControl | SequenceControl
+/**
+ * A LOCK'S STONES AND PLATES, one control however many plates: its states are the arrangements of the stones
+ * (src/game/mechanics/weights.ts), `opens` names the gates each arrangement opens and `moves` every lift and
+ * set-down by the plate it is made at. Compiled from a lock, never authored longhand.
+ */
+export type WeightsControl = {
+  id: string
+  control: "weights"
+  plates: { id: string; in: string; stone: boolean }[]
+  /** The lock's stone pipes, namespaced; absent where it has none. */
+  pipes?: StonePipe[]
+  states: string[]
+  initial: string
+  /** Gate ids (namespaced) each arrangement opens. */
+  opens: Record<string, string[]>
+  /** Moves by plate or hole id (namespaced). */
+  moves: StoneMove[]
+  /** The arrangements with a stone in hand. */
+  carrying: string[]
+  /** What the explorer's own weight opens, standing on a plate empty in `from`: gate ids (namespaced). */
+  underfoot: { from: string; plate: string; opens: string[] }[]
+  /** Each gate's stone terms (namespaced gate id → terms), for the door's face. */
+  terms: Record<string, WeightTerm[]>
+  /** The realisation the plates are dressed as, bound where the lock is placed. */
+  encounter?: string
+  /** The realisation a pipe's holes are dressed as, bound under `pipe` where the lock is placed. */
+  pipeEncounter?: string
+}
+
+export type Control = StatefulControl | ForkSwitchControl | SequenceControl | WeightsControl
 
 export const isForkSwitch = (control: Control): control is ForkSwitchControl => control.control === "fork-switch"
 
 export const isSequence = (control: Control): control is SequenceControl => control.control === "sequence"
 
-/** The core control kind a floor control is an instance of (src/game/mechanics): a stateful one is a toggle where it
- * returns to its start and an activator where it does not. */
+export const isWeights = (control: Control): control is WeightsControl => control.control === "weights"
+
+/** The core control kind a floor control is an instance of (src/game/mechanics): a torch says `flame`, and an unnamed
+ * stateful one is a toggle where it returns to its start and an activator where it does not. */
 export const controlKindOf = (control: Control): string =>
   control.control ?? (control.returnsToInitial ? "toggle" : "activator")
 
 /**
- * THE ORDER OF THE GATES STANDING ON ONE CONNECTION, written from `between[0]` to `between[1]`. Stated
- * only where a connection carries more than one gate: with one there is nothing to order, and with
- * several no default is guessed. The carve keeps this order and chooses the spacing.
+ * THE ITEMS STANDING ON ONE CORRIDOR, written from `between[0]` to `between[1]`. Stated where a corridor carries more
+ * than one item or an aligned one; a falling corridor's names its drop where it stands, and is how the floor knows
+ * the gates beside it stand on it. The carve keeps this order and chooses the spacing, as `align` prefers.
  */
-export type BarrierOrder = { between: readonly [string, string]; barriers: readonly string[] }
+export type BarrierOrder = {
+  between: readonly [string, string]
+  barriers: readonly string[]
+  /** Which corridor of the pair, as on its gates; absent, the first. */
+  corridor?: number
+  /** The aligned gates, as the lock wrote them; a gate it does not name is free. */
+  align?: Readonly<Record<string, Alignment>>
+}
 
 export type TopologyFault =
   | { type: "obstacleIdRepeated"; id: string }
@@ -168,6 +215,10 @@ export type TopologyFault =
    * drop is for — so this is the only structural question left to ask of it. */
   | { type: "obstacleNamesNoRegion"; id: string }
   | { type: "obstacleOffRoute"; id: string }
+  /** A gate whose two regions an open way joins: no edge gate on it and no barred region along
+   * it, so its two sides are one ground and no carve can stand its door between two (gateDoorFaults,
+   * carveAgreement.ts). `id` is the gate. */
+  | { type: "gateBypassed"; id: string; between: [string, string] }
   | { type: "obstacleUnowned"; id: string }
   | { type: "controlUnsatisfied"; id: string; what: string }
   /** The build has no plug-in for this control kind (src/game/mechanics); `id` is the control or one-way. */
@@ -199,6 +250,9 @@ export type TopologyFault =
   | { type: "sequenceTooShort"; id: string }
   /** A sequence's step names a region this floor's layout does not declare. */
   | { type: "sequenceStepNamesNoRegion"; id: string; step: number }
+  /** Two steps name one region. A step's tile stands on every way into its region, so one crossing would step on
+   * both. `step` is the later one, `earlier` the step it repeats. */
+  | { type: "sequenceRegionRepeated"; id: string; step: number; earlier: number }
   /** A sequence's `opens` names something that is not a gate of this floor; `gate` is what it named. */
   | { type: "sequenceOpensNotAGate"; id: string; gate: string }
   /** A sequence's `resetAt` is not an edge gate, so there is no one door to start again at. */
@@ -229,15 +283,140 @@ export type TopologyFault =
 const connectionKey = (a: string, b: string): string => JSON.stringify([a, b].sort())
 
 /**
- * EVERY WAY ONE SEQUENCE DOES NOT RESOLVE, from the config alone. Reachability is asked of the layout with
- * the gates this sequence opens taken away, ignoring every other control: a tile that cannot be reached
- * even when nothing else stands in the way is a tile behind its own door.
+ * ONE CORRIDOR OF A FLOOR: a layout connection, or a falling corridor — a drop with gates beside it, which the layout
+ * does not join and whose `barrierOrder` entry names the drop. `barriers` are its items from `between[0]` to
+ * `between[1]`, the drop among them; `index` is its place among the corridors of its pair.
+ */
+export type FloorCorridor = {
+  key: string
+  between: readonly [string, string]
+  index: number
+  drop?: string
+  barriers: readonly string[]
+  align: Readonly<Record<string, Alignment>>
+}
+
+export const corridorIndexOf = (gate: EdgeGateObstacle): number => gate.at.corridor ?? 0
+
+/** The same alignment read from the other end: left and right swap, centre stays. */
+export const flipAlign = (align: Readonly<Record<string, Alignment>>): Record<string, Alignment> =>
+  Object.fromEntries(
+    Object.entries(align).map(([id, side]) => [id, side === "left" ? "right" : side === "right" ? "left" : side])
+  )
+
+const slotOf = (key: string, index: number) => `${key}#${index}`
+
+/** An order that names a drop and something else describes a falling corridor; one naming a drop alone describes none. */
+const fallsAt = (order: BarrierOrder, drops: Pick<ReadonlySet<string>, "has">): string | undefined => {
+  const drop = order.barriers.find(id => drops.has(id))
+  return drop !== undefined && order.barriers.some(id => !drops.has(id)) ? drop : undefined
+}
+
+/**
+ * EVERY CORRIDOR OF A FLOOR, layout connections in layout order and then falling corridors in `barrierOrder` order.
+ * A falling corridor keeps the index its entry states; the pair's layout connections take the other indices in order.
+ */
+export const floorCorridors = (
+  layout: RegionGraph,
+  obstacles: readonly Obstacle[],
+  barrierOrder: readonly BarrierOrder[]
+): FloorCorridor[] => {
+  const drops = new Set(obstacles.flatMap(o => (o.kind === "oneWay" ? [o.id] : [])))
+  // The first falling order on a slot is its corridor; a later one is refused `barrierOrderRepeated`.
+  const taken = new Map<string, Set<number>>()
+  const falling = barrierOrder.filter(order => {
+    if (fallsAt(order, drops) === undefined) return false
+    const key = connectionKey(...order.between)
+    const indices = taken.get(key) ?? new Set<number>()
+    if (indices.has(order.corridor ?? 0)) return false
+    taken.set(key, indices.add(order.corridor ?? 0))
+    return true
+  })
+  const next = new Map<string, number>()
+  const corridors: FloorCorridor[] = []
+  for (const [a, b] of layout.connections) {
+    const key = connectionKey(a, b)
+    let index = next.get(key) ?? 0
+    while (taken.get(key)?.has(index)) index++
+    next.set(key, index + 1)
+    const order = barrierOrder.find(
+      o => connectionKey(...o.between) === key && (o.corridor ?? 0) === index && fallsAt(o, drops) === undefined
+    )
+    const reversed = order !== undefined && order.between[0] !== a
+    const barriers = order
+      ? reversed
+        ? [...order.barriers].reverse()
+        : [...order.barriers]
+      : obstacles.flatMap(o =>
+          isEdgeGate(o) && connectionKey(...o.at.between) === key && corridorIndexOf(o) === index ? [o.id] : []
+        )
+    const align = order?.align ?? {}
+    corridors.push({ key, between: [a, b], index, barriers, align: reversed ? flipAlign(align) : align })
+  }
+  for (const order of falling)
+    corridors.push({
+      key: connectionKey(...order.between),
+      between: order.between,
+      index: order.corridor ?? 0,
+      drop: fallsAt(order, drops),
+      barriers: order.barriers,
+      align: order.align ?? {},
+    })
+  return corridors
+}
+
+/**
+ * A FALLING CORRIDOR SPLIT AT ITS DROP: the items between the region it falls from and the drop, in travel order
+ * (`upstream`), and those between the drop and the region it leads to, in travel order (`downstream`). Alignment is
+ * turned with them, so `left` means toward where the player comes from on either stretch.
+ */
+export const fallingStretches = (
+  corridor: Pick<FloorCorridor, "between" | "barriers" | "align">,
+  drop: OneWayObstacle
+): { launch: string; landing: string; upstream: string[]; downstream: string[]; align: Record<string, Alignment> } => {
+  const at = corridor.barriers.indexOf(drop.id)
+  const forward = drop.at.between[0] === corridor.between[0]
+  const before = corridor.barriers.slice(0, at)
+  const after = corridor.barriers.slice(at + 1)
+  return {
+    launch: drop.at.between[0],
+    landing: drop.at.between[1],
+    upstream: forward ? before : [...after].reverse(),
+    downstream: forward ? after : [...before].reverse(),
+    align: forward ? { ...corridor.align } : flipAlign(corridor.align),
+  }
+}
+
+/**
+ * The drops whose falling corridor carries a gate past them, each with the first such gate: each lands on its own
+ * stretch, the ground before that gate, not in its region's ground.
+ */
+export const dropsLandingOnAStretch = (
+  obstacles: readonly Obstacle[],
+  barrierOrder: readonly BarrierOrder[]
+): Map<string, string> => {
+  const drops = new Map(obstacles.flatMap(o => (o.kind === "oneWay" ? [[o.id, o] as const] : [])))
+  const found = new Map<string, string>()
+  for (const order of barrierOrder) {
+    const id = fallsAt(order, drops)
+    if (id === undefined) continue
+    const { downstream } = fallingStretches({ ...order, align: order.align ?? {} }, drops.get(id)!)
+    if (downstream.length > 0) found.set(id, downstream[0])
+  }
+  return found
+}
+
+/**
+ * EVERY WAY ONE SEQUENCE DOES NOT RESOLVE, from the config alone. Reachability is asked of the floor's corridors with
+ * the ones this sequence's gates stand on taken away, ignoring every other control: a tile that cannot be reached
+ * even when nothing else stands in the way is a tile behind its own door. A drop falls on its falling corridor, so
+ * one of this sequence's gates anywhere on that corridor keeps the drop from landing.
  */
 const sequenceFaults = (
   sequence: SequenceControl,
   layout: RegionGraph,
   obstacleById: ReadonlyMap<string, Obstacle>,
-  drops: ReadonlyArray<readonly [string, string]>
+  corridors: readonly FloorCorridor[]
 ): TopologyFault[] => {
   const faults: TopologyFault[] = []
   const { id, steps, resetAt } = sequence
@@ -246,6 +425,8 @@ const sequenceFaults = (
   if (steps.length < 2) faults.push({ type: "sequenceTooShort", id })
   steps.forEach((step, n) => {
     if (!regions.has(step.in)) faults.push({ type: "sequenceStepNamesNoRegion", id, step: n })
+    const earlier = steps.findIndex(other => other.in === step.in)
+    if (earlier < n) faults.push({ type: "sequenceRegionRepeated", id, step: n, earlier })
   })
   const shutByThis = new Set<string>()
   const barredByThis = new Set<string>()
@@ -253,7 +434,7 @@ const sequenceFaults = (
     const obstacle = obstacleById.get(gate)
     if (!obstacle || obstacle.kind !== "gate") faults.push({ type: "sequenceOpensNotAGate", id, gate })
     else if (isRegionGate(obstacle)) barredByThis.add(obstacle.at.region)
-    else shutByThis.add(connectionKey(obstacle.at.between[0], obstacle.at.between[1]))
+    else shutByThis.add(slotOf(connectionKey(...obstacle.at.between), corridorIndexOf(obstacle)))
   }
   const reset = obstacleById.get(resetAt)
   if (!reset || !isEdgeGate(reset)) faults.push({ type: "sequenceResetNotAGate", id, gate: resetAt })
@@ -261,12 +442,18 @@ const sequenceFaults = (
 
   const neighbours = new Map<string, string[]>()
   const join = (from: string, to: string) => neighbours.set(from, [...(neighbours.get(from) ?? []), to])
-  for (const [a, b] of layout.connections)
-    if (!shutByThis.has(connectionKey(a, b))) {
-      join(a, b)
-      join(b, a)
+  const shutDrops = new Set(
+    corridors.flatMap(corridor =>
+      corridor.drop !== undefined && shutByThis.has(slotOf(corridor.key, corridor.index)) ? [corridor.drop] : []
+    )
+  )
+  for (const corridor of corridors)
+    if (corridor.drop === undefined && !shutByThis.has(slotOf(corridor.key, corridor.index))) {
+      join(...corridor.between)
+      join(corridor.between[1], corridor.between[0])
     }
-  for (const [from, to] of drops) join(from, to)
+  for (const obstacle of obstacleById.values())
+    if (obstacle.kind === "oneWay" && !shutDrops.has(obstacle.id)) join(...obstacle.at.between)
   const seen = new Set<string>()
   const queue = barredByThis.has(layout.in) ? [] : [layout.in]
   for (const region of queue) seen.add(region)
@@ -282,17 +469,20 @@ const sequenceFaults = (
   return faults
 }
 
+/** `laid`: the floor is laid from a lock plan (layLocks.ts), which stands a corridor on every connection. */
+export type TopologyOptions = { laid?: boolean }
+
 /**
  * EVERY WAY THE AUTHORED TOPOLOGY DOES NOT RESOLVE, answered from the config alone so it is refused
  * before a wall is carved. Nothing here depends on a seed: which regions exist, what joins them and
  * which route the main path threads are all fixed by the config.
  *
- * `obstacleOffRoute` is the honest limit of what the carve can actually stand a gate at: a seam is a
- * connection two adjacent cells meet along, and cells meet along the main path AND along a side
- * path's own chain — the mouth where it leaves its parent region, and every join within it
- * (offRouteChains, regions.ts, the same order `regionOfStep` distributes a chain's own cells in). A
- * connection genuinely off both is still refused: e.g. one touching a branch's SECOND meeting with the
- * route, which the carve never turns into a physical join (`offRouteChains` picks one mouth, not two).
+ * A SEAM IS A CONNECTION TWO ADJACENT CELLS MEET ALONG, and which connections have one depends on the carve. A
+ * floor laid from a lock plan (`laid`) stands a corridor on every connection, loops included, so every connection
+ * is a seam. A floor carved as side chains meets only along the main path and along each chain's own links (the
+ * mouth where it leaves its parent region, and every join within it: offRouteChains, regions.ts, the order
+ * `regionOfStep` distributes a chain's own cells in); a connection off both, such as a branch's SECOND meeting with
+ * the route, is refused `obstacleOffRoute`, because the side-chain carve never turns it into a physical join.
  */
 export const topologyFaults = (
   layout: RegionGraph | undefined,
@@ -300,7 +490,8 @@ export const topologyFaults = (
   controls: readonly Control[],
   forks: readonly ForkDemand[] = [],
   barrierOrder: readonly BarrierOrder[] = [],
-  kinds: ResolveMechanicKind = resolveMechanicKind
+  kinds: ResolveMechanicKind = resolveMechanicKind,
+  { laid = false }: TopologyOptions = {}
 ): TopologyFault[] => {
   const faults: TopologyFault[] = []
   if (obstacles.length === 0 && controls.length === 0 && barrierOrder.length === 0) return faults
@@ -314,20 +505,28 @@ export const topologyFaults = (
           : { type: "obstacleNamesNoConnection", id: o.id }
       )
     for (const c of controls)
-      faults.push({ type: "controlUnsatisfied", id: c.id, what: isSequence(c) ? (c.steps[0]?.in ?? c.id) : c.in })
+      faults.push({
+        type: "controlUnsatisfied",
+        id: c.id,
+        what: isSequence(c) ? (c.steps[0]?.in ?? c.id) : isWeights(c) ? (c.plates[0]?.in ?? c.id) : c.in,
+      })
     return faults
   }
 
   const joined = new Set(layout.connections.map(([a, b]) => connectionKey(a, b)))
   const drops = obstacles.flatMap(o => (o.kind === "oneWay" ? [[o.at.between[0], o.at.between[1]] as const] : []))
-  const route = regionRoute(layout)
-  const seatable = new Set<string>()
-  for (let i = 0; i < route.length - 1; i++) seatable.add(connectionKey(route[i], route[i + 1]))
-  for (const { mouth, regions } of offRouteChains(layout, drops)) {
-    const ordered = [mouth, ...regions]
-    for (let i = 0; i < ordered.length - 1; i++) seatable.add(connectionKey(ordered[i], ordered[i + 1]))
+  const seatable = new Set<string>(laid ? joined : [])
+  if (!laid) {
+    const route = regionRoute(layout)
+    for (let i = 0; i < route.length - 1; i++) seatable.add(connectionKey(route[i], route[i + 1]))
+    for (const { mouth, regions } of offRouteChains(layout, drops)) {
+      const ordered = [mouth, ...regions]
+      for (let i = 0; i < ordered.length - 1; i++) seatable.add(connectionKey(ordered[i], ordered[i + 1]))
+    }
   }
   const regions = new Set(layout.regions.map(r => r.name))
+  const corridors = floorCorridors(layout, obstacles, barrierOrder)
+  const corridorAt = new Map(corridors.map(corridor => [slotOf(corridor.key, corridor.index), corridor]))
 
   const seenObstacle = new Set<string>()
   const obstacleById = new Map<string, Obstacle>()
@@ -358,8 +557,49 @@ export const topologyFaults = (
       continue
     }
     const key = connectionKey(a, b)
-    if (!joined.has(key)) faults.push({ type: "obstacleNamesNoConnection", id: obstacle.id })
-    else if (!seatable.has(key)) faults.push({ type: "obstacleOffRoute", id: obstacle.id })
+    const corridor = corridorAt.get(slotOf(key, corridorIndexOf(obstacle)))
+    // A side-chain carve lays one corridor per pair on its seams; a laid floor lays every corridor.
+    const seated =
+      laid || (seatable.has(key) && corridor !== undefined && corridor.index === 0 && corridor.drop === undefined)
+    if (!corridor) faults.push({ type: "obstacleNamesNoConnection", id: obstacle.id })
+    else if (!seated) faults.push({ type: "obstacleOffRoute", id: obstacle.id })
+  }
+
+  // AN OPEN WAY ROUND A GATE, per corridor: the walk from one side of the gate to the other over corridors that carry
+  // no edge gate and touch no barred region. Its two sides are then one ground, so the carve would refuse its door at
+  // every seed; it is refused here by name instead. A falling corridor is never open: it is not walked both ways.
+  const gatedSlots = new Set(
+    obstacles.flatMap(o => (isEdgeGate(o) ? [slotOf(connectionKey(...o.at.between), corridorIndexOf(o))] : []))
+  )
+  const barred = new Set(obstacles.flatMap(o => (isRegionGate(o) ? [o.at.region] : [])))
+  const openNeighbours = new Map<string, string[]>()
+  for (const corridor of corridors) {
+    const [a, b] = corridor.between
+    if (corridor.drop !== undefined || gatedSlots.has(slotOf(corridor.key, corridor.index))) continue
+    if (barred.has(a) || barred.has(b)) continue
+    openNeighbours.set(a, [...(openNeighbours.get(a) ?? []), b])
+    openNeighbours.set(b, [...(openNeighbours.get(b) ?? []), a])
+  }
+  const openlyJoined = (from: string, to: string): boolean => {
+    const seen = new Set([from])
+    const queue = [from]
+    for (let at = 0; at < queue.length; at++)
+      for (const next of openNeighbours.get(queue[at]) ?? []) {
+        if (next === to) return true
+        if (!seen.has(next)) {
+          seen.add(next)
+          queue.push(next)
+        }
+      }
+    return false
+  }
+  for (const obstacle of obstacles) {
+    if (!isEdgeGate(obstacle)) continue
+    const corridor = corridorAt.get(slotOf(connectionKey(...obstacle.at.between), corridorIndexOf(obstacle)))
+    if (!corridor || corridor.drop !== undefined) continue
+    const [a, b] = obstacle.at.between
+    if (barred.has(a) || barred.has(b)) continue
+    if (openlyJoined(a, b)) faults.push({ type: "gateBypassed", id: obstacle.id, between: [a, b] })
   }
 
   const owned = new Set<string>()
@@ -372,8 +612,19 @@ export const topologyFaults = (
       continue
     }
     if (isSequence(control)) {
-      faults.push(...sequenceFaults(control, layout, obstacleById, drops))
+      faults.push(...sequenceFaults(control, layout, obstacleById, corridors))
       for (const id of control.opens.done ?? []) owned.add(id)
+      continue
+    }
+    // The stones: every plate stands in a region of the floor, and every gate an arrangement opens is a gate.
+    if (isWeights(control)) {
+      for (const plate of control.plates)
+        if (!regions.has(plate.in)) faults.push({ type: "controlUnsatisfied", id: control.id, what: plate.in })
+      for (const id of new Set(Object.values(control.opens).flat())) {
+        const obstacle = obstacleById.get(id)
+        if (!obstacle || obstacle.kind !== "gate") faults.push({ type: "controlUnsatisfied", id: control.id, what: id })
+        owned.add(id)
+      }
       continue
     }
     if (!regions.has(control.in)) faults.push({ type: "controlUnsatisfied", id: control.id, what: control.in })
@@ -410,13 +661,7 @@ export const topologyFaults = (
   const seamsFor = (region: string): Set<string> => {
     const known = seamsOf.get(region)
     if (known) return known
-    const seams = new Set(
-      offRouteChains(layout, drops)
-        .filter(
-          ({ mouth, regions: led }) => mouth === region && led.length > 0 && joined.has(connectionKey(region, led[0]))
-        )
-        .map(({ regions: led }) => connectionKey(region, led[0]))
-    )
+    const seams = new Set(forkSeams(layout, region, drops, { laid }).map(([a, b]) => connectionKey(a, b)))
     seamsOf.set(region, seams)
     return seams
   }
@@ -442,10 +687,16 @@ export const topologyFaults = (
       gatesOwnedBy.set(owner, [...(gatesOwnedBy.get(owner) ?? []), obstacle])
       if (opensGate.has(obstacle.id)) faults.push({ type: "gateOwnedTwice", id: obstacle.id, owner })
       const key = connectionKey(obstacle.at.between[0], obstacle.at.between[1])
-      if (regions.has(fork.in) && joined.has(key) && !seamsFor(fork.in).has(key))
+      // A fork's ways are layout corridors: the floor builds its mechanism from the seams alone, so a gate it
+      // owns on a falling corridor would never be issued a key. A laid junction may also own the route's way on.
+      const onFall = corridorAt.get(slotOf(key, corridorIndexOf(obstacle)))?.drop !== undefined
+      const onward = laid ? forkOnward(layout, fork.in) : undefined
+      const isOnward = onward !== undefined && key === connectionKey(...onward)
+      if (onFall || (regions.has(fork.in) && joined.has(key) && !seamsFor(fork.in).has(key) && !isOnward))
         faults.push({ type: "gateOwnedOffSeam", id: obstacle.id, owner })
     }
   }
+  const refusedAsForkSeam = new Set<string>()
   for (const fork of forkSwitches.values()) {
     if (!fork.encounter) faults.push({ type: "forkSwitchNoEncounter", id: fork.id })
     if (!forkRegions.has(fork.in)) {
@@ -453,17 +704,32 @@ export const topologyFaults = (
       continue
     }
     if (!regions.has(fork.in)) continue
+    // A seam is a layout corridor: a gate on the falling corridor beside it gates the fall, not the seam.
     for (const seam of seamsFor(fork.in)) {
-      const gates = (gatesOwnedBy.get(fork.id) ?? []).filter(
-        gate => connectionKey(gate.at.between[0], gate.at.between[1]) === seam
-      )
+      const gates = (gatesOwnedBy.get(fork.id) ?? []).filter(gate => {
+        const key = connectionKey(...gate.at.between)
+        return key === seam && corridorAt.get(slotOf(key, corridorIndexOf(gate)))?.drop === undefined
+      })
       const between: [string, string] = [fork.in, (JSON.parse(seam) as string[]).find(name => name !== fork.in)!]
       if (gates.length === 0) faults.push({ type: "forkSwitchSeamUngated", id: fork.id, between })
-      if (gates.length > 1) faults.push({ type: "forkSwitchSeamGatedTwice", id: fork.id, between })
+      if (gates.length > 1) {
+        faults.push({ type: "forkSwitchSeamGatedTwice", id: fork.id, between })
+        for (const gate of gates) refusedAsForkSeam.add(slotOf(seam, corridorIndexOf(gate)))
+      }
     }
   }
 
-  faults.push(...barrierOrderFaults(joined, obstacleById, obstacles, barrierOrder, forkSwitches, gatesOwnedBy))
+  faults.push(
+    ...barrierOrderFaults(
+      corridorAt,
+      obstacleById,
+      obstacles,
+      barrierOrder,
+      forkSwitches,
+      gatesOwnedBy,
+      refusedAsForkSeam
+    )
+  )
 
   for (const obstacle of obstacles)
     if (obstacle.kind === "gate" && !owned.has(obstacle.id)) faults.push({ type: "obstacleUnowned", id: obstacle.id })
@@ -474,34 +740,37 @@ export const topologyFaults = (
 const pairOf = ([a, b]: readonly [string, string]): [string, string] => [a, b]
 
 /**
- * EVERY WAY THE STATED ORDER OF A CONNECTION'S GATES DOES NOT RESOLVE. An id in an order must be a gate
- * defined on that very connection; a connection carrying several gates must state an order that lists
+ * EVERY WAY THE STATED ORDER OF A CORRIDOR'S GATES DOES NOT RESOLVE. An id in an order must be a gate on that very
+ * corridor, or the drop of the falling corridor it describes; a connection carrying several gates must state an order that lists
  * each exactly once; a gate a fork-switch owns must be first from the fork's side. A gate is always
  * placed by its own `at`, so "defined but standing nowhere" is `obstacleNamesNoConnection`,
  * `obstacleNamesNoRegion` and `obstacleOffRoute` above, never a gap the order could leave.
  */
 const barrierOrderFaults = (
-  joined: ReadonlySet<string>,
+  corridorAt: ReadonlyMap<string, FloorCorridor>,
   obstacleById: ReadonlyMap<string, Obstacle>,
   obstacles: readonly Obstacle[],
   barrierOrder: readonly BarrierOrder[],
   forkSwitches: ReadonlyMap<string, ForkSwitchControl>,
-  gatesOwnedBy: ReadonlyMap<string, EdgeGateObstacle[]>
+  gatesOwnedBy: ReadonlyMap<string, EdgeGateObstacle[]>,
+  refusedAsForkSeam: ReadonlySet<string>
 ): TopologyFault[] => {
   const faults: TopologyFault[] = []
   const orderOf = new Map<string, BarrierOrder>()
   for (const order of barrierOrder) {
     const between = pairOf(order.between)
     const key = connectionKey(...between)
-    if (!joined.has(key)) {
+    const slot = slotOf(key, order.corridor ?? 0)
+    const corridor = corridorAt.get(slot)
+    if (!corridor) {
       faults.push({ type: "barrierOrderNamesNoConnection", between })
       continue
     }
-    if (orderOf.has(key)) {
+    if (orderOf.has(slot)) {
       faults.push({ type: "barrierOrderRepeated", between })
       continue
     }
-    orderOf.set(key, order)
+    orderOf.set(slot, order)
     const listed = new Set<string>()
     for (const id of order.barriers) {
       if (listed.has(id)) {
@@ -511,7 +780,13 @@ const barrierOrderFaults = (
       listed.add(id)
       const obstacle = obstacleById.get(id)
       if (!obstacle) faults.push({ type: "barrierNotDefined", id, between })
-      else if (!isEdgeGate(obstacle) || connectionKey(...obstacle.at.between) !== key)
+      else if (
+        obstacle.kind === "oneWay"
+          ? id !== corridor.drop || connectionKey(...obstacle.at.between) !== key
+          : !isEdgeGate(obstacle) ||
+            connectionKey(...obstacle.at.between) !== key ||
+            corridorIndexOf(obstacle) !== (order.corridor ?? 0)
+      )
         faults.push({ type: "barrierNotOnConnection", id, between })
     }
   }
@@ -519,32 +794,23 @@ const barrierOrderFaults = (
   const gatesOn = new Map<string, EdgeGateObstacle[]>()
   for (const obstacle of obstacles)
     if (isEdgeGate(obstacle)) {
-      const key = connectionKey(...obstacle.at.between)
-      gatesOn.set(key, [...(gatesOn.get(key) ?? []), obstacle])
+      const slot = slotOf(connectionKey(...obstacle.at.between), corridorIndexOf(obstacle))
+      gatesOn.set(slot, [...(gatesOn.get(slot) ?? []), obstacle])
     }
-  // A seam two of one fork's own gates stand on is already refused as `forkSwitchSeamGatedTwice`; an order
-  // cannot mend it, so it is not refused a second time here for having none.
-  const refusedAsForkSeam = new Set(
-    [...gatesOwnedBy.values()].flatMap(owned => {
-      const perSeam = new Map<string, number>()
-      for (const gate of owned) {
-        const key = connectionKey(...gate.at.between)
-        perSeam.set(key, (perSeam.get(key) ?? 0) + 1)
-      }
-      return [...perSeam].filter(([, n]) => n > 1).map(([key]) => key)
-    })
-  )
-  for (const [key, gates] of gatesOn) {
-    if (gates.length < 2 || refusedAsForkSeam.has(key)) continue
-    const listed = new Set(orderOf.get(key)?.barriers ?? [])
+  // A corridor of a seam refused `forkSwitchSeamGatedTwice` cannot be mended by an order, so it is not refused a
+  // second time here for having none. A falling corridor's drop counts as one of its items: its gates are ordered
+  // around it.
+  for (const [slot, gates] of gatesOn) {
+    const items = gates.length + (corridorAt.get(slot)?.drop === undefined ? 0 : 1)
+    if (items < 2 || refusedAsForkSeam.has(slot)) continue
+    const listed = new Set(orderOf.get(slot)?.barriers ?? [])
     for (const gate of gates)
       if (!listed.has(gate.id)) faults.push({ type: "barrierUnordered", id: gate.id, between: pairOf(gate.at.between) })
   }
 
   for (const [owner, gates] of [...forkSwitches].map(([id, fork]) => [fork, gatesOwnedBy.get(id) ?? []] as const)) {
     for (const gate of gates) {
-      const key = connectionKey(...gate.at.between)
-      const order = orderOf.get(key)
+      const order = orderOf.get(slotOf(connectionKey(...gate.at.between), corridorIndexOf(gate)))
       if (!order || order.barriers.length < 2 || !order.barriers.includes(gate.id)) continue
       const first = order.between[0] === owner.in
       const standsFirst = first ? order.barriers[0] === gate.id : order.barriers[order.barriers.length - 1] === gate.id
@@ -555,25 +821,26 @@ const barrierOrderFaults = (
   return faults
 }
 
-/** A connection's gates, in the order they stand from `between[0]` to `between[1]`. */
-export type BarrierRun = { between: readonly [string, string]; gates: EdgeGateObstacle[] }
+/** A corridor's gates, in the order they stand from `between[0]` to `between[1]`; `falling` on a falling corridor. */
+export type BarrierRun = { between: readonly [string, string]; gates: EdgeGateObstacle[]; falling?: true }
 
 /**
- * EVERY CONNECTION THAT CARRIES A GATE, with its gates in the order stated. A connection with one gate is
- * its own run; one with several is ordered by `barrierOrder`, which `topologyFaults` has already proven
- * lists each of them exactly once.
+ * EVERY CORRIDOR THAT CARRIES A GATE, with its gates in the order stated. A corridor with one gate is its own run; one
+ * with several is ordered by `barrierOrder`, which `topologyFaults` has already proven lists each of them exactly once.
  */
 export const barrierRuns = (obstacles: readonly Obstacle[], barrierOrder: readonly BarrierOrder[]): BarrierRun[] => {
-  const byKey = new Map<string, EdgeGateObstacle[]>()
+  const drops = new Set(obstacles.flatMap(o => (o.kind === "oneWay" ? [o.id] : [])))
+  const bySlot = new Map<string, EdgeGateObstacle[]>()
   for (const obstacle of obstacles.filter(isEdgeGate)) {
-    const key = connectionKey(...obstacle.at.between)
-    byKey.set(key, [...(byKey.get(key) ?? []), obstacle])
+    const slot = slotOf(connectionKey(...obstacle.at.between), corridorIndexOf(obstacle))
+    bySlot.set(slot, [...(bySlot.get(slot) ?? []), obstacle])
   }
-  return [...byKey].map(([key, gates]) => {
-    const order = barrierOrder.find(entry => connectionKey(...entry.between) === key)
-    if (gates.length < 2 || !order) return { between: gates[0].at.between, gates }
+  return [...bySlot].map(([slot, gates]) => {
+    const order = barrierOrder.find(entry => slotOf(connectionKey(...entry.between), entry.corridor ?? 0) === slot)
+    const falling = order && fallsAt(order, drops) !== undefined ? { falling: true as const } : {}
+    if (gates.length < 2 || !order) return { between: gates[0].at.between, gates, ...falling }
     const byId = new Map(gates.map(gate => [gate.id, gate]))
-    return { between: order.between, gates: order.barriers.flatMap(id => byId.get(id) ?? []) }
+    return { between: order.between, gates: order.barriers.flatMap(id => byId.get(id) ?? []), ...falling }
   })
 }
 
@@ -636,14 +903,22 @@ const reachableOver = (connections: ReadonlyArray<readonly [string, string]>, fr
  * Every declared region gets an entry, empty where nothing bounds it, so a caller never has to decide
  * what an absent one means.
  */
-export const doorsToEnterRegion = (layout: RegionGraph, obstacles: readonly Obstacle[]): Map<string, Set<string>> => {
+export const doorsToEnterRegion = (
+  layout: RegionGraph,
+  obstacles: readonly Obstacle[],
+  corridors: readonly FloorCorridor[] = floorCorridors(layout, obstacles, [])
+): Map<string, Set<string>> => {
   const doors = new Map(layout.regions.map(r => [r.name, new Set<string>()]))
+  // Only the corridor an obstacle stands on is taken away: another corridor on its pair still walks round it. A
+  // falling corridor is no way in to walk.
+  const walked = corridors.filter(corridor => corridor.drop === undefined)
   for (const obstacle of obstacles) {
     // A region barrier stands inside its region rather than on a connection, so no connection is its to take away.
     if (isRegionGate(obstacle)) continue
-    const without = layout.connections.filter(
-      ([a, b]) => connectionKey(a, b) !== connectionKey(obstacle.at.between[0], obstacle.at.between[1])
-    )
+    const own = slotOf(connectionKey(...obstacle.at.between), isEdgeGate(obstacle) ? corridorIndexOf(obstacle) : 0)
+    const without = walked
+      .filter(corridor => slotOf(corridor.key, corridor.index) !== own)
+      .map(corridor => corridor.between)
     const arrived = reachableOver(without, layout.in)
     for (const { name } of layout.regions) if (!arrived.has(name)) doors.get(name)!.add(obstacle.id)
   }

@@ -20,21 +20,32 @@ export type RegionId = string
 export type BarrierId = string
 export type MechanicId = string
 
+/**
+ * Where an author stands a gate on its corridor, written with dashes: `left` right after what is written left of it
+ * (a region or another item), `right` right before what is written right of it, `center` with room for puzzles on
+ * both sides. A gate it does not name is free: the carve decides. It is a preference: it never refuses a lock and
+ * never lengthens a corridor.
+ */
+export type Alignment = "left" | "right" | "center"
+
 /** What a region is willing to hold — content, a reward, nothing. The carve fills it accordingly. */
 export type LockRegion = { takes: RegionAppetite }
 
 /**
- * A join between two regions. Bare, it is a passage the player walks: that is what lets two regions be
- * distinct PLACES with nothing between them, which a sequence needs to put its tiles somewhere the
- * author chose.
+ * A CORRIDOR between two regions. Bare, it is a passage the player walks: that is what lets two regions be distinct
+ * PLACES with nothing between them, which a sequence needs to put its tiles somewhere the author chose.
  *
- * `barriers` is what stands on it, IN ORDER from the first region to the second. The author decides the
- * order; the carve decides the distances, and may leave a gate halfway along a corridor. A fork puzzle's
- * gate is always first on its connection — checked, not authored.
+ * `barriers` are its items IN ORDER from the first region to the second: gates and at most one drop, by one id space.
+ * The carve decides the distances; `align` names the gates the author placed. Two connections on one pair are two
+ * corridors, the first written first. A fork puzzle's gate is always first on its connection — checked, not authored.
  */
 export type LockConnection =
   | readonly [RegionId, RegionId]
-  | { readonly between: readonly [RegionId, RegionId]; readonly barriers?: readonly BarrierId[] }
+  | {
+      readonly between: readonly [RegionId, RegionId]
+      readonly barriers?: readonly BarrierId[]
+      readonly align?: Readonly<Record<BarrierId, Alignment>>
+    }
 
 /**
  * HOW A DOOR WITH SEVERAL OWNERS IS ANSWERED. Default is every owner: each must name the gate in its
@@ -75,10 +86,10 @@ export type LockGate = EdgeGate | RegionGate
  * A DIRECTED PASSAGE WITH NO CONTROL: it is always on, and nothing owns or reverses it. It counts as a
  * way there and never as a way back.
  *
- * It carries an id because a connection names its barriers in order, and a one-way may share a join with
- * a gate. Every realisation of it is taken THROUGH A PROMPT, whatever it is dressed as, so the player
- * never crosses by accident and finds they cannot return. The prompt says it cannot be recrossed; it
- * does not say where it lands.
+ * It carries an id because it is an item of the corridor it stands on, named in that connection's `barriers` where it
+ * stands, and may share the corridor with gates. An entry no connection names is a corridor of its own carrying only
+ * that drop. Every realisation of it is taken THROUGH A PROMPT, whatever it is dressed as, so the player never crosses
+ * by accident and finds they cannot return. The prompt says it cannot be recrossed; it does not say where it lands.
  */
 export type LockOneWay = { readonly from: RegionId; readonly to: RegionId }
 
@@ -94,13 +105,26 @@ export type Toggle = {
 }
 
 /**
- * Two states, no way back; the second is for good. The torch, and a floor key — the same control with
- * another realisation, taken from a chest and carried to the door rather than worked where it stands.
+ * Two states, no way back; the second is for good. A floor key, or a prize taken once: water and sand never touch
+ * it, and no flood takes a floor key back.
  */
 export type Activator = {
   readonly control: "activator"
   readonly in: RegionId
   readonly starts: string
+  readonly opens: Opens
+}
+
+/**
+ * A torch, the core kind `flame` (the notation writes `torch`): off until the player lights it, or lit from the
+ * start (`starts: "on"`). Its states are always `off` and `on`. Water or sand over its region puts it out, and it
+ * can be lit again once the region is uncovered (`douseTorches`, mechanismDoors.ts). Nothing the player does puts
+ * it out.
+ */
+export type Flame = {
+  readonly control: "flame"
+  readonly in: RegionId
+  readonly starts: "off" | "on"
   readonly opens: Opens
 }
 
@@ -120,6 +144,12 @@ export type Sequence = {
   readonly steps: readonly { readonly in: RegionId }[]
   readonly resetAt: BarrierId
   readonly opens: Opens
+  /**
+   * The door carries a procession board instead of showing the order: a tile walked unlocks its bar, and the door
+   * opens once the board is solved and the order walked. The word changes the puzzle, not the look, so it binds
+   * the realisation itself (`procession-door`) and no floor binding may name another.
+   */
+  readonly procession?: true
 }
 
 /**
@@ -133,7 +163,42 @@ export type Sequence = {
  */
 export type ForkSwitch = { readonly control: "fork-switch"; readonly in: RegionId }
 
-export type LockMechanic = Toggle | Activator | Sequence | ForkSwitch
+export type LockMechanic = Toggle | Activator | Flame | Sequence | ForkSwitch
+
+/**
+ * STONES ON PLATES, the one lock-wide control that is not a mechanic. A stone rests on a plate or is in the
+ * player's hand; stones are alike, so a stone is written as the plate it starts on. A plate opens its
+ * `weighted` gates while a stone rests on it and its `empty` gates while none does; both may be empty, which
+ * makes it a shelf. See docs/superpowers/specs/2026-10-04-stones-acceptance.md.
+ */
+export type Weights = {
+  readonly plates: Readonly<
+    Record<
+      string,
+      {
+        readonly in: RegionId
+        readonly stone: boolean
+        readonly opens: { readonly weighted: readonly BarrierId[]; readonly empty: readonly BarrierId[] }
+      }
+    >
+  >
+  /** Stone pipes, by id: see `Pipe`. At most one per lock. */
+  readonly pipes?: Readonly<Record<string, Pipe>>
+}
+
+/**
+ * A STONE PIPE joins two regions through the walls: a stone posted at one hole lies in the other, and the pipe holds
+ * one stone at a time. `stone` names the end whose hole holds a stone at the start. A hole is no plate: it presses
+ * nothing and opens nothing (docs/instructions/stone-pipe.md).
+ */
+export type Pipe = { readonly ends: readonly [RegionId, RegionId]; readonly stone?: RegionId }
+
+/** The id of a pipe's hole in one region, which an arrangement, a walk step and the carve name it by. */
+export const holeOf = (pipe: string, region: RegionId): string => `${pipe}@${region}`
+
+/** Gate owners that are conditions on the stones rather than something placed: empty hands, which stand alone on
+ * their gate as a narrow passage. */
+export const CARRY_TERMS = ["unladen"] as const
 
 /**
  * One lock. Reusable: the same one is placed on several floors without being copied, and it does not
@@ -150,8 +215,12 @@ export type Lock = {
   readonly gates: Readonly<Record<BarrierId, LockGate>>
   readonly oneWays?: Readonly<Record<BarrierId, LockOneWay>>
   readonly mechanics: Readonly<Record<MechanicId, LockMechanic>>
+  readonly weights?: Weights
   readonly in: RegionId
   readonly out: RegionId
+  /** The one connection another lock may be spliced into (written `a -&> b`): its `in` meets `from`, its `out`
+   * meets `to`. The connection stays in `connections` as a plain corridor, which is what it is where nothing nests. */
+  readonly nestSpot?: { readonly from: RegionId; readonly to: RegionId }
 }
 
 /** A gate barring a whole region rather than a join between two. */
@@ -164,3 +233,74 @@ export const joinOf = (connection: LockConnection): readonly [RegionId, RegionId
 /** What stands on a connection, in order from its first region to its second. */
 export const barriersOf = (connection: LockConnection): readonly BarrierId[] =>
   "between" in connection ? (connection.barriers ?? []) : []
+
+/** The gates a connection's author aligned; a gate it does not name is free. */
+export const alignOf = (connection: LockConnection): Readonly<Record<BarrierId, Alignment>> =>
+  "between" in connection ? (connection.align ?? {}) : {}
+
+/** Whether a gate owner is a plate of the lock, or a condition on what the player carries. */
+export const isWeightOwner = (lock: Lock, owner: string): boolean =>
+  Object.hasOwn(lock.weights?.plates ?? {}, owner) || (CARRY_TERMS as readonly string[]).includes(owner)
+
+/** The same lock with every region taking `free`, for a bench floor: what it holds is the topology, and the
+ * carve seats none of a lock's `puzzles`/`nothing`/`reward` appetites on a floor with no content. */
+export const freeRegions = (lock: Lock): Lock => ({
+  ...lock,
+  regions: Object.fromEntries(Object.keys(lock.regions).map(region => [region, { takes: "free" as const }])),
+})
+
+/** A gate that empty hands alone open: a narrow passage. A gate any plate or mechanic also owns is a door. */
+export const isUnladenGate = (gate: LockGate): boolean =>
+  !isRegionGate(gate) && gate.owners.length > 0 && gate.owners.every(owner => owner === "unladen")
+
+/** Where a lock writes empty hands it may not: on a drop's connection (a drop already takes empty hands), or beside
+ * another owner (`unladen` is the narrow passage's keyword and stands alone). */
+export type UnladenFault =
+  { type: "unladenOnDrop"; barrier: BarrierId; oneWay: BarrierId } | { type: "unladenCombined"; barrier: BarrierId }
+
+export const unladenFaults = (lock: Lock): UnladenFault[] => {
+  const faults: UnladenFault[] = []
+  for (const connection of lock.connections) {
+    const barriers = barriersOf(connection)
+    const drop = barriers.find(barrier => Object.hasOwn(lock.oneWays ?? {}, barrier))
+    if (drop === undefined) continue
+    for (const barrier of barriers)
+      if (Object.hasOwn(lock.gates, barrier) && isUnladenGate(lock.gates[barrier]))
+        faults.push({ type: "unladenOnDrop", barrier, oneWay: drop })
+  }
+  for (const [barrier, gate] of Object.entries(lock.gates))
+    if (gate.owners.length > 1 && gate.owners.some(owner => (CARRY_TERMS as readonly string[]).includes(owner)))
+      faults.push({ type: "unladenCombined", barrier })
+  return faults
+}
+
+/** Every connection joining the spot's pair: one in a lock that compiles, more in one refused nestSpotShared. */
+const spotConnections = (lock: Lock): LockConnection[] => {
+  if (!lock.nestSpot) return []
+  const { from, to } = lock.nestSpot
+  return lock.connections.filter(c => {
+    const [a, b] = joinOf(c)
+    return (a === from && b === to) || (a === to && b === from)
+  })
+}
+
+/** The barriers on the nest spot's pair: a spot on a busy connection is no spot (designer, 2026-10-08), and the
+ * connection carves as written. */
+export const nestSpotBusy = (lock: Lock): BarrierId[] => spotConnections(lock).flatMap(c => [...barriersOf(c)])
+
+/** The connection another lock may be spliced into, or undefined: no spot written, its connection is busy, or its pair has other connections. */
+export const nestSpotOf = (lock: Lock): { from: RegionId; to: RegionId } | undefined =>
+  lock.nestSpot && spotConnections(lock).length === 1 && nestSpotBusy(lock).length === 0 ? lock.nestSpot : undefined
+
+/** A nest spot naming a connection the lock does not have (a JSON lock's typo; the notation cannot write one), or a
+ * pair with another connection beside the spot, which is a corridor of its own. */
+export type NestSpotFault =
+  | { type: "nestSpotOnNoConnection"; from: RegionId; to: RegionId }
+  | { type: "nestSpotShared"; from: RegionId; to: RegionId }
+
+export const nestSpotFaults = (lock: Lock): NestSpotFault[] => {
+  if (!lock.nestSpot) return []
+  const count = spotConnections(lock).length
+  if (count === 0) return [{ type: "nestSpotOnNoConnection", ...lock.nestSpot }]
+  return count > 1 ? [{ type: "nestSpotShared", ...lock.nestSpot }] : []
+}

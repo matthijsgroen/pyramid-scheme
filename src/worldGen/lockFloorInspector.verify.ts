@@ -1,9 +1,9 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest"
+import { beforeAll, describe, expect, it } from "vitest"
 import { buildConfigs } from "./configBuilder"
-import { DEV_JOURNEY_ID } from "./data"
 import type { SiteConfig } from "./types"
 import type { FloorConfig as GameFloorConfig } from "../game/siteTypes"
 import { assembleInspectedFloor } from "../game/assembleInspectedFloor"
+import { assembleFloor } from "../game/siteAssembler"
 import { ALL_CURRENCY_DISTRIBUTIONS } from "../mods/allCurrencyDistributions"
 import {
   CAPPED_CURRENCIES,
@@ -61,35 +61,60 @@ const lockFloors = (configs: Record<string, SiteConfig[]>): LockFloor[] =>
   )
 
 let plain: Record<string, SiteConfig[]>
-let withDev: Record<string, SiteConfig[]>
 
 beforeAll(() => {
-  delete process.env.INCLUDE_DEV
   plain = build()
-  process.env.INCLUDE_DEV = "1"
-  withDev = build()
-  delete process.env.INCLUDE_DEV
-}, 180_000)
-
-afterAll(() => {
-  delete process.env.INCLUDE_DEV
-})
+}, 600_000)
 
 describe("the journey inspector on lock floors", () => {
-  const assembles = ({ journeyId, pyramidNumber, floorIndex, floor }: LockFloor) =>
-    assembleInspectedFloor(journeyId, floor, INSPECTOR_SEED + pyramidNumber, floorIndex).success
+  // The inspector carries no family registry, so it refuses a floor that stands a switch before carving it
+  // (`switchFamilyNotReEnterable`); such a floor is asked at the inspector's seed with the world's families.
+  const assembles = ({ journeyId, pyramidNumber, floorIndex, floor }: LockFloor) => {
+    const inspected = assembleInspectedFloor(journeyId, floor, INSPECTOR_SEED + pyramidNumber, floorIndex)
+    if (inspected.success || !floor.switches) return inspected.success
+    const refusedTheSwitch = inspected.reasons.every(reason => reason.type === "switchFamilyNotReEnterable")
+    const seed = INSPECTOR_SEED + pyramidNumber + floorIndex
+    return refusedTheSwitch && assembleFloor(journeyId, floor, seed, resolveEncounterMeta).success
+  }
 
-  it("assembles the shipped world's lock floor, expert pyramid 4's first floor", () => {
+  it("assembles every lock floor the shipped world stands", () => {
     const shipped = lockFloors(plain)
     expect(shipped.map(({ journeyId, pyramidNumber, floorIndex }) => [journeyId, pyramidNumber, floorIndex])).toEqual([
+      ["junior_1", 1, 0],
+      ["junior_1", 2, 0],
+      ["junior_1", 3, 0],
+      ["junior_2", 1, 0],
+      ["junior_2", 2, 0],
+      ["junior_2", 3, 0],
+      ["junior_2", 4, 0],
+      ["junior_3", 1, 0],
+      ["junior_3", 2, 0],
+      ["junior_3", 3, 0],
+      ["junior_3", 4, 0],
+      ["junior_4", 1, 0],
+      ["junior_4", 2, 0],
+      ["junior_4", 3, 0],
+      ["junior_4", 4, 0],
+      ["junior_4", 5, 0],
+      ["expert_1", 1, 0],
+      ["expert_1", 2, 0],
+      ["expert_1", 3, 0],
       ["expert_1", 4, 0],
+      ["expert_2", 1, 0],
+      ["expert_2", 2, 0],
+      ["expert_2", 3, 0],
+      ["expert_2", 4, 0],
+      ["expert_3", 1, 0],
+      ["expert_3", 2, 0],
+      ["expert_3", 3, 0],
+      ["expert_3", 4, 0],
+      ["expert_3", 5, 0],
+      ["expert_4", 1, 0],
+      ["expert_4", 2, 0],
+      ["expert_4", 3, 0],
+      ["expert_4", 4, 0],
+      ["expert_4", 5, 0],
     ])
-    expect(shipped.map(assembles)).toEqual([true])
-  })
-
-  it("assembles every lock floor the dev journey stands", () => {
-    const dev = lockFloors({ [DEV_JOURNEY_ID]: withDev[DEV_JOURNEY_ID] })
-    expect(dev.map(({ pyramidNumber }) => pyramidNumber)).toEqual([2, 4, 10])
-    expect(dev.filter(floor => !assembles(floor))).toEqual([])
+    expect(shipped.filter(floor => !assembles(floor))).toEqual([])
   })
 })

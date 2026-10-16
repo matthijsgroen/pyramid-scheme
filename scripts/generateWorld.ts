@@ -25,6 +25,7 @@ import {
   findMispairedStairs,
   findStrandingLocks,
   findUnbakedSwitchBoards,
+  findUnseededDoorBoards,
   findUnwalkedLocks,
   floorsOwingALock,
 } from "../src/worldGen/validate"
@@ -46,6 +47,7 @@ import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
 import { resolveKeyRequirements, resolveEncounterMeta, ALL_FAMILY_META } from "../src/mods/allFamilyMeta"
 import { puzzleSeeds } from "../src/data/puzzleSeeds"
 import { resolveOneWayRealisation } from "../src/mods/allOneWayRealisations"
+import { resolvePassageRealisation } from "../src/mods/allPassageRealisations"
 import { HIEROGLYPH_REQUIRED } from "../src/mods/hieroglyph/game/hieroglyphData"
 import { assignFragmentPieceIndices, hieroglyphCoverage } from "../src/mods/hieroglyph/game/fragmentFinalize"
 
@@ -139,7 +141,13 @@ const assembleOnce = (journeyId: string, floor: FloorConfig, levelNr: number, fl
         { ...floor, seed, packing: packing === authored ? floor.packing : packing },
         base,
         resolveEncounterMeta,
-        { resolveKeyRequirements, resolveOneWay: resolveOneWayRealisation, floorRef, maxAttempts }
+        {
+          resolveKeyRequirements,
+          resolveOneWay: resolveOneWayRealisation,
+          resolvePassage: resolvePassageRealisation,
+          floorRef,
+          maxAttempts,
+        }
       )
     // The floor as the runtime carves it when nothing is stamped: the ladder widens the grid when the
     // authored packing cannot carve it on the first attempt.
@@ -238,7 +246,7 @@ console.log(`  Stair sweep: ${paired} stair id(s), each wired exactly twice`)
 // A board the offline pass never proved would be searched for on the player's device instead, which is
 // the very thing the lists replaced — and it would happen quietly. So an authored switch whose shape and
 // tier no list covers stops the build with its floor named: bake the list (`yarn generate-seeds`), or do
-// not author the room. The playtest journey is excused by its capabilities, not by its id.
+// not author the room.
 const unbakedSwitches = findUnbakedSwitchBoards(configs, ALL_FAMILY_META, puzzleSeeds)
 if (unbakedSwitches.length > 0) {
   console.error(`✗ ${unbakedSwitches.length} authored switch board(s) have no baked seed list:`)
@@ -249,6 +257,21 @@ if (unbakedSwitches.length > 0) {
     )
   if (unbakedSwitches.length > 20) console.error(`    … and ${unbakedSwitches.length - 20} more`)
   console.error("  Run `yarn generate-seeds` (it reads the spec, not the bake), then `yarn generate-world` again.")
+  process.exit(1)
+}
+
+const unseededDoors = findUnseededDoorBoards(configs, ALL_FAMILY_META, puzzleSeeds)
+if (unseededDoors.length > 0) {
+  console.error(`✗ ${unseededDoors.length} door board(s) have no seed list:`)
+  for (const door of unseededDoors)
+    console.error(
+      `    ${door.familyId}BoardUnseeded tier=${door.difficulty} steps=${door.steps}: ` +
+        `${door.journeyId} level ${door.levelNr} floor ${door.floorIndex}, ${door.mechanismId}`
+    )
+  console.error(
+    "  Run `yarn generate-seeds`, then `yarn generate-world` again. A tier and step count it finds no seed for needs a\n" +
+      "  band of its own (yarn tsx scripts/processionDoorSeeds.ts prints the table)."
+  )
   process.exit(1)
 }
 
@@ -307,7 +330,7 @@ if (unwalked.length > 0) {
 }
 
 if (stranding.length > 0) {
-  console.error(`✗ ${stranding.length} floor(s) hold a lock a player can be stranded in:`)
+  console.error(`✗ ${stranding.length} floor(s) hold a lock a player can be stranded in or lose a region of:`)
   for (const floor of stranding.slice(0, 20))
     console.error(`    ${floor.journeyId} level ${floor.levelNr} floor ${floor.floorIndex}: ${floor.problem}`)
   if (stranding.length > 20) console.error(`    … and ${stranding.length - 20} more`)

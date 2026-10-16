@@ -4,8 +4,8 @@ import { assembleFloor } from "../../game/siteAssembler"
 import { completeCell } from "../../game/gridNavigation"
 import type { Direction, FloorGrid } from "../../game/siteTypes"
 import { CELL } from "./mapScale"
-import { ART_IMAGE_RENDERING } from "./tileAssets"
-import { ExplorerDot, ExplorerFigure } from "./ExplorerDot"
+import { ART_IMAGE_RENDERING, sharedTileFrames } from "./tileAssets"
+import { ExplorerDot, ExplorerFigure, FootShadow, TorchGlow } from "./ExplorerDot"
 import { SiteMapView } from "./SiteMapView"
 
 const getGrid = (): FloorGrid => {
@@ -75,6 +75,43 @@ export const Interactive: Story = {
 // cycle (a mirrored pose, a leg that does not swing) is visible as a break in its row.
 const STEPS = 4
 
+// Below the walking rows, the same figure carrying a stone (ExplorerFigure's own `carrying`) and riding a
+// zipline. Riding is not part of ExplorerFigure, so the story stands those frames in the same clip, at the
+// same foot line and under the same light, itself. A riding pose is one frame per facing, so it repeats
+// across the steps.
+const POSE_W = 40
+const POSE_H = 70
+const POSE_LIT = "brightness(1.1) saturate(1.14) drop-shadow(0 0 5px rgba(255,186,102,0.6))"
+
+const PoseFigure = ({ prefix, facing, step }: { prefix: string; facing: Direction; step: number }) => {
+  const frames = sharedTileFrames(`${prefix}-${facing === "w" ? "e" : facing}`)
+  if (frames.length === 0) return null
+  return (
+    <>
+      <TorchGlow />
+      {prefix !== "explorer-zip" && <FootShadow />}
+      <div
+        style={{
+          position: "absolute",
+          left: -POSE_W / 2,
+          top: CELL / 2 - POSE_H - 5,
+          width: POSE_W,
+          height: POSE_H,
+          overflow: "hidden",
+          transform: facing === "w" ? "scaleX(-1)" : undefined,
+          filter: POSE_LIT,
+        }}
+      >
+        <img src={frames[step % frames.length]} width={POSE_W} height={POSE_H} alt="" />
+      </div>
+    </>
+  )
+}
+
+const POSES = ["carry", "explorer-zip"]
+// The walking rows, then one block of rows per pose; each is a block of facings.
+const ROWS = FACINGS.length * (1 + POSES.length)
+
 export const Facings: Story = {
   args: { grid, pos: grid.entrancePos },
   render: () => {
@@ -93,7 +130,7 @@ export const Facings: Story = {
                 key={scale}
                 style={{
                   width: STEPS * CELL * scale,
-                  height: FACINGS.length * rowH * scale,
+                  height: ROWS * rowH * scale,
                   background: ground,
                   imageRendering: ART_IMAGE_RENDERING,
                   overflow: "hidden",
@@ -103,7 +140,7 @@ export const Facings: Story = {
                   style={{
                     position: "relative",
                     width: STEPS * CELL,
-                    height: FACINGS.length * rowH,
+                    height: ROWS * rowH,
                     transform: `scale(${scale})`,
                     transformOrigin: "0 0",
                   }}
@@ -124,6 +161,28 @@ export const Facings: Story = {
                       </div>
                     ))
                   )}
+                  {POSES.map((prefix, pose) =>
+                    FACINGS.map((facing, row) =>
+                      Array.from({ length: STEPS }, (_, step) => (
+                        <div
+                          key={`${prefix}-${facing}-${step}`}
+                          style={{
+                            position: "absolute",
+                            left: step * CELL + CELL / 2,
+                            top: ((pose + 1) * FACINGS.length + row) * rowH + rowH - CELL / 2,
+                            width: 0,
+                            height: 0,
+                          }}
+                        >
+                          {prefix === "carry" ? (
+                            <ExplorerFigure facing={facing} step={step} carrying />
+                          ) : (
+                            <PoseFigure prefix={prefix} facing={facing} step={step} />
+                          )}
+                        </div>
+                      ))
+                    )
+                  )}
                 </div>
               </div>
             ))}
@@ -142,7 +201,8 @@ export const Facings: Story = {
 // The cycle is a CSS animation, so it keeps time on its own: the slider slows the WALK down — the frame
 // rate follows it, and follows each facing's own frame count, so a facing drawn in twelve frames and one
 // drawn in four still take the same two cells to complete a stride. Unticking WALKING drops each figure
-// onto its standing pose, which is what the player sees the moment they arrive.
+// onto its standing pose, which is what the player sees the moment they arrive. The second row carries a
+// stone, so both walks can be compared at the same speed.
 export const Walking: Story = {
   args: { grid, pos: grid.entrancePos },
   render: () => {
@@ -173,7 +233,7 @@ export const Walking: Story = {
                 key={scale}
                 style={{
                   width: FACINGS.length * CELL * scale,
-                  height: rowH * scale,
+                  height: 2 * rowH * scale,
                   background: ground,
                   imageRendering: ART_IMAGE_RENDERING,
                   overflow: "hidden",
@@ -183,25 +243,27 @@ export const Walking: Story = {
                   style={{
                     position: "relative",
                     width: FACINGS.length * CELL,
-                    height: rowH,
+                    height: 2 * rowH,
                     transform: `scale(${scale})`,
                     transformOrigin: "0 0",
                   }}
                 >
-                  {FACINGS.map((facing, col) => (
-                    <div
-                      key={facing}
-                      style={{
-                        position: "absolute",
-                        left: col * CELL + CELL / 2,
-                        top: rowH - CELL / 2,
-                        width: 0,
-                        height: 0,
-                      }}
-                    >
-                      <ExplorerFigure facing={facing} walking={walking} cellMs={cellMs} />
-                    </div>
-                  ))}
+                  {[false, true].map((carrying, row) =>
+                    FACINGS.map((facing, col) => (
+                      <div
+                        key={`${carrying}-${facing}`}
+                        style={{
+                          position: "absolute",
+                          left: col * CELL + CELL / 2,
+                          top: (row + 1) * rowH - CELL / 2,
+                          width: 0,
+                          height: 0,
+                        }}
+                      >
+                        <ExplorerFigure facing={facing} walking={walking} cellMs={cellMs} carrying={carrying} />
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             ))}

@@ -3,6 +3,7 @@ import { createJourneysV3Api, MECHANISM_AT_REST, type StoredJourneyStateV3 } fro
 import type { TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { journeys as allJourneys } from "@/data/journeys"
 import { migrateJourneyToCarveIndependent } from "@/app/SiteMap/cellIdentity"
+import { RELAID_FLOORS_VERSION } from "@/app/SiteMap/relaidPyramids"
 
 // completeJourney checks against knownJourneyIds (the real journey list), so we
 // need a real journey ID — use the first pyramid entry from the data.
@@ -216,6 +217,7 @@ describe("standingKey clears wherever positionKey does", () => {
         "completeJourney",
         "completeLevel",
         "setCarveIndependentState",
+        "setRelaidFloors",
         "setRepairedExploration",
         "startJourney",
         "updatePosition",
@@ -458,6 +460,66 @@ describe("mechanism positions", () => {
   it("hands a level nothing when every stored position belongs to another level", () => {
     const api = makeApi([makeStoredJourney({ levelNr: 2, mechanismStates: { "1:lever#0/xhandle": "right" } })])
     expect(api.getMechanismStates(REAL_ID).size).toBe(0)
+  })
+})
+
+describe("sequences that hide their order", () => {
+  const run = (steps: (api: ReturnType<typeof makeApi>) => void, start = makeStoredJourney()) => {
+    let state = [start]
+    const set = (updater: unknown) => {
+      state =
+        typeof updater === "function"
+          ? (updater as (p: unknown) => StoredJourneyStateV3[])(state)
+          : (updater as StoredJourneyStateV3[])
+    }
+    steps(createJourneysV3Api({ journeys: state, setJourneys: set, journeyData: [makeJourneyData(REAL_ID)] }))
+    // A reload: the save as storage would hand it back.
+    const reloaded = JSON.parse(JSON.stringify(state)) as StoredJourneyStateV3[]
+    return {
+      state,
+      api: createJourneysV3Api({ journeys: reloaded, setJourneys: set, journeyData: [makeJourneyData(REAL_ID)] }),
+    }
+  }
+
+  it("keeps the steps walked and the read across a reload", () => {
+    const { api } = run(a => {
+      a.recordWalkedSteps([{ address: "s0#0/p1", steps: [2, 0] }])
+      a.recordWalkedSteps([{ address: "s0#0/p1", steps: [1] }])
+    })
+    expect(api.getSequenceReads(REAL_ID).get("s0#0/p1")).toEqual({ walked: [0, 1, 2] })
+    const read = run(
+      a => a.readSequence("s0#0/p1"),
+      makeStoredJourney({ sequenceReads: { "1:s0#0/p1": { walked: [0, 1] } } })
+    )
+    expect(read.api.getSequenceReads(REAL_ID).get("s0#0/p1")).toEqual({ walked: [0, 1], read: true })
+  })
+
+  it("records a save's first walk at done as read, and a first walk short of done unread", () => {
+    const atDone = run(
+      a => a.recordWalkedSteps([{ address: "s0#0/p1", steps: [1], atDone: true }]),
+      makeStoredJourney({ mechanismStates: { "1:s0#0/p1": "3" } })
+    )
+    expect(atDone.api.getSequenceReads(REAL_ID).get("s0#0/p1")).toEqual({ walked: [1], read: true })
+    const fresh = run(a => a.recordWalkedSteps([{ address: "s0#0/p1", steps: [0], atDone: false }]))
+    expect(fresh.api.getSequenceReads(REAL_ID).get("s0#0/p1")).toEqual({ walked: [0] })
+  })
+
+  it("starts the run again from its first step when the order is read, from done included", () => {
+    const { api } = run(a => a.readSequence("s0#0/p1"), makeStoredJourney({ mechanismStates: { "1:s0#0/p1": "3" } }))
+    expect(api.getMechanismStates(REAL_ID).get("s0#0/p1")).toBe("0")
+  })
+
+  it("writes nothing on a second read, so a run walked after the first is kept", () => {
+    const start = makeStoredJourney({
+      mechanismStates: { "1:s0#0/p1": "3" },
+      sequenceReads: { "1:s0#0/p1": { walked: [0, 1, 2], read: true } },
+    })
+    const { state } = run(a => a.readSequence("s0#0/p1"), start)
+    expect(state[0]).toBe(start)
+  })
+
+  it("reads an absent record as nothing walked and nothing read", () => {
+    expect(makeApi([makeStoredJourney()]).getSequenceReads(REAL_ID).size).toBe(0)
   })
 })
 
@@ -760,5 +822,106 @@ describe("cellKeyVersion as a record of having been through this release", () =>
     const api = makeApi([makeStoredJourney({ cellKeyVersion: 3 })])
 
     expect(api.journeysNeedingReKey()).toEqual([])
+  })
+})
+
+describe("the re-laid pyramids step", () => {
+  const stateful = (stored: StoredJourneyStateV3) => {
+    let state = [stored]
+    const api = createJourneysV3Api({
+      journeys: state,
+      setJourneys: updater => {
+        state = typeof updater === "function" ? updater(state) : updater
+      },
+      journeyData: [makeJourneyData(REAL_ID)],
+    })
+    return { api, current: () => state[0] }
+  }
+
+  const standing = makeStoredJourney({
+    levelNr: 2,
+    interiorLevelNr: 2,
+    position: "0:1,2",
+    positionKey: "main#0/p2",
+    standingKey: "main#0/~7",
+    exploredCells: { "2:main": ["0/p0", "0/p2"] },
+    mechanismStates: { "2:main#0/xmech:lever": "open" },
+  })
+
+  it("offers every save not yet stamped, standing anywhere or nowhere", () => {
+    const api = makeApi([makeStoredJourney()])
+
+    expect(api.journeysNeedingRelaidFloors().map(j => j.journeyId)).toEqual([REAL_ID])
+  })
+
+  it("leaves a save already stamped alone", () => {
+    const api = makeApi([makeStoredJourney({ relaidFloorsVersion: RELAID_FLOORS_VERSION })])
+
+    expect(api.journeysNeedingRelaidFloors()).toEqual([])
+  })
+
+  it("forgets where a save inside a re-laid pyramid stands, and keeps its level, its exploration and its mechanisms", () => {
+    const { api, current } = stateful(standing)
+
+    api.setRelaidFloors(REAL_ID, true)
+
+    expect(current()).toEqual({
+      ...standing,
+      position: null,
+      positionKey: null,
+      standingKey: null,
+      relaidFloorsVersion: RELAID_FLOORS_VERSION,
+    })
+  })
+
+  it("forgets the place the re-key derived in the same launch", () => {
+    const { api, current } = stateful({ ...standing, positionKey: null, cellKeyVersion: undefined })
+
+    api.setCarveIndependentState(REAL_ID, {
+      exploredCells: { "2:main": ["0/p0", "0/p2"] },
+      positionKey: "main#0/p2",
+      standingKey: null,
+      disabledTraps: [],
+      skippedConsumables: [],
+      purchasedStock: [],
+      knownHiddenCorridors: [],
+      foundHiddenCorridors: [],
+    })
+    api.setRelaidFloors(REAL_ID, true)
+
+    expect(current()).toMatchObject({ positionKey: null, position: null, standingKey: null, cellKeyVersion: 3 })
+  })
+
+  it("only stamps a save that stands elsewhere", () => {
+    const { api, current } = stateful(standing)
+
+    api.setRelaidFloors(REAL_ID, false)
+
+    expect(current()).toEqual({ ...standing, relaidFloorsVersion: RELAID_FLOORS_VERSION })
+  })
+
+  it("starts a new journey already stamped, so a place taken after the release is kept", async () => {
+    let state: StoredJourneyStateV3[] = []
+    const api = createJourneysV3Api({
+      journeys: state,
+      setJourneys: updater => {
+        state = typeof updater === "function" ? updater(state) : updater
+      },
+      journeyData: [makeJourneyData(REAL_ID)],
+    })
+
+    await api.startJourney({ id: REAL_ID, levelCount: REAL_LEVEL_COUNT } as Parameters<typeof api.startJourney>[0])
+
+    expect(state[0].relaidFloorsVersion).toBe(RELAID_FLOORS_VERSION)
+  })
+})
+
+describe("a save holding a journey the build no longer has", () => {
+  const gone = makeStoredJourney({ journeyId: "no_such_journey", active: true })
+
+  it("has no active journey, and still answers for the journeys it does have", () => {
+    const api = makeApi([gone, makeStoredJourney({ journeyId: REAL_ID, active: false })])
+    expect(api.activeJourneyId).toBeUndefined()
+    expect(api.getJourney(REAL_ID)).toBeDefined()
   })
 })

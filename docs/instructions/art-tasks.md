@@ -234,10 +234,11 @@ original placeholder-generation commit: speculative art for a kind nobody added,
 report because no room asks for it and which anyone reading the tile folder would take for work in
 progress.
 
-**Region-barrier covers — owed, two textures.** A shut region barrier (a hall flooded, a vault buried) is drawn as
+**Region-barrier covers — both landed.** A shut region barrier (a hall flooded, a vault buried) is drawn as
 a cover over its region, from one seamless texture per realisation, shared by every rank: `default/regionWater`
-and `default/regionSand`, both in `repaint-queue.md`. Until they land the map draws each realisation's flat
-fallback colour; the owner's mark is drawn over the cover, so nothing in the texture needs to leave room for it.
+and `default/regionSand` (masters in `art/masters/surfaces/`, imports in `art/rebuild.sh`). A realisation
+without a texture draws its flat fallback colour; the owner's mark is drawn over the cover, so nothing in the
+texture needs to leave room for it.
 
 ## 6. Waiting on a scan
 
@@ -286,7 +287,7 @@ full of — `--contents` on what exists rather than a new model. `prim_niche`, `
 - **Patron gods** — designed, and now UNBLOCKED rather than unbuilt: `tileVariants` is the selector they
   needed. A patron is `statue-2.png` beside `statue.png`, and the same for `shrine`, `wallShrine`, `stela`
   and `mask`. No new kinds, no pool edits, no world regeneration, and art can arrive one file at a time.
-- **Torch (`torch` family) — no art at any rank.** A torch room is drawn as its marker carrying the flame icon; wanted per rank (starter, junior, expert, master, wizard) is a painted torch the three-state spent look can ease back, declared by setting `drawing.art` on the torch meta once it exists.
+- **Torch (`torch` family) — drawn.** The standing torch is shared `default` art at every rank (`torchUnlit`, `torchLit`), declared as `drawing.art: "standingTorch"` on the torch meta and drawn beside its flame marker. Lit, it lays a light pool on the floor at its foot (the same `LightPool` a stair's cresset uses) and is not eased back; the lit tile is imported with no `--seat`, so it casts no shadow (designer, 2026-10-07).
 - **A sequence tile (pressure plate)** is a vector slab with its glyph (`PlateShape`) in three looks (unwalked, walked in order, walked out of order); a painted plate is wanted in the same three states.
 
 **Built since this list was written**, and noted because the list claimed otherwise for a while:

@@ -1,0 +1,8 @@
+// designed by: Claude
+// LESSON, expert: two tiles, in order. The shut door stands at the entrance and shows the order; a tile
+// waits in each of two side rooms, so the player goes to them in that order and comes back through the door.
+
+in -- a
+in -- b
+in -[P]- out
+P sequence a b reset in-out

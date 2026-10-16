@@ -91,9 +91,9 @@ with the mod on and off alike, and nothing stands in for it (`unboundRole` for a
 with `unbound` for a one-way).
 
 Consequence for rule 1 with the topology mod removed from `registeredMods`: `yarn generate-world` builds the
-**whole** world, the shipped journeys and the dev journey, and the app runs it. Every floor carves with the
-walls the mod on carves; the floors that author a mechanic (junior_2's `switches`, expert_1's doubleBack floor,
-the dev journey's floors) stand with bare nodes and open corridors where the mechanics were.
+**whole** world, and the app runs it. Every floor carves with the
+walls the mod on carves; the floors that author a mechanic (junior_2's `switches`, expert_1's doubleBack floor)
+stand with bare nodes and open corridors where the mechanics were.
 
 ## Approach
 

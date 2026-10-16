@@ -70,6 +70,12 @@ describe("floorLocks on an auto-built pyramid", () => {
     expect(floors.map(without)).toEqual(plain.map(without))
   })
 
+  it("packs only the locked floor at the packing its overlay names", () => {
+    const floors = build({ ...AUTO, floorLocks: { 0: { locks: [{ lock: SLUICE }], packing: 0.15 } } })
+
+    expect(floors.map(floor => floor.packing)).toEqual([0.15, plain[1].packing])
+  })
+
   it("carries the one-way in the binding alone, as an explicit floor does", () => {
     const c = { ...AUTO, oneWayRealisation: "zipline" }
     const floors = build({ ...c, floorLocks: { 0: { locks: [{ lock: SLUICE }] } } })

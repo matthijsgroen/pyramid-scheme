@@ -2,8 +2,13 @@ import { beforeAll, describe, expect, it } from "vitest"
 import { assembleFloor, defaultResolveEncounter, type ResolveEncounter } from "./siteAssembler"
 import { cellAddress } from "./cellAddress"
 import { withGateFaces } from "./gateFace"
+import type { Mark } from "./mark"
+import { parseLock } from "./lockNotation"
+import { carveLockFloor } from "./testSupport/lockFixtures"
+import { SHELF_AND_DOOR } from "./testSupport/stoneFixtures"
 import { openDoorsFor, openWaysOut } from "./mechanismDoors"
-import type { FloorConfig, FloorGrid, GridCell, RoomCell } from "./siteTypes"
+import { arrangementOf } from "./mechanics/weights"
+import type { FloorConfig, FloorGrid, GridCell, MechanismRecord, RoomCell } from "./siteTypes"
 import { designerDoubleBack, forkSwitchFloorConfig } from "./testSupport/forkSwitchFixtures"
 import { handleFloorConfig } from "./testSupport/handleFixtures"
 import {
@@ -210,5 +215,107 @@ describe("a gate that waits on several owners", () => {
       const door = doorsOf(grid).find(d => d.gateFace)!
       expect(door.dirs.size).toBeGreaterThan(0)
     })
+  })
+})
+
+describe("a door the stones hold", () => {
+  const stoneFloor = (text: string, more: Record<string, string> = {}) =>
+    carveLockFloor(parseLock(text, "stones").lock, { weights: "stonePlate", ...more })
+  const faceOf = (grid: FloorGrid, positions: ReadonlyMap<string, string> = new Map()) =>
+    withGateFaces(grid, 0, positions, undefined, GATE_FACE_FAMILY)
+      .cells.flat()
+      .find((cell): cell is RoomCell => cell.type === "room" && cell.gateFace !== undefined)
+  const homeAddress = (grid: FloorGrid) => {
+    const home = grid.cells.flat().findIndex(cell => cell.type === "room" && cell.mechanism && cell.plate)
+    return cellAddress(grid, 0, Math.floor(home / grid.cols), home % grid.cols)!
+  }
+  const TWO_PLATES = "in -[a+b]- out\na plate @in\nb plate @in\ns plate @in stone\nt plate @in stone\nin ?\nout ?"
+
+  it("wears no face with one plate, as a door with one owner wears none", () => {
+    const grid = stoneFloor(SHELF_AND_DOOR)
+    expect(withGateFaces(grid, 0, new Map(), undefined, GATE_FACE_FAMILY)).toBe(grid)
+  })
+
+  it("wears a face with two plates, one marker per plate, a stone wanted on each", () => {
+    const door = faceOf(stoneFloor(TWO_PLATES))
+    expect(door?.family).toBe(GATE_FACE_FAMILY)
+    expect(door?.gateFace?.markers).toEqual([
+      { id: "stones.a", icon: { kind: "plate", wants: "stone" }, lit: false },
+      { id: "stones.b", icon: { kind: "plate", wants: "stone" }, lit: false },
+    ])
+  })
+
+  it("lights a plate's marker once the plate agrees", () => {
+    const grid = stoneFloor(TWO_PLATES)
+    const lit = faceOf(grid, new Map([[homeAddress(grid), "stones.a stones.t"]]))?.gateFace?.markers
+    expect(lit?.map(m => m.lit)).toEqual([true, false])
+  })
+
+  const EMPTY_AND_STONE = "in -[p:empty+q]- out\np plate @in\nq plate @in\nshelf plate @in stone\nin ?\nout ?"
+
+  it("marks a plate wanting none lit while it is empty", () => {
+    const door = faceOf(stoneFloor(EMPTY_AND_STONE))
+    expect(door?.gateFace?.markers).toEqual([
+      { id: "stones.p", icon: { kind: "plate", wants: "empty" }, lit: true },
+      { id: "stones.q", icon: { kind: "plate", wants: "stone" }, lit: false },
+    ])
+  })
+
+  describe("on a door that wants an empty plate and a stone on another", () => {
+    const markersWith = (pick: (grid: FloorGrid, record: MechanismRecord) => string) => {
+      const grid = stoneFloor(EMPTY_AND_STONE)
+      const record = grid.cells.flat().find(cell => cell.type === "room" && cell.mechanism?.weighs)!
+      const state = pick(grid, (record as RoomCell).mechanism!)
+      return faceOf(grid, new Map([[homeAddress(grid), state]]))?.gateFace?.markers.map(m => [m.id, m.lit])
+    }
+
+    it("lights an empty plate no more once a stone lies on it", () => {
+      const markers = markersWith((_, record) =>
+        record.states.find(s => arrangementOf(s).weighted.includes("stones.p"))!
+      )
+      expect(markers).toContainEqual(["stones.p", false])
+    })
+
+    it("reads a saved key the record does not have as the start", () => {
+      const markers = markersWith(() => "stones.p stones.nowhere")
+      expect(markers).toEqual([
+        ["stones.p", true],
+        ["stones.q", false],
+      ])
+    })
+  })
+
+  it("puts a plate beside a lever on one face, the lever's marker first", () => {
+    const grid = stoneFloor("in -[p+L]- out\np plate @in\nshelf plate @in stone\nL toggle @in\nin ?\nout ?", {
+      toggle: "handle",
+    })
+    expect(faceOf(grid)?.gateFace?.markers.map(m => m.icon.kind)).toEqual(["mechanism", "plate"])
+  })
+
+  it("wears no face on an `any` door, however many plates it lists", () => {
+    const grid = stoneFloor("in -[a|b]- out\na plate @in\nb plate @in\nshelf plate @in stone\nin ?\nout ?")
+    expect(withGateFaces(grid, 0, new Map(), undefined, GATE_FACE_FAMILY)).toBe(grid)
+  })
+})
+
+describe("the marks a door shows", () => {
+  it("are one per control on a door with several, each its own owner's pair, and none on any other door", () => {
+    for (const { name } of floors) {
+      const grid = carved.get(name)
+      if (!grid) continue
+      for (const door of doorsOf(grid)) {
+        const marks = (door.gateFace?.markers ?? []).flatMap(({ mark }) => (mark ? [mark] : []))
+        const owners = ownerRooms(grid).filter(({ cell }) =>
+          cell.mechanism!.positions.some(p => p.gateKeyId === door.requiredKeyId)
+        )
+        const several = owners.length > 1 && !(name.startsWith("an any door") || name.startsWith("a floor-key"))
+        if (several && door.gateFace) {
+          const byGlyph = (list: readonly (Mark | undefined)[]) => list.map(mark => mark?.glyph).sort()
+          expect(byGlyph(marks), `${name}: ${door.requiredKeyId}`).toEqual(byGlyph(owners.map(({ cell }) => cell.mark)))
+          expect(new Set(marks.map(mark => mark.glyph)).size, `${name}: two owners, one glyph`).toBe(marks.length)
+        } else if (door.gateFace === undefined || door.gateFace.sequences === undefined)
+          expect(marks, `${name}: ${door.requiredKeyId} shows marks with a single control`).toEqual([])
+      }
+    }
   })
 })

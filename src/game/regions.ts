@@ -364,6 +364,51 @@ export const offRouteChains = (
 }
 
 /**
+ * THE WAYS OUT OF `region` A JUNCTION THERE OFFERS BESIDE THE ROUTE, each as `[region, other]`.
+ *
+ * On a floor carved as side chains, a way out is the first join of a chain whose mouth is `region` (a chain joined
+ * to its mouth by a drop alone has no corridor to leave by). On a floor laid from a lock plan (`laid`) every
+ * connection is a corridor, so every other join of `region` the route does not take is a way out too: the second
+ * meeting of a loop. The chains' seams come first, so a layout with no loop gets the same seams in the same order
+ * either way.
+ */
+export const forkSeams = (
+  graph: RegionGraph,
+  region: string,
+  oneWays: ReadonlyArray<readonly [string, string]> = [],
+  { laid = false }: { laid?: boolean } = {}
+): [string, string][] => {
+  const keyOf = (a: string, b: string) => JSON.stringify([a, b].sort())
+  const joined = new Set(graph.connections.map(([a, b]) => keyOf(a, b)))
+  const chained = offRouteChains(graph, oneWays)
+    .filter(chain => chain.mouth === region && chain.regions.length > 0 && joined.has(keyOf(region, chain.regions[0])))
+    .map((chain): [string, string] => [region, chain.regions[0]])
+  if (!laid) return chained
+  const route = regionRoute(graph)
+  const taken = new Set([
+    ...route.slice(1).map((next, i) => keyOf(route[i], next)),
+    ...chained.map(([a, b]) => keyOf(a, b)),
+  ])
+  const looped: [string, string][] = []
+  for (const [a, b] of graph.connections) {
+    if ((a !== region && b !== region) || a === b || taken.has(keyOf(a, b))) continue
+    taken.add(keyOf(a, b))
+    looped.push([region, a === region ? b : a])
+  }
+  return [...chained, ...looped]
+}
+
+/**
+ * THE ROUTE'S WAY ON OUT OF `region`, as `[region, next]`: a laid junction may own it as one of its ways besides its
+ * seams. None for a region off the route or at its end.
+ */
+export const forkOnward = (graph: RegionGraph, region: string): [string, string] | undefined => {
+  const route = regionRoute(graph)
+  const at = route.indexOf(region)
+  return at >= 0 && at < route.length - 1 ? [region, route[at + 1]] : undefined
+}
+
+/**
  * WHICH REGION EACH STEP OF THE MAIN PATH STANDS IN, one entry per step.
  *
  * The steps are dealt evenly along the route, and where they do not divide the earlier regions take

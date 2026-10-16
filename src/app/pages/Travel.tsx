@@ -16,6 +16,7 @@ import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import { DevPanel } from "@/ui/molecules/DevPanel"
 import { useDevActions } from "@/app/dev/useDevActions"
 import { PuzzleLab } from "@/app/dev/PuzzleLab"
+import { START_LOCK, encodeLockHash } from "@/app/dev/lockEditorUrl"
 import { SaveTransfer } from "@/app/dev/SaveTransfer"
 
 import { journeyCardSlots } from "./journeyCardSlots"
@@ -195,6 +196,12 @@ export const TravelPage: FC<{
               )}
               <DevPanel title="Playtesting tools (every journey is pickable in develop mode)" actions={devActions} />
               <SaveTransfer />
+              <div className="mb-4 flex justify-center">
+                <DeveloperButton
+                  onClick={() => (window.location.hash = encodeLockHash(START_LOCK))}
+                  label={t("devLockEditor.open")}
+                />
+              </div>
               <PuzzleLab />
             </>
           )}

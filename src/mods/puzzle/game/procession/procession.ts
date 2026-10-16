@@ -1,3 +1,5 @@
+import { countArrangements, requiredRung } from "./solveProcession"
+
 /**
  * The procession: a day drawn as a track of ticks, and things that happen in it.
  *
@@ -94,4 +96,17 @@ export const brokenMarks = (puzzle: ProcessionPuzzle, state: ProcessionState): n
 export const barsOf = (puzzle: ProcessionPuzzle, mark: Mark): number[] => {
   if (mark.kind === "span") return puzzle.bars.map((_, index) => index)
   return mark.kind === "pin" ? [mark.a] : [mark.a, mark.b]
+}
+
+/**
+ * The bar of each step: `order[k]` is the bar that starts k-th in the board's one answer.
+ *
+ * Read off the answer, so a door's board is its sequence once solved. Undefined for a board without exactly one
+ * answer or with two bars starting together, which a door's gate (`distinctStarts`) never lets through.
+ */
+export const processionOrder = (puzzle: ProcessionPuzzle): number[] | undefined => {
+  if (countArrangements(puzzle, 2) !== 1) return undefined
+  const starts = requiredRung(puzzle)?.starts
+  if (!starts || new Set(starts).size < starts.length) return undefined
+  return starts.map((_, bar) => bar).sort((one, two) => starts[one] - starts[two])
 }

@@ -11,10 +11,13 @@ import { resolveEncounter } from "@/app/families/familyRegistry"
 import { resolveKeyRequirements } from "@/mods/allFamilyMeta"
 import { useAssembledFloor } from "./useAssembledFloor"
 import { useMechanismStates } from "./useMechanismStates"
+import { useSequenceReads } from "./useSequenceReads"
+import type { SequenceRead } from "@/game/sequenceReads"
 import { useSiteNavigation } from "./useSiteNavigation"
 import { buildRoomClaims } from "./roomClaims"
 import { offeredTargets } from "./clickTargets"
 import { encodeEdge } from "./edgeId"
+import type { ResolveOneWayRealisation } from "@/game/oneWayRealisation"
 
 // The real navigation hook, floor assembly and journeys API over one stored journey, so a spec plays a
 // carved sequence floor the way a player does and can mount it again from what was stored.
@@ -42,10 +45,18 @@ export const roomsOf = (grid: FloorGrid): { cell: RoomCell; at: Place }[] =>
     row.flatMap((cell, c) => (cell.type === "room" ? [{ cell, at: [r, c] as Place }] : []))
   )
 
-/** The sequence's tiles in step order, with where each stands. */
+/** Every tile of the sequence: a step stands one on each way into its region. */
+export const allTilesOf = (grid: FloorGrid) => roomsOf(grid).filter(({ cell }) => cell.sequenceTile)
+
+/** One tile per step, in step order, with where it stands: step 0's the one holding the record, every other the
+ * first on the floor. */
 export const tilesOf = (grid: FloorGrid) =>
-  roomsOf(grid)
-    .filter(({ cell }) => cell.sequenceTile)
+  allTilesOf(grid)
+    .filter(({ cell }, n, all) =>
+      cell.sequenceTile!.step === 0
+        ? cell.mechanism !== undefined
+        : all.findIndex(other => other.cell.sequenceTile!.step === cell.sequenceTile!.step) === n
+    )
     .sort((a, b) => a.cell.sequenceTile!.step - b.cell.sequenceTile!.step)
 
 /** The tile cell the sequence's record lives on. */
@@ -73,7 +84,7 @@ export const routesAreClean = (grid: FloorGrid): boolean => {
       path.length > 0 &&
       path
         .slice(1, -1)
-        .every(([r, c]) => !tiles.some(t => t.cell.sequenceTile!.step >= k && t.at[0] === r && t.at[1] === c))
+        .every(([r, c]) => !allTilesOf(grid).some(t => t.cell.sequenceTile!.step > k && t.at[0] === r && t.at[1] === c))
     )
   })
 }
@@ -83,6 +94,7 @@ type Store = {
   positionKey: string | null
   standingKey: string | null
   mechanismStates: Record<string, string>
+  sequenceReads: Record<string, SequenceRead>
 }
 
 const journeyData = (id: string): TranslatedJourney =>
@@ -96,8 +108,19 @@ const journeyData = (id: string): TranslatedJourney =>
     lengthLabel: "short",
   }) as TranslatedJourney
 
-export const sequenceHarness = (seed: number, config: FloorConfig) => {
-  const store: Store = { exploredCells: {}, positionKey: null, standingKey: null, mechanismStates: {} }
+/** `resolveOneWay` overrides the navigation's registry for one-ways, never the carve's. */
+export const sequenceHarness = (
+  seed: number,
+  config: FloorConfig,
+  { resolveOneWay }: { resolveOneWay?: ResolveOneWayRealisation } = {}
+) => {
+  const store: Store = {
+    exploredCells: {},
+    positionKey: null,
+    standingKey: null,
+    mechanismStates: {},
+    sequenceReads: {},
+  }
   const encountered: Place[] = []
   const siteConfig: SiteConfig = [config]
   const doc = (): StoredJourneyStateV3 => ({
@@ -112,6 +135,7 @@ export const sequenceHarness = (seed: number, config: FloorConfig) => {
     standingKey: store.standingKey,
     interiorLevelNr: null,
     mechanismStates: store.mechanismStates,
+    sequenceReads: store.sequenceReads,
   })
   const mount = () =>
     renderHook(() => {
@@ -127,6 +151,7 @@ export const sequenceHarness = (seed: number, config: FloorConfig) => {
             store.positionKey = next[0]?.positionKey ?? null
             store.standingKey = next[0]?.standingKey ?? null
             store.mechanismStates = next[0]?.mechanismStates ?? {}
+            store.sequenceReads = next[0]?.sequenceReads ?? {}
           },
           journeyData: [journeyData(JOURNEY)],
         }),
@@ -134,6 +159,7 @@ export const sequenceHarness = (seed: number, config: FloorConfig) => {
         getSkippedConsumables: () => new Set<string>(),
       } as unknown as JourneyAPI
       const mechanismStates = useMechanismStates(journeys, JOURNEY)
+      const sequenceReads = useSequenceReads(journeys, JOURNEY)
       const assembled = useAssembledFloor(
         JOURNEY,
         config,
@@ -145,7 +171,8 @@ export const sequenceHarness = (seed: number, config: FloorConfig) => {
         undefined,
         undefined,
         mechanismStates,
-        store.standingKey
+        store.standingKey,
+        sequenceReads
       )
       const nav = useSiteNavigation({
         journeys,
@@ -164,6 +191,7 @@ export const sequenceHarness = (seed: number, config: FloorConfig) => {
         },
         onSkippedConsumable: () => {},
         onExitReached: () => {},
+        ...(resolveOneWay ? { resolveOneWay } : {}),
       })
       return { ...assembled, ...nav, journeys, mechanismStates }
     })

@@ -1,6 +1,6 @@
 import type { FloorGrid, RoomCell } from "./siteTypes"
 
-/** How an obstacle's gate key is namespaced (gateKeyOf, siteAssembler.ts) — the one prefix that marks a
+/** How an obstacle's gate key is namespaced (gateKeyOf, carve/ids.ts) — the one prefix that marks a
  * requiredKeyId as driven by a region layout's own control rather than a ward or a floor's own chest. */
 export const OBSTACLE_KEY_PREFIX = "obstacle:"
 
@@ -34,8 +34,8 @@ const mechanismSlot = (mechanismId: string): string => `xmech:${mechanismId}`
  *   never the family — binding the mechanism to another realisation must not move its progress
  * - an obstacle's gate carries its own authored id — a region layout can stand more than one on the
  *   SAME main path, so family alone would not tell them apart
- * - a sequence's tile is the sequence's authored id plus its step in the order, so every tile has a name of
- *   its own and the first tile's is the one its single state is filed under
+ * - a sequence's tile is the sequence's authored id plus its step in the order and the region its way in comes
+ *   from, so every tile has a name of its own; the first tile of step 0 is the one its single state is filed under
  * - a region barrier has one door per entrance, all asking for one key, so each is named by the authored id
  *   PLUS the neighbouring region it is the entrance from
  * - a staircase is its `stairId`; the two plain portals are the entrance and the exit
@@ -69,13 +69,20 @@ export const cellSlot = (grid: FloorGrid, row: number, col: number): string | nu
   // (RoomCell.mechanismId).
   // A sequence's tile is named by the sequence, which is a kind of control with one state across several
   // cells, not a realisation: it carries no family.
-  if (cell.sequenceTile) return `xsequence:${cell.sequenceTile.id}#${cell.sequenceTile.step}`
+  if (cell.sequenceTile)
+    return `xsequence:${cell.sequenceTile.id}#${cell.sequenceTile.step}@${cell.sequenceTile.entrance}`
+  // A plate is named by its own authored id, so several plates in one section are told apart; the first holds
+  // the stones' one state.
+  if (cell.plate) return `xplate:${cell.plate.id}`
+  // A pipe's hole is named by its pipe and the region it stands in; on a lock with no plate the first holds the
+  // stones' one state.
+  if (cell.pipeHole) return `xpipe:${cell.pipeHole.pipe}@${cell.pipeHole.region}`
   if (cell.mechanismId !== undefined) return mechanismSlot(cell.mechanismId)
   // AN OBSTACLE'S GATE IS THE SAME KIND OF ROOM, ONE STEP OVER: a region layout can stand more than
   // one on the main path (one per connection its route crosses), and a control owns it so it carries no
   // family: it is named `xobstacle:<authored id>`. Its key already carries the
   // obstacle's AUTHORED id, namespaced "obstacle:<stem>:" the same way a switch's is "switch:"
-  // (gateKeyOf, siteAssembler.ts) — the prefix is stripped rather than split on the LAST colon, so the id
+  // (gateKeyOf, carve/ids.ts) — the prefix is stripped rather than split on the LAST colon, so the id
   // comes back exact whatever characters it authors, colons included.
   if (cell.requiredKeyId?.startsWith(OBSTACLE_KEY_PREFIX)) {
     const afterPrefix = cell.requiredKeyId.slice(OBSTACLE_KEY_PREFIX.length)
@@ -99,7 +106,8 @@ export const cellSlot = (grid: FloorGrid, row: number, col: number): string | nu
  */
 export const legacyCellSlot = (grid: FloorGrid, row: number, col: number): string | null => {
   const cell = grid.cells[row]?.[col]
-  if (!cell || cell.type !== "room" || cell.pathIndex !== undefined || cell.sequenceTile) return null
+  if (!cell || cell.type !== "room" || cell.pathIndex !== undefined || cell.sequenceTile || cell.plate || cell.pipeHole)
+    return null
   if (isSwitchDoor(cell)) return "x?"
   if (cell.mechanismId === undefined) return null
   const family = cell.family ?? "?"

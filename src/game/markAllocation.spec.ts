@@ -14,6 +14,14 @@ describe("allocating the marks of one floor", () => {
     expect(new Set(glyphsOf(marks)).size).toBe(2)
   })
 
+  it("gives two mechanics that prefer the same colour a colour each", () => {
+    const { marks } = allocateMarks([
+      { id: "a", seed: 0 },
+      { id: "b", seed: 30 },
+    ])
+    expect(marks.get("a")!.color).not.toBe(marks.get("b")!.color)
+  })
+
   it("lets the earlier-authored mechanic keep the glyph both prefer", () => {
     const { marks } = allocateMarks([
       { id: "first", seed: 4 },
@@ -61,6 +69,22 @@ describe("allocating the marks of one floor", () => {
     expect(withTiles.marks.get("lever")).toEqual(alone.marks.get("lever"))
   })
 
+  it("marks four mechanics and a six-step sequence on one floor, every glyph its own", () => {
+    const mechanics = ["Y", "Gate", "Drain", "T"].map((id, seed) => ({ id, seed: seed * 5 }))
+    const tiles = Array.from({ length: 6 }, (_, step) => ({ id: `Gate#${step}`, seed: step * 3 }))
+    const { marks, tileGlyphs, unmarked } = allocateMarks(mechanics, tiles)
+    expect(unmarked).toEqual([])
+    expect(new Set([...glyphsOf(marks), ...tileGlyphs.values()]).size).toBe(10)
+  })
+
+  it("keeps a floor of six requests or fewer on the first six glyphs, so growing the set re-marks none", () => {
+    for (let seed = 0; seed < 24; seed++) {
+      const requests = Array.from({ length: 6 }, (_, i) => ({ id: `m${i}`, seed: seed + i * 7 }))
+      const { marks } = allocateMarks(requests)
+      expect(glyphsOf(marks).every(glyph => MARK_GLYPHS.indexOf(glyph) < 6)).toBe(true)
+    }
+  })
+
   it("names the requests that found no glyph left, and reuses none", () => {
     const requests = Array.from({ length: MARK_GLYPHS.length + 2 }, (_, i) => ({ id: `m${i}`, seed: 0 }))
     const { marks, unmarked } = allocateMarks(requests)
@@ -75,5 +99,14 @@ describe("allocating the marks of one floor", () => {
       { id: "t1", seed: 0 },
     ])
     expect(unmarked).toEqual(["t1"])
+  })
+
+  it("never hands out an excluded glyph, and hands out what it did before when nothing is excluded", () => {
+    const requests = Array.from({ length: 8 }, (_, i) => ({ id: `m${i}`, seed: i * 7 }))
+    const excluded = new Set([MARK_GLYPHS[0], MARK_GLYPHS[3]])
+    const { marks, unmarked } = allocateMarks(requests, [], excluded)
+    expect(unmarked).toEqual([])
+    expect(glyphsOf(marks).filter(glyph => excluded.has(glyph))).toEqual([])
+    expect(allocateMarks(requests, [], new Set())).toEqual(allocateMarks(requests))
   })
 })

@@ -123,7 +123,7 @@ not on every pull request.
 testing what was authored, not how the code behaves, so it is a `.verify.ts`. A mechanic is tested on a
 fixture or a small inline config, never on a real floor. That covers every family's `generate*.verify.ts`,
 `puzzleSeeds.verify.ts`, and the world sweeps (`worldFloorAssembly.verify.ts`, `bakedCarve.verify.ts`,
-`devJourney.verify.ts`, and the rest), including the one holding the tenet that authoring an encounter never
+`laidCarveWorld.verify.ts`, and the rest), including the one holding the tenet that authoring an encounter never
 moves a wall (docs/game-design/world-spec-stability.md). Those answer a change to the WORLD SPEC, which is
 why they run when somebody makes one rather than on every pull request. A fixture-backed spec pairs with a `.verify.ts` that rebuilds
 the fixture and compares it with `toStrictEqual` — without that the split is a lie, since a stored board

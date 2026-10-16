@@ -47,9 +47,9 @@ A mechanic is a state machine the player drives; how it looks and is operated is
 
 | Owner | What | Where |
 | --- | --- | --- |
-| **core** | the five control kinds: toggle, activator, sequence, fork-switch, one-way. Each is a `MechanicKind` plug-in holding what it needs of the carve, its compile rule and its refusals. | `src/game/mechanics/` (registry: `CORE_MECHANICS`, `resolveMechanicKind`) |
+| **core** | the control kinds: toggle, activator, sequence, fork-switch, one-way, weights, unladen. Each is a `MechanicKind` plug-in holding what it needs of the carve, its compile rule and its refusals. | `src/game/mechanics/` (registry: `CORE_MECHANICS`, `resolveMechanicKind`) |
 | **core** | the authoring: `obstacles`, `controls`, `barrierOrder`, `oneWays`, `handles`, `forks: [{ in }]` | `FloorConfig` |
-| **mod** (topology today) | the realisation bound to a kind: the handle and torch families, the lightbeam switch, the zipline, the gate face | `families`, `oneWayRealisations` of the descriptor |
+| **mod** (topology today) | the realisation bound to a kind: the handle and torch families, the lightbeam switch, the zipline, water and sand, the stone plate, the narrow passage, the gate face | `families`, `oneWayRealisations`, `regionBarrierRealisations`, `passageRealisations` of the descriptor |
 
 `lockCompile` and `topologyFaults` read kinds through the registry, not through a branch per kind: a kind
 removed from it is refused with `unknownControlKind`, one added is honoured. The carve reads core authoring

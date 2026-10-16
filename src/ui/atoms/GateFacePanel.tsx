@@ -6,6 +6,8 @@ export type GateFaceMarker = {
   /** The owner's own icon, drawn by the caller. */
   icon: ReactNode
   lit: boolean
+  /** The owner's mark, so one torch can be told from another; drawn by the caller. */
+  badge?: ReactNode
   /** What the marker says to a screen reader, lit or not. */
   label: string
 }
@@ -42,6 +44,8 @@ type GateFacePanelProps = {
   orders?: readonly GateFaceOrder[]
   turnAroundLabel: string
   onTurnAround: () => void
+  /** What a door that is read rather than walked carries besides its markers (a board), scrolled if it is tall. */
+  children?: ReactNode
 }
 
 // What a door waits for: one marker per owner, bright once that owner has been worked and dim until then.
@@ -53,6 +57,7 @@ export const GateFacePanel: FC<GateFacePanelProps> = ({
   orders = [],
   turnAroundLabel,
   onTurnAround,
+  children,
 }) => (
   <div className="fixed inset-0 z-30 flex flex-col items-center justify-center gap-6 bg-black/85">
     <p className="font-pyramid text-2xl text-amber-300">{title}</p>
@@ -65,13 +70,14 @@ export const GateFacePanel: FC<GateFacePanelProps> = ({
             aria-label={marker.label}
             data-lit={marker.lit}
             className={clsx(
-              "flex size-16 items-center justify-center rounded-full border-2 text-4xl",
+              "relative flex size-16 items-center justify-center rounded-full border-2 text-4xl",
               marker.lit
                 ? "border-amber-300 bg-amber-900/60 shadow-[0_0_14px_rgba(252,211,77,0.6)]"
                 : "border-stone-600 bg-stone-900 opacity-40 grayscale"
             )}
           >
             {marker.icon}
+            {marker.badge && <span className="absolute -top-1 -left-1">{marker.badge}</span>}
           </li>
         ))}
       </ul>
@@ -104,6 +110,11 @@ export const GateFacePanel: FC<GateFacePanelProps> = ({
         )}
       </div>
     ))}
+    {children && (
+      <div className="flex max-h-[60dvh] w-full max-w-md flex-col items-center gap-3 overflow-y-auto px-4">
+        {children}
+      </div>
+    )}
     <button onClick={onTurnAround} className="text-sm text-stone-400 hover:text-stone-200">
       {turnAroundLabel}
     </button>

@@ -1,0 +1,10 @@
+// designed by: Claude
+// LESSON, expert: a door that waits for two; its face shows both marks. The shut door comes first, in the hall;
+// a torch waits in each of two side rooms, and the first one lit leaves the door shut.
+
+in -- hall
+hall -[T1+T2]- out
+hall -- east
+hall -- west
+T1 torch @east
+T2 torch @west

@@ -5,8 +5,8 @@ import { cellAddress } from "@/game/cellAddress"
 export type Handle = NonNullable<FloorConfig["handles"]>[number]
 
 /** Where these floors are authored, and so what their handles' gate key ids are derived from. */
-export const HANDLE_SITE_ID = "dev_topology:1"
-export const HANDLE_FLOOR_REF = { journeyId: "dev_topology", levelIndex: 0, floorIndex: 0 }
+export const HANDLE_SITE_ID = "test_site:1"
+export const HANDLE_FLOOR_REF = { journeyId: "test_site", levelIndex: 0, floorIndex: 0 }
 
 const path = (label: string) => ({ pathPuzzles: 1, difficulty: "junior" as const, end: "treasure" as const, label })
 
@@ -43,7 +43,7 @@ export const attemptFloor = (config: FloorConfig) =>
   assembleFloor(HANDLE_SITE_ID, config, 1, undefined, { floorRef: HANDLE_FLOOR_REF })
 
 /**
- * A carved floor, authored on `dev_topology` level 0 floor 0.
+ * A carved floor, authored on `test_site` level 0 floor 0.
  *
  * Which cells a carve offers is the seed's choice, so seeds are tried until one takes the handles;
  * running out throws, carrying every reason verbatim.
@@ -64,11 +64,11 @@ export const floorWithHandle = (...handles: Handle[]) => carveFloor(handleFloorC
 export const nestedFloorWithHandle = (...handles: Handle[]) => carveFloor(nestedHandleFloorConfig(...handles))
 
 /** The gate key the n-th handle of one of these floors puts on the section it drives. */
-export const gateKey = (section: string, handle = 0) => `handle:dev_topology#0#0#${handle}:${section}`
+export const gateKey = (section: string, handle = 0) => `handle:test_site#0#0#${handle}:${section}`
 
 /** Where the n-th lever answers in a save — what `openDoorsFor` keys a stored position by. */
 export const leverAddress = (grid: FloorGrid, handle = 0): string => {
-  const stem = `handle:dev_topology#0#0#${handle}:`
+  const stem = `handle:test_site#0#0#${handle}:`
   for (let r = 0; r < grid.rows; r++)
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]

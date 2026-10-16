@@ -12,11 +12,11 @@ build rather than substituting something near it.
 
 ## 1. Three layers
 
-| layer | what it says | examples |
-|---|---|---|
-| **control** | the state machine the player drives | back and forth, on only, in order, rest plus one per exit |
-| **effect** | what each state does to the map | these gates open, these regions impassable |
-| **realisation** | how it looks and is operated | zipline or headwind, lightswitch or another switch puzzle |
+| layer           | what it says                        | examples                                                  |
+| --------------- | ----------------------------------- | --------------------------------------------------------- |
+| **control**     | the state machine the player drives | back and forth, on only, in order, rest plus one per exit |
+| **effect**      | what each state does to the map     | these gates open, these regions impassable                |
+| **realisation** | how it looks and is operated        | zipline or headwind, lightswitch or another switch puzzle |
 
 A **lock** names controls and effects. It never names a realisation. A realisation is bound from
 **outside**, where the lock is placed, so one lock can be reused across pyramids with different themes:
@@ -26,22 +26,33 @@ the same one-way is a zipline in one pyramid and a strong headwind in another.
 the drawing and the operation differ. Something that adds a state is not another realisation of that
 control; it is another control.
 
+**A realisation may withhold a door behind a reading**, when that reading is always possible where the
+control's reset is made: the solver's states and edges stay the same, and play holds the door shut until the
+reading is done. The procession door is the one (§3.1).
+
+**The one word that changes the puzzle.** A lock never names a realisation, with one exception: a sequence
+written `procession` is a sequence whose door is a procession board. The word binds the realisation
+(`procession-door`) itself, and a floor binding that names another one for it is refused (`processionRebound`).
+It changes the puzzle, not the look.
+
 ## 2. The controls
 
-| control | states | notes |
-|---|---|---|
-| **toggle** | two, back and forth | the lever |
-| **activator** | two, no way back | the torch; also a floor key, whose operation is taking it from a chest |
-| **sequence** | progress 0..n, with a reset | tiles walked in the right order; see §3.1 |
-| **fork-switch** | rest, plus one per exit of its fork | governs its own fork; see §4 |
+| control         | states                              | notes                                                                                                                                       |
+| --------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| **toggle**      | two, back and forth                 | the lever                                                                                                                                   |
+| **activator**   | two, no way back                    | a floor key, or a prize taken once; water and sand never touch it                                                                           |
+| **flame**       | two, `off` and `on`                 | the torch (`.lock` keyword `torch`); lit by the player; put out by a region barrier covering its region; lit again once uncovered; see §3.3 |
+| **sequence**    | progress 0..n, with a reset         | tiles walked in the right order; see §3.1                                                                                                   |
+| **fork-switch** | rest, plus one per exit of its fork | governs its own fork; see §4                                                                                                                |
+| **weights**     | one per stone arrangement           | the stones on plates; see §3.2                                                                                                              |
 
 **one-way** is an effect with no control: always on, directed, and **always taken through a prompt** so
 the player never crosses by accident and finds they cannot come back. Every realisation of it must
 offer that prompt, including ones that would otherwise be passive.
 
 A **floor key is an activator.** The solver already models it as `absent -> held` with no return; the
-only difference from a torch is how the player works it. It can therefore own gates and take part in
-conditions like any other control.
+player works it by taking it from a chest. It can therefore own gates and take part in conditions like any
+other control.
 
 ## 3. Effects
 
@@ -54,7 +65,7 @@ A target is either:
 - **a region** — made impassable
 
 A gate may name more than one owner, with `and` (every owner must name it) or `any` (one is enough).
-Four torches opening one gate is four activators owning one gate with `and`.
+Four torches opening one gate is four torches owning one gate with `and`.
 
 ### A gate shows its own condition
 
@@ -65,12 +76,37 @@ waiting for, the way a ward gate already shows the key it wants.
   flames; three torches and a floor key are three flames and a key. The icons come from the owners, so
   nothing special is needed for a mixed condition.
 - **A sequence door shows the order**, and carries the **reset**. The door is where the player learns
-  what the order is, so it is where they must be able to start again.
+  what the order is, so it is where they must be able to start again. A procession door is the exception: it
+  carries a procession board instead, and shows the order only once that board is solved (§3.1).
 
 ### 3.1 The sequence
 
-- The lock expresses **order** only. The carve picks the hieroglyphs, from a set, **unique within a
-  floor** so two sequences never share a symbol.
+- The lock expresses **order** only. The carve picks the hieroglyphs, from a set, one per **step**, **unique
+  within a floor** so two steps and two sequences never share a symbol.
+- **A step lives in a room** (a region). Its tile stands on **every way into that room**: one tile per way in,
+  the **first cell inside the room**, all the same step wearing the same glyph. A gate on that way stays on the
+  seam to the corridor, outside the tile; a fork board's gate too, so a step in the board's own room stands its
+  tile between the board and that gate. A hub entered three ways has three tiles of one step. Entering the room
+  from any side crosses the step's tile, and so does walking out of it, except by a drop. Two steps of one sequence never name one room (`sequenceRegionRepeated`): one
+  crossing would step on both.
+- **Walking is stepping.** Crossing into a step's room steps on its tile, and so does crossing out of it; there
+  is no choice. A tile still in fog counts too when it is walked over.
+- **The floor's entrance comes before the lock.** Arriving in the lock's `in` from the floor's start is an entry,
+  so a step in `in` is stepped on at the start; a run spoiled there is recovered by the reset at the door. On the
+  floor the entrance counts as outside the room it stands in, so that room's tile stands on the way out of the
+  start and the first step off the entrance crosses it: play presses only cells walked over.
+- **A tile already walked in order does nothing** when stepped on again: the run stays correct, because the
+  ground to the tiles ahead may run across it.
+- **Only a tile ahead of the one due spoils the run.** The reset at the door clears a spoiled run; a done run
+  stays done.
+- Players explore, may step on tiles by accident, read the order on the door, reset, then walk it. The lock
+  tool (`walkSpecOf`), the floor walk (`floorLock`) and play (`walkPresses`) keep this one rule, from
+  `sequence.ts`: every tile of a step works that step.
+- Because the reset is made inside the door's room, a step k > 0 in that room strands the run when an earlier
+  step lies outside it: walking out after the reset steps on it out of order. The walks refuse such a lock.
+- **A sequence is walkable when it is walkable from its reset.** A lucky start (a step pressed by arriving in
+  `in`) proves nothing: from the reset at the door the whole order must still be walkable. The walks check this
+  through `strands`, since a spoiled run is a reachable state and must still finish.
 - Each tile shows its own state: not yet walked, walked in the right order, walked in the wrong order.
 - A wrong step **registers** rather than doing nothing, so the player can see they have spoiled the run.
 - **Progress survives leaving.** It is an ordinary state like any other, and only the reset clears it.
@@ -79,6 +115,124 @@ waiting for, the way a ward gate already shows the key it wants.
 - The reset is operated **at the door, not where the mechanic stands.** `LockSpec` already carries an
   `at` per transition, so the advance steps happen at each tile's region and the reset at the gate's —
   see §9.
+
+#### The procession door
+
+A sequence written `procession` (`P procession hall vault [reset hall-vault]`) keeps every rule above; its door
+carries a procession board (`docs/game-design/puzzles/procession.md`, "At a door") instead of showing the order.
+
+- **Two facts beside the run**, kept by play and never seen by the walk: the **steps walked** (every step whose tile
+  was ever crossed, from any state, a spoiled run and a tile already walked included) and **read** (the board was
+  solved once, and stays solved).
+- **One bar per step.** A bar is locked until its step is walked; the board cannot be solved until every bar is
+  free. Its one answer starts the bars in the sequence's order, no two together.
+- **The first solve resets the run** to its first step, from any state, `done` included: what was walked before it
+  does not count. A second solve does nothing. The reset is offered only once read.
+- **The door opens when the run is `done` and read.** Other owners fold in as on any door (`and`/`any`). A save
+  `done` with nothing walked on record predates the door and reads as read.
+- **Why the walk does not change:** finishing the run walks every tile, so the board can always be solved when the
+  run can finish, and the solve lands in the reset's own state at the reset's own place, from where the walks
+  already prove the order walkable. `sequenceDoor.verify.ts` walks this from player-reachable states.
+- **Glyphs:** the tiles wear the default cast's signs, the bars' own, shuffled per sequence so they say nothing of
+  the order; the mark glyphs are not used for them. On such a floor the marks leave those signs out, and 𓈖, which
+  reads as the cast's 𓈗.
+- **Refused before a wall is carved:** fewer than three steps or more than six (`processionStepsOutOfRange`), and a
+  second procession door on one floor (`processionDoorsRepeated`). A tier and step count no seed list covers is
+  refused at bake (`processionBoardUnseeded`).
+
+### 3.2 Stones on plates
+
+- **The lock's `weights` field** lists its plates: each has a region, whether a stone starts on it, and the
+  gates it opens while weighted or while empty. Stones are alike and have no ids; a stone is authored as the
+  plate it starts on. A gate owner is a plate id, under `and` or `any`. `unladen` (empty hands) is the narrow
+  passage's keyword and stands alone on its gate; beside any other owner it is refused (`unladenCombined`).
+- **One control per lock.** `compileLock` turns the whole `weights` field into one control, id
+  `<namespace>.stones`, because a lift and a set-down move one shared arrangement, not one plate. Its states
+  are the arrangements (`stoneArrangements`): which plates hold a stone, and whether the hand holds one.
+- **The record is built like a sequence's.** Placed-only: a plate works only the moves made at its own cell.
+  The record stands on the first plate, and every plate carries `worksMechanism` pointing at it, so the
+  arrangement is one state saved once.
+- **Gates read the arrangement.** A gate is open under every arrangement where its stone terms hold, and the
+  door folds in its other owners by the gate's mode. A narrow passage's `unladen` holds in every arrangement
+  without a stone in hand.
+- **Play.** A plate offers its move through a prompt (lift or set-down, `stoneMoveAt`); arriving never acts.
+  A carrying walk is turned away at every staircase and the way out, at a narrow passage, and at every
+  one-way's launch, with one line for all of them ("Cannot pass with a stone"), shown where the prompt stands.
+  One line because the player learns one rule, not which way refuses.
+- **A saved arrangement the lock no longer has** is read as the record's `initial` (`arrangementIn`), so the
+  stones play on from the start instead of freezing.
+- **The explorer's weight** is the record's `underfoot`: per arrangement and empty plate, what pressing it
+  opens. Only drawing reads it, so a way his weight alone holds is never on a route.
+- **The face.** The record's `weighs` lists each gate's stone terms. Each plate counts as one owner in the face
+  rule (a face only on a door with more than one owner that is not `any`), so a door one plate holds wears
+  none. A plate's marker shows as a stone; plates are all alike, nothing tells one from another. Empty hands
+  are never on a face: they stand alone, as a narrow passage.
+- **A narrow passage.** `-[unladen]-`, wherever it stands, binds under `unladen` to a passage realisation
+  (`narrowPassage`, topology mod), which draws it as a wall with a crack in one cell. It is a gate to every walk
+  and never ground in play: a tap on the wall walks the explorer to the side he can reach and offers "Squeeze
+  through" (nl "Wurm je er door"), and he squeezes from the side nearer him: head-on behind the wall's face, or
+  sideways along it; a carrying walk stops there with the one blocked line.
+- **Every one-way takes empty hands.** A drop, a zipline, any `>>`: every walk (the tool's, the engine's) and
+  play take it only with empty hands, with nothing written in the lock, so solver and play agree whatever the
+  realisation. `-[unladen]-` on a drop's connection is refused by name (`unladenOnDrop`): a drop already takes
+  empty hands.
+- **The way out is left with empty hands.** `emptyHands` on the walk spec names the states that are not empty
+  hands; every one-way and the way out read it, on every level of a nested floor: the way-out region may be
+  entered carrying, only leaving (and finishing) needs empty hands. A stone never leaves its floor, and
+  `yarn lock` never reports a route that ends with one in hand.
+- **Nested locks.** A lock nests only in its host's nest spot, spliced into that connection (§7). Each nesting
+  is read against the nearest lock it stands in that holds stones (`stoneNestings`, `LockNesting.stones`). A
+  **pass-through** lock (no stones of its own) lets a stone through, so nothing in it takes only empty hands: it
+  cannot write `-[unladen]-` (`carryWithoutStones`) and holds no one-way on its own route
+  (`oneWayOnPassThroughRoute`); one off its route is allowed, and the walk takes that lock fused with its
+  pool's level. A **contained** lock (stones, no lock around it holds any) lets them out by its way in and its way
+  out alike, since a nested lock's way out is not a floor exit; the walk takes it fused with the floor's own
+  level, where its stones may roam. No invisible edge and no
+  play rule. A **shared** lock (stones, and so does a lock around it) pools them: one weights control,
+  `<pool>.stones` (`poolStones`), one hand, and a stone set on either lock's plates; the walk takes it fused
+  with its pool's level, so its way out lets a stone through. A fused level's failure is named `pooled`. Every
+  level keeps `emptyHands`: a drop inside any nested lock takes empty hands, and the floor's own ways out do in
+  every case.
+- **Binding.** The binding key is `weights`; its realisation is `stonePlate` (topology mod), which draws
+  nothing of its own: plates are read from the cell's `plate`. A plate needs a free node in its region, and
+  placement refuses naming the plate when there is none.
+- **With the topology mod off** the plates are bare ground and the carve is otherwise identical. Every door
+  the plates govern stands open, unless another live control still holds it, so the walk is unobstructed.
+- **A stone pipe.** `P pipe @hall @vault [stone]` joins two regions through the walls, one pipe to a lock and to a
+  floor (`pipesRepeated`, `pipesOnOneFloor`) until marks pair two pipes' holes. It has a HOLE in each region,
+  `P@hall` and `P@vault`, and `stone` after a hole starts a stone in it. A hole is a place a stone lies, like a
+  plate, and part of the same arrangement: its key lists the holes holding a stone after the plates, so a lock
+  without a pipe keeps its keys. Two moves, each one action: a **post** at a hole, with a stone in hand and both
+  holes empty, leaves the hand empty and the stone in the OTHER hole; a **take** at a hole holding a stone, with
+  empty hands, puts it in hand. The pipe carries one stone at a time: no post while either hole holds one. It
+  needs no walk between its regions, and posting leaves the hands empty, so the empty-hands rule is untouched.
+  A hole is no plate: a stone in it presses nothing, a gate cannot name a pipe (`pipeOwnsGate`), and the
+  explorer's weight does nothing there. Refused besides: both holes in one region (`pipeInOneRegion`) and a
+  pipe on a lock with no stone (`pipeWithoutStones`). The carve stands a hole in the back wall of a bare node of
+  its region, never the entrance, the exit, a junction or a node beside another region, off the main path where
+  it can (`placePipeHoles`); the lay gives each hole two nodes of its region so one stands clear of its ways in.
+  Play offers "Post the stone" and "Take the stone" at the hole. The binding key is `pipe`; its realisation is
+  `stonePipe` (topology mod). With the mod off the holes are bare nodes and the carve is identical.
+
+### 3.3 Torches and floods
+
+- A **torch** (`control: "flame"`, written `torch` in a `.lock` file) has two fixed states, `off` and `on`. The
+  player's one move is to light it, standing in its region. Nothing the player does puts it out. It may start
+  lit (`B torch @hall lit`); a lit torch offers no move until something douses it.
+- A **region barrier** (water or sand) always covers its whole region. A region is **covered** while a region gate
+  barring it is shut: its owners, folded by its mode, do not open it. A region no region gate bars is never
+  covered; an edge gate covers nothing.
+- **A lit torch in a covered region is doused**: it goes to `off`, whatever it started as, and every door it held
+  open on its own shuts with it. **A doused torch can be lit again** once its region is uncovered; while covered it
+  cannot be reached.
+- **An activator is untouched**: no flood changes an activator, and no flood takes a floor key back.
+- **One rule, one function**: `douseTorches` (`src/game/mechanismDoors.ts`). The lock walk douses its start state
+  and every state a move reaches, after the entries it works (`dousedConfig`, `lockWalk.ts`); the floor's solver
+  lists each torch with the gates of its region's barrier doors (`floorLock`); play writes a move and every douse it
+  causes in one journeys write, and douses on arriving (`useDousedJourneys`).
+- **With the topology mod off** a torch's room is a bare node and a region barrier is plain ground at its door, so
+  no region is ever covered and nothing is doused or written; turning the mod back on finds the stored states as
+  they were.
 
 ### Impassable regions
 
@@ -112,6 +266,10 @@ region straddles the door.
   it searches.
 - **An unbound role is refused.** No default realisation.
 
+A one-way or passage realisation declares its prompt and its art, nothing about hands: every one-way and every
+passage takes only empty hands, so the lock already shuts both to a carrying walk, and play turns that walk away
+whatever the realisation.
+
 Within one lock, all roles of a kind take the same realisation for now. Per-role selectors are a later
 idea, not a current one.
 
@@ -133,7 +291,7 @@ mechanic lever
   built      yes
 
 mechanic torch
-  control    activator
+  control    flame
   governs    edges, regions
   built      yes
 
@@ -155,57 +313,136 @@ a lock and refuses to bake it, saying which mechanic is not ready.
 
 A lock is one JSON document. It names regions, how they join, the barriers on those joins, and the
 mechanics that work them. It never names a realisation: that is bound outside, where the lock is
-placed (§5), and so is nesting one lock inside another.
+placed (§5), and so is which lock nests in it, though only in its nest spot (below).
 
 ```json
 {
   "name": "doubleBack",
   "regions": {
-    "in":         { "takes": "puzzles" },
-    "leftLower":  { "takes": "nothing" },
+    "in": { "takes": "puzzles" },
+    "leftLower": { "takes": "nothing" },
     "rightLower": { "takes": "nothing" },
-    "s1":         { "takes": "nothing" },
-    "s2":         { "takes": "reward" },
-    "out":        { "takes": "nothing" }
+    "out": { "takes": "nothing" },
+    "s2": { "takes": "reward" },
+    "s1": { "takes": "nothing" }
   },
   "connections": [
-    ["in", "leftLower"], ["in", "rightLower"], ["rightLower", "s1"],
-    ["leftLower", "s2"], ["in", "out"]
+    {
+      "between": ["in", "leftLower"],
+      "barriers": ["in-leftLower"]
+    },
+    {
+      "between": ["in", "rightLower"],
+      "barriers": ["in-rightLower"]
+    },
+    {
+      "between": ["in", "out"],
+      "barriers": ["in-out"]
+    },
+    {
+      "between": ["leftLower", "s2"],
+      "barriers": ["leftLower-s2"]
+    },
+    {
+      "between": ["rightLower", "s1"],
+      "barriers": ["rightLower>s1"]
+    },
+    {
+      "between": ["s1", "leftLower"],
+      "barriers": ["s1>leftLower"]
+    },
+    {
+      "between": ["leftLower", "in"],
+      "barriers": ["leftLower>in"]
+    }
   ],
   "gates": {
-    "in-leftLower":  { "from": "in",         "to": "leftLower",  "owners": ["Y"] },
-    "in-rightLower": { "from": "in",         "to": "rightLower", "owners": ["Y"] },
-    "rightLower-s1": { "from": "rightLower", "to": "s1",         "owners": ["S1"] },
-    "leftLower-s2":  { "from": "leftLower",  "to": "s2",         "owners": ["S1"] },
-    "in-out":        { "from": "in",         "to": "out",        "owners": ["S2"] }
+    "in-leftLower": {
+      "from": "in",
+      "to": "leftLower",
+      "owners": ["Y"]
+    },
+    "in-rightLower": {
+      "from": "in",
+      "to": "rightLower",
+      "owners": ["Y"]
+    },
+    "in-out": {
+      "from": "in",
+      "to": "out",
+      "owners": ["S2"]
+    },
+    "leftLower-s2": {
+      "from": "leftLower",
+      "to": "s2",
+      "owners": ["S1"]
+    }
+  },
+  "oneWays": {
+    "rightLower>s1": { "from": "rightLower", "to": "s1" },
+    "s1>leftLower": { "from": "s1", "to": "leftLower" },
+    "leftLower>in": { "from": "leftLower", "to": "in" }
   },
   "mechanics": {
-    "Y":  { "control": "fork-switch", "in": "in" },
-    "S1": { "control": "toggle", "in": "s1", "starts": "a",
-            "opens": { "a": ["rightLower-s1"], "b": ["leftLower-s2"] } },
-    "S2": { "control": "toggle", "in": "s2", "starts": "a",
-            "opens": { "a": [], "b": ["in-out"] } }
+    "Y": { "control": "fork-switch", "in": "in" },
+    "S1": {
+      "control": "toggle",
+      "in": "s1",
+      "starts": "a",
+      "opens": {
+        "a": [],
+        "b": ["leftLower-s2"]
+      }
+    },
+    "S2": {
+      "control": "toggle",
+      "in": "s2",
+      "starts": "a",
+      "opens": {
+        "a": [],
+        "b": ["in-out"]
+      }
+    }
   },
-  "oneWays": [
-    { "from": "s1",        "to": "leftLower" },
-    { "from": "leftLower", "to": "in" }
-  ],
   "in": "in",
   "out": "out"
 }
 ```
 
+### The nest spot
+
+A lock marks at most one connection as its **nest spot**, `"nestSpot": { "from": "a", "to": "b" }`, written
+`a -&> b` in the notation (never `-&-` or `<&-`): the one place another lock may be nested in it, where it is
+placed. Nesting is rare, and a spot is where it can raise a lock's difficulty without the author guessing
+where a floor might put it. A nested lock is spliced into the connection: its `in` meets `from`, its `out`
+meets `to`, as the arrow points. The spot may be any connection of the lock, on its route or off it. A spot
+on a connection that also carries a gate, a drop or any other barrier is ignored: the lock has no nest spot,
+the connection carves as written, and `yarn lock` notes "nest spot ignored". In the notation a second spot is
+refused `nestSpotsRepeated`, and a spot on a pair that has another connection `nestSpotShared`, both when the
+lock is read (`yarn lock`); `compileLock` refuses a JSON lock's spot on a pair with another connection `nestSpotShared` too. A
+spot on no connection is refused `nestSpotOnNoConnection` (`compileLock`). The connection stays in
+`connections`, so where nothing nests the spot is a plain corridor.
+
 ### Connections
 
-`connections` is the whole shape of the lock: every pair of regions that join. A connection with nothing
-on it is a passage the player simply walks, which is what lets two regions be distinct places without a
+`connections` is the whole shape of the lock. A connection is a **corridor** between two regions; with nothing
+on it, it is a passage the player simply walks, which is what lets two regions be distinct places without a
 barrier between them — needed to put a sequence's tiles in different regions that nothing separates.
 
-An edge gate stands ON a connection, so every `from`/`to` gate must name one that exists. Topology is
-written once, in `connections`; `gates` says which of them are barred. A gate naming a connection that
-was never declared is an error rather than a new passage.
+`barriers` are the corridor's **items, in order** from `between[0]` to `between[1]`: gates and at most one drop, one id
+space. A drop stays an entry in `oneWays` (`from`/`to`, its direction of travel) and is named in its connection's
+`barriers` where it stands; it makes the corridor one-way from where it stands, and a corridor falls once
+(`corridorFallsTwice`). A `oneWays` entry no connection names is a corridor of its own carrying only that drop.
 
-A region gate needs no connection: it bars a region rather than an edge.
+`align` names the gates the author placed (`-[A]---` left, `---[A]-` right, `--[A]--` centre in the notation): left
+stands a gate right after what is written before it, right right before what follows, centre leaves room for puzzles
+either side. It is a preference to the carve: it never refuses a lock and never lengthens a corridor. A gate it does
+not name is free; a drop is never aligned (`alignOnDrop`), and an alignment names only its connection's own gates
+(`alignOffConnection`).
+
+**Two connections on one pair are two corridors**, the first written first. An edge gate stands ON a connection, so
+every `from`/`to` gate must name a pair that is declared; a gate naming a pair that was never declared is an error
+rather than a new passage. A region gate needs no connection: it bars a region rather than an edge.
 
 ### Gates
 
@@ -235,33 +472,36 @@ can contradict each other, so the mechanic is the only one.
         "opens": { "a": ["rightLower-s1"], "b": ["leftLower-s2"] } }
 ```
 
-**activator** — two states, no way back. The torch; a floor key is the same control with another
-realisation.
+**activator** — two states, no way back. A floor key, or a prize taken once.
+
+**flame** — the torch: `off` and `on`, lit by the player, put out by a flood over its region (§3.3).
 
 ```json
-"brazier": { "control": "activator", "in": "hall", "starts": "unlit",
-             "opens": { "unlit": [], "lit": ["hall-vault"] } }
+"brazier": { "control": "flame", "in": "hall", "starts": "off",
+             "opens": { "off": [], "on": ["hall-vault"] } }
 ```
 
-Four of them on one door is four activators and the default `and`:
+Four of them on one door is four torches and the default `and`:
 
 ```json
 "hall-vault": { "from": "hall", "to": "vault",
                 "owners": ["brazier1", "brazier2", "brazier3", "brazier4"] }
 ```
 
-**sequence** — tiles walked in order, with a reset at the door. Each step names its own region, so the
-author places them; the carve picks the hieroglyphs, distinct within a floor.
+**sequence** — tiles walked in order, with a reset at the door. Each step names its own region, a different one
+for every step, so the author places them; the carve stands each step's tile on every way into its region and
+picks one hieroglyph per step, distinct within a floor.
 
 ```json
 "plates": { "control": "sequence", "in": "hall",
-            "steps":   [{ "in": "hall" }, { "in": "vault" }, { "in": "hall" }],
+            "steps":   [{ "in": "hall" }, { "in": "vault" }, { "in": "mouth" }],
             "resetAt": "hall-vault",
             "opens":   { "done": ["hall-vault"] } }
 ```
 
 **fork-switch** — operates its own fork, so it names no targets. The gates name it instead, and every
-one of them must be a seam leaving the region it stands in (§4). The tool checks that.
+one of them must be a seam leaving the region it stands in (§4), or the route's way on out of that region,
+never a falling corridor. The tool checks that.
 
 ```json
 "Y": { "control": "fork-switch", "in": "in" }
@@ -292,23 +532,25 @@ and nothing stops it.
 ### What the tool should show back
 
 The starting state is derived, so the author cannot read it off the document. The tool should report it:
-*"at the start these gates stand open"*. That catches a lock whose only open gate is one nobody can
+_"at the start these gates stand open"_. That catches a lock whose only open gate is one nobody can
 reach yet — which is what doubleBack does today.
 
 ## 8. Settled, and still open
 
-**Settled.** The three layers. The four controls plus one-way. Targets are edges or regions. `and`/`any`
-conditions. A floor key is an activator. The fork-switch governs its own fork. Realisations are bound
+**Settled.** The three layers. The five controls (toggle, activator, flame, sequence, fork-switch) plus
+one-way and the stones, a stone pipe among them. Targets are edges or regions. `and`/`any` conditions. A floor key is an activator.
+A flood puts out a torch and never an activator. The fork-switch governs its own fork. Realisations are bound
 from outside, most specific wins, at bake time, refused when unbound. A realisation may not change what
 the solver sees. Impassable conceals, and conceals what was explored, without erasing it.
 
-A gate may show its own condition, and a sequence's reset is at its door.
+A gate may show its own condition, and a sequence's reset is at its door. A sequence is solved once: when
+it is done, it stays done. On a door it shares with other owners, those can still switch or reset, and the door
+follows them, while the sequence's part stays met. A sequence's tiles may stand in any region, so they may
+share ground with another lock. A sequence written `procession` is the one word that binds its realisation: its
+door is a procession board, and opens once read and walked.
 
 **Open.**
 
-- The sequence: whether its tiles may span regions and so interact with another lock, and whether it
-  stays fired once fired.
-- The sand barrier: parked. A wizard-pyramid idea that may not belong to the lock model at all.
 - Whether a realisation may demand anything of placement beyond space.
 
 ## 9. What this requires of the engine
@@ -321,7 +563,8 @@ Each is measured in `topology-status.md` §6.
 3. **An open gate keeps its symbol and colour**, or the player cannot reason that it will shut when
    another opens.
 4. **Two mechanics on one floor never share a mark**, and the same assignment must give a sequence's
-   tiles distinct hieroglyphs — a repeated symbol does not merely confuse, it makes the order unreadable.
+   steps distinct hieroglyphs (every tile of one step wears its step's) — a repeated symbol does not merely
+   confuse, it makes the order unreadable.
 5. **A realisation decides the drawing**, which `encounter` does not do today.
 6. **`openDoorsFor` and `floorLock` must agree on a door naming more than one key.** This was documented
    and left alone on 2026-10-01, correctly, because nothing could author such a door. Floor keys taking
@@ -349,9 +592,9 @@ example and 12 undoes a decision made the same afternoon.
     connection merges them into one region of the compiled lock. A sequence's tiles placed in separate
     regions collapse into one and the walk cannot see the order — which is exactly what §7's
     `connections` field was added for.
-13. **A step onto a tile is not optional.** A tile is a region of one cell on a cut of the walk, and the
-    solver makes its transition on entering that region (`Mechanism.entries`), never as a move the player
-    may decline; a floor no walk completes in order is refused naming the sequence (`Mechanism.goal`).
+13. **A step onto a tile is not optional.** A tile is a region of one cell on a way into its step's room, and
+    the solver makes its transition on crossing into or out of that region (`Mechanism.entries`), never as a
+    move the player may decline; a floor no walk completes in order is refused naming the sequence (`Mechanism.goal`).
 14. **A mechanic's state may live across several cells.** `mechanismStates` is keyed by one cell
     address; a sequence has one state and many tiles.
 15. **A cell's slot must not embed the family.** It is `x<family>:<mechanismId>` today, so binding one

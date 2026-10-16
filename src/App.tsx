@@ -5,6 +5,7 @@ import { useJourneys } from "@/app/state/useJourneys"
 import { useCarveIndependentBackfill } from "@/app/SiteMap/useCarveIndependentBackfill"
 import { useFloorExplorationBackfill } from "@/app/SiteMap/useFloorExplorationBackfill"
 import { useMechanismSlotBackfill } from "@/app/SiteMap/useMechanismSlotBackfill"
+import { useRelaidFloorsBackfill } from "@/app/SiteMap/useRelaidFloorsBackfill"
 import { FezCompanion } from "./app/fez/FezCompanion"
 import { DevelopModeProvider } from "./contexts/DevelopMode"
 import PWABadge from "./PWABadge"
@@ -19,8 +20,10 @@ function App() {
   // Also one-time: floor summaries a save kept from a visit it never finished light pyramids that
   // hold nothing, and the walk they provoke is the very thing they are meant to be deciding.
   useFloorExplorationBackfill(journeys)
-  // Last, because it merges into what the two above have just written.
+  // After the two above, because it merges into what they have just written.
   useMechanismSlotBackfill(journeys)
+  // Last, so a place the re-key derives for a save inside a re-laid pyramid is forgotten with the rest.
+  useRelaidFloorsBackfill(journeys)
 
   const journeyInfo = activeJourneyId ? getJourney(activeJourneyId) : null
 

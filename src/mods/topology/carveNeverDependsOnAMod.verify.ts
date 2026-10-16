@@ -1,6 +1,5 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest"
+import { beforeAll, describe, expect, it } from "vitest"
 import { buildConfigs } from "@/worldGen/configBuilder"
-import { DEV_JOURNEY_ID } from "@/worldGen/data"
 import type { FloorConfig as WorldFloor, SiteConfig } from "@/worldGen/types"
 import { ALL_CURRENCY_DISTRIBUTIONS } from "@/mods/allCurrencyDistributions"
 import {
@@ -32,6 +31,7 @@ import {
   type Outcome,
 } from "@/game/testSupport/modOff"
 import { reachableFloorsInSite } from "@/worldGen/reachability"
+import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { walkFloorLock } from "@/game/floorLockWalk"
 import { oneWayRuns } from "@/game/gridNavigation"
 
@@ -61,24 +61,67 @@ const build = (modIds: ReadonlySet<string>, resolveEncounter: typeof TOPOLOGY_ON
 
 const OPPOSITE = { n: "s", s: "n", e: "w", w: "e" } as const
 
-// The floors of the real world that stand a mechanic with every mod, whole sets: the shipped junior_2 switch, the
-// expert_1 pyramid whose first floor opens on the doubleBack, and every dev floor.
+// The floors of the real world that stand a mechanic with every mod, whole sets: the shipped junior_2 switch, every
+// floor a lesson or a lock stands on.
 const FLOORS_WITH_MECHANICS = [
+  "junior_1 level 1 floor 0",
+  "junior_1 level 2 floor 0",
+  "junior_1 level 3 floor 0",
+  "junior_2 level 1 floor 0",
   "junior_2 level 2 floor 0",
+  "junior_2 level 3 floor 0",
+  "junior_2 level 4 floor 0",
+  "junior_3 level 1 floor 0",
+  "junior_3 level 2 floor 0",
+  "junior_3 level 3 floor 0",
+  "junior_3 level 4 floor 0",
+  "junior_4 level 1 floor 0",
+  "junior_4 level 2 floor 0",
+  "junior_4 level 3 floor 0",
+  "junior_4 level 4 floor 0",
+  "junior_4 level 5 floor 0",
+  "expert_1 level 1 floor 0",
+  "expert_1 level 2 floor 0",
+  "expert_1 level 3 floor 0",
   "expert_1 level 4 floor 0",
-  ...Array.from({ length: 10 }, (_, n) => `dev_topology level ${n + 1} floor 0`),
+  "expert_2 level 1 floor 0",
+  "expert_2 level 2 floor 0",
+  "expert_2 level 3 floor 0",
+  "expert_2 level 4 floor 0",
+  "expert_3 level 1 floor 0",
+  "expert_3 level 2 floor 0",
+  "expert_3 level 3 floor 0",
+  "expert_3 level 4 floor 0",
+  "expert_3 level 5 floor 0",
+  "expert_4 level 1 floor 0",
+  "expert_4 level 2 floor 0",
+  "expert_4 level 3 floor 0",
+  "expert_4 level 4 floor 0",
+  "expert_4 level 5 floor 0",
 ]
 // The floors holding a one-way drop with every mod.
 const FLOORS_WITH_DROPS = [
-  "expert_1 level 4 floor 0",
-  "dev_topology level 2 floor 0",
-  "dev_topology level 3 floor 0",
-  "dev_topology level 10 floor 0",
+  "junior_1 level 1 floor 0",
+  "junior_3 level 2 floor 0",
+  "junior_3 level 3 floor 0",
+  "junior_3 level 4 floor 0",
+  "junior_4 level 2 floor 0",
+  "junior_4 level 3 floor 0",
+  "junior_4 level 4 floor 0",
+  "expert_2 level 1 floor 0",
+  "expert_2 level 2 floor 0",
+  "expert_3 level 2 floor 0",
+  "expert_3 level 5 floor 0",
+  "expert_4 level 4 floor 0",
 ]
+// The floors standing a mechanic another mod realises: a procession door is the puzzle mod's, so its tiles, its
+// door and its sequence stay standing with the topology mod off.
+const FLOORS_WITH_A_PROCESSION_DOOR = ["expert_2 level 3 floor 0"]
+// What a procession door leaves on its floor: its step tiles, the sequence on one of them, and the door they work.
+const PROCESSION_PIECES = /^\d+,\d+ (sequenceTile|worksMechanism|gateFace|shut door|mechanism|mechanismId)$/
 
 type Carved = {
   label: string
-  dev: boolean
   outcome: Outcome
   withMod: AssemblerResult
   without: AssemblerResult
@@ -92,36 +135,31 @@ const assembleReal = (
   off: boolean
 ): AssemblerResult => {
   const world = off ? TOPOLOGY_OFF : TOPOLOGY_ON
+  // A shipped floor carves at the (packing, seed) the bake stamped on it, the pair a player gets.
+  const baked = generatedWorldConfigs[journeyId]?.[levelNr - 1]?.[floorIndex]
+  const pinned = baked ? { ...floor, seed: baked.seed, packing: baked.packing } : floor
   return assembleFloor(
     journeyId,
-    floor as unknown as FloorConfig,
+    pinned as unknown as FloorConfig,
     floorAssemblySeed(persistentInteriorSeed(journeyId), levelNr, floorIndex),
     world.resolveEncounter,
     {
       resolveKeyRequirements,
       floorRef: { journeyId, floorIndex },
-      ...(off ? { resolveOneWay: TOPOLOGY_OFF.resolveOneWay } : {}),
+      ...(off ? { resolveOneWay: TOPOLOGY_OFF.resolveOneWay, resolvePassage: TOPOLOGY_OFF.resolvePassage } : {}),
     }
   )
 }
 
 let on: Record<string, SiteConfig[]>
 let off: Record<string, SiteConfig[]>
-let offShipped: Record<string, SiteConfig[]>
 
 beforeAll(() => {
-  process.env.INCLUDE_DEV = "1"
   on = build(TOPOLOGY_ON.modIds, TOPOLOGY_ON.resolveEncounter)
   off = build(TOPOLOGY_OFF.modIds, TOPOLOGY_OFF.resolveEncounter)
-  delete process.env.INCLUDE_DEV
-  offShipped = build(TOPOLOGY_OFF.modIds, TOPOLOGY_OFF.resolveEncounter)
 }, 300_000)
 
-afterAll(() => {
-  delete process.env.INCLUDE_DEV
-})
-
-describe("every floor of the real world, the dev journey included", () => {
+describe("every floor of the real world", () => {
   let carved: Carved[] = []
   beforeAll(() => {
     carved = []
@@ -133,7 +171,6 @@ describe("every floor of the real world, the dev journey included", () => {
           const without = assembleReal(journeyId, mirror, siteIdx + 1, floorIndex, true)
           carved.push({
             label: `${journeyId} level ${siteIdx + 1} floor ${floorIndex}`,
-            dev: journeyId === DEV_JOURNEY_ID,
             outcome: outcomeOf(withMod, without),
             withMod,
             without,
@@ -144,7 +181,6 @@ describe("every floor of the real world, the dev journey included", () => {
 
   it("was asked of the whole world, not of a handful of floors", () => {
     expect(carved.length).toBeGreaterThan(200)
-    expect(carved.filter(c => c.dev)).toHaveLength(10)
   })
 
   it("carves other walls with the mod off on no floor", () => {
@@ -157,25 +193,33 @@ describe("every floor of the real world, the dev journey included", () => {
   })
 
   it("carves every shipped floor identically with the mod off: nothing of the shipped world is refused", () => {
-    const shipped = carved.filter(c => !c.dev && c.outcome.kind !== "notCarvedWithMod")
+    const shipped = carved.filter(c => c.outcome.kind !== "notCarvedWithMod")
     expect(shipped.length).toBeGreaterThan(150)
     expect(shipped.filter(c => c.outcome.kind !== "identical").map(c => c.label)).toEqual([])
   })
 
-  it("carves every dev floor identically with the mod off, the floors that author a mechanic included", () => {
-    const dev = carved.filter(c => c.dev)
-    expect(dev).toHaveLength(10)
-    expect(dev.map(c => c.outcome.kind)).toEqual(Array(dev.length).fill("identical"))
-  })
-
-  it("leaves no mechanism, tile, cover, door face, way out or shut door standing on any floor with the mod off", () => {
+  it("leaves no mechanism, tile, cover, door face, way out or shut door of its own standing on any floor with the mod off", () => {
     const left = carved.flatMap(c =>
       c.withMod.success && c.without.success
         ? [{ label: c.label, left: mechanicsLeft(c.without.grid, gateKeysOwned(c.withMod.grid)) }]
         : []
     )
     expect(left.length).toBeGreaterThan(200)
-    expect(left.filter(floor => floor.left.length > 0)).toEqual([])
+    const procession = (label: string) => FLOORS_WITH_A_PROCESSION_DOOR.includes(label)
+    expect(left.filter(floor => floor.left.length > 0 && !procession(floor.label))).toEqual([])
+    for (const floor of left.filter(floor => procession(floor.label))) {
+      expect(
+        floor.left.filter(piece => !PROCESSION_PIECES.test(piece)),
+        floor.label
+      ).toEqual([])
+      const cell = (piece: string) => piece.split(" ")[0]
+      const tiles = new Set(floor.left.filter(piece => piece.endsWith(" sequenceTile")).map(cell))
+      const mechanisms = floor.left.filter(piece => piece.endsWith(" mechanism")).map(cell)
+      expect(
+        mechanisms.filter(at => !tiles.has(at)),
+        `${floor.label}: a mechanism off the sequence`
+      ).toEqual([])
+    }
   })
 
   it("takes the mechanics off every floor that stands one, which is exactly these floors", () => {
@@ -207,7 +251,7 @@ describe("every floor of the real world, the dev journey included", () => {
     }
   })
 
-  it("finds no lock to walk on a floor with the mod off, where the mod on walks one on exactly these floors", () => {
+  it("finds no lock to walk with the mod off but a procession door's, where the mod on walks one on exactly the floors that stand a mechanic", () => {
     const walked = (pick: "withMod" | "without") =>
       carved
         .filter(c => {
@@ -216,7 +260,7 @@ describe("every floor of the real world, the dev journey included", () => {
         })
         .map(c => c.label)
     expect(walked("withMod")).toEqual(FLOORS_WITH_MECHANICS)
-    expect(walked("without")).toEqual([])
+    expect(walked("without")).toEqual(FLOORS_WITH_A_PROCESSION_DOOR)
   })
 })
 
@@ -224,16 +268,13 @@ describe("the shipped world, built with the topology mod off", () => {
   it("is built whole: the same journeys with the same number of floors", () => {
     const shape = (world: Record<string, SiteConfig[]>) =>
       Object.fromEntries(Object.entries(world).map(([id, sites]) => [id, sites.map(site => site.length)]))
-    expect(offShipped[DEV_JOURNEY_ID]).toBeUndefined()
-    expect(shape(offShipped)).toEqual(
-      shape(Object.fromEntries(Object.entries(on).filter(([id]) => id !== DEV_JOURNEY_ID)))
-    )
+    expect(shape(off)).toEqual(shape(on))
   })
 
   it("assembles every floor, the doubleBack floor of expert_1 included, with its mechanics bare", () => {
     const failed: string[] = []
     let assembled = 0
-    for (const [journeyId, sites] of Object.entries(offShipped))
+    for (const [journeyId, sites] of Object.entries(off))
       sites.forEach((site, siteIdx) =>
         site.forEach((floor, floorIndex) => {
           const result = assembleReal(journeyId, floor, siteIdx + 1, floorIndex, true)
@@ -245,19 +286,12 @@ describe("the shipped world, built with the topology mod off", () => {
     expect(failed).toEqual([])
   }, 300_000)
 
-  it("builds the dev journey whole too, every floor assembling", () => {
-    const sites = off[DEV_JOURNEY_ID]
-    expect(sites).toHaveLength(10)
-    const failed = sites.flatMap((site, siteIdx) =>
-      site.flatMap((floor, floorIndex) =>
-        assembleReal(DEV_JOURNEY_ID, floor, siteIdx + 1, floorIndex, true).success ? [] : [`level ${siteIdx + 1}`]
-      )
-    )
-    expect(failed).toEqual([])
-  }, 300_000)
-
-  it("walks reachability over every site of the shipped world and the dev journey with the mod off, throwing on none", () => {
-    const support = { ...MOD_REACHABILITY_SUPPORT, resolveOneWay: TOPOLOGY_OFF.resolveOneWay }
+  it("walks reachability over every site of the shipped world with the mod off, throwing on none", () => {
+    const support = {
+      ...MOD_REACHABILITY_SUPPORT,
+      resolveOneWay: TOPOLOGY_OFF.resolveOneWay,
+      resolvePassage: TOPOLOGY_OFF.resolvePassage,
+    }
     const refused: string[] = []
     let walked = 0
     for (const [journeyId, sites] of Object.entries(off))
@@ -295,7 +329,6 @@ describe("the shipped world, built with the topology mod off", () => {
           }))
         )
       )
-    const shippedOn = Object.fromEntries(Object.entries(on).filter(([id]) => id !== DEV_JOURNEY_ID))
-    expect(authored(offShipped)).toEqual(authored(shippedOn))
+    expect(authored(off)).toEqual(authored(on))
   })
 })

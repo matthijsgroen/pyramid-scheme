@@ -713,6 +713,43 @@ def prim_brazier():
     return join_all()
 
 
+def prim_torch():
+    """A standing torch: a squat stone holder on the floor, a timber shaft rising out of a bronze collar,
+    and a head of pitch-soaked wrapping with a flame on it.
+
+    UNLIT AND LIT ARE ONE RENDER, and the unlit one is `--drop=accent`: the flame is always modelled. A
+    shorter object is normalised to one unit tall at a bigger scale and framed differently, so a torch
+    modelled without its flame would not share the lit one's outline below it. The flame is `nocast` so
+    the two footprints match as well. What `--drop` cannot carry is the import's trim: a torch is
+    HEIGHT-limited in its slot, so the unlit tile is imported at the lit one's `--scale` times the ratio
+    of their drawn heights, or it arrives taller. The queue's import lines carry both numbers.
+
+    IT MUST NOT READ AS THE BRAZIER, a squat dish on three splayed legs: wide, low and open at the top.
+    Everything here is the opposite — one upright shaft, a narrow footprint, no dish, no legs and no bowl
+    at any height. The head is a straight drum a little wider than the shaft, never flared: a flare is a
+    cup.
+
+    THE SHAFT HAS TO SURVIVE THE SLOT, and the flame is a NUB, by the law `prim_lamp` and `prim_sconce`
+    paid for: a sharp cone on top of a thin upright turns a torch into a spear.
+
+    Measured: lands 19x84 at --scale=1, so it is imported at --scale=0.6 — 19x51 units, the shaft's top at
+    the explorer's waist and the head at his chest. The shaft is 3.4 units wide there, over the 3 a thin
+    part needs to survive; the unlit tile's mask matches the lit one's to the pixel below the flame."""
+    base_h, collar_h, shaft_h, head_h = 0.07, 0.06, 0.78, 0.17
+    # A stepped octagonal holder, so it is a block someone set on the floor and not one drum.
+    mark(cyl(0.15, base_h, z=base_h / 2, verts=8), "body")
+    mark(cyl(0.115, 0.06, z=base_h + 0.03, verts=8), "body")
+    z = base_h + 0.06
+    mark(cyl(0.065, collar_h, z=z + collar_h / 2 - 0.01, verts=12), "metal")
+    mark(cyl(0.045, shaft_h, z=z + shaft_h / 2, verts=12), "timber")
+    top = z + shaft_h
+    # The head: a drum of wrapping, bound by one turn at its foot so it reads as wrapped, not turned.
+    mark(cyl(0.068, head_h, z=top + head_h / 2 - 0.02, verts=14), "cloth")
+    mark(cyl(0.074, 0.025, z=top - 0.005, verts=14), "metal")
+    mark(dome(0.07, 0.15, z=top + head_h - 0.03, segments=14), nocast("accent"))
+    return join_all()
+
+
 def prim_lamp():
     """An oil lamp and the thing it stands on: `--contents=stool` is the merchant's low wooden stool,
     `--contents=stand` the nobleman's tall bronze stand. The lamp itself is the same object at both ranks,
@@ -1287,6 +1324,165 @@ def prim_mat():
     geometry still owes the prop is a shape that is not a FLOOR TILE, and --spin is what buys that — a
     rug lying askew of the grid cannot be read as part of the paving, and it costs one flag."""
     box(0.95, 0.72, 0.055, z=0.0275)
+    return join_all()
+
+
+def prim_plate():
+    """A pressure plate set into the paving: one square slab standing a finger's width proud, a dark gap
+    all round it where it sinks, and a limestone block resting on it.
+
+    THE PLATE AND THE PLATE WITH ITS STONE ARE ONE RENDER. The stone is always modelled, and the empty
+    plate is `--drop=limestone`. Everything that places a tile is fitted to the whole object —
+    `seat_and_normalise` scales it to one unit tall, `add_camera` frames it, `sun_offset` clamps the
+    footprint to the frame's air — so a plate modelled without its stone is a different object at a
+    different scale with a different shadow, and the two tiles would not swap on one cell. `--drop` runs
+    after all three, so it removes the stone and moves nothing else. The stone is `nocast` for the same
+    reason: the footprint is rendered from the whole object, and the stone's would otherwise reach the
+    empty plate's seat (it lies inside the slab's own and is hidden there anyway).
+
+    A FLAT THING ON THE FLOOR HAS NO SILHOUETTE (`prim_mat`), so what makes this a plate and not a floor
+    tile is the GAP: a VOID ring proud of the floor line, and the slab standing above it. The ring is NOT
+    equal all round, because the shear does not draw it equal. A margin m draws as m at the sides, as
+    `ring + k*m` at the near edge (the ring's front face shows under the slab) and as `k*m - raise` at
+    the far edge, where the raised slab's top covers the ring. Built uniform, the far gap vanishes behind
+    the slab and the plate reads as a step. So the far margin is the widest and the near the narrowest,
+    chosen so all three draw at about 0.045: two units at slot size, the line that says the slab moves.
+
+    THE STONE IS A LARGE LOAF: about 20 units on a 56-unit plate, half the explorer's width and a fifth
+    of his height, low and wide so it reads as a weight set down rather than a thing standing up. Set
+    off the slab's axes by 12 degrees, because a block placed by hand is never square to the stone it is
+    put on; the plate itself is not spun, like `pit`, because it is cut into the paving and must agree
+    with it.
+
+    Measured: lands 56x43 at --scale=1, a cell across and low; the stone draws 157 px of the plate's 424,
+    20.7 units, and is 21 tall; the stone never reaches past the far gap, so both tiles trim to one box."""
+    k = 0.7
+    s, raise_ = 0.66, 0.03  # the slab, and how far it stands above the gap
+    ring = 0.012  # the gap's own height, proud of the floor line
+    m_side, m_near, m_far = 0.035, 0.029, 0.089
+    assert abs((ring + k * m_near) - (k * m_far - raise_)) < 0.005
+    mark(box(s + 2 * m_side, s + m_near + m_far, ring, y=(m_far - m_near) / 2, z=ring / 2), VOID)
+    mark(box(s, s, ring + raise_, z=(ring + raise_) / 2), "body")
+    stone = box(0.24, 0.17, 0.12, z=ring + raise_ + 0.06)
+    stone.rotation_euler = (0, 0, math.radians(12))
+    bpy.ops.object.transform_apply(rotation=True)
+    stone.data.transform(Matrix.Translation((-0.02, 0.03, 0)))
+    mark(stone, nocast("limestone"))
+    return join_all()
+
+
+def prim_sequencetile():
+    """A sequence tile: a square slab set FLUSH in the paving, a fine groove cut into its top a little in
+    from the edge, and a plain top inside it. The renderer draws the glyph on that top, so nothing is
+    carved there, and the groove hugs the edge so the glyph keeps 86% of the tile's width clear.
+
+    It is the pressure plate's opposite, and the two must never be read for each other: the plate stands
+    proud on a dark gap and takes a stone; this lies level with the floor and is walked on. So nothing
+    here may be lifted by the shear — `prim_mat`'s rule that a floor-lying sheet's own thickness draws as
+    a dark band and reads as RAISED is the whole design constraint, and the slab is as thin as the mesh
+    allows.
+
+    THE GROOVE IS REALLY CUT, not a recess sunk inside a solid slab (the laws table: that vanishes into the
+    stone). The slab is a thin base with the top built round the groove as separate pieces — a centre
+    square and four border bars — so the groove is an opening the camera can see down into. Its floor is
+    marked `deep`, and under z + k*y the far wall of the near and far runs faces the viewer, so all four
+    runs draw as a thin dark line. Not VOID: a groove is shadowed stone, and black is the plate's gap —
+    the one mark that must stay the plate's alone.
+
+    No `--seat`: like the pool's coping, nothing stands above the floor, so nothing casts. Not spun, like
+    `pit`: it is cut to the paving's grid. Lands 56x40 at --scale=1 and is imported at 0.8, 47x33 units:
+    the groove is about one unit wide there, fine but whole on all four sides."""
+    t, h, cut = 0.80, 0.012, 0.007  # the tile, its thickness, and how deep the groove is cut
+    rim, line = 0.04, 0.016  # the border outside the groove, and the groove's width
+    base = h - cut
+    mark(box(t, t, base, z=base / 2), "body")
+    zt = base + cut / 2
+    # The border round the groove: near and far bars full width, the sides between them.
+    for sx, sy, x, y in ((t, rim, 0, -(t - rim) / 2), (t, rim, 0, (t - rim) / 2),
+                         (rim, t - 2 * rim, -(t - rim) / 2, 0), (rim, t - 2 * rim, (t - rim) / 2, 0)):
+        mark(box(sx, sy, cut, x=x, y=y, z=zt), "body")
+    centre = t - 2 * (rim + line)
+    mark(box(centre, centre, cut, z=zt), "body")
+    # The groove's floor, a skin on the base inside the opening, well below the top.
+    g = t - 2 * rim  # the groove's outer edge
+    for sx, sy, x, y in ((g, line, 0, -(g - line) / 2), (g, line, 0, (g - line) / 2),
+                         (line, g - 2 * line, -(g - line) / 2, 0), (line, g - 2 * line, (g - line) / 2, 0)):
+        mark(box(sx, sy, 0.001, x=x, y=y, z=base + 0.0005), "deep")
+    return join_all()
+
+
+def prim_narrow():
+    """The narrow passage: one plain wall standing across a corridor cell, with a crack in it a person
+    squeezes through sideways and a stone does not, and rubble lying on both sides of it.
+
+    `--contents=across` is the wall across a NORTH-SOUTH corridor, seen face-on: a slab nearly as wide as
+    the cell, the crack a dark upright slit with a wider notch in the top. `--contents=along` is the wall
+    across an EAST-WEST corridor: it runs away from the viewer, so what the map shows is its end and its
+    top as a strip, and the crack is a dark gap cut across that top. One render per orientation covers
+    both headings, because the map only ever shows a wall from the south.
+
+    THE CRACK IS WHAT THE TILE IS FOR, and it has to survive 56 units. `across`: a slit 0.09 wide (5
+    units) running up through the wall, opening to 0.20 (11 units) in the top third, where shoulders and
+    head go. It is a real opening cut through four blocks, and its back is closed with a thin VOID panel
+    flush with the wall's far face: an open gap would show the magenta behind, which is no crack but a
+    hole in the tile. `along`: the gap is 0.16 across the top, and a wall seen from the south hides its
+    own notch behind the near half's top, so what draws is the FAR half's face turned toward the viewer;
+    that face is marked VOID, so the crack is a dark spot in the strip of the top.
+
+    BLACK IS THE PLATE'S GAP AND THE PIT'S MOUTH, and the crack is allowed it: a crack in a wall is as
+    dark as a hole is. What keeps it from the plate is that the plate lies in the floor and this stands.
+
+    THE WALL IS PLAIN: no carving, no door frame, nothing that says a door. The crack is the only thing in
+    it that is not stone. Not spun, like `pit`: the wall sits across the cell's own grid. The rubble is
+    brick-sized pieces rolled off level, a few on each side, none touching the crack."""
+    kind = arg("contents", "across")
+    H, Hl = 1.0, 0.62  # the wall's height, and where the slit opens out into the notch
+    s, n = 0.09, 0.20  # the slit's width, and the notch's
+    if kind == "across":
+        W, d = 0.92, 0.20
+        for sign in (-1, 1):
+            xs = sign * (s / 2 + (W / 2 - s / 2) / 2)
+            mark(box(W / 2 - s / 2, d, Hl, x=xs, z=Hl / 2), "body")
+            xn = sign * (n / 2 + (W / 2 - n / 2) / 2)
+            mark(box(W / 2 - n / 2, d, H - Hl, x=xn, z=(Hl + H) / 2), "body")
+        back = d / 2 - 0.003
+        mark(box(s, 0.004, Hl, y=back, z=Hl / 2), VOID)
+        mark(box(s, d, 0.004, z=0.002), VOID)  # the slit's floor, or the magenta shows between the edges
+        mark(box(n, 0.004, H - Hl, y=back, z=(Hl + H) / 2), VOID)
+        pieces = (  # (sx, sy, sz, x, y, yaw, roll)
+            (0.20, 0.11, 0.07, -0.30, -0.22, -14, 5),
+            (0.15, 0.10, 0.06, -0.06, -0.27, 22, -6),
+            (0.22, 0.12, 0.08, 0.20, -0.23, 9, 7),
+            (0.12, 0.09, 0.05, 0.38, -0.20, -30, -4),
+            (0.13, 0.09, 0.05, -0.40, -0.14, 35, 6),
+            (0.18, 0.11, 0.07, -0.20, 0.24, 17, -5),
+            (0.21, 0.11, 0.08, 0.14, 0.26, -11, 6),
+            (0.12, 0.09, 0.05, 0.38, 0.22, 28, -7),
+        )
+    else:
+        W, t, gap = 0.90, 0.20, 0.16
+        for sign in (-1, 1):
+            ys = sign * (gap / 2 + (W / 2 - gap / 2) / 2)
+            mark(box(t, W / 2 - gap / 2, H, y=ys, z=H / 2), "body")
+        mark(box(t, gap, Hl, z=Hl / 2), "body")
+        mark(box(t, 0.004, H - Hl, y=gap / 2 - 0.001, z=(Hl + H) / 2), VOID)
+        pieces = (
+            (0.20, 0.11, 0.07, -0.20, -0.30, 12, 5),
+            (0.15, 0.10, 0.06, -0.26, -0.02, -22, -6),
+            (0.22, 0.12, 0.08, -0.22, 0.24, -8, 7),
+            (0.12, 0.09, 0.05, -0.38, 0.12, 30, -4),
+            (0.18, 0.11, 0.07, 0.20, -0.22, -17, -5),
+            (0.21, 0.12, 0.08, 0.24, 0.06, 6, 6),
+            (0.12, 0.09, 0.05, 0.38, -0.08, -28, -7),
+            (0.16, 0.10, 0.06, 0.22, 0.30, 20, 4),
+        )
+    for sx, sy, sz, x, y, yaw, roll in pieces:
+        # Built at the origin, turned, then placed (`turn`'s order): rolled off level so the pieces read as
+        # fallen, and resting on the floor wherever they sit.
+        piece = box(sx, sy, sz)
+        piece.rotation_euler = (0, math.radians(roll), math.radians(yaw))
+        piece.location = (x, y, sz / 2)
+        mark(piece, "body")
     return join_all()
 
 
@@ -3484,6 +3680,36 @@ def prim_statue():
     return join_all()
 
 
+def prim_pipehole():
+    """A stone pipe's mouth in a wall: one round hole, dark inside, and with `--contents=stone` a stone in it.
+
+    A WALL ITEM WITH DEPTH, so it is modelled like `prim_niche` and rendered at `--shear=0.5`: the mouth is
+    a bore going back into the wall, and drawn at half depth its far end shows above its front lip, which
+    is what makes it read as a hole rather than a disc painted on the face. Landscape two by one, as the
+    wall band it is drawn on.
+
+    The same mouth at every rank: a pipe is a mechanic, and a player must never relearn it when the tomb
+    gets richer. The stone is the plate's limestone block, so the stone a player posted is the one he sees.
+    """
+    w, d, h = 1.62, 0.34, 0.81
+    r = 0.22
+    # The wall face round the mouth: a slab with the bore's front lip on it. Nothing else stands on the face.
+    mark(box(w, 0.06, h, y=-d / 2 + 0.03, z=h / 2), "body")
+    # The bore: a dark cylinder running back into the wall along y, its front flush with the face.
+    bore = cyl(r, d, y=0.0, z=h * 0.48, verts=32)
+    bore.rotation_euler = (math.pi / 2, 0.0, 0.0)
+    bpy.ops.object.transform_apply(rotation=True)
+    mark(bore, VOID)
+    if arg("contents", "empty") == "stone":
+        # The stone lies in the mouth, resting on the bore's floor, a little proud of the face.
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=16, ring_count=10, radius=r * 0.78, location=(0.0, -d / 2, h * 0.43))
+        stone = bpy.context.object
+        stone.scale = (1.1, 0.8, 0.85)
+        bpy.ops.object.transform_apply(scale=True)
+        mark(stone, "limestone")
+    return join_all()
+
+
 PRIMITIVES.update(
     {
         "statue": prim_statue,
@@ -3495,12 +3721,17 @@ PRIMITIVES.update(
         "shelf": prim_shelf,
         "chest": prim_chest,
         "brazier": prim_brazier,
+        "torch": prim_torch,
+        "plate": prim_plate,
+        "narrow": prim_narrow,
+        "sequenceTile": prim_sequencetile,
         "lamp": prim_lamp,
         "pillar": prim_pillar,
         "palm": prim_palm,
         "mat": prim_mat,
         "rubblePile": prim_rubbleheap,
         "niche": prim_niche,
+        "pipeHole": prim_pipehole,
         "pit": prim_pit,
         "lever": prim_lever,
         "spikes": prim_spikes,
@@ -3605,6 +3836,9 @@ PART_COLOURS = {
     # slab, which is a pillar and not a beam.
     "haze": "#d8b87c",
     "cloth": "#bdb3a0",
+    # A pale building stone set on a darker one. `prim_plate`'s block has to read as a separate thing put
+    # down on the slab, and in the rank's one colour it is a bump on the plate.
+    "limestone": "#d8ceb6",
     # STONE BELOW THE FLOOR LINE: the same material as `body`, carrying the light that reaches down a
     # shaft rather than the light on the paving. A hole has no sun in it — its walls stand in the y-z
     # plane and draw as lines — so depth cannot come from the lamp and has to be built as value. Two
@@ -4128,7 +4362,9 @@ def add_camera(obj, width, height, margin=1.06, drop=0.0):
     cam_data.ortho_scale = scale
     cam = bpy.data.objects.new("cam", cam_data)
     bpy.context.scene.collection.objects.link(cam)
-    cam.location = (0, -10, (z0 + z1) / 2)
+    # In FRONT of the whole object, which a fixed y=-10 is not for a very flat one: normalised to one
+    # unit tall, `prim_sequencetile` is 57 units deep and a camera inside it clipped its near half away.
+    cam.location = (0, min(-10.0, local_bounds(obj)[1][0] - 1.0), (z0 + z1) / 2)
     cam.rotation_euler = (math.radians(90), 0, 0)
     bpy.context.scene.camera = cam
 
@@ -4196,7 +4432,9 @@ def add_backdrop(hex_colour, obj):
     is three things a prompt no longer has to nag about."""
     (x0, x1), _, (z0, z1) = local_bounds(obj)
     span = max(x1 - x0, z1 - z0) * 8
-    bpy.ops.mesh.primitive_plane_add(size=span, location=(0, 12, (z0 + z1) / 2), rotation=(math.radians(90), 0, 0))
+    # Behind the whole object, for the camera's reason in `add_camera`: a very flat prop is deeper than 12.
+    behind = max(12.0, local_bounds(obj)[1][1] + 1.0)
+    bpy.ops.mesh.primitive_plane_add(size=span, location=(0, behind, (z0 + z1) / 2), rotation=(math.radians(90), 0, 0))
     plane = bpy.context.object
     mat = bpy.data.materials.new("backdrop")
     mat.use_nodes = True

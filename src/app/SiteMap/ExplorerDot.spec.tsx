@@ -48,3 +48,40 @@ describe("ExplorerDot", () => {
     expect(onArrive).toHaveBeenCalled()
   })
 })
+
+describe("ExplorerFigure, carrying", () => {
+  afterEach(() => vi.doUnmock("./tileAssets"))
+
+  const figure = async (frames: Record<string, string[]>) => {
+    vi.resetModules()
+    vi.doMock("./tileAssets", async original => ({
+      ...(await original<typeof import("./tileAssets")>()),
+      sharedTileFrames: (prefix: string) => frames[prefix] ?? [],
+    }))
+    return (await import("./ExplorerDot")).ExplorerFigure
+  }
+
+  it("draws the carrying frames of its facing", async () => {
+    const Figure = await figure({ "explorer-e": ["walk.png"], "explorer-carry-e": ["carry.png"] })
+    const { container } = render(<Figure facing="w" carrying />)
+    expect(container.querySelector("img")?.getAttribute("src")).toBe("carry.png")
+  })
+
+  it("falls back to the walking frames while a facing has no carrying art", async () => {
+    const Figure = await figure({ "explorer-n": ["walk.png"] })
+    const { container } = render(<Figure facing="n" carrying />)
+    expect(container.querySelector("img")?.getAttribute("src")).toBe("walk.png")
+  })
+
+  it("the walking explorer is drawn carrying while a stone is in hand", async () => {
+    vi.resetModules()
+    vi.doMock("./tileAssets", async original => ({
+      ...(await original<typeof import("./tileAssets")>()),
+      sharedTileFrames: (prefix: string) =>
+        ({ "explorer-s": ["walk.png"], "explorer-carry-s": ["carry.png"] })[prefix] ?? [],
+    }))
+    const { ExplorerDot: Dot } = await import("./ExplorerDot")
+    const { container } = render(<Dot grid={grid} pos={[0, 1]} carrying />)
+    expect(container.querySelector("img")?.getAttribute("src")).toBe("carry.png")
+  })
+})

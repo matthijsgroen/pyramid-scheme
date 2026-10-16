@@ -46,8 +46,25 @@ describe("drawLock", () => {
     expect(draw("in -[G]- out")).toContain("■G?")
   })
 
-  it("lists a drop that carries a gate under the map", () => {
-    expect(draw("in -[H]- >> hall\nhall -- out\nH toggle @in")).toContain("in -[■H:b]- >> hall")
+  it("writes a falling corridor's gate on its drop line", () => {
+    const art = draw("in -[H]- >> hall\nhall -- out\nH toggle @in")
+    expect(art).toContain("■H:b")
+    expect(art).not.toContain("no room to draw")
+  })
+})
+
+describe("drawLock, with corridors that share a pair", () => {
+  it("draws both corridors and both gates", () => {
+    const art = draw("in -[S]- hall\nin -[T]- hall\nhall -- out\nS toggle @in\nT toggle @in")
+    expect(art).toContain("■S:b")
+    expect(art).toContain("■T:b")
+    expect(art).not.toContain("no room to draw")
+  })
+
+  it("draws a drop no connection names", () => {
+    const { lock } = parseLock("in -- hall\nhall >> in\nhall -- out")
+    const unnamed = { ...lock, connections: lock.connections.filter(c => !("between" in c)) }
+    expect(drawLock(unnamed)).toMatch(/[▲▶▼◀]/)
   })
 })
 
@@ -57,5 +74,48 @@ describe("drawLock, with stones", () => {
     expect(art).toContain("◉door")
     expect(art).toContain("⊙shelf")
     expect(art).toContain("□door")
+  })
+})
+
+describe("drawLock, flat", () => {
+  it("routes a drop around a corridor rather than across it", () => {
+    const art = draw(
+      "in -- top\nin -[S2]- s2 -[S1]- middle\nin -[S2]- out\ntop >> s1 >> in\ntop >> middle >> in\nS1 toggle @s1\nS2 toggle @s2"
+    )
+    expect(art).not.toContain("┼")
+    expect(art).not.toContain("without crossing")
+  })
+})
+
+describe("drawLock, with a loop of gates", () => {
+  it("draws the join that closes the loop, with its gate", () => {
+    const art = draw("in -- hall\nhall -[H]- vault\nvault -[G]- in\nhall -- out\nH toggle @in\nG toggle @hall")
+    expect(art).toContain("■H:b")
+    expect(art).toContain("■G:b")
+    expect(art).not.toContain("without crossing")
+  })
+})
+
+describe("drawLock, with a barrier named like an object method", () => {
+  it("draws a gate called constructor as a gate, not a drop", () => {
+    const { lock, drafts } = parseLock("in -[T]- out\nT toggle @in")
+    const [gate] = Object.values(lock.gates)
+    const renamed = {
+      ...lock,
+      gates: { constructor: gate },
+      connections: lock.connections.map(c =>
+        typeof c === "object" && "barriers" in c ? { ...c, barriers: ["constructor"] } : c
+      ),
+    }
+    expect(drawLock(renamed as typeof lock, drafts)).toContain("■T")
+  })
+})
+
+describe("a stone pipe in the drawing", () => {
+  it("draws a hole in each region it joins, full where a stone starts, and names it in the legend", () => {
+    const drawn = drawLock(parseLock("in -[unladen]- hall\nhall -[p]- out\np plate @hall\nP pipe @in @hall stone").lock)
+    expect(drawn).toContain("[in · ○P]")
+    expect(drawn).toContain("●P]")
+    expect(drawn).toContain("○ pipe hole   ● hole with a stone")
   })
 })

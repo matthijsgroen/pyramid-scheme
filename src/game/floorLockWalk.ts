@@ -1,11 +1,27 @@
 import { floorLock, regionsOf } from "./floorLock"
-import { checkLockSpec, deadRegions, describeLockWalkFailure, reachableStates, walkLock } from "./lockWalk"
+import {
+  checkLockSpec,
+  deadRegions,
+  describeLockWalkFailure,
+  lostRegion,
+  MAX_LOCK_STATES,
+  reachableStates,
+  walkLock,
+} from "./lockWalk"
 import type { LockSpec, LockState, LockWalkFailure, RegionId } from "./lockWalk"
 import type { FloorGrid } from "./siteTypes"
 
 // THE WALK OF A FLOOR'S LOCK, which is the walk of the whole lock until a lock is nested in a region of another.
 // The product of a host's states and a nested lock's states is what a nesting must not cost, so a nested lock is
 // checked on its own and the host walks over what the nested lock amounts to for it.
+//
+// A NESTED LOCK IS WALKED APART only when nothing in it reads a hand: it holds no stones and no one-way, or the floor
+// holds no stone at all. A lock without stones never holds a narrow passage (`carryWithoutStones` in compileLock),
+// so its one-ways are all that could read one. Anywhere else the nesting is walked fused with the level its stones
+// reach: a shared one, and a pass-through with a one-way off its route, in its pool's level; a contained one in the
+// floor's own, since its stones may leave by either way; and a one-way in any other in the floor's own, since a
+// stone of any lock may be carried to it. Every level that holds stones keeps `emptyHands`, so its drops take empty
+// hands whatever its way out is.
 
 export type FloorWalkFailure =
   | LockWalkFailure
@@ -15,6 +31,8 @@ export type FloorWalkFailure =
   | { type: "notFree"; at: LockState; cannotReach: RegionId }
   /** The nested lock `instance` fails inside; `failure` is what its own check found. */
   | { type: "nested"; instance: string; failure: FloorWalkFailure }
+  /** A level several nested locks are walked in together fails; `instances` are the locks fused into it. */
+  | { type: "pooled"; instances: string[]; failure: FloorWalkFailure }
 
 /** `states` is the walk of the floor's own level; `nested` counts the states of each nested lock on its own. */
 export type FloorWalkResult =
@@ -32,6 +50,8 @@ export const describeFloorWalkFailure = (failure: FloorWalkFailure): string => {
     }
     case "nested":
       return `inside ${failure.instance}: ${describeFloorWalkFailure(failure.failure)}`
+    case "pooled":
+      return `the stones ${failure.instances.join(", ")} share: ${describeFloorWalkFailure(failure.failure)}`
     default:
       return describeLockWalkFailure(failure)
   }
@@ -54,16 +74,30 @@ type Cut = {
   /** The compiled region an authored region of a nested lock stands as. */
   portOf: (label: string) => RegionId
   within: (owner: Owner, node: Owner) => boolean
+  /** A nested lock walked in another's level: its pool's, or the floor's. */
+  fusedInto: Map<string, Owner>
+  /** A level's node → the locks fused into it, its pool first. */
+  pools: Map<Owner, string[]>
 }
 
 const cutOf = (grid: FloorGrid, lock: LockSpec): Cut => {
   const nesting = grid.lockNesting ?? []
+  const nested = new Set(nesting.map(n => n.instance))
+  const hostIn = new Map(nesting.map(n => [n.instance, n.host]))
+  const fusedInto = new Map<string, Owner>()
+  /** Walks `instance`, and every nested lock between it and `pool`, in `pool`'s level (the floor's when `pool` is
+   * no nested lock, or undefined). */
+  const fuse = (instance: string, pool: string | undefined) => {
+    const into: Owner = pool !== undefined && nested.has(pool) ? pool : FLOOR
+    for (
+      let at: string | undefined = instance;
+      at !== undefined && at !== pool && nested.has(at);
+      at = hostIn.get(at)
+    ) {
+      if (!fusedInto.has(at)) fusedInto.set(at, into)
+    }
+  }
   const { of } = regionsOf(grid)
-  const instanceOfLabel = new Map(nesting.flatMap(n => n.regions.map(region => [region, n.instance] as const)))
-  const hostOf = new Map<string, Owner>(
-    nesting.map(n => [n.instance, nesting.some(other => other.instance === n.host) ? n.host : FLOOR])
-  )
-
   const labels = new Map<RegionId, Set<string>>()
   grid.cells.forEach((row, r) =>
     row.forEach((cell, c) => {
@@ -72,6 +106,40 @@ const cutOf = (grid: FloorGrid, lock: LockSpec): Cut => {
       labels.set(id, (labels.get(id) ?? new Set()).add(cell.region))
     })
   )
+  const pooledBy: string[] = []
+  for (const { instance, stones } of nesting) {
+    if (stones?.case === "shared" || (stones?.case === "passThrough" && stones.oneWays)) {
+      fuse(instance, stones.pool)
+      pooledBy.push(stones.pool)
+    } else if (stones?.case === "contained") fuse(instance, undefined)
+  }
+  // ANY STONE ON THE FLOOR CAN BE CARRIED INTO ANY NESTED LOCK: a root lock's way out takes any hands, and a
+  // contained lock's stone may leave by either way. So wherever the floor holds a stone, a nested lock with a one-way
+  // in it is walked in the floor's level, where the hand is.
+  if ((lock.emptyHands ?? []).length > 0)
+    for (const { instance, regions } of nesting) {
+      const own = new Set(regions)
+      const touches = (region: RegionId) => [...(labels.get(region) ?? [])].some(label => own.has(label))
+      if ((lock.oneWays ?? []).some(({ from, to }) => touches(from) || touches(to))) fuse(instance, undefined)
+    }
+  // A pool nested in another lock is contained, so it is fused into the floor's level in turn: a lock fused into it
+  // is walked where it ends up.
+  const walkedAs = (instance: string): Owner => {
+    let at: Owner = instance
+    while (at !== FLOOR && fusedInto.has(at)) at = fusedInto.get(at)!
+    return at
+  }
+  const pools = new Map<Owner, string[]>()
+  for (const instance of [...pooledBy, ...fusedInto.keys()]) {
+    const level = nested.has(instance) ? walkedAs(instance) : FLOOR
+    const members = pools.get(level) ?? []
+    if (!members.includes(instance)) pools.set(level, [...members, instance])
+  }
+  const instanceOfLabel = new Map(
+    nesting.flatMap(n => n.regions.map(region => [region, walkedAs(n.instance)] as const))
+  )
+  const hostOf = new Map<string, Owner>(nesting.map(n => [n.instance, nested.has(n.host) ? walkedAs(n.host) : FLOOR]))
+
   const isDoor = (region: RegionId) => region.startsWith("door ")
   const only = (owners: Set<Owner>, what: string): Owner | undefined => {
     if (owners.size > 1) throw new Entangled(`${what} belongs to more than one lock`)
@@ -133,7 +201,7 @@ const cutOf = (grid: FloorGrid, lock: LockSpec): Cut => {
     }
     return false
   }
-  return { lock, regionOwner, gateOwner, mechanismOwner, portOf, within }
+  return { lock, regionOwner, gateOwner, mechanismOwner, portOf, within, fusedInto, pools }
 }
 
 // THE LOCKS UNDER ONE NODE AS A SPEC OF THEIR OWN. The node's own gates and mechanisms stay real. A lock nested
@@ -160,12 +228,23 @@ const levelOf = (cut: Cut, node: Owner, nesting: FloorGrid["lockNesting"]): Lock
   for (const gate of Object.values(gates)) regions.add(gate.from).add(gate.to)
   const own = node === FLOOR ? undefined : nesting?.find(n => n.instance === node)
   const port = own ? cut.portOf(own.in) : undefined
+  // Every one-way reads these, not only the way out.
+  const emptyHands = (lock.emptyHands ?? []).filter(({ mechanism }) => Object.hasOwn(mechanisms, mechanism))
+  // A torch is walked in the level its mechanism is. A covering gate not in this level's gates is dropped; a gate
+  // owned by a parent lock can't be one today, as a torch and its barrier come from one lock.
+  const torches = (lock.torches ?? [])
+    .filter(({ mechanism }) => Object.hasOwn(mechanisms, mechanism))
+    .map(({ mechanism, coveredBy }) => ({ mechanism, coveredBy: coveredBy.filter(gate => Object.hasOwn(gates, gate)) }))
+  const crossings = (lock.crossings ?? []).filter(region => regions.has(region))
   return {
     regions: lock.regions.filter(region => regions.has(region)),
     gates,
     mechanisms,
     oneWays: (lock.oneWays ?? []).filter(({ from, to }) => scope.has(from) && scope.has(to)),
     passages: [...(lock.passages ?? []).filter(({ a, b }) => scope.has(a) && scope.has(b)), ...opened],
+    ...(emptyHands.length > 0 ? { emptyHands } : {}),
+    ...(torches.length > 0 ? { torches } : {}),
+    ...(crossings.length > 0 ? { crossings } : {}),
     in: port ?? lock.in,
     out: port ?? lock.out,
   }
@@ -176,7 +255,12 @@ const levelOf = (cut: Cut, node: Owner, nesting: FloorGrid["lockNesting"]): Lock
 // stays true only if, from every state the lock can reach, each place the host (or the lock's own gates) leaves
 // the lock by is as reachable as it is on that open ground. A one-shot torch that shuts the door behind the
 // player, or a lever in a place the door then cuts off, breaks it, and the walk says where.
-const nestedFree = (cut: Cut, instance: string, spec: LockSpec): { states: number } | { failure: FloorWalkFailure } => {
+const nestedFree = (
+  cut: Cut,
+  instance: string,
+  spec: LockSpec,
+  maxStates: number
+): { states: number } | { failure: FloorWalkFailure } => {
   const problem = checkLockSpec(spec)
   if (problem) return { failure: { type: "entangled", problem } }
   const inside = new Set(cut.lock.regions.filter(region => cut.within(cut.regionOwner.get(region)!, instance)))
@@ -192,7 +276,7 @@ const nestedFree = (cut: Cut, instance: string, spec: LockSpec): { states: numbe
   for (const { a, b } of cut.lock.passages ?? []) edge(a, b)
   for (const { from, to } of cut.lock.oneWays ?? []) edge(from, to)
 
-  const found = reachableStates(spec)
+  const found = reachableStates(spec, maxStates)
   if (found === "tooLarge") return { failure: { type: "tooLarge" } }
   const { order, edges } = found
 
@@ -248,6 +332,8 @@ const nestedFree = (cut: Cut, instance: string, spec: LockSpec): { states: numbe
       if (reachable.has(terminal) && !reaching.get(terminal)!.has(n))
         return { failure: { type: "notFree", at: order[n], cannotReach: terminal } }
   }
+  const lost = lostRegion(spec, order, backwards)
+  if (lost) return { failure: { type: "regionLost", ...lost } }
   return { states: order.length }
 }
 
@@ -262,25 +348,39 @@ const nestedFree = (cut: Cut, instance: string, spec: LockSpec): { states: numbe
  */
 const levelsOf = (
   grid: FloorGrid,
-  lock: LockSpec
-): { ok: true; levels: Level[]; counts: Record<string, number> } | { ok: false; failure: FloorWalkFailure } => {
+  lock: LockSpec,
+  maxStates = MAX_LOCK_STATES
+):
+  | {
+      ok: true
+      levels: Level[]
+      counts: Record<string, number>
+      pooled: (node: Owner, failure: FloorWalkFailure) => FloorWalkFailure
+    }
+  | { ok: false; failure: FloorWalkFailure } => {
   const cut = cutOf(grid, lock)
   const counts: Record<string, number> = {}
   const levels: Level[] = []
+  const pooled = (node: Owner, failure: FloorWalkFailure): FloorWalkFailure => {
+    const instances = cut.pools.get(node)
+    return instances ? { type: "pooled", instances, failure } : failure
+  }
   for (const { instance } of grid.lockNesting ?? []) {
+    if (cut.fusedInto.has(instance)) continue
     const spec = levelOf(cut, instance, grid.lockNesting)
-    const free = nestedFree(cut, instance, spec)
-    if ("failure" in free) return { ok: false, failure: { type: "nested", instance, failure: free.failure } }
+    const free = nestedFree(cut, instance, spec, maxStates)
+    if ("failure" in free)
+      return { ok: false, failure: { type: "nested", instance, failure: pooled(instance, free.failure) } }
     counts[instance] = free.states
     levels.push({ instance, spec })
   }
   levels.push({ instance: undefined, spec: levelOf(cut, FLOOR, grid.lockNesting) })
-  return { ok: true, levels, counts }
+  return { ok: true, levels, counts, pooled }
 }
 
-const compose = (grid: FloorGrid, lock: LockSpec) => {
+const compose = (grid: FloorGrid, lock: LockSpec, maxStates = MAX_LOCK_STATES) => {
   try {
-    return levelsOf(grid, lock)
+    return levelsOf(grid, lock, maxStates)
   } catch (error) {
     if (error instanceof Entangled)
       return { ok: false as const, failure: { type: "entangled" as const, problem: error.message } }
@@ -291,16 +391,21 @@ const compose = (grid: FloorGrid, lock: LockSpec) => {
 /**
  * THE FLOOR'S LOCK WALKED: sound only when every nested lock is free by itself and the floor's own level is sound
  * with each nested lock as ground. Without nesting it is `walkLock` over the whole lock, unchanged. `undefined`
- * when the floor has no mechanism.
+ * when the floor has no mechanism. Takes the carved grid: the lock and its nesting are read off it, not handed in.
  */
-export const walkFloorLock = (grid: FloorGrid): FloorWalkResult | undefined => {
+export const walkFloorLock = (
+  grid: FloorGrid,
+  { maxStates = MAX_LOCK_STATES }: { maxStates?: number } = {}
+): FloorWalkResult | undefined => {
   const lock = floorLock(grid)
   if (!lock) return undefined
-  if (!grid.lockNesting || grid.lockNesting.length === 0) return walkLock(lock)
-  const composed = compose(grid, lock)
+  if (!grid.lockNesting || grid.lockNesting.length === 0) return walkLock(lock, maxStates)
+  const composed = compose(grid, lock, maxStates)
   if (!composed.ok) return { sound: false, failure: composed.failure }
-  const walk = walkLock(composed.levels[composed.levels.length - 1].spec)
-  return walk.sound ? { sound: true, states: walk.states, nested: composed.counts } : walk
+  const walk = walkLock(composed.levels[composed.levels.length - 1].spec, maxStates)
+  return walk.sound
+    ? { sound: true, states: walk.states, nested: composed.counts }
+    : { sound: false, failure: composed.pooled(FLOOR, walk.failure) }
 }
 
 /** The regions no reachable state stands in, each level asked on its own; the whole lock's when nothing is nested. */

@@ -29,7 +29,8 @@ const getStore = (storeName: string): Store => {
   if (!store) {
     const forage = localForage.createInstance({
       driver: [localForage.INDEXEDDB, localForage.LOCALSTORAGE],
-      name: storeName,
+      // A preview build shares the released game's origin; its own prefix keeps the two saves apart.
+      name: `${import.meta.env.VITE_STORAGE_PREFIX ?? ""}${storeName}`,
     })
     let subscribers: { key: string; callback: <T>(newValue: T) => void }[] = []
     const newest = new Map<string, unknown>()

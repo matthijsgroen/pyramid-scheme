@@ -2,8 +2,13 @@
 import type { Lock } from "./lockAuthoring"
 import { barriersOf, isRegionGate, joinOf } from "./lockAuthoring"
 import { WEIGHTS, walkSpecOf, isStretch } from "./lockWalkSpec"
-import { openGates, reachableStates, walkLock } from "./lockWalk"
-import type { LockSpec } from "./lockWalk"
+import { arrangementOf } from "./mechanics/weights"
+import { finished, openGates, reachableStates, walkLock } from "./lockWalk"
+import type { LockSpec, LockState } from "./lockWalk"
+
+/** Whether a move did something: worked a mechanism where the player stood, or stepped on a tile on the way in. */
+const acted = (a: LockState, b: LockState) =>
+  a.region === b.region || Object.keys(b.config).some(id => a.config[id] !== b.config[id])
 
 /**
  * The cheapest way through, where every action (a board solved, a lever thrown, a key taken) costs more
@@ -26,13 +31,13 @@ export const solveLock = (spec: LockSpec): { steps: string[]; actions: number } 
       if (!done.has(n) && cost[n] < Infinity && (at < 0 || cost[n] < cost[at])) at = n
     })
     if (at < 0) return undefined
-    if (order[at].region === spec.out) {
+    if (finished(spec, order[at])) {
       end = at
       break
     }
     done.add(at)
     for (const to of edges[at]) {
-      const next = cost[at] + (order[to].region === order[at].region ? 1000 : 1)
+      const next = cost[at] + (acted(order[at], order[to]) ? 1000 : 1)
       if (next >= cost[to]) continue
       cost[to] = next
       prev[to] = at
@@ -47,8 +52,11 @@ export const solveLock = (spec: LockSpec): { steps: string[]; actions: number } 
   for (let i = 1; i < path.length; i++) {
     const [a, b] = [order[path[i - 1]], order[path[i]]]
     if (a.region === b.region) {
-      const id = Object.keys(b.config).find(m => b.config[m] !== a.config[m])!
-      steps.push(id === WEIGHTS ? stoneMove(a.config[id], b.config[id]) : `${id}:${b.config[id]}`)
+      // The step is the move the player made; a torch a flood put out in the same step is its consequence.
+      const id = Object.keys(b.config).find(m =>
+        spec.mechanisms[m].transitions.some(t => t.at === a.region && t.from === a.config[m] && t.to === b.config[m])
+      )!
+      steps.push(id === WEIGHTS ? stoneMove(a.config[id], b.config[id], a.region) : `${id}:${b.config[id]}`)
       actions++
       continue
     }
@@ -60,16 +68,25 @@ export const solveLock = (spec: LockSpec): { steps: string[]; actions: number } 
     if (isStretch(b.region)) continue
     steps.push(dropped ? `⤓${b.region}` : b.region)
     dropped = false
+    // A tile stepped on by walking in is an action as much as a lever thrown.
+    const stepped = Object.keys(b.config).find(m =>
+      (spec.mechanisms[m].entries ?? []).some(t => t.at === b.region && t.from === a.config[m] && t.to === b.config[m])
+    )
+    if (stepped) {
+      steps.push(`${stepped}:${b.config[stepped]}`)
+      actions++
+    }
   }
   return { steps, actions }
 }
 
-// "door e1" to "e1 + hand": the one plate that changed, said as the player did it.
-const stoneMove = (before: string, after: string) => {
-  const plates = (key: string) => new Set(key.split(" ").filter(token => !["+", "hand", "none"].includes(token)))
-  const [was, is] = [plates(before), plates(after)]
-  const lifted = [...was].find(plate => !is.has(plate))
-  return lifted ? `lift from ${lifted}` : `stone on ${[...is].find(plate => !was.has(plate))}`
+// "door e1" to "e1 + hand": the one plate that changed, or the pipe worked in `region`, said as the player did it.
+const stoneMove = (before: string, after: string, region: string) => {
+  const [was, is] = [arrangementOf(before), arrangementOf(after)]
+  if (was.holes.some(hole => !is.holes.includes(hole))) return `take at ${region}`
+  if (is.holes.some(hole => !was.holes.includes(hole))) return `post at ${region}`
+  const lifted = was.weighted.find(plate => !is.weighted.includes(plate))
+  return lifted ? `lift from ${lifted}` : `stone on ${is.weighted.find(plate => !was.weighted.includes(plate))}`
 }
 
 /** The regions no order of moves ever stands the player in, stretches aside. */
@@ -119,7 +136,7 @@ const piecesOf = (lock: Lock): Piece[] => [
     )
     if (barriers.length === 0) return [{ name: `corridor ${a} -- ${b}`, without }]
     return barriers.map(id => {
-      if (id in (lock.oneWays ?? {})) return { name: `drop ${id}`, without }
+      if (Object.hasOwn(lock.oneWays ?? {}, id)) return { name: `drop ${id}`, without }
       const rest = barriers.filter(other => other !== id)
       const kept = lock.connections.map((other, k) =>
         k !== c ? other : rest.length > 0 ? { between: [a, b] as const, barriers: rest } : ([a, b] as const)
@@ -138,11 +155,11 @@ const lockCosts = (lock: Lock, drafts: readonly string[]) => {
   const found = reachableStates(spec)
   if (found === "tooLarge") return undefined
   const { order, edges } = found
-  const acts = (a: number, b: number) => (order[a].region === order[b].region ? 1 : 0)
+  const acts = (a: number, b: number) => (acted(order[a], order[b]) ? 1 : 0)
   const backwards: number[][] = order.map(() => [])
   edges.forEach((tos, from) => tos.forEach(to => backwards[to].push(from)))
-  const left = order.map(state => (state.region === spec.out ? 0 : Infinity))
-  const deque = order.flatMap((state, n) => (state.region === spec.out ? [n] : []))
+  const left = order.map(state => (finished(spec, state) ? 0 : Infinity))
+  const deque = order.flatMap((state, n) => (finished(spec, state) ? [n] : []))
   while (deque.length > 0) {
     const at = deque.shift()!
     for (const from of backwards[at]) {
@@ -165,7 +182,7 @@ const lockCosts = (lock: Lock, drafts: readonly string[]) => {
   while (queue.length > 0) {
     const [at, mask, cost] = queue.shift()!
     if (cost > (best.get(`${at},${mask}`) ?? Infinity)) continue
-    if (order[at].region === spec.out && mask === full) rewarded = Math.min(rewarded, cost)
+    if (finished(spec, order[at]) && mask === full) rewarded = Math.min(rewarded, cost)
     for (const to of edges[at]) {
       const next: [number, number, number] = [to, mark(mask, to), cost + acts(at, to)]
       const key = `${next[0]},${next[1]}`

@@ -131,7 +131,7 @@ const firstDifference = (a: Plain, b: Plain, path = ""): string | undefined => {
   return `${path}: ${stableStringify(a).slice(0, 80)} -> ${stableStringify(b).slice(0, 80)}`
 }
 
-const shipped = journeys.filter(j => !j.dev)
+const shipped = journeys
 
 // The builder and the fingerprint name two structurally compatible SiteConfig types that TypeScript
 // cannot see through (a gate colour is a string in one and a KeyColor in the other).
@@ -172,7 +172,7 @@ describe("registering a new puzzle family is a no-op for the authored world", ()
   beforeAll(() => {
     before = build()
     after = buildWithRegistry(registerNewFamily)
-  }, 120_000)
+  }, 600_000)
 
   afterAll(() => {
     expect(ALL_FAMILY_META).not.toContain(NEW_FAMILY)

@@ -1,7 +1,8 @@
 import { useCallback, useMemo } from "react"
 import { assembleFloor } from "@/game/siteAssembler"
 import { openDoorsFor, openWaysOut } from "@/game/mechanismDoors"
-import { withGateFaces } from "@/game/gateFace"
+import type { SequenceRead } from "@/game/sequenceReads"
+import { withGateFaces, withoutUnpairedMarks } from "@/game/gateFace"
 import { DOOR_FACE_ROLE } from "@/game/encounterFallback"
 import { completeCell, isSealedWayOut } from "@/game/gridNavigation"
 import type { Direction, FloorConfig, FloorGrid, GridCell, TombKeyReward } from "@/game/siteTypes"
@@ -9,6 +10,7 @@ import { resolveEncounter, getFamilyPlugin } from "@/app/families/familyRegistry
 import type { ResolveKeyRequirements } from "@/game/siteAssembler"
 import { OBSTACLE_KEY_PREFIX } from "@/game/cellSlot"
 import { resolveOneWayRealisation } from "@/mods/allOneWayRealisations"
+import { resolvePassageRealisation } from "@/mods/allPassageRealisations"
 import { resolveRegionBarrierRealisation } from "@/mods/allRegionBarrierRealisations"
 import { boardIndexesForFloor } from "./boardIndexes"
 import { cellKey, legacyCellKey, cellSlot, findByAddress, floorOfAddress, walkPosition } from "./cellIdentity"
@@ -341,6 +343,26 @@ const maskHiddenCells = (
   return { masked: { ...grid, cells: newCells }, hiddenJunctions: junctions, hiddenSections, junctionSections }
 }
 
+/** THE FLOOR AS PLAY CARVES IT: the registry's realisations, their key requirements and the address every id is
+ * derived from. Whatever must agree with the floor the player walks carves through this. */
+export const assemblePlayedFloor = (
+  journeyId: string,
+  floorConfig: FloorConfig,
+  seed: number,
+  currentFloor: number,
+  levelIndex?: number
+) =>
+  assembleFloor(journeyId, floorConfig, seed + currentFloor, resolveEncounter, {
+    resolveKeyRequirements,
+    resolveOneWay: resolveOneWayRealisation,
+    resolveRegionBarrier: resolveRegionBarrierRealisation,
+    resolvePassage: resolvePassageRealisation,
+    floorRef: { journeyId, ...(levelIndex !== undefined ? { levelIndex } : {}), floorIndex: currentFloor },
+    ...(levelIndex !== undefined
+      ? { resolveBoardIndex: boardIndexesForFloor(journeyId, levelIndex, currentFloor) }
+      : {}),
+  })
+
 export const useAssembledFloor = (
   journeyId: string,
   floorConfig: FloorConfig,
@@ -361,7 +383,10 @@ export const useAssembledFloor = (
    * for where to draw the explorer, since it names every cell walked onto and `positionKey` only the
    * last authored place. Appended last so a caller that has not been touched by this fix (a fixture
    * built before `standingKey` existed) still resolves exactly as it always has, via `positionKey`. */
-  standingKey?: string | null
+  standingKey?: string | null,
+  /** What play keeps beside each sequence that hides its order (useSequenceReads), keyed as its position: its door
+   * stays shut until the order is read (openDoorsFor). */
+  sequenceReads?: ReadonlyMap<string, SequenceRead>
 ): {
   grid: FloorGrid | null
   explorerPos: readonly [number, number]
@@ -375,17 +400,13 @@ export const useAssembledFloor = (
    * every render, so a lever thrown back shuts a gate this set stops naming just as readily as it
    * opened one. */
   openGateKeys: ReadonlySet<string>
+  /** The floor as carved, before any mechanism state opens a door: what the douse reads (useDousedJourneys). */
+  baseGrid: FloorGrid | null
+  /** The floor keys held here, as `openDoorsFor` reads them. */
+  heldKeys: ReadonlySet<string>
 } => {
   const baseGrid = useMemo(() => {
-    const result = assembleFloor(journeyId, floorConfig, seed + currentFloor, resolveEncounter, {
-      resolveKeyRequirements,
-      resolveOneWay: resolveOneWayRealisation,
-      resolveRegionBarrier: resolveRegionBarrierRealisation,
-      floorRef: { journeyId, ...(levelIndex !== undefined ? { levelIndex } : {}), floorIndex: currentFloor },
-      ...(levelIndex !== undefined
-        ? { resolveBoardIndex: boardIndexesForFloor(journeyId, levelIndex, currentFloor) }
-        : {}),
-    })
+    const result = assemblePlayedFloor(journeyId, floorConfig, seed, currentFloor, levelIndex)
     return result.success ? result.grid : null
   }, [journeyId, floorConfig, seed, currentFloor, levelIndex])
 
@@ -397,8 +418,10 @@ export const useAssembledFloor = (
   )
   const openGateKeys = useMemo(
     () =>
-      baseGrid ? openDoorsFor(baseGrid, currentFloor, mechanismPositions ?? NO_POSITIONS, heldKeys) : NO_OPEN_GATES,
-    [baseGrid, currentFloor, mechanismPositions, heldKeys]
+      baseGrid
+        ? openDoorsFor(baseGrid, currentFloor, mechanismPositions ?? NO_POSITIONS, heldKeys, sequenceReads)
+        : NO_OPEN_GATES,
+    [baseGrid, currentFloor, mechanismPositions, heldKeys, sequenceReads]
   )
 
   // The carve as the floor's own switches have left it — what everything below reads as "the floor". A
@@ -406,15 +429,18 @@ export const useAssembledFloor = (
   const carvedGrid = useMemo(
     () =>
       baseGrid
-        ? withGateFaces(
-            sealWaysOut(openWaysOut(baseGrid, openGateKeys)),
-            currentFloor,
-            mechanismPositions ?? NO_POSITIONS,
-            heldKeys,
-            resolveEncounter(undefined, DOOR_FACE_ROLE).familyId
+        ? withoutUnpairedMarks(
+            withGateFaces(
+              sealWaysOut(openWaysOut(baseGrid, openGateKeys)),
+              currentFloor,
+              mechanismPositions ?? NO_POSITIONS,
+              heldKeys,
+              resolveEncounter(undefined, DOOR_FACE_ROLE).familyId,
+              sequenceReads
+            )
           )
         : null,
-    [baseGrid, openGateKeys, currentFloor, mechanismPositions, heldKeys]
+    [baseGrid, openGateKeys, currentFloor, mechanismPositions, heldKeys, sequenceReads]
   )
 
   // Standing in the doorway is having been there: the entrance reads explored whether or not the save
@@ -478,5 +504,5 @@ export const useAssembledFloor = (
     return resolveStanding(standingKey) ?? resolveStanding(positionKey) ?? grid.entrancePos
   }, [grid, standingKey, positionKey, resolveStanding])
 
-  return { grid, explorerPos, hiddenJunctions, hiddenSections, junctionSections, openGateKeys }
+  return { grid, explorerPos, hiddenJunctions, hiddenSections, junctionSections, openGateKeys, baseGrid, heldKeys }
 }

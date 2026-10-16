@@ -1,0 +1,10 @@
+// designed by: Claude
+// LESSON, junior: a drop is a way down, never back. The shut door to the way out stands at the entrance;
+// the lever waits at the bottom of a drop, beside a door it opens that is the only way back up.
+
+in >> path -- ledge
+ledge -[G]- in
+in -[G]- out
+ledge $
+
+G toggle @ledge

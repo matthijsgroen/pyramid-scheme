@@ -11,7 +11,7 @@ stones). Write a lock as text, see it drawn as ASCII, proved sound, measured, an
 
 ```
 yarn lock                          every lock in the catalogue
-yarn lock src/game/locks/relay.lock
+yarn lock src/game/locks/expert/relay.lock
 yarn lock my.lock --watch          design mode: redraws on save, no JSON; a new file starts with the notation
 yarn lock --help                   the notation
 ```
@@ -27,7 +27,7 @@ one action solves).
 | `src/game/lockWalkSpec.ts` | `Lock` → `LockSpec` for the soundness walk (`walkSpecOf`), plus start/face/buildable reports. NOT main's `lockCompile.ts`, which compiles a `Lock` to floor vocabulary for the carve |
 | `src/game/lockReview.ts` | cheapest route, quality notes, unreached regions |
 | `src/game/lockDraw.ts` | the ASCII drawing |
-| `src/game/lockCatalogue.ts` | reads `src/game/locks/*.lock` and `locks/lessons/*.lock` |
+| `src/game/lockCatalogue.ts` | reads `src/game/locks/{junior,expert,master,wizard}/**/*.lock` |
 | `scripts/lock.ts` | the CLI |
 | `src/game/lockAuthoring.ts` (main) | the shared `Lock` type — the target; owned with the engine session |
 
@@ -44,8 +44,8 @@ multi-step items; a single board choice is a switch fork.
 
 **18 locks** in `src/game/locks/`: dropHome, cellar, twoLamps, overlook, doubleBack, seesaw, lamplighter,
 keyring, relay, clockwork, observatory, tide ⚠, sluice ⚠, plates ⚠, twoStones ⚠, masonsRamp ⚠,
-counterweight ⚠. **9 lessons** in `locks/lessons/`. Each lock is held to a test that takes away its
-load-bearing piece (`lockCatalogue.spec.ts`). ⚠ = needs engine work: region gates (water), sequences
+counterweight ⚠. **9 lessons** in `locks/junior/lessons/`. `yarn lock` is the check on every lock and lesson; no
+unit test pins a lock's contents. ⚠ = needs engine work: region gates (water), sequences
 (tiles), stones.
 
 **Stones (prototype, this branch only).** A plate is placed with or without a stone
@@ -102,7 +102,7 @@ good.
    appetites did not carve on the dev floor (all regions `free` there), and changing an existing floor's
    shape affects saves — follow the save-migration rule or ship with the world reshape release.
 3. **One source for doubleBack.** Main holds it as TypeScript (`src/worldGen/spec/locks/doubleBack.ts`),
-   this branch as `src/game/locks/doubleBack.lock`. Check whether the bake runs in Node so the world spec
+   this branch as `src/game/locks/expert/doubleBack.lock`. Check whether the bake runs in Node so the world spec
    can read the `.lock` file; otherwise they will drift.
 4. Pitch the stone proposal to the engine session: acceptance criteria in
    `docs/superpowers/specs/2026-10-04-stones-acceptance.md`.

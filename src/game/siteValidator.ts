@@ -1,5 +1,6 @@
 import type { FloorGrid, ValidationReason, ValidationResult, TombKeyReward } from "./siteTypes"
 import type { DoorMode } from "./doorOpen"
+import { oneWayRuns } from "./gridNavigation"
 
 type Pos = readonly [number, number]
 
@@ -35,11 +36,27 @@ export const reachableFrom = (
   const startKey = posKey(sr, sc)
   const visited = new Set<string>([startKey])
   const queue: Pos[] = [[sr, sc]]
+  // A drop is crossed launch to landing and never back: its span names no direction in the cells' `dirs`, so
+  // the walk takes it as one step from the launch. Every cell reached counts as one ground, keys past a drop with
+  // no way back included: a player holding such a key re-enters the floor from its entrance and walks up to the
+  // gate it opens, which a persistent floor allows.
+  const landingsOf = new Map<string, Pos[]>()
+  for (const run of oneWayRuns(grid))
+    landingsOf.set(posKey(...run.launch), [...(landingsOf.get(posKey(...run.launch)) ?? []), run.landing])
 
   while (queue.length > 0) {
     const [r, c] = queue.shift()!
     const cell = grid.cells[r]?.[c]
     if (!cell || cell.type === "empty") continue
+
+    for (const landing of landingsOf.get(posKey(r, c)) ?? [])
+      if (
+        !visited.has(posKey(...landing)) &&
+        !(blockedPos && landing[0] === blockedPos[0] && landing[1] === blockedPos[1])
+      ) {
+        visited.add(posKey(...landing))
+        queue.push(landing)
+      }
 
     const dirs = cell.type === "room" || cell.type === "corridor" ? cell.dirs : new Set()
 
@@ -176,6 +193,18 @@ export const nodeBeyond = (grid: FloorGrid, from: Pos, dir: string): Pos | undef
   return undefined
 }
 
+const BACK: Record<string, string> = { n: "s", s: "n", e: "w", w: "e" }
+
+// The door a gated way out of a fork stands on: the next room along it, or, when that room is a sequence tile (a step
+// in the fork's own region stands its tile as the room's first cell, inside the door), the room past the tile.
+export const armDoor = (grid: FloorGrid, from: Pos, dir: string): Pos | undefined => {
+  const next = nodeBeyond(grid, from, dir)
+  const cell = next && grid.cells[next[0]][next[1]]
+  if (!next || cell?.type !== "room" || cell.sequenceTile === undefined) return next
+  const onward = [...cell.dirs].filter(way => way !== BACK[dir])
+  return onward.length === 1 ? nodeBeyond(grid, next, onward[0]) : undefined
+}
+
 export const validateSite = (grid: FloorGrid): ValidationResult => {
   const reasons: ValidationReason[] = []
 
@@ -206,7 +235,7 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
       for (const exit of cell.exits ?? []) {
         if (exit.gateKeyId === undefined) continue
         allKeyIds.add(exit.gateKeyId)
-        const gatePos = nodeBeyond(grid, [r, c], exit.dir)
+        const gatePos = armDoor(grid, [r, c], exit.dir)
         if (!gatePos) continue
         claim(gatePos[0], gatePos[1], exit.gateKeyId)
         switchGates.push({ switchPos: [r, c], gatePos })
@@ -286,7 +315,8 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
             const isPuzzleLike =
               bcell.roomType === "encounter" &&
               (bcell.tags?.includes("puzzle") || bcell.tags?.includes("tomb-puzzle") || bcell.tags?.includes("trap"))
-            const isGate = bcell.tags?.includes("gate")
+            // A door is something to reach whatever it wears: a lock's own doors carry no tags until their face.
+            const isGate = bcell.tags?.includes("gate") || bcell.requiredKeyId !== undefined
             if (isGate || bcell.roomType === "portal" || isTreasureLike) hasInteresting = true
             else if (isPuzzleLike || bcell.roomType === "fork") {
               // traverse through puzzles/forks to find what's at the end of the branch

@@ -19,7 +19,7 @@ afterEach(cleanup)
 const ADDRESS = "s0#0/p1"
 
 // One entry per driven section, each tagged with the side it opens on — the shape
-// src/game/siteAssembler.ts writes for a real lever. The gate ids are never read by the component.
+// src/game/carve/render.ts writes for a real lever. The gate ids are never read by the component.
 const mechanismFor = (driven: { side: string; section: string }[], initial: string): MechanismRecord => ({
   states: [...HANDLE_SIDES],
   initial,

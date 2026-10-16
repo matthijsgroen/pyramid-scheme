@@ -1,8 +1,11 @@
 import type { FloorGrid, GridCell, MechanismRecord } from "./siteTypes"
 import { cellAddress, storedAtCell } from "./cellAddress"
 import { doorOpen, type DoorMode } from "./doorOpen"
+import { TORCH_OFF, TORCH_ON } from "./mechanics/torch"
+import { orderRead, type SequenceRead } from "./sequenceReads"
 
 const NO_KEYS: ReadonlySet<string> = new Set()
+const NO_READS: ReadonlyMap<string, SequenceRead> = new Map()
 
 // WHICH DOORS STAND OPEN IS ASKED OF EACH MECHANISM'S OWN MAPPING, NEVER STORED. The save holds the
 // position; the floor holds what that position opens. Keeping the mapping here rather than in the save
@@ -13,11 +16,15 @@ const NO_KEYS: ReadonlySet<string> = new Set()
 // whether its CURRENT state names it, and every floor key a door cell lists beside that gate key
 // (`requiredKeyIds`), each asked whether it is held. An owner nothing on the floor can supply (a key no
 // chest mints) is never held, so under `and` it keeps the door shut and under `any` it stands aside.
+//
+// A SEQUENCE THAT HIDES ITS ORDER (`hidesOrder`, a procession door) says no until its order is read (`orderRead`):
+// `reads` holds what play keeps about it, by the same address as its position.
 export const openDoorsFor = (
   grid: FloorGrid,
   floor: number,
   positions: ReadonlyMap<string, string>,
-  heldKeys: ReadonlySet<string> = NO_KEYS
+  heldKeys: ReadonlySet<string> = NO_KEYS,
+  reads: ReadonlyMap<string, SequenceRead> = NO_READS
 ): Set<string> => {
   const owners = new Map<string, { says: boolean[]; mode: DoorMode; floorKeys: Set<string> }>()
   for (let r = 0; r < grid.rows; r++)
@@ -32,9 +39,11 @@ export const openDoorsFor = (
       // A position this build no longer has simply opens nothing — the only safe answer: guessing at
       // the nearest position would open a door nobody threw the lever for.
       const { positions: named } = cell.mechanism
+      const withheld =
+        cell.mechanism.hidesOrder === true && !orderRead(cell.mechanism, state, storedAtCell(grid, floor, r, c, reads))
       for (const gateKeyId of new Set(named.map(p => p.gateKeyId))) {
         const gate = owners.get(gateKeyId) ?? { says: [], mode: "all", floorKeys: new Set() }
-        gate.says.push(named.some(p => p.gateKeyId === gateKeyId && p.state === state))
+        gate.says.push(!withheld && named.some(p => p.gateKeyId === gateKeyId && p.state === state))
         if (named.some(p => p.gateKeyId === gateKeyId && p.mode === "any")) gate.mode = "any"
         owners.set(gateKeyId, gate)
       }
@@ -113,23 +122,119 @@ type MechanismShape = Pick<MechanismRecord, "states" | "initial" | "returnsToIni
 /**
  * THE ONE RULE FOR WHERE A PRESS CAN SEND A MECHANISM, shared by the solver (`floorLock`'s transitions)
  * and play (`throwMechanism`) so the two cannot disagree about what is reachable: every declared state
- * but the one it stands in, and never `initial` when the record says it does not return there. Declared
- * order, so a press has a stable "next". Empty for a spent one-way mechanism.
+ * but the one it stands in, and never `initial` when the record says it does not return there. A `placedOnly`
+ * record (a torch) has exactly the moves its transitions place out of the state it is in, whatever its start. Declared
+ * order, so a press has a stable "next". Empty for a spent one-way mechanism or a burning torch.
  */
 export const legalTargets = (
   { states, initial, returnsToInitial, transitions, placedOnly }: MechanismShape,
   from: string
 ): string[] => {
-  // A mechanism that places every move has only the moves it places, out of the state it is in.
+  // The moves placed out of the state it is in.
   const placed = new Set((transitions ?? []).filter(t => t.from === undefined || t.from === from).map(({ to }) => to))
-  return states.filter(to => to !== from && (returnsToInitial || to !== initial) && (!placedOnly || placed.has(to)))
+  // A mechanism that places every move has exactly the moves it places; the rule about its start is for the rest.
+  return states.filter(to => to !== from && (placedOnly ? placed.has(to) : returnsToInitial || to !== initial))
+}
+
+/**
+ * THE ONE RULE FOR A FLOOD AND A TORCH, shared by the lock walk, the floor's solver and play: a lit torch in a covered
+ * region is out. A region is covered while any of its region gates is shut; `covered` answers, for a set of states,
+ * which torches stand in a covered region; every lit one it names goes `off`, and it is asked again, since a doused
+ * torch may own a region gate of its own.
+ * It only ever puts torches out, so it ends, and a second call changes nothing. It never lights a torch and never
+ * touches a key that is not in `torches`.
+ */
+export const douseTorches = <K>(
+  states: ReadonlyMap<K, string>,
+  torches: readonly K[],
+  covered: (states: ReadonlyMap<K, string>) => ReadonlySet<K>
+): Map<K, string> => {
+  const next = new Map(states)
+  for (;;) {
+    const hit = covered(next)
+    const out = torches.filter(torch => next.get(torch) === TORCH_ON && hit.has(torch))
+    if (out.length === 0) return next
+    for (const torch of out) next.set(torch, TORCH_OFF)
+  }
+}
+
+type FloorTorch = { address: string; at: readonly [number, number]; region: string; initial: string }
+
+/** Every torch on a floor: the address its state is filed under, its home cell, its region and its start. */
+export const floorTorches = (grid: FloorGrid, floor: number): FloorTorch[] => {
+  const torches: FloorTorch[] = []
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type !== "room" || !cell.mechanism?.torch) continue
+      const address = cellAddress(grid, floor, r, c)
+      if (address)
+        torches.push({ address, at: [r, c], region: cell.mechanism.torch.region, initial: cell.mechanism.initial })
+    }
+  return torches
+}
+
+/**
+ * WHAT A FLOOD PUTS OUT ON A FLOOR, as the writes that say so: every torch whose doused state differs from the state
+ * it stands in (stored, else its start). A region is covered while one of its barrier's doors is shut
+ * (`openDoorsFor`); with no barrier realised there is no door, so nothing is covered.
+ */
+export const douseFloor = (
+  grid: FloorGrid,
+  floor: number,
+  stored: ReadonlyMap<string, string>,
+  heldKeys: ReadonlySet<string> = NO_KEYS,
+  reads: ReadonlyMap<string, SequenceRead> = NO_READS
+): Map<string, string> => {
+  const torches = floorTorches(grid, floor)
+  if (torches.length === 0) return new Map()
+  const barrierKeys = new Map<string, Set<string>>()
+  for (const row of grid.cells)
+    for (const cell of row)
+      if (cell.type === "room" && cell.regionBarrier && cell.requiredKeyId)
+        barrierKeys.set(
+          cell.regionBarrier.region,
+          (barrierKeys.get(cell.regionBarrier.region) ?? new Set()).add(cell.requiredKeyId)
+        )
+  const now = new Map(stored)
+  for (const torch of torches)
+    now.set(torch.address, storedAtCell(grid, floor, torch.at[0], torch.at[1], stored) ?? torch.initial)
+  const covered = (states: ReadonlyMap<string, string>) => {
+    const open = openDoorsFor(grid, floor, states, heldKeys, reads)
+    return new Set(
+      torches
+        .filter(torch => [...(barrierKeys.get(torch.region) ?? [])].some(key => !open.has(key)))
+        .map(torch => torch.address)
+    )
+  }
+  const doused = douseTorches(
+    now,
+    torches.map(torch => torch.address),
+    covered
+  )
+  return new Map(
+    torches.filter(t => doused.get(t.address) !== now.get(t.address)).map(t => [t.address, doused.get(t.address)!])
+  )
+}
+
+/** A move (or several) and every douse it causes, as one set of writes. */
+export const withDouse = (
+  grid: FloorGrid,
+  floor: number,
+  stored: ReadonlyMap<string, string>,
+  moves: ReadonlyMap<string, string>,
+  heldKeys: ReadonlySet<string> = NO_KEYS,
+  reads: ReadonlyMap<string, SequenceRead> = NO_READS
+): Map<string, string> => {
+  const after = new Map([...stored, ...moves])
+  return new Map([...moves, ...douseFloor(grid, floor, after, heldKeys, reads)])
 }
 
 /**
  * A SPENT MECHANISM: one with nowhere left to go, so a press would do nothing. Of the contract's kinds
- * that is the activator once used (a lit torch, a thrown one-way switch) and nothing else: a mechanism
- * that returns to its start, or a one-way one with a position still ahead of it, can always be pressed.
- * Navigation reads it to offer nothing and the map to draw the used appearance, so the two agree.
+ * that is an activator once used (a thrown one-way switch, a taken key) or a torch while it burns, and
+ * nothing else: a mechanism that returns to its start, or a one-way one with a position still ahead of it, can
+ * always be pressed. Navigation reads it to offer nothing and the map to draw the used appearance, so the two agree.
  */
 export const isSpent = (mechanism: MechanismShape, state: string): boolean =>
   legalTargets(mechanism, state).length === 0
@@ -200,6 +305,8 @@ export const openWaysOut = (grid: FloorGrid, open: ReadonlySet<string>): FloorGr
   const cells = grid.cells.map(row =>
     row.map((cell): GridCell => {
       if (cell.type !== "room" || (cell.family !== undefined && cell.gateFace === undefined)) return cell
+      // A NARROW PASSAGE IS NEVER GROUND: open, it is crossed by its prompt, never walked into (useSiteNavigation).
+      if (cell.passage) return cell
       if (!cell.tags?.includes("gate") || !cell.requiredKeyId || !open.has(cell.requiredKeyId)) return cell
       opened = true
       // Open, a region barrier's blockage is gone and its cell is ground: nothing is left to draw.
@@ -223,6 +330,7 @@ export const openWaysOut = (grid: FloorGrid, open: ReadonlySet<string>): FloorGr
             keyColor: cell.keyColor,
             keyColors: cell.keyColors,
             mark: cell.mark,
+            ...(cell.gateFace ? { gateFace: cell.gateFace } : {}),
           },
         }),
       }

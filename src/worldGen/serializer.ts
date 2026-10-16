@@ -1,6 +1,6 @@
 import type { FloorConfig, SideSection, SiteConfig, TreasureReward } from "./types"
 import type { PlacedContainer } from "@/game/regions"
-import { isForkSwitch, isSequence, type Control, type GateTerms, type Obstacle } from "@/game/obstacles"
+import { isForkSwitch, isSequence, isWeights, type Control, type GateTerms, type Obstacle } from "@/game/obstacles"
 import { WORLD_SEED } from "./data"
 
 // Extra top-level exports a mod wants baked into the generated world file (name → JSON-serializable
@@ -104,6 +104,7 @@ const GATE_TERMS: { [K in keyof Required<GateTerms>]: (v: NonNullable<GateTerms[
   mode: v => JSON.stringify(v),
   owners: strings,
   floorKeys: strings,
+  passage: v => JSON.stringify(v),
 }
 
 // `at` nests one layer deep (`{ on, between }` or `{ on, region }`), which `serializeObject` cannot reach.
@@ -126,10 +127,13 @@ const serializeObstacle = (o: Obstacle): string => {
 const serializeControl = (c: Control): string => {
   if (isSequence(c))
     return `{ id: ${JSON.stringify(c.id)}, control: "sequence", steps: [${c.steps.map(step => `{ in: ${JSON.stringify(step.in)} }`).join(", ")}], resetAt: ${JSON.stringify(c.resetAt)}, opens: { done: [${c.opens.done.map(id => JSON.stringify(id)).join(", ")}] }${c.encounter === undefined ? "" : `, encounter: ${JSON.stringify(c.encounter)}`} }`
+  // Compiled from a lock, never authored longhand; written whole should a floor ever carry one.
+  if (isWeights(c)) return JSON.stringify(c)
   if (isForkSwitch(c))
     return `{ id: ${JSON.stringify(c.id)}, in: ${JSON.stringify(c.in)}, control: "fork-switch", encounter: ${JSON.stringify(c.encounter)} }`
   const parts = [
     `id: ${JSON.stringify(c.id)}`,
+    ...(c.control === "flame" ? [`control: "flame"`] : []),
     `in: ${JSON.stringify(c.in)}`,
     `states: [${c.states.map(s => JSON.stringify(s)).join(", ")}]`,
     `initial: ${JSON.stringify(c.initial)}`,

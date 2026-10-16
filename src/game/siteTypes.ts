@@ -78,7 +78,10 @@ export type CorridorCell = {
   openGate?: OpenGate
 }
 /** What an open gate keeps of the room it was: the fields that say it is a gate and whose. */
-export type OpenGate = Pick<RoomCell, "tags" | "gateVariant" | "keyIsAuthored" | "keyColor" | "keyColors" | "mark"> & {
+export type OpenGate = Pick<
+  RoomCell,
+  "tags" | "gateVariant" | "keyIsAuthored" | "keyColor" | "keyColors" | "mark" | "gateFace"
+> & {
   requiredKeyId: string
 }
 /** What an obstacle's span is: the id of the one-way realisation it was bound to, whose declared prompt the
@@ -261,7 +264,7 @@ export type RoomCell = {
   /** A fork room's own ways out, each with what lies down it: `main` continues the main path,
    * `side` reaches an attached section, `ward` is a side gated by a tomb-key, and `fork` leads
    * straight to another fork room. Read off the neighbour node two grid cells away (NODE_STEP in
-   * siteAssembler.ts) in each of the cell's own `dirs`. Unset off fork rooms — nothing needs it yet.
+   * carve/grid.ts) in each of the cell's own `dirs`. Unset off fork rooms — nothing needs it yet.
    *
    * `gateKeyId` is set on the ways out a SWITCH closed, and is how the builder reports which ones it
    * chose: whatever stands in the switch reads them off the room it is in rather than guessing the
@@ -302,10 +305,19 @@ export type RoomCell = {
    * can work a mechanism there is one entry for it. Unset on every room that works nothing remote. */
   worksMechanism?: { mechanismId: string; transition: number }
   /** THIS ROOM IS ONE TILE OF A SEQUENCE (obstacles.ts, SequenceControl): `id` is the sequence, `step` the
-   * place of this tile in its order, `glyph` the hieroglyph it wears (mark.ts allocates it, distinct
-   * from every other glyph on the floor). The sequence's one record sits on the tile of step 0; every
-   * tile works the moves that record places at it through `worksMechanism`. */
-  sequenceTile?: { id: string; step: number; glyph: number }
+   * place of this tile's step in its order, `glyph` the hieroglyph its step wears (mark.ts allocates it,
+   * distinct from every other glyph on the floor). A step stands a tile on every way into its region,
+   * `entrance` naming the region that way comes from. The sequence's one record sits on the first tile of
+   * step 0; every tile works the moves that record places at it through `worksMechanism`. */
+  sequenceTile?: { id: string; step: number; glyph: number; entrance: string }
+  /** A PLATE OF A LOCK'S STONES (src/game/weightsPlates.ts). Whether a stone rests on it is the stones'
+   * mechanism state, never the cell's: the record sits on the lock's first plate, and every plate works the
+   * moves that record places at it through `worksMechanism`. */
+  plate?: { id: string }
+  /** A HOLE OF A LOCK'S STONE PIPE, in the back wall of this node: `pipe` is the pipe's id, `region` the region it
+   * stands in (`${pipe}@${region}` is the hole's id). Whether a stone lies in it is the stones' mechanism state,
+   * as for a plate; the hole works the moves made at it through `worksMechanism`. */
+  pipeHole?: { pipe: string; region: string }
   /** WHICH MECHANISM THIS ROOM BELONGS TO, said in a glyph on a coloured ground (src/app/SiteMap/mark.tsx).
    * A mechanism's room and every gate it owns carry the same pair, and that pairing is the only thing
    * on the floor that says which lever drives which door. Unset everywhere else. */
@@ -319,6 +331,9 @@ export type RoomCell = {
    * tells this door from the barrier's others, `realisation` the id of the realisation (water, sand) the barrier was
    * bound to. A barrier has one door per entrance, all asking for one key. */
   regionBarrier?: { region: string; entrance: string; realisation: string }
+  /** THIS DOOR IS A NARROW PASSAGE (src/game/passages.ts): a gate empty hands alone open, dressed as the realisation
+   * it was bound to. Nobody stands in it: the explorer waits on either side and is taken through by its prompt. */
+  passage?: { realisation: string }
 }
 export type GridCell = EmptyCell | CorridorCell | RoomCell
 
@@ -372,6 +387,9 @@ export type HandleSide = (typeof HANDLE_SIDES)[number]
  * `Mark` in src/game/mark.ts. */
 export const MECHANISM_AT_REST = "rest"
 
+/** One condition a gate puts on a lock's stones: a plate holding a stone or left empty, or empty hands. */
+export type WeightTerm = { kind: "plate"; plate: string; wants: "stone" | "empty" } | { kind: "unladen" }
+
 /**
  * A MECHANISM'S WHOLE STATE MACHINE, said once on the cell it stands in: the positions it has, the one
  * it starts in, whether it can be put back there, and which gate each position opens.
@@ -415,6 +433,23 @@ export type MechanismRecord = {
    * where otherwise it is made in the mechanism's own room. A sequence is the one that needs it, because
    * most pairs of its states are not moves at all (progress cannot skip a tile). */
   placedOnly?: true
+  /** A TORCH, and the region it stands in (the floor's own name, namespaced as a region barrier's door names it): a
+   * covering region barrier puts it out (`douseFloor`, mechanismDoors.ts). Absent on every other mechanism, an
+   * activator included. */
+  torch?: { region: string }
+  /** The states with a stone in hand: the way out is not left in them. */
+  carrying?: string[]
+  /** WHAT THE EXPLORER'S OWN WEIGHT MAKES OF AN ARRANGEMENT: standing at the empty plate `at` while the stones stand
+   * in `from`, the gates they then open. Read only to draw the floor while he stands there; the walk never reads
+   * it, so a way his weight alone holds is never on a route. */
+  underfoot?: { from: string; at: readonly [number, number]; opens: { gateKeyId: string; mode?: "any" }[] }[]
+  /** WHAT EACH GATE THE STONES GOVERN WAITS FOR, term by term, under the key its door asks for. Read by the door's
+   * face (src/game/gateFace.ts); the walk reads `positions`. */
+  weighs?: { gateKeyId: string; terms: WeightTerm[] }[]
+  /** A SEQUENCE WHOSE DOOR DOES NOT SHOW ITS ORDER: `orderReader` (a procession door) reads it there instead, and play
+   * holds the door shut until it is read (mechanismDoors.ts). The walk reads neither. */
+  hidesOrder?: true
+  orderReader?: string
 }
 export type GateConfig =
   | {
@@ -750,6 +785,7 @@ export type AssemblerReason =
   | { type: "obstacleNamesNoConnection"; id: string }
   | { type: "obstacleNamesNoRegion"; id: string }
   | { type: "obstacleOffRoute"; id: string }
+  | { type: "gateBypassed"; id: string; between: [string, string] }
   | { type: "obstacleUnowned"; id: string }
   | { type: "controlUnsatisfied"; id: string; what: string }
   | { type: "unknownControlKind"; id: string; control: string }
@@ -765,6 +801,7 @@ export type AssemblerReason =
   | { type: "regionBarrierDropLands"; id: string; region: string; drop: string }
   | { type: "sequenceTooShort"; id: string }
   | { type: "sequenceStepNamesNoRegion"; id: string; step: number }
+  | { type: "sequenceRegionRepeated"; id: string; step: number; earlier: number }
   | { type: "sequenceOpensNotAGate"; id: string; gate: string }
   | { type: "sequenceResetNotAGate"; id: string; gate: string }
   | { type: "sequenceResetNotOpened"; id: string; gate: string }
@@ -784,12 +821,20 @@ export type AssemblerReason =
    * with a stretch of the region in front of it, so the barrier is refused rather than set elsewhere.
    * `id` is the barrier. */
   | { type: "regionBarrierNotSeated"; id: string; region: string }
-  /** No carve found a free corridor node in the region a sequence's step names, for every step that
-   * needs its own tile there. `id` is the sequence, `step` the first step left without a tile. */
-  | { type: "sequenceTileNotPlaced"; id: string; step: number }
+  /** No carve found a free corridor node on every way into the region a sequence's step names. `id` is the
+   * sequence, `step` the first step left without its tiles, `reason` what stood in the way. */
+  | { type: "sequenceTileNotPlaced"; id: string; step: number; reason: string }
+  /** No carve found a free corridor node for a plate in its region. `plate` is the first plate left without one. */
+  | { type: "plateNotPlaced"; plate: string }
+  /** No carve found a back-walled bare node for a pipe's hole in its region. `hole` is the first left without one. */
+  | { type: "pipeHoleNotPlaced"; hole: string }
   /** The floor's mechanics (and sequence tiles) need more distinct glyphs than the six a mark can wear,
    * so a mark would be shared. `ids` are the ones left without a glyph, in authoring order. */
   | { type: "marksExhausted"; ids: string[] }
+  /** A sequence written `procession` has fewer steps than three or more than six. */
+  | { type: "processionStepsOutOfRange"; id: string; steps: number }
+  /** A floor holds more than one procession door; `ids` are its sequences. */
+  | { type: "processionDoorsRepeated"; ids: string[] }
   /** A side section matched to an off-route chain (offRouteChains, regions.ts) hosts that chain's
    * regions across its own cells, cells[0] included — and an obstacle standing on the chain's own
    * MOUTH connection always seats there too (seamIndexFor, obstacles.ts: the mouth's far region
@@ -832,6 +877,9 @@ export type AssemblerReason =
   | { type: "locksContradictFloor"; fields: string[] }
   /** Two locks of one floor answer to one instance name, so their ids would collide; the second must say `as`. */
   | { type: "lockInstanceRepeated"; instance: string }
+  /** Two locks of one floor each carry a stone pipe. A floor holds one pipe until its holes wear marks that pair
+   * them; `instances` are the locks carrying one. */
+  | { type: "pipesOnOneFloor"; instances: string[] }
   /** A placed lock is refused, by the instance it was placed as and the fault of the lock itself. */
   | { type: "lockRefused"; instance: string; fault: LockFault }
   /** A placed lock cannot be seated inside the region of another lock it names. */

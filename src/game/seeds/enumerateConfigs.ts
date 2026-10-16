@@ -2,7 +2,7 @@ import type { Difficulty } from "@/data/difficultyLevels"
 import type { FamilyGenerationCtx, FamilyMeta } from "@/game/families/familyMeta"
 import { expandFloorLocks } from "@/game/floorLocks"
 import { FORK_SHAPES } from "@/game/forkShape"
-import { isForkSwitch } from "@/game/obstacles"
+import { isForkSwitch, isSequence } from "@/game/obstacles"
 import type { FloorConfig, SiteConfig, SubSection } from "@/game/siteTypes"
 import { configHash } from "./configHash"
 
@@ -22,7 +22,7 @@ export type ConfigDemand = {
 
 /** How a bucket reads in a report: the family, its tier, and whatever else parts it from its siblings. */
 export const demandLabel = ({ familyId, difficulty, ctx }: ConfigDemand): string =>
-  `${familyId}/${difficulty}${ctx.forkShape ? ` ${ctx.forkShape}` : ""}`
+  `${familyId}/${difficulty}${ctx.forkShape ? ` ${ctx.forkShape}` : ""}${ctx.variant ? ` ${ctx.variant}` : ""}`
 
 /**
  * Two numbers, and keeping them apart is what stops ordinary authoring from forcing a regeneration.
@@ -69,7 +69,7 @@ const sectionsOf = (section: SubSection & { sideSections?: SubSection[] }): SubS
 /**
  * The switches a floor can end up holding: which families may stand in one, and how many junctions can
  * carry one. `forks` reserves the junctions and `switches.max` says how many are filled, so the smaller
- * of the two is what any carve of this floor produces (siteAssembler.ts). A fork-switch control, authored or
+ * of the two is what any carve of this floor produces (the carve). A fork-switch control, authored or
  * compiled from a lock, stands one board in its own junction and owes the same boards. An array of encounters survives
  * baking where the authoring named a pool, so every candidate owes the boards.
  */
@@ -87,6 +87,36 @@ export const switchFamilies = (floor: FloorConfig): { families: string[]; count:
   for (const control of config.controls ?? [])
     if (isForkSwitch(control)) owed.set(control.encounter, (owed.get(control.encounter) ?? 0) + 1)
   return { families: [...owed.keys()], count: Math.max(0, ...owed.values()) }
+}
+
+/** One board a sequence's door carries (FamilyMeta.sequence.board): the family it is built by, and what it is asked. */
+export type DoorBoard = {
+  mechanismId: string
+  familyId: string
+  steps: number
+  ctx: FamilyGenerationCtx & { variant: string }
+}
+
+/**
+ * The boards a floor's sequence doors carry: one per sequence whose realisation names a board (a procession door), at
+ * the floor's tier and sized by its steps. A lock's sequences included.
+ */
+export const doorBoardsOf = (floor: FloorConfig, families: readonly FamilyMeta[]): DoorBoard[] => {
+  const expanded = expandFloorLocks(floor)
+  const config = expanded.ok ? expanded.config : floor
+  return (config.controls ?? []).filter(isSequence).flatMap(control => {
+    const board = families.find(family => family.id === control.encounter)?.sequence?.board
+    return board
+      ? [
+          {
+            mechanismId: control.id,
+            familyId: board.family,
+            steps: control.steps.length,
+            ctx: { difficulty: floor.difficulty, variant: board.variant(control.steps.length) },
+          },
+        ]
+      : []
+  })
 }
 
 /**
@@ -107,6 +137,8 @@ export const switchFamilies = (floor: FloorConfig): { families: string[]; count:
  * for that junction's SHAPE as well as the floor's tier. Which shape the carve gives it is settled by the
  * maze, not by the authoring, so the floor owes a board for all three (src/game/forkShape.ts) and the
  * tiers come from the floors that actually author one.
+ *
+ * A sequence DOOR that carries a board (a procession door) owes one too, at the floor's tier, sized by its steps.
  */
 export const enumerateConfigs = (world: Record<string, SiteConfig[]>, families: FamilyMeta[]): ConfigDemand[] => {
   const byMeta = new Map(families.map(family => [family.id, family]))
@@ -133,6 +165,7 @@ export const enumerateConfigs = (world: Record<string, SiteConfig[]>, families: 
         for (const familyId of switchFamilyIds)
           for (const forkShape of FORK_SHAPES)
             ask(familyId, floor.difficulty, { difficulty: floor.difficulty, forkShape }, count)
+        for (const { familyId, ctx } of doorBoardsOf(floor, families)) ask(familyId, floor.difficulty, ctx, 1)
       }
 
   return [...demand.values()].sort((a, b) => b.rooms - a.rooms)

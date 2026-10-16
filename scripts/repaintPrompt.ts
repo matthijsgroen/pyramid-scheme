@@ -18,51 +18,14 @@
 
 import { execFileSync } from "child_process"
 import { existsSync, readFileSync } from "fs"
-import { homedir } from "os"
 import { join } from "path"
+import { revealArgs } from "./repaintReveal"
+import { parse, type Entry } from "./repaintQueue"
 
 const QUEUE = "docs/instructions/repaint-queue.md"
 const CHARACTERS = "docs/game-design/story/character-art-prompts.md"
 /** Attached to every character prompt: the style and scale both of them are drawn against. */
 const ANCHOR = "src/assets/fez-250.png"
-
-type Entry = {
-  key: string
-  title: string
-  attachments: string[]
-  prompt: string
-  /** Where the finished file goes, and what turns the download into it. */
-  out: string
-  importedBy: string
-  /** Already on disk. Off the owed list, still fetchable by key — a landed file can need rolling again. */
-  drawn?: boolean
-  /** Why the landed file is not good enough. Set by a `**Re-roll:**` line, and puts it BACK on the list. */
-  reroll?: string
-  /** The generator return this was imported from, kept because it cannot be generated again. */
-  master?: string
-}
-
-/** Every `### n. \`tier/kind\` — title` block, with its attachment list and its first fenced block. */
-const parse = (md: string): Entry[] =>
-  md
-    .split(/^### /m)
-    .slice(1)
-    .flatMap(block => {
-      const key = /`([a-z]+\/[A-Za-z0-9-]+)`/.exec(block)?.[1]
-      const prompt = /```\n([\s\S]*?)\n```/.exec(block)?.[1]
-      if (!key || !prompt) return []
-      const attachments = [...block.matchAll(/`(~\/[^`]+\.png)`/g)].map(m => m[1].replace("~", homedir()))
-      return [
-        {
-          key,
-          title: (block.split("\n")[0] ?? key).trim(),
-          attachments,
-          prompt,
-          out: join("src/assets/tiles", key.split("/")[0], `${key.split("/")[1]}.png`),
-          importedBy: `yarn import-tile <file> --tier=${key.split("/")[0]} --name=${key.split("/")[1]} --slot=prop`,
-        },
-      ]
-    })
 
 /** A blockquote's text, unquoted. One per entry, and one per preamble. */
 const quoted = (block: string): string =>
@@ -209,11 +172,11 @@ const missing = entry.attachments.filter(p => !existsSync(p))
 for (const p of entry.attachments) console.log(`  attach  ${p}${existsSync(p) ? "" : "   MISSING"}`)
 if (missing.length > 0) {
   console.log(`\n${missing.length} missing — see "Regenerating the attachments" in ${QUEUE}.`)
-} else if (!check && process.platform === "darwin") {
+} else if (!check && process.platform === "darwin" && revealArgs(entry.attachments)) {
   // -R reveals rather than opens: a revealed file can be dragged straight into the browser, where an
   // opened one is a Preview window in the way.
-  execFileSync("open", ["-R", ...entry.attachments])
-  console.log("\nBoth revealed in the Finder — drag them in, paste, and put the download in ~/Downloads.")
+  execFileSync("open", revealArgs(entry.attachments)!)
+  console.log("\nRevealed in the Finder — drag them in, paste, and put the download in ~/Downloads.")
 }
 
 console.log(`\nWhen it lands I import it and measure it; the file is ${entry.out}.`)

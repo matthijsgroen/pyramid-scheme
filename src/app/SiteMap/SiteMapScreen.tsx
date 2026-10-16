@@ -2,22 +2,25 @@ import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { getOwnedKeys } from "@/game/gridNavigation"
 import { concealShutGround } from "@/game/concealment"
-import { getFamilyPlugin } from "@/app/families/familyRegistry"
 import { floorKeyRing } from "@/game/floorKeys"
 import { useCorridorDetection } from "@/app/SiteMap/useCorridorDetection"
 import { useFoundCorridors } from "@/app/SiteMap/useFoundCorridors"
 import { useMechanismStates } from "@/app/SiteMap/useMechanismStates"
+import { useSequenceReads } from "@/app/SiteMap/useSequenceReads"
 import { useDetectorBand } from "@/app/SiteMap/useDetectorBand"
 import type { SiteConfig } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
 import { useAssembledFloor } from "./useAssembledFloor"
+import { useDousedJourneys } from "./useDousedJourneys"
 import { floorOfPosition } from "./stairTravel"
 import { findByAddress, floorOfAddress } from "./cellIdentity"
 import { useFloorExplorationRecorder } from "./useFloorExplorationRecorder"
 import { useEncounter } from "./useEncounter"
 import { useRewardOffer } from "./useRewardOffer"
 import { useSiteExit } from "./useSiteExit"
-import { useSiteNavigation, type ArrivalPrompt, type ArrivalPromptKind } from "./useSiteNavigation"
+import { useCrossing } from "./useCrossing"
+import { useNoticeLabel, usePromptLabel } from "./usePromptLabel"
+import { useSiteNavigation } from "./useSiteNavigation"
 import { RewardFlow } from "./RewardFlow"
 import { EncounterModal } from "./EncounterModal"
 import { useApplyReward } from "./applyReward"
@@ -77,8 +80,9 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
 
   const foundCorridors = useFoundCorridors(journeys, journeyId)
   const mechanismStates = useMechanismStates(journeys, journeyId)
+  const sequenceReads = useSequenceReads(journeys, journeyId)
 
-  const { grid, explorerPos, hiddenSections, junctionSections, openGateKeys } = useAssembledFloor(
+  const { grid, explorerPos, hiddenSections, junctionSections, openGateKeys, baseGrid, heldKeys } = useAssembledFloor(
     journeyId,
     floorConfig,
     seed,
@@ -89,8 +93,11 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
     foundCorridors,
     levelIndex,
     mechanismStates,
-    journeyState?.standingKey
+    journeyState?.standingKey,
+    sequenceReads
   )
+  // Every mechanism write on this floor goes through here, so a flood's douse is saved with the move that caused it.
+  const floorJourneys = useDousedJourneys({ journeys, journeyId, floor: baseGrid, currentFloor, heldKeys })
 
   // Where a stored address sits on the floor the player is looking at. Only this floor is assembled,
   // so a hit anywhere else resolves to nothing and its readout stops at the floor (see ConsumableResult).
@@ -136,7 +143,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   // own precondition, the map's locked/unlocked gate coloring and the key ring below.
   //
   // A thrown lever is "held" in exactly this sense — the player may pass what it opens now — but it
-  // mints nothing a chest could also hold: `openGateKeys` carries no colour (siteAssembler never sets
+  // mints nothing a chest could also hold: `openGateKeys` carries no colour (the carve never sets
   // one on an authored gate), so the union changes what is passable without adding a key to go find.
   const ownedKeys = useMemo(
     () => new Set([...(grid ? getOwnedKeys(grid) : []), ...wardKeys, ...openGateKeys]),
@@ -171,7 +178,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   const rewardOffer = useRewardOffer({ journeys, rewardContributions, applyReward })
 
   const encounter = useEncounter({
-    journeys,
+    journeys: floorJourneys,
     journeyId,
     levelNr: levelIndex + 1,
     currentFloor,
@@ -183,8 +190,10 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
 
   const exit = useSiteExit()
 
-  const { onCellClick, prompt, explorerHidden } = useSiteNavigation({
-    journeys,
+  const { ride, squeeze, playTraversal } = useCrossing()
+
+  const { onCellClick, prompt, notice, explorerHidden } = useSiteNavigation({
+    journeys: floorJourneys,
     journeyId,
     siteConfig,
     seed,
@@ -194,26 +203,11 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
     onEncounter: encounter.open,
     onSkippedConsumable: rewardOffer.offerSkipped,
     onExitReached: exit.arrived,
+    playTraversal,
   })
 
-  // What the prompt beside the explorer says when the floor itself is what is offered. Written out
-  // rather than looked up by a built key, so the locale guard can see every one of them. `here` is the
-  // room prompt for a family that names none of its own, and for a room left by a mod that is off: it
-  // claims nothing about what stands there or about having been there before.
-  const promptLabels: Record<Exclude<ArrivalPromptKind, "obstacle">, string> = {
-    room: t("ui.prompt.here"),
-    stairs: t("ui.prompt.stairs"),
-    exit: t("ui.prompt.exit"),
-  }
-
-  // A room's own words come from the family standing in it (FamilyMeta.invitation), read through the
-  // registry so core names no mod and an unregistered one simply has nothing to say.
-  const promptLabel = (prompt: ArrivalPrompt): string => {
-    // A crossing's words are its realisation's own; one no mod declares still says it cannot be undone.
-    if (prompt.kind === "obstacle") return prompt.invitation ? t(prompt.invitation) : t("ui.prompt.oneWay")
-    const invitation = prompt.familyId ? getFamilyPlugin(prompt.familyId)?.meta.invitation : undefined
-    return invitation ? t(invitation) : promptLabels[prompt.kind]
-  }
+  const promptLabel = usePromptLabel()
+  const noticeLabel = useNoticeLabel()
 
   const ActiveEncounterComponent = encounter.family?.Component ?? null
 
@@ -231,11 +225,14 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
           onCellClick={onCellClick}
           explorerPos={explorerPos}
           explorerHidden={explorerHidden}
+          ride={ride}
+          squeeze={squeeze}
           currentFloor={currentFloor}
           pendingCells={pendingConsumableCells}
           ownedKeys={ownedKeys}
           mechanismStates={mechanismStates}
           prompt={prompt && { label: promptLabel(prompt), at: prompt.at, onTake: prompt.take }}
+          notice={notice && { label: noticeLabel, at: notice.at }}
           className="size-full"
         />
       </div>
@@ -322,7 +319,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
               puzzle={encounter.puzzle}
               ctx={encounter.ctx}
               progression={progression}
-              journeys={journeys}
+              journeys={floorJourneys}
               inventory={inventory}
               applyReward={applyReward}
               onSolved={encounter.solved}

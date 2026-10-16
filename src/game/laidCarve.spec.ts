@@ -4,8 +4,11 @@ import type { PlacedLock } from "./floorLocks"
 import { deadFloorRegions, describeFloorWalkFailure, walkFloorLock } from "./floorLockWalk"
 import type { Lock } from "./lockAuthoring"
 import { cellSlot } from "./cellSlot"
+import { mechanismAddress, openDoorsFor } from "./mechanismDoors"
 import { assembleFloor } from "./siteAssembler"
+import { armDoor } from "./siteValidator"
 import type { FloorConfig, FloorGrid, RoomCell, SideSection } from "./siteTypes"
+import { MECHANISM_AT_REST } from "./siteTypes"
 import {
   CARVE_FAULT_TYPES,
   carveOnce,
@@ -18,11 +21,11 @@ import {
 } from "./testSupport/laidCarveChecks"
 import type { LaidCarve } from "./testSupport/laidCarveChecks"
 import { leverLock, strandingLock } from "./testSupport/floorLockFixtures"
-import { BINDING, doubleBackLock, sluiceLock } from "./testSupport/lockFixtures"
+import { BINDING, mirrorForkLock, sluiceLock } from "./testSupport/lockFixtures"
 
 const SEEDS = Array.from({ length: 40 }, (_, i) => i + 1)
 
-/** Tiles in the hall, an annex off it and the hall again; the sequence opens the way on to the vault. */
+/** Tiles in the hall, an annex off it and the mouth; the sequence opens the way on to the vault. */
 const platesLock = (): Lock => ({
   name: "plates",
   regions: { mouth: { takes: "free" }, hall: { takes: "free" }, annex: { takes: "free" }, vault: { takes: "free" } },
@@ -31,7 +34,7 @@ const platesLock = (): Lock => ({
   mechanics: {
     plates: {
       control: "sequence",
-      steps: [{ in: "hall" }, { in: "annex" }, { in: "hall" }],
+      steps: [{ in: "hall" }, { in: "annex" }, { in: "mouth" }],
       resetAt: "vaultDoor",
       opens: { done: ["vaultDoor"] },
     },
@@ -70,6 +73,50 @@ const ringLock = (): Lock => ({
   mechanics: {},
   in: "in",
   out: "p",
+})
+
+/** A board in the hall picks the side room or the way out; a lever in the side room works the way out's second door. */
+const wayOnLock = (): Lock => ({
+  name: "wayOn",
+  regions: { foyer: { takes: "free" }, hall: { takes: "free" }, side: { takes: "free" }, out: { takes: "free" } },
+  connections: [
+    ["foyer", "hall"],
+    { between: ["hall", "side"], barriers: ["toSide"] },
+    { between: ["hall", "out"], barriers: ["wayOn", "second"] },
+  ],
+  gates: {
+    toSide: { from: "hall", to: "side", owners: ["Y"] },
+    wayOn: { from: "hall", to: "out", owners: ["Y"] },
+    second: { from: "hall", to: "out", owners: ["lever"] },
+  },
+  mechanics: {
+    Y: { control: "fork-switch", in: "hall" },
+    lever: { control: "toggle", in: "side", starts: "shut", opens: { shut: [], open: ["second"] } },
+  },
+  in: "foyer",
+  out: "out",
+})
+
+/** The board's own hall is the sequence's first step, the side room its second; finishing opens the way on. */
+const stepInBoardLock = (): Lock => ({
+  name: "stepInBoard",
+  regions: { foyer: { takes: "free" }, hall: { takes: "free" }, side: { takes: "free" }, out: { takes: "free" } },
+  connections: [
+    ["foyer", "hall"],
+    { between: ["hall", "side"], barriers: ["toSide"] },
+    { between: ["hall", "out"], barriers: ["wayOn", "done"], align: { wayOn: "left" } },
+  ],
+  gates: {
+    toSide: { from: "hall", to: "side", owners: ["Y"] },
+    wayOn: { from: "hall", to: "out", owners: ["Y"] },
+    done: { from: "hall", to: "out", owners: ["P"] },
+  },
+  mechanics: {
+    Y: { control: "fork-switch", in: "hall" },
+    P: { control: "sequence", steps: [{ in: "hall" }, { in: "side" }], resetAt: "done", opens: { done: ["done"] } },
+  },
+  in: "foyer",
+  out: "out",
 })
 
 /** The lever lock with an appetite in every region: nothing in the foyer, puzzles in the hall, a reward at the landing. */
@@ -133,14 +180,29 @@ const FIXTURES: Record<string, Fixture> = {
     minimum: 20,
   },
   "sequence lock": { floor: floorOf([{ lock: platesLock() }]), registry: false, sound: "some", minimum: 30 },
-  "doubleBack without side paths": {
-    floor: floorOf([{ lock: doubleBackLock() }], { pathPuzzles: 0 }),
+  "mirrorFork without side paths": {
+    floor: floorOf([{ lock: mirrorForkLock() }], { pathPuzzles: 0 }),
     registry: true,
     sound: true,
     minimum: 30,
   },
-  "doubleBack with side paths": {
-    floor: floorOf([{ lock: doubleBackLock() }], { pathPuzzles: 0, sideSections: SIDES }),
+  "mirrorFork with side paths": {
+    floor: floorOf([{ lock: mirrorForkLock() }], { pathPuzzles: 0, sideSections: SIDES }),
+    registry: true,
+    sound: true,
+    minimum: 30,
+  },
+  "a board owning the way on": {
+    floor: floorOf([{ lock: wayOnLock() }], { pathPuzzles: 0 }),
+    registry: true,
+    sound: true,
+    minimum: 30,
+  },
+  "a sequence step in the board's region": {
+    floor: floorOf([{ lock: stepInBoardLock() }], {
+      pathPuzzles: 0,
+      realisations: { ...BINDING, sequence: "pressure-plate" },
+    }),
     registry: true,
     sound: true,
     minimum: 30,
@@ -181,14 +243,14 @@ const FIXTURES: Record<string, Fixture> = {
     sound: true,
     minimum: 30,
   },
-  "doubleBack with two ungated side paths": {
-    floor: floorOf([{ lock: doubleBackLock() }], { pathPuzzles: 0, sideSections: UNGATED }),
+  "mirrorFork with two ungated side paths": {
+    floor: floorOf([{ lock: mirrorForkLock() }], { pathPuzzles: 0, sideSections: UNGATED }),
     registry: true,
     sound: true,
     minimum: 30,
   },
-  "doubleBack with one ungated and one floor-key-gated side path": {
-    floor: floorOf([{ lock: doubleBackLock() }], { pathPuzzles: 0, sideSections: MIXED }),
+  "mirrorFork with one ungated and one floor-key-gated side path": {
+    floor: floorOf([{ lock: mirrorForkLock() }], { pathPuzzles: 0, sideSections: MIXED }),
     registry: true,
     sound: true,
     minimum: 20,
@@ -279,10 +341,50 @@ describe("a lock floor is carved from the structure laid for it", { timeout: 300
     })
   }
 
-  it("stands doubleBack's fork-switch with the lightbeam family, rest and one state for each seam", () => {
-    for (const { grid } of carvedOf("doubleBack without side paths")) {
+  it("stands mirrorFork's fork-switch with the lightbeam family, rest and one state for each seam", () => {
+    for (const { grid } of carvedOf("mirrorFork without side paths")) {
       const junction = expectForkSwitchRoom(grid, "lightbeamSwitch")
       expect(junction.exits!.filter(exit => exit.gateKeyId !== undefined)).toHaveLength(2)
+    }
+  })
+
+  it("shuts the way on until the board picks it, its own door first and the lever's after", () => {
+    const MOVE = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] } as const
+    for (const { grid } of carvedOf("a board owning the way on")) {
+      const junction = expectForkSwitchRoom(grid, "lightbeamSwitch")
+      const wayOn = junction.exits!.find(exit => exit.kind === "main" && exit.gateKeyId !== undefined)!
+      const side = junction.exits!.find(exit => exit.kind === "side" && exit.gateKeyId !== undefined)!
+      const r = grid.cells.findIndex(row => row.includes(junction))
+      const c = grid.cells[r].indexOf(junction)
+      const [dr, dc] = MOVE[wayOn.dir]
+      const firstDoor = grid.cells[r + 2 * dr][c + 2 * dc]
+      expect(firstDoor.type === "room" && firstDoor.requiredKeyId).toBe(wayOn.gateKeyId)
+      const opens = (state: string) =>
+        openDoorsFor(grid, 0, new Map([[mechanismAddress(grid, 0, r, c)!, state]])).has(wayOn.gateKeyId!)
+      expect(opens(MECHANISM_AT_REST)).toBe(false)
+      expect(opens(side.gateKeyId!)).toBe(false)
+      expect(opens(wayOn.gateKeyId!)).toBe(true)
+    }
+  })
+
+  it("stands the board's step tile as the hall's first cell on each arm, the arm's door on the seam beyond it", () => {
+    const MOVE = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] } as const
+    for (const { grid } of carvedOf("a sequence step in the board's region")) {
+      const junction = expectForkSwitchRoom(grid, "lightbeamSwitch")
+      const r = grid.cells.findIndex(row => row.includes(junction))
+      const c = grid.cells[r].indexOf(junction)
+      const arms = junction.exits!.filter(exit => exit.gateKeyId !== undefined)
+      expect(arms).toHaveLength(2)
+      for (const arm of arms) {
+        const [dr, dc] = MOVE[arm.dir]
+        const tile = grid.cells[r + 2 * dr][c + 2 * dc]
+        expect(tile.type === "room" && tile.sequenceTile?.step).toBe(0)
+        expect(tile.type === "room" && tile.region).toBe(junction.region)
+        const [tr, tc] = armDoor(grid, [r, c], arm.dir)!
+        const door = grid.cells[tr][tc]
+        expect(Math.abs(tr - (r + 2 * dr)) + Math.abs(tc - (c + 2 * dc))).toBe(2)
+        expect(door.type === "room" && door.requiredKeyId).toBe(arm.gateKeyId)
+      }
     }
   })
 
@@ -313,7 +415,7 @@ const CONTENT_FIXTURES = [
   "lever with ungated side paths",
   "two locks in a chain with ungated side paths",
   "sluice with ungated side paths",
-  "doubleBack with two ungated side paths",
+  "mirrorFork with two ungated side paths",
 ]
 
 describe("an ungated side path of a laid floor is content standing on laid nodes", { timeout: 300_000 }, () => {
@@ -366,7 +468,7 @@ describe("an ungated side path of a laid floor is content standing on laid nodes
   })
 
   it("files an absorbed side path's rooms under the same addresses whichever seed carves them", () => {
-    const name = "doubleBack with two ungated side paths"
+    const name = "mirrorFork with two ungated side paths"
     const filed = (grid: FloorGrid) =>
       grid.cells
         .flatMap((row, r) =>
@@ -387,7 +489,7 @@ describe("an ungated side path of a laid floor is content standing on laid nodes
 })
 
 describe("a gated side path of a laid floor stays a branch off laid ground", { timeout: 300_000 }, () => {
-  const mixed = () => carvedOf("doubleBack with one ungated and one floor-key-gated side path")
+  const mixed = () => carvedOf("mirrorFork with one ungated and one floor-key-gated side path")
 
   it("hangs the gated path off laid ground as a branch of its own and fills only the ungated one in", () => {
     for (const { grid, laid } of mixed()) {

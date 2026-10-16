@@ -69,4 +69,48 @@ describe("solveLock, with stones", () => {
       "out",
     ])
   })
+
+  it("ends a route only with empty hands: the stone is set down before the way out", () => {
+    const stones = spec("in -[shelf:empty]- out\nshelf plate @in stone\nq plate @out")
+    expect(solveLock(stones)).toEqual({ steps: ["in", "lift from shelf", "out", "stone on q"], actions: 2 })
+  })
+})
+
+describe("solveLock, with a pipe", () => {
+  const BEYOND = "in -[unladen]- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone"
+
+  it("cannot carry a stone past a narrow passage without a pipe", () => {
+    expect(solveLock(spec(BEYOND))).toBeUndefined()
+  })
+
+  it("posts the stone through the pipe and takes it out beyond, each one action", () => {
+    expect(solveLock(spec(`${BEYOND}\nP pipe @in @hall`))).toEqual({
+      steps: ["in", "lift from shelf", "post at in", "hall", "take at hall", "stone on p", "out"],
+      actions: 4,
+    })
+  })
+})
+
+describe("a gate named like an object method", () => {
+  const renamed = () => {
+    const { lock } = parseLock("in -[T]- out\nT toggle @in")
+    return JSON.parse(JSON.stringify(lock).replaceAll(Object.keys(lock.gates)[0], "constructor")) as typeof lock
+  }
+
+  it("is walked as a gate", () => {
+    const original = solveLock(spec("in -[T]- out\nT toggle @in"))?.steps
+    expect(original).toBeDefined()
+    expect(solveLock(walkSpecOf(renamed()))?.steps).toEqual(original)
+  })
+
+  it("is reviewed as a gate", () => {
+    expect(lockQuality(renamed())).toEqual(lockQuality(parseLock("in -[T]- out\nT toggle @in").lock))
+  })
+})
+
+describe("solveLock, with a flood", () => {
+  it("names the lever thrown, not the torch its flood puts out", () => {
+    const flood = spec("in -- hub -- hall\nhub -[B:off]- out\nhall -[S:a]\nS toggle @hub\nB torch @hall lit")
+    expect(solveLock(flood)?.steps).toEqual(["in", "hub", "S:b", "out"])
+  })
 })

@@ -1,10 +1,16 @@
 import { encounterFromMeta, type ResolveEncounter } from "@/game/siteAssembler"
 import type { ResolveOneWayRealisation } from "@/game/oneWayRealisation"
 import { oneWayRuns } from "@/game/gridNavigation"
+import type { ResolvePassageRealisation } from "@/game/passageRealisation"
 import type { ResolveRegionBarrierRealisation } from "@/game/regionBarrierRealisation"
 import type { AssemblerReason, AssemblerResult, FloorGrid } from "@/game/siteTypes"
 import { ALL_FAMILY_META, resolveEncounterMeta } from "@/mods/allFamilyMeta"
-import { MOD_ONE_WAY_REALISATIONS, MOD_REGION_BARRIER_REALISATIONS, REGISTERED_MOD_IDS } from "@/mods/registeredMods"
+import {
+  MOD_ONE_WAY_REALISATIONS,
+  MOD_PASSAGE_REALISATIONS,
+  MOD_REGION_BARRIER_REALISATIONS,
+  REGISTERED_MOD_IDS,
+} from "@/mods/registeredMods"
 
 /**
  * THE BUILD AS IT STANDS WITH THE TOPOLOGY MOD REMOVED FROM `registeredMods`: the registered ids, the family
@@ -12,19 +18,27 @@ import { MOD_ONE_WAY_REALISATIONS, MOD_REGION_BARRIER_REALISATIONS, REGISTERED_M
  * is out of its list, without editing that list.
  */
 const MOD = "topology"
-const WITHOUT = ALL_FAMILY_META.filter(meta => meta.ownerMod !== MOD)
 
-const resolveWithout: ResolveEncounter = (encounter, defaultTag) => {
-  const value = (Array.isArray(encounter) ? encounter[0] : encounter) ?? defaultTag
-  const meta = WITHOUT.find(m => m.id === value) ?? WITHOUT.find(m => m.tags.includes(value))
-  return encounterFromMeta(meta, value)
+/** What resolves once `mod` is out of the build: the families the other mods contribute. */
+export const resolveEncounterWithout = (mod: string): ResolveEncounter => {
+  const left = ALL_FAMILY_META.filter(meta => meta.ownerMod !== mod)
+  return (encounter, defaultTag) => {
+    const value = (Array.isArray(encounter) ? encounter[0] : encounter) ?? defaultTag
+    const meta = left.find(m => m.id === value) ?? left.find(m => m.tags.includes(value))
+    return encounterFromMeta(meta, value)
+  }
 }
+
+const resolveWithout = resolveEncounterWithout(MOD)
 
 const oneWayWithout: ResolveOneWayRealisation = id =>
   id === undefined ? undefined : MOD_ONE_WAY_REALISATIONS.find(r => r.id === id && r.ownerMod !== MOD)
 
 const regionBarrierWithout: ResolveRegionBarrierRealisation = id =>
   id === undefined ? undefined : MOD_REGION_BARRIER_REALISATIONS.find(r => r.id === id && r.ownerMod !== MOD)
+
+const passageWithout: ResolvePassageRealisation = id =>
+  id === undefined ? undefined : MOD_PASSAGE_REALISATIONS.find(r => r.id === id && r.ownerMod !== MOD)
 
 export const TOPOLOGY_ON = { modIds: REGISTERED_MOD_IDS, resolveEncounter: resolveEncounterMeta }
 
@@ -33,6 +47,7 @@ export const TOPOLOGY_OFF = {
   resolveEncounter: resolveWithout,
   resolveOneWay: oneWayWithout,
   resolveRegionBarrier: regionBarrierWithout,
+  resolvePassage: passageWithout,
 }
 
 /** A carve as its walls: each cell's `dirs`, never its type, since a door is a room where a corridor stood. */
@@ -90,8 +105,11 @@ export const mechanicsLeft = (grid: FloorGrid, owned: ReadonlySet<string> = new 
       if (cell.mechanism) found.push(`${at} mechanism`)
       if (cell.mechanismId) found.push(`${at} mechanismId`)
       if (cell.sequenceTile) found.push(`${at} sequenceTile`)
+      if (cell.plate) found.push(`${at} plate`)
+      if (cell.pipeHole) found.push(`${at} pipeHole`)
       if (cell.worksMechanism) found.push(`${at} worksMechanism`)
       if (cell.regionBarrier) found.push(`${at} regionBarrier`)
+      if (cell.passage) found.push(`${at} passage`)
       if (cell.gateFace) found.push(`${at} gateFace`)
       if (cell.requiredKeyId !== undefined && owned.has(cell.requiredKeyId)) found.push(`${at} shut door`)
       for (const exit of cell.exits ?? []) if (exit.gateKeyId !== undefined) found.push(`${at} way out ${exit.dir}`)

@@ -5,15 +5,24 @@ import {
   findMispairedStairs,
   findStrandingLocks,
   findUnbakedSwitchBoards,
+  findUnseededDoorBoards,
   findUnwalkedLocks,
   validateRewardCounts,
 } from "./validate"
-import { DEV_CAPABILITIES, PYRAMID_CAPABILITIES } from "./capabilities"
+import { PYRAMID_CAPABILITIES } from "./capabilities"
+
+const UNBAKED_CAPABILITIES = { ...PYRAMID_CAPABILITIES, requireBakedBoards: false }
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FamilyMeta, FamilyOptions } from "@/game/families/familyMeta"
 import { FORK_SHAPES, type ForkShape } from "@/game/forkShape"
 import { configHash } from "@/game/seeds/configHash"
-import { doubleBackLock } from "./spec/locks/doubleBack"
+import { mirrorForkLock } from "../game/testSupport/lockFixtures"
+import {
+  lockFloor as notationFloor,
+  PROCESSION_LOCK,
+  STUB_BOARD,
+  STUB_DOOR,
+} from "../game/testSupport/processionFixtures"
 import { WORLD_TARGETS } from "./worldSpec"
 import { PYRAMID_JOURNEYS } from "./data"
 import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
@@ -32,11 +41,11 @@ const floor = (overrides: Partial<FloorConfig> = {}): FloorConfig => ({
   ...overrides,
 })
 
-// The designer's lock on a floor of its own: the drops, levers and fork-switch board exist only once it compiles.
+// A made-up lock on a floor of its own: the drops, levers and fork-switch board exist only once it compiles.
 const lockFloor = (difficulty: Difficulty = "expert", fork: string = "lightbeamSwitch"): FloorConfig =>
   floor({
     difficulty,
-    locks: [{ lock: doubleBackLock() }],
+    locks: [{ lock: mirrorForkLock() }],
     realisations: { "fork-switch": fork, toggle: "handle", "one-way": "zipline" },
   } as Partial<FloorConfig>)
 
@@ -250,7 +259,7 @@ describe("findUnbakedSwitchBoards", () => {
 
   it("excuses a site whose capabilities say its boards are not baked", () => {
     const configs = { [shipped]: [[switchFloor("junior")]] }
-    expect(findUnbakedSwitchBoards(configs, [seedable], {}, () => DEV_CAPABILITIES)).toEqual([])
+    expect(findUnbakedSwitchBoards(configs, [seedable], {}, () => UNBAKED_CAPABILITIES)).toEqual([])
     expect(findUnbakedSwitchBoards(configs, [seedable], {}, () => PYRAMID_CAPABILITIES)).toHaveLength(3)
   })
 
@@ -269,6 +278,31 @@ describe("findUnbakedSwitchBoards", () => {
     expect(findUnbakedSwitchBoards({ [shipped]: [[floor()]] }, [seedable], {})).toEqual([])
     const live: FamilyMeta = { ...seedable, seedable: undefined }
     expect(findUnbakedSwitchBoards({ [shipped]: [[switchFloor("junior")]] }, [live], {})).toEqual([])
+  })
+})
+
+describe("findUnseededDoorBoards", () => {
+  const shipped = PYRAMID_JOURNEYS[0].id
+  const configs = { [shipped]: [[notationFloor(PROCESSION_LOCK, { difficulty: "master" }) as FloorConfig]] }
+  const bucket = configHash(STUB_BOARD.seedable!.resolveOptions({ difficulty: "master", variant: "door3" }))
+
+  it("names the tier and the step count of a door no list covers", () => {
+    expect(findUnseededDoorBoards(configs, [STUB_BOARD, STUB_DOOR], {})).toEqual([
+      {
+        journeyId: shipped,
+        levelNr: 1,
+        floorIndex: 0,
+        mechanismId: "door.P",
+        familyId: STUB_BOARD.id,
+        difficulty: "master",
+        steps: 3,
+      },
+    ])
+    expect(findUnseededDoorBoards(configs, [STUB_BOARD, STUB_DOOR], { [bucket]: [7] })).toEqual([])
+  })
+
+  it("excuses a site whose capabilities say its boards are not baked", () => {
+    expect(findUnseededDoorBoards(configs, [STUB_BOARD, STUB_DOOR], {}, () => UNBAKED_CAPABILITIES)).toEqual([])
   })
 })
 

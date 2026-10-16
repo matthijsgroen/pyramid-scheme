@@ -1,5 +1,5 @@
 import type { LockFault, RealisationBinding } from "../lockCompile"
-import type { LockMechanic, Opens } from "../lockAuthoring"
+import type { Lock, LockMechanic, Opens } from "../lockAuthoring"
 import type { Control } from "../obstacles"
 import type { ForkDemand } from "../siteTypes"
 
@@ -25,8 +25,9 @@ export type CompileContext = {
 /** What one mechanic becomes on a floor: its controls, and the junctions it asks the carve to lay. */
 export type Compiled = { controls: Control[]; forks?: ForkDemand[] }
 
-/** What a control needs a node for: its own board, one tile of a sequence, or the cell a fork is operated from. */
-export type ControlSeatKind = "control" | "tile" | "junction"
+/** What a control needs a node for: its own board, one tile (a plate), a node on every way into the region (a
+ * sequence's step), or the cell a fork is operated from. */
+export type ControlSeatKind = "control" | "tile" | "threshold" | "junction"
 
 /**
  * ONE KIND OF CONTROL, a plug-in OF CORE (docs/mods/mechanic-contract.md): the state machine a player drives,
@@ -35,7 +36,7 @@ export type ControlSeatKind = "control" | "tile" | "junction"
  * entry rather than a branch in the compiler, so a new one is added by writing one.
  */
 export type MechanicKind = {
-  /** The `control` a lock names: "toggle", "activator", "sequence", "fork-switch", or "one-way". */
+  /** The `control` a lock names: "toggle", "activator", "flame", "sequence", "fork-switch", or "one-way". */
   control: string
   /** Whether the engine can build it. A lock using an unbuilt kind is written and checked, and refused at the bake. */
   built: boolean
@@ -51,6 +52,8 @@ export type MechanicKind = {
   faults?: (id: string, mechanic: LooseMechanic) => LockFault[]
   /** How a mechanic of this kind becomes controls on the floor. Absent: the kind has no mechanic to compile. */
   compile?: (id: string, mechanic: LockMechanic, context: CompileContext) => Compiled
+  /** How a kind that belongs to the whole lock rather than to one mechanic becomes controls: the stones. */
+  compileLock?: (lock: Lock, context: CompileContext) => Compiled
   /** Where a floor control of this kind needs a node of its own, one entry per node, in order. Absent: it needs none. */
   seats?: (control: Control) => { region: string; seat: ControlSeatKind }[]
   /** An effect with no control of its own, compiled where the lock's gates and drops are (a one-way). */

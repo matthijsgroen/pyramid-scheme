@@ -3,6 +3,7 @@ import {
   brokenMarks,
   createProcessionState,
   markHolds,
+  processionOrder,
   processionSolved,
   slideBar,
   type ProcessionPuzzle,
@@ -64,5 +65,22 @@ describe("a day and the things in it", () => {
     expect(slideBar(board, state, 2, -4).starts[2]).toBe(0)
     // A drag that lands where the bar already is changes nothing, so the screen has nothing to report.
     expect(slideBar(board, state, 2, 8)).toBe(state)
+  })
+})
+
+describe("the order a board's answer reads", () => {
+  const pinned = (ticks: number[]): ProcessionPuzzle => ({
+    ticks: 10,
+    bars: ticks.map(() => ({ len: 2, start: 0 })),
+    marks: ticks.map((tick, a) => ({ kind: "pin", a, tick })),
+  })
+
+  it("ranks the bars by where they start in the answer", () => {
+    expect(processionOrder(pinned([5, 0, 8]))).toEqual([1, 0, 2])
+  })
+
+  it("reads no order off a board with two answers or with two bars starting together", () => {
+    expect(processionOrder({ ...pinned([5, 0]), marks: [{ kind: "pin", a: 0, tick: 5 }] })).toBeUndefined()
+    expect(processionOrder(pinned([5, 5, 0]))).toBeUndefined()
   })
 })

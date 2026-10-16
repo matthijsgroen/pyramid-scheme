@@ -1,5 +1,6 @@
 import type { EncounterResolution, ResolveEncounter } from "./siteAssembler"
 import type { OneWayRealisationMeta, ResolveOneWayRealisation } from "./oneWayRealisation"
+import type { ResolvePassageRealisation } from "./passageRealisation"
 import type { ResolveRegionBarrierRealisation } from "./regionBarrierRealisation"
 
 /** The role a mechanism room stands as when its author names no realisation. A role, not a family: which
@@ -8,6 +9,14 @@ export const DEFAULT_CONTROL_ROLE = "default-control"
 
 /** The role of the family that stands in a door to tell the player what it waits on. */
 export const DOOR_FACE_ROLE = "door-face"
+
+/** The families the carve asks for by id: the chest a key or reward stands in, the shop a side path may
+ * end in, and the gate whose tags a region barrier's door wears. The resolver says who answers. */
+export const CARVE_FAMILY_QUERIES = {
+  treasureChest: "treasure-chest",
+  fezShop: "fez-shop",
+  keyGate: "key-gate",
+} as const
 
 // THE ONE FILE CORE NAMES MOD FAMILIES IN: the catalogue a caller with no registry (tests, stories)
 // resolves through. Production passes the registry's own resolver, so nothing here reaches a player.
@@ -44,7 +53,11 @@ export const defaultResolveEncounter: ResolveEncounter = (encounter, defaultTag)
   return { familyId, tags: DEFAULT_FAMILY_TAGS[familyId] ?? [], ownerMod: REGISTRY_LESS }
 }
 
-const DEFAULT_ONE_WAY: OneWayRealisationMeta = { id: "zipline", ownerMod: "topology", prompt: "ui.prompt.zipline" }
+const DEFAULT_ONE_WAY: OneWayRealisationMeta = {
+  id: "zipline",
+  ownerMod: "topology",
+  prompt: "ui.prompt.zipline",
+}
 
 // The same fallback for a one-way: a caller with no registry binds a one-way that names none to the one
 // realisation this catalogue knows. Production passes the registry's resolver, which binds nothing by default.
@@ -55,3 +68,8 @@ export const defaultResolveOneWayRealisation: ResolveOneWayRealisation = id =>
 // unnamed one is still refused, so no default stands in.
 export const defaultResolveRegionBarrierRealisation: ResolveRegionBarrierRealisation = id =>
   id === undefined ? undefined : { id, ownerMod: REGISTRY_LESS, fallback: "#808080" }
+
+// A caller with no registry accepts any passage a gate names, as it answers every encounter, and offers it with the
+// one prompt this catalogue knows. An unnamed one is no passage.
+export const defaultResolvePassageRealisation: ResolvePassageRealisation = id =>
+  id === undefined ? undefined : { id, ownerMod: REGISTRY_LESS, prompt: "ui.prompt.squeeze" }

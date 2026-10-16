@@ -226,6 +226,7 @@ const applyFloorLocks = (floors: FloorConfig[], constraint: PyramidConstraint, j
     const floorBinding = resolveBinding([constraint, overlay])
     const floor = floors[fi]
     floor.locks = overlay.locks
+    if (overlay.packing !== undefined) floor.packing = overlay.packing
     // The binding carries the one-way's realisation once a floor places locks, as in an explicit floor.
     delete floor.oneWayRealisation
     if (Object.keys(floorBinding).length > 0) floor.realisations = floorBinding
@@ -381,7 +382,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         // Non-last main floor (wizard's mainFloors:2 today): give it a real mainEndReward
         // (routed through the same fragmentSlot/assignFragments budget pipeline as every
         // other unset reward) instead of leaving it unset — an unset mainEndReward falls
-        // back to a free, uncounted mosaicPiece at assembly time (siteAssembler.ts), which
+        // back to a free, uncounted mosaicPiece at assembly time (carve/mainRooms.ts), which
         // this fixes.
         floorConfigs.push(
           buildFloor({

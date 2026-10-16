@@ -1,0 +1,143 @@
+// @vitest-environment jsdom
+import { act, cleanup, render, renderHook, screen, waitFor } from "@testing-library/react"
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest"
+import { parseLock } from "@/game/lockNotation"
+import { walkFloorLock } from "@/game/floorLockWalk"
+import { PROCESSION_LOCK } from "@/game/testSupport/processionFixtures"
+import { PLAYGROUND_JOURNEY, carvePlayground, defaultBinding, playgroundFloor } from "./playgroundCarve"
+import { assemblePlayedFloor } from "./useAssembledFloor"
+import { LockPlayground, useCarving } from "./lockPlayground"
+import "@/mods/registerModApps"
+
+// jsdom has no layout, so the map's scroll-to-explorer has nothing to call.
+const realScrollTo = Element.prototype.scrollTo
+beforeAll(() => {
+  Element.prototype.scrollTo = () => {}
+})
+afterAll(() => {
+  Element.prototype.scrollTo = realScrollTo
+})
+
+// Wraps the real carve so a spec can count how many seeds the search judges.
+vi.mock("./useAssembledFloor", async importOriginal => {
+  const original = await importOriginal<typeof import("./useAssembledFloor")>()
+  return { ...original, assemblePlayedFloor: vi.fn(original.assemblePlayedFloor) }
+})
+
+afterEach(() => {
+  cleanup()
+  vi.useRealTimers()
+  // A reset puts the real carve back, so a test that made it refuse does not hand the next one a refusing carve.
+  vi.mocked(assemblePlayedFloor).mockReset()
+})
+
+const LEVER = "in -[L]- out\nL toggle @in\nin *\nout *"
+
+describe("the playground's floor", () => {
+  it("frees every region and binds the realisations it is given", () => {
+    const config = playgroundFloor(parseLock(LEVER, "lever").lock, { toggle: "handle" })
+    const lock = config.locks![0].lock
+    expect(Object.values(lock.regions)).toEqual([{ takes: "free" }, { takes: "free" }])
+    expect(config.realisations).toEqual({ toggle: "handle" })
+    expect(config.pathPuzzles).toBe(0)
+  })
+
+  it("carves a floor whose lock walks sound, the same grid every time it is carved at that seed", () => {
+    const config = playgroundFloor(parseLock(LEVER, "lever").lock, defaultBinding())
+    const carved = carvePlayground(config)
+    if (!carved.found) throw new Error(JSON.stringify(carved.reasons))
+    expect(walkFloorLock(carved.grid)?.sound).toBe(true)
+    const again = assemblePlayedFloor(PLAYGROUND_JOURNEY, config, carved.seed, 0)
+    expect(again.success && again.grid).toEqual(carved.grid)
+    expect(carvePlayground(config)).toEqual(carved)
+  })
+})
+
+describe("a procession lock in the playground", () => {
+  it("carves with the default binding, its door read by the procession board", () => {
+    const carved = carvePlayground(playgroundFloor(parseLock(PROCESSION_LOCK, "door").lock, defaultBinding()))
+    if (!carved.found) throw new Error(JSON.stringify(carved.reasons))
+    const door = carved.grid.cells.flat().find(cell => cell.type === "room" && cell.gateFace?.sequences)
+    expect(door?.type === "room" && door.family).toBe("procession-door")
+  })
+})
+
+describe("LockPlayground", () => {
+  it("lists every lock it is given and draws the first one's floor", async () => {
+    const { container } = render(<LockPlayground locks={{ lever: LEVER, second: LEVER }} />)
+    expect(screen.getByRole("option", { name: "lever" })).toBeTruthy()
+    expect(screen.getByRole("option", { name: "second" })).toBeTruthy()
+    await waitFor(() => expect(container.querySelector("[data-explorer]")).not.toBeNull())
+  })
+
+  it("says why a lock does not parse instead of drawing a floor", () => {
+    const { container } = render(<LockPlayground locks={{ broken: "in -[L]- out\nL lever @nowhere" }} />)
+    expect(container.querySelector("[data-playground-refused]")?.textContent).toMatch(/line/)
+    expect(container.querySelector("[data-explorer]")).toBeNull()
+  })
+})
+
+describe("the playground's search for a seed", () => {
+  const config = () => playgroundFloor(parseLock(LEVER, "lever").lock, defaultBinding())
+
+  it("judges one seed per task, through the seed step carvePlayground uses", () => {
+    vi.useFakeTimers()
+    const refuse = { success: false, reasons: [{ type: "layoutNotFound" }] } as unknown as ReturnType<
+      typeof assemblePlayedFloor
+    >
+    vi.mocked(assemblePlayedFloor).mockReturnValue(refuse)
+    const floor = config()
+    const { result } = renderHook(() => useCarving(floor))
+    act(() => vi.advanceTimersToNextTimer())
+    expect(vi.mocked(assemblePlayedFloor)).toHaveBeenCalledTimes(1)
+    act(() => vi.advanceTimersToNextTimer())
+    expect(vi.mocked(assemblePlayedFloor)).toHaveBeenCalledTimes(2)
+    expect(result.current).toEqual({ status: "carving", tried: 2 })
+  })
+
+  it("judges no further seed once it is unmounted", () => {
+    vi.useFakeTimers()
+    const refuse = { success: false, reasons: [{ type: "layoutNotFound" }] } as unknown as ReturnType<
+      typeof assemblePlayedFloor
+    >
+    vi.mocked(assemblePlayedFloor).mockReturnValue(refuse)
+    const floor = config()
+    const { unmount } = renderHook(() => useCarving(floor))
+    act(() => vi.advanceTimersToNextTimer())
+    const judged = vi.mocked(assemblePlayedFloor).mock.calls.length
+    unmount()
+    act(() => vi.runAllTimers())
+    expect(vi.mocked(assemblePlayedFloor)).toHaveBeenCalledTimes(judged)
+  })
+
+  it("judges no further seed of the old floor once another floor is given", () => {
+    vi.useFakeTimers()
+    const refuse = { success: false, reasons: [{ type: "layoutNotFound" }] } as unknown as ReturnType<
+      typeof assemblePlayedFloor
+    >
+    vi.mocked(assemblePlayedFloor).mockReturnValue(refuse)
+    const first = config()
+    const second = config()
+    const { rerender } = renderHook(({ floor }) => useCarving(floor), { initialProps: { floor: first } })
+    act(() => vi.advanceTimersToNextTimer())
+    rerender({ floor: second })
+    vi.mocked(assemblePlayedFloor).mockClear()
+    act(() => vi.advanceTimersToNextTimer())
+    expect(vi.mocked(assemblePlayedFloor).mock.calls.every(call => call[1] === second)).toBe(true)
+    expect(vi.mocked(assemblePlayedFloor)).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe("a lock nested in the playground's lock", () => {
+  it("is spliced into the picked lock's nest spot, every region free", () => {
+    const host = parseLock("in -&> hall\nhall -[L]- out\nL toggle @in\nin *\nhall ?\nout ?", "host").lock
+    const inner = parseLock("in -- out\nshelf plate @in stone\nin *\nout ?", "cell").lock
+    const config = playgroundFloor(host, defaultBinding(), inner)
+    expect(config.locks?.map(placed => [placed.as, placed.inside])).toEqual([
+      [undefined, undefined],
+      ["inner", { instance: "host" }],
+    ])
+    expect(Object.values(config.locks![1].lock.regions).every(region => region.takes === "free")).toBe(true)
+    expect(config.locks![0].lock.nestSpot).toEqual({ from: "in", to: "hall" })
+  })
+})

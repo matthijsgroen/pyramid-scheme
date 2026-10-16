@@ -106,15 +106,25 @@ describe("the face of a door that waits on a torch and a lever", () => {
     const { door } = read({ flame: "unlit", beam: "left" })
     expect(door.cell.requiredKeyId).toBeDefined()
     expect(markers()).toHaveLength(2)
-    const icons = markers().map(m => m.textContent)
+    const icons = markers().map(m => m.textContent!.replace(/\p{Script=Egyptian_Hieroglyphs}/gu, ""))
     expect(icons.sort()).toEqual(["🎚️", "🔥"])
+  })
+
+  it("shows each owner's own mark beside its icon, so one owner can be told from another", () => {
+    const { grid } = read({ flame: "unlit", beam: "left" })
+    const owners = grid.cells
+      .flat()
+      .flatMap(cell => (cell.type === "room" && cell.mechanism && cell.mark ? [cell.mark] : []))
+    expect(owners).toHaveLength(2)
+    const shown = markers().map(m => m.querySelector("svg text")?.textContent)
+    expect(shown.sort()).toEqual(owners.map(mark => String.fromCodePoint(mark.glyph)).sort())
   })
 
   it("lights the marker of an owner that names the door and leaves the other dark", () => {
     read({ flame: "lit", beam: "left" })
     const lit = markers().filter(m => m.getAttribute("data-lit") === "true")
     expect(lit).toHaveLength(1)
-    expect(lit[0].textContent).toBe("🔥")
+    expect(lit[0].textContent).toContain("🔥")
   })
 
   it("lights both markers once both owners name the door, and the door is then no longer shut", () => {

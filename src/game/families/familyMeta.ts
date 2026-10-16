@@ -18,8 +18,9 @@ export type FamilyDrawing = {
   /** The marker the room wears at every rank: "handle" is the lever glyph, "mechanism" the family's own
    * `icon`. This is also the whole drawing wherever `art` is not painted. */
   marker: "handle" | "mechanism"
-  /** Furniture drawn beside the marker at a rank that has painted it ("lever"). Unset: the marker alone. */
-  art?: "lever"
+  /** Furniture drawn beside the marker where it is painted: "lever" at a rank that has its three pieces,
+   * "standingTorch" the shared one, unlit or lit by the control's position. Unset: the marker alone. */
+  art?: "lever" | "standingTorch"
 }
 
 // Plain data describing a registered encounter family — no React/app dependency, so
@@ -129,6 +130,23 @@ export type FamilyMeta = {
   // How this family builds a board, and how it judges one (`docs/instructions/puzzle-screens.md` §6.1). Unset means
   // the family generates live on every open, which is what every family did before there were lists.
   seedable?: SeedableFamily
+  /**
+   * What a realisation of the `sequence` control tells core about its tiles and its door. Unset: the tiles wear
+   * mark glyphs and the door shows the order (the pressure plate).
+   *
+   * `glyphs` are the signs the steps wear, one per step, in place of mark glyphs; the floor's marks then leave
+   * them out. `hidesOrder` withholds the door until the player has read the order elsewhere (the procession
+   * door's board), which the door record carries as `hidesOrder` and `orderReader` (this family's id).
+   * `resembles` are mark glyphs that read as one of `glyphs` at marker size, left out of the marks as well.
+   * `board` is the seedable family whose board the door carries, asked at the floor's tier with `variant(steps)`:
+   * the world owes one list entry per door (src/game/seeds/enumerateConfigs.ts).
+   */
+  sequence?: {
+    glyphs: readonly number[]
+    hidesOrder: true
+    resembles?: readonly number[]
+    board?: { family: string; variant: (steps: number) => string }
+  }
 }
 
 // --- Offline seed lists (`docs/instructions/puzzle-screens.md` §6.1) -----------------------------------------

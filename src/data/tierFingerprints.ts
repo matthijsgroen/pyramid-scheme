@@ -2,7 +2,7 @@ import { createHash } from "node:crypto"
 import type { SiteConfig } from "@/game/siteTypes"
 import { difficulties, type Difficulty } from "./difficultyLevels"
 
-type FingerprintJourney = { id: string; difficulty: Difficulty; dev?: boolean }
+type FingerprintJourney = { id: string; difficulty: Difficulty }
 
 // JSON with object keys sorted, so key order (incidental to how the baked file was written) cannot
 // move a hash. Array order is kept: a floor list or a decoration list in a different order IS a
@@ -46,9 +46,7 @@ export type TierFingerprint = { hash: string; journeys: string[] }
 
 // One fingerprint per tier, over the shape and loot of the baked configs (family records left out)
 // of the journeys whose `difficulty` is that tier.
-// The playtesting journey is left out by name: it exists only in a world generated with
-// INCLUDE_DEV, and shipped tiers must hash the same with or without it. A tier with no journeys
-// throws instead of hashing to an empty value, because a tier that silently vanished would
+// A tier with no journeys throws instead of hashing to an empty value, because a tier that silently vanished would
 // otherwise look like "unchanged".
 export const tierFingerprints = (
   journeys: readonly FingerprintJourney[],
@@ -57,7 +55,7 @@ export const tierFingerprints = (
   const result = {} as Record<Difficulty, TierFingerprint>
   for (const tier of difficulties) {
     const ids = journeys
-      .filter(j => j.difficulty === tier && !j.dev)
+      .filter(j => j.difficulty === tier)
       .map(j => j.id)
       .sort()
     if (ids.length === 0) throw new Error(`Tier "${tier}" has no journeys, so there is nothing to fingerprint`)

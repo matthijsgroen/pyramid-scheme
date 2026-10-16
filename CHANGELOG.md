@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Seven expert pyramids at Karnak, the Nile Delta and Djoser have puzzles of their own: a procession door, an hourglass of sand, floods, a canal lock and the stone pipe.
+- The Temple of Thoth's second pyramid has its own puzzle: two levers, one on each side of a drop.
+- A door with several controls opens a board showing each one with its mark, and a painted lever no longer has a square under it.
+- A torch stands painted on the floor, and once lit it lights the floor around it.
+- The Valley of the Kings' last pyramid has a zipline back into the lever chamber, so no room there is shut for good.
 - Turning tutorials off no longer silences the story — only the teaching.
 - Fez has someone to talk to: a conversation can carry two speakers, and the explorer answers from the other side of the screen.
 - Every pyramid in the world now greets you in its own voice.
@@ -26,16 +31,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- The arrow up a corridor that ends at a shut door or a narrow passage walks you there instead of doing nothing.
 - A journey now says its piece on the map as you set off, not once you are outside one of its pyramids.
 - Whoever speaks first slides in first. Fez used to appear with nothing to say and vanish again.
 - The explorer no longer has white patches under an arm, behind the neck and beside the map.
 - The explorer stands at the opposite edge from Fez instead of just inside it.
 - Everyone who talks to Fez is now drawn waist-up, so their faces are the same size as his instead of a third of it.
+
 ### Added
 
+- A stone pipe in the walls carries a stone where you cannot: post it at one hole and take it out of the other.
+- A procession door: its tiles free the bars of a procession board, and solving it teaches the order to walk.
 - A junior pyramid's fork now has a mirror puzzle standing in it, and the way that stands open is the one you route the beam to. Change your mind and the other way opens as that one shuts. The fork and its doors wear one mark on the map.
 - The last pyramid of the Valley of the Kings opens on a mirror fork with ziplines: throw the levers, route the beam, and drop from ledge to ledge to get back.
+- Djoser's last pyramid opens on a stone lock: lift the stone off the altar, park one on a shelf, and squeeze through the narrow passage.
+- Junior and expert pyramids now teach one mechanism at a time: a lever, a torch, a zipline drop, a light board, or a stone on a plate; the expert pyramids after them combine those in a lock.
 - A torch is a switch you can only light, drawn as a flame. Once it burns there is no prompt to touch it again, and you walk past it like any other floor.
+- Taking a zipline plays the ride: the explorer slides across the gap instead of appearing on the far side.
 
 ### Fixed
 

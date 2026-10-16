@@ -5,7 +5,7 @@ import type { FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
 import { assembleFloor } from "@/game/siteAssembler"
 import { openDoorsFor, openWaysOut } from "@/game/mechanismDoors"
 import { cellAddress } from "@/game/cellAddress"
-import { concealedBehindBarriers } from "@/game/concealment"
+import { concealShutGround, concealedBehindBarriers } from "@/game/concealment"
 import { clearGameData } from "@/support/useGameStorage"
 import { resolveEncounter } from "@/app/families/familyRegistry"
 import { resolveKeyRequirements } from "@/mods/allFamilyMeta"
@@ -103,13 +103,8 @@ describe("a shut barrier's concealment is a drawing matter only", () => {
     const drawn = vi.mocked(SiteMapView).mock.calls.at(-1)![0].grid
     const hidden = concealedBehindBarriers(grid, explorerPos)
     expect(hidden.size).toBeGreaterThan(0)
-    expect(
-      [...hidden].every(key => {
-        const [r, c] = key.split(",").map(Number)
-        return (drawn.cells[r][c] as { state: string }).state === "fogged"
-      }),
-      "the drawing hides the stretch"
-    ).toBe(true)
+    expect(drawn, "the drawing is the concealed floor").toEqual(concealShutGround(grid, explorerPos))
+    expect(drawn, "the drawing hides something").not.toEqual(grid)
     expect(recorded, "the recorder counts the grid with nothing concealed").toBe(grid)
     expect(computeFloorExploration(recorded)).toEqual(computeFloorExploration(grid))
   })

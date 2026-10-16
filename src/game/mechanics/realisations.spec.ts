@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest"
 import { resolveEncounterMeta } from "@/mods/allFamilyMeta"
 import { TOPOLOGY_OFF } from "@/game/testSupport/modOff"
 import { oneWayRuns } from "../gridNavigation"
-import type { Control } from "../obstacles"
+import type { Control, WeightsControl } from "../obstacles"
 import type { CorridorCell, Direction, FloorGrid, GridCell, RoomCell } from "../siteTypes"
-import { degradeUnrealised, unrealisedSequences } from "./realisations"
+import { degradeUnrealised, unrealisedPipes, unrealisedSequences, unrealisedWeights } from "./realisations"
 
 const sequence = (encounter?: string): Control => ({
   id: "plates",
@@ -177,5 +177,70 @@ describe("the pressure plate that realises a sequence", () => {
   it("is realised with its mod on and left as bare tiles with it off, never stood in by another family", () => {
     expect([...unrealisedSequences([sequence("pressure-plate")], resolveEncounterMeta)]).toEqual([])
     expect([...unrealisedSequences([sequence("pressure-plate")], TOPOLOGY_OFF.resolveEncounter)]).toEqual(["plates"])
+  })
+})
+
+describe("the stone plate that realises a lock's stones", () => {
+  const stones = (encounter: string): Control => ({
+    id: "a.stones",
+    control: "weights",
+    plates: [{ id: "a.p", in: "a.in", stone: true }],
+    states: ["a.p", "+ hand"],
+    initial: "a.p",
+    opens: { "a.p": [], "+ hand": [] },
+    moves: [],
+    carrying: ["+ hand"],
+    underfoot: [],
+    terms: {},
+    encounter,
+  })
+  const plate = (dirs: Direction[], id: string, home: boolean): RoomCell =>
+    room(dirs, {
+      plate: { id },
+      worksMechanism: { mechanismId: "a.stones", transition: 0 },
+      ...(home
+        ? {
+            mechanismId: "a.stones",
+            mechanism: {
+              states: ["a.p", "+ hand"],
+              initial: "a.p",
+              returnsToInitial: true,
+              placedOnly: true,
+              positions: [{ state: "a.p", gateKeyId: KEY }],
+              transitions: [{ from: "a.p", to: "+ hand", at: [0, 0] }],
+            },
+          }
+        : {}),
+    })
+
+  it("is realised with its mod on and unrealised with it off", () => {
+    expect([...unrealisedWeights([stones("stonePlate")], resolveEncounterMeta)]).toEqual([])
+    expect([...unrealisedWeights([stones("stonePlate")], TOPOLOGY_OFF.resolveEncounter)]).toEqual(["a.stones"])
+  })
+
+  it("realises a pipe with its mod on, and leaves its holes as ground with it off", () => {
+    const piped: WeightsControl = {
+      ...(stones("stonePlate") as WeightsControl),
+      pipes: [{ id: "a.P", ends: ["a.in", "a.out"] }],
+      pipeEncounter: "stonePipe",
+    }
+    expect([...unrealisedPipes([piped], resolveEncounterMeta)]).toEqual([])
+    expect([...unrealisedPipes([piped], TOPOLOGY_OFF.resolveEncounter)]).toEqual(["a.stones"])
+    expect([...unrealisedPipes([stones("stonePlate")], TOPOLOGY_OFF.resolveEncounter)]).toEqual([])
+    const hole = room(["e"], {
+      pipeHole: { pipe: "a.P", region: "a.in" },
+      worksMechanism: { mechanismId: "a.stones", transition: 0 },
+    })
+    const bare = degradeUnrealised(rowGrid([hole, ground(["w"])]), TOPOLOGY_OFF.resolveEncounter, {
+      ...NOTHING,
+      pipes: new Set(["a.stones"]),
+    })
+    expect(bare.cells[0][0]).toMatchObject({ type: "corridor", dirs: new Set(["e"]) })
+  })
+
+  it("leaves every plate as ground, and the doors only the stones held stand open as ground", () => {
+    const grid = rowGrid([plate(["e"], "a.p", true), plate(["w", "e"], "a.q", false), door(), ground(["w"])])
+    const bare = degradeUnrealised(grid, TOPOLOGY_OFF.resolveEncounter, { ...NOTHING, weights: new Set(["a.stones"]) })
+    expect(bare.cells[0].map(cell => cell.type)).toEqual(["corridor", "corridor", "corridor", "corridor"])
   })
 })

@@ -1,6 +1,6 @@
 import type { Direction, FloorGrid, GridCell, MechanismRecord, TombKeyReward } from "./siteTypes"
 import type { LockSpec, Mechanism, GateId, MechanismId, RegionId } from "./lockWalk"
-import { nodeBeyond } from "./siteValidator"
+import { armDoor } from "./siteValidator"
 import { legalTargets, mechanismWorkedAt } from "./mechanismDoors"
 import { isObstacleCell, oneWayRuns } from "./gridNavigation"
 import { progressState } from "./sequence"
@@ -121,8 +121,8 @@ export const regionsOf = (
 // believe a genuinely gated pocket has no way in at all and would refuse a floor that is perfectly sound.
 // A drop whose two ends land in the same region is skipped: a region is ground walked both ways, so the
 // two cells are ones the player already moves freely between.
-const oneWaysOf = (grid: FloorGrid, of: Map<string, RegionId>): { from: RegionId; to: RegionId }[] => {
-  const found: { from: RegionId; to: RegionId }[] = []
+const oneWaysOf = (grid: FloorGrid, of: Map<string, RegionId>): NonNullable<LockSpec["oneWays"]> => {
+  const found: NonNullable<LockSpec["oneWays"]> = []
   for (const run of oneWayRuns(grid)) {
     const from = of.get(posKey(run.launch[0], run.launch[1]))
     const to = of.get(posKey(run.landing[0], run.landing[1]))
@@ -172,7 +172,7 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
       if (cell.type !== "room") continue
       for (const exit of cell.exits ?? []) {
         if (exit.gateKeyId === undefined) continue
-        const door = nodeBeyond(grid, [r, c], exit.dir)
+        const door = armDoor(grid, [r, c], exit.dir)
         // A way out that names a gate and leads nowhere this compiler can find would otherwise be a
         // corridor with no gate on it at all — the floor would read as more open than it is.
         if (!door)
@@ -223,6 +223,8 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
   const gatesOfDoorKey = new Map<string, GateId[]>()
   /** Every gate any door named with a key id — what the chest that mints that key opens. */
   const gatesByKeyId = new Map<string, GateId[]>()
+  /** The gates of every region barrier's doors, by the region they bar: what covers a torch there. */
+  const barrierGates = new Map<string, GateId[]>()
 
   /** Gates the author said one owner is enough for; every other gate answers to all its owners. */
   const anyGates = new Set<GateId>()
@@ -251,6 +253,8 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
         if (!beside || beside === doorRegion) continue
         const gateId = `${doorRegion}|${beside}`
         gates[gateId] = { from: beside, to: doorRegion, owners: [] }
+        if (cell.type === "room" && cell.regionBarrier)
+          barrierGates.set(cell.regionBarrier.region, [...(barrierGates.get(cell.regionBarrier.region) ?? []), gateId])
         unopened.set(gateId, new Set(keyIds))
         if (ward) continue
         for (const keyId of keyIds) {
@@ -280,6 +284,10 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
       ),
     ]
   }
+
+  // A stone never leaves its floor: the way out waits for every mechanism holding one to put it down.
+  const emptyHands: NonNullable<LockSpec["emptyHands"]> = []
+  const torches: NonNullable<LockSpec["torches"]> = []
 
   // A MECHANISM: the position it stands in until it is worked, then a state per set of gates it can
   // open, and re-workable from any state into any other — which is what lets a player change their
@@ -341,7 +349,10 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
       }
     // A sequence must be completable by some walk, and the refusal names it.
     const tileCount = new Set(
-      (record.transitions ?? []).filter(t => isTile(grid.cells[t.at[0]]?.[t.at[1]])).map(t => posKey(t.at[0], t.at[1]))
+      (record.transitions ?? []).flatMap(t => {
+        const tile = grid.cells[t.at[0]]?.[t.at[1]]
+        return tile?.type === "room" && tile.sequenceTile ? [tile.sequenceTile.step] : []
+      })
     ).size
     const [homeRow, homeCol] = at.split(",").map(Number)
     const home = grid.cells[homeRow][homeCol]
@@ -355,6 +366,8 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
         ? { goal: { state: progressState(tileCount), label: `sequence ${home.mechanismId}` } }
         : {}),
     }
+    if (record.carrying && record.carrying.length > 0) emptyHands.push({ mechanism: id, notIn: record.carrying })
+    if (record.torch) torches.push({ mechanism: id, coveredBy: barrierGates.get(record.torch.region) ?? [] })
     for (const { gateIds, keyId, mode } of byPosition)
       for (const gateId of gateIds) {
         claim(gateId, keyId, id)
@@ -401,6 +414,7 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
   }
 
   const oneWays = oneWaysOf(grid, of)
+  const crossings = ids.filter(id => id.startsWith("door "))
 
   return {
     regions: ids,
@@ -408,6 +422,9 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
     mechanisms,
     ...(oneWays.length > 0 ? { oneWays } : {}),
     ...(passages.length > 0 ? { passages } : {}),
+    ...(emptyHands.length > 0 ? { emptyHands } : {}),
+    ...(torches.length > 0 ? { torches } : {}),
+    ...(crossings.length > 0 ? { crossings } : {}),
     in: of.get(posKey(grid.entrancePos[0], grid.entrancePos[1]))!,
     out: of.get(posKey(grid.exitPos[0], grid.exitPos[1]))!,
   }

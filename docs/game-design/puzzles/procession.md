@@ -226,6 +226,22 @@ when, so a set that carried its own narrative (dressing, then the crowning, then
 telling a lie on every board whose answer ran the other way. The names identify; the sentences state only
 what the marks state. A fixed story would have to constrain the generator, and that is a different family.
 
+## 8.1 At a door
+
+A lock's sequence written `procession` carries this board on its door instead of showing its order
+(`docs/mods/mechanic-contract.md`, "The procession door"). One bar per step, so the board is as many bars as the
+sequence has steps (three to six). A door lives outside the tier system: the steps alone set its difficulty, and the
+floor's tier is not read. It takes the `PROCESSION_CONFIG` entry whose own board has that many bars (3 starter,
+4 junior, 5 expert, 6 wizard) with `distinctStarts` on (the variant `door<n>`). The
+board's one answer starts no two bars together, and the k-th bar to start is step k.
+
+The board wears the `default` cast: each step's tile wears the sign of its bar, shuffled per sequence so the signs
+say nothing of the order. A bar is locked until its tile has been walked; it stands greyed, its sign readable. The
+board keeps the room's hint and pays no reward. Solved once, it stays solved, and its answer is the walk.
+
+`yarn tsx scripts/processionDoorSeeds.ts` prints how many of 2000 seeds give a board for each step count (121, 201, 19, 24). A
+count with none is refused at bake.
+
 ## 9. What this is not
 
 - **Not canisters.** Both are arithmetic, and they are opposite shapes: canisters searches a state space

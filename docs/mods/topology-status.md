@@ -15,8 +15,7 @@ nobody held the whole picture.
 (`src/worldGen/spec/junior.ts:156-169`). That is all.
 
 The baked world authors **zero** `handles`, **zero** `oneWays`, **zero** `regionLayout`, **zero**
-`obstacles`, **zero** `controls`. Levers, ziplines, the torch and every container live only in the
-develop journey `dev_topology`, which is built only with `INCLUDE_DEV` (`src/worldGen/data.ts:66-72`).
+`obstacles`, **zero** `controls`. Levers, ziplines, the torch and every container are played only from the Lock editor's Carve and play.
 
 Floor keys (58), tomb keys (289) and hidden sections (110) exist in the shipped world, but they are not
 mechanics in this document's sense: the player collects an item or finds a passage rather than
@@ -109,12 +108,12 @@ Each measured, each with its evidence.
 3. **An open family-less gate is rewritten to plain corridor**, losing its tags and its mark
    (`mechanismDoors.ts:98-120`). The player cannot see that a door is there, so they cannot reason that
    it will shut when another opens.
-4. **Two mechanisms on one floor can wear the identical mark.** Measured on dev pyramid 2: `Y`
+4. **Two mechanisms on one floor can wear the identical mark.** Measured on the doubleBack floor: `Y`
    (`forkLeft|forkRight`) and `S2` (`endDoor`) both compute to green + the same glyph. The collision
    chance is about 10% with three controls and 30% with five. The mark is the only thing on the map that
    says which lever drives which door.
 5. **A control is seated at the first free main-path node of its region**, not where the lock is
-   (`siteAssembler.ts:1463-1500`). On dev pyramid 2 that puts the lever sixteen cells from the fork it
+   (`siteAssembler.ts:1463-1500`). On the doubleBack floor that puts the lever sixteen cells from the fork it
    governs.
 6. **`openDoorsFor` and `floorLock` are not proved equivalent** for a door naming more than one key
    (`mechanismDoors.ts:13-28`, which also records the two measured ways they can disagree). This was
@@ -203,7 +202,7 @@ stored progress can be orphaned.
 **The shortest path to the worked example.** doubleBack as the designer wrote it needs only **10** and
 **2**. The other sixteen do not stand between it and being playable — 3 and 4 make it readable, the rest
 serve mechanics it does not use. Requirement 10 alone makes the layout carve with a plain three-state
-control, which is how the dev floor runs today, and tests everything except the fork-switch.
+control, which is how the lock editor's carve runs it today, and tests everything except the fork-switch.
 
 **Where a baseline is needed.** 1 (region targets), 2, 8 (tile placement) and 10 touch the carve. The
 ledger fingerprint hashes the assembler's import graph, so any of them invalidates the refusal entries

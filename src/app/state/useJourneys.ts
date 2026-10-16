@@ -2,6 +2,8 @@ import { useEffect, useMemo } from "react"
 import { useGameStorage } from "@/support/useGameStorage"
 import { journeys as journeyData, type Journey } from "@/data/journeys"
 import { generateNewSeed } from "@/game/random"
+import { progressState } from "@/game/sequence"
+import { withWalked, type SequenceRead } from "@/game/sequenceReads"
 import { persistentInteriorSeed } from "@/game/siteSeed"
 import { useJourneyTranslations, type TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { hashString } from "@/support/hashString"
@@ -9,6 +11,7 @@ import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 import { isPlaceAddress, keyOfAddress, sectionOfAddress, type CarveIndependentState } from "@/app/SiteMap/cellIdentity"
 import type { RepairedExploration } from "@/app/SiteMap/repairFloorExploration"
 import type { MechanismSlotBackfill } from "@/app/SiteMap/backfillMechanismSlots"
+import { RELAID_FLOORS_VERSION } from "@/app/SiteMap/relaidPyramids"
 
 /** Bumped whenever a stored cell key changes shape. 2 named cells by their authored slot and floor
  * rather than by their step along the carved walk. 3 named their SECTION by its authoring address
@@ -84,6 +87,10 @@ export type StoredJourneyStateV3 = {
    * The address is the mechanism's own cell address — authored, so a re-carve moves the cell and takes
    * the entry with it. Exactly one entry per mechanism, which is what a map gives for free. */
   mechanismStates?: Record<string, string>
+  /** What play keeps beside a sequence whose door hides its order (src/game/sequenceReads.ts), keyed
+   * `${levelNr}:${mechanismAddress}` as its position is: the steps ever walked, and whether the order was read.
+   * Absent reads as nothing walked and nothing read. */
+  sequenceReads?: Record<string, SequenceRead>
   // Corridor detector (§7.2, found = noticed via proximity): both keyed `${levelNr}:${sectionAddress}`.
   // `known` = hidden corridors on floors the player has viewed; `found` = ones the detector stopped
   // them at. Outstanding (known \ found) drives the L3 pyramid + L4 travel "unexplored corridor" markers.
@@ -102,6 +109,9 @@ export type StoredJourneyStateV3 = {
   floorExplorationVersion?: number
   /** Which mechanism-slot copy this save has been through, so the backfill runs once per save. */
   mechanismSlotVersion?: number
+  /** Which re-laying of shipped pyramids this save has been through (RELAID_FLOORS_VERSION), so the step that
+   *  forgets a place on a re-laid floor runs once per save. */
+  relaidFloorsVersion?: number
 }
 
 export type CombinedJourneyState = StoredJourneyStateV3 & {
@@ -110,6 +120,10 @@ export type CombinedJourneyState = StoredJourneyStateV3 & {
   progressPercentage: number
   journey: TranslatedJourney
 }
+
+/** Mechanism states to save: the writes, or what to write given the states saved when the write lands. */
+export type MechanismWrites =
+  ReadonlyMap<string, string> | ((stored: ReadonlyMap<string, string>) => ReadonlyMap<string, string>)
 
 export type JourneyAPI = {
   activeJourneyId: string | undefined
@@ -137,6 +151,11 @@ export type JourneyAPI = {
   /** Saves whose mechanism rooms may still be filed under their earlier address — see useMechanismSlotBackfill. */
   journeysNeedingMechanismSlots: () => StoredJourneyStateV3[]
   setMechanismSlotBackfill: (journeyId: string, copied: MechanismSlotBackfill) => void
+  /** Saves not yet through the current re-laying of shipped pyramids — see useRelaidFloorsBackfill. */
+  journeysNeedingRelaidFloors: () => StoredJourneyStateV3[]
+  /** Stamps the save; with `resumeAtEntrance` it also forgets where the save stands, as visitLevel does, and keeps
+   *  the level it is on. */
+  setRelaidFloors: (journeyId: string, resumeAtEntrance: boolean) => void
   /** This level's exploration, by section: the cell keys the map restores from. */
   getExploredCells: (journeyId: string) => Record<string, string[]>
   /** Records `address` as the live cell the player is standing on (`standingKey`), and — unless it
@@ -155,8 +174,17 @@ export type JourneyAPI = {
   /** The mechanism at `address` now stands at `stateId`, replacing whatever position it stood at before
    * rather than joining it — see mechanismStates. */
   setMechanismState: (address: string, stateId: string) => void
+  /** Several mechanisms' new states in one write, so a move and what it causes are saved together. */
+  setMechanismStates: (writes: MechanismWrites) => void
   /** The position every mechanism on this level currently stands in, keyed by its cell address. */
   getMechanismStates: (journeyId: string) => ReadonlyMap<string, string>
+  /** Steps a walk crossed of sequences that hide their order, by the sequence's address. */
+  recordWalkedSteps: (walked: readonly { address: string; steps: readonly number[]; atDone?: boolean }[]) => void
+  /** The order of the sequence at `address` was read at its door: it stays read, and the run starts again from its
+   * first step, both in one write. A second read writes nothing. */
+  readSequence: (address: string) => void
+  /** What play keeps beside each hiding sequence on this level, keyed by its address. */
+  getSequenceReads: (journeyId: string) => ReadonlyMap<string, SequenceRead>
   registerHiddenCorridors: (sectionAddresses: string[]) => void
   markCorridorFound: (sectionAddress: string) => void
   getFoundHiddenCorridors: (journeyId: string) => ReadonlySet<string>
@@ -176,6 +204,16 @@ export type JourneyAPI = {
 }
 
 const knownJourneyIds = journeyData.map(j => j.id)
+
+/** A level's entries of a level-keyed record, by the address under the level. */
+const atLevelMap = (levelNr: number, entries: Record<string, string> | undefined): Map<string, string> => {
+  const prefix = `${levelNr}:`
+  return new Map(
+    Object.entries(entries ?? {})
+      .filter(([key]) => key.startsWith(prefix))
+      .map(([key, value]) => [key.slice(prefix.length), value])
+  )
+}
 
 // Module constants, not inline literals: a fresh literal on every render makes every consumer of
 // useOfflineStorage look like a different default to anything comparing by identity.
@@ -296,6 +334,7 @@ export const createJourneysV3Api = ({
       // Born current: a journey started under this release has never been keyed any other way.
       cellKeyVersion: CELL_KEY_VERSION,
       mechanismSlotVersion: MECHANISM_SLOT_VERSION,
+      relaidFloorsVersion: RELAID_FLOORS_VERSION,
     }
     return Promise.resolve(setJourneys(prev => [...prev, newJourney]))
   }
@@ -456,6 +495,23 @@ export const createJourneysV3Api = ({
     )
   }
 
+  // Stamped on every journey, standing or not, so the stamp is the exact record of which saves came through.
+  const journeysNeedingRelaidFloors = () => journeys.filter(j => j.relaidFloorsVersion !== RELAID_FLOORS_VERSION)
+
+  const setRelaidFloors = (journeyId: string, resumeAtEntrance: boolean) => {
+    setJourneys(prev =>
+      prev.map(j =>
+        j.journeyId === journeyId
+          ? {
+              ...j,
+              ...(resumeAtEntrance ? { position: null, positionKey: null, standingKey: null } : {}),
+              relaidFloorsVersion: RELAID_FLOORS_VERSION,
+            }
+          : j
+      )
+    )
+  }
+
   const getExploredCells = (journeyId: string): Record<string, string[]> => {
     const j = journeys.find(j => j.journeyId === journeyId)
     if (!j) return {}
@@ -515,13 +571,7 @@ export const createJourneysV3Api = ({
     entries: Record<string, string> | undefined
   ): ReadonlyMap<string, string> => {
     const j = journeys.find(j => j.journeyId === journeyId)
-    if (!j) return new Map()
-    const prefix = `${j.levelNr}:`
-    return new Map(
-      Object.entries(entries ?? {})
-        .filter(([key]) => key.startsWith(prefix))
-        .map(([key, value]) => [key.slice(prefix.length), value])
-    )
+    return j ? atLevelMap(j.levelNr, entries) : new Map()
   }
 
   const markTrapDisabled = (address: string) => {
@@ -581,20 +631,72 @@ export const createJourneysV3Api = ({
   const getPurchasedShopSlots = (journeyId: string): ReadonlySet<string> =>
     forThisLevel(journeyId, journeys.find(j => j.journeyId === journeyId)?.purchasedStock)
 
-  const setMechanismState = (address: string, stateId: string) => {
-    if (!activeJourneyId) return
-    const at = atLevel(address)
+  const setMechanismStates = (writes: MechanismWrites) => {
+    if (!activeJourneyId || (typeof writes !== "function" && writes.size === 0)) return
     setJourneys(prev =>
       prev.map(j => {
         if (j.journeyId !== activeJourneyId) return j
-        if (j.mechanismStates?.[at] === stateId) return j
-        return { ...j, mechanismStates: { ...(j.mechanismStates ?? {}), [at]: stateId } }
+        // Read off the save as this write finds it, so writes made in one tick compose rather than each reading the
+        // snapshot this API was built over.
+        const resolved = typeof writes === "function" ? writes(atLevelMap(j.levelNr, j.mechanismStates)) : writes
+        const entries = [...resolved].map(([address, stateId]) => [`${j.levelNr}:${address}`, stateId] as const)
+        if (entries.every(([at, stateId]) => j.mechanismStates?.[at] === stateId)) return j
+        return { ...j, mechanismStates: { ...(j.mechanismStates ?? {}), ...Object.fromEntries(entries) } }
       })
     )
   }
 
+  const setMechanismState = (address: string, stateId: string) => setMechanismStates(new Map([[address, stateId]]))
+
   const getMechanismStates = (journeyId: string): ReadonlyMap<string, string> =>
     forThisLevelMap(journeyId, journeys.find(j => j.journeyId === journeyId)?.mechanismStates)
+
+  const recordWalkedSteps = (walked: readonly { address: string; steps: readonly number[]; atDone?: boolean }[]) => {
+    if (!activeJourneyId || walked.length === 0) return
+    setJourneys(prev =>
+      prev.map(j => {
+        if (j.journeyId !== activeJourneyId) return j
+        const reads = { ...(j.sequenceReads ?? {}) }
+        let changed = false
+        for (const { address, steps, atDone } of walked) {
+          const key = `${j.levelNr}:${address}`
+          const next = withWalked(reads[key], steps, atDone)
+          if (next === reads[key]) continue
+          reads[key] = next
+          changed = true
+        }
+        return changed ? { ...j, sequenceReads: reads } : j
+      })
+    )
+  }
+
+  const readSequence = (address: string) => {
+    if (!activeJourneyId) return
+    setJourneys(prev =>
+      prev.map(j => {
+        if (j.journeyId !== activeJourneyId) return j
+        const key = `${j.levelNr}:${address}`
+        const entry = j.sequenceReads?.[key]
+        if (entry?.read) return j
+        return {
+          ...j,
+          sequenceReads: { ...(j.sequenceReads ?? {}), [key]: { walked: entry?.walked ?? [], read: true } },
+          mechanismStates: { ...(j.mechanismStates ?? {}), [key]: progressState(0) },
+        }
+      })
+    )
+  }
+
+  const getSequenceReads = (journeyId: string): ReadonlyMap<string, SequenceRead> => {
+    const j = journeys.find(j => j.journeyId === journeyId)
+    if (!j) return new Map()
+    const prefix = `${j.levelNr}:`
+    return new Map(
+      Object.entries(j.sequenceReads ?? {})
+        .filter(([key]) => key.startsWith(prefix))
+        .map(([key, entry]) => [key.slice(prefix.length), entry])
+    )
+  }
 
   // Corridor detector: hidden sections become "known" the moment the player views the floor
   // holding them; keyed by levelNr like exploration so a multi-level pyramid keeps them apart.
@@ -710,7 +812,11 @@ export const createJourneysV3Api = ({
     markShopSlotPurchased,
     getPurchasedShopSlots,
     setMechanismState,
+    setMechanismStates,
     getMechanismStates,
+    recordWalkedSteps,
+    readSequence,
+    getSequenceReads,
     registerHiddenCorridors,
     markCorridorFound,
     getFoundHiddenCorridors,
@@ -721,5 +827,7 @@ export const createJourneysV3Api = ({
     setRepairedExploration,
     journeysNeedingMechanismSlots,
     setMechanismSlotBackfill,
+    journeysNeedingRelaidFloors,
+    setRelaidFloors,
   }
 }

@@ -34,8 +34,7 @@ const carveAtAnySeed = (config: FloorConfig, siteId: string, seed?: number): Car
 
 const JUNIOR_2 = "junior_2"
 const JUNIOR_2_LEVEL = 2
-// The store only writes for a journey the shipped data knows, and the dev journey is baked only for a
-// playtest build; these scenarios hand the floors in, so any shipped journey can hold their progress.
+// The store only writes for a journey the shipped data knows; these scenarios hand the floors in, so any shipped journey can hold their progress.
 const STORE_JOURNEY = JUNIOR_2
 
 /** The shipped pyramid-2 floor of junior_2, at its real seed, with its own switch bound to `encounter`. */
@@ -249,8 +248,8 @@ describe("a save written before a mechanism's slot named the mechanism", () => {
   }
 
   const grids: [string, FloorGrid, string, number][] = [
-    ["a control floor", carveAtAnySeed(andDoorFloor(), "site-old").grid, "dev_topology", 1],
-    ["a fork-switch floor", forkSwitchCarve().grid, "dev_topology", 1],
+    ["a control floor", carveAtAnySeed(andDoorFloor(), "site-old").grid, "made_up_site", 1],
+    ["a fork-switch floor", forkSwitchCarve().grid, "made_up_site", 1],
     ["the junior_2 plain switch", realJunior2Floor("lightbeamSwitch"), JUNIOR_2, JUNIOR_2_LEVEL],
   ]
 

@@ -1,0 +1,14 @@
+// designed by: Claude
+// master. A chain of airlocks: each switch shuts the door behind you, and the
+// drop home opens only once the last torch is lit.
+
+in -[A:a]- r1 -[A+B:off]- r2 -[B]- r3
+r3 -[C]- >> in
+in -[C]- out
+out >> r1
+out >> r3
+A toggle @r1
+B torch @r2
+C torch @r3
+r1 *
+r2 *

@@ -29,6 +29,7 @@ import {
   threeOwnerDoorFloor,
 } from "@/game/testSupport/gateFaceFixtures"
 import { handleFloorConfig, nestedHandleFloorConfig } from "@/game/testSupport/handleFixtures"
+import { corridorItemsFloor } from "@/game/testSupport/corridorFixtures"
 import { leverLock } from "@/game/testSupport/floorLockFixtures"
 import { BINDING } from "@/game/testSupport/lockFixtures"
 import { torchAndFloorKeyDoorFloor } from "@/game/testSupport/mixedDoorFixtures"
@@ -91,6 +92,7 @@ const FIXTURES: Record<string, () => FloorConfig> = {
   hiddenAnnexSequenceFloor,
   tooManyTilesSequenceFloor,
   lockedLeverFloor,
+  corridorItemsFloor,
   handleFloor: () => handleFloorConfig({ in: "lever", left: ["vault"], right: ["pocket"] }),
   nestedHandleFloor: () => nestedHandleFloorConfig({ in: "branch", left: ["s0.0"], right: ["s0.1"] }),
 }

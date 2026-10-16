@@ -1,4 +1,5 @@
 import type { Difficulty } from "@/data/difficultyLevels"
+import { PROCESSION_STEPS } from "@/game/mechanics/sequence"
 import type { ProcessionOptions } from "./generateProcession"
 
 /**
@@ -89,3 +90,27 @@ export const PROCESSION_CONFIG: Record<Difficulty, ProcessionOptions> = {
     maxSplits: 20,
   },
 }
+
+/** The variant a procession door asks for: `door<n>`, one bar per step of its sequence. */
+export const doorVariant = (steps: number) => `door${steps}`
+
+/**
+ * The options a procession door's board is built from. The door lives outside the tier system: its step count
+ * alone sets how hard it is, so it takes the config whose own board has that many bars (3 starter, 4 junior,
+ * 5 expert, 6 wizard) whatever the floor's tier, with no two bars starting together so its answer reads as one
+ * order (`docs/game-design/puzzles/procession.md`, "At a door"). A room's board is its tier's.
+ */
+export const processionOptions = (difficulty: Difficulty, variant?: string): ProcessionOptions => {
+  const steps = variant?.match(/^door(\d+)$/)?.[1]
+  if (!steps) return PROCESSION_CONFIG[difficulty]
+  const bars = Number(steps)
+  const config =
+    Object.values(PROCESSION_CONFIG).find(options => options.bars === bars) ?? PROCESSION_CONFIG[difficulty]
+  return { ...config, bars, distinctStarts: true }
+}
+
+/** How many steps a procession door's sequence may have: one bar each, and six is one cast's glyphs. */
+export const PROCESSION_DOOR_STEPS: readonly number[] = Array.from(
+  { length: PROCESSION_STEPS.max - PROCESSION_STEPS.min + 1 },
+  (_, index) => PROCESSION_STEPS.min + index
+)

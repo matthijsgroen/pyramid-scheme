@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { parseLock } from "./lockNotation"
+import { CONTROL_WORDS, LOCK_EXAMPLE, LOCK_SYNTAX, corridorLine, parseLock, syntaxSections } from "./lockNotation"
 
 const DOUBLE_BACK = `
   in -[Y]- leftLower -[S1]- s2
@@ -16,6 +16,7 @@ describe("parseLock", () => {
   it("writes doubleBack as the shared Lock, a drop beside its fork gate included", () => {
     expect(parseLock(DOUBLE_BACK, "doubleBack")).toEqual({
       drafts: [],
+      refused: [],
       lock: {
         name: "doubleBack",
         regions: {
@@ -95,6 +96,44 @@ describe("parseLock", () => {
     })
   })
 
+  it("reads a procession as a sequence whose door carries a procession board", () => {
+    const { lock } = parseLock("in -- hall\nhall -[P]- out\nP procession in hall in reset hall-out")
+    expect(lock.mechanics.P).toEqual({
+      control: "sequence",
+      steps: [{ in: "in" }, { in: "hall" }, { in: "in" }],
+      resetAt: "hall-out",
+      opens: { done: ["hall-out"] },
+      procession: true,
+    })
+  })
+
+  it("binds a sequence's reset on a two-gate corridor to the gate it opens", () => {
+    const { lock } = parseLock("in -- hall\nhall -[Y]- -[P]- out\nY toggle @in\nP sequence in hall reset hall-out")
+    expect(lock.mechanics.P).toMatchObject({ resetAt: "hall-out#2", opens: { done: ["hall-out#2"] } })
+  })
+
+  it("leaves the reset alone when the sequence's gate is the first on the corridor", () => {
+    const { lock } = parseLock("in -- hall\nhall -[P]- -[Y]- out\nY toggle @in\nP sequence in hall reset hall-out")
+    expect(lock.mechanics.P).toMatchObject({ resetAt: "hall-out" })
+  })
+
+  it("refuses a reset on a several-gate corridor the sequence opens none of", () => {
+    expect(() =>
+      parseLock(
+        "in -- hall\nhall -[Y]- -[Z]- out\nin -[P]- hall\nY toggle @in\nZ toggle @in\nP sequence in hall reset hall-out"
+      )
+    ).toThrow("reset hall-out: the corridor carries several gates; P opens none of them")
+  })
+
+  it("resets a sequence at the one gate it opens when no reset is written", () => {
+    const { lock } = parseLock("in -- hall\nhall -[Y]- -[P]- out\nY toggle @in\nP sequence in hall")
+    expect(lock.mechanics.P).toMatchObject({ resetAt: "hall-out#2" })
+  })
+
+  it("asks for a reset when the sequence opens several gates", () => {
+    expect(() => parseLock("in -[P]- hall\nhall -[P]- out\nP sequence in hall")).toThrow("write reset a-b")
+  })
+
   it("keeps an owner nothing places as a draft, out of the mechanics", () => {
     expect(parseLock("in -[G]- out")).toMatchObject({ drafts: ["G"], lock: { mechanics: {} } })
   })
@@ -111,7 +150,6 @@ describe("parseLock", () => {
   })
 
   it.each([
-    ["in -- out\nout -- in", "line 2: out and in are already joined by a corridor on line 1"],
     ["in -[S1:c]- out\nS1 toggle @in", "line 1: S1 has no state c"],
     ["in -[Y:x]- out\nY fork @in", "line 1: a fork's way is the gate itself: write -[Y]-"],
     ["in -- hall\nhall -[Y]- out\nY fork @in", "line 2: fork Y's gate must be the first thing on a join leaving in"],
@@ -129,16 +167,21 @@ describe("parseLock", () => {
     ["// only a comment", "the lock never reaches in"],
     ["in -[H]- hall\nH toggle @in", "the lock never reaches out"],
     ["in -[H]- out\nH toggle @in\nH toggle @out", "line 3: H is placed twice"],
-    ["in -[H]- out\nH toggle @in\nG toggle @in", "line 3: G owns no gate"],
     ["in -[H]- out\nH toggle @cellar", "line 2: no corridor reaches cellar"],
     ["in -[A+B|C]- out", "line 1: -[A+B|C]- mixes + and |"],
     ["in -[H+H]- out\nH toggle @in", "line 1: -[H+H]- names H twice"],
-    ["in -- -[H]- out", "line 1: -- is a bare corridor and carries no barriers"],
+    ["in -- -[H]- out", "line 1: -- is a bare corridor, exactly two dashes, and carries no items"],
     ["in -[Y]- >>", "line 1: a line starts and ends with a region"],
     ["in => out", 'line 1: cannot read "in => out"'],
     ["in -[Y]- in\nin -- out\nY fork @in", "line 1: a join leads from in to in"],
   ])("refuses %j", (text, message) => {
     expect(() => parseLock(text)).toThrow(message)
+  })
+
+  it("reads a lever that opens nothing whole, and says so beside it", () => {
+    const { lock, refused } = parseLock("in -[H]- out\nH toggle @in\nG toggle @in")
+    expect(refused).toEqual(["line 3: G owns no gate"])
+    expect(lock.mechanics.G).toEqual({ control: "toggle", in: "in", starts: "a", opens: { a: [], b: [] } })
   })
 })
 
@@ -179,6 +222,14 @@ describe("weights", () => {
     expect(lock.weights!.plates.p.opens.weighted).toEqual(["hall:barred"])
   })
 
+  it.each([
+    ["on a drop", "in -- yard\nyard -- out\nout -[unladen]- >> in", "line 3: a drop already takes empty hands"],
+    ["beside a plate", "in -[p+unladen]- out\np plate @in", "line 1: unladen stands alone, as a narrow passage"],
+    ["beside a lever", "in -[L|unladen]- out\nL toggle @in", "line 1: unladen stands alone, as a narrow passage"],
+  ])("reads a lock with empty hands %s whole, and says why they are refused", (_, text, message) => {
+    expect(parseLock(`${text}\nshelf plate @in stone`).refused).toEqual([message])
+  })
+
   it("reads unladen as a condition on the stones, not as an owner to place", () => {
     const { drafts } = parseLock("in -[unladen]- hall\nhall -- out\nshelf plate @in stone")
     expect(drafts).toEqual([])
@@ -194,8 +245,221 @@ describe("weights", () => {
     ["in -[p:held]- out\np plate @in stone", "line 1: plate p has no state held"],
     ["in -- hall\nhall -- out\nhall -[p]\np plate @hall stone", "line 3: p stands in hall, which it would bar"],
     ["in -[unladen]- out", "line 1: unladen asks about stones, and the lock has none"],
+    [
+      "in -[p:empty+q:empty+L]- out\np plate @in stone\nq plate @in stone\nL toggle @in",
+      "line 1: gate in-out: its stones never open it",
+    ],
     ["in -- out\np plate @in\np plate @out", "line 3: p is placed twice"],
   ])("refuses %j", (text, message) => {
     expect(() => parseLock(text)).toThrow(message)
+  })
+})
+
+describe("parseLock, with a region named like an object method", () => {
+  it("keeps the name, without a spurious suffix", () => {
+    const { lock } = parseLock("in -[T]- constructor\nconstructor -- out\nT toggle @in")
+    expect(Object.keys(lock.gates)).toEqual(["in-constructor"])
+  })
+})
+
+describe("a torch line", () => {
+  it("reads a torch off until lit, and one lit from the start", () => {
+    const { lock } = parseLock("in -[A+B:off]- out\nA torch @in\nB torch @in lit")
+    expect(lock.mechanics.A).toEqual({ control: "flame", in: "in", starts: "off", opens: { off: [], on: ["in-out"] } })
+    expect(lock.mechanics.B).toEqual({ control: "flame", in: "in", starts: "on", opens: { off: ["in-out"], on: [] } })
+  })
+
+  it.each(["B torch @in burning", "B torch @in lit lit", "B torch @in off on"])("refuses %s, naming the form", line => {
+    expect(() => parseLock(`in -[B]- out\n${line}`)).toThrow(
+      "a torch is off or lit at the start: write B torch @in lit"
+    )
+  })
+
+  it("reads an activator line as an activator", () => {
+    const { lock } = parseLock("in -[T]- out\nT activator @in")
+    expect(lock.mechanics.T).toEqual({
+      control: "activator",
+      in: "in",
+      starts: "off",
+      opens: { off: [], on: ["in-out"] },
+    })
+  })
+})
+
+describe("a corridor's items", () => {
+  it.each([
+    ["-[A]-", "free"],
+    ["--[A]--", "center"],
+    ["---[A]---", "center"],
+    ["-[A]--", "left"],
+    ["-[A]---", "left"],
+    ["---[A]-", "right"],
+    ["--[A]---", "left"],
+  ])("reads %s as %s", (gate, side) => {
+    const { lock } = parseLock(`in ${gate} out\nA toggle @in`)
+    expect(lock.connections[0]).toEqual({
+      between: ["in", "out"],
+      barriers: ["in-out"],
+      ...(side !== "free" ? { align: { "in-out": side } } : {}),
+    })
+  })
+
+  it("reads << as a drop from the region on its right, named by its direction of travel", () => {
+    const { lock } = parseLock("in -- out\nin << pit\npit -- out")
+    expect(lock.oneWays).toEqual({ "pit>in": { from: "pit", to: "in" } })
+    expect(lock.connections[1]).toEqual({ between: ["in", "pit"], barriers: ["pit>in"] })
+  })
+
+  it("reads a gate before a << drop as standing beside the region the drop leads to", () => {
+    const { lock } = parseLock("in -[Y]- << hall\nin -- out\nhall -- out\nY toggle @in")
+    expect(lock.connections[0]).toEqual({ between: ["in", "hall"], barriers: ["in-hall", "hall>in"] })
+  })
+
+  it("reads a gate aligned beside a << drop, the drop leading to the region on its left", () => {
+    const { lock } = parseLock("in --[Y]-- << hall\nin -- out\nhall -- out\nY toggle @in")
+    expect(lock.connections[0]).toEqual({
+      between: ["in", "hall"],
+      barriers: ["in-hall", "hall>in"],
+      align: { "in-hall": "center" },
+    })
+  })
+
+  it("reads two lines on one pair as two connections, the first written first", () => {
+    const { lock, refused } = parseLock("in -[Y]- hall\nhall >> in\nhall -- out\nY toggle @in")
+    expect(refused).toEqual([])
+    expect(lock.connections.slice(0, 2)).toEqual([
+      { between: ["in", "hall"], barriers: ["in-hall"] },
+      { between: ["hall", "in"], barriers: ["hall>in"] },
+    ])
+  })
+
+  it("reads two bare lines on one pair as two open corridors", () => {
+    expect(parseLock("in -- out\nout -- in").lock.connections).toEqual([
+      ["in", "out"],
+      ["out", "in"],
+    ])
+  })
+
+  it("reads a chain as two connections joined at the region between", () => {
+    const { lock } = parseLock("in -- out\nin -- west\nwest >> east >> in")
+    expect(lock.connections.slice(2)).toEqual([
+      { between: ["west", "east"], barriers: ["west>east"] },
+      { between: ["east", "in"], barriers: ["east>in"] },
+    ])
+  })
+
+  it("reads a chain that comes back to a region as a second corridor on its pair", () => {
+    const { lock } = parseLock("in -[X]- out -[Y]- in\nX toggle @in\nY toggle @in")
+    expect(lock.connections).toEqual([
+      { between: ["in", "out"], barriers: ["in-out"] },
+      { between: ["out", "in"], barriers: ["out-in"] },
+    ])
+  })
+
+  it("reads a line with no space between a region and an item as one with spaces", () => {
+    expect(parseLock("in-[S]- >>hall\nhall -- out\nS toggle @in").lock).toEqual(
+      parseLock("in -[S]- >> hall\nhall -- out\nS toggle @in").lock
+    )
+  })
+
+  it("writes no align on a lock that aligns nothing", () => {
+    const { lock } = parseLock("in -[A]- hall -[B]- out\nhall >> in\nA toggle @in\nB toggle @hall")
+    expect(lock.connections.some(c => "between" in c && c.align !== undefined)).toBe(false)
+  })
+
+  it.each([
+    ["in -[A]---[B]- out\nA toggle @in\nB toggle @in", "line 1: items on a corridor stand apart: write -[A]- -[B]-"],
+    ["in -[A]->> out\nA toggle @in", "line 1: items on a corridor stand apart: write -[A]- >>"],
+    ["in [A] out\nA toggle @in", "line 1: a gate stands between dashes: write -[A]-"],
+    ["in -[A] out\nA toggle @in", "line 1: a gate stands between dashes: write -[A]-"],
+    ["in -[A]- -- out\nA toggle @in", "line 1: -- is a bare corridor, exactly two dashes, and carries no items"],
+    ["in --- out", "line 1: -- is a bare corridor, exactly two dashes, and carries no items"],
+    ["in ->> out", 'line 1: cannot read "->>" on a corridor: an item is -[…]-, >>, << or -&>'],
+    ["in -<<- out", 'line 1: cannot read "-<<-" on a corridor: an item is -[…]-, >>, << or -&>'],
+    ["in >> -[A]- >> out\nA toggle @in", "line 1: a corridor falls once: put a region between two drops"],
+    ["in >> << out", "line 1: a corridor falls once: put a region between two drops"],
+    ["in --&> out", 'line 1: cannot read "--&>" on a corridor: an item is -[…]-, >>, << or -&>; items stand apart'],
+    ["in -&>- out", 'line 1: cannot read "-&>-" on a corridor: an item is -[…]-, >>, << or -&>; items stand apart'],
+    ["in >> a-b", 'line 1: cannot read a region called "a-b"'],
+    ["in -[[A]]- out\nA toggle @in", "line 1: a gate holds its owners in single brackets: write -[A]-"],
+  ])("refuses %j", (text, message) => {
+    expect(() => parseLock(text)).toThrow(message)
+  })
+})
+
+describe("a corridor written back", () => {
+  const MECHANICS = "S toggle @in\nG toggle @in wet dry\nT torch @in\np plate @in stone\nY fork @in"
+  it.each([
+    "in -[S]--- >> hall",
+    "in ---[S:a]- hall",
+    "in --[G:wet]-- -[T]- hall",
+    "in -[S|T]- << hall",
+    "in -[p:empty]- -[S+T]- hall",
+    "in -[Y]- -[S]- hall",
+  ])("reads %s back to the same connection", line => {
+    const text = `${line}\nin -- out\nhall -- out\nin -[Y]- out2\nout2 -- out\n${MECHANICS}`
+    const { lock } = parseLock(text, "back")
+    const written = corridorLine(lock, lock.connections[0])
+    expect(written).toBe(line)
+    expect(parseLock(text.replace(line, written), "back").lock).toEqual(lock)
+  })
+})
+
+describe("a stone pipe", () => {
+  const BASE = "in -- hall\nhall -[q]- out\nq plate @hall\nshelf plate @in stone"
+
+  it.each([
+    ["P pipe @in @hall", {}],
+    ["P pipe @in @hall stone", { stone: "hall" }],
+    ["P pipe @in stone @hall", { stone: "in" }],
+  ])("reads %j as a pipe between two regions", (line, stone) => {
+    const { lock, drafts, refused } = parseLock(`${BASE}\n${line}`)
+    expect(lock.weights!.pipes).toEqual({ P: { ends: ["in", "hall"], ...stone } })
+    expect(drafts).toEqual([])
+    expect(refused).toEqual([])
+  })
+
+  it("makes the lock's stones exist on its own", () => {
+    const { lock } = parseLock("in -- hall\nhall -[unladen]- out\nP pipe @in @hall stone")
+    expect(lock.weights).toEqual({ plates: {}, pipes: { P: { ends: ["in", "hall"], stone: "hall" } } })
+  })
+
+  it("counts a stone starting in a hole among the lock's stones", () => {
+    expect(() => parseLock("in -[p1+p2]- out\np1 plate @in\np2 plate @in stone\nP pipe @in @out stone")).not.toThrow()
+  })
+
+  it.each([
+    ["pipeInOneRegion", `${BASE}\nP pipe @hall @hall`, "line 5: pipeInOneRegion"],
+    ["pipeWithoutStones", "in -- hall\nhall -- out\nq plate @hall\nP pipe @in @hall", "line 4: pipeWithoutStones"],
+    ["pipeOwnsGate", `in -- hall\nhall -[P]- out\nshelf plate @in stone\nP pipe @in @hall`, "line 2: pipeOwnsGate"],
+    ["pipesRepeated", `${BASE}\nP pipe @in @hall\nQ pipe @in @hall`, "line 6: pipesRepeated"],
+  ])("refuses %s by name", (_name, text, message) => {
+    expect(parseLock(text).refused.some(line => line.startsWith(message))).toBe(true)
+  })
+
+  it.each([
+    [`${BASE}\nP pipe @in stone @hall stone`, "line 5: a pipe holds one stone at a time"],
+    [`${BASE}\nP pipe @in @cellar`, "line 5: no corridor reaches cellar"],
+    [`${BASE}\nP pipe @in`, "line 5: a pipe joins two regions"],
+    [`${BASE}\nq pipe @in @hall`, "line 5: q is placed twice"],
+  ])("refuses %j", (text, message) => {
+    expect(() => parseLock(text)).toThrow(message)
+  })
+})
+
+describe("LOCK_SYNTAX", () => {
+  it.each(Object.entries(CONTROL_WORDS))("explains the %s control", (_kind, word) => {
+    expect(LOCK_SYNTAX).toMatch(word)
+  })
+  it("splits every line into notation and meaning, each under a section", () => {
+    const sections = syntaxSections()
+    expect(sections).toHaveLength(4)
+    expect(sections.every(section => section.rows.length > 0)).toBe(true)
+    const rows = sections.flatMap(section => section.rows)
+    expect(rows.every(row => row.syntax !== "" && row.meaning !== "")).toBe(true)
+    expect(rows.find(row => row.syntax === "in -[A+B]- hall")?.meaning).toContain("any owner")
+  })
+  it("shows an example that reads whole", () => {
+    expect(parseLock(LOCK_EXAMPLE).refused).toEqual([])
   })
 })

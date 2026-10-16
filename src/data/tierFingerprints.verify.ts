@@ -6,7 +6,7 @@ import { journeys } from "./journeys"
 import expected from "./tierFingerprints.json"
 import { tierFingerprints } from "./tierFingerprints"
 
-const shipped = journeys.filter(j => !j.dev)
+const shipped = journeys
 
 // Names the tier that moved, and every tier that did not, because the accident this guards against is
 // authoring one tier and moving another.

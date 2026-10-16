@@ -12,7 +12,7 @@ import { cellSlot, legacyCellSlot } from "./cellSlot"
  *
  * A coordinate is an accident of the carve, and so — this is the part that took measuring — is the
  * ordinal. A cell's `ordinal` is its step along the CARVED walk, and how many steps that walk takes is
- * the carve's own choice (`targetDistance` in siteAssembler). Re-carving one expert floor at a
+ * the carve's own choice (`targetDistance` in carve/growMaze.ts). Re-carving one expert floor at a
  * neighbouring seed took it from 685 cells to 668 and moved the main chain's forks from steps
  * 26/49/58 to 5/6/13/22/29/50: everything past the first divergence renumbers. An ordinal survives a
  * floor being re-SHUFFLED; it does not survive one being re-LENGTHENED, which is what compacting the
@@ -24,9 +24,9 @@ import { cellSlot, legacyCellSlot } from "./cellSlot"
  * - a chest, shop or gate is its section's one `end` or `gate` — named by the family that fills it
  * - a staircase is its `stairId`; the two plain portals are the entrance and the exit
  *
- * Measured over the baked world: 5250 such slots, no two alike inside a (section, floor), and all 1303
- * sections hold at least one. Re-carved at two different seeds, four floors across four tiers and a
- * tomb kept every slot.
+ * Measured over the baked world: no two slots alike inside a (section, floor), and every section holds at
+ * least one but a lock region with no mechanism, plate or door. Re-carved at two different seeds, four floors
+ * across four tiers and a tomb kept every slot.
  *
  * Cells with no slot — corridors and bare forks — are addressed by `~${ordinal}`, which resolves inside
  * one carve and deliberately resolves to nothing after the floor moves. Their fog comes back by the

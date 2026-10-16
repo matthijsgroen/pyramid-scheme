@@ -1,0 +1,12 @@
+// designed by: Claude
+// junior. The way out waits for two levers, one above a drop and one below it, and stands below. Throw the upper
+// lever before you jump: the lower one opens the way back up, so jumping first costs a walk, never a dead end.
+
+in -- hall
+hall -- side
+hall -- ledge
+ledge >> pit
+pit -[B]- hall
+pit -[A+B]- out
+A toggle @side
+B toggle @pit

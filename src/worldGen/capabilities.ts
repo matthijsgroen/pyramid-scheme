@@ -1,4 +1,4 @@
-import { DEV_JOURNEYS, PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
+import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 
 // Which reward economies a site participates in. Presets select capabilities instead of
 // code branching on "is this a pyramid?" — a site opts into a capability by having it here,
@@ -36,22 +36,7 @@ export const TOMB_CAPABILITIES: SiteCapabilities = {
   requireBakedBoards: true,
 }
 
-// A dev site stands outside every reward economy. Nothing collects its path ends, so no chest on it
-// can take a mosaic piece or a fragment off a real pyramid: the loot a playtest floor contributes is
-// none, by construction rather than by careful authoring. Its ends therefore hold nothing at all —
-// see slots.ts's clearUncollectedSlots and validate.ts's findEmptyChests.
-export const DEV_CAPABILITIES: SiteCapabilities = {
-  emitFragmentSlots: false,
-  emitMapPiece: false,
-  emitPerkStream: false,
-  // A playtest floor is where an unbaked tier is MEANT to be walked: it stands one mechanic at every
-  // difficulty so a developer can look at it, long before any of those tiers is worth an offline list.
-  // So its boards are searched for on the spot — slower, never wrong, and the only site allowed it.
-  requireBakedBoards: false,
-}
-
 export const capabilitiesFor = (siteId: string): SiteCapabilities | undefined => {
-  if (DEV_JOURNEYS.some(j => j.id === siteId)) return DEV_CAPABILITIES
   if (PYRAMID_JOURNEYS.some(j => j.id === siteId)) return PYRAMID_CAPABILITIES
   if (TOMB_JOURNEYS.some(j => j.id === siteId)) return TOMB_CAPABILITIES
   return undefined

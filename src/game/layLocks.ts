@@ -84,7 +84,8 @@ const stretchLength = (plan: LockPlan, region: PlanRegion): number => {
     plan.corridors.filter(corridor => corridor.from === region.id || corridor.to === region.id).length +
     plan.drops.filter(drop => drop.launch === region.id || drop.landing === region.id).length
   const junction = plan.junctions.find(candidate => candidate.region === region.id)
-  const joint = junction && ways - junction.arms.length > 2 ? 2 : 1
+  const sideArms = junction?.arms.filter(id => !plan.corridors.find(corridor => corridor.id === id)?.onRoute) ?? []
+  const joint = junction && ways - sideArms.length > 2 ? 2 : 1
   return Math.max(region.minNodes, Math.ceil((ways - 2) / 2), joint)
 }
 
@@ -104,6 +105,9 @@ const dropHops = (d: number) => oneWayReach(DIRS[d][2]) / GRID_STEP
 // Work (candidate placements tried) one search may spend, how many reshuffled searches a grid gets per
 // allowance of lengthening, and the most extra nodes any one stretch may take.
 const WORK_BUDGET = 400
+// Lattice steps one search may take looking for a stretch's walk or a corridor's path. A walk or a path that does
+// not exist is otherwise looked for down every self-avoiding walk of its length, which on a crowded grid never ends.
+const STEP_BUDGET = 250_000
 const RESTARTS = 10
 const MAX_EXTRA_NODES = 1
 const MAX_EXTRA_PER_REGION = 2
@@ -123,12 +127,14 @@ type Part = LayRefusal["part"]
 type Step = { part: Part; run: (next: () => boolean) => boolean }
 type DropAt = { from: number; dir: number }
 
-/** One search at one grid size, with so many extra nodes to give out: the laid floor, or how far it got. */
+/** One search at one grid size, with so many extra nodes to give out: the laid floor, or how far it got. With
+ * `dropsAhead`, a branch is cut as soon as a laid region can no longer launch or land a drop it still owes. */
 const search = (
   plan: LockPlan,
   n: number,
   rand: () => number,
-  extraNodes: number
+  extraNodes: number,
+  dropsAhead = false
 ): { laid?: LaidLocks; deepest: number; parts: Part[] } => {
   const M = (n + 1) / 2
   const coords = (i: number): [number, number] => [Math.floor(i / M), i % M]
@@ -160,6 +166,9 @@ const search = (
   const trail: Array<() => void> = []
   let extraLeft = extraNodes
   let work = 0
+  let stepsTaken = 0
+  // A search that has taken its last lattice step looks no further: every generator stops and every step refuses.
+  const outOfSteps = () => ++stepsTaken > STEP_BUDGET
   let deepest = -1
 
   const undoTo = (mark: number) => {
@@ -191,7 +200,7 @@ const search = (
     extraLeft -= count
     trail.push(() => (extraLeft += count))
   }
-  const spent = () => ++work > WORK_BUDGET
+  const spent = () => ++work > WORK_BUDGET || stepsTaken > STEP_BUDGET
   const dirBetween = (a: number, b: number) => DIRS.findIndex((_, d) => step(a, d) === b)
 
   const regionById = new Map(plan.regions.map(region => [region.id, region]))
@@ -251,6 +260,8 @@ const search = (
   const regionStep = (region: PlanRegion, pin: { drop: string; other: string } | undefined): Step => {
     const entrance = region.id === plan.route[0]
     const junction = junctionOf.get(region.id)
+    const ownsOnward =
+      junction?.arms.some(id => plan.corridors.find(corridor => corridor.id === id)?.onRoute === true) ?? false
     const base = stretchLength(plan, region)
 
     function* anchors(): Generator<{ at: number; pinned?: { id: string; from: number; dir: number } }> {
@@ -294,6 +305,7 @@ const search = (
       let found = 0
       const path: number[] = []
       function* grow(at: number, left: number): Generator<number[]> {
+        if (outOfSteps()) return
         if (left === 0) {
           found++
           yield [...path]
@@ -314,7 +326,10 @@ const search = (
     return {
       part: { kind: "region", id: region.id },
       run: next => {
-        const reserve = entrance || region.id === plan.route[plan.route.length - 1] ? 0 : MAX_EXTRA_PER_REGION
+        const reserve =
+          entrance || region.id === plan.route[plan.route.length - 1] || region.answersTo !== undefined
+            ? 0
+            : MAX_EXTRA_PER_REGION
         for (let extra = 0; extra <= Math.min(extraLeft, reserve); extra++) {
           for (const { at, pinned } of anchors()) {
             if (spent()) return false
@@ -325,9 +340,12 @@ const search = (
               for (const flipped of base + extra > 1 ? [false, true] : [false]) {
                 const chain = flipped ? [...walk].reverse().concat(at) : [at, ...walk]
                 const anchorIdx = chain.indexOf(at)
+                // A junction owning the route's way on stands where that corridor leaves: the stretch's last node.
                 const joints = junction
                   ? shuffle(
-                      chain.map((_, i) => i).filter(i => !(pinned && i === anchorIdx)),
+                      chain
+                        .map((_, i) => i)
+                        .filter(i => !(pinned && i === anchorIdx) && (!ownsOnward || i === chain.length - 1)),
                       rand
                     )
                   : [-1]
@@ -342,7 +360,7 @@ const search = (
                   trail.push(() => placed.delete(region.id))
                   if (next()) return true
                   undoTo(inner)
-                  if (work > WORK_BUDGET) return false
+                  if (work > WORK_BUDGET || stepsTaken > STEP_BUDGET) return false
                 }
               }
             }
@@ -359,6 +377,7 @@ const search = (
       let found = 0
       const path = [s]
       function* walk(at: number, left: number): Generator<number[]> {
+        if (outOfSteps()) return
         for (const d of shuffle([0, 1, 2, 3], rand)) {
           if (found >= PATHS_PER_LENGTH) return
           if (at === s && !sideFree(s, d)) continue
@@ -566,6 +585,48 @@ const search = (
     }
   }
 
+  // A loop-closing corridor joins two regions both laid without it in mind, and the search backtracks
+  // chronologically, so a region walled in steps earlier is found only when the budget is gone. A placed
+  // region needs a usable side (free, with an empty cell or a region it still joins behind it) for each
+  // corridor it has yet to lay; a branch short of that can never lay and is cut at once. With `dropsAhead` the same
+  // holds for its drops: each needs a side whose straight run is clear and lands on empty ground or on its other
+  // region, and the corridors and drops together need as many different sides.
+  const walledIn = (): boolean => {
+    for (const [region, nodes] of regionNodes) {
+      const pending = corridorsOf(region).filter(corridor => !corridorPath.has(corridor.id))
+      const owed = dropsAhead ? dropsOf(region).filter(drop => !dropAt.has(drop.id)) : []
+      if (pending.length === 0 && owed.length === 0) continue
+      const others = new Set(pending.map(corridor => (corridor.from === region ? corridor.to : corridor.from)))
+      const usable = new Set<number>()
+      for (const node of nodes)
+        for (let d = 0; d < 4; d++) {
+          const next = step(node, d)
+          if (next < 0 || !sideFree(node, d)) continue
+          const owner = occupied.get(next)
+          if (owner === undefined || others.has(owner)) usable.add(node * 4 + d)
+        }
+      if (usable.size < pending.length) return true
+      for (const drop of owed) {
+        const other = drop.launch === region ? drop.landing : drop.launch
+        const otherNodes = regionNodes.get(other)
+        const lands = (at: number) =>
+          otherNodes ? otherNodes.includes(at) && at !== junctionAt.get(other) : !occupied.has(at)
+        let fits = false
+        for (const node of nodes) {
+          if (node === junctionAt.get(region)) continue
+          for (let d = 0; d < 4; d++)
+            if (dropFits(node, d) && lands(stepBy(node, d, dropHops(d)))) {
+              fits = true
+              usable.add(node * 4 + d)
+            }
+        }
+        if (!fits) return true
+      }
+      if (usable.size < pending.length + owed.length) return true
+    }
+    return false
+  }
+
   let laid: LaidLocks | undefined
   const run = (i: number): boolean => {
     if (i === steps.length) {
@@ -573,6 +634,7 @@ const search = (
       return true
     }
     deepest = Math.max(deepest, i)
+    if (walledIn()) return false
     return steps[i].run(() => run(i + 1))
   }
   run(0)
@@ -598,5 +660,13 @@ export const layLockPlan = (plan: LockPlan, { seed, n, ceiling = LAY_GRID_CEILIN
       }
     refusal = { part: furthest.part ?? { kind: "region", id: plan.route[0] }, grid }
   }
+  // Only a plan no search laid is searched again with its drops looked ahead to, so every plan that lays without
+  // it lays as it always has. The look-ahead cuts dead branches early, so one search per grid is enough.
+  if (plan.drops.length > 0)
+    for (let grid = n; grid <= Math.max(n, ceiling); grid += GRID_STEP)
+      for (let extra = 0; extra <= MAX_EXTRA_NODES; extra++) {
+        const { laid } = search(plan, grid, mulberry32(seed + grid * 7919 + extra * 104729), extra, true)
+        if (laid) return { ok: true, laid }
+      }
   return { ok: false, refusal: refusal! }
 }

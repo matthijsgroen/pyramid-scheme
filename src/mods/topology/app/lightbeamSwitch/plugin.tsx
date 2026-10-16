@@ -25,8 +25,7 @@ import { LightbeamSwitchPuzzle } from "./LightbeamSwitchPuzzle"
  * what lets a seed list hold one entry per shape instead of one per bearing.
  *
  * `seed` reaches `generatePuzzle` as the index into that shape and tier's list, and as the seed to search
- * from where no list covers them — the dev journey's expert, master and wizard switches, the playtesting
- * bench, a story.
+ * from where no list covers them — the Lock editor's expert, master and wizard switches, a story.
  *
  * The room is only ever authored into a junction the assembler shut, so the fallback shape below is for a
  * board built outside one, where there is no fork and nothing to face.

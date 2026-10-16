@@ -5,6 +5,7 @@ import type { FloorConfig, FloorGrid, GridCell } from "@/game/siteTypes"
 import { assembleFloor } from "@/game/siteAssembler"
 import { cellAddress } from "@/game/cellAddress"
 import { isSpent } from "@/game/mechanismDoors"
+import { withGateFaces, withoutUnpairedMarks } from "@/game/gateFace"
 import { createJourneysV3Api, type JourneyAPI, type StoredJourneyStateV3 } from "@/app/state/useJourneys"
 import { journeys as allKnownJourneys } from "@/data/journeys"
 import type { TranslatedJourney } from "@/app/translations/useJourneyTranslations"
@@ -14,8 +15,10 @@ import { andDoorFloor, threeOwnerDoorFloor } from "@/game/testSupport/gateFaceFi
 import { useAssembledFloor } from "./useAssembledFloor"
 import { useMechanismStates } from "./useMechanismStates"
 import { useSiteNavigation } from "./useSiteNavigation"
-import { SiteMapView } from "./SiteMapView"
-import { cellCenter, CELL } from "./mapScale"
+import { SiteMapView, nodeSpritesFor } from "./SiteMapView"
+import { buildRoomClaims } from "./roomClaims"
+import { sharedTileUrl } from "./tileAssets"
+import { cellCenter, CELL, PROP_H } from "./mapScale"
 import "@/mods/registerModApps"
 
 const JOURNEY = allKnownJourneys[0].id
@@ -77,7 +80,7 @@ const tickedOff = (marker: HTMLElement | undefined) => marker?.textContent?.incl
 
 describe("a spent activator says so on the map", () => {
   for (const name of Object.keys(FLOORS)) {
-    it(`${name}: every torch wears the used appearance when lit and the unused one when not, in every combination`, () => {
+    it(`${name}: every torch shows the used appearance when lit and the unused one when not, its own marker hidden under the art, in every combination`, () => {
       const { grid: base } = carved.get(name)!
       const torches = torchesOf(base)
       expect(torches.length, "the floor has torches").toBeGreaterThan(0)
@@ -89,7 +92,10 @@ describe("a spent activator says so on the map", () => {
           const where = `${name} / ${label} / torch at ${at}`
           const marker = markerOf(container, at[0], at[1])
           expect(tickedOff(marker), `${where}: ✓`).toBe(lit)
-          expect(marker?.querySelector("g[opacity]")?.getAttribute("opacity"), `${where}: dim`).toBe(lit ? "0.45" : "1")
+          expect(
+            marker?.querySelector("g[opacity]")?.getAttribute("opacity"),
+            `${where}: the torch art is the node`
+          ).toBe("0")
         }
         unmount()
       }
@@ -110,7 +116,48 @@ describe("a spent activator says so on the map", () => {
       }
     })
 
-    it(`${name}: a torch hangs no lever furniture in any lighting, its used look being its marker alone`, () => {
+    it(`${name}: a torch or lever wears the mark its door's board shows for it, and none where no board does`, () => {
+      const { grid: base } = carved.get(name)!
+      const grid = withoutUnpairedMarks(withGateFaces(walked(base), 0, new Map()))
+      const sprites = nodeSpritesFor(grid, buildRoomClaims(grid), "starter", undefined, new Map(), 0)
+      const boardMarks = grid.cells
+        .flat()
+        .flatMap(cell => (cell.type === "room" ? (cell.gateFace?.markers ?? []) : []))
+        .flatMap(({ mark }) => (mark ? [mark] : []))
+      for (const { at } of [...torchesOf(base), ...leversOf(base)]) {
+        const cell = grid.cells[at[0]][at[1]]
+        const sprite = sprites.find(s => s.key.endsWith(`:${at[0]},${at[1]}`))
+        const mark = cell.type === "room" ? cell.mark : undefined
+        const onBoard = mark !== undefined && boardMarks.some(m => m.color === mark.color && m.glyph === mark.glyph)
+        expect(sprite?.mark, `${name} at ${at}`).toEqual(onBoard ? mark : undefined)
+      }
+    })
+
+    it(`${name}: a torch is painted unlit until it is lit, and only a lit one lays light on the floor under its flame`, () => {
+      const { grid: base } = carved.get(name)!
+      const torches = torchesOf(base)
+      const grid = walked(base)
+      for (const { label, states } of everyLighting(base, torches)) {
+        const sprites = nodeSpritesFor(grid, buildRoomClaims(grid), "starter", undefined, states, 0)
+        for (const { at } of torches) {
+          const lit = states.get(cellAddress(base, 0, at[0], at[1])!) === "lit"
+          const where = `${name} / ${label} / torch at ${at}`
+          const sprite = sprites.find(s => s.key === `standingTorch:${at[0]},${at[1]}`)
+          expect(sprite?.url, `${where}: art`).toBe(sharedTileUrl(lit ? "torchLit" : "torchUnlit"))
+          expect(sprite?.spent, `${where}: never eased back, its flame says it is used`).toBeUndefined()
+          expect(sprite?.light !== undefined, `${where}: light`).toBe(lit)
+          if (sprite?.light) {
+            // Under the painted torch: inside the middle third of its frame, on the floor below the flame.
+            expect(sprite.light.x).toBeGreaterThan(sprite.x + CELL / 3)
+            expect(sprite.light.x).toBeLessThan(sprite.x + (CELL * 2) / 3)
+            expect(sprite.light.y).toBeGreaterThan(sprite.y + PROP_H - CELL / 2)
+            expect(sprite.light.y).toBeLessThanOrEqual(sprite.y + PROP_H)
+          }
+        }
+      }
+    })
+
+    it(`${name}: a torch hangs no lever furniture in any lighting and keeps its flame marker`, () => {
       const { grid: base } = carved.get(name)!
       const torches = torchesOf(base)
       for (const { label, states } of everyLighting(base, torches)) {

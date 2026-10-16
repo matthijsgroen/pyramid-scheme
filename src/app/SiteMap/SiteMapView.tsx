@@ -11,6 +11,11 @@ import type {
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { isSealedWayOut, oneWayRuns, revealAll } from "../../game/gridNavigation"
 import { ExplorerDot, LightPool } from "./ExplorerDot"
+import { RiderSprite, ZiplineRider } from "./ZiplineRider"
+import { poseFor, type RidePoses } from "./ridePoses"
+import type { Ride } from "./useZiplineRide"
+import { SqueezeRider } from "./SqueezeRider"
+import type { Squeeze } from "./useSqueeze"
 import { driftsFor, grassMatsFor, scatterFor, type Drift, type ScatterKind } from "./floorScatter"
 import { useMapZoom } from "./useMapZoom"
 import {
@@ -48,10 +53,15 @@ import {
 } from "./tileAssets"
 import { storedAtCell } from "@/game/cellAddress"
 import { tileStatusAt } from "@/game/sequencePlay"
+import { explorerWeight, holeLookAt, isCarrying, plateLookAt, type ExplorerWeight } from "@/game/stonePlay"
+import { passageArtUrl } from "./passageArt"
+import { PLATE_TILE } from "./plateArt"
+import { PIPE_HOLE_TILE } from "./pipeHoleArt"
 import { drawingOf, familyIconOf, isLockedGate, isSpentAt, nodeRadius, shapeKindFor, staysOpen } from "./nodeKinds"
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
+import { MapNotice } from "@/ui/atoms/MapNotice"
+import { MarkArtBadge } from "./mark"
 import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
-import { MarkArtBadge, type Mark } from "./mark"
 import { FloorShade, LitPlaces } from "./torchlight"
 import {
   SEATING_PASS,
@@ -102,6 +112,14 @@ type Props = {
   explorerPos?: readonly [number, number]
   /** The explorer is mid-span and drawn nowhere until he lands. */
   explorerHidden?: boolean
+  /** A zipline being ridden: drawn as one slide beside the explorer, who is hidden meanwhile. */
+  ride?: Ride | null
+  /** Where the rider hangs at each end of the ride and how big it is drawn; unset uses RIDE_POSES. A look, tuned in a story. */
+  ridePoses?: RidePoses
+  /** Draw the ride standing still at its first or last frame instead of sliding it: a story's way to tune the poses. */
+  rideFrame?: "from" | "to"
+  /** A narrow passage being squeezed through, drawn the way it is crossed (`SqueezeWay`); the explorer is hidden meanwhile. */
+  squeeze?: Squeeze | null
   /** Current floor index. Keys the explorer dot so a floor switch remounts it (instant snap to the
    * new floor's entrance) instead of animating a walk from the previous floor's coordinates. */
   currentFloor?: number
@@ -116,6 +134,8 @@ type Props = {
   mechanismStates?: ReadonlyMap<string, string>
   /** The way in the explorer is standing at, drawn as a button beside him — see `useSiteNavigation`. */
   prompt?: { label: string; at: readonly [number, number]; onTake: () => void } | null
+  /** Why the explorer stopped, drawn where the prompt is — see `useSiteNavigation`. */
+  notice?: { label: string; at: readonly [number, number] } | null
   className?: string
 }
 
@@ -123,6 +143,13 @@ type Props = {
  * tile rather than guessed: the flame's own pixels land 24 units to one side of centre. WHICH side is a
  * fact about the file — see `flameOnRight` where the flights are placed. */
 const STAIR_FLAME_DX = CELL * 0.43
+
+/** Where the standing torch's flame stands across its frame, measured off the painted tile: its pixels
+ * land 25 units from the left edge, a hair left of centre. */
+const TORCH_FLAME_X = CELL * 0.45
+/** How far behind its floor line the torch's foot stands: the middle of its painted base, so the pool sits
+ * round the foot rather than in front of it. */
+const TORCH_FOOT_DEPTH = CELL * 0.1
 
 /** Anything standing on the floor, with the line it stands on — a room's own furniture and a node's.
  *
@@ -212,6 +239,8 @@ const LEVER_CORRECTION_S = LEVER_SHEAR_K * LEVER_TILE_ASPECT // ≈ 0.4667
 const leverArmTransform = (angleDeg: number): string =>
   `scaleY(${1 / LEVER_CORRECTION_S}) rotate(${angleDeg}deg) scaleY(${LEVER_CORRECTION_S})`
 
+const NO_STATES: ReadonlyMap<string, string> = new Map()
+
 /** Every node's own furniture on one floor, in map space — chests beside treasure rooms, flights at
  * stairheads. See `NodeSprite` for why this is a list and not a child of each node's own `<g>`.
  *
@@ -230,7 +259,11 @@ export const nodeSpritesFor = (
    * state is stored under (`cellAddress`, `mechanismDoors.ts`). Absent for callers with no journey yet
    * (a story, a hand-built test grid): every control then draws at its own `initial` position. */
   mechanismStates?: ReadonlyMap<string, string>,
-  floorIndex = 0
+  floorIndex = 0,
+  /** Where the explorer stands once his walk has settled, for the plate he presses; unset while he walks. */
+  standingAt?: readonly [number, number],
+  /** What the explorer's weight moves while he stands on a plate: drawn so, never walked so. */
+  weight?: ExplorerWeight
 ): NodeSprite[] => {
   // Which cells belong to each room: the room's own, plus everything it claimed.
   const footprints = new Map<string, string[]>()
@@ -309,7 +342,7 @@ export const nodeSpritesFor = (
     c: number,
     tier: Difficulty,
     dirs: ReadonlySet<Direction>,
-    { open, wall, mark }: { open: boolean; wall: boolean; mark: Mark | undefined }
+    { open, wall }: { open: boolean; wall: boolean }
   ): void => {
     // `gate` is shut and `gate-open` is the same leaf swung back or sunk into the floor; a rank with
     // neither draws the marker alone, exactly as a stairhead did before its flights were painted.
@@ -394,16 +427,17 @@ export const nodeSpritesFor = (
       x: left,
       y: base - PROP_H,
       mirrored: false,
-      // ON THE LEAF, NOT ON THE MARKER: a way a lever shut hides its marker entirely, so the pair
-      // its lever wears has to be worn by the stone the player is actually looking at.
-      ...(mark ? { mark } : {}),
     })
   }
   for (let r = 0; r < grid.rows; r++) {
     for (let c = 0; c < grid.cols; c++) {
       const cell = grid.cells[r][c]
       if (cell.type === "corridor" && cell.openGate && cell.state !== "fogged") {
-        gateLeaf(r, c, cell.difficulty ?? floorTier, cell.dirs, { open: true, wall: false, mark: cell.openGate.mark })
+        // A way the explorer's weight shuts is drawn shut while he stands there; the walk still reads the corridor it is.
+        gateLeaf(r, c, cell.difficulty ?? floorTier, cell.dirs, {
+          open: !weight?.shut.has(cell.openGate.requiredKeyId ?? ""),
+          wall: false,
+        })
         continue
       }
       if (cell.type !== "room" || cell.state === "fogged") continue
@@ -448,23 +482,29 @@ export const nodeSpritesFor = (
           mirrored: false,
           light: { x: ex, y: ey + CELL * 0.12, r: LAMP_POOL_RADIUS },
         })
+      } else if (kind === "gate" && cell.passage) {
+        // A NARROW PASSAGE IS A WALL STANDING IN ITS OWN CELL, a crack in it: drawn in the cell-wide prop frame like a
+        // plate, never hung on a seam like a gate's leaf, and the same at every rank. Nobody stands in it; it fades
+        // while the explorer waits on the cell behind it. Unpainted, it is drawn as the shut gate it is to the walk.
+        const url = passageArtUrl(cell)
+        if (url)
+          out.push({
+            footprint,
+            key: `passage:${r},${c}`,
+            url,
+            x: cx - CELL / 2,
+            y: cy + CELL / 2 - PROP_H,
+            mirrored: false,
+            fadeAt: [`${r},${c}`, `${r - 1},${c}`],
+          })
+        else gateLeaf(r, c, tier, cell.dirs, { open: false, wall: true })
       } else if (kind === "gate" && cell.regionBarrier) {
         // A REGION BARRIER IS THE COVER ITSELF, NOT A DOOR HUNG IN THE PASSAGE: the water or sand is drawn
-        // under the floor's light (RegionBarrierCovers), and this sprite is only the seat for the owner's
-        // mark, the one thing tying the blockage to its mechanism, so it stands above the cover.
-        out.push({
-          footprint,
-          key: `blockage:${r},${c}`,
-          x: cx - CELL / 2,
-          y: cy + CELL / 2 - PROP_H,
-          mirrored: false,
-          ...(cell.mark ? { mark: cell.mark } : {}),
-        })
+        // under the floor's light (RegionBarrierCovers), and the cell carries no sprite and no marker.
       } else if (kind === "gate") {
         gateLeaf(r, c, tier, cell.dirs, {
-          open: cell.state === "completed",
+          open: cell.state === "completed" || (weight?.open.has(cell.requiredKeyId ?? "") ?? false),
           wall: isSealedWayOut(cell),
-          mark: cell.mark,
         })
       } else if (drawingOf(cell)?.art === "lever") {
         // BLOCKED UNTIL ALL THREE TILES EXIST, AND NEVER PLACEHOLDER: `tileUrl`, not `tileOrPlaceholder`
@@ -494,10 +534,63 @@ export const nodeSpritesFor = (
           key: `handle:${r},${c}`,
           ...(isSpentAt(grid, floorIndex, r, c, cell, mechanismStates) ? { spent: true } : {}),
           url: back,
+          ...(cell.mark ? { mark: cell.mark } : {}),
           x: cx + dx - CELL / 2,
           y: cy + dy + CELL / 2 - PROP_H,
           mirrored: false,
           armStack: { armUrl: arm, frontUrl: front, angleDeg },
+        })
+      } else if (drawingOf(cell)?.art === "standingTorch") {
+        // ONE SHARED PAINTING, lit or not by the control's own position. A lit torch is NOT eased back the way
+        // an emptied chest is: the flame is what says it is used, and a see-through post over its own pool of
+        // light reads as a ghost. Its marker still wears the ✓. The lit tile is imported with no seat shadow,
+        // because the pool laid at its foot lights the floor that shadow would have fallen on.
+        const spent = isSpentAt(grid, floorIndex, r, c, cell, mechanismStates)
+        const url = sharedTileUrl(spent ? "torchLit" : "torchUnlit")
+        if (!url) continue
+        const { dx, dy } = nodeArtOffset(cell.dirs)
+        const x = cx + dx - CELL / 2
+        const floorLine = cy + dy + CELL / 2
+        out.push({
+          footprint,
+          key: `standingTorch:${r},${c}`,
+          url,
+          ...(cell.mark ? { mark: cell.mark } : {}),
+          x,
+          y: floorLine - PROP_H,
+          mirrored: false,
+          ...(spent ? { light: { x: x + TORCH_FLAME_X, y: floorLine - TORCH_FOOT_DEPTH, r: LAMP_POOL_RADIUS } } : {}),
+        })
+      } else if (cell.plate) {
+        // A PLATE IS FLAT ON THE FLOOR, drawn in the cell-wide prop frame like an exit, in the look its stones and
+        // the explorer's weight give it now. The shared painting, never a rank's: a plate is the same at every rank.
+        const standing = standingAt !== undefined && standingAt[0] === r && standingAt[1] === c
+        const look = plateLookAt(grid, floorIndex, r, c, mechanismStates ?? NO_STATES, standing)
+        const url = look && sharedTileUrl(PLATE_TILE[look])
+        if (!url) continue
+        out.push({
+          footprint,
+          key: `plate:${r},${c}`,
+          url,
+          x: cx - CELL / 2,
+          y: cy + CELL / 2 - PROP_H,
+          mirrored: false,
+        })
+      } else if (cell.pipeHole) {
+        // A PIPE'S HOLE IS IN THE BACK WALL of its node, drawn on the wall band above the floor square in the look
+        // its stones give it. The shared painting, never a rank's.
+        const look = holeLookAt(grid, floorIndex, r, c, mechanismStates ?? NO_STATES)
+        const url = look && sharedTileUrl(PIPE_HOLE_TILE[look])
+        if (!url) continue
+        out.push({
+          footprint,
+          key: `pipeHole:${r},${c}`,
+          url,
+          x: cx - CELL / 2,
+          y: cellTop(r) - WALL_H,
+          w: CELL,
+          h: WALL_H,
+          mirrored: false,
         })
       } else if (kind === "stairhead") {
         const goesUp = r === grid.entrancePos[0] && c === grid.entrancePos[1]
@@ -1120,11 +1213,16 @@ export const SiteMapView = ({
   freeWalk = false,
   explorerPos,
   explorerHidden = false,
+  ride,
+  ridePoses,
+  rideFrame,
+  squeeze,
   currentFloor,
   pendingCells,
   ownedKeys,
   mechanismStates,
   prompt,
+  notice,
   className,
 }: Props) => {
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
@@ -1132,11 +1230,56 @@ export const SiteMapView = ({
   const tier = useMemo(() => floorTier(grid), [grid])
   const regions = useMemo(() => tileRegionsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
-  const covers = useMemo(() => regionBarrierCovers(grid), [grid])
+  // Reckoned from where the explorer stands: the water is what he cannot walk into from there.
+  const coverFrom = explorerPos ?? grid.entrancePos
+  const covers = useMemo(
+    () => regionBarrierCovers(grid, coverFrom),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- by value, so a fresh position tuple does not recompute
+    [grid, coverFrom[0], coverFrom[1]]
+  )
   const barrierCovers = useRegionBarrierCovers(covers, `${grid.siteId}:${currentFloor ?? 0}`)
+  // Corridor-run markers track the explorer dot's visual position, not the logical one:
+  // hide them the instant a run target is clicked (the player has committed to a
+  // destination, so the old markers no longer apply), and don't show the new ones at the
+  // far end until the dot actually arrives there rather than while it's still gliding.
+  const [settledExplorerPos, setSettledExplorerPos] = useState(explorerPos)
+  const isTraveling = !!(
+    explorerPos &&
+    settledExplorerPos &&
+    (explorerPos[0] !== settledExplorerPos[0] || explorerPos[1] !== settledExplorerPos[1])
+  )
+
+  const weight = useMemo(
+    () =>
+      isTraveling || !settledExplorerPos
+        ? undefined
+        : explorerWeight(grid, currentFloor ?? 0, settledExplorerPos, mechanismStates ?? NO_STATES, ownedKeys),
+    [grid, currentFloor, settledExplorerPos, isTraveling, mechanismStates, ownedKeys]
+  )
   const nodeSprites = useMemo(
-    () => nodeSpritesFor(grid, claims, tier, pendingCells, mechanismStates, currentFloor ?? 0),
-    [grid, claims, tier, pendingCells, mechanismStates, currentFloor]
+    () =>
+      nodeSpritesFor(
+        grid,
+        claims,
+        tier,
+        pendingCells,
+        mechanismStates,
+        currentFloor ?? 0,
+        isTraveling ? undefined : settledExplorerPos,
+        weight
+      ),
+    [grid, claims, tier, pendingCells, mechanismStates, currentFloor, isTraveling, settledExplorerPos, weight]
+  )
+  const drawnPlates = useMemo(
+    () =>
+      new Set(
+        nodeSprites.flatMap(sprite =>
+          sprite.key.startsWith("plate:") || sprite.key.startsWith("pipeHole:")
+            ? [sprite.key.replace(/^pipeHole:/, "plate:")]
+            : []
+        )
+      ),
+    [nodeSprites]
   )
   // The walkable floor, as rectangles: what a layer cut to the floor is cut to. The sand is the only one
   // left — everything else that used to share the map-wide clip now carries its own shape.
@@ -1146,6 +1289,11 @@ export const SiteMapView = ({
   // the line it stands on. Split at the explorer's own floor line so he is drawn in the middle.
   const standing = useMemo((): StandingSprite[] => {
     const standingOn = explorerPos ? `${explorerPos[0]},${explorerPos[1]}` : null
+    // A SQUEEZER IS IN THE CRACK, so the wall he passes stays solid until he lands: fading it for the side he set out
+    // from would ghost the wall he is seen squeezing through. Head-on his own fade says he is behind it.
+    const squeezing = squeeze && `${squeeze.traversal.via[0]},${squeeze.traversal.via[1]}`
+    const fades = (sprite: NodeSprite) =>
+      !!standingOn && !!sprite.fadeAt?.includes(standingOn) && sprite.key.split(":").pop() !== squeezing
     const sprites: StandingSprite[] = nodeSprites.map(sprite => ({
       key: sprite.key,
       // A drop is sorted by its run's floor line, not its bottom edge: the art hangs below the floor, and
@@ -1154,8 +1302,12 @@ export const SiteMapView = ({
       ...(sprite.light ? { light: sprite.light } : {}),
       // A drop is the exception: the player stands IN FRONT of it rather than working it, so on its own
       // mouth the general tie holds (he stands in front of what shares his floor line) and its parapet
-      // never covers him.
-      atExplorer: standingOn !== null && !sprite.key.startsWith("drop:") && sprite.footprint.includes(standingOn),
+      // never covers him. A plate is the other: he stands on it, so it is always under him.
+      atExplorer:
+        standingOn !== null &&
+        !sprite.key.startsWith("drop:") &&
+        !sprite.key.startsWith("plate:") &&
+        sprite.footprint.includes(standingOn),
       node: (
         <Fragment key={sprite.key}>
           {sprite.url && (
@@ -1172,11 +1324,7 @@ export const SiteMapView = ({
               // wide, so it reaches past its cell. See NodeSprite.footprint.
               clipTo={footprintRects(sprite.footprint)}
               opacity={
-                standingOn && sprite.fadeAt?.includes(standingOn)
-                  ? OCCLUDER_FADE
-                  : sprite.badge === "taken" || sprite.spent
-                    ? LOOTED_OPACITY
-                    : undefined
+                fades(sprite) ? OCCLUDER_FADE : sprite.badge === "taken" || sprite.spent ? LOOTED_OPACITY : undefined
               }
             />
           )}
@@ -1223,9 +1371,8 @@ export const SiteMapView = ({
           {sprite.badge && (
             <NodeBadge kind={sprite.badge} x={sprite.x + CELL / 2} y={sprite.y + PROP_H - CELL * 0.62} />
           )}
-          {/* ON THE LEAF, for the same reason: a door a lever drives has no marker left to wear it. */}
           {sprite.mark && (
-            <MarkArtBadge mark={sprite.mark} x={sprite.x + CELL / 2} y={sprite.y + PROP_H - CELL * 0.62} />
+            <MarkArtBadge mark={sprite.mark} x={sprite.x + CELL / 2} y={sprite.y + PROP_H - CELL * 0.16} />
           )}
         </Fragment>
       ),
@@ -1253,7 +1400,7 @@ export const SiteMapView = ({
       })
     }
     return sprites.sort((a, b) => a.baseY - b.baseY)
-  }, [grid, claims, tier, nodeSprites, explorerPos])
+  }, [grid, claims, tier, nodeSprites, explorerPos, squeeze])
 
   // The line the player stands on. A sprite lower than it is nearer the viewer and is drawn after him;
   // one level with it loses the tie, because the actor belongs in front of the furniture he shares a
@@ -1270,8 +1417,23 @@ export const SiteMapView = ({
   const isGate = (s: StandingSprite) => s.key.startsWith("gate:")
   const gateSprites = standing.filter(isGate)
   const seated = standing.filter(s => !isGate(s))
-  const behindExplorer = seated.filter(s => s.baseY < explorerBaseY || (s.baseY === explorerBaseY && !s.atExplorer))
-  const inFrontOfExplorer = seated.filter(s => s.baseY > explorerBaseY || (s.baseY === explorerBaseY && s.atExplorer))
+  // A RIDER HANGS FROM THE CABLE, so while a ride is drawn the zipline art is behind him whatever its floor
+  // line: sorted against the launch, a drop running down the page would otherwise cover the rider on it.
+  // ponytail: every drop, not only the one ridden; a floor showing two drops at once can match by run.
+  // A SQUEEZER IS IN THE CRACK, so the wall he passes is sorted by the way he crosses it, never against the side he set
+  // out from. Head-on and round a corner it is under him: he is drawn over its face and his own fade says when he is
+  // behind it. Sideways it is over him: he slides behind the wall from one side to the other.
+  const squeezedAt = squeeze && `${squeeze.traversal.via[0]},${squeeze.traversal.via[1]}`
+  const squeezed = (s: StandingSprite) => !!squeezedAt && s.key.split(":").pop() === squeezedAt
+  const underRider = (s: StandingSprite) =>
+    (!!ride && s.key.startsWith("drop:")) || (squeezed(s) && squeeze?.way !== "sideways")
+  const overRider = (s: StandingSprite) => squeezed(s) && squeeze?.way === "sideways"
+  const behindExplorer = seated.filter(
+    s => !overRider(s) && (underRider(s) || s.baseY < explorerBaseY || (s.baseY === explorerBaseY && !s.atExplorer))
+  )
+  const inFrontOfExplorer = seated.filter(
+    s => overRider(s) || (!underRider(s) && (s.baseY > explorerBaseY || (s.baseY === explorerBaseY && s.atExplorer)))
+  )
   const doorways = useMemo(() => doorwaysFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   // Where the arches are, in the same terms the wall bands are built in, with the stone each one is cut
   // from — the sill in that gap is drawn to match it (see TileLayers.archedGaps).
@@ -1364,17 +1526,6 @@ export const SiteMapView = ({
       new Map(doorways.map(({ row, col, tier: archTier }) => [`${cellLeft(col)},${cellTop(row) - WALL_H}`, archTier])),
     [doorways]
   )
-  // Corridor-run markers track the explorer dot's visual position, not the logical one:
-  // hide them the instant a run target is clicked (the player has committed to a
-  // destination, so the old markers no longer apply), and don't show the new ones at the
-  // far end until the dot actually arrives there rather than while it's still gliding.
-  const [settledExplorerPos, setSettledExplorerPos] = useState(explorerPos)
-  const isTraveling = !!(
-    explorerPos &&
-    settledExplorerPos &&
-    (explorerPos[0] !== settledExplorerPos[0] || explorerPos[1] !== settledExplorerPos[1])
-  )
-
   // One rule for what a tap does, asked per cell below — see `clickTargets.ts`. UNRESOLVED: two
   // positions feed it. Walkability (which corners and drop ends are offered) follows the LIVE explorer,
   // so mid-glide it is already reckoned from the destination; run arrows follow the SETTLED position
@@ -1402,7 +1553,8 @@ export const SiteMapView = ({
   const { scrollRef, sizerRef, mapRef, zoomRef, scrollHandlers } = useMapZoom(svgWidth, svgHeight)
 
   useEffect(() => {
-    if (!explorerPos || !scrollRef.current || !sizerRef.current) return
+    const target = ride?.traversal.to ?? explorerPos
+    if (!target || !scrollRef.current || !sizerRef.current) return
     const el = scrollRef.current
     const elRect = el.getBoundingClientRect()
     const mapRect = sizerRef.current.getBoundingClientRect()
@@ -1411,12 +1563,21 @@ export const SiteMapView = ({
     const originY = mapRect.top - elRect.top + el.scrollTop
     // Cell coordinates are in unzoomed SVG units; the rendered map is `zoom` times that size.
     const zoom = zoomRef.current
-    const { cx, cy } = cellCenter(explorerPos[0], explorerPos[1])
+    // A still frame of a ride centres on the middle of the run, so the whole drop is in view.
+    const at = cellCenter(target[0], target[1])
+    const from = ride && rideFrame ? cellCenter(ride.traversal.from[0], ride.traversal.from[1]) : at
+    const cx = (at.cx + from.cx) / 2
+    const cy = (at.cy + from.cy) / 2
     const x = originX + cx * zoom
     const y = originY + cy * zoom
     el.scrollTo({ left: x - el.clientWidth / 2, top: y - el.clientHeight / 2, behavior: "smooth" })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [explorerPos?.[0], explorerPos?.[1]])
+  }, [explorerPos?.[0], explorerPos?.[1], ride?.traversal.to[0], ride?.traversal.to[1]])
+
+  const carrying = useMemo(
+    () => isCarrying(grid, currentFloor ?? 0, mechanismStates ?? NO_STATES),
+    [grid, currentFloor, mechanismStates]
+  )
 
   return (
     /* The map's window, and the frame the air hangs in: the scrolling box is what MOVES, so a weather
@@ -1607,13 +1768,15 @@ export const SiteMapView = ({
                 const state = cell.state
                 // Reached, and done with. A room its family keeps open is reached and never done with, so it
                 // is left out of everything below that says finished — the dim and the ✓ alike.
-                // A USED ACTIVATOR IS DONE, THOUGH ITS ROOM STAYS OPEN: a lit torch has nothing left to offer, so
+                // A USED ACTIVATOR OR A LIT TORCH IS DONE, THOUGH ITS ROOM STAYS OPEN: it has no move left, so
                 // it wears the dim and the ✓ a finished room does. Read off the mechanism's position, so it
-                // shows without the player touching it; an unlit one wears neither.
+                // shows without the player touching it; an unlit or doused torch wears neither.
                 const spent = isSpentAt(grid, currentFloor ?? 0, r, c, cell, mechanismStates)
                 // A SEQUENCE TILE SAYS HOW THE RUN STANDS ON IT, never "done": walked is its own look.
                 const plateStatus = tileStatusAt(grid, currentFloor ?? 0, r, c, mechanismStates)
-                const isCompleted = (state === "completed" && !staysOpen(cell) && !cell.sequenceTile) || spent
+                const isCompleted =
+                  (state === "completed" && !staysOpen(cell) && !cell.sequenceTile && !cell.plate && !cell.pipeHole) ||
+                  spent
                 // Only ever a pending-loot marker for a treasure room with a consumable reward — this
                 // guards against stale coordinates in pendingCells (e.g. left over from before a site
                 // was regenerated) painting the badge onto whatever room now occupies that cell.
@@ -1640,6 +1803,16 @@ export const SiteMapView = ({
                 // a gate it carries no key colour and no state — a portal is a transition, never completed
                 // — so the vector has nothing left to say that the doorway does not say better.
                 const hasExit = shapeKind === "exit" && !!tileOrPlaceholder(cell.difficulty ?? tier, "exit")
+                // A PAINTED PLATE IS THE NODE, as a flight is: the vector slab underneath has nothing more to say.
+                const hasPlate = drawnPlates.has(`plate:${r},${c}`)
+                // A STANDING TORCH IS THE NODE, as a plate is: the flame square under it would put a second torch on the tile.
+                const hasTorch = drawingOf(cell)?.art === "standingTorch" && !!sharedTileUrl("torchUnlit")
+                // A PAINTED LEVER IS THE NODE, as a torch is: the marker square under it would put a second lever on the tile.
+                const hasLever =
+                  drawingOf(cell)?.art === "lever" &&
+                  !!tileUrl(cell.difficulty ?? tier, "leverBaseBack") &&
+                  !!tileUrl(cell.difficulty ?? tier, "leverArm") &&
+                  !!tileUrl(cell.difficulty ?? tier, "leverBaseFront")
                 const roomR = nodeRadius[shapeKind]
                 // A WAY A SWITCH SHUT IS A WALL, AND A WALL WEARS NO NODE. The bars standing in its doorway
                 // already say the way is closed; a gate marker on top of them offers a second reading — a
@@ -1665,7 +1838,7 @@ export const SiteMapView = ({
                       <g
                         data-shape-kind={shapeKind}
                         opacity={
-                          sealedWay || hasStair || hasExit
+                          sealedWay || hasStair || hasExit || hasPlate || hasTorch || hasLever
                             ? 0
                             : isCompleted && !isPending && !isPortal
                               ? 0.45
@@ -1725,9 +1898,17 @@ export const SiteMapView = ({
                   key={currentFloor}
                   grid={grid}
                   pos={explorerPos}
+                  carrying={carrying}
                   onArrive={() => setSettledExplorerPos(explorerPos)}
                 />
               )}
+              {ride &&
+                (rideFrame ? (
+                  <RiderSprite ride={ride} at={rideFrame} pose={poseFor(ride.traversal.dir, ridePoses)} />
+                ) : (
+                  <ZiplineRider ride={ride} poses={ridePoses} />
+                ))}
+              {squeeze && <SqueezeRider squeeze={squeeze} />}
 
               <StandingLayer sprites={inFrontOfExplorer} />
 
@@ -1808,6 +1989,24 @@ export const SiteMapView = ({
                   <MapActionPrompt label={prompt.label} onClick={prompt.onTake} />
                 </div>
               )}
+              {/* THE LIVE REGION IS ALWAYS IN THE PAGE and only its text is swapped: a region inserted together with
+                  its text is not announced, one that was already there is. */}
+              <div
+                role="status"
+                data-map-notice=""
+                style={
+                  notice
+                    ? {
+                        position: "absolute",
+                        left: cellCenter(notice.at[0], notice.at[1]).cx,
+                        top: cellCenter(notice.at[0], notice.at[1]).cy - CELL * 0.7,
+                        transform: "translate(-50%, -100%)",
+                      }
+                    : { position: "absolute" }
+                }
+              >
+                {notice && <MapNotice label={notice.label} />}
+              </div>
             </div>
           </div>
         </div>

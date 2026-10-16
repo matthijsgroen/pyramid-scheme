@@ -38,6 +38,11 @@ pose puts it: `2026-10-04-stones-acceptance.md`, "The carrying explorer").
 - [ ] The sprites are in `src/assets/tiles/default/`, at 40 × 70 like the walking set. A bare name is a
       one-frame animation to `sharedTileFrames`. The handle is at the top of the box, so the hands sit on
       the cable line where the zipline art draws it.
+- [ ] The riding sprite is anchored by its top edge (the handle on the cable line), not by its feet. The
+      `explorer` import slot seats a sprite on its lowest pixel (`seat: true`,
+      `scripts/importTile.ts:158`), and the three riding tiles' opaque tops sit at y = 7, 6 and 0 of 140
+      (s, n, e), so the glide either anchors by the top of the opaque area or the masters are padded so
+      the handle sits at the box top in every facing.
 - [ ] The Facings story shows the three beside the walking set, at 1:1 and 3x, over limestone and
       granite.
 - [ ] Each riding pose is kept large as `art/masters/explorer/explorer-zip-<facing>.webp`, and its import

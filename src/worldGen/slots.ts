@@ -186,7 +186,7 @@ export const collectSlots = (
           const secHidden = !!section.hidden
           // A section whose `end` is a stairhead (`"staircase"` / `{ stairId }`) is a pure
           // floor-to-floor connector, never a loot node — buildSite.ts's `wireSideSectionStaircases`
-          // ("the treasure IS the key", pyramid-interior-design.md §8) and siteAssembler.ts's own
+          // ("the treasure IS the key", pyramid-interior-design.md §8) and the carve's own
           // room-building (the stairhead branch never reads `endReward`) agree: only an
           // `end: "treasure"` section can actually display/grant a reward at runtime. An open
           // tomb-key gate leading to a stairhead must never be handed to a currency as a fillable

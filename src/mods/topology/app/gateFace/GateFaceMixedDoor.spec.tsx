@@ -114,7 +114,7 @@ describe("the face of a carved door owned by a torch and a floor key", () => {
       )
       const items = screen.getAllByRole("listitem")
       expect(items).toHaveLength(2)
-      expect(items[0].textContent).toBe("🔥")
+      expect(items[0].textContent).toContain("🔥")
       expect(items[1].querySelector("svg")).not.toBeNull()
       expect(items.map(m => m.getAttribute("data-lit"))).toEqual([String(torch === "lit"), String(held)])
     })

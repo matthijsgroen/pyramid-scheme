@@ -44,7 +44,15 @@
       "stairs": "Take the stairs",
       "exit": "Leave this place",
       "zipline": "Ride the line — there is no way back",
-      "oneWay": "Cross over — there is no way back"
+      "oneWay": "Cross over — there is no way back",
+      "liftStone": "Lift the stone",
+      "setStone": "Set the stone on the plate",
+      "postStone": "Post the stone",
+      "takeStone": "Take the stone",
+      "squeeze": "Squeeze through"
+    },
+    "blocked": {
+      "carrying": "Cannot pass with a stone"
     },
     "travel": "Travel",
     "chooseYourJourney": "Choose Your Journey",
@@ -1097,6 +1105,12 @@
         "span_one": "First start to last finish is {{count}} hour.",
         "span_other": "First start to last finish is {{count}} hours."
       }
+    },
+    "door": {
+      "title": "The Procession Door",
+      "hint": "Each tile you step on frees its doing. Order the day, then walk the tiles in that order.",
+      "read": "The day is read. Walk its tiles in this order, from the first.",
+      "hintButton": "Hint"
     }
   },
   "story": {
@@ -1158,10 +1172,11 @@
     "hint": "Every sign must burn before this door will open.",
     "lit": "{{owner}}: lit",
     "unlit": "{{owner}}: not yet",
-    "owner": { "torch": "Torch", "handle": "Lever", "key": "Key", "other": "Mechanism" },
+    "owner": { "torch": "Torch", "handle": "Lever", "key": "Key", "plateStone": "A stone on a plate", "plateEmpty": "A plate left empty", "other": "Mechanism" },
     "orderHint": "Walk the tiles in this order.",
     "reset": "Start again",
     "spoiled": "The run is spoiled: a tile was walked out of order.",
     "tile": { "unwalked": "Step {{step}}: not yet walked", "inOrder": "Step {{step}}: walked in order", "outOfOrder": "Step {{step}}: walked out of order" }
-  }
+  },
+  "devLockEditor": {"syntax":"Syntax","example":"Example","useExample":"Use example","title":"Lock editor","notation":"Lock notation","checks":"Checks","drawing":"Drawing","carveAndPlay":"Carve and play","copyLink":"Copy link","copied":"Link copied","failed":"Could not copy; the link is in the address bar","backToEditor":"← Editor","close":"Close","open":"Lock editor"}
 }

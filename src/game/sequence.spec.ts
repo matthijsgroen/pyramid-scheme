@@ -5,14 +5,10 @@ import { cellAddress } from "./cellAddress"
 import { cellSlot } from "./cellSlot"
 import { isSpent, legalTargets, mechanismAddress, pressAt } from "./mechanismDoors"
 import { compileSequence, sequenceStates, tileStatus } from "./sequence"
-import { hallAnnexSequenceFloor } from "./testSupport/sequenceFixtures"
+import { offRouteSequenceFloor } from "./testSupport/sequenceFixtures"
 
 const record = compileSequence({
-  tiles: [
-    [0, 0],
-    [0, 2],
-    [0, 4],
-  ],
+  tiles: [[[0, 0]], [[0, 2]], [[0, 4]]],
   door: [2, 2],
   gates: [{ gateKeyId: "door" }],
 })
@@ -59,18 +55,20 @@ describe("a tile's state", () => {
 })
 
 describe("working a carved sequence, tile by tile", () => {
-  const result = assembleFloor("test", hallAnnexSequenceFloor(), 7919)
+  const result = assembleFloor("test", offRouteSequenceFloor(), 7919)
   if (!result.success) throw new Error("the fixture no longer carves at this seed")
   const grid: FloorGrid = result.grid
 
   const tiles = grid.cells.flatMap((row, r) =>
     row.flatMap((cell, c) =>
-      cell.type === "room" && cell.sequenceTile ? [{ r, c, step: cell.sequenceTile.step }] : []
+      cell.type === "room" && cell.sequenceTile
+        ? [{ r, c, step: cell.sequenceTile.step, home: cell.mechanism !== undefined }]
+        : []
     )
   )
-  const tile = (step: number) => tiles.find(t => t.step === step)!
+  const tile = (step: number) => tiles.find(t => t.step === step && (step > 0 || t.home))!
   const door = grid.cells.flatMap((row, r) =>
-    row.flatMap((cell, c) => (cell.type === "room" && cell.requiredKeyId?.endsWith(":vaultDoor") ? [{ r, c }] : []))
+    row.flatMap((cell, c) => (cell.type === "room" && cell.worksMechanism && !cell.sequenceTile ? [{ r, c }] : []))
   )[0]
   const address = mechanismAddress(grid, 0, tile(0).r, tile(0).c)!
 
@@ -113,12 +111,17 @@ describe("working a carved sequence, tile by tile", () => {
     expect(press([tile(0), door, tile(2)], "3")).toBe("3")
   })
 
-  it("files every tile's state under the first tile's address, and names each tile by its step", () => {
+  it("works one step from every tile of that step", () => {
+    const ofStep = (step: number) => tiles.filter(t => t.step === step)
+    expect(ofStep(0).length).toBeGreaterThan(1)
+    for (const first of ofStep(0)) expect(press([first])).toBe("1")
+    for (const second of ofStep(1)) expect(press([tile(0), second])).toBe("2")
+  })
+
+  it("files every tile's state under its first tile's address, and names each tile by its step and its way in", () => {
     expect(address).toBe(cellAddress(grid, 0, tile(0).r, tile(0).c))
-    expect([0, 1, 2].map(step => cellSlot(grid, tile(step).r, tile(step).c))).toEqual([
-      "xsequence:plates#0",
-      "xsequence:plates#1",
-      "xsequence:plates#2",
-    ])
+    const slots = tiles.map(t => cellSlot(grid, t.r, t.c))
+    expect(new Set(slots).size).toBe(tiles.length)
+    for (const [n, t] of tiles.entries()) expect(slots[n]).toMatch(new RegExp(`^xsequence:plates\\.plates#${t.step}@`))
   })
 })

@@ -8,7 +8,7 @@ import { assembleFloor } from "@/game/siteAssembler"
 import { openDoorsFor } from "@/game/mechanismDoors"
 import { cellAddress } from "@/game/cellAddress"
 import { concealShutGround, concealedBehindBarriers } from "@/game/concealment"
-import { COVER_FADE_CELLS } from "@/game/regionBarrierCover"
+import { walkableFrom } from "@/game/gridNavigation"
 import { journeys as allKnownJourneys } from "@/data/journeys"
 import { resolveEncounter } from "@/app/families/familyRegistry"
 import { resolveKeyRequirements } from "@/mods/allFamilyMeta"
@@ -26,6 +26,9 @@ vi.mock("./tileAssets", async importOriginal => {
   const actual = await importOriginal<typeof import("./tileAssets")>()
   return { ...actual, tileUrl: vi.fn(actual.tileUrl) }
 })
+
+// jsdom has no scrollTo; the map scrolls itself to the explorer on mount.
+Element.prototype.scrollTo = Element.prototype.scrollTo ?? (() => {})
 
 const COVER_TEXTURES = new Set(MOD_REGION_BARRIER_REALISATIONS.flatMap(r => (r.texture ? [r.texture] : [])))
 
@@ -90,7 +93,8 @@ const floorAt = (name: string, state: string) => {
   const live = revealed(result.current.grid!)
   const open = openDoorsFor(base, 0, positions)
   const shut = roomsOf(base).filter(({ cell }) => cell.regionBarrier && !open.has(cell.requiredKeyId!))
-  return { grid: concealShutGround(live, from), live, from, shut, realisation: scenario.realisation }
+  const unseen = concealShutGround(result.current.grid!, from)
+  return { grid: concealShutGround(live, from), live, unseen, from, shut, realisation: scenario.realisation }
 }
 
 const eachFloor = (run: (name: string, state: string) => void) => {
@@ -139,17 +143,31 @@ afterEach(() => {
 
 describe("a shut region barrier's region is covered by its realisation", { timeout: 60_000 }, () => {
   eachFloor((name, state) =>
-    it(`${name}, ${state}: every visible cell of each shut barrier's region carries the cover, and no other cell does`, () => {
-      const { grid, shut, realisation } = floorAt(name, state)
+    it(`${name}, ${state}: every visible cell of each shut barrier's region the explorer cannot walk to carries the cover, and no other cell does`, () => {
+      const { grid, from, shut, realisation } = floorAt(name, state)
       const { container } = render(<SiteMapView grid={grid} />)
-      const wanted = regionsOf(shut).flatMap(region => visibleRegion(grid, region))
+      const walkable = walkableFrom(grid, from)
+      const wanted = regionsOf(shut).flatMap(region => visibleRegion(grid, region).filter(key => !walkable.has(key)))
       expect(coverCells(container).map(keyOf).sort(), `${name} / ${state}`).toEqual(wanted.sort())
+      for (const { at } of visibleDoors(grid, shut))
+        expect(coverCells(container).map(keyOf), `${name} / ${state}: the blockage is covered`).toContain(at.join(","))
       for (const region of regionsOf(shut)) {
         const layer = container.querySelector(`[data-region-cover="${region}"]`)!
         expect(layer.getAttribute("data-realisation")).toBe(realisation)
       }
     })
   )
+
+  it("leaves some walkable cell of a shut region uncovered, so the explorer walks up to the water's edge", () => {
+    let dry = 0
+    for (const { name } of SCENARIOS)
+      for (const state of STATES) {
+        const { grid, from, shut } = floorAt(name, state)
+        const walkable = walkableFrom(grid, from)
+        for (const region of regionsOf(shut)) dry += visibleRegion(grid, region).filter(key => walkable.has(key)).length
+      }
+    expect(dry).toBeGreaterThan(0)
+  })
 
   it("shuts a region in some position of every floor, so the cases above are not empty", () => {
     for (const { name } of SCENARIOS)
@@ -198,115 +216,55 @@ describe("a shut region barrier's region is covered by its realisation", { timeo
   )
 })
 
-describe("the cover fades in from each way into the region and is full at the blockage", { timeout: 60_000 }, () => {
-  /** Steps in from the nearest way into the region, by relaxation to a fixpoint — apart from the BFS under test. */
-  const stepsIn = (grid: FloorGrid, region: string): Map<string, number> => {
-    const visible = new Set(visibleRegion(grid, region))
-    const steps = new Map<string, number>()
-    const MOVES = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] } as const
-    for (const key of visible) {
-      const [r, c] = key.split(",").map(Number)
-      const cell = grid.cells[r][c]
-      if (cell.type === "empty") continue
-      const wayIn = [...cell.dirs].some(dir => {
-        const next = grid.cells[r + MOVES[dir][0]]?.[c + MOVES[dir][1]]
-        return next && next.type !== "empty" && next.region !== region
-      })
-      if (wayIn) steps.set(key, 1)
-    }
-    for (let changed = true; changed;) {
-      changed = false
-      for (const [key, d] of [...steps]) {
-        const [r, c] = key.split(",").map(Number)
-        const cell = grid.cells[r][c]
-        if (cell.type === "empty") continue
-        for (const dir of cell.dirs) {
-          const next = `${r + MOVES[dir][0]},${c + MOVES[dir][1]}`
-          if (visible.has(next) && (steps.get(next) ?? Infinity) > d + 1) {
-            steps.set(next, d + 1)
-            changed = true
-          }
-        }
-      }
-    }
-    return steps
+describe("the cover fades in across the blockage and is full past it", { timeout: 60_000 }, () => {
+  const MOVES = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] } as const
+  const TOWARD = { n: "bottom", s: "top", w: "right", e: "left" } as const
+  /** The sides of a cell the explorer can step up to it from — read off the walk, apart from the code under test. */
+  const walkedUpFrom = (grid: FloorGrid, walkable: ReadonlySet<string>, key: string) => {
+    const [r, c] = key.split(",").map(Number)
+    const cell = grid.cells[r][c]
+    if (cell.type === "empty") return []
+    return (["n", "e", "s", "w"] as const).filter(
+      dir => cell.dirs.has(dir) && walkable.has(`${r + MOVES[dir][0]},${c + MOVES[dir][1]}`)
+    )
   }
 
   eachFloor((name, state) =>
-    it(`${name}, ${state}: each cell's opacity is its distance's place on the fade curve, and the blockage is full`, () => {
-      const { grid, shut } = floorAt(name, state)
+    it(`${name}, ${state}: a blockage fades from the sides the explorer walks up to it from, and every other covered cell is full`, () => {
+      const { grid, from, shut } = floorAt(name, state)
       const { container } = render(<SiteMapView grid={grid} />)
-      for (const region of regionsOf(shut)) {
-        const steps = stepsIn(grid, region)
-        const doors = new Set(
-          shut.filter(({ cell }) => cell.regionBarrier!.region === region).map(({ at }) => at.join(","))
-        )
+      const walkable = walkableFrom(grid, from)
+      const doors = new Set(shut.map(({ at }) => at.join(",")))
+      for (const region of regionsOf(shut))
         for (const el of coverCells(container, region)) {
           const key = keyOf(el)
-          const expected = doors.has(key) ? 1 : Math.min(1, ((steps.get(key) ?? Infinity) - 0.5) / COVER_FADE_CELLS)
-          expect(parseFloat(el.style.opacity), `${name} / ${state} / ${region} / ${key}`).toBeCloseTo(expected, 6)
+          const sides = walkedUpFrom(grid, walkable, key)
+          if (!doors.has(key)) expect(sides, `${name} / ${key}: only a blockage borders walkable ground`).toEqual([])
+          // "to bottom" is a gradient's default direction, and the style serialises it away.
+          const wanted = sides
+            .map(dir => `linear-gradient(to ${TOWARD[dir]}, rgba(0, 0, 0, 0.5), black 28px)`.replace("to bottom, ", ""))
+            .join(", ")
+          expect(el.style.maskImage, `${name} / ${state} / ${region} / ${key}`).toBe(wanted)
+          expect(el.style.opacity, `${name} / ${key}: no flat thinning`).toBe("")
         }
-      }
     })
   )
 
-  eachFloor((name, state) =>
-    it(`${name}, ${state}: walking from a way in to the blockage the cover never thins and is full over the last stretch`, () => {
-      const { grid, shut } = floorAt(name, state)
-      const { container } = render(<SiteMapView grid={grid} />)
-      const MOVES = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] } as const
-      for (const { at, cell } of visibleDoors(grid, shut)) {
-        const region = cell.regionBarrier!.region
-        const steps = stepsIn(grid, region)
-        const opacityAt = (key: string) =>
-          parseFloat(coverCells(container, region).find(el => keyOf(el) === key)!.style.opacity)
-        const path = [at.join(",")]
-        for (let key = path[0]; (steps.get(key) ?? 1) > 1;) {
-          const [r, c] = key.split(",").map(Number)
-          const here = grid.cells[r][c]
-          if (here.type === "empty") break
-          const back = [...here.dirs]
-            .map(dir => `${r + MOVES[dir][0]},${c + MOVES[dir][1]}`)
-            .find(next => steps.get(next) === steps.get(key)! - 1)!
-          path.push(back)
-          key = back
-        }
-        const walked = path.reverse().map(opacityAt)
-        expect(walked.length, `${name} / ${state} / ${at}: a stretch to walk`).toBeGreaterThan(1)
-        expect(walked[0], "starts thin at the way in").toBeLessThan(1)
-        expect(walked, "never thins on the way to the blockage").toEqual([...walked].sort((a, b) => a - b))
-        expect(walked[walked.length - 1], "the blockage is full").toBe(1)
-      }
-    })
-  )
-
-  it("is thinner than full up to COVER_FADE_CELLS cells in from a way in and full beyond, the blockage aside", () => {
-    const seen = new Set<number>()
+  it("fades some blockage, so the cases above are not empty", () => {
+    let faded = 0
     for (const { name } of SCENARIOS)
       for (const state of STATES) {
         const { grid, shut } = floorAt(name, state)
         const { container } = render(<SiteMapView grid={grid} />)
-        for (const region of regionsOf(shut)) {
-          const steps = stepsIn(grid, region)
-          const doors = new Set(shut.map(({ at }) => at.join(",")))
-          for (const el of coverCells(container, region)) {
-            const d = steps.get(keyOf(el)) ?? Infinity
-            if (doors.has(keyOf(el))) continue
-            const opacity = parseFloat(el.style.opacity)
-            if (d >= COVER_FADE_CELLS + 1) expect(opacity, `${name} / ${keyOf(el)} is full`).toBe(1)
-            else expect(opacity, `${name} / ${keyOf(el)} is not yet full`).toBeLessThan(1)
-            seen.add(d)
-          }
-        }
+        const doors = new Set(shut.map(({ at }) => at.join(",")))
+        for (const el of coverCells(container)) if (el.style.maskImage && doors.has(keyOf(el))) faded++
         cleanup()
       }
-    expect(Math.max(...[...seen].filter(Number.isFinite)), "some cell lies past the fade").toBeGreaterThan(
-      COVER_FADE_CELLS
-    )
+    expect(faded).toBeGreaterThan(0)
   })
 })
 
-describe("the region past the blockage is concealed", { timeout: 60_000 }, () => {
+describe("the region past the blockage lies under water where seen, and in fog where not", { timeout: 60_000 }, () => {
   const drawnAt = (container: HTMLElement) => {
     const at = new Map<string, string>()
     for (let r = 0; r < 40; r++)
@@ -319,26 +277,46 @@ describe("the region past the blockage is concealed", { timeout: 60_000 }, () =>
     return drawn
   }
 
-  it("covers nothing and draws nothing of the region ground that only the shut barrier leads to", () => {
-    let hiddenRegionCells = 0
+  /** Every cell of a shut region only the shut barrier leads to, on each floor and position. */
+  const eachCutOff = (run: (name: string, state: string, key: string, region: string) => void) => {
     for (const { name } of SCENARIOS)
       for (const state of STATES) {
-        const { live, grid, from, shut } = floorAt(name, state)
-        const { container } = render(<SiteMapView grid={grid} />)
-        const drawn = drawnAt(container)
+        const { live, from, shut } = floorAt(name, state)
         const hidden = concealedBehindBarriers(live, from)
         for (const region of regionsOf(shut))
           for (const key of hidden) {
             const [r, c] = key.split(",").map(Number)
             const cell = live.cells[r][c]
-            if (cell.type === "empty" || cell.region !== region) continue
-            hiddenRegionCells++
-            expect(coverCells(container, region).map(keyOf), `${name} / ${state} / ${key}`).not.toContain(key)
-            expect(drawn.has(key), `${name} / ${state} / ${key} is drawn`).toBe(false)
+            if (cell.type !== "empty" && cell.region === region) run(name, state, key, region)
           }
-        cleanup()
       }
-    expect(hiddenRegionCells, "some region ground lies past a blockage").toBeGreaterThan(0)
+  }
+
+  it("covers every seen cell of the region ground only the shut barrier leads to", () => {
+    let covered = 0
+    eachCutOff((name, state, key, region) => {
+      const { grid, from } = floorAt(name, state)
+      const { container } = render(<SiteMapView grid={grid} explorerPos={from} />)
+      expect(coverCells(container, region).map(keyOf), `${name} / ${state} / ${key}`).toContain(key)
+      covered++
+      cleanup()
+    })
+    expect(covered, "some region ground lies past a blockage").toBeGreaterThan(0)
+  })
+
+  it("covers nothing and draws nothing of that ground while it has never been seen", () => {
+    let fogged = 0
+    eachCutOff((name, state, key, region) => {
+      const { unseen, from } = floorAt(name, state)
+      const [r, c] = key.split(",").map(Number)
+      if (unseen.cells[r][c].type === "empty" || (unseen.cells[r][c] as { state: string }).state !== "fogged") return
+      const { container } = render(<SiteMapView grid={unseen} explorerPos={from} />)
+      expect(coverCells(container, region).map(keyOf), `${name} / ${state} / ${key}`).not.toContain(key)
+      expect(drawnAt(container).has(key), `${name} / ${state} / ${key} is drawn`).toBe(false)
+      fogged++
+      cleanup()
+    })
+    expect(fogged, "some region ground past a blockage was never seen").toBeGreaterThan(0)
   })
 })
 
@@ -372,7 +350,7 @@ describe("a barrier opening while the player watches fades its cover away", { ti
     const before = floorAt(name, closed)
     const after = floorAt(name, open)
     const { container, rerender } = render(<SiteMapView grid={before.grid} />)
-    const shown = coverCells(container, region).map(el => [keyOf(el), el.style.opacity])
+    const shown = coverCells(container, region).map(el => [keyOf(el), el.style.maskImage])
     expect(shown.length).toBeGreaterThan(0)
 
     rerender(<SiteMapView grid={after.grid} />)
@@ -381,7 +359,7 @@ describe("a barrier opening while the player watches fades its cover away", { ti
     expect(layer.hasAttribute("data-leaving")).toBe(true)
     expect(layer.className).toContain("animate-region-cover-out")
     expect(layer.style.animationDuration).toBe(`${REGION_COVER_FADE_OUT_MS}ms`)
-    expect(coverCells(container, region).map(el => [keyOf(el), el.style.opacity])).toEqual(shown)
+    expect(coverCells(container, region).map(el => [keyOf(el), el.style.maskImage])).toEqual(shown)
 
     act(() => vi.advanceTimersByTime(REGION_COVER_FADE_OUT_MS))
     expect(container.querySelectorAll(`[data-region-cover="${region}"]`)).toHaveLength(0)
@@ -449,42 +427,44 @@ describe("a barrier opening while the player watches fades its cover away", { ti
   })
 })
 
-describe("the owner's mark stays readable on the blockage", { timeout: 60_000 }, () => {
-  it("is drawn after, so above, the cover's cell on the blockage", () => {
+describe("a region barrier's blockage carries no marker", { timeout: 60_000 }, () => {
+  const markCount = (grid: FloorGrid) => {
+    const { container } = render(<SiteMapView grid={grid} />)
+    const count = Array.from(container.querySelectorAll("svg")).filter(
+      svg => svg.getAttribute("viewBox") === "-12 -12 24 24"
+    ).length
+    cleanup()
+    return count
+  }
+
+  it("draws the same markers whether or not the blockage cells carry a mark", () => {
     let checked = 0
     for (const { name } of SCENARIOS)
       for (const state of STATES) {
         const { grid, shut } = floorAt(name, state)
-        const { container } = render(<SiteMapView grid={grid} />)
-        const marks = Array.from(container.querySelectorAll("svg")).filter(
-          svg => svg.getAttribute("viewBox") === "-12 -12 24 24"
-        )
-        for (const { at, cell } of visibleDoors(grid, shut)) {
-          const key = at.join(",")
-          const cover = coverCells(container).find(el => keyOf(el) === key)!
-          const glyph = String.fromCodePoint(cell.mark!.glyph)
-          const mark = marks.find(svg => svg.querySelector("text")?.textContent === glyph)!
-          expect(parseFloat(cover.style.opacity), `${name} / ${key}`).toBe(1)
-          expect(
-            cover.compareDocumentPosition(mark) & Node.DOCUMENT_POSITION_FOLLOWING,
-            `${name} / ${state} / ${key}: the mark is under the cover`
-          ).toBeTruthy()
-          checked++
+        const bare: FloorGrid = {
+          ...grid,
+          cells: grid.cells.map(row =>
+            row.map(cell => (cell.type === "room" && cell.regionBarrier ? { ...cell, mark: undefined } : cell))
+          ),
         }
-        cleanup()
+        expect(markCount(grid), `${name} / ${state}`).toBe(markCount(bare))
+        checked += shut.length
       }
     expect(checked).toBeGreaterThan(0)
   })
 })
 
-describe("the textures the covers are owed are queued for painting", () => {
-  const queue = readFileSync(join(__dirname, "..", "..", "..", "docs", "instructions", "repaint-queue.md"), "utf8")
+describe("the textures the covers are owed are painted or queued for painting", () => {
+  const root = join(__dirname, "..", "..", "..")
+  const queue = readFileSync(join(root, "docs", "instructions", "repaint-queue.md"), "utf8")
+  const rebuild = readFileSync(join(root, "art", "rebuild.sh"), "utf8")
 
-  it("names a repaint entry and an import line for every texture a realisation declares", () => {
+  it("names an import line in the rebuild, or a repaint entry, for every texture a realisation declares", () => {
     expect([...COVER_TEXTURES].sort()).toEqual(["regionSand", "regionWater"])
     for (const texture of COVER_TEXTURES) {
-      expect(queue, texture).toContain(`### \`default/${texture}\``)
-      expect(queue, texture).toContain(`--tier=default --name=${texture} --slot=floor`)
+      const importLine = new RegExp(`^yarn import-tile .*--tier=default --name=${texture} --slot=floor`, "m")
+      expect(importLine.test(rebuild) || queue.includes(`### \`default/${texture}\``), texture).toBe(true)
     }
   })
 })

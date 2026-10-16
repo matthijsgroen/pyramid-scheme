@@ -3,7 +3,7 @@ import { getTableauLevel } from "@/mods/hieroglyph/game/tableaus"
 import type { FamilyKeyRequirementResolver } from "@/game/families/familyMeta"
 
 // The only place that knows a tableau room's completion precondition is "hold enough
-// fragments of these specific hieroglyphs" — core (siteAssembler.ts/siteValidator.ts) only
+// fragments of these specific hieroglyphs" — core (the carve and siteValidator.ts) only
 // ever sees the opaque key strings this returns. `hieroglyph:${id}` is this module's own
 // convention for "hieroglyph id is complete"; the placement/worklist module that tracks
 // fragment counts and grants these keys owns the other end of that convention.

@@ -4,6 +4,7 @@ import { expandFloorLocks, FLOOR_ENTRANCE, FLOOR_EXIT } from "./floorLocks"
 import type { PlacedLock } from "./floorLocks"
 import { floorLock } from "./floorLock"
 import { walkLock } from "./lockWalk"
+import { parseLock } from "./lockNotation"
 import { assembleFloor } from "./siteAssembler"
 import type { CorridorCell, FloorConfig, FloorGrid, RoomCell } from "./siteTypes"
 import { leverLock } from "./testSupport/floorLockFixtures"
@@ -103,6 +104,15 @@ describe("two placements of one lock on a floor are two instances with names of 
     const result = carve(floorOf([{ lock: leverLock() }, { lock: leverLock() }]), 1)
 
     expect(result).toEqual({ success: false, reasons: [{ type: "lockInstanceRepeated", instance: "lever" }] })
+  })
+
+  it("refuses a floor whose locks carry two pipes, naming both", () => {
+    const piped = (name: string) =>
+      parseLock("in -[unladen]- hall\nhall -[p]- out\np plate @hall\nshelf plate @in stone\nP pipe @in @hall", name)
+        .lock
+    const result = expandFloorLocks(floorOf([{ lock: piped("east") }, { lock: piped("west") }]))
+    expect(result.ok).toBe(false)
+    expect(!result.ok && result.reasons).toContainEqual({ type: "pipesOnOneFloor", instances: ["east", "west"] })
   })
 
   it("refuses two placements that say the same `as`", () => {

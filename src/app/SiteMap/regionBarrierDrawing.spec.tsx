@@ -119,21 +119,19 @@ const spritesAt = (container: HTMLElement, r: number, c: number) =>
 
 describe("a shut region barrier is drawn as a blockage", () => {
   eachPosition((name, state) => {
-    it(`${name}: in ${state}, every shut barrier door is a bare cell wearing its owner's mark, never a barred door or a prop`, () => {
+    it(`${name}: in ${state}, every shut barrier door is a bare cell with no mark, never a barred door or a prop`, () => {
       const { shut } = positionOf(name, state)
       const grid = liveGrid(name, state)
       const { container } = render(<SiteMapView grid={grid} />)
       for (const {
         at: [r, c],
-        cell,
       } of shut) {
         const where = `${name} / ${state} / ${r},${c}`
         expect(
           spritesAt(container, r, c).map(s => s.getAttribute("data-node-sprite")),
           `${where}: a prop stands on the blockage`
         ).toEqual([])
-        expect(markAt(container, r, c), `${where}: the blockage wears no mark`).toBeDefined()
-        expect(markAt(container, r, c)!.glyph).toBe(String.fromCodePoint(cell.mark!.glyph))
+        expect(markAt(container, r, c), `${where}: the blockage wears a mark`).toBeUndefined()
       }
       expect(container.querySelectorAll('[data-node-sprite^="gate:"],[data-node-sprite^="wall:"]')).toHaveLength(0)
     })

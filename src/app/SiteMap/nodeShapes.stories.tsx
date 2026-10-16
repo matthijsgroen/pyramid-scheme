@@ -66,7 +66,7 @@ export const PlateStatuses: Story = {
   render: () => (
     <div style={{ display: "flex", gap: 16, background: "#14110d", padding: 16 }}>
       {(["unwalked", "inOrder", "outOfOrder"] as const).map(status => (
-        <svg key={status} width={48} height={48} viewBox="-24 -24 48 48">
+        <svg key={status} width={56} height={84} viewBox="-28 -56 56 84">
           <NodeShape type="plate" state="reachable" plate={{ glyph: 0x13080, status }} />
         </svg>
       ))}

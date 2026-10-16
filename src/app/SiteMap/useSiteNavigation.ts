@@ -2,9 +2,11 @@ import { useCallback, useRef, useState } from "react"
 import { flushSync } from "react-dom"
 import { cellAddress } from "./cellIdentity"
 import { storedAtCell } from "@/game/cellAddress"
-import { dropLaunchedAt, findPath, getCell } from "@/game/gridNavigation"
+import { dropLaunchedAt, findPath, getCell, walkableFrom } from "@/game/gridNavigation"
+import { headingOf, passageCrossing } from "@/game/passages"
 import { isSpent as mechanismIsSpent, throwMechanism } from "@/game/mechanismDoors"
-import { walkPresses } from "@/game/sequencePlay"
+import { walkedSteps, walkPresses } from "@/game/sequencePlay"
+import { isCarrying, stoneMoveAt, type StoneMoveKind } from "@/game/stonePlay"
 import type { FloorGrid, MechanismRecord, ObstacleKind, RoomCell, SiteConfig, TreasureReward } from "@/game/siteTypes"
 import { useTimeout } from "@/support/useTimeout"
 import type { JourneyAPI } from "@/app/state/useJourneys"
@@ -16,6 +18,8 @@ import { stairPeerPosition } from "./stairTravel"
 import { crossAtOnce, type PlayTraversal, type Traversal } from "./obstacleTraversal"
 import type { ResolveOneWayRealisation } from "@/game/oneWayRealisation"
 import { resolveOneWayRealisation } from "@/mods/allOneWayRealisations"
+import type { ResolvePassageRealisation } from "@/game/passageRealisation"
+import { resolvePassageRealisation } from "@/mods/allPassageRealisations"
 
 type NavigationArgs = {
   journeys: JourneyAPI
@@ -35,6 +39,8 @@ type NavigationArgs = {
   playTraversal?: PlayTraversal
   /** Says what the realisation a span was bound to declares, namely the prompt its crossing is offered through. */
   resolveOneWay?: ResolveOneWayRealisation
+  /** Says what the passage a gate was dressed as declares: its prompt. Every passage takes empty hands. */
+  resolvePassage?: ResolvePassageRealisation
 }
 
 /**
@@ -43,7 +49,7 @@ type NavigationArgs = {
  * `stairs`, `exit` and `obstacle` take the player somewhere; `room` opens what stands in the room he is
  * already in, whether that is a board or a stall, and moves nobody.
  */
-export type ArrivalPromptKind = "room" | "stairs" | "exit" | "obstacle"
+export type ArrivalPromptKind = "room" | "stairs" | "exit" | "obstacle" | "plate"
 
 export type ArrivalPrompt = {
   kind: ArrivalPromptKind
@@ -57,14 +63,23 @@ export type ArrivalPrompt = {
   /** Locale key of the prompt the span's realisation declared. Unset where none is registered, which reads
    * as the generic one-way prompt: a crossing is never taken without one. */
   invitation?: string
+  /** On a `plate` prompt, which move standing there offers: the stone lifted off it or set on it; at a pipe's hole,
+   * posted into it or taken out. */
+  stone?: StoneMoveKind
   /** Takes what is offered — this does what arriving used to do on its own. */
   take: () => void
 }
+
+/** Why the explorer stopped where he did: a stone in hand where it may not go. One line says so for every such
+ * place; nothing to take, and the next tap, which moves him on, clears it. */
+export type BlockedNotice = { at: readonly [number, number] }
 
 export type SiteNavigation = {
   onCellClick: (row: number, col: number) => void
   /** The way in the explorer is standing at, or null when he is standing at none. */
   prompt: ArrivalPrompt | null
+  /** Why the walk went no further, beside the explorer, or null. Never beside a prompt. */
+  notice: BlockedNotice | null
   /** The explorer is out of sight, in the middle of a span: drawn nowhere until he lands. */
   explorerHidden: boolean
 }
@@ -86,9 +101,11 @@ export const useSiteNavigation = ({
   onExitReached,
   playTraversal = crossAtOnce,
   resolveOneWay = resolveOneWayRealisation,
+  resolvePassage = resolvePassageRealisation,
 }: NavigationArgs): SiteNavigation => {
   const [scheduleArrival] = useTimeout()
   const [prompt, setPrompt] = useState<ArrivalPrompt | null>(null)
+  const [notice, setNotice] = useState<BlockedNotice | null>(null)
   const [explorerHidden, setExplorerHidden] = useState(false)
   // A ref beside the state: a tap in the same tick as taking the span must already see it under way.
   const traversing = useRef(false)
@@ -103,7 +120,8 @@ export const useSiteNavigation = ({
       accept: () => void,
       familyId?: string,
       obstacleKind?: ObstacleKind,
-      invitation?: string
+      invitation?: string,
+      stone?: StoneMoveKind
     ) =>
       setPrompt({
         kind,
@@ -111,6 +129,7 @@ export const useSiteNavigation = ({
         familyId,
         obstacleKind,
         invitation,
+        ...(stone ? { stone } : {}),
         take: () => {
           setPrompt(null)
           accept()
@@ -123,6 +142,12 @@ export const useSiteNavigation = ({
     (row: number, col: number) =>
       grid ? Math.max(0, findPath(grid, explorerPos, [row, col]).length - 1) * 120 + 100 : 0,
     [grid, explorerPos]
+  )
+  // A STONE NEVER LEAVES ITS FLOOR, and every one-way and every passage takes empty hands: a carrying walk ends where
+  // the player stands and says why, instead of offering the way on.
+  const turnAway = useCallback(
+    (row: number, col: number) => scheduleArrival(walkDelay(row, col), () => setNotice({ at: [row, col] })),
+    [scheduleArrival, walkDelay]
   )
   // Taking a span: out of sight, the traversal plays, and only then is the player written down at the
   // landing and drawn there. The hide is flushed so the dot unmounts before the traversal starts; batched,
@@ -170,25 +195,64 @@ export const useSiteNavigation = ({
       // Leaving where you stood takes the way in you were standing at with you. A tap this guard block
       // turned away moved nobody, so it leaves the standing offer alone.
       setPrompt(null)
+      setNotice(null)
 
-      const edgeId = encodeEdge(currentFloor, row, col)
+      // WALKING TO A CELL: every sequence tile on the route is stood on, so each works as it is passed. The cell's
+      // address is what every write about it is filed under; every cell the assembler draws carries one, so the
+      // fallback is for grids built outside the world.
+      const walkTo = (r: number, c: number) => {
+        const path = findPath(grid, explorerPos, [r, c])
+        const before = journeys.getMechanismStates(journeyId)
+        const presses = walkPresses(grid, currentFloor, path, before)
+        // One write for the whole walk, so the douse reads every tile it worked. One douse at the end of the walk
+        // equals one after each tile: a sequence opens a gate only at `done`, which stays fired.
+        if (presses.length > 0) journeys.setMechanismStates(new Map(presses.map(press => [press.address, press.state])))
+        // A hiding sequence's steps unlock their bars on the door's board whatever the crossing did to the run.
+        const walked = walkedSteps(grid, currentFloor, path, before)
+        if (walked.length > 0) journeys.recordWalkedSteps(walked)
+        const edgeId = encodeEdge(currentFloor, r, c)
+        const address = cellAddress(grid, currentFloor, r, c) ?? edgeId
+        return { edgeId, address, goHere: () => journeys.updatePosition(journeyId, address, edgeId) }
+      }
+
+      // A NARROW PASSAGE IS NEVER GROUND. A tap on its wall walks the explorer to the side he can reach and offers the
+      // crossing there; nothing else takes him through. It stands only on a gate empty hands alone open, so with a
+      // stone in hand the lock has shut it, whatever realises it, and the wall says why.
+      if (cell.type === "room" && cell.passage) {
+        const walkable = walkableFrom(grid, explorerPos)
+        const crossing = passageCrossing(
+          grid,
+          row,
+          col,
+          (r, c) => walkable.has(`${r},${c}`),
+          (r, c) => findPath(grid, explorerPos, [r, c]).length
+        )
+        const near = crossing && getCell(grid, crossing.near[0], crossing.near[1])
+        if (!crossing || !near || near.type === "empty") return
+        const [nr, nc] = crossing.near
+        const side = walkTo(nr, nc)
+        journeys.markCellExplored(near.sectionHash ?? "", side.edgeId, side.address)
+        side.goHere()
+        if (isCarrying(grid, currentFloor, journeys.getMechanismStates(journeyId))) return turnAway(nr, nc)
+        const passage = resolvePassage(crossing.realisation)
+        const traversal: Traversal = {
+          kind: crossing.realisation,
+          from: crossing.near,
+          to: crossing.far,
+          dir: headingOf(crossing.via, crossing.far),
+          via: crossing.via,
+        }
+        scheduleArrival(walkDelay(nr, nc), () =>
+          offer("obstacle", nr, nc, () => void takeSpan(traversal), undefined, crossing.realisation, passage?.prompt)
+        )
+        return
+      }
+
       const sectionHash = cell.sectionHash ?? ""
-      // Where this cell sits in its section, which is what every write below files it under. Every cell
-      // the assembler draws carries one, so the fallback is for grids built outside the world.
-      const address = cellAddress(grid, currentFloor, row, col) ?? edgeId
-      const goHere = () => journeys.updatePosition(journeyId, address, edgeId)
-
-      // WALKING ONTO A SEQUENCE TILE WORKS IT: no prompt, no screen, no stop beyond the step. Every tile
-      // on the route counts, not only the one tapped, since a tile on the way is stood on. Written now,
-      // beside the position and the exploration, so a tile never reads walked for a step the position
-      // does not hold.
-      for (const press of walkPresses(
-        grid,
-        currentFloor,
-        findPath(grid, explorerPos, [row, col]),
-        journeys.getMechanismStates(journeyId)
-      ))
-        journeys.setMechanismState(press.address, press.state)
+      const carrying = isCarrying(grid, currentFloor, journeys.getMechanismStates(journeyId))
+      // WALKING ONTO A SEQUENCE TILE WORKS IT: no prompt, no screen, no stop beyond the step. Written now, beside the
+      // position and the exploration, so a tile never reads walked for a step the position does not hold.
+      const { edgeId, address, goHere } = walkTo(row, col)
 
       // THROWING IT IS THE WHOLE VISIT (FamilyMeta.actsOnArrival): no screen opens for it, so this is
       // where a lever's position gets written — the same call its old modal made (`setMechanismState`),
@@ -217,6 +281,7 @@ export const useSiteNavigation = ({
       if (cell.type === "room" && cell.roomType === "portal" && cell.stairId) {
         journeys.markCellExplored(sectionHash, edgeId, address)
         goHere()
+        if (carrying) return turnAway(row, col)
         const stairId = cell.stairId
         scheduleArrival(walkDelay(row, col), () =>
           offer("stairs", row, col, () => {
@@ -240,6 +305,7 @@ export const useSiteNavigation = ({
       ) {
         journeys.markCellExplored(sectionHash, edgeId, address)
         goHere()
+        if (carrying) return turnAway(row, col)
         scheduleArrival(walkDelay(row, col), () => offer("exit", row, col, onExitReached))
         return
       }
@@ -252,6 +318,8 @@ export const useSiteNavigation = ({
         journeys.markCellExplored(sectionHash, edgeId, address)
         goHere()
         const traversal: Traversal = { kind: span.kind, from: span.launch, to: span.landing, dir: span.dir }
+        // Every one-way takes only empty hands, as every walk of the lock does.
+        if (carrying) return turnAway(row, col)
         scheduleArrival(walkDelay(row, col), () =>
           offer(
             "obstacle",
@@ -263,6 +331,33 @@ export const useSiteNavigation = ({
             resolveOneWay(span.kind)?.prompt
           )
         )
+        return
+      }
+
+      // A PLATE IS GROUND THAT OFFERS ITS STONE: written down by standing on it, like a sequence tile, and asked
+      // before the completed-cell block because a plate is walked back to again and again. A pipe's hole offers
+      // the post or the take the same way. The move is read again when the prompt is taken, so it is always the one
+      // the floor allows then.
+      if (cell.type === "room" && (cell.plate || cell.pipeHole)) {
+        journeys.markCellExplored(sectionHash, edgeId, address)
+        goHere()
+        const offered = stoneMoveAt(grid, currentFloor, row, col, journeys.getMechanismStates(journeyId))
+        if (offered)
+          scheduleArrival(walkDelay(row, col), () =>
+            offer(
+              "plate",
+              row,
+              col,
+              () => {
+                const move = stoneMoveAt(grid, currentFloor, row, col, journeys.getMechanismStates(journeyId))
+                if (move) journeys.setMechanismState(move.address, move.state)
+              },
+              undefined,
+              undefined,
+              undefined,
+              offered.move
+            )
+          )
         return
       }
 
@@ -363,6 +458,7 @@ export const useSiteNavigation = ({
       currentFloor,
       explorerPos,
       walkDelay,
+      turnAway,
       scheduleArrival,
       seed,
       siteConfig,
@@ -372,8 +468,9 @@ export const useSiteNavigation = ({
       offer,
       takeSpan,
       resolveOneWay,
+      resolvePassage,
     ]
   )
 
-  return { onCellClick, prompt, explorerHidden }
+  return { onCellClick, prompt, notice, explorerHidden }
 }

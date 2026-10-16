@@ -1,0 +1,8 @@
+// designed by: Claude
+// LESSON, junior: a lever opens a door it does not stand beside. The shut door comes first, in the hall;
+// the lever waits in a side room, so the player goes looking for it and comes back through the door.
+
+in -- hall
+hall -[H]- out
+hall -- side
+H toggle @side

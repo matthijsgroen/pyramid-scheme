@@ -101,10 +101,9 @@ export const expectCarveReadsLaid = (grid: FloorGrid, laid: LaidFloor): void => 
   for (const junction of laid.junctions) {
     const room = at(grid, junction.cell)
     if (room.type !== "room" || room.roomType !== "fork") throw new Error(`junction ${junction.cell} is no fork`)
+    // An arm may be the route's way on, which is the next step already.
     const wanted = [
-      routeKeys[junction.step - 1],
-      routeKeys[junction.step + 1],
-      ...junction.arms.map(arm => arm.first),
+      ...new Set([routeKeys[junction.step - 1], routeKeys[junction.step + 1], ...junction.arms.map(arm => arm.first)]),
     ].sort()
     const [r, c] = rc(junction.cell)
     const leaves = [...room.dirs].map(dir => `${r + 2 * DIRS[dir][0]},${c + 2 * DIRS[dir][1]}`).sort()

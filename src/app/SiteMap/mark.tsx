@@ -59,14 +59,10 @@ export const MarkChip = ({ mark, size = 24 }: { mark: Mark; size?: number }) => 
 )
 
 /**
- * THE MARK WORN BY THE ART RATHER THAN BY THE MARKER, for the half of the pair that has no marker to
- * wear it: a door a lever drives is a way a switch shut (`isSealedWayOut`), which the map draws as a
- * leaf of stone with its node marker hidden outright. The badge moves onto the leaf, exactly as the
- * emptied-chest ✓ moves onto the lid (`NodeSprite.badge`) and for the same reason.
- *
- * Placed by its CENTRE, in map units, inside the map's HTML layer.
+ * THE MARK WORN BY A CONTROL'S ART, small and at its foot, so the player can match a torch or lever to the
+ * owner it has on a door's board. Placed by its CENTRE, in map units, inside the map's HTML layer.
  */
-export const MarkArtBadge = ({ mark, x, y, r = 11 }: { mark: Mark; x: number; y: number; r?: number }) => (
+export const MarkArtBadge = ({ mark, x, y, r = 7 }: { mark: Mark; x: number; y: number; r?: number }) => (
   <svg
     aria-hidden="true"
     viewBox="-12 -12 24 24"

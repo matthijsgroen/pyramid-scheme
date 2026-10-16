@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react"
-import type { Difficulty, FloorGrid } from "@/game/siteTypes"
+import type { Difficulty, Direction, FloorGrid } from "@/game/siteTypes"
 import type { RegionBarrierCover } from "@/game/regionBarrierCover"
 import type { ResolveRegionBarrierRealisation } from "@/game/regionBarrierRealisation"
 import { resolveRegionBarrierRealisation } from "@/mods/allRegionBarrierRealisations"
@@ -11,6 +11,18 @@ import { REGION_COVER_FADE_OUT_MS } from "./useRegionBarrierCovers"
 const TEXTURE_UNITS = CELL * 8
 
 type Fill = { url: string } | { color: string }
+
+/** The way a fade runs, from the side the explorer walks up from to the far side of the cell. */
+const TOWARD: Record<Direction, string> = { n: "bottom", s: "top", w: "right", e: "left" }
+
+/** A blockage starts half dense at its walkable edge and is full half a cell on, so the floor is mostly hidden even in the
+ * cell beside the explorer, and where its piece also spans the gap to the next covered cell that gap is full. Several
+ * walkable sides each fade it, intersected. */
+const fadeIn = (from: readonly Direction[]): CSSProperties => ({
+  maskImage: from.map(dir => `linear-gradient(to ${TOWARD[dir]}, rgba(0, 0, 0, 0.5), black ${CELL / 2}px)`).join(", "),
+  maskRepeat: "no-repeat",
+  ...(from.length > 1 ? { maskComposite: "intersect" } : {}),
+})
 
 // A realisation draws its seamless texture once that is painted; until then the flat fill its mod declares.
 const fillOf = (
@@ -66,7 +78,7 @@ export const RegionBarrierCovers = ({
           ...(fading ? { animationDuration: `${REGION_COVER_FADE_OUT_MS}ms` } : {}),
         }}
       >
-        {cover.cells.map(({ at: [r, c], opacity }) => {
+        {cover.cells.map(({ at: [r, c], fadeFrom }) => {
           const cell = grid.cells[r][c]
           const dirs: ReadonlySet<string> = cell.type === "empty" ? new Set() : cell.dirs
           // Covered neighbours share the gap between them, so the cover runs unbroken along a passage.
@@ -92,8 +104,8 @@ export const RegionBarrierCovers = ({
                 top,
                 width: CELL + west,
                 height: CELL + north,
-                opacity,
                 ...paint,
+                ...(fadeFrom ? fadeIn(fadeFrom) : {}),
               }}
             />
           )

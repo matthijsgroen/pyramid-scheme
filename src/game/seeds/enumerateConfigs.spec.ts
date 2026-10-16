@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest"
 import type { FamilyMeta, FamilyOptions } from "@/game/families/familyMeta"
 import type { SiteConfig } from "@/game/siteTypes"
-import { enumerateConfigs } from "./enumerateConfigs"
+import type { Difficulty } from "@/data/difficultyLevels"
+import { defaultResolveEncounter } from "@/game/encounterFallback"
+import { lockFloor, PROCESSION_LOCK, STUB_BOARD, STUB_DOOR } from "@/game/testSupport/processionFixtures"
+import { buildBoardIndexes, switchAddress } from "./boardIndex"
+import { demandLabel, enumerateConfigs } from "./enumerateConfigs"
 
 // A seedable family whose bucket key is nothing but the tier, so a demand's hash reads back as the
 // difficulty the pass thought that room would be built at.
@@ -141,5 +145,31 @@ describe(enumerateConfigs, () => {
       "stub-switch/three",
       "stub/no shape",
     ])
+  })
+})
+
+describe("a procession door's board", () => {
+  const doorWorld = (...tiers: Difficulty[]): Record<string, SiteConfig[]> => ({
+    p: tiers.map(difficulty => [lockFloor(PROCESSION_LOCK, { difficulty })]),
+  })
+
+  it("is owed once per door, at the floor's tier, sized by its steps, and labelled by its variant", () => {
+    const demand = enumerateConfigs(doorWorld("master", "master", "wizard"), [STUB_BOARD, STUB_DOOR])
+    expect(demand.map(entry => `${demandLabel(entry)}: ${entry.rooms}`)).toEqual([
+      "stub-board/master door3: 2",
+      "stub-board/wizard door3: 1",
+    ])
+  })
+
+  it("is dealt one list entry per door, in deal order", () => {
+    const world = doorWorld("master", "master")
+    const indexes = buildBoardIndexes(world, [STUB_BOARD, STUB_DOOR], defaultResolveEncounter, () => "master")
+    const address = switchAddress("door.P")
+    expect([0, 1].map(level => indexes("p", level, 0, STUB_BOARD.id, address))).toEqual([0, 1])
+  })
+
+  it("is not owed where the realisation names no board", () => {
+    const plain: FamilyMeta = { ...STUB_DOOR, sequence: { ...STUB_DOOR.sequence!, board: undefined } }
+    expect(enumerateConfigs(doorWorld("master"), [STUB_BOARD, plain])).toEqual([])
   })
 })

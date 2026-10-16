@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import { expandFloorLocks } from "./floorLocks"
 import type { PlacedLock } from "./floorLocks"
 import {
+  answerBareStubs,
   fillLaidFloor,
   lengthenPlan,
   lengtheningCandidates,
@@ -13,10 +14,12 @@ import type { LaidFloor } from "./laidFloor"
 import { layLockPlan, startingGridSize } from "./layLocks"
 import { planLockFloor } from "./lockPlan"
 import type { LockPlan } from "./lockPlan"
+import { freeRegions } from "./lockAuthoring"
+import { parseLock } from "./lockNotation"
 import type { RegionAppetite } from "./regions"
 import type { FloorConfig } from "./siteTypes"
 import { leverLock } from "./testSupport/floorLockFixtures"
-import { BINDING, doubleBackLock, sluiceLock } from "./testSupport/lockFixtures"
+import { BINDING, mirrorForkLock, sluiceLock } from "./testSupport/lockFixtures"
 
 const planOf = (locks: PlacedLock[]): LockPlan => {
   const floor: FloorConfig = {
@@ -49,7 +52,7 @@ const apart = (a: string, b: string) => Math.abs(rc(a)[0] - rc(b)[0]) + Math.abs
 
 describe("the plan the carve asks to be laid", () => {
   it("holds a node on a corridor for each door on it and none for a corridor that carries none", () => {
-    const plan = planToLay(planOf([{ lock: doubleBackLock() }]), WANTS)
+    const plan = planToLay(planOf([{ lock: mirrorForkLock() }]), WANTS)
     for (const corridor of plan.corridors) expect(corridor.minNodes).toBe(corridor.barriers.length)
   })
 
@@ -88,10 +91,10 @@ describe("the plan the carve asks to be laid", () => {
   })
 })
 
-// Each test seats the doubleBack at several seeds, ~2.5s here; CI runs 2-3x slower than the 5s default allows.
+// Each test seats the mirrorFork at several seeds, ~2.5s here; CI runs 2-3x slower than the 5s default allows.
 describe("the laid floor as the carve seats rooms on it", { timeout: 60_000 }, () => {
   it("stands every door of a gate on a node of its own corridor, strictly between the two stretches it shuts", () => {
-    const plan = planOf([{ lock: doubleBackLock() }])
+    const plan = planOf([{ lock: mirrorForkLock() }])
     for (const seed of SEEDS) {
       const floor = seated(plan, seed)
       const chain = (cell: string) => floor.label.get(cell)
@@ -106,7 +109,7 @@ describe("the laid floor as the carve seats rooms on it", { timeout: 60_000 }, (
   })
 
   it("puts the door of each arm on the cell beside the junction", () => {
-    const plan = planOf([{ lock: doubleBackLock() }])
+    const plan = planOf([{ lock: mirrorForkLock() }])
     for (const seed of SEEDS) {
       const floor = seated(plan, seed)
       const [junction] = floor.junctions
@@ -133,7 +136,7 @@ describe("the laid floor as the carve seats rooms on it", { timeout: 60_000 }, (
   })
 
   it("labels the route by the regions it threads, in the plan's order, and reserves its doors and junction", () => {
-    const plan = planOf([{ lock: doubleBackLock() }])
+    const plan = planOf([{ lock: mirrorForkLock() }])
     for (const seed of SEEDS) {
       const floor = seated(plan, seed)
       expect(floor.routeLabels.filter((label, i, all) => label !== all[i - 1])).toEqual(plan.route)
@@ -147,7 +150,7 @@ describe("the laid floor as the carve seats rooms on it", { timeout: 60_000 }, (
   })
 
   it("keeps every off-route node in exactly one chain, hung from a node that is already laid", () => {
-    const plan = planOf([{ lock: doubleBackLock() }])
+    const plan = planOf([{ lock: mirrorForkLock() }])
     for (const seed of SEEDS) {
       const floor = seated(plan, seed)
       const route = new Set(floor.route.map(([r, c]) => `${r},${c}`))
@@ -163,7 +166,7 @@ describe("the laid floor as the carve seats rooms on it", { timeout: 60_000 }, (
   })
 
   it("splits ground at every door and at every change of region, so a leftover maze edge cannot cross either", () => {
-    const plan = planOf([{ lock: doubleBackLock() }])
+    const plan = planOf([{ lock: mirrorForkLock() }])
     for (const seed of SEEDS) {
       const floor = seated(plan, seed)
       const labelled = new Map<string, Set<string>>()
@@ -240,6 +243,7 @@ const straight = (labels: string[]) => {
     depth: new Map(keys.map((key, i) => [key, i])),
     open: new Set(keys),
     doors: new Set<string>(),
+    thresholds: new Set<string>(),
     junctions: [],
     drops: [],
     seatDemand: new Map<string, number>(),
@@ -408,11 +412,106 @@ describe("the stretch the carve lengthens when the laid nodes cannot take the co
     expect(ids(found)).toEqual(["region:A"])
   })
 
+  it("never offers a corridor into a sequence step's region, whose every node is kept bare for the tile", () => {
+    const stepped: LockPlan = {
+      ...plan,
+      regions: plan.regions.map(found =>
+        found.id === "C" ? { ...found, seats: [{ for: "threshold" as const, control: "P", step: 0 }] } : found
+      ),
+    }
+    const found = lengtheningCandidates(stepped, laid(FLAT), puzzle, new Map())
+    expect(ids(found)).not.toContain("corridor:B>C")
+    expect(ids(found)).toContain("region:C")
+  })
+
   it("asks the lay for the laid length of a stretch plus the nodes wanted, and no other stretch for more", () => {
     const grown = lengthenPlan(plan, laid({ ...FLAT, "corridor:B>C": 4 }), { kind: "corridor", id: "B>C", nodes: 2 })
     expect(grown.corridors.map(found => found.minNodes)).toEqual([0, 6])
     expect(grown.regions.map(found => found.minNodes)).toEqual([1, 1, 1])
     const region = lengthenPlan(plan, laid(FLAT), { kind: "region", id: "C", nodes: 1 })
     expect(region.regions.map(found => found.minNodes)).toEqual([1, 1, 3])
+  })
+})
+
+describe("doors on corridors that carry items", { timeout: 60_000 }, () => {
+  const planFor = (text: string, name: string) => planOf([{ lock: freeRegions(parseLock(text, name).lock) }])
+
+  it("labels a falling corridor's stretches and ledge by the region each hangs from, and stands its door on them", () => {
+    const plan = planFor("in -- out\nin -[A]- >> -[A]- pit\npit -- out\nA toggle @in", "fall")
+    for (const seed of SEEDS) {
+      const floor = seated(plan, seed)
+      const up = floor.gateDoor.get("fall.in-pit")!
+      const down = floor.gateDoor.get("fall.in-pit#2")!
+      expect(floor.label.get(up)).toBe("fall.in")
+      expect(floor.label.get(down)).toBe("fall.pit")
+      const [drop] = floor.drops
+      expect(floor.label.get(drop.from)).toBe("fall.in")
+      expect(floor.label.get(drop.to)).toBe("fall.pit")
+      expect(floor.seatDemand.has("fall.in>pit:ledge")).toBe(false)
+    }
+  })
+
+  it("stands a door aligned right on the node beside the region after it", () => {
+    const base = planFor("in ---[A]- hall\nhall -- out\nA toggle @in", "aligned")
+    const plan = { ...base, corridors: base.corridors.map(c => ({ ...c, minNodes: c.minNodes + 2 })) }
+    let laid = 0
+    for (const seed of SEEDS) {
+      const toLay = planToLay(plan, WANTS)
+      const result = layLockPlan(toLay, { seed, n: startingGridSize(toLay) })
+      if (!result.ok) continue
+      laid++
+      const floor = seatLaidFloor(plan, result.laid)
+      const nodes = result.laid.corridors.find(c => c.id === "aligned.in>aligned.hall")!.nodes
+      expect(floor.gateDoor.get("aligned.in-hall")).toBe(nodes[nodes.length - 1])
+    }
+    expect(laid).toBeGreaterThanOrEqual(6)
+  })
+})
+
+describe("a route region's stub off the route with no room in it", () => {
+  const nook = (control: "hall" | "nook") =>
+    planOf([
+      { lock: freeRegions(parseLock(`in -- hall\nhall -[H]- out\nhall -- nook\nH toggle @${control}\n`, "nook").lock) },
+    ])
+  // The doorless corridor into the nook laid long, its near half answering to the hall as the split gives it.
+  const STUB = ["40,40", "40,42"]
+  const withStub = (plan: LockPlan): LaidFloor => {
+    const floor = seated(plan, 1)
+    const corridor = plan.corridors.find(candidate => candidate.to.endsWith("nook") || candidate.from.endsWith("nook"))!
+    const hall = plan.regions.find(region => region.id.endsWith("hall"))!.id
+    return {
+      ...floor,
+      label: new Map([...floor.label, ...STUB.map(key => [key, hall] as const)]),
+      stretches: new Map([...floor.stretches, [`corridor:${corridor.id}`, STUB]]),
+    }
+  }
+
+  it("answers to the region its doorless corridor leads to, and the route keeps its labels", () => {
+    const plan = nook("nook")
+    const floor = withStub(plan)
+    const answered = answerBareStubs(plan, floor, [], FREE)
+    const nookRegion = plan.regions.find(region => region.id.endsWith("nook"))!.id
+    expect(STUB.map(key => answered.label.get(key))).toEqual([nookRegion, nookRegion])
+    expect(answered.routeLabels).toEqual(floor.routeLabels)
+  })
+
+  it("keeps the stub where a mechanic of its region may seat in it", () => {
+    const plan = nook("hall")
+    const floor = withStub(plan)
+    expect(answerBareStubs(plan, floor, [], FREE)).toBe(floor)
+  })
+
+  it("keeps the stub where a door stands in it", () => {
+    const plan = nook("nook")
+    const floor = { ...withStub(plan), doors: new Set([STUB[1]]) }
+    expect(answerBareStubs(plan, floor, [], FREE)).toBe(floor)
+  })
+
+  it("keeps the stub where its far region refuses a room filled into it", () => {
+    const plan = nook("nook")
+    const nookRegion = plan.regions.find(region => region.id.endsWith("nook"))!.id
+    const floor = { ...withStub(plan), absorbed: [{ section: 0, cells: [STUB[0]] }] }
+    const refusing = new Map<string, RegionAppetite>([[nookRegion, "reward"]])
+    expect(answerBareStubs(plan, floor, [{ section: 0, kinds: ["puzzle", "reward"] }], refusing)).toBe(floor)
   })
 })

@@ -97,7 +97,7 @@ describe(floorKeyRing, () => {
     expect(floorKeyRing(grid, new Set(["k1", "k2", "k3"])).held).toEqual(["blue", "red", "purple"])
   })
 
-  // A mechanism-opened gate (siteAssembler's obstacle gates, or an old-style handle gate) is
+  // A mechanism-opened gate (the carve's obstacle gates, or an old-style handle gate) is
   // authored: no chest on the floor grows its key, so it carries no colour, and the union that makes
   // it "owned" (SiteMapScreen.tsx) must not make it appear as something to hold or hunt for.
   it("shows no colour for a mechanism-opened gate, held or needed", () => {

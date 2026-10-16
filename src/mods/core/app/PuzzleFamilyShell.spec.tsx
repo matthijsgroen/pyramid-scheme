@@ -2,6 +2,7 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { PuzzleFamilyShell } from "./PuzzleFamilyShell"
+import { DevelopContext } from "@/contexts/DevelopMode"
 
 vi.mock("react-i18next", () => ({ useTranslation: () => ({ t: (key: string) => key }) }))
 
@@ -140,5 +141,39 @@ describe("the block the board stands on", () => {
     const block = container.querySelector("[data-board]")!.parentElement!
     expect(block.className).toContain("w-full")
     expect(block.className).not.toContain("w-fit")
+  })
+})
+
+describe("develop mode", () => {
+  afterEach(cleanup)
+
+  const renderIn = (isDevelopMode: boolean, onSolved: () => void = () => {}) =>
+    render(
+      <DevelopContext value={{ isDevelopMode, setDevelopMode: () => {} }}>
+        <PuzzleFamilyShell onSolved={onSolved} onCancel={() => {}}>
+          {() => <button>cell</button>}
+        </PuzzleFamilyShell>
+      </DevelopContext>
+    )
+
+  it("offers no Solve to a player", () => {
+    renderIn(false)
+    expect(screen.queryByRole("button", { name: "Solve" })).toBeNull()
+  })
+
+  it("finishes an unsolved board through the same banner a real solve shows", () => {
+    vi.useFakeTimers()
+    try {
+      const onSolved = vi.fn()
+      renderIn(true, onSolved)
+      fireEvent.click(screen.getByRole("button", { name: "Solve" }))
+      act(() => vi.advanceTimersByTime(5000))
+      expect(onSolved).not.toHaveBeenCalled()
+
+      fireEvent.click(screen.getByText("ui.tapToContinue"))
+      expect(onSolved).toHaveBeenCalledExactlyOnceWith({ unaided: true })
+    } finally {
+      vi.useRealTimers()
+    }
   })
 })

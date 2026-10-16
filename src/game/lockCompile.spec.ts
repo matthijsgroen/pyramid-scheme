@@ -2,7 +2,8 @@ import { describe, expect, expectTypeOf, it } from "vitest"
 import { CORE_MECHANICS, mechanicRegistry, resolveMechanicKind } from "./mechanics"
 import type { Activator, ForkSwitch, Lock, LockMechanic, LockOneWay, Sequence, Toggle } from "./lockAuthoring"
 import { checkLock, compileLock, type LockFragment, type RealisationBinding } from "./lockCompile"
-import { BINDING, doubleBackLock, sluiceLock } from "./testSupport/lockFixtures"
+import { parseLock } from "./lockNotation"
+import { BINDING, mirrorForkLock, sluiceLock } from "./testSupport/lockFixtures"
 
 const kinds = resolveMechanicKind
 const compile = (lock: Lock, binding: RealisationBinding = BINDING, namespace?: string) =>
@@ -15,12 +16,12 @@ const fragmentOf = (lock: Lock, binding: RealisationBinding = BINDING, namespace
 
 describe("a lock stands on its own", () => {
   it("is checked with no floor, no binding and no seed", () => {
-    expect(checkLock(doubleBackLock(), kinds)).toEqual([])
+    expect(checkLock(mirrorForkLock(), kinds)).toEqual([])
     expect(checkLock(sluiceLock(), kinds)).toEqual([])
   })
 
   it("compiles with no floor to place it on", () => {
-    expect(compile(doubleBackLock()).ok).toBe(true)
+    expect(compile(mirrorForkLock()).ok).toBe(true)
     expect(compile(sluiceLock()).ok).toBe(true)
   })
 
@@ -30,15 +31,15 @@ describe("a lock stands on its own", () => {
       ...f.obstacles.map(o => o.id),
       ...f.controls.map(c => c.id),
     ]
-    const left = ids(fragmentOf(doubleBackLock(), BINDING, "left"))
-    const right = ids(fragmentOf(doubleBackLock(), BINDING, "right"))
+    const left = ids(fragmentOf(mirrorForkLock(), BINDING, "left"))
+    const right = ids(fragmentOf(mirrorForkLock(), BINDING, "right"))
     expect(left.filter(id => right.includes(id))).toEqual([])
     expect(left.every(id => id.startsWith("left."))).toBe(true)
   })
 })
 
 describe("a lock refuses what contradicts itself, naming it", () => {
-  const d = doubleBackLock()
+  const d = mirrorForkLock()
   const refused = (lock: Lock) => checkLock(lock, kinds)
   const connectionsWith = (last: Lock["connections"][number]) => [...d.connections.slice(0, 4), last]
   const withMechanic = (id: string, mechanic: LockMechanic): Lock => ({
@@ -93,29 +94,9 @@ describe("a lock refuses what contradicts itself, naming it", () => {
     ])
   })
 
-  it("refuses one connection declared twice", () => {
-    expect(refused({ ...d, connections: [...d.connections, ["leftLower", "in"]] })).toEqual([
-      { type: "connectionRepeated", between: ["leftLower", "in"] },
-    ])
-  })
-
   it("refuses a gate and a one-way sharing an id", () => {
     expect(refused({ ...d, oneWays: { ...d.oneWays, "in-out": { from: "s1", to: "in" } } })).toEqual([
       { type: "barrierIdRepeated", id: "in-out" },
-    ])
-  })
-
-  it("refuses a one-way standing on a connection beside a gate, which the floor cannot say", () => {
-    expect(
-      refused({
-        ...d,
-        connections: [
-          { between: ["in", "leftLower"], barriers: ["in-leftLower", "dropToIn"] },
-          ...d.connections.slice(1),
-        ],
-      })
-    ).toEqual([
-      { type: "oneWaySharesConnection", between: ["in", "leftLower"], barriers: ["in-leftLower", "dropToIn"] },
     ])
   })
 
@@ -126,6 +107,19 @@ describe("a lock refuses what contradicts itself, naming it", () => {
     expect(refused(withMechanic("S2", { ...(d.mechanics.S2 as Toggle), opens: { a: [], b: [] } }))).toEqual([
       { type: "ownerNamesNoGate", barrier: "in-out", owner: "S2" },
     ])
+  })
+
+  it("reads a name as unknown when only Object.prototype has it: an owner or an opens named `constructor`", () => {
+    expect(
+      refused({ ...d, gates: { ...d.gates, "in-out": { from: "in", to: "out", owners: ["S2", "constructor"] } } })
+    ).toEqual([{ type: "gateOwnerUnknown", barrier: "in-out", owner: "constructor" }])
+    const S1 = d.mechanics.S1 as Toggle
+    expect(refused(withMechanic("S1", { ...S1, opens: { a: ["constructor"], b: ["leftLower-s2"] } }))).toContainEqual({
+      type: "opensUnknownBarrier",
+      mechanic: "S1",
+      state: "a",
+      barrier: "constructor",
+    })
   })
 
   it("refuses an opens naming a barrier nothing defines, or a one-way", () => {
@@ -269,8 +263,8 @@ describe("a lock names roles, never realisations", () => {
       ...rest,
       controls: controls.map(({ encounter: _encounter, ...control }) => control),
     })
-    const one = fragmentOf(doubleBackLock(), BINDING)
-    const two = fragmentOf(doubleBackLock(), other)
+    const one = fragmentOf(mirrorForkLock(), BINDING)
+    const two = fragmentOf(mirrorForkLock(), other)
 
     expect(bare(two)).toEqual(bare(one))
     expect(one.controls.map(c => [c.id, c.encounter])).toEqual([
@@ -287,16 +281,16 @@ describe("a lock names roles, never realisations", () => {
   })
 
   it("refuses a kind the binding leaves out, naming the kind and who uses it, with no default", () => {
-    expect(compile(doubleBackLock(), {})).toEqual({
+    expect(compile(mirrorForkLock(), {})).toEqual({
       ok: false,
       faults: [
         { type: "unboundRole", kind: "fork-switch", mechanics: ["Y"] },
         { type: "unboundRole", kind: "toggle", mechanics: ["S1", "S2"] },
-        { type: "unboundRole", kind: "one-way", mechanics: ["dropToLeft", "dropToIn"] },
+        { type: "unboundRole", kind: "one-way", mechanics: ["dropToLeft", "dropToIn", "dropToS1"] },
       ],
     })
     const { toggle: _toggle, ...withoutToggle } = BINDING
-    expect(compile(doubleBackLock(), withoutToggle)).toEqual({
+    expect(compile(mirrorForkLock(), withoutToggle)).toEqual({
       ok: false,
       faults: [{ type: "unboundRole", kind: "toggle", mechanics: ["S1", "S2"] }],
     })
@@ -358,7 +352,8 @@ describe("a lock using a mechanic that is not built yet", () => {
   })
 
   it("refuses every kind the registry no longer holds, naming each mechanic", () => {
-    expect(checkLock(doubleBackLock(), () => undefined).map(fault => fault.type)).toEqual([
+    expect(checkLock(mirrorForkLock(), () => undefined).map(fault => fault.type)).toEqual([
+      "unknownControlKind",
       "unknownControlKind",
       "unknownControlKind",
       "unknownControlKind",
@@ -378,17 +373,21 @@ describe("a lock using a mechanic that is not built yet", () => {
     expect(CORE_MECHANICS.map(kind => kind.control)).toEqual([
       "toggle",
       "activator",
+      "flame",
       "sequence",
       "fork-switch",
       "one-way",
+      "weights",
+      "pipe",
+      "unladen",
     ])
     expect(CORE_MECHANICS.every(kind => kind.built)).toBe(true)
   })
 })
 
 describe("a lock compiles into the floor's vocabulary", () => {
-  it("writes the doubleBack as layout, drops, fork and controls", () => {
-    expect(fragmentOf(doubleBackLock())).toEqual({
+  it("writes the mirrorFork as layout, drops, fork and controls", () => {
+    expect(fragmentOf(mirrorForkLock())).toEqual({
       regionLayout: {
         regions: ["in", "leftLower", "rightLower", "s1", "s2", "out"].map(name => ({ name, appetite: "free" })),
         connections: [
@@ -410,6 +409,7 @@ describe("a lock compiles into the floor's vocabulary", () => {
         { id: "in-out", kind: "gate", at: { on: "connection", between: ["in", "out"] } },
         { id: "dropToLeft", kind: "oneWay", at: { on: "connection", between: ["s1", "leftLower"] } },
         { id: "dropToIn", kind: "oneWay", at: { on: "connection", between: ["leftLower", "in"] } },
+        { id: "dropToS1", kind: "oneWay", at: { on: "connection", between: ["s2", "s1"] } },
       ],
       controls: [
         { id: "Y", in: "in", control: "fork-switch", encounter: "lightbeamSwitch" },
@@ -455,7 +455,7 @@ describe("a lock compiles into the floor's vocabulary", () => {
       two: { control: "activator", in: "annex", starts: "unlit", opens: { unlit: [], lit: ["door"] } },
       plates: {
         control: "sequence",
-        steps: [{ in: "hall" }, { in: "annex" }, { in: "hall" }],
+        steps: [{ in: "hall" }, { in: "annex" }, { in: "in" }],
         resetAt: "grate",
         opens: { done: ["grate"] },
       },
@@ -487,7 +487,7 @@ describe("a lock compiles into the floor's vocabulary", () => {
     expect(fragmentOf(hallLock()).controls[2]).toEqual({
       id: "plates",
       control: "sequence",
-      steps: [{ in: "hall" }, { in: "annex" }, { in: "hall" }],
+      steps: [{ in: "hall" }, { in: "annex" }, { in: "in" }],
       resetAt: "grate",
       opens: { done: ["grate"] },
       encounter: "plates",
@@ -529,5 +529,231 @@ describe("a lock compiles into the floor's vocabulary", () => {
     const fragment = fragmentOf(slide, { "one-way": "zipline" })
     expect(fragment.regionLayout.connections).toEqual([["a", "c"]])
     expect(fragment.obstacles).toEqual([{ id: "chute", kind: "oneWay", at: { on: "connection", between: ["a", "b"] } }])
+  })
+})
+
+describe("a lock with stones", () => {
+  const plateLock = (overrides: Partial<Lock> = {}): Lock => ({
+    name: "plate",
+    regions: { in: { takes: "free" }, out: { takes: "free" } },
+    connections: [{ between: ["in", "out"], barriers: ["door"] }],
+    gates: { door: { from: "in", to: "out", owners: ["p"] } },
+    mechanics: {},
+    weights: {
+      plates: {
+        p: { in: "in", stone: false, opens: { weighted: ["door"], empty: [] } },
+        shelf: { in: "in", stone: true, opens: { weighted: [], empty: [] } },
+      },
+    },
+    in: "in",
+    out: "out",
+    ...overrides,
+  })
+
+  it("takes a plate as a gate's owner, and is checked whole", () => {
+    expect(checkLock(plateLock())).toEqual([])
+  })
+
+  it("compiles its stones into one weights control, every name in the lock's namespace", () => {
+    const fragment = fragmentOf(plateLock(), { ...BINDING, weights: "stonePlate" }, "a")
+    const control = fragment.controls.find(c => c.control === "weights")
+    expect(control).toMatchObject({
+      id: "a.stones",
+      control: "weights",
+      plates: [
+        { id: "a.p", in: "a.in", stone: false },
+        { id: "a.shelf", in: "a.in", stone: true },
+      ],
+      initial: "a.shelf",
+      encounter: "stonePlate",
+    })
+    expect(control!.opens["a.p"]).toEqual(["a.door"])
+  })
+
+  it("refuses stones in a build whose registry has no weights kind", () => {
+    const withoutWeights = mechanicRegistry(CORE_MECHANICS.filter(kind => kind.control !== "weights"))
+    expect(checkLock(plateLock(), withoutWeights)).toEqual([
+      { type: "unknownControlKind", mechanic: "stones", control: "weights" },
+    ])
+  })
+
+  it("asks a binding for the stones like any built kind", () => {
+    const result = compile(plateLock(), BINDING)
+    expect(result).toEqual({ ok: false, faults: [{ type: "unboundRole", kind: "weights", mechanics: ["stones"] }] })
+  })
+
+  it("refuses a plate standing in a region the lock does not have", () => {
+    const lock = plateLock()
+    const weights = { plates: { ...lock.weights!.plates, p: { ...lock.weights!.plates.p, in: "cellar" } } }
+    expect(checkLock({ ...lock, weights })).toContainEqual({ type: "plateNamesNoRegion", plate: "p", region: "cellar" })
+  })
+
+  it("refuses a pipe whose hole stands in a region the lock does not have", () => {
+    const lock = plateLock()
+    const weights = { ...lock.weights!, pipes: { P: { ends: ["in", "cellar"] as const } } }
+    expect(checkLock({ ...lock, weights })).toContainEqual({ type: "pipeNamesNoRegion", pipe: "P", region: "cellar" })
+  })
+
+  it("asks a binding for a pipe's holes under pipe, and carries the namespaced pipe", () => {
+    const lock = plateLock()
+    const piped = {
+      ...lock,
+      weights: { ...lock.weights!, pipes: { P: { ends: ["in", "out"] as const, stone: "out" } } },
+    }
+    expect(compile(piped, { ...BINDING, weights: "stonePlate" })).toEqual({
+      ok: false,
+      faults: [{ type: "unboundRole", kind: "pipe", mechanics: ["P"] }],
+    })
+    const fragment = fragmentOf(piped, { ...BINDING, weights: "stonePlate", pipe: "stonePipe" }, "a")
+    expect(fragment.controls.find(c => c.control === "weights")).toMatchObject({
+      pipes: [{ id: "a.P", ends: ["a.in", "a.out"], stone: "a.out" }],
+      initial: "a.shelf a.P@a.out",
+      pipeEncounter: "stonePipe",
+    })
+  })
+
+  it("refuses unladen on a lock without stones", () => {
+    const lock = plateLock({ gates: { door: { from: "in", to: "out", owners: ["unladen"] } }, weights: undefined })
+    expect(checkLock(lock)).toContainEqual({ type: "carryWithoutStones", barrier: "door" })
+  })
+})
+
+describe("empty hands written on a drop", () => {
+  const STONES = "in -- yard\nyard -- out\nshelf plate @yard stone"
+
+  it.each([
+    ["before", "out -[unladen]- >> in"],
+    ["after", "out >> -[unladen]- in"],
+  ])("is refused by name, written %s the drop: a drop already takes empty hands", (_, line) => {
+    expect(checkLock(parseLock(`${STONES}\n${line}`, "drop").lock)).toEqual([
+      { type: "unladenOnDrop", barrier: "out-in", oneWay: "out>in" },
+    ])
+  })
+})
+
+describe("a mechanic of an effect-only kind", () => {
+  const asMechanic = (control: string): Lock => {
+    const s = sluiceLock()
+    return {
+      ...s,
+      mechanics: { ...s.mechanics, x: { control, in: "annex" } } as unknown as Lock["mechanics"],
+    }
+  }
+
+  it.each(["unladen", "one-way"])("is refused when a lock declares %s as a mechanic", control => {
+    expect(checkLock(asMechanic(control))).toContainEqual({ type: "effectOnlyMechanic", mechanic: "x", control })
+  })
+
+  it("leaves the gate owner unladen and the drop one-way alone", () => {
+    const lock = parseLock("in -- yard\nyard -[unladen]- out\nout >> in\nshelf plate @yard stone", "drop").lock
+    expect(checkLock(lock).map(fault => fault.type)).not.toContain("effectOnlyMechanic")
+  })
+})
+
+describe("corridors on a pair, and a drop among a corridor's items", () => {
+  const own = (lock: Lock) => checkLock(lock, kinds).filter(fault => fault.type !== "topology")
+
+  it("takes a gate corridor and a drop-only corridor on one pair", () => {
+    expect(checkLock(parseLock("in -[S]- hall\nhall >> in\nhall -- out\nS toggle @hall", "pair").lock, kinds)).toEqual(
+      []
+    )
+  })
+
+  it("takes a drop beside a gate on one corridor, with nothing of the lock's own to refuse", () => {
+    expect(own(parseLock("in -- out\nin -[A]- >> pit\npit -- out\nA toggle @in", "fall").lock)).toEqual([])
+  })
+
+  it("refuses a fork-switch's gate on a falling corridor: a fork's ways are layout corridors", () => {
+    const lock = parseLock(
+      "in -[S]- out\nin -[Y]- a\nin -[Y]- b\nin -[Y]- >> c\nc >> in\nS toggle @c\nY fork @in",
+      "forkFall"
+    ).lock
+    expect(checkLock(lock, kinds)).toContainEqual({
+      type: "topology",
+      fault: { type: "gateOwnedOffSeam", id: "in-c", owner: "Y" },
+    })
+  })
+
+  it("refuses two drops on one connection", () => {
+    const base = parseLock("in -- hall\nhall -- out", "falls").lock
+    const twice: Lock = {
+      ...base,
+      connections: [{ between: ["in", "hall"], barriers: ["in>hall", "in>hall#2"] }, ["hall", "out"]],
+      oneWays: { "in>hall": { from: "in", to: "hall" }, "in>hall#2": { from: "in", to: "hall" } },
+    }
+    expect(own(twice)).toEqual([
+      { type: "corridorFallsTwice", between: ["in", "hall"], barriers: ["in>hall", "in>hall#2"] },
+    ])
+  })
+
+  it("refuses an alignment naming a barrier its connection does not carry", () => {
+    const { lock } = parseLock("in -[A]- hall\nhall -[B]- out\nA toggle @in\nB toggle @hall", "aligned")
+    const off: Lock = {
+      ...lock,
+      connections: [
+        { between: ["in", "hall"], barriers: ["in-hall"], align: { "hall-out": "left" } },
+        lock.connections[1],
+      ],
+    }
+    expect(own(off)).toEqual([{ type: "alignOffConnection", between: ["in", "hall"], barrier: "hall-out" }])
+  })
+
+  it("refuses an alignment naming a drop", () => {
+    const { lock } = parseLock("in -[A]- >> hall\nhall -- out\nA toggle @in", "aligned")
+    const onDrop: Lock = {
+      ...lock,
+      connections: [
+        { between: ["in", "hall"], barriers: ["in-hall", "in>hall"], align: { "in>hall": "left" } },
+        lock.connections[1],
+      ],
+    }
+    expect(own(onDrop)).toEqual([{ type: "alignOnDrop", barrier: "in>hall" }])
+  })
+
+  it("compiles a drop no connection names to the fragment of one its own connection names", () => {
+    const named = parseLock("in -- hall\nhall >> in\nhall -- out", "drop").lock
+    const unnamed: Lock = { ...named, connections: named.connections.filter(c => !("between" in c)) }
+    expect(fragmentOf(unnamed)).toEqual(fragmentOf(named))
+  })
+
+  it("compiles two corridors on one pair, the second's gate and order carrying its index", () => {
+    const f = fragmentOf(
+      parseLock("in -[A]- hall\nin -[B]- -[C]- hall\nhall -- out\nA toggle @in\nB toggle @in\nC toggle @in", "pair")
+        .lock
+    )
+    expect(f.regionLayout.connections.filter(([a, b]) => a === "in" && b === "hall")).toHaveLength(2)
+    expect(f.obstacles.filter(o => o.kind === "gate").map(o => [o.id, o.at])).toEqual([
+      ["in-hall", { on: "connection", between: ["in", "hall"] }],
+      ["in-hall#2", { on: "connection", between: ["in", "hall"], corridor: 1 }],
+      ["in-hall#3", { on: "connection", between: ["in", "hall"], corridor: 1 }],
+    ])
+    expect(f.barrierOrder).toEqual([{ between: ["in", "hall"], barriers: ["in-hall#2", "in-hall#3"], corridor: 1 }])
+  })
+
+  it("refuses a gate an open corridor beside it goes round", () => {
+    expect(checkLock(parseLock("in -[S]- hall\nin -- hall\nhall -- out\nS toggle @in", "round").lock, kinds)).toEqual([
+      { type: "topology", fault: { type: "gateBypassed", id: "in-hall", between: ["in", "hall"] } },
+    ])
+  })
+
+  it("compiles a gate and a drop on one corridor to a falling corridor: a drop, its gate, an order and no layout join", () => {
+    const f = fragmentOf(parseLock("in -- out\nin -[A]- >> pit\npit -- out\nA toggle @in", "fall").lock)
+    expect(f.regionLayout.connections).toEqual([
+      ["in", "out"],
+      ["pit", "out"],
+    ])
+    expect(f.barrierOrder).toEqual([{ between: ["in", "pit"], barriers: ["in-pit", "in>pit"] }])
+    expect(f.obstacles.map(o => o.id).sort()).toEqual(["in-pit", "in>pit"])
+  })
+
+  it("writes an aligned gate's order, alone on its corridor", () => {
+    const f = fragmentOf(parseLock("in ---[A]- hall\nhall -- out\nA toggle @in", "aligned").lock)
+    expect(f.barrierOrder).toEqual([{ between: ["in", "hall"], barriers: ["in-hall"], align: { "in-hall": "right" } }])
+  })
+
+  it("compiles a lock that repeats no pair and aligns nothing with no corridor field anywhere", () => {
+    const f = fragmentOf(parseLock("in -[A]- hall -[B]- out\nhall >> in\nA toggle @in\nB toggle @hall", "plain").lock)
+    expect(JSON.stringify(f)).not.toContain('"corridor"')
+    expect(JSON.stringify(f)).not.toContain('"align"')
   })
 })

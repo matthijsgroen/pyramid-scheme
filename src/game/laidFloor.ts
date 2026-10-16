@@ -1,4 +1,5 @@
 import type { CellKey, LaidDrop, LaidLocks } from "./layLocks"
+import type { Alignment } from "./lockAuthoring"
 import type { LockPlan, PlanCorridor } from "./lockPlan"
 import { appetiteAccepts } from "./regions"
 import type { ContentKind, RegionAppetite } from "./regions"
@@ -7,13 +8,64 @@ type Cell = [number, number]
 
 const rc = (cell: CellKey): Cell => cell.split(",").map(Number) as Cell
 
+/**
+ * WHERE EACH OF A CORRIDOR'S ITEMS STANDS AMONG ITS `k` NODES. Its `k - m` spare nodes fall into `m + 1` gaps: before
+ * the first item, between each two, after the last. A gap is closed when the item after it is aligned left, the item
+ * before it is aligned right, or it touches the junction end. Each centred item first takes one spare node into each
+ * open gap beside it (a shared gap once); the rest go to the default gap — after the last item, or before the first
+ * when the junction is at the end — or, closed, to the nearest open gap, or, every gap closed, to it anyway. With
+ * nothing aligned this is where the carve has always stood a corridor's doors.
+ */
+export const seatItems = (
+  k: number,
+  aligns: ReadonlyArray<Alignment | undefined>,
+  junction?: "start" | "end"
+): number[] => {
+  const m = aligns.length
+  const gaps = Array<number>(m + 1).fill(0)
+  const closed = gaps.map(
+    (_, g) =>
+      aligns[g] === "left" ||
+      aligns[g - 1] === "right" ||
+      (g === 0 && junction === "start") ||
+      (g === m && junction === "end")
+  )
+  let spare = k - m
+  const filled = new Set<number>()
+  aligns.forEach((align, j) => {
+    if (align !== "center") return
+    for (const g of [j, j + 1])
+      if (!closed[g] && !filled.has(g) && spare > 0) {
+        gaps[g]++
+        filled.add(g)
+        spare--
+      }
+  })
+  const preferred = junction === "end" ? 0 : m
+  const open = gaps.map((_, g) => g).filter(g => !closed[g])
+  const into =
+    closed[preferred] && open.length > 0
+      ? open.reduce((best, g) => (Math.abs(g - preferred) < Math.abs(best - preferred) ? g : best))
+      : preferred
+  gaps[into] += spare
+  const at: number[] = []
+  let node = gaps[0]
+  for (let j = 0; j < m; j++) {
+    at.push(node)
+    node += 1 + gaps[j + 1]
+  }
+  return at
+}
+
 /** The doors a corridor carries, nearest its `from` end first: the doors of a region barrier standing at each end of it, with the corridor's own gates between. */
 type CorridorDoor = { kind: "gate"; id: string } | { kind: "region"; barrier: string; region: string; entrance: string }
 
 const doorsOnCorridor = (plan: LockPlan, corridor: PlanCorridor): CorridorDoor[] => {
   const regionDoors = (region: string, entrance: string): CorridorDoor[] =>
     (plan.regions.find(candidate => candidate.id === region)?.seats ?? []).flatMap(seat =>
-      seat.for === "door" && seat.entrance === entrance
+      seat.for === "door" &&
+      seat.entrance === entrance &&
+      (seat.corridor === undefined || seat.corridor === corridor.id)
         ? [{ kind: "region" as const, barrier: seat.barrier, region, entrance }]
         : []
     )
@@ -24,35 +76,97 @@ const doorsOnCorridor = (plan: LockPlan, corridor: PlanCorridor): CorridorDoor[]
   ]
 }
 
+/** The region a plan region's nodes answer to: a ledge's or a landing's own region, otherwise itself. */
+const labelOf = (plan: LockPlan, id: string): string => plan.regions.find(region => region.id === id)?.answersTo ?? id
+
+const holdsStep = (plan: LockPlan, id: string) =>
+  plan.regions.find(region => region.id === id)?.seats.some(seat => seat.for === "threshold") ?? false
+
+// A step's region entered three ways or more: its stretch has two ends, so a corridor into it brings its own node
+// for the tile.
+const isHub = (plan: LockPlan, id: string) =>
+  holdsStep(plan, id) &&
+  plan.corridors.filter(corridor => corridor.from === id || corridor.to === id).length +
+    plan.drops.filter(drop => drop.landing === id).length >=
+    3
+
 /**
- * HOW A CORRIDOR OF `k` NODES IS SPLIT BETWEEN ITS TWO REGIONS: the first `split` nodes answer to `from`, the
- * rest to `to`, and `firstDoor` is the node its nearest door stands on. A corridor ending at a junction's
- * region has its nearest door beside the junction, at its far end.
+ * Which ends of a corridor of `k` nodes keep a node of their own for a sequence step's tile: an end arriving in a
+ * hub always (`corridorNodesWanted` lays it), any other end arriving in a step's region while the corridor has a
+ * node to spare, the `to` end first. An end without one leaves the tile to the region's own node it arrives at.
  */
-const corridorSplit = (plan: LockPlan, corridor: PlanCorridor, k: number): { split: number; firstDoor: number } => {
+const thresholdsOnCorridor = (plan: LockPlan, corridor: PlanCorridor, k: number): { from: boolean; to: boolean } => {
+  let spare = k - doorsOnCorridor(plan, corridor).length
+  const hubFrom = isHub(plan, corridor.from)
+  const hubTo = isHub(plan, corridor.to)
+  spare -= (hubFrom ? 1 : 0) + (hubTo ? 1 : 0)
+  const to = hubTo || (holdsStep(plan, corridor.to) && spare-- >= 1)
+  const from = hubFrom || (holdsStep(plan, corridor.from) && spare >= 1)
+  return { from, to }
+}
+
+/** Every node a corridor must lay: one per door, and one at each end arriving in a hub holding a step. */
+const corridorNodesWanted = (plan: LockPlan, corridor: PlanCorridor): number =>
+  doorsOnCorridor(plan, corridor).length + (isHub(plan, corridor.from) ? 1 : 0) + (isHub(plan, corridor.to) ? 1 : 0)
+
+/**
+ * WHERE A CORRIDOR OF `k` NODES STANDS ITS DOORS (`seatItems`, its junction end closed) and how it is split between
+ * its two regions: the nodes before its first door answer to `from`, the rest to `to`; with no door, halfway.
+ * The junction end is closed on every corridor touching a junction's region, a fork's arms and any other corridor
+ * leaving it alike: that is where the carve has always stood their doors, so a corridor of free items lays as before.
+ * A threshold for a step's region stands at that region's end, inside its doors, and answers to that region.
+ */
+const corridorSeats = (
+  plan: LockPlan,
+  corridor: PlanCorridor,
+  k: number
+): { doors: number[]; thresholds: number[]; split: number } => {
   const junctionRegions = new Set(plan.junctions.map(junction => junction.region))
-  const m = doorsOnCorridor(plan, corridor).length
-  const firstDoor = junctionRegions.has(corridor.to) && !junctionRegions.has(corridor.from) ? k - m : 0
-  return { split: m > 0 ? firstDoor : Math.ceil(k / 2), firstDoor }
+  const end = junctionRegions.has(corridor.from) ? "start" : junctionRegions.has(corridor.to) ? "end" : undefined
+  const ends = thresholdsOnCorridor(plan, corridor, k)
+  const doorAligns = doorsOnCorridor(plan, corridor).map(door =>
+    door.kind === "gate" ? corridor.align?.[door.id] : undefined
+  )
+  const items = seatItems(
+    k,
+    [...(ends.from ? ["left" as const] : []), ...doorAligns, ...(ends.to ? ["right" as const] : [])],
+    end
+  )
+  const doors = items.slice(ends.from ? 1 : 0, ends.from ? 1 + doorAligns.length : doorAligns.length)
+  const split =
+    doors.length > 0 ? doors[0] : ends.from ? items[0] + 1 : ends.to ? items[items.length - 1] : Math.ceil(k / 2)
+  const thresholds = [...(ends.from ? [items[0]] : []), ...(ends.to ? [items[items.length - 1]] : [])]
+  return { doors, thresholds, split }
 }
 
 const corridorLabels = (plan: LockPlan, corridor: PlanCorridor, k: number): string[] => {
-  const { split } = corridorSplit(plan, corridor, k)
-  return Array.from({ length: k }, (_, i) => (i < split ? corridor.from : corridor.to))
+  const { split } = corridorSeats(plan, corridor, k)
+  return Array.from({ length: k }, (_, i) => labelOf(plan, i < split ? corridor.from : corridor.to))
 }
 
 /**
  * HOW MANY NODES A REGION'S MECHANICS WANT, beyond the doors its corridors carry: one per control and tile, and
  * for a region with tiles one more for every way off the route that leaves it, because a tile stands on a node
- * with two ways and not three.
+ * with two ways and not three. A sequence step's region wants a node for each way into it whose tile stands on the
+ * region's own ground: every way, or for a hub (whose corridors bring their own) each drop landing in it.
  */
+// The nodes of a step's region its tiles may take: one per way in, or for a hub (whose corridors bring their own)
+// one per drop landing in it. Kept bare by `thresholds`, so never counted as a seat's demand on content.
+const thresholdNodes = (plan: LockPlan, id: string): number => {
+  if (!holdsStep(plan, id)) return 0
+  const landings = plan.drops.filter(drop => drop.landing === id).length
+  if (isHub(plan, id)) return landings
+  return plan.corridors.filter(corridor => corridor.from === id || corridor.to === id).length + landings
+}
+
 const nodesForSeats = (plan: LockPlan, region: LockPlan["regions"][number]): number => {
+  const thresholds = thresholdNodes(plan, region.id)
   const seats = region.seats.filter(seat => seat.for === "control" || seat.for === "tile")
-  if (!seats.some(seat => seat.for === "tile")) return seats.length
+  if (!seats.some(seat => seat.for === "tile")) return seats.length + thresholds
   const leaves =
     plan.corridors.filter(corridor => !corridor.onRoute && (corridor.from === region.id || corridor.to === region.id))
       .length + plan.drops.filter(drop => drop.launch === region.id || drop.landing === region.id).length
-  return seats.length + leaves
+  return seats.length + leaves + thresholds
 }
 
 /**
@@ -87,7 +201,7 @@ export const planToLay = (
   return {
     ...plan,
     regions,
-    corridors: plan.corridors.map(corridor => ({ ...corridor, minNodes: doorsOnCorridor(plan, corridor).length })),
+    corridors: plan.corridors.map(corridor => ({ ...corridor, minNodes: corridorNodesWanted(plan, corridor) })),
   }
 }
 
@@ -121,7 +235,11 @@ export type LaidFloor = {
   regionDoors: LaidRegionDoor[]
   /** Every node a door stands on, edge gates and region barriers alike. */
   doors: Set<CellKey>
-  /** Route steps nothing else may take: every door on the route and every junction. */
+  /** Every node of a corridor arriving in a sequence step's region, or the region's node it arrives at when it has
+   * none to spare, kept bare: the step's tile stands on the first of them the way in reaches, with no room before
+   * it and no branch beside it. */
+  thresholds: Set<CellKey>
+  /** Route steps nothing else may take: every door and threshold on the route and every junction. */
   reserved: Set<number>
   /** How many nodes of each region a mechanic's seat will want: the controls and sequence tiles standing in it. */
   seatDemand: Map<string, number>
@@ -147,35 +265,84 @@ const decodePassage = (key: string, n: number): [CellKey, CellKey] => {
   return [`${Math.floor(x / n)},${x % n}`, `${Math.floor(y / n)},${y % n}`]
 }
 
+const neighboursOf = (passages: readonly string[], n: number): Map<CellKey, CellKey[]> => {
+  const neighbours = new Map<CellKey, CellKey[]>()
+  for (const key of passages) {
+    const [a, b] = decodePassage(key, n)
+    neighbours.set(a, [...(neighbours.get(a) ?? []), b])
+    neighbours.set(b, [...(neighbours.get(b) ?? []), a])
+  }
+  for (const list of neighbours.values()) list.sort()
+  return neighbours
+}
+
+/** A door is a ground of its own; elsewhere ground is walked both ways inside one label. */
+const groundOf = (
+  label: ReadonlyMap<CellKey, string>,
+  doorCells: ReadonlySet<CellKey>,
+  neighbours: ReadonlyMap<CellKey, CellKey[]>
+): Map<CellKey, string> => {
+  const ground = new Map<CellKey, string>()
+  for (const node of [...label.keys()].sort()) {
+    if (ground.has(node)) continue
+    if (doorCells.has(node)) {
+      ground.set(node, `door ${node}`)
+      continue
+    }
+    const stack = [node]
+    ground.set(node, `at ${node}`)
+    while (stack.length > 0) {
+      const at = stack.pop()!
+      for (const next of neighbours.get(at) ?? []) {
+        if (ground.has(next) || doorCells.has(next) || label.get(next) !== label.get(at)) continue
+        ground.set(next, `at ${node}`)
+        stack.push(next)
+      }
+    }
+  }
+  return ground
+}
+
 /** READS THE LAID STRUCTURE INTO THE FORM THE CARVE SEATS ROOMS ON. Pure: no draw is made, so one laid plan always reads the same way. */
 export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
   const label = new Map<CellKey, string>()
-  for (const region of laid.regions) for (const node of region.nodes) label.set(node, region.id)
+  for (const region of laid.regions) for (const node of region.nodes) label.set(node, labelOf(plan, region.id))
 
   const gateDoor = new Map<string, CellKey>()
   const regionDoors: LaidRegionDoor[] = []
   const doorCells = new Set<CellKey>()
+  const thresholdCells = new Set<CellKey>()
   for (const corridor of plan.corridors) {
     const laidCorridor = laid.corridors.find(candidate => candidate.id === corridor.id)!
     const doors = doorsOnCorridor(plan, corridor)
     const k = laidCorridor.nodes.length
     const labels = corridorLabels(plan, corridor, k)
-    const { firstDoor } = corridorSplit(plan, corridor, k)
+    const { doors: at, thresholds } = corridorSeats(plan, corridor, k)
     laidCorridor.nodes.forEach((node, i) => label.set(node, labels[i]))
+    if (thresholds.length > 0) for (const node of laidCorridor.nodes) thresholdCells.add(node)
+    // An end with no node of its own for the tile leaves it to the region's node the corridor arrives at.
+    const ends = thresholdsOnCorridor(plan, corridor, k)
+    if (holdsStep(plan, corridor.from) && !ends.from) thresholdCells.add(laidCorridor.start)
+    if (holdsStep(plan, corridor.to) && !ends.to) thresholdCells.add(laidCorridor.end)
     doors.forEach((door, j) => {
-      const cell = laidCorridor.nodes[firstDoor + j]
+      const cell = laidCorridor.nodes[at[j]]
       doorCells.add(cell)
       if (door.kind === "gate") gateDoor.set(door.id, cell)
       else regionDoors.push({ barrier: door.barrier, region: door.region, entrance: door.entrance, cell })
     })
   }
 
+  // A drop into a step's region lands beside the node that way in's tile stands on.
+  for (const drop of laid.drops)
+    if (plan.regions.find(region => region.id === drop.landing)?.seats.some(seat => seat.for === "threshold"))
+      thresholdCells.add(drop.to)
+
   const junctionCells = new Set(laid.junctions.map(junction => junction.cell))
 
   const routeStep = new Map(laid.route.map((node, i) => [node, i] as const))
   const routeSet = new Set(laid.route)
   const reserved = new Set<number>()
-  for (const cell of [...doorCells, ...junctionCells]) {
+  for (const cell of [...doorCells, ...thresholdCells, ...junctionCells]) {
     const step = routeStep.get(cell)
     if (step !== undefined) reserved.add(step)
   }
@@ -197,13 +364,7 @@ export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
     }
   })
 
-  const neighbours = new Map<CellKey, CellKey[]>()
-  for (const key of laid.passages) {
-    const [a, b] = decodePassage(key, laid.n)
-    neighbours.set(a, [...(neighbours.get(a) ?? []), b])
-    neighbours.set(b, [...(neighbours.get(b) ?? []), a])
-  }
-  for (const list of neighbours.values()) list.sort()
+  const neighbours = neighboursOf(laid.passages, laid.n)
 
   const depth = new Map<CellKey, number>([[laid.route[0], 0]])
   const queue = [laid.route[0]]
@@ -260,25 +421,7 @@ export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
     chains.push({ cells })
   }
 
-  // A door is a ground of its own; elsewhere ground is walked both ways inside one label.
-  const ground = new Map<CellKey, string>()
-  for (const node of [...label.keys()].sort()) {
-    if (ground.has(node)) continue
-    if (doorCells.has(node)) {
-      ground.set(node, `door ${node}`)
-      continue
-    }
-    const stack = [node]
-    ground.set(node, `at ${node}`)
-    while (stack.length > 0) {
-      const at = stack.pop()!
-      for (const next of neighbours.get(at) ?? []) {
-        if (ground.has(next) || doorCells.has(next) || label.get(next) !== label.get(at)) continue
-        ground.set(next, `at ${node}`)
-        stack.push(next)
-      }
-    }
-  }
+  const ground = groundOf(label, doorCells, neighbours)
 
   return {
     n: laid.n,
@@ -289,8 +432,13 @@ export const seatLaidFloor = (plan: LockPlan, laid: LaidLocks): LaidFloor => {
     gateDoor,
     regionDoors,
     doors: doorCells,
+    thresholds: thresholdCells,
     reserved,
-    seatDemand: new Map(plan.regions.map(region => [region.id, nodesForSeats(plan, region)])),
+    seatDemand: new Map(
+      plan.regions
+        .filter(region => region.answersTo === undefined)
+        .map(region => [region.id, nodesForSeats(plan, region) - thresholdNodes(plan, region.id)])
+    ),
     junctions,
     chains,
     drops: laid.drops,
@@ -376,7 +524,7 @@ export type Lengthening = { kind: "region" | "corridor"; id: string; nodes: numb
 export const fillLaidFloor = (
   floor: Pick<
     LaidFloor,
-    "route" | "routeLabels" | "label" | "depth" | "open" | "doors" | "junctions" | "drops" | "seatDemand"
+    "route" | "routeLabels" | "label" | "depth" | "open" | "doors" | "thresholds" | "junctions" | "drops" | "seatDemand"
   >,
   taken: ReadonlySet<CellKey>,
   demands: readonly AbsorbedDemand[],
@@ -389,6 +537,7 @@ export const fillLaidFloor = (
     exit,
     ...taken,
     ...floor.doors,
+    ...floor.thresholds,
     ...floor.junctions.map(junction => junction.cell),
     ...floor.drops.flatMap(drop => [drop.from, drop.to]),
   ])
@@ -489,9 +638,12 @@ export const lengtheningCandidates = (
       ],
     })
   }
-  for (const region of plan.regions) consider("region", region.id, region.id, region.onRoute)
+  for (const region of plan.regions)
+    if (region.answersTo === undefined) consider("region", region.id, region.id, region.onRoute)
   for (const corridor of plan.corridors) {
     const k = floor.stretches.get(`corridor:${corridor.id}`)?.length ?? 0
+    // A corridor arriving in a step's region keeps every node bare, so a node more there seats nothing.
+    if (corridorSeats(plan, corridor, k + 1).thresholds.length > 0) continue
     const before = corridorLabels(plan, corridor, k)
     const after = corridorLabels(plan, corridor, k + 1)
     const gained = after.filter(label => after.filter(l => l === label).length > before.filter(l => l === label).length)
@@ -518,4 +670,56 @@ export const lengthenPlan = (plan: LockPlan, floor: Pick<LaidFloor, "stretches">
         : corridor
     ),
   }
+}
+
+/**
+ * A ROUTE REGION'S STUB OFF THE ROUTE THAT WOULD HOLD NO ROOM ANSWERS TO THE REGION ITS CORRIDOR LEADS TO. A doorless
+ * corridor is split halfway between its two regions, so a corridor from a route region to one off the route grows
+ * the route region a stub. The rooms filled into it keep their own section, so a stub with a node no room took, no
+ * door, tile, drop end or junction, and no mechanic's seat in its region would be a stretch of ground holding no room,
+ * whose fog a re-carve loses. Where every such node lies on doorless corridors leading off the route, and their far
+ * regions take the rooms filled into them, those corridors answer wholly to their far regions. Any other floor is
+ * returned as it is.
+ */
+export const answerBareStubs = (
+  plan: LockPlan,
+  floor: LaidFloor,
+  demands: readonly AbsorbedDemand[],
+  appetite: ReadonlyMap<string, RegionAppetite>
+): LaidFloor => {
+  const routeKeys = new Set(floor.route.map(([r, c]) => `${r},${c}`))
+  const kindAt = new Map<CellKey, ContentKind>()
+  for (const { section, cells } of floor.absorbed) {
+    const kinds = demands.find(demand => demand.section === section)?.kinds ?? []
+    cells.forEach((cell, i) => kindAt.set(cell, kinds[i]))
+  }
+  const roomed = new Set<CellKey>([
+    ...floor.doors,
+    ...floor.thresholds,
+    ...floor.junctions.map(junction => junction.cell),
+    ...floor.drops.flatMap(drop => [drop.from, drop.to]),
+  ])
+  const onRoute = new Set(plan.regions.filter(region => region.onRoute).map(region => region.id))
+  const label = new Map(floor.label)
+  for (const region of new Set(floor.routeLabels)) {
+    const stub = [...floor.label].flatMap(([key, of]) => (of === region && !routeKeys.has(key) ? [key] : []))
+    if (stub.length === 0) continue
+    if (stub.some(key => roomed.has(key)) || (floor.seatDemand.get(region) ?? 0) > 0) continue
+    const answers = new Map<CellKey, string>()
+    for (const corridor of plan.corridors) {
+      const near = [corridor.from, corridor.to].find(end => labelOf(plan, end) === region)
+      const far = near === corridor.from ? corridor.to : corridor.from
+      if (near === undefined || corridor.onRoute || onRoute.has(far) || labelOf(plan, far) === region) continue
+      for (const key of floor.stretches.get(`corridor:${corridor.id}`) ?? [])
+        if (floor.label.get(key) === region) answers.set(key, labelOf(plan, far))
+    }
+    const covered = stub.every(key => answers.has(key))
+    const takes = [...answers].every(([key, to]) => {
+      const kind = kindAt.get(key)
+      return kind === undefined || appetiteAccepts(appetite.get(to) ?? "free", kind)
+    })
+    if (covered && takes) for (const [key, to] of answers) label.set(key, to)
+  }
+  if ([...label].every(([key, of]) => floor.label.get(key) === of)) return floor
+  return { ...floor, label, ground: groundOf(label, floor.doors, neighboursOf(floor.passages, floor.n)) }
 }

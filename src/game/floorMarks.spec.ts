@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, it } from "vitest"
 import { assembleFloor, defaultResolveEncounter } from "./siteAssembler"
 import type { ResolveEncounter } from "./siteAssembler"
+import { MARK_GLYPHS } from "./mark"
 import type { Mark } from "./mark"
 import type { FloorConfig, FloorGrid, RoomCell } from "./siteTypes"
 import { designerDoubleBack, forkSwitchFloorConfig } from "./testSupport/forkSwitchFixtures"
@@ -137,21 +138,32 @@ describe("the marks on a carved floor", () => {
       switches: { encounter: "sumplete", min: count, max: count },
     })
 
-    it("is refused by the mechanics left without a mark, never given a repeated one", () => {
-      const result = assembleFloor("site-marks-exhausted", withSwitches(4), 1, reEnterable)
-      expect(result).toEqual({ success: false, reasons: [{ type: "marksExhausted", ids: ["switch:3"] }] })
-    })
+    // designerDoubleBack's own three mechanics take three glyphs before any switch.
+    const switchesFitting = MARK_GLYPHS.length - 3
 
-    it("names every mechanic past the sixth", () => {
-      const result = assembleFloor("site-marks-exhausted", withSwitches(6), 1, reEnterable)
+    it("is refused by the mechanics left without a mark, never given a repeated one", () => {
+      const result = assembleFloor("site-marks-exhausted", withSwitches(switchesFitting + 1), 1, reEnterable)
       expect(result).toEqual({
         success: false,
-        reasons: [{ type: "marksExhausted", ids: ["switch:3", "switch:4", "switch:5"] }],
+        reasons: [{ type: "marksExhausted", ids: [`switch:${switchesFitting}`] }],
       })
     })
 
-    it("is not refused for marks at exactly six", () => {
-      const result = assembleFloor("site-marks-exhausted", withSwitches(3), 1, reEnterable)
+    it("names every mechanic past the last glyph", () => {
+      const result = assembleFloor("site-marks-exhausted", withSwitches(switchesFitting + 3), 1, reEnterable)
+      expect(result).toEqual({
+        success: false,
+        reasons: [
+          {
+            type: "marksExhausted",
+            ids: [0, 1, 2].map(n => `switch:${switchesFitting + n}`),
+          },
+        ],
+      })
+    })
+
+    it("is not refused for marks at exactly as many as there are glyphs", () => {
+      const result = assembleFloor("site-marks-exhausted", withSwitches(switchesFitting), 1, reEnterable)
       expect(result.success ? [] : result.reasons.filter(reason => reason.type === "marksExhausted")).toEqual([])
     })
   })

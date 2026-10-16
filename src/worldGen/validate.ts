@@ -3,7 +3,7 @@ import type { Difficulty } from "@/data/difficultyLevels"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import { FORK_SHAPES, type ForkShape } from "@/game/forkShape"
 import { configHash } from "@/game/seeds/configHash"
-import { switchFamilies } from "@/game/seeds/enumerateConfigs"
+import { doorBoardsOf, switchFamilies } from "@/game/seeds/enumerateConfigs"
 import type { FloorConfig as GameFloorConfig, FloorGrid as AssembledFloor } from "@/game/siteTypes"
 import { walkFloorLock, describeFloorWalkFailure, deadFloorRegions } from "@/game/floorLockWalk"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
@@ -166,8 +166,7 @@ export const findEmptyChests = (
  * The fallback that would otherwise cover it — searching on the player's device — is exactly what
  * pre-seeding exists to stop, and it covers silently. So a site whose capabilities say its boards are
  * baked (capabilities.ts's requireBakedBoards) makes this an authoring error with a floor named on it,
- * and the playtest journey, which stands the mechanic at tiers nobody has baked yet, is excused by the
- * same seam rather than by its id.
+ * and a site that does not require them is excused by the same seam rather than by its id.
  *
  * All three shapes are owed, because which one a junction gets is the carve's choice rather than the
  * author's.
@@ -210,6 +209,54 @@ export const findUnbakedSwitchBoards = (
               forkShape,
             })
           }
+        }
+      })
+    )
+  }
+  return missing
+}
+
+/**
+ * A sequence door whose board (a procession door's) no seed list covers at its floor's tier and step count.
+ *
+ * A door's board is sized by the sequence, so a tier and step count no seed search finds a board for is a design
+ * gap, not a missing run: refused at bake, named by both, for the designer to give that pair a band of its own.
+ * Excused where boards are not baked (capabilities.ts's requireBakedBoards), as a switch is.
+ */
+export type UnseededDoorBoard = {
+  journeyId: string
+  levelNr: number
+  floorIndex: number
+  mechanismId: string
+  familyId: string
+  difficulty: Difficulty
+  steps: number
+}
+
+export const findUnseededDoorBoards = (
+  configs: Record<string, SiteConfig[]>,
+  families: FamilyMeta[],
+  seeds: Record<string, number[]>,
+  capabilities: (siteId: string) => SiteCapabilities | undefined = capabilitiesFor
+): UnseededDoorBoard[] => {
+  const byId = new Map(families.map(family => [family.id, family]))
+  const missing: UnseededDoorBoard[] = []
+  for (const [journeyId, sites] of Object.entries(configs)) {
+    if (capabilities(journeyId)?.requireBakedBoards === false) continue
+    sites.forEach((site, siteIdx) =>
+      site.forEach((floor, floorIndex) => {
+        for (const { mechanismId, familyId, ctx, steps } of doorBoardsOf(floor as GameFloorConfig, families)) {
+          const seedable = byId.get(familyId)?.seedable
+          if (!seedable || seeds[configHash(seedable.resolveOptions(ctx))]?.length) continue
+          missing.push({
+            journeyId,
+            levelNr: siteIdx + 1,
+            floorIndex,
+            mechanismId,
+            familyId,
+            difficulty: floor.difficulty,
+            steps,
+          })
         }
       })
     )

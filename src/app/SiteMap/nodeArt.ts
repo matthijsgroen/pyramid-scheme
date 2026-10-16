@@ -98,14 +98,10 @@ export type NodeSprite = {
    * badge moves onto the chest, where the player is already looking, and the marker underneath drops
    * its own so the room is not checked twice.  */
   badge?: "taken" | "pending"
-  /** A control that has been used up (a lit torch): its furniture eases back as an emptied chest does. Its
+  /** A control that has been used up: its furniture eases back as an emptied chest does. Its
    * marker, which stands beside the art and not under it, wears the ✓ itself. */
   spent?: boolean
-  /** Which mechanism this node belongs to (RoomCell.mark), for art that covers its own marker.
-   *
-   * A door a lever drives is drawn as a leaf of stone and its marker is hidden outright (a way a switch
-   * shut is a wall, `isSealedWayOut`) — so the pair the lever wears would have been worn at one end
-   * only, which tells a player nothing. Same move as `badge` above, for the same reason. */
+  /** The pair a torch or lever wears (RoomCell.mark), set only where its door has a board to match it against. */
   mark?: Mark
   /** A CONTROL'S ARM AND NEAR HALF, riding between `url` (the far half, `leverBaseBack`) and the floor —
    * set only where a lever stands, so `url` alone still draws every other kind.

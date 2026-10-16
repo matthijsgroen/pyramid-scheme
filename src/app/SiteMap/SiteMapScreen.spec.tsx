@@ -75,9 +75,11 @@ type CarvedKeys = {
 // The first baked floor carrying all three at once: a chest whose tombKey reward opens a coloured
 // door standing on the same floor, and a ward gate wanting a key no chest here holds. Its colour is
 // required to be the only one of its hue on the floor, so a ring reading that colour can only be
-// reading this door.
+// reading this door. A floor standing a lock is passed over: its mechanism doors may stand between the
+// entrance and the key door, and these tests walk straight there.
 const carvedFloorWithKeys = (): CarvedKeys | null => {
   for (const floor of allFloors()) {
+    if (floor.config.locks?.length) continue
     const result = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, {
       resolveKeyRequirements,
       floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
@@ -317,6 +319,38 @@ describe(SiteMapScreen, () => {
       expect(goInPrompt(container).textContent).toBe("ui.prompt.zipline")
     })
 
+    it("rides a taken zipline: the explorer is hidden, a rider is drawn, and the landing returns him when the slide ends", async () => {
+      const obstacle: GridCell = {
+        type: "corridor",
+        dirs: new Set(),
+        state: "completed",
+        obstacle: { dir: "e", kind: "zipline" },
+      }
+      const launch: GridCell = { type: "corridor", dirs: new Set(["w"]), state: "completed" }
+      const landing: GridCell = { type: "corridor", dirs: new Set(["e"]), state: "completed" }
+      grid = gridOf([entrance, launch, ...Array.from({ length: 5 }, () => obstacle), landing, exitRoom])
+
+      const { container } = await renderScreen()
+      fireEvent.click(nodeAt(container, 1))
+      await act(async () => {
+        vi.advanceTimersByTime(1000)
+      })
+      expect(container.querySelector("[data-zipline-rider]")).toBeNull()
+
+      fireEvent.click(goInPrompt(container))
+      await settle()
+
+      expect(container.querySelector("[data-explorer]")).toBeNull()
+      const rider = container.querySelector("[data-zipline-rider]")!
+      expect(rider).not.toBeNull()
+
+      fireEvent.transitionEnd(rider)
+      await settle()
+
+      expect(container.querySelector("[data-zipline-rider]")).toBeNull()
+      expect(container.querySelector("[data-explorer]")).not.toBeNull()
+    })
+
     it("still offers the stairs as the walk they are", async () => {
       expect(await promptAtCol1(roomOf({ type: "room", roomType: "portal", stairId: "s1", state: "reachable" }))).toBe(
         "ui.prompt.stairs"
@@ -359,11 +393,11 @@ describe(SiteMapScreen, () => {
   })
 
   describe("a gate a mechanism opens", () => {
-    // Shaped exactly as siteAssembler builds an obstacle gate on the main path (see
+    // Shaped exactly as the carve builds an obstacle gate on the main path (see
     // `regionGates.spec.ts`): family always set (it wears bars and is tapped, unlike a switch's own
     // shut fork exit), no key colour (the key is authored — no chest on this floor grows it), the
     // requiredKeyId a control's `positions[].gateKeyId` names, and no `gateVariant`/`keyIsAuthored` —
-    // that obstacle-gate branch (siteAssembler.ts) sets neither; both are a side-section gate's own
+    // that obstacle-gate branch (carve/mainRooms.ts) sets neither; both are a side-section gate's own
     // fields (and unread here regardless, see useEncounter.ts/nodeShapes.tsx).
     const mechanismGate: GridCell = {
       type: "room",

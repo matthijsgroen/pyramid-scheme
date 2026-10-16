@@ -385,6 +385,21 @@ yarn drift-mask --out="$OBJ" --seed=fan --size=504 --peak=0.5
 yarn import-tile art/masters/surfaces/sand.webp --tier=default --name=sand --slot=drift \
   --filter=smooth --key=none --mask="$OBJ" --brightness=0.78
 
+# A shut region barrier's water cover: a full-bleed texture, no mask, shared by every rank.
+# The master is the painting as drawn; the import pushes its blue and softens the pale caustic net.
+WATER=$(mktemp -t regionwater).png
+scripts/recolourSurface.sh art/masters/surfaces/regionWater.webp "$WATER" 230 26 0.45
+yarn import-tile "$WATER" --tier=default --name=regionWater --slot=floor \
+  --filter=smooth --key=none
+rm -f "$WATER"
+
+# The import warms the grey-beige master so it reads as sand against the stone floor.
+SAND=$(mktemp -t regionsand).png
+scripts/recolourSurface.sh art/masters/surfaces/regionSand.webp "$SAND" 80 40 1 0.95
+yarn import-tile "$SAND" --tier=default --name=regionSand --slot=floor \
+  --filter=smooth --key=none
+rm -f "$SAND"
+
 # junior — the nobleman
 
 # THE STAIRS, and they are SHARED: `tiles/default/`, drawn at every rank. `tileUrl` falls back
@@ -1543,6 +1558,66 @@ scaffold lever --contents=arm --shadow=0 --colour=#a7b2be --floor=#8d98a5
 yarn import-tile art/masters/props/default/leverArm.webp --tier=default --name=leverArm --slot=prop \
   --filter=smooth --mask="$OBJ" --brightness=0.9 --no-trim
 
+# THE MECHANICS
+#
+# The pressure plate, SHARED across ranks (`tiles/default/`, drawn at every rank), in three looks that swap
+# on one cell: `plate` (raised, empty), `plateDown` (the slab sunk level with its kerb, the explorer standing
+# on it) and `plateStone` (sunk, with the limestone block on it). `plateDown` is a Gemini EDIT of the plate
+# master and `plateStone` an EDIT of `plateDown`, so everything outside what changed is the same paint. All
+# three are cut UNMASKED, with the same flags and scale (the painted kerb is larger than the scaffold
+# footprint, a mask clipped it).
+scaffold plate --drop=limestone --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/default/plate.webp --tier=default --name=plate --slot=prop \
+  --filter=smooth --seat="$SHADOW"
+yarn import-tile art/masters/props/default/plateDown.webp --tier=default --name=plateDown --slot=prop \
+  --filter=smooth --seat="$SHADOW"
+yarn import-tile art/masters/props/default/plateStone.webp --tier=default --name=plateStone --slot=prop \
+  --filter=smooth --seat="$SHADOW"
+
+# The standing torch, shared across ranks, unlit and lit. `torchLit` was painted as a Gemini EDIT of the
+# painted `torchUnlit`; the lit render is the same scaffold without `--drop=accent`. Both are cut UNMASKED
+# (the scaffold mask clipped the painted head and collar edges). The importer scales an object so its
+# trimmed height fills the same frame, and the lit painting is taller (flame, 2437 px against 2110), so
+# each gets its own --scale: 0.5639 for the unlit and 0.6513 = 0.5639 x 2437/2110 for the lit one, which
+# puts both paintings at the same pixels per master pixel and lets the base, collars, shaft and head
+# coincide, so lighting it only adds the flame. The lit one takes no --seat: its flame lights the floor
+# the shadow would fall on (the map lays a light pool there), and the shadow lies inside the object's own
+# trimmed box, so leaving it out moves nothing.
+scaffold torch --spin=15 --drop=accent --colour-cloth=#3e3731 --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/default/torchUnlit.webp --tier=default --name=torchUnlit --slot=prop \
+  --filter=smooth --seat="$SHADOW" --scale=0.5639
+yarn import-tile art/masters/props/default/torchLit.webp --tier=default --name=torchLit --slot=prop \
+  --filter=smooth --scale=0.6513
+
+# The sequence tile, SHARED across ranks: a flush sandstone tile with a plain top, one tile for every glyph
+# and every state (the renderer draws the glyph on it and colours it by state). A Gemini EDIT of a basalt
+# painting over the `sequenceTile` scaffold, turned to sandstone so it is never taken for the pressure plate.
+# No --seat: it lies flush, so nothing on it casts. Cut UNMASKED: the mask clipped the painted lip's last row.
+yarn import-tile art/masters/props/default/sequenceTile.webp --tier=default --name=sequenceTile --slot=prop \
+  --filter=smooth --scale=0.8
+
+# The narrow passage, wall ACROSS a north-south corridor, SHARED across ranks. The crack is painted black
+# and kept (only the magenta is keyed); cut UNMASKED because the painted rubble spills past the scaffold
+# footprint, at the natural size.
+scaffold narrow --contents=across --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/default/narrowAcross.webp --tier=default --name=narrowAcross --slot=prop \
+  --filter=smooth --seat="$SHADOW"
+
+# The same wall ALONG an east-west corridor: its narrow end and its long top, the crack cut across the top.
+# Same unmasked cut; the default keyer leaves no pink between the rubble.
+scaffold narrow --contents=along --colour=#a7b2be --floor=#8d98a5 --colour-deep=#5f6b77
+yarn import-tile art/masters/props/default/narrowAlong.webp --tier=default --name=narrowAlong --slot=prop \
+  --filter=smooth --seat="$SHADOW"
+
+# The stone pipe's mouth, SHARED across ranks, empty and with a stone in it: a wall item with depth, so it is
+# rendered at half shear like the niche, and imported into the wall slot. `pipeHoleStone` is a Gemini EDIT of the
+# painted `pipeHole`, so the two swap on one wall. The paintings carry a wall round the mouth; both are cut to
+# `pipeHole-mask.png`, an ellipse round the lip, so only the mouth lands and the room's own wall shows round it.
+yarn import-tile art/masters/props/default/pipeHole.webp --tier=default --name=pipeHole --slot=wall \
+  --filter=smooth --mask=art/masters/props/default/pipeHole-mask.png
+yarn import-tile art/masters/props/default/pipeHoleStone.webp --tier=default --name=pipeHoleStone --slot=wall \
+  --filter=smooth --mask=art/masters/props/default/pipeHole-mask.png
+
 # The overgrown POOL — the condition's second sprite per slot, so a floor is not overgrown with one weed.
 # Flat tiles: no mesh, no mask, the magenta keyed (docs/instructions/repaint-queue.md, "Overgrown").
 # Saturation and brightness measured against `overgrown-plant`, which is the one these stand beside:
@@ -1575,6 +1650,23 @@ yarn drift-mask --out="$OBJ" --seed=grass --size=504 --peak=1 --core=0.92 --lobe
 yarn import-tile art/masters/surfaces/overgrown-grass.webp --tier=default --name=overgrown-grass --slot=drift \
   --filter=smooth --mask="$OBJ" --brightness=0.7
 
+# THE EXPLORER, CARRYING
+yarn import-tile art/masters/explorer/explorer-carry-s-1.webp --tier=default --name=explorer-carry-s-1 --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-carry-s-2.webp --tier=default --name=explorer-carry-s-2 --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-carry-n-1.webp --tier=default --name=explorer-carry-n-1 --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-carry-n-2.webp --tier=default --name=explorer-carry-n-2 --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-carry-n-3.webp --tier=default --name=explorer-carry-n-3 --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-carry-n-4.webp --tier=default --name=explorer-carry-n-4 --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-carry-e-1.webp --tier=default --name=explorer-carry-e-1 --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-carry-e-2.webp --tier=default --name=explorer-carry-e-2 --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-carry-e-3.webp --tier=default --name=explorer-carry-e-3 --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-carry-e-4.webp --tier=default --name=explorer-carry-e-4 --slot=explorer --filter=smooth
+
+# THE EXPLORER, RIDING
+yarn import-tile art/masters/explorer/explorer-zip-s.webp --tier=default --name=explorer-zip-s --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-zip-n.webp --tier=default --name=explorer-zip-n --slot=explorer --filter=smooth
+yarn import-tile art/masters/explorer/explorer-zip-e.webp --tier=default --name=explorer-zip-e --slot=explorer --filter=smooth
+
 # Conversation portraits. No render and no scaffold: a character is generated whole, on white, and the
 # import keys the white out and seats the figure on the bottom edge. The explorer's neutral and grinning
 # masters are the ORIGINAL character artwork the walking sprites were drawn from — which is why his
@@ -1594,3 +1686,8 @@ yarn import-portrait art/masters/characters/ghost-henut.jpeg --name=ghost-henut 
 yarn import-portrait art/masters/characters/ghost-priest.jpeg --name=ghost-priest --bust=0.55
 yarn import-portrait art/masters/characters/ghost-pharaoh.jpeg --name=ghost-pharaoh --bust=0.55
 yarn import-portrait art/masters/characters/ghost-other.jpeg --name=ghost-other --bust=0.55
+
+# THE EXPLORER, SQUEEZING (side frame e, profile frame s; north reuses s)
+# --tight: the arms-spread frame is wider than the 40-unit slot, so a slot fit shrank the figure to 60% of the walking one; 18.3 master px to a unit puts his head at the walking size, and the tile is as wide as the pose needs (feet on the bottom edge)
+yarn import-tile art/masters/explorer/explorer-squeeze-e.webp --tier=default --name=explorer-squeeze-e --slot=explorer --filter=smooth --tight=18.3
+yarn import-tile art/masters/explorer/explorer-squeeze-s.webp --tier=default --name=explorer-squeeze-s --slot=explorer --filter=smooth

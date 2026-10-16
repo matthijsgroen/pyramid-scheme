@@ -5,14 +5,10 @@ import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
 import { cellAddress } from "@/game/cellAddress"
 import { findPath } from "@/game/gridNavigation"
 import { progressState, sequenceStates, spoiledState, tileStatus, type TileStatus } from "@/game/sequence"
-import {
-  hallAnnexSequenceFloor,
-  offRouteSequenceFloor,
-  oneRegionSequenceFloor,
-} from "@/game/testSupport/sequenceFixtures"
+import { offRouteSequenceFloor } from "@/game/testSupport/sequenceFixtures"
 import { useAssembledFloor } from "./useAssembledFloor"
 import { SiteMapView } from "./SiteMapView"
-import { plateLook } from "./plateLook"
+import { sequenceTileLook } from "./sequenceTileLook"
 import {
   JOURNEY,
   carveSequence,
@@ -22,14 +18,13 @@ import {
   roomsOf,
   sequenceHarness,
   tilesOf,
+  allTilesOf,
   type Place,
 } from "./sequenceHarness.testing"
 import "@/mods/registerModApps"
 
 const FLOORS: { name: string; make: () => FloorConfig }[] = [
-  { name: "tiles in the hall, an annex and the hall again", make: hallAnnexSequenceFloor },
-  { name: "all tiles in one region", make: oneRegionSequenceFloor },
-  { name: "tiles spread across off-route regions", make: offRouteSequenceFloor },
+  { name: "a step in a hub and one in each of its annexes", make: offRouteSequenceFloor },
 ]
 
 const carved = new Map<string, { seed: number; grid: FloorGrid; config: FloorConfig }>()
@@ -45,20 +40,20 @@ afterEach(() => {
   vi.useRealTimers()
 })
 
-const isTile =
-  (grid: FloorGrid) =>
-  ([r, c]: Place) =>
-    tilesOf(grid).some(({ at }) => at[0] === r && at[1] === c)
+const tileAt = (grid: FloorGrid, [r, c]: Place) => allTilesOf(grid).find(({ at }) => at[0] === r && at[1] === c)
 
-// A tile whose route from the entrance runs over no tile at all, so stepping on it first is a wrong step.
-const spoilingTile = (grid: FloorGrid) =>
-  tilesOf(grid).find(
+// A tile of the last step whose route from the entrance runs over no tile but the first step's, so stepping on it
+// first is a wrong step.
+const spoilingTile = (grid: FloorGrid) => {
+  const last = tilesOf(grid).length - 1
+  return allTilesOf(grid).find(
     ({ at, cell }) =>
-      cell.sequenceTile!.step > 0 &&
+      cell.sequenceTile!.step === last &&
       findPath(revealed(grid), grid.entrancePos as Place, at)
         .slice(1, -1)
-        .every(p => !isTile(grid)(p))
+        .every(p => [undefined, 0].includes(tileAt(grid, p)?.cell.sequenceTile!.step))
   )
+}
 
 const spoiled = new Map<string, { seed: number; grid: FloorGrid; config: FloorConfig }>()
 beforeAll(() => {
@@ -91,7 +86,10 @@ describe.each(FLOORS)("walking a sequence of $name", ({ name }) => {
       expect(h.current().explorerPos, `standing on tile ${k}`).toEqual(at)
       expect(stateOf(h, grid), `after tile ${k}`).toBe(progressState(k + 1))
       expect(h.current().prompt, `a prompt on tile ${k}`).toBeNull()
-      expect(h.encountered.filter(isTile(grid)), `an encounter opened on a tile by tile ${k}`).toEqual([])
+      expect(
+        h.encountered.filter(p => tileAt(grid, p) !== undefined),
+        `an encounter opened on a tile by tile ${k}`
+      ).toEqual([])
     })
   }, 60_000)
 
@@ -111,8 +109,8 @@ describe.each(FLOORS)("walking a sequence of $name", ({ name }) => {
     const h = sequenceHarness(seed, config)
     const wrong = spoilingTile(grid)!
     h.walkTo(wrong.at)
-    const state = spoiledState(0, wrong.cell.sequenceTile!.step)
-    expect(stateOf(h, grid)).toBe(state)
+    const state = stateOf(h, grid)
+    expect(state).toMatch(new RegExp(`^x[01]\\.${wrong.cell.sequenceTile!.step}$`))
     for (const { at } of tilesOf(grid)) {
       h.walkTo(at)
       expect(stateOf(h, grid)).toBe(state)
@@ -170,8 +168,9 @@ describe.each(FLOORS)("walking a sequence of $name", ({ name }) => {
       <SiteMapView grid={revealed(h.current().grid!)} currentFloor={0} mechanismStates={h.current().mechanismStates} />
     )
     expect(plates(again.container)).toEqual(drawnBefore)
+    const walked = allTilesOf(grid).filter(({ cell }) => cell.sequenceTile!.step < 2).length
     expect(drawnBefore.map(([, status]) => status).sort()).toEqual(
-      ["inOrder", "inOrder", ...Array(drawnBefore.length - 2).fill("unwalked")].sort()
+      [...Array(walked).fill("inOrder"), ...Array(drawnBefore.length - walked).fill("unwalked")].sort()
     )
   }, 60_000)
 })
@@ -214,8 +213,7 @@ describe("every tile shows its own state", () => {
         Number(el.getAttribute("data-plate")),
         {
           status: el.getAttribute("data-status"),
-          fill: el.querySelector("rect")?.getAttribute("fill"),
-          stroke: el.querySelector("rect")?.getAttribute("stroke"),
+          ink: el.querySelector("[data-glyph-ink]")?.getAttribute("fill"),
         },
       ])
     )
@@ -242,8 +240,7 @@ describe("every tile shows its own state", () => {
           const got = plates.get(glyph)
           expect(got, `${state} / tile ${step}`).toEqual({
             status: want,
-            fill: plateLook[want].fill,
-            stroke: plateLook[want].stroke,
+            ink: sequenceTileLook[want],
           })
         }
         unmount()
@@ -251,12 +248,6 @@ describe("every tile shows its own state", () => {
       expect([...looksSeen].sort()).toEqual(["inOrder", "outOfOrder", "unwalked"])
     })
   }
-
-  it("the three looks differ from one another in fill and in stroke colour", () => {
-    const looks = Object.values(plateLook)
-    expect(new Set(looks.map(l => l.fill)).size).toBe(3)
-    expect(new Set(looks.map(l => l.stroke)).size).toBe(3)
-  })
 
   it("a tile is never drawn as a finished room, in any state, once the ground is walked", () => {
     const { seed, config, grid } = carved.get(FLOORS[0].name)!
@@ -274,7 +265,7 @@ describe("every tile shows its own state", () => {
       }
       const { container, unmount } = render(<SiteMapView grid={walked} currentFloor={0} mechanismStates={positions} />)
       const plates = container.querySelectorAll("[data-plate]")
-      expect(plates.length, state).toBe(n)
+      expect(plates.length, state).toBe(allTilesOf(grid).length)
       for (const plate of plates) {
         const marker = plate.closest("[data-marker-cell]")
         expect(marker?.textContent, state).not.toContain("✓")

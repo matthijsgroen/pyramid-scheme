@@ -10,11 +10,11 @@ type Point = { x: number; y: number }
 // The explorer is a figure standing IN its cell: a shade under a cell wide, bottom-anchored so the feet
 // sit on the cell's floor line and the head stays inside its own square. Small enough that the map still
 // reads as a map, big enough to be a person rather than a token.
-const CHAR_W = 40
-const CHAR_H = 70
+export const CHAR_W = 40
+export const CHAR_H = 70
 // A few units off the cell's bottom edge. Standing exactly on it, the feet met the wall band below and the
 // figure read as leaning against the wall rather than standing in front of it.
-const FOOT_LIFT = 5
+export const FOOT_LIFT = 5
 // How much ground ONE full walk cycle covers. A stride is a distance, not a frame count: whether a facing
 // is drawn in four frames or in twelve, the legs must come back to the same pose after the same two cells,
 // or the character strides at a different rate depending on which way it is walking.
@@ -38,11 +38,20 @@ type Props = {
   /** Duration per grid-cell step in ms. Default 180 — and the walk cycle's frame rate follows it. */
   segmentDuration?: number
   color?: string
+  /** A stone in hand: drawn with the carrying frames, which fall back to the plain ones per facing. */
+  carrying?: boolean
   /** Fires once the dot visually settles at `pos` — on arrival, on an instant snap, and on mount. */
   onArrive?: () => void
 }
 
-export const ExplorerDot = ({ grid, pos, segmentDuration = 180, color = "#ffd060", onArrive }: Props) => {
+export const ExplorerDot = ({
+  grid,
+  pos,
+  segmentDuration = 180,
+  color = "#ffd060",
+  carrying = false,
+  onArrive,
+}: Props) => {
   // The map lays cells out on a stretched pitch so every wall has a place of its own — the dot walks
   // between floor-square centres, wherever those land.
   const toPixel = ([r, c]: readonly [number, number]): Point => {
@@ -167,7 +176,7 @@ export const ExplorerDot = ({ grid, pos, segmentDuration = 180, color = "#ffd060
       data-at={`${svgPos.x},${svgPos.y}`}
       style={{ position: "absolute", left: svgPos.x, top: svgPos.y, width: 0, height: 0, pointerEvents: "none" }}
     >
-      <ExplorerFigure facing={facing} walking={walking} cellMs={segmentDuration} color={color} />
+      <ExplorerFigure facing={facing} walking={walking} cellMs={segmentDuration} color={color} carrying={carrying} />
     </div>
   )
 }
@@ -210,7 +219,7 @@ const LIGHT_POOL_FILL =
  * lift going chalky; and the warm `drop-shadow` is spill off the flame, hugging the silhouette, which is
  * what separates a figure from stone of a similar value at the zoom a floor is read at.
  */
-const FIGURE_LIT = "brightness(1.1) saturate(1.14) drop-shadow(0 0 5px rgba(255,186,102,0.6))"
+export const FIGURE_LIT = "brightness(1.1) saturate(1.14) drop-shadow(0 0 5px rgba(255,186,102,0.6))"
 
 /**
  * The dark the explorer stands in, which is the half of standing the light cannot do.
@@ -239,7 +248,7 @@ const FOOT_SHADOW_FILL = `radial-gradient(closest-side, ${tierPalette.starter.ou
  * than in front of it — centred on the line it would puddle, hung below it, trail behind them. Drawn
  * over the torch pool and under the figure: a shadow is not lit by the pool it lies in, and the person
  * casting it is in front of it. */
-const FootShadow = () => (
+export const FootShadow = () => (
   <div
     data-foot-shadow=""
     style={{
@@ -279,7 +288,7 @@ export const LightPool = ({ r, cx = 0, cy = 0 }: { r: number; cx?: number; cy?: 
   />
 )
 
-const TorchGlow = () => <LightPool r={TORCH_RADIUS} cy={CELL * 0.22 - FOOT_LIFT} />
+export const TorchGlow = () => <LightPool r={TORCH_RADIUS} cy={CELL * 0.22 - FOOT_LIFT} />
 
 /**
  * The explorer as drawn, in cell-local units around the centre of the cell it stands on. Separate from the
@@ -296,6 +305,7 @@ export const ExplorerFigure = ({
   walking = false,
   cellMs = 180,
   color = "#ffd060",
+  carrying = false,
 }: {
   facing: Direction
   /** Which frame to stand on when NOT walking. Taken modulo this facing's own frame count. */
@@ -305,9 +315,13 @@ export const ExplorerFigure = ({
   /** How long one grid cell takes to walk, in ms. The frame rate follows from it and the frame count. */
   cellMs?: number
   color?: string
+  /** A stone in hand: the carrying frames of this facing, or the plain ones while it has none drawn. */
+  carrying?: boolean
 }) => {
   // Three directions of art, not four: facing west is facing east mirrored.
-  const frames = sharedTileFrames(`explorer-${facing === "w" ? "e" : facing}`)
+  const direction = facing === "w" ? "e" : facing
+  const carried = carrying ? sharedTileFrames(`explorer-carry-${direction}`) : []
+  const frames = carried.length > 0 ? carried : sharedTileFrames(`explorer-${direction}`)
   // However many frames this facing was drawn with, they share out the same two cells of ground.
   const frameMs = (cellMs * CELLS_PER_CYCLE) / Math.max(frames.length, 1)
   if (frames.length === 0)

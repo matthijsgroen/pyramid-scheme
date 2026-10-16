@@ -1,0 +1,14 @@
+// designed by: Claude
+// master. Djoser's building site: one stone holds the chute door so the other can go down the pipe to the
+// workshop; you follow with empty hands, down the chute or through the narrow passage.
+
+in -- yard
+yard -[unladen]- workshop
+yard -[r]- chute >> workshop
+yard -[p]- out
+r plate @yard
+p plate @workshop
+pile1 plate @yard stone
+pile2 plate @yard stone
+P pipe @chute @workshop
+chute *
