@@ -110,14 +110,15 @@ const FLOORS_WITH_DROPS = [
   "junior_4 level 4 floor 0",
   "expert_2 level 1 floor 0",
   "expert_2 level 2 floor 0",
-  "expert_2 level 4 floor 0",
   "expert_3 level 2 floor 0",
-  "expert_3 level 3 floor 0",
-  "expert_3 level 4 floor 0",
   "expert_3 level 5 floor 0",
-  "expert_4 level 3 floor 0",
   "expert_4 level 4 floor 0",
 ]
+// The floors standing a mechanic another mod realises: a procession door is the puzzle mod's, so its tiles, its
+// door and its sequence stay standing with the topology mod off.
+const FLOORS_WITH_A_PROCESSION_DOOR = ["expert_2 level 3 floor 0"]
+// What a procession door leaves on its floor: its step tiles, the sequence on one of them, and the door they work.
+const PROCESSION_PIECES = /^\d+,\d+ (sequenceTile|worksMechanism|gateFace|shut door|mechanism|mechanismId)$/
 
 type Carved = {
   label: string
@@ -204,7 +205,21 @@ describe("every floor of the real world", () => {
         : []
     )
     expect(left.length).toBeGreaterThan(200)
-    expect(left.filter(floor => floor.left.length > 0)).toEqual([])
+    const procession = (label: string) => FLOORS_WITH_A_PROCESSION_DOOR.includes(label)
+    expect(left.filter(floor => floor.left.length > 0 && !procession(floor.label))).toEqual([])
+    for (const floor of left.filter(floor => procession(floor.label))) {
+      expect(
+        floor.left.filter(piece => !PROCESSION_PIECES.test(piece)),
+        floor.label
+      ).toEqual([])
+      const cell = (piece: string) => piece.split(" ")[0]
+      const tiles = new Set(floor.left.filter(piece => piece.endsWith(" sequenceTile")).map(cell))
+      const mechanisms = floor.left.filter(piece => piece.endsWith(" mechanism")).map(cell)
+      expect(
+        mechanisms.filter(at => !tiles.has(at)),
+        `${floor.label}: a mechanism off the sequence`
+      ).toEqual([])
+    }
   })
 
   it("takes the mechanics off every floor that stands one, which is exactly these floors", () => {
@@ -236,7 +251,7 @@ describe("every floor of the real world", () => {
     }
   })
 
-  it("finds no lock to walk on any floor with the mod off, where the mod on walks one on exactly the floors that stand a mechanic", () => {
+  it("finds no lock to walk with the mod off but a procession door's, where the mod on walks one on exactly the floors that stand a mechanic", () => {
     const walked = (pick: "withMod" | "without") =>
       carved
         .filter(c => {
@@ -245,7 +260,7 @@ describe("every floor of the real world", () => {
         })
         .map(c => c.label)
     expect(walked("withMod")).toEqual(FLOORS_WITH_MECHANICS)
-    expect(walked("without")).toEqual([])
+    expect(walked("without")).toEqual(FLOORS_WITH_A_PROCESSION_DOOR)
   })
 })
 

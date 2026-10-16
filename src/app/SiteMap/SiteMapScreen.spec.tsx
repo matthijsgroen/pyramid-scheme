@@ -75,9 +75,11 @@ type CarvedKeys = {
 // The first baked floor carrying all three at once: a chest whose tombKey reward opens a coloured
 // door standing on the same floor, and a ward gate wanting a key no chest here holds. Its colour is
 // required to be the only one of its hue on the floor, so a ring reading that colour can only be
-// reading this door.
+// reading this door. A floor standing a lock is passed over: its mechanism doors may stand between the
+// entrance and the key door, and these tests walk straight there.
 const carvedFloorWithKeys = (): CarvedKeys | null => {
   for (const floor of allFloors()) {
+    if (floor.config.locks?.length) continue
     const result = assembleFloor(floor.journeyId, floor.config, floor.seed, resolveEncounter, {
       resolveKeyRequirements,
       floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },

@@ -142,6 +142,7 @@ const DEMAND_WITHOUT_SWITCHES = [
   "futoshiki/starter: 4",
   "sumplete/starter: 3",
   "sudoku/junior: 3",
+  "procession/expert door4: 1",
 ]
 
 describe("the demand the world declares", () => {

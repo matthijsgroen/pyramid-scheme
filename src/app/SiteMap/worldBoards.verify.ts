@@ -57,6 +57,9 @@ describe("every room in the world builds the board its tap asks for", () => {
               requiredKeyId: cell.requiredKeyId,
               gateVariant: cell.gateVariant,
               keyColor: cell.keyColor,
+              mechanism: cell.mechanism,
+              mark: cell.mark,
+              gateFace: cell.gateFace,
               ownedKeys: new Set<string>(),
             })
           } catch (error) {
