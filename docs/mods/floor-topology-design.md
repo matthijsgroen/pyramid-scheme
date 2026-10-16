@@ -59,7 +59,7 @@ that registered it, so core knows who owns a piece of authored structure by look
 that mod off and the feature drops, taking everything it placed with it.
 
 A feature is the authored unit. The catalogue in `../game-design/floor-as-puzzle-brainstorm.md` is
-the feature list — the one-way ramp, the waterline, the sequence door, the choked pyramid — and what
+the feature list — the one-way ramp, the waterline, the sequence door, the sand pyramid — and what
 this page once called primitives is the vocabulary those features are built from, not something a mod
 ships on its own.
 
@@ -196,6 +196,9 @@ to compare, so there is no unfairness in the comparison.
 cannot also be a sand barrier waiting on a switch from another pyramid, and the builder refuses the
 pair rather than choosing between them.
 
+A lock gate naming an outside input beside a floor control is one gate of one lock, showing a marker per owner,
+not two features.
+
 The reason is not tidiness. Two features on one passage means two openers on one barrier, and a
 player looking at it cannot tell which thing they are looking at — or which of the two they have just
 satisfied. The floor stops being readable before it stops being solvable.
@@ -261,9 +264,11 @@ A **region is a named area in a floor's coarse layout.** Naming one names the _p
 rather than the map's shape: `leftLower` means "past the fork's left gate, before the green one", not
 "the left-hand side". Two regions may be joined with a gate on the connection, or with nothing at all.
 
-**A region belongs to the floor, not to the lock that gates it.** Four of the six catalogue features
+**A region belongs to the floor, not to the lock that gates it.** Three of the six catalogue features
 act on the same nouns: a lock gates the boundaries between regions, `waterline` floods one from
-within, `cosmicDust` re-lays which corridors connect them, `sandSlide` blocks one. So the layout —
+within, `sandSlide` blocks one. `sandPyramid` reaches them from above: its web lock buries whole floors and
+sections, and binds the outside inputs a lock declares on its own gates (`mechanic-contract.md`, sand from
+above the floor). So the layout —
 regions, their connections, what content each will take — is **core and structural**, and the gates,
 switches and one-ways placed on it are the **topology mod's**. That is the `forks`/`switches` split
 one size up, and it buys the same guarantee: with the mod off, the identical walls carve and every
@@ -759,7 +764,7 @@ One rule, and both degradation modes fall out of it rather than needing separate
 | The tagged field                                       | Dropping it                               | What it costs a run           |
 | ------------------------------------------------------ | ----------------------------------------- | ----------------------------- |
 | _added_ geometry — a ramp's link                       | the floor carves without that corridor    | nothing; walls moving is free |
-| _removed_ passability — a flood, dust over a side path | the restriction lifts, geometry unchanged | nothing                       |
+| _removed_ passability — a flood, sand over a side path | the restriction lifts, geometry unchanged | nothing                       |
 
 Same mechanism, opposite consequence, decided by which of the two the authoring was.
 
@@ -791,9 +796,9 @@ For each blocker, one of these holds, and both are questions the solver already 
 
 A blocker on the main path is allowed. Being stuck is what is forbidden.
 
-The worked example is cosmic dust's choked pyramid: it is entered and gives nothing at all until its
-siblings are worked — the one site in the game not completable on arrival. It satisfies the second
-clause, not the first. The opener is in the journey's other pyramids, and leaving is always
+The worked example is the sand pyramid: it is entered and gives nothing at all until levers in
+the other wizard journeys are pulled — the one site in the game not completable on arrival. It satisfies
+the second clause, not the first. The opener is in other journeys' pyramids, and leaving is always
 available, so the player is never stuck, only sent elsewhere.
 
 ### Two bracket runs, one BFS
@@ -807,7 +812,7 @@ Where the states in between cannot be counted, bracket them:
 
 - **Most permissive** — every blocker assumed clearable. Answers _is every reward ever obtainable?_
   This is what placement and reachability already compute.
-- **Most restrictive** — every blocker at its worst: ramp absent, corridors flooded, dust in place,
+- **Most restrictive** — every blocker at its worst: ramp absent, corridors flooded, sand in place,
   upper floor choked. Answers _is each blocker's opener still reachable?_
 
 None of those three has a finite set of configurations to walk, so the two runs stand in for walking
@@ -954,11 +959,11 @@ own, and none is built before a feature needs it.
 
 |     | Primitive                                                                                   | Generalises                                                                | Serves                                                  |
 | --- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------- |
-| P1  | **Blocked-until, with a registered opener**                                                 | `hidden`+found and `gate`+key are two hardcoded instances of this one idea | flooding, collapse, dust, the hourglass                 |
+| P1  | **Blocked-until, with a registered opener**                                                 | `hidden`+found and `gate`+key are two hardcoded instances of this one idea | flooding, collapse, the sand pyramid, the hourglass     |
 | P2  | **Authored edge between two addresses, optionally directed**                                | —                                                                          | ramps, back-bars, shafts                                |
 | P3  | **Corridor cells carry mod markers**, fired on being crossed                                | only rooms carry anything                                                  | glyph tiles, sand trails, a sequence's authored markers |
 | P4  | **Floor-scoped encounter** — the board is the floor, the moves are steps                    | room-sized boards                                                          | the hourglass, visit-order floors                       |
-| P5  | **Currency scope** — journey, beside positional and world-spread                            | §E's positional-vs-spread split                                            | cosmic dust                                             |
+| P5  | **A web lock across journeys** — named keys minted in one pyramid, spent in another         | the ward gate, positional at both ends                                     | the sand pyramid                                        |
 | P6  | **Per-visit mod state with a lifecycle** — created on entering a site, discarded on leaving | mods own persistent state only                                             | the hourglass flip                                      |
 
 P1 is the one worth building for its own sake: it does not merely serve a mod, it **subsumes two
@@ -1007,7 +1012,7 @@ authored.
 | 2     | `sequenceLock`    | P3                                      | expert           | door unlocked, no glyph tiles           |
 | 3     | `sandSlide`       | P2                                      | expert           | ramp corridors absent, floor re-carves  |
 | 4     | `waterline`       | nothing                                 | master           | floor permanently drained               |
-| 5     | `cosmicDust`      | P5                                      | wizard           | pyramid not choked, handles inert       |
+| 5     | `sandPyramid`     | P5                                      | wizard           | pyramid not buried, levers inert        |
 | 6     | `hourglass`       | P4, P6                                  | wizard           | upper floor clear, lower floor ordinary |
 
 **Four of these six are the same feature wearing different clothes**, once a mechanism is a thing
@@ -1017,8 +1022,8 @@ gates — every corridor below the line — which is why it buys no primitive: a
 with a mechanism as the opener, and that is the thing being built. `sequenceLock` is a mechanism
 whose states are progress, and it buys P3 for its markers rather than for the lock.
 
-What stays genuinely separate is the pair that reaches past one floor: `cosmicDust` spans a journey's
-pyramids and `hourglass` spans two floors with per-visit state. That is a satisfying place for the
+What stays genuinely separate is the pair that reaches past one floor: `sandPyramid` spans a tier's
+journeys and `hourglass` spans two floors with per-visit state. That is a satisfying place for the
 boundary to fall — a floor's mechanisms are one vocabulary, and reaching beyond a floor is what costs
 a new one.
 
@@ -1099,87 +1104,66 @@ unregistered, every floor still carves, and the only difference is that mod's ow
 
 ---
 
-## Free-order journeys
+## Free order between journeys
 
-`cosmicDust` needs a journey whose pyramids are all open at once, and the dependency runs both ways:
-without dust, a free-order wizard journey has nothing left to come back for, because
-`getUnexploredLevels` has nothing to report.
+The build plan is `../instructions/sand-pyramid.md`.
 
-This is **core progression, authored per journey** — not something the dust mod owns. With dust
-unregistered, a free-order journey is simply a more open journey.
+`sandPyramid` needs the other wizard journeys open while wizard_3 is buried, and the dependency runs
+both ways: without the sand, a free-order tier has no late point, because any journey could be the
+last one played.
+
+This is **core progression, authored per tier** — not something the sand mod owns. With the mod
+unregistered, a free-order tier is simply a more open tier.
 
 **It opens one level of the ladder and no other.** Tiers gate on tomb tableaus; a tomb gates on its
-`piecesRequired` map pieces; a journey unlocks the next one in its tier by being completed. Free
-order changes none of those. It reaches the level underneath them: the pyramids **inside** one
-journey. That is also why the dust currency's scope is the journey — the handles clear a pyramid
-among its own siblings, never across journeys.
+`piecesRequired` map pieces. Free order changes neither. It reaches the level underneath them: the
+journeys **inside** one tier, which otherwise open one after the other as each is completed. Inside a
+journey the pyramids stay in order, so the `levelNr` cursor stays, and "journey complete" keeps
+meaning the cursor has passed `levelCount`.
 
-Only the tomb-treasure mod's `journeyEntryLock` and `tierUnlockBucket` are visible to the solver;
-journey-to-journey progression is app-side and outside its scope, the same way pyramid order is.
+**The solver already assumes it.** `reachability.ts` treats every journey of an unlocked tier as
+enterable and leaves the order between them to the app. Free order removes a divergence between what
+the solver assumes and what the game enforces. Only the tomb-treasure mod's `journeyEntryLock` and
+`tierUnlockBucket` are visible to the solver.
 
-**"Journey complete" has to be restated.** A cursor passing `levelCount` means _last pyramid done_
-and _all pyramids done_ at once, so the two readings are indistinguishable today. Once `levelNr`
-becomes a set, they come apart, and the unlock condition must say `completed.size === levelCount`
-explicitly — otherwise a free-order journey unlocks its successor off whichever pyramid the player
-happened to finish last. The migration that buys free order carries this predicate with it.
+**Order inside a journey is what the sand pyramid adds to the solver.** wizard_3's later pyramids are
+reachable only once its first pyramid's exit is, and that exit is behind sand. "Pyramid N+1 of a journey
+is enterable when pyramid N's exit is reachable" is true of every journey and becomes a solver edge.
 
-**The choked pyramid is always its journey's last.** It cannot be finished until its siblings hand
-over the handles, so a free-order journey still has a definite ending, and dust is what guarantees
-it.
+**The sand pyramid is wizard_3's first.** Because pyramids inside a journey stay in order, a buried first
+pyramid holds the whole journey back, and the levers in the other three journeys are what let it go.
+The tier gets a late point without forcing which journey comes first. Sand may lie in later wizard_3
+pyramids too, and keys freed there open sealed places in the other journeys; the web walker counts the
+revisits that asks for.
 
 What it costs:
 
-- `levelNr` stops being a cursor and becomes a set of unlocked levels. A save migration —
-  double-write, backfill, switch the read.
-- `progressPercentage` derives from completed count rather than from the cursor.
-- The travel screen carries more weight: `getUnexploredLevels` becomes the primary navigation
-  rather than a nudge.
-- Each pyramid's exterior puzzle still gates its interior, so free order means "attempt any", not
-  "walk in free".
+- the availability check skips "the journey before it in the tier is completed" for a free-order tier;
+- the completion screen's "next journey" offer can no longer be the next one in the list;
+- the travel screen carries more weight: the buried pyramid is a fourth node state.
 
-What it does **not** cost: the solver. `reachability.ts` already leaves level progression out of
-scope — the coarse graph never locks level N+1 behind level N. Free order removes a divergence
-between what the solver assumes and what the game enforces.
+### Pacing inside a free-order tier must be a key
 
-### Pacing inside a free-order journey must be a key
+Placement addresses a site by `journeyId:levelIndex` and seeds from it; it never treats the journey list
+as an ordering. Inside a journey the pyramid order still paces: `PyramidSelector` and
+`PathPuzzlesRange {start, end}` keep meaning what they say. Across a free-order tier's journeys, the
+journey order no longer does: "the rare thing is in wizard_4" paces a player only by a convention
+world-gen cannot see.
 
-Placement addresses a site by `journeyId:levelIndex` and seeds from it; it never treats the index as
-an ordering. So "the rare thing is in level 4" paces a player only by a convention world-gen cannot
-see, and in a free-order journey that convention evaporates.
+The authoring rule that follows: **across a free-order tier's journeys, pacing that matters is
+expressed as a key, or it does not exist.** Which is what the sand levers are for — they give back, in
+a form the solver can read, a sequencing free order removes.
 
-The authoring rule that follows: **in a free-order journey, pacing that matters is expressed as a
-key, or it does not exist.** Which is what cosmic dust is for — it gives back, in a form the solver
-can read, the sequencing free order removes.
-
-The place this bites is `PyramidSelector` — `number | "first" | "last" | "middle" | "n-m" |
-"last-n"`, which the whole world is authored with. Every selector stays a valid **address**; what
-`first` and `last` stop carrying is **when**. Authoring that used position to pace — the gentle
-pyramid first, the map piece last — keeps naming the same pyramid and stops meaning the same thing.
-
-`PathPuzzlesRange {start, end}` is the same thing one step further in, and it is live world data
-rather than a hypothetical: it interpolates linearly from a journey's first pyramid to its last, and
-`PYRAMID_PATH_PUZZLES` is written as ranges. Under free order it still interpolates — the pyramids
-still get 4, 5, 6, 7 — but the ramp becomes a spread, because the player may meet the 7 first.
-
-**A free-order journey needs a difficulty read on the travel screen, and does not have one.**
-`JourneyPathView` takes `levelCount`, `levelNr` and `unexploredNodes`; `JourneyCard` shows the
-journey's tier, so every wizard pyramid reads "wizard". Without the read, free order is a coin flip
-rather than a choice, and a player who meets the hardest pyramid first has no way to tell an easier
-one was open. Dust guarantees the journey an ending; nothing yet guarantees it an on-ramp. The node
-per pyramid is already positioned and already carries state, so this is a prop and a fill rather
-than a screen. The authoring-side statement of all this lives in
+**A free-order tier needs a difficulty read on the travel screen, and does not have one.**
+`JourneyCard` shows the journey's tier, so every wizard journey reads "wizard". Without a read, the
+choice between four open journeys is a coin flip. The authoring-side statement of this lives in
 `../game-design/worldgen-dsl-redesign.md`.
 
-**Steep and choked are different tenses, not different intensities.** A steep pyramid says _this
-will take some doing_, and it is about the player; a choked one says _this is not open yet_, and it
-is about the world. Drawn as one severity scale they collapse, and a player reads the choked node as
+**Steep and buried are different tenses, not different intensities.** A steep pyramid says _this
+will take some doing_, and it is about the player; a buried one says _this is not open yet_, and it
+is about the world. Drawn as one severity scale they collapse, and a player reads the buried node as
 "very hard", picks it deliberately and finds a wall. The two need distinct reads on the node — cheap
 to settle before the art exists, annoying to retrofit after.
-
-One consequence to decide deliberately rather than discover: a wizard journey's levels escalate, and
-free order lets a player meet the hardest first.
-
----
 
 ## The world must validate as solvable
 
@@ -1212,7 +1196,7 @@ worklist already holds them to the stricter reading.
 
 ## Not features
 
-- **Free-order journeys** — core progression, authored per journey.
+- **Free order between journeys** — core progression, authored per tier.
 - **Keys under locks** — `floorKeys.ts` already does it. Authoring.
 - **Inscriptions that name a place** — room text over existing dispatch.
 - **Back-bars, shafts, collapsing corridors, rising sand, visit-order floors** — not separate
@@ -1229,9 +1213,9 @@ becomes a feature composed from vocabulary that already exists.
   economy's supply count does not know. Whether a feature declares what it consumes, or the economy
   reads the floor after features land, is undecided. A lock's region tree is the same gap at a larger
   size: a floor authoring three locks and a full set of paths may not fit, and nothing counts.
-- **`needs` above floor scope.** The hourglass spans two floors and cosmic dust spans sibling
-  pyramids, so their requirements are not statements about one floor. The slot's vocabulary covers a
-  floor today. A lock asks it from the other side: nothing says a region sits on one floor, and a
+- **`needs` above floor scope.** The hourglass spans two floors, so its requirements are not
+  statements about one floor. The sand pyramid spans a tier's journeys and states its own, in its web lock
+  (`../instructions/sand-pyramid.md`). The slot's vocabulary covers a floor today. A lock asks it from the other side: nothing says a region sits on one floor, and a
   staircase inside a container would make it span two.
 - **Whether region names become save addresses.** They would be steadier than carve-derived section
   addresses, which is a benefit rather than a cost — but it is a save-format question and wants its

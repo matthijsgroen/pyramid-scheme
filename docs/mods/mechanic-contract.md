@@ -246,6 +246,26 @@ is there as they left it, and they do not walk it twice.
 
 This is a property of the effect, not of the realisation. Sand and water conceal alike.
 
+### Sand from above the floor
+
+The sand pyramid (`../instructions/sand-pyramid.md`) is written one level up, as a **web lock** over a tier:
+its places are pyramids, their sections and the outside inputs of their floor locks, and its only controls are
+activators minting keys held from outside the floor. Under it is one mechanism, a door whose key is held from
+outside, written in two places:
+
+- **Inside a lock, as an outside input.** `A outside` declares one; the lock names it bare like any owner, on
+  corridor gates (`-[A]-`, `-[A+S]-`, `-[A|S]-`) or a region barrier (`hall -[A]`), and the web binds it to an
+  activator. Never `A:state`: it would shut on arrival. At most three per lock.
+- **On ground no lock owns, as section sand:** a side section's mouth, or a floor's main path just past its
+  arrival.
+- **A web key only arrives.** In the floor walk it is a one-way mechanism, `missing → held`, whose move is an
+  arrival offered from every state. So the walk holds every order of arrival: a torch doused under buried
+  ground and the ground then cleared is a state it walks, and relights.
+- **An input's door shows a marker per owner**, the floor owners' floor marks and the input's web mark. Web marks
+  come from a glyph set of their own, so two mechanics on one floor still never share a mark.
+- **One sand per site.** Where a site carries a web door, region barriers owned only by floor controls bind to
+  water; a region barrier naming an input is web sand.
+
 ## 4. The fork-switch governs its own fork
 
 Every other control takes its effect from the lock. A fork-switch does not: **a fork puzzle operates
@@ -541,7 +561,9 @@ reach yet — which is what doubleBack does today.
 one-way and the stones, a stone pipe among them. Targets are edges or regions. `and`/`any` conditions. A floor key is an activator.
 A flood puts out a torch and never an activator. The fork-switch governs its own fork. Realisations are bound
 from outside, most specific wins, at bake time, refused when unbound. A realisation may not change what
-the solver sees. Impassable conceals, and conceals what was explored, without erasing it.
+the solver sees. Impassable conceals, and conceals what was explored, without erasing it. A web lock's sand is a door whose key is held from outside the floor:
+an outside input a lock declares on its gates, or a section gate on ground no lock owns, arriving once and
+never shut by the input.
 
 A gate may show its own condition, and a sequence's reset is at its door. A sequence is solved once: when
 it is done, it stays done. On a door it shares with other owners, those can still switch or reset, and the door

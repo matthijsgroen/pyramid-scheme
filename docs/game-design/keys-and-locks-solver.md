@@ -129,6 +129,29 @@ player hold currency X" — but what it unlocks differs by **scope**:
   pieces are held (no single room, a threshold over the whole journey).
 - **Global-scoped** — the next difficulty tier unlocks.
 
+**A key minted in one journey and spent in another.** The sand pyramid
+(`../instructions/sand-pyramid.md`) is wizard_3's first pyramid, buried in
+sand, and the sand is written as a web lock across the wizard journeys. Each
+lever or key of the web is **positional** at both ends: one activator at one
+authored section end, harvested by reachability and never ranked into free
+slots, minting one named key `web:<id>`; and the doors that ask for it, each
+a room-scoped lock on that key like a ward gate: a gate at an authored section
+mouth, or a gate of a floor lock that declares the key as an outside input. An
+input's door may ask for a floor mechanism's say beside the key, under the
+door's mode; `reachableFrom` counts the mechanism's say as given, as for every
+lock door. Nothing is counted,
+so no order is forced: the web walker proves every order of play finishes,
+and the bake requires this solver, run over the carved floors with the web's
+keys, to agree with that walk.
+
+The buried pyramid is also the one place where **the order of pyramids
+inside a journey** matters to the solver: wizard_3's later pyramids are
+reachable only once its first pyramid's exit is. The rule is general —
+pyramid N+1 of a journey is enterable when pyramid N's exit is reachable —
+and it is the only within-journey ordering the solver needs. The order of
+journeys inside a tier is not modelled: the wizard journeys are open
+together, and every journey of an unlocked tier is enterable.
+
 One key instance can satisfy multiple scoped locks at once — a tomb's
 first treasure is simultaneously the thing that opens that tomb's own
 room-scoped ward gates _and_ the thing that flips the global next-
