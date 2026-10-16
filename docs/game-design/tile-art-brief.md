@@ -248,21 +248,16 @@ What painted means for a drawing, and every one of these was learned by measurin
 
 ## Colour, before the art
 
-The merchant palette was settled with `yarn generate-dummy-tiles --palettes` (see the prep doc's tools) and
-is **dark grey-brown** — a cellar of mudbrick and limestone chips lit by the stair and a wick, not a gallery
-of pale dressed stone. The pale cool grey the placeholders wore was measurably the worst of the candidates:
-the gold click marker sat at 1.78 contrast against its floor where the chosen one gives 4.31, and props
-separated from the ground at 1.29 against 2.08.
+**Colour is decided in [visual-direction.md](visual-direction.md)**, and where this section and that one
+disagree, that one wins. Each rank is a calm ground plus one saturated metal; master is the bar; rooms are
+lit. The merchant is light warm limestone and whitewashed mudbrick with red ochre and turquoise — its
+target palette is in the `starter/*` entries of [repaint-queue.md](../instructions/repaint-queue.md).
 
-Two constraints came out of that test and hold for the other four ranks:
+What holds from the palette test (`yarn generate-dummy-tiles --palettes`) is **value separation**: floor
+against wall face, wall mass, outline, prop and marker. A pale floor is fine; a pale floor with props or a
+wall face at its own value is not. `yarn rank-colour` measures a rank against master once its art is in.
 
-- **A rank must not out-brown the rank above it.** Junior is dressed sandstone with ochre paint, so it has
-  to read as the step UP in wealth; the mudbrick candidate lost partly for being more ochre than junior.
-- **Value separation, not hue separation.** Floor against wall face, floor against wall mass, floor against
-  outline, floor against prop, floor against the marker — the table prints all five, and a candidate that
-  goes below what already ships is flagged. Hue is taste; those numbers are not.
-
-Run it before drawing a rank, not after.
+Run both before drawing a rank, not after.
 
 ## 1. Surfaces — 4 per rank
 

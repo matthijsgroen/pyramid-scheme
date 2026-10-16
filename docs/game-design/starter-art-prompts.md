@@ -124,6 +124,13 @@ a cartoon, and a cartoon is all contrast. Check every file — the numbers are i
 
 ## 2. Surfaces — 4 files
 
+**The surfaces are being repainted** in the vivid starter of
+[visual-direction.md](visual-direction.md): pale limestone, whitewashed mudbrick, red ochre and turquoise,
+rooms lit. Their prompts are the four `starter/*` entries in
+[repaint-queue.md](../instructions/repaint-queue.md) — `yarn repaint starter/floor` — and those are the
+ones to paste. The blocks below are the cellar the shipped tiles were painted from: they record what the
+current art is, and are not to be generated again.
+
 **`floor` — 1:1 exactly, fills the frame, no background**
 
 ```

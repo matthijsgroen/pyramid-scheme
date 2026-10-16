@@ -112,6 +112,200 @@ landed. `prop-pipeline.md` has the numbers.
 
 ---
 
+## Merchant surfaces — four, the vivid starter
+
+The pilot of [visual-direction.md](../game-design/visual-direction.md): the merchant's storehouse, light and
+warm, its ground calm so the red ochre and the turquoise stand out. These are SURFACES, not props — no
+scaffold, no mask. Each block carries the whole preamble, and the one attachment is a STYLE reference
+whose colours the prompt tells the model to ignore.
+
+**Order: floor first, then the others.** The floor is the anchor. Once the new floor lands, its master is
+`art/masters/surfaces/starter-floor.webp` — the same path every later entry attaches — so the rest of the
+set is painted against the new ground, not the old cellar.
+
+These colours are the merchant's TARGET palette. `tierPalette.starter` still holds the cellar's until the
+floor and wall face land; the ground tokens move with them, in the same commit as the import.
+
+### `starter/floor` — pale limestone paving, swept, market day
+
+**Attach:** `art/masters/surfaces/junior-floor.webp` — a style reference for paint and texture only; its sandstone colour is not the merchant's
+
+```
+Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
+Rank: a MERCHANT's storehouse tomb — the poorest of five, and the friendliest. Whitewashed mudbrick and
+pale limestone, red ochre paint, a little turquoise faience. Homely and warm: market day, not a cellar.
+Lit evenly by daylight from above — every corner of the room is visible, nothing sinks into darkness.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
+a comic, not a cartoon. An edge is a change of value, never a stroke.
+Palette, strictly: floor #d8c8a8 / #e4d6b8 / #cbb995 on a #bfae8c bed, joints #8a7656,
+walls #b49d74 with #e6d9bd tops and #7e6a4c at the base, objects terracotta #c0612f and #7e3a1a,
+red ochre paint #b8452c, turquoise faience #2a9d8f.
+Every colour comes from that list. Nothing lighter than #f1e8d4, nothing darker than #2a1e14.
+Warm and clear, with real colour: the red ochre and the turquoise are saturated and read from across
+the room. The STONE stays calm — the ground is quiet so the paint and the pots can stand out on it.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours, its darkness or its subject from it — the palette above is the only source of colour.
+
+Seamless top-down floor texture, viewed straight down. Square image, exactly 1:1.
+Pale limestone paving laid in a running bond, swept clean but well used. COUNT THE SLABS: exactly 7
+slabs across the width of the image and 14 rows down it, so each slab is twice as wide as it is tall
+and takes up about a seventh of the frame. Small paving stones, not flagstones. Square corners — not
+rounded rectangles.
+The slabs BUTT AGAINST EACH OTHER. The joint between two slabs is a shallow GROOVE: a soft narrow
+shadow where the surface dips and rises again — modelled, never a drawn line, never black. No slab has
+a contour around it.
+The slabs are WARM PALE LIMESTONE, #d8c8a8, varying from slab to slab across #e4d6b8 and #cbb995 so the
+bond reads without the seams having to draw it. Cream and sand, never grey, never brown.
+A working floor, lightly worn: shallow scuffs where jars were dragged, a few chipped corners showing the
+#bfae8c bed in the notch, fine hairline cracks stopping at a slab's edge. All of it painted as depth and
+all of it SHALLOW — no black holes, no trenches.
+The merchant's life on it: a few spilled grains and husks in the joints, a faint ring where a jar stood,
+a small smear of red ochre #b8452c where a pot of paint was set down, and two or three tiny turquoise
+#2a9d8f faience beads lost between slabs. Small, scattered, and few.
+It tiles, so NOTHING crosses the whole image: no crack, stain or scuff longer than an eighth of the
+frame, and no feature touching two edges. Spread evenly — no corner busier than another.
+Even lighting across the entire image, no hotspot, no vignette. Edge to edge texture.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/starter-floor.webp --tier=starter --name=floor --slot=floor --filter=smooth --key=none --repeat=2.4`
+
+Make the download seamless first (`yarn make-seamless`), save it as the master, then import. No
+`--flatten`: it is a corrective, for when `yarn tile-stats` says the roll missed.
+
+### `starter/wall-face` — whitewashed mudbrick with an ochre band
+
+**Attach:** `art/masters/surfaces/starter-floor.webp` — the new floor, as the style reference
+
+```
+Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
+Rank: a MERCHANT's storehouse tomb — the poorest of five, and the friendliest. Whitewashed mudbrick and
+pale limestone, red ochre paint, a little turquoise faience. Homely and warm: market day, not a cellar.
+Lit evenly by daylight from above — every corner of the room is visible, nothing sinks into darkness.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
+a comic, not a cartoon. An edge is a change of value, never a stroke.
+Palette, strictly: floor #d8c8a8 / #e4d6b8 / #cbb995 on a #bfae8c bed, joints #8a7656,
+walls #b49d74 with #e6d9bd tops and #7e6a4c at the base, objects terracotta #c0612f and #7e3a1a,
+red ochre paint #b8452c, turquoise faience #2a9d8f.
+Every colour comes from that list. Nothing lighter than #f1e8d4, nothing darker than #2a1e14.
+Warm and clear, with real colour: the red ochre and the turquoise are saturated and read from across
+the room. The STONE stays calm — the ground is quiet so the paint and the pots can stand out on it.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it — the palette above is the only source of colour.
+
+Seamless horizontal strip of a mudbrick wall, seen straight on from the front at eye level.
+Wide strip, exactly 8 times as wide as it is tall.
+COUNT THE BRICKS: exactly 3 courses stacked in the strip's height and 16 bricks across its width,
+each course offset half a brick from the one above. Small mud bricks, square corners.
+The bricks BUTT AGAINST EACH OTHER. The joint between two bricks is a shallow GROOVE: a soft narrow
+shadow — modelled, never a drawn line, never black. No brick has a contour around it.
+WARM WHITEWASHED MUDBRICK, mid-light: the wall as a whole is #b49d74, a clear step DARKER than the pale
+floor in front of it, never lighter, so the room keeps its depth. Whitewash covers most of it, worn
+thin and warm — never brighter than #d2c09a — and the sandy brick #b49d74 shows through where hands and
+shoulders have rubbed it.
+ONE PAINTED BAND of red ochre #b8452c runs along the lower third of the wall, its edges soft and a little
+uneven, rubbed paler where people have leaned. Above it, the merchant's marks, painted as depth: ochre
+tally strokes, a pressed clay seal, two wooden peg holes with a peg still in one, a small turquoise
+#2a9d8f faience tile set into one brick.
+The very top edge carries a lighter cap #e6d9bd where the wall's top surface catches the light; the very
+bottom edge a darker base #7e6a4c where it meets the floor. Those two bands and the ochre band run
+unbroken the whole width — they are the only things that do.
+It tiles left to right: nothing else crosses the full width, no crack or stain longer than an eighth of
+it, and no object big enough to be recognised twice in a row.
+Even lighting left to right, no hotspot, no vignette. Edge to edge texture.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/starter-wall-face.webp --tier=starter --name=wall-face --slot=face --filter=smooth --key=none --headroom=0.14 --repeat=2`
+
+`yarn make-seamless --axis=x` on the download first: a face repeats sideways only.
+
+### `starter/threshold` — a worn limestone step with its ochre line
+
+**Attach:** `art/masters/surfaces/starter-floor.webp` — the new floor, as the style reference
+
+```
+Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
+Rank: a MERCHANT's storehouse tomb — the poorest of five, and the friendliest. Whitewashed mudbrick and
+pale limestone, red ochre paint, a little turquoise faience. Homely and warm: market day, not a cellar.
+Lit evenly by daylight from above — every corner of the room is visible, nothing sinks into darkness.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
+a comic, not a cartoon. An edge is a change of value, never a stroke.
+Palette, strictly: floor #d8c8a8 / #e4d6b8 / #cbb995 on a #bfae8c bed, joints #8a7656,
+walls #b49d74 with #e6d9bd tops and #7e6a4c at the base, objects terracotta #c0612f and #7e3a1a,
+red ochre paint #b8452c, turquoise faience #2a9d8f.
+Every colour comes from that list. Nothing lighter than #f1e8d4, nothing darker than #2a1e14.
+Warm and clear, with real colour: the red ochre and the turquoise are saturated and read from across
+the room. The STONE stays calm — the ground is quiet so the paint and the pots can stand out on it.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it — the palette above is the only source of colour.
+
+A single worn limestone step seen from straight above, spanning the full width of a doorway.
+Wide strip, exactly 5 times as wide as it is tall, filling the frame edge to edge with no background.
+It is ONE band of stone across the whole width: a soft shadow along its far edge where it drops to the
+floor beyond, its own worn top surface across the middle, a soft shadow along its near edge. No object
+sits on it and nothing crosses it end to end except those two edges and one painted line.
+The stone is the floor's own limestone, #cbb995 — the same paving as the chamber, laid as one long
+block, a step darker than the floor either side of it, never lighter.
+Dished in the middle by feet, its ends a little crumbled. One line of red ochre #b8452c painted along
+its near edge, still bright, rubbed away only where every foot lands.
+Even lighting left to right, no hotspot, no vignette.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/starter-threshold.webp --tier=starter --name=threshold --slot=sill --filter=smooth --key=none`
+
+### `starter/arch` — a timber doorway with a painted lintel
+
+**Attach:** `art/masters/surfaces/starter-floor.webp` — the new floor, as the style reference
+
+```
+Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
+Rank: a MERCHANT's storehouse tomb — the poorest of five, and the friendliest. Whitewashed mudbrick and
+pale limestone, red ochre paint, a little turquoise faience. Homely and warm: market day, not a cellar.
+Lit evenly by daylight from above — every corner of the room is visible, nothing sinks into darkness.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
+a comic, not a cartoon. An edge is a change of value, never a stroke.
+Red ochre paint #b8452c, turquoise faience #2a9d8f. Nothing lighter than #f1e8d4, nothing darker than
+#2a1e14.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it.
+THE CAMERA: 30 degrees above the floor, looking slightly down. Depth going away from the viewer is
+squashed to HALF; height is barely squashed. A square wooden beam shows a top face a bit more than HALF
+as deep as the front of it is tall — a clear band, not a sliver. Verticals stay vertical, horizontals
+stay horizontal: an orthographic squash, never a vanishing point. Not isometric, not photographic.
+
+A free-standing wooden doorway frame, alone on a flat magenta #ff00ff background. Nothing else in the
+picture: no wall, no floor, no ground, no shadow cast on the magenta.
+The frame is 2.7 times as wide as it is tall. Two thick upright wooden posts, one at the left and one at
+the right, and a heavy beam lying across the top of them. THE MIDDLE IS EMPTY — flat magenta #ff00ff
+between the posts, from under the beam all the way down and off the bottom edge of the picture. Magenta
+OUTSIDE the frame too, left of the left post, right of the right post, and above the beam.
+Each post is about a sixth of the picture's width. The gap between them is the remaining two thirds.
+The wood is a WARM HONEY BROWN, clearly warmer and darker than the pale stone around it: #9a6a3c in the
+light, #5e3a1e in shadow. Old rough-hewn timber, split along the grain, adze marks.
+The front of the beam carries a painted band of red ochre #b8452c with a row of small turquoise #2a9d8f
+dots along it — the merchant's one decoration — worn at the ends where hands have gripped it.
+EVERY PIECE SHOWS ITS TOP. The beam's whole upper face is visible as a band running the full width,
+lighter than its front. Each post shows the small top face where the beam rests on it.
+The underside of the beam, where it overhangs the opening, is in shadow, and so is the inner face of each
+post. That darker edge around the empty middle is what makes the gateway read as a way through.
+Even lighting left to right, no hotspot, no vignette.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/starter-arch.webp --tier=starter --name=arch --slot=arch --filter=smooth`
+
+---
+
 ## Priest — three
 
 His CHAMBER props, and none of them existed as a model until now: his rank had nothing but the veil and
