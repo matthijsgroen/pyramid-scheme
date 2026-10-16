@@ -104,7 +104,7 @@ lock, not a sampler.
 | highWater          | expert                   | the key's cellar is dry only while the torch's hall floods; fetch the key first, or the flood puts the torch out                                            |
 | lockChamber        | expert                   | three basins, two winches: walk to the key and back as a boat goes through a canal lock                                                                     |
 | scaffold           | expert                   | a stone holds the quarry open; bring the quarry's stone out first, then spend the prop                                                                      |
-| buildersLift       | expert                   | the stone goes down the pipe and you down the hatch; the stone propping the hatch is the wrong one to post                                                  |
+| buildersLift       | expert                   | the pipe and the hatch, then scaffold's prop: set the stone below before spending the stone that props the hatch                                            |
 | stoneGate          | expert capstone (Djoser) | lifting the stone off the altar opens the back way and shuts the way in; park a stone on a shelf to fit through the narrow passage; both stones spent twice |
 
 ## Where they go
@@ -131,7 +131,7 @@ Site counts are the shipped world's (junior 16, expert 18, master 19).
 
 Every lock in a journey leans only on lessons that journey or junior has taught. In Djoser (expert_4) the stone comes
 first (stoneOnAPlate, site 1), then throughTheWall teaches the pipe and the narrow passage (site 2) before scaffold
-(site 3), buildersLift (site 4, the pipe again, with a drop) and stoneGate, the capstone. festivalProcession (expert_2
+(site 3), buildersLift (site 4, the pipe and a drop under scaffold's prop) and stoneGate, the capstone. festivalProcession (expert_2
 site 3) is the first procession door. doubleBack closes expert_3. The site tables above are the older layers; the
 placed locks are in `lock-placement.md`.
 
