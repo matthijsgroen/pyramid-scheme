@@ -76,8 +76,9 @@ statue, part of the motifs. Mice are the one new sprite, drawn and moved the way
 
 ## One palette, three readers
 
-A single token module holds, per difficulty: ground, ground light, ground shade, metal, metal light,
-counter-accent. Three things read it:
+A single token module (`src/ui/tokens/metalPalette.ts`) holds, per difficulty: `material`, `light`,
+`shade` and `accent`. The ground tokens (`slab`, `wall`, `wallBase`, `outline` in `tierPalette`) stay with
+the ground art and move with each rank's surface repaint. Three things read it:
 
 - the site map — `tierPalette` in `src/app/siteMap/tileMaterials.ts`
 - the hieroglyph tiles — `difficultyMaterial` in `src/ui/tokens/difficultyColors.ts`
@@ -113,8 +114,10 @@ legible:
 ## Measuring
 
 The method is the one in `docs/instructions/map-rendering.md` § Measuring: off the art composited through
-the renderer's own operators, read as L\*, chroma and hue angle. `yarn rank-colour` (`scripts/rankColour.ts`) samples each rank's rendered
-Storybook floor and prints, per rank:
+the renderer's own operators, read as L\*, chroma and hue angle. `yarn rank-colour` (`scripts/rankColour.ts`)
+composites each rank's committed floor and wall-face art, with its metal and prop tokens, through the
+renderer's wash; the rendered page is read separately in Storybook for sign-off, and the two differ by
+about 1–2 L\*. It prints, per rank:
 
 - the metal's chroma after the wash
 - ground-to-metal contrast (L\* difference)
@@ -126,21 +129,7 @@ wash, its ground-to-metal contrast is at least master's, the marker holds 3:1, p
 floor at least as well as today's 2.08 — and the user signs it off on screenshots of a real floor in the
 game, not on loose tiles.
 
-Baseline, all ranks at their shipped night:
-
-```
-┌─────────┬──────────┬──────────┬────────────┬──────────────┬──────────┬───────────┬───────────┬──────────────────┬─────────────┐
-│ (index) │ floor L* │ floor C* │ metal C*   │ ground→metal │ marker   │ prop      │ face step │ solved faceNight │ hue to next │
-├─────────┼──────────┼──────────┼────────────┼──────────────┼──────────┼───────────┼───────────┼──────────────────┼─────────────┤
-│ starter │ 27.5     │ 7        │ '34.3 LOW' │ '1.6 LOW'    │ '7.4 ok' │ '1.4 LOW' │ 8.9       │ 0.09             │ 18.1        │
-│ junior  │ 29.8     │ 20       │ '26.1 LOW' │ '9.1 LOW'    │ '6.8 ok' │ '1.1 LOW' │ 10.4      │ 0                │ 157.9       │
-│ expert  │ 29       │ 5.8      │ '7.3 LOW'  │ '0.6 LOW'    │ '7 ok'   │ '1 LOW'   │ 10.2      │ 0.09             │ 178         │
-│ master  │ 25.3     │ 5.8      │ '47.5 ok'  │ '31.8 ok'    │ '8 ok'   │ '3.2 ok'  │ 8         │ 0.13             │ 80.1        │
-│ wizard  │ 28       │ 12.9     │ '22.9 LOW' │ '2 LOW'      │ '7.2 ok' │ '1.2 LOW' │ 10        │ 0.22             │ ''          │
-└─────────┴──────────┴──────────┴────────────┴──────────────┴──────────┴───────────┴───────────┴──────────────────┴─────────────┘
-```
-
-After starter's night falls to 0.2:
+Current measurement:
 
 ```
 ┌─────────┬──────────┬──────────┬────────────┬──────────────┬──────────┬───────────┬───────────┬──────────────────┬─────────────┐
@@ -154,7 +143,7 @@ After starter's night falls to 0.2:
 └─────────┴──────────┴──────────┴────────────┴──────────────┴──────────┴───────────┴───────────┴──────────────────┴─────────────┘
 ```
 
-The game's floor 0 moved from L\* 34.8 to 42.3: lighter, not yet more colourful, because the starter art is still the brown cellar. Colour arrives with the surface repaint.
+In the game, starter_1 floor 0 reads floor L\* 42 — lighter, not yet more colourful: colour arrives with the surface repaint.
 
 ## Starter first
 

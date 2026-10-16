@@ -1060,11 +1060,12 @@ describe("SiteMapView — the shade the lamp is read against", () => {
     // A lamp is carried at floor level, so a vertical face takes it at a glancing angle. Without this
     // the floor and the wall land within a step of each other once the night is over both, and the room
     // reads as a floorplan with a change of texture rather than as a place with walls.
-    const { container } = render(<SiteMapView grid={twoRooms()} />)
+    const { container } = render(<SiteMapView grid={{ ...twoRooms(), difficulty: "expert" }} />)
     const faceNight = container.querySelector<SVGElement>("[data-face-night]")!
 
     expect(faceNight).toBeDefined()
-    expect(Number(faceNight.getAttribute("opacity"))).toBe(tierPalette.starter.faceNight)
+    expect(tierPalette.expert.faceNight).toBeGreaterThan(0)
+    expect(Number(faceNight.getAttribute("opacity"))).toBe(tierPalette.expert.faceNight)
     // Under the night itself: it deepens the face's own stone rather than lying over the whole picture.
     expect(depthOf(container, faceNight)).toBeLessThan(depthOf(container, shades(container)[0]))
   })

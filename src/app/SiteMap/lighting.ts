@@ -42,15 +42,15 @@ export const LIT_STANDING_STRENGTH = 0.25
  * more, and the rest of the range is left for what the beam does on its way down (`MapBeams`).
  *
  * Read off the RENDERED PAGE rather than modelled — a Storybook shot of a starter floor, sampled as mean
- * L* over a patch of paving. Unlit floor about 35, a ray in the air 65.5, the
- * patch of sun it lands in 70.1, the torch-lit floor round the explorer 65.9. The pool is the brightest
- * thing on the floor and the ray sits just under it. Composited off the art alone the same numbers come out several L*
- * apart, because the page also carries the scatter, the sand drift and the second shade pass; what the
- * player sees is what this is solved against.
+ * L* over a patch of paving. Unlit floor about 35, a ray in the air 65.5, the patch of sun it lands in
+ * 70.1, the torch-lit floor round the explorer 65.9. The pool is the brightest thing on the floor and
+ * the ray sits just under it. Composited off the art alone the same numbers come out several L* apart,
+ * because the page also carries the scatter, the sand drift and the second shade pass; what the player
+ * sees is what this is solved against.
  *
- * ONE NUMBER, NOT ONE PER RANK. The night is already solved to land every rank's floor at the same L*, so
- * a light asked for the same lift everywhere needs the same strength everywhere, and a rank that wanted
- * its own would be a rank out of step with the others (docs/instructions/map-rendering.md).
+ * ONE NUMBER, NOT ONE PER RANK. Every rank's night is held to an alpha of 0.2 or less (starter is there;
+ * the others follow with their own art repaint, measured by `yarn rank-colour`), so a light asked for the
+ * same lift needs the same strength on every rank (docs/instructions/map-rendering.md).
  *
  * TWO LIGHTS IN ONE ROOM DO NOT STACK. `color-dodge` divides, so a beam and a torch drawn over each other
  * multiply their scales and take the floor half again above anything else on the map. So the beam's light

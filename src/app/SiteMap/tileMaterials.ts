@@ -31,10 +31,10 @@ export type TierPalette = {
   /** The extra helping of that night a VERTICAL face takes, over the floor's share.
    *
    * A lamp is carried at floor level, so a wall takes its light at a glancing angle and the ground does
-   * not — without that the two planes sit within a step of each other (measured: the floor→face step is
-   * 9.5 in the starter art and 3.5 once the night is over both) and a room reads as a floorplan with a
-   * texture change rather than as a place with walls. Solved per rank to the same 7.5 step, since the
-   * art's own step varies from 6.8 to 22.7 and it is the RENDERED one the player sees. */
+   * not — without that the two planes sit within a step of each other and a room reads as a floorplan
+   * with a texture change rather than as a place with walls. Solved per rank to a 7.5 L* step with
+   * `yarn rank-colour`, since it is the RENDERED step the player sees; 0 where the art already steps
+   * that far. */
   faceNight: number
   /** freestanding props, and the near-black they are outlined in */
   prop: string

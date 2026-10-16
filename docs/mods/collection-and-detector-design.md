@@ -102,13 +102,12 @@ exposing the two roles explicitly:
 
 ```ts
 export const difficultyMaterial: Record<Difficulty, MaterialSpec> // stone→emerald gradients + symbol color
-export const difficultyRank: Record<Difficulty, string> // green→purple pill classes
+export const difficultyMaterialFlat: Record<Difficulty, CSSProperties> // flat panel surface in the metal
 ```
 
-`HieroglyphTile` consumes `difficultyMaterial` (collapsing its 3× inline
-ternaries into one lookup); `hieroglyphLevelColors.ts` becomes a thin re-export
-or is replaced at its two call sites; `DifficultyPill` consumes `difficultyRank`.
-No visual change — pure de-duplication.
+Difficulty has one colour: its metal (`src/ui/tokens/metalPalette.ts`), which
+`HieroglyphTile` is cut from (one lookup, `difficultyMaterial`) and
+`DifficultyPill` wears.
 
 **Blast radius:** `HieroglyphTile` is shared by treasures + sellables, so the
 material-token refactor touches all three collectible kinds. That's desirable

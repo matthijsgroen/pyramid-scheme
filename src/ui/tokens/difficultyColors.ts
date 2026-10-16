@@ -1,7 +1,8 @@
 import type { CSSProperties } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
-import { difficulties } from "@/data/difficultyLevels"
 import { METALS } from "./metalPalette"
+
+const difficulties = Object.keys(METALS) as Difficulty[]
 
 // The difficulty's metal (./metalPalette.ts), cut two ways: as the carved 3D tile the hieroglyphs sit on,
 // and as a flat surface for panels that want the tier's colour without the carving.
