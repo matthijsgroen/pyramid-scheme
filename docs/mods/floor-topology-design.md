@@ -261,9 +261,10 @@ A **region is a named area in a floor's coarse layout.** Naming one names the _p
 rather than the map's shape: `leftLower` means "past the fork's left gate, before the green one", not
 "the left-hand side". Two regions may be joined with a gate on the connection, or with nothing at all.
 
-**A region belongs to the floor, not to the lock that gates it.** Four of the six catalogue features
+**A region belongs to the floor, not to the lock that gates it.** Three of the six catalogue features
 act on the same nouns: a lock gates the boundaries between regions, `waterline` floods one from
-within, `sandPyramid` buries them until levers elsewhere clear them, `sandSlide` blocks one. So the layout —
+within, `sandSlide` blocks one. `sandPyramid` lies above them: its web lock buries whole floors and
+sections no lock owns, and never a region (`mechanic-contract.md`, sand from above the floor). So the layout —
 regions, their connections, what content each will take — is **core and structural**, and the gates,
 switches and one-ways placed on it are the **topology mod's**. That is the `forks`/`switches` split
 one size up, and it buys the same guarantee: with the mod off, the identical walls carve and every
@@ -958,7 +959,7 @@ own, and none is built before a feature needs it.
 | P2  | **Authored edge between two addresses, optionally directed**                                | —                                                                          | ramps, back-bars, shafts                                |
 | P3  | **Corridor cells carry mod markers**, fired on being crossed                                | only rooms carry anything                                                  | glyph tiles, sand trails, a sequence's authored markers |
 | P4  | **Floor-scoped encounter** — the board is the floor, the moves are steps                    | room-sized boards                                                          | the hourglass, visit-order floors                       |
-| P5  | **A counted key across journeys** — minted in place, spent by count                         | §E's positional-vs-spread split                                            | the sand pyramid                                        |
+| P5  | **A web lock across journeys** — named keys minted in one pyramid, spent in another         | the ward gate, positional at both ends                                     | the sand pyramid                                        |
 | P6  | **Per-visit mod state with a lifecycle** — created on entering a site, discarded on leaving | mods own persistent state only                                             | the hourglass flip                                      |
 
 P1 is the one worth building for its own sake: it does not merely serve a mod, it **subsumes two
@@ -1127,7 +1128,9 @@ is enterable when pyramid N's exit is reachable" is true of every journey and be
 
 **The sand pyramid is wizard_3's first.** Because pyramids inside a journey stay in order, a buried first
 pyramid holds the whole journey back, and the levers in the other three journeys are what let it go.
-The tier gets a late point without forcing which journey comes first.
+The tier gets a late point without forcing which journey comes first. Sand may lie in later wizard_3
+pyramids too, and keys freed there open sealed places in the other journeys; the web walker counts the
+revisits that asks for.
 
 What it costs:
 
@@ -1206,9 +1209,9 @@ becomes a feature composed from vocabulary that already exists.
   economy's supply count does not know. Whether a feature declares what it consumes, or the economy
   reads the floor after features land, is undecided. A lock's region tree is the same gap at a larger
   size: a floor authoring three locks and a full set of paths may not fit, and nothing counts.
-- **`needs` above floor scope.** The hourglass spans two floors and the sand pyramid spans a
-  tier's journeys, so their requirements are not statements about one floor. The slot's vocabulary covers a
-  floor today. A lock asks it from the other side: nothing says a region sits on one floor, and a
+- **`needs` above floor scope.** The hourglass spans two floors, so its requirements are not
+  statements about one floor. The sand pyramid spans a tier's journeys and states its own, in its web lock
+  (`../instructions/sand-pyramid.md`). The slot's vocabulary covers a floor today. A lock asks it from the other side: nothing says a region sits on one floor, and a
   staircase inside a container would make it span two.
 - **Whether region names become save addresses.** They would be steadier than carve-derived section
   addresses, which is a benefit rather than a cost — but it is a save-format question and wants its

@@ -534,7 +534,7 @@ hourglass mechanic**, and on **a pyramid standing full of sand that clears a lit
 pulled in other journeys** — wizard_3's first pyramid, cleared from wizard_1, wizard_2 and wizard_4.
 
 That last one is progress in one journey gating a site in another, which is P5 in the design document's
-primitive table (`../mods/floor-topology-design.md`, "A counted key across journeys") reaching past a
+primitive table (`../mods/floor-topology-design.md`, "A web lock across journeys") reaching past a
 single floor the way `sandPyramid` and `hourglass` do. It is not costed in the six steps above; its plan
 is `instructions/sand-pyramid.md`.
 

@@ -131,13 +131,14 @@ player hold currency X" — but what it unlocks differs by **scope**:
 
 **A key minted in one journey and spent in another.** The sand pyramid
 (`../instructions/sand-pyramid.md`) is wizard_3's first pyramid, buried in
-sand. Each sand lever in wizard_1, wizard_2 or wizard_4 is **positional**
-content, like a tomb treasure: one lever at one authored place, harvested by
-reachability and never ranked into free slots. What it mints is one unit of
-a **counted** bucket, `sand`, like a map piece: region k of the buried
-pyramid is a room-scoped lock on `sand` at threshold k. Positional where it
-is minted, counted where it is spent — so the regions clear in a fixed order
-whichever journey the player does first.
+sand, and the sand is written as a web lock across the wizard journeys. Each
+lever or key of the web is **positional** at both ends: one activator at one
+authored section end, harvested by reachability and never ranked into free
+slots, minting one named key `web:<id>`; and one gate at one authored section
+mouth, a room-scoped lock on that key, like a ward gate. Nothing is counted,
+so no order is forced: the web walker proves every order of play finishes,
+and the bake requires this solver, run over the carved floors with the web's
+keys, to agree with that walk.
 
 The buried pyramid is also the one place where **the order of pyramids
 inside a journey** matters to the solver: wizard_3's later pyramids are

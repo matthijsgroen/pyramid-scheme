@@ -246,13 +246,24 @@ is there as they left it, and they do not walk it twice.
 
 This is a property of the effect, not of the realisation. Sand and water conceal alike.
 
-### A region gate owned from outside the floor
+### Sand from above the floor
 
-The sand pyramid (`../instructions/sand-pyramid.md`) bars its regions with gates whose owner is not a
-mechanic on the floor but a **counted key** the player holds: region k opens once k sand levers have been
-pulled in other journeys. A held key never goes back, so such a region opens once and never closes, and
-nothing is concealed. To the floor it is an activator standing elsewhere; to the world solver it is a key
-bucket with a threshold per region. A lock writes it as an owner that names the key, not a mechanic.
+The sand pyramid (`../instructions/sand-pyramid.md`) is written one level up, as a **web lock**: the same
+notation, its places pyramids and their sections across a tier, its only controls activators whose keys are
+held from outside the floor. A web's sand is not a region barrier of the floor's lock, and the two never
+mix:
+
+- **Web sand sits on whole floors and on sections no lock owns:** a side section's mouth, or a floor's main
+  path just past its arrival. Never on a lock's seam or region, and never over a lock piece. So a floor's
+  lock is either wholly under web sand or wholly clear of it.
+- **A lock never names a web key**, and no door carries a web key beside a mechanic's.
+- **A web key only arrives.** A web gate is an edge door, so it covers no region, douses no torch and
+  conceals nothing.
+- **The floor walk takes web keys as held from outside**, and the floor must be sound with every one of them
+  held. Every state the player can reach while some sand still lies is a state of that walk, because a
+  missing web key only takes away moves.
+- **Web gates and activators wear the web's own marks**, never a floor's, so two mechanics on one floor
+  still never share a mark.
 
 ## 4. The fork-switch governs its own fork
 
@@ -549,8 +560,8 @@ reach yet — which is what doubleBack does today.
 one-way and the stones, a stone pipe among them. Targets are edges or regions. `and`/`any` conditions. A floor key is an activator.
 A flood puts out a torch and never an activator. The fork-switch governs its own fork. Realisations are bound
 from outside, most specific wins, at bake time, refused when unbound. A realisation may not change what
-the solver sees. Impassable conceals, and conceals what was explored, without erasing it. A region gate may be owned by a counted key
-held from outside the floor; it opens once and conceals nothing.
+the solver sees. Impassable conceals, and conceals what was explored, without erasing it. A web lock's sand lies above the floor's lock:
+on whole floors and on sections no lock owns, opened once by a key held from outside, concealing nothing.
 
 A gate may show its own condition, and a sequence's reset is at its door. A sequence is solved once: when
 it is done, it stays done. On a door it shares with other owners, those can still switch or reset, and the door

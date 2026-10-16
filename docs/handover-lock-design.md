@@ -40,7 +40,7 @@ Design docs: `docs/game-design/lock-curriculum.md` (the curriculum — read firs
 **Rule (`lock-curriculum.md`): a mechanic appears alone before it appears in company.** Junior teaches
 single mechanics as plain floor content ("lessons", one action). Expert gets the first locks, with
 doubleBack as capstone. Master gets the rest. **Wizard gets the sand pyramid** (`docs/instructions/sand-pyramid.md`): one buried pyramid in wizard_3, cleared by levers in
-the other wizard journeys; its layout is a wizard lock, the designer's. A lock is only for
+the other wizard journeys; its sand is a web lock, the designer's. A lock is only for
 multi-step items; a single board choice is a switch fork.
 
 **18 locks** in `src/game/locks/`: dropHome, cellar, twoLamps, overlook, doubleBack, seesaw, lamplighter,
