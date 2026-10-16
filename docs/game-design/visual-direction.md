@@ -52,6 +52,26 @@ both a lightness and a hue, so they stay apart on the map as well as in a screen
 The metal ladder is the one `src/data/materialTiers.ts` already names (stone, bronze → copper, silver,
 gold, divine → emerald), and the one the hieroglyph tiles already wear.
 
+## Tier themes
+
+What each rank is made of beyond its colours. **Tier theme**, not _theme_: in the code a `theme` is a
+floor's hour or weather (`journeys.md` §2), and the two must not share a word.
+
+| Tier                             | Motifs and ornament                                                            | Signature props                                                                          | Air and life                                                                                     |
+| -------------------------------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| **starter · stone** storehouse   | tally marks, merchants' seals, basket weave, ochre bands                       | jars on shelves, a striped awning cloth (hanging), a grain bin (basin)                   | warm sunlit dust and chaff; **a cat and mice** — Ipi's cats were _for the grain_                 |
+| **junior · copper** noble house  | lotus and papyrus, rosettes, banquet friezes, a painted dado                   | copper vessels with verdigris (basin), lotus pillars, an offering table with flowers     | scented incense haze, drifting petals; **a goose** — Henut's, in the place an owl belongs        |
+| **expert · silver** clean temple | ceiling stars, djed and was pillars, sunk-relief text columns, a crescent moon | **satin curtains** (hanging), silver lamps, a basin of still water, a shut naos (shrine) | clear and cool, one slow thread of incense; **now and then an ibis**, Thoth's. Otherwise nothing |
+| **master · gold** galleries      | cartouches, the winged sun disc, uraeus cobras, a kheker frieze                | gilded statues, a gold-inlaid sarcophagus, a gilded shrine, braziers                     | still and ceremonial, gold dust catching the shafts; **now and then a cobra**                    |
+| **wizard · emerald** the gods    | stars (Nut), ankh, the Eye of Horus, Ma'at's feather                           | crystals, a shrine that is a window on the cosmos, seams of light in the floor           | motes of light rising **upward** instead of settling, an emerald glow; **no animals**            |
+
+Every signature prop is a rank's drawing of a kind the brief already has (§2, thirteen kinds), so a tier
+theme adds no kind. The air extends `RANK_MOOD` in `moodSettings.ts`, which today carries a tint, drifting
+motes, scarabs and the odds of a shaft; the motes' direction (wizard's rise) is new.
+
+**The animals are new art.** `life` draws scarabs only today: a cat, mice, a goose, an ibis and a cobra
+are five small sprites, budgeted below.
+
 ## One palette, three readers
 
 A single token module holds, per difficulty: ground, ground light, ground shade, metal, metal light,
@@ -132,7 +152,8 @@ brief before copper starts.
 
 The game precaches everything for offline play (`story/review.md` § The art budget: 5.4 MB today). A repaint
 replaces tiles rather than adding them, so the total holds; each rank's imports are checked against the
-files they replace, and webp is the lever if texture makes them heavier.
+files they replace, and webp is the lever if texture makes them heavier. The tier themes' five animals are
+the one addition: small floor sprites, a few kB each.
 
 ## Out of scope
 
