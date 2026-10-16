@@ -23,6 +23,8 @@ redesign, 37 from before the explorer existed, and which of those to rewrite, re
 [**The cast**](cast.md) is who Fez and the explorer are — wants, voice, never-says, and the pair — kept
 in one place so copy written months apart still sounds like them.
 
+[**Review**](review.md) is the tuning pass over what ships, stretch by stretch, as tasks.
+
 [**Implementation**](IMPLEMENTATION.md) is what falls out of these documents as work, split by whether a
 story decision is in the way, and what of it is now built and playing. Three of the four things still
 unblocked are content; the fourth is a drawing.

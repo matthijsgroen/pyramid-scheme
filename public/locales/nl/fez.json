@@ -93,11 +93,13 @@
       "5": { "fez": "Drieduizend jaar, en de bonnetjes hebben de waar overleefd. Typisch." }
     },
     "starter_3": {
-      "1": { "fez": "Mensen kwamen hier om bescherming vragen, en bescherming betekende een deur die dicht blijft." },
+      "1": {
+        "fez": "Mensen kwamen hier om bescherming te vragen, en bescherming betekende een deur die dicht blijft."
+      },
       "2": { "explorer": "Dicht voor wie?" },
       "3": { "fez": "Voor iedereen die niet netjes vroeg. Voor ons, vooral." },
       "4": { "fez": "Alles wat in dit land verzegeld is, is verzegeld door iemand die het meende." },
-      "5": { "fez": "En de katten! Ze hielden hier katten, weet je. Aanbeden werden ze. Ze konden er niets aan doen." }
+      "5": { "fez": "En de katten! Ze hielden hier katten, weet je. Ze aanbaden ze. Ze konden het niet laten." }
     },
     "starter_4": {
       "1": {

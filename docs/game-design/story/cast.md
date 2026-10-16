@@ -245,7 +245,10 @@ That line already says **us**. The middle three acts are what earns the word.
 
 ---
 
-## How they meet — open
+## How they meet
+
+**Decided 2026-10-16: setup 3, the meeting on floor 0 of `starter_1` pyramid 1.** The work it sets off is
+in [review.md](review.md) § The opening.
 
 Ruled out: **they already know each other.** The arc above needs distance to travel, and "I came for the
 resale, I'm saying it now while it's still true" is a strange thing to say to an old partner.
@@ -268,7 +271,7 @@ first question than who are you — and he is complaining rather than looming, w
 
 ### Open
 
-1. **Which setup**, and if the third: how long is the quiet, exactly one board or the whole first pyramid?
+1. **How long is the quiet**: the exterior board and the first rooms of floor 0 — where exactly is open in [review.md](review.md).
 2. **Does the map ever pay off?** Secondhand and vague is the right start, but a map nobody returns to is
    set dressing. It could be worthless for good, or turn out to be one of the earlier explorer's.
 3. **Which five errors, exactly?** The starter one is nearly written; the other four want a real piece of
