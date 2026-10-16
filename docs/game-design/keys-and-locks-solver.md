@@ -134,8 +134,12 @@ player hold currency X" — but what it unlocks differs by **scope**:
 sand, and the sand is written as a web lock across the wizard journeys. Each
 lever or key of the web is **positional** at both ends: one activator at one
 authored section end, harvested by reachability and never ranked into free
-slots, minting one named key `web:<id>`; and one gate at one authored section
-mouth, a room-scoped lock on that key, like a ward gate. Nothing is counted,
+slots, minting one named key `web:<id>`; and the doors that ask for it, each
+a room-scoped lock on that key like a ward gate: a gate at an authored section
+mouth, or a gate of a floor lock that declares the key as an outside input. An
+input's door may ask for a floor mechanism's say beside the key, under the
+door's mode; `reachableFrom` counts the mechanism's say as given, as for every
+lock door. Nothing is counted,
 so no order is forced: the web walker proves every order of play finishes,
 and the bake requires this solver, run over the carved floors with the web's
 keys, to agree with that walk.

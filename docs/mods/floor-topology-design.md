@@ -196,6 +196,9 @@ to compare, so there is no unfairness in the comparison.
 cannot also be a sand barrier waiting on a switch from another pyramid, and the builder refuses the
 pair rather than choosing between them.
 
+A lock gate naming an outside input beside a floor control is one gate of one lock, showing a marker per owner,
+not two features.
+
 The reason is not tidiness. Two features on one passage means two openers on one barrier, and a
 player looking at it cannot tell which thing they are looking at — or which of the two they have just
 satisfied. The floor stops being readable before it stops being solvable.
@@ -263,8 +266,9 @@ rather than the map's shape: `leftLower` means "past the fork's left gate, befor
 
 **A region belongs to the floor, not to the lock that gates it.** Three of the six catalogue features
 act on the same nouns: a lock gates the boundaries between regions, `waterline` floods one from
-within, `sandSlide` blocks one. `sandPyramid` lies above them: its web lock buries whole floors and
-sections no lock owns, and never a region (`mechanic-contract.md`, sand from above the floor). So the layout —
+within, `sandSlide` blocks one. `sandPyramid` reaches them from above: its web lock buries whole floors and
+sections, and binds the outside inputs a lock declares on its own gates (`mechanic-contract.md`, sand from
+above the floor). So the layout —
 regions, their connections, what content each will take — is **core and structural**, and the gates,
 switches and one-ways placed on it are the **topology mod's**. That is the `forks`/`switches` split
 one size up, and it buys the same guarantee: with the mod off, the identical walls carve and every

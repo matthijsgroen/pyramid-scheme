@@ -2,7 +2,7 @@
 
 Which floors teach which mechanic, and which locks combine them, from junior to master. Wizard is not in
 it: wizard gets the sand pyramid (`../instructions/sand-pyramid.md`), wizard_3's first pyramid buried in sand
-that named levers in the other wizard journeys clear. The sand is a web lock, `wizard/chamberOfMaat.web`, the designer's: the lock notation one level up, over pyramids and their sections.
+that named levers in the other wizard journeys clear. The sand is a web lock, `wizard/chamberOfMaat.web`, the designer's: the lock notation one level up, over pyramids, their sections and the outside inputs its wizard locks declare.
 
 The locks and lessons themselves are files: `src/game/locks/{junior,expert,master,wizard}/**/*.lock` (lessons in `junior/lessons/`),
 in the notation of `src/game/lockNotation.ts`. `yarn lock <file>` draws one, walks it and says what it
