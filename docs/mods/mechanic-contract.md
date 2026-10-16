@@ -246,6 +246,14 @@ is there as they left it, and they do not walk it twice.
 
 This is a property of the effect, not of the realisation. Sand and water conceal alike.
 
+### A region gate owned from outside the floor
+
+The sand pyramid (`../instructions/sand-pyramid.md`) bars its regions with gates whose owner is not a
+mechanic on the floor but a **counted key** the player holds: region k opens once k sand levers have been
+pulled in other journeys. A held key never goes back, so such a region opens once and never closes, and
+nothing is concealed. To the floor it is an activator standing elsewhere; to the world solver it is a key
+bucket with a threshold per region. A lock writes it as an owner that names the key, not a mechanic.
+
 ## 4. The fork-switch governs its own fork
 
 Every other control takes its effect from the lock. A fork-switch does not: **a fork puzzle operates
@@ -541,7 +549,8 @@ reach yet — which is what doubleBack does today.
 one-way and the stones, a stone pipe among them. Targets are edges or regions. `and`/`any` conditions. A floor key is an activator.
 A flood puts out a torch and never an activator. The fork-switch governs its own fork. Realisations are bound
 from outside, most specific wins, at bake time, refused when unbound. A realisation may not change what
-the solver sees. Impassable conceals, and conceals what was explored, without erasing it.
+the solver sees. Impassable conceals, and conceals what was explored, without erasing it. A region gate may be owned by a counted key
+held from outside the floor; it opens once and conceals nothing.
 
 A gate may show its own condition, and a sequence's reset is at its door. A sequence is solved once: when
 it is done, it stays done. On a door it shares with other owners, those can still switch or reset, and the door

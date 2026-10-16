@@ -1,7 +1,8 @@
 # The lock curriculum
 
 Which floors teach which mechanic, and which locks combine them, from junior to master. Wizard is not in
-it: wizard gets sand puzzles, which `mechanic-contract.md` §8 parks outside the lock model.
+it: wizard gets the sand pyramid (`../instructions/sand-pyramid.md`), wizard_3's first pyramid buried in sand
+that levers in the other wizard journeys clear. Its layout is a wizard lock, the designer's.
 
 The locks and lessons themselves are files: `src/game/locks/{junior,expert,master,wizard}/**/*.lock` (lessons in `junior/lessons/`),
 in the notation of `src/game/lockNotation.ts`. `yarn lock <file>` draws one, walks it and says what it
@@ -13,7 +14,7 @@ test pins what a lock contains.
 A lock's tier is its action count, the length of its cheapest solution (`yarn lock`'s "steps"), and its folder says
 which: `src/game/locks/junior/` (1-3 actions, the lessons in `junior/lessons/`), `expert/` (4-6 actions),
 `master/` (a bathHouse-sized lock, about 14 actions, and locks not yet buildable such as masonsRamp) and `wizard/`
-(empty: sand puzzles, parked). A lock goes by its bare file name, never its folder, so a name is unique across
+(the sand pyramid's lock, the designer's). A lock goes by its bare file name, never its folder, so a name is unique across
 tiers and `yarn lock expert/relay` and `yarn lock relay` draw the same lock. The tier columns below match the
 folders; relay and doubleBack take three actions and stand in expert by the designer's choice. The "Where they
 go" tables are the older per-site layers; the one-lock-per-floor proposal is in

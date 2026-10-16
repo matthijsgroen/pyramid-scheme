@@ -129,6 +129,24 @@ player hold currency X" — but what it unlocks differs by **scope**:
   pieces are held (no single room, a threshold over the whole journey).
 - **Global-scoped** — the next difficulty tier unlocks.
 
+**A key minted in one journey and spent in another.** The sand pyramid
+(`../instructions/sand-pyramid.md`) is wizard_3's first pyramid, buried in
+sand. Each sand lever in wizard_1, wizard_2 or wizard_4 is **positional**
+content, like a tomb treasure: one lever at one authored place, harvested by
+reachability and never ranked into free slots. What it mints is one unit of
+a **counted** bucket, `sand`, like a map piece: region k of the buried
+pyramid is a room-scoped lock on `sand` at threshold k. Positional where it
+is minted, counted where it is spent — so the regions clear in a fixed order
+whichever journey the player does first.
+
+The buried pyramid is also the one place where **the order of pyramids
+inside a journey** matters to the solver: wizard_3's later pyramids are
+reachable only once its first pyramid's exit is. The rule is general —
+pyramid N+1 of a journey is enterable when pyramid N's exit is reachable —
+and it is the only within-journey ordering the solver needs. The order of
+journeys inside a tier is not modelled: the wizard journeys are open
+together, and every journey of an unlocked tier is enterable.
+
 One key instance can satisfy multiple scoped locks at once — a tomb's
 first treasure is simultaneously the thing that opens that tomb's own
 room-scoped ward gates _and_ the thing that flips the global next-

@@ -21,15 +21,15 @@ gates that must show what they wait for · what cannot be built yet. Below the m
 and what the lock could do without (a piece that does nothing, a drop that is only a shortcut, a lock
 one action solves).
 
-| file | job |
-| --- | --- |
-| `src/game/lockNotation.ts` | text → shared `Lock` (`parseLock`, `LOCK_SYNTAX`); refuses by line |
-| `src/game/lockWalkSpec.ts` | `Lock` → `LockSpec` for the soundness walk (`walkSpecOf`), plus start/face/buildable reports. NOT main's `lockCompile.ts`, which compiles a `Lock` to floor vocabulary for the carve |
-| `src/game/lockReview.ts` | cheapest route, quality notes, unreached regions |
-| `src/game/lockDraw.ts` | the ASCII drawing |
-| `src/game/lockCatalogue.ts` | reads `src/game/locks/{junior,expert,master,wizard}/**/*.lock` |
-| `scripts/lock.ts` | the CLI |
-| `src/game/lockAuthoring.ts` (main) | the shared `Lock` type — the target; owned with the engine session |
+| file                               | job                                                                                                                                                                                  |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `src/game/lockNotation.ts`         | text → shared `Lock` (`parseLock`, `LOCK_SYNTAX`); refuses by line                                                                                                                   |
+| `src/game/lockWalkSpec.ts`         | `Lock` → `LockSpec` for the soundness walk (`walkSpecOf`), plus start/face/buildable reports. NOT main's `lockCompile.ts`, which compiles a `Lock` to floor vocabulary for the carve |
+| `src/game/lockReview.ts`           | cheapest route, quality notes, unreached regions                                                                                                                                     |
+| `src/game/lockDraw.ts`             | the ASCII drawing                                                                                                                                                                    |
+| `src/game/lockCatalogue.ts`        | reads `src/game/locks/{junior,expert,master,wizard}/**/*.lock`                                                                                                                       |
+| `scripts/lock.ts`                  | the CLI                                                                                                                                                                              |
+| `src/game/lockAuthoring.ts` (main) | the shared `Lock` type — the target; owned with the engine session                                                                                                                   |
 
 Design docs: `docs/game-design/lock-curriculum.md` (the curriculum — read first), spec
 `docs/superpowers/specs/2026-10-02-lock-text-notation-design.md`, the engine contract
@@ -39,7 +39,8 @@ Design docs: `docs/game-design/lock-curriculum.md` (the curriculum — read firs
 
 **Rule (`lock-curriculum.md`): a mechanic appears alone before it appears in company.** Junior teaches
 single mechanics as plain floor content ("lessons", one action). Expert gets the first locks, with
-doubleBack as capstone. Master gets the rest. **Wizard gets sand puzzles, not locks.** A lock is only for
+doubleBack as capstone. Master gets the rest. **Wizard gets the sand pyramid** (`docs/instructions/sand-pyramid.md`): one buried pyramid in wizard_3, cleared by levers in
+the other wizard journeys; its layout is a wizard lock, the designer's. A lock is only for
 multi-step items; a single board choice is a switch fork.
 
 **18 locks** in `src/game/locks/`: dropHome, cellar, twoLamps, overlook, doubleBack, seesaw, lamplighter,
@@ -61,20 +62,20 @@ shared contract yet.**
 The curriculum doc holds the first placement. This later mapping follows each journey's setting (from
 the world specs, `journeys.ts`, and the story branch `story/journey-beats`). It was not yet confirmed.
 
-| journey | p1 | p2 | p3 | p4 | p5 |
-| --- | --- | --- | --- | --- | --- |
-| junior_1 Sacred Ibis (water, Thoth) | leverOpensADoor | **waterMoves** | dropDown | — | — |
-| junior_2 Artisans | leverOpensADoor | boardPicksTheWay (existing switch fork) | torch | leverSwapsDoors | — |
-| junior_3 Temple of Thoth (writing) | leverOpensADoor | **tilesInOrder** | dropDown | boardPicksTheWay | — |
-| junior_4 Lighthouse (light) | torch | boardPicksTheWay | dropDown | **doorWaitsForTwo** | leverSwapsDoors |
-| expert_1 Valley of the Kings | twoLamps | dropHome | cellar | **doubleBack** (Anubis) | — |
-| expert_2 Karnak (sun) | dropHome | twoLamps | overlook | **doubleBack** | — |
-| expert_3 Nile Delta (flood, overgrown 0→1) | cellar | **sluice** | overlook | doubleBack | **tide** (Sobek) |
-| expert_4 Djoser (building site) | dropHome | cellar (has a floor key) | **plates** | overlook | **doubleBack** |
-| master_1 Giza | relay (portcullis) | lamplighter | keyring (replaces KEY_CHAIN) | clockwork (Horus) | — |
-| master_2 Book of the Dead | lamplighter | **plates** (spells) | keyring | **seesaw** (weighing) | observatory |
-| master_3 Curse of the Pharaohs | relay | lamplighter | keyring | seesaw | clockwork (Sekhmet) |
-| master_4 Nefertari | observatory | clockwork | keyring | relay | seesaw |
+| journey                                    | p1                 | p2                                      | p3                           | p4                      | p5                  |
+| ------------------------------------------ | ------------------ | --------------------------------------- | ---------------------------- | ----------------------- | ------------------- |
+| junior_1 Sacred Ibis (water, Thoth)        | leverOpensADoor    | **waterMoves**                          | dropDown                     | —                       | —                   |
+| junior_2 Artisans                          | leverOpensADoor    | boardPicksTheWay (existing switch fork) | torch                        | leverSwapsDoors         | —                   |
+| junior_3 Temple of Thoth (writing)         | leverOpensADoor    | **tilesInOrder**                        | dropDown                     | boardPicksTheWay        | —                   |
+| junior_4 Lighthouse (light)                | torch              | boardPicksTheWay                        | dropDown                     | **doorWaitsForTwo**     | leverSwapsDoors     |
+| expert_1 Valley of the Kings               | twoLamps           | dropHome                                | cellar                       | **doubleBack** (Anubis) | —                   |
+| expert_2 Karnak (sun)                      | dropHome           | twoLamps                                | overlook                     | **doubleBack**          | —                   |
+| expert_3 Nile Delta (flood, overgrown 0→1) | cellar             | **sluice**                              | overlook                     | doubleBack              | **tide** (Sobek)    |
+| expert_4 Djoser (building site)            | dropHome           | cellar (has a floor key)                | **plates**                   | overlook                | **doubleBack**      |
+| master_1 Giza                              | relay (portcullis) | lamplighter                             | keyring (replaces KEY_CHAIN) | clockwork (Horus)       | —                   |
+| master_2 Book of the Dead                  | lamplighter        | **plates** (spells)                     | keyring                      | **seesaw** (weighing)   | observatory         |
+| master_3 Curse of the Pharaohs             | relay              | lamplighter                             | keyring                      | seesaw                  | clockwork (Sekhmet) |
+| master_4 Nefertari                         | observatory        | clockwork                               | keyring                      | relay                   | seesaw              |
 
 Stone locks were designed after this table: natural homes are Djoser (masonsRamp), Giza (counterweight),
 Book of the Dead (twoStones, the weighing). Check master_2: the story arc's decoy and real seals sit on
@@ -82,13 +83,13 @@ its floors 1 and 3.
 
 ## Mechanic pitches — not decided
 
-| pitch | what | fits | cost |
-| --- | --- | --- | --- |
-| **weight** | carried stones on plates | Djoser, Giza, Book of the Dead | **prototyped here** |
-| **ferry** | a boat that crosses with you, only from its side | Nile Delta, Ibis, solar barque | walk move that also changes state |
-| **water levels** | the Nile rising in steps; some gaps only crossable flooded | Delta, Ibis | a stepping control; builds on the flooded art |
-| **turntable** | a room that faces one exit, turns one way only | Thoth, Giza, Nefertari | cyclic control, cheap |
-| **crumbling floor** | a passage that becomes one-way after you cross | Curse of the Pharaohs | same walk move as ferry |
+| pitch               | what                                                       | fits                           | cost                                          |
+| ------------------- | ---------------------------------------------------------- | ------------------------------ | --------------------------------------------- |
+| **weight**          | carried stones on plates                                   | Djoser, Giza, Book of the Dead | **prototyped here**                           |
+| **ferry**           | a boat that crosses with you, only from its side           | Nile Delta, Ibis, solar barque | walk move that also changes state             |
+| **water levels**    | the Nile rising in steps; some gaps only crossable flooded | Delta, Ibis                    | a stepping control; builds on the flooded art |
+| **turntable**       | a room that faces one exit, turns one way only             | Thoth, Giza, Nefertari         | cyclic control, cheap                         |
+| **crumbling floor** | a passage that becomes one-way after you cross             | Curse of the Pharaohs          | same walk move as ferry                       |
 
 Sokoban-style pushing was rejected: players move by tapping nodes, and a pushed stone can be cornered for
 good.
