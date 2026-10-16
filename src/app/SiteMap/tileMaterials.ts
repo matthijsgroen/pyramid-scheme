@@ -1,5 +1,6 @@
 import type { CellState } from "@/game/siteTypes"
 import type { Difficulty } from "@/data/difficultyLevels"
+import { METALS } from "@/ui/tokens/metalPalette"
 
 // The tier materials, in one place because two consumers need the same numbers: the renderer (for
 // the wall mass, which is a solid fill rather than art, and the silhouette outline) and
@@ -22,18 +23,10 @@ export type TierPalette = {
   wallBase: string
   /** The wash lying over everything the lamp does not reach — the tier's own night, hue and all.
    *
-   * IT IS THE TIER'S OWN NEAR-BLACK, AT THE ALPHA THAT LANDS ITS FLOOR ON THE SHARED TARGET. A wash is
-   * a scale plus an added colour (`art × (1−a) + wash × a`), and both halves are why the night used to
-   * cost so much: the scale flattens the art's own modelling, and at a floor already scaled to a third
-   * the added colour is most of what is left. A near-white-grey wash at a = 0.56 took the starter floor
-   * from L* 40 to 16 with 61% of its chroma gone and its hue dragged from ochre (73°) to a cold
-   * magenta (330°) — which is what made a lit room read as grey mush with pale cut-outs standing in it.
-   *
-   * So the wash colour is the rank's own near-black (`outline`), which adds the rank's own hue rather
-   * than a foreign one, and the alpha is solved per rank rather than authored: whatever lands that
-   * rank's floor at L* ≈ 24. The ranks then agree on how dark a lit floor is and on how far a wall
-   * steps back from it, and differ where they are meant to — starter stays ochre at C* 6.6, junior
-   * ochre at 18.2, expert cold at 263°, wizard verdigris at 168°. Consistent is not flat. */
+   * It is the tier's own near-black (`outline`) at an alpha of 0.2 or less: a wash is a scale plus an
+   * added colour (`art × (1−a) + wash × a`), and a heavy one flattens the art's own modelling and drags
+   * its hue toward the wash, so the night stays the lightest hand on the map and the rank keeps its own
+   * hue. `yarn rank-colour` measures the result per rank and solves `faceNight` for it. */
   shade: string
   /** The extra helping of that night a VERTICAL face takes, over the floor's share.
    *
@@ -63,15 +56,14 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     slabHi: "#7b7166",
     slabLo: "#5f564b",
     joint: "#282219",
-    accent: "#b07a3c",
+    accent: METALS.starter.accent,
     wall: "#4a4137",
     wallTop: "#736858",
     wallBase: "#2b261f",
-    // Mudbrick keeps the day's warmth even unlit, and a wick is not what makes a cellar warm — the
-    // stone is. The cold wash that used to stand here made its point against the torch by taking the
-    // ochre out of every surface in the place.
-    shade: "rgba(21,17,12,0.39)",
-    faceNight: 0.18,
+    // The night is the lightest hand on the map, as master's is: rooms are lit and the torch is an
+    // accent (docs/game-design/visual-direction.md). Its colour is the rank's own near-black.
+    shade: "rgba(21,17,12,0.2)",
+    faceNight: 0,
     prop: "#a49781",
     propDark: "#5c5347",
     outline: "#15110c",
@@ -82,7 +74,7 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     slabHi: "#cfa974",
     slabLo: "#b8925f",
     joint: "#4a3520",
-    accent: "#c2452c",
+    accent: METALS.junior.accent,
     wall: "#8f6a3f",
     wallTop: "#b58a55",
     wallBase: "#4a3520",
@@ -100,7 +92,7 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     slabHi: "#98a3b0",
     slabLo: "#828d9a",
     joint: "#2b333d",
-    accent: "#6ea08a",
+    accent: METALS.expert.accent,
     wall: "#5b6675",
     wallTop: "#7c8797",
     wallBase: "#323a46",
@@ -119,7 +111,7 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     slabHi: "#615c53",
     slabLo: "#4e4a43",
     joint: "#25221d",
-    accent: "#d9a93f",
+    accent: METALS.master.accent,
     wall: "#3a3630",
     wallTop: "#5b554b",
     wallBase: "#201d19",
@@ -137,7 +129,7 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     slabHi: "#658c80",
     slabLo: "#537668",
     joint: "#22423a",
-    accent: "#5fd9a4",
+    accent: METALS.wizard.accent,
     wall: "#3a6155",
     wallTop: "#4f7c6d",
     wallBase: "#1d3830",
