@@ -5,32 +5,29 @@ build when the work is picked up.
 
 ## The design
 
-**wizard_3, the Chamber of Ma'at, opens on a pyramid full of sand.** Its first pyramid is buried past the
-arrival. The player can walk in, see the sand and walk out. Because a journey's pyramids stay in order,
-wizard_3's later pyramids wait behind it.
+**wizard_3, the Chamber of Ma'at, opens buried.** Sand fills the journey from its first pyramid's arrival
+onward. The player can walk in, see the sand and walk out. Because a journey's pyramids stay in order,
+wizard_3's later pyramids wait behind the sand.
 
-**The sand clears through work done elsewhere.** Levers stand in the pyramids of the other wizard journeys.
-Each lever has a name and clears the sand of that name, and nothing else. Clearing is one-way: cleared sand
-never comes back.
+**The sand recedes a stretch per lever.** A heap of sand, a **pot**, lists its levers and where its front
+stops after each pull. The first lever pulled, whichever it is, clears up to the first stop; the second, up
+to the second. The front always recedes from the arrival, in any pull order. Levers stand in pyramids of any
+wizard journey, wizard_3's own among them, and one lever counts for every pot that lists it. Clearing is
+one-way: cleared sand never comes back.
 
-**The sand lies inside the floor locks too.** A wizard floor lock can cover almost a whole floor, and wizard is
-where the most complex locks belong. So a lock may declare **outside inputs**: doors of its own whose owner is
-not on the floor. The web says which lever each input waits for. Sand that buries a lock's forecourt, a
-shortcut that opens when a far lever is pulled, an exit that also waits on another journey: all are the lock's
-own gates, and the lock's walk proves them.
+**Keys open named places.** What the sand gave up opens sealed places elsewhere: a stretch of a main path, a
+side hall, a door inside another floor's lock. The player goes back and forth between journeys. This is the
+ward-gate shape the game already has (a gate here, its key from elsewhere), with both ends inside one tier.
 
-**Any play order works, and a tool proves it.** The wizard journeys open together, so the player may pull
-the levers in any order. The web walker (below) walks every order and proves each one finishes, so nothing
-has to force the sand to clear from the front to the back.
+**The sand lies inside the floor locks too.** A wizard floor lock can cover almost a whole floor. A front that
+stops inside one gives the lock a door it did not write: an owner on a corridor between two regions, or a
+buried region. Where the designer wants sand at an exact place inside a lock, the lock declares an **outside
+input** and the web binds it.
 
-**The sand works both ways.** Places freed in wizard_3 hold keys that open things in the other journeys'
-pyramids: a deep floor, a sealed side hall, a door inside another floor's lock. The player goes back and forth
-between journeys. This is the ward-gate shape the game already has (a gate here, its key from elsewhere),
-with both ends inside one tier.
-
-**Sand may lie in any wizard_3 pyramid.** The first worked example is wizard_3 pyramid 1 buried: its arrival
-floor under sand and its hub floor's lock waiting on two levers. Once its exit is clear the pyramid can be
-finished, and pyramid 2 opens. Places still under sand are things to come back for.
+**Any play order works, and a tool proves it.** The wizard journeys open together, so the player may pull the
+levers in any order. A pot counts pulls, not names, and every door only opens, so what a player holds depends
+on which levers they pulled, never on the order. The web walker proves the tier finishes from every set of
+pulls a player can reach.
 
 **The order between wizard journeys is free; inside a journey it stays.** Holding the wizard tier key opens
 wizard_1 to wizard_4 at once. Inside a journey the `levelNr` cursor stays.
@@ -39,25 +36,23 @@ wizard_1 to wizard_4 at once. Inside a journey the `levelNr` cursor stays.
 its own floor. A sand lever is pulled once, never goes back, and works on another site. The player should
 see that before they touch it.
 
-## Two layers, one mechanism
+## One mechanism
 
-There is one mechanism under the sand: **a door on a floor whose key is held from outside the floor**, a named
-key `web:<id>` that a web activator mints and that only ever arrives. `floorLock` reads a whole floor as a lock
-(`src/game/floorLock.ts`), side sections and lock ground alike, so to the floor walker every such door is the
-same thing: an outside input of the floor.
+Under the sand is one mechanism: **a door on a floor whose key is held from outside the floor**, a key under
+the `web:` stem that only ever arrives. `floorLock` reads a whole floor as a lock (`src/game/floorLock.ts`),
+side sections and lock ground alike, so to the floor walker every such door is the same thing: an outside
+input of the floor.
 
-It is written in two places, by who owns the ground the door stands on:
+The web writes three kinds of door, and the bake lays each where it stands:
 
-- **Inside a floor lock**, the lock declares the input and uses it on its own gates; the web binds the input to
-  an activator. Only the lock can say where a door stands among its regions, and the carve decides which
-  side sections hang in which region (`../game-design/regions-and-containers.md`), so the web cannot point
-  into a lock's ground by section.
-- **On ground no lock owns**, the web buries a section by its address: a whole floor past its arrival, a side
-  section's mouth. A lock cannot do this: it cannot reach a section the carve hung outside its regions, nor
-  ground before its `in` or after its `out`, nor a stair section leading to a ward wing.
+| Written                         | Its key                                     | On ground no lock owns            | Inside a floor lock                                    |
+| ------------------------------- | ------------------------------------------- | --------------------------------- | ------------------------------------------------------ |
+| a pot's stop (`sand ... by`)    | `web:<pot>#<n>`: n of the pot's levers held | a gate on a main-path seam        | an owner added to a corridor, or a region buried whole |
+| a named gate (`X opens ...`)    | `web:<X>`                                   | a main-path seam, a section mouth | as a pot's stop                                        |
+| a bound input (`sand L.A by X`) | `web:<X>`                                   | —                                 | the lock's own gates naming `A`                        |
 
-A floor without a lock does not need a trivial lock to carry sand: the section gate is the same door. Both
-writings share one proof, one key, one look and one save.
+All three share one proof, one save and one held-keys provider. A floor without a lock does not need a
+trivial lock to carry sand: a seam gate is the same door.
 
 ## The lock side: outside inputs
 
@@ -71,6 +66,9 @@ scale -[p1+A]- out              a stone on p1 and the input
 hall -[A]                       a buried region: hall impassable until A is held
 ```
 
+A front stopping inside a lock adds an input the lock did not write (below, "Where a stop lands"). The bake
+adds it as `W outside` with the added owner, and the lock's checks walk it like a declared one.
+
 **The rules, each refused by name when broken:**
 
 1. **An input is named bare.** `-[A:off]-` would open while the input is missing and shut when it arrives,
@@ -78,7 +76,8 @@ hall -[A]                       a buried region: hall impassable until A is held
 2. **An input owns at least one gate** (the existing "owns no gate" refusal).
 3. **An input is not a draft.** An owner nothing declares stays a draft, refused as "not placed yet", as today;
    `outside` is the declaration that says the owner is meant to come from off the floor.
-4. **A lock declares at most three inputs.** Each doubles the walk's states (below). Refused: `outsideTooMany`.
+4. **A lock carries at most three inputs**, declared and added together. Each doubles the walk's states
+   (below). Refused: `outsideTooMany`, naming the pots whose stops added them.
 
 An input may own a region barrier, `hall -[A]`: the region is buried until the input arrives. While it lies, a
 torch in the region is doused (`douseTorches`, `src/game/mechanismDoors.ts`), as under water; once the sand
@@ -99,11 +98,11 @@ a strand on the floor. Whether that input can be fetched without finishing this 
 
 **The cost.** A lock's states are its regions times the product of its mechanisms' states, so n inputs
 multiply them by 2ⁿ: three inputs, eight times. `MAX_LOCK_STATES` (50,000, `src/game/lockWalk.ts`) still
-caps the walk and reports `tooLarge`; rule 4 keeps a wizard lock well inside it. A section gate on the same
+caps the walk and reports `tooLarge`; rule 4 keeps a wizard lock well inside it. A seam gate on the same
 floor is an input of the floor's compiled lock too, and counts against the floor walk's ceiling, not the
 lock's rule.
 
-A lock with inputs is placed only where a web binds every one of them, which today is the wizard tier.
+A lock with declared inputs is placed only where a web binds every one of them, which today is the wizard tier.
 
 ### What `yarn lock <file>` reports for a lock with inputs
 
@@ -119,263 +118,290 @@ inputs: A, B, C, arriving in any order
 missing, so a door naming one is shut at the start, and the check's own rule (reach the door from `in` while
 its owners are unchanged) means reaching it while its input is still missing; other inputs may arrive on the
 way. An input has no control region on the floor, so nothing is forbidden but its arrival. A lock whose input
-door is in reach only once the input has arrived is warned about (`⚠ C: its door is reached only once C is held`), refused on a lesson. The order between levers across pyramids is the web's question, answered on the
+door is in reach only once the input has arrived is warned about (`⚠ C: its door is reached only once C is
+held`), refused on a lesson. The order between levers across pyramids is the web's question, answered on the
 baked floors (below).
 
-## The web side: the web lock
+## The web side
 
-The tier's web is written one level above the floor locks: the idea and the notation of a `.lock`
-(`../mods/mechanic-contract.md` §7, `yarn lock --help`), with pyramids, their sections and their locks'
-inputs as the places. One web per tier; the wizard web lives at `src/game/locks/wizard/chamberOfMaat.web`.
-The designer owns it, as they own master and wizard locks. Claude builds the format, the walker and the
-placement.
+The tier's web is one file, `src/game/locks/wizard/chamberOfMaat.web`, in the spirit of a `.lock`: one line
+per fact, `//` comments, the file opening with `// designed by: name`. The designer owns it, as they own
+master and wizard locks. Claude builds the format, the walker and the placement.
 
-### Notation
+### Blocks and places
 
-A web has five kinds of line.
+A web is a list of **blocks**. A block's heading names a place in the world, and every address inside it is
+relative to that place.
 
-**Journey order.** One line per journey, its pyramids in order. `>` reads "is finished before the next
-opens", which is the `levelNr` cursor rule. There is no order between lines: the journeys of a web are open
-together.
+- **`[wNpM]`, a pyramid block:** journey `wizard_N`, pyramid M (the `levelNr`, counted from 1).
+- **`[wN]`, a journey block:** journey `wizard_N`, all its pyramids. Addresses inside start with `pM`.
 
-```
-w3p1 > w3p2 > w3p3 > w3p4 > w3p5 > w3p6
-```
+A web writes no journey order. The tool reads each journey's pyramids from the world: the order between
+journeys is free, and inside a journey the `levelNr` cursor stays. A block naming a journey or a pyramid the
+world does not have is refused, naming the line.
 
-`w3p1` is journey `wizard_3`, pyramid 1 (the `levelNr`, counted from 1). The tool checks every line
-against the world: the journey exists and has that many pyramids.
+**The line.** A pyramid's main path, all its floors in order, is one line from 0% (the arrival) to 100% (the
+last room of the main path), measured in **main-path rooms**. A journey's line is its pyramids' lines one
+after another, in `levelNr` order, so 50% of a journey is halfway by rooms, not by pyramids. Ward wings and
+side sections hang off the line; they are not on it.
 
-**Sections.** A place on ground no lock owns is a section of a floor of a pyramid, by its authoring address:
+**Places in a block:**
 
-| Written        | Means                                                            | Save key, inside `wizard_3`'s record  |
-| -------------- | ---------------------------------------------------------------- | ------------------------------------- |
-| `w3p1.f1`      | floor 1's main path, and so the whole floor (all hangs off main) | `1:main`, cells whose key starts `1/` |
-| `w3p1.f1.s4`   | side section `s4` of floor 1, and all that hangs off it          | `1:s4`, cells whose key starts `1/`   |
-| `w3p1.f1.s4.0` | its first sub-path                                               | `1:s4.0`, cells whose key starts `1/` |
+| Written           | Means                                                                                                                |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `@end`            | the last room of the main path: the top floor's `mainEndReward`                                                      |
+| `@45%`            | the main-path room nearest 45% of the line: its reward slot (a floor's `rewards[i]`)                                 |
+| `@60% side`       | the end of the first side section hanging off the main path after 60%: its `endReward`                               |
+| `@weighing.vault` | inside region `vault` of lock `weighing` on this pyramid: the region's reward. The region must take one (`$` or `?`) |
+| `70%`             | the main-path seam nearest 70%: a door there (with `opens`)                                                          |
+| `side @80%`       | the mouth of the first side section after 80% (with `opens`)                                                         |
+| `f1.s4`           | side section `s4` of floor 1 and all that hangs off it; `f1.s4.0` its first sub-path                                 |
+| `weighing.A`      | input `A` of lock `weighing` on this pyramid                                                                         |
 
-This is `${levelNr}:${sectionAddress}`, the key a save already files a section's cells under
-(`src/app/SiteMap/cellIdentity.ts`), with the floor added: a section address repeats on every floor, and
-a cell's key carries the floor (`${floor}/${slot}`). It is also the stair id's address
-(`wizard_3:p0:f1:s4`, which counts pyramids from 0). A section holds everything that hangs off it: a
-ward wing's floor hangs off the stair section that leads up to it.
+A section address is the save's own (`${levelNr}:${sectionAddress}`, cells keyed `${floor}/${slot}`,
+`src/app/SiteMap/cellIdentity.ts`). A lock goes by its bare file name, unique across tiers; a pyramid carrying
+the same lock on two floors names it `f1.weighing`.
 
-An unlabelled side section's address shifts when a section is authored ahead of it
-(`../game-design/world-spec-stability.md`, a section's `label`). Placement pins every section a web names
-by giving it its current address as its label.
-
-**Section sand.** A section that stays impassable until its key is held, written like a `.lock` region gate:
-
-```
-w3p1.f0 -[sun]
-```
-
-On a floor's main path the gate stands at its first seam after the arrival; on a side section, at its mouth.
-One owner, or `-[C+D]` (every owner) and `-[C|D]` (any owner), as in a `.lock`.
-
-**Input bindings.** A lock's input, bound to the activator that holds it:
+### Lines
 
 ```
-w3p1.f1.scales.A = moon
+lever reed @60% side             a sand lever, standing there
+key ankh @55% side               a web key, standing there
+sand by sun moon star            a pot over this block's line: equal stops, 33% 67% 100%
+sand 40% 75% 100% by sun moon star    the Nth pull, whichever, clears to the Nth stop
+sand f1.s4 by sun                a pot over one side section's own line (fine control)
+sand weighing.A by moon          a lock's declared input, held once moon is pulled (fine control)
+ankh opens 70%                   a door on the main-path seam nearest 70%, shut until ankh
+ankh opens side @80%             a door at the mouth of the first side section after 80%
 ```
 
-`w3p1.f1.scales.A` is input `A` of lock `scales` on floor 1 of `w3p1`. The lock is named because a floor can
-carry several (`locks: [...]` on `.floor`), and a lock goes by its bare file name, unique across tiers. A web
-names a lock's inputs, its declared interface, and never its regions, so the lock stays reusable: any web
-binding the same inputs can place it.
-
-A binding names one activator. The lock does the combining (`-[A+B]-`, `-[A|B]-`): a floor door folds all
-its owners under one mode (`openDoorsFor`, `src/game/mechanismDoors.ts`), so a binding with a mode of its own
-could not be laid on it. One activator may hold several inputs and several section gates.
-
-**Levers and keys, with their site.** An activator of the web, written like a `.lock` activator:
-
-```
-moon activator @w2p2.f1
-ankh activator @w3p1.f1.s4
-```
-
-An activator stands at the end of the section it names: `@w2p2.f1` is floor 1's main-path end reward,
-`@w3p1.f1.s4` is the end reward of side section `s4`. It is the section's `endReward`, so it is positional
-content and costs no re-carve. One activator per section end. Lever or key is the look, bound outside: an
-activator whose doors stand in wizard_3 is drawn as a sand lever, one whose doors stand elsewhere as a key.
+- **`lever` and `key` are both web activators.** The word is only the look: a lever is drawn as a sand lever,
+  a key as a web key. Each name is declared once, in the block where it stands, and is unique in the web. Any
+  activator may count in a pot and open named places, crosswise between journeys.
+- **A pot** covers its block's line, or one side section's line (`sand f1.s4 ...`). It lists as many stops as
+  levers, rising, the last 100%; `sand by` spaces them equally. Before any pull its sand lies from the arrival
+  of its line onward. One pot per line: a pyramid under its journey's pot takes no pot of its own (refused:
+  `potsOverlap`); a section pot inside a buried main path is another line and allowed.
+- **Side sections hanging off buried main path are buried too.** They are behind the door the front stands
+  at, so they need no door of their own.
+- **A bound input** names one activator. The lock does the combining (`-[A+B]-`, `-[A|B]-`): a floor door folds
+  all its owners under one mode (`openDoorsFor`, `src/game/mechanismDoors.ts`), so a binding with a mode of its
+  own could not be laid on it.
+- **`opens`** names one activator and one place. Where a place needs two keys, a lock does it with inputs.
+- **The look follows the line**: a `sand` line's doors are web sand; an `opens` line's doors are a web seal.
 
 Only activators. A web has no toggle, no torch, no sequence: everything in it only opens.
 
+### Where a stop lands
+
+A stop is a point on its line. It resolves to a main-path room by counting rooms, and lands on the **nearest
+main-path seam** (the corridor between two consecutive main-path rooms of one floor; a stop nearest a stair
+lands on the nearer seam either side of it). Ties go toward the arrival, burying more. What the seam is decides
+the door:
+
+- **On ground no lock owns**, a gate on that seam asking for `web:<pot>#<n>`.
+- **A seam between two regions of a floor lock**, a corridor of the lock: the bake adds an outside owner to
+  that corridor and walks the lock again with it as a one-way arrival (the exact model above). A plain
+  corridor becomes `-[W]-`; a gated one gains the owner under `+` (`-[K+T]-` becomes `-[K+T+W]-`). A corridor
+  gated with `|` cannot carry it, since its other owner would open the sand: refused `frontOnAnyGate`, naming
+  the stop.
+- **A seam inside one region** of a floor lock: the front falls inside the region, which is buried whole, a
+  region barrier `region -[W]`. A torch in it is doused until the sand clears and can be lit again, which the
+  walk already allows.
+
+Everything past a front must stay behind it. A place past the front that the walk reaches without the front's
+key, round a lock's side corridor or through a side section looping back, is refused: `frontLeaks`, naming the
+place and the way round.
+
+**Stability.** The line counts authored rooms (each floor's `pathPuzzles` and its end room), so a percentage
+resolves to the same seam however a floor carves. What that seam is (plain ground, a lock corridor, the inside
+of a region) and which side section hangs first after a percentage are the carve's; placement reads them off
+the baked floor and pins them by authored name: a section by its label, set to its current address
+(`../game-design/world-spec-stability.md`), a lock corridor or region by the lock's own region names. A
+re-carve keeps every pinned name, so the web's doors and activators stay where they were placed; the report
+says where each landed.
+
 ### The worked example
 
-**An illustration, not a design.** The designer writes the wizard locks and the web; the lock below exists to
-show the shape, and its names are placeholders. The section numbers are wizard_3 pyramid 1 as baked today
-(`src/data/generatedWorld.ts`, wizard_3 from :16326): floor 0 is one seven-room section ending at the stairs,
-floor 1 is the hub (main path, ten side sections, `s7` the stairs up to the ward wing), floor 2 is the ward
-wing behind `wizard_a_1`.
-
-Floor 1 carries a lock, `scales`, built on highWater's flood-and-torch trick with a stone to carry and three
-inputs. Written with each input as an activator standing at `in`, which `yarn lock` can walk today, it is
-sound: 6 floor actions with every input held, 7 with the east drift still lying (the lever's way round):
+**An illustration, not a design.** The designer writes the web and the wizard locks; the names below are
+placeholders. `weighing` (w2p2), `scales` (w3p1) and `pillars` (w1p3) stand for wizard locks on those floors.
 
 ```
-// designed by: <designer>   (an illustration; the real wizard locks are the designer's)
-// wizard. The weighing hall under the drift. The key lies past a cellar that is dry only while the torch's
-// hall is flooded; the scale's pan wants a stone from the east room, behind a lever or a drift.
+// designed by: Matthijs   (an illustration; the real web is the designer's)
+// wizard. The Chamber of Ma'at lies buried. Levers in the other journeys clear it a stretch at a time, and
+// what the sand gave up opens places there.
 
-A outside                    // the drift across the forecourt
-B outside                    // the drift in the east passage: a short cut past the lever
-C outside                    // the sand on the counterweight: the exit also waits on it
+[w3]                              // journey block: one pot, the front runs w3p1 → w3p6
+sand by sun moon star lotus ibis djed
 
-in -[A]- court
-court -- hall
-hall -- sluice
-hall -- torchHall
-hall -- cellar -- vault
-torchHall -[S:a]
-cellar -[S:b]
-hall -[K+T]- scale
-court -[R|B]- east
-scale -[p1+C]- out
-S toggle @sluice
-T torch @torchHall
-K activator @vault
-R toggle @scale
-p1 plate @scale
-p0 plate @east stone
+[w3p1]
+lever reed @60% side              // in w3, clears sand in wizard_1
+key ankh @55% side                // what the sand gave up
+sand scales.B by ibis             // fine control: the east drift inside scales, a short cut, never a need
+
+[w3p2]
+lever djed @30% side              // in its own pot: clear once two other levers are pulled
+
+[w1p3]
+sand 50% 100% by reed ankh        // pyramid pot: the first pull clears to 50%, the second to the end
+lever sun @end
+ankh opens side @80%              // the side passage after 80% stays sealed until ankh
+
+[w2p2]
+lever moon @45%
+lever lotus @weighing.vault       // inside this floor's lock: region vault of lock weighing
+
+[w2p4]
+lever ibis @end
+
+[w4p3]
+lever star @end
+djed opens 70%                    // the main path from 70% on: shut until djed
 ```
 
-The web:
+How it plays: wizard_3 is buried from its arrival. `moon`, `lotus` and `ibis` lie open in wizard_2; any three
+pulls take the w3 front to 50%, clearing w3p1, w3p2 and most of w3p3. w3p1 gives up `reed` and `ankh`, which
+clear w1p3 and open its side passage; w1p3's end gives `sun`. w3p2 gives `djed`, which opens w4p3's second
+half and so `star`. Six pulls, in whatever order the player came by them, clear wizard_3 to its end.
 
-```
-// designed by: <designer>   (an illustration)
-// wizard. The Chamber of Ma'at, buried: levers in the other journeys clear its arrival floor and the
-// weighing hall's lock, and let wizard_3 go on. What it frees opens places in wizard_1 and wizard_4.
+### Refusals
 
-w1p1 > w1p2 > w1p3 > w1p4
-w2p1 > w2p2 > w2p3 > w2p4 > w2p5
-w3p1 > w3p2 > w3p3 > w3p4 > w3p5 > w3p6
-w4p1 > w4p2 > w4p3 > w4p4 > w4p5 > w4p6
+`yarn lock <web>` refuses, naming the line:
 
-// sand on ground no lock owns
-w3p1.f0 -[sun]                 // the arrival floor past the arrival
+- **A place not in the world**: a journey, pyramid, floor, section, lock, region or input the world does not
+  have, a region that takes no reward, a percentage with no side section after it.
+- **A lever under its own pot's front.** A lever counting in a pot may stand in that pot's sand where the pot's
+  other levers clear it; one that only its own pull could clear is refused (`ownFront`).
+- **A cross deadlock**, reported with the whole chain. Had `[w3p1]` also bound `sand scales.C by star` (the scale's
+  counterweight, on the way out):
 
-// sand inside the weighing hall's lock
-w3p1.f1.scales.A = moon        // the forecourt: the whole lock
-w3p1.f1.scales.B = star        // the east drift: a short cut, never a need
-w3p1.f1.scales.C = star        // the counterweight: the exit
+  ```
+  ✗ deadlock
+    star (w4p3 @end) waits on djed opens w4p3 70%
+    djed (w3p2 @30% side) waits on w3p1 finished, the journey's order
+    w3p1 finished waits on sand scales.C by star
+  ```
 
-// the levers
-sun activator @w1p1.f1
-moon activator @w2p2.f1
-star activator @w4p3.f1
-
-// what the sand keeps, and what it opens elsewhere
-ankh activator @w3p1.f1.s4
-djed activator @w3p2.f1.s2
-w1p3.f1.s3 -[ankh]             // a sealed hall in wizard_1
-w4p4.f1.weighing.W = djed      // a door inside wizard_4 pyramid 4's floor lock, which declares W outside
-```
-
-How it plays: the player meets w3p1 buried at any time. `sun` (wizard_1's first pyramid) clears floor 0 and
-brings them to the hall's forecourt; `moon` (wizard_2's second) clears it. Inside, the lock plays as a lock:
-key, flood, torch, and a stone for the pan, fetched by the lever's way round or straight through the east
-passage once `star` is pulled. `star` (wizard_4's third) also clears the counterweight, so w3p1 is finished
-only after all three, and w3p2 opens. Whether `s4` and its `ankh` hang inside the lock's regions or outside
-them is the carve's choice; the web walk reads it off the baked floor. `djed` stands in w3p2 and opens a
-door inside wizard_4's fourth pyramid.
+- **Two stops on one seam** (`stopsShareSeam`), `frontOnAnyGate`, `frontLeaks`, `potsOverlap`,
+  `outsideTooMany`, and an unbound input or a binding naming no input.
+- **One sand kind per site.** On a pyramid where web sand lies, a floor lock's region barriers owned only by
+  floor controls bind to water; a lock that binds them to sand there is refused.
 
 ### What `yarn lock <web>` reports
 
-A web is bound to one baked world. The tool reads the carved floors of every pyramid it names and walks each
-floor with `floorLock` under the web keys held at that point (below), so it runs after a bake that carries
-the web's gates and bindings. Before a bake, `yarn lock` on each wizard lock gives the floor-level checks.
-
-**A visit** is one entry into one pyramid from the travel screen. **A revisit** is a visit to a pyramid
-already visited. Every pyramid needs one visit, so the cost the web adds is its revisits. The walk is
-breadth-first over the states (held web keys, each journey's cursor), one move per visit.
-
-**What a visit can do under held keys H** comes from the floor walks of that pyramid with arrivals limited to
-the keys in H, memoised per pyramid and per H (a pyramid's own web keys are few, so the subsets are few). A
-state of that walk holds any part of H, since a key held now may have arrived at any point of earlier visits:
-
-- **finishes** if, from every state the floor walks reach under H, the exit is still reachable under H;
-- **takes an activator** if, from every such state, the activator's cell is still reachable;
-- **sees a face** if some such state stands beside a door that waits on a key not in H.
-
-The first two read "every state", not "the fresh floor": a floor may be played into a state from which its exit
-waits on a key not yet held, and the web must not count on the player having avoided it. The third reads
-"some state", as `doorsSeenLate` does.
+A web is checked against one baked world: the tool reads the carved floors of every pyramid it names and
+lays its doors on them as the bake would (a gate on a seam, an owner on a lock corridor, a region barrier),
+without re-carving. So the designer iterates on percentages and levers against the last bake, and a bake
+makes the doors real.
 
 ```
 ## chamberOfMaat.web   (the shape of the report; the numbers are illustrative)
 
 ✓ compiles
-✓ every place is in the world
+✓ every place is in the world: journeys read as 4, 5, 6, 6 pyramids
 ✓ every input is bound, and every binding names an input
-✓ solvable: every journey finishes
-✓ every gate opens
-✓ no softlock
+✓ no lever under its own front
+✓ no deadlock
+✓ every pull order finishes: 8 activators, 97 reachable pull sets, each closes on all 8
 ✓ every buried place is seen before its lever is pulled
-✓ no activator stands in sand only it clears
 assumed held on the way: the ward key on w4p4's wing stairs
 
-cheapest: 21 visits to finish every journey and clear everything, no revisit
-  w1p1 sun ▸ w2p1 ▸ w2p2 moon ▸ w4p1 ▸ w4p2 ▸ w4p3 star ▸ w3p1 ankh ▸ w3p2 djed ▸ w1p2 ▸ w1p3 ▸ …
+pot w3   w3p1 → w3p6, 138 rooms   by sun moon star lotus ibis djed
+  after 1 → w3p1 77%       17%  w3p1 f1 scales hall–scale   lock corridor, owner added; 4 of 6 actions in reach
+  after 2 → w3p2 80%       33%  w3p2 f1 seam 9|10
+  after 3 → w3p3 86%       50%  w3p3 f2 seam 3|4
+  after 4 → w3p4 91%       67%  w3p4 f1 seam 12|13
+  after 5 → w3p6 0%        83%  w3p6 f0 seam 0|1, the first after the arrival
+  after 6 → w3p6 open
+pot w1p3   26 rooms   by reed ankh
+  after 1 → w1p3 46%       50%  w1p3 f1 pillars nave        region buried whole; 2 of 9 actions in reach
+  after 2 → w1p3 open
+named
+  ankh opens w1p3 side @80%  → f2.s5's mouth
+  djed opens w4p3 70%        → f1 seam 6|7
+  sand scales.B by ibis      → w3p1 f1 scales court–east
+activators
+  reed   w3p1 @60% side      → f1.s4's end, w3 after 1 pull
+  ankh   w3p1 @55% side      → f1.s3's end, w3 after 1 pull
+  djed   w3p2 @30% side      → f0.s1's end, w3 after 2 pulls
+  lotus  w2p2 @weighing.vault
+  …
+
+cheapest: 21 visits, no return
+  w2p1 ▸ w2p2 moon lotus ▸ w2p3 ▸ w2p4 ibis ▸ w3p1 reed ankh ▸ w3p2 djed ▸ w1p1 ▸ w1p2 ▸ w1p3 sun ▸ w4p1 ▸ …
+cheapest seeing every sand first: 24 visits, 3 returns (w3p1, w1p3, w4p3)
 ```
 
 What each line means:
 
-- **every input is bound.** Every input of every lock placed on a floor the web names has one binding, and
-  every binding names an input of the lock on that floor. Either failure names the line.
-- **solvable.** Some order of visits finishes every journey.
-- **every gate opens.** Some order holds every web key and stands behind every web door. A door that never
-  opens is loot nobody collects, the web's `deadRegions`.
-- **no softlock.** Every state the walk reaches can still finish every journey and open every door. Web keys
-  only arrive, so this follows from solvable on the "every state" reading above; the walk still checks it.
-  It is where a floor that can be played into waiting on a key, whose activator waits behind that same
-  pyramid, is refused, naming the floor and the key.
-- **seen before pulled.** For each web door there is an order in which the player sees its face (in reach
-  and shut) before its activator is taken. A face of a section gate is the section's mouth; a face of an
-  input is a door of the lock naming it, so the lock-level check above is this one, with only the keys the web
-  actually holds by then allowed to arrive. A lever whose door cannot be seen first is a warning naming the place
-  (`⚠ w3p1.f1.scales.C: its door is reached only once star is pulled`), as on a lock that is not a lesson. A
-  lever pulled before its sand is reached is not lost: the travel screen lights the buried pyramid once a
-  visit has been made and the key is held.
-- **no activator in its own sand.** An activator that is reachable only with its own key, directly or through
-  the sections, floors and lock regions it lies behind, is refused by name. A longer cycle (X behind Y's sand,
-  Y behind X's) is refused as not solvable, naming the chain.
+- **after n.** Per pot, how far n pulls clear, whichever levers they were, and the stop they reach: the seam
+  it landed on, or the lock corridor or region with the lock's cheapest action count and how many of those
+  actions are in reach while that sand still lies.
+- **every pull order finishes.** See "Why any pull order works". The walker checks pull _sets_, not orders:
+  two orders reaching the same set hold the same keys. It walks every set a player can reach (adding one
+  activator in reach at a time) and checks each still closes on every activator and every journey finished.
+  The cost is at most 2ⁿ sets for n activators, each a memo lookup per pyramid; a floor walk runs once per
+  pyramid and per distinct held set of the keys that pyramid's doors ask for, which a pot's count levels and a
+  few named keys keep small. A web of more than 16 activators is refused as `webTooLarge`.
+- **seen before pulled.** For each web door there is a route in which the player sees it shut before its key
+  is held. A face of a pot's stop is its seam; a face of an input is a door of the lock naming it. A door that
+  cannot be seen first is a warning naming the place, as on a lock that is not a lesson.
 - **assumed held.** Keys outside the web that stand on the way to a web door (a tomb's ward key on a wing's
-  stairs) are taken as held, the third bracket of `../authored-locks-roadmap.md`. They are listed so the
-  designer sees them. An activator may never stand behind one (the bake refuses it), so the cost and the
-  proof never lean on them.
-- **cheapest.** The fewest visits to finish every journey, and the fewest to clear everything, with one
-  cheapest route. A failed check prints `✗` and the chain it found, as `yarn lock` does.
+  stairs) are taken as held, the third bracket of `../authored-locks-roadmap.md`, and listed. An activator may
+  never stand behind one (the bake refuses it), so the proof never leans on them.
+- **cheapest.** A visit is one entry into one pyramid from the travel screen; a return is a visit to a pyramid
+  already visited. The fewest visits to finish every journey, then the fewest that also stand at every web
+  door while it is shut, each with a route. A Dijkstra over (pull set, each journey's cursor), dominated states
+  pruned, capped like `MAX_LOCK_STATES`.
 
-## Why the walk is exact
+**What a visit can do under held keys H** comes from the floor walks of that pyramid with arrivals limited to
+H. It **finishes** if from every state the floor walks reach under H the exit is still reachable under H, or
+the keys it waits on can be had without finishing this pyramid (below); it **takes an activator** if the
+activator's cell is reachable likewise.
+
+## Why any pull order works
+
+1. **Held keys are a function of the pulled set.** A named key is held once its activator is taken; a pot's
+   n-th key once any n of its levers are. The set only grows. So the order of pulls never matters, only which.
+2. **What can be taken only grows with the set.** Every web door only opens, so a larger set reaches no less.
+   Every order therefore climbs to the same fixpoint, the closure from no pulls; the web is sound when that
+   closure holds every activator and finishes every journey. Walking every reachable set confirms it, and
+   catches a floor that can be played into waiting (below).
+3. **A floor can be played into a state that waits on a key.** The floor walk counts an arrival as a way out,
+   so the web proves the key arrives without this pyramid: for each pyramid and each web key some reachable
+   floor state waits on, the closure with that pyramid's exit cut must hold that key. Refused otherwise, naming
+   the floor and the key.
+
+## Why the floor walk is exact
 
 The floor's soundness gate is **one walk in which every web key on the floor is a one-way mechanism**,
 `missing → held`, arriving from any state, plus today's checks (solvable, no strand, no region lost, no dead
-region). It does not argue that the states with keys missing are covered by some other walk: it walks them.
-Every order of arrival, at every point of play, is a path in it.
+region). A pot's stops are keys like any other: the n-th never arrives before the (n-1)-th, a restriction the
+walk need not use, since it walks every order of arrival. Every order of arrival, at every point of play, is
+a path in it.
 
 **Checked case by case:**
 
-| Case                                        | Exact?  | Why                                                                                                                                                                                   |
-| ------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Toggles on the same door (`-[A+S]-`)        | yes     | the door folds the input's state with the toggle's, both in the config                                                                                                                |
-| `\|` and `+` combinations                   | yes     | `openGates` folds every owner by the gate's mode, an input like any other                                                                                                             |
-| `-[A:off]-`                                 | refused | it opens while the input is missing and shuts on arrival, which makes a lever pulled elsewhere a loss. Rule 1                                                                         |
-| A region barrier naming an input            | yes     | while the input is missing the region is covered and a torch in it is doused (`dousedConfig` after every move); after the arrival it can be lit again. Both states are walked         |
-| A stone left in a region that later clears  | yes     | the stone's place is in the config; the arrival changes only the input                                                                                                                |
-| Drops                                       | yes     | a drop is a move like any other. A pocket whose way out waits on a missing input leaves by an arrival; the web's "every state" reading refuses one whose key lies behind this pyramid |
-| The procession reset                        | yes     | a reset is a transition at the door; what play keeps beside it (`sequenceReads`) only grows and is outside the walk                                                                   |
-| Mechanism state kept between visits         | yes     | the saved config is a walk state; web keys are not in it (`mechanismStates` holds positions only), and the arrival move is what happens to the floor while the player is away         |
-| Keys arriving between visits, or during one | yes     | an arrival is offered from every state, so both are paths of the walk                                                                                                                 |
-| Coming back at the entrance                 | **no**  | see below; the re-entry rule fixes it                                                                                                                                                 |
+| Case                                        | Exact?  | Why                                                                                                                                                                           |
+| ------------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Toggles on the same door (`-[A+S]-`)        | yes     | the door folds the input's state with the toggle's, both in the config                                                                                                        |
+| `\|` and `+` combinations                   | yes     | `openGates` folds every owner by the gate's mode, an input like any other                                                                                                     |
+| `-[A:off]-`                                 | refused | it opens while the input is missing and shuts on arrival, which makes a lever pulled elsewhere a loss. Rule 1                                                                 |
+| A region barrier naming an input            | yes     | while the input is missing the region is covered and a torch in it is doused (`dousedConfig` after every move); after the arrival it can be lit again. Both states are walked |
+| A stone left in a region that later clears  | yes     | the stone's place is in the config; the arrival changes only the input                                                                                                        |
+| Drops                                       | yes     | a drop is a move like any other. A pocket whose way out waits on a missing input leaves by an arrival; the web's check 3 refuses one whose key lies behind this pyramid       |
+| The procession reset                        | yes     | a reset is a transition at the door; what play keeps beside it (`sequenceReads`) only grows and is outside the walk                                                           |
+| Mechanism state kept between visits         | yes     | the saved config is a walk state; web keys are not in it (`mechanismStates` holds positions only), and the arrival move is what happens to the floor while the player is away |
+| Keys arriving between visits, or during one | yes     | an arrival is offered from every state, so both are paths of the walk                                                                                                         |
+| Coming back at the entrance                 | **no**  | see below; the re-entry rule fixes it                                                                                                                                         |
 
 **Arrivals and the checks.** An arrival counts as a way out of a state for "no strand" and "no region lost": a
 player waiting on a lever is not stuck, since leaving keeps the floor. That is only true if the lever can be
 pulled without finishing this pyramid, which the web walk proves. A state stranded with every input held
 stays a strand.
 
-**The cost.** n inputs multiply the floor's states by 2ⁿ. Rule 4 holds a lock to three; a floor with section
-gates as well counts those too, and `MAX_LOCK_STATES` reports `tooLarge` past its ceiling as today.
+**The cost.** n web keys on a floor multiply its states by 2ⁿ. Rule 4 holds a lock to three; a floor with
+seam gates as well counts those too, and `MAX_LOCK_STATES` reports `tooLarge` past its ceiling as today.
 
 **Coming back at the entrance.** The walk has one way of leaving and coming back: from the way out to the way
 in, because "re-entering a site puts the player back where they stood" (`movesFrom`, `src/game/lockWalk.ts`).
@@ -383,79 +409,66 @@ That holds while the player comes back to the same journey's same pyramid. A pyr
 is entered through `visitLevel` (`src/app/state/useJourneys.ts`), which sets the journey's `levelNr` to it and
 forgets the position: the player stands at the entrance, every mechanism as they left it. So the floor can be
 re-entered at `in` from any state, a move the walk does not have, and `(in, config)` may be a state it never
-reached. This is true of every floor today; the web makes it the normal way to collect what sand freed, and
-it also brings the player back to the pyramid they were in at its entrance.
+reached. This is true of every floor today; the web makes it the normal way to collect what sand freed.
 
 **The rule that fixes it: re-entry adds states, never escapes.** On a floor of a web journey the walk adds,
 from every reachable state, the state at `in` with the same config (a stone in hand stays in hand, as the save
 keeps it). The new states must pass every check like any other. The backward sweep for strands and lost
 regions does not use the re-entry edges, so a chamber a mechanism sealed is still a strand: re-entry is a way
-to start again, not a way out of a trap. Arrivals and re-entry are independent moves, so a key that arrives
-while the player is away and a return at the entrance are both walked, in either order. Whether the rule
-belongs on every floor, or the save should keep a position per pyramid instead, is open question 7.
-
-**Sand cannot trap a floor lock.** Web keys only arrive, the player can always leave a pyramid with the floor's
-state kept, the walk proves every state finishes once the keys it waits on arrive, and the web walk proves each
-key is obtainable without finishing the pyramid that waits on it.
+to start again, not a way out of a trap. Arrivals and re-entry are independent moves, so both are walked, in
+either order. Whether the rule belongs on every floor, or the save should keep a position per pyramid
+instead, is open question 6.
 
 ## Seen before its control, across the layers
 
 - **On the lock** (`yarn lock <file>`): `doorsSeenLate` in the one walk, input doors included, because an input
-  starts missing and its door is shut at the start. Reaching the door with its owners unchanged means reaching
-  it before its input arrives; other inputs may arrive on the way. No separate walk per input is needed.
+  starts missing and its door is shut at the start.
 - **On the web** (`yarn lock <web>`): the same question with only the keys the web holds before this lever
-  allowed to arrive, which accounts for doors that wait on each other across pyramids. Reported on "every
-  buried place is seen before its lever is pulled", naming `w3p1.f1.scales.C`.
+  allowed to arrive, which accounts for doors that wait on each other across pyramids.
 - **A door with an input and a floor control** (`-[p1+C]-`) is one gate with two owners; `doorsSeenLate` asks
   for it to be reached before either is worked or arrives.
 
-## Marks and the look of an input's door
+## Marks and the look of a web door
 
-An input's door is an `and` or `any` door like any other: it shows one marker per owner
-(`../mods/mechanic-contract.md` §3, a gate shows its own condition), the floor owners' floor marks and the
-input's web mark. Web marks are the activators' (below), from a glyph set disjoint from `MARK_GLYPHS`, so two
+A web door shows one marker per owner (`../mods/mechanic-contract.md` §3, a gate shows its own condition): the
+floor owners' floor marks and its web mark. A pot's doors all wear the pot's mark with the count they wait for;
+a named gate wears its activator's mark. Web marks come from a glyph set disjoint from `MARK_GLYPHS`, so two
 mechanics on one floor still never share a mark and `allocateMarks` (`src/game/mark.ts`) never sees a web key.
 
-A door naming an input is drawn as the web's: web sand at a wizard_3 site, a web seal elsewhere, with its
-markers on it. A section gate is drawn the same way. A region barrier naming an input is web sand over the
-region, and conceals what was explored under it as every region barrier does.
-
-**One sand per site.** On a pyramid carrying any web door, region barriers owned only by floor controls bind to
-water, so sand on that site always means a lever elsewhere. The illustration's flood is water already.
+A `sand` line's doors are drawn as web sand, an `opens` line's as a web seal. A region buried by a front or by
+an input is web sand over the region, and conceals what was explored under it as every region barrier does.
 
 ## What the bake checks, to tie the web to the real floors
 
-1. Every pyramid, floor, section and lock the web names exists in the world, and every named section carries
-   its current address as its label.
-2. Every journey line matches the journey's pyramid count, and the web's journeys are one free-order tier.
-3. **Every input is bound and every binding names an input:** for every lock placed on a floor of the world,
-   each `outside` line has one binding in the tier's web; each binding names a lock placed on that floor and an
-   input it declares. A lock with inputs on a floor no web names is refused.
-4. Every section gate is carved: a gate room at that section's mouth (or the main path's first seam) asking
-   for `web:<id>`. Every input's gates are laid asking for `web:<activator>` beside their floor owners' keys,
-   under the gate's mode. No other door asks for a web key.
-5. Every activator is the end reward of the section it names, one per id, and opens at least one door.
-6. The lock-side rules on every placed lock; one gate per section mouth.
-7. Every floor carrying a web door walks sound with its web keys arriving, and with re-entry.
-8. The world solver, run with web keys as positional keys and the order inside each journey, agrees with
-   the web walk: every activator reachable, every door opened, every journey finished. No activator needs a
-   key from outside the web (a ward key, a map piece), so the web walk's assumptions are exact.
-9. `yarn lock <web>` passes on the baked world.
+1. Every place the web names exists in the world; every pinned section carries its address as its label.
+2. Every stop and every `opens` resolves to one seam, lock corridor, region or section mouth, laid as a door
+   asking for its `web:` key; no other door asks for a web key. Every activator is the reward it names, one
+   per reward, and counts in a pot or opens a door.
+3. **Every input is bound and every binding names an input**, for every lock placed on a floor of the world.
+   A lock with declared inputs on a floor no web binds is refused.
+4. The lock-side rules on every placed lock, added owners included; no front leaks.
+5. Every floor carrying a web door walks sound with its web keys arriving, and with re-entry.
+6. The world solver, run with the web's keys and the order inside each journey, agrees with the web walk:
+   every activator reachable, every door opened, every journey finished. No activator needs a key from outside
+   the web (a ward key, a map piece), so the web walk's assumptions are exact.
+7. `yarn lock <web>` passes on the baked world.
 
-## Keys, state and save
+## State and save
 
-**A web key is a named key.** Activator X mints `web:X`; a door waiting on it asks for `web:X`. Every reader
-that checks `heldKeys.has(id)` then works unchanged, and a door with floor owners folds it in already:
-`openDoorsFor` reads a door's `requiredKeyIds` as held keys beside its mechanism's say, under the door's mode.
+**The record is the pulled set: `webPulled: Record<name, true>` in the topology mod's own state**, beside the
+tomb-treasure mod's `tombKeys` (`useModState`). It has an add and no remove. The front is never stored: a
+held-keys provider (`registerHeldKeysProvider`, `src/app/SiteMap/keyProviders.ts`) derives `web:<name>` for
+each taken activator and `web:<pot>#1..n` for each pot holding n of its levers, from the compiled web shipped
+with the world data.
 
-- **The record: `webKeys: Record<id, true>` in the topology mod's own state**, beside the tomb-treasure mod's
-  `tombKeys` (`useModState`). A held-keys provider (`registerHeldKeysProvider`,
-  `src/app/SiteMap/keyProviders.ts`) turns it into `web:<id>`. It has an add and no remove.
 - **Mechanism state does not change.** It stays per journey, per pyramid; a web key never enters it.
 - **No change to the journey save.** The `levelNr` cursor stays. Free order between journeys is computed, not
   stored.
 - **A web door opens on its own** once its key is held, if its floor owners agree: the lever did the work, so
   the sand is gone when the player arrives.
+- **Moving a stop or adding a lever re-derives the front** from the same pulled set, so a re-tuned web needs no
+  migration. Renaming an activator does: the save keys it by name, and a rename ships with a double-write
+  migration.
 - A new field with an empty default needs no migration.
 
 ## What the floor compiler needs
@@ -488,28 +501,28 @@ authored data on the tier, set for wizard.
 
 ## What the world solver needs
 
-1. **Web keys are positional at both ends.** An activator is an `endReward` like a tomb key (`RewardSpec`,
-   `src/worldGen/dsl.ts:41`), harvested through its currency's `bucketForReward`, never placed into free
-   slots. A web door is a lock on one named key.
-2. **A web door is a real lock to the solver.** `reachableFrom` (`src/game/siteValidator.ts`) already treats a
+1. **Web keys are positional at both ends.** An activator is a reward at a named place, harvested through its
+   currency's `bucketForReward`, never placed into free slots. A web door is a lock on one key.
+2. **A pot's stop is a count.** `web:<pot>#n` is held once n of the pot's activators are reached: a threshold
+   over a named set, the shape a tomb's `piecesRequired` already has, scoped to a pot's list.
+3. **A web door is a real lock to the solver.** `reachableFrom` (`src/game/siteValidator.ts`) already treats a
    door asking for a key it does not hold as a discovered lock. An input's door under `all` asks for its web
-   key beside the mechanism's say, which the walk counts as given; under `any` the mechanism's say opens it
-   alone, which is the optimistic reading the solver takes of every floor mechanism.
-3. **Order inside a journey enters the solver.** Today progressing between `levelIndex` values is outside the
+   key beside the mechanism's say, which the walk counts as given.
+4. **Order inside a journey enters the solver.** Today progressing between `levelIndex` values is outside the
    solver (`reachability.ts:73-77`). The rule to add is true of every journey: pyramid N+1 is enterable when
    pyramid N's exit is reachable.
-4. **The world check is the web's.** The web walk is the designer's check; the world solver's run is the proof
-   on the carved floors, and the bake requires both to agree (check 8 above).
+5. **The world check is the web's.** The web walk is the designer's check; the world solver's run is the proof
+   on the carved floors, and the bake requires both to agree.
 
 ## The look
 
-- **The sand lever**, a new realisation of the web's activator in wizard_3's direction. The floor lever is the
-  `handle` family (`src/mods/topology/game/handle/meta.ts`), drawn from `leverBaseBack`, `leverArm` and
-  `leverBaseFront`. The sand lever has its own art and a pulled pose that never swings back.
-- **The web key and the sealed door**, for doors outside wizard_3: a key whose head wears its web mark, and a
-  door sealed with the same mark.
-- **Web sand**, a drift in a corridor wearing the web mark of what clears it, beside any floor markers its door
-  carries.
+- **The sand lever**, the `lever` realisation of a web activator. The floor lever is the `handle` family
+  (`src/mods/topology/game/handle/meta.ts`), drawn from `leverBaseBack`, `leverArm` and `leverBaseFront`. The
+  sand lever has its own art and a pulled pose that never swings back.
+- **The web key and the web seal**, the `key` realisation and the door of an `opens` line: a key whose head
+  wears its web mark, and a door sealed with the same mark.
+- **Web sand**, a drift in a corridor wearing the mark of its pot and the count it waits for, beside any floor
+  markers its door carries.
 - **Web marks:** a glyph set disjoint from `MARK_GLYPHS`, on a sand ground in a cartouche.
 
 **Art tasks, for `docs/instructions/art-tasks.md` (default-tier art, the same at every difficulty):**
@@ -540,87 +553,96 @@ current and future. `JourneyCard` has one emerald "still treasure to find here" 
   - `JourneyPathView` draws the ring on the current node as well.
 - **Before the first visit** nothing has been saved, so a pull shows no ring. The arrival beat makes sure the
   player has stood in the sand once.
-- **The journey card** of a journey with a buried pyramid shows the web marks its main path waits for, lit as
-  each is pulled.
+- **The journey card** of a journey under a pot shows the pot's mark with one notch per lever, lit as each is
+  pulled.
 
 ## Toggle-off
 
-With the topology mod off, every gate is an open corridor (section gates and lock gates alike, so an input's
-door too), activators are bare nodes (the end reward is empty), and the carve is identical. wizard_3's first
-pyramid is an ordinary pyramid. Free order between journeys is core progression and stays.
+With the topology mod off, every gate is an open corridor (seam gates, added owners and declared inputs
+alike), activators are bare nodes (the reward is empty), and the carve is identical. wizard_3 is an ordinary
+journey. Free order between journeys is core progression and stays.
 
 ## Who does what
 
-- **The designer** writes the wizard locks, with their `outside` lines, and the web: which sections are
-  buried, which inputs each lever holds, which keys the sand keeps, where each activator stands. Also the art
-  and the story beats.
-- **Claude** builds the `outside` notation and its walks, the format, the web walker, `floorLock`'s held keys,
-  the re-entry states, the doors and keys in the world, the solver edges, the travel read and the
+- **The designer** writes the web and the wizard locks, with their `outside` lines.
+- **Claude** builds the `outside` notation and its walks, the web format and walker, `floorLock`'s arriving
+  keys, the re-entry states, the doors and keys in the world, the solver edges, the travel read and the
   realisations, and places the web.
 - Until the designer writes the web and the wizard locks, the slices run on made-up webs and made-up locks.
   Tests never pin the designer's; `yarn lock` is the check on them.
+
+**The designer's workload.** A web is one block per pyramid that holds something, one line per activator, one
+`sand` line per buried stretch and one `opens` line per sealed place: the illustration is fifteen lines for the
+tier. Nobody reads section numbers off `generatedWorld.ts`: places are percentages, `side`, `@end` and a lock's
+own region names, and the report says where each landed. Iterating is editing a percentage and running
+`yarn lock <web>` against the last bake; a bake makes the doors real. Fine control (a declared input, a section
+pot) is there for the few places a percentage cannot say.
+
+**The limits.** One activator per reward: per main-path room, per section end, per lock region taking a
+reward, so a pyramid holds at most as many activators as it has those. Wizard pyramids are large (wizard_3
+pyramid 1's hub floor has ten side sections today); a pot's stops need a seam each, so a pot over a short line
+cannot take many levers (`stopsShareSeam`). A lock carries at most three inputs, added ones counted. A web
+carries at most 16 activators.
 
 ## Impact
 
 ### For the player
 
 - When the wizard tier opens, all four wizard journeys open at once.
-- wizard_3 starts with a pyramid they cannot finish yet. They see it buried and go elsewhere.
-- Some pyramids in the other journeys end a path at a sand lever. Pulling it clears a named stretch of
-  wizard_3, a whole floor, a side hall or a door inside a floor's lock; the travel screen pulses on the buried
-  pyramid.
-- A wizard lock may have sand in it: a door that waits on a lever in another journey, or a short cut that
-  opens when one is pulled.
+- wizard_3 is buried from its first room. They see the sand and go elsewhere.
+- Some pyramids end a path at a sand lever. Each pull clears wizard_3 a stretch further, whichever lever it was;
+  the travel screen pulses on the buried pyramid and the journey card counts the pulls.
+- A wizard lock may have sand in it: a door the front stops at, a buried hall, or a short cut that opens when a
+  far lever is pulled.
 - Places freed in wizard_3 hold keys that open sealed places in the other journeys, so the tier is played back
-  and forth. `yarn lock <web>` says how many revisits the web asks for.
+  and forth. `yarn lock <web>` says how many returns the web asks for.
 
 ### Systems and files touched
 
-| System        | What changes                                                                                                                         | Files                                                                                                                                                                |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Progression   | a free-order flag per tier; skip the "previous completed" check; the "next journey" offer                                            | `src/app/pages/journeyAvailability.ts`, `src/data/difficultyLevels.ts` or `journeyStructure.ts`                                                                      |
-| Lock notation | `X outside`; the refusals; inputs as one-way arrivals; `doorsSeenLate` on input doors; the inputs line                               | `src/game/lockNotation.ts`, `src/game/lockAuthoring.ts`, `src/game/lockWalkSpec.ts`, `src/game/lockChecks.ts`, `src/game/lockCompile.ts`                             |
-| Web format    | the `.web` notation with bindings, its compiler, the walk over baked floors with arrivals limited to H, the report                   | new `src/game/webNotation.ts`, `src/game/webWalk.ts`, `scripts/lock.ts`                                                                                              |
-| Floor walk    | `web:` keys as arriving owners; `LockSpec.arrivals`; floors with only web doors compile; re-entry states                             | `src/game/floorLock.ts`, `src/game/lockWalk.ts`, `src/game/floorLockWalk.ts`, `src/worldGen/validate.ts`                                                             |
-| Keys / save   | `webKeys` in topology mod state; a held-keys provider giving `web:<id>`                                                              | `src/mods/topology/app/`, `src/app/SiteMap/keyProviders.ts`                                                                                                          |
-| World-gen DSL | a `web-key` section gate; a main-path gate at the arrival; a `webKey` end reward; input gates laid with their web key; the web bound | `src/worldGen/dsl.ts`, `src/worldGen/rewards.ts`, `src/worldGen/buildSite.ts`, `src/game/carve/chainRooms.ts`, `src/game/layLocks.ts`, `src/worldGen/spec/wizard.ts` |
-| World solver  | web keys as positional keys; the order inside a journey; agreement with the web walk                                                 | `src/worldGen/reachability.ts`, `src/worldGen/placeFragments.ts`, topology mod descriptor                                                                            |
-| Map / travel  | buried node, pulse on the current node, card marks; `blockingKeys` counts web doors                                                  | `src/ui/atoms/JourneyPathView.tsx`, `src/ui/organisms/JourneyCard.tsx`, `src/app/pages/Travel.tsx`, `src/app/SiteMap/floorExploration.ts`                            |
-| Site map art  | sand lever, web sand, web seal and key, web marks beside floor markers                                                               | `src/app/SiteMap/SiteMapView.tsx`, `src/game/mark.ts`, `src/assets/tiles/default/`, `art/masters/props/default/`                                                     |
-| Story         | the buried-pyramid arrival is wizard_3's arrival; the clearing beat; wizard arrivals in any order                                    | `docs/game-design/story/`, `public/locales/*/story*.json`                                                                                                            |
-| i18n          | buried node label, lever and seal prompts                                                                                            | `public/locales/en/`, `public/locales/nl/`                                                                                                                           |
+| System        | What changes                                                                                                  | Files                                                                                                                                                                |
+| ------------- | ------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Progression   | a free-order flag per tier; skip the "previous completed" check; the "next journey" offer                     | `src/app/pages/journeyAvailability.ts`, `src/data/difficultyLevels.ts` or `journeyStructure.ts`                                                                      |
+| Lock notation | `X outside`; the refusals; inputs as one-way arrivals; added owners; `doorsSeenLate` on input doors           | `src/game/lockNotation.ts`, `src/game/lockAuthoring.ts`, `src/game/lockWalkSpec.ts`, `src/game/lockChecks.ts`, `src/game/lockCompile.ts`                             |
+| Web format    | blocks, the line, stops landing on seams, pots, `opens`, bindings; the set walk; the report                   | new `src/game/webNotation.ts`, `src/game/webLine.ts`, `src/game/webWalk.ts`, `scripts/lock.ts`                                                                       |
+| Floor walk    | `web:` keys as arriving owners; `LockSpec.arrivals`; floors with only web doors compile; re-entry states      | `src/game/floorLock.ts`, `src/game/lockWalk.ts`, `src/game/floorLockWalk.ts`, `src/worldGen/validate.ts`                                                             |
+| Keys / save   | `webPulled` in topology mod state; a held-keys provider deriving named and counted keys                       | `src/mods/topology/app/`, `src/app/SiteMap/keyProviders.ts`                                                                                                          |
+| World-gen DSL | seam gates, added lock owners and region barriers, activators as rewards, sections pinned by label, web bound | `src/worldGen/dsl.ts`, `src/worldGen/rewards.ts`, `src/worldGen/buildSite.ts`, `src/game/carve/chainRooms.ts`, `src/game/layLocks.ts`, `src/worldGen/spec/wizard.ts` |
+| World solver  | web keys as positional keys; counted stops; the order inside a journey; agreement with the web walk           | `src/worldGen/reachability.ts`, `src/worldGen/placeFragments.ts`, topology mod descriptor                                                                            |
+| Map / travel  | buried node, pulse on the current node, the card's pull count; `blockingKeys` counts web doors                | `src/ui/atoms/JourneyPathView.tsx`, `src/ui/organisms/JourneyCard.tsx`, `src/app/pages/Travel.tsx`, `src/app/SiteMap/floorExploration.ts`                            |
+| Site map art  | sand lever, web sand, web seal and key, web marks beside floor markers                                        | `src/app/SiteMap/SiteMapView.tsx`, `src/game/mark.ts`, `src/assets/tiles/default/`, `art/masters/props/default/`                                                     |
+| Story         | the buried-journey arrival is wizard_3's arrival; the clearing beat; wizard arrivals in any order             | `docs/game-design/story/`, `public/locales/*/story*.json`                                                                                                            |
+| i18n          | buried node label, lever and seal prompts                                                                     | `public/locales/en/`, `public/locales/nl/`                                                                                                                           |
 
 ### Baked data that moves
 
-- **Every section gate re-carves its floor.** A gate's presence is structural; it costs its own room. A floor
-  buried whole gains one gate room after its arrival.
-- **An input costs nothing of its own.** Its gates are the lock's gates, carved with the lock. Binding it
-  changes which key the door asks for, not its walls.
-- **Every pyramid holding an activator changes one end reward.** That does not re-carve. The reward it
-  replaces (often a fragment slot) is placed again by the worklist and may land in another wizard room.
-- **Sections the web names get labels** equal to their current address. That moves nothing.
-- **Sections the web buries that carry a ward gate today** lose it to another place in the journey, at the
-  designer's say (open question 2).
+- **A stop on a plain seam, or an `opens` door, re-carves its floor.** A gate's presence is structural.
+- **A stop on a lock corridor that is already gated** only adds an owner: no re-carve. One on a plain lock
+  corridor, or one burying a region, re-carves that floor.
+- **A declared input costs nothing of its own.** Its gates are the lock's, carved with the lock.
+- **Every reward holding an activator changes.** That does not re-carve. The reward it replaces (often a
+  fragment slot) is placed again by the worklist and may land in another wizard room.
+- **Sections the web places get labels** equal to their current address. That moves nothing.
+- **Buried sections that carry a ward gate today** lose it to another place in the journey, at the designer's
+  say (open question 2).
 - **No other tier moves.** Re-entry states change no carve; if they are turned on for every floor (open
-  question 7), they may refuse floors that bake today, which is why that is measured first.
+  question 6), they may refuse floors that bake today, which is why that is measured first.
 
 ### Risks
 
 - **Re-entry is a soundness change.** It touches the floor walk every lock relies on. Review it with Opus, with
-  `floorLock`'s held keys and the order inside a journey.
-- **The web walk needs a bake.** Lock regions take side sections where the carve puts them, so what a web
-  key frees is known only on the carved floor. The designer iterates on a web through bakes; `yarn lock` on a
-  single wizard lock stays fast.
-- **Revisits can grow quietly.** A web where every key lies behind another journey's later pyramid can ask
-  for many revisits and still be sound. The cheapest-visits line is the designer's measure; nothing refuses
-  a high number.
-- **A revisit costs a walk.** `visitLevel` moves the journey's cursor to the pyramid picked, so after a return
+  `floorLock`'s arriving keys and the order inside a journey.
+- **A stop's landing is read off the carve.** Inside a lock, whether a percentage falls on a corridor or inside
+  a region is the carve's; placement pins it by name, and the report shows it, so the designer sees a stop
+  that landed somewhere other than they meant.
+- **Returns can grow quietly.** A web where every key lies behind another journey's later pyramid can ask for
+  many returns and still be sound. The cheapest line is the designer's measure; nothing refuses a high number.
+- **A return costs a walk.** `visitLevel` moves the journey's cursor to the pyramid picked, so after a return
   to w3p1 the player finishes it again to come back to w3p2, at its entrance. The visit count does not show
   that walk.
 - **Free order changes the story's ordering.** At wizard, arrivals come in any order, so Act V's beats must not
-  lean on each other's order.
-- **wizard_4 could be finished before wizard_3.** If the story needs wizard_3 first, the web says so with a
-  gate (open question 3).
+  lean on each other's order. Where the story needs one journey finished before another, the web says so: a
+  key at the end of the first opens the last stretch of the second (`key maat @end` in `[w3p6]`,
+  `maat opens 90%` in `[w4p6]`).
 
 ## Slices, in build order (for later)
 
@@ -647,46 +669,52 @@ Rough sizes: S is about a day, M two to three days, L a week.
    it did not measure. Tests freeze: a made-up floor that strands only after coming back at the entrance is
    refused; a chamber a mechanism sealed is still a strand with re-entry on; a floor sound today and sound
    with re-entry reports the same.
-5. **The web format and its walk (M).** Notation with bindings, compile, the walk over baked floors with
-   arrivals limited to the held set, the report. Tests freeze, on made-up webs over a made-up world: pyramids in one journey open in order
-   and journeys in any order; an unbound input and a binding naming no input are each refused by name; an
-   activator behind its own sand is refused by name; a two-key cycle is refused naming the chain; a web with
-   anything but activators, sections and bindings is refused; a floor that can be played into waiting on a
-   key whose activator lies behind that pyramid is refused; the cheapest visits of a small web (three
-   pyramids, one revisit) are counted exactly; a lever whose door cannot be seen first is warned about.
-6. **Web doors and keys in the world (M).** The `web-key` section gate, the main-path gate after the arrival,
-   input gates laid asking for `web:<activator>`, the `webKey` end reward, `webKeys` and its provider. Tests
-   freeze: a door laid from `-[A]-` bound to `moon` asks for `web:moon`; a web door is shut without its key and
-   open with it; the held set only grows; a key taken twice is held once; with the mod off every web door is
-   an open corridor and the walls are identical.
-7. **The solver (M, Opus).** Web keys as positional keys, the order inside a journey, the agreement with the
-   web walk, activators behind outside keys refused. Tests freeze: pyramid N+1 is not reached while pyramid
-   N's exit is shut; a world where the web walk and the solver disagree is reported; an activator behind a
-   ward gate is refused.
-8. **The look (M).** The sand lever, web sand, the seal and key, web marks beside floor markers, the
+5. **The web format and the line (M).** Blocks, relative places, the line in authored rooms, stops landing on
+   seams, the refusals that need no walk. Tests freeze, on a made-up world: a block naming a pyramid the world
+   lacks is refused; `sand by a b c` stops at a third, two thirds and the end; a stop resolves to the nearest
+   seam and ties toward the arrival; a stop on a lock corridor adds an owner under `+`, one inside a region
+   buries the region, one on a `|` corridor is refused as `frontOnAnyGate`; two stops on one seam are refused;
+   a pyramid pot under a journey pot is refused as `potsOverlap`; `@60% side` names the first side section
+   hanging after 60%; a re-carve that keeps the pinned names resolves every place the same.
+6. **The web walk and its report (M, Opus).** The set walk, the closure, the per-pyramid check with its exit
+   cut, the report. Tests freeze, on made-up webs: two orders of the same pulls hold the same keys; the n-th
+   pull clears to the n-th stop whichever lever it was; a lever only its own pull clears is refused as
+   `ownFront`; a three-lever cycle across journeys is refused naming the whole chain; a front that leaks round
+   a side corridor is refused as `frontLeaks`; a floor that can be played into waiting on a key whose
+   activator lies behind that pyramid is refused; a web of 17 activators is refused as `webTooLarge`; the
+   cheapest visits and returns of a small web (three pyramids, one return) are counted exactly; a lever whose
+   door cannot be seen first is warned about.
+7. **Web doors and keys in the world (M).** Seam gates, added owners and region barriers laid on the carve,
+   activators as rewards, `webPulled` and its provider. Tests freeze: a stop asks for `web:<pot>#n`; a door
+   laid from `-[A]-` bound to `moon` asks for `web:moon`; the provider gives `web:<pot>#2` for any two of the
+   pot's levers pulled; the pulled set only grows and a lever pulled twice counts once; with the mod off every
+   web door is an open corridor and the walls are identical.
+8. **The solver (M, Opus).** Web keys as positional keys, counted stops, the order inside a journey, the
+   agreement with the web walk, activators behind outside keys refused. Tests freeze: pyramid N+1 is not
+   reached while pyramid N's exit is shut; a stop is reached with n of its pot's activators and not with n-1;
+   a world where the web walk and the solver disagree is reported; an activator behind a ward gate is refused.
+9. **The look (M).** The sand lever, web sand, the seal and key, web marks beside floor markers, the
    one-sand-per-site binding rule. Tests freeze: a web mark never equals a floor mark; a door with an input and
-   a lever shows two markers; the sand lever's drawing is not the floor lever's; a site with a web door that
+   a lever shows two markers; the sand lever's drawing is not the floor lever's; a site with web sand that
    binds a lock's barriers to sand is refused.
-9. **The travel read (M).** `blockingKeys` counts web doors, the buried node, the pulse on the current node, the
-   card's marks. Tests freeze: a buried pyramid's node is not drawn as current; one pull after a visit lights
-   it; before any visit it does not.
-10. **Placement and bake (M).** The designer's web and wizard locks bound to the wizard tier, sections labelled,
-    gates, bindings and activators placed, the bake, the gate in a clean worktree. Checks: `yarn lock <web>`,
+10. **The travel read (M).** `blockingKeys` counts web doors, the buried node, the pulse on the current node, the
+    card's pull count. Tests freeze: a buried pyramid's node is not drawn as current; one pull after a visit
+    lights it; before any visit it does not.
+11. **Placement and bake (M).** The designer's web and wizard locks bound to the wizard tier, places pinned,
+    doors and activators laid, the bake, the gate in a clean worktree. Checks: `yarn lock <web>`,
     `yarn verify-content`, the world sweep. No unit test pins the web, the locks or the placement.
 
 ## Open questions for the designer
 
 1. **A door seen only after its lever:** a warning, as on a lock, or refused?
-2. **A section gate on a section that already has a ward gate:** move the ward content (the plan), or allow one
+2. **A buried or sealed section that already has a ward gate:** move the ward content (the plan), or allow one
    door with both keys?
-3. **Is wizard_4 allowed to finish before wizard_3?** If the story needs "weighed, then closed", the web puts a
-   gate on wizard_4's last pyramid whose key lies in wizard_3.
-4. **One arrival or two?** wizard_3's arrival (Fez and the scale) and the buried-pyramid arrival ("It is full")
+3. **A pot that starts part way in.** A pot's sand lies from the arrival of its line, so "the second half of
+   w1p3 is buried" is not yet a pot. Should a pot name where its sand starts (say `sand from 50%: 75% 100% by
+reed ankh`), or is that an `opens` line?
+4. **One arrival or two?** wizard_3's arrival (Fez and the scale) and the buried-journey arrival ("It is full")
    happen in the same place. Play both in order, merge them, or move the scale to the clearing?
 5. **Does a pull show anything where it is pulled?** A Fez line, or the sand channel emptying and nothing said.
-6. **Outputs as well as inputs:** may a lock declare where a web activator stands inside it (a lock's `$`
-   region holding the web's key), so the web names it as it names an input? Today an activator stands at a
-   section's end, and whether that section lies inside the lock is the carve's choice.
-7. **Coming back at the entrance:** re-entry states fix a gap every floor has today, the web only makes it
+6. **Coming back at the entrance:** re-entry states fix a gap every floor has today, the web only makes it
    common. Turn them on for every floor once the measurement in slice 4 is in, keep them to web journeys, or
-   change the save so a revisit resumes where the player stood in that pyramid?
+   change the save so a return resumes where the player stood in that pyramid?

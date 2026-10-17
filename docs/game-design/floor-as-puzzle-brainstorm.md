@@ -177,16 +177,20 @@ restoring a balance rather than opening a door.
 
 | #   | Idea                                                                                                                                                                                                            | Leans on                                              | Tier  | Build |
 | --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ----- | ----- |
-| G1  | **The sand pyramid.** wizard_3's first pyramid is wholly buried in sand. Named levers in the other wizard journeys clear its sections and the inputs of its floor locks.                                        | a web lock over the tier, `getUnexploredLevels`       | rooms | L     |
+| G1  | **The sand pyramid.** wizard_3 is buried from its first arrival. Each lever pulled, in any wizard journey, moves the sand front a stretch further.                                                              | a web over the tier, `getUnexploredLevels`            | rooms | L     |
 | G2  | **The hourglass.** The upper floor is choked; a lever there sends the player down to a floor walked as a hidato, sand falling in behind them, and the path they trace below decides which corridors open above. | hidato, the stair pairing, `floorExploration`'s shape | rooms | L     |
 
-### G1 — a web lock whose scope is the tier
+### G1 — a web whose scope is the tier
 
-The buried pyramid is **wizard_3's first pyramid**, the Chamber of Ma'at. Sand levers stand in the pyramids
-of the other wizard journeys, each with a name, and each clears the sand of its name. The sand is written as
-a **web lock**: the `.lock` notation one level up, its places the pyramids, their sections and the outside
-inputs their floor locks declare, across the tier. A wizard lock may wait on a lever in another journey: it
-declares the input, the web binds it. The build plan, the notation and what the walker proves are `../instructions/sand-pyramid.md`.
+The buried journey is **wizard_3**, the Chamber of Ma'at, sand lying from its first pyramid's arrival on.
+Sand levers stand in pyramids of any wizard journey. The sand is written in a **web**, one file over the
+tier: a block per journey or pyramid, places given as percentages of a main path (`@45%`, `@60% side`,
+`@end`), and a **pot** listing its levers, `sand 40% 75% 100% by sun moon star`. The n-th pull, whichever
+lever it is, moves the front to the n-th stop. A stop lands on the nearest seam of the main path, a corridor
+between a floor lock's regions among them, and a front falling inside a region buries it whole. Keys the
+sand gives up `open` named places elsewhere. Where sand must sit at an exact place inside a wizard lock, the
+lock declares an outside input and the web binds it. The build plan, the format and what the walker proves
+are `../instructions/sand-pyramid.md`.
 
 **The return half already ships.** `getUnexploredLevels(journeyId, heldKeys)` answers "which of this
 journey's pyramids still hold something I can now reach", drives the travel screen's pulse, and
@@ -194,13 +198,14 @@ names no mod — its keys are opaque ids. A sand key is another such id, so the 
 needs nothing new.
 
 **A lever is a key, not a mechanism.** A pull never goes back, and it works on another site, so it is
-positional content that mints one named key, and the sand of that name is a gate on that key. The player may
-pull the levers in any order; the web walker walks every order, proves each one finishes, and says whether
-every buried place can be seen before its lever is pulled.
+positional content that mints one named key; a pot's stops are keys held once enough of its levers are. The
+player may pull the levers in any order: a pot counts pulls, not names, so what a player holds depends on
+which levers they pulled, never on the order. The web walker proves the tier finishes from every set of pulls
+a player can reach, and says whether every buried place can be seen before its lever is pulled.
 
-**It works both ways.** Sections freed in wizard_3 hold keys that open sealed places in the other journeys'
+**It works both ways.** Places freed in wizard_3 hold keys that open sealed places in the other journeys'
 pyramids, so the tier is played back and forth. That is the ward gate's shape, a gate here and its key from
-elsewhere, with both ends inside one tier. The walker counts the revisits a web asks for.
+elsewhere, with both ends inside one tier. The walker counts the returns a web asks for.
 
 **Free order between journeys is the enabler.** All four wizard journeys open together; inside a journey
 the pyramids stay in order. Without that the buried pyramid is only a later journey with sand drawn on
@@ -210,8 +215,8 @@ divergence rather than adding one.
 **Restoring, not unlocking.** The levers clear paths in a pyramid the player has already seen
 buried, which is why this reads as balance rather than as a key.
 
-**The sand takes the spine too.** The buried pyramid is entered and gives nothing until levers elsewhere
-are pulled — not a pyramid with buried branches, a pyramid with nothing reachable. This is the one
+**The sand takes the spine too.** The first buried pyramid is entered and gives nothing until levers
+elsewhere are pulled — not a pyramid with buried branches, a pyramid with nothing reachable. This is the one
 place in the game a site is not completable on arrival, and it is safe for the reason
 `../mods/floor-topology-design.md` gives: the opener lies outside the site and leaving is always
 available, so the player is never stuck, only sent elsewhere. Because pyramids inside a journey stay in

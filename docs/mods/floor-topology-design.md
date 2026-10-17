@@ -266,9 +266,9 @@ rather than the map's shape: `leftLower` means "past the fork's left gate, befor
 
 **A region belongs to the floor, not to the lock that gates it.** Three of the six catalogue features
 act on the same nouns: a lock gates the boundaries between regions, `waterline` floods one from
-within, `sandSlide` blocks one. `sandPyramid` reaches them from above: its web lock buries whole floors and
-sections, and binds the outside inputs a lock declares on its own gates (`mechanic-contract.md`, sand from
-above the floor). So the layout —
+within, `sandSlide` blocks one. `sandPyramid` reaches them from above: its web moves a sand front along whole
+main paths, landing on seams, on corridors between a lock's regions or over a region, and binds the outside
+inputs a lock declares on its own gates (`mechanic-contract.md`, sand from above the floor). So the layout —
 regions, their connections, what content each will take — is **core and structural**, and the gates,
 switches and one-ways placed on it are the **topology mod's**. That is the `forks`/`switches` split
 one size up, and it buys the same guarantee: with the mod off, the identical walls carve and every
@@ -963,7 +963,7 @@ own, and none is built before a feature needs it.
 | P2  | **Authored edge between two addresses, optionally directed**                                | —                                                                          | ramps, back-bars, shafts                                |
 | P3  | **Corridor cells carry mod markers**, fired on being crossed                                | only rooms carry anything                                                  | glyph tiles, sand trails, a sequence's authored markers |
 | P4  | **Floor-scoped encounter** — the board is the floor, the moves are steps                    | room-sized boards                                                          | the hourglass, visit-order floors                       |
-| P5  | **A web lock across journeys** — named keys minted in one pyramid, spent in another         | the ward gate, positional at both ends                                     | the sand pyramid                                        |
+| P5  | **A web across journeys** — keys minted in one pyramid, spent in another, named or counted  | the ward gate, positional at both ends                                     | the sand pyramid                                        |
 | P6  | **Per-visit mod state with a lifecycle** — created on entering a site, discarded on leaving | mods own persistent state only                                             | the hourglass flip                                      |
 
 P1 is the one worth building for its own sake: it does not merely serve a mod, it **subsumes two
@@ -1128,13 +1128,15 @@ the solver assumes and what the game enforces. Only the tomb-treasure mod's `jou
 
 **Order inside a journey is what the sand pyramid adds to the solver.** wizard_3's later pyramids are
 reachable only once its first pyramid's exit is, and that exit is behind sand. "Pyramid N+1 of a journey
-is enterable when pyramid N's exit is reachable" is true of every journey and becomes a solver edge.
+is enterable when pyramid N's exit is reachable" is true of every journey and becomes a solver edge. A
+sand front's stop is the solver's second new shape: a key held once n of a pot's levers are reached, a
+threshold over a named set, as a tomb's `piecesRequired` is.
 
-**The sand pyramid is wizard_3's first.** Because pyramids inside a journey stay in order, a buried first
-pyramid holds the whole journey back, and the levers in the other three journeys are what let it go.
-The tier gets a late point without forcing which journey comes first. Sand may lie in later wizard_3
-pyramids too, and keys freed there open sealed places in the other journeys; the web walker counts the
-revisits that asks for.
+**The sand starts at wizard_3's first arrival.** Because pyramids inside a journey stay in order, sand
+over the journey's line holds the whole journey back, and each lever pulled, in any journey, moves the
+front a stretch further. The tier gets a late point without forcing which journey comes first. Keys
+freed under the sand open sealed places in the other journeys; the web walker counts the returns that
+asks for.
 
 What it costs:
 
@@ -1214,7 +1216,7 @@ becomes a feature composed from vocabulary that already exists.
   reads the floor after features land, is undecided. A lock's region tree is the same gap at a larger
   size: a floor authoring three locks and a full set of paths may not fit, and nothing counts.
 - **`needs` above floor scope.** The hourglass spans two floors, so its requirements are not
-  statements about one floor. The sand pyramid spans a tier's journeys and states its own, in its web lock
+  statements about one floor. The sand pyramid spans a tier's journeys and states its own, in its web
   (`../instructions/sand-pyramid.md`). The slot's vocabulary covers a floor today. A lock asks it from the other side: nothing says a region sits on one floor, and a
   staircase inside a container would make it span two.
 - **Whether region names become save addresses.** They would be steadier than carve-derived section
