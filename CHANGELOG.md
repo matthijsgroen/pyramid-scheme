@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A torch stands painted on the floor, and once lit it lights the floor around it.
 - The Valley of the Kings' last pyramid has a zipline back into the lever chamber, so no room there is shut for good.
 - The first pyramids' rooms are lit instead of sinking into the dark.
+- The first pyramids are pale limestone and whitewashed brick, painted with red ochre.
+- The room you are standing in is never dimmed as finished.
 - Difficulty now has one colour, its metal: stone, copper, silver, gold and emerald.
 - A journey card names the place; the joke waits for the arrival.
 - Turning tutorials off no longer silences the story — only the teaching.
