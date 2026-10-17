@@ -32,6 +32,7 @@ import { AXES, DROP_AT, dropGrid, obstacleIndexes } from "./floorFixtures.testin
 import { CHAMBER_SCALE, GROWTH_POOLS, growthTile } from "./moodSettings"
 import { sharedTileUrl } from "./tileAssets"
 import { STANDING_RELIEF, lampStrength } from "./lighting"
+import { BeamLight } from "./MapBeams"
 
 // Cell positions come from mapScale's own geometry (the pitch is stretched to give every wall a
 // place of its own), so a change there can't silently break every position assumption in this file.
@@ -1102,6 +1103,20 @@ describe("SiteMapView — the shade the lamp is read against", () => {
 
     expect(litStrength("starter")).toBeCloseTo(lampStrength() * tierPalette.starter.lamp, 5)
     expect(litStrength("expert")).toBeCloseTo(lampStrength() * tierPalette.expert.lamp, 5)
+  })
+
+  it("lifts a shaft's room by the rank's own share too, so daylight does not bleach a lit rank", () => {
+    const grid = twoRooms()
+    const claims = buildRoomClaims(grid)
+    const strengthAt = (share: number) => {
+      const { container } = render(
+        <BeamLight grid={grid} claims={claims} shafts={["0,1"]} torchPlace={new Set()} share={share} />
+      )
+      const lit = container.querySelector<HTMLElement>("[data-beam='lit']")!
+      return Number(lit.style.getPropertyValue("--map-lit-strength"))
+    }
+
+    expect(strengthAt(0.3)).toBeCloseTo(strengthAt(1) * 0.3, 5)
   })
 
   it("draws the lit place over the shade, or the lamp would be washed out by it", () => {

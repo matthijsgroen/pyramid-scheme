@@ -23,8 +23,8 @@ export const imageMap: Record<Difficulty, { color: string; gradient: string; beh
   starter: {
     image: starterWall,
     behind: "bg-[#15110c]",
-    color: "bg-[#2b261f]",
-    gradient: "bg-gradient-to-t from-[#2b261f] from-50% to-[#4a4137] to-100%",
+    color: "bg-[#3d2e20]",
+    gradient: "bg-gradient-to-t from-[#3d2e20] from-50% to-[#b49d74] to-100%",
   },
   junior: {
     image: juniorWall,

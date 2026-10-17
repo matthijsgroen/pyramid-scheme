@@ -29,8 +29,8 @@ edge is a change of value. What changes is colour and light.
 **Ground plus metal.** Every rank has a ground — its material, light or dark but calm — and a metal, which
 is saturated and lives in props, trim, inlay and lintels. Vividness is the contrast between the two.
 
-**Rooms are lit; the torch is an accent.** The night wash drops to master's hand (0.2 or less) at
-every rank. The torch is a warm glow around the explorer rather than what makes a room visible. Shafts of
+**Rooms are lit; the torch is an accent.** The night wash is a light hand at every rank —
+starter, on pale limestone, at 0.3. The torch is a warm glow around the explorer rather than what makes a room visible. Shafts of
 daylight stay the brightest thing on a floor. Fog is unchanged: an undiscovered cell is still not drawn.
 
 **The characters stay as drawn.** Outlined cartoon figures on a painted world keeps them legible; only
@@ -105,11 +105,15 @@ legible:
 
 ## Light and the map code
 
-- **Night washes** fall to 0.2 or less at every rank (`tierPalette[tier].shade`).
+- **Night washes** are light at every rank (`tierPalette[tier].shade`): enough to keep a room nobody lights
+  from washing out, never so much that the stone loses its colour. Starter is at 0.3.
 - **The lamp** burns at each rank's own share (`tierPalette[tier].lamp`): a lamp lifts a dark room into
   view and only bleaches a lit one, so a rank that is lit burns it low — starter at 0.3 of the full lamp.
-- **Shafts** are re-solved so the patch of sun lands above the new floor. The numbers in `lighting.ts`
-  (ray L\* 65.5, sun 70.1) are measured on the lit starter floor, over an unlit floor of about L\* 35.
+  A shaft's lift on its room and its dust take the same share; its patch of sun keeps full strength.
+- **The room the explorer stands in is drawn as current, not as done** (`drawnAsCurrent`): a finished
+  room is dimmed so the player sees what is behind them, but where they stand never is.
+- **Shafts** are re-solved so the patch of sun lands above the new floor. Measured on the repainted
+  starter floor: unlit L\* 50, torch-lit 60, the patch of sun 63 — still the brightest thing on the floor.
 - **The click marker** stays one gold fill in a dark ring at every rank (`markerColours.ts`): the ring already makes one shape read on light and dark stone. `yarn rank-colour` holds it to 3:1 against every floor.
 - **The state washes** (visited, completed) are checked on the lighter grounds and kept if they still read.
 
@@ -153,7 +157,7 @@ Stone is the rank every player sees first, so it is the pilot. The work splits a
 does: Claude writes prompts, imports, sets tokens and measures; the user generates through
 `yarn repaint <key>`.
 
-1. **Tokens first** — starter's ground, metal and a wash of 0.2, viewed with the existing tiles in
+1. **Tokens first** — starter's ground, metal and a light night, viewed with the existing tiles in
    Storybook and on floor 0. The direction is visible before anything is generated. The ground tokens
    (`slab`, `wall`, `wallBase`, `outline`) describe the ground art and are `tile-stats`' targets for it,
    so they move with the surfaces in item 2, not here.

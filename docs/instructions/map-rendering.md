@@ -81,10 +81,10 @@ background, and **`ClipLayer`**, a box cut to a path — the size of its own SHA
   with 61% of its chroma gone and its hue dragged from ochre (73°) to a cold magenta (330°) — a lit room
   of grey mush with pale cut-outs standing in it, on art that had the colour all along. So the wash colour
   is the rank's OWN near-black (`outline`), which adds the rank's own hue rather than a foreign one, and
-  the night is held to an alpha of **0.2 or less**: starter is there (a floor near L\* 35 on the page), and
-  the other ranks follow with their own art repaint. `yarn rank-colour` is the measurement.
-- **The ranks are held together by their targets and told apart by their hues.** A night alpha of 0.2 or
-  less and a 7.5-step back to the wall on every rank; starter ochre at C\* 6.6, junior ochre at 18.2,
+  the night is a light hand — light enough that the rank keeps its colour, deep enough that a room nobody
+  lights is not washed out. Starter, on pale limestone, is at **0.3**; the other ranks follow with their own
+  art repaint. `yarn rank-colour` is the measurement.
+- **The ranks are held together by their targets and told apart by their hues.** A light night and a 7.5-step back to the wall on every rank; starter ochre at C\* 6.6, junior ochre at 18.2,
   expert cold at 263°, wizard verdigris at 168°. Consistent is not flat: same rule everywhere, different
   character in it.
 - **A vertical face takes a helping of the night the floor does not** (`faceNight`). A lamp is carried at
@@ -156,4 +156,4 @@ each wash as `art × (1−a) + wash × a`, each light as a `screen` at its opaci
 **chroma** and **hue angle** rather than as a WCAG ratio, which is built for text and understates
 separation at the values a tomb is drawn at. Three numbers decide a change to the night: where the unlit
 floor lands, how much of the art's own chroma and hue survive to it, and what the lamp is still worth
-above it (the lit floor, less the unlit). A rank's night above 0.2 is out of step with the rule.
+above it (the lit floor, less the unlit). A repainted rank whose night has to darken its stone to read is a rank whose art is too pale.

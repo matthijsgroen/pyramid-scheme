@@ -73,6 +73,7 @@ import {
   litPlaceCells,
 } from "./lighting"
 import { BeamLight, BeamShafts } from "./MapBeams"
+import { drawnAsCurrent } from "./currentRoom"
 import { TileLayers } from "./tileLayers"
 import { regionBarrierCovers } from "@/game/regionBarrierCover"
 import { RegionBarrierCovers } from "./RegionBarrierCovers"
@@ -1222,7 +1223,15 @@ export const SiteMapView = ({
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
   const claims = useMemo(() => buildRoomClaims(grid), [grid])
   const tier = useMemo(() => floorTier(grid), [grid])
-  const regions = useMemo(() => tileRegionsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
+  const torchPlace = useMemo(
+    () => new Set(explorerPos ? litPlaceCells(grid, claims, explorerPos) : []),
+    [grid, claims, explorerPos]
+  )
+  // The place the explorer stands is drawn as current rather than done — see `drawnAsCurrent`.
+  const regions = useMemo(
+    () => tileRegionsFor(drawnAsCurrent(grid, torchPlace), claims, ownedKeys),
+    [grid, torchPlace, claims, ownedKeys]
+  )
   const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   // Reckoned from where the explorer stands: the water is what he cannot walk into from there.
   const coverFrom = explorerPos ?? grid.entrancePos
@@ -1503,10 +1512,6 @@ export const SiteMapView = ({
     () => beamShafts(grid, claims, mood.beam ?? 0, grid.siteId, daylight),
     [grid, claims, mood.beam, daylight]
   )
-  const torchPlace = useMemo(
-    () => new Set(explorerPos ? litPlaceCells(grid, claims, explorerPos) : []),
-    [grid, claims, explorerPos]
-  )
   // What is strewn on this floor. A function of the floor's shape and its id, so it never moves.
   const scatter = useMemo(() => scatterFor(grid, claims), [grid, claims])
   const drifts = useMemo(() => driftsFor(grid, tier), [grid, tier])
@@ -1701,7 +1706,14 @@ export const SiteMapView = ({
               strength={lampStrength(daylight) * tierPalette[tier].lamp}
             />
             {/* And the rooms daylight is already falling into, lamp or no lamp. */}
-            <BeamLight grid={grid} claims={claims} shafts={shafts} torchPlace={torchPlace} daylight={daylight} />
+            <BeamLight
+              grid={grid}
+              claims={claims}
+              shafts={shafts}
+              torchPlace={torchPlace}
+              daylight={daylight}
+              share={tierPalette[tier].lamp}
+            />
 
             {/* THE MARKERS: an icon per cell, each in a little `<svg>` of its own — a shape per kind, a
                 colour per state, key badges on the rim. Over the stone, under everything standing on it,
@@ -1964,12 +1976,20 @@ export const SiteMapView = ({
                 shafts={shafts}
                 torchPlace={torchPlace}
                 daylight={daylight}
+                share={tierPalette[tier].lamp}
                 headroom
               />
 
               {/* The cones after every light: a shaft of dust is between the eye and the room, so it stands in
                 front of the statue it falls on rather than behind it. */}
-              <BeamShafts grid={grid} claims={claims} shafts={shafts} siteId={grid.siteId} floorRects={floorRects} />
+              <BeamShafts
+                grid={grid}
+                claims={claims}
+                shafts={shafts}
+                siteId={grid.siteId}
+                floorRects={floorRects}
+                share={tierPalette[tier].lamp}
+              />
 
               {/* AFTER THE LIGHT AND THE SHADE, and last of everything: the prompt is a thing the player
                   taps rather than a thing in the room, so neither pass may dim it and nothing standing

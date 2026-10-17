@@ -23,7 +23,7 @@ export type TierPalette = {
   wallBase: string
   /** The wash lying over everything the lamp does not reach — the tier's own night, hue and all.
    *
-   * It is the tier's own near-black (`outline`) at an alpha of 0.2 or less: a wash is a scale plus an
+   * It is the tier's own near-black (`outline`) at a light alpha: a wash is a scale plus an
    * added colour (`art × (1−a) + wash × a`), and a heavy one flattens the art's own modelling and drags
    * its hue toward the wash, so the night stays the lightest hand on the map and the rank keeps its own
    * hue. `yarn rank-colour` measures the result per rank and solves `faceNight` for it. */
@@ -48,8 +48,8 @@ export type TierPalette = {
 
 export const tierPalette: Record<Difficulty, TierPalette> = {
   // A merchant's storehouse: pale warm limestone underfoot, red ochre and turquoise as its colour
-  // (docs/game-design/visual-direction.md). The floor tokens are the repainted floor's; the wall tokens
-  // are the wall face's, and move with its repaint.
+  // (docs/game-design/visual-direction.md). The floor and wall tokens are the repainted floor's and wall face's;
+  // the prop tokens move with the props' repaint.
   starter: {
     bed: "#bfae8c",
     slab: "#d8c8a8",
@@ -57,12 +57,12 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     slabLo: "#cbb995",
     joint: "#8a7656",
     accent: METALS.starter.accent,
-    wall: "#4a4137",
-    wallTop: "#736858",
-    wallBase: "#2b261f",
+    wall: "#b49d74",
+    wallTop: "#e6d9bd",
+    wallBase: "#3d2e20",
     // The night is the lightest hand on the map, as master's is: rooms are lit and the torch is an
     // accent (docs/game-design/visual-direction.md). Its colour is the rank's own near-black.
-    shade: "rgba(21,17,12,0.2)",
+    shade: "rgba(21,17,12,0.3)",
     faceNight: 0,
     lamp: 0.3,
     prop: "#a49781",
