@@ -12,6 +12,7 @@ import { ARCH_H, ARCH_RISE, CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop 
 import { ALL_STATES } from "./tileRegions"
 import { MAX_ZOOM, MIN_ZOOM } from "./useMapZoom"
 import { tierPalette } from "./tileMaterials"
+import type { Difficulty } from "@/data/difficultyLevels"
 import type {
   CellState,
   DecorationKind,
@@ -30,7 +31,7 @@ import { cellAddress } from "@/game/cellAddress"
 import { AXES, DROP_AT, dropGrid, obstacleIndexes } from "./floorFixtures.testing"
 import { CHAMBER_SCALE, GROWTH_POOLS, growthTile } from "./moodSettings"
 import { sharedTileUrl } from "./tileAssets"
-import { STANDING_RELIEF } from "./lighting"
+import { STANDING_RELIEF, lampStrength } from "./lighting"
 
 // Cell positions come from mapScale's own geometry (the pitch is stretched to give every wall a
 // place of its own), so a change there can't silently break every position assumption in this file.
@@ -1090,6 +1091,17 @@ describe("SiteMapView — the shade the lamp is read against", () => {
     expect(depthOf(container, full)).toBeLessThan(depthOf(container, marker))
     expect(depthOf(container, second)).toBeGreaterThan(depthOf(container, marker))
     expect(Number(second.style.opacity)).toBeLessThan(1)
+  })
+
+  it("burns each rank's lamp at that rank's own share, so a lit room is not bleached by it", () => {
+    const litStrength = (difficulty: Difficulty) => {
+      const { container } = render(<SiteMapView grid={{ ...twoRooms(), difficulty }} explorerPos={[0, 0]} />)
+      const lit = container.querySelector<HTMLElement>("[data-torch='lit']")!
+      return Number(lit.style.getPropertyValue("--map-lit-strength"))
+    }
+
+    expect(litStrength("starter")).toBeCloseTo(lampStrength() * tierPalette.starter.lamp, 5)
+    expect(litStrength("expert")).toBeCloseTo(lampStrength() * tierPalette.expert.lamp, 5)
   })
 
   it("draws the lit place over the shade, or the lamp would be washed out by it", () => {

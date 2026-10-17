@@ -1694,7 +1694,7 @@ export const SiteMapView = ({
             {/* The dark, and then the light in it: the place the explorer is standing is the hole the
               lamp burns in the shade, so it has to be laid over the shade rather than under it. */}
             <FloorShade tier={tier} strength={floorNight(daylight)} />
-            <LitPlaces grid={grid} claims={claims} at={explorerPos} strength={lampStrength(daylight)} />
+            <LitPlaces grid={grid} claims={claims} at={explorerPos} strength={lampStrength(daylight) * tierPalette[tier].lamp} />
             {/* And the rooms daylight is already falling into, lamp or no lamp. */}
             <BeamLight grid={grid} claims={claims} shafts={shafts} torchPlace={torchPlace} daylight={daylight} />
 
@@ -1950,7 +1950,7 @@ export const SiteMapView = ({
                 grid={grid}
                 claims={claims}
                 at={explorerPos}
-                strength={lampStandingStrength(daylight)}
+                strength={lampStandingStrength(daylight) * tierPalette[tier].lamp}
                 headroom
               />
               <BeamLight

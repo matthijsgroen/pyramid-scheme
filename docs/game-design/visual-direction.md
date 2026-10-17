@@ -106,6 +106,8 @@ legible:
 ## Light and the map code
 
 - **Night washes** fall to 0.2 or less at every rank (`tierPalette[tier].shade`).
+- **The lamp** burns at each rank's own share (`tierPalette[tier].lamp`): a lamp lifts a dark room into
+  view and only bleaches a lit one, so a rank that is lit burns it low — starter at 0.3 of the full lamp.
 - **Shafts** are re-solved so the patch of sun lands above the new floor. The numbers in `lighting.ts`
   (ray L\* 65.5, sun 70.1) are measured on the lit starter floor, over an unlit floor of about L\* 35.
 - **The click marker** stays one gold fill in a dark ring at every rank (`markerColours.ts`): the ring already makes one shape read on light and dark stone. `yarn rank-colour` holds it to 3:1 against every floor.

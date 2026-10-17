@@ -36,6 +36,10 @@ export type TierPalette = {
    * `yarn rank-colour`, since it is the RENDERED step the player sees; 0 where the art already steps
    * that far. */
   faceNight: number
+  /** How much of the full lamp (`LIT_STRENGTH`) this rank's torch burns at, 0–1. A lamp lifts a dark
+   * room into view; in a rank whose night is already light it only bleaches the stone, so a lit rank
+   * burns it low and the torch stays an accent (docs/game-design/visual-direction.md). */
+  lamp: number
   /** freestanding props, and the near-black they are outlined in */
   prop: string
   propDark: string
@@ -43,19 +47,15 @@ export type TierPalette = {
 }
 
 export const tierPalette: Record<Difficulty, TierPalette> = {
-  // A merchant's cellar is DARK: mudbrick and limestone chips, lit by the stair and a wick, not a
-  // gallery of pale dressed stone. Grey-brown rather than blue-grey, and deliberately not more ochre than
-  // junior — junior's sandstone has to read as the step UP in wealth, so the first rank stays neutral.
-  // Settled with `yarn generate-dummy-tiles --palettes`: of the candidates it was the one that kept the
-  // gold click marker legible (4.31 against the floor, where the pale grey managed 1.78), kept props
-  // separate from the ground they stand on (2.08 against 1.29), and still held its wall FACE apart from
-  // the floor (1.68 — better than any rank shipping before it).
+  // A merchant's storehouse: pale warm limestone underfoot, red ochre and turquoise as its colour
+  // (docs/game-design/visual-direction.md). The floor tokens are the repainted floor's; the wall tokens
+  // are the wall face's, and move with its repaint.
   starter: {
-    bed: "#544b40",
-    slab: "#6c6257",
-    slabHi: "#7b7166",
-    slabLo: "#5f564b",
-    joint: "#282219",
+    bed: "#bfae8c",
+    slab: "#d8c8a8",
+    slabHi: "#e4d6b8",
+    slabLo: "#cbb995",
+    joint: "#8a7656",
     accent: METALS.starter.accent,
     wall: "#4a4137",
     wallTop: "#736858",
@@ -64,6 +64,7 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     // accent (docs/game-design/visual-direction.md). Its colour is the rank's own near-black.
     shade: "rgba(21,17,12,0.2)",
     faceNight: 0,
+    lamp: 0.3,
     prop: "#a49781",
     propDark: "#5c5347",
     outline: "#15110c",
@@ -82,6 +83,7 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     // in the game, and the highest alpha, because its slabs are also the palest.
     shade: "rgba(36,23,8,0.66)",
     faceNight: 0.14,
+    lamp: 1,
     prop: "#e0c193",
     propDark: "#9c7442",
     outline: "#241708",
@@ -101,6 +103,7 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     // from rather than a wash borrowed from another rank.
     shade: "rgba(23,28,34,0.63)",
     faceNight: 0.31,
+    lamp: 1,
     prop: "#a7b2be",
     propDark: "#69737f",
     outline: "#171c22",
@@ -119,6 +122,7 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     // most of the way to black before any night falls on them, so this is the lightest hand of the five.
     shade: "rgba(20,18,16,0.18)",
     faceNight: 0.17,
+    lamp: 1,
     prop: "#d9a93f",
     propDark: "#8a6a24",
     outline: "#141210",
@@ -136,6 +140,7 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     // Verdigris and standing water. Not the absence of a lamp — the colour the place already is.
     shade: "rgba(15,35,29,0.61)",
     faceNight: 0.45,
+    lamp: 1,
     prop: "#8fd9bd",
     propDark: "#3f7563",
     outline: "#0f231d",

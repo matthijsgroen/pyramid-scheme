@@ -73,8 +73,10 @@ meshscaffold() {
 #
 # The flags are the docs' per-slot recipe (tile-art-brief, "The loop"), which is what those numbers were
 # always meant to be.
+# The floor is the vivid starter's (docs/game-design/visual-direction.md): its master is already seamless,
+# and it needs no --flatten — its own values land on the palette.
 yarn import-tile art/masters/surfaces/starter-floor.webp --tier=starter --name=floor --slot=floor \
-  --filter=smooth --key=none --repeat=2.4 --flatten=0.65
+  --filter=smooth --key=none --repeat=2.4
 yarn import-tile art/masters/surfaces/starter-wall-face.webp --tier=starter --name=wall-face --slot=face \
   --filter=smooth --key=none --headroom=0.14 --repeat=2
 yarn import-tile art/masters/surfaces/starter-threshold.webp --tier=starter --name=threshold --slot=sill \
