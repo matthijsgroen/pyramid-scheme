@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 269173869
+export const worldContentHash = 1811009698
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -12072,8 +12072,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           6: "sumplete",
           7: "twin-stars",
         },
-        packing: 0.22,
-        seed: 3815879145,
+        packing: 0.16,
+        seed: 4081382388249045,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p14", pieceIndex: 1 },
         rewards: [
           { type: "consumable", consumable: "trapTool" },
@@ -12085,6 +12085,76 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           undefined,
           undefined,
         ],
+        locks: [
+          {
+            lock: {
+              name: "weighingOfTheHeart",
+              regions: {
+                in: { takes: "free" },
+                court: { takes: "free" },
+                west: { takes: "free" },
+                crypt: { takes: "free" },
+                east: { takes: "free" },
+                sanctum: { takes: "free" },
+                out: { takes: "free" },
+                sunrise: { takes: "free" },
+                zenith: { takes: "free" },
+                sunset: { takes: "free" },
+              },
+              connections: [
+                ["in", "court"],
+                { between: ["court", "west"], barriers: ["court-west"] },
+                { between: ["court", "crypt"], barriers: ["court-crypt"] },
+                { between: ["crypt", "west"], barriers: ["crypt-west"] },
+                { between: ["court", "east"], barriers: ["court-east"] },
+                ["crypt", "sanctum"],
+                { between: ["sanctum", "out"], barriers: ["sanctum-out", "sanctum-out#2", "sanctum-out#3"] },
+                ["east", "sunrise"],
+                ["crypt", "zenith"],
+                ["west", "sunset"],
+              ],
+              gates: {
+                "court-west": { from: "court", to: "west", owners: ["feather"] },
+                "court-crypt": { from: "court", to: "crypt", owners: ["unladen"] },
+                "crypt-west": { from: "crypt", to: "west", owners: ["unladen"] },
+                "court-east": { from: "court", to: "east", owners: ["Ra"] },
+                "sanctum-out": { from: "sanctum", to: "out", owners: ["Ra"] },
+                "sanctum-out#2": { from: "sanctum", to: "out", owners: ["heart"] },
+                "sanctum-out#3": { from: "sanctum", to: "out", owners: ["Sun"] },
+              },
+              mechanics: {
+                Ra: {
+                  control: "toggle",
+                  in: "crypt",
+                  starts: "dawn",
+                  opens: { dawn: ["sanctum-out"], dusk: ["court-east"] },
+                },
+                Sun: {
+                  control: "sequence",
+                  steps: [{ in: "sunrise" }, { in: "zenith" }, { in: "sunset" }],
+                  resetAt: "sanctum-out#3",
+                  opens: { done: ["sanctum-out#3"] },
+                },
+              },
+              weights: {
+                plates: {
+                  feather: { in: "west", stone: true, opens: { weighted: ["court-west"], empty: [] } },
+                  heart: { in: "east", stone: false, opens: { weighted: ["sanctum-out#2"], empty: [] } },
+                },
+                pipes: { canopic: { ends: ["west", "east"] } },
+              },
+              in: "in",
+              out: "out",
+            },
+          },
+        ],
+        realisations: {
+          toggle: "handle",
+          sequence: "pressure-plate",
+          weights: "stonePlate",
+          pipe: "stonePipe",
+          unladen: "narrowPassage",
+        },
       },
       {
         pathPuzzles: 8,
