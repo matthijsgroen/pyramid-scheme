@@ -367,6 +367,8 @@ export type FloorGrid = {
   /** The locks nested in a region of another, as the floor's `locks` placed them; absent on a floor with none.
    * The walk reads it to take each nested lock as one place of its host (game/floorLockWalk.ts). */
   readonly lockNesting?: readonly LockNesting[]
+  /** The floor's `webMarks`, carried where its web doors are laid: what a door's face draws a web key's mark with. */
+  readonly webMarks?: Readonly<Record<string, number>>
 }
 
 /** THE TWO SIDES A LEVER HANGS ON, and the whole of its state vocabulary. The assembler tags each
@@ -631,6 +633,9 @@ export type FloorConfig = {
    * finished carve, so they move no wall, and left off it where no registered mod realises web sand. Placed by the
    * bake from the tier's web (docs/instructions/sand-pyramid.md). */
   webDoors?: WebDoorPlacement[]
+  /** THE GLYPH EACH POT AND ACTIVATOR OF THE FLOOR'S WEB WEARS, by name, as the bake handed them out per web
+   * (`allocateWebMarks`, src/game/mark.ts): what the floor's web doors and gate faces draw their web marks with. */
+  webMarks?: Record<string, number>
   /** WHICH REALISATION EACH CONTROL KIND OF THE FLOOR'S LOCKS IS DRESSED AS, by kind (`region-barrier` for barred regions), as the build resolved
    * them (floor over pyramid over journey over difficulty) and baked. The runtime reads this and never resolves from the levels. */
   realisations?: RealisationBinding

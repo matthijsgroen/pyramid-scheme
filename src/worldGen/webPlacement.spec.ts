@@ -80,8 +80,18 @@ describe("a web placed on a world", () => {
       name: "sun",
       look: "lever",
       pots: ["w2p1"],
+      glyph: placement.resolved.marks.w2p1,
     })
     expect(placement.placement).toContain("web:w2p1#1 w2p1 f0 seam 1|2")
+  })
+
+  it("hands the floor its web's marks, so the door wears the glyph its lever wears", () => {
+    const { configs, placement } = placed("[w2p1]\nsand from 30%: 100% by sun\n[w1p1]\nlever sun @end")
+    const door = carve("wizard_2", 1, 0, configs.wizard_2[0][0])
+      .cells.flat()
+      .find(cell => cell.type === "room" && cell.requiredKeyId === potKey("w2p1", 1))
+    expect(configs.wizard_2[0][0].webMarks).toEqual(placement.resolved.marks)
+    expect(door?.type === "room" && door.mark?.glyph).toBe(placement.resolved.marks.w2p1)
   })
 
   it("refuses an activator in a slot that already holds a reward of its own", () => {

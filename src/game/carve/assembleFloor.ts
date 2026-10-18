@@ -55,6 +55,7 @@ export const assembleFloor = (
   if (mixed.length > 0) return { success: false, reasons: mixed }
   const floorRef = keyRequirements.floorRef ?? { journeyId: siteId, floorIndex: 0 }
   const gateTags = resolveEncounter(CARVE_FAMILY_QUERIES.keyGate, CARVE_FAMILY_QUERIES.keyGate).tags
-  const laid = layWebDoors(nested.grid, doors, gates, gateTags, id => gateKeyOf(floorRef, id))
+  const marked = authoredConfig.webMarks ? { ...nested.grid, webMarks: authoredConfig.webMarks } : nested.grid
+  const laid = layWebDoors(marked, doors, gates, gateTags, id => gateKeyOf(floorRef, id))
   return laid.ok ? { ...nested, grid: laid.grid } : { success: false, reasons: [laid.fault] }
 }

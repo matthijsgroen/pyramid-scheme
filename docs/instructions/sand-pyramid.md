@@ -291,6 +291,8 @@ half and so `star`. Six pulls, in whatever order the player came by them, clear 
 
 - **Two stops on one seam** (`stopsShareSeam`), `frontOnAnyGate`, `frontLeaks`, `potsOverlap`,
   `outsideTooMany`, and an unbound input or a binding naming no input.
+- **More marks than web glyphs** (`webMarksRunOut`): a web whose pots and named keys wear more marks than
+  `WEB_MARK_GLYPHS` holds (eight), since two of them would look alike.
 - **One sand kind per site.** On a pyramid where web sand lies, a floor lock's region barriers owned only by
   floor controls bind to water; a lock that binds them to sand there is refused.
 
@@ -441,6 +443,9 @@ A web door shows one marker per owner (`../mods/mechanic-contract.md` §3, a gat
 floor owners' floor marks and its web mark. A pot's doors all wear the pot's mark with the count they wait for;
 a named gate wears its activator's mark. Web marks come from a glyph set disjoint from `MARK_GLYPHS`, so two
 mechanics on one floor still never share a mark and `allocateMarks` (`src/game/mark.ts`) never sees a web key.
+The web hands its glyphs out itself, `allocateWebMarks`: every pot and named key it wears gets one of its own,
+by name in sorted order, so two pots, or a pot and a key, never look alike, and the same web gets the same
+marks on every bake. The bake writes them on the floors (`webMarks`) and on each activator (`glyph`).
 
 A `sand` line's doors are drawn as web sand, an `opens` line's as a web seal. A region buried by a front or by
 an input is web sand over the region, and conceals what was explored under it as every region barrier does.

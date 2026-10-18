@@ -16,6 +16,7 @@ const GROUPS: { ok: string; types: WebRefusalType[] }[] = [
       "placeTaken",
       "activatorBehindWard",
       "webTooLarge",
+      "webMarksRunOut",
     ],
   },
   {

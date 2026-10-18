@@ -304,7 +304,7 @@ export const layWebDoors = (
         ? {}
         : {
             webDoor: { realisation: webDoorRealisation(keys[0]) },
-            ...(keys.length === 1 ? { mark: webMarkFor(keys[0]) } : {}),
+            ...(keys.length === 1 ? { mark: webMarkFor(keys[0], grid.webMarks) } : {}),
           }),
       ...extra,
     } as RoomCell

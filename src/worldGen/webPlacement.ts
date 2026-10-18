@@ -17,7 +17,13 @@ import type { CarvedPyramid, ReadWorld } from "./webWorld"
 export type CarveFloor = (journeyId: string, levelNr: number, floorIndex: number, config: GameFloorConfig) => FloorGrid
 
 /** The reward a web activator stands as, from the mod that realises it. */
-export type WebActivatorReward = (activator: { name: string; look: WebLook; pots: string[] }) => TreasureReward
+export type WebActivatorReward = (activator: {
+  name: string
+  look: WebLook
+  pots: string[]
+  /** The glyph its web handed the mark it wears. */
+  glyph?: number
+}) => TreasureReward
 
 /** The web journeys of a world: `wizard_N` by N. */
 export const webJourneysOf = (configs: Record<string, SiteConfig[]>): [number, string][] =>
@@ -76,7 +82,7 @@ export const withoutWeb = (
       id,
       configs[id].map(site =>
         site.map(floor => {
-          const { webDoors: _doors, ...rest } = floor
+          const { webDoors: _doors, webMarks: _marks, ...rest } = floor
           return {
             ...rest,
             ...(floor.rewards ? { rewards: floor.rewards.map(keep) } : {}),
@@ -149,6 +155,7 @@ export const placeWeb = (
     if (!placed) continue
     const floor = floorOf(door.at, door.where.floor)
     floor.webDoors = [...(floor.webDoors ?? []), placed]
+    floor.webMarks = resolved.marks
   }
 
   // A lock's inputs: those a line binds, and the owners its stops add.
@@ -171,6 +178,7 @@ export const placeWeb = (
     const [, pyramid, floor, instance] = /^(w\d+p\d+) f(\d+) (.+)$/.exec(id)!
     const [, j, p] = /^w(\d+)p(\d+)$/.exec(pyramid)!
     const config = floorOf({ journey: Number(j), pyramid: Number(p) }, Number(floor))
+    config.webMarks = resolved.marks
     config.locks = (config.locks ?? []).map(placed =>
       (placed.as ?? placed.lock.name) === instance
         ? { ...placed, web: { inputs: entry.inputs, ...(entry.fronts.length > 0 ? { fronts: entry.fronts } : {}) } }
@@ -182,7 +190,8 @@ export const placeWeb = (
     if (!placed) continue
     const { activator, held } = placed
     const pots = resolved.pots.filter(pot => pot.levers.includes(activator.name)).map(pot => pot.name)
-    held.set(toReward({ name: activator.name, look: activator.look, pots }))
+    const worn = activator.look === "lever" ? (pots[0] ?? activator.name) : activator.name
+    held.set(toReward({ name: activator.name, look: activator.look, pots, glyph: resolved.marks[worn] }))
   }
 
   return { resolved, walked: walked!, placement: placementOf(resolved, read) }

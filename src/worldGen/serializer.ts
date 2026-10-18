@@ -197,6 +197,7 @@ const floorFieldEmitters: {
   locks: v => (v.length ? `locks: ${JSON.stringify(v)}` : null),
   realisations: v => `realisations: ${JSON.stringify(v)}`,
   webDoors: v => (v.length ? `webDoors: ${JSON.stringify(v)}` : null),
+  webMarks: v => (Object.keys(v).length ? `webMarks: ${JSON.stringify(v)}` : null),
   switches: v => `switches: ${serializeObject(v)}`,
 }
 
