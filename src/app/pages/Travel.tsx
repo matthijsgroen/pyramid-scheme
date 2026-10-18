@@ -44,7 +44,7 @@ export const TravelPage: FC<{
   // that has a matching unopened ward door (getUnexploredLevels re-checks against this).
   const heldKeys = useMergedHeldKeys()
   // Playtesting grants + the every-journey bypass below; rendered only in develop mode.
-  const devActions = useDevActions()
+  const devActions = useDevActions(startGame)
   // A completed journey (completionCount > 0) is in revisit/explore mode: selecting it from the grid
   // lands on the map (not the game) so the player picks which pyramid to re-enter.
   const isRevisit = (journeyId: string) => (getJourney(journeyId)?.completionCount ?? 0) > 0

@@ -134,6 +134,9 @@ export type JourneyAPI = {
   // PyramidExpedition before that leaves it seeded with the level the player just left.
   startJourney: (journey: Journey) => Promise<unknown>
   visitLevel: (journeyId: string, levelNr: number) => Promise<unknown>
+  /** Makes `journeyId` the active journey with site `levelNr`'s interior open and the explorer standing at
+   *  `address` (null: the entrance), starting the journey if it never was. A develop-mode jump. */
+  enterAt: (journeyId: string, levelNr: number, address: string | null) => Promise<unknown>
   nextJourneySeed: (journeyId: string) => number
   getJourney: (journeyId: string) => CombinedJourneyState | undefined
   completeJourney: () => void
@@ -219,6 +222,20 @@ const atLevelMap = (levelNr: number, entries: Record<string, string> | undefined
 // useOfflineStorage look like a different default to anything comparing by identity.
 const INITIAL_STORAGE_VERSIONS = { journeys: 3, inventory: 1, answers: 1 }
 const NO_JOURNEYS: StoredJourneyStateV3[] = []
+
+const freshJourney = (journeyId: string): StoredJourneyStateV3 => ({
+  journeyId,
+  levelNr: 1,
+  completionCount: 0,
+  active: true,
+  exploredSections: {},
+  position: null,
+  interiorLevelNr: null,
+  // Born current: a journey started under this release has never been keyed any other way.
+  cellKeyVersion: CELL_KEY_VERSION,
+  mechanismSlotVersion: MECHANISM_SLOT_VERSION,
+  relaidFloorsVersion: RELAID_FLOORS_VERSION,
+})
 
 export const useJourneys = (): JourneyAPI => {
   const [storageVersions, setStorageVersion, versionLoaded] = useGameStorage<{
@@ -323,21 +340,27 @@ export const createJourneysV3Api = ({
         )
       )
     }
-    const newJourney: StoredJourneyStateV3 = {
-      journeyId: journey.id,
-      levelNr: 1,
-      completionCount: 0,
-      active: true,
-      exploredSections: {},
-      position: null,
-      interiorLevelNr: null,
-      // Born current: a journey started under this release has never been keyed any other way.
-      cellKeyVersion: CELL_KEY_VERSION,
-      mechanismSlotVersion: MECHANISM_SLOT_VERSION,
-      relaidFloorsVersion: RELAID_FLOORS_VERSION,
-    }
-    return Promise.resolve(setJourneys(prev => [...prev, newJourney]))
+    return Promise.resolve(setJourneys(prev => [...prev, freshJourney(journey.id)]))
   }
+
+  const enterAt = (journeyId: string, levelNr: number, address: string | null) =>
+    Promise.resolve(
+      setJourneys(prev => {
+        const placed = (j: StoredJourneyStateV3): StoredJourneyStateV3 => ({
+          ...j,
+          active: true,
+          levelNr,
+          interiorLevelNr: levelNr,
+          position: null,
+          positionKey: address,
+          standingKey: address,
+        })
+        const others = prev.map(j =>
+          j.journeyId === journeyId ? placed(j) : j.active ? { ...j, active: false, interiorLevelNr: null } : j
+        )
+        return prev.some(j => j.journeyId === journeyId) ? others : [...others, placed(freshJourney(journeyId))]
+      })
+    )
 
   const completeJourney = () => {
     if (!activeJourneyId) return
@@ -796,6 +819,7 @@ export const createJourneysV3Api = ({
     nextJourneySeed,
     startJourney,
     visitLevel,
+    enterAt,
     completeJourney,
     cancelJourney,
     completeLevel,

@@ -16,3 +16,22 @@ export const useMergedDevGrants = (): readonly DevGrant[] => {
   }
   return lists.flat()
 }
+
+// What a mod hands the dev menu to stand the explorer somewhere. Never part of "Unlock everything": a
+// jump resolves once the save says where the explorer is, and the menu then opens the expedition.
+export type DevJump = { label: string; jump: () => Promise<unknown> }
+
+export type UseDevJumps = () => readonly DevJump[]
+
+const jumpRegistry: UseDevJumps[] = []
+
+export const registerDevJumps = (useJumps: UseDevJumps) => jumpRegistry.push(useJumps)
+
+export const useMergedDevJumps = (): readonly DevJump[] => {
+  const lists: (readonly DevJump[])[] = []
+  for (const useJumps of jumpRegistry) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks -- fixed registry order, set once at module load
+    lists.push(useJumps())
+  }
+  return lists.flat()
+}

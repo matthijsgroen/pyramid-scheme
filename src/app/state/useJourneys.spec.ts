@@ -216,6 +216,7 @@ describe("standingKey clears wherever positionKey does", () => {
       [
         "completeJourney",
         "completeLevel",
+        "enterAt",
         "setCarveIndependentState",
         "setRelaidFloors",
         "setRepairedExploration",
@@ -923,5 +924,40 @@ describe("a save holding a journey the build no longer has", () => {
     const api = makeApi([gone, makeStoredJourney({ journeyId: REAL_ID, active: false })])
     expect(api.activeJourneyId).toBeUndefined()
     expect(api.getJourney(REAL_ID)).toBeDefined()
+  })
+})
+
+// ── enterAt ───────────────────────────────────────────────────────────────────
+
+describe("enterAt", () => {
+  const run = (journeys: StoredJourneyStateV3[], ...args: Parameters<ReturnType<typeof makeApi>["enterAt"]>) => {
+    let state = journeys
+    createJourneysV3Api({
+      journeys,
+      setJourneys: updater => {
+        state = typeof updater === "function" ? updater(state) : updater
+      },
+      journeyData: [makeJourneyData(REAL_ID)],
+    }).enterAt(...args)
+    return state
+  }
+
+  it("opens the site's interior with the explorer standing at the address", () => {
+    const [placed] = run([makeStoredJourney({ active: false })], REAL_ID, 2, "main#0/p2")
+
+    expect(placed).toMatchObject({
+      active: true,
+      levelNr: 2,
+      interiorLevelNr: 2,
+      positionKey: "main#0/p2",
+      standingKey: "main#0/p2",
+    })
+  })
+
+  it("starts a journey that never was, and puts the active one down", () => {
+    const state = run([makeStoredJourney({ journeyId: "other", interiorLevelNr: 1 })], REAL_ID, 1, null)
+
+    expect(state.find(j => j.journeyId === "other")).toMatchObject({ active: false, interiorLevelNr: null })
+    expect(state.find(j => j.journeyId === REAL_ID)).toMatchObject({ active: true, levelNr: 1, positionKey: null })
   })
 })
