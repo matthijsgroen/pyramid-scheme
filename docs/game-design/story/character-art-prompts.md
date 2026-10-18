@@ -191,11 +191,11 @@ So they are named, and the script prints every patch it left opaque after each r
 to look. Pass the ones that are not eyes:
 
 ```
-yarn import-portrait art/masters/characters/explorer.jpeg --name=explorer --bust=0.55 \
+yarn import-portrait art/masters/characters/explorer.jpeg --name=explorer --bust=0.55 --centre=1160 \
   --holes="574,1299;631,1503;1242,1025;646,1062;748,642"
-yarn import-portrait art/masters/characters/grin-explorer.jpeg --name=grin-explorer --bust=0.55 \
+yarn import-portrait art/masters/characters/grin-explorer.jpeg --name=grin-explorer --bust=0.55 --centre=1160 \
   --holes="582,1329;1243,1026;646,1061;929,599;749,642"
-yarn import-portrait art/masters/characters/point-explorer.jpeg --name=point-explorer --bust=0.55 --centre=1065 \
+yarn import-portrait art/masters/characters/point-explorer.jpeg --name=point-explorer --bust=0.55 --centre=1085 \
   --holes="586,1330;649,1059;753,638"
 yarn import-portrait art/masters/characters/ghost-ipi.jpeg     --name=ghost-ipi     --bust=0.55
 yarn import-portrait art/masters/characters/ghost-henut.jpeg   --name=ghost-henut   --bust=0.55
@@ -224,10 +224,12 @@ by way of the reed pen and tablet, Henut is mid-gesture, and the pointing pose e
 **A bust is framed on the head and sized by its height**, which is the opposite of what a full figure gets.
 Fit a band by its width and the scale depends on how far the arms happen to reach — the explorer holds a
 map out at arm's length, so fitted that way he came out smaller than every ghost. Framed on the head they
-all match, and the map clips at the frame edge, which costs less.
+all match.
 
-`--centre` is the exception and there is exactly one: the pointing pose's whole point is off to one side,
-so a window centred on the face cuts the finger off. It is named for that drawing, the way the holes are.
+`--centre` moves the window off the face where a drawing needs it, and only the explorer needs it. He is
+drawn mirrored on the right of a conversation, so his far side faces the middle of the screen: a map or a
+finger clipped there shows the cut mid-screen. His window is pushed towards the map and the raised finger,
+and the clip falls on the rope side, which ends at the screen edge. Named per drawing, the way the holes are.
 
 **The full-length versions are still what the journey card and the title want.** Same command without
 `--bust`.

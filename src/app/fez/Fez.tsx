@@ -24,7 +24,6 @@ const asExplorer = (chats: PoseChat[]): PoseChat[] => chats.map(([pose, key]) =>
 
 const conversations: Record<string, PoseChat[]> = {
   welcome: asExplorer(pose(["welcome", "welcome2", "welcome3"])),
-  chooseExpedition: asExplorer(pose(["chooseExpedition"])),
   pyramidIntro: pose(["pyramidIntro", "pyramidIntro2"], "pointUp", ["pyramidIntro3"]),
   levelCompleted: pose("pointUp", ["levelCompleted"]),
   expeditionCompleted: pose("glassesPoint", ["expeditionCompleted", "expeditionCompleted2"]),
@@ -160,6 +159,8 @@ export const Fez: FC<{
               // be pushed over: left-aligned in a right-anchored column, the explorer stood inboard
               // of the edge instead of opposite Fez, and the two of them did not face each other.
               speaker === "explorer" && "ml-auto",
+              // Every sprite is drawn facing right, which is towards the other speaker only from the left.
+              speaker === "explorer" && "-scale-x-100",
               // The dead are see-through. Drawn opaque and faded here rather than painted
               // translucent, so one sprite serves and the room shows through all of them equally.
               GHOSTS.includes(speaker) && "opacity-70",

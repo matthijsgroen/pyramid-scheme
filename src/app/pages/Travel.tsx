@@ -1,4 +1,4 @@
-import { use, useEffect, useMemo, useRef, useState, type FC } from "react"
+import { use, useMemo, useRef, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { Page } from "@/ui/atoms/Page"
 import { JourneyPathView } from "@/ui/atoms/JourneyPathView"
@@ -10,7 +10,8 @@ import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { useJourneyTranslations, type TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { DifficultyPill } from "@/ui/atoms/DifficultyPill"
-import { FezContext } from "../fez/context"
+import { TapHint } from "@/ui/atoms/TapHint"
+import { useTapHint } from "@/app/state/useTapHint"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import { DevPanel } from "@/ui/molecules/DevPanel"
@@ -54,21 +55,16 @@ export const TravelPage: FC<{
   // holding something of theirs the player already found.
   const journeyFacts = useMergedJourneyContributions()
   const setOff = useJourneyArrival()
+  const [mapHint, mapTapped] = useTapHint("travelMap")
+  const [journeyHint, journeyTapped] = useTapHint("firstJourney")
   const [showJourneySelection, setShowJourneySelection] = useState(false)
   const [selectedJourney, setSelectedJourney] = useState<TranslatedJourney | null>(null)
   const [showInterruptModal, setShowInterruptModal] = useState(false)
   const journeyId = activeJourneyId ?? selectedJourney?.id
   const activeJourneyInfo = journeyId ? getJourney(journeyId) : undefined
 
-  const { showConversation } = use(FezContext)
   const { isDevelopMode } = use(DevelopContext)
   const shopTombJourney = journeys.find(j => j.id === "junior_treasure_tomb")
-
-  useEffect(() => {
-    if (showJourneySelection) {
-      showConversation("chooseExpedition")
-    }
-  }, [showJourneySelection, showConversation])
 
   const journey = activeJourneyInfo?.journey ?? selectedJourney
   // Nodes on this journey's map: one per site, so a tomb (one site, however many floors) has one.
@@ -79,6 +75,7 @@ export const TravelPage: FC<{
   const pathLevelNr = revisiting && journey ? effectiveLevelCount + 1 : (activeJourneyInfo?.levelNr ?? 1)
 
   const handleMapClick = async () => {
+    mapTapped()
     if (revisiting && journey) {
       // Tapping the map background (not a node) re-enters the last-picked pyramid, re-solving its
       // exterior board (visitLevel clears the interior).
@@ -96,6 +93,7 @@ export const TravelPage: FC<{
   }
 
   const handleJourneySelect = async (journey: TranslatedJourney) => {
+    journeyTapped()
     if (isRevisit(journey.id)) {
       // Don't jump in — return to the map with the journey loaded so the player picks a pyramid.
       setSelectedJourney(journey)
@@ -153,6 +151,9 @@ export const TravelPage: FC<{
     () => journeys.filter(j => availableJourneyIds.has(j.id)).at(-1)?.id,
     [journeys, availableJourneyIds]
   )
+
+  // The first card in the list: the one the hand points at before the player has picked any journey.
+  const firstPickableId = journeys.find(j => availableJourneyIds.has(j.id) && !journeyFacts.hidden(j.id))?.id
 
   // A lock the player has started but not finished is worth a nudge back onto the map.
   const hasPendingLockProgress = journeys.some(j => {
@@ -219,26 +220,28 @@ export const TravelPage: FC<{
                 </>
               )}
               {!journey && <p className="mb-4 text-center">{t("ui.startAdventure")}</p>}
-              <JourneyPathView
-                onClick={handleMapClick}
-                onNodeClick={journey ? handleNodeClick : undefined}
-                inJourney={!!journey}
-                levelCount={effectiveLevelCount}
-                levelNr={pathLevelNr}
-                journeyLength={journey?.journeyLength ?? "long"}
-                exterior={journey?.exterior ?? "pyramid"}
-                label={
-                  revisiting
-                    ? journey?.exterior === "tomb"
-                      ? t("ui.revisitTomb")
-                      : t("ui.revisitExpedition")
-                    : activeJourneyInfo?.inProgress
-                      ? t("ui.continueExpedition")
-                      : t("ui.planExpedition")
-                }
-                nudge={!journey && hasPendingLockProgress}
-                unexploredNodes={mapUnexploredNodes}
-              />
+              <TapHint show={mapHint && !journey}>
+                <JourneyPathView
+                  onClick={handleMapClick}
+                  onNodeClick={journey ? handleNodeClick : undefined}
+                  inJourney={!!journey}
+                  levelCount={effectiveLevelCount}
+                  levelNr={pathLevelNr}
+                  journeyLength={journey?.journeyLength ?? "long"}
+                  exterior={journey?.exterior ?? "pyramid"}
+                  label={
+                    revisiting
+                      ? journey?.exterior === "tomb"
+                        ? t("ui.revisitTomb")
+                        : t("ui.revisitExpedition")
+                      : activeJourneyInfo?.inProgress
+                        ? t("ui.continueExpedition")
+                        : t("ui.planExpedition")
+                  }
+                  nudge={!journey && hasPendingLockProgress}
+                  unexploredNodes={mapUnexploredNodes}
+                />
+              </TapHint>
               {revisiting && (
                 <div className="mt-4 text-center text-sm">
                   {t("ui.or")}{" "}
@@ -317,30 +320,33 @@ export const TravelPage: FC<{
                   )
                 }
                 return (
-                  <JourneyCard
-                    key={journey.id}
-                    showDetails={journey.id === newestAvailableId}
-                    journey={journey}
-                    disabled={false}
-                    completionCount={completionCount}
-                    progressLevelNr={journeyInfo?.inProgress ? progressLevelNr : undefined}
-                    index={index}
-                    showAnimation={showJourneySelection}
-                    mark={mark}
-                    hasUnexploredCorridors={
-                      corridorDetectorLevel >= 4 && getOutstandingHiddenCorridorCount(journey.id) > 0
-                    }
-                    hasReachableUnexplored={completionCount > 0 && getUnexploredLevels(journey.id, heldKeys).size > 0}
-                    lang={i18n.language}
-                    labels={{
-                      progressLevel: t("ui.progressLevel"),
-                    }}
-                    onClick={() => handleJourneySelect(journey)}
-                  >
-                    {journeyInfo
-                      ? journeyCardSlots().map(({ id, Component }) => <Component key={id} journeyInfo={journeyInfo} />)
-                      : null}
-                  </JourneyCard>
+                  <TapHint key={journey.id} show={journeyHint && journey.id === firstPickableId}>
+                    <JourneyCard
+                      showDetails={journey.id === newestAvailableId}
+                      journey={journey}
+                      disabled={false}
+                      completionCount={completionCount}
+                      progressLevelNr={journeyInfo?.inProgress ? progressLevelNr : undefined}
+                      index={index}
+                      showAnimation={showJourneySelection}
+                      mark={mark}
+                      hasUnexploredCorridors={
+                        corridorDetectorLevel >= 4 && getOutstandingHiddenCorridorCount(journey.id) > 0
+                      }
+                      hasReachableUnexplored={completionCount > 0 && getUnexploredLevels(journey.id, heldKeys).size > 0}
+                      lang={i18n.language}
+                      labels={{
+                        progressLevel: t("ui.progressLevel"),
+                      }}
+                      onClick={() => handleJourneySelect(journey)}
+                    >
+                      {journeyInfo
+                        ? journeyCardSlots().map(({ id, Component }) => (
+                            <Component key={id} journeyInfo={journeyInfo} />
+                          ))
+                        : null}
+                    </JourneyCard>
+                  </TapHint>
                 )
               })}
               {comingSoonTier && (

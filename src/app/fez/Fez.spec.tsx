@@ -31,3 +31,17 @@ describe("who slides in", () => {
     expect(document.querySelector(".opacity-0")).toBeTruthy()
   })
 })
+
+describe("facing", () => {
+  it("mirrors the explorer on the right, so he faces the speaker on the left", () => {
+    render(<Fez conversation="arrival.starter_1" onComplete={() => {}} />)
+
+    expect(screen.getByRole("img").classList).toContain("-scale-x-100")
+  })
+
+  it("draws Fez as painted, already facing right from the left side", () => {
+    render(<Fez conversation="levelCompleted" onComplete={() => {}} />)
+
+    expect(screen.getByRole("img").classList).not.toContain("-scale-x-100")
+  })
+})

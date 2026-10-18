@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- A tapping hand shows where to start on the travel screen, and in a conversation the explorer faces whoever he talks to.
 - A stone pipe in the walls carries a stone where you cannot: post it at one hole and take it out of the other.
 - A procession door: its tiles free the bars of a procession board, and solving it teaches the order to walk.
 - A junior pyramid's fork now has a mirror puzzle standing in it, and the way that stands open is the one you route the beam to. Change your mind and the other way opens as that one shuts. The fork and its doors wear one mark on the map.
