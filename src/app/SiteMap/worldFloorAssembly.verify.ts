@@ -225,6 +225,14 @@ describe("what a world-spec setting may and may not move", () => {
         }),
     ],
     [
+      "the activity a room is dressed for",
+      c =>
+        edited(c, n => {
+          if (n.decorations) n.decorations = ["scale", "basketStack", "scribeDesk"]
+          if (n.wallDecorations) n.wallDecorations = ["tallyBoard"]
+        }),
+    ],
+    [
       "the skin and the role a room was drawn for",
       c =>
         edited(c, n => {

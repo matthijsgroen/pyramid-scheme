@@ -508,7 +508,7 @@ export type SubSection = {
    * selectors (docs/mods/ARCHITECTURE.md ("Authoring: node selectors")). Room k uses `encountersByIndex[k] ?? encounter`;
    * at runtime the values are resolved family ids. */
   encountersByIndex?: Record<number, string | string[]>
-  /** Pool of decoration kinds available to this section's fork/endpoint rooms. */
+  /** Pool of decoration kinds this section's rooms are dressed from. */
   decorations?: DecorationKind[]
   /** Pool of wall-item kinds for the same rooms, hung on a wall instead of standing on the floor. */
   wallDecorations?: WallDecorationKind[]
@@ -542,7 +542,7 @@ export type FloorConfig = {
   /** If set, the entrance room becomes an up-stairhead with this stairId. */
   entrance?: "stairhead" | { stairId: string }
   sideSections: SideSection[]
-  /** Pool of decoration kinds available to the main path's fork/endpoint rooms. */
+  /** Pool of decoration kinds the main path's rooms are dressed from. */
   decorations?: DecorationKind[]
   /** Pool of wall-item kinds for the same rooms, hung on a wall instead of standing on the floor. */
   wallDecorations?: WallDecorationKind[]

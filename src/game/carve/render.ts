@@ -1,5 +1,6 @@
 import { hashString } from "@/support/hashString"
 import { oneWayRunCells } from "../carveConstants"
+import { activitiesFor } from "../activities"
 import { rolesOfProp, rolesOfWallItem } from "../dressingTags"
 import { footprintSize } from "../roomFootprint"
 import type {
@@ -18,7 +19,7 @@ import { edgeAllowed, forkPositions, rooms, routeStepOf } from "./derive"
 import { CONNECTOR_DIRS, OPPOSITE } from "./grid"
 import { switchMark } from "./ids"
 import { MAIN_SECTION_ADDRESS } from "./sections"
-import type { CarveState, FloorPrep } from "./state"
+import type { CarveState, FloorPrep, RoomSpec } from "./state"
 
 /** The five kinds a god can be DEPICTED on, as `tileAssets.ts`'s resolver reads them: a patron reaches the map
  * through these and nothing else. Copied rather than imported for the reason `artCensus.ts` gives — that module
@@ -64,7 +65,7 @@ const wallSuiting = (pool: WallDecorationKind[], prop: DecorationKind | undefine
 /**
  * THE GROUND, WRITTEN FROM WHAT THE PASSES DECIDED, every reserved junction still open. Every used node becomes
  * a room where a pass specced one and a corridor where none did, every allowed edge its connector, every drop
- * its launch, run and landing; then the entrance opens and the forks and dead ends are dressed. It decides
+ * its launch, run and landing; then the entrance opens and every room is dressed. It decides
  * nothing a pass could: what it reads back off the grid (a node's `dirs` for a drop's join and a room's
  * footprint for its dressing) is what it itself just wrote. The carve is checked against this view open.
  */
@@ -235,25 +236,36 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
   const entranceCell = cells2D[entR][entC]
   if (entranceCell.type === "room") cells2D[entR][entC] = { ...entranceCell, state: "reachable" }
 
-  // DRESSING: forks and dead-end rooms (treasure, shop, stairhead, exit — never the entrance) may show a prop and
-  // a wall item from their section's pools, picked by WHERE the room is so every kind in a pool gets used.
+  // DRESSING: ONE PURPOSE PER ROOM, by precedence — mechanism, then patron, then treasure or shop, then an
+  // activity. A mechanism's room and a treasure or shop room show nothing competing with what stands in them;
+  // every other room shows one activity its section's pool furnishes, prop and wall item both from it, or where
+  // the pool furnishes none, any prop of the pool. Every pick is hashed from WHERE the room is.
+  const switchesStanding = new Set(state.forks.reserved.slice(0, state.forks.switchesPlaced))
+  const isMechanism = (pk: string, spec: RoomSpec): boolean =>
+    state.switchRooms.has(pk) ||
+    state.forkSwitchRooms.has(pk) ||
+    switchesStanding.has(pk) ||
+    spec.mechanism !== undefined ||
+    spec.mechanismId !== undefined ||
+    spec.requiredKeyId !== undefined ||
+    spec.gateVariant !== undefined
+  const isTreasureLike = (spec: RoomSpec): boolean =>
+    spec.roomType === "encounter" && (spec.tags?.includes("treasure") === true || spec.tags?.includes("shop") === true)
+  const pickDressing = <T>(pool: readonly T[] | undefined, pk: string, salt: string): T | undefined =>
+    pool?.length ? pool[hashString(`${siteId}:${salt}:${pk}`) % pool.length] : undefined
+
+  // The rooms that claim floor around them on the map: junctions and dead-end treasure or shop rooms. Only these
+  // are big enough to show a god.
   const endpointPositions = new Set<string>()
   for (const [pk, spec] of roomSpecs) {
     const [r, c] = pk.split(",").map(Number)
-    const isTreasureLike =
-      spec.roomType === "encounter" && (spec.tags?.includes("treasure") || spec.tags?.includes("shop"))
-    const isPortalEndpoint = spec.roomType === "portal" && !(r === entR && c === entC)
-    if (!isTreasureLike && !isPortalEndpoint) continue
     const cell = cells2D[r][c]
-    if (cell.type === "room" && cell.dirs.size === 1) endpointPositions.add(pk)
+    if (isTreasureLike(spec) && cell.type === "room" && cell.dirs.size === 1) endpointPositions.add(pk)
   }
-  const pickDressing = <T>(pool: T[] | undefined, pk: string, salt: string): T | undefined =>
-    pool?.length ? pool[hashString(`${siteId}:${salt}:${pk}`) % pool.length] : undefined
-  const dressedPositions = [...new Set([...forks, ...endpointPositions])]
 
   // A DEDICATED FLOOR SHOWS ITS GOD AT LEAST ONCE, in the chamber it is organised around: a fork first, then the
   // biggest room by the floor it draws (`footprintSize`, the renderer's own claim rule), hash breaking ties. Never
-  // a portal, and only a room whose own pool can carry a patron.
+  // a portal or a mechanism's room, and only a room whose own pool can carry a patron.
   const patronRooms = new Set<string>()
   if (config.patron !== undefined && PATRON_PER_FLOOR > 0) {
     const claimGrid: FloorGrid = {
@@ -274,12 +286,13 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
       const cell = cells2D[r][c]
       return cell.type === "room" && cell.roomType === "fork"
     }
-    const eligible = dressedPositions
+    const eligible = [...new Set([...forks, ...endpointPositions])]
       .filter(pk => (labels.dressing.get(pk)?.props ?? []).some(k => PATRON_KINDS.has(k)))
       .filter(pk => {
+        const spec = roomSpecs.get(pk)
         const [r, c] = rowCol(pk)
         const cell = cells2D[r][c]
-        return cell.type === "room" && cell.roomType !== "portal"
+        return cell.type === "room" && cell.roomType !== "portal" && !(spec && isMechanism(pk, spec))
       })
       .sort(
         (a, b) =>
@@ -291,12 +304,19 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
     for (const pk of eligible.slice(0, PATRON_PER_FLOOR)) patronRooms.add(pk)
   }
 
-  for (const pk of dressedPositions) {
+  for (const [pk, spec] of roomSpecs) {
+    const isPatron = patronRooms.has(pk)
+    if (isMechanism(pk, spec) || (!isPatron && isTreasureLike(spec))) continue
     const pools = labels.dressing.get(pk)
+    const activity = isPatron ? undefined : pickDressing(activitiesFor(pools?.props ?? []), pk, "activity")
     // The god's room draws from the god-bearing kinds, a statue first where the pool has one.
     const patronProps = pools?.props?.filter(k => PATRON_KINDS.has(k))
     const godProps = patronProps?.includes("statue") ? (["statue"] as DecorationKind[]) : patronProps
-    const propPool = patronRooms.has(pk) ? godProps : pools?.props
+    const propPool = isPatron
+      ? godProps
+      : activity
+        ? pools?.props?.filter(k => activity.props.includes(k))
+        : pools?.props
     const picked = pickDressing(propPool, pk, "decoration")
     // No pit beside a way down: re-picked rather than filtered, so the pool's length moves no other room.
     const [r, c] = pk.split(",").map(Number)
@@ -310,20 +330,25 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
             "decoration:not-a-pit"
           )
         : picked
-    // The god's room takes a god's wall item too, which is how the renderer finds it.
-    const patronWall = patronRooms.has(pk) ? pools?.wall?.filter(k => PATRON_KINDS.has(k)) : undefined
-    const wallDecoration = pickDressing(
-      patronWall?.length ? patronWall : pools?.wall ? wallSuiting(pools.wall, decoration) : undefined,
-      pk,
-      "wallDecoration"
-    )
+    // The god's room takes a god's wall item too, which is how the renderer finds it. An activity hangs only its
+    // own wall items, and nothing where it has none.
+    const patronWall = isPatron ? pools?.wall?.filter(k => PATRON_KINDS.has(k)) : undefined
+    const wallPool = patronWall?.length
+      ? patronWall
+      : activity
+        ? pools?.wall?.filter(k => activity.wall.includes(k))
+        : pools?.wall
+          ? wallSuiting(pools.wall, decoration)
+          : undefined
+    const wallDecoration = pickDressing(wallPool, pk, "wallDecoration")
     if (!decoration && !wallDecoration) continue
     if (owner.type === "room")
       cells2D[r][c] = {
         ...owner,
         ...(decoration ? { decoration } : {}),
         ...(wallDecoration ? { wallDecoration } : {}),
-        ...(patronRooms.has(pk) && decoration ? { patronRoom: true } : {}),
+        ...(activity ? { activity: activity.id } : {}),
+        ...(isPatron && decoration ? { patronRoom: true } : {}),
       }
   }
 
