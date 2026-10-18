@@ -1,4 +1,5 @@
 import { floorLock, regionsOf } from "./floorLock"
+import type { FloorLockOptions } from "./floorLock"
 import {
   checkLockSpec,
   deadRegions,
@@ -236,6 +237,8 @@ const levelOf = (cut: Cut, node: Owner, nesting: FloorGrid["lockNesting"]): Lock
     .filter(({ mechanism }) => Object.hasOwn(mechanisms, mechanism))
     .map(({ mechanism, coveredBy }) => ({ mechanism, coveredBy: coveredBy.filter(gate => Object.hasOwn(gates, gate)) }))
   const crossings = (lock.crossings ?? []).filter(region => regions.has(region))
+  // An outside input arrives in every level whose gates name it.
+  const arrivals = (lock.arrivals ?? []).filter(({ mechanism }) => Object.hasOwn(mechanisms, mechanism))
   return {
     regions: lock.regions.filter(region => regions.has(region)),
     gates,
@@ -245,6 +248,7 @@ const levelOf = (cut: Cut, node: Owner, nesting: FloorGrid["lockNesting"]): Lock
     ...(emptyHands.length > 0 ? { emptyHands } : {}),
     ...(torches.length > 0 ? { torches } : {}),
     ...(crossings.length > 0 ? { crossings } : {}),
+    ...(arrivals.length > 0 ? { arrivals } : {}),
     in: port ?? lock.in,
     out: port ?? lock.out,
   }
@@ -391,13 +395,14 @@ const compose = (grid: FloorGrid, lock: LockSpec, maxStates = MAX_LOCK_STATES) =
 /**
  * THE FLOOR'S LOCK WALKED: sound only when every nested lock is free by itself and the floor's own level is sound
  * with each nested lock as ground. Without nesting it is `walkLock` over the whole lock, unchanged. `undefined`
- * when the floor has no mechanism. Takes the carved grid: the lock and its nesting are read off it, not handed in.
+ * when the floor has no mechanism and no web door. Takes the carved grid: the lock and its nesting are read off it,
+ * not handed in. `arriving` limits the web keys that may arrive (`floorLock`).
  */
 export const walkFloorLock = (
   grid: FloorGrid,
-  { maxStates = MAX_LOCK_STATES }: { maxStates?: number } = {}
+  { maxStates = MAX_LOCK_STATES, arriving }: { maxStates?: number } & FloorLockOptions = {}
 ): FloorWalkResult | undefined => {
-  const lock = floorLock(grid)
+  const lock = floorLock(grid, { arriving })
   if (!lock) return undefined
   if (!grid.lockNesting || grid.lockNesting.length === 0) return walkLock(lock, maxStates)
   const composed = compose(grid, lock, maxStates)
@@ -409,8 +414,8 @@ export const walkFloorLock = (
 }
 
 /** The regions no reachable state stands in, each level asked on its own; the whole lock's when nothing is nested. */
-export const deadFloorRegions = (grid: FloorGrid): RegionId[] => {
-  const lock = floorLock(grid)
+export const deadFloorRegions = (grid: FloorGrid, { arriving }: FloorLockOptions = {}): RegionId[] => {
+  const lock = floorLock(grid, { arriving })
   if (!lock) return []
   if (!grid.lockNesting || grid.lockNesting.length === 0) return deadRegions(lock)
   const composed = compose(grid, lock)
