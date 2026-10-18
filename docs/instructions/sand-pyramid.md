@@ -718,3 +718,10 @@ reed ankh`), or is that an `opens` line?
 6. **Coming back at the entrance:** re-entry states fix a gap every floor has today, the web only makes it
    common. Turn them on for every floor once the measurement in slice 4 is in, keep them to web journeys, or
    change the save so a return resumes where the player stood in that pyramid?
+
+   **The measurement (2026-10-18).** Walked with re-entry on (a stone in hand stays in hand), 6 of the 36
+   catalogue locks and 5 of the 35 baked floors with a lock that walk sound today are refused, each as a strand
+   from the way in: the locks `expert/counterweight`, `expert/keyring`, `expert/lockChamber`, `expert/relay`,
+   `junior/tide` and `master/weighingOfTheHeart`; the floors junior_4 pyramid 5, expert_1 pyramid 2, expert_2
+   pyramid 2, expert_3 pyramid 4 and master_2 pyramid 5, each floor 0. The rest walk sound either way. Today the
+   walk has re-entry behind a flag (`reentry`, `walkFloorLock`), off on every baked floor.
