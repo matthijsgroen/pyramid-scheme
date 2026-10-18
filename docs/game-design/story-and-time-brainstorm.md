@@ -483,33 +483,29 @@ reason to come back tomorrow; it gives no reason to open this door rather than t
 Ordering is the constraint that decides what a beat is allowed to assume. The world has three rails and
 they are not equally strong.
 
-| Rail                  | Count | Ordered?                                                              | What a beat on it may assume    |
-| --------------------- | ----- | --------------------------------------------------------------------- | ------------------------------- |
-| Pyramid arrival       | 20    | **Yes** — within a tier each opens when the previous one is completed | everything before it            |
-| Tier crossing         | 5     | **Yes** — possession of a tier-unlock treasure                        | everything in prior tiers       |
-| Tomb opening          | 9     | **No** — key-gated, never sequenced against each other                | only its own tier               |
-| An item found in situ | many  | **No**                                                                | nothing outside its own subject |
+| Rail                  | Count | Ordered?                                                                                                     | What a beat on it may assume    |
+| --------------------- | ----- | ------------------------------------------------------------------------------------------------------------ | ------------------------------- |
+| Pyramid arrival       | 20    | **Yes** below wizard — each opens when the previous one is completed; the four wizard journeys open together | everything before it            |
+| Tier crossing         | 5     | **Yes** — possession of a tier-unlock treasure                                                               | everything in prior tiers       |
+| Tomb opening          | 9     | **No** — key-gated, never sequenced against each other                                                       | only its own tier               |
+| An item found in situ | many  | **No**                                                                                                       | nothing outside its own subject |
 
 4 pyramids + 1–3 tombs per tier, five tiers (`src/data/journeys.ts`). The pyramid chain is in
 `availablePyramidJourneyIds` (`src/app/pages/journeyAvailability.ts`), which skips non-pyramid journeys —
 which is exactly why tombs are not a sequence.
 
-**Free order does not reach these rails.** `docs/mods/floor-topology-design.md` proposes that a wizard
-journey opens its pyramids all at once instead of walking them in `levelNr` order — and a journey holds
-several: `wizard_3` and `wizard_4` hold six each, `wizard_1` holds four. **The order of journeys is
-unchanged**, and arrival beats are keyed per journey rather than per pyramid, so all twenty stay ordered.
+**Free order reaches this rail at wizard, and only there.** The four wizard journeys open together
+(`docs/mods/floor-topology-design.md`, free order between journeys), so Act V's four arrivals come in any
+order. Inside a journey the pyramids stay in order, so the `PyramidSelector` addresses
+(`number | "first" | "last" | "middle" | "N-M" | "last-N"`) keep pacing what they pace. Below wizard
+every tier still opens its journeys one after the other, and those sixteen arrivals stay ordered.
 
-What free order does reach is anything addressed by **pyramid index inside a journey** — the DSL's
-`PyramidSelector` (`number | "first" | "last" | "middle" | "N-M" | "last-N"`), and the exposure is wider
-than this story: **the whole world is authored with it.**
+The one wizard order the game does guarantee is a key: wizard_3's first pyramid is buried until sand levers
+in the other three journeys are pulled (`docs/instructions/sand-pyramid.md`), so wizard_3 comes late. A
+wizard arrival beat may assume the tiers before it, and nothing about the other wizard journeys.
 
-Put precisely, in the topology session's words: every selector stays a valid **address**; what `first` and
-`last` stop carrying is **when**. Authoring that used position to pace — the gentle pyramid first, the map
-piece last — keeps naming the same pyramid and quietly stops meaning the same thing. Only in free-order
-journeys, so only at wizard.
-
-Nothing in this story paces by index today. The rule if anything ever does is that design's own: **pacing
-that matters is expressed as a key, or it does not exist.**
+Nothing in this story paces by journey order at wizard. The rule if anything ever does is that design's
+own: **pacing that matters is expressed as a key, or it does not exist.**
 
 **The rule that falls out: a beat may only assume what its rail guarantees.** A link-completion beat may
 never say "as you now know", because the player may have finished another thread's second link first. This
@@ -572,15 +568,15 @@ because **the ordering moved into the queue**. What is left:
 one — carrying it over means a beat written for Act II can still fire in Act III to a player who rushed the
 tier, and flushing means a tier's unplayed beats are simply lost. Neither breaks the ordering guarantee.
 
-Free-order journeys (`docs/mods/floor-topology-design.md`) then cost the story nothing anywhere, rather
-than costing it a wizard exception — and would keep costing nothing if free order ever widened to other
-tiers or across journeys, because the queue absorbs it. Only anchored beats would want re-checking.
+Free order between the wizard journeys (`docs/mods/floor-topology-design.md`) then costs the story
+nothing, rather than costing it a wizard exception — and would keep costing nothing if free order ever
+widened to other tiers, because the queue absorbs it. Only anchored beats would want re-checking.
 
-**One place the two designs could meet rather than merely coexist.** Cosmic dust's come-back loop is what
-keeps `getUnexploredLevels` reporting anything in a free-order wizard journey. If a thread beat ever fires
+**One place the two designs could meet rather than merely coexist.** The sand pyramid's come-back loop is what
+makes `getUnexploredLevels` light wizard_3 again after a lever elsewhere is pulled. If a thread beat ever fires
 on **returning** to a pyramid rather than arriving at one, that pulse is what it would ride — the only
-point where that mechanic could carry a beat instead of permitting one. One line from Fez when a sibling
-handle clears a path, and nothing more.
+point where that mechanic could carry a beat instead of permitting one. One line from Fez when a lever clears a
+stretch, and nothing more.
 
 #### What it implies for the script as written
 

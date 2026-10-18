@@ -67,3 +67,17 @@ export const WithNudge: Story = {
     onClick: () => console.log("Journey path clicked"),
   },
 }
+
+export const BuriedNode: Story = {
+  args: {
+    label: "Sand to the doorstep",
+    inJourney: true,
+    levelCount: 4,
+    levelNr: 2,
+    journeyLength: "medium",
+    exterior: "pyramid",
+    buriedNodes: new Set([2, 3]),
+    unexploredNodes: new Set([2]),
+    onClick: () => console.log("Journey path clicked"),
+  },
+}

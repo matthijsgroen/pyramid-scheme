@@ -604,6 +604,33 @@ describe("floor exploration tracking", () => {
     expect([...api.getUnexploredLevels(REAL_ID, new Set(["ward_a_1", "hieroglyph:p10"]))]).toEqual([1]) // both → lit
   })
 
+  describe("what a pull opened since the floor was saved", () => {
+    const isWeb = (key: string) => key.startsWith("web:")
+
+    it("lights a floor saved behind a web door once its key is held", () => {
+      const { api } = run(a => a.registerFloorExploration(REAL_ID, 1, 0, false, [["web:moon"]]))
+      expect([...api.getUnexploredLevels(REAL_ID, new Set(["web:moon"]), isWeb)]).toEqual([1])
+    })
+
+    it("does not light before the key is held", () => {
+      const { api } = run(a => a.registerFloorExploration(REAL_ID, 1, 0, false, [["web:moon"]]))
+      expect(api.getUnexploredLevels(REAL_ID, NO_KEYS, isWeb).size).toBe(0)
+    })
+
+    it("does not light a pyramid never visited, whatever is pulled", () => {
+      const { api } = run(() => {})
+      expect(api.getUnexploredLevels(REAL_ID, new Set(["web:moon"]), isWeb).size).toBe(0)
+    })
+
+    it("does not count ungated or ward-gated content", () => {
+      const { api } = run(a => {
+        a.registerFloorExploration(REAL_ID, 1, 0, true, [])
+        a.registerFloorExploration(REAL_ID, 1, 1, false, [["junior_a_1"]])
+      })
+      expect(api.getUnexploredLevels(REAL_ID, new Set(["junior_a_1", "web:moon"]), isWeb).size).toBe(0)
+    })
+  })
+
   it("records against the passed journeyId even when the journey is no longer active", () => {
     // Recording runs from the interior's unmount cleanup — which can happen right after
     // completeJourney flips `active` to false. Passing journeyId explicitly (not relying on the

@@ -4,6 +4,7 @@ import {
   barriersOf,
   CARRY_TERMS,
   isRegionGate,
+  isOutsideInput,
   isUnladenGate,
   isWeightOwner,
   joinOf,
@@ -102,6 +103,9 @@ export type LockFault =
   /** The binding names `realisation` for a procession, or the procession door for a plain sequence: the lock word
    * alone decides which door a sequence has. */
   | { type: "processionRebound"; kind: string; realisation: string; mechanics: string[] }
+  /** The lock declares outside inputs and nothing binds them to a key held from elsewhere: placed only where a web
+   * binds every one (docs/instructions/sand-pyramid.md). */
+  | { type: "outsideUnbound"; inputs: string[] }
   /** What the floor topology refuses of the compiled fragment, as it would on a floor. */
   | { type: "topology"; fault: TopologyFault }
 
@@ -112,6 +116,9 @@ export type CompileOptions = {
   kinds?: ResolveMechanicKind
   /** Prefixes every region, barrier and mechanic id, so a clone of one lock on a floor has names of its own. */
   namespace?: string
+  /** The outside inputs a web binds where the lock is placed: compiled as the rest of the lock, their doors the web's
+   * (webDoors.ts). An input left out is still refused as unbound. */
+  boundInputs?: readonly string[]
 }
 
 const looseOf = (mechanic: LockMechanic): LooseMechanic => mechanic
@@ -198,7 +205,8 @@ const lockFaults = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
           faults.push({ type: "carryWithoutStones", barrier: id })
         continue
       }
-      if (!Object.hasOwn(lock.mechanics, owner)) faults.push({ type: "gateOwnerUnknown", barrier: id, owner })
+      if (!Object.hasOwn(lock.mechanics, owner) && !isOutsideInput(lock, owner))
+        faults.push({ type: "gateOwnerUnknown", barrier: id, owner })
     }
     if (isRegionGate(gate)) {
       need(`gate ${id}`, gate.region)
@@ -419,8 +427,36 @@ const translate = (
   }
 }
 
+// THE LOCK AS ITS FLOOR CONTROLS LAY IT: an outside input is taken off every gate, and a gate only inputs own off its
+// corridor. What a web lays for an input is the web's, so the topology asked here is the rest of the lock.
+const withoutInputs = (lock: Lock): Lock => {
+  if (!lock.inputs?.length) return lock
+  const gates = Object.fromEntries(
+    Object.entries(lock.gates).flatMap(([id, gate]) => {
+      const owners = gate.owners.filter(owner => !isOutsideInput(lock, owner))
+      return owners.length > 0 ? [[id, { ...gate, owners }]] : []
+    })
+  )
+  const kept = (id: string) => Object.hasOwn(gates, id) || Object.hasOwn(lock.oneWays ?? {}, id)
+  const connections = lock.connections.map((connection): LockConnection => {
+    const barriers = barriersOf(connection).filter(kept)
+    if (barriers.length === barriersOf(connection).length) return connection
+    const align = Object.fromEntries(Object.entries(alignOf(connection)).filter(([id]) => kept(id)))
+    return barriers.length > 0
+      ? { between: joinOf(connection), barriers, ...(Object.keys(align).length > 0 ? { align } : {}) }
+      : joinOf(connection)
+  })
+  const { inputs: _inputs, ...rest } = lock
+  return { ...rest, gates, connections }
+}
+
 const topologyOf = (lock: Lock, kinds: ResolveMechanicKind): LockFault[] => {
-  const { regionLayout, obstacles, controls, forks, barrierOrder } = translate(lock, {}, undefined, kinds)
+  const { regionLayout, obstacles, controls, forks, barrierOrder } = translate(
+    withoutInputs(lock),
+    {},
+    undefined,
+    kinds
+  )
   // A lock is always laid from its plan when it is baked (carve/layFloor.ts, layLockPlan).
   return topologyFaults(regionLayout, obstacles, controls, forks, barrierOrder, kinds, { laid: true })
     .filter(fault => fault.type !== "forkSwitchNoEncounter")
@@ -444,14 +480,16 @@ export const checkLock = (lock: Lock, kinds: ResolveMechanicKind = resolveMechan
  */
 export const compileLock = (lock: Lock, binding: RealisationBinding, options: CompileOptions = {}): CompileResult => {
   const kinds = options.kinds ?? resolveMechanicKind
+  const unbound = (lock.inputs ?? []).filter(input => !(options.boundInputs ?? []).includes(input))
   const faults = [
     ...checkLock(lock, kinds),
     ...unbakeableFaults(lock, kinds),
     ...unboundFaults(lock, binding, kinds),
     ...reboundFaults(lock, binding),
+    ...(unbound.length > 0 ? [{ type: "outsideUnbound" as const, inputs: unbound }] : []),
   ]
   if (faults.length > 0) return { ok: false, faults }
-  return { ok: true, fragment: translate(lock, binding, options.namespace, kinds) }
+  return { ok: true, fragment: translate(withoutInputs(lock), binding, options.namespace, kinds) }
 }
 
 /** A fault in one line, its type then the names it carries: `gateOwnedOffSeam id=in-out owner=Y`. */

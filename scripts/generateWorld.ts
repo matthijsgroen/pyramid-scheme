@@ -17,6 +17,9 @@ import { writeFileSync } from "fs"
 import { join, dirname } from "path"
 import { fileURLToPath } from "url"
 import { buildWorldConfigs } from "../src/mods/buildWorldConfigs"
+import { MOD_REACHABILITY_SUPPORT } from "../src/mods/registeredMods"
+import { checkPlacedWeb } from "../src/worldGen/webBakeCheck"
+import type { WebPlacement } from "../src/worldGen/webPlacement"
 import { generateFile, printStats } from "../src/worldGen/serializer"
 import { validateWorldSpec } from "../src/worldGen/validateWorldSpec"
 import {
@@ -71,7 +74,9 @@ const validateOnly = process.argv.includes("--validate-only")
 // (the hieroglyph coverage guard among them) — not just the spec-shape check above. Skipping
 // buildConfigs here used to mean `yarn validate-world` could never catch a coverage shortfall;
 // it only skips the file write below.
-const configs = buildWorldConfigs(EMPTY_FRACTION)
+// The tier's web, placed while the world is built and checked once every floor carries its pin.
+const webPlacements: WebPlacement[] = []
+const configs = buildWorldConfigs(EMPTY_FRACTION, { onWebPlaced: placed => webPlacements.push(placed) })
 // Hieroglyph finalize (mod-owned, §D): stamp each fragment's pieceIndex — hieroglyph-specific
 // logic the core serializer no longer owns. Every symbol's full required count is guaranteed
 // placed by this point (placeFragments.ts's completion pass + the hieroglyph coverage
@@ -353,6 +358,25 @@ if (stuckRegions.length > 0) {
     "  Two on-floor mechanisms are deadlocking each other's gate — the loot behind it can never be collected."
   )
   process.exit(1)
+}
+
+// THE WEB ON THE PINNED FLOORS: where every stop and activator landed, the real floor walks, the doors shutting what
+// they stand before, and the world solver agreeing with the web walk. Printed in full, refused on any failure.
+for (const placed of webPlacements) {
+  const { report, failures } = checkPlacedWeb(
+    placed,
+    configs,
+    (journeyId, levelNr, floorIndex) =>
+      assembleOnce(journeyId, configs[journeyId][levelNr - 1][floorIndex], levelNr, floorIndex)!,
+    MOD_REACHABILITY_SUPPORT,
+    resolveEncounterMeta
+  )
+  console.log(report)
+  if (failures.length > 0) {
+    console.error(`✗ the web ${placed.resolved.web.name} fails on the baked floors:`)
+    for (const failure of failures) console.error(`    ${failure}`)
+    process.exit(1)
+  }
 }
 
 if (emptyChests.length > 0) {

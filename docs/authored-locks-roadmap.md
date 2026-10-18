@@ -23,16 +23,16 @@ Delete this file when step 6 lands.
 
 Read against the fixture in `src/game/lockWalk.spec.ts`, which is the example in its current form:
 
-| The example has                                             | Today                                                                      |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------- |
-| six named regions                                           | sections can be named — `SubSection.label` gives a stable address          |
-| three levels of nesting, and branches that rejoin           | `SideSection.sideSections?: SubSection[]` is two levels, single-parent     |
-| gates whose two ends are both named regions                 | `SubSection.gate` belongs to a section: it joins that section to elsewhere |
+| The example has                                             | Today                                                                                                                                                                                  |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| six named regions                                           | sections can be named — `SubSection.label` gives a stable address                                                                                                                      |
+| three levels of nesting, and branches that rejoin           | `SideSection.sideSections?: SubSection[]` is two levels, single-parent                                                                                                                 |
+| gates whose two ends are both named regions                 | `SubSection.gate` belongs to a section: it joins that section to elsewhere                                                                                                             |
 | `greenRight` starting open, then shutting behind the player | **done** for a gate a lever owns — `handles[].starts` hangs the lever on a side and that side's gates are open on arrival, the carve unchanged. A free-standing gate still starts shut |
-| gates owned by a mechanism, several states each opening one | **done, and each state opens a SET** — `MechanismRecord` declares `states`/`initial`/`returnsToInitial`, and `floorLock` compiles the machine straight off it |
-| two levers (`S1`, `S2`)                                     | **done** — `handle` is a family, `FloorConfig.handles` authors it, two on one floor are carved and told apart |
-| two one-way drops                                           | **done** — `FloorConfig.oneWays` carves a directed passage between two named sections; art is still a plain corridor, and only the develop journey may stand one |
-| a mark pairing each lever to the doors it drives            | **done** — `RoomCell.mark`, one glyph on one ground worn by the lever and every gate it owns |
+| gates owned by a mechanism, several states each opening one | **done, and each state opens a SET** — `MechanismRecord` declares `states`/`initial`/`returnsToInitial`, and `floorLock` compiles the machine straight off it                          |
+| two levers (`S1`, `S2`)                                     | **done** — `handle` is a family, `FloorConfig.handles` authors it, two on one floor are carved and told apart                                                                          |
+| two one-way drops                                           | **done** — `FloorConfig.oneWays` carves a directed passage between two named sections; art is still a plain corridor, and only the develop journey may stand one                       |
+| a mark pairing each lever to the doors it drives            | **done** — `RoomCell.mark`, one glyph on one ground worn by the lever and every gate it owns                                                                                           |
 
 The walk itself needs nothing: `LockSpec.oneWays` and `movesFrom`'s one-way step already exist and
 are already consumed. What is missing is every way of _producing_ a lock.
@@ -150,14 +150,14 @@ things that never have to agree.
 
 #### Regions are core. Gates and mechanisms are the mod.
 
-| Authoring                                     | Owner            |
-| --------------------------------------------- | ---------------- |
+| Authoring                                          | Owner            |
+| -------------------------------------------------- | ---------------- |
 | regions, their connections, their content appetite | core, structural |
-| gates, switches, one-ways                     | topology mod     |
+| gates, switches, one-ways                          | topology mod     |
 
 Not because of locks. **Four of the six catalogue features act on regions**: a lock gates the
-boundaries between them, `waterline` floods one from within, `cosmicDust` re-lays which corridors
-connect them, `sandSlide` blocks one. Regions belong to whoever owns the floor.
+boundaries between them, `waterline` floods one from within, `sandPyramid` buries them until
+levers elsewhere clear them, `sandSlide` blocks one. Regions belong to whoever owns the floor.
 
 This is the `forks`/`switches` split one size up, and it buys the same guarantee: **toggle the
 topology mod off and the identical walls carve with every door standing open.** Not "roughly the same
@@ -280,10 +280,10 @@ that can never open.
 
 So three brackets, which must not be confused:
 
-| Question                | Bracket                                                              |
-| ----------------------- | -------------------------------------------------------------------- |
-| Is the lock sound?      | ward keys assumed **shut** — keeps the proof local to the container  |
-| Is this loot reachable? | authored doors assumed **open** — reachable at any point counts      |
+| Question                | Bracket                                                                    |
+| ----------------------- | -------------------------------------------------------------------------- |
+| Is the lock sound?      | ward keys assumed **shut** — keeps the proof local to the container        |
+| Is this loot reachable? | authored doors assumed **open** — reachable at any point counts            |
 | Is this region reached? | mechanism gates use **the walk**; ward and off-floor keys assumed openable |
 
 The third is the new one and it sits between the other two. `junior_2` L2 F0's deliberately
@@ -530,13 +530,13 @@ Told by the owner, 2026-09-27, and recorded because none of it is written down e
 
 The story layer is not blocked on step 6 landing `doubleBack`. It waits on **the whole re-authoring of
 master and wizard** — the 58 floor-key gates, 56 of them in those two tiers — together with **the
-hourglass mechanic**, and on **a pyramid standing full of sand that clears a little at a time as other
-pyramids in the same journey are finished**.
+hourglass mechanic**, and on **a pyramid standing full of sand that clears a little at a time as levers are
+pulled in other journeys** — wizard_3's first pyramid, cleared from wizard_1, wizard_2 and wizard_4.
 
-That last one is journey-scoped progress gating a site's interior, which is P5 in the design document's
-primitive table (`../mods/floor-topology-design.md`, "Currency scope — journey, beside positional and
-world-spread") reaching past a single floor the way `cosmicDust` and `hourglass` do. It is not costed in
-the six steps above; it arrives with them.
+That last one is progress in one journey gating a site in another, which is P5 in the design document's
+primitive table (`../mods/floor-topology-design.md`, "A web across journeys") reaching past a
+single floor the way `sandPyramid` and `hourglass` do. It is not costed in the six steps above; its plan
+is `instructions/sand-pyramid.md`.
 
 So the chain is long: handle → container → `doubleBack` → master and wizard re-authored → hourglass →
 the sand pyramid → the story layer on top. **That is the main meat of the release**, and all of it stands

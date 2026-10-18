@@ -221,7 +221,20 @@ export type Lock = {
   /** The one connection another lock may be spliced into (written `a -&> b`): its `in` meets `from`, its `out`
    * meets `to`. The connection stays in `connections` as a plain corridor, which is what it is where nothing nests. */
   readonly nestSpot?: { readonly from: RegionId; readonly to: RegionId }
+  /**
+   * OUTSIDE INPUTS (written `A outside`): owners held or not from off the floor, never worked on it. Each starts
+   * missing and only ever arrives, opening the gates naming it, which name it bare. A web binds each to a key held
+   * from elsewhere (docs/instructions/sand-pyramid.md); a lock with inputs is placed only where one does. At most
+   * `MAX_OUTSIDE_INPUTS`.
+   */
+  readonly inputs?: readonly MechanicId[]
 }
+
+/** Each outside input doubles a lock's states, so a lock carries at most this many. */
+export const MAX_OUTSIDE_INPUTS = 3
+
+/** Whether a gate owner is an outside input of the lock. */
+export const isOutsideInput = (lock: Lock, owner: string): boolean => (lock.inputs ?? []).includes(owner)
 
 /** A gate barring a whole region rather than a join between two. */
 export const isRegionGate = (gate: LockGate): gate is RegionGate => "region" in gate

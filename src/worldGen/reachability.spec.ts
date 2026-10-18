@@ -5,6 +5,7 @@ import { defaultResolveEncounter } from "../game/siteAssembler"
 import {
   computeReachability,
   floorKey,
+  isOrderedJourney,
   isTierUnlocked,
   reachableFloorsInSite,
   type ReachabilitySupport,
@@ -623,5 +624,17 @@ describe(computeReachability, () => {
       reEnterableFamilies
     )
     expect(result.reachableFloors.has(floorKey({ journeyId: "j", levelIndex: 0, floorIndex: 0 }))).toBe(true)
+  })
+})
+
+describe("isOrderedJourney", () => {
+  const withLockWeb = (web: object) => [[{ locks: [{ web }] }]] as unknown as SiteConfig[]
+
+  it("orders a journey whose lock waits on the web", () => {
+    expect(isOrderedJourney(withLockWeb({ inputs: { A: "web:moon" } }))).toBe(true)
+  })
+
+  it("leaves a journey unordered when its lock inputs are open ground, as with no mod realising the web", () => {
+    expect(isOrderedJourney(withLockWeb({ inputs: {}, open: true }))).toBe(false)
   })
 })

@@ -1,5 +1,6 @@
 import type { Direction, FloorGrid, GridCell, MechanismRecord, TombKeyReward } from "./siteTypes"
 import type { LockSpec, Mechanism, GateId, MechanismId, RegionId } from "./lockWalk"
+import { outsideInput } from "./lockWalk"
 import { armDoor } from "./siteValidator"
 import { legalTargets, mechanismWorkedAt } from "./mechanismDoors"
 import { isObstacleCell, oneWayRuns } from "./gridNavigation"
@@ -19,7 +20,8 @@ const walkable = (cell: GridCell | undefined): boolean =>
 // the game's own walk (siteValidator's `reachableFrom`) refuses the step on any one of them exactly
 // as it refuses a single `requiredKeyId`. A barrier this compiler cannot model has to come out shut,
 // so every id counts — a boundary stands open only while all of them do.
-const doorKeysOf = (cell: GridCell | undefined): string[] =>
+/** The keys a door cell asks for: its own, and those a shared cell adds. */
+export const doorKeysOf = (cell: GridCell | undefined): string[] =>
   cell?.type === "room" ? [...(cell.requiredKeyId ? [cell.requiredKeyId] : []), ...(cell.requiredKeyIds ?? [])] : []
 
 // Two cells the author put in different regions of the layout: ground the flood does not join.
@@ -139,7 +141,16 @@ const doorKey = (doorRegion: RegionId, keyId: string) => `${doorRegion}|${keyId}
  * what moves it offers is its own record's answer (MechanismRecord), never this stem's. */
 const kindOf = (record: MechanismRecord): string => record.positions[0]?.gateKeyId.split(":")[0] ?? "mechanism"
 
-export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
+/** The stem of a key held from outside the floor, which a web mints (docs/instructions/sand-pyramid.md). */
+export const WEB_KEY_STEM = "web:"
+export const isWebKey = (keyId: string): boolean => keyId.startsWith(WEB_KEY_STEM)
+
+/** `arriving`: the web keys allowed to arrive, each starting missing. Absent, every web key the floor's doors ask for
+ * arrives (the floor's soundness walk); a web key outside the set never does, and is sealed. */
+export type FloorLockOptions = { arriving?: ReadonlySet<string> }
+
+// A FLOOR WITH ONLY WEB DOORS COMPILES TOO, so a walk with held keys can ask it what is in reach.
+export const floorLock = (grid: FloorGrid, { arriving }: FloorLockOptions = {}): LockSpec | undefined => {
   // EVERY MECHANISM ON THE FLOOR IS ONE RECORD ON THE CELL IT STANDS IN — its states, the one it
   // starts in, whether it returns there, and which key each position opens. The runtime
   // (mechanismDoors.ts) reads that same record to decide which doors stand open, so a board and a
@@ -194,7 +205,8 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
         exitDoorsAt.set(posKey(r, c), named)
       }
     }
-  if (mechanismsAt.size === 0) return undefined
+  const webKeys = [...doorsByKeyId.keys()].filter(isWebKey)
+  if (mechanismsAt.size === 0 && webKeys.length === 0) return undefined
 
   // A CELL THAT WORKS A MECHANISM ELSEWHERE AND THE RECORD THAT PLACES IT ARE TWO ACCOUNTS OF ONE FACT,
   // and a cell naming a transition the record puts somewhere else would be thrown from a place the walk
@@ -399,9 +411,22 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
     for (const gateId of gateIds) claim(gateId, keyId, id)
   }
 
+  // A WEB KEY IS AN OUTSIDE INPUT: held from elsewhere, it only arrives, and it may arrive in any state of the floor,
+  // wherever the player stands (`LockSpec.arrivals`). One mechanism per key, however many doors ask for it.
+  const arrivals: NonNullable<LockSpec["arrivals"]> = []
+  for (const keyId of webKeys) {
+    const gateIds = gatesByKeyId.get(keyId)
+    if (!gateIds || chestsByKeyId.has(keyId) || (arriving && !arriving.has(keyId))) continue
+    const id = `outside ${keyId}`
+    const { mechanism, arrival } = outsideInput(id, gateIds)
+    mechanisms[id] = mechanism
+    arrivals.push(arrival)
+    for (const gateId of gateIds) claim(gateId, keyId, id)
+  }
+
   // WHAT IS LEFT IS SEALED. A door whose opener this floor does not hold — a ward gate, a key minted
-  // somewhere else, a hieroglyph the player completes off this floor — is assumed shut, because a
-  // barrier the compiler cannot model has to come out shut rather than absent.
+  // somewhere else, a hieroglyph the player completes off this floor, a web key not allowed to arrive — is assumed
+  // shut, because a barrier the compiler cannot model has to come out shut rather than absent.
   for (const [gateId, keyIds] of unopened)
     for (const keyId of keyIds) {
       const id = `sealed ${keyId}`
@@ -425,6 +450,7 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
     ...(emptyHands.length > 0 ? { emptyHands } : {}),
     ...(torches.length > 0 ? { torches } : {}),
     ...(crossings.length > 0 ? { crossings } : {}),
+    ...(arrivals.length > 0 ? { arrivals } : {}),
     in: of.get(posKey(grid.entrancePos[0], grid.entrancePos[1]))!,
     out: of.get(posKey(grid.exitPos[0], grid.exitPos[1]))!,
   }

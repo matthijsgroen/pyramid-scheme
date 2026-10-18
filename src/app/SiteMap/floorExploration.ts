@@ -1,5 +1,6 @@
 import type { Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 import { getFamilyPlugin } from "@/app/families/familyRegistry"
+import { isWebKey } from "@/game/floorLock"
 
 // The per-floor "still stuff to find here" summary that drives the Travel marker. Computed from an
 // assembled floor grid (cheap, done while the player is inside the site) and persisted so the travel
@@ -34,12 +35,14 @@ const DIR_MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], 
 
 // What an unsolved node still asks of the player before they can pass it: a tableau's hieroglyphs, a
 // ward door's key. A puzzle or a trap asks for nothing — the player can just do it — and a completed
-// room is a doorway like any other.
+// room is a doorway like any other. A web door's key is asked for the same way: the door's first key, or one of
+// `requiredKeyIds` where it shares a cell with another gate.
 const blockingKeys = (cell: GridCell): readonly string[] => {
   if (cell.type !== "room" || cell.state === "completed") return []
   const own = cell.requiredKeyIds ?? []
   const gate = cell.gateVariant === "tomb-key" && cell.requiredKeyId ? [cell.requiredKeyId] : []
-  return [...own, ...gate]
+  const web = cell.requiredKeyId && isWebKey(cell.requiredKeyId) ? [cell.requiredKeyId] : []
+  return [...own, ...gate, ...web]
 }
 
 // The cheapest set of keys each cell can be stood in with, walking out from the entrance. "Cheapest"

@@ -1,4 +1,5 @@
 import { floorLock, regionsOf } from "./floorLock"
+import type { FloorLockOptions } from "./floorLock"
 import {
   checkLockSpec,
   deadRegions,
@@ -8,7 +9,7 @@ import {
   reachableStates,
   walkLock,
 } from "./lockWalk"
-import type { LockSpec, LockState, LockWalkFailure, RegionId } from "./lockWalk"
+import type { LockSpec, LockState, LockWalkFailure, RegionId, WalkOptions } from "./lockWalk"
 import type { FloorGrid } from "./siteTypes"
 
 // THE WALK OF A FLOOR'S LOCK, which is the walk of the whole lock until a lock is nested in a region of another.
@@ -188,6 +189,18 @@ const cutOf = (grid: FloorGrid, lock: LockSpec): Cut => {
       ) ?? regionOwner.get(isDoor(gate.to) ? gate.to : gate.from)!
     )
 
+  // AN OUTSIDE INPUT ARRIVES ONCE FOR THE WHOLE FLOOR, and each level walks it on its own: its doors stand in one lock,
+  // or the walk apart would let it be held in one level and missing in another.
+  for (const { mechanism } of lock.arrivals ?? [])
+    only(
+      new Set(
+        Object.entries(lock.gates)
+          .filter(([, gate]) => gate.owners.includes(mechanism))
+          .map(([id]) => gateOwner.get(id)!)
+      ),
+      mechanism
+    )
+
   const portOf = (label: string): RegionId => {
     const found = lock.regions.filter(
       region => !isDoor(region) && !region.startsWith("tile ") && labels.get(region)?.has(label)
@@ -236,6 +249,8 @@ const levelOf = (cut: Cut, node: Owner, nesting: FloorGrid["lockNesting"]): Lock
     .filter(({ mechanism }) => Object.hasOwn(mechanisms, mechanism))
     .map(({ mechanism, coveredBy }) => ({ mechanism, coveredBy: coveredBy.filter(gate => Object.hasOwn(gates, gate)) }))
   const crossings = (lock.crossings ?? []).filter(region => regions.has(region))
+  // An outside input arrives in every level whose gates name it.
+  const arrivals = (lock.arrivals ?? []).filter(({ mechanism }) => Object.hasOwn(mechanisms, mechanism))
   return {
     regions: lock.regions.filter(region => regions.has(region)),
     gates,
@@ -245,6 +260,7 @@ const levelOf = (cut: Cut, node: Owner, nesting: FloorGrid["lockNesting"]): Lock
     ...(emptyHands.length > 0 ? { emptyHands } : {}),
     ...(torches.length > 0 ? { torches } : {}),
     ...(crossings.length > 0 ? { crossings } : {}),
+    ...(arrivals.length > 0 ? { arrivals } : {}),
     in: port ?? lock.in,
     out: port ?? lock.out,
   }
@@ -259,7 +275,8 @@ const nestedFree = (
   cut: Cut,
   instance: string,
   spec: LockSpec,
-  maxStates: number
+  maxStates: number,
+  options: WalkOptions
 ): { states: number } | { failure: FloorWalkFailure } => {
   const problem = checkLockSpec(spec)
   if (problem) return { failure: { type: "entangled", problem } }
@@ -276,7 +293,9 @@ const nestedFree = (
   for (const { a, b } of cut.lock.passages ?? []) edge(a, b)
   for (const { from, to } of cut.lock.oneWays ?? []) edge(from, to)
 
-  const found = reachableStates(spec, maxStates)
+  // Coming back at the floor's entrance, the player walks the host's ground to the lock's port: re-entry stands them
+  // there, the lock as they left it.
+  const found = reachableStates(spec, maxStates, options)
   if (found === "tooLarge") return { failure: { type: "tooLarge" } }
   const { order, edges } = found
 
@@ -349,7 +368,8 @@ const nestedFree = (
 const levelsOf = (
   grid: FloorGrid,
   lock: LockSpec,
-  maxStates = MAX_LOCK_STATES
+  maxStates: number,
+  options: WalkOptions
 ):
   | {
       ok: true
@@ -368,7 +388,7 @@ const levelsOf = (
   for (const { instance } of grid.lockNesting ?? []) {
     if (cut.fusedInto.has(instance)) continue
     const spec = levelOf(cut, instance, grid.lockNesting)
-    const free = nestedFree(cut, instance, spec, maxStates)
+    const free = nestedFree(cut, instance, spec, maxStates, options)
     if ("failure" in free)
       return { ok: false, failure: { type: "nested", instance, failure: pooled(instance, free.failure) } }
     counts[instance] = free.states
@@ -378,9 +398,9 @@ const levelsOf = (
   return { ok: true, levels, counts, pooled }
 }
 
-const compose = (grid: FloorGrid, lock: LockSpec, maxStates = MAX_LOCK_STATES) => {
+const compose = (grid: FloorGrid, lock: LockSpec, maxStates: number, options: WalkOptions) => {
   try {
-    return levelsOf(grid, lock, maxStates)
+    return levelsOf(grid, lock, maxStates, options)
   } catch (error) {
     if (error instanceof Entangled)
       return { ok: false as const, failure: { type: "entangled" as const, problem: error.message } }
@@ -391,28 +411,37 @@ const compose = (grid: FloorGrid, lock: LockSpec, maxStates = MAX_LOCK_STATES) =
 /**
  * THE FLOOR'S LOCK WALKED: sound only when every nested lock is free by itself and the floor's own level is sound
  * with each nested lock as ground. Without nesting it is `walkLock` over the whole lock, unchanged. `undefined`
- * when the floor has no mechanism. Takes the carved grid: the lock and its nesting are read off it, not handed in.
+ * when the floor has no mechanism and no web door. Takes the carved grid: the lock and its nesting are read off it,
+ * not handed in. `arriving` limits the web keys that may arrive (`floorLock`); `reentry` walks coming back at the
+ * entrance from any state (`reachableStates`), which a floor of a web journey asks for.
  */
 export const walkFloorLock = (
   grid: FloorGrid,
-  { maxStates = MAX_LOCK_STATES }: { maxStates?: number } = {}
+  {
+    maxStates = MAX_LOCK_STATES,
+    arriving,
+    reentry = false,
+  }: { maxStates?: number } & FloorLockOptions & WalkOptions = {}
 ): FloorWalkResult | undefined => {
-  const lock = floorLock(grid)
+  const lock = floorLock(grid, { arriving })
   if (!lock) return undefined
-  if (!grid.lockNesting || grid.lockNesting.length === 0) return walkLock(lock, maxStates)
-  const composed = compose(grid, lock, maxStates)
+  if (!grid.lockNesting || grid.lockNesting.length === 0) return walkLock(lock, maxStates, { reentry })
+  const composed = compose(grid, lock, maxStates, { reentry })
   if (!composed.ok) return { sound: false, failure: composed.failure }
-  const walk = walkLock(composed.levels[composed.levels.length - 1].spec, maxStates)
+  const walk = walkLock(composed.levels[composed.levels.length - 1].spec, maxStates, { reentry })
   return walk.sound
     ? { sound: true, states: walk.states, nested: composed.counts }
     : { sound: false, failure: composed.pooled(FLOOR, walk.failure) }
 }
 
 /** The regions no reachable state stands in, each level asked on its own; the whole lock's when nothing is nested. */
-export const deadFloorRegions = (grid: FloorGrid): RegionId[] => {
-  const lock = floorLock(grid)
+export const deadFloorRegions = (
+  grid: FloorGrid,
+  { arriving, reentry = false }: FloorLockOptions & WalkOptions = {}
+): RegionId[] => {
+  const lock = floorLock(grid, { arriving })
   if (!lock) return []
-  if (!grid.lockNesting || grid.lockNesting.length === 0) return deadRegions(lock)
-  const composed = compose(grid, lock)
-  return composed.ok ? composed.levels.flatMap(level => deadRegions(level.spec)) : []
+  if (!grid.lockNesting || grid.lockNesting.length === 0) return deadRegions(lock, { reentry })
+  const composed = compose(grid, lock, MAX_LOCK_STATES, { reentry })
+  return composed.ok ? composed.levels.flatMap(level => deadRegions(level.spec, { reentry })) : []
 }

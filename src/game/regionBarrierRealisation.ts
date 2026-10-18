@@ -11,6 +11,9 @@ export type RegionBarrierRealisationMeta = {
   /** Key of the seamless texture drawn over the barred region (`tiles/default/<key>.png`). Until that file is
    * painted, or while this is unset, the region is drawn as a flat fill of `fallback`. */
   texture?: string
+  /** The painting this realisation stands in for while it is owed (art-tasks.md): `texture` then names a placeholder
+   * that is another realisation's. Absent once its own is painted. */
+  owed?: string
   /** CSS colour of the flat fill the region is drawn with while its texture is not painted. */
   fallback: string
 }

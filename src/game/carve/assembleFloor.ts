@@ -4,9 +4,12 @@ import { planLockFloor } from "../lockPlan"
 import { roomlessRouteStubs } from "../routeStubs"
 import type { AssembleFloorKeyRequirements, ResolveEncounter } from "../siteAssembler"
 import type { AssemblerResult, FloorConfig } from "../siteTypes"
+import { layWebDoors, WEB_SAND_REALISATION, webSandKindRefusals } from "../webDoors"
 import { carveFloor } from "./carveFloor"
+import { gateKeyOf } from "./ids"
 import { finishAttempt, PASSES } from "./passes"
 import { prepareFloor } from "./prepareFloor"
+import { CARVE_FAMILY_QUERIES } from "../encounterFallback"
 
 // Where a floor's `locks` become its layout, obstacles and controls, so the bake, the sweeps and the
 // runtime all carve the one expanded config; a floor without locks passes through untouched.
@@ -37,6 +40,21 @@ export const assembleFloor = (
   // corridor leads to (`answerBareStubs`), so every floor whose stubs hold a room carves as it always has.
   const first = carve(false)
   const result = plan && first.success && roomlessRouteStubs(first.grid).length > 0 ? carve(true) : first
-  if (!result.success || !expanded.nesting) return result
-  return { ...result, grid: { ...result.grid, lockNesting: expanded.nesting } }
+  if (!result.success) return result
+  const nested = expanded.nesting ? { ...result, grid: { ...result.grid, lockNesting: expanded.nesting } } : result
+  // THE WEB'S DOORS GO ON THE FINISHED CARVE, never into it: a web door moves no wall. Where no registered mod realises
+  // web sand they are left off, and every one of them is open ground.
+  const doors = authoredConfig.webDoors ?? []
+  const gates = expanded.webGates ?? []
+  const { resolveRegionBarrier } = keyRequirements
+  const realised = !resolveRegionBarrier || resolveRegionBarrier(WEB_SAND_REALISATION) !== undefined
+  if ((doors.length === 0 && gates.length === 0) || !realised) return nested
+  // One sand kind per site: this floor's own lock may not bind sand beside its web's. The rest of the site is the
+  // bake's to check (`webSandKindRefusals` over every floor).
+  const mixed = webSandKindRefusals([authoredConfig])
+  if (mixed.length > 0) return { success: false, reasons: mixed }
+  const floorRef = keyRequirements.floorRef ?? { journeyId: siteId, floorIndex: 0 }
+  const gateTags = resolveEncounter(CARVE_FAMILY_QUERIES.keyGate, CARVE_FAMILY_QUERIES.keyGate).tags
+  const laid = layWebDoors(nested.grid, doors, gates, gateTags, id => gateKeyOf(floorRef, id))
+  return laid.ok ? { ...nested, grid: laid.grid } : { success: false, reasons: [laid.fault] }
 }

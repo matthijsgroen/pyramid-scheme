@@ -246,6 +246,30 @@ is there as they left it, and they do not walk it twice.
 
 This is a property of the effect, not of the realisation. Sand and water conceal alike.
 
+### Sand from above the floor
+
+The sand pyramid (`../instructions/sand-pyramid.md`) is written one level up, in a **web** over a tier: blocks
+naming journeys and pyramids, places given as percentages of a main path, and activators (a `lever` or a `key`,
+only the look differs) minting keys held from outside the floor. A **pot** lists its levers; the n-th pull,
+whichever lever it is, moves the sand front to the n-th stop, receding from the arrival. A key `opens` a named
+place. Under both is one mechanism, a door whose key is held from outside the floor:
+
+- **On ground no lock owns, a seam gate:** a stop or an `opens` lands on the nearest main-path seam, or on a
+  side section's mouth.
+- **Inside a lock, an outside input.** A stop landing on a corridor between two regions adds an owner to that
+  corridor under `+`; one landing inside a region buries the region whole (a region barrier). For sand at an
+  exact place the lock declares the input itself: `A outside`, named bare like any owner, on corridor gates
+  (`-[A]-`, `-[A+S]-`, `-[A|S]-`) or a region barrier (`hall -[A]`), and the web binds it to an activator.
+  Never `A:state`: it would shut on arrival. At most three per lock, added ones counted.
+- **A web key only arrives.** In the floor walk it is a one-way mechanism, `missing → held`, whose move is an
+  arrival offered from every state. So the walk holds every order of arrival: a torch doused under buried
+  ground and the ground then cleared is a state it walks, and relights. Across the tier, held keys are a
+  function of which levers are pulled, never of the order, so every pull order climbs to the same fixpoint.
+- **A web door shows a marker per owner**, the floor owners' floor marks and its web mark. Web marks come from
+  a glyph set of their own, so two mechanics on one floor still never share a mark.
+- **One sand per site.** Where web sand lies on a site, region barriers owned only by floor controls bind to
+  water.
+
 ## 4. The fork-switch governs its own fork
 
 Every other control takes its effect from the lock. A fork-switch does not: **a fork puzzle operates
@@ -541,7 +565,9 @@ reach yet — which is what doubleBack does today.
 one-way and the stones, a stone pipe among them. Targets are edges or regions. `and`/`any` conditions. A floor key is an activator.
 A flood puts out a torch and never an activator. The fork-switch governs its own fork. Realisations are bound
 from outside, most specific wins, at bake time, refused when unbound. A realisation may not change what
-the solver sees. Impassable conceals, and conceals what was explored, without erasing it.
+the solver sees. Impassable conceals, and conceals what was explored, without erasing it. The web's sand is a door whose key is held from outside the floor: a
+seam gate on ground no lock owns, or an outside input of a lock, added where a sand front stops or declared by
+the lock, arriving once and never shut by the input.
 
 A gate may show its own condition, and a sequence's reset is at its door. A sequence is solved once: when
 it is done, it stays done. On a door it shares with other owners, those can still switch or reset, and the door

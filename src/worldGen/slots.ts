@@ -129,6 +129,8 @@ export const collectSlots = (
       ) => {
         if (!rewards) return
         rewards.forEach((rw, i) => {
+          // A reward already standing in a puzzle room (a web activator) is placed, not a slot to fill or clear.
+          if (rw !== undefined && rw.type !== "fragmentSlot") return
           const arr = rewards
           const enc = encountersByIndex?.[i] ?? encounter
           const encId = Array.isArray(enc) ? enc[0] : enc

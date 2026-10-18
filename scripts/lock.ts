@@ -9,7 +9,8 @@
  *   yarn lock sketch.lock           a file
  *   yarn lock sketch.lock --watch   redrawn on every save; a new file starts with the notation
  *   yarn lock - < sketch.lock       standard input
- *   yarn lock --help                the notation
+ *   yarn lock chamberOfMaat.web     a sand web, read against the last bake: its checks, where each stop landed
+ *   yarn lock --help                the notation, the lock's and the web's
  */
 import { existsSync, readFileSync, watch, writeFileSync } from "node:fs"
 import { basename, dirname } from "node:path"
@@ -19,6 +20,10 @@ import { LOCK_SYNTAX, parseLock } from "../src/game/lockNotation"
 import type { ParsedLock } from "../src/game/lockNotation"
 import { LESSONS, LOCK_CATALOGUE, LOCK_ENTRIES, LOCK_TIERS, findLockEntry } from "../src/game/lockCatalogue"
 import { corridorLines, formatLockTable, isLessonPath, lockChecks, lockRow } from "./lockTable"
+import { WEB_SYNTAX, parseWeb } from "../src/game/webNotation"
+import type { Web } from "../src/game/webNotation"
+import { resolveWeb } from "../src/game/webLine"
+import { webReport } from "../src/game/webReport"
 
 const args = process.argv.slice(2)
 const watching = args.includes("--watch")
@@ -26,7 +31,7 @@ const named = args.find(arg => !arg.startsWith("--"))
 const library: Record<string, ParsedLock> = { ...LOCK_CATALOGUE, ...LESSONS }
 // A name without `.lock` is a catalogue lock by any name it answers to; watching a new one starts it in its tier
 // folder (`expert/sketch`), or under junior without one.
-const isName = named && named !== "-" && !named.endsWith(".lock")
+const isName = named && named !== "-" && !named.endsWith(".lock") && !named.endsWith(".web")
 const entry = isName ? findLockEntry(named) : undefined
 const inLocks = isName
   ? entry
@@ -81,8 +86,71 @@ if (watching && target && target !== "-" && !entry && !existsSync(target)) {
   )
 }
 
+// A web is read against the last bake's wizard floors, carved as the game carves them.
+const webCheck = async (path: string): Promise<boolean> => {
+  let web: Web
+  try {
+    web = parseWeb(readFileSync(path, "utf8"), basename(path))
+  } catch (error) {
+    console.log(`## ${basename(path)}\n\n✗ ${(error as Error).message}\n\n${WEB_SYNTAX}`)
+    return false
+  }
+  const { bakedWebWorld } = await import("./webWorld")
+  const baked = bakedWebWorld()
+  const resolved = resolveWeb(web, baked.world)
+  if (resolved.refusals.length > 0) {
+    console.log(webReport(resolved, undefined).text)
+    return false
+  }
+  // Placed as the bake places it, on a copy of the last bake with any web taken off, and its floors walked again with
+  // the doors laid: the states a player can stand in, each visit with only the held keys arriving.
+  const { generatedWorldConfigs } = await import("../src/data/generatedWorld")
+  const { carveWorldFloor } = await import("../src/mods/buildWorldConfigs")
+  const { MOD_REACHABILITY_SUPPORT, MOD_WEB_ACTIVATOR } = await import("../src/mods/registeredMods")
+  const { resolveEncounterMeta } = await import("../src/mods/allFamilyMeta")
+  const { placeWeb, withoutWeb } = await import("../src/worldGen/webPlacement")
+  const { checkPlacedWeb } = await import("../src/worldGen/webBakeCheck")
+  if (!MOD_WEB_ACTIVATOR) {
+    console.log("✗ no registered mod realises a web's activators")
+    return false
+  }
+  const marker = MOD_WEB_ACTIVATOR({ name: "", look: "lever", pots: [] }).type
+  const configs = withoutWeb(structuredClone(generatedWorldConfigs), reward => reward.type === marker)
+  let placed
+  const displaced: string[] = []
+  try {
+    placed = placeWeb(web, configs, (id, levelNr, f) => baked.grids[id][levelNr - 1][f], MOD_WEB_ACTIVATOR, {
+      displaces: line => displaced.push(line),
+    })
+  } catch (error) {
+    console.log((error as Error).message)
+    return false
+  }
+  const { report, failures } = checkPlacedWeb(
+    placed,
+    configs,
+    (journeyId, levelNr, floorIndex) =>
+      carveWorldFloor(journeyId, levelNr, floorIndex, configs[journeyId][levelNr - 1][floorIndex]),
+    MOD_REACHABILITY_SUPPORT,
+    resolveEncounterMeta
+  )
+  console.log(
+    [
+      report,
+      ...failures.map(failure => `✗ ${failure}`),
+      ...(displaced.length > 0 ? ["displaced, the bake places it again:", ...displaced.map(line => `  ${line}`)] : []),
+    ].join("\n")
+  )
+  return failures.length === 0
+}
+
 if (args.includes("--help")) {
-  console.log(syntax)
+  console.log(`${syntax}\n${WEB_SYNTAX}`)
+} else if (target?.endsWith(".web")) {
+  if (!existsSync(target)) {
+    console.error(`no web called ${target}`)
+    process.exitCode = 1
+  } else void webCheck(target).then(sound => (process.exitCode = sound ? 0 : 1))
 } else if (!target) {
   const rows = LOCK_ENTRIES.map(e => lockRow(`${e.tier}/${e.path}`, (e.lesson ? LESSONS : LOCK_CATALOGUE)[e.name]))
   console.log(formatLockTable(rows))

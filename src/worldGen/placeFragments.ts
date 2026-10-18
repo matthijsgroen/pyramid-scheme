@@ -168,6 +168,8 @@ export const placeFragments = (
       }
       return reachabilitySupport.bucketForReward?.(reward)
     },
+    alsoHarvests: reachabilitySupport.alsoHarvests,
+    factsForCount: reachabilitySupport.factsForCount,
     journeyEntryLock: reachabilitySupport.journeyEntryLock,
     tierUnlockBucket: reachabilitySupport.tierUnlockBucket,
   }

@@ -17,6 +17,9 @@ export type JourneyContribution = {
   hidden?: (journeyId: string) => boolean
   // The glyph to mark the card with, for a journey holding something of this mod's already found.
   mark?: (journeyId: string) => string | undefined
+  // The 1-based nodes of the journey whose pyramid is shut by something of this mod's the player cannot clear from
+  // inside: drawn as not open yet, never as a harder pyramid.
+  buried?: (journeyId: string) => ReadonlySet<number>
 }
 
 export type UseJourneyContribution = () => JourneyContribution
@@ -29,6 +32,7 @@ export type MergedJourneyContributions = {
   lock: (journeyId: string) => JourneyLock | undefined
   hidden: (journeyId: string) => boolean
   mark: (journeyId: string) => string | undefined
+  buried: (journeyId: string) => ReadonlySet<number>
 }
 
 // Calls each contribution hook in a fixed order (the registry is populated once at module load —
@@ -49,6 +53,7 @@ export const useMergedJourneyContributions = (): MergedJourneyContributions => {
       return undefined
     },
     hidden: journeyId => resolved.some(c => c.hidden?.(journeyId)),
+    buried: journeyId => new Set(resolved.flatMap(c => [...(c.buried?.(journeyId) ?? [])])),
     mark: journeyId => {
       for (const c of resolved) {
         const mark = c.mark?.(journeyId)

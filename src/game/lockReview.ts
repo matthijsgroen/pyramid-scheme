@@ -11,8 +11,8 @@ const acted = (a: LockState, b: LockState) =>
   a.region === b.region || Object.keys(b.config).some(id => a.config[id] !== b.config[id])
 
 /**
- * The cheapest way through, where every action (a board solved, a lever thrown, a key taken) costs more
- * than any amount of walking. Steps are regions walked to, `⤓region` for a drop taken, and `Id:state`
+ * The cheapest way through, where every action (a board solved, a lever thrown, a key taken, an input arriving)
+ * costs more than any amount of walking. Steps are regions walked to, `⤓region` for a drop taken, and `Id:state`
  * for an action.
  */
 export const solveLock = (spec: LockSpec): { steps: string[]; actions: number } | undefined => {
@@ -52,9 +52,13 @@ export const solveLock = (spec: LockSpec): { steps: string[]; actions: number } 
   for (let i = 1; i < path.length; i++) {
     const [a, b] = [order[path[i - 1]], order[path[i]]]
     if (a.region === b.region) {
-      // The step is the move the player made; a torch a flood put out in the same step is its consequence.
-      const id = Object.keys(b.config).find(m =>
-        spec.mechanisms[m].transitions.some(t => t.at === a.region && t.from === a.config[m] && t.to === b.config[m])
+      // The step is the move the player made, or an input arriving; a torch a flood put out in the same step is its
+      // consequence.
+      const id = Object.keys(b.config).find(
+        m =>
+          spec.mechanisms[m].transitions.some(
+            t => t.at === a.region && t.from === a.config[m] && t.to === b.config[m]
+          ) || (spec.arrivals ?? []).some(t => t.mechanism === m && t.from === a.config[m] && t.to === b.config[m])
       )!
       steps.push(id === WEIGHTS ? stoneMove(a.config[id], b.config[id], a.region) : `${id}:${b.config[id]}`)
       actions++

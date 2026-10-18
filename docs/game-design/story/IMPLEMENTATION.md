@@ -200,17 +200,17 @@ before translation starts rather than after.
 On `story/journey-beats` (PR #304), playing in English and Dutch. What is written here as "ready now"
 below was the plan; this is what came of it.
 
-| Built                                        | Where it lives                                                              |
-| -------------------------------------------- | --------------------------------------------------------------------------- |
-| Journey arrivals, all 20, fired from the map | `useJourneyArrival.ts` + `fez.json` `arrival.*` — 96 lines                  |
-| Two speakers, portraits, sides swapping      | `Fez.tsx`, `portraits.ts`                                                   |
-| Story beats exempt from the tutorials toggle | `shouldSkipConversation`                                                    |
-| The eight tomb scenes                        | `fez.json` `tomb.*` — 92 lines, five ghosts drawn and placed                |
-| The reaction rail — five of the six bonds    | `reactionContributions.ts` (core) + `story/game/reaction/beatFor.ts`        |
+| Built                                        | Where it lives                                                                    |
+| -------------------------------------------- | --------------------------------------------------------------------------------- |
+| Journey arrivals, all 20, fired from the map | `useJourneyArrival.ts` + `fez.json` `arrival.*` — 96 lines                        |
+| Two speakers, portraits, sides swapping      | `Fez.tsx`, `portraits.ts`                                                         |
+| Story beats exempt from the tutorials toggle | `shouldSkipConversation`                                                          |
+| The eight tomb scenes                        | `fez.json` `tomb.*` — 92 lines, five ghosts drawn and placed                      |
+| The reaction rail — five of the six bonds    | `reactionContributions.ts` (core) + `story/game/reaction/beatFor.ts`              |
 | The Sphinx ending                            | `walls.ts` `starter_1`, the ward gate in `starter.ts`, the reed leaf in the Vault |
-| The story mod                                | `src/mods/story/` — `conversation` and `reading` families                   |
-| The story log                                | a mod screen; arrivals and tomb scenes, re-readable                         |
-| The explorer and the five ghosts             | `art/masters/characters/`, imported by `yarn import-portrait --bust=0.55`   |
+| The story mod                                | `src/mods/story/` — `conversation` and `reading` families                         |
+| The story log                                | a mod screen; arrivals and tomb scenes, re-readable                               |
+| The explorer and the five ghosts             | `art/masters/characters/`, imported by `yarn import-portrait --bust=0.55`         |
 
 **238 authored lines against this document's own count of 237.** The content is complete except for two
 beats that cannot be written yet (below).
@@ -259,16 +259,16 @@ standing in a tableau's place costs the tier a fragment host. `placement.spec.ts
 
 ### What is left
 
-| Left                              | Blocked on                                                                |
-| --------------------------------- | ------------------------------------------------------------------------- |
-| `reading.junior/expert/master`    | nothing — authored, and the encounter exists; three tomb rooms to author  |
-| `story.end.*`                     | nothing — authored, and nothing fires it. Where it goes is the decision   |
-| The new beats in the story log    | nothing — `ALL_SCENES` is arrivals and tombs, so `bond.*`, `reading.*` and `end` never appear |
-| The Sphinx inscription artwork    | nothing — the encounter draws catalogue glyphs today                      |
-| The offering arc (`altar.*`, `bond.master`) | **wall-or-choice at the tier gate** (`story-and-time-brainstorm.md` §4.5) |
-| The choked pyramid's arrival      | the topology work — its journey id does not exist                         |
-| One Fez line at the dust clearing | the topology work                                                         |
-| Reviewing a story beat at all     | the Puzzle Lab benches `puzzle`/`tomb-puzzle`/`capstone`; these are `story` |
+| Left                                        | Blocked on                                                                                                                    |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `reading.junior/expert/master`              | nothing — authored, and the encounter exists; three tomb rooms to author                                                      |
+| `story.end.*`                               | nothing — authored, and nothing fires it. Where it goes is the decision                                                       |
+| The new beats in the story log              | nothing — `ALL_SCENES` is arrivals and tombs, so `bond.*`, `reading.*` and `end` never appear                                 |
+| The Sphinx inscription artwork              | nothing — the encounter draws catalogue glyphs today                                                                          |
+| The offering arc (`altar.*`, `bond.master`) | **wall-or-choice at the tier gate** (`story-and-time-brainstorm.md` §4.5)                                                     |
+| The sand pyramid's arrival                  | the sand pyramid (`../../instructions/sand-pyramid.md`); it is wizard_3's first pyramid, so it meets `story.arrival.wizard_3` |
+| One Fez line at the sand clearing           | the sand pyramid                                                                                                              |
+| Reviewing a story beat at all               | the Puzzle Lab benches `puzzle`/`tomb-puzzle`/`capstone`; these are `story`                                                   |
 
 ## Ready now
 

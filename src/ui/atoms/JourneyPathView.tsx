@@ -22,6 +22,16 @@ const evalPath = (t: number, path: string): { x: number; y: number } => {
   return t <= 0.5 ? { x: q(s, 17, 30, 50), y: q(s, 75, 30, 40) } : { x: q(s, 50, 70, 83), y: q(s, 40, 50, 17) }
 }
 
+// Emerald pulse: this pyramid holds content a key now held opens. SMIL animating r + opacity, not `animate-ping`: a CSS
+// scale() transform on an SVG element scales about the SVG origin (0,0), so the ring would drift toward the corner
+// instead of pulsing in place. Growing `r` expands from the fixed centre.
+const UnexploredRing: FC<{ x: number; y: number }> = ({ x, y }) => (
+  <circle cx={x} cy={y} fill="none" stroke="rgb(16,185,129)" strokeWidth="1" className="pointer-events-none">
+    <animate attributeName="r" values="3.5;7" dur="1.1s" repeatCount="indefinite" />
+    <animate attributeName="opacity" values="0.8;0" dur="1.1s" repeatCount="indefinite" />
+  </circle>
+)
+
 // N positions evenly spaced by arc length along the path
 const getNodePositions = (path: string, n: number): Array<{ x: number; y: number }> => {
   if (n <= 0) return []
@@ -66,6 +76,9 @@ type Props = {
   // 1-based levelNrs of completed nodes that still hold reachable, unexplored content — pinged so a
   // player with a fresh ward key sees which pyramid to re-enter.
   unexploredNodes?: ReadonlySet<number>
+  // 1-based levelNrs of pyramids whose exit is sealed by sand the player cannot clear from inside: not open yet,
+  // which is about the world and says nothing of how hard the pyramid is. Drawn sand-filled instead of "current".
+  buriedNodes?: ReadonlySet<number>
 }
 
 export const JourneyPathView: FC<Props> = ({
@@ -79,6 +92,7 @@ export const JourneyPathView: FC<Props> = ({
   exterior,
   nudge = false,
   unexploredNodes,
+  buriedNodes,
 }) => {
   const path = PATHS[journeyLength]
   const nodes = inJourney ? getNodePositions(path, levelCount) : []
@@ -225,40 +239,42 @@ export const JourneyPathView: FC<Props> = ({
                       strokeWidth="0.8"
                       className="pointer-events-none"
                     />
-                    {/* Emerald pulse: this completed pyramid still holds unvisited content (a skipped
-                      chest/puzzle, or a ward path/tableau a key you now hold unlocks). Only completed
-                      nodes light — the pyramid you're currently in never does. */}
-                    {unexploredNodes?.has(i + 1) && (
-                      // SMIL animating r + opacity, not `animate-ping`: a CSS scale() transform on an
-                      // SVG element scales about the SVG origin (0,0), so the ring would drift toward
-                      // the corner instead of pulsing in place. Growing `r` expands from the fixed centre.
-                      <circle
-                        cx={pos.x}
-                        cy={pos.y}
-                        fill="none"
-                        stroke="rgb(16,185,129)"
-                        strokeWidth="1"
-                        className="pointer-events-none"
-                      >
-                        <animate attributeName="r" values="3.5;7" dur="1.1s" repeatCount="indefinite" />
-                        <animate attributeName="opacity" values="0.8;0" dur="1.1s" repeatCount="indefinite" />
-                      </circle>
-                    )}
+                    {unexploredNodes?.has(i + 1) && <UnexploredRing {...pos} />}
+                  </g>
+                )
+              }
+              if (buriedNodes?.has(i + 1)) {
+                // Sand to the brim, a dashed rim and no pulse: a shut place, not the next one to play.
+                return (
+                  <g key={i} data-node="buried">
+                    <circle
+                      cx={pos.x}
+                      cy={pos.y}
+                      r="3.8"
+                      fill="rgb(214,190,140)"
+                      stroke="rgb(146,110,60)"
+                      strokeWidth="0.8"
+                      strokeDasharray="1.2 0.8"
+                    />
+                    {isCurrent && unexploredNodes?.has(i + 1) && <UnexploredRing {...pos} />}
                   </g>
                 )
               }
               if (isCurrent) {
                 return (
-                  <g key={i} className="animate-pulse">
-                    <circle cx={pos.x} cy={pos.y} r="5.5" fill="rgba(251,191,36,0.25)" />
-                    <circle
-                      cx={pos.x}
-                      cy={pos.y}
-                      r="3.5"
-                      fill="rgb(251,191,36)"
-                      stroke="rgb(180,83,9)"
-                      strokeWidth="0.8"
-                    />
+                  <g key={i} data-node="current">
+                    <g className="animate-pulse">
+                      <circle cx={pos.x} cy={pos.y} r="5.5" fill="rgba(251,191,36,0.25)" />
+                      <circle
+                        cx={pos.x}
+                        cy={pos.y}
+                        r="3.5"
+                        fill="rgb(251,191,36)"
+                        stroke="rgb(180,83,9)"
+                        strokeWidth="0.8"
+                      />
+                    </g>
+                    {unexploredNodes?.has(i + 1) && <UnexploredRing {...pos} />}
                   </g>
                 )
               }

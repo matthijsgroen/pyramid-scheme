@@ -171,47 +171,61 @@ rather than what you open.
 ## G. Wizard — the scope outgrows the floor
 
 Wizard's identity is not another mechanic, it is a larger board. Expert plays a floor, master plays
-a site, and these two play the journey and the site-as-one-object. Cosmic is the right register for
-it: the material is cosmic dust, the stuff constellations are made from, and putting it back is
+a site, and these two play the tier and the site-as-one-object. Cosmic is the right register for
+it: the sand is what the stars are made of when enough of it comes down, and clearing it is
 restoring a balance rather than opening a door.
 
-| #   | Idea                                                                                                                                                                                                            | Leans on                                                              | Tier  | Build |
-| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- | ----- | ----- |
-| G1  | **The choked pyramid.** One pyramid in the journey is wholly buried in cosmic dust. Handles in its sibling pyramids clear it one path at a time.                                                                | the `hidden` mask, gates as currency consumers, `getUnexploredLevels` | rooms | L     |
-| G2  | **The hourglass.** The upper floor is choked; a lever there sends the player down to a floor walked as a hidato, sand falling in behind them, and the path they trace below decides which corridors open above. | hidato, the stair pairing, `floorExploration`'s shape                 | rooms | L     |
+| #   | Idea                                                                                                                                                                                                            | Leans on                                              | Tier  | Build |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ----- | ----- |
+| G1  | **The sand pyramid.** wizard_3 is buried from its first arrival. Each lever pulled, in any wizard journey, moves the sand front a stretch further.                                                              | a web over the tier, `getUnexploredLevels`            | rooms | L     |
+| G2  | **The hourglass.** The upper floor is choked; a lever there sends the player down to a floor walked as a hidato, sand falling in behind them, and the path they trace below decides which corridors open above. | hidato, the stair pairing, `floorExploration`'s shape | rooms | L     |
 
-### G1 — a currency whose scope is the journey
+### G1 — a web whose scope is the tier
 
-The return half already ships. `getUnexploredLevels(journeyId, heldKeys)` answers "which of this
+The buried journey is **wizard_3**, the Chamber of Ma'at, sand lying from its first pyramid's arrival on.
+Sand levers stand in pyramids of any wizard journey. The sand is written in a **web**, one file over the
+tier: a block per journey or pyramid, places given as percentages of a main path (`@45%`, `@60% side`,
+`@end`), and a **pot** listing its levers, `sand 40% 75% 100% by sun moon star`. The n-th pull, whichever
+lever it is, moves the front to the n-th stop. A stop lands on the nearest seam of the main path, a corridor
+between a floor lock's regions among them, and a front falling inside a region buries it whole. Keys the
+sand gives up `open` named places elsewhere. Where sand must sit at an exact place inside a wizard lock, the
+lock declares an outside input and the web binds it. The build plan, the format and what the walker proves
+are `../instructions/sand-pyramid.md`.
+
+**The return half already ships.** `getUnexploredLevels(journeyId, heldKeys)` answers "which of this
 journey's pyramids still hold something I can now reach", drives the travel screen's pulse, and
-names no mod — its keys are opaque ids. A dust currency is another such id, so the come-back loop
+names no mod — its keys are opaque ids. A sand key is another such id, so the come-back loop
 needs nothing new.
 
-What is new is the **scope**. Every currency today is either positional (a key in a place) or spread
-across the world; this one is spread across _one journey's siblings_ and consumed in _one_ of them.
-§E's split between positional keys and spread currencies is the vocabulary for saying so.
+**A lever is a key, not a mechanism.** A pull never goes back, and it works on another site, so it is
+positional content that mints one named key; a pot's stops are keys held once enough of its levers are. The
+player may pull the levers in any order: a pot counts pulls, not names, so what a player holds depends on
+which levers they pulled, never on the order. The web walker proves the tier finishes from every set of pulls
+a player can reach, and says whether every buried place can be seen before its lever is pulled.
 
-**Free forward travel is the enabler, and it is a progression change.** A journey holds one
-`levelNr` cursor: revisiting an earlier pyramid already works, reaching a later one out of order
-does not. Without that change the choked pyramid is only a later level with dust drawn on it.
+**It works both ways.** Places freed in wizard_3 hold keys that open sealed places in the other journeys'
+pyramids, so the tier is played back and forth. That is the ward gate's shape, a gate here and its key from
+elsewhere, with both ends inside one tier. The walker counts the returns a web asks for.
 
-**Restoring, not unlocking.** The handles clear paths in a pyramid the player has already seen
+**Free order between journeys is the enabler.** All four wizard journeys open together; inside a journey
+the pyramids stay in order. Without that the buried pyramid is only a later journey with sand drawn on
+it. The world solver already treats every journey of an unlocked tier as enterable, so this removes a
+divergence rather than adding one.
+
+**Restoring, not unlocking.** The levers clear paths in a pyramid the player has already seen
 buried, which is why this reads as balance rather than as a key.
 
-**The dust takes the spine too.** The choked pyramid is entered and gives nothing until its siblings
-are worked — not a pyramid with buried branches, a pyramid with nothing reachable. This is the one
+**The sand takes the spine too.** The first buried pyramid is entered and gives nothing until levers
+elsewhere are pulled — not a pyramid with buried branches, a pyramid with nothing reachable. This is the one
 place in the game a site is not completable on arrival, and it is safe for the reason
 `../mods/floor-topology-design.md` gives: the opener lies outside the site and leaving is always
-available, so the player is never stuck, only sent elsewhere.
+available, so the player is never stuck, only sent elsewhere. Because pyramids inside a journey stay in
+order, wizard_3's later pyramids wait behind it.
 
-**Balance is ma'at, and the tier already says so.** wizard_3 is the Chamber of Ma'at, and ma'at is
+**Balance is ma'at, and the journey already says so.** wizard_3 is the Chamber of Ma'at, and ma'at is
 truth and order — the way things are supposed to be, and what the mural's finale weighs. A pyramid
-choked with cosmic dust is a place fallen out of the sky's order, and the handles put it back. The
-meaning is the journey's own name rather than fiction imported for a mechanic.
-
-**Free order is per journey, not per tier.** The handles clear a pyramid among its own journey's
-siblings; journeys stay reachable as they always were, and tiers still gate on tomb tableaus. That
-is why the currency's scope is the journey (P5).
+full of sand is a place fallen out of order, and the levers put it back. The meaning is the journey's own
+name rather than fiction imported for a mechanic.
 
 ### G2 — the puzzle's output is a map
 
@@ -328,7 +342,7 @@ is needed.
 - **G2 needs a sand state a save can hold**, shaped like `floorExploration` but authoritative rather
   than a summary: a half-turned hourglass is a real position in the world, not a snapshot of one.
 - **G1 asks whether a pyramid may be useless.** A site that can be entered and offers nothing until
-  its siblings are worked is new — everything today either withholds content or gives it.
+  levers elsewhere are pulled is new — everything today either withholds content or gives it.
 - **Where the puzzle actually lives in A1.** A ramp that never strands is a convenience. It becomes a
   puzzle only through _where landings point_: aim each at the mouth of a branch not yet taken and
   clearing a floor in one pass turns into a route-ordering problem. Landings at the entrance are

@@ -200,7 +200,13 @@ export type JourneyAPI = {
   // held keys — ungated content, or gated content whose full key bundle the player now holds (a ward
   // door's key, a tableau's hieroglyphs, …). Empty set = nothing to go back for. Read cheaply on the
   // travel screen from the persisted floorExploration summary; names no mod (keys are opaque ids).
-  getUnexploredLevels: (journeyId: string, heldKeys: ReadonlySet<string>) => ReadonlySet<number>
+  getUnexploredLevels: (
+    journeyId: string,
+    heldKeys: ReadonlySet<string>,
+    /** Only bundles asking for a key this accepts count, and ungated content never does: what a held key of that
+     * kind opened since the floor was saved. */
+    via?: (keyId: string) => boolean
+  ) => ReadonlySet<number>
 }
 
 const knownJourneyIds = journeyData.map(j => j.id)
@@ -772,7 +778,11 @@ export const createJourneysV3Api = ({
     )
   }
 
-  const getUnexploredLevels = (journeyId: string, heldKeys: ReadonlySet<string>): ReadonlySet<number> => {
+  const getUnexploredLevels = (
+    journeyId: string,
+    heldKeys: ReadonlySet<string>,
+    via?: (keyId: string) => boolean
+  ): ReadonlySet<number> => {
     const j = journeys.find(j => j.journeyId === journeyId)
     const levels = new Set<number>()
     if (!j?.floorExploration) return levels
@@ -783,7 +793,9 @@ export const createJourneysV3Api = ({
     for (const [key, entry] of Object.entries(j.floorExploration)) {
       const level = Number(key.split(":")[0])
       if (level > nodes) continue
-      const lit = (entry.open ?? false) || (entry.keySets ?? []).some(ks => ks.every(k => heldKeys.has(k)))
+      const lit =
+        (!via && (entry.open ?? false)) ||
+        (entry.keySets ?? []).some(ks => ks.every(k => heldKeys.has(k)) && (!via || ks.some(via)))
       if (lit) levels.add(level)
     }
     return levels
