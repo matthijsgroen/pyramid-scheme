@@ -71,6 +71,8 @@ const serializeSideSection = (s: SideSection): string => {
   if (s.role) parts.push(`role: ${serializeEncounter(s.role)}`)
   if (s.encountersByIndex && Object.keys(s.encountersByIndex).length)
     parts.push(`encountersByIndex: ${serializeEncountersByIndex(s.encountersByIndex)}`)
+  if (s.activitiesByIndex && Object.keys(s.activitiesByIndex).length)
+    parts.push(`activitiesByIndex: ${serializeEncountersByIndex(s.activitiesByIndex)}`)
   if (s.sideSections?.length)
     parts.push(`sideSections: [${s.sideSections.map(sub => serializeSideSection(sub as SideSection)).join(", ")}]`)
   return `{ ${parts.join(", ")} }`
@@ -177,6 +179,7 @@ const floorFieldEmitters: {
   wallDecorations: v => (v.length ? `wallDecorations: ${JSON.stringify(v)}` : null),
   role: v => `role: ${serializeEncounter(v)}`,
   encountersByIndex: v => (Object.keys(v).length ? `encountersByIndex: ${serializeEncountersByIndex(v)}` : null),
+  activitiesByIndex: v => (Object.keys(v).length ? `activitiesByIndex: ${serializeEncountersByIndex(v)}` : null),
   corridorStraightness: v => `corridorStraightness: ${v}`,
   packing: v => `packing: ${v}`,
   seed: v => `seed: ${v}`,

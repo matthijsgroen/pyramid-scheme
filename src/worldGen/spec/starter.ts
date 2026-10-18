@@ -214,7 +214,7 @@ export const starterRules: Rule[] = [
       {
         mainEndReward: "tombTreasure",
         pathPuzzles: TOMB_ROOMS_PER_FLOOR.starter + 1,
-        nodes: [{ where: "last", encounter: "conversation" }],
+        nodes: [{ where: "last", encounter: "conversation", activity: "ledger" }],
       },
       { mainEndReward: "tombTreasure" },
       { mainEndReward: "tombTreasure" },

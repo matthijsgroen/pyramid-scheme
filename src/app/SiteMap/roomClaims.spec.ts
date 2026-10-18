@@ -34,6 +34,33 @@ describe("where a dressed room's prop stands", () => {
     expect(buildRoomClaims(grid).decorationAt.size).toBe(0)
   })
 
+  it("stands a story room's prop beside it in the corridor, its authored activity making it a chamber", () => {
+    const story: GridCell = {
+      type: "room",
+      roomType: "encounter",
+      family: "conversation",
+      dirs: new Set<Direction>(["e", "w"]),
+      state,
+      decoration: "shelf",
+      activity: "ledger",
+      authoredActivity: "ledger",
+    }
+    const grid: FloorGrid = {
+      siteId: "site",
+      rows: 3,
+      cols: 5,
+      entrancePos: [1, 0],
+      exitPos: [1, 4],
+      staircases: {},
+      cells: [
+        [empty, empty, empty, empty, empty],
+        [corridor(["e"]), corridor(["e", "w"]), story, corridor(["e", "w"]), corridor(["w"])],
+        [empty, empty, empty, empty, empty],
+      ],
+    }
+    expect([...buildRoomClaims(grid).decorationAt.values()]).toEqual(["shelf"])
+  })
+
   it("never stands a stairhead's prop on the stair's own cell", () => {
     const stairhead: GridCell = {
       type: "room",

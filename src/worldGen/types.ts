@@ -1,3 +1,4 @@
+import type { ActivityId } from "../game/activities"
 import type {
   DecorationKind,
   ForkDemand,
@@ -56,6 +57,8 @@ export type SubSection = {
   /** Per-node encounter override: 0-based room index → family/tag, resolved from authored `nodes`
    * selectors. A room uses `encountersByIndex[k] ?? encounter`. Mirrors game/siteTypes.ts. */
   encountersByIndex?: Record<number, string | string[]>
+  /** Per-node authored activity, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
+  activitiesByIndex?: Record<number, ActivityId>
   /** Opaque payload for whichever family renders this section's rooms (e.g. a tableau's
    * `{runNr}`) — mirrors game/siteTypes.ts's SubSection.encounterArgs. */
   encounterArgs?: unknown
@@ -90,6 +93,8 @@ export type FloorConfig = {
    * authored `nodes` selectors (e.g. the last room → "capstone"). Room k uses
    * `encountersByIndex[k] ?? encounter`. Mirrors game/siteTypes.ts. */
   encountersByIndex?: Record<number, string | string[]>
+  /** Per-node authored activity for the main path, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
+  activitiesByIndex?: Record<number, ActivityId>
   corridorStraightness?: number
   packing?: number
   /** The seed this floor carves at, in place of the one its address derives. Read inside the assembler, so

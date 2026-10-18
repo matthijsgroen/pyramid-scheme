@@ -1,4 +1,5 @@
 import type { Tier, Difficulty, PathPuzzlesRange } from "./types"
+import type { ActivityId } from "../game/activities"
 import type { DecorationKind, HandleSide, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
 import type { PlacedContainer } from "../game/regions"
 import type { BarrierOrder, Control, Obstacle } from "@/game/obstacles"
@@ -67,6 +68,8 @@ export type NodeSelector = {
   where: NodeWhere
   /** Family/tag for the selected node(s) — an exact family id or a tag (e.g. "capstone", "trap"). */
   encounter?: string | string[]
+  /** What the selected room is for — a story scene's set (activities.ts). Free: it only dresses the room. */
+  activity?: ActivityId
 }
 
 /** Expand `nodes` selectors against a path's node `count` into a sparse 0-based index → encounter
@@ -75,23 +78,36 @@ export type NodeSelector = {
 export const resolveNodeSelectors = (
   nodes: NodeSelector[] | undefined,
   count: number
-): Record<number, string | string[]> => {
-  const out: Record<number, string | string[]> = {}
+): Record<number, string | string[]> => resolveNodeField(nodes, count, sel => sel.encounter)
+
+/** Expand `nodes` selectors into a sparse 0-based index → authored activity map, the way
+ * `resolveNodeSelectors` does for encounters. */
+export const resolveNodeActivities = (nodes: NodeSelector[] | undefined, count: number): Record<number, ActivityId> =>
+  resolveNodeField(nodes, count, sel => sel.activity)
+
+const resolveNodeField = <T>(
+  nodes: NodeSelector[] | undefined,
+  count: number,
+  field: (sel: NodeSelector) => T | undefined
+): Record<number, T> => {
+  const out: Record<number, T> = {}
   if (!nodes || count <= 0) return out
-  const set = (oneBased: number, enc: string | string[] | undefined) => {
-    const i = oneBased - 1
-    if (enc !== undefined && i >= 0 && i < count) out[i] = enc
-  }
   for (const sel of nodes) {
+    const value = field(sel)
+    if (value === undefined) continue
+    const set = (oneBased: number) => {
+      const i = oneBased - 1
+      if (i >= 0 && i < count) out[i] = value
+    }
     const w = sel.where
-    if (w === "first") set(1, sel.encounter)
-    else if (w === "last") set(count, sel.encounter)
-    else if (typeof w === "number") set(w, sel.encounter)
+    if (w === "first") set(1)
+    else if (w === "last") set(count)
+    else if (typeof w === "number") set(w)
     else {
       // Clamp step to a positive integer so a bad `every` (0, negative, fractional) can't hang the
       // build; a nonsense value degrades to "every node" rather than looping forever.
       const step = Math.max(1, Math.floor(w.every))
-      for (let pos = w.from ?? 1; pos <= count; pos += step) set(pos, sel.encounter)
+      for (let pos = w.from ?? 1; pos <= count; pos += step) set(pos)
     }
   }
   return out

@@ -86,6 +86,7 @@ export const puzzleRoomSpec = (
 ): RoomSpec => {
   const { resolveEncounter, resolveKeyRequirements, resolveBoardIndex, floorRef } = prep.input
   const reward = section.rewards?.[pi]
+  const authoredActivity = section.activitiesByIndex?.[pi]
   const override = section.encountersByIndex?.[pi]
   const family =
     override !== undefined ? resolveEncounter(override, "puzzle") : resolveEncounter(section.encounter, "puzzle")
@@ -110,6 +111,7 @@ export const puzzleRoomSpec = (
     ...(section.role !== undefined ? { role: section.role } : {}),
     ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
     ...(reward ? { reward } : {}),
+    ...(authoredActivity ? { authoredActivity } : {}),
   }
 }
 

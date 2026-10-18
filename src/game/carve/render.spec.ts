@@ -10,7 +10,7 @@ import type { RenderState } from "./render"
 import { validate } from "./validate"
 import { assembleFloor } from "./assembleFloor"
 import type { Cell, DressingPools, OneWayEdge, RoomSpec } from "./state"
-import { ACTIVITIES, activitiesFor } from "../activities"
+import { ACTIVITIES, activitiesFor, type ActivityId } from "../activities"
 import type { Direction, FloorConfig, FloorGrid, GridCell, RoomCell } from "../siteTypes"
 // A walk of three nodes along row 0 (0,0 → 0,2 → 0,4), the entrance and exit rooms at its ends, and a node at
 // 4,4 a vertical drop below the exit.
@@ -291,8 +291,20 @@ describe("dressing by purpose", () => {
     junctionPools?: DressingPools
     patron?: FloorConfig["patron"]
     switchAtJunction?: boolean
+    authored?: Record<string, ActivityId>
   }
-  const dressed = ({ pools = TRADE, stairPools, junctionPools, patron, switchAtJunction = false }: Setup = {}) => {
+  const dressed = ({
+    pools = TRADE,
+    stairPools,
+    junctionPools,
+    patron,
+    switchAtJunction = false,
+    authored = {},
+  }: Setup = {}) => {
+    const withAuthored = (entries: [string, RoomSpec][]) =>
+      new Map<string, RoomSpec>(
+        entries.map(([pk, spec]) => [pk, authored[pk] ? { ...spec, authoredActivity: authored[pk] } : spec])
+      )
     const prep = prepOf(plainFloor(patron ? { patron } : {}))
     const labels = noLabels()
     for (const node of nodes) labels.dressing.set(node, pools)
@@ -318,13 +330,13 @@ describe("dressing by purpose", () => {
         seamGated: new Set<string>(),
         seamBehind: new Map(),
       },
-      mainRooms: new Map<string, RoomSpec>([
+      mainRooms: withAuthored([
         ["0,0", { roomType: "portal" }],
         ["0,2", { roomType: "encounter", family: "sumplete" }],
         ["0,4", { roomType: "fork" }],
         ["0,6", { roomType: "portal", stairId: "down" }],
       ]),
-      chainRooms: new Map<string, RoomSpec>([
+      chainRooms: withAuthored([
         ["2,4", { roomType: "encounter", family: "chest", tags: ["treasure"] }],
         ["2,2", { roomType: "encounter", family: "keyGate", requiredKeyId: "ward", gateVariant: "tomb-key" }],
         ["4,2", { roomType: "encounter", family: "sumplete" }],
@@ -442,6 +454,38 @@ describe("dressing by purpose", () => {
     expect(at("0,4")).not.toHaveProperty("decoration")
     expect(at("0,4")).not.toHaveProperty("patronRoom")
     expect(at("2,4")).toMatchObject({ decoration: "statue", patronRoom: true })
+  })
+
+  it("dresses a room from its authored activity, whatever the hash would pick", () => {
+    const hashed = dressed()("0,4").activity
+    const other = hashed === "ledger" ? "storage" : "ledger"
+    const room = dressed({ authored: { "0,4": other } })("0,4")
+    expect(room.activity).toBe(other)
+    expect(activityOf(other)?.props).toContain(room.decoration)
+    expect(TRADE.props).toContain(room.decoration)
+  })
+
+  it("dresses a story room standing in the corridor, which the authored activity makes a chamber", () => {
+    const room = dressed({ authored: { "0,2": "ledger" } })("0,2")
+    expect(room).toMatchObject({ activity: "ledger", decoration: "shelf" })
+  })
+
+  it("dresses from the authored activity's own props where the pool holds none of them", () => {
+    const room = dressed({ pools: { props: ["basketStack"], wall: [] }, authored: { "0,2": "ledger" } })("0,2")
+    expect(room.activity).toBe("ledger")
+    expect(["scribeDesk", "shelf"]).toContain(room.decoration)
+  })
+
+  it("lets an authored activity take a mechanism's room", () => {
+    const room = dressed({ switchAtJunction: true, authored: { "0,4": "ledger" } })("0,4")
+    expect(room).toMatchObject({ activity: "ledger", decoration: "shelf" })
+  })
+
+  it("keeps the god off a room with an authored activity", () => {
+    const pools: DressingPools = { props: ["statue", "shelf", "rubblePile"], wall: ["stela", "niche"] }
+    const junction = dressed({ pools, patron: "anubis", authored: { "0,4": "ledger" } })("0,4")
+    expect(junction).toMatchObject({ activity: "ledger", decoration: "shelf" })
+    expect(junction).not.toHaveProperty("patronRoom")
   })
 
   it("dresses the same site the same way every time", () => {

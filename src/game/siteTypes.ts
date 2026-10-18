@@ -272,6 +272,9 @@ export type RoomCell = {
   /** What the room is for (activities.ts): its props and wall item come from this activity. Unset on a
    * room some other purpose has, or on a rank whose pool furnishes no activity. */
   activity?: ActivityId
+  /** The activity a story authored for this room (`nodes: [{ activity }]`). It wins over every other purpose,
+   * and it makes the room a chamber even where it stands in a corridor (`isChamber`): a scene needs its set. */
+  authoredActivity?: ActivityId
   /**
    * THE GOD'S ROOM on a dedicated floor: the biggest chamber, dressed with a statue of him and paired.
    *
@@ -508,6 +511,8 @@ export type SubSection = {
    * selectors (docs/mods/ARCHITECTURE.md ("Authoring: node selectors")). Room k uses `encountersByIndex[k] ?? encounter`;
    * at runtime the values are resolved family ids. */
   encountersByIndex?: Record<number, string | string[]>
+  /** Per-node authored activity: 0-based room index → the activity that room is dressed for. */
+  activitiesByIndex?: Record<number, ActivityId>
   /** Pool of decoration kinds this section's rooms are dressed from. */
   decorations?: DecorationKind[]
   /** Pool of wall-item kinds for the same rooms, hung on a wall instead of standing on the floor. */
@@ -667,6 +672,8 @@ export type FloorConfig = {
    * `encountersByIndex[k] ?? encounter`; baked to concrete family ids by the gen-time encounter
    * pass. Replaces the old last-only `lastMainPuzzleFamily`. See docs/mods/ARCHITECTURE.md ("Authoring: node selectors"). */
   encountersByIndex?: Record<number, string | string[]>
+  /** Per-node authored activity for the main path: 0-based room index → the activity that room is dressed for. */
+  activitiesByIndex?: Record<number, ActivityId>
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65 (fairly straight); lower = more winding. */
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */

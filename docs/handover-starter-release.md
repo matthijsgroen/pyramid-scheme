@@ -66,12 +66,12 @@ Start with the writing-plans skill on `themed-rooms.md`, then subagent-driven ex
 
 ### E. The opening (story) — from `story/review.md` § The opening
 
-| #   | Owner                | Task                                                                                                                                                                                             |
-| --- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| E1  | C                    | The meeting room on `starter_1` p1 floor 0: `pathPuzzles: 1`, `nodes: [{ where: "last", encounter: "conversation" }]`; `sceneFor` for `starter_1`; a line with no portrait (a voice in the dark) |
-| E2  | C drafts, U approves | The meeting scene; `arrival.starter_1` rewritten explorer-only; `pyramidIntro` as the explorer's exterior hint; `mapPiece*` as Fez's                                                             |
-| E3  | C                    | The tap-hint atom; explorer portrait mirrored on the right (re-crop if the cut map shows)                                                                                                        |
-| E4  | C                    | Copy: `welcome*`, cut `chooseExpedition`, one word for journey/expedition, "tik" not "klik", the arrival fired where its place is                                                                |
+| #   | Owner                | Task                                                                                                                                                                                                                                |
+| --- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| E1  | C                    | The meeting room on `starter_1` p1 floor 0: `pathPuzzles: 1`, `nodes: [{ where: "last", encounter: "conversation", activity: "selling" }]` (its set, C3); `sceneFor` for `starter_1`; a line with no portrait (a voice in the dark) |
+| E2  | C drafts, U approves | The meeting scene; `arrival.starter_1` rewritten explorer-only; `pyramidIntro` as the explorer's exterior hint; `mapPiece*` as Fez's                                                                                                |
+| E3  | C                    | The tap-hint atom; explorer portrait mirrored on the right (re-crop if the cut map shows)                                                                                                                                           |
+| E4  | C                    | Copy: `welcome*`, cut `chooseExpedition`, one word for journey/expedition, "tik" not "klik", the arrival fired where its place is                                                                                                   |
 
 ### F. Release — C prepares, U releases
 

@@ -5,7 +5,7 @@ import { TIER_UNLOCK_PERK_IDS } from "../data/treasurePerks"
 import { hashStr, pathEndToReward, specToGate } from "./rewards"
 import { stairIdAt, type StairAddress } from "../game/stairAddress"
 import type { KeyColor, PathEntry, RewardSpec, SideIntensity, SideSectionConstraint } from "./dsl"
-import { resolveNodeSelectors } from "./dsl"
+import { resolveNodeActivities, resolveNodeSelectors } from "./dsl"
 
 const ALL_KEY_COLORS: KeyColor[] = ["blue", "red", "green", "yellow", "purple"]
 
@@ -64,6 +64,7 @@ const buildDslSection = <TExtra extends string>(
   // This section's own per-node encounter overrides (authored `nodes` selectors) — selectors work
   // on any path, not just the main path (§G).
   const encountersByIndex = resolveNodeSelectors(cs.nodes, pathPuzzles)
+  const activitiesByIndex = resolveNodeActivities(cs.nodes, pathPuzzles)
   return {
     ...(cs.label !== undefined ? { label: cs.label } : {}),
     pathPuzzles,
@@ -78,6 +79,7 @@ const buildDslSection = <TExtra extends string>(
     ...(cs.sealed ? { sealed: true } : {}),
     ...(cs.encounter !== undefined ? { encounter: cs.encounter } : {}),
     ...(Object.keys(encountersByIndex).length ? { encountersByIndex } : {}),
+    ...(Object.keys(activitiesByIndex).length ? { activitiesByIndex } : {}),
     ...(cs.encounterArgs !== undefined ? { encounterArgs: cs.encounterArgs } : {}),
     ...(cs.theme !== undefined ? { theme: cs.theme } : {}),
   }

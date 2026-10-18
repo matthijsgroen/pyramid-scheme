@@ -233,6 +233,13 @@ describe("what a world-spec setting may and may not move", () => {
         }),
     ],
     [
+      "the activity a story authored for a room",
+      c =>
+        edited(c, n => {
+          if ((n.pathPuzzles as number) > 0) n.activitiesByIndex = { 0: "ledger" }
+        }),
+    ],
+    [
       "the skin and the role a room was drawn for",
       c =>
         edited(c, n => {

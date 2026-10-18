@@ -23,8 +23,10 @@ describe("buildFloor", () => {
       sideSections: [],
       encounter: "tableau",
       encountersByIndex: { 1: "crocodile" },
+      activitiesByIndex: { 1: "ledger" },
       corridorStraightness: 0.5,
     })
+    expect(floor.activitiesByIndex).toEqual({ 1: "ledger" })
     expect(floor.encounter).toBe("tableau")
     expect(floor.encountersByIndex).toEqual({ 1: "crocodile" })
     expect(floor.corridorStraightness).toBe(0.5)
@@ -98,7 +100,7 @@ describe("buildSite", () => {
       constraint: {
         floors: [
           { pathPuzzles: 1, mainEndReward: "tombTreasure", encounter: "tableau" },
-          { pathPuzzles: 2, nodes: [{ where: "last", encounter: "crocodile" }] },
+          { pathPuzzles: 2, nodes: [{ where: "last", encounter: "crocodile", activity: "ledger" }] },
         ],
       } as PyramidConstraint,
     })
@@ -106,6 +108,7 @@ describe("buildSite", () => {
     expect(floors[0].encounter).toBe("tableau")
     // `nodes: [{where:"last"}]` on a 2-node path resolves to index 1.
     expect(floors[1].encountersByIndex).toEqual({ 1: "crocodile" })
+    expect(floors[1].activitiesByIndex).toEqual({ 1: "ledger" })
     // Non-last floor's own reward, not the site-level fallback (which never runs here).
     expect(floors[0].mainEndReward).not.toEqual({ type: "fragmentSlot" })
   })

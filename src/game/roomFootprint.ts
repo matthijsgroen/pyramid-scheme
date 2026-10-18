@@ -64,10 +64,13 @@ export const portalKindOf = (
 /**
  * A CHAMBER claims the floor around it on the map; every other room is a stop in a 1-wide corridor. Every
  * junction is one, whatever stands in it, and so is a dead end that holds treasure or is a stairhead or the
- * exit. `kind` is the shape the room is drawn as.
+ * exit, and so is a room a story authored an activity for, wherever it stands: a scene needs its set. `kind`
+ * is the shape the room is drawn as.
  *
  * It lives in the DOMAIN because the renderer claims the floor by it and the carve dresses by it: a prop
  * recorded on a room that claims no floor is a prop nobody can see.
  */
-export const isChamber = (cell: Pick<RoomCell, "roomType" | "dirs">, kind: string): boolean =>
-  cell.roomType === "fork" || ((kind === "treasure" || kind === "stairhead" || kind === "exit") && cell.dirs.size === 1)
+export const isChamber = (cell: Pick<RoomCell, "roomType" | "dirs" | "authoredActivity">, kind: string): boolean =>
+  cell.roomType === "fork" ||
+  cell.authoredActivity !== undefined ||
+  ((kind === "treasure" || kind === "stairhead" || kind === "exit") && cell.dirs.size === 1)

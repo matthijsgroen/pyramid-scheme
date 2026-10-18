@@ -102,6 +102,7 @@ export const mainRooms = pass(
         const family =
           override !== undefined ? resolveEncounter(override, "puzzle") : resolveEncounter(config.encounter, "puzzle")
         const reward = config.rewards?.[k]
+        const authoredActivity = config.activitiesByIndex?.[k]
         const requiredKeyIds = resolveKeyRequirements(family.familyId, {
           ...floorRef,
           pathIndex: k,
@@ -122,6 +123,7 @@ export const mainRooms = pass(
           ...(config.role !== undefined ? { role: config.role } : {}),
           ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
           ...(reward ? { reward } : {}),
+          ...(authoredActivity ? { authoredActivity } : {}),
         })
       }
     })

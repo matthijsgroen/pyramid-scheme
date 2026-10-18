@@ -1,5 +1,6 @@
 import { hashString } from "@/support/hashString"
 import { oneWayRunCells } from "../carveConstants"
+import { ACTIVITIES } from "../activities"
 import { activitiesServing, rolesOfProp, rolesOfWallItem } from "../dressingTags"
 import { footprintSize, isChamber, portalKindOf } from "../roomFootprint"
 import type {
@@ -236,11 +237,13 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
   if (entranceCell.type === "room") cells2D[entR][entC] = { ...entranceCell, state: "reachable" }
 
   // DRESSING: ONLY A CHAMBER IS DRESSED — a room that claims floor on the map (`isChamber`); a puzzle stands in
-  // the corridor and has nowhere to put a prop. ONE PURPOSE PER CHAMBER, by precedence — mechanism, then
-  // patron, then treasure or shop, then an activity. A mechanism's room and a treasure or shop room show
-  // nothing competing with what stands in them; every other chamber shows one activity its section's pool
-  // furnishes and its wing's role serves, prop and wall item both from it, or where there is none, any prop of
-  // the pool. Every pick is hashed from WHERE the room is.
+  // the corridor and has nowhere to put a prop. ONE PURPOSE PER CHAMBER, by precedence — story, then mechanism,
+  // then patron, then treasure or shop, then an activity. A story room shows the activity authored for it, from
+  // the pool where the pool holds its props and from its own props where it does not: a scene's set is
+  // authored, so it may name a kind the wing's role narrowed away. A mechanism's room and a treasure or shop
+  // room show nothing competing with what stands in them; every other chamber shows one activity its section's
+  // pool furnishes and its wing's role serves, prop and wall item both from it, or where there is none, any
+  // prop of the pool. Every pick is hashed from WHERE the room is.
   const switchesStanding = new Set(state.forks.reserved.slice(0, state.forks.switchesPlaced))
   const isMechanism = (pk: string, spec: RoomSpec): boolean =>
     state.switchRooms.has(pk) ||
@@ -289,6 +292,7 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
     }
     const eligible = [...new Set([...forks, ...endpointPositions])]
       .filter(pk => (labels.dressing.get(pk)?.props ?? []).some(k => PATRON_KINDS.has(k)))
+      .filter(pk => roomSpecs.get(pk)?.authoredActivity === undefined)
       .filter(pk => {
         const spec = roomSpecs.get(pk)
         const [r, c] = rowCol(pk)
@@ -317,21 +321,29 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
           : "room"
     return isChamber(cell, kind)
   }
+  const fromPoolOrOwn = <T>(pool: readonly T[] | undefined, own: readonly T[]): readonly T[] => {
+    const shared = pool?.filter(k => own.includes(k)) ?? []
+    return shared.length ? shared : own
+  }
   for (const [pk, spec] of roomSpecs) {
     const isPatron = patronRooms.has(pk)
-    if (!chamberAt(pk, spec) || isMechanism(pk, spec) || (!isPatron && isTreasureLike(spec))) continue
+    const authored = ACTIVITIES.find(a => a.id === spec.authoredActivity)
+    if (!chamberAt(pk, spec)) continue
+    if (!authored && (isMechanism(pk, spec) || (!isPatron && isTreasureLike(spec)))) continue
     const pools = labels.dressing.get(pk)
-    const activity = isPatron
-      ? undefined
-      : pickDressing(activitiesServing(pools?.props ?? [], pools?.role), pk, "activity")
+    const activity =
+      authored ??
+      (isPatron ? undefined : pickDressing(activitiesServing(pools?.props ?? [], pools?.role), pk, "activity"))
     // The god's room draws from the god-bearing kinds, a statue first where the pool has one.
     const patronProps = pools?.props?.filter(k => PATRON_KINDS.has(k))
     const godProps = patronProps?.includes("statue") ? (["statue"] as DecorationKind[]) : patronProps
-    const propPool = isPatron
-      ? godProps
-      : activity
-        ? pools?.props?.filter(k => activity.props.includes(k))
-        : pools?.props
+    const propPool = authored
+      ? fromPoolOrOwn(pools?.props, authored.props)
+      : isPatron
+        ? godProps
+        : activity
+          ? pools?.props?.filter(k => activity.props.includes(k))
+          : pools?.props
     const picked = pickDressing(propPool, pk, "decoration")
     // No pit beside a way down: re-picked rather than filtered, so the pool's length moves no other room.
     const [r, c] = pk.split(",").map(Number)
@@ -348,13 +360,15 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
     // The god's room takes a god's wall item too, which is how the renderer finds it. An activity hangs only its
     // own wall items, and nothing where it has none.
     const patronWall = isPatron ? pools?.wall?.filter(k => PATRON_KINDS.has(k)) : undefined
-    const wallPool = patronWall?.length
-      ? patronWall
-      : activity
-        ? pools?.wall?.filter(k => activity.wall.includes(k))
-        : pools?.wall
-          ? wallSuiting(pools.wall, decoration)
-          : undefined
+    const wallPool = authored
+      ? fromPoolOrOwn(pools?.wall, authored.wall)
+      : patronWall?.length
+        ? patronWall
+        : activity
+          ? pools?.wall?.filter(k => activity.wall.includes(k))
+          : pools?.wall
+            ? wallSuiting(pools.wall, decoration)
+            : undefined
     const wallDecoration = pickDressing(wallPool, pk, "wallDecoration")
     if (!decoration && !wallDecoration) continue
     if (owner.type === "room")

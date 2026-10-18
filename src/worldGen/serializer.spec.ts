@@ -16,6 +16,7 @@ describe("generateFile — serializeSideSection field coverage", () => {
       exitOrStaircase: "exit",
       sealed: true,
       theme: "night",
+      activitiesByIndex: { 0: "ledger" },
       sideSections: [
         {
           pathPuzzles: 1,
@@ -26,6 +27,7 @@ describe("generateFile — serializeSideSection field coverage", () => {
           rewards: [{ type: "mosaicPiece" }, { type: "consumable", consumable: "oil" }],
           sealed: true,
           encounter: "tableau",
+          activitiesByIndex: { 0: "selling" },
           sideSections: [{ pathPuzzles: 0, difficulty: "junior", end: "treasure", endReward: { type: "mosaicPiece" } }],
         },
       ],
@@ -60,6 +62,11 @@ describe("generateFile — serializeSideSection field coverage", () => {
   it("keeps the skin on both a serialized floor and a serialized side section", () => {
     expect(output).toContain('theme: "night"')
     expect(output).toContain('theme: "day"')
+  })
+
+  it("keeps an authored room activity on both a serialized floor and a serialized side section", () => {
+    expect(output).toContain('activitiesByIndex: { 0: "ledger" }')
+    expect(output).toContain('activitiesByIndex: { 0: "selling" }')
   })
 })
 
