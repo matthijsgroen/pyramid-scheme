@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
-import { journeys } from "@/data/journeys"
+import { isFreeOrderDifficulty } from "@/data/difficultyLevels"
+import { journeys, type Journey } from "@/data/journeys"
 import { TIER_UNLOCK_PERK_IDS } from "@/data/treasurePerks"
 import {
   availablePyramidJourneyIds,
@@ -103,5 +104,54 @@ describe(nextPyramidJourneyId, () => {
 
   it("announces nothing the player couldn't start", () => {
     expect(nextPyramidJourneyId(journeys, juniorPyramids[0], noKeys)).toBeUndefined()
+  })
+})
+
+describe("free-order tier", () => {
+  const made = (id: string, difficulty: Journey["difficulty"], entryLock?: boolean) =>
+    ({ id, difficulty, ...(entryLock ? { entryLock: {} } : {}) }) as unknown as Journey
+  const world = [
+    made("s1", "starter"),
+    made("s2", "starter"),
+    made("j1", "junior"),
+    made("j2", "junior"),
+    made("j3", "junior"),
+    made("j-tomb", "junior", true),
+  ]
+  const freeJunior = (d: string) => d === "junior"
+  const juniorKey = keys(...TIER_UNLOCK_PERK_IDS.junior!)
+
+  it("opens every journey of the tier with the tier key, nothing completed", () => {
+    const available = availablePyramidJourneyIds(world, juniorKey, completed(), freeJunior)
+    expect([...available].filter(id => id.startsWith("j"))).toEqual(["j1", "j2", "j3"])
+  })
+
+  it("keeps the tier shut without its key", () => {
+    const available = availablePyramidJourneyIds(world, noKeys, completed(), freeJunior)
+    expect([...available].some(id => id.startsWith("j"))).toBe(false)
+  })
+
+  it("keeps the previous-completed rule in a tier that is not free-order", () => {
+    const available = availablePyramidJourneyIds(world, juniorKey, completed(), freeJunior)
+    expect([...available].filter(id => id.startsWith("s"))).toEqual(["s1"])
+  })
+
+  it("offers the first open journey after this one, then any before it", () => {
+    expect(nextPyramidJourneyId(world, "j1", juniorKey, completed(), freeJunior)).toBe("j2")
+    expect(nextPyramidJourneyId(world, "j3", juniorKey, completed(), freeJunior)).toBe("j1")
+  })
+
+  it("never names a completed journey, nor the one just finished", () => {
+    expect(nextPyramidJourneyId(world, "j1", juniorKey, completed("j2"), freeJunior)).toBe("j3")
+    expect(nextPyramidJourneyId(world, "j1", juniorKey, completed("j2", "j3"), freeJunior)).toBeUndefined()
+  })
+
+  it("never names a journey of a closed tier", () => {
+    expect(nextPyramidJourneyId(world, "j1", noKeys, completed(), freeJunior)).toBeUndefined()
+  })
+
+  it("marks wizard, and no other tier, free-order", () => {
+    expect(isFreeOrderDifficulty("wizard")).toBe(true)
+    expect(isFreeOrderDifficulty("expert")).toBe(false)
   })
 })

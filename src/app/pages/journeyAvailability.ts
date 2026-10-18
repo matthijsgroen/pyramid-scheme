@@ -1,4 +1,4 @@
-import { difficulties, isDifficultyReleased, type Difficulty } from "@/data/difficultyLevels"
+import { difficulties, isDifficultyReleased, isFreeOrderDifficulty, type Difficulty } from "@/data/difficultyLevels"
 import { TIER_UNLOCK_PERK_IDS } from "@/data/treasurePerks"
 import type { Journey } from "@/data/journeys"
 
@@ -11,7 +11,8 @@ import type { Journey } from "@/data/journeys"
 // the same fact — a second, different rule here is what let the two drift apart.
 //
 // Within a tier, journeys still open one at a time: the tier's first is available as soon as the
-// tier is, each later one when the pyramid before it has been completed.
+// tier is, each later one when the pyramid before it has been completed. A free-order tier (wizard)
+// opens every journey with the tier key.
 
 const holdsTierKey = (difficulty: Difficulty, heldKeys: ReadonlySet<string>): boolean => {
   // The first tier has no entry key — nothing gates the start of the game.
@@ -31,7 +32,8 @@ export const comingSoonDifficulty = (heldKeys: ReadonlySet<string>): Difficulty 
 export const availablePyramidJourneyIds = (
   journeys: readonly Journey[],
   heldKeys: ReadonlySet<string>,
-  isCompleted: (journeyId: string) => boolean
+  isCompleted: (journeyId: string) => boolean,
+  isFreeOrder: (difficulty: Difficulty) => boolean = isFreeOrderDifficulty
 ): ReadonlySet<string> => {
   const available = new Set<string>()
   const previousInTier = new Map<Difficulty, Journey>()
@@ -41,20 +43,32 @@ export const availablePyramidJourneyIds = (
     const previous = previousInTier.get(journey.difficulty)
     previousInTier.set(journey.difficulty, journey)
     if (!isTierUnlocked(journey.difficulty, heldKeys)) continue
-    if (!previous || isCompleted(previous.id)) available.add(journey.id)
+    if (!previous || isFreeOrder(journey.difficulty) || isCompleted(previous.id)) available.add(journey.id)
   }
   return available
 }
 
 // The expedition the completion screen offers next: the pyramid journey following this one, and
-// only if the player may actually pick it — announcing a locked tier would be a dead end.
+// only if the player may actually pick it — announcing a locked tier would be a dead end. In a
+// free-order tier every journey is open, so the offer is the first one not yet completed after this
+// one (then any before it), or nothing.
 export const nextPyramidJourneyId = (
   journeys: readonly Journey[],
   journeyId: string,
-  heldKeys: ReadonlySet<string>
+  heldKeys: ReadonlySet<string>,
+  isCompleted: (journeyId: string) => boolean = () => false,
+  isFreeOrder: (difficulty: Difficulty) => boolean = isFreeOrderDifficulty
 ): string | undefined => {
   const index = journeys.findIndex(j => j.id === journeyId)
   if (index === -1) return undefined
+  const current = journeys[index]
+  if (isFreeOrder(current.difficulty)) {
+    if (!isTierUnlocked(current.difficulty, heldKeys)) return undefined
+    const others = journeys.filter(j => !j.entryLock && j.difficulty === current.difficulty && j.id !== journeyId)
+    const split = others.findIndex(j => journeys.indexOf(j) > index)
+    const ordered = split === -1 ? others : [...others.slice(split), ...others.slice(0, split)]
+    return ordered.find(j => !isCompleted(j.id))?.id
+  }
   const next = journeys[index + 1]
   if (!next || next.entryLock) return undefined
   return isTierUnlocked(next.difficulty, heldKeys) ? next.id : undefined
