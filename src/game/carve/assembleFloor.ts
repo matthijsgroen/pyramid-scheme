@@ -4,7 +4,7 @@ import { planLockFloor } from "../lockPlan"
 import { roomlessRouteStubs } from "../routeStubs"
 import type { AssembleFloorKeyRequirements, ResolveEncounter } from "../siteAssembler"
 import type { AssemblerResult, FloorConfig } from "../siteTypes"
-import { layWebDoors, WEB_SAND_REALISATION } from "../webDoors"
+import { layWebDoors, WEB_SAND_REALISATION, webSandKindRefusals } from "../webDoors"
 import { carveFloor } from "./carveFloor"
 import { gateKeyOf } from "./ids"
 import { finishAttempt, PASSES } from "./passes"
@@ -49,6 +49,10 @@ export const assembleFloor = (
   const { resolveRegionBarrier } = keyRequirements
   const realised = !resolveRegionBarrier || resolveRegionBarrier(WEB_SAND_REALISATION) !== undefined
   if ((doors.length === 0 && gates.length === 0) || !realised) return nested
+  // One sand kind per site: this floor's own lock may not bind sand beside its web's. The rest of the site is the
+  // bake's to check (`webSandKindRefusals` over every floor).
+  const mixed = webSandKindRefusals([authoredConfig])
+  if (mixed.length > 0) return { success: false, reasons: mixed }
   const floorRef = keyRequirements.floorRef ?? { journeyId: siteId, floorIndex: 0 }
   const gateTags = resolveEncounter(CARVE_FAMILY_QUERIES.keyGate, CARVE_FAMILY_QUERIES.keyGate).tags
   const laid = layWebDoors(nested.grid, doors, gates, gateTags, id => gateKeyOf(floorRef, id))

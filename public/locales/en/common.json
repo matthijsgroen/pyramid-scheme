@@ -1174,6 +1174,7 @@
       "torch": "Torch",
       "handle": "Lever",
       "key": "Key",
+      "web": "A sign of the sand",
       "plateStone": "A stone on a plate",
       "plateEmpty": "A plate left empty",
       "other": "Mechanism"

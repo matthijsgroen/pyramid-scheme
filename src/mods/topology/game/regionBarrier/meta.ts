@@ -14,3 +14,19 @@ export const SAND_META: RegionBarrierRealisationMeta = {
   texture: "regionSand",
   fallback: "#c9a45c",
 }
+
+// THE WEB'S OWN SAND AND SEAL: never the floor's. A site holds one kind of sand, so a lock of a site with web sand
+// binds its barriers to water (webDoors.ts, `webSandKindRefusals`). Both stand in for paintings that are owed.
+export const WEB_SAND_META: RegionBarrierRealisationMeta = {
+  id: "webSand",
+  ownerMod: "topology",
+  texture: "regionSand",
+  owed: "webSand",
+  fallback: "#d9b36a",
+}
+export const WEB_SEAL_META: RegionBarrierRealisationMeta = {
+  id: "webSeal",
+  ownerMod: "topology",
+  owed: "webSeal",
+  fallback: "#8a7a5c",
+}

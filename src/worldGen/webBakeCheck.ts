@@ -2,8 +2,8 @@
 // every place where it was placed, every web door shutting what it stands in front of, the web walk sound on the real
 // floor states with re-entry, and the world solver agreeing with it.
 import type { ResolveEncounter } from "../game/siteAssembler"
-import type { FloorGrid } from "../game/siteTypes"
-import { webDoorLeaks } from "../game/webDoors"
+import type { FloorConfig, FloorGrid } from "../game/siteTypes"
+import { webDoorLeaks, webSandKindRefusals } from "../game/webDoors"
 import { pyramidName, resolveWeb } from "../game/webLine"
 import { webReport } from "../game/webReport"
 import { walkWeb, walkWebFloors } from "../game/webWalk"
@@ -52,6 +52,16 @@ export const checkPlacedWeb = (
         for (const leak of webDoorLeaks(grid)) failures.push(`${id} pyramid ${p + 1} floor ${f}: ${leak}`)
       })
     )
+
+  // One sand kind per site: a pyramid with web sand binds none of its locks' barriers to the floor's sand.
+  for (const [, id] of webJourneysOf(configs))
+    configs[id].forEach((pyramid, p) => {
+      for (const refusal of webSandKindRefusals(pyramid as unknown as FloorConfig[]))
+        if (refusal.type === "webSandKindMixed")
+          failures.push(
+            `${id} pyramid ${p + 1} floor ${refusal.floor}: web sand beside the floor's ${refusal.realisation}, bind its barriers to water`
+          )
+    })
 
   if (walked) {
     const names = resolved.activators.map(a => a.name)

@@ -12,11 +12,12 @@ import { buriedLevels } from "@/mods/topology/game/web/buriedLevels"
 import { WORLD_ACTIVATORS } from "./activators"
 import { useWebPulled } from "./useWebPulled"
 import { WebPullCount } from "./WebPullCount"
+import { webActivatorArt } from "./webArt"
 
 export { WORLD_ACTIVATORS }
 
 // The sand web in play: an activator taken is pulled for good, and the keys it gives open web doors on every floor.
-// The look of a sand lever and a web key is still the plain chest's, until they are drawn.
+// A sand lever and a web key stand in their room as webArt.ts draws them.
 export const webActivatorSchema = z.object({
   type: z.literal(WEB_ACTIVATOR),
   name: z.string(),
@@ -28,6 +29,7 @@ if (isModEnabled("topology")) {
   registerRewardSchema(WEB_ACTIVATOR, webActivatorSchema)
   registerRewardHandler({
     type: WEB_ACTIVATOR,
+    art: reward => webActivatorArt(webActivatorSchema.parse(reward)),
     emoji: "🏺",
     text: (reward, t) => {
       const { look } = webActivatorSchema.parse(reward)

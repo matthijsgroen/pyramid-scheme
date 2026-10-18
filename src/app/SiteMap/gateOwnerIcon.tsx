@@ -8,6 +8,8 @@ import { CELL, PROP_H } from "./mapScale"
  * painting of it, with a stone where the door wants one. Every plate alike: the face never tells one from another. */
 export const gateOwnerIcon = (icon: GateOwnerIcon) => {
   if (icon.kind === "key") return <KeyIcon color={icon.color ?? "blue"} size={40} />
+  // What a web door waits on is a lever or key standing in another pyramid: its mark, beside this, says which.
+  if (icon.kind === "web") return <span aria-hidden="true">🏺</span>
   if (icon.kind === "plate") {
     const src = sharedTileUrl(icon.wants === "stone" ? "plateStone" : "plate")
     return src ? <img src={src} width={40} height={(40 * PROP_H) / CELL} alt="" /> : <span aria-hidden="true">▭</span>
@@ -19,8 +21,10 @@ export const gateOwnerIcon = (icon: GateOwnerIcon) => {
 export const gateOwnerName = (icon: GateOwnerIcon): string =>
   icon.kind === "key"
     ? "key"
-    : icon.kind === "plate"
-      ? icon.wants === "stone"
-        ? "plateStone"
-        : "plateEmpty"
-      : icon.family
+    : icon.kind === "web"
+      ? "web"
+      : icon.kind === "plate"
+        ? icon.wants === "stone"
+          ? "plateStone"
+          : "plateEmpty"
+        : icon.family

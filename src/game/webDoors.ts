@@ -7,7 +7,9 @@ import type { Lock } from "./lockAuthoring"
 import { isOutsideInput, isRegionGate } from "./lockAuthoring"
 import { mechanismGatesOf } from "./mechanismDoors"
 import { reachableFrom } from "./siteValidator"
-import type { Direction, FloorGrid, GridCell, RoomCell } from "./siteTypes"
+import { webMarkFor } from "./mark"
+import { REGION_BARRIER_KIND } from "./regionBarrierRealisation"
+import type { AssemblerReason, Direction, FloorConfig, FloorGrid, GridCell, RoomCell } from "./siteTypes"
 import { MAIN_SECTION_ADDRESS } from "./carve/sections"
 import { addFrontOwner } from "./webLine"
 
@@ -37,8 +39,39 @@ export type WebLockGate = { keys: string[]; mode?: "any"; obstacle?: string } & 
   { kind: "edge"; between: readonly [string, string] } | { kind: "region"; region: string }
 )
 
-/** The look a web door's bars wear, until web sand has a realisation of its own. */
-export const WEB_SAND_REALISATION = "sand"
+/** The sand a web door stands as, and the seal an activator's door stands as: realisations the topology mod declares,
+ * apart from the floor's own sand so one site holds one kind of each (`webSandKindRefusals`). Where no mod answers to
+ * web sand the web's doors are left off the carve. */
+export const WEB_SAND_REALISATION = "webSand"
+export const WEB_SEAL_REALISATION = "webSeal"
+
+/** The floor's own sand, which a site with web sand binds no lock's barriers to. */
+const FLOOR_SAND_REALISATION = "sand"
+
+/** How a web door is drawn: a stop of a pot (`web:moon#2`) is web sand, a door an activator opens (`web:ankh`) a seal. */
+export const webDoorRealisation = (keyId: string): string =>
+  keyId.includes("#") ? WEB_SAND_REALISATION : WEB_SEAL_REALISATION
+
+/** A floor with web sand: a stop of a pot laid as a door, or a lock whose inputs or fronts the web bound (a region
+ * they bury is web sand). */
+const holdsWebSand = (floor: FloorConfig): boolean =>
+  (floor.webDoors ?? []).some(door => webDoorRealisation(door.key) === WEB_SAND_REALISATION) ||
+  (floor.locks ?? []).some(
+    placed =>
+      placed.web && !placed.web.open && (Object.keys(placed.web.inputs).length > 0 || !!placed.web.fronts?.length)
+  )
+
+/**
+ * ONE SAND KIND PER SITE: a site with web sand whose lock binds its region barriers to the floor's sand is refused,
+ * naming the floor, so the two never share a drift the player cannot tell apart. Bind them to water there.
+ */
+export const webSandKindRefusals = (site: readonly FloorConfig[]): AssemblerReason[] =>
+  site.some(holdsWebSand)
+    ? site.flatMap((floor, index): AssemblerReason[] => {
+        const bound = floor.realisations?.[REGION_BARRIER_KIND] ?? floor.regionBarrierRealisation
+        return bound === FLOOR_SAND_REALISATION ? [{ type: "webSandKindMixed", floor: index, realisation: bound }] : []
+      })
+    : []
 
 /** The lock as the web lays it: its stops' owners added. Undefined when one cannot be added (a corridor gated with |). */
 export const laidLockOf = (lock: Lock, web: PlacedLockWeb | undefined): Lock | undefined => {
@@ -268,6 +301,14 @@ export const layWebDoors = (
       tags: [...gateTags, ...(extra.regionBarrier ? ["region-barrier"] : [])],
       requiredKeyId: keys[0],
       ...(keys.length > 1 ? { requiredKeyIds: keys.slice(1) } : {}),
+      // A door one web key shuts wears that key's mark; with several owners its face lists each (gateFace.ts). A
+      // region barrier's door is the cover itself.
+      ...(extra.regionBarrier
+        ? {}
+        : {
+            webDoor: { realisation: webDoorRealisation(keys[0]) },
+            ...(keys.length === 1 ? { mark: webMarkFor(keys[0]) } : {}),
+          }),
       ...extra,
     } as RoomCell
   }
@@ -284,8 +325,11 @@ export const layWebDoors = (
       // A cell another web door already stands in asks for this gate's keys too: both must be held.
       const asked = doorKeys(there)
       const more = keys.filter(id => !asked.includes(id))
-      if (more.length > 0)
-        cells[door[0]][door[1]] = { ...there, requiredKeyIds: [...(there.requiredKeyIds ?? []), ...more] }
+      if (more.length > 0) {
+        // Two owners: the door's face lists a mark for each, so the door itself wears none.
+        const { mark: _single, ...both } = there
+        cells[door[0]][door[1]] = { ...both, requiredKeyIds: [...(there.requiredKeyIds ?? []), ...more] }
+      }
       return true
     }
     shut(door, keys, extra(at(outer) as Ground))

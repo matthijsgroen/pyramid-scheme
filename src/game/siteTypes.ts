@@ -335,6 +335,9 @@ export type RoomCell = {
   /** THIS DOOR IS A NARROW PASSAGE (src/game/passages.ts): a gate empty hands alone open, dressed as the realisation
    * it was bound to. Nobody stands in it: the explorer waits on either side and is taken through by its prompt. */
   passage?: { realisation: string }
+  /** THIS DOOR IS THE WEB'S, on ground no lock owns (src/game/webDoors.ts): `realisation` is the web sand a stop of a
+   * pot is drawn as, or the web seal a door an activator opens is. Its web mark is `mark`. */
+  webDoor?: { realisation: string }
 }
 export type GridCell = EmptyCell | CorridorCell | RoomCell
 
@@ -805,6 +808,9 @@ export type AssemblerReason =
   /** A web door has no cell to stand in on the finished carve: `where` names the door, `why` what the carve has there
    * instead (webDoors.ts). The bake moves the stop; a wall is never moved for it. */
   | { type: "webDoorUnseated"; where: string; why: string }
+  /** A site holds one kind of sand: it has web sand, and a lock of it binds its region barriers to the floor's sand.
+   * Bind them to water there. `floor` is the floor index whose lock binds it, `realisation` what it bound. */
+  | { type: "webSandKindMixed"; floor: number; realisation: string }
   | { type: "mechanicStandsInBarredRegion"; id: string; region: string; barrier: string }
   | { type: "regionBarrierDropLands"; id: string; region: string; drop: string }
   | { type: "sequenceTooShort"; id: string }

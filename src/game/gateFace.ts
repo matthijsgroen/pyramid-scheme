@@ -5,7 +5,8 @@ import { arrangementIn } from "./stonePlay"
 import { pressAt } from "./mechanismDoors"
 import { DOOR_FACE_ROLE, defaultResolveEncounter } from "./encounterFallback"
 import { tileStatus, type TileStatus } from "./sequence"
-import type { Mark } from "./mark"
+import { isWebKey } from "./floorLock"
+import { webMarkFor, type Mark } from "./mark"
 import type { FloorGrid, GridCell, KeyColor, MechanismRecord, RoomCell } from "./siteTypes"
 
 /** What an owner looks like on the face: a mechanism wears its own family's icon (a flame for a torch),
@@ -14,6 +15,7 @@ import type { FloorGrid, GridCell, KeyColor, MechanismRecord, RoomCell } from ".
 export type GateOwnerIcon =
   | { kind: "mechanism"; family: string }
   | { kind: "key"; color?: KeyColor }
+  | { kind: "web" }
   | { kind: "plate"; wants: "stone" | "empty" }
 
 /** One owner of the door, unlit until its current state names the door. */
@@ -186,7 +188,14 @@ export const withGateFaces = (
         }
       })
       markers.push(...weighed)
-      for (const keyId of floorKeys) markers.push({ id: keyId, icon: { kind: "key" }, lit: heldKeys.has(keyId) })
+      // A web key stands beside the lever as its own marker, wearing its web mark: a glyph on a sand ground in a
+      // cartouche, never one a floor mark wears.
+      for (const keyId of floorKeys)
+        markers.push(
+          isWebKey(keyId)
+            ? { id: keyId, icon: { kind: "web" }, lit: heldKeys.has(keyId), mark: webMarkFor(keyId) }
+            : { id: keyId, icon: { kind: "key" }, lit: heldKeys.has(keyId) }
+        )
       const orders = sequences.map(({ id, mechanism, at }): SequenceFace => {
         const state = storedAtCell(grid, floor, at[0], at[1], positions) ?? mechanism.initial
         const steps = grid.cells

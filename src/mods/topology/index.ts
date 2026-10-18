@@ -8,7 +8,7 @@ import { TORCH_META } from "./game/torch/meta"
 import { PRESSURE_PLATE_META } from "./game/pressurePlate/meta"
 import { STONE_PLATE_META } from "./game/stonePlate/meta"
 import { STONE_PIPE_META } from "./game/stonePipe/meta"
-import { SAND_META, WATER_META } from "./game/regionBarrier/meta"
+import { SAND_META, WATER_META, WEB_SAND_META, WEB_SEAL_META } from "./game/regionBarrier/meta"
 import { ZIPLINE_META } from "./game/zipline/meta"
 import { WEB_REACHABILITY, webActivatorReward } from "./game/web/activator"
 
@@ -44,7 +44,7 @@ export const topologyMod: ModDescriptor = {
     STONE_PIPE_META,
   ],
   oneWayRealisations: [ZIPLINE_META],
-  regionBarrierRealisations: [WATER_META, SAND_META],
+  regionBarrierRealisations: [WATER_META, SAND_META, WEB_SAND_META, WEB_SEAL_META],
   passageRealisations: [NARROW_PASSAGE_META],
   // The sand web: its activators stand as this reward, and the solver reads each as its key and its pots' counts.
   webActivator: webActivatorReward,
