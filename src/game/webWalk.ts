@@ -10,10 +10,12 @@ import { describeFloorWalkFailure, walkFloorLock } from "./floorLockWalk"
 import type { FloorGrid } from "./siteTypes"
 import type { Web } from "./webNotation"
 import type { PyramidRef, ResolvedWeb, WebDoor, WebFloor, WebRefusal, WebSection, WebSpot } from "./webLine"
+import { webHeldKeys } from "./webKeys"
 import {
   instanceOf,
   isLockRegion,
   joins,
+  MAX_WEB_ACTIVATORS,
   potKey,
   pyramidName,
   regionNode,
@@ -21,7 +23,6 @@ import {
   sectionNode,
   seamPath,
   startNode,
-  webKey,
 } from "./webLine"
 
 type Held = ReadonlySet<string>
@@ -298,7 +299,7 @@ const flood = (graph: Graph, held: Held): Flood => {
 }
 
 /** What one visit to a pyramid can do under held keys: whether its exit is reachable, the nodes in reach, the shut
- * faces seen, and the keys a reachable state waits on. A floor walk with arrivals stands in through `WalkOptions.visit`. */
+ * faces seen, and the keys a reachable state waits on. A floor walk with arrivals stands in through `WebWalkOptions.visit`. */
 export type Visit = {
   exit: boolean
   reach: ReadonlySet<string>
@@ -306,14 +307,12 @@ export type Visit = {
   waitsOn: ReadonlySet<string>
 }
 
-export type WalkOptions = {
+export type WebWalkOptions = {
   /** Answers a visit in place of the graph, for a pyramid it knows; undefined falls back to the graph. */
   visit?: (at: PyramidRef, held: Held) => Visit | undefined
   /** The ceiling on the states the cheapest count explores. */
   maxStates?: number
 }
-
-const PULL_SET_CAP = 1 << 16
 
 export type CheapestRoute = { visits: number; returns: number; route: string[] } | "none" | "tooLarge"
 
@@ -334,7 +333,7 @@ export type WebWalk = {
 
 /** Walks a resolved web: the closure, every reachable pull set, the per-pyramid wait check, the leak and own-front
  * refusals, the sightings and the cheapest routes. */
-export const walkWeb = (resolved: ResolvedWeb, options: WalkOptions = {}): WebWalk => {
+export const walkWeb = (resolved: ResolvedWeb, options: WebWalkOptions = {}): WebWalk => {
   const refusals: WebRefusal[] = []
   const warnings: string[] = []
   const { world, activators, pots, doors } = resolved
@@ -347,15 +346,13 @@ export const walkWeb = (resolved: ResolvedWeb, options: WalkOptions = {}): WebWa
   const activatorsIn = new Map<string, typeof activators>()
   for (const a of activators) activatorsIn.set(pyramidName(a.at), [...(activatorsIn.get(pyramidName(a.at)) ?? []), a])
 
-  const heldOf = (pulled: Iterable<string>): Set<string> => {
-    const set = new Set(pulled)
-    const held = new Set([...set].map(webKey))
-    for (const pot of pots) {
-      const count = pot.levers.filter(l => set.has(l)).length
-      for (let k = 1; k <= count; k++) held.add(potKey(pot.name, k))
-    }
-    return held
-  }
+  // The keys a pulled set holds, derived as play derives them.
+  const shipped = names.map(name => ({
+    name,
+    pots: pots.filter(pot => pot.levers.includes(name)).map(pot => pot.name),
+  }))
+  const heldOf = (pulled: Iterable<string>): Set<string> =>
+    webHeldKeys(Object.fromEntries([...pulled].map(name => [name, true as const])), shipped)
 
   const memo = new Map<string, Visit>()
   const visit = (at: PyramidRef, held: Held): Visit => {
@@ -412,10 +409,10 @@ export const walkWeb = (resolved: ResolvedWeb, options: WalkOptions = {}): WebWa
   const cutClosures = new Map<string, Set<string>>()
   const waitsReported = new Set<string>()
   let sets = 0
-  if (names.length <= MAX_WEB_SET_ACTIVATORS) {
+  if (names.length <= MAX_WEB_ACTIVATORS) {
     const seenSets = new Set<number>([0])
     const queue = [0]
-    for (let at = 0; at < queue.length && queue.length <= PULL_SET_CAP; at++) {
+    for (let at = 0; at < queue.length; at++) {
       const mask = queue[at]
       const pulled = names.filter((_, i) => mask & (1 << i))
       const held = heldOf(pulled)
@@ -424,12 +421,18 @@ export const walkWeb = (resolved: ResolvedWeb, options: WalkOptions = {}): WebWa
       // Why any pull order works, point 3: a key a floor can wait on arrives without finishing that pyramid.
       for (const name of reach.entered) {
         const [, j, p] = /^w(\d+)p(\d+)$/.exec(name)!
-        const result = visit({ journey: Number(j), pyramid: Number(p) }, held)
+        const ref = { journey: Number(j), pyramid: Number(p) }
+        const result = visit(ref, held)
+        if (result.waitsOn.size === 0) continue
+        if (!cutClosures.has(name)) cutClosures.set(name, heldOf(closureOf([], name).pulled))
+        const cut = cutClosures.get(name)!
+        // A way out shut only by keys that arrive without finishing the pyramid is a wait the player comes back from,
+        // whatever other shut doors the stuck visit saw on the way.
+        if (!result.exit && visit(ref, new Set([...held, ...cut])).exit) continue
         for (const key of result.waitsOn) {
           const id = `${name}|${key}`
           if (waitsReported.has(id)) continue
-          if (!cutClosures.has(name)) cutClosures.set(name, heldOf(closureOf([], name).pulled))
-          if (cutClosures.get(name)!.has(key)) continue
+          if (cut.has(key)) continue
           waitsReported.add(id)
           const door = doors.find(d => d.key === key && pyramidName(d.at) === name)
           refusals.push({
@@ -509,9 +512,6 @@ export const walkWeb = (resolved: ResolvedWeb, options: WalkOptions = {}): WebWa
     heldOf,
   }
 }
-
-/** The set walk runs on webs of at most this many activators; resolveWeb refuses more. */
-const MAX_WEB_SET_ACTIVATORS = 16
 
 /** The nodes that lie past a door: later rooms of its line and floors, or the section behind it. */
 const pastOf = (graph: Graph, door: WebDoor): string[] => {
@@ -702,7 +702,7 @@ export const laidLockRefusals = (resolved: ResolvedWeb): WebRefusal[] =>
         ]
   })
 
-/** One visit to a pyramid under held keys, read off its graph: what `WalkOptions.visit` falls back to. */
+/** One visit to a pyramid under held keys, read off its graph: what `WebWalkOptions.visit` falls back to. */
 export const visitPyramid = (resolved: ResolvedWeb, at: PyramidRef, held: Held): Visit =>
   visitGraph(graphOf(resolved, at), held, resolved.doors)
 

@@ -170,6 +170,20 @@ describe("refusals of the walk", () => {
     expect(walkWeb(resolved).refusals).toEqual([])
   })
 
+  it("lets a pyramid wait at its way out on a key fetched elsewhere, though a short cut it saw waits on a later one", () => {
+    const L = lockOf("in -- out", "in -[B]- side", "B outside", "side $")
+    const on = world({
+      1: [pyramid(floor(4, { regions: [undefined, "L.in", "L.out", undefined], locks: { L } })), plain(3)],
+      2: [plain(3)],
+    })
+    const { resolved, walked } = walk(
+      "[w1p1]\ndjed opens 70%\nsand L.B by bee\n[w1p2]\nlever bee @end\n[w2p1]\nlever djed @end",
+      on
+    )
+    expect(resolved.refusals).toEqual([])
+    expect(walked.refusals).toEqual([])
+  })
+
   it("refuses a web of 17 activators", () => {
     const names = Array.from({ length: 17 }, (_, i) => `a${i}`)
     const text = `[w1p1]\nsand by ${names.join(" ")}\n[w2p1]\n${names.map((n, i) => `lever ${n} @${i * 5}%`).join("\n")}`
