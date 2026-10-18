@@ -367,6 +367,44 @@ scaffold hanging --contents=rail --shear=0.5 --width=448 --height=224 --sun=0 --
 yarn import-tile art/masters/props/starter/veil.webp --tier=starter --name=veil --slot=wall \
   --filter=smooth --mask="$OBJ"
 
+# The storehouse's ACTIVITY props (themed-rooms.md §1): weighing, packing, selling, the ledger. Each block
+# runs once its master is in — until then there is nothing to import, and the scaffold is in the repaint
+# queue. All six stand against the north wall, so their spins stay in Step 1b's 0–8 band; the balance is
+# square on because it is symmetrical about its post and turned its two pans land at different heights.
+# Cloth is dyed red-brown (--colour-cloth) because the default linen is lighter than the pale floor allows.
+# --scale on the balance and the baskets: unscaled they land 56x63 and 56x56, a man's height beside a
+# 40x70 explorer.
+if [ -f art/masters/props/starter/scale.webp ]; then
+  scaffold scale --colour=#9a6a3c --floor=#d8c8a8
+  yarn import-tile art/masters/props/starter/scale.webp --tier=starter --name=scale --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.8
+fi
+if [ -f art/masters/props/starter/weightsTable.webp ]; then
+  scaffold weightsTable --spin=4 --colour=#9a6a3c --floor=#d8c8a8
+  yarn import-tile art/masters/props/starter/weightsTable.webp --tier=starter --name=weightsTable --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/starter/basketStack.webp ]; then
+  scaffold basketStack --spin=8 --colour=#9a6a3c --floor=#d8c8a8
+  yarn import-tile art/masters/props/starter/basketStack.webp --tier=starter --name=basketStack --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.85
+fi
+if [ -f art/masters/props/starter/bales.webp ]; then
+  scaffold bales --spin=5 --colour=#9a6a3c --floor=#d8c8a8
+  yarn import-tile art/masters/props/starter/bales.webp --tier=starter --name=bales --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/starter/counter.webp ]; then
+  scaffold counter --spin=3 --colour=#9a6a3c --floor=#d8c8a8 --colour-cloth=#8a4a2c
+  yarn import-tile art/masters/props/starter/counter.webp --tier=starter --name=counter --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+if [ -f art/masters/props/starter/scribeDesk.webp ]; then
+  scaffold scribeDesk --spin=5 --colour=#9a6a3c --floor=#d8c8a8 --colour-cloth=#8a4a2c
+  yarn import-tile art/masters/props/starter/scribeDesk.webp --tier=starter --name=scribeDesk --slot=prop \
+    --filter=smooth --mask="$OBJ" --seat="$SHADOW"
+fi
+
 # shared — one desert blows into all five tombs
 #
 # Sand is the only tile whose SHAPE this repository generates. It is not an object: a drift has no

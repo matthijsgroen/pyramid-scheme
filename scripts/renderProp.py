@@ -3680,6 +3680,209 @@ def prim_statue():
     return join_all()
 
 
+def _drum(r_bottom, r_top, h, x, z, squash=0.62, y=0.0, part="body"):
+    """A basket's body: a drum flared to its rim and SQUASHED IN Y, for `prim_market`'s baskets' reason —
+    round costs depth, and depth is charged to the drawn height, so a round drum draws as tall as it is
+    wide. A coiled basket packed against its neighbours is not a circle anyway."""
+    obj = cone(r_bottom, r_top, h, x=x, y=y, z=z + h / 2, verts=18)
+    obj.scale = (1.0, squash, 1.0)
+    bpy.ops.object.transform_apply(scale=True)
+    return mark(obj, part)
+
+
+def _lying(r, length, x, y, z, squash=1.0, verts=16, part="body"):
+    """A cylinder lying ALONG X — the only horizontal axis, so a bale, a roll or a bolt reads as a bar with
+    its length across the picture. Stood on end it is a disc, and a disc reads as a hole (`prim_shelf`)."""
+    obj = cyl(r, length, x=x, y=y, z=z, verts=verts)
+    obj.scale = (1.0, squash, 1.0)
+    obj.rotation_euler = (0.0, math.pi / 2, 0.0)
+    bpy.ops.object.transform_apply(rotation=True, scale=True)
+    return mark(obj, part)
+
+
+def _low_table(w, d, h, top_t=0.06, leg=0.06, part="body"):
+    """A slab on four square legs, the carcass `prim_market` stands its goods on, at any height."""
+    mark(box(w, d, top_t, z=h - top_t / 2), part)
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            mark(box(leg, leg, h - top_t, x=sx * (w / 2 - leg), y=sy * (d / 2 - leg), z=(h - top_t) / 2), part)
+
+
+# THE STOREHOUSE'S ACTIVITIES — weighing, packing, selling, the ledger (themed-rooms.md §1). Six kinds, each
+# one sprite standing against the north wall, and every one SHALLOW: depth is charged to drawn height at
+# k = 0.7, so a deep object is mostly top face and the room's projection breaks around it. The market table
+# is 0.6 deep and that is the most this set will take; these stay at 0.40 or under.
+#
+# Everything that has to be told apart is marked, and `stone` is the one part new to them: the weights,
+# which were dark hard stone — haematite and basalt — and are the thing a weighing room is FOR.
+
+
+def prim_scale():
+    """A merchant's BALANCE standing on the floor: a post on a stepped foot, a beam across its head, and a
+    pan hanging from each end, a weight in one and a heap of grain in the other.
+
+    The pans hang on a V of cords IN X, from the beam's end out to either rim. Under z + k*y a cord run in
+    y draws as a vertical line over the pan, and one cord straight down reads as a stalk — `prim_market`'s
+    balance records the pair coming back as two mushrooms on a table. What says hanging is daylight under
+    the pan, and the foot is kept narrower than the beam so there is floor under both.
+
+    Square on, unspun: a balance is the one object here that is symmetrical about its post, and turned the
+    beam foreshortens and the two pans land at different heights."""
+    foot_w, foot_d = 0.34, 0.22
+    mark(box(foot_w, foot_d, 0.10, z=0.05), "body")
+    mark(box(foot_w * 0.68, foot_d * 0.78, 0.07, z=0.135), "body")
+    post_top = 1.20
+    mark(cyl(0.045, post_top - 0.17, z=0.17 + (post_top - 0.17) / 2, verts=12), "body")
+    # A cap on the post, which the beam pivots under — the finial tomb paintings put a head on.
+    mark(box(0.10, 0.08, 0.07, z=post_top + 0.03), "body")
+    # Everything above the foot HANGS, so it is kept out of the footprint: flattened to the floor the pans
+    # drew as two dark discs either side of the foot, joined by the beam's shadow, and read as a dumbbell
+    # lying beside the scale. A thing in the air casts nothing in this set (`--sun` for a wall item).
+    beam_z, reach = post_top - 0.05, 0.46
+    mark(box(2 * reach + 0.06, 0.045, 0.045, z=beam_z), nocast("metal"))
+    pan_z, pan_r = 0.58, 0.15
+    for sx in (-1, 1):
+        cx = sx * reach
+        for rim in (-1, 1):
+            mark(strung((cx, 0.0, beam_z - 0.02), (cx + rim * (pan_r - 0.02), 0.0, pan_z + 0.04), 0.026), nocast("metal"))
+        # A shallow BOWL, wider at the rim: a flat disc reads as a plate on a stick.
+        mark(cone(pan_r * 0.62, pan_r, 0.05, x=cx, z=pan_z + 0.025, verts=20), nocast("metal"))
+    # A loaf-shaped stone weight in the left pan, a heap of grain in the right one — the two halves of a sale.
+    mark(dome(0.075, 0.085, x=-reach, z=pan_z + 0.045), nocast("stone"))
+    bpy.ops.mesh.primitive_cone_add(vertices=18, radius1=0.11, radius2=0.0, depth=0.09, location=(reach, 0.0, pan_z + 0.09))
+    mark(bpy.context.object, nocast("accent"))
+    return join_all()
+
+
+def prim_weightstable():
+    """A LOW TABLE with the merchant's stone weights set out along it, largest to smallest.
+
+    Domes, because that is what a weight from a storehouse is — a loaf of polished stone — and a GRADED ROW
+    is what tells a set of weights from a row of loaves: nothing else on a table steps down in size.
+
+    The largest is tall enough to TOP THE BACK EDGE, `prim_market`'s far-edge rule: under z + k*y the back of
+    the tabletop is the high boundary, and a row that stays under it is drawn against timber and reads as
+    a stain on it. A stack of three ring weights at the right end says the same from the other side."""
+    w, d, h = 1.10, 0.38, 0.42
+    _low_table(w, d, h)
+    for x, r, ht in ((-0.38, 0.12, 0.20), (-0.14, 0.10, 0.155), (0.06, 0.08, 0.12), (0.22, 0.065, 0.09)):
+        mark(dome(r, ht, x=x, y=0.01, z=h - 0.005), "stone")
+    for i, r in enumerate((0.075, 0.064, 0.053)):
+        mark(cyl(r, 0.045, x=0.41, y=0.0, z=h + 0.02 + i * 0.043, verts=18), "stone")
+    return join_all()
+
+
+def prim_basketstack():
+    """Woven baskets STACKED, two columns of them: three high on the left with a lid and its knob on top,
+    two high on the right with the top one open and heaped.
+
+    The stacking is the whole of what separates this from the merchant's second market drawing, which is
+    the same drums in a ROW on the floor (`prim_market --contents=baskets`). Two columns of unequal height
+    give a stepped silhouette; one column is a pillar and two level ones are a crate.
+
+    Each drum flares to a RIM proud of its body, which is how a coiled basket is finished and the one part
+    of the weave that survives at 56 units. Stacked baskets overlap by a few hundredths so no hairline of
+    background opens between them (`prim_mask`)."""
+    z = 0.0
+    for rb, rt, ht in ((0.22, 0.26, 0.28), (0.19, 0.225, 0.24), (0.165, 0.19, 0.20)):
+        _drum(rb, rt, ht, -0.22, z)
+        _drum(rt * 1.06, rt * 1.06, 0.04, -0.22, z + ht - 0.02)
+        z += ht + 0.01
+    mark(_drum(0.20, 0.20, 0.04, -0.22, z - 0.01), "body")
+    mark(cyl(0.035, 0.05, x=-0.22, z=z + 0.045, verts=12), "body")
+    z = 0.0
+    for rb, rt, ht in ((0.19, 0.22, 0.26), (0.16, 0.19, 0.20)):
+        _drum(rb, rt, ht, 0.25, z)
+        _drum(rt * 1.06, rt * 1.06, 0.04, 0.25, z + ht - 0.02)
+        z += ht + 0.01
+    bpy.ops.mesh.primitive_cone_add(vertices=18, radius1=0.18, radius2=0.0, depth=0.14, location=(0.25, 0.0, z + 0.05))
+    heap = bpy.context.object
+    heap.scale = (1.0, 0.62, 1.0)
+    bpy.ops.object.transform_apply(scale=True)
+    mark(heap, "accent")
+    return join_all()
+
+
+def prim_bales():
+    """Three BALES — goods wrapped in reed matting or linen and tied with rope — two on the floor and one
+    laid across them.
+
+    Each is a CAPSULE lying along X: a squashed cylinder with a rounded end on either side. Flat ends and
+    bands round the middle are a barrel, and the first render was exactly that — three barrels with hoops.
+    A wrapped bundle has no rim at either end; the wrapping folds round it. Squashed in y for the depth
+    reason, which also makes it read as soft packed goods rather than a log.
+
+    The TIES are what say bale and not bolster: two bands of rope round each, proud of the wrapping by more
+    than a hairline or they vanish into it. Marked `timber` — dark cord, darker than the wrapping."""
+    r, sq = 0.16, 0.78
+    for x, length, z, y in ((-0.29, 0.40, r, 0.0), (0.30, 0.36, r, 0.0), (-0.02, 0.38, r * 2.72, 0.02)):
+        _lying(r, length, x, y, z, squash=sq, verts=18)
+        for end in (-1, 1):
+            bpy.ops.mesh.primitive_uv_sphere_add(segments=18, ring_count=10, radius=r,
+                                                 location=(x + end * length / 2, y, z))
+            cap = bpy.context.object
+            cap.scale = (0.55, sq, 1.0)
+            bpy.ops.object.transform_apply(scale=True)
+            mark(cap, "body")
+        for t in (-1, 1):
+            _lying(r * 1.07, 0.04, x + t * length * 0.30, y, z, squash=sq, verts=18, part="timber")
+    return join_all()
+
+
+def prim_counter():
+    """A merchant's COUNTER: a solid mudbrick block with a timber top overhanging it, and goods out on it —
+    an open basket heaped with grain, folded cloth, and a stoppered jar at the back.
+
+    SOLID, where the market table stands on legs: what separates the two at 56 units is daylight under a
+    top or none, the argument `prim_market`'s altar makes. The top overhangs front and sides so the block
+    has a drawn line across it, and the jar at the back right tops the back edge for the far-edge rule."""
+    w, d, h, top_t = 1.20, 0.36, 0.52, 0.06
+    mark(box(w - 0.08, d - 0.06, h - top_t, z=(h - top_t) / 2), "body")
+    mark(box(w, d, top_t, z=h - top_t / 2), "body")
+    bx = -0.34
+    _drum(0.12, 0.15, 0.13, bx, h - 0.005, y=-0.02)
+    bpy.ops.mesh.primitive_cone_add(vertices=18, radius1=0.15, radius2=0.0, depth=0.11, location=(bx, -0.02, h + 0.17))
+    heap = bpy.context.object
+    heap.scale = (1.0, 0.62, 1.0)
+    bpy.ops.object.transform_apply(scale=True)
+    mark(heap, "accent")
+    mark(box(0.30, 0.20, 0.06, x=0.02, y=-0.03, z=h + 0.025), "cloth")
+    mark(box(0.26, 0.18, 0.055, x=0.00, y=-0.03, z=h + 0.08), "cloth")
+    mark(cyl(0.10, 0.04, x=0.36, y=0.06, z=h + 0.015, verts=16), "pottery")
+    jar(0.36, 0.06, 0.32, 0.10, z=h - 0.03)
+    return join_all()
+
+
+def prim_scribedesk():
+    """A SCRIBE'S LOW DESK and his things on it: a papyrus unrolled across the middle with its roll at the
+    back, his palette in front at the right with its two ink wells, a water pot, and finished rolls stacked
+    at the back left.
+
+    Low, because a scribe sat on the floor to write — at the height of the weights table it would read as
+    one more market table. The rolls LIE along X for `prim_shelf`'s reason, and their stack is what tops the
+    back edge. The palette is long in X and thin for the same axis law; it is the scribe's one tool and the
+    piece that makes this a desk and not a table with paper on it. One well is VOID (black ink), one
+    `accent` (red), each standing proud of the palette (the altar's channel law)."""
+    w, d, h = 1.00, 0.40, 0.30
+    _low_table(w, d, h, top_t=0.05, leg=0.055)
+    # The sheet, flat, and its unread part rolled at its back edge.
+    mark(box(0.40, 0.24, 0.012, x=-0.04, y=-0.04, z=h + 0.006), "cloth")
+    _lying(0.035, 0.40, -0.04, 0.09, h + 0.035, part="cloth")
+    # The palette: a long slip of wood, its wells proud of it.
+    mark(box(0.30, 0.07, 0.024, x=0.28, y=-0.10, z=h + 0.012), "timber")
+    mark(cyl(0.020, 0.014, x=0.18, y=-0.10, z=h + 0.027, verts=12), VOID)
+    mark(cyl(0.020, 0.014, x=0.24, y=-0.10, z=h + 0.027, verts=12), "accent")
+    # The water pot, back right.
+    mark(cyl(0.055, 0.10, x=0.38, y=0.08, z=h + 0.05, verts=16), "pottery")
+    mark(cyl(0.042, 0.03, x=0.38, y=0.08, z=h + 0.11, verts=16), "pottery")
+    # Finished rolls, three in a pile at the back left, each with a tie round its middle — the tie is what
+    # separates a roll from a dowel (`prim_shelf`'s papyrus).
+    for dy, dz in ((-0.045, 0.04), (0.045, 0.04), (0.0, 0.112)):
+        _lying(0.042, 0.30, -0.30, 0.10 + dy, h + dz, part="cloth")
+        _lying(0.048, 0.03, -0.30, 0.10 + dy, h + dz, part="accent")
+    return join_all()
+
+
 def prim_pipehole():
     """A stone pipe's mouth in a wall: one round hole, dark inside, and with `--contents=stone` a stone in it.
 
@@ -3747,6 +3950,12 @@ PRIMITIVES.update(
         "wallShrine": prim_wallshrine,
         "starShaft": prim_starshaft,
         "mask": prim_mask,
+        "scale": prim_scale,
+        "weightsTable": prim_weightstable,
+        "basketStack": prim_basketstack,
+        "bales": prim_bales,
+        "counter": prim_counter,
+        "scribeDesk": prim_scribedesk,
     }
 )
 
@@ -3863,6 +4072,9 @@ PART_COLOURS = {
     # never a colour instruction — the niche arrives in stone and comes back with cedar doors.
     # Override per rank with --colour-figure.
     "figure": "#6f6459",
+    # Hard dark stone worked small — a merchant's weights, haematite and basalt. Darker than any timber, so
+    # a row of weights on a table is never read as loaves on it.
+    "stone": "#4e4840",
     # NOCAST is not a colour: a part kept out of the footprint is still painted the rank's stone.
 }
 
