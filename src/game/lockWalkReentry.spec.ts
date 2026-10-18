@@ -196,6 +196,7 @@ describe("the walk's exactness, on random made-up locks", () => {
   })
 
   it("keeps a state stranded with every input held a strand, whatever arrived before", () => {
+    let stranded = 0
     for (const { seed, spec, inputs } of randomSpecs) {
       if (inputs.length === 0) continue
       const { order, edges } = statesOf(spec)
@@ -211,7 +212,11 @@ describe("the walk's exactness, on random made-up locks", () => {
             queue.push(from)
           }
       const allHeld = order.some((state, n) => !finishes.has(n) && inputs.every(i => state.config[i] === INPUT_HELD))
-      if (allHeld) expect(walkLock(spec).sound, `seed ${seed}`).toBe(false)
+      if (!allHeld) continue
+      stranded++
+      const walked = walkLock(spec)
+      expect(walked.sound ? undefined : walked.failure.type, `seed ${seed}`).toMatch(/^(strands|unsolvable)$/)
     }
+    expect(stranded, "locks with a state stranded once every input is held").toBeGreaterThan(0)
   })
 })

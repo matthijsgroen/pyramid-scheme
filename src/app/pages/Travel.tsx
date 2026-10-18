@@ -134,7 +134,7 @@ export const TravelPage: FC<{
   }
 
   // Which pyramid expeditions are pickable: a tier is entered on holding one of its unlock
-  // treasures, and inside a tier they still open one at a time (see journeyAvailability).
+  // treasures, and inside a tier they open together (wizard) or one at a time (see journeyAvailability).
   //
   // Develop mode opens every one of them. This IS a bypass, unlike the dev panel's grants (those go
   // through the real mod APIs): the within-tier "previous pyramid completed" rule can't be satisfied

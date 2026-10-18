@@ -48,12 +48,17 @@ describe("the sand lever's drawing", () => {
       expect(SAND_LEVER_TILES[piece]).not.toBe(FLOOR_LEVER_TILES[piece])
   })
 
-  it("is flagged owed while its own tiles are unpainted, and then stands as the floor lever", () => {
-    const painted = (tile: string) => tileUrl("expert", tile) !== undefined
-    expect(owedWebTiles(painted)).toEqual(expect.arrayContaining([...Object.values(SAND_LEVER_TILES), WEB_KEY_TILE]))
+  it("is flagged owed while its own tiles are unpainted, and no longer once they are", () => {
+    expect(owedWebTiles(() => false)).toEqual([...Object.values(SAND_LEVER_TILES), WEB_KEY_TILE])
+    expect(owedWebTiles(() => true)).toEqual([])
+  })
+
+  it("stands in its own arm where it is painted, and as the floor lever where it is not", () => {
     const sprite = spriteOf("lever", "reachable")!
     expect(sprite.key).toBe("webLever:0,1")
-    expect(sprite.armStack?.armUrl).toBe(tileUrl("expert", FLOOR_LEVER_TILES.arm))
+    expect(sprite.armStack?.armUrl).toBe(
+      tileUrl("expert", SAND_LEVER_TILES.arm) ?? tileUrl("expert", FLOOR_LEVER_TILES.arm)
+    )
   })
 
   it("is set until the reward is taken, then pulled for good", () => {

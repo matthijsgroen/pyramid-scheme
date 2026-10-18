@@ -10,9 +10,9 @@ import type { Journey } from "@/data/journeys"
 // exactly that ladder (`isTierUnlocked` in worldGen/reachability.ts), so the screen has to gate on
 // the same fact — a second, different rule here is what let the two drift apart.
 //
-// Within a tier, journeys still open one at a time: the tier's first is available as soon as the
-// tier is, each later one when the pyramid before it has been completed. A free-order tier (wizard)
-// opens every journey with the tier key.
+// Within a free-order tier (wizard) every journey opens with the tier key. Any other tier opens
+// them one at a time: its first as soon as the tier is, each later one when the pyramid before it
+// has been completed.
 
 const holdsTierKey = (difficulty: Difficulty, heldKeys: ReadonlySet<string>): boolean => {
   // The first tier has no entry key — nothing gates the start of the game.

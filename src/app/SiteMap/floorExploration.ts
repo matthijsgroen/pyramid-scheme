@@ -35,8 +35,8 @@ const DIR_MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], 
 
 // What an unsolved node still asks of the player before they can pass it: a tableau's hieroglyphs, a
 // ward door's key. A puzzle or a trap asks for nothing — the player can just do it — and a completed
-// room is a doorway like any other. A web door's key is asked for the same way: it is the door's first key, which
-// `requiredKeyIds` (the extra ones) does not hold.
+// room is a doorway like any other. A web door's key is asked for the same way: the door's first key, or one of
+// `requiredKeyIds` where it shares a cell with another gate.
 const blockingKeys = (cell: GridCell): readonly string[] => {
   if (cell.type !== "room" || cell.state === "completed") return []
   const own = cell.requiredKeyIds ?? []
