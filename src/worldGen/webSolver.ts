@@ -2,6 +2,7 @@
 // floors walked with only the keys the web hands out, each journey's pyramids in order, and the answer held against the
 // web walk's. The web walk is the designer's check; this is the proof on the floors the player will walk.
 import type { ResolveEncounter, ResolveKeyRequirements } from "../game/siteAssembler"
+import { isWebKey } from "../game/floorLock"
 import { webKey } from "../game/webLine"
 import type { SiteConfig } from "./types"
 import { computeReachability, createFloorAssemblyCache } from "./reachability"
@@ -28,8 +29,11 @@ export const solveWeb = (
   const meta: Record<string, JourneyMeta> = Object.fromEntries(journeys.map(([, id]) => [id, { tier: "wizard" }]))
   // Only what the web's keys are made of: every other currency is held by no one.
   const webOnly: ReachabilitySupport = {
-    bucketForReward: support.bucketForReward,
-    alsoHarvests: support.alsoHarvests,
+    bucketForReward: reward => {
+      const bucket = support.bucketForReward?.(reward)
+      return bucket && isWebKey(bucket) ? bucket : undefined
+    },
+    alsoHarvests: reward => (support.alsoHarvests?.(reward) ?? []).filter(isWebKey),
     factsForCount: support.factsForCount,
     // The floors carved as play carves them: the same realisations.
     resolveOneWay: support.resolveOneWay,

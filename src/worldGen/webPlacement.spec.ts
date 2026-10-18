@@ -6,6 +6,7 @@ import { parseWeb } from "../game/webNotation"
 import { resolveEncounterMeta } from "../mods/allFamilyMeta"
 import { WEB_REACHABILITY, webActivatorReward } from "../mods/topology/game/web/activator"
 import { computeReachability } from "./reachability"
+import type { ReachabilitySupport } from "./reachability"
 import type { SiteConfig } from "./types"
 import { placeWeb } from "./webPlacement"
 import { solveWeb, webAgreement } from "./webSolver"
@@ -142,5 +143,23 @@ describe("the world solver on a placed web", () => {
     expect(webAgreement(placement.walked.closure, solved, ["sun"], ["w1p1", "w2p1", "w2p2"])).toContain(
       "sun: the web walk takes it, the solver never reaches it on the carved floors"
     )
+  })
+
+  it("holds no key from outside the web, even one a mod harvests on the web's own floors", () => {
+    const { configs } = placed("[w2p1]\nsand from 30%: 100% by sun\n[w1p1]\nlever sun @end")
+    // The ward's key lies open on the same floor, and the support handed in harvests it as every mod's would.
+    configs.wizard_1[0][0].mainEndReward = { type: "madeUpWardKey" }
+    configs.wizard_1[0][0].sideSections[0] = {
+      ...configs.wizard_1[0][0].sideSections[0],
+      gate: { type: "tomb-key", wardKeyId: "wizard_b_1" },
+      endReward: webActivatorReward({ name: "sun", look: "lever", pots: ["w2p1"] }),
+    }
+    const everyMod: ReachabilitySupport = {
+      ...WEB_REACHABILITY,
+      bucketForReward: reward =>
+        reward.type === "madeUpWardKey" ? "wizard_b_1" : WEB_REACHABILITY.bucketForReward?.(reward),
+    }
+    const solved = solveWeb(configs, ["sun"], everyMod, undefined, resolveEncounterMeta)
+    expect(solved.activators.has("sun")).toBe(false)
   })
 })
