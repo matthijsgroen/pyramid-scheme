@@ -2,7 +2,8 @@
 // never carved, so a web door moves no wall. A door on ground no lock owns stands on one corridor cell the player has to
 // walk through; a door a lock's input owns stands where the lock's own gate does, or on every crossing between the two
 // regions, or round the region it buries. The web model (webWalk.ts) lays its doors in the same places.
-import { isWebKey } from "./floorLock"
+import { OPPOSITE } from "./carve/grid"
+import { doorKeysOf, isWebKey } from "./floorLock"
 import type { Lock } from "./lockAuthoring"
 import { isOutsideInput, isRegionGate } from "./lockAuthoring"
 import { mechanismGatesOf } from "./mechanismDoors"
@@ -109,7 +110,6 @@ export const webLockGates = (lock: Lock, web: PlacedLockWeb, instance: string): 
 
 type Pos = readonly [number, number]
 const MOVES: Record<Direction, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 1], w: [0, -1] }
-const OPPOSITE: Record<Direction, Direction> = { n: "s", s: "n", e: "w", w: "e" }
 const key = ([r, c]: Pos) => `${r},${c}`
 
 type Ground = Extract<GridCell, { type: "room" | "corridor" }>
@@ -119,7 +119,7 @@ const groundAt = (grid: FloorGrid, [r, c]: Pos): Ground | undefined => {
 }
 
 /** The neighbours a cell is joined to both ways. */
-const joinedTo = (grid: FloorGrid, at: Pos): Pos[] => {
+export const joinedTo = (grid: FloorGrid, at: Pos): Pos[] => {
   const cell = groundAt(grid, at)
   if (!cell) return []
   return [...cell.dirs].flatMap(dir => {
@@ -134,12 +134,9 @@ const ordinalOf = (cell: Ground): number => {
   return b === undefined ? a : (a + b) / 2
 }
 
-const doorKeys = (cell: Ground | undefined): string[] =>
-  cell?.type === "room" ? [...(cell.requiredKeyId ? [cell.requiredKeyId] : []), ...(cell.requiredKeyIds ?? [])] : []
-
 /** A door the web laid: one of its keys is a web key. */
 export const isWebDoorCell = (cell: GridCell | undefined): boolean =>
-  cell !== undefined && cell.type === "room" && doorKeys(cell).some(isWebKey)
+  cell !== undefined && cell.type === "room" && doorKeysOf(cell).some(isWebKey)
 
 /** The cells of one section of the authoring, by the address a save files them under. */
 const sectionCells = (grid: FloorGrid, address: string): Pos[] => {
@@ -251,7 +248,7 @@ export const webDoorLeaks = (grid: FloorGrid): string[] => {
   const allKeys = new Set<string>()
   grid.cells.forEach((row, r) =>
     row.forEach((cell, c) => {
-      for (const id of doorKeys(cell.type === "empty" ? undefined : cell)) {
+      for (const id of doorKeysOf(cell.type === "empty" ? undefined : cell)) {
         allKeys.add(id)
         if (isWebKey(id)) byKey.set(id, [...(byKey.get(id) ?? []), [r, c]])
       }
@@ -323,7 +320,7 @@ export const layWebDoors = (
     const there = at(door)
     if (there.type === "room") {
       // A cell another web door already stands in asks for this gate's keys too: both must be held.
-      const asked = doorKeys(there)
+      const asked = doorKeysOf(there)
       const more = keys.filter(id => !asked.includes(id))
       if (more.length > 0) {
         // Two owners: the door's face lists a mark for each, so the door itself wears none.

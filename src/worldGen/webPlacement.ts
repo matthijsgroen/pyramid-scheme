@@ -8,7 +8,7 @@ import type { PyramidRef, ResolvedWeb, WebDoor } from "../game/webLine"
 import type { Web, WebLook } from "../game/webNotation"
 import { webReport } from "../game/webReport"
 import { walkWeb } from "../game/webWalk"
-import type { WalkOptions, WebWalk } from "../game/webWalk"
+import type { WebWalkOptions, WebWalk } from "../game/webWalk"
 import type { SiteConfig, TreasureReward } from "./types"
 import { describeSlot, readWebWorld, slotOf } from "./webWorld"
 import type { CarvedPyramid, ReadWorld } from "./webWorld"
@@ -109,7 +109,7 @@ export const placeWeb = (
   carve: CarveFloor,
   toReward: WebActivatorReward,
   options: {
-    walk?: WalkOptions
+    walk?: WebWalkOptions
     /** On a world whose loot is already placed (`yarn lock <web>` on the last bake): an activator takes a filled slot,
      * and what it displaces is told here, since the bake places that loot again. */
     displaces?: (line: string) => void

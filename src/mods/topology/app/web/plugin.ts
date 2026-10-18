@@ -14,8 +14,6 @@ import { useWebPulled } from "./useWebPulled"
 import { WebPullCount } from "./WebPullCount"
 import { webActivatorArt } from "./webArt"
 
-export { WORLD_ACTIVATORS }
-
 // The sand web in play: an activator taken is pulled for good, and the keys it gives open web doors on every floor.
 // A sand lever and a web key stand in their room as webArt.ts draws them.
 export const webActivatorSchema = z.object({

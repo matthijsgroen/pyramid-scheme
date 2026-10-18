@@ -20,7 +20,8 @@ const walkable = (cell: GridCell | undefined): boolean =>
 // the game's own walk (siteValidator's `reachableFrom`) refuses the step on any one of them exactly
 // as it refuses a single `requiredKeyId`. A barrier this compiler cannot model has to come out shut,
 // so every id counts — a boundary stands open only while all of them do.
-const doorKeysOf = (cell: GridCell | undefined): string[] =>
+/** The keys a door cell asks for: its own, and those a shared cell adds. */
+export const doorKeysOf = (cell: GridCell | undefined): string[] =>
   cell?.type === "room" ? [...(cell.requiredKeyId ? [cell.requiredKeyId] : []), ...(cell.requiredKeyIds ?? [])] : []
 
 // Two cells the author put in different regions of the layout: ground the flood does not join.
