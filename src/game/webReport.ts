@@ -46,7 +46,7 @@ const routeLines = (label: string, route: CheapestRoute): string[] =>
           `  ${route.route.join(" ▸ ")}`,
         ]
 
-/** The report of a web read against a world, and whether it passes. `floors` is the re-entry walk of the web
+/** The report of a web read against a world, and whether it passes. `floors` is the walk of the web
  * journeys' floors, where the floors were carved. */
 export const webReport = (
   resolved: ResolvedWeb,
@@ -74,8 +74,8 @@ export const webReport = (
   if (floors)
     lines.push(
       ...(floors.failures.length === 0
-        ? [`✓ every floor of a web journey walks sound with re-entry: ${floors.walked} with a lock`]
-        : floors.failures.map(failure => `✗ with re-entry, ${failure}`))
+        ? [`✓ every floor of a web journey walks sound with its web keys arriving: ${floors.walked} with a lock`]
+        : floors.failures.map(failure => `✗ with its web keys arriving, ${failure}`))
     )
   if (walked && walked.assumed.length > 0) lines.push(`assumed held on the way: ${walked.assumed.join(", ")}`)
 

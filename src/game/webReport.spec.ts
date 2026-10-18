@@ -23,7 +23,7 @@ describe("the web report", () => {
     expect(text).toContain("✗ placeNotInWorld (line 1): wizard_1 has no pyramid 4")
   })
 
-  it("fails a web whose journey floors do not walk sound with re-entry", () => {
+  it("fails a web whose journey floors do not walk sound", () => {
     const resolved = resolve("[w1p1]\nsand by sun\n[w2p1]\nlever sun @end", world({ 1: [plain(3)], 2: [plain(3)] }))
     const { sound } = webReport(resolved, walkWeb(resolved), { walked: 1, failures: ["wizard_1 pyramid 1 floor 0: x"] })
     expect(sound).toBe(false)

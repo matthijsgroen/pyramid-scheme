@@ -233,8 +233,6 @@ const atLevelMap = (levelNr: number, entries: Record<string, string> | undefined
   )
 }
 
-// Module constants, not inline literals: a fresh literal on every render makes every consumer of
-// useOfflineStorage look like a different default to anything comparing by identity.
 /** The save standing where the player stood in pyramid `levelNr` when they last backed out of it, or at its entrance. */
 const standingIn = (j: StoredJourneyStateV3, levelNr: number) => {
   const back = j.pyramidPositions?.[levelNr]
@@ -262,6 +260,8 @@ const forgetting = (j: StoredJourneyStateV3, levelNr: number) => {
   return { pyramidPositions }
 }
 
+// Module constants, not inline literals: a fresh literal on every render makes every consumer of
+// useOfflineStorage look like a different default to anything comparing by identity.
 const INITIAL_STORAGE_VERSIONS = { journeys: 3, inventory: 1, answers: 1 }
 const NO_JOURNEYS: StoredJourneyStateV3[] = []
 

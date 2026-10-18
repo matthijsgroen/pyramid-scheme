@@ -274,8 +274,8 @@ describe("why any pull order works", () => {
   })
 })
 
-describe("re-entry on the floors of web journeys", () => {
-  it("walks only the floors of the journeys a web names, each with re-entry", () => {
+describe("the floors of web journeys", () => {
+  it("walks only the floors of the journeys a web names, none with re-entry: a return resumes where the player stood", () => {
     const grid = (siteId: string) => ({ siteId }) as FloorGrid
     const floors = { wizard_1: [[grid("w1p1f0"), grid("w1p1f1")]], wizard_2: [[grid("w2p1f0")]] }
     const walkFloor = vi.fn<typeof walkFloorLock>((g: FloorGrid) =>
@@ -285,8 +285,8 @@ describe("re-entry on the floors of web journeys", () => {
     )
     const result = walkWebFloors(parseWeb("[w1p1]\nlever a @end"), floors, walkFloor)
     expect(walkFloor.mock.calls.map(([g, options]) => [g.siteId, options])).toEqual([
-      ["w1p1f0", { reentry: true }],
-      ["w1p1f1", { reentry: true }],
+      ["w1p1f0", undefined],
+      ["w1p1f1", undefined],
     ])
     expect(result.walked).toBe(2)
     expect(result.failures).toEqual([expect.stringMatching(/^wizard_1 pyramid 1 floor 1: /)])

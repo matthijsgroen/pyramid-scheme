@@ -77,12 +77,14 @@ const walkFloor = (grid: FloorGrid, held: ReadonlySet<string>, reentry: boolean)
 /**
  * A VISIT READ OFF THE CARVED FLOORS: the floors of the pyramid's main path walked in turn, each entered only once the
  * one below is left by its way out. Undefined where a floor's walk is too large, and the web's graph answers instead.
+ * `reentryJourneys` walks those journeys' floors with re-entry; the bake names none, since a player coming back to a
+ * pyramid resumes where they stood.
  */
 export const carvedVisit =
   (
     read: ReadWorld & { pyramids: Readonly<Record<number, readonly CarvedPyramid[]>> },
     resolved: ResolvedWeb,
-    reentryJourneys: ReadonlySet<number>
+    reentryJourneys: ReadonlySet<number> = new Set()
   ) =>
   (at: PyramidRef, held: ReadonlySet<string>): Visit | undefined => {
     const pyramid = read.pyramids[at.journey]?.[at.pyramid - 1]

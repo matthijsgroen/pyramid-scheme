@@ -1,6 +1,6 @@
 // THE PLACED WEB CHECKED ON THE FLOORS THE BAKE PINNED (docs/instructions/sand-pyramid.md, "What the bake checks"):
 // every place where it was placed, every web door shutting what it stands in front of, the web walk sound on the real
-// floor states with re-entry, and the world solver agreeing with it.
+// floor states with its keys arriving, and the world solver agreeing with it.
 import type { ResolveEncounter } from "../game/siteAssembler"
 import type { FloorConfig, FloorGrid } from "../game/siteTypes"
 import { webDoorLeaks, webSandKindRefusals } from "../game/webDoors"
@@ -37,9 +37,7 @@ export const checkPlacedWeb = (
   if (moved.length > 0)
     failures.push(`the carve moved the web since it was placed, so bake again:\n  ${moved.join("\n  ")}`)
 
-  const journeys = new Set(web.blocks.map(block => block.journey))
-  const walked =
-    resolved.refusals.length === 0 ? walkWeb(resolved, { visit: carvedVisit(read, resolved, journeys) }) : undefined
+  const walked = resolved.refusals.length === 0 ? walkWeb(resolved, { visit: carvedVisit(read, resolved) }) : undefined
   const grids = Object.fromEntries(
     webJourneysOf(configs).map(([n, id]) => [id, (read.pyramids[n] ?? []).map(pyramid => [...pyramid.grids])])
   )
