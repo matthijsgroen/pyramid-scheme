@@ -23,7 +23,6 @@ import { corridorLines, formatLockTable, isLessonPath, lockChecks, lockRow } fro
 import { WEB_SYNTAX, parseWeb } from "../src/game/webNotation"
 import type { Web } from "../src/game/webNotation"
 import { resolveWeb } from "../src/game/webLine"
-import { walkWeb, walkWebFloors } from "../src/game/webWalk"
 import { webReport } from "../src/game/webReport"
 
 const args = process.argv.slice(2)
@@ -97,12 +96,52 @@ const webCheck = async (path: string): Promise<boolean> => {
     return false
   }
   const { bakedWebWorld } = await import("./webWorld")
-  const { world, grids } = bakedWebWorld()
-  const resolved = resolveWeb(web, world)
-  const walked = resolved.refusals.length === 0 ? walkWeb(resolved) : undefined
-  const { text, sound } = webReport(resolved, walked, walkWebFloors(web, grids))
-  console.log(text)
-  return sound
+  const baked = bakedWebWorld()
+  const resolved = resolveWeb(web, baked.world)
+  if (resolved.refusals.length > 0) {
+    console.log(webReport(resolved, undefined).text)
+    return false
+  }
+  // Placed as the bake places it, on a copy of the last bake with any web taken off, and its floors walked again with
+  // the doors laid: the states a player can stand in, each visit with only the held keys arriving.
+  const { generatedWorldConfigs } = await import("../src/data/generatedWorld")
+  const { carveWorldFloor } = await import("../src/mods/buildWorldConfigs")
+  const { MOD_REACHABILITY_SUPPORT, MOD_WEB_ACTIVATOR } = await import("../src/mods/registeredMods")
+  const { resolveEncounterMeta } = await import("../src/mods/allFamilyMeta")
+  const { placeWeb, withoutWeb } = await import("../src/worldGen/webPlacement")
+  const { checkPlacedWeb } = await import("../src/worldGen/webBakeCheck")
+  if (!MOD_WEB_ACTIVATOR) {
+    console.log("✗ no registered mod realises a web's activators")
+    return false
+  }
+  const marker = MOD_WEB_ACTIVATOR({ name: "", look: "lever", pots: [] }).type
+  const configs = withoutWeb(structuredClone(generatedWorldConfigs), reward => reward.type === marker)
+  let placed
+  const displaced: string[] = []
+  try {
+    placed = placeWeb(web, configs, (id, levelNr, f) => baked.grids[id][levelNr - 1][f], MOD_WEB_ACTIVATOR, {
+      displaces: line => displaced.push(line),
+    })
+  } catch (error) {
+    console.log((error as Error).message)
+    return false
+  }
+  const { report, failures } = checkPlacedWeb(
+    placed,
+    configs,
+    (journeyId, levelNr, floorIndex) =>
+      carveWorldFloor(journeyId, levelNr, floorIndex, configs[journeyId][levelNr - 1][floorIndex]),
+    MOD_REACHABILITY_SUPPORT,
+    resolveEncounterMeta
+  )
+  console.log(
+    [
+      report,
+      ...failures.map(failure => `✗ ${failure}`),
+      ...(displaced.length > 0 ? ["displaced, the bake places it again:", ...displaced.map(line => `  ${line}`)] : []),
+    ].join("\n")
+  )
+  return failures.length === 0
 }
 
 if (args.includes("--help")) {

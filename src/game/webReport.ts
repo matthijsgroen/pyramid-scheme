@@ -8,11 +8,19 @@ import { bindingFace, laidLockRefusals } from "./webWalk"
 const GROUPS: { ok: string; types: WebRefusalType[] }[] = [
   {
     ok: "every place is in the world",
-    types: ["placeNotInWorld", "activatorTwice", "unknownActivator", "activatorUnused", "placeTaken", "webTooLarge"],
+    types: [
+      "placeNotInWorld",
+      "activatorTwice",
+      "unknownActivator",
+      "activatorUnused",
+      "placeTaken",
+      "activatorBehindWard",
+      "webTooLarge",
+    ],
   },
   {
     ok: "every stop lands on a seam of its own",
-    types: ["stopsMalformed", "stopNotAfterFrom", "stopsShareSeam", "potsOverlap", "frontOnAnyGate"],
+    types: ["stopsMalformed", "stopNotAfterFrom", "stopsShareSeam", "stopOffGround", "potsOverlap", "frontOnAnyGate"],
   },
   {
     ok: "every input is bound, and every binding names an input",

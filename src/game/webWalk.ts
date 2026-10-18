@@ -322,8 +322,8 @@ export type WebWalk = {
   warnings: string[]
   /** The pull sets a player can reach, the empty one included. */
   sets: number
-  /** The activators the closure from no pulls takes, and whether every journey finishes in it. */
-  closure: { activators: string[]; finished: boolean }
+  /** The activators the closure from no pulls takes, whether every journey finishes in it, and the pyramids it finishes. */
+  closure: { activators: string[]; finished: boolean; pyramids: string[] }
   /** Ward keys the walk takes as held where they stand on the way to a web door or activator. */
   assumed: string[]
   cheapest: CheapestRoute
@@ -502,7 +502,7 @@ export const walkWeb = (resolved: ResolvedWeb, options: WalkOptions = {}): WebWa
     refusals,
     warnings,
     sets,
-    closure: { activators: [...closure.pulled], finished: finishedAll },
+    closure: { activators: [...closure.pulled], finished: finishedAll, pyramids: [...closure.reach.finished] },
     assumed,
     cheapest: cheapest(pyramids, names, activatorsIn, heldOf, visit, maxStates, []),
     cheapestSeeing: cheapest(pyramids, names, activatorsIn, heldOf, visit, maxStates, goalDoors),

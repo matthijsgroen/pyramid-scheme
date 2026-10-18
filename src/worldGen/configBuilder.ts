@@ -302,7 +302,11 @@ export const buildConfigs = (
   // Phase 4's reachability walk — injected from src/mods/allFamilyMeta.ts (resolveEncounterMeta) by
   // scripts/generateWorld.ts. Absent (existing callers, specs) leaves the reachability walk on its
   // own default, which never claims reEnterable for anyone, and leaves every switch fork standing.
-  resolveEncounter?: ResolveEncounter
+  resolveEncounter?: ResolveEncounter,
+  // Places the tier's web on the built world (webPlacement.ts): its doors on the authoring and its activators in reward
+  // slots, before the worklist places the currencies, so they keep out of those slots and the solver reads the doors.
+  // Absent (no web, or no mod realising one) the world is built without.
+  placeWorldWeb?: (configs: Record<string, SiteConfig[]>) => void
 ): Record<string, SiteConfig[]> => {
   // Phase 1: Resolve constraints + compute per-pyramid path puzzle counts
   const plan = buildPlan()
@@ -347,6 +351,9 @@ export const buildConfigs = (
   // Phase 3.6: mods place their shop-stock sentinels into resolved shops (after encounters resolve
   // + stock arrays seed, before slot collection fills them). Core names no currency here.
   placeShopStock(allConfigs, shopStock)
+
+  // Phase 3.65: the tier's web, laid on the world the passes above built.
+  placeWorldWeb?.(allConfigs)
 
   // Phase 4: Worklist-driven currency placement (docs/game-design/keys-and-locks-solver.md)
   // — assigns fragmentSlot positions per registered currency, fills the remainder with junk loot

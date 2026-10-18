@@ -10,6 +10,7 @@ import { STONE_PLATE_META } from "./game/stonePlate/meta"
 import { STONE_PIPE_META } from "./game/stonePipe/meta"
 import { SAND_META, WATER_META } from "./game/regionBarrier/meta"
 import { ZIPLINE_META } from "./game/zipline/meta"
+import { WEB_REACHABILITY, webActivatorReward } from "./game/web/activator"
 
 // The topology mod descriptor. Owns the families whose board decides where the player may WALK, rather
 // than only what they solve: lightbeam aims a corridor's beam, the lightbeam switch routes its beam to
@@ -45,4 +46,7 @@ export const topologyMod: ModDescriptor = {
   oneWayRealisations: [ZIPLINE_META],
   regionBarrierRealisations: [WATER_META, SAND_META],
   passageRealisations: [NARROW_PASSAGE_META],
+  // The sand web: its activators stand as this reward, and the solver reads each as its key and its pots' counts.
+  webActivator: webActivatorReward,
+  reachabilitySupport: WEB_REACHABILITY,
 }

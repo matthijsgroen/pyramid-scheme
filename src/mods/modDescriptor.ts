@@ -4,6 +4,7 @@ import type { TombTreasureResolver } from "@/worldGen/configBuilder"
 import type { Distribution } from "@/worldGen/slotAllocator"
 import type { ShopStockAssignment } from "@/worldGen/shopStock"
 import type { WorldValidator } from "@/worldGen/validate"
+import type { WebActivatorReward } from "@/worldGen/webPlacement"
 import type { CurrencyMeta } from "@/game/ledger/currencyRegistry"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { OneWayRealisationMeta } from "@/game/oneWayRealisation"
@@ -69,4 +70,7 @@ export type ModDescriptor = {
   // is moved out of the free-world spread into the shop. Drops with the mod (shop off → shops fall
   // back to chests; this currency off → its pieces stay in the world). See docs/mods/ARCHITECTURE.md (shop mod).
   shopStock?: ShopStockAssignment[]
+  // The reward a web activator (a sand lever, a web key) stands as. A tier's web is placed only where a registered mod
+  // gives one, so the web drops with its mod: no doors, no activators, every slot left to the loot passes.
+  webActivator?: WebActivatorReward
 }

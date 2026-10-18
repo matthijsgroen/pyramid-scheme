@@ -200,11 +200,14 @@ Only activators. A web has no toggle, no torch, no sequence: everything in it on
 A stop is a point on its line. It resolves to a main-path room by counting rooms, and lands on the **nearest
 main-path seam** (the corridor between two consecutive main-path rooms of one floor; a stop nearest a stair
 lands on the nearer seam either side of it). Ties go toward the arrival, burying more. What the seam is decides
-the door:
+the door, read off the seam's **last step**, the one into its second room, so every side section hanging on the
+seam hangs before the door:
 
-- **On ground no lock owns**, a gate on that seam asking for `web:<pot>#<n>`.
+- **On ground no lock owns**, a gate on that seam asking for `web:<pot>#<n>`, on the corridor cell right before
+  the second room. A last step that enters a lock from outside it takes no door: refused `stopOffGround`.
 - **A seam between two regions of a floor lock**, a corridor of the lock: the bake adds an outside owner to
-  that corridor and walks the lock again with it as a one-way arrival (the exact model above). A plain
+  every corridor between those two regions and walks the lock again with it as a one-way arrival (the exact model
+  above). A plain
   corridor becomes `-[W]-`; a gated one gains the owner under `+` (`-[K+T]-` becomes `-[K+T+W]-`). A corridor
   gated with `|` cannot carry it, since its other owner would open the sand: refused `frontOnAnyGate`, naming
   the stop.
@@ -219,10 +222,11 @@ place and the way round.
 **Stability.** The line counts authored rooms (each floor's `pathPuzzles` and its end room), so a percentage
 resolves to the same seam however a floor carves. What that seam is (plain ground, a lock corridor, the inside
 of a region) and which side section hangs first after a percentage are the carve's; placement reads them off
-the baked floor and pins them by authored name: a section by its label, set to its current address
-(`../game-design/world-spec-stability.md`), a lock corridor or region by the lock's own region names. A
-re-carve keeps every pinned name, so the web's doors and activators stay where they were placed; the report
-says where each landed.
+the baked floor and pins them by authored name: a section by its address, a lock corridor or region by the
+lock's own region names. A section is not given a label for it: a label may not imitate a positional address
+(`src/game/carve/sections.ts`), so "a label equal to its current address" is refused by the carve. Instead the
+bake places the web on the floors at their last pins, then reads it again on the floors the search pinned, and
+refuses the bake, naming each line, when anything landed elsewhere; the report says where each landed.
 
 ### The worked example
 
@@ -511,9 +515,10 @@ authored data on the tier, set for wizard.
 3. **A web door is a real lock to the solver.** `reachableFrom` (`src/game/siteValidator.ts`) already treats a
    door asking for a key it does not hold as a discovered lock. An input's door under `all` asks for its web
    key beside the mechanism's say, which the walk counts as given.
-4. **Order inside a journey enters the solver.** Today progressing between `levelIndex` values is outside the
-   solver (`reachability.ts:73-77`). The rule to add is true of every journey: pyramid N+1 is enterable when
-   pyramid N's exit is reachable.
+4. **Order inside a journey enters the solver.** Pyramid N+1 is enterable when pyramid N's exit is reachable
+   (`isOrderedJourney`, `src/worldGen/reachability.ts`). The rule is true of every journey, but the solver applies
+   it only to a journey carrying a web door: there alone a key held from elsewhere can shut a way out, and a world
+   without a web then bakes as it did. Whether applying it to every journey moves the baked world is not measured.
 5. **The world check is the web's.** The web walk is the designer's check; the world solver's run is the proof
    on the carved floors, and the bake requires both to agree.
 
@@ -618,13 +623,13 @@ carries at most 16 activators.
 
 ### Baked data that moves
 
-- **A stop on a plain seam, or an `opens` door, re-carves its floor.** A gate's presence is structural.
-- **A stop on a lock corridor that is already gated** only adds an owner: no re-carve. One on a plain lock
-  corridor, or one burying a region, re-carves that floor.
+- **A web door re-carves nothing.** Every web door is laid on the finished carve (`src/game/webDoors.ts`): a seam
+  or mouth door on one corridor cell, a lock gate an input shares with floor owners asking for the input's key
+  too, a gate only inputs own on every crossing it bars. A lock compiles without its inputs, so its walls are
+  those of the lock without them. The bake refuses a door the floor walks round (`webDoorLeaks`).
 - **A declared input costs nothing of its own.** Its gates are the lock's, carved with the lock.
 - **Every reward holding an activator changes.** That does not re-carve. The reward it replaces (often a
   fragment slot) is placed again by the worklist and may land in another wizard room.
-- **Sections the web places get labels** equal to their current address. That moves nothing.
 - **Buried sections that carry a ward gate today** lose it to another place in the journey, at the designer's
   say (open question 2).
 - **No other tier moves.** Re-entry states change no carve; if they are turned on for every floor (open

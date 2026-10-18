@@ -3,7 +3,7 @@ import { doorOpen, type DoorMode } from "./doorOpen"
 import { floorLock } from "./floorLock"
 import { walkFloorLock } from "./floorLockWalk"
 import { INPUT_HELD, INPUT_MISSING, openGates, reachableStates, walkLock, type LockConfig } from "./lockWalk"
-import { openDoorsFor } from "./mechanismDoors"
+import { douseFloor, openDoorsFor } from "./mechanismDoors"
 import { cellAddress } from "./cellAddress"
 import type { Direction, FloorGrid, GridCell, MechanismRecord } from "./siteTypes"
 
@@ -154,6 +154,9 @@ describe("a web door in the floor walk", () => {
     expect(order.some(state => state.config[key] === INPUT_MISSING && state.config[torch] === "on")).toBe(false)
     expect(order.some(state => state.config[key] === INPUT_HELD && state.config[torch] === "on")).toBe(true)
     expect(walkFloorLock(grid)).toMatchObject({ sound: true })
+    // Play douses by the same rule: the torch is out while the key is missing, and stays lit once it is held.
+    expect([...douseFloor(grid, 0, new Map()).values()]).toEqual(["off"])
+    expect(douseFloor(grid, 0, new Map(), new Set([web(0)])).size).toBe(0)
   })
 })
 

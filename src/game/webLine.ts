@@ -123,6 +123,8 @@ export type ResolvedWeb = {
   bindings: WebBinding[]
   /** Each lock that took an owner or a buried region from a stop, as it is laid: `${pyramid} f${floor} ${instance}`. */
   laidLocks: Map<string, Lock>
+  /** The outside owner each stop landing in a lock adds, by lock as `laidLocks` names it, in the order added. */
+  fronts: Map<string, { input: string; door: WebDoor }[]>
   refusals: WebRefusal[]
 }
 
@@ -690,6 +692,7 @@ export const resolveWeb = (web: Web, world: WebWorld): ResolvedWeb => {
     else boundKey.set(id, binding)
   }
   const laidLocks = new Map<string, Lock>()
+  const fronts = new Map<string, { input: string; door: WebDoor }[]>()
   const addedBy = new Map<string, WebDoor[]>()
   for (const door of doors)
     if (door.where.kind === "corridor" || door.where.kind === "region") {
@@ -735,11 +738,12 @@ export const resolveWeb = (web: Web, world: WebWorld): ResolvedWeb => {
               break
             }
             laid = next
+            fronts.set(id, [...(fronts.get(id) ?? []), { input, door }])
           }
           if (laid && added.length > 0) laidLocks.set(id, laid)
         }
       })
     )
 
-  return { web, world, activators, pots, doors, bindings, laidLocks, refusals }
+  return { web, world, activators, pots, doors, bindings, laidLocks, fronts, refusals }
 }

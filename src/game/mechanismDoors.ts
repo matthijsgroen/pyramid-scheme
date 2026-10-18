@@ -201,9 +201,10 @@ export const douseFloor = (
     now.set(torch.address, storedAtCell(grid, floor, torch.at[0], torch.at[1], stored) ?? torch.initial)
   const covered = (states: ReadonlyMap<string, string>) => {
     const open = openDoorsFor(grid, floor, states, heldKeys, reads)
+    // A barrier door asking for a key held from elsewhere (web sand) stands open once that key is held.
     return new Set(
       torches
-        .filter(torch => [...(barrierKeys.get(torch.region) ?? [])].some(key => !open.has(key)))
+        .filter(torch => [...(barrierKeys.get(torch.region) ?? [])].some(key => !open.has(key) && !heldKeys.has(key)))
         .map(torch => torch.address)
     )
   }

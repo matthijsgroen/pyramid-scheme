@@ -33,7 +33,9 @@ const serializeEncountersByIndex = (m: Record<number, string | string[]>): strin
 // Reward payloads are flat scalars (type + amount/itemId/hieroglyphId/pieceIndex/…). fragmentSlot
 // is the placement sentinel; any hieroglyph pieceIndex is already stamped by the hieroglyph
 // finalize pass (scripts/generateWorld.ts) before we get here.
-const serializeValue = (v: unknown): string => (typeof v === "string" ? JSON.stringify(v) : `${v}`)
+// A list or an object (a web activator's pots) is written whole; a number or a flag as it reads.
+const serializeValue = (v: unknown): string =>
+  typeof v === "string" || (typeof v === "object" && v !== null) ? JSON.stringify(v) : `${v}`
 const serializeReward = (r: TreasureReward): string => {
   if (r.type === "fragmentSlot")
     throw new Error("fragmentSlot reached serializer — placement must fill or clear every slot first")
