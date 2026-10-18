@@ -19,12 +19,21 @@
  *   only the brick field deciding the verdict. An OBJECT — prop, wall item, archway, explorer — is held to
  *   the palette's ends and nothing else: it is meant to differ from the stone behind it.
  *
+ * A LIGHT rank — one whose floor stands above mid-grey through its own night — turns the object rule over
+ * (docs/game-design/visual-direction.md, light and dark floors): an object passes on value when it stands
+ * `MIN_STEP` L* below the floor as the map draws both, and a floor is too contrasty when its dark detail
+ * reaches that far down, since then the floor's own joints read as objects.
+ *
  * Magenta background and transparent pixels are excluded, so a prop measures its object only.
  */
 
 import sharp from "sharp"
-import { tierPalette } from "../src/app/SiteMap/tileMaterials"
+import { pathToFileURL } from "url"
+import { tierPalette, type TierPalette } from "../src/app/SiteMap/tileMaterials"
+import { SEATING_PASS } from "../src/app/SiteMap/lighting"
+import { hexToRgb, parseRgba, toLch, wash, type Rgb } from "../src/support/colour"
 import type { Difficulty } from "../src/data/difficultyLevels"
+import { MIN_STEP } from "./rankColour"
 
 const luminance = (r: number, g: number, b: number) => 0.2126 * r + 0.7152 * g + 0.0722 * b
 
@@ -41,6 +50,33 @@ const lumOf = (colour: string) => Math.round(luminance(...(rgb(colour) as [numbe
 
 /** How warm a colour is: red over blue. The one number a drifting generator moves. */
 const warmth = (r: number, _g: number, b: number) => r - b
+
+/** A floor lighter than mid-grey through its night is a light floor. */
+export const LIGHT_FLOOR = 50
+
+/** L* of a colour lying on the floor under the rank's night. */
+const atNight = (palette: TierPalette, colour: Rgb) => {
+  const { rgb: night, alpha } = parseRgba(palette.shade)
+  return toLch(wash(colour, night, alpha)).L
+}
+
+export const isLightFloor = (palette: TierPalette) => atNight(palette, hexToRgb(palette.slab)) >= LIGHT_FLOOR
+
+/** How far below the floor an object of this mean colour is drawn, in L*: the night, then the seating
+ * pass a standing thing takes (`measureRank`'s `seated`). Negative when it is drawn lighter. */
+export const objectStep = (palette: TierPalette, mean: Rgb) => {
+  const { rgb: night, alpha } = parseRgba(palette.shade)
+  const seated = wash(wash(mean, night, alpha), night, alpha * SEATING_PASS)
+  return atNight(palette, hexToRgb(palette.slab)) - toLch(seated).L
+}
+
+/** How far a floor's dark detail falls below its body under the night, in L*, from two luminance levels. */
+export const detailStep = (palette: TierPalette, body: number, detail: number) =>
+  atNight(palette, [body, body, body]) - atNight(palette, [detail, detail, detail])
+
+/** The lightest stone the palette holds: a dark rank's props, a light rank's pale slab or wall cap. */
+export const lightestOf = (palette: TierPalette) =>
+  Math.max(...[palette.prop, palette.slabHi, palette.wallTop].map(lumOf))
 
 /** The band of a face that is neither its light cap nor its dark base — the brick itself. */
 const FIELD = [0.1, 0.9]
@@ -66,7 +102,8 @@ const main = async () => {
 
   // What this slot is made of. A face is wall, everything else is floor stone.
   const material = isFace ? palette.wall : palette.slab
-  const lightest = lumOf(palette.prop)
+  const light = isLightFloor(palette)
+  const lightest = lightestOf(palette)
   const darkest = lumOf(palette.joint)
   const [sr, sg, sb] = rgb(material)
 
@@ -115,7 +152,9 @@ const main = async () => {
   }
 
   console.log(
-    `${width}x${height}  aspect ${(width / height).toFixed(2)}:1   tier ${tier}${isFace ? "  slot face" : ""}`
+    `${width}x${height}  aspect ${(width / height).toFixed(2)}:1   tier ${tier} (${light ? "light" : "dark"} floor)${
+      isFace ? "  slot face" : ""
+    }`
   )
   console.log(
     `lum  p5 ${at(5)}  p50 ${at(50)}  p95 ${at(95)}   (${isFace ? "the brick field wants" : "the slab band is"} ${
@@ -144,7 +183,16 @@ const main = async () => {
   // every other check and then disappears under the player's eye — so the gap is printed for every object
   // and faulted when it closes. Either direction counts: a merchant's jar rack separates by being darker.
   const floorGap = at(50) - lumOf(palette.slab)
-  if (isObject)
+  // On a light floor the gap is read the way `yarn rank-colour` reads it: L* through the night, below.
+  const step = objectStep(palette, mean)
+  if (isObject && light) {
+    const { C } = toLch(mean)
+    console.log(
+      `against the floor it stands on: ${Math.abs(step).toFixed(1)} L* ${step >= 0 ? "darker" : "lighter"} at night (wants ${MIN_STEP} darker)   chroma ${C.toFixed(
+        1
+      )} (the slab's ${toLch(hexToRgb(palette.slab)).C.toFixed(1)})`
+    )
+  } else if (isObject)
     console.log(
       `against the floor it stands on: ${Math.abs(floorGap)} ${floorGap >= 0 ? "lighter" : "darker"} (the slab is ${lumOf(
         palette.slab
@@ -165,21 +213,30 @@ const main = async () => {
   // below the floor's mortar colour are expected there and only the LIGHT end can overshoot — which is
   // the failure a wall actually has (one came back at median 129 against a wall colour of 66).
   const outside = isFace ? tooLight : tooLight + tooDark
+  // A light floor's dark end is held to the step instead of the joint colour and a fixed spread: its
+  // joints may go as dark as they like short of reading as something standing on it.
+  const detail = detailStep(palette, at(50), at(5))
+  const tooContrasty = light && !isFace ? tooLight >= 2 || detail >= MIN_STEP : outside >= 2 || spread >= spreadLimit
+  if (light && !isFace && !isObject)
+    console.log(
+      `dark detail: p5 sits ${detail.toFixed(1)} L* below the body at night (under ${MIN_STEP} keeps it floor)`
+    )
   const faults = isObject
     ? [
         // Only the LIGHT end. An object's dark end is its own shadow — the underside of a beam, the inner
         // face of a post — which is what seats it in the world; the failure objects actually have is
         // chalky highlights, the same white flaking that ruined the first floor.
         tooLight >= 2 ? `${tooLight.toFixed(1)}% lighter than ${lightest} — restate the value clamp` : null,
+        light && step < MIN_STEP
+          ? `only ${step.toFixed(1)} L* below the floor at night — a light rank's object wants ${MIN_STEP}`
+          : null,
         // 10 is about a palette step. Closer than that and the object is the floor's own value.
-        Math.abs(floorGap) < 10
+        !light && Math.abs(floorGap) < 10
           ? `only ${Math.abs(floorGap)} from the floor it stands on — it will not read against it`
           : null,
       ].filter(Boolean)
     : [
-        (outside >= 2 || spread >= spreadLimit) && !isStep
-          ? `too contrasty: p5–p95 spans ${spread}, restate the value clamp`
-          : null,
+        tooContrasty && !isStep ? `too contrasty: p5–p95 spans ${spread}, restate the value clamp` : null,
         // 15 is about the width of one palette step, so a drift past it is a different brown, not a variation.
         Math.abs(drift) > 15
           ? `${drift > 0 ? "too warm" : "too cool"} by ${Math.abs(Math.round(drift))}, restate the palette hexes`
@@ -192,4 +249,4 @@ const main = async () => {
   console.log(faults.length === 0 ? "reads as one tomb — import it" : faults.join("\n"))
 }
 
-main()
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main()
