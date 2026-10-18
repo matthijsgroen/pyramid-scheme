@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest"
 import { mulberry32, shuffle } from "./random"
 import { potKey, roomNode } from "./webLine"
-import type { ResolvedWeb } from "./webLine"
+import type { ResolvedWeb, WebFloor } from "./webLine"
 import { parseWeb } from "./webNotation"
 import { visitPyramid, walkWeb, walkWebFloors } from "./webWalk"
 import { floor, lockOf, plain, pyramid, refusalTypes, resolve, section, world } from "./webFixtures.testing"
@@ -113,6 +113,39 @@ describe("refusals of the walk", () => {
     expect(walked.refusals).toEqual([
       expect.objectContaining({ type: "frontLeaks", n: 2, message: expect.stringContaining("by L in–hall") }),
     ])
+  })
+
+  it("refuses a front that leaks through a drop of the floor", () => {
+    // s0 hangs off room 0, before the front at seam 1|2; its last room drops to room 4, past it.
+    const leaky = (drops: WebFloor["drops"]) =>
+      world({ 1: [pyramid(floor(6, { sections: [section("s0", 1, 2)], drops }))], 2: [plain(3)] })
+    const text = "[w1p1]\nsand from 40%: 100% by a\n[w2p1]\nlever a @end"
+    expect(walk(text, leaky([{ from: { section: "s0", room: 1 }, to: { room: 4 } }])).walked.refusals).toEqual([
+      expect.objectContaining({ type: "frontLeaks", n: 2, message: expect.stringContaining("drop") }),
+    ])
+    // The same drop the other way round lands before the front.
+    expect(walk(text, leaky([{ from: { room: 4 }, to: { section: "s0", room: 1 } }])).walked.refusals).toEqual([])
+  })
+
+  it("walks a lock nested in its host's nest spot through the spot", () => {
+    const host = lockOf("in -&> hall", "hall -- out")
+    const inner = lockOf("in -- vault", "vault -- out", "vault $")
+    const on = world({
+      1: [
+        pyramid(
+          floor(3, {
+            locks: { H: host, N: inner },
+            nesting: { N: "H" },
+            regions: ["H.in", "H.hall", "H.out"],
+          })
+        ),
+      ],
+      2: [plain(3)],
+    })
+    const { resolved, walked } = walk("[w1p1]\nlever a @N.vault\n[w2p1]\nsand by a", on)
+    expect(resolved.refusals).toEqual([])
+    expect(walked.refusals).toEqual([])
+    expect(walked.closure.activators).toEqual(["a"])
   })
 
   it("refuses a floor that can be played into waiting on a key whose activator lies behind that pyramid", () => {

@@ -1,7 +1,7 @@
 // A WEB READ AGAINST A WORLD: the line in authored rooms, stops landing on seams, places resolved by authored name,
 // and the refusals that need no walk (docs/instructions/sand-pyramid.md). The world is a WebWorld: what the web
 // needs of the carve, read off the bake (scripts/webWorld.ts) or made up by a test.
-import type { EdgeGate, Lock, LockGate } from "./lockAuthoring"
+import type { EdgeGate, Lock, LockConnection, LockGate } from "./lockAuthoring"
 import { MAX_OUTSIDE_INPUTS, barriersOf, isRegionGate, joinOf } from "./lockAuthoring"
 import type { ActivatorPlace, DoorPlace, SandTarget, Web, WebLook } from "./webNotation"
 
@@ -21,13 +21,20 @@ export type WebSection = {
   sections?: WebSection[]
 }
 
+/** A place on a floor a drop leaves from or lands in: a main room, a lock region, or a room of a side section. */
+export type WebSpot = { room: number } | { region: string } | { section: string; room: number }
+
 /** One floor as the web sees it. `via[i]`: the lock regions the main path crosses between rooms i and i+1, in
- * order, where it crosses any besides theirs. `locks`: the floor's lock instances by name. */
+ * order, where it crosses any besides theirs. `locks`: the floor's lock instances by name. `nesting`: each lock
+ * placed in another's nest spot, by instance, naming its host. `drops`: the floor's own one-ways, each taken from
+ * `from` to `to` and never back. */
 export type WebFloor = {
   rooms: WebRoom[]
   via?: Readonly<Record<number, readonly string[]>>
   sections: WebSection[]
   locks?: Readonly<Record<string, Lock>>
+  nesting?: Readonly<Record<string, string>>
+  drops?: readonly { from: WebSpot; to: WebSpot }[]
 }
 
 export type WebPyramid = { floors: WebFloor[] }
@@ -92,6 +99,8 @@ export type WebRefusalType =
   | "stopsShareSeam"
   | "potsOverlap"
   | "frontOnAnyGate"
+  | "stopOffGround"
+  | "activatorBehindWard"
   | "outsideTooMany"
   | "inputUnbound"
   | "bindingNamesNoInput"
@@ -201,31 +210,35 @@ export const isLockRegion = (region: string | undefined): region is string =>
 export const instanceOf = (region: string) => region.slice(0, region.indexOf("."))
 const bareOf = (region: string) => region.slice(region.indexOf(".") + 1)
 
-/** The regions the main path stands in from room `seam` to the next, in order; undefined is floor ground. */
-export const seamPath = (floor: WebFloor, seam: number): (string | undefined)[] => [
-  floor.rooms[seam]?.region,
-  ...(floor.via?.[seam] ?? []),
-  floor.rooms[seam + 1]?.region,
-]
+/** The regions the main path stands in from room `seam` to the next, in order, each once where it stands in it for
+ * several steps; undefined is floor ground. */
+export const seamPath = (floor: WebFloor, seam: number): (string | undefined)[] =>
+  [floor.rooms[seam]?.region, ...(floor.via?.[seam] ?? []), floor.rooms[seam + 1]?.region].filter(
+    (region, k, path) => k === 0 || path[k - 1] !== region
+  )
 
-/** What a main-path seam is: plain ground, a corridor between two regions of one lock (the first the path crosses,
- * toward the arrival), or the inside of one region. */
-const landingOf = (floor: WebFloor, f: number, seam: number): DoorWhere => {
+/** What a main-path seam is, read off its LAST step, the one into room `seam + 1`: a door on floor ground before that
+ * room, a corridor between two regions of one lock, or, where both rooms and the way between them stand in one
+ * region, that region buried whole. Undefined where the last step enters a lock from outside it: no door the bake
+ * lays stands there. */
+export const landingOf = (floor: WebFloor, f: number, seam: number): DoorWhere | undefined => {
   const path = seamPath(floor, seam)
-  for (let i = 0; i + 1 < path.length; i++) {
-    const [a, b] = [path[i], path[i + 1]]
-    if (a === b) continue
-    if (isLockRegion(a) && isLockRegion(b) && instanceOf(a) === instanceOf(b))
-      return { kind: "corridor", floor: f, seam, lock: instanceOf(a), from: bareOf(a), to: bareOf(b) }
-    return { kind: "seam", floor: f, seam }
-  }
-  const only = path[0]
-  return isLockRegion(only)
-    ? { kind: "region", floor: f, seam, lock: instanceOf(only), region: bareOf(only) }
-    : { kind: "seam", floor: f, seam }
+  const [x, y] = [path[path.length - 2], path[path.length - 1]]
+  if (path.length === 1)
+    return isLockRegion(y)
+      ? { kind: "region", floor: f, seam, lock: instanceOf(y), region: bareOf(y) }
+      : { kind: "seam", floor: f, seam }
+  if (!isLockRegion(y)) return { kind: "seam", floor: f, seam }
+  if (isLockRegion(x) && instanceOf(x) === instanceOf(y))
+    return { kind: "corridor", floor: f, seam, lock: instanceOf(x), from: bareOf(x), to: bareOf(y) }
+  return undefined
 }
 
-const lineSeamWhere = (world: WebWorld, line: Line, seam: LineSeam): DoorWhere => {
+const offGround = (seam: LineSeam): string =>
+  `${pyramidName(seam.at)} f${seam.floor} seam ${seam.seam}|${seam.seam + 1} is where the main path enters a lock: ` +
+  `no door stands there, move the stop a room either way`
+
+const lineSeamWhere = (world: WebWorld, line: Line, seam: LineSeam): DoorWhere | undefined => {
   if (line.section) return { kind: "sectionSeam", floor: seam.floor, section: line.section.address, seam: seam.seam }
   const floor = world.journeys[seam.at.journey][seam.at.pyramid - 1].floors[seam.floor]
   return landingOf(floor, seam.floor, seam.seam)
@@ -265,18 +278,11 @@ export const describeWhere = (at: PyramidRef, where: DoorWhere): string => {
   }
 }
 
-const gatesOn = (lock: Lock, from: string, to: string): { id: string; gate: EdgeGate }[] =>
-  lock.connections
-    .filter(c => {
-      const [a, b] = joinOf(c)
-      return (a === from && b === to) || (a === to && b === from)
-    })
-    .slice(0, 1)
-    .flatMap(c => barriersOf(c))
-    .flatMap(id => {
-      const gate = lock.gates[id]
-      return gate && !isRegionGate(gate) ? [{ id, gate }] : []
-    })
+/** Whether a connection joins two regions, either way round. */
+export const joins = (connection: LockConnection, from: string, to: string): boolean => {
+  const [a, b] = joinOf(connection)
+  return (a === from && b === to) || (a === to && b === from)
+}
 
 /** A name for an input the bake adds, unused by the lock. */
 const addedInputName = (lock: Lock, used: Set<string>): string => {
@@ -286,8 +292,9 @@ const addedInputName = (lock: Lock, used: Set<string>): string => {
   }
 }
 
-/** The lock with an outside owner added where a front stops: under `+` on the corridor's gate, a gate of its own on
- * a plain corridor, or a barrier over the region. Undefined when the corridor's gates all answer to any owner. */
+/** The lock with an outside owner added where a front stops: on every corridor between the two regions, under `+` on
+ * its gate or as a gate of its own on a plain one; or a barrier over the region. Undefined when a corridor's gates all
+ * answer to any owner. */
 export const addFrontOwner = (
   lock: Lock,
   where: Extract<DoorWhere, { kind: "corridor" | "region" }>,
@@ -298,27 +305,36 @@ export const addFrontOwner = (
     const gate: LockGate = { region: where.region, owners: [input] }
     return { ...lock, inputs, gates: { ...lock.gates, [`${input}-bury`]: gate } }
   }
-  const gates = gatesOn(lock, where.from, where.to)
-  const every = gates.find(({ gate }) => gate.mode !== "any" || gate.owners.length < 2)
-  if (gates.length > 0 && !every) return undefined
-  if (every) {
-    const gate: EdgeGate = { ...every.gate, owners: [...every.gate.owners, input] }
-    return { ...lock, inputs, gates: { ...lock.gates, [every.id]: gate } }
-  }
-  const id = `${input}-front`
-  const index = lock.connections.findIndex(c => {
-    const [a, b] = joinOf(c)
-    return (a === where.from && b === where.to) || (a === where.to && b === where.from)
+  const gates: Record<string, LockGate> = { ...lock.gates }
+  let added = 0
+  let refused = false
+  const connections = lock.connections.map((connection): LockConnection => {
+    if (!joins(connection, where.from, where.to)) return connection
+    const barriers = barriersOf(connection)
+    const edge = barriers.filter(id => {
+      const gate = lock.gates[id]
+      return gate !== undefined && !isRegionGate(gate)
+    })
+    const every = edge.find(id => {
+      const gate = lock.gates[id] as EdgeGate
+      return gate.mode !== "any" || gate.owners.length < 2
+    })
+    if (edge.length > 0 && every === undefined) {
+      refused = true
+      return connection
+    }
+    if (every !== undefined) {
+      // One owner and the input are both needed: the gate counts all its owners.
+      const { mode: _mode, ...gate } = lock.gates[every] as EdgeGate
+      gates[every] = { ...gate, owners: [...gate.owners, input] }
+      return connection
+    }
+    const id = added === 0 ? `${input}-front` : `${input}-front${added + 1}`
+    added++
+    gates[id] = { from: where.from, to: where.to, owners: [input] }
+    return { between: joinOf(connection), barriers: [...barriers, id] }
   })
-  const connection = lock.connections[index]
-  const [a, b] = joinOf(connection)
-  const connections = lock.connections.map((c, i) => (i === index ? { between: [a, b] as const, barriers: [id] } : c))
-  return {
-    ...lock,
-    inputs,
-    connections,
-    gates: { ...lock.gates, [id]: { from: where.from, to: where.to, owners: [input] } },
-  }
+  return refused ? undefined : { ...lock, inputs, connections, gates }
 }
 
 /** Resolves every line of a web against a world: places, lines, stops, doors, bindings, and the refusals that need
@@ -416,6 +432,13 @@ export const resolveWeb = (web: Web, world: WebWorld): ResolvedWeb => {
     const hanging = sectionAfter(line, place.pct)
     if (!hanging) return void refuse("placeNotInWorld", ctx.n, `no side section hangs after ${place.pct}%`)
     const { section, floor } = hanging
+    // A key from outside the web would stand between the player and the activator, which the walk never assumes.
+    if (section.ward !== undefined)
+      return void refuse(
+        "activatorBehindWard",
+        ctx.n,
+        `f${floor}.${section.address} lies behind the ward key ${section.ward}: an activator never stands behind one`
+      )
     return {
       at: hanging.at,
       node: sectionNode(floor, section.address, section.rooms - 1),
@@ -485,13 +508,18 @@ export const resolveWeb = (web: Web, world: WebWorld): ResolvedWeb => {
             refuse("placeNotInWorld", line.n, "the line has no seam")
             continue
           }
+          const where = lineSeamWhere(world, span, seam)
+          if (!where) {
+            refuse("stopOffGround", line.n, offGround(seam))
+            continue
+          }
           addDoor({
             id: `${line.n}`,
             key: webKey(line.name),
             n: line.n,
             source,
             at: seam.at,
-            where: lineSeamWhere(world, span, seam),
+            where,
             pct: place.pct,
             landed: seam.pos,
           })
@@ -616,20 +644,22 @@ export const resolveWeb = (web: Web, world: WebWorld): ResolvedWeb => {
       points.forEach((pct, k) => {
         const seam = pct === undefined ? span.seams[0] : nearestSeam(span, pct)
         if (!seam) return
+        const where = lineSeamWhere(world, span, seam)
+        if (!where) return void refuse("stopOffGround", line.n, offGround(seam))
         const door: WebDoor = {
           id: `${line.n}#${k + 1}`,
           key: potKey(name, k + 1),
           n: line.n,
           source: line.text,
           at: seam.at,
-          where: lineSeamWhere(world, span, seam),
+          where,
           ...(pct !== undefined ? { pct } : {}),
           landed: seam.pos,
         }
         potDoors.push(door)
         addDoor(door)
       })
-      if (potDoors.length === 0) refuse("placeNotInWorld", line.n, `${spanText} has no seam for the sand to stand at`)
+      if (span.seams.length === 0) refuse("placeNotInWorld", line.n, `${spanText} has no seam for the sand to stand at`)
       pots.push({
         name,
         levers,

@@ -62,6 +62,13 @@ describe("places and the world", () => {
     expect(resolved.activators.map(a => a.place)).toEqual(["f0.s1's end"])
   })
 
+  it("refuses an activator behind a ward gate", () => {
+    const on = world({ 1: [pyramid(floor(5, { sections: [section("s0", 2, 2, { ward: "wizard_b_1" })] }))] })
+    expect(resolve("[w1p1]\nlever a @10% side\nsand by a", on).refusals).toContainEqual(
+      expect.objectContaining({ type: "activatorBehindWard", n: 2 })
+    )
+  })
+
   it("refuses a lock region that takes no reward", () => {
     const lock = lockOf("in -- vault", "vault -- out", "vault -")
     const on = world({ 1: [pyramid(floor(3, { locks: { L: lock }, regions: ["L.in", "L.vault", "L.out"] }))] })
@@ -175,6 +182,33 @@ describe("a stop inside a floor lock", () => {
     expect(doorsOf(resolved)).toEqual([[potKey("w1p1", 1), "w1p1 f0 L hall   region buried whole"]])
     const barrier = Object.values(resolved.laidLocks.get("w1p1 f0 L")!.gates).find(isRegionGate)
     expect(barrier).toEqual({ region: "hall", owners: ["W1"] })
+  })
+
+  it("reads a seam off its last step, and refuses one where the main path enters a lock", () => {
+    // Room 1 stands on ground, room 2 in L.in: the step into room 2 enters the lock.
+    const on = lockFloor(["in -- hall", "hall -- out"], ["", "", "L.in", "L.hall", "L.out"])
+    const at = (pct: number) => resolve(`[w1p1]\nsand from ${pct}%: 100% by a\n${levers("a")}`, on)
+    expect(at(30).refusals).toEqual([expect.objectContaining({ type: "stopOffGround", n: 2 })])
+    // Room 0 on ground, the path crossing L.in, room 1 on ground: a seam door before room 1.
+    const crossing = world({
+      1: [pyramid(floor(3, { locks: { L: lockOf("in -- out") }, via: { 0: ["L.in", "L.out"] } }))],
+      ...ELSEWHERE,
+    })
+    expect(doorsOf(resolve(`[w1p1]\nsand from 10%: 100% by a\n${levers("a")}`, crossing))).toEqual([
+      [potKey("w1p1", 1), "w1p1 f0 seam 0|1"],
+    ])
+  })
+
+  it("adds the owner on every corridor between the two regions it lands between", () => {
+    const on = lockFloor(
+      ["in -[K]- hall", "in -- hall", "hall -- out", "K toggle @in"],
+      ["L.in", "L.in", "L.hall", "L.hall", "L.out"]
+    )
+    const laid = resolve(`[w1p1]\nsand from 30%: 100% by a\n${levers("a")}`, on).laidLocks.get("w1p1 f0 L")!
+    expect(Object.entries(laid.gates).map(([id, g]) => [id, g.owners])).toEqual([
+      ["in-hall", ["K", "W1"]],
+      ["W1-front", ["W1"]],
+    ])
   })
 
   it("refuses a stop on a corridor gated with |", () => {

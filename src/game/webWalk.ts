@@ -3,15 +3,17 @@
 // main rooms, lock regions and side sections; the floor's own controls are taken as workable, so the floor walk
 // (floorLockWalk.ts) stays the soundness gate of each floor and a `visit` override can stand in for it.
 import type { Lock } from "./lockAuthoring"
-import { barriersOf, isOutsideInput, isRegionGate, joinOf } from "./lockAuthoring"
+import { barriersOf, isOutsideInput, isRegionGate, joinOf, nestSpotOf } from "./lockAuthoring"
 import { lockChecks } from "./lockChecks"
 import { MAX_LOCK_STATES } from "./lockWalk"
 import { describeFloorWalkFailure, walkFloorLock } from "./floorLockWalk"
 import type { FloorGrid } from "./siteTypes"
 import type { Web } from "./webNotation"
-import type { PyramidRef, ResolvedWeb, WebDoor, WebFloor, WebRefusal, WebSection } from "./webLine"
+import type { PyramidRef, ResolvedWeb, WebDoor, WebFloor, WebRefusal, WebSection, WebSpot } from "./webLine"
 import {
+  instanceOf,
   isLockRegion,
+  joins,
   potKey,
   pyramidName,
   regionNode,
@@ -106,45 +108,36 @@ const graphOf = (resolved: ResolvedWeb, at: PyramidRef): Graph => {
       }
     })
 
-    // Each seam: lock corridors carry the steps between two regions of one lock; every other step is ground.
+    // Each seam, one step per change of region: lock corridors carry the steps between two regions of one lock, every
+    // other step is ground. A seam's door stands on its last step, the one into room `seam + 1`, which is where the
+    // bake lays it (webDoors.ts): every side section hanging on the seam hangs before it.
     for (let seam = 0; seam + 1 < floor.rooms.length; seam++) {
       const path = seamPath(floor, seam)
       const last = path.length - 1
       const seamDoors = here.filter(d => d.where.kind === "seam" && d.where.floor === f && d.where.seam === seam)
-      let doorPlaced = false
-      const placeDoors = (edge: Edge) => {
-        if (doorPlaced) return
+      const label = `f${f} seam ${seam}|${seam + 1}`
+      if (last === 0) {
+        if (isLockRegion(path[0])) continue
+        const edge = join(roomNode(f, seam), roomNode(f, seam + 1), label)
         seamDoors.forEach(door => doorOn(edge, door))
-        doorPlaced = true
+        continue
       }
-      let groundAt = 0
-      const nodeAt = (k: number): string => {
-        const region = path[k]
-        if (k === 0) return roomNode(f, seam)
-        if (k === last) return roomNode(f, seam + 1)
-        return isLockRegion(region) ? regionNode(f, region) : `f${f} seam ${seam} ground ${groundAt++}`
-      }
-      let previous = nodeAt(0)
-      let differed = false
       for (let k = 1; k <= last; k++) {
-        const current = nodeAt(k)
         const [x, y] = [path[k - 1], path[k]]
-        if (x === y && isLockRegion(x)) {
-          previous = current
-          continue
-        }
-        differed ||= x !== y
-        const sameLock = isLockRegion(x) && isLockRegion(y) && x.split(".")[0] === y.split(".")[0]
-        if (!sameLock) {
-          // A room joins the step through its region where it stands in one.
-          const from = k - 1 === 0 && isLockRegion(x) ? regionNode(f, x) : previous
-          const to = k === last && isLockRegion(y) ? regionNode(f, y) : current
-          placeDoors(join(from, to, `f${f} seam ${seam}|${seam + 1}`))
-        }
-        previous = current
+        if (isLockRegion(x) && isLockRegion(y) && instanceOf(x) === instanceOf(y)) continue
+        // A room joins the step through its region where it stands in one; between the rooms the path stands in regions.
+        const from = isLockRegion(x) ? regionNode(f, x) : roomNode(f, seam)
+        const to = isLockRegion(y) ? regionNode(f, y) : roomNode(f, seam + 1)
+        const edge = join(from, to, label)
+        if (k === last) seamDoors.forEach(door => doorOn(edge, door))
       }
-      if (!differed && !isLockRegion(path[0]) && !doorPlaced)
-        placeDoors(join(roomNode(f, seam), roomNode(f, seam + 1), `f${f} seam ${seam}|${seam + 1}`))
+    }
+
+    // A lock in another's nest spot: the spot's corridor gives way to two, through the nested lock.
+    const nestedIn = new Map<string, { instance: string; lock: Lock }>()
+    for (const [instance, host] of Object.entries(floor.nesting ?? {})) {
+      const lock = floor.locks?.[instance]
+      if (lock) nestedIn.set(host, { instance, lock })
     }
 
     // Lock corridors and region barriers, with the web's owners: bound inputs, added fronts.
@@ -161,10 +154,25 @@ const graphOf = (resolved: ResolvedWeb, at: PyramidRef): Graph => {
         owners: gate.owners.map(ownerOf),
         mode: gate.mode === "any" ? "any" : "every",
       })
-      const fronted = new Set<string>()
+      const spot = nestSpotOf(lock)
+      const nested = spot ? nestedIn.get(instance) : undefined
       lock.connections.forEach(connection => {
         const [a, b] = joinOf(connection)
         const barriers = barriersOf(connection)
+        if (nested && spot && barriers.length === 0 && joins(connection, spot.from, spot.to)) {
+          const inner = (region: string) => regionNode(f, `${nested.instance}.${region}`)
+          join(
+            regionNode(f, `${instance}.${spot.from}`),
+            inner(nested.lock.in),
+            `${instance} ${spot.from}–${nested.instance}`
+          )
+          join(
+            inner(nested.lock.out),
+            regionNode(f, `${instance}.${spot.to}`),
+            `${nested.instance}–${instance} ${spot.to}`
+          )
+          return
+        }
         const drop = barriers.map(id => lock.oneWays?.[id]).find(Boolean)
         const [from, to] = drop ? [drop.from, drop.to] : [a, b]
         const edge = join(
@@ -179,16 +187,13 @@ const graphOf = (resolved: ResolvedWeb, at: PyramidRef): Graph => {
           const gate = lock.gates[id]
           if (gate && !isRegionGate(gate)) edge.gates.push(gateOf(gate))
         }
-        // A front lands on the first corridor between its two regions.
-        const pair = [a, b].sort().join("|")
-        if (fronted.has(pair)) return
-        fronted.add(pair)
+        // A front stands on every corridor between its two regions, as the bake lays it (addFrontOwner).
         for (const door of here)
           if (
             door.where.kind === "corridor" &&
             door.where.floor === f &&
             door.where.lock === instance &&
-            [door.where.from, door.where.to].sort().join("|") === pair
+            joins(connection, door.where.from, door.where.to)
           )
             doorOn(edge, door)
       })
@@ -231,6 +236,16 @@ const graphOf = (resolved: ResolvedWeb, at: PyramidRef): Graph => {
       for (const sub of section.sections ?? []) hang(sub, k => rooms[Math.max(0, k - 1)])
     }
     for (const section of floor.sections) hang(section, k => (k === 0 ? startNode(f) : roomNode(f, k - 1)))
+
+    // The floor's own drops: one way, from where the launch stands to where the landing does.
+    const spotNode = (spot: WebSpot): string =>
+      "region" in spot
+        ? regionNode(f, spot.region)
+        : "section" in spot
+          ? sectionNode(f, spot.section, spot.room)
+          : roomNode(f, spot.room)
+    for (const { from, to } of floor.drops ?? [])
+      join(spotNode(from), spotNode(to), `f${f} drop ${spotNode(from)} → ${spotNode(to)}`, { oneWay: true })
   })
 
   const lastFloor = floors.length - 1
