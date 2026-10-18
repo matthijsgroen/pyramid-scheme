@@ -5,10 +5,17 @@
  *   yarn repaint                 # list every key still owed
  *   yarn repaint junior/lamp     # prompt to the clipboard, both files revealed
  *   yarn repaint junior/lamp --check   # report only: no clipboard, no Finder
+ *   yarn repaint junior/lamp --land    # newest image in ~/Downloads becomes the master, imported and measured
  *
  * The loop is manual on purpose: driving Gemini's web UI is against Google's terms and the API costs
  * money, so the prompt is pasted by hand. What that leaves worth automating is the fetching — finding the
  * right block in a 950-line document, and locating two files in a folder of two hundred renders.
+ *
+ * `--land` takes the newest png, jpg or webp in `~/Downloads` as the entry's master (the first path after
+ * `yarn import-tile`, or `art/masters/props/<tier>/<name>.webp`), makes a floor seamless both ways and a
+ * face along x, runs the entry's own import (its fenced `sh` block, scaffold renders included, or its
+ * `**Import:**` line), then prints `tile-stats` and the rank's `rank-colour` row and ends on IMPORT, or
+ * RE-ROLL with the failing number: a tile-stats fault, or a step under 25 L* off the floor.
  *
  * Two queues feed it, because the two kinds of art are owed in the same sense and a person with an hour
  * at the generator wants one list: `docs/instructions/repaint-queue.md` for tiles, and
@@ -20,6 +27,7 @@ import { execFileSync } from "child_process"
 import { existsSync, readFileSync } from "fs"
 import { join } from "path"
 import { revealArgs } from "./repaintReveal"
+import { land } from "./repaintLandRun"
 import { parse, type Entry } from "./repaintQueue"
 
 const QUEUE = "docs/instructions/repaint-queue.md"
@@ -151,6 +159,11 @@ if (found.length !== 1) {
 }
 
 const entry = found[0]
+// --land is the other half of the loop: the download comes back, and this turns it into a measured tile.
+if (process.argv.includes("--land")) {
+  await land(entry)
+  process.exit(0)
+}
 // --check reports and touches NOTHING — no clipboard, no Finder. It exists because the obvious way to
 // audit the queue is to run this over every key, and doing that steals the desktop's focus once per
 // entry and leaves the clipboard holding whichever prompt happened to be last. Fifty-two of those in a

@@ -15,6 +15,8 @@ export type Entry = {
   reroll?: string
   /** The generator return this was imported from, kept because it cannot be generated again. */
   master?: string
+  /** A prop's fenced `sh` block: the `scaffold` that renders its mask and shadow, then its import. */
+  importScript?: string
 }
 
 /** Every `### n. \`tier/kind\` — title` block, with its attachment list and its first fenced block. */
@@ -31,6 +33,7 @@ export const parse = (md: string): Entry[] =>
       // are outputs and so never attachments.
       const importLine = /^\*\*Import:\*\*\s*`([^`]+)`/m.exec(block)?.[1]
       const outputs = importLine?.split(/\s+/) ?? []
+      const importScript = /```sh\n([\s\S]*?)\n```/.exec(block)?.[1]
       const attachments = [...block.matchAll(/`((?:~\/[^`]+\.png|art\/masters\/[^`]+\.(?:webp|png|jpe?g)))`/g)]
         .map(m => m[1])
         .filter(path => !outputs.includes(path))
@@ -44,6 +47,7 @@ export const parse = (md: string): Entry[] =>
           out: join("src/assets/tiles", key.split("/")[0], `${key.split("/")[1]}.png`),
           importedBy:
             importLine ?? `yarn import-tile <file> --tier=${key.split("/")[0]} --name=${key.split("/")[1]} --slot=prop`,
+          importScript,
         },
       ]
     })

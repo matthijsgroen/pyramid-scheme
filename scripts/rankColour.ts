@@ -100,7 +100,7 @@ export const meanOpaque = (raw: Uint8Array, channels: number): Rgb => {
   return [r / n, g / n, b / n]
 }
 
-const artMean = async (tier: Difficulty, name: string): Promise<Rgb> => {
+export const artMean = async (tier: Difficulty, name: string): Promise<Rgb> => {
   const { data, info } = await sharp(`src/assets/tiles/${tier}/${name}.png`)
     .ensureAlpha()
     .raw()
@@ -108,7 +108,7 @@ const artMean = async (tier: Difficulty, name: string): Promise<Rgb> => {
   return meanOpaque(new Uint8Array(data), info.channels)
 }
 
-const inputFor = async (tier: Difficulty): Promise<RankInput> => {
+export const inputFor = async (tier: Difficulty): Promise<RankInput> => {
   const palette = tierPalette[tier]
   const { rgb: night, alpha: nightAlpha } = parseRgba(palette.shade)
   return {
@@ -125,7 +125,8 @@ const inputFor = async (tier: Difficulty): Promise<RankInput> => {
   }
 }
 
-const main = async () => {
+/** Every rank's input and report, read off the committed art. */
+export const measureAll = async () => {
   const inputs = Object.fromEntries(
     await Promise.all(difficulties.map(async tier => [tier, await inputFor(tier)] as const))
   ) as Record<Difficulty, RankInput>
@@ -133,31 +134,35 @@ const main = async () => {
     Difficulty,
     RankReport
   >
-  const bar = reports.master
+  return { inputs, reports }
+}
+
+/** One rank's row of the table, graded against master. */
+export const rankRow = (
+  tier: Difficulty,
+  inputs: Record<Difficulty, RankInput>,
+  reports: Record<Difficulty, RankReport>
+) => {
+  const r = reports[tier]
+  const v = verdict(r, reports.master)
+  const next = difficulties[difficulties.indexOf(tier) + 1]
   const round = (n: number) => Math.round(n * 10) / 10
-  console.table(
-    Object.fromEntries(
-      difficulties.map((tier, index) => {
-        const r = reports[tier]
-        const v = verdict(r, bar)
-        const next = difficulties[index + 1]
-        return [
-          tier,
-          {
-            "floor L*": round(r.floor.L),
-            "floor C*": round(r.floor.C),
-            "metal C*": `${round(r.metal.C)} ${v.metalChroma ? "ok" : "LOW"}`,
-            "ground→metal": `${round(r.groundToMetal)} ${v.groundToMetal ? "ok" : "LOW"}`,
-            marker: `${round(r.marker)} ${v.marker ? "ok" : "LOW"}`,
-            prop: `${round(r.prop)} ${v.prop ? "ok" : "LOW"}`,
-            "face step": `${round(r.faceStep)} ${v.faceStep ? "ok" : "LOW"}`,
-            "solved faceNight": solveFaceNight(inputs[tier]),
-            "hue to next": next ? round(hueDistance(r.metal.h, reports[next].metal.h)) : "",
-          },
-        ]
-      })
-    )
-  )
+  return {
+    "floor L*": round(r.floor.L),
+    "floor C*": round(r.floor.C),
+    "metal C*": `${round(r.metal.C)} ${v.metalChroma ? "ok" : "LOW"}`,
+    "ground→metal": `${round(r.groundToMetal)} ${v.groundToMetal ? "ok" : "LOW"}`,
+    marker: `${round(r.marker)} ${v.marker ? "ok" : "LOW"}`,
+    prop: `${round(r.prop)} ${v.prop ? "ok" : "LOW"}`,
+    "face step": `${round(r.faceStep)} ${v.faceStep ? "ok" : "LOW"}`,
+    "solved faceNight": solveFaceNight(inputs[tier]),
+    "hue to next": next ? round(hueDistance(r.metal.h, reports[next].metal.h)) : "",
+  }
+}
+
+const main = async () => {
+  const { inputs, reports } = await measureAll()
+  console.table(Object.fromEntries(difficulties.map(tier => [tier, rankRow(tier, inputs, reports)])))
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
