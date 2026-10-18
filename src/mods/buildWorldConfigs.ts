@@ -6,7 +6,7 @@ import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
 import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
 import { worldWebs } from "@/game/webCatalogue"
 import type { Web } from "@/game/webNotation"
-import { placeWeb, webJourneysOf } from "@/worldGen/webPlacement"
+import { pinWebFloors, placeWeb } from "@/worldGen/webPlacement"
 import type { WebPlacement } from "@/worldGen/webPlacement"
 import { ALL_CURRENCY_DISTRIBUTIONS } from "./allCurrencyDistributions"
 import {
@@ -54,22 +54,6 @@ export const carveWorldFloor = (
   return result.grid
 }
 
-/**
- * THE WEB'S FLOORS CARRY THEIR PINS BEFORE THE WEB IS READ: the last bake's, or the address's own seed where there is
- * none. The search that stamps pins runs after the build and a web moves no wall, so the floor the web is read on is
- * the floor the solver, the bake and play all carve.
- */
-const pinWebFloors = (configs: Record<string, SiteConfig[]>) => {
-  for (const [, id] of webJourneysOf(configs))
-    configs[id].forEach((site, p) =>
-      site.forEach((floor, f) => {
-        const pinned = generatedWorldConfigs[id]?.[p]?.[f]
-        floor.seed ??= pinned?.seed ?? floorAssemblySeed(persistentInteriorSeed(id), p + 1, f)
-        if (floor.packing === undefined && pinned?.packing !== undefined) floor.packing = pinned.packing
-      })
-    )
-}
-
 /** With no mod realising the web, a lock's outside inputs are open ground: nothing binds them, nothing shuts them. */
 export const openLockInputs = (configs: Record<string, SiteConfig[]>) => {
   for (const sites of Object.values(configs))
@@ -86,6 +70,8 @@ export type BuildWorldOptions = {
   webs?: readonly Web[]
   /** Handed each web as it was placed, for the checks run once the floors carry their pins. */
   onWebPlaced?: (placement: WebPlacement) => void
+  /** The carve pins the web's floors are read at; the last bake's by default. */
+  pins?: Readonly<Record<string, SiteConfig[]>>
 }
 
 /** The world as the spec builds it with every registered mod, before carve seeds are stamped. A web is placed only
@@ -99,7 +85,7 @@ export const buildWorldConfigs = (
   const placeWorldWeb =
     toReward && webs.length > 0
       ? (configs: Record<string, SiteConfig[]>) => {
-          pinWebFloors(configs)
+          pinWebFloors(configs, options.pins ?? generatedWorldConfigs)
           for (const web of webs) options.onWebPlaced?.(placeWeb(web, configs, carveWorldFloor, toReward))
         }
       : toReward

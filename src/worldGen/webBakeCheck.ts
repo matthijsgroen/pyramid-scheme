@@ -9,7 +9,7 @@ import { webReport } from "../game/webReport"
 import { walkWeb, walkWebFloors } from "../game/webWalk"
 import type { ReachabilitySupport } from "./reachability"
 import type { SiteConfig } from "./types"
-import { placementOf, readCarvedWorld, webJourneysOf } from "./webPlacement"
+import { placementMoved, readCarvedWorld, webJourneysOf } from "./webPlacement"
 import type { WebPlacement } from "./webPlacement"
 import { solveWeb, webAgreement } from "./webSolver"
 import { carvedVisit } from "./webVisit"
@@ -29,11 +29,7 @@ export const checkPlacedWeb = (
   const resolved = resolveWeb(web, read.world)
 
   // A re-carve that moved a stop, a door or an activator moved the web under the designer's feet.
-  const now = placementOf(resolved, read)
-  const moved = [
-    ...placed.placement.filter(line => !now.includes(line)).map(line => `placed: ${line}`),
-    ...now.filter(line => !placed.placement.includes(line)).map(line => `now:    ${line}`),
-  ]
+  const moved = placementMoved(placed, configs, (id, levelNr, floorIndex) => gridOf(id, levelNr, floorIndex))
   if (moved.length > 0)
     failures.push(`the carve moved the web since it was placed, so bake again:\n  ${moved.join("\n  ")}`)
 
