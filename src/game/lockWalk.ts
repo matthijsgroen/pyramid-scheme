@@ -443,6 +443,7 @@ export const lostRegion = (
 // behind one is left alone — `junior_2` L2 F0's ward pocket is exactly this shape and must stay legal.
 // Only a region whose every bounding gate answers solely to a mechanism the floor itself drives is
 // reported: that is the fault class two deadlocking controls belong to, and nothing else catches it.
+// An outside input is walked through every order of its arrival, so a region it bounds is judged like any other.
 //
 // REPORTS, and decides nothing — same contract as `strandedRegions` (game/regions.ts), one layer up
 // from the structural question that one asks.
@@ -450,11 +451,12 @@ export const deadRegions = (spec: LockSpec, options: WalkOptions = {}): RegionId
   const found = reachableStates(spec, MAX_LOCK_STATES, options)
   if (found === "tooLarge") return []
   const stood = new Set(found.order.map(state => state.region))
-  const onFloor = new Set(
-    Object.entries(spec.mechanisms)
+  const onFloor = new Set([
+    ...Object.entries(spec.mechanisms)
       .filter(([, mechanism]) => mechanism.transitions.length > 0 || (mechanism.entries ?? []).length > 0)
-      .map(([id]) => id)
-  )
+      .map(([id]) => id),
+    ...(spec.arrivals ?? []).map(({ mechanism }) => mechanism),
+  ])
   return spec.regions.filter(region => {
     if (stood.has(region)) return false
     const bounding = Object.values(spec.gates).filter(gate => gate.from === region || gate.to === region)

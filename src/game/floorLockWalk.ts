@@ -189,6 +189,18 @@ const cutOf = (grid: FloorGrid, lock: LockSpec): Cut => {
       ) ?? regionOwner.get(isDoor(gate.to) ? gate.to : gate.from)!
     )
 
+  // AN OUTSIDE INPUT ARRIVES ONCE FOR THE WHOLE FLOOR, and each level walks it on its own: its doors stand in one lock,
+  // or the walk apart would let it be held in one level and missing in another.
+  for (const { mechanism } of lock.arrivals ?? [])
+    only(
+      new Set(
+        Object.entries(lock.gates)
+          .filter(([, gate]) => gate.owners.includes(mechanism))
+          .map(([id]) => gateOwner.get(id)!)
+      ),
+      mechanism
+    )
+
   const portOf = (label: string): RegionId => {
     const found = lock.regions.filter(
       region => !isDoor(region) && !region.startsWith("tile ") && labels.get(region)?.has(label)

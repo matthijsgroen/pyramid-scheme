@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 import { parseLock } from "./lockNotation"
 import { lockChecks } from "./lockChecks"
 import { walkSpecOf } from "./lockWalkSpec"
-import { INPUT_HELD, INPUT_MISSING, openGates, reachableStates, walkLock } from "./lockWalk"
+import { INPUT_HELD, INPUT_MISSING, deadRegions, openGates, reachableStates, walkLock } from "./lockWalk"
 import type { LockState } from "./lockWalk"
 import { checkLock, compileLock } from "./lockCompile"
 import { solveLock } from "./lockReview"
@@ -88,6 +88,14 @@ describe("an outside input in the walk", () => {
 
   it("names the input arriving on the cheapest way through as an action", () => {
     expect(solveLock(specOf("in -[A]- out", "A outside"))?.steps).toEqual(["in", "A:held", "out"])
+  })
+
+  it("reports a region no arrival lets anyone stand in as dead, and one an arrival opens as alive", () => {
+    // The lever that opens the vault stands inside it: the input's arrival cannot help.
+    expect(deadRegions(specOf("in -- out", "in -[A+S]- vault", "S toggle @vault", "A outside", "vault $"))).toEqual([
+      "vault",
+    ])
+    expect(deadRegions(specOf("in -- out", "in -[A]- vault", "A outside", "vault $"))).toEqual([])
   })
 })
 
