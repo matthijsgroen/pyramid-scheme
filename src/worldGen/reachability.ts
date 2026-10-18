@@ -256,7 +256,9 @@ export const reachableFloorsInSite = (
  */
 export const isOrderedJourney = (sites: readonly SiteConfig[]): boolean =>
   sites.some(site =>
-    site.some(floor => (floor.webDoors?.length ?? 0) > 0 || (floor.locks ?? []).some(placed => placed.web))
+    site.some(
+      floor => (floor.webDoors?.length ?? 0) > 0 || (floor.locks ?? []).some(placed => placed.web && !placed.web.open)
+    )
   )
 
 // Global scope: a tier is unlocked when it has no unlock locks (e.g. the first tier), or when ANY
