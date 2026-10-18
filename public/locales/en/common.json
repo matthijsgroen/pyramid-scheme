@@ -55,7 +55,7 @@
       "carrying": "Cannot pass with a stone"
     },
     "travel": "Travel",
-    "chooseYourJourney": "Choose Your Journey",
+    "chooseYourJourney": "Choose Your Expedition",
     "backToMap": "Back to map",
     "startAdventure": "Start your adventure by exploring pyramids.",
     "continueExploration": "Continue your exploration of the pyramids.",
@@ -67,7 +67,7 @@
     "or": "Or",
     "selectAnotherExpedition": "Select another expedition",
     "interruptExpedition": "Interrupt expedition",
-    "confirmInterruptExpedition": "Are you sure you want to interrupt this expedition? Journey progress will be kept, but level progress will be lost!",
+    "confirmInterruptExpedition": "Are you sure you want to interrupt this expedition? Expedition progress will be kept, but level progress will be lost!",
     "cancel": "Cancel",
     "settings": "Settings",
     "language": "Language",
@@ -161,7 +161,7 @@
   "loot": {
     "youFound": "You found",
     "expeditionReward": "Extra reward for completing the expedition",
-    "clickToContinue": "Click anywhere to continue"
+    "clickToContinue": "Tap anywhere to continue"
   },
   "money": {
     "label": "Coins"
@@ -194,7 +194,7 @@
   },
   "collection": {
     "title": "Collection",
-    "clickForDetails": "Click a tile for details",
+    "clickForDetails": "Tap a tile for details",
     "categories": {
       "deities": "🏺 Deities",
       "professions": "⚱️ Professions",
