@@ -8,8 +8,9 @@
  * uses (a wash is `art × (1−a) + wash × a`, a standing thing takes a second pass of `SEATING_PASS` of the
  * night) and read CIELAB rather than a WCAG ratio. The checks are docs/game-design/visual-direction.md's:
  * a rank's metal keeps master's chroma after the night, stands at least master's L* off its floor, the
- * marker holds 3:1 and the props 2.08. It also prints the `faceNight` that steps each rank's wall face
- * 7.5 L* below its floor, which is how that number is chosen.
+ * marker holds 3:1, and the wall face and the props stand at least 25 L* off the floor — below a light floor
+ * or above a dark one. It also prints the `faceNight` that shadows a light rank's wall face 30 L* below its
+ * floor, which is how that number is chosen.
  */
 
 import sharp from "sharp"
@@ -55,11 +56,16 @@ export const measureRank = (i: RankInput): RankReport => {
     metal,
     groundToMetal: Math.abs(metal.L - floorLch.L),
     marker: Math.max(contrastRatio(i.markerFill, floor), contrastRatio(i.markerOutline, floor)),
-    prop: contrastRatio(seated(i.prop), floor),
+    prop: Math.abs(toLch(seated(i.prop)).L - floorLch.L),
   }
 }
 
-export const solveFaceNight = (i: RankInput, target = 7.5): number => {
+/** How far a wall face and a prop must stand off the floor, in L*, to read as wall and as object. */
+export const MIN_STEP = 25
+/** Where `solveFaceNight` aims a light rank's shadowed wall face. */
+export const FACE_STEP = 30
+
+export const solveFaceNight = (i: RankInput, target = FACE_STEP): number => {
   if (measureRank({ ...i, faceNight: 0 }).faceStep >= target) return 0
   let lo = 0
   let hi = 1
@@ -75,7 +81,8 @@ export const verdict = (report: RankReport, bar: RankReport) => ({
   metalChroma: report.metal.C >= bar.metal.C,
   groundToMetal: report.groundToMetal >= bar.groundToMetal,
   marker: report.marker >= 3,
-  prop: report.prop >= 2.08,
+  faceStep: Math.abs(report.faceStep) >= MIN_STEP,
+  prop: report.prop >= MIN_STEP,
 })
 
 export const meanOpaque = (raw: Uint8Array, channels: number): Rgb => {
@@ -143,7 +150,7 @@ const main = async () => {
             "ground→metal": `${round(r.groundToMetal)} ${v.groundToMetal ? "ok" : "LOW"}`,
             marker: `${round(r.marker)} ${v.marker ? "ok" : "LOW"}`,
             prop: `${round(r.prop)} ${v.prop ? "ok" : "LOW"}`,
-            "face step": round(r.faceStep),
+            "face step": `${round(r.faceStep)} ${v.faceStep ? "ok" : "LOW"}`,
             "solved faceNight": solveFaceNight(inputs[tier]),
             "hue to next": next ? round(hueDistance(r.metal.h, reports[next].metal.h)) : "",
           },

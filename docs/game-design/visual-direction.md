@@ -103,6 +103,69 @@ legible:
 | painted, matte, no outlines on a surface   | **kept**                                                                                    |
 | value separation: marker, props, wall face | **kept** — legibility stays a hard requirement                                              |
 
+## Readability — what legible dungeons do
+
+Researched 2026-10-18, after the repainted starter floor came back reading as one beige band: floor L\* 50,
+wall face 40–44, props 38–43. Measured on reference screenshots the same way `yarn rank-colour` reads our
+own page (mean L\* and C\* over 16 px patches).
+
+**Moonlighter, the desert dungeon** — the closest case to ours, a pale sand floor:
+
+| Plane                   | L\*   | C\*                      |
+| ----------------------- | ----- | ------------------------ |
+| floor                   | 67–77 | 19                       |
+| wall face               | 18–24 | 21                       |
+| pots (props)            | 36–42 | 20–25                    |
+| pillars                 | 58    | 24                       |
+| orange trim and hazards | 79    | 18, and saturated in hue |
+
+What the references share:
+
+1. **The wall face is the biggest value jump in the picture.** Moonlighter: pale floor, near-black faces —
+   about 50 L\* apart. Enter the Gungeon flips it: dark floor, torch-lit brick faces. Either way the room's
+   shape reads at a glance.
+2. **Props sit far off the floor's value**, 25–35 L\* in Moonlighter, darker, with a dark base or contact
+   shadow. In Hades and Children of Morta what matters is saturated or glowing instead. A thing at the
+   architecture's value is read as architecture.
+3. **The floor is quiet** — low internal contrast, at most a subtle pattern — so whatever stands on it
+   separates.
+4. **Accent colour in small saturated doses** that signpost: Moonlighter's orange trim and fire, Hades'
+   green pillars. Each area keys one hue.
+5. **Value first, hue second.** Separation has to survive a grayscale screenshot; hue-only separation fails
+   on weak screens and for colour-blind players.
+
+Sources:
+
+- [GamineAI — top-down dungeon lighting, contrast rules](https://gamineai.com/blog/top-down-dungeon-lighting-2026-12-contrast-rules-readable-combat-spaces)
+- [80.lv — key factors in environment design of LawBreakers](https://80.lv/articles/key-factors-in-environment-design-of-lawbreakers/)
+- [Space Station 14 art guide](https://docs.goobstation.com/en/space-station-14/art.html)
+- [bugnet.io — readable game art: why clarity beats detail](https://bugnet.io/blog/readable-game-art-why-clarity-beats-detail)
+- [PixelJoint — tileset critique thread](https://pixeljoint.com/forum/forum_posts.asp?TID=27805)
+- [Shacknews — Hades, best art style of 2020](https://shacknews.com/article/122029/shacknews-best-art-style-of-2020-hades?amphtml=1)
+- Steam store screenshots, measured: [Hades](https://store.steampowered.com/app/1145360/Hades/),
+  [Moonlighter](https://store.steampowered.com/app/606150/), [Enter the Gungeon](https://store.steampowered.com/app/311690/),
+  [Children of Morta](https://store.steampowered.com/app/330020/)
+
+## Light and dark floors
+
+Decided 2026-10-18, from the readability research above. **The floor gets darker the deeper the rank**, as
+the daylight does (`RANK_MOOD`: a roof gives way at the top of the world, rarely at the bottom). **The wall
+face and the props always stand on the other side of the floor**: shadowed and dark on a light floor, lit or
+glowing on a dark one.
+
+| Rank             | Floor            | Wall face                              | Props and metal                      | Like            |
+| ---------------- | ---------------- | -------------------------------------- | ------------------------------------ | --------------- |
+| starter · stone  | light            | dark, in shadow                        | dark terracotta, ochre and turquoise | Moonlighter     |
+| junior · copper  | light-mid, warm  | dark, painted                          | copper, deep and saturated           | Moonlighter     |
+| expert · silver  | light, cool      | dark, cool                             | silver and lapis, deep shadows       | Moonlighter     |
+| master · gold    | **dark** granite | **light** — gilded, catching the light | gold, light and saturated            | Gungeon / Hades |
+| wizard · emerald | **dark**, night  | **light** — light leaking from joints  | emerald that glows                   | Hades           |
+
+The three light ranks are told apart by hue — warm limestone, copper, cool silver — and the two dark ones by
+their metal. Steps, measured by `yarn rank-colour`: **the wall face at least 25 L\* off the floor** (a light
+rank's face is shadowed to about 30 with `faceNight`) and **the props at least 25 L\* off it**, in either
+direction.
+
 ## Light and the map code
 
 - **Night washes** are light at every rank (`tierPalette[tier].shade`): enough to keep a room nobody lights
@@ -131,22 +194,22 @@ about 1–2 L\*. It prints, per rank:
 - marker against floor, props against floor
 
 **Master's numbers are the bar.** A rank is done when its metal keeps at least master's chroma after the
-wash, its ground-to-metal contrast is at least master's, the marker holds 3:1, props separate from the
-floor at least as well as today's 2.08 — and the user signs it off on screenshots of a real floor in the
+wash, its ground-to-metal contrast is at least master's, the marker holds 3:1, its wall face and its props
+stand at least 25 L\* off the floor (§ Light and dark floors) — and the user signs it off on screenshots of a real floor in the
 game, not on loose tiles.
 
 Current measurement:
 
 ```
-┌─────────┬──────────┬──────────┬────────────┬──────────────┬──────────┬───────────┬───────────┬──────────────────┬─────────────┐
-│ (index) │ floor L* │ floor C* │ metal C*   │ ground→metal │ marker   │ prop      │ face step │ solved faceNight │ hue to next │
-├─────────┼──────────┼──────────┼────────────┼──────────────┼──────────┼───────────┼───────────┼──────────────────┼─────────────┤
-│ starter │ 33.9     │ 7.8      │ '46.1 LOW' │ '0.9 LOW'    │ '5.9 ok' │ '1.7 LOW' │ 7.8       │ 0                │ 18.6        │
-│ junior  │ 29.8     │ 20       │ '26.1 LOW' │ '9.1 LOW'    │ '6.8 ok' │ '1.1 LOW' │ 10.4      │ 0                │ 157.9       │
-│ expert  │ 29       │ 5.8      │ '7.3 LOW'  │ '0.6 LOW'    │ '7 ok'   │ '1 LOW'   │ 10.2      │ 0.09             │ 178         │
-│ master  │ 25.3     │ 5.8      │ '47.5 ok'  │ '31.8 ok'    │ '8 ok'   │ '3.2 ok'  │ 8         │ 0.13             │ 80.1        │
-│ wizard  │ 28       │ 12.9     │ '22.9 LOW' │ '2 LOW'      │ '7.2 ok' │ '1.2 LOW' │ 10        │ 0.22             │ ''          │
-└─────────┴──────────┴──────────┴────────────┴──────────────┴──────────┴───────────┴───────────┴──────────────────┴─────────────┘
+┌─────────┬──────────┬──────────┬────────────┬──────────────┬──────────┬───────────┬────────────┬──────────────────┬─────────────┐
+│ (index) │ floor L* │ floor C* │ metal C*   │ ground→metal │ marker   │ prop      │ face step  │ solved faceNight │ hue to next │
+├─────────┼──────────┼──────────┼────────────┼──────────────┼──────────┼───────────┼────────────┼──────────────────┼─────────────┤
+│ starter │ 56       │ 16.6     │ '39.7 LOW' │ '26 LOW'     │ '5.2 ok' │ '14 LOW'  │ '30 ok'    │ 0.55             │ 18.4        │
+│ junior  │ 29.8     │ 20       │ '26.1 LOW' │ '9.1 LOW'    │ '6.8 ok' │ '1.6 LOW' │ '10.4 LOW' │ 1                │ 157.9       │
+│ expert  │ 29       │ 5.8      │ '7.3 LOW'  │ '0.6 LOW'    │ '7 ok'   │ '0.6 LOW' │ '10.2 LOW' │ 1                │ 178         │
+│ master  │ 25.3     │ 5.8      │ '47.5 ok'  │ '31.8 ok'    │ '8 ok'   │ '31.8 ok' │ '8 LOW'    │ 1                │ 80.1        │
+│ wizard  │ 28       │ 12.9     │ '22.9 LOW' │ '2 LOW'      │ '7.2 ok' │ '5.8 LOW' │ '10 LOW'   │ 1                │ ''          │
+└─────────┴──────────┴──────────┴────────────┴──────────────┴──────────┴───────────┴────────────┴──────────────────┴─────────────┘
 ```
 
 In the game, starter_1 floor 0 reads floor L\* 42 — lighter, not yet more colourful: colour arrives with the surface repaint.

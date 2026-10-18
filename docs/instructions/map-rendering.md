@@ -84,7 +84,7 @@ background, and **`ClipLayer`**, a box cut to a path — the size of its own SHA
   the night is a light hand — light enough that the rank keeps its colour, deep enough that a room nobody
   lights is not washed out. Starter, on pale limestone, is at **0.3**; the other ranks follow with their own
   art repaint. `yarn rank-colour` is the measurement.
-- **The ranks are held together by their targets and told apart by their hues.** A light night and a 7.5-step back to the wall on every rank; starter ochre at C\* 6.6, junior ochre at 18.2,
+- **The ranks are held together by their targets and told apart by their hues.** A light night, and a wall face at least 25 L\* off its floor on every rank; starter ochre at C\* 6.6, junior ochre at 18.2,
   expert cold at 263°, wizard verdigris at 168°. Consistent is not flat: same rule everywhere, different
   character in it.
 - **A vertical face takes a helping of the night the floor does not** (`faceNight`). A lamp is carried at

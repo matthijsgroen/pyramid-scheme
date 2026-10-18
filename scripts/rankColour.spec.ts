@@ -49,6 +49,30 @@ describe("verdict", () => {
     const grey = measureRank({ ...input, accent: [120, 115, 110] })
     expect(verdict(grey, bar).metalChroma).toBe(false)
   })
+
+  it("fails a prop painted at the floor's own value, however different its hue", () => {
+    const report = measureRank({ ...input, prop: [130, 145, 150] })
+    expect(verdict(report, report).prop).toBe(false)
+  })
+
+  it("passes a prop well off the floor, darker or lighter", () => {
+    const darker = measureRank({ ...input, prop: [70, 35, 20] })
+    const lighter = measureRank({ ...input, floorArt: [40, 35, 30], prop: [240, 200, 120] })
+    expect(verdict(darker, darker).prop).toBe(true)
+    expect(verdict(lighter, lighter).prop).toBe(true)
+  })
+
+  it("counts a wall face lit above a dark floor as a step, the way it counts one shadowed below", () => {
+    const shadowed = measureRank({ ...input, faceArt: [50, 40, 30] })
+    const lit = measureRank({ ...input, floorArt: [40, 35, 30], faceArt: [200, 170, 110] })
+    expect(verdict(shadowed, shadowed).faceStep).toBe(true)
+    expect(verdict(lit, lit).faceStep).toBe(true)
+  })
+
+  it("fails a wall face too close to its floor to read as a wall", () => {
+    const flat = measureRank({ ...input, faceArt: [140, 120, 100] })
+    expect(verdict(flat, flat).faceStep).toBe(false)
+  })
 })
 
 describe("meanOpaque", () => {

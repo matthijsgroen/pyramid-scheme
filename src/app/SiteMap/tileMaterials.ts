@@ -32,9 +32,9 @@ export type TierPalette = {
    *
    * A lamp is carried at floor level, so a wall takes its light at a glancing angle and the ground does
    * not — without that the two planes sit within a step of each other and a room reads as a floorplan
-   * with a texture change rather than as a place with walls. Solved per rank to a 7.5 L* step with
-   * `yarn rank-colour`, since it is the RENDERED step the player sees; 0 where the art already steps
-   * that far. */
+   * with a texture change rather than as a place with walls. On a light-floored rank it shadows the face 30 L* below
+   * the floor (`yarn rank-colour` solves it); a dark-floored rank lights its faces in the art instead and
+   * takes 0 here. */
   faceNight: number
   /** How much of the full lamp (`LIT_STRENGTH`) this rank's torch burns at, 0–1. A lamp lifts a dark
    * room into view; in a rank whose night is already light it only bleaches the stone, so a lit rank
@@ -63,7 +63,7 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     // The night is the lightest hand on the map, as master's is: rooms are lit and the torch is an
     // accent (docs/game-design/visual-direction.md). Its colour is the rank's own near-black.
     shade: "rgba(21,17,12,0.3)",
-    faceNight: 0,
+    faceNight: 0.55,
     lamp: 0.3,
     prop: "#a49781",
     propDark: "#5c5347",
