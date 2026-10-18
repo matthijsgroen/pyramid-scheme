@@ -1,3 +1,4 @@
+import { ACTIVITIES, type ActivityId } from "@/game/activities"
 import type { DecorationKind } from "@/game/siteTypes"
 import { PROP_ROLES, rolesOfProp } from "@/game/dressingTags"
 import { hashUnit } from "@/support/hashString"
@@ -18,11 +19,15 @@ import { hashUnit } from "@/support/hashString"
  *
  * Four rules, and each one is a way of not making floors worse:
  *
- * 1. **The leader must have a purpose.** Rubble, a pillar, a chest and a mat are untagged on purpose —
- *    they fit anywhere — so there is nothing for a companion to agree WITH, and a pillar with a
- *    sarcophagus beside it is the "furniture distributed" reading the assembler spent a rewrite escaping.
- *    Untagged leader, no companion.
- * 2. **The companion must share an explicit purpose** with it, and must not be the leader again.
+ * 1. **A room with an activity takes its companion from that activity** (`activities.ts`): a storage
+ *    room led by a shelf gets a jar rack or a basin, never a selling counter, though shelf and counter
+ *    share the `trade` role. The activity names its own props, so a filler it lists (the selling room's
+ *    mat) is a fair companion there.
+ * 2. **Without an activity, the companion must share an explicit purpose** with the leader. Rubble, a
+ *    pillar, a chest and a mat are untagged on purpose — they fit anywhere — so there is nothing for a
+ *    companion to agree WITH, and a pillar with a sarcophagus beside it is the "furniture distributed"
+ *    reading the assembler spent a rewrite escaping. Untagged leader, no companion. Either way the
+ *    companion is never the leader again.
  * 3. **It must be DRAWN at this rank.** A companion is placed by rule, so a kind with only a placeholder
  *    would multiply placeholders across the map — which is the one thing the art backlog must not be able
  *    to do to itself.
@@ -43,9 +48,18 @@ const MIN_FREE = 2
 
 const TAGGED = Object.keys(PROP_ROLES) as DecorationKind[]
 
-/** The kinds that could stand beside `leader` and mean the same thing. Sorted, so the choice cannot
- * depend on key order. */
-export const companionsFor = (leader: DecorationKind, hasArt: (kind: DecorationKind) => boolean): DecorationKind[] => {
+/** The kinds that could stand beside `leader` and mean the same thing: the room's activity's props when
+ * it has one, else the kinds sharing a role with the leader. Sorted, so the choice cannot depend on key
+ * order. */
+export const companionsFor = (
+  leader: DecorationKind,
+  hasArt: (kind: DecorationKind) => boolean,
+  activity?: ActivityId
+): DecorationKind[] => {
+  if (activity) {
+    const props = ACTIVITIES.find(a => a.id === activity)?.props ?? []
+    return props.filter(kind => kind !== leader && hasArt(kind)).sort()
+  }
   const purposes = rolesOfProp(leader)
   if (!purposes?.length) return []
   return TAGGED.filter(
@@ -61,14 +75,22 @@ export const companionsFor = (leader: DecorationKind, hasArt: (kind: DecorationK
  */
 export const companionFor = (
   siteId: string,
-  rooms: readonly { ownerKey: string; leader: DecorationKind; free: readonly string[]; shrine?: boolean }[],
+  rooms: readonly {
+    ownerKey: string
+    leader: DecorationKind
+    free: readonly string[]
+    shrine?: boolean
+    activity?: ActivityId
+  }[],
   hasArt: (kind: DecorationKind) => boolean,
   pick: (free: readonly string[]) => string
 ): ReadonlyMap<string, DecorationKind> => {
   const out = new Map<string, DecorationKind>()
   // Sorted for the reason `scatterFor` sorts: the placement is indexed, and Map order is insertion order,
   // so which room is "first" would otherwise depend on how the claims happened to be built.
-  for (const { ownerKey, leader, free, shrine } of [...rooms].sort((a, b) => (a.ownerKey < b.ownerKey ? -1 : 1))) {
+  for (const { ownerKey, leader, free, shrine, activity } of [...rooms].sort((a, b) =>
+    a.ownerKey < b.ownerKey ? -1 : 1
+  )) {
     if (free.length < MIN_FREE) continue
     // THE GOD'S ROOM IS THE ONE EXCEPTION TO BOTH GATES, and it breaks rule 2 on purpose.
     //
@@ -79,13 +101,14 @@ export const companionFor = (
     // a shrine, where a statue beside some other object is only a furnished room. `tileVariants` picks
     // by cell position, so two statues side by side are not necessarily the same drawing.
     //
-    // Everywhere else the rules stand: same purpose, never the leader again, one room in three.
+    // Everywhere else the rules stand: the activity's props (or else the same purpose), never the leader
+    // again, one room in three.
     if (shrine) {
       if (hasArt(leader)) out.set(pick(free), leader)
       continue
     }
     if (hashUnit(siteId, `companion-room:${ownerKey}`, 0) > SHARE) continue
-    const options = companionsFor(leader, hasArt)
+    const options = companionsFor(leader, hasArt, activity)
     if (options.length === 0) continue
     const kind = options[Math.floor(hashUnit(siteId, `companion-kind:${ownerKey}`, 1) * options.length)]
     out.set(pick(free), kind)

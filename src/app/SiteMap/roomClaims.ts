@@ -231,7 +231,7 @@ export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
     return r >= 0 && c >= 0 && r < grid.rows && c < grid.cols
   }
   const decorationAt = new Map<string, DecorationKind>()
-  const roomsForCompanion: { ownerKey: string; leader: DecorationKind; free: string[] }[] = []
+  const roomsForCompanion: Parameters<typeof companionFor>[1][number][] = []
   for (const [ownerKey, candidates] of ownerPropCandidates) {
     const [ownerRow, ownerCol] = ownerKey.split(",").map(Number)
     const owner = grid.cells[ownerRow]?.[ownerCol]
@@ -249,6 +249,7 @@ export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
       leader: owner.decoration,
       free: candidates.filter(key => key !== taken),
       ...(shrine ? { shrine } : {}),
+      ...(owner.activity ? { activity: owner.activity } : {}),
     })
   }
   // What this rank is furnished with at all — see the two tests below.
