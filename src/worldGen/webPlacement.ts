@@ -131,7 +131,8 @@ export const placeWeb = (
     }
     const held = slotOf(floorOf(activator.at, slot.floor), slot)
     const there = held.get()
-    if (there !== undefined && there.type !== "fragmentSlot") {
+    // A slot an author reserved for a currency (`prefers`) is that currency's, not the web's.
+    if (there !== undefined && (there.type !== "fragmentSlot" || there.prefers !== undefined)) {
       const line = `${activator.name} (line ${activator.n}): ${pyramidName(activator.at)} ${describeSlot(slot)} holds a ${there.type}`
       if (options.displaces) options.displaces(line)
       else slotRefusals.push(`✗ ${line}`)

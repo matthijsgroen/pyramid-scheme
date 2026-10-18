@@ -70,6 +70,17 @@ const pinWebFloors = (configs: Record<string, SiteConfig[]>) => {
     )
 }
 
+/** With no mod realising the web, a lock's outside inputs are open ground: nothing binds them, nothing shuts them. */
+export const openLockInputs = (configs: Record<string, SiteConfig[]>) => {
+  for (const sites of Object.values(configs))
+    for (const site of sites)
+      for (const floor of site)
+        if (floor.locks)
+          floor.locks = floor.locks.map(placed =>
+            placed.lock.inputs?.length ? { ...placed, web: { inputs: {}, open: true as const } } : placed
+          )
+}
+
 export type BuildWorldOptions = {
   /** The tier webs to place; the ones under src/game/locks by default. */
   webs?: readonly Web[]
@@ -91,7 +102,9 @@ export const buildWorldConfigs = (
           pinWebFloors(configs)
           for (const web of webs) options.onWebPlaced?.(placeWeb(web, configs, carveWorldFloor, toReward))
         }
-      : undefined
+      : toReward
+        ? undefined
+        : openLockInputs
   return buildConfigs(
     resolveKeyRequirements,
     ALL_CURRENCY_DISTRIBUTIONS,

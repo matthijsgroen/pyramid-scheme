@@ -160,6 +160,20 @@ describe("with the topology mod off", () => {
   })
 })
 
+describe("a lock's inputs where no web is placed", () => {
+  it("are open ground when no mod realises the web: the lock carves the walls of the lock without them", () => {
+    const { a: without, b: open } = carvePair(
+      lockFloor(["in -- hall", "hall -- out", "in ?", "hall ?", "out ?"]),
+      lockFloor(["A outside", "in -[A]- hall", "hall -- out", "hall -[A]", "in ?", "hall ?", "out ?"], {
+        inputs: {},
+        open: true,
+      })
+    )
+    expect(dirsOf(open)).toBe(dirsOf(without))
+    expect(anyWebKey(open)).toBe(false)
+  })
+})
+
 /** The same floor assembled as the build stands with the topology mod removed, at the seed `on` carved at. */
 const assembleFloorOff = (config: FloorConfig, on: FloorGrid): FloorGrid => {
   for (const seed of SEEDS) {

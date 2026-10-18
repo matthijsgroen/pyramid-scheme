@@ -260,11 +260,11 @@ export const expandFloorLocks = (
     }
     const result = compileLock(lock, binding, {
       namespace: instance,
-      boundInputs: Object.keys(placed.web?.inputs ?? {}),
+      boundInputs: placed.web?.open ? (lock.inputs ?? []) : Object.keys(placed.web?.inputs ?? {}),
     })
     if (result.ok) compiled.push(result.fragment)
     else for (const fault of result.faults) reasons.push({ type: "lockRefused", instance, fault })
-    if (placed.web) webGates.push(...webLockGates(lock, placed.web, instance))
+    if (placed.web && !placed.web.open) webGates.push(...webLockGates(lock, placed.web, instance))
   }
   if (reasons.length > 0) return { ok: false, reasons }
 

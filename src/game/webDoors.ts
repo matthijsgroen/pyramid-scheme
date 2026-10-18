@@ -23,7 +23,12 @@ export type WebDoorPlacement = { key: string; at: WebDoorSpot }
 export type WebFront = { input: string; corridor: readonly [string, string] } | { input: string; region: string }
 
 /** A placed lock's inputs bound to the web keys they wait for, and the owners its stops added (`W1`, …). */
-export type PlacedLockWeb = { inputs: Readonly<Record<string, string>>; fronts?: readonly WebFront[] }
+export type PlacedLockWeb = {
+  inputs: Readonly<Record<string, string>>
+  fronts?: readonly WebFront[]
+  /** No mod realises the web: every input is open ground, its gates the lock's floor owners' alone. */
+  open?: true
+}
 
 /** One gate of a placed lock a web key has a say in, under its floor names. `obstacle`: the compiled gate whose doors
  * the carve stood, where floor owners keep it; absent, the carve left the corridor or the region open and the web
@@ -274,7 +279,15 @@ export const layWebDoors = (
   ) => {
     const door = passable(grid, inner) ? inner : passable(grid, outer) ? outer : undefined
     if (!door) return false
-    if (at(door).type === "room") return true
+    const there = at(door)
+    if (there.type === "room") {
+      // A cell another web door already stands in asks for this gate's keys too: both must be held.
+      const asked = doorKeys(there)
+      const more = keys.filter(id => !asked.includes(id))
+      if (more.length > 0)
+        cells[door[0]][door[1]] = { ...there, requiredKeyIds: [...(there.requiredKeyIds ?? []), ...more] }
+      return true
+    }
     shut(door, keys, extra(at(outer) as Ground))
     return true
   }
@@ -319,6 +332,10 @@ export const layWebDoors = (
             () => true
           )
     if (pairs.length === 0) return fault(name, "no ground of the two regions meets")
+    // Buried ground the player arrives on has no crossing to bar: the floor's way in stands in it.
+    const arrival = groundAt(grid, grid.entrancePos)
+    if (gate.kind === "region" && arrival?.region === gate.region)
+      return fault(name, "the floor's way in stands in the region it buries")
     for (const { inner, outer } of pairs)
       if (
         !shutOnCrossing(inner, outer, gate.keys, beside =>

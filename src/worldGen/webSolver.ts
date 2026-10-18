@@ -31,6 +31,10 @@ export const solveWeb = (
     bucketForReward: support.bucketForReward,
     alsoHarvests: support.alsoHarvests,
     factsForCount: support.factsForCount,
+    // The floors carved as play carves them: the same realisations.
+    resolveOneWay: support.resolveOneWay,
+    resolveRegionBarrier: support.resolveRegionBarrier,
+    resolvePassage: support.resolvePassage,
   }
   const owned = new Map<string, number>()
   const cache = createFloorAssemblyCache()
