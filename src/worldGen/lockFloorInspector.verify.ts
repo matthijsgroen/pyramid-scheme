@@ -114,6 +114,7 @@ describe("the journey inspector on lock floors", () => {
       ["expert_4", 3, 0],
       ["expert_4", 4, 0],
       ["expert_4", 5, 0],
+      ["master_2", 5, 0],
     ])
     expect(shipped.filter(floor => !assembles(floor))).toEqual([])
   })
