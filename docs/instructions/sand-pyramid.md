@@ -169,6 +169,7 @@ lever reed @60% side             a sand lever, standing there
 key ankh @55% side               a web key, standing there
 sand by sun moon star            a pot over this block's line: equal stops, 33% 67% 100%
 sand 40% 75% 100% by sun moon star    the Nth pull, whichever, clears to the Nth stop
+sand from 50%: 75% 100% by reed ankh  the sand starts at 50%: the line before it is playable
 sand f1.s4 by sun                a pot over one side section's own line (fine control)
 sand weighing.A by moon          a lock's declared input, held once moon is pulled (fine control)
 ankh opens 70%                   a door on the main-path seam nearest 70%, shut until ankh
@@ -180,7 +181,9 @@ ankh opens side @80%             a door at the mouth of the first side section a
   activator may count in a pot and open named places, crosswise between journeys.
 - **A pot** covers its block's line, or one side section's line (`sand f1.s4 ...`). It lists as many stops as
   levers, rising, the last 100%; `sand by` spaces them equally. Before any pull its sand lies from the arrival
-  of its line onward. One pot per line: a pyramid under its journey's pot takes no pot of its own (refused:
+  of its line onward, its first door on the first seam after the arrival; `from X%:` starts it at the seam
+  nearest X% instead, and the line before it is playable. Every stop lies past the start (a stop at or before it
+  is refused: `stopNotAfterFrom`); `sand from 50%: by a b` spaces them equally from the start. One pot per line: a pyramid under its journey's pot takes no pot of its own (refused:
   `potsOverlap`); a section pot inside a buried main path is another line and allowed.
 - **Side sections hanging off buried main path are buried too.** They are behind the door the front stands
   at, so they need no door of their own.
@@ -417,7 +420,7 @@ keeps it). The new states must pass every check like any other. The backward swe
 regions does not use the re-entry edges, so a chamber a mechanism sealed is still a strand: re-entry is a way
 to start again, not a way out of a trap. Arrivals and re-entry are independent moves, so both are walked, in
 either order. Whether the rule belongs on every floor, or the save should keep a position per pyramid
-instead, is open question 6.
+instead, is open question 5.
 
 ## Seen before its control, across the layers
 
@@ -625,7 +628,7 @@ carries at most 16 activators.
 - **Buried sections that carry a ward gate today** lose it to another place in the journey, at the designer's
   say (open question 2).
 - **No other tier moves.** Re-entry states change no carve; if they are turned on for every floor (open
-  question 6), they may refuse floors that bake today, which is why that is measured first.
+  question 5), they may refuse floors that bake today, which is why that is measured first.
 
 ### Risks
 
@@ -709,13 +712,10 @@ Rough sizes: S is about a day, M two to three days, L a week.
 1. **A door seen only after its lever:** a warning, as on a lock, or refused?
 2. **A buried or sealed section that already has a ward gate:** move the ward content (the plan), or allow one
    door with both keys?
-3. **A pot that starts part way in.** A pot's sand lies from the arrival of its line, so "the second half of
-   w1p3 is buried" is not yet a pot. Should a pot name where its sand starts (say `sand from 50%: 75% 100% by
-reed ankh`), or is that an `opens` line?
-4. **One arrival or two?** wizard_3's arrival (Fez and the scale) and the buried-journey arrival ("It is full")
+3. **One arrival or two?** wizard_3's arrival (Fez and the scale) and the buried-journey arrival ("It is full")
    happen in the same place. Play both in order, merge them, or move the scale to the clearing?
-5. **Does a pull show anything where it is pulled?** A Fez line, or the sand channel emptying and nothing said.
-6. **Coming back at the entrance:** re-entry states fix a gap every floor has today, the web only makes it
+4. **Does a pull show anything where it is pulled?** A Fez line, or the sand channel emptying and nothing said.
+5. **Coming back at the entrance:** re-entry states fix a gap every floor has today, the web only makes it
    common. Turn them on for every floor once the measurement in slice 4 is in, keep them to web journeys, or
    change the save so a return resumes where the player stood in that pyramid?
 
@@ -724,4 +724,5 @@ reed ankh`), or is that an `opens` line?
    from the way in: the locks `expert/counterweight`, `expert/keyring`, `expert/lockChamber`, `expert/relay`,
    `junior/tide` and `master/weighingOfTheHeart`; the floors junior_4 pyramid 5, expert_1 pyramid 2, expert_2
    pyramid 2, expert_3 pyramid 4 and master_2 pyramid 5, each floor 0. The rest walk sound either way. Today the
-   walk has re-entry behind a flag (`reentry`, `walkFloorLock`), off on every baked floor.
+   walk has re-entry behind a flag (`reentry`, `walkFloorLock`), off in the bake; `yarn lock <web>` turns it on for
+   every floor of a web journey, a journey any web names (`walkWebFloors`).
