@@ -266,7 +266,7 @@ describe("a switch on a carved floor", () => {
 })
 
 // entrance 0,0 → puzzle 0,2 → junction 0,4 → stairhead 0,6 along row 0; a treasure dead end 2,4 below the
-// junction; a gate 2,2 below the puzzle, and a ward room 4,2 behind it that dresses from its own pools.
+// junction; a gate 2,2 below the puzzle, and a ward room 4,2 behind it.
 describe("dressing by purpose", () => {
   const TRADE: DressingPools = { props: ["shelf", "jarRack", "rubblePile"], wall: ["niche", "tallyBoard", "sconce"] }
   const pkey = makePkey(7)
@@ -287,17 +287,17 @@ describe("dressing by purpose", () => {
   const nodes = ["0,0", "0,2", "0,4", "0,6", "2,4", "2,2", "4,2"]
   type Setup = {
     pools?: DressingPools
-    wardPools?: DressingPools
     stairPools?: DressingPools
+    junctionPools?: DressingPools
     patron?: FloorConfig["patron"]
     switchAtJunction?: boolean
   }
-  const dressed = ({ pools = TRADE, wardPools, stairPools, patron, switchAtJunction = false }: Setup = {}) => {
+  const dressed = ({ pools = TRADE, stairPools, junctionPools, patron, switchAtJunction = false }: Setup = {}) => {
     const prep = prepOf(plainFloor(patron ? { patron } : {}))
     const labels = noLabels()
     for (const node of nodes) labels.dressing.set(node, pools)
-    if (wardPools) labels.dressing.set("4,2", wardPools)
     if (stairPools) labels.dressing.set("0,6", stairPools)
+    if (junctionPools) labels.dressing.set("0,4", junctionPools)
     const grid = render(prep, {
       ...freshState(prep),
       lay: null,
@@ -344,16 +344,25 @@ describe("dressing by purpose", () => {
   }
   const activityOf = (id: string) => ACTIVITIES.find(activity => activity.id === id)
 
-  it("dresses an ordinary puzzle room from one activity its pool furnishes", () => {
-    const room = dressed()("0,2")
+  it("dresses a junction from one activity its pool furnishes", () => {
+    const room = dressed()("0,4")
     expect(room.activity).toBeDefined()
     expect(activitiesFor(TRADE.props ?? []).map(activity => activity.id)).toContain(room.activity)
     expect(activityOf(room.activity!)?.props).toContain(room.decoration)
   })
 
+  it("leaves a puzzle room standing in the corridor bare, a dead-end one too", () => {
+    const at = dressed()
+    for (const pk of ["0,2", "4,2"]) {
+      expect(at(pk)).not.toHaveProperty("decoration")
+      expect(at(pk)).not.toHaveProperty("wallDecoration")
+      expect(at(pk)).not.toHaveProperty("activity")
+    }
+  })
+
   it("hangs only the activity's own wall item, or nothing", () => {
     const at = dressed()
-    for (const pk of ["0,0", "0,2", "0,4", "0,6", "4,2"]) {
+    for (const pk of ["0,4", "0,6"]) {
       const room = at(pk)
       if (room.wallDecoration === undefined) continue
       expect(activityOf(room.activity!)?.wall).toContain(room.wallDecoration)
@@ -369,13 +378,10 @@ describe("dressing by purpose", () => {
     }
   })
 
-  it("dresses a junction no switch stands in by its activity", () => {
-    expect(dressed()("0,4").activity).toBeDefined()
-  })
-
-  it("dresses the entrance and the stairhead too", () => {
+  it("dresses the stairhead, never the entrance", () => {
     const at = dressed()
-    expect(at("0,0").activity).toBeDefined()
+    expect(at("0,0")).not.toHaveProperty("decoration")
+    expect(at("0,0")).not.toHaveProperty("activity")
     expect(at("0,6").activity).toBeDefined()
   })
 
@@ -383,17 +389,44 @@ describe("dressing by purpose", () => {
     expect(dressed({ stairPools: { props: ["pit"] } })("0,6")).not.toHaveProperty("decoration")
   })
 
-  it("dresses a ward room from its own pool's activities", () => {
-    const room = dressed({ wardPools: { props: ["basketStack", "bales"], wall: [] } })("4,2")
+  it("dresses a room from its own section's pool's activities", () => {
+    const room = dressed({ stairPools: { props: ["basketStack", "bales"], wall: [] } })("0,6")
     expect(room.activity).toBe("packing")
     expect(["basketStack", "bales"]).toContain(room.decoration)
     expect(room).not.toHaveProperty("wallDecoration")
   })
 
   it("dresses a room whose pool furnishes no activity from the whole pool, with no activity", () => {
-    const room = dressed({ pools: { props: ["statue", "rubblePile"], wall: ["stela", "sconce"] } })("0,2")
+    const room = dressed({ pools: { props: ["statue", "rubblePile"], wall: ["stela", "sconce"] } })("0,4")
     expect(["statue", "rubblePile"]).toContain(room.decoration)
     expect(room).not.toHaveProperty("activity")
+  })
+
+  it("gives a funerary wing whose pool holds selling's props no activity", () => {
+    const room = dressed({
+      junctionPools: { props: ["offeringTable", "hanging"], wall: ["stela"], role: "funerary" },
+    })("0,4")
+    expect(room).not.toHaveProperty("activity")
+    expect(["offeringTable", "hanging"]).toContain(room.decoration)
+  })
+
+  it("gives a trade wing an activity of trade's", () => {
+    const room = dressed({
+      junctionPools: { props: ["offeringTable", "hanging", "jarRack"], wall: ["niche"], role: ["trade"] },
+    })("0,4")
+    expect(["selling", "storage"]).toContain(room.activity)
+  })
+
+  it("narrows by role only to an activity that serves it", () => {
+    const room = dressed({
+      junctionPools: { props: ["counter", "jarRack"], wall: ["niche"], role: "agriculture" },
+    })("0,4")
+    expect(room.activity).toBe("storage")
+  })
+
+  it("lets a role no place furnishes leave the pool's activities whole", () => {
+    const room = dressed({ junctionPools: { props: ["basketStack"], wall: [], role: "puzzle" } })("0,4")
+    expect(room.activity).toBe("packing")
   })
 
   it("gives the god the junction on a dedicated floor, ahead of any activity", () => {

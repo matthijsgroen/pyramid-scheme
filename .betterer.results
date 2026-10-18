@@ -64,7 +64,7 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/data/puzzleSeeds.ts:3579692772": [
       [4, 58, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/game/dressingTags.ts:3126414141": [
+    "src/game/dressingTags.ts:589999011": [
       [6, 58, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/game/families/familyMeta.ts:3900028678": [
@@ -1018,8 +1018,8 @@ exports[`design doc references name a file, not a paragraph`] = {
 
 exports[`core names no mod family id`] = {
   value: `{
-    "src/app/SiteMap/nodeKinds.ts:151041311": [
-      [17, 4, 8, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "1887827023"]
+    "src/app/SiteMap/nodeKinds.ts:911755260": [
+      [18, 4, 8, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "1887827023"]
     ],
     "src/app/SiteMap/nodeShapes.tsx:209511653": [
       [478, 9, 8, "Core does not name a mod family: receive the id from the resolver or registry (src/game/encounterFallback.ts is the one catalogue).", "1887827023"]

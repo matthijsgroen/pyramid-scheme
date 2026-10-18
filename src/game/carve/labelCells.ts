@@ -5,6 +5,7 @@ import { computeLegacySideSectionHash, computeSideSectionHash } from "./sectionH
 import { MAIN_SECTION_ADDRESS } from "./sections"
 import { pass } from "./state"
 import type { CellLabels, DressingPools } from "./state"
+import type { DecorationKind, WallDecorationKind } from "../siteTypes"
 
 /**
  * WHAT EVERY CARVED CELL IS FILED UNDER: its section's hash and address, how far along its section's walk it
@@ -48,7 +49,17 @@ export const labelCells = pass("labelCells", ["maze", "regions", "keys", "lay"],
     region: new Map(),
     absorbedHash: new Map(),
   }
-  const floorPools: DressingPools = { props: config.decorations, wall: config.wallDecorations }
+  const poolsOf = (node: {
+    decorations?: DecorationKind[]
+    wallDecorations?: WallDecorationKind[]
+    role?: string | string[]
+  }) =>
+    ({
+      props: node.decorations,
+      wall: node.wallDecorations,
+      ...(node.role !== undefined ? { role: node.role } : {}),
+    }) satisfies DressingPools
+  const floorPools = poolsOf(config)
 
   mainPath.forEach((cell, step) => {
     const key = keyOf(cell)
@@ -83,7 +94,7 @@ export const labelCells = pass("labelCells", ["maze", "regions", "keys", "lay"],
     }
     const sHash = computeSideSectionHash(section, idx, doors.length > 0, config, parentIdx)
     const legacyHash = computeLegacySideSectionHash(section, idx, parentIdx)
-    const pools: DressingPools = { props: section.decorations, wall: section.wallDecorations }
+    const pools = poolsOf(section)
     const address = addressOf.get(positional) ?? positional
     cells.forEach((cell, step) => labels.ordinal.set(keyOf(cell), String(step)))
     for (const cell of cells) labels.address.set(keyOf(cell), address)
@@ -124,7 +135,7 @@ export const labelCells = pass("labelCells", ["maze", "regions", "keys", "lay"],
     }
     for (const cellKey of nodes) {
       labels.absorbedHash.set(cellKey, own)
-      labels.dressing.set(cellKey, { props: section.decorations, wall: section.wallDecorations })
+      labels.dressing.set(cellKey, poolsOf(section))
     }
   }
 

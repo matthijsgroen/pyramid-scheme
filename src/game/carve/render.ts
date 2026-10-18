@@ -1,8 +1,7 @@
 import { hashString } from "@/support/hashString"
 import { oneWayRunCells } from "../carveConstants"
-import { activitiesFor } from "../activities"
-import { rolesOfProp, rolesOfWallItem } from "../dressingTags"
-import { footprintSize } from "../roomFootprint"
+import { activitiesServing, rolesOfProp, rolesOfWallItem } from "../dressingTags"
+import { footprintSize, isChamber, portalKindOf } from "../roomFootprint"
 import type {
   CorridorCell,
   DecorationKind,
@@ -65,7 +64,7 @@ const wallSuiting = (pool: WallDecorationKind[], prop: DecorationKind | undefine
 /**
  * THE GROUND, WRITTEN FROM WHAT THE PASSES DECIDED, every reserved junction still open. Every used node becomes
  * a room where a pass specced one and a corridor where none did, every allowed edge its connector, every drop
- * its launch, run and landing; then the entrance opens and every room is dressed. It decides
+ * its launch, run and landing; then the entrance opens and the chambers are dressed. It decides
  * nothing a pass could: what it reads back off the grid (a node's `dirs` for a drop's join and a room's
  * footprint for its dressing) is what it itself just wrote. The carve is checked against this view open.
  */
@@ -236,10 +235,12 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
   const entranceCell = cells2D[entR][entC]
   if (entranceCell.type === "room") cells2D[entR][entC] = { ...entranceCell, state: "reachable" }
 
-  // DRESSING: ONE PURPOSE PER ROOM, by precedence — mechanism, then patron, then treasure or shop, then an
-  // activity. A mechanism's room and a treasure or shop room show nothing competing with what stands in them;
-  // every other room shows one activity its section's pool furnishes, prop and wall item both from it, or where
-  // the pool furnishes none, any prop of the pool. Every pick is hashed from WHERE the room is.
+  // DRESSING: ONLY A CHAMBER IS DRESSED — a room that claims floor on the map (`isChamber`); a puzzle stands in
+  // the corridor and has nowhere to put a prop. ONE PURPOSE PER CHAMBER, by precedence — mechanism, then
+  // patron, then treasure or shop, then an activity. A mechanism's room and a treasure or shop room show
+  // nothing competing with what stands in them; every other chamber shows one activity its section's pool
+  // furnishes and its wing's role serves, prop and wall item both from it, or where there is none, any prop of
+  // the pool. Every pick is hashed from WHERE the room is.
   const switchesStanding = new Set(state.forks.reserved.slice(0, state.forks.switchesPlaced))
   const isMechanism = (pk: string, spec: RoomSpec): boolean =>
     state.switchRooms.has(pk) ||
@@ -304,11 +305,25 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
     for (const pk of eligible.slice(0, PATRON_PER_FLOOR)) patronRooms.add(pk)
   }
 
+  const chamberAt = (pk: string, spec: RoomSpec): boolean => {
+    const [r, c] = pk.split(",").map(Number)
+    const cell = cells2D[r][c]
+    if (cell.type !== "room") return false
+    const kind =
+      spec.roomType === "portal"
+        ? portalKindOf({ entrancePos: [entR, entC] }, r, c, spec)
+        : isTreasureLike(spec)
+          ? "treasure"
+          : "room"
+    return isChamber(cell, kind)
+  }
   for (const [pk, spec] of roomSpecs) {
     const isPatron = patronRooms.has(pk)
-    if (isMechanism(pk, spec) || (!isPatron && isTreasureLike(spec))) continue
+    if (!chamberAt(pk, spec) || isMechanism(pk, spec) || (!isPatron && isTreasureLike(spec))) continue
     const pools = labels.dressing.get(pk)
-    const activity = isPatron ? undefined : pickDressing(activitiesFor(pools?.props ?? []), pk, "activity")
+    const activity = isPatron
+      ? undefined
+      : pickDressing(activitiesServing(pools?.props ?? [], pools?.role), pk, "activity")
     // The god's room draws from the god-bearing kinds, a statue first where the pool has one.
     const patronProps = pools?.props?.filter(k => PATRON_KINDS.has(k))
     const godProps = patronProps?.includes("statue") ? (["statue"] as DecorationKind[]) : patronProps

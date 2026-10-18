@@ -1,6 +1,7 @@
 import type { FloorGrid, RoomCell } from "@/game/siteTypes"
 import { isSpent } from "@/game/mechanismDoors"
 import { storedAtCell } from "@/game/cellAddress"
+import { portalKindOf } from "@/game/roomFootprint"
 import type { FamilyDrawing } from "@/game/families/familyMeta"
 import { getFamilyPlugin } from "@/app/families/familyRegistry"
 import { NODE_RADIUS_FORK, NODE_RADIUS_LARGE, NODE_RADIUS_PUZZLE } from "./mapScale"
@@ -53,10 +54,7 @@ export const shapeKindFor = (grid: FloorGrid, r: number, c: number, cell: ShapeC
   if (cell.roomType === "fork") {
     return cell.family !== undefined && getFamilyPlugin(cell.family) !== undefined ? "switch" : "fork"
   }
-  if (cell.roomType === "portal") {
-    if (cell.stairId) return "stairhead"
-    return r === grid.entrancePos[0] && c === grid.entrancePos[1] ? "entrance" : "exit"
-  }
+  if (cell.roomType === "portal") return portalKindOf(grid, r, c, cell)
   // A sequence tile, a stone's plate and a pipe's hole are ground stepped on, whatever else their cell says; the home
   // plate's record makes it no mechanism room.
   if (cell.sequenceTile || cell.plate || cell.pipeHole) return "plate"

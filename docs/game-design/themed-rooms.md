@@ -11,14 +11,15 @@ light/dark floor rule, the tier themes) and on the room dressing that already ex
 ## What exists today, and what is missing
 
 - A **role** per wing (`trade`, `funerary`, …) narrows the rank's prop pool at world-gen time.
-- **Only forks and dead-end endpoints are dressed**; ordinary puzzle rooms get no prop (`carve/render.ts`).
+- **Only chambers are dressed** — forks, and dead-end stairheads and exits (`isChamber` in
+  `src/game/roomFootprint.ts`, the rule the map claims floor by). A puzzle stands in a 1-wide corridor and has
+  no floor for a prop.
 - **One prop and one wall item per dressed room**, plus an optional second prop of the same purpose in about a
   third of rooms (`companionProps.ts`). The prop leads, the wall item follows.
 - Props stand against the **north wall**, are **one sprite with no orientation**, and may have numbered art
   variants (`offeringTable-2`) picked per cell.
 
-Missing: a level **below the role** — the activity a single room is for — and dressing for the rooms that are
-not forks.
+Missing: a level **below the role** — the activity a single room is for.
 
 ## 1. An activity is a small fixed set
 
@@ -38,6 +39,9 @@ skin):
 - A rank shows an activity only when it has that activity's props painted — each rank fills the list by what
   exists, with no per-rank table.
 - A kind may serve several activities (a shelf stores and keeps the books).
+- **An activity matches its wing's role**: it is eligible only where its Roles meet the role the wing was
+  authored for, so a funerary wing whose pool holds an offering table and a hanging is not a market. A wing with
+  no authored role, or one no kind furnishes (`puzzle`), takes any activity its pool furnishes.
 - Untagged kinds (rubble, pillar, mat) stay filler that fits anywhere.
 - **`PROP_ROLES` is derived from the activities**, so there is one list, not two that drift.
 
@@ -55,7 +59,7 @@ merchant's storehouse, the heart before the gods — the same scale.
 | 2          | mechanism       | the lock, lever or torch, and nothing competing with it |
 | 3          | patron          | the god's statue and shrine (exists)                    |
 | 4          | treasure / shop | the chest, or Fez's stall                               |
-| 5          | activity        | every other room, **puzzle rooms included**             |
+| 5          | activity        | every other chamber: a junction, a stairhead, the exit  |
 
 Two layers lie **over** any purpose rather than beside it: the site's **condition** (overgrowth, flooding —
 an overlay, exists) and a **ward pocket**, which is dressed in the rank it belongs to (exists).
@@ -64,12 +68,13 @@ an overlay, exists) and a **ward pocket**, which is dressed in the rank it belon
 `starter_1` floor 0 is **selling** (he is the merchant who overpaid for a map), Ipi's tomb room is **ledger**.
 A scene that needs a thing of its own (the Sphinx inscription) gets its own prop — rare.
 
-## 3. The carve dresses every room
+## 3. The carve dresses every chamber
 
-- The carve picks a purpose per room by the precedence above, then the activity, then its props and wall item
-  from that activity. Deterministic from the site id, as today.
-- **Every room with free cells is dressed**, puzzle rooms included. Props stay **out of the node's cell**, so
-  a tap is never blocked.
+- The carve picks a purpose per chamber by the precedence above, then the activity, then its props and wall
+  item from that activity. Deterministic from the site id.
+- **Only chambers are dressed**: forks, and dead-end stairheads and exits — the rooms that claim floor on the
+  map. Puzzles stand in corridors and carry no prop; the entrance claims no floor and is bare. Props stay **out
+  of the node's cell**, so a tap is never blocked.
 - Lead plus companion both come from the room's activity; the companion odds stay as they are.
 - Changing the pools re-bakes `generatedWorld.ts` and the tier fingerprint; saves and runs are untouched
   (`world-spec-stability.md`: decorations are free fields).

@@ -6,7 +6,7 @@ const state: CellState = "completed"
 const empty: GridCell = { type: "empty" }
 const corridor = (dirs: Direction[]): GridCell => ({ type: "corridor", dirs: new Set(dirs), state })
 
-// The carve dresses every room; the map stands a prop only on an empty cell the room claims.
+// The map stands a prop only on an empty cell the room claims.
 describe("where a dressed room's prop stands", () => {
   it("stands nothing for a room that claims no floor, though the carve dressed it", () => {
     const puzzle: GridCell = {

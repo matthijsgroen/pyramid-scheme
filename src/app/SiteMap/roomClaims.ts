@@ -1,5 +1,5 @@
 import type { DecorationKind, Direction, FloorGrid, GridCell, RoomCell } from "@/game/siteTypes"
-import { cellAt, isClaimableNeighbor } from "@/game/roomFootprint"
+import { cellAt, isChamber, isClaimableNeighbor } from "@/game/roomFootprint"
 import { DIR_MOVES, OPPOSITE_DIR } from "./corridorRuns"
 import { buildTileRegions, type FloorAt, type Rect, type TileRegions } from "./tileRegions"
 import { CELL, SIDE_W } from "./mapScale"
@@ -20,13 +20,10 @@ import type { Difficulty } from "@/data/difficultyLevels"
 // sprite-tile renderer needs to tile cleanly (see
 // docs/game-design/spritesheet-renderer-prep.md). Purely derived at render time from
 // the existing grid — no generation-side bookkeeping.
-const canClaimVoid = (grid: FloorGrid, r: number, c: number, cell: RoomCell): boolean => {
+const canClaimVoid = (grid: FloorGrid, r: number, c: number, cell: RoomCell): boolean =>
   // EVERY junction absorbs the void around it, whatever stands in it — the footprint is the room type's
   // and not the marker's, so a junction carrying a board is shaped like the junction it is.
-  if (cell.roomType === "fork") return true
-  const kind = shapeKindFor(grid, r, c, cell)
-  return (kind === "treasure" || kind === "stairhead" || kind === "exit") && cell.dirs.size === 1
-}
+  isChamber(cell, shapeKindFor(grid, r, c, cell))
 
 const ORTHO_OFFSETS: ReadonlyArray<readonly [number, number]> = [
   [-1, 0],

@@ -1,4 +1,4 @@
-import { ACTIVITIES, FILLER } from "./activities"
+import { ACTIVITIES, FILLER, activitiesFor } from "./activities"
 import type { DecorationKind, WallDecorationKind } from "./siteTypes"
 
 /**
@@ -69,3 +69,17 @@ export const WALL_ITEM_ROLES: Partial<Record<WallDecorationKind, readonly string
 /** The purposes a kind serves, or `undefined` for one that fits anywhere. */
 export const rolesOfProp = (kind: DecorationKind): readonly string[] | undefined => PROP_ROLES[kind]
 export const rolesOfWallItem = (kind: WallDecorationKind): readonly string[] | undefined => WALL_ITEM_ROLES[kind]
+
+const PROP_PLACES: ReadonlySet<string> = new Set(Object.values(PROP_ROLES).flatMap(roles => roles ?? []))
+
+/**
+ * The activities a room may serve: those its pool furnishes, and of those only the ones its wing's role is
+ * a place for — a funerary wing holding an offering table is not a market. A role no kind furnishes
+ * (`puzzle`, the default for a room no author placed, or one a mod invents) names no place, so it narrows
+ * nothing, as it narrows nothing in world-gen's pools.
+ */
+export const activitiesServing = (pool: readonly DecorationKind[], role: string | readonly string[] | undefined) => {
+  const furnished = activitiesFor(pool)
+  const places = (role === undefined ? [] : typeof role === "string" ? [role] : role).filter(r => PROP_PLACES.has(r))
+  return places.length === 0 ? furnished : furnished.filter(activity => activity.roles.some(r => places.includes(r)))
+}

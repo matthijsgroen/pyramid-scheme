@@ -3,11 +3,11 @@
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development. Steps use checkbox
 > (`- [ ]`) syntax for tracking.
 
-**Goal:** every room with free cells is dressed by ONE purpose, and the ordinary room's purpose is an activity
+**Goal:** every chamber (a fork, a dead-end stairhead or exit) is dressed by ONE purpose, and the ordinary room's purpose is an activity
 (weighing, packing, storage, selling, ledger) whose props and wall item agree.
 
 **Architecture:** one `ACTIVITIES` table in `src/game/` with `PROP_ROLES` derived from it; `carve/render.ts`
-picks a purpose per room by precedence and writes the room's `activity` beside its `decoration`; the app's
+picks a purpose per chamber by precedence and writes the room's `activity` beside its `decoration`; the app's
 companion rule reads that `activity`. Story rooms author their activity on the node selector.
 
 **Tech stack:** TypeScript, Vitest. `yarn verify` is the gate; `yarn verify-content` after C4.
@@ -42,6 +42,15 @@ companion rule reads that `activity`. Story rooms author their activity on the n
 6. **A room with no eligible activity** (a funerary wing) keeps today's pick: any kind from the pool, wall
    narrowed by `wallSuiting`.
 7. **An activity with no wall item** (packing, selling) hangs nothing.
+8. **Only chambers are dressed.** A puzzle node is a stop in a 1-wide corridor, so a prop recorded on it is one
+   nobody sees. The carve dresses exactly the rooms the map claims floor for: forks, and dead-end (one-way-in)
+   stairheads and exits — `isChamber` in `src/game/roomFootprint.ts`, which the map's `canClaimVoid` also
+   calls. Treasure/shop and mechanism rooms are chambers that stay bare (decision 5); the entrance claims no
+   floor.
+9. **An activity matches its wing's role.** The section's authored `role` reaches the carve on
+   `labels.dressing` beside the pools (a free field), and an activity is eligible only where its roles meet it
+   (`activitiesServing` in `dressingTags.ts`). No role, or one no kind furnishes (`puzzle`), leaves pool-only
+   eligibility.
 
 ---
 
@@ -99,7 +108,7 @@ export const ACTIVITIES: readonly Activity[] = [
       differ: do NOT re-bake here, C4 does. If a world spec fails on the artifact, note it for C4.
 - [ ] Step 6: commit `feat: activity table, PROP_ROLES derived from it, six new prop kinds`
 
-### Task C2: the carve dresses every room by purpose
+### Task C2: the carve dresses every chamber by purpose
 
 **Files:**
 
@@ -109,9 +118,9 @@ export const ACTIVITIES: readonly Activity[] = [
 - Modify: `docs/game-design/world-spec-stability.md` free list + its sweep in `worldFloorAssembly.spec` (`activity`)
 
 **Consumes:** `activitiesFor`, `ActivityId`, `RoomCell.activity` (C1). **Produces:** `RoomCell.activity` set on
-every activity-dressed room.
+every activity-dressed chamber.
 
-The new rule, replacing "forks and endpoints":
+The rule:
 
 ```ts
 // Purpose by precedence: story (C3) > mechanism > patron > treasure/shop > activity.
@@ -119,9 +128,9 @@ const isMechanism = (pk: string) =>
   state.switchRooms.has(pk) || state.forkSwitchRooms.has(pk) || state.forks.reserved.includes(pk) ||
   !!spec?.mechanism || !!spec?.mechanismId || spec?.requiredKeyId !== undefined || spec?.gateVariant !== undefined
 const isTreasureLike = spec.roomType === "encounter" && (spec.tags?.includes("treasure") || spec.tags?.includes("shop"))
-// every room in roomSpecs is a candidate; mechanism and treasure-like rooms are skipped,
-// patron rooms keep today's god pick, the rest:
-const eligible = activitiesFor(pools?.props ?? [])
+// every chamber (isChamber) is a candidate; mechanism and treasure-like rooms are skipped,
+// patron rooms keep the god pick, the rest:
+const eligible = activitiesServing(pools?.props ?? [], pools?.role)
 const activity = eligible.length ? eligible[hashString(`${siteId}:activity:${pk}`) % eligible.length] : undefined
 const propPool = activity ? pools.props.filter(k => activity.props.includes(k)) : pools?.props
 const wallPool = activity ? pools?.wall?.filter(k => activity.wall.includes(k)) : wallSuiting(pools.wall, decoration)
@@ -133,7 +142,10 @@ claimed cells) — keep it that way; a room with no empty claim simply draws not
 
 - [ ] Step 1: failing specs, each on a made-up floor with pools `{ props: ["shelf", "jarRack", "rubblePile"],
       wall: ["niche", "tallyBoard", "sconce"] }`:
-  - an ordinary puzzle room (not fork, not endpoint) gets a `decoration` and an `activity`.
+  - a junction gets a `decoration` and an `activity`; a puzzle room in the corridor and the entrance get
+    neither; a stairhead is dressed.
+  - a funerary-role section whose pool holds offeringTable + hanging gets no activity and dresses by decision
+    6; a trade-role one gets selling or storage.
   - the decoration is one of the chosen activity's props; the wall item is one of its wall items or absent.
   - a treasure room, a switch fork and a gate room get no `decoration` and no `activity`.
   - the patron room still gets the god's kind (existing spec keeps passing).
@@ -143,7 +155,8 @@ claimed cells) — keep it that way; a room with no empty claim simply draws not
 - [ ] Step 3: implement in `render.ts`; update the DRESSING comment to the new rule.
 - [ ] Step 4: `activity` onto the free-field list + sweep; `yarn verify` → green except artifact-backed specs,
       which C4 re-bakes.
-- [ ] Step 5: commit `feat: every room dressed by one purpose, ordinary rooms by an activity`
+- [ ] Step 5: commit `feat: every room dressed by one purpose, ordinary rooms by an activity`, then
+      `fix: only chambers are dressed, and an activity matches its wing's role`
 
 ### Task C2b: the companion comes from the room's activity
 
@@ -182,19 +195,22 @@ returning `Record<number, ActivityId>`), the path `encountersByIndex` takes into
       `decorations`, `wallDecorations` and node `activity` stripped — must be identical. Save identity (authoring
       address + slot) is untouched by construction; say so with the diff as evidence.
 - [ ] Step 4: `yarn verify` and `yarn verify-content` green; look at a starter floor in the A2 story and in the
-      game (screenshot) — every room furnished, no prop on a node, no prop in a treasure room.
-- [ ] Step 5: commit `chore: re-bake the world for themed rooms`; CHANGELOG `## Unreleased` one line.
+      game (screenshot) — every chamber furnished, no prop on a node, no prop in a treasure room.
+- [ ] Step 5: re-measure visible props per starter floor on a fresh assembly: rooms the carve dressed against
+      rooms the map stands a prop in (`buildRoomClaims(grid).decorationAt`); the two differ only by chambers
+      with no empty claimed cell.
+- [ ] Step 6: commit `chore: re-bake the world for themed rooms`; CHANGELOG `## Unreleased` one line.
 
 ## Review focus
 
-1. **Entrance and stairhead rooms** now dress — the explorer's start room must not get a prop on its node cell
-   or in front of the stair sprite (the pit rule covers only pits). Add to C2: a stairhead room's decoration is
-   never `pit`, and nothing is placed on the stair's own cell.
+1. **Stairhead rooms** dress, the entrance does not — nothing may stand in front of the stair sprite (the pit
+   rule covers only pits). C2 covers it: a stairhead room's decoration is never `pit`, and nothing is placed on
+   the stair's own cell.
 2. **A one-cell room** (no empty claim) — dressing it in the carve is harmless only because `roomClaims` drops
    the prop; C2's spec asserts the carve still records the decoration and the claims place nothing.
-3. **Wall-item monotony** — with every room dressed, one wall item can fill most rooms (the 19-of-97 measure in
+3. **Wall-item monotony** — with every chamber dressed, one wall item can fill most rooms (the 19-of-97 measure in
    `companionProps.ts`). C4 Step 4 counts wall items per starter floor and reports the top share.
-4. **Ward pockets** dress in their own rank's pool (exists): C2's spec includes a room whose `labels.dressing`
+4. **Ward pockets** dress in their own rank's pool (exists): C2's spec includes a chamber whose `labels.dressing`
    pool differs from the floor's and checks its activity comes from its own pool.
 5. **Patron rooms on a trade floor**: precedence keeps the god's room; the spec for decision 5 must not skip
    patron rooms that are also forks with a switch — mechanism wins (precedence 2 over 3).
