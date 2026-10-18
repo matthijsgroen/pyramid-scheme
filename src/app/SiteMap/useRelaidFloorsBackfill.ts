@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react"
 import type { JourneyAPI } from "@/app/state/useJourneys"
-import { RELAID_PYRAMIDS, standsInRelaidPyramid, type RelaidPyramid } from "./relaidPyramids"
+import { RELAID_PYRAMIDS, relaidLevelsOf, standsInRelaidPyramid, type RelaidPyramid } from "./relaidPyramids"
 
 /**
  * Forgets where a save stands when a release has re-laid the pyramid it stands in, once per save, on the first launch
@@ -18,6 +18,7 @@ export const useRelaidFloorsBackfill = (
     const outstanding = journeys.journeysNeedingRelaidFloors()
     if (!outstanding.length) return
     done.current = true
-    for (const stored of outstanding) journeys.setRelaidFloors(stored.journeyId, standsInRelaidPyramid(stored, relaid))
+    for (const stored of outstanding)
+      journeys.setRelaidFloors(stored.journeyId, standsInRelaidPyramid(stored, relaid), relaidLevelsOf(stored, relaid))
   }, [journeys, relaid])
 }

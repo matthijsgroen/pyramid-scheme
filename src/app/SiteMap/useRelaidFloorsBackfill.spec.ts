@@ -29,10 +29,21 @@ describe("useRelaidFloorsBackfill", () => {
 
     renderHook(() => useRelaidFloorsBackfill(journeys, RELAID))
 
-    expect(journeys.setRelaidFloors.mock.calls).toEqual([
+    expect(journeys.setRelaidFloors.mock.calls.map(([id, resume]) => [id, resume])).toEqual([
       ["made_up", true],
       ["made_up", false],
       ["other", false],
+    ])
+  })
+
+  it("forgets the position a save remembers in a re-laid pyramid, wherever the save stands", () => {
+    const journeys = fakeJourneys([save("made_up", 3), save("other", 2)])
+
+    renderHook(() => useRelaidFloorsBackfill(journeys, RELAID))
+
+    expect(journeys.setRelaidFloors.mock.calls.map(([id, , levels]) => [id, levels])).toEqual([
+      ["made_up", [2]],
+      ["other", []],
     ])
   })
 
