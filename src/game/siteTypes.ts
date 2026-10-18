@@ -7,6 +7,7 @@ import type { CarveFault } from "./carveAgreement"
 import type { GateFace } from "./gateFace"
 import type { LockNesting, LockNestingFault, PlacedLock } from "./floorLocks"
 import type { LockFault, RealisationBinding } from "./lockCompile"
+import type { ActivityId } from "./activities"
 export type RoomType = "portal" | "fork" | "encounter"
 // OPEN reward vocabulary (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1):
 // core enumerates no reward/currency id. A reward is a `type` tag plus arbitrary payload fields the
@@ -118,6 +119,12 @@ export const DECORATION_KINDS = [
   "shrine",
   "crystal",
   "mat",
+  "scale",
+  "weightsTable",
+  "basketStack",
+  "bales",
+  "counter",
+  "scribeDesk",
 ] as const
 export type DecorationKind = (typeof DECORATION_KINDS)[number]
 // What hangs ON a wall, drawn into a cell's face band rather than standing on its floor. Its own
@@ -262,6 +269,9 @@ export type RoomCell = {
   stairId?: string
   decoration?: DecorationKind
   wallDecoration?: WallDecorationKind
+  /** What the room is for (activities.ts): its props and wall item come from this activity. Unset on a
+   * room some other purpose has, or on a rank whose pool furnishes no activity. */
+  activity?: ActivityId
   /**
    * THE GOD'S ROOM on a dedicated floor: the biggest chamber, dressed with a statue of him and paired.
    *

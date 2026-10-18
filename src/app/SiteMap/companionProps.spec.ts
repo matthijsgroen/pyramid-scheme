@@ -14,10 +14,10 @@ const first = (free: readonly string[]) => free[0]
 
 describe("companionsFor", () => {
   it("offers only kinds that share a purpose with the leader", () => {
-    // offeringTable is trade/funerary/judgement; shelf is trade; basin is water/agriculture.
+    // offeringTable is trade/shop/funerary/judgement; shelf is trade; crystal is cosmos/sky/light.
     const options = companionsFor("offeringTable", all)
     expect(options).toContain("shelf")
-    expect(options).not.toContain("basin")
+    expect(options).not.toContain("crystal")
   })
 
   it("never offers the leader again", () => {

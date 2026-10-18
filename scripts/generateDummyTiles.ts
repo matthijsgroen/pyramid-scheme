@@ -54,6 +54,12 @@ type Kind =
   | "shrine"
   | "crystal"
   | "mat"
+  | "scale"
+  | "weightsTable"
+  | "basketStack"
+  | "bales"
+  | "counter"
+  | "scribeDesk"
   | "sand"
 
 // Every kind for every tier. A real art pass draws only what a rank's pool authors — a tier with no
@@ -86,6 +92,12 @@ const ALL_KINDS: Kind[] = [
   "shrine",
   "crystal",
   "mat",
+  "scale",
+  "weightsTable",
+  "basketStack",
+  "bales",
+  "counter",
+  "scribeDesk",
 ]
 
 // Deterministic jitter — the same tier always rasterises to the same bytes.
@@ -309,6 +321,42 @@ const shapes: Record<Kind, (p: Palette) => string> = {
     <rect x="10" y="${BASE - 13}" width="36" height="10" fill="${p.prop}"/>
     ${[14, 22, 30, 38].map(x => `<rect x="${x}" y="${BASE - 13}" width="2" height="10" fill="${p.propDark}"/>`).join("")}
     <rect x="6" y="${BASE - 16}" width="44" height="2" fill="${p.accent}" opacity="0.7"/>`,
+  // The activity props (docs/game-design/themed-rooms.md). Stand-ins only: each is told apart by
+  // silhouette until its rank paints it.
+  scale: p => `
+    <rect x="16" y="${BASE - 6}" width="24" height="6" fill="${p.propDark}"/>
+    <rect x="26" y="${BASE - 40}" width="4" height="34" fill="${p.propDark}"/>
+    <rect x="10" y="${BASE - 40}" width="36" height="3" fill="${p.prop}"/>
+    <path d="M 6 ${BASE - 24} L 18 ${BASE - 24} L 12 ${BASE - 37} Z" fill="${p.accent}"/>
+    <path d="M 38 ${BASE - 24} L 50 ${BASE - 24} L 44 ${BASE - 37} Z" fill="${p.accent}"/>`,
+  weightsTable: p => `
+    <rect x="6" y="${BASE - 20}" width="44" height="5" fill="${p.prop}"/>
+    <rect x="9" y="${BASE - 15}" width="4" height="15" fill="${p.propDark}"/>
+    <rect x="43" y="${BASE - 15}" width="4" height="15" fill="${p.propDark}"/>
+    <rect x="12" y="${BASE - 28}" width="10" height="8" fill="${p.accent}"/>
+    <rect x="25" y="${BASE - 26}" width="8" height="6" fill="${p.accent}"/>
+    <rect x="36" y="${BASE - 24}" width="6" height="4" fill="${p.accent}"/>`,
+  basketStack: p => `
+    <rect x="8" y="${BASE - 18}" width="20" height="18" fill="${p.prop}"/>
+    <rect x="28" y="${BASE - 18}" width="20" height="18" fill="${p.propDark}"/>
+    <rect x="18" y="${BASE - 34}" width="20" height="16" fill="${p.prop}"/>
+    ${[8, 28].map(x => `<rect x="${x}" y="${BASE - 10}" width="20" height="2" fill="${p.accent}" opacity="0.7"/>`).join("")}`,
+  bales: p => `
+    <rect x="6" y="${BASE - 16}" width="22" height="16" fill="${p.prop}"/>
+    <rect x="28" y="${BASE - 16}" width="22" height="16" fill="${p.prop}"/>
+    <rect x="16" y="${BASE - 30}" width="24" height="14" fill="${p.propDark}"/>
+    ${[16, 38, 27].map(x => `<rect x="${x}" y="${BASE - 30}" width="2" height="30" fill="${p.accent}" opacity="0.6"/>`).join("")}`,
+  counter: p => `
+    <rect x="4" y="${BASE - 22}" width="48" height="22" fill="${p.propDark}"/>
+    <rect x="2" y="${BASE - 26}" width="52" height="4" fill="${p.prop}"/>
+    <rect x="8" y="${BASE - 16}" width="40" height="3" fill="${p.accent}" opacity="0.7"/>
+    <ellipse cx="18" cy="${BASE - 29}" rx="5" ry="3" fill="${p.accent}"/>
+    <ellipse cx="36" cy="${BASE - 29}" rx="5" ry="3" fill="${p.accent}"/>`,
+  scribeDesk: p => `
+    <rect x="10" y="${BASE - 18}" width="36" height="18" fill="${p.propDark}"/>
+    <path d="M 8 ${BASE - 18} L 48 ${BASE - 18} L 44 ${BASE - 26} L 12 ${BASE - 26} Z" fill="${p.prop}"/>
+    <rect x="18" y="${BASE - 25}" width="18" height="6" fill="#efe6cf"/>
+    <rect x="40" y="${BASE - 34}" width="2" height="10" fill="${p.accent}"/>`,
   // Floor scatter, so it lies FLAT on the cell's floor line rather than standing up off it: a low
   // drift with a soft edge, wider than it is tall, and nothing above the line at all.
   sand: p => `
