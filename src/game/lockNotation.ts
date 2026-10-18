@@ -1,6 +1,14 @@
 // A LOCK WRITTEN AS TEXT, one line per join, read into the shared Lock type (lockAuthoring.ts). The
 // notation is LOCK_SYNTAX, which `yarn lock` also prints so nobody has to remember it.
-import { CARRY_TERMS, alignOf, barriersOf, isWeightOwner, joinOf, unladenFaults } from "./lockAuthoring"
+import {
+  CARRY_TERMS,
+  MAX_OUTSIDE_INPUTS,
+  alignOf,
+  barriersOf,
+  isWeightOwner,
+  joinOf,
+  unladenFaults,
+} from "./lockAuthoring"
 import type { Alignment, Lock, LockConnection, LockGate, LockMechanic, LockOneWay, Pipe } from "./lockAuthoring"
 import { PROCESSION_ROLE } from "./mechanics/sequence"
 import { TORCH_STATES } from "./mechanics/torch"
@@ -44,6 +52,10 @@ IN A REGION (items: placed @region)
   hall -[sluice:wet]            region gate: hall impassable unless sluice is wet
   hall *   s2 $   spare ?   corridor -     takes puzzles, a reward, anything, nothing
 
+FROM OFF THE FLOOR
+  A outside                     an outside input: held from elsewhere, never worked here; it only arrives, at any time
+  in -[A]- hall   hall -[A]     open once A is held; named bare, never A:state; at most three inputs to a lock
+
 COMMENTS
   // comment                    ignored to the end of the line; a lock's file opens with // designed by: name
 `.slice(1)
@@ -81,7 +93,11 @@ export const syntaxSections = (): SyntaxSection[] => {
 
 /** The words that place a control, by the mechanic they build. Typed on LockMechanic's kinds, so a control the
  * parser gains must be named here, and the spec holds LOCK_SYNTAX to mentioning each word. */
-export const CONTROL_WORDS: Record<LockMechanic["control"] | "plate" | "pipe" | typeof PROCESSION_ROLE, RegExp> = {
+export const CONTROL_WORDS: Record<
+  LockMechanic["control"] | "plate" | "pipe" | "outside" | typeof PROCESSION_ROLE,
+  RegExp
+> = {
+  outside: /\boutside\b/,
   toggle: /\btoggle\b/,
   activator: /\bactivator\b/,
   flame: /\btorch\b/,
@@ -245,6 +261,7 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
   const plates = new Map<string, { in: string; stone: boolean; n: number }>()
   const plateOpens = new Map<string, { weighted: string[]; empty: string[] }>()
   const pipes: { id: string; ends: [string, string]; stone: string | undefined; n: number }[] = []
+  const inputs = new Map<string, number>()
 
   const unique = (base: string) => {
     let id = base
@@ -291,7 +308,8 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
     })
     joins.push({ between: [from, to], barriers, align, n })
   }
-  const placed = (id: string) => declared.has(id) || plates.has(id) || pipes.some(pipe => pipe.id === id)
+  const placed = (id: string) =>
+    declared.has(id) || plates.has(id) || inputs.has(id) || pipes.some(pipe => pipe.id === id)
   const declare = (n: number, id: string, what: Declared) => {
     if (placed(id)) fail(n, `${id} is placed twice`)
     declared.set(id, what)
@@ -324,6 +342,9 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
       if (placed(m[1])) fail(n, `${m[1]} is placed twice`)
       if (m[3] && m[5]) fail(n, `a pipe holds one stone at a time: write stone after one hole of ${m[1]}`)
       pipes.push({ id: m[1], ends: [m[2], m[4]], stone: m[3] ? m[2] : m[5] ? m[4] : undefined, n })
+    } else if ((m = line.match(/^(\w+)\s+outside$/))) {
+      if (placed(m[1])) fail(n, `${m[1]} is placed twice`)
+      inputs.set(m[1], n)
     } else if (/^\w+\s+pipe\b/.test(line)) {
       fail(n, "a pipe joins two regions: P pipe @hall @vault, stone after the hole holding one")
     } else if (/^\w+\s+stone\b/.test(line)) {
@@ -364,6 +385,13 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
     for (const { owner, state } of list) {
       if ((CARRY_TERMS as readonly string[]).includes(owner)) {
         if (stones === 0) fail(n, `${owner} asks about stones, and the lock has none`)
+        continue
+      }
+      // AN INPUT IS NAMED BARE: `A:off` would open while it is missing and shut when it arrives, so a lever pulled
+      // elsewhere would be a loss.
+      if (inputs.has(owner)) {
+        if (state !== undefined)
+          refused.push(`line ${n}: outsideState: an outside input is named bare, and ${id} names ${owner}:${state}`)
         continue
       }
       if (pipe?.id === owner) {
@@ -485,6 +513,14 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
     }
   }
 
+  for (const [id, n] of inputs)
+    if (!Object.values(gates).some(gate => gate.owners.includes(id))) refused.push(`line ${n}: ${id} owns no gate`)
+  // Each input doubles the states the walk holds.
+  for (const [id, n] of [...inputs].slice(MAX_OUTSIDE_INPUTS))
+    refused.push(
+      `line ${n}: outsideTooMany: a lock carries at most ${MAX_OUTSIDE_INPUTS} outside inputs, and ${id} is one more`
+    )
+
   const connections: LockConnection[] = joins.map(j =>
     j.barriers.length > 0
       ? { between: j.between, barriers: j.barriers, ...(Object.keys(j.align).length > 0 ? { align: j.align } : {}) }
@@ -501,6 +537,7 @@ export const parseLock = (text: string, name = "lock"): ParsedLock => {
     in: "in",
     out: "out",
     ...(spots.length > 0 ? { nestSpot: { from: spots[0].from, to: spots[0].to } } : {}),
+    ...(inputs.size > 0 ? { inputs: [...inputs.keys()] } : {}),
   }
   // A door folds only the owners some position names, so a gate no arrangement opens would let its
   // other owners open it alone in play, while the walk keeps it shut.

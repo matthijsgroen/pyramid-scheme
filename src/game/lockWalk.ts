@@ -61,7 +61,32 @@ export type LockSpec = {
   torches?: { mechanism: MechanismId; coveredBy: GateId[] }[]
   /** Regions that are only a way across, a door's own node: nothing stands on one, so it is never lost. */
   crossings?: RegionId[]
+  /** MOVES MADE OFF THE FLOOR: an outside input (`outsideInput`) goes from `from` to `to` wherever the player stands,
+   * so the walk offers it from every state. A key held from elsewhere only ever arrives. */
+  arrivals?: { mechanism: MechanismId; from: StateId; to: StateId }[]
 }
+
+/** An outside input's two states: it starts missing and, once arrived, is held for good. */
+export const INPUT_MISSING = "missing"
+export const INPUT_HELD = "held"
+
+/** An outside input opening `gates` once held, and the arrival that is its one move. Nothing on the floor works it. */
+export const outsideInput = (
+  id: MechanismId,
+  gates: GateId[]
+): { mechanism: Mechanism; arrival: NonNullable<LockSpec["arrivals"]>[number] } => ({
+  mechanism: {
+    states: [INPUT_MISSING, INPUT_HELD],
+    initial: INPUT_MISSING,
+    opens: { [INPUT_MISSING]: [], [INPUT_HELD]: gates },
+    transitions: [],
+  },
+  arrival: { mechanism: id, from: INPUT_MISSING, to: INPUT_HELD },
+})
+
+/** `reentry`: the player may leave from any state and come back at the way in, every mechanism as they left it
+ * (docs/instructions/sand-pyramid.md, "Coming back at the entrance"). Off unless asked for. */
+export type WalkOptions = { reentry?: boolean }
 
 // EVERY ID IN A LOCK IS A REFERENCE INTO ANOTHER TABLE, and a misspelled one is the failure that does
 // not announce itself: the branch behind it is unreachable for ever and the walk below would report
@@ -127,6 +152,13 @@ export const checkLockSpec = (spec: LockSpec): string | undefined => {
         return `torch ${mechanism} has a move other than lighting it: ${from} to ${to}`
     for (const gate of coveredBy) if (!spec.gates[gate]) return `torch ${mechanism} is covered by no such gate: ${gate}`
   }
+
+  for (const { mechanism, from, to } of spec.arrivals ?? []) {
+    const arriving = spec.mechanisms[mechanism]
+    if (!arriving) return `an arrival names no mechanism: ${mechanism}`
+    if (!arriving.states.includes(from)) return `${mechanism} arrives from a state it does not have: ${from}`
+    if (!arriving.states.includes(to)) return `${mechanism} arrives in a state it does not have: ${to}`
+  }
   return undefined
 }
 
@@ -189,6 +221,10 @@ const stateKey = (ids: readonly MechanismId[], state: LockState): string =>
 // Reaching another floor means reaching the staircase. So this is the move that makes shutting your
 // own way back after passing the staircase a state rather than an argument, and it is NOT an escape
 // from a chamber a mechanism has sealed.
+//
+// The fifth is an arrival: an outside input held from elsewhere, offered from every state wherever the player stands,
+// so every order of arrival at every point of play is a path of the walk. The player does not move, so it works no
+// entry; what it opens may uncover a region, and the douse after it sees that.
 // Every move ends with the douse: a move, the entries its arrival works, then the torches a flood puts out.
 const movesFrom = (spec: LockSpec, state: LockState): LockState[] => {
   const { region, config } = state
@@ -212,6 +248,8 @@ const movesFrom = (spec: LockSpec, state: LockState): LockState[] => {
       if (transition.at === region && config[id] === transition.from)
         moves.push({ region, config: { ...config, [id]: transition.to }, walked: true })
   if (region === spec.out && handsEmpty(spec, config)) moves.push({ region: spec.in, config, walked: false })
+  for (const { mechanism, from, to } of spec.arrivals ?? [])
+    if (config[mechanism] === from) moves.push({ region, config: { ...config, [mechanism]: to }, walked: false })
 
   return moves.map(({ walked, ...move }) => {
     const arrived = walked
@@ -254,36 +292,43 @@ export const leaving = (spec: LockSpec, from: RegionId, arrived: LockState): Loc
 // order, so the first failure found later is also the shortest one to describe. `edges` is kept
 // because the second question walks the same graph backwards and re-deriving the moves would be the
 // same work twice.
+//
+// RE-ENTRY ADDS STATES, NEVER ESCAPES. With `reentry`, every state also leads to the way in with the same config, as
+// coming back from the travel map does: those states are walked like any other, but the move is kept out of `edges`,
+// so the backward sweeps for strands and lost regions never use it. A chamber a mechanism sealed is still a strand.
 export const reachableStates = (
   spec: LockSpec,
-  maxStates = MAX_LOCK_STATES
+  maxStates = MAX_LOCK_STATES,
+  { reentry = false }: WalkOptions = {}
 ): { order: LockState[]; edges: number[][] } | "tooLarge" => {
   const ids = Object.keys(spec.mechanisms).sort()
   const ceiling = spec.regions.length * ids.reduce((n, id) => n * spec.mechanisms[id].states.length, 1)
   if (ceiling > maxStates) return "tooLarge"
 
   // The floor's entrance comes before the lock, so arriving in the way in is an entry like any other.
-  const arrived = entering(spec, undefined, {
-    region: spec.in,
-    config: Object.fromEntries(ids.map(id => [id, spec.mechanisms[id].initial])),
-  })
-  const start: LockState = { region: spec.in, config: dousedConfig(spec, arrived.config) }
+  const atEntrance = (config: LockConfig): LockState => {
+    const arrived = entering(spec, undefined, { region: spec.in, config })
+    return { region: spec.in, config: dousedConfig(spec, arrived.config) }
+  }
+  const start = atEntrance(Object.fromEntries(ids.map(id => [id, spec.mechanisms[id].initial])))
   const index = new Map<string, number>([[stateKey(ids, start), 0]])
   const order: LockState[] = [start]
   const edges: number[][] = [[]]
+  const indexOf = (state: LockState): number => {
+    const key = stateKey(ids, state)
+    let found = index.get(key)
+    if (found === undefined) {
+      found = order.length
+      index.set(key, found)
+      order.push(state)
+      edges.push([])
+    }
+    return found
+  }
 
   for (let at = 0; at < order.length; at++) {
-    for (const move of movesFrom(spec, order[at])) {
-      const key = stateKey(ids, move)
-      let to = index.get(key)
-      if (to === undefined) {
-        to = order.length
-        index.set(key, to)
-        order.push(move)
-        edges.push([])
-      }
-      edges[at].push(to)
-    }
+    for (const move of movesFrom(spec, order[at])) edges[at].push(indexOf(move))
+    if (reentry) indexOf(atEntrance(order[at].config))
   }
 
   return { order, edges }
@@ -304,11 +349,11 @@ export type LockWalkResult = { sound: true; states: number } | { sound: false; f
 // at the way out; and does EVERY reachable state still reach it. The second is strictly stronger than
 // the permissive bracket over the same floor: that one answers whether a reward is ever obtainable,
 // which is no comfort to a player who cannot reach it by any legal sequence of moves.
-export const walkLock = (spec: LockSpec, maxStates = MAX_LOCK_STATES): LockWalkResult => {
+export const walkLock = (spec: LockSpec, maxStates = MAX_LOCK_STATES, options: WalkOptions = {}): LockWalkResult => {
   const problem = checkLockSpec(spec)
   if (problem) return { sound: false, failure: { type: "malformed", problem } }
 
-  const found = reachableStates(spec, maxStates)
+  const found = reachableStates(spec, maxStates, options)
   if (found === "tooLarge") return { sound: false, failure: { type: "tooLarge" } }
   const { order, edges } = found
 
@@ -353,7 +398,8 @@ export const walkLock = (spec: LockSpec, maxStates = MAX_LOCK_STATES): LockWalkR
 // seals for good is gone for the rest of the game, and a hidden corridor or side path in it with it. Leaving and
 // coming back is one of the moves, so a region reached again only by re-entering at `in` is not lost. A mechanism
 // owned off the floor has no move here and never changes state, so it never loses a region: as in `deadRegions`,
-// what it does is the world's.
+// what it does is the world's. An outside input only arrives, and an arrival is a move like any other: a region
+// reached again once it has arrived is not lost.
 //
 // One backward sweep per region from the states standing in it; a reachable state outside the sweep has lost it.
 // The first such state is breadth-first, so the fewest moves from the start, as `strands` reports.
@@ -400,8 +446,8 @@ export const lostRegion = (
 //
 // REPORTS, and decides nothing — same contract as `strandedRegions` (game/regions.ts), one layer up
 // from the structural question that one asks.
-export const deadRegions = (spec: LockSpec): RegionId[] => {
-  const found = reachableStates(spec)
+export const deadRegions = (spec: LockSpec, options: WalkOptions = {}): RegionId[] => {
+  const found = reachableStates(spec, MAX_LOCK_STATES, options)
   if (found === "tooLarge") return []
   const stood = new Set(found.order.map(state => state.region))
   const onFloor = new Set(

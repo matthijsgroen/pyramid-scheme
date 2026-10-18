@@ -50,6 +50,7 @@ const MECHANISM_ORDER = [
   "narrow passage",
   "water/sand",
   "drop",
+  "outside input",
 ]
 
 /** The kinds of mechanism a lock is built from, in the author's words, each once. */
@@ -64,6 +65,7 @@ export const mechanismsOf = (lock: Lock): string[] => {
       isRegionGate(gate) ? ["water/sand"] : isUnladenGate(gate) ? ["narrow passage"] : []
     ),
     ...(Object.keys(lock.oneWays ?? {}).length > 0 ? ["drop"] : []),
+    ...((lock.inputs ?? []).length > 0 ? ["outside input"] : []),
   ])
   return MECHANISM_ORDER.filter(word => used.has(word))
 }

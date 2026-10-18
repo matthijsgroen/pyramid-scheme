@@ -8,7 +8,7 @@ import { walkSpecOf, needsFace, openAtStart, readable } from "./lockWalkSpec"
 import { unreachedRegions } from "./lockReview"
 import type { ParsedLock } from "./lockNotation"
 import { checkLock, describeLockFault } from "./lockCompile"
-import { isWeightOwner, nestSpotBusy, nestSpotOf } from "./lockAuthoring"
+import { isOutsideInput, isWeightOwner, nestSpotBusy, nestSpotOf } from "./lockAuthoring"
 import type { Lock } from "./lockAuthoring"
 
 /** The nest spot, or why it is ignored: a spot on a busy connection is no spot, and says so (D9). */
@@ -33,44 +33,89 @@ const controlRegions = (lock: Lock, owner: string): string[] => {
 }
 
 /**
- * The gates shut at the start whose door the player cannot reach before their control: from `in`, never entering
- * a region a control of the gate stands in, and never working one, no state stands beside the door. A lesson shows
- * the problem first, so this refuses one; on any other lock it is a warning. `tooLarge` when the lock cannot be walked.
+ * Where the player first stands beside each gate shut at the start that a control or an outside input owns, or
+ * undefined when its door cannot be reached before its control: from `in`, never entering a region a control of the
+ * gate stands in, and with none of its owners worked or arrived, no state stands beside the door. Other inputs may
+ * arrive on the way. `tooLarge` when the lock cannot be walked.
  */
-export const doorsSeenLate = (lock: Lock, spec: LockSpec): string[] | "tooLarge" => {
+const doorSightings = (lock: Lock, spec: LockSpec): Map<string, string | undefined> | "tooLarge" => {
   const found = reachableStates(spec)
   if (found === "tooLarge") return found
   const { order, edges } = found
   const open = new Set(openAtStart(lock))
-  return Object.entries(lock.gates)
-    .filter(([id, gate]) => !open.has(id) && gate.owners.some(owner => controlRegions(lock, owner).length > 0))
-    .flatMap(([id, gate]) => {
-      const forbidden = new Set(gate.owners.flatMap(owner => controlRegions(lock, owner)))
-      const hops = Object.entries(spec.gates).filter(([hop]) => hop === id || hop.startsWith(`${id}@`))
-      const owners = [...new Set(hops.flatMap(([, hop]) => hop.owners))]
-      const sides = new Set(hops.flatMap(([, hop]) => [hop.from, hop.to]))
-      const untouched = (n: number) => owners.every(owner => order[n].config[owner] === order[0].config[owner])
-      if (forbidden.has(order[0].region)) return [id]
-      const seen = new Set([0])
-      const queue = [0]
-      while (queue.length > 0) {
-        const at = queue.shift()!
-        if (sides.has(order[at].region)) return []
-        for (const to of edges[at]) {
-          if (seen.has(to) || forbidden.has(order[to].region) || !untouched(to)) continue
-          seen.add(to)
-          queue.push(to)
-        }
+  const sightings = new Map<string, string | undefined>()
+  for (const [id, gate] of Object.entries(lock.gates)) {
+    if (open.has(id)) continue
+    if (!gate.owners.some(owner => controlRegions(lock, owner).length > 0 || isOutsideInput(lock, owner))) continue
+    const forbidden = new Set(gate.owners.flatMap(owner => controlRegions(lock, owner)))
+    const hops = Object.entries(spec.gates).filter(([hop]) => hop === id || hop.startsWith(`${id}@`))
+    const owners = [...new Set(hops.flatMap(([, hop]) => hop.owners))]
+    const sides = new Set(hops.flatMap(([, hop]) => [hop.from, hop.to]))
+    const untouched = (n: number) => owners.every(owner => order[n].config[owner] === order[0].config[owner])
+    let seenAt: string | undefined
+    const seen = new Set([0])
+    const queue = forbidden.has(order[0].region) ? [] : [0]
+    while (queue.length > 0 && seenAt === undefined) {
+      const at = queue.shift()!
+      if (sides.has(order[at].region)) seenAt = order[at].region
+      for (const to of edges[at]) {
+        if (seen.has(to) || forbidden.has(order[to].region) || !untouched(to)) continue
+        seen.add(to)
+        queue.push(to)
       }
-      return [id]
-    })
+    }
+    sightings.set(id, seenAt)
+  }
+  return sightings
 }
 
-const doorLines = (late: string[] | "tooLarge", lesson: boolean): string[] => {
-  if (late === "tooLarge") return []
-  if (late.length === 0) return ["✓ every shut door is seen before its control"]
-  return [`${lesson ? "✗" : "⚠"} its control is reached before its door is seen: ${late.join(", ")}`]
+/**
+ * The gates shut at the start whose door the player cannot reach before their control (`doorSightings`). A lesson
+ * shows the problem first, so this refuses one; on any other lock it is a warning. `tooLarge` when the lock cannot
+ * be walked.
+ */
+export const doorsSeenLate = (lock: Lock, spec: LockSpec): string[] | "tooLarge" => {
+  const sightings = doorSightings(lock, spec)
+  if (sightings === "tooLarge") return sightings
+  return [...sightings].flatMap(([id, at]) => (at === undefined ? [id] : []))
 }
+
+const doorLines = (lock: Lock, sightings: Map<string, string | undefined> | "tooLarge", lesson: boolean): string[] => {
+  if (sightings === "tooLarge") return []
+  const inputs = lock.inputs ?? []
+  const late = [...sightings].flatMap(([id, at]) => (at === undefined ? [id] : []))
+  if (late.length === 0) {
+    // Each input by the first of its doors in the order written.
+    const seen = inputs.flatMap(input => {
+      const door = [...sightings].find(([id]) => lock.gates[id].owners.includes(input))
+      return door ? [`${input} at ${readable(door[1]!)}`] : []
+    })
+    return [`✓ every shut door is seen before its control${seen.length > 0 ? `: ${seen.join(", ")}` : ""}`]
+  }
+  const mark = lesson ? "✗" : "⚠"
+  // A door only inputs own has no control on the floor: it is late when it is reached only once they arrive.
+  const onlyInputs = (id: string) => lock.gates[id].owners.every(owner => isOutsideInput(lock, owner))
+  const controlled = late.filter(id => !onlyInputs(id))
+  const waiting = [
+    ...new Set(
+      late.filter(onlyInputs).map(id => {
+        const { owners, mode } = lock.gates[id]
+        const held = owners.join(mode === "any" ? " or " : " and ")
+        return `${mark} ${owners.join(", ")}: its door is reached only once ${held} ${owners.length > 1 && mode !== "any" ? "are" : "is"} held`
+      })
+    ),
+  ]
+  return [
+    ...(controlled.length > 0
+      ? [`${mark} its control is reached before its door is seen: ${controlled.join(", ")}`]
+      : []),
+    ...waiting,
+  ]
+}
+
+/** The outside inputs, which may arrive in any order: the walk holds every order. */
+const inputLines = (lock: Lock): string[] =>
+  (lock.inputs ?? []).length > 0 ? [`inputs: ${lock.inputs!.join(", ")}, arriving in any order`] : []
 
 /** The lock's pipe, by the regions its holes join. */
 const pipeLines = (lock: Lock): string[] =>
@@ -88,7 +133,8 @@ export const lockChecks = ({ lock, drafts, refused }: ParsedLock, { lesson = fal
   const open = openAtStart(lock)
   const faults = checkLock(lock)
   const compiles = faults.length === 0
-  const late = walked.sound ? doorsSeenLate(lock, spec) : "tooLarge"
+  const sightings = walked.sound ? doorSightings(lock, spec) : "tooLarge"
+  const late = sightings === "tooLarge" ? sightings : [...sightings.values()].filter(at => at === undefined)
   const checks = [
     ...refused.map(problem => `✗ ${problem}`),
     ...(drafts.length > 0 ? [`✗ not placed yet: ${drafts.join(", ")}`] : []),
@@ -101,8 +147,9 @@ export const lockChecks = ({ lock, drafts, refused }: ParsedLock, { lesson = fal
       : `✗ not solvable: ${readable(describeLockWalkFailure(walked.failure))}`,
     ...(deadEnd ? [`✗ a dead end: ${readable(describeLockWalkFailure(walked.failure))}`] : []),
     ...(lost ? [`✗ a region is lost: ${readable(describeLockWalkFailure(walked.failure))}`] : []),
+    ...inputLines(lock),
     `at the start ${open.length > 0 ? `these gates stand open: ${open.join(", ")}` : "no gate stands open"}`,
-    ...doorLines(late, lesson),
+    ...doorLines(lock, sightings, lesson),
     ...nestSpotLines(lock),
     ...pipeLines(lock),
     ...needsFace(lock).map(({ gate, owners }) => `${gate} shows what it waits for: ${owners.join(", ")}`),
