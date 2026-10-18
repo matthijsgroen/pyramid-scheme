@@ -194,6 +194,7 @@ const floorFieldEmitters: {
   barrierOrder: v => (v.length ? `barrierOrder: [${v.map(serializeObject).join(", ")}]` : null),
   locks: v => (v.length ? `locks: ${JSON.stringify(v)}` : null),
   realisations: v => `realisations: ${JSON.stringify(v)}`,
+  webDoors: v => (v.length ? `webDoors: ${JSON.stringify(v)}` : null),
   switches: v => `switches: ${serializeObject(v)}`,
 }
 

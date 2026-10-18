@@ -7,6 +7,7 @@ import type { CarveFault } from "./carveAgreement"
 import type { GateFace } from "./gateFace"
 import type { LockNesting, LockNestingFault, PlacedLock } from "./floorLocks"
 import type { LockFault, RealisationBinding } from "./lockCompile"
+import type { WebDoorPlacement } from "./webDoors"
 export type RoomType = "portal" | "fork" | "encounter"
 // OPEN reward vocabulary (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1):
 // core enumerates no reward/currency id. A reward is a `type` tag plus arbitrary payload fields the
@@ -623,6 +624,10 @@ export type FloorConfig = {
    * `regionLayout`, `obstacles`, `controls`, `forks` and `barrierOrder` where the floor is assembled, so a
    * floor authoring `locks` may not author those itself: the contradiction is refused by name. */
   locks?: PlacedLock[]
+  /** THE WEB'S DOORS ON GROUND NO LOCK OWNS, each asking for its `web:` key (src/game/webDoors.ts): laid on the
+   * finished carve, so they move no wall, and left off it where no registered mod realises web sand. Placed by the
+   * bake from the tier's web (docs/instructions/sand-pyramid.md). */
+  webDoors?: WebDoorPlacement[]
   /** WHICH REALISATION EACH CONTROL KIND OF THE FLOOR'S LOCKS IS DRESSED AS, by kind (`region-barrier` for barred regions), as the build resolved
    * them (floor over pyramid over journey over difficulty) and baked. The runtime reads this and never resolves from the levels. */
   realisations?: RealisationBinding
@@ -797,6 +802,9 @@ export type AssemblerReason =
   | { type: "forkSwitchSeamUngated"; id: string; between: [string, string] }
   | { type: "forkSwitchSeamGatedTwice"; id: string; between: [string, string] }
   | { type: "regionBarrierHoldsPort"; id: string; region: string; port: "in" | "out" }
+  /** A web door has no cell to stand in on the finished carve: `where` names the door, `why` what the carve has there
+   * instead (webDoors.ts). The bake moves the stop; a wall is never moved for it. */
+  | { type: "webDoorUnseated"; where: string; why: string }
   | { type: "mechanicStandsInBarredRegion"; id: string; region: string; barrier: string }
   | { type: "regionBarrierDropLands"; id: string; region: string; drop: string }
   | { type: "sequenceTooShort"; id: string }

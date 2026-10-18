@@ -7,6 +7,8 @@ import { isWeights } from "./obstacles"
 import { regionRoute } from "./regions"
 import type { Region } from "./regions"
 import type { AssemblerReason, FloorConfig } from "./siteTypes"
+import { laidLockOf, webLockGates } from "./webDoors"
+import type { PlacedLockWeb, WebLockGate } from "./webDoors"
 
 /**
  * A LOCK PLACED ON A FLOOR. `lock` is shared by reference between every floor that uses it; `as` names this
@@ -15,8 +17,11 @@ import type { AssemblerReason, FloorConfig } from "./siteTypes"
  *
  * `inside` splices the lock into the nest spot of another placement (`Lock.nestSpot`) instead of the floor's
  * sequence. Neither lock knows: the host is written exactly as it would be alone.
+ *
+ * `web` binds the lock's outside inputs to the web keys they wait for and names the owners a web's stops add, as the
+ * bake placed them (webDoors.ts). The lock itself stays as authored.
  */
-export type PlacedLock = { lock: Lock; as?: string; inside?: { instance: string } }
+export type PlacedLock = { lock: Lock; as?: string; inside?: { instance: string }; web?: PlacedLockWeb }
 
 /** A LOCK NESTED IN THE NEST SPOT OF ANOTHER, as the expansion leaves it for the floor's walk: the inner instance,
  * its host instance, and the inner's own regions and ports under their floor (namespaced) names. */
@@ -55,7 +60,13 @@ export type PlacedInstance = {
 }
 
 /** What `expandFloorLocks` hands back for a floor that places locks: the config the carve sees, and what the planner reads beside it. */
-export type ExpandedFloor = { config: FloorConfig; nesting?: LockNesting[]; placed?: PlacedInstance[] }
+export type ExpandedFloor = {
+  config: FloorConfig
+  nesting?: LockNesting[]
+  placed?: PlacedInstance[]
+  /** The gates a web key has a say in, which the finished carve is given (webDoors.ts). */
+  webGates?: WebLockGate[]
+}
 
 /** EVERY WAY A NESTING IS REFUSED, naming the host or instance to fix. Authored names. A spot that contradicts its
  * host is the host's own refusal (`nestSpotFaults`, compileLock), never a nesting's. */
@@ -239,11 +250,21 @@ export const expandFloorLocks = (
 
   const binding: RealisationBinding = config.realisations ?? {}
   const compiled: LockFragment[] = []
+  const webGates: WebLockGate[] = []
   for (const placed of placements) {
     const instance = instanceName(placed)
-    const result = compileLock(placed.lock, binding, { namespace: instance })
+    const lock = laidLockOf(placed.lock, placed.web)
+    if (!lock) {
+      reasons.push({ type: "webDoorUnseated", where: instance, why: "a stop lands on a corridor gated with |" })
+      continue
+    }
+    const result = compileLock(lock, binding, {
+      namespace: instance,
+      boundInputs: Object.keys(placed.web?.inputs ?? {}),
+    })
     if (result.ok) compiled.push(result.fragment)
     else for (const fault of result.faults) reasons.push({ type: "lockRefused", instance, fault })
+    if (placed.web) webGates.push(...webLockGates(lock, placed.web, instance))
   }
   if (reasons.length > 0) return { ok: false, reasons }
 
@@ -361,5 +382,6 @@ export const expandFloorLocks = (
     },
     ...(nesting.length > 0 ? { nesting } : {}),
     placed,
+    ...(webGates.length > 0 ? { webGates } : {}),
   }
 }

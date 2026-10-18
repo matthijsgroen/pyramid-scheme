@@ -116,6 +116,9 @@ export type CompileOptions = {
   kinds?: ResolveMechanicKind
   /** Prefixes every region, barrier and mechanic id, so a clone of one lock on a floor has names of its own. */
   namespace?: string
+  /** The outside inputs a web binds where the lock is placed: compiled as the rest of the lock, their doors the web's
+   * (webDoors.ts). An input left out is still refused as unbound. */
+  boundInputs?: readonly string[]
 }
 
 const looseOf = (mechanic: LockMechanic): LooseMechanic => mechanic
@@ -477,15 +480,16 @@ export const checkLock = (lock: Lock, kinds: ResolveMechanicKind = resolveMechan
  */
 export const compileLock = (lock: Lock, binding: RealisationBinding, options: CompileOptions = {}): CompileResult => {
   const kinds = options.kinds ?? resolveMechanicKind
+  const unbound = (lock.inputs ?? []).filter(input => !(options.boundInputs ?? []).includes(input))
   const faults = [
     ...checkLock(lock, kinds),
     ...unbakeableFaults(lock, kinds),
     ...unboundFaults(lock, binding, kinds),
     ...reboundFaults(lock, binding),
-    ...(lock.inputs?.length ? [{ type: "outsideUnbound" as const, inputs: [...lock.inputs] }] : []),
+    ...(unbound.length > 0 ? [{ type: "outsideUnbound" as const, inputs: unbound }] : []),
   ]
   if (faults.length > 0) return { ok: false, faults }
-  return { ok: true, fragment: translate(lock, binding, options.namespace, kinds) }
+  return { ok: true, fragment: translate(withoutInputs(lock), binding, options.namespace, kinds) }
 }
 
 /** A fault in one line, its type then the names it carries: `gateOwnedOffSeam id=in-out owner=Y`. */
