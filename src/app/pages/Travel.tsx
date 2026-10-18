@@ -24,6 +24,7 @@ import "@/mods/registerModApps" // populate the journey-card slot registry, as C
 import { availablePyramidJourneyIds, comingSoonDifficulty } from "./journeyAvailability"
 import { useMergedJourneyContributions } from "./journeyContributions"
 import { useJourneyArrival } from "@/app/fez/useJourneyArrival"
+import { isWebKey } from "@/game/floorLock"
 
 export const TravelPage: FC<{
   startGame: () => void
@@ -162,11 +163,17 @@ export const TravelPage: FC<{
 
   // Pyramids of the currently-shown journey that still hold unvisited content. Not gated on
   // `revisiting`: a pyramid you finished mid-journey is a completed node too, so its dot shows as
-  // soon as you move past it. JourneyPathView only draws the dot on completed nodes, so the pyramid
-  // you're currently in never lights.
-  const mapUnexploredNodes = journey
-    ? getUnexploredLevels(journey.id, heldKeys)
-    : (new Set<number>() as ReadonlySet<number>)
+  // soon as you move past it. The pyramid you're currently in lights only for what a web key pulled since
+  // it was saved opened there (a never-visited one has no save, so it cannot): its own open content is
+  // what you are about to play.
+  const mapUnexploredNodes = useMemo(() => {
+    if (!journey) return new Set<number>() as ReadonlySet<number>
+    const nodes = new Set(getUnexploredLevels(journey.id, heldKeys))
+    nodes.delete(pathLevelNr)
+    for (const level of getUnexploredLevels(journey.id, heldKeys, isWebKey)) if (level === pathLevelNr) nodes.add(level)
+    return nodes as ReadonlySet<number>
+  }, [journey, getUnexploredLevels, heldKeys, pathLevelNr])
+  const buriedNodes = journey ? journeyFacts.buried(journey.id) : undefined
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
@@ -238,6 +245,7 @@ export const TravelPage: FC<{
                 }
                 nudge={!journey && hasPendingLockProgress}
                 unexploredNodes={mapUnexploredNodes}
+                buriedNodes={buriedNodes}
               />
               {revisiting && (
                 <div className="mt-4 text-center text-sm">

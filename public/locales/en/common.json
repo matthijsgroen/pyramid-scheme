@@ -65,6 +65,7 @@
     "revisitExpedition": "Revisit — pick a pyramid",
     "revisitTomb": "Revisit — re-enter the tomb",
     "or": "Or",
+    "webPullsCleared": "{{pulled}} of {{total}} cleared",
     "selectAnotherExpedition": "Select another expedition",
     "interruptExpedition": "Interrupt expedition",
     "confirmInterruptExpedition": "Are you sure you want to interrupt this expedition? Journey progress will be kept, but level progress will be lost!",
@@ -1056,14 +1057,7 @@
       }
     },
     "events": {
-      "default": [
-        "the fire",
-        "the water carrying",
-        "the baking",
-        "the boat trip",
-        "the ox driving",
-        "the night watch"
-      ],
+      "default": ["the fire", "the water carrying", "the baking", "the boat trip", "the ox driving", "the night watch"],
       "funerary": [
         "the plastering",
         "the grid drawing",
@@ -1176,11 +1170,37 @@
     "hint": "Every sign must burn before this door will open.",
     "lit": "{{owner}}: lit",
     "unlit": "{{owner}}: not yet",
-    "owner": { "torch": "Torch", "handle": "Lever", "key": "Key", "plateStone": "A stone on a plate", "plateEmpty": "A plate left empty", "other": "Mechanism" },
+    "owner": {
+      "torch": "Torch",
+      "handle": "Lever",
+      "key": "Key",
+      "plateStone": "A stone on a plate",
+      "plateEmpty": "A plate left empty",
+      "other": "Mechanism"
+    },
     "orderHint": "Walk the tiles in this order.",
     "reset": "Start again",
     "spoiled": "The run is spoiled: a tile was walked out of order.",
-    "tile": { "unwalked": "Step {{step}}: not yet walked", "inOrder": "Step {{step}}: walked in order", "outOfOrder": "Step {{step}}: walked out of order" }
+    "tile": {
+      "unwalked": "Step {{step}}: not yet walked",
+      "inOrder": "Step {{step}}: walked in order",
+      "outOfOrder": "Step {{step}}: walked out of order"
+    }
   },
-  "devLockEditor": {"syntax":"Syntax","example":"Example","useExample":"Use example","title":"Lock editor","notation":"Lock notation","checks":"Checks","drawing":"Drawing","carveAndPlay":"Carve and play","copyLink":"Copy link","copied":"Link copied","failed":"Could not copy; the link is in the address bar","backToEditor":"← Editor","close":"Close","open":"Lock editor"}
+  "devLockEditor": {
+    "syntax": "Syntax",
+    "example": "Example",
+    "useExample": "Use example",
+    "title": "Lock editor",
+    "notation": "Lock notation",
+    "checks": "Checks",
+    "drawing": "Drawing",
+    "carveAndPlay": "Carve and play",
+    "copyLink": "Copy link",
+    "copied": "Link copied",
+    "failed": "Could not copy; the link is in the address bar",
+    "backToEditor": "← Editor",
+    "close": "Close",
+    "open": "Lock editor"
+  }
 }
