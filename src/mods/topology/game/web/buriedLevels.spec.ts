@@ -21,4 +21,12 @@ describe("buriedLevels", () => {
   it("opens it once the key is held", () => {
     expect(buriedLevels(sites, new Set(["web:moon#2"])).size).toBe(0)
   })
+
+  it("buries the pyramid whose main path waits for an owner a stop added inside a lock", () => {
+    const inLock = [
+      [{ locks: [{ web: { inputs: { W1: "web:moon#3", A: "web:sun" }, fronts: [{ input: "W1", region: "hall" }] } }] }],
+    ] as unknown as SiteConfig[]
+    expect([...buriedLevels(inLock, new Set(["web:sun"]))]).toEqual([1])
+    expect(buriedLevels(inLock, new Set(["web:moon#3"])).size).toBe(0)
+  })
 })

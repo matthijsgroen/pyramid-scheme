@@ -15,6 +15,11 @@ describe("journeyPulls", () => {
     expect(journeyPulls(sites, activators, { a: true, d: true })).toEqual({ pulled: 1, total: 3 })
   })
 
+  it("counts a pot whose stop landed inside a lock", () => {
+    const inLock = [[{ locks: [{ web: { inputs: { W1: "web:sun#1" } } }] }]] as unknown as SiteConfig[]
+    expect(journeyPulls(inLock, activators, { c: true })).toEqual({ pulled: 1, total: 2 })
+  })
+
   it("says nothing for a journey whose doors count in no pot", () => {
     const named = [[{ webDoors: [{ key: "web:moon", at: { seam: 1 } }] }]] as unknown as SiteConfig[]
     expect(journeyPulls(named, activators, {})).toBeUndefined()

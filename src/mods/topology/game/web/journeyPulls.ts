@@ -3,11 +3,17 @@ import type { ShippedActivator, WebPulled } from "@/game/webKeys"
 
 const POT_KEY = /^web:(.+)#\d+$/
 
-/** The pots a journey's web doors count in: the `<pot>` of every `web:<pot>#n` key its pyramids' doors ask for. */
-export const journeyPots = (sites: readonly SiteConfig[]): string[] => [
+/** The pots a journey's web doors count in: the `<pot>` of every `web:<pot>#n` key its pyramids' doors and lock
+ * inputs ask for. */
+const journeyPots = (sites: readonly SiteConfig[]): string[] => [
   ...new Set(
     sites.flatMap(site =>
-      site.flatMap(floor => (floor.webDoors ?? []).flatMap(door => POT_KEY.exec(door.key)?.slice(1, 2) ?? []))
+      site.flatMap(floor =>
+        [
+          ...(floor.webDoors ?? []).map(door => door.key),
+          ...(floor.locks ?? []).flatMap(placed => Object.values(placed.web?.inputs ?? {})),
+        ].flatMap(key => POT_KEY.exec(key)?.slice(1, 2) ?? [])
+      )
     )
   ),
 ]
