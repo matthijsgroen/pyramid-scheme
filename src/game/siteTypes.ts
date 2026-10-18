@@ -97,34 +97,45 @@ export const KEY_COLORS: readonly KeyColor[] = ["blue", "red", "green", "yellow"
 // tiles/<tier>/<kind>.png — which is what keeps a fifth rank from costing as much to draw as the
 // first (docs/game-design/spritesheet-renderer-prep.md, "Chamber props"). `basin` rather than
 // "fountain": Egypt had libation basins, ablution basins and temple lakes, not pressurised fountains.
-export type DecorationKind =
-  | "rubblePile"
-  | "pillar"
-  | "pit"
-  | "statue"
-  | "basin"
-  | "sarcophagus"
+export const DECORATION_KINDS = [
+  "rubblePile",
+  "pillar",
+  "pit",
+  "statue",
+  "basin",
+  "sarcophagus",
   // A CHEST MEANS TREASURE YOU CAN OPEN, so no rank's pool authors one as furniture. The kind stays
   // because the art does: a treasure room draws `tiles/<tier>/chestProp.png` beside its marker
   // (`NodeChest`). Put it back in a `decorations` pool and the map starts saying "you may open this
   // one and not that one" with the same picture.
-  | "chestProp"
-  | "offeringTable"
-  | "jarRack"
-  | "brazier"
-  | "lamp"
-  | "hanging"
-  | "shelf"
-  | "shrine"
-  | "crystal"
-  | "mat"
+  "chestProp",
+  "offeringTable",
+  "jarRack",
+  "brazier",
+  "lamp",
+  "hanging",
+  "shelf",
+  "shrine",
+  "crystal",
+  "mat",
+] as const
+export type DecorationKind = (typeof DECORATION_KINDS)[number]
 // What hangs ON a wall, drawn into a cell's face band rather than standing on its floor. Its own
 // vocabulary rather than a slice of DecorationKind: a stela is not a prop that could stand in the
 // middle of a chamber, and the two must not be confusable
 // (docs/game-design/spritesheet-renderer-prep.md, "Three things a tier dresses"). Resolved as
 // tiles/<tier>/<kind>.png at CELL x WALL_H — the band's own shape, not a square.
-export type WallDecorationKind =
-  "niche" | "stela" | "sconce" | "veil" | "starShaft" | "wallShrine" | "tallyBoard" | "mask"
+export const WALL_DECORATION_KINDS = [
+  "niche",
+  "stela",
+  "sconce",
+  "veil",
+  "starShaft",
+  "wallShrine",
+  "tallyBoard",
+  "mask",
+] as const
+export type WallDecorationKind = (typeof WALL_DECORATION_KINDS)[number]
 
 /**
  * Something that has got INTO a site and runs through the whole of it — water standing in the floors,
