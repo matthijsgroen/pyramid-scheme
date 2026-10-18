@@ -306,6 +306,644 @@ Even lighting left to right, no hotspot, no vignette.
 
 ---
 
+## Merchant props — fifteen, the light-rank rule
+
+Every starter prop and wall item again, for the repainted floor. [visual-direction.md](../game-design/visual-direction.md)
+§ Light and dark floors: on a light rank the props stand on the dark side of the floor, at least 25 L\* darker
+than `#d8c8a8` — saturated terracotta, timber, red ochre and turquoise, with a dark base. The current tiles
+clear the 25 on value but are the cellar's greys and buffs (C\* 8 to 26 against the floor's 21), so on the
+new floor they read as one beige band. Each block names its colours as hexes and forbids every pale material
+the old prompts asked for: whitewash, bleached linen, pale straw, buff clay.
+
+**Order: what the most rooms show first.** Storage and selling lead — shelf, the market table and its
+second drawing, jar rack, basin — because `themed-rooms.md` dresses every room from those activities. The
+two wall items follow (65 and 58 rooms in `art-census`), then the scatter that lands on every floor by
+rule (rubble, mat), then the rest by room count.
+
+**The import lines are rebuild.sh's, flags and all.** Brightness and saturation in them were measured
+against the cellar and are placeholders here, as the preamble says, until `yarn tile-stats` reads the
+return against the new floor.
+
+**Every scaffold here is drawn for the light rank** — timber `#9a6a3c` on magenta, its footprint the pale
+floor darkened — so the painter starts from an object already 29 L\* or more under the floor. Each is that
+entry's `scaffold` line rendered once with its shadow, for example
+`yarn render-prop --primitive=shelf --colour=#9a6a3c --floor=#d8c8a8 --out=$HOME/tile-previews/shelf-starter.png`;
+the shabti is `--mesh=art/masters/meshes/shabti.glb`. `starter-plain.png` is the top-left 1638 of
+`art/masters/surfaces/starter-floor.webp` scaled to 1024, the crop every `<tier>-plain.png` is. The
+tally board has no scaffold: it attaches its own master.
+
+### `starter/shelf` — red-ochre shelving, the merchant's pots and linen
+
+**Attach:**
+
+1. `~/tile-previews/shelf-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: mudbrick SHELVING with the merchant's stock in it. The frame with a shelf across its middle
+is the unit. In the upper opening stand two squat round-bellied storage JARS with short necks. In the
+lower one is a stack of FOLDED CLOTH at the left and a tall lidded BASKET at the right. Lying flat on the
+top course is a potsherd, an OSTRACON, with a few tally strokes on it.
+
+The shelving is mud plaster washed RED OCHRE #b8452c, deepened to #7e3a1a on its front faces and rubbed
+through to dark mudbrick #5e3a1e at the corners where shoulders catch it. The openings behind the stock
+are in deep shade #3a2a1c. The jars are fired terracotta #c0612f, darker #7e3a1a at the belly, one with a
+turquoise #2a9d8f glazed collar. The cloth is DYED, never plain linen: folded bands of red ochre and deep
+umber. The basket is woven palm fibre stained dark honey #9a6a3c with a #5e3a1e lid. The ostracon is
+terracotta with dark strokes.
+
+IT STANDS ON A PALE FLOOR AND MUST READ DARK ON IT. The floor is pale limestone, #d8c8a8. The object as a
+whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is lighter
+than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its base, its underside
+and every part nearest the floor are its darkest, deep umber #3a2a1c. Nothing on it is white, cream,
+bleached, pale straw or whitewash — a pale part vanishes into the floor.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A2A1C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold shelf
+yarn import-tile art/masters/props/starter/shelf.webp --tier=starter --name=shelf --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --saturation=1.45 --brightness=0.93
+```
+
+### `starter/offeringTable` — a market table with grain and a balance
+
+**Attach:**
+
+1. `~/tile-previews/market-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a merchant's MARKET TABLE. The flat slab on four legs is the TABLETOP. The big mound on the
+left of it is a heap of GRAIN. The upright post on the right with a beam across its top and a shallow pan
+hanging from each end is a BALANCE SCALE. The dark space under the tabletop is the shade under the table.
+
+The table is old timber, honey-brown #9a6a3c on its top, #5e3a1e on its front edge and legs, scuffed
+darker where goods are dragged. A band of red ochre #b8452c runs along the front edge, worn at the
+corners. The grain is warm golden-brown, its shadowed side #7e3a1a, never pale straw. The balance is dark
+wood with two copper-brown pans; a small turquoise #2a9d8f faience weight sits in one pan. The shade
+under the table is deep umber #3a2a1c.
+
+IT STANDS ON A PALE FLOOR AND MUST READ DARK ON IT. The floor is pale limestone, #d8c8a8. The object as a
+whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is lighter
+than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its base, its underside
+and every part nearest the floor are its darkest, deep umber #3a2a1c. Nothing on it is white, cream,
+bleached, pale straw or whitewash — a pale part vanishes into the floor.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A2A1C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold market
+yarn import-tile art/masters/props/starter/offeringTable.webp --tier=starter --name=offeringTable --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --saturation=1.3
+```
+
+### `starter/offeringTable-2` — baskets of grain on the floor, the market's second drawing
+
+**Attach:**
+
+1. `~/tile-previews/baskets-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: the merchant's goods sold straight off the floor. The big drum at the left with a low mound
+heaped in it is a BASKET of grain; the two lower drums beside it are lidded BASKETS; the small slab
+leaning at the right is a lid set down.
+
+The baskets are coiled palm fibre DYED and stained, not pale straw: their bodies dark honey #9a6a3c, with
+woven bands of red ochre #b8452c and deep umber #5e3a1e round each one, darkest #3a2a1c at the foot where
+they sit on the floor. One basket carries a narrow band of turquoise #2a9d8f. The grain heaped in the
+open basket is warm golden-brown, shadowed #7e3a1a on its far side. The leaning lid is the same dark
+weave.
+
+IT STANDS ON A PALE FLOOR AND MUST READ DARK ON IT. The floor is pale limestone, #d8c8a8. The object as a
+whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is lighter
+than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its base, its underside
+and every part nearest the floor are its darkest, deep umber #3a2a1c. Nothing on it is white, cream,
+bleached, pale straw or whitewash — a pale part vanishes into the floor.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A2A1C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold market --contents=baskets
+yarn import-tile art/masters/props/starter/offeringTable-2.webp --tier=starter --name=offeringTable-2 \
+  --slot=prop --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.86 --saturation=0.7
+```
+
+### `starter/jarRack` — terracotta jars in a dark timber rack
+
+**Attach:**
+
+1. `~/tile-previews/jarrack-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a JAR RACK. The two uprights and the two crossbars are the timber FRAME. Hanging in it,
+pointed ends down, are three tall STORAGE JARS, each closed with a round clay STOPPER at its neck.
+
+The frame is dark split timber, #5e3a1e, lighter honey #9a6a3c only on its top faces, lashed at the
+joints with dark cord. The jars are fired TERRACOTTA, saturated #c0612f on their lit side and #7e3a1a on
+their shadowed side, each with a painted red ochre #b8452c band and a dark merchant's mark on its
+shoulder. The stoppers are dark mud sealed with a small turquoise #2a9d8f faience seal. Not one jar is
+pale or buff.
+
+IT STANDS ON A PALE FLOOR AND MUST READ DARK ON IT. The floor is pale limestone, #d8c8a8. The object as a
+whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is lighter
+than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its base, its underside
+and every part nearest the floor are its darkest, deep umber #3a2a1c. Nothing on it is white, cream,
+bleached, pale straw or whitewash — a pale part vanishes into the floor.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A2A1C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold jarrack
+yarn import-tile art/masters/props/starter/jarRack.webp --tier=starter --name=jarRack --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82 --saturation=1.7
+```
+
+### `starter/basin` — a big terracotta water jar on a timber stand
+
+**Attach:**
+
+1. `~/tile-previews/basin-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a WATER JAR on a stand. The three splayed legs and the thick ring they hold are the timber
+STAND. Sitting in the ring is a large egg-shaped JAR with a round STOPPER on its mouth. The small cup
+hooked on its side is a DIPPER.
+
+The jar is fired TERRACOTTA, saturated #c0612f on its lit side going to #7e3a1a on its shadowed side,
+darkened by damp below its widest point, with a band of red ochre #b8452c round its shoulder. The stopper
+is dark mud with a turquoise #2a9d8f faience seal. The stand is dark timber #5e3a1e, the ring's top face
+honey #9a6a3c. The dipper is terracotta. Nothing on it is pale buff clay.
+
+IT STANDS ON A PALE FLOOR AND MUST READ DARK ON IT. The floor is pale limestone, #d8c8a8. The object as a
+whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is lighter
+than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its base, its underside
+and every part nearest the floor are its darkest, deep umber #3a2a1c. Nothing on it is white, cream,
+bleached, pale straw or whitewash — a pale part vanishes into the floor.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A2A1C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold basin --contents=jar
+yarn import-tile art/masters/props/starter/basin.webp --tier=starter --name=basin --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.90 --saturation=1.45
+```
+
+### `starter/niche` — a goods recess with two jars and a bundle
+
+**Attach:**
+
+1. `~/tile-previews/niche-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a recess cut into a wall, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a goods recess cut into a mudbrick wall. The frame round the opening is the SURROUND — jambs,
+lintel and sill. Inside, the two round shapes at the left are small storage JARS, and the rounded lump at
+the right is a cloth BUNDLE tied at the top.
+
+The surround is mud plaster washed RED OCHRE #b8452c, deepened to #7e3a1a, rubbed through to dark
+mudbrick #5e3a1e on the sill where goods are slid in and out. The recess behind is in deep shade #3a2a1c.
+The jars are fired terracotta #c0612f, one with a turquoise #2a9d8f glazed lip. The bundle is cloth dyed
+deep umber, tied with red cord.
+
+IT SITS IN A WALL ABOVE A PALE FLOOR AND MUST READ DARK. The floor is pale limestone, #d8c8a8. The object
+as a whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is
+lighter than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its lower edge
+is its darkest, deep umber #3a2a1c. Nothing on it is white, cream, bleached or whitewash.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold niche --shear=0.5 --width=448 --height=224 --sun=0
+yarn import-tile art/masters/props/starter/niche.webp --tier=starter --name=niche --slot=wall \
+  --filter=smooth --mask="$OBJ" --headroom=0.18
+```
+
+### `starter/tallyBoard` — a dark plank of ochre tally strokes
+
+FLAT, so there is no scaffold to attach: the first attachment is the landed tile's own master, and the
+prompt is an EDIT of it — same plank, same strokes, new colours. The import overwrites that master, so it
+is replaced only by a return you have kept.
+
+**Attach:**
+
+1. `art/masters/props/starter/tallyBoard.webp` — the plank to repaint
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single flat object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a TALLY BOARD — one wooden plank hanging on two pegs, the short dark blocks above and below
+each end. Across its face run groups of TALLY STROKES, five to a group, the fifth struck through. Lying
+along its top edge is a stub of CHALK.
+
+The plank is old timber, DARK honey-brown #5e3a1e going to #9a6a3c on its lit top edge, split along the
+grain. The tally strokes are painted red ochre #b8452c, bright where fresh and rubbed where counted off.
+The pegs are near-black #3a2a1c. The chalk stub is a small turquoise #2a9d8f stick, not white. Nothing on
+the plank is grey or pale.
+
+IT SITS IN A WALL ABOVE A PALE FLOOR AND MUST READ DARK. The floor is pale limestone, #d8c8a8. The object
+as a whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is
+lighter than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its lower edge
+is its darkest, deep umber #3a2a1c. Nothing on it is white, cream, bleached or whitewash.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+yarn import-tile art/masters/props/starter/tallyBoard.webp --tier=starter --name=tallyBoard --slot=wall \
+  --filter=smooth --headroom=0.18 --brightness=0.85
+```
+
+### `starter/rubblePile` — broken mudbrick, one brick still red
+
+**Attach:**
+
+1. `~/tile-previews/rubbleheap-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a knee-high HEAP of broken MUDBRICK, the blocks tumbled on each other at different angles,
+one brick still whole.
+
+The brick is dark sun-dried mud, #7e3a1a to #5e3a1e, its broken faces a shade lighter #9a6a3c and never
+pale. Patches of the RED OCHRE #b8452c plaster that once covered it still cling to several faces. The
+gaps between the blocks and the faces nearest the floor are deep umber #3a2a1c. One fragment carries a
+chip of turquoise #2a9d8f faience tile.
+
+IT STANDS ON A PALE FLOOR AND MUST READ DARK ON IT. The floor is pale limestone, #d8c8a8. The object as a
+whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is lighter
+than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its base, its underside
+and every part nearest the floor are its darkest, deep umber #3a2a1c. Nothing on it is white, cream,
+bleached, pale straw or whitewash — a pale part vanishes into the floor.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A2A1C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold rubblePile
+yarn import-tile art/masters/props/starter/rubblePile.webp --tier=starter --name=rubblePile --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82 --saturation=1.45
+```
+
+### `starter/mat` — a dyed palm-fibre mat with ochre bands
+
+**Attach:**
+
+1. `~/tile-previews/mat-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a flat woven MAT lying on the floor, a little askew, and nothing else. Its only shape is its
+outline; everything that says MAT is the weave painted on it.
+
+Palm fibre DYED, not pale straw: a body of dark honey #9a6a3c woven in a tight diagonal plait, crossed by
+two broad bands of red ochre #b8452c and a narrow border of deep umber #5e3a1e all the way round, with
+one thin line of turquoise #2a9d8f inside the border. Worn darker in the middle where people sat, frayed
+at one corner.
+
+IT STANDS ON A PALE FLOOR AND MUST READ DARK ON IT. The floor is pale limestone, #d8c8a8. The object as a
+whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is lighter
+than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its base, its underside
+and every part nearest the floor are its darkest, deep umber #3a2a1c. Nothing on it is white, cream,
+bleached, pale straw or whitewash — a pale part vanishes into the floor.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A2A1C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold mat --spin=9 --shadow=0.5
+yarn import-tile art/masters/props/starter/mat.webp --tier=starter --name=mat --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.86 --saturation=0.6
+```
+
+### `starter/lamp` — a clay lamp on a dark wooden stool
+
+**Attach:**
+
+1. `~/tile-previews/lamp-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: an OIL LAMP and the low wooden STOOL it stands on. The flat seat on four short legs is the
+stool. The straight-sided dish at its front edge, overhanging it, is the LAMP; the small nub at its side
+is the WICK and its FLAME.
+
+The stool is dark timber #5e3a1e, its seat's top face honey #9a6a3c, never pale split wood, with a red
+ochre #b8452c band along the seat's front edge. The lamp is fired terracotta #c0612f, sooted dark at the
+spout. The flame is a small ochre-orange tongue with no glow round it and no light thrown on the wood.
+
+IT STANDS ON A PALE FLOOR AND MUST READ DARK ON IT. The floor is pale limestone, #d8c8a8. The object as a
+whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is lighter
+than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its base, its underside
+and every part nearest the floor are its darkest, deep umber #3a2a1c. Nothing on it is white, cream,
+bleached, pale straw or whitewash — a pale part vanishes into the floor.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A2A1C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold lamp
+yarn import-tile art/masters/props/starter/lamp.webp --tier=starter --name=lamp --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.48 --saturation=1.6 --brightness=0.85
+```
+
+### `starter/statue` — a turquoise faience shabti
+
+NOT AN ENVELOPE, so this statue keeps the edge sentence the others drop. The scaffold is the `shabti.glb`
+scan, not `prim_statue`'s roughed-out block: its silhouette is already the figure's own, and the mask is
+that silhouette, so a contour carved inward would leave magenta inside it. What the preamble's statue
+rule nails down in words — frame, projection, facing, size — the sentence holds here for free. Its
+material is what moves: a SHABTI was most often blue-green faience, which is the merchant's turquoise and
+dark enough to stand on the pale floor where the old pale limestone could not.
+
+**Attach:**
+
+1. `~/tile-previews/render-shabti.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a SHABTI, a small servant figure for the afterlife, standing upright and facing the viewer.
+It is MUMMIFORM — wrapped, its body one smooth tapering shape with no limbs free. The rounded head-dress
+is a striped WIG; the shapes crossed on the chest are its two HOES held in the wrapped hands; the base
+under its feet is part of the same piece.
+
+Glazed FAIENCE, deep blue-green: #2a9d8f on its lit faces going to #1f7a70 and darker in the hollows and
+down its sides, the glaze thinner and darker at the base #3a2a1c. The details are painted in near-black
+manganese #2a1e14: the wig's stripes, the eyes, the hoes, and one vertical column of hieroglyphs down the
+front of the legs. It is a carved, glazed object with a fixed face, not a person: no skin, no anatomy, no
+expression.
+
+IT STANDS ON A PALE FLOOR AND MUST READ DARK ON IT. The floor is pale limestone, #d8c8a8. The object as a
+whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is lighter
+than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its base, its underside
+and every part nearest the floor are its darkest, deep umber #3a2a1c. Nothing on it is white, cream,
+bleached, pale straw or whitewash — a pale part vanishes into the floor.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A2A1C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+meshscaffold shabti.glb
+yarn import-tile art/masters/props/starter/statue-shabti.webp --tier=starter --name=statue --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.96 --saturation=1.4
+```
+
+### `starter/hanging` — a striped awning cloth on a timber pole
+
+**Attach:**
+
+1. `~/tile-previews/hanging-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: an AWNING CLOTH slung from a pole. The long bar across the top is the POLE; the two uprights
+under its ends are the POSTS; the sheet hanging from the pole in folds is the CLOTH, its hem ragged and
+one corner torn away.
+
+The cloth is heavy linen DYED, never bleached or cream: broad vertical STRIPES of red ochre #b8452c and
+deep umber #5e3a1e, with a narrow turquoise #2a9d8f stripe between every few, the stripes following the
+folds. Faded a little at the top where sun has caught it, darker in every fold's hollow, mended in two
+places with a patch of plain umber cloth. The pole and posts are dark timber #5e3a1e, lashed with cord
+where the cloth is tied.
+
+IT STANDS ON A PALE FLOOR AND MUST READ DARK ON IT. The floor is pale limestone, #d8c8a8. The object as a
+whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is lighter
+than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its base, its underside
+and every part nearest the floor are its darkest, deep umber #3a2a1c. Nothing on it is white, cream,
+bleached, pale straw or whitewash — a pale part vanishes into the floor.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A2A1C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold hanging --spin=45
+yarn import-tile art/masters/props/starter/hanging.webp --tier=starter --name=hanging --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.88 --saturation=2.3
+```
+
+### `starter/brazier` — a terracotta brazier on a dark tripod
+
+**Attach:**
+
+1. `~/tile-previews/brazier-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a shallow DISH on three splayed legs, burning low. The three legs are a TRIPOD; the wide
+shallow vessel is the dish; the low mass inside it is EMBERS; the bar laid across the rim is an unburnt
+STICK.
+
+The dish is fired terracotta #c0612f, blackened #3a2a1c round its rim and all down its inside where the
+fire has taken it, with a red ochre #b8452c band round its outside. The tripod is dark timber #5e3a1e,
+charred at the top where it meets the dish. The embers are a dull ember red-orange, matte, brightest at
+the centre and dark at the edges, with no glow round them. The stick is charred black at one end and
+honey timber #9a6a3c at the other.
+
+IT STANDS ON A PALE FLOOR AND MUST READ DARK ON IT. The floor is pale limestone, #d8c8a8. The object as a
+whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is lighter
+than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its base, its underside
+and every part nearest the floor are its darkest, deep umber #3a2a1c. Nothing on it is white, cream,
+bleached, pale straw or whitewash — a pale part vanishes into the floor.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A2A1C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold brazier --depth=0.65
+yarn import-tile art/masters/props/starter/brazier.webp --tier=starter --name=brazier --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.7 --saturation=2.2 --brightness=0.95
+```
+
+### `starter/shrine` — a red-ochre household shrine, Bes and a lamp inside
+
+**Attach:**
+
+1. `~/tile-previews/shrine-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a merchant's HOUSEHOLD SHRINE, a mudbrick box standing on the floor. The slab on top is the
+LINTEL; the two sides and the sill frame the OPENING; inside it, the squat wide figure at the left is the
+god BES, a stout bearded dwarf, and the small dish at the right with a nub on it is a LAMP.
+
+The box is mud plaster painted RED OCHRE #b8452c, deepened to #7e3a1a on its front faces, with a
+turquoise #2a9d8f painted band along the lintel's front — NOT whitewashed, NOT pale. The recess is in
+deep shade #3a2a1c, lit only a little by the lamp. Bes is dark painted wood #5e3a1e with touches of red
+ochre on his kilt; he is clothed. The lamp is terracotta #c0612f with a small ochre flame and no glow
+round it.
+
+IT STANDS ON A PALE FLOOR AND MUST READ DARK ON IT. The floor is pale limestone, #d8c8a8. The object as a
+whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is lighter
+than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its base, its underside
+and every part nearest the floor are its darkest, deep umber #3a2a1c. Nothing on it is white, cream,
+bleached, pale straw or whitewash — a pale part vanishes into the floor.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A2A1C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold shrine
+yarn import-tile art/masters/props/starter/shrine.webp --tier=starter --name=shrine --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.85 --brightness=0.70 --saturation=1.5
+```
+
+### `starter/pillar` — a leaning timber prop, red ochre on its wedges
+
+**Attach:**
+
+1. `~/tile-previews/pillar-starter.png` — the scaffold
+2. `~/tile-previews/starter-plain.png` — the material reference
+
+```
+A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
+
+The object: a rough timber PROP leaning a little, holding up a roof that is out of the frame. The tall
+trunk is the POST; the two chunky blocks at its foot are WEDGES hammered in under it.
+
+The post is a rough-hewn trunk, dark honey-brown #9a6a3c on its lit side going to #5e3a1e on its shadowed
+side, adze marks along the grain, bark left in a strip. Never grey, never weathered silver. A band of red
+ochre #b8452c is painted round it at shoulder height with a merchant's mark, and it is darkest #3a2a1c at
+the foot. The wedges are dark timber with a dab of red ochre on each.
+
+IT STANDS ON A PALE FLOOR AND MUST READ DARK ON IT. The floor is pale limestone, #d8c8a8. The object as a
+whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is lighter
+than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its base, its underside
+and every part nearest the floor are its darkest, deep umber #3a2a1c. Nothing on it is white, cream,
+bleached, pale straw or whitewash — a pale part vanishes into the floor.
+
+Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
+
+The shadow at its foot is part of the picture: paint it #3A2A1C, with no pink and no purple in it at all.
+
+No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
+```
+
+Then, once the return is in `~/Downloads`:
+
+```sh
+scaffold pillar
+yarn import-tile art/masters/props/starter/pillar.webp --tier=starter --name=pillar --slot=prop \
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --saturation=1.7 --brightness=0.9
+```
+
+---
+
 ## Priest — three
 
 His CHAMBER props, and none of them existed as a model until now: his rank had nothing but the veil and
