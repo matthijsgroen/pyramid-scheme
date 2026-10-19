@@ -106,11 +106,10 @@ yarn import-tile art/masters/props/starter/brazier.webp --tier=starter --name=br
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.7 --saturation=2.2 --brightness=0.95
 
 # The stool's seat is 0.16 deep, not 0.26: at 0.26 its top face was 40% of the drawn height and read as
-# a wall with legs. --brightness=0.85 clips a repaint that came back 9.3% over the light end — the
-# palest of the four so far, because pale split timber is most of its surface.
+# a wall with legs.
 scaffold lamp --colour=#9a6a3c --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/lamp.webp --tier=starter --name=lamp --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.48 --saturation=1.6 --brightness=0.85
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.48
 
 # No stone pad in the model: a wide flat slab at floor level casts a shadow of its own silhouette
 # right under itself and reads as a second step. --saturation=1.7 because the repaint gave the trunk
