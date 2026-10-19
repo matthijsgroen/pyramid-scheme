@@ -100,8 +100,10 @@ yarn import-tile art/masters/props/starter/chestProp.webp --tier=starter --name=
 # --depth=0.65 must match what the master was painted over: a circular dish gives a top face so large
 # under this shear that the thing reads as a round table.
 scaffold brazier --depth=0.65 --colour=#9a6a3c --floor=#d8c8a8
+# Its mask is kept beside the master: the model's below the rim, the return's own silhouette above it,
+# so the two sticks laid across the bowl keep the ends that overhang it.
 yarn import-tile art/masters/props/starter/brazier.webp --tier=starter --name=brazier --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.7
+  --filter=smooth --mask=art/masters/props/starter/brazier-mask.png --seat="$SHADOW" --scale=0.7
 
 # The stool's seat is 0.16 deep, not 0.26: at 0.26 its top face was 40% of the drawn height and read as
 # a wall with legs.
