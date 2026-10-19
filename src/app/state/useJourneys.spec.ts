@@ -954,6 +954,17 @@ describe("enterAt", () => {
     })
   })
 
+  it("writes the ground it stands the explorer on down explored, and resumes a corridor at no place", () => {
+    const [placed] = run([makeStoredJourney({ active: false })], REAL_ID, 2, "main#0/~3|4", {
+      sectionHash: "h",
+      cellId: "0:5,6",
+    })
+
+    expect(placed).toMatchObject({ positionKey: null, standingKey: "main#0/~3|4" })
+    expect(placed.exploredCells?.["2:main"]).toContain("0/~3|4")
+    expect(placed.exploredSections["2:h"]).toContain("0:5,6")
+  })
+
   it("starts a journey that never was, and puts the active one down", () => {
     const state = run([makeStoredJourney({ journeyId: "other", interiorLevelNr: 1 })], REAL_ID, 1, null)
 

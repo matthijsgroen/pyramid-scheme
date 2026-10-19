@@ -135,8 +135,14 @@ export type JourneyAPI = {
   startJourney: (journey: Journey) => Promise<unknown>
   visitLevel: (journeyId: string, levelNr: number) => Promise<unknown>
   /** Makes `journeyId` the active journey with site `levelNr`'s interior open and the explorer standing at
-   *  `address` (null: the entrance), starting the journey if it never was. A develop-mode jump. */
-  enterAt: (journeyId: string, levelNr: number, address: string | null) => Promise<unknown>
+   *  `address` (null: the entrance), starting the journey if it never was. A develop-mode jump. With
+   *  `walkedOnto` the cell is written down explored, as walking onto it would, so he can move from it. */
+  enterAt: (
+    journeyId: string,
+    levelNr: number,
+    address: string | null,
+    walkedOnto?: { sectionHash: string; cellId: string }
+  ) => Promise<unknown>
   nextJourneySeed: (journeyId: string) => number
   getJourney: (journeyId: string) => CombinedJourneyState | undefined
   completeJourney: () => void
@@ -207,6 +213,33 @@ export type JourneyAPI = {
 }
 
 const knownJourneyIds = journeyData.map(j => j.id)
+
+/** `j` with one cell written down explored on level `levelNr`. Two keys, on purpose: exploration is filed by the
+ * section's AUTHORING address, the coordinate archive beside it stays filed by the structural hash it was always
+ * written under, so a later re-keying can still match it. Both go when the reshape drops the archive. */
+const withExplored = (
+  j: StoredJourneyStateV3,
+  levelNr: number,
+  sectionHash: string,
+  cellId: string,
+  address?: string | null
+): StoredJourneyStateV3 => {
+  const key = `${levelNr}:${sectionHash}`
+  const cellKey = address ? keyOfAddress(address) : undefined
+  const sectionKey = address ? `${levelNr}:${sectionOfAddress(address)}` : key
+  const coordinates = j.exploredSections[key] ?? []
+  const keys = j.exploredCells?.[sectionKey] ?? []
+  const haveCoordinate = coordinates.includes(cellId)
+  const haveKey = !cellKey || keys.includes(cellKey)
+  if (haveCoordinate && haveKey) return j
+  return {
+    ...j,
+    // The cell key is what the map restores from. The coordinate is written alongside it purely
+    // as the archive a re-keying reads (see `cellKeyVersion`), and goes when the floors move.
+    exploredSections: haveCoordinate ? j.exploredSections : { ...j.exploredSections, [key]: [...coordinates, cellId] },
+    ...(cellKey && !haveKey ? { exploredCells: { ...(j.exploredCells ?? {}), [sectionKey]: [...keys, cellKey] } } : {}),
+  }
+}
 
 /** A level's entries of a level-keyed record, by the address under the level. */
 const atLevelMap = (levelNr: number, entries: Record<string, string> | undefined): Map<string, string> => {
@@ -343,16 +376,17 @@ export const createJourneysV3Api = ({
     return Promise.resolve(setJourneys(prev => [...prev, freshJourney(journey.id)]))
   }
 
-  const enterAt = (journeyId: string, levelNr: number, address: string | null) =>
+  const enterAt: JourneyAPI["enterAt"] = (journeyId, levelNr, address, walkedOnto) =>
     Promise.resolve(
       setJourneys(prev => {
         const placed = (j: StoredJourneyStateV3): StoredJourneyStateV3 => ({
-          ...j,
+          ...(address && walkedOnto ? withExplored(j, levelNr, walkedOnto.sectionHash, walkedOnto.cellId, address) : j),
           active: true,
           levelNr,
           interiorLevelNr: levelNr,
           position: null,
-          positionKey: address,
+          // A save resumes only at an authored place, as updatePosition files one; a corridor is only stood on.
+          positionKey: address && isPlaceAddress(address) ? address : null,
           standingKey: address,
         })
         const others = prev.map(j =>
@@ -432,32 +466,8 @@ export const createJourneysV3Api = ({
   const markCellExplored = (sectionHash: string, cellId: string, address?: string | null) => {
     if (!activeJourneyId) return
     const levelNr = levelOf(activeJourneyId)
-    // Two keys, on purpose: exploration is filed by the section's AUTHORING address, the coordinate
-    // archive beside it stays filed by the structural hash it was always written under, so a later
-    // re-keying can still match it. Both go when the reshape drops the archive.
-    const key = `${levelNr}:${sectionHash}`
-    const cellKey = address ? keyOfAddress(address) : undefined
-    const sectionKey = address ? `${levelNr}:${sectionOfAddress(address)}` : key
     setJourneys(prev =>
-      prev.map(j => {
-        if (j.journeyId !== activeJourneyId) return j
-        const coordinates = j.exploredSections[key] ?? []
-        const keys = j.exploredCells?.[sectionKey] ?? []
-        const haveCoordinate = coordinates.includes(cellId)
-        const haveKey = !cellKey || keys.includes(cellKey)
-        if (haveCoordinate && haveKey) return j
-        return {
-          ...j,
-          // The cell key is what the map restores from. The coordinate is written alongside it purely
-          // as the archive a re-keying reads (see `cellKeyVersion`), and goes when the floors move.
-          exploredSections: haveCoordinate
-            ? j.exploredSections
-            : { ...j.exploredSections, [key]: [...coordinates, cellId] },
-          ...(cellKey && !haveKey
-            ? { exploredCells: { ...(j.exploredCells ?? {}), [sectionKey]: [...keys, cellKey] } }
-            : {}),
-        }
-      })
+      prev.map(j => (j.journeyId === activeJourneyId ? withExplored(j, levelNr, sectionHash, cellId, address) : j))
     )
   }
 

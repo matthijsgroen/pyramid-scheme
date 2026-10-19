@@ -1,9 +1,52 @@
 import { useMemo } from "react"
 import { registerDevJumps } from "@/app/dev/devActionContributions"
 import { useJourneys } from "@/app/state/useJourneys"
+import { assemblePlayedFloor } from "@/app/SiteMap/useAssembledFloor"
+import { cellAddress, findByAddress, floorOfAddress } from "@/app/SiteMap/cellIdentity"
+import { encodeEdge } from "@/app/SiteMap/edgeId"
 import { isModEnabled } from "@/mods/registeredMods"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
-import { STORY_ROOMS, storyRoomPlace } from "../game/storyRooms"
+import { findPath, revealAll } from "@/game/gridNavigation"
+import { persistentInteriorSeed } from "@/game/siteSeed"
+import { STORY_ROOMS, storyRoomPlace, type StoryRoom } from "../game/storyRooms"
+
+export type StoryRoomLanding = {
+  levelNr: number
+  address: string | null
+  walkedOnto?: { sectionHash: string; cellId: string }
+}
+
+/**
+ * Where a jump to `room` stands the explorer: on its doorstep, the corridor cell the walk from the floor's entrance
+ * crosses last before the room, written down explored. A tap on the room then walks in and plays it the way play
+ * does. Stood in the room itself he is on unexplored ground, which nothing walks from; and marking the ROOM explored
+ * would read as solved and open the way past it.
+ */
+export const storyRoomLanding = (room: StoryRoom): StoryRoomLanding => {
+  const sites = generatedWorldConfigs[room.journeyId] ?? []
+  const { levelNr, address } = storyRoomPlace(room, sites)
+  if (!address) return { levelNr, address }
+  const floor = floorOfAddress(address)
+  const carved = assemblePlayedFloor(
+    room.journeyId,
+    sites[levelNr - 1][floor],
+    persistentInteriorSeed(room.journeyId) + levelNr,
+    floor,
+    levelNr - 1
+  )
+  const at = carved.success ? findByAddress(carved.grid, floor, address) : null
+  if (!carved.success || !at) return { levelNr, address }
+  const route = findPath(revealAll(carved.grid), carved.grid.entrancePos, at)
+  const doorstep = route.at(-2)
+  const cell = doorstep && carved.grid.cells[doorstep[0]][doorstep[1]]
+  const doorstepAddress = doorstep && cellAddress(carved.grid, floor, doorstep[0], doorstep[1])
+  if (cell?.type !== "corridor" || !doorstepAddress) return { levelNr, address }
+  return {
+    levelNr,
+    address: doorstepAddress,
+    walkedOnto: { sectionHash: cell.sectionHash ?? "", cellId: encodeEdge(floor, doorstep[0], doorstep[1]) },
+  }
+}
 
 const useStoryJumps = () => {
   const { enterAt } = useJourneys()
@@ -12,8 +55,8 @@ const useStoryJumps = () => {
       STORY_ROOMS.map(room => ({
         label: room.label,
         jump: () => {
-          const { levelNr, address } = storyRoomPlace(room, generatedWorldConfigs[room.journeyId] ?? [])
-          return enterAt(room.journeyId, levelNr, address)
+          const { levelNr, address, walkedOnto } = storyRoomLanding(room)
+          return enterAt(room.journeyId, levelNr, address, walkedOnto)
         },
       })),
     [enterAt]
