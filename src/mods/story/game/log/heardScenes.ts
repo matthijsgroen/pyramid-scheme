@@ -39,7 +39,13 @@ export const ALL_SCENES: Scene[] = TIERS.flatMap(tier => [
   ...[1, 2, 3, 4]
     .map(n => `${tier}_${n}`)
     .filter(journeyId => JOURNEYS_WITH_ARRIVAL.has(journeyId))
-    .map(journeyId => ({ id: `arrival.${journeyId}`, journeyId, parts: [`arrival.${journeyId}`] })),
+    .flatMap(journeyId => {
+      const met = sceneFor(journeyId)
+      return [
+        { id: `arrival.${journeyId}`, journeyId, parts: [`arrival.${journeyId}`] },
+        ...(met ? [{ id: met, journeyId, parts: [met] }] : []),
+      ]
+    }),
   ...TOMB_STRUCTURES.filter(tomb => tomb.tier === tier).flatMap(tomb => {
     const id = sceneFor(tomb.id)
     return id ? [{ id, journeyId: tomb.id, parts: [id, ...(CONTINUES[id] ?? [])] }] : []

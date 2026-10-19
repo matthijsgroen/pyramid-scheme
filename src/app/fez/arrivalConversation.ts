@@ -1,8 +1,11 @@
 /** Everyone who can hold a line. The dead speak in the tombs; the living carry everywhere else. */
-export type Speaker = "fez" | "explorer" | "ipi" | "henut" | "priest" | "pharaoh"
+export type Speaker = "fez" | "explorer" | "ipi" | "henut" | "priest" | "pharaoh" | "voice"
 
 /** The dead. Drawn faded, and they never appear outside a tomb. */
 export const GHOSTS: readonly Speaker[] = ["ipi", "henut", "priest", "pharaoh"]
+
+/** Heard and not seen: a line with no portrait, its bubble on the left where Fez stands. */
+export const UNSEEN: readonly Speaker[] = ["voice"]
 
 /** One line of a conversation: who says it, and where its text lives. */
 export type SpokenLine = { speaker: Speaker; key: string }
@@ -39,7 +42,7 @@ export const JOURNEYS_WITH_ARRIVAL: ReadonlySet<string> = new Set<string>([
 /** Whether a translation key has a line behind it. */
 export type HasLine = (key: string) => boolean
 
-const SPEAKERS: readonly Speaker[] = ["fez", "explorer", ...GHOSTS]
+const SPEAKERS: readonly Speaker[] = ["fez", "explorer", ...GHOSTS, ...UNSEEN]
 
 /** The conversation played on arriving at a journey: its own, or the shared pyramid intro. */
 export const arrivalConversationId = (journeyId: string): string =>

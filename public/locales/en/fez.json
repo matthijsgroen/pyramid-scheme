@@ -4,9 +4,8 @@
   "welcome2": "Somewhere on it is a pyramid nobody has finished emptying.",
   "welcome3": "Probably wrong. Worth a look.",
 
-  "pyramidIntro": "Look at these walls — so many numbers are missing!",
-  "pyramidIntro2": "The secret: every number is the sum of the two below it.",
-  "pyramidIntro3": "Use that, and we'll uncover what the ancient builders hid here. Good luck!",
+  "pyramidIntro": "Numbers on the stones. Some are missing.",
+  "pyramidIntro2": "Each stone is the two beneath it, added. It holds everywhere I check.",
 
   "pyramidBlockedBlocks": "Some blocks are blocked. They do not reveal their value.",
   "pyramidBlockedBlocks2": "We can try to calculate their value based on blocks around it.",
@@ -41,9 +40,9 @@
   "notEnoughHieroglyphs2": "We can interrupt the expedition to search elsewhere for the hieroglyphs we still need to complete.",
 
   "tombLoot": "Wow, our first treasure! Well done!",
-  "mapPiece": "We found a map piece! Together they lead to a hidden tomb.",
-  "mapPiece2": "There's one waiting in each expedition at this difficulty — let's find them all!",
-  "mapPiece3": "Check the journey list to see how many we've collected so far.",
+  "mapPiece": "Now THAT is a map. Properly old — worth more than both of ours put together!",
+  "mapPiece2": "Only a piece of one, mind. Every expedition round here hides one, and together they lead to a tomb.",
+  "mapPiece3": "Keep count on the expedition list. I certainly will.",
 
   "mosaicStarter": "A cat in the doorway, and a snake leaving in a hurry. That was worth a bowl of milk.",
   "mosaicStarter2": "Egyptians loved cats for exactly this — they killed the snakes and the rats that got into the grain.",
@@ -78,14 +77,8 @@
     "starter_1": {
       "1": { "explorer": "There is writing on it. Down at the base, where the sand keeps shifting off." },
       "2": { "explorer": "I cannot read a word of it." },
-      "3": { "fez": "No. Nobody can." },
-      "4": { "fez": "Someone could, once." },
-      "5": { "explorer": "Where did you come from?" },
-      "6": { "fez": "The base was painted, you know. All of it. Blue and gold, to about here." },
-      "7": { "explorer": "How do you know that?" },
-      "8": { "fez": "…Somebody told me." },
-      "9": { "fez": "Fez. I'm along for the trade — those tombs are full of things worth selling." },
-      "10": { "fez": "Come on." }
+      "3": { "explorer": "Somebody meant it to be read." },
+      "4": { "explorer": "The pyramid first, then." }
     },
     "starter_2": {
       "1": { "fez": "Now this I understand. Everything that ever went up the Nile came past here first." },
@@ -436,6 +429,37 @@
         "priest": "It has a mark. It is a very good mark. It was cut by somebody with excellent tools and no business here, and not long ago."
       },
       "4": { "priest": "I have been waiting three thousand years. I am not being fobbed off in the last week of it." }
+    }
+  },
+
+  "meeting": {
+    "starter_1": {
+      "1": { "voice": "Not there! Not THERE. You are standing in the stock." },
+      "2": { "voice": "Three days I have had this laid out. Three days, in the dark, by touch." },
+      "3": { "explorer": "Where are you?" },
+      "4": { "fez": "Down here. Mind the scales." },
+      "5": { "explorer": "What is a lizard doing down here?" },
+      "6": { "fez": "Business! Everything down here is worth something to somebody up there." },
+      "7": { "explorer": "And the fez?" },
+      "8": { "fez": "What about it?" },
+      "9": { "explorer": "How did you find this place?" },
+      "10": { "fez": "A map. I paid far too much for it." },
+      "11": { "explorer": "So did I." },
+      "12": { "fez": "Little man by the river? One sandal?" },
+      "13": { "explorer": "Two." },
+      "14": { "fez": "Then he is doing well out of us." },
+      "15": { "explorer": "The writing on the Sphinx. Can you read it?" },
+      "16": { "fez": "No. Nobody can." },
+      "17": { "fez": "Someone could, once." },
+      "18": { "fez": "The base was painted, you know. All of it. Blue and gold, to about here." },
+      "19": { "explorer": "How do you know that?" },
+      "20": { "fez": "…Somebody told me." },
+      "21": { "fez": "What are you after, then?" },
+      "22": { "explorer": "Something neat." },
+      "23": { "fez": "…That's it?" },
+      "24": { "explorer": "I'll know it when I see it." },
+      "25": { "fez": "Neat I can sell. I'm coming with you." },
+      "26": { "explorer": "Mind the stock." }
     }
   },
 

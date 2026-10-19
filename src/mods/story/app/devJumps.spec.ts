@@ -23,7 +23,6 @@ describe("a develop-mode jump to an authored story room", () => {
       if (cell?.type !== "room" || cell.family !== room.encounter) missed.push(`${room.label}: ${address}`)
     }
     expect(missed).toEqual([])
-    // The meeting room is authored by the opening's first task; the jump falls back to the entrance until then.
-    expect(unplaced).toEqual(["Jump: Fez meeting"])
+    expect(unplaced).toEqual([])
   })
 })

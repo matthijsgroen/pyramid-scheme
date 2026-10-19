@@ -23,17 +23,19 @@ const rooms = (): { journeyId: string; floor: number; index: number }[] => {
   return found
 }
 
-const scenes = (locale: string): Record<string, unknown> =>
-  JSON.parse(readFileSync(`public/locales/${locale}/fez.json`, "utf8")).tomb ?? {}
+/** Whether `<group>.<id>` has lines in `locale` — a tomb's scene and the meeting live in different groups. */
+const written = (locale: string, scene: string): boolean => {
+  const [group, id] = scene.split(".")
+  return JSON.parse(readFileSync(`public/locales/${locale}/fez.json`, "utf8"))[group]?.[id] !== undefined
+}
 
 describe("every conversation room in the world", () => {
   it("has a scene written for it, in both languages", () => {
     const missing: string[] = []
     for (const room of rooms()) {
       const scene = sceneFor(room.journeyId)
-      const id = scene?.replace(/^tomb\./, "")
       for (const locale of ["en", "nl"])
-        if (!id || !scenes(locale)[id]) missing.push(`${locale}: ${room.journeyId} wants ${scene ?? "nothing"}`)
+        if (!scene || !written(locale, scene)) missing.push(`${locale}: ${room.journeyId} wants ${scene ?? "nothing"}`)
     }
     expect(missing).toEqual([])
   })

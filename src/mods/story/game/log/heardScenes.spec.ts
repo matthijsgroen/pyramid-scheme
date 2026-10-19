@@ -7,6 +7,7 @@ const authored = (): Record<string, Record<string, unknown>> => {
   return Object.fromEntries([
     ...Object.entries(doc.arrival ?? {}).map(([id, lines]) => [`arrival.${id}`, lines]),
     ...Object.entries(doc.tomb ?? {}).map(([id, lines]) => [`tomb.${id}`, lines]),
+    ...Object.entries(doc.meeting ?? {}).map(([id, lines]) => [`meeting.${id}`, lines]),
   ]) as Record<string, Record<string, unknown>>
 }
 

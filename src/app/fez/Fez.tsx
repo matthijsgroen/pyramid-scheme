@@ -24,7 +24,8 @@ const asExplorer = (chats: PoseChat[]): PoseChat[] => chats.map(([pose, key]) =>
 
 const conversations: Record<string, PoseChat[]> = {
   welcome: asExplorer(pose(["welcome", "welcome2", "welcome3"])),
-  pyramidIntro: pose(["pyramidIntro", "pyramidIntro2"], "pointUp", ["pyramidIntro3"]),
+  // The exterior is the one board that does not show its own rule, so the explorer says it, alone.
+  pyramidIntro: asExplorer(pose(["pyramidIntro", "pyramidIntro2"])),
   levelCompleted: pose("pointUp", ["levelCompleted"]),
   expeditionCompleted: pose("glassesPoint", ["expeditionCompleted", "expeditionCompleted2"]),
   collectionIntro: pose(["collectionIntro", "collectionIntro2", "collectionIntro3"]),
