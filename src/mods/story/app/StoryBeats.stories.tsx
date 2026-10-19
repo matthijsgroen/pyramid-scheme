@@ -13,7 +13,7 @@ import { WALLS } from "../game/reading/walls"
 // shows up here as unplaced rather than going unheard. Only what code cannot say (a bond's trigger, a beat
 // whose mechanism is unbuilt) is written down below.
 
-type Kind = "arrival" | "tomb" | "bond" | "reading" | "unplaced"
+type Kind = "arrival" | "meeting" | "tomb" | "bond" | "reading" | "unplaced"
 type Beat = { id: string; lines: number; landed?: string; placement?: string }
 
 const nameOf = (journeyId: string) => journeys.find(journey => journey.id === journeyId)?.name ?? journeyId
@@ -58,6 +58,9 @@ const roomsOf = (encounter: string): Map<string, string[]> => {
 const TOMB_ROOM =
   "A `conversation` room on the tomb floor, which is authored one room longer for it. Never ahead of a tableau (tableaus are numbered by position); from junior on never last either (the crocodile capstone), so it stands second-to-last."
 
+const MEETING_ROOM =
+  "A `conversation` room in the journey's first pyramid, where the explorer meets Fez (`sceneFor`'s MEETINGS)."
+
 /** What only the code's control flow knows (`beatFor`), or what nothing builds yet. */
 const BY_HAND: Record<string, Pick<Beat, "landed" | "placement">> = {
   "bond.starter": { landed: "First board solved without hints at starter tier (reaction rail)." },
@@ -77,10 +80,10 @@ const BY_HAND: Record<string, Pick<Beat, "landed" | "placement">> = {
 const catalogue = (): Record<Kind, Beat[]> => {
   const conversationRooms = roomsOf("conversation")
   const readingRooms = roomsOf("reading")
-  const sorted: Record<Kind, Beat[]> = { arrival: [], tomb: [], bond: [], reading: [], unplaced: [] }
+  const sorted: Record<Kind, Beat[]> = { arrival: [], meeting: [], tomb: [], bond: [], reading: [], unplaced: [] }
   for (const [id, lines] of conversations()) {
     const kind = id.split(".")[0]
-    if (!["arrival", "tomb", "bond", "reading", "altar", "end"].includes(kind)) continue
+    if (!["arrival", "meeting", "tomb", "bond", "reading", "altar", "end"].includes(kind)) continue
     const beat: Beat = { id, lines, ...BY_HAND[id] }
 
     if (kind === "arrival") {
@@ -88,11 +91,11 @@ const catalogue = (): Record<Kind, Beat[]> => {
       if (JOURNEYS_WITH_ARRIVAL.has(journeyId))
         beat.landed = `Travel screen, setting off for ${nameOf(journeyId)} (${journeyId}).`
     }
-    if (kind === "tomb") {
+    if (kind === "tomb" || kind === "meeting") {
       const placed = [...conversationRooms].filter(([journeyId]) => sceneFor(journeyId) === id)
       if (placed.length > 0) {
         beat.landed = placed.map(([journeyId, at]) => `${nameOf(journeyId)} (${journeyId}), ${at.join("; ")}`).join(" ")
-        beat.placement = TOMB_ROOM
+        beat.placement = kind === "tomb" ? TOMB_ROOM : MEETING_ROOM
       }
     }
     const wall = Object.entries(WALLS).find(([, candidate]) => candidate.after === id)
@@ -162,6 +165,9 @@ type Story = StoryObj<typeof meta>
 
 /** One per journey, on the travel screen as the player sets off: no room in any level. */
 export const Arrivals: Story = { args: { kind: "arrival" } }
+
+/** Where the explorer meets Fez: a conversation room in that journey's first pyramid. */
+export const Meetings: Story = { args: { kind: "meeting" } }
 
 /** A ghost in each tomb, in a conversation room authored onto the tomb floor. */
 export const TombScenes: Story = { args: { kind: "tomb" } }
