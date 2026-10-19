@@ -152,6 +152,9 @@ export const Fez: FC<{
         </div>
         {portrait && (
           <img
+            // One element per speaker: the slide-in transitions every transform, the mirror included, so a
+            // shared element would visibly spin round each time the other one spoke.
+            key={speaker}
             src={portrait.src}
             alt={portrait.alt}
             className={clsx(

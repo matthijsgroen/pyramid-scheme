@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from "vitest"
-import { render, screen } from "@testing-library/react"
+import { act, fireEvent, render, screen } from "@testing-library/react"
 
 // A two-hander whose FIRST line is the explorer's — the case the portrait got wrong.
 const WRITTEN = new Set(["arrival.starter_1.1.explorer", "arrival.starter_1.2.fez"])
@@ -43,5 +43,19 @@ describe("facing", () => {
     render(<Fez conversation="levelCompleted" onComplete={() => {}} />)
 
     expect(screen.getByRole("img").classList).not.toContain("-scale-x-100")
+  })
+
+  it("swaps in a new portrait when the speaker changes, so the mirroring never animates", () => {
+    vi.useFakeTimers()
+    const { container } = render(<Fez conversation="arrival.starter_1" onComplete={() => {}} />)
+    for (let i = 0; i < 20; i++) act(() => void vi.advanceTimersByTime(100))
+    const explorer = screen.getByRole("img")
+
+    fireEvent.click(container.firstElementChild as HTMLElement)
+    for (let i = 0; i < 20; i++) act(() => void vi.advanceTimersByTime(100))
+    vi.useRealTimers()
+
+    expect(screen.getByRole("img").getAttribute("alt")).not.toMatch(/explorer/i)
+    expect(explorer.isConnected).toBe(false)
   })
 })
