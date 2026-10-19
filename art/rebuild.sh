@@ -213,20 +213,10 @@ scaffold rubblePile --colour=#9a6a3c --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/rubblePile.webp --tier=starter --name=rubblePile --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
-# --brightness=0.70 is the deepest clip in this file, and it is a WHITEWASH problem rather than the usual
-# repaint drift. Told the shrine is whitewashed, the generator painted it white: untouched, 54.7% of the
-# tile sat over the rank's 152 light end and the sprite measured 60 LIGHTER than the floor.
-#
-# It is still meant to be the brightest thing the merchant owns, and it is — the whitewash lands at 146
-# with a max of 161, against a floor at 99 and a wall face whose own worn whitewash tops out at 120. What
-# 0.70 buys over 0.74 is the tail: 4.0% of the sprite over the clamp instead of 19.4%.
-#
-# Judge that number on the WHITEWASH and not on the sprite. This tile is a pale box, a near-black recess
-# and a shadow, so its whole-sprite mean sits near the floor's own value however bright the box is, and
-# tile-stats' "1 lighter than the slab" at 0.65 said nothing about whether the shrine reads.
+# A red-ochre household shrine: Bes and a lamp in its recess.
 scaffold shrine --colour=#9a6a3c --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/shrine.webp --tier=starter --name=shrine --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.85 --brightness=0.70 --saturation=1.5
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.85
 
 # The first CLOTH in the set, and the one the pipeline's own table said could not be made. --sun=0.16
 # because an awning is a sheet, and a sheet flattened to z=0 is prim_pillar's slab: at the default the
