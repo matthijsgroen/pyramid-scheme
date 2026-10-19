@@ -285,6 +285,14 @@ describe("useAssembledFloor — restoring a saved position", () => {
     expect(result.current.explorerPos).toEqual(result.current.grid!.entrancePos)
   })
 
+  it("sends the player back to the entrance when a pyramid's remembered cell names a place the carve no longer has", () => {
+    const { result } = renderHook(() =>
+      useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, {}, "gone#0/p3", 0, new Set(), undefined, undefined, "gone#0/~2")
+    )
+
+    expect(result.current.explorerPos).toEqual(result.current.grid!.entrancePos)
+  })
+
   it("honours a saved cell that is still standable", () => {
     const { result } = renderHook(() => useAssembledFloor(JOURNEY_ID, CONFIG, SEED, 0, {}, null, 0, new Set()))
     const grid = result.current.grid!

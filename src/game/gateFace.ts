@@ -193,7 +193,7 @@ export const withGateFaces = (
       for (const keyId of floorKeys)
         markers.push(
           isWebKey(keyId)
-            ? { id: keyId, icon: { kind: "web" }, lit: heldKeys.has(keyId), mark: webMarkFor(keyId) }
+            ? { id: keyId, icon: { kind: "web" }, lit: heldKeys.has(keyId), mark: webMarkFor(keyId, grid.webMarks) }
             : { id: keyId, icon: { kind: "key" }, lit: heldKeys.has(keyId) }
         )
       const orders = sequences.map(({ id, mechanism, at }): SequenceFace => {

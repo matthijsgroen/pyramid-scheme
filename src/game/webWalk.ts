@@ -716,14 +716,14 @@ const visitGraph = (graph: Graph, held: Held, doors: readonly WebDoor[]): Visit 
   return { exit, reach: reached, seen, waitsOn: exit ? new Set() : new Set(onWay.map(([, key]) => key)) }
 }
 
-/** The journeys a web names: the floors of these are walked with re-entry. */
+/** The journeys a web names: the floors of these are walked with their web keys arriving. */
 export const webJourneys = (web: Web): string[] =>
   [...new Set(web.blocks.map(block => `wizard_${block.journey}`))].sort()
 
 /**
- * EVERY FLOOR OF A WEB JOURNEY WALKS SOUND WITH ITS WEB KEYS ARRIVING AND WITH RE-ENTRY: a key freed elsewhere is
- * collected by coming back at the entrance. `floors` is each journey's pyramids' carved floors; a floor with nothing to
- * walk is skipped.
+ * EVERY FLOOR OF A WEB JOURNEY WALKS SOUND WITH ITS WEB KEYS ARRIVING: a key freed elsewhere is collected by coming
+ * back where the player stood, which the save remembers per pyramid, so the walk needs no re-entry. `floors` is each
+ * journey's pyramids' carved floors; a floor with nothing to walk is skipped.
  */
 export const walkWebFloors = (
   web: Web,
@@ -735,7 +735,7 @@ export const walkWebFloors = (
   for (const journey of webJourneys(web))
     (floors[journey] ?? []).forEach((pyramid, p) =>
       pyramid.forEach((grid, f) => {
-        const result = walk(grid, { reentry: true })
+        const result = walk(grid)
         if (!result) return
         walked++
         if (!result.sound)

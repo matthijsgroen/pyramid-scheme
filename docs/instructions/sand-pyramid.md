@@ -86,9 +86,9 @@ clears the torch can be lit again. The walk below models that, so it needs no ru
 **In the walk an input is a one-way mechanism**: states `missing` and `held`, starting `missing`, opening its
 gates in `held`. Its one move, `missing → held`, is an **arrival**: a move the walk may make from every state,
 wherever the player stands, never a choice made in a region. That is exact. A key arrives while the player is
-elsewhere, and the player comes back to the state they left: between journeys the save keeps the position, and
-a pyramid re-entered from the travel map comes back at its entrance, which re-entry models (below). An arrival
-mid-visit, from an activator on another floor of the same pyramid, is a state the player left too.
+elsewhere, and the player comes back to the state they left: the save keeps where the player stood in each
+pyramid, so a pyramid re-entered from the travel map comes back there (below). An arrival mid-visit, from an
+activator on another floor of the same pyramid, is a state the player left too.
 
 So the walk has every order of arrival in it, and every check runs over all of it: a torch doused under sand and
 then the sand cleared is a state like any other, and from it the way out must still be reachable and no region
@@ -226,7 +226,9 @@ the baked floor and pins them by authored name: a section by its address, a lock
 lock's own region names. A section is not given a label for it: a label may not imitate a positional address
 (`src/game/carve/sections.ts`), so "a label equal to its current address" is refused by the carve. Instead the
 bake places the web on the floors at their last pins, then reads it again on the floors the search pinned, and
-refuses the bake, naming each line, when anything landed elsewhere; the report says where each landed.
+refuses the bake, naming each line, when anything landed elsewhere; the report says where each landed. A web
+floor the search re-stamps is built again on its new pin before that check (`bakeOnSettledPins`), so the pins the
+bake writes are the ones the web was placed on, and the next bake starts from them.
 
 ### The worked example
 
@@ -291,6 +293,8 @@ half and so `star`. Six pulls, in whatever order the player came by them, clear 
 
 - **Two stops on one seam** (`stopsShareSeam`), `frontOnAnyGate`, `frontLeaks`, `potsOverlap`,
   `outsideTooMany`, and an unbound input or a binding naming no input.
+- **More marks than web glyphs** (`webMarksRunOut`): a web whose pots and named keys wear more marks than
+  `WEB_MARK_GLYPHS` holds (eight), since two of them would look alike.
 - **One sand kind per site.** On a pyramid where web sand lies, a floor lock's region barriers owned only by
   floor controls bind to water; a lock that binds them to sand there is refused.
 
@@ -400,7 +404,7 @@ a path in it.
 | The procession reset                        | yes     | a reset is a transition at the door; what play keeps beside it (`sequenceReads`) only grows and is outside the walk                                                           |
 | Mechanism state kept between visits         | yes     | the saved config is a walk state; web keys are not in it (`mechanismStates` holds positions only), and the arrival move is what happens to the floor while the player is away |
 | Keys arriving between visits, or during one | yes     | an arrival is offered from every state, so both are paths of the walk                                                                                                         |
-| Coming back at the entrance                 | **no**  | see below; the re-entry rule fixes it                                                                                                                                         |
+| Coming back from the travel map             | yes     | the save keeps where the player stood in each pyramid (`pyramidPositions`); leaving by the way out comes back at `in`, the walk's own move; see below                         |
 
 **Arrivals and the checks.** An arrival counts as a way out of a state for "no strand" and "no region lost": a
 player waiting on a lever is not stuck, since leaving keeps the floor. That is only true if the lever can be
@@ -410,21 +414,31 @@ stays a strand.
 **The cost.** n web keys on a floor multiply its states by 2ⁿ. Rule 4 holds a lock to three; a floor with
 seam gates as well counts those too, and `MAX_LOCK_STATES` reports `tooLarge` past its ceiling as today.
 
-**Coming back at the entrance.** The walk has one way of leaving and coming back: from the way out to the way
-in, because "re-entering a site puts the player back where they stood" (`movesFrom`, `src/game/lockWalk.ts`).
-That holds while the player comes back to the same journey's same pyramid. A pyramid picked on the travel map
-is entered through `visitLevel` (`src/app/state/useJourneys.ts`), which sets the journey's `levelNr` to it and
-forgets the position: the player stands at the entrance, every mechanism as they left it. So the floor can be
-re-entered at `in` from any state, a move the walk does not have, and `(in, config)` may be a state it never
-reached. This is true of every floor today; the web makes it the normal way to collect what sand freed.
+**Coming back where the player stood.** The walk has one way of leaving and coming back: from the way out to
+the way in, because "re-entering a site puts the player back where they stood" (`movesFrom`,
+`src/game/lockWalk.ts`). A pyramid picked on the travel map is entered through `visitLevel`
+(`src/app/state/useJourneys.ts`). The player who backed out of a pyramid to the map has their place written
+down for that pyramid (`pyramidPositions`, keyed by `levelNr`), and a return puts them back on it, every
+mechanism as they left it: `(place, config)` is the state they left, a state the walk already has. So a key
+freed elsewhere is collected by walking on from where the player stood, and the floor walk needs no move of
+its own for it.
 
-**The rule that fixes it: re-entry adds states, never escapes.** On a floor of a web journey the walk adds,
-from every reachable state, the state at `in` with the same config (a stone in hand stays in hand, as the save
-keeps it). The new states must pass every check like any other. The backward sweep for strands and lost
-regions does not use the re-entry edges, so a chamber a mechanism sealed is still a strand: re-entry is a way
-to start again, not a way out of a trap. Arrivals and re-entry are independent moves, so both are walked, in
-either order. Whether the rule belongs on every floor, or the save should keep a position per pyramid
-instead, is open question 5.
+What still starts at the entrance:
+
+- **Leaving by the way out.** The interior closes (`setInteriorLevel(…, null)`), the pyramid's place is
+  forgotten, and a return starts at `in` with the config as left. That is the walk's own move from `out` to `in`.
+- **A first visit**, and an older save that remembers no place: the entrance, with the initial config or the
+  one the save holds for a pyramid it never backed out of.
+- **A place the carve no longer has.** A re-carve or a re-laid pyramid (`RELAID_PYRAMIDS`, which also forgets the
+  remembered places there) falls back to the floor's entrance with the config as left: a state the walk may
+  not have. Both are release decisions, not play.
+
+**Re-entry, kept as an option.** The walk can still add, from every reachable state, the state at `in` with
+the same config (`reentry`, `walkFloorLock`, `src/game/lockWalk.ts`): re-entry adds states, never escapes, and a
+chamber a mechanism sealed is still a strand. The web no longer turns it on: `yarn lock <web>` and the bake
+walk a web journey's floors with their web keys arriving only (`walkWebFloors`, `carvedVisit`). It stays for
+the cases above: a release that re-carves or re-lays a web floor under players standing in it can walk that
+floor with re-entry to see what a fallback to the entrance can reach.
 
 ## Seen before its control, across the layers
 
@@ -441,6 +455,12 @@ A web door shows one marker per owner (`../mods/mechanic-contract.md` §3, a gat
 floor owners' floor marks and its web mark. A pot's doors all wear the pot's mark with the count they wait for;
 a named gate wears its activator's mark. Web marks come from a glyph set disjoint from `MARK_GLYPHS`, so two
 mechanics on one floor still never share a mark and `allocateMarks` (`src/game/mark.ts`) never sees a web key.
+The web hands its glyphs out itself, `allocateWebMarks`: every pot and named key it wears gets one of its own,
+by name in sorted order, so two pots, or a pot and a key, never look alike, and the same web gets the same
+marks on every bake. The bake writes them on the floors (`webMarks`) and on each activator (`glyph`).
+
+A lever in several pots wears its first pot's mark, and that is enough: a lever never goes back, so the player
+always pulls it, and the travel map's pulse, not the lever, says where it reached, as it does for a ward key.
 
 A `sand` line's doors are drawn as web sand, an `opens` line's as a web seal. A region buried by a front or by
 an input is web sand over the region, and conceals what was explored under it as every region barrier does.
@@ -454,7 +474,7 @@ an input is web sand over the region, and conceals what was explored under it as
 3. **Every input is bound and every binding names an input**, for every lock placed on a floor of the world.
    A lock with declared inputs on a floor no web binds is refused.
 4. The lock-side rules on every placed lock, added owners included; no front leaks.
-5. Every floor carrying a web door walks sound with its web keys arriving, and with re-entry.
+5. Every floor carrying a web door walks sound with its web keys arriving.
 6. The world solver, run with the web's keys and the order inside each journey, agrees with the web walk:
    every activator reachable, every door opened, every journey finished. No activator needs a key from outside
    the web (a ward key, a map piece), so the web walk's assumptions are exact.
@@ -469,8 +489,9 @@ each taken activator and `web:<pot>#1..n` for each pot holding n of its levers, 
 with the world data.
 
 - **Mechanism state does not change.** It stays per journey, per pyramid; a web key never enters it.
-- **No change to the journey save.** The `levelNr` cursor stays. Free order between journeys is computed, not
-  stored.
+- **The journey save keeps a place per pyramid** (`pyramidPositions`), so a return from the travel map resumes
+  where the player stood. It is a field added with an empty default: an older save starts at the entrance as
+  before. The `levelNr` cursor stays. Free order between journeys is computed, not stored.
 - **A web door opens on its own** once its key is held, if its floor owners agree: the lever did the work, so
   the sand is gone when the player arrives.
 - **Moving a stop or adding a lever re-derives the front** from the same pulled set, so a re-tuned web needs no
@@ -632,13 +653,12 @@ carries at most 16 activators.
   fragment slot) is placed again by the worklist and may land in another wizard room.
 - **Buried sections that carry a ward gate today** lose it to another place in the journey, at the designer's
   say (open question 2).
-- **No other tier moves.** Re-entry states change no carve; if they are turned on for every floor (open
-  question 5), they may refuse floors that bake today, which is why that is measured first.
+- **No other tier moves.** Re-entry stays off (open question 5), so no floor that bakes today is refused for it.
 
 ### Risks
 
-- **Re-entry is a soundness change.** It touches the floor walk every lock relies on. Review it with Opus, with
-  `floorLock`'s arriving keys and the order inside a journey.
+- **A remembered place is a save field.** It must be forgotten wherever the floor under it changes: a re-laid
+  pyramid forgets it with the place the save stands at (`useRelaidFloorsBackfill`).
 - **A stop's landing is read off the carve.** Inside a lock, whether a percentage falls on a corridor or inside
   a region is the carve's; placement pins it by name, and the report shows it, so the designer sees a stop
   that landed somewhere other than they meant.
@@ -731,3 +751,7 @@ Rough sizes: S is about a day, M two to three days, L a week.
    pyramid 2, expert_3 pyramid 4 and master_2 pyramid 5, each floor 0. The rest walk sound either way. Today the
    walk has re-entry behind a flag (`reentry`, `walkFloorLock`), off in the bake; `yarn lock <web>` turns it on for
    every floor of a web journey, a journey any web names (`walkWebFloors`).
+
+   **Decided: the save keeps a place per pyramid.** A return from the travel map resumes where the player stood
+   ("Why the floor walk is exact", "Coming back where the player stood"), so the web walks its floors without
+   re-entry. The flag stays in the walker, off everywhere.

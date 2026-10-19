@@ -20,8 +20,16 @@ const KEY_STAND_IN = "chestProp"
 export const owedWebTiles = (isPainted: (tile: string) => boolean): string[] =>
   [...Object.values(SAND_LEVER_TILES), WEB_KEY_TILE].filter(tile => !isPainted(tile))
 
-/** A lever wears the mark of the pot it counts in, a key the mark its door asks for. */
-export const webActivatorArt = ({ name, look, pots }: Pick<WebActivatorShape, "name" | "look" | "pots">): RewardArt =>
-  look === "lever"
-    ? { kind: "lever", tiles: SAND_LEVER_TILES, stand: FLOOR_LEVER_TILES, mark: webMarkFor(pots[0] ?? name) }
-    : { kind: "prop", tile: WEB_KEY_TILE, stand: KEY_STAND_IN, mark: webMarkFor(name) }
+/** A lever wears the mark of the pot it counts in, a key the mark its door asks for: the glyph its web handed it. */
+export const webActivatorArt = ({
+  name,
+  look,
+  pots,
+  glyph,
+}: Pick<WebActivatorShape, "name" | "look" | "pots" | "glyph">): RewardArt => {
+  const worn = look === "lever" ? (pots[0] ?? name) : name
+  const mark = webMarkFor(worn, glyph !== undefined ? { [worn]: glyph } : undefined)
+  return look === "lever"
+    ? { kind: "lever", tiles: SAND_LEVER_TILES, stand: FLOOR_LEVER_TILES, mark }
+    : { kind: "prop", tile: WEB_KEY_TILE, stand: KEY_STAND_IN, mark }
+}

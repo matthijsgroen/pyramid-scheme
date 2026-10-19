@@ -19,6 +19,7 @@ import { fileURLToPath } from "url"
 import { buildWorldConfigs } from "../src/mods/buildWorldConfigs"
 import { MOD_REACHABILITY_SUPPORT } from "../src/mods/registeredMods"
 import { checkPlacedWeb } from "../src/worldGen/webBakeCheck"
+import { bakeOnSettledPins, placementMoved, webJourneysOf } from "../src/worldGen/webPlacement"
 import type { WebPlacement } from "../src/worldGen/webPlacement"
 import { generateFile, printStats } from "../src/worldGen/serializer"
 import { validateWorldSpec } from "../src/worldGen/validateWorldSpec"
@@ -45,7 +46,7 @@ import {
 import { generatedWorldConfigs } from "../src/data/generatedWorld"
 import { floorHash, LEDGER_PATH, readLedger, sourceFingerprint, type CarveLedger } from "./carveLedger"
 import type { AssemblerResult, FloorGrid } from "../src/game/siteTypes"
-import type { FloorConfig } from "../src/worldGen/types"
+import type { FloorConfig, SiteConfig } from "../src/worldGen/types"
 import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
 import { resolveKeyRequirements, resolveEncounterMeta, ALL_FAMILY_META } from "../src/mods/allFamilyMeta"
 import { puzzleSeeds } from "../src/data/puzzleSeeds"
@@ -69,19 +70,6 @@ if (errors.length > 0) {
 }
 
 const validateOnly = process.argv.includes("--validate-only")
-
-// --validate-only must still run the full build — including every registered worldValidator
-// (the hieroglyph coverage guard among them) — not just the spec-shape check above. Skipping
-// buildConfigs here used to mean `yarn validate-world` could never catch a coverage shortfall;
-// it only skips the file write below.
-// The tier's web, placed while the world is built and checked once every floor carries its pin.
-const webPlacements: WebPlacement[] = []
-const configs = buildWorldConfigs(EMPTY_FRACTION, { onWebPlaced: placed => webPlacements.push(placed) })
-// Hieroglyph finalize (mod-owned, §D): stamp each fragment's pieceIndex — hieroglyph-specific
-// logic the core serializer no longer owns. Every symbol's full required count is guaranteed
-// placed by this point (placeFragments.ts's completion pass + the hieroglyph coverage
-// worldValidator both hard-fail otherwise), so HIEROGLYPH_REQUIRED is written as-is — no capping.
-assignFragmentPieceIndices(configs)
 
 // Chests are authored, so the generator does not quietly work around one that holds nothing — it
 // stops, and leaves the call to the author: add loot, or take the chest out. Assembles each floor at
@@ -130,6 +118,18 @@ const carveSearch: {
   packing: number
 }[] = []
 const grids = new Map<string, FloorGrid | null>()
+// The pins a floor's baked (packing, seed) is verified against: the last bake's, or the round before when the search
+// re-stamped a web floor (bakeOnSettledPins).
+let bakedPins: Readonly<Record<string, SiteConfig[]>> = generatedWorldConfigs
+const startCarveRound = (pins: Readonly<Record<string, SiteConfig[]>>) => {
+  bakedPins = pins
+  for (const key of Object.keys(nextLedger)) delete nextLedger[key]
+  Object.assign(carveStats, { verified: 0, ledgered: 0, searched: 0 })
+  unsatisfiable.length = 0
+  unassembled.length = 0
+  carveSearch.length = 0
+  grids.clear()
+}
 const assembleOnce = (journeyId: string, floor: FloorConfig, levelNr: number, floorIndex: number) => {
   const cacheKey = `${journeyId}#${levelNr}#${floorIndex}`
   if (!grids.has(cacheKey)) {
@@ -165,7 +165,7 @@ const assembleOnce = (journeyId: string, floor: FloorConfig, levelNr: number, fl
       fullLadder: Infinity,
     }
     const hash = floorHash(carveSources, floor, { ...options, step: PACKING_STEP })
-    const baked = CARVE_RESEARCH ? undefined : generatedWorldConfigs[journeyId]?.[levelNr - 1]?.[floorIndex]
+    const baked = CARVE_RESEARCH ? undefined : bakedPins[journeyId]?.[levelNr - 1]?.[floorIndex]
     const verified = baked
       ? verifyCarvePair(base, { seed: baked.seed ?? base, packing: baked.packing ?? authored }, assembleAt, options)
       : null
@@ -223,7 +223,37 @@ const assembleOnce = (journeyId: string, floor: FloorConfig, levelNr: number, fl
   return grids.get(cacheKey)!
 }
 
-const emptyChests = findEmptyChests(configs, assembleOnce)
+// --validate-only must still run the full build — including every registered worldValidator
+// (the hieroglyph coverage guard among them) — not just the spec-shape check above. Skipping
+// buildConfigs here used to mean `yarn validate-world` could never catch a coverage shortfall;
+// it only skips the file write below.
+// The tier's web, placed while the world is built on its floors' last pins, and checked once every floor carries its
+// pin. A web floor the search re-stamps is built again on the new pin, so the bake writes the pins it placed on.
+const { configs, webPlacements, emptyChests } = bakeOnSettledPins(
+  pins => {
+    startCarveRound(pins)
+    const webPlacements: WebPlacement[] = []
+    const configs = buildWorldConfigs(EMPTY_FRACTION, { pins, onWebPlaced: placed => webPlacements.push(placed) })
+    // Hieroglyph finalize (mod-owned, §D): stamp each fragment's pieceIndex — hieroglyph-specific
+    // logic the core serializer no longer owns. Every symbol's full required count is guaranteed
+    // placed by this point (placeFragments.ts's completion pass + the hieroglyph coverage
+    // worldValidator both hard-fail otherwise), so HIEROGLYPH_REQUIRED is written as-is — no capping.
+    assignFragmentPieceIndices(configs)
+    return { configs, webPlacements, emptyChests: [] as ReturnType<typeof findEmptyChests> }
+  },
+  round => {
+    round.emptyChests = findEmptyChests(round.configs, assembleOnce)
+    for (const [, id] of webJourneysOf(round.configs))
+      round.configs[id].forEach((site, p) => site.forEach((floor, f) => assembleOnce(id, floor, p + 1, f)))
+  },
+  round =>
+    round.webPlacements.flatMap(placed =>
+      placementMoved(placed, round.configs, (id, levelNr, f) =>
+        assembleOnce(id, round.configs[id][levelNr - 1][f], levelNr, f)!
+      )
+    ),
+  generatedWorldConfigs
+)
 
 printStats(configs)
 const cov = hieroglyphCoverage(configs, HIEROGLYPH_REQUIRED)

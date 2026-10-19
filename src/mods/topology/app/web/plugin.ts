@@ -21,6 +21,7 @@ export const webActivatorSchema = z.object({
   name: z.string(),
   look: z.enum(["lever", "key"]),
   pots: z.array(z.string()),
+  glyph: z.number().optional(),
 })
 
 if (isModEnabled("topology")) {

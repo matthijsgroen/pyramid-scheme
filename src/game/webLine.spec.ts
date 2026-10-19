@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { isRegionGate } from "./lockAuthoring"
+import { WEB_MARK_GLYPHS } from "./mark"
 import { describeWhere, potKey } from "./webLine"
 import type { ResolvedWeb } from "./webLine"
 import { parseWeb } from "./webNotation"
@@ -267,5 +268,25 @@ describe("stability", () => {
     const before = resolve(text, carve([], [2, 4]))
     expect(before.refusals).toEqual([])
     expect(placesOf(resolve(text, carve(["L.hall"], [2, 5])))).toEqual(placesOf(before))
+  })
+})
+
+describe("the web's marks", () => {
+  // n pots, one per pyramid of wizard_1, each cleared by one lever standing in wizard_9.
+  const potsWeb = (n: number) => {
+    const names = Array.from({ length: n }, (_, i) => `k${i + 1}`)
+    const text = [levers(...names), ...names.map((name, i) => `[w1p${i + 1}]\nsand by ${name}`)].join("\n")
+    return resolve(text, world({ 1: names.map(() => plain(4)), ...ELSEWHERE }))
+  }
+
+  it("gives every pot of one web a glyph of its own", () => {
+    const resolved = potsWeb(WEB_MARK_GLYPHS.length)
+    expect(resolved.refusals).toEqual([])
+    const glyphs = resolved.pots.map(pot => resolved.marks[pot.name])
+    expect(new Set(glyphs).size).toBe(WEB_MARK_GLYPHS.length)
+  })
+
+  it("refuses a web wearing more marks than there are web glyphs", () => {
+    expect(refusalTypes(potsWeb(WEB_MARK_GLYPHS.length + 1))).toContain("webMarksRunOut")
   })
 })

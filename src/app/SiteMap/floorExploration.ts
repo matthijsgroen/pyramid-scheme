@@ -110,7 +110,9 @@ export const computeFloorExploration = (grid: FloorGrid): FloorExploration => {
       }
       if (cell.state === "completed") return
       const priority = cell.family ? (getFamilyPlugin(cell.family)?.meta.rewardPriority ?? 0) : 0
-      const ownKeys = cell.requiredKeyIds ?? []
+      // A web key a door lists beside its floor owner is a way in, not something the door holds: it asks for it on the
+      // route (blockingKeys), never as content of its own.
+      const ownKeys = (cell.requiredKeyIds ?? []).filter(id => !isWebKey(id))
       if (priority > 0 || ownKeys.length > 0) addContent(h, route, ownKeys)
     })
   )

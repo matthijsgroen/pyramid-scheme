@@ -15,6 +15,16 @@ export const RELAID_PYRAMIDS: readonly RelaidPyramid[] = [
   { journeyId: "expert_4", levelNr: 5, since: 1 },
 ]
 
+/** The levels of a save's journey re-laid after the version it is stamped with: a position it remembers there names
+ * a room of the floor as it was, so it is forgotten as the place a save stands at is. */
+export const relaidLevelsOf = (
+  stored: Pick<StoredJourneyStateV3, "journeyId" | "relaidFloorsVersion">,
+  relaid: readonly RelaidPyramid[]
+): number[] =>
+  relaid
+    .filter(pyramid => pyramid.since > (stored.relaidFloorsVersion ?? 0) && pyramid.journeyId === stored.journeyId)
+    .map(pyramid => pyramid.levelNr)
+
 /**
  * Whether a save stands inside a pyramid re-laid after the version it is stamped with. Its saved place names a room
  * of the floor as it was; on the re-laid floor that room can lie past a door the lock has not opened, so the place is

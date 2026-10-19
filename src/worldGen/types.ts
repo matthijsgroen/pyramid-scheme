@@ -151,6 +151,8 @@ export type FloorConfig = {
   locks?: PlacedLock[]
   /** Mirrors game/siteTypes.ts's FloorConfig.webDoors. */
   webDoors?: WebDoorPlacement[]
+  /** Mirrors game/siteTypes.ts's FloorConfig.webMarks. */
+  webMarks?: Record<string, number>
   realisations?: RealisationBinding
 }
 

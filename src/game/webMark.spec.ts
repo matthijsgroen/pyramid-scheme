@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { allocateMarks, MARK_GLYPHS, markFor, WEB_MARK_GLYPHS, webMarkFor } from "./mark"
+import { allocateMarks, allocateWebMarks, MARK_GLYPHS, markFor, WEB_MARK_GLYPHS, webMarkFor } from "./mark"
 import { potKey, webKey } from "./webLine"
 
 const NAMES = ["moon", "sun", "star", "ankh", "reed", "w1p1", "w2p3", "weighing", "a", "b", "c", "d", "e", "f"]
@@ -20,6 +20,26 @@ describe("a web mark", () => {
 
   it("draws from a glyph set disjoint from the floor's", () => {
     expect(WEB_MARK_GLYPHS.filter(glyph => MARK_GLYPHS.includes(glyph))).toEqual([])
+  })
+
+  it("is never shared by two names of one web, even two whose hashes pick the same glyph", () => {
+    // "a" and "i" are 8 apart, so their hashes prefer one glyph.
+    expect(webMarkFor(webKey("a")).glyph).toBe(webMarkFor(webKey("i")).glyph)
+    const { glyphs, unmarked } = allocateWebMarks(["a", "i", ...WEB_MARK_GLYPHS.slice(2).map((_, n) => `p${n}`)])
+    expect(unmarked).toEqual([])
+    expect(new Set(Object.values(glyphs)).size).toBe(WEB_MARK_GLYPHS.length)
+    expect(webMarkFor(webKey("a"), glyphs).glyph).not.toBe(webMarkFor(potKey("i", 2), glyphs).glyph)
+  })
+
+  it("is handed out the same on every run, whatever order the names come in", () => {
+    const names = ["moon", "sun", "w3", "ankh", "reed"]
+    expect(allocateWebMarks([...names].reverse())).toEqual(allocateWebMarks(names))
+    expect(allocateWebMarks(names)).toEqual(allocateWebMarks(names))
+  })
+
+  it("leaves a name unmarked once every web glyph is taken", () => {
+    const names = Array.from({ length: WEB_MARK_GLYPHS.length + 1 }, (_, n) => `n${n}`)
+    expect(allocateWebMarks(names).unmarked).toHaveLength(1)
   })
 
   it("is the same for every stop of a pot and carries the stop it waits for", () => {

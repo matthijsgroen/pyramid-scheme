@@ -50,15 +50,43 @@ export const WEB_MARK_GLYPHS: readonly number[] = [
   0x131ef, 0x131fc, 0x13217, 0x13218, 0x13219, 0x1320d, 0x13207, 0x13202,
 ]
 
-/** The mark a web key wears, from its pot or its activator alone: every door of one pot wears one glyph, the
- * stop (`web:moon#2`) written beside it. Pure of the floor, so every pyramid shows the same mark. */
-export const webMarkFor = (keyId: string): Mark => {
-  const [name, count] = keyId.replace(/^web:/, "").split("#")
+/** The pot or activator a web key names: `web:moon#2` and `web:moon` both name `moon`. */
+export const webMarkName = (keyId: string): string => keyId.replace(/^web:/, "").split("#")[0]
+
+const nameHash = (name: string): number => {
   let hash = 0
   for (const ch of name) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0
+  return hash
+}
+
+/**
+ * THE GLYPH EACH NAME OF ONE WEB WEARS, none shared: each name, in sorted order, takes the glyph its hash prefers or
+ * the next one free, as `allocateMarks` hands a floor its marks. A name left once every glyph is taken is `unmarked`.
+ */
+export const allocateWebMarks = (names: Iterable<string>): { glyphs: Record<string, number>; unmarked: string[] } => {
+  const glyphs: Record<string, number> = {}
+  const unmarked: string[] = []
+  const taken = new Set<number>()
+  for (const name of [...new Set(names)].sort()) {
+    const seed = nameHash(name)
+    const index = WEB_MARK_GLYPHS.map((_, step) => (seed + step) % WEB_MARK_GLYPHS.length).find(n => !taken.has(n))
+    if (index === undefined) unmarked.push(name)
+    else {
+      taken.add(index)
+      glyphs[name] = WEB_MARK_GLYPHS[index]
+    }
+  }
+  return { glyphs, unmarked }
+}
+
+/** The mark a web key wears: the glyph its web handed its pot or activator (`allocateWebMarks`), the stop
+ * (`web:moon#2`) written beside it, so every door of one pot wears one glyph in every pyramid. Without the web's
+ * glyphs the name's own hash picks one. */
+export const webMarkFor = (keyId: string, glyphs?: Readonly<Record<string, number>>): Mark => {
+  const [name, count] = keyId.replace(/^web:/, "").split("#")
   return {
     color: "yellow",
-    glyph: WEB_MARK_GLYPHS[hash % WEB_MARK_GLYPHS.length],
+    glyph: glyphs?.[name] ?? WEB_MARK_GLYPHS[nameHash(name) % WEB_MARK_GLYPHS.length],
     web: true,
     ...(count === undefined ? {} : { count: Number(count) }),
   }

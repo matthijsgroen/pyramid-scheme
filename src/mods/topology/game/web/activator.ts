@@ -9,16 +9,24 @@ import type { WebActivatorReward } from "@/worldGen/webPlacement"
 // standing in a reward slot, carrying the pots it counts in so play and the solver derive the same keys from it.
 export const WEB_ACTIVATOR = "webActivator"
 
-export type WebActivatorShape = { type: typeof WEB_ACTIVATOR; name: string; look: WebLook; pots: string[] }
+/** `glyph`: the mark its web handed it (a lever wears its first pot's), set by the bake. */
+export type WebActivatorShape = {
+  type: typeof WEB_ACTIVATOR
+  name: string
+  look: WebLook
+  pots: string[]
+  glyph?: number
+}
 
 export const isWebActivator = (reward: TreasureReward | undefined): reward is WebActivatorShape & TreasureReward =>
   reward?.type === WEB_ACTIVATOR && typeof reward.name === "string" && Array.isArray(reward.pots)
 
-export const webActivatorReward: WebActivatorReward = ({ name, look, pots }) => ({
+export const webActivatorReward: WebActivatorReward = ({ name, look, pots, glyph }) => ({
   type: WEB_ACTIVATOR,
   name,
   look,
   pots,
+  ...(glyph !== undefined ? { glyph } : {}),
 })
 
 /** The counter a pot keeps in the solver: one per lever of it reached. */

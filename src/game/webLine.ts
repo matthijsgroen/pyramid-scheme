@@ -3,6 +3,7 @@
 // needs of the carve, read off the bake (scripts/webWorld.ts) or made up by a test.
 import type { EdgeGate, Lock, LockConnection, LockGate } from "./lockAuthoring"
 import { MAX_OUTSIDE_INPUTS, barriersOf, isRegionGate, joinOf } from "./lockAuthoring"
+import { WEB_MARK_GLYPHS, allocateWebMarks, webMarkName } from "./mark"
 import type { ActivatorPlace, DoorPlace, SandTarget, Web, WebLook } from "./webNotation"
 
 /** A main-path room the line counts: a floor's puzzle rooms and its end room. `region` is `instance.region` of the
@@ -106,6 +107,7 @@ export type WebRefusalType =
   | "bindingNamesNoInput"
   | "lockRefused"
   | "webTooLarge"
+  | "webMarksRunOut"
   | "frontLeaks"
   | "ownFront"
   | "deadlock"
@@ -125,6 +127,8 @@ export type ResolvedWeb = {
   laidLocks: Map<string, Lock>
   /** The outside owner each stop landing in a lock adds, by lock as `laidLocks` names it, in the order added. */
   fronts: Map<string, { input: string; door: WebDoor }[]>
+  /** The glyph each pot and activator the web's doors, bindings and activators wear, none shared (`allocateWebMarks`). */
+  marks: Record<string, number>
   refusals: WebRefusal[]
 }
 
@@ -745,5 +749,21 @@ export const resolveWeb = (web: Web, world: WebWorld): ResolvedWeb => {
       })
     )
 
-  return { web, world, activators, pots, doors, bindings, laidLocks, fronts, refusals }
+  // A door wears its key's pot or activator, a lever the first pot it counts in, a key its own name.
+  const worn = new Set([
+    ...doors.map(door => webMarkName(door.key)),
+    ...bindings.map(binding => webMarkName(binding.key)),
+    ...activators.map(a =>
+      a.look === "lever" ? (pots.find(pot => pot.levers.includes(a.name))?.name ?? a.name) : a.name
+    ),
+  ])
+  const { glyphs: marks, unmarked } = allocateWebMarks(worn)
+  if (unmarked.length > 0)
+    refuse(
+      "webMarksRunOut",
+      undefined,
+      `${worn.size} marks for ${WEB_MARK_GLYPHS.length} glyphs: ${unmarked.join(", ")} would share a mark`
+    )
+
+  return { web, world, activators, pots, doors, bindings, laidLocks, fronts, marks, refusals }
 }

@@ -50,6 +50,29 @@ describe("a web door in the way", () => {
     const result = computeFloorExploration(floorFrom(["E.D.C"], { D: door, C: chest }))
     expect(result.keySets).toContainEqual(["web:moon"])
   })
+
+  it("a door on a floor gate is nothing to come back for once what lies behind it is taken", () => {
+    const door = roomPiece({
+      family: undefined,
+      tags: ["gate"],
+      gateVariant: "floor-key",
+      requiredKeyId: "gate_1",
+      requiredKeyIds: ["web:moon"],
+    })
+    const grid = floorFrom(["E.D.C"], { D: door, C: chest })
+    // Everything walked and taken; the door still asks for its floor owner.
+    const walked: FloorGrid = {
+      ...grid,
+      cells: grid.cells.map(row =>
+        row.map(cell =>
+          cell.type === "empty" || (cell.type === "room" && cell.requiredKeyId === "gate_1")
+            ? cell
+            : ({ ...cell, state: "completed" } as GridCell)
+        )
+      ),
+    }
+    expect(computeFloorExploration(walked)).toEqual({ open: false, keySets: [] })
+  })
 })
 
 // A tomb floor: two tableaus one behind the other, and a chest behind them both.

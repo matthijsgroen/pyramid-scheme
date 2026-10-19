@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest"
 import { assembleFloor } from "../game/siteAssembler"
 import type { FloorConfig as GameFloorConfig, FloorGrid } from "../game/siteTypes"
-import { potKey, webKey } from "../game/webLine"
+import { potKey, resolveWeb, webKey } from "../game/webLine"
 import { parseWeb } from "../game/webNotation"
 import { resolveEncounterMeta } from "../mods/allFamilyMeta"
 import { WEB_REACHABILITY, webActivatorReward } from "../mods/topology/game/web/activator"
 import { computeReachability } from "./reachability"
 import type { ReachabilitySupport } from "./reachability"
 import type { SiteConfig } from "./types"
-import { placeWeb } from "./webPlacement"
+import { bakeOnSettledPins, pinWebFloors, placeWeb, placementMoved, placementOf, readCarvedWorld } from "./webPlacement"
 import { solveWeb, webAgreement } from "./webSolver"
 
 // A made-up wizard tier: wizard_1 one pyramid, wizard_2 two, each pyramid one floor with a side section.
@@ -80,8 +80,18 @@ describe("a web placed on a world", () => {
       name: "sun",
       look: "lever",
       pots: ["w2p1"],
+      glyph: placement.resolved.marks.w2p1,
     })
     expect(placement.placement).toContain("web:w2p1#1 w2p1 f0 seam 1|2")
+  })
+
+  it("hands the floor its web's marks, so the door wears the glyph its lever wears", () => {
+    const { configs, placement } = placed("[w2p1]\nsand from 30%: 100% by sun\n[w1p1]\nlever sun @end")
+    const door = carve("wizard_2", 1, 0, configs.wizard_2[0][0] as GameFloorConfig)
+      .cells.flat()
+      .find(cell => cell.type === "room" && cell.requiredKeyId === potKey("w2p1", 1))
+    expect(configs.wizard_2[0][0].webMarks).toEqual(placement.resolved.marks)
+    expect(door?.type === "room" && door.mark?.glyph).toBe(placement.resolved.marks.w2p1)
   })
 
   it("refuses an activator in a slot that already holds a reward of its own", () => {
@@ -161,5 +171,97 @@ describe("the world solver on a placed web", () => {
     }
     const solved = solveWeb(configs, ["sun"], everyMod, undefined, resolveEncounterMeta)
     expect(solved.activators.has("sun")).toBe(false)
+  })
+})
+
+describe("a bake whose carve search re-stamps a web floor", () => {
+  // The lever stands at the end of whichever of w1p1's two side sections the carve hangs first: the carve's to say.
+  const TEXT = "[w2p1]\nsand from 30%: 100% by sun\n[w1p1]\nlever sun @0% side"
+  const twoSides = () => floorOf({ sideSections: [...floorOf().sideSections, ...floorOf().sideSections] })
+  const unpinned = (): Record<string, SiteConfig[]> => ({
+    wizard_1: [[twoSides()]],
+    wizard_2: [[floorOf()], [floorOf()]],
+  })
+  const firstCarving = (journeyId: string, levelNr: number) =>
+    SEEDS.find(seed => carve(journeyId, levelNr, 0, { ...floorOf(), seed }, false))!
+  /** The world pinned at `w1p1` for wizard_1's floor and each wizard_2 floor's first carving seed. */
+  const pinsAt = (w1p1: number): Record<string, SiteConfig[]> => ({
+    wizard_1: [[{ ...twoSides(), seed: w1p1 }]],
+    wizard_2: [1, 2].map(levelNr => [{ ...floorOf(), seed: firstCarving("wizard_2", levelNr) }]),
+  })
+  const placeOn = (pins: Readonly<Record<string, SiteConfig[]>>) => {
+    const configs = unpinned()
+    pinWebFloors(configs, pins)
+    return { configs, placement: placeWeb(parseWeb(TEXT, "made.web"), configs, carve, webActivatorReward) }
+  }
+  const placementAt = (w1p1: number) => {
+    try {
+      return placeOn(pinsAt(w1p1)).placement.placement.join("\n")
+    } catch {
+      return undefined
+    }
+  }
+  // The pin the search settles w1p1 on, and a pin of an earlier bake the web lands elsewhere on.
+  const settled = SEEDS.find(seed => placementAt(seed) !== undefined)!
+  const stale = SEEDS.find(seed => ![undefined, placementAt(settled)].includes(placementAt(seed)))!
+  const search = (configs: Record<string, SiteConfig[]>) => {
+    configs.wizard_1[0][0].seed = settled
+    configs.wizard_2.forEach((site, p) => (site[0].seed = firstCarving("wizard_2", p + 1)))
+  }
+  const bake = (pins: Record<string, SiteConfig[]>) => {
+    let builds = 0
+    const round = bakeOnSettledPins(
+      at => {
+        builds++
+        return placeOn(at)
+      },
+      ({ configs }) => search(configs),
+      ({ placement, configs }) => placementMoved(placement, configs, carve),
+      pins
+    )
+    return { round, builds }
+  }
+
+  it("places the web again on the pins the search stamped, so the check finds it where it was placed", () => {
+    expect(placementAt(stale)).not.toBe(placementAt(settled))
+    const { round, builds } = bake(pinsAt(stale))
+    expect(builds).toBe(2)
+    expect(round.configs.wizard_1[0][0].seed).toBe(settled)
+    const read = readCarvedWorld(round.configs, carve)
+    expect(round.placement.placement).toEqual(placementOf(resolveWeb(parseWeb(TEXT, "made.web"), read.world), read))
+  })
+
+  it("builds once on pins the search keeps", () => {
+    expect(bake(pinsAt(settled)).builds).toBe(1)
+  })
+
+  it("builds once where no web is placed, whatever the search stamps", () => {
+    let builds = 0
+    bakeOnSettledPins(
+      () => {
+        builds++
+        return { configs: unpinned() }
+      },
+      ({ configs }) => search(configs),
+      () => [],
+      pinsAt(stale)
+    )
+    expect(builds).toBe(1)
+  })
+
+  it("refuses a search that moves the web on every bake", () => {
+    expect(() =>
+      bakeOnSettledPins(
+        placeOn,
+        ({ configs }) => {
+          const floor = configs.wizard_1[0][0]
+          const pinned = floor.seed
+          search(configs)
+          floor.seed = pinned === settled ? stale : settled
+        },
+        ({ placement, configs }) => placementMoved(placement, configs, carve),
+        pinsAt(stale)
+      )
+    ).toThrow(/the web still moves after 3 bakes/)
   })
 })

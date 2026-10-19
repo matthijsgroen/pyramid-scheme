@@ -1,6 +1,7 @@
 // THE WEB PLACED ON THE WORLD (docs/instructions/sand-pyramid.md, "What the bake checks"): the tier's web read against
 // its carved floors, refused unless it walks sound, then written onto the authoring as web doors, bound lock inputs and
 // activators standing in reward slots. Nothing here carves: the carve is handed in, and a web door moves no wall.
+import { floorAssemblySeed, persistentInteriorSeed } from "../game/siteSeed"
 import type { FloorConfig as GameFloorConfig, FloorGrid } from "../game/siteTypes"
 import type { WebDoorPlacement, WebFront } from "../game/webDoors"
 import { describeWhere, pyramidName, resolveWeb } from "../game/webLine"
@@ -17,7 +18,13 @@ import type { CarvedPyramid, ReadWorld } from "./webWorld"
 export type CarveFloor = (journeyId: string, levelNr: number, floorIndex: number, config: GameFloorConfig) => FloorGrid
 
 /** The reward a web activator stands as, from the mod that realises it. */
-export type WebActivatorReward = (activator: { name: string; look: WebLook; pots: string[] }) => TreasureReward
+export type WebActivatorReward = (activator: {
+  name: string
+  look: WebLook
+  pots: string[]
+  /** The glyph its web handed the mark it wears. */
+  glyph?: number
+}) => TreasureReward
 
 /** The web journeys of a world: `wizard_N` by N. */
 export const webJourneysOf = (configs: Record<string, SiteConfig[]>): [number, string][] =>
@@ -25,6 +32,48 @@ export const webJourneysOf = (configs: Record<string, SiteConfig[]>): [number, s
     const m = /^wizard_(\d+)$/.exec(id)
     return m ? [[Number(m[1]), id] as [number, string]] : []
   })
+
+/**
+ * THE WEB'S FLOORS CARRY THEIR PINS BEFORE THE WEB IS READ: those in `pins` (the last bake's), or the address's own
+ * seed where there is none. The search that stamps pins runs after the build and a web moves no wall, so the floor the
+ * web is read on is the floor the solver, the bake and play all carve.
+ */
+export const pinWebFloors = (configs: Record<string, SiteConfig[]>, pins: Readonly<Record<string, SiteConfig[]>>) => {
+  for (const [, id] of webJourneysOf(configs))
+    configs[id].forEach((site, p) =>
+      site.forEach((floor, f) => {
+        const pinned = pins[id]?.[p]?.[f]
+        floor.seed ??= pinned?.seed ?? floorAssemblySeed(persistentInteriorSeed(id), p + 1, f)
+        if (floor.packing === undefined && pinned?.packing !== undefined) floor.packing = pinned.packing
+      })
+    )
+}
+
+/**
+ * A BAKE WHOSE WEB STANDS ON THE PINS IT WRITES. `build` places the web on the floors at `pins`, then `stamp` runs the
+ * carve search, and `moved` names what of the web landed elsewhere on the floors the search pinned
+ * (`placementMoved`). Where anything did, the world is built again on the pins the search stamped. Throws when the
+ * web still moves after `rounds` builds.
+ */
+export const bakeOnSettledPins = <R extends { configs: Record<string, SiteConfig[]> }>(
+  build: (pins: Readonly<Record<string, SiteConfig[]>>) => R,
+  stamp: (round: R) => void,
+  moved: (round: R) => string[],
+  pins: Readonly<Record<string, SiteConfig[]>>,
+  rounds = 3
+): R => {
+  for (let round = 1; ; round++) {
+    const built = build(pins)
+    stamp(built)
+    const lines = moved(built)
+    if (lines.length === 0) return built
+    if (round >= rounds)
+      throw new Error(
+        `the web still moves after ${rounds} bakes on the pins the search stamped:\n  ${lines.join("\n  ")}`
+      )
+    pins = built.configs
+  }
+}
 
 /** The wizard tier as the web reads it, each floor carved by `carve`. */
 export const readCarvedWorld = (
@@ -54,6 +103,20 @@ export const placementOf = (resolved: ResolvedWeb, read: ReadWorld): string[] =>
 
 export type WebPlacement = { resolved: ResolvedWeb; walked: WebWalk; placement: string[] }
 
+/** What of a placed web stands elsewhere on the floors as `carve` carves them now, one line each side. */
+export const placementMoved = (
+  placed: WebPlacement,
+  configs: Record<string, SiteConfig[]>,
+  carve: CarveFloor
+): string[] => {
+  const read = readCarvedWorld(configs, carve)
+  const now = placementOf(resolveWeb(placed.resolved.web, read.world), read)
+  return [
+    ...placed.placement.filter(line => !now.includes(line)).map(line => `placed: ${line}`),
+    ...now.filter(line => !placed.placement.includes(line)).map(line => `now:    ${line}`),
+  ]
+}
+
 /** The web journeys' authoring with a placed web taken off: its doors, its lock bindings, and the activators in their
  * slots (`isActivator`). What a web is placed on afresh. */
 export const withoutWeb = (
@@ -76,7 +139,7 @@ export const withoutWeb = (
       id,
       configs[id].map(site =>
         site.map(floor => {
-          const { webDoors: _doors, ...rest } = floor
+          const { webDoors: _doors, webMarks: _marks, ...rest } = floor
           return {
             ...rest,
             ...(floor.rewards ? { rewards: floor.rewards.map(keep) } : {}),
@@ -149,6 +212,7 @@ export const placeWeb = (
     if (!placed) continue
     const floor = floorOf(door.at, door.where.floor)
     floor.webDoors = [...(floor.webDoors ?? []), placed]
+    floor.webMarks = resolved.marks
   }
 
   // A lock's inputs: those a line binds, and the owners its stops add.
@@ -171,6 +235,7 @@ export const placeWeb = (
     const [, pyramid, floor, instance] = /^(w\d+p\d+) f(\d+) (.+)$/.exec(id)!
     const [, j, p] = /^w(\d+)p(\d+)$/.exec(pyramid)!
     const config = floorOf({ journey: Number(j), pyramid: Number(p) }, Number(floor))
+    config.webMarks = resolved.marks
     config.locks = (config.locks ?? []).map(placed =>
       (placed.as ?? placed.lock.name) === instance
         ? { ...placed, web: { inputs: entry.inputs, ...(entry.fronts.length > 0 ? { fronts: entry.fronts } : {}) } }
@@ -182,7 +247,8 @@ export const placeWeb = (
     if (!placed) continue
     const { activator, held } = placed
     const pots = resolved.pots.filter(pot => pot.levers.includes(activator.name)).map(pot => pot.name)
-    held.set(toReward({ name: activator.name, look: activator.look, pots }))
+    const worn = activator.look === "lever" ? (pots[0] ?? activator.name) : activator.name
+    held.set(toReward({ name: activator.name, look: activator.look, pots, glyph: resolved.marks[worn] }))
   }
 
   return { resolved, walked: walked!, placement: placementOf(resolved, read) }
