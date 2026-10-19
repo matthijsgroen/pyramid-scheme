@@ -252,16 +252,9 @@ yarn import-tile art/masters/props/starter/shrine.webp --tier=starter --name=shr
 # is a sheet hanging DOWN off a pole, a drape and not a canopy. So the fix was the paint, and this master is
 # the same cloth on the same pole described as a screening cloth: patched, mended in dull red thread, hem
 # frayed and one corner torn away.
-#
-# --brightness=0.88 --saturation=2.3. Bleached linen came back ACHROMATIC — +0 warmth, with 29.8% of the
-# sprite over the rank's 152 light end — and saturation scales existing chroma, so a grey prop needs
-# multiples of what a brown one does: 2.3 here against 1.45 for the basin, the same argument the brazier
-# makes at 2.2. It lands at +25 warmth and 11 lighter than the slab, which is the separation a pale cloth
-# should have against mudbrick, with a 4.3% tail — the widest in this file after the shrine's whitewash,
-# and for the same reason: the thing is meant to be pale.
 scaffold hanging --spin=45 --colour=#9a6a3c --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/hanging.webp --tier=starter --name=hanging --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.88 --saturation=2.3
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
 # The merchant's two wall items, matched back to their downloads and given rebuild lines for the first
 # time. art/README recorded them as masters that could not be identified; they were `Mudbrick Recess
