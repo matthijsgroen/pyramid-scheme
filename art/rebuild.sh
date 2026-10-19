@@ -217,14 +217,9 @@ yarn import-tile art/masters/props/starter/jarRack.webp --tier=starter --name=ja
 
 # The standing rubble: `rubble` is two objects and this is the one a ROOM is dressed with, resolved
 # through SiteMapView's STANDING_VARIANT. The scatter layer's flat spill shares the name and not the art.
-#
-# --brightness=0.82 --saturation=1.45. Untouched it measured 6 LIGHTER than the slab, which tile-stats
-# faults outright — under 10 either way a prop does not read against the floor it stands on. Down at 0.82
-# it separates by 15 the other way, and the saturation brings +11 warmth back to +22, the bottom of the
-# hand-painted band.
 scaffold rubblePile --colour=#9a6a3c --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/rubblePile.webp --tier=starter --name=rubblePile --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82 --saturation=1.45
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
 # --brightness=0.70 is the deepest clip in this file, and it is a WHITEWASH problem rather than the usual
 # repaint drift. Told the shrine is whitewashed, the generator painted it white: untouched, 54.7% of the
