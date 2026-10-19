@@ -157,7 +157,7 @@ yarn import-tile art/masters/props/starter/offeringTable-2.webp --tier=starter -
 # than most props here need and is honest — the stand is dark timber and only the jar is pale.
 scaffold basin --contents=jar --colour=#9a6a3c --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/basin.webp --tier=starter --name=basin --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.90 --saturation=1.45
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
 # The scatter layer's SPILL, and the one tile in this file whose repaint ignored the scaffold's layout:
 # the return came back as forty of its own fragments spread over the frame instead of the modelled
