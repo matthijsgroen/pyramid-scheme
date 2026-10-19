@@ -24,6 +24,8 @@ export const parse = (md: string): Entry[] =>
   md
     .split(/^### /m)
     .slice(1)
+    // An entry ends where its section does: the next `## ` intro names files that are not its attachments.
+    .map(block => block.split(/^## /m)[0])
     .flatMap(block => {
       const key = /`([a-z]+\/[A-Za-z0-9-]+)`/.exec(block)?.[1]
       const prompt = /```\n([\s\S]*?)\n```/.exec(block)?.[1]
