@@ -89,7 +89,7 @@ yarn import-tile art/masters/surfaces/starter-threshold.webp --tier=starter --na
 # light and dark floors), and the rest keep the stone their masters were painted over.
 scaffold shelf --colour=#9a6a3c --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/shelf.webp --tier=starter --name=shelf --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --saturation=1.45 --brightness=0.93
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
 # No --saturation: masking away this repaint's invented floor leaves only wood and reed, which are
 # already the warmest things in the rank. 1.3 put it at +38 against a target band of +22 to +25.
@@ -141,19 +141,11 @@ meshscaffold shabti.glb --colour=#9a6a3c --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/statue-shabti.webp --tier=starter --name=statue --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.96 --saturation=1.4
 
-# The merchant's trade room, SECOND DRAWING. `tileVariants` picks between this and offeringTable.png by
-# the cell's own position, so some of his trade rooms sell off a table and others out of baskets on the
-# floor — which is what tomb painting shows at least as often, and both are the same statement, so they
-# share a KIND. A variant is not a pool entry: adding this file moved no furniture anywhere.
-#
-# --brightness=0.86 --saturation=0.7, and the saturation is the second in this file to go BELOW 1 — the
-# mat is the other. Dry straw and palm-leaf come back as the warmest thing the generator can paint: +44
-# warmth untouched, against a rank that sits at +22 to +25, with 17.4% of the sprite over the 152 light
-# end. 0.7 pulls it to +24 and 0.86 takes the tail to 2.4%, leaving it 14 lighter than the slab. The
-# lever runs both ways and this end of it is as real as the brazier's 2.2.
+# The market's SECOND DRAWING: `tileVariants` picks between this and offeringTable.png by the cell's own
+# position. A variant is not a pool entry, so adding it moved no furniture.
 scaffold market --contents=baskets --colour=#9a6a3c --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/offeringTable-2.webp --tier=starter --name=offeringTable-2 \
-  --slot=prop --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.86 --saturation=0.7
+  --slot=prop --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
 # The merchant's BASIN, re-rolled over its geometry, which is what took it out of art-tasks §3. The tile
 # it replaces was a prompted return with a painted opaque shadow and no scaffold behind it, so a mask
@@ -215,33 +207,13 @@ scaffold pit --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/pit.webp --tier=starter --name=pit --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82
 
-# The market table was one of the four made by PROMPTING alone, before the pipeline existed, so its
-# shadow was painted into the art and it had no scaffold, no mask and no rebuild line — which is how it
-# missed the translucent seat that shelf, chest, brazier, lamp, pillar and mat all got. Re-rolled over
-# prim_market, it joins them.
-#
-# --saturation=1.3 is the documented repaint drift, not a choice: a generator copying a render
-# desaturates toward grey, and this came back at +14 warmth against a rank whose hand-painted props sit
-# at +22 to +25. 1.3 lands it at +24, beside the jar rack at +22 and the ka-statue at +22.
 scaffold market --colour=#9a6a3c --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/offeringTable.webp --tier=starter --name=offeringTable --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --saturation=1.3
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
-# The jar rack, the second of the four prompted props to be re-rolled over its primitive. Its scaffold
-# marks the frame `body` and every piece of every jar `pottery`, so the repaint is told which lump is
-# timber and which is clay instead of inferring it from silhouette.
-#
-# --brightness=0.82 --saturation=1.7, and 1.7 is the highest in this file after the brazier's 2.2 for the
-# same reason: a generator copying a render desaturates toward grey, and split pale timber has little
-# chroma to begin with, so there was almost nothing to multiply. It came back at +7 warmth and lands at
-# +23, inside the hand-painted band of +22 to +25.
-#
-# The dark-end fault tile-stats prints — 8.3% below 35 — is the clay and the shadow, and the painted
-# basin sits at 23.8%. It is the LIGHT end that matters on this one: untouched, the timber put 12% of the
-# tile over the clamp.
 scaffold jarrack --colour=#9a6a3c --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/jarRack.webp --tier=starter --name=jarRack --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82 --saturation=1.7
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
 # The standing rubble: `rubble` is two objects and this is the one a ROOM is dressed with, resolved
 # through SiteMapView's STANDING_VARIANT. The scatter layer's flat spill shares the name and not the art.

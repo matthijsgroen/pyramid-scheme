@@ -193,46 +193,6 @@ the shabti is `--mesh=art/masters/meshes/shabti.glb`. `starter-plain.png` is the
 `art/masters/surfaces/starter-floor.webp` scaled to 1024, the crop every `<tier>-plain.png` is. The
 tally board has no scaffold: it attaches its own master.
 
-### `starter/jarRack` — terracotta jars in a dark timber rack
-
-**Attach:**
-
-1. `~/tile-previews/jarrack-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a JAR RACK. The two uprights and the two crossbars are the timber FRAME. Hanging in it,
-pointed ends down, are three tall STORAGE JARS, each closed with a round clay STOPPER at its neck.
-
-The frame is dark split timber, #5e3a1e, lighter honey #9a6a3c only on its top faces, lashed at the
-joints with dark cord. The jars are fired TERRACOTTA, saturated #c0612f on their lit side and #7e3a1a on
-their shadowed side, each with a painted red ochre #b8452c band and a dark merchant's mark on its
-shoulder. The stoppers are dark mud sealed with a small turquoise #2a9d8f faience seal. Not one jar is
-pale or buff.
-
-IT STANDS ON A PALE FLOOR AND MUST READ DARK ON IT. The floor is pale limestone, #d8c8a8. The object as a
-whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is lighter
-than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its base, its underside
-and every part nearest the floor are its darkest, deep umber #3a2a1c. Nothing on it is white, cream,
-bleached, pale straw or whitewash — a pale part vanishes into the floor.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A2A1C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold jarrack
-yarn import-tile art/masters/props/starter/jarRack.webp --tier=starter --name=jarRack --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82 --saturation=1.7
-```
-
 ### `starter/basin` — a big terracotta water jar on a timber stand
 
 **Attach:**
@@ -270,7 +230,7 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold basin --contents=jar
 yarn import-tile art/masters/props/starter/basin.webp --tier=starter --name=basin --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.90 --saturation=1.45
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `starter/niche` — a goods recess with two jars and a bundle
@@ -347,7 +307,7 @@ Then, once the return is in `~/Downloads`:
 
 ```sh
 yarn import-tile art/masters/props/starter/tallyBoard.webp --tier=starter --name=tallyBoard --slot=wall \
-  --filter=smooth --headroom=0.18 --brightness=0.85
+  --filter=smooth --headroom=0.18
 ```
 
 ### `starter/rubblePile` — broken mudbrick, one brick still red
@@ -386,7 +346,7 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold rubblePile
 yarn import-tile art/masters/props/starter/rubblePile.webp --tier=starter --name=rubblePile --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.82 --saturation=1.45
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `starter/mat` — a dyed palm-fibre mat with ochre bands
@@ -425,7 +385,7 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold mat --spin=9 --shadow=0.5
 yarn import-tile art/masters/props/starter/mat.webp --tier=starter --name=mat --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.86 --saturation=0.6
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `starter/lamp` — a clay lamp on a dark wooden stool
@@ -464,7 +424,7 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold lamp
 yarn import-tile art/masters/props/starter/lamp.webp --tier=starter --name=lamp --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.48 --saturation=1.6 --brightness=0.85
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.48
 ```
 
 ### `starter/statue` — a turquoise faience shabti
@@ -513,7 +473,7 @@ Then, once the return is in `~/Downloads`:
 ```sh
 meshscaffold shabti.glb
 yarn import-tile art/masters/props/starter/statue-shabti.webp --tier=starter --name=statue --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.96 --saturation=1.4
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `starter/hanging` — a striped awning cloth on a timber pole
@@ -554,7 +514,7 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold hanging --spin=45
 yarn import-tile art/masters/props/starter/hanging.webp --tier=starter --name=hanging --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.88 --saturation=2.3
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ### `starter/brazier` — a terracotta brazier on a dark tripod
@@ -595,7 +555,7 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold brazier --depth=0.65
 yarn import-tile art/masters/props/starter/brazier.webp --tier=starter --name=brazier --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.7 --saturation=2.2 --brightness=0.95
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.7
 ```
 
 ### `starter/shrine` — a red-ochre household shrine, Bes and a lamp inside
@@ -636,7 +596,7 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold shrine
 yarn import-tile art/masters/props/starter/shrine.webp --tier=starter --name=shrine --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.85 --brightness=0.70 --saturation=1.5
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.85
 ```
 
 ### `starter/pillar` — a leaning timber prop, red ochre on its wedges
@@ -675,7 +635,7 @@ Then, once the return is in `~/Downloads`:
 ```sh
 scaffold pillar
 yarn import-tile art/masters/props/starter/pillar.webp --tier=starter --name=pillar --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --saturation=1.7 --brightness=0.9
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
 
 ---
