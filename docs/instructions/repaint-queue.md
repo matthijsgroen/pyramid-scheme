@@ -193,46 +193,6 @@ the shabti is `--mesh=art/masters/meshes/shabti.glb`. `starter-plain.png` is the
 `art/masters/surfaces/starter-floor.webp` scaled to 1024, the crop every `<tier>-plain.png` is. The
 tally board has no scaffold: it attaches its own master.
 
-### `starter/tallyBoard` — a dark plank of ochre tally strokes
-
-FLAT, so there is no scaffold to attach: the first attachment is the landed tile's own master, and the
-prompt is an EDIT of it — same plank, same strokes, new colours. The import overwrites that master, so it
-is replaced only by a return you have kept.
-
-**Attach:**
-
-1. `art/masters/props/starter/tallyBoard.webp` — the plank to repaint
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-A wall-less product shot of a single flat object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a TALLY BOARD — one wooden plank hanging on two pegs, the short dark blocks above and below
-each end. Across its face run groups of TALLY STROKES, five to a group, the fifth struck through. Lying
-along its top edge is a stub of CHALK.
-
-The plank is old timber, DARK honey-brown #5e3a1e going to #9a6a3c on its lit top edge, split along the
-grain. The tally strokes are painted red ochre #b8452c, bright where fresh and rubbed where counted off.
-The pegs are near-black #3a2a1c. The chalk stub is a small turquoise #2a9d8f stick, not white. Nothing on
-the plank is grey or pale.
-
-IT SITS IN A WALL ABOVE A PALE FLOOR AND MUST READ DARK. The floor is pale limestone, #d8c8a8. The object
-as a whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is
-lighter than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its lower edge
-is its darkest, deep umber #3a2a1c. Nothing on it is white, cream, bleached or whitewash.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-yarn import-tile art/masters/props/starter/tallyBoard.webp --tier=starter --name=tallyBoard --slot=wall \
-  --filter=smooth --headroom=0.18
-```
-
 ### `starter/rubblePile` — broken mudbrick, one brick still red
 
 **Attach:**

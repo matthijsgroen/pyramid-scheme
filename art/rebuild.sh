@@ -290,10 +290,9 @@ yarn import-tile art/masters/props/starter/niche.webp --tier=starter --name=nich
   --filter=smooth --mask="$OBJ" --headroom=0.18
 
 # FLAT — a plank hanging against the surface, so no mesh and no mask, the same route as the nobleman's
-# stela. --brightness=0.85 clips a return that came back over the light end, which the handover already
-# recorded as 10.3% before anyone had the flag written down.
+# stela.
 yarn import-tile art/masters/props/starter/tallyBoard.webp --tier=starter --name=tallyBoard --slot=wall \
-  --filter=smooth --headroom=0.18 --brightness=0.85
+  --filter=smooth --headroom=0.18
 
 # The merchant's WALL SHRINE — a whitewashed mudbrick cupboard, doors ajar, a lamp lit in the gap. The
 # lamp is the SCAFFOLD's, not the prompt's: `prim_wallshrine --contents=ajar` stands one there and its
