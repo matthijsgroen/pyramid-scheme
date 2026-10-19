@@ -114,14 +114,14 @@ landed. `prop-pipeline.md` has the numbers.
 
 ---
 
-## Merchant surfaces — two, the vivid starter
+## Merchant surfaces — one, the vivid starter
 
 The pilot of [visual-direction.md](../game-design/visual-direction.md): the merchant's storehouse, light and
 warm, its ground calm so the red ochre and the turquoise stand out. These are SURFACES, not props — no
 scaffold, no mask. Each block carries the whole preamble, and the one attachment is a STYLE reference
 whose colours the prompt tells the model to ignore.
 
-The floor, the wall face and the threshold have landed (`art/rebuild.sh`); every entry here is painted against
+The floor, the wall face, the threshold and the tableau wall have landed (`art/rebuild.sh`); every entry here is painted against
 `art/masters/surfaces/starter-floor.webp`.
 
 ### `starter/arch` — a timber doorway with a painted lintel
@@ -166,57 +166,6 @@ Even lighting left to right, no hotspot, no vignette.
 ```
 
 **Import:** `yarn import-tile art/masters/surfaces/starter-arch.webp --tier=starter --name=arch --slot=arch --filter=smooth`
-
-### `starter/tombWall` — the merchant's wall, whole, behind every puzzle
-
-**Attach:** `art/masters/surfaces/starter-wall-face.webp` — the landed wall face, as the style reference
-
-The wall the tableau and every encounter are set against (`src/ui/atoms/tombImageMap.ts`). It is laid with
-`cover`, never tiled, so it needs no seams — but a phone shows only its middle half at full height, a wide
-screen its full width with the top and bottom cropped, and a board sits over its centre. So the wall reads
-the same everywhere: no centrepiece, the little details scattered thin and off-centre, and the ochre band
-low, under where the boards sit. The brick field is held to the rank's `wall` (#b49d74), which is what
-`tile-stats` grades a panel against; boards stay readable over it because the encounter's scrim and the
-symbol strip's black block are what pull them away from it.
-
-```
-Ancient Egyptian tomb wall art, New Kingdom period, for a puzzle game's background.
-THE PICTURE IS SQUARE, 1:1 — one whole wall seen straight on. Do not make it a long strip like the
-reference, and do not crop it to a detail.
-Rank: a MERCHANT's storehouse tomb — the poorest of five, and the friendliest. Whitewashed mudbrick and
-pale limestone, red ochre paint, a little turquoise faience. Homely and warm: market day, not a cellar.
-Lit evenly by daylight — every part of the wall is visible, nothing sinks into darkness.
-HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
-surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
-a comic, not a cartoon. An edge is a change of value, never a stroke.
-Red ochre paint #b8452c, turquoise faience #2a9d8f. Nothing lighter than #f1e8d4, nothing darker than
-#2a1e14.
-No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS THIS SAME WALL, painted as a long strip. Match its paint quality, its texture,
-its brick and its colours exactly. Do NOT copy its layout: this is the whole wall, square.
-THE CAMERA: straight on, a flat elevation. Verticals vertical, horizontals horizontal, no perspective,
-no vanishing point. No floor and no ceiling in the picture — only the wall.
-
-One plain wall of whitewashed mudbrick filling the whole square, edge to edge.
-At the very top, a narrow ledge of pale limestone coping, lighter than the brick, about a twentieth of
-the picture's height.
-Below it, about fourteen even courses of mudbrick laid in a running bond, mortar joints a soft warm
-shade darker than the brick. The whitewash is worn unevenly — some bricks paler, some showing the warm
-mud through — but the wall as a whole is ONE even mid-light tone, the colour of #b49d74 on average.
-Low on the wall, about five sixths of the way down, a single painted band of red ochre #b8452c runs
-straight across from the left edge to the right edge, the merchant's one decoration. Below the band,
-two courses of plainer, slightly darker plinth brick, and a soft shadow along the very bottom edge
-where the wall meets the floor.
-A few small marks, sparse and spread out, none in the middle of the picture and none repeated in a
-pattern: a scratched tally of strokes, a wooden peg, a round clay seal pressed into a brick, a chipped
-corner. Two or three small turquoise #2a9d8f faience studs set along the ochre band, far apart.
-No doorway, no niche, no shelf, no object standing in front of the wall, no single large feature
-anywhere — the middle of the wall is plain brick, because a game board will cover it.
-Even lighting left to right and top to bottom, no hotspot, no darkening at the corners.
-```
-
-**Import:** `yarn import-panel art/masters/tombWall/starter.webp --tier=starter`
 
 ---
 

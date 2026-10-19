@@ -82,6 +82,8 @@ yarn import-tile art/masters/surfaces/starter-wall-face.webp --tier=starter --na
   --filter=smooth --key=none --headroom=0.14 --repeat=2
 yarn import-tile art/masters/surfaces/starter-threshold.webp --tier=starter --name=threshold --slot=sill \
   --filter=smooth --key=none
+# The tableau and encounter wall, one whole wall laid with cover, so never made seamless.
+yarn import-panel art/masters/tombWall/starter.webp --tier=starter
 
 # The merchant's floor is pale limestone, so every scaffold below names it: left at the default, a
 # footprint is darkened from the default's dark stone instead of from the floor it lies on. The props
