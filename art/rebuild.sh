@@ -179,13 +179,11 @@ yarn import-tile art/masters/props/starter/rubbleSpill.webp --tier=starter --nam
 # of the paving, where an axis-aligned one can. --shadow=0.5 keeps the footprint faint, since a slab at
 # floor level casts a copy of itself at any offset and reads as a second step (`prim_pillar`).
 #
-# --saturation BELOW 1, the only prop that needs it: the repaint came back photoreal straw at +51 warmth
-# against a rank that sits at +22 to +25. The lever runs both ways, and the brazier is the other end of
-# it at 2.2. --brightness=0.86 is a narrow window — 0.8 left the rug only 7 from the floor's own value
-# and 0.9 put 2.4% of it over the light end.
+# The repaint came back painted straight down; its master is that return warped onto the scaffold's four
+# corners (a flat thing has no other geometry to keep).
 scaffold mat --spin=9 --shadow=0.5 --colour=#9a6a3c --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/mat.webp --tier=starter --name=mat --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.86 --saturation=0.6
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
 # The hole casts nothing and the BRICKS ROUND IT DO, which took two goes to get right. The tile shipped
 # with --shadow=0 and no --seat, on the rule that a hole casts nothing — true of the hole, false of the
