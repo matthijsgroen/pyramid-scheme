@@ -19,3 +19,31 @@ describe("EncounterModal", () => {
     expect((container.firstElementChild as HTMLElement).className).toContain("p-safe-edge")
   })
 })
+
+describe("an encounter with nothing on screen", () => {
+  // A conversation plays in the companion overlay, and the shop is blank while Fez greets: an empty frame
+  // collapses to its padding and draws as a bar across the map.
+  const Nothing = () => null
+
+  it("draws no frame", () => {
+    const { container } = render(
+      <EncounterModal>
+        <Nothing />
+      </EncounterModal>
+    )
+    const modal = container.firstElementChild as HTMLElement
+
+    expect(modal.matches(":has([data-encounter-content]:empty)")).toBe(true)
+    expect(modal.className).toContain("has-[[data-encounter-content]:empty]:hidden")
+  })
+
+  it("draws the frame once there is something in it", () => {
+    const { container } = render(
+      <EncounterModal>
+        <p>an encounter</p>
+      </EncounterModal>
+    )
+
+    expect((container.firstElementChild as HTMLElement).matches(":has([data-encounter-content]:empty)")).toBe(false)
+  })
+})

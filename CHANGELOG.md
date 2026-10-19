@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- No more bar across the screen while somebody talks to you in a room, or while Fez greets you at his stall.
 - The explorer no longer spins round each time the speaker changes in a conversation.
 - A solved pyramid stays filled in as it slides away, also after leaving its interior and coming back.
 - The arrow up a corridor that ends at a shut door or a narrow passage walks you there instead of doing nothing.

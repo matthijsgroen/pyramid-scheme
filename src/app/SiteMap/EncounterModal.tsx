@@ -36,10 +36,13 @@ import { imageMap, WALL_SIZE } from "@/ui/atoms/tombImageMap"
 // their own translucent black block (`PuzzleFamilyShell`), the way the hieroglyph strip under a tableau
 // does. Darkening the whole wall instead traded the room the player is standing in for concentration; a
 // block gives the concentration back without taking the room away.
+//
+// NOTHING IN IT, NO FRAME. A conversation is played in the companion overlay and the shop shows nothing
+// while Fez greets, and a frame with nothing in it collapses to its padding: a bar across the map.
 export const EncounterModal: FC<{ children: ReactNode; difficulty?: Difficulty }> = ({ children, difficulty }) => {
   const wall = difficulty ? imageMap[difficulty] : undefined
   return (
-    <div className="fixed inset-0 z-20 flex justify-center overflow-x-hidden overflow-y-auto bg-black/80 p-safe-edge">
+    <div className="fixed inset-0 z-20 flex justify-center overflow-x-hidden overflow-y-auto bg-black/80 p-safe-edge has-[[data-encounter-content]:empty]:hidden">
       <div
         className="relative m-auto flex w-full max-w-md flex-col items-center gap-4 overflow-hidden rounded-lg border border-amber-900 bg-stone-900 p-3"
         style={
@@ -50,7 +53,9 @@ export const EncounterModal: FC<{ children: ReactNode; difficulty?: Difficulty }
       >
         {wall && <div aria-hidden className="pointer-events-none absolute inset-0 bg-stone-900/55" />}
         {/* Over the scrim, and the only reason this wrapper exists. */}
-        <div className="relative flex w-full flex-col items-center gap-4">{children}</div>
+        <div data-encounter-content className="relative flex w-full flex-col items-center gap-4">
+          {children}
+        </div>
       </div>
     </div>
   )
