@@ -193,48 +193,6 @@ the shabti is `--mesh=art/masters/meshes/shabti.glb`. `starter-plain.png` is the
 `art/masters/surfaces/starter-floor.webp` scaled to 1024, the crop every `<tier>-plain.png` is. The
 tally board has no scaffold: it attaches its own master.
 
-### `starter/weightsTable` — a low table of dark stone weights, largest to smallest
-
-**Attach:**
-
-1. `~/tile-previews/weightsTable-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a merchant's WEIGHTS TABLE. The flat slab on four legs is the TABLETOP. Standing in a row
-along it, from the left, are four domed stone WEIGHTS, each smaller than the last, and at the right end
-a short stack of three flat RING WEIGHTS one on another. The dark space under the tabletop is the shade
-under the table.
-
-The table is old timber, honey-brown #9a6a3c on its top, #5e3a1e on its front edge and legs, scuffed
-darker where weights are slid on and off; a band of red ochre #b8452c runs along the front edge. The
-weights are polished hard dark stone — haematite and basalt — deep grey-brown going to near-black
-#3a2a1c on their shadowed sides, smooth, each with a small incised mark; the largest has a turquoise
-#2a9d8f inlay in its mark. The shade under the table is deep umber #3a2a1c.
-
-IT STANDS ON A PALE FLOOR AND MUST READ DARK ON IT. The floor is pale limestone, #d8c8a8. The object as a
-whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is lighter
-than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its base, its underside
-and every part nearest the floor are its darkest, deep umber #3a2a1c. Nothing on it is white, cream,
-bleached, pale straw or whitewash — a pale part vanishes into the floor.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A2A1C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold weightsTable --spin=4 --colour=#9a6a3c --floor=#d8c8a8
-yarn import-tile art/masters/props/starter/weightsTable.webp --tier=starter --name=weightsTable --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
-
 ### `starter/basketStack` — woven baskets stacked in two columns, one lidded, one heaped
 
 **Attach:**
