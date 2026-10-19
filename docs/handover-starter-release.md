@@ -88,3 +88,13 @@ Start with the writing-plans skill on `themed-rooms.md`, then subagent-driven ex
 - **U** paints whenever there is a moment: `yarn repaint` → generate → `yarn repaint <key> --land` → look in the
   "<rank> on the floor" story → a bad roll gets a `**Re-roll:**` line in its entry.
 - Story is tested in Storybook's story beats and, in the game, through the develop-mode jumps.
+
+## After the release
+
+- **A rank skin for the narrow passage** (`-[unladen]-`, drawn as `default/narrowAcross` and `narrowAlong`).
+  A ward pocket keeps the rank it belongs to, so a starter pocket on an expert floor can hold a lock with a
+  narrow passage standing in the merchant's storehouse. Starter's skin is crates stacked to leave the gap.
+  This is the one deliberate exception to "mechanic art is the same at every rank": the passage reads by its
+  SHAPE — an opening you only just fit through — and stacked crates keep that shape, where a torch or a lever
+  is read by the object itself. Needs a scaffold with the default passage's footprint and opening, and the
+  renderer picking `<rank>/narrowAcross` with `default/` as the fallback.
