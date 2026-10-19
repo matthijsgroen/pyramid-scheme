@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- A solved pyramid stays filled in as it slides away, also after leaving its interior and coming back.
 - The arrow up a corridor that ends at a shut door or a narrow passage walks you there instead of doing nothing.
 - A journey now says its piece on the map as you set off, not once you are outside one of its pyramids.
 - Whoever speaks first slides in first. Fez used to appear with nothing to say and vanish again.

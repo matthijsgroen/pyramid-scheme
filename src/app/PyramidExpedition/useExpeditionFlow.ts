@@ -20,6 +20,8 @@ export type ExpeditionFlow = {
   levelCompleted: boolean
   /** The interior site map covers the board. */
   showingInterior: boolean
+  /** This level's board is solved — also when it was solved on an earlier visit and the interior is reopened. */
+  boardSolved: boolean
   completeLevel: () => void
   completionFinished: () => void
   interiorComplete: () => void
@@ -44,6 +46,7 @@ export const useExpeditionFlow = ({
   const [transitionToLevel, setTransitionToLevel] = useState(levelNr)
   const [levelCompleted, setLevelCompleted] = useState(false)
   const [showingInterior, setShowingInterior] = useState(restoringInterior)
+  const [boardSolved, setBoardSolved] = useState(restoringInterior)
 
   // The expedition is keyed on the journey, not the level, so the states above outlive a level change
   // — and they're seeded from an `activeJourney` that can still describe the level the player just
@@ -59,6 +62,7 @@ export const useExpeditionFlow = ({
     // its place, with no way back short of leaving the journey.
     setTransitionToLevel(levelNr)
     setShowingInterior(restoringInterior)
+    setBoardSolved(restoringInterior)
     setLevelCompleted(false)
   }
 
@@ -82,6 +86,7 @@ export const useExpeditionFlow = ({
     // The board underneath the interior is already known to be solved; don't replay the celebration.
     if (startNextLevel || showingInterior) return
     setLevelCompleted(true)
+    setBoardSolved(true)
   }, [startNextLevel, showingInterior])
 
   const completionFinished = useCallback(() => {
@@ -124,6 +129,7 @@ export const useExpeditionFlow = ({
     startNextLevel,
     levelCompleted,
     showingInterior,
+    boardSolved,
     completeLevel,
     completionFinished,
     interiorComplete,

@@ -59,7 +59,7 @@ export const PyramidExpedition: FC<{
     onNextLevel,
     onClose,
   })
-  const { startNextLevel, levelCompleted, showingInterior } = flow
+  const { startNextLevel, levelCompleted, showingInterior, boardSolved } = flow
   // The board's entrance animation is only meaningful when the board is actually shown — dropping
   // straight into a restored interior skips it.
   const { entering } = useEntranceAnimation(!showingInterior)
@@ -210,7 +210,7 @@ export const PyramidExpedition: FC<{
                   decorationOffset={activeJourney.randomSeed}
                   onComplete={flow.completeLevel}
                   dayTime={dayTime}
-                  revealed={revealSolvedBoard}
+                  revealed={revealSolvedBoard || boardSolved}
                   entranceBlockId={entering || levelCompleted || revealSolvedBoard ? entranceBlockId : undefined}
                 />
               )}
