@@ -98,12 +98,10 @@ yarn import-tile art/masters/props/starter/chestProp.webp --tier=starter --name=
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
 # --depth=0.65 must match what the master was painted over: a circular dish gives a top face so large
-# under this shear that the thing reads as a round table. --saturation=2.2 is high because the repaint
-# came back nearly achromatic (+1 warmth) and saturation SCALES existing chroma, so a grey prop needs
-# multiples of what a brown one does. 2.7 reaches the +22 band and turns humble clay to brass.
+# under this shear that the thing reads as a round table.
 scaffold brazier --depth=0.65 --colour=#9a6a3c --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/brazier.webp --tier=starter --name=brazier --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.7 --saturation=2.2 --brightness=0.95
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.7
 
 # The stool's seat is 0.16 deep, not 0.26: at 0.26 its top face was 40% of the drawn height and read as
 # a wall with legs.

@@ -193,47 +193,6 @@ the shabti is `--mesh=art/masters/meshes/shabti.glb`. `starter-plain.png` is the
 `art/masters/surfaces/starter-floor.webp` scaled to 1024, the crop every `<tier>-plain.png` is. The
 tally board has no scaffold: it attaches its own master.
 
-### `starter/brazier` — a terracotta brazier on a dark tripod
-
-**Attach:**
-
-1. `~/tile-previews/brazier-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a shallow DISH on three splayed legs, burning low. The three legs are a TRIPOD; the wide
-shallow vessel is the dish; the low mass inside it is EMBERS; the bar laid across the rim is an unburnt
-STICK.
-
-The dish is fired terracotta #c0612f, blackened #3a2a1c round its rim and all down its inside where the
-fire has taken it, with a red ochre #b8452c band round its outside. The tripod is dark timber #5e3a1e,
-charred at the top where it meets the dish. The embers are a dull ember red-orange, matte, brightest at
-the centre and dark at the edges, with no glow round them. The stick is charred black at one end and
-honey timber #9a6a3c at the other.
-
-IT STANDS ON A PALE FLOOR AND MUST READ DARK ON IT. The floor is pale limestone, #d8c8a8. The object as a
-whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is lighter
-than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its base, its underside
-and every part nearest the floor are its darkest, deep umber #3a2a1c. Nothing on it is white, cream,
-bleached, pale straw or whitewash — a pale part vanishes into the floor.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A2A1C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold brazier --depth=0.65
-yarn import-tile art/masters/props/starter/brazier.webp --tier=starter --name=brazier --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.7
-```
-
 ### `starter/shrine` — a red-ochre household shrine, Bes and a lamp inside
 
 **Attach:**
