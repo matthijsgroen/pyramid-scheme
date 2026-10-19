@@ -31,7 +31,8 @@ const holdChest = (index: number) => wardChest({ tomb: "starter_treasure_tomb", 
 const HOLD_CYCLE = [1, 2, 0, 1]
 
 export const starterRules: Rule[] = [
-  // a merchant's cellar: shelves and crates, amphorae, a market table, a water jar, mats.
+  // a merchant's house of trade: scales and weights, baskets and bales, a counter, a scribe's desk,
+  // shelves and amphorae, a market table, a water jar, mats.
   tier("starter", {
     difficulty: "starter",
     decorations: [
@@ -47,6 +48,12 @@ export const starterRules: Rule[] = [
       "brazier",
       "rubblePile",
       "mat",
+      "scale",
+      "weightsTable",
+      "basketStack",
+      "bales",
+      "counter",
+      "scribeDesk",
     ],
     // a merchant hangs inventory: a niche of goods and the tally board beside it.
     wallDecorations: ["niche", "tallyBoard"],

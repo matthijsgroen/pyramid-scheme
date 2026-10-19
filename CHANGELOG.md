@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The first pyramids' rooms are furnished for what was done in them: weighing, packing, storage, selling and the books.
 - You meet Fez on the first pyramid's ground floor, a voice in the dark before he is a face.
 - The game says tap rather than click, and calls an expedition one thing everywhere.
 - Seven expert pyramids at Karnak, the Nile Delta and Djoser have puzzles of their own: a procession door, an hourglass of sand, floods, a canal lock and the stone pipe.
