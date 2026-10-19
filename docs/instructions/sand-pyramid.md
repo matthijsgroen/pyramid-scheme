@@ -459,6 +459,9 @@ The web hands its glyphs out itself, `allocateWebMarks`: every pot and named key
 by name in sorted order, so two pots, or a pot and a key, never look alike, and the same web gets the same
 marks on every bake. The bake writes them on the floors (`webMarks`) and on each activator (`glyph`).
 
+A lever in several pots wears its first pot's mark, and that is enough: a lever never goes back, so the player
+always pulls it, and the travel map's pulse, not the lever, says where it reached, as it does for a ward key.
+
 A `sand` line's doors are drawn as web sand, an `opens` line's as a web seal. A region buried by a front or by
 an input is web sand over the region, and conceals what was explored under it as every region barrier does.
 
