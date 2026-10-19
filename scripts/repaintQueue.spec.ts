@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { readFileSync } from "fs"
 import { join } from "path"
-import { revealArgs } from "./repaintReveal"
+import { selectScript, stagedNames } from "./repaintReveal"
 import { parse } from "./repaintQueue"
 
 /**
@@ -119,12 +119,17 @@ describe("the repaint queue's other entries", () => {
 })
 
 describe("revealing an entry's attachments", () => {
-  it("reveals the files it has", () => {
-    expect(revealArgs(["/a.png", "/b.png"])).toEqual(["-R", "/a.png", "/b.png"])
+  it("numbers them in the entry's order, so the scaffold sorts before the material reference", () => {
+    expect(stagedNames(["/x/scaffold.png", "/y/starter-plain.png"])).toEqual(["1-scaffold.png", "2-starter-plain.png"])
   })
 
-  it("has nothing to reveal for an entry with no attachments, which `open -R` would reject", () => {
-    expect(revealArgs([])).toBeUndefined()
+  it("selects every staged file in one Finder reveal", () => {
+    const script = selectScript("/stage", ["1-a.png", "2-b.png"])
+    expect(script).toContain('reveal {POSIX file "/stage/1-a.png" as alias, POSIX file "/stage/2-b.png" as alias}')
+  })
+
+  it("has nothing to reveal for an entry with no attachments", () => {
+    expect(selectScript("/stage", [])).toBeUndefined()
   })
 })
 

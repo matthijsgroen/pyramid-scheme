@@ -24,9 +24,10 @@
  */
 
 import { execFileSync } from "child_process"
-import { existsSync, readFileSync } from "fs"
+import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync } from "fs"
+import { homedir } from "os"
 import { join } from "path"
-import { revealArgs } from "./repaintReveal"
+import { selectScript, stagedNames } from "./repaintReveal"
 import { land } from "./repaintLandRun"
 import { parse, type Entry } from "./repaintQueue"
 
@@ -185,11 +186,16 @@ const missing = entry.attachments.filter(p => !existsSync(p))
 for (const p of entry.attachments) console.log(`  attach  ${p}${existsSync(p) ? "" : "   MISSING"}`)
 if (missing.length > 0) {
   console.log(`\n${missing.length} missing — see "Regenerating the attachments" in ${QUEUE}.`)
-} else if (!check && process.platform === "darwin" && revealArgs(entry.attachments)) {
-  // -R reveals rather than opens: a revealed file can be dragged straight into the browser, where an
-  // opened one is a Preview window in the way.
-  execFileSync("open", revealArgs(entry.attachments)!)
-  console.log("\nRevealed in the Finder — drag them in, paste, and put the download in ~/Downloads.")
+} else if (!check && process.platform === "darwin" && entry.attachments.length > 0) {
+  // Staged into a folder of their own, so the Finder can select them all in one window: the floor and the
+  // scaffolds share ~/tile-previews, where a reveal selects one file among two hundred.
+  const stage = join(homedir(), "tile-previews", "attach")
+  rmSync(stage, { recursive: true, force: true })
+  mkdirSync(stage, { recursive: true })
+  const names = stagedNames(entry.attachments)
+  entry.attachments.forEach((path, i) => copyFileSync(path, join(stage, names[i])))
+  execFileSync("osascript", ["-e", selectScript(stage, names)!])
+  console.log(`\nSelected in the Finder (${stage}) — drag them in, paste, and put the download in ~/Downloads.`)
 }
 
 console.log(`\nWhen it lands I import it and measure it; the file is ${entry.out}.`)
