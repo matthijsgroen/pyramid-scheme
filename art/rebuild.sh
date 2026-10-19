@@ -131,14 +131,9 @@ yarn import-tile art/masters/props/starter/pillar.webp --tier=starter --name=pil
 # field behind the figure and a painted black shadow at its foot. Those are what --mask and --seat are
 # for. Masking to the render's own alpha removes an invented background by construction, which is the
 # whole argument of prop-pipeline.md, and the rendered seat is translucent where the painted one was not.
-#
-# --brightness=0.96 --saturation=1.4. Pale limestone came back at +13 warmth, under the rank's band, with
-# 6.1% of the sprite over the 152 light end. 1.4 brings warmth to +25 and 0.96 takes the tail to 0.6%,
-# and it stays 13 LIGHTER than the slab: a shabti is meant to be pale against mudbrick, the same argument
-# the whitewashed shrine makes at the other end of the file.
 meshscaffold shabti.glb --colour=#9a6a3c --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/statue-shabti.webp --tier=starter --name=statue --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --brightness=0.96 --saturation=1.4
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
 # The market's SECOND DRAWING: `tileVariants` picks between this and offeringTable.png by the cell's own
 # position. A variant is not a pool entry, so adding it moved no furniture.
