@@ -65,6 +65,8 @@ paste one block, not a block plus a preamble.
    picture, and the nobleman's lamp niche came back as his wall panel redrawn — four registers of
    procession and no niche in it anywhere. The priest's panel is worse, being solid hieroglyph columns.
    `<tier>-plain.png` is a crop of that rank's own floor: same palette, same brush, nothing in it to copy.
+   It is the top-left 1638 of `art/masters/surfaces/<tier>-floor.webp` scaled to 1024:
+   `magick <floor>.webp -crop 1638x1638+0+0 +repage -resize 1024x1024 ~/tile-previews/<tier>-plain.png`.
 
 **What NOT to fix in a prompt.** An invented background and an invented shadow are both harmless — the mask
 is the object alone, so both are discarded and Step 4 seats a rendered shadow instead. A part that has
@@ -164,79 +166,6 @@ Even lighting left to right, no hotspot, no vignette.
 ```
 
 **Import:** `yarn import-tile art/masters/surfaces/starter-arch.webp --tier=starter --name=arch --slot=arch --filter=smooth`
-
----
-
-## Merchant props — fifteen, the light-rank rule
-
-Every starter prop and wall item again, for the repainted floor. [visual-direction.md](../game-design/visual-direction.md)
-§ Light and dark floors: on a light rank the props stand on the dark side of the floor, at least 25 L\* darker
-than `#d8c8a8` — saturated terracotta, timber, red ochre and turquoise, with a dark base. The current tiles
-clear the 25 on value but are the cellar's greys and buffs (C\* 8 to 26 against the floor's 21), so on the
-new floor they read as one beige band. Each block names its colours as hexes and forbids every pale material
-the old prompts asked for: whitewash, bleached linen, pale straw, buff clay.
-
-**Order: what the most rooms show first.** Storage and selling lead — shelf, the market table and its
-second drawing, jar rack, basin — because `themed-rooms.md` dresses every room from those activities. The
-two wall items follow (65 and 58 rooms in `art-census`), then the scatter that lands on every floor by
-rule (rubble, mat), then the rest by room count.
-
-**The import lines are rebuild.sh's, flags and all.** Brightness and saturation in them were measured
-against the cellar and are placeholders here, as the preamble says, until `yarn tile-stats` reads the
-return against the new floor.
-
-**Every scaffold here is drawn for the light rank** — timber `#9a6a3c` on magenta, its footprint the pale
-floor darkened — so the painter starts from an object already 29 L\* or more under the floor. Each is that
-entry's `scaffold` line rendered once with its shadow, for example
-`yarn render-prop --primitive=shelf --colour=#9a6a3c --floor=#d8c8a8 --out=$HOME/tile-previews/shelf-starter.png`;
-the shabti is `--mesh=art/masters/meshes/shabti.glb`. `starter-plain.png` is the top-left 1638 of
-`art/masters/surfaces/starter-floor.webp` scaled to 1024, the crop every `<tier>-plain.png` is. The
-tally board has no scaffold: it attaches its own master.
-
-### `starter/scribeDesk` — a scribe's low desk with a papyrus, his palette and his rolls
-
-**Attach:**
-
-1. `~/tile-previews/scribeDesk-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a SCRIBE'S LOW DESK. The flat slab on four short legs is the DESK. On it, across the
-middle, is a sheet of PAPYRUS lying open, the rest of it ROLLED along its back edge. At the front right is
-the scribe's PALETTE — a long slip of wood with two small round INK WELLS in it. At the back right stands
-a small WATER POT. At the back left lies a pile of three finished papyrus ROLLS, each tied round its
-middle with a band. The dark space under the desk is its shade.
-
-The desk is old timber, honey-brown #9a6a3c on its top, #5e3a1e on its front edge and legs. The
-papyrus is AGED and tobacco-brown, #9a6a3c deepening to #7e3a1a at its edges, never cream or white; it
-carries only a few short dark strokes in groups of five, with no letters, no words and no numerals in
-any language or any alphabet. The rolls are the same aged brown, tied with red ochre #b8452c bands and
-sealed with dark clay. The palette is dark wood #5e3a1e; one well holds black ink #3a2a1c, the other red
-ochre #b8452c. The water pot is fired terracotta #c0612f with a turquoise #2a9d8f glazed rim. The shade
-under the desk is deep umber #3a2a1c.
-
-IT STANDS ON A PALE FLOOR AND MUST READ DARK ON IT. The floor is pale limestone, #d8c8a8. The object as a
-whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is lighter
-than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its base, its underside
-and every part nearest the floor are its darkest, deep umber #3a2a1c. Nothing on it is white, cream,
-bleached, pale straw or whitewash — a pale part vanishes into the floor.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A2A1C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold scribeDesk --spin=5 --colour=#9a6a3c --floor=#d8c8a8 --colour-cloth=#8a4a2c
-yarn import-tile art/masters/props/starter/scribeDesk.webp --tier=starter --name=scribeDesk --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
 
 ---
 
