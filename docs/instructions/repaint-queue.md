@@ -112,52 +112,15 @@ landed. `prop-pipeline.md` has the numbers.
 
 ---
 
-## Merchant surfaces — two, the vivid starter
+## Merchant surfaces — one, the vivid starter
 
 The pilot of [visual-direction.md](../game-design/visual-direction.md): the merchant's storehouse, light and
 warm, its ground calm so the red ochre and the turquoise stand out. These are SURFACES, not props — no
 scaffold, no mask. Each block carries the whole preamble, and the one attachment is a STYLE reference
 whose colours the prompt tells the model to ignore.
 
-The floor and the wall face have landed (`art/rebuild.sh`); every entry here is painted against
+The floor, the wall face and the threshold have landed (`art/rebuild.sh`); every entry here is painted against
 `art/masters/surfaces/starter-floor.webp`.
-
-### `starter/threshold` — a worn limestone step with its ochre line
-
-**Attach:** `art/masters/surfaces/starter-floor.webp` — the new floor, as the style reference
-
-```
-Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
-Rank: a MERCHANT's storehouse tomb — the poorest of five, and the friendliest. Whitewashed mudbrick and
-pale limestone, red ochre paint, a little turquoise faience. Homely and warm: market day, not a cellar.
-Lit evenly by daylight from above — every corner of the room is visible, nothing sinks into darkness.
-HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
-surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
-a comic, not a cartoon. An edge is a change of value, never a stroke.
-Palette, strictly: floor #d8c8a8 / #e4d6b8 / #cbb995 on a #bfae8c bed, joints #8a7656,
-walls #b49d74 with #e6d9bd tops and #7e6a4c at the base, objects terracotta #c0612f and #7e3a1a,
-red ochre paint #b8452c, turquoise faience #2a9d8f.
-Every colour comes from that list. Nothing lighter than #f1e8d4, nothing darker than #2a1e14.
-Warm and clear, with real colour: the red ochre and the turquoise are saturated and read from across
-the room. The STONE stays calm — the ground is quiet so the paint and the pots can stand out on it.
-No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it — the palette above is the only source of colour.
-
-A single worn limestone step seen from straight above, spanning the full width of a doorway.
-Wide strip, exactly 5 times as wide as it is tall, filling the frame edge to edge with no background.
-It is ONE band of stone across the whole width: a soft shadow along its far edge where it drops to the
-floor beyond, its own worn top surface across the middle, a soft shadow along its near edge. No object
-sits on it and nothing crosses it end to end except those two edges and one painted line.
-The stone is the floor's own limestone, #cbb995 — the same paving as the chamber, laid as one long
-block, a step darker than the floor either side of it, never lighter.
-Dished in the middle by feet, its ends a little crumbled. One line of red ochre #b8452c painted along
-its near edge, still bright, rubbed away only where every foot lands.
-Even lighting left to right, no hotspot, no vignette.
-```
-
-**Import:** `yarn import-tile art/masters/surfaces/starter-threshold.webp --tier=starter --name=threshold --slot=sill --filter=smooth --key=none`
 
 ### `starter/arch` — a timber doorway with a painted lintel
 
