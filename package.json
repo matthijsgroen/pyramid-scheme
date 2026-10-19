@@ -21,6 +21,7 @@
     "make-seamless": "tsx scripts/makeSeamless.ts",
     "import-tile": "tsx scripts/importTile.ts",
     "import-portrait": "tsx scripts/importPortrait.ts",
+    "import-panel": "tsx scripts/importPanel.ts",
     "art-census": "tsx scripts/artCensus.ts",
     "drift-mask": "tsx scripts/driftMask.ts",
     "on-floor": "node scripts/onFloorPreview.mjs",

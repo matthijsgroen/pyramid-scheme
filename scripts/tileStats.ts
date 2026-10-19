@@ -92,7 +92,9 @@ const main = async () => {
   // A face is the one slot that IS the wall. Everything with a shape — a prop, a wall item, the timber
   // archway, the explorer — is an object, and an object is supposed to differ from the stone it stands
   // against: that difference is how it reads. So an object is held to the palette's ENDS and nothing else.
-  const isFace = slot === "face"
+  // A tableau's whole-wall PANEL is the same wall at a nearer scale — ledge on top, brick, a dark base —
+  // so it is graded as a face.
+  const isFace = slot === "face" || slot === "panel"
   // A sill is floor stone, so it is graded against the slab — but it is a STEP, and its two edge shadows
   // are what make it one. Judging its spread the way a floor's is judged called every sill too contrasty.
   const isStep = slot === "sill"

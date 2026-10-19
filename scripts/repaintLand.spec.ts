@@ -86,12 +86,30 @@ describe("where a landing goes", () => {
   })
 })
 
+describe("a whole-wall panel", () => {
+  const panel = entry("**Import:** `yarn import-panel art/masters/tombWall/junior.webp --tier=junior`")
+
+  it("lands at the master its import-panel line names, graded as a panel and never wrapped", () => {
+    expect(landPlan(panel)).toMatchObject({
+      master: "art/masters/tombWall/junior.webp",
+      tier: "junior",
+      slot: "panel",
+      seamless: undefined,
+    })
+  })
+
+  it("is shipped as the rank's tomb wall, not as a map tile", () => {
+    expect(panel.out).toBe("src/assets/tombWall/junior.webp")
+  })
+})
+
 describe("seamless", () => {
   it("wraps a floor both ways, a face along x, and nothing with a shape", () => {
     expect(seamlessAxis("floor")).toBe("both")
     expect(seamlessAxis("face")).toBe("x")
     expect(seamlessAxis("sill")).toBeUndefined()
     expect(seamlessAxis("prop")).toBeUndefined()
+    expect(seamlessAxis("panel")).toBeUndefined()
     expect(seamlessAxis(undefined)).toBeUndefined()
   })
 })

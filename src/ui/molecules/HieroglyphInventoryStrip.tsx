@@ -22,8 +22,10 @@ export const HieroglyphInventoryStrip: FC<{
   items: InventoryStripItem[]
   onItemClick: (symbolId: string) => void
 }> = ({ title, items, onItemClick }) => {
+  // Half black: the strip sits straight on the rank's wall, and white text over the merchant's pale
+  // whitewash needs that much to clear 4.5:1.
   return (
-    <div className="mt-8 mb-4 w-fit rounded bg-black/20 p-2">
+    <div className="mt-8 mb-4 w-fit rounded bg-black/50 p-2">
       <h3 className="mb-2 text-sm font-bold">{title}</h3>
       <div className="flex flex-wrap gap-2">
         {items.map(item => (

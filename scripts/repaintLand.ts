@@ -34,7 +34,10 @@ export const newestImage = (dir: string): string | undefined =>
     })
     .sort((a, b) => b.mtime - a.mtime)[0]?.path
 
-/** A floor repeats both ways and a face only along x; anything else has a shape and is never wrapped. */
+/**
+ * A floor repeats both ways and a face only along x; anything else has a shape and is never wrapped —
+ * a whole-wall panel included, since it is laid with `cover` and never repeats.
+ */
 export const seamlessAxis = (slot: string | undefined): Axis | undefined =>
   slot === "floor" ? "both" : slot === "face" ? "x" : undefined
 
@@ -64,7 +67,8 @@ export const landPlan = (entry: Entry): LandPlan => {
   const importer = steps.find(s => s.kind === "yarn" && /^import-/.test(s.args[0]))
   const master = importer?.args.slice(1).find(a => !a.startsWith("--"))
   if (!importer || !master) throw new Error(`${entry.key}: no \`yarn import-…\` line to land it with`)
-  const slot = flag(importer.args, "slot")
+  // A whole-wall panel names no slot: it has one, and it is graded as wall (tileStats.ts).
+  const slot = importer.args[0] === "import-panel" ? "panel" : flag(importer.args, "slot")
   return {
     master,
     tier: flag(importer.args, "tier"),

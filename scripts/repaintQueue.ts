@@ -46,7 +46,10 @@ export const parse = (md: string): Entry[] =>
           title: (block.split("\n")[0] ?? key).trim(),
           attachments,
           prompt,
-          out: join("src/assets/tiles", key.split("/")[0], `${key.split("/")[1]}.png`),
+          // A whole-wall panel is not a map tile: it lands as the rank's tableau wall.
+          out: importLine?.startsWith("yarn import-panel ")
+            ? join("src/assets/tombWall", `${/--tier=(\w+)/.exec(importLine)?.[1]}.webp`)
+            : join("src/assets/tiles", key.split("/")[0], `${key.split("/")[1]}.png`),
           importedBy:
             importLine ?? `yarn import-tile <file> --tier=${key.split("/")[0]} --name=${key.split("/")[1]} --slot=prop`,
           importScript,
