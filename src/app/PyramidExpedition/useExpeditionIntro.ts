@@ -1,7 +1,9 @@
 import { useEffect } from "react"
 import type { FezContext } from "@/app/fez/context"
+import { JOURNEYS_WITH_ARRIVAL, arrivalConversationId } from "@/app/fez/arrivalConversation"
 
 type IntroArgs = {
+  journeyId: string
   isTomb: boolean
   /** This board has blocks that can't be opened yet — Fez explains them the first time. */
   hasBlockedBlocks: boolean
@@ -11,18 +13,19 @@ type IntroArgs = {
 // What Fez says on arrival. Everything here is offered on every visit: Fez remembers which
 // conversations the player has already seen and skips those himself (FezCompanion), and queues what
 // he does play in call order.
-export const useExpeditionIntro = ({ isTomb, hasBlockedBlocks, showConversation }: IntroArgs): void => {
+export const useExpeditionIntro = ({ journeyId, isTomb, hasBlockedBlocks, showConversation }: IntroArgs): void => {
   useEffect(() => {
     if (isTomb) {
       showConversation("tombIntro")
       showConversation("tombTutorial")
       return
     }
-    // Only the teaching. The journey's own arrival beat is about the PLACE and plays on the map as
-    // the player sets off (`useJourneyArrival`) — here it landed over a board of numbered blocks,
-    // in whichever of the journey's pyramids happened to be opened first. `pyramidIntro` is about
-    // this board, plays once ever, and is the only thing that explains the arithmetic.
+    // The journey's beat is about the PLACE, so it plays with the place's pyramid on screen. Its id
+    // is the journey's, not this pyramid's: heard at whichever pyramid comes first, it is skipped at
+    // the rest. Story, so the tutorials toggle cannot silence it. `pyramidIntro` is about this board.
+    if (JOURNEYS_WITH_ARRIVAL.has(journeyId))
+      showConversation(arrivalConversationId(journeyId), undefined, { story: true })
     showConversation("pyramidIntro")
     if (hasBlockedBlocks) showConversation("pyramidBlockedBlocks")
-  }, [isTomb, showConversation, hasBlockedBlocks])
+  }, [journeyId, isTomb, showConversation, hasBlockedBlocks])
 }

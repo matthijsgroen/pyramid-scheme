@@ -84,7 +84,7 @@ export const PyramidExpedition: FC<{
     return levelContent?.pyramid.blocks.some(block => !block.isOpen && block.value === undefined) ?? false
   }, [levelContent])
 
-  useExpeditionIntro({ isTomb, hasBlockedBlocks, showConversation })
+  useExpeditionIntro({ journeyId: activeJourney.journeyId, isTomb, hasBlockedBlocks, showConversation })
 
   const expeditionCompleted = activeJourney.levelNr > journey.levelCount
 

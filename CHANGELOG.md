@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- A journey's arrival plays in front of its pyramid, not over the list of journeys.
 - The first pyramids' rooms are furnished for what was done in them: weighing, packing, storage, selling and the books.
 - You meet Fez on the first pyramid's ground floor, a voice in the dark before he is a face.
 - The game says tap rather than click, and calls an expedition one thing everywhere.

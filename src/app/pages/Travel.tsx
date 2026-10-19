@@ -24,7 +24,6 @@ import { journeyCardSlots } from "./journeyCardSlots"
 import "@/mods/registerModApps" // populate the journey-card slot registry, as Collection does for its sections
 import { availablePyramidJourneyIds, comingSoonDifficulty } from "./journeyAvailability"
 import { useMergedJourneyContributions } from "./journeyContributions"
-import { useJourneyArrival } from "@/app/fez/useJourneyArrival"
 
 export const TravelPage: FC<{
   startGame: () => void
@@ -54,7 +53,6 @@ export const TravelPage: FC<{
   // What the mods say about each journey: still locked (and how far along), not on the map yet, or
   // holding something of theirs the player already found.
   const journeyFacts = useMergedJourneyContributions()
-  const setOff = useJourneyArrival()
   const [mapHint, mapTapped] = useTapHint("travelMap")
   const [journeyHint, journeyTapped] = useTapHint("firstJourney")
   const [showJourneySelection, setShowJourneySelection] = useState(false)
@@ -101,12 +99,7 @@ export const TravelPage: FC<{
       return
     }
     await startJourney(journey)
-    // THE ARRIVAL BEAT BELONGS HERE, not at the pyramid. It is about the PLACE — the Valley of the
-    // Artisans, the Colossi, the Sphinx — and a journey holds several pyramids in free order, so
-    // fired on the way into one it landed at whichever the player happened to open first, over a
-    // board of numbered blocks with nothing of the place on screen. Here the card they just chose
-    // is still behind it. The board's own teaching (`pyramidIntro`) stays where the board is.
-    setOff(journey.id, startGame)
+    startGame()
   }
 
   const handleBackToMap = () => {

@@ -113,7 +113,7 @@ first-encounter mechanics (hearts, coins, gates, traps) are his lines, not a ban
 | A tap hint atom                      | S    | a `👆` that taps over its target until the player does, then never again. Wordless, so it carries the "where" no line should. Reduced motion: still, no tap. First uses: the travel map card, the first journey card. Candidates later: the first empty exterior block, the first move on floor 0 |
 | One word for journey / expedition    | S    | `Travel`, `Plan Expedition`, `Choose your Journey`, `Expedition Level` — pick, in en + nl                                                                                                                                                                                                         |
 | "Click" → "Tap"                      | XS   | `Klik ergens om door te gaan`                                                                                                                                                                                                                                                                     |
-| Arrival on the travel list           | S    | the beat describes the Sphinx over a list; fire it on the pyramid's exterior screen, or give the list the place's picture                                                                                                                                                                         |
+| Arrival on the travel list           | ✓    | fires on the journey's first exterior screen, before `pyramidIntro`, once per journey                                                                                                                                                                                                             |
 
 ### F. Art
 
@@ -166,8 +166,8 @@ at `starter_3` is always corrected after it is made.
 
 ### B. Placement
 
-Nothing to place: arrivals fire from the journey, not a room. Where they fire is the opening's task
-(_Arrival on the travel list_) and holds for all twenty.
+Nothing to place: arrivals fire from the journey, not a room — at whichever of its pyramids' exteriors
+the player opens first, for all twenty.
 
 ### C. Art and presentation
 
