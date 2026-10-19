@@ -193,64 +193,6 @@ the shabti is `--mesh=art/masters/meshes/shabti.glb`. `starter-plain.png` is the
 `art/masters/surfaces/starter-floor.webp` scaled to 1024, the crop every `<tier>-plain.png` is. The
 tally board has no scaffold: it attaches its own master.
 
-### `starter/pillar` — a leaning timber prop, red ochre on its wedges
-
-**Attach:**
-
-1. `~/tile-previews/pillar-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-A wall-less product shot of a single object, painted in flat matte gouache, no background, on pure magenta #FF00FF. Portrait, two units wide by three tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a rough timber PROP leaning a little, holding up a roof that is out of the frame. The tall
-trunk is the POST; the two chunky blocks at its foot are WEDGES hammered in under it.
-
-The post is a rough-hewn trunk, dark honey-brown #9a6a3c on its lit side going to #5e3a1e on its shadowed
-side, adze marks along the grain, bark left in a strip. Never grey, never weathered silver. A band of red
-ochre #b8452c is painted round it at shoulder height with a merchant's mark, and it is darkest #3a2a1c at
-the foot. The wedges are dark timber with a dab of red ochre on each.
-
-IT STANDS ON A PALE FLOOR AND MUST READ DARK ON IT. The floor is pale limestone, #d8c8a8. The object as a
-whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is lighter
-than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its base, its underside
-and every part nearest the floor are its darkest, deep umber #3a2a1c. Nothing on it is white, cream,
-bleached, pale straw or whitewash — a pale part vanishes into the floor.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-The shadow at its foot is part of the picture: paint it #3A2A1C, with no pink and no purple in it at all.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold pillar
-yarn import-tile art/masters/props/starter/pillar.webp --tier=starter --name=pillar --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
-```
-
----
-
-## Merchant props — six new, the activities
-
-The storehouse's activity props ([themed-rooms.md](../game-design/themed-rooms.md) §1): **weighing**
-(scale, weightsTable — the tally board is its wall item), **packing** (basketStack, bales), **selling**
-(counter) and the **ledger** (scribeDesk). New kinds, so each has a fresh primitive in `renderProp.py`
-and no landed tile to compare with. Same light-rank rule and same palette as the fifteen above, and the
-same render: timber `#9a6a3c` on magenta over the pale floor's footprint, with cloth dyed `#8a4a2c`
-(`--colour-cloth`) because the default linen is paler than the floor allows. Every one stands against
-the north wall and is SHALLOW — 0.40 deep at most — so its spin stays in Step 1b's 0–8 band; the balance
-is square on.
-
-**They enter the decorations pools when they land**, not before: `themed-rooms.md` shows an activity
-only where its props are painted. The import flags are first guesses with no correction in them —
-`yarn repaint <key> --land` runs `tile-stats`, and its numbers decide `--brightness` and
-`--saturation`. Each scaffold is the `scaffold` line of its block rendered once with its shadow, e.g.
-`yarn render-prop --primitive=scale --colour=#9a6a3c --floor=#d8c8a8 --out=$HOME/tile-previews/scale-starter.png`.
-
 ### `starter/scale` — a balance scale on its post, a weight in one pan and grain in the other
 
 **Attach:**

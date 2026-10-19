@@ -112,11 +112,10 @@ yarn import-tile art/masters/props/starter/lamp.webp --tier=starter --name=lamp 
   --filter=smooth --mask="$OBJ" --seat="$SHADOW" --scale=0.48
 
 # No stone pad in the model: a wide flat slab at floor level casts a shadow of its own silhouette
-# right under itself and reads as a second step. --saturation=1.7 because the repaint gave the trunk
-# grey-green bark; the wedges are the only warm thing on it.
+# right under itself and reads as a second step.
 scaffold pillar --colour=#9a6a3c --floor=#d8c8a8
 yarn import-tile art/masters/props/starter/pillar.webp --tier=starter --name=pillar --slot=prop \
-  --filter=smooth --mask="$OBJ" --seat="$SHADOW" --saturation=1.7 --brightness=0.9
+  --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 
 # The mat is a flat rug and nothing else, and it is the only prop here whose identity is PAINT: under
 # this projection a flat thing on the floor has no silhouette. Three shaped designs were rendered and
