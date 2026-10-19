@@ -193,43 +193,6 @@ the shabti is `--mesh=art/masters/meshes/shabti.glb`. `starter-plain.png` is the
 `art/masters/surfaces/starter-floor.webp` scaled to 1024, the crop every `<tier>-plain.png` is. The
 tally board has no scaffold: it attaches its own master.
 
-### `starter/niche` — a goods recess with two jars and a bundle
-
-**Attach:**
-
-1. `~/tile-previews/niche-starter.png` — the scaffold
-2. `~/tile-previews/starter-plain.png` — the material reference
-
-```
-A wall-less product shot of a recess cut into a wall, painted in flat matte gouache, no background, on pure magenta #FF00FF. Landscape, two units wide by one tall, exactly as the reference. Do not re-compose it into a square. Paint over the reference image itself.
-
-The object: a goods recess cut into a mudbrick wall. The frame round the opening is the SURROUND — jambs,
-lintel and sill. Inside, the two round shapes at the left are small storage JARS, and the rounded lump at
-the right is a cloth BUNDLE tied at the top.
-
-The surround is mud plaster washed RED OCHRE #b8452c, deepened to #7e3a1a, rubbed through to dark
-mudbrick #5e3a1e on the sill where goods are slid in and out. The recess behind is in deep shade #3a2a1c.
-The jars are fired terracotta #c0612f, one with a turquoise #2a9d8f glazed lip. The bundle is cloth dyed
-deep umber, tied with red cord.
-
-IT SITS IN A WALL ABOVE A PALE FLOOR AND MUST READ DARK. The floor is pale limestone, #d8c8a8. The object
-as a whole is clearly DARKER and more colourful than that: nothing on it larger than a fingertip is
-lighter than terracotta #c0612f, and only the turquoise #2a9d8f may be, in small touches. Its lower edge
-is its darkest, deep umber #3a2a1c. Nothing on it is white, cream, bleached or whitewash.
-
-Keep every edge, every proportion and every silhouette exactly as in the reference image — do not move, resize, straighten, add, remove or restyle any part of it, and do not change the angle it stands at. Paint only material and wear.
-
-No highlights, no gloss, no rim light, no ground plane, no reflections. Matte throughout, as if lit by one dull lamp. Merchant's storehouse: fired terracotta #c0612f and #7e3a1a, honey-brown timber #9a6a3c and #5e3a1e, red ochre paint #b8452c, turquoise faience #2a9d8f. Saturated and warm — colour that reads from across the room — and never as pale as the floor it stands on.
-```
-
-Then, once the return is in `~/Downloads`:
-
-```sh
-scaffold niche --shear=0.5 --width=448 --height=224 --sun=0
-yarn import-tile art/masters/props/starter/niche.webp --tier=starter --name=niche --slot=wall \
-  --filter=smooth --mask="$OBJ" --headroom=0.18
-```
-
 ### `starter/tallyBoard` — a dark plank of ochre tally strokes
 
 FLAT, so there is no scaffold to attach: the first attachment is the landed tile's own master, and the
