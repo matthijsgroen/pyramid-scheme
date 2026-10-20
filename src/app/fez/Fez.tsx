@@ -161,20 +161,33 @@ export const Fez: FC<{
   const pose = current?.[0] || "default"
   const speaker: Speaker = current?.[2] ?? "fez"
   const portrait = PORTRAITS[speaker]?.[pose]
+  const wide = portrait?.wide === true
 
   if (unmet) return null
 
   return (
-    <div className="fixed inset-0 z-10 bg-black/10" onClick={onNextMessage}>
+    // Clipped, so a portrait hanging past a phone's edge never scrolls the page sideways.
+    <div className="fixed inset-0 z-10 overflow-hidden bg-black/10" onClick={onNextMessage}>
       {/* The column the game's panels share (max-w-md), centred: on a wide screen the viewport's
           corners are far from the game and from each other, and the two speakers stood in them. On a
           phone the column is the screen, so nothing moves there. */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 mx-auto max-w-md">
-        <div className={clsx("absolute bottom-0", speaker === "explorer" ? "right-0 pl-6" : "left-0 pr-6")}>
+        <div
+          className={clsx(
+            "absolute bottom-0",
+            speaker === "explorer" ? "pl-6" : "pr-6",
+            // A human sprite carries 80px more of the figure behind him (`--behind=0.4`). A phone has
+            // no room for it, so it hangs past the screen's edge there; a wider screen has the column
+            // to stand him whole in.
+            !wide && (speaker === "explorer" ? "right-0" : "left-0"),
+            wide && (speaker === "explorer" ? "-right-20 min-[28rem]:right-0" : "-left-20 min-[28rem]:left-0")
+          )}
+        >
           <div
             className={clsx(
               "mb-2 max-w-xs rounded border border-black bg-white p-3 text-black shadow-lg transition-all duration-300",
-              speaker === "explorer" ? "mr-15 origin-bottom-right" : "ml-15 origin-bottom-left",
+              speaker === "explorer" ? "origin-bottom-right" : "origin-bottom-left",
+              speaker === "explorer" ? (wide ? "mr-35" : "mr-15") : wide ? "ml-35" : "ml-15",
               showMessage ? "rotate-0 opacity-100" : "rotate-12 opacity-0"
             )}
           >
@@ -188,16 +201,14 @@ export const Fez: FC<{
               src={portrait.src}
               alt={portrait.alt}
               className={clsx(
-                "-mb-15 w-50 animate-subtle-bounce transition-transform duration-300",
+                "-mb-15 animate-subtle-bounce transition-transform duration-300",
+                wide ? "w-70" : "w-50",
                 // The sprite is narrower than the bubble above it, so on the right-hand side it has to
                 // be pushed over: left-aligned in a right-anchored column, the explorer stood inboard
                 // of the edge instead of opposite Fez, and the two of them did not face each other.
                 speaker === "explorer" && "ml-auto",
                 // Every sprite is drawn facing right, which is towards the other speaker only from the left.
                 speaker === "explorer" && "-scale-x-100",
-                // His art is cut off along his back, meant to stand against the screen's edge. Once the
-                // column is narrower than the screen that edge is open floor, so the cut fades out there.
-                speaker === "explorer" && "min-[28rem]:mask-l-from-80%",
                 // The dead are see-through. Drawn opaque and faded here rather than painted
                 // translucent, so one sprite serves and the room shows through all of them equally.
                 GHOSTS.includes(speaker) && "opacity-70",

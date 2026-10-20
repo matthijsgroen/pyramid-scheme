@@ -20,6 +20,10 @@
  *                    figure (the journey card, the title, anything not standing beside him).
  *   --centre=840     where to frame a bust horizontally, in source pixels. Defaults to the head; give
  *                    it only for a pose whose point is off to one side (the raised finger).
+ *   --behind=0.4     widen a bust's frame by this fraction on its LEFT, the side behind a figure that
+ *                    faces right — his rope, her raised hand. The 250 wide face frame stays the right
+ *                    part of the sprite, so `Fez.tsx` can let the extra hang off a phone's edge and
+ *                    show it on a wider screen. 0.4 makes a 350x375 sprite.
  *   --holes=x,y;x,y  points inside enclosed background — the gap under an arm, between a held map and
  *                    a hand, behind a neck. The flood cannot reach these from the edge and no rule can
  *                    tell them from an eye, so they are named. Every import prints what it left.
@@ -326,6 +330,10 @@ const main = async (): Promise<void> => {
         }
       })()
   const { wide: tooWide } = seat(figure)
+  const behind = bust ? Number(arg("behind", "0")) : 0
+  const extra = Math.round(window.width * behind)
+  window.left -= extra
+  window.width += extra
 
   // Clamped to the image, then padded back out: a window may reach past an edge (a head near the
   // top, a bust wider than the source), and sharp's extract cannot.
@@ -351,7 +359,10 @@ const main = async (): Promise<void> => {
     .toBuffer()
 
   const out = join(OUT_ROOT, name + "-250.png")
-  await sharp(padded).resize(WIDTH, HEIGHT).png().toFile(out)
+  await sharp(padded)
+    .resize(Math.round(WIDTH * (1 + behind)), HEIGHT)
+    .png()
+    .toFile(out)
 
   const left_over = enclosedRegions({
     data,

@@ -191,16 +191,16 @@ So they are named, and the script prints every patch it left opaque after each r
 to look. Pass the ones that are not eyes:
 
 ```
-yarn import-portrait art/masters/characters/explorer.jpeg --name=explorer --bust=0.55 --centre=1160 \
+yarn import-portrait art/masters/characters/explorer.jpeg --name=explorer --bust=0.55 --centre=1160 --behind=0.4 \
   --holes="574,1299;631,1503;1242,1025;646,1062;748,642"
-yarn import-portrait art/masters/characters/grin-explorer.jpeg --name=grin-explorer --bust=0.55 --centre=1160 \
+yarn import-portrait art/masters/characters/grin-explorer.jpeg --name=grin-explorer --bust=0.55 --centre=1160 --behind=0.4 \
   --holes="582,1329;1243,1026;646,1061;929,599;749,642"
-yarn import-portrait art/masters/characters/point-explorer.jpeg --name=point-explorer --bust=0.55 --centre=1085 \
+yarn import-portrait art/masters/characters/point-explorer.jpeg --name=point-explorer --bust=0.55 --centre=1085 --behind=0.4 \
   --holes="586,1330;649,1059;753,638"
-yarn import-portrait art/masters/characters/ghost-ipi.jpeg     --name=ghost-ipi     --bust=0.55
-yarn import-portrait art/masters/characters/ghost-henut.jpeg   --name=ghost-henut   --bust=0.55
-yarn import-portrait art/masters/characters/ghost-priest.jpeg  --name=ghost-priest  --bust=0.55
-yarn import-portrait art/masters/characters/ghost-pharaoh.jpeg --name=ghost-pharaoh --bust=0.55
+yarn import-portrait art/masters/characters/ghost-ipi.jpeg     --name=ghost-ipi     --bust=0.55 --behind=0.4
+yarn import-portrait art/masters/characters/ghost-henut.jpeg   --name=ghost-henut   --bust=0.55 --behind=0.4
+yarn import-portrait art/masters/characters/ghost-priest.jpeg  --name=ghost-priest  --bust=0.55 --behind=0.4
+yarn import-portrait art/masters/characters/ghost-pharaoh.jpeg --name=ghost-pharaoh --bust=0.55 --behind=0.4
 ```
 
 Coordinates are in the MASTER image, so they survive as long as the master does; a redrawn master needs new
@@ -230,6 +230,11 @@ all match.
 drawn mirrored on the right of a conversation, so his far side faces the middle of the screen: a map or a
 finger clipped there shows the cut mid-screen. His window is pushed towards the map and the raised finger,
 and the clip falls on the rope side, which ends at the screen edge. Named per drawing, the way the holes are.
+
+`--behind=0.4` puts that rope side back: it widens the window by 40% on the side behind the figure, so every
+human sprite is 350x375 with the 250 wide face frame on its right. On a phone `Fez.tsx` hangs the extra
+past the screen edge, so he looks as the face frame alone did; in the centred column of a wider screen he
+stands whole. The ghosts get it too, for Henut's raised hand, so every human sprite has the same width.
 
 **The full-length versions are still what the journey card and the title want.** Same command without
 `--bust`.

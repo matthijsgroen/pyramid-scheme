@@ -1662,17 +1662,18 @@ yarn import-tile art/masters/explorer/explorer-zip-e.webp --tier=default --name=
 #
 # --bust cuts every human waist-up so their faces read at Fez's size rather than a third of it, --holes
 # names the enclosed background no flood can reach, and --centre keeps the pointing pose's finger and
-# the held map in frame. All three are explained in docs/game-design/story/character-art-prompts.md.
-yarn import-portrait art/masters/characters/explorer.jpeg --name=explorer --bust=0.55 --centre=1160 \
+# the held map in frame, and --behind keeps what is behind them (his rope, Henut's hand) for a screen
+# wide enough to show it. All four are explained in docs/game-design/story/character-art-prompts.md.
+yarn import-portrait art/masters/characters/explorer.jpeg --name=explorer --bust=0.55 --centre=1160 --behind=0.4 \
   --holes="574,1299;631,1503;1242,1025;646,1062;748,642"
-yarn import-portrait art/masters/characters/grin-explorer.jpeg --name=grin-explorer --bust=0.55 --centre=1160 \
+yarn import-portrait art/masters/characters/grin-explorer.jpeg --name=grin-explorer --bust=0.55 --centre=1160 --behind=0.4 \
   --holes="582,1329;1243,1026;646,1061;929,599;749,642"
-yarn import-portrait art/masters/characters/point-explorer.jpeg --name=point-explorer --bust=0.55 --centre=1085 \
+yarn import-portrait art/masters/characters/point-explorer.jpeg --name=point-explorer --bust=0.55 --centre=1085 --behind=0.4 \
   --holes="586,1330;649,1059;753,638"
-yarn import-portrait art/masters/characters/ghost-ipi.jpeg --name=ghost-ipi --bust=0.55
-yarn import-portrait art/masters/characters/ghost-henut.jpeg --name=ghost-henut --bust=0.55
-yarn import-portrait art/masters/characters/ghost-priest.jpeg --name=ghost-priest --bust=0.55
-yarn import-portrait art/masters/characters/ghost-pharaoh.jpeg --name=ghost-pharaoh --bust=0.55
+yarn import-portrait art/masters/characters/ghost-ipi.jpeg --name=ghost-ipi --bust=0.55 --behind=0.4
+yarn import-portrait art/masters/characters/ghost-henut.jpeg --name=ghost-henut --bust=0.55 --behind=0.4
+yarn import-portrait art/masters/characters/ghost-priest.jpeg --name=ghost-priest --bust=0.55 --behind=0.4
+yarn import-portrait art/masters/characters/ghost-pharaoh.jpeg --name=ghost-pharaoh --bust=0.55 --behind=0.4
 yarn import-portrait art/masters/characters/ghost-other.jpeg --name=ghost-other --bust=0.55
 
 # THE EXPLORER, SQUEEZING (side frame e, profile frame s; north reuses s)
