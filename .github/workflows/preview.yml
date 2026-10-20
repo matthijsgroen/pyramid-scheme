@@ -16,9 +16,8 @@ jobs:
   preview:
     runs-on: ubuntu-latest
     steps:
+      # The branch that triggered the run: a push to topology/mechanics, or whichever branch a manual run names.
       - uses: actions/checkout@v7
-        with:
-          ref: topology/mechanics
       - name: Enable Corepack
         run: corepack enable
       - name: Set up Node
