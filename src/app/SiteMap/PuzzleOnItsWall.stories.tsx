@@ -19,10 +19,24 @@ const siteBound = allFamilies().filter(family => !playableInLab(family.meta))
 
 const SEED = 1
 
+/** A family's faces, the plain one first: every id its role map names (`FamilyMeta.faces`). */
+const facesOf = (family: FamilyPlugin): string[] => [
+  "default",
+  ...new Set(
+    Object.values(family.meta.faces ?? {})
+      .flat()
+      .filter(face => face !== "default")
+  ),
+]
+
 // The tableau asks Fez to explain it on first sight; here nobody is around to say it.
 const NO_FEZ = { showConversation: () => {} }
 
-const PuzzleOnItsWall: FC<{ familyId: string; difficulty: Difficulty }> = ({ familyId, difficulty }) => {
+const PuzzleOnItsWall: FC<{ familyId: string; difficulty: Difficulty; face?: string }> = ({
+  familyId,
+  difficulty,
+  face = "default",
+}) => {
   const family = benchFamilies.find(f => f.meta.id === familyId)
   if (!family) return <p className="p-4 text-white">No family {familyId} in the registry.</p>
   if (!allowedDifficulties(family.meta).includes(difficulty))
@@ -33,12 +47,12 @@ const PuzzleOnItsWall: FC<{ familyId: string; difficulty: Difficulty }> = ({ fam
     )
   return (
     <EncounterModal difficulty={difficulty}>
-      <Board key={`${family.meta.id}:${difficulty}`} family={family} difficulty={difficulty} />
+      <Board key={`${family.meta.id}:${difficulty}:${face}`} family={family} difficulty={difficulty} face={face} />
     </EncounterModal>
   )
 }
 
-const Board: FC<{ family: FamilyPlugin; difficulty: Difficulty }> = ({ family, difficulty }) => {
+const Board: FC<{ family: FamilyPlugin; difficulty: Difficulty; face: string }> = ({ family, difficulty, face }) => {
   const progression = useProgression()
   const journeys = useJourneys()
   const inventory = useInventory()
@@ -51,9 +65,11 @@ const Board: FC<{ family: FamilyPlugin; difficulty: Difficulty }> = ({ family, d
       sectionHash: "story",
       freshArrival: true,
       difficulty,
+      // A face is asked for by name the way the puzzle lab asks: through the theme, "default" being no ask.
+      theme: face === "default" ? undefined : face,
       tags: family.meta.tags,
     }),
-    [family, difficulty]
+    [family, difficulty, face]
   )
   const generated = useMemo(() => {
     try {
@@ -103,8 +119,10 @@ const meta = {
   argTypes: {
     familyId: { control: "select", options: benchFamilies.map(f => f.meta.id) },
     difficulty: { control: "inline-radio", options: difficulties },
+    // Every face any family has; one this family lacks falls through to its plain board.
+    face: { control: "select", options: [...new Set(benchFamilies.flatMap(facesOf))] },
   },
-  args: { familyId: benchFamilies[0]?.meta.id ?? "", difficulty: "starter" },
+  args: { familyId: benchFamilies[0]?.meta.id ?? "", difficulty: "starter", face: "default" },
 } satisfies Meta<typeof PuzzleOnItsWall>
 
 export default meta
@@ -113,18 +131,20 @@ type Story = StoryObj<typeof meta>
 /** One board on its wall: flip the family and the rank. */
 export const OneFamily: Story = {}
 
-/** Every board on the same rank's wall, one under the other: flip the rank to repaint-check them all. */
+/** Every board in every face on the same rank's wall, one under the other: flip the rank to repaint-check them all. */
 export const EveryFamily: Story = {
-  argTypes: { familyId: { table: { disable: true } } },
+  argTypes: { familyId: { table: { disable: true } }, face: { table: { disable: true } } },
   render: ({ difficulty }) => (
     <div className="flex flex-col gap-8 bg-black">
-      {benchFamilies.map(family => (
-        // `contain: paint` makes this block the frame's containing block, so each `fixed inset-0` frame fills
-        // its own slot instead of all of them stacking over the viewport.
-        <div key={family.meta.id} className="relative min-h-180" style={{ contain: "paint" }}>
-          <PuzzleOnItsWall familyId={family.meta.id} difficulty={difficulty} />
-        </div>
-      ))}
+      {benchFamilies.flatMap(family =>
+        facesOf(family).map(face => (
+          // `contain: paint` makes this block the frame's containing block, so each `fixed inset-0` frame fills
+          // its own slot instead of all of them stacking over the viewport.
+          <div key={`${family.meta.id}:${face}`} className="relative min-h-180" style={{ contain: "paint" }}>
+            <PuzzleOnItsWall familyId={family.meta.id} difficulty={difficulty} face={face} />
+          </div>
+        ))
+      )}
     </div>
   ),
 }
