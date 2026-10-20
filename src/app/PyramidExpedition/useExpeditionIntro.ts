@@ -15,9 +15,9 @@ type IntroArgs = {
 // he does play in call order.
 export const useExpeditionIntro = ({ journeyId, isTomb, hasBlockedBlocks, showConversation }: IntroArgs): void => {
   useEffect(() => {
+    // The tableau's own lesson waits for the tableau (TombPuzzle): here it is not on screen yet.
     if (isTomb) {
       showConversation("tombIntro")
-      showConversation("tombTutorial")
       return
     }
     // The journey's beat is about the PLACE, so it plays with the place's pyramid on screen. Its id

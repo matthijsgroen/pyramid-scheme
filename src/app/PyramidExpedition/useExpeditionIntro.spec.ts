@@ -73,8 +73,8 @@ describe("useExpeditionIntro", () => {
     ])
   })
 
-  it("teaches the tomb, in the order Fez should play it", () => {
-    expect(render({ isTomb: true }).map(s => s.id)).toEqual(["tombIntro", "tombTutorial"])
+  it("welcomes the tomb, and leaves the tableau's lesson to the tableau", () => {
+    expect(render({ isTomb: true }).map(s => s.id)).toEqual(["tombIntro"])
   })
 
   it("says nothing about boards inside a tomb", () => {

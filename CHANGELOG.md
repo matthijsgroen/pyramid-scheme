@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- How a tomb's tableau is worked is explained when the tableau is open, not on arrival.
 - The pointing hand on the travel map waits until the conversation is over.
 - Fez says nothing before you have met him.
 - On a wide screen the conversation stands by the game, not in the screen's corners.

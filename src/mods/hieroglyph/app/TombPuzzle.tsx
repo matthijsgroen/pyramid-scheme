@@ -68,6 +68,9 @@ export const TombPuzzle: FC<{
   )
 
   const { showConversation } = use(FezContext)
+  // How a tableau is worked, said with the tableau on screen. Before the nudge below, so a player short of
+  // hieroglyphs hears what the slots are for first.
+  useEffect(() => showConversation("tombTutorial"), [showConversation])
   useEffect(() => {
     if (notEnough) {
       showConversation("notEnoughHieroglyphs")

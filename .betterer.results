@@ -230,7 +230,7 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/mods/puzzle/app/constellation/constellationHint.ts:331766611": [
       [24, 87, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/puzzle/app/constellation/glyphs.tsx:1805655020": [
+    "src/mods/puzzle/app/constellation/glyphs.tsx:334783610": [
       [17, 57, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/puzzle/app/constellation/skins.ts:2608496423": [
