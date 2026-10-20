@@ -78,6 +78,10 @@ export const FezCompanion: React.FC<{
     }),
     [conversations, loaded, setConversations, tutorialsEnabled]
   )
+  // Kept apart from the memo above: `showConversation` must stay stable while speakers come and go, or every
+  // caller that asks from an effect would ask again on each line.
+  const speaking = activeConversation !== null
+  const value = useMemo(() => ({ ...contextValue, speaking }), [contextValue, speaking])
 
   const meeting = fezMeeting()
   const beforeMeeting =
@@ -90,7 +94,7 @@ export const FezCompanion: React.FC<{
 
   return (
     <>
-      <FezContext.Provider value={contextValue}>{children}</FezContext.Provider>
+      <FezContext.Provider value={value}>{children}</FezContext.Provider>
       {createPortal(
         activeConversation && (
           <Fez

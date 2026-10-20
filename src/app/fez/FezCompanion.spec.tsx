@@ -151,3 +151,27 @@ describe("once Fez is met", () => {
     expect(speakers()).toEqual([])
   })
 })
+
+describe("while someone is talking", () => {
+  const Speaking = () => <p>{use(FezContext).speaking ? "speaking" : "quiet"}</p>
+
+  it("says so, so a pointing hand can wait for the end of the conversation", async () => {
+    const onDone = vi.fn()
+    const { rerender } = render(
+      <FezCompanion journeyProgress={() => ({ levelNr: 1, completionCount: 0 })}>
+        <Speaking />
+      </FezCompanion>
+    )
+    expect(screen.getByText("quiet")).toBeTruthy()
+
+    rerender(
+      <FezCompanion journeyProgress={() => ({ levelNr: 1, completionCount: 0 })}>
+        <Speaking />
+        <Ask id="musing" story onDone={onDone} />
+      </FezCompanion>
+    )
+    for (let i = 0; i < 3; i++) await act(async () => void vi.advanceTimersByTime(100))
+
+    expect(screen.getByText("speaking")).toBeTruthy()
+  })
+})

@@ -12,6 +12,7 @@ import { useJourneyTranslations, type TranslatedJourney } from "@/app/translatio
 import { DifficultyPill } from "@/ui/atoms/DifficultyPill"
 import { TapHint } from "@/ui/atoms/TapHint"
 import { useTapHint } from "@/app/state/useTapHint"
+import { FezContext } from "@/app/fez/context"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import { DevPanel } from "@/ui/molecules/DevPanel"
@@ -53,6 +54,8 @@ export const TravelPage: FC<{
   // What the mods say about each journey: still locked (and how far along), not on the map yet, or
   // holding something of theirs the player already found.
   const journeyFacts = useMergedJourneyContributions()
+  // A pointing hand waits for the conversation to end, so one thing at a time asks for the player's eye.
+  const { speaking } = use(FezContext)
   const [mapHint, mapTapped] = useTapHint("travelMap")
   const [journeyHint, journeyTapped] = useTapHint("firstJourney")
   const [showJourneySelection, setShowJourneySelection] = useState(false)
@@ -213,7 +216,7 @@ export const TravelPage: FC<{
                 </>
               )}
               {!journey && <p className="mb-4 text-center">{t("ui.startAdventure")}</p>}
-              <TapHint show={mapHint && !journey}>
+              <TapHint show={mapHint && !journey && !speaking}>
                 <JourneyPathView
                   onClick={handleMapClick}
                   onNodeClick={journey ? handleNodeClick : undefined}
@@ -313,7 +316,7 @@ export const TravelPage: FC<{
                   )
                 }
                 return (
-                  <TapHint key={journey.id} show={journeyHint && journey.id === firstPickableId}>
+                  <TapHint key={journey.id} show={journeyHint && !speaking && journey.id === firstPickableId}>
                     <JourneyCard
                       showDetails={journey.id === newestAvailableId}
                       journey={journey}

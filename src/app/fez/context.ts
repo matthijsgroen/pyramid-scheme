@@ -8,6 +8,8 @@ export const FezContext = createContext<{
     onComplete?: (result: FezConversationResult) => void,
     options?: { forceReplay?: boolean; story?: boolean }
   ) => void
+  /** Someone is talking: whatever else asks for the player's eye waits until the conversation is over. */
+  speaking?: boolean
 }>({
   showConversation: () => {
     throw new Error("FezContext not provided")
