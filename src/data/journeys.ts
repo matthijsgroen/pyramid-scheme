@@ -19,6 +19,10 @@ import { PYRAMID_STRUCTURES, TOMB_STRUCTURES } from "./journeyStructure"
  */
 export type DayNightCycleStep = "morning" | "afternoon" | "evening" | "night"
 
+/** What stands on the horizon behind a journey's pyramids: the place the journey is named after. The
+ * backdrop declares the same list for itself (`src/ui/atoms/DesertBackdrop.tsx`), for the same reason. */
+export type Landmark = "sphinx"
+
 export type Journey = {
   id: string
   name: string
@@ -35,6 +39,7 @@ export type Journey = {
     time: DayNightCycleStep
     timeStepSize?: number
     showNile?: boolean
+    landmark?: Landmark
   }
   // The cross-sum board each of this journey's sites is entered through.
   levelSettings: {
@@ -70,6 +75,7 @@ const authoredJourneys: AuthoredJourney[] = [
     journeyLength: "short",
     background: {
       time: "morning",
+      landmark: "sphinx",
     },
     levelSettings: {
       startFloorCount: 3,

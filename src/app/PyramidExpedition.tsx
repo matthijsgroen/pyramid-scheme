@@ -109,6 +109,7 @@ export const PyramidExpedition: FC<{
       start={journey.background.time}
       timeStepSize={journey.background.timeStepSize}
       showNile={journey.background.showNile}
+      landmark={journey.background.landmark}
     >
       <div className="flex size-full flex-col">
         <div className="flex-shrink-0 bg-gradient-to-t from-transparent via-transparent to-black/30 backdrop-blur-sm">

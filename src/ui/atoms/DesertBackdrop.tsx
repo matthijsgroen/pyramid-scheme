@@ -10,6 +10,14 @@ import {
   skyTop,
   type DayNightCycleStep,
 } from "@/ui/atoms/backdropSelection"
+import sphinx from "@/assets/landmarks/sphinx.svg"
+
+/** What stands on the horizon behind a journey's pyramid. A journey authors its own copy of this list
+ * (`src/data/journeys.ts`), because the design system imports nothing from `src/`. */
+export type Landmark = "sphinx"
+
+// Flat silhouettes, drawn as a mask so the backdrop tints them with the hour.
+const landmarkImages: Record<Landmark, string> = { sphinx }
 
 export const DesertBackdrop: FC<
   PropsWithChildren<{
@@ -17,8 +25,9 @@ export const DesertBackdrop: FC<
     start: DayNightCycleStep
     timeStepSize?: number
     showNile?: boolean
+    landmark?: Landmark
   }>
-> = ({ children, levelNr, start, timeStepSize = 3, showNile = false }) => {
+> = ({ children, levelNr, start, timeStepSize = 3, showNile = false, landmark }) => {
   const step = dayNightCycleStep(levelNr, start, timeStepSize)
   const transitionDuration = "duration-12000"
 
@@ -60,6 +69,24 @@ export const DesertBackdrop: FC<
           transitionDuration
         )}
       >
+        {landmark && (
+          // Right of the board and clear of the Nile and the sun; the moon may rise behind it. Its base
+          // sinks a pixel into the sand, and it is tinted between the two sand shades so it stays a
+          // distant shape at every hour rather than a cut-out.
+          <div
+            data-landmark={landmark}
+            className={clsx(
+              "pointer-events-none absolute right-2 bottom-1/2 aspect-[118/40] w-20 translate-y-px bg-[color-mix(in_srgb,color-mix(in_srgb,var(--sand-bottom)_70%,var(--sky-middle))_80%,black)] transition-colors sm:right-[12%] sm:w-24",
+              transitionDuration
+            )}
+            style={{
+              maskImage: `url("${landmarkImages[landmark]}")`,
+              maskSize: "contain",
+              maskRepeat: "no-repeat",
+              maskPosition: "bottom",
+            }}
+          />
+        )}
         {showNile && (
           <div
             className={clsx(

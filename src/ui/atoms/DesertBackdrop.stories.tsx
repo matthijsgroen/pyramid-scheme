@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { DesertBackdrop } from "./DesertBackdrop"
+import { DesertBackdrop, type Landmark } from "./DesertBackdrop"
 import { skyTop, type DayNightCycleStep } from "./backdropSelection"
 
 const meta = {
@@ -20,6 +20,10 @@ const meta = {
     start: {
       control: "select",
       options: ["morning", "afternoon", "evening", "night"] as DayNightCycleStep[],
+    },
+    landmark: {
+      control: "select",
+      options: [undefined, "sphinx"] as (Landmark | undefined)[],
     },
   },
 } satisfies Meta<typeof DesertBackdrop>
@@ -134,4 +138,35 @@ export const Empty: Story = {
     levelNr: 1,
     start: "morning",
   },
+}
+
+/** Slide `levelNr` to walk the landmark through every hour (one step per level). */
+export const WithLandmark: Story = {
+  args: {
+    levelNr: 1,
+    start: "morning",
+    showNile: false,
+    landmark: "sphinx",
+  },
+}
+
+/** Every step of the cycle side by side, the pyramid board stood in by a block. */
+export const LandmarkThroughTheDay: Story = {
+  args: {
+    levelNr: 1,
+    start: "afternoon",
+    showNile: false,
+    landmark: "sphinx",
+  },
+  render: args => (
+    <div className="grid grid-cols-2 gap-1 bg-black p-1 md:grid-cols-4">
+      {skyTop.map((_, step) => (
+        <div key={step} className="h-60 overflow-hidden">
+          <DesertBackdrop {...args} levelNr={step}>
+            <div className="h-16 w-28 -translate-y-1/2 bg-amber-200/80 [clip-path:polygon(50%_0,100%_100%,0_100%)]" />
+          </DesertBackdrop>
+        </div>
+      ))}
+    </div>
+  ),
 }
