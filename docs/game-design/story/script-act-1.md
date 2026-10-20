@@ -193,7 +193,7 @@ half — rarely, and remembering the last time.
 >
 > **Explorer:** It was a door.
 >
-> **Fez:** I've walked with people who'd take a week over a door like that. Not naming names. Mostly me.
+> **Fez:** A door like that takes me a week. On a good day.
 
 **On leaving the first tomb, after Ipi:**
 
