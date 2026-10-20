@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fez says nothing before you have met him.
+- On a wide screen the conversation stands by the game, not in the screen's corners.
 - No more bar across the screen while somebody talks to you in a room, or while Fez greets you at his stall.
 - No more faint bar behind a treasure chest before you open it.
 - The explorer no longer spins round each time the speaker changes in a conversation.

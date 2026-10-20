@@ -59,3 +59,15 @@ describe("facing", () => {
     expect(explorer.isConnected).toBe(false)
   })
 })
+
+describe("where the conversation stands", () => {
+  it.each(["arrival.starter_1", "levelCompleted"])(
+    "puts %s in the centred column the game's panels share, not in the screen's corners",
+    conversation => {
+      render(<Fez conversation={conversation} onComplete={() => {}} />)
+
+      const column = screen.getByRole("img").closest(".max-w-md")
+      expect(column?.classList).toContain("mx-auto")
+    }
+  )
+})
