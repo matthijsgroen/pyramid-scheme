@@ -31,7 +31,7 @@ function App() {
 
   return (
     <DevelopModeProvider>
-      <FezCompanion>
+      <FezCompanion journeyProgress={getJourney}>
         {!inGame && <Base startGame={() => setInGame(true)} />}
         {inGame && journeyInfo && journeyInfo.journey && (
           <PyramidExpedition

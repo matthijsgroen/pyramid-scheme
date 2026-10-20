@@ -10,7 +10,10 @@
  * (story/review.md, The opening); its scene is `meeting.<journey>`, kept apart from the arrival
  * that plays at the door.
  */
-const MEETINGS: ReadonlySet<string> = new Set(["starter_1"])
+/** The journey where the explorer meets Fez. */
+export const FEZ_MET_IN = "starter_1"
+
+const MEETINGS: ReadonlySet<string> = new Set([FEZ_MET_IN])
 
 export const sceneFor = (journeyId: string): string | undefined => {
   if (MEETINGS.has(journeyId)) return `meeting.${journeyId}`

@@ -19,7 +19,7 @@ const pose = (...args: (Pose | string[])[]): PoseChat[] => {
   return result
 }
 
-/** Before the first pyramid the explorer is alone, so the map screen is theirs to carry. */
+/** Until Fez is met the explorer is alone, so what the player needs before then is his to say. */
 const asExplorer = (chats: PoseChat[]): PoseChat[] => chats.map(([pose, key]) => [pose, key, "explorer"])
 
 const conversations: Record<string, PoseChat[]> = {
@@ -65,32 +65,58 @@ const NOT_FOUND = pose("default", ["not-found"])
  * the tomb scenes are authored that way, because a new beat should cost a key rather than a code
  * change. The table is what is left: the tutorials and the shipped one-voice beats.
  */
-const linesFor = (conversation: string, hasLine: (key: string) => boolean): PoseChat[] => {
+const writtenLines = (conversation: string, hasLine: (key: string) => boolean): PoseChat[] => {
   const table = conversations[conversation]
   if (table) return table
   const spoken = spokenLines(conversation, hasLine)
   return spoken.length > 0 ? spoken.map(line => ["default", line.key, line.speaker] as PoseChat) : NOT_FOUND
 }
 
+const fezSpeaks = (lines: PoseChat[]): boolean => lines.some(([, , speaker]) => (speaker ?? "fez") === "fez")
+
+/**
+ * The lines a conversation plays, or nothing when Fez speaks in it and has not been met yet.
+ *
+ * Dropped whole rather than with his lines cut, so the explorer never answers nobody. A line the
+ * player needs before the meeting is the explorer's in the table above (`asExplorer`), not Fez's.
+ */
+const linesFor = (conversation: string, hasLine: (key: string) => boolean, beforeMeeting: boolean) => {
+  const lines = writtenLines(conversation, hasLine)
+  return beforeMeeting && fezSpeaks(lines) ? undefined : lines
+}
+
 export const Fez: FC<{
   conversation: string
-  onComplete: (result: "complete" | "skipped") => void
-}> = ({ conversation, onComplete }) => {
+  onComplete: (result: "complete" | "skipped" | "unmet") => void
+  /** Fez is not met yet, so a conversation he speaks in is dropped (`linesFor`). */
+  beforeMeeting?: boolean
+}> = ({ conversation, onComplete, beforeMeeting = false }) => {
   const { t, i18n } = useTranslation("fez")
   const [visible, setVisible] = useState(false)
   const [showMessage, setShowMessage] = useState(false)
   const [messageIndex, setMessageIndex] = useState(0)
 
-  const messages = linesFor(conversation, key => i18n?.exists?.(key, { ns: "fez" }) === true)
+  const staged = linesFor(conversation, key => i18n?.exists?.(key, { ns: "fez" }) === true, beforeMeeting)
+  const unmet = !staged
+  const messages = staged ?? []
+
+  // Once per mount: the companion keys this component by conversation, and its onComplete is a fresh
+  // function every render, so depending on it would report the same drop again and again.
+  useEffect(() => {
+    if (unmet) onComplete("unmet")
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [unmet])
 
   useEffect(() => {
+    if (unmet) return
     const timer = setTimeout(() => {
       setVisible(true)
     }, 200) // Show after 200 milliseconds
     return () => clearTimeout(timer)
-  }, [])
+  }, [unmet])
 
   useEffect(() => {
+    if (unmet) return
     if (!visible) {
       if (messageIndex >= messages.length) {
         const timer = setTimeout(() => {
@@ -104,7 +130,7 @@ export const Fez: FC<{
       setShowMessage(true)
     }, 600) // Show after 600 milliseconds
     return () => clearTimeout(timer)
-  }, [visible, messageIndex, messages.length, onComplete])
+  }, [unmet, visible, messageIndex, messages.length, onComplete])
 
   useEffect(() => {
     if (!showMessage && visible) {
@@ -135,6 +161,8 @@ export const Fez: FC<{
   const pose = current?.[0] || "default"
   const speaker: Speaker = current?.[2] ?? "fez"
   const portrait = PORTRAITS[speaker]?.[pose]
+
+  if (unmet) return null
 
   return (
     <div className="fixed inset-0 z-10 bg-black/10" onClick={onNextMessage}>

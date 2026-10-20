@@ -4,7 +4,8 @@ import { registerFamily, type FamilyPlugin } from "@/app/families/familyRegistry
 import { isModEnabled } from "@/mods/registeredMods"
 import { CONVERSATION_META } from "@/mods/story/game/conversation/meta"
 import { FezContext } from "@/app/fez/context"
-import { sceneFor } from "@/mods/story/game/conversation/sceneFor"
+import { FEZ_MET_IN, sceneFor } from "@/mods/story/game/conversation/sceneFor"
+import { registerFezMeeting } from "@/app/fez/fezMeeting"
 
 /** An authored override, for a journey that wants more than the one scene its tomb is named for. */
 export type ConversationArgs = { conversation?: string }
@@ -42,9 +43,12 @@ const ConversationComponent: FamilyPlugin["Component"] = ({ ctx, journeys, onCan
 
 // Gated on the mod: story off → no plugin in the registry → a story-tagged room resolves through
 // the family-absence pass-through (SiteMapScreen) and the floor is walkable without the beat.
-if (isModEnabled("story"))
+if (isModEnabled("story")) {
+  // Until this room has been heard Fez says nothing: the explorer starts out alone.
+  registerFezMeeting({ conversation: `meeting.${FEZ_MET_IN}`, journeyId: FEZ_MET_IN })
   registerFamily({
     meta: CONVERSATION_META,
     generate: () => ({}),
     Component: ConversationComponent,
   })
+}

@@ -1,6 +1,6 @@
 import { createContext } from "react"
 
-export type FezConversationResult = "not-loaded" | "complete" | "skipped" | "seen-earlier"
+export type FezConversationResult = "not-loaded" | "complete" | "skipped" | "seen-earlier" | "unmet"
 
 export const FezContext = createContext<{
   showConversation: (
