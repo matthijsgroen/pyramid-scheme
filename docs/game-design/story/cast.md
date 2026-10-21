@@ -7,6 +7,28 @@ Cast table (`FORMAT.md` §2) lists who appears in it; this says who they are.
 "dry" differently. A list of things a character does not do survives being read by someone else, and it is
 the only part of this document that can be checked.
 
+## How everyone speaks
+
+Every character, in every act, speaks — they do not narrate. A line is somebody talking out loud about
+what is in front of them, not a caption describing the scene from outside. The house style is three rules,
+kept with the rest of the writing format in [`FORMAT.md`](FORMAT.md) § "Every line is spoken, not
+narrated":
+
+1. **Feeling first, information second** — what the speaker feels about it right now (excited, surprised,
+   annoyed, unsure), then the fact.
+2. **Spoken language** — short exclamations, half sentences, repetition, a question to oneself. It has to
+   sound right said out loud. Dutch is spreektaal: no written-Dutch constructions, no filler overload.
+3. **They talk TO something** — themselves, the map, the Sphinx, each other. Never the reader.
+
+> **Explorer:** Egypte! Ik ben er echt.
+>
+> **Explorer:** En deze kaart… daar heb ik veel te veel voor betaald. Als die maar klopt.
+>
+> **Voice:** Hé! Niet dáár! Kijk uit waar je loopt!
+
+The rules decide how a character speaks. The sheets below decide who they are, and a line that gains
+feeling but loses the character is wrong.
+
 What is deliberately absent: biography, family, home towns, childhood. For the explorer that is not merely
 unnecessary — every detail of a past implies a demographic this game has decided not to have.
 
@@ -18,12 +40,13 @@ unnecessary — every detail of a past implies a demographic this game has decid
 to be for sale, which is the whole of his arc.
 
 **Voice.** Excitable, commercial, warm. Speaks in _we_. Short sentences, frequent exclamations, opinions
-about value arriving unasked. He teaches by enthusiasm rather than instruction — he points at a thing and
+about value arriving unasked. His feeling is out loud and about people and prices: delight at a ledger,
+indignation at a bad deal, a wobble when something is not for sale. He teaches by enthusiasm rather than instruction — he points at a thing and
 tells you why it mattered to the people who made it.
 
 Shipped lines that are the reference:
 
-> **Fez:** Wow, our first treasure! Well done!
+> **Fez:** Ha! Finally, something I understand. Everything that went up the Nile came past here first.
 >
 > **Fez:** A cat in the doorway, and a snake leaving in a hurry. That was worth a bowl of milk.
 >
@@ -157,7 +180,7 @@ be beside, which is a different and easier job than a blank to project onto.
 **Wants (decided).** To find something neat. That is the whole of it at the start, and it is deliberately
 small: no fortune, no name to make, no wrong the world did them.
 
-> **Fez:** What are you after, then?
+> **Fez:** But tell me — what are you after, then?
 >
 > **Explorer:** Something neat.
 >
@@ -179,10 +202,14 @@ is rewarded, and the story never lectures.
 they came anyway — curiosity in object form. It also plants, quietly and in the first minute, that things
 bought from merchants are not always what they were sold as, which is what Act IV's forgery collects on.
 
-**Voice.** Dry, brief, present tense. Asks the question the player is already asking. Answers in
-fragments. Competent — never the ignorant one, just not a scholar either.
+**Voice.** Few words, present tense, and every one of them felt. Curious first: the explorer is the one
+who stops and stares, says _wow_ at the Sphinx, and talks to the map. Asks the question the player is
+already asking. Answers in fragments. Competent — never the ignorant one, just not a scholar either. Dry
+when Fez is loud; never flat.
 
-> **Explorer:** Gone, or never there?
+> **Explorer:** Wauw. Die is groter dan ik dacht.
+>
+> **Explorer:** Hé, wat staat daar onderaan? Schrift?
 >
 > **Explorer:** It was a door.
 >
@@ -198,7 +225,8 @@ fragments. Competent — never the ignorant one, just not a scholar either.
 - No name, no pronoun for themselves beyond a present-tense "I". **The dead all have names** — Ipi,
   Henut — and the contrast is deliberate: the explorer is the one person here nobody wrote down.
 - No backstory: no family in the trade, no schooling, no home.
-- Never exclaims. Enthusiasm is Fez's register and the joke dies if both of them have it.
+- Never gushes about what a thing is worth, and never pitches. Excitement about value is Fez's register,
+  and the joke dies if both of them have it. The explorer's exclamations are short and about the place.
 - Never cruel. Dry is not mean, and they never deflate Fez in a way that wounds him.
 - Never explains a rule — they are working it out too.
 

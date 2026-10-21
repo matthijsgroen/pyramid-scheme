@@ -105,8 +105,8 @@ may not assume anything.** That constraint is the reason this column exists rath
 A written line is always prefixed, never left to context:
 
 ```
-> **Fez:** Three thousand years, and the receipts outlived the goods. Typical.
-> **Ipi:** I kept these accounts for forty years. I am not leaving them in that state.
+> **Fez:** Three thousand years. The goods are gone, and the receipts are still here. Typical!
+> **Ipi:** Forty years I kept these accounts. Forty! I am not leaving them like this.
 ```
 
 Unattributed copy reads fine in a draft where one character happens to be talking and then goes wrong the
@@ -121,6 +121,32 @@ is said from what is seen.
 **The prefix is `Explorer:`, not `Player:`.** The player is the person holding the phone; the explorer is
 the character in the hat, and only one of those can be written for.
 
+#### Every line is spoken, not narrated (house style, every act)
+
+A line is somebody talking, out loud, about something in front of them — never a caption describing the
+scene from outside. Neat, measured, complete sentences addressed to nobody read like a book, and a player
+taps through a book. Three rules, for every speaker in every act:
+
+1. **Feeling first, information second.** Before a line says what something is, it says how the speaker
+   feels about it right now: excited, surprised, annoyed, unsure. The fact rides on the feeling.
+2. **Spoken language.** Short exclamations, half sentences, repetition, a question to oneself. Read it out
+   loud; if it sounds written, it is. Dutch is spreektaal — no written-Dutch constructions, and no filler
+   (_weet je_ at most once a scene).
+3. **They talk TO something.** Themselves, the map, the Sphinx, each other — never the reader.
+
+| Caption                                                    | Spoken                                                                                                  |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| _Egypte. En een kaart waar ik te veel voor heb betaald._   | _Egypte! Ik ben er echt._ / _En deze kaart… daar heb ik veel te veel voor betaald. Als die maar klopt._ |
+| _Getallen op de stenen. Er ontbreken er een paar._         | _Er staan getallen op die stenen. En er missen er een paar…_                                            |
+| _Niet daar! Niet DÁÁR. Je staat midden in de handelswaar._ | _Hé! Niet dáár! Kijk uit waar je loopt!_                                                                |
+
+**The rules change how a character speaks, never who they are.** Personality, wants and never-says stay
+in [`cast.md`](cast.md); a line that gains feeling but loses the character is wrong twice.
+
+**And never at the cost of a rule the player needs.** A line that teaches a mechanic says the whole rule,
+correctly — the feeling goes around it, not in place of it: _"Wacht. Elke steen is die twee eronder bij
+elkaar! Ja, hier ook!"_
+
 ##### The explorer speaks, and is a character rather than an avatar (decided)
 
 The explorer is **not** the player. There is no customisation screen and none is wanted, so the job is a
@@ -130,9 +156,10 @@ supposed to project onto.
 They speak. One-sided comedy is hard, and a companion who only ever gets reactions cannot be funny with
 anyone.
 
-**Fez is the excitable one already** — his shipped lines run to _"Wow, our first treasure! Well done!"_ So
-the explorer is the dry one. That pairing is funnier against a talking lizard in a fez than the reverse,
-and deadpan is the register that survives translation best: short, literal, no wordplay to reconstruct.
+**Fez is the loud one** — he enthuses about what things are worth and who owed whom. The explorer says
+less, and what they say is about the place itself: wonder, nerves, a short question. Both speak from
+feeling (above); the difference is volume and subject, not whether they feel anything. Short and literal
+is also the register that survives translation best: no wordplay to reconstruct.
 
 Four rules keep them likable to everyone, and three of them are mechanical:
 
