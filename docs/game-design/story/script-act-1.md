@@ -50,53 +50,39 @@ player must not know that.
 `story.meeting.starter_1.*` — the last room of floor 0's main corridor, a voice before a face. It plants
 the map they both overpaid for, the fez nobody explains, and Fez knowing what the Sphinx looked like.
 
-> **Voice:** Hey! Not THERE! Watch where you're stepping!
->
-> **Voice:** Three days I've been sorting this out. In the dark!
+> **Voice:** Hey! Not thére! Watch where you're going!
 >
 > **Explorer:** Sorry! I can't see a thing! Where are you?
 >
-> **Fez:** Down here! You're standing right in my stock!
+> **Fez:** Down here! You're standing in my stock!
 >
-> **Explorer:** A lizard?!
+> **Explorer:** A lizard?! In a fez?
 >
-> **Fez:** A merchant! Everything down here is worth something to somebody up there.
+> **Fez:** A merchant. And what's wrong with my fez?
 >
-> **Explorer:** And the fez?
+> **Fez:** You're here for the pyramid too, I bet. Bought a map? Paid far too much?
 >
-> **Fez:** What about it?
+> **Explorer:** Wáy too much.
 >
-> **Fez:** So how did YOU get here? Bought a map too, I bet?
+> **Fez:** Me too. Pff.
 >
-> **Explorer:** Yes. Paid way too much for it.
+> **Explorer:** The writing on the Sphinx… can you read it?
 >
-> **Fez:** Me too! Little man by the river? One sandal?
->
-> **Explorer:** Two, now.
->
-> **Fez:** Huh. He's doing well out of us.
->
-> **Explorer:** That writing on the Sphinx… can you read it?
->
-> **Fez:** No. Nobody can, any more. Somebody could, once.
->
-> **Fez:** That base was painted, you know. All of it! Blue and gold, up to about here.
+> **Fez:** No. Nobody can, any more. That base was blue and gold once, you know.
 >
 > **Explorer:** How do you know that?
 >
-> **Fez:** …Somebody told me.
->
-> **Fez:** But tell me — what are you after, then?
+> **Fez:** …Heard it. So, what are you after down here?
 >
 > **Explorer:** Something neat.
 >
-> **Fez:** …That's it?
+> **Fez:** Neat sells! You know what? I'm coming with you!
 >
-> **Explorer:** I'll know it when I see it.
+> **Explorer:** What? With me?
 >
-> **Fez:** Neat I can sell! I'm coming with you.
->
-> **Explorer:** Watch where you're stepping, then.
+> **Fez:** Two see more than one. Come on, that pyramid's waiting!
+
+**Fez joins on screen, not in passing**: he says he is coming, the explorer is surprised, he gives a reason. Everything after this has two of them in it, so the moment it starts has to be one the player sees.
 
 **Fez knows too much about the Sphinx** — the first of one tell an act (`cast.md`). It reads as a
 merchant showing off, and it is not.
