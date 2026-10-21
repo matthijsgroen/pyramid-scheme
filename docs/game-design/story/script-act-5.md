@@ -187,7 +187,7 @@ stuck for two thousand years because nobody read the one already there. And afte
 the statue sounded a note at dawn every morning — until a Roman emperor repaired it, after which it never
 made a sound again.
 
-> **Fez (pointUp):** Two of them, twenty metres up, and both of them Amenhotep.
+> **Fez (pointUp):** Two of them, eighteen metres up, and both of them Amenhotep.
 >
 > **Fez:** The Greeks took one look and decided it was a hero of theirs. Memnon. The name stuck for two
 > thousand years.
