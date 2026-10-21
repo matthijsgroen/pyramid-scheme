@@ -1,28 +1,28 @@
 {
   "not-found": "Sorry het gesprek dat je zoekt bestaat niet.",
-  "welcome": "Egypte. En een kaart waar ik te veel voor heb betaald.",
-  "welcome2": "Ergens daarop staat een piramide die nog niet helemaal leeggehaald is.",
-  "welcome3": "Klopt vast niet. Toch maar kijken.",
-  "pyramidIntro": "Getallen op de stenen. Er ontbreken er een paar.",
-  "pyramidIntro2": "Elke steen is de twee eronder, opgeteld. Het klopt overal waar ik kijk.",
-  "pyramidBlockedBlocks": "Sommige blokken zijn geblokkeerd. Ze onthullen hun waarde niet.",
-  "pyramidBlockedBlocks2": "We kunnen proberen hun waarde te berekenen op basis van de blokken eromheen.",
-  "pyramidBlockedBlocks3": "En dan dat nummer uit het geheugen gebruiken.",
-  "pyramidBlockedBlocks4": "Je hebt het tot hier gebracht, je kunt het!",
-  "levelCompleted": "Goed gedaan!",
+  "welcome": "Egypte! Ik ben er echt.",
+  "welcome2": "En deze kaart… daar heb ik veel te veel voor betaald. Als die maar klopt.",
+  "welcome3": "Kom op. Even kijken waar dat kruisje staat.",
+  "pyramidIntro": "Er staan getallen op die stenen. En er missen er een paar…",
+  "pyramidIntro2": "Wacht. Elke steen is die twee eronder bij elkaar! Ja, hier ook!",
+  "pyramidBlockedBlocks": "Hé, wat is dit nou? Die blokken zitten dicht. Ze laten hun getal niet zien!",
+  "pyramidBlockedBlocks2": "Geeft niks. Kijk naar de blokken eromheen — daar kun je het uit uitrekenen.",
+  "pyramidBlockedBlocks3": "Alleen kun je het er niet in zetten. Dat getal moet je onthouden.",
+  "pyramidBlockedBlocks4": "Kom op, je bent al zo ver gekomen. Dit kun jij!",
+  "levelCompleted": "Ha! Hij gaat open! Kom, naar binnen.",
   "expeditionCompleted": "Gefeliciteerd met het voltooien van de expeditie!",
   "expeditionCompleted2": "Een nieuwe expeditie is nu beschikbaar.",
   "collectionIntro": "Tijdens onze expedities hebben we enkele items gevonden!",
   "collectionIntro2": "Je kunt ze nader inspecteren op je Collectie scherm.",
   "collectionIntro3": "Veeg/scroll naar rechts om je collectie te zien.",
 
-  "tombIntro": "We hebben de verborgen tombe gevonden!",
-  "tombIntro2": "Misschien kunnen we de tekst vertalen met behulp van de hiërogliefen die we hebben gevonden.",
-  "tombIntro3": "We zouden hier zelfs een schat kunnen vinden.",
+  "tombIntro": "Daar! De verborgen tombe! We hebben hem echt gevonden!",
+  "tombIntro2": "Kijk, tekst. Misschien kunnen we die lezen met de hiërogliefen die we gevonden hebben…",
+  "tombIntro3": "En misschien ligt er wel een schat. Misschien!",
 
-  "tombTutorial": "Zie je die symboolplaatsen in de formules? Plaats hiëroglieven uit je verzameling hieronder om ze te vullen.",
-  "tombTutorial2": "De aanwijzingsformules bevestigen wanneer je toewijzingen kloppen — gebruik ze om de juiste combinatie te vinden.",
-  "tombTutorial3": "Als alle plaatsen gevuld zijn, verschijnt een cijferslot. Los de hoofdformule op om de code te vinden en de tombe te openen!",
+  "tombTutorial": "Kijk nou, sommen met tekens erin! Zie je die lege plekjes? Daar gaan de hiërogliefen in. Die van jou, hieronder.",
+  "tombTutorial2": "De kleine sommen laten zien wanneer een teken goed zit. Zo vinden we welk teken waar hoort.",
+  "tombTutorial3": "Alles gevuld? Dan komt er een cijferslot. De grote som is de code — en dan gaat de tombe open!",
 
   "hieroglyphUnlock": "We hebben een speciaal artefact — daarmee kunnen we op één van die verzegelde blokken schrijven!",
   "hieroglyphUnlock2": "Tik op een glinsterende steen en sleep het artefact erop om hem te ontgrendelen. Één blok per piramide.",
@@ -37,9 +37,9 @@
   "notEnoughHieroglyphs2": "We kunnen de expeditie onderbreken om elders de hiërogliefen te zoeken die we nog moeten voltooien.",
 
   "tombLoot": "Wauw, onze eerste schat! Goed bezig!",
-  "mapPiece": "Kijk, DÁT is nog eens een kaart. Echt oud — meer waard dan die van ons samen!",
-  "mapPiece2": "Maar een stukje, hoor. Elke expeditie hier in de buurt verbergt er één, en samen leiden ze naar een tombe.",
-  "mapPiece3": "Hou de telling bij in de lijst met expedities. Ik doe dat in elk geval wel.",
+  "mapPiece": "Kijk! DÁT is pas een kaart. Echt oud! Meer waard dan die van ons samen!",
+  "mapPiece2": "Maar het is maar een stukje, hè. Elke expeditie hier in de buurt verbergt er één, en samen wijzen ze naar een tombe.",
+  "mapPiece3": "Hou maar bij in de lijst met expedities hoeveel we er hebben. Ik tel in elk geval mee!",
 
   "mosaicStarter": "Een kat in de deuropening, en een slang die er haastig vandoor gaat. Dat was een schaaltje melk waard.",
   "mosaicStarter2": "Egyptenaren waren dol op katten, precies hierom — die doodden de slangen en de ratten die in het graan kwamen.",
@@ -72,34 +72,32 @@
   "shopArrival2": "Zeldzame vondsten kosten het meest, maar ik heb ook alledaagse spullen — en ik betaal je voor snuisterijen die je meedraagt.",
   "arrival": {
     "starter_1": {
-      "1": { "explorer": "Er staat schrift op. Onderaan, waar het zand steeds wegwaait." },
-      "2": { "explorer": "Ik kan er geen woord van lezen." },
-      "3": { "explorer": "Iemand wilde dat het gelezen werd." },
-      "4": { "explorer": "Eerst de piramide dan." }
+      "1": { "explorer": "Wauw. Die is groter dan ik dacht." },
+      "2": { "explorer": "Hé, wat staat daar onderaan? Schrift?" },
+      "3": { "explorer": "Ik kan er niks van lezen. Helemaal niks." },
+      "4": { "explorer": "Oké. Eerst die piramide." }
     },
     "starter_2": {
-      "1": { "fez": "Hier snap ik tenminste iets van. Alles wat ooit de Nijl op ging, kwam hier eerst langs." },
-      "2": { "fez": "En handelaren schrijven alles op. Wie wat kocht, wie wie iets schuldig was, wie te laat was." },
+      "1": { "fez": "Ha! Eindelijk iets waar ik verstand van heb. Alles wat de Nijl op ging, kwam hier eerst langs." },
+      "2": { "fez": "En handelaren schrijven álles op. Wie wat kocht, wie wie iets schuldig was, wie te laat was…" },
       "3": { "explorer": "Wie te laat was?" },
-      "4": { "fez": "Vooral wie te laat was." },
-      "5": { "fez": "Drieduizend jaar, en de bonnetjes hebben de waar overleefd. Typisch." }
+      "4": { "fez": "Vooral wie te laat was!" },
+      "5": { "fez": "Drieduizend jaar. De waar is weg, en de bonnetjes liggen er nog. Typisch!" }
     },
     "starter_3": {
-      "1": {
-        "fez": "Mensen kwamen hier om bescherming te vragen, en bescherming betekende een deur die dicht blijft."
-      },
+      "1": { "fez": "Kijk die deuren! Hier kwam je om bescherming te vragen. En dan bleef zo'n deur dicht." },
       "2": { "explorer": "Dicht voor wie?" },
-      "3": { "fez": "Voor iedereen die niet netjes vroeg. Voor ons, vooral." },
-      "4": { "fez": "Alles wat in dit land verzegeld is, is verzegeld door iemand die het meende." },
-      "5": { "fez": "En de katten! Ze hielden hier katten, weet je. Ze aanbaden ze. Ze konden het niet laten." }
+      "3": { "fez": "Voor iedereen die niet netjes vroeg. Voor ons dus, vooral." },
+      "4": { "fez": "Alles wat hier verzegeld is, heeft iemand verzegeld die het meende. Echt meende." },
+      "5": { "fez": "En de katten! Ze aanbáden hier katten. Ze konden er gewoon niet van afblijven." }
     },
     "starter_4": {
       "1": {
-        "fez": "Hier werden ze opgeleid. Teken voor teken, op gebroken potscherven — papyrus was veel te duur om aan kinderen te verspillen."
+        "fez": "O, dit vind ik mooi. Hier leerden ze schrijven! Teken voor teken, op potscherven — papyrus was veel te duur voor kinderen."
       },
       "2": { "explorer": "Ze oefenden op afval?" },
-      "3": { "fez": "Ze oefenden op wat er was. Leer er genoeg van en een muur is geen versiering meer." },
-      "4": { "explorer": "Ik wil die Sfinx nog eens bekijken." },
+      "3": { "fez": "Op wat er was! En ken je er genoeg, dan is zo'n muur ineens geen versiering meer." },
+      "4": { "explorer": "Die Sfinx… daar wil ik nog een keer naar kijken." },
       "5": { "fez": "Nog niet. Straks." }
     },
 
@@ -234,34 +232,34 @@
   "tomb": {
     "starter": {
       "1": {
-        "ipi": "Je liet op je wachten. Derde plank, de kruik met de schilfer eruit — die is van mij. De rest mag je hebben."
+        "ipi": "Nou, eindelijk. Derde plank, de kruik met die schilfer eruit — die is van mij. De rest mag je houden."
       },
-      "2": { "fez": "…Zei die kruik nou iets?" },
-      "3": { "explorer": "De kruik zei: derde plank." },
-      "4": { "ipi": "Ik heb deze boeken veertig jaar bijgehouden. Ik laat ze niet in die staat achter." },
+      "2": { "fez": "…Zei die kruik nou iets?!" },
+      "3": { "explorer": "Hij zei: derde plank." },
+      "4": { "ipi": "Veertig jaar heb ik deze boeken bijgehouden. Veertig! Zo laat ik ze niet achter." },
       "5": {
-        "ipi": "Wil je verder? Dan is er een edelvrouw ten noorden van hier. Beschilderd gewelf, bijzonder ingenomen met zichzelf. Ze heeft het lapis nooit betaald."
+        "ipi": "Wil je verder? Ten noorden van hier ligt een edelvrouw. Beschilderd gewelf, heel tevreden met zichzelf. En het lapis? Nooit betaald."
       },
       "6": { "explorer": "Heeft ze een naam?" },
       "7": {
-        "ipi": "Henut, dochter van Sennefer, van de westelijke landgoederen. Elf deben lapis, onbetaald, derde jaar."
+        "ipi": "Henut, dochter van Sennefer, van de westelijke landgoederen. Elf deben lapis. Onbetaald. Derde jaar."
       },
-      "8": { "ipi": "Natuurlijk heeft ze een naam. Ik heb hem opgeschreven." },
-      "9": { "ipi": "Het zijn de Hori's die je de das omdoen. Hori de schipper, Hori de bakker, en die andere Hori." },
+      "8": { "ipi": "Natuurlijk heeft ze een naam! Ik heb hem opgeschreven." },
+      "9": { "ipi": "Maar de Hori's, dáár word je gek van. Hori de schipper, Hori de bakker… en die andere Hori." },
       "10": { "explorer": "Hoeveel Hori's?" },
-      "11": { "ipi": "In één straat? Vier. Ik moest hun vaders er ook bij zetten." },
-      "12": { "explorer": "Waarom doet dat ertoe, als zij het niet meer kan horen?" },
-      "13": { "ipi": "Omdat wat opgeschreven is, gebeurd is. Veeg een mans naam uit en hij heeft nooit bestaan." },
+      "11": { "ipi": "In één straat? Vier! Ik moest hun vaders er ook nog bij zetten." },
+      "12": { "explorer": "Maar waarom doet dat er nog toe? Ze kan het niet eens meer horen." },
+      "13": { "ipi": "Omdat wat opgeschreven is, gebeurd is! Veeg een mans naam uit en hij heeft nooit bestaan." },
       "14": { "ipi": "Zeg maar dat Ipi je stuurt. Dat verpest haar middag wel." },
-      "15": { "fez": "Zo iemand had vast katten. Iedereen had katten. Charmante beesten." },
-      "16": { "ipi": "Ik had er vier, en geen van allen was charmant. Ze waren voor het graan." },
-      "17": { "ipi": "Weet jij wat één rat je kost, over een seizoen? Ik wel. Tot op de zak." },
-      "18": { "fez": "…Juist." },
-      "19": { "explorer": "Dat heeft hij ook opgeschreven." },
-      "20": { "ipi": "Natuurlijk heb ik dat opgeschreven." },
-      "21": { "fez": "Ik mag hem wel." },
-      "22": { "explorer": "Je mag het dat hij geld tegoed heeft." },
-      "23": { "fez": "Ik mag het dat hij het opschreef." }
+      "15": { "fez": "Zo'n man had vast katten. Iedereen had katten! Schatjes, toch?" },
+      "16": { "ipi": "Ik had er vier. En geen van allen was een schatje. Ze waren voor het graan." },
+      "17": { "ipi": "Weet jij wat één rat je kost, over een heel seizoen? Ik wel. Tot op de zak!" },
+      "18": { "fez": "…O. Juist." },
+      "19": { "explorer": "Dat heeft hij vast ook opgeschreven." },
+      "20": { "ipi": "Natuurlijk heb ik dat opgeschreven!" },
+      "21": { "fez": "Ik mag hem wel!" },
+      "22": { "explorer": "Jij vindt het gewoon leuk dat hij nog geld krijgt." },
+      "23": { "fez": "Ik vind het leuk dat hij het opschreef!" }
     },
     "junior": {
       "1": { "henut": "Eindelijk. Je komt zeker over het lapis. Ipi zeurt er vast nog steeds over." },
@@ -375,7 +373,9 @@
       }
     },
     "starterTomb": {
-      "1": { "fez": "Ik zei toch dat ik voor de handel meega. Ik zeg het nog maar eens, nu het nog klopt." },
+      "1": {
+        "fez": "Even voor de duidelijkheid, hè. Ik doe dit voor de handel. Dat zeg ik nu maar, nu het nog waar is."
+      },
       "2": { "explorer": "Genoteerd." }
     },
     "junior": {
@@ -451,37 +451,35 @@
 
   "meeting": {
     "starter_1": {
-      "1": { "voice": "Niet daar! Niet DÁÁR. Je staat midden in de handelswaar." },
-      "2": { "voice": "Drie dagen ben ik hiermee bezig. Drie dagen, in het donker, op de tast." },
-      "3": { "explorer": "Waar ben je?" },
-      "4": { "fez": "Hier beneden. Pas op de weegschaal." },
-      "5": { "explorer": "Wat doet een hagedis hier beneden?" },
-      "6": { "fez": "Handel! Alles hier beneden is daarboven wel íémand iets waard." },
+      "1": { "voice": "Hé! Niet dáár! Kijk uit waar je loopt!" },
+      "2": { "voice": "Drie dagen heb ik dit staan uitzoeken. In het donker!" },
+      "3": { "explorer": "Sorry! Ik zie niks! Waar ben je?" },
+      "4": { "fez": "Hier beneden! Je staat midden in mijn handelswaar!" },
+      "5": { "explorer": "Een hagedis?!" },
+      "6": { "fez": "Een handelaar! Alles hier beneden is daarboven wel íémand iets waard." },
       "7": { "explorer": "En die fez?" },
       "8": { "fez": "Wat is daarmee?" },
-      "9": { "explorer": "Hoe heb jij deze plek gevonden?" },
-      "10": { "fez": "Met een kaart. Veel te veel voor betaald." },
-      "11": { "explorer": "Ik ook." },
-      "12": { "fez": "Klein mannetje bij de rivier? Eén sandaal?" },
-      "13": { "explorer": "Twee." },
-      "14": { "fez": "Dan verdient hij goed aan ons." },
-      "15": { "explorer": "Het schrift op de Sfinx. Kun jij dat lezen?" },
-      "16": { "fez": "Nee. Niemand kan dat." },
-      "17": { "fez": "Iemand kon het ooit." },
-      "18": { "fez": "De sokkel was beschilderd, weet je. Helemaal. Blauw en goud, tot ongeveer hier." },
-      "19": { "explorer": "Hoe weet jij dat?" },
-      "20": { "fez": "…Dat heeft iemand me verteld." },
-      "21": { "fez": "En waar ben jij naar op zoek?" },
-      "22": { "explorer": "Iets moois." },
-      "23": { "fez": "…Is dat alles?" },
-      "24": { "explorer": "Ik zie het wel als ik het zie." },
-      "25": { "fez": "Moois kan ik verkopen. Ik ga met je mee." },
-      "26": { "explorer": "Pas op de handelswaar." }
+      "9": { "fez": "Maar hoe kom jíj hier? Ook een kaart gekocht, zeker?" },
+      "10": { "explorer": "Ja. Veel te veel voor betaald." },
+      "11": { "fez": "Ik ook! Klein mannetje bij de rivier? Eén sandaal?" },
+      "12": { "explorer": "Nu twee." },
+      "13": { "fez": "Pff. Die verdient goed aan ons." },
+      "14": { "explorer": "Dat schrift op de Sfinx… kun jij dat lezen?" },
+      "15": { "fez": "Nee. Niemand kan dat meer. Ooit wel." },
+      "16": { "fez": "Die sokkel was beschilderd, weet je. Helemaal! Blauw en goud, tot ongeveer hier." },
+      "17": { "explorer": "Hoe weet jij dat nou?" },
+      "18": { "fez": "…Dat heeft iemand me verteld." },
+      "19": { "fez": "Maar zeg eens, waar ben jij eigenlijk naar op zoek?" },
+      "20": { "explorer": "Iets moois." },
+      "21": { "fez": "…Is dat alles?" },
+      "22": { "explorer": "Ik zie het wel als ik het zie." },
+      "23": { "fez": "Moois kan ik verkopen! Ik loop met je mee." },
+      "24": { "explorer": "Kijk jij maar uit waar je loopt." }
     }
   },
 
   "end": {
-    "1": { "fez": "Was het netjes?" },
+    "1": { "fez": "Was het mooi?" },
     "2": { "explorer": "Het kan ermee door." }
   }
 }

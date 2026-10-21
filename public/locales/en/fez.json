@@ -1,31 +1,31 @@
 {
   "not-found": "Sorry the conversation you are looking for does not exist.",
-  "welcome": "Egypt. And a map I paid too much for.",
-  "welcome2": "Somewhere on it is a pyramid nobody has finished emptying.",
-  "welcome3": "Probably wrong. Worth a look.",
+  "welcome": "Egypt! I'm really here.",
+  "welcome2": "And this map… I paid way too much for it. It had better be right.",
+  "welcome3": "Come on. Let's see where that cross is.",
 
-  "pyramidIntro": "Numbers on the stones. Some are missing.",
-  "pyramidIntro2": "Each stone is the two beneath it, added. It holds everywhere I check.",
+  "pyramidIntro": "There are numbers on these stones. And some are missing…",
+  "pyramidIntro2": "Wait. Every stone is the two below it, added up! Yes — here too!",
 
-  "pyramidBlockedBlocks": "Some blocks are blocked. They do not reveal their value.",
-  "pyramidBlockedBlocks2": "We can try to calculate their value based on blocks around it.",
-  "pyramidBlockedBlocks3": "And then use that number from memory.",
-  "pyramidBlockedBlocks4": "You made it this far, you can do it!",
+  "pyramidBlockedBlocks": "Hey, what's this? Those blocks are sealed. They won't show their number!",
+  "pyramidBlockedBlocks2": "Never mind. Look at the blocks around it — you can work it out from those.",
+  "pyramidBlockedBlocks3": "Only you can't write it in. You'll have to keep that number in your head.",
+  "pyramidBlockedBlocks4": "Come on, you've come this far. You can do this!",
 
-  "levelCompleted": "Well done!",
+  "levelCompleted": "Ha! It's opening! Come on, inside.",
   "expeditionCompleted": "Congratulations on completing the expedition!",
   "expeditionCompleted2": "A new expedition is now available.",
   "collectionIntro": "During our expeditions we found some items!",
   "collectionIntro2": "You can inspect them in your Collection screen.",
   "collectionIntro3": "Swipe/scroll the screen to the right to see your collection.",
 
-  "tombIntro": "We found the hidden tomb!",
-  "tombIntro2": "Maybe we can translate the text using the hieroglyphs we found.",
-  "tombIntro3": "We could even find a treasure here.",
+  "tombIntro": "There! The hidden tomb! We actually found it!",
+  "tombIntro2": "Look, writing. Maybe we can read it with the hieroglyphs we've found…",
+  "tombIntro3": "And maybe there's treasure in there. Maybe!",
 
-  "tombTutorial": "See those symbol slots in the formulas? Place hieroglyphs from your collection below to fill them in.",
-  "tombTutorial2": "The hint formulas will confirm when your assignments are correct — use them to find the right combination.",
-  "tombTutorial3": "Once every slot is filled, a number lock appears. Solve the main formula to find the code and open the tomb!",
+  "tombTutorial": "Look at that, sums with signs in them! See those empty slots? The hieroglyphs go in there. Yours, down below.",
+  "tombTutorial2": "The small sums show you when a sign is right. That's how we find which sign goes where.",
+  "tombTutorial3": "All filled in? Then a number lock appears. The big sum is the code — and then the tomb opens!",
 
   "hieroglyphUnlock": "We have a special artifact — it lets us write on one of those sealed blocks!",
   "hieroglyphUnlock2": "Tap a glowing stone, then drag the artifact onto it to unlock it. One block per pyramid.",
@@ -40,9 +40,9 @@
   "notEnoughHieroglyphs2": "We can interrupt the expedition to search elsewhere for the hieroglyphs we still need to complete.",
 
   "tombLoot": "Wow, our first treasure! Well done!",
-  "mapPiece": "Now THAT is a map. Properly old — worth more than both of ours put together!",
-  "mapPiece2": "Only a piece of one, mind. Every expedition round here hides one, and together they lead to a tomb.",
-  "mapPiece3": "Keep count on the expedition list. I certainly will.",
+  "mapPiece": "Look! Now THAT is a map. Properly old! Worth more than both of ours put together!",
+  "mapPiece2": "Only a piece of one, mind. Every expedition round here hides one, and together they point to a tomb.",
+  "mapPiece3": "Keep count on the expedition list. I certainly will!",
 
   "mosaicStarter": "A cat in the doorway, and a snake leaving in a hurry. That was worth a bowl of milk.",
   "mosaicStarter2": "Egyptians loved cats for exactly this — they killed the snakes and the rats that got into the grain.",
@@ -75,32 +75,36 @@
   "shopArrival2": "Rare finds cost the most, but I've also got everyday supplies — and I'll pay you for any trinkets you're carrying.",
   "arrival": {
     "starter_1": {
-      "1": { "explorer": "There is writing on it. Down at the base, where the sand keeps shifting off." },
-      "2": { "explorer": "I cannot read a word of it." },
-      "3": { "explorer": "Somebody meant it to be read." },
-      "4": { "explorer": "The pyramid first, then." }
+      "1": { "explorer": "Wow. It's bigger than I thought." },
+      "2": { "explorer": "Hey, what's that at the bottom? Writing?" },
+      "3": { "explorer": "I can't read any of it. Not a thing." },
+      "4": { "explorer": "Okay. The pyramid first." }
     },
     "starter_2": {
-      "1": { "fez": "Now this I understand. Everything that ever went up the Nile came past here first." },
-      "2": { "fez": "And merchants write it all down. Who bought what, who owed whom, who was late." },
+      "1": { "fez": "Ha! Finally, something I understand. Everything that went up the Nile came past here first." },
+      "2": { "fez": "And merchants write everything down. Who bought what, who owed who, who was late…" },
       "3": { "explorer": "Who was late?" },
-      "4": { "fez": "Especially who was late." },
-      "5": { "fez": "Three thousand years, and the receipts outlived the goods. Typical." }
+      "4": { "fez": "Especially who was late!" },
+      "5": { "fez": "Three thousand years. The goods are gone, and the receipts are still here. Typical!" }
     },
     "starter_3": {
-      "1": { "fez": "People came here to ask for protection, and protection meant a door that stays shut." },
+      "1": {
+        "fez": "Look at those doors! People came here to ask for protection. And then a door like that stayed shut."
+      },
       "2": { "explorer": "Shut to who?" },
       "3": { "fez": "Anyone who didn't ask nicely. Us, mainly." },
-      "4": { "fez": "Every sealed thing in this country was sealed by someone who meant it." },
-      "5": { "fez": "And the cats! They kept cats here, you know. Adored them. Couldn't help themselves." }
+      "4": { "fez": "Everything sealed in this country, somebody sealed it and meant it. Really meant it." },
+      "5": { "fez": "And the cats! They adored cats here. Just couldn't keep their hands off them." }
     },
     "starter_4": {
       "1": {
-        "fez": "This is where they were taught. Sign by sign, on broken pottery — papyrus was far too dear to waste on children."
+        "fez": "Oh, I like this one. This is where they learned to write! Sign by sign, on broken pots — papyrus was far too dear for children."
       },
       "2": { "explorer": "They practised on rubbish?" },
-      "3": { "fez": "They practised on what there was. Learn enough of these and a wall stops being decoration." },
-      "4": { "explorer": "I want another look at that Sphinx." },
+      "3": {
+        "fez": "On whatever there was! And learn enough of these, and suddenly a wall isn't decoration any more."
+      },
+      "4": { "explorer": "That Sphinx… I want another look at it." },
       "5": { "fez": "Not yet. Soon." }
     },
 
@@ -223,32 +227,34 @@
   "tomb": {
     "starter": {
       "1": {
-        "ipi": "Took your time. Third shelf, the jar with the chip out of it — that one's mine. The rest you may as well have."
+        "ipi": "Well, finally. Third shelf, the jar with the chip out of it — that one's mine. The rest you can keep."
       },
-      "2": { "fez": "…Did the jar just say something?" },
-      "3": { "explorer": "The jar said the third shelf." },
-      "4": { "ipi": "I kept these accounts for forty years. I am not leaving them in that state." },
+      "2": { "fez": "…Did that jar just talk?!" },
+      "3": { "explorer": "It said third shelf." },
+      "4": { "ipi": "Forty years I kept these accounts. Forty! I am not leaving them like this." },
       "5": {
-        "ipi": "You want to get on? Then there's a noblewoman north of here. Painted vault, very pleased with herself. She never paid for the lapis."
+        "ipi": "Want to get on? There's a noblewoman north of here. Painted vault, very pleased with herself. And the lapis? Never paid for."
       },
       "6": { "explorer": "Does she have a name?" },
-      "7": { "ipi": "Henut, daughter of Sennefer, of the western estates. Eleven deben of lapis, unpaid, third year." },
-      "8": { "ipi": "Of course she has a name. I wrote it down." },
-      "9": { "ipi": "It is the Horis that finish you. Hori the boatman, Hori the baker, and the other Hori." },
+      "7": { "ipi": "Henut, daughter of Sennefer, of the western estates. Eleven deben of lapis. Unpaid. Third year." },
+      "8": { "ipi": "Of course she has a name! I wrote it down." },
+      "9": {
+        "ipi": "The Horis, though. They're what drive you mad. Hori the boatman, Hori the baker… and the other Hori."
+      },
       "10": { "explorer": "How many Horis?" },
-      "11": { "ipi": "In one street? Four. I had to put their fathers in as well." },
-      "12": { "explorer": "Why does that matter, if she is not here to hear it?" },
-      "13": { "ipi": "Because a thing written down is a thing that happened. Rub out a man's name and he never did." },
-      "14": { "ipi": "Tell her Ipi sent you. That should spoil her afternoon." },
-      "15": { "fez": "He'd have had cats, a man like this. Everyone did. Charming animals." },
-      "16": { "ipi": "I had four, and not one of them was charming. They were for the grain." },
-      "17": { "ipi": "Do you know what a rat costs you, over a season? I do. To the sack." },
-      "18": { "fez": "…Right." },
-      "19": { "explorer": "He wrote that down too." },
-      "20": { "ipi": "Of course I wrote it down." },
-      "21": { "fez": "I like him." },
-      "22": { "explorer": "You like that he's owed money." },
-      "23": { "fez": "I like that he wrote it down." }
+      "11": { "ipi": "In one street? Four! I had to put their fathers in as well." },
+      "12": { "explorer": "But why does it still matter? She can't even hear it." },
+      "13": { "ipi": "Because a thing written down is a thing that happened! Rub out a man's name and he never did." },
+      "14": { "ipi": "Tell her Ipi sent you. That'll spoil her afternoon." },
+      "15": { "fez": "A man like this, he'd have had cats. Everyone did! Charming little things, aren't they?" },
+      "16": { "ipi": "I had four. And not one of them was charming. They were for the grain." },
+      "17": { "ipi": "Do you know what one rat costs you, over a whole season? I do. To the sack!" },
+      "18": { "fez": "…Oh. Right." },
+      "19": { "explorer": "He wrote that down too, didn't he." },
+      "20": { "ipi": "Of course I wrote it down!" },
+      "21": { "fez": "I like him!" },
+      "22": { "explorer": "You just like that he's owed money." },
+      "23": { "fez": "I like that he wrote it down!" }
     },
     "junior": {
       "1": { "henut": "Finally. You will have come about the lapis. I assume Ipi is still going on about the lapis." },
@@ -358,7 +364,7 @@
       "3": { "fez": "I'd have taken a week." }
     },
     "starterTomb": {
-      "1": { "fez": "I did say I came for the resale. I am saying it again, while it is still true." },
+      "1": { "fez": "Just so we're clear. I'm in this for the resale. I'm saying it now, while it's still true." },
       "2": { "explorer": "Noted." }
     },
     "junior": {
@@ -434,32 +440,30 @@
 
   "meeting": {
     "starter_1": {
-      "1": { "voice": "Not there! Not THERE. You are standing in the stock." },
-      "2": { "voice": "Three days I have had this laid out. Three days, in the dark, by touch." },
-      "3": { "explorer": "Where are you?" },
-      "4": { "fez": "Down here. Mind the scales." },
-      "5": { "explorer": "What is a lizard doing down here?" },
-      "6": { "fez": "Business! Everything down here is worth something to somebody up there." },
+      "1": { "voice": "Hey! Not THERE! Watch where you're stepping!" },
+      "2": { "voice": "Three days I've been sorting this out. In the dark!" },
+      "3": { "explorer": "Sorry! I can't see a thing! Where are you?" },
+      "4": { "fez": "Down here! You're standing right in my stock!" },
+      "5": { "explorer": "A lizard?!" },
+      "6": { "fez": "A merchant! Everything down here is worth something to somebody up there." },
       "7": { "explorer": "And the fez?" },
       "8": { "fez": "What about it?" },
-      "9": { "explorer": "How did you find this place?" },
-      "10": { "fez": "A map. I paid far too much for it." },
-      "11": { "explorer": "So did I." },
-      "12": { "fez": "Little man by the river? One sandal?" },
-      "13": { "explorer": "Two." },
-      "14": { "fez": "Then he is doing well out of us." },
-      "15": { "explorer": "The writing on the Sphinx. Can you read it?" },
-      "16": { "fez": "No. Nobody can." },
-      "17": { "fez": "Someone could, once." },
-      "18": { "fez": "The base was painted, you know. All of it. Blue and gold, to about here." },
-      "19": { "explorer": "How do you know that?" },
-      "20": { "fez": "…Somebody told me." },
-      "21": { "fez": "What are you after, then?" },
-      "22": { "explorer": "Something neat." },
-      "23": { "fez": "…That's it?" },
-      "24": { "explorer": "I'll know it when I see it." },
-      "25": { "fez": "Neat I can sell. I'm coming with you." },
-      "26": { "explorer": "Mind the stock." }
+      "9": { "fez": "So how did YOU get here? Bought a map too, I bet?" },
+      "10": { "explorer": "Yes. Paid way too much for it." },
+      "11": { "fez": "Me too! Little man by the river? One sandal?" },
+      "12": { "explorer": "Two, now." },
+      "13": { "fez": "Huh. He's doing well out of us." },
+      "14": { "explorer": "That writing on the Sphinx… can you read it?" },
+      "15": { "fez": "No. Nobody can, any more. Somebody could, once." },
+      "16": { "fez": "That base was painted, you know. All of it! Blue and gold, up to about here." },
+      "17": { "explorer": "How do you know that?" },
+      "18": { "fez": "…Somebody told me." },
+      "19": { "fez": "But tell me — what are you after, then?" },
+      "20": { "explorer": "Something neat." },
+      "21": { "fez": "…That's it?" },
+      "22": { "explorer": "I'll know it when I see it." },
+      "23": { "fez": "Neat I can sell! I'm coming with you." },
+      "24": { "explorer": "Watch where you're stepping, then." }
     }
   },
 
