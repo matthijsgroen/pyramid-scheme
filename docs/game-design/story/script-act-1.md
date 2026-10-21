@@ -37,13 +37,16 @@ both are the explorer's (`asExplorer` in `Fez.tsx`).
 `story.arrival.starter_1.*` — arrival rail, assumes nothing. The explorer is still alone. **The whole ending is set up here**, and the
 player must not know that.
 
-> **Explorer:** Wow. It's bigger than I thought.
+The exterior shows the pyramid up close and the Sphinx small on the horizon behind it, so the explorer looks
+back at it, and knows the writing only by hearsay.
+
+> **Explorer:** Look, back there! The Sphinx!
 >
-> **Explorer:** Hey, what's that at the bottom? Writing?
+> **Explorer:** Huge, even from here.
 >
-> **Explorer:** I can't read any of it. Not a thing.
+> **Explorer:** They say there's writing under its paws. That nobody can read.
 >
-> **Explorer:** Okay. The pyramid first.
+> **Explorer:** Later. This pyramid first!
 
 ## `starter_1` — the meeting, floor 0
 

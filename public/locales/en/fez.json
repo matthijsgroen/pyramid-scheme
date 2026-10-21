@@ -75,10 +75,10 @@
   "shopArrival2": "Rare finds cost the most, but I've also got everyday supplies — and I'll pay you for any trinkets you're carrying.",
   "arrival": {
     "starter_1": {
-      "1": { "explorer": "Wow. It's bigger than I thought." },
-      "2": { "explorer": "Hey, what's that at the bottom? Writing?" },
-      "3": { "explorer": "I can't read any of it. Not a thing." },
-      "4": { "explorer": "Okay. The pyramid first." }
+      "1": { "explorer": "Look, back there! The Sphinx!" },
+      "2": { "explorer": "Huge, even from here." },
+      "3": { "explorer": "They say there's writing under its paws. That nobody can read." },
+      "4": { "explorer": "Later. This pyramid first!" }
     },
     "starter_2": {
       "1": { "fez": "Ha! Finally, something I understand. Everything that went up the Nile came past here first." },

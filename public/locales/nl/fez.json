@@ -72,10 +72,10 @@
   "shopArrival2": "Zeldzame vondsten kosten het meest, maar ik heb ook alledaagse spullen — en ik betaal je voor snuisterijen die je meedraagt.",
   "arrival": {
     "starter_1": {
-      "1": { "explorer": "Wauw. Die is groter dan ik dacht." },
-      "2": { "explorer": "Hé, wat staat daar onderaan? Schrift?" },
-      "3": { "explorer": "Ik kan er niks van lezen. Helemaal niks." },
-      "4": { "explorer": "Oké. Eerst die piramide." }
+      "1": { "explorer": "Kijk, daar achter! De Sfinx!" },
+      "2": { "explorer": "Zelfs van hier is hij enorm." },
+      "3": { "explorer": "Ze zeggen dat er schrift onder zijn poten staat. Dat niemand kan lezen." },
+      "4": { "explorer": "Later. Eerst deze piramide!" }
     },
     "starter_2": {
       "1": { "fez": "Ha! Eindelijk iets waar ik verstand van heb. Alles wat de Nijl op ging, kwam hier eerst langs." },
