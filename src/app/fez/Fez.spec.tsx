@@ -3,7 +3,19 @@ import { describe, expect, it, vi } from "vitest"
 import { act, fireEvent, render, screen } from "@testing-library/react"
 
 // A two-hander whose FIRST line is the explorer's — the case the portrait got wrong.
-const WRITTEN = new Set(["arrival.starter_1.1.explorer", "arrival.starter_1.2.fez"])
+const WRITTEN = new Set([
+  "arrival.starter_1.1.explorer",
+  "arrival.starter_1.2.fez",
+  "excited.1.fez",
+  "calm.1.fez",
+  "undrawn.1.ipi",
+])
+
+// Made-up lines, so no authored expression is pinned here.
+vi.mock("./storyPoses", () => ({
+  storyPose: (key: string) =>
+    (({ "excited.1.fez": "pointUp", "undrawn.1.ipi": "pointUp" }) as Record<string, string>)[key] ?? "default",
+}))
 
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
@@ -70,4 +82,23 @@ describe("where the conversation stands", () => {
       expect(column?.classList).toContain("mx-auto")
     }
   )
+})
+
+describe("a story line's expression", () => {
+  const portrait = (conversation: string) => {
+    render(<Fez conversation={conversation} onComplete={() => {}} />)
+    return screen.getByRole("img").getAttribute("src") ?? ""
+  }
+
+  it("draws the pose the line asks for", () => {
+    expect(portrait("excited")).toMatch(/point-fez/)
+  })
+
+  it("draws the default for a line that asks for none", () => {
+    expect(portrait("calm")).toMatch(/\/fez-250/)
+  })
+
+  it("falls back to the speaker's default when nobody has drawn that pose for them", () => {
+    expect(portrait("undrawn")).toMatch(/ghost-ipi/)
+  })
 })

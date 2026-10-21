@@ -24,7 +24,7 @@ it.
 >
 > **Explorer:** Somebody counted?
 >
-> **Fez:** Somebody always counts. That is the part people forget about all this — it was run by clerks.
+> **Fez (pointUp):** Somebody always counts. That is the part people forget about all this — it was run by clerks.
 >
 > **Fez:** Beautiful, isn't it. Hate to think what the payroll looked like.
 
@@ -39,7 +39,7 @@ hidden corridor here.
 >
 > **Fez:** A manual for being dead. They wrote everything down, this lot.
 >
-> **Fez:** Which, given what we are looking for, is the first good news all week.
+> **Fez (pointUp):** Which, given what we are looking for, is the first good news all week.
 
 ## `master_3` — Curse of the Pharaohs
 
@@ -61,7 +61,7 @@ hidden corridor here.
 
 `story.arrival.master_4.*` — the comparison: one done properly.
 
-> **Fez:** Now THIS is what the others were imitating. Look at the colour — three thousand years and it is
+> **Fez (pointUp):** Now THIS is what the others were imitating. Look at the colour — three thousand years and it is
 > still wet-looking.
 >
 > **Explorer:** Henut would be furious.

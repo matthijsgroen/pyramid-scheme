@@ -32,7 +32,7 @@ thinks, twice, and does not comment on it.
 
 `story.arrival.expert_2.*` — **Fez's error.**
 
-> **Fez:** Amun-Ra. The sun. Everybody's favourite, and you can see why — look at the size of the place.
+> **Fez (pointUp):** Amun-Ra. The sun. Everybody's favourite, and you can see why — look at the size of the place.
 >
 > **Explorer:** Two names.
 >
@@ -42,7 +42,7 @@ thinks, twice, and does not comment on it.
 
 `story.arrival.expert_3.*`
 
-> **Fez:** The whole country is a line of green either side of one river, and then it opens out here into
+> **Fez (pointUp):** The whole country is a line of green either side of one river, and then it opens out here into
 > this.
 >
 > **Fez:** Everything grows. Everything also bites.
@@ -57,7 +57,7 @@ thinks, twice, and does not comment on it.
 
 > **Fez:** The first one. Before this, kings went under a flat slab like everyone else.
 >
-> **Fez:** Someone stood here and thought: what if we did that, but six times, upwards.
+> **Fez (pointUp):** Someone stood here and thought: what if we did that, but six times, upwards.
 >
 > **Explorer:** Did it work?
 >
@@ -122,7 +122,7 @@ an ask placed in an optional room is an arc the player can walk past.
 >
 > **Explorer:** How can you tell?
 >
-> **Fez:** Because there is still something in it.
+> **Fez (pointUp):** Because there is still something in it.
 
 ## The bond beat
 

@@ -121,6 +121,12 @@ is said from what is seen.
 **The prefix is `Explorer:`, not `Player:`.** The player is the person holding the phone; the explorer is
 the character in the hat, and only one of those can be written for.
 
+**An expression rides in the prefix.** `> **Fez (pointUp):** Look at those doors!` draws that line with
+the named pose; a bare prefix is the speaker's `default`. The game reads it from
+`src/app/fez/storyPoses.ts`, keyed by the line's locale key, so a pose set in a script is set there too.
+Only poses in `Pose` (`src/app/fez/portraits.ts`) are valid, and one a speaker has no art for draws their
+`default`.
+
 #### Every line is spoken, not narrated (house style, every act)
 
 A line is somebody talking, out loud, about something in front of them — never a caption describing the

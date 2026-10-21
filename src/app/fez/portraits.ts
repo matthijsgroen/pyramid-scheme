@@ -11,8 +11,9 @@ import ghostPriest from "@/assets/ghost-priest-250.png"
 import ghostPharaoh from "@/assets/ghost-pharaoh-250.png"
 import type { Speaker } from "./arrivalConversation"
 
-/** How a portrait is drawn for a line. Fez has four; everybody else has one. */
-export type Pose = "default" | "pointUp" | "glassesPoint" | "cocktail"
+/** How a portrait is drawn for a line. Fez has four, the explorer three, the ghosts one. */
+export const POSES = ["default", "pointUp", "glassesPoint", "cocktail"] as const
+export type Pose = (typeof POSES)[number]
 
 /**
  * Who is drawn when somebody speaks.
@@ -48,8 +49,6 @@ export const PORTRAITS: Partial<
   pharaoh: { default: { src: ghostPharaoh, alt: "A pharaoh, pale blue-green", wide: true } },
   explorer: {
     default: { src: explorer, alt: "The explorer, in a wide brown hat and olive vest", wide: true },
-    // No beat asks for either yet — every arrival line is `default`. What would ask is the reaction
-    // rail, which is the half of the script that watches how the board went rather than where we are.
     pointUp: { src: explorerPoint, alt: "The explorer, pointing", wide: true },
     glassesPoint: { src: explorerGrin, alt: "The explorer, in sunglasses, grinning", wide: true },
   },

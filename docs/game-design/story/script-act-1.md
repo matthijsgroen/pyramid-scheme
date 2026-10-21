@@ -40,13 +40,13 @@ player must not know that.
 The exterior shows the pyramid up close and the Sphinx small on the horizon behind it, so the explorer looks
 back at it, and knows the writing only by hearsay.
 
-> **Explorer:** Look, back there! The Sphinx!
+> **Explorer (pointUp):** Look, back there! The Sphinx!
 >
 > **Explorer:** Huge, even from here.
 >
 > **Explorer:** They say there's writing under its paws. That nobody can read.
 >
-> **Explorer:** Later. This pyramid first!
+> **Explorer (pointUp):** Later. This pyramid first!
 
 ## `starter_1` — the meeting, floor 0
 
@@ -79,11 +79,11 @@ the map they both overpaid for, the fez nobody explains, and Fez knowing what th
 >
 > **Explorer:** Something neat.
 >
-> **Fez:** Neat sells! You know what? I'm coming with you!
+> **Fez (pointUp):** Neat sells! You know what? I'm coming with you!
 >
 > **Explorer:** What? With me?
 >
-> **Fez:** Two see more than one. Come on, that pyramid's waiting!
+> **Fez (pointUp):** Two see more than one. Come on, that pyramid's waiting!
 
 **Fez joins on screen, not in passing**: he says he is coming, the explorer is surprised, he gives a reason. Everything after this has two of them in it, so the moment it starts has to be one the player sees.
 
@@ -97,15 +97,15 @@ After the meeting the tutorials are his: `levelCompleted`, `mapPiece*`, `pyramid
 
 `story.arrival.starter_2.*`
 
-> **Fez:** Ha! Finally, something I understand. Everything that went up the Nile came past here first.
+> **Fez (pointUp):** Ha! Finally, something I understand. Everything that went up the Nile came past here first.
 >
 > **Fez:** And merchants write everything down. Who bought what, who owed who, who was late…
 >
 > **Explorer:** Who was late?
 >
-> **Fez:** Especially who was late!
+> **Fez (pointUp):** Especially who was late!
 >
-> **Fez:** Three thousand years. The goods are gone, and the receipts are still here. Typical!
+> **Fez (pointUp):** Three thousand years. The goods are gone, and the receipts are still here. Typical!
 
 ## `starter_3` — Temple of Bastet · the door
 
@@ -114,7 +114,7 @@ After the meeting the tutorials are his: `levelCompleted`, `mapPiece*`, `pyramid
 The mosaic's own Bastet lines already do the cat (`fez.json` `mosaicStarter`), so this does the **door** —
 which is the ward gates the player is about to start meeting.
 
-> **Fez:** Look at those doors! People came here to ask for protection. And then a door like that stayed shut.
+> **Fez (pointUp):** Look at those doors! People came here to ask for protection. And then a door like that stayed shut.
 >
 > **Explorer:** Shut to who?
 >
@@ -122,7 +122,7 @@ which is the ward gates the player is about to start meeting.
 >
 > **Fez:** Everything sealed in this country, somebody sealed it and meant it. Really meant it.
 >
-> **Fez:** And the cats! They adored cats here. Just couldn't keep their hands off them.
+> **Fez (pointUp):** And the cats! They adored cats here. Just couldn't keep their hands off them.
 
 **The error is planted here** (`cast.md`, "one thing he is wrong about per tier"). He is confident, he is
 charming, and he is wrong about why. Ipi puts him right two journeys later, and `mosaicStarter` — already
@@ -133,11 +133,11 @@ than something he knew.
 
 `story.arrival.starter_4.*`
 
-> **Fez:** Oh, I like this one. This is where they learned to write! Sign by sign, on broken pots — papyrus was far too dear for children.
+> **Fez (pointUp):** Oh, I like this one. This is where they learned to write! Sign by sign, on broken pots — papyrus was far too dear for children.
 >
 > **Explorer:** They practised on rubbish?
 >
-> **Fez:** On whatever there was! And learn enough of these, and suddenly a wall isn't decoration any more.
+> **Fez (pointUp):** On whatever there was! And learn enough of these, and suddenly a wall isn't decoration any more.
 >
 > **Explorer:** That Sphinx… I want another look at it.
 >
@@ -183,7 +183,7 @@ room and the room is a hole in the ground.
 >
 > **Ipi:** Tell her Ipi sent you. That'll spoil her afternoon.
 >
-> **Fez:** A man like this, he'd have had cats. Everyone did! Charming little things, aren't they?
+> **Fez (pointUp):** A man like this, he'd have had cats. Everyone did! Charming little things, aren't they?
 >
 > **Ipi:** I had four. And not one of them was charming. They were for the grain.
 >
@@ -195,11 +195,11 @@ room and the room is a hole in the ground.
 >
 > **Ipi:** Of course I wrote it down!
 >
-> **Fez:** I like him!
+> **Fez (pointUp):** I like him!
 >
 > **Explorer:** You just like that he's owed money.
 >
-> **Fez:** I like that he wrote it down!
+> **Fez (pointUp):** I like that he wrote it down!
 
 **Ipi teaches the ending.** _"A thing written down is a thing that happened"_ is the belief the finale
 stands on (`what-the-player-knows.md`), said four acts early by a bookkeeper for whom it is not a belief

@@ -26,9 +26,9 @@ the ending's mechanism arriving quietly, four tiers early.
 
 `story.arrival.junior_2.*` — **the quiet one.** It never says the word copy.
 
-> **Fez:** This is where they made it all. Not the tombs — the things that went in them.
+> **Fez (pointUp):** This is where they made it all. Not the tombs — the things that went in them.
 >
-> **Fez:** Look at the moulds. Same bracelet, forty times.
+> **Fez (pointUp):** Look at the moulds. Same bracelet, forty times.
 >
 > **Explorer:** For forty people?
 >
@@ -48,7 +48,7 @@ the ending's mechanism arriving quietly, four tiers early.
 
 `story.arrival.junior_4.*`
 
-> **Fez:** Three hundred feet of it, and a fire at the top that never went out.
+> **Fez (pointUp):** Three hundred feet of it, and a fire at the top that never went out.
 >
 > **Fez:** Sailors could find the coast from a day away. Before that they found it by hitting it.
 >
@@ -133,7 +133,7 @@ everyone has met her.
 `story.reading.junior.*` — fires the first time the player can read a full line of the formula that is
 written in **every** tomb, because it genuinely was.
 
-> **Explorer:** There is a line here I can read now.
+> **Explorer (pointUp):** There is a line here I can read now.
 >
 > **Explorer:** _I gave bread to the hungry._
 >

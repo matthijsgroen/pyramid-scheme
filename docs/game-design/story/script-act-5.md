@@ -187,7 +187,7 @@ stuck for two thousand years because nobody read the one already there. And afte
 the statue sounded a note at dawn every morning — until a Roman emperor repaired it, after which it never
 made a sound again.
 
-> **Fez:** Two of them, twenty metres up, and both of them Amenhotep.
+> **Fez (pointUp):** Two of them, twenty metres up, and both of them Amenhotep.
 >
 > **Fez:** The Greeks took one look and decided it was a hero of theirs. Memnon. The name stuck for two
 > thousand years.
@@ -223,7 +223,7 @@ is the only sad note Act V gets, and it is spent on a rock rather than on a char
 >
 > **Fez:** Oh.
 >
-> **Fez:** Light. You want it LIGHT.
+> **Fez (pointUp):** Light. You want it LIGHT.
 
 ## `wizard_4` — Eternal Pyramid
 
@@ -279,7 +279,7 @@ Not a body. A rope still hanging, a notebook, and somebody who turned back.
 
 `story.tomb.wizardC.*` — the existing `mosaicFinale` lines already close this. Their setup:
 
-> **Fez:** Stop a moment. Look at what we have been carrying up out of those pyramids.
+> **Fez (pointUp):** Stop a moment. Look at what we have been carrying up out of those pyramids.
 >
 > **Explorer:** It is a picture.
 >

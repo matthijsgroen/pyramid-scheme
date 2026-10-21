@@ -3,6 +3,7 @@ import { useEffect, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { GHOSTS, spokenLines, type Speaker } from "./arrivalConversation"
 import { PORTRAITS, type Pose } from "./portraits"
+import { storyPose } from "./storyPoses"
 
 type PoseChat = [pose: Pose, translationKey: string, speaker?: Speaker]
 
@@ -63,13 +64,13 @@ const NOT_FOUND = pose("default", ["not-found"])
  *
  * A conversation not in the table above is read out of the translations instead — the arrivals and
  * the tomb scenes are authored that way, because a new beat should cost a key rather than a code
- * change. The table is what is left: the tutorials and the shipped one-voice beats.
+ * change. Their expressions come from `storyPoses`. The table is what is left: the tutorials and the shipped one-voice beats.
  */
 const writtenLines = (conversation: string, hasLine: (key: string) => boolean): PoseChat[] => {
   const table = conversations[conversation]
   if (table) return table
   const spoken = spokenLines(conversation, hasLine)
-  return spoken.length > 0 ? spoken.map(line => ["default", line.key, line.speaker] as PoseChat) : NOT_FOUND
+  return spoken.length > 0 ? spoken.map(line => [storyPose(line.key), line.key, line.speaker] as PoseChat) : NOT_FOUND
 }
 
 const fezSpeaks = (lines: PoseChat[]): boolean => lines.some(([, , speaker]) => (speaker ?? "fez") === "fez")
@@ -160,7 +161,8 @@ export const Fez: FC<{
   const current = messages[Math.max(messageIndex - 1, 0)]
   const pose = current?.[0] || "default"
   const speaker: Speaker = current?.[2] ?? "fez"
-  const portrait = PORTRAITS[speaker]?.[pose]
+  // A pose nobody has drawn for this speaker yet is their default, never an empty space beside the bubble.
+  const portrait = PORTRAITS[speaker]?.[pose] ?? PORTRAITS[speaker]?.default
   const wide = portrait?.wide === true
 
   if (unmet) return null
