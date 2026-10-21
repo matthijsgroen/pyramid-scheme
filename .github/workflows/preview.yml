@@ -1,9 +1,13 @@
 name: Preview
 
+# Only by hand, naming the branch: several sessions push in parallel, and a push is not a request to deploy.
 on:
-  push:
-    branches: [topology/mechanics]
   workflow_dispatch:
+    inputs:
+      branch:
+        description: The branch to build and publish to the preview
+        required: true
+        type: string
 
 concurrency:
   group: preview
@@ -16,8 +20,9 @@ jobs:
   preview:
     runs-on: ubuntu-latest
     steps:
-      # The branch that triggered the run: a push to topology/mechanics, or whichever branch a manual run names.
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.branch }}
       - name: Enable Corepack
         run: corepack enable
       - name: Set up Node
