@@ -226,35 +226,23 @@
 
   "tomb": {
     "starter": {
-      "1": {
-        "ipi": "Well, finally. Third shelf, the jar with the chip out of it — that one's mine. The rest you can keep."
-      },
-      "2": { "fez": "…Did that jar just talk?!" },
-      "3": { "explorer": "It said third shelf." },
-      "4": { "ipi": "Forty years I kept these accounts. Forty! I am not leaving them like this." },
-      "5": {
-        "ipi": "Want to get on? There's a noblewoman north of here. Painted vault, very pleased with herself. And the lapis? Never paid for."
-      },
-      "6": { "explorer": "Does she have a name?" },
-      "7": { "ipi": "Henut, daughter of Sennefer, of the western estates. Eleven deben of lapis. Unpaid. Third year." },
-      "8": { "ipi": "Of course she has a name! I wrote it down." },
-      "9": {
-        "ipi": "The Horis, though. They're what drive you mad. Hori the boatman, Hori the baker… and the other Hori."
-      },
-      "10": { "explorer": "How many Horis?" },
-      "11": { "ipi": "In one street? Four! I had to put their fathers in as well." },
-      "12": { "explorer": "But why does it still matter? She can't even hear it." },
-      "13": { "ipi": "Because a thing written down is a thing that happened! Rub out a man's name and he never did." },
-      "14": { "ipi": "Tell her Ipi sent you. That'll spoil her afternoon." },
-      "15": { "fez": "A man like this, he'd have had cats. Everyone did! Charming little things, aren't they?" },
-      "16": { "ipi": "I had four. And not one of them was charming. They were for the grain." },
-      "17": { "ipi": "Do you know what one rat costs you, over a whole season? I do. To the sack!" },
-      "18": { "fez": "…Oh. Right." },
-      "19": { "explorer": "He wrote that down too, didn't he." },
-      "20": { "ipi": "Of course I wrote it down!" },
-      "21": { "fez": "I like him!" },
-      "22": { "explorer": "You just like that he's owed money." },
-      "23": { "fez": "I like that he wrote it down!" }
+      "1": { "ipi": "Hey! Hands off! That's my jar!" },
+      "2": { "fez": "…Did that jar just say something?!" },
+      "3": { "ipi": "That was me. Third shelf, the one with the chip. That one's mine." },
+      "4": { "explorer": "Okay, okay! It stays put. Who are you?" },
+      "5": { "ipi": "Ipi. Forty years I kept the books. Forty!" },
+      "6": { "fez": "Books? Whose?" },
+      "7": { "ipi": "Everyone's! Who owed what, down to the last sack of grain." },
+      "8": { "ipi": "That Henut, up north from here? Eleven deben of lapis. Never paid!" },
+      "9": { "explorer": "And you still remember that, after all this time?" },
+      "10": { "ipi": "It's written down! A thing written down is a thing that happened." },
+      "11": { "ipi": "Only those Horis… Hori the boatman, Hori the baker… and that other Hori." },
+      "12": { "fez": "Did you have cats too? Everyone had cats, didn't they? Sweet little things!" },
+      "13": { "ipi": "Sweet? They were for the grain! Do you know what one rat costs you, over a whole season?" },
+      "14": { "fez": "…Oh. Right." },
+      "15": { "ipi": "Tell Henut that Ipi sent you. That'll spoil her afternoon." },
+      "16": { "fez": "I like him!" },
+      "17": { "explorer": "You just like that he's still owed money." }
     },
     "junior": {
       "1": { "henut": "Finally. You will have come about the lapis. I assume Ipi is still going on about the lapis." },

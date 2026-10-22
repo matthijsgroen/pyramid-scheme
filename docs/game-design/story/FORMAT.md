@@ -200,7 +200,7 @@ correction is the teaching, and it is funny rather than didactic because somebod
 
 The two the finale rests on are taught the same way and four acts early: **a thing written down is a thing
 that happened** is Ipi's, said by a bookkeeper for whom it is not a belief but a professional fact; and
-**Hori is the most ordinary name in Egypt** is Ipi's ledger complaining about four of them in one street.
+**Hori is the most ordinary name in Egypt** is Ipi's ledger listing three of them by trade.
 Neither is explained at the Sphinx, because by then neither has to be.
 
 **And the facts have to be true.** Eighteen metres, not twenty; the curse invented by newspapers in 1923;

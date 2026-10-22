@@ -40,9 +40,9 @@ what?"_ — a payoff built on knowledge the player was never given.
 **It costs about two lines, and Ipi is the right mouth.** He is a bookkeeper who wants his accounts
 settled, three thousand years on, and the belief is indistinguishable from his character:
 
-> **Explorer:** Why does it matter, if it is all written down?
+> **Explorer:** And you still remember that, after all this time?
 >
-> **Ipi:** Because a thing written down is a thing that happened. Rub out a man's name and he never did.
+> **Ipi:** It's written down! A thing written down is a thing that happened.
 
 Act I, from the first ghost, two acts before Henut's wall and four before the Sphinx. Henut then reinforces
 it as feeling rather than fact — _"It is the only thing that does."_ — and by Act V the player has been told

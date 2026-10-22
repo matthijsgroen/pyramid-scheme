@@ -160,8 +160,8 @@ _(let that sit)_
 **This is the whole ending.** Not a pronouncement and not a moral about what the player collected — fifty
 hours to say one name out loud, and it is his.
 
-_"It is written down"_ is Ipi's, from the first tomb in the game: _"a thing written down is a thing that
-happened. Rub out a man's name and he never did."_ The explorer is not consoling him, they are quoting a
+_"It is written down"_ is Ipi's, from the first tomb in the game: _"It's written down! A thing written down is a thing
+that happened."_ The explorer is not consoling him, they are quoting a
 bookkeeper, and that is why it lands without anybody explaining it.
 
 **He is unimpressed, and that is the rule** (`cast.md`). No curse lifts, nothing mends, he does not weep —

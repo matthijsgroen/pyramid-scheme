@@ -231,35 +231,23 @@
 
   "tomb": {
     "starter": {
-      "1": {
-        "ipi": "Nou, eindelijk. Derde plank, de kruik met die schilfer eruit — die is van mij. De rest mag je houden."
-      },
+      "1": { "ipi": "Hé! Afblijven! Dat is mijn kruik!" },
       "2": { "fez": "…Zei die kruik nou iets?!" },
-      "3": { "explorer": "Hij zei: derde plank." },
-      "4": { "ipi": "Veertig jaar heb ik deze boeken bijgehouden. Veertig! Zo laat ik ze niet achter." },
-      "5": {
-        "ipi": "Wil je verder? Ten noorden van hier ligt een edelvrouw. Beschilderd gewelf, heel tevreden met zichzelf. En het lapis? Nooit betaald."
-      },
-      "6": { "explorer": "Heeft ze een naam?" },
-      "7": {
-        "ipi": "Henut, dochter van Sennefer, van de westelijke landgoederen. Elf deben lapis. Onbetaald. Derde jaar."
-      },
-      "8": { "ipi": "Natuurlijk heeft ze een naam! Ik heb hem opgeschreven." },
-      "9": { "ipi": "Maar de Hori's, dáár word je gek van. Hori de schipper, Hori de bakker… en die andere Hori." },
-      "10": { "explorer": "Hoeveel Hori's?" },
-      "11": { "ipi": "In één straat? Vier! Ik moest hun vaders er ook nog bij zetten." },
-      "12": { "explorer": "Maar waarom doet dat er nog toe? Ze kan het niet eens meer horen." },
-      "13": { "ipi": "Omdat wat opgeschreven is, gebeurd is! Veeg een mans naam uit en hij heeft nooit bestaan." },
-      "14": { "ipi": "Zeg maar dat Ipi je stuurt. Dat verpest haar middag wel." },
-      "15": { "fez": "Zo'n man had vast katten. Iedereen had katten! Schatjes, toch?" },
-      "16": { "ipi": "Ik had er vier. En geen van allen was een schatje. Ze waren voor het graan." },
-      "17": { "ipi": "Weet jij wat één rat je kost, over een heel seizoen? Ik wel. Tot op de zak!" },
-      "18": { "fez": "…O. Juist." },
-      "19": { "explorer": "Dat heeft hij vast ook opgeschreven." },
-      "20": { "ipi": "Natuurlijk heb ik dat opgeschreven!" },
-      "21": { "fez": "Ik mag hem wel!" },
-      "22": { "explorer": "Jij vindt het gewoon leuk dat hij nog geld krijgt." },
-      "23": { "fez": "Ik vind het leuk dat hij het opschreef!" }
+      "3": { "ipi": "Ík zei iets. Derde plank, die met de schilfer. Die is van mij." },
+      "4": { "explorer": "Oké, oké! Die blijft staan. Wie ben jij?" },
+      "5": { "ipi": "Ipi. Veertig jaar de boeken bijgehouden. Veertig!" },
+      "6": { "fez": "Boeken? Van wie dan?" },
+      "7": { "ipi": "Van iedereen! Wie wat schuldig was, tot op de zak graan." },
+      "8": { "ipi": "Die Henut, verderop naar het noorden? Elf deben lapis. Nooit betaald!" },
+      "9": { "explorer": "En dat weet je nog, na al die tijd?" },
+      "10": { "ipi": "Het staat opgeschreven! Wat opgeschreven is, is gebeurd." },
+      "11": { "ipi": "Alleen die Hori's… Hori de schipper, Hori de bakker… en die ándere Hori." },
+      "12": { "fez": "Had je ook katten? Iedereen had toch katten? Schatjes!" },
+      "13": { "ipi": "Schatjes? Ze waren voor het graan! Weet jij wat één rat kost, een heel seizoen?" },
+      "14": { "fez": "…O. Juist." },
+      "15": { "ipi": "Zeg tegen Henut dat Ipi je stuurt. Dat verpest haar middag wel." },
+      "16": { "fez": "Ik mag hem wel!" },
+      "17": { "explorer": "Jij vindt het gewoon leuk dat hij nog geld krijgt." }
     },
     "junior": {
       "1": { "henut": "Eindelijk. Je komt zeker over het lapis. Ipi zeurt er vast nog steeds over." },

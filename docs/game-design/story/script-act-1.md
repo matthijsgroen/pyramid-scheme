@@ -155,58 +155,46 @@ Ipi is **already there** when the player arrives, wants something entirely munda
 costs nothing, and does not mention being dead. The joke is status: he is the most organised person in the
 room and the room is a hole in the ground.
 
-> **Ipi:** Well, finally. Third shelf, the jar with the chip out of it — that one's mine. The rest you can keep.
+> **Ipi:** Hey! Hands off! That's my jar!
 >
-> **Fez:** …Did that jar just talk?!
+> **Fez:** …Did that jar just say something?!
 >
-> **Explorer:** It said third shelf.
+> **Ipi:** That was me. Third shelf, the one with the chip. That one's mine.
 >
-> **Ipi:** Forty years I kept these accounts. Forty! I am not leaving them like this.
+> **Explorer:** Okay, okay! It stays put. Who are you?
 >
-> **Ipi:** Want to get on? There's a noblewoman north of here. Painted vault, very pleased with herself. And the lapis? Never paid for.
+> **Ipi:** Ipi. Forty years I kept the books. Forty!
 >
-> **Explorer:** Does she have a name?
+> **Fez:** Books? Whose?
 >
-> **Ipi:** Henut, daughter of Sennefer, of the western estates. Eleven deben of lapis. Unpaid. Third year.
+> **Ipi:** Everyone's! Who owed what, down to the last sack of grain.
 >
-> **Ipi:** Of course she has a name! I wrote it down.
+> **Ipi:** That Henut, up north from here? Eleven deben of lapis. Never paid!
 >
-> **Ipi:** The Horis, though. They're what drive you mad. Hori the boatman, Hori the baker… and the other Hori.
+> **Explorer:** And you still remember that, after all this time?
 >
-> **Explorer:** How many Horis?
+> **Ipi:** It's written down! A thing written down is a thing that happened.
 >
-> **Ipi:** In one street? Four! I had to put their fathers in as well.
+> **Ipi:** Only those Horis… Hori the boatman, Hori the baker… and that other Hori.
 >
-> **Explorer:** But why does it still matter? She can't even hear it.
+> **Fez (pointUp):** Did you have cats too? Everyone had cats, didn't they? Sweet little things!
 >
-> **Ipi:** Because a thing written down is a thing that happened! Rub out a man's name and he never did.
->
-> **Ipi:** Tell her Ipi sent you. That'll spoil her afternoon.
->
-> **Fez (pointUp):** A man like this, he'd have had cats. Everyone did! Charming little things, aren't they?
->
-> **Ipi:** I had four. And not one of them was charming. They were for the grain.
->
-> **Ipi:** Do you know what one rat costs you, over a whole season? I do. To the sack!
+> **Ipi:** Sweet? They were for the grain! Do you know what one rat costs you, over a whole season?
 >
 > **Fez:** …Oh. Right.
 >
-> **Explorer:** He wrote that down too, didn't he.
->
-> **Ipi:** Of course I wrote it down!
+> **Ipi:** Tell Henut that Ipi sent you. That'll spoil her afternoon.
 >
 > **Fez (pointUp):** I like him!
 >
-> **Explorer:** You just like that he's owed money.
->
-> **Fez (pointUp):** I like that he wrote it down!
+> **Explorer:** You just like that he's still owed money.
 
 **Ipi teaches the ending.** _"A thing written down is a thing that happened"_ is the belief the finale
 stands on (`what-the-player-knows.md`), said four acts early by a bookkeeper for whom it is not a belief
 at all but a professional fact. The explorer quotes it back at the Sphinx.
 
-**He names her, and that is the point of him.** _Of course she has a name. I wrote it down._ — the debt,
-the parentage and the year, from memory, three thousand years on. It pays off in Act II, where the tomb
+**He names her, and that is the point of him.** _That Henut? Eleven deben of lapis. Never paid!_ — the name
+and the debt, from memory, three thousand years on, because it is written down. It pays off in Act II, where the tomb
 wall she paid for gets her name wrong and his ledger does not.
 
 **This is the act break and the first introduction** (main-path, "introductions"): the player leaves with a

@@ -205,7 +205,7 @@ below was the plan; this is what came of it.
 | Journey arrivals, all 20, fired at the pyramid | `useExpeditionIntro.ts` + `fez.json` `arrival.*` — 96 lines                       |
 | Two speakers, portraits, sides swapping        | `Fez.tsx`, `portraits.ts`                                                         |
 | Story beats exempt from the tutorials toggle   | `shouldSkipConversation`                                                          |
-| The eight tomb scenes                          | `fez.json` `tomb.*` — 92 lines, five ghosts drawn and placed                      |
+| The eight tomb scenes                          | `fez.json` `tomb.*` — 86 lines, five ghosts drawn and placed                      |
 | The reaction rail — five of the six bonds      | `reactionContributions.ts` (core) + `story/game/reaction/beatFor.ts`              |
 | The Sphinx ending                              | `walls.ts` `starter_1`, the ward gate in `starter.ts`, the reed leaf in the Vault |
 | The story mod                                  | `src/mods/story/` — `conversation` and `reading` families                         |

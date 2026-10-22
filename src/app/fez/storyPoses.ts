@@ -20,9 +20,8 @@ export const STORY_POSES: Readonly<Record<string, Pose>> = {
   "arrival.starter_3.5.fez": "pointUp",
   "arrival.starter_4.1.fez": "pointUp",
   "arrival.starter_4.3.fez": "pointUp",
-  "tomb.starter.15.fez": "pointUp",
-  "tomb.starter.21.fez": "pointUp",
-  "tomb.starter.23.fez": "pointUp",
+  "tomb.starter.12.fez": "pointUp",
+  "tomb.starter.16.fez": "pointUp",
   // Act II
   "arrival.junior_2.1.fez": "pointUp",
   "arrival.junior_2.2.fez": "pointUp",
