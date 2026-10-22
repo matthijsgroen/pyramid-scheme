@@ -65,7 +65,7 @@
     "revisitExpedition": "Opnieuw bezoeken — kies een piramide",
     "revisitTomb": "Opnieuw bezoeken — betreed de tombe",
     "or": "Of",
-    "webPullsCleared": "{{pulled}} van {{total}} vrijgemaakt",
+    "webBuriedPercent": "Nog voor {{percent}}% bedolven",
     "selectAnotherExpedition": "Selecteer een andere expeditie",
     "interruptExpedition": "Onderbreek expeditie",
     "confirmInterruptExpedition": "Weet je zeker dat je deze expeditie wilt onderbreken? Expeditie voortgang wordt bewaard, maar niveau voortgang gaat verloren!",

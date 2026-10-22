@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Coming back to a pyramid puts you where you left it.
+- A journey under sand says how much is still buried.
 - All wizard journeys open together.
 - The Book of the Dead's last pyramid has its own puzzle: the weighing of the heart, with a lever, sun tiles and a stone pipe.
 - Seven expert pyramids at Karnak, the Nile Delta and Djoser have puzzles of their own: a procession door, an hourglass of sand, floods, a canal lock and the stone pipe.

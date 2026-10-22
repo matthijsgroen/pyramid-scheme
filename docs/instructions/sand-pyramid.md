@@ -582,8 +582,13 @@ current and future. `JourneyCard` has one emerald "still treasure to find here" 
   - `JourneyPathView` draws the ring on the current node as well.
 - **Before the first visit** nothing has been saved, so a pull shows no ring. The arrival beat makes sure the
   player has stood in the sand once.
-- **The journey card** of a journey under a pot shows the pot's mark with one notch per lever, lit as each is
-  pulled.
+- **The journey card** of a journey under sand reads "Still 60% buried" ("Nog voor 60% bedolven"): the share of the
+  journey's main-path rooms, counted as the web line counts them, that still lies behind a sand front. Pots on the
+  journey's pyramids, the journey pot and stops inside locks count; a `from` pot counts only from its start; `opens`
+  seals are not sand. Whole percent, 1% rather than 0% while anything is buried; the line is hidden at 0% and on a
+  journey without sand. It reads the authoring, so it shows before the first visit. A stop inside a lock has no seam
+  in the authoring, so it counts from its floor's first room (`journeyBuriedPercent`,
+  `src/game/webBuriedPercent.ts`).
 
 ## Toggle-off
 
@@ -620,7 +625,7 @@ carries at most 16 activators.
 - When the wizard tier opens, all four wizard journeys open at once.
 - wizard_3 is buried from its first room. They see the sand and go elsewhere.
 - Some pyramids end a path at a sand lever. Each pull clears wizard_3 a stretch further, whichever lever it was;
-  the travel screen pulses on the buried pyramid and the journey card counts the pulls.
+  the travel screen pulses on the buried pyramid and the journey card says how much is still buried.
 - A wizard lock may have sand in it: a door the front stops at, a buried hall, or a short cut that opens when a
   far lever is pulled.
 - Places freed in wizard_3 hold keys that open sealed places in the other journeys, so the tier is played back
@@ -637,7 +642,7 @@ carries at most 16 activators.
 | Keys / save   | `webPulled` in topology mod state; a held-keys provider deriving named and counted keys                       | `src/mods/topology/app/`, `src/app/SiteMap/keyProviders.ts`                                                                                                          |
 | World-gen DSL | seam gates, added lock owners and region barriers, activators as rewards, sections pinned by label, web bound | `src/worldGen/dsl.ts`, `src/worldGen/rewards.ts`, `src/worldGen/buildSite.ts`, `src/game/carve/chainRooms.ts`, `src/game/layLocks.ts`, `src/worldGen/spec/wizard.ts` |
 | World solver  | web keys as positional keys; counted stops; the order inside a journey; agreement with the web walk           | `src/worldGen/reachability.ts`, `src/worldGen/placeFragments.ts`, topology mod descriptor                                                                            |
-| Map / travel  | buried node, pulse on the current node, the card's pull count; `blockingKeys` counts web doors                | `src/ui/atoms/JourneyPathView.tsx`, `src/ui/organisms/JourneyCard.tsx`, `src/app/pages/Travel.tsx`, `src/app/SiteMap/floorExploration.ts`                            |
+| Map / travel  | buried node, pulse on the current node, the card's buried percentage; `blockingKeys` counts web doors                | `src/ui/atoms/JourneyPathView.tsx`, `src/ui/organisms/JourneyCard.tsx`, `src/app/pages/Travel.tsx`, `src/app/SiteMap/floorExploration.ts`                            |
 | Site map art  | sand lever, web sand, web seal and key, web marks beside floor markers                                        | `src/app/SiteMap/SiteMapView.tsx`, `src/game/mark.ts`, `src/assets/tiles/default/`, `art/masters/props/default/`                                                     |
 | Story         | the buried-journey arrival is wizard_3's arrival; the clearing beat; wizard arrivals in any order             | `docs/game-design/story/`, `public/locales/*/story*.json`                                                                                                            |
 | i18n          | buried node label, lever and seal prompts                                                                     | `public/locales/en/`, `public/locales/nl/`                                                                                                                           |
@@ -726,7 +731,7 @@ Rough sizes: S is about a day, M two to three days, L a week.
    a lever shows two markers; the sand lever's drawing is not the floor lever's; a site with web sand that
    binds a lock's barriers to sand is refused.
 10. **The travel read (M).** `blockingKeys` counts web doors, the buried node, the pulse on the current node, the
-    card's pull count. Tests freeze: a buried pyramid's node is not drawn as current; one pull after a visit
+    card's buried percentage. Tests freeze: a buried pyramid's node is not drawn as current; one pull after a visit
     lights it; before any visit it does not.
 11. **Placement and bake (M).** The designer's web and wizard locks bound to the wizard tier, places pinned,
     doors and activators laid, the bake, the gate in a clean worktree. Checks: `yarn lock <web>`,
