@@ -36,10 +36,13 @@
  *                    exactly as the base is (pass the base's own framing flags). `Fez.tsx` stacks it on
  *                    the pose. Tuned with --threshold=64 --erode=4 --grow=45 --feather=18 --spread=4.5
  *                    --link=24: only the largest change and the parts linked to it are the face.
+ *                    The edit is first moved so its head lands on the base's (headOffset), so --holes
+ *                    are in the base's pixels.
  *   --front-of=master for a POSE BASE: also write <name>-front-250.png, the pose's pixels that differ
  *                    from `master` where any of its face layers (every <master>-face-*.jpeg beside it)
  *                    would paint — a straw across the chin. `Fez.tsx` draws it above the face. Written
- *                    only when there is such a pixel; otherwise a stale one is removed.
+ *                    only when there is such a pixel; otherwise a stale one is removed. The pose is
+ *                    first moved onto `master`'s head, like a face edit.
  *
  * The key is flood-filled inward from the edges rather than matched everywhere, which is the whole
  * difference between this and `import-tile`: a prop on magenta has no magenta of its own, but a person on
@@ -302,6 +305,107 @@ export const sharedBackground = (backgrounds: readonly Uint8Array[]): Uint8Array
   backgrounds.reduce((shared, next) => shared.map((b, i) => b & next[i]))
 
 /**
+ * The master's head, in source pixels: the topmost `slice` of its figure, as wide as that slice runs.
+ * What an edit of the master must keep in place, and so what `headOffset` aligns.
+ */
+export const headBox = (background: Uint8Array, width: number, height: number, slice = 0.15) => {
+  const { top, bottom } = bounds(background, width, height)
+  if (bottom < top) return undefined
+  const to = top + Math.max(1, Math.round((bottom - top + 1) * slice))
+  let left = width
+  let right = -1
+  for (let y = top; y <= to; y++)
+    for (let x = 0; x < width; x++)
+      if (background[y * width + x] === 0) {
+        if (x < left) left = x
+        if (x > right) right = x
+      }
+  return { left, right, top, bottom: to }
+}
+
+/**
+ * How far an edit's head sits from its master's: the shift (dx, dy) at which the most of the master's
+ * head pixels find a pixel of their colour in the edit, `edit(x + dx, y + dy) ≈ master(x, y)`.
+ *
+ * The generator hands an edit back a few pixels off its master — `explorer-pose-point.jpeg` 6 rows high,
+ * `explorer-face-cool.jpeg` also 5 columns right — and a sprite cut through the master's window then
+ * carries that drift, so the head jumps between two lines. Counting agreeing pixels rather than summing
+ * differences keeps a new expression from pulling the answer: the pixels it changed disagree at every
+ * shift alike. Ties go to the smaller shift, so a true edit stays where it is.
+ */
+export const headOffset = ({
+  master,
+  edit,
+  background,
+  width,
+  height,
+  channels,
+  radius = 16,
+  step = 2,
+  tolerance = 32,
+}: {
+  master: Uint8Array | Buffer
+  edit: Uint8Array | Buffer
+  /** The master's keyed background: its head is where the shift is measured. */
+  background: Uint8Array
+  width: number
+  height: number
+  channels: number
+  radius?: number
+  step?: number
+  tolerance?: number
+}) => {
+  const head = headBox(background, width, height)
+  let best = { dx: 0, dy: 0, agree: -1 }
+  if (!head) return { dx: 0, dy: 0 }
+  for (let dy = -radius; dy <= radius; dy++)
+    for (let dx = -radius; dx <= radius; dx++) {
+      let agree = 0
+      for (let y = head.top; y <= head.bottom; y += step)
+        for (let x = head.left; x <= head.right; x += step) {
+          const ex = x + dx
+          const ey = y + dy
+          if (background[y * width + x] === 1 || ex < 0 || ey < 0 || ex >= width || ey >= height) continue
+          const a = (y * width + x) * channels
+          const b = (ey * width + ex) * channels
+          if (Math.hypot(master[a] - edit[b], master[a + 1] - edit[b + 1], master[a + 2] - edit[b + 2]) < tolerance)
+            agree++
+        }
+      const closer = Math.abs(dx) + Math.abs(dy) < Math.abs(best.dx) + Math.abs(best.dy)
+      if (agree > best.agree || (agree === best.agree && closer)) best = { dx, dy, agree }
+    }
+  return { dx: best.dx, dy: best.dy }
+}
+
+/** `data` moved by the offset `headOffset` measured, so its head lands on the master's; what comes in is `fill`. */
+export const shifted = (
+  data: Uint8Array | Buffer,
+  width: number,
+  height: number,
+  channels: number,
+  { dx, dy }: { dx: number; dy: number },
+  fill: { r: number; g: number; b: number }
+): Buffer => {
+  const out = Buffer.alloc(width * height * channels)
+  for (let y = 0; y < height; y++)
+    for (let x = 0; x < width; x++) {
+      const o = (y * width + x) * channels
+      const sx = x + dx
+      const sy = y + dy
+      if (sx < 0 || sy < 0 || sx >= width || sy >= height) {
+        out[o] = fill.r
+        out[o + 1] = fill.g
+        out[o + 2] = fill.b
+        if (channels > 3) out[o + 3] = 255
+        continue
+      }
+      const i = (sy * width + sx) * channels
+      for (let c = 0; c < channels; c++) out[o + c] = data[i + c]
+    }
+  return out
+}
+
+/**
  * The window a portrait is cut from, in source pixels, and the sprite width it is resized to.
  *
  * A bust frames on the face and keeps every head the same size (see bustWindow); a full figure is
@@ -418,6 +522,24 @@ const FACE_DEFAULTS: FaceOptions = { threshold: 64, erode: 4, grow: 45, feather:
 
 const raw = (file: string) => sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
 
+type Key = { r: number; g: number; b: number }
+
+/**
+ * An edit of `masterFile`, read and moved so its head lands on the master's (`headOffset`) — before it is
+ * keyed, framed or diffed, so every base and face of a character shares the master's head as well as its
+ * window. Says how far it moved.
+ */
+const registered = async (file: string, masterFile: string, key: Key, tolerance: number) => {
+  const edit = await raw(file)
+  const master = await raw(masterFile)
+  sameSize(master.info, edit.info, file)
+  const { width, height, channels } = edit.info
+  const background = edgeBackground({ data: master.data, width, height, channels, key, tolerance })
+  const offset = headOffset({ master: master.data, edit: edit.data, background, width, height, channels })
+  if (offset.dx === 0 && offset.dy === 0) return { ...edit, offset }
+  return { data: shifted(edit.data, width, height, channels, offset, key), info: edit.info, offset }
+}
+
 /**
  * The alpha a face layer is cut with, at source size: the face region (see faceLayer.ts) of what moved
  * between `base` and `expression`, blurred by `feather`. Undefined when the two do not differ.
@@ -483,7 +605,9 @@ const faceMastersOf = async (master: string) => {
  */
 const toFrontLayer = async (
   pose: { data: Buffer; info: sharp.OutputInfo; background: Uint8Array },
-  masterFile: string
+  masterFile: string,
+  key: Key,
+  tolerance: number
 ) => {
   const { info, background } = pose
   const master = await raw(masterFile)
@@ -491,8 +615,7 @@ const toFrontLayer = async (
   const faces = await faceMastersOf(masterFile)
   const reach = new Uint8Array(info.width * info.height)
   for (const file of faces) {
-    const expression = await raw(file)
-    sameSize(master.info, expression.info, file)
+    const expression = await registered(file, masterFile, key, tolerance)
     const face = await featheredFace(master, expression, FACE_DEFAULTS)
     if (face) for (let i = 0; i < reach.length; i++) if (face.alpha[i] > 0) reach[i] = 1
   }
@@ -532,7 +655,14 @@ const main = async (): Promise<void> => {
     .filter(Boolean)
     .map(pair => pair.split(",").map(Number) as [number, number])
 
-  const { data, info } = await sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  // A face edit or a pose edit is moved onto its master's head first; a master is read as it is.
+  const faceOf = arg("face-of")
+  const frontOf = arg("front-of")
+  const editOf = faceOf ?? frontOf
+  const { data, info, offset } = editOf
+    ? await registered(file, editOf, key, tolerance)
+    : { ...(await raw(file)), offset: undefined }
+  if (offset) console.log(`head registered onto ${editOf}: moved by ${-offset.dx},${-offset.dy}`)
   const background = edgeBackground({
     data,
     width: info.width,
@@ -544,7 +674,6 @@ const main = async (): Promise<void> => {
   })
   for (let i = 0; i < background.length; i++) if (background[i] === 1) data[i * info.channels + 3] = 0
 
-  const faceOf = arg("face-of")
   const faceBox = faceOf
     ? await toFaceLayer({ data, info, background }, faceOf, {
         threshold: Number(arg("threshold", String(FACE_DEFAULTS.threshold))),
@@ -555,8 +684,7 @@ const main = async (): Promise<void> => {
         link: Number(arg("link", String(FACE_DEFAULTS.link))),
       })
     : undefined
-  const frontOf = arg("front-of")
-  const front = frontOf ? await toFrontLayer({ data, info, background }, frontOf) : undefined
+  const front = frontOf ? await toFrontLayer({ data, info, background }, frontOf, key, tolerance) : undefined
 
   // A face layer is always cut through its base's frame; a pose base names the character's masters
   // so every one of them shares it.

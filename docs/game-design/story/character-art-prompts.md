@@ -332,6 +332,14 @@ edits' `--face-of` framing them through `explorer.jpeg`, and his pose edits `--c
 they share its band. His `--holes` are his master's for a face edit (the body did not move) and whatever
 the import reports for a pose edit.
 
+**One window is not enough: the edit's head must also sit where the master's does.** The generator hands
+edits back a few pixels off — `explorer-pose-point` and `explorer-face-surprised` 6 rows high,
+`explorer-face-cool` also 5 columns right — and cut through the master's window that drift lands in the
+sprite, so the head jumps two pixels between consecutive lines. So every edit (`--face-of`, `--front-of`)
+is first moved onto its master's head (`headOffset` in the importer, which prints the move), and its
+`--holes` are in the master's pixels. `src/app/fez/portraitAlignment.spec.ts` holds every speaker's bases
+and faces to their default base's head at an offset of 0.
+
 ### Fez's colours
 
 Measured off `fez-250.png`, and substituted for `[fez palette]`:
@@ -487,7 +495,7 @@ foreground.
 > picture's size and detail. Keep the head exactly as it is: same outline, same hair, same eyes, same
 > face, same hat, in the same place on the canvas. Same canvas, same framing, white background.
 
-**Then:** `yarn import-portrait art/masters/characters/explorer-pose-point.jpeg --name=explorer-pose-point --bust=0.55 --centre=1160 --behind=0.4 --holes="574,1300;632,1505;749,639;645,1059" --crop-from=art/masters/characters/explorer.jpeg --front-of=art/masters/characters/explorer.jpeg`
+**Then:** `yarn import-portrait art/masters/characters/explorer-pose-point.jpeg --name=explorer-pose-point --bust=0.55 --centre=1160 --behind=0.4 --holes="574,1306;632,1511;749,645;645,1065" --crop-from=art/masters/characters/explorer.jpeg --front-of=art/masters/characters/explorer.jpeg`
 
 ### `explorer-face-cool` — the explorer, cool
 

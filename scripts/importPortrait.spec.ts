@@ -4,9 +4,11 @@ import {
   cutBox,
   edgeBackground,
   headCentre,
+  headOffset,
   portraitWindow,
   seat,
   sharedBackground,
+  shifted,
   topBand,
 } from "./importPortrait"
 
@@ -242,5 +244,87 @@ describe("the whole-canvas frame", () => {
     })!
 
     expect(window).toEqual({ left: 0, top: -16, width: 1696, height: 2544 })
+  })
+})
+
+describe("registering an edit onto its master's head", () => {
+  /** `.` white, `#` black, `r` red — RGBA, the way sharp hands it over. */
+  const picture = (rows: string[]) => {
+    const colours: Record<string, [number, number, number]> = { ".": [255, 255, 255], "#": [0, 0, 0], r: [255, 0, 0] }
+    const width = rows[0].length
+    const data = new Uint8Array(width * rows.length * 4)
+    rows.forEach((row, y) => [...row].forEach((cell, x) => data.set([...colours[cell], 255], (y * width + x) * 4)))
+    return { data, width, height: rows.length, channels: 4 }
+  }
+  const master = picture([
+    "..........",
+    "...####...",
+    "...#rr#...",
+    "...####...",
+    "....##....",
+    "...####...",
+    "...####...",
+    "..........",
+  ])
+  const background = edgeBackground({ ...master, key: WHITE, tolerance: 20 })
+  const offset = (edit: ReturnType<typeof picture>) =>
+    headOffset({ master: master.data, edit: edit.data, background, ...master, radius: 2, step: 1 })
+
+  it("finds a head the generator moved down a row and right a column", () => {
+    const edit = picture([
+      "..........",
+      "..........",
+      "....####..",
+      "....#rr#..",
+      "....####..",
+      ".....##...",
+      "....####..",
+      "....####..",
+    ])
+
+    expect(offset(edit)).toEqual({ dx: 1, dy: 1 })
+  })
+
+  it("leaves a true edit where it is, though its face changed", () => {
+    const edit = picture([
+      "..........",
+      "...####...",
+      "...#..#...",
+      "...####...",
+      "....##....",
+      "...####...",
+      "...####...",
+      "..........",
+    ])
+
+    expect(offset(edit)).toEqual({ dx: 0, dy: 0 })
+  })
+
+  it("moves the edit back onto the master, filling what comes in with the key colour", () => {
+    const edit = picture([
+      "..........",
+      "..........",
+      "...####...",
+      "...#rr#...",
+      "...####...",
+      "....##....",
+      "...####...",
+      "...####...",
+    ])
+
+    expect(shifted(edit.data, edit.width, edit.height, 4, offset(edit), WHITE)).toEqual(
+      Buffer.from(
+        picture([
+          "..........",
+          "...####...",
+          "...#rr#...",
+          "...####...",
+          "....##....",
+          "...####...",
+          "...####...",
+          "..........",
+        ]).data
+      )
+    )
   })
 })

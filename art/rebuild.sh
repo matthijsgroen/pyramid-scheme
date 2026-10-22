@@ -1706,8 +1706,9 @@ yarn import-portrait art/masters/characters/explorer-face-cool.jpeg --name=explo
   --centre=1160 --behind=0.4 --holes="574,1299;631,1503;1242,1025;646,1062;748,642" \
   --face-of=art/masters/characters/explorer.jpeg
 # His pose bases share the master's band (--crop-from) and run after his faces, which their --front-of reads.
+# Every edit's head is moved onto the master's before anything else, so its --holes are in the master's pixels.
 yarn import-portrait art/masters/characters/explorer-pose-point.jpeg --name=explorer-pose-point --bust=0.55 \
-  --centre=1160 --behind=0.4 --holes="574,1300;632,1505;749,639;645,1059" \
+  --centre=1160 --behind=0.4 --holes="574,1306;632,1511;749,645;645,1065" \
   --crop-from=art/masters/characters/explorer.jpeg --front-of=art/masters/characters/explorer.jpeg
 
 # THE EXPLORER, SQUEEZING (side frame e, profile frame s; north reuses s)
