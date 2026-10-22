@@ -335,3 +335,86 @@ reference. Like `fez-worried`, the master shows MISSING until `fez-master` has l
 > upward, the way he does in the second attached picture. Use the second picture for the pose only — draw it
 > in the first picture's size and detail. Keep his head exactly as it is: same outline, same eyes, same
 > face, same fez, in the same place on the canvas. Same canvas, same framing, white background.
+
+### The next faces, in the order they are owed
+
+Five face edits, master only like the proof, highest-serving first. Landing one is three steps: `yarn
+repaint <key> --land`, then the import line under its entry (the face layer, cut through its base's frame),
+then tagging its lines in `storyPoses.ts`. Fez's faces stack on both of his face bases (`fez`,
+`point-fez-base`). The explorer's stack on his neutral pose only: `explorer.jpeg` is the master
+`explorer-250` was cut from, and a face edit of it is framed through that same bust window by passing the
+same flags (`--bust=0.55 --centre=1160 --behind=0.4`, and his `--holes`). His point is a different canvas
+(1696 wide, its own `--centre`) and his grin a separate painting, so neither takes a face; his first face
+also needs `faceBase: explorer` on his default pose in `portraits.ts`.
+
+### `fez-wistful` — the master, wistful
+
+**Master:** `art/masters/characters/fez-wistful.jpeg`
+
+Lines it serves: ≈17, the moved ones — the ending, the Sphinx reveal, the mural. Attach the landed master,
+`art/masters/characters/fez.jpeg`.
+
+> [preamble] [fez palette] Edit the attached picture of Fez. Change ONLY his face, to wistful and moved:
+> eyes lowered and soft, the lids a little heavy, a small gentle smile or none. Keep the outline of his
+> head, the position of his eyes, the fez, the neckerchief, his body, his tail and the white background
+> exactly as they are — pixel for pixel. Same canvas, same size, same framing. Nothing outside his face
+> moves.
+
+**Then:** `yarn import-portrait art/masters/characters/fez-wistful.jpeg --name=fez-face-wistful --whole --face-of=art/masters/characters/fez.jpeg`
+
+### `fez-surprised` — the master, stunned
+
+**Master:** `art/masters/characters/fez-surprised.jpeg`
+
+Lines it serves: ≈12 — the first ghost, wizard_3's turn. Attach the landed master,
+`art/masters/characters/fez.jpeg`.
+
+> [preamble] [fez palette] Edit the attached picture of Fez. Change ONLY his face, to stunned: eyes wide
+> open, brows raised high, a small round open mouth. Keep the outline of his head, the position of his
+> eyes, the fez, the neckerchief, his body, his tail and the white background exactly as they are — pixel
+> for pixel. Same canvas, same size, same framing. Nothing outside his face moves.
+
+**Then:** `yarn import-portrait art/masters/characters/fez-surprised.jpeg --name=fez-face-surprised --whole --face-of=art/masters/characters/fez.jpeg`
+
+### `fez-sheepish` — the master, corrected
+
+**Master:** `art/masters/characters/fez-sheepish.jpeg`
+
+Lines it serves: ≈9, the ones where he is put right — "…O. Juist." Attach the landed master,
+`art/masters/characters/fez.jpeg`.
+
+> [preamble] [fez palette] Edit the attached picture of Fez. Change ONLY his face, to sheepish, caught out
+> being wrong: an awkward lopsided half-smile, eyes glancing to one side; a faint blush on the cheek or a
+> single small sweat drop beside the head is allowed. Keep the outline of his head, the position of his
+> eyes, the fez, the neckerchief, his body, his tail and the white background exactly as they are — pixel
+> for pixel. Same canvas, same size, same framing. Nothing outside his face moves.
+
+**Then:** `yarn import-portrait art/masters/characters/fez-sheepish.jpeg --name=fez-face-sheepish --whole --face-of=art/masters/characters/fez.jpeg`
+
+### `explorer-surprised` — the explorer, surprised
+
+**Master:** `art/masters/characters/explorer-surprised.jpeg`
+
+Lines it serves: ≈9 — the meeting with Fez. Attach the explorer's master,
+`art/masters/characters/explorer.jpeg`.
+
+> [preamble] [palette] Edit the attached picture of the explorer. Change ONLY the face, to surprised: brows
+> raised, eyes a little wider, mouth open. Keep the outline of the head and hair, the position of the eyes,
+> the hat, the neckerchief, the vest, the rope, the map, the hands and the white background exactly as they
+> are — pixel for pixel. Same canvas, same size, same framing. Nothing outside the face moves.
+
+**Then:** `yarn import-portrait art/masters/characters/explorer-surprised.jpeg --name=explorer-face-surprised --bust=0.55 --centre=1160 --behind=0.4 --holes="574,1299;631,1503;1242,1025;646,1062;748,642" --face-of=art/masters/characters/explorer.jpeg`
+
+### `explorer-deadpan` — the explorer, deadpan
+
+**Master:** `art/masters/characters/explorer-deadpan.jpeg`
+
+Lines it serves: ≈18, the dry register. Attach the explorer's master, `art/masters/characters/explorer.jpeg`.
+
+> [preamble] [palette] Edit the attached picture of the explorer. Change ONLY the face, to deadpan: one
+> eyebrow raised, the other level, a flat closed half-smile. Keep the outline of the head and hair, the
+> position of the eyes, the hat, the neckerchief, the vest, the rope, the map, the hands and the white
+> background exactly as they are — pixel for pixel. Same canvas, same size, same framing. Nothing outside
+> the face moves.
+
+**Then:** `yarn import-portrait art/masters/characters/explorer-deadpan.jpeg --name=explorer-face-deadpan --bust=0.55 --centre=1160 --behind=0.4 --holes="574,1299;631,1503;1242,1025;646,1062;748,642" --face-of=art/masters/characters/explorer.jpeg`
