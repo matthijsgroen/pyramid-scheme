@@ -2623,3 +2623,128 @@ scaffold statue --contents=standing --spin=-12 --colour=#d9a93f --colour-figure=
 yarn import-tile art/masters/props/master/statue-horus.webp --tier=master --name=statue-horus --slot=prop \
   --filter=smooth --mask="$OBJ" --seat="$SHADOW"
 ```
+
+---
+
+## Ghosts on the map — four
+
+The dead stand in the rooms they talk in (`roomOccupants.ts`), and until these land each one is drawn as
+the face frame of their conversation portrait — the right person, plainly not map art. These are their
+map figures: the explorer's own frame and pixel style, so a ghost and the explorer standing in one room are
+drawn the same way.
+
+**Two attachments, and both do a different job.** The explorer's front-facing frame is the STYLE and the
+SCALE: pixel size, outline weight, canvas, where the feet stand. The ghost's portrait master is the
+CHARACTER: who it is and what they wear. Asking for one figure in the other's style is the edit that has
+kept the explorer consistent across poses (`art/README.md`, The explorer).
+
+**Painted opaque.** The game draws every ghost see-through, in a conversation and on the map alike, so one
+painted figure serves both and the room shows through all of them equally. A return painted translucent is
+a re-roll: magenta would show through it and the key cannot take that out.
+
+**One frame, standing.** A ghost does not walk, so there is no strip to build — `default/ghost-<name>` is
+a single file, which the map finds with no code change.
+
+### `default/ghost-ipi` — Ipi — starter, the bookkeeper, standing in the room
+
+**Attach:** `art/masters/explorer/explorer-s-1.webp` (style and scale), `art/masters/characters/ghost-ipi.jpeg` (who)
+
+```
+Edit the FIRST attached image: the same pixel-art game sprite, a different character in it.
+Keep its style exactly: chunky visible pixels, dark one-pixel outlines on every shape, flat fills with one
+darker shade per colour, no anti-aliasing blur, no gradients, no texture.
+Keep its frame exactly: the same portrait canvas, the figure the same height and in the same place, feet
+on the same line near the bottom edge. Flat magenta #ff00ff everywhere else. No ground, no shadow on the
+magenta, no text, no border.
+
+The character is the one in the SECOND attached image, redrawn small in the first image's pixel style.
+Ipi, an elderly ancient Egyptian bookkeeper: bald, slight, a plain linen kilt and a simple sash over one shoulder, a reed pen in one hand and a small clay tablet held against his chest. Faintly exasperated — eyebrows raised, mouth a flat line, as though he has been waiting for you and is about to mention it.
+
+A ghost: every colour is a pale blue-green, exactly these flat colours, outlines charcoal #2f3535.
+Skin #b9e1dd, shaded #95b8b1. Kilt and sash a paler #e4f4f1, shaded #b9e1dd. The tablet #b98f70.
+Painted OPAQUE — not see-through, no magenta showing through any part of the figure. The game fades it.
+
+Standing still and facing the viewer, weight on one leg. Feet visible and on the ground. Eyes ordinary and
+open. Not scary: no glow, no smoke, no tattered edges, no chains.
+Nothing of the first image's character stays — no hat, no torch, no vest, no bag — only its style and size.
+```
+
+**Import:** `yarn import-tile art/masters/ghosts/ghost-ipi.webp --tier=default --name=ghost-ipi --slot=explorer --filter=smooth`
+
+### `default/ghost-henut` — Henut — junior, the noblewoman, standing in the room
+
+**Attach:** `art/masters/explorer/explorer-s-1.webp` (style and scale), `art/masters/characters/ghost-henut.jpeg` (who)
+
+```
+Edit the FIRST attached image: the same pixel-art game sprite, a different character in it.
+Keep its style exactly: chunky visible pixels, dark one-pixel outlines on every shape, flat fills with one
+darker shade per colour, no anti-aliasing blur, no gradients, no texture.
+Keep its frame exactly: the same portrait canvas, the figure the same height and in the same place, feet
+on the same line near the bottom edge. Flat magenta #ff00ff everywhere else. No ground, no shadow on the
+magenta, no text, no border.
+
+The character is the one in the SECOND attached image, redrawn small in the first image's pixel style.
+Henut, an ancient Egyptian noblewoman: a long pleated linen dress, an elaborate braided wig, a broad beaded collar and heavy bracelets. Chin slightly lifted, pleased with herself, one hand raised to show off her rings. Vain and warm rather than cold.
+
+A ghost: every colour is a pale blue-green, exactly these flat colours, outlines charcoal #2f3535.
+Skin #a7d9d6, shaded #89b9b7. Dress a paler #e0f2f1, shaded #a7d9d6. Wig #6b9d9d. Collar and bracelets #898466.
+Painted OPAQUE — not see-through, no magenta showing through any part of the figure. The game fades it.
+
+Standing still and facing the viewer, weight on one leg. Feet visible and on the ground. Eyes ordinary and
+open. Not scary: no glow, no smoke, no tattered edges, no chains.
+Nothing of the first image's character stays — no hat, no torch, no vest, no bag — only its style and size.
+```
+
+**Import:** `yarn import-tile art/masters/ghosts/ghost-henut.webp --tier=default --name=ghost-henut --slot=explorer --filter=smooth`
+
+### `default/ghost-priest` — the high priest — expert, standing in the room
+
+**Attach:** `art/masters/explorer/explorer-s-1.webp` (style and scale), `art/masters/characters/ghost-priest.jpeg` (who)
+
+```
+Edit the FIRST attached image: the same pixel-art game sprite, a different character in it.
+Keep its style exactly: chunky visible pixels, dark one-pixel outlines on every shape, flat fills with one
+darker shade per colour, no anti-aliasing blur, no gradients, no texture.
+Keep its frame exactly: the same portrait canvas, the figure the same height and in the same place, feet
+on the same line near the bottom edge. Flat magenta #ff00ff everywhere else. No ground, no shadow on the
+magenta, no text, no border.
+
+The character is the one in the SECOND attached image, redrawn small in the first image's pixel style.
+An ancient Egyptian high priest: head shaved, a white linen robe to the ankles, a leopard-skin sash over one shoulder, hands clasped in front. Precise, patient, faintly disapproving — a man who has been waiting a very long time for somebody to do something properly.
+
+A ghost: every colour is a pale blue-green, exactly these flat colours, outlines charcoal #2f3535.
+Skin #afd9d7, shaded #96b2a8. Robe a paler #e2f3f2, shaded #afd9d7. The leopard sash #cbc7aa with spots #779790.
+Painted OPAQUE — not see-through, no magenta showing through any part of the figure. The game fades it.
+
+Standing still and facing the viewer, weight on one leg. Feet visible and on the ground. Eyes ordinary and
+open. Not scary: no glow, no smoke, no tattered edges, no chains.
+Nothing of the first image's character stays — no hat, no torch, no vest, no bag — only its style and size.
+```
+
+**Import:** `yarn import-tile art/masters/ghosts/ghost-priest.webp --tier=default --name=ghost-priest --slot=explorer --filter=smooth`
+
+### `default/ghost-pharaoh` — the pharaoh — master, standing in the room
+
+**Attach:** `art/masters/explorer/explorer-s-1.webp` (style and scale), `art/masters/characters/ghost-pharaoh.jpeg` (who)
+
+```
+Edit the FIRST attached image: the same pixel-art game sprite, a different character in it.
+Keep its style exactly: chunky visible pixels, dark one-pixel outlines on every shape, flat fills with one
+darker shade per colour, no anti-aliasing blur, no gradients, no texture.
+Keep its frame exactly: the same portrait canvas, the figure the same height and in the same place, feet
+on the same line near the bottom edge. Flat magenta #ff00ff everywhere else. No ground, no shadow on the
+magenta, no text, no border.
+
+The character is the one in the SECOND attached image, redrawn small in the first image's pixel style.
+An ancient Egyptian pharaoh: a striped nemes headcloth with a uraeus at the brow, a pleated kilt, a broad collar, arms folded. Delighted and imperious at once — the faint smile of somebody enjoying himself enormously at someone else's expense.
+
+A ghost: every colour is a pale blue-green, exactly these flat colours, outlines charcoal #2f3535.
+Skin #b3d6d1, shaded #96b8ab. Kilt and nemes stripes a paler #e2f2ef with #608f90. Collar and uraeus #9b8c6c.
+Painted OPAQUE — not see-through, no magenta showing through any part of the figure. The game fades it.
+
+Standing still and facing the viewer, weight on one leg. Feet visible and on the ground. Eyes ordinary and
+open. Not scary: no glow, no smoke, no tattered edges, no chains.
+Nothing of the first image's character stays — no hat, no torch, no vest, no bag — only its style and size.
+```
+
+**Import:** `yarn import-tile art/masters/ghosts/ghost-pharaoh.webp --tier=default --name=ghost-pharaoh --slot=explorer --filter=smooth`

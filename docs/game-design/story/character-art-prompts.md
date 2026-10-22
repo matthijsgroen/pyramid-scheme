@@ -245,6 +245,13 @@ stands whole. The ghosts get it too, for Henut's raised hand, so every human spr
 their own reference set, and the inscription is the ending — it wants its own pass with the writing legible
 enough to read at phone width.
 
+**The ghosts' map figures.** A ghost stands in the room they talk in, drawn the way the explorer is on the
+map — a small pixel figure on magenta, imported with `import-tile` rather than `import-portrait`. So their
+entries live in the tile queue, [repaint-queue.md](../../instructions/repaint-queue.md) § Ghosts on the map
+(`yarn repaint ghost-ipi`, `ghost-henut`, `ghost-priest`, `ghost-pharaoh`), each one attaching the
+explorer's front frame for style and scale and the portrait master above for who it is. Until one lands the
+map stands the portrait's face frame in for it.
+
 ## 5. Composed expressions
 
 An expression is a face, not a picture. Rolling a whole new portrait for every mood gives a slightly
