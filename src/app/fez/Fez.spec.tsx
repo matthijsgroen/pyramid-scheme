@@ -9,12 +9,23 @@ const WRITTEN = new Set([
   "excited.1.fez",
   "calm.1.fez",
   "undrawn.1.ipi",
+  "worried.1.fez",
+  "pointWorried.1.fez",
+  "faceless.1.ipi",
 ])
 
 // Made-up lines, so no authored expression is pinned here.
 vi.mock("./storyPoses", () => ({
-  storyPose: (key: string) =>
-    (({ "excited.1.fez": "pointUp", "undrawn.1.ipi": "pointUp" }) as Record<string, string>)[key] ?? "default",
+  storyExpression: (key: string) =>
+    (
+      ({
+        "excited.1.fez": { pose: "pointUp" },
+        "undrawn.1.ipi": { pose: "pointUp" },
+        "worried.1.fez": { pose: "default", face: "worried" },
+        "pointWorried.1.fez": { pose: "pointUp", face: "worried" },
+        "faceless.1.ipi": { pose: "default", face: "worried" },
+      }) as Record<string, { pose: string; face?: string }>
+    )[key] ?? { pose: "default" },
 }))
 
 vi.mock("react-i18next", () => ({
@@ -48,13 +59,13 @@ describe("facing", () => {
   it("mirrors the explorer on the right, so he faces the speaker on the left", () => {
     render(<Fez conversation="arrival.starter_1" onComplete={() => {}} />)
 
-    expect(screen.getByRole("img").classList).toContain("-scale-x-100")
+    expect(screen.getByRole("img").parentElement?.classList).toContain("-scale-x-100")
   })
 
   it("draws Fez as painted, already facing right from the left side", () => {
     render(<Fez conversation="levelCompleted" onComplete={() => {}} />)
 
-    expect(screen.getByRole("img").classList).not.toContain("-scale-x-100")
+    expect(screen.getByRole("img").parentElement?.classList).not.toContain("-scale-x-100")
   })
 
   it("swaps in a new portrait when the speaker changes, so the mirroring never animates", () => {
@@ -100,5 +111,37 @@ describe("a story line's expression", () => {
 
   it("falls back to the speaker's default when nobody has drawn that pose for them", () => {
     expect(portrait("undrawn")).toMatch(/ghost-ipi/)
+  })
+})
+
+describe("a face over the pose", () => {
+  const drawn = (conversation: string) => {
+    render(<Fez conversation={conversation} onComplete={() => {}} />)
+    const figure = screen.getByRole("img")
+    return { figure, face: figure.parentElement?.querySelector<HTMLImageElement>("img[data-face]") }
+  }
+
+  it("is laid in the same box as the figure, so every transform moves both", () => {
+    const { figure, face } = drawn("worried")
+
+    expect(figure.getAttribute("src")).toMatch(/\/fez-250/)
+    expect(face?.getAttribute("src")).toMatch(/fez-face-worried/)
+    expect(face?.parentElement).toBe(figure.parentElement)
+    expect(face?.classList).toContain("inset-0")
+  })
+
+  it("sits on a stacking pose as well as the default", () => {
+    const { figure, face } = drawn("pointWorried")
+
+    expect(figure.getAttribute("src")).toMatch(/point-fez/)
+    expect(face?.getAttribute("src")).toMatch(/fez-face-worried/)
+  })
+
+  it("is left off for a speaker nobody has painted it for", () => {
+    expect(drawn("faceless").face).toBeNull()
+  })
+
+  it("is absent on a line that asks for none", () => {
+    expect(drawn("calm").face).toBeNull()
   })
 })

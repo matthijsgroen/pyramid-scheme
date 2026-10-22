@@ -1,13 +1,17 @@
-import type { Pose } from "./portraits"
+import type { Face, Pose } from "./portraits"
 
 /**
  * The expression a story line is drawn with, by its locale key — speaker included, so a line that
  * changes hands drops out of the locales and the spec says so. A line not named here is its speaker's
  * `default`. Kept out of the translations because a face is the same in every language.
  *
- * The scripts mark the same lines in their speaker prefix: `> **Fez (pointUp):** …` (FORMAT.md).
+ * A line may also wear a face over its pose — `{ face: "worried" }` on the default pose, or
+ * `{ pose: "pointUp", face: "worried" }` — drawn as a layer on the figure (`portraitFor`).
+ *
+ * The scripts mark the same lines in their speaker prefix: `> **Fez (pointUp):** …`,
+ * `> **Fez (pointUp, worried):** …` (FORMAT.md).
  */
-export const STORY_POSES: Readonly<Record<string, Pose>> = {
+export const STORY_POSES: Readonly<Record<string, Pose | { pose?: Pose; face: Face }>> = {
   // Act I
   "arrival.starter_1.1.explorer": "pointUp",
   "arrival.starter_1.4.explorer": "pointUp",
@@ -42,4 +46,8 @@ export const STORY_POSES: Readonly<Record<string, Pose>> = {
   "tomb.wizardC.1.fez": "pointUp",
 }
 
-export const storyPose = (key: string): Pose => STORY_POSES[key] ?? "default"
+/** The pose a line is drawn in and the face over it, if any. */
+export const storyExpression = (key: string): { pose: Pose; face?: Face } => {
+  const named = STORY_POSES[key] ?? "default"
+  return typeof named === "string" ? { pose: named } : { pose: named.pose ?? "default", face: named.face }
+}

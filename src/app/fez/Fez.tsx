@@ -2,10 +2,10 @@ import clsx from "clsx"
 import { useEffect, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { GHOSTS, spokenLines, type Speaker } from "./arrivalConversation"
-import { PORTRAITS, type Pose } from "./portraits"
-import { storyPose } from "./storyPoses"
+import { FACE_LAYERS, portraitFor, type Face, type Pose } from "./portraits"
+import { storyExpression } from "./storyPoses"
 
-type PoseChat = [pose: Pose, translationKey: string, speaker?: Speaker]
+type PoseChat = [pose: Pose, translationKey: string, speaker?: Speaker, face?: Face]
 
 const pose = (...args: (Pose | string[])[]): PoseChat[] => {
   let currentPose: Pose = "default"
@@ -73,7 +73,12 @@ const writtenLines = (conversation: string, hasLine: (key: string) => boolean): 
   const table = conversations[conversation]
   if (table) return table
   const spoken = spokenLines(conversation, hasLine)
-  return spoken.length > 0 ? spoken.map(line => [storyPose(line.key), line.key, line.speaker] as PoseChat) : NOT_FOUND
+  return spoken.length > 0
+    ? spoken.map(line => {
+        const { pose, face } = storyExpression(line.key)
+        return [pose, line.key, line.speaker, face] as PoseChat
+      })
+    : NOT_FOUND
 }
 
 const fezSpeaks = (lines: PoseChat[]): boolean => lines.some(([, , speaker]) => (speaker ?? "fez") === "fez")
@@ -165,8 +170,18 @@ export const Fez: FC<{
   const pose = current?.[0] || "default"
   const speaker: Speaker = current?.[2] ?? "fez"
   // A pose nobody has drawn for this speaker yet is their default, never an empty space beside the bubble.
-  const portrait = PORTRAITS[speaker]?.[pose] ?? PORTRAITS[speaker]?.default
+  const portrait = portraitFor(speaker, pose, current?.[3])
   const wide = portrait?.wide === true
+  // Every face this speaker wears in the conversation is mounted with the figure and only shown on its
+  // line, so a look arriving mid-conversation is already loaded and never flashes the bare figure.
+  const faces = [
+    ...new Set(
+      messages
+        .filter(([, , who, face]) => (who ?? "fez") === speaker && face)
+        .map(([, , , face]) => FACE_LAYERS[speaker]?.[face!])
+        .filter(src => src !== undefined)
+    ),
+  ]
 
   if (unmet) return null
 
@@ -199,14 +214,13 @@ export const Fez: FC<{
             {t(current?.[1])}
           </div>
           {portrait && (
-            <img
+            <div
               // One element per speaker: the slide-in transitions every transform, the mirror included, so a
-              // shared element would visibly spin round each time the other one spoke.
+              // shared element would visibly spin round each time the other one spoke. The figure and its
+              // face share this box, so the mirror, the bounce and the slide move both as one.
               key={speaker}
-              src={portrait.src}
-              alt={portrait.alt}
               className={clsx(
-                "-mb-15 animate-subtle-bounce transition-transform duration-300",
+                "relative -mb-15 animate-subtle-bounce transition-transform duration-300",
                 wide ? "w-70" : "w-50",
                 // The sprite is narrower than the bubble above it, so on the right-hand side it has to
                 // be pushed over: left-aligned in a right-anchored column, the explorer stood inboard
@@ -219,7 +233,18 @@ export const Fez: FC<{
                 GHOSTS.includes(speaker) && "opacity-70",
                 visible ? "translate-y-0" : "translate-y-1/1"
               )}
-            />
+            >
+              <img src={portrait.src} alt={portrait.alt} className="w-full" />
+              {faces.map(src => (
+                <img
+                  key={src}
+                  src={src}
+                  alt=""
+                  data-face
+                  className={clsx("absolute inset-0 w-full", src !== portrait.face && "invisible")}
+                />
+              ))}
+            </div>
           )}
         </div>
       </div>
