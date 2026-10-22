@@ -27,8 +27,9 @@ export const TUTORIAL_LINES: Record<string, PoseChat[]> = {
   levelCompleted: pose("pointUp", ["levelCompleted"]),
   expeditionCompleted: pose("glassesPoint", ["expeditionCompleted", "expeditionCompleted2"]),
   collectionIntro: pose(["collectionIntro", "collectionIntro2", "collectionIntro3"]),
-  tombIntro: pose(["tombIntro", "tombIntro2"], "pointUp", ["tombIntro3"]),
-  tombTutorial: pose(["tombTutorial", "tombTutorial2"], "pointUp", ["tombTutorial3"]),
+  tombIntro: pose(["tombIntro"], "pointUp", ["tombIntro2"]),
+  // The writing is only talked about once the tableau is on screen.
+  tombTutorial: pose(["tombTutorial", "tombTutorial2", "tombTutorial3"], "pointUp", ["tombTutorial4"]),
   hieroglyphUnlock: pose(["hieroglyphUnlock"], "pointUp", ["hieroglyphUnlock2"]),
   errorHighlightTutorial: pose(["errorHighlightTutorial"], "glassesPoint", ["errorHighlightTutorial2"]),
   earlyFeedbackTutorial: pose(["earlyFeedbackTutorial"], "pointUp", ["earlyFeedbackTutorial2"]),

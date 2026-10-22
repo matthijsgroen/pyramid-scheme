@@ -25,12 +25,12 @@
   "collectionIntro3": "Swipe/scroll the screen to the right to see your collection.",
 
   "tombIntro": "There! The hidden tomb! We actually found it!",
-  "tombIntro2": "Look, writing. Maybe we can read it with the hieroglyphs we've found…",
-  "tombIntro3": "And maybe there's treasure in there. Maybe!",
+  "tombIntro2": "And maybe there's treasure in there. Maybe!",
 
-  "tombTutorial": "Look at that, sums with signs in them! See those empty slots? The hieroglyphs go in there. Yours, down below.",
-  "tombTutorial2": "The small sums show you when a sign is right. That's how we find which sign goes where.",
-  "tombTutorial3": "All filled in? Then a number lock appears. The big sum is the code — and then the tomb opens!",
+  "tombTutorial": "Ooh, writing! Can we read it? With the hieroglyphs we've found… maybe!",
+  "tombTutorial2": "Look at that, sums with signs in them! See those empty slots? The hieroglyphs go in there. Yours, down below.",
+  "tombTutorial3": "The small sums show you when a sign is right. That's how we find which sign goes where.",
+  "tombTutorial4": "All filled in? Then a number lock appears. The big sum is the code — and then the tomb opens!",
 
   "hieroglyphUnlock": "We have a special artifact — it lets us write on one of those sealed blocks!",
   "hieroglyphUnlock2": "Tap a glowing stone, then drag the artifact onto it to unlock it. One block per pyramid.",
