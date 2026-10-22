@@ -107,7 +107,9 @@ export default defineConfig({
           globPatterns: ["**/*.{js,css,html,svg,png,webp,ico,mp3,aac,ttf,otf,woff2,json}"],
           // iOS draws its own launch screens and does not go through the service worker for them,
           // so 27 splash PNGs in the precache were 0.6 MB nobody read.
-          globIgnores: ["**/apple-splash-*.png"],
+          // The Lock editor's web worker carries a second copy of the world and the web walk for a develop-mode
+          // tool: fetched when the editor's web mode opens, never precached for players.
+          globIgnores: ["**/apple-splash-*.png", "**/webCheck.worker-*.js"],
           // The whole game has to be playable offline, mosaic window included, so the stained-glass
           // artwork is precached — and the ceiling covers it UNOPTIMIZED. sharp is an optional peer
           // dep: when it fails to install (Linux CI) the image optimizer skips silently and the raw
@@ -141,5 +143,9 @@ export default defineConfig({
   },
   build: {
     target: "esnext",
+  },
+  // The Lock editor's web worker is a module worker: the world and the web walk split into chunks like the app.
+  worker: {
+    format: "es",
   },
 })

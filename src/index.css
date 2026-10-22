@@ -96,6 +96,14 @@ body {
     }
   }
 
+  /* The Lock editor's web mode: an activator a pull just put in reach rings out twice, then stays lit. */
+  --animate-web-pulse: web-pulse 1.2s ease 2;
+  @keyframes web-pulse {
+    50% {
+      box-shadow: 0 0 0 9px rgba(56, 189, 248, 0.35);
+    }
+  }
+
   /* A puzzle node finishing: it catches the light, and nothing moves. A swell was tried first and read as
      the board twitching — a node changing SIZE says "something is wrong with the layout" rather than
      "this one is done". Brightness only, so the colour a skin already gave the node is what flashes. */

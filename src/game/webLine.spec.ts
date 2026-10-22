@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { isRegionGate } from "./lockAuthoring"
 import { WEB_MARK_GLYPHS } from "./mark"
-import { describeWhere, potKey } from "./webLine"
+import { describeWhere, potKey, pyramidLinePct } from "./webLine"
 import type { ResolvedWeb } from "./webLine"
 import { parseWeb } from "./webNotation"
 import { floor, lockOf, plain, pyramid, refusalTypes, resolve, section, world } from "./webFixtures.testing"
@@ -288,5 +288,21 @@ describe("the web's marks", () => {
 
   it("refuses a web wearing more marks than there are web glyphs", () => {
     expect(refusalTypes(potsWeb(WEB_MARK_GLYPHS.length + 1))).toContain("webMarksRunOut")
+  })
+})
+
+describe("a point on a pyramid's line", () => {
+  // Two floors of 3 and 5 rooms: a line of 8 rooms, 7 steps from the arrival to the last room.
+  const two = world({ 1: [pyramid(floor(3), floor(5))] })
+  const at = { journey: 1, pyramid: 1 }
+
+  it("counts rooms across floors, the arrival at 0% and the last room at 100%", () => {
+    expect(pyramidLinePct(two, at, 0, 0)).toBe(0)
+    expect(pyramidLinePct(two, at, 1, 4)).toBe(100)
+    expect(pyramidLinePct(two, at, 1, 0)).toBeCloseTo((3 / 7) * 100)
+  })
+
+  it("puts a seam halfway between its two rooms", () => {
+    expect(pyramidLinePct(two, at, 1, 1.5)).toBeCloseTo((4.5 / 7) * 100)
   })
 })

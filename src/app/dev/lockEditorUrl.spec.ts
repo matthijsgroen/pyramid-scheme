@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
-import { START_LOCK, decodeLockHash, encodeLockHash } from "./lockEditorUrl"
+import { START_LOCK, START_WEB, decodeLockHash, decodeWebHash, encodeLockHash, encodeWebHash } from "./lockEditorUrl"
+import { parseWeb } from "@/game/webNotation"
 import { parseLock } from "@/game/lockNotation"
 import { lockChecks } from "@/game/lockChecks"
 
@@ -22,5 +23,18 @@ describe("the lock link", () => {
 
   it("starts from a lock that compiles and is sound", () => {
     expect(lockChecks(parseLock(START_LOCK)).sound).toBe(true)
+  })
+})
+
+describe("the web link", () => {
+  it("reads back exactly the web it was made from, and is no lock link", () => {
+    const text = "[w3]\nsand from 50%: 75% 100% by reed ankh // #1"
+    expect(decodeWebHash(encodeWebHash(text))).toBe(text)
+    expect(decodeLockHash(encodeWebHash(text))).toBeNull()
+    expect(decodeWebHash(encodeLockHash(text))).toBeNull()
+  })
+
+  it("starts from a web that reads", () => {
+    expect(() => parseWeb(START_WEB)).not.toThrow()
   })
 })
