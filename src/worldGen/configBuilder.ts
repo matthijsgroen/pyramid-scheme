@@ -1,6 +1,6 @@
 import type { Difficulty, SiteConfig, Tier, TreasureReward } from "./types"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
-import type { JourneyDef } from "./types"
+import type { JourneyDef, TombJourneyDef } from "./types"
 import { resolvePyramidConstraintWithProvenance } from "./constraintResolver"
 import type { Provenance } from "./constraintResolver"
 import { worldSpec } from "./worldSpec"
@@ -167,17 +167,56 @@ const buildSiteConfigs = (
 // the floor's treasure absent. See docs/game-design/keys-and-locks-solver.md.
 export type TombTreasureResolver = (tombId: string, index: number) => TreasureReward | undefined
 
-// A tomb is structurally the same as a pyramid interior (pyramid-interior-design.md) —
-// one treasure per floor, self-gating its own next floor's shortcut ("the treasure IS the
-// key"). Built by authoring one FloorConstraint per floor and handing them to buildSite()'s
-// authored-floors branch, the exact same mechanism pyramids' own authored floors[] use —
-// tomb-specific vocabulary (wardPath, the perk-stream reward resolver, "tomb-puzzle" encounter,
-// crocodile capstone) is authoring convenience, not a separate construction path.
-const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<string, SiteConfig[]> => {
+// A tomb is a journey of `levelCount` sites built through buildSite like any other. Every level but
+// the last is an ordinary authored site (its `floors` come from the journey's own pyramid rules); the
+// last is the tomb proper, which is structurally the same as a pyramid interior
+// (pyramid-interior-design.md) — one treasure per floor, self-gating its own next floor's shortcut
+// ("the treasure IS the key"). The tomb's rules (`tomb()`) are scoped to that last level. Its floors are
+// authored FloorConstraints handed to buildSite()'s authored-floors branch, the exact same mechanism
+// pyramids' own authored floors[] use — tomb-specific vocabulary (wardPath, the perk-stream reward
+// resolver, "tomb-puzzle" encounter, crocodile capstone) is authoring convenience, not a separate
+// construction path. Every authored floor field passes through; the tomb only fills what is unset.
+export const buildTombConfigsFor = (
+  tombs: readonly TombJourneyDef[],
+  spec: typeof worldSpec,
+  resolveTombTreasure?: TombTreasureResolver
+): Record<string, SiteConfig[]> => {
   const configs: Record<string, SiteConfig[]> = {}
-  for (const tomb of TOMB_JOURNEYS) {
-    // ponytail: pyramidIndex=0,levelCount=1 so tier-pyramid selectors like "last"/"first" always match
-    const { constraint } = resolvePyramidConstraintWithProvenance(worldSpec, tomb.id, tomb.tier as Tier, 0, 1)
+  for (const tomb of tombs) {
+    const sites: SiteConfig[] = []
+    for (let li = 0; li < tomb.levelCount - 1; li++) {
+      const { constraint: earlier } = resolvePyramidConstraintWithProvenance(
+        spec,
+        tomb.id,
+        tomb.tier,
+        li,
+        tomb.levelCount
+      )
+      if (!earlier.floors?.length)
+        throw new Error(`buildTombConfigs: tomb=${tomb.id} level=${li + 1} must author its floors`)
+      const { floors } = buildSite({
+        journeyId: tomb.id,
+        tier: tomb.tier,
+        pyramidIndex: li,
+        levelCount: tomb.levelCount,
+        pathPuzzles: 1,
+        constraint: earlier,
+        difficulty: earlier.difficulty ?? tomb.tier,
+        hasMapPieceBranch: false,
+        hasWardGate: false,
+        nextTier: null,
+        resolveReward: reward => specToReward(reward, tomb.tier),
+        resolveMainEndReward: reward => specToReward(reward, tomb.tier),
+        sideEncounter: earlier.encounter,
+        sideEncounterArgs: earlier.encounterArgs,
+        sideTheme: earlier.theme,
+        sideDecorations: earlier.decorations,
+        sideWallDecorations: earlier.wallDecorations,
+      })
+      sites.push(floors)
+    }
+    const li = tomb.levelCount - 1
+    const { constraint } = resolvePyramidConstraintWithProvenance(spec, tomb.id, tomb.tier, li, tomb.levelCount)
     const difficulty: Difficulty = constraint.difficulty ?? "starter"
     // Defaults to the "tomb-puzzle" tag (resolves to tableau) — not "puzzle" (sumplete), since
     // tomb main-path rooms consume hieroglyph symbols the player may not have yet.
@@ -194,7 +233,7 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
     const resolveTombReward = (reward: RewardSpec | TombRewardHint | undefined): TreasureReward | undefined => {
       if (reward === "tombTreasure") return resolveTombTreasure?.(tomb.id, treasureIndex++)
       if (reward === "fragmentSlot") return { type: "fragmentSlot" }
-      if (reward) return specToReward(reward as RewardSpec, tomb.tier as Tier)
+      if (reward) return specToReward(reward as RewardSpec, tomb.tier)
       return undefined
     }
 
@@ -224,11 +263,11 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
         ? [wardChest({ tomb: tomb.id, index: i, puzzles: 0 })]
         : [wardPath({ tomb: tomb.id, index: i, puzzles: 0 })]
       return {
+        ...authored,
         pathPuzzles: authored?.pathPuzzles ?? TOMB_ROOMS_PER_FLOOR[difficulty],
-        difficulty,
-        encounter,
+        difficulty: authored?.difficulty ?? difficulty,
+        encounter: authored?.encounter ?? encounter,
         mainEndReward: authored?.mainEndReward ?? "tombTreasure",
-        nodes: authored?.nodes,
         sideSections: [...authoredSections, ...shortcut],
         corridorStraightness: authored?.corridorStraightness ?? constraint.corridorStraightness,
         packing: authored?.packing ?? constraint.packing,
@@ -240,9 +279,9 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
 
     const { floors: floorConfigs } = buildSite<TombRewardHint>({
       journeyId: tomb.id,
-      tier: tomb.tier as Tier,
-      pyramidIndex: 0,
-      levelCount: 1,
+      tier: tomb.tier,
+      pyramidIndex: li,
+      levelCount: tomb.levelCount,
       pathPuzzles: 1,
       // Cast: `floors` is authored in tomb's own TombRewardHint vocabulary, which
       // resolveTombReward (below) understands.
@@ -259,10 +298,14 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
       sideDecorations: constraint.decorations,
       sideWallDecorations: constraint.wallDecorations,
     })
-    configs[tomb.id] = [floorConfigs]
+    sites.push(floorConfigs)
+    configs[tomb.id] = sites
   }
   return configs
 }
+
+const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<string, SiteConfig[]> =>
+  buildTombConfigsFor(TOMB_JOURNEYS, worldSpec, resolveTombTreasure)
 
 // ── Main entry point ──────────────────────────────────────────────────────────
 

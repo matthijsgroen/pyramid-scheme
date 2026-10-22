@@ -1,4 +1,5 @@
-// Single source of truth for journey structure (id, tier, levelCount).
+// Single source of truth for journey structure (id, tier, levelCount). A tomb also carries floorCount
+// (floors inside a site) apart from levelCount (sites).
 // Imported by both src/data/journeys.ts and scripts/worldGen/data.ts.
 // No framework or game-engine imports allowed here.
 

@@ -592,7 +592,7 @@ export function journey(id: string, c?: PyramidConstraint): Rule | JourneyScopeB
 }
 
 export function tomb(id: string, c: TombConstraint): Rule {
-  return { scope: { level: "journey", journey: id }, constraints: c }
+  return { scope: { level: "journey-pyramid", journey: id, pyramid: "last" }, constraints: c }
 }
 
 export const rules = (list: Rule[]): Rule[] => list
