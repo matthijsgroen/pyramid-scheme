@@ -3,6 +3,7 @@ import { act, render } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import type { FloorGrid, GridCell } from "@/game/siteTypes"
 import { ExplorerDot } from "./ExplorerDot"
+import { cellCenter } from "./mapScale"
 
 const corridor = (dirs: string[]): GridCell => ({
   type: "corridor",
@@ -46,6 +47,20 @@ describe("ExplorerDot", () => {
     act(() => void vi.advanceTimersByTime(2000))
 
     expect(onArrive).toHaveBeenCalled()
+  })
+
+  it("rests at the spot its room stands it on, off the node's centre, and walks off from there", () => {
+    const standAt = (r: number, c: number) => (r === 0 && c === 1 ? { dx: 10, dy: 20 } : { dx: 0, dy: 0 })
+    const at = (container: HTMLElement) => container.querySelector("[data-explorer]")?.getAttribute("data-at")
+    const { container, rerender } = render(<ExplorerDot grid={grid} pos={[0, 1]} standAt={standAt} />)
+    const node = cellCenter(0, 1)
+    expect(at(container)).toBe(`${node.cx + 10},${node.cy + 20}`)
+
+    rerender(<ExplorerDot grid={grid} pos={[0, 2]} standAt={standAt} />)
+    act(() => void vi.advanceTimersByTime(2000))
+
+    const next = cellCenter(0, 2)
+    expect(at(container)).toBe(`${next.cx},${next.cy}`)
   })
 })
 

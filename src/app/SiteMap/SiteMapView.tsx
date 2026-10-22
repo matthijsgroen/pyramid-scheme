@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState, type ReactNode } from "react"
+import { Fragment, useCallback, useEffect, useMemo, useState, type ReactNode } from "react"
 import type {
   CellState,
   DecorationKind,
@@ -90,6 +90,7 @@ import {
   tileRegionsFor,
   type RoomClaims,
 } from "./roomClaims"
+import { standingOffset } from "./standingSpot"
 import { DIR_MOVES } from "./corridorRuns"
 import { footprintRects, hasWallFace } from "./tileRegions"
 import type { Rect } from "./tileRegions"
@@ -1410,7 +1411,10 @@ export const SiteMapView = ({
   // floor line with — UNLESS that furniture is the room he is standing at (`atExplorer`), which wins
   // the tie instead: a lever the player is stood on has to stay visible while he works it, not vanish
   // behind him.
-  const explorerBaseY = explorerPos ? cellCenter(explorerPos[0], explorerPos[1]).cy + CELL / 2 : Infinity
+  const standAt = useCallback((r: number, c: number) => standingOffset(grid, claims, r, c), [grid, claims])
+  const explorerBaseY = explorerPos
+    ? cellCenter(explorerPos[0], explorerPos[1]).cy + standAt(explorerPos[0], explorerPos[1]).dy + CELL / 2
+    : Infinity
   // A GATE IS DRAWN WITH THE ARCHWAYS, after everything else, for the archway's own reason: it is a
   // thing in the world rather than a decal, so the player walks BEHIND it, and it is hung in the wall
   // band where an arch is — sorted by its floor line among the furniture it came out UNDER the doorway
@@ -1911,6 +1915,7 @@ export const SiteMapView = ({
                   pos={explorerPos}
                   carrying={carrying}
                   onArrive={() => setSettledExplorerPos(explorerPos)}
+                  standAt={standAt}
                 />
               )}
               {ride &&
