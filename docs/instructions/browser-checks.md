@@ -11,7 +11,8 @@ the machine full of stray processes or one agent driving another's tab.
   close is.
 - **Every server you start, you stop** — a `yarn dev` or Storybook you launched, killed by the PID you
   launched before you report. Never stop one you did not start: a Storybook already running belongs to
-  someone else (the user keeps one on 6007) — reuse it and leave it running.
+  someone else, often the user, on whatever port was free — find it (`lsof -iTCP -sTCP:LISTEN`), reuse it
+  and leave it running.
 - Start your own server on a **free port**, never the default 9164 the user plays on.
 
 ## One shared browser
