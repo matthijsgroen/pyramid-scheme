@@ -588,7 +588,7 @@ current and future. `JourneyCard` has one emerald "still treasure to find here" 
   seals are not sand. Whole percent, 1% rather than 0% while anything is buried; the line is hidden at 0% and on a
   journey without sand. It reads the authoring, so it shows before the first visit. A stop inside a lock has no seam
   in the authoring, so it counts from its floor's first room (`journeyBuriedPercent`,
-  `src/mods/topology/game/web/buriedPercent.ts`).
+  `src/game/webBuriedPercent.ts`).
 
 ## Toggle-off
 

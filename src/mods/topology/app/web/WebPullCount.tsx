@@ -2,7 +2,7 @@ import type { FC } from "react"
 import { useTranslation } from "react-i18next"
 import type { CombinedJourneyState } from "@/app/state/useJourneys"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
-import { journeyBuriedPercent } from "@/mods/topology/game/web/buriedPercent"
+import { journeyBuriedPercent } from "@/game/webBuriedPercent"
 import { useWebPulled } from "./useWebPulled"
 import { WORLD_ACTIVATORS } from "./activators"
 
