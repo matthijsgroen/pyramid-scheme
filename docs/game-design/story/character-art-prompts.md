@@ -271,9 +271,15 @@ together, and the outlines run continuously between them. Cut at the eye and the
 change outside those cuts are left behind, and the edge of every cut lands on an outline. One soft region
 takes all of it.
 
-**Baked offline, not composed in the app.** The face layer is laid over the base at master size and the
-result goes through `yarn import-portrait` like any other master, so the game still ships one flat sprite
-per expression. What changes is where the expression comes from, not what is loaded.
+**Composed in the app, not baked.** A face layer ships as its own sprite — transparent outside the head,
+cut through the same window as its character's poses — and `Fez.tsx` stacks it on whichever pose the line
+asks for (`portraitFor`). One figure per pose plus a small layer per look costs far less than a whole
+portrait for every pose-and-look pair: Fez's figure is ~75 kB, the worried face ~40 kB, and it serves
+every pose cut to the shared frame. `yarn import-portrait <expression> --face-of=<base>` writes the layer;
+a pose base is an edit that kept the base's head in place, imported with the same framing flags
+(`--whole` for Fez, whose masters are painted in his sprite's frame), so every layer lands on every pose
+pixel for pixel. A pose whose own painting carries a face (Fez's open-mouthed point) keeps it for the bare
+pose and names a plain base for faces (`point-fez-base`). The lines are in `art/rebuild.sh`.
 
 **The pass criterion**, for the proof and for every composed expression after it: at 100% there is no visible
 seam anywhere around the face, and outside the head the composed picture is the base to within compression

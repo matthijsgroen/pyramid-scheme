@@ -157,7 +157,7 @@ room and the room is a hole in the ground.
 
 > **Ipi:** Hey! Hands off! That's my jar!
 >
-> **Fez:** …Did that jar just say something?!
+> **Fez (worried):** …Did that jar just say something?!
 >
 > **Ipi:** That was me. Third shelf, the one with the chip. That one's mine.
 >

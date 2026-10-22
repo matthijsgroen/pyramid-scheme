@@ -49,7 +49,7 @@ thinks, twice, and does not comment on it.
 >
 > **Explorer:** Which of those are we here for?
 >
-> **Fez:** I was rather hoping neither.
+> **Fez (worried):** I was rather hoping neither.
 
 ## `expert_4` — Pyramid of Djoser
 
@@ -128,11 +128,11 @@ an ask placed in an optional room is an arc the player can walk past.
 
 `story.bond.expert.*` — reaction rail, on a trap survived.
 
-> **Fez:** That was close.
+> **Fez (worried):** That was close.
 >
 > **Explorer:** It was fine.
 >
-> **Fez:** It was close. I am allowed to say so.
+> **Fez (worried):** It was close. I am allowed to say so.
 
 ## The inscription, line two
 

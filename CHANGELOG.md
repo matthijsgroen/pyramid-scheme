@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ipi, in the first tomb, talks with Fez and the explorer instead of at them.
 - The map button on the main screen is square.
 - Fez and the explorer look excited on their excited story lines.
+- Fez looks worried on his worried story lines.
 - On a wider screen the explorer and the ghosts stand whole beside the conversation; a phone still cuts them at its edge.
 - The Sphinx stands on the horizon behind the Dawn at the Sphinx pyramids.
 - A journey's arrival plays in front of its pyramid, not over the list of journeys.

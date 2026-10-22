@@ -26,7 +26,7 @@ the place is and lets the mechanic read itself.
 >
 > **Explorer:** That is what we have been doing.
 >
-> **Fez:** I had been trying not to say so.
+> **Fez (worried):** I had been trying not to say so.
 >
 > **Explorer:** The sand is still coming in.
 >
@@ -257,7 +257,7 @@ The rite the priest has been waiting three thousand years to complete.
 
 Not a body. A rope still hanging, a notebook, and somebody who turned back.
 
-> **Fez:** Their rope. Still tied off.
+> **Fez (worried):** Their rope. Still tied off.
 >
 > **Explorer:** They got this far.
 >

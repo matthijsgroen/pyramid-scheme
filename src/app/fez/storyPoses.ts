@@ -26,6 +26,7 @@ export const STORY_POSES: Readonly<Record<string, Pose | { pose?: Pose; face: Fa
   "arrival.starter_4.3.fez": "pointUp",
   "tomb.starter.12.fez": "pointUp",
   "tomb.starter.16.fez": "pointUp",
+  "tomb.starter.2.fez": { face: "worried" },
   // Act II
   "arrival.junior_2.1.fez": "pointUp",
   "arrival.junior_2.2.fez": "pointUp",
@@ -36,14 +37,23 @@ export const STORY_POSES: Readonly<Record<string, Pose | { pose?: Pose; face: Fa
   "arrival.expert_3.1.fez": "pointUp",
   "arrival.expert_4.2.fez": "pointUp",
   "tomb.expertB.3.fez": "pointUp",
+  "arrival.expert_3.4.fez": { face: "worried" },
+  "bond.expert.1.fez": { face: "worried" },
+  "bond.expert.3.fez": { face: "worried" },
   // Act IV
   "arrival.master_1.3.fez": "pointUp",
   "arrival.master_2.4.fez": "pointUp",
   "arrival.master_4.1.fez": "pointUp",
+  "arrival.master_3.1.fez": { face: "worried" },
+  "arrival.master_3.4.fez": { face: "worried" },
+  "arrival.master_3.6.fez": { face: "worried" },
+  "bond.master.1.fez": { face: "worried" },
   // Act V
   "arrival.wizard_2.1.fez": "pointUp",
   "arrival.wizard_3.5.fez": "pointUp",
   "tomb.wizardC.1.fez": "pointUp",
+  "arrival.wizard_1.4.fez": { face: "worried" },
+  "tomb.wizardB.1.fez": { face: "worried" },
 }
 
 /** The pose a line is drawn in and the face over it, if any. */

@@ -45,17 +45,17 @@ hidden corridor here.
 
 `story.arrival.master_3.*` — **where somebody was here first.**
 
-> **Fez:** Ah. Somebody's camp.
+> **Fez (worried):** Ah. Somebody's camp.
 >
 > **Explorer:** Recent?
 >
 > **Fez:** Recent-ish. Tinned food and a bad cough, by the look of it.
 >
-> **Fez:** They went in further than this and they did not take their kit with them.
+> **Fez (worried):** They went in further than this and they did not take their kit with them.
 >
 > **Explorer:** Did they come back for it?
 >
-> **Fez:** …Let us keep moving.
+> **Fez (worried):** …Let us keep moving.
 
 ## `master_4` — Tomb of Nefertari
 
@@ -131,7 +131,7 @@ sent to `master_2`. This says only that what they hold is wrong.
 
 `story.bond.master.*` — reaction rail, after the refusal.
 
-> **Fez:** We could stop.
+> **Fez (worried):** We could stop.
 >
 > **Explorer:** We could.
 >

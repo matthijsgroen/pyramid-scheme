@@ -127,6 +127,12 @@ the named pose; a bare prefix is the speaker's `default`. The game reads it from
 Only poses in `Pose` (`src/app/fez/portraits.ts`) are valid, and one a speaker has no art for draws their
 `default`.
 
+**A face rides there too.** `> **Fez (worried):** …` lays the worried face over his default pose, and
+`> **Fez (pointUp, worried):** …` over the pointing one — pose first, face second. In `storyPoses.ts` that
+is `{ face: "worried" }` or `{ pose: "pointUp", face: "worried" }`. Only faces in `Face` are valid, and
+the spec holds every face named to one painted for that speaker on that pose; a face nobody painted is
+the bare pose.
+
 #### Every line is spoken, not narrated (house style, every act)
 
 A line is somebody talking, out loud, about something in front of them — never a caption describing the
