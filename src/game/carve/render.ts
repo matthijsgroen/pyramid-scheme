@@ -119,6 +119,7 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
     const region = labels.region.get(cellKey)
     const ordinal = labels.ordinal.get(cellKey)
     const tier = labels.difficulty.get(cellKey)
+    const tileset = labels.tileset.get(cellKey)
     if (spec) {
       // The spec spreads whole, so a future RoomCell field cannot go missing here; the section's tier first, so a
       // room authored at its own tier keeps it.
@@ -127,6 +128,7 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
         dirs,
         state: "fogged",
         ...(tier ? { difficulty: tier } : {}),
+        ...(tileset ? { tileset } : {}),
         sectionAddress,
         sectionHash: labels.absorbedHash.get(cellKey)?.hash ?? sectionHash,
         legacySectionHash: labels.absorbedHash.get(cellKey)?.legacy ?? legacySectionHash,
@@ -147,6 +149,7 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
         legacySectionHash,
         ...(ordinal ? { ordinal } : {}),
         ...(tier ? { difficulty: tier } : {}),
+        ...(tileset ? { tileset } : {}),
         ...(hidden ? { hidden } : {}),
         ...(region !== undefined ? { region } : {}),
       }
@@ -173,6 +176,7 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
         ? `${labels.address.get(other) ?? MAIN_SECTION_ADDRESS}:${otherOrdinal}`
         : otherOrdinal
     const tier = labels.difficulty.get(owner)
+    const tileset = labels.tileset.get(owner)
     return {
       type: "corridor",
       dirs,
@@ -187,6 +191,7 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
           }
         : {}),
       ...(tier ? { difficulty: tier } : {}),
+      ...(tileset ? { tileset } : {}),
       ...(labels.hidden.has(owner) && labels.hidden.has(other) ? { hidden: true } : {}),
       ...(labels.region.get(owner) !== undefined ? { region: labels.region.get(owner) } : {}),
     }
@@ -391,6 +396,7 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
   return {
     cells: cells2D,
     difficulty: config.difficulty,
+    ...(config.tileset !== undefined ? { tileset: config.tileset } : {}),
     ...(config.theme !== undefined ? { theme: config.theme } : {}),
     ...(config.condition !== undefined ? { condition: config.condition } : {}),
     ...(config.patron !== undefined ? { patron: config.patron } : {}),

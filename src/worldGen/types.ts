@@ -22,7 +22,7 @@ export type Difficulty = "starter" | "junior" | "expert" | "master" | "wizard"
 
 // One open reward type, shared: worldGen re-exports game/siteTypes rather than mirroring it
 // (worldGen→game is an allowed edge). Core enumerates no reward id; see the doc comment there.
-import type { TreasureReward, FragmentSlotReward, MapPieceReward, TombKeyReward } from "@/game/siteTypes"
+import type { TreasureReward, FragmentSlotReward, MapPieceReward, TombKeyReward, Tileset } from "@/game/siteTypes"
 export type { TreasureReward, FragmentSlotReward, MapPieceReward, TombKeyReward }
 
 export type SubSection = {
@@ -31,6 +31,8 @@ export type SubSection = {
   label?: string
   pathPuzzles: number
   difficulty: Difficulty
+  /** The tileset this path is drawn in. Mirrors game/siteTypes.ts. */
+  tileset?: Tileset
   end: "treasure" | "staircase" | { stairId: string }
   gate?:
     | {
@@ -89,6 +91,8 @@ export type SideSection = SubSection & {
 export type FloorConfig = {
   pathPuzzles: number
   difficulty: Difficulty
+  /** The tileset this floor is drawn in. Mirrors game/siteTypes.ts. */
+  tileset?: Tileset
   end: "treasure"
   exitOrStaircase: "exit" | "none" | "staircase" | { stairId: string }
   entrance?: "stairhead" | { stairId: string }

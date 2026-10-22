@@ -1,4 +1,4 @@
-import type { DecorationKind, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
+import type { DecorationKind, Patron, SiteCondition, Tileset, WallDecorationKind } from "../game/siteTypes"
 import type { Difficulty, FloorConfig, SideSection, Tier, TreasureReward } from "./types"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { GLOBAL_DEFAULTS } from "./spec/global"
@@ -116,6 +116,7 @@ export type BuildFloorOptions = {
   sealed?: boolean
   encounterArgs?: unknown
   theme?: string
+  tileset?: Tileset
   decorations?: DecorationKind[]
   /** What has got into the site. Copied onto every floor, which is what makes it survive the climb. */
   condition?: SiteCondition
@@ -155,6 +156,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.sealed ? { sealed: true } : {}),
   ...(opts.encounterArgs !== undefined ? { encounterArgs: opts.encounterArgs } : {}),
   ...(opts.theme !== undefined ? { theme: opts.theme } : {}),
+  ...(opts.tileset !== undefined ? { tileset: opts.tileset } : {}),
   ...(opts.forks ? { forks: opts.forks } : {}),
   ...(opts.oneWays ? { oneWays: opts.oneWays } : {}),
   ...(opts.oneWayRealisation ? { oneWayRealisation: opts.oneWayRealisation } : {}),
@@ -374,6 +376,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           encounterArgs: fc.encounterArgs ?? constraint.encounterArgs,
           // A floor may wear its own skin inside a plainer pyramid; unset, it wears the site’s.
           theme: fc.theme ?? constraint.theme,
+          tileset: fc.tileset ?? constraint.tileset,
           decorations: fc.decorations ?? constraint.decorations,
           wallDecorations: fc.wallDecorations ?? constraint.wallDecorations,
           // No per-floor override: a condition that stopped halfway up would read as an authoring slip
@@ -429,6 +432,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             switches: constraint.switches,
             encounterArgs: constraint.encounterArgs,
             theme: constraint.theme,
+            tileset: constraint.tileset,
             // The SITE's condition, on every floor. It rides beside `theme` at each of these calls, and the
             // difference between the two is the point: a floor may wear its own hour, but green through the
             // brick that stopped at floor three would read as an authoring slip rather than as weather.
@@ -489,6 +493,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           switches: constraint.switches,
           encounterArgs: constraint.encounterArgs,
           theme: constraint.theme,
+          tileset: constraint.tileset,
           condition: constraint.condition,
           patron: constraint.patron,
           // The pools ride with them, and for the same reason: a fork is where a prop goes, so a floor
@@ -587,6 +592,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             switches: constraint.switches,
             encounterArgs: constraint.encounterArgs,
             theme: constraint.theme,
+            tileset: constraint.tileset,
             condition: constraint.condition,
             patron: constraint.patron,
             // The pools ride with them, and for the same reason: a fork is where a prop goes, so a floor
@@ -669,6 +675,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     switches: constraint.switches,
     encounterArgs: constraint.encounterArgs,
     theme: constraint.theme,
+    tileset: constraint.tileset,
     condition: constraint.condition,
     patron: constraint.patron,
     // The pools ride with them, and for the same reason: a fork is where a prop goes, so a floor

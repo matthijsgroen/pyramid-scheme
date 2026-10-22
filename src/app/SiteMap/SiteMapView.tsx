@@ -2,10 +2,10 @@ import { Fragment, useCallback, useEffect, useMemo, useState, type ReactNode } f
 import type {
   CellState,
   DecorationKind,
-  Difficulty,
   Direction,
   FloorGrid,
   Patron,
+  Tileset,
   WallDecorationKind,
 } from "../../game/siteTypes"
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
@@ -84,6 +84,7 @@ import {
   allFloorRects,
   buildRoomClaims,
   cellFloorAt,
+  cellTileset,
   floorTier,
   isPassable,
   litClaimOwner,
@@ -263,7 +264,7 @@ const NO_STATES: ReadonlyMap<string, string> = new Map()
 export const nodeSpritesFor = (
   grid: FloorGrid,
   claims: RoomClaims,
-  floorTier: Difficulty,
+  floorTier: Tileset,
   pendingCells?: ReadonlySet<string>,
   /** Every mechanism's current position, and which floor this is — together the address a lever's own
    * state is stored under (`cellAddress`, `mechanismDoors.ts`). Absent for callers with no journey yet
@@ -330,7 +331,7 @@ export const nodeSpritesFor = (
     if (end.type !== "corridor") continue
     const art = DROP_ART[run.dir]
     const { x, y, w, h } = dropFrame(run.cells, run.dir)
-    const dropUrl = art && tileUrl(end.difficulty ?? floorTier, art.name)
+    const dropUrl = art && tileUrl(cellTileset(end, grid, floorTier), art.name)
     if (!art || !dropUrl || end.state === "fogged") continue
     out.push({
       footprint: clipCells(run.cells.map(([r, c]) => `${r},${c}`)),
@@ -350,7 +351,7 @@ export const nodeSpritesFor = (
   const gateLeaf = (
     r: number,
     c: number,
-    tier: Difficulty,
+    tier: Tileset,
     dirs: ReadonlySet<Direction>,
     { open, wall }: { open: boolean; wall: boolean }
   ): void => {
@@ -444,7 +445,7 @@ export const nodeSpritesFor = (
       const cell = grid.cells[r][c]
       if (cell.type === "corridor" && cell.openGate && cell.state !== "fogged") {
         // A way the explorer's weight shuts is drawn shut while he stands there; the walk still reads the corridor it is.
-        gateLeaf(r, c, cell.difficulty ?? floorTier, cell.dirs, {
+        gateLeaf(r, c, cellTileset(cell, grid, floorTier), cell.dirs, {
           open: !weight?.shut.has(cell.openGate.requiredKeyId ?? ""),
           wall: false,
         })
@@ -452,7 +453,7 @@ export const nodeSpritesFor = (
       }
       if (cell.type !== "room" || cell.state === "fogged") continue
       const kind = shapeKindFor(grid, r, c, cell)
-      const tier = cell.difficulty ?? floorTier
+      const tier = cellTileset(cell, grid, floorTier)
       const { cx, cy } = cellCenter(r, c)
       const footprint = clipCells(footprints.get(`${r},${c}`) ?? [`${r},${c}`])
       if (kind === "treasure" && !cell.tags?.includes("shop")) {
@@ -699,7 +700,7 @@ const Decoration = ({
   patron,
 }: {
   kind: DecorationKind
-  tier: Difficulty
+  tier: Tileset
   seed: string
   patron?: Patron
 }) => {
@@ -808,7 +809,7 @@ const FloorScatter = ({
 }: {
   grid: FloorGrid
   scatter: ReadonlyMap<string, ScatterKind>
-  tier: Difficulty
+  tier: Tileset
 }) => (
   <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
     {[...scatter].map(([cellKey, kind]) => {
@@ -911,7 +912,7 @@ type WallItem = {
   row: number
   col: number
   kind: WallDecorationKind
-  tier: Difficulty
+  tier: Tileset
   /** the band's own light, so an item is not brighter than the wall it hangs on */
   state: CellState
 }
@@ -1001,7 +1002,7 @@ const WallItems = ({ items, patron }: { items: readonly WallItem[]; patron?: Pat
 // front of them. Which is also why it fades while they stand in it — an arch that hid the player would
 // be a wall, and a doorway is not.
 
-type Doorway = { row: number; col: number; tier: Difficulty }
+type Doorway = { row: number; col: number; tier: Tileset }
 
 /** Every doorway on the floor: the way into a CHAMBER, held in a wall run that gives its jambs corners to
  * stand on. Both sides have to be drawn floor, so an unexplored way through carries no arch — an arch is a
@@ -1404,7 +1405,7 @@ export const SiteMapView = ({
           <div key={`prop:${cellKey}`} style={{ position: "absolute", left: cx, top: cy, width: 0, height: 0 }}>
             <Decoration
               kind={kind}
-              tier={owner.difficulty ?? tier}
+              tier={cellTileset(owner, grid, tier)}
               patron={grid.patron}
               seed={`${grid.siteId}:${cellKey}`}
             />
@@ -1844,11 +1845,11 @@ export const SiteMapView = ({
                 const isStair = shapeKind === "stairhead"
                 const goesUp = isStair && r === grid.entrancePos[0] && c === grid.entrancePos[1]
                 const hasStair =
-                  isStair && !!tileOrPlaceholder(cell.difficulty ?? tier, goesUp ? "stair-up" : "stair-down")
+                  isStair && !!tileOrPlaceholder(cellTileset(cell, grid, tier), goesUp ? "stair-up" : "stair-down")
                 // A DRAWN EXIT LOSES ITS MARKER for the stairhead's reason: the art IS the node, and unlike
                 // a gate it carries no key colour and no state — a portal is a transition, never completed
                 // — so the vector has nothing left to say that the doorway does not say better.
-                const hasExit = shapeKind === "exit" && !!tileOrPlaceholder(cell.difficulty ?? tier, "exit")
+                const hasExit = shapeKind === "exit" && !!tileOrPlaceholder(cellTileset(cell, grid, tier), "exit")
                 // A PAINTED PLATE IS THE NODE, as a flight is: the vector slab underneath has nothing more to say.
                 const hasPlate = drawnPlates.has(`plate:${r},${c}`)
                 // A STANDING TORCH IS THE NODE, as a plate is: the flame square under it would put a second torch on the tile.
@@ -1856,9 +1857,9 @@ export const SiteMapView = ({
                 // A PAINTED LEVER IS THE NODE, as a torch is: the marker square under it would put a second lever on the tile.
                 const hasLever =
                   drawingOf(cell)?.art === "lever" &&
-                  !!tileUrl(cell.difficulty ?? tier, "leverBaseBack") &&
-                  !!tileUrl(cell.difficulty ?? tier, "leverArm") &&
-                  !!tileUrl(cell.difficulty ?? tier, "leverBaseFront")
+                  !!tileUrl(cellTileset(cell, grid, tier), "leverBaseBack") &&
+                  !!tileUrl(cellTileset(cell, grid, tier), "leverArm") &&
+                  !!tileUrl(cellTileset(cell, grid, tier), "leverBaseFront")
                 const roomR = nodeRadius[shapeKind]
                 // A WAY A SWITCH SHUT IS A WALL, AND A WALL WEARS NO NODE. The bars standing in its doorway
                 // already say the way is closed; a gate marker on top of them offers a second reading — a

@@ -1,10 +1,52 @@
 import { describe, expect, it } from "vitest"
-import { buildRoomClaims } from "./roomClaims"
-import type { CellState, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
+import { buildRoomClaims, cellTileset, floorTier } from "./roomClaims"
+import type { CellState, Direction, FloorGrid, GridCell, RoomCell } from "@/game/siteTypes"
 
 const state: CellState = "completed"
 const empty: GridCell = { type: "empty" }
 const corridor = (dirs: Direction[]): GridCell => ({ type: "corridor", dirs: new Set(dirs), state })
+
+describe("cellTileset", () => {
+  const room = (over: Partial<RoomCell>): RoomCell => ({
+    type: "room",
+    roomType: "encounter",
+    dirs: new Set<Direction>(),
+    state,
+    ...over,
+  })
+  const grid = (over: Partial<FloorGrid>): FloorGrid => ({
+    siteId: "site",
+    rows: 0,
+    cols: 0,
+    entrancePos: [0, 0],
+    exitPos: [0, 0],
+    staircases: {},
+    cells: [],
+    ...over,
+  })
+
+  it("draws a cell in its section's difficulty when nothing names a tileset", () => {
+    expect(cellTileset(room({ difficulty: "junior" }), grid({ difficulty: "starter" }))).toBe("junior")
+  })
+
+  it("draws a cell in the floor's tileset over its section's difficulty", () => {
+    expect(cellTileset(room({ difficulty: "junior" }), grid({ difficulty: "starter", tileset: "cave" }))).toBe("cave")
+  })
+
+  it("draws a cell in its own tileset over the floor's", () => {
+    expect(cellTileset(room({ difficulty: "junior", tileset: "master" }), grid({ tileset: "cave" }))).toBe("master")
+  })
+
+  it("draws a cell that names nothing in the floor's difficulty, else starter", () => {
+    expect(cellTileset(room({}), grid({ difficulty: "wizard" }))).toBe("wizard")
+    expect(cellTileset(room({}), grid({}))).toBe("starter")
+  })
+
+  it("builds a floor of its tileset, else its difficulty", () => {
+    expect(floorTier(grid({ difficulty: "expert", tileset: "cave" }))).toBe("cave")
+    expect(floorTier(grid({ difficulty: "expert" }))).toBe("expert")
+  })
+})
 
 // The map stands a prop only on an empty cell the room claims.
 describe("where a dressed room's prop stands", () => {

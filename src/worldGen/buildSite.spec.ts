@@ -363,3 +363,40 @@ describe("buildSite loot: false", () => {
     expect(floors[0].sideSections[0]).not.toHaveProperty("loot")
   })
 })
+
+describe("buildSite tileset", () => {
+  const ctx = {
+    journeyId: "starter_1",
+    tier: "starter" as const,
+    pyramidIndex: 0,
+    levelCount: 3,
+    pathPuzzles: 3,
+    difficulty: "starter" as const,
+    hasMapPieceBranch: false,
+    hasWardGate: false,
+    nextTier: null,
+    mosaicPathCount: 0,
+    resolveReward: () => ({ type: "mosaicPiece" as const }),
+    resolveMainEndReward: () => ({ type: "mosaicPiece" as const }),
+  }
+  const floorsOf = (constraint: PyramidConstraint) => buildSite({ ...ctx, constraint }).floors
+
+  it("a site's tileset reaches every floor, and a floor's own wins", () => {
+    const floors = floorsOf({ tileset: "cave", floors: [{ pathPuzzles: 1 }, { pathPuzzles: 1, tileset: "junior" }] })
+    expect(floors.map(f => f.tileset)).toEqual(["cave", "junior"])
+  })
+
+  it("a section names its own tileset, and the floor's is not copied onto it", () => {
+    const [floor] = floorsOf({
+      tileset: "cave",
+      floors: [{ pathPuzzles: 1, sideSections: [{ pathPuzzles: 1, tileset: "junior" }, { pathPuzzles: 1 }] }],
+    })
+    expect(floor.sideSections.map(s => s.tileset)).toEqual(["junior", undefined])
+  })
+
+  it("an unset tileset leaves the built floor unchanged", () => {
+    const [floor] = floorsOf({ floors: [{ pathPuzzles: 1, sideSections: [{ pathPuzzles: 1 }] }] })
+    expect(floor).not.toHaveProperty("tileset")
+    expect(floor.sideSections[0]).not.toHaveProperty("tileset")
+  })
+})

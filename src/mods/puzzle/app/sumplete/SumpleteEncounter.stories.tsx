@@ -42,9 +42,9 @@ const Sumplete = ({ difficulty }: { difficulty: Difficulty }) => {
 /** A board that sizes itself from the block it stands on — which is most of them, and the case a block
  * sized to its content destroys. Sumplete is built of fixed cells and cannot show it. */
 export const SizedFromItsBlock: Story = {
-  args: { difficulty: "starter", children: null },
+  args: { tileset: "starter", children: null },
   render: () => (
-    <EncounterModal difficulty="starter">
+    <EncounterModal tileset="starter">
       <ConstellationPuzzle
         puzzle={generateConstellation(1, CONSTELLATION_CONFIG.starter)}
         difficulty="starter"
@@ -56,9 +56,9 @@ export const SizedFromItsBlock: Story = {
 }
 
 export const Starter: Story = {
-  args: { difficulty: "starter", children: null },
+  args: { tileset: "starter", children: null },
   render: () => (
-    <EncounterModal difficulty="starter">
+    <EncounterModal tileset="starter">
       <Sumplete difficulty="starter" />
     </EncounterModal>
   ),
@@ -71,7 +71,7 @@ export const EveryRank: Story = {
     <div className="flex flex-col gap-8">
       {difficulties.map(difficulty => (
         <div key={difficulty} className="relative min-h-180">
-          <EncounterModal difficulty={difficulty}>
+          <EncounterModal tileset={difficulty}>
             <Sumplete difficulty={difficulty} />
           </EncounterModal>
         </div>

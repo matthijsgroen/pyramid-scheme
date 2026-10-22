@@ -178,7 +178,7 @@ const PlayedFloor: FC<{ config: FloorConfig; seed: number; base: FloorGrid }> = 
         />
       </div>
       {encounter.isOpen && Board && encounter.ctx && (
-        <EncounterModal difficulty={encounter.ctx.difficulty}>
+        <EncounterModal tileset={encounter.ctx.tileset}>
           <PuzzleRoomContext value={encounter.roomKey}>
             <Board
               puzzle={encounter.puzzle}

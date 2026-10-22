@@ -2,6 +2,7 @@
 import { afterEach, describe, expect, it } from "vitest"
 import { cleanup, render } from "@testing-library/react"
 import { EncounterModal } from "./EncounterModal"
+import { imageMap } from "@/ui/atoms/tombImageMap"
 
 afterEach(cleanup)
 
@@ -17,6 +18,28 @@ describe("EncounterModal", () => {
       </EncounterModal>
     )
     expect((container.firstElementChild as HTMLElement).className).toContain("p-safe-edge")
+  })
+})
+
+describe("the wall an encounter stands against", () => {
+  const wallOf = (container: HTMLElement) => (container.firstElementChild!.firstElementChild as HTMLElement).style
+
+  it("is the tileset's wall for a rank", () => {
+    const { container } = render(
+      <EncounterModal tileset="junior">
+        <p>an encounter</p>
+      </EncounterModal>
+    )
+    expect(wallOf(container).backgroundImage).toContain(imageMap.junior.image)
+  })
+
+  it("is none for a tileset with no wall, leaving the card's own colour", () => {
+    const { container } = render(
+      <EncounterModal tileset="cave">
+        <p>an encounter</p>
+      </EncounterModal>
+    )
+    expect(wallOf(container).backgroundImage).toBe("")
   })
 })
 

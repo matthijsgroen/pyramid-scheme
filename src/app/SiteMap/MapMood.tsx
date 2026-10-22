@@ -1,6 +1,5 @@
 import { hashUnit } from "@/support/hashString"
-import type { Difficulty } from "@/data/difficultyLevels"
-import type { ConditionKind } from "@/game/siteTypes"
+import type { ConditionKind, Tileset } from "@/game/siteTypes"
 import type { Mood } from "./moodSettings"
 import { CANOPY_SCALE, CHAMBER_SCALE, GROWTH_POOLS, growthTile } from "./moodSettings"
 import { CELL, WALL_FACE_H, cellCenter } from "./mapScale"
@@ -160,7 +159,7 @@ export const MapGrowth = ({
   canopy = false,
   explorerPos,
   treeCells,
-}: Props & { tier: Difficulty }) => {
+}: Props & { tier: Tileset }) => {
   const g = mood.growth
   if (!g?.floor && !g?.wall && !g?.chamber) return null
   const tuft = pool(g.kind, GROWTH_POOLS.floor)

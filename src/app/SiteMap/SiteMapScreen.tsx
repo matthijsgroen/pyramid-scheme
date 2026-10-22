@@ -323,7 +323,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
         />
       )}
       {encounter.isOpen && ActiveEncounterComponent && encounter.ctx && (
-        <EncounterModal difficulty={encounter.ctx.difficulty}>
+        <EncounterModal tileset={encounter.ctx.tileset}>
           {/* The room the board belongs to — what an unfinished board is saved against. */}
           <PuzzleRoomContext value={encounter.roomKey}>
             <ActiveEncounterComponent

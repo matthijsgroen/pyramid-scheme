@@ -123,6 +123,50 @@ describe("carved through assembleFloor", () => {
     expect(rooms.map(r => r.difficulty).sort()).toEqual(["master", "starter", "wizard", "wizard"])
   })
 
+  it("draws a room whose node names another difficulty in its section's tileset", () => {
+    const config: FloorConfig = {
+      ...basicConfig(),
+      pathPuzzles: 2,
+      difficulty: "starter",
+      difficultiesByIndex: { 1: "junior" },
+    }
+    const result = assembleFloor("site-1", config, 42)
+    if (!result.success) throw new Error("assembly failed")
+    const rooms = result.grid.cells.flat().filter((c): c is RoomCell => c.type === "room" && isPuzzleRoom(c))
+    const named = rooms.find(r => r.pathIndex === 1)
+    expect(named).toMatchObject({ difficulty: "junior", tileset: "starter" })
+    expect(rooms.find(r => r.pathIndex === 0)?.tileset).toBeUndefined()
+  })
+
+  it("draws a room whose node names another difficulty in the floor's tileset when the floor names one", () => {
+    const config: FloorConfig = {
+      ...basicConfig(),
+      pathPuzzles: 2,
+      difficulty: "starter",
+      tileset: "cave",
+      difficultiesByIndex: { 1: "junior" },
+    }
+    const result = assembleFloor("site-1", config, 42)
+    if (!result.success) throw new Error("assembly failed")
+    expect(result.grid.tileset).toBe("cave")
+    const rooms = result.grid.cells.flat().filter((c): c is RoomCell => c.type === "room" && isPuzzleRoom(c))
+    expect(rooms.find(r => r.pathIndex === 1)).toMatchObject({ difficulty: "junior", tileset: "cave" })
+  })
+
+  it("stamps a section's own tileset on its cells and leaves the others to the floor", () => {
+    const config: FloorConfig = {
+      ...basicConfig(),
+      pathPuzzles: 1,
+      sideSections: [{ pathPuzzles: 1, difficulty: "starter", tileset: "cave", end: "treasure" }],
+    }
+    const result = assembleFloor("site-1", config, 42)
+    if (!result.success) throw new Error("assembly failed")
+    expect(result.grid.tileset).toBeUndefined()
+    const tilesets = result.grid.cells.flat().flatMap(c => (c.type === "empty" || !c.tileset ? [] : [c.tileset]))
+    expect(tilesets.length).toBeGreaterThan(0)
+    expect(new Set(tilesets)).toEqual(new Set(["cave"]))
+  })
+
   it("resolves a main-path puzzle room's own key requirement via the injected resolver, tagged with its path index and the floor's encounterArgs", () => {
     const config: FloorConfig = { ...basicConfig(), pathPuzzles: 2, encounter: "tableau", encounterArgs: { runNr: 7 } }
     const result = assembleFloor("starter_treasure_tomb:2", config, 42, undefined, {

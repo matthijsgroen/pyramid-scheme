@@ -1,5 +1,5 @@
 import { Fragment } from "react"
-import type { Difficulty } from "@/data/difficultyLevels"
+import type { Tileset } from "@/game/siteTypes"
 import { CELL, SIDE_W, WALL_H } from "./mapScale"
 import { corridorShade, stateWash, tierPalette } from "./tileMaterials"
 import { tileUrl } from "./tileAssets"
@@ -36,20 +36,20 @@ export const TileLayers = ({
   archedGaps,
 }: {
   regions: TileRegions
-  tier: Difficulty
+  tier: Tileset
   /** "x,y" of every gap an archway stands in, and the arch's own tier. An arch's middle is transparent, so
    * the sill shows THROUGH it — the step the jambs stand on, which is what stops a doorway hovering in a
    * gap with its reveal running straight into floor. The one thing the two disagreed about was stone: a
    * sill takes the tier being ENTERED and an arch the tier of the band it pierces, so at a ward gate the
    * map laid one rank's threshold inside another's gateway. Settled by giving the gap to the arch — an
    * arched sill is drawn in the arch's stone, so an opening is one material. */
-  archedGaps?: ReadonlyMap<string, Difficulty>
+  archedGaps?: ReadonlyMap<string, Tileset>
 }) => {
   const mega = CELL * 8
   // Every sill that an arch stands in, filed under the ARCH's tier rather than the tier being entered.
   // At a ward gate those differ, and one opening showing two ranks of stone is the reason the sill used to
   // be skipped here entirely.
-  const archedSills = new Map<Difficulty, Rect[]>()
+  const archedSills = new Map<Tileset, Rect[]>()
   for (const [, groups] of regions) {
     for (const rect of groups.threshold) {
       const archTier = archedGaps?.get(`${rect[0]},${rect[1]}`)

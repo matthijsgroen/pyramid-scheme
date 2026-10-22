@@ -64,6 +64,7 @@ const serializeLootByIndex = (m: Record<number, false>): string =>
 const serializeSideSection = (s: SideSection): string => {
   const endStr = typeof s.end === "object" ? `{ stairId: "${s.end.stairId}" }` : `"${s.end}"`
   const parts = [`pathPuzzles: ${s.pathPuzzles}`, `difficulty: "${s.difficulty}"`, `end: ${endStr}`]
+  if (s.tileset !== undefined) parts.splice(2, 0, `tileset: "${s.tileset}"`)
   if (s.label !== undefined) parts.unshift(`label: ${JSON.stringify(s.label)}`)
   if (s.gate) parts.push(`gate: ${serializeGate(s.gate)}`)
   if (s.endReward) parts.push(`endReward: ${serializeReward(s.endReward)}`)
@@ -176,6 +177,7 @@ const floorFieldEmitters: {
 } = {
   pathPuzzles: v => `pathPuzzles: ${v}`,
   difficulty: v => `difficulty: "${v}"`,
+  tileset: v => `tileset: "${v}"`,
   end: () => `end: "treasure"`,
   exitOrStaircase: v =>
     typeof v === "object" ? `exitOrStaircase: { stairId: "${v.stairId}" }` : `exitOrStaircase: "${v}"`,

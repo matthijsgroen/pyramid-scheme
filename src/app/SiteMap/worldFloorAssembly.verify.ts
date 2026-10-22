@@ -240,6 +240,13 @@ describe("what a world-spec setting may and may not move", () => {
         }),
     ],
     [
+      "the tileset a floor and its paths are drawn in",
+      c =>
+        edited(c, n => {
+          n.tileset = "cave"
+        }),
+    ],
+    [
       "the skin and the role a room was drawn for",
       c =>
         edited(c, n => {

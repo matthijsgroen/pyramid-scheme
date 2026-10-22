@@ -1,6 +1,6 @@
 import type { Tier, Difficulty, PathPuzzlesRange } from "./types"
 import type { ActivityId } from "../game/activities"
-import type { DecorationKind, HandleSide, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
+import type { DecorationKind, HandleSide, Patron, SiteCondition, Tileset, WallDecorationKind } from "../game/siteTypes"
 import type { PlacedContainer } from "../game/regions"
 import type { BarrierOrder, Control, Obstacle } from "@/game/obstacles"
 import type { PlacedLock } from "@/game/floorLocks"
@@ -144,6 +144,9 @@ export type SideSectionConstraint<TExtra extends string = never> = {
   gate?: GateSpec
   pathPuzzles?: PathPuzzlesPreset | number
   difficulty?: Difficulty
+  /** What this path is drawn in (tiles, palette, mood, encounter wall), apart from the `difficulty` its boards
+   * are built at. Unset: the floor's tileset, else this path's `difficulty`. */
+  tileset?: Tileset
   /** `false` keeps generated loot out of this path: its puzzle rooms and its unauthored end. Authored rewards
    * (`endReward`, a gate) stay. Inherited by the sections beneath it; unset inherits the floor's. */
   loot?: false
@@ -182,6 +185,9 @@ export type SideSectionConstraint<TExtra extends string = never> = {
 export type FloorConstraint<TExtra extends string = never> = {
   pathPuzzles?: PathPuzzlesPreset | number
   difficulty?: Difficulty
+  /** What this floor and its paths are drawn in, apart from the `difficulty` its boards are built at. Unset
+   * inherits the site's, else the floor is drawn in its `difficulty`. */
+  tileset?: Tileset
   /** `false` keeps generated loot out of this floor: its puzzle rooms, its unauthored end and every section
    * on it. Authored rewards (`mainEndReward`, `endReward`, gates) stay. Unset inherits the site's. */
   loot?: false
@@ -329,6 +335,8 @@ export type PyramidConstraint = {
    * and sharedKeyChance. */
   keyColorsRange?: { min: number; max: number }
   difficulty?: Difficulty
+  /** What every floor of the site is drawn in, unless one names its own; see FloorConstraint.tileset. */
+  tileset?: Tileset
   /** `false` keeps generated loot out of the whole site; see FloorConstraint.loot. */
   loot?: false
   /** Pool of decoration kinds every floor and side section of this site draws its props from, unless

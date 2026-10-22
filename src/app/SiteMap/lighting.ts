@@ -1,6 +1,5 @@
-import type { Difficulty } from "@/data/difficultyLevels"
 import { difficulties } from "@/data/difficultyLevels"
-import type { Direction, FloorGrid } from "@/game/siteTypes"
+import type { Direction, FloorGrid, Tileset } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
 import { hashUnit } from "@/support/hashString"
 import { DIR_MOVES, OPPOSITE_DIR, isCorridorCorner } from "./corridorRuns"
@@ -26,9 +25,12 @@ export const SEATING_PASS = 0.45
  * Per sprite rather than on the layer holding them: a filter rasterises its subtree as ONE layer, and the
  * standing layer is the size of the map (`docs/instructions/map-rendering.md`). A prop's own box is a cell.
  */
-export const STANDING_RELIEF: Record<Difficulty, string> = Object.fromEntries(
-  difficulties.map(tier => [tier, `contrast(${(1 / (1 - nightAlpha(tier) * SEATING_PASS)).toFixed(2)})`])
-) as Record<Difficulty, string>
+export const STANDING_RELIEF: Record<Tileset, string> = Object.fromEntries(
+  [...difficulties, "cave" as const].map(tier => [
+    tier,
+    `contrast(${(1 / (1 - nightAlpha(tier) * SEATING_PASS)).toFixed(2)})`,
+  ])
+) as Record<Tileset, string>
 export const LIT_STRENGTH = 0.5
 export const LIT_STANDING_STRENGTH = 0.25
 

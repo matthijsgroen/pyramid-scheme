@@ -1,5 +1,4 @@
-import type { Difficulty } from "@/data/difficultyLevels"
-import type { FloorGrid } from "@/game/siteTypes"
+import type { FloorGrid, Tileset } from "@/game/siteTypes"
 import type { RoomClaims } from "./roomClaims"
 import { hashUnit } from "@/support/hashString"
 
@@ -84,7 +83,7 @@ const runThrough = (grid: FloorGrid, row: number, col: number, dr: number, dc: n
  * One file for the art: sand has its own colour in all five tombs, so it lives in `tiles/default/` like
  * the explorer. The gods' rank gets none — a clean seam — which is sand's only per-rank difference.
  */
-export const driftsFor = (grid: FloorGrid, tier: Difficulty): Drift[] => {
+export const driftsFor = (grid: FloorGrid, tier: Tileset): Drift[] => {
   if (tier === "wizard") return []
   const walkable: string[] = []
   for (let r = 0; r < grid.rows; r++)

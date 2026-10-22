@@ -38,6 +38,8 @@ export type CorridorCell = {
    * the floor's tier: a ward pocket gated behind a junior key is junior stone inside a starter
    * pyramid. Mirrors RoomCell.difficulty, which has always carried this for rooms. */
   difficulty?: Difficulty
+  /** The tileset this corridor's own section authored, if it did: drawn in place of the floor's. */
+  tileset?: Tileset
   /** WHICH SECTION OF THE AUTHORING this cell belongs to — `main`, `s0` for the first sidepath off it,
    *  `s0.1` for that sidepath's second sub-path. This is what a save files the cell under, because it
    *  is what the author steers: the first sidepath of the main path stays the first sidepath whether
@@ -260,6 +262,9 @@ export type RoomCell = {
   // gentler detour), and the room is what the player meets, not the floor. Unset falls back to the
   // floor's own difficulty.
   difficulty?: Difficulty
+  // What this room is drawn in when that is not what the floor draws (see cellTileset): the section's own
+  // tileset, or, for a room whose node names another difficulty, the tileset its section is drawn in.
+  tileset?: Tileset
   // Which skin this room's family should wear (docs/instructions/puzzle-screens.md §2), carried from the
   // FloorConfig/SideSection that authored it. A NAME, not a look: core knows nothing about what it means,
   // and a family with no skin registered under it draws its default one.
@@ -371,6 +376,8 @@ export type FloorGrid = {
    * `RoomCell.difficulty` can differ (a ward-chest teaser is authored at a later tier), so it must not
    * be used to infer this. Optional only because test fixtures build grids by hand. */
   readonly difficulty?: Difficulty
+  /** The tileset the floor authors, which draws it in place of `difficulty`. Unset = drawn in `difficulty`. */
+  readonly tileset?: Tileset
   /** What has got into this site, if anything — see SiteCondition. Runs through every floor of a
    * pyramid by construction: it is authored once, on the pyramid. */
   readonly condition?: SiteCondition
@@ -493,12 +500,17 @@ export type GateConfig =
   | { type: "tomb-key"; wardKeyId: string }
 export type { Difficulty } from "@/data/difficultyLevels"
 import type { Difficulty } from "@/data/difficultyLevels"
+/** What a floor, path or room is DRAWN in: its tiles, palette, mood and encounter wall. A rank is the stone
+ * built for that difficulty; `cave` is a set of its own. Apart from `difficulty`, which picks the board. */
+export type Tileset = Difficulty | "cave"
 export type SubSection = {
   /** The authored name for this path, if it has one — what a save files its cells under, in place of
    * the positional `s0`/`s0.1`. See SideSectionConstraint.label and cellIdentity.ts. */
   label?: string
   pathPuzzles: number
   difficulty: Difficulty
+  /** The tileset this path is drawn in, in place of the floor's tileset or its own `difficulty`. */
+  tileset?: Tileset
   end: "treasure" | "staircase" | { stairId: string }
   gate?: GateConfig
   endReward?: TreasureReward
@@ -552,6 +564,8 @@ export type ForkDemand = { exits: number; count: number } | { in: string }
 export type FloorConfig = {
   pathPuzzles: number
   difficulty: Difficulty
+  /** The tileset this floor is drawn in, in place of its `difficulty`; its paths inherit it. */
+  tileset?: Tileset
   end: "treasure"
   exitOrStaircase: "exit" | "none" | "staircase" | { stairId: string }
   /** If set, the entrance room becomes an up-stairhead with this stairId. */

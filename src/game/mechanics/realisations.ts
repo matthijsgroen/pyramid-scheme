@@ -57,6 +57,7 @@ const groundOf = (cell: RoomCell): CorridorCell => ({
   dirs: cell.dirs,
   state: cell.state,
   ...(cell.difficulty !== undefined ? { difficulty: cell.difficulty } : {}),
+  ...(cell.tileset !== undefined ? { tileset: cell.tileset } : {}),
   ...(cell.sectionAddress !== undefined ? { sectionAddress: cell.sectionAddress } : {}),
   ...(cell.region !== undefined ? { region: cell.region } : {}),
   ...(cell.sectionHash !== undefined ? { sectionHash: cell.sectionHash } : {}),

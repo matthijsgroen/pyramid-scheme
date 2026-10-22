@@ -74,6 +74,7 @@ const buildDslSection = <TExtra extends string>(
     ...(cs.label !== undefined ? { label: cs.label } : {}),
     pathPuzzles,
     difficulty: sectionDifficulty,
+    ...(cs.tileset !== undefined ? { tileset: cs.tileset } : {}),
     end,
     ...(gate ? { gate } : {}),
     ...(endReward ? { endReward } : {}),

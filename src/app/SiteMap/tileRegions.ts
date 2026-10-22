@@ -1,4 +1,4 @@
-import type { CellState, Difficulty } from "@/game/siteTypes"
+import type { CellState, Tileset } from "@/game/siteTypes"
 import { CELL, PROP_H, SIDE_W, WALL_H, cellLeft, cellTop } from "./mapScale"
 
 // Which rectangles the sprite renderer paints, grouped so each group becomes ONE filled path
@@ -36,7 +36,7 @@ export type CellKind = "room" | "corridor"
 export type FloorAt = (
   row: number,
   col: number
-) => { state: CellState; kind: CellKind; tier: Difficulty } | "unlit" | "stone"
+) => { state: CellState; kind: CellKind; tier: Tileset } | "unlit" | "stone"
 
 /** Whether the player can pass from (row, col) toward `dir`. Adjacency is not passage: a room claims
  * the cells around it, so its floor can sit flush against a corridor it has no way through to. */
@@ -60,7 +60,7 @@ export type StateGroups = {
 
 /** One set of groups per tier the floor actually holds — the renderer draws each with that tier's own
  * patterns, so a gated pocket of another difficulty is built of its own stone. */
-export type TileRegions = Map<Difficulty, StateGroups>
+export type TileRegions = Map<Tileset, StateGroups>
 
 export const ALL_STATES: CellState[] = ["fogged", "visible", "reachable", "completed"]
 
@@ -82,7 +82,7 @@ const BRIGHTNESS: Record<CellState, number> = { fogged: 0, visible: 1, completed
 const brightest = (...states: (CellState | null | undefined)[]): CellState | null =>
   states.reduce<CellState | null>((best, s) => (s && (!best || BRIGHTNESS[s] > BRIGHTNESS[best]) ? s : best), null)
 
-type FloorHere = { state: CellState; kind: CellKind; tier: Difficulty } | null
+type FloorHere = { state: CellState; kind: CellKind; tier: Tileset } | null
 
 /**
  * Is this gap the MOUTH of an unlit passage — the one gap where lit floor meets it?
@@ -127,19 +127,19 @@ export const buildTileRegions = (
   floorAt: FloorAt,
   openBetween: OpenBetween,
   /** What stone to use where no floor is in reach to say — the floor's own tier. */
-  fallbackTier: Difficulty
+  fallbackTier: Tileset
 ): TileRegions => {
   const regions: TileRegions = new Map()
   // A rect belongs to the tier of the cell it is part of — the same cell its STATE comes from, so
   // material and light never disagree about which room a rect belongs to.
-  const groupsFor = (tier: Difficulty): StateGroups => {
+  const groupsFor = (tier: Tileset): StateGroups => {
     const existing = regions.get(tier)
     if (existing) return existing
     const fresh = emptyStateGroups()
     regions.set(tier, fresh)
     return fresh
   }
-  const tierAt = (...cells: readonly (readonly [number, number])[]): Difficulty => {
+  const tierAt = (...cells: readonly (readonly [number, number])[]): Tileset => {
     for (const [r, c] of cells) {
       const cell = floorOf(r, c)
       if (cell) return cell.tier

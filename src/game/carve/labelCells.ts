@@ -46,6 +46,7 @@ export const labelCells = pass("labelCells", ["maze", "regions", "keys", "lay"],
     hidden: new Set(),
     dressing: new Map(),
     difficulty: new Map(),
+    tileset: new Map(),
     region: new Map(),
     absorbedHash: new Map(),
   }
@@ -120,6 +121,7 @@ export const labelCells = pass("labelCells", ["maze", "regions", "keys", "lay"],
       labels.legacySectionHash.set(key, legacyHash)
       labels.dressing.set(key, pools)
       labels.difficulty.set(key, section.difficulty)
+      if (section.tileset !== undefined) labels.tileset.set(key, section.tileset)
       if (hidden) labels.hidden.add(key)
     }
   }

@@ -46,7 +46,7 @@ const PuzzleOnItsWall: FC<{ familyId: string; difficulty: Difficulty; face?: str
       </p>
     )
   return (
-    <EncounterModal difficulty={difficulty}>
+    <EncounterModal tileset={difficulty}>
       <Board key={`${family.meta.id}:${difficulty}:${face}`} family={family} difficulty={difficulty} face={face} />
     </EncounterModal>
   )

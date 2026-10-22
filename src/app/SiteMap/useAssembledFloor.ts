@@ -220,6 +220,7 @@ export const sealWaysOut = (grid: FloorGrid): FloorGrid => {
       legacySectionHash: gate.legacySectionHash,
       ordinal: gate.ordinal,
       difficulty: gate.difficulty,
+      ...(gate.tileset ? { tileset: gate.tileset } : {}),
       hidden: gate.hidden,
     }
   }
@@ -329,6 +330,7 @@ const maskHiddenCells = (
               legacySectionHash: cell.legacySectionHash,
               ordinal: cell.ordinal,
               difficulty: cell.difficulty,
+              ...(cell.tileset ? { tileset: cell.tileset } : {}),
               hidden: cell.hidden,
             }
           }

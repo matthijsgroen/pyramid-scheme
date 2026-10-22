@@ -1,5 +1,5 @@
 import { contentNow, controlAtIndex, forkPositions, gateIndexOf, gateIndices, keyOf } from "./derive"
-import { roomDifficulty } from "../roomDifficulty"
+import { roomDifficulty, roomTileset } from "../roomDifficulty"
 import { gateKeyOf, stairOnThisFloor } from "./ids"
 import {
   controlRoomSpec,
@@ -56,6 +56,7 @@ export const mainRooms = pass(
           ...spec,
           sectionAddress: addressOf.get(positional) ?? positional,
           difficulty: i < section.pathPuzzles ? roomDifficulty(section, i) : section.difficulty,
+          ...(i < section.pathPuzzles ? roomTileset(section, config, i) : {}),
         })
       })
     }
@@ -124,6 +125,7 @@ export const mainRooms = pass(
           ...(boardIndex !== undefined ? { boardIndex } : {}),
           ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
           difficulty: roomDifficulty(config, k),
+          ...roomTileset(config, config, k),
           ...(config.theme !== undefined ? { theme: config.theme } : {}),
           ...(config.condition !== undefined ? { condition: config.condition } : {}),
           ...(config.patron !== undefined ? { patron: config.patron } : {}),

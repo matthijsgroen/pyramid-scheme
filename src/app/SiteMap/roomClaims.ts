@@ -1,4 +1,4 @@
-import type { DecorationKind, Direction, FloorGrid, GridCell, RoomCell } from "@/game/siteTypes"
+import type { DecorationKind, Direction, FloorGrid, GridCell, RoomCell, Tileset } from "@/game/siteTypes"
 import { cellAt, isChamber, isClaimableNeighbor } from "@/game/roomFootprint"
 import { DIR_MOVES, OPPOSITE_DIR } from "./corridorRuns"
 import { buildTileRegions, type FloorAt, type Rect, type TileRegions } from "./tileRegions"
@@ -250,7 +250,7 @@ export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
     })
   }
   // What this rank is furnished with at all — see the two tests below.
-  const authoredHere = authoredKindsFor(grid.difficulty ?? "starter").props
+  const authoredHere = authoredKindsFor(floorTier(grid)).props
   // A SECOND prop of the same purpose, in some of the rooms with space for one — see `companionProps`.
   // It goes into `decorationAt` rather than into a layer of its own, which is what keeps the rest of the
   // map honest for free: `floorScatter` dresses the cells this map does NOT hold, so a companion is a cell
@@ -269,7 +269,7 @@ export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
     // **And it has to be PAINTED here**, which is rule 3 of `companionProps`: `tileUrl` skips
     // `placeholder/` on purpose, so a stand-in can never be multiplied across the map by a rule nobody
     // is watching.
-    kind => authoredHere.includes(kind) && !!tileUrl(grid.difficulty ?? "starter", kind),
+    kind => authoredHere.includes(kind) && !!tileUrl(floorTier(grid), kind),
     // Same rule as the leader: on the map first, then the wall-behind preference.
     free => {
       const inside = free.filter(onGrid)
@@ -458,7 +458,7 @@ export const cellFloorAt = (
 ): ReturnType<FloorAt> => {
   // The stone a cell is built of is its own SECTION's tier, not its floor's: a pocket gated behind a
   // junior key is junior stone inside a starter pyramid, and walking through the gate should say so.
-  const floorTierOf = grid.difficulty ?? "starter"
+  const floorTierOf = floorTier(grid)
   // A GATE NOT YET OPENED WEARS THE PYRAMID'S OWN STONE. The pocket behind it keeps its authored tier —
   // that is the point of the material, and walking through says so — but the gate's own square is on
   // THIS side of the door, and paving it in the pocket's stone let the player read next tier's
@@ -468,8 +468,8 @@ export const cellFloorAt = (
   // pyramid's own stone, and only what the gate guards is built of the tier it guards. That is one
   // crossing instead of three, and it lands where the bars are (`cellsThisSideOfAWard`).
   const thisSide = cellsThisSideOfAWard(grid)
-  const tierOf = (cell: { difficulty?: Difficulty }, row: number, col: number): Difficulty =>
-    thisSide.has(`${row},${col}`) ? floorTierOf : (cell.difficulty ?? floorTierOf)
+  const tierOf = (cell: TilesetCell, row: number, col: number): Tileset =>
+    thisSide.has(`${row},${col}`) ? floorTierOf : cellTileset(cell, grid)
   const owner = litClaimOwner(grid, claims, r, c)
   // A claimed cell renders as part of its owner: same material, same state, one continuous chamber.
   // A claimed cell is grid VOID and so on no walk of the floor: it asks the question at its OWNER's
@@ -501,7 +501,7 @@ export const tileRegionsFor = (grid: FloorGrid, claims: RoomClaims, ownedKeys?: 
     grid.cols,
     (r, c) => cellFloorAt(grid, claims, ownedKeys, r, c),
     (r, c, dir) => isPassable(grid, claims, r, c, dir),
-    grid.difficulty ?? "starter"
+    floorTier(grid)
   )
 
 // A corridor is a "corner" (and thus a valid click target for corner-reveal/hidden-
@@ -516,7 +516,14 @@ export const FACE_TOP = SIDE_W / 2
 // starter pyramid's ward-chest teaser is authored at a LATER tier on purpose (spec/starter.ts), so
 // room difficulties are the wrong thing to infer a floor's material from: a starter cellar came out
 // built of a pharaoh's granite. Per-room difficulty still dresses the room (props, light).
-export const floorTier = (grid: FloorGrid): Difficulty => grid.difficulty ?? "starter"
+export const floorTier = (grid: FloorGrid): Tileset => grid.tileset ?? grid.difficulty ?? "starter"
+
+type TilesetCell = { tileset?: Tileset; difficulty?: Difficulty }
+
+/** What one cell is drawn in: its own tileset, else the floor's, else the tier it was authored at, so a
+ * pocket gated behind a junior key stays junior stone on a floor that names no tileset. */
+export const cellTileset = (cell: TilesetCell, grid: FloorGrid, fallback: Tileset = floorTier(grid)): Tileset =>
+  cell.tileset ?? grid.tileset ?? cell.difficulty ?? fallback
 
 export const allFloorRects = (regions: TileRegions): Rect[] =>
   [...regions.values()].flatMap(groups => [

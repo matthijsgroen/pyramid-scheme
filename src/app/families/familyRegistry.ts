@@ -1,6 +1,6 @@
 import type { FC } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
-import type { GateVariant, KeyColor, MechanismRecord, RoomCell, TreasureReward } from "@/game/siteTypes"
+import type { GateVariant, KeyColor, MechanismRecord, RoomCell, Tileset, TreasureReward } from "@/game/siteTypes"
 import type { ForkShape } from "@/game/forkShape"
 import type { Mark } from "@/app/SiteMap/mark"
 import { encounterFromMeta, type ResolveEncounter } from "@/game/siteAssembler"
@@ -36,6 +36,9 @@ export type FamilyContext = {
   // traveled away and back) — shop uses this to decide whether its own stock resets.
   freshArrival: boolean
   difficulty?: Difficulty
+  /** What this room is drawn in (cellTileset): the wall its screen stands against follows it, never `difficulty`,
+   * which picks the board. */
+  tileset?: Tileset
   theme?: string
   /** The role this room was allocated FOR — what the site asked for, where the family id is what it
    *  resolved to. A family that serves several pools reads this to know which of its identities to wear;

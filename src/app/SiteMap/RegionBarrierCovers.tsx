@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react"
-import type { Difficulty, Direction, FloorGrid } from "@/game/siteTypes"
+import type { Direction, FloorGrid, Tileset } from "@/game/siteTypes"
 import type { RegionBarrierCover } from "@/game/regionBarrierCover"
 import type { ResolveRegionBarrierRealisation } from "@/game/regionBarrierRealisation"
 import { resolveRegionBarrierRealisation } from "@/mods/allRegionBarrierRealisations"
@@ -27,7 +27,7 @@ const fadeIn = (from: readonly Direction[]): CSSProperties => ({
 // A realisation draws its seamless texture once that is painted; until then the flat fill its mod declares.
 const fillOf = (
   realisation: string,
-  tier: Difficulty,
+  tier: Tileset,
   resolve: ResolveRegionBarrierRealisation,
   urlOf: typeof tileUrl
 ): Fill | undefined => {
@@ -50,7 +50,7 @@ export const RegionBarrierCovers = ({
   urlOf = tileUrl,
 }: {
   grid: FloorGrid
-  tier: Difficulty
+  tier: Tileset
   standing: readonly RegionBarrierCover[]
   /** Covers whose barrier has just opened, fading away. */
   leaving: readonly RegionBarrierCover[]

@@ -1,5 +1,4 @@
-import type { CellState } from "@/game/siteTypes"
-import type { Difficulty } from "@/data/difficultyLevels"
+import type { CellState, Tileset } from "@/game/siteTypes"
 import { METALS } from "@/ui/tokens/metalPalette"
 
 // The tier materials, in one place because two consumers need the same numbers: the renderer (for
@@ -46,7 +45,7 @@ export type TierPalette = {
   outline: string
 }
 
-export const tierPalette: Record<Difficulty, TierPalette> = {
+export const tierPalette: Record<Tileset, TierPalette> = {
   // A merchant's storehouse: pale warm limestone underfoot, red ochre and turquoise as its colour
   // (docs/game-design/visual-direction.md). The floor and wall tokens are the repainted floor's and wall face's;
   // the prop tokens move with the props' repaint.
@@ -145,14 +144,32 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     propDark: "#3f7563",
     outline: "#0f231d",
   },
+  // Bare rock: grey-brown, uncut and unlit. No rank's stone, so it borrows no rank's metal either.
+  cave: {
+    bed: "#6b6258",
+    slab: "#7a7066",
+    slabHi: "#857a6f",
+    slabLo: "#70675d",
+    joint: "#37312b",
+    accent: METALS.expert.accent,
+    wall: "#52493f",
+    wallTop: "#6e645a",
+    wallBase: "#2a251f",
+    // A cave has no lamps of its own and is dim before any night falls on it.
+    shade: "rgba(22,19,16,0.45)",
+    faceNight: 0.3,
+    lamp: 1,
+    prop: "#a89d90",
+    propDark: "#625a50",
+    outline: "#1a1612",
+  },
 }
 
 /** The alpha of a tier's night, read back off its own wash.
  *
  * Derived rather than authored beside it, because anything that has to UNDO part of the wash needs the
  * same number the wash is drawn with, and two copies of it drift the first time one is tuned. */
-export const nightAlpha = (tier: Difficulty): number =>
-  Number(tierPalette[tier].shade.match(/([\d.]+)\s*\)$/)?.[1] ?? 1)
+export const nightAlpha = (tier: Tileset): number => Number(tierPalette[tier].shade.match(/([\d.]+)\s*\)$/)?.[1] ?? 1)
 
 // Fog is an overlay over the one material, never a second set of art: a wash per cell state, and
 // nothing at all on `reachable`, which is the brightness everything else is read against.
