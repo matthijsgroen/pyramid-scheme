@@ -2645,32 +2645,6 @@ a re-roll: magenta would show through it and the key cannot take that out.
 **One frame, standing.** A ghost does not walk, so there is no strip to build — `default/ghost-<name>` is
 a single file, which the map finds with no code change.
 
-### `default/ghost-ipi` — Ipi — starter, the bookkeeper, standing in the room
-
-**Attach:** `art/masters/explorer/explorer-s-1.webp` (style and scale), `art/masters/characters/ghost-ipi.jpeg` (who)
-
-```
-Edit the FIRST attached image: the same pixel-art game sprite, a different character in it.
-Keep its style exactly: chunky visible pixels, dark one-pixel outlines on every shape, flat fills with one
-darker shade per colour, no anti-aliasing blur, no gradients, no texture.
-Keep its frame exactly: the same portrait canvas, the figure the same height and in the same place, feet
-on the same line near the bottom edge. Flat magenta #ff00ff everywhere else. No ground, no shadow on the
-magenta, no text, no border.
-
-The character is the one in the SECOND attached image, redrawn small in the first image's pixel style.
-Ipi, an elderly ancient Egyptian bookkeeper: bald, slight, a plain linen kilt and a simple sash over one shoulder, a reed pen in one hand and a small clay tablet held against his chest. Faintly exasperated — eyebrows raised, mouth a flat line, as though he has been waiting for you and is about to mention it.
-
-A ghost: every colour is a pale blue-green, exactly these flat colours, outlines charcoal #2f3535.
-Skin #b9e1dd, shaded #95b8b1. Kilt and sash a paler #e4f4f1, shaded #b9e1dd. The tablet #b98f70.
-Painted OPAQUE — not see-through, no magenta showing through any part of the figure. The game fades it.
-
-Standing still and facing the viewer, weight on one leg. Feet visible and on the ground. Eyes ordinary and
-open. Not scary: no glow, no smoke, no tattered edges, no chains.
-Nothing of the first image's character stays — no hat, no torch, no vest, no bag — only its style and size.
-```
-
-**Import:** `yarn import-tile art/masters/ghosts/ghost-ipi.webp --tier=default --name=ghost-ipi --slot=explorer --filter=smooth`
-
 ### `default/ghost-henut` — Henut — junior, the noblewoman, standing in the room
 
 **Attach:** `art/masters/explorer/explorer-s-1.webp` (style and scale), `art/masters/characters/ghost-henut.jpeg` (who)
