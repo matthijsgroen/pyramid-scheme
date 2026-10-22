@@ -179,8 +179,8 @@ describe("tomb floor linking — ward-path shortcuts", () => {
     floors = buildRealConfigs().junior_treasure_tomb[0]
   }, 600_000)
 
-  it("every floor's main path ends in a real exit, not an auto-chained stairhead", () => {
-    for (const floor of floors) expect(floor.exitOrStaircase).toBe("exit")
+  it("the tomb's one exit ends floor 0, and every deeper floor is left by its stair back up", () => {
+    expect(floors.map(floor => floor.exitOrStaircase)).toEqual(["exit", ...floors.slice(1).map(() => "none")])
   })
 
   it("every non-last floor has a ward-path shortcut gated by that floor's own key", () => {

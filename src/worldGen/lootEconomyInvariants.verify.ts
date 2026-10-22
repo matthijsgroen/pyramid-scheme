@@ -40,9 +40,9 @@ const auditWorld = (configs: Record<string, SiteConfig[]>): Counts => {
   for (const [siteId, siteConfigs] of Object.entries(configs)) {
     for (const floors of siteConfigs) {
       floors.forEach((floor, fi) => {
-        // A floor whose main path EXITS ends in a treasure chest; a staircase floor goes up stairs
-        // (no terminal chest), so only exit floors carry a main-path chest to check.
-        if (floor.exitOrStaircase === "exit" && floor.mainEndReward === undefined)
+        // A floor whose main path ends on this floor — at the exit or at a dead end — ends in a treasure
+        // chest; a staircase floor goes on down the stairs, so only those floors carry a main-path chest.
+        if ((floor.exitOrStaircase === "exit" || floor.exitOrStaircase === "none") && floor.mainEndReward === undefined)
           emptyChests.push(`${siteId}#${fi} main`)
         countPuzzleFills(floor.rewards)
 

@@ -134,7 +134,7 @@ export const mainRooms = pass(
     for (const key of forkPositions(state)) if (!rooms.has(key)) rooms.set(key, { roomType: "fork" })
 
     if (config.exitOrStaircase === "exit") rooms.set(keyOf(exit), { roomType: "portal" })
-    else {
+    else if (config.exitOrStaircase !== "none") {
       const stairId =
         typeof config.exitOrStaircase === "object" ? config.exitOrStaircase.stairId : stairOnThisFloor(floorRef, "main")
       rooms.set(keyOf(exit), { roomType: "portal", stairId })

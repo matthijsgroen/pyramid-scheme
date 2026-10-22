@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1357191366
+export const worldContentHash = 1092678394
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -230,7 +230,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 2,
         difficulty: "starter",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 1,
@@ -578,7 +578,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 2,
         difficulty: "junior",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 1,
@@ -787,7 +787,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 3,
         difficulty: "expert",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 1,
@@ -2887,7 +2887,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 1,
         difficulty: "junior",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "junior_1:p2:f0:s6" },
         encounter: "constellation",
@@ -3654,7 +3654,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 2,
         difficulty: "expert",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "junior_2:p2:f0:s7" },
         encounter: "hidato",
@@ -3897,7 +3897,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 2,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "junior_2:p3:f0:s5" },
         encounter: "procession",
@@ -4707,7 +4707,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 1,
         difficulty: "junior",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "junior_3:p2:f0:s9" },
         encounter: "star-battle",
@@ -4972,7 +4972,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 2,
         difficulty: "expert",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "junior_3:p3:f0:s6" },
         encounter: "eclipse",
@@ -5582,7 +5582,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 2,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "junior_4:p3:f0:s6" },
         encounter: "star-battle",
@@ -5740,7 +5740,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 1,
         difficulty: "junior",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "junior_4:p4:f0:s6" },
         encounter: "star-battle",
@@ -6547,7 +6547,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 2,
         difficulty: "expert",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "expert_1:p2:f0:s8" },
         encounter: "balance-scale",
@@ -6577,7 +6577,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 2,
         difficulty: "starter",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "expert_1:p2:f0:s9" },
         encounter: "procession",
@@ -6884,7 +6884,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 2,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "expert_1:p3:f0:s8" },
         encounter: "constellation",
@@ -7794,7 +7794,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 2,
         difficulty: "expert",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "expert_2:p2:f0:s8" },
         encounter: "sudoku",
@@ -8127,7 +8127,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 2,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "expert_2:p3:f0:s8" },
         encounter: "rush-hour",
@@ -9280,7 +9280,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 2,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "expert_3:p3:f0:s7" },
         encounter: "procession",
@@ -9622,7 +9622,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 2,
         difficulty: "expert",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "expert_3:p4:f0:s8" },
         encounter: "sumplete",
@@ -10737,7 +10737,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 2,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "expert_4:p3:f0:s8" },
         encounter: "eclipse",
@@ -11063,7 +11063,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 2,
         difficulty: "expert",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "expert_4:p4:f0:s7" },
         encounter: "futoshiki",
@@ -11259,7 +11259,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 4,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "master_1:p0:f0:s9" },
         encounter: "twin-stars",
@@ -11431,7 +11431,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 5,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "master_1:p1:f0:s8" },
         encounter: "sudoku",
@@ -11638,7 +11638,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 5,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "master_1:p2:f0:s10" },
         encounter: "eclipse",
@@ -11795,7 +11795,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 6,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "master_1:p3:f0:s7" },
         encounter: "futoshiki",
@@ -11965,7 +11965,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 6,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "master_2:p0:f0:s7" },
         encounter: "canisters",
@@ -12126,7 +12126,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "master_2:p1:f0:s7" },
         encounter: "canisters",
@@ -12331,7 +12331,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "master_2:p2:f0:s9" },
         encounter: "sudoku",
@@ -12518,7 +12518,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 4,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "master_2:p3:f0:s8" },
         encounter: "hidato",
@@ -12683,7 +12683,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 8,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "master_2:p4:f0:s7" },
         encounter: "futoshiki",
@@ -12867,7 +12867,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 6,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "master_3:p0:f0:s8" },
         encounter: "balance-scale",
@@ -13048,7 +13048,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "master_3:p1:f0:s8" },
         encounter: "hidato",
@@ -13253,7 +13253,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "master_3:p2:f0:s9" },
         encounter: "procession",
@@ -13436,7 +13436,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 8,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "master_3:p3:f0:s8" },
         encounter: "constellation",
@@ -13618,7 +13618,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 8,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "master_3:p4:f0:s8" },
         encounter: "sudoku",
@@ -13783,7 +13783,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 5,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "master_4:p0:f0:s7" },
         encounter: "rush-hour",
@@ -13930,7 +13930,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 6,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "master_4:p1:f0:s6" },
         encounter: "balance-scale",
@@ -14107,7 +14107,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 6,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "master_4:p2:f0:s7" },
         encounter: "canisters",
@@ -14279,7 +14279,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 4,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "master_4:p3:f0:s7" },
         encounter: "procession",
@@ -14454,7 +14454,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "master_4:p4:f0:s8" },
         encounter: "twin-stars",
@@ -14687,7 +14687,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 3,
         difficulty: "starter",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "wizard_1:p0:f1:s6" },
         encounter: "eclipse",
@@ -14914,7 +14914,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 8,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "wizard_1:p1:f1:s5" },
         encounter: "canisters",
@@ -15163,7 +15163,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 8,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "wizard_1:p2:f1:s7" },
         encounter: "rush-hour",
@@ -15374,7 +15374,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 9,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "wizard_1:p3:f1:s5" },
         encounter: "balance-scale",
@@ -15665,7 +15665,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "wizard_2:p0:f1:s6" },
         encounter: "hidato",
@@ -15954,7 +15954,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 8,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "wizard_2:p1:f1:s5" },
         encounter: "eclipse",
@@ -16326,7 +16326,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 8,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "wizard_2:p2:f1:s9" },
         encounter: "canisters",
@@ -16602,7 +16602,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 9,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "wizard_2:p3:f1:s5" },
         encounter: "constellation",
@@ -16879,7 +16879,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 9,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "wizard_2:p4:f1:s5" },
         encounter: "rush-hour",
@@ -17126,7 +17126,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "wizard_3:p0:f1:s7" },
         encounter: "balance-scale",
@@ -17345,7 +17345,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "wizard_3:p1:f1:s5" },
         encounter: "futoshiki",
@@ -17581,7 +17581,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 8,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "wizard_3:p2:f1:s7" },
         encounter: "constellation",
@@ -17801,7 +17801,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 8,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "wizard_3:p3:f1:s6" },
         encounter: "rush-hour",
@@ -18012,7 +18012,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 9,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "wizard_3:p4:f1:s5" },
         encounter: "sudoku",
@@ -18224,7 +18224,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 9,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "wizard_3:p5:f1:s5" },
         encounter: "balance-scale",
@@ -18541,7 +18541,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "wizard_4:p0:f1:s7" },
         encounter: "canisters",
@@ -18828,7 +18828,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "wizard_4:p1:f1:s5" },
         encounter: "procession",
@@ -19105,7 +19105,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 8,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "wizard_4:p2:f1:s5" },
         encounter: "balance-scale",
@@ -19452,7 +19452,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 8,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "wizard_4:p3:f1:s8" },
         encounter: "eclipse",
@@ -19707,7 +19707,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 9,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "wizard_4:p4:f1:s4" },
         encounter: "sumplete",
@@ -19985,7 +19985,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 9,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [],
         entrance: { stairId: "wizard_4:p5:f1:s5" },
         encounter: "twin-stars",
@@ -20094,7 +20094,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 2,
         difficulty: "starter",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -20160,7 +20160,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 2,
         difficulty: "starter",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -20226,7 +20226,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 2,
         difficulty: "starter",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -20378,7 +20378,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 4,
         difficulty: "junior",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -20435,7 +20435,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 4,
         difficulty: "junior",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 1,
@@ -20518,7 +20518,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 4,
         difficulty: "junior",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -20575,7 +20575,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 4,
         difficulty: "junior",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -20632,7 +20632,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 4,
         difficulty: "junior",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -20774,7 +20774,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 5,
         difficulty: "expert",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 1,
@@ -20856,7 +20856,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 5,
         difficulty: "expert",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -20912,7 +20912,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 5,
         difficulty: "expert",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -21053,7 +21053,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 5,
         difficulty: "expert",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -21109,7 +21109,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 5,
         difficulty: "expert",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -21165,7 +21165,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 5,
         difficulty: "expert",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -21304,7 +21304,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 6,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -21357,7 +21357,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 6,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -21410,7 +21410,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 6,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -21463,7 +21463,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 6,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -21591,7 +21591,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 6,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -21644,7 +21644,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 6,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -21697,7 +21697,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 6,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -21750,7 +21750,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 6,
         difficulty: "master",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -21911,7 +21911,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -21972,7 +21972,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -22033,7 +22033,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -22177,7 +22177,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -22237,7 +22237,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -22297,7 +22297,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -22440,7 +22440,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -22500,7 +22500,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,
@@ -22560,7 +22560,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         pathPuzzles: 7,
         difficulty: "wizard",
         end: "treasure",
-        exitOrStaircase: "exit",
+        exitOrStaircase: "none",
         sideSections: [
           {
             pathPuzzles: 0,

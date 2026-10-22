@@ -5,6 +5,7 @@ import { validateSite } from "../siteValidator"
 import { openDoorsFor } from "../mechanismDoors"
 import { designerDoubleBack, forkSwitchFloorConfig as forkSwitched } from "../testSupport/forkSwitchFixtures"
 import { cellAddress } from "../cellAddress"
+import { cellSlot } from "../cellSlot"
 import { floorLock } from "../floorLock"
 import { walkLock } from "../lockWalk"
 import { resolveEncounter } from "@/app/families/familyRegistry"
@@ -636,5 +637,40 @@ describe("the designer's doubleBack, two arms off the entrance with drops betwee
       )
       expect(refusedWith(config)).toEqual([{ type: "gateOwnedTwice", id: "forkLeft", owner: "Y" }])
     })
+  })
+})
+
+describe("a floor with no exit", () => {
+  const noExit = (seed: number) =>
+    assembleFloor(
+      "site-1",
+      {
+        ...basicConfig(),
+        pathPuzzles: 3,
+        exitOrStaircase: "none",
+        entrance: { stairId: "up" },
+        mainEndReward: { type: "fragmentSlot" },
+        sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: "treasure" }],
+      },
+      seed
+    )
+
+  it.each([1, 2, 3, 4, 5, 6, 7, 8])("carves one portal, its entrance stair, at seed %i", seed => {
+    const result = noExit(seed)
+    if (!result.success) throw new Error("assembly failed")
+    const { grid } = result
+    const portals = grid.cells.flatMap(row => row.filter(cell => cell.type === "room" && cell.roomType === "portal"))
+    expect(portals).toEqual([expect.objectContaining({ stairId: "up" })])
+    for (let r = 0; r < grid.rows; r++)
+      for (let c = 0; c < grid.cols; c++) expect(cellSlot(grid, r, c)).not.toBe("exit")
+  })
+
+  it.each([1, 2, 3, 4, 5, 6, 7, 8])("ends its main path at the goal chest, a dead end, at seed %i", seed => {
+    const result = noExit(seed)
+    if (!result.success) throw new Error("assembly failed")
+    const [er, ec] = result.grid.exitPos
+    const end = result.grid.cells[er][ec]
+    expect(end).toMatchObject({ type: "room", roomType: "encounter", reward: { type: "fragmentSlot" } })
+    expect(end.type === "room" && end.dirs.size).toBe(1)
   })
 })
