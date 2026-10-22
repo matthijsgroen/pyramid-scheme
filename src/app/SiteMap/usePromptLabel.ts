@@ -7,11 +7,12 @@ import type { ArrivalPrompt } from "./useSiteNavigation"
  * WHAT THE PROMPT BESIDE THE EXPLORER SAYS. Every key is written out in a `t("…")` call, so the locale guard
  * (src/i18n/keys.spec.ts) sees each one. A room's words are its family's own (FamilyMeta.invitation), read
  * through the registry so core names no mod; `here` is for a room whose family names none, or whose mod is off.
+ * A room that plays the same thing again (roomReplays.ts) says so instead.
  */
-export const usePromptLabel = (): ((prompt: ArrivalPrompt) => string) => {
+export const usePromptLabel = (): ((prompt: ArrivalPrompt, replay?: boolean) => string) => {
   const { t } = useTranslation("common")
   return useCallback(
-    (prompt: ArrivalPrompt): string => {
+    (prompt: ArrivalPrompt, replay = false): string => {
       switch (prompt.kind) {
         case "obstacle":
           // A crossing's words are its realisation's own; one no mod declares still says it cannot be undone.
@@ -32,6 +33,7 @@ export const usePromptLabel = (): ((prompt: ArrivalPrompt) => string) => {
         case "exit":
           return t("ui.prompt.exit")
         case "room": {
+          if (replay) return t("ui.prompt.replay")
           const invitation = prompt.familyId ? getFamilyPlugin(prompt.familyId)?.meta.invitation : undefined
           return invitation ? t(invitation) : t("ui.prompt.here")
         }

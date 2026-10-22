@@ -35,6 +35,7 @@ import { hudWidgets } from "@/app/SiteMap/hudRegistry"
 import { useMergedRewardContributions } from "@/app/SiteMap/rewardContributions"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { useMergedRoomOccupants } from "@/app/SiteMap/roomOccupants"
+import { useMergedRoomReplays } from "@/app/SiteMap/roomReplays"
 import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { useDetectorReadout } from "@/app/SiteMap/useDetectorReadout"
 import { useMergedReactions } from "@/app/reactions/reactionContributions"
@@ -70,6 +71,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   const journeyState = journeys.getJourney(journeyId)
   const wardKeys = useMergedHeldKeys()
   const occupantOf = useMergedRoomOccupants(journeyId)
+  const replaysAt = useMergedRoomReplays(journeyId)
   // Detector levels come from the owning mods (compass←hieroglyph, supplies←trap, corridor←core) via
   // the merged accessor — core names no mod.
   const detectorLevels = useMergedDetectorLevels()
@@ -212,6 +214,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   useExitIntro(prompt?.kind, use(FezContext).showConversation)
 
   const promptLabel = usePromptLabel()
+  const promptCell = prompt?.kind === "room" ? grid?.cells[prompt.at[0]]?.[prompt.at[1]] : undefined
+  const replaysAtPrompt = promptCell?.type === "room" && replaysAt(promptCell)
   const noticeLabel = useNoticeLabel()
 
   const ActiveEncounterComponent = encounter.family?.Component ?? null
@@ -236,9 +240,10 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
           pendingCells={pendingConsumableCells}
           ownedKeys={ownedKeys}
           mechanismStates={mechanismStates}
-          prompt={prompt && { label: promptLabel(prompt), at: prompt.at, onTake: prompt.take }}
+          prompt={prompt && { label: promptLabel(prompt, replaysAtPrompt), at: prompt.at, onTake: prompt.take }}
           notice={notice && { label: noticeLabel, at: notice.at }}
           occupantOf={occupantOf}
+          replaysAt={replaysAt}
           className="size-full"
         />
       </div>

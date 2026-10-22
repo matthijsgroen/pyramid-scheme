@@ -61,7 +61,7 @@ import { drawingOf, familyIconOf, isLockedGate, isSpentAt, nodeRadius, shapeKind
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
 import { MapNotice } from "@/ui/atoms/MapNotice"
 import { MarkArtBadge } from "./mark"
-import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge } from "./nodeShapes"
+import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge, ReplayBadge } from "./nodeShapes"
 import { FloorShade, LitPlaces } from "./torchlight"
 import {
   SEATING_PASS,
@@ -92,6 +92,7 @@ import {
 } from "./roomClaims"
 import { occupantOffset, standingOffset } from "./standingSpot"
 import { OccupantFigure } from "./OccupantFigure"
+import type { ReplaysAt } from "./roomReplays"
 import type { OccupantOf } from "./roomOccupants"
 import { DIR_MOVES } from "./corridorRuns"
 import { footprintRects, hasWallFace } from "./tileRegions"
@@ -143,6 +144,8 @@ type Props = {
   notice?: { label: string; at: readonly [number, number] } | null
   /** Who stands in a room — a ghost in the room they talk in (roomOccupants). Drawn once the room is lit. */
   occupantOf?: OccupantOf
+  /** A finished room that plays again when walked back into (roomReplays), wearing the replay symbol. */
+  replaysAt?: ReplaysAt
   className?: string
 }
 
@@ -1224,6 +1227,7 @@ export const SiteMapView = ({
   prompt,
   notice,
   occupantOf,
+  replaysAt,
   className,
 }: Props) => {
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
@@ -1905,12 +1909,17 @@ export const SiteMapView = ({
                           }
                         />
                       </g>
-                      {/* A chest wears its own badge (`nodeSpritesFor`), because it stands over this one. */}
-                      {isCompleted &&
+                      {/* A chest wears its own badge (`nodeSpritesFor`), because it stands over this one. A room
+                        that plays again wears the replay symbol where the ✓ would be. */}
+                      {replaysAt?.(cell) ? (
+                        <ReplayBadge r={roomR} />
+                      ) : (
+                        isCompleted &&
                         !isPortal &&
                         !hasChest &&
                         shapeKind !== "fork" &&
-                        (isPending ? <PendingLootBadge r={roomR} /> : <CompletedBadge r={roomR} />)}
+                        (isPending ? <PendingLootBadge r={roomR} /> : <CompletedBadge r={roomR} />)
+                      )}
                     </MarkerCell>
                   </Fragment>
                 )

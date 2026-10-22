@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { readFileSync } from "node:fs"
 import { spokenLines, type Speaker } from "@/app/fez/arrivalConversation"
-import { REVISITS, revisitLines, sceneOnVisit } from "./revisits"
+import { REVISITS, playsAgain, revisitLines, sceneOnVisit } from "./revisits"
 
 const heard = (...ids: string[]): Record<string, boolean> => Object.fromEntries(ids.map(id => [id, true]))
 
@@ -30,6 +30,21 @@ describe(sceneOnVisit, () => {
 
   it("replays the scene when nothing is written for coming back", () => {
     expect(sceneOnVisit("tomb.expertB", heard("tomb.expertB"))).toBe("tomb.expertB")
+  })
+})
+
+describe(playsAgain, () => {
+  it("is a heard scene nobody wrote a line for coming back to", () => {
+    expect(playsAgain("tomb.expertB", heard("tomb.expertB"))).toBe(true)
+    expect(playsAgain("meeting.starter_1", heard("meeting.starter_1"))).toBe(true)
+  })
+
+  it("is not a scene still to be heard", () => {
+    expect(playsAgain("tomb.expertB", heard())).toBe(false)
+  })
+
+  it("is not a ghost's scene, which answers with a line instead", () => {
+    expect(playsAgain("tomb.starter", heard("tomb.starter"))).toBe(false)
   })
 })
 

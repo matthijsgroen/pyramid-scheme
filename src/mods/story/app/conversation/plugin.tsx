@@ -8,7 +8,9 @@ import { sceneOnVisit } from "@/mods/story/game/conversation/revisits"
 import { registerFezMeeting } from "@/app/fez/fezMeeting"
 import { useGameStorage } from "@/support/useGameStorage"
 import { registerRoomOccupants } from "@/app/SiteMap/roomOccupants"
+import { registerRoomReplays } from "@/app/SiteMap/roomReplays"
 import { useGhostOccupants } from "./ghostOccupants"
+import { useConversationReplays } from "./replays"
 
 export type { ConversationArgs } from "@/mods/story/game/conversation/sceneFor"
 
@@ -17,7 +19,8 @@ export type { ConversationArgs } from "@/mods/story/game/conversation/sceneFor"
 //
 // Told as story, so the tutorials toggle cannot silence it. The whole scene plays until it has been
 // heard; after that, walking back in plays ONE line for where the story stands (`revisits.ts`) — a
-// person standing there with something to say, not the scene again. Closes through onCancel, never
+// person standing there with something to say, not the scene again. A scene nobody wrote such a line for
+// plays whole again, offered on the map as a replay (replays.ts). Closes through onCancel, never
 // onSolved — a beat is read, not solved, and resolving would hand over rewards the room was never given.
 export const ConversationComponent: FamilyPlugin["Component"] = ({ ctx, journeys, onCancel }) => {
   const fez = use(FezContext)
@@ -56,4 +59,5 @@ if (isModEnabled("story")) {
     Component: ConversationComponent,
   })
   registerRoomOccupants(useGhostOccupants)
+  registerRoomReplays(useConversationReplays)
 }

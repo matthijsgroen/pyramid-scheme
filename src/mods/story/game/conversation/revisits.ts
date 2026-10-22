@@ -58,3 +58,7 @@ export const sceneOnVisit = (
   const lines = revisitLines(scene, heard)
   return lines.length === 0 ? scene : lines[Math.floor(pick() * lines.length)]
 }
+
+/** A heard scene with no line written for coming back plays whole again: the room offers it as a replay. */
+export const playsAgain = (scene: string, heard: Readonly<Record<string, boolean>>): boolean =>
+  heard[scene] === true && revisitLines(scene, heard).length === 0

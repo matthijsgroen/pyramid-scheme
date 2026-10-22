@@ -67,7 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- The tomb ghosts stand in their rooms, and walking back in they say one line about where the story has got to.
+- The tomb ghosts stand in their rooms and say one line when you walk back in; a conversation room without one wears a replay symbol on the map and plays its scene again.
 - A tapping hand shows where to start on the travel screen, and in a conversation the explorer faces whoever he talks to.
 - A stone pipe in the walls carries a stone where you cannot: post it at one hole and take it out of the other.
 - A procession door: its tiles free the bars of a procession board, and solving it teaches the order to walk.

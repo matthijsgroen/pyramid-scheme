@@ -54,6 +54,17 @@ export const CompletedBadge = ({ r }: { r: number }) => (
   </g>
 )
 
+// A finished room that plays its scene again when walked back into (roomReplays.ts)
+export const ReplayBadge = ({ r }: { r: number }) => (
+  <g data-replay-badge transform={`translate(${r - 7}, ${r - 7})`}>
+    <circle r={7} fill="#14182a" stroke="#6a80c8" strokeWidth={1.5} />
+    {/* ⏯ drawn rather than typed: an emoji glyph brings its own tile and differs per platform. */}
+    <path d="M -4 -3 L -4 3 L 0 0 Z" fill="#a8b8f0" />
+    <rect x={1} y={-3} width={1.2} height={6} fill="#a8b8f0" />
+    <rect x={3} y={-3} width={1.2} height={6} fill="#a8b8f0" />
+  </g>
+)
+
 // A treasure that couldn't be picked up (inventory was full) — still waiting to be looted
 export const PendingLootBadge = ({ r }: { r: number }) => (
   <g transform={`translate(${r - 7}, ${r - 7})`}>
