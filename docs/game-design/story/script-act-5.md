@@ -63,7 +63,7 @@ tutorial about a wall.
 >
 > **Fez:** Nothing for us today, then.
 >
-> **Explorer:** It is not going anywhere.
+> **Explorer (deadpan):** It is not going anywhere.
 >
 > **Fez:** No. Neither is it.
 
@@ -217,7 +217,7 @@ is the only sad note Act V gets, and it is spent on a rock rather than on a char
 
 > **Fez:** The scale. Heart on one side, feather on the other — so a good heavy heart wins, presumably.
 >
-> **Explorer:** Which way does a heavy thing go?
+> **Explorer (deadpan):** Which way does a heavy thing go?
 >
 > **Fez (surprised):** …Down.
 >
@@ -247,7 +247,7 @@ The rite the priest has been waiting three thousand years to complete.
 >
 > **Priest:** That is the first time I have done that. I had begun to think I had forgotten how.
 >
-> **Explorer:** Had you?
+> **Explorer (deadpan):** Had you?
 >
 > **Priest:** Completely. It came back.
 
@@ -263,7 +263,7 @@ Not a body. A rope still hanging, a notebook, and somebody who turned back.
 >
 > **Fez (wistful):** Further than this. And then they went back up it.
 >
-> **Explorer:** There is a notebook.
+> **Explorer (surprised):** There is a notebook.
 >
 > **Fez:** What does it say?
 >
@@ -299,7 +299,7 @@ true."_
 >
 > **Fez (wistful):** I am not going to price that.
 >
-> **Explorer:** Noted.
+> **Explorer (deadpan):** Noted.
 
 ## The last exchange
 
@@ -307,7 +307,7 @@ true."_
 
 > **Fez (wistful):** Was it neat?
 >
-> **Explorer:** It'll do.
+> **Explorer (deadpan):** It'll do.
 
 ## Open
 

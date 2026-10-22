@@ -22,7 +22,7 @@ it.
 
 > **Fez:** Two million blocks. Somebody counted.
 >
-> **Explorer:** Somebody counted?
+> **Explorer (surprised):** Somebody counted?
 >
 > **Fez (pointUp):** Somebody always counts. That is the part people forget about all this — it was run by clerks.
 >
@@ -35,7 +35,7 @@ hidden corridor here.
 
 > **Fez:** Instructions. That is all it is — what to say, in what order, so the journey goes properly.
 >
-> **Explorer:** A manual.
+> **Explorer (deadpan):** A manual.
 >
 > **Fez:** A manual for being dead. They wrote everything down, this lot.
 >
@@ -47,7 +47,7 @@ hidden corridor here.
 
 > **Fez (worried):** Ah. Somebody's camp.
 >
-> **Explorer:** Recent?
+> **Explorer (surprised):** Recent?
 >
 > **Fez:** Recent-ish. Tinned food and a bad cough, by the look of it.
 >
@@ -64,7 +64,7 @@ hidden corridor here.
 > **Fez (pointUp):** Now THIS is what the others were imitating. Look at the colour — three thousand years and it is
 > still wet-looking.
 >
-> **Explorer:** Henut would be furious.
+> **Explorer (deadpan):** Henut would be furious.
 >
 > **Fez:** Henut would be taking notes.
 

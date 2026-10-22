@@ -26,7 +26,7 @@ thinks, twice, and does not comment on it.
 >
 > **Fez:** What do you make of it?
 >
-> **Explorer:** That we are late.
+> **Explorer (deadpan):** That we are late.
 
 ## `expert_2` — Karnak Temple Complex
 
@@ -47,7 +47,7 @@ thinks, twice, and does not comment on it.
 >
 > **Fez:** Everything grows. Everything also bites.
 >
-> **Explorer:** Which of those are we here for?
+> **Explorer (deadpan):** Which of those are we here for?
 >
 > **Fez (worried):** I was rather hoping neither.
 
@@ -59,7 +59,7 @@ thinks, twice, and does not comment on it.
 >
 > **Fez (pointUp):** Someone stood here and thought: what if we did that, but six times, upwards.
 >
-> **Explorer:** Did it work?
+> **Explorer (deadpan):** Did it work?
 >
 > **Fez:** It is still standing and he is not. Depends what you mean.
 
@@ -102,7 +102,7 @@ years ago and he has not left off waiting for the rest of it.
 >
 > **Fez (sheepish):** …Right. Yes. I did know that.
 >
-> **Explorer:** You did not.
+> **Explorer (deadpan):** You did not.
 >
 > **Fez (sheepish):** I did not.
 
@@ -130,7 +130,7 @@ an ask placed in an optional room is an arc the player can walk past.
 
 > **Fez (worried):** That was close.
 >
-> **Explorer:** It was fine.
+> **Explorer (deadpan):** It was fine.
 >
 > **Fez (worried):** It was close. I am allowed to say so.
 

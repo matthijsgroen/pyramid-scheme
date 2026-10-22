@@ -65,7 +65,7 @@ the map they both overpaid for, the fez nobody explains, and Fez knowing what th
 >
 > **Fez:** You're here for the pyramid too, I bet. Bought a map? Paid far too much?
 >
-> **Explorer:** Wáy too much.
+> **Explorer (deadpan):** Wáy too much.
 >
 > **Fez (sheepish):** Me too. Pff.
 >
@@ -77,7 +77,7 @@ the map they both overpaid for, the fez nobody explains, and Fez knowing what th
 >
 > **Fez (sheepish):** …Heard it. So, what are you after down here?
 >
-> **Explorer:** Something neat.
+> **Explorer (deadpan):** Something neat.
 >
 > **Fez (pointUp):** Neat sells! You know what? I'm coming with you!
 >
@@ -135,7 +135,7 @@ than something he knew.
 
 > **Fez (pointUp):** Oh, I like this one. This is where they learned to write! Sign by sign, on broken pots — papyrus was far too dear for children.
 >
-> **Explorer:** They practised on rubbish?
+> **Explorer (surprised):** They practised on rubbish?
 >
 > **Fez (pointUp):** On whatever there was! And learn enough of these, and suddenly a wall isn't decoration any more.
 >
@@ -161,7 +161,7 @@ room and the room is a hole in the ground.
 >
 > **Ipi:** That was me. Third shelf, the one with the chip. That one's mine.
 >
-> **Explorer:** Okay, okay! It stays put. Who are you?
+> **Explorer (surprised):** Okay, okay! It stays put. Who are you?
 >
 > **Ipi:** Ipi. Forty years I kept the books. Forty!
 >
@@ -187,7 +187,7 @@ room and the room is a hole in the ground.
 >
 > **Fez (pointUp):** I like him!
 >
-> **Explorer:** You just like that he's still owed money.
+> **Explorer (deadpan):** You just like that he's still owed money.
 
 **Ipi teaches the ending.** _"A thing written down is a thing that happened"_ is the belief the finale
 stands on (`what-the-player-knows.md`), said four acts early by a bookkeeper for whom it is not a belief
@@ -230,7 +230,7 @@ half — rarely, and remembering the last time.
 
 > **Fez (surprised):** That was quick.
 >
-> **Explorer:** It was a door.
+> **Explorer (deadpan):** It was a door.
 >
 > **Fez (sheepish):** I'd have taken a week.
 
@@ -238,7 +238,7 @@ half — rarely, and remembering the last time.
 
 > **Fez:** Just so we're clear. I'm in this for the resale. I'm saying it now, while it's still true.
 >
-> **Explorer:** Noted.
+> **Explorer (deadpan):** Noted.
 
 _"Noted."_ is the whole bond in one word: they heard him, they are not arguing, and it is on the record for
 Act V to come back to.

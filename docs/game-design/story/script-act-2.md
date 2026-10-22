@@ -18,7 +18,7 @@ the ending's mechanism arriving quietly, four tiers early.
 >
 > **Fez:** So people started counting the days between. That is where the calendar comes from — birds.
 >
-> **Explorer:** Birds.
+> **Explorer (deadpan):** Birds.
 >
 > **Fez:** Birds and paperwork. It is always birds and paperwork.
 
@@ -40,7 +40,7 @@ the ending's mechanism arriving quietly, four tiers early.
 
 > **Fez:** Thoth, this one. God of secrets and magic, I am fairly sure.
 >
-> **Explorer:** Fairly.
+> **Explorer (deadpan):** Fairly.
 >
 > **Fez (sheepish):** Ninety per cent. Anyway — the signs you have been collecting are his.
 
@@ -69,7 +69,7 @@ game does not say so — Fez does, badly, and is corrected.
 
 > **Henut:** Finally. You will have come about the lapis. I assume Ipi is still going on about the lapis.
 >
-> **Explorer:** He is.
+> **Explorer (deadpan):** He is.
 >
 > **Henut:** It was glass. Beautiful glass. He knew.
 >
@@ -88,7 +88,7 @@ hieroglyphs do anything outside a tableau, and the mechanism the ending runs on.
 
 > **Henut:** There. Now it will still be my name in a thousand years.
 >
-> **Explorer:** Ipi spelled it correctly.
+> **Explorer (deadpan):** Ipi spelled it correctly.
 >
 > **Henut:** Ipi spelled everything correctly. It was his one redeeming feature.
 >
@@ -139,7 +139,7 @@ written in **every** tomb, because it genuinely was.
 >
 > **Fez:** Bread. In a tomb.
 >
-> **Explorer:** It is in the last one too. I did not know it was words.
+> **Explorer (surprised):** It is in the last one too. I did not know it was words.
 
 ## Open
 
