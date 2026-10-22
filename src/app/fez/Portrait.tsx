@@ -4,8 +4,9 @@ import { GHOSTS, type Speaker } from "./arrivalConversation"
 import type { PortraitArt } from "./portraits"
 
 /**
- * A speaker's figure with its faces stacked over it, one box so a mirror or a bounce moves both as one.
- * Only `art.face` shows; the other `faces` stay mounted and hidden, so a look arriving later is loaded.
+ * A speaker's figure with its faces stacked over it and the figure's foreground over those, one box so a
+ * mirror or a bounce moves them as one. Only `art.face` shows; the other `faces` stay mounted and hidden,
+ * so a look arriving later is loaded.
  */
 export const Portrait: FC<{
   speaker: Speaker
@@ -37,5 +38,6 @@ export const Portrait: FC<{
         className={clsx("absolute inset-0 w-full", src !== art.face && "invisible")}
       />
     ))}
+    {art.front && <img src={art.front} alt="" data-front className="absolute inset-0 w-full" />}
   </div>
 )

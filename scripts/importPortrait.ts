@@ -35,16 +35,21 @@
  *                    out with a feathered mask (faceLayer.ts), the rest is transparent, and it is framed
  *                    exactly as the base is (pass the base's own framing flags). `Fez.tsx` stacks it on
  *                    the pose. Tuned with --threshold=64 --erode=4 --grow=45 --feather=18.
+ *   --front-of=master for a POSE BASE: also write <name>-front-250.png, the pose's pixels that differ
+ *                    from `master` where any of its face layers (every <master>-face-*.jpeg beside it)
+ *                    would paint — a straw across the chin. `Fez.tsx` draws it above the face. Written
+ *                    only when there is such a pixel; otherwise a stale one is removed.
  *
  * The key is flood-filled inward from the edges rather than matched everywhere, which is the whole
  * difference between this and `import-tile`: a prop on magenta has no magenta of its own, but a person on
  * white has white in their eyes, and a plain threshold punches both of them out.
  */
 import sharp from "sharp"
-import { dirname, join } from "node:path"
+import { readdir, rm } from "node:fs/promises"
+import { basename, dirname, extname, join } from "node:path"
 import { fileURLToPath, pathToFileURL } from "node:url"
 import { hexToRgb } from "./keyOut"
-import { boxOf, diffMask, faceRegion } from "./faceLayer"
+import { boxOf, diffMask, faceRegion, frontRegion } from "./faceLayer"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const OUT_ROOT = join(__dirname, "..", "src", "assets")
@@ -393,36 +398,104 @@ const keyed = async (file: string, key: { r: number; g: number; b: number }, tol
   return { data, info, background: edgeBackground({ data, ...info, key, tolerance }) }
 }
 
+type FaceOptions = { threshold: number; erode: number; grow: number; feather: number }
+
+const FACE_DEFAULTS: FaceOptions = { threshold: 64, erode: 4, grow: 45, feather: 18 }
+
+const raw = (file: string) => sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+
 /**
- * Turns an expression master into its face layer, in place: alpha is the feathered face region (see
- * faceLayer.ts) times the master's own keyed alpha, so the soft edge never paints the white it was
- * generated on over the room.
+ * The alpha a face layer is cut with, at source size: the face region (see faceLayer.ts) of what moved
+ * between `base` and `expression`, blurred by `feather`. Undefined when the two do not differ.
  */
-const toFaceLayer = async (
-  expression: { data: Buffer; info: sharp.OutputInfo; background: Uint8Array },
-  baseFile: string,
-  options: { threshold: number; erode: number; grow: number; feather: number }
+const featheredFace = async (
+  base: { data: Buffer; info: sharp.OutputInfo },
+  expression: { data: Buffer; info: sharp.OutputInfo },
+  options: FaceOptions
 ) => {
-  const { data, info, background } = expression
-  const base = await sharp(baseFile).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
-  if (base.info.width !== info.width || base.info.height !== info.height)
-    throw new Error(
-      `the expression is ${info.width}x${info.height} and its base ${base.info.width}x${base.info.height}`
-    )
-  const diff = diffMask({ a: base.data, b: data, ...info, threshold: options.threshold })
+  const { info } = expression
+  const diff = diffMask({ a: base.data, b: expression.data, ...info, threshold: options.threshold })
   const region = faceRegion(diff, info.width, info.height, options)
   const box = boxOf(region, info.width, info.height)
-  if (!box) throw new Error(`${baseFile} and its expression do not differ — nothing to cut`)
-  const feathered = await sharp(Buffer.from(region.map(b => b * 255)), {
+  if (!box) return undefined
+  const alpha = await sharp(Buffer.from(region.map(b => b * 255)), {
     raw: { width: info.width, height: info.height, channels: 1 },
   })
     .blur(options.feather)
     .extractChannel(0)
     .raw()
     .toBuffer()
+  return { alpha, box }
+}
+
+const sameSize = (a: sharp.OutputInfo, b: sharp.OutputInfo, what: string) => {
+  if (a.width !== b.width || a.height !== b.height)
+    throw new Error(`${what} is ${b.width}x${b.height}, not ${a.width}x${a.height}`)
+}
+
+/**
+ * Turns an expression master into its face layer, in place: alpha is the feathered face region times the
+ * master's own keyed alpha, so the soft edge never paints the white it was generated on over the room.
+ */
+const toFaceLayer = async (
+  expression: { data: Buffer; info: sharp.OutputInfo; background: Uint8Array },
+  baseFile: string,
+  options: FaceOptions
+) => {
+  const { data, info, background } = expression
+  const base = await raw(baseFile)
+  sameSize(info, base.info, baseFile)
+  const face = await featheredFace(base, expression, options)
+  if (!face) throw new Error(`${baseFile} and its expression do not differ — nothing to cut`)
   for (let i = 0; i < info.width * info.height; i++)
-    data[i * info.channels + 3] = background[i] === 1 ? 0 : feathered[i]
-  return box
+    data[i * info.channels + 3] = background[i] === 1 ? 0 : face.alpha[i]
+  return face.box
+}
+
+/** Every face edit of a master, found by name: `fez.jpeg` has `fez-face-*.jpeg` beside it. */
+const faceMastersOf = async (master: string) => {
+  const stem = basename(master, extname(master))
+  const dir = dirname(master)
+  return (await readdir(dir))
+    .filter(file => file.startsWith(`${stem}-face-`) && extname(file) === extname(master))
+    .sort()
+    .map(file => join(dir, file))
+}
+
+/**
+ * A pose base's FOREGROUND layer: its pixels that differ from `masterFile` inside the reach of any of the
+ * master's face layers — what would otherwise be painted over by a face — with a 1px feather rather than a
+ * face's soft band, since it is an object in front. Drawn above the face. Undefined when there is none.
+ */
+const toFrontLayer = async (
+  pose: { data: Buffer; info: sharp.OutputInfo; background: Uint8Array },
+  masterFile: string
+) => {
+  const { info, background } = pose
+  const master = await raw(masterFile)
+  sameSize(master.info, info, `the pose of ${masterFile}`)
+  const faces = await faceMastersOf(masterFile)
+  const reach = new Uint8Array(info.width * info.height)
+  for (const file of faces) {
+    const expression = await raw(file)
+    sameSize(master.info, expression.info, file)
+    const face = await featheredFace(master, expression, FACE_DEFAULTS)
+    if (face) for (let i = 0; i < reach.length; i++) if (face.alpha[i] > 0) reach[i] = 1
+  }
+  const diff = diffMask({ a: master.data, b: pose.data, ...info, threshold: FACE_DEFAULTS.threshold })
+  const region = frontRegion(diff, reach, info.width, info.height, { erode: 4, close: 12, grow: 2 })
+  const box = boxOf(region, info.width, info.height)
+  if (!box) return { faces, front: undefined }
+  const alpha = await sharp(Buffer.from(region.map(b => b * 255)), {
+    raw: { width: info.width, height: info.height, channels: 1 },
+  })
+    .blur(1)
+    .extractChannel(0)
+    .raw()
+    .toBuffer()
+  const data = Buffer.from(pose.data)
+  for (let i = 0; i < reach.length; i++) data[i * info.channels + 3] = background[i] === 1 ? 0 : alpha[i]
+  return { faces, front: { data, box } }
 }
 
 const main = async (): Promise<void> => {
@@ -454,12 +527,14 @@ const main = async (): Promise<void> => {
   const faceOf = arg("face-of")
   const faceBox = faceOf
     ? await toFaceLayer({ data, info, background }, faceOf, {
-        threshold: Number(arg("threshold", "64")),
-        erode: Number(arg("erode", "4")),
-        grow: Number(arg("grow", "45")),
-        feather: Number(arg("feather", "18")),
+        threshold: Number(arg("threshold", String(FACE_DEFAULTS.threshold))),
+        erode: Number(arg("erode", String(FACE_DEFAULTS.erode))),
+        grow: Number(arg("grow", String(FACE_DEFAULTS.grow))),
+        feather: Number(arg("feather", String(FACE_DEFAULTS.feather))),
       })
     : undefined
+  const frontOf = arg("front-of")
+  const front = frontOf ? await toFrontLayer({ data, info, background }, frontOf) : undefined
 
   // A face layer is always cut through its base's frame; a pose base names the character's masters
   // so every one of them shares it.
@@ -497,14 +572,31 @@ const main = async (): Promise<void> => {
 
   // Two passes, because sharp always extends AFTER it resizes: padding and resizing in one chain pads
   // the finished 250x375 and hands back a canvas the size of neither.
-  const padded = await sharp(data, { raw: { width: info.width, height: info.height, channels: info.channels } })
-    .extract(extract)
-    .extend({ ...extend, background: { r: 0, g: 0, b: 0, alpha: 0 } })
-    .png()
-    .toBuffer()
+  const cut = async (pixels: Buffer, out: string) => {
+    const padded = await sharp(pixels, { raw: { width: info.width, height: info.height, channels: info.channels } })
+      .extract(extract)
+      .extend({ ...extend, background: { r: 0, g: 0, b: 0, alpha: 0 } })
+      .png()
+      .toBuffer()
+    await sharp(padded).resize(spriteWidth, HEIGHT).png().toFile(out)
+  }
 
   const out = join(OUT_ROOT, name + "-250.png")
-  await sharp(padded).resize(spriteWidth, HEIGHT).png().toFile(out)
+  await cut(data, out)
+
+  if (front) {
+    // Written only when the pose reaches in front of a face; a stale one is removed, so the file says which.
+    const frontOut = join(OUT_ROOT, name + "-front-250.png")
+    const faces = front.faces.map(file => basename(file)).join(", ") || "none"
+    if (front.front) {
+      await cut(front.front.data, frontOut)
+      const { width, height, left, top } = front.front.box
+      console.log(`${frontOut}  in front of the faces (${faces}), ${width}x${height}+${left}+${top}`)
+    } else {
+      await rm(frontOut, { force: true })
+      console.log(`no foreground: the pose reaches in front of none of the faces (${faces})`)
+    }
+  }
 
   if (faceBox) {
     console.log(

@@ -115,3 +115,39 @@ export const boxOf = (mask: Uint8Array, width: number, height: number) => {
   }
   return right < 0 ? undefined : { left, top, width: right - left + 1, height: bottom - top + 1 }
 }
+
+/** 1 where the mask reaches within `radius` of a set pixel. */
+const dilate = (mask: Uint8Array, width: number, height: number, radius: number) =>
+  Uint8Array.from(squaredDistanceTo(mask, width, height), d => (d <= radius * radius ? 1 : 0))
+
+/** 1 where the mask holds every pixel within `radius`. */
+const erode = (mask: Uint8Array, width: number, height: number, radius: number) =>
+  Uint8Array.from(
+    squaredDistanceTo(
+      Uint8Array.from(mask, b => (b ? 0 : 1)),
+      width,
+      height
+    ),
+    d => (d > radius * radius ? 1 : 0)
+  )
+
+/**
+ * A pose's FOREGROUND: what the pose edit added in front of the head — a straw, an umbrella — where a
+ * face layer would paint over it. The difference from the master opened by `erode` (outlines redrawn a
+ * pixel over are not an object), closed by `close` (where the object's outline crosses the head's own, the
+ * pixels did not change), grown by `grow` for its anti-aliased edge, and kept only inside `reach`, the
+ * pixels any face layer paints. Outside the reach the base already shows the object.
+ */
+export const frontRegion = (
+  diff: Uint8Array,
+  reach: Uint8Array,
+  width: number,
+  height: number,
+  options: { erode: number; close: number; grow: number }
+): Uint8Array => {
+  const opened = dilate(erode(diff, width, height, options.erode), width, height, options.erode)
+  const closed =
+    options.close > 0 ? erode(dilate(opened, width, height, options.close), width, height, options.close) : opened
+  const grown = options.grow > 0 ? dilate(closed, width, height, options.grow) : closed
+  return grown.map((b, i) => b & reach[i])
+}

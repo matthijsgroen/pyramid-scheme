@@ -3,7 +3,11 @@ import fezPosePoint from "@/assets/fez-pose-point-250.png"
 import fezFaceWorried from "@/assets/fez-face-worried-250.png"
 import fezFaceExcited from "@/assets/fez-face-excited-250.png"
 import fezFaceCool from "@/assets/fez-face-cool-250.png"
-import fezCocktail from "@/assets/cocktail-fez-250.png"
+import fezFaceWistful from "@/assets/fez-face-wistful-250.png"
+import fezFaceSurprised from "@/assets/fez-face-surprised-250.png"
+import fezFaceSheepish from "@/assets/fez-face-sheepish-250.png"
+import fezPoseCocktail from "@/assets/fez-pose-cocktail-250.png"
+import fezPoseCocktailFront from "@/assets/fez-pose-cocktail-front-250.png"
 import explorer from "@/assets/explorer-250.png"
 import explorerCool from "@/assets/grin-explorer-250.png"
 import explorerPoint from "@/assets/point-explorer-250.png"
@@ -21,7 +25,7 @@ export const BASES = ["default", "point", "cocktail"] as const
 export type Base = (typeof BASES)[number]
 
 /** A look laid over a pose base. `default` is the base's own face. */
-export const FACES = ["default", "worried", "excited", "cool"] as const
+export const FACES = ["default", "worried", "excited", "cool", "wistful", "surprised", "sheepish"] as const
 export type Face = (typeof FACES)[number]
 
 /** The pose names lines are written with (`> **Fez (pointUp):** …`), each a pose base and a face. */
@@ -35,7 +39,15 @@ export const POSE_PARTS: Readonly<Record<Pose, { base: Base; face: Face }>> = {
   cocktail: { base: "cocktail", face: "default" },
 }
 
-type Art = { src: string; alt: string }
+type Art = {
+  src: string
+  alt: string
+  /**
+   * What the pose holds in front of the head (a straw across the chin), cut by the importer
+   * (`--front-of`) and drawn above any face, which would otherwise paint over it.
+   */
+  front?: string
+}
 type Combination = `${Base}+${Face}`
 
 type Portraits = {
@@ -63,10 +75,19 @@ export const PORTRAITS: Partial<Record<Speaker, Portraits>> = {
     bases: {
       default: { src: fez, alt: "Happy companion lizard wearing a fez" },
       point: { src: fezPosePoint, alt: "Happy companion lizard wearing a fez, pointing" },
+      cocktail: {
+        src: fezPoseCocktail,
+        front: fezPoseCocktailFront,
+        alt: "Happy companion lizard wearing a fez and holding a cocktail",
+      },
     },
-    faces: { worried: fezFaceWorried, excited: fezFaceExcited, cool: fezFaceCool },
-    paintings: {
-      "cocktail+default": { src: fezCocktail, alt: "Happy companion lizard wearing a fez and holding a cocktail" },
+    faces: {
+      worried: fezFaceWorried,
+      excited: fezFaceExcited,
+      cool: fezFaceCool,
+      wistful: fezFaceWistful,
+      surprised: fezFaceSurprised,
+      sheepish: fezFaceSheepish,
     },
   },
   ipi: { wide: true, bases: { default: { src: ghostIpi, alt: "Ipi, a bookkeeper, pale blue-green" } } },
@@ -88,7 +109,7 @@ const compose = (portraits: Portraits, base: Base, face: Face) => {
   const layer = face === "default" ? undefined : portraits.faces?.[face]
   if (figure && (face === "default" || layer)) return { ...figure, face: layer, painting: false }
   const painting = portraits.paintings?.[`${base}+${face}`]
-  return painting && { ...painting, face: undefined, painting: true }
+  return painting && { ...painting, face: undefined, front: undefined, painting: true }
 }
 
 /** Exactly this base and face for a speaker, with no giving way: a composition, a painting, or nothing. */

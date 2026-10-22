@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { boxOf, diffMask, faceRegion, squaredDistanceTo } from "./faceLayer"
+import { boxOf, diffMask, faceRegion, frontRegion, squaredDistanceTo } from "./faceLayer"
 
 /** A picture of `.` white and `#` black, read as RGB the way sharp hands it over. */
 const picture = (rows: string[]) => {
@@ -101,5 +101,91 @@ describe("boxOf", () => {
     const { bits, width, height } = mask(["..", ".."])
 
     expect(boxOf(bits, width, height)).toBeUndefined()
+  })
+})
+
+describe("frontRegion", () => {
+  const reach = mask(["..........", ".######...", ".######...", ".######...", ".######...", ".######...", ".........."])
+  const front = (changed: Uint8Array, options: { erode?: number; close?: number; grow?: number } = {}) =>
+    frontRegion(changed, reach.bits, 10, 7, { erode: 1, close: 0, grow: 0, ...options })
+
+  it("is what the pose added inside a face layer's reach, cut off where the reach ends", () => {
+    const straw = mask([
+      "..........",
+      "..........",
+      "....######",
+      "....######",
+      "....######",
+      "....######",
+      "..........",
+    ])
+
+    expect(draw(front(straw.bits), 10)).toEqual([
+      "..........",
+      "..........",
+      ".....##...",
+      "....###...",
+      "....###...",
+      ".....##...",
+      "..........",
+    ])
+  })
+
+  it("is empty when the pose changed only outside every face's reach — a raised arm is no foreground", () => {
+    const arm = mask([".......###", ".......###", ".......###", ".......###", "..........", "..........", ".........."])
+
+    expect(boxOf(front(arm.bits), 10, 7)).toBeUndefined()
+  })
+
+  it("drops a hairline — an outline redrawn a pixel over is in front of nothing", () => {
+    const outline = mask([
+      "..........",
+      "..........",
+      ".#######..",
+      "..........",
+      "..........",
+      "..........",
+      "..........",
+    ])
+
+    expect(boxOf(front(outline.bits), 10, 7)).toBeUndefined()
+  })
+
+  it("closes a gap where the object's outline crosses the head's own and so did not change", () => {
+    const crossed = mask([
+      "..........",
+      ".###.###..",
+      ".###.###..",
+      ".###.###..",
+      ".###.###..",
+      ".###.###..",
+      "..........",
+    ])
+    const gap = 3 * 10 + 4
+
+    expect(front(crossed.bits)[gap]).toBe(0)
+    expect(front(crossed.bits, { close: 1 })[gap]).toBe(1)
+  })
+
+  it("grows the object by a few pixels so its anti-aliased edge comes with it", () => {
+    const glass = mask([
+      "..........",
+      "..........",
+      "..###.....",
+      "..###.....",
+      "..###.....",
+      "..........",
+      "..........",
+    ])
+
+    expect(draw(front(glass.bits, { grow: 1 }), 10)).toEqual([
+      "..........",
+      "...#......",
+      "..###.....",
+      ".#####....",
+      "..###.....",
+      "...#......",
+      "..........",
+    ])
   })
 })

@@ -42,4 +42,17 @@ describe("Portrait", () => {
       "smile.png",
     ])
   })
+
+  it("draws a base's foreground above its face, so a straw stays in front of the mouth", () => {
+    render(<Portrait speaker="fez" art={{ ...art, front: "straw.png" }} />)
+
+    const layers = [...box()!.querySelectorAll("img")].map(img => img.getAttribute("src"))
+    expect(layers).toEqual(["figure.png", "smile.png", "straw.png"])
+  })
+
+  it("draws only the figure and its face for a base with no foreground", () => {
+    render(<Portrait speaker="fez" art={art} />)
+
+    expect([...box()!.querySelectorAll("img")].map(img => img.getAttribute("src"))).toEqual(["figure.png", "smile.png"])
+  })
 })

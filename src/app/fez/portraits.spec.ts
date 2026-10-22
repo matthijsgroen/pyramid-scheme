@@ -15,10 +15,22 @@ describe("portraitFor", () => {
   })
 
   it("stands a whole painting in for a pose and face that cannot be composed yet", () => {
-    const drawn = portraitFor("fez", "cocktail")
+    const drawn = portraitFor("explorer", "pointUp")
 
-    expect(drawn?.src).toMatch(/cocktail-fez-250/)
+    expect(drawn?.src).toMatch(/point-explorer-250/)
     expect(drawn?.face).toBeUndefined()
+  })
+
+  it("carries a pose base's foreground, to be drawn over whichever face lies on it", () => {
+    const drawn = portraitFor("fez", "cocktail", "worried")
+
+    expect(drawn?.src).toMatch(/fez-pose-cocktail-250/)
+    expect(drawn?.face).toMatch(/fez-face-worried/)
+    expect(drawn?.front).toMatch(/fez-pose-cocktail-front-250/)
+  })
+
+  it("has no foreground for a base whose pose reaches in front of no face", () => {
+    expect(portraitFor("fez", "pointUp")?.front).toBeUndefined()
   })
 
   it("composes a pose and face once both are drawn: pointUp is the point base under the excited face", () => {
@@ -36,10 +48,10 @@ describe("portraitFor", () => {
   })
 
   it("keeps the pose and drops the face when the two cannot be drawn together", () => {
-    const drawn = portraitFor("fez", "cocktail", "worried")
+    const drawn = portraitFor("explorer", "pointUp", "worried")
 
-    expect(drawn?.src).toMatch(/cocktail-fez/)
-    expect(drawn?.drawn).toEqual({ base: "cocktail", face: "default" })
+    expect(drawn?.src).toMatch(/point-explorer/)
+    expect(drawn?.drawn).toEqual({ base: "point", face: "default" })
   })
 
   it("falls back to the default pose for one nobody has drawn for that speaker", () => {
@@ -52,7 +64,7 @@ describe("portraitFor", () => {
 
 describe("portraitPart", () => {
   it("marks a painting stand-in as a painting", () => {
-    expect(portraitPart("fez", "cocktail", "default")?.painting).toBe(true)
+    expect(portraitPart("explorer", "point", "default")?.painting).toBe(true)
   })
 
   it("draws a composition as a base and face, no painting", () => {
