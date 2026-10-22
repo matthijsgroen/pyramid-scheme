@@ -86,11 +86,16 @@ Under the rule, two new checks are needed:
 - On floor 0, every stairhead a player arrives on from below reaches the exit.
 
 Measured: **no floor below 0 carries `oneWays`, `locks`, `obstacles`, `controls`, `forks` or `regionLayout`
-today**, so the first check is a guard for future authoring. The second check bites on **14 floor-0 lock floors
+today**, so the first check is a guard for future authoring. The second could bite on **14 floor-0 lock floors
 that also hang a wing**:
 
 - junior_1 p3, junior_2 p3–4, junior_3 p3–4, junior_4 p4–5
 - expert_1 p3–4, expert_2 p3–4, expert_3 p4–5, expert_4 p4–5
+
+Run over the baked world (`strandedFromHome`, every door open), **none of the 206 floors strands a room**,
+these 14 and the 12 floors that carry a drop included. The lock walk already proves the state-aware half:
+every reachable state of a lock floor reaches its exit, and a player coming back up a wing stair finds the
+floor in the state they left it.
 
 **Designer's locks.** doubleBack (expert_3 p5) and stoneGate (expert_4 p5) both sit on floor 0 (`floorLocks: {0}`)
 and **both pyramids hang a ward wing off that floor**. Neither relies on a deeper exit, and their headers must not

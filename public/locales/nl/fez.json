@@ -10,6 +10,11 @@
   "pyramidBlockedBlocks3": "Alleen kun je het er niet in zetten. Dat getal moet je onthouden.",
   "pyramidBlockedBlocks4": "Kom op, je bent al zo ver gekomen. Dit kun jij!",
   "levelCompleted": "Ha! Hij gaat open! Kom, naar binnen.",
+  "exitPillar": {
+    "1": { "fez": "Ha! Daglicht! Zie je die lichtstraal? Daar gaan we naar buiten. Erin stappen, en we zijn klaar hier." },
+    "2": { "fez": "Er is er maar één, altijd helemaal aan het eind van de hoofdgang. Waar we ook rondzwerven, we komen hier terug." },
+    "3": { "explorer": "Eén uitgang. Genoteerd." }
+  },
   "expeditionCompleted": "Gefeliciteerd met het voltooien van de expeditie!",
   "expeditionCompleted2": "Een nieuwe expeditie is nu beschikbaar.",
   "collectionIntro": "Tijdens onze expedities hebben we enkele items gevonden!",

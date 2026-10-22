@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react"
+import { use, useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { getOwnedKeys } from "@/game/gridNavigation"
 import { concealShutGround } from "@/game/concealment"
@@ -21,6 +21,8 @@ import { useSiteExit } from "./useSiteExit"
 import { useCrossing } from "./useCrossing"
 import { useNoticeLabel, usePromptLabel } from "./usePromptLabel"
 import { useSiteNavigation } from "./useSiteNavigation"
+import { useExitIntro } from "./useExitIntro"
+import { FezContext } from "@/app/fez/context"
 import { RewardFlow } from "./RewardFlow"
 import { EncounterModal } from "./EncounterModal"
 import { useApplyReward } from "./applyReward"
@@ -207,6 +209,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
     onExitReached: exit.arrived,
     playTraversal,
   })
+  useExitIntro(prompt?.kind, use(FezContext).showConversation)
 
   const promptLabel = usePromptLabel()
   const noticeLabel = useNoticeLabel()

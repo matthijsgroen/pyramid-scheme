@@ -13,6 +13,11 @@
   "pyramidBlockedBlocks4": "Come on, you've come this far. You can do this!",
 
   "levelCompleted": "Ha! It's opening! Come on, inside.",
+  "exitPillar": {
+    "1": { "fez": "Ha! Daylight! See that shaft of light? That's our way out. Step in, and we're done here." },
+    "2": { "fez": "Only ever the one, right at the end of the main corridor. Wherever else we wander, we come back to it." },
+    "3": { "explorer": "One way out. Noted." }
+  },
   "expeditionCompleted": "Congratulations on completing the expedition!",
   "expeditionCompleted2": "A new expedition is now available.",
   "collectionIntro": "During our expeditions we found some items!",
