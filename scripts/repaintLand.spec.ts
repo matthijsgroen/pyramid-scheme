@@ -1,8 +1,9 @@
-import { mkdirSync, mkdtempSync, utimesSync, writeFileSync } from "fs"
+import { mkdirSync, mkdtempSync, readFileSync, utimesSync, writeFileSync } from "fs"
 import { tmpdir } from "os"
 import { join } from "path"
 import { describe, expect, it } from "vitest"
-import { landPlan, newestImage, seamlessAxis, substitute, words } from "./repaintLand"
+import sharp from "sharp"
+import { fitToBase, landPlan, newestImage, seamlessAxis, substitute, words } from "./repaintLand"
 import { parse, type Entry } from "./repaintQueue"
 
 const folder = (files: Record<string, number>) => {
@@ -94,6 +95,67 @@ describe("where a landing goes", () => {
       importedBy: "nothing — master only",
     })
     expect(plan).toEqual({ master: "art/masters/characters/someone-proof.jpeg", steps: [] })
+  })
+})
+
+describe("an edit lands at its master's size", () => {
+  const edit = (attachments: string[]): Entry => ({
+    ...entry(""),
+    key: "portrait/someone-face-x",
+    masterOnly: true,
+    master: "art/masters/characters/someone-face-x.jpeg",
+    attachments,
+  })
+
+  it("takes its base from the first attachment among the character masters", () => {
+    const plan = landPlan(
+      edit(["src/assets/someone-250.png", "art/masters/characters/someone.jpeg", "art/masters/characters/other.jpeg"])
+    )
+    expect(plan.base).toBe("art/masters/characters/someone.jpeg")
+  })
+
+  it("has no base when nothing it attaches is a character master", () => {
+    expect(landPlan(edit(["src/assets/someone-250.png"])).base).toBeUndefined()
+  })
+
+  const image = async (dir: string, name: string, width: number, height: number) => {
+    const path = join(dir, name)
+    await sharp({ create: { width, height, channels: 3, background: "#808080" } })
+      .png()
+      .toFile(path)
+    return path
+  }
+  const size = async (path: string) => {
+    const { width, height } = await sharp(path).metadata()
+    return `${width}x${height}`
+  }
+
+  it("scales a download of another size to the base's exact size, both axes", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "repaint-fit-spec-"))
+    const base = await image(dir, "someone.jpeg", 40, 60)
+    const download = await image(dir, "download.png", 41, 59)
+
+    expect(await fitToBase(download, base)).toBe("scaled 41x59 → 40x60 to match someone.jpeg")
+    expect(await size(download)).toBe("40x60")
+  })
+
+  it("leaves a download of the base's size untouched", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "repaint-fit-spec-"))
+    const base = await image(dir, "someone.jpeg", 40, 60)
+    const download = await image(dir, "download.png", 40, 60)
+    const before = readFileSync(download)
+
+    expect(await fitToBase(download, base)).toBeUndefined()
+    expect(readFileSync(download).equals(before)).toBe(true)
+  })
+
+  it("leaves a download untouched without a base, or with one not on disk", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "repaint-fit-spec-"))
+    const download = await image(dir, "download.png", 41, 59)
+
+    expect(await fitToBase(download, undefined)).toBeUndefined()
+    expect(await fitToBase(download, join(dir, "missing.jpeg"))).toBeUndefined()
+    expect(await size(download)).toBe("41x59")
   })
 })
 

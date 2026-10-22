@@ -1699,7 +1699,7 @@ yarn import-portrait art/masters/characters/fez-face-surprised.jpeg --name=fez-f
   --face-of=art/masters/characters/fez.jpeg
 yarn import-portrait art/masters/characters/fez-face-sheepish.jpeg --name=fez-face-sheepish --whole \
   --face-of=art/masters/characters/fez.jpeg
-# The explorer's face edits came back 1696 wide; each master is scaled to his 1686 first, so they stack.
+# The explorer's face edits come back 1696 wide; `yarn repaint --land` scales each to his 1686, so they stack.
 yarn import-portrait art/masters/characters/explorer-face-surprised.jpeg --name=explorer-face-surprised --bust=0.55 \
   --centre=1160 --behind=0.4 --holes="574,1299;631,1503;1242,1025;646,1062;748,642" \
   --face-of=art/masters/characters/explorer.jpeg

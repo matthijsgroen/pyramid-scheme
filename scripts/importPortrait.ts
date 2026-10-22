@@ -34,7 +34,8 @@
  *   --face-of=base   write a FACE LAYER: this master is an expression edit of `base`; what moved is cut
  *                    out with a feathered mask (faceLayer.ts), the rest is transparent, and it is framed
  *                    exactly as the base is (pass the base's own framing flags). `Fez.tsx` stacks it on
- *                    the pose. Tuned with --threshold=64 --erode=4 --grow=45 --feather=18.
+ *                    the pose. Tuned with --threshold=64 --erode=4 --grow=45 --feather=18 --near=400
+ *                    --speck=200: only the largest change and the parts linked to it are the face.
  *   --front-of=master for a POSE BASE: also write <name>-front-250.png, the pose's pixels that differ
  *                    from `master` where any of its face layers (every <master>-face-*.jpeg beside it)
  *                    would paint — a straw across the chin. `Fez.tsx` draws it above the face. Written
@@ -398,9 +399,14 @@ const keyed = async (file: string, key: { r: number; g: number; b: number }, tol
   return { data, info, background: edgeBackground({ data, ...info, key, tolerance }) }
 }
 
-type FaceOptions = { threshold: number; erode: number; grow: number; feather: number }
+type FaceOptions = { threshold: number; erode: number; grow: number; feather: number; near: number; speck: number }
 
-const FACE_DEFAULTS: FaceOptions = { threshold: 64, erode: 4, grow: 45, feather: 18 }
+/**
+ * `near` and `speck` measured on the masters: Fez's furthest real parts link at 292px (wistful's far eye)
+ * and are 355px of opened change or more, while the explorer's stray outlines are at most 113px (his boots)
+ * and link at 270px (his hat brim).
+ */
+const FACE_DEFAULTS: FaceOptions = { threshold: 64, erode: 4, grow: 45, feather: 18, near: 400, speck: 200 }
 
 const raw = (file: string) => sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
 
@@ -531,6 +537,8 @@ const main = async (): Promise<void> => {
         erode: Number(arg("erode", String(FACE_DEFAULTS.erode))),
         grow: Number(arg("grow", String(FACE_DEFAULTS.grow))),
         feather: Number(arg("feather", String(FACE_DEFAULTS.feather))),
+        near: Number(arg("near", String(FACE_DEFAULTS.near))),
+        speck: Number(arg("speck", String(FACE_DEFAULTS.speck))),
       })
     : undefined
   const frontOf = arg("front-of")

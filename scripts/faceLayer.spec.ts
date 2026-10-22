@@ -60,7 +60,54 @@ describe("faceRegion", () => {
   it("drops a thin stroke — an outline redrawn a pixel over is not the face", () => {
     const { bits, width, height } = mask([".........", "#########", "........."])
 
-    expect([...faceRegion(bits, width, height, { erode: 1, grow: 0 })].every(b => b === 0)).toBe(true)
+    expect([...faceRegion(bits, width, height, { erode: 1, grow: 0, near: 10, speck: 4 })].every(b => b === 0)).toBe(
+      true
+    )
+  })
+
+  // A 5x5 change opens to a 3x3 core of 9; a 3x3 change to a speck of 1. Erode 1 + grow 1 is a reach of 2,
+  // so a speck joins only where its grown region meets the face's: cores at most 4 apart.
+  const face = (rows: string[]) => {
+    const { bits, width, height } = mask(rows)
+    return boxOf(faceRegion(bits, width, height, { erode: 1, grow: 1, near: 12, speck: 4 }), width, height)
+  }
+  const head = [".#####", ".#####", ".#####", ".#####", ".#####"]
+  const row = (head: string, gap: number, part: string) =>
+    head + ".".repeat(gap) + part + ".".repeat(30 - gap - part.length)
+
+  it("drops a speck far from the face — an outline redrawn at the boots is not part of it", () => {
+    const speck = ["...", "###", "###", "###", "..."]
+    const rows = head.map((h, y) => row(h, 20, speck[y]))
+
+    expect(face(rows)).toEqual({ left: 0, top: 0, width: 7, height: 5 })
+  })
+
+  it("keeps a speck whose grown edge meets the face's — a stray pixel beside the cheek", () => {
+    const speck = ["...", "###", "###", "###", "..."]
+    const rows = head.map((h, y) => row(h, 1, speck[y]))
+
+    expect(face(rows)?.width).toBe(11)
+  })
+
+  it("keeps a part of the face that does not touch it within `near` — a floating brow, a sweat drop", () => {
+    const brow = [".#####", ".#####", ".#####", ".#####", ".#####"]
+    const rows = head.map((h, y) => row(h, 8, brow[y]))
+
+    expect(face(rows)?.width).toBe(21)
+  })
+
+  it("drops a part beyond `near` of the face, however solid", () => {
+    const remnant = [".#####", ".#####", ".#####", ".#####", ".#####"]
+    const rows = head.map((h, y) => row(h, 20, remnant[y]))
+
+    expect(face(rows)).toEqual({ left: 0, top: 0, width: 7, height: 5 })
+  })
+
+  it("keeps the face as the LARGEST change, wherever it is", () => {
+    const big = ["#######", "#######", "#######", "#######", "#######"]
+    const rows = head.map((h, y) => row(h, 20, big[y]))
+
+    expect(face(rows)?.left).toBe(25)
   })
 
   it("keeps a solid change and grows it outward by the grow radius", () => {
@@ -76,7 +123,7 @@ describe("faceRegion", () => {
       ".........",
     ])
 
-    expect(draw(faceRegion(bits, width, height, { erode: 1, grow: 2 }), width)).toEqual([
+    expect(draw(faceRegion(bits, width, height, { erode: 1, grow: 2, near: 10, speck: 4 }), width)).toEqual([
       ".........",
       "....#....",
       "..#####..",

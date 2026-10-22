@@ -289,7 +289,8 @@ scarf changes, the tail grows a curl — and a conversation that cuts between th
 **Landing one**, in order:
 
 1. `yarn repaint <key>`, generate, then `yarn repaint <key> --land` saves the download at the entry's
-   `**Master:**` path.
+   `**Master:**` path, scaled to the canvas of the master it attaches (the generator hands edits back a
+   few pixels off it).
 2. Look at it against the pass criterion below. A pose edit that moved the head, or a face edit that moved
    anything outside the face, is re-rolled — never masked around, never accepted.
 3. Run the entry's **Then:** line and add it to `art/rebuild.sh` with the character's others.

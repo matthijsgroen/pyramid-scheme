@@ -6,7 +6,7 @@ import sharp from "sharp"
 import { difficulties, type Difficulty } from "../src/data/difficultyLevels"
 import { makeSeamless } from "./makeSeamless"
 import { MIN_STEP, artMean, measureAll, measureRank, rankRow, verdict } from "./rankColour"
-import { landPlan, newestImage, substitute, type Step } from "./repaintLand"
+import { fitToBase, landPlan, newestImage, substitute, type Step } from "./repaintLand"
 import type { Entry } from "./repaintQueue"
 
 const BLENDER = process.env.BLENDER ?? "/Applications/Blender.app/Contents/MacOS/Blender"
@@ -74,6 +74,8 @@ export const land = async (entry: Entry): Promise<void> => {
   try {
     const png = join(work, "master.png")
     await sharp(download).png().toFile(png)
+    const fitted = await fitToBase(png, plan.base)
+    if (fitted) console.log(fitted)
     if (plan.seamless) console.log(`seamless: ${await makeSeamless(png, plan.seamless)}`)
     mkdirSync(dirname(plan.master), { recursive: true })
     const master = sharp(png)
