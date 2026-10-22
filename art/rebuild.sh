@@ -1683,3 +1683,4 @@ yarn import-tile art/masters/explorer/explorer-squeeze-s.webp --tier=default --n
 
 # The dead on the map: drawn in the explorer's frame, a shade taller than his compact figure.
 yarn import-tile art/masters/ghosts/ghost-ipi.webp --tier=default --name=ghost-ipi --slot=explorer --filter=smooth
+yarn import-tile art/masters/ghosts/ghost-henut.webp --tier=default --name=ghost-henut --slot=explorer --filter=smooth
