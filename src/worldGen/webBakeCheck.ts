@@ -5,8 +5,10 @@ import type { ResolveEncounter } from "../game/siteAssembler"
 import type { FloorConfig, FloorGrid } from "../game/siteTypes"
 import { webDoorLeaks, webSandKindRefusals } from "../game/webDoors"
 import { pyramidName, resolveWeb } from "../game/webLine"
+import type { ResolvedWeb } from "../game/webLine"
 import { webReport } from "../game/webReport"
 import { walkWeb, walkWebFloors } from "../game/webWalk"
+import type { WebWalk } from "../game/webWalk"
 import type { ReachabilitySupport } from "./reachability"
 import type { SiteConfig } from "./types"
 import { placementMoved, readCarvedWorld, webJourneysOf } from "./webPlacement"
@@ -14,7 +16,8 @@ import type { WebPlacement } from "./webPlacement"
 import { solveWeb, webAgreement } from "./webSolver"
 import { carvedVisit } from "./webVisit"
 
-export type PlacedWebCheck = { report: string; failures: string[] }
+/** The report and its failures, with the web as read on the floors the bake pinned and its walk there. */
+export type PlacedWebCheck = { report: string; failures: string[]; resolved: ResolvedWeb; walked?: WebWalk }
 
 export const checkPlacedWeb = (
   placed: WebPlacement,
@@ -66,5 +69,5 @@ export const checkPlacedWeb = (
     for (const line of webAgreement(walked.closure, solved, names, pyramids))
       failures.push(`the solver and the web walk disagree: ${line}`)
   }
-  return { report: report.text, failures }
+  return { report: report.text, failures, resolved, walked }
 }
