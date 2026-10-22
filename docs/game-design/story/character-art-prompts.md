@@ -367,9 +367,9 @@ his.
 
 **Master:** `art/masters/characters/fez-face-excited.jpeg`
 
-Lines it serves: every `pointUp` of his — 24 story lines and 13 tutorial lines. Retires the `point-fez`
-painting. Attach the landed master, `art/masters/characters/fez.jpeg`, and `src/assets/point-fez-250.png`
-for the expression only.
+Lines it serves: every `pointUp` of his — 24 story lines and 13 tutorial lines. Retired the `point-fez`
+painting. Attached the landed master, `art/masters/characters/fez.jpeg`, and that painting for the expression
+only. Landed.
 
 > [preamble] [fez palette] Edit the first attached picture of Fez. Change ONLY his face, to the excited,
 > delighted look of the second attached picture: eyes wide and bright, a big open smile with the tongue
@@ -545,8 +545,8 @@ generator to edit faithfully, so this asks for the picture again at the master s
 
 **Master:** `art/masters/characters/fez-pose-point.jpeg`
 
-Attach the landed master, `art/masters/characters/fez.jpeg`, and `src/assets/point-fez-250.png` as the pose
-reference. Landed.
+Attached the landed master, `art/masters/characters/fez.jpeg`, and the `point-fez` painting it replaces as
+the pose reference. Landed.
 
 > [preamble] [fez palette] Edit the first attached picture of Fez so that he raises one finger, pointing
 > upward, the way he does in the second attached picture. Use the second picture for the pose only — draw it

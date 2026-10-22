@@ -15,10 +15,17 @@ describe("portraitFor", () => {
   })
 
   it("stands a whole painting in for a pose and face that cannot be composed yet", () => {
+    const drawn = portraitFor("fez", "glassesPoint")
+
+    expect(drawn?.src).toMatch(/glasses-point-fez-250/)
+    expect(drawn?.face).toBeUndefined()
+  })
+
+  it("composes a pose and face once both are drawn: pointUp is the point base under the excited face", () => {
     const drawn = portraitFor("fez", "pointUp")
 
-    expect(drawn?.src).toMatch(/point-fez-250/)
-    expect(drawn?.face).toBeUndefined()
+    expect(drawn?.src).toMatch(/fez-pose-point-250/)
+    expect(drawn?.face).toMatch(/fez-face-excited-250/)
   })
 
   it("draws the pose with its own face when the speaker has no such face", () => {

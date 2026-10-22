@@ -1,7 +1,7 @@
 import fez from "@/assets/fez-250.png"
 import fezPosePoint from "@/assets/fez-pose-point-250.png"
 import fezFaceWorried from "@/assets/fez-face-worried-250.png"
-import fezPointExcited from "@/assets/point-fez-250.png"
+import fezFaceExcited from "@/assets/fez-face-excited-250.png"
 import fezPointCool from "@/assets/glasses-point-fez-250.png"
 import fezCocktail from "@/assets/cocktail-fez-250.png"
 import explorer from "@/assets/explorer-250.png"
@@ -64,9 +64,8 @@ export const PORTRAITS: Partial<Record<Speaker, Portraits>> = {
       default: { src: fez, alt: "Happy companion lizard wearing a fez" },
       point: { src: fezPosePoint, alt: "Happy companion lizard wearing a fez, pointing" },
     },
-    faces: { worried: fezFaceWorried },
+    faces: { worried: fezFaceWorried, excited: fezFaceExcited },
     paintings: {
-      "point+excited": { src: fezPointExcited, alt: "Happy companion lizard wearing a fez, pointing" },
       "point+cool": { src: fezPointCool, alt: "Happy companion lizard wearing a fez and glasses" },
       "cocktail+default": { src: fezCocktail, alt: "Happy companion lizard wearing a fez and holding a cocktail" },
     },

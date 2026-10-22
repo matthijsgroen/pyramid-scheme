@@ -102,7 +102,7 @@ describe("a story line's expression", () => {
   }
 
   it("draws the pose the line asks for", () => {
-    expect(portrait("excited")).toMatch(/point-fez/)
+    expect(portrait("excited")).toMatch(/fez-pose-point/)
   })
 
   it("draws the default for a line that asks for none", () => {
