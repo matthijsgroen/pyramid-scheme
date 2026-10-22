@@ -175,3 +175,24 @@ describe("while someone is talking", () => {
     expect(screen.getByText("speaking")).toBeTruthy()
   })
 })
+
+describe("whether Fez is met", () => {
+  const Met = () => <p>{use(FezContext).met ? "met" : "unmet"}</p>
+  const show = (progress = { levelNr: 1, completionCount: 0 }) =>
+    render(
+      <FezCompanion journeyProgress={() => progress}>
+        <Met />
+      </FezCompanion>
+    )
+
+  it("says not yet before the meeting", () => {
+    show()
+    expect(screen.getByText("unmet")).toBeTruthy()
+  })
+
+  it("says so once the meeting is heard, so a caller can hold back what he would say", () => {
+    store.conversations = { "meeting.here": true }
+    show()
+    expect(screen.getByText("met")).toBeTruthy()
+  })
+})

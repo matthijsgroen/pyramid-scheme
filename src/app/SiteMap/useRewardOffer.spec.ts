@@ -17,6 +17,7 @@ const setup = (contributions: Partial<MergedRewardContributions> = {}) => {
   const applyReward = vi.fn()
   const rewardContributions = {
     effects: {},
+    seen: {},
     canAccept: () => true,
     skip: () => false,
     ...contributions,
@@ -91,5 +92,27 @@ describe("useRewardOffer", () => {
     act(() => hook.result.current.dismiss())
 
     expect(hook.result.current.pending).toBeNull()
+  })
+
+  it("tells the reward's owner once the player has dismissed its popup, so it can speak without covering the find", () => {
+    const seen = vi.fn()
+    const { hook } = setup({ seen: { tombKey: seen } })
+    act(() => hook.result.current.offerFound(tombKey, "0:1,1"))
+    act(() => hook.result.current.pending!.onCollect())
+    expect(seen).not.toHaveBeenCalled()
+
+    act(() => hook.result.current.dismiss())
+
+    expect(seen).toHaveBeenCalledWith(tombKey)
+  })
+
+  it("tells nobody about a reward refused for a full pack, since it was not taken", () => {
+    const seen = vi.fn()
+    const { hook } = setup({ canAccept: () => false, seen: { consumable: seen } })
+    act(() => hook.result.current.offerFound(consumable, "0:1,1"))
+
+    act(() => hook.result.current.dismiss())
+
+    expect(seen).not.toHaveBeenCalled()
   })
 })

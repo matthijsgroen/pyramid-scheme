@@ -47,6 +47,9 @@ const conversations: Record<string, PoseChat[]> = {
   // The first stall the player ever reaches: he owns up to it being his and pitches the counter.
   // Closes on the same practical line as every later visit, so the rules live in one string.
   shopFirstVisit: pose("cocktail", ["shopFirstVisit", "shopFirstVisit2", "shopArrival2"]),
+  // The first mosaic piece found, and the nudge the travel screen repeats while pieces wait in hand.
+  mosaicIntro: pose(["mosaicIntro", "mosaicIntro2"], "pointUp", ["mosaicIntro3"]),
+  mosaicReminder: pose("pointUp", ["mosaicReminder"]),
   // One per finished mosaic register, plus the finale. Registers complete in any order, so no beat
   // may lean on another.
   mosaicStarter: pose(["mosaicStarter", "mosaicStarter2"], "pointUp", ["mosaicStarter3"]),

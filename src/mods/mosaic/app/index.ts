@@ -1,4 +1,6 @@
+import { use } from "react"
 import { z } from "zod"
+import { FezContext } from "@/app/fez/context"
 import { registerModScreen } from "@/app/pages/screenRegistry"
 import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
 import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
@@ -7,6 +9,7 @@ import { useProgression } from "@/app/state/useProgression"
 import { MOSAIC_TIERS, mosaicBucket } from "../game/mosaicCurrency"
 import { MosaicPage } from "./MosaicPage"
 import { registerMosaicRewardDisplay } from "./rewardDisplay"
+import { MOSAIC_INTRO } from "./useMosaicReminder"
 
 // Mosaic's app-side registration (side-effect), self-gated on the mod being enabled:
 // - its screen (Base renders the screen registry, naming no mod).
@@ -22,6 +25,7 @@ if (isModEnabled("mosaic")) {
   registerRewardSchema("mosaicPiece", mosaicPieceSchema)
   registerRewardContribution(() => {
     const progression = useProgression()
+    const fez = use(FezContext)
     return {
       effects: {
         mosaicPiece: reward => {
@@ -29,6 +33,8 @@ if (isModEnabled("mosaic")) {
           progression.ledger.grant(mosaicBucket(tier), 1)
         },
       },
+      // A tutorial, told once: what the piece is and where it goes.
+      seen: { mosaicPiece: () => fez.showConversation(MOSAIC_INTRO) },
     }
   })
 }

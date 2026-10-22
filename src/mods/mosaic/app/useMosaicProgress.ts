@@ -11,8 +11,9 @@ type PlacedByTier = Partial<Record<MosaicTier, number>>
 // Mod-owned persisted slice (useModState) so core's ProgressionState never carries it. Per
 // register, because the registers fill independently from loot of their own difficulty.
 export const useMosaicProgress = () => {
-  const [placed, setPlaced] = useModState<PlacedByTier>("mosaic", {})
+  const [placed, setPlaced, loaded] = useModState<PlacedByTier>("mosaic", {})
   return {
+    loaded,
     placedCount: (tier: MosaicTier) => placed[tier] ?? 0,
     placeOne: (tier: MosaicTier) => setPlaced(prev => ({ ...prev, [tier]: (prev[tier] ?? 0) + 1 })),
   }

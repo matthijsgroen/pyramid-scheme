@@ -81,16 +81,15 @@ export const FezCompanion: React.FC<{
   // Kept apart from the memo above: `showConversation` must stay stable while speakers come and go, or every
   // caller that asks from an effect would ask again on each line.
   const speaking = activeConversation !== null
-  const value = useMemo(() => ({ ...contextValue, speaking }), [contextValue, speaking])
-
   const meeting = fezMeeting()
-  const beforeMeeting =
-    activeConversation !== meeting?.conversation &&
-    !hasMetFez({
-      meeting,
-      heard: conversations,
-      progress: meeting && journeyProgress?.(meeting.journeyId),
-    })
+  const met = hasMetFez({
+    meeting,
+    heard: conversations,
+    progress: meeting && journeyProgress?.(meeting.journeyId),
+  })
+  const value = useMemo(() => ({ ...contextValue, speaking, met }), [contextValue, speaking, met])
+
+  const beforeMeeting = activeConversation !== meeting?.conversation && !met
 
   return (
     <>
