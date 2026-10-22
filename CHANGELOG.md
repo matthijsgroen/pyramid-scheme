@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fez looks wistful, surprised or sheepish on the story lines that call for it.
 - Fez at his shop is the same lizard as everywhere else, cocktail in hand.
 - On a wider screen the explorer and the ghosts stand whole beside the conversation; a phone still cuts them at its edge.
+- The explorer pointing is the same explorer as when he talks.
 - The Sphinx stands on the horizon behind the Dawn at the Sphinx pyramids.
 - A journey's arrival plays in front of its pyramid, not over the list of journeys.
 - The first pyramids' rooms are furnished for what was done in them: weighing, packing, storage, selling and the books.

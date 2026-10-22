@@ -1666,10 +1666,6 @@ yarn import-tile art/masters/explorer/explorer-zip-e.webp --tier=default --name=
 # wide enough to show it. All four are explained in docs/game-design/story/character-art-prompts.md.
 yarn import-portrait art/masters/characters/explorer.jpeg --name=explorer --bust=0.55 --centre=1160 --behind=0.4 \
   --holes="574,1299;631,1503;1242,1025;646,1062;748,642"
-yarn import-portrait art/masters/characters/grin-explorer.jpeg --name=grin-explorer --bust=0.55 --centre=1160 --behind=0.4 \
-  --holes="582,1329;1243,1026;646,1061;929,599;749,642"
-yarn import-portrait art/masters/characters/point-explorer.jpeg --name=point-explorer --bust=0.55 --centre=1085 --behind=0.4 \
-  --holes="586,1330;649,1059;753,638"
 yarn import-portrait art/masters/characters/ghost-ipi.jpeg --name=ghost-ipi --bust=0.55 --behind=0.4
 yarn import-portrait art/masters/characters/ghost-henut.jpeg --name=ghost-henut --bust=0.55 --behind=0.4
 yarn import-portrait art/masters/characters/ghost-priest.jpeg --name=ghost-priest --bust=0.55 --behind=0.4
@@ -1703,6 +1699,16 @@ yarn import-portrait art/masters/characters/fez-face-sheepish.jpeg --name=fez-fa
 yarn import-portrait art/masters/characters/explorer-face-surprised.jpeg --name=explorer-face-surprised --bust=0.55 \
   --centre=1160 --behind=0.4 --holes="574,1299;631,1503;1242,1025;646,1062;748,642" \
   --face-of=art/masters/characters/explorer.jpeg
+yarn import-portrait art/masters/characters/explorer-face-deadpan.jpeg --name=explorer-face-deadpan --bust=0.55 \
+  --centre=1160 --behind=0.4 --holes="574,1299;631,1503;1242,1025;646,1062;748,642" \
+  --face-of=art/masters/characters/explorer.jpeg
+yarn import-portrait art/masters/characters/explorer-face-cool.jpeg --name=explorer-face-cool --bust=0.55 \
+  --centre=1160 --behind=0.4 --holes="574,1299;631,1503;1242,1025;646,1062;748,642" \
+  --face-of=art/masters/characters/explorer.jpeg
+# His pose bases share the master's band (--crop-from) and run after his faces, which their --front-of reads.
+yarn import-portrait art/masters/characters/explorer-pose-point.jpeg --name=explorer-pose-point --bust=0.55 \
+  --centre=1160 --behind=0.4 --holes="574,1300;632,1505;749,639;645,1059" \
+  --crop-from=art/masters/characters/explorer.jpeg --front-of=art/masters/characters/explorer.jpeg
 
 # THE EXPLORER, SQUEEZING (side frame e, profile frame s; north reuses s)
 # --tight: the arms-spread frame is wider than the 40-unit slot, so a slot fit shrank the figure to 60% of the walking one; 18.3 master px to a unit puts his head at the walking size, and the tile is as wide as the pose needs (feet on the bottom edge)

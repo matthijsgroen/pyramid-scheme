@@ -60,16 +60,17 @@ describe("faceRegion", () => {
   it("drops a thin stroke — an outline redrawn a pixel over is not the face", () => {
     const { bits, width, height } = mask([".........", "#########", "........."])
 
-    expect([...faceRegion(bits, width, height, { erode: 1, grow: 0, near: 10, speck: 4 })].every(b => b === 0)).toBe(
+    expect([...faceRegion(bits, width, height, { erode: 1, grow: 0, spread: 5, link: 2 })].every(b => b === 0)).toBe(
       true
     )
   })
 
-  // A 5x5 change opens to a 3x3 core of 9; a 3x3 change to a speck of 1. Erode 1 + grow 1 is a reach of 2,
-  // so a speck joins only where its grown region meets the face's: cores at most 4 apart.
+  // A 5x5 change opens to a 3x3 core of 9, which reaches 5 * 3 = 15; a 3x3 change to a speck of 1. Erode 1 +
+  // grow 1 grows a core by 2, so a speck joins where its grown region meets the face's (4) plus the stroke
+  // the opening took (2): cores at most 6 apart.
   const face = (rows: string[]) => {
     const { bits, width, height } = mask(rows)
-    return boxOf(faceRegion(bits, width, height, { erode: 1, grow: 1, near: 12, speck: 4 }), width, height)
+    return boxOf(faceRegion(bits, width, height, { erode: 1, grow: 1, spread: 5, link: 2 }), width, height)
   }
   const head = [".#####", ".#####", ".#####", ".#####", ".#####"]
   const row = (head: string, gap: number, part: string) =>
@@ -89,14 +90,21 @@ describe("faceRegion", () => {
     expect(face(rows)?.width).toBe(11)
   })
 
-  it("keeps a part of the face that does not touch it within `near` — a floating brow, a sweat drop", () => {
+  it("does not walk from speck to speck — a sub-pixel shift leaves them all down a figure", () => {
+    const specks = ["...............", ".###..###..###.", ".###..###..###.", ".###..###..###.", "..............."]
+    const rows = head.map((h, y) => row(h, 0, specks[y]))
+
+    expect(face(rows)?.width).toBe(11)
+  })
+
+  it("keeps a part of the face that does not touch it within its reach — a floating brow, a sweat drop", () => {
     const brow = [".#####", ".#####", ".#####", ".#####", ".#####"]
     const rows = head.map((h, y) => row(h, 8, brow[y]))
 
     expect(face(rows)?.width).toBe(21)
   })
 
-  it("drops a part beyond `near` of the face, however solid", () => {
+  it("drops a part beyond its reach of the face, however solid", () => {
     const remnant = [".#####", ".#####", ".#####", ".#####", ".#####"]
     const rows = head.map((h, y) => row(h, 20, remnant[y]))
 
@@ -123,7 +131,7 @@ describe("faceRegion", () => {
       ".........",
     ])
 
-    expect(draw(faceRegion(bits, width, height, { erode: 1, grow: 2, near: 10, speck: 4 }), width)).toEqual([
+    expect(draw(faceRegion(bits, width, height, { erode: 1, grow: 2, spread: 5, link: 2 }), width)).toEqual([
       ".........",
       "....#....",
       "..#####..",
@@ -154,7 +162,7 @@ describe("boxOf", () => {
 describe("frontRegion", () => {
   const reach = mask(["..........", ".######...", ".######...", ".######...", ".######...", ".######...", ".........."])
   const front = (changed: Uint8Array, options: { erode?: number; close?: number; grow?: number } = {}) =>
-    frontRegion(changed, reach.bits, 10, 7, { erode: 1, close: 0, grow: 0, ...options })
+    frontRegion(changed, reach.bits, 10, 7, { erode: 1, close: 0, grow: 0, spread: 5, link: 2, ...options })
 
   it("is what the pose added inside a face layer's reach, cut off where the reach ends", () => {
     const straw = mask([
@@ -176,6 +184,25 @@ describe("frontRegion", () => {
       ".....##...",
       "..........",
     ])
+  })
+
+  it("is empty when the head was only redrawn a sub-pixel over, far from what the pose moved", () => {
+    const head = mask(Array.from({ length: 7 }, () => "#####" + ".".repeat(25)))
+    const eyes = mask([
+      "..............................",
+      ".###..........................",
+      ".###..........................",
+      ".###..........................",
+      "..............................",
+      "..............................",
+      "..............................",
+    ])
+    const arm = mask(Array.from({ length: 7 }, () => ".".repeat(22) + "########"))
+    const changed = eyes.bits.map((b, i) => b | arm.bits[i])
+
+    expect(
+      boxOf(frontRegion(changed, head.bits, 30, 7, { erode: 1, close: 0, grow: 0, spread: 5, link: 2 }), 30, 7)
+    ).toBeUndefined()
   })
 
   it("is empty when the pose changed only outside every face's reach — a raised arm is no foreground", () => {

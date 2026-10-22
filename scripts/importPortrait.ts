@@ -34,8 +34,8 @@
  *   --face-of=base   write a FACE LAYER: this master is an expression edit of `base`; what moved is cut
  *                    out with a feathered mask (faceLayer.ts), the rest is transparent, and it is framed
  *                    exactly as the base is (pass the base's own framing flags). `Fez.tsx` stacks it on
- *                    the pose. Tuned with --threshold=64 --erode=4 --grow=45 --feather=18 --near=400
- *                    --speck=200: only the largest change and the parts linked to it are the face.
+ *                    the pose. Tuned with --threshold=64 --erode=4 --grow=45 --feather=18 --spread=4.5
+ *                    --link=24: only the largest change and the parts linked to it are the face.
  *   --front-of=master for a POSE BASE: also write <name>-front-250.png, the pose's pixels that differ
  *                    from `master` where any of its face layers (every <master>-face-*.jpeg beside it)
  *                    would paint — a straw across the chin. `Fez.tsx` draws it above the face. Written
@@ -399,14 +399,22 @@ const keyed = async (file: string, key: { r: number; g: number; b: number }, tol
   return { data, info, background: edgeBackground({ data, ...info, key, tolerance }) }
 }
 
-type FaceOptions = { threshold: number; erode: number; grow: number; feather: number; near: number; speck: number }
+type FaceOptions = {
+  threshold: number
+  erode: number
+  grow: number
+  feather: number
+  spread: number
+  link: number
+}
 
 /**
- * `near` and `speck` measured on the masters: Fez's furthest real parts link at 292px (wistful's far eye)
- * and are 355px of opened change or more, while the explorer's stray outlines are at most 113px (his boots)
- * and link at 270px (his hat brim).
+ * `spread` and `link` (faceParts, in faceLayer.ts) measured on the masters, at 4.5 and 24: every Fez face
+ * and the explorer's surprised one come out the same from 3.5 to 5 and from 16 to 24, where 3 drops a part
+ * of Fez's worried and wistful faces and 7 takes in the hat crown the explorer's cool edit redrew; at a
+ * link of 8 a speck of Fez's worried face is lost, at 49 the explorer's cool face walks down to the map.
  */
-const FACE_DEFAULTS: FaceOptions = { threshold: 64, erode: 4, grow: 45, feather: 18, near: 400, speck: 200 }
+const FACE_DEFAULTS: FaceOptions = { threshold: 64, erode: 4, grow: 45, feather: 18, spread: 4.5, link: 24 }
 
 const raw = (file: string) => sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
 
@@ -489,7 +497,13 @@ const toFrontLayer = async (
     if (face) for (let i = 0; i < reach.length; i++) if (face.alpha[i] > 0) reach[i] = 1
   }
   const diff = diffMask({ a: master.data, b: pose.data, ...info, threshold: FACE_DEFAULTS.threshold })
-  const region = frontRegion(diff, reach, info.width, info.height, { erode: 4, close: 12, grow: 2 })
+  const region = frontRegion(diff, reach, info.width, info.height, {
+    erode: 4,
+    close: 12,
+    grow: 2,
+    spread: FACE_DEFAULTS.spread,
+    link: FACE_DEFAULTS.link,
+  })
   const box = boxOf(region, info.width, info.height)
   if (!box) return { faces, front: undefined }
   const alpha = await sharp(Buffer.from(region.map(b => b * 255)), {
@@ -537,8 +551,8 @@ const main = async (): Promise<void> => {
         erode: Number(arg("erode", String(FACE_DEFAULTS.erode))),
         grow: Number(arg("grow", String(FACE_DEFAULTS.grow))),
         feather: Number(arg("feather", String(FACE_DEFAULTS.feather))),
-        near: Number(arg("near", String(FACE_DEFAULTS.near))),
-        speck: Number(arg("speck", String(FACE_DEFAULTS.speck))),
+        spread: Number(arg("spread", String(FACE_DEFAULTS.spread))),
+        link: Number(arg("link", String(FACE_DEFAULTS.link))),
       })
     : undefined
   const frontOf = arg("front-of")

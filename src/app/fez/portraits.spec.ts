@@ -14,13 +14,6 @@ describe("portraitFor", () => {
     expect(portraitFor("fez", "pointUp")?.drawn).toEqual({ base: "point", face: "excited" })
   })
 
-  it("stands a whole painting in for a pose and face that cannot be composed yet", () => {
-    const drawn = portraitFor("explorer", "pointUp")
-
-    expect(drawn?.src).toMatch(/point-explorer-250/)
-    expect(drawn?.face).toBeUndefined()
-  })
-
   it("carries a pose base's foreground, to be drawn over whichever face lies on it", () => {
     const drawn = portraitFor("fez", "cocktail", "worried")
 
@@ -47,10 +40,11 @@ describe("portraitFor", () => {
     expect(drawn?.drawn).toEqual({ base: "default", face: "default" })
   })
 
-  it("keeps the pose and drops the face when the two cannot be drawn together", () => {
+  it("keeps the pose and drops the face when the speaker has no such face", () => {
     const drawn = portraitFor("explorer", "pointUp", "worried")
 
-    expect(drawn?.src).toMatch(/point-explorer/)
+    expect(drawn?.src).toMatch(/explorer-pose-point/)
+    expect(drawn?.face).toBeUndefined()
     expect(drawn?.drawn).toEqual({ base: "point", face: "default" })
   })
 
@@ -63,18 +57,14 @@ describe("portraitFor", () => {
 })
 
 describe("portraitPart", () => {
-  it("marks a painting stand-in as a painting", () => {
-    expect(portraitPart("explorer", "point", "default")?.painting).toBe(true)
-  })
-
-  it("draws a composition as a base and face, no painting", () => {
+  it("draws a composition as a base and face", () => {
     const part = portraitPart("fez", "point", "cool")
 
-    expect(part?.painting).toBe(false)
+    expect(part?.src).toMatch(/fez-pose-point/)
     expect(part?.face).toMatch(/fez-face-cool/)
   })
 
-  it("gives nothing for a pair that is neither composed nor painted, rather than giving way", () => {
+  it("gives nothing for a pair that cannot be composed, rather than giving way", () => {
     expect(portraitPart("ipi", "point", "default")).toBeUndefined()
   })
 })

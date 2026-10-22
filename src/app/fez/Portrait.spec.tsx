@@ -8,7 +8,6 @@ const art: PortraitArt = {
   src: "figure.png",
   alt: "A figure",
   face: "smile.png",
-  painting: false,
   wide: undefined,
   drawn: { base: "default", face: "excited" },
 }

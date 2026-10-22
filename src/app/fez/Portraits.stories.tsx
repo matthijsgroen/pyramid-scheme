@@ -29,7 +29,6 @@ const Cell: FC<{ speaker: Speaker; art: PortraitArt | undefined; mirrorExplorer:
       <div className="flex h-24 w-25 items-center justify-center text-2xl text-stone-500">—</div>
     )}
     {label && <span className="text-xs text-stone-300">{label}</span>}
-    {art?.painting && <span className="rounded bg-amber-700 px-1.5 text-[10px] tracking-wide uppercase">painting</span>}
   </div>
 )
 

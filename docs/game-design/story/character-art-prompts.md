@@ -8,7 +8,7 @@ Same loop as [starter-art-prompts.md](../starter-art-prompts.md): one file at a 
 accepted file becomes the reference for the next.
 
 **`yarn repaint`** lists what is still owed here, tiles included, and **`yarn repaint <key>`** — `ipi`,
-`point-explorer` — puts that entry's prompt on the clipboard with §0 already folded into it and reveals its
+`explorer-face-cool` — puts that entry's prompt on the clipboard with §0 already folded into it and reveals its
 references in the Finder. An entry whose file exists is not owed and drops off the list. The paste is yours;
 everything before it is prepared.
 
@@ -37,9 +37,7 @@ can give you — §3 cuts it out on the way in.
 ## 1. The explorer — conversation portraits
 
 The neutral pose IS the original character artwork, imported — `art/masters/characters/explorer.jpeg` is
-his master, and every other pose and face of his is an edit of it (§5). The grin and the point below are
-separate paintings the game draws only until §5's `explorer-face-cool` and `explorer-pose-point` replace
-them; then their entries go.
+his master, and every other pose and face of his is an edit of it (§5).
 
 **Match the existing explorer exactly**: olive-green utility vest with
 four flap pockets, cream rolled-sleeve shirt, red neckerchief, wide brown felt bush hat, cream cargo
@@ -69,18 +67,6 @@ prompts below is substituted with this:
 > the viewer, one hand resting at their side and the other holding a folded map. Calm, dry, pleasant
 > expression — mouth closed or barely smiling, eyebrows level. Not grinning. Reference the supplied
 > explorer artwork for every item of clothing and equipment.
-
-### `grin-explorer-250.png` — the solve
-
-> [preamble] [palette] The same explorer, same clothing and equipment, now wearing dark sunglasses and grinning
-> broadly, head tilted very slightly. One thumb hooked in a vest pocket. Pleased rather than smug.
-> Reference the supplied explorer artwork.
-
-### `point-explorer-250.png` — drawing attention
-
-> [preamble] [palette] The same explorer, same clothing and equipment, pointing upward and slightly off-camera with
-> one index finger, looking where they point. Mouth open as if mid-sentence. Reference the supplied
-> explorer artwork.
 
 ## 2. The five tomb ghosts
 
@@ -194,10 +180,6 @@ to look. Pass the ones that are not eyes:
 ```
 yarn import-portrait art/masters/characters/explorer.jpeg --name=explorer --bust=0.55 --centre=1160 --behind=0.4 \
   --holes="574,1299;631,1503;1242,1025;646,1062;748,642"
-yarn import-portrait art/masters/characters/grin-explorer.jpeg --name=grin-explorer --bust=0.55 --centre=1160 --behind=0.4 \
-  --holes="582,1329;1243,1026;646,1061;929,599;749,642"
-yarn import-portrait art/masters/characters/point-explorer.jpeg --name=point-explorer --bust=0.55 --centre=1085 --behind=0.4 \
-  --holes="586,1330;649,1059;753,638"
 yarn import-portrait art/masters/characters/ghost-ipi.jpeg     --name=ghost-ipi     --bust=0.55 --behind=0.4
 yarn import-portrait art/masters/characters/ghost-henut.jpeg   --name=ghost-henut   --bust=0.55 --behind=0.4
 yarn import-portrait art/masters/characters/ghost-priest.jpeg  --name=ghost-priest  --bust=0.55 --behind=0.4
@@ -294,18 +276,13 @@ scarf changes, the tail grows a curl — and a conversation that cuts between th
 2. Look at it against the pass criterion below. A pose edit that moved the head, or a face edit that moved
    anything outside the face, is re-rolled — never masked around, never accepted.
 3. Run the entry's **Then:** line and add it to `art/rebuild.sh` with the character's others.
-4. Register it in `portraits.ts`: a base under the speaker's `bases`, a face under `faces`. The game
-   composes a base and a face as soon as both exist, ahead of any painting registered for that pair, so the
-   painting it retires (its entry says which) is then deleted — from `paintings`, from `src/assets`, from
-   `art/` and `rebuild.sh`, and its §1 entry if it has one.
+4. Register it in `portraits.ts`: a base under the speaker's `bases`, a face under `faces`.
 5. Tag lines only for a new look: `> **Fez (pointUp, wistful):**` in the script and its key in
    `storyPoses.ts` (FORMAT.md). A face that replaces a painting retags nothing — the pose name already
    asks for it.
 
 **What is never done.** No standalone portrait is painted any more: a new look is a face edit, a new
-gesture a pose edit, both of the master. The paintings still in the game — `point-explorer` and
-`grin-explorer` — are registered in `portraits.ts` as `paintings` for their pose and face only until the
-edits below replace them. Fez has none left.
+gesture a pose edit, both of the master.
 
 **The ghosts stay one portrait each** — their master is their `default` base — until a scene needs a
 second expression of one. The priest's peaceful face in Act V is the first; it is then a face edit of
@@ -318,17 +295,17 @@ the line (`Fez (pointUp, worried)`) takes the place of the pose's own. What cann
 face first, then base — `portraitFor`, held by `portraitsInUse.spec.ts` to every line in `storyPoses.ts`
 and the tutorial table (`tutorialLines.ts`).
 
-| Speaker  | Pose name      | Base            | Face    | Drawn today                                                                 | Used by                                 |
-| -------- | -------------- | --------------- | ------- | --------------------------------------------------------------------------- | --------------------------------------- |
-| Fez      | `default`      | default         | default | `fez` (master)                                                              | most lines                              |
-| Fez      | any + worried  | default / point | worried | `fez` / `fez-pose-point` + `fez-face-worried`                               | 13 story lines                          |
-| Fez      | `pointUp`      | point           | excited | `fez-pose-point` + `fez-face-excited`                                       | 24 story lines, 13 tutorial lines       |
-| Fez      | `glassesPoint` | point           | cool    | `fez-pose-point` + `fez-face-cool`                                          | 8 tutorial lines                        |
-| Fez      | `cocktail`     | cocktail        | default | `fez-pose-cocktail`, its `-front` over any face                             | 5 shop lines, the shop screen           |
-| Explorer | `default`      | default         | default | `explorer` (master)                                                         | his lines, the welcome tutorials        |
-| Explorer | `pointUp`      | point           | default | painting `point-explorer`                                                   | 3 story lines                           |
-| Explorer | `glassesPoint` | point           | cool    | painting `point-explorer` (`grin-explorer` is registered as default + cool) | none                                    |
-| Ghosts   | `default`      | default         | default | their master                                                                | their scenes, the log, the map stand-in |
+| Speaker  | Pose name      | Base            | Face    | Drawn today                                     | Used by                                 |
+| -------- | -------------- | --------------- | ------- | ----------------------------------------------- | --------------------------------------- |
+| Fez      | `default`      | default         | default | `fez` (master)                                  | most lines                              |
+| Fez      | any + worried  | default / point | worried | `fez` / `fez-pose-point` + `fez-face-worried`   | 13 story lines                          |
+| Fez      | `pointUp`      | point           | excited | `fez-pose-point` + `fez-face-excited`           | 24 story lines, 13 tutorial lines       |
+| Fez      | `glassesPoint` | point           | cool    | `fez-pose-point` + `fez-face-cool`              | 8 tutorial lines                        |
+| Fez      | `cocktail`     | cocktail        | default | `fez-pose-cocktail`, its `-front` over any face | 5 shop lines, the shop screen           |
+| Explorer | `default`      | default         | default | `explorer` (master)                             | his lines, the welcome tutorials        |
+| Explorer | `pointUp`      | point           | default | `explorer-pose-point`                           | 3 story lines                           |
+| Explorer | `glassesPoint` | point           | cool    | `explorer-pose-point` + `explorer-face-cool`    | none                                    |
+| Ghosts   | `default`      | default         | default | their master                                    | their scenes, the log, the map stand-in |
 
 The explorer's `pointUp` is his point base with its own face: he has no excited face, and a face a speaker
 has no art for gives way to the base's own.
@@ -345,8 +322,8 @@ rather than sitting on a line. Not separate eyes and mouth: an expression moves 
 shape of the eye whites and the shading around all of them together, and the outlines run continuously
 between them, so a cut at the eye and the mouth leaves part of the change behind and lands every edge on
 an outline. The proof is Fez: `fez-face-worried`, laid over both `fez` and `fez-pose-point`, shows no seam.
-It holds only for a true edit of the master — the explorer's grin is a separate painting whose head sits
-slightly off his neutral one, and laid over it the mouth doubles.
+It holds only for a true edit of the master — a separately painted head sits slightly off the master's,
+and laid over it the mouth doubles.
 
 **Every base and face of a character is cut through one frame**, so any face lands on any base pixel for
 pixel. Fez's masters are painted in his sprite's frame, so each is imported `--whole`. The explorer's are
@@ -484,7 +461,7 @@ Lines it serves: ≈9 — the meeting with Fez. Attach the explorer's master,
 
 **Master:** `art/masters/characters/explorer-face-deadpan.jpeg`
 
-Lines it serves: ≈18, the dry register. Attach the explorer's master, `art/masters/characters/explorer.jpeg`.
+Lines it serves: ≈18, the dry register. Attached the explorer's master, `art/masters/characters/explorer.jpeg`. Landed.
 
 > [preamble] [palette] Edit the attached picture of the explorer. Change ONLY the face, to deadpan: one
 > eyebrow raised, the other level, a flat closed half-smile. Keep the outline of the head and hair, the
@@ -498,9 +475,10 @@ Lines it serves: ≈18, the dry register. Attach the explorer's master, `art/mas
 
 **Master:** `art/masters/characters/explorer-pose-point.jpeg`
 
-Lines it serves: his 3 `pointUp` story lines. Retires the `point-explorer` painting. Attach the
-explorer's master, `art/masters/characters/explorer.jpeg`, and `art/masters/characters/point-explorer.jpeg`
-as the pose reference.
+Lines it serves: his 3 `pointUp` story lines. Retired the `point-explorer` painting. Attached the
+explorer's master, `art/masters/characters/explorer.jpeg`, and that painting as the pose reference. Landed
+1696 wide and scaled to the master's 1686; its head differs from the master only by hairlines, so it has no
+foreground.
 
 > [preamble] [palette] Edit the first attached picture of the explorer so that the hand holding the map
 > lowers it and the other hand comes up beside the shoulder, index finger raised and pointing upward, the
@@ -509,15 +487,15 @@ as the pose reference.
 > picture's size and detail. Keep the head exactly as it is: same outline, same hair, same eyes, same
 > face, same hat, in the same place on the canvas. Same canvas, same framing, white background.
 
-**Then:** `yarn import-portrait art/masters/characters/explorer-pose-point.jpeg --name=explorer-pose-point --bust=0.55 --centre=1160 --behind=0.4 --crop-from=art/masters/characters/explorer.jpeg` — plus `--holes` for the gaps it reports.
+**Then:** `yarn import-portrait art/masters/characters/explorer-pose-point.jpeg --name=explorer-pose-point --bust=0.55 --centre=1160 --behind=0.4 --holes="574,1300;632,1505;749,639;645,1059" --crop-from=art/masters/characters/explorer.jpeg --front-of=art/masters/characters/explorer.jpeg`
 
 ### `explorer-face-cool` — the explorer, cool
 
 **Master:** `art/masters/characters/explorer-face-cool.jpeg`
 
-Lines it serves: none yet — his `glassesPoint`, which no line asks for. Retires the `grin-explorer`
-painting, the last standalone one. Attach the explorer's master, `art/masters/characters/explorer.jpeg`,
-and `art/masters/characters/grin-explorer.jpeg` for the expression only.
+Lines it serves: none yet — his `glassesPoint`, which no line asks for. Retired the `grin-explorer`
+painting, the last standalone one. Attached the explorer's master, `art/masters/characters/explorer.jpeg`,
+and that painting for the expression only. Landed.
 
 > [preamble] [palette] Edit the first attached picture of the explorer. Change ONLY the face: dark
 > sunglasses over the eyes and a broad, pleased grin, as in the second attached picture. Use the second

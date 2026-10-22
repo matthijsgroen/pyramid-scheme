@@ -112,37 +112,53 @@ const components = (mask: Uint8Array, width: number, height: number) => {
 }
 
 /**
- * Which parts of an opened difference are the face: the largest, and every other part linked to it — a
- * part of `speck` pixels or more within `near` (a floating brow, a sweat drop), a smaller one only within
- * `touch` (where the two would meet once grown). Linked parts link further, so the face is gathered until
- * nothing more joins; what is left is a sub-pixel shift redrawn at a boot or a hat brim.
+ * Which parts of an opened difference are the face. The largest is; another joins when it lies within its
+ * reach of the face, and a part's reach grows with it — `spread` times the square root of its pixels — so
+ * a floating brow or a sweat drop joins from across a gap a fleck of hat brim cannot.
+ *
+ * Every part reaches at least `touch` (where it and the face would meet once grown) plus `stroke`. A part
+ * whose reach is no more than that is a SPECK: it joins within that of a part that is not one, and of other
+ * specks only within `link`. A sub-pixel shift leaves specks all down a figure, close enough at `touch` to
+ * walk from the face to the boots.
  */
 const faceParts = (
   core: Uint8Array,
   width: number,
   height: number,
-  { near, speck, touch }: { near: number; speck: number; touch: number }
+  { spread, touch, stroke, link }: { spread: number; touch: number; stroke: number; link: number }
 ): Uint8Array => {
   const { label, sizes } = components(core, width, height)
   if (sizes.length === 0) return core
   const kept = new Uint8Array(sizes.length + 1)
-  kept[sizes.indexOf(Math.max(...sizes)) + 1] = 1
-  for (;;) {
+  const largest = sizes.indexOf(Math.max(...sizes)) + 1
+  kept[largest] = 1
+  const least = touch + stroke
+  const reachOf = (id: number) => Math.max(least, spread * Math.sqrt(sizes[id - 1]))
+  const isSpeck = (id: number) => id !== largest && reachOf(id) <= least
+  const isPart = (id: number) => !isSpeck(id)
+  /** Joins every part `which` admits within `reach` of the kept parts `from` admits; whether any joined. */
+  const gather = (which: (id: number) => boolean, reach: (id: number) => number, from: (id: number) => boolean) => {
     const toFace = squaredDistanceTo(
-      Uint8Array.from(label, l => kept[l]),
+      Uint8Array.from(label, id => (kept[id] && from(id) ? 1 : 0)),
       width,
       height
     )
     const closest = new Float64Array(sizes.length + 1).fill(Infinity)
     for (let i = 0; i < label.length; i++) if (label[i] && toFace[i] < closest[label[i]]) closest[label[i]] = toFace[i]
     let joined = false
-    sizes.forEach((size, k) => {
-      const reach = size >= speck ? near : touch
-      if (kept[k + 1] || closest[k + 1] > reach * reach) return
-      kept[k + 1] = 1
+    for (let id = 1; id <= sizes.length; id++) {
+      if (kept[id] || !which(id) || closest[id] > reach(id) ** 2) continue
+      kept[id] = 1
       joined = true
-    })
-    if (!joined) return Uint8Array.from(label, l => kept[l])
+    }
+    return joined
+  }
+  const any = () => true
+  for (;;) {
+    while (gather(isPart, reachOf, any));
+    const specks = gather(isSpeck, () => least, isPart)
+    while (gather(isSpeck, () => link, any));
+    if (!specks) return Uint8Array.from(label, id => kept[id])
   }
 }
 
@@ -155,12 +171,12 @@ export const faceRegion = (
   diff: Uint8Array,
   width: number,
   height: number,
-  { erode, grow, near, speck }: { erode: number; grow: number; near: number; speck: number }
+  { erode, grow, spread, link }: { erode: number; grow: number; spread: number; link: number }
 ): Uint8Array => {
   const clear = diff.map(b => (b ? 0 : 1))
   const toClear = squaredDistanceTo(clear, width, height)
   const opened = Uint8Array.from(toClear, d => (d > erode * erode ? 1 : 0))
-  const core = faceParts(opened, width, height, { near, speck, touch: 2 * (erode + grow) })
+  const core = faceParts(opened, width, height, { spread, touch: 2 * (erode + grow), stroke: 2 * erode, link })
   const toCore = squaredDistanceTo(core, width, height)
   const reach = (erode + grow) * (erode + grow)
   return Uint8Array.from(toCore, d => (d <= reach ? 1 : 0))
@@ -202,7 +218,8 @@ const erode = (mask: Uint8Array, width: number, height: number, radius: number) 
 /**
  * A pose's FOREGROUND: what the pose edit added in front of the head — a straw, an umbrella — where a
  * face layer would paint over it. The difference from the master opened by `erode` (outlines redrawn a
- * pixel over are not an object), closed by `close` (where the object's outline crosses the head's own, the
+ * pixel over are not an object) and cut to its parts as a face is (the object is the largest change; a
+ * head redrawn a sub-pixel over leaves outlines thick enough to survive the opening, far from it), closed by `close` (where the object's outline crosses the head's own, the
  * pixels did not change), grown by `grow` for its anti-aliased edge, and kept only inside `reach`, the
  * pixels any face layer paints. Outside the reach the base already shows the object.
  */
@@ -211,9 +228,15 @@ export const frontRegion = (
   reach: Uint8Array,
   width: number,
   height: number,
-  options: { erode: number; close: number; grow: number }
+  options: { erode: number; close: number; grow: number; spread: number; link: number }
 ): Uint8Array => {
-  const opened = dilate(erode(diff, width, height, options.erode), width, height, options.erode)
+  const core = faceParts(erode(diff, width, height, options.erode), width, height, {
+    spread: options.spread,
+    touch: 2 * (options.erode + options.grow),
+    stroke: 2 * options.erode,
+    link: options.link,
+  })
+  const opened = dilate(core, width, height, options.erode)
   const closed =
     options.close > 0 ? erode(dilate(opened, width, height, options.close), width, height, options.close) : opened
   const grown = options.grow > 0 ? dilate(closed, width, height, options.grow) : closed

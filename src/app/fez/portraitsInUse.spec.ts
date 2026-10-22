@@ -4,10 +4,7 @@ import { PORTRAITS, portraitFor, POSE_PARTS, type Face, type Pose } from "./port
 import { STORY_POSES, storyExpression } from "./storyPoses"
 import { TUTORIAL_LINES } from "./tutorialLines"
 
-const hasFace = (speaker: Speaker, face: Face) =>
-  face === "default" ||
-  PORTRAITS[speaker]?.faces?.[face] !== undefined ||
-  Object.keys(PORTRAITS[speaker]?.paintings ?? {}).some(combination => combination.endsWith(`+${face}`))
+const hasFace = (speaker: Speaker, face: Face) => face === "default" || PORTRAITS[speaker]?.faces?.[face] !== undefined
 
 /** Drawn in another pose base than the line names, or without a face the speaker has art for. */
 const misdrawn = (speaker: Speaker, pose: Pose, face?: Face) => {

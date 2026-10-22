@@ -9,9 +9,10 @@ import fezFaceSheepish from "@/assets/fez-face-sheepish-250.png"
 import fezPoseCocktail from "@/assets/fez-pose-cocktail-250.png"
 import fezPoseCocktailFront from "@/assets/fez-pose-cocktail-front-250.png"
 import explorer from "@/assets/explorer-250.png"
+import explorerPosePoint from "@/assets/explorer-pose-point-250.png"
 import explorerFaceSurprised from "@/assets/explorer-face-surprised-250.png"
-import explorerCool from "@/assets/grin-explorer-250.png"
-import explorerPoint from "@/assets/point-explorer-250.png"
+import explorerFaceDeadpan from "@/assets/explorer-face-deadpan-250.png"
+import explorerFaceCool from "@/assets/explorer-face-cool-250.png"
 import ghostIpi from "@/assets/ghost-ipi-250.png"
 import ghostHenut from "@/assets/ghost-henut-250.png"
 import ghostPriest from "@/assets/ghost-priest-250.png"
@@ -26,7 +27,7 @@ export const BASES = ["default", "point", "cocktail"] as const
 export type Base = (typeof BASES)[number]
 
 /** A look laid over a pose base. `default` is the base's own face. */
-export const FACES = ["default", "worried", "excited", "cool", "wistful", "surprised", "sheepish"] as const
+export const FACES = ["default", "worried", "excited", "cool", "wistful", "surprised", "sheepish", "deadpan"] as const
 export type Face = (typeof FACES)[number]
 
 /** The pose names lines are written with (`> **Fez (pointUp):** …`), each a pose base and a face. */
@@ -49,7 +50,6 @@ type Art = {
    */
   front?: string
 }
-type Combination = `${Base}+${Face}`
 
 type Portraits = {
   /** 350x375 rather than 250x375: imported with `--behind=0.4`, the figure behind them included. */
@@ -58,11 +58,6 @@ type Portraits = {
   bases: Partial<Record<Base, Art>>
   /** Transparent outside the head: one small layer per look instead of a portrait per pose and look. */
   faces?: Partial<Record<Exclude<Face, "default">, string>>
-  /**
-   * Whole paintings drawn for a pose and face until that pair can be composed from a base and a face
-   * layer. Composition wins as soon as it can; the painting is then deleted.
-   */
-  paintings?: Partial<Record<Combination, Art>>
 }
 
 /**
@@ -97,24 +92,21 @@ export const PORTRAITS: Partial<Record<Speaker, Portraits>> = {
   pharaoh: { wide: true, bases: { default: { src: ghostPharaoh, alt: "A pharaoh, pale blue-green" } } },
   explorer: {
     wide: true,
-    bases: { default: { src: explorer, alt: "The explorer, in a wide brown hat and olive vest" } },
-    faces: { surprised: explorerFaceSurprised },
-    paintings: {
-      "point+default": { src: explorerPoint, alt: "The explorer, pointing" },
-      "default+cool": { src: explorerCool, alt: "The explorer, in sunglasses, grinning" },
+    bases: {
+      default: { src: explorer, alt: "The explorer, in a wide brown hat and olive vest" },
+      point: { src: explorerPosePoint, alt: "The explorer, in a wide brown hat and olive vest, pointing" },
     },
+    faces: { surprised: explorerFaceSurprised, deadpan: explorerFaceDeadpan, cool: explorerFaceCool },
   },
 }
 
 const compose = (portraits: Portraits, base: Base, face: Face) => {
   const figure = portraits.bases[base]
   const layer = face === "default" ? undefined : portraits.faces?.[face]
-  if (figure && (face === "default" || layer)) return { ...figure, face: layer, painting: false }
-  const painting = portraits.paintings?.[`${base}+${face}`]
-  return painting && { ...painting, face: undefined, front: undefined, painting: true }
+  return figure && (face === "default" || layer) ? { ...figure, face: layer } : undefined
 }
 
-/** Exactly this base and face for a speaker, with no giving way: a composition, a painting, or nothing. */
+/** Exactly this base and face for a speaker, with no giving way: a composition, or nothing. */
 export const portraitPart = (speaker: Speaker, base: Base, face: Face) => {
   const portraits = PORTRAITS[speaker]
   const art = portraits && compose(portraits, base, face)
