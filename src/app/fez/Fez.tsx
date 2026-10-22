@@ -1,7 +1,8 @@
 import clsx from "clsx"
 import { useEffect, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
-import { GHOSTS, spokenLines, type Speaker } from "./arrivalConversation"
+import { spokenLines, type Speaker } from "./arrivalConversation"
+import { Portrait } from "./Portrait"
 import { portraitFor } from "./portraits"
 import { storyExpression } from "./storyPoses"
 import { pose, TUTORIAL_LINES, type PoseChat } from "./tutorialLines"
@@ -160,37 +161,22 @@ export const Fez: FC<{
             {t(current?.[1])}
           </div>
           {portrait && (
-            <div
+            <Portrait
               // One element per speaker: the slide-in transitions every transform, the mirror included, so a
-              // shared element would visibly spin round each time the other one spoke. The figure and its
-              // face share this box, so the mirror, the bounce and the slide move both as one.
+              // shared element would visibly spin round each time the other one spoke.
               key={speaker}
+              speaker={speaker}
+              art={portrait}
+              faces={faces}
               className={clsx(
-                "relative -mb-15 animate-subtle-bounce transition-transform duration-300",
-                wide ? "w-70" : "w-50",
+                "-mb-15 transition-transform duration-300",
                 // The sprite is narrower than the bubble above it, so on the right-hand side it has to
                 // be pushed over: left-aligned in a right-anchored column, the explorer stood inboard
                 // of the edge instead of opposite Fez, and the two of them did not face each other.
                 speaker === "explorer" && "ml-auto",
-                // Every sprite is drawn facing right, which is towards the other speaker only from the left.
-                speaker === "explorer" && "-scale-x-100",
-                // The dead are see-through. Drawn opaque and faded here rather than painted
-                // translucent, so one sprite serves and the room shows through all of them equally.
-                GHOSTS.includes(speaker) && "opacity-70",
                 visible ? "translate-y-0" : "translate-y-1/1"
               )}
-            >
-              <img src={portrait.src} alt={portrait.alt} className="w-full" />
-              {faces.map(src => (
-                <img
-                  key={src}
-                  src={src}
-                  alt=""
-                  data-face
-                  className={clsx("absolute inset-0 w-full", src !== portrait.face && "invisible")}
-                />
-              ))}
-            </div>
+            />
           )}
         </div>
       </div>

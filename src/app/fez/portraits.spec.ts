@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { portraitFor } from "./portraits"
+import { portraitFor, portraitPart } from "./portraits"
 
 describe("portraitFor", () => {
   it("lays a speaker's face over a pose base", () => {
@@ -47,5 +47,22 @@ describe("portraitFor", () => {
 
     expect(drawn?.src).toMatch(/ghost-ipi/)
     expect(drawn?.drawn).toEqual({ base: "default", face: "default" })
+  })
+})
+
+describe("portraitPart", () => {
+  it("marks a painting stand-in as a painting", () => {
+    expect(portraitPart("fez", "cocktail", "default")?.painting).toBe(true)
+  })
+
+  it("draws a composition as a base and face, no painting", () => {
+    const part = portraitPart("fez", "point", "cool")
+
+    expect(part?.painting).toBe(false)
+    expect(part?.face).toMatch(/fez-face-cool/)
+  })
+
+  it("gives nothing for a pair that is neither composed nor painted, rather than giving way", () => {
+    expect(portraitPart("ipi", "point", "default")).toBeUndefined()
   })
 })

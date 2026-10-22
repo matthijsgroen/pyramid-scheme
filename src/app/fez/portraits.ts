@@ -86,18 +86,25 @@ export const PORTRAITS: Partial<Record<Speaker, Portraits>> = {
 const compose = (portraits: Portraits, base: Base, face: Face) => {
   const figure = portraits.bases[base]
   const layer = face === "default" ? undefined : portraits.faces?.[face]
-  if (figure && (face === "default" || layer)) return { ...figure, face: layer }
+  if (figure && (face === "default" || layer)) return { ...figure, face: layer, painting: false }
   const painting = portraits.paintings?.[`${base}+${face}`]
-  return painting && { ...painting, face: undefined }
+  return painting && { ...painting, face: undefined, painting: true }
 }
+
+/** Exactly this base and face for a speaker, with no giving way: a composition, a painting, or nothing. */
+export const portraitPart = (speaker: Speaker, base: Base, face: Face) => {
+  const portraits = PORTRAITS[speaker]
+  const art = portraits && compose(portraits, base, face)
+  return art ? { ...art, wide: portraits.wide, drawn: { base, face } } : undefined
+}
+
+export type PortraitArt = NonNullable<ReturnType<typeof portraitPart>>
 
 /**
  * What is drawn for a line: its pose's base with the line's face, or the pose's own one. What cannot be
  * drawn gives way face first, then pose — the base with its own face, then the default base.
  */
-export const portraitFor = (speaker: Speaker, pose: Pose, face?: Face) => {
-  const portraits = PORTRAITS[speaker]
-  if (!portraits) return undefined
+export const portraitFor = (speaker: Speaker, pose: Pose, face?: Face): PortraitArt | undefined => {
   const asked = { base: POSE_PARTS[pose].base, face: face ?? POSE_PARTS[pose].face }
   const tries: { base: Base; face: Face }[] = [
     asked,
@@ -106,8 +113,8 @@ export const portraitFor = (speaker: Speaker, pose: Pose, face?: Face) => {
     { base: "default", face: "default" },
   ]
   for (const drawn of tries) {
-    const art = compose(portraits, drawn.base, drawn.face)
-    if (art) return { ...art, wide: portraits.wide, drawn }
+    const art = portraitPart(speaker, drawn.base, drawn.face)
+    if (art) return art
   }
   return undefined
 }
