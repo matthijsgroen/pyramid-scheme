@@ -164,7 +164,8 @@ describe("the shapes a board of givens comes in", () => {
 
   it("holds the tier's floor on a dig that spends two squares at a time", () => {
     const options = only("mirrored", SUDOKU_CONFIG.junior)
-    for (const seed of SEEDS) expect(filled(generateSudoku(seed, options)), `seed ${seed}`).toBeGreaterThanOrEqual(14)
+    for (const seed of SEEDS)
+      expect(filled(generateSudoku(seed, options)), `seed ${seed}`).toBeGreaterThanOrEqual(options.minGivens!)
   }, 120_000)
 })
 

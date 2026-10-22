@@ -17,16 +17,18 @@ import type { SudokuOptions } from "./generateSudoku"
 const ALL_SHAPES: SudokuOptions["variants"] = ["plain", "hiddenDigit", "mirrored"]
 
 export const SUDOKU_CONFIG: Record<Difficulty, SudokuOptions> = {
-  // Naked singles only, and a board handed nearly half of itself: what is left in this square, when
+  // Naked singles only, and a board handed more than half of itself: what is left in this square, when
   // its row, its column and its chamber have taken everything else. The whole family in one sentence,
-  // with no scanning to do to reach it. It ships one shape of board and no others: a first encounter
-  // teaches what a full grid of givens means, and a value missing from all of them is a second thing to
-  // work out before the first one has landed.
-  starter: { techniqueCap: "nakedSingle", minGivens: 16 },
+  // with no scanning to do to reach it. Most squares fall as the last one left in a group; the three or
+  // four that do not are the deductions, and every board has them. It ships one shape of board and no
+  // others: a first encounter teaches what a full grid of givens means, and a value missing from all of
+  // them is a second thing to work out before the first one has landed.
+  starter: { techniqueCap: "nakedSingle", minGivens: 20 },
   // The second reading of a square, and the one that makes this a puzzle rather than a subtraction:
   // a value can be forced into a square that could still hold three others, because there is nowhere
-  // ELSE in the row, the column or the chamber for it to go.
-  junior: { techniqueCap: "hiddenSingle", minGivens: 14, demands: "hiddenSingle", variants: ALL_SHAPES },
+  // ELSE in the row, the column or the chamber for it to go. Four squares fewer than starter, so the new
+  // reason arrives on a board still generous enough that it is the only new thing.
+  junior: { techniqueCap: "hiddenSingle", minGivens: 16, demands: "hiddenSingle", variants: ALL_SHAPES },
   // The same rung against less of the answer. The reasoning is not what got harder — the board did,
   // and finding the one home takes a scan of the whole group rather than a glance at a nearly full one.
   expert: { techniqueCap: "hiddenSingle", minGivens: 12, demands: "hiddenSingle", variants: ALL_SHAPES },

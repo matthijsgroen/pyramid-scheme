@@ -111,14 +111,20 @@ a third setting that is not about difficulty at all (§5.5).
 
 | Tier    | Cap            | Demands        | Given floor | Shapes | What the tier is                                         |
 | ------- | -------------- | -------------- | ----------- | ------ | -------------------------------------------------------- |
-| starter | `nakedSingle`  | —              | 16          | plain  | what is left in this square, with nearly half given      |
-| junior  | `hiddenSingle` | `hiddenSingle` | 14          | all    | the value's only home in a row, column or chamber        |
+| starter | `nakedSingle`  | —              | 20          | plain  | what is left in this square, with more than half given   |
+| junior  | `hiddenSingle` | `hiddenSingle` | 16          | all    | the value's only home in a row, column or chamber        |
 | expert  | `hiddenSingle` | `hiddenSingle` | 12          | all    | the same rung against less of the answer                 |
 | master  | `hiddenSingle` | `hiddenSingle` | 0           | all    | dug as far as the singles reach — about ten squares left |
 | wizard  | `boxLine`      | `boxLine`      | 0           | all    | the board that needs a chamber against its lines         |
 
-Measured over 30 seeds a tier: 16 / 14 / 12 / 10.2 / 10.3 given squares, 20 / 22 /
-24 / 26 / 28 forced steps, and 2ms / 64ms / 26ms / 24ms / 1448ms to generate.
+Measured over 30 seeds a tier: 20 / 16 / 12 / 10.2 / 10.3 given squares, 16 / 20 /
+24 / 26 / 28 forced steps, and under 1ms / 49ms / 26ms / 24ms / 1448ms to generate.
+
+Most forced steps are the last square left in a row, column or chamber. Played as a
+person would, taking that last square whenever one is open, the steps where none is
+open — the ones that need a real reason — number 3–4 at starter, 7–9 at junior and
+11–12 at expert, on the listed seeds. Starter is never zero, so it is still deduced
+rather than read out.
 
 The chamber-line rung is the ceiling of a 6×6 and there is no fifth rung under it
 waiting to be forced, so what separates wizard from master is not a new kind of
@@ -150,7 +156,7 @@ dig (§3.1) is built around producing it.
 
 ### 5.4 A 6×6 has a low ceiling, and the table says so
 
-Four rungs and roughly six given squares separate starter from wizard. That is the
+Four rungs and roughly ten given squares separate starter from wizard. That is the
 grid, not an oversight: this family is authored at one size because the upright
 chambers are the shape it exists to show, and the catalogue records the consequence
 (`PUZZLE_FAMILIES.md` §4.8). A tier ladder that pretended otherwise would be a table
@@ -178,7 +184,7 @@ Measured over 10 seeds a tier, each shape drawn on its own:
 
 | Tier   | `plain`         | `hiddenDigit`   | `mirrored`      |
 | ------ | --------------- | --------------- | --------------- |
-| junior | 14.0 g, 52ms    | 14.0 g, 17ms    | 14.0 g, 63ms    |
+| junior | 16.0 g, 64ms    | 16.0 g, 23ms    | 16.0 g, 43ms    |
 | expert | 12.0 g, 18ms    | 12.0 g, 16ms    | 12.4 g, 40ms    |
 | master | 9.8 g, 22ms     | 10.3 g, 15ms    | 12.0 g, 45ms    |
 | wizard | 10.1 g, 875ms   | 10.6 g, 975ms   | 12.4 g, 607ms   |

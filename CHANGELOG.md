@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The first sudoku boards hand you more of the answer, and the next tier steps up more gently.
 - Ipi, in the first tomb, talks with Fez and the explorer instead of at them.
 - The map button on the main screen is square.
 - Fez and the explorer look excited on their excited story lines.
