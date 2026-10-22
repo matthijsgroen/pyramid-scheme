@@ -1,7 +1,7 @@
 import { useCallback } from "react"
 import { useTranslation } from "react-i18next"
 import type { HasLine } from "@/app/fez/arrivalConversation"
-import { PORTRAITS } from "@/app/fez/portraits"
+import { portraitFor } from "@/app/fez/portraits"
 import type { OccupantOf, RoomOccupant } from "@/app/SiteMap/roomOccupants"
 import { sharedTileFrames } from "@/app/SiteMap/tileAssets"
 import { CONVERSATION_META } from "@/mods/story/game/conversation/meta"
@@ -26,7 +26,7 @@ export const ghostOccupant = (
   if (!ghost) return undefined
   const painted = figure(ghost)
   if (painted) return { id: ghost, src: painted, kind: "sprite", translucent: true }
-  const portrait = PORTRAITS[ghost]?.default
+  const portrait = portraitFor(ghost, "default")
   return portrait ? { id: ghost, src: portrait.src, kind: "bust", wide: portrait.wide, translucent: true } : undefined
 }
 

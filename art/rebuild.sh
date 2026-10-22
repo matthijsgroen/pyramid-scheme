@@ -1676,14 +1676,14 @@ yarn import-portrait art/masters/characters/ghost-priest.jpeg --name=ghost-pries
 yarn import-portrait art/masters/characters/ghost-pharaoh.jpeg --name=ghost-pharaoh --bust=0.55 --behind=0.4
 yarn import-portrait art/masters/characters/ghost-other.jpeg --name=ghost-other --bust=0.55
 
-# Fez's masters are his sprite redrawn at full size, so --whole frames the canvas as painted: every pose
-# base and every face layer of him is cut through that one window, and the game stacks a face on a pose
-# pixel for pixel (character-art-prompts.md, Composed expressions). A pose base is an edit that kept
-# the base's head where it was; a face layer is an expression edit of the base, cut to what moved.
-# point-fez-base is the pointing figure a face is laid on; the open-mouthed point-fez stays the bare pose.
+# Every portrait is a pose base and a face, each an edit of the character's one master
+# (character-art-prompts.md §5): <char>-pose-<name> kept the master's head in place, <char>-face-<name>
+# changed only the face and is cut to what moved. Fez's masters are his sprite redrawn at full size, so
+# --whole frames the canvas as painted and every base and face of him shares that one window. The
+# paintings point-fez, glasses-point-fez and cocktail-fez stand in until their pose and face land.
 yarn import-portrait art/masters/characters/fez.jpeg --name=fez --whole
-yarn import-portrait art/masters/characters/fez-pointUp-base.jpeg --name=point-fez-base --whole
-yarn import-portrait art/masters/characters/fez-worried.jpeg --name=fez-face-worried --whole \
+yarn import-portrait art/masters/characters/fez-pose-point.jpeg --name=fez-pose-point --whole
+yarn import-portrait art/masters/characters/fez-face-worried.jpeg --name=fez-face-worried --whole \
   --face-of=art/masters/characters/fez.jpeg
 
 # THE EXPLORER, SQUEEZING (side frame e, profile frame s; north reuses s)

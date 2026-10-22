@@ -1,11 +1,13 @@
 import { useEffect, useState, type FC, type ReactNode } from "react"
-import fezCocktail from "@/assets/cocktail-fez-250.png"
+import { portraitFor } from "@/app/fez/portraits"
 import { ShopPanel } from "@/ui/molecules/ShopPanel"
 import { ShopItemCard } from "@/ui/atoms/ShopItemCard"
 import { SellItemCard } from "@/ui/atoms/SellItemCard"
 
 // ponytail: scroll distance (px) over which the portrait fully shrinks into the header thumbnail
 const SHRINK_DISTANCE = 72
+/** The shop is his: drawn in the pose his shop lines are. */
+const fezCocktail = portraitFor("fez", "cocktail")?.src
 
 export type ShopBuyItem = {
   id: string

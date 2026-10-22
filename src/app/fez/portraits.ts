@@ -1,11 +1,11 @@
 import fez from "@/assets/fez-250.png"
-import fezPoint from "@/assets/point-fez-250.png"
-import fezPointBase from "@/assets/point-fez-base-250.png"
-import fezGlassesPoint from "@/assets/glasses-point-fez-250.png"
-import fezCocktail from "@/assets/cocktail-fez-250.png"
+import fezPosePoint from "@/assets/fez-pose-point-250.png"
 import fezFaceWorried from "@/assets/fez-face-worried-250.png"
+import fezPointExcited from "@/assets/point-fez-250.png"
+import fezPointCool from "@/assets/glasses-point-fez-250.png"
+import fezCocktail from "@/assets/cocktail-fez-250.png"
 import explorer from "@/assets/explorer-250.png"
-import explorerGrin from "@/assets/grin-explorer-250.png"
+import explorerCool from "@/assets/grin-explorer-250.png"
 import explorerPoint from "@/assets/point-explorer-250.png"
 import ghostIpi from "@/assets/ghost-ipi-250.png"
 import ghostHenut from "@/assets/ghost-henut-250.png"
@@ -13,9 +13,44 @@ import ghostPriest from "@/assets/ghost-priest-250.png"
 import ghostPharaoh from "@/assets/ghost-pharaoh-250.png"
 import type { Speaker } from "./arrivalConversation"
 
-/** How a portrait is drawn for a line. Fez has four, the explorer three, the ghosts one. */
+/**
+ * Every portrait is a pose base and a face (character-art-prompts.md). A pose base is the figure,
+ * an edit of the speaker's one master that kept the head where it was; `default` is the master itself.
+ */
+export const BASES = ["default", "point", "cocktail"] as const
+export type Base = (typeof BASES)[number]
+
+/** A look laid over a pose base. `default` is the base's own face. */
+export const FACES = ["default", "worried", "excited", "cool"] as const
+export type Face = (typeof FACES)[number]
+
+/** The pose names lines are written with (`> **Fez (pointUp):** …`), each a pose base and a face. */
 export const POSES = ["default", "pointUp", "glassesPoint", "cocktail"] as const
 export type Pose = (typeof POSES)[number]
+
+export const POSE_PARTS: Readonly<Record<Pose, { base: Base; face: Face }>> = {
+  default: { base: "default", face: "default" },
+  pointUp: { base: "point", face: "excited" },
+  glassesPoint: { base: "point", face: "cool" },
+  cocktail: { base: "cocktail", face: "default" },
+}
+
+type Art = { src: string; alt: string }
+type Combination = `${Base}+${Face}`
+
+type Portraits = {
+  /** 350x375 rather than 250x375: imported with `--behind=0.4`, the figure behind them included. */
+  wide?: true
+  /** Each cut through the speaker's shared frame (`art/rebuild.sh`), so any face lands on any of them. */
+  bases: Partial<Record<Base, Art>>
+  /** Transparent outside the head: one small layer per look instead of a portrait per pose and look. */
+  faces?: Partial<Record<Exclude<Face, "default">, string>>
+  /**
+   * Whole paintings drawn for a pose and face until that pair can be composed from a base and a face
+   * layer. Composition wins as soon as it can; the painting is then deleted.
+   */
+  paintings?: Partial<Record<Combination, Art>>
+}
 
 /**
  * Who is drawn when somebody speaks.
@@ -23,66 +58,58 @@ export type Pose = (typeof POSES)[number]
  * Data rather than part of the renderer, so content can be held to the art that exists — a scene
  * authored for a speaker nobody has drawn opens a bubble beside nobody.
  */
-export const PORTRAITS: Partial<
-  Record<
-    Speaker,
-    Partial<
-      Record<
-        Pose,
-        {
-          src: string
-          alt: string
-          /** 350x375 rather than 250x375: imported with `--behind=0.4`, the figure behind them included. */
-          wide?: true
-          /**
-           * The figure a face is laid on: this pose imported through the speaker's shared frame
-           * (`art/rebuild.sh`), so a face layer lands on its head pixel for pixel. Often `src` itself; a
-           * pose whose own painting has a face of its own (Fez's open-mouthed point) names a plain one.
-           * A pose without it takes no face.
-           */
-          faceBase?: string
-        }
-      >
-    >
-  >
-> = {
+export const PORTRAITS: Partial<Record<Speaker, Portraits>> = {
   fez: {
-    default: { src: fez, alt: "Happy companion lizard wearing a fez", faceBase: fez },
-    pointUp: { src: fezPoint, alt: "Happy companion lizard wearing a fez", faceBase: fezPointBase },
-    glassesPoint: { src: fezGlassesPoint, alt: "Happy companion lizard wearing a fez and glasses" },
-    cocktail: { src: fezCocktail, alt: "Happy companion lizard wearing a fez and holding a cocktail" },
+    bases: {
+      default: { src: fez, alt: "Happy companion lizard wearing a fez" },
+      point: { src: fezPosePoint, alt: "Happy companion lizard wearing a fez, pointing" },
+    },
+    faces: { worried: fezFaceWorried },
+    paintings: {
+      "point+excited": { src: fezPointExcited, alt: "Happy companion lizard wearing a fez, pointing" },
+      "point+cool": { src: fezPointCool, alt: "Happy companion lizard wearing a fez and glasses" },
+      "cocktail+default": { src: fezCocktail, alt: "Happy companion lizard wearing a fez and holding a cocktail" },
+    },
   },
-  ipi: { default: { src: ghostIpi, alt: "Ipi, a bookkeeper, pale blue-green", wide: true } },
-  henut: { default: { src: ghostHenut, alt: "Henut, a noblewoman, pale blue-green", wide: true } },
-  priest: { default: { src: ghostPriest, alt: "A high priest, pale blue-green", wide: true } },
-  pharaoh: { default: { src: ghostPharaoh, alt: "A pharaoh, pale blue-green", wide: true } },
+  ipi: { wide: true, bases: { default: { src: ghostIpi, alt: "Ipi, a bookkeeper, pale blue-green" } } },
+  henut: { wide: true, bases: { default: { src: ghostHenut, alt: "Henut, a noblewoman, pale blue-green" } } },
+  priest: { wide: true, bases: { default: { src: ghostPriest, alt: "A high priest, pale blue-green" } } },
+  pharaoh: { wide: true, bases: { default: { src: ghostPharaoh, alt: "A pharaoh, pale blue-green" } } },
   explorer: {
-    default: { src: explorer, alt: "The explorer, in a wide brown hat and olive vest", wide: true },
-    pointUp: { src: explorerPoint, alt: "The explorer, pointing", wide: true },
-    glassesPoint: { src: explorerGrin, alt: "The explorer, in sunglasses, grinning", wide: true },
+    wide: true,
+    bases: { default: { src: explorer, alt: "The explorer, in a wide brown hat and olive vest" } },
+    paintings: {
+      "point+default": { src: explorerPoint, alt: "The explorer, pointing" },
+      "default+cool": { src: explorerCool, alt: "The explorer, in sunglasses, grinning" },
+    },
   },
 }
 
-/** A look laid over a pose: the expression without repainting the figure. */
-export const FACES = ["worried"] as const
-export type Face = (typeof FACES)[number]
-
-/**
- * Each speaker's face layers: transparent outside the head, cut at the size of that speaker's
- * stacking poses (`import-portrait --face-of`), so the game ships one figure per pose and a small
- * layer per look instead of a whole portrait for every combination.
- */
-export const FACE_LAYERS: Partial<Record<Speaker, Partial<Record<Face, string>>>> = {
-  fez: { worried: fezFaceWorried },
+const compose = (portraits: Portraits, base: Base, face: Face) => {
+  const figure = portraits.bases[base]
+  const layer = face === "default" ? undefined : portraits.faces?.[face]
+  if (figure && (face === "default" || layer)) return { ...figure, face: layer }
+  const painting = portraits.paintings?.[`${base}+${face}`]
+  return painting && { ...painting, face: undefined }
 }
 
 /**
- * What is drawn for a line: the pose — the speaker's default when nobody has drawn that one — and the
- * face over it, on the pose's `faceBase`, when that speaker has the face AND the pose has a base for it.
+ * What is drawn for a line: its pose's base with the line's face, or the pose's own one. What cannot be
+ * drawn gives way face first, then pose — the base with its own face, then the default base.
  */
 export const portraitFor = (speaker: Speaker, pose: Pose, face?: Face) => {
-  const base = PORTRAITS[speaker]?.[pose] ?? PORTRAITS[speaker]?.default
-  if (!base) return undefined
-  const layer = face && base.faceBase ? FACE_LAYERS[speaker]?.[face] : undefined
-  return layer ? { ...base, src: base.faceBase!, face: layer } : { ...base, face: undefined }
+  const portraits = PORTRAITS[speaker]
+  if (!portraits) return undefined
+  const asked = { base: POSE_PARTS[pose].base, face: face ?? POSE_PARTS[pose].face }
+  const tries: { base: Base; face: Face }[] = [
+    asked,
+    { base: asked.base, face: "default" },
+    { base: "default", face: asked.face },
+    { base: "default", face: "default" },
+  ]
+  for (const drawn of tries) {
+    const art = compose(portraits, drawn.base, drawn.face)
+    if (art) return { ...art, wide: portraits.wide, drawn }
+  }
+  return undefined
 }

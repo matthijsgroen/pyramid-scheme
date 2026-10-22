@@ -2,75 +2,21 @@ import clsx from "clsx"
 import { useEffect, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { GHOSTS, spokenLines, type Speaker } from "./arrivalConversation"
-import { FACE_LAYERS, portraitFor, type Face, type Pose } from "./portraits"
+import { portraitFor } from "./portraits"
 import { storyExpression } from "./storyPoses"
-
-type PoseChat = [pose: Pose, translationKey: string, speaker?: Speaker, face?: Face]
-
-const pose = (...args: (Pose | string[])[]): PoseChat[] => {
-  let currentPose: Pose = "default"
-
-  const result = args.flatMap<PoseChat>(key => {
-    if (Array.isArray(key)) {
-      return key.map<PoseChat>(k => [currentPose, k])
-    }
-    currentPose = key
-    return []
-  })
-  return result
-}
-
-/** Until Fez is met the explorer is alone, so what the player needs before then is his to say. */
-const asExplorer = (chats: PoseChat[]): PoseChat[] => chats.map(([pose, key]) => [pose, key, "explorer"])
-
-const conversations: Record<string, PoseChat[]> = {
-  welcome: asExplorer(pose(["welcome", "welcome2", "welcome3"])),
-  // The exterior is the one board that does not show its own rule, so the explorer says it, alone.
-  pyramidIntro: asExplorer(pose(["pyramidIntro", "pyramidIntro2"])),
-  levelCompleted: pose("pointUp", ["levelCompleted"]),
-  expeditionCompleted: pose("glassesPoint", ["expeditionCompleted", "expeditionCompleted2"]),
-  collectionIntro: pose(["collectionIntro", "collectionIntro2", "collectionIntro3"]),
-  tombIntro: pose(["tombIntro", "tombIntro2"], "pointUp", ["tombIntro3"]),
-  tombTutorial: pose(["tombTutorial", "tombTutorial2"], "pointUp", ["tombTutorial3"]),
-  hieroglyphUnlock: pose(["hieroglyphUnlock"], "pointUp", ["hieroglyphUnlock2"]),
-  errorHighlightTutorial: pose(["errorHighlightTutorial"], "glassesPoint", ["errorHighlightTutorial2"]),
-  earlyFeedbackTutorial: pose(["earlyFeedbackTutorial"], "pointUp", ["earlyFeedbackTutorial2"]),
-  notEnoughHieroglyphs: pose(["notEnoughHieroglyphs"], "pointUp", ["notEnoughHieroglyphs2"]),
-  tombLoot: pose("glassesPoint", ["tombLoot"]),
-  mapPiece: pose(["mapPiece", "mapPiece2"], "pointUp", ["mapPiece3"]),
-  pyramidBlockedBlocks: pose(
-    ["pyramidBlockedBlocks", "pyramidBlockedBlocks2", "pyramidBlockedBlocks3"],
-    "glassesPoint",
-    ["pyramidBlockedBlocks4"]
-  ),
-  shopArrival: pose("cocktail", ["shopArrival", "shopArrival2"]),
-  // The first stall the player ever reaches: he owns up to it being his and pitches the counter.
-  // Closes on the same practical line as every later visit, so the rules live in one string.
-  shopFirstVisit: pose("cocktail", ["shopFirstVisit", "shopFirstVisit2", "shopArrival2"]),
-  // The first mosaic piece found, and the nudge the travel screen repeats while pieces wait in hand.
-  mosaicIntro: pose(["mosaicIntro", "mosaicIntro2"], "pointUp", ["mosaicIntro3"]),
-  mosaicReminder: pose("pointUp", ["mosaicReminder"]),
-  // One per finished mosaic register, plus the finale. Registers complete in any order, so no beat
-  // may lean on another.
-  mosaicStarter: pose(["mosaicStarter", "mosaicStarter2"], "pointUp", ["mosaicStarter3"]),
-  mosaicJunior: pose("glassesPoint", ["mosaicJunior"], "default", ["mosaicJunior2", "mosaicJunior3"]),
-  mosaicExpert: pose("pointUp", ["mosaicExpert"], "default", ["mosaicExpert2", "mosaicExpert3"]),
-  mosaicMaster: pose("glassesPoint", ["mosaicMaster"], "default", ["mosaicMaster2", "mosaicMaster3"]),
-  mosaicWizard: pose(["mosaicWizard", "mosaicWizard2"], "pointUp", ["mosaicWizard3"]),
-  mosaicFinale: pose("glassesPoint", ["mosaicFinale"], "default", ["mosaicFinale2"], "pointUp", ["mosaicFinale3"]),
-}
+import { pose, TUTORIAL_LINES, type PoseChat } from "./tutorialLines"
 
 const NOT_FOUND = pose("default", ["not-found"])
 
 /**
  * The lines a conversation id plays.
  *
- * A conversation not in the table above is read out of the translations instead — the arrivals and
+ * A conversation not in `TUTORIAL_LINES` is read out of the translations instead — the arrivals and
  * the tomb scenes are authored that way, because a new beat should cost a key rather than a code
- * change. Their expressions come from `storyPoses`. The table is what is left: the tutorials and the shipped one-voice beats.
+ * change. Their expressions come from `storyPoses`.
  */
 const writtenLines = (conversation: string, hasLine: (key: string) => boolean): PoseChat[] => {
-  const table = conversations[conversation]
+  const table = TUTORIAL_LINES[conversation]
   if (table) return table
   const spoken = spokenLines(conversation, hasLine)
   return spoken.length > 0
@@ -87,7 +33,7 @@ const fezSpeaks = (lines: PoseChat[]): boolean => lines.some(([, , speaker]) => 
  * The lines a conversation plays, or nothing when Fez speaks in it and has not been met yet.
  *
  * Dropped whole rather than with his lines cut, so the explorer never answers nobody. A line the
- * player needs before the meeting is the explorer's in the table above (`asExplorer`), not Fez's.
+ * player needs before the meeting is the explorer's in `TUTORIAL_LINES` (`asExplorer`), not Fez's.
  */
 const linesFor = (conversation: string, hasLine: (key: string) => boolean, beforeMeeting: boolean) => {
   const lines = writtenLines(conversation, hasLine)
@@ -177,8 +123,8 @@ export const Fez: FC<{
   const faces = [
     ...new Set(
       messages
-        .filter(([, , who, face]) => (who ?? "fez") === speaker && face)
-        .map(([, , , face]) => FACE_LAYERS[speaker]?.[face!])
+        .filter(([, , who]) => (who ?? "fez") === speaker)
+        .map(([linePose, , , face]) => portraitFor(speaker, linePose, face)?.face)
         .filter(src => src !== undefined)
     ),
   ]

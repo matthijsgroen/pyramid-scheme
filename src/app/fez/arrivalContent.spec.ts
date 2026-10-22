@@ -82,7 +82,7 @@ describe("everyone who speaks", () => {
     for (const lines of Object.values(scenes("en")))
       for (const line of Object.values(lines))
         for (const speaker of Object.keys(line) as Speaker[])
-          if (!UNSEEN.includes(speaker) && !PORTRAITS[speaker]?.default) missing.add(speaker)
+          if (!UNSEEN.includes(speaker) && !PORTRAITS[speaker]?.bases.default) missing.add(speaker)
     expect([...missing]).toEqual([])
   })
 })
