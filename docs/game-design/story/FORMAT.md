@@ -124,14 +124,16 @@ the character in the hat, and only one of those can be written for.
 **An expression rides in the prefix.** `> **Fez (pointUp):** Look at those doors!` draws that line with
 the named pose; a bare prefix is the speaker's `default`. The game reads it from
 `src/app/fez/storyPoses.ts`, keyed by the line's locale key, so a pose set in a script is set there too.
-Only poses in `Pose` (`src/app/fez/portraits.ts`) are valid, and one a speaker has no art for draws their
-`default`.
+Only poses in `Pose` (`src/app/fez/portraits.ts`) are valid. Each is a pose base and a face
+(`POSE_PARTS`): `pointUp` is the point base with the excited face, `glassesPoint` the point base with the
+cool one, `cocktail` the cocktail base with its own.
 
 **A face rides there too.** `> **Fez (worried):** …` lays the worried face over his default pose, and
-`> **Fez (pointUp, worried):** …` over the pointing one — pose first, face second. In `storyPoses.ts` that
-is `{ face: "worried" }` or `{ pose: "pointUp", face: "worried" }`. Only faces in `Face` are valid, and
-the spec holds every face named to one painted for that speaker on that pose; a face nobody painted is
-the bare pose.
+`> **Fez (pointUp, worried):** …` over the pointing one — pose first, face second, the face taking the
+place of the pose's own. In `storyPoses.ts` that is `{ face: "worried" }` or
+`{ pose: "pointUp", face: "worried" }`. Only faces in `Face` are valid, and the spec holds every line to
+the pose base it names and to its face wherever that speaker has art for it; a face a speaker has no art
+for is the base's own.
 
 #### Every line is spoken, not narrated (house style, every act)
 

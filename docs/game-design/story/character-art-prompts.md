@@ -36,9 +36,10 @@ can give you — §3 cuts it out on the way in.
 
 ## 1. The explorer — conversation portraits
 
-The neutral and grinning poses ARE the original character artwork, imported — `art/masters/characters/`
-holds both, and `yarn import-portrait` is the whole of the work. Only what the original does not have needs
-drawing, which today is the pointing pose and any later one.
+The neutral pose IS the original character artwork, imported — `art/masters/characters/explorer.jpeg` is
+his master, and every other pose and face of his is an edit of it (§5). The grin and the point below are
+separate paintings the game draws only until §5's `explorer-face-cool` and `explorer-pose-point` replace
+them; then their entries go.
 
 **Match the existing explorer exactly**: olive-green utility vest with
 four flap pockets, cream rolled-sleeve shirt, red neckerchief, wide brown felt bush hat, cream cargo
@@ -252,53 +253,277 @@ entries live in the tile queue, [repaint-queue.md](../../instructions/repaint-qu
 explorer's front frame for style and scale and the portrait master above for who it is. Until one lands the
 map stands the portrait's face frame in for it.
 
-## 5. Composed expressions
+## 5. Pose and face: how every portrait is made
 
-An expression is a face, not a picture. Rolling a whole new portrait for every mood gives a slightly
-different Fez each time — the hat moves, the scarf changes, the tail grows a curl — and a conversation that
-cuts between them reads as two lizards. So an expression is painted as an EDIT of one base picture, and only
-its face is kept: laid over the base, it is the same Fez with a different look on him.
+**Every portrait the game draws is a pose base and a face.** A pose base is the figure — body, hands,
+props — wearing its own neutral face; a face is a layer laid over the head of any of that character's
+bases. Both are EDITS of the character's one master (`fez.jpeg`, `explorer.jpeg`, a ghost's portrait),
+never paintings of their own: rolled fresh, each picture is a slightly different Fez — the hat moves, the
+scarf changes, the tail grows a curl — and a conversation that cuts between them reads as two lizards.
 
-**The face layer is the whole face region, cut with a feathered mask.** Diff the expression edit against its
-base; the pixels that moved are the face, and the mask is an ellipse around them — head included, brows to
-chin — with a soft edge tens of pixels wide, so the join fades over a band rather than sitting on a line.
-The proof that this works is Fez: `fez-worried.jpeg`, an edit of `fez.jpeg` that changed only the face, cut
-that way and laid over both `fez.jpeg` and `fez-pointUp-base.jpeg`, shows no seam. It holds only for a true
-face-only edit — the explorer's grin is a separate painting whose head sits slightly off his neutral one, and
-laid over it the mouth doubles.
+**There are two kinds of edit, and each changes one thing.**
 
-**Not separate eyes and mouth.** It would be the cheaper layer set, and it does not survive this style: an
-expression moves the brows, the cheeks, the shape of the eye whites and the shading around all of them
-together, and the outlines run continuously between them. Cut at the eye and the mouth, the parts of the
-change outside those cuts are left behind, and the edge of every cut lands on an outline. One soft region
-takes all of it.
+- **A pose edit** changes the body and keeps the head pixel for pixel: same outline, same eyes, same face,
+  same hat, in the same place on the canvas. It is imported whole and becomes a base.
+- **A face edit** changes the face and nothing else. Diffed against the master, what moved is the face;
+  `yarn import-portrait --face-of` cuts it out as a layer, and the game stacks it on whichever base the
+  line asks for. Whatever the face wears goes in the layer with it — sunglasses included, since the diff
+  takes them in.
 
-**Composed in the app, not baked.** A face layer ships as its own sprite — transparent outside the head,
-cut through the same window as its character's poses — and `Fez.tsx` stacks it on whichever pose the line
-asks for (`portraitFor`). One figure per pose plus a small layer per look costs far less than a whole
-portrait for every pose-and-look pair: Fez's figure is ~75 kB, the worried face ~40 kB, and it serves
-every pose cut to the shared frame. `yarn import-portrait <expression> --face-of=<base>` writes the layer;
-a pose base is an edit that kept the base's head in place, imported with the same framing flags
-(`--whole` for Fez, whose masters are painted in his sprite's frame), so every layer lands on every pose
-pixel for pixel. A pose whose own painting carries a face (Fez's open-mouthed point) keeps it for the bare
-pose and names a plain base for faces (`point-fez-base`). The lines are in `art/rebuild.sh`.
+**The names say which.** Master, sprite and `yarn repaint` key are one name:
 
-**The pass criterion**, for the proof and for every composed expression after it: at 100% there is no visible
-seam anywhere around the face, and outside the head the composed picture is the base to within compression
-noise. An edit that moved the hat, the scarf or the outline of the head fails, and is re-rolled rather than
-masked around.
+| File                      | What it is                                       | Sprite                       |
+| ------------------------- | ------------------------------------------------ | ---------------------------- |
+| `<char>.jpeg`             | the master, and the `default` base with its face | `<char>-250.png`             |
+| `<char>-pose-<name>.jpeg` | a pose edit of the master: a base                | `<char>-pose-<name>-250.png` |
+| `<char>-face-<name>.jpeg` | a face edit of the master: a layer               | `<char>-face-<name>-250.png` |
 
-### The Fez proof
+`<name>` is the base or face it is registered as in `src/app/fez/portraits.ts` (`BASES`, `FACES`).
 
-Three paintings, each landing as a MASTER only: these are inputs to the proof, and no shipped sprite in
-`src/assets` is written by any of them. `yarn repaint <key> --land` saves the download at the entry's
-`**Master:**` path and stops there.
+**Landing one**, in order:
 
-Fez's colours, measured off `fez-250.png`, are substituted for `[fez palette]`:
+1. `yarn repaint <key>`, generate, then `yarn repaint <key> --land` saves the download at the entry's
+   `**Master:**` path.
+2. Look at it against the pass criterion below. A pose edit that moved the head, or a face edit that moved
+   anything outside the face, is re-rolled — never masked around, never accepted.
+3. Run the entry's **Then:** line and add it to `art/rebuild.sh` with the character's others.
+4. Register it in `portraits.ts`: a base under the speaker's `bases`, a face under `faces`. The game
+   composes a base and a face as soon as both exist, ahead of any painting registered for that pair, so the
+   painting it retires (its entry says which) is then deleted — from `paintings`, from `src/assets`, from
+   `art/` and `rebuild.sh`, and its §1 entry if it has one.
+5. Tag lines only for a new look: `> **Fez (pointUp, wistful):**` in the script and its key in
+   `storyPoses.ts` (FORMAT.md). A face that replaces a painting retags nothing — the pose name already
+   asks for it.
+
+**What is never done.** No standalone portrait is painted any more: a new look is a face edit, a new
+gesture a pose edit, both of the master. The paintings still in the game — `point-fez`,
+`glasses-point-fez`, `cocktail-fez`, `point-explorer`, `grin-explorer` — are registered in `portraits.ts`
+as `paintings` for their pose and face only until the edits below replace them.
+
+**The ghosts stay one portrait each** — their master is their `default` base — until a scene needs a
+second expression of one. The priest's peaceful face in Act V is the first; it is then a face edit of
+`ghost-priest.jpeg`, cut with that ghost's import flags plus `--face-of`, exactly like the others.
+
+### What the game draws
+
+Lines name a pose (`Pose` in `portraits.ts`), and each pose name is a base and a face; a face named on
+the line (`Fez (pointUp, worried)`) takes the place of the pose's own. What cannot be drawn gives way
+face first, then base — `portraitFor`, held by `portraitsInUse.spec.ts` to every line in `storyPoses.ts`
+and the tutorial table (`tutorialLines.ts`).
+
+| Speaker  | Pose name      | Base            | Face    | Drawn today                                                                 | Used by                                 |
+| -------- | -------------- | --------------- | ------- | --------------------------------------------------------------------------- | --------------------------------------- |
+| Fez      | `default`      | default         | default | `fez` (master)                                                              | most lines                              |
+| Fez      | any + worried  | default / point | worried | `fez` / `fez-pose-point` + `fez-face-worried`                               | 13 story lines                          |
+| Fez      | `pointUp`      | point           | excited | painting `point-fez`                                                        | 24 story lines, 13 tutorial lines       |
+| Fez      | `glassesPoint` | point           | cool    | painting `glasses-point-fez`                                                | 8 tutorial lines                        |
+| Fez      | `cocktail`     | cocktail        | default | painting `cocktail-fez`                                                     | 5 shop lines, the shop screen           |
+| Explorer | `default`      | default         | default | `explorer` (master)                                                         | his lines, the welcome tutorials        |
+| Explorer | `pointUp`      | point           | default | painting `point-explorer`                                                   | 3 story lines                           |
+| Explorer | `glassesPoint` | point           | cool    | painting `point-explorer` (`grin-explorer` is registered as default + cool) | none                                    |
+| Ghosts   | `default`      | default         | default | their master                                                                | their scenes, the log, the map stand-in |
+
+The explorer's `pointUp` is his point base with its own face: he has no excited face, and a face a speaker
+has no art for gives way to the base's own.
+
+### The pass criterion
+
+For every pose and face edit: at 100% there is no visible seam anywhere around the face, and outside the
+head the composed picture is the base to within compression noise. An edit that moved the hat, the scarf
+or the outline of the head fails, and is re-rolled.
+
+**The face layer is the whole face region, cut with a feathered mask.** The mask is an ellipse around what
+moved — head included, brows to chin — with a soft edge tens of pixels wide, so the join fades over a band
+rather than sitting on a line. Not separate eyes and mouth: an expression moves the brows, the cheeks, the
+shape of the eye whites and the shading around all of them together, and the outlines run continuously
+between them, so a cut at the eye and the mouth leaves part of the change behind and lands every edge on
+an outline. The proof is Fez: `fez-face-worried`, laid over both `fez` and `fez-pose-point`, shows no seam.
+It holds only for a true edit of the master — the explorer's grin is a separate painting whose head sits
+slightly off his neutral one, and laid over it the mouth doubles.
+
+**Every base and face of a character is cut through one frame**, so any face lands on any base pixel for
+pixel. Fez's masters are painted in his sprite's frame, so each is imported `--whole`. The explorer's are
+cut through his bust window: his flags (`--bust=0.55 --centre=1160 --behind=0.4`) on every one, the face
+edits' `--face-of` framing them through `explorer.jpeg`, and his pose edits `--crop-from=` the master so
+they share its band. His `--holes` are his master's for a face edit (the body did not move) and whatever
+the import reports for a pose edit.
+
+### Fez's colours
+
+Measured off `fez-250.png`, and substituted for `[fez palette]`:
 
 > Keep Fez's exact flat colours: scales teal #42a892, shaded teal #118883, belly pale green #bcd8aa, eye
 > whites cream #f2e6bf, fez dark red #a64b34, neckerchief red #d54f3b with its shadow #ba4637, outlines
 > charcoal #1c2729. Do not lighten, desaturate or reinterpret any of these.
+
+### The paint list, in order
+
+Master only: each lands at its `**Master:**` path, and its **Then:** line writes the sprite. Ordered by
+what the game uses — Fez's paintings retired first, then the five faces in the order they were approved,
+then the explorer's pose and the last painting. Fez's faces stack on every base of his; the explorer's on
+his.
+
+### `fez-face-excited` — Fez, excited
+
+**Master:** `art/masters/characters/fez-face-excited.jpeg`
+
+Lines it serves: every `pointUp` of his — 24 story lines and 13 tutorial lines. Retires the `point-fez`
+painting. Attach the landed master, `art/masters/characters/fez.jpeg`, and `src/assets/point-fez-250.png`
+for the expression only.
+
+> [preamble] [fez palette] Edit the first attached picture of Fez. Change ONLY his face, to the excited,
+> delighted look of the second attached picture: eyes wide and bright, a big open smile with the tongue
+> showing. Use the second picture for the expression only — draw it in the first picture's size and
+> detail. Keep the outline of his head, the position of his eyes, the fez, the neckerchief, his body, his
+> tail and the white background exactly as they are — pixel for pixel. Same canvas, same size, same
+> framing. Nothing outside his face moves.
+
+**Then:** `yarn import-portrait art/masters/characters/fez-face-excited.jpeg --name=fez-face-excited --whole --face-of=art/masters/characters/fez.jpeg`
+
+### `fez-face-cool` — Fez, cool
+
+**Master:** `art/masters/characters/fez-face-cool.jpeg`
+
+Lines it serves: every `glassesPoint` — 8 tutorial lines. Laid on `fez-pose-point`, it retires the
+`glasses-point-fez` painting. Attach the landed master, `art/masters/characters/fez.jpeg`, and
+`src/assets/glasses-point-fez-250.png` for the expression only.
+
+> [preamble] [fez palette] Edit the first attached picture of Fez. Change ONLY his face: he now wears
+> black sunglasses over his eyes and grins broadly with his mouth open, as in the second attached picture.
+> Use the second picture for the sunglasses and the grin only — draw them in the first picture's size and
+> detail. Keep the outline of his head, the fez, the neckerchief, his body, his tail and the white
+> background exactly as they are — pixel for pixel. Same canvas, same size, same framing. Nothing outside
+> his face moves.
+
+**Then:** `yarn import-portrait art/masters/characters/fez-face-cool.jpeg --name=fez-face-cool --whole --face-of=art/masters/characters/fez.jpeg`
+
+### `fez-pose-cocktail` — Fez, holding a cocktail
+
+**Master:** `art/masters/characters/fez-pose-cocktail.jpeg`
+
+Lines it serves: every `cocktail` — 5 shop lines, and the shop screen's picture of him. Retires the
+`cocktail-fez` painting; he wears his own face over the glass. Attach the landed master,
+`art/masters/characters/fez.jpeg`, and `src/assets/cocktail-fez-250.png` as the pose reference.
+
+> [preamble] [fez palette] Edit the first attached picture of Fez so that he holds a tall orange cocktail
+> with a straw, an orange slice and a small paper umbrella, the way he does in the second attached
+> picture — but held at chest height, the straw well clear of his mouth. Use the second picture for the
+> glass and the hand only — draw them in the first picture's size and detail. Keep his head exactly as it
+> is: same outline, same eyes, same face, same fez, in the same place on the canvas. Same canvas, same
+> framing, white background.
+
+**Then:** `yarn import-portrait art/masters/characters/fez-pose-cocktail.jpeg --name=fez-pose-cocktail --whole`
+
+### `fez-face-wistful` — Fez, wistful
+
+**Master:** `art/masters/characters/fez-face-wistful.jpeg`
+
+Lines it serves: ≈17, the moved ones — the ending, the Sphinx reveal, the mural. Attach the landed master,
+`art/masters/characters/fez.jpeg`.
+
+> [preamble] [fez palette] Edit the attached picture of Fez. Change ONLY his face, to wistful and moved:
+> eyes lowered and soft, the lids a little heavy, a small gentle smile or none. Keep the outline of his
+> head, the position of his eyes, the fez, the neckerchief, his body, his tail and the white background
+> exactly as they are — pixel for pixel. Same canvas, same size, same framing. Nothing outside his face
+> moves.
+
+**Then:** `yarn import-portrait art/masters/characters/fez-face-wistful.jpeg --name=fez-face-wistful --whole --face-of=art/masters/characters/fez.jpeg`
+
+### `fez-face-surprised` — Fez, stunned
+
+**Master:** `art/masters/characters/fez-face-surprised.jpeg`
+
+Lines it serves: ≈12 — the first ghost, wizard_3's turn. Attach the landed master,
+`art/masters/characters/fez.jpeg`.
+
+> [preamble] [fez palette] Edit the attached picture of Fez. Change ONLY his face, to stunned: eyes wide
+> open, brows raised high, a small round open mouth. Keep the outline of his head, the position of his
+> eyes, the fez, the neckerchief, his body, his tail and the white background exactly as they are — pixel
+> for pixel. Same canvas, same size, same framing. Nothing outside his face moves.
+
+**Then:** `yarn import-portrait art/masters/characters/fez-face-surprised.jpeg --name=fez-face-surprised --whole --face-of=art/masters/characters/fez.jpeg`
+
+### `fez-face-sheepish` — Fez, corrected
+
+**Master:** `art/masters/characters/fez-face-sheepish.jpeg`
+
+Lines it serves: ≈9, the ones where he is put right — "…O. Juist." Attach the landed master,
+`art/masters/characters/fez.jpeg`.
+
+> [preamble] [fez palette] Edit the attached picture of Fez. Change ONLY his face, to sheepish, caught out
+> being wrong: an awkward lopsided half-smile, eyes glancing to one side; a faint blush on the cheek or a
+> single small sweat drop beside the head is allowed. Keep the outline of his head, the position of his
+> eyes, the fez, the neckerchief, his body, his tail and the white background exactly as they are — pixel
+> for pixel. Same canvas, same size, same framing. Nothing outside his face moves.
+
+**Then:** `yarn import-portrait art/masters/characters/fez-face-sheepish.jpeg --name=fez-face-sheepish --whole --face-of=art/masters/characters/fez.jpeg`
+
+### `explorer-face-surprised` — the explorer, surprised
+
+**Master:** `art/masters/characters/explorer-face-surprised.jpeg`
+
+Lines it serves: ≈9 — the meeting with Fez. Attach the explorer's master,
+`art/masters/characters/explorer.jpeg`.
+
+> [preamble] [palette] Edit the attached picture of the explorer. Change ONLY the face, to surprised: brows
+> raised, eyes a little wider, mouth open. Keep the outline of the head and hair, the position of the eyes,
+> the hat, the neckerchief, the vest, the rope, the map, the hands and the white background exactly as they
+> are — pixel for pixel. Same canvas, same size, same framing. Nothing outside the face moves.
+
+**Then:** `yarn import-portrait art/masters/characters/explorer-face-surprised.jpeg --name=explorer-face-surprised --bust=0.55 --centre=1160 --behind=0.4 --holes="574,1299;631,1503;1242,1025;646,1062;748,642" --face-of=art/masters/characters/explorer.jpeg`
+
+### `explorer-face-deadpan` — the explorer, deadpan
+
+**Master:** `art/masters/characters/explorer-face-deadpan.jpeg`
+
+Lines it serves: ≈18, the dry register. Attach the explorer's master, `art/masters/characters/explorer.jpeg`.
+
+> [preamble] [palette] Edit the attached picture of the explorer. Change ONLY the face, to deadpan: one
+> eyebrow raised, the other level, a flat closed half-smile. Keep the outline of the head and hair, the
+> position of the eyes, the hat, the neckerchief, the vest, the rope, the map, the hands and the white
+> background exactly as they are — pixel for pixel. Same canvas, same size, same framing. Nothing outside
+> the face moves.
+
+**Then:** `yarn import-portrait art/masters/characters/explorer-face-deadpan.jpeg --name=explorer-face-deadpan --bust=0.55 --centre=1160 --behind=0.4 --holes="574,1299;631,1503;1242,1025;646,1062;748,642" --face-of=art/masters/characters/explorer.jpeg`
+
+### `explorer-pose-point` — the explorer, pointing
+
+**Master:** `art/masters/characters/explorer-pose-point.jpeg`
+
+Lines it serves: his 3 `pointUp` story lines. Retires the `point-explorer` painting. Attach the
+explorer's master, `art/masters/characters/explorer.jpeg`, and `art/masters/characters/point-explorer.jpeg`
+as the pose reference.
+
+> [preamble] [palette] Edit the first attached picture of the explorer so that the hand holding the map
+> lowers it and the other hand comes up beside the shoulder, index finger raised and pointing upward, the
+> way it does in the second attached picture. Keep the raised hand close in — no further from the body
+> than the map is now. Use the second picture for the arm and hand only — draw them in the first
+> picture's size and detail. Keep the head exactly as it is: same outline, same hair, same eyes, same
+> face, same hat, in the same place on the canvas. Same canvas, same framing, white background.
+
+**Then:** `yarn import-portrait art/masters/characters/explorer-pose-point.jpeg --name=explorer-pose-point --bust=0.55 --centre=1160 --behind=0.4 --crop-from=art/masters/characters/explorer.jpeg` — plus `--holes` for the gaps it reports.
+
+### `explorer-face-cool` — the explorer, cool
+
+**Master:** `art/masters/characters/explorer-face-cool.jpeg`
+
+Lines it serves: none yet — his `glassesPoint`, which no line asks for. Retires the `grin-explorer`
+painting, the last standalone one. Attach the explorer's master, `art/masters/characters/explorer.jpeg`,
+and `art/masters/characters/grin-explorer.jpeg` for the expression only.
+
+> [preamble] [palette] Edit the first attached picture of the explorer. Change ONLY the face: dark
+> sunglasses over the eyes and a broad, pleased grin, as in the second attached picture. Use the second
+> picture for the sunglasses and the grin only — draw them in the first picture's size and detail. Keep
+> the outline of the head and hair, the hat, the neckerchief, the vest, the rope, the map, the hands and
+> the white background exactly as they are — pixel for pixel. Same canvas, same size, same framing.
+> Nothing outside the face moves.
+
+**Then:** `yarn import-portrait art/masters/characters/explorer-face-cool.jpeg --name=explorer-face-cool --bust=0.55 --centre=1160 --behind=0.4 --holes="574,1299;631,1503;1242,1025;646,1062;748,642" --face-of=art/masters/characters/explorer.jpeg`
+
+### The landed edits
+
+`fez-master` is the base everything of his is an edit of: his sprite was 250px wide, too little for a
+generator to edit faithfully, so it was asked for again at the master size the explorer's are.
 
 ### `fez-master` — Fez, the same picture at full size
 
@@ -314,108 +539,31 @@ generator to edit faithfully, so this asks for the picture again at the master s
 > position in the frame. Do not add detail, texture or shading that is not in the attached picture, and do
 > not tidy or restyle anything. Plain white background.
 
-### `fez-worried` — the master, worried
+**Then:** `yarn import-portrait art/masters/characters/fez.jpeg --name=fez --whole`
 
-**Master:** `art/masters/characters/fez-worried.jpeg`
+### `fez-pose-point` — Fez, pointing up
 
-Attach the landed master, `art/masters/characters/fez.jpeg`. It shows as MISSING in `--check` until
-`fez-master` has landed — expected; paint that one first.
-
-> [preamble] [fez palette] Edit the attached picture of Fez. Change ONLY his face, to worried and uneasy:
-> brows raised and drawn together, a small open mouth. Keep the outline of his head, the position of his
-> eyes, the fez, the neckerchief, his body, his tail and the white background exactly as they are — pixel
-> for pixel. Same canvas, same size, same framing. Nothing outside his face moves.
-
-### `fez-pointUp-base` — the master, pointing up
-
-**Master:** `art/masters/characters/fez-pointUp-base.jpeg`
+**Master:** `art/masters/characters/fez-pose-point.jpeg`
 
 Attach the landed master, `art/masters/characters/fez.jpeg`, and `src/assets/point-fez-250.png` as the pose
-reference. Like `fez-worried`, the master shows MISSING until `fez-master` has landed.
+reference. Landed.
 
 > [preamble] [fez palette] Edit the first attached picture of Fez so that he raises one finger, pointing
 > upward, the way he does in the second attached picture. Use the second picture for the pose only — draw it
 > in the first picture's size and detail. Keep his head exactly as it is: same outline, same eyes, same
 > face, same fez, in the same place on the canvas. Same canvas, same framing, white background.
 
-### The next faces, in the order they are owed
+**Then:** `yarn import-portrait art/masters/characters/fez-pose-point.jpeg --name=fez-pose-point --whole`
 
-Five face edits, master only like the proof, highest-serving first. Landing one is three steps: `yarn repaint <key> --land`, then the import line under its entry (the face layer, cut through its base's frame),
-then tagging its lines in `storyPoses.ts`. Fez's faces stack on both of his face bases (`fez`,
-`point-fez-base`). The explorer's stack on his neutral pose only: `explorer.jpeg` is the master
-`explorer-250` was cut from, and a face edit of it is framed through that same bust window by passing the
-same flags (`--bust=0.55 --centre=1160 --behind=0.4`, and his `--holes`). His point is a different canvas
-(1696 wide, its own `--centre`) and his grin a separate painting, so neither takes a face; his first face
-also needs `faceBase: explorer` on his default pose in `portraits.ts`.
+### `fez-face-worried` — Fez, worried
 
-### `fez-wistful` — the master, wistful
+**Master:** `art/masters/characters/fez-face-worried.jpeg`
 
-**Master:** `art/masters/characters/fez-wistful.jpeg`
+Attach the landed master, `art/masters/characters/fez.jpeg`. Landed.
 
-Lines it serves: ≈17, the moved ones — the ending, the Sphinx reveal, the mural. Attach the landed master,
-`art/masters/characters/fez.jpeg`.
-
-> [preamble] [fez palette] Edit the attached picture of Fez. Change ONLY his face, to wistful and moved:
-> eyes lowered and soft, the lids a little heavy, a small gentle smile or none. Keep the outline of his
-> head, the position of his eyes, the fez, the neckerchief, his body, his tail and the white background
-> exactly as they are — pixel for pixel. Same canvas, same size, same framing. Nothing outside his face
-> moves.
-
-**Then:** `yarn import-portrait art/masters/characters/fez-wistful.jpeg --name=fez-face-wistful --whole --face-of=art/masters/characters/fez.jpeg`
-
-### `fez-surprised` — the master, stunned
-
-**Master:** `art/masters/characters/fez-surprised.jpeg`
-
-Lines it serves: ≈12 — the first ghost, wizard_3's turn. Attach the landed master,
-`art/masters/characters/fez.jpeg`.
-
-> [preamble] [fez palette] Edit the attached picture of Fez. Change ONLY his face, to stunned: eyes wide
-> open, brows raised high, a small round open mouth. Keep the outline of his head, the position of his
+> [preamble] [fez palette] Edit the attached picture of Fez. Change ONLY his face, to worried and uneasy:
+> brows raised and drawn together, a small open mouth. Keep the outline of his head, the position of his
 > eyes, the fez, the neckerchief, his body, his tail and the white background exactly as they are — pixel
 > for pixel. Same canvas, same size, same framing. Nothing outside his face moves.
 
-**Then:** `yarn import-portrait art/masters/characters/fez-surprised.jpeg --name=fez-face-surprised --whole --face-of=art/masters/characters/fez.jpeg`
-
-### `fez-sheepish` — the master, corrected
-
-**Master:** `art/masters/characters/fez-sheepish.jpeg`
-
-Lines it serves: ≈9, the ones where he is put right — "…O. Juist." Attach the landed master,
-`art/masters/characters/fez.jpeg`.
-
-> [preamble] [fez palette] Edit the attached picture of Fez. Change ONLY his face, to sheepish, caught out
-> being wrong: an awkward lopsided half-smile, eyes glancing to one side; a faint blush on the cheek or a
-> single small sweat drop beside the head is allowed. Keep the outline of his head, the position of his
-> eyes, the fez, the neckerchief, his body, his tail and the white background exactly as they are — pixel
-> for pixel. Same canvas, same size, same framing. Nothing outside his face moves.
-
-**Then:** `yarn import-portrait art/masters/characters/fez-sheepish.jpeg --name=fez-face-sheepish --whole --face-of=art/masters/characters/fez.jpeg`
-
-### `explorer-surprised` — the explorer, surprised
-
-**Master:** `art/masters/characters/explorer-surprised.jpeg`
-
-Lines it serves: ≈9 — the meeting with Fez. Attach the explorer's master,
-`art/masters/characters/explorer.jpeg`.
-
-> [preamble] [palette] Edit the attached picture of the explorer. Change ONLY the face, to surprised: brows
-> raised, eyes a little wider, mouth open. Keep the outline of the head and hair, the position of the eyes,
-> the hat, the neckerchief, the vest, the rope, the map, the hands and the white background exactly as they
-> are — pixel for pixel. Same canvas, same size, same framing. Nothing outside the face moves.
-
-**Then:** `yarn import-portrait art/masters/characters/explorer-surprised.jpeg --name=explorer-face-surprised --bust=0.55 --centre=1160 --behind=0.4 --holes="574,1299;631,1503;1242,1025;646,1062;748,642" --face-of=art/masters/characters/explorer.jpeg`
-
-### `explorer-deadpan` — the explorer, deadpan
-
-**Master:** `art/masters/characters/explorer-deadpan.jpeg`
-
-Lines it serves: ≈18, the dry register. Attach the explorer's master, `art/masters/characters/explorer.jpeg`.
-
-> [preamble] [palette] Edit the attached picture of the explorer. Change ONLY the face, to deadpan: one
-> eyebrow raised, the other level, a flat closed half-smile. Keep the outline of the head and hair, the
-> position of the eyes, the hat, the neckerchief, the vest, the rope, the map, the hands and the white
-> background exactly as they are — pixel for pixel. Same canvas, same size, same framing. Nothing outside
-> the face moves.
-
-**Then:** `yarn import-portrait art/masters/characters/explorer-deadpan.jpeg --name=explorer-face-deadpan --bust=0.55 --centre=1160 --behind=0.4 --holes="574,1299;631,1503;1242,1025;646,1062;748,642" --face-of=art/masters/characters/explorer.jpeg`
+**Then:** `yarn import-portrait art/masters/characters/fez-face-worried.jpeg --name=fez-face-worried --whole --face-of=art/masters/characters/fez.jpeg`
