@@ -73,6 +73,8 @@ export type NodeSelector = {
   /** The difficulty this room is dealt and generated at, in place of its path's. A node that names only a
    * difficulty is dealt from that difficulty's pool of the path's role. */
   difficulty?: Difficulty
+  /** `false` keeps generated loot out of this room. Authored rewards are never touched. */
+  loot?: false
 }
 
 /** Expand `nodes` selectors against a path's node `count` into a sparse 0-based index → encounter
@@ -91,6 +93,10 @@ export const resolveNodeActivities = (nodes: NodeSelector[] | undefined, count: 
 /** Expand `nodes` selectors into a sparse 0-based index → difficulty map, the way `resolveNodeActivities` does. */
 export const resolveNodeDifficulties = (nodes: NodeSelector[] | undefined, count: number): Record<number, Difficulty> =>
   resolveNodeField(nodes, count, sel => sel.difficulty)
+
+/** Expand `nodes` selectors into a sparse 0-based index → `false` map of the rooms kept free of generated loot. */
+export const resolveNodeLoot = (nodes: NodeSelector[] | undefined, count: number): Record<number, false> =>
+  resolveNodeField(nodes, count, sel => sel.loot)
 
 const resolveNodeField = <T>(
   nodes: NodeSelector[] | undefined,
@@ -138,6 +144,9 @@ export type SideSectionConstraint<TExtra extends string = never> = {
   gate?: GateSpec
   pathPuzzles?: PathPuzzlesPreset | number
   difficulty?: Difficulty
+  /** `false` keeps generated loot out of this path: its puzzle rooms and its unauthored end. Authored rewards
+   * (`endReward`, a gate) stay. Inherited by the sections beneath it; unset inherits the floor's. */
+  loot?: false
   /** Which family/tag renders this section's intermediate rooms — an exact registered family
    * id (e.g. "tableau", "sumplete") or a tag (e.g. "trap", "puzzle"). Omit = the default for
    * this section's context (a side path defaults to the "puzzle" tag, i.e. sumplete). */
@@ -173,6 +182,9 @@ export type SideSectionConstraint<TExtra extends string = never> = {
 export type FloorConstraint<TExtra extends string = never> = {
   pathPuzzles?: PathPuzzlesPreset | number
   difficulty?: Difficulty
+  /** `false` keeps generated loot out of this floor: its puzzle rooms, its unauthored end and every section
+   * on it. Authored rewards (`mainEndReward`, `endReward`, gates) stay. Unset inherits the site's. */
+  loot?: false
   /** Default family/tag for this floor's main-path encounter rooms. */
   encounter?: string | string[]
   /** Per-node encounter selectors — override `encounter` at chosen positions of the main-path
@@ -317,6 +329,8 @@ export type PyramidConstraint = {
    * and sharedKeyChance. */
   keyColorsRange?: { min: number; max: number }
   difficulty?: Difficulty
+  /** `false` keeps generated loot out of the whole site; see FloorConstraint.loot. */
+  loot?: false
   /** Pool of decoration kinds every floor and side section of this site draws its props from, unless
    * one names its own. Authored at tier level this dresses a whole rank in one line. Purely drawn —
    * a free field (docs/game-design/world-spec-stability.md). */

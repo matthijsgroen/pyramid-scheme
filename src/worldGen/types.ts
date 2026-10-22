@@ -62,6 +62,10 @@ export type SubSection = {
   /** Per-node difficulty, resolved from `nodes` selectors: a room builds at `difficultiesByIndex[k] ?? difficulty`
    * (see roomDifficulty). Mirrors game/siteTypes.ts. */
   difficultiesByIndex?: Record<number, Difficulty>
+  /** `false` keeps generated loot out of this section. Mirrors game/siteTypes.ts. */
+  loot?: false
+  /** Per-node loot, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
+  lootByIndex?: Record<number, false>
   /** Opaque payload for whichever family renders this section's rooms (e.g. a tableau's
    * `{runNr}`) — mirrors game/siteTypes.ts's SubSection.encounterArgs. */
   encounterArgs?: unknown
@@ -100,6 +104,10 @@ export type FloorConfig = {
   activitiesByIndex?: Record<number, ActivityId>
   /** Per-node difficulty for the main path, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
   difficultiesByIndex?: Record<number, Difficulty>
+  /** `false` keeps generated loot out of this floor. Mirrors game/siteTypes.ts. */
+  loot?: false
+  /** Per-node loot for the main path, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
+  lootByIndex?: Record<number, false>
   corridorStraightness?: number
   packing?: number
   /** The seed this floor carves at, in place of the one its address derives. Read inside the assembler, so

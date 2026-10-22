@@ -5,7 +5,7 @@ import { TIER_UNLOCK_PERK_IDS } from "../data/treasurePerks"
 import { hashStr, pathEndToReward, specToGate } from "./rewards"
 import { stairIdAt, type StairAddress } from "../game/stairAddress"
 import type { KeyColor, PathEntry, RewardSpec, SideIntensity, SideSectionConstraint } from "./dsl"
-import { resolveNodeActivities, resolveNodeDifficulties, resolveNodeSelectors } from "./dsl"
+import { resolveNodeActivities, resolveNodeDifficulties, resolveNodeLoot, resolveNodeSelectors } from "./dsl"
 
 const ALL_KEY_COLORS: KeyColor[] = ["blue", "red", "green", "yellow", "purple"]
 
@@ -45,19 +45,22 @@ const buildDslSection = <TExtra extends string>(
   difficulty: Difficulty,
   resolveReward: ResolveReward<TExtra>,
   floor: FloorStairAddress,
-  path: string
+  path: string,
+  parentLoot: false | undefined
 ): SideSection => {
   const gate = specToGate(cs.gate)
   const sectionDifficulty = cs.difficulty ?? difficulty
-  const subSections = buildDslSections(cs.sideSections, sectionDifficulty, resolveReward, floor, `${path}.`)
+  // Lootless is inherited downward: a section is lootless when it says so or the path it hangs off is.
+  const loot = cs.loot ?? parentLoot
+  const subSections = buildDslSections(cs.sideSections, sectionDifficulty, resolveReward, floor, `${path}.`, loot)
   const end = cs.end === "staircase" ? { stairId: stairIdAt({ ...floor, path }) } : ("treasure" as const)
   // A treasure end with no authored reward and no gate is a plain loot slot — default it to the
-  // untagged `treasure` slot (filled by whatever's spare). A gated end already becomes a slot via
-  // its open gate (collectSlots); a staircase end bears no reward.
+  // untagged `treasure` slot (filled by whatever's spare) — unless the section is lootless, where it holds
+  // nothing. A gated end already becomes a slot via its open gate (collectSlots); a staircase end bears no reward.
   const endReward =
     cs.endReward !== undefined
       ? resolveReward(cs.endReward)
-      : end === "treasure" && !gate
+      : end === "treasure" && !gate && loot !== false
         ? pathEndToReward("treasure")
         : undefined
   const pathPuzzles = typeof cs.pathPuzzles === "number" ? cs.pathPuzzles : 0
@@ -66,6 +69,7 @@ const buildDslSection = <TExtra extends string>(
   const encountersByIndex = resolveNodeSelectors(cs.nodes, pathPuzzles)
   const activitiesByIndex = resolveNodeActivities(cs.nodes, pathPuzzles)
   const difficultiesByIndex = resolveNodeDifficulties(cs.nodes, pathPuzzles)
+  const lootByIndex = resolveNodeLoot(cs.nodes, pathPuzzles)
   return {
     ...(cs.label !== undefined ? { label: cs.label } : {}),
     pathPuzzles,
@@ -82,6 +86,8 @@ const buildDslSection = <TExtra extends string>(
     ...(Object.keys(encountersByIndex).length ? { encountersByIndex } : {}),
     ...(Object.keys(activitiesByIndex).length ? { activitiesByIndex } : {}),
     ...(Object.keys(difficultiesByIndex).length ? { difficultiesByIndex } : {}),
+    ...(loot === false ? { loot } : {}),
+    ...(Object.keys(lootByIndex).length ? { lootByIndex } : {}),
     ...(cs.encounterArgs !== undefined ? { encounterArgs: cs.encounterArgs } : {}),
     ...(cs.theme !== undefined ? { theme: cs.theme } : {}),
   }
@@ -97,10 +103,11 @@ const buildDslSections = <TExtra extends string>(
   resolveReward: ResolveReward<TExtra>,
   floor: FloorStairAddress,
   pathPrefix: string,
+  parentLoot: false | undefined,
   startIndex = 0
 ): SideSection[] =>
   (constraintSections ?? []).map((cs, i) =>
-    buildDslSection(cs, difficulty, resolveReward, floor, `${pathPrefix}${startIndex + i}`)
+    buildDslSection(cs, difficulty, resolveReward, floor, `${pathPrefix}${startIndex + i}`, parentLoot)
   )
 
 export type BuildSideSectionsOptions<TExtra extends string = never> = {
@@ -118,6 +125,8 @@ export type BuildSideSectionsOptions<TExtra extends string = never> = {
   /** Where this floor sits, for the ids its stairheads take (game/stairAddress.ts). */
   floor: FloorStairAddress
   constraintSections?: SideSectionConstraint<TExtra>[]
+  /** `false` when the floor these sections hang off is lootless; they inherit it unless they say otherwise. */
+  loot?: false
   /**
    * A role for sections that do not author one — the site's theme, handed down.
    *
@@ -163,10 +172,12 @@ const wearSiteRole = (
   sideEncounterArgs: unknown,
   sideTheme: string | undefined,
   sideDecorations: DecorationKind[] | undefined,
-  sideWallDecorations: WallDecorationKind[] | undefined
+  sideWallDecorations: WallDecorationKind[] | undefined,
+  loot: false | undefined
 ): SideSection[] =>
   sections.map(section => ({
     ...section,
+    ...(loot === false && section.loot === undefined ? { loot } : {}),
     ...(sideEncounter !== undefined && section.encounter === undefined ? { encounter: sideEncounter } : {}),
     ...(sideEncounterArgs !== undefined && section.encounterArgs === undefined
       ? { encounterArgs: sideEncounterArgs }
@@ -188,6 +199,7 @@ export const buildSideSections = <TExtra extends string = never>(
     journeyId,
     floor,
     constraintSections,
+    loot,
     hasMapPieceBranch,
     hasWardGate,
     nextTier,
@@ -225,7 +237,7 @@ export const buildSideSections = <TExtra extends string = never>(
     }
   }
 
-  sections.push(...buildDslSections(constraintSections, difficulty, resolveReward, floor, "s", sections.length))
+  sections.push(...buildDslSections(constraintSections, difficulty, resolveReward, floor, "s", loot, sections.length))
 
   const colorCount = Math.min(keyColors ?? 1, 5)
 
@@ -273,5 +285,5 @@ export const buildSideSections = <TExtra extends string = never>(
     }
   })
 
-  return wearSiteRole(sections, sideEncounter, sideEncounterArgs, sideTheme, sideDecorations, sideWallDecorations)
+  return wearSiteRole(sections, sideEncounter, sideEncounterArgs, sideTheme, sideDecorations, sideWallDecorations, loot)
 }

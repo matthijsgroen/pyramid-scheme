@@ -8,7 +8,7 @@ import { initPuzzleChains } from "./puzzleRewards"
 import { buildSideSections, type ResolveReward } from "./sideSections"
 import { stairIdAt } from "../game/stairAddress"
 import type { FloorConstraint, PyramidConstraint, RewardSpec } from "./dsl"
-import { resolveNodeActivities, resolveNodeDifficulties, resolveNodeSelectors } from "./dsl"
+import { resolveNodeActivities, resolveNodeDifficulties, resolveNodeLoot, resolveNodeSelectors } from "./dsl"
 import { ONE_WAY_KIND, declaredBinding, regionBarrierBinding, resolveBinding } from "./realisationBinding"
 
 // ── Per-pyramid randomized resolution ─────────────────────────────────────────
@@ -96,6 +96,8 @@ export type BuildFloorOptions = {
   encountersByIndex?: FloorConfig["encountersByIndex"]
   activitiesByIndex?: FloorConfig["activitiesByIndex"]
   difficultiesByIndex?: FloorConfig["difficultiesByIndex"]
+  loot?: FloorConfig["loot"]
+  lootByIndex?: FloorConfig["lootByIndex"]
   forks?: FloorConfig["forks"]
   oneWays?: FloorConfig["oneWays"]
   oneWayRealisation?: FloorConfig["oneWayRealisation"]
@@ -145,6 +147,8 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.difficultiesByIndex && Object.keys(opts.difficultiesByIndex).length
     ? { difficultiesByIndex: opts.difficultiesByIndex }
     : {}),
+  ...(opts.loot === false ? { loot: false as const } : {}),
+  ...(opts.lootByIndex && Object.keys(opts.lootByIndex).length ? { lootByIndex: opts.lootByIndex } : {}),
   ...(opts.corridorStraightness !== undefined ? { corridorStraightness: opts.corridorStraightness } : {}),
   ...(opts.packing !== undefined ? { packing: opts.packing } : {}),
   ...(opts.seed !== undefined ? { seed: opts.seed } : {}),
@@ -265,9 +269,12 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     sideWallDecorations,
   } = ctx
 
-  const mainEndReward: TreasureReward = constraint.mainEndReward
+  // The end of a path that authors no reward is an open loot slot, unless it is lootless.
+  const unauthoredEnd = (loot: false | undefined): TreasureReward | undefined =>
+    loot === false ? undefined : { type: "fragmentSlot" }
+  const mainEndReward = constraint.mainEndReward
     ? resolveMainEndReward(constraint.mainEndReward)
-    : { type: "fragmentSlot" }
+    : unauthoredEnd(constraint.loot)
 
   if (constraint.floors?.length) {
     if (constraint.floorLocks)
@@ -283,6 +290,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
       const fc = floors[fi] ?? {}
       const floorPP = typeof fc.pathPuzzles === "number" ? fc.pathPuzzles : pp
       const floorDiff: Difficulty = fc.difficulty ?? difficulty
+      const floorLoot = fc.loot ?? constraint.loot
       const isLast = fi === floors.length - 1
       const floorSections = Array.isArray(fc.sideSections) ? fc.sideSections : undefined
       const floorSideSections = buildSideSections({
@@ -294,6 +302,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         journeyId: `${journeyId}:${i}:floor${fi}`,
         floor: { journeyId, pyramidIndex: i, floorIndex: fi },
         constraintSections: floorSections,
+        loot: floorLoot,
         // Floor-level declared side/hidden paths. Authored per-floor (fc.*); no pyramid/tier
         // fallback here so a fully-authored floor stays explicit (tombs author everything).
         declaredSidePaths: fc.sidePaths,
@@ -322,9 +331,9 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
       const floorMainEndReward =
         fc.mainEndReward !== undefined
           ? resolveReward(fc.mainEndReward)
-          : isLast
+          : isLast && constraint.mainEndReward
             ? mainEndReward
-            : { type: "fragmentSlot" as const }
+            : unauthoredEnd(floorLoot)
       floorConfigs.push(
         buildFloor({
           pathPuzzles: floorPP,
@@ -339,6 +348,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           encountersByIndex: resolveNodeSelectors(fc.nodes, floorPP),
           activitiesByIndex: resolveNodeActivities(fc.nodes, floorPP),
           difficultiesByIndex: resolveNodeDifficulties(fc.nodes, floorPP),
+          loot: floorLoot,
+          lootByIndex: resolveNodeLoot(fc.nodes, floorPP),
           // A floor's own junctions win; otherwise the site's, the way `encounter` and `theme` resolve.
           forks: fc.forks ?? constraint.forks,
           oneWays: fc.oneWays ?? constraint.oneWays,
@@ -402,7 +413,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             pathPuzzles: pp,
             difficulty,
             sideSections: [],
-            mainEndReward: { type: "fragmentSlot" },
+            mainEndReward: unauthoredEnd(constraint.loot),
+            loot: constraint.loot,
             encounter: constraint.encounter,
             // The junctions the site asks every floor of it to carve, and what stands in them.
             forks: constraint.forks,
@@ -442,6 +454,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         // Only the last main floor carries the site's side content, so `fi` is where these sit.
         floor: { journeyId, pyramidIndex: i, floorIndex: fi },
         constraintSections,
+        loot: constraint.loot,
         hasMapPieceBranch,
         hasWardGate,
         nextTier,
@@ -461,6 +474,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           difficulty,
           sideSections,
           mainEndReward,
+          loot: constraint.loot,
           encounter: constraint.encounter,
           // The junctions the site asks every floor of it to carve, and what stands in them.
           forks: constraint.forks,
@@ -621,6 +635,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     // A single-floor site: everything it has hangs off floor 0.
     floor: { journeyId, pyramidIndex: i, floorIndex: 0 },
     constraintSections,
+    loot: constraint.loot,
     hasMapPieceBranch,
     hasWardGate,
     nextTier,
@@ -639,6 +654,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     difficulty,
     sideSections,
     mainEndReward,
+    loot: constraint.loot,
     encounter: constraint.encounter,
     // The junctions the site asks every floor of it to carve, and what stands in them.
     forks: constraint.forks,

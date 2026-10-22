@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import { buildFloor, buildSite, wireStaircases } from "./buildSite"
 import type { FloorConfig } from "./types"
 import type { PyramidConstraint } from "./dsl"
+import { collectSlots } from "./slots"
 
 describe("buildFloor", () => {
   it("defaults to an exiting floor with no main reward (the caller/site decides the chest)", () => {
@@ -290,5 +291,75 @@ describe("authored forks and switches", () => {
     })
 
     expect(floors[0].forks).toEqual([{ exits: 2, count: 1 }])
+  })
+})
+
+describe("buildSite loot: false", () => {
+  const ctx = {
+    journeyId: "starter_1",
+    tier: "starter" as const,
+    pyramidIndex: 0,
+    levelCount: 3,
+    pathPuzzles: 3,
+    difficulty: "starter" as const,
+    hasMapPieceBranch: false,
+    hasWardGate: false,
+    nextTier: null,
+    mosaicPathCount: 0,
+    resolveReward: () => ({ type: "mosaicPiece" as const }),
+    resolveMainEndReward: () => ({ type: "mosaicPiece" as const }),
+  }
+  const slotsOf = (constraint: PyramidConstraint) => {
+    const { floors } = buildSite({ ...ctx, constraint })
+    return { floors, slots: collectSlots({ starter_1: [floors] }) }
+  }
+
+  it("a lootless floor emits no generated slots but keeps its authored treasure", () => {
+    const { floors, slots } = slotsOf({
+      floors: [
+        {
+          loot: false,
+          pathPuzzles: 3,
+          mainEndReward: "mosaicPiece",
+          sideSections: [{ pathPuzzles: 2 }],
+        },
+      ],
+    })
+    expect(slots).toEqual([])
+    expect(floors[0].mainEndReward).toEqual({ type: "mosaicPiece" })
+  })
+
+  it("a lootless floor's unauthored ends hold nothing, the main one and a section's", () => {
+    const { floors } = slotsOf({ floors: [{ loot: false, pathPuzzles: 1, sideSections: [{ pathPuzzles: 1 }] }] })
+    expect(floors[0].mainEndReward).toBeUndefined()
+    expect(floors[0].sideSections[0].endReward).toBeUndefined()
+  })
+
+  it("a lootless site reaches every floor, section and nested section", () => {
+    const { slots } = slotsOf({
+      loot: false,
+      floors: [{ pathPuzzles: 2, sideSections: [{ pathPuzzles: 1, sideSections: [{ pathPuzzles: 1 }] }] }, {}],
+    })
+    expect(slots).toEqual([])
+  })
+
+  it("a lootless section drops its own slots and leaves the rest of the floor alone", () => {
+    const { slots } = slotsOf({
+      floors: [{ pathPuzzles: 2, sideSections: [{ pathPuzzles: 2, loot: false }] }],
+    })
+    expect(slots.filter(s => s.kind === "puzzle")).toHaveLength(2)
+    expect(slots.filter(s => s.kind === "end")).toHaveLength(1)
+  })
+
+  it("a lootless node drops only its own room's slot", () => {
+    const { slots } = slotsOf({ floors: [{ pathPuzzles: 3, nodes: [{ where: 2, loot: false }] }] })
+    expect(slots.filter(s => s.kind === "puzzle")).toHaveLength(2)
+  })
+
+  it("an unset loot leaves the built floor unchanged", () => {
+    const { floors } = slotsOf({ floors: [{ pathPuzzles: 1, sideSections: [{ pathPuzzles: 1 }] }] })
+    expect(floors[0]).not.toHaveProperty("loot")
+    expect(floors[0]).not.toHaveProperty("lootByIndex")
+    expect(floors[0].sideSections[0]).not.toHaveProperty("loot")
   })
 })

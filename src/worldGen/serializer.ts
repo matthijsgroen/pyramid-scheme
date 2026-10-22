@@ -54,6 +54,13 @@ const serializeGate = (g: NonNullable<SideSection["gate"]>): string =>
     .map(([k, v]) => `${k}: ${serializeValue(v)}`)
     .join(", ")} }`
 
+const serializeLootByIndex = (m: Record<number, false>): string =>
+  `{ ${Object.keys(m)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .map(k => `${k}: false`)
+    .join(", ")} }`
+
 const serializeSideSection = (s: SideSection): string => {
   const endStr = typeof s.end === "object" ? `{ stairId: "${s.end.stairId}" }` : `"${s.end}"`
   const parts = [`pathPuzzles: ${s.pathPuzzles}`, `difficulty: "${s.difficulty}"`, `end: ${endStr}`]
@@ -75,6 +82,9 @@ const serializeSideSection = (s: SideSection): string => {
     parts.push(`activitiesByIndex: ${serializeEncountersByIndex(s.activitiesByIndex)}`)
   if (s.difficultiesByIndex && Object.keys(s.difficultiesByIndex).length)
     parts.push(`difficultiesByIndex: ${serializeEncountersByIndex(s.difficultiesByIndex)}`)
+  if (s.loot === false) parts.push(`loot: false`)
+  if (s.lootByIndex && Object.keys(s.lootByIndex).length)
+    parts.push(`lootByIndex: ${serializeLootByIndex(s.lootByIndex)}`)
   if (s.sideSections?.length)
     parts.push(`sideSections: [${s.sideSections.map(sub => serializeSideSection(sub as SideSection)).join(", ")}]`)
   return `{ ${parts.join(", ")} }`
@@ -183,6 +193,8 @@ const floorFieldEmitters: {
   encountersByIndex: v => (Object.keys(v).length ? `encountersByIndex: ${serializeEncountersByIndex(v)}` : null),
   activitiesByIndex: v => (Object.keys(v).length ? `activitiesByIndex: ${serializeEncountersByIndex(v)}` : null),
   difficultiesByIndex: v => (Object.keys(v).length ? `difficultiesByIndex: ${serializeEncountersByIndex(v)}` : null),
+  loot: () => `loot: false`,
+  lootByIndex: v => (Object.keys(v).length ? `lootByIndex: ${serializeLootByIndex(v)}` : null),
   corridorStraightness: v => `corridorStraightness: ${v}`,
   packing: v => `packing: ${v}`,
   seed: v => `seed: ${v}`,

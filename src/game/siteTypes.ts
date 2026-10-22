@@ -519,6 +519,10 @@ export type SubSection = {
   activitiesByIndex?: Record<number, ActivityId>
   /** Per-node difficulty: 0-based room index → the tier that room builds at, else the section's `difficulty`. */
   difficultiesByIndex?: Record<number, Difficulty>
+  /** `false` keeps generated loot out of this section's puzzle rooms (and its unauthored end); authored rewards stay. */
+  loot?: false
+  /** Per-node loot: 0-based room index → `false`, keeping generated loot out of that room alone. */
+  lootByIndex?: Record<number, false>
   /** Pool of decoration kinds this section's rooms are dressed from. */
   decorations?: DecorationKind[]
   /** Pool of wall-item kinds for the same rooms, hung on a wall instead of standing on the floor. */
@@ -682,6 +686,10 @@ export type FloorConfig = {
   activitiesByIndex?: Record<number, ActivityId>
   /** Per-node difficulty for the main path: 0-based room index → the tier that room builds at, else `difficulty`. */
   difficultiesByIndex?: Record<number, Difficulty>
+  /** `false` keeps generated loot out of this floor's main-path puzzle rooms (and its unauthored end); authored rewards stay. */
+  loot?: false
+  /** Per-node loot for the main path: 0-based room index → `false`, keeping generated loot out of that room alone. */
+  lootByIndex?: Record<number, false>
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65 (fairly straight); lower = more winding. */
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */

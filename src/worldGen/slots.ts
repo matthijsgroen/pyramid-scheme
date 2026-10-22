@@ -123,7 +123,12 @@ export const collectSlots = (
       const emitPuzzle = (
         rewards: (TreasureReward | undefined)[] | undefined,
         ref: FloorRef,
-        chain: { difficulty: Difficulty; difficultiesByIndex?: Record<number, Difficulty> },
+        chain: {
+          difficulty: Difficulty
+          difficultiesByIndex?: Record<number, Difficulty>
+          loot?: false
+          lootByIndex?: Record<number, false>
+        },
         encounter: string | string[] | undefined,
         encountersByIndex: Record<number, string | string[]> | undefined,
         hidden: boolean
@@ -131,6 +136,12 @@ export const collectSlots = (
         if (!rewards) return
         rewards.forEach((rw, i) => {
           const arr = rewards
+          // A lootless room (or chain) offers nothing to the pool. A currency sentinel a mod tagged into
+          // it would never be filled, so it goes too.
+          if (chain.loot === false || chain.lootByIndex?.[i] === false) {
+            if (rw?.type === "fragmentSlot") arr[i] = undefined
+            return
+          }
           const enc = encountersByIndex?.[i] ?? encounter
           const encId = Array.isArray(enc) ? enc[0] : enc
           // A reward-array entry that's a fragmentSlot sentinel is a currency placeholder (a shop's

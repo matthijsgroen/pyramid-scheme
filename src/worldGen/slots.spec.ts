@@ -100,3 +100,21 @@ describe(collectSlots, () => {
     expect(slots).toHaveLength(0)
   })
 })
+
+describe("collectSlots on a lootless chain", () => {
+  it("clears a currency sentinel tagged into a lootless room instead of leaving it unfilled", () => {
+    const site: SiteConfig = [
+      {
+        pathPuzzles: 2,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        loot: false,
+        rewards: [{ type: "fragmentSlot", prefers: "junk" }, undefined],
+        sideSections: [],
+      },
+    ]
+    expect(collectSlots({ starter_1: [site] })).toEqual([])
+    expect(site[0].rewards).toEqual([undefined, undefined])
+  })
+})
