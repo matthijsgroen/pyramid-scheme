@@ -1679,10 +1679,14 @@ yarn import-portrait art/masters/characters/ghost-other.jpeg --name=ghost-other 
 # Every portrait is a pose base and a face, each an edit of the character's one master
 # (character-art-prompts.md §5): <char>-pose-<name> kept the master's head in place, <char>-face-<name>
 # changed only the face and is cut to what moved. Fez's masters are his sprite redrawn at full size, so
-# --whole frames the canvas as painted and every base and face of him shares that one window. The
-# paintings point-fez, glasses-point-fez and cocktail-fez stand in until their pose and face land.
+# --whole frames the canvas as painted and every base and face of him shares that one window. A pose's
+# --front-of cuts what it holds in front of any face (the cocktail's straw) to <name>-front-250.png, and
+# writes none when nothing is; it reads every fez-face-* master, so re-run the poses when a face lands.
 yarn import-portrait art/masters/characters/fez.jpeg --name=fez --whole
-yarn import-portrait art/masters/characters/fez-pose-point.jpeg --name=fez-pose-point --whole
+yarn import-portrait art/masters/characters/fez-pose-point.jpeg --name=fez-pose-point --whole \
+  --front-of=art/masters/characters/fez.jpeg
+yarn import-portrait art/masters/characters/fez-pose-cocktail.jpeg --name=fez-pose-cocktail --whole \
+  --holes="1165,1245" --front-of=art/masters/characters/fez.jpeg
 yarn import-portrait art/masters/characters/fez-face-worried.jpeg --name=fez-face-worried --whole \
   --face-of=art/masters/characters/fez.jpeg
 yarn import-portrait art/masters/characters/fez-face-excited.jpeg --name=fez-face-excited --whole \
@@ -1692,6 +1696,8 @@ yarn import-portrait art/masters/characters/fez-face-cool.jpeg --name=fez-face-c
 yarn import-portrait art/masters/characters/fez-face-wistful.jpeg --name=fez-face-wistful --whole \
   --face-of=art/masters/characters/fez.jpeg
 yarn import-portrait art/masters/characters/fez-face-surprised.jpeg --name=fez-face-surprised --whole \
+  --face-of=art/masters/characters/fez.jpeg
+yarn import-portrait art/masters/characters/fez-face-sheepish.jpeg --name=fez-face-sheepish --whole \
   --face-of=art/masters/characters/fez.jpeg
 
 # THE EXPLORER, SQUEEZING (side frame e, profile frame s; north reuses s)
