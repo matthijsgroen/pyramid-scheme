@@ -84,6 +84,17 @@ describe("where a landing goes", () => {
     })
     expect(plan).toMatchObject({ master: "art/masters/characters/someone.jpeg", tier: undefined })
   })
+
+  it("lands a master-only entry at its master and imports nothing", () => {
+    const plan = landPlan({
+      ...entry(""),
+      key: "portrait/someone-proof",
+      masterOnly: true,
+      master: "art/masters/characters/someone-proof.jpeg",
+      importedBy: "nothing — master only",
+    })
+    expect(plan).toEqual({ master: "art/masters/characters/someone-proof.jpeg", steps: [] })
+  })
 })
 
 describe("a whole-wall panel", () => {

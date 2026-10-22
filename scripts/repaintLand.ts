@@ -52,6 +52,7 @@ const flag = (args: string[], name: string) => args.find(a => a.startsWith(`--${
  * commands that import it — the entry's fenced `sh` block when it has one, its `**Import:**` line otherwise.
  */
 export const landPlan = (entry: Entry): LandPlan => {
+  if (entry.masterOnly && entry.master) return { master: entry.master, steps: [] }
   const [tier, name] = entry.key.split("/")
   const script = (entry.importScript ?? entry.importedBy)
     .replace(/<file>/g, `art/masters/props/${tier}/${name}.webp`)

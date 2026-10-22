@@ -15,6 +15,8 @@ export type Entry = {
   reroll?: string
   /** The generator return this was imported from, kept because it cannot be generated again. */
   master?: string
+  /** Lands at `master` and stops: no import, so no shipped file is written. */
+  masterOnly?: boolean
   /** A prop's fenced `sh` block: the `scaffold` that renders its mask and shadow, then its import. */
   importScript?: string
 }

@@ -244,3 +244,81 @@ stands whole. The ghosts get it too, for Henut's raised hand, so every human spr
 **The Sphinx inscription, the seals and the props.** Those are objects rather than characters, they need
 their own reference set, and the inscription is the ending — it wants its own pass with the writing legible
 enough to read at phone width.
+
+## 5. Composed expressions
+
+An expression is a face, not a picture. Rolling a whole new portrait for every mood gives a slightly
+different Fez each time — the hat moves, the scarf changes, the tail grows a curl — and a conversation that
+cuts between them reads as two lizards. So an expression is painted as an EDIT of one base picture, and only
+its face is kept: laid over the base, it is the same Fez with a different look on him.
+
+**The face layer is the whole face region, cut with a feathered mask.** Diff the expression edit against its
+base; the pixels that moved are the face, and the mask is an ellipse around them — head included, brows to
+chin — with a soft edge tens of pixels wide, so the join fades over a band rather than sitting on a line.
+The proof that this works is the explorer: the grin from `grin-explorer.jpeg`, cut that way and laid over
+`explorer.jpeg`, shows no seam.
+
+**Not separate eyes and mouth.** It would be the cheaper layer set, and it does not survive this style: an
+expression moves the brows, the cheeks, the shape of the eye whites and the shading around all of them
+together, and the outlines run continuously between them. Cut at the eye and the mouth, the parts of the
+change outside those cuts are left behind, and the edge of every cut lands on an outline. One soft region
+takes all of it.
+
+**Baked offline, not composed in the app.** The face layer is laid over the base at master size and the
+result goes through `yarn import-portrait` like any other master, so the game still ships one flat sprite
+per expression. What changes is where the expression comes from, not what is loaded.
+
+**The pass criterion**, for the proof and for every composed expression after it: at 100% there is no visible
+seam anywhere around the face, and outside the head the composed picture is the base to within compression
+noise. An edit that moved the hat, the scarf or the outline of the head fails, and is re-rolled rather than
+masked around.
+
+### The Fez proof
+
+Three paintings, each landing as a MASTER only: these are inputs to the proof, and no shipped sprite in
+`src/assets` is written by any of them. `yarn repaint <key> --land` saves the download at the entry's
+`**Master:**` path and stops there.
+
+Fez's colours, measured off `fez-250.png`, are substituted for `[fez palette]`:
+
+> Keep Fez's exact flat colours: scales teal #42a892, shaded teal #118883, belly pale green #bcd8aa, eye
+> whites cream #f2e6bf, fez dark red #a64b34, neckerchief red #d54f3b with its shadow #ba4637, outlines
+> charcoal #1c2729. Do not lighten, desaturate or reinterpret any of these.
+
+### `fez-master` — Fez, the same picture at full size
+
+**Master:** `art/masters/characters/fez.jpeg`
+
+The base everything else is an edit of. The shipped sprite is 250px wide, which is too little detail for a
+generator to edit faithfully, so this asks for the picture again at the master size the explorer's are
+(1686x2528). Attach `src/assets/fez-250.png` alone — the picture being enlarged is the only reference.
+
+> [preamble] [fez palette] Redraw the attached picture of Fez, the small teal lizard in a fez and a red
+> neckerchief, at full size on an upright 2:3 portrait canvas, 1686x2528. The same picture, larger, nothing
+> changed: same pose, same expression, same proportions, same outline weight relative to his size, the same
+> position in the frame. Do not add detail, texture or shading that is not in the attached picture, and do
+> not tidy or restyle anything. Plain white background.
+
+### `fez-worried` — the master, worried
+
+**Master:** `art/masters/characters/fez-worried.jpeg`
+
+Attach the landed master, `art/masters/characters/fez.jpeg`. It shows as MISSING in `--check` until
+`fez-master` has landed — expected; paint that one first.
+
+> [preamble] [fez palette] Edit the attached picture of Fez. Change ONLY his face, to worried and uneasy:
+> brows raised and drawn together, a small open mouth. Keep the outline of his head, the position of his
+> eyes, the fez, the neckerchief, his body, his tail and the white background exactly as they are — pixel
+> for pixel. Same canvas, same size, same framing. Nothing outside his face moves.
+
+### `fez-pointUp-base` — the master, pointing up
+
+**Master:** `art/masters/characters/fez-pointUp-base.jpeg`
+
+Attach the landed master, `art/masters/characters/fez.jpeg`, and `src/assets/point-fez-250.png` as the pose
+reference. Like `fez-worried`, the master shows MISSING until `fez-master` has landed.
+
+> [preamble] [fez palette] Edit the first attached picture of Fez so that he raises one finger, pointing
+> upward, the way he does in the second attached picture. Use the second picture for the pose only — draw it
+> in the first picture's size and detail. Keep his head exactly as it is: same outline, same eyes, same
+> face, same fez, in the same place on the canvas. Same canvas, same framing, white background.

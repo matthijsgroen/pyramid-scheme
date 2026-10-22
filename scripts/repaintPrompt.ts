@@ -70,19 +70,32 @@ const parseCharacters = (md: string): Entry[] => {
   // The measured fills, so "cream cargo trousers" stops being the generator's to interpret.
   const palette = quoted(section("1.").split(/^### /m)[0])
   const ghostPreamble = quoted(section("2.").split(/^### /m)[0]).replace(/^\*\*Ghost preamble\*\*[^:]*:\s*/, "")
+  // §5's blocks that are not entries hold Fez's measured fills, as §1's intro holds the explorer's.
+  const fezPalette = section("5.")
+    .split(/^### /m)
+    .filter(block => !block.startsWith("`"))
+    .map(quoted)
+    .join("\n")
+    .trim()
   const groups = [
     { group: "portrait", body: section("1.") },
     { group: "ghost", body: section("2.") },
+    { group: "portrait", body: section("5.") },
   ]
   const drawn: Entry[] = []
   for (const { group, body } of groups)
     for (const block of body.split(/^### /m).slice(1)) {
-      const file = /^`([\w-]+)-250\.png`/.exec(block)?.[1]
+      // A `**Master:**` line makes an entry master only: the download is kept there and nothing is imported,
+      // so a proof input can never overwrite a shipped sprite.
+      const masterOnly = /^\*\*Master:\*\*\s*`([^`]+)`/m.exec(block)?.[1]
+      const file = masterOnly ? /^`([\w-]+)`/.exec(block)?.[1] : /^`([\w-]+)-250\.png`/.exec(block)?.[1]
       if (!file) continue
       const name = file.replace(/^ghost-/, "")
-      const out = join("src/assets", `${file}-250.png`)
+      const out = masterOnly ?? join("src/assets", `${file}-250.png`)
       // An entry may name its own references in backticks; most want the default pair.
-      const named = [...block.matchAll(/`((?:art|src)\/[^`]+\.(?:jpe?g|png))`/g)].map(m => m[1])
+      const named = [...block.matchAll(/`((?:art|src)\/[^`]+\.(?:jpe?g|png))`/g)]
+        .map(m => m[1])
+        .filter(path => path !== masterOnly)
       const reroll = /\*\*Re-roll:\*\*\s*([^\n]+)/.exec(block)?.[1]?.trim()
       drawn.push({
         key: `${group}/${name}`,
@@ -97,11 +110,15 @@ const parseCharacters = (md: string): Entry[] => {
           .replace(/\[preamble \+ ghost preamble\]\s*/, `${preamble}\n\n${ghostPreamble}\n\n`)
           .replace(/\[preamble\]\s*/, `${preamble}\n\n`)
           .replace(/\[palette\]\s*/, palette ? `${palette}\n\n` : "")
+          .replace(/\[fez palette\]\s*/, fezPalette ? `${fezPalette}\n\n` : "")
           .replace(/\*\*/g, "")
           .trim(),
         out,
-        master: join("art/masters/characters", `${file}.jpeg`),
-        importedBy: `yarn import-portrait art/masters/characters/${file}.jpeg --name=${file}`,
+        master: masterOnly ?? join("art/masters/characters", `${file}.jpeg`),
+        masterOnly: Boolean(masterOnly),
+        importedBy: masterOnly
+          ? "nothing — master only"
+          : `yarn import-portrait art/masters/characters/${file}.jpeg --name=${file}`,
       })
     }
   let reference: string | undefined
@@ -112,7 +129,8 @@ const parseCharacters = (md: string): Entry[] => {
     withReferences.push({ ...entry, attachments, drawn: landed })
     // Hand over the MASTER where there is one: the sprite is 250px wide, and a reference that small is
     // most of the detail gone before the generator sees it (art/README.md).
-    if (landed) reference = entry.master && existsSync(entry.master) ? entry.master : entry.out
+    // A master-only entry is a proof input, not the newest of the set, so it never becomes the reference.
+    if (landed && !entry.masterOnly) reference = entry.master && existsSync(entry.master) ? entry.master : entry.out
   }
   return withReferences
 }
@@ -198,5 +216,8 @@ if (missing.length > 0) {
   console.log(`\nSelected in the Finder (${stage}) — drag them in, paste, and put the download in ~/Downloads.`)
 }
 
-console.log(`\nWhen it lands I import it and measure it; the file is ${entry.out}.`)
-console.log(`  ${entry.importedBy}`)
+if (entry.masterOnly) console.log(`\nWhen it lands it is kept as ${entry.out}, master only — nothing is imported.`)
+else {
+  console.log(`\nWhen it lands I import it and measure it; the file is ${entry.out}.`)
+  console.log(`  ${entry.importedBy}`)
+}
