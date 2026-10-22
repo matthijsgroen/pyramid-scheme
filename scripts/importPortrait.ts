@@ -27,6 +27,14 @@
  *   --holes=x,y;x,y  points inside enclosed background — the gap under an arm, between a held map and
  *                    a hand, behind a neck. The flood cannot reach these from the edge and no rule can
  *                    tell them from an eye, so they are named. Every import prints what it left.
+ *   --whole          frame the whole canvas instead of the figure — for masters painted in the frame
+ *                    their sprite uses (Fez's). Every pose of the character then stacks on the next.
+ *   --crop-from=a,b  frame through the window that holds the figures of ALL these masters, not this
+ *                    one's: a character's pose bases share it, so their heads land on the same pixels.
+ *   --face-of=base   write a FACE LAYER: this master is an expression edit of `base`; what moved is cut
+ *                    out with a feathered mask (faceLayer.ts), the rest is transparent, and it is framed
+ *                    exactly as the base is (pass the base's own framing flags). `Fez.tsx` stacks it on
+ *                    the pose. Tuned with --threshold=64 --erode=4 --grow=45 --feather=18.
  *
  * The key is flood-filled inward from the edges rather than matched everywhere, which is the whole
  * difference between this and `import-tile`: a prop on magenta has no magenta of its own, but a person on
@@ -36,6 +44,7 @@ import sharp from "sharp"
 import { dirname, join } from "node:path"
 import { fileURLToPath, pathToFileURL } from "node:url"
 import { hexToRgb } from "./keyOut"
+import { boxOf, diffMask, faceRegion } from "./faceLayer"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const OUT_ROOT = join(__dirname, "..", "src", "assets")
@@ -275,6 +284,147 @@ const bounds = (background: Uint8Array, width: number, height: number) => {
   return { left, right, top, bottom }
 }
 
+/**
+ * The figure of several masters at once: background only where EVERY one of them is background.
+ *
+ * What makes a character's pose bases and face layers stack. Each is cut through the window this
+ * mask gives, not through its own, so a pointing pose whose finger reaches past the base does not
+ * get a frame of its own — and its head, which the edit kept where the base had it, lands on the
+ * same sprite pixels as the base's head and every face layer's.
+ */
+export const sharedBackground = (backgrounds: readonly Uint8Array[]): Uint8Array =>
+  backgrounds.reduce((shared, next) => shared.map((b, i) => b & next[i]))
+
+/**
+ * The window a portrait is cut from, in source pixels, and the sprite width it is resized to.
+ *
+ * A bust frames on the face and keeps every head the same size (see bustWindow); a full figure is
+ * seated in a canvas that holds all of it (see seat). The two want opposite things from a wide
+ * subject, which is why this is a branch and not a parameter.
+ * The head is the right place to frame on for everybody except a pose built around a gesture:
+ * the pointing explorer holds a finger up at arm’s length, and a window centred on his face
+ * clips it off — removing the one thing that pose is for. Named per sprite for the same reason
+ * the holes are: it is a property of that drawing, not a rule.
+ */
+export const portraitWindow = ({
+  background,
+  width,
+  height,
+  bust,
+  centre,
+  behind = 0,
+  whole = false,
+}: {
+  background: Uint8Array
+  width: number
+  height: number
+  /**
+   * Frame the whole canvas rather than the figure: for a character whose masters are painted in the
+   * frame their sprite already uses (Fez's are his shipped sprite redrawn at full size), so every pose
+   * and face of him is cut through one window that no figure moves.
+   */
+  whole?: boolean
+  bust?: number
+  centre?: number
+  behind?: number
+}) => {
+  const extent = bounds(background, width, height)
+  const { left, right, top, bottom } = bust ? topBand(background, width, extent, bust) : extent
+  if (right < left && !whole) return undefined
+  const figure = { left, right, top, bottom, width: right - left + 1, height: bottom - top + 1 }
+  const window = whole
+    ? (() => {
+        const canvasWidth = Math.max(width, Math.ceil((height * WIDTH) / HEIGHT))
+        const canvasHeight = Math.round((canvasWidth * HEIGHT) / WIDTH)
+        return {
+          left: Math.floor((width - canvasWidth) / 2),
+          top: height - canvasHeight,
+          width: canvasWidth,
+          height: canvasHeight,
+        }
+      })()
+    : bust
+      ? bustWindow({ top, bottom }, centre ?? headCentre(background, width, { top, bottom }))
+      : (() => {
+          const { canvasWidth, canvasHeight } = seat(figure)
+          const sides = canvasWidth - figure.width
+          return {
+            left: left - Math.floor(sides / 2),
+            top: bottom + 1 - canvasHeight,
+            width: canvasWidth,
+            height: canvasHeight,
+          }
+        })()
+  const extra = bust ? Math.round(window.width * behind) : 0
+  return {
+    figure,
+    window: { ...window, left: window.left - extra, width: window.width + extra },
+    spriteWidth: Math.round(WIDTH * (1 + (bust ? behind : 0))),
+  }
+}
+
+/**
+ * How to take a window out of an image with sharp: extract the part that lies inside it, then pad
+ * back out with transparency. A window may reach past an edge (a head near the top, a bust wider
+ * than the source), and sharp's extract cannot.
+ */
+export const cutBox = (
+  window: { left: number; top: number; width: number; height: number },
+  imageWidth: number,
+  imageHeight: number
+) => {
+  const left = Math.max(0, window.left)
+  const top = Math.max(0, window.top)
+  const width = Math.min(imageWidth, window.left + window.width) - left
+  const height = Math.min(imageHeight, window.top + window.height) - top
+  return {
+    extract: { left, top, width, height },
+    extend: {
+      top: top - window.top,
+      bottom: window.top + window.height - (top + height),
+      left: left - window.left,
+      right: window.left + window.width - (left + width),
+    },
+  }
+}
+
+const keyed = async (file: string, key: { r: number; g: number; b: number }, tolerance: number) => {
+  const { data, info } = await sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  return { data, info, background: edgeBackground({ data, ...info, key, tolerance }) }
+}
+
+/**
+ * Turns an expression master into its face layer, in place: alpha is the feathered face region (see
+ * faceLayer.ts) times the master's own keyed alpha, so the soft edge never paints the white it was
+ * generated on over the room.
+ */
+const toFaceLayer = async (
+  expression: { data: Buffer; info: sharp.OutputInfo; background: Uint8Array },
+  baseFile: string,
+  options: { threshold: number; erode: number; grow: number; feather: number }
+) => {
+  const { data, info, background } = expression
+  const base = await sharp(baseFile).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  if (base.info.width !== info.width || base.info.height !== info.height)
+    throw new Error(
+      `the expression is ${info.width}x${info.height} and its base ${base.info.width}x${base.info.height}`
+    )
+  const diff = diffMask({ a: base.data, b: data, ...info, threshold: options.threshold })
+  const region = faceRegion(diff, info.width, info.height, options)
+  const box = boxOf(region, info.width, info.height)
+  if (!box) throw new Error(`${baseFile} and its expression do not differ — nothing to cut`)
+  const feathered = await sharp(Buffer.from(region.map(b => b * 255)), {
+    raw: { width: info.width, height: info.height, channels: 1 },
+  })
+    .blur(options.feather)
+    .extractChannel(0)
+    .raw()
+    .toBuffer()
+  for (let i = 0; i < info.width * info.height; i++)
+    data[i * info.channels + 3] = background[i] === 1 ? 0 : feathered[i]
+  return box
+}
+
 const main = async (): Promise<void> => {
   const file = process.argv[2]
   const name = arg("name")
@@ -301,68 +451,67 @@ const main = async (): Promise<void> => {
   })
   for (let i = 0; i < background.length; i++) if (background[i] === 1) data[i * info.channels + 3] = 0
 
-  const whole = bounds(background, info.width, info.height)
+  const faceOf = arg("face-of")
+  const faceBox = faceOf
+    ? await toFaceLayer({ data, info, background }, faceOf, {
+        threshold: Number(arg("threshold", "64")),
+        erode: Number(arg("erode", "4")),
+        grow: Number(arg("grow", "45")),
+        feather: Number(arg("feather", "18")),
+      })
+    : undefined
+
+  // A face layer is always cut through its base's frame; a pose base names the character's masters
+  // so every one of them shares it.
+  const cropFrom = (arg("crop-from") ?? faceOf)?.split(",").filter(Boolean)
+  const framing = cropFrom
+    ? await (async () => {
+        const masters = await Promise.all(cropFrom.map(master => keyed(master, key, tolerance)))
+        for (const { info: other } of masters)
+          if (other.width !== info.width || other.height !== info.height)
+            throw new Error(`--crop-from masters must be ${info.width}x${info.height}, the size of ${file}`)
+        return sharedBackground(masters.map(m => m.background))
+      })()
+    : background
+
   const bust = arg("bust")
-  const { left, right, top, bottom } = bust ? topBand(background, info.width, whole, Number(bust)) : whole
-  if (right < left) {
+  const whole = process.argv.includes("--whole")
+  const centre = arg("centre")
+  const behind = bust ? Number(arg("behind", "0")) : 0
+  const framed = portraitWindow({
+    background: framing,
+    width: info.width,
+    height: info.height,
+    bust: bust ? Number(bust) : undefined,
+    centre: centre ? Number(centre) : undefined,
+    behind,
+    whole,
+  })
+  if (!framed) {
     console.error(`nothing but background in ${file} — is it on ${arg("key", "#ffffff")}?`)
     process.exit(1)
   }
-  const figure = { width: right - left + 1, height: bottom - top + 1 }
-  // A bust frames on the face and keeps every head the same size (see bustWindow); a full figure is
-  // seated in a canvas that holds all of it (see seat). The two want opposite things from a wide
-  // subject, which is why this is a branch and not a parameter.
-  // The head is the right place to frame on for everybody except a pose built around a gesture:
-  // the pointing explorer holds a finger up at arm’s length, and a window centred on his face
-  // clips it off — removing the one thing that pose is for. Named per sprite for the same reason
-  // the holes are: it is a property of that drawing, not a rule.
-  const centre = arg("centre")
-  const window = bust
-    ? bustWindow({ top, bottom }, centre ? Number(centre) : headCentre(background, info.width, { top, bottom }))
-    : (() => {
-        const { canvasWidth, canvasHeight } = seat(figure)
-        const sides = canvasWidth - figure.width
-        return {
-          left: left - Math.floor(sides / 2),
-          top: bottom + 1 - canvasHeight,
-          width: canvasWidth,
-          height: canvasHeight,
-        }
-      })()
+  const { figure, window, spriteWidth } = framed
   const { wide: tooWide } = seat(figure)
-  const behind = bust ? Number(arg("behind", "0")) : 0
-  const extra = Math.round(window.width * behind)
-  window.left -= extra
-  window.width += extra
-
-  // Clamped to the image, then padded back out: a window may reach past an edge (a head near the
-  // top, a bust wider than the source), and sharp's extract cannot.
-  const cut = {
-    left: Math.max(0, window.left),
-    top: Math.max(0, window.top),
-  }
-  const cutW = Math.min(info.width, window.left + window.width) - cut.left
-  const cutH = Math.min(info.height, window.top + window.height) - cut.top
+  const { extract, extend } = cutBox(window, info.width, info.height)
 
   // Two passes, because sharp always extends AFTER it resizes: padding and resizing in one chain pads
   // the finished 250x375 and hands back a canvas the size of neither.
   const padded = await sharp(data, { raw: { width: info.width, height: info.height, channels: info.channels } })
-    .extract({ left: cut.left, top: cut.top, width: cutW, height: cutH })
-    .extend({
-      top: cut.top - window.top,
-      bottom: window.top + window.height - (cut.top + cutH),
-      left: cut.left - window.left,
-      right: window.left + window.width - (cut.left + cutW),
-      background: { r: 0, g: 0, b: 0, alpha: 0 },
-    })
+    .extract(extract)
+    .extend({ ...extend, background: { r: 0, g: 0, b: 0, alpha: 0 } })
     .png()
     .toBuffer()
 
   const out = join(OUT_ROOT, name + "-250.png")
-  await sharp(padded)
-    .resize(Math.round(WIDTH * (1 + behind)), HEIGHT)
-    .png()
-    .toFile(out)
+  await sharp(padded).resize(spriteWidth, HEIGHT).png().toFile(out)
+
+  if (faceBox) {
+    console.log(
+      `${out}  face layer of ${faceOf}, face ${faceBox.width}x${faceBox.height}+${faceBox.left}+${faceBox.top}`
+    )
+    return
+  }
 
   const left_over = enclosedRegions({
     data,
@@ -374,13 +523,22 @@ const main = async (): Promise<void> => {
     background,
   })
 
-  console.log(`${out}  figure ${figure.width}x${figure.height} of ${info.width}x${info.height}, x ${left}..${right}`)
+  console.log(
+    `${out}  figure ${figure.width}x${figure.height} of ${info.width}x${info.height}, x ${figure.left}..${figure.right}` +
+      (cropFrom ? `  (shared crop of ${cropFrom.join(", ")})` : "")
+  )
   console.log(
     `fills ${Math.round((figure.width / window.width) * 100)}% of the width and ` +
       `${Math.round((figure.height / window.height) * 100)}% of the height it ends up in` +
       // Over 100% in bust mode means the sides were clipped, which is the point — what must match
       // across the cast is the head, and a wide subject fitted by its width comes out small.
-      (bust ? " (bust: framed on the head, sides clipped)" : tooWide ? " (seated by width: wider than it is tall)" : "")
+      (whole
+        ? " (the whole canvas, as painted)"
+        : bust
+          ? " (bust: framed on the head, sides clipped)"
+          : tooWide
+            ? " (seated by width: wider than it is tall)"
+            : "")
   )
   // Every patch of background the flood could not reach and no --holes named. The eyes belong here;
   // anything else is an opaque white blob that will only show up once the sprite is over a dark room.

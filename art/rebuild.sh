@@ -1676,6 +1676,15 @@ yarn import-portrait art/masters/characters/ghost-priest.jpeg --name=ghost-pries
 yarn import-portrait art/masters/characters/ghost-pharaoh.jpeg --name=ghost-pharaoh --bust=0.55 --behind=0.4
 yarn import-portrait art/masters/characters/ghost-other.jpeg --name=ghost-other --bust=0.55
 
+# Fez's masters are his sprite redrawn at full size, so --whole frames the canvas as painted: every pose
+# base and every face layer of him is cut through that one window, and the game stacks a face on a pose
+# pixel for pixel (character-art-prompts.md, Composed expressions). A pose base is an edit that kept
+# the base's head where it was; a face layer is an expression edit of the base, cut to what moved.
+yarn import-portrait art/masters/characters/fez.jpeg --name=fez --whole
+yarn import-portrait art/masters/characters/fez-pointUp-base.jpeg --name=point-fez --whole
+yarn import-portrait art/masters/characters/fez-worried.jpeg --name=fez-face-worried --whole \
+  --face-of=art/masters/characters/fez.jpeg
+
 # THE EXPLORER, SQUEEZING (side frame e, profile frame s; north reuses s)
 # --tight: the arms-spread frame is wider than the 40-unit slot, so a slot fit shrank the figure to 60% of the walking one; 18.3 master px to a unit puts his head at the walking size, and the tile is as wide as the pose needs (feet on the bottom edge)
 yarn import-tile art/masters/explorer/explorer-squeeze-e.webp --tier=default --name=explorer-squeeze-e --slot=explorer --filter=smooth --tight=18.3

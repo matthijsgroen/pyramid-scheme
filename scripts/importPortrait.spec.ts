@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest"
-import { bustWindow, edgeBackground, headCentre, seat, topBand } from "./importPortrait"
+import {
+  bustWindow,
+  cutBox,
+  edgeBackground,
+  headCentre,
+  portraitWindow,
+  seat,
+  sharedBackground,
+  topBand,
+} from "./importPortrait"
 
 const WHITE = { r: 255, g: 255, b: 255 }
 
@@ -153,5 +162,85 @@ describe("bustWindow", () => {
 
   it("centres on the head even when that runs off the source, so faces never slide off-centre", () => {
     expect(bustWindow({ top: 0, bottom: 299 }, 10).left).toBeLessThan(0)
+  })
+})
+
+describe("the shared crop", () => {
+  // Two poses of one character: the base, and a pose whose arm reaches out to the right. The head
+  // (rows 0-1) is where the base has it in both — the edit kept it there.
+  const base = mask(["..##.....", "..##.....", ".####....", ".####....", ".####....", ".#..#...."])
+  const pointing = mask(["..##.....", "..##...#.", ".#######.", ".####....", ".####....", ".#..#...."])
+
+  it("is figure wherever ANY pose is figure", () => {
+    const shared = sharedBackground([base.background, pointing.background])
+
+    expect(shared[1 * 9 + 7]).toBe(0)
+    expect(shared[0]).toBe(1)
+  })
+
+  it("frames every pose through one window that holds all of them", () => {
+    const framed = portraitWindow({
+      background: sharedBackground([base.background, pointing.background]),
+      width: 9,
+      height: 6,
+    })!
+
+    expect(framed.window.left).toBeLessThanOrEqual(1)
+    expect(framed.window.left + framed.window.width).toBeGreaterThan(7)
+    expect(framed.window.top + framed.window.height).toBe(6)
+  })
+
+  it("is the same window whichever pose is being cut, so the heads stack", () => {
+    const shared = sharedBackground([base.background, pointing.background])
+
+    expect(portraitWindow({ background: shared, width: 9, height: 6 })).toEqual(
+      portraitWindow({ background: sharedBackground([pointing.background, base.background]), width: 9, height: 6 })
+    )
+  })
+
+  it("widens a bust behind the figure and its sprite with it", () => {
+    const framed = portraitWindow({ background: base.background, width: 9, height: 6, bust: 1, behind: 0.4 })!
+
+    expect(framed.spriteWidth).toBe(350)
+  })
+})
+
+describe("cutBox", () => {
+  it("extracts what lies inside the image and pads the rest back out", () => {
+    expect(cutBox({ left: -2, top: 3, width: 10, height: 10 }, 6, 20)).toEqual({
+      extract: { left: 0, top: 3, width: 6, height: 10 },
+      extend: { top: 0, bottom: 0, left: 2, right: 2 },
+    })
+  })
+
+  it("leaves a window inside the image alone", () => {
+    expect(cutBox({ left: 1, top: 1, width: 2, height: 2 }, 6, 6).extend).toEqual({
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+    })
+  })
+})
+
+describe("the whole-canvas frame", () => {
+  it("frames the master as painted, whatever the figure does, so every pose of it stacks", () => {
+    const small = mask([".....", "..#..", ".....", "....."])
+    const big = mask(["#####", "#####", "#####", "#####"])
+
+    expect(portraitWindow({ background: small.background, width: 5, height: 4, whole: true })!.window).toEqual(
+      portraitWindow({ background: big.background, width: 5, height: 4, whole: true })!.window
+    )
+  })
+
+  it("is 2:3, holds the whole canvas and stands it on the bottom edge", () => {
+    const { window } = portraitWindow({
+      background: new Uint8Array(1696 * 2528),
+      width: 1696,
+      height: 2528,
+      whole: true,
+    })!
+
+    expect(window).toEqual({ left: 0, top: -16, width: 1696, height: 2544 })
   })
 })
