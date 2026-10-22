@@ -121,9 +121,14 @@ Painted by the user through `yarn repaint`; prompts go in the repaint docs.
 
 ## Outside this spec
 
-- **Release prerequisite: the starter loot economy.** Before the starter release the starter tier's puzzles,
-  chests, side paths and loot must be final for the loot distribution, including the open questions on
-  mosaic piece counts, healing amounts and inventory use. Once a tier is released its loot stays put; new
-  content there carries `loot: false`.
+- **Release prerequisite: the loot economy.** Decided before the starter release, so the loot distribution
+  stays stable from then on:
+  1. mosaic piece counts;
+  2. health drops (how much healing);
+  3. inventory management (how much the inventory is used);
+  4. whether cave and cavern puzzles carry loot, and if so how many puzzles each tomb and cave has. With
+     `loot: false` (this spec) their count is free to change later; with loot it is frozen at release.
+
+  Once a tier is released its loot stays put; new content there carries `loot: false`.
 - Story lines for the hooks above.
 - The other tiers' caves, caverns and locks, each with its release.
