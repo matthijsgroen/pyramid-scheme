@@ -189,7 +189,7 @@ export const masterRules: Rule[] = [
   tomb("master_treasure_tomb", {
     encounter: "tomb-puzzle",
     difficulty: "master",
-    levelCount: 5,
+    floorCount: 5,
     sealed: true, // linear tomb — no shortcut around a tableau room
     // A crocodile capstone guards EVERY floor's treasure (see junior.ts for why `+ 1`).
     floors: [
@@ -232,7 +232,7 @@ export const masterRules: Rule[] = [
   tomb("master_treasure_tomb_b", {
     encounter: "tomb-puzzle",
     difficulty: "master",
-    levelCount: 5,
+    floorCount: 5,
     sealed: true, // linear tomb — no shortcut around a tableau room
     // A crocodile capstone guards EVERY floor's treasure (see junior.ts for why `+ 1`).
     floors: [

@@ -199,7 +199,7 @@ export const juniorRules: Rule[] = [
   tomb("junior_treasure_tomb", {
     encounter: "tomb-puzzle",
     difficulty: "junior",
-    levelCount: 6,
+    floorCount: 6,
     sealed: true, // linear tomb — no shortcut around a tableau room
     // Every floor's treasure IS a ward key, and from junior on each one is guarded by a crocodile
     // capstone — authored per floor via a node selector, not a core rule. `pathPuzzles` is one

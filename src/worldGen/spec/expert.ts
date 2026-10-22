@@ -210,7 +210,7 @@ export const expertRules: Rule[] = [
   tomb("expert_treasure_tomb", {
     encounter: "tomb-puzzle",
     difficulty: "expert",
-    levelCount: 4,
+    floorCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
     // A crocodile capstone guards EVERY floor's treasure (see junior.ts for why `+ 1`).
     floors: [
@@ -250,7 +250,7 @@ export const expertRules: Rule[] = [
   tomb("expert_treasure_tomb_b", {
     encounter: "tomb-puzzle",
     difficulty: "expert",
-    levelCount: 4,
+    floorCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
     // A crocodile capstone guards EVERY floor's treasure (see junior.ts for why `+ 1`).
     floors: [

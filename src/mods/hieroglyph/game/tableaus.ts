@@ -87,7 +87,7 @@ function getTableauDescription(
 const tombJourneys = TOMB_JOURNEYS.map(tomb => ({
   id: tomb.id,
   difficulty: tomb.tier as Difficulty,
-  levelCount: tomb.levelCount,
+  floorCount: tomb.floorCount,
 }))
 
 // N tableau rooms per REAL tomb floor (pyramid-interior-design.md). A tier's tomb may be split
@@ -163,7 +163,7 @@ difficulties.forEach(difficulty => {
   const tierTombs = tombJourneys.filter(j => j.difficulty === difficulty)
   const [primaryTomb] = tierTombs
   const roomsPerFloor = TABLEAUS_PER_FLOOR[difficulty]
-  const totalFloors = tierTombs.reduce((sum, t) => sum + t.levelCount, 0)
+  const totalFloors = tierTombs.reduce((sum, t) => sum + t.floorCount, 0)
   const own = new Set(TOMB_SYMBOLS[difficulty])
 
   // All authored grid cells for the tier (run 1..totalFloors × level 1..roomsPerFloor).
@@ -179,7 +179,7 @@ difficulties.forEach(difficulty => {
   // own authored (run, level) for the story lookup; physical placement is independent.
   let idx = 0
   for (const tomb of tierTombs) {
-    for (let floor = 1; floor <= tomb.levelCount; floor++) {
+    for (let floor = 1; floor <= tomb.floorCount; floor++) {
       for (let room = 1; room <= roomsPerFloor; room++) {
         const cell = ordered[idx++]
         const key = `${tomb.id}.run${floor}_level${room}`
@@ -207,7 +207,7 @@ difficulties.forEach(difficulty => {
     const tierTombs = tombJourneys.filter(j => j.difficulty === tomb.difficulty)
     if (tierTombs[0] === tomb) continue // primary — never patched
     const slots = patchSlotsByTier.get(tomb.difficulty) ?? []
-    for (let floor = 1; floor <= tomb.levelCount; floor++) slots.push(`${tomb.id}.run${floor}_level1`)
+    for (let floor = 1; floor <= tomb.floorCount; floor++) slots.push(`${tomb.id}.run${floor}_level1`)
     patchSlotsByTier.set(tomb.difficulty, slots)
   }
   const patchCursor = new Map<Difficulty, number>()
@@ -236,7 +236,7 @@ export function generateTableaus(t?: TranslationFunction): TableauLevel[] {
 
   tombJourneys.forEach(tomb => {
     const roomsPerFloor = TABLEAUS_PER_FLOOR[tomb.difficulty]
-    for (let floor = 1; floor <= tomb.levelCount; floor++) {
+    for (let floor = 1; floor <= tomb.floorCount; floor++) {
       for (let room = 1; room <= roomsPerFloor; room++) {
         const key = `${tomb.id}.run${floor}_level${room}`
         const tableauSymbols = tableauInventory[key]

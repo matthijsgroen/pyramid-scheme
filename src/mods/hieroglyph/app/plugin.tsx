@@ -98,7 +98,7 @@ if (isModEnabled("hieroglyph"))
           const roomsPerFloor = TABLEAUS_PER_FLOOR[journey.difficulty]
           const escalation = {
             position: (parsed.data.runNr - 1) * roomsPerFloor + levelNr,
-            total: (TOMB_JOURNEYS.find(t => t.id === ctx.journeyId)?.levelCount ?? 1) * roomsPerFloor,
+            total: (TOMB_JOURNEYS.find(t => t.id === ctx.journeyId)?.floorCount ?? 1) * roomsPerFloor,
           }
           return generateRewardCalculation(
             buildTombCalculationSettings(tombFormulaFor(ctx.journeyId), tableau, escalation),

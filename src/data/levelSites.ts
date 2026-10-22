@@ -14,7 +14,7 @@ export const levelSitesOf = (configs: Record<string, SiteConfig[]>): Record<stri
   Object.fromEntries(
     [...PYRAMID_STRUCTURES, ...TOMB_STRUCTURES]
       .filter(({ id }) => configs[id]?.length)
-      .map(({ id, levelCount }) => [
+      .map(({ id, levelCount = 1 }) => [
         id,
         Array.from({ length: levelCount }, (_unused, level) => configs[id][level] ?? configs[id][0]),
       ])

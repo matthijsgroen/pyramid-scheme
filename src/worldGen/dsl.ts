@@ -431,8 +431,8 @@ export type PyramidConstraint = {
   hiddenPaths?: PathEntry[]
   /** Integer weights for consumable type selection. Higher = more frequent. */
   consumableRates?: { bandage: number; oil: number; trapTool: number }
-  /** Number of floors for tomb journeys. Overrides the value in TOMB_STRUCTURES. */
-  levelCount?: number
+  /** Number of floors of a tomb level. Overrides the value in TOMB_STRUCTURES. */
+  floorCount?: number
 }
 
 /** Tomb-only reward hints: "tombTreasure" draws the next ward-key/perk off the tomb's

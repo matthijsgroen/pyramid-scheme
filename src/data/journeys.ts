@@ -635,5 +635,5 @@ export const journeys: Journey[] = authoredJourneys.map(journey => {
   const config = generatedWorldConfigs[journey.id]
   // No config means the world has not been generated (yarn generate-world); fall back to world-gen's
   // own input so the screens still have something to draw.
-  return { ...journey, levelCount: config?.length ?? structure.levelCount, siteConfigs: config }
+  return { ...journey, levelCount: config?.length ?? structure.levelCount ?? 1, siteConfigs: config }
 })

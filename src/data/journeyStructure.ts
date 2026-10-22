@@ -5,7 +5,7 @@
 export type JourneyTier = "starter" | "junior" | "expert" | "master" | "wizard"
 
 export type PyramidStructure = { id: string; tier: JourneyTier; levelCount: number }
-export type TombStructure = { id: string; tier: JourneyTier; levelCount: number }
+export type TombStructure = { id: string; tier: JourneyTier; floorCount: number; levelCount?: number }
 
 export const PYRAMID_STRUCTURES: PyramidStructure[] = [
   // Starter
@@ -36,13 +36,13 @@ export const PYRAMID_STRUCTURES: PyramidStructure[] = [
 ]
 
 export const TOMB_STRUCTURES: TombStructure[] = [
-  { id: "starter_treasure_tomb", tier: "starter", levelCount: 4 },
-  { id: "junior_treasure_tomb", tier: "junior", levelCount: 6 },
-  { id: "expert_treasure_tomb", tier: "expert", levelCount: 4 },
-  { id: "expert_treasure_tomb_b", tier: "expert", levelCount: 4 },
-  { id: "master_treasure_tomb", tier: "master", levelCount: 5 },
-  { id: "master_treasure_tomb_b", tier: "master", levelCount: 5 },
-  { id: "wizard_treasure_tomb", tier: "wizard", levelCount: 4 },
-  { id: "wizard_treasure_tomb_b", tier: "wizard", levelCount: 4 },
-  { id: "wizard_treasure_tomb_c", tier: "wizard", levelCount: 4 },
+  { id: "starter_treasure_tomb", tier: "starter", floorCount: 4 },
+  { id: "junior_treasure_tomb", tier: "junior", floorCount: 6 },
+  { id: "expert_treasure_tomb", tier: "expert", floorCount: 4 },
+  { id: "expert_treasure_tomb_b", tier: "expert", floorCount: 4 },
+  { id: "master_treasure_tomb", tier: "master", floorCount: 5 },
+  { id: "master_treasure_tomb_b", tier: "master", floorCount: 5 },
+  { id: "wizard_treasure_tomb", tier: "wizard", floorCount: 4 },
+  { id: "wizard_treasure_tomb_b", tier: "wizard", floorCount: 4 },
+  { id: "wizard_treasure_tomb_c", tier: "wizard", floorCount: 4 },
 ]

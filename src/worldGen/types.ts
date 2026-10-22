@@ -158,4 +158,4 @@ export type FloorConfig = {
 
 export type SiteConfig = FloorConfig[]
 
-export type TombJourneyDef = { id: string; tier: Tier; levelCount: number }
+export type TombJourneyDef = { id: string; tier: Tier; floorCount: number; levelCount: number }

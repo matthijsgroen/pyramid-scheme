@@ -179,7 +179,7 @@ export const wizardRules: Rule[] = [
   tomb("wizard_treasure_tomb", {
     encounter: "tomb-puzzle",
     difficulty: "wizard",
-    levelCount: 4,
+    floorCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
     // A crocodile capstone guards EVERY floor's treasure (see junior.ts for why `+ 1`).
     floors: [
@@ -225,7 +225,7 @@ export const wizardRules: Rule[] = [
   tomb("wizard_treasure_tomb_b", {
     encounter: "tomb-puzzle",
     difficulty: "wizard",
-    levelCount: 4,
+    floorCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
     // A crocodile capstone guards EVERY floor's treasure (see junior.ts for why `+ 1`).
     floors: [
@@ -263,7 +263,7 @@ export const wizardRules: Rule[] = [
   tomb("wizard_treasure_tomb_c", {
     encounter: "tomb-puzzle",
     difficulty: "wizard",
-    levelCount: 4,
+    floorCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
     // A crocodile capstone guards EVERY floor's treasure (see junior.ts for why `+ 1`).
     floors: [

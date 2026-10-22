@@ -211,7 +211,7 @@ export const starterRules: Rule[] = [
   tomb("starter_treasure_tomb", {
     encounter: "tomb-puzzle",
     difficulty: "starter",
-    levelCount: 4,
+    floorCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
     floors: [
       // Ipi is at the end of the first floor, in among his own jars — which is what "third shelf,

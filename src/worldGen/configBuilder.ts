@@ -183,7 +183,7 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
     // tomb main-path rooms consume hieroglyph symbols the player may not have yet.
     const encounter = constraint.encounter ?? "tomb-puzzle"
 
-    const levelCount = constraint.levelCount ?? tomb.levelCount
+    const floorCount = constraint.floorCount ?? tomb.floorCount
     const authoredFloors = constraint.floors as FloorConstraint<TombRewardHint>[] | undefined
     // Position in this tomb's treasure stream — core tracks WHICH floor (structural), the
     // injected resolver (tomb-treasure mod) maps that position to its own reward vocabulary, so
@@ -216,8 +216,8 @@ const buildTombConfigs = (resolveTombTreasure?: TombTreasureResolver): Record<st
     // encounterArgs.runNr defaults to this floor's own 1-based index — each floor's tableau is tied
     // to the treasure it unlocks. An authored floor can override it to place its tableau content on
     // a different run (e.g. a ward-gated side path pointing at a later run's puzzle).
-    const floors: FloorConstraint<TombRewardHint>[] = Array.from({ length: levelCount }, (_, i) => {
-      const isLast = i === levelCount - 1
+    const floors: FloorConstraint<TombRewardHint>[] = Array.from({ length: floorCount }, (_, i) => {
+      const isLast = i === floorCount - 1
       const authored = authoredFloors?.[i]
       const authoredSections = (authored?.sideSections as SideSectionConstraint<TombRewardHint>[] | undefined) ?? []
       const shortcut = isLast
