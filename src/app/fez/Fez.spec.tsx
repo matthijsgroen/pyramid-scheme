@@ -133,7 +133,7 @@ describe("a face over the pose", () => {
   it("sits on a stacking pose as well as the default", () => {
     const { figure, face } = drawn("pointWorried")
 
-    expect(figure.getAttribute("src")).toMatch(/point-fez/)
+    expect(figure.getAttribute("src")).toMatch(/point-fez-base/)
     expect(face?.getAttribute("src")).toMatch(/fez-face-worried/)
   })
 

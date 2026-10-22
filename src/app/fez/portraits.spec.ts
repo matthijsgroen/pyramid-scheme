@@ -5,8 +5,12 @@ describe("portraitFor", () => {
   it("lays a speaker's face over a pose cut to fit it", () => {
     const drawn = portraitFor("fez", "pointUp", "worried")
 
-    expect(drawn?.src).toMatch(/point-fez/)
+    expect(drawn?.src).toMatch(/point-fez-base/)
     expect(drawn?.face).toMatch(/fez-face-worried/)
+  })
+
+  it("keeps the pose's own painting when no face is asked for", () => {
+    expect(portraitFor("fez", "pointUp")?.src).toMatch(/point-fez-250/)
   })
 
   it("draws the pose alone when the speaker has no such face", () => {

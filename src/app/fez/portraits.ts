@@ -1,5 +1,6 @@
 import fez from "@/assets/fez-250.png"
 import fezPoint from "@/assets/point-fez-250.png"
+import fezPointBase from "@/assets/point-fez-base-250.png"
 import fezGlassesPoint from "@/assets/glasses-point-fez-250.png"
 import fezCocktail from "@/assets/cocktail-fez-250.png"
 import fezFaceWorried from "@/assets/fez-face-worried-250.png"
@@ -34,18 +35,20 @@ export const PORTRAITS: Partial<
           /** 350x375 rather than 250x375: imported with `--behind=0.4`, the figure behind them included. */
           wide?: true
           /**
-           * Imported through the speaker's shared frame (`art/rebuild.sh`), so a face layer lands on its
-           * head pixel for pixel. A pose without it is a separate painting and takes no face.
+           * The figure a face is laid on: this pose imported through the speaker's shared frame
+           * (`art/rebuild.sh`), so a face layer lands on its head pixel for pixel. Often `src` itself; a
+           * pose whose own painting has a face of its own (Fez's open-mouthed point) names a plain one.
+           * A pose without it takes no face.
            */
-          stacks?: true
+          faceBase?: string
         }
       >
     >
   >
 > = {
   fez: {
-    default: { src: fez, alt: "Happy companion lizard wearing a fez", stacks: true },
-    pointUp: { src: fezPoint, alt: "Happy companion lizard wearing a fez", stacks: true },
+    default: { src: fez, alt: "Happy companion lizard wearing a fez", faceBase: fez },
+    pointUp: { src: fezPoint, alt: "Happy companion lizard wearing a fez", faceBase: fezPointBase },
     glassesPoint: { src: fezGlassesPoint, alt: "Happy companion lizard wearing a fez and glasses" },
     cocktail: { src: fezCocktail, alt: "Happy companion lizard wearing a fez and holding a cocktail" },
   },
@@ -75,11 +78,11 @@ export const FACE_LAYERS: Partial<Record<Speaker, Partial<Record<Face, string>>>
 
 /**
  * What is drawn for a line: the pose — the speaker's default when nobody has drawn that one — and the
- * face over it, when that speaker has the face AND the pose is one it was cut to fit.
+ * face over it, on the pose's `faceBase`, when that speaker has the face AND the pose has a base for it.
  */
 export const portraitFor = (speaker: Speaker, pose: Pose, face?: Face) => {
   const base = PORTRAITS[speaker]?.[pose] ?? PORTRAITS[speaker]?.default
   if (!base) return undefined
-  const layer = face && base.stacks ? FACE_LAYERS[speaker]?.[face] : undefined
-  return { ...base, face: layer }
+  const layer = face && base.faceBase ? FACE_LAYERS[speaker]?.[face] : undefined
+  return layer ? { ...base, src: base.faceBase!, face: layer } : { ...base, face: undefined }
 }
