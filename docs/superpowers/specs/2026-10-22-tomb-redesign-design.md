@@ -15,7 +15,7 @@ their caves, caverns and locks with their own releases.
   The tomb's floor count moves to its own field (`floorCount`); the tableau grid, the validator,
   `TOMB_ROOMS_PER_FLOOR` and `levelSitesOf` read the real numbers instead of treating floors as levels.
 - **One vocabulary for every site.** Each level is authored as a `PyramidConstraint` — floors, puzzles,
-  traps, locks, difficulty, skin — and built by the same `buildSite` path as a pyramid. The tomb branch that
+  traps, locks, difficulty, tileset — and built by the same `buildSite` path as a pyramid. The tomb branch that
   copies a subset of floor fields goes. `tomb()` adds only what is the tomb's own, as rules on top of an
   ordinary site: the ward key per floor (`wardPath`/`wardChest`), `tombTreasure`, and the tableau `runNr`,
   each set explicitly rather than derived from the floor index.
@@ -32,20 +32,20 @@ their caves, caverns and locks with their own releases.
 - **Saves.** The cavern's keys move from `1:` to `2:`. The starter release resets saves
   (`docs/instructions/world-reshape-release.md`), so there is no migration.
 
-## 2. Skin, apart from difficulty
+## 2. Tileset, apart from difficulty
 
-- A floor, a section and a room resolve a **skin**: `section.skin ?? floor.skin ?? section.difficulty`. With
-  no skin authored, every site draws as today (byte-identical).
-- The skin picks the **tiles and palette** (`tileUrl`, `tierPalette`, rank mood) and the **encounter wall**:
-  `EncounterModal` takes the room's skin instead of `ctx.difficulty`. Difficulty picks the board.
-- Gates and doorways keep their per-cell difficulty art, so a room's weight still reads off the floor.
-- New skin: `cave`. Without its art it falls back to `placeholder/` tiles and the card colour behind
+- A floor, a section and a room resolve a **tileset**: `section.tileset ?? floor.tileset ?? section.difficulty`. With
+  no tileset authored, every site draws as today (byte-identical).
+- The tileset picks **everything drawn** — the tiles and palette (`tileUrl`, `tierPalette`, rank mood) and the **encounter wall**:
+  `EncounterModal` takes the room's tileset instead of `ctx.difficulty`. Difficulty picks the board only.
+- (Named `tileset`, not `skin`: a floor's `theme` is already called its skin in the code.)
+- New tileset: `cave`. Without its art it falls back to `placeholder/` tiles and the card colour behind
   encounters, as a rank without wall art does now.
 
 ## 3. Node difficulty and loot
 
-- `NodeSelector` gains `difficulty`. A node's difficulty lands in `RoomCell.difficulty` and drives that
-  room's board; the floor's other rooms keep the floor's difficulty.
+- `NodeSelector` gains `difficulty`, resolved to `difficultiesByIndex` like `encountersByIndex`. It drives
+  that room's board (family deal, board bucket, loot tier); the room is still drawn in its section's tileset.
 - `loot: false` on a floor, a section and a node, inherited downward. It drops **generated** slots only —
   puzzle-room slots and `fragmentSlot` defaults. Authored rewards stay: `tombTreasure`, ward keys, chests.
 - Everything new in this redesign carries `loot: false`: tier + 1 puzzles must not pull higher-tier loot into
@@ -64,7 +64,7 @@ their caves, caverns and locks with their own releases.
 ## 5. The cave site (level 1)
 
 - Exterior: a desert ridge with a cave mouth, no board.
-- One site with 1..n floors, `skin: "cave"`, `difficulty` the tomb's own tier. Starter: one floor.
+- One site with 1..n floors, `tileset: "cave"`, `difficulty` the tomb's own tier. Starter: one floor.
 - Puzzles on the main path at the **tomb's own tier** (starter: three). The lock is the tier + 1 step.
 - **One floor lock per cave floor at tier + 1**, placed by name through the ordinary `locks`/`realisations`.
   Tier + 1 is how the lock feels in solve steps, not a code link — lock tier folders only classify:
@@ -78,7 +78,7 @@ their caves, caverns and locks with their own releases.
 
 - Exterior: a vast cave with sunlight falling in, the pyramid standing in it. Board `levelSettings` sized as
   the next tier's (starter tomb: a junior-sized board); wizard uses wizard at its heaviest.
-- Floors as today (starter: four), `difficulty` and `skin` the tomb's tier.
+- Floors as today (starter: four), `difficulty` and `tileset` the tomb's tier.
 - **Unchanged:** the tableaus in the same order with explicit `runNr`, each floor leading to its ward key;
   `tombTreasure`; the chest; the crocodile (junior and up); the tomb's own loot.
 - **Added:** tier + 1 puzzles between the tableaus as `nodes: [{ where, encounter, difficulty, loot: false }]`,
@@ -91,14 +91,14 @@ Painted by the user through `yarn repaint`; prompts go in the repaint docs.
 
 1. Cave-mouth exterior.
 2. Sunlit cavern with its pyramid.
-3. `cave` skin tiles (floor and wall, the same set as a rank folder) and its palette.
-4. `cave` skin encounter wall.
+3. `cave` tileset tiles (floor and wall, the same set as a rank folder) and its palette.
+4. `cave` tileset encounter wall.
 
 ## 8. Build order (starter release)
 
 1. Capture a stability baseline (`generatedWorld.ts`, tableaus, tier fingerprints).
 2. Uniform tomb authoring through `buildSite`, explicit `runNr`, tableau family ordinal. World byte-identical.
-3. Skin on floor, section and room; tiles and `EncounterModal` read it. World byte-identical.
+3. Tileset on floor, section and room; tiles and `EncounterModal` read it. World byte-identical.
 4. `difficulty` and `loot` on `NodeSelector`; `loot` on floor and section. World byte-identical.
 5. Per-level `exterior` and `board: false`; no slide after a boardless level; resume a completed journey at
    its last level.
@@ -108,7 +108,7 @@ Painted by the user through `yarn repaint`; prompts go in the repaint docs.
 
 ## 9. Testing
 
-- Unit tests on the vocabulary with made-up sites, never on authored locks or puzzles: skin resolution
+- Unit tests on the vocabulary with made-up sites, never on authored locks or puzzles: tileset resolution
   (default and inheritance), tableau ordinal with another room between tableaus, `loot: false` dropping
   generated slots and keeping authored rewards, node difficulty in `RoomCell`, a boardless level continuing
   without a slide, resume at the last level.
