@@ -64,14 +64,14 @@ beforeEach(() => {
 
 describe("Fez's reminder to set the mosaic pieces in", () => {
   it("comes on the third return to the travel screen with pieces in hand, replayed though heard before", async () => {
-    const { asked, showConversation } = await returnTimes(3, 2)
+    const { asked, showConversation } = await returnTimes(3, 5)
 
     expect(asked).toEqual(["mosaicReminder"])
     expect(showConversation).toHaveBeenCalledWith("mosaicReminder", undefined, { forceReplay: true })
   })
 
   it("does not come on the returns before it", async () => {
-    expect((await returnTimes(2, 2)).asked).toEqual([])
+    expect((await returnTimes(2, 5)).asked).toEqual([])
   })
 
   it("never comes with no pieces waiting", async () => {
@@ -79,18 +79,22 @@ describe("Fez's reminder to set the mosaic pieces in", () => {
   })
 
   it("waits while somebody else is talking", async () => {
-    expect((await returnTimes(3, 1, { speaking: true })).asked).toEqual([])
-    expect((await returnTimes(1, 1)).asked).toEqual(["mosaicReminder"])
+    expect((await returnTimes(3, 5, { speaking: true })).asked).toEqual([])
+    expect((await returnTimes(1, 5)).asked).toEqual(["mosaicReminder"])
   })
 
   it("waits until Fez is met", async () => {
-    expect((await returnTimes(3, 1, { met: false })).asked).toEqual([])
-    expect((await returnTimes(1, 1)).asked).toEqual(["mosaicReminder"])
+    expect((await returnTimes(3, 5, { met: false })).asked).toEqual([])
+    expect((await returnTimes(1, 5)).asked).toEqual(["mosaicReminder"])
+  })
+
+  it("lets a handful of loose pieces be", async () => {
+    expect((await returnTimes(6, 4)).asked).toEqual([])
   })
 
   it("stays quiet with tutorials turned off", async () => {
     store.tutorialsEnabled = false
-    expect((await returnTimes(6, 1)).asked).toEqual([])
+    expect((await returnTimes(6, 5)).asked).toEqual([])
   })
 
   it("gives the explanation instead when the player has pieces and never heard it", async () => {
