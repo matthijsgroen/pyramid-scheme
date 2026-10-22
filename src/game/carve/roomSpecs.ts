@@ -1,4 +1,5 @@
 import { DEFAULT_CONTROL_ROLE } from "../encounterFallback"
+import { roomDifficulty } from "../roomDifficulty"
 import type { EncounterResolution } from "../siteAssembler"
 import type { KeyColor, MechanismRecord, SideSection, SubSection } from "../siteTypes"
 import type { StatefulControl } from "../obstacles"
@@ -121,7 +122,7 @@ export const puzzleRoomSpec = (
     familyOrdinal,
     ...(boardIndex !== undefined ? { boardIndex } : {}),
     ...(section.encounterArgs !== undefined ? { encounterArgs: section.encounterArgs } : {}),
-    difficulty: section.difficulty,
+    difficulty: roomDifficulty(section, pi),
     ...(section.theme !== undefined ? { theme: section.theme } : {}),
     ...(section.role !== undefined ? { role: section.role } : {}),
     ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),

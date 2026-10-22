@@ -1,4 +1,5 @@
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
+import { roomDifficulty } from "@/game/roomDifficulty"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { EncounterResolution, ResolveEncounter } from "@/game/siteAssembler"
 import type { FloorConfig, SiteConfig, SubSection } from "@/game/siteTypes"
@@ -122,7 +123,7 @@ export const buildBoardIndexes = (
             )
             const seedable = byId.get(familyId)?.seedable
             if (!seedable) continue
-            const bucket = configHash(seedable.resolveOptions({ difficulty: section.difficulty }))
+            const bucket = configHash(seedable.resolveOptions({ difficulty: roomDifficulty(section, pathIndex) }))
             const ordinal = nextInBucket.get(bucket) ?? 0
             nextInBucket.set(bucket, ordinal + 1)
             indexes.set(

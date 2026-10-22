@@ -8,7 +8,7 @@ import { initPuzzleChains } from "./puzzleRewards"
 import { buildSideSections, type ResolveReward } from "./sideSections"
 import { stairIdAt } from "../game/stairAddress"
 import type { FloorConstraint, PyramidConstraint, RewardSpec } from "./dsl"
-import { resolveNodeActivities, resolveNodeSelectors } from "./dsl"
+import { resolveNodeActivities, resolveNodeDifficulties, resolveNodeSelectors } from "./dsl"
 import { ONE_WAY_KIND, declaredBinding, regionBarrierBinding, resolveBinding } from "./realisationBinding"
 
 // ── Per-pyramid randomized resolution ─────────────────────────────────────────
@@ -95,6 +95,7 @@ export type BuildFloorOptions = {
   encounter?: FloorConfig["encounter"]
   encountersByIndex?: FloorConfig["encountersByIndex"]
   activitiesByIndex?: FloorConfig["activitiesByIndex"]
+  difficultiesByIndex?: FloorConfig["difficultiesByIndex"]
   forks?: FloorConfig["forks"]
   oneWays?: FloorConfig["oneWays"]
   oneWayRealisation?: FloorConfig["oneWayRealisation"]
@@ -140,6 +141,9 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
     : {}),
   ...(opts.activitiesByIndex && Object.keys(opts.activitiesByIndex).length
     ? { activitiesByIndex: opts.activitiesByIndex }
+    : {}),
+  ...(opts.difficultiesByIndex && Object.keys(opts.difficultiesByIndex).length
+    ? { difficultiesByIndex: opts.difficultiesByIndex }
     : {}),
   ...(opts.corridorStraightness !== undefined ? { corridorStraightness: opts.corridorStraightness } : {}),
   ...(opts.packing !== undefined ? { packing: opts.packing } : {}),
@@ -334,6 +338,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           // Resolve this floor's authored `nodes` selectors → per-node encounter overrides (§G).
           encountersByIndex: resolveNodeSelectors(fc.nodes, floorPP),
           activitiesByIndex: resolveNodeActivities(fc.nodes, floorPP),
+          difficultiesByIndex: resolveNodeDifficulties(fc.nodes, floorPP),
           // A floor's own junctions win; otherwise the site's, the way `encounter` and `theme` resolve.
           forks: fc.forks ?? constraint.forks,
           oneWays: fc.oneWays ?? constraint.oneWays,

@@ -1,4 +1,5 @@
 import { contentNow, controlAtIndex, forkPositions, gateIndexOf, gateIndices, keyOf } from "./derive"
+import { roomDifficulty } from "../roomDifficulty"
 import { gateKeyOf, stairOnThisFloor } from "./ids"
 import {
   controlRoomSpec,
@@ -54,7 +55,7 @@ export const mainRooms = pass(
         rooms.set(cellKey, {
           ...spec,
           sectionAddress: addressOf.get(positional) ?? positional,
-          difficulty: section.difficulty,
+          difficulty: i < section.pathPuzzles ? roomDifficulty(section, i) : section.difficulty,
         })
       })
     }
@@ -122,7 +123,7 @@ export const mainRooms = pass(
           familyOrdinal,
           ...(boardIndex !== undefined ? { boardIndex } : {}),
           ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
-          difficulty: config.difficulty,
+          difficulty: roomDifficulty(config, k),
           ...(config.theme !== undefined ? { theme: config.theme } : {}),
           ...(config.condition !== undefined ? { condition: config.condition } : {}),
           ...(config.patron !== undefined ? { patron: config.patron } : {}),

@@ -2,6 +2,7 @@ import type { SiteConfig, SubSection, Tier, TreasureReward, FragmentSlotReward }
 import type { Difficulty } from "../data/difficultyLevels"
 import { capabilitiesFor } from "./capabilities"
 import type { FloorRef } from "./reachability"
+import { roomDifficulty } from "@/game/roomDifficulty"
 
 // A candidate reward-placement site, tagged with the floor it lives on so a distribution
 // rule can be filtered down to only the currently-reachable ones (see
@@ -122,7 +123,7 @@ export const collectSlots = (
       const emitPuzzle = (
         rewards: (TreasureReward | undefined)[] | undefined,
         ref: FloorRef,
-        difficulty: Difficulty,
+        chain: { difficulty: Difficulty; difficultiesByIndex?: Record<number, Difficulty> },
         encounter: string | string[] | undefined,
         encountersByIndex: Record<number, string | string[]> | undefined,
         hidden: boolean
@@ -140,7 +141,7 @@ export const collectSlots = (
           slots.push({
             ref,
             journeyId,
-            tier: difficulty as Tier,
+            tier: roomDifficulty(chain, i) as Tier,
             wardKeys: [],
             isPlaceholder: frag !== undefined,
             ...(frag?.prefers ? { preference: frag.prefers } : {}),
@@ -157,19 +158,12 @@ export const collectSlots = (
       }
       floors.forEach((floor, floorIndex) => {
         const pRef: FloorRef = { journeyId, levelIndex, floorIndex }
-        emitPuzzle(floor.rewards, pRef, floor.difficulty, floor.encounter, floor.encountersByIndex, false)
+        emitPuzzle(floor.rewards, pRef, floor, floor.encounter, floor.encountersByIndex, false)
         for (const section of floor.sideSections) {
           const secHidden = !!section.hidden
-          emitPuzzle(section.rewards, pRef, section.difficulty, section.encounter, section.encountersByIndex, secHidden)
+          emitPuzzle(section.rewards, pRef, section, section.encounter, section.encountersByIndex, secHidden)
           for (const sub of section.sideSections ?? [])
-            emitPuzzle(
-              sub.rewards,
-              pRef,
-              sub.difficulty,
-              sub.encounter,
-              sub.encountersByIndex,
-              secHidden || !!sub.hidden
-            )
+            emitPuzzle(sub.rewards, pRef, sub, sub.encounter, sub.encountersByIndex, secHidden || !!sub.hidden)
         }
       })
 

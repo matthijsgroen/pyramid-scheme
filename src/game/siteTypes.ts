@@ -517,6 +517,8 @@ export type SubSection = {
   encountersByIndex?: Record<number, string | string[]>
   /** Per-node authored activity: 0-based room index → the activity that room is dressed for. */
   activitiesByIndex?: Record<number, ActivityId>
+  /** Per-node difficulty: 0-based room index → the tier that room builds at, else the section's `difficulty`. */
+  difficultiesByIndex?: Record<number, Difficulty>
   /** Pool of decoration kinds this section's rooms are dressed from. */
   decorations?: DecorationKind[]
   /** Pool of wall-item kinds for the same rooms, hung on a wall instead of standing on the floor. */
@@ -678,6 +680,8 @@ export type FloorConfig = {
   encountersByIndex?: Record<number, string | string[]>
   /** Per-node authored activity for the main path: 0-based room index → the activity that room is dressed for. */
   activitiesByIndex?: Record<number, ActivityId>
+  /** Per-node difficulty for the main path: 0-based room index → the tier that room builds at, else `difficulty`. */
+  difficultiesByIndex?: Record<number, Difficulty>
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65 (fairly straight); lower = more winding. */
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */

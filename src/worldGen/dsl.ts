@@ -70,6 +70,9 @@ export type NodeSelector = {
   encounter?: string | string[]
   /** What the selected room is for — a story scene's set (activities.ts). Free: it only dresses the room. */
   activity?: ActivityId
+  /** The difficulty this room is dealt and generated at, in place of its path's. A node that names only a
+   * difficulty is dealt from that difficulty's pool of the path's role. */
+  difficulty?: Difficulty
 }
 
 /** Expand `nodes` selectors against a path's node `count` into a sparse 0-based index → encounter
@@ -84,6 +87,10 @@ export const resolveNodeSelectors = (
  * `resolveNodeSelectors` does for encounters. */
 export const resolveNodeActivities = (nodes: NodeSelector[] | undefined, count: number): Record<number, ActivityId> =>
   resolveNodeField(nodes, count, sel => sel.activity)
+
+/** Expand `nodes` selectors into a sparse 0-based index → difficulty map, the way `resolveNodeActivities` does. */
+export const resolveNodeDifficulties = (nodes: NodeSelector[] | undefined, count: number): Record<number, Difficulty> =>
+  resolveNodeField(nodes, count, sel => sel.difficulty)
 
 const resolveNodeField = <T>(
   nodes: NodeSelector[] | undefined,

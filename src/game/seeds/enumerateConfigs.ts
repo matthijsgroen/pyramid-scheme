@@ -1,4 +1,5 @@
 import type { Difficulty } from "@/data/difficultyLevels"
+import { roomDifficulty } from "@/game/roomDifficulty"
 import type { FamilyGenerationCtx, FamilyMeta } from "@/game/families/familyMeta"
 import { expandFloorLocks } from "@/game/floorLocks"
 import { FORK_SHAPES } from "@/game/forkShape"
@@ -53,12 +54,15 @@ export const seedFloor = (demand: ConfigDemand, cap: number = SEED_CAP): number 
  * Every room on a section, as the family id it was baked to. Room k takes its per-index override
  * where the authoring left one, and the section's default otherwise.
  */
-const roomFamilies = (section: Pick<SubSection, "pathPuzzles" | "encounter" | "encountersByIndex">): string[] =>
+const roomFamilies = (
+  section: Pick<SubSection, "pathPuzzles" | "encounter" | "encountersByIndex" | "difficulty" | "difficultiesByIndex">
+): { familyId: string; difficulty: Difficulty }[] =>
   Array.from({ length: section.pathPuzzles }, (_unused, room) => {
     const baked = section.encountersByIndex?.[room] ?? section.encounter
+    const difficulty = roomDifficulty(section, room)
     // An array survives baking where the authoring named a pool rather than a family; the assembler
     // resolves it per room, so a list of candidates is a list of buckets any of them may need.
-    return Array.isArray(baked) ? baked : baked ? [baked] : []
+    return (Array.isArray(baked) ? baked : baked ? [baked] : []).map(familyId => ({ familyId, difficulty }))
   }).flat()
 
 const sectionsOf = (section: SubSection & { sideSections?: SubSection[] }): SubSection[] => [
@@ -158,8 +162,7 @@ export const enumerateConfigs = (world: Record<string, SiteConfig[]>, families: 
       for (const floor of site) {
         const sections = [floor, ...floor.sideSections.flatMap(section => sectionsOf(section))]
         for (const section of sections) {
-          const { difficulty } = section
-          for (const familyId of roomFamilies(section)) ask(familyId, difficulty, { difficulty }, 1)
+          for (const { familyId, difficulty } of roomFamilies(section)) ask(familyId, difficulty, { difficulty }, 1)
         }
         const { families: switchFamilyIds, count } = switchFamilies(floor)
         for (const familyId of switchFamilyIds)
