@@ -50,6 +50,9 @@ export type FamilyContext = {
   // (e.g. a tableau's `{ runNr }`), carried from the assembled cell. The tableau family reads both
   // to re-derive the exact authored TableauLevel world-gen placed fragments for. Opaque to core.
   pathIndex?: number
+  // This room's place among the rooms of its own family on its chain (RoomCell.familyOrdinal), which a
+  // family keys its authored content by.
+  familyOrdinal?: number
   // Which entry of this room's seed list to build (src/game/seeds/boardIndex.ts) — dealt at assembly so
   // no two rooms in the world serve the same board. Unset outside the baked world; generatePuzzle then
   // falls back to indexing the list by the room's own hash.

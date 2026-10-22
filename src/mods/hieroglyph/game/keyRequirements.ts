@@ -11,20 +11,20 @@ import type { FamilyKeyRequirementResolver } from "@/game/families/familyMeta"
 // `runNr` is author-supplied via FloorConfig/SideSection's `encounterArgs` — no derivation
 // from floor position, since a tableau corridor can now be authored anywhere (a ward-gated
 // side path, not just the main path), and two corridors on the same floor need to be able
-// to name different runs. `levelNr` is never authored: it's `pathIndex + 1`, this room's
-// 1-based position among its own section's tableau rooms in path order (see
-// ResolveKeyRequirements in siteAssembler.ts for how pathIndex is scoped).
+// to name different runs. `levelNr` is never authored: it's `familyOrdinal + 1`, this room's
+// 1-based position among the tableau rooms of its own chain in path order, so a room of another family
+// standing before it never renumbers it (see RoomCell.familyOrdinal).
 // The tableau encounter's authored args — shared with the play-time tableau plugin so both the
 // world-gen resolver and the rendered puzzle validate + read `runNr` the same way.
 export const tableauEncounterArgsSchema = z.object({ runNr: z.number().int().positive() })
 
 export const resolveTableauKeyRequirements: FamilyKeyRequirementResolver = ({
   journeyId,
-  pathIndex,
+  familyOrdinal,
   encounterArgs,
 }) => {
   const { runNr } = tableauEncounterArgsSchema.parse(encounterArgs)
-  const levelNr = pathIndex + 1
+  const levelNr = familyOrdinal + 1
   const level = getTableauLevel(journeyId, runNr, levelNr)
   if (!level) {
     throw new Error(

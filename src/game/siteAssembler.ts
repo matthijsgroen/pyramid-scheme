@@ -56,7 +56,7 @@ export const encounterFromMeta = (meta: FamilyMeta | undefined, fallback: string
 // declares one (see src/mods/allFamilyMeta.ts); most families provide none.
 export type ResolveKeyRequirements = (
   familyId: string,
-  ctx: { journeyId: string; floorIndex: number; pathIndex: number; encounterArgs?: unknown }
+  ctx: { journeyId: string; floorIndex: number; pathIndex: number; familyOrdinal: number; encounterArgs?: unknown }
 ) => string[] | undefined
 
 export type AssembleFloorKeyRequirements = {

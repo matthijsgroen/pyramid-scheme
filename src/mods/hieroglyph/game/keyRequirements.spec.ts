@@ -10,19 +10,31 @@ const realTableau = (journeyId: string, runNr: number, levelNr: number) =>
   tableauLevels.find(t => t.tombJourneyId === journeyId && t.runNumber === runNr && t.levelNr === levelNr)
 
 describe(resolveTableauKeyRequirements, () => {
-  it("pathIndex 0 selects levelNr 1 — the floor's first tableau room", () => {
+  it("familyOrdinal 0 selects levelNr 1 — the floor's first tableau room", () => {
     const tombId = "starter_treasure_tomb"
     const expected = realTableau(tombId, 1, 1)!
     expect(
-      resolveTableauKeyRequirements({ journeyId: tombId, floorIndex: 0, pathIndex: 0, encounterArgs: { runNr: 1 } })
+      resolveTableauKeyRequirements({
+        journeyId: tombId,
+        floorIndex: 0,
+        pathIndex: 0,
+        familyOrdinal: 0,
+        encounterArgs: { runNr: 1 },
+      })
     ).toEqual(expected.inventoryIds.map(id => `hieroglyph:${id}`))
   })
 
-  it("pathIndex selects levelNr = pathIndex + 1 — one room per tableau on the floor", () => {
+  it("familyOrdinal selects levelNr = familyOrdinal + 1 — one room per tableau on the floor", () => {
     const tombId = "starter_treasure_tomb"
     const expected = realTableau(tombId, 1, 2)!
     expect(
-      resolveTableauKeyRequirements({ journeyId: tombId, floorIndex: 0, pathIndex: 1, encounterArgs: { runNr: 1 } })
+      resolveTableauKeyRequirements({
+        journeyId: tombId,
+        floorIndex: 0,
+        pathIndex: 1,
+        familyOrdinal: 1,
+        encounterArgs: { runNr: 1 },
+      })
     ).toEqual(expected.inventoryIds.map(id => `hieroglyph:${id}`))
   })
 
@@ -32,29 +44,33 @@ describe(resolveTableauKeyRequirements, () => {
       journeyId: tombId,
       floorIndex: 0,
       pathIndex: 0,
+      familyOrdinal: 0,
       encounterArgs: { runNr: 1 },
     })
     const run2 = resolveTableauKeyRequirements({
       journeyId: tombId,
       floorIndex: 0,
       pathIndex: 0,
+      familyOrdinal: 0,
       encounterArgs: { runNr: 2 },
     })
     expect(run2).not.toEqual(run1)
   })
 
-  it("floorIndex doesn't affect the result — runNr/pathIndex fully determine the lookup", () => {
+  it("floorIndex doesn't affect the result — runNr/familyOrdinal fully determine the lookup", () => {
     const tombId = "starter_treasure_tomb"
     const a = resolveTableauKeyRequirements({
       journeyId: tombId,
       floorIndex: 0,
       pathIndex: 0,
+      familyOrdinal: 0,
       encounterArgs: { runNr: 1 },
     })
     const b = resolveTableauKeyRequirements({
       journeyId: tombId,
       floorIndex: 99,
       pathIndex: 0,
+      familyOrdinal: 0,
       encounterArgs: { runNr: 1 },
     })
     expect(a).toEqual(b)
@@ -62,7 +78,7 @@ describe(resolveTableauKeyRequirements, () => {
 
   it("throws when encounterArgs is missing or malformed", () => {
     const tombId = "starter_treasure_tomb"
-    const base = { journeyId: tombId, floorIndex: 0, pathIndex: 0 }
+    const base = { journeyId: tombId, floorIndex: 0, pathIndex: 0, familyOrdinal: 0 }
     expect(() => resolveTableauKeyRequirements({ ...base, encounterArgs: undefined })).toThrow()
     expect(() => resolveTableauKeyRequirements({ ...base, encounterArgs: {} })).toThrow()
     expect(() => resolveTableauKeyRequirements({ ...base, encounterArgs: { runNr: -1 } })).toThrow()
@@ -75,6 +91,7 @@ describe(resolveTableauKeyRequirements, () => {
         journeyId: "starter_treasure_tomb",
         floorIndex: 0,
         pathIndex: 999,
+        familyOrdinal: 999,
         encounterArgs: { runNr: 1 },
       })
     ).toThrow()
@@ -83,8 +100,24 @@ describe(resolveTableauKeyRequirements, () => {
         journeyId: "not-a-real-tomb",
         floorIndex: 0,
         pathIndex: 0,
+        familyOrdinal: 0,
         encounterArgs: { runNr: 1 },
       })
     ).toThrow()
+  })
+})
+
+describe("a tableau's place on its chain", () => {
+  it("resolves by its family ordinal, not its path position", () => {
+    const at = (pathIndex: number, familyOrdinal: number) =>
+      resolveTableauKeyRequirements({
+        journeyId: "starter_treasure_tomb",
+        floorIndex: 0,
+        pathIndex,
+        familyOrdinal,
+        encounterArgs: { runNr: 1 },
+      })
+    expect(at(2, 1)).toEqual(at(1, 1))
+    expect(at(2, 1)).toEqual(realTableau("starter_treasure_tomb", 1, 2)!.inventoryIds.map(id => `hieroglyph:${id}`))
   })
 })

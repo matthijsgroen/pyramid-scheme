@@ -237,6 +237,10 @@ export type RoomCell = {
   // family re-deriving which TableauLevel it presents from journeyId + the section's own
   // encounterArgs.runNr + this index, not from floor position).
   pathIndex?: number
+  // This room's position among the rooms of its own family on its chain (main path, or one section),
+  // 0-based in path order. A family keys authored content by it (a tableau's level), so a room of
+  // another family standing before it never renumbers it.
+  familyOrdinal?: number
   // Which entry of its family's seed list this room draws (see src/game/seeds/boardIndex.ts). Every
   // room drawing from one list gets a different entry, so no two rooms in the world serve the same
   // board. Unset where the site isn't part of the baked world (stories, specs, the builder), and the

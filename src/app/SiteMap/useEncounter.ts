@@ -85,6 +85,7 @@ export const useEncounter = ({
       reward: cell?.type === "room" ? cell.reward : undefined,
       stock: cell?.type === "room" ? cell.stock : undefined,
       pathIndex: cell?.type === "room" ? cell.pathIndex : undefined,
+      familyOrdinal: cell?.type === "room" ? cell.familyOrdinal : undefined,
       boardIndex: cell?.type === "room" ? cell.boardIndex : undefined,
       encounterArgs: cell?.type === "room" ? cell.encounterArgs : undefined,
       // The skin this room was authored to wear (docs/instructions/puzzle-screens.md §2). Core carries the

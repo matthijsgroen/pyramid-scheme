@@ -222,9 +222,8 @@ export const starterRules: Rule[] = [
       // fragment host. `pathPuzzles` is structural and re-carves this floor; the encounter itself is
       // free (docs/game-design/world-spec-stability.md).
       //
-      // LAST, not first: a tableau's authored content is keyed by its position along the path
-      // (`levelNr = pathIndex + 1`), so a room inserted ahead of them renumbers every tableau on the
-      // floor and asks for a level nobody wrote.
+      // LAST by choice: his ghost beat closes the floor. A tableau's authored content is keyed by its place
+      // among tableaus (`levelNr = familyOrdinal + 1`), so he could stand anywhere without renumbering them.
       {
         mainEndReward: "tombTreasure",
         pathPuzzles: TOMB_ROOMS_PER_FLOOR.starter + 1,

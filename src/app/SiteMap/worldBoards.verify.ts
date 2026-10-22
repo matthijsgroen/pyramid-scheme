@@ -50,6 +50,7 @@ describe("every room in the world builds the board its tap asks for", () => {
               reward: cell.reward,
               stock: cell.stock,
               pathIndex: cell.pathIndex,
+              familyOrdinal: cell.familyOrdinal,
               boardIndex: cell.boardIndex,
               encounterArgs: cell.encounterArgs,
               theme: cell.theme,

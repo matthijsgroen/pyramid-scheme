@@ -5,6 +5,7 @@ import {
   endRoomSpec,
   floorKeysOfGate,
   leverSpec,
+  familyOrdinals,
   puzzleRoomSpec,
   regionBarrierDoorSpec,
 } from "./roomSpecs"
@@ -35,6 +36,7 @@ export const mainRooms = pass(
     const gateAt = gateIndexOf(state)
     const controlAt = controlAtIndex(prep, state.mainControls)
     const rooms = new Map<string, RoomSpec>()
+    const mainOrdinalOf = familyOrdinals()
 
     // A SECTION FILLED INTO LAID NODES KEEPS ITS OWN IDENTITY ON ITS ROOMS: the section's address and its slots
     // are the ones it would have as a branch, so a save filed under them survives a re-carve that moves the room
@@ -42,11 +44,12 @@ export const mainRooms = pass(
     for (const { section: idx, cells: nodes } of laid?.absorbed ?? []) {
       const section = sideSections[idx]
       const positional = `s${idx}`
+      const ordinalOf = familyOrdinals()
       nodes.forEach((cellKey, i) => {
         const cell = cellKey.split(",").map(Number) as Cell
         const spec =
           i < section.pathPuzzles
-            ? puzzleRoomSpec(prep, section, positional, i)
+            ? puzzleRoomSpec(prep, section, positional, i, ordinalOf)
             : endRoomSpec(prep, section, positional, hostColors.get(idx) ?? [], cell)
         rooms.set(cellKey, {
           ...spec,
@@ -103,9 +106,11 @@ export const mainRooms = pass(
           override !== undefined ? resolveEncounter(override, "puzzle") : resolveEncounter(config.encounter, "puzzle")
         const reward = config.rewards?.[k]
         const authoredActivity = config.activitiesByIndex?.[k]
+        const familyOrdinal = mainOrdinalOf(family.familyId)
         const requiredKeyIds = resolveKeyRequirements(family.familyId, {
           ...floorRef,
           pathIndex: k,
+          familyOrdinal,
           encounterArgs: config.encounterArgs,
         })
         const boardIndex = resolveBoardIndex?.(family.familyId, { section: "main", pathIndex: k })
@@ -114,6 +119,7 @@ export const mainRooms = pass(
           family: family.familyId,
           tags: family.tags,
           pathIndex: k,
+          familyOrdinal,
           ...(boardIndex !== undefined ? { boardIndex } : {}),
           ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
           difficulty: config.difficulty,

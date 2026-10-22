@@ -8,6 +8,7 @@ import {
   endRoomSpec,
   floorKeysOfGate,
   leverSpec,
+  familyOrdinals,
   puzzleRoomSpec,
   regionBarrierDoorSpec,
 } from "./roomSpecs"
@@ -252,8 +253,9 @@ export const chainRooms = pass(
         }
       }
 
+      const ordinalOf = familyOrdinals()
       for (let pi = 0; pi < section.pathPuzzles; pi++)
-        rooms.set(keyOf(cells[contentIndices[pi]]), puzzleRoomSpec(prep, section, positional, pi))
+        rooms.set(keyOf(cells[contentIndices[pi]]), puzzleRoomSpec(prep, section, positional, pi, ordinalOf))
 
       // A stretch a lock laid ends with the lock's own room, or in none.
       if (laidChain) continue

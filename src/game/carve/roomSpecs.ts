@@ -77,12 +77,24 @@ export const controlRoomSpec = (
   mechanismId: control.id,
 })
 
+/** Counts, per family, the rooms of one chain as they are resolved in path order. The one place a room's
+ * `familyOrdinal` is computed: every reader takes it off the room. */
+export const familyOrdinals = () => {
+  const seen = new Map<string, number>()
+  return (familyId: string): number => {
+    const ordinal = seen.get(familyId) ?? 0
+    seen.set(familyId, ordinal + 1)
+    return ordinal
+  }
+}
+
 // THE ROOMS A SIDE SECTION IS MADE OF, written once for a branch and for a section filled into laid nodes.
 export const puzzleRoomSpec = (
   prep: FloorPrep,
   section: SideSection | SubSection,
   positional: string,
-  pi: number
+  pi: number,
+  ordinalOf: (familyId: string) => number
 ): RoomSpec => {
   const { resolveEncounter, resolveKeyRequirements, resolveBoardIndex, floorRef } = prep.input
   const reward = section.rewards?.[pi]
@@ -90,9 +102,11 @@ export const puzzleRoomSpec = (
   const override = section.encountersByIndex?.[pi]
   const family =
     override !== undefined ? resolveEncounter(override, "puzzle") : resolveEncounter(section.encounter, "puzzle")
+  const familyOrdinal = ordinalOf(family.familyId)
   const requiredKeyIds = resolveKeyRequirements(family.familyId, {
     ...floorRef,
     pathIndex: pi,
+    familyOrdinal,
     encounterArgs: section.encounterArgs,
   })
   const boardIndex = resolveBoardIndex?.(family.familyId, { section: positional, pathIndex: pi })
@@ -104,6 +118,7 @@ export const puzzleRoomSpec = (
     family: family.familyId,
     tags: family.tags,
     pathIndex: pi,
+    familyOrdinal,
     ...(boardIndex !== undefined ? { boardIndex } : {}),
     ...(section.encounterArgs !== undefined ? { encounterArgs: section.encounterArgs } : {}),
     difficulty: section.difficulty,

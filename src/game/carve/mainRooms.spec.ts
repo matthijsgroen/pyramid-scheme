@@ -37,6 +37,19 @@ describe("mainRooms", () => {
     expect(at(goal)?.family).toBe("treasure-chest")
   })
 
+  it("numbers a room among the rooms of its own family on the chain", () => {
+    const state = firstCarved(
+      prepOf(plainFloor({ pathPuzzles: 4, encounter: "tableau", encountersByIndex: { 1: "sumplete" } }))
+    )
+    const rooms = state.content!.placed.slice(0, 4).map(step => state.mainRooms!.get(keyOf(state.maze!.mainPath[step])))
+    expect(rooms.map(room => [room?.family, room?.familyOrdinal])).toEqual([
+      ["tableau", 0],
+      ["sumplete", 0],
+      ["tableau", 1],
+      ["tableau", 2],
+    ])
+  })
+
   it("makes the exit a plain portal, or a stairhead where the floor goes down", () => {
     const exit = (exitOrStaircase: "exit" | "staircase") => {
       const { state, rooms } = carvedWith(exitOrStaircase)
