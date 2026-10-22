@@ -394,6 +394,24 @@ describe("buildSite tileset", () => {
     expect(floor.sideSections.map(s => s.tileset)).toEqual(["junior", undefined])
   })
 
+  it("a nested section wears its parent's tileset unless it names its own", () => {
+    const [floor] = floorsOf({
+      floors: [
+        {
+          pathPuzzles: 1,
+          sideSections: [
+            {
+              pathPuzzles: 1,
+              tileset: "cave",
+              sideSections: [{ pathPuzzles: 1 }, { pathPuzzles: 1, tileset: "junior" }],
+            },
+          ],
+        },
+      ],
+    })
+    expect(floor.sideSections[0].sideSections?.map(s => s.tileset)).toEqual(["cave", "junior"])
+  })
+
   it("an unset tileset leaves the built floor unchanged", () => {
     const [floor] = floorsOf({ floors: [{ pathPuzzles: 1, sideSections: [{ pathPuzzles: 1 }] }] })
     expect(floor).not.toHaveProperty("tileset")

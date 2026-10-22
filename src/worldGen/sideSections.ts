@@ -1,5 +1,5 @@
 import type { Difficulty, SideSection, TreasureReward } from "./types"
-import type { DecorationKind, WallDecorationKind } from "../game/siteTypes"
+import type { DecorationKind, Tileset, WallDecorationKind } from "../game/siteTypes"
 import { mulberry32 } from "../game/random"
 import { TIER_UNLOCK_PERK_IDS } from "../data/treasurePerks"
 import { hashStr, pathEndToReward, specToGate } from "./rewards"
@@ -46,13 +46,24 @@ const buildDslSection = <TExtra extends string>(
   resolveReward: ResolveReward<TExtra>,
   floor: FloorStairAddress,
   path: string,
-  parentLoot: false | undefined
+  parentLoot: false | undefined,
+  parentTileset: Tileset | undefined
 ): SideSection => {
   const gate = specToGate(cs.gate)
   const sectionDifficulty = cs.difficulty ?? difficulty
   // Lootless is inherited downward: a section is lootless when it says so or the path it hangs off is.
   const loot = cs.loot ?? parentLoot
-  const subSections = buildDslSections(cs.sideSections, sectionDifficulty, resolveReward, floor, `${path}.`, loot)
+  // A path's own look carries down to the paths beneath it, the way its difficulty and lootlessness do.
+  const tileset = cs.tileset ?? parentTileset
+  const subSections = buildDslSections(
+    cs.sideSections,
+    sectionDifficulty,
+    resolveReward,
+    floor,
+    `${path}.`,
+    loot,
+    tileset
+  )
   const end = cs.end === "staircase" ? { stairId: stairIdAt({ ...floor, path }) } : ("treasure" as const)
   // A treasure end with no authored reward and no gate is a plain loot slot — default it to the
   // untagged `treasure` slot (filled by whatever's spare) — unless the section is lootless, where it holds
@@ -74,7 +85,7 @@ const buildDslSection = <TExtra extends string>(
     ...(cs.label !== undefined ? { label: cs.label } : {}),
     pathPuzzles,
     difficulty: sectionDifficulty,
-    ...(cs.tileset !== undefined ? { tileset: cs.tileset } : {}),
+    ...(tileset !== undefined ? { tileset } : {}),
     end,
     ...(gate ? { gate } : {}),
     ...(endReward ? { endReward } : {}),
@@ -105,10 +116,11 @@ const buildDslSections = <TExtra extends string>(
   floor: FloorStairAddress,
   pathPrefix: string,
   parentLoot: false | undefined,
+  parentTileset: Tileset | undefined,
   startIndex = 0
 ): SideSection[] =>
   (constraintSections ?? []).map((cs, i) =>
-    buildDslSection(cs, difficulty, resolveReward, floor, `${pathPrefix}${startIndex + i}`, parentLoot)
+    buildDslSection(cs, difficulty, resolveReward, floor, `${pathPrefix}${startIndex + i}`, parentLoot, parentTileset)
   )
 
 export type BuildSideSectionsOptions<TExtra extends string = never> = {
@@ -238,7 +250,9 @@ export const buildSideSections = <TExtra extends string = never>(
     }
   }
 
-  sections.push(...buildDslSections(constraintSections, difficulty, resolveReward, floor, "s", loot, sections.length))
+  sections.push(
+    ...buildDslSections(constraintSections, difficulty, resolveReward, floor, "s", loot, undefined, sections.length)
+  )
 
   const colorCount = Math.min(keyColors ?? 1, 5)
 
