@@ -262,8 +262,10 @@ its face is kept: laid over the base, it is the same Fez with a different look o
 **The face layer is the whole face region, cut with a feathered mask.** Diff the expression edit against its
 base; the pixels that moved are the face, and the mask is an ellipse around them — head included, brows to
 chin — with a soft edge tens of pixels wide, so the join fades over a band rather than sitting on a line.
-The proof that this works is the explorer: the grin from `grin-explorer.jpeg`, cut that way and laid over
-`explorer.jpeg`, shows no seam.
+The proof that this works is Fez: `fez-worried.jpeg`, an edit of `fez.jpeg` that changed only the face, cut
+that way and laid over both `fez.jpeg` and `fez-pointUp-base.jpeg`, shows no seam. It holds only for a true
+face-only edit — the explorer's grin is a separate painting whose head sits slightly off his neutral one, and
+laid over it the mouth doubles.
 
 **Not separate eyes and mouth.** It would be the cheaper layer set, and it does not survive this style: an
 expression moves the brows, the cheeks, the shape of the eye whites and the shading around all of them
@@ -338,8 +340,7 @@ reference. Like `fez-worried`, the master shows MISSING until `fez-master` has l
 
 ### The next faces, in the order they are owed
 
-Five face edits, master only like the proof, highest-serving first. Landing one is three steps: `yarn
-repaint <key> --land`, then the import line under its entry (the face layer, cut through its base's frame),
+Five face edits, master only like the proof, highest-serving first. Landing one is three steps: `yarn repaint <key> --land`, then the import line under its entry (the face layer, cut through its base's frame),
 then tagging its lines in `storyPoses.ts`. Fez's faces stack on both of his face bases (`fez`,
 `point-fez-base`). The explorer's stack on his neutral pose only: `explorer.jpeg` is the master
 `explorer-250` was cut from, and a face edit of it is framed through that same bust window by passing the
