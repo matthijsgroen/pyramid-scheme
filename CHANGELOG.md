@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The map button on the main screen is square.
 - Fez and the explorer look excited on their excited story lines.
 - Fez looks worried on his worried story lines.
+- Fez looks wistful, surprised or sheepish on the story lines that call for it.
 - Fez at his shop is the same lizard as everywhere else, cocktail in hand.
 - On a wider screen the explorer and the ghosts stand whole beside the conversation; a phone still cuts them at its edge.
 - The Sphinx stands on the horizon behind the Dawn at the Sphinx pyramids.

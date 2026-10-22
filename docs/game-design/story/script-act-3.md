@@ -100,11 +100,11 @@ years ago and he has not left off waiting for the rest of it.
 >
 > **Priest:** They are the same god. That is not a coincidence, it is the entire idea.
 >
-> **Fez:** …Right. Yes. I did know that.
+> **Fez (sheepish):** …Right. Yes. I did know that.
 >
 > **Explorer:** You did not.
 >
-> **Fez:** I did not.
+> **Fez (sheepish):** I did not.
 
 ## `expert_treasure_tomb_b` — Inner Sanctum
 
@@ -118,7 +118,7 @@ which makes it the one tomb in the tier that may refer back to a scene the playe
 **Which is also why the ask stays with him and not here.** The treasury is auto-discovered and this is not;
 an ask placed in an optional room is an arc the player can walk past.
 
-> **Fez:** Nobody has been in here. Not us, not the earlier lot, nobody.
+> **Fez (surprised):** Nobody has been in here. Not us, not the earlier lot, nobody.
 >
 > **Explorer:** How can you tell?
 >

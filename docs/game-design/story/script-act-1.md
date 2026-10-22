@@ -67,15 +67,15 @@ the map they both overpaid for, the fez nobody explains, and Fez knowing what th
 >
 > **Explorer:** Wáy too much.
 >
-> **Fez:** Me too. Pff.
+> **Fez (sheepish):** Me too. Pff.
 >
 > **Explorer:** The writing on the Sphinx… can you read it?
 >
-> **Fez:** No. Nobody can, any more. That base was blue and gold once, you know.
+> **Fez (wistful):** No. Nobody can, any more. That base was blue and gold once, you know.
 >
 > **Explorer:** How do you know that?
 >
-> **Fez:** …Heard it. So, what are you after down here?
+> **Fez (sheepish):** …Heard it. So, what are you after down here?
 >
 > **Explorer:** Something neat.
 >
@@ -157,7 +157,7 @@ room and the room is a hole in the ground.
 
 > **Ipi:** Hey! Hands off! That's my jar!
 >
-> **Fez (worried):** …Did that jar just say something?!
+> **Fez (surprised):** …Did that jar just say something?!
 >
 > **Ipi:** That was me. Third shelf, the one with the chip. That one's mine.
 >
@@ -181,7 +181,7 @@ room and the room is a hole in the ground.
 >
 > **Ipi:** Sweet? They were for the grain! Do you know what one rat costs you, over a whole season?
 >
-> **Fez:** …Oh. Right.
+> **Fez (sheepish):** …Oh. Right.
 >
 > **Ipi:** Tell Henut that Ipi sent you. That'll spoil her afternoon.
 >
@@ -228,11 +228,11 @@ half — rarely, and remembering the last time.
 
 **On the first board solved without a hint:**
 
-> **Fez:** That was quick.
+> **Fez (surprised):** That was quick.
 >
 > **Explorer:** It was a door.
 >
-> **Fez:** I'd have taken a week.
+> **Fez (sheepish):** I'd have taken a week.
 
 **On leaving the first tomb, after Ipi:**
 

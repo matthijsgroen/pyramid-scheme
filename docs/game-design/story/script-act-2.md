@@ -42,7 +42,7 @@ the ending's mechanism arriving quietly, four tiers early.
 >
 > **Explorer:** Fairly.
 >
-> **Fez:** Ninety per cent. Anyway — the signs you have been collecting are his.
+> **Fez (sheepish):** Ninety per cent. Anyway — the signs you have been collecting are his.
 
 ## `junior_4` — Lighthouse of Alexandria
 

@@ -147,7 +147,7 @@ sent to `master_2`. This says only that what they hold is wrong.
 >
 > **Explorer:** In the tomb of a man who took everything with him.
 >
-> **Fez:** …Yes. I had noticed that.
+> **Fez (sheepish):** …Yes. I had noticed that.
 
 ## Open
 
