@@ -51,9 +51,9 @@ export const repairFloorExploration = (stored: Repairable, assembleFor: Assemble
       const exit = exitOf(grid, floor)
       const section = exit && `${prefix}${exit.section}`
       const held = (section && exploredCells[section]) || []
-      // A finished level was left through AN exit, but most sites carry one on every floor and only
-      // one of them was used. What says this is the one: the last room before it was walked. Without
-      // that, a floor the player only passed through would have its tail marked walked as well.
+      // A finished level was left through its one exit. What says the player came this way: the last
+      // room before it was walked. Without that, a save that never names the rooms leading there would
+      // have its tail marked walked on a guess.
       if (
         exit &&
         section &&

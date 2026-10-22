@@ -302,6 +302,34 @@ describe("useAssembledFloor — restoring a saved position", () => {
   })
 })
 
+describe("useAssembledFloor — a save standing on an exit the floor no longer has", () => {
+  // A floor reached by a side stair lost its own exit: a site has one, at its main path's end. A save made
+  // standing on that pillar names a slot the floor no longer carves.
+  const deeper = (exitOrStaircase: FloorConfig["exitOrStaircase"]): FloorConfig => ({
+    ...CONFIG,
+    sideSections: [],
+    entrance: { stairId: "wing" },
+    mainEndReward: { type: "fragmentSlot" },
+    exitOrStaircase,
+  })
+
+  it("resumes the player on the stair they came down by", () => {
+    const withExit = deeper("exit")
+    const { result: before } = renderHook(() => useAssembledFloor(JOURNEY_ID, withExit, SEED, 1, {}, null, 0))
+    const [xr, xc] = before.current.grid!.exitPos
+    const onTheExit = cellAddress(before.current.grid!, 1, xr, xc)
+    expect(cellSlot(before.current.grid!, xr, xc)).toBe("exit")
+
+    const withoutExit = deeper("none")
+    const { result: after } = renderHook(() =>
+      useAssembledFloor(JOURNEY_ID, withoutExit, SEED, 1, {}, onTheExit, 0, undefined, undefined, undefined, onTheExit)
+    )
+    const [er, ec] = after.current.grid!.entrancePos
+    expect(after.current.explorerPos).toEqual([er, ec])
+    expect(after.current.grid!.cells[er][ec]).toMatchObject({ roomType: "portal", stairId: "wing" })
+  })
+})
+
 describe("useAssembledFloor — the high-water mark", () => {
   const assembled = assembleFloor(JOURNEY_ID, CONFIG, SEED)
   if (!assembled.success) throw new Error("assembly failed")

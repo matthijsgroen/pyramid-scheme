@@ -94,8 +94,8 @@ describe("repairFloorExploration", () => {
     expect(repaired.floorExploration).toEqual({ "1:0": { open: false, keySets: [] } })
   })
 
-  // Finishing a level means ONE of its exits was used, and most sites carry one on every floor. The
-  // last room before a door is what says the player came to that one.
+  // Finishing a level means its exit was used. The last room before the door is what says the player
+  // walked to it.
   it("writes down a way out only where the room before it was walked", () => {
     const repaired = repairFloorExploration(
       {
@@ -120,6 +120,18 @@ describe("repairFloorExploration", () => {
     )
 
     expect(repaired.exploredCells["1:main"]).not.toContain("0/exit")
+  })
+
+  it("writes no way out on a finished level's floor that has none, where the chest ends the walk", () => {
+    const stair: GridCell = { ...entrance, stairId: "wing" }
+    const chest: GridCell = { ...exitRoom, roomType: "encounter", family: "treasure-chest" }
+    const noExit: FloorGrid = { ...floor, cells: [[stair, corridor, chest]] }
+    const repaired = repairFloorExploration(
+      { ...onLevel2, floorExploration: { "1:1": { open: false, keySets: [] } }, exploredCells: {} },
+      () => noExit
+    )
+
+    expect(repaired.exploredCells).toEqual({})
   })
 
   it("leaves the way out unwritten on a level the player has not finished", () => {
