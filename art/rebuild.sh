@@ -1685,3 +1685,4 @@ yarn import-tile art/masters/explorer/explorer-squeeze-s.webp --tier=default --n
 yarn import-tile art/masters/ghosts/ghost-ipi.webp --tier=default --name=ghost-ipi --slot=explorer --filter=smooth
 yarn import-tile art/masters/ghosts/ghost-henut.webp --tier=default --name=ghost-henut --slot=explorer --filter=smooth
 yarn import-tile art/masters/ghosts/ghost-priest.webp --tier=default --name=ghost-priest --slot=explorer --filter=smooth
+yarn import-tile art/masters/ghosts/ghost-pharaoh.webp --tier=default --name=ghost-pharaoh --slot=explorer --filter=smooth

@@ -2645,28 +2645,3 @@ a re-roll: magenta would show through it and the key cannot take that out.
 **One frame, standing.** A ghost does not walk, so there is no strip to build — `default/ghost-<name>` is
 a single file, which the map finds with no code change.
 
-### `default/ghost-pharaoh` — the pharaoh — master, standing in the room
-
-**Attach:** `art/masters/explorer/explorer-s-1.webp` (style and scale), `art/masters/characters/ghost-pharaoh.jpeg` (who)
-
-```
-Edit the FIRST attached image: the same pixel-art game sprite, a different character in it.
-Keep its style exactly: chunky visible pixels, dark one-pixel outlines on every shape, flat fills with one
-darker shade per colour, no anti-aliasing blur, no gradients, no texture.
-Keep its frame exactly: the same portrait canvas, the figure the same height and in the same place, feet
-on the same line near the bottom edge. Flat magenta #ff00ff everywhere else. No ground, no shadow on the
-magenta, no text, no border.
-
-The character is the one in the SECOND attached image, redrawn small in the first image's pixel style.
-An ancient Egyptian pharaoh: a striped nemes headcloth with a uraeus at the brow, a pleated kilt, a broad collar, arms folded. Delighted and imperious at once — the faint smile of somebody enjoying himself enormously at someone else's expense.
-
-A ghost: every colour is a pale blue-green, exactly these flat colours, outlines charcoal #2f3535.
-Skin #b3d6d1, shaded #96b8ab. Kilt and nemes stripes a paler #e2f2ef with #608f90. Collar and uraeus #9b8c6c.
-Painted OPAQUE — not see-through, no magenta showing through any part of the figure. The game fades it.
-
-Standing still and facing the viewer, weight on one leg. Feet visible and on the ground. Eyes ordinary and
-open. Not scary: no glow, no smoke, no tattered edges, no chains.
-Nothing of the first image's character stays — no hat, no torch, no vest, no bag — only its style and size.
-```
-
-**Import:** `yarn import-tile art/masters/ghosts/ghost-pharaoh.webp --tier=default --name=ghost-pharaoh --slot=explorer --filter=smooth`
