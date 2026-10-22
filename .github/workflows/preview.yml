@@ -37,6 +37,8 @@ jobs:
         env:
           VITE_BASE: /pyramid-scheme-preview/
           VITE_STORAGE_PREFIX: "preview:"
+          # The preview plays what the next release ships, so it is tested as players will meet it.
+          VITE_LAST_RELEASED_DIFFICULTY: starter
       - name: Add .nojekyll
         run: touch dist/.nojekyll
       - name: Publish to pyramid-scheme-preview
