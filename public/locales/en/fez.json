@@ -455,5 +455,40 @@
   "end": {
     "1": { "fez": "Was it neat?" },
     "2": { "explorer": "It'll do." }
+  },
+
+  "revisit": {
+    "starter": {
+      "north1": { "1": { "ipi": "Still here? North! Henut! Eleven deben!" } },
+      "north2": { "1": { "ipi": "Eleven deben of lapis. Henut. North. What are you waiting for?" } },
+      "paid1": { "1": { "ipi": "Well? Did she pay? …No. Of course not." } },
+      "paid2": { "1": { "ipi": "Glass? GLASS? It says lapis. Right here. Lapis!" } },
+      "later1": { "1": { "ipi": "You again. Third shelf, the chipped one — still mine. Hands off." } },
+      "later2": { "1": { "ipi": "Forty years of books, and not one of them balances. Not one!" } }
+    },
+    "junior": {
+      "wall1": { "1": { "henut": "The wall. Third sign. It is still not my name." } },
+      "wall2": { "1": { "henut": "You are still here, and that goose is still on my wall. Fix it." } },
+      "priest1": { "1": { "henut": "Still my name. I checked. Now — Karnak, the priest. Off you go." } },
+      "priest2": { "1": { "henut": "Karnak! He has been waiting long enough. Go and be announced." } },
+      "met1": { "1": { "henut": "Well? Insufferable, wasn't he? I did say." } },
+      "later1": { "1": { "henut": "Glass, still. Still beautiful. Still chosen by me." } }
+    },
+    "expert": {
+      "seal1": { "1": { "priest": "The seal. Brought here, set down, spoken over. I will wait." } },
+      "seal2": { "1": { "priest": "Ah. You again. And still no seal." } },
+      "king1": { "1": { "priest": "You have seen the king. Good. The thing itself, mind — not a likeness." } },
+      "later1": { "1": { "priest": "You again. There is nothing left to do here. It is very restful." } }
+    },
+    "master": {
+      "priest1": { "1": { "pharaoh": "Still here? To the priest with that copy! I want to hear how it goes." } },
+      "priest2": { "1": { "pharaoh": "You may approach. Again. Has the priest seen it yet?" } },
+      "rite1": { "1": { "pharaoh": "So he finally did his rite. Good. Now he will be unbearable about it." } },
+      "later1": { "1": { "pharaoh": "Still the best week in nine hundred years. And it keeps going!" } }
+    },
+    "wizard": {
+      "later1": { "1": { "priest": "…Yes. I still remember how. Good." } },
+      "later2": { "1": { "priest": "Set down, spoken over. Done. It is a strange feeling." } }
+    }
   }
 }

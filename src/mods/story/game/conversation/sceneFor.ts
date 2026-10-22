@@ -22,3 +22,10 @@ export const sceneFor = (journeyId: string): string | undefined => {
   const [, tier, suffix] = tomb
   return `tomb.${tier}${suffix ? suffix.toUpperCase() : ""}`
 }
+
+/** An authored override, for a journey that wants more than the one scene its tomb is named for. */
+export type ConversationArgs = { conversation?: string }
+
+/** The scene a conversation room plays: its authored override, or the one its journey is named for. */
+export const sceneOfRoom = (journeyId: string, encounterArgs?: unknown): string | undefined =>
+  (encounterArgs as ConversationArgs | undefined)?.conversation ?? sceneFor(journeyId)

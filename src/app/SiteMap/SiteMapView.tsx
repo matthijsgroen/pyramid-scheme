@@ -90,7 +90,9 @@ import {
   tileRegionsFor,
   type RoomClaims,
 } from "./roomClaims"
-import { standingOffset } from "./standingSpot"
+import { occupantOffset, standingOffset } from "./standingSpot"
+import { OccupantFigure } from "./OccupantFigure"
+import type { OccupantOf } from "./roomOccupants"
 import { DIR_MOVES } from "./corridorRuns"
 import { footprintRects, hasWallFace } from "./tileRegions"
 import type { Rect } from "./tileRegions"
@@ -139,6 +141,8 @@ type Props = {
   prompt?: { label: string; at: readonly [number, number]; onTake: () => void } | null
   /** Why the explorer stopped, drawn where the prompt is — see `useSiteNavigation`. */
   notice?: { label: string; at: readonly [number, number] } | null
+  /** Who stands in a room — a ghost in the room they talk in (roomOccupants). Drawn once the room is lit. */
+  occupantOf?: OccupantOf
   className?: string
 }
 
@@ -1219,6 +1223,7 @@ export const SiteMapView = ({
   mechanismStates,
   prompt,
   notice,
+  occupantOf,
   className,
 }: Props) => {
   const grid = revealAllCells ? revealAll(gridProp) : gridProp
@@ -1403,8 +1408,30 @@ export const SiteMapView = ({
         ),
       })
     }
+    // SOMEBODY STANDING IN A ROOM is one more thing on the floor, sorted against the player like the rest:
+    // walk round behind a ghost and he is in front of you.
+    if (occupantOf)
+      grid.cells.forEach((row, r) =>
+        row.forEach((cell, c) => {
+          if (cell.type !== "room" || cell.state === "fogged") return
+          const occupant = occupantOf(cell)
+          if (!occupant) return
+          const { cx, cy } = cellCenter(r, c)
+          const { dx, dy } = occupantOffset(grid, claims, r, c)
+          const key = `occupant:${r},${c}`
+          sprites.push({
+            key,
+            baseY: cy + dy + CELL / 2,
+            node: (
+              <div key={key} style={{ position: "absolute", left: cx + dx, top: cy + dy, width: 0, height: 0 }}>
+                <OccupantFigure occupant={occupant} />
+              </div>
+            ),
+          })
+        })
+      )
     return sprites.sort((a, b) => a.baseY - b.baseY)
-  }, [grid, claims, tier, nodeSprites, explorerPos, squeeze])
+  }, [grid, claims, tier, nodeSprites, explorerPos, squeeze, occupantOf])
 
   // The line the player stands on. A sprite lower than it is nearer the viewer and is drawn after him;
   // one level with it loses the tie, because the actor belongs in front of the furniture he shares a

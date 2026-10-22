@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest"
 import type { CellState, Direction, FloorGrid, GridCell } from "@/game/siteTypes"
 import { COL_PITCH, ROW_PITCH } from "./mapScale"
 import { buildRoomClaims } from "./roomClaims"
-import { standingOffset } from "./standingSpot"
+import { occupantOffset, standingOffset } from "./standingSpot"
+import { nodeArtOffset } from "./nodeArt"
 
 const state: CellState = "completed"
 const empty: GridCell = { type: "empty" }
@@ -77,5 +78,27 @@ describe("where the explorer stands in a stair's room", () => {
       [corridor(["n", "e"]), corridor(["w", "e"]), corridor(["w", "n"])],
     ])
     expect(offsetAt(grid, 1, 1)).toEqual({ dx: 0, dy: 0 })
+  })
+})
+
+describe("where somebody the room is for stands", () => {
+  const talk = (dirs: Direction[]): GridCell => ({ type: "room", roomType: "encounter", dirs: new Set(dirs), state })
+
+  it("stands in a bare cell of the room beside the node, so the explorer at the marker meets them", () => {
+    const grid = floor([
+      [empty, corridor(["s"]), empty],
+      [empty, stair(["n"]), empty],
+      [empty, empty, empty],
+    ])
+    expect(occupantOffset(grid, buildRoomClaims(grid), 1, 1)).toEqual({ dx: COL_PITCH, dy: 0 })
+  })
+
+  it("takes the furniture's corner when the room has no floor to spare", () => {
+    const grid = floor([
+      [empty, corridor(["s"]), empty],
+      [empty, talk(["n"]), empty],
+      [empty, empty, empty],
+    ])
+    expect(occupantOffset(grid, buildRoomClaims(grid), 1, 1)).toEqual(nodeArtOffset(new Set(["n"])))
   })
 })

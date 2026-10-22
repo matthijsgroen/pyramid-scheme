@@ -466,5 +466,44 @@
   "end": {
     "1": { "fez": "Was het mooi?" },
     "2": { "explorer": "Het kan ermee door." }
+  },
+
+  "revisit": {
+    "starter": {
+      "north1": { "1": { "ipi": "Nog steeds hier? Naar het noorden! Henut! Elf deben!" } },
+      "north2": { "1": { "ipi": "Elf deben lapis. Henut. Noorden. Waar wacht je nog op?" } },
+      "paid1": { "1": { "ipi": "En? Heeft ze betaald? …Nee. Natuurlijk niet." } },
+      "paid2": { "1": { "ipi": "Glas? GLAS? Hier staat lapis. Zwart op wit. Lapis!" } },
+      "later1": { "1": { "ipi": "Jij weer. Derde plank, die met de schilfer — nog steeds van mij. Afblijven." } },
+      "later2": { "1": { "ipi": "Veertig jaar boeken, en er klopt er niet één. Niet één!" } }
+    },
+    "junior": {
+      "wall1": { "1": { "henut": "De muur. Het derde teken. Het is nog steeds mijn naam niet." } },
+      "wall2": { "1": { "henut": "Jij bent er nog, en die gans staat nog steeds op mijn muur. Zet het recht." } },
+      "priest1": { "1": { "henut": "Nog steeds mijn naam. Ik heb gekeken. En nu — Karnak, die priester. Hup." } },
+      "priest2": { "1": { "henut": "Karnak! Hij wacht al lang genoeg. Ga je maar laten aankondigen." } },
+      "met1": { "1": { "henut": "En? Onuitstaanbaar, hè? Ik zei het toch." } },
+      "later1": { "1": { "henut": "Nog steeds glas. Nog steeds prachtig. Nog steeds door mij uitgezocht." } }
+    },
+    "expert": {
+      "seal1": { "1": { "priest": "Het zegel. Hierheen gebracht, neergelegd, uitgesproken. Ik wacht wel." } },
+      "seal2": { "1": { "priest": "Ah. U weer. En nog steeds geen zegel." } },
+      "king1": { "1": { "priest": "U bent bij de koning geweest. Goed. Het ding zelf, let wel — geen gelijkenis." } },
+      "later1": { "1": { "priest": "U weer. Er valt hier niets meer te doen. Het is heel rustgevend." } }
+    },
+    "master": {
+      "priest1": {
+        "1": { "pharaoh": "Nog steeds hier? Naar die priester met die kopie! Ik wil horen hoe het afloopt." }
+      },
+      "priest2": { "1": { "pharaoh": "U mag naderen. Alweer. Heeft de priester het al gezien?" } },
+      "rite1": {
+        "1": { "pharaoh": "Dus hij heeft eindelijk zijn ritueel gedaan. Mooi. Nu wordt hij er onverdraaglijk over." }
+      },
+      "later1": { "1": { "pharaoh": "Nog steeds de beste week in negenhonderd jaar. En hij duurt maar voort!" } }
+    },
+    "wizard": {
+      "later1": { "1": { "priest": "…Ja. Ik weet nog steeds hoe het moet. Goed zo." } },
+      "later2": { "1": { "priest": "Neergelegd, uitgesproken. Klaar. Het is een vreemd gevoel." } }
+    }
   }
 }

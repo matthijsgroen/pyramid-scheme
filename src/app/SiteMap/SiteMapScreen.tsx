@@ -32,6 +32,7 @@ import { EntranceTransitionOverlay } from "@/ui/atoms/EntranceTransitionOverlay"
 import { hudWidgets } from "@/app/SiteMap/hudRegistry"
 import { useMergedRewardContributions } from "@/app/SiteMap/rewardContributions"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
+import { useMergedRoomOccupants } from "@/app/SiteMap/roomOccupants"
 import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { useDetectorReadout } from "@/app/SiteMap/useDetectorReadout"
 import { useMergedReactions } from "@/app/reactions/reactionContributions"
@@ -66,6 +67,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   const exploredCells = journeys.getExploredCells(journeyId)
   const journeyState = journeys.getJourney(journeyId)
   const wardKeys = useMergedHeldKeys()
+  const occupantOf = useMergedRoomOccupants(journeyId)
   // Detector levels come from the owning mods (compass←hieroglyph, supplies←trap, corridor←core) via
   // the merged accessor — core names no mod.
   const detectorLevels = useMergedDetectorLevels()
@@ -233,6 +235,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
           mechanismStates={mechanismStates}
           prompt={prompt && { label: promptLabel(prompt), at: prompt.at, onTake: prompt.take }}
           notice={notice && { label: noticeLabel, at: notice.at }}
+          occupantOf={occupantOf}
           className="size-full"
         />
       </div>

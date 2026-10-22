@@ -1114,6 +1114,7 @@
     }
   },
   "story": {
+    "invitation": "Talk",
     "log": {
       "title": "What we have been told",
       "empty": "Nothing yet. Fez will have plenty to say."
