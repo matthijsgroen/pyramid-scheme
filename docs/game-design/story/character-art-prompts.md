@@ -475,7 +475,7 @@ Lines it serves: ≈9 — the meeting with Fez. Attach the explorer's master,
 > [preamble] [palette] Edit the attached picture of the explorer. Change ONLY the face, to surprised: brows
 > raised, eyes a little wider, mouth open. Keep the outline of the head and hair, the position of the eyes,
 > the hat, the neckerchief, the vest, the rope, the map, the hands and the white background exactly as they
-> are — pixel for pixel. Same canvas, same size, same framing. Nothing outside the face moves.
+> are — pixel for pixel. Same canvas, same size, same framing. Nothing outside the face moves. Landed (scaled from the return's 1696 to the master's 1686 wide first).
 
 **Then:** `yarn import-portrait art/masters/characters/explorer-face-surprised.jpeg --name=explorer-face-surprised --bust=0.55 --centre=1160 --behind=0.4 --holes="574,1299;631,1503;1242,1025;646,1062;748,642" --face-of=art/masters/characters/explorer.jpeg`
 

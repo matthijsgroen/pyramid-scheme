@@ -9,6 +9,7 @@ import fezFaceSheepish from "@/assets/fez-face-sheepish-250.png"
 import fezPoseCocktail from "@/assets/fez-pose-cocktail-250.png"
 import fezPoseCocktailFront from "@/assets/fez-pose-cocktail-front-250.png"
 import explorer from "@/assets/explorer-250.png"
+import explorerFaceSurprised from "@/assets/explorer-face-surprised-250.png"
 import explorerCool from "@/assets/grin-explorer-250.png"
 import explorerPoint from "@/assets/point-explorer-250.png"
 import ghostIpi from "@/assets/ghost-ipi-250.png"
@@ -97,6 +98,7 @@ export const PORTRAITS: Partial<Record<Speaker, Portraits>> = {
   explorer: {
     wide: true,
     bases: { default: { src: explorer, alt: "The explorer, in a wide brown hat and olive vest" } },
+    faces: { surprised: explorerFaceSurprised },
     paintings: {
       "point+default": { src: explorerPoint, alt: "The explorer, pointing" },
       "default+cool": { src: explorerCool, alt: "The explorer, in sunglasses, grinning" },

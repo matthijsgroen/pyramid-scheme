@@ -1699,6 +1699,10 @@ yarn import-portrait art/masters/characters/fez-face-surprised.jpeg --name=fez-f
   --face-of=art/masters/characters/fez.jpeg
 yarn import-portrait art/masters/characters/fez-face-sheepish.jpeg --name=fez-face-sheepish --whole \
   --face-of=art/masters/characters/fez.jpeg
+# The explorer's face edits came back 1696 wide; each master is scaled to his 1686 first, so they stack.
+yarn import-portrait art/masters/characters/explorer-face-surprised.jpeg --name=explorer-face-surprised --bust=0.55 \
+  --centre=1160 --behind=0.4 --holes="574,1299;631,1503;1242,1025;646,1062;748,642" \
+  --face-of=art/masters/characters/explorer.jpeg
 
 # THE EXPLORER, SQUEEZING (side frame e, profile frame s; north reuses s)
 # --tight: the arms-spread frame is wider than the 40-unit slot, so a slot fit shrank the figure to 60% of the walking one; 18.3 master px to a unit puts his head at the walking size, and the tile is as wide as the pose needs (feet on the bottom edge)

@@ -55,11 +55,11 @@ the map they both overpaid for, the fez nobody explains, and Fez knowing what th
 
 > **Voice:** Hey! Not thére! Watch where you're going!
 >
-> **Explorer:** Sorry! I can't see a thing! Where are you?
+> **Explorer (surprised):** Sorry! I can't see a thing! Where are you?
 >
 > **Fez:** Down here! You're standing in my stock!
 >
-> **Explorer:** A lizard?! In a fez?
+> **Explorer (surprised):** A lizard?! In a fez?
 >
 > **Fez:** A merchant. And what's wrong with my fez?
 >
@@ -81,7 +81,7 @@ the map they both overpaid for, the fez nobody explains, and Fez knowing what th
 >
 > **Fez (pointUp):** Neat sells! You know what? I'm coming with you!
 >
-> **Explorer:** What? With me?
+> **Explorer (surprised):** What? With me?
 >
 > **Fez (pointUp):** Two see more than one. Come on, that pyramid's waiting!
 
