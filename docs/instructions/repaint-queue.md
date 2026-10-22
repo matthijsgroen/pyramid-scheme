@@ -2645,32 +2645,6 @@ a re-roll: magenta would show through it and the key cannot take that out.
 **One frame, standing.** A ghost does not walk, so there is no strip to build — `default/ghost-<name>` is
 a single file, which the map finds with no code change.
 
-### `default/ghost-priest` — the high priest — expert, standing in the room
-
-**Attach:** `art/masters/explorer/explorer-s-1.webp` (style and scale), `art/masters/characters/ghost-priest.jpeg` (who)
-
-```
-Edit the FIRST attached image: the same pixel-art game sprite, a different character in it.
-Keep its style exactly: chunky visible pixels, dark one-pixel outlines on every shape, flat fills with one
-darker shade per colour, no anti-aliasing blur, no gradients, no texture.
-Keep its frame exactly: the same portrait canvas, the figure the same height and in the same place, feet
-on the same line near the bottom edge. Flat magenta #ff00ff everywhere else. No ground, no shadow on the
-magenta, no text, no border.
-
-The character is the one in the SECOND attached image, redrawn small in the first image's pixel style.
-An ancient Egyptian high priest: head shaved, a white linen robe to the ankles, a leopard-skin sash over one shoulder, hands clasped in front. Precise, patient, faintly disapproving — a man who has been waiting a very long time for somebody to do something properly.
-
-A ghost: every colour is a pale blue-green, exactly these flat colours, outlines charcoal #2f3535.
-Skin #afd9d7, shaded #96b2a8. Robe a paler #e2f3f2, shaded #afd9d7. The leopard sash #cbc7aa with spots #779790.
-Painted OPAQUE — not see-through, no magenta showing through any part of the figure. The game fades it.
-
-Standing still and facing the viewer, weight on one leg. Feet visible and on the ground. Eyes ordinary and
-open. Not scary: no glow, no smoke, no tattered edges, no chains.
-Nothing of the first image's character stays — no hat, no torch, no vest, no bag — only its style and size.
-```
-
-**Import:** `yarn import-tile art/masters/ghosts/ghost-priest.webp --tier=default --name=ghost-priest --slot=explorer --filter=smooth`
-
 ### `default/ghost-pharaoh` — the pharaoh — master, standing in the room
 
 **Attach:** `art/masters/explorer/explorer-s-1.webp` (style and scale), `art/masters/characters/ghost-pharaoh.jpeg` (who)
