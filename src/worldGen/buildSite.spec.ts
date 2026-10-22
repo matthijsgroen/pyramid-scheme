@@ -125,6 +125,28 @@ describe("buildSite", () => {
     expect(floors[2].mainEndReward).toEqual({ type: "fragmentSlot" })
   })
 
+  it("authored floors[] branch: the site's one exit is on floor 0, and a floor reached by a side stair has none", () => {
+    const { floors } = buildSite({
+      ...baseCtx,
+      constraint: {
+        floors: [
+          { pathPuzzles: 1, sideSections: [{ pathPuzzles: 1, end: "staircase" }] },
+          { pathPuzzles: 2, sideSections: [{ pathPuzzles: 1, end: "staircase" }] },
+          { pathPuzzles: 1 },
+        ],
+      } as PyramidConstraint,
+    })
+    expect(floors.map(f => f.exitOrStaircase)).toEqual(["exit", "none", "none"])
+  })
+
+  it("auto multi-floor branch: the exit ends the last main floor, and a ward wing has none", () => {
+    const { floors } = buildSite({ ...baseCtx, constraint: { mainFloors: 2, wardWings: 1 } })
+    expect(floors).toHaveLength(3)
+    expect(floors[1].exitOrStaircase).toBe("exit")
+    expect(floors[2].entrance).toBeDefined()
+    expect(floors[2].exitOrStaircase).toBe("none")
+  })
+
   it("inits an empty puzzle-reward array per chain (fill happens later, in the placement pass)", () => {
     const { floors } = buildSite({ ...baseCtx, pathPuzzles: 20 })
     expect(floors[0].rewards).toHaveLength(20)

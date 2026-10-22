@@ -58,9 +58,30 @@ const fillFragments = (n: number): FloorConfig["sideSections"] =>
   }))
 
 describe("validateRewardCounts", () => {
-  it("throws when a non-last floor is set to exit incorrectly", () => {
+  it("throws when the main path ends without an exit", () => {
     const configs = { site: [[floor({ exitOrStaircase: "staircase" })]] as SiteConfig[] }
-    expect(() => validateRewardCounts(configs)).toThrow(/expected "exit"/)
+    expect(() => validateRewardCounts(configs)).toThrow(/main path ends on floor 0 with exitOrStaircase="staircase"/)
+  })
+
+  it("throws when the main path ends on a deeper floor that has no exit", () => {
+    const configs = {
+      site: [
+        [floor({ exitOrStaircase: { stairId: "m" } }), floor({ entrance: { stairId: "m" }, exitOrStaircase: "none" })],
+      ] as SiteConfig[],
+    }
+    expect(() => validateRewardCounts(configs)).toThrow(/main path ends on floor 1 with exitOrStaircase="none"/)
+  })
+
+  it("throws when a floor off the main path has an exit of its own", () => {
+    const configs = {
+      site: [
+        [
+          floor({ sideSections: [{ pathPuzzles: 1, difficulty: "starter", end: { stairId: "w" } }] }),
+          floor({ entrance: { stairId: "w" } }),
+        ],
+      ] as SiteConfig[],
+    }
+    expect(() => validateRewardCounts(configs)).toThrow(/floor 1 is off the main path but has an exit/)
   })
 
   it("throws when mapPiece count doesn't match WORLD_TARGETS", () => {

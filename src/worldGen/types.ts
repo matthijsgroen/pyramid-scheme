@@ -83,7 +83,7 @@ export type FloorConfig = {
   pathPuzzles: number
   difficulty: Difficulty
   end: "treasure"
-  exitOrStaircase: "exit" | "staircase" | { stairId: string }
+  exitOrStaircase: "exit" | "none" | "staircase" | { stairId: string }
   entrance?: "stairhead" | { stairId: string }
   sideSections: SideSection[]
   mainEndReward?: TreasureReward

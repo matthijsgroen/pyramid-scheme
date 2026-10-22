@@ -162,7 +162,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
 })
 
 // Sequentially links floors[fi] → floors[fi+1] via a stairhead: floor fi's exitOrStaircase and floor
-// fi+1's entrance both become the id of floor fi's main-path way up, which is what pairs them. Used
+// fi+1's entrance both become the id of floor fi's main-path way down, which is what pairs them. Used
 // for main-path chains (pyramid auto-multi-floor) — never touches the last floor's exit.
 export const wireStaircases = (floors: FloorConfig[], site: { journeyId: string; pyramidIndex: number }): void => {
   for (let fi = 0; fi < floors.length - 1; fi++) {
@@ -177,11 +177,14 @@ export const wireStaircases = (floors: FloorConfig[], site: { journeyId: string;
 // whether the shortcut is ward-gated by an external key (a pyramid's authored floors[]) or
 // self-gated by the floor's own treasure (a tomb's shortcut — pyramid-interior-design.md
 // §8, "the treasure IS the key"). Both are just a side section whose `end` is a stairhead.
+// A floor reached by a side stair is off the main path, so it has no exit: its way out is
+// that stair, back up (one exit per site, at the main path's end).
 export const wireSideSectionStaircases = (floors: FloorConfig[]): void => {
   for (let fi = 0; fi < floors.length - 1; fi++) {
     const stairSection = floors[fi].sideSections.find(s => typeof s.end === "object")
     if (stairSection && typeof stairSection.end === "object") {
       floors[fi + 1].entrance = { stairId: stairSection.end.stairId }
+      floors[fi + 1].exitOrStaircase = "none"
     }
   }
 }
@@ -519,7 +522,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           }))
 
       wingDefs.forEach(wing => {
-        // The stairs up to a wing are a section of the last main floor, so the id takes that
+        // The stairs down to a wing are a section of the last main floor, so the id takes that
         // section's own address — the index it is about to land on, which is what the assembler
         // would have called it had the authoring left the stairhead unnamed.
         const wingStairId = stairIdAt({
@@ -535,7 +538,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             difficulty: wing.difficulty,
             end: { stairId: wingStairId },
             gate: { type: "tomb-key", wardKeyId: wing.wardKeyId },
-            // The stairs up to a wing are rooms of this pyramid, so they wear its theme too. Built here
+            // The stairs down to a wing are rooms of this pyramid, so they wear its theme too. Built here
             // rather than by buildSideSections, which is why the role is applied by hand.
             ...(sideEncounter !== undefined ? { encounter: sideEncounter } : {}),
             ...(sideTheme !== undefined ? { theme: sideTheme } : {}),
@@ -547,6 +550,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             difficulty: wing.difficulty,
             sideSections: [],
             entrance: { stairId: wingStairId },
+            // A wing is off the main path: its way out is the stair it came down.
+            exitOrStaircase: "none",
             mainEndReward: wing.endReward ? hintToReward(wing.endReward, wing.difficulty) : { type: "fragmentSlot" },
             // A wing is a floor of this pyramid, so it wears the pyramid's theme too.
             encounter: constraint.encounter,

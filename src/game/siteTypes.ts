@@ -543,7 +543,7 @@ export type FloorConfig = {
   pathPuzzles: number
   difficulty: Difficulty
   end: "treasure"
-  exitOrStaircase: "exit" | "staircase" | { stairId: string }
+  exitOrStaircase: "exit" | "none" | "staircase" | { stairId: string }
   /** If set, the entrance room becomes an up-stairhead with this stairId. */
   entrance?: "stairhead" | { stairId: string }
   sideSections: SideSection[]
