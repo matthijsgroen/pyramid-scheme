@@ -1689,6 +1689,8 @@ yarn import-portrait art/masters/characters/fez-face-excited.jpeg --name=fez-fac
   --face-of=art/masters/characters/fez.jpeg
 yarn import-portrait art/masters/characters/fez-face-cool.jpeg --name=fez-face-cool --whole \
   --face-of=art/masters/characters/fez.jpeg
+yarn import-portrait art/masters/characters/fez-face-wistful.jpeg --name=fez-face-wistful --whole \
+  --face-of=art/masters/characters/fez.jpeg
 
 # THE EXPLORER, SQUEEZING (side frame e, profile frame s; north reuses s)
 # --tight: the arms-spread frame is wider than the 40-unit slot, so a slot fit shrank the figure to 60% of the walking one; 18.3 master px to a unit puts his head at the walking size, and the tile is as wide as the pose needs (feet on the bottom edge)
