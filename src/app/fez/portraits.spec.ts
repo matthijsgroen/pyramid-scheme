@@ -15,9 +15,9 @@ describe("portraitFor", () => {
   })
 
   it("stands a whole painting in for a pose and face that cannot be composed yet", () => {
-    const drawn = portraitFor("fez", "glassesPoint")
+    const drawn = portraitFor("fez", "cocktail")
 
-    expect(drawn?.src).toMatch(/glasses-point-fez-250/)
+    expect(drawn?.src).toMatch(/cocktail-fez-250/)
     expect(drawn?.face).toBeUndefined()
   })
 

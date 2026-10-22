@@ -385,7 +385,7 @@ only. Landed.
 **Master:** `art/masters/characters/fez-face-cool.jpeg`
 
 Lines it serves: every `glassesPoint` — 8 tutorial lines. Laid on `fez-pose-point`, it retires the
-`glasses-point-fez` painting. Attach the landed master, `art/masters/characters/fez.jpeg`, and
+`glasses-point-fez` painting. Attached the landed master, `art/masters/characters/fez.jpeg`, and
 `src/assets/glasses-point-fez-250.png` for the expression only.
 
 > [preamble] [fez palette] Edit the first attached picture of Fez. Change ONLY his face: he now wears
@@ -393,7 +393,7 @@ Lines it serves: every `glassesPoint` — 8 tutorial lines. Laid on `fez-pose-po
 > Use the second picture for the sunglasses and the grin only — draw them in the first picture's size and
 > detail. Keep the outline of his head, the fez, the neckerchief, his body, his tail and the white
 > background exactly as they are — pixel for pixel. Same canvas, same size, same framing. Nothing outside
-> his face moves.
+> his face moves. Landed.
 
 **Then:** `yarn import-portrait art/masters/characters/fez-face-cool.jpeg --name=fez-face-cool --whole --face-of=art/masters/characters/fez.jpeg`
 
