@@ -4,7 +4,7 @@ import type { RoomOccupant } from "./roomOccupants"
 
 /** A stand-in bust is a shade wider than a figure, so a face at map size is still somebody's. */
 const BUST_W = CHAR_W * 1.2
-/** A portrait's face frame is 250x375 (character-art-prompts.md §3), so its height follows from the width. */
+/** A portrait's face frame is 250x375 (docs/game-design/story/character-art-prompts.md), so its height follows from the width. */
 const BUST_H = BUST_W * 1.5
 /** A wide portrait carries 100px of the figure behind it on its left, past the 250 face frame. */
 const WIDE = 350 / 250
