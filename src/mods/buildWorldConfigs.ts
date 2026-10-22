@@ -1,13 +1,11 @@
 import { buildConfigs } from "@/worldGen/configBuilder"
 import type { SiteConfig } from "@/worldGen/types"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
-import { assembleFloor } from "@/game/siteAssembler"
-import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
-import type { FloorConfig, FloorGrid } from "@/game/siteTypes"
 import { worldWebs } from "@/game/webCatalogue"
 import type { Web } from "@/game/webNotation"
 import { pinWebFloors, placeWeb } from "@/worldGen/webPlacement"
 import type { WebPlacement } from "@/worldGen/webPlacement"
+import { carveWorldFloor } from "./carveWorldFloor"
 import { ALL_CURRENCY_DISTRIBUTIONS } from "./allCurrencyDistributions"
 import {
   resolveKeyRequirements,
@@ -27,32 +25,7 @@ import {
   MOD_RESERVED_TREASURE_INDICES,
   MOD_WEB_ACTIVATOR,
   REGISTERED_MOD_IDS,
-  resolveOneWayRealisation,
-  resolvePassageRealisation,
-  resolveRegionBarrierRealisation,
 } from "./registeredMods"
-
-/** One floor carved as play carves it, at the seed and packing its authoring carries. */
-export const carveWorldFloor = (
-  journeyId: string,
-  levelNr: number,
-  floorIndex: number,
-  config: FloorConfig
-): FloorGrid => {
-  const seed = floorAssemblySeed(persistentInteriorSeed(journeyId), levelNr, floorIndex)
-  const result = assembleFloor(journeyId, config, seed, resolveEncounterMeta, {
-    resolveKeyRequirements,
-    floorRef: { journeyId, levelIndex: levelNr - 1, floorIndex },
-    resolveOneWay: resolveOneWayRealisation,
-    resolveRegionBarrier: resolveRegionBarrierRealisation,
-    resolvePassage: resolvePassageRealisation,
-  })
-  if (!result.success)
-    throw new Error(
-      `${journeyId} pyramid ${levelNr} floor ${floorIndex} will not carve: ${JSON.stringify(result.reasons)}`
-    )
-  return result.grid
-}
 
 /** With no mod realising the web, a lock's outside inputs are open ground: nothing binds them, nothing shuts them. */
 export const openLockInputs = (configs: Record<string, SiteConfig[]>) => {

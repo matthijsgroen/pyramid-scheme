@@ -1,6 +1,7 @@
 // THE KEYS A PLAYER HOLDS FROM THE WEB, from the activators they took (docs/instructions/sand-pyramid.md, "State and
 // save"): the record is the pulled set, which only grows; the keys are derived from it, never stored.
 import { potKey, webKey } from "./webLine"
+import type { ResolvedWeb } from "./webLine"
 
 /** An activator as the world ships it: its name, and the pots it counts in. */
 export type ShippedActivator = { name: string; pots: readonly string[] }
@@ -24,3 +25,10 @@ export const webHeldKeys = (pulled: WebPulled, activators: readonly ShippedActiv
   for (const [pot, count] of counts) for (let k = 1; k <= count; k++) held.add(potKey(pot, k))
   return held
 }
+
+/** A resolved web's activators as the world ships them: each with the pots it counts in. */
+export const activatorsOfWeb = (resolved: Pick<ResolvedWeb, "activators" | "pots">): ShippedActivator[] =>
+  resolved.activators.map(({ name }) => ({
+    name,
+    pots: resolved.pots.filter(pot => pot.levers.includes(name)).map(pot => pot.name),
+  }))

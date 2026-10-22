@@ -164,6 +164,14 @@ const pyramidLine = (world: WebWorld, at: PyramidRef, offset: number): Line => {
   return line
 }
 
+/** Where a point of a pyramid's main path stands on its line, 0% at the arrival and 100% at its last room. `pos` counts
+ * rooms from the floor's first: a room is its index, the seam after room s is `s + 0.5`. */
+export const pyramidLinePct = (world: WebWorld, at: PyramidRef, floor: number, pos: number): number => {
+  const { rooms } = pyramidLine(world, at, 0)
+  const start = rooms.findIndex(room => room.floor === floor)
+  return rooms.length < 2 || start < 0 ? 100 : ((start + pos) / (rooms.length - 1)) * 100
+}
+
 const journeyLine = (world: WebWorld, journey: number): Line => {
   const line: Line = { rooms: [], seams: [], sections: [] }
   ;(world.journeys[journey] ?? []).forEach((_, i) => {

@@ -10,7 +10,7 @@ import { describeFloorWalkFailure, walkFloorLock } from "./floorLockWalk"
 import type { FloorGrid } from "./siteTypes"
 import type { Web } from "./webNotation"
 import type { PyramidRef, ResolvedWeb, WebDoor, WebFloor, WebRefusal, WebSection, WebSpot } from "./webLine"
-import { webHeldKeys } from "./webKeys"
+import { activatorsOfWeb, webHeldKeys } from "./webKeys"
 import {
   instanceOf,
   isLockRegion,
@@ -329,6 +329,18 @@ export type WebWalk = {
   cheapestSeeing: CheapestRoute
   /** A pyramid's visit under the held keys of a pull set, for the report. */
   heldOf: (pulled: Iterable<string>) => Set<string>
+  /** What one visit to every open pyramid reaches with a pull set held, as the walk reads it. */
+  reachOf: (pulled: Iterable<string>) => PullReach
+}
+
+/** What a pull set puts in reach: the activators standing in reach, the pyramids finished and entered (journey order
+ * keeps the rest shut), and each entered pyramid's visit. */
+export type PullReach = {
+  held: ReadonlySet<string>
+  taken: ReadonlySet<string>
+  finished: ReadonlySet<string>
+  entered: readonly string[]
+  visits: ReadonlyMap<string, Visit>
 }
 
 /** Walks a resolved web: the closure, every reachable pull set, the per-pyramid wait check, the leak and own-front
@@ -347,10 +359,7 @@ export const walkWeb = (resolved: ResolvedWeb, options: WebWalkOptions = {}): We
   for (const a of activators) activatorsIn.set(pyramidName(a.at), [...(activatorsIn.get(pyramidName(a.at)) ?? []), a])
 
   // The keys a pulled set holds, derived as play derives them.
-  const shipped = names.map(name => ({
-    name,
-    pots: pots.filter(pot => pot.levers.includes(name)).map(pot => pot.name),
-  }))
+  const shipped = activatorsOfWeb(resolved)
   const heldOf = (pulled: Iterable<string>): Set<string> =>
     webHeldKeys(Object.fromEntries([...pulled].map(name => [name, true as const])), shipped)
 
@@ -368,25 +377,33 @@ export const walkWeb = (resolved: ResolvedWeb, options: WebWalkOptions = {}): We
     return result
   }
 
-  type Reach = { taken: Set<string>; finished: Set<string>; entered: string[]; seen: Map<string, string> }
+  type Reach = {
+    taken: Set<string>
+    finished: Set<string>
+    entered: string[]
+    seen: Map<string, string>
+    visits: Map<string, Visit>
+  }
   /** Everything in reach under `held`, journey by journey in levelNr order; `cut` never finishes. */
   const reachUnder = (held: Held, cut?: string): Reach => {
     const taken = new Set<string>()
     const finished = new Set<string>()
     const entered: string[] = []
     const seen = new Map<string, string>()
+    const visits = new Map<string, Visit>()
     for (const [journey, list] of Object.entries(world.journeys))
       for (let p = 1; p <= list.length; p++) {
         const at = { journey: Number(journey), pyramid: p }
         const name = pyramidName(at)
         entered.push(name)
         const result = visit(at, held)
+        visits.set(name, result)
         for (const [face, key] of result.seen) seen.set(face, key)
         for (const a of activatorsIn.get(name) ?? []) if (result.reach.has(a.node)) taken.add(a.name)
         if (!result.exit || name === cut) break
         finished.add(name)
       }
-    return { taken, finished, entered, seen }
+    return { taken, finished, entered, seen, visits }
   }
   const closureOf = (start: Iterable<string>, cut?: string) => {
     const pulled = new Set(start)
@@ -510,6 +527,11 @@ export const walkWeb = (resolved: ResolvedWeb, options: WebWalkOptions = {}): We
     cheapest: cheapest(pyramids, names, activatorsIn, heldOf, visit, maxStates, []),
     cheapestSeeing: cheapest(pyramids, names, activatorsIn, heldOf, visit, maxStates, goalDoors),
     heldOf,
+    reachOf: pulled => {
+      const held = heldOf(pulled)
+      const { taken, finished, entered, visits } = reachUnder(held)
+      return { held, taken, finished, entered, visits }
+    },
   }
 }
 

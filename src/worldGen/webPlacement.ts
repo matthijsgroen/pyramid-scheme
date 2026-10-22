@@ -162,6 +162,47 @@ const placementFor = (door: WebDoor): WebDoorPlacement | undefined => {
   return undefined
 }
 
+/** Writes a resolved web's doors onto the authoring: a web door on ground no lock owns, and on each lock the inputs a
+ * line binds and the owners its stops add. Its activators are placeWeb's. */
+export const layWebDoors = (resolved: ResolvedWeb, configs: Record<string, SiteConfig[]>): void => {
+  const floorOf = (at: PyramidRef, f: number) => configs[journeyIdOf(at)][at.pyramid - 1][f] as GameFloorConfig
+  for (const door of resolved.doors) {
+    const placed = placementFor(door)
+    if (!placed) continue
+    const floor = floorOf(door.at, door.where.floor)
+    floor.webDoors = [...(floor.webDoors ?? []), placed]
+    floor.webMarks = resolved.marks
+  }
+
+  // A lock's inputs: those a line binds, and the owners its stops add.
+  const lockWebs = new Map<string, { inputs: Record<string, string>; fronts: WebFront[] }>()
+  const webOf = (id: string) => {
+    if (!lockWebs.has(id)) lockWebs.set(id, { inputs: {}, fronts: [] })
+    return lockWebs.get(id)!
+  }
+  for (const binding of resolved.bindings)
+    webOf(`${pyramidName(binding.at)} f${binding.floor} ${binding.lock}`).inputs[binding.input] = binding.key
+  for (const [id, added] of resolved.fronts)
+    for (const { input, door } of added) {
+      const entry = webOf(id)
+      entry.inputs[input] = door.key
+      const where = door.where
+      if (where.kind === "corridor") entry.fronts.push({ input, corridor: [where.from, where.to] })
+      if (where.kind === "region") entry.fronts.push({ input, region: where.region })
+    }
+  for (const [id, entry] of lockWebs) {
+    const [, pyramid, floor, instance] = /^(w\d+p\d+) f(\d+) (.+)$/.exec(id)!
+    const [, j, p] = /^w(\d+)p(\d+)$/.exec(pyramid)!
+    const config = floorOf({ journey: Number(j), pyramid: Number(p) }, Number(floor))
+    config.webMarks = resolved.marks
+    config.locks = (config.locks ?? []).map(placed =>
+      (placed.as ?? placed.lock.name) === instance
+        ? { ...placed, web: { inputs: entry.inputs, ...(entry.fronts.length > 0 ? { fronts: entry.fronts } : {}) } }
+        : placed
+    )
+  }
+}
+
 /**
  * READS THE WEB AGAINST THE CARVED WORLD, REFUSES IT UNLESS IT WALKS SOUND, AND WRITES IT ONTO THE AUTHORING. Throws
  * with the report when anything refuses: a web the bake cannot place is never half placed.
@@ -207,41 +248,7 @@ export const placeWeb = (
   if (!report.sound || slotRefusals.length > 0)
     throw new Error(`the web ${web.name} cannot be placed:\n${report.text}${slotRefusals.join("\n")}`)
 
-  for (const door of resolved.doors) {
-    const placed = placementFor(door)
-    if (!placed) continue
-    const floor = floorOf(door.at, door.where.floor)
-    floor.webDoors = [...(floor.webDoors ?? []), placed]
-    floor.webMarks = resolved.marks
-  }
-
-  // A lock's inputs: those a line binds, and the owners its stops add.
-  const lockWebs = new Map<string, { inputs: Record<string, string>; fronts: WebFront[] }>()
-  const webOf = (id: string) => {
-    if (!lockWebs.has(id)) lockWebs.set(id, { inputs: {}, fronts: [] })
-    return lockWebs.get(id)!
-  }
-  for (const binding of resolved.bindings)
-    webOf(`${pyramidName(binding.at)} f${binding.floor} ${binding.lock}`).inputs[binding.input] = binding.key
-  for (const [id, added] of resolved.fronts)
-    for (const { input, door } of added) {
-      const entry = webOf(id)
-      entry.inputs[input] = door.key
-      const where = door.where
-      if (where.kind === "corridor") entry.fronts.push({ input, corridor: [where.from, where.to] })
-      if (where.kind === "region") entry.fronts.push({ input, region: where.region })
-    }
-  for (const [id, entry] of lockWebs) {
-    const [, pyramid, floor, instance] = /^(w\d+p\d+) f(\d+) (.+)$/.exec(id)!
-    const [, j, p] = /^w(\d+)p(\d+)$/.exec(pyramid)!
-    const config = floorOf({ journey: Number(j), pyramid: Number(p) }, Number(floor))
-    config.webMarks = resolved.marks
-    config.locks = (config.locks ?? []).map(placed =>
-      (placed.as ?? placed.lock.name) === instance
-        ? { ...placed, web: { inputs: entry.inputs, ...(entry.fronts.length > 0 ? { fronts: entry.fronts } : {}) } }
-        : placed
-    )
-  }
+  layWebDoors(resolved, configs)
 
   for (const placed of placements) {
     if (!placed) continue
