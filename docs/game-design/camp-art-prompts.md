@@ -16,9 +16,10 @@ without the flag". Walking the chain backwards is what keeps one spot the same t
 the same light from its first step to its last. So per spot the order is: the LAST entry first, then up.
 
 **The anchor is the wizard impression** (`art/masters/camp/impression-wizard.webp`), attached to every entry, for the viewing angle,
-scale and composition only. **The style is the world's**, from `docs/game-design/visual-direction.md`
-(on `tomb/cave-and-cavern` until it merges): painted, matte and vivid, no outlines — an edge is a change of
-value. Only the characters keep outlines. The impressions' outlined, glossy look is not the target.
+scale, composition **and colours**. **The painting is the world's**, from `docs/game-design/visual-direction.md`
+(on `tomb/cave-and-cavern` until it merges): matte, no outlines — an edge is a change of value. Only the
+characters keep outlines. So: the impressions' palette, the world's brushwork — not their outlined,
+glossy look.
 
 **The metal ladder runs through the camp.** What a step adds wears the metal of the chapter it arrives in:
 starter's ochre, terracotta and turquoise faience, then copper, silver with lapis, gold, and glowing
@@ -45,10 +46,11 @@ every step of a spot must share one frame), writes the shipped file and keeps th
 ## 0. The house style, stated once
 
 > Painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, an edge is
-> a change of value. Use the attached reference image only for the viewing angle, scale and composition,
-> NOT for its line work or its glossy finish. Seen from slightly above, about 35 degrees down, like the
-> reference. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour,
-> warm wood, bright painted colours. Mid-tone to dark values with clear form shading, so the object
+> a change of value. Take the viewing angle, scale, composition AND THE COLOURS from the attached
+> reference image: the same warm browns, golds and saturated hues as the matching objects in it. Do NOT
+> take its line work or its glossy finish: same colours, new painting. Seen from slightly above, about 35
+> degrees down, like the reference. Evenly lit by soft, neutral white light from the upper left: full,
+> rich, saturated colour. Mid-tone to dark values with clear form shading, so the object
 > stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never
 > glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand or
 > ground under the objects. The objects
@@ -70,7 +72,7 @@ Paint the chest first: every later final-state entry attaches it.
 
 Attach: `art/masters/camp/impression-wizard.webp`
 
-> [preamble] Paint a sturdy treasure chest of warm reddish-brown cedar wood with a domed lid, lid closed, broad bright red-ochre painted bands, vivid turquoise faience studs along the bands and a warm bronze lock plate, all matte.
+> [preamble] Paint the treasure chest from the reference image, in its colours: warm brown wooden planks, a domed lid, lid closed, broad gold metal bands and corners and a gold lock plate, all matte.
 
 ### 2. `camp/window` — Stained-glass window
 
