@@ -817,6 +817,10 @@ without it. Where one object sits on another (the compass on the star cloth), th
 painted under the upper one, and its layer would have a hole. A layer source fills that: an extra edit,
 never shown as a step, only cut from.
 
+`yarn camp-layers` cuts every layer step into `src/assets/camp/layers/<piece>.webp` (with its shadow). Which
+picture each layer is cut against lives in `LAYER_SOURCES` in `scripts/campLayers.ts`; re-run it after
+importing a step or a layer source.
+
 ### 90. `camp/bed` — Layer source: the bare palm garden bed
 
 The palm garden's base: its finds (palm seed, second palm, fig tree, lotus planter) arrive in any order, so

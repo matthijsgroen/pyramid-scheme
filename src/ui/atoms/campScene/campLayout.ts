@@ -1,12 +1,21 @@
 import { difficulties, difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
-import type { CampCatalogue, CampFixedId, CampPiece, CampPlace, CampSpot, CampSpotId } from "./campTypes"
+import type {
+  CampCatalogue,
+  CampFixedId,
+  CampFound,
+  CampPiece,
+  CampPlace,
+  CampSpot,
+  CampSpotId,
+  CampStep,
+} from "./campTypes"
 
 export type CampLayoutInput = {
   width: number
   height: number
   insets: { top: number; bottom: number }
   chapter: Difficulty
-  steps: Partial<Record<CampSpotId, number>>
+  found: CampFound
   catalogue: CampCatalogue
 }
 
@@ -25,12 +34,17 @@ export type PlacedPiece = {
   key: string
   spot: CampSpotId | CampFixedId
   piece: CampPiece
+  /** Drawn from the spot's layer art, over the spot, rather than as a whole-spot picture. */
+  layer: boolean
   x: number
   y: number
   scale: number
   width: number
   height: number
-  /** False for a piece a later step replaces: still placed, so the scene can fade it out under its successor. */
+  /**
+   * False for a found piece that does not show: replaced by a later step, or a layer whose host is missing.
+   * Still placed, so the scene can fade it out, and in again once it shows.
+   */
   visible: boolean
   /** None for a hidden piece and for a piece that burns: its own fire lights the ground it would fall on. */
   shadow?: PlacedShadow
@@ -114,16 +128,57 @@ const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(ma
 
 const reached = (step: { chapter: Difficulty }, chapter: Difficulty) => difficultyCompare(step.chapter, chapter) <= 0
 
-const stepsAvailable = (spot: CampSpot, chapter: Difficulty) => spot.steps.filter(s => reached(s, chapter)).length
-
 /** A spot belongs to the chapter of its first step; the camera frames it from then on. */
 const spotOpen = (spot: CampSpot, chapter: Difficulty) => spot.steps.some(s => reached(s, chapter))
 
-export const fullSteps = (catalogue: CampCatalogue, chapter: Difficulty): Record<CampSpotId, number> =>
-  Object.fromEntries(catalogue.spots.map(spot => [spot.id, stepsAvailable(spot, chapter)])) as Record<
-    CampSpotId,
-    number
-  >
+const idsOf = (steps: CampStep[]) => steps.flatMap(s => s.pieces.map(p => p.id))
+
+/** Every piece of every step the chapter has reached: the camp complete up to it. */
+export const fullFound = (catalogue: CampCatalogue, chapter: Difficulty): CampFound =>
+  Object.fromEntries(catalogue.spots.map(spot => [spot.id, idsOf(spot.steps.filter(s => reached(s, chapter)))]))
+
+/** For each spot given a count, the pieces of its first n steps: the order its art was painted in. */
+export const foundUpTo = (catalogue: CampCatalogue, counts: Partial<Record<CampSpotId, number>>): CampFound =>
+  Object.fromEntries(
+    catalogue.spots.flatMap(spot => {
+      const count = counts[spot.id]
+      return count === undefined ? [] : [[spot.id, idsOf(spot.steps.slice(0, Math.max(0, count)))]]
+    })
+  )
+
+const isBase = (step: CampStep) => !step.layer
+
+const lastWhere = <T>(items: readonly T[], test: (item: T) => boolean) => [...items].reverse().find(test)
+
+/**
+ * The steps of a spot that are there in the chapter, in step order, each with whether it shows: a base step
+ * while no later base step is there, a growth stage while no further stage of its object is, a layer step
+ * while its hosts all show.
+ */
+export const spotSteps = (spot: CampSpot, chapter: Difficulty, found: readonly string[]) => {
+  const have = new Set(found)
+  const finds = spot.steps.filter(s => !s.given && reached(s, chapter) && s.pieces.every(p => have.has(p.id)))
+  const present = spot.steps.filter(s => finds.includes(s) || (s.given && finds.length > 0 && reached(s, chapter)))
+  const base = lastWhere(present, isBase)
+  const hostsOf = (step: CampStep) => {
+    const on = step.layer?.on
+    if (on === undefined)
+      return [lastWhere(spot.steps.slice(0, spot.steps.indexOf(step)), isBase)].flatMap(s => s ?? [])
+    const ids = typeof on === "string" ? [on] : on
+    return spot.steps.filter(s => s.pieces.some(p => ids.includes(p.id)))
+  }
+  const furthest = (step: CampStep) => {
+    const growth = step.layer?.growth
+    return !growth || lastWhere(present, s => s.layer?.growth === growth) === step
+  }
+  const shows = (step: CampStep, seen: ReadonlySet<CampStep>): boolean => {
+    if (!present.includes(step) || seen.has(step)) return false
+    if (isBase(step)) return step === base
+    const next = new Set(seen).add(step)
+    return furthest(step) && hostsOf(step).every(host => shows(host, next))
+  }
+  return present.map(step => ({ step, shown: shows(step, new Set()) }))
+}
 
 const toRadians = (degrees: number) => (degrees * Math.PI) / 180
 
@@ -152,7 +207,7 @@ const castShadow = (p: Omit<PlacedPiece, "shadow">, glows: PlacedGlow[]): Placed
   }
 }
 
-type Placed = { spot: CampSpotId | CampFixedId; place: CampPlace; piece: CampPiece }
+type Placed = { spot: CampSpotId | CampFixedId; place: CampPlace; piece: CampPiece; layer: boolean; shown: boolean }
 
 /** A piece's box around its anchor, in object units, at its depth. */
 type Extent = { x: number; y: number; left: number; right: number; top: number; bottom: number }
@@ -190,7 +245,7 @@ export const layoutCamp = ({
   height,
   insets,
   chapter,
-  steps,
+  found,
   catalogue,
 }: CampLayoutInput): CampLayout | null => {
   if (!(width > 0) || !(height > 0)) return null
@@ -267,14 +322,16 @@ export const layoutCamp = ({
   const drawn: Placed[] = []
   for (const spot of catalogue.spots) {
     if (!spotOpen(spot, chapter)) continue
-    const count = clamp(Math.floor(steps[spot.id] ?? 0), 0, stepsAvailable(spot, chapter))
-    for (const step of spot.steps.slice(0, count))
-      for (const piece of step.pieces) drawn.push({ spot: spot.id, place: spot, piece })
+    for (const { step, shown } of spotSteps(spot, chapter, found[spot.id] ?? []))
+      for (const piece of step.pieces) drawn.push({ spot: spot.id, place: spot, piece, layer: !isBase(step), shown })
   }
   // Fixed pieces follow spot pieces so that, on a shared anchor, they draw on top.
-  for (const fixed of catalogue.fixed) drawn.push({ spot: fixed.id, place: fixed, piece: fixed.piece })
+  for (const fixed of catalogue.fixed)
+    drawn.push({ spot: fixed.id, place: fixed, piece: fixed.piece, layer: false, shown: true })
 
-  const hidden = new Set(drawn.flatMap(d => (d.piece.replaces ?? []).filter(id => id !== d.piece.id)))
+  const hidden = new Set(
+    drawn.filter(d => d.shown).flatMap(d => (d.piece.replaces ?? []).filter(id => id !== d.piece.id))
+  )
 
   // Sorted by anchor, not by each piece's own y, so a piece raised onto another (a flag on a tent) stays in front.
   const standing = drawn
@@ -292,30 +349,41 @@ export const layoutCamp = ({
         key: `${d.spot}:${d.piece.id}`,
         spot: d.spot,
         piece: d.piece,
+        layer: d.layer,
         x: x + d.piece.dx * px,
         y: y + d.piece.dy * px,
         scale,
         width: d.piece.width * px,
         height: d.piece.height * px,
-        visible: !hidden.has(d.piece.id),
+        visible: d.shown && !hidden.has(d.piece.id),
         frame: px,
       }
     })
 
-  const glows: PlacedGlow[] = standing
-    .filter(p => p.visible)
-    .flatMap(p => {
-      return (p.piece.lights ?? []).map((light, i) => ({
-        key: `${p.key}:${i}`,
-        x: p.x + light.dx * p.frame,
-        y: p.y + light.dy * p.frame,
-        floor: p.y,
-        radius: light.radius * p.scale,
-        color: light.color,
-        mode: light.mode,
-        strength: light.strength,
-      }))
-    })
+  const lit = standing.filter(p => p.visible)
+  // A spot's pieces share its anchor, so they stand in step order: the last carrying a light id is the latest.
+  const sourceOf = (spot: string, id: string) => `${spot}:${id}`
+  const latest = new Map(
+    lit.flatMap(p => (p.piece.lights ?? []).flatMap(l => (l.id ? [[sourceOf(p.spot, l.id), p] as const] : [])))
+  )
+  const glows: PlacedGlow[] = lit.flatMap(p =>
+    (p.piece.lights ?? []).flatMap((light, i) =>
+      light.id && latest.get(sourceOf(p.spot, light.id)) !== p
+        ? []
+        : [
+            {
+              key: `${p.key}:${i}`,
+              x: p.x + light.dx * p.frame,
+              y: p.y + light.dy * p.frame,
+              floor: p.y,
+              radius: light.radius * p.scale,
+              color: light.color,
+              mode: light.mode,
+              strength: light.strength,
+            },
+          ]
+    )
+  )
 
   const pieces: PlacedPiece[] = standing.map(({ frame: _, ...p }) => ({
     ...p,

@@ -4,7 +4,7 @@ import { render, screen, fireEvent, within } from "@testing-library/react"
 import type { ComponentProps } from "react"
 import type { CampArt } from "./campScene/campArt"
 import type { CampCatalogue, CampPiece } from "./campScene/campTypes"
-import { fullSteps } from "./campScene/campLayout"
+import { fullFound } from "./campScene/campLayout"
 import { CampScene } from "./CampScene"
 
 const piece = (id: string, options: Partial<CampPiece> = {}): CampPiece => ({
@@ -72,7 +72,7 @@ describe("CampScene", () => {
         <Scene
           {...size}
           chapter="starter"
-          steps={{ fire: 1 }}
+          found={{ fire: ["ring"] }}
           catalogue={catalogue}
           entrances={{ chest: { label: "Collection", onOpen: noop }, window: { label: "Mosaic", onOpen: noop } }}
         />
@@ -89,7 +89,7 @@ describe("CampScene", () => {
     render(
       <Scene
         chapter="starter"
-        steps={{}}
+        found={{}}
         catalogue={catalogue}
         entrances={{ chest: { label: "Collection", onOpen } }}
       />
@@ -102,7 +102,7 @@ describe("CampScene", () => {
     render(
       <Scene
         chapter="starter"
-        steps={{}}
+        found={{}}
         catalogue={catalogue}
         entrances={{
           chest: { label: "Collection", onOpen: noop, badge: 3 },
@@ -122,7 +122,7 @@ describe("CampScene", () => {
         width={160}
         height={320}
         chapter="wizard"
-        steps={{}}
+        found={{}}
         catalogue={catalogue}
         entrances={{ chest: { label: "Collection", onOpen: noop } }}
       />
@@ -133,40 +133,38 @@ describe("CampScene", () => {
 
   it("offers the journeys entrance only once the map table stands", () => {
     const entrances = { mapTable: { label: "Journeys", onOpen: noop } }
-    const { rerender } = render(
-      <Scene chapter="starter" steps={{ mapTable: 0 }} catalogue={catalogue} entrances={entrances} />
-    )
+    const { rerender } = render(<Scene chapter="starter" found={{}} catalogue={catalogue} entrances={entrances} />)
     expect(screen.queryByRole("button", { name: "Journeys" })).toBeNull()
 
-    rerender(<Scene chapter="starter" steps={{ mapTable: 1 }} catalogue={catalogue} entrances={entrances} />)
+    rerender(<Scene chapter="starter" found={{ mapTable: ["table"] }} catalogue={catalogue} entrances={entrances} />)
     expect(screen.getByRole("button", { name: "Journeys" })).toBeTruthy()
   })
 
   it("draws a stand-in naming a piece without art", () => {
-    render(<Scene chapter="starter" steps={{ fire: 1 }} catalogue={catalogue} />)
+    render(<Scene chapter="starter" found={{ fire: ["ring"] }} catalogue={catalogue} />)
     expect(screen.getByText("ring")).toBeTruthy()
   })
 
   it("casts no shadow under a stand-in", () => {
     const standIns: CampCatalogue = { spots: [catalogue.spots[0]], fixed: [] }
-    const { container } = render(<Scene chapter="starter" steps={{ fire: 1 }} catalogue={standIns} />)
+    const { container } = render(<Scene chapter="starter" found={{ fire: ["ring"] }} catalogue={standIns} />)
     expect(screen.getByText("ring")).toBeTruthy()
     expect(container.querySelectorAll(".camp-shadow")).toHaveLength(0)
   })
 
   it("drops later-chapter spots when the chapter goes down", () => {
-    const steps = fullSteps(catalogue, "wizard")
-    const { rerender } = render(<Scene chapter="wizard" steps={steps} catalogue={catalogue} />)
+    const found = fullFound(catalogue, "wizard")
+    const { rerender } = render(<Scene chapter="wizard" found={found} catalogue={catalogue} />)
     expect(screen.getByText("thoth")).toBeTruthy()
 
-    rerender(<Scene chapter="starter" steps={steps} catalogue={catalogue} />)
+    rerender(<Scene chapter="starter" found={found} catalogue={catalogue} />)
     expect(screen.queryByText("thoth")).toBeNull()
   })
 
   it("stacks a second frame when a piece has one", () => {
     art.set("flame", { url: "/flame.webp", frameB: "/flame-b.webp" })
     art.set("jar", { url: "/jar.webp" })
-    const { container } = render(<Scene chapter="starter" steps={{ water: 1 }} catalogue={firelit} />)
+    const { container } = render(<Scene chapter="starter" found={{ water: ["jar"] }} catalogue={firelit} />)
     const frames = [...container.querySelectorAll("img.camp-piece")].map(img => img.getAttribute("src"))
     expect(frames).toEqual(expect.arrayContaining(["/flame.webp", "/flame-b.webp", "/jar.webp"]))
     expect(container.querySelectorAll(".camp-frame--a")).toHaveLength(1)
@@ -193,7 +191,7 @@ describe("CampScene", () => {
       ],
       fixed: firelit.fixed,
     }
-    const { container } = render(<Scene chapter="starter" steps={{ water: 2 }} catalogue={twoSteps} />)
+    const { container } = render(<Scene chapter="starter" found={{ water: ["jar", "urn"] }} catalogue={twoSteps} />)
     const jar = container.querySelector("img[src='/jar.webp']")!
     const urn = container.querySelector("img[src='/urn.webp']")!
     expect(jar.parentElement!.classList.contains("camp-fade--hidden")).toBe(true)
@@ -206,7 +204,7 @@ describe("CampScene", () => {
 
   it("adds a self-shade overlay masked by the piece's own art", () => {
     art.set("jar", { url: "/jar.webp", shadow: "/jar-shadow.webp" })
-    const { container } = render(<Scene chapter="starter" steps={{ water: 1 }} catalogue={firelit} />)
+    const { container } = render(<Scene chapter="starter" found={{ water: ["jar"] }} catalogue={firelit} />)
     const shades = container.querySelectorAll<HTMLElement>(".camp-shade")
     expect(shades).toHaveLength(1)
     const jar = container.querySelector<HTMLElement>("img[src='/jar.webp']")!
@@ -223,7 +221,7 @@ describe("CampScene", () => {
 
   it("gives a burning piece neither shadow nor self-shade", () => {
     art.set("flame", { url: "/flame.webp", shadow: "/flame-shadow.webp" })
-    const { container } = render(<Scene chapter="starter" steps={{}} catalogue={firelit} />)
+    const { container } = render(<Scene chapter="starter" found={{}} catalogue={firelit} />)
     expect(container.querySelector("img[src='/flame.webp']")).toBeTruthy()
     expect(container.querySelectorAll(".camp-shadow")).toHaveLength(0)
     expect(container.querySelectorAll(".camp-shade")).toHaveLength(0)
@@ -240,12 +238,12 @@ describe("CampScene", () => {
     }
 
     it("lays no tint over the whole camp, so the pieces keep their colour", () => {
-      const { container } = render(<Scene chapter="starter" steps={{}} catalogue={lit} />)
+      const { container } = render(<Scene chapter="starter" found={{}} catalogue={lit} />)
       expect(container.querySelector(".camp-night")).toBeNull()
     })
 
     it("gives every light a wide pool that saturates and a small core that brightens", () => {
-      const { container } = render(<Scene chapter="starter" steps={{}} catalogue={lit} />)
+      const { container } = render(<Scene chapter="starter" found={{}} catalogue={lit} />)
       const pools = container.querySelectorAll<HTMLElement>(".camp-glow--pool")
       const cores = container.querySelectorAll<HTMLElement>(".camp-glow--core")
       expect(pools).toHaveLength(2)
@@ -255,21 +253,21 @@ describe("CampScene", () => {
     })
 
     it("lays a light's pool on the sand at its piece's foot, below its core", () => {
-      const { container } = render(<Scene chapter="starter" steps={{}} catalogue={lit} />)
+      const { container } = render(<Scene chapter="starter" found={{}} catalogue={lit} />)
       const pool = container.querySelector<HTMLElement>(".camp-glow--pool.camp-glow--flicker")!
       const core = container.querySelector<HTMLElement>(".camp-glow--core.camp-glow--flicker")!
       expect(parseFloat(pool.style.top)).toBeGreaterThan(parseFloat(core.style.top))
     })
 
     it("raises a handful of embers from a burning piece only", () => {
-      const { container } = render(<Scene chapter="starter" steps={{}} catalogue={lit} />)
+      const { container } = render(<Scene chapter="starter" found={{}} catalogue={lit} />)
       const embers = container.querySelectorAll(".camp-ember")
       expect(embers.length).toBeGreaterThan(0)
       expect(embers.length).toBeLessThanOrEqual(8)
     })
 
     it("twinkles a few stars and leaves the rest still", () => {
-      const { container } = render(<Scene chapter="starter" steps={{}} catalogue={lit} />)
+      const { container } = render(<Scene chapter="starter" found={{}} catalogue={lit} />)
       const twinkling = container.querySelectorAll(".camp-star--twinkle").length
       expect(twinkling).toBeGreaterThan(0)
       expect(twinkling).toBeLessThanOrEqual(10)
