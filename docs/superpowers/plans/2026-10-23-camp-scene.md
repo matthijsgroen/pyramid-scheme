@@ -560,3 +560,62 @@ a fade instead.
   - component: `it("draws a spot's earlier steps hidden under the current one")`
 - **Look.** In Storybook's Playground, step the fire pit up and down. There should be no flash of empty
   ground. Screenshots can't show a fade, so check the computed styles in the DOM.
+
+---
+
+## Added 2026-10-23: a lighting pass so the camp sparkles like the impression
+
+The designer finds the scene less colourful than the impressions. Five causes:
+
+- the global blue multiply night tint greys everything;
+- the `screen` glows wash out instead of saturating;
+- the sand is one flat colour;
+- there is almost no sparkle: no window spill, no embers, no twinkle;
+- grey stand-ins remain where art is still missing.
+
+The art stays as it is. The fix is in code, measured against the impression.
+
+### Task 12: Lighting pass, measured against the starter impression
+
+**Measure first, then after.** `art/masters/camp/impression-starter.webp` shows the starter camp; most starter
+art has landed, the water spot is still a stand-in. Write `scripts/campLook.ts` (`yarn camp-look`). Given an
+image and the horizon's share of its height, it prints for the ground area below the horizon:
+
+- mean L\* and C\* (CIELAB);
+- the share of pixels with C\* > 40;
+- mean L\* and C\* inside a disc around the fire, given as x, y and r in shares of width and height.
+
+Run it on the impression and on a 471×844 screenshot of StarterFull. Report both, before and after.
+
+**Changes, each a starting value tuned by eye and by the numbers:**
+
+1. **Night.** Drop the global multiply tint over the camp. The night lives in:
+   - the sky;
+   - a vignette darkening the outer edge of the ground (radial, about 0.35 at the corners);
+   - a slight cool tone on far ground toward the horizon.
+
+   The camp area keeps its colour.
+
+2. **Firelight that saturates.** The fire's glow becomes two layers:
+   - a large warm pool using `mix-blend-mode: soft-light` or `overlay` (whichever reads closer to the impression), radius about 1.5× today's, which raises the warmth and chroma of the sand and of pieces;
+   - a small bright core that keeps `screen`.
+
+   The window and the chest get the same treatment at their own colour: a blue-gold pool on the sand in front of the window, gold for the chest. Keep the flicker and breathe animations, and keep reduced-motion behaviour.
+
+3. **Sand.** The ground becomes a gradient: warm ochre near the camp's centre, darker and cooler toward the edges and horizon. It still gives way to `sand.webp` when that art exists. In that case the gradient is laid over the texture as a tint.
+4. **Sparkle**, cheap and CSS only:
+   - a handful of embers rising from each burning piece (small dots, `transform` and `opacity` keyframes, staggered);
+   - a few stars that twinkle;
+   - none of it under reduced motion.
+
+   Count elements: at most about 8 embers per fire and 10 twinkling stars.
+
+5. **No `filter`** on large layers. Blend modes only on the glow layers, as today. Check that paint and frame time stay as Task 7 measured them, by one quick measurement on WizardFull at 390×844.
+
+- [ ] **Step 1:** write `yarn camp-look` and a small spec for it on a synthetic image (known colours give known L\*/C\*). Measure the impression and the current StarterFull.
+- [ ] **Step 2:** implement 1–4, iterating with screenshots and `camp-look` until the camp area's mean C\* and the fire disc's L\*/C\* come close to the impression's. Report the gap left.
+- [ ] **Step 3: Gates.**
+  - Run `yarn test src/ui/atoms scripts`, `yarn check-types`, `yarn lint` and `yarn prettier --write <files>`.
+  - Run `yarn build-storybook`.
+  - Save side-by-side screenshots of StarterFull and WizardFull with their impressions.
+- [ ] **Step 4: Commit** `feat: camp lighting that sparkles like the impression`
