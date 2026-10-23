@@ -341,7 +341,7 @@ The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/ref-cooking.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the cooking corner, complete: a wooden tripod with a small clay pot hanging from it, a small wooden spice rack with clay jars and bottles, a round wooden bread board with two flatbreads, a mud-brick bread oven with firewood stacked underneath, an A-frame drying rack with four fish hanging from it, and a patterned red rug set with plates of food, fruit and cups, cushions around it. Use the colours of the matching objects in the reference image.
+> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the cooking corner, complete: a tall wooden tripod with a round black iron pot hanging from it over a small fire of a few logs, a small wooden spice rack with clay jars and bottles on its shelves, a round wooden bread board with two flatbreads leaning against the foot of the spice rack, a domed mud-brick bread oven with a short chimney, a small fire in its round mouth and firewood stacked in the opening underneath, a wooden drying rack of two A-frames and a crossbar with three fish hanging from it, and a patterned red rug set with plates of food, fruit and cups, striped cushions around it. Use the colours of the matching objects in the reference image.
 
 #### 27. `camp/dryingRack` — Cooking corner, step 5 of 6 (master)
 
@@ -358,7 +358,7 @@ Edit of `camp/dryingRack`.
 
 Attach: `art/masters/camp/ref-cooking.webp`, `art/masters/camp/dryingRack.webp`
 
-> [edit] Remove this, and only this: an A-frame wooden drying rack with four fish hanging from it. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: a wooden drying rack of two A-frames and a crossbar with three fish hanging from it. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 #### 29. `camp/breadBoard` — Cooking corner, step 3 of 6 (junior)
@@ -367,7 +367,7 @@ Edit of `camp/breadOven`.
 
 Attach: `art/masters/camp/ref-cooking.webp`, `art/masters/camp/breadOven.webp`
 
-> [edit] Remove this, and only this: a mud-brick bread oven with a round mouth, firewood stacked underneath. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the domed mud-brick bread oven with its chimney, the fire in its mouth and the firewood underneath. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 #### 30. `camp/spiceRack` — Cooking corner, step 2 of 6 (junior)
