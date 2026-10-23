@@ -1,5 +1,24 @@
 /* The camp at night: sky, ground and pieces under a cool tint, with glows pulling warm colour back out. */
+/*
+ * Steps fade, the opening does not. Half a second after the scene mounts it flags itself settled, and only a
+ * settled scene fades its pieces: what is there when the camp opens simply stands there, a step that changes
+ * later fades in. A container style query reads the flag, because transition properties may not depend on an
+ * animated value directly. A browser without style queries shows no fade at all.
+ */
+@property --camp-settled {
+  syntax: "<integer>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@keyframes camp-settle {
+  to {
+    --camp-settled: 1;
+  }
+}
+
 .camp-scene {
+  animation: camp-settle 1ms 0.5s forwards;
   position: relative;
   width: 100%;
   height: 100%;
@@ -111,12 +130,17 @@
   inset: 0;
   pointer-events: none;
   opacity: 1;
-  transition: opacity 0.4s ease;
 }
 
-@starting-style {
+@container style(--camp-settled: 1) {
   .camp-fade {
-    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  @starting-style {
+    .camp-fade {
+      opacity: 0;
+    }
   }
 }
 
