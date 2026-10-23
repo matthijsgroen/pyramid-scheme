@@ -30,6 +30,13 @@ star map, scroll case, lookout flag, seat cushions, astrolabe, reed globe, star 
 (Thoth, Bastet, Anubis, Ra), and seeds and cuttings: palm seed (×2: palm and second palm), fig seed,
 papyrus root, reed cutting, lotus.
 
+**Any order.** Finds come in any order, so the camp does not show "step n of a chain". A spot is drawn
+as its base plus one **layer** per object the player has, in any combination. The layers come from the
+painted chains, no new art: each step differs from the one before by one object, so that object's layer
+is the pixels where the two differ (a spike on the map table, 2026-10-23, composed every subset cleanly;
+tiny noise specks need dropping). An object painted on a host (a compass on the table) shows once its host
+stands; until then it is only in the chest. The step order stays as the art workflow, never as a game rule.
+
 ### 2. Built from found parts (26 structures)
 
 Structures are not found whole; their **parts** are, like hieroglyph fragments. A structure appears once
