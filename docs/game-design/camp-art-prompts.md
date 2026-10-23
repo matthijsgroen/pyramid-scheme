@@ -432,7 +432,7 @@ Edit of `camp/saddlebags`.
 
 Attach: `art/masters/camp/ref-donkey.webp`, `art/masters/camp/saddlebags.webp`
 
-> [edit] Remove this, and only this: woven saddlebags on the donkey's back. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the leather bag on the donkey's flank and its strap. The halter stays. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 #### 38. `camp/halter` — Donkey, step 1 of 6 (junior)
