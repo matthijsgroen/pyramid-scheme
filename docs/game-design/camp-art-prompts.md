@@ -32,8 +32,9 @@ spot is painted against one finished object; an edit attaches the image it edits
 
 - Square canvas. The group stands on an invisible ground line low in the frame, centred.
 - Flat `#ff00ff` background to all four edges: no sand, no ground patch, no cast shadow under it.
-- Cool, neutral moonlight. **No warm glow cast by fire on anything around it** — flames themselves are
-  fine. The scene's firelight is drawn by code, and a painted glow would double it.
+- Neutral, even light and full colour. **The night is drawn by code** (a night tint over the scene),
+  so a piece painted as night is dimmed twice and comes out murky. **No glow cast by fire on anything
+  around it** either — flames themselves are fine; the scene's firelight is drawn by code too.
 - In an edit: nothing moved. The same framing, position and size as the image it edits. A part that has
   moved breaks the step-to-step swap in the scene.
 
@@ -43,13 +44,14 @@ every step of a spot must share one frame), writes the shipped file and keeps th
 
 ## 0. The house style, stated once
 
-> Painted illustration, matte and vivid: soft brush texture, NO outlines anywhere, an edge is a change of
-> value. Use the attached reference image only for the viewing angle, scale and composition, NOT for its
-> line work or its glossy finish. Seen from slightly above, about 35 degrees down, like the reference.
-> The objects are clearly darker than pale desert sand, with a wide range of values and deep shadows in
-> their own folds, so they stand out against a light ground. Metals are saturated but matte, never
-> glossy or shiny. Night, lit by cool moonlight from the upper left. No warm firelight glow on
-> anything, no light pool, no cast shadow on the ground, no sand or ground under the objects. The objects
+> Painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, an edge is
+> a change of value. Use the attached reference image only for the viewing angle, scale and composition,
+> NOT for its line work or its glossy finish. Seen from slightly above, about 35 degrees down, like the
+> reference. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour,
+> warm wood, bright painted colours. Mid-tone to dark values with clear form shading, so the object
+> stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never
+> glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand or
+> ground under the objects. The objects
 > stand isolated on a flat, solid #ff00ff magenta background that fills the whole square canvas to its
 > edges. Square 1:1 canvas; the group stands on an invisible ground line at about 88% of the height,
 > centred, filling about 80% of the width. No text, no frame, no border.
@@ -68,7 +70,7 @@ Paint the chest first: every later final-state entry attaches it.
 
 Attach: `art/masters/camp/impression-wizard.webp`
 
-> [preamble] Paint a sturdy treasure chest of dark cedar wood with a domed lid, lid closed, broad red-ochre painted bands, small turquoise faience studs along the bands and a plain bronze lock plate, all matte.
+> [preamble] Paint a sturdy treasure chest of warm reddish-brown cedar wood with a domed lid, lid closed, broad bright red-ochre painted bands, vivid turquoise faience studs along the bands and a warm bronze lock plate, all matte.
 
 ### 2. `camp/window` — Stained-glass window
 
@@ -780,7 +782,7 @@ A seamless tile. If the generator cannot tile, make it with Midjourney `--tile`
 Attach: `art/masters/camp/impression-wizard.webp`
 
 > Seamless tileable square texture of fine desert sand seen from about 35 degrees above, soft wind
-> ripples, painterly style like the attached reference, cool neutral moonlit colour. No objects, no
+> ripples, painterly style like the attached reference, warm natural colour in neutral light. No objects, no
 > footprints, no light pool, no vignette. The left edge continues into the right edge and the top into
 > the bottom.
 
@@ -790,8 +792,8 @@ Import with `--size=2048`.
 
 Attach: `art/masters/camp/impression-wizard.webp`
 
-> A wide horizontal strip of distant desert dunes at night, 4:1 landscape canvas, painterly style like
-> the attached reference, cool moonlight. The dunes fill the lower half; above the dune line everything is
+> A wide horizontal strip of distant desert dunes in neutral light, 4:1 landscape canvas, painted and matte, warm sand
+> colour. The dunes fill the lower half; above the dune line everything is
 > flat solid #ff00ff magenta. The left edge continues seamlessly into the right edge. No pyramids, no
 > objects.
 
@@ -799,8 +801,8 @@ Attach: `art/masters/camp/impression-wizard.webp`
 
 Attach: `art/masters/camp/impression-wizard.webp`
 
-> [preamble] Paint one distant stone pyramid, sandstone blocks, lit by cool moonlight from the upper
-> left, its right face in shadow. Nothing else.
+> [preamble] Paint one distant stone pyramid, sandstone blocks, lit by neutral light from the upper
+> left, its right face in shadow, warm sandstone colour. Nothing else.
 
 ### 81. `camp/pyramidGold` — Pyramid with golden capstone
 
