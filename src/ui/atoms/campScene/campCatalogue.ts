@@ -108,7 +108,8 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["wizard", "caravanBanner"],
     ]),
     spot("mapTable", { x: 0.8, y: 0.92, frame: 1.67, footprint: 1.5 }, [
-      ["expert", "map"],
+      // The map on the ground opens "Alle reizen", so like every entrance it stands from the start.
+      ["starter", "map"],
       ["expert", "table"],
       ["expert", "compass"],
       ["master", "starMap"],

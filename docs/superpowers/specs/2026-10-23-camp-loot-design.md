@@ -22,10 +22,10 @@ Two more constraints came out of the discussion:
 
 Every camp step has exactly one source.
 
-### 1. Found as itself (27 steps)
+### 1. Found as itself (26 steps)
 
 Portable things that can plausibly lie in a tomb are found as loot, one find = one step:
-gourd, jar, second jar, reed mat, blanket, tent rug, pot, spice rack, bread board, tent flag, map, compass,
+gourd, jar, second jar, reed mat, blanket, tent rug, pot, spice rack, bread board, tent flag, compass,
 star map, scroll case, lookout flag, seat cushions, astrolabe, reed globe, star cloth, the four god statues
 (Thoth, Bastet, Anubis, Ra), and seeds and cuttings: palm seed (×2: palm and second palm), fig seed,
 papyrus root, reed cutting, lotus.
@@ -84,6 +84,12 @@ better is the camp's bonus. A purchase is the animal plus what it needs (the tro
 Only what really happens by itself is not loot: sprout, palm and dates grow from a found palm seed; the
 ibises arrive once the pond has reeds. Builder's call (see below) when exactly.
 
+### Fixed from the start
+
+The entrances stand from the first visit and are never loot: the chest (collection), the mosaic window,
+the small campfire (healing), and **the map** on the ground, weighted with stones (it opens "Alle reizen").
+The map table's other steps (table, compass, star map, …) are finds that join it later.
+
 ### Healing
 
 Unchanged from camp.md: hearts refill at the fire on coming home. The small campfire stands from the
@@ -132,7 +138,7 @@ From the camp.md table (rewards counted by section tier):
   slots).
 - **Expert and up:** the old consumable slots become ~60 waterskins (camp.md §2), camp finds, parts, and
   the rest money and sellables.
-- With 26 structures × ~3 parts ≈ 78 parts plus 27 items, camp loot fills most of the ~100 free slots
+- With 26 structures × ~3 parts ≈ 78 parts plus 26 items, camp loot fills most of the ~100 free slots
   on expert and up; the economy recompute decides the rest.
 - Fragments, mosaic, map pieces, tomb keys and treasures are unchanged.
 - **The world is still growing** (new areas are being authored in another session), and more loot is
