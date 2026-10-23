@@ -359,3 +359,58 @@ Agreed with the designer: each piece gets ONE combined shadow, pre-rendered at i
   - Screenshot StarterFull on a phone viewport: the chest's shadow should point away from the fire.
 - [ ] **Step 4: Measure.** Follow the recipe in `docs/instructions/map-html-port.md` on WizardFull at 390×844 with 4× CPU throttle. Compare against the commit before this task: frame time and layer count, with every piece given a shadow (temporarily copy the chest shadow to every id in a scratch run; do not commit that). Report the numbers.
 - [ ] **Step 5: Commit** `feat: camp pieces cast shadows away from the fire`
+
+---
+
+## Added 2026-10-23: contact shadows, self-shading, two-frame fire
+
+Agreed with the designer after the first art landed. Three changes:
+
+- The cast silhouette is laid flat, so it cannot follow a 3/4-view object's base. It becomes a **contact shadow**.
+- Pieces get **self-shading** toward and away from the fire.
+- Burning pieces get an **optional second frame** for a small flicker.
+
+### Task 8: Contact shadow, self-shade layer, two-frame fire
+
+**Files:**
+
+- Modify: `scripts/importCamp.ts` (+ spec), `src/ui/atoms/campScene/campLayout.ts` (+ spec), `src/ui/atoms/CampScene.tsx` (+ spec), `CampScene.css`, `docs/superpowers/specs/2026-10-23-camp-scene-design.md` ("Shadows" section), `docs/game-design/camp-art-prompts.md`
+
+**Behaviour:**
+
+- **Contact shadow, at import.**
+  - `<name>-shadow.webp` becomes the object's **base band**, not its whole silhouette. For each column of the keyed alpha, take the lowest opaque pixel and fill upward a band of about 6% of the canvas height, following the object's own base contour. Blur it once.
+  - It keeps the same canvas and size as the piece.
+  - Re-import `chest` and `window` from their masters in `art/masters/camp/`.
+- **Contact shadow, in the scene.**
+  - The shadow is drawn exactly under its piece: same box, **no rotation, no flatten**.
+  - It is translated away from the light by a small offset, about 0.06u at full fire and 0.03u under the moon, in the direction `shadow.angle`.
+  - Strength and flicker work as today.
+  - `PlacedShadow.length` is dropped if nothing uses it any more.
+- **Self-shade layer.**
+  - Each drawn piece with art, unless it burns (the same rule as the shadow), gets one overlay element in the same box. Its `mask-image` (and `-webkit-mask-image`) is the piece's own art URL, so it covers only the piece.
+  - The overlay holds a `linear-gradient` along the light direction (`shadow.angle`): toward the light, a faint warm tint (fire) or nothing (moon); away from the light, a darkening of about 0.35 black at full fire.
+  - Its opacity follows `shadow.strength`. Firelit pieces flicker the overlay's opacity in step with their shadow, and hold still under reduced motion.
+  - Only `transform` and `opacity` are set: no `filter`, and no `mix-blend-mode` on large layers. Use a plain alpha overlay.
+- **Two-frame fire.**
+  - If `src/assets/camp/<id>-b.webp` exists, a piece renders both frames stacked.
+  - The frames alternate with a CSS `steps()` opacity animation at about 3–4 Hz, with an irregular feel from two durations.
+  - Under `prefers-reduced-motion` only frame A shows. A piece with no `-b` file is unchanged.
+  - The art lookup ignores `-b` and `-shadow` files when listing pieces.
+- **Prompts.**
+  - Add `camp/campfire-b` to `camp-art-prompts.md` as an edit of `camp/campfire`: "Edit the second attached image: the same sticks, same size and position; repaint only the flames in a different moment of their flicker — leaning the other way, a different tongue shape. Same painting style, crisp opaque outer edge, flat #ff00ff background."
+  - Write a short note that a burning step may get a `-b` entry the same way.
+  - `parseCamp` must accept the `-b` key. The `[A-Za-z0-9-]` pattern already allows it; confirm with a test.
+
+- [ ] **Step 1: Write failing tests:**
+  - import: `it("builds the shadow from the object's base, not its whole silhouette")`. On a synthetic image (a tall rectangle), the shadow has alpha near the rectangle's bottom edge and none at its top.
+  - layout: `it("offsets a contact shadow away from the fire")`, on the made-up catalogue.
+  - component:
+    - `it("stacks a second frame when a piece has one")`, with a stubbed art lookup;
+    - `it("adds a self-shade overlay masked by the piece's own art")`;
+    - `it("gives a burning piece neither shadow nor self-shade")`.
+- [ ] **Step 2: Implement.** Then re-import `chest` and `window`.
+- [ ] **Step 3: Gates and a look.**
+  - Run `yarn test src/ui/atoms scripts`, `yarn check-types`, `yarn lint` (and `yarn prettier`, **never `npx prettier`**) and `yarn build-storybook`.
+  - Screenshot StarterEmpty and StarterFull at 390×844. Check that the chest's shadow hugs its diagonal base, that the side away from the fire is darker, and that the window reads the same way.
+- [ ] **Step 4: Commit** `feat: camp contact shadows, self-shading and two-frame fire`
