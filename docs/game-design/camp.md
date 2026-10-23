@@ -75,21 +75,21 @@ Camp items are a new tier-bound filler currency. Every find adds one step to one
 **12 spots that keep growing.** A spot appears in one tier and gains additions in every later tier. 74
 finds in total, scaled to the loot space each tier has.
 
-| Spot           | Beginner                         | Junior                          | Expert               | Master                       | Wizard                         |
-| -------------- | -------------------------------- | ------------------------------- | -------------------- | ---------------------------- | ------------------------------ |
-| Fire pit       | stone ring, fire, cooking stones | pot over the fire               | seating stones       | clay oven                    | cushions and rugs on the seats |
-| Sleeping place | reed mat, blanket, windbreak     | tent, rug in the tent           | flag on the tent     | second tent                  | pavilion                       |
-| Water          | gourd, jar                       | second jar                      | water trough         | well                         | pulley on the well             |
-| Cooking corner | —                                | tripod, spice rack, bread board | bread oven           | drying rack with fish        | feast                          |
-| Donkey         | —                                | halter, donkey, saddlebags      | cart, donkey blanket | second donkey                | painted cart                   |
-| Camel          | —                                | —                               | rope, camel, saddle  | second camel, trough         | caravan banner                 |
-| Map table      | —                                | —                               | map, table, compass  | star map, scroll case        | astrolabe, reed globe          |
-| Palm garden    | —                                | —                               | seed, sprout, palm   | second palm, dates           | lotus planter, fig tree        |
-| Ibis pond      | —                                | —                               | —                    | hollow, pond, reeds, ibis    | lotus, second ibis             |
-| Lookout tower  | —                                | —                               | —                    | post, platform, ladder, flag | roof, signal fire              |
-| God statues    | —                                | —                               | —                    | —                            | Thoth, Bastet, Anubis, Ra      |
-| Star canopy    | —                                | —                               | —                    | —                            | poles, cloth, stars, planets   |
-| **Finds**      | **8**                            | **10**                          | **15**               | **19**                       | **22**                         |
+| Spot           | Beginner                         | Junior                          | Expert               | Master                            | Wizard                         |
+| -------------- | -------------------------------- | ------------------------------- | -------------------- | --------------------------------- | ------------------------------ |
+| Fire pit       | stone ring, fire, cooking stones | pot over the fire               | seating stones       | clay oven                         | cushions and rugs on the seats |
+| Sleeping place | reed mat, blanket, windbreak     | tent, rug in the tent           | flag on the tent     | second tent                       | pavilion                       |
+| Water          | gourd, jar                       | second jar                      | water trough         | stone well                        | roof, crank and rope           |
+| Cooking corner | —                                | tripod, spice rack, bread board | bread oven           | drying rack with fish             | feast                          |
+| Donkey         | —                                | halter, donkey, saddlebags      | cart, donkey blanket | second donkey                     | painted cart                   |
+| Camel          | —                                | —                               | rope, camel, saddle  | second camel, trough              | caravan banner                 |
+| Map table      | —                                | —                               | map, table, compass  | star map, scroll case             | astrolabe, reed globe          |
+| Palm garden    | —                                | —                               | seed, sprout, palm   | second palm, dates                | lotus planter, fig tree        |
+| Ibis pond      | —                                | —                               | —                    | edge stones, papyrus, reeds, ibis | lotus, second ibis             |
+| Lookout tower  | —                                | —                               | —                    | post, platform, ladder, flag      | roof, signal fire              |
+| God statues    | —                                | —                               | —                    | —                                 | Thoth, Bastet, Anubis, Ra      |
+| Star canopy    | —                                | —                               | —                    | —                                 | poles, cloth, stars, planets   |
+| **Finds**      | **8**                            | **10**                          | **15**               | **19**                            | **22**                         |
 
 The chest, the mosaic window and the campfire's glow are fixed from the start: they anchor the camp
 as home even when it is nearly empty.

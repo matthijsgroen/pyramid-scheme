@@ -130,8 +130,8 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["wizard", "figTree"],
     ]),
     spot("ibisPond", { x: -0.98, y: 1.83, frame: 2.46, footprint: 2.21 }, [
-      ["master", "hollow"],
-      ["master", "pond"],
+      ["master", "edgeStones", { replaces: ["oasis"] }],
+      ["master", "papyrus"],
       ["master", "reeds"],
       ["master", "ibis"],
       ["wizard", "lotus"],
@@ -192,6 +192,15 @@ export const CAMP_CATALOGUE: CampCatalogue = {
         dy: -0.6,
         lights: [light(2.1, "255,150,55", "flicker", 0.75, 0, -0.2)],
       }),
+    },
+    {
+      // The oasis pool is why the camp stands here: there from the start, adorned later by the ibis pond's steps.
+      id: "oasis",
+      x: -0.98,
+      y: 1.83,
+      frame: 2.46,
+      footprint: 2.21,
+      piece: piece("oasis"),
     },
   ],
 }

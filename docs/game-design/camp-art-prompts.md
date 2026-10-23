@@ -286,7 +286,7 @@ The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/ref-water.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the water, complete: a round stone well with a small wooden roof, a wooden pulley wheel and crank with a rope and bucket, a long low stone water trough with water in it, two terracotta water jars with small handles and a round dried gourd bottle. Use the colours of the matching objects in the reference image.
+> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the water, complete: a round stone well with a small wooden roof on two posts, a roller with a crank and a rope over the well, a long low stone water trough with water in it, two terracotta water jars with small handles and a round dried gourd bottle. Use the colours of the matching objects in the reference image.
 
 #### 21. `camp/well` — Water, step 5 of 6 (master)
 
@@ -294,8 +294,8 @@ Edit of `camp/wellPulley`.
 
 Attach: `art/masters/camp/ref-water.webp`, `art/masters/camp/wellPulley.webp`
 
-> [edit] Remove this, and only this: a wooden pulley wheel and crank on the well, a rope and bucket hanging from it. Where it stood, show the #ff00ff background or
-> whatever was behind it.
+> [edit] Remove the wooden roof with its two posts, the roller, the crank and the rope; the round stone
+> well stays exactly as it is. Where they stood, show the #ff00ff background or whatever was behind them.
 
 #### 22. `camp/waterTrough` — Water, step 4 of 6 (expert)
 
@@ -303,7 +303,7 @@ Edit of `camp/well`.
 
 Attach: `art/masters/camp/ref-water.webp`, `art/masters/camp/well.webp`
 
-> [edit] Remove this, and only this: a round stone well with a small wooden roof. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the round stone well. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 #### 23. `camp/secondJar` — Water, step 3 of 6 (junior)
@@ -639,7 +639,7 @@ The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/ref-ibisPond.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the ibis pond, complete: a round pond of clear blue water edged with a few stones, tall reeds and bulrushes along its back edge, lily pads and pink lotus flowers on the water, one white ibis with a black head and curved beak standing at the edge and a second ibis wading in the shallows. Use the colours of the matching objects in the reference image.
+> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the ibis pond, complete: a round pond of clear blue water, its rim edged with flat sandstone slabs, a clump of tall papyrus at one side, tall reeds and bulrushes along its back edge, lily pads and pink lotus flowers on the water, one white ibis with a black head and curved beak standing at the edge and a second ibis wading in the shallows. Use the colours of the matching objects in the reference image.
 
 #### 60. `camp/lotus` — Ibis pond, step 5 of 6 (wizard)
 
@@ -668,7 +668,7 @@ Attach: `art/masters/camp/ref-ibisPond.webp`, `art/masters/camp/ibis.webp`
 > [edit] Remove this, and only this: a white ibis with a black head and curved beak standing at the water's edge. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
-#### 63. `camp/pond` — Ibis pond, step 2 of 6 (master)
+#### 63. `camp/papyrus` — Ibis pond, step 2 of 6 (master)
 
 Edit of `camp/reeds`.
 
@@ -677,14 +677,24 @@ Attach: `art/masters/camp/ref-ibisPond.webp`, `art/masters/camp/reeds.webp`
 > [edit] Remove this, and only this: tall reeds and bulrushes along the pond's back edge. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
-#### 64. `camp/hollow` — Ibis pond, step 1 of 6 (master)
+#### 64. `camp/edgeStones` — Ibis pond, step 1 of 6 (master)
 
-Edit of `camp/pond`.
+Edit of `camp/papyrus`.
 
-Attach: `art/masters/camp/ref-ibisPond.webp`, `art/masters/camp/pond.webp`
+Attach: `art/masters/camp/ref-ibisPond.webp`, `art/masters/camp/papyrus.webp`
 
-> [edit] Remove this, and only this: clear blue water filling the hollow. Where it stood, show the #ff00ff background or
-> whatever was behind it.
+> [edit] Remove this, and only this: the clump of tall papyrus at the side of the pond. Where it stood, show the
+> #ff00ff background or whatever was behind it.
+
+#### 65. `camp/oasis` — Oasis pool, fixed from the start
+
+The plain pool the camp is pitched beside; the ibis pond's steps adorn it. Edit of `camp/edgeStones`.
+
+Attach: `art/masters/camp/ref-ibisPond.webp`, `art/masters/camp/edgeStones.webp`
+
+> [edit] Remove the flat sandstone slabs from the pond's rim; leave a natural sandy edge with two or three
+> small rough stones. The water stays exactly as it is. Where the slabs lay, show the pond's edge or the #ff00ff
+> background.
 
 ### Lookout tower (`lookout`)
 

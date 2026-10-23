@@ -54,7 +54,7 @@ export type CampPlace = { x: number; y: number; frame: number; footprint: number
 
 export type CampSpot = CampPlace & { id: CampSpotId; steps: CampStep[] }
 
-export type CampFixedId = "chest" | "window" | "campfire"
+export type CampFixedId = "chest" | "window" | "campfire" | "oasis"
 
 export type CampFixed = CampPlace & { id: CampFixedId; piece: CampPiece }
 
