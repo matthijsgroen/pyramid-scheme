@@ -41,9 +41,9 @@
   height: 2px;
   border-radius: 50%;
   background: #f6efdc;
-  opacity: var(--camp-star-opacity, 0.6);
 }
 
+/* Plain numbers in the keyframes, no custom property, so the twinkle stays on the compositor. */
 .camp-star--twinkle {
   width: 3px;
   height: 3px;
@@ -54,7 +54,7 @@
 @keyframes camp-twinkle {
   0%,
   100% {
-    opacity: var(--camp-star-opacity, 0.6);
+    opacity: 0.8;
     scale: 1;
   }
   50% {
@@ -325,7 +325,10 @@
   );
 }
 
-/* A spark rising from a fire: transform and opacity only. */
+/*
+ * A spark rising from a fire: transform and opacity only. Its font-size is how far it rises, so the keyframes
+ * hold plain em lengths and no custom property, which keeps the animation on the compositor.
+ */
 .camp-ember {
   position: absolute;
   width: 3px;
@@ -348,7 +351,25 @@
   }
   100% {
     opacity: 0;
-    transform: translate(var(--camp-ember-drift, 0), var(--camp-ember-rise, -40px)) scale(0.4);
+    transform: translate(0.25em, -1em) scale(0.4);
+  }
+}
+
+.camp-ember--left {
+  animation-name: camp-ember-left;
+}
+
+@keyframes camp-ember-left {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(1);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-0.25em, -1em) scale(0.4);
   }
 }
 

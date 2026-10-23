@@ -60,7 +60,7 @@ const embers = (index: number, unit: number) =>
     const t = (i * 0.618 + index * 0.37) % 1
     return {
       dx: (t - 0.5) * unit * 0.35,
-      drift: (((i * 0.382 + index * 0.21) % 1) - 0.5) * unit * 0.5,
+      driftLeft: (i * 0.382 + index * 0.21) % 1 < 0.5,
       rise: unit * (0.9 + t * 0.7),
       duration: 2.2 + ((i * 0.29) % 1) * 1.4,
       delay: -((i * 0.47 + index * 0.13) % 1) * 3.6,
@@ -268,7 +268,7 @@ export const CampScene = ({
               {
                 left: star.x,
                 top: star.y,
-                "--camp-star-opacity": star.opacity,
+                opacity: star.opacity,
                 animationDelay: star.twinkle ? `${-((i * 0.61) % 1) * 4}s` : undefined,
               } as CSSProperties
             }
@@ -356,13 +356,12 @@ export const CampScene = ({
                 embers(i, u).map((ember, j) => (
                   <i
                     key={j}
-                    className="camp-ember"
+                    className={ember.driftLeft ? "camp-ember camp-ember--left" : "camp-ember"}
                     style={
                       {
                         left: glow.x + ember.dx,
                         top: glow.y,
-                        "--camp-ember-rise": `${-ember.rise}px`,
-                        "--camp-ember-drift": `${ember.drift}px`,
+                        fontSize: ember.rise,
                         animationDuration: `${ember.duration}s`,
                         animationDelay: `${ember.delay}s`,
                       } as CSSProperties
