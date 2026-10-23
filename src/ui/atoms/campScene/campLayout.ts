@@ -128,7 +128,7 @@ export const layoutCamp = ({
   const margins = marginLeft + marginRight
 
   const backReach = P.depth[0] + P.backHeadroom
-  const minHeight = P.bottomPad + backReach + P.skyMin + (1 + P.backGapFactor) * P.rowGapMin
+  const minHeight = P.bottomPad + backReach + P.farSandMin + P.skyMin + (1 + P.backGapFactor) * P.rowGapMin
   const unit = Math.min(
     insetFree / Math.max(P.cameraHeight[chapter], minHeight),
     width / (span * P.spacingMin + margins)
@@ -145,8 +145,8 @@ export const layoutCamp = ({
   const baseline: [number, number, number] = [0, 0, bottom - P.bottomPad * unit]
   baseline[1] = baseline[2] - rowGap * unit
   baseline[0] = baseline[1] - rowGap * P.backGapFactor * unit
-  // Spare height becomes far sand, not sky: the horizon only rises when the back row reaches it.
-  const horizon = Math.min(baseline[0] - backReach * unit, lowestHorizon)
+  // Spare height becomes far sand, not sky: the horizon only rises when the back row and its far sand reach it.
+  const horizon = Math.min(baseline[0] - (backReach + P.farSandMin) * unit, lowestHorizon)
 
   const frameWidth = (span * spacing + margins) * unit
   const frameX = (width - frameWidth) / 2

@@ -189,7 +189,20 @@ describe("layoutCamp", () => {
     })
   })
 
-  it("keeps the horizon at or above 27% of the inset-free height", () => {
+  it("keeps at least 0.5u of far sand under the horizon", () => {
+    const { depth, backHeadroom, farSandMin } = CAMP_LAYOUT_PARAMS
+    for (const size of [...SIZES, [1000, 400] as [number, number]])
+      for (const insets of INSETS)
+        for (const chapter of difficulties) {
+          const [width, height] = size
+          const l = layout({ width, height, insets, chapter })
+          const backBaseline = l.pieces.find(p => p.spot === "window")!.y
+          const farSand = (backBaseline - (depth[0] + backHeadroom) * l.unit - l.horizon) / l.unit
+          expect(farSand).toBeGreaterThanOrEqual(farSandMin - 1e-9)
+        }
+  })
+
+  it("keeps the horizon no lower than max(27% of the inset-free height, the minimum sky)", () => {
     sweep((l, { height, insets }) => {
       const hc = height - insets.top - insets.bottom
       const lowest = insets.top + Math.max(hc * 0.27, CAMP_LAYOUT_PARAMS.skyMin * l.unit)
