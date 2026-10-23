@@ -254,3 +254,72 @@ Fixtures are step counts only. "Full up to chapter X" is `fullSteps(CAMP_CATALOG
 - Art generation and import (`src/assets/camp/`, `art/masters/camp/`): a separate art brief. The catalogue's `art` fields fill in as pieces land.
 - The rule that no stand-in ships to players: it belongs to the integration plan, which wires the scene into the home screen.
 - HUD, "Op pad", "Alle reizen", unpacking.
+
+---
+
+## Added 2026-10-23: art as one image per spot per step
+
+Decided with the designer after the plan was written: each step of a spot is ONE image of the whole spot
+at that step, painted as an edit chain from the final state (`docs/game-design/camp-art-prompts.md`), and
+each step's image replaces the previous one in the scene.
+
+### Task 5: Catalogue: one image per step, several lights per piece
+
+**Files:**
+
+- Modify: `src/ui/atoms/campScene/campTypes.ts`, `campCatalogue.ts`, `campLayout.ts`, `campLayout.spec.ts`, `src/ui/atoms/CampScene.tsx` (only if it reads `art`/`light`), `docs/superpowers/specs/2026-10-23-camp-scene-design.md` ("Steps are pieces" section)
+
+**Interfaces:**
+
+- Changes: `CampPiece.light?: CampLight` becomes `lights?: CampLight[]`. `CampPiece.art` is removed: the art file is `src/assets/camp/<piece id>.webp`, looked up by piece id.
+- Unchanged: `layoutCamp`, `fullSteps` and every `Placed*` type.
+
+Catalogue rules:
+
+- Every spot step is one piece, with `dx = dy = 0` and `width = height = 1`: a square frame anchored bottom-centre. It `replaces` the previous step's piece id.
+- The fire pit's first step also replaces `campfire`.
+- Lights move onto every step that shows their source:
+  - fire pit: a fire glow on every step (radius 2.1 on step 1, 2.9 from step 2), plus the clay oven light from its step on and the fire bowl light on the last step;
+  - lookout: the signal fire light on its last step;
+  - window: two breathe lights, blue (1.1, 0.55) and warm (0.9, 0.5, raised half an object);
+  - chest: one breathe light.
+- The fixed pieces keep their sizes.
+
+- [ ] **Step 1: Update the tests to `lights`** and add:
+  - `it("draws only the latest step of a spot when each step replaces the one before")`
+  - `it("keeps every light of a piece that carries several")`
+    Both use the made-up catalogue.
+- [ ] **Step 2: Run them, expect FAIL.** Then change the types, the layout and the catalogue. Make the component look art up by piece id.
+- [ ] **Step 3: `yarn test src/ui/atoms`, `yarn check-types`, `yarn lint`, `yarn build-storybook`.** Expected: green.
+- [ ] **Step 4: Rewrite the spec's "Steps are pieces" section** to describe the per-step image model.
+- [ ] **Step 5: Commit** `feat: camp steps are whole-spot images`
+
+### Task 6: `yarn import-camp` and the camp queue in `yarn repaint`
+
+**Files:**
+
+- Create: `scripts/importCamp.ts`, `scripts/importCamp.spec.ts`
+- Modify: `scripts/repaintPrompt.ts`, `scripts/repaintQueue.ts` (or a sibling `campPrompts.ts` parser), `scripts/repaintQueue.spec.ts` or a new `campPrompts.spec.ts`, `package.json` (`"import-camp": "tsx scripts/importCamp.ts"`)
+
+**Interfaces:**
+
+- `yarn import-camp <file> --name=<piece> [--key=#ff00ff|none] [--tolerance=60] [--size=768]`. It:
+  - writes the master to `art/masters/camp/<name>.webp` (webp quality 92, original resolution);
+  - keys the background with `keyOut` from `scripts/keyOut.ts`, skipped when `--key=none`;
+  - resizes to fit `size × size`, keeping the aspect ratio. **No trim**: every step of a spot has to share one frame;
+  - writes `src/assets/camp/<name>.webp`.
+- `parseCamp(md: string): Entry[]` (the `Entry` type from `scripts/repaintQueue.ts`), reading `docs/game-design/camp-art-prompts.md`:
+
+  - **Key and title:** each `### n.` or `#### n.` heading holding a `` `camp/<id>` `` key is one entry. The title is the heading's text.
+  - **Prompt:** the entry's blockquote, with `[preamble]` replaced by §0's first blockquote and `[edit]` by its second, and bold markers stripped.
+  - **Attachments:** the backticked `art/…` paths on the `Attach:` line.
+  - **Files:** `out` is `src/assets/camp/<id>.webp` and `master` is `art/masters/camp/<id>.webp`. `drawn` means `out` exists.
+  - **Import command:** `` `yarn import-camp <file> --name=<id>` ``, plus `--key=none` when the entry says "Import with `--key=none`".
+  - **Wiring:** `repaintPrompt.ts` adds these entries to its list, and `"camp"` joins `TIERS` (sorted after `default`).
+
+- [ ] **Step 1: Write the failing tests:**
+  - `importCamp.spec.ts` — `it("keys the magenta out and keeps the canvas")`: build a 400×400 magenta PNG with a 100×100 red square in sharp, import it to a temp dir, and check that the corners have alpha 0, the centre is opaque and the output is 400×400.
+  - parser spec — `it("composes a camp entry from its preamble and edit preamble")`, on a made-up markdown with one final and one edit entry: the prompts carry the preambles, the attachments are parsed, and `out`/`importedBy` are right.
+- [ ] **Step 2: Run, expect FAIL. Implement. Run, expect PASS.**
+- [ ] **Step 3: Check it end to end.** Run `yarn repaint camp/chest --check` and expect the prompt line count and two attachments, the master marked MISSING (it is not drawn yet). Then `yarn lint`, `yarn check-types`.
+- [ ] **Step 4: Commit** `feat: import-camp and the camp repaint queue`

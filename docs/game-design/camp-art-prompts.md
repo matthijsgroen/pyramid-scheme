@@ -1,0 +1,785 @@
+# Camp art — generation prompts
+
+The art for `CampScene` (`docs/superpowers/specs/2026-10-23-camp-scene-design.md`). One entry per image,
+under the key `camp/<piece>`; the key is the piece id in `src/ui/atoms/campScene/campCatalogue.ts`, and the
+file lands as `src/assets/camp/<piece>.webp`.
+
+**`yarn repaint`** lists what is still owed here, and **`yarn repaint camp/<piece>`** puts that entry's prompt
+on the clipboard with §0 folded in and reveals its attachments in the Finder. An entry whose file exists
+drops off the list.
+
+## How the set is built
+
+**One image per spot per step, each one replacing the one before.** A spot is painted ONCE in its final
+state — the wizard camp — and every earlier step is an edit of the step after it: "the same picture,
+without the flag". Walking the chain backwards is what keeps one spot the same tent, the same donkey and
+the same light from its first step to its last. So per spot the order is: the LAST entry first, then up.
+
+**The anchor is the wizard impression** (`art/masters/camp/impression-wizard.webp`), attached to every entry. It is the style, the
+palette and the viewing angle. A final-state entry also attaches the chest once it has landed, so every
+spot is painted against one finished object; an edit attaches the image it edits.
+
+**What a return must have**, or roll it again:
+
+- Square canvas. The group stands on an invisible ground line low in the frame, centred.
+- Flat `#ff00ff` background to all four edges: no sand, no ground patch, no cast shadow under it.
+- Cool, neutral moonlight. **No warm glow cast by fire on anything around it** — flames themselves are
+  fine. The scene's firelight is drawn by code, and a painted glow would double it.
+- In an edit: nothing moved. The same framing, position and size as the image it edits. A part that has
+  moved breaks the step-to-step swap in the scene.
+
+**Import:** `yarn import-camp <download> --name=<piece>` keys the magenta out, keeps the canvas (no trim:
+every step of a spot must share one frame), writes the shipped file and keeps the master in
+`art/masters/camp/`.
+
+## 0. The house style, stated once
+
+> Painted storybook illustration in the exact style of the attached reference image: soft painterly
+> shading, clean dark-brown outlines, warm desert palette. Seen from slightly above, about 35 degrees
+> down, like the reference. Night, lit by cool moonlight from the upper left. No warm firelight glow on
+> anything, no light pool, no cast shadow on the ground, no sand or ground under the objects. The objects
+> stand isolated on a flat, solid #ff00ff magenta background that fills the whole square canvas to its
+> edges. Square 1:1 canvas; the group stands on an invisible ground line at about 88% of the height,
+> centred, filling about 80% of the width. No text, no frame, no border.
+
+**Edit preamble** (`[edit]` below):
+
+> Edit the second attached image. Change only what is described next. Keep everything else exactly as it
+> is: the same framing, position, size, colours, outlines and the same flat #ff00ff background. Do not
+> re-compose, crop, zoom or redraw what is not mentioned.
+
+## 1. Fixed objects
+
+Paint the chest first: every later final-state entry attaches it.
+
+### 1. `camp/chest` — Treasure chest
+
+Attach: `art/masters/camp/impression-wizard.webp`
+
+> [preamble] Paint a sturdy wooden treasure chest with a domed lid and gold metal bands and corners, lid closed, a gold lock plate in front.
+
+### 2. `camp/window` — Stained-glass window
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
+
+> [preamble] Paint a free-standing arched stained-glass window in a dark wooden frame on a small foot, deep blue glass with gold lotus vines and a gold sun at the top. Paint the glass as coloured glass, not glowing.
+
+### 3. `camp/campfire` — Small campfire
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
+
+> [preamble] Paint a small, low campfire: a few crossed sticks on bare ground with small flames. No stones around it.
+
+## 2. Camp spots
+
+### Fire pit (`fire`)
+
+#### 4. `camp/fireBowl` — Fire pit, step 7 of 7 (wizard)
+
+The final state; paint this one first for the spot.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
+
+> [preamble] Paint one camp spot, the fire pit, complete: a ring of rough grey stones with a big crackling fire in it, a black iron pot hanging over the fire from a wooden crossbar on two forked sticks, two flat cooking stones beside the ring, three low flat seating stones around it, a small dome-shaped clay oven behind it with firewood stacked at its side, and a burning bronze fire bowl on a short carved stone plinth beside the ring.
+
+#### 5. `camp/clayOven` — Fire pit, step 6 of 7 (master)
+
+Edit of `camp/fireBowl`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/fireBowl.webp`
+
+> [edit] Remove this, and only this: a bronze fire bowl on a short carved stone plinth beside the ring, burning. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 6. `camp/seatingStones` — Fire pit, step 5 of 7 (expert)
+
+Edit of `camp/clayOven`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/clayOven.webp`
+
+> [edit] Remove this, and only this: a small dome-shaped clay oven behind the fire, a stack of firewood at its side. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 7. `camp/pot` — Fire pit, step 4 of 7 (junior)
+
+Edit of `camp/seatingStones`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/seatingStones.webp`
+
+> [edit] Remove this, and only this: three low, flat seating stones set around the fire. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 8. `camp/cookingStones` — Fire pit, step 3 of 7 (starter)
+
+Edit of `camp/pot`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/pot.webp`
+
+> [edit] Remove this, and only this: a black iron pot hanging over the fire from a wooden crossbar on two forked sticks. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 9. `camp/fire` — Fire pit, step 2 of 7 (starter)
+
+Edit of `camp/cookingStones`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/cookingStones.webp`
+
+> [edit] Remove this, and only this: two flat cooking stones lying beside the ring. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 10. `camp/stoneRing` — Fire pit, step 1 of 7 (starter)
+
+Edit of `camp/fire`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/fire.webp`
+
+> [edit] Make the fire in the stone ring small and low again: a few sticks with small flames.
+
+### Sleeping place (`sleeping`)
+
+#### 11. `camp/pavilion` — Sleeping place, step 8 of 8 (wizard)
+
+The final state; paint this one first for the spot.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
+
+> [preamble] Paint one camp spot, the sleeping place, complete: a round cream canvas tent with an open flap and a small pale-blue pennant on top, a striped red-and-ochre rug in its doorway, a woven reed mat with a folded grey-blue blanket in front of it, a second smaller cream tent beside it, and an open pavilion with gauzy white curtains and a pile of coloured cushions beside the tents.
+
+#### 12. `camp/secondTent` — Sleeping place, step 7 of 8 (master)
+
+Edit of `camp/pavilion`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/pavilion.webp`
+
+> [edit] Remove this, and only this: an open pavilion with gauzy white curtains and a pile of coloured cushions, beside the tents. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 13. `camp/tentFlag` — Sleeping place, step 6 of 8 (expert)
+
+Edit of `camp/secondTent`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/secondTent.webp`
+
+> [edit] Remove this, and only this: a second, smaller cream tent beside the first. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 14. `camp/tentRug` — Sleeping place, step 5 of 8 (junior)
+
+Edit of `camp/tentFlag`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/tentFlag.webp`
+
+> [edit] Remove this, and only this: a small pale-blue pennant flag on top of the tent. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 15. `camp/tent` — Sleeping place, step 4 of 8 (junior)
+
+Edit of `camp/tentRug`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/tentRug.webp`
+
+> [edit] Remove this, and only this: a striped red-and-ochre rug in the tent's doorway. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 16. `camp/windbreak` — Sleeping place, step 3 of 8 (starter)
+
+Edit of `camp/tent`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/tent.webp`
+
+> [edit] Replace the round tent with a windbreak: pale cloth stretched between four wooden poles, standing behind the reed mat in the same place. The mat and blanket stay exactly as they are.
+
+#### 17. `camp/blanket` — Sleeping place, step 2 of 8 (starter)
+
+Edit of `camp/windbreak`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/windbreak.webp`
+
+> [edit] Remove this, and only this: a windbreak of pale cloth stretched between four wooden poles behind the mat. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 18. `camp/reedMat` — Sleeping place, step 1 of 8 (starter)
+
+Edit of `camp/blanket`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/blanket.webp`
+
+> [edit] Remove this, and only this: a folded grey-blue blanket on the mat. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+### Water (`water`)
+
+#### 19. `camp/wellPulley` — Water, step 6 of 6 (wizard)
+
+The final state; paint this one first for the spot.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
+
+> [preamble] Paint one camp spot, the water, complete: a round stone well with a small wooden roof, a wooden pulley wheel and crank with a rope and bucket, a long low stone water trough with water in it, two terracotta water jars with small handles and a round dried gourd bottle.
+
+#### 20. `camp/well` — Water, step 5 of 6 (master)
+
+Edit of `camp/wellPulley`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/wellPulley.webp`
+
+> [edit] Remove this, and only this: a wooden pulley wheel and crank on the well, a rope and bucket hanging from it. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 21. `camp/waterTrough` — Water, step 4 of 6 (expert)
+
+Edit of `camp/well`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/well.webp`
+
+> [edit] Remove this, and only this: a round stone well with a small wooden roof. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 22. `camp/secondJar` — Water, step 3 of 6 (junior)
+
+Edit of `camp/waterTrough`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/waterTrough.webp`
+
+> [edit] Remove this, and only this: a long low stone water trough with water in it. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 23. `camp/jar` — Water, step 2 of 6 (starter)
+
+Edit of `camp/secondJar`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/secondJar.webp`
+
+> [edit] Remove this, and only this: a second terracotta jar. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 24. `camp/gourd` — Water, step 1 of 6 (starter)
+
+Edit of `camp/jar`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/jar.webp`
+
+> [edit] Remove this, and only this: a terracotta water jar with two small handles. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+### Cooking corner (`cooking`)
+
+#### 25. `camp/feast` — Cooking corner, step 6 of 6 (wizard)
+
+The final state; paint this one first for the spot.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
+
+> [preamble] Paint one camp spot, the cooking corner, complete: a wooden tripod with a small clay pot hanging from it, a small wooden spice rack with clay jars and bottles, a round wooden bread board with two flatbreads, a mud-brick bread oven with firewood stacked underneath, an A-frame drying rack with four fish hanging from it, and a patterned red rug set with plates of food, fruit and cups, cushions around it.
+
+#### 26. `camp/dryingRack` — Cooking corner, step 5 of 6 (master)
+
+Edit of `camp/feast`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/feast.webp`
+
+> [edit] Remove this, and only this: a patterned red rug on the ground set with plates of food, fruit and cups, cushions around it. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 27. `camp/breadOven` — Cooking corner, step 4 of 6 (expert)
+
+Edit of `camp/dryingRack`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/dryingRack.webp`
+
+> [edit] Remove this, and only this: an A-frame wooden drying rack with four fish hanging from it. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 28. `camp/breadBoard` — Cooking corner, step 3 of 6 (junior)
+
+Edit of `camp/breadOven`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/breadOven.webp`
+
+> [edit] Remove this, and only this: a mud-brick bread oven with a round mouth, firewood stacked underneath. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 29. `camp/spiceRack` — Cooking corner, step 2 of 6 (junior)
+
+Edit of `camp/breadBoard`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/breadBoard.webp`
+
+> [edit] Remove this, and only this: a round wooden bread board with two flatbreads. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 30. `camp/tripod` — Cooking corner, step 1 of 6 (junior)
+
+Edit of `camp/spiceRack`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/spiceRack.webp`
+
+> [edit] Remove this, and only this: a small wooden spice rack with clay jars and bottles. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+### Donkey (`donkey`)
+
+#### 31. `camp/paintedCart` — Donkey, step 7 of 7 (wizard)
+
+The final state; paint this one first for the spot.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
+
+> [preamble] Paint one camp spot, the donkey, complete: a wooden stake with a rope halter, a grey donkey lying down with woven saddlebags and a striped red-and-green blanket on its back, a second grey donkey lying down beside it, and a two-wheeled cart painted with bright geometric patterns in red, blue and gold, sacks, a cushion and bundles in it.
+
+#### 32. `camp/secondDonkey` — Donkey, step 6 of 7 (master)
+
+Edit of `camp/paintedCart`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/paintedCart.webp`
+
+> [edit] Make the cart plain again: unpainted weathered wood, a few sacks in it, no cushion. Same cart, same place.
+
+#### 33. `camp/donkeyBlanket` — Donkey, step 5 of 7 (expert)
+
+Edit of `camp/secondDonkey`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/secondDonkey.webp`
+
+> [edit] Remove this, and only this: a second grey donkey lying down on the other side. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 34. `camp/cart` — Donkey, step 4 of 7 (expert)
+
+Edit of `camp/donkeyBlanket`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/donkeyBlanket.webp`
+
+> [edit] Remove this, and only this: a striped red-and-green blanket on the donkey. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 35. `camp/saddlebags` — Donkey, step 3 of 7 (junior)
+
+Edit of `camp/cart`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/cart.webp`
+
+> [edit] Remove this, and only this: a simple two-wheeled wooden cart beside the donkey, sacks in it. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 36. `camp/donkey` — Donkey, step 2 of 7 (junior)
+
+Edit of `camp/saddlebags`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/saddlebags.webp`
+
+> [edit] Remove this, and only this: woven saddlebags on the donkey's back. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 37. `camp/halter` — Donkey, step 1 of 7 (junior)
+
+Edit of `camp/donkey`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/donkey.webp`
+
+> [edit] Remove this, and only this: a grey donkey lying down, tied to the stake. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+### Camel (`camel`)
+
+#### 38. `camp/caravanBanner` — Camel, step 6 of 6 (wizard)
+
+The final state; paint this one first for the spot.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
+
+> [preamble] Paint one camp spot, the camel, complete: a wooden hitching stake with a coiled rope, two camels lying down side by side, each with a padded saddle and a red-and-blue saddle cloth, a small wooden water trough in front of them, and a tall caravan banner on a pole with a painted falcon on cream cloth.
+
+#### 39. `camp/camelTrough` — Camel, step 5 of 6 (master)
+
+Edit of `camp/caravanBanner`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/caravanBanner.webp`
+
+> [edit] Remove this, and only this: a tall caravan banner on a pole beside the camels, a painted falcon on cream cloth. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 40. `camp/secondCamel` — Camel, step 4 of 6 (master)
+
+Edit of `camp/camelTrough`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/camelTrough.webp`
+
+> [edit] Remove this, and only this: a small wooden water trough in front of the camels. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 41. `camp/saddle` — Camel, step 3 of 6 (expert)
+
+Edit of `camp/secondCamel`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/secondCamel.webp`
+
+> [edit] Remove this, and only this: a second camel lying down beside the first, with its own saddle cloth. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 42. `camp/camel` — Camel, step 2 of 6 (expert)
+
+Edit of `camp/saddle`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/saddle.webp`
+
+> [edit] Remove this, and only this: a padded saddle with a red-and-blue saddle cloth on the camel. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 43. `camp/rope` — Camel, step 1 of 6 (expert)
+
+Edit of `camp/camel`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/camel.webp`
+
+> [edit] Remove this, and only this: a camel lying down, tied to the stake. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+### Map table (`mapTable`)
+
+#### 44. `camp/reedGlobe` — Map table, step 7 of 7 (wizard)
+
+The final state; paint this one first for the spot.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
+
+> [preamble] Paint one camp spot, the map table, complete: a low wooden table with a parchment map of pyramids and a river spread on it, a brass compass and a brass astrolabe standing on the map, a dark-blue star chart unrolled beside it, a leather scroll case with rolled maps leaning against the table, and a globe woven from reeds on a wooden stand beside the table.
+
+#### 45. `camp/astrolabe` — Map table, step 6 of 7 (wizard)
+
+Edit of `camp/reedGlobe`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/reedGlobe.webp`
+
+> [edit] Remove this, and only this: a globe woven from reeds on a wooden stand beside the table. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 46. `camp/scrollCase` — Map table, step 5 of 7 (master)
+
+Edit of `camp/astrolabe`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/astrolabe.webp`
+
+> [edit] Remove this, and only this: a brass astrolabe standing on the table. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 47. `camp/starMap` — Map table, step 4 of 7 (master)
+
+Edit of `camp/scrollCase`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/scrollCase.webp`
+
+> [edit] Remove this, and only this: a leather scroll case with rolled maps leaning against the table. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 48. `camp/compass` — Map table, step 3 of 7 (expert)
+
+Edit of `camp/starMap`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/starMap.webp`
+
+> [edit] Remove this, and only this: a dark-blue star chart unrolled beside the map. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 49. `camp/table` — Map table, step 2 of 7 (expert)
+
+Edit of `camp/compass`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/compass.webp`
+
+> [edit] Remove this, and only this: a brass compass on the map. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 50. `camp/map` — Map table, step 1 of 7 (expert)
+
+Edit of `camp/table`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/table.webp`
+
+> [edit] Remove the table. The same map now lies flat on the ground where the table stood, held down at two corners by small stones.
+
+### Palm garden (`palmGarden`)
+
+#### 51. `camp/figTree` — Palm garden, step 7 of 7 (wizard)
+
+The final state; paint this one first for the spot.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
+
+> [preamble] Paint one camp spot, the palm garden, complete: two young date palms growing from a mound of dark soil, bunches of orange dates under their crowns, a low stone planter with water and pink lotus flowers in front, and a small fig tree with purple figs beside them.
+
+#### 52. `camp/lotusPlanter` — Palm garden, step 6 of 7 (wizard)
+
+Edit of `camp/figTree`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/figTree.webp`
+
+> [edit] Remove this, and only this: a small fig tree with purple figs beside the palms. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 53. `camp/dates` — Palm garden, step 5 of 7 (master)
+
+Edit of `camp/lotusPlanter`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/lotusPlanter.webp`
+
+> [edit] Remove this, and only this: a low stone planter with water and pink lotus flowers in front of the palms. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 54. `camp/secondPalm` — Palm garden, step 4 of 7 (master)
+
+Edit of `camp/dates`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/dates.webp`
+
+> [edit] Remove this, and only this: bunches of orange dates hanging under both palms' crowns. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 55. `camp/palm` — Palm garden, step 3 of 7 (expert)
+
+Edit of `camp/secondPalm`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/secondPalm.webp`
+
+> [edit] Remove this, and only this: a second date palm beside the first. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 56. `camp/sprout` — Palm garden, step 2 of 7 (expert)
+
+Edit of `camp/palm`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/palm.webp`
+
+> [edit] Replace the young palm with a small green palm sprout, ankle-high, growing from the same mound.
+
+#### 57. `camp/seed` — Palm garden, step 1 of 7 (expert)
+
+Edit of `camp/sprout`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/sprout.webp`
+
+> [edit] Replace the sprout with a single seed lying on top of the soil mound. The mound stays exactly as it is.
+
+### Ibis pond (`ibisPond`)
+
+#### 58. `camp/secondIbis` — Ibis pond, step 6 of 6 (wizard)
+
+The final state; paint this one first for the spot.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
+
+> [preamble] Paint one camp spot, the ibis pond, complete: a round pond of clear blue water edged with a few stones, tall reeds and bulrushes along its back edge, lily pads and pink lotus flowers on the water, one white ibis with a black head and curved beak standing at the edge and a second ibis wading in the shallows.
+
+#### 59. `camp/lotus` — Ibis pond, step 5 of 6 (wizard)
+
+Edit of `camp/secondIbis`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/secondIbis.webp`
+
+> [edit] Remove this, and only this: a second white ibis wading in the shallows. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 60. `camp/ibis` — Ibis pond, step 4 of 6 (master)
+
+Edit of `camp/lotus`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/lotus.webp`
+
+> [edit] Remove this, and only this: lily pads and pink lotus flowers on the water. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 61. `camp/reeds` — Ibis pond, step 3 of 6 (master)
+
+Edit of `camp/ibis`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/ibis.webp`
+
+> [edit] Remove this, and only this: a white ibis with a black head and curved beak standing at the water's edge. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 62. `camp/pond` — Ibis pond, step 2 of 6 (master)
+
+Edit of `camp/reeds`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/reeds.webp`
+
+> [edit] Remove this, and only this: tall reeds and bulrushes along the pond's back edge. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 63. `camp/hollow` — Ibis pond, step 1 of 6 (master)
+
+Edit of `camp/pond`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/pond.webp`
+
+> [edit] Remove this, and only this: clear blue water filling the hollow. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+### Lookout tower (`lookout`)
+
+#### 64. `camp/signalFire` — Lookout tower, step 6 of 6 (wizard)
+
+The final state; paint this one first for the spot.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
+
+> [preamble] Paint one camp spot, the lookout tower, complete: a wooden lookout tower: four tall posts braced with crossbeams, a plank platform with a low railing on top, a wooden ladder leaning up to it, a thatched straw roof on four short poles over the platform, a small pale-blue pennant at its corner and an iron brazier with a burning signal fire on the platform.
+
+#### 65. `camp/roof` — Lookout tower, step 5 of 6 (wizard)
+
+Edit of `camp/signalFire`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/signalFire.webp`
+
+> [edit] Remove this, and only this: an iron brazier with a burning signal fire on the platform. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 66. `camp/flag` — Lookout tower, step 4 of 6 (master)
+
+Edit of `camp/roof`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/roof.webp`
+
+> [edit] Remove this, and only this: a thatched straw roof over the platform on four short poles. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 67. `camp/ladder` — Lookout tower, step 3 of 6 (master)
+
+Edit of `camp/flag`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/flag.webp`
+
+> [edit] Remove this, and only this: a small pale-blue pennant flag on a pole at the platform's corner. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 68. `camp/platform` — Lookout tower, step 2 of 6 (master)
+
+Edit of `camp/ladder`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/ladder.webp`
+
+> [edit] Remove this, and only this: a wooden ladder leaning against the tower up to the platform. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 69. `camp/post` — Lookout tower, step 1 of 6 (master)
+
+Edit of `camp/platform`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/platform.webp`
+
+> [edit] Remove this, and only this: a plank platform on top of the posts with a low railing. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+### God statues (`godStatues`)
+
+#### 70. `camp/ra` — God statues, step 4 of 4 (wizard)
+
+The final state; paint this one first for the spot.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
+
+> [preamble] Paint one camp spot, the god statues, complete: a low stone bench with four statues in a row: Thoth ibis-headed in blue and gold, Bastet a seated black cat with gold jewellery, Anubis black jackal-headed in blue and gold, and Ra falcon-headed with a red sun disc.
+
+#### 71. `camp/anubis` — God statues, step 3 of 4 (wizard)
+
+Edit of `camp/ra`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/ra.webp`
+
+> [edit] Remove this, and only this: a fourth statue on the right end: Ra, falcon-headed with a red sun disc. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 72. `camp/bastet` — God statues, step 2 of 4 (wizard)
+
+Edit of `camp/anubis`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/anubis.webp`
+
+> [edit] Remove this, and only this: a third statue: Anubis, black jackal-headed, in blue and gold. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 73. `camp/thoth` — God statues, step 1 of 4 (wizard)
+
+Edit of `camp/bastet`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/bastet.webp`
+
+> [edit] Remove this, and only this: a second statue next to Thoth: Bastet, a seated black cat with gold jewellery. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+### Star canopy (`starCanopy`)
+
+#### 74. `camp/planets` — Star canopy, step 4 of 4 (wizard)
+
+The final state; paint this one first for the spot.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
+
+> [preamble] Paint one camp spot, the star canopy, complete: four tall slim wooden poles with a deep-blue cloth canopy stretched between them, embroidered with small gold stars, a crescent moon and a few round planets, one of them ringed.
+
+#### 75. `camp/stars` — Star canopy, step 3 of 4 (wizard)
+
+Edit of `camp/planets`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/planets.webp`
+
+> [edit] Remove this, and only this: a few round planets, one ringed, embroidered among the stars. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 76. `camp/cloth` — Star canopy, step 2 of 4 (wizard)
+
+Edit of `camp/stars`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/stars.webp`
+
+> [edit] Remove this, and only this: small gold stars and a crescent moon embroidered on the canopy. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+#### 77. `camp/poles` — Star canopy, step 1 of 4 (wizard)
+
+Edit of `camp/cloth`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/cloth.webp`
+
+> [edit] Remove this, and only this: a deep-blue cloth canopy stretched between the poles. Where it stood, show the #ff00ff background or
+> whatever was behind it.
+
+## 3. Surroundings
+
+Not cut-outs: these fill the scene behind the camp.
+
+### 78. `camp/sand` — Sand ground
+
+A seamless tile. If the generator cannot tile, make it with Midjourney `--tile`
+(`docs/game-design/art-pipeline.md` §0). Import with `--key=none`.
+
+Attach: `art/masters/camp/impression-wizard.webp`
+
+> Seamless tileable square texture of fine desert sand seen from about 35 degrees above, soft wind
+> ripples, painterly style like the attached reference, cool neutral moonlit colour. No objects, no
+> footprints, no light pool, no vignette. The left edge continues into the right edge and the top into
+> the bottom.
+
+### 79. `camp/dunes` — Far dunes
+
+Attach: `art/masters/camp/impression-wizard.webp`
+
+> A wide horizontal strip of distant desert dunes at night, 4:1 landscape canvas, painterly style like
+> the attached reference, cool moonlight. The dunes fill the lower half; above the dune line everything is
+> flat solid #ff00ff magenta. The left edge continues seamlessly into the right edge. No pyramids, no
+> objects.
+
+### 80. `camp/pyramid` — Pyramid on the horizon
+
+Attach: `art/masters/camp/impression-wizard.webp`
+
+> [preamble] Paint one distant stone pyramid, sandstone blocks, lit by cool moonlight from the upper
+> left, its right face in shadow. Nothing else.
+
+### 81. `camp/pyramidGold` — Pyramid with golden capstone
+
+Edit of `camp/pyramid`.
+
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/pyramid.webp`
+
+> [edit] Add a shining gold capstone to the very top of the pyramid.
