@@ -22,6 +22,7 @@
     "import-tile": "tsx scripts/importTile.ts",
     "import-portrait": "tsx scripts/importPortrait.ts",
     "import-camp": "tsx scripts/importCamp.ts",
+    "camp-cut": "tsx scripts/campCut.ts",
     "art-census": "tsx scripts/artCensus.ts",
     "drift-mask": "tsx scripts/driftMask.ts",
     "on-floor": "node scripts/onFloorPreview.mjs",

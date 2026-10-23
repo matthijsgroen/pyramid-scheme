@@ -56,6 +56,12 @@ The same steps for every piece, so a piece painted next month matches one painte
    lit the same way every time (neutral, upper left); everything that depends on where a piece stands —
    the contact shadow, the warm and cool side toward the fire, the glows — is drawn by the scene.
 
+**A step that only removes a free-standing object needs no generation.** If the object stands apart from
+the rest (an island in the picture, touching nothing), cut it out of the next step instead:
+`yarn camp-cut <next-step> --name=<this-step> --at=<x>,<y>` (a point on the object, as shares of width and
+height), then import as usual. Every other pixel stays exactly as it was. An object that touches the rest is
+not an island; that step stays an edit.
+
 A burning piece may get a second frame, `<piece>-b`, as an edit of the first (see `camp/campfire-b`): the
 scene alternates the two. Without one the fire stands still.
 
