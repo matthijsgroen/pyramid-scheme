@@ -55,38 +55,43 @@ const SCENERY = new Set(["sand", "dunes", "pyramid", "pyramidGold"])
 const SHADOW_BLUR = 0.008
 /** How far the band reaches up from the object's lowest pixel in each column, as a share of the canvas height. */
 const SHADOW_BAND = 0.06
-/** How far into the object the edge un-mixing reaches, as a share of the download's longest side. */
-const EDGE_BAND = 0.004
-/** Within that band, alpha ramps from the tolerance up to this many tolerances away from the key. */
-const EDGE_RAMP = 4
+/** A soft edge reaches this many tolerances away from the key; alpha ramps from the tolerance up to it. */
+const EDGE_RAMP = 3
 
-/** Background to alpha 0; the object's edge un-mixed from the key; its inside untouched. */
+/**
+ * Background to alpha 0; the object's soft edge un-mixed from the key; its inside untouched.
+ *
+ * The edge is found by growing out of the background through every pixel still near the key, so a flame's
+ * wide wisp is followed all the way in, while real paint — even purple — is too far from the key to cross.
+ */
 const keyUnmix = (data: Buffer, width: number, height: number, key: string, tolerance: number) => {
   const k = hexToRgb(key)
   const n = width * height
+  const reach = tolerance * EDGE_RAMP
   const distance = new Float32Array(n)
   const near = new Uint8Array(n)
+  const queue = new Int32Array(n)
+  let tail = 0
   for (let i = 0; i < n; i++) {
     distance[i] = Math.hypot(data[i * 4] - k.r, data[i * 4 + 1] - k.g, data[i * 4 + 2] - k.b)
-    near[i] = distance[i] <= tolerance ? 1 : 0
+    if (distance[i] <= tolerance) {
+      near[i] = 1
+      queue[tail++] = i
+    }
   }
-  // Grow the background into the object a few pixels: that ring is the edge.
-  const band = Math.max(1, Math.round(Math.max(width, height) * EDGE_BAND))
-  for (let step = 0; step < band; step++) {
-    const grown = near.slice()
-    for (let y = 0; y < height; y++)
-      for (let x = 0; x < width; x++) {
-        const i = y * width + x
-        if (near[i]) continue
-        if (
-          (x > 0 && near[i - 1]) ||
-          (x < width - 1 && near[i + 1]) ||
-          (y > 0 && near[i - width]) ||
-          (y < height - 1 && near[i + width])
-        )
-          grown[i] = 1
+  for (let head = 0; head < tail; head++) {
+    const i = queue[head]
+    const x = i % width
+    const visit = (j: number) => {
+      if (!near[j] && distance[j] < reach) {
+        near[j] = 1
+        queue[tail++] = j
       }
-    near.set(grown)
+    }
+    if (x > 0) visit(i - 1)
+    if (x < width - 1) visit(i + 1)
+    if (i >= width) visit(i - width)
+    if (i < n - width) visit(i + width)
   }
   for (let i = 0; i < n; i++) {
     const p = i * 4

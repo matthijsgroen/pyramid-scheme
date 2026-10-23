@@ -113,6 +113,28 @@ describe("importCamp", () => {
     expect(at(200, 200)[2]).toBeGreaterThan(80)
   })
 
+  it("un-mixes a wide soft edge all the way in, as far as it stays near the key", async () => {
+    // A 40px ramp from magenta to orange, like a flame's wisp, then solid orange.
+    const source = join(dir, "ramp.png")
+    const ramp = Buffer.alloc(400 * 400 * 3)
+    for (let y = 0; y < 400; y++)
+      for (let x = 0; x < 400; x++) {
+        const t = Math.max(0, Math.min(1, (x - 150) / 40))
+        const i = (y * 400 + x) * 3
+        ramp[i] = 255
+        ramp[i + 1] = Math.round(150 * t)
+        ramp[i + 2] = Math.round(255 * (1 - t) + 40 * t)
+      }
+    await sharp(ramp, { raw: { width: 400, height: 400, channels: 3 } }).png().toFile(source)
+    const { out } = await importCamp(options(source))
+
+    const { data } = await sharp(out).raw().toBuffer({ resolveWithObject: true })
+    const [r, g, b, a] = [...data.subarray((200 * 400 + 175) * 4, (200 * 400 + 175) * 4 + 4)]
+    expect(a).toBeLessThan(255)
+    expect(g).toBeGreaterThan(b)
+    expect(r).toBeGreaterThan(200)
+  })
+
   it("casts no shadow for scenery or an unkeyed import", async () => {
     const source = await magentaWithRedSquare()
     for (const name of ["sand", "dunes", "pyramid", "pyramidGold"])
