@@ -69,10 +69,9 @@ scene alternates the two. Without one the fire stands still.
 > rich, saturated colour. Mid-tone to dark values with clear form shading, so the object
 > stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never
 > glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt,
-> ash or ground patch under the objects. Every edge against the background is crisp and opaque. Flames are
-> painted like the rest, with soft brushwork and varied warm colours inside, never a flat icon; only their
-> outer silhouette is crisp, with no glow halo, no translucent wisps, no sparks and no smoke blending into
-> the background. Paint only the object described: an attached image is a reference, and nothing from it
+> ash or ground patch under the objects. Flames are painted like the rest, with soft brushwork and
+> varied warm colours, never a flat icon and never outlined; no glow halo around them, no loose sparks and
+> no smoke. Paint only the object described: an attached image is a reference, and nothing from it
 > appears in the picture unless the text asks for it. The objects
 > stand isolated on a flat, solid #ff00ff magenta background that fills the whole square canvas to its
 > edges. Square 1:1 canvas; the group stands on an invisible ground line at about 88% of the height,
