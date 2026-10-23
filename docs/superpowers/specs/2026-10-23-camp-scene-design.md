@@ -61,7 +61,7 @@ found.
 
 **The light comes from the scene.** The campfire throws a warm pool over the sand, the window spills
 coloured light on the sand in front of it, the chest glows gold from inside. Later pieces that burn (the
-clay oven, the lookout's signal fire, the fire bowl) bring their own small glow.
+clay oven, the lookout's signal fire) bring their own small glow.
 
 ## Composition
 

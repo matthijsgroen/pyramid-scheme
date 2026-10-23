@@ -122,7 +122,7 @@ Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
 ### 4. `camp/campfire-b` — Small campfire, second frame
 
 Edit of `camp/campfire`. A burning piece may have a second frame, `<id>-b`: the scene alternates the two
-for a small flicker. A burning step of a spot (the fire, the fire bowl) may get a `-b` entry the same way,
+for a small flicker. A burning step of a spot (the fire, the clay oven) may get a `-b` entry the same way,
 an edit of that step with only the flames repainted.
 
 Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/campfire.webp`
@@ -140,21 +140,21 @@ reads as the fire jumping, not flickering.
 
 ### Fire pit (`fire`)
 
-#### 5. `camp/fireBowl` — Fire pit, step 7 of 7 (wizard)
+#### 5. `camp/seatCushions` — Fire pit, step 7 of 7 (wizard)
 
 The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/ref-fire.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the fire pit, complete: a ring of rough grey stones with a big crackling fire in it, a black iron pot hanging over the fire from a wooden crossbar on two forked sticks, two flat cooking stones beside the ring, three low flat seating stones around it, a small dome-shaped clay oven behind it with firewood stacked at its side, and a burning fire bowl on a short carved stone plinth beside the ring. Use the colours of the matching objects in the reference image.
+> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the fire pit, complete: a ring of rough grey stones with a big crackling fire in it, a black iron pot hanging over the fire from a wooden crossbar on two forked sticks, two flat cooking stones beside the ring, three low flat seating stones around it, each with a woven rug laid over it and a few plump cushions on top, and a small dome-shaped clay oven behind it with firewood stacked at its side. Use the colours of the matching objects in the reference image.
 
 #### 6. `camp/clayOven` — Fire pit, step 6 of 7 (master)
 
-Edit of `camp/fireBowl`.
+Edit of `camp/seatCushions`.
 
-Attach: `art/masters/camp/ref-fire.webp`, `art/masters/camp/fireBowl.webp`
+Attach: `art/masters/camp/ref-fire.webp`, `art/masters/camp/seatCushions.webp`
 
-> [edit] Remove this, and only this: a fire bowl on a short carved stone plinth beside the ring, burning. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the woven rugs and cushions on the seating stones; the bare stones stay. Where they lay, show the stone or
 > whatever was behind it.
 
 #### 7. `camp/seatingStones` — Fire pit, step 5 of 7 (expert)

@@ -15,7 +15,6 @@ const light = (
 /** Where each source sits inside its step's square frame (bottom-centre anchored, dy positive-down). */
 const fireGlow = (radius: number) => light(radius, "255,150,55", "flicker", 0.75, 0, -0.3)
 const OVEN = light(0.7, FIRE, "flicker", 0.8, -0.3, -0.35)
-const BOWL = light(0.9, "255,170,70", "flicker", 0.8, 0.3, -0.35)
 const SIGNAL = light(0.8, "255,160,60", "flicker", 0.8, 0, -0.85)
 
 type PieceOptions = Partial<Pick<CampPiece, "dx" | "dy" | "width" | "height" | "replaces" | "lights">>
@@ -62,7 +61,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["junior", "pot", { lights: [fireGlow(2.9)] }],
       ["expert", "seatingStones", { lights: [fireGlow(2.9)] }],
       ["master", "clayOven", { lights: [fireGlow(2.9), OVEN] }],
-      ["wizard", "fireBowl", { lights: [fireGlow(2.9), OVEN, BOWL] }],
+      ["wizard", "seatCushions", { lights: [fireGlow(2.9), OVEN] }],
     ]),
     spot("sleeping", 0, -1, [
       ["starter", "reedMat"],
