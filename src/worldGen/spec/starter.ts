@@ -32,7 +32,7 @@ const holdChest = (index: number) => wardChest({ tomb: "starter_treasure_tomb", 
 const HOLD_CYCLE = [1, 2, 0, 1]
 
 // The tier + 1 step inside the cavern: a junior puzzle as the second room, after the first tableau.
-const juniorBetweenTableaus = { where: 2, encounter: "puzzle", difficulty: "junior", loot: false } as const
+const juniorBetweenTableaus = { where: 2, encounter: "puzzle", difficulty: "junior" } as const
 
 export const starterRules: Rule[] = [
   // a merchant's house of trade: scales and weights, baskets and bales, a counter, a scribe's desk,
@@ -216,11 +216,10 @@ export const starterRules: Rule[] = [
   }),
 
   // The tomb's first level: the cave. Starter puzzles on the way to the pillar, one junior-weight lock
-  // (levers and doors) as the step up, and no loot of its own — the treasure is in the cavern.
+  // (levers and doors) as the step up. Its puzzles carry ordinary starter filler loot.
   journey("starter_treasure_tomb").pyramid("first", {
     tileset: "cave",
     difficulty: "starter",
-    loot: false,
     // Cave furniture, not the starter merchant's house the tier pool dresses its pyramids in.
     decorations: ["rubblePile", "pillar", "pit", "crystal"],
     floors: [{ pathPuzzles: 3, encounter: "puzzle", ...lockOnFloor("caveLevers") }],

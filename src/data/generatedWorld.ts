@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 845123510
+export const worldContentHash = 159267502
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -15156,7 +15156,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { type: "money", amount: 2 },
           { type: "money", amount: 2 },
           { type: "money", amount: 3 },
-          { type: "money", amount: 2 },
+          undefined,
         ],
       },
       {
@@ -20036,9 +20036,9 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["niche", "tallyBoard"],
         role: "puzzle",
         encountersByIndex: { 0: "eclipse", 1: "balance-scale", 2: "star-battle" },
-        loot: false,
         packing: 0.1,
         seed: 1835615271702410,
+        mainEndReward: { type: "money", amount: 2 },
         rewards: [undefined, undefined, undefined],
         locks: [
           {
@@ -20142,7 +20142,6 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         encountersByIndex: { 0: "tableau", 1: "lightbeam", 2: "tableau", 3: "conversation" },
         activitiesByIndex: { 3: "ledger" },
         difficultiesByIndex: { 1: "junior" },
-        lootByIndex: { 1: false },
         packing: 0.1,
         seed: 1835615271702411,
         sealed: true,
@@ -20210,7 +20209,6 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: "tomb-puzzle",
         encountersByIndex: { 0: "tableau", 1: "lightbeam", 2: "tableau" },
         difficultiesByIndex: { 1: "junior" },
-        lootByIndex: { 1: false },
         packing: 0.1,
         seed: 1835615271702412,
         sealed: true,
@@ -20318,7 +20316,6 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: "tomb-puzzle",
         encountersByIndex: { 0: "tableau", 1: "constellation", 2: "tableau" },
         difficultiesByIndex: { 1: "junior" },
-        lootByIndex: { 1: false },
         packing: 0.1,
         seed: 1835615271702413,
         sealed: true,
@@ -20387,7 +20384,6 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         role: "tomb-puzzle",
         encountersByIndex: { 0: "tableau", 1: "twin-stars", 2: "tableau" },
         difficultiesByIndex: { 1: "junior" },
-        lootByIndex: { 1: false },
         packing: 0.1,
         seed: 1835615271702414,
         sealed: true,

@@ -45,12 +45,13 @@ their caves, caverns and locks with their own releases.
 ## 3. Node difficulty and loot
 
 - `NodeSelector` gains `difficulty`, resolved to `difficultiesByIndex` like `encountersByIndex`. It drives
-  that room's board (family deal, board bucket, loot tier); the room is still drawn in its section's tileset.
+  that room's board (family deal, board bucket) and nothing else: a room's loot tier is its section's, so a junior
+  node on a starter path never pulls junior loot. The room is still drawn in its section's tileset.
 - `loot: false` on a floor, a section and a node, inherited downward. It drops **generated** slots only —
   puzzle-room slots and `fragmentSlot` defaults. Authored rewards stay: `tombTreasure`, ward keys, chests.
-- Everything new in this redesign carries `loot: false`: tier + 1 puzzles must not pull higher-tier loot into
-  the early game, and without new slots, adding caves or locks to a released tier later leaves its loot where
-  it is (`src/data/tierFingerprints.spec.ts` guards that per tier).
+- The cave ends in a chest with filler at the tomb's tier, and the cavern puzzles keep their loot slots; they fill
+  when the pool allows and with camp supplies once that currency exists. `loot: false` stays in the vocabulary for content that must add no slots to a released
+  tier (`src/data/tierFingerprints.spec.ts` guards that per tier).
 
 ## 4. Tableau key by family ordinal
 
@@ -70,8 +71,7 @@ their caves, caverns and locks with their own releases.
   Tier + 1 is how the lock feels in solve steps, not a code link — lock tier folders only classify:
   - starter cave → junior feel (1–3 actions per door), levers and doors (`toggle: "handle"`), several of each;
   - junior → expert (4–6), expert → master (combinations), master and wizard → wizard at its heaviest.
-- `loot: false` on the whole site.
-- The player leaves by the pillar at the main path's end, the one exit.
+- The cave ends in a chest with filler loot; the player leaves by the pillar at the main path's end, the one exit.
 - Story hooks: entering the cave, reaching the pillar. Lines are written in a story review pass.
 
 ## 6. The cavern site (level 2)
@@ -81,7 +81,7 @@ their caves, caverns and locks with their own releases.
 - Floors as today (starter: four), `difficulty` and `tileset` the tomb's tier.
 - **Unchanged:** the tableaus in the same order with explicit `runNr`, each floor leading to its ward key;
   `tombTreasure`; the chest; the crocodile (junior and up); the tomb's own loot.
-- **Added:** tier + 1 puzzles between the tableaus as `nodes: [{ where, encounter, difficulty, loot: false }]`,
+- **Added:** tier + 1 puzzles between the tableaus as `nodes: [{ where, encounter, difficulty }]`,
   and tier + 1 floor locks by name. Starter: locks on floors 2 and 4.
 - Story hook: arriving at the cavern's exterior.
 
@@ -126,9 +126,8 @@ Painted by the user through `yarn repaint`; prompts go in the repaint docs.
   1. mosaic piece counts;
   2. health drops (how much healing);
   3. inventory management (how much the inventory is used);
-  4. whether cave and cavern puzzles carry loot, and if so how many puzzles each tomb and cave has. With
-     `loot: false` (this spec) their count is free to change later; with loot it is frozen at release.
+  4. decided: the cave ends in a chest and the cavern puzzles keep loot slots at the tomb's tier; their count is frozen at release.
 
-  Once a tier is released its loot stays put; new content there carries `loot: false`.
+  Once a tier is released its loot stays put; new content there that must not move it carries `loot: false`.
 - Story lines for the hooks above.
 - The other tiers' caves, caverns and locks, each with its release.

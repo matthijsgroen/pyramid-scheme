@@ -391,7 +391,7 @@ cavern on its own, until their own releases add a cave.
   nothing). The lock walk reads a tableau's hieroglyph door and a ward gate as opened off the floor, so the exit
   past them is reachable; a lock whose own control stood behind one would lean on a key earned elsewhere, and the
   walk refuses it (`leansOffFloor`).
-- **The cave ends at its pillar, not a chest**: a lootless floor with no main-end reward has no goal chest.
+- **The starter cave ends in a chest; a lootless floor ends at its pillar**: a floor with no main-end reward has no goal chest.
 
 ### Structure — one persistent multi-floor site, same shape as a pyramid interior
 
