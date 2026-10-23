@@ -550,7 +550,7 @@ Edit of `camp/table`.
 
 Attach: `art/masters/camp/ref-mapTable.webp`, `art/masters/camp/table.webp`
 
-> [edit] Remove the table. The same map now lies flat on the ground where the table stood, held down at two corners by small stones.
+> [edit] Remove the table. The same map now lies flat where the table stood, at the height of its feet, held down at two corners by small stones. Paint no ground under it: no sand, no slab, no base; the flat #ff00ff background shows right up to the edges of the map and the stones.
 
 ### Palm garden (`palmGarden`)
 
