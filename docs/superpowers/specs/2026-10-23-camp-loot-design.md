@@ -135,6 +135,10 @@ From the camp.md table (rewards counted by section tier):
 - With 26 structures × ~3 parts ≈ 78 parts plus 27 items, camp loot fills most of the ~100 free slots
   on expert and up; the economy recompute decides the rest.
 - Fragments, mosaic, map pieces, tomb keys and treasures are unchanged.
+- **The world is still growing** (new areas are being authored in another session), and more loot is
+  better. Camp loot is the flexible filler: the number of parts per structure scales with the slots a
+  tier has, so new areas add camp parts without touching the fixed currency totals. Nothing in the build
+  may pin a slot count; counts above are today's world, not targets.
 
 ## Goals
 
