@@ -1,5 +1,5 @@
 import { difficulties, difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
-import type { CampCatalogue, CampFixedId, CampPiece, CampRow, CampSpot, CampSpotId } from "./campTypes"
+import type { CampCatalogue, CampFixedId, CampPiece, CampPlace, CampSpot, CampSpotId } from "./campTypes"
 
 export type CampLayoutInput = {
   width: number
@@ -49,8 +49,8 @@ export type PlacedPyramid = { x: number; width: number; height: number; golden: 
 
 export type CampLayout = {
   unit: number
-  spacing: number
-  rowGap: number
+  /** Multiplies every impression offset, per axis, to use the room the container gives. */
+  stretch: { x: number; y: number }
   horizon: number
   frame: { x: number; y: number; width: number; height: number }
   /** Back to front, so later entries draw on top. */
@@ -60,28 +60,26 @@ export type CampLayout = {
 }
 
 /**
- * All lengths in object units `u` (the chest is 1u wide), except the shares of height. The minimum slot
- * spacing is not a parameter: it is what keeps the widest pair of neighbouring footprints apart.
+ * All lengths in object units `u` (the chest is 0.83u wide), except the shares of height. A spot's place
+ * is its impression offset from the fire times a stretch, one per axis, each elastic within its range.
  */
 export const CAMP_LAYOUT_PARAMS = {
-  spacingMax: 2.3,
-  /** Two neighbours stand at least their mean footprint times this apart, centre to centre. */
+  stretchX: [0.85, 1.6] as readonly [number, number],
+  stretchY: [0.85, 1.6] as readonly [number, number],
+  /** Two spots at the same depth stand at least their mean footprint times this apart, centre to centre. */
   gapFactor: 1,
-  rowGapMin: 0.75,
-  rowGapMax: 5,
-  /** The back gap is a little shorter than the front one: farther ground looks flatter. */
-  backGapFactor: 0.85,
-  depth: [0.9, 0.95, 1] as readonly [number, number, number],
-  spread: [0.88, 0.95, 1] as readonly [number, number, number],
+  /** Anchors this close in y stand at the same depth; farther apart they may overlap, the nearer in front. */
+  sameDepth: 0.35,
+  /** Drawing scale at the farthest and at the nearest anchor of the catalogue. */
+  depth: [0.9, 1] as readonly [number, number],
   skyMin: 1.7,
   farSandMin: 0.5,
   bottomPad: 0.35,
-  /** Room a back-row object needs above its baseline beyond its depth-scaled size. */
-  backHeadroom: 0.25,
+  /** Spot art carries its own transparent margin, so the frame needs only a little more at the sides. */
+  sideMargin: 0.15,
   cameraHeight: { starter: 4.2, junior: 4.8, expert: 5.4, master: 6.0, wizard: 6.6 } as Readonly<
     Record<Difficulty, number>
   >,
-  frameMargin: 0.65,
   horizonShare: 0.27,
   /** Insets never squeeze the camp into less than this share of the height. */
   minInsetFreeShare: 0.25,
@@ -150,26 +148,36 @@ const castShadow = (p: Omit<PlacedPiece, "shadow">, glows: PlacedGlow[]): Placed
   }
 }
 
-type Placed = { spot: CampSpotId | CampFixedId; row: CampRow; frame: number; piece: CampPiece }
+type Placed = { spot: CampSpotId | CampFixedId; place: CampPlace; piece: CampPiece }
 
-type Standing = { row: CampRow; slot: number; footprint: number }
+/** A piece's box around its anchor, in object units, at its depth. */
+type Extent = { x: number; y: number; left: number; right: number; top: number; bottom: number }
+
+/** The largest stretch in [min, max] at which `size` stays within `limit`; `min` when even that does not fit. */
+const largestFit = (size: (s: number) => number, min: number, max: number, limit: number) => {
+  if (size(max) <= limit) return max
+  if (size(min) > limit) return min
+  let [lo, hi] = [min, max]
+  for (let k = 0; k < 40; k++) {
+    const mid = (lo + hi) / 2
+    if (size(mid) <= limit) lo = mid
+    else hi = mid
+  }
+  return lo
+}
 
 /**
- * The smallest slot spacing at which no two footprints in a row overlap. Every pair counts, not only
- * neighbours, because two spots can share a slot (a fire pit over the campfire) with different footprints.
+ * The smallest sideways stretch at which no two footprints at the same depth overlap. A pair on the same
+ * x is skipped: that is one spot growing over another (a fire pit over the campfire).
  */
-const footprintSpacing = (standing: Standing[]) =>
+const sameDepthStretch = (places: (CampPlace & { depth: number })[]) =>
   Math.max(
     0,
-    ...standing.flatMap((a, i) =>
-      standing
+    ...places.flatMap((a, i) =>
+      places
         .slice(i + 1)
-        .filter(b => b.row === a.row && b.slot !== a.slot)
-        .map(
-          b =>
-            (((a.footprint + b.footprint) / 2) * P.gapFactor * P.depth[a.row]) /
-            (Math.abs(a.slot - b.slot) * P.spread[a.row])
-        )
+        .filter(b => Math.abs(a.y - b.y) <= P.sameDepth && a.x !== b.x)
+        .map(b => (((a.footprint * a.depth + b.footprint * b.depth) / 2) * P.gapFactor) / Math.abs(a.x - b.x))
     )
   )
 
@@ -187,97 +195,103 @@ export const layoutCamp = ({
   const top = clamp(insets.top, 0, height - insetFree)
   const bottom = top + insetFree
 
+  // Over the whole catalogue, so a spot is drawn at the same size in every chapter.
+  const ys = [...catalogue.spots, ...catalogue.fixed].map(o => o.y)
+  const [yFar, yNear] = [Math.min(...ys), Math.max(...ys)]
+  const depthAt = (y: number) =>
+    yNear > yFar ? P.depth[0] + ((y - yFar) / (yNear - yFar)) * (P.depth[1] - P.depth[0]) : P.depth[1]
+
   const framed = [
     ...catalogue.spots
       .filter(s => spotOpen(s, chapter))
       .map(s => ({ ...s, pieces: s.steps.filter(step => reached(step, chapter)).flatMap(step => step.pieces) })),
-    ...catalogue.fixed.map(f => ({ ...f, frame: 1, pieces: [f.piece] })),
+    ...catalogue.fixed.map(f => ({ ...f, pieces: [f.piece] })),
+  ].map(o => ({ ...o, depth: depthAt(o.y) }))
+
+  // The fire's anchor always counts, so a chapter with nothing yet still has a frame.
+  const extents: Extent[] = [
+    { x: 0, y: 0, left: 0, right: 0, top: 0, bottom: 0 },
+    ...framed.flatMap(o =>
+      o.pieces.map(p => {
+        const size = o.frame * o.depth
+        return {
+          x: o.x,
+          y: o.y,
+          left: (p.dx - p.width / 2) * size,
+          right: (p.dx + p.width / 2) * size,
+          top: (p.dy - p.height) * size,
+          bottom: p.dy * size,
+        }
+      })
+    ),
   ]
-  const spacingMin = footprintSpacing(framed)
-  const spacingMax = Math.max(P.spacingMax, spacingMin)
-  const xs = framed.map(o => o.slot * P.spread[o.row])
-  const xMin = Math.min(...xs, 0)
-  const xMax = Math.max(...xs, 0)
-  const span = Math.max(xMax - xMin, 1)
+  const leftAt = (sx: number) => Math.min(...extents.map(e => e.x * sx + e.left))
+  const rightAt = (sx: number) => Math.max(...extents.map(e => e.x * sx + e.right))
+  const topAt = (sy: number) => Math.min(...extents.map(e => e.y * sy + e.top))
+  const bottomAt = (sy: number) => Math.max(...extents.map(e => e.y * sy + e.bottom))
+  const spanX = (sx: number) => rightAt(sx) - leftAt(sx)
+  const spanY = (sy: number) => bottomAt(sy) - topAt(sy)
 
-  // A side margin grows past frameMargin when a piece reaches further out than it, measured at minimum
-  // spacing where inner spots stand closest to the edge, so no piece the chapter can hold is ever cropped.
-  const reach = (side: -1 | 1) =>
-    Math.max(
-      P.frameMargin,
-      ...framed.flatMap((o, i) =>
-        o.pieces.map(
-          p =>
-            (side * p.dx + p.width / 2) * o.frame * P.depth[o.row] -
-            (side > 0 ? xMax - xs[i] : xs[i] - xMin) * spacingMin
-        )
-      )
-    )
-  const marginLeft = reach(-1)
-  const marginRight = reach(1)
-  const margins = marginLeft + marginRight
+  const sxMin = Math.max(P.stretchX[0], sameDepthStretch(framed))
+  const sxMax = Math.max(P.stretchX[1], sxMin)
+  const [syMin, syMax] = P.stretchY
 
-  const backReach = P.depth[0] + P.backHeadroom
-  const minHeight = P.bottomPad + backReach + P.farSandMin + P.skyMin + (1 + P.backGapFactor) * P.rowGapMin
-  const unit = Math.min(insetFree / Math.max(P.cameraHeight[chapter], minHeight), width / (span * spacingMin + margins))
-  const spacing = clamp((width / unit - margins) / span, spacingMin, spacingMax)
-
-  // Rows spread over the ground between the lowest horizon (plus far sand) and the bottom.
-  const lowestHorizon = top + Math.max(insetFree * P.horizonShare, P.skyMin * unit)
-  const rowGap = clamp(
-    ((bottom - lowestHorizon) / unit - P.bottomPad - backReach - P.farSandMin) / (1 + P.backGapFactor),
-    P.rowGapMin,
-    P.rowGapMax
+  // The chapter's frame at the minimum stretch fits the inset-free container: sky, far sand, camp, padding.
+  const frameHeight = P.skyMin + P.farSandMin + spanY(syMin) + P.bottomPad
+  const unit = Math.min(
+    insetFree / P.cameraHeight[chapter],
+    insetFree / frameHeight,
+    width / (spanX(sxMin) + 2 * P.sideMargin)
   )
-  const baseline: [number, number, number] = [0, 0, bottom - P.bottomPad * unit]
-  baseline[1] = baseline[2] - rowGap * unit
-  baseline[0] = baseline[1] - rowGap * P.backGapFactor * unit
-  // Spare height becomes far sand, not sky: the horizon only rises when the back row and its far sand reach it.
-  const horizon = Math.min(baseline[0] - (backReach + P.farSandMin) * unit, lowestHorizon)
 
-  const frameWidth = (span * spacing + margins) * unit
+  // Spare width spreads the camp sideways; spare height spreads it down the ground below the lowest horizon.
+  const sx = largestFit(spanX, sxMin, sxMax, width / unit - 2 * P.sideMargin)
+  const lowestHorizon = top + Math.max(insetFree * P.horizonShare, P.skyMin * unit)
+  const groundBottom = bottom - P.bottomPad * unit
+  const sy = largestFit(spanY, syMin, syMax, (groundBottom - lowestHorizon) / unit - P.farSandMin)
+
+  const fireY = groundBottom - bottomAt(sy) * unit
+  // Spare height becomes far sand, not sky: the horizon only rises when the farthest frame and its far sand reach it.
+  const horizon = Math.min(fireY + topAt(sy) * unit - P.farSandMin * unit, lowestHorizon)
+
+  const frameWidth = (spanX(sx) + 2 * P.sideMargin) * unit
   const frameX = (width - frameWidth) / 2
   const frameY = horizon - P.skyMin * unit
-  const frame = { x: frameX, y: frameY, width: frameWidth, height: baseline[2] + P.bottomPad * unit - frameY }
-
-  const originX = frameX + (marginLeft - xMin * spacing) * unit
-  const anchor = (o: { row: CampRow; slot: number }) => ({
-    x: originX + o.slot * P.spread[o.row] * spacing * unit,
-    y: baseline[o.row],
-    scale: unit * P.depth[o.row],
-  })
+  const frame = { x: frameX, y: frameY, width: frameWidth, height: bottom - frameY }
+  const fireX = frameX + (P.sideMargin - leftAt(sx)) * unit
 
   const drawn: Placed[] = []
   for (const spot of catalogue.spots) {
     if (!spotOpen(spot, chapter)) continue
     const count = clamp(Math.floor(steps[spot.id] ?? 0), 0, stepsAvailable(spot, chapter))
     for (const step of spot.steps.slice(0, count))
-      for (const piece of step.pieces) drawn.push({ spot: spot.id, row: spot.row, frame: spot.frame, piece })
+      for (const piece of step.pieces) drawn.push({ spot: spot.id, place: spot, piece })
   }
-  // Fixed pieces follow spot pieces so that, on a shared baseline, they draw on top.
-  for (const fixed of catalogue.fixed) drawn.push({ spot: fixed.id, row: fixed.row, frame: 1, piece: fixed.piece })
+  // Fixed pieces follow spot pieces so that, on a shared anchor, they draw on top.
+  for (const fixed of catalogue.fixed) drawn.push({ spot: fixed.id, place: fixed, piece: fixed.piece })
 
   const hidden = new Set(drawn.flatMap(d => (d.piece.replaces ?? []).filter(id => id !== d.piece.id)))
   const visible = drawn.filter(d => !hidden.has(d.piece.id))
 
-  const slotOf = new Map<string, number>([
-    ...catalogue.spots.map(s => [s.id, s.slot] as const),
-    ...catalogue.fixed.map(f => [f.id, f.slot] as const),
-  ])
-
-  // Sorted by row, not by each piece's own y, so a piece raised onto another (a flag on a tent) stays in front.
+  // Sorted by anchor, not by each piece's own y, so a piece raised onto another (a flag on a tent) stays in front.
   const standing = visible
-    .map((d, order) => ({ d, order, at: anchor({ row: d.row, slot: slotOf.get(d.spot) ?? 0 }) }))
-    .sort((a, b) => a.at.y - b.at.y || a.order - b.order)
-    .map(({ d, at }) => {
-      const px = at.scale * d.frame
+    .map((d, order) => ({
+      d,
+      order,
+      x: fireX + d.place.x * sx * unit,
+      y: fireY + d.place.y * sy * unit,
+      scale: unit * depthAt(d.place.y),
+    }))
+    .sort((a, b) => a.y - b.y || a.order - b.order)
+    .map(({ d, x, y, scale }) => {
+      const px = scale * d.place.frame
       return {
         key: `${d.spot}:${d.piece.id}`,
         spot: d.spot,
         piece: d.piece,
-        x: at.x + d.piece.dx * px,
-        y: at.y + d.piece.dy * px,
-        scale: at.scale,
+        x: x + d.piece.dx * px,
+        y: y + d.piece.dy * px,
+        scale,
         width: d.piece.width * px,
         height: d.piece.height * px,
         frame: px,
@@ -311,7 +325,7 @@ export const layoutCamp = ({
     }
   })
 
-  return { unit, spacing, rowGap, horizon, frame, pieces, glows, pyramids }
+  return { unit, stretch: { x: sx, y: sy }, horizon, frame, pieces, glows, pyramids }
 }
 
 /** The smallest hit area of an entrance, in CSS px, however small its art is drawn. */

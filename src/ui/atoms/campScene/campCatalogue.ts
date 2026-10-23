@@ -1,5 +1,5 @@
 import type { Difficulty } from "@/data/difficultyLevels"
-import type { CampCatalogue, CampLight, CampPiece, CampSpot, CampSpotId } from "./campTypes"
+import type { CampCatalogue, CampLight, CampPiece, CampPlace, CampSpot, CampSpotId } from "./campTypes"
 
 const FIRE = "255,150,60"
 
@@ -35,20 +35,16 @@ const piece = (id: string, options: PieceOptions = {}): CampPiece => ({
  * `frame` and `footprint` are measured from the wizard impression against the chest (271×226 px there,
  * its art filling 0.83×0.76 of its 1u frame): an object w×h px is w/271·0.83 wide and h/226·0.76 tall, its
  * footprint is that width, and its frame is the larger of the two over 0.9, the share of its square that
- * spot art fills. Re-measured when a spot's art lands.
+ * spot art fills. `x` and `y` are the anchor's offset from the fire pit's in the wizard impression (1438×2576
+ * px, 1u = 326 px). All are starting values, re-measured when a spot's art lands.
  */
 const spot = (
   id: CampSpotId,
-  row: CampSpot["row"],
-  slot: number,
-  { frame, footprint }: Pick<CampSpot, "frame" | "footprint">,
+  place: CampPlace,
   steps: [Difficulty, string, Pick<PieceOptions, "replaces" | "lights">?][]
 ): CampSpot => ({
   id,
-  row,
-  slot,
-  frame,
-  footprint,
+  ...place,
   steps: steps.map(([chapter, name, options], i) => ({
     chapter,
     pieces: [
@@ -62,7 +58,7 @@ const spot = (
 
 export const CAMP_CATALOGUE: CampCatalogue = {
   spots: [
-    spot("fire", 1, 0, { frame: 1.91, footprint: 1.72 }, [
+    spot("fire", { x: 0, y: 0, frame: 1.91, footprint: 1.72 }, [
       ["starter", "stoneRing", { replaces: ["campfire"], lights: [fireGlow(2.1)] }],
       ["starter", "fire", { lights: [fireGlow(2.9)] }],
       ["starter", "cookingStones", { lights: [fireGlow(2.9)] }],
@@ -71,7 +67,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["master", "clayOven", { lights: [fireGlow(2.9), OVEN] }],
       ["wizard", "seatCushions", { lights: [fireGlow(2.9), OVEN] }],
     ]),
-    spot("sleeping", 0, -1, { frame: 1.53, footprint: 1.38 }, [
+    spot("sleeping", { x: -0.57, y: -2.41, frame: 1.53, footprint: 1.38 }, [
       ["starter", "reedMat"],
       ["starter", "blanket"],
       ["starter", "windbreak"],
@@ -81,7 +77,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["master", "secondTent"],
       ["wizard", "pavilion"],
     ]),
-    spot("water", 1, 1, { frame: 1.21, footprint: 0.91 }, [
+    spot("water", { x: 1.1, y: -0.94, frame: 1.21, footprint: 0.91 }, [
       ["starter", "gourd"],
       ["starter", "jar"],
       ["junior", "secondJar"],
@@ -89,7 +85,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["master", "well"],
       ["wizard", "wellPulley"],
     ]),
-    spot("cooking", 1, -1, { frame: 1.89, footprint: 1.7 }, [
+    spot("cooking", { x: -0.45, y: -1.14, frame: 1.89, footprint: 1.7 }, [
       ["junior", "tripod"],
       ["junior", "spiceRack"],
       ["junior", "breadBoard"],
@@ -97,7 +93,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["master", "dryingRack"],
       ["wizard", "feast"],
     ]),
-    spot("donkey", 1, -2, { frame: 1.49, footprint: 1.34 }, [
+    spot("donkey", { x: -1.46, y: -0.39, frame: 1.49, footprint: 1.34 }, [
       ["junior", "halter"],
       ["junior", "donkey"],
       ["junior", "saddlebags"],
@@ -106,7 +102,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["master", "secondDonkey"],
       ["wizard", "paintedCart"],
     ]),
-    spot("camel", 1, 2, { frame: 1.46, footprint: 1.19 }, [
+    spot("camel", { x: 1.55, y: 0.13, frame: 1.46, footprint: 1.19 }, [
       ["expert", "rope"],
       ["expert", "camel"],
       ["expert", "saddle"],
@@ -114,7 +110,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["master", "camelTrough"],
       ["wizard", "caravanBanner"],
     ]),
-    spot("mapTable", 2, 0, { frame: 1.67, footprint: 1.5 }, [
+    spot("mapTable", { x: 0.8, y: 0.92, frame: 1.67, footprint: 1.5 }, [
       ["expert", "map"],
       ["expert", "table"],
       ["expert", "compass"],
@@ -123,7 +119,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["wizard", "astrolabe"],
       ["wizard", "reedGlobe"],
     ]),
-    spot("palmGarden", 0, 2, { frame: 2.51, footprint: 1.07 }, [
+    spot("palmGarden", { x: 1.61, y: -1.62, frame: 2.51, footprint: 1.07 }, [
       ["expert", "seed"],
       ["expert", "sprout"],
       ["expert", "palm"],
@@ -132,7 +128,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["wizard", "lotusPlanter"],
       ["wizard", "figTree"],
     ]),
-    spot("ibisPond", 2, -2.5, { frame: 2.46, footprint: 2.21 }, [
+    spot("ibisPond", { x: -0.98, y: 1.83, frame: 2.46, footprint: 2.21 }, [
       ["master", "hollow"],
       ["master", "pond"],
       ["master", "reeds"],
@@ -140,7 +136,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["wizard", "lotus"],
       ["wizard", "secondIbis"],
     ]),
-    spot("lookout", 0, -2.5, { frame: 2.31, footprint: 0.87 }, [
+    spot("lookout", { x: -1.62, y: -1.89, frame: 2.31, footprint: 0.87 }, [
       ["master", "post"],
       ["master", "platform"],
       ["master", "ladder"],
@@ -148,13 +144,13 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["wizard", "roof"],
       ["wizard", "signalFire", { lights: [SIGNAL] }],
     ]),
-    spot("godStatues", 2, 2.5, { frame: 1.8, footprint: 1.62 }, [
+    spot("godStatues", { x: 1.33, y: 1.87, frame: 1.8, footprint: 1.62 }, [
       ["wizard", "thoth"],
       ["wizard", "bastet"],
       ["wizard", "anubis"],
       ["wizard", "ra"],
     ]),
-    spot("starCanopy", 0, 0, { frame: 1.12, footprint: 1.01 }, [
+    spot("starCanopy", { x: 0.65, y: -2.79, frame: 1.12, footprint: 1.01 }, [
       ["wizard", "poles"],
       ["wizard", "cloth"],
       ["wizard", "stars"],
@@ -164,18 +160,19 @@ export const CAMP_CATALOGUE: CampCatalogue = {
   fixed: [
     {
       id: "chest",
-      row: 2,
-      slot: -1,
+      x: -1.52,
+      y: 0.4,
+      frame: 1,
       footprint: 0.83,
       piece: piece("chest", { lights: [light(0.8, "255,200,80", "breathe", 0.4, 0, -0.35)] }),
     },
     {
       id: "window",
-      row: 0,
-      slot: 1,
+      x: 0.91,
+      y: -1.92,
+      frame: 1.4,
       footprint: 0.55,
-      // The mosaic window is the camp's landmark: drawn a little above its size in the impression (~0.8),
-      // so the goal stays in sight.
+      // The mosaic window stands 1.35× the chest's height in the impression.
       piece: piece("window", {
         lights: [
           light(1.3, "90,150,255", "breathe", 0.55, 0, -0.39),
@@ -185,8 +182,9 @@ export const CAMP_CATALOGUE: CampCatalogue = {
     },
     {
       id: "campfire",
-      row: 1,
-      slot: 0,
+      x: 0,
+      y: 0,
+      frame: 1,
       footprint: 0.45,
       piece: piece("campfire", {
         lights: [light(2.1, "255,150,55", "flicker", 0.75, 0, -0.2)],

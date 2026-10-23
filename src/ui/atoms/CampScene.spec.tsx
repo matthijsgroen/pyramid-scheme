@@ -18,28 +18,28 @@ const piece = (id: string, options: Partial<CampPiece> = {}): CampPiece => ({
 
 const catalogue: CampCatalogue = {
   spots: [
-    { id: "fire", row: 1, slot: 0, frame: 1, footprint: 0.8, steps: [{ chapter: "starter", pieces: [piece("ring")] }] },
+    { id: "fire", x: 0, y: 0, frame: 1, footprint: 0.8, steps: [{ chapter: "starter", pieces: [piece("ring")] }] },
     {
       id: "mapTable",
-      row: 2,
-      slot: 0,
+      x: 0,
+      y: 1,
       frame: 1,
       footprint: 0.8,
       steps: [{ chapter: "starter", pieces: [piece("table")] }],
     },
     {
       id: "godStatues",
-      row: 2,
-      slot: 2,
+      x: 2,
+      y: 1,
       frame: 1,
       footprint: 0.8,
       steps: [{ chapter: "wizard", pieces: [piece("thoth")] }],
     },
   ],
   fixed: [
-    { id: "chest", row: 2, slot: -1, footprint: 0.8, piece: piece("chest") },
-    { id: "window", row: 0, slot: 1, footprint: 0.8, piece: piece("window") },
-    { id: "campfire", row: 1, slot: 0, footprint: 0.8, piece: piece("smallFlame") },
+    { id: "chest", x: -1, y: 1, frame: 1, footprint: 0.8, piece: piece("chest") },
+    { id: "window", x: 1, y: -1, frame: 1, footprint: 0.8, piece: piece("window") },
+    { id: "campfire", x: 0, y: 0, frame: 1, footprint: 0.8, piece: piece("smallFlame") },
   ],
 }
 
@@ -52,9 +52,9 @@ afterEach(() => art.clear())
 const fireLight = { dx: 0, dy: -0.3, radius: 3, color: "#ffb24a", mode: "flicker" as const, strength: 0.6 }
 const firelit: CampCatalogue = {
   spots: [
-    { id: "water", row: 2, slot: 1, frame: 1, footprint: 0.8, steps: [{ chapter: "starter", pieces: [piece("jar")] }] },
+    { id: "water", x: 1, y: 0, frame: 1, footprint: 0.8, steps: [{ chapter: "starter", pieces: [piece("jar")] }] },
   ],
-  fixed: [{ id: "campfire", row: 2, slot: 0, footprint: 0.8, piece: piece("flame", { lights: [fireLight] }) }],
+  fixed: [{ id: "campfire", x: 0, y: 0, frame: 1, footprint: 0.8, piece: piece("flame", { lights: [fireLight] }) }],
 }
 
 type SceneProps = Omit<ComponentProps<typeof CampScene>, "width" | "height"> & { width?: number; height?: number }

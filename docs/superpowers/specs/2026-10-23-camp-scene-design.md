@@ -78,26 +78,40 @@ clay oven, the lookout's signal fire) bring their own small glow.
    the object is drawn; two hit areas never overlap (they shrink toward their own object, not below 44, and
    otherwise move apart sideways). A label is never set below 11 px.
 
-### Spots as anchors, not coordinates
+### Spots as anchors, placed as in the impression
 
-Every spot has a **row** (back, middle, front) and a **slot** in that row: a signed number of slot widths
-left or right of the fire, which is slot 0 of the middle row. A spot never has a fixed pixel position.
+Every spot, and the chest, window and campfire, has an **anchor**: the bottom centre of its object group.
+Its place is its offset from the fire pit's anchor as measured in the wizard impression (1438×2576 px),
+in object units `u` (1u = 326 px there, the chest being 0.83u wide in 271 px). x runs right, y runs down;
+a smaller y stands farther away. A spot never has a fixed pixel position. These are starting values, tuned
+by eye once art lands:
 
-The layout is data, tuned in the prototype. Starting layout (my call, follows `MobielIndeling` and the
-wizard impression, rearranged so earlier chapters sit near the fire and later ones further out):
+| Spot / piece | x     | y     |
+| ------------ | ----- | ----- |
+| lookout      | -1.62 | -1.89 |
+| sleeping     | -0.57 | -2.41 |
+| star canopy  | 0.65  | -2.79 |
+| palm garden  | 1.61  | -1.62 |
+| cooking      | -0.45 | -1.14 |
+| fire         | 0     | 0     |
+| water        | 1.10  | -0.94 |
+| donkey       | -1.46 | -0.39 |
+| camel        | 1.55  | 0.13  |
+| ibis pond    | -0.98 | 1.83  |
+| map table    | 0.80  | 0.92  |
+| god statues  | 1.33  | 1.87  |
+| chest        | -1.52 | 0.40  |
+| window       | 0.91  | -1.92 |
+| campfire     | 0     | 0     |
 
-| Row    | −2.5      | −2     | −1       | 0           | +1     | +2          | +2.5        |
-| ------ | --------- | ------ | -------- | ----------- | ------ | ----------- | ----------- |
-| back   | lookout   |        | sleeping | star canopy | window | palm garden |             |
-| middle |           | donkey | cooking  | fire        | water  | camel       |             |
-| front  | ibis pond |        | chest    | map table   |        |             | god statues |
+The impression's horizon is at y = -4.07.
 
-Every spot also has a **frame** and a **footprint**, both in object units `u` (the chest's frame is 1u). The
-frame is the side of the square its step images are drawn at; the footprint is the width the object stands
-on. They are measured from the wizard impression against the chest (271×226 px there, its art filling
-0.83×0.76 of its frame): an object w×h px is w/271·0.83 wide and h/226·0.76 tall, its footprint is that
-width, and its frame is the larger of the two over 0.9, the share of its square that spot art fills.
-Re-measured when a spot's art lands. Starting values:
+Every spot also has a **frame** and a **footprint**, both in object units. The frame is the side of the
+square its step images are drawn at; the footprint is the width the object stands on. They are measured
+from the wizard impression against the chest (271×226 px there, its art filling 0.83×0.76 of its frame):
+an object w×h px is w/271·0.83 wide and h/226·0.76 tall, its footprint is that width, and its frame is the
+larger of the two over 0.9, the share of its square that spot art fills. Re-measured when a spot's art
+lands. Starting values:
 
 | Spot        | frame | footprint |
 | ----------- | ----- | --------- |
@@ -114,58 +128,59 @@ Re-measured when a spot's art lands. Starting values:
 | map table   | 1.67  | 1.50      |
 | god statues | 1.80  | 1.62      |
 | chest       | 1     | 0.83      |
-| window      | 1.0   | 0.55      |
+| window      | 1.4   | 0.55      |
 | campfire    | 1     | 0.45      |
 
-The window is drawn a little above its impression size (~0.8): it is the camp's landmark.
+The window stands 1.35× the chest's height in the impression; its frame of 1.4 draws it at that.
 
 ### Size and spacing are two separate things
 
-- **Size** follows the container's **height** and the chapter's camera. A tent takes the same share of
-  the screen's height on a phone and on a desktop.
-- **Spacing** follows the **width** that is left. The distance between two slots is elastic between a
-  minimum and a maximum, both in units of object size. The minimum is what keeps every two spots of a
-  row apart by their mean footprint (times a gap factor, about 1), centre to centre: the largest such
-  requirement over pairs in a row, divided by their slot distance. On a phone the spots pack close (about 60 px per
-  spot at 390 px wide); on a desktop they spread out, and once spacing hits its maximum only empty desert
-  grows at the sides.
-- **Depth**: a farther row stands higher on the ground and is drawn a little smaller. The vertical gap
-  between rows is elastic the same way: the rows spread to fill the ground between the lowest horizon
-  (plus a strip of far sand) and the bottom edge, up to a maximum. A portrait phone, where the width
-  keeps objects small, gets a camp spread down the whole screen, not one packed at the bottom.
-- Spacing never drops below the minimum. At the minimum, no two footprints in a row overlap; frames may,
-  since the art fills only part of its square.
-- **When the width runs out, the objects shrink** (my call). The object size is the smaller of "what the
-  height allows" and "what fits the frame at minimum spacing". A portrait phone at wizard is
-  width-bound: objects get smaller, the spare height goes to sky. "Same share of the height" holds only
-  while the width allows it; no-overlap and never-cropped always hold.
+- **Size** (`u`) is the largest at which the chapter's frame fits the inset-free container at the
+  minimum stretch, capped by the chapter's camera height. A tent takes the same share of the screen's
+  height on a phone and on a desktop while the width allows it.
+- **Spacing** is elastic in both directions. A spot's screen position is the fire's anchor plus
+  (x·sx·u, y·sy·u), where `sx` and `sy` are stretch factors, each within its range. Once `u` is set, `sx`
+  grows to use the spare width and `sy` the spare height between the lowest horizon (plus far sand) and
+  the bottom, each up to its maximum: a desktop pane spreads sideways, a tall phone spreads downward. Past
+  the maxima only empty desert grows. A stretch scales every offset alike, so every spot keeps its order in
+  x and in y on any container.
+- **Depth**: the drawing scale runs from 0.9 at the catalogue's farthest anchor to 1 at its nearest, so a
+  spot keeps its size across chapters. Pieces are drawn in order of their anchor's y, the farthest first.
+- **Overlap**: spots whose anchors are within 0.35u in y stand at the same depth, and at the minimum
+  stretch their footprints never overlap (mean footprint times a gap factor of 1, centre to centre); when
+  the impression's offsets are too close for that, the minimum `sx` rises until they are apart. Spots at
+  different depths may overlap, as in the impression: the nearer one is drawn over the farther one.
+- **When the width runs out, the objects shrink** (my call). A portrait phone at wizard is width-bound:
+  objects get smaller and `sy` takes the spare height. No-crop always holds.
 
-### Starting numbers (from the prototype)
+### Starting numbers
 
-All in units of object size `u` (the chest is `1u` wide):
+All in object units `u` (the chest is 0.83u wide):
 
-| What                                  | Value                               |
-| ------------------------------------- | ----------------------------------- |
-| slot spacing                          | footprint minimum – 2.3             |
-| gap between row baselines             | 0.75 – 5 (back gap ×0.85)           |
-| far sand between horizon and back row | at least 0.5                        |
-| depth scale back / middle / front     | 0.9 / 0.95 / 1                      |
-| slot spread back / middle / front     | 0.88 / 0.95 / 1                     |
-| minimum sky above the back row        | 1.7                                 |
-| lowest horizon, share of height       | 0.27 from the top                   |
-| insets top / bottom (px, phone)       | 56 / 96 (HUD; safe area + "Op pad") |
-| padding below the front row           | 0.35                                |
-| camera height per chapter             | 4.2 / 4.8 / 5.4 / 6.0 / 6.6         |
-| frame side margin                     | 0.65 each side                      |
+| What                                          | Value                               |
+| --------------------------------------------- | ----------------------------------- |
+| stretch sx and sy                             | 0.85 – 1.6 each                     |
+| same depth                                    | anchors within 0.35 in y            |
+| gap factor between same-depth footprints      | 1                                   |
+| depth scale farthest / nearest anchor         | 0.9 / 1                             |
+| far sand between horizon and the farthest top | at least 0.5                        |
+| minimum sky above the horizon                 | 1.7                                 |
+| lowest horizon, share of height               | 0.27 from the top                   |
+| insets top / bottom (px, phone)               | 56 / 96 (HUD; safe area + "Op pad") |
+| padding below the nearest anchor              | 0.35                                |
+| side margin of the frame                      | 0.15 each side                      |
+| camera height per chapter                     | 4.2 / 4.8 / 5.4 / 6.0 / 6.6         |
 
-`u = min(H / max(cameraHeight, minHeight), W / (span × minSpacing + margins))`, then spacing and row
-gap are solved from what is left and clamped. At 390×844 with the phone insets, wizard comes out at
-u ≈ 37 px, about 62 px per slot (the footprint minimum, 1.71, set by the cooking place beside the fire).
+`u = min(H / cameraHeight, H / frameHeight(sy min), W / (frameWidth(sx min) + margins))`, then `sx` and
+`sy` are solved from what is left and clamped. At 390×844 with the phone insets, wizard comes out at
+u ≈ 65 px, width-bound: the window beside the palm garden (0.30u apart in y) sets the minimum `sx` at
+about 1.07.
 
 ### The camera zooms out per chapter
 
-Each chapter has a **frame**: the bounding box of the spots that chapter can hold, plus the chest, window
-and fire. Beginner sits close to the fire; each later chapter takes one step out; wizard frames the whole
+Each chapter has a **frame**: the bounding box of the frames of the spots that chapter can hold and of the
+chest, window and campfire, at their positions, plus the minimum sky above. The horizon stays above the
+farthest frame top by at least the far sand. Beginner sits close to the fire; each later chapter takes one step out; wizard frames the whole
 camp. The frame is fitted into the container without cropping it:
 
 - spare height above the frame is filled first with **far sand**: the horizon never sits lower than a
@@ -175,8 +190,8 @@ camp. The frame is fitted into the container without cropping it:
 - spare width beside the frame is filled with sand and dunes;
 - the frame is never cut.
 
-Spots keep their slot when a chapter is added: the camera zooms out to reveal ground where the new spots
-will stand. Nothing shifts sideways because a chapter was reached.
+Spots keep their place in the impression when a chapter is added: the camera zooms out to reveal ground
+where the new spots will stand. A new chapter can change the stretch, never the order of the spots.
 
 A spot that belongs to a later chapter than the current one is not drawn. A spot of the current chapter
 with zero steps is not drawn either. Both are just sand.
@@ -274,8 +289,8 @@ steps build around it, and its "fire" step makes the flame bigger with a wider g
   No hooks into game state, no storage.
 - The layout is a **pure function** of (container size, chapter, step counts) that returns the placed
   pieces, glows, pyramids and the camera. The component only renders its result. That function carries
-  the tests: the frame is never cropped, spacing stays within its bounds, no two spots in a row overlap at
-  the minimum, a spot keeps its slot across chapters, a later-chapter spot is not drawn.
+  the tests: the frame is never cropped, both stretches stay within their range, no two spots at the same
+  depth overlap, every spot keeps its order in x and in y across containers and chapters, a later-chapter spot is not drawn.
 - The spot/step/piece catalogue is data in one file, next to the layout.
 - Labels (entrance names) come in as props, already translated; the caller composes them (the window's
   "Mosaic 61/252"). The `camp.entrance.*` locale keys are the caller's.
@@ -294,7 +309,7 @@ steps build around it, and its "fire" step makes the flame bigger with a wider g
 
 ## Left to the builder
 
-- The exact spacing bounds, row heights, depth scaling and chapter frames (start from the prototype's
+- The exact stretch ranges, depth scaling and chapter frames (start from the prototype's
   values).
 - How glows are blended and animated, within "flicker" and "breathe" above.
 - How the art catalogue is shaped in code.
