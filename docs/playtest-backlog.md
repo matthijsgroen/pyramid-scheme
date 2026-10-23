@@ -111,7 +111,6 @@ played, and open an issue or a task for anything that plays wrong.
 - **Cavern floors 2 and 4, never played in the browser.** pitStair (floor 2) and throwItBack (floor 4, the
   expert-weight capstone): play both through to the pillar.
 - **A stale starter_1 story bubble stays over the tomb screens** and blocks taps.
-- **The tomb's completion screen** says the tomb just finished was unlocked.
 - **The revisited cavern's solved board** draws its bottom row oddly.
 - **The cave-mouth fallback** in `CaveBackdrop` is crude until the painted art lands.
 - **Tombs after the first in a tier** (e.g. `*_tomb_b`) deal different runtime boards than before: phantom tomb
