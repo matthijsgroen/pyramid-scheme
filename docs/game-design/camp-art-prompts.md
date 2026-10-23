@@ -817,7 +817,7 @@ without it. Where one object sits on another (the compass on the star cloth), th
 painted under the upper one, and its layer would have a hole. A layer source fills that: an extra edit,
 never shown as a step, only cut from.
 
-### `camp/bed` — the bare palm garden bed
+### 90. `camp/bed` — Layer source: the bare palm garden bed
 
 The palm garden's base: its finds (palm seed, second palm, fig tree, lotus planter) arrive in any order, so
 none of them can be the base. Edit of `camp/sprout`.
@@ -827,7 +827,7 @@ Attach: `art/masters/camp/sprout.webp`
 > [edit] Remove this, and only this: the small palm sprout. Where it grew, show the same dark soil and a few
 > blades of grass as around it. The bed, its stones and the leafy plant stay exactly as they are.
 
-### `camp/starMap-cloth` — the star cloth without the compass
+### 91. `camp/starMap-cloth` — Layer source: the star cloth without the compass
 
 Edit of `camp/starMap`.
 
