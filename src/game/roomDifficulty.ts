@@ -2,8 +2,9 @@ import type { Difficulty } from "@/data/difficultyLevels"
 import type { Tileset } from "./siteTypes"
 
 /** The difficulty one room of a chain is built at: its node's own, else the section's (a floor is a section
- * here too). Every per-room reader goes through this so a node that names a difficulty is dealt, bucketed,
- * tiered and generated at it everywhere at once. */
+ * here too). Every per-room board reader goes through this so a node that names a difficulty is dealt,
+ * bucketed and generated at it everywhere at once. Loot is not one of them: a room's loot tier is its
+ * section's. */
 export const roomDifficulty = (
   section: { difficulty: Difficulty; difficultiesByIndex?: Record<number, Difficulty> },
   index: number

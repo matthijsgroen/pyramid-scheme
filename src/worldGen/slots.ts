@@ -2,7 +2,6 @@ import type { SiteConfig, SubSection, Tier, TreasureReward, FragmentSlotReward }
 import type { Difficulty } from "../data/difficultyLevels"
 import { capabilitiesFor } from "./capabilities"
 import type { FloorRef } from "./reachability"
-import { roomDifficulty } from "@/game/roomDifficulty"
 
 // A candidate reward-placement site, tagged with the floor it lives on so a distribution
 // rule can be filtered down to only the currently-reachable ones (see
@@ -136,6 +135,8 @@ export const collectSlots = (
         if (!rewards) return
         rewards.forEach((rw, i) => {
           const arr = rewards
+          // A room's loot is tiered by its SECTION, never by its node's own difficulty: a node picks
+          // the board, so a junior node on a starter path must not pull junior loot into it.
           // A lootless room (or chain) offers nothing to the pool. A currency sentinel a mod tagged into
           // it would never be filled, so it goes too.
           if (chain.loot === false || chain.lootByIndex?.[i] === false) {
@@ -152,7 +153,7 @@ export const collectSlots = (
           slots.push({
             ref,
             journeyId,
-            tier: roomDifficulty(chain, i) as Tier,
+            tier: chain.difficulty as Tier,
             wardKeys: [],
             isPlaceholder: frag !== undefined,
             ...(frag?.prefers ? { preference: frag.prefers } : {}),
