@@ -374,6 +374,30 @@ fills the lower part of that box, so nothing reaches the wall band a prop's head
 | **stain**    | something spilled long ago         | oil pooled and dried black                      | wine, sunk into plaster                  | resin and natron, crusted white       | scorch under a lamp tree              | a spill of light                 |
 | **tilework** | a patch of the floor that is finer | one salvaged tile set into the earth            | ochre band painted across the slabs      | faience panel, tiles missing from it  | inlay panel, lapis and gold, complete | star-field inlay, still moving   |
 
+## 4a. The cave tileset
+
+`cave` is a tileset, not a rank: the starter tomb's first level draws from `tiles/cave/`, dim and cool where the
+starter is warm and daylit. It has the four surfaces (floor, wall face, threshold, encounter wall) and its own
+furniture, authored in the tomb's `decorations` and `wallDecorations` pools. A kind is a silhouette and the
+tileset is its skin, so the shared kinds are the same slots as every rank's.
+
+| Kind            | Slot                      | What it is                                                                 |
+| --------------- | ------------------------- | -------------------------------------------------------------------------- |
+| **basin**       | chamber prop 56×84        | a still, clear rock pool with a wet rim                                    |
+| **pillar**      | chamber prop 56×84        | a dripstone column, stalactite and stalagmite grown together               |
+| **rubblePile**  | chamber prop 56×84        | a rockfall of broken limestone                                             |
+| **pit**         | chamber prop 56×84        | a sinkhole, a dark shaft                                                   |
+| **crystal**     | chamber prop 56×84        | pale selenite blades growing from a rock seam                              |
+| **brazier**     | chamber prop 56×84        | an old campfire: a ring of stones round ash, someone camped here before    |
+| **stalagmite**  | chamber prop 56×84        | a cluster of low stone cones                                               |
+| **puddle**      | floor scatter, prop box   | flat, glossy, soft-edged water on the rock                                 |
+| **bones**       | floor scatter, prop box   | an old animal skeleton half in the sand                                    |
+| **roots**       | wall item 56×28           | roots coming through the ceiling and down the face                         |
+| **stalactites** | wall item 56×28           | a fringe of stalactites along the face top                                 |
+
+`puddle` and `bones` are authored in the pool like `mat`, and are flat, so they draw on the lower part of the
+prop box. The prompts are in `docs/instructions/repaint-queue.md`, "Cave and cavern".
+
 ## 5. What has to be built for §3–§4
 
 | Needed for                | Change                                                                                                                                                                                     | Size  |

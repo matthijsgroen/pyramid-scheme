@@ -169,7 +169,7 @@ Even lighting left to right, no hotspot, no vignette.
 
 ---
 
-## Cave and cavern — six
+## Cave and cavern — seventeen
 
 The starter tomb's two levels ([the spec](../superpowers/specs/2026-10-22-tomb-redesign-design.md), §7). Until
 they land the cave draws from `placeholder/` tiles and a CSS backdrop. The `cave` tileset is not a rank: it
@@ -300,6 +300,229 @@ THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality. Do NOT ta
 ```
 
 **Import:** `cp ~/Downloads/<file> src/assets/exteriors/cavern.png`
+
+The cave's furniture, drawn as a kind per silhouette in the cave's palette: seven chamber props, two flat floor
+scatter pieces, two wall items. Each is a single repaint with no scaffold, keyed on magenta.
+
+### `cave/basin` — a still rock pool, wet rim
+
+**Attach:** `art/masters/props/starter/basin.webp` — a starter prop, as the style reference
+
+```
+Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
+A still pool in a cave: a shallow natural basin of grey limestone holding clear, motionless water, its rim dark and wet where the water has stood, a little sand at the lip. Seen standing in a chamber, a low mound of rock with the pool in its top.
+Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
+Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
+than #23272b.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it.
+The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen at the same slightly raised angle as the attached prop. Fill the frame's lower two thirds. Even lighting, no ground plane, no shadow.
+```
+
+**Import:** `yarn import-tile art/masters/props/cave/basin.webp --tier=cave --name=basin --slot=prop --filter=smooth`
+
+### `cave/pillar` — a dripstone column
+
+**Attach:** `art/masters/props/starter/pillar.webp` — a starter prop, as the style reference
+
+```
+Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
+A dripstone column: a stalactite grown down and a stalagmite grown up until they met, one pale-grey fluted column from floor to top of the frame, narrow at the waist, flared at foot and head, damp and slightly glistening.
+Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
+Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
+than #23272b.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it.
+The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen at the same slightly raised angle as the attached prop. Fill the frame's lower two thirds. Even lighting, no ground plane, no shadow.
+```
+
+**Import:** `yarn import-tile art/masters/props/cave/pillar.webp --tier=cave --name=pillar --slot=prop --filter=smooth`
+
+### `cave/rubblePile` — a rockfall of broken limestone
+
+**Attach:** `art/masters/props/starter/rubblePile.webp` — a starter prop, as the style reference
+
+```
+Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
+A rockfall: a knee-high heap of broken pale-grey limestone, angular slabs and chunks tumbled together, fresh pale fracture faces against weathered grey, a little sand drifted between the stones.
+Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
+Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
+than #23272b.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it.
+The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen at the same slightly raised angle as the attached prop. Fill the frame's lower two thirds. Even lighting, no ground plane, no shadow.
+```
+
+**Import:** `yarn import-tile art/masters/props/cave/rubblePile.webp --tier=cave --name=rubblePile --slot=prop --filter=smooth`
+
+### `cave/pit` — a sinkhole, dark shaft
+
+**Attach:** `art/masters/props/starter/pit.webp` — a starter prop, as the style reference
+
+```
+Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
+A sinkhole in a cave floor: a ragged round hole in the bedrock, its lip crumbled and uneven, the shaft inside falling away into black. The rim is the only thing lit; the shaft is deep shadow, never a flat black disc.
+Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
+Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
+than #23272b.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it.
+The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen at the same slightly raised angle as the attached prop. Fill the frame's lower two thirds. Even lighting, no ground plane, no shadow.
+```
+
+**Import:** `yarn import-tile art/masters/props/cave/pit.webp --tier=cave --name=pit --slot=prop --filter=smooth`
+
+### `cave/crystal` — pale selenite blades from a rock seam
+
+**Attach:** `art/masters/props/starter/crystal.webp` — a starter prop, as the style reference
+
+```
+Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
+Pale selenite: a cluster of long translucent gypsum blades growing out of a seam in a lump of grey rock, tilting different ways, milky white with a faint cool tint, the tallest about the height of the frame's upper third. Matte, never glassy.
+Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
+Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
+than #23272b.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it.
+The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen at the same slightly raised angle as the attached prop. Fill the frame's lower two thirds. Even lighting, no ground plane, no shadow.
+```
+
+**Import:** `yarn import-tile art/masters/props/cave/crystal.webp --tier=cave --name=crystal --slot=prop --filter=smooth`
+
+### `cave/brazier` — an old campfire, someone camped here
+
+**Attach:** `art/masters/props/starter/brazier.webp` — a starter prop, as the style reference
+
+```
+Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
+An old campfire: a ring of fire-blackened stones around a bed of grey ash and a few charred sticks, long cold. Someone camped here before. Low and wide, a little soot staining the nearest stones.
+Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
+Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
+than #23272b.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it.
+The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen at the same slightly raised angle as the attached prop. Fill the frame's lower two thirds. Even lighting, no ground plane, no shadow.
+```
+
+**Import:** `yarn import-tile art/masters/props/cave/brazier.webp --tier=cave --name=brazier --slot=prop --filter=smooth`
+
+### `cave/stalagmite` — a cluster of low stone cones
+
+**Attach:** `art/masters/props/starter/pillar.webp` — a starter prop, as the style reference
+
+```
+Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
+A cluster of stalagmites: three or four low stone cones of different heights growing from one patch of damp floor, pale grey, smooth, dripstone-banded, rounded at the tips, the tallest no higher than the middle of the frame.
+Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
+Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
+than #23272b.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it.
+The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen at the same slightly raised angle as the attached prop. Fill the frame's lower two thirds. Even lighting, no ground plane, no shadow.
+```
+
+**Import:** `yarn import-tile art/masters/props/cave/stalagmite.webp --tier=cave --name=stalagmite --slot=prop --filter=smooth`
+
+### `cave/puddle` — a flat glossy puddle, soft-edged
+
+**Attach:** `art/masters/props/starter/rubbleSpill.webp` — a starter prop, as the style reference
+
+```
+Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
+A puddle on a cave floor, seen from above: a flat irregular patch of still water, soft at the edges where it thins out over the rock, a darker shadow in the middle and a faint cool sheen on the surface. Flat on the floor, no depth, no ripples.
+Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
+Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
+than #23272b.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it.
+The patch alone on pure magenta #FF00FF, soft-edged, centred in the lower part of a portrait frame. Even lighting, no cast shadow.
+```
+
+**Import:** `yarn import-tile art/masters/props/cave/puddle.webp --tier=cave --name=puddle --slot=prop --filter=smooth --scale=0.55`
+
+### `cave/bones` — an old skeleton half in the sand
+
+**Attach:** `art/masters/props/starter/rubbleSpill.webp` — a starter prop, as the style reference
+
+```
+Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
+An old animal skeleton lying half-buried in drifted sand, seen from above: a ribcage, a few long bones and a skull, bleached and brittle, the sand covering one end. Flat on the floor, edges soft where bone sinks into sand, nothing standing up.
+Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
+Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
+than #23272b.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it.
+The patch alone on pure magenta #FF00FF, soft-edged, centred in the lower part of a portrait frame. Even lighting, no cast shadow.
+```
+
+**Import:** `yarn import-tile art/masters/props/cave/bones.webp --tier=cave --name=bones --slot=prop --filter=smooth --scale=0.55`
+
+### `cave/roots` — roots coming through the ceiling down the face
+
+**Attach:** `art/masters/props/starter/veil.webp` — a starter prop, as the style reference
+
+```
+Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
+Roots from above: pale-brown tree roots breaking through the rock at the top of a cave wall and hanging down its face, thick near the ceiling, branching and thinning to fine hairs, a few trailing nearly to the floor. Frontal, flat, one band wide and shallow.
+Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
+Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
+than #23272b.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it.
+Flat frontal view, no perspective. A wide shallow band, twice as wide as tall, on pure magenta #FF00FF, the art touching the top edge and filling the frame's width. Even lighting.
+```
+
+**Import:** `yarn import-tile art/masters/props/cave/roots.webp --tier=cave --name=roots --slot=wall --filter=smooth --trim`
+
+### `cave/stalactites` — a fringe of stalactites along the face top
+
+**Attach:** `art/masters/props/starter/veil.webp` — a starter prop, as the style reference
+
+```
+Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
+A fringe of stalactites: a row of pale-grey dripstone cones hanging from the top edge of a cave wall, of uneven lengths, damp tips glistening faintly, the lower part of the band left clear rock. Frontal, flat, wide and shallow.
+Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
+Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
+than #23272b.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it.
+Flat frontal view, no perspective. A wide shallow band, twice as wide as tall, on pure magenta #FF00FF, the art touching the top edge and filling the frame's width. Even lighting.
+```
+
+**Import:** `yarn import-tile art/masters/props/cave/stalactites.webp --tier=cave --name=stalactites --slot=wall --filter=smooth --trim`
 
 ---
 
@@ -2778,4 +3001,3 @@ a re-roll: magenta would show through it and the key cannot take that out.
 
 **One frame, standing.** A ghost does not walk, so there is no strip to build — `default/ghost-<name>` is
 a single file, which the map finds with no code change.
-
