@@ -391,7 +391,7 @@ Attach: `art/masters/camp/ref-cooking.webp`, `art/masters/camp/spiceRack.webp`
 
 ### Donkey (`donkey`)
 
-#### 32. `camp/paintedCart` — Donkey, step 7 of 7 (wizard)
+#### 32. `camp/paintedCart` — Donkey, step 6 of 6 (wizard)
 
 The final state; paint this one first for the spot.
 
@@ -399,7 +399,7 @@ Attach: `art/masters/camp/ref-donkey.webp`, `art/masters/camp/chest.webp`
 
 > [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the donkey, complete: a wooden stake with a rope halter, a grey donkey lying down with woven saddlebags and a striped red-and-green blanket on its back, a second grey donkey lying down beside it, and a two-wheeled cart painted with bright geometric patterns in red, blue and gold, sacks, a cushion and bundles in it; its bed rests on a thick wooden axle with a spoked wheel on each end, the near wheel snug against the side of the bed, and its two shafts run along both sides of the grey donkey, strapped to a padded leather collar at its shoulders. Use the colours of the matching objects in the reference image.
 
-#### 33. `camp/secondDonkey` — Donkey, step 6 of 7 (master)
+#### 33. `camp/secondDonkey` — Donkey, step 5 of 6 (master)
 
 Edit of `camp/paintedCart`.
 
@@ -407,7 +407,7 @@ Attach: `art/masters/camp/ref-donkey.webp`, `art/masters/camp/paintedCart.webp`
 
 > [edit] Make the cart plain again: unpainted weathered wood, a few sacks in it, no cushion. Same cart, same place.
 
-#### 34. `camp/donkeyBlanket` — Donkey, step 5 of 7 (expert)
+#### 35. `camp/cart` — Donkey, step 4 of 6 (expert)
 
 Edit of `camp/secondDonkey`.
 
@@ -416,25 +416,17 @@ Attach: `art/masters/camp/ref-donkey.webp`, `art/masters/camp/secondDonkey.webp`
 > [edit] Remove this, and only this: the brown donkey lying down in front of the cart. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
-#### 35. `camp/cart` — Donkey, step 4 of 7 (expert)
-
-Edit of `camp/donkeyBlanket`.
-
-Attach: `art/masters/camp/ref-donkey.webp`, `art/masters/camp/donkeyBlanket.webp`
-
-> [edit] Remove this, and only this: a striped red-and-green blanket on the donkey. Where it stood, show the #ff00ff background or
-> whatever was behind it.
-
-#### 36. `camp/saddlebags` — Donkey, step 3 of 7 (junior)
+#### 36. `camp/saddlebags` — Donkey, step 3 of 6 (junior)
 
 Edit of `camp/cart`.
 
 Attach: `art/masters/camp/ref-donkey.webp`, `art/masters/camp/cart.webp`
 
-> [edit] Remove this, and only this: a simple two-wheeled wooden cart beside the donkey, sacks in it. Where it stood, show the #ff00ff background or
-> whatever was behind it.
+> [edit] Remove the cart with its sacks, its wheel, its axle and both its shafts, the padded collar and the straps that tied the shafts, and the striped
+> blanket on the grey donkey. The leather bag stays, now hanging straight on its grey flank, and so does its halter. Where they stood, show the
+> #ff00ff background or whatever was behind them.
 
-#### 37. `camp/donkey` — Donkey, step 2 of 7 (junior)
+#### 37. `camp/donkey` — Donkey, step 2 of 6 (junior)
 
 Edit of `camp/saddlebags`.
 
@@ -443,7 +435,7 @@ Attach: `art/masters/camp/ref-donkey.webp`, `art/masters/camp/saddlebags.webp`
 > [edit] Remove this, and only this: woven saddlebags on the donkey's back. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
-#### 38. `camp/halter` — Donkey, step 1 of 7 (junior)
+#### 38. `camp/halter` — Donkey, step 1 of 6 (junior)
 
 Painted on its own and placed by hand: the stake is its own picture, and `yarn import-camp` paints it in
 behind every later donkey step (`BEHIND` in `scripts/importCamp.ts`). An edit that empties the cart

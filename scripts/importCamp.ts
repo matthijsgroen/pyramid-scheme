@@ -55,7 +55,7 @@ const SCENERY = new Set(["sand", "dunes", "pyramid", "pyramidGold"])
 
 /** The donkey's stake is its own picture, so no edit has to keep it: every later step stands in front of it. */
 export const BEHIND: Record<string, string> = Object.fromEntries(
-  ["donkey", "saddlebags", "cart", "donkeyBlanket", "secondDonkey", "paintedCart"].map(step => [step, "halter"])
+  ["donkey", "saddlebags", "cart", "secondDonkey", "paintedCart"].map(step => [step, "halter"])
 )
 
 /** The blur's spread as a share of the piece's longest side, so a shadow looks the same at any import size. */

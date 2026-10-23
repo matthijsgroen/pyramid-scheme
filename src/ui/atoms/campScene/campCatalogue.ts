@@ -99,7 +99,6 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["junior", "donkey"],
       ["junior", "saddlebags"],
       ["expert", "cart"],
-      ["expert", "donkeyBlanket"],
       ["master", "secondDonkey"],
       ["wizard", "paintedCart"],
     ]),
