@@ -11,11 +11,11 @@ export type CampLayoutInput = {
 }
 
 /**
- * Laid on the ground from the piece's foot. `angle` is the screen direction it falls in, in degrees (0 is
- * right, 90 is down); `length` is its reach as a share of the piece's own height; `strength` is its
+ * A contact shadow under the piece's base. `angle` is the screen direction away from the light, in degrees
+ * (0 is right, 90 is down); `offset` is how far, in px, the shadow shifts that way; `strength` is its
  * opacity. `light` is the key of the fire glow casting it, absent for the moon.
  */
-export type PlacedShadow = { angle: number; length: number; strength: number; light?: string }
+export type PlacedShadow = { angle: number; offset: number; strength: number; light?: string }
 
 /** Pixels, anchored bottom-centre; `scale` is the px size of one object unit at the piece's depth. */
 export type PlacedPiece = {
@@ -84,14 +84,15 @@ const P = CAMP_LAYOUT_PARAMS
 
 /**
  * A fire casts the shadows inside its glow; past three times its radius the moon takes over, and between
- * the two the direction blends. Near the fire a shadow is short and dark, under the moon long and faint.
+ * the two the direction blends. Near the fire a shadow is dark and pushed further from its base, under the
+ * moon faint and close. Offsets are object units at the piece's depth.
  */
 export const CAMP_SHADOW_PARAMS = {
   /** Lower right, away from the moon in the upper left of the sky. */
   moonAngle: 30,
   reachFactor: 3,
-  lengthMin: 0.45,
-  lengthMax: 1.1,
+  offsetMoon: 0.03,
+  offsetFire: 0.06,
   strengthMin: 0.18,
   strengthMax: 0.6,
 }
@@ -128,13 +129,13 @@ const castShadow = (p: Omit<PlacedPiece, "shadow">, glows: PlacedGlow[]): Placed
     nearest && nearest.distance > 0
       ? clamp((reach - nearest.distance) / Math.max(reach - nearest.g.radius, 1e-9), 0, 1)
       : 0
-  if (fire === 0) return { angle: S.moonAngle, length: S.lengthMax, strength: S.strengthMin }
+  if (fire === 0) return { angle: S.moonAngle, offset: S.offsetMoon * p.scale, strength: S.strengthMin }
   const moon = toRadians(S.moonAngle)
   const vx = (fire * (p.x - nearest.g.x)) / nearest.distance + (1 - fire) * Math.cos(moon)
   const vy = (fire * (p.y - nearest.g.y)) / nearest.distance + (1 - fire) * Math.sin(moon)
   return {
     angle: (Math.atan2(vy, vx) * 180) / Math.PI,
-    length: S.lengthMax - fire * (S.lengthMax - S.lengthMin),
+    offset: (S.offsetMoon + fire * (S.offsetFire - S.offsetMoon)) * p.scale,
     strength: S.strengthMin + fire * (S.strengthMax - S.strengthMin),
     light: nearest.g.key,
   }

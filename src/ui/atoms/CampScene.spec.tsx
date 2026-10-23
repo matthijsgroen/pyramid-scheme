@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
-import { describe, it, expect, vi } from "vitest"
+import { afterEach, describe, it, expect, vi } from "vitest"
 import { render, screen, fireEvent, within } from "@testing-library/react"
 import type { ComponentProps } from "react"
+import type { CampArt } from "./campScene/campArt"
 import type { CampCatalogue, CampPiece } from "./campScene/campTypes"
 import { fullSteps } from "./campScene/campLayout"
 import { CampScene } from "./CampScene"
@@ -29,6 +30,16 @@ const catalogue: CampCatalogue = {
 }
 
 const noop = () => {}
+
+const art = vi.hoisted(() => new Map<string, CampArt>())
+vi.mock("./campScene/campArt", () => ({ campArt: (id: string) => art.get(id) }))
+afterEach(() => art.clear())
+
+const fireLight = { dx: 0, dy: -0.3, radius: 3, color: "#ffb24a", mode: "flicker" as const, strength: 0.6 }
+const firelit: CampCatalogue = {
+  spots: [{ id: "water", row: 2, slot: 1, steps: [{ chapter: "starter", pieces: [piece("jar")] }] }],
+  fixed: [{ id: "campfire", row: 2, slot: 0, piece: piece("flame", { lights: [fireLight] }) }],
+}
 
 type SceneProps = Omit<ComponentProps<typeof CampScene>, "width" | "height"> & { width?: number; height?: number }
 const Scene = ({ width = 390, height = 844, ...props }: SceneProps) => (
@@ -119,5 +130,41 @@ describe("CampScene", () => {
 
     rerender(<Scene chapter="starter" steps={steps} catalogue={catalogue} />)
     expect(screen.queryByText("thoth")).toBeNull()
+  })
+
+  it("stacks a second frame when a piece has one", () => {
+    art.set("flame", { url: "/flame.webp", frameB: "/flame-b.webp" })
+    art.set("jar", { url: "/jar.webp" })
+    const { container } = render(<Scene chapter="starter" steps={{ water: 1 }} catalogue={firelit} />)
+    const frames = [...container.querySelectorAll("img.camp-piece")].map(img => img.getAttribute("src"))
+    expect(frames).toEqual(expect.arrayContaining(["/flame.webp", "/flame-b.webp", "/jar.webp"]))
+    expect(container.querySelectorAll(".camp-frame--a")).toHaveLength(1)
+    expect(container.querySelectorAll(".camp-frame--b")).toHaveLength(1)
+    expect(container.querySelector("img[src='/jar.webp']")!.classList.contains("camp-frame--a")).toBe(false)
+  })
+
+  it("adds a self-shade overlay masked by the piece's own art", () => {
+    art.set("jar", { url: "/jar.webp", shadow: "/jar-shadow.webp" })
+    const { container } = render(<Scene chapter="starter" steps={{ water: 1 }} catalogue={firelit} />)
+    const shades = container.querySelectorAll<HTMLElement>(".camp-shade")
+    expect(shades).toHaveLength(1)
+    const jar = container.querySelector<HTMLElement>("img[src='/jar.webp']")!
+    expect(shades[0].style.maskImage).toMatch(/^url\("?\/jar.webp"?\)$/)
+    expect(shades[0].style.backgroundImage).toContain("linear-gradient")
+    expect([shades[0].style.left, shades[0].style.top, shades[0].style.width, shades[0].style.height]).toEqual([
+      jar.style.left,
+      jar.style.top,
+      jar.style.width,
+      jar.style.height,
+    ])
+    expect(jar.compareDocumentPosition(shades[0]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it("gives a burning piece neither shadow nor self-shade", () => {
+    art.set("flame", { url: "/flame.webp", shadow: "/flame-shadow.webp" })
+    const { container } = render(<Scene chapter="starter" steps={{}} catalogue={firelit} />)
+    expect(container.querySelector("img[src='/flame.webp']")).toBeTruthy()
+    expect(container.querySelectorAll(".camp-shadow")).toHaveLength(0)
+    expect(container.querySelectorAll(".camp-shade")).toHaveLength(0)
   })
 })

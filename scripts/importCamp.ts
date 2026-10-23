@@ -15,9 +15,11 @@
  *   --tolerance=60   how far from that colour still counts as background (0-441)
  *   --size=768       the longest side of the shipped file; never enlarged
  *
- * A keyed piece also gets src/assets/camp/<name>-shadow.webp: its alpha as a black silhouette, blurred
- * once here so the scene never runs a filter, on the same canvas so it lines up with the piece's frame.
- * Scenery is ground and sky, not something standing on it, so it casts none.
+ * A keyed piece also gets src/assets/camp/<name>-shadow.webp, its contact shadow: a black band along the
+ * object's base, following its own base contour column by column, blurred once here so the scene never runs
+ * a filter, on the same canvas so it lines up with the piece's frame. A whole silhouette laid flat cannot
+ * follow the base of an object seen from 3/4 above; a band under that base can. Scenery is ground and sky,
+ * not something standing on it, so it casts none.
  */
 import { mkdirSync } from "node:fs"
 import { dirname, join } from "node:path"
@@ -43,16 +45,34 @@ const SCENERY = new Set(["sand", "dunes", "pyramid", "pyramidGold"])
 
 /** The blur's spread as a share of the piece's longest side, so a shadow looks the same at any import size. */
 const SHADOW_BLUR = 0.008
+/** How far the band reaches up from the object's lowest pixel in each column, as a share of the canvas height. */
+const SHADOW_BAND = 0.06
+/** The alpha from which a pixel counts as the object, not its keyed fringe. */
+const OPAQUE = 128
+
+/** Per column, a full band from the lowest opaque pixel upward. */
+const baseBand = (alpha: Buffer, width: number, height: number) => {
+  const band = Math.max(1, Math.round(height * SHADOW_BAND))
+  const out = Buffer.alloc(width * height)
+  for (let x = 0; x < width; x++) {
+    let bottom = height - 1
+    while (bottom >= 0 && alpha[bottom * width + x] < OPAQUE) bottom--
+    for (let y = bottom; y >= 0 && y > bottom - band; y--) out[y * width + x] = 255
+  }
+  return out
+}
 
 const writeShadow = async (piece: Buffer, path: string) => {
-  const { width = 0, height = 0 } = await sharp(piece).metadata()
-  const { data, info } = await sharp(piece)
-    .extractChannel(3)
+  const { data: alpha, info } = await sharp(piece).extractChannel(3).raw().toBuffer({ resolveWithObject: true })
+  const { width, height } = info
+  const data = await sharp(baseBand(alpha, width, height), { raw: { width, height, channels: 1 } })
     .blur(Math.max(0.3, Math.max(width, height) * SHADOW_BLUR))
+    // sharp writes a one-channel input back out as sRGB; keep the one channel the alpha needs.
+    .extractChannel(0)
     .raw()
-    .toBuffer({ resolveWithObject: true })
-  await sharp({ create: { width: info.width, height: info.height, channels: 3, background: "#000000" } })
-    .joinChannel(data, { raw: { width: info.width, height: info.height, channels: 1 } })
+    .toBuffer()
+  await sharp({ create: { width, height, channels: 3, background: "#000000" } })
+    .joinChannel(data, { raw: { width, height, channels: 1 } })
     .webp({ quality: 90, alphaQuality: 90 })
     .toFile(path)
 }

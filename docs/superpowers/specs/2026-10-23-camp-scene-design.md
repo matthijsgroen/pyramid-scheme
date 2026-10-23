@@ -187,20 +187,38 @@ steps build around it, and its "fire" step makes the flame bigger with a wider g
 
 ## Shadows
 
-- Each piece casts ONE combined shadow, pre-rendered at import: `yarn import-camp` writes
-  `src/assets/camp/<id>-shadow.webp` beside the piece, the keyed piece's alpha as a black silhouette,
-  blurred once, on the same canvas so it lines up with the piece's frame. Scenery (`sand`, `dunes`,
-  `pyramid`, `pyramidGold`, and any `--key=none` import) casts none.
-- The layout gives every placed piece a shadow direction, length and strength. A piece inside a fire's
+- Each piece casts ONE **contact shadow**, pre-rendered at import: `yarn import-camp` writes
+  `src/assets/camp/<id>-shadow.webp` beside the piece. It is a black band along the object's base: per
+  column of the keyed alpha, from the lowest opaque pixel up about 6% of the canvas height, so it follows
+  the object's own base contour. It is blurred once, on the same canvas so it lines up with the piece's
+  frame. A whole silhouette laid flat cannot follow the base of an object seen from 3/4 above; this band
+  can. Scenery (`sand`, `dunes`, `pyramid`, `pyramidGold`, and any `--key=none` import) casts none.
+- The layout gives every placed piece a shadow direction, offset and strength. A piece inside a fire's
   (`flicker`) glow is lit by it alone; between that glow's radius and three times it the direction blends
   toward the moon's, which falls to the lower right; past that the moon casts it. A piece's own light
-  never shadows it. Near the fire a shadow is short and dark, under the moon long and faint, with a
-  floor on strength so nothing floats.
-- The shadow is drawn under its piece, in the same depth order, pivoting at the art's ground line
-  (88% of the frame): stretched to its length, turned to its direction and flattened onto the ground.
-  Only `transform` and `opacity` are set, never a runtime `filter`, so the blur costs nothing per frame.
-- A firelit shadow flickers its opacity in step with its fire's glow; under `prefers-reduced-motion` it
-  holds still. A stand-in, or a piece without a shadow file, casts none.
+  never shadows it: a piece that burns casts none. Near the fire a shadow is dark and shifted about 0.06u
+  from the base, under the moon faint and shifted about 0.03u, with a floor on strength so nothing floats.
+- The shadow is drawn exactly under its piece, in the same box and depth order, with no rotation and no
+  flattening, translated away from the light by its offset. Only `transform` and `opacity` are set,
+  never a runtime `filter`, so the blur costs nothing per frame.
+- **Self-shading:** the art keeps its own painted form shading, from one fixed neutral light at the upper
+  left for every piece, so the self-shade stays subtle: it adds only the fire-relative nuance on top.
+  Every drawn piece with art, unless it burns, gets one overlay in its own box, masked (`mask-image`) by
+  the piece's own art so it covers only the piece. It holds a `linear-gradient` along the light
+  direction: a faint warm tint toward a fire (nothing toward the moon), a darkening of at most about 0.2
+  black away from it at full fire. Its opacity follows the shadow's strength. A plain alpha overlay: no
+  `filter` and no `mix-blend-mode`.
+- A firelit shadow and self-shade flicker their opacity in step with their fire's glow; under
+  `prefers-reduced-motion` they hold still. A stand-in casts no shadow and has no self-shade; a piece
+  without a shadow file casts none.
+
+## Two-frame fire
+
+- A burning piece may have a second frame, `src/assets/camp/<id>-b.webp`, an edit of the first with only
+  the flames repainted. The scene stacks both and shows one at a time with a `steps()` opacity animation
+  at about 3–4 Hz, two unequal holds giving it an irregular feel. Under `prefers-reduced-motion` only the
+  first frame shows. A piece without a `-b` file is drawn as one image.
+- The art lookup lists `-b` and `-shadow` files under their piece, never as pieces of their own.
 
 ## Art
 

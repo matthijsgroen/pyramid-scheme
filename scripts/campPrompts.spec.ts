@@ -39,13 +39,17 @@ Import with \`--key=none\`.
 Import with \`--size=2048\`.
 
 > [preamble] Paint a strip.
+
+### 5. \`camp/box-b\` — A box, second frame
+
+> [edit] Repaint only the flames.
 `
 
 describe("parseCamp", () => {
   const entries = parseCamp(MD)
 
   it("composes a camp entry from its preamble and edit preamble", () => {
-    expect(entries.map(e => e.key)).toEqual(["camp/box", "camp/lid", "camp/ground", "camp/strip"])
+    expect(entries.map(e => e.key)).toEqual(["camp/box", "camp/lid", "camp/ground", "camp/strip", "camp/box-b"])
     expect(entries[0].prompt).toBe("House style line one,\nline two.\n\nPaint a box.")
     expect(entries[1].prompt).toBe("Edit the second image.\n\nRemove the lid.")
     expect(entries[1].attachments).toEqual(["art/masters/camp/anchor.webp", "art/masters/camp/box.webp"])
@@ -60,5 +64,10 @@ describe("parseCamp", () => {
 
   it("asks for a --size=N where the entry says so", () => {
     expect(entries[3].importedBy).toBe("yarn import-camp <file> --name=strip --size=2048")
+  })
+
+  it("takes a second frame's -b key as its own entry", () => {
+    expect(entries[4].out).toBe("src/assets/camp/box-b.webp")
+    expect(entries[4].importedBy).toBe("yarn import-camp <file> --name=box-b")
   })
 })

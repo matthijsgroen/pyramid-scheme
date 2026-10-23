@@ -1,7 +1,14 @@
 import type { CSSProperties } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
+import { campArt } from "./campScene/campArt"
 import { CAMP_CATALOGUE } from "./campScene/campCatalogue"
-import { layoutCamp, type PlacedPiece, type PlacedPyramid, type PlacedShadow } from "./campScene/campLayout"
+import {
+  CAMP_SHADOW_PARAMS,
+  layoutCamp,
+  type PlacedPiece,
+  type PlacedPyramid,
+  type PlacedShadow,
+} from "./campScene/campLayout"
 import type { CampCatalogue, CampSpotId } from "./campScene/campTypes"
 import "./CampScene.css"
 
@@ -20,17 +27,7 @@ export type CampSceneProps = {
   className?: string
 }
 
-// The filename is the piece id, so adding a piece's art is dropping its file in. A piece with no file yet
-// draws the stand-in; the scenery (sand, dunes, pyramid, pyramidGold) falls back to CSS. A piece's shadow is
-// `<id>-shadow`, written beside it by `yarn import-camp`.
-const artUrls = import.meta.glob("../../assets/camp/*.{png,webp,svg}", {
-  eager: true,
-  query: "?url",
-  import: "default",
-}) as Record<string, string>
-const artByKey = new Map(
-  Object.entries(artUrls).map(([path, url]) => [path.replace(/^.*\/([^/]+)\.\w+$/, "$1"), url] as const)
-)
+// A piece with no art yet draws the stand-in; the scenery (sand, dunes, pyramid, pyramidGold) falls back to CSS.
 
 const NO_INSETS = { top: 0, bottom: 0 }
 const MIN_TARGET = 44
@@ -63,48 +60,82 @@ const boundsOf = (pieces: PlacedPiece[]) => {
   return { x: (left + right) / 2, y: bottom, width: right - left, height: bottom - top }
 }
 
-/** How far the ground is foreshortened: a shadow lying on it is drawn at this share of its height. */
-const GROUND_FLATTEN = 0.35
-
 /** Offsets keep neighbouring fires out of step; a shadow takes its fire's strength offset to stay in step. */
 const flickerDelays = (i: number) => [-(i * 0.73) % 3, -(i * 1.31) % 5]
 
+/** A piece's box: anchored bottom-centre on (left, top) by the `camp-piece` class. */
+const boxOf = ({ piece, x, y, scale }: PlacedPiece) => ({
+  left: x,
+  top: y,
+  width: piece.width * scale,
+  height: piece.height * scale,
+})
+
 /**
- * The silhouette stands up from the ground line, is stretched to its length, turned to its direction on the
- * ground and then flattened onto it. The turn is taken on the unflattened ground, so the flattened
- * shadow falls along `angle` on screen.
+ * The art carries its own form shading from a fixed upper-left light, so the self-shade only adds the
+ * fire-relative nuance: a faint warmth on the lit side (none from the moon), a capped darkening away from it.
  */
+const LIT_TINT = { fire: "rgb(255 176 92 / 0.12)", moon: "transparent" }
+const AWAY_SHADE = "rgb(0 0 0 / 0.2)"
+
+/** The contact shadow under the piece's base, shifted away from its light. */
 const Shadow = ({
   shadow,
   placed,
   url,
-  lightIndex,
+  delay,
 }: {
   shadow: PlacedShadow
   placed: PlacedPiece
   url: string
-  lightIndex: number
+  delay?: string
 }) => {
-  const { piece, x, y, scale } = placed
-  const width = piece.width * scale
-  const height = piece.height * scale
   const a = (shadow.angle * Math.PI) / 180
-  const turn = (Math.atan2(Math.sin(a) / GROUND_FLATTEN, Math.cos(a)) * 180) / Math.PI + 90
   return (
     <img
-      className={shadow.light ? "camp-shadow camp-shadow--firelit" : "camp-shadow"}
+      className={shadow.light ? "camp-shadow camp-firelit" : "camp-shadow"}
       src={url}
       alt=""
       draggable={false}
       style={
         {
-          left: x - width / 2,
-          top: y - height,
-          width,
-          height,
-          transform: `scaleY(${GROUND_FLATTEN}) rotate(${turn}deg) scaleY(${shadow.length})`,
-          "--camp-shadow-strength": shadow.strength,
-          ...(lightIndex >= 0 && { animationDelay: `${flickerDelays(lightIndex)[1]}s` }),
+          ...boxOf(placed),
+          transform: `translate(-50%, -100%) translate(${shadow.offset * Math.cos(a)}px, ${shadow.offset * Math.sin(a)}px)`,
+          "--camp-strength": shadow.strength,
+          animationDelay: delay,
+        } as CSSProperties
+      }
+    />
+  )
+}
+
+/**
+ * Light on the side facing the light, dark on the side away from it, masked by the piece's own art so it
+ * covers only the piece. A plain alpha overlay: no filter and no blend mode.
+ */
+const SelfShade = ({
+  shadow,
+  placed,
+  url,
+  delay,
+}: {
+  shadow: PlacedShadow
+  placed: PlacedPiece
+  url: string
+  delay?: string
+}) => {
+  const mask = `url(${url})`
+  return (
+    <i
+      className={shadow.light ? "camp-shade camp-firelit" : "camp-shade"}
+      style={
+        {
+          ...boxOf(placed),
+          backgroundImage: `linear-gradient(${shadow.angle + 90}deg, ${shadow.light ? LIT_TINT.fire : LIT_TINT.moon}, transparent 45%, ${AWAY_SHADE})`,
+          maskImage: mask,
+          WebkitMaskImage: mask,
+          "--camp-strength": shadow.strength / CAMP_SHADOW_PARAMS.strengthMax,
+          animationDelay: delay,
         } as CSSProperties
       }
     />
@@ -112,30 +143,38 @@ const Shadow = ({
 }
 
 const Piece = ({ placed, lightIndex }: { placed: PlacedPiece; lightIndex: number }) => {
-  const { piece, x, y, scale } = placed
-  const url = artByKey.get(piece.id)
-  const shadowUrl = artByKey.get(`${piece.id}-shadow`)
-  const style: CSSProperties = { left: x, top: y, width: piece.width * scale, height: piece.height * scale }
-  if (url)
+  const { piece, scale, shadow } = placed
+  const art = campArt(piece.id)
+  const style: CSSProperties = boxOf(placed)
+  if (!art)
     return (
-      <>
-        {shadowUrl && placed.shadow && (
-          <Shadow shadow={placed.shadow} placed={placed} url={shadowUrl} lightIndex={lightIndex} />
-        )}
-        <img className="camp-piece" src={url} alt="" draggable={false} style={style} />
-      </>
+      <div className="camp-piece camp-standin" style={{ ...style, fontSize: clamp(scale * 0.17, 8, 13) }}>
+        {piece.id}
+      </div>
     )
+  const delay = lightIndex >= 0 ? `${flickerDelays(lightIndex)[1]}s` : undefined
   return (
-    <div className="camp-piece camp-standin" style={{ ...style, fontSize: clamp(scale * 0.17, 8, 13) }}>
-      {piece.id}
-    </div>
+    <>
+      {art.shadow && shadow && <Shadow shadow={shadow} placed={placed} url={art.shadow} delay={delay} />}
+      <img
+        className={art.frameB ? "camp-piece camp-frame--a" : "camp-piece"}
+        src={art.url}
+        alt=""
+        draggable={false}
+        style={style}
+      />
+      {art.frameB && (
+        <img className="camp-piece camp-frame--b" src={art.frameB} alt="" draggable={false} style={style} />
+      )}
+      {shadow && <SelfShade shadow={shadow} placed={placed} url={art.url} delay={delay} />}
+    </>
   )
 }
 
 /** The painted pyramid when its art exists, else the CSS one; the fifth wears the golden capstone. */
 const Pyramid = ({ pyramid, top }: { pyramid: PlacedPyramid; top: number }) => {
   const style: CSSProperties = { left: pyramid.x, top, width: pyramid.width, height: pyramid.height }
-  const url = artByKey.get(pyramid.golden ? "pyramidGold" : "pyramid")
+  const url = campArt(pyramid.golden ? "pyramidGold" : "pyramid")?.url
   if (url) return <img className="camp-pyramid camp-pyramid--art" src={url} alt="" draggable={false} style={style} />
   return (
     <div className="camp-pyramid" style={style}>
@@ -164,8 +203,8 @@ export const CampScene = ({
   const stars = starField(width, horizon)
   const moon = Math.max(18, u * 0.55)
   const tagSize = clamp(u * 0.2, 10, 14)
-  const sand = artByKey.get("sand")
-  const dunes = artByKey.get("dunes")
+  const sand = campArt("sand")?.url
+  const dunes = campArt("dunes")?.url
   const rootStyle = { "--camp-horizon": `${(horizon / height) * 100}%` } as CSSProperties
 
   const entranceButtons = (["chest", "window", "mapTable"] as const).flatMap(spot => {

@@ -381,12 +381,16 @@ describe("layoutCamp shadows", () => {
     expect(far.strength).toBeGreaterThan(0)
   })
 
-  it("lengthens a shadow farther from the fire, up to a clamp", () => {
-    const { at } = shadowsOf(around(1.5, [-1, 2.5, 6]))
-    const [near, mid, far] = ["p-1", "p2.5", "p6"].map(id => at(id).shadow)
-    expect(near.length).toBeLessThan(mid.length)
-    expect(mid.length).toBeLessThan(far.length)
-    expect(far.length).toBe(CAMP_SHADOW_PARAMS.lengthMax)
+  it("offsets a contact shadow away from the fire", () => {
+    const firelit = shadowsOf(around(3, [-1, 1]))
+    for (const id of ["p-1", "p1"]) {
+      const p = firelit.at(id)
+      const a = (p.shadow.angle * Math.PI) / 180
+      expect(Math.sign(Math.cos(a) * p.shadow.offset)).toBe(Math.sign(p.x - firelit.fireGlow.x))
+      expect(p.shadow.offset).toBeCloseTo(CAMP_SHADOW_PARAMS.offsetFire * p.scale)
+    }
+    const moonlit = shadowsOf(around(0.1, [-2])).at("p-2")
+    expect(moonlit.shadow.offset).toBeCloseTo(CAMP_SHADOW_PARAMS.offsetMoon * moonlit.scale)
   })
 })
 

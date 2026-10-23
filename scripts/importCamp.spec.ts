@@ -45,7 +45,7 @@ describe("importCamp", () => {
     expect((await sharp(master).metadata()).width).toBe(400)
   })
 
-  it("writes a blurred silhouette beside the piece", async () => {
+  it("writes a blurred black band beside the piece, on its canvas", async () => {
     const { out, shadow } = await importCamp(options(await magentaWithRedSquare()))
 
     expect(shadow).toBe(join(dir, "assets", "chest-shadow.webp"))
@@ -53,12 +53,29 @@ describe("importCamp", () => {
     const { data, info } = await sharp(shadow!).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
     expect([info.width, info.height]).toEqual([piece.width, piece.height])
     const at = (x: number, y: number) => [...data.subarray((y * info.width + x) * 4, (y * info.width + x) * 4 + 4)]
-    const [r, g, b, a] = at(200, 200)
+    const [r, g, b, a] = at(200, 240)
     expect(Math.max(r, g, b)).toBeLessThan(8)
     expect(a).toBeGreaterThan(240)
     expect([at(0, 0)[3], at(399, 0)[3], at(0, 399)[3], at(399, 399)[3]]).toEqual([0, 0, 0, 0])
-    expect(at(147, 200)[3]).toBeGreaterThan(0)
-    expect(at(147, 200)[3]).toBeLessThan(255)
+    expect(at(147, 240)[3]).toBeGreaterThan(0)
+    expect(at(147, 240)[3]).toBeLessThan(255)
+  })
+
+  it("builds the shadow from the object's base, not its whole silhouette", async () => {
+    const source = join(dir, "tall.png")
+    await sharp({ create: { width: 400, height: 400, channels: 3, background: "#ff00ff" } })
+      .composite([
+        { input: { create: { width: 100, height: 300, channels: 3, background: "#ff0000" } }, left: 150, top: 50 },
+      ])
+      .png()
+      .toFile(source)
+    const { shadow } = await importCamp(options(source))
+
+    const { data, info } = await sharp(shadow!).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+    const alphaAt = (x: number, y: number) => data[(y * info.width + x) * 4 + 3]
+    expect(alphaAt(200, 340)).toBeGreaterThan(200)
+    expect(alphaAt(200, 60)).toBe(0)
+    expect(alphaAt(200, 200)).toBe(0)
   })
 
   it("casts no shadow for scenery or an unkeyed import", async () => {
