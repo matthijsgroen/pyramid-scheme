@@ -175,7 +175,7 @@ const baseBand = (alpha: Buffer, width: number, height: number) => {
   return out
 }
 
-const writeShadow = async (piece: Buffer, path: string, size: number) => {
+export const writeShadow = async (piece: Buffer, path: string, size: number) => {
   const small = await sharp(piece).resize(size, size, { fit: "inside", withoutEnlargement: true }).png().toBuffer()
   const { data: alpha, info } = await sharp(small).extractChannel(3).raw().toBuffer({ resolveWithObject: true })
   const { width, height } = info

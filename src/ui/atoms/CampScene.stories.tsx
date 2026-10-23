@@ -2,8 +2,8 @@ import type { Decorator, Meta, StoryObj } from "@storybook/react-vite"
 import { fn } from "storybook/test"
 import { CampScene, type CampSceneProps } from "./CampScene"
 import { CAMP_CATALOGUE } from "./campScene/campCatalogue"
-import { fullSteps } from "./campScene/campLayout"
-import type { CampSpotId } from "./campScene/campTypes"
+import { foundUpTo, fullFound } from "./campScene/campLayout"
+import type { CampFound, CampSpot, CampSpotId } from "./campScene/campTypes"
 
 /** Frames the scene in a box of its `width` x `height` args, the size a caller would have measured. */
 const sizedBox: Decorator<CampSceneProps> = (Story, { args }) => (
@@ -35,7 +35,7 @@ const meta = {
   args: {
     ...PHONE,
     chapter: "wizard",
-    steps: fullSteps(CAMP_CATALOGUE, "wizard"),
+    found: fullFound(CAMP_CATALOGUE, "wizard"),
     insets: INSETS,
   },
 } satisfies Meta<typeof CampScene>
@@ -43,27 +43,64 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-type PlaygroundArgs = CampSceneProps & Partial<Record<CampSpotId, number>>
+type PieceArg = `${CampSpotId}_${string}`
+type PlaygroundArgs = CampSceneProps & Partial<Record<CampSpotId, number>> & Partial<Record<PieceArg, boolean>>
 
-/** One number control per spot, bounded by how many steps the catalogue gives it. */
+/** Bought in a fixed order: one slider for how far along the chain the spot is. */
+const isChain = (spot: CampSpot) => spot.steps.every(step => !step.layer)
+
+const pieceArg = (spot: CampSpot, piece: string): PieceArg => `${spot.id}_${piece}`
+
+/** The pieces a player can find: a given step comes with them. */
+const piecesOf = (spot: CampSpot) => spot.steps.flatMap(step => (step.given ? [] : step.pieces.map(p => p.id)))
+
+/** A slider per chain spot, a checkbox per piece of a spot found in any order. */
 const spotControls = Object.fromEntries(
-  CAMP_CATALOGUE.spots.map(spot => [
-    spot.id,
-    { control: { type: "range", min: 0, max: spot.steps.length, step: 1 }, table: { category: "steps" } },
-  ])
+  CAMP_CATALOGUE.spots.flatMap((spot): [string, object][] =>
+    isChain(spot)
+      ? [
+          [
+            spot.id,
+            { control: { type: "range", min: 0, max: spot.steps.length, step: 1 }, table: { category: "chains" } },
+          ],
+        ]
+      : piecesOf(spot).map(piece => [
+          pieceArg(spot, piece),
+          { name: piece, control: { type: "boolean" }, table: { category: spot.id } },
+        ])
+  )
 )
 
+const playgroundArgs = (found: CampFound) =>
+  Object.fromEntries(
+    CAMP_CATALOGUE.spots.flatMap((spot): [string, number | boolean][] =>
+      isChain(spot)
+        ? [[spot.id, (found[spot.id] ?? []).length]]
+        : piecesOf(spot).map(piece => [pieceArg(spot, piece), (found[spot.id] ?? []).includes(piece)])
+    )
+  ) as Partial<PlaygroundArgs>
+
 export const Playground: StoryObj<PlaygroundArgs> = {
-  argTypes: { ...spotControls, steps: { table: { disable: true } } },
-  args: { chapter: "expert", ...fullSteps(CAMP_CATALOGUE, "expert") },
+  argTypes: { ...spotControls, found: { table: { disable: true } } },
+  args: { chapter: "expert", ...playgroundArgs(fullFound(CAMP_CATALOGUE, "expert")) },
   render: ({ width, height, chapter, insets, className, entrances, ...rest }) => {
-    const steps = Object.fromEntries(CAMP_CATALOGUE.spots.map(spot => [spot.id, rest[spot.id] ?? 0]))
+    const counts = Object.fromEntries(
+      CAMP_CATALOGUE.spots.filter(isChain).map(spot => [spot.id, Number(rest[spot.id] ?? 0)])
+    )
+    const found: CampFound = {
+      ...foundUpTo(CAMP_CATALOGUE, counts),
+      ...Object.fromEntries(
+        CAMP_CATALOGUE.spots
+          .filter(spot => !isChain(spot))
+          .map(spot => [spot.id, piecesOf(spot).filter(piece => rest[pieceArg(spot, piece)] === true)])
+      ),
+    }
     return (
       <CampScene
         width={width}
         height={height}
         chapter={chapter}
-        steps={steps}
+        found={found}
         insets={insets}
         entrances={entrances}
         className={className}
@@ -73,56 +110,65 @@ export const Playground: StoryObj<PlaygroundArgs> = {
 }
 
 export const StarterEmpty: Story = {
-  args: { chapter: "starter", steps: {} },
+  args: { chapter: "starter", found: {} },
 }
 
 export const JuniorEmpty: Story = {
-  args: { chapter: "junior", steps: {} },
+  args: { chapter: "junior", found: {} },
 }
 
 export const ExpertEmpty: Story = {
-  args: { chapter: "expert", steps: {} },
+  args: { chapter: "expert", found: {} },
 }
 
 export const MasterEmpty: Story = {
-  args: { chapter: "master", steps: {} },
+  args: { chapter: "master", found: {} },
 }
 
 export const WizardEmpty: Story = {
-  args: { chapter: "wizard", steps: {} },
+  args: { chapter: "wizard", found: {} },
 }
 
 export const StarterFull: Story = {
-  args: { chapter: "starter", steps: fullSteps(CAMP_CATALOGUE, "starter") },
+  args: { chapter: "starter", found: fullFound(CAMP_CATALOGUE, "starter") },
 }
 
 export const JuniorFull: Story = {
-  args: { chapter: "junior", steps: fullSteps(CAMP_CATALOGUE, "junior") },
+  args: { chapter: "junior", found: fullFound(CAMP_CATALOGUE, "junior") },
 }
 
 export const ExpertFull: Story = {
-  args: { chapter: "expert", steps: fullSteps(CAMP_CATALOGUE, "expert") },
+  args: { chapter: "expert", found: fullFound(CAMP_CATALOGUE, "expert") },
 }
 
 export const MasterFull: Story = {
-  args: { chapter: "master", steps: fullSteps(CAMP_CATALOGUE, "master") },
+  args: { chapter: "master", found: fullFound(CAMP_CATALOGUE, "master") },
 }
 
 export const WizardFull: Story = {
-  args: { chapter: "wizard", steps: fullSteps(CAMP_CATALOGUE, "wizard") },
+  args: { chapter: "wizard", found: fullFound(CAMP_CATALOGUE, "wizard") },
 }
 
 export const PartlyBuilt: Story = {
   args: {
     chapter: "expert",
-    steps: {
-      ...fullSteps(CAMP_CATALOGUE, "junior"),
-      fire: 2,
-      sleeping: 4,
-      cooking: 1,
-      camel: 2,
-      mapTable: 1,
-      palmGarden: 1,
+    found: {
+      ...fullFound(CAMP_CATALOGUE, "junior"),
+      ...foundUpTo(CAMP_CATALOGUE, { fire: 2, sleeping: 4, cooking: 1, camel: 2, mapTable: 1, palmGarden: 1 }),
+    },
+  },
+}
+
+/** Finds out of the painted order: a compass with no table waits in the chest, and the pot waits for the fire. */
+export const FoundInAnyOrder: Story = {
+  args: {
+    chapter: "master",
+    found: {
+      fire: ["stoneRing", "pot", "seatingStones", "seatCushions"],
+      sleeping: ["reedMat", "tent", "tentFlag"],
+      water: ["jar", "well"],
+      cooking: ["tripod", "feast"],
+      mapTable: ["map", "compass", "starMap"],
     },
   },
 }

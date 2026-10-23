@@ -34,4 +34,13 @@ const ART = groupCampArt(
   }) as Record<string, string>
 )
 
-export const campArt = (id: string): CampArt | undefined => ART.get(id)
+// A layer step's object alone, cut from its spot's pictures by `yarn camp-layers`.
+const LAYER_ART = groupCampArt(
+  import.meta.glob("../../../assets/camp/layers/*.webp", {
+    eager: true,
+    query: "?url",
+    import: "default",
+  }) as Record<string, string>
+)
+
+export const campArt = (id: string, layer = false): CampArt | undefined => (layer ? LAYER_ART : ART).get(id)

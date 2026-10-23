@@ -1,13 +1,15 @@
 import { describe, it, expect } from "vitest"
 import { difficulties, type Difficulty } from "@/data/difficultyLevels"
-import type { CampCatalogue, CampPiece, CampSpot, CampSpotId } from "./campTypes"
+import type { CampCatalogue, CampPiece, CampSpot, CampSpotId, CampStep } from "./campTypes"
 import {
   CAMP_LAYOUT_PARAMS,
   CAMP_SHADOW_PARAMS,
   ENTRANCE_MIN,
   entranceAreas,
-  fullSteps,
+  foundUpTo,
+  fullFound,
   layoutCamp,
+  spotSteps,
   type CampLayout,
   type CampLayoutInput,
   type PlacedPiece,
@@ -43,6 +45,7 @@ const catalogue: CampCatalogue = {
         { chapter: "starter", pieces: [piece("ring", { height: 0.3 })] },
         {
           chapter: "starter",
+          layer: {},
           pieces: [piece("flame", { dy: -0.1, height: 0.6, replaces: ["smallFlame"], lights: [glow(3)] })],
         },
         { chapter: "junior", pieces: [piece("bigRing", { width: 1, height: 0.4, replaces: ["ring"] })] },
@@ -56,7 +59,11 @@ const catalogue: CampCatalogue = {
       footprint: 1,
       steps: [
         { chapter: "starter", pieces: [piece("mat", { height: 0.3 })] },
-        { chapter: "junior", pieces: [piece("tent"), piece("flag", { dx: 0.3, dy: -0.8, width: 0.2, height: 0.3 })] },
+        {
+          chapter: "junior",
+          layer: {},
+          pieces: [piece("tent"), piece("flag", { dx: 0.3, dy: -0.8, width: 0.2, height: 0.3 })],
+        },
       ],
     },
     { id: "water", x: 0.9, y: 1, frame: 1, footprint: 0.7, steps: [{ chapter: "junior", pieces: [piece("jar")] }] },
@@ -114,17 +121,20 @@ const catalogue: CampCatalogue = {
   ],
 }
 
-const input = (overrides: Partial<CampLayoutInput> = {}): CampLayoutInput => ({
+/** `steps` finds each spot's first n steps, the painted order. */
+type Overrides = Partial<CampLayoutInput> & { steps?: Partial<Record<CampSpotId, number>> }
+
+const input = ({ steps = {}, ...overrides }: Overrides = {}): CampLayoutInput => ({
   width: 390,
   height: 844,
   insets: { top: 56, bottom: 96 },
   chapter: "starter",
-  steps: {},
+  found: foundUpTo(overrides.catalogue ?? catalogue, steps),
   catalogue,
   ...overrides,
 })
 
-const layout = (overrides: Partial<CampLayoutInput> = {}): CampLayout => {
+const layout = (overrides: Overrides = {}): CampLayout => {
   const result = layoutCamp(input(overrides))
   if (!result) throw new Error("expected a layout")
   return result
@@ -149,7 +159,7 @@ const sweep = (check: (l: CampLayout, i: CampLayoutInput) => void, c: CampCatalo
   for (const [width, height] of SIZES)
     for (const insets of INSETS)
       for (const chapter of difficulties) {
-        const i = input({ width, height, insets, chapter, steps: fullSteps(c, chapter), catalogue: c })
+        const i = input({ width, height, insets, chapter, found: fullFound(c, chapter), catalogue: c })
         check(layoutCamp(i)!, i)
       }
 }
@@ -181,12 +191,11 @@ describe("layoutCamp", () => {
     expect(spots).toEqual(new Set(["chest", "window", "campfire"]))
   })
 
-  it("clamps step counts to what the chapter allows", () => {
-    const full = layout({ steps: { fire: fullSteps(catalogue, "starter").fire } })
-    expect(layout({ steps: { fire: 99 } })).toEqual(full)
-    expect(pieceIds(full)).toContain("flame")
-    expect(pieceIds(full)).not.toContain("bigRing")
-    expect(layout({ steps: { fire: -3 } })).toEqual(layout({ steps: {} }))
+  it("ignores found pieces of a chapter not reached yet", () => {
+    const early = layout({ chapter: "starter", found: { fire: ["ring", "flame", "bigRing"] } })
+    expect(pieceIds(early)).toContain("flame")
+    expect(pieceIds(early)).not.toContain("bigRing")
+    expect(early).toEqual(layout({ chapter: "starter", steps: { fire: 2 } }))
   })
 
   it("hides a piece a later step replaces", () => {
@@ -316,8 +325,8 @@ describe("layoutCamp", () => {
   })
 
   it("spreads sideways on a wide container and downward on a tall one", () => {
-    const steps = fullSteps(catalogue, "wizard")
-    const at = (width: number, height: number) => layout({ width, height, chapter: "wizard", steps })
+    const found = fullFound(catalogue, "wizard")
+    const at = (width: number, height: number) => layout({ width, height, chapter: "wizard", found })
     const narrow = at(390, 844)
     const wide = at(1600, 700)
     expect(wide.stretch.x).toBeGreaterThan(narrow.stretch.x)
@@ -331,7 +340,7 @@ describe("layoutCamp", () => {
 
   it("draws the farthest anchor at the back depth and the nearest at full size", () => {
     const [back, front] = CAMP_LAYOUT_PARAMS.depth
-    const l = layout({ chapter: "wizard", steps: fullSteps(catalogue, "wizard") })
+    const l = layout({ chapter: "wizard", found: fullFound(catalogue, "wizard") })
     const at = anchors(l)
     expect(at.get("lookout")!.scale).toBeCloseTo(back * l.unit)
     expect(at.get("godStatues")!.scale).toBeCloseTo(front * l.unit)
@@ -348,7 +357,7 @@ describe("layoutCamp", () => {
   it("keeps every spot's relative order in x and in y as the container changes", () => {
     for (const chapter of difficulties) {
       const orders = SIZES.map(([width, height]) => {
-        const at = [...anchors(layout({ width, height, chapter, steps: fullSteps(catalogue, chapter) })).entries()]
+        const at = [...anchors(layout({ width, height, chapter, found: fullFound(catalogue, chapter) })).entries()]
         return {
           x: [...at].sort((a, b) => a[1].x - b[1].x || a[0].localeCompare(b[0])).map(([spot]) => spot),
           y: [...at].sort((a, b) => a[1].y - b[1].y || a[0].localeCompare(b[0])).map(([spot]) => spot),
@@ -447,7 +456,7 @@ describe("layoutCamp", () => {
       for (const insets of INSETS)
         for (const chapter of difficulties) {
           const [width, height] = size
-          const l = layout({ width, height, insets, chapter, steps: fullSteps(catalogue, chapter) })
+          const l = layout({ width, height, insets, chapter, found: fullFound(catalogue, chapter) })
           const farthestTop = Math.min(...l.pieces.map(p => p.y - p.height))
           expect((farthestTop - l.horizon) / l.unit).toBeGreaterThanOrEqual(farSandMin - 1e-9)
         }
@@ -463,10 +472,10 @@ describe("layoutCamp", () => {
   })
 
   it("keeps each spot's left-to-right order when the chapter rises", () => {
-    const steps = fullSteps(catalogue, "wizard")
+    const found = fullFound(catalogue, "wizard")
     for (const [width, height] of SIZES) {
       const orders = difficulties.map(chapter => {
-        const l = layout({ width, height, chapter, steps })
+        const l = layout({ width, height, chapter, found })
         return [...anchors(l).entries()].sort((a, b) => a[1].x - b[1].x).map(([spot]) => spot)
       })
       for (let k = 1; k < orders.length; k++) {
@@ -506,7 +515,7 @@ describe("layoutCamp", () => {
       height: 300,
       insets: { top: 200, bottom: 200 },
       chapter: "wizard",
-      steps: fullSteps(catalogue, "wizard"),
+      found: fullFound(catalogue, "wizard"),
     })
     const numbers = [
       l.unit,
@@ -662,19 +671,154 @@ describe("entranceAreas", () => {
   })
 })
 
-describe("fullSteps", () => {
-  it("fills a chapter with every step up to it", () => {
-    const expected = (chapter: Difficulty): Partial<Record<CampSpotId, number>> => fullSteps(catalogue, chapter)
-    expect(expected("starter")).toMatchObject({ fire: 2, sleeping: 1, water: 0, cooking: 0, camel: 0, lookout: 0 })
-    expect(expected("junior")).toMatchObject({ fire: 3, sleeping: 2, water: 1, cooking: 0 })
-    expect(expected("wizard")).toMatchObject({
-      fire: 3,
-      sleeping: 2,
-      water: 1,
-      cooking: 1,
-      camel: 1,
-      lookout: 1,
-      godStatues: 1,
+describe("fullFound", () => {
+  it("finds every piece of every step up to the chapter", () => {
+    expect(fullFound(catalogue, "starter")).toMatchObject({ fire: ["ring", "flame"], sleeping: ["mat"], water: [] })
+    expect(fullFound(catalogue, "junior")).toMatchObject({
+      fire: ["ring", "flame", "bigRing"],
+      sleeping: ["mat", "tent", "flag"],
+      water: ["jar"],
     })
+  })
+})
+
+const step = (id: string, layer?: CampStep["layer"], chapter: Difficulty = "starter"): CampStep => ({
+  chapter,
+  pieces: [piece(id)],
+  ...(layer && { layer }),
+})
+
+describe("spotSteps", () => {
+  // Two bases (seed, then tree); a vase on the seed's picture; fruit on the tree's; a bird on the vase.
+  const garden: CampSpot = {
+    id: "palmGarden",
+    x: 0,
+    y: 0,
+    frame: 1,
+    footprint: 1,
+    steps: [
+      step("seed"),
+      step("vase", {}),
+      step("tree"),
+      step("fruit", {}),
+      step("bird", { on: "vase" }),
+      step("moon", {}, "wizard"),
+    ],
+  }
+  const shown = (found: string[], spot = garden) =>
+    spotSteps(spot, "starter", found)
+      .filter(s => s.shown)
+      .map(s => s.step.pieces[0].id)
+
+  it("shows only the latest found base step, whatever order they were found in", () => {
+    expect(shown(["seed"])).toEqual(["seed"])
+    expect(shown(["tree", "seed"])).toEqual(["tree"])
+    expect(shown(["tree"])).toEqual(["tree"])
+  })
+
+  it("shows a layer only while the nearest base step before it shows", () => {
+    expect(shown(["seed", "vase"])).toEqual(["seed", "vase"])
+    expect(shown(["vase"])).toEqual([])
+    expect(shown(["seed", "tree", "vase", "fruit"])).toEqual(["tree", "fruit"])
+  })
+
+  it("shows a layer with an explicit host only while that host shows", () => {
+    expect(shown(["seed", "bird"])).toEqual(["seed"])
+    expect(shown(["seed", "vase", "bird"])).toEqual(["seed", "vase", "bird"])
+    expect(shown(["tree", "vase", "bird"])).toEqual(["tree"])
+  })
+
+  it("still lists a found step that does not show, so the scene can fade it", () => {
+    const steps = spotSteps(garden, "starter", ["vase", "tree"])
+    expect(steps.map(s => [s.step.pieces[0].id, s.shown])).toEqual([
+      ["vase", false],
+      ["tree", true],
+    ])
+  })
+
+  it("shows a layer with no base before it on its own", () => {
+    const statues: CampSpot = { ...garden, steps: [step("thoth", {}), step("ra", {})] }
+    expect(shown(["ra"], statues)).toEqual(["ra"])
+  })
+
+  it("leaves out a found step of a chapter not reached yet", () => {
+    expect(spotSteps(garden, "starter", ["seed", "moon"]).map(s => s.step.pieces[0].id)).toEqual(["seed"])
+  })
+
+  // Ground given with the first find; an oak growing acorn → sapling → oak; an elm; a swing in both trees.
+  const orchard: CampSpot = {
+    ...garden,
+    steps: [
+      { ...step("soil"), given: true },
+      step("acorn", { growth: "oak" }),
+      step("sapling", { growth: "oak" }),
+      step("oak", { growth: "oak" }),
+      step("elm", {}),
+      step("swing", { on: ["oak", "elm"] }),
+    ],
+  }
+
+  it("shows only the furthest found stage of a growing object, whatever order they were found in", () => {
+    expect(shown(["acorn"], orchard)).toEqual(["soil", "acorn"])
+    expect(shown(["sapling", "acorn"], orchard)).toEqual(["soil", "sapling"])
+    expect(shown(["oak", "acorn"], orchard)).toEqual(["soil", "oak"])
+  })
+
+  it("lets a growing object stand beside other layers on the same ground", () => {
+    expect(shown(["elm", "sapling"], orchard)).toEqual(["soil", "sapling", "elm"])
+  })
+
+  it("shows a layer with several hosts only while every one of them shows", () => {
+    expect(shown(["oak", "swing"], orchard)).toEqual(["soil", "oak"])
+    expect(shown(["elm", "sapling", "swing"], orchard)).toEqual(["soil", "sapling", "elm"])
+    expect(shown(["elm", "oak", "swing"], orchard)).toEqual(["soil", "oak", "elm", "swing"])
+  })
+
+  it("lays given ground once anything else in its spot is found, and never on its own", () => {
+    expect(spotSteps(orchard, "starter", [])).toEqual([])
+    expect(spotSteps(orchard, "starter", ["soil"])).toEqual([])
+    expect(shown(["elm"], orchard)).toEqual(["soil", "elm"])
+  })
+})
+
+describe("layoutCamp layers", () => {
+  const hearth = (radius: number) => ({ ...glow(radius), id: "hearth" })
+  const pit: CampCatalogue = {
+    spots: [
+      {
+        id: "fire",
+        x: 0,
+        y: 0,
+        frame: 1,
+        footprint: 1,
+        steps: [
+          { chapter: "starter", pieces: [piece("ring", { lights: [hearth(1)] })] },
+          { chapter: "starter", layer: {}, pieces: [piece("logs", { lights: [hearth(3)] })] },
+          { chapter: "starter", layer: { on: "logs" }, pieces: [piece("pot")] },
+        ],
+      },
+    ],
+    fixed: [],
+  }
+  const at = (found: string[]) => layout({ catalogue: pit, found: { fire: found } })
+
+  it("marks a layer step's piece as a layer and a base step's as a whole picture", () => {
+    const l = at(["ring", "logs"])
+    expect(l.pieces.map(p => [p.piece.id, p.layer])).toEqual([
+      ["ring", false],
+      ["logs", true],
+    ])
+  })
+
+  it("places a layer whose host is missing hidden, and shows it once the host is found", () => {
+    const pot = (l: CampLayout) => l.pieces.find(p => p.piece.id === "pot")
+    expect(pot(at(["ring", "pot"]))?.visible).toBe(false)
+    expect(pot(at(["ring", "logs", "pot"]))?.visible).toBe(true)
+  })
+
+  it("lights one source once, from the latest step that carries it", () => {
+    const radii = (l: CampLayout) => l.glows.map(g => g.radius / l.pieces[0].scale)
+    expect(radii(at(["ring"]))).toEqual([expect.closeTo(1, 6)])
+    expect(radii(at(["ring", "logs"]))).toEqual([expect.closeTo(3, 6)])
   })
 })

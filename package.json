@@ -24,6 +24,7 @@
     "import-camp": "tsx scripts/importCamp.ts",
     "camp-cut": "tsx scripts/campCut.ts",
     "camp-look": "tsx scripts/campLook.ts",
+    "camp-layers": "tsx scripts/campLayers.ts",
     "art-census": "tsx scripts/artCensus.ts",
     "drift-mask": "tsx scripts/driftMask.ts",
     "on-floor": "node scripts/onFloorPreview.mjs",

@@ -1,5 +1,5 @@
 import type { Difficulty } from "@/data/difficultyLevels"
-import type { CampCatalogue, CampLight, CampPiece, CampPlace, CampSpot, CampSpotId } from "./campTypes"
+import type { CampCatalogue, CampLight, CampPiece, CampPlace, CampSpot, CampSpotId, CampStep } from "./campTypes"
 
 const FIRE = "255,150,60"
 
@@ -9,12 +9,13 @@ const light = (
   mode: CampLight["mode"],
   strength: number,
   dx = 0,
-  dy = 0
-): CampLight => ({ dx, dy, radius, color: `rgb(${color})`, mode, strength })
+  dy = 0,
+  id?: string
+): CampLight => ({ ...(id && { id }), dx, dy, radius, color: `rgb(${color})`, mode, strength })
 
-/** Where each source sits inside its step's square frame, in frame units (bottom-centre anchored, dy positive-down). */
 // Offsets are in frame units: the fire burns in the ring's middle, about half way up the fire pit's frame.
-const fireGlow = (radius: number) => light(radius, "255,150,55", "flicker", 0.75, 0, -0.5)
+// One hearth: the ring's small fire gives way to the big one's light once the fire is laid.
+const fireGlow = (radius: number) => light(radius, "255,150,55", "flicker", 0.75, 0, -0.5, "hearth")
 const OVEN = light(0.7, FIRE, "flicker", 0.8, 0.35, -0.62)
 const SIGNAL = light(0.8, "255,160,60", "flicker", 0.8, 0, -0.85)
 
@@ -29,9 +30,23 @@ const piece = (id: string, options: PieceOptions = {}): CampPiece => ({
   ...options,
 })
 
+type StepOptions = Pick<PieceOptions, "replaces" | "lights"> & {
+  /** A base step in a layered spot: the whole spot as one picture, hiding the base before it. */
+  base?: true
+  /** Not a find: ground for the spot, there once anything else in it is found. */
+  given?: true
+  /** The pieces a layer sits on, when that is not the base before it. */
+  on?: string | string[]
+  /** The growing object a layer is one stage of. */
+  growth?: string
+}
+
+type StepEntry = [Difficulty, string, StepOptions?]
+
 /**
- * One find adds one step, in the order of the "Camp loot" table in docs/game-design/camp.md. A step is the
- * whole spot as one square image (`src/assets/camp/<name>.webp`) that replaces the step before it.
+ * One find adds one step, in the order of the "Camp loot" table in docs/game-design/camp.md: the order the
+ * art is painted in, each step's square image (`src/assets/camp/<name>.webp`) adding one object to the one
+ * before it.
  *
  * `frame` and `footprint` are measured from the wizard impression against the chest (271×226 px there,
  * its art filling 0.83×0.76 of its 1u frame): an object w×h px is w/271·0.83 wide and h/226·0.76 tall, its
@@ -39,62 +54,72 @@ const piece = (id: string, options: PieceOptions = {}): CampPiece => ({
  * spot art fills. `x` and `y` are the anchor's offset from the fire pit's in the wizard impression (1438×2576
  * px, 1u = 326 px). All are starting values, re-measured when a spot's art lands.
  */
-const spot = (
-  id: CampSpotId,
-  place: CampPlace,
-  steps: [Difficulty, string, Pick<PieceOptions, "replaces" | "lights">?][]
-): CampSpot => ({
-  id,
-  ...place,
-  steps: steps.map(([chapter, name, options], i) => ({
-    chapter,
-    pieces: [
-      piece(name, {
-        ...options,
-        replaces: [...(i > 0 ? [steps[i - 1][1]] : []), ...(options?.replaces ?? [])],
-      }),
-    ],
-  })),
+const spot = (id: CampSpotId, place: CampPlace, steps: CampStep[]): CampSpot => ({ id, ...place, steps })
+
+const step = ([chapter, name, { base, given, on, growth, ...options } = {}]: StepEntry, layer: boolean): CampStep => ({
+  chapter,
+  pieces: [piece(name, options)],
+  ...(layer && !base && { layer: { ...(on && { on }), ...(growth && { growth }) } }),
+  ...(given && { given }),
 })
+
+/** Bought in a fixed order, so each step's whole picture replaces the one before. */
+const chain = (id: CampSpotId, place: CampPlace, steps: StepEntry[]) =>
+  spot(
+    id,
+    place,
+    steps.map(entry => step(entry, false))
+  )
+
+/** Found in any order: every step is a layer (cut by `yarn camp-layers`) unless marked `base`. */
+const layered = (id: CampSpotId, place: CampPlace, steps: StepEntry[]) =>
+  spot(
+    id,
+    place,
+    steps.map(entry => step(entry, true))
+  )
 
 export const CAMP_CATALOGUE: CampCatalogue = {
   spots: [
-    spot("fire", { x: 0, y: 0, frame: 1.91, footprint: 1.72 }, [
-      ["starter", "stoneRing", { replaces: ["campfire"], lights: [fireGlow(2.1)] }],
+    layered("fire", { x: 0, y: 0, frame: 1.91, footprint: 1.72 }, [
+      ["starter", "stoneRing", { base: true, replaces: ["campfire"], lights: [fireGlow(2.1)] }],
       ["starter", "fire", { lights: [fireGlow(2.9)] }],
-      ["starter", "cookingStones", { lights: [fireGlow(2.9)] }],
-      ["junior", "pot", { lights: [fireGlow(2.9)] }],
-      ["expert", "seatingStones", { lights: [fireGlow(2.9)] }],
-      ["master", "clayOven", { lights: [fireGlow(2.9), OVEN] }],
-      ["wizard", "seatCushions", { lights: [fireGlow(2.9), OVEN] }],
+      ["starter", "cookingStones"],
+      ["junior", "pot", { on: "fire" }],
+      ["expert", "seatingStones"],
+      ["master", "clayOven", { lights: [OVEN] }],
+      ["wizard", "seatCushions", { on: "seatingStones" }],
     ]),
-    spot("sleeping", { x: -0.57, y: -2.41, frame: 1.53, footprint: 1.38 }, [
+    layered("sleeping", { x: -0.57, y: -2.41, frame: 1.53, footprint: 1.38 }, [
       ["starter", "reedMat"],
-      ["starter", "blanket"],
+      ["starter", "blanket", { on: "reedMat" }],
       ["starter", "windbreak"],
-      ["junior", "tent"],
-      ["junior", "tentRug"],
-      ["expert", "tentFlag"],
-      ["master", "secondTent"],
-      ["wizard", "pavilion"],
+      // The tent stands where the windbreak stood.
+      ["junior", "tent", { replaces: ["windbreak"] }],
+      ["junior", "tentRug", { on: "tent" }],
+      ["expert", "tentFlag", { on: "tent" }],
+      // The second tent is painted only where the tent leaves it in view; the pavilion's picture repaints its edge.
+      ["master", "secondTent", { on: "tent" }],
+      ["wizard", "pavilion", { on: "secondTent" }],
     ]),
-    spot("water", { x: 1.1, y: -0.94, frame: 1.21, footprint: 0.91 }, [
+    layered("water", { x: 1.1, y: -0.94, frame: 1.21, footprint: 0.91 }, [
       ["starter", "gourd"],
       ["starter", "jar"],
       ["junior", "secondJar"],
       ["expert", "waterTrough"],
       ["master", "well"],
-      ["wizard", "wellPulley"],
+      ["wizard", "wellPulley", { on: "well" }],
     ]),
-    spot("cooking", { x: -0.45, y: -1.14, frame: 1.89, footprint: 1.7 }, [
+    layered("cooking", { x: -0.45, y: -1.14, frame: 1.89, footprint: 1.7 }, [
       ["junior", "tripod"],
       ["junior", "spiceRack"],
-      ["junior", "breadBoard"],
-      ["expert", "breadOven"],
+      ["junior", "breadBoard", { on: "spiceRack" }],
+      // The oven's picture repainted the bread board in front of it, so it shows with the board.
+      ["expert", "breadOven", { on: "breadBoard" }],
       ["master", "dryingRack"],
       ["wizard", "feast"],
     ]),
-    spot("donkey", { x: -1.46, y: -0.39, frame: 1.49, footprint: 1.34 }, [
+    chain("donkey", { x: -1.46, y: -0.39, frame: 1.49, footprint: 1.34 }, [
       ["junior", "halter"],
       ["junior", "donkey"],
       ["junior", "saddlebags"],
@@ -102,57 +127,60 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["master", "secondDonkey"],
       ["wizard", "paintedCart"],
     ]),
-    spot("camel", { x: 1.55, y: 0.13, frame: 1.46, footprint: 1.19 }, [
+    chain("camel", { x: 1.55, y: 0.13, frame: 1.46, footprint: 1.19 }, [
       ["expert", "camel"],
       ["master", "secondCamel"],
       ["wizard", "caravanBanner"],
     ]),
-    spot("mapTable", { x: 0.8, y: 0.92, frame: 1.67, footprint: 1.5 }, [
+    layered("mapTable", { x: 0.8, y: 0.92, frame: 1.67, footprint: 1.5 }, [
       // The map on the ground opens "Alle reizen", so like every entrance it stands from the start.
-      ["starter", "map"],
-      ["expert", "table"],
+      ["starter", "map", { base: true }],
+      ["expert", "table", { base: true }],
       ["expert", "compass"],
       ["master", "starMap"],
       ["master", "scrollCase"],
-      ["wizard", "astrolabe"],
+      ["wizard", "astrolabe", { on: "starMap" }],
       ["wizard", "reedGlobe"],
     ]),
-    spot("palmGarden", { x: 1.61, y: -1.62, frame: 2.51, footprint: 0.7 }, [
-      ["expert", "seed"],
-      ["expert", "sprout"],
-      ["expert", "palm"],
+    layered("palmGarden", { x: 1.61, y: -1.62, frame: 2.51, footprint: 0.7 }, [
+      ["expert", "bed", { base: true, given: true }],
+      // One palm growing: a later stage takes the earlier one's place.
+      ["expert", "seed", { growth: "palm" }],
+      ["expert", "sprout", { growth: "palm" }],
+      ["expert", "palm", { growth: "palm" }],
       ["master", "secondPalm"],
-      ["master", "dates"],
+      // The dates hang in both palms.
+      ["master", "dates", { on: ["palm", "secondPalm"] }],
       ["wizard", "lotusPlanter"],
       ["wizard", "figTree"],
     ]),
-    spot("ibisPond", { x: -0.98, y: 1.83, frame: 2.46, footprint: 2.21 }, [
-      ["master", "edgeStones", { replaces: ["oasis"] }],
+    layered("ibisPond", { x: -0.98, y: 1.83, frame: 2.46, footprint: 2.21 }, [
+      ["master", "edgeStones", { base: true, replaces: ["oasis"] }],
       ["master", "papyrus"],
       ["master", "reeds"],
       ["master", "ibis"],
       ["wizard", "lotus"],
       ["wizard", "secondIbis"],
     ]),
-    spot("lookout", { x: -1.62, y: -1.89, frame: 2.31, footprint: 0.87 }, [
-      ["master", "post"],
+    layered("lookout", { x: -1.62, y: -1.89, frame: 2.31, footprint: 0.87 }, [
+      ["master", "post", { base: true }],
       ["master", "platform"],
-      ["master", "ladder"],
+      ["master", "ladder", { on: "platform" }],
       ["master", "flag"],
-      ["wizard", "roof"],
-      ["wizard", "signalFire", { lights: [SIGNAL] }],
+      ["wizard", "roof", { on: "platform" }],
+      ["wizard", "signalFire", { on: "platform", lights: [SIGNAL] }],
     ]),
-    spot("godStatues", { x: 1.33, y: 1.87, frame: 1.8, footprint: 1.62 }, [
+    layered("godStatues", { x: 1.33, y: 1.87, frame: 1.8, footprint: 1.62 }, [
       ["wizard", "thoth"],
       ["wizard", "bastet"],
       ["wizard", "anubis"],
       ["wizard", "ra"],
     ]),
-    spot("starCanopy", { x: 0.65, y: -2.79, frame: 1.12, footprint: 1.01 }, [
-      ["wizard", "poles"],
+    layered("starCanopy", { x: 0.65, y: -2.79, frame: 1.12, footprint: 1.01 }, [
+      ["wizard", "poles", { base: true }],
       ["wizard", "cloth"],
-      ["wizard", "stars"],
-      ["wizard", "planets"],
+      ["wizard", "stars", { on: "cloth" }],
+      ["wizard", "planets", { on: "cloth" }],
     ]),
   ],
   fixed: [

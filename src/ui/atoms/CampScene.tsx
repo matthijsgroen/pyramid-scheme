@@ -10,7 +10,7 @@ import {
   type PlacedPyramid,
   type PlacedShadow,
 } from "./campScene/campLayout"
-import type { CampCatalogue, CampSpotId } from "./campScene/campTypes"
+import type { CampCatalogue, CampFound } from "./campScene/campTypes"
 import "./CampScene.css"
 
 /** `label` is the translated name the caller composes, e.g. "Mosaic 61/252". */
@@ -21,7 +21,8 @@ export type CampSceneProps = {
   width: number
   height: number
   chapter: Difficulty
-  steps: Partial<Record<CampSpotId, number>>
+  /** Per spot, the pieces found so far, in any order. */
+  found: CampFound
   insets?: { top: number; bottom: number }
   entrances?: { chest?: CampEntrance; window?: CampEntrance; mapTable?: CampEntrance }
   catalogue?: CampCatalogue
@@ -167,7 +168,7 @@ const Fade = ({ visible, children }: { visible: boolean; children: ReactNode }) 
 
 const Piece = ({ placed, lightIndex }: { placed: PlacedPiece; lightIndex: number }) => {
   const { piece, scale, shadow } = placed
-  const art = campArt(piece.id)
+  const art = campArt(piece.id, placed.layer)
   const style: CSSProperties = boxOf(placed)
   if (!art)
     return (
@@ -214,14 +215,14 @@ export const CampScene = ({
   width,
   height,
   chapter,
-  steps,
+  found,
   insets = NO_INSETS,
   entrances = {},
   catalogue = CAMP_CATALOGUE,
   className,
 }: CampSceneProps) => {
   const rootClass = ["camp-scene", className].filter(Boolean).join(" ")
-  const layout = layoutCamp({ width, height, insets, chapter, steps, catalogue })
+  const layout = layoutCamp({ width, height, insets, chapter, found, catalogue })
   if (!layout) return <div className={rootClass} />
 
   const { unit: u, horizon } = layout
