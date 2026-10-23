@@ -494,7 +494,7 @@ The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/ref-mapTable.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the map table, complete: a low wooden table with a parchment map of pyramids and a river spread on it, a compass and a astrolabe standing on the map, a dark-blue star chart unrolled beside it, a leather scroll case with rolled maps leaning against the table, and a globe woven from reeds on a wooden stand beside the table. Use the colours of the matching objects in the reference image.
+> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the map table, complete: a low dark wooden table on four square legs; a dark-blue star chart cloth spread across it, hanging down over its left end; on top a parchment map with rolled ends, drawn with three pyramids and a blue river; a red-brown leather scroll case lying on the table's left end; a round brass compass on the table's right end; a tall brass astrolabe standing upright at the back right of the table; and beside the table, on the right, a round globe woven from golden reeds on a wooden stand. Use the colours of the matching objects in the reference image.
 
 #### 46. `camp/astrolabe` — Map table, step 6 of 7 (wizard)
 
@@ -502,7 +502,7 @@ Edit of `camp/reedGlobe`.
 
 Attach: `art/masters/camp/ref-mapTable.webp`, `art/masters/camp/reedGlobe.webp`
 
-> [edit] Remove this, and only this: a globe woven from reeds on a wooden stand beside the table. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the globe woven from golden reeds on its wooden stand beside the table. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 #### 47. `camp/scrollCase` — Map table, step 5 of 7 (master)
@@ -511,7 +511,7 @@ Edit of `camp/astrolabe`.
 
 Attach: `art/masters/camp/ref-mapTable.webp`, `art/masters/camp/astrolabe.webp`
 
-> [edit] Remove this, and only this: a astrolabe standing on the table. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the tall brass astrolabe standing at the back right of the table. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 #### 48. `camp/starMap` — Map table, step 4 of 7 (master)
@@ -520,7 +520,7 @@ Edit of `camp/scrollCase`.
 
 Attach: `art/masters/camp/ref-mapTable.webp`, `art/masters/camp/scrollCase.webp`
 
-> [edit] Remove this, and only this: a leather scroll case with rolled maps leaning against the table. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the red-brown leather scroll case lying on the table's left end. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 #### 49. `camp/compass` — Map table, step 3 of 7 (expert)
@@ -529,7 +529,7 @@ Edit of `camp/starMap`.
 
 Attach: `art/masters/camp/ref-mapTable.webp`, `art/masters/camp/starMap.webp`
 
-> [edit] Remove this, and only this: a dark-blue star chart unrolled beside the map. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the dark-blue star chart cloth under the map and over the table's end; the bare wooden table top shows there. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 #### 50. `camp/table` — Map table, step 2 of 7 (expert)
@@ -538,7 +538,7 @@ Edit of `camp/compass`.
 
 Attach: `art/masters/camp/ref-mapTable.webp`, `art/masters/camp/compass.webp`
 
-> [edit] Remove this, and only this: a compass on the map. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the round brass compass on the table. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 #### 51. `camp/map` — Map table, step 1 of 7 (expert)
