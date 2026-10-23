@@ -92,10 +92,7 @@ Attach: `art/masters/camp/ref-window.webp`, `art/masters/camp/chest.webp`
 
 ### 3. `camp/campfire` — Small campfire
 
-A small subject leaves the canvas mostly empty, and a generator fills empty canvas with whatever is
-attached: so this one attaches the impression only, no finished prop.
-
-Attach: `art/masters/camp/impression-wizard.webp`
+Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
 
 > [preamble] Paint a SMALL, low campfire, the kind a lone traveller makes: four or five thin, crossed
 > sticks with small, lively flames. Not logs, not a bonfire. It is small in the frame: about a
