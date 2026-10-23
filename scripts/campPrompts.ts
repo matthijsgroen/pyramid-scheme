@@ -38,6 +38,7 @@ export const parseCamp = (md: string): Entry[] => {
       const attachments = [...attachLine.matchAll(/`(art\/[^`]+)`/g)].map(m => m[1])
       const out = join("src/assets/camp", `${id}.webp`)
       const noKey = /Import with `--key=none`/.test(block)
+      const size = /Import with `--size=(\d+)`/.exec(block)?.[1]
       return [
         {
           key: `camp/${id}`,
@@ -50,7 +51,7 @@ export const parseCamp = (md: string): Entry[] => {
             .trim(),
           out,
           master: join("art/masters/camp", `${id}.webp`),
-          importedBy: `yarn import-camp <file> --name=${id}${noKey ? " --key=none" : ""}`,
+          importedBy: `yarn import-camp <file> --name=${id}${noKey ? " --key=none" : ""}${size ? ` --size=${size}` : ""}`,
           drawn: existsSync(out),
         },
       ]

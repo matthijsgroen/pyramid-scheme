@@ -762,6 +762,8 @@ Attach: `art/masters/camp/impression-wizard.webp`
 
 ### 79. `camp/dunes` — Far dunes
 
+Import with `--size=2048`.
+
 Attach: `art/masters/camp/impression-wizard.webp`
 
 > A wide horizontal strip of distant desert dunes at night, 4:1 landscape canvas, painterly style like

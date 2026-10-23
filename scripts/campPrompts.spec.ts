@@ -33,13 +33,19 @@ Attach: \`art/masters/camp/anchor.webp\`, \`art/masters/camp/box.webp\`
 ### 3. \`camp/ground\` — Ground
 
 Import with \`--key=none\`.
+
+### 4. \`camp/strip\` — A wide strip
+
+Import with \`--size=2048\`.
+
+> [preamble] Paint a strip.
 `
 
 describe("parseCamp", () => {
   const entries = parseCamp(MD)
 
   it("composes a camp entry from its preamble and edit preamble", () => {
-    expect(entries.map(e => e.key)).toEqual(["camp/box", "camp/lid", "camp/ground"])
+    expect(entries.map(e => e.key)).toEqual(["camp/box", "camp/lid", "camp/ground", "camp/strip"])
     expect(entries[0].prompt).toBe("House style line one,\nline two.\n\nPaint a box.")
     expect(entries[1].prompt).toBe("Edit the second image.\n\nRemove the lid.")
     expect(entries[1].attachments).toEqual(["art/masters/camp/anchor.webp", "art/masters/camp/box.webp"])
@@ -50,5 +56,9 @@ describe("parseCamp", () => {
 
   it("asks for --key=none where the entry says so", () => {
     expect(entries[2].importedBy).toBe("yarn import-camp <file> --name=ground --key=none")
+  })
+
+  it("asks for a --size=N where the entry says so", () => {
+    expect(entries[3].importedBy).toBe("yarn import-camp <file> --name=strip --size=2048")
   })
 })
