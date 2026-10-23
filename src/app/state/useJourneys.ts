@@ -809,9 +809,8 @@ export const createJourneysV3Api = ({
     const j = journeys.find(j => j.journeyId === journeyId)
     const levels = new Set<number>()
     if (!j?.floorExploration) return levels
-    // Only levels this journey still has a node for. A tomb's earliest runs filed floors under the
-    // levels its exterior used to count, and it now re-enters level 1 from every node: those entries
-    // are unreachable, and counting them left the journey card pulsing at a tomb with nothing left.
+    // Only levels this journey still has a node for (one per site): an entry filed under a higher
+    // level is unreachable, and counting it left the journey card pulsing with nothing left to visit.
     const nodes = journeyData.find(info => info.id === journeyId)?.levelCount ?? 1
     for (const [key, entry] of Object.entries(j.floorExploration)) {
       const level = Number(key.split(":")[0])

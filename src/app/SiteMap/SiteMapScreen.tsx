@@ -53,8 +53,8 @@ type Props = {
   journeyId: string
   siteConfig: SiteConfig
   /** Which level of the journey this is (levelNr - 1) — the address its rooms draw their boards by
-   * (src/game/seeds/boardIndex.ts). A tomb re-enters one authored site per level, so the level is what
-   * separates those visits, not the site. */
+   * (src/game/seeds/boardIndex.ts). A tomb is a journey of levelCount sites, so the level is what
+   * tells its sites apart. */
   levelIndex: number
   seed: number
   onSiteComplete: () => void

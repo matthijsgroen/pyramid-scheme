@@ -32,7 +32,13 @@ export const validateWorldSpec = (
   const errors: WorldSpecError[] = []
 
   for (const tomb of tombs) {
-    const { constraint } = resolvePyramidConstraintWithProvenance(spec, tomb.id, tomb.tier as Tier, 0, 1)
+    const { constraint } = resolvePyramidConstraintWithProvenance(
+      spec,
+      tomb.id,
+      tomb.tier as Tier,
+      tomb.levelCount - 1,
+      tomb.levelCount
+    )
     const tombConstraint = constraint as TombConstraint
     const floors = tombConstraint.floors as FloorConstraint<TombRewardHint>[] | undefined
 

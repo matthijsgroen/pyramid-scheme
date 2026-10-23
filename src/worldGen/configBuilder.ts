@@ -175,7 +175,8 @@ export type TombTreasureResolver = (tombId: string, index: number) => TreasureRe
 // authored FloorConstraints handed to buildSite()'s authored-floors branch, the exact same mechanism
 // pyramids' own authored floors[] use — tomb-specific vocabulary (wardPath, the perk-stream reward
 // resolver, "tomb-puzzle" encounter, crocodile capstone) is authoring convenience, not a separate
-// construction path. Every authored floor field passes through; the tomb only fills what is unset.
+// construction path. Every authored floor field passes through, sideSections included; the tomb adds only the ward
+// shortcut.
 export const buildTombConfigsFor = (
   tombs: readonly TombJourneyDef[],
   spec: typeof worldSpec,

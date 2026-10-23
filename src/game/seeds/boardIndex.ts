@@ -98,8 +98,8 @@ export const journeysInDealOrder = (
 ): string[] =>
   Object.keys(world).sort((a, b) => difficultyCompare(tierOf(a), tierOf(b)) || (a < b ? -1 : a > b ? 1 : 0))
 
-/** `world` is keyed by journey and indexed by LEVEL, not by authored site (src/data/worldLevels.ts) — a
- * tomb re-enters its one site once per level, and each of those visits is a room of its own. */
+/** `world` is keyed by journey and indexed by LEVEL (src/data/worldLevels.ts) — a tomb is a journey of
+ * levelCount sites, and each level's rooms are rooms of their own. */
 export const buildBoardIndexes = (
   world: Record<string, SiteConfig[]>,
   families: FamilyMeta[],

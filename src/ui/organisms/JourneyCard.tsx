@@ -115,8 +115,8 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
             "text-amber-700": !disabled && !isTreasureTomb,
           })}
         >
-          {/* How far along the journey's nodes the player is. A journey of one node (a tomb, whose
-              single site holds all its floors) has nowhere to be along, so it says nothing. */}
+          {/* How far along the journey's nodes the player is. A journey of one node has nowhere to be
+              along, so it says nothing. */}
           {progressLevelNr > 0 && journey.levelCount > 1 && (
             <span className="flex-shrink-0 font-bold">
               {labels.progressLevel}:{" "}

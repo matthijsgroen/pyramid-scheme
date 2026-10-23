@@ -621,9 +621,8 @@ describe("floor exploration tracking", () => {
   })
 
   it("ignores floors filed under a level the journey has no node for", () => {
-    // A journey has one node per site, so a tomb (one site) has one: a save filed under a higher
-    // level can never be revisited or re-recorded, and counting it kept the card pulsing over
-    // nothing left to go back to.
+    // A journey has one node per site: a save filed under a higher level can never be revisited or
+    // re-recorded, and counting it kept the card pulsing over nothing left to go back to.
     const tomb = { ...makeJourneyData(REAL_ID), exterior: "tomb", levelCount: 1 } as TranslatedJourney
     const state = [
       makeStoredJourney({

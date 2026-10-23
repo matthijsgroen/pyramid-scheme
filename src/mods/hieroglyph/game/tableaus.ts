@@ -83,7 +83,8 @@ function getTableauDescription(
 }
 
 // Every tomb with its FLOOR count and tier, straight off the table world-gen builds from. The
-// journey's own levelCount is its map nodes (one, for a tomb's single site), a different number.
+// journey's own levelCount is its map nodes (one per site: two for the starter tomb), a different
+// number.
 const tombJourneys = TOMB_JOURNEYS.map(tomb => ({
   id: tomb.id,
   difficulty: tomb.tier as Difficulty,

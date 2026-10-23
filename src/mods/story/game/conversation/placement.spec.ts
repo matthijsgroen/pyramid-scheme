@@ -39,26 +39,4 @@ describe("every conversation room in the world", () => {
     }
     expect(missing).toEqual([])
   })
-
-  it("never stands ahead of a tableau, which is numbered by its position", () => {
-    // `resolveTableauKeyRequirements` reads `levelNr = pathIndex + 1`, so a room inserted before a
-    // tableau renumbers it and asks for authored content that does not exist. World generation fails
-    // outright when that happens — this says why, and keeps the rule where the placements are.
-    const ahead: string[] = []
-    for (const [journeyId, levels] of Object.entries(generatedWorldConfigs))
-      levels.forEach((floors, floor) =>
-        floors.forEach(section => {
-          const byIndex = section.encountersByIndex ?? {}
-          const talk = Object.entries(byIndex)
-            .filter(([, encounter]) => encounter === "conversation")
-            .map(([index]) => Number(index))
-          const tableaus = Object.entries(byIndex)
-            .filter(([, encounter]) => encounter === "tableau")
-            .map(([index]) => Number(index))
-          for (const at of talk)
-            if (tableaus.some(tableau => tableau > at)) ahead.push(`${journeyId} floor ${floor}, room ${at}`)
-        })
-      )
-    expect(ahead).toEqual([])
-  })
 })
