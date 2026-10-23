@@ -745,6 +745,16 @@ describe("spotSteps", () => {
     ])
   })
 
+  it("draws a layer that stands behind another just before it, whatever order they were painted in", () => {
+    const water: CampSpot = {
+      ...garden,
+      steps: [step("jar", {}), step("trough", {}), step("well", { behind: "trough" })],
+    }
+    const order = (found: string[]) => spotSteps(water, "starter", found).map(s => s.step.pieces[0].id)
+    expect(order(["jar", "trough", "well"])).toEqual(["jar", "well", "trough"])
+    expect(order(["well", "jar"])).toEqual(["jar", "well"])
+  })
+
   it("shows a layer with no base before it on its own", () => {
     const statues: CampSpot = { ...garden, steps: [step("thoth", {}), step("ra", {})] }
     expect(shown(["ra"], statues)).toEqual(["ra"])

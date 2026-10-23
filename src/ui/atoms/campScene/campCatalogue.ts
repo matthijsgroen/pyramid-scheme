@@ -39,6 +39,8 @@ type StepOptions = Pick<PieceOptions, "replaces" | "lights"> & {
   on?: string | string[]
   /** The growing object a layer is one stage of. */
   growth?: string
+  /** A piece of the same spot this layer stands behind. */
+  behind?: string
 }
 
 type StepEntry = [Difficulty, string, StepOptions?]
@@ -56,10 +58,13 @@ type StepEntry = [Difficulty, string, StepOptions?]
  */
 const spot = (id: CampSpotId, place: CampPlace, steps: CampStep[]): CampSpot => ({ id, ...place, steps })
 
-const step = ([chapter, name, { base, given, on, growth, ...options } = {}]: StepEntry, layer: boolean): CampStep => ({
+const step = (
+  [chapter, name, { base, given, on, growth, behind, ...options } = {}]: StepEntry,
+  layer: boolean
+): CampStep => ({
   chapter,
   pieces: [piece(name, options)],
-  ...(layer && !base && { layer: { ...(on && { on }), ...(growth && { growth }) } }),
+  ...(layer && !base && { layer: { ...(on && { on }), ...(growth && { growth }), ...(behind && { behind }) } }),
   ...(given && { given }),
 })
 
@@ -107,7 +112,8 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["starter", "jar"],
       ["junior", "secondJar"],
       ["expert", "waterTrough"],
-      ["master", "well"],
+      // The well is painted whole (well-alone) and stands behind the gourd, the jars and the trough.
+      ["master", "well", { behind: "gourd" }],
       ["wizard", "wellPulley", { on: "well" }],
     ]),
     layered("cooking", { x: -0.45, y: -1.14, frame: 1.89, footprint: 1.7 }, [

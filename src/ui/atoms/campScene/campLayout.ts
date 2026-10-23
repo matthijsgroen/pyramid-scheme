@@ -177,7 +177,12 @@ export const spotSteps = (spot: CampSpot, chapter: Difficulty, found: readonly s
     const next = new Set(seen).add(step)
     return furthest(step) && hostsOf(step).every(host => shows(host, next))
   }
-  return present.map(step => ({ step, shown: shows(step, new Set()) }))
+  const drawOrder = present.filter(s => !s.layer?.behind)
+  for (const step of present.filter(s => s.layer?.behind)) {
+    const front = drawOrder.findIndex(s => s.pieces.some(p => p.id === step.layer?.behind))
+    drawOrder.splice(front < 0 ? drawOrder.length : front, 0, step)
+  }
+  return drawOrder.map(step => ({ step, shown: shows(step, new Set()) }))
 }
 
 const toRadians = (degrees: number) => (degrees * Math.PI) / 180

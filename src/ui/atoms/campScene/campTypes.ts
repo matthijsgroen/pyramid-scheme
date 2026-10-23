@@ -48,7 +48,8 @@ export type CampPiece = {
  * its hosts all show: the pieces named by `on`, else the nearest base step before it; with neither it stands
  * alone. Layers sharing a `growth` are the stages of one growing object: only the furthest found one shows.
  */
-export type CampLayer = { on?: string | readonly string[]; growth?: string }
+/** `behind` names a piece of the same spot this layer stands behind, so it draws just before it. */
+export type CampLayer = { on?: string | readonly string[]; growth?: string; behind?: string }
 
 /**
  * A base step is the whole spot as one picture and hides every earlier base step of its spot; without
