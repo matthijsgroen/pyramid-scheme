@@ -67,6 +67,9 @@ scene alternates the two. Without one the fire stands still.
 
 ## 0. The house style, stated once
 
+> IMPORTANT: the reference image is outlined cartoon line art. Take only its objects, shapes, arrangement,
+> angle and colours, NEVER its outlines: paint with no dark contour lines at all, every edge only a change
+> of value between painted areas.
 > Painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, an edge is
 > a change of value. Take the viewing angle, scale, composition AND THE COLOURS from the attached
 > reference image: the same warm browns, golds and saturated hues as the matching objects in it. Do NOT
