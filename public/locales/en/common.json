@@ -1240,5 +1240,12 @@
     "legendBuried": "buried",
     "legendSeal": "seal",
     "legendPins": "● lever · ■ key · small = side section"
+  },
+  "camp": {
+    "entrance": {
+      "collection": "Collection",
+      "mosaic": "Mosaic",
+      "journeys": "All journeys"
+    }
   }
 }

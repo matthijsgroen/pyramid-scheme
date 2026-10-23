@@ -1,0 +1,245 @@
+/* The camp at night: sky, ground and pieces under a cool tint, with glows pulling warm colour back out. */
+.camp-scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(
+    #0f1733 0%,
+    #1f2b5c 45%,
+    #3b3466 var(--camp-horizon, 62%),
+    #c9a06a var(--camp-horizon, 62%)
+  );
+}
+
+.camp-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.camp-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #f6efdc;
+}
+
+.camp-moon {
+  position: absolute;
+  border-radius: 50%;
+  box-shadow: inset calc(var(--camp-moon) * -0.28) calc(var(--camp-moon) * -0.05) 0 0 #f3ecd6;
+}
+
+.camp-haze {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgb(140 90 150 / 0.55));
+}
+
+.camp-pyramid {
+  position: absolute;
+  transform: translateX(-50%);
+}
+
+.camp-pyramid__lit,
+.camp-pyramid__shade {
+  position: absolute;
+  bottom: 0;
+  width: 50%;
+  height: 100%;
+}
+
+.camp-pyramid__lit {
+  left: 0;
+  background: #a88a64;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+
+.camp-pyramid__shade {
+  right: 0;
+  background: #7d6447;
+  clip-path: polygon(0 0, 100% 100%, 0 100%);
+}
+
+.camp-pyramid__cap {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: 24%;
+  height: 12%;
+  background: #f2c84b;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  box-shadow: 0 0 12px #f2c84b;
+}
+
+.camp-ground {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(ellipse at 20% 30%, rgb(255 255 255 / 0.05), transparent 40%),
+    radial-gradient(ellipse at 70% 60%, rgb(0 0 0 / 0.06), transparent 45%),
+    repeating-linear-gradient(172deg, rgb(120 80 40 / 0.1) 0 2px, transparent 2px 22px),
+    linear-gradient(#b8915e, #d3ad74 60%, #caa26a);
+}
+
+.camp-dune {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+/* Pieces are anchored bottom-centre on their (left, top) point. */
+.camp-piece {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  user-select: none;
+}
+
+.camp-standin {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  box-sizing: border-box;
+  padding-bottom: 2px;
+  border: 1.5px solid rgb(40 25 10 / 0.7);
+  border-radius: 40% 40% 8% 8% / 30% 30% 8% 8%;
+  background: #9a8466;
+  color: #f6ecd8;
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+  overflow: hidden;
+}
+
+.camp-night {
+  background: rgb(28 34 80 / 0.42);
+  mix-blend-mode: multiply;
+}
+
+.camp-glow {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  mix-blend-mode: screen;
+  opacity: var(--camp-glow-strength, 1);
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--camp-glow-color) 85%, transparent),
+    color-mix(in srgb, var(--camp-glow-color) 35%, transparent) 45%,
+    transparent
+  );
+}
+
+/* Two loops with unrelated lengths, so a fire never repeats the same flicker in step. */
+.camp-glow--flicker {
+  animation:
+    camp-flicker-size 1.7s ease-in-out infinite,
+    camp-flicker-strength 2.9s ease-in-out infinite;
+}
+
+.camp-glow--breathe {
+  animation: camp-breathe 6s ease-in-out infinite;
+}
+
+@keyframes camp-flicker-size {
+  0%,
+  100% {
+    scale: 1;
+  }
+  25% {
+    scale: 1.05;
+  }
+  55% {
+    scale: 0.96;
+  }
+  80% {
+    scale: 1.03;
+  }
+}
+
+@keyframes camp-flicker-strength {
+  0%,
+  100% {
+    opacity: var(--camp-glow-strength, 1);
+  }
+  30% {
+    opacity: calc(var(--camp-glow-strength, 1) * 0.86);
+  }
+  60% {
+    opacity: calc(var(--camp-glow-strength, 1) * 1.08);
+  }
+}
+
+@keyframes camp-breathe {
+  0%,
+  100% {
+    scale: 0.97;
+  }
+  50% {
+    scale: 1.03;
+  }
+}
+
+/* Under reduced motion every glow holds still at its middle value: scale 1, its own strength. */
+@media (prefers-reduced-motion: reduce) {
+  .camp-glow--flicker,
+  .camp-glow--breathe {
+    animation: none;
+  }
+}
+
+.camp-entrances {
+  font-family: inherit;
+}
+
+.camp-entrance {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.camp-entrance:focus-visible {
+  outline: 2px solid #e0b33f;
+  outline-offset: 2px;
+}
+
+.camp-entrance__tag {
+  padding: 2px 9px;
+  border: 1.5px solid #2b2118;
+  border-radius: 10px;
+  background: #fff6e2;
+  color: #2b2118;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.camp-entrance__badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  background: #a3401a;
+  color: #fff8ea;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 20px;
+  text-align: center;
+}
