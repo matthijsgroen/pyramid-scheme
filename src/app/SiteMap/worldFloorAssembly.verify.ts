@@ -6,7 +6,7 @@ import { configHash } from "@/game/seeds/configHash"
 import { puzzleSeeds } from "@/data/puzzleSeeds"
 import { hashString } from "@/support/hashString"
 import { boardIndexesForFloor } from "./boardIndexes"
-import { buildRoomClaims } from "./roomClaims"
+import { buildRoomClaims, floorTier } from "./roomClaims"
 import { authoredKindsFor } from "./authoredKinds"
 import { encodeEdge } from "./edgeId"
 import { allFloors, resolveKeyRequirements } from "./worldFloors.testing"
@@ -415,7 +415,7 @@ describe("a rank is dressed with what it is authored to hold", () => {
         floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
       })
       if (!result.success) continue
-      const tier = result.grid.difficulty ?? "starter"
+      const tier = floorTier(result.grid)
       const authored = authoredKindsFor(tier).props
       for (const [cell, kind] of buildRoomClaims(result.grid).decorationAt)
         if (!authored.includes(kind)) wrong.push(`${floor.label} ${cell}: ${kind} at ${tier}`)

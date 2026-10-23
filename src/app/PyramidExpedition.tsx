@@ -41,8 +41,8 @@ export const PyramidExpedition: FC<{
   onClose?: () => void
 }> = ({ activeJourney, onLevelComplete: onNextLevel, onJourneyComplete, onStartJourney, onClose }) => {
   const isTomb = activeJourney.journey.exterior === "tomb"
-  // Both site types render through this one flow; a tomb is adapted into a single-level exterior
-  // journey whose interior is its multi-floor site.
+  // Both site types render through this one flow; a tomb is a journey of levelCount sites (the
+  // starter tomb has two, cave then cavern), each with its own multi-floor interior.
   const journey = activeJourney.journey
   const { t } = useTranslation("common")
   const { isDevelopMode } = use(DevelopContext)
@@ -69,9 +69,13 @@ export const PyramidExpedition: FC<{
   const { entering } = useEntranceAnimation(!showingInterior)
   const { scrollContainerRef, currentLevelRef, nextLevelRef, futureLevelRef } = useLevelParallax(startNextLevel)
 
-  const levelContent = generateExpeditionLevel(journey, activeJourney.randomSeed, activeJourney.levelNr)
-  const nextLevelContent = generateExpeditionLevel(journey, activeJourney.randomSeed, activeJourney.levelNr + 1)
-  const nextNextLevelContent = generateExpeditionLevel(journey, activeJourney.randomSeed, activeJourney.levelNr + 2)
+  // A boardless level draws no board at all, so none is generated: not its own, and not the next
+  // level's as scenery either.
+  const levelAt = (levelNr: number) =>
+    boardless ? null : generateExpeditionLevel(journey, activeJourney.randomSeed, levelNr)
+  const levelContent = levelAt(activeJourney.levelNr)
+  const nextLevelContent = levelAt(activeJourney.levelNr + 1)
+  const nextNextLevelContent = levelAt(activeJourney.levelNr + 2)
 
   const width = levelContent ? getLevelWidth(levelContent.pyramid.floorCount) : 0
 
@@ -217,7 +221,7 @@ export const PyramidExpedition: FC<{
                 transition: startNextLevel ? "transform 1000ms ease-in-out" : "none",
               }}
             >
-              {levelContent && !boardless && (
+              {levelContent && (
                 <Level
                   key={activeJourney.levelNr}
                   storageKey={storageKey}

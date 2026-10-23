@@ -212,6 +212,13 @@ describe("PyramidExpedition — a level without a board", () => {
     expect(queryByText("finish interior")).not.toBeNull()
   })
 
+  it("draws no board of its own and borrows none of the next level's as scenery", async () => {
+    const { container } = render(screen(boardlessJourney))
+    await settle()
+
+    expect(container.querySelectorAll("[inert] *")).toHaveLength(0)
+  })
+
   it("reopens the interior, not the way in, when the player comes back mid-visit", async () => {
     const { queryByText } = render(screen({ ...boardlessJourney, interiorLevelNr: 1 }))
     await settle()

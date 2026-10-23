@@ -221,6 +221,8 @@ export const starterRules: Rule[] = [
     tileset: "cave",
     difficulty: "starter",
     loot: false,
+    // Cave furniture, not the starter merchant's house the tier pool dresses its pyramids in.
+    decorations: ["rubblePile", "pillar", "pit", "crystal"],
     floors: [{ pathPuzzles: 3, encounter: "puzzle", ...lockOnFloor("caveLevers") }],
   }),
 
@@ -234,8 +236,8 @@ export const starterRules: Rule[] = [
     floors: [
       // Ipi is at the end of the first floor, in among his own jars — which is what "third shelf,
       // the jar with the chip out of it" is pointing at.
-      // A ROOM OF HIS OWN, not a tableau's: this floor is authored one more room longer so the beat is
-      // added rather than substituted. A tomb's tableau count is what drives hieroglyph
+      // A ROOM OF HIS OWN, not a tableau's: this floor is authored two rooms longer (his and the junior
+      // room) so the beat is added rather than substituted. A tomb's tableau count is what drives hieroglyph
       // distribution, so a ghost standing in a tableau's place would quietly cost the tier a
       // fragment host. `pathPuzzles` is structural and re-carves this floor; the encounter itself is
       // free (docs/game-design/world-spec-stability.md).
@@ -244,18 +246,26 @@ export const starterRules: Rule[] = [
       // among tableaus (`levelNr = familyOrdinal + 1`), so he could stand anywhere without renumbering them.
       {
         mainEndReward: "tombTreasure",
+        encounterArgs: { runNr: 1 },
         pathPuzzles: TOMB_ROOMS_PER_FLOOR.starter + 2,
         nodes: [juniorBetweenTableaus, { where: "last", encounter: "conversation", activity: "ledger" }],
       },
       {
         mainEndReward: "tombTreasure",
+        encounterArgs: { runNr: 2 },
         pathPuzzles: TOMB_ROOMS_PER_FLOOR.starter + 1,
         nodes: [juniorBetweenTableaus],
         ...lockBeforeFloorContent("pitStair"),
       },
-      { mainEndReward: "tombTreasure", pathPuzzles: TOMB_ROOMS_PER_FLOOR.starter + 1, nodes: [juniorBetweenTableaus] },
       {
         mainEndReward: "tombTreasure",
+        encounterArgs: { runNr: 3 },
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.starter + 1,
+        nodes: [juniorBetweenTableaus],
+      },
+      {
+        mainEndReward: "tombTreasure",
+        encounterArgs: { runNr: 4 },
         pathPuzzles: TOMB_ROOMS_PER_FLOOR.starter + 1,
         nodes: [juniorBetweenTableaus],
         ...lockBeforeFloorContent("throwItBack"),
