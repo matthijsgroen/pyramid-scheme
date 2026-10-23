@@ -159,7 +159,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       id: "chest",
       row: 2,
       slot: -1,
-      piece: piece("chest", { width: 0.8, height: 0.6, lights: [light(0.8, "255,200,80", "breathe", 0.6, 0, -0.35)] }),
+      piece: piece("chest", { lights: [light(0.8, "255,200,80", "breathe", 0.6, 0, -0.35)] }),
     },
     {
       id: "window",
@@ -179,8 +179,6 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       row: 1,
       slot: 0,
       piece: piece("campfire", {
-        width: 0.6,
-        height: 0.5,
         lights: [light(2.1, "255,150,55", "flicker", 0.75, 0, -0.2)],
       }),
     },
