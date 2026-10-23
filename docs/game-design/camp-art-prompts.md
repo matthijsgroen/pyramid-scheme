@@ -21,10 +21,6 @@ scale, composition **and colours**. **The painting is the world's**, from `docs/
 characters keep outlines. So: the impressions' palette, the world's brushwork — not their outlined,
 glossy look.
 
-**The metal ladder runs through the camp.** What a step adds wears the metal of the chapter it arrives in:
-starter's ochre, terracotta and turquoise faience, then copper, silver with lapis, gold, and glowing
-emerald. The player reads the camp's growth in its materials, as on the journey screen.
-
 **Value first:** the sand is pale, so every object is clearly darker than it. The scene adds a contact
 shadow in code, so the art carries none. A final-state entry also attaches the chest once it has landed, so every
 spot is painted against one finished object; an edit attaches the image it edits.
@@ -96,8 +92,7 @@ The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] Paint one camp spot, the fire pit, complete: a ring of rough grey stones with a big crackling fire in it, a black iron pot hanging over the fire from a wooden crossbar on two forked sticks, two flat cooking stones beside the ring, three low flat seating stones around it, a small dome-shaped clay oven behind it with firewood stacked at its side, and a burning fire bowl on a short carved stone plinth beside the ring. Materials, by the part they
-> belong to: stone ring, fire, cooking stones: plain wood, stone, clay and woven reed, coloured with red ochre and terracotta, with small turquoise faience accents; pot: fittings, rims and decoration of copper, warm and saturated, with green verdigris in the hollows; seating stones: fittings, inlay and decoration of silver, cool and bright, with deep-blue lapis; clay oven: fittings, inlay and decoration of gold, saturated and matte; fire bowl: fittings and decoration of emerald green that seems lit from within, trimmed with gold. Each part keeps its own natural material (stone, clay, wood, cloth, animal); the metal is in its fittings and decoration, and those are the most saturated thing in the picture.
+> [preamble] Paint one camp spot, the fire pit, complete: a ring of rough grey stones with a big crackling fire in it, a black iron pot hanging over the fire from a wooden crossbar on two forked sticks, two flat cooking stones beside the ring, three low flat seating stones around it, a small dome-shaped clay oven behind it with firewood stacked at its side, and a burning fire bowl on a short carved stone plinth beside the ring. Use the colours of the matching objects in the reference image.
 
 #### 5. `camp/clayOven` — Fire pit, step 6 of 7 (master)
 
@@ -160,8 +155,7 @@ The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] Paint one camp spot, the sleeping place, complete: a round cream canvas tent with an open flap and a small pale-blue pennant on top, a striped red-and-ochre rug in its doorway, a woven reed mat with a folded grey-blue blanket in front of it, a second smaller cream tent beside it, and an open pavilion with gauzy white curtains and a pile of coloured cushions beside the tents. Materials, by the part they
-> belong to: reed mat, blanket, windbreak: plain wood, stone, clay and woven reed, coloured with red ochre and terracotta, with small turquoise faience accents; tent, tent rug: fittings, rims and decoration of copper, warm and saturated, with green verdigris in the hollows; tent flag: fittings, inlay and decoration of silver, cool and bright, with deep-blue lapis; second tent: fittings, inlay and decoration of gold, saturated and matte; pavilion: fittings and decoration of emerald green that seems lit from within, trimmed with gold. Each part keeps its own natural material (stone, clay, wood, cloth, animal); the metal is in its fittings and decoration, and those are the most saturated thing in the picture.
+> [preamble] Paint one camp spot, the sleeping place, complete: a round cream canvas tent with an open flap and a small pale-blue pennant on top, a striped red-and-ochre rug in its doorway, a woven reed mat with a folded grey-blue blanket in front of it, a second smaller cream tent beside it, and an open pavilion with gauzy white curtains and a pile of coloured cushions beside the tents. Use the colours of the matching objects in the reference image.
 
 #### 12. `camp/secondTent` — Sleeping place, step 7 of 8 (master)
 
@@ -233,8 +227,7 @@ The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] Paint one camp spot, the water, complete: a round stone well with a small wooden roof, a wooden pulley wheel and crank with a rope and bucket, a long low stone water trough with water in it, two terracotta water jars with small handles and a round dried gourd bottle. Materials, by the part they
-> belong to: gourd, jar: plain wood, stone, clay and woven reed, coloured with red ochre and terracotta, with small turquoise faience accents; second jar: fittings, rims and decoration of copper, warm and saturated, with green verdigris in the hollows; water trough: fittings, inlay and decoration of silver, cool and bright, with deep-blue lapis; well: fittings, inlay and decoration of gold, saturated and matte; well pulley: fittings and decoration of emerald green that seems lit from within, trimmed with gold. Each part keeps its own natural material (stone, clay, wood, cloth, animal); the metal is in its fittings and decoration, and those are the most saturated thing in the picture.
+> [preamble] Paint one camp spot, the water, complete: a round stone well with a small wooden roof, a wooden pulley wheel and crank with a rope and bucket, a long low stone water trough with water in it, two terracotta water jars with small handles and a round dried gourd bottle. Use the colours of the matching objects in the reference image.
 
 #### 20. `camp/well` — Water, step 5 of 6 (master)
 
@@ -289,8 +282,7 @@ The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] Paint one camp spot, the cooking corner, complete: a wooden tripod with a small clay pot hanging from it, a small wooden spice rack with clay jars and bottles, a round wooden bread board with two flatbreads, a mud-brick bread oven with firewood stacked underneath, an A-frame drying rack with four fish hanging from it, and a patterned red rug set with plates of food, fruit and cups, cushions around it. Materials, by the part they
-> belong to: tripod, spice rack, bread board: fittings, rims and decoration of copper, warm and saturated, with green verdigris in the hollows; bread oven: fittings, inlay and decoration of silver, cool and bright, with deep-blue lapis; drying rack: fittings, inlay and decoration of gold, saturated and matte; feast: fittings and decoration of emerald green that seems lit from within, trimmed with gold. Each part keeps its own natural material (stone, clay, wood, cloth, animal); the metal is in its fittings and decoration, and those are the most saturated thing in the picture.
+> [preamble] Paint one camp spot, the cooking corner, complete: a wooden tripod with a small clay pot hanging from it, a small wooden spice rack with clay jars and bottles, a round wooden bread board with two flatbreads, a mud-brick bread oven with firewood stacked underneath, an A-frame drying rack with four fish hanging from it, and a patterned red rug set with plates of food, fruit and cups, cushions around it. Use the colours of the matching objects in the reference image.
 
 #### 26. `camp/dryingRack` — Cooking corner, step 5 of 6 (master)
 
@@ -345,8 +337,7 @@ The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] Paint one camp spot, the donkey, complete: a wooden stake with a rope halter, a grey donkey lying down with woven saddlebags and a striped red-and-green blanket on its back, a second grey donkey lying down beside it, and a two-wheeled cart painted with bright geometric patterns in red, blue and gold, sacks, a cushion and bundles in it. Materials, by the part they
-> belong to: halter, donkey, saddlebags: fittings, rims and decoration of copper, warm and saturated, with green verdigris in the hollows; cart, donkey blanket: fittings, inlay and decoration of silver, cool and bright, with deep-blue lapis; second donkey: fittings, inlay and decoration of gold, saturated and matte; painted cart: fittings and decoration of emerald green that seems lit from within, trimmed with gold. Each part keeps its own natural material (stone, clay, wood, cloth, animal); the metal is in its fittings and decoration, and those are the most saturated thing in the picture.
+> [preamble] Paint one camp spot, the donkey, complete: a wooden stake with a rope halter, a grey donkey lying down with woven saddlebags and a striped red-and-green blanket on its back, a second grey donkey lying down beside it, and a two-wheeled cart painted with bright geometric patterns in red, blue and gold, sacks, a cushion and bundles in it. Use the colours of the matching objects in the reference image.
 
 #### 32. `camp/secondDonkey` — Donkey, step 6 of 7 (master)
 
@@ -409,8 +400,7 @@ The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] Paint one camp spot, the camel, complete: a wooden hitching stake with a coiled rope, two camels lying down side by side, each with a padded saddle and a red-and-blue saddle cloth, a small wooden water trough in front of them, and a tall caravan banner on a pole with a painted falcon on cream cloth. Materials, by the part they
-> belong to: rope, camel, saddle: fittings, inlay and decoration of silver, cool and bright, with deep-blue lapis; second camel, camel trough: fittings, inlay and decoration of gold, saturated and matte; caravan banner: fittings and decoration of emerald green that seems lit from within, trimmed with gold. Each part keeps its own natural material (stone, clay, wood, cloth, animal); the metal is in its fittings and decoration, and those are the most saturated thing in the picture.
+> [preamble] Paint one camp spot, the camel, complete: a wooden hitching stake with a coiled rope, two camels lying down side by side, each with a padded saddle and a red-and-blue saddle cloth, a small wooden water trough in front of them, and a tall caravan banner on a pole with a painted falcon on cream cloth. Use the colours of the matching objects in the reference image.
 
 #### 39. `camp/camelTrough` — Camel, step 5 of 6 (master)
 
@@ -465,8 +455,7 @@ The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] Paint one camp spot, the map table, complete: a low wooden table with a parchment map of pyramids and a river spread on it, a compass and a astrolabe standing on the map, a dark-blue star chart unrolled beside it, a leather scroll case with rolled maps leaning against the table, and a globe woven from reeds on a wooden stand beside the table. Materials, by the part they
-> belong to: map, table, compass: fittings, inlay and decoration of silver, cool and bright, with deep-blue lapis; star map, scroll case: fittings, inlay and decoration of gold, saturated and matte; astrolabe, reed globe: fittings and decoration of emerald green that seems lit from within, trimmed with gold. Each part keeps its own natural material (stone, clay, wood, cloth, animal); the metal is in its fittings and decoration, and those are the most saturated thing in the picture.
+> [preamble] Paint one camp spot, the map table, complete: a low wooden table with a parchment map of pyramids and a river spread on it, a compass and a astrolabe standing on the map, a dark-blue star chart unrolled beside it, a leather scroll case with rolled maps leaning against the table, and a globe woven from reeds on a wooden stand beside the table. Use the colours of the matching objects in the reference image.
 
 #### 45. `camp/astrolabe` — Map table, step 6 of 7 (wizard)
 
@@ -529,8 +518,7 @@ The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] Paint one camp spot, the palm garden, complete: two young date palms growing from a mound of dark soil, bunches of orange dates under their crowns, a low stone planter with water and pink lotus flowers in front, and a small fig tree with purple figs beside them. Materials, by the part they
-> belong to: seed, sprout, palm: fittings, inlay and decoration of silver, cool and bright, with deep-blue lapis; second palm, dates: fittings, inlay and decoration of gold, saturated and matte; lotus planter, fig tree: fittings and decoration of emerald green that seems lit from within, trimmed with gold. Each part keeps its own natural material (stone, clay, wood, cloth, animal); the metal is in its fittings and decoration, and those are the most saturated thing in the picture.
+> [preamble] Paint one camp spot, the palm garden, complete: two young date palms growing from a mound of dark soil, bunches of orange dates under their crowns, a low stone planter with water and pink lotus flowers in front, and a small fig tree with purple figs beside them. Use the colours of the matching objects in the reference image.
 
 #### 52. `camp/lotusPlanter` — Palm garden, step 6 of 7 (wizard)
 
@@ -592,8 +580,7 @@ The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] Paint one camp spot, the ibis pond, complete: a round pond of clear blue water edged with a few stones, tall reeds and bulrushes along its back edge, lily pads and pink lotus flowers on the water, one white ibis with a black head and curved beak standing at the edge and a second ibis wading in the shallows. Materials, by the part they
-> belong to: hollow, pond, reeds, ibis: fittings, inlay and decoration of gold, saturated and matte; lotus, second ibis: fittings and decoration of emerald green that seems lit from within, trimmed with gold. Each part keeps its own natural material (stone, clay, wood, cloth, animal); the metal is in its fittings and decoration, and those are the most saturated thing in the picture.
+> [preamble] Paint one camp spot, the ibis pond, complete: a round pond of clear blue water edged with a few stones, tall reeds and bulrushes along its back edge, lily pads and pink lotus flowers on the water, one white ibis with a black head and curved beak standing at the edge and a second ibis wading in the shallows. Use the colours of the matching objects in the reference image.
 
 #### 59. `camp/lotus` — Ibis pond, step 5 of 6 (wizard)
 
@@ -648,8 +635,7 @@ The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] Paint one camp spot, the lookout tower, complete: a wooden lookout tower: four tall posts braced with crossbeams, a plank platform with a low railing on top, a wooden ladder leaning up to it, a thatched straw roof on four short poles over the platform, a small pale-blue pennant at its corner and an iron brazier with a burning signal fire on the platform. Materials, by the part they
-> belong to: post, platform, ladder, flag: fittings, inlay and decoration of gold, saturated and matte; roof, signal fire: fittings and decoration of emerald green that seems lit from within, trimmed with gold. Each part keeps its own natural material (stone, clay, wood, cloth, animal); the metal is in its fittings and decoration, and those are the most saturated thing in the picture.
+> [preamble] Paint one camp spot, the lookout tower, complete: a wooden lookout tower: four tall posts braced with crossbeams, a plank platform with a low railing on top, a wooden ladder leaning up to it, a thatched straw roof on four short poles over the platform, a small pale-blue pennant at its corner and an iron brazier with a burning signal fire on the platform. Use the colours of the matching objects in the reference image.
 
 #### 65. `camp/roof` — Lookout tower, step 5 of 6 (wizard)
 
@@ -704,8 +690,7 @@ The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] Paint one camp spot, the god statues, complete: a low stone bench with four statues in a row: Thoth ibis-headed in blue and gold, Bastet a seated black cat with gold jewellery, Anubis black jackal-headed in blue and gold, and Ra falcon-headed with a red sun disc. Materials, by the part they
-> belong to: thoth, bastet, anubis, ra: fittings and decoration of emerald green that seems lit from within, trimmed with gold. Each part keeps its own natural material (stone, clay, wood, cloth, animal); the metal is in its fittings and decoration, and those are the most saturated thing in the picture.
+> [preamble] Paint one camp spot, the god statues, complete: a low stone bench with four statues in a row: Thoth ibis-headed in blue and gold, Bastet a seated black cat with gold jewellery, Anubis black jackal-headed in blue and gold, and Ra falcon-headed with a red sun disc. Use the colours of the matching objects in the reference image.
 
 #### 71. `camp/anubis` — God statues, step 3 of 4 (wizard)
 
@@ -742,8 +727,7 @@ The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] Paint one camp spot, the star canopy, complete: four tall slim wooden poles with a deep-blue cloth canopy stretched between them, embroidered with small gold stars, a crescent moon and a few round planets, one of them ringed. Materials, by the part they
-> belong to: poles, cloth, stars, planets: fittings and decoration of emerald green that seems lit from within, trimmed with gold. Each part keeps its own natural material (stone, clay, wood, cloth, animal); the metal is in its fittings and decoration, and those are the most saturated thing in the picture.
+> [preamble] Paint one camp spot, the star canopy, complete: four tall slim wooden poles with a deep-blue cloth canopy stretched between them, embroidered with small gold stars, a crescent moon and a few round planets, one of them ringed. Use the colours of the matching objects in the reference image.
 
 #### 75. `camp/stars` — Star canopy, step 3 of 4 (wizard)
 
