@@ -445,18 +445,24 @@ Attach: `art/masters/camp/ref-donkey.webp`, `art/masters/camp/saddlebags.webp`
 
 #### 38. `camp/halter` — Donkey, step 1 of 7 (junior)
 
-Edit of `camp/paintedCart`, for its frame: the stake is its own picture, and `yarn import-camp` paints it in
-behind every later donkey step (`BEHIND` in `scripts/importCamp.ts`). So it stands where nothing of the
-later steps covers its top: behind the grey donkey's back, right of the cart's front post. Import it before
-the later steps; re-import those from their masters once it lands.
+Painted on its own and placed by hand: the stake is its own picture, and `yarn import-camp` paints it in
+behind every later donkey step (`BEHIND` in `scripts/importCamp.ts`). An edit that empties the cart
+picture does not work: Gemini adds the stake instead. So the stake is painted alone, then scaled and set
+into the donkey frame (behind the grey donkey's back, right of the cart's front post, where nothing of the
+later steps covers its top) before import. Re-import the later steps from their masters once it lands.
 
-Attach: `art/masters/camp/ref-donkey.webp`, `art/masters/camp/paintedCart.webp`
+Attach: `art/masters/camp/chest.webp`
 
-> [edit] Remove everything in the picture: the cart, both donkeys, the blanket, the bag and the harness.
-> Paint only one thing in the empty space: a rough wooden stake, about as tall as the grey donkey's ears,
-> driven into the ground just behind where the grey donkey's back was, right of where the cart's front post
-> stood, with a coiled rope halter hanging from its top. Same scale as the picture, same flat #ff00ff
-> background everywhere else.
+> Painted illustration of a game prop, matte: soft brush texture, NO outlines anywhere, an edge is a change
+> of value. Match the brushwork, matte finish and lighting of the attached image, but paint none of its
+> content. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the
+> upper left: full, rich colour, mid-tone to dark values, so it stands out against pale sand. No cast
+> shadow, no ground patch.
+>
+> Paint one thing: a short rough wooden stake, a weathered round post with a blunt top, driven straight into
+> the ground, with a coiled rope halter hanging from a peg near its top. It stands upright in the middle of
+> the canvas, its foot at about 90% of the height, its top at about 25%. Flat solid #ff00ff magenta
+> background filling the whole square canvas to its edges. Square 1:1 canvas. No text, no frame.
 
 ### Camel (`camel`)
 
