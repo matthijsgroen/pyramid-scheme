@@ -65,13 +65,13 @@ describe(TravelPage, () => {
     expect(startGame).toHaveBeenCalled()
   })
 
-  it("resumes at the level it stopped on when that one exists", async () => {
+  it("resumes a completed journey at its last level whatever level it stopped on", async () => {
     stored = { ...stored, levelNr: 1 }
     visitLevel.mockClear()
     render(<TravelPage startGame={() => {}} />)
 
     await act(async () => fireEvent.click(screen.getByTestId("journey-map")))
 
-    expect(visitLevel).toHaveBeenCalledWith("t", 1)
+    expect(visitLevel).toHaveBeenCalledWith("t", 2)
   })
 })

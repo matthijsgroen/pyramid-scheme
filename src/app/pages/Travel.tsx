@@ -68,7 +68,7 @@ export const TravelPage: FC<{
   const shopTombJourney = journeys.find(j => j.id === "junior_treasure_tomb")
 
   const journey = activeJourneyInfo?.journey ?? selectedJourney
-  // Nodes on this journey's map: one per site, so a tomb (one site, however many floors) has one.
+  // Nodes on this journey's map: one per site; a tomb is a journey of levelCount sites.
   const effectiveLevelCount = journey?.levelCount ?? 1
   // Revisit/explore: a completed journey (completionCount > 0). Every pyramid stays a pickable node
   // even while one is open, so drive the path view past the last level regardless of stored levelNr.
@@ -78,12 +78,10 @@ export const TravelPage: FC<{
   const handleMapClick = async () => {
     mapTapped()
     if (revisiting && journey) {
-      // Tapping the map background (not a node) re-enters the last-picked pyramid, re-solving its
-      // exterior board (visitLevel clears the interior). A journey finished with its stored level
-      // one past the end resumes at its last level.
-      const info = getJourney(journey.id)
-      const resumeAt =
-        info && info.levelNr >= 1 && info.levelNr <= effectiveLevelCount ? info.levelNr : effectiveLevelCount
+      // Tapping the map card (not a node) resumes a finished journey at its last level, whatever level
+      // it stopped on; node taps still pick any level. visitLevel re-solves the exterior board and
+      // clears the interior.
+      const resumeAt = effectiveLevelCount
       // Awaited: the expedition must not mount until every useJourneys() instance can see the
       // level we're heading to, or it seeds its transition animation from the level we're leaving.
       await visitLevel(journey.id, resumeAt)
