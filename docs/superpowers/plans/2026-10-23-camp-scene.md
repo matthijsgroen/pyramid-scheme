@@ -323,3 +323,39 @@ Catalogue rules:
 - [ ] **Step 2: Run, expect FAIL. Implement. Run, expect PASS.**
 - [ ] **Step 3: Check it end to end.** Run `yarn repaint camp/chest --check` and expect the prompt line count and two attachments, the master marked MISSING (it is not drawn yet). Then `yarn lint`, `yarn check-types`.
 - [ ] **Step 4: Commit** `feat: import-camp and the camp repaint queue`
+
+---
+
+## Added 2026-10-23: shadows
+
+Agreed with the designer: each piece gets ONE combined shadow, pre-rendered at import, with no runtime filter.
+
+### Task 7: Pre-rendered shadows, laid away from the fire
+
+**Files:**
+- Modify: `scripts/importCamp.ts` (+ spec), `src/ui/atoms/campScene/campLayout.ts` (+ spec), `campTypes.ts` if needed, `src/ui/atoms/CampScene.tsx`, `CampScene.css`, `docs/superpowers/specs/2026-10-23-camp-scene-design.md` (a "Shadows" section)
+
+**Behaviour:**
+- **Import.** `yarn import-camp` also writes `src/assets/camp/<name>-shadow.webp`. It is the keyed piece's alpha as a black silhouette, blurred once at import, on the same canvas and size, so it lines up with the piece frame. Scenery imports skip it: `--key=none`, `sand`, `dunes`, `pyramid`, `pyramidGold`. Re-run the import for the landed chest so it gets its shadow.
+- **Layout.** `layoutCamp` gives each `PlacedPiece` a `shadow: { angle: number; length: number; strength: number }`.
+  - Direction blends between two sources:
+    - away from the nearest `flicker` glow, weighted by how close the piece is to it (within about 3× that glow's radius);
+    - the moon direction, falling to the lower right (fixed angle), weighted by the rest.
+  - Length grows with distance from the fire and is clamped.
+  - Strength falls with distance: firelit pieces get a dark shadow, moonlit ones a faint one, with a floor so nothing floats.
+  - A piece with no flicker glow in range gets the pure moon shadow.
+- **Render.** The shadow is an `<img>` of the `-shadow` file, drawn under its piece in the same depth order. It sits at the piece's foot, flattened onto the ground (scaleY about 0.35), rotated to `angle` and stretched to `length`, with `opacity: strength`. Only `transform` and `opacity` are set; no `filter`. A piece without a shadow file gets no shadow, and stand-ins get none either.
+- **Flicker.** The shadows of firelit pieces flicker their opacity only, through a CSS keyframe in step with the fire glow. Under `prefers-reduced-motion` they hold still.
+
+- [ ] **Step 1: Write failing tests:**
+  - layout, on the made-up catalogue:
+    - `it("casts a firelit shadow away from the fire")`: the angle points from the glow through the piece;
+    - `it("falls back to the moon shadow out of the fire's reach")`;
+    - `it("darkens a shadow nearer the fire")`;
+  - import: `it("writes a blurred silhouette beside the piece")`: same size as the piece, black where the piece is opaque, transparent at the corners.
+- [ ] **Step 2: Implement.** Re-import the chest from `art/masters/camp/chest.webp`.
+- [ ] **Step 3: Gates and a look.**
+  - Run `yarn test src/ui/atoms scripts`, `yarn check-types`, `yarn lint` and `yarn build-storybook`.
+  - Screenshot StarterFull on a phone viewport: the chest's shadow should point away from the fire.
+- [ ] **Step 4: Measure.** Follow the recipe in `docs/instructions/map-html-port.md` on WizardFull at 390×844 with 4× CPU throttle. Compare against the commit before this task: frame time and layer count, with every piece given a shadow (temporarily copy the chest shadow to every id in a scratch run; do not commit that). Report the numbers.
+- [ ] **Step 5: Commit** `feat: camp pieces cast shadows away from the fire`
