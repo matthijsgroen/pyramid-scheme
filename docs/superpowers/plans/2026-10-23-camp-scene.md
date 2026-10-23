@@ -535,3 +535,28 @@ The impression's horizon is at y = -4.07. The window's frame becomes 1.4: in the
   - Screenshot StarterFull, MasterFull and WizardFull at 390×844, 1000×836 and 1600×700, and WizardFull at 320×640.
   - Report `u` and the chest's drawn width per size, and compare the wizard 390×844 shot side by side with the impression.
 - [ ] **Step 4: Commit** `feat: camp layout from the impression, elastic both ways`
+
+---
+
+## Added 2026-10-23: steps fade into each other
+
+### Task 11: Cross-fade between a spot's steps
+
+A spot that changes step swaps one image for the next, and that reads as a flicker. The designer asked for
+a fade instead.
+
+- **Layout.** The pieces a later step replaces, within the steps the spot owns, are returned too, marked
+  `visible: false` (`PlacedPiece.visible: boolean`). They have the same position and frame, no glows and
+  no shadow. Visible pieces keep everything they have today.
+- **Component.**
+  - A spot's pieces render in step order, stacked; only the visible one has opacity 1.
+  - Opacity has a CSS transition of about 400 ms, and a newly mounted visible piece starts from 0 via
+    `@starting-style`, so a step that arrives fades in over the one it replaces.
+  - Hidden pieces are not interactive and carry no shadow or self-shade.
+  - Under `prefers-reduced-motion` there is no transition.
+  - Glows and shadows follow the visible piece as today.
+- **Tests.**
+  - layout: `it("keeps a replaced step in place, hidden, so the scene can fade between steps")`
+  - component: `it("draws a spot's earlier steps hidden under the current one")`
+- **Look.** In Storybook's Playground, step the fire pit up and down. There should be no flash of empty
+  ground. Screenshots can't show a fade, so check the computed styles in the DOM.
