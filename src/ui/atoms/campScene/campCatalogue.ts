@@ -103,11 +103,8 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["wizard", "paintedCart"],
     ]),
     spot("camel", { x: 1.55, y: 0.13, frame: 1.46, footprint: 1.19 }, [
-      ["expert", "rope"],
       ["expert", "camel"],
-      ["expert", "saddle"],
       ["master", "secondCamel"],
-      ["master", "camelTrough"],
       ["wizard", "caravanBanner"],
     ]),
     spot("mapTable", { x: 0.8, y: 0.92, frame: 1.67, footprint: 1.5 }, [

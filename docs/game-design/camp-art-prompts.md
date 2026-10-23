@@ -458,58 +458,33 @@ Attach: `art/masters/camp/chest.webp`
 
 ### Camel (`camel`)
 
-#### 39. `camp/caravanBanner` — Camel, step 6 of 6 (wizard)
+Three images, one per purchase: what Fez sells lands together (the camel with its rope and saddle; the
+second camel with its trough), so no in-between step is ever on screen.
+
+#### 39. `camp/caravanBanner` — Camel, step 3 of 3 (wizard)
 
 The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/ref-camel.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the camel, complete: a wooden hitching stake with a coiled rope, two camels lying down side by side, each with a padded saddle and a red-and-blue saddle cloth, a small wooden water trough in front of them, and a tall caravan banner on a pole with a painted falcon on cream cloth. Use the colours of the matching objects in the reference image.
+> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the camels, complete: two camels lying down side by side, both facing left, the front one a little lower and closer; the back camel wears a padded saddle with a red saddle cloth with a woven border, the front camel a padded saddle with a blue saddle cloth with tassels; both wear rope halters with a rope lead hanging down. In front of them, to the left, a long low wooden water trough with water in it, on two small feet. Behind them, to the right, a tall wooden pole with a crossbar from which hangs a cream caravan banner painted with an orange falcon, tassels along its pointed bottom edge. Use the colours of the matching objects in the reference image.
 
-#### 40. `camp/camelTrough` — Camel, step 5 of 6 (master)
+#### 40. `camp/secondCamel` — Camel, step 2 of 3 (master)
 
 Edit of `camp/caravanBanner`.
 
 Attach: `art/masters/camp/ref-camel.webp`, `art/masters/camp/caravanBanner.webp`
 
-> [edit] Remove this, and only this: a tall caravan banner on a pole beside the camels, a painted falcon on cream cloth. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the tall pole with its crossbar and the cream caravan banner with the falcon. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
-#### 41. `camp/secondCamel` — Camel, step 4 of 6 (master)
-
-Edit of `camp/camelTrough`.
-
-Attach: `art/masters/camp/ref-camel.webp`, `art/masters/camp/camelTrough.webp`
-
-> [edit] Remove this, and only this: a small wooden water trough in front of the camels. Where it stood, show the #ff00ff background or
-> whatever was behind it.
-
-#### 42. `camp/saddle` — Camel, step 3 of 6 (expert)
+#### 41. `camp/camel` — Camel, step 1 of 3 (expert)
 
 Edit of `camp/secondCamel`.
 
 Attach: `art/masters/camp/ref-camel.webp`, `art/masters/camp/secondCamel.webp`
 
-> [edit] Remove this, and only this: a second camel lying down beside the first, with its own saddle cloth. Where it stood, show the #ff00ff background or
-> whatever was behind it.
-
-#### 43. `camp/camel` — Camel, step 2 of 6 (expert)
-
-Edit of `camp/saddle`.
-
-Attach: `art/masters/camp/ref-camel.webp`, `art/masters/camp/saddle.webp`
-
-> [edit] Remove this, and only this: a padded saddle with a red-and-blue saddle cloth on the camel. Where it stood, show the #ff00ff background or
-> whatever was behind it.
-
-#### 44. `camp/rope` — Camel, step 1 of 6 (expert)
-
-Edit of `camp/camel`.
-
-Attach: `art/masters/camp/ref-camel.webp`, `art/masters/camp/camel.webp`
-
-> [edit] Remove this, and only this: a camel lying down, tied to the stake. Where it stood, show the #ff00ff background or
-> whatever was behind it.
+> [edit] Remove the front camel with its blue saddle cloth and halter, and the long wooden water trough. The back camel with its red saddle cloth, its halter and rope lead stays exactly as it is; where the front camel covered it, paint the rest of the back camel's body and legs as they would continue. Elsewhere show the #ff00ff background.
 
 ### Map table (`mapTable`)
 
