@@ -22,6 +22,15 @@ const walkable = (cell: GridCell | undefined): boolean =>
 const doorKeysOf = (cell: GridCell | undefined): string[] =>
   cell?.type === "room" ? [...(cell.requiredKeyId ? [cell.requiredKeyId] : []), ...(cell.requiredKeyIds ?? [])] : []
 
+// THE KEYS A DOOR ASKS FOR THAT ARE EARNED OFF THE FLOOR: every key of a ward gate, and the keys an encounter
+// asks for to be solved (a tableau's hieroglyphs). A floor key or a mechanism's gate key is the floor's own
+// business, and one nothing on the floor opens is a door shut for good.
+const offFloorKeysOf = (cell: GridCell | undefined): string[] => {
+  if (cell?.type !== "room") return []
+  if (cell.gateVariant === "tomb-key") return doorKeysOf(cell)
+  return cell.family !== undefined ? (cell.requiredKeyIds ?? []) : []
+}
+
 // Two cells the author put in different regions of the layout: ground the flood does not join.
 const apart = (a: GridCell, b: GridCell): boolean =>
   (a.type === "room" || a.type === "corridor") &&
@@ -218,6 +227,8 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
   const ownersOf = new Map<GateId, Set<MechanismId>>()
   /** The keys of a gate no mechanism on this floor opens — what the sealing pass below reads. */
   const unopened = new Map<GateId, Set<string>>()
+  /** The keys of a gate earned off this floor (`offFloorKeysOf`). */
+  const offFloorKeys = new Map<GateId, Set<string>>()
   /** Which gates one door grew for one of its keys. Indexed by the DOOR, so a key id that collides
    * with another door's elsewhere on the floor cannot hand a switch a door that is not its own. */
   const gatesOfDoorKey = new Map<string, GateId[]>()
@@ -241,10 +252,9 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
       const cell = grid.cells[r][c]
       const keyIds = doorKeysOf(cell)
       if (keyIds.length === 0 || !walkable(cell)) continue
-      // A WARD GATE IS SHUT BECAUSE IT IS A WARD GATE. Its key is earned elsewhere in the world, so a
-      // lock leaning on one could only ever be checked in context; the container rule is that it is
-      // assumed shut, which is the reading that keeps the answer local. Deciding that from "nothing
-      // on this floor mints it" would open the day a floor minted a tomb key on itself.
+      // A WARD GATE IS OPENED OFF THE FLOOR BECAUSE IT IS A WARD GATE. Its key is earned elsewhere in the
+      // world, so no chest on this floor answers for it, even one minting the same id: deciding that from
+      // "nothing on this floor mints it" would change the answer the day a floor minted a tomb key on itself.
       const ward = cell.type === "room" && cell.gateVariant === "tomb-key"
       const doorRegion = of.get(posKey(r, c))!
       for (const dir of dirsOf(cell)) {
@@ -256,6 +266,7 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
         if (cell.type === "room" && cell.regionBarrier)
           barrierGates.set(cell.regionBarrier.region, [...(barrierGates.get(cell.regionBarrier.region) ?? []), gateId])
         unopened.set(gateId, new Set(keyIds))
+        offFloorKeys.set(gateId, new Set(offFloorKeysOf(cell)))
         if (ward) continue
         for (const keyId of keyIds) {
           gatesOfDoorKey.set(doorKey(doorRegion, keyId), [
@@ -399,11 +410,21 @@ export const floorLock = (grid: FloorGrid): LockSpec | undefined => {
     for (const gateId of gateIds) claim(gateId, keyId, id)
   }
 
-  // WHAT IS LEFT IS SEALED. A door whose opener this floor does not hold — a ward gate, a key minted
-  // somewhere else, a hieroglyph the player completes off this floor — is assumed shut, because a
-  // barrier the compiler cannot model has to come out shut rather than absent.
+  // WHAT IS LEFT IS OPENED OFF THE FLOOR, OR SEALED. A key earned off the floor — a ward gate's, a tableau's
+  // hieroglyphs — is a mechanism nothing here throws, standing in the one state that opens its doors: a player
+  // without the key turns back the way they came and one who holds it walks on, so the walk asks what the floor
+  // does to a player who has it. Whether a lock LEANS on such a key — a control of its own standing only past
+  // one — is asked apart, with these doors shut (`leansOffFloor`, floorLockWalk.ts). Any other key no mechanism
+  // on this floor opens is sealed: a barrier the compiler cannot model comes out shut rather than absent.
   for (const [gateId, keyIds] of unopened)
     for (const keyId of keyIds) {
+      if (offFloorKeys.get(gateId)?.has(keyId)) {
+        const id = `off-floor ${keyId}`
+        mechanisms[id] ??= { states: ["held"], initial: "held", opens: { held: [] }, transitions: [] }
+        mechanisms[id].opens.held.push(gateId)
+        ownersOf.set(gateId, (ownersOf.get(gateId) ?? new Set()).add(id))
+        continue
+      }
       const id = `sealed ${keyId}`
       mechanisms[id] ??= { states: ["shut"], initial: "shut", opens: { shut: [] }, transitions: [] }
       ownersOf.set(gateId, (ownersOf.get(gateId) ?? new Set()).add(id))

@@ -8,7 +8,7 @@ import {
   reachableStates,
   walkLock,
 } from "./lockWalk"
-import type { LockSpec, LockState, LockWalkFailure, RegionId } from "./lockWalk"
+import type { LockSpec, LockState, LockWalkFailure, Mechanism, MechanismId, RegionId } from "./lockWalk"
 import type { FloorGrid } from "./siteTypes"
 
 // THE WALK OF A FLOOR'S LOCK, which is the walk of the whole lock until a lock is nested in a region of another.
@@ -33,6 +33,8 @@ export type FloorWalkFailure =
   | { type: "nested"; instance: string; failure: FloorWalkFailure }
   /** A level several nested locks are walked in together fails; `instances` are the locks fused into it. */
   | { type: "pooled"; instances: string[]; failure: FloorWalkFailure }
+  /** A control of the floor's own that no walk reaches while every door opened off the floor stays shut. */
+  | { type: "leansOffFloor"; mechanism: MechanismId }
 
 /** `states` is the walk of the floor's own level; `nested` counts the states of each nested lock on its own. */
 export type FloorWalkResult =
@@ -52,6 +54,8 @@ export const describeFloorWalkFailure = (failure: FloorWalkFailure): string => {
       return `inside ${failure.instance}: ${describeFloorWalkFailure(failure.failure)}`
     case "pooled":
       return `the stones ${failure.instances.join(", ")} share: ${describeFloorWalkFailure(failure.failure)}`
+    case "leansOffFloor":
+      return `${failure.mechanism} is worked only past a door opened off this floor`
     default:
       return describeLockWalkFailure(failure)
   }
@@ -388,10 +392,45 @@ const compose = (grid: FloorGrid, lock: LockSpec, maxStates = MAX_LOCK_STATES) =
   }
 }
 
+// A MECHANISM NOTHING ON THE FLOOR WORKS is a door's opener held off the floor (floorLock's "opened off the floor").
+const offFloor = (mechanism: Mechanism): boolean =>
+  mechanism.transitions.length === 0 && (mechanism.entries ?? []).length === 0
+
+/**
+ * A LOCK MUST NOT LEAN ON A KEY EARNED OFF ITS FLOOR. The walk reads every such door open, which is the floor a
+ * player holding the key walks; this asks the other side of it: with every one of them shut, each control of the
+ * floor's own still stands somewhere a walk reaches. The first that does not, or undefined.
+ */
+export const leansOffFloor = (spec: LockSpec, maxStates = MAX_LOCK_STATES): MechanismId | undefined => {
+  const shut: LockSpec = {
+    ...spec,
+    mechanisms: Object.fromEntries(
+      Object.entries(spec.mechanisms).map(([id, mechanism]) => [
+        id,
+        offFloor(mechanism)
+          ? { ...mechanism, opens: Object.fromEntries(mechanism.states.map(state => [state, []])) }
+          : mechanism,
+      ])
+    ),
+  }
+  const found = reachableStates(shut, maxStates)
+  if (found === "tooLarge") return undefined
+  const stood = new Set(found.order.map(state => state.region))
+  return Object.keys(spec.mechanisms)
+    .sort()
+    .find(id => {
+      const mechanism = spec.mechanisms[id]
+      if (offFloor(mechanism)) return false
+      const workedAt = [...mechanism.transitions, ...(mechanism.entries ?? [])].map(move => move.at)
+      return !workedAt.some(region => stood.has(region))
+    })
+}
+
 /**
  * THE FLOOR'S LOCK WALKED: sound only when every nested lock is free by itself and the floor's own level is sound
- * with each nested lock as ground. Without nesting it is `walkLock` over the whole lock, unchanged. `undefined`
- * when the floor has no mechanism. Takes the carved grid: the lock and its nesting are read off it, not handed in.
+ * with each nested lock as ground, and no level leans on a key earned off the floor. Without nesting it is
+ * `walkLock` over the whole lock. `undefined` when the floor has no mechanism. Takes the carved grid: the lock and
+ * its nesting are read off it, not handed in.
  */
 export const walkFloorLock = (
   grid: FloorGrid,
@@ -399,13 +438,26 @@ export const walkFloorLock = (
 ): FloorWalkResult | undefined => {
   const lock = floorLock(grid)
   if (!lock) return undefined
-  if (!grid.lockNesting || grid.lockNesting.length === 0) return walkLock(lock, maxStates)
+  if (!grid.lockNesting || grid.lockNesting.length === 0) {
+    const walk = walkLock(lock, maxStates)
+    if (!walk.sound) return walk
+    const leaning = leansOffFloor(lock, maxStates)
+    return leaning ? { sound: false, failure: { type: "leansOffFloor", mechanism: leaning } } : walk
+  }
   const composed = compose(grid, lock, maxStates)
   if (!composed.ok) return { sound: false, failure: composed.failure }
   const walk = walkLock(composed.levels[composed.levels.length - 1].spec, maxStates)
-  return walk.sound
-    ? { sound: true, states: walk.states, nested: composed.counts }
-    : { sound: false, failure: composed.pooled(FLOOR, walk.failure) }
+  if (!walk.sound) return { sound: false, failure: composed.pooled(FLOOR, walk.failure) }
+  for (const { instance, spec } of composed.levels) {
+    const leaning = leansOffFloor(spec, maxStates)
+    if (!leaning) continue
+    const failure: FloorWalkFailure = { type: "leansOffFloor", mechanism: leaning }
+    return {
+      sound: false,
+      failure: instance === undefined ? composed.pooled(FLOOR, failure) : { type: "nested", instance, failure },
+    }
+  }
+  return { sound: true, states: walk.states, nested: composed.counts }
 }
 
 /** The regions no reachable state stands in, each level asked on its own; the whole lock's when nothing is nested. */
