@@ -608,11 +608,12 @@ Attach: `art/masters/camp/ref-palmGarden.webp`, `art/masters/camp/palm.webp`
 
 #### 58. `camp/seed` — Palm garden, step 1 of 7 (expert)
 
-Edit of `camp/sprout`.
+A seed is planted underground, so the step shows where it went in. Edit of `camp/bed` (see Layer sources).
 
-Attach: `art/masters/camp/ref-palmGarden.webp`, `art/masters/camp/sprout.webp`
+Attach: `art/masters/camp/ref-palmGarden.webp`, `art/masters/camp/bed.webp`
 
-> [edit] Replace the sprout with a single date seed lying on the dark soil where the sprout grew. The bed stays exactly as it is.
+> [edit] Add this, and only this: where the sprout grew, a small mound of freshly turned dark soil with a short
+> wooden marker stick pushed into it. Everything else stays exactly as it is.
 
 ### Ibis pond (`ibisPond`)
 
@@ -815,6 +816,16 @@ plus one layer per object, and an object's layer is the pixels where its step di
 without it. Where one object sits on another (the compass on the star cloth), the lower one was never
 painted under the upper one, and its layer would have a hole. A layer source fills that: an extra edit,
 never shown as a step, only cut from.
+
+### `camp/bed` — the bare palm garden bed
+
+The palm garden's base: its finds (palm seed, second palm, fig tree, lotus planter) arrive in any order, so
+none of them can be the base. Edit of `camp/sprout`.
+
+Attach: `art/masters/camp/sprout.webp`
+
+> [edit] Remove this, and only this: the small palm sprout. Where it grew, show the same dark soil and a few
+> blades of grass as around it. The bed, its stones and the leafy plant stay exactly as they are.
 
 ### `camp/starMap-cloth` — the star cloth without the compass
 
