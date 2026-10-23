@@ -194,7 +194,7 @@ steps build around it, and its "fire" step makes the flame bigger with a wider g
 
 ## The component
 
-- An organism in `src/ui/organisms/CampScene.tsx` with `CampScene.stories.tsx` next to it.
+- An atom in `src/ui/atoms/CampScene.tsx` with `CampScene.stories.tsx` next to it.
 - Props: the chapter (a `Difficulty`), the step count per spot, per entrance an optional badge and an
   open callback, and **top and bottom insets** in px (my call): the space the HUD in the sky and the
   floating "Op pad" take. The frame is fitted between the insets, so nothing occupied sits under an
