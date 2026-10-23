@@ -244,11 +244,11 @@ next slice inherits:
   entrance, and reaching another floor means reaching the staircase. A player sealed into a chamber
   does not get to walk out of it by leaving. Getting this wrong in the permissive direction hides
   exactly the traps the walk exists to find.
-- **The compiler seals what it cannot model.** A room carrying `requiredKeyIds` (a tableau wanting
-  several hieroglyphs) and a ward gate both compile to a door that never opens, because the container
-  must be sound with an off-floor key assumed shut. So **the first lock authored beside a tableau on
-  its main path will report `unsolvable`** — that is the rule working, not a bug, and it is the thing
-  most likely to surprise whoever authors lock number two.
+- **A key earned off the floor is held; any other unopened key is sealed.** An encounter's
+  `requiredKeyIds` (a tableau wanting several hieroglyphs) and a ward gate compile to a door its off-floor
+  key holds open, so the walk asks what the floor does to a player who has the key. A lock control standing
+  only past such a door leans on a key earned elsewhere and is refused (`leansOffFloor`, floorLockWalk.ts);
+  a floor key or gate key nothing on the floor opens stays shut.
 - **A guard holds the sweep's reach.** The build stops if the sweep walks zero locks while the configs
   authored a switch, so the check cannot quietly stop reaching the floor it was written for.
 - **The state space has a flat ceiling** (`MAX_LOCK_STATES`). A container is a handful of regions and
@@ -649,16 +649,16 @@ Worked from a controlling session that dispatched one implementer per item, revi
 and ran the gates. Gate after items 1(part)/2/4/5: `yarn test` **3648 passed, 299 files, exit 0** (3647
 at handover, +1 for item 1's new collision test); `yarn lint` 0 errors, 17 warnings, which is the budget.
 
-| # | State | Commit |
-| - | ----- | ------ |
-| 1 | done — refuses a third level, and the label check sees every one | `fcefc2c7` + `a66327af` |
-| 2 | done | `15e383b2` |
-| 3 | done — build guard is derived, spec pins 1 and 8 | `17276d95` |
-| 4 | done | `523e6c6e` |
-| 5 | done | `e61fc9f8` |
-| 6 | done — browser-verified | `6d504d3e` |
-| 7 | done — side-path puzzles zeroed too, see below | `854a6365` |
-| 8 | done — 2566 → 2404 lines, byte-identical | `7d289ccc` |
+| #   | State                                                            | Commit                  |
+| --- | ---------------------------------------------------------------- | ----------------------- |
+| 1   | done — refuses a third level, and the label check sees every one | `fcefc2c7` + `a66327af` |
+| 2   | done                                                             | `15e383b2`              |
+| 3   | done — build guard is derived, spec pins 1 and 8                 | `17276d95`              |
+| 4   | done                                                             | `523e6c6e`              |
+| 5   | done                                                             | `e61fc9f8`              |
+| 6   | done — browser-verified                                          | `6d504d3e`              |
+| 7   | done — side-path puzzles zeroed too, see below                   | `854a6365`              |
+| 8   | done — 2566 → 2404 lines, byte-identical                         | `7d289ccc`              |
 
 Gate with ALL EIGHT in: `yarn test` **3659 passed / 299 files**, `check-types` clean, `lint` 0 errors /
 17 warnings, `betterer` **531 unchanged**, `generate-world` **8b610d0e016ef60a1fa1526cc84bd910**
@@ -885,7 +885,7 @@ they are the same slice:
 **A third gap, found this session and not in that table:** a handle authors `in: <section address>`
 and the assembler checks it against `knownSectionAddresses`, but `doubleBack`'s mechanisms name
 REGIONS (`transitions: [{ …, at: "s1Chamber" }]`). Mechanisms must be able to point at a region, and
-that is the piece that lets a lever stand *in* one.
+that is the piece that lets a lever stand _in_ one.
 
 **THE DECISION THE NEXT SESSION NEEDS FROM THE OWNER, before planning that slice:** a connection gate
 has two ends where today's gate has one — is it key-owned (reusing `GateConfig`) or mechanism-owned?
@@ -1165,14 +1165,14 @@ tests untouched. `explorerPos` resolves standing, then position, then the entran
 
 ## The guards that now hold it, and what each promises
 
-| Guard | Promise |
-| --- | --- |
+| Guard                       | Promise                                                                                                                             |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `movementInvariant.spec.ts` | Reachable implies named; taking an offer moves you; every tap draws something. Walks hand-built fixtures per mechanic, not content. |
-| `tierFingerprints.spec.ts` | A tier's SHAPE and LOOT are stable. Which puzzle stands in a room is not. |
-| `newFamilyIsNoOp.verify.ts` | Registering a puzzle family moves neither structure nor loot. |
-| `allFamilyMeta.spec.ts` | A family cannot join a pool with a loot signature that would displace it. |
-| `boardIndexOrder.spec.ts` | A higher tier never takes a board ordinal before a lower one. |
-| `gateBoundary.spec.ts` | A gate sits on the boundary it names — `it.fails` for the one case where it does not. |
+| `tierFingerprints.spec.ts`  | A tier's SHAPE and LOOT are stable. Which puzzle stands in a room is not.                                                           |
+| `newFamilyIsNoOp.verify.ts` | Registering a puzzle family moves neither structure nor loot.                                                                       |
+| `allFamilyMeta.spec.ts`     | A family cannot join a pool with a loot signature that would displace it.                                                           |
+| `boardIndexOrder.spec.ts`   | A higher tier never takes a board ordinal before a lower one.                                                                       |
+| `gateBoundary.spec.ts`      | A gate sits on the boundary it names — `it.fails` for the one case where it does not.                                               |
 
 ## Corrections to earlier sections
 
@@ -1189,7 +1189,7 @@ tests untouched. `explorerPos` resolves standing, then position, then the entran
   206 floors yields ZERO one-way mouths.** Everything topology is develop-journey only. That is why the
   gate's family removal, the `xobstacle:` address change and the board reshuffle were all free.
 - **Board ordinals were dealt alphabetically world-wide**, and `expert < junior < master < starter <
-  wizard`, so a master journey's starter-difficulty room took an ordinal before every starter room.
+wizard`, so a master journey's starter-difficulty room took an ordinal before every starter room.
   Fixed by dealing in tier order; 561 of 1516 rooms (37%) changed board once.
 
 ## How this session worked, since it is the part that generalises

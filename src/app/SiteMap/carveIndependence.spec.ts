@@ -162,8 +162,8 @@ describe("a save survives the floor being carved somewhere else", () => {
    */
   it("keeps two floors that share a section hash apart", () => {
     const tomb = "starter_treasure_tomb"
-    const ground = gridFor(tomb, 1, 0)
-    const upstairs = gridFor(tomb, 1, 1)
+    const ground = gridFor(tomb, 2, 0)
+    const upstairs = gridFor(tomb, 2, 1)
 
     const [r, c] = positions(ground).find(at => cellSlot(ground, at[0], at[1]))!
     const shared = sectionOf(ground, [r, c])

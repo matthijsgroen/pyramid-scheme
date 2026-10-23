@@ -23,16 +23,16 @@ Delete this file when step 6 lands.
 
 Read against the fixture in `src/game/lockWalk.spec.ts`, which is the example in its current form:
 
-| The example has                                             | Today                                                                      |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------- |
-| six named regions                                           | sections can be named — `SubSection.label` gives a stable address          |
-| three levels of nesting, and branches that rejoin           | `SideSection.sideSections?: SubSection[]` is two levels, single-parent     |
-| gates whose two ends are both named regions                 | `SubSection.gate` belongs to a section: it joins that section to elsewhere |
+| The example has                                             | Today                                                                                                                                                                                  |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| six named regions                                           | sections can be named — `SubSection.label` gives a stable address                                                                                                                      |
+| three levels of nesting, and branches that rejoin           | `SideSection.sideSections?: SubSection[]` is two levels, single-parent                                                                                                                 |
+| gates whose two ends are both named regions                 | `SubSection.gate` belongs to a section: it joins that section to elsewhere                                                                                                             |
 | `greenRight` starting open, then shutting behind the player | **done** for a gate a lever owns — `handles[].starts` hangs the lever on a side and that side's gates are open on arrival, the carve unchanged. A free-standing gate still starts shut |
-| gates owned by a mechanism, several states each opening one | **done, and each state opens a SET** — `MechanismRecord` declares `states`/`initial`/`returnsToInitial`, and `floorLock` compiles the machine straight off it |
-| two levers (`S1`, `S2`)                                     | **done** — `handle` is a family, `FloorConfig.handles` authors it, two on one floor are carved and told apart |
-| two one-way drops                                           | **done** — `FloorConfig.oneWays` carves a directed passage between two named sections; art is still a plain corridor, and only the develop journey may stand one |
-| a mark pairing each lever to the doors it drives            | **done** — `RoomCell.mark`, one glyph on one ground worn by the lever and every gate it owns |
+| gates owned by a mechanism, several states each opening one | **done, and each state opens a SET** — `MechanismRecord` declares `states`/`initial`/`returnsToInitial`, and `floorLock` compiles the machine straight off it                          |
+| two levers (`S1`, `S2`)                                     | **done** — `handle` is a family, `FloorConfig.handles` authors it, two on one floor are carved and told apart                                                                          |
+| two one-way drops                                           | **done** — `FloorConfig.oneWays` carves a directed passage between two named sections; art is still a plain corridor, and only the develop journey may stand one                       |
+| a mark pairing each lever to the doors it drives            | **done** — `RoomCell.mark`, one glyph on one ground worn by the lever and every gate it owns                                                                                           |
 
 The walk itself needs nothing: `LockSpec.oneWays` and `movesFrom`'s one-way step already exist and
 are already consumed. What is missing is every way of _producing_ a lock.
@@ -150,10 +150,10 @@ things that never have to agree.
 
 #### Regions are core. Gates and mechanisms are the mod.
 
-| Authoring                                     | Owner            |
-| --------------------------------------------- | ---------------- |
+| Authoring                                          | Owner            |
+| -------------------------------------------------- | ---------------- |
 | regions, their connections, their content appetite | core, structural |
-| gates, switches, one-ways                     | topology mod     |
+| gates, switches, one-ways                          | topology mod     |
 
 Not because of locks. **Four of the six catalogue features act on regions**: a lock gates the
 boundaries between them, `waterline` floods one from within, `cosmicDust` re-lays which corridors
@@ -280,11 +280,11 @@ that can never open.
 
 So three brackets, which must not be confused:
 
-| Question                | Bracket                                                              |
-| ----------------------- | -------------------------------------------------------------------- |
-| Is the lock sound?      | ward keys assumed **shut** — keeps the proof local to the container  |
-| Is this loot reachable? | authored doors assumed **open** — reachable at any point counts      |
-| Is this region reached? | mechanism gates use **the walk**; ward and off-floor keys assumed openable |
+| Question                | Bracket                                                                                                                                              |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Is the lock sound?      | keys earned off the floor (ward gates, a tableau's hieroglyphs) assumed **held**; a lock control standing only past one is refused (`leansOffFloor`) |
+| Is this loot reachable? | authored doors assumed **open** — reachable at any point counts                                                                                      |
+| Is this region reached? | mechanism gates use **the walk**; ward and off-floor keys assumed openable                                                                           |
 
 The third is the new one and it sits between the other two. `junior_2` L2 F0's deliberately
 unreachable ward pocket stays legal, because its key is earned elsewhere in the world; a region behind

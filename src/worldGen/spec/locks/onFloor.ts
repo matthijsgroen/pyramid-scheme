@@ -39,6 +39,26 @@ export const lockOnFloor = (name: LockName): Pick<FloorConstraint, "locks" | "re
   realisations: LOCK_BINDINGS[name],
 })
 
+/** A catalogue lock standing between the floor's entrance and everything the floor holds: every region but its way
+ * out takes nothing, so the floor's own content — a tomb's tableaus, whose hieroglyphs are earned off the floor —
+ * lies past the lock and no control of the lock stands behind it. */
+export const lockBeforeFloorContent = (name: LockName): Pick<FloorConstraint, "locks" | "realisations"> => {
+  const lock = catalogueLock(name)
+  return {
+    locks: [
+      {
+        lock: {
+          ...lock,
+          regions: Object.fromEntries(
+            Object.keys(lock.regions).map(region => [region, { takes: region === lock.out ? "free" : "nothing" }])
+          ),
+        },
+      },
+    ],
+    realisations: LOCK_BINDINGS[name],
+  }
+}
+
 /** A catalogue lock on the main floor of a pyramid. */
 export const lockOnMainFloor = (
   name: LockName,

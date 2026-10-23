@@ -163,9 +163,12 @@ const authoredJourneys: AuthoredJourney[] = [
     journeyLength: "short",
     entryLock: { count: 4 },
     background: { time: "night" },
+    // The cave has no board; the cavern's is junior-sized, the tier + 1 step.
+    levels: [{ exterior: "caveMouth", board: false }, { exterior: "cavern" }],
     levelSettings: {
-      startFloorCount: 3,
-      startNumberRange: [1, 6],
+      startFloorCount: 4,
+      startNumberRange: [1, 5],
+      blocksOpen: [0.5, 0.5],
     },
   },
 

@@ -98,6 +98,9 @@ const FLOORS_WITH_MECHANICS = [
   "expert_4 level 3 floor 0",
   "expert_4 level 4 floor 0",
   "expert_4 level 5 floor 0",
+  "starter_treasure_tomb level 1 floor 0",
+  "starter_treasure_tomb level 2 floor 1",
+  "starter_treasure_tomb level 2 floor 3",
 ]
 // The floors holding a one-way drop with every mod.
 const FLOORS_WITH_DROPS = [
@@ -113,6 +116,8 @@ const FLOORS_WITH_DROPS = [
   "expert_3 level 2 floor 0",
   "expert_3 level 5 floor 0",
   "expert_4 level 4 floor 0",
+  "starter_treasure_tomb level 2 floor 1",
+  "starter_treasure_tomb level 2 floor 3",
 ]
 // The floors standing a mechanic another mod realises: a procession door is the puzzle mod's, so its tiles, its
 // door and its sequence stay standing with the topology mod off.

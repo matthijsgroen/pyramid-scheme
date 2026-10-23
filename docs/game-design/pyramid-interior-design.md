@@ -367,6 +367,32 @@ All mechanics active. Up to 3 floors. Floor 2 carries map pieces for wizard_b; f
 
 ## 8. Tomb interior design
 
+### Two levels — the cave, then the cavern (starter tomb)
+
+The starter tomb is a journey of **two levels, two nodes on its map** (`TOMB_STRUCTURES` `levelCount: 2`,
+`docs/superpowers/specs/2026-10-22-tomb-redesign-design.md`). The other tiers' tombs are still one level, the
+cavern on its own, until their own releases add a cave.
+
+- **Level 1, the cave.** Exterior: a desert ridge with a cave mouth and an Enter button, no board
+  (`levels[0] = { exterior: "caveMouth", board: false }` in `journeys.ts`). One floor in the `cave` tileset,
+  authored with the ordinary site vocabulary (`journey("starter_treasure_tomb").pyramid("first", …)` in
+  `src/worldGen/spec/starter.ts`): three starter puzzles on the main path, the `caveLevers` floor lock (levers and
+  doors, a junior-weight step up), `loot: false` on the whole site. The player leaves by the pillar at the main
+  path's end, and finishing the cave opens the cavern's exterior with no slide in between.
+- **Level 2, the cavern.** Exterior: a sunlit cavern with the pyramid standing in it, in front of a
+  junior-sized board (`levels[1] = { exterior: "cavern" }`). Inside, the tomb proper as described below: four
+  floors in the starter tileset, each with its two tableaus, its treasure and its ward key. Between the two
+  tableaus of every floor stands **one junior puzzle** (`nodes: [{ where: 2, encounter: "puzzle", difficulty:
+"junior", loot: false }]`), drawn on the floor's own walls; floor 1 ends with Ipi's room after the second
+  tableau. A completed tomb resumes at the cavern.
+- **Floor locks in the cavern**: `pitStair` on floor 2 (junior weight) and `throwItBack` on floor 4 (the
+  capstone, expert weight), each standing between the floor's entrance and its tableaus
+  (`lockBeforeFloorContent` in `src/worldGen/spec/locks/onFloor.ts`: every lock region but its way out takes
+  nothing). The lock walk reads a tableau's hieroglyph door and a ward gate as opened off the floor, so the exit
+  past them is reachable; a lock whose own control stood behind one would lean on a key earned elsewhere, and the
+  walk refuses it (`leansOffFloor`).
+- **The cave ends at its pillar, not a chest**: a lootless floor with no main-end reward has no goal chest.
+
 ### Structure — one persistent multi-floor site, same shape as a pyramid interior
 
 A tomb is **structurally the same as a pyramid interior**: a `SiteConfig[]` of connected floors, generated once, revisited over time — not a small site replayed N times with reshuffled content. Floor `T` corresponds to treasure `T` (a tomb with 4 treasures has 4 floors).
@@ -376,7 +402,7 @@ A tomb is **structurally the same as a pyramid interior**: a `SiteConfig[]` of c
 ```
 Entrance ── side path ── [fez shop] (always open, no gate)
     │
-    └── main path ── N tableau rooms ──┬── [gate: tomb-key, requires treasure T]
+    └── main path ── tableau rooms (and authored rooms between them) ──┬── [gate: tomb-key, requires treasure T]
                                         │        └── stairhead → floor T+1 entrance
                                         └── [crocodile capstone] ── [chest: treasure T] (── exit, floor 1 only)
 ```

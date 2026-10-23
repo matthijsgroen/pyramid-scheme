@@ -37,7 +37,7 @@ export const PYRAMID_STRUCTURES: PyramidStructure[] = [
 ]
 
 export const TOMB_STRUCTURES: TombStructure[] = [
-  { id: "starter_treasure_tomb", tier: "starter", floorCount: 4 },
+  { id: "starter_treasure_tomb", tier: "starter", floorCount: 4, levelCount: 2 },
   { id: "junior_treasure_tomb", tier: "junior", floorCount: 6 },
   { id: "expert_treasure_tomb", tier: "expert", floorCount: 4 },
   { id: "expert_treasure_tomb_b", tier: "expert", floorCount: 4 },

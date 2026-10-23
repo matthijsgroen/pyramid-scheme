@@ -5,6 +5,16 @@ there was. `PyramidExpedition.tsx` branches on `isTomb` for the intro conversati
 So a sealed tomb is opened by solving a pyramid of numbers standing in front of it, which is the one place
 in the game where the fiction and the board have no relationship at all.
 
+The starter tomb has two exteriors, one per level (`Journey.levels` in `src/data/journeys.ts`):
+
+- **Cave mouth** (level 1): a desert ridge with a cave in it and an Enter button. No board — the cave is the
+  way in.
+- **Cavern** (level 2): a vast cave with sunlight falling in and the pyramid standing in it, in front of a
+  junior-sized board. Finishing the cave lands here with no slide; a completed tomb resumes here.
+
+The board still stands in front of the cavern, so the question below is unchanged for it. The other eight
+tombs still open on the night desert and the board.
+
 Nine tombs use it. It is worth designing.
 
 ## A threshold is a different job from a room
