@@ -368,7 +368,8 @@ Edit of `camp/breadOven`.
 Attach: `art/masters/camp/ref-cooking.webp`, `art/masters/camp/breadOven.webp`
 
 > [edit] Remove this, and only this: the domed mud-brick bread oven with its chimney, the fire in its mouth and the firewood underneath. Where it stood, show the #ff00ff background or
-> whatever was behind it.
+> whatever was behind it. The round bread board with the two flatbreads leaned against the oven: keep its size and the spot
+> where it stands on the ground, but tilt it back so it leans against the right side of the spice rack.
 
 #### 30. `camp/spiceRack` — Cooking corner, step 2 of 6 (junior)
 
