@@ -143,7 +143,8 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["starter", "map", { base: true }],
       ["expert", "table", { base: true }],
       ["expert", "compass"],
-      ["master", "starMap"],
+      // The star cloth lies on the table under the map and the compass.
+      ["master", "starMap", { behind: "compass" }],
       ["master", "scrollCase"],
       ["wizard", "astrolabe", { on: "starMap" }],
       ["wizard", "reedGlobe"],
