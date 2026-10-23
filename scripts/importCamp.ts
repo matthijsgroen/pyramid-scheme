@@ -28,7 +28,7 @@
  * follow the base of an object seen from 3/4 above; a band under that base can. Scenery is ground and sky,
  * not something standing on it, so it casts none.
  */
-import { mkdirSync } from "node:fs"
+import { existsSync, mkdirSync } from "node:fs"
 import { dirname, join, resolve } from "node:path"
 import { fileURLToPath, pathToFileURL } from "node:url"
 import sharp from "sharp"
@@ -47,9 +47,16 @@ export type CampImport = {
   shadowSize: number
   outRoot: string
   masterRoot: string
+  /** A shipped piece painted in behind this one, in the same frame: the spot's first step standing in every later one. */
+  behind?: string
 }
 
 const SCENERY = new Set(["sand", "dunes", "pyramid", "pyramidGold"])
+
+/** The donkey's stake is its own picture, so no edit has to keep it: every later step stands in front of it. */
+export const BEHIND: Record<string, string> = Object.fromEntries(
+  ["donkey", "saddlebags", "cart", "donkeyBlanket", "secondDonkey", "paintedCart"].map(step => [step, "halter"])
+)
 
 /** The blur's spread as a share of the piece's longest side, so a shadow looks the same at any import size. */
 const SHADOW_BLUR = 0.008
@@ -184,7 +191,17 @@ const writeShadow = async (piece: Buffer, path: string, size: number) => {
     .toFile(path)
 }
 
-export const importCamp = async ({ file, name, key, tolerance, size, shadowSize, outRoot, masterRoot }: CampImport) => {
+export const importCamp = async ({
+  file,
+  name,
+  key,
+  tolerance,
+  size,
+  shadowSize,
+  outRoot,
+  masterRoot,
+  behind,
+}: CampImport) => {
   mkdirSync(outRoot, { recursive: true })
   mkdirSync(masterRoot, { recursive: true })
   const master = join(masterRoot, `${name}.webp`)
@@ -193,10 +210,20 @@ export const importCamp = async ({ file, name, key, tolerance, size, shadowSize,
   if (resolve(file) !== resolve(master)) await sharp(file).webp({ quality: 92 }).toFile(master)
   const { data, info } = await sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
   if (key !== "none") keyUnmix(data, info.width, info.height, key, tolerance)
-  const piece = await sharp(data, { raw: { width: info.width, height: info.height, channels: 4 } })
+  const keyed = await sharp(data, { raw: { width: info.width, height: info.height, channels: 4 } })
     .resize(size, size, { fit: "inside", withoutEnlargement: true })
     .png()
     .toBuffer()
+  const under = behind && join(outRoot, `${behind}.webp`)
+  if (under && !existsSync(under)) console.warn(`${behind} is not imported yet; ${name} lands without it`)
+  const piece =
+    under && existsSync(under)
+      ? await sharp(under)
+          .resize((await sharp(keyed).metadata()).width)
+          .composite([{ input: keyed }])
+          .png()
+          .toBuffer()
+      : keyed
   await sharp(piece).webp({ quality: 90 }).toFile(out)
   if (key === "none" || SCENERY.has(name)) return { out, master }
   const shadow = join(outRoot, `${name}-shadow.webp`)
@@ -225,6 +252,7 @@ const main = async () => {
     shadowSize: Number(arg("shadow-size", "256")),
     outRoot: join(ROOT, "src", "assets", "camp"),
     masterRoot: join(ROOT, "art", "masters", "camp"),
+    behind: BEHIND[name],
   })
   const { width, height } = await sharp(out).metadata()
   console.log(`${out}  ${width}x${height}\nmaster ${master}${shadow ? `\nshadow ${shadow}` : ""}`)

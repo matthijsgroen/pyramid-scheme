@@ -413,7 +413,7 @@ Edit of `camp/secondDonkey`.
 
 Attach: `art/masters/camp/ref-donkey.webp`, `art/masters/camp/secondDonkey.webp`
 
-> [edit] Remove this, and only this: a second grey donkey lying down on the other side. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the brown donkey lying down in front of the cart. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 #### 35. `camp/cart` — Donkey, step 4 of 7 (expert)
@@ -445,12 +445,18 @@ Attach: `art/masters/camp/ref-donkey.webp`, `art/masters/camp/saddlebags.webp`
 
 #### 38. `camp/halter` — Donkey, step 1 of 7 (junior)
 
-Edit of `camp/donkey`.
+Edit of `camp/paintedCart`, for its frame: the stake is its own picture, and `yarn import-camp` paints it in
+behind every later donkey step (`BEHIND` in `scripts/importCamp.ts`). So it stands where nothing of the
+later steps covers its top: behind the grey donkey's back, right of the cart's front post. Import it before
+the later steps; re-import those from their masters once it lands.
 
-Attach: `art/masters/camp/ref-donkey.webp`, `art/masters/camp/donkey.webp`
+Attach: `art/masters/camp/ref-donkey.webp`, `art/masters/camp/paintedCart.webp`
 
-> [edit] Remove this, and only this: a grey donkey lying down, tied to the stake. Where it stood, show the #ff00ff background or
-> whatever was behind it.
+> [edit] Remove everything in the picture: the cart, both donkeys, the blanket, the bag and the harness.
+> Paint only one thing in the empty space: a rough wooden stake, about as tall as the grey donkey's ears,
+> driven into the ground just behind where the grey donkey's back was, right of where the cart's front post
+> stood, with a coiled rope halter hanging from its top. Same scale as the picture, same flat #ff00ff
+> background everywhere else.
 
 ### Camel (`camel`)
 

@@ -171,4 +171,23 @@ describe("importCamp", () => {
     expect((await importCamp({ ...options(source), key: "none" })).shadow).toBeUndefined()
     expect(existsSync(join(dir, "assets", "chest-shadow.webp"))).toBe(false)
   })
+
+  it("paints the behind piece in under the new step, where the step is empty", async () => {
+    const stake = join(dir, "stake.png")
+    await sharp({ create: { width: 400, height: 400, channels: 3, background: "#ff00ff" } })
+      .composite([
+        { input: { create: { width: 20, height: 300, channels: 3, background: "#0000ff" } }, left: 40, top: 50 },
+      ])
+      .png()
+      .toFile(stake)
+    await importCamp({ ...options(stake), name: "stake" })
+
+    const { out } = await importCamp({ ...options(await magentaWithRedSquare()), behind: "stake" })
+
+    const { data, info } = await sharp(out).raw().toBuffer({ resolveWithObject: true })
+    const at = (x: number, y: number) => [...data.subarray((y * info.width + x) * 4, (y * info.width + x) * 4 + 4)]
+    expect(at(50, 200)).toEqual([0, 0, 255, 255])
+    expect(at(200, 200)[0] - at(200, 200)[2]).toBeGreaterThan(240)
+    expect(at(300, 50)[3]).toBe(0)
+  })
 })
