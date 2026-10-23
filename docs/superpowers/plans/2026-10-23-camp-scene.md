@@ -1,0 +1,256 @@
+# Camp Scene Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** A `CampScene` component that draws the camp for any chapter, any step counts and any container size, fully testable in Storybook before integration.
+
+**Architecture:** A pure `layoutCamp()` turns (container size, insets, chapter, step counts, catalogue) into placed pieces, glows, pyramids and the horizon. `CampScene` measures its container, calls it, and renders HTML layers positioned with CSS. The spot/step/piece catalogue is data; tests use a made-up catalogue.
+
+**Tech Stack:** React, TypeScript, Tailwind + plain CSS, Vitest + Testing Library (jsdom), Storybook (react-vite), react-i18next.
+
+**Spec:** `docs/superpowers/specs/2026-10-23-camp-scene-design.md`. Reference layout: the `layout()` function in the [Kamp scène prototype](https://claude.ai/artifact/ASVzctuASBaLPYP3fopob5).
+
+## Global Constraints
+
+- Chapters are `Difficulty` (`src/data/difficultyLevels.ts`); camp.md's "beginner" is `starter`.
+- No placeholders in the game: a spot with 0 steps, or of a later chapter, is not drawn.
+- No baked light: every glow comes from code.
+- An occupied spot is never cropped, and nothing occupied sits inside the top/bottom insets.
+- Same spots in the same order on every device; only spacing differs.
+- Every glow holds still under `prefers-reduced-motion: reduce`.
+- The component takes props only: no game-state hooks, no storage, no `env()` reads.
+- Starting numbers (units of object size `u`): spacing 1.15–2.3; row gap 0.75–5 (back gap ×0.85); depth 0.78 / 0.89 / 1; spread 0.88 / 0.95 / 1; min sky 1.7; far sand ≥ 0.5; bottom pad 0.35; camera height 4.2 / 4.8 / 5.4 / 6.0 / 6.6; frame side margin 0.65; lowest horizon 0.27 of the inset-free height.
+- No tests pin the authored catalogue (`feedback_no_tests_on_authored_content`); tests use a made-up catalogue.
+- No duration assertions; count calls instead.
+- Comments say what holds and why, never history.
+
+## Review Focus
+
+1. **Zero-size container on the first render** (before the `ResizeObserver` fires): the scene renders nothing and does not throw. Test in Task 3.
+2. **Insets larger than the container** (a landscape phone with a big bottom inset): the layout clamps to a minimum content height and does not return NaN or negative sizes. Test in Task 2.
+3. **Step count above what the chapter allows, or negative**: clamped to 0..available. Test in Task 2.
+4. **Extreme aspect ratios** (ultrawide 1600×700, narrow 320×900): the frame fits, spacing stays within bounds, no overlap. Test in Task 2.
+5. **Chapter goes down** (a story switching wizard→starter): later-chapter spots disappear, and nothing stale stays on screen. Test in Task 3.
+
+---
+
+## File Structure
+
+- `src/ui/atoms/campScene/campTypes.ts`: the catalogue types and the `CampLayout` result type.
+- `src/ui/atoms/campScene/campCatalogue.ts`: the authored data (12 spots, steps, pieces, fixed objects, lights).
+- `src/ui/atoms/campScene/campLayout.ts`: `layoutCamp()` and `CAMP_LAYOUT_PARAMS`. Pure.
+- `src/ui/atoms/campScene/campLayout.spec.ts`
+- `src/ui/atoms/CampScene.tsx`: the component. An **atom**: it renders no other `src/ui` component (`docs/instructions/storybook.md`). The spec says organism; the repo's tier rule wins, and the spec gets fixed in Task 1.
+- `src/ui/atoms/CampScene.css`: glow keyframes and the reduced-motion rule.
+- `src/ui/atoms/CampScene.spec.tsx`
+- `src/ui/atoms/CampScene.stories.tsx`
+- `public/locales/{en,nl}/common.json`: `camp.entrance.*` keys.
+- `src/assets/camp/`: empty for now; art lands here later.
+
+---
+
+### Task 1: Catalogue types and data
+
+**Files:**
+
+- Create: `src/ui/atoms/campScene/campTypes.ts`, `src/ui/atoms/campScene/campCatalogue.ts`
+- Modify: `docs/superpowers/specs/2026-10-23-camp-scene-design.md` (organism → atom, path `src/ui/atoms/CampScene.tsx`)
+
+**Interfaces:**
+
+- Produces:
+
+```ts
+export type CampRow = 0 | 1 | 2 // back, middle, front
+export type CampSpotId =
+  | "fire"
+  | "sleeping"
+  | "water"
+  | "cooking"
+  | "donkey"
+  | "camel"
+  | "mapTable"
+  | "palmGarden"
+  | "ibisPond"
+  | "lookout"
+  | "godStatues"
+  | "starCanopy"
+export type CampLight = {
+  dx: number
+  dy: number
+  radius: number
+  color: string
+  mode: "flicker" | "breathe"
+  strength: number
+}
+export type CampPiece = {
+  id: string
+  art?: string
+  dx: number
+  dy: number
+  width: number
+  height: number
+  replaces?: string[]
+  light?: CampLight
+}
+export type CampStep = { chapter: Difficulty; pieces: CampPiece[] }
+export type CampSpot = { id: CampSpotId; row: CampRow; slot: number; steps: CampStep[] }
+export type CampFixedId = "chest" | "window" | "campfire"
+export type CampFixed = { id: CampFixedId; row: CampRow; slot: number; piece: CampPiece }
+export type CampCatalogue = { spots: CampSpot[]; fixed: CampFixed[] }
+export const CAMP_CATALOGUE: CampCatalogue
+```
+
+`dx`, `dy`, `width`, `height` and `radius` are in object-size units, relative to the spot's anchor (bottom-centre).
+
+- [ ] **Step 1: Write `campTypes.ts`** with the types above.
+- [ ] **Step 2: Write `CAMP_CATALOGUE`.** Spots, rows and slots come from the spec's slot table; steps in order come from `docs/game-design/camp.md` "Camp loot" (one piece per step, `art` undefined). Fixed objects: chest (front, −1), window (back, +1), campfire (middle, 0) with a flicker light (radius 2.1, strength 0.75). The fire pit's "fire" step carries a bigger light (radius 2.9), the clay oven, fire bowl and signal fire carry their own small lights, and the window and chest carry breathe lights. Take the values from the prototype's `layout()`. The sleeping place's tent `replaces` the windbreak.
+- [ ] **Step 3: Fix the spec's tier.** Change it to atom at `src/ui/atoms/CampScene.tsx`.
+- [ ] **Step 4: `yarn check-types`.** Expected: no errors.
+- [ ] **Step 5: Commit** `feat: camp scene catalogue`
+
+### Task 2: `layoutCamp()`
+
+**Files:**
+
+- Create: `src/ui/atoms/campScene/campLayout.ts`, `src/ui/atoms/campScene/campLayout.spec.ts`
+
+**Interfaces:**
+
+- Consumes: Task 1 types.
+- Produces:
+
+```ts
+export type CampLayoutInput = {
+  width: number
+  height: number
+  insets: { top: number; bottom: number }
+  chapter: Difficulty
+  steps: Partial<Record<CampSpotId, number>>
+  catalogue: CampCatalogue
+}
+export type PlacedPiece = {
+  key: string
+  spot: CampSpotId | CampFixedId
+  piece: CampPiece
+  x: number
+  y: number
+  scale: number
+} // px, anchor bottom-centre; scale = u × depth
+export type PlacedGlow = {
+  key: string
+  x: number
+  y: number
+  radius: number
+  color: string
+  mode: "flicker" | "breathe"
+  strength: number
+}
+export type PlacedPyramid = { x: number; height: number; golden: boolean }
+export type CampLayout = {
+  unit: number
+  spacing: number
+  rowGap: number
+  horizon: number
+  frame: { x: number; y: number; width: number; height: number }
+  pieces: PlacedPiece[] // sorted back to front by y
+  glows: PlacedGlow[]
+  pyramids: PlacedPyramid[]
+}
+export const CAMP_LAYOUT_PARAMS: {
+  /* the Global Constraints numbers */
+}
+export const layoutCamp: (input: CampLayoutInput) => CampLayout | null // null when width or height ≤ 0
+export const fullSteps: (catalogue: CampCatalogue, chapter: Difficulty) => Record<CampSpotId, number> // every step up to and including chapter
+```
+
+The algorithm is the prototype's `layout()`, with insets: `Hc = height − top − bottom`, clamped to a minimum of `1u`-worth so it is never ≤ 0. `u = min(Hc / max(cameraHeight[chapter], minHeight), width / (span × spacingMin + 1.3))`. Spacing and row gap are solved from what is left and clamped. The horizon is `min(naturalHorizon, top + max(Hc × 0.27, skyMin × u))`. Pyramid `i` sits at `frame.x + frame.width × (0.1 + 0.2i)`, with height `(0.55 + 0.22i)u`; pyramid 4 is golden. A step count is clamped to `0..steps available up to chapter`. The pieces of steps `1..n` are drawn, minus those listed in a later piece's `replaces`.
+
+- [ ] **Step 1: Write the failing tests** against a made-up two-row catalogue built in the spec file (spots in two chapters, one piece with `replaces`, one piece with a light):
+  - `it("returns null for a zero-size container")`
+  - `it("draws no spot with zero steps and no spot of a later chapter")`
+  - `it("clamps step counts to what the chapter allows")`: steps `{a: 99}` at its chapter equals full; `{a: -3}` draws nothing.
+  - `it("hides a piece a later step replaces")`
+  - `it("keeps every piece inside the container and outside the insets")`: for sizes `[390×844, 820×1180, 1000×836, 1600×700, 320×900]` × every chapter, each piece's box (`x ± width×scale/2`, `y − height×scale .. y`) lies within `[0,width] × [top, height−bottom]`.
+  - `it("keeps spacing within its bounds and never overlaps a row")`: same sweep. `spacing ∈ [1.15, 2.3]`, and neighbours in a row are at least `scale` apart.
+  - `it("keeps the horizon at or above 27% of the inset-free height")`
+  - `it("keeps each spot's left-to-right order when the chapter rises")`
+  - `it("zooms out as the chapter rises")`: `unit` is non-increasing from starter to wizard at 390×844 and at 1000×836.
+  - `it("gives one pyramid per chapter, the fifth golden")`
+  - `it("survives insets larger than the container")`: 400×300 with insets 200/200 returns finite, positive numbers.
+  - `it("fills a chapter with every step up to it")`: `fullSteps` on the made-up catalogue.
+- [ ] **Step 2: `yarn test src/ui/atoms/campScene/campLayout.spec.ts`.** Expected: FAIL (module missing).
+- [ ] **Step 3: Implement `layoutCamp`.**
+- [ ] **Step 4: Run the tests again.** Expected: PASS.
+- [ ] **Step 5: Commit** `feat: camp scene layout`
+
+### Task 3: `CampScene` component
+
+**Files:**
+
+- Create: `src/ui/atoms/CampScene.tsx`, `src/ui/atoms/CampScene.css`, `src/ui/atoms/CampScene.spec.tsx`
+- Modify: `public/locales/en/common.json`, `public/locales/nl/common.json`
+
+**Interfaces:**
+
+- Consumes: `layoutCamp`, `CAMP_CATALOGUE`, Task 1 types.
+- Produces:
+
+```ts
+export type CampEntrance = { badge?: number; onOpen: () => void }
+export type CampSceneProps = {
+  chapter: Difficulty
+  steps: Partial<Record<CampSpotId, number>>
+  insets?: { top: number; bottom: number } // default 0/0
+  entrances?: { chest?: CampEntrance; window?: CampEntrance & { label?: string }; mapTable?: CampEntrance }
+  catalogue?: CampCatalogue // default CAMP_CATALOGUE; tests pass a made-up one
+  className?: string
+}
+export const CampScene: (props: CampSceneProps) => JSX.Element
+```
+
+Layers, back to front: sky (CSS gradient, stars, moon, purple haze at the horizon), pyramids, ground with two dune strips, pieces, a night tint (`mix-blend-mode: multiply`), glows (radial gradients, `mix-blend-mode: screen`), entrance buttons. A piece with `art` renders an `<img alt="">`; one without renders a stand-in box carrying the piece id as text. Entrances are real `<button>`s at least 44×44 px, with a visible label (`t("camp.entrance.collection")`, `camp.entrance.mosaic`, `camp.entrance.journeys`) and a badge when one is given. The map-table entrance shows only when the map table has ≥ 1 step. Size comes from a `ResizeObserver` on the root; before the first measurement nothing but the sky renders.
+
+Glow motion is CSS only: `.camp-glow--flicker` runs two keyframe animations with unrelated durations on scale and opacity; `.camp-glow--breathe` runs one slow one. `@media (prefers-reduced-motion: reduce)` sets `animation: none` on both.
+
+- [ ] **Step 1: Write the failing tests** (jsdom; stub `ResizeObserver` to report a fixed size; `t` is the identity mock the suite already uses):
+  - `it("renders only the sky before it has been measured")`
+  - `it("opens the collection from the chest")`: click the button named `camp.entrance.collection`; `onOpen` is called once.
+  - `it("shows a badge only when one is given")`
+  - `it("offers the journeys entrance only once the map table stands")`: absent at `mapTable: 0`, present at `mapTable: 1`.
+  - `it("draws a stand-in naming a piece without art")`
+  - `it("drops later-chapter spots when the chapter goes down")`: rerender wizard → starter with a full-wizard `steps`; a wizard-only piece's stand-in is gone.
+- [ ] **Step 2: `yarn test src/ui/atoms/CampScene.spec.tsx`.** Expected: FAIL.
+- [ ] **Step 3: Implement `CampScene`, the CSS and the locale keys.** en: Collection / Mosaic / All journeys. nl: Verzameling / Mozaïek / Alle reizen.
+- [ ] **Step 4: Run the tests again, plus `yarn test src/i18n/keys.spec.ts`.** Expected: PASS.
+- [ ] **Step 5: Commit** `feat: camp scene component`
+
+### Task 4: Stories
+
+**Files:**
+
+- Create: `src/ui/atoms/CampScene.stories.tsx`
+
+**Interfaces:**
+
+- Consumes: `CampScene`, `CAMP_CATALOGUE`.
+
+Fixtures are step counts only. "Full up to chapter X" is `fullSteps(CAMP_CATALOGUE, X)` from Task 2, so stories neither copy authored numbers nor hold logic of their own. Container sizes come from a decorator wrapping the scene in a fixed `width × height` box. `layout: "fullscreen"`.
+
+- [ ] **Step 1: Write the stories:**
+  - `Playground`: controls for `chapter` (select) and each spot's step count; insets 56/96.
+  - `StarterEmpty`, `StarterFull`, `JuniorFull`, `ExpertFull`, `MasterFull`, `WizardFull`.
+  - `PartlyBuilt`: expert, with a handful of spots part-way.
+  - `Phone` 390×844, `Tablet` 820×1180, `DesktopPane` 1000×836, `Ultrawide` 1600×700, all `WizardFull`.
+  - `WithBadges`: chest badge 3, window label "61/252".
+- [ ] **Step 2: `yarn build-storybook`.** Expected: builds without errors. Then open `yarn storybook`, look at each story at phone and desktop sizes, and screenshot `Phone` and `DesktopPane` (`feedback_verify_by_looking`).
+- [ ] **Step 3: `yarn lint && yarn check-types`.** Expected: clean.
+- [ ] **Step 4: Commit** `feat: camp scene stories`
+
+---
+
+## Not in this plan
+
+- Art generation and import (`src/assets/camp/`, `art/masters/camp/`): a separate art brief. The catalogue's `art` fields fill in as pieces land.
+- The rule that no stand-in ships to players: it belongs to the integration plan, which wires the scene into the home screen.
+- HUD, "Op pad", "Alle reizen", unpacking.
