@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react"
+import type { CSSProperties, ReactNode } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { campArt } from "./campScene/campArt"
 import { CAMP_CATALOGUE } from "./campScene/campCatalogue"
@@ -129,19 +129,29 @@ const SelfShade = ({
   )
 }
 
+/**
+ * A piece and everything drawn with it, as one layer that fades. A step that replaces another mounts
+ * visible and fades in from 0 while the replaced one, still mounted, fades out.
+ */
+const Fade = ({ visible, children }: { visible: boolean; children: ReactNode }) => (
+  <div className={visible ? "camp-fade" : "camp-fade camp-fade--hidden"}>{children}</div>
+)
+
 const Piece = ({ placed, lightIndex }: { placed: PlacedPiece; lightIndex: number }) => {
   const { piece, scale, shadow } = placed
   const art = campArt(piece.id)
   const style: CSSProperties = boxOf(placed)
   if (!art)
     return (
-      <div className="camp-piece camp-standin" style={{ ...style, fontSize: clamp(scale * 0.17, 8, 13) }}>
-        {piece.id}
-      </div>
+      <Fade visible={placed.visible}>
+        <div className="camp-piece camp-standin" style={{ ...style, fontSize: clamp(scale * 0.17, 8, 13) }}>
+          {piece.id}
+        </div>
+      </Fade>
     )
   const delay = lightIndex >= 0 ? `${flickerDelays(lightIndex)[1]}s` : undefined
   return (
-    <>
+    <Fade visible={placed.visible}>
       {art.shadow && shadow && <Shadow shadow={shadow} placed={placed} url={art.shadow} delay={delay} />}
       <img
         className={art.frameB ? "camp-piece camp-frame--a" : "camp-piece"}
@@ -154,7 +164,7 @@ const Piece = ({ placed, lightIndex }: { placed: PlacedPiece; lightIndex: number
         <img className="camp-piece camp-frame--b" src={art.frameB} alt="" draggable={false} style={style} />
       )}
       {shadow && <SelfShade shadow={shadow} placed={placed} url={art.url} delay={delay} />}
-    </>
+    </Fade>
   )
 }
 

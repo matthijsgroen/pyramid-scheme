@@ -130,7 +130,7 @@ const layout = (overrides: Partial<CampLayoutInput> = {}): CampLayout => {
   return result
 }
 
-const pieceIds = (l: CampLayout) => l.pieces.map(p => p.piece.id)
+const pieceIds = (l: CampLayout) => l.pieces.filter(p => p.visible).map(p => p.piece.id)
 
 const SIZES: [number, number][] = [
   [390, 844],
@@ -194,6 +194,17 @@ describe("layoutCamp", () => {
     const ids = pieceIds(layout({ chapter: "junior", steps: { fire: 3 } }))
     expect(ids).toContain("bigRing")
     expect(ids).not.toContain("ring")
+  })
+
+  it("keeps a replaced step in place, hidden, so the scene can fade between steps", () => {
+    const l = layout({ chapter: "junior", steps: { fire: 3 } })
+    const ring = l.pieces.find(p => p.piece.id === "ring")!
+    const bigRing = l.pieces.find(p => p.piece.id === "bigRing")!
+    expect([ring.visible, bigRing.visible]).toEqual([false, true])
+    expect([ring.x, ring.y]).toEqual([bigRing.x, bigRing.y])
+    expect(ring.shadow).toBeUndefined()
+    expect(l.glows.every(g => !g.key.startsWith(`${ring.key}:`))).toBe(true)
+    expect(l.pieces.indexOf(ring)).toBeLessThan(l.pieces.indexOf(bigRing))
   })
 
   it("a step can replace a fixed piece, and its glow goes with it", () => {

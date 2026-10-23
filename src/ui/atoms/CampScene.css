@@ -103,6 +103,32 @@
 }
 
 /*
+ * One layer per piece, filling the scene, so a piece fades together with its shadow, self-shade and frames.
+ * A piece that mounts visible starts from 0; one a later step replaces fades to 0 and takes no input.
+ */
+.camp-fade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+
+@starting-style {
+  .camp-fade {
+    opacity: 0;
+  }
+}
+
+.camp-fade--hidden {
+  opacity: 0;
+}
+
+.camp-fade.camp-fade--hidden * {
+  animation: none;
+}
+
+/*
  * The contact shadow and the self-shade sit in the piece's box. Both are plain alpha layers: the shadow is
  * pre-blurred at import, and only transform and opacity are set here, so nothing filters or repaints at runtime.
  */
@@ -266,6 +292,10 @@
   .camp-firelit,
   .camp-frame--a {
     animation: none;
+  }
+
+  .camp-fade {
+    transition: none;
   }
 
   .camp-frame--b {

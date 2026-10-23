@@ -30,7 +30,9 @@ export type PlacedPiece = {
   scale: number
   width: number
   height: number
-  /** None for a piece that burns: its own fire lights the ground it would fall on. */
+  /** False for a piece a later step replaces: still placed, so the scene can fade it out under its successor. */
+  visible: boolean
+  /** None for a hidden piece and for a piece that burns: its own fire lights the ground it would fall on. */
   shadow?: PlacedShadow
 }
 
@@ -271,10 +273,9 @@ export const layoutCamp = ({
   for (const fixed of catalogue.fixed) drawn.push({ spot: fixed.id, place: fixed, piece: fixed.piece })
 
   const hidden = new Set(drawn.flatMap(d => (d.piece.replaces ?? []).filter(id => id !== d.piece.id)))
-  const visible = drawn.filter(d => !hidden.has(d.piece.id))
 
   // Sorted by anchor, not by each piece's own y, so a piece raised onto another (a flag on a tent) stays in front.
-  const standing = visible
+  const standing = drawn
     .map((d, order) => ({
       d,
       order,
@@ -294,23 +295,29 @@ export const layoutCamp = ({
         scale,
         width: d.piece.width * px,
         height: d.piece.height * px,
+        visible: !hidden.has(d.piece.id),
         frame: px,
       }
     })
 
-  const glows: PlacedGlow[] = standing.flatMap(p => {
-    return (p.piece.lights ?? []).map((light, i) => ({
-      key: `${p.key}:${i}`,
-      x: p.x + light.dx * p.frame,
-      y: p.y + light.dy * p.frame,
-      radius: light.radius * p.scale,
-      color: light.color,
-      mode: light.mode,
-      strength: light.strength,
-    }))
-  })
+  const glows: PlacedGlow[] = standing
+    .filter(p => p.visible)
+    .flatMap(p => {
+      return (p.piece.lights ?? []).map((light, i) => ({
+        key: `${p.key}:${i}`,
+        x: p.x + light.dx * p.frame,
+        y: p.y + light.dy * p.frame,
+        radius: light.radius * p.scale,
+        color: light.color,
+        mode: light.mode,
+        strength: light.strength,
+      }))
+    })
 
-  const pieces: PlacedPiece[] = standing.map(({ frame: _, ...p }) => ({ ...p, shadow: castShadow(p, glows) }))
+  const pieces: PlacedPiece[] = standing.map(({ frame: _, ...p }) => ({
+    ...p,
+    shadow: p.visible ? castShadow(p, glows) : undefined,
+  }))
 
   // Clamped by its half-width so a pyramid stands whole even where the frame runs to the container's edge.
   const pyramids: PlacedPyramid[] = difficulties.slice(0, difficulties.indexOf(chapter) + 1).map((_, i) => {
@@ -340,14 +347,14 @@ const overlapOf = (a: EntranceArea, b: EntranceArea) => ({
 })
 
 /**
- * Hit areas for the given spots, in that order, each covering every piece its spot draws and at least
+ * Hit areas for the given spots, in that order, each covering every visible piece its spot draws and at least
  * ENTRANCE_MIN square. Two that collide first shrink toward their own centre along the axis that overlaps
  * least, never below ENTRANCE_MIN; when that is not enough, they move apart horizontally. A spot that
  * draws nothing has no area.
  */
 export const entranceAreas = (pieces: PlacedPiece[], spots: readonly (CampSpotId | CampFixedId)[]): EntranceArea[] => {
   const areas = spots.flatMap(spot => {
-    const own = pieces.filter(p => p.spot === spot)
+    const own = pieces.filter(p => p.spot === spot && p.visible)
     if (own.length === 0) return []
     const left = Math.min(...own.map(p => p.x - p.width / 2))
     const right = Math.max(...own.map(p => p.x + p.width / 2))

@@ -174,6 +174,36 @@ describe("CampScene", () => {
     expect(container.querySelector("img[src='/jar.webp']")!.classList.contains("camp-frame--a")).toBe(false)
   })
 
+  it("draws a spot's earlier steps hidden under the current one", () => {
+    art.set("jar", { url: "/jar.webp", shadow: "/jar-shadow.webp" })
+    art.set("urn", { url: "/urn.webp", shadow: "/urn-shadow.webp" })
+    const twoSteps: CampCatalogue = {
+      spots: [
+        {
+          id: "water",
+          x: 1,
+          y: 0,
+          frame: 1,
+          footprint: 0.8,
+          steps: [
+            { chapter: "starter", pieces: [piece("jar")] },
+            { chapter: "starter", pieces: [piece("urn", { replaces: ["jar"] })] },
+          ],
+        },
+      ],
+      fixed: firelit.fixed,
+    }
+    const { container } = render(<Scene chapter="starter" steps={{ water: 2 }} catalogue={twoSteps} />)
+    const jar = container.querySelector("img[src='/jar.webp']")!
+    const urn = container.querySelector("img[src='/urn.webp']")!
+    expect(jar.parentElement!.classList.contains("camp-fade--hidden")).toBe(true)
+    expect(urn.parentElement!.classList.contains("camp-fade--hidden")).toBe(false)
+    expect(jar.compareDocumentPosition(urn) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(container.querySelectorAll(".camp-shadow")).toHaveLength(1)
+    expect(container.querySelector(".camp-shadow")!.getAttribute("src")).toBe("/urn-shadow.webp")
+    expect(container.querySelectorAll(".camp-shade")).toHaveLength(1)
+  })
+
   it("adds a self-shade overlay masked by the piece's own art", () => {
     art.set("jar", { url: "/jar.webp", shadow: "/jar-shadow.webp" })
     const { container } = render(<Scene chapter="starter" steps={{ water: 1 }} catalogue={firelit} />)
