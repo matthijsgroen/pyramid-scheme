@@ -49,9 +49,11 @@ every step of a spot must share one frame), writes the shipped file and keeps th
 > rich, saturated colour. Mid-tone to dark values with clear form shading, so the object
 > stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never
 > glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt,
-> ash or ground patch under the objects. Every edge against the background is crisp and opaque: flames
-> are painted as solid, stylised shapes with hard edges, with no soft glow, no transparency, no sparks
-> and no smoke blending into the background. The objects
+> ash or ground patch under the objects. Every edge against the background is crisp and opaque. Flames are
+> painted like the rest, with soft brushwork and varied warm colours inside, never a flat icon; only their
+> outer silhouette is crisp, with no glow halo, no translucent wisps, no sparks and no smoke blending into
+> the background. Paint only the object described: an attached image is a reference, and nothing from it
+> appears in the picture unless the text asks for it. The objects
 > stand isolated on a flat, solid #ff00ff magenta background that fills the whole square canvas to its
 > edges. Square 1:1 canvas; the group stands on an invisible ground line at about 88% of the height,
 > centred, filling about 80% of the width. No text, no frame, no border.
@@ -90,10 +92,13 @@ Attach: `art/masters/camp/ref-window.webp`, `art/masters/camp/chest.webp`
 
 ### 3. `camp/campfire` — Small campfire
 
-Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
+A small subject leaves the canvas mostly empty, and a generator fills empty canvas with whatever is
+attached: so this one attaches the impression only, no finished prop.
+
+Attach: `art/masters/camp/impression-wizard.webp`
 
 > [preamble] Paint a SMALL, low campfire, the kind a lone traveller makes: four or five thin, crossed
-> sticks with small knee-high-to-a-cat flames. Not logs, not a bonfire. It is small in the frame: about a
+> sticks with small, lively flames. Not logs, not a bonfire. It is small in the frame: about a
 > third of the canvas width, standing on the ground line, the rest of the canvas empty magenta. No
 > stones around it, no ash bed, no ground patch: the sticks sit directly on the magenta.
 
