@@ -10,6 +10,13 @@ export type CampLayoutInput = {
   catalogue: CampCatalogue
 }
 
+/**
+ * Laid on the ground from the piece's foot. `angle` is the screen direction it falls in, in degrees (0 is
+ * right, 90 is down); `length` is its reach as a share of the piece's own height; `strength` is its
+ * opacity. `light` is the key of the fire glow casting it, absent for the moon.
+ */
+export type PlacedShadow = { angle: number; length: number; strength: number; light?: string }
+
 /** Pixels, anchored bottom-centre; `scale` is the px size of one object unit at the piece's depth. */
 export type PlacedPiece = {
   key: string
@@ -18,6 +25,7 @@ export type PlacedPiece = {
   x: number
   y: number
   scale: number
+  shadow: PlacedShadow
 }
 
 export type PlacedGlow = {
@@ -73,6 +81,22 @@ export const CAMP_LAYOUT_PARAMS = {
 
 const P = CAMP_LAYOUT_PARAMS
 
+/**
+ * A fire casts the shadows inside its glow; past three times its radius the moon takes over, and between
+ * the two the direction blends. Near the fire a shadow is short and dark, under the moon long and faint.
+ */
+export const CAMP_SHADOW_PARAMS = {
+  /** Lower right, away from the moon in the upper left of the sky. */
+  moonAngle: 30,
+  reachFactor: 3,
+  lengthMin: 0.45,
+  lengthMax: 1.1,
+  strengthMin: 0.18,
+  strengthMax: 0.6,
+}
+
+const S = CAMP_SHADOW_PARAMS
+
 const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v))
 
 const reached = (step: { chapter: Difficulty }, chapter: Difficulty) => difficultyCompare(step.chapter, chapter) <= 0
@@ -87,6 +111,32 @@ export const fullSteps = (catalogue: CampCatalogue, chapter: Difficulty): Record
     CampSpotId,
     number
   >
+
+const toRadians = (degrees: number) => (degrees * Math.PI) / 180
+
+/** A piece's own light never shadows it, so a fire stands in the light of other fires and the moon. */
+const castShadow = (p: Omit<PlacedPiece, "shadow">, glows: PlacedGlow[]): PlacedShadow => {
+  const nearest = glows
+    .filter(g => g.mode === "flicker" && !g.key.startsWith(`${p.key}:`))
+    .map(g => ({ g, distance: Math.hypot(p.x - g.x, p.y - g.y) }))
+    .sort((a, b) => a.distance - b.distance)[0]
+  const reach = nearest ? nearest.g.radius * S.reachFactor : 0
+  // Fully firelit inside the glow itself, fading to moonlight at its reach.
+  const fire =
+    nearest && nearest.distance > 0
+      ? clamp((reach - nearest.distance) / Math.max(reach - nearest.g.radius, 1e-9), 0, 1)
+      : 0
+  if (fire === 0) return { angle: S.moonAngle, length: S.lengthMax, strength: S.strengthMin }
+  const moon = toRadians(S.moonAngle)
+  const vx = (fire * (p.x - nearest.g.x)) / nearest.distance + (1 - fire) * Math.cos(moon)
+  const vy = (fire * (p.y - nearest.g.y)) / nearest.distance + (1 - fire) * Math.sin(moon)
+  return {
+    angle: (Math.atan2(vy, vx) * 180) / Math.PI,
+    length: S.lengthMax - fire * (S.lengthMax - S.lengthMin),
+    strength: S.strengthMin + fire * (S.strengthMax - S.strengthMin),
+    light: nearest.g.key,
+  }
+}
 
 type Placed = { spot: CampSpotId | CampFixedId; row: CampRow; piece: CampPiece }
 
@@ -182,7 +232,7 @@ export const layoutCamp = ({
   ])
 
   // Sorted by row, not by each piece's own y, so a piece raised onto another (a flag on a tent) stays in front.
-  const pieces: PlacedPiece[] = visible
+  const standing = visible
     .map((d, order) => ({ d, order, at: anchor({ row: d.row, slot: slotOf.get(d.spot) ?? 0 }) }))
     .sort((a, b) => a.at.y - b.at.y || a.order - b.order)
     .map(({ d, at }) => ({
@@ -194,7 +244,7 @@ export const layoutCamp = ({
       scale: at.scale,
     }))
 
-  const glows: PlacedGlow[] = pieces.flatMap(p => {
+  const glows: PlacedGlow[] = standing.flatMap(p => {
     return (p.piece.lights ?? []).map((light, i) => ({
       key: `${p.key}:${i}`,
       x: p.x + light.dx * p.scale,
@@ -205,6 +255,8 @@ export const layoutCamp = ({
       strength: light.strength,
     }))
   })
+
+  const pieces: PlacedPiece[] = standing.map(p => ({ ...p, shadow: castShadow(p, glows) }))
 
   // Clamped by its half-width so a pyramid stands whole even where the frame runs to the container's edge.
   const pyramids: PlacedPyramid[] = difficulties.slice(0, difficulties.indexOf(chapter) + 1).map((_, i) => {

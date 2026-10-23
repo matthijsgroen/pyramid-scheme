@@ -107,6 +107,33 @@
   user-select: none;
 }
 
+/* Pre-blurred at import; only transform and opacity are set here, so nothing filters or repaints at runtime. */
+.camp-shadow {
+  position: absolute;
+  /* The ground line the art prompts paint every group on (docs/game-design/camp-art-prompts.md). */
+  transform-origin: 50% 88%;
+  opacity: var(--camp-shadow-strength, 0.3);
+  user-select: none;
+}
+
+/* On the same 2.9s loop and delay as its fire glow's strength: the shadow deepens as the fire flares. */
+.camp-shadow--firelit {
+  animation: camp-shadow-flicker 2.9s ease-in-out infinite;
+}
+
+@keyframes camp-shadow-flicker {
+  0%,
+  100% {
+    opacity: var(--camp-shadow-strength, 0.3);
+  }
+  30% {
+    opacity: calc(var(--camp-shadow-strength, 0.3) * 0.86);
+  }
+  60% {
+    opacity: calc(var(--camp-shadow-strength, 0.3) * 1.08);
+  }
+}
+
 .camp-standin {
   display: flex;
   align-items: flex-end;
@@ -192,10 +219,11 @@
   }
 }
 
-/* Under reduced motion every glow holds still at its middle value: scale 1, its own strength. */
+/* Under reduced motion every glow and shadow holds still at its middle value: scale 1, its own strength. */
 @media (prefers-reduced-motion: reduce) {
   .camp-glow--flicker,
-  .camp-glow--breathe {
+  .camp-glow--breathe,
+  .camp-shadow--firelit {
     animation: none;
   }
 }

@@ -1,34 +1,41 @@
-import { afterEach, describe, expect, it } from "vitest"
-import { mkdtempSync, rmSync } from "fs"
+import { afterEach, beforeEach, describe, expect, it } from "vitest"
+import { existsSync, mkdtempSync, rmSync } from "fs"
 import { tmpdir } from "os"
 import { join } from "path"
 import sharp from "sharp"
 import { importCamp } from "./importCamp"
 
-const dirs: string[] = []
-afterEach(() => dirs.splice(0).forEach(dir => rmSync(dir, { recursive: true, force: true })))
+let dir = ""
+beforeEach(() => {
+  dir = mkdtempSync(join(tmpdir(), "import-camp-"))
+})
+afterEach(() => rmSync(dir, { recursive: true, force: true }))
+
+/** A 400x400 magenta download with a 100x100 red square in the middle. */
+const magentaWithRedSquare = async () => {
+  const source = join(dir, "download.png")
+  await sharp({ create: { width: 400, height: 400, channels: 3, background: "#ff00ff" } })
+    .composite([
+      { input: { create: { width: 100, height: 100, channels: 3, background: "#ff0000" } }, left: 150, top: 150 },
+    ])
+    .png()
+    .toFile(source)
+  return source
+}
+
+const options = (file: string) => ({
+  file,
+  name: "chest",
+  key: "#ff00ff",
+  tolerance: 60,
+  size: 768,
+  outRoot: join(dir, "assets"),
+  masterRoot: join(dir, "masters"),
+})
 
 describe("importCamp", () => {
   it("keys the magenta out and keeps the canvas", async () => {
-    const dir = mkdtempSync(join(tmpdir(), "import-camp-"))
-    dirs.push(dir)
-    const source = join(dir, "download.png")
-    await sharp({ create: { width: 400, height: 400, channels: 3, background: "#ff00ff" } })
-      .composite([
-        { input: { create: { width: 100, height: 100, channels: 3, background: "#ff0000" } }, left: 150, top: 150 },
-      ])
-      .png()
-      .toFile(source)
-
-    const { out, master } = await importCamp({
-      file: source,
-      name: "chest",
-      key: "#ff00ff",
-      tolerance: 60,
-      size: 768,
-      outRoot: join(dir, "assets"),
-      masterRoot: join(dir, "masters"),
-    })
+    const { out, master } = await importCamp(options(await magentaWithRedSquare()))
 
     const { data, info } = await sharp(out).raw().toBuffer({ resolveWithObject: true })
     const alphaAt = (x: number, y: number) => data[(y * info.width + x) * info.channels + 3]
@@ -36,5 +43,29 @@ describe("importCamp", () => {
     expect([alphaAt(0, 0), alphaAt(399, 0), alphaAt(0, 399), alphaAt(399, 399)]).toEqual([0, 0, 0, 0])
     expect(alphaAt(200, 200)).toBe(255)
     expect((await sharp(master).metadata()).width).toBe(400)
+  })
+
+  it("writes a blurred silhouette beside the piece", async () => {
+    const { out, shadow } = await importCamp(options(await magentaWithRedSquare()))
+
+    expect(shadow).toBe(join(dir, "assets", "chest-shadow.webp"))
+    const piece = await sharp(out).metadata()
+    const { data, info } = await sharp(shadow!).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+    expect([info.width, info.height]).toEqual([piece.width, piece.height])
+    const at = (x: number, y: number) => [...data.subarray((y * info.width + x) * 4, (y * info.width + x) * 4 + 4)]
+    const [r, g, b, a] = at(200, 200)
+    expect(Math.max(r, g, b)).toBeLessThan(8)
+    expect(a).toBeGreaterThan(240)
+    expect([at(0, 0)[3], at(399, 0)[3], at(0, 399)[3], at(399, 399)[3]]).toEqual([0, 0, 0, 0])
+    expect(at(147, 200)[3]).toBeGreaterThan(0)
+    expect(at(147, 200)[3]).toBeLessThan(255)
+  })
+
+  it("casts no shadow for scenery or an unkeyed import", async () => {
+    const source = await magentaWithRedSquare()
+    for (const name of ["sand", "dunes", "pyramid", "pyramidGold"])
+      expect((await importCamp({ ...options(source), name })).shadow).toBeUndefined()
+    expect((await importCamp({ ...options(source), key: "none" })).shadow).toBeUndefined()
+    expect(existsSync(join(dir, "assets", "chest-shadow.webp"))).toBe(false)
   })
 })

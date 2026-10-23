@@ -14,6 +14,10 @@
  *   --key=#ff00ff    background colour to make transparent. --key=none to skip (the sand tile)
  *   --tolerance=60   how far from that colour still counts as background (0-441)
  *   --size=768       the longest side of the shipped file; never enlarged
+ *
+ * A keyed piece also gets src/assets/camp/<name>-shadow.webp: its alpha as a black silhouette, blurred
+ * once here so the scene never runs a filter, on the same canvas so it lines up with the piece's frame.
+ * Scenery is ground and sky, not something standing on it, so it casts none.
  */
 import { mkdirSync } from "node:fs"
 import { dirname, join } from "node:path"
@@ -35,6 +39,24 @@ export type CampImport = {
   masterRoot: string
 }
 
+const SCENERY = new Set(["sand", "dunes", "pyramid", "pyramidGold"])
+
+/** The blur's spread as a share of the piece's longest side, so a shadow looks the same at any import size. */
+const SHADOW_BLUR = 0.008
+
+const writeShadow = async (piece: Buffer, path: string) => {
+  const { width = 0, height = 0 } = await sharp(piece).metadata()
+  const { data, info } = await sharp(piece)
+    .extractChannel(3)
+    .blur(Math.max(0.3, Math.max(width, height) * SHADOW_BLUR))
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+  await sharp({ create: { width: info.width, height: info.height, channels: 3, background: "#000000" } })
+    .joinChannel(data, { raw: { width: info.width, height: info.height, channels: 1 } })
+    .webp({ quality: 90, alphaQuality: 90 })
+    .toFile(path)
+}
+
 export const importCamp = async ({ file, name, key, tolerance, size, outRoot, masterRoot }: CampImport) => {
   mkdirSync(outRoot, { recursive: true })
   mkdirSync(masterRoot, { recursive: true })
@@ -43,8 +65,12 @@ export const importCamp = async ({ file, name, key, tolerance, size, outRoot, ma
   await sharp(file).webp({ quality: 92 }).toFile(master)
   const source = sharp(file)
   const keyed = key === "none" ? source.ensureAlpha() : await keyOut(source, key, tolerance)
-  await keyed.resize(size, size, { fit: "inside", withoutEnlargement: true }).webp({ quality: 90 }).toFile(out)
-  return { out, master }
+  const piece = await keyed.resize(size, size, { fit: "inside", withoutEnlargement: true }).png().toBuffer()
+  await sharp(piece).webp({ quality: 90 }).toFile(out)
+  if (key === "none" || SCENERY.has(name)) return { out, master }
+  const shadow = join(outRoot, `${name}-shadow.webp`)
+  await writeShadow(piece, shadow)
+  return { out, master, shadow }
 }
 
 const arg = (name: string, fallback?: string): string | undefined =>
@@ -57,7 +83,7 @@ const main = async () => {
     console.error("usage: yarn import-camp <file> --name=<piece> [--key=#ff00ff|none] [--tolerance=60] [--size=768]")
     process.exit(1)
   }
-  const { out, master } = await importCamp({
+  const { out, master, shadow } = await importCamp({
     file,
     name,
     key: arg("key", "#ff00ff")!,
@@ -67,7 +93,7 @@ const main = async () => {
     masterRoot: join(ROOT, "art", "masters", "camp"),
   })
   const { width, height } = await sharp(out).metadata()
-  console.log(`${out}  ${width}x${height}\nmaster ${master}`)
+  console.log(`${out}  ${width}x${height}\nmaster ${master}${shadow ? `\nshadow ${shadow}` : ""}`)
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

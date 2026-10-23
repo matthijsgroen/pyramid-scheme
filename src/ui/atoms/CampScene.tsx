@@ -21,7 +21,8 @@ export type CampSceneProps = {
 }
 
 // The filename is the piece id, so adding a piece's art is dropping its file in. A piece with no file yet
-// draws the stand-in; the scenery (sand, dunes, pyramid, pyramidGold) falls back to CSS.
+// draws the stand-in; the scenery (sand, dunes, pyramid, pyramidGold) falls back to CSS. A piece's shadow is
+// `<id>-shadow`, written beside it by `yarn import-camp`.
 const artUrls = import.meta.glob("../../assets/camp/*.{png,webp,svg}", {
   eager: true,
   query: "?url",
@@ -62,11 +63,56 @@ const boundsOf = (pieces: PlacedPiece[]) => {
   return { x: (left + right) / 2, y: bottom, width: right - left, height: bottom - top }
 }
 
-const Piece = ({ placed }: { placed: PlacedPiece }) => {
+/** How far the ground is foreshortened: a shadow lying on it is drawn at this share of its height. */
+const GROUND_FLATTEN = 0.35
+
+/** Offsets keep neighbouring fires out of step; a shadow takes its fire's strength offset to stay in step. */
+const flickerDelays = (i: number) => [-(i * 0.73) % 3, -(i * 1.31) % 5]
+
+/**
+ * The silhouette stands up from the ground line, is stretched to its length, turned to its direction on the
+ * ground and then flattened onto it. The turn is taken on the unflattened ground, so the flattened
+ * shadow falls along `angle` on screen.
+ */
+const Shadow = ({ placed, url, lightIndex }: { placed: PlacedPiece; url: string; lightIndex: number }) => {
+  const { piece, x, y, scale, shadow } = placed
+  const width = piece.width * scale
+  const height = piece.height * scale
+  const a = (shadow.angle * Math.PI) / 180
+  const turn = (Math.atan2(Math.sin(a) / GROUND_FLATTEN, Math.cos(a)) * 180) / Math.PI + 90
+  return (
+    <img
+      className={shadow.light ? "camp-shadow camp-shadow--firelit" : "camp-shadow"}
+      src={url}
+      alt=""
+      draggable={false}
+      style={
+        {
+          left: x - width / 2,
+          top: y - height,
+          width,
+          height,
+          transform: `scaleY(${GROUND_FLATTEN}) rotate(${turn}deg) scaleY(${shadow.length})`,
+          "--camp-shadow-strength": shadow.strength,
+          ...(lightIndex >= 0 && { animationDelay: `${flickerDelays(lightIndex)[1]}s` }),
+        } as CSSProperties
+      }
+    />
+  )
+}
+
+const Piece = ({ placed, lightIndex }: { placed: PlacedPiece; lightIndex: number }) => {
   const { piece, x, y, scale } = placed
   const url = artByKey.get(piece.id)
+  const shadowUrl = artByKey.get(`${piece.id}-shadow`)
   const style: CSSProperties = { left: x, top: y, width: piece.width * scale, height: piece.height * scale }
-  if (url) return <img className="camp-piece" src={url} alt="" draggable={false} style={style} />
+  if (url)
+    return (
+      <>
+        {shadowUrl && <Shadow placed={placed} url={shadowUrl} lightIndex={lightIndex} />}
+        <img className="camp-piece" src={url} alt="" draggable={false} style={style} />
+      </>
+    )
   return (
     <div className="camp-piece camp-standin" style={{ ...style, fontSize: clamp(scale * 0.17, 8, 13) }}>
       {piece.id}
@@ -189,7 +235,11 @@ export const CampScene = ({
       </div>
       <div className="camp-layer">
         {layout.pieces.map(placed => (
-          <Piece key={placed.key} placed={placed} />
+          <Piece
+            key={placed.key}
+            placed={placed}
+            lightIndex={layout.glows.findIndex(g => g.key === placed.shadow.light)}
+          />
         ))}
       </div>
       <div className="camp-layer camp-night" aria-hidden="true" />
@@ -206,8 +256,9 @@ export const CampScene = ({
                 height: glow.radius * 2,
                 "--camp-glow-strength": glow.strength,
                 "--camp-glow-color": glow.color,
-                // Offsets keep neighbouring glows out of step with one another.
-                animationDelay: `${-(i * 0.73) % 3}s, ${-(i * 1.31) % 5}s`,
+                animationDelay: flickerDelays(i)
+                  .map(d => `${d}s`)
+                  .join(", "),
               } as CSSProperties
             }
           />

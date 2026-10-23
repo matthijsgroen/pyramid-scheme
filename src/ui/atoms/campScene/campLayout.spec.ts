@@ -1,7 +1,14 @@
 import { describe, it, expect } from "vitest"
 import { difficulties, type Difficulty } from "@/data/difficultyLevels"
 import type { CampCatalogue, CampPiece, CampRow, CampSpotId } from "./campTypes"
-import { CAMP_LAYOUT_PARAMS, fullSteps, layoutCamp, type CampLayout, type CampLayoutInput } from "./campLayout"
+import {
+  CAMP_LAYOUT_PARAMS,
+  CAMP_SHADOW_PARAMS,
+  fullSteps,
+  layoutCamp,
+  type CampLayout,
+  type CampLayoutInput,
+} from "./campLayout"
 
 const piece = (id: string, options: Partial<CampPiece> = {}): CampPiece => ({
   id,
@@ -315,6 +322,70 @@ describe("layoutCamp", () => {
     expect(l.unit).toBeGreaterThan(0)
     expect(l.frame.width).toBeGreaterThan(0)
     for (const p of l.pieces) expect(p.y).toBeLessThanOrEqual(300)
+  })
+})
+
+describe("layoutCamp shadows", () => {
+  // One fire in the middle of the front row with a glow of `fireRadius`; pieces at the given slots around it.
+  const around = (fireRadius: number, slots: number[]): CampCatalogue => {
+    const ids: CampSpotId[] = ["water", "cooking", "donkey", "camel", "lookout"]
+    return {
+      spots: slots.map((slot, i) => ({
+        id: ids[i],
+        row: 2,
+        slot,
+        steps: [{ chapter: "starter", pieces: [piece(`p${slot}`)] }],
+      })),
+      fixed: [{ id: "campfire", row: 2, slot: 0, piece: piece("fire", { lights: [glow(fireRadius)] }) }],
+    }
+  }
+  const shadowsOf = (c: CampCatalogue) => {
+    const l = layout({ catalogue: c, steps: { water: 1, cooking: 1, donkey: 1, camel: 1, lookout: 1 } })
+    const fireGlow = l.glows[0]
+    const at = (id: string) => l.pieces.find(p => p.piece.id === id)!
+    return { l, fireGlow, at }
+  }
+  const degrees = (dy: number, dx: number) => (Math.atan2(dy, dx) * 180) / Math.PI
+
+  it("casts a firelit shadow away from the fire", () => {
+    const { fireGlow, at } = shadowsOf(around(3, [-1, 1]))
+    for (const id of ["p-1", "p1"]) {
+      const p = at(id)
+      expect(p.shadow.angle).toBeCloseTo(degrees(p.y - fireGlow.y, p.x - fireGlow.x))
+      expect(p.shadow.light).toBe(fireGlow.key)
+    }
+    expect(at("p-1").shadow.angle).not.toBeCloseTo(at("p1").shadow.angle)
+  })
+
+  it("falls back to the moon shadow out of the fire's reach", () => {
+    const { at } = shadowsOf(around(0.1, [-2, 2]))
+    for (const id of ["p-2", "p2"]) {
+      expect(at(id).shadow.angle).toBe(CAMP_SHADOW_PARAMS.moonAngle)
+      expect(at(id).shadow.light).toBeUndefined()
+    }
+  })
+
+  it("casts no shadow from a piece's own light", () => {
+    const { at } = shadowsOf(around(0.1, []))
+    expect(at("fire").shadow.angle).toBe(CAMP_SHADOW_PARAMS.moonAngle)
+  })
+
+  it("darkens a shadow nearer the fire, keeping a floor so nothing floats", () => {
+    const { at } = shadowsOf(around(1.5, [-1, 2.5, 6]))
+    const [near, mid, far] = ["p-1", "p2.5", "p6"].map(id => at(id).shadow)
+    expect(near.strength).toBeGreaterThan(mid.strength)
+    expect(mid.strength).toBeGreaterThan(far.strength)
+    expect(far.light).toBeUndefined()
+    expect(far.strength).toBe(CAMP_SHADOW_PARAMS.strengthMin)
+    expect(far.strength).toBeGreaterThan(0)
+  })
+
+  it("lengthens a shadow farther from the fire, up to a clamp", () => {
+    const { at } = shadowsOf(around(1.5, [-1, 2.5, 6]))
+    const [near, mid, far] = ["p-1", "p2.5", "p6"].map(id => at(id).shadow)
+    expect(near.length).toBeLessThan(mid.length)
+    expect(mid.length).toBeLessThan(far.length)
+    expect(far.length).toBe(CAMP_SHADOW_PARAMS.lengthMax)
   })
 })
 

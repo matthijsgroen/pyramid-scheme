@@ -185,6 +185,23 @@ steps build around it, and its "fire" step makes the flame bigger with a wider g
   **breathe**: slower and smaller.
 - Under `prefers-reduced-motion` every glow holds still at its middle value.
 
+## Shadows
+
+- Each piece casts ONE combined shadow, pre-rendered at import: `yarn import-camp` writes
+  `src/assets/camp/<id>-shadow.webp` beside the piece, the keyed piece's alpha as a black silhouette,
+  blurred once, on the same canvas so it lines up with the piece's frame. Scenery (`sand`, `dunes`,
+  `pyramid`, `pyramidGold`, and any `--key=none` import) casts none.
+- The layout gives every placed piece a shadow direction, length and strength. A piece inside a fire's
+  (`flicker`) glow is lit by it alone; between that glow's radius and three times it the direction blends
+  toward the moon's, which falls to the lower right; past that the moon casts it. A piece's own light
+  never shadows it. Near the fire a shadow is short and dark, under the moon long and faint, with a
+  floor on strength so nothing floats.
+- The shadow is drawn under its piece, in the same depth order, pivoting at the art's ground line
+  (88% of the frame): stretched to its length, turned to its direction and flattened onto the ground.
+  Only `transform` and `opacity` are set, never a runtime `filter`, so the blur costs nothing per frame.
+- A firelit shadow flickers its opacity in step with its fire's glow; under `prefers-reduced-motion` it
+  holds still. A stand-in, or a piece without a shadow file, casts none.
+
 ## Art
 
 - Every piece is painted in neutral night light, with no warm glow in it, so code can light it.

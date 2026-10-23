@@ -105,6 +105,13 @@ describe("CampScene", () => {
     expect(screen.getByText("ring")).toBeTruthy()
   })
 
+  it("casts no shadow under a stand-in", () => {
+    const standIns: CampCatalogue = { spots: [catalogue.spots[0]], fixed: [] }
+    const { container } = render(<Scene chapter="starter" steps={{ fire: 1 }} catalogue={standIns} />)
+    expect(screen.getByText("ring")).toBeTruthy()
+    expect(container.querySelectorAll(".camp-shadow")).toHaveLength(0)
+  })
+
   it("drops later-chapter spots when the chapter goes down", () => {
     const steps = fullSteps(catalogue, "wizard")
     const { rerender } = render(<Scene chapter="wizard" steps={steps} catalogue={catalogue} />)
