@@ -37,6 +37,25 @@ describe("mainRooms", () => {
     expect(at(goal)?.family).toBe("treasure-chest")
   })
 
+  describe("the goal of a floor with no main-end reward", () => {
+    const goalOf = (config: Parameters<typeof plainFloor>[0]) => {
+      const state = firstCarved(prepOf(plainFloor({ pathPuzzles: 2, exitOrStaircase: "exit", ...config })))
+      return state.mainRooms!.get(keyOf(state.maze!.mainPath[state.content!.goal]))
+    }
+
+    it("is no chest on a lootless floor: the floor ends at its pillar", () => {
+      expect(goalOf({ loot: false })?.family).not.toBe("treasure-chest")
+    })
+
+    it("is still a chest on a floor with loot", () => {
+      expect(goalOf({})?.family).toBe("treasure-chest")
+    })
+
+    it("is a chest on a lootless floor whose main end authors a reward", () => {
+      expect(goalOf({ loot: false, mainEndReward: { type: "tombKey", keyId: "k" } })?.family).toBe("treasure-chest")
+    })
+  })
+
   it("numbers a room among the rooms of its own family on the chain", () => {
     const state = firstCarved(
       prepOf(plainFloor({ pathPuzzles: 4, encounter: "tableau", encountersByIndex: { 1: "sumplete" } }))

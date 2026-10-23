@@ -62,9 +62,10 @@ export const mainRooms = pass(
     }
 
     // Main path nodes — spread across the full path per the content placed; everything else along the path is
-    // left unassigned and falls through to plain corridor. The goal-room fallback here is defensive only: every
-    // real config sets mainEndReward explicitly (buildSite.ts). An unset one falls back to the same
-    // grant-nothing placeholder every other unset reward slot uses.
+    // left unassigned and falls through to plain corridor. The goal is a chest; one whose mainEndReward is unset
+    // grants nothing, like every other unset reward slot. A LOOTLESS FLOOR WITH NO MAIN-END REWARD HAS NO CHEST:
+    // its goal stays corridor and the floor ends at its pillar.
+    const goalIsChest = config.loot !== false || config.mainEndReward !== undefined
     mainPath.forEach((cell, mi) => {
       const key = keyOf(cell)
       if (mi === 0) {
@@ -74,6 +75,7 @@ export const mainRooms = pass(
           rooms.set(key, { roomType: "portal", stairId })
         } else rooms.set(key, { roomType: "portal" })
       } else if (mi === goal) {
+        if (!goalIsChest) return
         rooms.set(key, {
           roomType: "encounter",
           family: treasureChest.familyId,
