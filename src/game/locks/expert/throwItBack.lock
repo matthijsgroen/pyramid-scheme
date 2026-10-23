@@ -1,5 +1,5 @@
 // designed by: Claude
-// junior. The lever beside the shut exit opens the side room, whose lever swaps the way east for a ledge; the
+// expert. The lever beside the shut exit opens the side room, whose lever swaps the way east for a ledge; the
 // exit's lever waits below the drop, so the swap lever is thrown, then thrown back to reach the exit again.
 
 in -- hall

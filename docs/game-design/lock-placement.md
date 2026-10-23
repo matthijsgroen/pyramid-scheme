@@ -107,7 +107,8 @@ tombs are not sites in this table; their locks are below.
 ### Starter tomb
 
 A tomb's floor locks feel one tier up (`docs/superpowers/specs/2026-10-22-tomb-redesign-design.md` §5–6), so the
-starter tomb's are junior locks. The cave is the first floor lock a starter player meets: levers and doors only.
+starter tomb's are junior locks, with one expert-weight capstone. The cave is the first floor lock a starter player
+meets: levers and doors only.
 
 | Site             | Floor       | Chosen lock | Mechanics   | Placed |
 | ---------------- | ----------- | ----------- | ----------- | ------ |
@@ -121,7 +122,7 @@ starter tomb's are junior locks. The cave is the first floor lock a starter play
   the gallery holding the exit lever. The one mechanic beyond levers is the drop. 3 actions.
 - **throwItBack**: the lever beside the shut exit opens a side room, whose lever swaps the way east for a ledge; the
   exit's lever waits below the drop, so the swap lever is thrown, then thrown back to reach the exit again. The
-  tomb's hardest junior lock: 4 actions.
+  tomb's capstone and its one expert-weight lock (`expert/`): 4 actions.
 
 They stand on authored floors through `lockOnFloor(name)` (below).
 
@@ -312,7 +313,7 @@ but are still a proposal for the engine (`lock-curriculum.md`, "Stones").
 | stoneGate     | expert capstone (Djoser 5), stones | torch, door-waits-for-two, stones & plates, narrow passage | solvable                                                   |
 | caveLevers    | junior (starter tomb cave)         | lever                                                      | solvable                                                   |
 | pitStair      | junior (starter tomb cavern 2)     | lever, drop                                                | solvable                                                   |
-| throwItBack   | junior (starter tomb cavern 4)     | lever, drop                                                | solvable                                                   |
+| throwItBack   | expert (starter tomb capstone)     | lever, drop                                                | solvable                                                   |
 
 The curriculum's "lever: all but plates" is wider than the files: twoStones, counterweight, masonsRamp,
 observatory and stoneGate have no lever either.
