@@ -473,3 +473,65 @@ Fixed pieces:
   - Screenshot StarterFull, MasterFull and WizardFull at 390×844 and 1000×836.
   - Compare chest : fire pit : window proportions against the wizard impression, and report the numbers.
 - [ ] **Step 4: Commit** `feat: camp spots sized from the impression, spaced by footprint`
+
+---
+
+## Added 2026-10-23: the layout comes from the impression
+
+Task 9 fixed the proportions, but its 3 rows of up to 5 spots run out of width on a portrait phone. At
+wizard on 390×844, `u` falls to ~36 px while the rows stand far apart. The impression stacks its spots on
+about six staggered depths, so a portrait screen fills top to bottom with large objects. Agreed with the
+designer: each spot's position comes from the wizard impression, and the layout stays elastic.
+
+### Task 10: Positions from the impression, elastic in both directions
+
+**Positions.** Each spot's anchor (the bottom centre of its object group) is measured in the wizard
+impression (1438×2576). It is given in object units (1u = 326 px, the chest being 0.83u wide in 271 px),
+relative to the fire pit's anchor. x runs right and y runs down. These are starting values, tuned by eye
+once art lands.
+
+| Spot / piece | x     | y     |
+| ------------ | ----- | ----- |
+| lookout      | -1.62 | -1.89 |
+| sleeping     | -0.57 | -2.41 |
+| starCanopy   | 0.65  | -2.79 |
+| palmGarden   | 1.61  | -1.62 |
+| cooking      | -0.45 | -1.14 |
+| fire         | 0     | 0     |
+| water        | 1.10  | -0.94 |
+| donkey       | -1.46 | -0.39 |
+| camel        | 1.55  | 0.13  |
+| ibisPond     | -0.98 | 1.83  |
+| mapTable     | 0.80  | 0.92  |
+| godStatues   | 1.33  | 1.87  |
+| chest        | -1.52 | 0.40  |
+| window       | 0.91  | -1.92 |
+| campfire     | 0     | 0     |
+
+The impression's horizon is at y = -4.07. The window's frame becomes 1.4: in the impression it is 1.35× the chest's height, and Task 9's 1.0 drew it at 1.06×. Footprints and frames are as in Task 9.
+
+**Behaviour:**
+
+- **Catalogue.** `row` and `slot` are replaced by `x` and `y`, in impression units. `CampRow` goes, unless something else still needs it.
+- **Elastic layout.**
+  - Screen position = fire anchor + (x·sx·u, y·sy·u). `sx` and `sy` are stretch factors, each clamped to a range, starting at 0.85–1.6.
+  - `u` is the largest value for which the chapter's frame fits the inset-free container at the minimum stretch, capped by the chapter camera height as today.
+  - Then `sx` and `sy` grow independently to use the spare width and height, up to their maxima, so a desktop pane spreads sideways and a tall phone spreads downward.
+  - Depth: drawing scale = lerp(0.9, 1.0) from the farthest to the nearest anchor y. Pieces are sorted by anchor y.
+- **Chapter frame.** The bounding box of the chapter's spots' frames, the fixed pieces and their positions, plus the minimum sky above. The horizon stays above the farthest frame top, with the far-sand rule.
+- **Overlap rule.** At minimum stretch, no two footprints overlap where their anchors are within ~0.35u in y, that is, at about the same depth. Pieces at different depths may overlap, as in the impression (the farther one is drawn first). The tests check this rule, not the old per-row one.
+- **Unchanged:** never cropped, insets, horizon floor, far sand, zoom-out per chapter (`u` non-increasing), the entrance rules from Task 9 (44×44, no overlap, labels ≥11px), shadows, glows, stories.
+- **Tests.**
+  - Replace the row and slot tests with a made-up catalogue in x/y.
+  - `it("spreads sideways on a wide container and downward on a tall one")`
+  - `it("keeps spots at the same depth from overlapping")`
+  - `it("keeps every spot's relative order in x and in y as the container changes")`
+- **Spec.** Rewrite "Spots as anchors" and "Size and spacing" for the impression layout, and the starting numbers.
+
+- [ ] **Step 1: Write the failing tests.**
+- [ ] **Step 2: Implement** the catalogue, layout, component (only if needed) and spec.
+- [ ] **Step 3: Gates and a look.**
+  - Run `yarn test src/ui/atoms scripts`, `yarn check-types`, `yarn lint`, `yarn prettier --write <files>` (never `npx`) and `yarn build-storybook`.
+  - Screenshot StarterFull, MasterFull and WizardFull at 390×844, 1000×836 and 1600×700, and WizardFull at 320×640.
+  - Report `u` and the chest's drawn width per size, and compare the wizard 390×844 shot side by side with the impression.
+- [ ] **Step 4: Commit** `feat: camp layout from the impression, elastic both ways`
