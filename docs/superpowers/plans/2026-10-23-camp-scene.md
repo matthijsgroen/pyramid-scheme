@@ -157,9 +157,7 @@ export type CampLayout = {
   glows: PlacedGlow[]
   pyramids: PlacedPyramid[]
 }
-export const CAMP_LAYOUT_PARAMS: {
-  /* the Global Constraints numbers */
-}
+export const CAMP_LAYOUT_PARAMS: {/* the Global Constraints numbers */}
 export const layoutCamp: (input: CampLayoutInput) => CampLayout | null // null when width or height ≤ 0
 export const fullSteps: (catalogue: CampCatalogue, chapter: Difficulty) => Record<CampSpotId, number> // every step up to and including chapter
 ```
@@ -333,9 +331,11 @@ Agreed with the designer: each piece gets ONE combined shadow, pre-rendered at i
 ### Task 7: Pre-rendered shadows, laid away from the fire
 
 **Files:**
+
 - Modify: `scripts/importCamp.ts` (+ spec), `src/ui/atoms/campScene/campLayout.ts` (+ spec), `campTypes.ts` if needed, `src/ui/atoms/CampScene.tsx`, `CampScene.css`, `docs/superpowers/specs/2026-10-23-camp-scene-design.md` (a "Shadows" section)
 
 **Behaviour:**
+
 - **Import.** `yarn import-camp` also writes `src/assets/camp/<name>-shadow.webp`. It is the keyed piece's alpha as a black silhouette, blurred once at import, on the same canvas and size, so it lines up with the piece frame. Scenery imports skip it: `--key=none`, `sand`, `dunes`, `pyramid`, `pyramidGold`. Re-run the import for the landed chest so it gets its shadow.
 - **Layout.** `layoutCamp` gives each `PlacedPiece` a `shadow: { angle: number; length: number; strength: number }`.
   - Direction blends between two sources:

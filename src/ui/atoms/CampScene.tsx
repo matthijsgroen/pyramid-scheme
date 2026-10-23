@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { CAMP_CATALOGUE } from "./campScene/campCatalogue"
-import { layoutCamp, type PlacedPiece, type PlacedPyramid } from "./campScene/campLayout"
+import { layoutCamp, type PlacedPiece, type PlacedPyramid, type PlacedShadow } from "./campScene/campLayout"
 import type { CampCatalogue, CampSpotId } from "./campScene/campTypes"
 import "./CampScene.css"
 
@@ -74,8 +74,18 @@ const flickerDelays = (i: number) => [-(i * 0.73) % 3, -(i * 1.31) % 5]
  * ground and then flattened onto it. The turn is taken on the unflattened ground, so the flattened
  * shadow falls along `angle` on screen.
  */
-const Shadow = ({ placed, url, lightIndex }: { placed: PlacedPiece; url: string; lightIndex: number }) => {
-  const { piece, x, y, scale, shadow } = placed
+const Shadow = ({
+  shadow,
+  placed,
+  url,
+  lightIndex,
+}: {
+  shadow: PlacedShadow
+  placed: PlacedPiece
+  url: string
+  lightIndex: number
+}) => {
+  const { piece, x, y, scale } = placed
   const width = piece.width * scale
   const height = piece.height * scale
   const a = (shadow.angle * Math.PI) / 180
@@ -109,7 +119,9 @@ const Piece = ({ placed, lightIndex }: { placed: PlacedPiece; lightIndex: number
   if (url)
     return (
       <>
-        {shadowUrl && <Shadow placed={placed} url={shadowUrl} lightIndex={lightIndex} />}
+        {shadowUrl && placed.shadow && (
+          <Shadow shadow={placed.shadow} placed={placed} url={shadowUrl} lightIndex={lightIndex} />
+        )}
         <img className="camp-piece" src={url} alt="" draggable={false} style={style} />
       </>
     )
@@ -238,7 +250,7 @@ export const CampScene = ({
           <Piece
             key={placed.key}
             placed={placed}
-            lightIndex={layout.glows.findIndex(g => g.key === placed.shadow.light)}
+            lightIndex={layout.glows.findIndex(g => g.key === placed.shadow?.light)}
           />
         ))}
       </div>

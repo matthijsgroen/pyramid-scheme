@@ -342,8 +342,9 @@ describe("layoutCamp shadows", () => {
   const shadowsOf = (c: CampCatalogue) => {
     const l = layout({ catalogue: c, steps: { water: 1, cooking: 1, donkey: 1, camel: 1, lookout: 1 } })
     const fireGlow = l.glows[0]
-    const at = (id: string) => l.pieces.find(p => p.piece.id === id)!
-    return { l, fireGlow, at }
+    const find = (id: string) => l.pieces.find(p => p.piece.id === id)!
+    const at = (id: string) => ({ ...find(id), shadow: find(id).shadow! })
+    return { l, fireGlow, at, find }
   }
   const degrees = (dy: number, dx: number) => (Math.atan2(dy, dx) * 180) / Math.PI
 
@@ -365,9 +366,9 @@ describe("layoutCamp shadows", () => {
     }
   })
 
-  it("casts no shadow from a piece's own light", () => {
-    const { at } = shadowsOf(around(0.1, []))
-    expect(at("fire").shadow.angle).toBe(CAMP_SHADOW_PARAMS.moonAngle)
+  it("casts no shadow from a piece that burns: its own fire lights the ground around it", () => {
+    const { find } = shadowsOf(around(0.1, []))
+    expect(find("fire").shadow).toBeUndefined()
   })
 
   it("darkens a shadow nearer the fire, keeping a floor so nothing floats", () => {

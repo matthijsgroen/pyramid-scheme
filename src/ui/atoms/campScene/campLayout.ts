@@ -25,7 +25,8 @@ export type PlacedPiece = {
   x: number
   y: number
   scale: number
-  shadow: PlacedShadow
+  /** None for a piece that burns: its own fire lights the ground it would fall on. */
+  shadow?: PlacedShadow
 }
 
 export type PlacedGlow = {
@@ -115,7 +116,8 @@ export const fullSteps = (catalogue: CampCatalogue, chapter: Difficulty): Record
 const toRadians = (degrees: number) => (degrees * Math.PI) / 180
 
 /** A piece's own light never shadows it, so a fire stands in the light of other fires and the moon. */
-const castShadow = (p: Omit<PlacedPiece, "shadow">, glows: PlacedGlow[]): PlacedShadow => {
+const castShadow = (p: Omit<PlacedPiece, "shadow">, glows: PlacedGlow[]): PlacedShadow | undefined => {
+  if (p.piece.lights?.some(l => l.mode === "flicker")) return undefined
   const nearest = glows
     .filter(g => g.mode === "flicker" && !g.key.startsWith(`${p.key}:`))
     .map(g => ({ g, distance: Math.hypot(p.x - g.x, p.y - g.y) }))
