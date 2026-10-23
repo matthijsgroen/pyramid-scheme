@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from "react"
+import { Fragment, type CSSProperties, type ReactNode } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { campArt } from "./campScene/campArt"
 import { CAMP_CATALOGUE } from "./campScene/campCatalogue"
@@ -40,8 +40,36 @@ const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(ma
 const starField = (width: number, horizon: number) => {
   let seed = 7
   const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280
-  return Array.from({ length: 70 }, () => ({ x: rnd() * width, y: rnd() * horizon * 0.9, opacity: 0.35 + rnd() * 0.6 }))
+  return Array.from({ length: 70 }, (_, i) => ({
+    x: rnd() * width,
+    y: rnd() * horizon * 0.9,
+    opacity: 0.35 + rnd() * 0.6,
+    twinkle: i % TWINKLE_EVERY === 0,
+  }))
 }
+
+/** One star in seven twinkles: ten of the seventy. */
+const TWINKLE_EVERY = 7
+
+/** Embers per burning light: enough to read as sparks, few enough to stay cheap. */
+const EMBERS = 7
+
+/** Deterministic per light, so embers keep their paths across renders. */
+const embers = (index: number, unit: number) =>
+  Array.from({ length: EMBERS }, (_, i) => {
+    const t = (i * 0.618 + index * 0.37) % 1
+    return {
+      dx: (t - 0.5) * unit * 0.35,
+      drift: (((i * 0.382 + index * 0.21) % 1) - 0.5) * unit * 0.5,
+      rise: unit * (0.9 + t * 0.7),
+      duration: 2.2 + ((i * 0.29) % 1) * 1.4,
+      delay: -((i * 0.47 + index * 0.13) % 1) * 3.6,
+    }
+  })
+
+/** A light's wide pool reaches past its core and is centred on its piece's foot, where the light lands on the sand. */
+const POOL_REACH = 1.5
+const CORE_REACH = 0.45
 
 const duneSvg = (fill: string, amp: number) => (
   <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 400 40" aria-hidden="true">
@@ -202,6 +230,11 @@ export const CampScene = ({
   const tagSize = clamp(u * 0.2, TAG_MIN, 14)
   const sand = campArt("sand")?.url
   const dunes = campArt("dunes")?.url
+  // The camp's middle, as shares of the ground below the horizon: the sand is warmest there.
+  const centre = {
+    "--camp-cx": `${((layout.frame.x + layout.frame.width / 2) / width) * 100}%`,
+    "--camp-cy": `${((layout.frame.y + layout.frame.height / 2 - horizon) / (height - horizon)) * 100}%`,
+  } as CSSProperties
   const rootStyle = { "--camp-horizon": `${(horizon / height) * 100}%` } as CSSProperties
 
   const entranceSpots = (["chest", "window", "mapTable"] as const).filter(spot => entrances[spot])
@@ -228,7 +261,18 @@ export const CampScene = ({
     <div className={rootClass} style={rootStyle}>
       <div className="camp-layer" aria-hidden="true">
         {stars.map((star, i) => (
-          <i key={i} className="camp-star" style={{ left: star.x, top: star.y, opacity: star.opacity }} />
+          <i
+            key={i}
+            className={star.twinkle ? "camp-star camp-star--twinkle" : "camp-star"}
+            style={
+              {
+                left: star.x,
+                top: star.y,
+                "--camp-star-opacity": star.opacity,
+                animationDelay: star.twinkle ? `${-((i * 0.61) % 1) * 4}s` : undefined,
+              } as CSSProperties
+            }
+          />
         ))}
         <i
           className="camp-moon"
@@ -272,6 +316,7 @@ export const CampScene = ({
             </div>
           </>
         )}
+        <div className="camp-ground-tint" style={{ top: horizon, ...centre }} />
       </div>
       <div className="camp-layer">
         {layout.pieces.map(placed => (
@@ -282,27 +327,51 @@ export const CampScene = ({
           />
         ))}
       </div>
-      <div className="camp-layer camp-night" aria-hidden="true" />
       <div className="camp-layer" aria-hidden="true">
-        {layout.glows.map((glow, i) => (
-          <i
-            key={glow.key}
-            className={`camp-glow camp-glow--${glow.mode}`}
-            style={
-              {
-                left: glow.x,
-                top: glow.y,
-                width: glow.radius * 2,
-                height: glow.radius * 2,
-                "--camp-glow-strength": glow.strength,
-                "--camp-glow-color": glow.color,
-                animationDelay: flickerDelays(i)
-                  .map(d => `${d}s`)
-                  .join(", "),
-              } as CSSProperties
-            }
-          />
-        ))}
+        <div className="camp-vignette" style={{ top: horizon, ...centre }} />
+        {layout.glows.map((glow, i) => {
+          const glowStyle = (reach: number, top: number) =>
+            ({
+              left: glow.x,
+              top,
+              width: glow.radius * reach * 2,
+              height: glow.radius * reach * 2,
+              "--camp-glow-strength": glow.strength,
+              "--camp-glow-color": glow.color,
+              animationDelay: flickerDelays(i)
+                .map(d => `${d}s`)
+                .join(", "),
+            }) as CSSProperties
+          return (
+            <Fragment key={glow.key}>
+              <i
+                className={`camp-glow camp-glow--pool camp-glow--${glow.mode}`}
+                style={glowStyle(POOL_REACH, glow.floor)}
+              />
+              <i
+                className={`camp-glow camp-glow--core camp-glow--${glow.mode}`}
+                style={glowStyle(CORE_REACH, glow.y)}
+              />
+              {glow.mode === "flicker" &&
+                embers(i, u).map((ember, j) => (
+                  <i
+                    key={j}
+                    className="camp-ember"
+                    style={
+                      {
+                        left: glow.x + ember.dx,
+                        top: glow.y,
+                        "--camp-ember-rise": `${-ember.rise}px`,
+                        "--camp-ember-drift": `${ember.drift}px`,
+                        animationDuration: `${ember.duration}s`,
+                        animationDelay: `${ember.delay}s`,
+                      } as CSSProperties
+                    }
+                  />
+                ))}
+            </Fragment>
+          )
+        })}
       </div>
       <div className="camp-layer camp-entrances">{entranceButtons}</div>
     </div>

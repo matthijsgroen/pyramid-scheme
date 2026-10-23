@@ -229,6 +229,13 @@ describe("layoutCamp", () => {
     expect(l.glows.map(g => g.key)).not.toContain(l.pieces.find(p => p.spot === "window")!.key)
   })
 
+  it("gives a glow the foot of its piece, where its light lands on the sand", () => {
+    const l = layout({ steps: {} })
+    const chest = l.pieces.find(p => p.spot === "chest")!
+    const chestGlow = l.glows.find(g => g.key === `${chest.key}:0`)!
+    expect(chestGlow.floor).toBeCloseTo(chest.y)
+  })
+
   it("draws only the latest step of a spot when each step replaces the one before", () => {
     const wholeSpot: CampCatalogue = {
       spots: [

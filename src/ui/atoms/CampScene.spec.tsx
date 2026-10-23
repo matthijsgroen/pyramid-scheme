@@ -228,4 +228,52 @@ describe("CampScene", () => {
     expect(container.querySelectorAll(".camp-shadow")).toHaveLength(0)
     expect(container.querySelectorAll(".camp-shade")).toHaveLength(0)
   })
+
+  describe("lighting", () => {
+    const breathe = { dx: 0, dy: 0, radius: 1, color: "#5a96ff", mode: "breathe" as const, strength: 0.5 }
+    const lit: CampCatalogue = {
+      spots: [],
+      fixed: [
+        { id: "campfire", x: 0, y: 0, frame: 1, footprint: 0.8, piece: piece("flame", { lights: [fireLight] }) },
+        { id: "window", x: 1, y: -1, frame: 1, footprint: 0.8, piece: piece("window", { lights: [breathe] }) },
+      ],
+    }
+
+    it("lays no tint over the whole camp, so the pieces keep their colour", () => {
+      const { container } = render(<Scene chapter="starter" steps={{}} catalogue={lit} />)
+      expect(container.querySelector(".camp-night")).toBeNull()
+    })
+
+    it("gives every light a wide pool that saturates and a small core that brightens", () => {
+      const { container } = render(<Scene chapter="starter" steps={{}} catalogue={lit} />)
+      const pools = container.querySelectorAll<HTMLElement>(".camp-glow--pool")
+      const cores = container.querySelectorAll<HTMLElement>(".camp-glow--core")
+      expect(pools).toHaveLength(2)
+      expect(cores).toHaveLength(2)
+      for (let i = 0; i < 2; i++)
+        expect(parseFloat(pools[i].style.width)).toBeGreaterThan(parseFloat(cores[i].style.width))
+    })
+
+    it("lays a light's pool on the sand at its piece's foot, below its core", () => {
+      const { container } = render(<Scene chapter="starter" steps={{}} catalogue={lit} />)
+      const pool = container.querySelector<HTMLElement>(".camp-glow--pool.camp-glow--flicker")!
+      const core = container.querySelector<HTMLElement>(".camp-glow--core.camp-glow--flicker")!
+      expect(parseFloat(pool.style.top)).toBeGreaterThan(parseFloat(core.style.top))
+    })
+
+    it("raises a handful of embers from a burning piece only", () => {
+      const { container } = render(<Scene chapter="starter" steps={{}} catalogue={lit} />)
+      const embers = container.querySelectorAll(".camp-ember")
+      expect(embers.length).toBeGreaterThan(0)
+      expect(embers.length).toBeLessThanOrEqual(8)
+    })
+
+    it("twinkles a few stars and leaves the rest still", () => {
+      const { container } = render(<Scene chapter="starter" steps={{}} catalogue={lit} />)
+      const twinkling = container.querySelectorAll(".camp-star--twinkle").length
+      expect(twinkling).toBeGreaterThan(0)
+      expect(twinkling).toBeLessThanOrEqual(10)
+      expect(container.querySelectorAll(".camp-star").length).toBeGreaterThan(twinkling)
+    })
+  })
 })

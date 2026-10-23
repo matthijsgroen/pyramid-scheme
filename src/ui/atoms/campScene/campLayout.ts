@@ -40,6 +40,8 @@ export type PlacedGlow = {
   key: string
   x: number
   y: number
+  /** The foot of the piece carrying the light: where its light lands on the sand. */
+  floor: number
   radius: number
   color: string
   mode: "flicker" | "breathe"
@@ -307,6 +309,7 @@ export const layoutCamp = ({
         key: `${p.key}:${i}`,
         x: p.x + light.dx * p.frame,
         y: p.y + light.dy * p.frame,
+        floor: p.y,
         radius: light.radius * p.scale,
         color: light.color,
         mode: light.mode,
