@@ -808,6 +808,23 @@ Attach: `art/masters/camp/ref-starCanopy.webp`, `art/masters/camp/cloth.webp`
 > [edit] Remove this, and only this: a deep-blue cloth canopy stretched between the poles. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
+## Layer sources
+
+Finds show in any order (`docs/superpowers/specs/2026-10-23-camp-loot-design.md`): a spot is drawn as its base
+plus one layer per object, and an object's layer is the pixels where its step differs from the step
+without it. Where one object sits on another (the compass on the star cloth), the lower one was never
+painted under the upper one, and its layer would have a hole. A layer source fills that: an extra edit,
+never shown as a step, only cut from.
+
+### `camp/starMap-cloth` — the star cloth without the compass
+
+Edit of `camp/starMap`.
+
+Attach: `art/masters/camp/starMap.webp`
+
+> [edit] Remove this, and only this: the round brass compass on the right end of the table. The dark-blue
+> cloth under it stays and continues where the compass stood, with its gold border.
+
 ## 3. Surroundings
 
 Not cut-outs: these fill the scene behind the camp.
