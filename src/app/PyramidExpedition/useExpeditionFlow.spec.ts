@@ -8,6 +8,7 @@ type Props = {
   completionCount: number
   interiorLevelNr: number | null
   hasInterior: boolean
+  boardless: boolean
 }
 
 const setup = (over: Partial<Props> = {}) => {
@@ -19,6 +20,7 @@ const setup = (over: Partial<Props> = {}) => {
     completionCount: 0,
     interiorLevelNr: null,
     hasInterior: false,
+    boardless: false,
     ...over,
   }
   const hook = renderHook(
@@ -46,6 +48,32 @@ describe("useExpeditionFlow", () => {
     const { hook } = setup({ hasInterior: true, interiorLevelNr: 1, levelNr: 1 })
 
     expect(hook.result.current.showingInterior).toBe(true)
+  })
+
+  it("goes on to the next level without a slide after a boardless level's site", () => {
+    const { hook, onNextLevel } = setup({ hasInterior: true, boardless: true, interiorLevelNr: 1 })
+
+    act(() => hook.result.current.interiorComplete())
+    expect(hook.result.current.startNextLevel).toBe(false)
+    finishTransition()
+
+    expect(onNextLevel).toHaveBeenCalledOnce()
+    expect(hook.result.current.startNextLevel).toBe(false)
+  })
+
+  it("reopens a boardless level's interior after backing out", () => {
+    const { hook } = setup({ hasInterior: true, boardless: true, interiorLevelNr: 1, levelNr: 1 })
+
+    expect(hook.result.current.showingInterior).toBe(true)
+  })
+
+  it("enters the interior without a board, and remembers it for re-entry", () => {
+    const { hook, setInteriorLevel } = setup({ hasInterior: true, boardless: true, levelNr: 2 })
+
+    act(() => hook.result.current.enterInterior())
+
+    expect(hook.result.current.showingInterior).toBe(true)
+    expect(setInteriorLevel).toHaveBeenCalledWith("j1", 2)
   })
 
   it("celebrates a solved board once, and not again underneath an open interior", () => {

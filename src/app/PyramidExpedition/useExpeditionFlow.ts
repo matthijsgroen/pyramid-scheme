@@ -8,6 +8,8 @@ type ExpeditionFlowArgs = {
   interiorLevelNr: number | null | undefined
   /** Whether this journey authors an interior site at all. */
   hasInterior: boolean
+  /** This level has no board: its site is the whole level. */
+  boardless?: boolean
   setInteriorLevel: (journeyId: string, levelNr: number | null) => void
   onNextLevel?: () => void
   onClose?: () => void
@@ -22,6 +24,8 @@ export type ExpeditionFlow = {
   showingInterior: boolean
   /** This level's board is solved — also when it was solved on an earlier visit and the interior is reopened. */
   boardSolved: boolean
+  /** Open the interior without solving a board first. */
+  enterInterior: () => void
   completeLevel: () => void
   completionFinished: () => void
   interiorComplete: () => void
@@ -36,6 +40,7 @@ export const useExpeditionFlow = ({
   completionCount,
   interiorLevelNr,
   hasInterior,
+  boardless = false,
   setInteriorLevel,
   onNextLevel,
   onClose,
@@ -89,19 +94,23 @@ export const useExpeditionFlow = ({
     setBoardSolved(true)
   }, [startNextLevel, showingInterior])
 
+  const enterInterior = useCallback(() => {
+    // Mark the interior open so re-entry skips the exterior and drops straight into the site.
+    setInteriorLevel(journeyId, levelNr)
+    setShowingInterior(true)
+  }, [setInteriorLevel, journeyId, levelNr])
+
   const completionFinished = useCallback(() => {
     setLevelCompleted(false)
     if (hasInterior) {
-      // Mark the interior open so re-entry skips the exterior board and drops straight into the site.
-      setInteriorLevel(journeyId, levelNr)
-      setShowingInterior(true)
+      enterInterior()
       return
     }
     scheduleTransition([
       [1000, () => setTransitionToLevel(levelNr + 1)],
       [1995, () => onNextLevel?.()],
     ])
-  }, [hasInterior, setInteriorLevel, journeyId, levelNr, onNextLevel, scheduleTransition])
+  }, [hasInterior, enterInterior, levelNr, onNextLevel, scheduleTransition])
 
   const interiorComplete = useCallback(() => {
     setInteriorLevel(journeyId, null)
@@ -112,11 +121,16 @@ export const useExpeditionFlow = ({
       onClose?.()
       return
     }
+    if (boardless) {
+      // No board slides away after a site that had none; the next level simply arrives.
+      onNextLevel?.()
+      return
+    }
     scheduleTransition([
       [300, () => setTransitionToLevel(levelNr + 1)],
       [2000, () => onNextLevel?.()],
     ])
-  }, [setInteriorLevel, journeyId, completionCount, levelNr, onNextLevel, onClose, scheduleTransition])
+  }, [setInteriorLevel, journeyId, completionCount, boardless, levelNr, onNextLevel, onClose, scheduleTransition])
 
   // Backing out of the interior returns to the map; interiorLevelNr stays set, so re-entry lands
   // straight back inside.
@@ -130,6 +144,7 @@ export const useExpeditionFlow = ({
     levelCompleted,
     showingInterior,
     boardSolved,
+    enterInterior,
     completeLevel,
     completionFinished,
     interiorComplete,

@@ -23,6 +23,14 @@ export type DayNightCycleStep = "morning" | "afternoon" | "evening" | "night"
  * backdrop declares the same list for itself (`src/ui/atoms/DesertBackdrop.tsx`), for the same reason. */
 export type Landmark = "sphinx"
 
+/** What one level of a journey is, when it differs from the journey's own exterior and board. */
+export type JourneyLevel = {
+  // The outdoor scene this level opens on; unset, the journey's desert.
+  exterior?: "caveMouth" | "cavern"
+  // `false`: no cross-sum board stands before this level's site, only the way in.
+  board?: false
+}
+
 export type Journey = {
   id: string
   name: string
@@ -57,6 +65,8 @@ export type Journey = {
   // that currency says which one it is and reports the progress (app/pages/journeyContributions.ts);
   // core only knows a count has to be reached.
   entryLock?: { count: number }
+  // Per-level overrides, indexed by level number - 1; a level without an entry is an ordinary one.
+  levels?: JourneyLevel[]
   siteConfigs?: SiteConfig[]
 }
 

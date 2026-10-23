@@ -79,9 +79,11 @@ export const TravelPage: FC<{
     mapTapped()
     if (revisiting && journey) {
       // Tapping the map background (not a node) re-enters the last-picked pyramid, re-solving its
-      // exterior board (visitLevel clears the interior).
+      // exterior board (visitLevel clears the interior). A journey finished with its stored level
+      // one past the end resumes at its last level.
       const info = getJourney(journey.id)
-      const resumeAt = info && info.levelNr >= 1 && info.levelNr <= effectiveLevelCount ? info.levelNr : 1
+      const resumeAt =
+        info && info.levelNr >= 1 && info.levelNr <= effectiveLevelCount ? info.levelNr : effectiveLevelCount
       // Awaited: the expedition must not mount until every useJourneys() instance can see the
       // level we're heading to, or it seeds its transition animation from the level we're leaving.
       await visitLevel(journey.id, resumeAt)
@@ -111,8 +113,7 @@ export const TravelPage: FC<{
 
   const handleNodeClick = async (levelNr: number) => {
     if (!journey) return
-    // A tomb has a single exterior level; every "node" re-enters that one site (see effectiveLevelCount).
-    // Awaited — see handleMapClick.
+    // Each node is one site (see effectiveLevelCount). Awaited — see handleMapClick.
     await visitLevel(journey.id, levelNr)
     startGame()
   }

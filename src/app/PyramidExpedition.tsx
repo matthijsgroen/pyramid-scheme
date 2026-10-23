@@ -1,4 +1,4 @@
-import { type FC, use, useMemo } from "react"
+import { type FC, type ReactNode, use, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { Level } from "@/app/PyramidLevel/Level"
 import { LevelCompletionHandler } from "@/app/PyramidLevel/LevelCompletionHandler"
@@ -12,6 +12,7 @@ import { SiteMapScreen } from "@/app/SiteMap/SiteMapScreen"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { clsx } from "clsx"
 import { DesertBackdrop } from "@/ui/atoms/DesertBackdrop"
+import { CaveBackdrop } from "@/ui/atoms/CaveBackdrop"
 import { getLevelWidth } from "@/game/state"
 import { dayNightCycleDayTime, dayNightCycleStep } from "@/ui/atoms/backdropSelection"
 import { generateJourneyLevel } from "@/game/generateJourneyLevel"
@@ -49,12 +50,15 @@ export const PyramidExpedition: FC<{
   // Ward/tomb keys held right now — what decides whether the next tier is open (journeyAvailability).
   const heldKeys = useMergedHeldKeys()
   const hasInterior = !!journey.siteConfigs?.length
+  const levelSetup = journey.levels?.[activeJourney.levelNr - 1]
+  const boardless = levelSetup?.board === false
   const flow = useExpeditionFlow({
     journeyId: activeJourney.journeyId,
     levelNr: activeJourney.levelNr,
     completionCount: activeJourney.completionCount,
     interiorLevelNr: activeJourney.interiorLevelNr,
     hasInterior,
+    boardless,
     setInteriorLevel,
     onNextLevel,
     onClose,
@@ -103,14 +107,24 @@ export const PyramidExpedition: FC<{
       ? "text-black"
       : "text-white"
 
-  return (
-    <DesertBackdrop
-      levelNr={activeJourney.levelNr}
-      start={journey.background.time}
-      timeStepSize={journey.background.timeStepSize}
-      showNile={journey.background.showNile}
-      landmark={journey.background.landmark}
-    >
+  // A function, not a component: a component defined here would be a new type every render and remount the board.
+  const backdrop = (children: ReactNode) =>
+    levelSetup?.exterior ? (
+      <CaveBackdrop variant={levelSetup.exterior === "caveMouth" ? "mouth" : "cavern"}>{children}</CaveBackdrop>
+    ) : (
+      <DesertBackdrop
+        levelNr={activeJourney.levelNr}
+        start={journey.background.time}
+        timeStepSize={journey.background.timeStepSize}
+        showNile={journey.background.showNile}
+        landmark={journey.background.landmark}
+      >
+        {children}
+      </DesertBackdrop>
+    )
+
+  return backdrop(
+    <>
       <div className="flex size-full flex-col">
         <div className="flex-shrink-0 bg-gradient-to-t from-transparent via-transparent to-black/30 backdrop-blur-sm">
           <Header className={textColor}>
@@ -203,7 +217,7 @@ export const PyramidExpedition: FC<{
                 transition: startNextLevel ? "transform 1000ms ease-in-out" : "none",
               }}
             >
-              {levelContent && (
+              {levelContent && !boardless && (
                 <Level
                   key={activeJourney.levelNr}
                   storageKey={storageKey}
@@ -216,9 +230,9 @@ export const PyramidExpedition: FC<{
                 />
               )}
             </div>
-            {revealSolvedBoard && !showingInterior && !startNextLevel && (
+            {(revealSolvedBoard || boardless) && !showingInterior && !startNextLevel && (
               <div className="absolute inset-x-0 bottom-4 z-20 mb-safe-bottom flex justify-center">
-                <ActionButton label={t("ui.enterSite")} onClick={flow.completionFinished} />
+                <ActionButton label={t("ui.enterSite")} onClick={flow.enterInterior} />
               </div>
             )}
             {expeditionCompleted && (
@@ -250,6 +264,6 @@ export const PyramidExpedition: FC<{
           />
         </div>
       )}
-    </DesertBackdrop>
+    </>
   )
 }

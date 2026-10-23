@@ -175,3 +175,48 @@ describe("PyramidExpedition — leaving a reopened interior", () => {
     expect(inputs.filter(input => input.value === "")).toHaveLength(0)
   })
 })
+
+describe("PyramidExpedition — a level without a board", () => {
+  beforeEach(async () => {
+    await clearGameData()
+  })
+
+  const boardlessJourney: CombinedJourneyState = {
+    ...makeActiveJourney(1),
+    completionCount: 0,
+    interiorLevelNr: null,
+    journey: {
+      ...journeyData,
+      siteConfigs: allJourneys.find(j => (j.siteConfigs?.length ?? 0) > 0)!.siteConfigs,
+      levels: [{ exterior: "caveMouth", board: false }],
+      name: "cave",
+      description: "",
+      lengthLabel: "short",
+    } as TranslatedJourney,
+  }
+  const screen = (state: CombinedJourneyState) => (
+    <FezContext.Provider value={{ showConversation: () => {} }}>
+      <PyramidExpedition activeJourney={state} runNr={1} />
+    </FezContext.Provider>
+  )
+
+  it("shows the way in and no board, and the way in opens the interior", async () => {
+    const { container, getByText, queryByText } = render(screen(boardlessJourney))
+    await settle()
+
+    expect(container.querySelectorAll('[tabindex="0"]')).toHaveLength(0)
+    expect(queryByText("finish interior")).toBeNull()
+
+    await act(async () => getByText("ui.enterSite").click())
+
+    expect(queryByText("finish interior")).not.toBeNull()
+  })
+
+  it("reopens the interior, not the way in, when the player comes back mid-visit", async () => {
+    const { queryByText } = render(screen({ ...boardlessJourney, interiorLevelNr: 1 }))
+    await settle()
+
+    expect(queryByText("finish interior")).not.toBeNull()
+    expect(queryByText("ui.enterSite")).toBeNull()
+  })
+})
