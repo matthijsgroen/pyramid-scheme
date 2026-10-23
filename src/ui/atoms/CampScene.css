@@ -6,7 +6,7 @@
   overflow: hidden;
   background: linear-gradient(
     #0f1733 0%,
-    #1f2b5c 45%,
+    #1f2b5c,
     #3b3466 var(--camp-horizon, 62%),
     #c9a06a var(--camp-horizon, 62%)
   );
@@ -42,6 +42,12 @@
 .camp-pyramid {
   position: absolute;
   transform: translateX(-50%);
+}
+
+.camp-pyramid--art {
+  object-fit: contain;
+  object-position: 50% 100%;
+  user-select: none;
 }
 
 .camp-pyramid__lit,

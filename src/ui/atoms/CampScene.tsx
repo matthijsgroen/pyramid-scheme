@@ -1,24 +1,27 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react"
-import { useTranslation } from "react-i18next"
+import type { CSSProperties } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { CAMP_CATALOGUE } from "./campScene/campCatalogue"
-import { layoutCamp, type PlacedPiece } from "./campScene/campLayout"
+import { layoutCamp, type PlacedPiece, type PlacedPyramid } from "./campScene/campLayout"
 import type { CampCatalogue, CampSpotId } from "./campScene/campTypes"
 import "./CampScene.css"
 
-export type CampEntrance = { badge?: number; onOpen: () => void }
+/** `label` is the translated name the caller composes, e.g. "Mosaic 61/252". */
+export type CampEntrance = { label: string; badge?: number; onOpen: () => void }
 
 export type CampSceneProps = {
+  /** The container's size in px; the caller measures it. */
+  width: number
+  height: number
   chapter: Difficulty
   steps: Partial<Record<CampSpotId, number>>
   insets?: { top: number; bottom: number }
-  entrances?: { chest?: CampEntrance; window?: CampEntrance & { label?: string }; mapTable?: CampEntrance }
+  entrances?: { chest?: CampEntrance; window?: CampEntrance; mapTable?: CampEntrance }
   catalogue?: CampCatalogue
   className?: string
 }
 
 // The filename is the piece id, so adding a piece's art is dropping its file in. A piece with no file yet
-// draws the stand-in.
+// draws the stand-in; the scenery (sand, dunes, pyramid, pyramidGold) falls back to CSS.
 const artUrls = import.meta.glob("../../assets/camp/*.{png,webp,svg}", {
   eager: true,
   query: "?url",
@@ -71,7 +74,23 @@ const Piece = ({ placed }: { placed: PlacedPiece }) => {
   )
 }
 
+/** The painted pyramid when its art exists, else the CSS one; the fifth wears the golden capstone. */
+const Pyramid = ({ pyramid, top }: { pyramid: PlacedPyramid; top: number }) => {
+  const style: CSSProperties = { left: pyramid.x, top, width: pyramid.width, height: pyramid.height }
+  const url = artByKey.get(pyramid.golden ? "pyramidGold" : "pyramid")
+  if (url) return <img className="camp-pyramid camp-pyramid--art" src={url} alt="" draggable={false} style={style} />
+  return (
+    <div className="camp-pyramid" style={style}>
+      <i className="camp-pyramid__lit" />
+      <i className="camp-pyramid__shade" />
+      {pyramid.golden && <i className="camp-pyramid__cap" />}
+    </div>
+  )
+}
+
 export const CampScene = ({
+  width,
+  height,
   chapter,
   steps,
   insets = NO_INSETS,
@@ -79,59 +98,31 @@ export const CampScene = ({
   catalogue = CAMP_CATALOGUE,
   className,
 }: CampSceneProps) => {
-  const { t } = useTranslation("common")
-  const rootRef = useRef<HTMLDivElement>(null)
-  const [size, setSize] = useState<{ width: number; height: number } | null>(null)
+  const rootClass = ["camp-scene", className].filter(Boolean).join(" ")
+  const layout = layoutCamp({ width, height, insets, chapter, steps, catalogue })
+  if (!layout) return <div className={rootClass} />
 
-  useEffect(() => {
-    const root = rootRef.current
-    if (!root) return
-    const observer = new ResizeObserver(entries => {
-      const { width, height } = entries[entries.length - 1].contentRect
-      setSize(prev => (prev && prev.width === width && prev.height === height ? prev : { width, height }))
-    })
-    observer.observe(root)
-    return () => observer.disconnect()
-  }, [])
-
-  const layout = useMemo(
-    () => (size ? layoutCamp({ ...size, insets, chapter, steps, catalogue }) : null),
-    [size, insets, chapter, steps, catalogue]
-  )
-
-  const width = size?.width ?? 0
-  const horizon = layout?.horizon ?? 0
-  const stars = useMemo(() => starField(width, horizon), [width, horizon])
-
-  const rootStyle = {
-    "--camp-horizon": layout && size ? `${(layout.horizon / size.height) * 100}%` : undefined,
-  } as CSSProperties
-
-  if (!layout || !size) {
-    return <div ref={rootRef} className={["camp-scene", className].filter(Boolean).join(" ")} style={rootStyle} />
-  }
-
-  const { unit: u } = layout
+  const { unit: u, horizon } = layout
+  const stars = starField(width, horizon)
   const moon = Math.max(18, u * 0.55)
   const tagSize = clamp(u * 0.2, 10, 14)
+  const sand = artByKey.get("sand")
+  const dunes = artByKey.get("dunes")
+  const rootStyle = { "--camp-horizon": `${(horizon / height) * 100}%` } as CSSProperties
 
-  const entranceButtons = (
-    [
-      ["chest", "camp.entrance.collection", entrances.chest],
-      ["window", "camp.entrance.mosaic", entrances.window],
-      ["mapTable", "camp.entrance.journeys", entrances.mapTable],
-    ] as const
-  ).flatMap(([spot, labelKey, entrance]) => {
+  const entranceButtons = (["chest", "window", "mapTable"] as const).flatMap(spot => {
+    const entrance = entrances[spot]
     if (!entrance) return []
     const box = boundsOf(layout.pieces.filter(p => p.spot === spot))
     if (!box) return []
-    const label = "label" in entrance ? entrance.label : undefined
+    const { label, badge, onOpen } = entrance
     return [
       <button
         key={spot}
         type="button"
         className="camp-entrance"
-        onClick={entrance.onOpen}
+        aria-label={badge === undefined ? label : `${label} (${badge})`}
+        onClick={onOpen}
         style={{
           left: box.x,
           top: box.y,
@@ -139,17 +130,16 @@ export const CampScene = ({
           height: Math.max(MIN_TARGET, box.height),
         }}
       >
-        {entrance.badge !== undefined && <span className="camp-entrance__badge">{entrance.badge}</span>}
+        {badge !== undefined && <span className="camp-entrance__badge">{badge}</span>}
         <span className="camp-entrance__tag" style={{ fontSize: tagSize }}>
-          {t(labelKey)}
-          {label ? ` ${label}` : ""}
+          {label}
         </span>
       </button>,
     ]
   })
 
   return (
-    <div ref={rootRef} className={["camp-scene", className].filter(Boolean).join(" ")} style={rootStyle}>
+    <div className={rootClass} style={rootStyle}>
       <div className="camp-layer" aria-hidden="true">
         {stars.map((star, i) => (
           <i key={i} className="camp-star" style={{ left: star.x, top: star.y, opacity: star.opacity }} />
@@ -159,32 +149,43 @@ export const CampScene = ({
           style={
             {
               "--camp-moon": `${moon}px`,
-              left: size.width * 0.2,
-              top: Math.max(16, layout.horizon * 0.1),
+              left: width * 0.2,
+              top: insets.top + Math.max(16, (horizon - insets.top) * 0.1),
               width: moon,
               height: moon,
             } as CSSProperties
           }
         />
-        <i className="camp-haze" style={{ top: layout.horizon - u * 1.2, height: u * 1.2 }} />
+        <i className="camp-haze" style={{ top: horizon - u * 1.2, height: u * 1.2 }} />
         {layout.pyramids.map((p, i) => (
-          <div
-            key={i}
-            className="camp-pyramid"
-            style={{ left: p.x, top: layout.horizon - p.height + u * 0.12, width: p.height * 1.5, height: p.height }}
-          >
-            <i className="camp-pyramid__lit" />
-            <i className="camp-pyramid__shade" />
-            {p.golden && <i className="camp-pyramid__cap" />}
-          </div>
+          <Pyramid key={i} pyramid={p} top={horizon - p.height + u * 0.12} />
         ))}
-        <div className="camp-ground" style={{ top: layout.horizon }} />
-        <div className="camp-dune" style={{ top: layout.horizon - u * 0.18, height: u * 0.5 }}>
-          {duneSvg("#a98458", 6)}
-        </div>
-        <div className="camp-dune" style={{ top: layout.horizon + u * 0.15, height: u * 0.6 }}>
-          {duneSvg("#bb9663", 9)}
-        </div>
+        <div
+          className="camp-ground"
+          style={{
+            top: horizon,
+            ...(sand && { background: `url(${sand}) 0 0 / ${Math.round(u * 3)}px repeat` }),
+          }}
+        />
+        {dunes ? (
+          <div
+            className="camp-dune"
+            style={{
+              top: horizon - u * 0.6,
+              height: u,
+              background: `url(${dunes}) 0 100% / auto 100% repeat-x`,
+            }}
+          />
+        ) : (
+          <>
+            <div className="camp-dune" style={{ top: horizon - u * 0.18, height: u * 0.5 }}>
+              {duneSvg("#a98458", 6)}
+            </div>
+            <div className="camp-dune" style={{ top: horizon + u * 0.15, height: u * 0.6 }}>
+              {duneSvg("#bb9663", 9)}
+            </div>
+          </>
+        )}
       </div>
       <div className="camp-layer">
         {layout.pieces.map(placed => (

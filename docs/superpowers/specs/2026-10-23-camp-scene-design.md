@@ -198,8 +198,8 @@ steps build around it, and its "fire" step makes the flame bigger with a wider g
 ## The component
 
 - An atom in `src/ui/atoms/CampScene.tsx` with `CampScene.stories.tsx` next to it.
-- Props: the chapter (a `Difficulty`), the step count per spot, per entrance an optional badge and an
-  open callback, and **top and bottom insets** in px (my call): the space the HUD in the sky and the
+- Props: the container's **width and height** in px, the chapter (a `Difficulty`), the step count per
+  spot, per entrance a translated label, an optional badge and an open callback, and **top and bottom insets** in px (my call): the space the HUD in the sky and the
   floating "Op pad" take. The frame is fitted between the insets, so nothing occupied sits under an
   overlay; sky and sand still run to the edges behind them. The integration passes the device's safe
   area (`env(safe-area-inset-*)`) plus its own overlay heights; the scene does not read `env()` itself.
@@ -209,9 +209,11 @@ steps build around it, and its "fire" step makes the flame bigger with a wider g
   the tests: the frame is never cropped, spacing stays within its bounds, no two spots in a row overlap at
   the minimum, a spot keeps its slot across chapters, a later-chapter spot is not drawn.
 - The spot/step/piece catalogue is data in one file, next to the layout.
-- Labels (entrance names) go through i18n.
-- Rendering is HTML elements positioned with CSS transforms, no canvas. The container's size is measured
-  (a `ResizeObserver`), so the scene reflows live when the window is resized.
+- Labels (entrance names) come in as props, already translated; the caller composes them (the window's
+  "Mosaic 61/252"). The `camp.entrance.*` locale keys are the caller's.
+- Rendering is HTML elements positioned with CSS transforms, no canvas. The size comes in as props: the
+  caller measures its container and passes width and height, so the scene reflows whenever the caller's
+  measurement changes. A ui atom holds no state and measures nothing.
 
 ## Storybook
 
