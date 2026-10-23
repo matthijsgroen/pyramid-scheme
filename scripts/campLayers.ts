@@ -33,6 +33,8 @@ export const LAYER_SOURCES: Record<string, LayerSource> = {
   starMap: { with: "starMap-cloth", without: "table" },
   // The well was painted behind the trough and the gourd; its own edit holds the well alone, whole.
   well: { with: "well-alone", without: null },
+  // Cut against the jars the trough keeps a sliver of the second jar; its own edit holds it alone.
+  waterTrough: { with: "waterTrough-alone", without: null },
   // The tent's canvas is the windbreak's colour, so against the windbreak it would come out full of holes.
   tent: { without: "blanket" },
   // Each growth stage of the first palm is the whole plant, so each is cut against the bare bed.

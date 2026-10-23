@@ -842,6 +842,17 @@ Attach: `art/masters/camp/well.webp`
 > bowl. Where they covered the well, paint the rest of its stone wall as it continues; elsewhere show the
 > #ff00ff background. The well itself stays exactly where and as it is.
 
+### 93. `camp/waterTrough-alone` — Layer source: the trough on its own
+
+Cut against the jars, the trough keeps a sliver of the second jar's base it was painted over. Its layer is
+this picture whole. Edit of `camp/waterTrough`.
+
+Attach: `art/masters/camp/waterTrough.webp`
+
+> [edit] Remove everything except the long low stone water trough: both jars and the gourd bowl. Where the
+> second jar stood behind the trough, show the #ff00ff background. The trough itself stays exactly where and as
+> it is.
+
 ### 91. `camp/starMap-cloth` — Layer source: the star cloth without the compass
 
 Edit of `camp/starMap`.
