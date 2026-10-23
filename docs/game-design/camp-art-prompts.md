@@ -560,7 +560,7 @@ The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/ref-palmGarden.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the palm garden, complete: two young date palms growing from a mound of dark soil, bunches of orange dates under their crowns, a low stone planter with water and pink lotus flowers in front, and a small fig tree with purple figs beside them. Use the colours of the matching objects in the reference image.
+> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the palm garden, complete: a low rectangular garden bed edged with pale stone slabs, filled with dark soil and a little grass; two tall date palms growing from it, the left one taller, their trunks leaning slightly apart, with bunches of orange dates hanging under both crowns; a small fig tree with purple figs at the front left of the bed; and in front of the bed, to the right, a low square stone planter with water, green lily pads and pink lotus flowers. Use the colours of the matching objects in the reference image.
 
 #### 53. `camp/lotusPlanter` — Palm garden, step 6 of 7 (wizard)
 
@@ -568,7 +568,7 @@ Edit of `camp/figTree`.
 
 Attach: `art/masters/camp/ref-palmGarden.webp`, `art/masters/camp/figTree.webp`
 
-> [edit] Remove this, and only this: a small fig tree with purple figs beside the palms. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the small fig tree with purple figs at the front left of the bed; the palm trunk and the bed behind it show there. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 #### 54. `camp/dates` — Palm garden, step 5 of 7 (master)
@@ -577,7 +577,7 @@ Edit of `camp/lotusPlanter`.
 
 Attach: `art/masters/camp/ref-palmGarden.webp`, `art/masters/camp/lotusPlanter.webp`
 
-> [edit] Remove this, and only this: a low stone planter with water and pink lotus flowers in front of the palms. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the low square stone planter with water, lily pads and lotus flowers in front of the bed. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 #### 55. `camp/secondPalm` — Palm garden, step 4 of 7 (master)
@@ -595,7 +595,7 @@ Edit of `camp/secondPalm`.
 
 Attach: `art/masters/camp/ref-palmGarden.webp`, `art/masters/camp/secondPalm.webp`
 
-> [edit] Remove this, and only this: a second date palm beside the first. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the second, shorter date palm on the right, trunk and crown; the first palm and the bed stay exactly as they are. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 #### 57. `camp/sprout` — Palm garden, step 2 of 7 (expert)
@@ -604,7 +604,7 @@ Edit of `camp/palm`.
 
 Attach: `art/masters/camp/ref-palmGarden.webp`, `art/masters/camp/palm.webp`
 
-> [edit] Replace the young palm with a small green palm sprout, ankle-high, growing from the same mound.
+> [edit] Replace the tall palm with a small green palm sprout, ankle-high, growing from the same spot in the same garden bed. The bed stays exactly as it is.
 
 #### 58. `camp/seed` — Palm garden, step 1 of 7 (expert)
 
@@ -612,7 +612,7 @@ Edit of `camp/sprout`.
 
 Attach: `art/masters/camp/ref-palmGarden.webp`, `art/masters/camp/sprout.webp`
 
-> [edit] Replace the sprout with a single seed lying on top of the soil mound. The mound stays exactly as it is.
+> [edit] Replace the sprout with a single date seed lying on the dark soil where the sprout grew. The bed stays exactly as it is.
 
 ### Ibis pond (`ibisPond`)
 
