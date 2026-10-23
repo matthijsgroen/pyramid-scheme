@@ -127,9 +127,14 @@ an edit of that step with only the flames repainted.
 
 Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/campfire.webp`
 
-> Edit the second attached image: the same sticks, same size and position; repaint only the flames in a
-> different moment of their flicker — leaning the other way, a different tongue shape. Same painting style,
-> crisp opaque outer edge, flat #ff00ff background.
+> Edit the second attached image: the next frame of a gentle flicker, a SMALL change only. Keep the
+> sticks, the flame's base, its overall height, width and lean exactly as they are. Change only the flame
+> tips: shift each tongue a little sideways, make the tallest one slightly shorter and a side tongue
+> slightly longer, and move the inner colours a touch. No new tongues, no floating fragments or sparks,
+> nothing detached from the flame. Same painting style, crisp opaque outer edge, flat #ff00ff background.
+
+The two frames alternate a few times a second, so they must be near twins: a frame that leans or grows
+reads as the fire jumping, not flickering.
 
 ## 2. Camp spots
 
