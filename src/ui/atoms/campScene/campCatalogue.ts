@@ -159,18 +159,19 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       id: "chest",
       row: 2,
       slot: -1,
-      piece: piece("chest", { lights: [light(0.8, "255,200,80", "breathe", 0.6, 0, -0.35)] }),
+      piece: piece("chest", { lights: [light(0.8, "255,200,80", "breathe", 0.4, 0, -0.35)] }),
     },
     {
       id: "window",
       row: 0,
       slot: 1,
       piece: piece("window", {
-        width: 1,
-        height: 1,
+        // The mosaic window is the camp's landmark: bigger than its row would draw it, so the goal stays in sight.
+        width: 1.4,
+        height: 1.4,
         lights: [
-          light(1.1, "90,150,255", "breathe", 0.55, 0, -0.4),
-          light(0.9, "255,200,120", "breathe", 0.5, 0, -0.9),
+          light(1.3, "90,150,255", "breathe", 0.55, 0, -0.55),
+          light(1.0, "255,200,120", "breathe", 0.5, 0, -1.1),
         ],
       }),
     },
