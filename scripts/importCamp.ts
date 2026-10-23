@@ -55,6 +55,14 @@ const SCENERY = new Set(["sand", "dunes", "pyramid", "pyramidGold"])
 const SHADOW_BLUR = 0.008
 /** How far the band reaches up from the object's lowest pixel in each column, as a share of the canvas height. */
 const SHADOW_BAND = 0.06
+/**
+ * The outermost ring of the object, as a share of the download's longest side. A dark outline mixed with
+ * magenta is too far from the key to count as near it, so in this ring the key's share is also read from the
+ * colour's magenta cast (blue and red above green) — deep enough to take a painted edge line, too shallow to
+ * thin a purple cushion.
+ */
+const RIM = 0.006
+
 /** A soft edge reaches this many tolerances away from the key; alpha ramps from the tolerance up to it. */
 const EDGE_RAMP = 3
 
@@ -93,15 +101,50 @@ const keyUnmix = (data: Buffer, width: number, height: number, key: string, tole
     if (i >= width) visit(i - width)
     if (i < n - width) visit(i + width)
   }
+  // The rim: every pixel within a few steps of the background.
+  const rimDepth = Math.max(2, Math.round(Math.max(width, height) * RIM))
+  const depth = new Uint8Array(n).fill(255)
+  const ring = new Int32Array(n)
+  let ringTail = 0
+  for (let i = 0; i < n; i++)
+    if (distance[i] <= tolerance) {
+      depth[i] = 0
+      ring[ringTail++] = i
+    }
+  for (let head = 0; head < ringTail; head++) {
+    const i = ring[head]
+    if (depth[i] >= rimDepth) continue
+    const x = i % width
+    const step = (j: number) => {
+      if (depth[j] === 255) {
+        depth[j] = depth[i] + 1
+        ring[ringTail++] = j
+      }
+    }
+    if (x > 0) step(i - 1)
+    if (x < width - 1) step(i + 1)
+    if (i >= width) step(i - width)
+    if (i < n - width) step(i + width)
+  }
+  const magentaKey = k.r > 200 && k.b > 200 && k.g < 120
   for (let i = 0; i < n; i++) {
     const p = i * 4
     if (distance[i] <= tolerance) {
       data[p + 3] = 0
       continue
     }
-    if (!near[i]) continue
-    const a = Math.min(1, (distance[i] - tolerance) / (tolerance * (EDGE_RAMP - 1)))
+    const inRim = depth[i] <= rimDepth
+    if (!near[i] && !inRim) continue
+    let a = near[i] ? Math.min(1, (distance[i] - tolerance) / (tolerance * (EDGE_RAMP - 1))) : 1
+    if (inRim && magentaKey) {
+      const cast = Math.max(0, Math.min(1, (Math.min(data[p], data[p + 2]) - data[p + 1]) / 255))
+      a = Math.min(a, 1 - cast)
+    }
     if (a >= 1) continue
+    if (a < 0.05) {
+      data[p + 3] = 0
+      continue
+    }
     const clamp = (v: number) => Math.max(0, Math.min(255, Math.round(v)))
     data[p] = clamp((data[p] - (1 - a) * k.r) / a)
     data[p + 1] = clamp((data[p + 1] - (1 - a) * k.g) / a)

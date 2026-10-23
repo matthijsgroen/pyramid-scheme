@@ -137,6 +137,33 @@ describe("importCamp", () => {
     expect(r).toBeGreaterThan(200)
   })
 
+  it("takes the magenta out of a dark outline mixed with it, at the very edge", async () => {
+    // A brown square with a one-pixel dark outline half mixed with magenta: a painted edge line on the key.
+    const source = join(dir, "outline.png")
+    await sharp({ create: { width: 400, height: 400, channels: 3, background: "#ff00ff" } })
+      .composite([
+        {
+          input: { create: { width: 102, height: 102, channels: 3, background: { r: 157, g: 20, b: 142 } } },
+          left: 149,
+          top: 149,
+        },
+        {
+          input: { create: { width: 100, height: 100, channels: 3, background: { r: 150, g: 100, b: 60 } } },
+          left: 150,
+          top: 150,
+        },
+      ])
+      .png()
+      .toFile(source)
+    const { out } = await importCamp(options(source))
+
+    const { data } = await sharp(out).raw().toBuffer({ resolveWithObject: true })
+    const [r, g, b, a] = [...data.subarray((200 * 400 + 149) * 4, (200 * 400 + 149) * 4 + 4)]
+    expect(a).toBeLessThan(200)
+    expect(b).toBeLessThanOrEqual(r)
+    expect(Math.abs(b - g)).toBeLessThan(40)
+  })
+
   it("casts no shadow for scenery or an unkeyed import", async () => {
     const source = await magentaWithRedSquare()
     for (const name of ["sand", "dunes", "pyramid", "pyramidGold"])
