@@ -285,6 +285,15 @@ describe("layoutCamp", () => {
     })
   })
 
+  it("keeps every pyramid inside the container", () => {
+    sweep((l, { width }) => {
+      for (const p of l.pyramids) {
+        expect(p.x - p.width / 2).toBeGreaterThanOrEqual(0)
+        expect(p.x + p.width / 2).toBeLessThanOrEqual(width)
+      }
+    })
+  })
+
   it("survives insets larger than the container", () => {
     const l = layout({
       width: 400,

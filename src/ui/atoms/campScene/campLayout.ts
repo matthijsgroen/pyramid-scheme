@@ -30,7 +30,8 @@ export type PlacedGlow = {
   strength: number
 }
 
-export type PlacedPyramid = { x: number; height: number; golden: boolean }
+/** Anchored bottom-centre on the horizon. */
+export type PlacedPyramid = { x: number; width: number; height: number; golden: boolean }
 
 export type CampLayout = {
   unit: number
@@ -66,6 +67,8 @@ export const CAMP_LAYOUT_PARAMS = {
   horizonShare: 0.27,
   /** Insets never squeeze the camp into less than this share of the height. */
   minInsetFreeShare: 0.25,
+  /** A horizon pyramid's width over its height. */
+  pyramidAspect: 1.5,
 }
 
 const P = CAMP_LAYOUT_PARAMS
@@ -203,9 +206,18 @@ export const layoutCamp = ({
     }))
   })
 
-  const pyramids: PlacedPyramid[] = difficulties
-    .slice(0, difficulties.indexOf(chapter) + 1)
-    .map((_, i) => ({ x: frame.x + frame.width * (0.1 + 0.2 * i), height: (0.55 + 0.22 * i) * unit, golden: i === 4 }))
+  // Clamped by its half-width so a pyramid stands whole even where the frame runs to the container's edge.
+  const pyramids: PlacedPyramid[] = difficulties.slice(0, difficulties.indexOf(chapter) + 1).map((_, i) => {
+    const pyramidHeight = (0.55 + 0.22 * i) * unit
+    const pyramidWidth = pyramidHeight * P.pyramidAspect
+    const half = pyramidWidth / 2
+    return {
+      x: clamp(frame.x + frame.width * (0.1 + 0.2 * i), half, width - half),
+      width: pyramidWidth,
+      height: pyramidHeight,
+      golden: i === 4,
+    }
+  })
 
   return { unit, spacing, rowGap, horizon, frame, pieces, glows, pyramids }
 }
