@@ -1,0 +1,12 @@
+// designed by: Claude
+// junior. One lever swaps the way east for the way west; the lever that opens the exit stands west and the exit
+// east, so the swap lever is thrown, then thrown back.
+
+in -- hall
+hall -- side
+hall -[S:a]- east
+hall -[S]- west
+east -[K]- out
+S toggle @side
+K toggle @west
+west *

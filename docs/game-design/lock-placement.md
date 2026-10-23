@@ -102,7 +102,28 @@ Placed: 34 of 34 (2026-10-16): 31 with their chosen lock, 3 stand-ins.
 | 5    | 1           | 1           | wizard ward wing                                       | stoneGate      | ✓                                           |
 
 Site counts: junior 16 (3 + 4 + 4 + 5), expert 18 (4 + 4 + 5 + 5), the same as the curriculum's. Treasure
-tombs are not sites in this table.
+tombs are not sites in this table; their locks are below.
+
+### Starter tomb
+
+A tomb's floor locks feel one tier up (`docs/superpowers/specs/2026-10-22-tomb-redesign-design.md` §5–6), so the
+starter tomb's are junior locks. The cave is the first floor lock a starter player meets: levers and doors only.
+
+| Site             | Floor       | Chosen lock | Mechanics   | Placed |
+| ---------------- | ----------- | ----------- | ----------- | ------ |
+| cave (level 1)   | the one     | caveLevers  | lever       | no     |
+| cavern (level 2) | 2 (index 1) | pitStair    | lever, drop | no     |
+| cavern (level 2) | 4 (index 3) | throwItBack | lever       | no     |
+
+- **caveLevers**: three shut doors face the hall, the way out among them; the first lever is in a side room, each
+  next one behind the door the last opened. 3 actions.
+- **pitStair**: a lever opens a ledge, the drop below lands beside the lever that opens both the stair back up and
+  the gallery holding the exit lever. The one mechanic beyond levers is the drop. 3 actions.
+- **throwItBack**: one lever swaps the way east for the way west; the exit stands east, its lever west, so the swap
+  lever is thrown, then thrown back. The tomb's hardest junior lock: its first throw shuts the way to the exit.
+  3 actions.
+
+They stand on authored floors through `lockOnFloor(name)` (below).
 
 Duplicates among the stand-ins, until they are replaced: leverSwapsDoors (junior_2 site 2 and expert_3 site 1),
 stoneOnAPlate (junior_4 site 1 and expert_4 site 1), dropHome (junior_3 site 3 and expert_3 site 2).
@@ -143,8 +164,9 @@ expert_4's stoneGate stands the same way, read from its `.lock` file with `catal
 The locks between a journey's lessons and its capstone stand through `lockOnMainFloor(name)` in
 `src/worldGen/spec/locks/onFloor.ts`: the lock read with `catalogueLock`, every
 region `free`, and only the kinds it uses bound (fork-switch `lightbeamSwitch`, toggle `handle`, one-way `zipline`,
-activator `torch`). expert_3's doubleBack pyramid authors `packing: 0.15`: at the default packing its floor carves at
-the inspector's default seed on no attempt. No `RELAID_FLOORS_VERSION`, by the designer's call.
+activator `torch`). On a floor the spec authors itself, such as a tomb's, `lockOnFloor(name)` gives the same lock
+and bindings as the floor's `locks` and `realisations`. expert_3's doubleBack pyramid authors `packing: 0.15`: at
+the default packing its floor carves at the inspector's default seed on no attempt. No `RELAID_FLOORS_VERSION`, by the designer's call.
 
 A lesson stands through `lessonOnMainFloor(name)` in `src/worldGen/spec/locks/lessons.ts`: the lesson's file read as
 `catalogueLock("lessons/<name>")`, every region `free`, and only the kinds the lesson uses bound (toggle `handle`,
@@ -288,6 +310,9 @@ but are still a proposal for the engine (`lock-curriculum.md`, "Stones").
 | sluice        | master                             | lever, torch, water/sand barrier                           | solvable                                                   |
 | tide          | master                             | lever, torch, water/sand barrier                           | solvable                                                   |
 | stoneGate     | expert capstone (Djoser 5), stones | torch, door-waits-for-two, stones & plates, narrow passage | solvable                                                   |
+| caveLevers    | junior (starter tomb cave)         | lever                                                      | solvable                                                   |
+| pitStair      | junior (starter tomb cavern 2)     | lever, drop                                                | solvable                                                   |
+| throwItBack   | junior (starter tomb cavern 4)     | lever                                                      | solvable                                                   |
 
 The curriculum's "lever: all but plates" is wider than the files: twoStones, counterweight, masonsRamp,
 observatory and stoneGate have no lever either.

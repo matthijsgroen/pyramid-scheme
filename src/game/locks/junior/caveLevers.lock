@@ -1,0 +1,14 @@
+// designed by: Claude
+// junior, the starter cave. Three shut doors face the hall, the way out among them; each lever stands behind
+// another door, the first in a side room, so the player opens the cave one door at a time.
+
+in -- hall
+hall -- side
+hall -[C]- west
+hall -[B]- east
+hall -[A]- out
+C toggle @side
+B toggle @west
+A toggle @east
+west *
+east *
