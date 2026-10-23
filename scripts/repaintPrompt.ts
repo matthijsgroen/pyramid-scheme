@@ -10,9 +10,10 @@
  * money, so the prompt is pasted by hand. What that leaves worth automating is the fetching — finding the
  * right block in a 950-line document, and locating two files in a folder of two hundred renders.
  *
- * Two queues feed it, because the two kinds of art are owed in the same sense and a person with an hour
+ * Three queues feed it, because the kinds of art are owed in the same sense and a person with an hour
  * at the generator wants one list: `docs/instructions/repaint-queue.md` for tiles, and
- * `docs/game-design/story/character-art-prompts.md` for the story's people. Both are parsed rather than
+ * `docs/game-design/story/character-art-prompts.md` for the story's people, and
+ * `docs/game-design/camp-art-prompts.md` for the camp scene. All are parsed rather than
  * copied, so a prompt edited there is the prompt that gets pasted.
  */
 
@@ -21,8 +22,10 @@ import { existsSync, readFileSync } from "fs"
 import { join } from "path"
 import { revealArgs } from "./repaintReveal"
 import { parse, type Entry } from "./repaintQueue"
+import { parseCamp } from "./campPrompts"
 
 const QUEUE = "docs/instructions/repaint-queue.md"
+const CAMP = "docs/game-design/camp-art-prompts.md"
 const CHARACTERS = "docs/game-design/story/character-art-prompts.md"
 /** Attached to every character prompt: the style and scale both of them are drawn against. */
 const ANCHOR = "src/assets/fez-250.png"
@@ -108,13 +111,17 @@ const parseCharacters = (md: string): Entry[] => {
   return withReferences
 }
 
-const entries = [...parse(readFileSync(QUEUE, "utf8")), ...parseCharacters(readFileSync(CHARACTERS, "utf8"))]
+const entries = [
+  ...parse(readFileSync(QUEUE, "utf8")),
+  ...parseCharacters(readFileSync(CHARACTERS, "utf8")),
+  ...parseCamp(readFileSync(CAMP, "utf8")),
+]
 const wanted = process.argv[2]
 
 /** Rank order, poorest tomb first, which is the order the ranks were painted in and the order the
  * sections of the queue are written in. Anything the pattern does not recognise sorts last rather than
  * being dropped — a listing that silently loses an entry is worse than one with an odd row in it. */
-const TIERS = ["starter", "junior", "expert", "master", "wizard", "default"]
+const TIERS = ["starter", "junior", "expert", "master", "wizard", "default", "camp"]
 
 if (!wanted) {
   // GROUPED BY RANK, not in file order. The file is written in rank sections and used to list that way
