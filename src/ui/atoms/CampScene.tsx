@@ -4,6 +4,7 @@ import { campArt } from "./campScene/campArt"
 import { CAMP_CATALOGUE } from "./campScene/campCatalogue"
 import {
   CAMP_SHADOW_PARAMS,
+  entranceAreas,
   layoutCamp,
   type PlacedPiece,
   type PlacedPyramid,
@@ -30,7 +31,8 @@ export type CampSceneProps = {
 // A piece with no art yet draws the stand-in; the scenery (sand, dunes, pyramid, pyramidGold) falls back to CSS.
 
 const NO_INSETS = { top: 0, bottom: 0 }
-const MIN_TARGET = 44
+/** Entrance labels stay readable however far the camera zooms out. */
+const TAG_MIN = 11
 
 const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v))
 
@@ -50,26 +52,11 @@ const duneSvg = (fill: string, amp: number) => (
   </svg>
 )
 
-/** The screen box around every piece a spot draws: an entrance covers the whole object it opens. */
-const boundsOf = (pieces: PlacedPiece[]) => {
-  if (pieces.length === 0) return null
-  const left = Math.min(...pieces.map(p => p.x - (p.piece.width * p.scale) / 2))
-  const right = Math.max(...pieces.map(p => p.x + (p.piece.width * p.scale) / 2))
-  const top = Math.min(...pieces.map(p => p.y - p.piece.height * p.scale))
-  const bottom = Math.max(...pieces.map(p => p.y))
-  return { x: (left + right) / 2, y: bottom, width: right - left, height: bottom - top }
-}
-
 /** Offsets keep neighbouring fires out of step; a shadow takes its fire's strength offset to stay in step. */
 const flickerDelays = (i: number) => [-(i * 0.73) % 3, -(i * 1.31) % 5]
 
 /** A piece's box: anchored bottom-centre on (left, top) by the `camp-piece` class. */
-const boxOf = ({ piece, x, y, scale }: PlacedPiece) => ({
-  left: x,
-  top: y,
-  width: piece.width * scale,
-  height: piece.height * scale,
-})
+const boxOf = ({ x, y, width, height }: PlacedPiece) => ({ left: x, top: y, width, height })
 
 /**
  * The art carries its own form shading from a fixed upper-left light, so the self-shade only adds the
@@ -202,37 +189,29 @@ export const CampScene = ({
   const { unit: u, horizon } = layout
   const stars = starField(width, horizon)
   const moon = Math.max(18, u * 0.55)
-  const tagSize = clamp(u * 0.2, 10, 14)
+  const tagSize = clamp(u * 0.2, TAG_MIN, 14)
   const sand = campArt("sand")?.url
   const dunes = campArt("dunes")?.url
   const rootStyle = { "--camp-horizon": `${(horizon / height) * 100}%` } as CSSProperties
 
-  const entranceButtons = (["chest", "window", "mapTable"] as const).flatMap(spot => {
-    const entrance = entrances[spot]
-    if (!entrance) return []
-    const box = boundsOf(layout.pieces.filter(p => p.spot === spot))
-    if (!box) return []
-    const { label, badge, onOpen } = entrance
-    return [
+  const entranceSpots = (["chest", "window", "mapTable"] as const).filter(spot => entrances[spot])
+  const entranceButtons = entranceAreas(layout.pieces, entranceSpots).map(area => {
+    const { label, badge, onOpen } = entrances[area.spot as (typeof entranceSpots)[number]]!
+    return (
       <button
-        key={spot}
+        key={area.spot}
         type="button"
         className="camp-entrance"
         aria-label={badge === undefined ? label : `${label} (${badge})`}
         onClick={onOpen}
-        style={{
-          left: box.x,
-          top: box.y,
-          width: Math.max(MIN_TARGET, box.width),
-          height: Math.max(MIN_TARGET, box.height),
-        }}
+        style={{ left: area.x, top: area.y + area.height / 2, width: area.width, height: area.height }}
       >
         {badge !== undefined && <span className="camp-entrance__badge">{badge}</span>}
         <span className="camp-entrance__tag" style={{ fontSize: tagSize }}>
           {label}
         </span>
-      </button>,
-    ]
+      </button>
+    )
   })
 
   return (

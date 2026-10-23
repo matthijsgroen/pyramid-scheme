@@ -4,6 +4,8 @@ import type { CampCatalogue, CampPiece, CampRow, CampSpotId } from "./campTypes"
 import {
   CAMP_LAYOUT_PARAMS,
   CAMP_SHADOW_PARAMS,
+  ENTRANCE_MIN,
+  entranceAreas,
   fullSteps,
   layoutCamp,
   type CampLayout,
@@ -34,6 +36,8 @@ const catalogue: CampCatalogue = {
       id: "fire",
       row: 1,
       slot: 0,
+      frame: 1.6,
+      footprint: 1.2,
       steps: [
         { chapter: "starter", pieces: [piece("ring", { height: 0.3 })] },
         {
@@ -47,36 +51,63 @@ const catalogue: CampCatalogue = {
       id: "sleeping",
       row: 0,
       slot: -1,
+      frame: 1.3,
+      footprint: 1,
       steps: [
         { chapter: "starter", pieces: [piece("mat", { height: 0.3 })] },
         { chapter: "junior", pieces: [piece("tent"), piece("flag", { dx: 0.3, dy: -0.8, width: 0.2, height: 0.3 })] },
       ],
     },
-    { id: "water", row: 2, slot: 1, steps: [{ chapter: "junior", pieces: [piece("jar")] }] },
-    { id: "cooking", row: 1, slot: -1, steps: [{ chapter: "expert", pieces: [piece("pot")] }] },
-    { id: "camel", row: 1, slot: 2, steps: [{ chapter: "master", pieces: [piece("camel", { width: 1, height: 1 })] }] },
+    { id: "water", row: 2, slot: 1, frame: 1, footprint: 0.7, steps: [{ chapter: "junior", pieces: [piece("jar")] }] },
+    {
+      id: "cooking",
+      row: 1,
+      slot: -1,
+      frame: 1.4,
+      footprint: 1.1,
+      steps: [{ chapter: "expert", pieces: [piece("pot")] }],
+    },
+    {
+      id: "camel",
+      row: 1,
+      slot: 2,
+      frame: 1.2,
+      footprint: 0.9,
+      steps: [{ chapter: "master", pieces: [piece("camel", { width: 1, height: 1 })] }],
+    },
     {
       id: "lookout",
       row: 0,
       slot: -2.5,
+      frame: 2.2,
+      footprint: 0.8,
       steps: [{ chapter: "wizard", pieces: [piece("post", { width: 0.3, height: 1 })] }],
     },
     {
       id: "godStatues",
       row: 2,
       slot: 2.5,
+      frame: 1.5,
+      footprint: 1.3,
       steps: [{ chapter: "wizard", pieces: [piece("ra", { dx: 0.9, width: 0.5, height: 1 })] }],
     },
   ],
   fixed: [
-    { id: "chest", row: 2, slot: -1, piece: piece("chest", { height: 0.6, lights: [glow(0.8)] }) },
-    { id: "window", row: 0, slot: 1, piece: piece("window", { width: 1, height: 1 }) },
-    { id: "campfire", row: 1, slot: 0, piece: piece("smallFlame", { width: 0.5, height: 0.5, lights: [glow(2)] }) },
+    { id: "chest", row: 2, slot: -1, footprint: 0.7, piece: piece("chest", { height: 0.6, lights: [glow(0.8)] }) },
+    { id: "window", row: 0, slot: 1, footprint: 0.5, piece: piece("window", { width: 1, height: 1 }) },
+    {
+      id: "campfire",
+      row: 1,
+      slot: 0,
+      footprint: 0.4,
+      piece: piece("smallFlame", { width: 0.5, height: 0.5, lights: [glow(2)] }),
+    },
   ],
 }
 
-const rowOf = (spot: string): CampRow =>
-  (catalogue.spots.find(s => s.id === spot) ?? catalogue.fixed.find(f => f.id === spot))!.row
+const placeOf = (spot: string) =>
+  (catalogue.spots.find(s => s.id === spot) ?? catalogue.fixed.find(f => f.id === spot))!
+const rowOf = (spot: string): CampRow => placeOf(spot).row
 
 const input = (overrides: Partial<CampLayoutInput> = {}): CampLayoutInput => ({
   width: 390,
@@ -117,7 +148,8 @@ const sweep = (check: (l: CampLayout, i: CampLayoutInput) => void) => {
       }
 }
 
-const anchorX = (p: CampLayout["pieces"][number]) => p.x - p.piece.dx * p.scale
+// A piece's offset is in frame units: its drawn width over its own width is one frame in px.
+const anchorX = (p: CampLayout["pieces"][number]) => p.x - (p.piece.dx * p.width) / p.piece.width
 
 describe("layoutCamp", () => {
   it("returns null for a zero-size container", () => {
@@ -150,12 +182,14 @@ describe("layoutCamp", () => {
   it("a step can replace a fixed piece, and its glow goes with it", () => {
     const before = layout({ steps: { fire: 1 } })
     expect(pieceIds(before)).toContain("smallFlame")
-    expect(before.glows.map(g => g.radius / before.unit)).toContainEqual(expect.closeTo(2 * 0.89, 6))
+    expect(before.glows.map(g => g.radius / before.unit)).toContainEqual(
+      expect.closeTo(2 * CAMP_LAYOUT_PARAMS.depth[1], 6)
+    )
 
     const after = layout({ steps: { fire: 2 } })
     expect(pieceIds(after)).not.toContain("smallFlame")
     const fireGlows = after.glows.filter(g => g.key.startsWith("campfire") || g.key.startsWith("fire"))
-    expect(fireGlows.map(g => g.radius / after.unit)).toEqual([expect.closeTo(3 * 0.89, 6)])
+    expect(fireGlows.map(g => g.radius / after.unit)).toEqual([expect.closeTo(3 * CAMP_LAYOUT_PARAMS.depth[1], 6)])
   })
 
   it("lights a glow at its piece, scaled by the piece's depth", () => {
@@ -175,6 +209,8 @@ describe("layoutCamp", () => {
           id: "water",
           row: 1,
           slot: 0,
+          frame: 1,
+          footprint: 1,
           steps: [
             { chapter: "starter", pieces: [piece("water1", { width: 1, height: 1 })] },
             { chapter: "starter", pieces: [piece("water2", { width: 1, height: 1, replaces: ["water1"] })] },
@@ -198,6 +234,7 @@ describe("layoutCamp", () => {
           id: "window",
           row: 0,
           slot: 0,
+          footprint: 1,
           piece: piece("window", { lights: [glow(1.1), { ...glow(0.9), dy: -0.5, color: "rgb(9,9,9)" }] }),
         },
       ],
@@ -212,29 +249,88 @@ describe("layoutCamp", () => {
   it("keeps every piece inside the container and outside the insets", () => {
     sweep((l, { width, height, insets }) => {
       for (const p of l.pieces) {
-        const half = (p.piece.width * p.scale) / 2
-        expect(p.x - half).toBeGreaterThanOrEqual(0)
-        expect(p.x + half).toBeLessThanOrEqual(width)
-        expect(p.y - p.piece.height * p.scale).toBeGreaterThanOrEqual(insets.top)
+        expect(p.x - p.width / 2).toBeGreaterThanOrEqual(-1e-9)
+        expect(p.x + p.width / 2).toBeLessThanOrEqual(width + 1e-9)
+        expect(p.y - p.height).toBeGreaterThanOrEqual(insets.top)
         expect(p.y).toBeLessThanOrEqual(height - insets.bottom)
       }
     })
   })
 
-  it("keeps spacing within its bounds and never overlaps a row", () => {
+  it("keeps spacing under its maximum and never overlaps two footprints in a row", () => {
     sweep(l => {
-      expect(l.spacing).toBeGreaterThanOrEqual(CAMP_LAYOUT_PARAMS.spacingMin)
       expect(l.spacing).toBeLessThanOrEqual(CAMP_LAYOUT_PARAMS.spacingMax)
       for (const row of [0, 1, 2]) {
-        const anchors = new Map<string, { x: number; scale: number }>()
-        for (const p of l.pieces) if (rowOf(p.spot) === row) anchors.set(p.spot, { x: anchorX(p), scale: p.scale })
+        const anchors = new Map<string, { x: number; scale: number; footprint: number }>()
+        for (const p of l.pieces)
+          if (rowOf(p.spot) === row)
+            anchors.set(p.spot, { x: anchorX(p), scale: p.scale, footprint: placeOf(p.spot).footprint })
         const xs = [...anchors.values()].sort((a, b) => a.x - b.x)
         for (let k = 1; k < xs.length; k++) {
           if (Math.abs(xs[k].x - xs[k - 1].x) < 1e-9) continue
-          expect(xs[k].x - xs[k - 1].x).toBeGreaterThanOrEqual(xs[k].scale)
+          const apart = ((xs[k].footprint + xs[k - 1].footprint) / 2) * CAMP_LAYOUT_PARAMS.gapFactor * xs[k].scale
+          expect(xs[k].x - xs[k - 1].x).toBeGreaterThanOrEqual(apart - 1e-9)
         }
       }
     })
+  })
+
+  // Two wide frames with narrow footprints, side by side in the front row, on a phone too narrow to spread them.
+  const pair = (frame: number, footprint: number): CampCatalogue => ({
+    spots: (["water", "camel"] as const).map((id, slot) => ({
+      id,
+      row: 2,
+      slot,
+      frame,
+      footprint,
+      steps: [{ chapter: "starter", pieces: [piece(id, { width: 1, height: 1 })] }],
+    })),
+    fixed: [],
+  })
+  const narrow = (c: CampCatalogue) => layout({ catalogue: c, width: 320, height: 900, steps: { water: 1, camel: 1 } })
+
+  it("keeps neighbours apart by their footprints, not their frames", () => {
+    const { gapFactor } = CAMP_LAYOUT_PARAMS
+    const tight = narrow(pair(2, 0.6))
+    const [a, b] = tight.pieces
+    expect(b.x - a.x).toBeCloseTo(0.6 * gapFactor * tight.unit)
+    expect(b.x - a.x).toBeLessThan(a.width)
+
+    const wide = narrow(pair(2, 1.6))
+    const [c, d] = wide.pieces
+    expect(d.x - c.x).toBeCloseTo(1.6 * gapFactor * wide.unit)
+  })
+
+  it("draws a spot's image at its frame size", () => {
+    const l = narrow(pair(1.8, 0.6))
+    for (const p of l.pieces) {
+      expect(p.width).toBeCloseTo(1.8 * p.scale)
+      expect(p.height).toBeCloseTo(1.8 * p.scale)
+    }
+    const fixed = layout({ steps: {} }).pieces.find(p => p.spot === "window")!
+    expect(fixed.width).toBeCloseTo(fixed.scale)
+  })
+
+  it("keeps a light's place on its piece when the frame is bigger", () => {
+    const lit = (frame: number): CampCatalogue => ({
+      spots: [
+        {
+          id: "fire",
+          row: 2,
+          slot: 0,
+          frame,
+          footprint: 1,
+          steps: [{ chapter: "starter", pieces: [piece("pit", { width: 1, height: 1, lights: [glow(2)] })] }],
+        },
+      ],
+      fixed: [],
+    })
+    for (const frame of [1, 2.4]) {
+      const l = layout({ catalogue: lit(frame), steps: { fire: 1 } })
+      const [pit] = l.pieces
+      expect((pit.y - l.glows[0].y) / pit.height).toBeCloseTo(0.2)
+      expect(l.glows[0].radius).toBeCloseTo(2 * pit.scale)
+    }
   })
 
   it("keeps at least 0.5u of far sand under the horizon", () => {
@@ -334,9 +430,13 @@ describe("layoutCamp shadows", () => {
         id: ids[i],
         row: 2,
         slot,
+        frame: 1,
+        footprint: 0.8,
         steps: [{ chapter: "starter", pieces: [piece(`p${slot}`)] }],
       })),
-      fixed: [{ id: "campfire", row: 2, slot: 0, piece: piece("fire", { lights: [glow(fireRadius)] }) }],
+      fixed: [
+        { id: "campfire", row: 2, slot: 0, footprint: 0.5, piece: piece("fire", { lights: [glow(fireRadius)] }) },
+      ],
     }
   }
   const shadowsOf = (c: CampCatalogue) => {
@@ -372,8 +472,8 @@ describe("layoutCamp shadows", () => {
   })
 
   it("darkens a shadow nearer the fire, keeping a floor so nothing floats", () => {
-    const { at } = shadowsOf(around(1.5, [-1, 2.5, 6]))
-    const [near, mid, far] = ["p-1", "p2.5", "p6"].map(id => at(id).shadow)
+    const { at } = shadowsOf(around(1.5, [-1, 2.5, 9]))
+    const [near, mid, far] = ["p-1", "p2.5", "p9"].map(id => at(id).shadow)
     expect(near.strength).toBeGreaterThan(mid.strength)
     expect(mid.strength).toBeGreaterThan(far.strength)
     expect(far.light).toBeUndefined()
@@ -391,6 +491,64 @@ describe("layoutCamp shadows", () => {
     }
     const moonlit = shadowsOf(around(0.1, [-2])).at("p-2")
     expect(moonlit.shadow.offset).toBeCloseTo(CAMP_SHADOW_PARAMS.offsetMoon * moonlit.scale)
+  })
+})
+
+describe("entranceAreas", () => {
+  type Area = ReturnType<typeof entranceAreas>[number]
+  const overlap = (a: Area, b: Area) =>
+    Math.abs(a.x - b.x) < (a.width + b.width) / 2 - 1e-9 && Math.abs(a.y - b.y) < (a.height + b.height) / 2 - 1e-9
+  const expectUsable = (areas: Area[]) => {
+    for (const a of areas) {
+      expect(a.width).toBeGreaterThanOrEqual(ENTRANCE_MIN)
+      expect(a.height).toBeGreaterThanOrEqual(ENTRANCE_MIN)
+    }
+    for (let i = 0; i < areas.length; i++)
+      for (let k = i + 1; k < areas.length; k++) expect(overlap(areas[i], areas[k])).toBe(false)
+  }
+
+  // A chest, a map table and a window crowded around the fire: small art, close slots.
+  const crowded: CampCatalogue = {
+    spots: [
+      {
+        id: "mapTable",
+        row: 2,
+        slot: 0,
+        frame: 1.4,
+        footprint: 0.5,
+        steps: [{ chapter: "starter", pieces: [piece("table")] }],
+      },
+    ],
+    fixed: [
+      { id: "chest", row: 2, slot: -0.5, footprint: 0.4, piece: piece("chest", { width: 0.5, height: 0.4 }) },
+      { id: "window", row: 1, slot: -0.3, footprint: 0.4, piece: piece("window", { width: 0.5, height: 0.5 }) },
+    ],
+  }
+
+  it("keeps entrance hit areas at least 44px and apart", () => {
+    for (const [width, height] of [
+      [390, 844],
+      [320, 640],
+    ]) {
+      const l = layout({ catalogue: crowded, width, height, chapter: "wizard", steps: { mapTable: 1 } })
+      const areas = entranceAreas(l.pieces, ["chest", "window", "mapTable"])
+      expect(areas.map(a => a.spot)).toEqual(["chest", "window", "mapTable"])
+      expectUsable(areas)
+    }
+  })
+
+  it("separates entrances whose art stands in the same place", () => {
+    const l = layout({ steps: {} })
+    const chest = l.pieces.find(p => p.spot === "chest")!
+    const stacked = [chest, { ...chest, spot: "window" as const }]
+    expectUsable(entranceAreas(stacked, ["chest", "window"]))
+  })
+
+  it("covers the whole art of a large entrance", () => {
+    const big = { ...layout({ steps: {} }).pieces.find(p => p.spot === "chest")!, width: 200, height: 120 }
+    const [area] = entranceAreas([big], ["chest"])
+    expect([area.width, area.height]).toEqual([200, 120])
+    expect([area.x, area.y]).toEqual([big.x, big.y - 60])
   })
 })
 

@@ -74,7 +74,9 @@ clay oven, the lookout's signal fire) bring their own small glow.
    nearer piece overlaps a farther one.
 5. **Light**: the glows, blended over layers 3 and 4.
 6. **Entrances**: the chest, the window and (once it exists) the map table as buttons, each with a visible
-   label and an optional badge.
+   label and an optional badge. A hit area covers its whole object and is at least 44×44 px however small
+   the object is drawn; two hit areas never overlap (they shrink toward their own object, not below 44, and
+   otherwise move apart sideways). A label is never set below 11 px.
 
 ### Spots as anchors, not coordinates
 
@@ -90,19 +92,49 @@ wizard impression, rearranged so earlier chapters sit near the fire and later on
 | middle |           | donkey | cooking  | fire        | water  | camel       |             |
 | front  | ibis pond |        | chest    | map table   |        |             | god statues |
 
+Every spot also has a **frame** and a **footprint**, both in object units `u` (the chest's frame is 1u). The
+frame is the side of the square its step images are drawn at; the footprint is the width the object stands
+on. They are measured from the wizard impression against the chest (271×226 px there, its art filling
+0.83×0.76 of its frame): an object w×h px is w/271·0.83 wide and h/226·0.76 tall, its footprint is that
+width, and its frame is the larger of the two over 0.9, the share of its square that spot art fills.
+Re-measured when a spot's art lands. Starting values:
+
+| Spot        | frame | footprint |
+| ----------- | ----- | --------- |
+| lookout     | 2.31  | 0.87      |
+| sleeping    | 1.53  | 1.38      |
+| star canopy | 1.12  | 1.01      |
+| palm garden | 2.51  | 1.07      |
+| cooking     | 1.89  | 1.70      |
+| fire        | 1.91  | 1.72      |
+| water       | 1.21  | 0.91      |
+| donkey      | 1.49  | 1.34      |
+| camel       | 1.46  | 1.19      |
+| ibis pond   | 2.46  | 2.21      |
+| map table   | 1.67  | 1.50      |
+| god statues | 1.80  | 1.62      |
+| chest       | 1     | 0.83      |
+| window      | 1.0   | 0.55      |
+| campfire    | 1     | 0.45      |
+
+The window is drawn a little above its impression size (~0.8): it is the camp's landmark.
+
 ### Size and spacing are two separate things
 
 - **Size** follows the container's **height** and the chapter's camera. A tent takes the same share of
   the screen's height on a phone and on a desktop.
 - **Spacing** follows the **width** that is left. The distance between two slots is elastic between a
-  minimum and a maximum, both in units of object size. On a phone the spots pack close (about 60 px per
+  minimum and a maximum, both in units of object size. The minimum is what keeps every two spots of a
+  row apart by their mean footprint (times a gap factor, about 1), centre to centre: the largest such
+  requirement over pairs in a row, divided by their slot distance. On a phone the spots pack close (about 60 px per
   spot at 390 px wide); on a desktop they spread out, and once spacing hits its maximum only empty desert
   grows at the sides.
 - **Depth**: a farther row stands higher on the ground and is drawn a little smaller. The vertical gap
   between rows is elastic the same way: the rows spread to fill the ground between the lowest horizon
   (plus a strip of far sand) and the bottom edge, up to a maximum. A portrait phone, where the width
   keeps objects small, gets a camp spread down the whole screen, not one packed at the bottom.
-- Spacing never drops below the minimum. At the minimum, no two spots in a row overlap.
+- Spacing never drops below the minimum. At the minimum, no two footprints in a row overlap; frames may,
+  since the art fills only part of its square.
 - **When the width runs out, the objects shrink** (my call). The object size is the smaller of "what the
   height allows" and "what fits the frame at minimum spacing". A portrait phone at wizard is
   width-bound: objects get smaller, the spare height goes to sky. "Same share of the height" holds only
@@ -110,14 +142,14 @@ wizard impression, rearranged so earlier chapters sit near the fire and later on
 
 ### Starting numbers (from the prototype)
 
-All in units of object size `u` (a front-row object is `1u` wide):
+All in units of object size `u` (the chest is `1u` wide):
 
 | What                                  | Value                               |
 | ------------------------------------- | ----------------------------------- |
-| slot spacing                          | 1.15 – 2.3                          |
+| slot spacing                          | footprint minimum – 2.3             |
 | gap between row baselines             | 0.75 – 5 (back gap ×0.85)           |
 | far sand between horizon and back row | at least 0.5                        |
-| depth scale back / middle / front     | 0.78 / 0.89 / 1                     |
+| depth scale back / middle / front     | 0.9 / 0.95 / 1                      |
 | slot spread back / middle / front     | 0.88 / 0.95 / 1                     |
 | minimum sky above the back row        | 1.7                                 |
 | lowest horizon, share of height       | 0.27 from the top                   |
@@ -126,9 +158,9 @@ All in units of object size `u` (a front-row object is `1u` wide):
 | camera height per chapter             | 4.2 / 4.8 / 5.4 / 6.0 / 6.6         |
 | frame side margin                     | 0.65 each side                      |
 
-`u = min(H / max(cameraHeight, minHeight), W / (span × minSpacing + 1.3))`, then spacing and row gap
-are solved from what is left and clamped. At 390×844, wizard comes out at u ≈ 56 px, about 64 px per
-slot.
+`u = min(H / max(cameraHeight, minHeight), W / (span × minSpacing + margins))`, then spacing and row
+gap are solved from what is left and clamped. At 390×844 with the phone insets, wizard comes out at
+u ≈ 37 px, about 62 px per slot (the footprint minimum, 1.71, set by the cooking place beside the fire).
 
 ### The camera zooms out per chapter
 
@@ -154,10 +186,11 @@ with zero steps is not drawn either. Both are just sand.
 Each step of a spot (the list in `camp.md` "Camp loot", in order) is **one piece**: the whole spot as it
 looks at that step, one square image (`src/assets/camp/<piece id>.webp`, see `camp-art-prompts.md`). A piece has:
 
-- its frame: a square 1×1 object unit, anchored bottom-centre on the spot (`dx = dy = 0`);
+- its frame: the spot's square frame, anchored bottom-centre on the spot (`dx = dy = 0`);
 - the id of the previous step's piece in `replaces`, so only the latest step of a spot is drawn (the fire
   pit's first step also replaces the fixed campfire);
-- optionally a list of **lights**: offset inside the frame, radius, colour, mode. A piece may carry several,
+- optionally a list of **lights**: offset inside the frame (scaled with it, so a glow keeps its place on a
+  bigger image), radius (object units), colour, mode. A piece may carry several,
   and every step that shows a light's source carries it (the fire glow on every fire pit step, the oven light
   from the oven on).
 

@@ -18,14 +18,28 @@ const piece = (id: string, options: Partial<CampPiece> = {}): CampPiece => ({
 
 const catalogue: CampCatalogue = {
   spots: [
-    { id: "fire", row: 1, slot: 0, steps: [{ chapter: "starter", pieces: [piece("ring")] }] },
-    { id: "mapTable", row: 2, slot: 0, steps: [{ chapter: "starter", pieces: [piece("table")] }] },
-    { id: "godStatues", row: 2, slot: 2, steps: [{ chapter: "wizard", pieces: [piece("thoth")] }] },
+    { id: "fire", row: 1, slot: 0, frame: 1, footprint: 0.8, steps: [{ chapter: "starter", pieces: [piece("ring")] }] },
+    {
+      id: "mapTable",
+      row: 2,
+      slot: 0,
+      frame: 1,
+      footprint: 0.8,
+      steps: [{ chapter: "starter", pieces: [piece("table")] }],
+    },
+    {
+      id: "godStatues",
+      row: 2,
+      slot: 2,
+      frame: 1,
+      footprint: 0.8,
+      steps: [{ chapter: "wizard", pieces: [piece("thoth")] }],
+    },
   ],
   fixed: [
-    { id: "chest", row: 2, slot: -1, piece: piece("chest") },
-    { id: "window", row: 0, slot: 1, piece: piece("window") },
-    { id: "campfire", row: 1, slot: 0, piece: piece("smallFlame") },
+    { id: "chest", row: 2, slot: -1, footprint: 0.8, piece: piece("chest") },
+    { id: "window", row: 0, slot: 1, footprint: 0.8, piece: piece("window") },
+    { id: "campfire", row: 1, slot: 0, footprint: 0.8, piece: piece("smallFlame") },
   ],
 }
 
@@ -37,8 +51,10 @@ afterEach(() => art.clear())
 
 const fireLight = { dx: 0, dy: -0.3, radius: 3, color: "#ffb24a", mode: "flicker" as const, strength: 0.6 }
 const firelit: CampCatalogue = {
-  spots: [{ id: "water", row: 2, slot: 1, steps: [{ chapter: "starter", pieces: [piece("jar")] }] }],
-  fixed: [{ id: "campfire", row: 2, slot: 0, piece: piece("flame", { lights: [fireLight] }) }],
+  spots: [
+    { id: "water", row: 2, slot: 1, frame: 1, footprint: 0.8, steps: [{ chapter: "starter", pieces: [piece("jar")] }] },
+  ],
+  fixed: [{ id: "campfire", row: 2, slot: 0, footprint: 0.8, piece: piece("flame", { lights: [fireLight] }) }],
 }
 
 type SceneProps = Omit<ComponentProps<typeof CampScene>, "width" | "height"> & { width?: number; height?: number }
@@ -98,6 +114,21 @@ describe("CampScene", () => {
     const window = screen.getByRole("button", { name: "Mosaic 61/252" })
     expect(within(chest).getByText("3")).toBeTruthy()
     expect(window.textContent).toBe("Mosaic 61/252")
+  })
+
+  it("never draws an entrance label below 11px, however far the camera zooms out", () => {
+    render(
+      <Scene
+        width={160}
+        height={320}
+        chapter="wizard"
+        steps={{}}
+        catalogue={catalogue}
+        entrances={{ chest: { label: "Collection", onOpen: noop } }}
+      />
+    )
+    const tag = screen.getByText("Collection")
+    expect(parseFloat(tag.style.fontSize)).toBeGreaterThanOrEqual(11)
   })
 
   it("offers the journeys entrance only once the map table stands", () => {
