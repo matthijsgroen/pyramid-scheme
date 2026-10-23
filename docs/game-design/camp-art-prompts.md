@@ -623,7 +623,7 @@ The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/ref-ibisPond.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the ibis pond, complete: a round pond of clear blue water, its rim edged with flat sandstone slabs, a clump of tall papyrus at one side, tall reeds and bulrushes along its back edge, lily pads and pink lotus flowers on the water, one white ibis with a black head and curved beak standing at the edge and a second ibis wading in the shallows. Use the colours of the matching objects in the reference image.
+> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the ibis pond, complete: a wide, irregular pond of clear blue water with a natural sandy rim, no stone edging; a big rounded sandstone boulder and two or three small stones on its right rim; a tall clump of bulrushes with brown cattail heads at the left edge; more bulrushes growing in the water at the back and a clump on the right edge, with a few tufts of grass along the rim; green lily pads with pink lotus flowers on the water, at the back left and the front right; and two white ibises with dark wing tips and long curved orange-red bills standing at the front left edge of the water, side by side, the right one a little closer. Use the colours of the matching objects in the reference image.
 
 #### 60. `camp/lotus` — Ibis pond, step 5 of 6 (wizard)
 
@@ -631,7 +631,7 @@ Edit of `camp/secondIbis`.
 
 Attach: `art/masters/camp/ref-ibisPond.webp`, `art/masters/camp/secondIbis.webp`
 
-> [edit] Remove this, and only this: a second white ibis wading in the shallows. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the ibis on the left, the one further back. The other ibis stays exactly as it is. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 #### 61. `camp/ibis` — Ibis pond, step 4 of 6 (master)
@@ -640,7 +640,7 @@ Edit of `camp/lotus`.
 
 Attach: `art/masters/camp/ref-ibisPond.webp`, `art/masters/camp/lotus.webp`
 
-> [edit] Remove this, and only this: lily pads and pink lotus flowers on the water. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the lily pads and pink lotus flowers on the water; the clear water shows there. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 #### 62. `camp/reeds` — Ibis pond, step 3 of 6 (master)
@@ -649,7 +649,7 @@ Edit of `camp/ibis`.
 
 Attach: `art/masters/camp/ref-ibisPond.webp`, `art/masters/camp/ibis.webp`
 
-> [edit] Remove this, and only this: a white ibis with a black head and curved beak standing at the water's edge. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the white ibis standing at the front left edge of the water. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 #### 63. `camp/papyrus` — Ibis pond, step 2 of 6 (master)
@@ -658,7 +658,7 @@ Edit of `camp/reeds`.
 
 Attach: `art/masters/camp/ref-ibisPond.webp`, `art/masters/camp/reeds.webp`
 
-> [edit] Remove this, and only this: tall reeds and bulrushes along the pond's back edge. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the bulrushes growing in the water at the back and the clump on the right edge; the water and the rim show there. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 #### 64. `camp/edgeStones` — Ibis pond, step 1 of 6 (master)
@@ -667,7 +667,7 @@ Edit of `camp/papyrus`.
 
 Attach: `art/masters/camp/ref-ibisPond.webp`, `art/masters/camp/papyrus.webp`
 
-> [edit] Remove this, and only this: the clump of tall papyrus at the side of the pond. Where it stood, show the
+> [edit] Remove this, and only this: the tall clump of bulrushes at the left edge of the pond. Where it stood, show the
 > #ff00ff background or whatever was behind it.
 
 #### 65. `camp/oasis` — Oasis pool, fixed from the start
@@ -676,8 +676,8 @@ The plain pool the camp is pitched beside; the ibis pond's steps adorn it. Edit 
 
 Attach: `art/masters/camp/ref-ibisPond.webp`, `art/masters/camp/edgeStones.webp`
 
-> [edit] Remove the flat sandstone slabs from the pond's rim; leave a natural sandy edge with two or three
-> small rough stones. The water stays exactly as it is. Where the slabs lay, show the pond's edge or the #ff00ff
+> [edit] Remove the big sandstone boulder and the small stones on the right rim, and the tufts of grass along the rim.
+> The pond, its water and its sandy rim stay exactly as they are. Where they lay, show the rim or the #ff00ff
 > background.
 
 ### Lookout tower (`lookout`)

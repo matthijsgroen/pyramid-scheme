@@ -155,7 +155,8 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["wizard", "figTree"],
     ]),
     layered("ibisPond", { x: -0.98, y: 1.83, frame: 2.46, footprint: 2.21 }, [
-      ["master", "edgeStones", { base: true, replaces: ["oasis"] }],
+      // The pond itself is the fixed oasis; every step only adds to its rim and water.
+      ["master", "edgeStones"],
       ["master", "papyrus"],
       ["master", "reeds"],
       ["master", "ibis"],

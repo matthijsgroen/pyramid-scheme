@@ -33,6 +33,8 @@ export const LAYER_SOURCES: Record<string, LayerSource> = {
   // The tent's canvas is the windbreak's colour, so against the windbreak it would come out full of holes.
   tent: { without: "blanket" },
   // Each growth stage of the first palm is the whole plant, so each is cut against the bare bed.
+  // The ibis pond adds to the fixed oasis pool, so its first step is cut against the bare pool.
+  edgeStones: { without: "oasis" },
   seed: { without: "bed" },
   sprout: { without: "bed" },
   palm: { without: "bed" },
