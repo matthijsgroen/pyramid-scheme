@@ -125,7 +125,9 @@ describe("importCamp", () => {
         ramp[i + 1] = Math.round(150 * t)
         ramp[i + 2] = Math.round(255 * (1 - t) + 40 * t)
       }
-    await sharp(ramp, { raw: { width: 400, height: 400, channels: 3 } }).png().toFile(source)
+    await sharp(ramp, { raw: { width: 400, height: 400, channels: 3 } })
+      .png()
+      .toFile(source)
     const { out } = await importCamp(options(source))
 
     const { data } = await sharp(out).raw().toBuffer({ resolveWithObject: true })
