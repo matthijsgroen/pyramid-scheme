@@ -221,7 +221,8 @@ export const starterRules: Rule[] = [
     tileset: "cave",
     difficulty: "starter",
     // Cave furniture, not the starter merchant's house the tier pool dresses its pyramids in.
-    decorations: ["rubblePile", "pillar", "pit", "crystal"],
+    decorations: ["basin", "pillar", "rubblePile", "pit", "crystal", "brazier", "stalagmite", "puddle", "bones"],
+    wallDecorations: ["roots", "stalactites"],
     floors: [{ pathPuzzles: 3, encounter: "puzzle", ...lockOnFloor("caveLevers") }],
   }),
 

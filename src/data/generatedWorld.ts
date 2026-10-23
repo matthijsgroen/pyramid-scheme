@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 159267502
+export const worldContentHash = 1107292607
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -20032,8 +20032,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         exitOrStaircase: "exit",
         sideSections: [],
         encounter: "eclipse",
-        decorations: ["rubblePile", "pillar", "pit", "crystal"],
-        wallDecorations: ["niche", "tallyBoard"],
+        decorations: ["basin", "pillar", "rubblePile", "pit", "crystal", "brazier", "stalagmite", "puddle", "bones"],
+        wallDecorations: ["roots", "stalactites"],
         role: "puzzle",
         encountersByIndex: { 0: "eclipse", 1: "balance-scale", 2: "star-battle" },
         packing: 0.1,

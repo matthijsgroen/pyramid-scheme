@@ -127,6 +127,10 @@ export const DECORATION_KINDS = [
   "bales",
   "counter",
   "scribeDesk",
+  // The cave's own furniture (tileset `cave`). `puddle` and `bones` lie flat on the floor, like `mat`.
+  "stalagmite",
+  "puddle",
+  "bones",
 ] as const
 export type DecorationKind = (typeof DECORATION_KINDS)[number]
 // What hangs ON a wall, drawn into a cell's face band rather than standing on its floor. Its own
@@ -143,6 +147,8 @@ export const WALL_DECORATION_KINDS = [
   "wallShrine",
   "tallyBoard",
   "mask",
+  "roots",
+  "stalactites",
 ] as const
 export type WallDecorationKind = (typeof WALL_DECORATION_KINDS)[number]
 
