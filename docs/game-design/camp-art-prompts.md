@@ -72,9 +72,19 @@ Attach: `art/masters/camp/impression-wizard.webp`
 
 ### 2. `camp/window` — Stained-glass window
 
-Attach: `art/masters/camp/impression-wizard.webp`, `art/masters/camp/chest.webp`
+The whole impression is too busy for the generator to find the window in, so this entry attaches a crop
+of it: `ref-window` is the window cut from the wizard impression.
 
-> [preamble] Paint a free-standing arched stained-glass window in a dark wooden frame on a small foot, deep blue glass with gold-yellow lotus vines and a gold-yellow sun at the top. Paint the glass as coloured glass, not glowing.
+Attach: `art/masters/camp/ref-window.webp`, `art/masters/camp/chest.webp`
+
+> [preamble] The first attached image is the reference: paint exactly that window, with its shape,
+> proportions and angle. The second attached image is a finished prop in the target painting style:
+> match its brushwork, matte finish and lighting. A slender free-standing stained-glass window with a
+> POINTED gothic arch, about twice as tall as it is wide, in a THIN dark-brown wooden frame, a flat board
+> rather than a cabinet. It stands almost square to the viewer, turned only slightly, its bottom edge
+> resting straight on the ground: no feet, no plinth, no base. Deep blue glass with gold-yellow lotus
+> vines and a gold-yellow star-shaped sun at the top, in the colours of the reference. Paint the glass as
+> coloured glass, not glowing.
 
 ### 3. `camp/campfire` — Small campfire
 
