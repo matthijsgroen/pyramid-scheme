@@ -170,6 +170,8 @@ From the camp.md table (rewards counted by section tier):
 
 - Animals gate on top of the existing tier-unlock treasures and tomb entry locks.
 - Fez sells the animals in his tomb shops; they arrive in the camp.
+- **Starter stays simple:** starter → junior needs no ride, no shop, no money; the first purchase is the
+  junior donkey, which opens expert.
 
 ## Settled with the builder check (Claude's calls, flagged for review)
 
