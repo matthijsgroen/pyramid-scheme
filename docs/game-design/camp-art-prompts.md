@@ -397,7 +397,7 @@ The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/ref-donkey.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the donkey, complete: a wooden stake with a rope halter, a grey donkey lying down with woven saddlebags and a striped red-and-green blanket on its back, a second grey donkey lying down beside it, and a two-wheeled cart painted with bright geometric patterns in red, blue and gold, sacks, a cushion and bundles in it. Use the colours of the matching objects in the reference image.
+> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the donkey, complete: a wooden stake with a rope halter, a grey donkey lying down with woven saddlebags and a striped red-and-green blanket on its back, a second grey donkey lying down beside it, and a two-wheeled cart painted with bright geometric patterns in red, blue and gold, sacks, a cushion and bundles in it; its bed rests on a thick wooden axle with a spoked wheel on each end, the near wheel snug against the side of the bed, and its two shafts run along both sides of the grey donkey, strapped to a padded leather collar at its shoulders. Use the colours of the matching objects in the reference image.
 
 #### 33. `camp/secondDonkey` — Donkey, step 6 of 7 (master)
 
