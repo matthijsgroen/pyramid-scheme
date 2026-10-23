@@ -13,8 +13,9 @@ const light = (
 ): CampLight => ({ dx, dy, radius, color: `rgb(${color})`, mode, strength })
 
 /** Where each source sits inside its step's square frame, in frame units (bottom-centre anchored, dy positive-down). */
-const fireGlow = (radius: number) => light(radius, "255,150,55", "flicker", 0.75, 0, -0.3)
-const OVEN = light(0.7, FIRE, "flicker", 0.8, -0.3, -0.35)
+// Offsets are in frame units: the fire burns in the ring's middle, about half way up the fire pit's frame.
+const fireGlow = (radius: number) => light(radius, "255,150,55", "flicker", 0.75, 0, -0.5)
+const OVEN = light(0.7, FIRE, "flicker", 0.8, 0.35, -0.62)
 const SIGNAL = light(0.8, "255,160,60", "flicker", 0.8, 0, -0.85)
 
 type PieceOptions = Partial<Pick<CampPiece, "dx" | "dy" | "width" | "height" | "replaces" | "lights">>
@@ -187,6 +188,8 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       frame: 1,
       footprint: 0.45,
       piece: piece("campfire", {
+        // Raised into the fire pit's ring: the ring that replaces it is drawn half way up a larger frame.
+        dy: -0.6,
         lights: [light(2.1, "255,150,55", "flicker", 0.75, 0, -0.2)],
       }),
     },
