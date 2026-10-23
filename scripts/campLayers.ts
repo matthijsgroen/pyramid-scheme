@@ -30,6 +30,8 @@ export type LayerSource = { with?: string; without?: string }
 export const LAYER_SOURCES: Record<string, LayerSource> = {
   // The star cloth was painted under the compass, so its own edit (no compass) gives it whole, on the bare table.
   starMap: { with: "starMap-cloth", without: "table" },
+  // The well was painted behind the trough; its own edit without the trough gives its wall whole.
+  well: { with: "well-alone", without: "secondJar" },
   // The tent's canvas is the windbreak's colour, so against the windbreak it would come out full of holes.
   tent: { without: "blanket" },
   // Each growth stage of the first palm is the whole plant, so each is cut against the bare bed.

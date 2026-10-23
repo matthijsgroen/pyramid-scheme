@@ -831,6 +831,16 @@ Attach: `art/masters/camp/sprout.webp`
 > [edit] Remove this, and only this: the small palm sprout. Where it grew, show the same dark soil and a few
 > blades of grass as around it. The bed, its stones and the leafy plant stay exactly as they are.
 
+### 92. `camp/well-alone` — Layer source: the well without the trough in front
+
+The well was painted behind the trough, so cut against the jars it would have a notch where the trough stood.
+Edit of `camp/well`.
+
+Attach: `art/masters/camp/well.webp`
+
+> [edit] Remove this, and only this: the long low stone water trough in front of the well. Where it stood,
+> paint the rest of the round stone well wall as it continues; elsewhere show the #ff00ff background.
+
 ### 91. `camp/starMap-cloth` — Layer source: the star cloth without the compass
 
 Edit of `camp/starMap`.
