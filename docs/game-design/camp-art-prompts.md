@@ -39,6 +39,26 @@ spot is painted against one finished object; an edit attaches the image it edits
 every step of a spot must share one frame), writes the shipped file and keeps the master in
 `art/masters/camp/`.
 
+## Working the loop
+
+The same steps for every piece, so a piece painted next month matches one painted today.
+
+1. **`yarn repaint camp/<piece>`, in a NEW chat.** It stages the attachments in `~/tile-previews/attach/`:
+   the spot's crop of the impression (shape, angle, colour) and the chest (brushwork). Drag both, paste.
+2. **Judge the image on screen, not only the download.** A download can carry things the displayed image
+   does not (an attached object painted in, a ground bar); then a screenshot of the displayed image is the
+   better master (`art/README.md`).
+3. **Fix a near miss as an edit in the same chat** ("repaint only the flames …"), not as a new generation:
+   the composition, size and position stay. A new roll is for a wrong shape or angle.
+4. **Land it:** `yarn import-camp <file> --name=<piece>`. Then check it on sand under the night tint (no
+   pink fringe, darker than the sand, colours of the impression) and in Storybook.
+5. **What a prompt never carries:** a light direction per spot, ground, a cast shadow, a glow. The art is
+   lit the same way every time (neutral, upper left); everything that depends on where a piece stands —
+   the contact shadow, the warm and cool side toward the fire, the glows — is drawn by the scene.
+
+A burning piece may get a second frame, `<piece>-b`, as an edit of the first (see `camp/campfire-b`): the
+scene alternates the two. Without one the fire stands still.
+
 ## 0. The house style, stated once
 
 > Painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, an edge is
