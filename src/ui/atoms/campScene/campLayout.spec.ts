@@ -586,6 +586,20 @@ describe("layoutCamp shadows", () => {
     expect(at("p-1").shadow.angle).not.toBeCloseTo(at("p1").shadow.angle)
   })
 
+  it("takes its shadow from the fire that lights it most, not from a small one that stands closer", () => {
+    const c = around(3, [1.2])
+    c.fixed.push({
+      id: "chest",
+      x: 1.6,
+      y: 0,
+      frame: 1,
+      footprint: 0.5,
+      piece: piece("ember", { lights: [glow(0.2)] }),
+    })
+    const { fireGlow, at } = shadowsOf(c)
+    expect(at("p1.2").shadow.light).toBe(fireGlow.key)
+  })
+
   it("falls back to the moon shadow out of the fire's reach", () => {
     const { at } = shadowsOf(around(0.1, [-2, 2]))
     for (const id of ["p-2", "p2"]) {

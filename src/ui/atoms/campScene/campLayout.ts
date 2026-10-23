@@ -190,16 +190,19 @@ const toRadians = (degrees: number) => (degrees * Math.PI) / 180
 /** A piece's own light never shadows it, so a fire stands in the light of other fires and the moon. */
 const castShadow = (p: Omit<PlacedPiece, "shadow">, glows: PlacedGlow[]): PlacedShadow | undefined => {
   if (p.piece.lights?.some(l => l.mode === "flicker")) return undefined
+  // Fully firelit inside a glow itself, fading to moonlight at its reach; the fire lighting it most wins, so a
+  // small oven beside a piece does not turn its shadow away from the big fire that lights it.
+  const lit = (g: PlacedGlow) => {
+    const distance = Math.hypot(p.x - g.x, p.y - g.y)
+    const reach = g.radius * S.reachFactor
+    const fire = distance > 0 ? clamp((reach - distance) / Math.max(reach - g.radius, 1e-9), 0, 1) : 0
+    return { g, distance, fire }
+  }
   const nearest = glows
     .filter(g => g.mode === "flicker" && !g.key.startsWith(`${p.key}:`))
-    .map(g => ({ g, distance: Math.hypot(p.x - g.x, p.y - g.y) }))
-    .sort((a, b) => a.distance - b.distance)[0]
-  const reach = nearest ? nearest.g.radius * S.reachFactor : 0
-  // Fully firelit inside the glow itself, fading to moonlight at its reach.
-  const fire =
-    nearest && nearest.distance > 0
-      ? clamp((reach - nearest.distance) / Math.max(reach - nearest.g.radius, 1e-9), 0, 1)
-      : 0
+    .map(lit)
+    .sort((a, b) => b.fire - a.fire || a.distance - b.distance)[0]
+  const fire = nearest?.fire ?? 0
   if (fire === 0) return { angle: S.moonAngle, offset: S.offsetMoon * p.scale, strength: S.strengthMin }
   const moon = toRadians(S.moonAngle)
   const vx = (fire * (p.x - nearest.g.x)) / nearest.distance + (1 - fire) * Math.cos(moon)
