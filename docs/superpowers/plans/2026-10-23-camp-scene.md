@@ -414,3 +414,62 @@ Agreed with the designer after the first art landed. Three changes:
   - Run `yarn test src/ui/atoms scripts`, `yarn check-types`, `yarn lint` (and `yarn prettier`, **never `npx prettier`**) and `yarn build-storybook`.
   - Screenshot StarterEmpty and StarterFull at 390×844. Check that the chest's shadow hugs its diagonal base, that the side away from the fire is darker, and that the window reads the same way.
 - [ ] **Step 4: Commit** `feat: camp contact shadows, self-shading and two-frame fire`
+
+---
+
+## Added 2026-10-23: spot sizes from the impression
+
+With the first real art in Storybook the designer saw that the scale is off. Every step image gets the same
+1×1 frame, so the whole fire pit (ring, stones, oven) is squeezed into a chest-sized box. In the wizard
+impression the fire pit is about twice the chest's width. The decisions:
+
+- Each spot gets a frame size and a footprint, measured against the chest in the impression.
+- Row spacing respects the footprints.
+- The depth shrink is milder.
+- The window is drawn at 1.0, a little above its impression size (~0.8) as the camp's landmark.
+
+### Task 9: Spot frame size, footprint spacing, milder depth
+
+**Measured** from the `ref-<spot>` crops: the chest in the impression is 271×226 px, and its art fills 0.83×0.76 of its frame. A spot's object width is `w/271·0.83`, its height `h/226·0.76`. The frame is `max(width, height) / 0.9`, because spot art fills about 90% of its square. These are starting values, re-measured when each spot's art lands.
+
+| Spot       | frame | footprint |
+| ---------- | ----- | --------- |
+| lookout    | 2.31  | 0.87      |
+| sleeping   | 1.53  | 1.38      |
+| starCanopy | 1.12  | 1.01      |
+| palmGarden | 2.51  | 1.07      |
+| cooking    | 1.89  | 1.70      |
+| fire       | 1.91  | 1.72      |
+| water      | 1.21  | 0.91      |
+| donkey     | 1.49  | 1.34      |
+| camel      | 1.46  | 1.19      |
+| ibisPond   | 2.46  | 2.21      |
+| mapTable   | 1.67  | 1.50      |
+| godStatues | 1.80  | 1.62      |
+
+Fixed pieces:
+
+| Piece    | frame | footprint | note                                                     |
+| -------- | ----- | --------- | -------------------------------------------------------- |
+| chest    | 1     | 0.83      | the reference                                            |
+| window   | 1.0   | 0.55      | landmark, a bit above its impression size                |
+| campfire | 1     | 0.45      | stands where the fire pit will; it is replaced by step 1 |
+
+**Behaviour:**
+
+- **Catalogue.** A spot carries its `frame` and `footprint`. Every step piece of that spot uses `width = height = frame`. A fixed piece carries its own. Light offsets stay relative to the piece and are scaled by its frame, so a glow keeps its place on a bigger image. Check this against the current light code and adjust if lights are absolute units.
+- **Layout: spacing.** The unit `u` stays one object unit. Two neighbours in a row are at least `(footprintA + footprintB) / 2 · gapFactor` apart, centre to centre. `gapFactor` is about 1.0, a starting value tuned by eye. The minimum slot spacing is the largest such requirement over adjacent pairs, divided by their slot distance, in place of the fixed 1.15. Everything else (max spacing, camera, insets, horizon, no-crop sweep) is unchanged, but the no-overlap and no-crop tests use footprints and frames.
+- **Layout: depth.** Depth scale changes from back/middle/front 0.78/0.89/1 to 0.9/0.95/1.
+- **Tests.** The made-up catalogue gets spots with different frames and footprints:
+  - `it("keeps neighbours apart by their footprints, not their frames")`
+  - `it("draws a spot's image at its frame size")`
+
+  The existing sweeps keep passing.
+
+- [ ] **Step 1: Write the failing tests.**
+- [ ] **Step 2: Implement** the catalogue, layout and spec ("Spots as anchors" and "Size and spacing" sections; the starting-numbers table).
+- [ ] **Step 3: Gates and a look.**
+  - Run `yarn test src/ui/atoms scripts`, `yarn check-types`, `yarn lint`, `yarn prettier` (never `npx`) and `yarn build-storybook`.
+  - Screenshot StarterFull, MasterFull and WizardFull at 390×844 and 1000×836.
+  - Compare chest : fire pit : window proportions against the wizard impression, and report the numbers.
+- [ ] **Step 4: Commit** `feat: camp spots sized from the impression, spaced by footprint`
