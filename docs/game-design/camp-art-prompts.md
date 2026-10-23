@@ -833,13 +833,14 @@ Attach: `art/masters/camp/sprout.webp`
 
 ### 92. `camp/well-alone` — Layer source: the well without the trough in front
 
-The well was painted behind the trough, so cut against the jars it would have a notch where the trough stood.
-Edit of `camp/well`.
+The well was painted behind the trough and the gourd, so cut against the jars it would have notches where
+they stood. Its layer is this picture whole. Edit of `camp/well`.
 
 Attach: `art/masters/camp/well.webp`
 
-> [edit] Remove this, and only this: the long low stone water trough in front of the well. Where it stood,
-> paint the rest of the round stone well wall as it continues; elsewhere show the #ff00ff background.
+> [edit] Remove everything except the round stone well: the long low stone trough, both jars and the gourd
+> bowl. Where they covered the well, paint the rest of its stone wall as it continues; elsewhere show the
+> #ff00ff background. The well itself stays exactly where and as it is.
 
 ### 91. `camp/starMap-cloth` — Layer source: the star cloth without the compass
 

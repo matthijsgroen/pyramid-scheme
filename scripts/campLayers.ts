@@ -24,14 +24,15 @@ import { writeShadow } from "./importCamp"
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, "..")
 
-/** `with` is the picture holding the object, `without` the one it is cut against; both are piece ids. */
-export type LayerSource = { with?: string; without?: string }
+/** `with` is the picture holding the object, `without` the one it is cut against; both are piece ids. A `without`
+ * of null takes all of `with`: a layer source painted with the object alone. */
+export type LayerSource = { with?: string; without?: string | null }
 
 export const LAYER_SOURCES: Record<string, LayerSource> = {
   // The star cloth was painted under the compass, so its own edit (no compass) gives it whole, on the bare table.
   starMap: { with: "starMap-cloth", without: "table" },
-  // The well was painted behind the trough; its own edit without the trough gives its wall whole.
-  well: { with: "well-alone", without: "secondJar" },
+  // The well was painted behind the trough and the gourd; its own edit holds the well alone, whole.
+  well: { with: "well-alone", without: null },
   // The tent's canvas is the windbreak's colour, so against the windbreak it would come out full of holes.
   tent: { without: "blanket" },
   // Each growth stage of the first palm is the whole plant, so each is cut against the bare bed.
@@ -148,7 +149,10 @@ export const layerJobs = (catalogue: CampCatalogue, sources: Record<string, Laye
         ? step.pieces.map(piece => ({
             id: piece.id,
             with: sources[piece.id]?.with ?? piece.id,
-            without: sources[piece.id]?.without ?? spot.steps[i - 1]?.pieces[0].id,
+            without:
+              sources[piece.id]?.without === undefined
+                ? spot.steps[i - 1]?.pieces[0].id
+                : (sources[piece.id].without ?? undefined),
           }))
         : []
     )

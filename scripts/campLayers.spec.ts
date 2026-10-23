@@ -86,6 +86,14 @@ describe("layerJobs", () => {
       { id: "ghost", with: "ghost", without: "lid" },
     ])
   })
+
+  it("takes a source's picture whole when it is cut against nothing", () => {
+    expect(layerJobs(catalogue, { lid: { with: "lidAlone", without: null } })).toContainEqual({
+      id: "lid",
+      with: "lidAlone",
+      without: undefined,
+    })
+  })
 })
 
 describe("campLayers", () => {
