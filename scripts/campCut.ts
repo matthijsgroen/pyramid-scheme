@@ -92,12 +92,17 @@ export const campCut = async ({ from, name, at, masterRoot, key, tolerance }: Ca
     }
     cut.set(grown)
   }
+  // Paint the cut with the picture's own background colour, not the exact key: a generator returns a
+  // slightly different magenta, and a patch of pure key reads to it as a shape it then copies into edits.
+  const fill = [0, 0, 0]
+  let count = 0
   for (let i = 0; i < n; i++)
-    if (cut[i]) {
-      data[i * channels] = k.r
-      data[i * channels + 1] = k.g
-      data[i * channels + 2] = k.b
+    if (background[i] && !cut[i]) {
+      for (let c = 0; c < 3; c++) fill[c] += data[i * channels + c]
+      count++
     }
+  const colour = count > 0 ? fill.map(v => Math.round(v / count)) : [k.r, k.g, k.b]
+  for (let i = 0; i < n; i++) if (cut[i]) for (let c = 0; c < 3; c++) data[i * channels + c] = colour[c]
   const out = join(masterRoot, `${name}.webp`)
   await sharp(data, { raw: { width, height, channels } }).webp({ quality: 92 }).toFile(out)
   return out

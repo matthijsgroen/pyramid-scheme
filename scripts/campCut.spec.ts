@@ -51,6 +51,28 @@ describe("campCut", () => {
     expect(near(await pixel(out, 100, 200), [255, 0, 0])).toBe(true)
   })
 
+  it("fills the cut with the picture's own background, not the exact key", async () => {
+    const masterRoot = await twoIslands()
+    await sharp({ create: { width: 400, height: 400, channels: 3, background: "#fd12f9" } })
+      .composite([
+        { input: { create: { width: 80, height: 80, channels: 3, background: "#00a000" } }, left: 260, top: 160 },
+      ])
+      .webp({ lossless: true })
+      .toFile(join(masterRoot, "offkey.webp"))
+    const out = await campCut({
+      from: "offkey",
+      name: "cut",
+      at: [[0.75, 0.5]],
+      masterRoot,
+      key: "#ff00ff",
+      tolerance: 60,
+    })
+
+    const [r, g, b] = await pixel(out, 300, 200)
+    expect(Math.abs(g - 0x12)).toBeLessThan(5)
+    expect(Math.abs(r - 0xfd) + Math.abs(b - 0xf9)).toBeLessThan(8)
+  })
+
   it("refuses a point that lands on background, so a wrong coordinate cuts nothing silently", async () => {
     const masterRoot = await twoIslands()
     await expect(
