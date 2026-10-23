@@ -119,7 +119,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["wizard", "astrolabe"],
       ["wizard", "reedGlobe"],
     ]),
-    spot("palmGarden", { x: 1.61, y: -1.62, frame: 2.51, footprint: 1.07 }, [
+    spot("palmGarden", { x: 1.61, y: -1.62, frame: 2.51, footprint: 0.7 }, [
       ["expert", "seed"],
       ["expert", "sprout"],
       ["expert", "palm"],
