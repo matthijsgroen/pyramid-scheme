@@ -406,6 +406,12 @@ describe("layoutCamp", () => {
   })
   const narrow = (c: CampCatalogue) => layout({ catalogue: c, width: 320, height: 900, steps: { water: 1, camel: 1 } })
 
+  it("frames a spot with bleed closer, letting its top and sides leave the screen", () => {
+    const tall = (bleed?: number): CampCatalogue => ({ spots: [{ ...lone("palmGarden", 1, 0, 3, 0.7), bleed }], fixed: [] })
+    const fit = (c: CampCatalogue) => layout({ catalogue: c, width: 320, height: 900, steps: { palmGarden: 1 } })
+    expect(fit(tall(0.2)).unit).toBeGreaterThan(fit(tall()).unit)
+  })
+
   it("keeps neighbours apart by their footprints, not their frames", () => {
     const { gapFactor } = CAMP_LAYOUT_PARAMS
     const tight = narrow(pair(2, 0.6))

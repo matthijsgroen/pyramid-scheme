@@ -273,12 +273,13 @@ export const layoutCamp = ({
     ...framed.flatMap(o =>
       o.pieces.map(p => {
         const size = o.frame * o.depth
+        const bleed = (o.bleed ?? 0) * size
         return {
           x: o.x,
           y: o.y,
-          left: (p.dx - p.width / 2) * size,
-          right: (p.dx + p.width / 2) * size,
-          top: (p.dy - p.height) * size,
+          left: (p.dx - p.width / 2) * size + bleed,
+          right: (p.dx + p.width / 2) * size - bleed,
+          top: (p.dy - p.height) * size + bleed,
           bottom: p.dy * size,
         }
       })

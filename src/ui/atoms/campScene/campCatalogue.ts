@@ -142,7 +142,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["wizard", "astrolabe", { on: "starMap" }],
       ["wizard", "reedGlobe"],
     ]),
-    layered("palmGarden", { x: 2.05, y: -1.62, frame: 2.2, footprint: 0.7 }, [
+    layered("palmGarden", { x: 2.05, y: -1.62, frame: 2.2, footprint: 0.7, bleed: 0.15 }, [
       ["expert", "bed", { base: true, given: true }],
       // One palm growing: a later stage takes the earlier one's place.
       ["expert", "seed", { growth: "palm" }],

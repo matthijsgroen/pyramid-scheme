@@ -62,9 +62,10 @@ export type CampStep = { chapter: Difficulty; pieces: CampPiece[]; layer?: CampL
  * `x` and `y` place its anchor, the bottom centre of its object group, relative to the fire's anchor as
  * measured in the wizard impression: x runs right, y runs down, and a smaller y stands farther away.
  * `frame` is the side of the square its images are drawn at; `footprint` is the width the object stands
- * on, which keeps a neighbour at the same depth away.
+ * on, which keeps a neighbour at the same depth away. `bleed` is the share of the frame the camera may leave
+ * off-screen on its sides and top (a palm crown can stick out; its ground never does).
  */
-export type CampPlace = { x: number; y: number; frame: number; footprint: number }
+export type CampPlace = { x: number; y: number; frame: number; footprint: number; bleed?: number }
 
 export type CampSpot = CampPlace & { id: CampSpotId; steps: CampStep[] }
 
