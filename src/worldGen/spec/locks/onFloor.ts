@@ -28,7 +28,7 @@ const LOCK_BINDINGS = {
   buildersLift: { weights: "stonePlate", pipe: "stonePipe", "one-way": "zipline" },
   caveLevers: { toggle: "handle" },
   pitStair: { toggle: "handle", "one-way": "zipline" },
-  throwItBack: { toggle: "handle" },
+  throwItBack: { toggle: "handle", "one-way": "zipline" },
 } as const
 
 type LockName = keyof typeof LOCK_BINDINGS

@@ -1,14 +1,15 @@
 // designed by: Claude
-// junior, the starter cave. Three shut doors face the hall, the way out among them; each lever stands behind
-// another door, the first in a side room, so the player opens the cave one door at a time.
+// junior, the starter cave. One lever opens two doors at once, and each room behind them holds the lever for the
+// other's: west's lever opens the cell in east, whose lever opens the way out.
 
 in -- hall
 hall -- side
 hall -[C]- west
-hall -[B]- east
+hall -[C]- east
+east -[W]- cell
 hall -[A]- out
 C toggle @side
-B toggle @west
-A toggle @east
+W toggle @west
+A toggle @cell
 west *
 east *

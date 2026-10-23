@@ -113,15 +113,15 @@ starter tomb's are junior locks. The cave is the first floor lock a starter play
 | ---------------- | ----------- | ----------- | ----------- | ------ |
 | cave (level 1)   | the one     | caveLevers  | lever       | no     |
 | cavern (level 2) | 2 (index 1) | pitStair    | lever, drop | no     |
-| cavern (level 2) | 4 (index 3) | throwItBack | lever       | no     |
+| cavern (level 2) | 4 (index 3) | throwItBack | lever, drop | no     |
 
-- **caveLevers**: three shut doors face the hall, the way out among them; the first lever is in a side room, each
-  next one behind the door the last opened. 3 actions.
+- **caveLevers**: one lever in a side room opens two doors at once; west's lever opens a cell inside east, and the
+  cell's lever opens the way out. Four doors, three levers, and the order of west and east is the player's. 3 actions.
 - **pitStair**: a lever opens a ledge, the drop below lands beside the lever that opens both the stair back up and
   the gallery holding the exit lever. The one mechanic beyond levers is the drop. 3 actions.
-- **throwItBack**: one lever swaps the way east for the way west; the exit stands east, its lever west, so the swap
-  lever is thrown, then thrown back. The tomb's hardest junior lock: its first throw shuts the way to the exit.
-  3 actions.
+- **throwItBack**: the lever beside the shut exit opens a side room, whose lever swaps the way east for a ledge; the
+  exit's lever waits below the drop, so the swap lever is thrown, then thrown back to reach the exit again. The
+  tomb's hardest junior lock: 4 actions.
 
 They stand on authored floors through `lockOnFloor(name)` (below).
 
@@ -312,7 +312,7 @@ but are still a proposal for the engine (`lock-curriculum.md`, "Stones").
 | stoneGate     | expert capstone (Djoser 5), stones | torch, door-waits-for-two, stones & plates, narrow passage | solvable                                                   |
 | caveLevers    | junior (starter tomb cave)         | lever                                                      | solvable                                                   |
 | pitStair      | junior (starter tomb cavern 2)     | lever, drop                                                | solvable                                                   |
-| throwItBack   | junior (starter tomb cavern 4)     | lever                                                      | solvable                                                   |
+| throwItBack   | junior (starter tomb cavern 4)     | lever, drop                                                | solvable                                                   |
 
 The curriculum's "lever: all but plates" is wider than the files: twoStones, counterweight, masonsRamp,
 observatory and stoneGate have no lever either.

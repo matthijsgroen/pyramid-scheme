@@ -1,12 +1,15 @@
 // designed by: Claude
-// junior. One lever swaps the way east for the way west; the lever that opens the exit stands west and the exit
-// east, so the swap lever is thrown, then thrown back.
+// junior. The lever beside the shut exit opens the side room, whose lever swaps the way east for a ledge; the
+// exit's lever waits below the drop, so the swap lever is thrown, then thrown back to reach the exit again.
 
 in -- hall
-hall -- side
+hall -[L]- side
 hall -[S:a]- east
-hall -[S]- west
+hall -[S]- ledge
+ledge >> pit
+pit -[K]- hall
 east -[K]- out
+L toggle @east
 S toggle @side
-K toggle @west
-west *
+K toggle @pit
+pit *
