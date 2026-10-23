@@ -1,10 +1,11 @@
 # Handover — the tomb redesign
 
-A tomb should feel like **the end of a difficulty tier**, not a weak extra pyramid, and it should be **hidden**:
-found through map pieces. Today a tomb's exterior is a plain pyramid (tombs never had an exterior of their
-own) and its floors are not exciting. This is the brainstorm's state on 2026-10-22, run with the designer; the
-next session picks it up at "present the design in sections", then writes the spec and the plan
-(superpowers:brainstorming → superpowers:writing-plans).
+Design: [the spec](superpowers/specs/2026-10-22-tomb-redesign-design.md). Build plan:
+[the plan](superpowers/plans/2026-10-22-tomb-redesign.md).
+
+**The starter tomb is built**: the cave (one floor, a lever lock, three puzzles, no loot) and the sunlit cavern
+(four floors, locks on floors 2 and 4, junior puzzles between the tableaus). A tomb should feel like **the end
+of a difficulty tier**, and it is **hidden**, found through map pieces. What follows is the design it follows.
 
 ## Decided with the designer
 
@@ -42,21 +43,12 @@ and the hardest floor-lock combinations.
 - Faces and poses, ghosts on the floor with revisit lines, Ipi's rewritten scene, Fez's tomb lines (hieroglyph
   line now plays with the tableau open).
 
-## Next steps
+## What is left
 
-1. Re-run the read-only exploration (an Explore agent was mapping this when the session ended): how a tomb
-   journey is defined (`TOMB_JOURNEYS`, `src/worldGen/spec/starter.ts` tomb entry, `entryLock`, map pieces);
-   journey `exterior`/`background`/levels and where the level slide transition lives (`PyramidExpedition`);
-   how a floor gets its rank dressing and whether a non-rank "cave" skin has a precedent; where the exterior
-   board's tier comes from; floor-lock placement and per-section tier; loot slots and authoring a no-loot site.
-2. Present the design in sections (journey shape, cave site, cavern site, flow/transition, art list, lock and
-   puzzle tiers, what stays untouched, testing), get approval per section.
-3. Write the spec to `docs/superpowers/specs/2026-10-xx-tomb-redesign-design.md`, then the plan.
-4. Art to queue (the user paints): the cave-mouth exterior, the sunlit cavern with its pyramid, the cave floor
-   and wall tiles; and a junior floor lock for the starter cave (Claude may write junior/expert locks).
-
-## Open questions still to ask
-
-- The cave floor's puzzles: own tier or tier + 1?
-- The cave floor lock: which mechanic per tier (starter → junior: levers and doors, per the designer).
-- Story beats in the cave (Fez/explorer lines on entering the cave, on the light, on seeing the pyramid).
+1. **Story lines for the hooks**: entering the cave, the pillar of light in the cave, arriving at the cavern.
+2. **The loot economy, decided before the starter release** (spec, "Outside this spec"): mosaic piece counts,
+   health drops, inventory use, and whether cave and cavern puzzles carry loot.
+3. **Paint the art queue** (`yarn repaint`, "Cave and cavern" in `docs/instructions/repaint-queue.md`): the
+   cave-mouth and cavern exteriors, the `cave` floor, wall face, threshold and encounter wall.
+4. **The other tiers' caves, caverns and locks**, each with its own release.
+5. Playtest items are in `docs/playtest-backlog.md`, "The tomb: cave and cavern".

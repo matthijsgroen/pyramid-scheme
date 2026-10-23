@@ -169,6 +169,140 @@ Even lighting left to right, no hotspot, no vignette.
 
 ---
 
+## Cave and cavern — six
+
+The starter tomb's two levels ([the spec](../superpowers/specs/2026-10-22-tomb-redesign-design.md), §7). Until
+they land the cave draws from `placeholder/` tiles and a CSS backdrop. The `cave` tileset is not a rank: it
+holds the same files a rank folder does (`floor`, `wall-face`, `threshold`, plus the encounter wall) and is
+the cave's own palette, dim and cool where the starter is warm and daylit. The cavern is the starter's
+merchant rank under a hole in the rock, so it keeps the merchant's tiles and needs only its exterior.
+
+Each block carries the whole preamble. The one attachment is a STYLE reference whose colours the prompt
+tells the model to ignore. The cave floor and wall are painted first; the cave's `tile-stats` row then sets
+its palette.
+
+### `cave/floor` — bare cave rock underfoot
+
+**Attach:** `art/masters/surfaces/starter-floor.webp` — the merchant's floor, as the style reference
+
+```
+Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
+Rough pale-grey limestone bedrock, damp-dark in the hollows, a little sand drifted into the cracks.
+Cool and dim but readable: every part of the floor is visible, nothing sinks into black.
+HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
+surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
+a comic, not a cartoon. An edge is a change of value, never a stroke.
+Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
+than #23272b.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it.
+THE CAMERA: straight down. A seamless square tile of uneven bedrock: shallow cracks, small flakes,
+a few scattered pebbles, no slabs, no joints, no built stonework. Even lighting, no hotspot, no vignette.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/cave-floor.webp --tier=cave --name=floor --slot=floor --filter=smooth --key=none --repeat=2.4`
+
+### `cave/wall-face` — the cave's rock wall face
+
+**Attach:** `art/masters/surfaces/starter-wall-face.webp` — the merchant's wall face, as the style reference
+
+```
+Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
+The standing face of a cave wall seen from the front: raw rough-hewn limestone, vertical weathering
+streaks, a few ledges and small hollows, damp-dark toward the foot. No bricks, no joints, no paint.
+Cool and dim but readable. HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and
+fine speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
+Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
+than #23272b.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it.
+Flat frontal view, no perspective. A wide band, seamless left to right. Even lighting.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/cave-wall-face.webp --tier=cave --name=wall-face --slot=face --filter=smooth --key=none --headroom=0.14 --repeat=2`
+
+### `cave/threshold` — the worn sill of a cave passage
+
+**Attach:** `art/masters/surfaces/starter-threshold.webp` — the merchant's sill, as the style reference
+
+```
+Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
+A worn sill where one cave passage meets the next: bedrock rubbed smooth and slightly dished by feet,
+a thin line of sand along its edge. No blocks, no joints, no paint.
+Cool and dim but readable. HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and
+fine speckle in the surface, soft shading. Painted rather than drawn.
+NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
+Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
+than #23272b.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
+colours or its subject from it.
+Same camera and proportions as the attached sill. Even lighting.
+```
+
+**Import:** `yarn import-tile art/masters/surfaces/cave-threshold.webp --tier=cave --name=threshold --slot=sill --filter=smooth --key=none`
+
+### `cave/wall-panel` — the encounter wall, a cave face
+
+**Attach:** `art/masters/tombWall/starter.webp` — the merchant's encounter wall, as the style reference
+
+```
+A whole wall of a cave, seen straight on, for a puzzle's backdrop: raw pale-grey limestone, rough and
+weathered, vertical streaks, a few ledges and hollows, sand drifted at the foot. No carving, no hieroglyphs,
+no paint, no bricks. Cool and dim but readable.
+HAND-PAINTED digital art: matte, soft brush texture, grit and speckle. NO OUTLINES — no black contour, no
+ink, no cel shading, no vector look.
+Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
+than #23272b.
+No text, no letters, no watermark, no logo, no frame, no border, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY, for the frame's proportions and paint quality. Do NOT take
+its colours or its subject from it. Same aspect as the reference; do not re-compose it square.
+```
+
+**Import:** `yarn import-panel art/masters/tombWall/cave.webp --tier=cave`
+
+### `exteriors/cave-mouth` — a cave mouth in a small desert range
+
+**Attach:** `art/masters/surfaces/starter-floor.webp` — the merchant's floor, as the style reference
+
+```
+Landscape game background, ancient Egyptian desert, hand-painted digital art: matte, soft brush texture,
+realistic materials, painted rather than drawn. NO OUTLINES — no black contour, no ink, no cel shading.
+A small range of low sandstone hills under a pale sky, seen from the front at eye level. In the middle
+of the nearest hill, low down, the dark mouth of a cave, a rough arch big enough to walk into, shadow
+inside, a little drifted sand at its foot. Nothing else built: no pyramid, no building, no figure, no
+text. Warm sand and rock, the cave mouth the one dark shape. The lower third is calm sand so a map
+marker can sit there.
+Landscape, 16 by 9. No text, no watermark, no frame, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality. Do NOT take its subject from it.
+```
+
+**Import:** `cp ~/Downloads/<file> src/assets/exteriors/cave-mouth.png`
+
+### `exteriors/cavern` — a sunlit cavern with a pyramid standing in it
+
+**Attach:** `art/masters/surfaces/starter-floor.webp` — the merchant's floor, as the style reference
+
+```
+Landscape game background, ancient Egyptian desert, hand-painted digital art: matte, soft brush texture,
+realistic materials, painted rather than drawn. NO OUTLINES — no black contour, no ink, no cel shading.
+The inside of a gigantic cave, seen from the front: a vast rock vault overhead, its roof open in one
+place so a shaft of warm sunlight falls straight down onto the cavern floor. In the middle of the sunlit
+floor stands a small sandstone pyramid, its top well below the roof. Cool shadowed rock all round, warm
+light on the pyramid and the sand beneath it. No figure, no text. The lower third is calm sand so a map
+marker can sit there.
+Landscape, 16 by 9. No text, no watermark, no frame, no vignette.
+THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality. Do NOT take its subject from it.
+```
+
+**Import:** `cp ~/Downloads/<file> src/assets/exteriors/cavern.png`
+
+---
+
 ## Priest — three
 
 His CHAMBER props, and none of them existed as a model until now: his rank had nothing but the veil and
