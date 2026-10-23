@@ -151,15 +151,18 @@ with zero steps is not drawn either. Both are just sand.
 
 ### Steps are pieces
 
-Each step of a spot (the list in `camp.md` "Camp loot", in order) is one or more **pieces**: separate
-cut-out images. A piece has:
+Each step of a spot (the list in `camp.md` "Camp loot", in order) is **one piece**: the whole spot as it
+looks at that step, one square image (`src/assets/camp/<piece id>.webp`, see `camp-art-prompts.md`). A piece has:
 
-- the art (a cut-out image), or none yet;
-- its offset and size inside the spot, in object-size units;
-- optionally a list of earlier pieces it **replaces** (the tent replaces the windbreak);
-- optionally a **light**: offset, radius, colour, whether it flickers.
+- its frame: a square 1×1 object unit, anchored bottom-centre on the spot (`dx = dy = 0`);
+- the id of the previous step's piece in `replaces`, so only the latest step of a spot is drawn (the fire
+  pit's first step also replaces the fixed campfire);
+- optionally a list of **lights**: offset inside the frame, radius, colour, mode. A piece may carry several,
+  and every step that shows a light's source carries it (the fire glow on every fire pit step, the oven light
+  from the oven on).
 
-The scene draws, for every occupied spot, the pieces of steps 1..n, minus replaced ones.
+The scene draws, for every occupied spot, the piece of step n. The fixed pieces (chest, window, campfire)
+keep their own sizes and lights.
 
 A spot's step count is **cumulative across chapters**: one running index into the spot's full step list
 (sleeping place at 4 = mat, blanket, windbreak, tent). The scene clamps a count to the steps the current

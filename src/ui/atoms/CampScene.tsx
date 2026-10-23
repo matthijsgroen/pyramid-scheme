@@ -17,8 +17,8 @@ export type CampSceneProps = {
   className?: string
 }
 
-// The filename is the art key, so adding a piece's art is dropping its file in. A key with no file yet
-// draws the stand-in, like a piece without a key.
+// The filename is the piece id, so adding a piece's art is dropping its file in. A piece with no file yet
+// draws the stand-in.
 const artUrls = import.meta.glob("../../assets/camp/*.{png,webp,svg}", {
   eager: true,
   query: "?url",
@@ -61,7 +61,7 @@ const boundsOf = (pieces: PlacedPiece[]) => {
 
 const Piece = ({ placed }: { placed: PlacedPiece }) => {
   const { piece, x, y, scale } = placed
-  const url = piece.art ? artByKey.get(piece.art) : undefined
+  const url = artByKey.get(piece.id)
   const style: CSSProperties = { left: x, top: y, width: piece.width * scale, height: piece.height * scale }
   if (url) return <img className="camp-piece" src={url} alt="" draggable={false} style={style} />
   return (

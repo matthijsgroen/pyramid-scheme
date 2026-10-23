@@ -27,18 +27,20 @@ export type CampLight = {
   strength: number
 }
 
-/** All offsets and sizes are object-size units relative to the spot's anchor (bottom-centre). */
+/**
+ * All offsets and sizes are object-size units relative to the spot's anchor (bottom-centre). The art is
+ * `src/assets/camp/<id>.webp`. A light's offset is relative to the piece, so it sits where its source is
+ * inside the piece's frame.
+ */
 export type CampPiece = {
   id: string
-  /** Asset key; absent while the piece has no art, so the stand-in draws. */
-  art?: string
   dx: number
   dy: number
   width: number
   height: number
   /** Ids of earlier pieces in the same spot that this one hides. */
   replaces?: string[]
-  light?: CampLight
+  lights?: CampLight[]
 }
 
 export type CampStep = { chapter: Difficulty; pieces: CampPiece[] }

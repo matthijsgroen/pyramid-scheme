@@ -31,7 +31,7 @@ const catalogue: CampCatalogue = {
         { chapter: "starter", pieces: [piece("ring", { height: 0.3 })] },
         {
           chapter: "starter",
-          pieces: [piece("flame", { dy: -0.1, height: 0.6, replaces: ["smallFlame"], light: glow(3) })],
+          pieces: [piece("flame", { dy: -0.1, height: 0.6, replaces: ["smallFlame"], lights: [glow(3)] })],
         },
         { chapter: "junior", pieces: [piece("bigRing", { width: 1, height: 0.4, replaces: ["ring"] })] },
       ],
@@ -62,9 +62,9 @@ const catalogue: CampCatalogue = {
     },
   ],
   fixed: [
-    { id: "chest", row: 2, slot: -1, piece: piece("chest", { height: 0.6, light: glow(0.8) }) },
+    { id: "chest", row: 2, slot: -1, piece: piece("chest", { height: 0.6, lights: [glow(0.8)] }) },
     { id: "window", row: 0, slot: 1, piece: piece("window", { width: 1, height: 1 }) },
-    { id: "campfire", row: 1, slot: 0, piece: piece("smallFlame", { width: 0.5, height: 0.5, light: glow(2) }) },
+    { id: "campfire", row: 1, slot: 0, piece: piece("smallFlame", { width: 0.5, height: 0.5, lights: [glow(2)] }) },
   ],
 }
 
@@ -154,11 +154,52 @@ describe("layoutCamp", () => {
   it("lights a glow at its piece, scaled by the piece's depth", () => {
     const l = layout({ steps: {} })
     const chest = l.pieces.find(p => p.spot === "chest")!
-    const chestGlow = l.glows.find(g => g.key === chest.key)!
+    const chestGlow = l.glows.find(g => g.key === `${chest.key}:0`)!
     expect(chestGlow.x).toBeCloseTo(chest.x)
     expect(chestGlow.y).toBeCloseTo(chest.y - 0.2 * chest.scale)
     expect(chestGlow.radius).toBeCloseTo(0.8 * chest.scale)
     expect(l.glows.map(g => g.key)).not.toContain(l.pieces.find(p => p.spot === "window")!.key)
+  })
+
+  it("draws only the latest step of a spot when each step replaces the one before", () => {
+    const wholeSpot: CampCatalogue = {
+      spots: [
+        {
+          id: "water",
+          row: 1,
+          slot: 0,
+          steps: [
+            { chapter: "starter", pieces: [piece("water1", { width: 1, height: 1 })] },
+            { chapter: "starter", pieces: [piece("water2", { width: 1, height: 1, replaces: ["water1"] })] },
+            { chapter: "junior", pieces: [piece("water3", { width: 1, height: 1, replaces: ["water2"] })] },
+          ],
+        },
+      ],
+      fixed: [],
+    }
+    const at = (n: number) => pieceIds(layout({ catalogue: wholeSpot, chapter: "junior", steps: { water: n } }))
+    expect(at(1)).toEqual(["water1"])
+    expect(at(2)).toEqual(["water2"])
+    expect(at(3)).toEqual(["water3"])
+  })
+
+  it("keeps every light of a piece that carries several", () => {
+    const twoLights: CampCatalogue = {
+      spots: [],
+      fixed: [
+        {
+          id: "window",
+          row: 0,
+          slot: 0,
+          piece: piece("window", { lights: [glow(1.1), { ...glow(0.9), dy: -0.5, color: "rgb(9,9,9)" }] }),
+        },
+      ],
+    }
+    const l = layout({ catalogue: twoLights, steps: {} })
+    expect(l.glows).toHaveLength(2)
+    expect(new Set(l.glows.map(g => g.key)).size).toBe(2)
+    expect(l.glows.map(g => g.color)).toEqual(["rgb(1,2,3)", "rgb(9,9,9)"])
+    expect(l.glows[1].y).toBeLessThan(l.glows[0].y)
   })
 
   it("keeps every piece inside the container and outside the insets", () => {

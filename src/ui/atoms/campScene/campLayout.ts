@@ -192,19 +192,15 @@ export const layoutCamp = ({
     }))
 
   const glows: PlacedGlow[] = pieces.flatMap(p => {
-    const light = p.piece.light
-    if (!light) return []
-    return [
-      {
-        key: p.key,
-        x: p.x + light.dx * p.scale,
-        y: p.y + light.dy * p.scale,
-        radius: light.radius * p.scale,
-        color: light.color,
-        mode: light.mode,
-        strength: light.strength,
-      },
-    ]
+    return (p.piece.lights ?? []).map((light, i) => ({
+      key: `${p.key}:${i}`,
+      x: p.x + light.dx * p.scale,
+      y: p.y + light.dy * p.scale,
+      radius: light.radius * p.scale,
+      color: light.color,
+      mode: light.mode,
+      strength: light.strength,
+    }))
   })
 
   const pyramids: PlacedPyramid[] = difficulties
