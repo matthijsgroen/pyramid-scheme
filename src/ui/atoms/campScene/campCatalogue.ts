@@ -43,7 +43,13 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       [
         "starter",
         "fire",
-        { dy: -0.1, width: 0.6, height: 0.7, light: light(2.9, "255,150,55", "flicker", 0.75, 0, -0.2) },
+        {
+          dy: -0.1,
+          width: 0.6,
+          height: 0.7,
+          replaces: ["campfire"],
+          light: light(2.9, "255,150,55", "flicker", 0.75, 0, -0.2),
+        },
       ],
       ["starter", "cookingStones", { dx: 0.35, width: 0.5, height: 0.3 }],
       ["junior", "pot", { dy: -0.3, width: 0.6, height: 0.5 }],
