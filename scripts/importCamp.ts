@@ -13,7 +13,14 @@
  * Flags:
  *   --key=#ff00ff    background colour to make transparent. --key=none to skip (the sand tile)
  *   --tolerance=60   how far from that colour still counts as background (0-441)
- *   --size=768       the longest side of the shipped file; never enlarged
+ *   --size=512       the longest side of the shipped file; never enlarged
+ *   --shadow-size=256  the longest side of the contact shadow, which is blurred and needs few pixels
+ *
+ * Keying un-mixes the edge. A soft edge — a flame's wisps, a painted fringe — is part magenta, and a hard
+ * cut leaves it as a pink rim. Within a few pixels of the background, a pixel's distance from the key sets
+ * its alpha over a wide band, and the key's share is taken back out of its colour, so a flame ends in
+ * orange going transparent rather than in pink. Deeper inside nothing is touched: a purple cushion is
+ * paint, not background, which is also why this does not use `keyOut`'s magenta despill.
  *
  * A keyed piece also gets src/assets/camp/<name>-shadow.webp, its contact shadow: a black band along the
  * object's base, following its own base contour column by column, blurred once here so the scene never runs
@@ -22,10 +29,10 @@
  * not something standing on it, so it casts none.
  */
 import { mkdirSync } from "node:fs"
-import { dirname, join } from "node:path"
+import { dirname, join, resolve } from "node:path"
 import { fileURLToPath, pathToFileURL } from "node:url"
 import sharp from "sharp"
-import { keyOut } from "./keyOut"
+import { hexToRgb } from "./keyOut"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, "..")
@@ -37,6 +44,7 @@ export type CampImport = {
   key: string
   tolerance: number
   size: number
+  shadowSize: number
   outRoot: string
   masterRoot: string
 }
@@ -47,6 +55,56 @@ const SCENERY = new Set(["sand", "dunes", "pyramid", "pyramidGold"])
 const SHADOW_BLUR = 0.008
 /** How far the band reaches up from the object's lowest pixel in each column, as a share of the canvas height. */
 const SHADOW_BAND = 0.06
+/** How far into the object the edge un-mixing reaches, as a share of the download's longest side. */
+const EDGE_BAND = 0.004
+/** Within that band, alpha ramps from the tolerance up to this many tolerances away from the key. */
+const EDGE_RAMP = 4
+
+/** Background to alpha 0; the object's edge un-mixed from the key; its inside untouched. */
+const keyUnmix = (data: Buffer, width: number, height: number, key: string, tolerance: number) => {
+  const k = hexToRgb(key)
+  const n = width * height
+  const distance = new Float32Array(n)
+  const near = new Uint8Array(n)
+  for (let i = 0; i < n; i++) {
+    distance[i] = Math.hypot(data[i * 4] - k.r, data[i * 4 + 1] - k.g, data[i * 4 + 2] - k.b)
+    near[i] = distance[i] <= tolerance ? 1 : 0
+  }
+  // Grow the background into the object a few pixels: that ring is the edge.
+  const band = Math.max(1, Math.round(Math.max(width, height) * EDGE_BAND))
+  for (let step = 0; step < band; step++) {
+    const grown = near.slice()
+    for (let y = 0; y < height; y++)
+      for (let x = 0; x < width; x++) {
+        const i = y * width + x
+        if (near[i]) continue
+        if (
+          (x > 0 && near[i - 1]) ||
+          (x < width - 1 && near[i + 1]) ||
+          (y > 0 && near[i - width]) ||
+          (y < height - 1 && near[i + width])
+        )
+          grown[i] = 1
+      }
+    near.set(grown)
+  }
+  for (let i = 0; i < n; i++) {
+    const p = i * 4
+    if (distance[i] <= tolerance) {
+      data[p + 3] = 0
+      continue
+    }
+    if (!near[i]) continue
+    const a = Math.min(1, (distance[i] - tolerance) / (tolerance * (EDGE_RAMP - 1)))
+    if (a >= 1) continue
+    const clamp = (v: number) => Math.max(0, Math.min(255, Math.round(v)))
+    data[p] = clamp((data[p] - (1 - a) * k.r) / a)
+    data[p + 1] = clamp((data[p + 1] - (1 - a) * k.g) / a)
+    data[p + 2] = clamp((data[p + 2] - (1 - a) * k.b) / a)
+    data[p + 3] = Math.round(a * data[p + 3])
+  }
+}
+
 /** The alpha from which a pixel counts as the object, not its keyed fringe. */
 const OPAQUE = 128
 
@@ -62,8 +120,9 @@ const baseBand = (alpha: Buffer, width: number, height: number) => {
   return out
 }
 
-const writeShadow = async (piece: Buffer, path: string) => {
-  const { data: alpha, info } = await sharp(piece).extractChannel(3).raw().toBuffer({ resolveWithObject: true })
+const writeShadow = async (piece: Buffer, path: string, size: number) => {
+  const small = await sharp(piece).resize(size, size, { fit: "inside", withoutEnlargement: true }).png().toBuffer()
+  const { data: alpha, info } = await sharp(small).extractChannel(3).raw().toBuffer({ resolveWithObject: true })
   const { width, height } = info
   const data = await sharp(baseBand(alpha, width, height), { raw: { width, height, channels: 1 } })
     .blur(Math.max(0.3, Math.max(width, height) * SHADOW_BLUR))
@@ -77,19 +136,23 @@ const writeShadow = async (piece: Buffer, path: string) => {
     .toFile(path)
 }
 
-export const importCamp = async ({ file, name, key, tolerance, size, outRoot, masterRoot }: CampImport) => {
+export const importCamp = async ({ file, name, key, tolerance, size, shadowSize, outRoot, masterRoot }: CampImport) => {
   mkdirSync(outRoot, { recursive: true })
   mkdirSync(masterRoot, { recursive: true })
   const master = join(masterRoot, `${name}.webp`)
   const out = join(outRoot, `${name}.webp`)
-  await sharp(file).webp({ quality: 92 }).toFile(master)
-  const source = sharp(file)
-  const keyed = key === "none" ? source.ensureAlpha() : await keyOut(source, key, tolerance)
-  const piece = await keyed.resize(size, size, { fit: "inside", withoutEnlargement: true }).png().toBuffer()
+  // A re-import from the master itself (a new size, a better keyer) keeps it: re-encoding would lose detail.
+  if (resolve(file) !== resolve(master)) await sharp(file).webp({ quality: 92 }).toFile(master)
+  const { data, info } = await sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true })
+  if (key !== "none") keyUnmix(data, info.width, info.height, key, tolerance)
+  const piece = await sharp(data, { raw: { width: info.width, height: info.height, channels: 4 } })
+    .resize(size, size, { fit: "inside", withoutEnlargement: true })
+    .png()
+    .toBuffer()
   await sharp(piece).webp({ quality: 90 }).toFile(out)
   if (key === "none" || SCENERY.has(name)) return { out, master }
   const shadow = join(outRoot, `${name}-shadow.webp`)
-  await writeShadow(piece, shadow)
+  await writeShadow(piece, shadow, shadowSize)
   return { out, master, shadow }
 }
 
@@ -100,7 +163,9 @@ const main = async () => {
   const file = process.argv[2]
   const name = arg("name")
   if (!file || file.startsWith("--") || !name) {
-    console.error("usage: yarn import-camp <file> --name=<piece> [--key=#ff00ff|none] [--tolerance=60] [--size=768]")
+    console.error(
+      "usage: yarn import-camp <file> --name=<piece> [--key=#ff00ff|none] [--tolerance=60] [--size=512] [--shadow-size=256]"
+    )
     process.exit(1)
   }
   const { out, master, shadow } = await importCamp({
@@ -108,7 +173,8 @@ const main = async () => {
     name,
     key: arg("key", "#ff00ff")!,
     tolerance: Number(arg("tolerance", "60")),
-    size: Number(arg("size", "768")),
+    size: Number(arg("size", "512")),
+    shadowSize: Number(arg("shadow-size", "256")),
     outRoot: join(ROOT, "src", "assets", "camp"),
     masterRoot: join(ROOT, "art", "masters", "camp"),
   })

@@ -29,6 +29,7 @@ const options = (file: string) => ({
   key: "#ff00ff",
   tolerance: 60,
   size: 768,
+  shadowSize: 400,
   outRoot: join(dir, "assets"),
   masterRoot: join(dir, "masters"),
 })
@@ -76,6 +77,40 @@ describe("importCamp", () => {
     expect(alphaAt(200, 340)).toBeGreaterThan(200)
     expect(alphaAt(200, 60)).toBe(0)
     expect(alphaAt(200, 200)).toBe(0)
+  })
+
+  it("writes the shadow at its own size, on the piece's aspect", async () => {
+    const { shadow } = await importCamp({ ...options(await magentaWithRedSquare()), shadowSize: 128 })
+    const { width, height } = await sharp(shadow!).metadata()
+    expect([width, height]).toEqual([128, 128])
+  })
+
+  it("un-mixes the magenta out of a soft edge instead of leaving a pink rim", async () => {
+    // An orange square whose outer ring of pixels is half magenta: what a soft flame edge looks like.
+    const orange = { r: 255, g: 150, b: 40 }
+    const half = { r: 255, g: 75, b: 148 }
+    const purple = { r: 120, g: 20, b: 120 }
+    const source = join(dir, "soft.png")
+    await sharp({ create: { width: 400, height: 400, channels: 3, background: "#ff00ff" } })
+      .composite([
+        { input: { create: { width: 120, height: 120, channels: 3, background: half } }, left: 140, top: 140 },
+        { input: { create: { width: 112, height: 112, channels: 3, background: orange } }, left: 144, top: 144 },
+        { input: { create: { width: 40, height: 40, channels: 3, background: purple } }, left: 180, top: 180 },
+      ])
+      .png()
+      .toFile(source)
+    const { out } = await importCamp(options(source))
+
+    const { data, info } = await sharp(out).raw().toBuffer({ resolveWithObject: true })
+    const at = (x: number, y: number) => [...data.subarray((y * info.width + x) * 4, (y * info.width + x) * 4 + 4)]
+    const [r, g, b, a] = at(141, 200)
+    expect(a).toBeGreaterThan(60)
+    expect(a).toBeLessThan(200)
+    expect(g).toBeGreaterThan(b)
+    expect(r).toBeGreaterThan(200)
+    // Deep inside the object a magenta-ish colour is paint, not background, and stays.
+    expect(at(200, 200)[3]).toBe(255)
+    expect(at(200, 200)[2]).toBeGreaterThan(80)
   })
 
   it("casts no shadow for scenery or an unkeyed import", async () => {
