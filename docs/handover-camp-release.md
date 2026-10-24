@@ -106,7 +106,7 @@ remove the supplies detector levels (decision 5). Rewrite the docs that describe
 `docs/mods/collection-and-detector-design.md`. Soundness: the bake and the economy guard. Ends with a bake; the
 loot overview below is run and its numbers recorded in the review list.
 
-### Phase 2 — the loot overview [ ]
+### Phase 2 — the loot overview [x]
 
 `yarn loot-report`: from the baked world, per tier and per journey/level, every slot and what fills it (by
 reward type), empty puzzle rooms, the share of puzzles with loot, chests filled, and totals per currency against
@@ -215,3 +215,4 @@ worktree, and the review list sorted: decisions, drafts, failures, things to loo
 
 - 2026-10-24 — queue written; PR #322 merged into main; branch `camp/home-and-loot` created. Next: phase 1 plan task, in a fresh session.
 - 2026-10-25 — phase 1 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-1-consumables-out.md`): supplies, pack and supplies detector gone; 60 waterskins (20 per tier, expert and up) heal on pickup; hearts refill on every return to base; gate green. Two trap checks wait in the review list. Next: phase 2 plan task.
+- 2026-10-25 — phase 2 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-2-loot-report.md`): `yarn loot-report` writes `docs/loot-report.md`; mods report demand through `lootTotals`; the bake names the path of any empty chest or path end. Next: phase 3 plan task.
