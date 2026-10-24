@@ -774,35 +774,35 @@ Attach: `art/masters/camp/ref-godStatues-soft.webp`, `art/masters/camp/bastet.we
 
 The final state; paint this one first for the spot.
 
-Attach: `art/masters/camp/ref-starCanopy.webp`, `art/masters/camp/chest.webp`
+Attach: `art/masters/camp/ref-starCanopy-soft.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the star canopy, complete: four tall slim wooden poles with a deep-blue cloth canopy stretched between them, embroidered with small gold stars, a crescent moon and a few round planets, one of them ringed. Use the colours of the matching objects in the reference image.
+> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the star canopy, complete: four tall slim wooden poles, each topped with a small gold finial, and a deep-blue cloth canopy stretched between their tops, sagging a little in the middle, its edges hanging down in a short scalloped valance. On the cloth, embroidered in gold: one big eight-pointed star, a scatter of small stars, a shooting star with a long trail, a crescent moon, and one ringed planet in warm gold and orange. Use the colours of the matching objects in the reference image.
 
 #### 76. `camp/stars` — Star canopy, step 3 of 4 (wizard)
 
 Edit of `camp/planets`.
 
-Attach: `art/masters/camp/ref-starCanopy.webp`, `art/masters/camp/planets.webp`
+Attach: `art/masters/camp/ref-starCanopy-soft.webp`, `art/masters/camp/planets.webp`
 
-> [edit] Remove this, and only this: a few round planets, one ringed, embroidered among the stars. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the ringed planet embroidered on the cloth; the deep-blue cloth shows there. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 #### 77. `camp/cloth` — Star canopy, step 2 of 4 (wizard)
 
 Edit of `camp/stars`.
 
-Attach: `art/masters/camp/ref-starCanopy.webp`, `art/masters/camp/stars.webp`
+Attach: `art/masters/camp/ref-starCanopy-soft.webp`, `art/masters/camp/stars.webp`
 
-> [edit] Remove this, and only this: small gold stars and a crescent moon embroidered on the canopy. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: all the gold embroidery left on the cloth: the stars, the shooting star and the crescent moon; the plain deep-blue cloth shows there. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 #### 78. `camp/poles` — Star canopy, step 1 of 4 (wizard)
 
 Edit of `camp/cloth`.
 
-Attach: `art/masters/camp/ref-starCanopy.webp`, `art/masters/camp/cloth.webp`
+Attach: `art/masters/camp/ref-starCanopy-soft.webp`, `art/masters/camp/cloth.webp`
 
-> [edit] Remove this, and only this: a deep-blue cloth canopy stretched between the poles. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the deep-blue cloth canopy with its valance. The four poles with their gold finials stay exactly as they are; where the cloth covered them, paint the rest of the poles. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 ## Layer sources
