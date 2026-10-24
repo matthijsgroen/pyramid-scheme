@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- The starter treasure tomb is now hidden in a cave, behind a lever lock, before its sunlit cavern.
+- Every treasure tomb is now hidden in a cave before its sunlit cavern; the starter tomb's cave is behind a lever lock.
 - The old skeleton in the cave lies across two floor cells.
 - The cave floor has worn, rounded edges instead of square ones, and its back walls end round against the side walls.
 - The tomb cave is a rocky hill standing in the desert where a pyramid would, and tombs are visited by day.

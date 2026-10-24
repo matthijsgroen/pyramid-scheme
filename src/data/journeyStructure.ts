@@ -38,12 +38,12 @@ export const PYRAMID_STRUCTURES: PyramidStructure[] = [
 
 export const TOMB_STRUCTURES: TombStructure[] = [
   { id: "starter_treasure_tomb", tier: "starter", floorCount: 4, levelCount: 2 },
-  { id: "junior_treasure_tomb", tier: "junior", floorCount: 6 },
-  { id: "expert_treasure_tomb", tier: "expert", floorCount: 4 },
-  { id: "expert_treasure_tomb_b", tier: "expert", floorCount: 4 },
-  { id: "master_treasure_tomb", tier: "master", floorCount: 5 },
-  { id: "master_treasure_tomb_b", tier: "master", floorCount: 5 },
-  { id: "wizard_treasure_tomb", tier: "wizard", floorCount: 4 },
-  { id: "wizard_treasure_tomb_b", tier: "wizard", floorCount: 4 },
-  { id: "wizard_treasure_tomb_c", tier: "wizard", floorCount: 4 },
+  { id: "junior_treasure_tomb", tier: "junior", floorCount: 6, levelCount: 2 },
+  { id: "expert_treasure_tomb", tier: "expert", floorCount: 4, levelCount: 2 },
+  { id: "expert_treasure_tomb_b", tier: "expert", floorCount: 4, levelCount: 2 },
+  { id: "master_treasure_tomb", tier: "master", floorCount: 5, levelCount: 2 },
+  { id: "master_treasure_tomb_b", tier: "master", floorCount: 5, levelCount: 2 },
+  { id: "wizard_treasure_tomb", tier: "wizard", floorCount: 4, levelCount: 2 },
+  { id: "wizard_treasure_tomb_b", tier: "wizard", floorCount: 4, levelCount: 2 },
+  { id: "wizard_treasure_tomb_c", tier: "wizard", floorCount: 4, levelCount: 2 },
 ]

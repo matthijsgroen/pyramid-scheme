@@ -176,7 +176,7 @@ describe("tomb floor linking — ward-path shortcuts", () => {
   // SKIP_ECONOMY_GUARD — a describe-body call would execute at collection time, before it.
   let floors: FloorConfig[]
   beforeAll(() => {
-    floors = buildRealConfigs().junior_treasure_tomb[0]
+    floors = buildRealConfigs().junior_treasure_tomb[1] // level 2, the cavern
   }, 600_000)
 
   it("the tomb's one exit ends floor 0, and every deeper floor is left by its stair back up", () => {

@@ -1,6 +1,7 @@
 import { tier, journey, tomb, wardPath, wardChest, sidePath, hiddenPath } from "../dsl"
 import { TOMB_ROOMS_PER_FLOOR } from "../data"
 import { lockBeforeFloorContent, lockOnFloor } from "./locks/onFloor"
+import { CAVE_DRESSING } from "./cave"
 import type { Rule } from "../dsl"
 
 // Ward-chest teasers: every starter pyramid gets one ward-gated loot chest keyed to a LATER
@@ -218,13 +219,8 @@ export const starterRules: Rule[] = [
   // The tomb's first level: the cave. Starter puzzles on the way to the pillar, one junior-weight lock
   // (levers and doors) as the step up. Its puzzles carry ordinary starter filler loot.
   journey("starter_treasure_tomb").pyramid("first", {
-    tileset: "cave",
+    ...CAVE_DRESSING,
     difficulty: "starter",
-    // Cave furniture, not the starter merchant's house the tier pool dresses its pyramids in.
-    decorations: ["basin", "pillar", "rubblePile", "pit", "crystal", "brazier", "stalagmite", "puddle", "bones"],
-    wallDecorations: ["roots", "stalactites"],
-    // A cave winds: its passages turn far more often than a built corridor does.
-    corridorStraightness: 0.3,
     floors: [{ pathPuzzles: 3, encounter: "puzzle", ...lockOnFloor("caveLevers") }],
   }),
 

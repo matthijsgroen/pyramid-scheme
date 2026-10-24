@@ -1,6 +1,7 @@
 import { tier, journey, tomb, sidePath, wardWing, wardChest } from "../dsl"
 import type { Rule, PathSettings } from "../dsl"
 import { TOMB_ROOMS_PER_FLOOR } from "../data"
+import { tombCave } from "./cave"
 import { lessonFloor, lessonOnMainFloor } from "./locks/lessons"
 import { lockOnMainFloor } from "./locks/onFloor"
 
@@ -63,6 +64,9 @@ const SWITCH_BOARD = { encounter: "lightbeamSwitch", min: 1, max: 1 }
 
 // An ungated branch, so the junction has a way out worth closing and the switch decides something.
 const switchBranch = () => sidePath({ puzzles: 1, endReward: "junk" })
+
+// The tier + 1 step inside the cavern: an expert puzzle as the second room, after the first tableau.
+const expertBetweenTableaus = { where: 2, encounter: "puzzle", difficulty: "expert" } as const
 
 export const juniorRules: Rule[] = [
   // a nobleman's wing: a painted ka-statue, sealed chests, an ablution basin, linen and lamps.
@@ -196,29 +200,34 @@ export const juniorRules: Rule[] = [
   journey("junior_4").pyramid(4, lockOnMainFloor("lamplighter")),
   journey("junior_4").pyramid(5, lockOnMainFloor("tide")),
 
+  // Each tomb's first level: the cave, one floor of junior puzzles on the way to the pillar.
+  tombCave("junior_treasure_tomb", "junior", 1),
+
   tomb("junior_treasure_tomb", {
     encounter: "tomb-puzzle",
     difficulty: "junior",
     floorCount: 6,
     sealed: true, // linear tomb — no shortcut around a tableau room
     // Every floor's treasure IS a ward key, and from junior on each one is guarded by a crocodile
-    // capstone — authored per floor via a node selector, not a core rule. `pathPuzzles` is one
-    // ABOVE the tier's tableau count so the capstone is an EXTRA room: the selector overrides the
-    // last room's family, so without the +1 the crocodile would eat a tableau and leave the floor
-    // short of the `floors × TOMB_ROOMS_PER_FLOOR` story grid tableaus.ts sizes for.
+    // capstone — authored per floor via a node selector, not a core rule. `pathPuzzles` is two
+    // ABOVE the tier's tableau count so the capstone and the tier + 1 puzzle are EXTRA rooms: a
+    // selector overrides its room's family, so without them the crocodile and the puzzle would each
+    // eat a tableau and leave the floor short of the `floors × TOMB_ROOMS_PER_FLOOR` story grid
+    // tableaus.ts sizes for.
     floors: [
       {
         // Somebody is waiting on this floor: a room of its own, two from the end. The tableaus keep
-        // positions 1..n (their authored content is keyed by position), the crocodile keeps the last
-        // room, and the beat sits between them — so it is passed on the way to the floor's treasure
-        // and cannot be skipped by taking the stairs.
+        // their order (their authored content is keyed by their place among tableaus), the crocodile
+        // keeps the last room, and the beat sits between them — so it is passed on the way to the
+        // floor's treasure and cannot be skipped by taking the stairs.
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 3,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 4,
         nodes: [
+          expertBetweenTableaus,
           { where: "last", encounter: "capstone" },
-          { where: TOMB_ROOMS_PER_FLOOR.junior + 1, encounter: "conversation" },
+          { where: TOMB_ROOMS_PER_FLOOR.junior + 2, encounter: "conversation" },
           // Her wall, in the room after she asks: she says "fix it" and the next door along is it.
-          { where: TOMB_ROOMS_PER_FLOOR.junior + 2, encounter: "reading" },
+          { where: TOMB_ROOMS_PER_FLOOR.junior + 3, encounter: "reading" },
         ],
         // Fez shop — a 6-slot stock node, filled by the mods (currency pieces + consumables).
         // Empty until resolveShopStock + the consumable fill land; the shop mods own its content.
@@ -226,30 +235,30 @@ export const juniorRules: Rule[] = [
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 2,
+        nodes: [expertBetweenTableaus, { where: "last", encounter: "capstone" }],
       },
       // A tomb is designed exactly like a pyramid — a side path with a mosaic reward.
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 2,
+        nodes: [expertBetweenTableaus, { where: "last", encounter: "capstone" }],
         sideSections: [sidePath({ puzzles: 1, endReward: "mosaicPiece" })],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 2,
+        nodes: [expertBetweenTableaus, { where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 2,
+        nodes: [expertBetweenTableaus, { where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.junior + 2,
+        nodes: [expertBetweenTableaus, { where: "last", encounter: "capstone" }],
       },
     ],
   }),

@@ -262,6 +262,7 @@ const authoredJourneys: AuthoredJourney[] = [
     journeyLength: "medium",
     entryLock: { count: 4 },
     background: { time: "afternoon" },
+    levels: [{ exterior: "caveMouth", board: false }, { exterior: "cavern" }],
     levelSettings: {
       startFloorCount: 3,
       startNumberRange: [1, 10],
@@ -364,6 +365,7 @@ const authoredJourneys: AuthoredJourney[] = [
     journeyLength: "short",
     entryLock: { count: 4 },
     background: { time: "afternoon" },
+    levels: [{ exterior: "caveMouth", board: false }, { exterior: "cavern" }],
     levelSettings: {
       startFloorCount: 4,
       startNumberRange: [1, 10],
@@ -379,6 +381,7 @@ const authoredJourneys: AuthoredJourney[] = [
     journeyLength: "short",
     entryLock: { count: 3 },
     background: { time: "afternoon" },
+    levels: [{ exterior: "caveMouth", board: false }, { exterior: "cavern" }],
     levelSettings: {
       startFloorCount: 4,
       startNumberRange: [2, 12],
@@ -476,6 +479,7 @@ const authoredJourneys: AuthoredJourney[] = [
     journeyLength: "medium",
     entryLock: { count: 4 },
     background: { time: "afternoon" },
+    levels: [{ exterior: "caveMouth", board: false }, { exterior: "cavern" }],
     levelSettings: {
       startFloorCount: 4,
       startNumberRange: [1, 10],
@@ -491,6 +495,7 @@ const authoredJourneys: AuthoredJourney[] = [
     journeyLength: "medium",
     entryLock: { count: 3 },
     background: { time: "afternoon" },
+    levels: [{ exterior: "caveMouth", board: false }, { exterior: "cavern" }],
     levelSettings: {
       startFloorCount: 4,
       startNumberRange: [1, 12],
@@ -599,6 +604,7 @@ const authoredJourneys: AuthoredJourney[] = [
     journeyLength: "medium",
     entryLock: { count: 4 },
     background: { time: "afternoon" },
+    levels: [{ exterior: "caveMouth", board: false }, { exterior: "cavern" }],
     levelSettings: {
       startFloorCount: 5,
       startNumberRange: [1, 15],
@@ -614,6 +620,7 @@ const authoredJourneys: AuthoredJourney[] = [
     journeyLength: "medium",
     entryLock: { count: 3 },
     background: { time: "afternoon" },
+    levels: [{ exterior: "caveMouth", board: false }, { exterior: "cavern" }],
     levelSettings: {
       startFloorCount: 5,
       startNumberRange: [2, 18],
@@ -629,6 +636,7 @@ const authoredJourneys: AuthoredJourney[] = [
     journeyLength: "medium",
     entryLock: { count: 2 },
     background: { time: "afternoon" },
+    levels: [{ exterior: "caveMouth", board: false }, { exterior: "cavern" }],
     levelSettings: {
       startFloorCount: 5,
       startNumberRange: [3, 20],

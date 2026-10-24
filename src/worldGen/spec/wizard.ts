@@ -1,6 +1,7 @@
 import { tier, tomb, journey, wardChest, wardWing } from "../dsl"
 import type { Rule, SideSectionConstraint } from "../dsl"
 import { TOMB_ROOMS_PER_FLOOR } from "../data"
+import { tombCave } from "./cave"
 
 // The ceiling saturates every mechanic, including a key chain (a red floor-key gates a room
 // holding a green-gated vault). Kept to two levels: the maze assembler flattens deeper nesting
@@ -50,6 +51,9 @@ const wizardCMapPieceGate: SideSectionConstraint = {
   gate: { type: "tomb-key", tombId: "wizard_treasure_tomb_b", index: 1 },
   endReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_c" },
 }
+
+// Wizard has no tier above it, so the cavern puzzle between the tableaus is wizard too: the second room, after the first tableau.
+const wizardBetweenTableaus = { where: 2, encounter: "puzzle", difficulty: "wizard" } as const
 
 export const wizardRules: Rule[] = [
   // the gods' vault: crystal grown from the walls, an open coffin, lights with nothing holding them.
@@ -176,23 +180,27 @@ export const wizardRules: Rule[] = [
   journey("wizard_4").pyramid(3, { sideSections: [holdChestC(1)] }),
   journey("wizard_4").pyramid(4, { sideSections: [holdChestC(0), holdChestC(0), expertEcho()] }),
 
+  // Each tomb's first level: the cave, 3 floors of wizard puzzles on the way to the pillar.
+  ...["wizard_treasure_tomb", "wizard_treasure_tomb_b", "wizard_treasure_tomb_c"].map(id => tombCave(id, "wizard", 3)),
+
   tomb("wizard_treasure_tomb", {
     encounter: "tomb-puzzle",
     difficulty: "wizard",
     floorCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
-    // A crocodile capstone guards EVERY floor's treasure (see junior.ts for why `+ 1`).
+    // A crocodile capstone guards EVERY floor's treasure (see junior.ts for the room count).
     floors: [
       {
         // Somebody is waiting on this floor: a room of its own, two from the end. The tableaus keep
-        // positions 1..n (their authored content is keyed by position), the crocodile keeps the last
-        // room, and the beat sits between them — so it is passed on the way to the floor's treasure
-        // and cannot be skipped by taking the stairs.
+        // their order (their authored content is keyed by their place among tableaus), the crocodile
+        // keeps the last room, and the beat sits between them — so it is passed on the way to the
+        // floor's treasure and cannot be skipped by taking the stairs.
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 2,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 3,
         nodes: [
+          wizardBetweenTableaus,
           { where: "last", encounter: "capstone" },
-          { where: TOMB_ROOMS_PER_FLOOR.wizard + 1, encounter: "conversation" },
+          { where: TOMB_ROOMS_PER_FLOOR.wizard + 2, encounter: "conversation" },
         ],
         // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
         // Beside it, the reed leaf: the one sign in the catalogue that spells rather than names, and
@@ -207,18 +215,18 @@ export const wizardRules: Rule[] = [
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 2,
+        nodes: [wizardBetweenTableaus, { where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 2,
+        nodes: [wizardBetweenTableaus, { where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 2,
+        nodes: [wizardBetweenTableaus, { where: "last", encounter: "capstone" }],
       },
     ],
   }),
@@ -227,36 +235,37 @@ export const wizardRules: Rule[] = [
     difficulty: "wizard",
     floorCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
-    // A crocodile capstone guards EVERY floor's treasure (see junior.ts for why `+ 1`).
+    // A crocodile capstone guards EVERY floor's treasure (see junior.ts for the room count).
     floors: [
       {
         // Somebody is waiting on this floor: a room of its own, two from the end. The tableaus keep
-        // positions 1..n (their authored content is keyed by position), the crocodile keeps the last
-        // room, and the beat sits between them — so it is passed on the way to the floor's treasure
-        // and cannot be skipped by taking the stairs.
+        // their order (their authored content is keyed by their place among tableaus), the crocodile
+        // keeps the last room, and the beat sits between them — so it is passed on the way to the
+        // floor's treasure and cannot be skipped by taking the stairs.
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 2,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 3,
         nodes: [
+          wizardBetweenTableaus,
           { where: "last", encounter: "capstone" },
-          { where: TOMB_ROOMS_PER_FLOOR.wizard + 1, encounter: "conversation" },
+          { where: TOMB_ROOMS_PER_FLOOR.wizard + 2, encounter: "conversation" },
         ],
         // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 2,
+        nodes: [wizardBetweenTableaus, { where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 2,
+        nodes: [wizardBetweenTableaus, { where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 2,
+        nodes: [wizardBetweenTableaus, { where: "last", encounter: "capstone" }],
       },
     ],
   }),
@@ -265,36 +274,37 @@ export const wizardRules: Rule[] = [
     difficulty: "wizard",
     floorCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
-    // A crocodile capstone guards EVERY floor's treasure (see junior.ts for why `+ 1`).
+    // A crocodile capstone guards EVERY floor's treasure (see junior.ts for the room count).
     floors: [
       {
         // Somebody is waiting on this floor: a room of its own, two from the end. The tableaus keep
-        // positions 1..n (their authored content is keyed by position), the crocodile keeps the last
-        // room, and the beat sits between them — so it is passed on the way to the floor's treasure
-        // and cannot be skipped by taking the stairs.
+        // their order (their authored content is keyed by their place among tableaus), the crocodile
+        // keeps the last room, and the beat sits between them — so it is passed on the way to the
+        // floor's treasure and cannot be skipped by taking the stairs.
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 2,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 3,
         nodes: [
+          wizardBetweenTableaus,
           { where: "last", encounter: "capstone" },
-          { where: TOMB_ROOMS_PER_FLOOR.wizard + 1, encounter: "conversation" },
+          { where: TOMB_ROOMS_PER_FLOOR.wizard + 2, encounter: "conversation" },
         ],
         // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 2,
+        nodes: [wizardBetweenTableaus, { where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 2,
+        nodes: [wizardBetweenTableaus, { where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.wizard + 2,
+        nodes: [wizardBetweenTableaus, { where: "last", encounter: "capstone" }],
       },
     ],
   }),
