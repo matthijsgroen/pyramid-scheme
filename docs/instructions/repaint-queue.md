@@ -198,8 +198,12 @@ than #23272b.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
 colours or its subject from it.
-THE CAMERA: straight down. A seamless square tile of uneven bedrock: shallow cracks, small flakes,
-a few scattered pebbles, no slabs, no joints, no built stonework. Even lighting, no hotspot, no vignette.
+THE CAMERA: straight down. A seamless square tile of uneven bedrock broken into MANY SMALL pieces:
+about as many fragments across the tile as the reference has paving blocks — ten to twelve across,
+the largest no wider than a tenth of the tile. Shallow cracks between them, fine grit and a few tiny
+pebbles. NO big slabs, NO boulders, NO large dark patches or pools of shadow: the tile repeats across
+the floor, and any large feature turns into a visible grid. Value spread evenly over the whole tile.
+No joints, no built stonework. Even lighting, no hotspot, no vignette.
 ```
 
 **Import:** `yarn import-tile art/masters/surfaces/cave-floor.webp --tier=cave --name=floor --slot=floor --filter=smooth --key=none --repeat=2.4`
