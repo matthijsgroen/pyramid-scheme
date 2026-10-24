@@ -34,7 +34,6 @@ export const useDetectorReadout = (levels: MergedDetectorLevels): DetectorReadou
   const titles = useMemo(
     () => ({
       compass: t("common:detector.compassTitle"),
-      consumable: t("common:detector.consumableTitle"),
       hiddenPassageway: t("common:detector.corridorTitle"),
     }),
     [t]
@@ -52,7 +51,6 @@ export const useDetectorReadout = (levels: MergedDetectorLevels): DetectorReadou
         unknown: t("common:detector.access.unknown"),
       },
       more: count => t("common:detector.more", { count }),
-      noSkippedChests: t("common:detector.noSkippedChests"),
       corridorNearby: t("common:detector.corridorNearby"),
       corridorNoneNearby: t("common:detector.corridorNoneNearby"),
       corridorOnFloor: t("common:detector.corridorOnFloor"),
@@ -67,10 +65,9 @@ export const useDetectorReadout = (levels: MergedDetectorLevels): DetectorReadou
     () =>
       [
         ...(levels.compass > 0 ? (["compass"] as const) : []),
-        ...(levels.supplies > 0 ? (["consumable"] as const) : []),
         ...(levels.corridor > 0 ? (["hiddenPassageway"] as const) : []),
       ] satisfies Exclude<DetectorMode, null>[],
-    [levels.compass, levels.supplies, levels.corridor]
+    [levels.compass, levels.corridor]
   )
 
   return { labels, titles, journeyName, compassTargetLabel, available }

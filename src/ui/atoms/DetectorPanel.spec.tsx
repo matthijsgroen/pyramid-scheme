@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect, afterEach } from "vitest"
 import { render, screen, cleanup } from "@testing-library/react"
-import type { CompassHit, ConsumableResult } from "@/game/siteTypes"
+import type { CompassHit } from "@/game/siteTypes"
 import { DetectorPanel, type DetectorPanelLabels } from "./DetectorPanel"
 
 // Plain stand-in prose: the panel takes its strings as props, so the app owns the real translations.
@@ -16,7 +16,6 @@ const labels: DetectorPanelLabels = {
     unknown: "Access: unknown",
   },
   more: count => `+${count} more`,
-  noSkippedChests: "No skipped chests",
   corridorNearby: "A hidden corridor is close by",
   corridorNoneNearby: "No hidden corridor close by",
   corridorOnFloor: "A hidden corridor waits on this floor",
@@ -31,7 +30,7 @@ afterEach(cleanup)
 
 // Journey ids are internal; the panel is handed a lookup so the readout shows real names. Tests use
 // stand-ins to prove the substitution happens (the app passes localized names from journeys.json).
-const journeyName = (id: string) => ({ starter_1: "Sphinx Dawn", junior_1: "Ibis Way" })[id] ?? id
+const journeyName = (id: string) => ({ starter_1: "Sphinx Dawn" })[id] ?? id
 const targetLabel = (id: string) => (id === "h1" ? "𓎗" : id)
 
 const COMPASS: CompassHit[] = [
@@ -55,24 +54,17 @@ const COMPASS: CompassHit[] = [
   },
 ]
 
-const CONSUMABLE: ConsumableResult[] = [
-  { journeyId: "junior_1", address: "s#0/3@rencounter", floorIdx: 0, cell: { row: 2, col: 3 } },
-  { journeyId: "junior_1", address: "s#1/6@rencounter", floorIdx: 1, cell: { row: 6, col: 1 } },
-]
-
 const renderCompass = (compassLevel: number, compassResults: CompassHit[] = COMPASS) =>
   render(
     <DetectorPanel
       labels={labels}
       activeDetector="compass"
       compassLevel={compassLevel}
-      consumableDetectorLevel={0}
       detectionLevel={0}
       compassTarget="h1"
       compassTargetLabel={targetLabel}
       journeyName={journeyName}
       compassResults={compassResults}
-      consumableResults={[]}
     />
   )
 
@@ -106,11 +98,9 @@ describe("DetectorPanel precision by level (§7.2)", () => {
         labels={labels}
         activeDetector="compass"
         compassLevel={1}
-        consumableDetectorLevel={0}
         detectionLevel={0}
         compassTarget={null}
         compassResults={[]}
-        consumableResults={[]}
       />
     )
     expect(screen.getByText("Pick a target")).toBeTruthy()
@@ -135,10 +125,8 @@ describe("DetectorPanel precision by level (§7.2)", () => {
     labels,
     activeDetector: "hiddenPassageway" as const,
     compassLevel: 0,
-    consumableDetectorLevel: 0,
     compassTarget: null,
     compassResults: [],
-    consumableResults: [],
   }
 
   it("unlocks one scope per level, and says nothing about scopes still locked", () => {
@@ -199,7 +187,7 @@ describe("DetectorPanel precision by level (§7.2)", () => {
     const withSwitcher = {
       ...corridorBase,
       detectionLevel: 1,
-      detectorTitles: { compass: "Compass", consumable: "Supplies", hiddenPassageway: "Corridors" },
+      detectorTitles: { compass: "Compass", hiddenPassageway: "Corridors" },
       onSetDetector: () => {},
     }
 
@@ -215,24 +203,6 @@ describe("DetectorPanel precision by level (§7.2)", () => {
   it("leaves the switcher out when the screen supplies no way to switch", () => {
     render(<DetectorPanel {...corridorBase} detectionLevel={3} compassLevel={2} />)
     expect(screen.queryByTitle("Compass")).toBeNull()
-  })
-
-  it("supplies L1 pyramid only; L3 exact cell", () => {
-    const props = {
-      labels,
-      activeDetector: "consumable" as const,
-      compassLevel: 0,
-      detectionLevel: 0,
-      compassTarget: null,
-      compassResults: [],
-      consumableResults: CONSUMABLE,
-    }
-    const { rerender } = render(<DetectorPanel {...props} consumableDetectorLevel={1} journeyName={journeyName} />)
-    expect(screen.getAllByText("Ibis Way")).toHaveLength(1)
-
-    rerender(<DetectorPanel {...props} consumableDetectorLevel={3} journeyName={journeyName} />)
-    expect(screen.getByText("Ibis Way F1 · (2,3)")).toBeTruthy()
-    expect(screen.getByText("Ibis Way F2 · (6,1)")).toBeTruthy()
   })
 })
 

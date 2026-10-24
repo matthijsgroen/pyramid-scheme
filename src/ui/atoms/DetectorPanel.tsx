@@ -1,5 +1,5 @@
 import type { FC } from "react"
-import type { DetectorMode, CompassAccess, CompassHit, ConsumableResult } from "@/game/siteTypes"
+import type { DetectorMode, CompassAccess, CompassHit } from "@/game/siteTypes"
 import { DetectorToggles } from "./DetectorToggles"
 
 // Every string the readout can show. The counted/interpolated ones arrive as functions so the app
@@ -10,7 +10,6 @@ export type DetectorPanelLabels = {
   allCollected: string
   access: Record<CompassAccess, string>
   more: (count: number) => string
-  noSkippedChests: string
   // The corridor ladder: each unlocked scope answers either way, so the readout is never silent.
   corridorNearby: string
   corridorNoneNearby: string
@@ -24,7 +23,6 @@ type Props = {
   labels: DetectorPanelLabels
   activeDetector: DetectorMode
   compassLevel: number // 0 = not unlocked
-  consumableDetectorLevel: number // 0 = not unlocked
   detectionLevel: number // 0 = not unlocked
   // The hunted hieroglyph, picked on the Collection screen (§3C). null = nothing picked yet.
   compassTarget: string | null
@@ -33,7 +31,6 @@ type Props = {
   compassTargetLabel?: (id: string) => string
   journeyName?: (journeyId: string) => string
   compassResults: CompassHit[]
-  consumableResults: ConsumableResult[]
   // Switching modes happens in here rather than in the HUD row — see DetectorButton. Passed through
   // to DetectorToggles. Shown whenever the readout is open, even with one detector owned: since a
   // detector keeps running once the readout is shut, tapping the active one here is the only way to
@@ -88,34 +85,15 @@ const compassLabel = (r: CompassHit, level: number, journeyName: (id: string) =>
   return level >= 3 && r.cell ? `${floor} · (${r.cell.row},${r.cell.col})` : floor
 }
 
-const consumableKey = (r: ConsumableResult, level: number): string =>
-  level <= 1
-    ? r.journeyId
-    : level === 2
-      ? `${r.journeyId}:${r.floorIdx}`
-      : `${r.journeyId}:${r.floorIdx}:${r.cell ? `${r.cell.row},${r.cell.col}` : "?"}`
-
-// The supplies readout gets the same name treatment. Its L1 stays journey-wide, unlike the compass:
-// ConsumableResult carries no levelIdx (it's rebuilt from an edgeId), so pyramid precision here
-// needs the skipped-consumable store to record one first.
-const consumableLabel = (r: ConsumableResult, level: number, journeyName: (id: string) => string): string => {
-  const journey = journeyName(r.journeyId)
-  if (level <= 1) return journey
-  const floor = `${journey} F${r.floorIdx + 1}`
-  return level >= 3 && r.cell ? `${floor} · (${r.cell.row},${r.cell.col})` : floor
-}
-
 export const DetectorPanel: FC<Props> = ({
   labels,
   activeDetector,
   compassLevel,
-  consumableDetectorLevel,
   detectionLevel,
   compassTarget,
   compassTargetLabel = id => id,
   journeyName = id => id,
   compassResults,
-  consumableResults,
   detectorTitles,
   onSetDetector,
   corridorNearby = false,
@@ -128,10 +106,9 @@ export const DetectorPanel: FC<Props> = ({
   if (!activeDetector) return null
 
   // How many detectors the player owns at all — decides whether the switcher above is meaningful.
-  const ownedDetectors = [compassLevel, consumableDetectorLevel, detectionLevel].filter(l => l > 0).length
+  const ownedDetectors = [compassLevel, detectionLevel].filter(l => l > 0).length
 
   const shownCompass = uniqueBy(compassResults, r => compassKey(r, compassLevel))
-  const shownConsumables = uniqueBy(consumableResults, r => consumableKey(r, consumableDetectorLevel))
 
   return (
     // `pointer-events-auto` re-enables hit-testing inside SiteHudBar's non-hit-testing band, so taps
@@ -143,7 +120,6 @@ export const DetectorPanel: FC<Props> = ({
           <DetectorToggles
             activeDetector={activeDetector}
             compassLevel={compassLevel}
-            consumableDetectorLevel={consumableDetectorLevel}
             detectionLevel={detectionLevel}
             titles={detectorTitles}
             onSetDetector={onSetDetector}
@@ -173,21 +149,6 @@ export const DetectorPanel: FC<Props> = ({
               )}
             </>
           )}
-        </div>
-      )}
-
-      {activeDetector === "consumable" && (
-        <div>
-          {shownConsumables.length === 0 ? (
-            <p className="text-stone-500">{labels.noSkippedChests}</p>
-          ) : (
-            shownConsumables.slice(0, 3).map((r, i) => (
-              <div key={i} className="truncate text-amber-200">
-                {consumableLabel(r, consumableDetectorLevel, journeyName)}
-              </div>
-            ))
-          )}
-          {shownConsumables.length > 3 && <p className="text-stone-500">{labels.more(shownConsumables.length - 3)}</p>}
         </div>
       )}
 

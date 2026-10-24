@@ -179,10 +179,10 @@ Each is the option that changes the least shipped behaviour; Task 1 writes them 
 - Produces: `TrapProgressAPI = { currentHealth, maxHealth, armorStacks, trapInsightStacks, isTrapAttemptSafe, takeTrapDamage, restoreHealth, drinkWaterskin }`.
 - Produces: `TrapWarningScreen` props `{ currentHealth, maxHealth, attemptSafe, onAttempt, onTurnAround }`.
 
-- [ ] **Step 1: Tests.** `useTrapProgress.perks.spec.ts` asserts the API above (no pack members) and that a hit still costs `trapDamage(armor)`; any spec of the warning screen asserts no heal or disarm button renders.
-- [ ] **Step 2: Implement**, then `grep -rnE "bandage|trapTool|ConsumableBar|useConsumable|addConsumable|consumableDetectorLevel" src/mods/trap` — empty.
-- [ ] **Step 3: Run** `yarn test src/mods/trap src/ui/atoms` — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 4: Commit** — `feat: no pack of supplies; traps are beaten or walked away from`
+- [x] **Step 1: Tests.** `useTrapProgress.perks.spec.ts` asserts the API above (no pack members) and that a hit still costs `trapDamage(armor)`; any spec of the warning screen asserts no heal or disarm button renders.
+- [x] **Step 2: Implement**, then `grep -rnE "bandage|trapTool|ConsumableBar|useConsumable|addConsumable|consumableDetectorLevel" src/mods/trap` — empty.
+- [x] **Step 3: Run** `yarn test src/mods/trap src/ui/atoms` — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 4: Commit** — `feat: no pack of supplies; traps are beaten or walked away from`
 
 ---
 
@@ -207,10 +207,10 @@ Runs before Task 7: `useDetector` reads the skipped-chest store Task 7 removes.
 
 - Produces: `DetectorLevelMode = "compass" | "corridor"`, `MergedDetectorLevels = { compass: number; corridor: number }`, `DetectorMode = "compass" | "hiddenPassageway" | null`. `DetectorPanel` / `DetectorToggles` drop `consumableDetectorLevel`, `consumableResults` and `labels.noSkippedChests`.
 
-- [ ] **Step 1: Tests.** `DetectorToggles.spec`: with only compass and corridor levels the two buttons render, with both at 0 nothing renders. `DetectorPanel.spec`: no supplies readout path remains (delete its cases; keep compass and corridor). `devGrants.spec`: the grant-all dev action yields compass and corridor levels only. A `treasurePerks` assertion is NOT added (authored content); `yarn check-types` proves the union.
-- [ ] **Step 2: Implement**, then `grep -rnE "consumable|supplies" src/app/state/useDetector* src/app/SiteMap/*Detector* src/app/SiteMap/detectorLevels.ts src/ui/atoms/Detector* src/ui/atoms/detectorModeIcons.ts src/mods/tombTreasure` — empty.
+- [x] **Step 1: Tests.** `DetectorToggles.spec`: with only compass and corridor levels the two buttons render, with both at 0 nothing renders. `DetectorPanel.spec`: no supplies readout path remains (delete its cases; keep compass and corridor). `devGrants.spec`: the grant-all dev action yields compass and corridor levels only. A `treasurePerks` assertion is NOT added (authored content); `yarn check-types` proves the union.
+- [x] **Step 2: Implement**, then `grep -rnE "consumable|supplies" src/app/state/useDetector* src/app/SiteMap/*Detector* src/app/SiteMap/detectorLevels.ts src/ui/atoms/Detector* src/ui/atoms/detectorModeIcons.ts src/mods/tombTreasure` — empty.
 - [ ] **Step 3: Run** `yarn test src/ui/atoms src/app/state src/app/SiteMap/useDetector src/mods/tombTreasure` — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 4: Commit** — `feat: the supplies detector is gone; its treasures stay as treasures`
+- [x] **Step 4: Commit** — `feat: the supplies detector is gone; its treasures stay as treasures`
 
 ---
 

@@ -27,6 +27,5 @@ describe("dev menu: All treasures + keys", () => {
     // Every tiered detector at its best level.
     expect(result.current.levels.corridor).toBe(4)
     expect(result.current.levels.compass).toBe(3)
-    expect(result.current.levels.supplies).toBe(3)
   })
 })

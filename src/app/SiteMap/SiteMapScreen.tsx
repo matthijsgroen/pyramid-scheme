@@ -1,4 +1,4 @@
-import { use, useCallback, useMemo } from "react"
+import { use, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { getOwnedKeys } from "@/game/gridNavigation"
 import { concealShutGround } from "@/game/concealment"
@@ -72,7 +72,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   const wardKeys = useMergedHeldKeys()
   const occupantOf = useMergedRoomOccupants(journeyId)
   const replaysAt = useMergedRoomReplays(journeyId)
-  // Detector levels come from the owning mods (compass←hieroglyph, supplies←trap, corridor←core) via
+  // Detector levels come from the owning mods (compass←hieroglyph, corridor←core) via
   // the merged accessor — core names no mod.
   const detectorLevels = useMergedDetectorLevels()
   const readout = useDetectorReadout(detectorLevels)
@@ -105,18 +105,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   // Every mechanism write on this floor goes through here, so a flood's douse is saved with the move that caused it.
   const floorJourneys = useDousedJourneys({ journeys, journeyId, floor: baseGrid, currentFloor, heldKeys })
 
-  // Where a stored address sits on the floor the player is looking at. Only this floor is assembled,
-  // so a hit anywhere else resolves to nothing and its readout stops at the floor (see ConsumableResult).
-  const resolveCell = useCallback(
-    (hitJourneyId: string, address: string) => {
-      if (!grid || hitJourneyId !== journeyId) return undefined
-      const at = findByAddress(grid, currentFloor, address)
-      return at ? { row: at[0], col: at[1] } : undefined
-    },
-    [grid, journeyId, currentFloor]
-  )
-
-  const detector = useDetector(journeys, resolveCell)
+  const detector = useDetector()
 
   const corridors = useCorridorDetection({
     journeys,
@@ -254,13 +243,11 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
           labels={readout.labels}
           activeDetector={detector.readoutOpen ? detector.activeDetector : null}
           compassLevel={detectorLevels.compass}
-          consumableDetectorLevel={detectorLevels.supplies}
           detectionLevel={detectorLevels.corridor}
           compassTarget={detector.compassTarget}
           compassTargetLabel={readout.compassTargetLabel}
           journeyName={readout.journeyName}
           compassResults={detector.compassResults}
-          consumableResults={detector.consumableResults}
           detectorTitles={readout.titles}
           onSetDetector={mode => {
             detector.setDetector(mode)

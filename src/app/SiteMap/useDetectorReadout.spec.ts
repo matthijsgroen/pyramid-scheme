@@ -16,9 +16,8 @@ vi.mock("@/app/translations/useJourneyTranslations", () => ({
 
 const { useDetectorReadout } = await import("./useDetectorReadout")
 
-const levels = (over: Partial<{ compass: number; supplies: number; corridor: number }> = {}) => ({
+const levels = (over: Partial<{ compass: number; corridor: number }> = {}) => ({
   compass: 0,
-  supplies: 0,
   corridor: 0,
   ...over,
 })

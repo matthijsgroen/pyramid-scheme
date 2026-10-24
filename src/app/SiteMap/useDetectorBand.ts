@@ -23,10 +23,7 @@ type DetectorBandArgs = {
 // hand the player L3 precision at L1.
 //
 // A hit's pyramid: CompassHit carries levelIdx, so a hit elsewhere in this journey is correctly
-// "another pyramid" rather than this floor. ConsumableResult carries no levelIdx (it is rebuilt from
-// an edgeId), so supplies can only match journey + floor index — a skipped chest on floor 2 of a
-// DIFFERENT pyramid of the same journey reads as "this floor". Same limitation the supplies readout
-// already has in its labels; fixing it means recording the pyramid when the skip is stored.
+// "another pyramid" rather than this floor.
 export const useDetectorBand = ({
   detector,
   levels,
@@ -55,19 +52,10 @@ export const useDetectorBand = ({
         detector.compassResults.map(r => ({ onThisFloor: here.includes(r), nearby: here.includes(r) && close }))
       )
     }
-    if (detector.activeDetector === "consumable") {
-      const here = detector.consumableResults.filter(r => r.journeyId === journeyId && r.floorIdx === currentFloor)
-      const close = anyNearby(here.flatMap(r => (r.cell ? [r.cell] : [])))
-      return bandFromHits(
-        levels.supplies,
-        detector.consumableResults.map(r => ({ onThisFloor: here.includes(r), nearby: here.includes(r) && close }))
-      )
-    }
     return "none"
   }, [
     detector.activeDetector,
     detector.compassResults,
-    detector.consumableResults,
     levels,
     corridors,
     grid,

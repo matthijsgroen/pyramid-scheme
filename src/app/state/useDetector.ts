@@ -1,12 +1,9 @@
 import { useMemo, useState } from "react"
 import { useGameStorage } from "@/support/useGameStorage"
-import { generatedWorldConfigs } from "@/data/generatedWorld"
-import type { DetectorMode, CompassAccess, CompassHit, ConsumableResult } from "@/game/siteTypes"
-import type { JourneyAPI } from "./useJourneys"
+import type { DetectorMode, CompassAccess, CompassHit } from "@/game/siteTypes"
 import { useMergedCompassScanner } from "@/app/SiteMap/detectorScanners"
 import { useCompassTarget } from "@/app/SiteMap/compassTarget"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
-import { floorOfAddress } from "@/app/SiteMap/cellIdentity"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "@/worldGen/data"
 import { isTierUnlocked } from "@/app/pages/journeyAvailability"
 import type { Difficulty } from "@/data/difficultyLevels"
@@ -20,7 +17,6 @@ export type DetectorAPI = {
   setDetector: (mode: DetectorMode) => void
   setReadoutOpen: (open: boolean) => void
   compassResults: CompassHit[]
-  consumableResults: ConsumableResult[]
 }
 
 // journeyId → its tier, and which journeys are tombs. Same derivation as placeFragments' own
@@ -49,12 +45,7 @@ const accessOf = (
   return { access: "open" }
 }
 
-/** `resolveCell` turns a cell address into a coordinate, and only the caller holding an assembled
- * floor can: pass one to place hits on the floor the player is standing on. */
-export const useDetector = (
-  journeys: JourneyAPI,
-  resolveCell?: (journeyId: string, address: string) => { row: number; col: number } | undefined
-): DetectorAPI => {
+export const useDetector = (): DetectorAPI => {
   // Two separate things, deliberately: which detector is running, and whether its readout is on
   // screen. The readout is a card over the map, so the player wants it shut most of the time — while
   // the detector keeps reading, reported by the pulsing dot beside its button. Results below stay
@@ -82,22 +73,6 @@ export const useDetector = (
     [activeDetector, compassTarget, scanCompass, heldKeys]
   )
 
-  const consumableResults = useMemo((): ConsumableResult[] => {
-    if (activeDetector !== "consumable") return []
-    // The addresses of chests whose consumable was left behind because the pack was full — every
-    // journey's, so the player knows where to go back to, not just this one's.
-    const results: ConsumableResult[] = []
-    for (const [journeyId] of Object.entries(generatedWorldConfigs)) {
-      for (const address of journeys.getSkippedConsumables(journeyId)) {
-        // The floor is in the address, so the panel can narrow the readout by level (§7.2). The
-        // coordinate is not: it belongs to a carve, and only the floor on screen has one assembled.
-        // L3 therefore names a cell for a chest on this floor and stops at the floor for the rest.
-        results.push({ journeyId, address, floorIdx: floorOfAddress(address), cell: resolveCell?.(journeyId, address) })
-      }
-    }
-    return results
-  }, [activeDetector, journeys, resolveCell])
-
   return {
     activeDetector,
     readoutOpen,
@@ -105,6 +80,5 @@ export const useDetector = (
     setDetector: setActiveDetector,
     setReadoutOpen,
     compassResults,
-    consumableResults,
   }
 }

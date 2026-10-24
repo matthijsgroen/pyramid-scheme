@@ -238,8 +238,8 @@ export type RoomCell = {
   ordinal?: string
   hidden?: boolean
   reward?: TreasureReward
-  /** A shop node's stock: up to `rewardCapacity` reward slots (currency pieces + consumables) the
-   * mods placed into the section's `rewards[]`. The shop family renders these as its buyable list;
+  /** A shop node's stock: up to `rewardCapacity` reward slots (currency pieces) the mods
+   * placed into the section's `rewards[]`. The shop family renders these as its buyable list;
    * each is priced by the shop and claimed per (node, index). Entries may be undefined (unfilled). */
   stock?: (TreasureReward | undefined)[]
   requiredKeyId?: string
@@ -999,7 +999,7 @@ export type AssemblerResult = { success: true; grid: FloorGrid; attempt: number 
 
 // ── Detector types ────────────────────────────────────────────────────────────
 
-export type DetectorMode = "compass" | "consumable" | "hiddenPassageway" | null
+export type DetectorMode = "compass" | "hiddenPassageway" | null
 
 // `cell` (row,col within the floor) is resolved only at compass level 3 — it needs a floor
 // assembly the lower levels don't pay for. See collection-and-detector-design.md §7.2.
@@ -1036,13 +1036,3 @@ export type CompassAccess = "open" | "locked" | "hidden" | "unknown"
 
 // A compass hit with its access verdict resolved against what the player currently holds.
 export type CompassHit = CompassResult & { access: CompassAccess; missingKeys?: readonly string[] }
-
-// A chest whose consumable was left behind, so the supplies detector can narrow its readout by level
-// (§7.2): L1 pyramid, L2 +floor, L3 +cell. `floorIdx` reads straight off the address; `cell` needs an
-// assembled floor to say where that address landed, so it is only there for the floor on screen.
-export type ConsumableResult = {
-  journeyId: string
-  address: string
-  floorIdx: number
-  cell?: { row: number; col: number }
-}
