@@ -322,189 +322,315 @@ scatter pieces, two wall items. Each is a single repaint with no scaffold, keyed
 
 ### `cave/basin` — a still rock pool, wet rim
 
-**Attach:** `art/masters/props/starter/basin.webp` — a starter prop, as the style reference
+**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's own rock, for its paint and its colour
 
 ```
-Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
-A still pool in a cave: a shallow natural basin of grey limestone holding clear, motionless water, its rim dark and wet where the water has stood, a little sand at the lip. Seen standing in a chamber, a low mound of rock with the pool in its top.
-Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
-speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
-than #181b1e.
-No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
-Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
-object described here, alone.
-The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen at the same slightly raised angle as the attached prop. Fill the frame's lower two thirds. Even lighting, no ground plane, no shadow.
+STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
+projection with zero vanishing points; lines must never converge. Display exactly 50% flat front
+elevation and 50% top-down elevation. All depth lines must extrude straight upwards along the
+vertical Y-axis. Strictly hide all left and right side planes.
+
+SUBJECT: A still rock pool: a low, shallow natural basin of grey limestone holding clear, motionless dark water, its rim wet and darker, a little sand at the lip. The water's surface is the top-down half of the picture.
+
+RENDERING: one object alone, painted and matte, with soft brush texture and grit. Soft modelled
+shading, never flat cel shading. NO OUTLINES: no dark contour around the object or any part of it
+— every edge is a change of value, never a stroke.
+It stands on the bottom edge of the picture, centred. A soft dark shadow lies on the ground
+beneath it, darkest where it meets the floor, no wider than the object and reaching no further
+below it than a tenth of its height. No hard edge, no drawn ellipse. The shadow is exactly the grey
+of stone in shade, around #23272b, completely free of pink or purple.
+Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
+blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
+
+PALETTE, strictly: a natural cave, cool and dim. Objects #8e9196 and #50555b, one sand accent
+#a3906c, against floor #5f6368 and walls #3a3f44. NOTHING LIGHTER THAN #a8aaa8 — no white, no cream,
+no highlight brighter than that, no shine. Nothing darker than #181b1e. Nothing built by hand: no cut
+edges, no tool marks, no paint, no wood, no pottery.
+
+SCALE: it will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE:
+few, large, simple shapes and nothing finer than a tenth of the object. No text, no letters, no
+hieroglyphs, no watermark, no frame, no border.
+It is about twice as wide as it is tall: a low mound of rock, knee-high.
 ```
 
 **Import:** `yarn import-tile art/masters/props/cave/basin.webp --tier=cave --name=basin --slot=prop --filter=smooth`
 
 ### `cave/pillar` — a dripstone column
 
-**Attach:** `art/masters/props/starter/pillar.webp` — a starter prop, as the style reference
+**Attach:** `art/masters/props/cave/basin.webp` — the cave's accepted pool, for its paint and its projection
 
 ```
-Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
-A dripstone column: a stalactite grown down and a stalagmite grown up until they met, one pale-grey fluted column from floor to top of the frame, narrow at the waist, flared at foot and head, damp and slightly glistening.
-Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
-speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
-than #181b1e.
-No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
-Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
-object described here, alone.
-The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen at the same slightly raised angle as the attached prop. Fill the frame's lower two thirds. Even lighting, no ground plane, no shadow.
+STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
+projection with zero vanishing points; lines must never converge. Display exactly 50% flat front
+elevation and 50% top-down elevation. All depth lines must extrude straight upwards along the
+vertical Y-axis. Strictly hide all left and right side planes.
+
+SUBJECT: A dripstone column: a stalactite and a stalagmite grown together into one thick, rippled limestone column, flaring at its foot. Its upper end is a rough, rounded dripstone knob, never a flat cut top.
+
+RENDERING: one object alone, painted and matte, with soft brush texture and grit. Soft modelled
+shading, never flat cel shading. NO OUTLINES: no dark contour around the object or any part of it
+— every edge is a change of value, never a stroke.
+It stands on the bottom edge of the picture, centred. A soft dark shadow lies on the ground
+beneath it, darkest where it meets the floor, no wider than the object and reaching no further
+below it than a tenth of its height. No hard edge, no drawn ellipse. The shadow is exactly the grey
+of stone in shade, around #23272b, completely free of pink or purple.
+Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
+blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
+
+PALETTE, strictly: a natural cave, cool and dim. Objects #8e9196 and #50555b, one sand accent
+#a3906c, against floor #5f6368 and walls #3a3f44. NOTHING LIGHTER THAN #a8aaa8 — no white, no cream,
+no highlight brighter than that, no shine. Nothing darker than #181b1e. Nothing built by hand: no cut
+edges, no tool marks, no paint, no wood, no pottery.
+
+SCALE: it will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE:
+few, large, simple shapes and nothing finer than a tenth of the object. No text, no letters, no
+hieroglyphs, no watermark, no frame, no border.
+It is about one third as wide as it is tall: a column taller than a person.
 ```
 
 **Import:** `yarn import-tile art/masters/props/cave/pillar.webp --tier=cave --name=pillar --slot=prop --filter=smooth`
 
 ### `cave/rubblePile` — a rockfall of broken limestone
 
-**Attach:** `art/masters/props/starter/rubblePile.webp` — a starter prop, as the style reference
+**Attach:** `art/masters/props/cave/basin.webp` — the cave's accepted pool, for its paint and its projection
 
 ```
-Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
-A rockfall: a knee-high heap of broken pale-grey limestone, angular slabs and chunks tumbled together, fresh pale fracture faces against weathered grey, a little sand drifted between the stones.
-Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
-speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
-than #181b1e.
-No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
-Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
-object described here, alone.
-The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen at the same slightly raised angle as the attached prop. Fill the frame's lower two thirds. Even lighting, no ground plane, no shadow.
+STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
+projection with zero vanishing points; lines must never converge. Display exactly 50% flat front
+elevation and 50% top-down elevation. All depth lines must extrude straight upwards along the
+vertical Y-axis. Strictly hide all left and right side planes.
+
+SUBJECT: A rockfall: a heap of broken grey limestone chunks and slabs fallen from the cave roof, sand sifted between them.
+
+RENDERING: one object alone, painted and matte, with soft brush texture and grit. Soft modelled
+shading, never flat cel shading. NO OUTLINES: no dark contour around the object or any part of it
+— every edge is a change of value, never a stroke.
+It stands on the bottom edge of the picture, centred. A soft dark shadow lies on the ground
+beneath it, darkest where it meets the floor, no wider than the object and reaching no further
+below it than a tenth of its height. No hard edge, no drawn ellipse. The shadow is exactly the grey
+of stone in shade, around #23272b, completely free of pink or purple.
+Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
+blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
+
+PALETTE, strictly: a natural cave, cool and dim. Objects #8e9196 and #50555b, one sand accent
+#a3906c, against floor #5f6368 and walls #3a3f44. NOTHING LIGHTER THAN #a8aaa8 — no white, no cream,
+no highlight brighter than that, no shine. Nothing darker than #181b1e. Nothing built by hand: no cut
+edges, no tool marks, no paint, no wood, no pottery.
+
+SCALE: it will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE:
+few, large, simple shapes and nothing finer than a tenth of the object. No text, no letters, no
+hieroglyphs, no watermark, no frame, no border.
+It is about one and a half times as wide as it is tall: a knee-high heap.
 ```
 
 **Import:** `yarn import-tile art/masters/props/cave/rubblePile.webp --tier=cave --name=rubblePile --slot=prop --filter=smooth`
 
 ### `cave/pit` — a sinkhole, dark shaft
 
-**Attach:** `art/masters/props/starter/pit.webp` — a starter prop, as the style reference
+**Attach:** `art/masters/props/cave/basin.webp` — the cave's accepted pool, for its paint and its projection
 
 ```
-Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
-A sinkhole in a cave floor: a ragged round hole in the bedrock, its lip crumbled and uneven, the shaft inside falling away into black. The rim is the only thing lit; the shaft is deep shadow, never a flat black disc.
-Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
-speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
-than #181b1e.
-No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
-Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
-object described here, alone.
-The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen at the same slightly raised angle as the attached prop. Fill the frame's lower two thirds. Even lighting, no ground plane, no shadow.
+STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
+projection with zero vanishing points; lines must never converge. Display exactly 50% flat front
+elevation and 50% top-down elevation. All depth lines must extrude straight upwards along the
+vertical Y-axis. Strictly hide all left and right side planes.
+
+SUBJECT: A sinkhole: a ragged natural hole in the rock floor dropping into a dark shaft, its rim broken limestone with drifted sand.
+
+RENDERING: one object alone, painted and matte, with soft brush texture and grit. Soft modelled
+shading, never flat cel shading. NO OUTLINES: no dark contour around the object or any part of it
+— every edge is a change of value, never a stroke.
+It stands on the bottom edge of the picture, centred. A soft dark shadow lies on the ground
+beneath it, darkest where it meets the floor, no wider than the object and reaching no further
+below it than a tenth of its height. No hard edge, no drawn ellipse. The shadow is exactly the grey
+of stone in shade, around #23272b, completely free of pink or purple.
+Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
+blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
+
+PALETTE, strictly: a natural cave, cool and dim. Objects #8e9196 and #50555b, one sand accent
+#a3906c, against floor #5f6368 and walls #3a3f44. NOTHING LIGHTER THAN #a8aaa8 — no white, no cream,
+no highlight brighter than that, no shine. Nothing darker than #181b1e. Nothing built by hand: no cut
+edges, no tool marks, no paint, no wood, no pottery.
+
+SCALE: it will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE:
+few, large, simple shapes and nothing finer than a tenth of the object. No text, no letters, no
+hieroglyphs, no watermark, no frame, no border.
+It is about twice as wide as it is tall: a hole in the floor with a low broken rim.
 ```
 
 **Import:** `yarn import-tile art/masters/props/cave/pit.webp --tier=cave --name=pit --slot=prop --filter=smooth`
 
 ### `cave/crystal` — pale selenite blades from a rock seam
 
-**Attach:** `art/masters/props/starter/crystal.webp` — a starter prop, as the style reference
+**Attach:** `art/masters/props/cave/basin.webp` — the cave's accepted pool, for its paint and its projection
 
 ```
-Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
-Pale selenite: a cluster of long translucent gypsum blades growing out of a seam in a lump of grey rock, tilting different ways, milky white with a faint cool tint, the tallest about the height of the frame's upper third. Matte, never glassy.
-Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
-speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
-than #181b1e.
-No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
-Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
-object described here, alone.
-The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen at the same slightly raised angle as the attached prop. Fill the frame's lower two thirds. Even lighting, no ground plane, no shadow.
+STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
+projection with zero vanishing points; lines must never converge. Display exactly 50% flat front
+elevation and 50% top-down elevation. All depth lines must extrude straight upwards along the
+vertical Y-axis. Strictly hide all left and right side planes.
+
+SUBJECT: A cluster of pale selenite: long, flat gypsum blades growing at angles out of a seam of grey rock, faintly translucent, the rock at their base rough.
+
+RENDERING: one object alone, painted and matte, with soft brush texture and grit. Soft modelled
+shading, never flat cel shading. NO OUTLINES: no dark contour around the object or any part of it
+— every edge is a change of value, never a stroke.
+It stands on the bottom edge of the picture, centred. A soft dark shadow lies on the ground
+beneath it, darkest where it meets the floor, no wider than the object and reaching no further
+below it than a tenth of its height. No hard edge, no drawn ellipse. The shadow is exactly the grey
+of stone in shade, around #23272b, completely free of pink or purple.
+Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
+blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
+
+PALETTE, strictly: a natural cave, cool and dim. Objects #8e9196 and #50555b, one sand accent
+#a3906c, against floor #5f6368 and walls #3a3f44. NOTHING LIGHTER THAN #a8aaa8 — no white, no cream,
+no highlight brighter than that, no shine. Nothing darker than #181b1e. Nothing built by hand: no cut
+edges, no tool marks, no paint, no wood, no pottery.
+
+SCALE: it will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE:
+few, large, simple shapes and nothing finer than a tenth of the object. No text, no letters, no
+hieroglyphs, no watermark, no frame, no border.
+It is about as wide as it is tall: a waist-high cluster.
 ```
 
 **Import:** `yarn import-tile art/masters/props/cave/crystal.webp --tier=cave --name=crystal --slot=prop --filter=smooth`
 
 ### `cave/brazier` — an old campfire, someone camped here
 
-**Attach:** `art/masters/props/starter/brazier.webp` — a starter prop, as the style reference
+**Attach:** `art/masters/props/cave/basin.webp` — the cave's accepted pool, for its paint and its projection
 
 ```
-Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
-An old campfire: a ring of fire-blackened stones around a bed of grey ash and a few charred sticks, long cold. Someone camped here before. Low and wide, a little soot staining the nearest stones.
-Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
-speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
-than #181b1e.
-No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
-Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
-object described here, alone.
-The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen at the same slightly raised angle as the attached prop. Fill the frame's lower two thirds. Even lighting, no ground plane, no shadow.
+STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
+projection with zero vanishing points; lines must never converge. Display exactly 50% flat front
+elevation and 50% top-down elevation. All depth lines must extrude straight upwards along the
+vertical Y-axis. Strictly hide all left and right side planes.
+
+SUBJECT: An old campfire: a ring of fist-sized stones around cold grey ash and a few charred sticks, left by someone who camped here long ago. The ash is the coolest thing in the picture.
+
+RENDERING: one object alone, painted and matte, with soft brush texture and grit. Soft modelled
+shading, never flat cel shading. NO OUTLINES: no dark contour around the object or any part of it
+— every edge is a change of value, never a stroke.
+It stands on the bottom edge of the picture, centred. A soft dark shadow lies on the ground
+beneath it, darkest where it meets the floor, no wider than the object and reaching no further
+below it than a tenth of its height. No hard edge, no drawn ellipse. The shadow is exactly the grey
+of stone in shade, around #23272b, completely free of pink or purple.
+Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
+blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
+
+PALETTE, strictly: a natural cave, cool and dim. Objects #8e9196 and #50555b, one sand accent
+#a3906c, against floor #5f6368 and walls #3a3f44. NOTHING LIGHTER THAN #a8aaa8 — no white, no cream,
+no highlight brighter than that, no shine. Nothing darker than #181b1e. Nothing built by hand: no cut
+edges, no tool marks, no paint, no wood, no pottery.
+
+SCALE: it will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE:
+few, large, simple shapes and nothing finer than a tenth of the object. No text, no letters, no
+hieroglyphs, no watermark, no frame, no border.
+It is about three times as wide as it is tall: flat on the floor, ankle-high.
 ```
 
 **Import:** `yarn import-tile art/masters/props/cave/brazier.webp --tier=cave --name=brazier --slot=prop --filter=smooth`
 
 ### `cave/stalagmite` — a cluster of low stone cones
 
-**Attach:** `art/masters/props/starter/pillar.webp` — a starter prop, as the style reference
+**Attach:** `art/masters/props/cave/basin.webp` — the cave's accepted pool, for its paint and its projection
 
 ```
-Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
-A cluster of stalagmites: three or four low stone cones of different heights growing from one patch of damp floor, pale grey, smooth, dripstone-banded, rounded at the tips, the tallest no higher than the middle of the frame.
-Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
-speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
-than #181b1e.
-No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
-Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
-object described here, alone.
-The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen at the same slightly raised angle as the attached prop. Fill the frame's lower two thirds. Even lighting, no ground plane, no shadow.
+STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
+projection with zero vanishing points; lines must never converge. Display exactly 50% flat front
+elevation and 50% top-down elevation. All depth lines must extrude straight upwards along the
+vertical Y-axis. Strictly hide all left and right side planes.
+
+SUBJECT: A cluster of three to five stalagmites: rippled limestone cones of different heights rising from the floor, wet and darker at their tips.
+
+RENDERING: one object alone, painted and matte, with soft brush texture and grit. Soft modelled
+shading, never flat cel shading. NO OUTLINES: no dark contour around the object or any part of it
+— every edge is a change of value, never a stroke.
+It stands on the bottom edge of the picture, centred. A soft dark shadow lies on the ground
+beneath it, darkest where it meets the floor, no wider than the object and reaching no further
+below it than a tenth of its height. No hard edge, no drawn ellipse. The shadow is exactly the grey
+of stone in shade, around #23272b, completely free of pink or purple.
+Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
+blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
+
+PALETTE, strictly: a natural cave, cool and dim. Objects #8e9196 and #50555b, one sand accent
+#a3906c, against floor #5f6368 and walls #3a3f44. NOTHING LIGHTER THAN #a8aaa8 — no white, no cream,
+no highlight brighter than that, no shine. Nothing darker than #181b1e. Nothing built by hand: no cut
+edges, no tool marks, no paint, no wood, no pottery.
+
+SCALE: it will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE:
+few, large, simple shapes and nothing finer than a tenth of the object. No text, no letters, no
+hieroglyphs, no watermark, no frame, no border.
+It is about as wide as it is tall: the tallest cone waist-high.
 ```
 
 **Import:** `yarn import-tile art/masters/props/cave/stalagmite.webp --tier=cave --name=stalagmite --slot=prop --filter=smooth`
 
 ### `cave/puddle` — a flat glossy puddle, soft-edged
 
-**Attach:** `art/masters/props/starter/rubbleSpill.webp` — a starter prop, as the style reference
+**Attach:** `art/masters/props/cave/basin.webp` — the cave's accepted pool, for its paint and its projection
 
 ```
-Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
-A puddle on a cave floor, seen from above: a flat irregular patch of still water, soft at the edges where it thins out over the rock, a darker shadow in the middle and a faint cool sheen on the surface. Flat on the floor, no depth, no ripples.
-Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
-speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
-than #181b1e.
-No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
-Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
-object described here, alone.
-The patch alone on pure magenta #FF00FF, soft-edged, centred in the lower part of a portrait frame. Even lighting, no cast shadow.
+STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
+projection with zero vanishing points; lines must never converge. Display exactly 50% flat front
+elevation and 50% top-down elevation. All depth lines must extrude straight upwards along the
+vertical Y-axis. Strictly hide all left and right side planes.
+
+SUBJECT: A shallow puddle of still water on bare rock, dark and glossy, soft-edged, a few drips beside it. Almost flat: the water is the top-down half of the picture.
+
+RENDERING: one object alone, painted and matte, with soft brush texture and grit. Soft modelled
+shading, never flat cel shading. NO OUTLINES: no dark contour around the object or any part of it
+— every edge is a change of value, never a stroke.
+It stands on the bottom edge of the picture, centred. A soft dark shadow lies on the ground
+beneath it, darkest where it meets the floor, no wider than the object and reaching no further
+below it than a tenth of its height. No hard edge, no drawn ellipse. The shadow is exactly the grey
+of stone in shade, around #23272b, completely free of pink or purple.
+Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
+blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
+
+PALETTE, strictly: a natural cave, cool and dim. Objects #8e9196 and #50555b, one sand accent
+#a3906c, against floor #5f6368 and walls #3a3f44. NOTHING LIGHTER THAN #a8aaa8 — no white, no cream,
+no highlight brighter than that, no shine. Nothing darker than #181b1e. Nothing built by hand: no cut
+edges, no tool marks, no paint, no wood, no pottery.
+
+SCALE: it will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE:
+few, large, simple shapes and nothing finer than a tenth of the object. No text, no letters, no
+hieroglyphs, no watermark, no frame, no border.
+It is about four times as wide as it is tall: flat, lying on the floor.
 ```
 
 **Import:** `yarn import-tile art/masters/props/cave/puddle.webp --tier=cave --name=puddle --slot=prop --filter=smooth --scale=0.55`
 
 ### `cave/bones` — an old skeleton half in the sand
 
-**Attach:** `art/masters/props/starter/rubbleSpill.webp` — a starter prop, as the style reference
+**Attach:** `art/masters/props/cave/basin.webp` — the cave's accepted pool, for its paint and its projection
 
 ```
-Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
-An old animal skeleton lying half-buried in drifted sand, seen from above: a ribcage, a few long bones and a skull, bleached and brittle, the sand covering one end. Flat on the floor, edges soft where bone sinks into sand, nothing standing up.
-Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
-speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
-than #181b1e.
-No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
-Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
-object described here, alone.
-The patch alone on pure magenta #FF00FF, soft-edged, centred in the lower part of a portrait frame. Even lighting, no cast shadow.
+STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
+projection with zero vanishing points; lines must never converge. Display exactly 50% flat front
+elevation and 50% top-down elevation. All depth lines must extrude straight upwards along the
+vertical Y-axis. Strictly hide all left and right side planes.
+
+SUBJECT: An old animal skeleton half buried in sand: a ribcage, a long skull and scattered leg bones, dry and grey, the bones no lighter than #a8aaa8.
+
+RENDERING: one object alone, painted and matte, with soft brush texture and grit. Soft modelled
+shading, never flat cel shading. NO OUTLINES: no dark contour around the object or any part of it
+— every edge is a change of value, never a stroke.
+It stands on the bottom edge of the picture, centred. A soft dark shadow lies on the ground
+beneath it, darkest where it meets the floor, no wider than the object and reaching no further
+below it than a tenth of its height. No hard edge, no drawn ellipse. The shadow is exactly the grey
+of stone in shade, around #23272b, completely free of pink or purple.
+Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
+blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
+
+PALETTE, strictly: a natural cave, cool and dim. Objects #8e9196 and #50555b, one sand accent
+#a3906c, against floor #5f6368 and walls #3a3f44. NOTHING LIGHTER THAN #a8aaa8 — no white, no cream,
+no highlight brighter than that, no shine. Nothing darker than #181b1e. Nothing built by hand: no cut
+edges, no tool marks, no paint, no wood, no pottery.
+
+SCALE: it will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE:
+few, large, simple shapes and nothing finer than a tenth of the object. No text, no letters, no
+hieroglyphs, no watermark, no frame, no border.
+It is about three times as wide as it is tall: lying on the floor.
 ```
 
 **Import:** `yarn import-tile art/masters/props/cave/bones.webp --tier=cave --name=bones --slot=prop --filter=smooth --scale=0.55`
