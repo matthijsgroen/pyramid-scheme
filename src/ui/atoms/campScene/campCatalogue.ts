@@ -161,7 +161,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["wizard", "lotusPlanter"],
       ["wizard", "figTree"],
     ]),
-    layered("ibisPond", { x: -1.7, y: 2.62, frame: 2.46, footprint: 2.21, bleed: 0.3, sink: 0.28 }, [
+    layered("ibisPond", { x: -1.7, y: 2.9, frame: 2.46, footprint: 2.21, bleed: 0.3, sink: 0.4 }, [
       // The pond itself is the fixed oasis; every step only adds to its rim and water.
       ["master", "edgeStones"],
       ["master", "papyrus"],
@@ -231,12 +231,12 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       // The oasis pool is why the camp stands here: there from the start, adorned later by the ibis pond's steps.
       id: "oasis",
       x: -1.7,
-      y: 2.62,
+      y: 2.9,
       frame: 2.46,
       footprint: 2.21,
       // Nothing to tap, so the pond may run off the side and the bottom of the screen.
       bleed: 0.3,
-      sink: 0.28,
+      sink: 0.4,
       piece: piece("oasis"),
     },
   ],
