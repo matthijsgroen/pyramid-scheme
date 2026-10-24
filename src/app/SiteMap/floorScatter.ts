@@ -200,9 +200,9 @@ export const scatterFor = (grid: FloorGrid, claims: RoomClaims): ReadonlyMap<str
   }
   for (const [c, [ownerKey, cells]] of [...footprints].sort(([a], [b]) => (a < b ? -1 : 1)).entries()) {
     // NOT the owner's own cell: that is where the room's icon goes — a puzzle's family, an exit's star
-    // — and not a cell that already carries the room's prop, which `decorationAt` has put on one of
-    // the claims. Dressing lies on the floor AROUND what the room is for.
-    const free = cells.filter(key => !claims.decorationAt.has(key) && key !== ownerKey)
+    // — and not a cell a prop stands on (`decorationCells`, every cell of its footprint). Dressing lies
+    // on the floor AROUND what the room is for.
+    const free = cells.filter(key => !claims.decorationCells.has(key) && key !== ownerKey)
     for (let i = 0; i < PER_CHAMBER && free.length; i++) {
       const key = free[Math.floor(hashUnit(grid.siteId, `chamber-cell-${c}`, i) * free.length)]
       out.set(key, CHAMBER_KINDS[Math.floor(hashUnit(grid.siteId, `chamber-kind-${c}`, i) * CHAMBER_KINDS.length)])

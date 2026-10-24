@@ -1,4 +1,13 @@
-import type { DecorationKind, Direction, FloorGrid, GridCell, RoomCell, Tileset } from "@/game/siteTypes"
+import {
+  decorationFootprint,
+  type DecorationKind,
+  type Direction,
+  type FloorGrid,
+  type GridCell,
+  type PropFootprint,
+  type RoomCell,
+  type Tileset,
+} from "@/game/siteTypes"
 import { cellAt, isChamber, isClaimableNeighbor } from "@/game/roomFootprint"
 import { DIR_MOVES, OPPOSITE_DIR } from "./corridorRuns"
 import { buildTileRegions, type FloorAt, type Rect, type TileRegions } from "./tileRegions"
@@ -80,8 +89,10 @@ const edgeKey = (r1: number, c1: number, r2: number, c2: number): string => {
 export type RoomClaims = {
   /** claimed-cell key ("r,c") -> owning room's key ("r,c") */
   claimedBy: ReadonlyMap<string, string>
-  /** the one claimed cell (per owner) that carries the owner's decoration, if any */
+  /** each prop by its ANCHOR cell, the north-west one of its footprint (decorationFootprint) */
   decorationAt: ReadonlyMap<string, DecorationKind>
+  /** every cell a prop covers, anchors included: what scatter and standing spots keep clear of */
+  decorationCells: ReadonlySet<string>
   /** unordered cell-pair keys with no wall between them (owner<->claim, or diagonal<->flank) */
   openEdges: ReadonlySet<string>
   /** unordered OWNER-pair keys for two chambers the player can already walk between */
@@ -96,7 +107,10 @@ export type RoomClaims = {
 // be either claimed void or the owner's own real corridor arm — either way the diagonal
 // ends up visually flush with a wall the owner already has open, not floating by itself.
 
-export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
+export const buildRoomClaims = (
+  grid: FloorGrid,
+  footprintOf: (kind: DecorationKind) => PropFootprint = decorationFootprint
+): RoomClaims => {
   const claimedBy = new Map<string, string>()
   const openEdges = new Set<string>()
   // Every claim of an owner's that a prop could stand on, in claim order: genuinely EMPTY cells only. A
@@ -227,7 +241,22 @@ export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
     const [r, c] = key.split(",").map(Number)
     return r >= 0 && c >= 0 && r < grid.rows && c < grid.cols
   }
+  // A BIGGER PROP NEEDS ALL ITS FLOOR. Every cell of the footprint must be one of `usable` — the room's own
+  // free floor — so it never stands on a passage, a node, another room's claim or another prop. Among the
+  // anchors that fit, the wall-behind preference reads the footprint's whole top row. A single cell comes
+  // out exactly as `usable.find(wallBehind) ?? usable[0]`.
+  const footprintCells = (anchor: string, { cols, rows }: PropFootprint): string[] => {
+    const [r, c] = anchor.split(",").map(Number)
+    return Array.from({ length: rows * cols }, (_, i) => `${r + Math.floor(i / cols)},${c + (i % cols)}`)
+  }
+  const standOn = (kind: DecorationKind, usable: readonly string[]): string[] | undefined => {
+    const footprint = footprintOf(kind)
+    const free = new Set(usable)
+    const fits = usable.map(anchor => footprintCells(anchor, footprint)).filter(cells => cells.every(k => free.has(k)))
+    return fits.find(cells => cells.slice(0, footprint.cols).every(wallBehind)) ?? fits[0]
+  }
   const decorationAt = new Map<string, DecorationKind>()
+  const decorationCells = new Set<string>()
   const roomsForCompanion: Parameters<typeof companionFor>[1][number][] = []
   for (const [ownerKey, candidates] of ownerPropCandidates) {
     const [ownerRow, ownerCol] = ownerKey.split(",").map(Number)
@@ -235,16 +264,22 @@ export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
     if (owner?.type !== "room" || !owner.decoration) continue
     const inside = candidates.filter(onGrid)
     const usable = inside.length ? inside : candidates
-    const taken = usable.find(wallBehind) ?? usable[0]
-    decorationAt.set(taken, owner.decoration)
+    // A room with no floor the shape of its prop stands the single-cell kind the carve picked beside it.
+    const standing = [owner.decoration, owner.decorationFallback]
+      .flatMap(kind => (kind ? [{ kind, cells: standOn(kind, usable) }] : []))
+      .find(({ cells }) => cells !== undefined)
+    if (!standing?.cells) continue
+    const { kind: leader, cells: takenCells } = standing
+    decorationAt.set(takenCells[0], leader)
+    for (const key of takenCells) decorationCells.add(key)
     // THE GOD'S ROOM is written on the cell by the assembler (RoomCell.patronRoom). It used to be
     // inferred from prop and wall item both being patron kinds, which is unreachable at a rank whose
     // wall pool holds nothing a god can appear on — the merchant hangs a goods niche and a tally board.
     const shrine = owner.patronRoom === true
     roomsForCompanion.push({
       ownerKey,
-      leader: owner.decoration,
-      free: candidates.filter(key => key !== taken),
+      leader,
+      free: candidates.filter(key => !takenCells.includes(key)),
       ...(shrine ? { shrine } : {}),
       ...(owner.activity ? { activity: owner.activity } : {}),
     })
@@ -255,7 +290,7 @@ export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
   // It goes into `decorationAt` rather than into a layer of its own, which is what keeps the rest of the
   // map honest for free: `floorScatter` dresses the cells this map does NOT hold, so a companion is a cell
   // scatter avoids without anything being told about it.
-  for (const [key, kind] of companionFor(
+  for (const [anchor, kind] of companionFor(
     grid.siteId,
     roomsForCompanion,
     // TWO TESTS, and the first one is the one this got wrong.
@@ -270,14 +305,14 @@ export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
     // `placeholder/` on purpose, so a stand-in can never be multiplied across the map by a rule nobody
     // is watching.
     kind => authoredHere.includes(kind) && !!tileUrl(floorTier(grid), kind),
-    // Same rule as the leader: on the map first, then the wall-behind preference.
-    free => {
+    // Same rule as the leader: on the map first, then the footprint and the wall-behind preference.
+    (free, kind) => {
       const inside = free.filter(onGrid)
-      const usable = inside.length ? inside : free
-      return usable.find(wallBehind) ?? usable[0]
+      return standOn(kind, inside.length ? inside : free)?.[0]
     }
   )) {
-    decorationAt.set(key, kind)
+    decorationAt.set(anchor, kind)
+    for (const key of footprintCells(anchor, footprintOf(kind))) decorationCells.add(key)
   }
 
   /**
@@ -317,7 +352,7 @@ export const buildRoomClaims = (grid: FloorGrid): RoomClaims => {
     }
   }
 
-  return { claimedBy, decorationAt, openEdges, joinedOwners }
+  return { claimedBy, decorationAt, decorationCells, openEdges, joinedOwners }
 }
 
 // The room a claimed cell renders as part of, if that room is lit — the claim borrows the owner's

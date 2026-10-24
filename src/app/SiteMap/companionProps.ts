@@ -71,7 +71,8 @@ export const companionsFor = (
  * Where a second prop stands, as `"row,col" -> kind`.
  *
  * `free` is the room's cells with the icon cell and the first prop already removed, in the caller's own
- * order; `pick` chooses among them, so the caller keeps its wall-behind preference.
+ * order; `pick` chooses among them for the kind chosen, so the caller keeps its wall-behind preference and
+ * its footprint rule. A kind `pick` finds no room for (undefined) is left out.
  */
 export const companionFor = (
   siteId: string,
@@ -83,8 +84,12 @@ export const companionFor = (
     activity?: ActivityId
   }[],
   hasArt: (kind: DecorationKind) => boolean,
-  pick: (free: readonly string[]) => string
+  pick: (free: readonly string[], kind: DecorationKind) => string | undefined
 ): ReadonlyMap<string, DecorationKind> => {
+  const place = (free: readonly string[], kind: DecorationKind, out: Map<string, DecorationKind>) => {
+    const at = pick(free, kind)
+    if (at !== undefined) out.set(at, kind)
+  }
   const out = new Map<string, DecorationKind>()
   // Sorted for the reason `scatterFor` sorts: the placement is indexed, and Map order is insertion order,
   // so which room is "first" would otherwise depend on how the claims happened to be built.
@@ -104,14 +109,14 @@ export const companionFor = (
     // Everywhere else the rules stand: the activity's props (or else the same purpose), never the leader
     // again, one room in three.
     if (shrine) {
-      if (hasArt(leader)) out.set(pick(free), leader)
+      if (hasArt(leader)) place(free, leader, out)
       continue
     }
     if (hashUnit(siteId, `companion-room:${ownerKey}`, 0) > SHARE) continue
     const options = companionsFor(leader, hasArt, activity)
     if (options.length === 0) continue
     const kind = options[Math.floor(hashUnit(siteId, `companion-kind:${ownerKey}`, 1) * options.length)]
-    out.set(pick(free), kind)
+    place(free, kind, out)
   }
   return out
 }

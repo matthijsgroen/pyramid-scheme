@@ -38,7 +38,7 @@ const besideNode = (grid: FloorGrid, claims: RoomClaims, r: number, c: number): 
     return (
       claims.claimedBy.get(key) === `${r},${c}` &&
       cellAt(grid, r + dr, c + dc).type === "empty" &&
-      !claims.decorationAt.has(key)
+      !claims.decorationCells.has(key)
     )
   }
   const dir = ASIDE.find(bare)
