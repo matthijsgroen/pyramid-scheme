@@ -12,7 +12,7 @@ import { SiteMapScreen } from "@/app/SiteMap/SiteMapScreen"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { clsx } from "clsx"
 import { DesertBackdrop } from "@/ui/atoms/DesertBackdrop"
-import { CaveBackdrop, CaveMouth } from "@/ui/atoms/CaveBackdrop"
+import { CaveBackdrop, CaveMouth, cavernFloor } from "@/ui/atoms/CaveBackdrop"
 import { getLevelWidth } from "@/game/state"
 import { dayNightCycleDayTime, dayNightCycleStep } from "@/ui/atoms/backdropSelection"
 import { generateJourneyLevel } from "@/game/generateJourneyLevel"
@@ -219,7 +219,8 @@ export const PyramidExpedition: FC<{
               ref={currentLevelRef}
               key={activeJourney.levelNr}
               className={clsx(
-                "absolute inset-0 flex flex-1 items-center justify-center transition-all duration-1000 ease-in-out",
+                "absolute inset-0 flex flex-1 justify-center transition-all duration-1000 ease-in-out",
+                levelSetup?.exterior === "cavern" ? cavernFloor : "items-center",
                 entering && "pointer-events-none"
               )}
               style={{

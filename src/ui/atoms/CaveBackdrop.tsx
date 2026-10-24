@@ -19,6 +19,11 @@ const cavernScene = [
   "linear-gradient(to bottom, #15110e 0%, #221b15 60%, #2d241c 100%)",
 ].join(", ")
 
+/** Where a board stands in the cavern: its foot on the patch of sunlight, 15% of the painting up from its
+ * bottom edge — the painting covers the screen, so that is 15% of the screen height or of 1072/1920 of its
+ * width, whichever the painting was scaled to. */
+export const cavernFloor = "items-end pb-[max(15vh,8.4vw)]"
+
 /** The sunlit cavern a level opens on below ground. Fills its parent like `DesertBackdrop`. */
 export const CaveBackdrop: FC<PropsWithChildren> = ({ children }) => {
   const url = artUrl("cavern")
