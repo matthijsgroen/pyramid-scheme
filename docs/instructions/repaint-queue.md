@@ -283,18 +283,24 @@ its colours or its subject from it. Same aspect as the reference; do not re-comp
 
 ### `exteriors/cave-mouth` — a cave mouth in a small desert range
 
-**Attach:** `art/masters/surfaces/starter-floor.webp` — the merchant's floor, as the style reference
+**Attach:**
+
+1. `art/masters/exteriors/desert-scene.png` — a pyramid level as the game draws it (Storybook GameLevel → Default),
+   for the composition and the colours: the cave stands where the pyramid stands
+2. `art/masters/surfaces/starter-floor.webp` — the merchant's floor, as the style reference
 
 ```
 Landscape game background, ancient Egyptian desert, hand-painted digital art: matte, soft brush texture,
 realistic materials, painted rather than drawn. NO OUTLINES — no black contour, no ink, no cel shading.
-A small range of low sandstone hills under a pale sky, seen from the front at eye level. In the middle
-of the nearest hill, low down, the dark mouth of a cave, a rough arch big enough to walk into, shadow
-inside, a little drifted sand at its foot. Nothing else built: no pyramid, no building, no figure, no
-text. Warm sand and rock, the cave mouth the one dark shape. The lower third is calm sand so a map
-marker can sit there.
+THE FIRST IMAGE IS THE SCENE TO REPAINT. Keep its camera, its horizon at the same height, its deep blue
+sky, its low sun on the left and its flat orange sand. Take out the block pyramid, the camel and the
+sphinx. Where the block pyramid stood, in the middle on the sand, stand a low rocky sandstone hill, a
+little wider than the pyramid was, its foot on the sand just below the horizon. Low down in the middle
+of the hill, the dark mouth of a cave, a rough arch big enough to walk into, shadow inside, a little
+drifted sand at its foot. Nothing built: no pyramid, no building, no figure, no text. The cave mouth is
+the one dark shape. The lower third is calm sand so a map marker can sit there.
 Landscape, 16 by 9. No text, no watermark, no frame, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality. Do NOT take its subject from it.
+THE SECOND IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality. Do NOT take its subject from it.
 ```
 
 **Import:** `cp ~/Downloads/<file> src/assets/exteriors/cave-mouth.png`
