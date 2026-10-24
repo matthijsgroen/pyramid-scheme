@@ -157,7 +157,12 @@ export type EmptyChest = {
 const placeOf = (sectionAddress: string | undefined): string => {
   const address = sectionAddress ?? "main"
   const positional = /^s(\d+(?:\.\d+)?)$/.exec(address)
-  return positional ? `side ${positional[1].split(".").map(n => Number(n) + 1).join(".")}` : address
+  return positional
+    ? `side ${positional[1]
+        .split(".")
+        .map(n => Number(n) + 1)
+        .join(".")}`
+    : address
 }
 
 export const findEmptyChests = (
