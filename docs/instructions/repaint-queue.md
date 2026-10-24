@@ -833,7 +833,8 @@ vertical Y-axis. Strictly hide all left and right side planes.
 SUBJECT: A few rounded boulders and a slope of smaller stones heaped into a corner: the heap is
 tallest and tightest in the TOP-LEFT of the picture, where two unseen walls meet, and runs out
 lower and looser toward the bottom-right. Its left side and its top are cut off straight by the
-edges of the picture, as if pressed against the walls.
+edges of the picture. The walls themselves are NOT drawn: no wall, no wall face, no edge of a wall,
+nothing but stones and magenta.
 
 RENDERING: painted and matte, with soft brush texture and grit. Soft modelled shading, never flat
 cel shading. NO OUTLINES: no dark contour around any stone — every edge is a change of value, never
@@ -853,7 +854,24 @@ or four large stones, nothing finer than a tenth of the picture. Square. No text
 frame.
 ```
 
+**Prepare:** if the walls come back painted in anyway, keep the render as `art/masters/props/cave/cornerRock-walls.webp` and paint them out with the next entry; its result is the master.
+
 **Import:** `yarn import-tile art/masters/props/cave/cornerRock.webp --tier=cave --name=cornerRock --slot=corner --filter=smooth --trim`
+
+### `cave/cornerRock-clean` — the same corner rock with the painted walls taken out
+
+**Attach:** `art/masters/props/cave/cornerRock-walls.webp` — the accepted rocks, with walls the generator painted round them
+
+```
+THE ATTACHED IMAGE HOLDS THIS VERY OBJECT, already accepted: the heap of pale stones in the corner. Repaint
+it exactly as it is — keep every stone, its shape, its outline, its light, its colours, the sand between the
+stones and the loose stones at its foot. Change ONE thing: the two pale walls along the top and the left
+edge, and the shadow they throw, are gone. Everything that is not a stone or the sand between them is flat
+magenta, exactly #ff00ff (red 255 green 0 blue 255), to all four edges — no wall, no gradient, no glow. Do
+not redesign the stones, do not add or remove any.
+```
+
+**Import:** the result is the master of `cave/cornerRock` above; import it with that entry's line.
 
 ---
 
