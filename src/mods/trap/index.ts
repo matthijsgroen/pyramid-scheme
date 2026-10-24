@@ -1,4 +1,5 @@
 import type { ModDescriptor } from "../modDescriptor"
+import { trapLootTotals } from "./game/lootTotals"
 import { ARITHMETIC_REFLEX_META } from "./game/arithmeticReflex/meta"
 import { CLOCK_REFLEX_META } from "./game/clockReflex/meta"
 import { CROCODILE_META } from "./game/crocodile/meta"
@@ -19,4 +20,5 @@ export const trapMod: ModDescriptor = {
   families: [ARITHMETIC_REFLEX_META, CLOCK_REFLEX_META, CROCODILE_META],
   dynamicDistributions: [trapWaterskins],
   currencyMeta: HEALTH_CURRENCY_META,
+  lootTotals: trapLootTotals,
 }

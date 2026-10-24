@@ -1,4 +1,5 @@
 import type { ModDescriptor } from "../modDescriptor"
+import { shopLootTotals } from "./game/lootTotals"
 import { FEZ_SHOP_META } from "./game/fezShop/meta"
 import { MONEY_CURRENCY_META } from "./game/moneyCurrency"
 import { shopMoneyEconomy } from "./game/loot"
@@ -19,4 +20,5 @@ export const shopMod: ModDescriptor = {
   currencyMeta: MONEY_CURRENCY_META,
   dynamicDistributions: [shopMoneyEconomy],
   worldValidator: shopEconomyGuard,
+  lootTotals: shopLootTotals,
 }

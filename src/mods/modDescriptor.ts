@@ -5,6 +5,8 @@ import type { Distribution } from "@/worldGen/slotAllocator"
 import type { ShopStockAssignment } from "@/worldGen/shopStock"
 import type { WorldValidator } from "@/worldGen/validate"
 import type { WebActivatorReward } from "@/worldGen/webPlacement"
+import type { LootTotal } from "@/worldGen/lootReport"
+import type { SiteConfig } from "@/worldGen/types"
 import type { CurrencyMeta } from "@/game/ledger/currencyRegistry"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { OneWayRealisationMeta } from "@/game/oneWayRealisation"
@@ -73,4 +75,7 @@ export type ModDescriptor = {
   // The reward a web activator (a sand lever, a web key) stands as. A tier's web is placed only where a registered mod
   // gives one, so the web drops with its mod: no doors, no activators, every slot left to the loot passes.
   webActivator?: WebActivatorReward
+  // This mod's own placed-against-needed counts for `yarn loot-report`, one row per figure it can state.
+  // Drops with the mod, so core reports no currency it does not know.
+  lootTotals?: (configs: Record<string, SiteConfig[]>) => LootTotal[]
 }

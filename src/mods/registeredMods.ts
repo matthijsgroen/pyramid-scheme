@@ -5,6 +5,8 @@ import type { Distribution } from "@/worldGen/slotAllocator"
 import type { ShopStockAssignment } from "@/worldGen/shopStock"
 import type { WorldValidator } from "@/worldGen/validate"
 import type { WebActivatorReward } from "@/worldGen/webPlacement"
+import type { LootTotal } from "@/worldGen/lootReport"
+import type { SiteConfig } from "@/worldGen/types"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { OneWayRealisationMeta, ResolveOneWayRealisation } from "@/game/oneWayRealisation"
 import type { PassageRealisationMeta, ResolvePassageRealisation } from "@/game/passageRealisation"
@@ -136,6 +138,11 @@ export const MOD_WEB_ACTIVATOR: WebActivatorReward | undefined = REGISTERED_MODS
 
 // Is a mod enabled? The single toggle point the app side consults (Base.tsx, registerCurrencies)
 // so a mod's screen + currency-meta drop out together when it leaves REGISTERED_MODS.
+// Every registered mod's loot-report rows, in registry order. A mod off reports nothing, so the report names
+// only currencies the build knows. Read by `yarn loot-report`.
+export const MOD_LOOT_TOTALS = (configs: Record<string, SiteConfig[]>): LootTotal[] =>
+  REGISTERED_MODS.flatMap(m => m.lootTotals?.(configs) ?? [])
+
 export const isModEnabled = (id: string): boolean => REGISTERED_MODS.some(m => m.id === id)
 
 // The registered ids as a set, for buildConfigs' mod-owned-authoring drop (docs/mods/floor-topology-design.md).

@@ -1,4 +1,5 @@
 import type { ModDescriptor } from "../modDescriptor"
+import { tombTreasureLootTotals } from "./game/lootTotals"
 import { MAP_PIECE_CURRENCY, MAP_PIECE_CURRENCY_META } from "./game/mapPieceCurrency"
 import { TOMB_TREASURE_REACHABILITY } from "./game/reachabilitySupport"
 import { resolveTombTreasure } from "./game/tombTreasureReward"
@@ -35,4 +36,5 @@ export const tombTreasureMod: ModDescriptor = {
   // is freed for the shop by spec/wizard.ts's journey("wizard_4") override). A
   // `prefers:"mapPiece:<tombId>"` sentinel the map-piece worklist fills. Drops with the mod.
   shopStock: [{ journeyId: "master_treasure_tomb_b", prefers: "mapPiece:wizard_treasure_tomb_c" }],
+  lootTotals: tombTreasureLootTotals,
 }
