@@ -651,7 +651,7 @@ hieroglyphs, no watermark, no frame, no border.
 It is about four times as wide as it is tall: flat, lying on the floor.
 ```
 
-**Import:** `yarn import-tile art/masters/props/cave/puddle.webp --tier=cave --name=puddle --slot=prop --filter=smooth --scale=0.55`
+**Import:** `yarn import-tile art/masters/props/cave/puddle.webp --tier=cave --name=puddle --slot=prop --filter=smooth --scale=0.85`
 
 ### `cave/bones` — an old skeleton half in the sand
 
