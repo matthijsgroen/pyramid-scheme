@@ -183,7 +183,7 @@ its palette.
 
 ### `cave/floor` — bare cave rock underfoot
 
-**Attach:** `art/masters/surfaces/cave-floor-natural.webp` — natural cave rock, right in material, too coarse in scale
+**Attach:** `art/masters/surfaces/cave-floor-natural.webp` — natural cave rock at the right scale, too light
 
 ```
 Top-down dungeon game tile art for a natural cave under the Egyptian desert, a hidden tomb's approach.
@@ -198,9 +198,9 @@ a comic, not a cartoon. An edge is a change of value, never a stroke.
 Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
 than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS THE RIGHT MATERIAL AT THE WRONG SCALE. Keep its natural rock, its paint and its
-sand; paint the same kind of floor about THREE TIMES SMALLER, so ten or more rock forms cross the tile and
-the largest is no wider than a tenth of it.
+THE ATTACHED IMAGE IS THE RIGHT MATERIAL AT THE RIGHT SCALE, BUT TOO LIGHT. Paint the WHOLE tile like it:
+the same size of rock forms everywhere, top to bottom, none larger anywhere — and clearly DARKER, in the
+colours given above, a cave lit only by what comes down its mouth.
 THE CAMERA: straight down. A seamless square tile of natural rock: irregular rounded forms, curving
 cracks that wander and branch, fine grit and a few tiny pebbles.
 NOTHING BUILT: no rectangular blocks, no rows or courses, no straight edges, no right angles, no
