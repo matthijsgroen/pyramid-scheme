@@ -172,7 +172,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["wizard", "lotus"],
       ["wizard", "secondIbis"],
     ]),
-    layered("lookout", { x: -1.62, y: -1.89, frame: 2.31, footprint: 0.87 }, [
+    layered("lookout", { x: -2.0, y: -2.3, frame: 2.31, footprint: 0.87, bleed: 0.15 }, [
       ["master", "post", { base: true, cast: TOWER_CAST }],
       ["master", "platform", { cast: TOWER_CAST }],
       ["master", "ladder", { on: "platform", cast: TOWER_CAST }],
