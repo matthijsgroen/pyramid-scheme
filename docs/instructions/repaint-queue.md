@@ -701,7 +701,7 @@ projection with zero vanishing points; lines must never converge. Display exactl
 elevation and 50% top-down elevation. All depth lines must extrude straight upwards along the
 vertical Y-axis. Strictly hide all left and right side planes.
 
-SUBJECT: A scatter of loose limestone stones and grit fallen from a cave roof, lying flat on the floor: a few fist-sized pale stones and many small chips, spread thin, the floor showing between them. No heap, no mound, nothing built, no bricks.
+SUBJECT: Scree that has fallen from a cave roof and lies where it landed: one or two broken chunks, a handful of smaller angular fragments and a lot of grit and dust, all of different sizes and shapes, half sunk into the grit. It is densest on one side and thins out raggedly toward the other, with stray chips flung beyond it. It looks FALLEN, not placed: no arrangement, no rows, no circle, no even spacing, no set of similar stones laid out side by side, no two stones alike. No heap, no mound, nothing built, no bricks.
 
 THE ATTACHED IMAGE SHOWS A DIFFERENT SPILL (broken brick). Take only its size, its camera and how flat it lies;
 draw nothing of its bricks or colours.
