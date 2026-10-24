@@ -689,7 +689,7 @@ It is about three times as wide as it is tall: lying on the floor.
 
 **Prepare:** the generator painted the skeleton ON the attached floor. Its difference from that floor is the skeleton: `magick render.jpeg \( art/masters/surfaces/cave-floor.webp -resize 2048x2048\! \) -compose difference -composite -colorspace Gray -blur 0x3 -threshold 9% -morphology Close Disk:4 -morphology Open Disk:2 mask.png`, keep only the skeleton's region of the mask, then `magick \( -size 2048x2048 xc:'#FF00FF' \) render.jpeg mask.png -composite clean.png` — `clean.png` is the master.
 
-**Import:** `yarn import-tile art/masters/props/cave/bones.webp --tier=cave --name=bones --slot=prop --filter=smooth --scale=0.95`
+**Import:** `yarn import-tile art/masters/props/cave/bones.webp --tier=cave --name=bones --slot=prop --filter=smooth --cells=2x1 --scale=0.95` — two cells across (`DECORATION_FOOTPRINTS`); check with `yarn on-floor src/assets/tiles/cave/bones.png cave /tmp/bones.png --cells=2x1`
 
 ### `cave/roots` — roots coming through the ceiling down the face
 

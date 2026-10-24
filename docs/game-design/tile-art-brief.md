@@ -10,16 +10,22 @@ fifth rank from costing as much to draw as the first.
 
 ## The contract
 
-| Slot           | File                         | Size    | Anchor                                                                |
-| -------------- | ---------------------------- | ------- | --------------------------------------------------------------------- |
-| Floor megatile | `tiles/<rank>/floor.png`     | 448×448 | tiles both ways, world-aligned. `yarn make-seamless`                  |
-| Wall face      | `tiles/<rank>/wall-face.png` | 448×56  | tiles horizontally only; **shown at 448×28** — see below              |
-| Threshold sill | `tiles/<rank>/threshold.png` | 56×12   | laid across the way through, at a rank seam                           |
-| Archway        | `tiles/<rank>/arch.png`      | 84×56   | middle transparent; jambs in the outer 14px each side                 |
-| Chamber prop   | `tiles/<rank>/<kind>.png`    | 56×84   | **bottom-anchored**; the top 28 is headroom, used only by tall things |
-| Wall item      | `tiles/<rank>/<kind>.png`    | 56×28   | painted on the face band                                              |
-| Floor scatter  | `tiles/<rank>/<kind>.png`    | 56×84   | flat on the floor, soft-edged; the PROP box, bottom-anchored          |
-| Shared         | `tiles/default/<name>.png`   | varies  | not a rank: the explorer, the scarab                                  |
+| Slot            | File                         | Size         | Anchor                                                                |
+| --------------- | ---------------------------- | ------------ | --------------------------------------------------------------------- |
+| Floor megatile  | `tiles/<rank>/floor.png`     | 448×448      | tiles both ways, world-aligned. `yarn make-seamless`                  |
+| Wall face       | `tiles/<rank>/wall-face.png` | 448×56       | tiles horizontally only; **shown at 448×28** — see below              |
+| Threshold sill  | `tiles/<rank>/threshold.png` | 56×12        | laid across the way through, at a rank seam                           |
+| Archway         | `tiles/<rank>/arch.png`      | 84×56        | middle transparent; jambs in the outer 14px each side                 |
+| Chamber prop    | `tiles/<rank>/<kind>.png`    | 56×84        | **bottom-anchored**; the top 28 is headroom, used only by tall things |
+| Multi-cell prop | `tiles/<rank>/<kind>.png`    | 126×84 (2×1) | as a prop, spanning its footprint: see below                          |
+| Wall item       | `tiles/<rank>/<kind>.png`    | 56×28        | painted on the face band                                              |
+| Floor scatter   | `tiles/<rank>/<kind>.png`    | 56×84        | flat on the floor, soft-edged; the PROP box, bottom-anchored          |
+| Shared          | `tiles/default/<name>.png`   | varies       | not a rank: the explorer, the scarab                                  |
+
+**A multi-cell prop covers `cols` × `rows` cells and stands `tall` cells higher** (the kind's
+`DECORATION_FOOTPRINTS` entry): 56 + 70 per extra column wide, 84 + 84 per extra row + 56 per `tall` high.
+Bottom-anchored on its bottom row's floor line, its left edge on the anchor (north-west) cell's west edge.
+Import with `--cells=COLSxROWS --tall=N`.
 
 **A face is the one slot whose file is not the shape it is seen at.** The renderer draws a 448×56 face
 into a band `WALL_H` = 28 tall, so art drawn at 8:1 arrives on screen at 16:1 and every sign, brick and
@@ -381,22 +387,23 @@ starter is warm and daylit. It has the four surfaces (floor, wall face, threshol
 furniture, authored in the tomb's `decorations` and `wallDecorations` pools. A kind is a silhouette and the
 tileset is its skin, so the shared kinds are the same slots as every rank's.
 
-| Kind            | Slot                      | What it is                                                                 |
-| --------------- | ------------------------- | -------------------------------------------------------------------------- |
-| **basin**       | chamber prop 56×84        | a still, clear rock pool with a wet rim                                    |
-| **pillar**      | chamber prop 56×84        | a dripstone column, stalactite and stalagmite grown together               |
-| **rubblePile**  | chamber prop 56×84        | a rockfall of broken limestone                                             |
-| **pit**         | chamber prop 56×84        | a sinkhole, a dark shaft                                                   |
-| **crystal**     | chamber prop 56×84        | pale selenite blades growing from a rock seam                              |
-| **brazier**     | chamber prop 56×84        | an old campfire: a ring of stones round ash, someone camped here before    |
-| **stalagmite**  | chamber prop 56×84        | a cluster of low stone cones                                               |
-| **puddle**      | floor scatter, prop box   | flat, glossy, soft-edged water on the rock                                 |
-| **bones**       | floor scatter, prop box   | an old animal skeleton half in the sand                                    |
-| **roots**       | wall item 56×28           | roots coming through the ceiling and down the face                         |
-| **stalactites** | wall item 56×28           | a fringe of stalactites along the face top                                 |
+| Kind            | Slot                        | What it is                                                              |
+| --------------- | --------------------------- | ----------------------------------------------------------------------- |
+| **basin**       | chamber prop 56×84          | a still, clear rock pool with a wet rim                                 |
+| **pillar**      | chamber prop 56×84          | a dripstone column, stalactite and stalagmite grown together            |
+| **rubblePile**  | chamber prop 56×84          | a rockfall of broken limestone                                          |
+| **pit**         | chamber prop 56×84          | a sinkhole, a dark shaft                                                |
+| **crystal**     | chamber prop 56×84          | pale selenite blades growing from a rock seam                           |
+| **brazier**     | chamber prop 56×84          | an old campfire: a ring of stones round ash, someone camped here before |
+| **stalagmite**  | chamber prop 56×84          | a cluster of low stone cones                                            |
+| **puddle**      | floor scatter, prop box     | flat, glossy, soft-edged water on the rock                              |
+| **bones**       | multi-cell prop 2×1, 126×84 | an old animal skeleton half in the sand                                 |
+| **roots**       | wall item 56×28             | roots coming through the ceiling and down the face                      |
+| **stalactites** | wall item 56×28             | a fringe of stalactites along the face top                              |
 
 `puddle` and `bones` are authored in the pool like `mat`, and are flat, so they draw on the lower part of the
-prop box. The prompts are in `docs/instructions/repaint-queue.md`, "Cave and cavern".
+prop box; `bones` lies across two cells, and a room with no two free cells side by side stands a one-cell
+kind from its pool instead. The prompts are in `docs/instructions/repaint-queue.md`, "Cave and cavern".
 
 ## 5. What has to be built for §3–§4
 
@@ -439,12 +446,12 @@ else in this document is that same list four more times, with better stone.
 Ten tiles, all `--tier=default`: one skin for every rank, because a condition is a thing that has got
 into a site rather than a property of its masonry. Three slots and a ground.
 
-| slot | members |
-| --- | --- |
-| floor joints (`growth`, 22×22) | `overgrown` tuft · `-flowers` · `-scrub` · `-fronds` |
-| wall band (`growthWall`, 22×34) | `-wall` root · `-creeper` · `-curtain` |
-| chamber floor (`growth`; `canopy`, 110×110, for a tree) | `-plant` · `-palm` · `-ferns` |
-| the ground (`drift`) | `-grass` |
+| slot                                                    | members                                              |
+| ------------------------------------------------------- | ---------------------------------------------------- |
+| floor joints (`growth`, 22×22)                          | `overgrown` tuft · `-flowers` · `-scrub` · `-fronds` |
+| wall band (`growthWall`, 22×34)                         | `-wall` root · `-creeper` · `-curtain`               |
+| chamber floor (`growth`; `canopy`, 110×110, for a tree) | `-plant` · `-palm` · `-ferns`                        |
+| the ground (`drift`)                                    | `-grass`                                             |
 
 **A plant is drawn from ABOVE, not from the side.** This is the rule the family cost the most rolls on.
 The 30° camera in §2 describes FURNITURE — a jar rack, a timber post, things with a front. A plant grows
