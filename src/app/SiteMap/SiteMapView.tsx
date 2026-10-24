@@ -1692,7 +1692,7 @@ export const SiteMapView = ({
               aria-hidden="true"
               className="absolute inset-0 block"
             >
-              <TileLayers regions={regions} tier={tier} archedGaps={archedGaps} />
+              <TileLayers regions={regions} tier={tier} archedGaps={archedGaps} seed={grid.siteId} />
             </svg>
             <GroundCover
               grid={grid}
