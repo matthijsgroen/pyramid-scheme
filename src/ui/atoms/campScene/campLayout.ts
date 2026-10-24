@@ -191,22 +191,24 @@ const toRadians = (degrees: number) => (degrees * Math.PI) / 180
 const castShadow = (p: Omit<PlacedPiece, "shadow">, glows: PlacedGlow[]): PlacedShadow | undefined => {
   if (p.piece.lights?.some(l => l.mode === "flicker")) return undefined
   // Fully firelit inside a glow itself, fading to moonlight at its reach; the fire lighting it most wins, so a
-  // small oven beside a piece does not turn its shadow away from the big fire that lights it.
+  // small oven beside a piece does not turn its shadow away from the big fire that lights it. Measured foot to
+  // foot, where the light lands on the sand, so a raised flame does not tilt the shadows around it.
   const lit = (g: PlacedGlow) => {
-    const distance = Math.hypot(p.x - g.x, p.y - g.y)
+    const distance = Math.hypot(p.x - g.x, p.y - g.floor)
     const reach = g.radius * S.reachFactor
     const fire = distance > 0 ? clamp((reach - distance) / Math.max(reach - g.radius, 1e-9), 0, 1) : 0
     return { g, distance, fire }
   }
   const nearest = glows
-    .filter(g => g.mode === "flicker" && !g.key.startsWith(`${p.key}:`))
+    // A spot's own light (the tower's signal fire) lights it from within, never across its own ground.
+    .filter(g => g.mode === "flicker" && !g.key.startsWith(`${p.spot}:`))
     .map(lit)
     .sort((a, b) => b.fire - a.fire || a.distance - b.distance)[0]
   const fire = nearest?.fire ?? 0
   if (fire === 0) return { angle: S.moonAngle, offset: S.offsetMoon * p.scale, strength: S.strengthMin }
   const moon = toRadians(S.moonAngle)
   const vx = (fire * (p.x - nearest.g.x)) / nearest.distance + (1 - fire) * Math.cos(moon)
-  const vy = (fire * (p.y - nearest.g.y)) / nearest.distance + (1 - fire) * Math.sin(moon)
+  const vy = (fire * (p.y - nearest.g.floor)) / nearest.distance + (1 - fire) * Math.sin(moon)
   return {
     angle: (Math.atan2(vy, vx) * 180) / Math.PI,
     offset: (S.offsetMoon + fire * (S.offsetFire - S.offsetMoon)) * p.scale,

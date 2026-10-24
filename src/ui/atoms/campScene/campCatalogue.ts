@@ -17,9 +17,11 @@ const light = (
 // One hearth: the ring's small fire gives way to the big one's light once the fire is laid.
 const fireGlow = (radius: number) => light(radius, "255,150,55", "flicker", 0.75, 0, -0.5, "hearth")
 const OVEN = light(0.7, FIRE, "flicker", 0.8, 0.35, -0.62)
+/** The tower stands tall and alone, so it lays a long silhouette on the sand. */
+const TOWER_CAST = 0.45
 const SIGNAL = light(0.8, "255,160,60", "flicker", 0.8, 0, -0.85)
 
-type PieceOptions = Partial<Pick<CampPiece, "dx" | "dy" | "width" | "height" | "replaces" | "lights">>
+type PieceOptions = Partial<Pick<CampPiece, "dx" | "dy" | "width" | "height" | "replaces" | "lights" | "cast">>
 
 const piece = (id: string, options: PieceOptions = {}): CampPiece => ({
   id,
@@ -30,7 +32,7 @@ const piece = (id: string, options: PieceOptions = {}): CampPiece => ({
   ...options,
 })
 
-type StepOptions = Pick<PieceOptions, "replaces" | "lights"> & {
+type StepOptions = Pick<PieceOptions, "replaces" | "lights" | "cast"> & {
   /** A base step in a layered spot: the whole spot as one picture, hiding the base before it. */
   base?: true
   /** Not a find: ground for the spot, there once anything else in it is found. */
@@ -171,13 +173,13 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["wizard", "secondIbis"],
     ]),
     layered("lookout", { x: -1.62, y: -1.89, frame: 2.31, footprint: 0.87 }, [
-      ["master", "post", { base: true }],
-      ["master", "platform"],
-      ["master", "ladder", { on: "platform" }],
-      ["master", "roof", { on: "platform" }],
+      ["master", "post", { base: true, cast: TOWER_CAST }],
+      ["master", "platform", { cast: TOWER_CAST }],
+      ["master", "ladder", { on: "platform", cast: TOWER_CAST }],
+      ["master", "roof", { on: "platform", cast: TOWER_CAST }],
       // The pennant flies from the roof's peak.
-      ["wizard", "flag", { on: "roof" }],
-      ["wizard", "signalFire", { on: "platform", lights: [SIGNAL] }],
+      ["wizard", "flag", { on: "roof", cast: TOWER_CAST }],
+      ["wizard", "signalFire", { on: "platform", lights: [SIGNAL], cast: TOWER_CAST }],
     ]),
     layered("godStatues", { x: 1.33, y: 1.87, frame: 1.8, footprint: 1.62 }, [
       ["wizard", "statueBench", { base: true, given: true }],

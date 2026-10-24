@@ -595,7 +595,7 @@ describe("layoutCamp shadows", () => {
     const { fireGlow, at } = shadowsOf(around(3, [-1, 1]))
     for (const id of ["p-1", "p1"]) {
       const p = at(id)
-      expect(p.shadow.angle).toBeCloseTo(degrees(p.y - fireGlow.y, p.x - fireGlow.x))
+      expect(p.shadow.angle).toBeCloseTo(degrees(p.y - fireGlow.floor, p.x - fireGlow.x))
       expect(p.shadow.light).toBe(fireGlow.key)
     }
     expect(at("p-1").shadow.angle).not.toBeCloseTo(at("p1").shadow.angle)
@@ -613,6 +613,32 @@ describe("layoutCamp shadows", () => {
     })
     const { fireGlow, at } = shadowsOf(c)
     expect(at("p1.2").shadow.light).toBe(fireGlow.key)
+  })
+
+  it("measures a shadow's direction from the foot of the light, not from its raised flame", () => {
+    const c = around(3, [1])
+    c.fixed[0].piece = piece("fire", { lights: [{ ...glow(3), dy: -2 }] })
+    const { at } = shadowsOf(c)
+    expect(at("p1").shadow.angle).toBeCloseTo(0)
+  })
+
+  it("takes no shadow from a light of its own spot", () => {
+    const tower: CampCatalogue = {
+      spots: [
+        {
+          ...lone("lookout", 0, 0, 1, 1),
+          steps: [
+            { chapter: "starter", pieces: [piece("post")] },
+            { chapter: "starter", pieces: [piece("brazier", { lights: [glow(3)] })], layer: {} },
+          ],
+        },
+      ],
+      fixed: [],
+    }
+    const post = layout({ catalogue: tower, found: { lookout: ["post", "brazier"] } }).pieces.find(
+      p => p.piece.id === "post"
+    )!
+    expect(post.shadow?.light).toBeUndefined()
   })
 
   it("falls back to the moon shadow out of the fire's reach", () => {

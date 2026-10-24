@@ -41,6 +41,8 @@ export type CampPiece = {
   /** Ids of earlier pieces in the same spot that this one hides. */
   replaces?: string[]
   lights?: CampLight[]
+  /** Opt-in: the piece lays its own silhouette on the sand, this share of its height long. */
+  cast?: number
 }
 
 /**

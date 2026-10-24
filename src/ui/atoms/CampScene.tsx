@@ -1,6 +1,6 @@
 import { Fragment, type CSSProperties, type ReactNode } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
-import { campArt } from "./campScene/campArt"
+import { campArt, campFoot } from "./campScene/campArt"
 import { CAMP_CATALOGUE } from "./campScene/campCatalogue"
 import {
   CAMP_SHADOW_PARAMS,
@@ -126,6 +126,46 @@ const Shadow = ({
 }
 
 /**
+ * The piece's own silhouette laid on the sand away from its light, like the decorations beside a pyramid:
+ * the art as a black mask, sheared about the line its picture stands on so its top lands `length` of its height
+ * away. Opt-in per piece (`cast`), since a silhouette does not suit every object.
+ */
+const CastShadow = ({
+  shadow,
+  placed,
+  url,
+  length,
+  foot,
+  delay,
+}: {
+  shadow: PlacedShadow
+  placed: PlacedPiece
+  url: string
+  length: number
+  foot: number
+  delay?: string
+}) => {
+  const a = (shadow.angle * Math.PI) / 180
+  const mask = `url(${url})`
+  return (
+    <i
+      className={shadow.light ? "camp-cast camp-firelit" : "camp-cast"}
+      style={
+        {
+          ...boxOf(placed),
+          transform: `translate(-50%, -100%) matrix(1, 0, ${-length * Math.cos(a)}, ${-length * Math.sin(a)}, 0, 0)`,
+          transformOrigin: `50% ${foot * 100}%`,
+          maskImage: mask,
+          WebkitMaskImage: mask,
+          "--camp-strength": shadow.strength,
+          animationDelay: delay,
+        } as CSSProperties
+      }
+    />
+  )
+}
+
+/**
  * Light on the side facing the light, dark on the side away from it, masked by the piece's own art so it
  * covers only the piece. A plain alpha overlay: no filter and no blend mode.
  */
@@ -181,6 +221,16 @@ const Piece = ({ placed, lightIndex }: { placed: PlacedPiece; lightIndex: number
   const delay = lightIndex >= 0 ? `${flickerDelays(lightIndex)[1]}s` : undefined
   return (
     <Fade visible={placed.visible}>
+      {piece.cast && shadow && (
+        <CastShadow
+          shadow={shadow}
+          placed={placed}
+          url={art.url}
+          length={piece.cast}
+          foot={campFoot(piece.id) ?? 1}
+          delay={delay}
+        />
+      )}
       {art.shadow && shadow && <Shadow shadow={shadow} placed={placed} url={art.shadow} delay={delay} />}
       <img
         className={art.frameB ? "camp-piece camp-frame--a" : "camp-piece"}

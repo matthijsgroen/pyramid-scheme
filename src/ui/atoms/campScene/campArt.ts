@@ -25,6 +25,8 @@ export const groupCampArt = (urls: Record<string, string>): Map<string, CampArt>
   return art
 }
 
+import FEET from "../../../assets/camp/feet.json"
+
 // The filename is the piece id, so adding a piece's art is dropping its file in.
 const ART = groupCampArt(
   import.meta.glob("../../../assets/camp/*.{png,webp,svg}", {
@@ -44,3 +46,6 @@ const LAYER_ART = groupCampArt(
 )
 
 export const campArt = (id: string, layer = false): CampArt | undefined => (layer ? LAYER_ART : ART).get(id)
+
+/** Where a step's picture stands, as a share of its height (`yarn import-camp` measures it); a layer shares it. */
+export const campFoot = (id: string): number | undefined => (FEET as Record<string, number>)[id]

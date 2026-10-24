@@ -222,6 +222,18 @@
   user-select: none;
 }
 
+/* Sheared about the line the art stands on, set per piece from its measured foot. */
+.camp-cast {
+  position: absolute;
+  opacity: calc(var(--camp-strength, 0.3) * 0.7);
+  background: #000;
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  user-select: none;
+}
+
 .camp-shade {
   transform: translate(-50%, -100%);
   mask-size: 100% 100%;

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
-import { existsSync, mkdtempSync, rmSync } from "fs"
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "fs"
 import { tmpdir } from "os"
 import { join } from "path"
 import sharp from "sharp"
@@ -189,5 +189,12 @@ describe("importCamp", () => {
     expect(at(50, 200)).toEqual([0, 0, 255, 255])
     expect(at(200, 200)[0] - at(200, 200)[2]).toBeGreaterThan(240)
     expect(at(300, 50)[3]).toBe(0)
+  })
+
+  it("records where the piece stands: its lowest opaque row, as a share of the height", async () => {
+    await importCamp(options(await magentaWithRedSquare()))
+
+    const feet = JSON.parse(readFileSync(join(dir, "assets", "feet.json"), "utf8"))
+    expect(feet.chest).toBeCloseTo(250 / 400, 2)
   })
 })

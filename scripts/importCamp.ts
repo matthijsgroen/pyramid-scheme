@@ -28,7 +28,7 @@
  * follow the base of an object seen from 3/4 above; a band under that base can. Scenery is ground and sky,
  * not something standing on it, so it casts none.
  */
-import { existsSync, mkdirSync } from "node:fs"
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
 import { dirname, join, resolve } from "node:path"
 import { fileURLToPath, pathToFileURL } from "node:url"
 import sharp from "sharp"
@@ -164,24 +164,20 @@ const keyUnmix = (data: Buffer, width: number, height: number, key: string, tole
 /** The alpha from which a pixel counts as the object, not its keyed fringe. */
 const OPAQUE = 128
 
-/** How far below a foot, as a share of the height, the rest of the spot still counts as what it rests on. */
-const RESTS_ON = 0.03
-
 /**
  * Per column, a full band from the lowest opaque pixel upward; with `ground` (the whole spot the piece is
- * part of), only where nothing of the spot lies just below that foot, so a roof on a tower casts none.
+ * part of), only where nothing of the spot lies anywhere below that foot: a roof on a tower, or a pennant waving
+ * over it, is held up by the rest and casts none.
  */
 const baseBand = (alpha: Buffer, width: number, height: number, ground?: Buffer) => {
   const band = Math.max(1, Math.round(height * SHADOW_BAND))
-  const reach = Math.max(2, Math.round(height * RESTS_ON))
   const out = Buffer.alloc(width * height)
   for (let x = 0; x < width; x++) {
     let bottom = height - 1
     while (bottom >= 0 && alpha[bottom * width + x] < OPAQUE) bottom--
     if (bottom < 0) continue
     let rests = false
-    for (let y = bottom + 2; ground && y < Math.min(height, bottom + reach); y++)
-      rests ||= ground[y * width + x] >= OPAQUE
+    for (let y = bottom + 2; ground && y < height; y++) rests ||= ground[y * width + x] >= OPAQUE
     if (rests) continue
     for (let y = bottom; y >= 0 && y > bottom - band; y--) out[y * width + x] = 255
   }
@@ -207,6 +203,23 @@ export const writeShadow = async (piece: Buffer, path: string, size: number, gro
     .joinChannel(data, { raw: { width, height, channels: 1 } })
     .webp({ quality: 90, alphaQuality: 90 })
     .toFile(path)
+}
+
+/** The lowest opaque row of a picture, as a share of its height: where its object stands on the sand. */
+export const measureFoot = async (image: Buffer | string) => {
+  const { data, info } = await sharp(image).ensureAlpha().extractChannel(3).raw().toBuffer({ resolveWithObject: true })
+  for (let y = info.height - 1; y >= 0; y--)
+    for (let x = 0; x < info.width; x++) if (data[y * info.width + x] >= OPAQUE) return (y + 1) / info.height
+  return 1
+}
+
+/** Each piece's foot, read by the scene to shear a cast shadow about the line its object stands on. */
+export const recordFoot = async (outRoot: string, name: string, image: Buffer | string) => {
+  const path = join(outRoot, "feet.json")
+  const feet: Record<string, number> = existsSync(path) ? JSON.parse(readFileSync(path, "utf8")) : {}
+  feet[name] = Math.round((await measureFoot(image)) * 1000) / 1000
+  const sorted = Object.fromEntries(Object.entries(feet).sort(([a], [b]) => a.localeCompare(b)))
+  writeFileSync(path, `${JSON.stringify(sorted, null, 2)}\n`)
 }
 
 export const importCamp = async ({
@@ -244,6 +257,7 @@ export const importCamp = async ({
       : keyed
   await sharp(piece).webp({ quality: 90 }).toFile(out)
   if (key === "none" || SCENERY.has(name)) return { out, master }
+  await recordFoot(outRoot, name, piece)
   const shadow = join(outRoot, `${name}-shadow.webp`)
   await writeShadow(piece, shadow, shadowSize)
   return { out, master, shadow }
