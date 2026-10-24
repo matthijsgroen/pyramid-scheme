@@ -488,7 +488,9 @@ hieroglyphs, no watermark, no frame, no border.
 It is about twice as wide as it is tall: a hole in the floor with a low broken rim.
 ```
 
-**Import:** `yarn import-tile art/masters/props/cave/pit.webp --tier=cave --name=pit --slot=prop --filter=smooth`
+**Prepare:** `art/deshadow.sh <render> clean.png art/masters/props/cave/pit-shadow.png`, keep `clean.png` as the master (the shadow comes back magenta).
+
+**Import:** `yarn import-tile art/masters/props/cave/pit.webp --tier=cave --name=pit --slot=prop --filter=smooth --seat=art/masters/props/cave/pit-shadow.png --seat-opacity=0.55`
 
 ### `cave/crystal` — pale selenite blades from a rock seam
 
