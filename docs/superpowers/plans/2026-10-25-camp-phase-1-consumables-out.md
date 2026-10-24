@@ -61,11 +61,11 @@ Each is the option that changes the least shipped behaviour; Task 1 writes them 
 
 **Interfaces:** none (a document the designer reads first).
 
-- [ ] **Step 1:** Create the file with four sections in this order: **Decisions**, **Drafts**, **Failures**, **Look at in browser**. One line per entry. A short header (two sentences) says what the file is: the designer's morning list for the unattended camp-release queue, newest phase last within each section.
-- [ ] **Step 2:** Seed **Decisions** with the queue's seven defaults from `docs/handover-camp-release.md` ("Defaults this queue takes"), one line each, each marked `(queue default)`: camp mod; waterskin in the trap mod; healing at the camp fire; coming home fires on every return; pack-mule and supplies detector; animal prices; where things live once the pager is gone.
-- [ ] **Step 3:** Add this plan's ten "Decisions for the review list" under Decisions, each prefixed `Phase 1 —`, one line each, with its alternative.
-- [ ] **Step 4:** Under **Drafts**, add one line for Fez's `shopArrival2` (filled in by Task 8). Under **Look at in browser**, add: hearts refill after leaving an expedition; the waterskin popup; Fez's shop without supplies; the trap warning without heal or disarm buttons; the HUD without the supplies bar; the detector toggles without the supplies detector.
-- [ ] **Step 5:** `yarn lint` (Prettier formats markdown). Commit — `docs: the camp release review list`
+- [x] **Step 1:** Create the file with four sections in this order: **Decisions**, **Drafts**, **Failures**, **Look at in browser**. One line per entry. A short header (two sentences) says what the file is: the designer's morning list for the unattended camp-release queue, newest phase last within each section.
+- [x] **Step 2:** Seed **Decisions** with the queue's seven defaults from `docs/handover-camp-release.md` ("Defaults this queue takes"), one line each, each marked `(queue default)`: camp mod; waterskin in the trap mod; healing at the camp fire; coming home fires on every return; pack-mule and supplies detector; animal prices; where things live once the pager is gone.
+- [x] **Step 3:** Add this plan's ten "Decisions for the review list" under Decisions, each prefixed `Phase 1 —`, one line each, with its alternative.
+- [x] **Step 4:** Under **Drafts**, add one line for Fez's `shopArrival2` (filled in by Task 8). Under **Look at in browser**, add: hearts refill after leaving an expedition; the waterskin popup; Fez's shop without supplies; the trap warning without heal or disarm buttons; the HUD without the supplies bar; the detector toggles without the supplies detector.
+- [x] **Step 5:** `yarn lint` (Prettier formats markdown). Commit — `docs: the camp release review list`
 
 ---
 
