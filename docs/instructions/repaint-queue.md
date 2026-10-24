@@ -333,8 +333,9 @@ NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shadin
 Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
 than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it.
+THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
+Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
+object described here, alone.
 The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen at the same slightly raised angle as the attached prop. Fill the frame's lower two thirds. Even lighting, no ground plane, no shadow.
 ```
 
@@ -353,8 +354,9 @@ NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shadin
 Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
 than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it.
+THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
+Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
+object described here, alone.
 The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen at the same slightly raised angle as the attached prop. Fill the frame's lower two thirds. Even lighting, no ground plane, no shadow.
 ```
 
@@ -373,8 +375,9 @@ NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shadin
 Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
 than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it.
+THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
+Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
+object described here, alone.
 The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen at the same slightly raised angle as the attached prop. Fill the frame's lower two thirds. Even lighting, no ground plane, no shadow.
 ```
 
@@ -393,8 +396,9 @@ NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shadin
 Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
 than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it.
+THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
+Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
+object described here, alone.
 The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen at the same slightly raised angle as the attached prop. Fill the frame's lower two thirds. Even lighting, no ground plane, no shadow.
 ```
 
@@ -413,8 +417,9 @@ NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shadin
 Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
 than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it.
+THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
+Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
+object described here, alone.
 The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen at the same slightly raised angle as the attached prop. Fill the frame's lower two thirds. Even lighting, no ground plane, no shadow.
 ```
 
@@ -433,8 +438,9 @@ NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shadin
 Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
 than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it.
+THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
+Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
+object described here, alone.
 The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen at the same slightly raised angle as the attached prop. Fill the frame's lower two thirds. Even lighting, no ground plane, no shadow.
 ```
 
@@ -453,8 +459,9 @@ NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shadin
 Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
 than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it.
+THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
+Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
+object described here, alone.
 The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen at the same slightly raised angle as the attached prop. Fill the frame's lower two thirds. Even lighting, no ground plane, no shadow.
 ```
 
@@ -473,8 +480,9 @@ NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shadin
 Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
 than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it.
+THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
+Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
+object described here, alone.
 The patch alone on pure magenta #FF00FF, soft-edged, centred in the lower part of a portrait frame. Even lighting, no cast shadow.
 ```
 
@@ -493,8 +501,9 @@ NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shadin
 Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
 than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it.
+THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
+Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
+object described here, alone.
 The patch alone on pure magenta #FF00FF, soft-edged, centred in the lower part of a portrait frame. Even lighting, no cast shadow.
 ```
 
@@ -513,8 +522,9 @@ NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shadin
 Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
 than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it.
+THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
+Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
+object described here, alone.
 Flat frontal view, no perspective. A wide shallow band, twice as wide as tall, on pure magenta #FF00FF, the art touching the top edge and filling the frame's width. Even lighting.
 ```
 
@@ -533,8 +543,9 @@ NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shadin
 Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
 than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it.
+THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
+Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
+object described here, alone.
 Flat frontal view, no perspective. A wide shallow band, twice as wide as tall, on pure magenta #FF00FF, the art touching the top edge and filling the frame's width. Even lighting.
 ```
 
