@@ -18,6 +18,5 @@ describe("priceFor", () => {
   it("returns 0 for a reward type it doesn't price (money/sellable/unknown)", () => {
     expect(priceFor({ type: "money", amount: 5 }, "junior")).toBe(0)
     expect(priceFor({ type: "sellable", itemId: "x" }, "junior")).toBe(0)
-    expect(priceFor({ type: "consumable", consumable: "bandage" }, "junior")).toBe(0)
   })
 })

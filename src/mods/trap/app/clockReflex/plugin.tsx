@@ -8,11 +8,10 @@ import { ClockReflexChallenge } from "./ClockReflexChallenge"
 
 export type { ClockQuestion }
 
-const ClockReflexFamily: FamilyPlugin<ClockQuestion>["Component"] = ({ puzzle, ctx, journeys, onSolved, onCancel }) => (
+const ClockReflexFamily: FamilyPlugin<ClockQuestion>["Component"] = ({ puzzle, ctx, onSolved, onCancel }) => (
   <TrapFamilyShell
     question={puzzle}
     ctx={ctx}
-    journeys={journeys}
     onSolved={onSolved}
     onCancel={onCancel}
     ChallengeComponent={ClockReflexChallenge}
