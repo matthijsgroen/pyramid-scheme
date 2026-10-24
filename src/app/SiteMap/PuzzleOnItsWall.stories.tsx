@@ -51,12 +51,23 @@ const PuzzleOnItsWall: FC<{ familyId: string; difficulty: Difficulty; face?: str
     )
   return (
     <EncounterModal tileset={wall ?? difficulty}>
-      <Board key={`${family.meta.id}:${difficulty}:${face}`} family={family} difficulty={difficulty} face={face} />
+      <Board
+        key={`${family.meta.id}:${difficulty}:${face}:${wall}`}
+        family={family}
+        difficulty={difficulty}
+        face={face}
+        wall={wall}
+      />
     </EncounterModal>
   )
 }
 
-const Board: FC<{ family: FamilyPlugin; difficulty: Difficulty; face: string }> = ({ family, difficulty, face }) => {
+const Board: FC<{ family: FamilyPlugin; difficulty: Difficulty; face: string; wall?: Tileset }> = ({
+  family,
+  difficulty,
+  face,
+  wall,
+}) => {
   const progression = useProgression()
   const journeys = useJourneys()
   const inventory = useInventory()
@@ -69,11 +80,12 @@ const Board: FC<{ family: FamilyPlugin; difficulty: Difficulty; face: string }> 
       sectionHash: "story",
       freshArrival: true,
       difficulty,
+      tileset: wall,
       // A face is asked for by name the way the puzzle lab asks: through the theme, "default" being no ask.
       theme: face === "default" ? undefined : face,
       tags: family.meta.tags,
     }),
-    [family, difficulty, face]
+    [family, difficulty, face, wall]
   )
   const generated = useMemo(() => {
     try {

@@ -1,5 +1,6 @@
 import type { FC, FormEvent } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
+import type { Tileset } from "@/game/siteTypes"
 import type { TableauLevel } from "@/mods/hieroglyph/game/tableaus"
 import type { HieroglyphSymbolResolver } from "@/ui/molecules/FormulaPart"
 import type { ChestState } from "@/ui/atoms/Chest"
@@ -11,6 +12,8 @@ import type { FilledTileState } from "@/ui/molecules/FormulaPart"
 
 export const TombPuzzleView: FC<{
   difficulty: Difficulty
+  /** The wall the tableau stands in and opens: the room's tileset, not its difficulty. */
+  wall: Tileset
   tableau: TableauLevel
   calculation: TableauCalculation
   filledState: FilledTileState
@@ -29,6 +32,7 @@ export const TombPuzzleView: FC<{
   onInventoryItemClick: (symbolId: string) => void
 }> = ({
   difficulty,
+  wall,
   tableau,
   calculation,
   filledState,
@@ -53,11 +57,7 @@ export const TombPuzzleView: FC<{
     <div className="flex flex-1" />
     <div className="flex min-w-fit flex-1 flex-col items-center justify-center overflow-y-auto px-4 text-white">
       <div className="flex flex-1" />
-      <TombDoor
-        className="flex flex-2 flex-col items-center justify-center"
-        open={lockState === "open"}
-        difficulty={difficulty}
-      >
+      <TombDoor className="flex flex-2 flex-col items-center justify-center" open={lockState === "open"} wall={wall}>
         {isPuzzleCompleted && (
           <TombLockPanel
             difficulty={difficulty}

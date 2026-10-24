@@ -3,10 +3,11 @@ import juniorWall from "@/assets/tombWall/junior.webp"
 import expertWall from "@/assets/tombWall/expert.webp"
 import masterWall from "@/assets/tombWall/master.webp"
 import wizardWall from "@/assets/tombWall/wizard.webp"
-import type { Difficulty } from "@/data/difficultyLevels"
+import caveWall from "@/assets/tombWall/cave.webp"
+import type { Tileset } from "@/game/siteTypes"
 
 /**
- * The wall a tomb puzzle is set against, one per rank, so a board wears the stone of the tomb it was
+ * The wall a tomb puzzle is set against, one per tileset (each rank, and the cave), so a board wears the stone of the place it was
  * found in: behind the tableau (TombBackdrop), the passage door (TombDoor) and every encounter
  * (EncounterModal). Each is a SQUARE panel of one whole wall — ceiling ledge on top, the rank's brick,
  * a dark base — laid with `cover` (WALL_SIZE below), so it is never tiled: a portrait screen shows its
@@ -17,7 +18,7 @@ import type { Difficulty } from "@/data/difficultyLevels"
  * is outlined in, because a warm brown void behind the gods' calcite reads as a different tomb. All
  * three come from `tierPalette` in src/app/SiteMap/tileMaterials.ts.
  */
-export const imageMap: Record<Difficulty, { color: string; gradient: string; behind: string; image: string }> = {
+export const imageMap: Record<Tileset, { color: string; gradient: string; behind: string; image: string }> = {
   starter: {
     image: starterWall,
     behind: "bg-[#15110c]",
@@ -47,6 +48,13 @@ export const imageMap: Record<Difficulty, { color: string; gradient: string; beh
     behind: "bg-[#0f231d]",
     color: "bg-[#1d3830]",
     gradient: "bg-gradient-to-t from-[#1d3830] from-50% to-[#3a6155] to-100%",
+  },
+  // No rank's tomb: the cave's own rock, met behind the boards a cave holds.
+  cave: {
+    image: caveWall,
+    behind: "bg-[#120f0c]",
+    color: "bg-[#1f1b16]",
+    gradient: "bg-gradient-to-t from-[#1f1b16] from-50% to-[#41392f] to-100%",
   },
 }
 

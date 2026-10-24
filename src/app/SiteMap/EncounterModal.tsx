@@ -1,19 +1,6 @@
 import type { FC, ReactNode } from "react"
-import type { Difficulty, Tileset } from "@/game/siteTypes"
-import caveWall from "@/assets/tombWall/cave.webp"
+import type { Tileset } from "@/game/siteTypes"
 import { imageMap, WALL_SIZE } from "@/ui/atoms/tombImageMap"
-
-// The ranks' walls, and the cave's: a tileset that is no rank, so no tomb door or tableau stands against it,
-// only its encounters. Its colours are its own `wallBase` and `wall` (tileMaterials.ts).
-const walls: Partial<Record<Tileset, (typeof imageMap)[Difficulty]>> = {
-  ...imageMap,
-  cave: {
-    image: caveWall,
-    behind: "bg-[#120f0c]",
-    color: "bg-[#1f1b16]",
-    gradient: "bg-gradient-to-t from-[#1f1b16] from-50% to-[#41392f] to-100%",
-  },
-}
 
 // The frame every encounter (puzzle, trap, shop, gate, chest) is presented in. Scrolls
 // vertically so a family can put its rules below the board while the board itself stays within
@@ -53,7 +40,7 @@ const walls: Partial<Record<Tileset, (typeof imageMap)[Difficulty]>> = {
 // NOTHING IN IT, NO FRAME. A conversation is played in the companion overlay and the shop shows nothing
 // while Fez greets, and a frame with nothing in it collapses to its padding: a bar across the map.
 export const EncounterModal: FC<{ children: ReactNode; tileset?: Tileset }> = ({ children, tileset }) => {
-  const wall = tileset ? walls[tileset] : undefined
+  const wall = tileset ? imageMap[tileset] : undefined
   return (
     <div className="fixed inset-0 z-20 flex justify-center overflow-x-hidden overflow-y-auto bg-black/80 p-safe-edge has-[[data-encounter-content]:empty]:hidden">
       <div

@@ -5,7 +5,7 @@ const meta = {
   component: TombDoor,
   parameters: { layout: "centered" },
   argTypes: {
-    difficulty: { control: "select", options: ["starter", "junior", "expert", "master", "wizard"] },
+    wall: { control: "select", options: ["starter", "junior", "expert", "master", "wizard", "cave"] },
     open: { control: "boolean" },
   },
 } satisfies Meta<typeof TombDoor>
@@ -16,7 +16,7 @@ type Story = StoryObj<typeof meta>
 const doorContent = <p className="mt-8 text-center font-bold text-white/80">Tomb Entrance</p>
 
 export const Starter: Story = {
-  args: { difficulty: "starter", children: doorContent },
+  args: { wall: "starter", children: doorContent },
   decorators: [
     Story => (
       <div className="size-48">
@@ -27,7 +27,7 @@ export const Starter: Story = {
 }
 
 export const Expert: Story = {
-  args: { difficulty: "expert", children: doorContent },
+  args: { wall: "expert", children: doorContent },
   decorators: [
     Story => (
       <div className="size-48">
@@ -38,7 +38,7 @@ export const Expert: Story = {
 }
 
 export const Master: Story = {
-  args: { difficulty: "master", children: doorContent },
+  args: { wall: "master", children: doorContent },
   decorators: [
     Story => (
       <div className="size-48">
@@ -49,7 +49,7 @@ export const Master: Story = {
 }
 
 export const Wizard: Story = {
-  args: { difficulty: "wizard", children: doorContent },
+  args: { wall: "wizard", children: doorContent },
   decorators: [
     Story => (
       <div className="size-48">
@@ -60,7 +60,18 @@ export const Wizard: Story = {
 }
 
 export const Open: Story = {
-  args: { difficulty: "starter", open: true, children: doorContent },
+  args: { wall: "starter", open: true, children: doorContent },
+  decorators: [
+    Story => (
+      <div className="size-48">
+        <Story />
+      </div>
+    ),
+  ],
+}
+
+export const Cave: Story = {
+  args: { wall: "cave", children: doorContent },
   decorators: [
     Story => (
       <div className="size-48">

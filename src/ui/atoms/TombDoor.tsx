@@ -1,15 +1,15 @@
-import type { Difficulty } from "@/data/difficultyLevels"
+import type { Tileset } from "@/game/siteTypes"
 import clsx from "clsx"
 import type { FC, PropsWithChildren } from "react"
 import { imageMap, WALL_SIZE } from "./tombImageMap"
 
-export const TombDoor: FC<PropsWithChildren<{ className?: string; open?: boolean; difficulty: Difficulty }>> = ({
+export const TombDoor: FC<PropsWithChildren<{ className?: string; open?: boolean; wall: Tileset }>> = ({
   children,
   className,
-  difficulty,
+  wall,
   open = false,
 }) => {
-  const settings = imageMap[difficulty]
+  const settings = imageMap[wall]
   return (
     <div className={clsx(settings.behind, "perspective-midrange perspective-origin-left", className)}>
       <div

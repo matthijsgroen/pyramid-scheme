@@ -1,4 +1,5 @@
 import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
+import type { Tileset } from "@/game/siteTypes"
 import type { TableauLevel } from "@/mods/hieroglyph/game/tableaus"
 import { type RewardCalculation } from "@/mods/hieroglyph/game/generateRewardCalculation"
 import { getInventoryItemById } from "@/mods/hieroglyph/game/symbolCatalogue"
@@ -24,8 +25,10 @@ export const TombPuzzle: FC<{
   tableau: TableauLevel
   calculation: RewardCalculation
   difficulty: Difficulty
+  /** The room's tileset; unset, the tableau's own rank. */
+  wall?: Tileset
   onComplete?: () => void
-}> = ({ tableau, calculation, difficulty, onComplete }) => {
+}> = ({ tableau, calculation, difficulty, wall, onComplete }) => {
   const { t } = useTranslation("common")
 
   // A hieroglyph is OWNED once its fragments are complete — a reusable key that fills every slot of
@@ -171,6 +174,7 @@ export const TombPuzzle: FC<{
   return (
     <TombPuzzleView
       difficulty={difficulty}
+      wall={wall ?? difficulty}
       tableau={tableau}
       calculation={calculation}
       filledState={{ filledPositions, symbolCounts }}
