@@ -245,7 +245,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
         />
         {/* pointer-events-auto: opts this row back into hit-testing inside SiteHudBar's
             non-hit-testing band (the detector toggles and mod widgets below are clickable). */}
-        {/* Wraps rather than clipping: with every detector, a full key ring, six hearts, the supplies
+        {/* Wraps rather than clipping: with every detector, a full key ring, six hearts
             and the balance, this row outgrows a phone even after folding the detectors into one
             button — and an overflowing row pushed the coin balance off-screen entirely. */}
         <div className="pointer-events-auto flex flex-wrap items-center justify-center gap-x-4 gap-y-2">

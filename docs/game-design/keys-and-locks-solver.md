@@ -54,7 +54,7 @@ one finished:
    pieces already use (see "Capped loot spreads" below). Authored DSL drop
    rates for capped loot are a tentative idea, not yet designed — see
    "Open" below.
-4. **Uncapped loot.** Fills whatever's left (sellables, consumables,
+4. **Uncapped loot.** Fills whatever's left (money, sellables,
    junk) — a max-%-occupancy and a drop rate, not "always fill." Not yet
    designed at all; out of scope until phase 3 (capped loot) is built and
    proven. See "Open" below.
@@ -312,7 +312,7 @@ policy.
 Once every key-like currency is fully placed (no blockers left), remaining
 slots get filled by phase 3 (capped loot: mosaic tiles today, more
 mod-owned capped currencies later) then phase 4 (uncapped loot:
-consumables, sellables, junk) — through the **same composable
+money, sellables, junk) — through the **same composable
 distribution-rule pipeline** every key currency already uses, just with
 different completion guarantees (capped = must fully place; uncapped =
 drop-rate-gated, a slot can end up genuinely empty). Neither phase needs

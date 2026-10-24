@@ -25,7 +25,7 @@ export type FamilyContext = {
   /** Where this room is drawn in the carve that is on screen — for anything about the here and now. */
   edgeId: string
   /** WHICH ROOM THIS IS, as `${sectionHash}#${floor}/${slot}` (cellIdentity.ts). A family
-   * that remembers anything per room — a bought shop slot, a disarmed trap, a half-finished board —
+   * that remembers anything per room — a bought shop slot, a half-finished board —
    * files it under this, because the coordinate above moves when the floor is carved again. */
   address: string
   /** The address this room had before a mechanism's slot named the mechanism (`legacyCellAddress`), for

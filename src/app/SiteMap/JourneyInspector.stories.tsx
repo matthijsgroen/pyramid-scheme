@@ -53,8 +53,6 @@ const rewardLabel = (r: TreasureReward): string => {
       return "Mosaic Piece"
     case "mapPiece":
       return `Map Piece → ${r.tombId}`
-    case "waterskin":
-      return "Waterskin"
     case "fragmentSlot":
       return "Fragment Slot (unassigned)"
     case "money":
@@ -77,8 +75,6 @@ const rewardColor = (r: TreasureReward): string => {
       return "text-cyan-300"
     case "mapPiece":
       return "text-green-300"
-    case "waterskin":
-      return "text-orange-300"
     case "fragmentSlot":
       return "text-stone-400"
     case "money":

@@ -7,7 +7,7 @@ import type { CappedCurrency } from "./placeFragments"
 // (priority among eligible — composed from distribution.ts's pipe/rankBy/preferThenRelax);
 // CORE allocates the slots, the MOD fills them — so core never rolls a variant or knows a
 // currency's meaning. Capped currencies are the degenerate exact-footprint case (min === max);
-// the dynamic distributions (trap waterskins, shop money economy) are flexible.
+// the dynamic distributions (owned by mods, e.g. the shop's money economy) are flexible.
 export type Footprint = { min: number; max: number }
 
 export type Distribution = {
@@ -15,7 +15,7 @@ export type Distribution = {
   // How many slots core should hand this distribution. Exact (min === max) for a fixed total.
   footprint: (allConfigs: Record<string, SiteConfig[]>) => Footprint
   // Which slots core may allocate to it (default: any). The encounter↔loot join lives here —
-  // e.g. waterskins filter on `slot.rewardPriority > 0 && tier >= expert`; the shop takes any
+  // e.g. a mod's distribution may filter on `slot.rewardPriority > 0 && tier >= expert`; the shop takes any
   // loot-eligible (`rewardPriority > 0`) slot.
   eligible?: (slot: Slot) => boolean
   // Priority among eligible slots when contended (default: natural order).

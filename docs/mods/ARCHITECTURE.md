@@ -180,8 +180,7 @@ Two seams, so core never sees a mod's state:
   (state writes reading the mod's own hooks) (e.g. trap's waterskin heals on pickup).
   `useMergedRewardContributions` merges every contribution in a stable order.
 
-`useApplyReward` runs the core handler's `apply` plus the merged mod effects; the
-site-map screen uses `canAccept` for the pack-full pickup guard. One claim seam,
+`useApplyReward` runs the core handler's `apply` plus the merged mod effects. One claim seam,
 shared by chest claims, puzzle-solve rewards, and shop purchases — core names no mod.
 
 ### Perks — contribution seam
@@ -204,7 +203,7 @@ max-health / armor / trap-insight / pack-mule (`useTrapProgress`),
 hieroglyph owns compass, core owns only
 corridor-detection (`mods/core/app/index.ts`). Detector levels read
 through a parallel merged accessor `useMergedDetectorLevels()`
-(`src/app/SiteMap/detectorLevels.ts`: compass←hieroglyph, supplies←trap, corridor←core)
+(`src/app/SiteMap/detectorLevels.ts`: compass←hieroglyph, corridor←core)
 and the compass hunt target through `useCompassTarget()`
 (`src/app/SiteMap/compassTarget.ts`), so `DetectorPanel` names no mod. The old
 `perkRegistry` / `registerPerks` (registered at boot, never read) are deleted. Full

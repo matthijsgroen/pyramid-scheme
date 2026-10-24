@@ -31,7 +31,7 @@ export const Default: Story = {
           onBuy={() => {}}
         />
         <ShopItemCard
-          itemName="Trap Tool"
+          itemName="Map piece"
           icon="🔧"
           price={80}
           affordable={false}

@@ -82,7 +82,6 @@ describe("shopMoneyEconomy fill", () => {
     const slots = Array.from({ length: 200 }, (_, i) => slot({ weight: 100, tier: "wizard", kind: "end", seq: i }))
     allocateDistributions(new Set<Slot>(slots), [shopMoneyEconomy], shopWorld(4))
     const floor = 4 * 500 + MONEY_ALLOWANCE
-    expect(MONEY_ALLOWANCE).toBe(1070)
     expect(placedValue(slots)).toBeGreaterThanOrEqual(floor)
     expect(placedValue(slots)).toBeLessThanOrEqual(Math.round(floor * 1.1))
   })

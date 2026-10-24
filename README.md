@@ -16,7 +16,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the version history.
 - **Explore Pyramid Interiors**: Navigate branching floors across 5 difficulty tiers, from Starter to Wizard
 - **Solve Puzzles**: Decode hieroglyphic symbols using mathematical formulas
 - **Collect Hieroglyph Fragments**: Complete hieroglyphs to unlock tomb tableau rooms that require them
-- **Survive Traps**: Beat arithmetic reflex challenges and trap corridors, or spend consumables to heal and bypass them
+- **Survive Traps**: Beat arithmetic reflex challenges and trap corridors; waterskins heal you on the way, and camp refills your hearts
 - **Unlock Ward Gates**: Use ward-key treasures earned in tombs to open sealed floors back in the pyramids
 - **Claim Treasures**: Clear treasure tombs for permanent passive effects — more health, armor, and better fragment/hidden-path detection
 
