@@ -6,6 +6,7 @@ import { allowedDifficulties, playableInLab } from "@/app/dev/puzzleLabOptions"
 import { useProgression } from "@/app/state/useProgression"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useInventory } from "@/app/Inventory/useInventory"
+import type { Tileset } from "@/game/siteTypes"
 import { EncounterModal } from "./EncounterModal"
 import { FezContext } from "@/app/fez/context"
 import "@/mods/registerModApps"
@@ -32,10 +33,13 @@ const facesOf = (family: FamilyPlugin): string[] => [
 // The tableau asks Fez to explain it on first sight; here nobody is around to say it.
 const NO_FEZ = { showConversation: () => {} }
 
-const PuzzleOnItsWall: FC<{ familyId: string; difficulty: Difficulty; face?: string }> = ({
+// The wall is the room's tileset, not its difficulty: unset, a board stands on its own rank's wall; set, on any
+// tileset's, the cave's among them, which is how a cave meets its starter boards.
+const PuzzleOnItsWall: FC<{ familyId: string; difficulty: Difficulty; face?: string; wall?: Tileset }> = ({
   familyId,
   difficulty,
   face = "default",
+  wall,
 }) => {
   const family = benchFamilies.find(f => f.meta.id === familyId)
   if (!family) return <p className="p-4 text-white">No family {familyId} in the registry.</p>
@@ -46,7 +50,7 @@ const PuzzleOnItsWall: FC<{ familyId: string; difficulty: Difficulty; face?: str
       </p>
     )
   return (
-    <EncounterModal tileset={difficulty}>
+    <EncounterModal tileset={wall ?? difficulty}>
       <Board key={`${family.meta.id}:${difficulty}:${face}`} family={family} difficulty={difficulty} face={face} />
     </EncounterModal>
   )
@@ -119,6 +123,7 @@ const meta = {
   argTypes: {
     familyId: { control: "select", options: benchFamilies.map(f => f.meta.id) },
     difficulty: { control: "inline-radio", options: difficulties },
+    wall: { control: "inline-radio", options: [...difficulties, "cave"] satisfies Tileset[] },
     // Every face any family has; one this family lacks falls through to its plain board.
     face: { control: "select", options: [...new Set(benchFamilies.flatMap(facesOf))] },
   },
@@ -134,17 +139,20 @@ export const OneFamily: Story = {}
 /** Every board in every face on the same rank's wall, one under the other: flip the rank to repaint-check them all. */
 export const EveryFamily: Story = {
   argTypes: { familyId: { table: { disable: true } }, face: { table: { disable: true } } },
-  render: ({ difficulty }) => (
+  render: ({ difficulty, wall }) => (
     <div className="flex flex-col gap-8 bg-black">
       {benchFamilies.flatMap(family =>
         facesOf(family).map(face => (
           // `contain: paint` makes this block the frame's containing block, so each `fixed inset-0` frame fills
           // its own slot instead of all of them stacking over the viewport.
           <div key={`${family.meta.id}:${face}`} className="relative min-h-180" style={{ contain: "paint" }}>
-            <PuzzleOnItsWall familyId={family.meta.id} difficulty={difficulty} face={face} />
+            <PuzzleOnItsWall familyId={family.meta.id} difficulty={difficulty} face={face} wall={wall} />
           </div>
         ))
       )}
     </div>
   ),
 }
+
+/** The cave's own wall behind the starter boards it holds. */
+export const OnTheCaveWall: Story = { args: { wall: "cave" } }
