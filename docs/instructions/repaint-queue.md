@@ -567,7 +567,9 @@ hieroglyphs, no watermark, no frame, no border.
 It is about as wide as it is tall: the tallest cone waist-high.
 ```
 
-**Import:** `yarn import-tile art/masters/props/cave/stalagmite.webp --tier=cave --name=stalagmite --slot=prop --filter=smooth`
+**Prepare:** `art/deshadow.sh <render> clean.png art/masters/props/cave/stalagmite-shadow.png`, keep `clean.png` as the master (the shadow comes back magenta).
+
+**Import:** `yarn import-tile art/masters/props/cave/stalagmite.webp --tier=cave --name=stalagmite --slot=prop --filter=smooth --seat=art/masters/props/cave/stalagmite-shadow.png --seat-opacity=0.55`
 
 ### `cave/puddle` — a flat glossy puddle, soft-edged
 
