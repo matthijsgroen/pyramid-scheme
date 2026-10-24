@@ -85,14 +85,14 @@ Each is the option that changes the least shipped behaviour; Task 1 writes them 
 - Produces: `TrapProgressAPI.restoreHealth(): void` — sets health to the current derived `maxHealth`.
 - Consumes: `App.tsx`'s `onJourneyComplete` and `onClose` (the only two paths that set `inGame` to false).
 
-- [ ] **Step 1: Failing tests.**
+- [x] **Step 1: Failing tests.**
   - `homecomingRegistry.spec.ts`: the merged handler runs every registered handler once, in registration order; with none registered it is a no-op; a handler reads its hook's latest state (a contribution backed by `useState` sees the value from the last render). Test the merge as a pure fold beside the hook, as `mergeContributions` is tested.
   - `useTrapProgress.homecoming.spec.ts`: after two trap hits, `restoreHealth` brings `currentHealth` back to `maxHealth`; with a max-health perk earned it fills to the raised ceiling; at full health it changes nothing.
   - No `App`-level test: the two exits are one-line calls; Review Focus 1 is checked in the browser in Task 9.
-- [ ] **Step 2: Run** `yarn test src/app/homecomingRegistry src/mods/trap` — FAIL.
-- [ ] **Step 3: Implement.** The registry file's comment says what coming home is (the player is back at base: a journey ended or they left it) and that mods own what happens then. `App.tsx` calls `useHomecoming()` once and runs the handler before `setInGame(false)` in `onJourneyComplete` and `onClose`; `onStartJourney` is untouched. The trap app entrypoint registers a contribution returning `useTrapProgress().restoreHealth`, inside its existing `isModEnabled("trap")` block.
-- [ ] **Step 4: Run** the specs — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Commit** — `feat: hearts refill whenever you come back to camp`
+- [x] **Step 2: Run** `yarn test src/app/homecomingRegistry src/mods/trap` — FAIL.
+- [x] **Step 3: Implement.** The registry file's comment says what coming home is (the player is back at base: a journey ended or they left it) and that mods own what happens then. `App.tsx` calls `useHomecoming()` once and runs the handler before `setInGame(false)` in `onJourneyComplete` and `onClose`; `onStartJourney` is untouched. The trap app entrypoint registers a contribution returning `useTrapProgress().restoreHealth`, inside its existing `isModEnabled("trap")` block.
+- [x] **Step 4: Run** the specs — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Commit** — `feat: hearts refill whenever you come back to camp`
 
 ---
 

@@ -47,6 +47,7 @@ export type TrapProgressAPI = {
   isConsumablePackFull: () => boolean
   addConsumable: (type: ConsumableType) => boolean // false if at cap
   useConsumable: (type: ConsumableType) => void
+  restoreHealth: () => void
 }
 
 export const useTrapProgress = (): TrapProgressAPI => {
@@ -82,6 +83,7 @@ export const useTrapProgress = (): TrapProgressAPI => {
         setState(prev => ({ ...prev, consumables: { ...prev.consumables, [type]: prev.consumables[type] + 1 } }))
         return true
       },
+      restoreHealth: () => setState(prev => ({ ...prev, health: maxHealth })),
       useConsumable: type =>
         setState(prev => {
           if (prev.consumables[type] <= 0) return prev

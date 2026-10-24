@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next"
 import { registerHudWidget } from "@/app/SiteMap/hudRegistry"
+import { registerHomecoming } from "@/app/homecomingRegistry"
 import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
 import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
 import { registerPerkContribution, type Perk } from "@/app/SiteMap/perkContributions"
@@ -45,4 +46,5 @@ if (isModEnabled("trap")) {
     }
   })
   registerDetectorLevel("supplies", () => useTrapProgress().consumableDetectorLevel)
+  registerHomecoming(() => useTrapProgress().restoreHealth)
 }

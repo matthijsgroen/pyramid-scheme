@@ -9,11 +9,13 @@ import { useRelaidFloorsBackfill } from "@/app/SiteMap/useRelaidFloorsBackfill"
 import { FezCompanion } from "./app/fez/FezCompanion"
 import { DevelopModeProvider } from "./contexts/DevelopMode"
 import PWABadge from "./PWABadge"
+import { useHomecoming } from "@/app/homecomingRegistry"
 import { journeys as allJourneys } from "@/data/journeys"
 
 function App() {
   const [inGame, setInGame] = useState(false)
   const journeys = useJourneys()
+  const comeHome = useHomecoming()
   const { activeJourneyId, getJourney, completeLevel, completeJourney, startJourney } = journeys
   // One-time, and it must happen in the release BEFORE any floor is reshaped — see the hook.
   useCarveIndependentBackfill(journeys)
@@ -41,6 +43,7 @@ function App() {
             onLevelComplete={completeLevel}
             onJourneyComplete={() => {
               completeJourney()
+              comeHome()
               setInGame(false)
             }}
             onStartJourney={journeyId => {
@@ -49,7 +52,10 @@ function App() {
               completeJourney()
               startJourney(journey)
             }}
-            onClose={() => setInGame(false)}
+            onClose={() => {
+              comeHome()
+              setInGame(false)
+            }}
           />
         )}
         <PWABadge />
