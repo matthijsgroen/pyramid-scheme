@@ -190,9 +190,9 @@ export const wireStaircases = (floors: FloorConfig[], site: { journeyId: string;
 // A floor reached by a side stair is off the main path, so it has no exit: its way out is
 // that stair, back up (one exit per site, at the main path's end).
 //
-// An authored floor with no stairhead section of its own goes down by its main path instead, the way a
-// pyramid's main floors do (wireStaircases), so a site authored floor by floor can still be one walk down
-// to a single exit on its last floor.
+// A floor ON THE MAIN WALK with no stairhead section of its own goes down by its main path instead, the way a
+// pyramid's main floors do (wireStaircases), so a site authored floor by floor can be one walk down to a
+// single exit on its last floor. A floor reached by a side stair stays off that walk and gains no main stair.
 export const wireSideSectionStaircases = (
   floors: FloorConfig[],
   site: { journeyId: string; pyramidIndex: number }
@@ -202,7 +202,7 @@ export const wireSideSectionStaircases = (
     if (stairSection && typeof stairSection.end === "object") {
       floors[fi + 1].entrance = { stairId: stairSection.end.stairId }
       floors[fi + 1].exitOrStaircase = "none"
-    } else {
+    } else if (floors[fi].exitOrStaircase !== "none") {
       const id = stairIdAt({ ...site, floorIndex: fi, path: "main" })
       floors[fi].exitOrStaircase = { stairId: id }
       floors[fi + 1].entrance = { stairId: id }

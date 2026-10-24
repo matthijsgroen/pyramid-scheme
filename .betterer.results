@@ -953,7 +953,7 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/ui/organisms/JourneyCard.tsx:928864658": [
       [22, 27, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/worldGen/buildSite.ts:1434271713": [
+    "src/worldGen/buildSite.ts:2933201832": [
       [188, 3, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [269, 31, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [359, 93, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]

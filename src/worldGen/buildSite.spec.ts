@@ -154,6 +154,21 @@ describe("buildSite", () => {
     expect(floors[2].entrance).toEqual({ stairId: "j1:p0:f1:main" })
   })
 
+  it("authored floors[] branch: a floor reached by a side stair never gains a main stair down", () => {
+    const { floors } = buildSite({
+      ...baseCtx,
+      constraint: {
+        floors: [
+          { pathPuzzles: 1, sideSections: [{ pathPuzzles: 1, end: "staircase" }] },
+          { pathPuzzles: 2 },
+          { pathPuzzles: 1 },
+        ],
+      } as PyramidConstraint,
+    })
+    expect(floors[1].exitOrStaircase).toBe("none")
+    expect(floors[2].entrance).toBeUndefined()
+  })
+
   it("auto multi-floor branch: the exit ends the last main floor, and a ward wing has none", () => {
     const { floors } = buildSite({ ...baseCtx, constraint: { mainFloors: 2, wardWings: 1 } })
     expect(floors).toHaveLength(3)
