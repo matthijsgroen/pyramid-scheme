@@ -148,6 +148,12 @@ From the camp.md table (rewards counted by section tier):
 - With 26 structures × ~3 parts ≈ 78 parts plus 26 items, camp loot fills most of the ~100 free slots
   on expert and up; the economy recompute decides the rest.
 - Fragments, mosaic, map pieces, tomb keys and treasures are unchanged.
+- **The table does not count the tomb redesign's slots** (`docs/superpowers/specs/2026-10-22-tomb-redesign-design.md`). The
+  starter tomb is now a cave and a sunlit cavern and adds five beginner slots: the cave's end chest and one
+  puzzle on each of the four cavern floors. A room's loot tier is its path's, so the cavern's junior-weight
+  puzzles count as beginner. The four cavern slots are empty today (the filler pool runs out first), which
+  makes them natural homes for camp finds and parts. Every later tier's tomb brings its own cave and cavern
+  slots with its release; recount the table from `yarn world-info` when building.
 - **The world is still growing** (new areas are being authored in another session), and more loot is
   better. Camp loot is the flexible filler: the number of parts per structure scales with the slots a
   tier has, so new areas add camp parts without touching the fixed currency totals. Nothing in the build
