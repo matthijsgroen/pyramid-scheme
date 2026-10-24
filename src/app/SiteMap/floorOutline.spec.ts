@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest"
 import type { Tileset } from "@/game/siteTypes"
-import { CELL, cellLeft, cellTop } from "./mapScale"
-import { floorGroups, floorOutline } from "./floorOutline"
-import { buildTileRegions, rectsToPath, type FloorAt, type OpenBetween } from "./tileRegions"
+import { CELL, WALL_H, cellLeft, cellTop } from "./mapScale"
+import { floorGroups, floorOutline, wornFaceCorners } from "./floorOutline"
+import { ALL_STATES, buildTileRegions, rectsToPath, type FloorAt, type OpenBetween } from "./tileRegions"
 
 // `R` room, `C` corridor, `.` stone; lower case is starter stone on the same floor. Neighbouring floor is always open.
 const regionsOf = (plan: string[], tier: Tileset) => {
@@ -167,5 +167,25 @@ describe("floorOutline", () => {
       xs => Math.min(...xs) <= cellLeft(1) + CELL / 2 && Math.max(...xs) >= cellLeft(5) + CELL / 2
     )
     expect(straight).toBe(true)
+  })
+})
+
+describe("wornFaceCorners", () => {
+  const cutsOf = (plan: string[]) => {
+    const groups = regionsOf(plan, "cave").get("cave")!
+    const faces = ALL_STATES.flatMap(s => groups.wallFace[s])
+    const floor = ALL_STATES.flatMap(s => [...groups.floorRoom[s], ...groups.floorCorridor[s]])
+    return wornFaceCorners(faces, faces, floor, WALL_H / 2).match(/M[\d.-]+/g) ?? []
+  }
+
+  it("rounds the top of a back wall where a side wall closes it, at both ends", () => {
+    expect(cutsOf(["......", ".RRR..", ".RRR.."])).toEqual([`M${cellLeft(1)}`, `M${cellLeft(3) + CELL}`])
+  })
+
+  it("keeps the corner a doorway's jamb stands on", () => {
+    // The corridor's own dead end is closed both sides, so its top is worn too.
+    expect(cutsOf(["..C...", ".RRR..", ".RRR.."]).sort()).toEqual(
+      [cellLeft(1), cellLeft(2), cellLeft(2) + CELL, cellLeft(3) + CELL].map(x => `M${x}`).sort()
+    )
   })
 })

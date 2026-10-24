@@ -6,7 +6,7 @@ import { tileUrl } from "./tileAssets"
 import { LightPoolDefs } from "./ExplorerDot"
 import { ALL_STATES, faceShadowRects, faceTopRects, rectsToPath, type Rect, type TileRegions } from "./tileRegions"
 import { FACE_SHADOW, FACE_TOP } from "./roomClaims"
-import { floorGroups, floorOutline } from "./floorOutline"
+import { floorGroups, floorOutline, wornFaceCorners } from "./floorOutline"
 
 /** Natural rock: its floor's outline is worn round rather than cut square (see floorOutline). */
 const wornEdges = (tier: Tileset) => tier === "cave"
@@ -75,6 +75,12 @@ export const TileLayers = ({
   // which is the one direction a prop is meant to cross, so a tall thing occludes the wall behind it
   // instead of being sliced off at its own floor line.
   const tiers = [...regions.keys()]
+  // Every face and floor rect on the map, whatever its tier or light: where a worn wall's run ends is a question
+  // about its neighbours, which need not share either.
+  const allFaces = [...regions.values()].flatMap(g => ALL_STATES.flatMap(s => g.wallFace[s]))
+  const allFloorRects = [...regions.values()].flatMap(g =>
+    ALL_STATES.flatMap(s => [...g.floorRoom[s], ...g.floorCorridor[s]])
+  )
 
   return (
     <>
@@ -198,6 +204,12 @@ export const TileLayers = ({
                         <path key={rect.join(",")} d={rectsToPath([rect])} fill={sillFill(rect)} opacity={0.9} />
                       ))}
                     {shadows && <path d={shadows} fill={palette.outline} opacity={0.45} />}
+                    {wornEdges(t) && (
+                      <path
+                        d={wornFaceCorners(groups.wallFace[state], allFaces, allFloorRects, WALL_H * 0.8)}
+                        fill={palette.wallBase}
+                      />
+                    )}
                     {wash && (
                       <path d={room + corridor + faces + mass + wornWash} fill={wash.fill} opacity={wash.opacity} />
                     )}

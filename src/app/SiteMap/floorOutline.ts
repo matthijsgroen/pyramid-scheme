@@ -260,3 +260,31 @@ export const floorOutline = (
   for (const [owner, list] of patches) fills.set(groups[owner].id, fills.get(groups[owner].id)! + list.join(""))
   return { outline: outline.join(""), fills }
 }
+
+/**
+ * The top corners of a worn wall: where a run of face ends against a side wall, its upper outer corner is
+ * rounded off in the wall mass's stone, so the band stops like rock rather than a cut slab. A run that ends
+ * at a doorway keeps its corner, because the jamb stands there.
+ */
+export const wornFaceCorners = (
+  faces: readonly Rect[],
+  /** every face on the floor, whatever its light: a run goes on through a change of state */
+  allFaces: readonly Rect[],
+  allFloor: readonly Rect[],
+  radius: number
+): string => {
+  const floorAt = new Set(allFloor.map(([x, y]) => `${x},${y}`))
+  const faceStarts = new Set(allFaces.map(([x, y]) => `${x},${y}`))
+  const faceEnds = new Set(allFaces.map(([x, y, w]) => `${x + w},${y}`))
+  let d = ""
+  for (const [x, y, w, h] of faces) {
+    // A corner piece only joins the band where floor runs under it, so no side wall closes a run there.
+    if (w === SIDE_W) continue
+    // The gap beside the floor below the face: floor there is a way through, so no side wall stands.
+    if (!faceEnds.has(`${x},${y}`) && !floorAt.has(`${x - SIDE_W},${y + h}`))
+      d += `M${x} ${y}h${radius}A${radius} ${radius} 0 0 0 ${x} ${y + radius}z`
+    if (!faceStarts.has(`${x + w},${y}`) && !floorAt.has(`${x + w},${y + h}`))
+      d += `M${x + w} ${y}h${-radius}A${radius} ${radius} 0 0 1 ${x + w} ${y + radius}z`
+  }
+  return d
+}
