@@ -1,7 +1,32 @@
+import { oneWayRuns } from "./gridNavigation"
 import { reachableFrom } from "./siteValidator"
-import type { FloorGrid } from "./siteTypes"
+import type { Direction, FloorGrid } from "./siteTypes"
 
 type Pos = readonly [number, number]
+
+const STEP: Record<Direction, readonly [number, number, Direction]> = {
+  n: [-1, 0, "s"],
+  s: [1, 0, "n"],
+  e: [0, 1, "w"],
+  w: [0, -1, "e"],
+}
+
+// Every way on the floor can be walked back: no drop, and every opening is answered by the cell it opens onto.
+// Then the floor is one undirected ground, and a room reaches home exactly when the entrance does.
+const everyWayWalksBack = (grid: FloorGrid): boolean => {
+  if (oneWayRuns(grid).length > 0) return false
+  for (let r = 0; r < grid.rows; r++)
+    for (let c = 0; c < grid.cols; c++) {
+      const cell = grid.cells[r][c]
+      if (cell.type !== "room" && cell.type !== "corridor") continue
+      for (const d of cell.dirs) {
+        const [dr, dc, back] = STEP[d]
+        const next = grid.cells[r + dr]?.[c + dc]
+        if (next && (next.type === "room" || next.type === "corridor") && !next.dirs.has(back)) return false
+      }
+    }
+  return true
+}
 
 const isPortal = (grid: FloorGrid, [r, c]: Pos) => {
   const cell = grid.cells[r]?.[c]
@@ -48,10 +73,17 @@ export const strandedFromHome = (grid: FloorGrid): Pos[] => {
     }
   const walk = (from: Pos) => reachableFrom(grid, from, allKeys, undefined, undefined, true)
   const homeKeys = home.map(([r, c]) => `${r},${c}`)
+  const reached = walk(grid.entrancePos)
+  const undirected = everyWayWalksBack(grid)
+  const entranceGoesHome = homeKeys.some(h => reached.has(h))
   const stranded: Pos[] = []
-  for (const key of walk(grid.entrancePos)) {
+  for (const key of reached) {
     const [r, c] = key.split(",").map(Number)
     if (grid.cells[r]?.[c]?.type !== "room") continue
+    if (undirected) {
+      if (!entranceGoesHome) stranded.push([r, c])
+      continue
+    }
     const from = walk([r, c])
     if (!homeKeys.some(h => from.has(h))) stranded.push([r, c])
   }

@@ -1,7 +1,13 @@
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 import { ONE_WAY_RUN_CELLS } from "./carveConstants"
 import { strandedFromHome } from "./wayHome"
 import type { Direction, FloorGrid, GridCell } from "./siteTypes"
+import * as siteValidator from "./siteValidator"
+
+vi.mock("./siteValidator", async original => {
+  const actual = await original<typeof import("./siteValidator")>()
+  return { ...actual, reachableFrom: vi.fn(actual.reachableFrom) }
+})
 
 // One row of cells, west to east, each piece naming the ways it opens. A drop is laid as the carve lays
 // it: a launch open only back the way it came, the obstacle cells naming nothing, a landing open only on.
@@ -64,5 +70,26 @@ describe(strandedFromHome, () => {
   it("lets a locked door count as opened, since the question is the way home and not the key", () => {
     const cells = [portal(["e"], "up"), room(["w", "e"], { requiredKeyId: "k" }), room(["w"])]
     expect(strandedFromHome(row(cells, 0, 2))).toEqual([])
+  })
+})
+
+describe("strandedFromHome on a floor with no one-way way", () => {
+  const corridorRow = (length: number) =>
+    row([portal(["e"], "up"), ...Array.from({ length }, () => room(["w", "e"])), room(["w"])], 0, length + 1)
+
+  it("walks it once, however many rooms it has", () => {
+    const walks = vi.mocked(siteValidator.reachableFrom)
+    walks.mockClear()
+    expect(strandedFromHome(corridorRow(12))).toEqual([])
+    expect(walks).toHaveBeenCalledTimes(1)
+  })
+
+  it("names every room the entrance reaches when no walk reaches home", () => {
+    // The exit portal stands apart: nothing opens onto it.
+    const grid = row([room(["e"]), room(["w"]), portal([])], 0, 2)
+    expect(strandedFromHome(grid)).toEqual([
+      [0, 0],
+      [0, 1],
+    ])
   })
 })

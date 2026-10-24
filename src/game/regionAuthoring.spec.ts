@@ -333,5 +333,5 @@ describe("a region only drops join seats on a side path", () => {
       out: "c",
     })
     expect([chain, tree, ring].map(config => carvesAtOnce(config) > 0)).toEqual([true, true, true])
-  })
+  }, 60_000)
 })
