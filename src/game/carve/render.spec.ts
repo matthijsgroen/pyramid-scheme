@@ -11,7 +11,16 @@ import { validate } from "./validate"
 import { assembleFloor } from "./assembleFloor"
 import type { Cell, DressingPools, OneWayEdge, RoomSpec } from "./state"
 import { ACTIVITIES, activitiesFor, type ActivityId } from "../activities"
-import type { Direction, FloorConfig, FloorGrid, GridCell, RoomCell } from "../siteTypes"
+import {
+  DECORATION_KINDS,
+  decorationFootprint,
+  isSingleCell,
+  type Direction,
+  type FloorConfig,
+  type FloorGrid,
+  type GridCell,
+  type RoomCell,
+} from "../siteTypes"
 // A walk of three nodes along row 0 (0,0 → 0,2 → 0,4), the entrance and exit rooms at its ends, and a node at
 // 4,4 a vertical drop below the exit.
 describe("render", () => {
@@ -492,5 +501,31 @@ describe("dressing by purpose", () => {
     const first = dressed()
     const second = dressed()
     for (const pk of nodes) expect(first(pk)).toEqual(second(pk))
+  })
+
+  describe("a prop wider than one cell", () => {
+    const wide = DECORATION_KINDS.filter(kind => !isSingleCell(decorationFootprint(kind)))
+    const dressedRooms = (props: DressingPools["props"]) => {
+      const at = dressed({ pools: { props, wall: [] } })
+      return ["0,4", "0,6"].map(at).filter(room => room.decoration !== undefined)
+    }
+
+    it.skipIf(wide.length === 0)("carries a single-cell fallback from the same pool", () => {
+      const rooms = dressedRooms([...wide, ...wide, ...wide, ...wide, "rubblePile"])
+      expect(rooms.some(room => wide.includes(room.decoration!))).toBe(true)
+      for (const room of rooms)
+        if (wide.includes(room.decoration!)) expect(room.decorationFallback).toBe("rubblePile")
+        else expect(room).not.toHaveProperty("decorationFallback")
+    })
+
+    it.skipIf(wide.length === 0)("carries no fallback when the pool has no single-cell kind", () => {
+      const rooms = dressedRooms([...wide])
+      expect(rooms.length).toBeGreaterThan(0)
+      for (const room of rooms) expect(room).not.toHaveProperty("decorationFallback")
+    })
+
+    it("carries no fallback for a single-cell prop", () => {
+      for (const room of dressedRooms(["rubblePile", "pillar"])) expect(room).not.toHaveProperty("decorationFallback")
+    })
   })
 })

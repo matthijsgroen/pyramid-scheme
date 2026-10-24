@@ -134,6 +134,21 @@ export const DECORATION_KINDS = [
   "bones",
 ] as const
 export type DecorationKind = (typeof DECORATION_KINDS)[number]
+
+/**
+ * How much floor a prop covers: `cols` cells east from its anchor, `rows` cells south, and `tall` cells of
+ * extra height above the normal prop frame, for art that stands higher than a face band. The anchor is the
+ * north-west cell; every cell of the footprint must be the room's own free floor for the prop to stand.
+ */
+export type PropFootprint = { cols: number; rows: number; tall: number }
+export const SINGLE_CELL: PropFootprint = { cols: 1, rows: 1, tall: 0 }
+/** The kinds bigger than one cell. Every kind not listed is `SINGLE_CELL`. */
+export const DECORATION_FOOTPRINTS: Partial<Record<DecorationKind, PropFootprint>> = {
+  // A skeleton lies at full length: two cells across, flat on the floor.
+  bones: { cols: 2, rows: 1, tall: 0 },
+}
+export const decorationFootprint = (kind: DecorationKind): PropFootprint => DECORATION_FOOTPRINTS[kind] ?? SINGLE_CELL
+export const isSingleCell = ({ cols, rows }: PropFootprint): boolean => cols === 1 && rows === 1
 // What hangs ON a wall, drawn into a cell's face band rather than standing on its floor. Its own
 // vocabulary rather than a slice of DecorationKind: a stela is not a prop that could stand in the
 // middle of a chamber, and the two must not be confusable
@@ -284,6 +299,10 @@ export type RoomCell = {
   tags?: string[]
   stairId?: string
   decoration?: DecorationKind
+  /** The single-cell kind this room stands instead when `decoration` covers more than one cell and the
+   * room has no free floor that shape (roomClaims.ts). Picked from the same pool by the same hash, so the
+   * map never has to know the pool. Unset when `decoration` is single-cell or the pool has no such kind. */
+  decorationFallback?: DecorationKind
   wallDecoration?: WallDecorationKind
   /** What the room is for (activities.ts): its props and wall item come from this activity. Unset on a
    * room some other purpose has, or on a rank whose pool furnishes no activity. */

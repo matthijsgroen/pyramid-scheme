@@ -12,7 +12,7 @@ import type {
   RoomCell,
   WallDecorationKind,
 } from "../siteTypes"
-import { MECHANISM_AT_REST } from "../siteTypes"
+import { MECHANISM_AT_REST, decorationFootprint, isSingleCell } from "../siteTypes"
 import { holeRegion } from "../mechanics/weights"
 import { standOnCorridor } from "../sequenceTiles"
 import { edgeAllowed, forkPositions, rooms, routeStepOf } from "./derive"
@@ -362,6 +362,16 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
             "decoration:not-a-pit"
           )
         : picked
+    // A prop bigger than a cell may find no floor its shape on the map (roomClaims.ts), so it carries the
+    // single-cell kind to stand instead, from the same pool by its own salt: no other pick moves.
+    const decorationFallback =
+      decoration && !isSingleCell(decorationFootprint(decoration))
+        ? pickDressing(
+            propPool?.filter(k => isSingleCell(decorationFootprint(k)) && !(k === "pit" && besideStair)),
+            pk,
+            "decoration:single-cell"
+          )
+        : undefined
     // The god's room takes a god's wall item too, which is how the renderer finds it. An activity hangs only its
     // own wall items, and nothing where it has none.
     const patronWall = isPatron ? pools?.wall?.filter(k => PATRON_KINDS.has(k)) : undefined
@@ -380,6 +390,7 @@ export const renderGround = (prep: FloorPrep, state: RenderState): WritableGrid 
       cells2D[r][c] = {
         ...owner,
         ...(decoration ? { decoration } : {}),
+        ...(decorationFallback ? { decorationFallback } : {}),
         ...(wallDecoration ? { wallDecoration } : {}),
         ...(activity ? { activity: activity.id } : {}),
         ...(isPatron && decoration ? { patronRoom: true } : {}),
