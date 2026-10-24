@@ -160,6 +160,7 @@ glowing on a dark one.
 | expert · silver  | light, cool      | dark, cool                             | silver and lapis, deep shadows       | Moonlighter     |
 | master · gold    | **dark** granite | **light** — gilded, catching the light | gold, light and saturated            | Gungeon / Hades |
 | wizard · emerald | **dark**, night  | **light** — light leaking from joints  | emerald that glows                   | Hades           |
+| cave · no rank   | **dark** rock    | **light** — pale rock catching the torch | pale rock, crystals the lightest     | Gungeon         |
 
 The three light ranks are told apart by hue — warm limestone, copper, cool silver — and the two dark ones by
 their metal. Steps, measured by `yarn rank-colour`: **the wall face at least 25 L\* off the floor** (a light

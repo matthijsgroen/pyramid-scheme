@@ -152,15 +152,17 @@ export const tierPalette: Record<Tileset, TierPalette> = {
     slabLo: "#59524a",
     joint: "#2a2520",
     accent: METALS.expert.accent,
-    wall: "#41392f",
-    wallTop: "#574e45",
+    // A dark floor, so the wall and what stands on it are on the light side of it (visual-direction.md,
+    // "Light and dark floors"): pale rock catching the torch, never shadowed further.
+    wall: "#ccc6ba",
+    wallTop: "#d8d2c4",
     wallBase: "#1f1b16",
     // A cave has no lamps of its own and is dim before any night falls on it.
-    shade: "rgba(22,19,16,0.55)",
-    faceNight: 0.3,
+    shade: "rgba(22,19,16,0.35)",
+    faceNight: 0,
     lamp: 1,
-    prop: "#a89d90",
-    propDark: "#625a50",
+    prop: "#d8d2c4",
+    propDark: "#9c968a",
     outline: "#1a1612",
   },
 }

@@ -224,11 +224,11 @@ Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden to
 The standing face of a cave wall seen from the front: natural limestone no hand ever cut, water-worn and
 flowing: vertical weathering streaks, rounded bulges, a few ledges and small hollows, damp-dark toward the
 foot. NOTHING BUILT: no bricks, no blocks, no courses, no joints, no straight edges, no tool marks, no paint.
-Dark, cool and dim but readable. HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and
+Pale and lit, catching the torchlight, far lighter than the dark cave floor. HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and
 fine speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
-than #181b1e.
+Pale limestone #ccc6ba, shade #8f8a80, sand #b8a585. Nothing lighter than #eee8da, nothing darker
+than #5a5650.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
 colours or its subject from it.
@@ -342,9 +342,10 @@ of stone in shade, around #23272b, completely free of pink or purple.
 Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
 blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
 
-PALETTE, strictly: a natural cave, cool and dim. Objects #8e9196 and #50555b, one sand accent
-#a3906c, against floor #5f6368 and walls #3a3f44. NOTHING LIGHTER THAN #a8aaa8 — no white, no cream,
-no highlight brighter than that, no shine. Nothing darker than #181b1e. Nothing built by hand: no cut
+PALETTE, strictly: a dark cave, and this object is LIT by the explorer's torch — far lighter than the
+dark floor it stands on. Objects #d8d2c4 and #a19b8f, one sand accent #b8a585, against floor #3e4246
+and walls #ccc6ba. NOTHING LIGHTER THAN #f2ecde, no pure white, no shine. Nothing darker than #4a4640
+except a hole or water. Nothing built by hand: no cut
 edges, no tool marks, no paint, no wood, no pottery.
 
 SCALE: it will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE:
@@ -377,9 +378,10 @@ of stone in shade, around #23272b, completely free of pink or purple.
 Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
 blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
 
-PALETTE, strictly: a natural cave, cool and dim. Objects #8e9196 and #50555b, one sand accent
-#a3906c, against floor #5f6368 and walls #3a3f44. NOTHING LIGHTER THAN #a8aaa8 — no white, no cream,
-no highlight brighter than that, no shine. Nothing darker than #181b1e. Nothing built by hand: no cut
+PALETTE, strictly: a dark cave, and this object is LIT by the explorer's torch — far lighter than the
+dark floor it stands on. Objects #d8d2c4 and #a19b8f, one sand accent #b8a585, against floor #3e4246
+and walls #ccc6ba. NOTHING LIGHTER THAN #f2ecde, no pure white, no shine. Nothing darker than #4a4640
+except a hole or water. Nothing built by hand: no cut
 edges, no tool marks, no paint, no wood, no pottery.
 
 SCALE: it will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE:
@@ -412,9 +414,10 @@ of stone in shade, around #23272b, completely free of pink or purple.
 Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
 blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
 
-PALETTE, strictly: a natural cave, cool and dim. Objects #8e9196 and #50555b, one sand accent
-#a3906c, against floor #5f6368 and walls #3a3f44. NOTHING LIGHTER THAN #a8aaa8 — no white, no cream,
-no highlight brighter than that, no shine. Nothing darker than #181b1e. Nothing built by hand: no cut
+PALETTE, strictly: a dark cave, and this object is LIT by the explorer's torch — far lighter than the
+dark floor it stands on. Objects #d8d2c4 and #a19b8f, one sand accent #b8a585, against floor #3e4246
+and walls #ccc6ba. NOTHING LIGHTER THAN #f2ecde, no pure white, no shine. Nothing darker than #4a4640
+except a hole or water. Nothing built by hand: no cut
 edges, no tool marks, no paint, no wood, no pottery.
 
 SCALE: it will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE:
@@ -447,9 +450,10 @@ of stone in shade, around #23272b, completely free of pink or purple.
 Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
 blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
 
-PALETTE, strictly: a natural cave, cool and dim. Objects #8e9196 and #50555b, one sand accent
-#a3906c, against floor #5f6368 and walls #3a3f44. NOTHING LIGHTER THAN #a8aaa8 — no white, no cream,
-no highlight brighter than that, no shine. Nothing darker than #181b1e. Nothing built by hand: no cut
+PALETTE, strictly: a dark cave, and this object is LIT by the explorer's torch — far lighter than the
+dark floor it stands on. Objects #d8d2c4 and #a19b8f, one sand accent #b8a585, against floor #3e4246
+and walls #ccc6ba. NOTHING LIGHTER THAN #f2ecde, no pure white, no shine. Nothing darker than #4a4640
+except a hole or water. Nothing built by hand: no cut
 edges, no tool marks, no paint, no wood, no pottery.
 
 SCALE: it will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE:
@@ -482,9 +486,10 @@ of stone in shade, around #23272b, completely free of pink or purple.
 Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
 blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
 
-PALETTE, strictly: a natural cave, cool and dim. Objects #8e9196 and #50555b, one sand accent
-#a3906c, against floor #5f6368 and walls #3a3f44. NOTHING LIGHTER THAN #a8aaa8 — no white, no cream,
-no highlight brighter than that, no shine. Nothing darker than #181b1e. Nothing built by hand: no cut
+PALETTE, strictly: a dark cave, and this object is LIT by the explorer's torch — far lighter than the
+dark floor it stands on. Objects #d8d2c4 and #a19b8f, one sand accent #b8a585, against floor #3e4246
+and walls #ccc6ba. NOTHING LIGHTER THAN #f2ecde, no pure white, no shine. Nothing darker than #4a4640
+except a hole or water. Nothing built by hand: no cut
 edges, no tool marks, no paint, no wood, no pottery.
 
 SCALE: it will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE:
@@ -519,9 +524,10 @@ of stone in shade, around #23272b, completely free of pink or purple.
 Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
 blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
 
-PALETTE, strictly: a natural cave, cool and dim. Objects #8e9196 and #50555b, one sand accent
-#a3906c, against floor #5f6368 and walls #3a3f44. NOTHING LIGHTER THAN #a8aaa8 — no white, no cream,
-no highlight brighter than that, no shine. Nothing darker than #181b1e. Nothing built by hand: no cut
+PALETTE, strictly: a dark cave, and this object is LIT by the explorer's torch — far lighter than the
+dark floor it stands on. Objects #d8d2c4 and #a19b8f, one sand accent #b8a585, against floor #3e4246
+and walls #ccc6ba. NOTHING LIGHTER THAN #f2ecde, no pure white, no shine. Nothing darker than #4a4640
+except a hole or water. Nothing built by hand: no cut
 edges, no tool marks, no paint, no wood, no pottery.
 
 SCALE: it will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE:
@@ -556,9 +562,10 @@ of stone in shade, around #23272b, completely free of pink or purple.
 Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
 blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
 
-PALETTE, strictly: a natural cave, cool and dim. Objects #8e9196 and #50555b, one sand accent
-#a3906c, against floor #5f6368 and walls #3a3f44. NOTHING LIGHTER THAN #a8aaa8 — no white, no cream,
-no highlight brighter than that, no shine. Nothing darker than #181b1e. Nothing built by hand: no cut
+PALETTE, strictly: a dark cave, and this object is LIT by the explorer's torch — far lighter than the
+dark floor it stands on. Objects #d8d2c4 and #a19b8f, one sand accent #b8a585, against floor #3e4246
+and walls #ccc6ba. NOTHING LIGHTER THAN #f2ecde, no pure white, no shine. Nothing darker than #4a4640
+except a hole or water. Nothing built by hand: no cut
 edges, no tool marks, no paint, no wood, no pottery.
 
 SCALE: it will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE:
@@ -593,9 +600,10 @@ of stone in shade, around #23272b, completely free of pink or purple.
 Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
 blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
 
-PALETTE, strictly: a natural cave, cool and dim. Objects #8e9196 and #50555b, one sand accent
-#a3906c, against floor #5f6368 and walls #3a3f44. NOTHING LIGHTER THAN #a8aaa8 — no white, no cream,
-no highlight brighter than that, no shine. Nothing darker than #181b1e. Nothing built by hand: no cut
+PALETTE, strictly: a dark cave, and this object is LIT by the explorer's torch — far lighter than the
+dark floor it stands on. Objects #d8d2c4 and #a19b8f, one sand accent #b8a585, against floor #3e4246
+and walls #ccc6ba. NOTHING LIGHTER THAN #f2ecde, no pure white, no shine. Nothing darker than #4a4640
+except a hole or water. Nothing built by hand: no cut
 edges, no tool marks, no paint, no wood, no pottery.
 
 SCALE: it will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE:
@@ -628,9 +636,10 @@ of stone in shade, around #23272b, completely free of pink or purple.
 Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
 blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
 
-PALETTE, strictly: a natural cave, cool and dim. Objects #8e9196 and #50555b, one sand accent
-#a3906c, against floor #5f6368 and walls #3a3f44. NOTHING LIGHTER THAN #a8aaa8 — no white, no cream,
-no highlight brighter than that, no shine. Nothing darker than #181b1e. Nothing built by hand: no cut
+PALETTE, strictly: a dark cave, and this object is LIT by the explorer's torch — far lighter than the
+dark floor it stands on. Objects #d8d2c4 and #a19b8f, one sand accent #b8a585, against floor #3e4246
+and walls #ccc6ba. NOTHING LIGHTER THAN #f2ecde, no pure white, no shine. Nothing darker than #4a4640
+except a hole or water. Nothing built by hand: no cut
 edges, no tool marks, no paint, no wood, no pottery.
 
 SCALE: it will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE:
