@@ -86,7 +86,7 @@ finds in total, scaled to the loot space each tier has.
 | Map table      | map (fixed)                      | —                               | table, compass       | star map, scroll case             | astrolabe, reed globe          |
 | Palm garden    | —                                | —                               | seed, sprout, palm   | second palm, dates                | lotus planter, fig tree        |
 | Ibis pond      | —                                | —                               | —                    | edge stones, papyrus, reeds, ibis | lotus, second ibis             |
-| Lookout tower  | —                                | —                               | —                    | post, platform, ladder, flag      | roof, signal fire              |
+| Lookout tower  | —                                | —                               | —                    | post, platform, ladder, roof      | flag, signal fire              |
 | God statues    | —                                | —                               | —                    | —                                 | Thoth, Bastet, Anubis, Ra      |
 | Star canopy    | —                                | —                               | —                    | —                                 | poles, cloth, stars, planets   |
 | **Finds**      | **8**                            | **10**                          | **14**               | **19**                            | **22**                         |

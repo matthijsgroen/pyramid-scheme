@@ -174,8 +174,9 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["master", "post", { base: true }],
       ["master", "platform"],
       ["master", "ladder", { on: "platform" }],
-      ["master", "flag"],
-      ["wizard", "roof", { on: "platform" }],
+      ["master", "roof", { on: "platform" }],
+      // The pennant flies from the roof's peak.
+      ["wizard", "flag", { on: "roof" }],
       ["wizard", "signalFire", { on: "platform", lights: [SIGNAL] }],
     ]),
     layered("godStatues", { x: 1.33, y: 1.87, frame: 1.8, footprint: 1.62 }, [

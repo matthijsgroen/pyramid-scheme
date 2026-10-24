@@ -688,34 +688,31 @@ The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/ref-lookout.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the lookout tower, complete: a wooden lookout tower: four tall posts braced with crossbeams, a plank platform with a low railing on top, a wooden ladder leaning up to it, a thatched straw roof on four short poles over the platform, a small pale-blue pennant at its corner and an iron brazier with a burning signal fire on the platform. Use the colours of the matching objects in the reference image.
+> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the lookout tower, complete: a tall wooden lookout tower on four square posts braced with crossed beams on every side; a square plank platform on top with a solid plank railing; four corner posts rising from the platform carry a pointed thatched straw roof, with a pale cream pennant on a short pole at the roof's peak; a wooden ladder leaning against the front right side up to the platform; and on the platform, behind the railing, an iron brazier on three crossed legs with a burning signal fire in its bowl. Use the colours of the matching objects in the reference image.
 
-#### 66. `camp/roof` — Lookout tower, step 5 of 6 (wizard)
+#### 66. `camp/flag` — Lookout tower, step 5 of 6 (wizard)
 
 Edit of `camp/signalFire`.
 
 Attach: `art/masters/camp/ref-lookout.webp`, `art/masters/camp/signalFire.webp`
 
-> [edit] Remove this, and only this: an iron brazier with a burning signal fire on the platform. Where it stood, show the #ff00ff background or
-> whatever was behind it.
+> [edit] Remove this, and only this: the iron brazier with its signal fire on the platform. Where it stood, show the platform, the railing and the roof posts behind it, or the #ff00ff background.
 
-#### 67. `camp/flag` — Lookout tower, step 4 of 6 (master)
-
-Edit of `camp/roof`.
-
-Attach: `art/masters/camp/ref-lookout.webp`, `art/masters/camp/roof.webp`
-
-> [edit] Remove this, and only this: a thatched straw roof over the platform on four short poles. Where it stood, show the #ff00ff background or
-> whatever was behind it.
-
-#### 68. `camp/ladder` — Lookout tower, step 3 of 6 (master)
+#### 67. `camp/roof` — Lookout tower, step 4 of 6 (master)
 
 Edit of `camp/flag`.
 
 Attach: `art/masters/camp/ref-lookout.webp`, `art/masters/camp/flag.webp`
 
-> [edit] Remove this, and only this: a small pale-blue pennant flag on a pole at the platform's corner. Where it stood, show the #ff00ff background or
-> whatever was behind it.
+> [edit] Remove this, and only this: the pale cream pennant and its short pole at the roof's peak. Where it stood, show the #ff00ff background.
+
+#### 68. `camp/ladder` — Lookout tower, step 3 of 6 (master)
+
+Edit of `camp/roof`.
+
+Attach: `art/masters/camp/ref-lookout.webp`, `art/masters/camp/roof.webp`
+
+> [edit] Remove the thatched roof and the four corner posts that carry it, down to the railing. The platform, its railing, the ladder and the tower stay exactly as they are. Where they stood, show the #ff00ff background.
 
 #### 69. `camp/platform` — Lookout tower, step 2 of 6 (master)
 
@@ -723,8 +720,7 @@ Edit of `camp/ladder`.
 
 Attach: `art/masters/camp/ref-lookout.webp`, `art/masters/camp/ladder.webp`
 
-> [edit] Remove this, and only this: a wooden ladder leaning against the tower up to the platform. Where it stood, show the #ff00ff background or
-> whatever was behind it.
+> [edit] Remove this, and only this: the wooden ladder leaning against the front right side. Where it stood, show the tower's posts and crossed beams behind it, or the #ff00ff background.
 
 #### 70. `camp/post` — Lookout tower, step 1 of 6 (master)
 
@@ -732,8 +728,7 @@ Edit of `camp/platform`.
 
 Attach: `art/masters/camp/ref-lookout.webp`, `art/masters/camp/platform.webp`
 
-> [edit] Remove this, and only this: a plank platform on top of the posts with a low railing. Where it stood, show the #ff00ff background or
-> whatever was behind it.
+> [edit] Remove the plank platform and its railing from the top of the tower. The four tall posts and their crossed beams stay exactly as they are and end where the platform sat. Elsewhere show the #ff00ff background.
 
 ### God statues (`godStatues`)
 
