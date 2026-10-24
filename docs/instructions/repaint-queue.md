@@ -631,22 +631,18 @@ projection with zero vanishing points; lines must never converge. Display exactl
 elevation and 50% top-down elevation. All depth lines must extrude straight upwards along the
 vertical Y-axis. Strictly hide all left and right side planes.
 
-SUBJECT: A shallow puddle of still water on bare rock, dark and glossy, soft-edged, a few drips beside it. Almost flat: the water is the top-down half of the picture.
+SUBJECT: A shallow puddle of still water lying directly on the dark cave floor: an irregular, soft-edged patch of dark, glossy water, a few drips beside it. It has NO ground of its own — no stone, slab, rim, disc or plate under or around it; only the water itself, the floor shows through at its edge. On the water, one pale reflection of the explorer's torch, the lightest thing in the picture. Almost flat: the water is the top-down half of the picture.
 
 RENDERING: one object alone, painted and matte, with soft brush texture and grit. Soft modelled
 shading, never flat cel shading. NO OUTLINES: no dark contour around the object or any part of it
 — every edge is a change of value, never a stroke.
-It stands on the bottom edge of the picture, centred. A soft dark shadow lies on the ground
-beneath it, darkest where it meets the floor, no wider than the object and reaching no further
-below it than a tenth of its height. No hard edge, no drawn ellipse. The shadow is exactly the grey
-of stone in shade, around #23272b, completely free of pink or purple.
+It stands on the bottom edge of the picture, centred. It casts NO shadow: water lies flat in the floor.
 Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
 blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
 
-PALETTE, strictly: a dark cave, and this object is LIT by the explorer's torch — far lighter than the
-dark floor it stands on. Objects #d8d2c4 and #a19b8f, one sand accent #b8a585, against floor #3e4246
-and walls #ccc6ba. NOTHING LIGHTER THAN #f2ecde, no pure white, no shine. Nothing darker than #4a4640
-except a hole or water. Nothing built by hand: no cut
+PALETTE, strictly: water darker than the floor it lies on and glossy: #24282c to #3a3f44, the torch
+reflection #e8e0cc and a thin pale wet sheen at its edge, against floor #3e4246. No sand, no stone, no
+earth of its own. Nothing built by hand: no cut
 edges, no tool marks, no paint, no wood, no pottery.
 
 SCALE: it will be shown very small, about as tall as a fingernail. It must read as a SILHOUETTE:
