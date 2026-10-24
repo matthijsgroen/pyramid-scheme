@@ -64,9 +64,10 @@ export type CampStep = { chapter: Difficulty; pieces: CampPiece[]; layer?: CampL
  * measured in the wizard impression: x runs right, y runs down, and a smaller y stands farther away.
  * `frame` is the side of the square its images are drawn at; `footprint` is the width the object stands
  * on, which keeps a neighbour at the same depth away. `bleed` is the share of the frame the camera may leave
- * off-screen on its sides and top (a palm crown can stick out; its ground never does).
+ * off-screen on its sides and top (a palm crown can stick out). `sink` is the share it may leave below the
+ * screen's bottom: only for a spot nobody taps, like the pond.
  */
-export type CampPlace = { x: number; y: number; frame: number; footprint: number; bleed?: number }
+export type CampPlace = { x: number; y: number; frame: number; footprint: number; bleed?: number; sink?: number }
 
 export type CampSpot = CampPlace & { id: CampSpotId; steps: CampStep[] }
 

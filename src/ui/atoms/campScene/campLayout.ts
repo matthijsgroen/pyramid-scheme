@@ -288,7 +288,7 @@ export const layoutCamp = ({
           left: (p.dx - p.width / 2) * size + bleed,
           right: (p.dx + p.width / 2) * size - bleed,
           top: (p.dy - p.height) * size + bleed,
-          bottom: p.dy * size,
+          bottom: (p.dy - (o.sink ?? 0)) * size,
         }
       })
     ),

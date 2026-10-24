@@ -415,6 +415,12 @@ describe("layoutCamp", () => {
     expect(keys.indexOf("oasis:pool")).toBeLessThan(keys.indexOf("ibisPond:ibisPond"))
   })
 
+  it("frames a spot with sink closer, letting its bottom leave the screen", () => {
+    const low = (sink?: number): CampCatalogue => ({ spots: [{ ...lone("ibisPond", 0, 3, 3, 3), sink }], fixed: [] })
+    const fit = (c: CampCatalogue) => layout({ catalogue: c, width: 2000, height: 500, steps: { ibisPond: 1 } })
+    expect(fit(low(0.2)).unit).toBeGreaterThan(fit(low()).unit)
+  })
+
   it("frames a spot with bleed closer, letting its top and sides leave the screen", () => {
     const tall = (bleed?: number): CampCatalogue => ({
       spots: [{ ...lone("palmGarden", 1, 0, 3, 0.7), bleed }],
