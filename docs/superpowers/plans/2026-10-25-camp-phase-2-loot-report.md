@@ -143,9 +143,9 @@ Each is the option that changes the least shipped behaviour; Task 5 writes them 
 - Consumes: `generatedWorldConfigs`, `resolveEncounterMeta` (`src/mods/allFamilyMeta.ts`), `MOD_LOOT_TOTALS`, `PYRAMID_JOURNEYS` / `TOMB_JOURNEYS` (for `journeyTier`), `buildLootReport`, `renderLootReportMarkdown`.
 - Produces: the command. With no flags it prints the totals table and the per-tier table to the console (padded columns, as `scripts/worldInfo.ts` does) and writes `docs/loot-report.md`. `--journey <id>` also prints that journey's slots one per line (level, floor, place, kind, tier, reward type and its fields). It never fails on a low share and exits non-zero only when the configs cannot be read.
 
-- [ ] **Step 1: Implement** the script (no logic beyond wiring and printing; everything it counts comes from Task 1 and Task 2).
-- [ ] **Step 2: Run** `yarn loot-report` and `yarn loot-report --journey <any pyramid id>`; read the output: totals carry a found and needed column, every tier has a row, the share column reads like the phase 1 numbers in `docs/review-camp-release.md` (it uses the same definition; a large difference is a classification bug — fix it in Task 1's function with a made-up case that shows it). Do not commit `docs/loot-report.md` yet: `git checkout -- docs/loot-report.md` if it exists, or delete it.
-- [ ] **Step 3:** `yarn check-types`, `yarn lint`. **Commit** — `feat: yarn loot-report prints and writes the loot in the world`
+- [x] **Step 1: Implement** the script (no logic beyond wiring and printing; everything it counts comes from Task 1 and Task 2).
+- [x] **Step 2: Run** `yarn loot-report` and `yarn loot-report --journey <any pyramid id>`; read the output: totals carry a found and needed column, every tier has a row, the share column reads like the phase 1 numbers in `docs/review-camp-release.md` (it uses the same definition; a large difference is a classification bug — fix it in Task 1's function with a made-up case that shows it). Do not commit `docs/loot-report.md` yet: `git checkout -- docs/loot-report.md` if it exists, or delete it.
+- [x] **Step 3:** `yarn check-types`, `yarn lint`. **Commit** — `feat: yarn loot-report prints and writes the loot in the world`
 
 ---
 

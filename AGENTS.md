@@ -99,6 +99,7 @@ yarn lint         # ESLint (Tailwind class order; --max-warnings pins the warn b
 yarn betterer     # The ratcheted guards — fails on a new occurrence, per file
 yarn betterer:update # Record a guard's new, lower state after fixing occurrences
 yarn build        # Production build
+yarn loot-report  # The loot in the baked world against demand, writes docs/loot-report.md
 yarn storybook    # Component docs at http://localhost:6006
 ```
 

@@ -36,6 +36,7 @@
     "seeds-info": "tsx scripts/puzzleSeeds.ts info",
     "verify-seeds": "tsx scripts/puzzleSeeds.ts verify",
     "verify-content": "vitest run --config vitest.verify.config.ts",
+    "loot-report": "tsx scripts/lootReport.ts",
     "world-info": "tsx scripts/worldInfo.ts",
     "release": "tsx scripts/release.ts",
     "prepare": "husky",
