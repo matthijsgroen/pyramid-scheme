@@ -958,10 +958,10 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/worldGen/dsl.spec.ts:531463177": [
       [12, 54, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/worldGen/lootEconomyInvariants.verify.ts:2802438428": [
+    "src/worldGen/lootEconomyInvariants.verify.ts:2022799130": [
       [21, 13, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/worldGen/placeFragments.ts:1826053950": [
+    "src/worldGen/placeFragments.ts:2622274585": [
       [251, 37, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [251, 76, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
@@ -980,13 +980,13 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/worldGen/sideSections.ts:3785662563": [
       [78, 42, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/worldGen/slotAllocator.ts:3128149081": [
+    "src/worldGen/slotAllocator.ts:2429983620": [
       [43, 75, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/worldGen/slots.spec.ts:1761166363": [
       [78, 87, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/worldGen/slots.ts:1760217034": [
+    "src/worldGen/slots.ts:1675005161": [
       [31, 71, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [48, 9, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [120, 51, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
