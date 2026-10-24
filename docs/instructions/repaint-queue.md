@@ -357,7 +357,7 @@ It is about twice as wide as it is tall: a low mound of rock, knee-high.
 
 ### `cave/pillar` — a dripstone column
 
-**Attach:** `art/masters/props/cave/basin.webp` — the cave's accepted pool, for its paint and its projection
+**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's own rock, for its paint and its colour; the STYLE block gives the angle
 
 ```
 STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
@@ -392,7 +392,7 @@ It is about one third as wide as it is tall: a column taller than a person.
 
 ### `cave/rubblePile` — a rockfall of broken limestone
 
-**Attach:** `art/masters/props/cave/basin.webp` — the cave's accepted pool, for its paint and its projection
+**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's own rock, for its paint and its colour; the STYLE block gives the angle
 
 ```
 STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
@@ -427,7 +427,7 @@ It is about one and a half times as wide as it is tall: a knee-high heap.
 
 ### `cave/pit` — a sinkhole, dark shaft
 
-**Attach:** `art/masters/props/cave/basin.webp` — the cave's accepted pool, for its paint and its projection
+**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's own rock, for its paint and its colour; the STYLE block gives the angle
 
 ```
 STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
@@ -462,7 +462,7 @@ It is about twice as wide as it is tall: a hole in the floor with a low broken r
 
 ### `cave/crystal` — pale selenite blades from a rock seam
 
-**Attach:** `art/masters/props/cave/basin.webp` — the cave's accepted pool, for its paint and its projection
+**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's own rock, for its paint and its colour; the STYLE block gives the angle
 
 ```
 STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
@@ -497,7 +497,7 @@ It is about as wide as it is tall: a waist-high cluster.
 
 ### `cave/brazier` — an old campfire, someone camped here
 
-**Attach:** `art/masters/props/cave/basin.webp` — the cave's accepted pool, for its paint and its projection
+**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's own rock, for its paint and its colour; the STYLE block gives the angle
 
 ```
 STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
@@ -532,7 +532,7 @@ It is about three times as wide as it is tall: flat on the floor, ankle-high.
 
 ### `cave/stalagmite` — a cluster of low stone cones
 
-**Attach:** `art/masters/props/cave/basin.webp` — the cave's accepted pool, for its paint and its projection
+**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's own rock, for its paint and its colour; the STYLE block gives the angle
 
 ```
 STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
@@ -567,7 +567,7 @@ It is about as wide as it is tall: the tallest cone waist-high.
 
 ### `cave/puddle` — a flat glossy puddle, soft-edged
 
-**Attach:** `art/masters/props/cave/basin.webp` — the cave's accepted pool, for its paint and its projection
+**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's own rock, for its paint and its colour; the STYLE block gives the angle
 
 ```
 STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
@@ -602,7 +602,7 @@ It is about four times as wide as it is tall: flat, lying on the floor.
 
 ### `cave/bones` — an old skeleton half in the sand
 
-**Attach:** `art/masters/props/cave/basin.webp` — the cave's accepted pool, for its paint and its projection
+**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's own rock, for its paint and its colour; the STYLE block gives the angle
 
 ```
 STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
