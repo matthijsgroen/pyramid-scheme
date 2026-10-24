@@ -733,9 +733,9 @@ It is about three times as wide as it is tall: lying on the floor.
 
 **Import:** `yarn import-tile art/masters/props/cave/bones.webp --tier=cave --name=bones --slot=prop --filter=smooth --cells=2x1 --scale=0.95` — two cells across (`DECORATION_FOOTPRINTS`); check with `yarn on-floor src/assets/tiles/cave/bones.png cave /tmp/bones.png --cells=2x1`
 
-### `cave/rubbleSpill` — loose stones fallen on the passage floor
+### `cave/rubbleSpill` — a fan of grit and sand fallen on the passage floor
 
-**Attach:** `art/masters/props/starter/rubbleSpill.webp` — the merchant's spill, for its size, its camera and how flat it lies only
+No attachment: a reference spill of anything hard is copied as blocks, whatever the prompt says.
 
 ```
 STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
@@ -743,18 +743,19 @@ projection with zero vanishing points; lines must never converge. Display exactl
 elevation and 50% top-down elevation. All depth lines must extrude straight upwards along the
 vertical Y-axis. Strictly hide all left and right side planes.
 
-SUBJECT: Scree that has fallen from a cave roof and lies where it landed: one or two broken chunks, a handful of smaller angular fragments and a lot of grit and dust, all of different sizes and shapes, half sunk into the grit. It is densest on one side and thins out raggedly toward the other, with stray chips flung beyond it. It looks FALLEN, not placed: no arrangement, no rows, no circle, no even spacing, no set of similar stones laid out side by side, no two stones alike. No heap, no mound, nothing built, no bricks.
-
-THE ATTACHED IMAGE SHOWS A DIFFERENT SPILL (broken brick). Take only its size, its camera and how flat it lies;
-draw nothing of its bricks or colours.
+SUBJECT: A flat fan of fine grit, gravel and sand that has trickled down from a crack in the cave roof
+and spread out over the floor where it landed. Mostly TEXTURE: sand and tiny pebbles, densest and a little
+raised where it fell, thinning out raggedly toward its edges into a scatter of loose grains. At most a few
+pebbles bigger than a fingertip, rounded and worn. No stones, no chunks, no blocks, no bricks, no slabs, no
+flat faces, no straight edges, no corners. Nothing arranged, no rows, no circle, no heap.
 
 RENDERING: painted and matte, soft brush texture, soft modelled shading. NO OUTLINES — every edge is a change
-of value, never a stroke. A faint soft contact shadow under each larger stone, exactly the grey of stone in
+of value, never a stroke. A faint soft contact shadow under the raised middle, exactly the grey of stone in
 shade, around #23272b, free of pink or purple. Everything else flat magenta #ff00ff (red 255 green 0 blue 255)
 to all four edges.
 
-PALETTE, strictly: a dark cave, the stones LIT by the explorer's torch — far lighter than the dark floor they
-lie on. Stones #d8d2c4 and #a19b8f, grit #b8a585, against floor #3e4246. Nothing lighter than #f2ecde.
+PALETTE, strictly: a dark cave, the grit LIT by the explorer's torch — far lighter than the dark floor it
+lies on. Sand #b8a585 and #d8d2c4, pebbles #a19b8f, against floor #3e4246. Nothing lighter than #f2ecde.
 
 SCALE: shown very small. Few, simple shapes. About four times as wide as it is tall: flat, lying on the floor.
 ```
