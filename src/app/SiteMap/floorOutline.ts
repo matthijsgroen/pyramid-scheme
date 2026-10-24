@@ -25,7 +25,7 @@ export type FloorGroup = { id: string; rects: readonly Rect[]; soft: boolean }
 
 /** The corner radius — a side wall's thickness, so a corner is worn about as far as a wall is thick. */
 const RADIUS = SIDE_W * 1.5
-/** How far a side or south edge wanders off its line, either way. Under a fifth of the thinnest gap, so a
+/** How far a side or south edge wanders off its line, either way. Under a quarter of the thinnest gap (`SIDE_W`), so a
  * wobble never reaches across a wall to the floor on its other side. */
 const WOBBLE = 3
 /** The spacing of the wobble's points along an edge, in map units. */

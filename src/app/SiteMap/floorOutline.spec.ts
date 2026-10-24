@@ -4,8 +4,7 @@ import { CELL, cellLeft, cellTop } from "./mapScale"
 import { floorGroups, floorOutline } from "./floorOutline"
 import { buildTileRegions, rectsToPath, type FloorAt, type OpenBetween } from "./tileRegions"
 
-/** A made-up floor drawn as text: `R` room, `C` corridor, `.` stone. Every floor cell opens onto every floor
- * neighbour, so a block of letters is one space. */
+// `R` room, `C` corridor, `.` stone; lower case is starter stone on the same floor. Neighbouring floor is always open.
 const regionsOf = (plan: string[], tier: Tileset) => {
   const rows = plan.length
   const cols = plan[0].length
@@ -13,7 +12,11 @@ const regionsOf = (plan: string[], tier: Tileset) => {
   const floorAt: FloorAt = (r, c) => {
     const ch = at(r, c)
     if (ch === ".") return "stone"
-    return { state: "reachable", kind: ch === "R" ? "room" : "corridor", tier }
+    return {
+      state: "reachable",
+      kind: ch.toUpperCase() === "R" ? "room" : "corridor",
+      tier: ch === ch.toLowerCase() ? "starter" : tier,
+    }
   }
   const openBetween: OpenBetween = (r, c, dir) =>
     at(r, c) !== "." && (dir === "s" ? at(r + 1, c) : at(r, c + 1)) !== "."
@@ -23,7 +26,6 @@ const regionsOf = (plan: string[], tier: Tileset) => {
 const floorCellsOf = (plan: string[]) =>
   plan.flatMap((line, r) => [...line].flatMap((ch, c) => (ch === "." ? [] : [[r, c] as const])))
 
-/** The outline's loops as polygons: lines kept, each curve sampled along its length. */
 const loopsOf = (d: string): [number, number][][] => {
   const loops: [number, number][][] = []
   let loop: [number, number][] = []
@@ -70,8 +72,6 @@ const inside = (loops: [number, number][][], [px, py]: readonly [number, number]
   return crossings % 2 === 1
 }
 
-// A room with a corridor running east from its middle row and one running south from its bottom row: every
-// kind of corner the floor has, convex and concave, against a face and away from one.
 const PLAN = [
   "......", //
   ".RRRCC",
@@ -113,6 +113,37 @@ describe("floorOutline", () => {
     const a = floorOutline(groups, "site-a")
     expect(floorOutline(groups, "site-a")).toEqual(a)
     expect(floorOutline(groups, "site-b").outline).not.toBe(a.outline)
+  })
+
+  it("traces two separate caves on one floor as two outlines", () => {
+    const islands = ["......", ".RR.RR", ".RR.RR"]
+    const { outline } = floorOutline(
+      floorGroups(regionsOf(islands, "cave"), t => t === "cave"),
+      "site-a"
+    )
+    expect(outline.match(/M/g)).toHaveLength(2)
+  })
+
+  it("keeps the pillar of rock inside a ring of cave floor out of the floor", () => {
+    const ring = [".......", ".RRRRR.", ".RR.RR.", ".RRRRR."]
+    const { outline } = floorOutline(
+      floorGroups(regionsOf(ring, "cave"), t => t === "cave"),
+      "site-a"
+    )
+    const loops = loopsOf(outline)
+    expect(loops).toHaveLength(2)
+    expect(inside(loops, [cellLeft(3) + CELL / 2, cellTop(2) + CELL / 2])).toBe(false)
+    for (const [r, c] of floorCellsOf(ring))
+      expect(inside(loops, [cellLeft(c) + CELL / 2, cellTop(r) + CELL / 2]), `cell ${r},${c}`).toBe(true)
+  })
+
+  it("leaves a starter pocket on a cave floor drawn as its own rectangles", () => {
+    const mixed = ["......", ".RRrr.", ".RRrr."]
+    const groups = floorGroups(regionsOf(mixed, "cave"), t => t === "cave")
+    const { fills } = floorOutline(groups, "site-a")
+    const starter = groups.filter(g => g.id.startsWith("starter:") && g.rects.length > 0)
+    expect(starter.length).toBeGreaterThan(0)
+    for (const g of starter) expect(fills.get(g.id)).toBe(rectsToPath(g.rects))
   })
 
   it("leaves the floor edge under a wall face straight and at its own height", () => {
