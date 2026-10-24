@@ -1,0 +1,202 @@
+# Handover — the camp release: loot, camp home, journeys, collection, healing, story
+
+The task queue for turning the camp into the game's home and its loot into camp things. It is built to run
+**unattended**: one driver session works through the phases below, each task done by a fresh subagent, and the
+designer reviews the result the next day. Read this file, then [`docs/instructions/agent-work.md`](instructions/agent-work.md)
+and `AGENTS.md`, then start at the first phase whose box is unchecked.
+
+## How the driver session works
+
+- **Branch.** Work on `camp/home-and-loot` (worktree `prickly-gila`), branched from `origin/main` after PR #322
+  (story, art direction, tomb caves and caverns) was merged. Never work on `main`. Commit after every task; push the branch
+  after every phase (the designer allows it for this queue). Never merge a PR.
+- **One phase at a time.** A phase starts with its **plan task**: a fresh planning subagent (Opus) writes
+  `docs/superpowers/plans/2026-10-25-camp-<phase>.md` from this brief, the specs it names and the code as it is
+  _then_, in the format of `docs/superpowers/plans/2026-10-22-tomb-redesign.md` (Goal, Architecture, Spec, Global
+  Constraints, Review Focus, tasks with Files / Interfaces / checkbox Steps) and the rule in agent-work.md that a
+  plan says what to build, which files, and what the tests prove, **without code**. Commit the plan, then run it.
+- **One subagent per task** (superpowers:subagent-driven-development). Sonnet implements; Opus implements the tasks
+  a plan marks _soundness_ (saves, world-gen placement, reachability, the economy guard). One review per phase at
+  its end (Sonnet), plus a per-task review on soundness tasks. A reviewer's finding is fixed by a fresh subagent,
+  then the next task starts.
+- **Checks.** Each task runs its own specs, `yarn check-types` and `yarn lint`. A phase's last task runs, each
+  under `timeout 900`: the bake (`yarn generate-world`) when the phase touches world-gen, `yarn verify`,
+  `yarn verify-content`, `yarn build`. A phase is done only when all of them pass. When a process is quiet for
+  long, check `ps` for a hung node/vitest.
+- **When stuck.** Two failed attempts at the same task: stop that phase, write what failed into the review list
+  (below), and continue with the next phase that does not depend on it. Never weaken a check, skip a test or
+  edit a baked number by hand to get past a failure.
+- **Decisions.** Where a brief leaves a choice open, take the default written here; where a new choice comes up,
+  take the option that changes the least shipped behaviour, and write it into the review list with the
+  alternative. Never stop to ask: the designer is not there.
+- **The review list.** `docs/review-camp-release.md` (create it in the first task): one line per decision taken,
+  per draft text to approve, per failure left behind, per thing to look at in the browser. This is what the
+  designer reads first the next day.
+- **Progress.** After each task, tick its box in the phase plan; after each phase, tick it below and add one line
+  to "State" at the bottom of this file.
+
+## Sources
+
+- Design: [`docs/game-design/camp.md`](game-design/camp.md) (direction; its find model and slot conversion are
+  replaced by the loot spec), [`docs/superpowers/specs/2026-10-23-camp-loot-design.md`](superpowers/specs/2026-10-23-camp-loot-design.md)
+  (the loot model, decided), [`docs/superpowers/specs/2026-10-23-camp-scene-design.md`](superpowers/specs/2026-10-23-camp-scene-design.md)
+  (the scene component; its "step count per spot" is superseded by the found-ids model in
+  `src/ui/atoms/campScene/campTypes.ts`).
+- Screens: [`docs/design/camp-sketches/`](design/camp-sketches/README.md), the approved sketches (camp, Alle reizen,
+  coming home, new chapter, Verzameling, mosaic window, desktop camp, the 12 spots and their 74 finds).
+- Built: `src/ui/atoms/CampScene.tsx` and `src/ui/atoms/campScene/*` (Storybook only, not mounted).
+- Conventions: `AGENTS.md`, [`docs/mods/TARGET.md`](mods/TARGET.md) (mods toggle off; core never names a mod).
+- Story voice: [`docs/game-design/story/IMPLEMENTATION.md`](game-design/story/IMPLEMENTATION.md) and the story
+  review notes beside it.
+
+## Decisions (taken; the designer reviews them)
+
+Decided by the designer:
+
+- **Saves reset** at the starter release; there is no migration for the shapes this queue changes (trap
+  consumables, left-behind chests, pack-mule and detector perk ids). A save from before simply starts over.
+- **Loot stays the size it is.** −185 consumables, +26 found items, +~78 structure parts, +~60 waterskins (expert
+  and up). The animals add money **value**, not slots: sellables go up in number or price. Every chest and path
+  end carries loot; a puzzle room may be empty. The share of puzzles with loot is reported per tier (measured on
+  the current bake: starter 81%, junior 43%, expert 40%, master 27%, wizard 17%).
+- **Loot first, then screens.** The screens follow the sketches.
+- **After a journey the player always returns to the camp**, with the coming-home overview. Nothing chains into
+  the next journey.
+- **Story texts are drafted unattended** and marked as drafts; the designer reviews them the next day.
+
+Defaults this queue takes (each goes into the review list):
+
+1. **A new `camp` mod** owns camp items, structure parts, the camp's saved state and the camp screens' content.
+   The step-to-tier data world-gen needs moves from `src/ui/atoms/campScene/campCatalogue.ts` into the mod's
+   domain layer; the ui atom keeps taking everything as props.
+2. **Waterskin** belongs to the trap mod (it owns health): picked up, it heals one heart at once if a heart
+   is missing, and otherwise heals nothing. Either way it is used up: there is no inventory of supplies any more,
+   and nothing is ever left behind in a chest. (Decided by the designer.)
+3. **Healing** happens at the camp fire on coming home: hearts refill to full. Core gets a "coming home" seam
+   that mods register into; core never names trap or health.
+4. **"Coming home"** fires whenever the player leaves the expedition screen back to base: at a journey's end
+   (always) and when leaving mid-journey. The overview lists what was found since the last homecoming; an empty
+   haul shows only the fire and hearts.
+5. **Perks that pointed at consumables:** pack-mule (`starter_a_3`) becomes "waterskins heal two hearts"; the
+   supplies detector levels 1–3 detect camp finds instead.
+6. **Animal prices** are authored defaults that satisfy the per-gate guard with a margin; the caravan banner
+   opens nothing.
+7. **Where things live once the pager is gone:** settings behind a gear in the camp HUD (developer mode keeps
+   its 7-tap entrance on the title), the story log as a tab in the Verzameling, the mosaic window opens the
+   existing mosaic screen, the dev tools from Travel move to the settings panel.
+
+## Phases
+
+Each brief is the input for that phase's plan task. Order is fixed; a later phase may start only when the
+earlier ones it names are done.
+
+### Phase 1 — consumables out, healing at the camp [ ]
+
+Remove bandage, oil and trapTool as a currency everywhere: the trap descriptor's distributions and shop stock,
+the DSL `consumableRates`, the reward contribution and its full-pack `canAccept`, the left-behind chest flow
+(`disabledTraps`, `skippedConsumables`, `useRewardOffer`, `RewardFlow`'s `consumableFull`), the HUD bar, the
+consumable emoji/display/schema, the shop's `CONSUMABLE_PRICES`, Fez's shop rows, the locale keys. Traps keep
+dealing damage; nothing heals during a site. Add the core "coming home" seam (decision 3) and the trap mod's
+registration that refills health. Add the waterskin currency (decision 2) as a trap-owned distribution on
+expert-and-up puzzle slots, replacing the consumable fill there one for one where possible. Retarget pack-mule
+and the supplies detector (decision 5). Rewrite the docs that describe consumables and health:
+`docs/game-design/pyramid-interior-design.md` (health section), `docs/game-design/shop-mechanic.md`,
+`docs/mods/collection-and-detector-design.md`. Soundness: the bake and the economy guard. Ends with a bake; the
+loot overview below is run and its numbers recorded in the review list.
+
+### Phase 2 — the loot overview [ ]
+
+`yarn loot-report`: from the baked world, per tier and per journey/level, every slot and what fills it (by
+reward type), empty puzzle rooms, the share of puzzles with loot, chests filled, and totals per currency against
+demand (fragments needed by tableaus, mosaic 252, map pieces, keys, camp finds, money needed before each gate once
+phase 4 exists). A pure function over the baked configs with specs on a made-up world, and a world validator
+that fails the bake when a chest or path end is empty. Small, but every later phase reads its output.
+
+### Phase 3 — camp loot: found items and structure parts [ ]
+
+The `camp` mod (decision 1). Two currencies from the loot spec: **found items** (26) and **structure parts**
+(26 structures, about 3 parts each; small structures 1–2; the spec leaves names and counts to the builder), placed
+by tier following each step's tier in the catalogue, as a capped/dynamic distribution so they fill slots without
+gating. Reward contributions that record a find; the camp's found state (`CampFound` per spot, any order); a
+structure appears only when all its parts are in; self-growing steps follow on the next homecoming. The
+Verzameling gets a **Constructies** tab (started structures only, "n van m", parts named or "???"). The scene
+reads the found state through props. Soundness: placement and the bake. Ends with a bake and the loot report.
+
+### Phase 4 — animals as gates, the per-gate guard [ ]
+
+The animals are **obstacles**: without the right one the player cannot reach a higher tier or an optional
+tomb. The seven purchases (loot spec, "Bought at Fez"):
+
+| Purchase (Fez)         | Lands in the camp                 | Opens                                           |
+| ---------------------- | --------------------------------- | ----------------------------------------------- |
+| Junior: donkey         | halter, donkey, saddlebags        | the expert tier                                 |
+| Expert: cart           | cart with blanket                 | the master tier                                 |
+| Expert: camel          | rope, camel, saddle, water trough | the second expert tomb (Inner Sanctum)          |
+| Master: second donkey  | second donkey                     | the wizard tier                                 |
+| Master: second camel   | second camel, camel trough        | the second master tomb (Hall of Osiris)         |
+| Wizard: sturdier cart  | the painted cart                  | the second wizard tomb (Realm of Cosmic Forces) |
+| Wizard: caravan banner | the banner                        | nothing — just for fun                          |
+
+A locked journey or tier shows what it needs (in Alle reizen: "Je hebt een ezel nodig"). The purchases are sold in Fez's tomb shops (the builder picks which shop, reachable before
+its gate), each landing its camp steps and opening its gate **on top of** the existing gate (tier unlock
+treasure, tomb `entryLock`). Core grows a registry so several mods can each add a requirement to the same gate
+(today `journeyEntryLock` returns one lock and `tierUnlockBucket` is an OR; mods may not import each other). The
+economy guard becomes **per gate**: all income reachable before a gate ≥ the price of everything buyable before
+it, the animal included. Shop mod off: the animal gates fall away. Starter → junior needs no animal. Soundness:
+reachability and the guard. Ends with a bake.
+
+### Phase 5 — the economy recomputed [ ]
+
+Sinks = the 13 rare items + the 7 purchases. Income ≈ 1.1 × sinks and passing the per-gate guard, split over
+sellables and loose coins; sellables go up (more of them or dearer, `src/data/sellables.ts`) so the animals are
+affordable. The total number of drops stays about what it is (the loot report shows it). Sold items stay
+visible in the collection. Ends with a bake, the loot report in the review list, and the tier fingerprints
+updated deliberately (the world is unreleased; starter moves only if this phase must touch it, and the review
+list says why).
+
+### Phase 6 — the camp as home, coming home [ ]
+
+Mount `CampScene` as the home screen in place of the Travel/Collection pager (`src/app/Base.tsx`), following
+`docs/design/camp-sketches/Main.dc.html` and `DesktopKamp.dc.html`: the HUD (coins, hearts, settings gear), the
+scene with its entrances (chest → Verzameling, mosaic window → mosaic screen, map → Alle reizen, fire), the
+"Verder met" card with **Op pad**, **Alle reizen**, the hint row. Journey end and leaving an expedition go
+home through the coming-home screen (`MobielUitpakken`, `DesktopUitpakken`): fire, hearts refilled, the haul
+since last time, **Uitpakken**; the completion overlay stops offering the next journey. A newly unlocked tier
+shows the new-chapter screen (`MobielHoofdstuk`). Settings, dev tools and story log move per decision 7. New ui
+pieces get stories; strings in en and nl. No camp spot ships as a stand-in: a spot without art stays bare ground.
+
+### Phase 7 — Alle reizen and the Verzameling [ ]
+
+Alle reizen as a popup over the camp (side panel on desktop), per `MobielReizen.dc.html`: one flat list, tiers
+as headers newest first, the current journey marked, completed tiers collapsed with a dot when something new
+waits, locked journeys showing what they need; every journey one tap away. It replaces `src/app/pages/Travel.tsx`
+and its map view. The Verzameling as a popup from the chest, per `MobielVerzameling.dc.html`: the existing
+collection sections as tabs, NIEUW badges, plus the Constructies tab from phase 3 and the story log. The mosaic
+window per `MobielMozaiek.dc.html`.
+
+### Phase 8 — story drafts [ ]
+
+Draft every new line in the voice of the story docs (spoken, from the character's feeling, addressed to someone;
+jokes land on first read; the explorer speaks only where it helps), mark each as a draft, and wire its hook:
+
+- every tomb: entering the cave, reaching the pillar, arriving at the cavern (the story hooks of
+  `docs/superpowers/specs/2026-10-22-tomb-redesign-design.md`);
+- the camp: first arrival, coming home (with and without loot), resting at the fire after taking damage, a new
+  chapter per tier;
+- Fez: the animals for sale, each purchase, the banner;
+- the animal gates: the first time a tier or optional tomb is blocked for want of an animal (who says it, and
+  where to get one), the moment the animal lets the player through, and the animal arriving in the camp;
+- finishing a structure; the first camp find.
+
+Lines go where the story layer keeps them, each listed in the review list with where it fires. No line is
+"final" until the designer has read it.
+
+### Phase 9 — wrap-up [ ]
+
+CHANGELOG (edit the Unreleased bullets, do not pile them up), `docs/playtest-backlog.md` (what to try in the
+browser), the onboarding/handover docs this queue made stale, a last loot report, the full gate in a clean
+worktree, and the review list sorted: decisions, drafts, failures, things to look at. Push the branch; open no PR.
+
+## State
+
+- 2026-10-24 — queue written; PR #322 merged into main; branch `camp/home-and-loot` created. Next: phase 1 plan task, in a fresh session.
