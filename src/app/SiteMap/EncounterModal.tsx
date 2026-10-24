@@ -1,8 +1,19 @@
 import type { FC, ReactNode } from "react"
 import type { Difficulty, Tileset } from "@/game/siteTypes"
+import caveWall from "@/assets/tombWall/cave.webp"
 import { imageMap, WALL_SIZE } from "@/ui/atoms/tombImageMap"
 
-const walls: Partial<Record<Tileset, (typeof imageMap)[Difficulty]>> = imageMap
+// The ranks' walls, and the cave's: a tileset that is no rank, so no tomb door or tableau stands against it,
+// only its encounters. Its colours are its own `wallBase` and `wall` (tileMaterials.ts).
+const walls: Partial<Record<Tileset, (typeof imageMap)[Difficulty]>> = {
+  ...imageMap,
+  cave: {
+    image: caveWall,
+    behind: "bg-[#120f0c]",
+    color: "bg-[#1f1b16]",
+    gradient: "bg-gradient-to-t from-[#1f1b16] from-50% to-[#41392f] to-100%",
+  },
+}
 
 // The frame every encounter (puzzle, trap, shop, gate, chest) is presented in. Scrolls
 // vertically so a family can put its rules below the board while the board itself stays within
@@ -16,8 +27,7 @@ const walls: Partial<Record<Tileset, (typeof imageMap)[Difficulty]>> = imageMap
 // IT WEARS THE FLOOR'S OWN WALL, which is what makes an encounter part of the pyramid rather than a
 // dialogue box over a picture of one. The five rank walls were painted for the tableau and were drawn
 // nowhere but behind its board; every family is met in the same tomb, so every family is met against the
-// same stone. A tileset with no wall art (the cave's, until it is painted) falls back to the card's own
-// colour, and so does an encounter opened without a tileset at all. The wall is the room's tileset and not
+// same stone. An encounter opened without a tileset falls back to the card's own colour. The wall is the room's tileset and not
 // its difficulty: a junior board in a starter section is still met against the starter wall.
 //
 // A SCRIM OVER IT, because the chrome above and below a board is small stone-coloured text and a painted

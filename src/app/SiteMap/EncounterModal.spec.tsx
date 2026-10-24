@@ -33,9 +33,18 @@ describe("the wall an encounter stands against", () => {
     expect(wallOf(container).backgroundImage).toContain(imageMap.junior.image)
   })
 
-  it("is none for a tileset with no wall, leaving the card's own colour", () => {
+  it("is the cave's own wall for the cave, a tileset that is no rank", () => {
     const { container } = render(
       <EncounterModal tileset="cave">
+        <p>an encounter</p>
+      </EncounterModal>
+    )
+    expect(wallOf(container).backgroundImage).toContain("cave")
+  })
+
+  it("is none without a tileset, leaving the card's own colour", () => {
+    const { container } = render(
+      <EncounterModal>
         <p>an encounter</p>
       </EncounterModal>
     )

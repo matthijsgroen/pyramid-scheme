@@ -11,7 +11,7 @@
 import sharp from "sharp"
 import { dirname, join } from "node:path"
 import { fileURLToPath, pathToFileURL } from "node:url"
-import { difficulties, type Difficulty } from "../src/data/difficultyLevels"
+import { difficulties } from "../src/data/difficultyLevels"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -23,13 +23,16 @@ export const squareCut = ({ width, height }: { width: number; height: number }) 
   return { left: Math.floor((width - size) / 2), top: Math.floor((height - size) / 2), width: size, height: size }
 }
 
-export const panelPath = (tier: Difficulty) => join("src", "assets", "tombWall", `${tier}.webp`)
+/** A rank's wall, or a tileset that is no rank (the cave). */
+const PANEL_TIERS: string[] = [...difficulties, "cave"]
+
+export const panelPath = (tier: string) => join("src", "assets", "tombWall", `${tier}.webp`)
 
 const main = async (): Promise<void> => {
   const file = process.argv[2]
-  const tier = process.argv.find(a => a.startsWith("--tier="))?.slice("--tier=".length) as Difficulty | undefined
-  if (!file || file.startsWith("--") || !tier || !difficulties.includes(tier)) {
-    console.error(`usage: yarn import-panel <master> --tier=<${difficulties.join("|")}>`)
+  const tier = process.argv.find(a => a.startsWith("--tier="))?.slice("--tier=".length)
+  if (!file || file.startsWith("--") || !tier || !PANEL_TIERS.includes(tier)) {
+    console.error(`usage: yarn import-panel <master> --tier=<${PANEL_TIERS.join("|")}>`)
     process.exit(1)
   }
   const { width = 0, height = 0 } = await sharp(file).metadata()
