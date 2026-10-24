@@ -745,7 +745,7 @@ Attach: `art/masters/camp/ref-godStatues-soft.webp`, `art/masters/camp/chest.web
 
 Edit of `camp/ra`.
 
-Attach: `art/masters/camp/ref-godStatues.webp`, `art/masters/camp/ra.webp`
+Attach: `art/masters/camp/ref-godStatues-soft.webp`, `art/masters/camp/ra.webp`
 
 > [edit] Remove this, and only this: the Ra statue at the back right, with its plinth: the falcon head, the red sun disc and its gold body. Where it stood, show the #ff00ff background or
 > whatever was behind it.
@@ -754,7 +754,7 @@ Attach: `art/masters/camp/ref-godStatues.webp`, `art/masters/camp/ra.webp`
 
 Edit of `camp/anubis`.
 
-Attach: `art/masters/camp/ref-godStatues.webp`, `art/masters/camp/anubis.webp`
+Attach: `art/masters/camp/ref-godStatues-soft.webp`, `art/masters/camp/anubis.webp`
 
 > [edit] Remove this, and only this: the Anubis statue, third from the front, with its plinth. Where it stood, show the #ff00ff background or
 > whatever was behind it.
@@ -763,7 +763,7 @@ Attach: `art/masters/camp/ref-godStatues.webp`, `art/masters/camp/anubis.webp`
 
 Edit of `camp/bastet`.
 
-Attach: `art/masters/camp/ref-godStatues.webp`, `art/masters/camp/bastet.webp`
+Attach: `art/masters/camp/ref-godStatues-soft.webp`, `art/masters/camp/bastet.webp`
 
 > [edit] Remove this, and only this: the Bastet cat bust, second from the front, with its plinth. Where it stood, show the #ff00ff background or
 > whatever was behind it.
