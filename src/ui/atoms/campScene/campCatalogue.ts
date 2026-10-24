@@ -195,8 +195,8 @@ export const CAMP_CATALOGUE: CampCatalogue = {
   fixed: [
     {
       id: "chest",
-      x: -1.52,
-      y: 0.4,
+      x: -1.25,
+      y: 0.3,
       frame: 1,
       footprint: 0.83,
       piece: piece("chest", { lights: [light(0.8, "255,200,80", "breathe", 0.4, 0, -0.35)] }),
