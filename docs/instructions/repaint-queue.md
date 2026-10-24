@@ -693,45 +693,59 @@ It is about three times as wide as it is tall: lying on the floor.
 
 ### `cave/roots` — roots coming through the ceiling down the face
 
-**Attach:** `art/masters/props/starter/veil.webp` — a starter prop, as the style reference
+**Attach:** `art/masters/props/starter/tallyBoard.webp` — a starter wall item, for the wall-item camera only
 
 ```
-Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
-Roots from above: pale-brown tree roots breaking through the rock at the top of a cave wall and hanging down its face, thick near the ceiling, branching and thinning to fine hairs, a few trailing nearly to the floor. Frontal, flat, one band wide and shallow.
-Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
-speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
-than #181b1e.
-No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
-Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
-object described here, alone.
-Flat frontal view, no perspective. A wide shallow band, twice as wide as tall, on pure magenta #FF00FF, the art touching the top edge and filling the frame's width. Even lighting.
+STYLE: Pure Cabinet Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
+projection with zero vanishing points; lines must never converge. The front face is a flat front
+elevation, seen straight on. All depth INTO the wall extrudes straight upwards along the vertical
+Y-axis at HALF scale: a point 10 units deeper is drawn 5 units HIGHER and not one pixel sideways.
+Strictly hide all left and right side planes.
+
+SUBJECT: Tree roots hanging into a cave from above: four or five thick, twisting roots that come down from the top edge and taper as they hang, a couple splitting once into two. Thick and few, not a web of hairs.
+
+RENDERING: painted and matte, soft brush texture, soft modelled shading. NO OUTLINES — every edge
+is a change of value, never a stroke. ONLY THE OBJECT: no rock, no wall, no ceiling, no ground behind or
+around it — the game draws the cave wall behind it. Mounted on a wall, nothing below it, filling the frame
+width. Background flat magenta #ff00ff (red 255 green 0 blue 255) to all four edges, no cast shadow on
+the background.
+
+SCALE: it will be shown very small, as a band about a fingernail tall. It must read as a SILHOUETTE: a
+few large, simple shapes and nothing finer than a tenth of the band's height. No text, no watermark, no
+frame. About twice as wide as it is tall.
+
+PALETTE, strictly: the cave wall behind them is pale lit limestone #ccc6ba, so the roots are clearly DARKER: warm brown #6e5a40 and #8a7458, a lighter brown edge where the torch catches them. Nothing lighter than #b8a585, nothing darker than #3a2f24.
 ```
 
-**Import:** `yarn import-tile art/masters/props/cave/roots.webp --tier=cave --name=roots --slot=wall --filter=smooth --trim`
+**Import:** `yarn import-tile art/masters/props/cave/roots.webp --tier=cave --name=roots --slot=wall --filter=smooth --headroom=0.18`
 
 ### `cave/stalactites` — a fringe of stalactites along the face top
 
-**Attach:** `art/masters/props/starter/veil.webp` — a starter prop, as the style reference
+**Attach:** `art/masters/props/starter/tallyBoard.webp` — a starter wall item, for the wall-item camera only
 
 ```
-Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
-A fringe of stalactites: a row of pale-grey dripstone cones hanging from the top edge of a cave wall, of uneven lengths, damp tips glistening faintly, the lower part of the band left clear rock. Frontal, flat, wide and shallow.
-Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
-speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
-than #181b1e.
-No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE SHOWS A DIFFERENT OBJECT. Take only its camera angle and its paint quality from it.
-Draw NOTHING of it: none of its shapes, parts, colours or materials — no jar, no wood, no stand. Only the
-object described here, alone.
-Flat frontal view, no perspective. A wide shallow band, twice as wide as tall, on pure magenta #FF00FF, the art touching the top edge and filling the frame's width. Even lighting.
+STYLE: Pure Cabinet Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
+projection with zero vanishing points; lines must never converge. The front face is a flat front
+elevation, seen straight on. All depth INTO the wall extrudes straight upwards along the vertical
+Y-axis at HALF scale: a point 10 units deeper is drawn 5 units HIGHER and not one pixel sideways.
+Strictly hide all left and right side planes.
+
+SUBJECT: A fringe of stalactites along the top of a cave wall: five to seven pointed stone icicles of different lengths hanging from the top edge, rippled, each ending in a wet tip with a drop of water.
+
+RENDERING: painted and matte, soft brush texture, soft modelled shading. NO OUTLINES — every edge
+is a change of value, never a stroke. ONLY THE OBJECT: no rock, no wall, no ceiling, no ground behind or
+around it — the game draws the cave wall behind it. Mounted on a wall, nothing below it, filling the frame
+width. Background flat magenta #ff00ff (red 255 green 0 blue 255) to all four edges, no cast shadow on
+the background.
+
+SCALE: it will be shown very small, as a band about a fingernail tall. It must read as a SILHOUETTE: a
+few large, simple shapes and nothing finer than a tenth of the band's height. No text, no watermark, no
+frame. About twice as wide as it is tall.
+
+PALETTE, strictly: the cave wall behind them is pale lit limestone #ccc6ba, so the stalactites are wet and clearly DARKER: #9c968a and #6f6a60, darker still at the wet tips, one bright glint of torchlight #eee8da on each drop. Nothing darker than #4a4640.
 ```
 
-**Import:** `yarn import-tile art/masters/props/cave/stalactites.webp --tier=cave --name=stalactites --slot=wall --filter=smooth --trim`
+**Import:** `yarn import-tile art/masters/props/cave/stalactites.webp --tier=cave --name=stalactites --slot=wall --filter=smooth --headroom=0.18`
 
 ---
 
