@@ -116,7 +116,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["master", "well", { behind: "gourd" }],
       ["wizard", "wellPulley", { on: "well" }],
     ]),
-    layered("cooking", { x: -0.45, y: -1.14, frame: 1.89, footprint: 1.7 }, [
+    layered("cooking", { x: -0.8, y: -1.14, frame: 1.89, footprint: 1.7 }, [
       ["junior", "tripod"],
       ["junior", "spiceRack"],
       ["junior", "breadBoard", { on: "spiceRack" }],
