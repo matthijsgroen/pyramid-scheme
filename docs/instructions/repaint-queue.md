@@ -238,7 +238,7 @@ Flat frontal view, no perspective. A wide band, seamless left to right. Even lig
 **Prepare:** the generator returns a 2.4:1 band, a third of a face's 8:1. Lay three side by side and make it seamless along x; that band is the master, `art/masters/surfaces/cave-wall-face.webp`:
 `magick band.jpeg band.jpeg band.jpeg +append wide.png && yarn make-seamless --axis=x wide.png`
 
-**Import:** `yarn import-tile art/masters/surfaces/cave-wall-face.webp --tier=cave --name=wall-face --slot=face --filter=smooth --key=none --headroom=0.14 --repeat=1`
+**Import:** `yarn import-tile art/masters/surfaces/cave-wall-face.webp --tier=cave --name=wall-face --slot=face --filter=smooth --key=none --headroom=0.14 --repeat=1 --brightness=1.25` (the brightness lands the face 25 L* over the floor; check with `yarn rank-colour`)
 
 ### `cave/threshold` — the worn sill of a cave passage
 
