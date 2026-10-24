@@ -215,10 +215,10 @@ describe("translating a save written in coordinates", () => {
 
     expect(migrated.exploredCells).toEqual({})
     expect(migrated.positionKey).toBeNull()
-    expect(migrated.disabledTraps).toEqual([])
+    expect(migrated.purchasedStock).toEqual([])
   })
 
-  it("re-keys a whole save — position, traps, stock and consumables along with the rooms", () => {
+  it("re-keys a whole save — position, stock and found corridors along with the rooms", () => {
     const grid = floorOf(3, 0)
     const room = someRoom(grid)
     const other = someRoom(grid, 0, 1)
@@ -229,9 +229,9 @@ describe("translating a save written in coordinates", () => {
         levelNr: 3,
         exploredSections: { [`3:${room.sectionHash}`]: [at(room)] },
         position: at(other),
-        disabledTraps: [at(room)],
-        skippedConsumables: [at(other)],
         purchasedStock: [`${at(room)}#2`],
+        knownHiddenCorridors: [`3:${room.sectionHash}`],
+        foundHiddenCorridors: [`3:${room.sectionHash}`],
       },
       (l, f) => (l === 3 && f === 0 ? grid : null)
     )
@@ -239,9 +239,9 @@ describe("translating a save written in coordinates", () => {
     expect(migrated.exploredCells).toEqual({ [`3:${room.section}`]: [`0/${room.slot}`] })
     expect(migrated.positionKey).toBe(other.address)
     // The level goes on here, where exploration carries it in its own key.
-    expect(migrated.disabledTraps).toEqual([`3:${room.address}`])
-    expect(migrated.skippedConsumables).toEqual([`3:${other.address}`])
     expect(migrated.purchasedStock).toEqual([`3:${room.address}!2`])
+    expect(migrated.knownHiddenCorridors).toEqual([`3:${room.section}`])
+    expect(migrated.foundHiddenCorridors).toEqual([`3:${room.section}`])
   })
 
   it("translates nothing it cannot assemble, rather than guessing", () => {
@@ -253,14 +253,14 @@ describe("translating a save written in coordinates", () => {
         levelNr: 3,
         exploredSections: { [`3:${room.sectionHash}`]: [`0:${room.row},${room.col}`] },
         position: `0:${room.row},${room.col}`,
-        disabledTraps: [`0:${room.row},${room.col}`],
+        purchasedStock: [`0:${room.row},${room.col}#1`],
       },
       () => null
     )
 
     expect(migrated.exploredCells).toEqual({})
     expect(migrated.positionKey).toBeNull()
-    expect(migrated.disabledTraps).toEqual([])
+    expect(migrated.purchasedStock).toEqual([])
   })
 })
 

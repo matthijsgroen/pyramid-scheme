@@ -161,8 +161,6 @@
       "oil": "Healing Oil",
       "trapTool": "Trap Disabler"
     },
-    "consumableFull": "Pack is full — {{item}} left behind",
-    "packFull": "Pack full",
     "waterskin": "Waterskin",
     "waterskinDescription": "Cool water. You drink it on the spot and feel your wounds ease."
   },

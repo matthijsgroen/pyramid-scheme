@@ -225,17 +225,15 @@ const twoFloors: SiteConfig = [
   },
 ]
 
-const setup = (cells: GridCell[], skipped: string[] = [], config: SiteConfig = siteConfig) => {
+const setup = (cells: GridCell[], config: SiteConfig = siteConfig) => {
   const journeys = {
     markCellExplored: vi.fn(),
     updatePosition: vi.fn(),
     getPurchasedShopSlots: () => new Set<string>(),
-    getSkippedConsumables: () => new Set(skipped),
     getMechanismStates: vi.fn(() => new Map<string, string>()),
     setMechanismState: vi.fn(),
   } as unknown as JourneyAPI
   const onEncounter = vi.fn()
-  const onSkippedConsumable = vi.fn()
   const onExitReached = vi.fn()
   // THE EXPLORER'S POSITION IS A PROP, AND A TEST THAT WALKS HIM HAS TO MOVE IT. The hook offers from
   // where it is told he stands, so leaving it at the way in while the test taps on across the floor asks
@@ -251,13 +249,12 @@ const setup = (cells: GridCell[], skipped: string[] = [], config: SiteConfig = s
         grid: gridOf(cells),
         explorerPos: pos,
         onEncounter,
-        onSkippedConsumable,
         onExitReached,
       }),
     { initialProps: { pos: [0, 0] as readonly [number, number] } }
   )
   const standAt = (row: number, col: number) => hook.rerender({ pos: [row, col] as readonly [number, number] })
-  return { hook, journeys, onEncounter, onSkippedConsumable, onExitReached, standAt }
+  return { hook, journeys, onEncounter, onExitReached, standAt }
 }
 
 // Anything "on arrival" waits out the walk; the tests jump past it.
@@ -450,7 +447,7 @@ describe("useSiteNavigation", () => {
   })
 
   it("offers the stairs on arrival rather than taking the player off the floor", () => {
-    const { hook, journeys } = setup([entrance, stairRoom], [], twoFloors)
+    const { hook, journeys } = setup([entrance, stairRoom], twoFloors)
 
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
@@ -461,7 +458,7 @@ describe("useSiteNavigation", () => {
   })
 
   it("moves to the peer floor when the stairs prompt is taken", () => {
-    const { hook, journeys } = setup([entrance, stairRoom], [], twoFloors)
+    const { hook, journeys } = setup([entrance, stairRoom], twoFloors)
 
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
@@ -474,11 +471,7 @@ describe("useSiteNavigation", () => {
   })
 
   it("drops the stairs prompt when the player walks off the stairhead, staying on the floor", () => {
-    const { hook, journeys, standAt } = setup(
-      [entrance, corridor, { ...stairRoom, dirs: new Set(["w"]) }],
-      [],
-      twoFloors
-    )
+    const { hook, journeys, standAt } = setup([entrance, corridor, { ...stairRoom, dirs: new Set(["w"]) }], twoFloors)
 
     act(() => hook.result.current.onCellClick(0, 2))
     arrive()
@@ -502,7 +495,7 @@ describe("useSiteNavigation", () => {
     expect(onEncounter).not.toHaveBeenCalled()
   })
 
-  // The sibling of the two reopen cases below, and the one a whole mechanic rests on: a door that hands
+  // The sibling of the shop reopen case below, and the one a whole mechanic rests on: a door that hands
   // over one of the two keys it holds is a door the player has to be able to walk back into.
   it("offers the way back into a completed room whose family says it stays re-enterable", () => {
     const { hook, onEncounter } = setup([entrance, { ...puzzleRoom, family: RETURNABLE_FAMILY, state: "completed" }])
@@ -536,23 +529,24 @@ describe("useSiteNavigation", () => {
     expect(onEncounter).not.toHaveBeenCalled()
   })
 
-  it("reopens a completed chest whose consumable was left behind, once the player is back at it", () => {
-    const reward = { type: "consumable", itemId: "bandage" }
-    const { hook, onSkippedConsumable } = setup(
-      [entrance, { ...puzzleRoom, state: "completed", reward }],
-      [PUZZLE_AT_1]
-    )
+  it("repositions the player on a completed chest that held a waterskin, offering nothing", () => {
+    const { hook, journeys, onEncounter } = setup([
+      entrance,
+      { ...puzzleRoom, state: "completed", reward: { type: "waterskin" } },
+    ])
 
     act(() => hook.result.current.onCellClick(0, 1))
     arrive()
 
-    expect(onSkippedConsumable).toHaveBeenCalledWith(reward, PUZZLE_AT_1)
+    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", PUZZLE_AT_1, "0:0,1")
+    expect(hook.result.current.prompt).toBeNull()
+    expect(onEncounter).not.toHaveBeenCalled()
   })
 
   it("offers the stall of a completed shop that still has unbought stock", () => {
     const { hook, onEncounter } = setup([
       entrance,
-      { ...puzzleRoom, state: "completed", stock: [{ type: "consumable", itemId: "bandage" }] },
+      { ...puzzleRoom, state: "completed", stock: [{ type: "money", amount: 5 }] },
     ])
 
     act(() => hook.result.current.onCellClick(0, 1))
@@ -683,7 +677,6 @@ describe("useSiteNavigation taking a span", () => {
       markCellExplored: vi.fn(),
       updatePosition: vi.fn(),
       getPurchasedShopSlots: () => new Set<string>(),
-      getSkippedConsumables: () => new Set<string>(),
       getMechanismStates: vi.fn(() => new Map<string, string>()),
       setMechanismState: vi.fn(),
     } as unknown as JourneyAPI
@@ -709,7 +702,6 @@ describe("useSiteNavigation taking a span", () => {
         grid: floor,
         explorerPos: at(DROP_AT.fromNode),
         onEncounter: vi.fn(),
-        onSkippedConsumable: vi.fn(),
         onExitReached: vi.fn(),
         playTraversal,
       })
@@ -825,7 +817,6 @@ describe("useSiteNavigation taking a span", () => {
         if (address === landingAddress) setPos(landing)
       }),
       getPurchasedShopSlots: () => new Set<string>(),
-      getSkippedConsumables: () => new Set<string>(),
       getMechanismStates: vi.fn(() => new Map<string, string>()),
       setMechanismState: vi.fn(),
     } as unknown as JourneyAPI
@@ -842,7 +833,6 @@ describe("useSiteNavigation taking a span", () => {
         grid: floor,
         explorerPos: pos,
         onEncounter: vi.fn(),
-        onSkippedConsumable: vi.fn(),
         onExitReached: vi.fn(),
         playTraversal: crossAtOnce,
       })

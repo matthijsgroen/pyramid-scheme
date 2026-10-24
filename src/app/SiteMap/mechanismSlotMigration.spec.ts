@@ -233,14 +233,13 @@ describe("a save written before a mechanism's slot named the mechanism", () => {
       mechanismStates[old] = `state-of-${cell.mechanismId}`
       mechanismStates[`${old}:angles`] = `angles-of-${cell.mechanismId}`
     }
-    // Entries that are not a mechanism's: a puzzle room, a chest, a trap, a bought slot, a position.
+    // Entries that are not a mechanism's: a puzzle room, a chest, a bought slot, a position.
     exploredCells[`${levelNr}:main`] = [...(exploredCells[`${levelNr}:main`] ?? []), "0/p0", "0/xtreasure-chest"]
     return makeJourney({
       journeyId,
       levelNr,
       exploredCells,
       mechanismStates,
-      disabledTraps: [`${levelNr}:main#0/p1`],
       purchasedStock: [`${levelNr}:main#0/xfez-shop!0`],
       positionKey: `main#0/p0`,
       standingKey: `main#0/p0`,

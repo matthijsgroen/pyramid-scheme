@@ -47,7 +47,7 @@ describe("a passage's tile", () => {
 describe("a passage on the map", () => {
   const grid = revealAll(carveLockFloor(parseLock(CRACK, "stones").lock, PASSAGE_BINDING, SEEDS))
   const [r, c] = passageAt(grid)
-  const sprites = nodeSpritesFor(grid, buildRoomClaims(grid), "expert", undefined, new Map(), 0)
+  const sprites = nodeSpritesFor(grid, buildRoomClaims(grid), "expert", new Map(), 0)
 
   it("is drawn as its wall, in its own cell, and as no gate's leaf", () => {
     const wall = sprites.find(sprite => sprite.key === `passage:${r},${c}`)
@@ -71,7 +71,7 @@ describe("a passage no registered mod paints", () => {
       )
     ),
   }
-  const sprites = nodeSpritesFor(grid, buildRoomClaims(grid), "expert", undefined, new Map(), 0)
+  const sprites = nodeSpritesFor(grid, buildRoomClaims(grid), "expert", new Map(), 0)
 
   it("is drawn as the shut gate it is to the walk", () => {
     expect(sprites.map(sprite => sprite.key)).toContain(`wall:${r},${c}`)

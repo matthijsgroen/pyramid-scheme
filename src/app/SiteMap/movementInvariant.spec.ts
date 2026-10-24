@@ -291,7 +291,6 @@ const buildHarness = (
         journeyData,
       }),
       getPurchasedShopSlots: () => new Set<string>(),
-      getSkippedConsumables: () => new Set<string>(),
       ...patch,
     } as unknown as JourneyAPI
 
@@ -332,7 +331,6 @@ const buildHarness = (
           if (cell && cell.type !== "empty" && address)
             journeys.markCellExplored(cell.sectionHash ?? "", encodeEdge(0, r, c), address)
         }),
-      onSkippedConsumable: () => {},
       onExitReached: () => {},
     })
     return { ...assembled, onCellClick: nav.onCellClick, prompt: nav.prompt }
@@ -755,7 +753,7 @@ describe("a gate a control owns is decided by its control alone", () => {
   }
   const drawnBars = (grid: FloorGrid, positions: Record<string, string>): string[] => {
     const seen = revealAll(grid)
-    return nodeSpritesFor(seen, buildRoomClaims(seen), "expert", undefined, new Map(Object.entries(positions)), 0)
+    return nodeSpritesFor(seen, buildRoomClaims(seen), "expert", new Map(Object.entries(positions)), 0)
       .map(sprite => sprite.key)
       .filter(key => key.startsWith("wall:") || key.startsWith("gate:"))
   }

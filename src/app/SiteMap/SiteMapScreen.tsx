@@ -13,7 +13,6 @@ import { SiteMapView } from "./SiteMapView"
 import { useAssembledFloor } from "./useAssembledFloor"
 import { useDousedJourneys } from "./useDousedJourneys"
 import { floorOfPosition } from "./stairTravel"
-import { findByAddress, floorOfAddress } from "./cellIdentity"
 import { useFloorExplorationRecorder } from "./useFloorExplorationRecorder"
 import { useEncounter } from "./useEncounter"
 import { useRewardOffer } from "./useRewardOffer"
@@ -154,23 +153,10 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
 
   useFloorExplorationRecorder({ journeys, journeyId, levelNr: levelIndex + 1, currentFloor, grid })
 
-  // The chests on THIS floor still holding a consumable the player had no room for, as the coordinates
-  // the map draws badges at — resolved from their addresses against the floor as it is carved now.
-  const pendingConsumableCells = useMemo(() => {
-    const result = new Set<string>()
-    if (!grid) return result
-    for (const address of journeys.getSkippedConsumables(journeyId)) {
-      if (floorOfAddress(address) !== currentFloor) continue
-      const at = findByAddress(grid, currentFloor, address)
-      if (at) result.add(`${at[0]},${at[1]}`)
-    }
-    return result
-  }, [journeys, journeyId, currentFloor, grid])
-
   // Applies a claimed reward to game state; whether it reaches the player at all is useRewardOffer's.
   const applyReward = useApplyReward(progression, inventory, journeyId)
   const react = useMergedReactions()
-  const rewardOffer = useRewardOffer({ journeys, rewardContributions, applyReward })
+  const rewardOffer = useRewardOffer({ rewardContributions, applyReward })
 
   const encounter = useEncounter({
     journeys: floorJourneys,
@@ -196,7 +182,6 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
     grid,
     explorerPos,
     onEncounter: encounter.open,
-    onSkippedConsumable: rewardOffer.offerSkipped,
     onExitReached: exit.arrived,
     playTraversal,
   })
@@ -226,7 +211,6 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
           ride={ride}
           squeeze={squeeze}
           currentFloor={currentFloor}
-          pendingCells={pendingConsumableCells}
           ownedKeys={ownedKeys}
           mechanismStates={mechanismStates}
           prompt={prompt && { label: promptLabel(prompt, replaysAtPrompt), at: prompt.at, onTake: prompt.take }}
@@ -290,7 +274,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
             heldLabel={color => t("common:keys.heldTitle", { key: t(`common:keys.${color}`) })}
             neededLabel={color => t("common:keys.neededTitle", { key: t(`common:keys.${color}`) })}
           />
-          {/* Mod-contributed HUD widgets (trap's health + consumables, shop's balance) — core names none. */}
+          {/* Mod-contributed HUD widgets — core names none. */}
           {hudWidgets().map(({ id, Component }) => (
             <Component key={id} />
           ))}

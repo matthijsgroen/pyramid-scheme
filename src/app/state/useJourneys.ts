@@ -70,10 +70,8 @@ export type StoredJourneyStateV3 = {
    *  longer has falls back to the entrance where the map resolves it (`useAssembledFloor`'s `explorerPos`). */
   pyramidPositions?: Record<string, PyramidPosition>
   interiorLevelNr: number | null // set when interior is open for a level; cleared on level advance
-  // All three name cells by address — `${levelNr}:${sectionHash}#${floor}/${slot}` — so a
-  // re-carve moves the cell and takes the entry with it. See migrateJourneyToCarveIndependent.
-  disabledTraps?: string[] // cells where trapTool was spent to disarm the corridor
-  skippedConsumables?: string[] // cells where inventory was full at collect time
+  // Names cells by address — `${levelNr}:${sectionHash}#${floor}/${slot}` — so a re-carve moves the
+  // cell and takes the entry with it. See migrateJourneyToCarveIndependent.
   purchasedStock?: string[] // `${address}!${stockIndex}` of shop slots already bought
   /** Which POSITION each mechanism on this site stands in, keyed `${levelNr}:${mechanismAddress}`.
    *
@@ -186,10 +184,6 @@ export type JourneyAPI = {
   setInteriorLevel: (journeyId: string, levelNr: number | null) => void
   // Every one of these names a cell by its `${sectionHash}#${floor}/${slot}` address, which
   // the caller reads off the cell with `cellAddress`. The level is added here, as for exploration.
-  markTrapDisabled: (address: string) => void
-  markConsumableSkipped: (address: string) => void
-  clearConsumableSkipped: (address: string) => void
-  getSkippedConsumables: (journeyId: string) => ReadonlySet<string>
   markShopSlotPurchased: (address: string, stockIndex: number) => void
   getPurchasedShopSlots: (journeyId: string) => ReadonlySet<string>
   /** The mechanism at `address` now stands at `stateId`, replacing whatever position it stood at before
@@ -659,46 +653,6 @@ export const createJourneysV3Api = ({
     return j ? atLevelMap(j.levelNr, entries) : new Map()
   }
 
-  const markTrapDisabled = (address: string) => {
-    if (!activeJourneyId) return
-    const key = atLevel(address)
-    setJourneys(prev =>
-      prev.map(j => {
-        if (j.journeyId !== activeJourneyId) return j
-        const traps = j.disabledTraps ?? []
-        return traps.includes(key) ? j : { ...j, disabledTraps: [...traps, key] }
-      })
-    )
-  }
-
-  const markConsumableSkipped = (address: string) => {
-    if (!activeJourneyId) return
-    const key = atLevel(address)
-    setJourneys(prev =>
-      prev.map(j => {
-        if (j.journeyId !== activeJourneyId) return j
-        const skipped = j.skippedConsumables ?? []
-        if (skipped.includes(key)) return j
-        return { ...j, skippedConsumables: [...skipped, key] }
-      })
-    )
-  }
-
-  const clearConsumableSkipped = (address: string) => {
-    if (!activeJourneyId) return
-    const key = atLevel(address)
-    setJourneys(prev =>
-      prev.map(j =>
-        j.journeyId === activeJourneyId
-          ? { ...j, skippedConsumables: (j.skippedConsumables ?? []).filter(id => id !== key) }
-          : j
-      )
-    )
-  }
-
-  const getSkippedConsumables = (journeyId: string): ReadonlySet<string> =>
-    forThisLevel(journeyId, journeys.find(j => j.journeyId === journeyId)?.skippedConsumables)
-
   const markShopSlotPurchased = (address: string, stockIndex: number) => {
     if (!activeJourneyId) return
     // `!` and not `#`: the address already spends its `#` on the section it belongs to.
@@ -896,10 +850,6 @@ export const createJourneysV3Api = ({
     getExploredCells,
     updatePosition,
     setInteriorLevel,
-    markTrapDisabled,
-    markConsumableSkipped,
-    clearConsumableSkipped,
-    getSkippedConsumables,
     markShopSlotPurchased,
     getPurchasedShopSlots,
     setMechanismState,

@@ -26,7 +26,7 @@ export type RewardHandler<R extends TreasureReward = TreasureReward> = {
   /** Drawn in the room in place of the chest, where the reward is not a chest's. Absent: the chest. */
   art?: (reward: R) => RewardArt | undefined
   // The state write for a claim that only touches CORE state (progression/inventory). Reward
-  // types whose effect needs a mod's own state (e.g. a consumable → trap) omit this and register
+  // types whose effect needs a mod's own state (e.g. a fragment → hieroglyph's collection) omit this and register
   // a reward contribution instead (rewardContributions.ts); a handler is then display-only.
   apply?: (reward: R, ctx: ApplyCtx) => void
   emoji: string

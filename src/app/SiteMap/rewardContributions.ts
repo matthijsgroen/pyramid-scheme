@@ -8,13 +8,11 @@ export type RewardEffect = (reward: TreasureReward, ctx: RewardEffectCtx) => voi
 export type RewardSeen = (reward: TreasureReward) => void
 
 // How a mod plugs into reward claiming without core knowing the mod exists. A contribution is a
-// HOOK (so it can read the mod's own state, e.g. useTrapProgress) returning:
+// HOOK (so it can read the mod's own state) returning:
 //   - effects: what to do when a reward of a given type is claimed (the mod owns the state write)
-//   - canAccept: whether a reward can be taken right now, else it's refused with a "come back later"
-//     popup and remembered as skipped (e.g. a full consumable pack — the player returns with room)
 //   - skip: whether to SILENTLY ignore the reward — no popup, no side effect, not remembered (e.g.
-//     an already-collected hieroglyph fragment the player re-encounters). Distinct from canAccept:
-//     skip means "nothing to do here", canAccept=false means "refused for now, come back".
+//     an already-collected hieroglyph fragment the player re-encounters). A reward that is not
+//     skipped is offered, and taking it applies it; nothing is refused or left behind.
 // Core merges every registered contribution and dispatches by reward type — it never names a mod
 // or threads mod-specific state into the reward context. See docs/mods/app-plugins-design.md.
 export type RewardContribution = {
@@ -22,7 +20,6 @@ export type RewardContribution = {
   /** Once the player has dismissed the popup announcing a reward of this type: the moment to say something
    * about it without talking over the find. */
   seen?: Partial<Record<TreasureReward["type"], RewardSeen>>
-  canAccept?: (reward: TreasureReward) => boolean
   skip?: (reward: TreasureReward) => boolean
 }
 
@@ -35,30 +32,23 @@ export const registerRewardContribution = (useContribution: UseRewardContributio
 export type MergedRewardContributions = {
   effects: Partial<Record<TreasureReward["type"], RewardEffect>>
   seen: Partial<Record<TreasureReward["type"], RewardSeen>>
-  canAccept: (reward: TreasureReward) => boolean
   skip: (reward: TreasureReward) => boolean
 }
 
-// Fold resolved contributions into one: effects merge by type; a reward is acceptable only if
-// EVERY contribution accepts it (any one can refuse-for-now); a reward is skipped if ANY
-// contribution silently ignores it. `canAccept` and `skip` are deliberately independent — a
-// full pack refuses (come back), an owned fragment skips (nothing to do). Pure, so the
-// distinction is testable without the registry/hooks.
+// Fold resolved contributions into one: effects merge by type; a reward is skipped if ANY
+// contribution silently ignores it. Pure, so it is testable without the registry/hooks.
 export const mergeContributions = (contributions: readonly RewardContribution[]): MergedRewardContributions => {
   const effects: Partial<Record<TreasureReward["type"], RewardEffect>> = {}
   const seen: Partial<Record<TreasureReward["type"], RewardSeen>> = {}
-  const accepts: Array<(reward: TreasureReward) => boolean> = []
   const skips: Array<(reward: TreasureReward) => boolean> = []
   for (const c of contributions) {
     Object.assign(effects, c.effects)
     Object.assign(seen, c.seen)
-    if (c.canAccept) accepts.push(c.canAccept)
     if (c.skip) skips.push(c.skip)
   }
   return {
     effects,
     seen,
-    canAccept: reward => accepts.every(fn => fn(reward)),
     skip: reward => skips.some(fn => fn(reward)),
   }
 }

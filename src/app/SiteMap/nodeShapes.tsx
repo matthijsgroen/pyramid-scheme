@@ -65,28 +65,18 @@ export const ReplayBadge = ({ r }: { r: number }) => (
   </g>
 )
 
-// A treasure that couldn't be picked up (inventory was full) — still waiting to be looted
-export const PendingLootBadge = ({ r }: { r: number }) => (
-  <g transform={`translate(${r - 7}, ${r - 7})`}>
-    <circle r={7} fill="#2a1e08" stroke="#d0a840" strokeWidth={1.5} />
-    <text textAnchor="middle" dominantBaseline="central" fontSize={9} fill="#f0c860" style={{ userSelect: "none" }}>
-      !
-    </text>
-  </g>
-)
-
 /** A node's badge, worn by the ART rather than by the marker: a chest stands over its own marker, so the
  * ✓ that says the room is done goes on the chest's lid where the eye already is.
  *
  * Its own little inline `<svg>` inside the HTML layer — the badges are icons, and static vector costs
  * nothing (docs/instructions/map-rendering.md, "The markers"). Placed by its CENTRE, in map units. */
-export const NodeBadge = ({ kind, x, y }: { kind: "taken" | "pending"; x: number; y: number }) => (
+export const NodeBadge = ({ x, y }: { x: number; y: number }) => (
   <svg
     aria-hidden="true"
     viewBox="-7 -7 14 14"
     style={{ position: "absolute", left: x - 7, top: y - 7, width: 14, height: 14, overflow: "visible" }}
   >
-    {kind === "pending" ? <PendingLootBadge r={7} /> : <CompletedBadge r={7} />}
+    <CompletedBadge r={7} />
   </svg>
 )
 

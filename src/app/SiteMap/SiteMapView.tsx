@@ -64,7 +64,7 @@ import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
 import { MapNotice } from "@/ui/atoms/MapNotice"
 import { MarkArtBadge } from "./mark"
 import { getRewardHandler } from "./rewardHandlerRegistry"
-import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge, ReplayBadge } from "./nodeShapes"
+import { CompletedBadge, NodeBadge, NodeShape, ReplayBadge } from "./nodeShapes"
 import { FloorShade, LitPlaces } from "./torchlight"
 import {
   SEATING_PASS,
@@ -133,8 +133,6 @@ type Props = {
   /** Current floor index. Keys the explorer dot so a floor switch remounts it (instant snap to the
    * new floor's entrance) instead of animating a walk from the previous floor's coordinates. */
   currentFloor?: number
-  /** "row,col" keys of completed treasure cells with a reward still waiting to be picked up */
-  pendingCells?: ReadonlySet<string>
   /** Keys the player already holds — used only to color a gate as locked/unlocked on the map. */
   ownedKeys?: ReadonlySet<string>
   /** Every mechanism's current position on this journey, keyed by its cell address — the same map
@@ -268,7 +266,6 @@ export const nodeSpritesFor = (
   grid: FloorGrid,
   claims: RoomClaims,
   floorTier: Tileset,
-  pendingCells?: ReadonlySet<string>,
   /** Every mechanism's current position, and which floor this is — together the address a lever's own
    * state is stored under (`cellAddress`, `mechanismDoors.ts`). Absent for callers with no journey yet
    * (a story, a hand-built test grid): every control then draws at its own `initial` position. */
@@ -482,12 +479,9 @@ export const nodeSpritesFor = (
           x: cx + dx - CELL / 2,
           y: cy + dy + CELL / 2 - PROP_H,
           mirrored: false,
-          // A reward left behind because the pack was full is still there to come back for: that chest
-          // stays full, and wears the `!` rather than the ✓. A chest whose family keeps its room open
-          // wears neither, and is not dimmed: the ✓ and the fade are the pair that say emptied.
-          ...(cell.state === "completed" && !staysOpen(cell)
-            ? { badge: pendingCells?.has(`${r},${c}`) ? ("pending" as const) : ("taken" as const) }
-            : {}),
+          // A chest whose family keeps its room open wears no ✓ and is not dimmed: the ✓ and the fade are
+          // the pair that say emptied.
+          ...(cell.state === "completed" && !staysOpen(cell) ? { badge: "taken" as const } : {}),
           ...(rewardArt?.mark ? { mark: rewardArt.mark } : {}),
         }
         if (leverUrls) {
@@ -1323,7 +1317,6 @@ export const SiteMapView = ({
   rideFrame,
   squeeze,
   currentFloor,
-  pendingCells,
   ownedKeys,
   mechanismStates,
   prompt,
@@ -1378,13 +1371,12 @@ export const SiteMapView = ({
         grid,
         claims,
         tier,
-        pendingCells,
         mechanismStates,
         currentFloor ?? 0,
         isTraveling ? undefined : settledExplorerPos,
         weight
       ),
-    [grid, claims, tier, pendingCells, mechanismStates, currentFloor, isTraveling, settledExplorerPos, weight]
+    [grid, claims, tier, mechanismStates, currentFloor, isTraveling, settledExplorerPos, weight]
   )
   const drawnPlates = useMemo(
     () =>
@@ -1484,9 +1476,7 @@ export const SiteMapView = ({
           )}
           {/* ON THE CHEST, NOT ON THE MARKER: the marker's own ✓ is behind the sprite. Sat on the lid,
               where the eye already is. */}
-          {sprite.badge && (
-            <NodeBadge kind={sprite.badge} x={sprite.x + CELL / 2} y={sprite.y + PROP_H - CELL * 0.62} />
-          )}
+          {sprite.badge && <NodeBadge x={sprite.x + CELL / 2} y={sprite.y + PROP_H - CELL * 0.62} />}
           {sprite.mark && (
             <MarkArtBadge mark={sprite.mark} x={sprite.x + CELL / 2} y={sprite.y + PROP_H - CELL * 0.16} />
           )}
@@ -1931,19 +1921,11 @@ export const SiteMapView = ({
                 const isCompleted =
                   (state === "completed" && !staysOpen(cell) && !cell.sequenceTile && !cell.plate && !cell.pipeHole) ||
                   spent
-                // Only ever a pending-loot marker for a treasure room with a consumable reward — this
-                // guards against stale coordinates in pendingCells (e.g. left over from before a site
-                // was regenerated) painting the badge onto whatever room now occupies that cell.
                 const shapeKind = shapeKindFor(grid, r, c, cell)
                 // Portals (entrance/stairhead/exit) are transitions, not tasks — they can't be
                 // "completed", so they never get the completed dim or the ✓ badge even though the
                 // entrance is always marked explored (useAssembledFloor) and used staircases complete.
                 const isPortal = shapeKind === "entrance" || shapeKind === "stairhead" || shapeKind === "exit"
-                const isPending =
-                  isCompleted &&
-                  shapeKind === "treasure" &&
-                  cell.reward?.type === "consumable" &&
-                  (pendingCells?.has(`${r},${c}`) ?? false)
                 const offer = clickTargetAt(grid, claims, r, c, offerContext)
                 // A fogged room never reaches here — the loop above draws unlit cells — so no guard is
                 // needed to keep a chest out of the dark.
@@ -1994,7 +1976,7 @@ export const SiteMapView = ({
                         opacity={
                           sealedWay || hasStair || hasExit || hasPlate || hasTorch || hasLever
                             ? 0
-                            : isCompleted && !isPending && !isPortal
+                            : isCompleted && !isPortal
                               ? 0.45
                               : hasChest
                                 ? NODE_OVER_ART_OPACITY
@@ -2022,11 +2004,7 @@ export const SiteMapView = ({
                       {replaysAt?.(cell) ? (
                         <ReplayBadge r={roomR} />
                       ) : (
-                        isCompleted &&
-                        !isPortal &&
-                        !hasChest &&
-                        shapeKind !== "fork" &&
-                        (isPending ? <PendingLootBadge r={roomR} /> : <CompletedBadge r={roomR} />)
+                        isCompleted && !isPortal && !hasChest && shapeKind !== "fork" && <CompletedBadge r={roomR} />
                       )}
                     </MarkerCell>
                   </Fragment>

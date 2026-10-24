@@ -58,7 +58,6 @@ export const useMemoryJourneys = (journeyId: string) => {
       ({
         ...createJourneysV3Api({ journeys: docs, setJourneys: setDocs, journeyData: [journeyData(journeyId)] }),
         getPurchasedShopSlots: () => new Set<string>(),
-        getSkippedConsumables: () => new Set<string>(),
       }) as unknown as JourneyAPI,
     [docs, journeyId]
   )
@@ -139,7 +138,6 @@ const PlayedFloor: FC<{ config: FloorConfig; seed: number; base: FloorGrid }> = 
     grid,
     explorerPos,
     onEncounter: encounter.open,
-    onSkippedConsumable: () => {},
     onExitReached: () => {},
     playTraversal,
   })

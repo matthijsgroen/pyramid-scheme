@@ -268,7 +268,7 @@ describe(SiteMapScreen, () => {
       ({ roomType: "encounter", dirs: new Set(["w"]), state: "completed", ...cell }) as GridCell
 
     const stallStocking = (family: string): GridCell =>
-      roomOf({ type: "room", family, tags: ["shop"], stock: [{ type: "consumable", itemId: "bandage" }] })
+      roomOf({ type: "room", family, tags: ["shop"], stock: [{ type: "money", amount: 5 }] })
 
     const QUIET_FAMILY = "spec-quiet"
     registerFamily({

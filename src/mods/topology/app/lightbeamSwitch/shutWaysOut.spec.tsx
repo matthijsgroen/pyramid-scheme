@@ -497,7 +497,6 @@ const Walking = () => {
     grid,
     explorerPos,
     onEncounter: encounter.open,
-    onSkippedConsumable: () => {},
     onExitReached: () => {},
   })
   stand(explorerPos)

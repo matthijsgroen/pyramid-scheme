@@ -148,7 +148,7 @@ export const migrateExploredToCells = (
 /**
  * The address a stored coordinate stands for, under each level the save has been in.
  *
- * The trap, shop and consumable collections store a bare `floor:row,col` with no level beside it, so a
+ * The shop collection stores a bare `floor:row,col` with no level beside it, so a
  * coordinate on floor 1 means "floor 1 of whichever level you are on" — the same entry answers for
  * every level of a multi-level pyramid. Translating it against each of those levels in turn keeps that
  * exactly as it was; going forward the writers file one address per level, which is stricter.
@@ -172,8 +172,6 @@ export type CarveIndependentState = {
   /** Always null: the live cell outranks `positionKey` in both readers, so a stale one surviving a
    * re-keying would hide the freshly derived `positionKey`. The next step the player takes rewrites it. */
   standingKey: null
-  disabledTraps: string[]
-  skippedConsumables: string[]
   purchasedStock: string[]
   knownHiddenCorridors: string[]
   foundHiddenCorridors: string[]
@@ -186,8 +184,6 @@ type Migratable = {
    * rather than taking the launch down with it. */
   exploredSections?: Record<string, string[]>
   position?: string | null
-  disabledTraps?: string[]
-  skippedConsumables?: string[]
   purchasedStock?: string[]
   knownHiddenCorridors?: string[]
   foundHiddenCorridors?: string[]
@@ -232,10 +228,6 @@ export const migrateJourneyToCarveIndependent = (
 
   const floors = floorsIn(stored.exploredSections ?? {})
   const levels = [...new Set(floors.map(([levelNr]) => levelNr))]
-  const translate = (edgeIds: readonly string[] | undefined): string[] => [
-    ...new Set((edgeIds ?? []).flatMap(edgeId => addressesForEdge(edgeId, levels, cached))),
-  ]
-
   // A stock entry is a cell plus which slot of it was bought, so it translates as its cell and keeps
   // the slot number. `!` separates them because the address already spends `#` on its section.
   const stock = [
@@ -282,8 +274,6 @@ export const migrateJourneyToCarveIndependent = (
     exploredCells: migrateExploredToCells(stored.exploredSections ?? {}, cached),
     positionKey: positionGrid ? cellAddress(positionGrid, positionFloor, pr, pc) : null,
     standingKey: null,
-    disabledTraps: translate(stored.disabledTraps),
-    skippedConsumables: translate(stored.skippedConsumables),
     purchasedStock: stock,
     knownHiddenCorridors: sections(stored.knownHiddenCorridors),
     foundHiddenCorridors: sections(stored.foundHiddenCorridors),

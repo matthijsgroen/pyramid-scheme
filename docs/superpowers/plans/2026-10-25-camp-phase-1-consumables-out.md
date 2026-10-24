@@ -234,15 +234,15 @@ Runs before Task 7: `useDetector` reads the skipped-chest store Task 7 removes.
 - Produces: `RewardContribution = { effects?, seen?, skip? }`; `MergedRewardContributions = { effects, seen, skip }`. `RewardOffer = { pending, offerFound, dismiss }`; `PendingReward = { reward, keyColors?, onCollect }`.
 - Produces: `JourneyProgress` and `JourneyAPI` without the six trap/consumable members. A stored save that still holds the two arrays is ignored (saves reset; no migration).
 
-- [ ] **Step 1: Tests.**
+- [x] **Step 1: Tests.**
   - `rewardContributions.spec`: merged effects and `skip` behave as before; there is no refusal path.
   - `useRewardOffer.spec`: a found reward is offered and applied on collect; a skipped one shows nothing; dismiss calls `seen`. Cases about full packs and re-offers are deleted, not rewritten.
   - `useSiteNavigation.spec`: walking onto a completed chest that held a waterskin repositions the player and offers nothing.
   - `cellIdentity.spec` / `carveIndependence.spec`: the re-key still finds explored cells, opened chests and bought shop slots where they now stand; the trap and consumable cases are deleted.
-- [ ] **Step 2: Implement**, then `grep -rnE "canAccept|consumableFull|skippedConsumables|SkippedConsumable|disabledTraps|markTrapDisabled|offerSkipped" src` — empty.
-- [ ] **Step 3: Run** `yarn test src/app src/mods` — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 4: Per-task review** (soundness): no save reader still expects the removed arrays; the backfills still run on a save without them; the re-key spec covers every store the save keeps.
-- [ ] **Step 5: Commit** — `refactor: rewards are taken or skipped, never left behind`
+- [x] **Step 2: Implement**, then `grep -rnE "canAccept|consumableFull|skippedConsumables|SkippedConsumable|disabledTraps|markTrapDisabled|offerSkipped" src` — empty.
+- [x] **Step 3: Run** `yarn test src/app src/mods` — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 4: Per-task review** (soundness): no save reader still expects the removed arrays; the backfills still run on a save without them; the re-key spec covers every store the save keeps.
+- [x] **Step 5: Commit** — `refactor: rewards are taken or skipped, never left behind`
 
 ---
 

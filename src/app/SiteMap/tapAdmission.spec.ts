@@ -44,7 +44,6 @@ const stubJourneys = () =>
     markCellExplored: vi.fn(),
     updatePosition: vi.fn(),
     getPurchasedShopSlots: () => new Set<string>(),
-    getSkippedConsumables: () => new Set<string>(),
     getMechanismStates: vi.fn(() => new Map<string, string>()),
     setMechanismState: vi.fn(),
     setMechanismStates: vi.fn(),
@@ -78,7 +77,6 @@ describe("a tap on a carved floor goes through the offer layer", () => {
           grid,
           explorerPos,
           onEncounter: () => {},
-          onSkippedConsumable: () => {},
           onExitReached: () => {},
         })
       )
@@ -163,7 +161,6 @@ describe("the arrow up a corridor that ends at a door", () => {
         grid,
         explorerPos: [0, 0],
         onEncounter: () => {},
-        onSkippedConsumable: () => {},
         onExitReached: () => {},
       })
     )

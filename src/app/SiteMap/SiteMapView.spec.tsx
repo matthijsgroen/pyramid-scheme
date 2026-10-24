@@ -2252,13 +2252,6 @@ describe("an emptied chest says so", () => {
     expect(chestIn(container)?.style.opacity).toBe("")
     expect(ticks(container)).toHaveLength(0)
   })
-
-  it("keeps a chest whose reward would not fit full, and badges it as waiting", () => {
-    const { container } = render(<SiteMapView grid={gridWith("completed")} pendingCells={new Set(["1,1"])} />)
-    expect(chestIn(container)?.style.opacity).toBe("")
-    expect(ticks(container)).toHaveLength(0)
-    expect(Array.from(container.querySelectorAll("text")).filter(el => el.textContent === "!")).toHaveLength(1)
-  })
 })
 
 describe("a stair's pool of light lands on the side the flame is painted", () => {

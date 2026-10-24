@@ -159,7 +159,6 @@ const buildHarness = (
         journeyData,
       }),
       getPurchasedShopSlots: () => new Set<string>(),
-      getSkippedConsumables: () => new Set<string>(),
       ...patch,
     } as unknown as JourneyAPI
 
@@ -200,7 +199,6 @@ const buildHarness = (
           if (cell && cell.type !== "empty" && address)
             journeys.markCellExplored(cell.sectionHash ?? "", encodeEdge(0, r, c), address)
         }),
-      onSkippedConsumable: () => {},
       onExitReached: () => {},
     })
     return {

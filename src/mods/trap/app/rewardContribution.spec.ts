@@ -19,9 +19,8 @@ describe("the waterskin reward", () => {
     expect(drinkWaterskin).toHaveBeenCalledTimes(1)
   })
 
-  it("is never refused", () => {
+  it("is never skipped", () => {
     const { result } = renderHook(useMerged)
-    expect(result.current.canAccept({ type: "waterskin" })).toBe(true)
     expect(result.current.skip({ type: "waterskin" })).toBe(false)
   })
 })

@@ -28,7 +28,7 @@ afterAll(() => {
 
 const lit = revealAll(carveLockFloor(parseLock(SHELF_AND_DOOR, "stones").lock, { weights: "stonePlate" }))
 const sprites = (grid: FloorGrid, standingAt?: readonly [number, number]) =>
-  nodeSpritesFor(grid, buildRoomClaims(grid), "expert", undefined, new Map(), 0, standingAt)
+  nodeSpritesFor(grid, buildRoomClaims(grid), "expert", new Map(), 0, standingAt)
 const spriteAt = (grid: FloorGrid, [r, c]: readonly [number, number], standingAt?: readonly [number, number]) =>
   sprites(grid, standingAt).find(s => s.key === `plate:${r},${c}`)
 
@@ -103,7 +103,7 @@ describe("a door under the explorer's weight", () => {
       row.flatMap((cell, c) => (cell.type === "room" && cell.tags?.includes("gate") ? [[r, c] as const] : []))
     )[0]
     const leaf = (weight?: ReturnType<typeof explorerWeight>) =>
-      nodeSpritesFor(lit, buildRoomClaims(lit), "expert", undefined, new Map(), 0, p, weight).find(
+      nodeSpritesFor(lit, buildRoomClaims(lit), "expert", new Map(), 0, p, weight).find(
         s => s.key === `gate:${door[0]},${door[1]}` || s.key === `wall:${door[0]},${door[1]}`
       )
     expect(leaf(explorerWeight(lit, 0, p, new Map()))?.url).toMatch(/gate-open/)
@@ -131,7 +131,7 @@ describe("a door under the explorer's weight", () => {
     const opened = openWaysOut(grid, openDoorsFor(grid, 0, thrown))
     const p = plateNamed(opened, "p")
     const leaf = (weight?: ReturnType<typeof explorerWeight>) =>
-      nodeSpritesFor(opened, buildRoomClaims(opened), "expert", undefined, thrown, 0, p, weight).find(s =>
+      nodeSpritesFor(opened, buildRoomClaims(opened), "expert", thrown, 0, p, weight).find(s =>
         s.key.startsWith("gate:")
       )
     expect(leaf(undefined)?.url).toMatch(/gate-open/)

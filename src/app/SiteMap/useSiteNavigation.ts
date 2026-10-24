@@ -7,7 +7,7 @@ import { headingOf, passageCrossing } from "@/game/passages"
 import { isSpent as mechanismIsSpent, throwMechanism } from "@/game/mechanismDoors"
 import { walkedSteps, walkPresses } from "@/game/sequencePlay"
 import { isCarrying, stoneMoveAt, type StoneMoveKind } from "@/game/stonePlay"
-import type { FloorGrid, MechanismRecord, ObstacleKind, RoomCell, SiteConfig, TreasureReward } from "@/game/siteTypes"
+import type { FloorGrid, MechanismRecord, ObstacleKind, RoomCell, SiteConfig } from "@/game/siteTypes"
 import { useTimeout } from "@/support/useTimeout"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { encodeEdge } from "./edgeId"
@@ -31,8 +31,6 @@ type NavigationArgs = {
   explorerPos: readonly [number, number]
   /** A room to open, once the explorer has walked there. */
   onEncounter: (pos: readonly [number, number], freshArrival: boolean) => void
-  /** Re-entering a chest whose consumable was left behind when the pack was full. */
-  onSkippedConsumable: (reward: TreasureReward, address: string) => void
   /** The explorer has stepped into an exit chamber. */
   onExitReached: () => void
   /** Plays a span the player takes (see obstacleTraversal.ts). Settles when the traversal is over. */
@@ -97,7 +95,6 @@ export const useSiteNavigation = ({
   grid,
   explorerPos,
   onEncounter,
-  onSkippedConsumable,
   onExitReached,
   playTraversal = crossAtOnce,
   resolveOneWay = resolveOneWayRealisation,
@@ -361,8 +358,8 @@ export const useSiteNavigation = ({
         return
       }
 
-      // Completed cells just reposition the player, except three that reopen: a room whose family
-      // says it stays re-enterable, a shop with unbought stock, and an unfitted consumable.
+      // Completed cells just reposition the player, except two that reopen: a room whose family
+      // says it stays re-enterable, and a shop with unbought stock.
       if (cell.state === "completed") {
         const alreadyStandingHere = explorerPos[0] === row && explorerPos[1] === col
         goHere()
@@ -387,15 +384,6 @@ export const useSiteNavigation = ({
               familyId
             )
           )
-          return
-        }
-        if (
-          cell.type === "room" &&
-          cell.reward?.type === "consumable" &&
-          journeys.getSkippedConsumables(journeyId).has(address)
-        ) {
-          const reward = cell.reward
-          scheduleArrival(walkDelay(row, col), () => onSkippedConsumable(reward, address))
         }
         return
       }
@@ -463,7 +451,6 @@ export const useSiteNavigation = ({
       seed,
       siteConfig,
       onEncounter,
-      onSkippedConsumable,
       onExitReached,
       offer,
       takeSpan,

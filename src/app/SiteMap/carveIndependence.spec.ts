@@ -91,25 +91,20 @@ describe("a save survives the floor being carved somewhere else", () => {
     expect(stayedPut.length).toBeLessThan(slots.length)
   })
 
-  // Disarmed traps, bought stock and skipped consumables all store one address each, level-prefixed by
-  // useJourneys. One round trip covers all three, because what they store is the same string.
-  it("finds a disarmed trap, a bought shop slot and a skipped consumable where they now stand", () => {
+  // Bought stock stores one address per slot, level-prefixed by useJourneys.
+  it("finds a bought shop slot where it now stands", () => {
     const [r, c] = positions(before).find(at => {
       const cell = before.cells[at[0]][at[1]]
       return cell.type === "room" && cell.roomType === "encounter"
     })!
     const address = cellAddress(before, 0, r, c)!
 
-    const disabledTraps = new Set([`${LEVEL}:${address}`])
     const purchasedStock = new Set([`${LEVEL}:${address}!2`])
-    const skippedConsumables = new Set([`${LEVEL}:${address}`])
 
     const at = findByAddress(after, 0, address)!
     const reKeyed = cellAddress(after, 0, at[0], at[1])!
 
-    expect(disabledTraps.has(`${LEVEL}:${reKeyed}`)).toBe(true)
     expect(purchasedStock.has(`${LEVEL}:${reKeyed}!2`)).toBe(true)
-    expect(skippedConsumables.has(`${LEVEL}:${reKeyed}`)).toBe(true)
   })
 
   it("puts the player back on a real cell, on the floor the address names", () => {

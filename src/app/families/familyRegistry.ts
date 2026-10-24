@@ -61,9 +61,8 @@ export type FamilyContext = {
   // falls back to indexing the list by the room's own hash.
   boardIndex?: number
   encounterArgs?: unknown
-  // A shop node's stock: the reward slots the mods placed into this node's `rewards[]` (currency
-  // pieces + consumables). The fez-shop family renders these as its buyable list. Entries may be
-  // undefined (unfilled slots). Distinct from the single `reward` a plain chest/puzzle-solve grants.
+  // A shop node's stock: the reward slots the mods placed into this node's `rewards[]`. The fez-shop
+  // family renders these as its buyable list. Entries may be undefined (unfilled slots). Distinct from the single `reward` a plain chest/puzzle-solve grants.
   stock?: (TreasureReward | undefined)[]
   // key-gate's own precondition: which key this room needs, and whether the player
   // already holds it (local-floor tomb keys ∪ ward keys owned entering the site).

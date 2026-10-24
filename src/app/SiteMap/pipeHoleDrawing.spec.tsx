@@ -15,7 +15,7 @@ import "@/mods/registerModApps"
 
 const lit = revealAll(carveLockFloor(parseLock(PIPED, "stones").lock, PIPE_BINDING))
 const spriteAt = (grid: FloorGrid, [r, c]: readonly [number, number], states = new Map<string, string>()) =>
-  nodeSpritesFor(grid, buildRoomClaims(grid), "expert", undefined, states, 0).find(s => s.key === `pipeHole:${r},${c}`)
+  nodeSpritesFor(grid, buildRoomClaims(grid), "expert", states, 0).find(s => s.key === `pipeHole:${r},${c}`)
 
 describe("a pipe's hole on the map", () => {
   it("has a painting for both looks", () => {
