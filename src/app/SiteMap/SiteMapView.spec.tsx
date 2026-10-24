@@ -173,6 +173,20 @@ describe("a node's furniture and the clip it is cut to", () => {
     state: "completed",
   })
 
+  it("carries the chest of the floor's rank into a cave, which has none of its own", () => {
+    const grid: FloorGrid = {
+      ...makeGrid([
+        [empty, empty, empty],
+        [empty, treasureCell(["w"]), empty],
+        [empty, empty, empty],
+      ]),
+      difficulty: "junior",
+      tileset: "cave",
+    }
+    const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} />)
+    expect(urlOf(spriteMatching(container, "chestProp")[0])).toContain("junior")
+  })
+
   it("grows the clip into the paving beside it, so a chest is not cut by its own offset", () => {
     // A chest is STEPPED AWAY FROM ITS DOORWAYS — 0.3 of a cell across, 0.2 down — and a node sprite is
     // a cell wide, so the offset always hangs past the room's own cells. Clipped to those alone it lost

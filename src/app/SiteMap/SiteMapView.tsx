@@ -466,7 +466,10 @@ export const nodeSpritesFor = (
         const url =
           rewardArt?.kind === "prop"
             ? (tileUrl(tier, rewardArt.tile) ?? tileOrPlaceholder(tier, rewardArt.stand))
-            : tileOrPlaceholder(tier, "chestProp")
+            : // A tileset that is no rank (the cave) has no chest of its own: someone carried this one in, so
+              // it is the chest of the rank the room was authored at.
+              (tileUrl(tier, "chestProp") ??
+              tileOrPlaceholder(cell.difficulty ?? grid.difficulty ?? "starter", "chestProp"))
         const leverUrls =
           rewardArt?.kind === "lever"
             ? (["back", "arm", "front"] as const).map(
@@ -1789,6 +1792,8 @@ export const SiteMapView = ({
               kind="grass"
               floorRects={floorRects}
             />
+            {/* Under everything else that stands or lies here: the rock is the wall's own foot. */}
+            <CornerRocks rocks={cornerRocks} />
             <FloorScatter grid={grid} scatter={scatter} tier={tier} />
             <ArchShadows doorways={doorways} />
             <MapLife
@@ -1823,7 +1828,6 @@ export const SiteMapView = ({
               }}
             />
             <WallItems items={wallItems} patron={grid.patron} />
-            <CornerRocks rocks={cornerRocks} />
 
             {/* THE WATER OR SAND OVER A SHUT REGION BARRIER, under the shade and the lamp so the floor's
                 own light is what tints it, and under the markers and everything standing so a mark on the

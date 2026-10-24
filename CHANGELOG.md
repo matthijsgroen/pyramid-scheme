@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The tomb's cavern is painted: its pyramid stands in a shaft of sunlight under a hole in the rock.
 - Grit and sand that trickled from the roof lie in the cave's passages.
 - Rock gathers in the back corners of the cave's rooms.
+- A chest in the cave is the chest of its rank instead of a stand-in.
 - A pyramid has one way out now: the pillar of light where its main corridor ends, which Fez explains the first time you reach it.
 - The first sudoku boards hand you more of the answer, and the next tier steps up more gently.
 - Ipi, in the first tomb, talks with Fez and the explorer instead of at them.
