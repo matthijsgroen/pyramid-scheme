@@ -97,7 +97,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["master", "clayOven", { lights: [OVEN] }],
       ["wizard", "seatCushions", { on: "seatingStones" }],
     ]),
-    layered("sleeping", { x: -0.57, y: -2.41, frame: 1.53, footprint: 1.38 }, [
+    layered("sleeping", { x: -0.57, y: -2.41, frame: 1.9, footprint: 1.7 }, [
       ["starter", "reedMat"],
       ["starter", "blanket", { on: "reedMat" }],
       ["starter", "windbreak"],
