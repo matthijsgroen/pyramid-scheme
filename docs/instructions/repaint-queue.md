@@ -691,6 +691,36 @@ It is about three times as wide as it is tall: lying on the floor.
 
 **Import:** `yarn import-tile art/masters/props/cave/bones.webp --tier=cave --name=bones --slot=prop --filter=smooth --cells=2x1 --scale=0.95` — two cells across (`DECORATION_FOOTPRINTS`); check with `yarn on-floor src/assets/tiles/cave/bones.png cave /tmp/bones.png --cells=2x1`
 
+### `cave/rubbleSpill` — loose stones fallen on the passage floor
+
+**Attach:** `art/masters/props/starter/rubbleSpill.webp` — the merchant's spill, for its size, its camera and how flat it lies only
+
+```
+STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
+projection with zero vanishing points; lines must never converge. Display exactly 50% flat front
+elevation and 50% top-down elevation. All depth lines must extrude straight upwards along the
+vertical Y-axis. Strictly hide all left and right side planes.
+
+SUBJECT: A scatter of loose limestone stones and grit fallen from a cave roof, lying flat on the floor: a few fist-sized pale stones and many small chips, spread thin, the floor showing between them. No heap, no mound, nothing built, no bricks.
+
+THE ATTACHED IMAGE SHOWS A DIFFERENT SPILL (broken brick). Take only its size, its camera and how flat it lies;
+draw nothing of its bricks or colours.
+
+RENDERING: painted and matte, soft brush texture, soft modelled shading. NO OUTLINES — every edge is a change
+of value, never a stroke. A faint soft contact shadow under each larger stone, exactly the grey of stone in
+shade, around #23272b, free of pink or purple. Everything else flat magenta #ff00ff (red 255 green 0 blue 255)
+to all four edges.
+
+PALETTE, strictly: a dark cave, the stones LIT by the explorer's torch — far lighter than the dark floor they
+lie on. Stones #d8d2c4 and #a19b8f, grit #b8a585, against floor #3e4246. Nothing lighter than #f2ecde.
+
+SCALE: shown very small. Few, simple shapes. About four times as wide as it is tall: flat, lying on the floor.
+```
+
+**Prepare:** `art/deshadow.sh <render> clean.png art/masters/props/cave/rubbleSpill-shadow.png` if the shadow comes back magenta, and keep `clean.png` as the master.
+
+**Import:** `yarn import-tile art/masters/props/cave/rubbleSpill.webp --tier=cave --name=rubbleSpill --slot=prop --filter=smooth --scale=0.85`
+
 ### `cave/roots` — roots coming through the ceiling down the face
 
 **Attach:** `art/masters/props/starter/tallyBoard.webp` — a starter wall item, for the wall-item camera only

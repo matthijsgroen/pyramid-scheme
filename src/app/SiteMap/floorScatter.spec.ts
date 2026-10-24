@@ -62,6 +62,14 @@ describe("floor scatter", () => {
     }
   })
 
+  it("furnishes nothing in a cave: nobody lived there", () => {
+    for (const siteId of Array.from({ length: 40 }, (_, i) => `cave_${i}:0`)) {
+      const grid: FloorGrid = { ...floor(siteId), tileset: "cave" }
+      const kinds = new Set(scatterFor(grid, buildRoomClaims(grid)).values())
+      expect(kinds.has("mat")).toBe(false)
+    }
+  })
+
   it("strews the passages with ground and never with furnishing", () => {
     // A mat is furnishing: it belongs in a room someone lived in, not in a corridor.
     let groundInCorridor = 0
