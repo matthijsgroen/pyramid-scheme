@@ -138,7 +138,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["master", "secondCamel"],
       ["wizard", "caravanBanner"],
     ]),
-    layered("mapTable", { x: 0.8, y: 0.92, frame: 1.67, footprint: 1.5 }, [
+    layered("mapTable", { x: 0.25, y: 1.3, frame: 1.67, footprint: 1.5 }, [
       // The map on the ground opens "Alle reizen", so like every entrance it stands from the start.
       ["starter", "map", { base: true }],
       ["expert", "table", { base: true }],
@@ -161,7 +161,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["wizard", "lotusPlanter"],
       ["wizard", "figTree"],
     ]),
-    layered("ibisPond", { x: -0.98, y: 2.05, frame: 2.46, footprint: 2.21, sink: 0.15 }, [
+    layered("ibisPond", { x: -1.55, y: 2.5, frame: 2.46, footprint: 2.21, bleed: 0.2, sink: 0.2 }, [
       // The pond itself is the fixed oasis; every step only adds to its rim and water.
       ["master", "edgeStones"],
       ["master", "papyrus"],
@@ -230,12 +230,13 @@ export const CAMP_CATALOGUE: CampCatalogue = {
     {
       // The oasis pool is why the camp stands here: there from the start, adorned later by the ibis pond's steps.
       id: "oasis",
-      x: -0.98,
-      y: 2.05,
+      x: -1.55,
+      y: 2.5,
       frame: 2.46,
       footprint: 2.21,
-      // Nothing to tap, so the pond may run off the bottom of the screen.
-      sink: 0.15,
+      // Nothing to tap, so the pond may run off the side and the bottom of the screen.
+      bleed: 0.2,
+      sink: 0.2,
       piece: piece("oasis"),
     },
   ],
