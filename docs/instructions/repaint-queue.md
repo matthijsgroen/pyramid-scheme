@@ -760,7 +760,7 @@ lies on. Sand #b8a585 and #d8d2c4, pebbles #a19b8f, against floor #3e4246. Nothi
 SCALE: shown very small. Few, simple shapes. About four times as wide as it is tall: flat, lying on the floor.
 ```
 
-**Prepare:** `art/deshadow.sh <render> clean.png art/masters/props/cave/rubbleSpill-shadow.png` if the shadow comes back magenta, and keep `clean.png` as the master.
+**Prepare:** the generator lays it on flat cave floor grey instead of magenta: `magick <render> -fuzz 7% -fill "#ff00ff" -opaque "rgb(62,63,67)" clean.png`, sampling the grey first if it differs, and keep `clean.png` as the master. The grit's fringe is that same grey, which is the floor it lands on.
 
 **Import:** `yarn import-tile art/masters/props/cave/rubbleSpill.webp --tier=cave --name=rubbleSpill --slot=prop --filter=smooth --scale=0.85`
 
