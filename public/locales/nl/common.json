@@ -1240,5 +1240,12 @@
     "legendBuried": "bedolven",
     "legendSeal": "zegel",
     "legendPins": "● hendel · ■ sleutel · klein = zijgang"
+  },
+  "camp": {
+    "entrance": {
+      "collection": "Verzameling",
+      "mosaic": "Mozaïek",
+      "journeys": "Alle reizen"
+    }
   }
 }

@@ -105,3 +105,11 @@ played, and open an issue or a task for anything that plays wrong.
 - In the game: set off for a journey from each act on the travel screen and read its arrival.
 - Two speakers: the portrait and the bubble swap sides when the speaker changes.
 - With tutorials turned off the arrival still plays.
+
+## Camp art (`camp/scene-component`)
+
+- Water spot before the well (junior to expert): the second jar stands far left, keeping the well's place, so the
+  two jars look far apart. Left as is for now; a jar that shifts in until the well lands is the cheap fix.
+- Layer flaws still open: the left seating stone has a notch under the pot's tripod leg (visible without the pot);
+  oven, pavilion and astrolabe are tied to the bread board, second tent and star cloth only to hide repainted bits;
+  the second palm's crown edge is ragged when it stands alone. Each wants a layer source.

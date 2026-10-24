@@ -10,19 +10,23 @@
  * money, so the prompt is pasted by hand. What that leaves worth automating is the fetching — finding the
  * right block in a 950-line document, and locating two files in a folder of two hundred renders.
  *
- * Two queues feed it, because the two kinds of art are owed in the same sense and a person with an hour
+ * Three queues feed it, because the kinds of art are owed in the same sense and a person with an hour
  * at the generator wants one list: `docs/instructions/repaint-queue.md` for tiles, and
- * `docs/game-design/story/character-art-prompts.md` for the story's people. Both are parsed rather than
+ * `docs/game-design/story/character-art-prompts.md` for the story's people, and
+ * `docs/game-design/camp-art-prompts.md` for the camp scene. All are parsed rather than
  * copied, so a prompt edited there is the prompt that gets pasted.
  */
 
 import { execFileSync } from "child_process"
-import { existsSync, readFileSync } from "fs"
+import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync } from "fs"
+import { homedir } from "os"
 import { join } from "path"
-import { revealArgs } from "./repaintReveal"
+import { selectScript, stagedNames } from "./repaintReveal"
 import { parse, type Entry } from "./repaintQueue"
+import { parseCamp } from "./campPrompts"
 
 const QUEUE = "docs/instructions/repaint-queue.md"
+const CAMP = "docs/game-design/camp-art-prompts.md"
 const CHARACTERS = "docs/game-design/story/character-art-prompts.md"
 /** Attached to every character prompt: the style and scale both of them are drawn against. */
 const ANCHOR = "src/assets/fez-250.png"
@@ -108,13 +112,17 @@ const parseCharacters = (md: string): Entry[] => {
   return withReferences
 }
 
-const entries = [...parse(readFileSync(QUEUE, "utf8")), ...parseCharacters(readFileSync(CHARACTERS, "utf8"))]
+const entries = [
+  ...parse(readFileSync(QUEUE, "utf8")),
+  ...parseCharacters(readFileSync(CHARACTERS, "utf8")),
+  ...parseCamp(readFileSync(CAMP, "utf8")),
+]
 const wanted = process.argv[2]
 
 /** Rank order, poorest tomb first, which is the order the ranks were painted in and the order the
  * sections of the queue are written in. Anything the pattern does not recognise sorts last rather than
  * being dropped — a listing that silently loses an entry is worse than one with an odd row in it. */
-const TIERS = ["starter", "junior", "expert", "master", "wizard", "default"]
+const TIERS = ["starter", "junior", "expert", "master", "wizard", "default", "camp"]
 
 if (!wanted) {
   // GROUPED BY RANK, not in file order. The file is written in rank sections and used to list that way
@@ -172,11 +180,16 @@ const missing = entry.attachments.filter(p => !existsSync(p))
 for (const p of entry.attachments) console.log(`  attach  ${p}${existsSync(p) ? "" : "   MISSING"}`)
 if (missing.length > 0) {
   console.log(`\n${missing.length} missing — see "Regenerating the attachments" in ${QUEUE}.`)
-} else if (!check && process.platform === "darwin" && revealArgs(entry.attachments)) {
-  // -R reveals rather than opens: a revealed file can be dragged straight into the browser, where an
-  // opened one is a Preview window in the way.
-  execFileSync("open", revealArgs(entry.attachments)!)
-  console.log("\nRevealed in the Finder — drag them in, paste, and put the download in ~/Downloads.")
+} else if (!check && process.platform === "darwin" && entry.attachments.length > 0) {
+  // Staged into a folder of their own, so the Finder can select them all in one window: the floor and the
+  // scaffolds share ~/tile-previews, where a reveal selects one file among two hundred.
+  const stage = join(homedir(), "tile-previews", "attach")
+  rmSync(stage, { recursive: true, force: true })
+  mkdirSync(stage, { recursive: true })
+  const names = stagedNames(entry.attachments)
+  entry.attachments.forEach((path, i) => copyFileSync(path, join(stage, names[i])))
+  execFileSync("osascript", ["-e", selectScript(stage, names)!])
+  console.log(`\nSelected in the Finder (${stage}) — drag them in, paste, and put the download in ~/Downloads.`)
 }
 
 console.log(`\nWhen it lands I import it and measure it; the file is ${entry.out}.`)
