@@ -188,13 +188,13 @@ its palette.
 ```
 Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
 Rough pale-grey limestone bedrock, damp-dark in the hollows, a little sand drifted into the cracks.
-Cool and dim but readable: every part of the floor is visible, nothing sinks into black.
+Dark, cool and dim but readable: every part of the floor is visible, nothing sinks into black.
 HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
 surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
 a comic, not a cartoon. An edge is a change of value, never a stroke.
-Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
-than #23272b.
+Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
+than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
 colours or its subject from it.
@@ -216,11 +216,11 @@ No joints, no built stonework. Even lighting, no hotspot, no vignette.
 Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
 The standing face of a cave wall seen from the front: raw rough-hewn limestone, vertical weathering
 streaks, a few ledges and small hollows, damp-dark toward the foot. No bricks, no joints, no paint.
-Cool and dim but readable. HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and
+Dark, cool and dim but readable. HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and
 fine speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
-than #23272b.
+Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
+than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
 colours or its subject from it.
@@ -237,11 +237,11 @@ Flat frontal view, no perspective. A wide band, seamless left to right. Even lig
 Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
 A worn sill where one cave passage meets the next: bedrock rubbed smooth and slightly dished by feet,
 a thin line of sand along its edge. No blocks, no joints, no paint.
-Cool and dim but readable. HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and
+Dark, cool and dim but readable. HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and
 fine speckle in the surface, soft shading. Painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
-than #23272b.
+Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
+than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
 colours or its subject from it.
@@ -257,11 +257,11 @@ Same camera and proportions as the attached sill. Even lighting.
 ```
 A whole wall of a cave, seen straight on, for a puzzle's backdrop: raw pale-grey limestone, rough and
 weathered, vertical streaks, a few ledges and hollows, sand drifted at the foot. No carving, no hieroglyphs,
-no paint, no bricks. Cool and dim but readable.
+no paint, no bricks. Dark, cool and dim but readable.
 HAND-PAINTED digital art: matte, soft brush texture, grit and speckle. NO OUTLINES — no black contour, no
 ink, no cel shading, no vector look.
-Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
-than #23272b.
+Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
+than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY, for the frame's proportions and paint quality. Do NOT take
 its colours or its subject from it. Same aspect as the reference; do not re-compose it square.
@@ -315,11 +315,11 @@ scatter pieces, two wall items. Each is a single repaint with no scaffold, keyed
 ```
 Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
 A still pool in a cave: a shallow natural basin of grey limestone holding clear, motionless water, its rim dark and wet where the water has stood, a little sand at the lip. Seen standing in a chamber, a low mound of rock with the pool in its top.
-Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
 speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
-than #23272b.
+Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
+than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
 colours or its subject from it.
@@ -335,11 +335,11 @@ The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen 
 ```
 Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
 A dripstone column: a stalactite grown down and a stalagmite grown up until they met, one pale-grey fluted column from floor to top of the frame, narrow at the waist, flared at foot and head, damp and slightly glistening.
-Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
 speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
-than #23272b.
+Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
+than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
 colours or its subject from it.
@@ -355,11 +355,11 @@ The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen 
 ```
 Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
 A rockfall: a knee-high heap of broken pale-grey limestone, angular slabs and chunks tumbled together, fresh pale fracture faces against weathered grey, a little sand drifted between the stones.
-Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
 speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
-than #23272b.
+Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
+than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
 colours or its subject from it.
@@ -375,11 +375,11 @@ The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen 
 ```
 Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
 A sinkhole in a cave floor: a ragged round hole in the bedrock, its lip crumbled and uneven, the shaft inside falling away into black. The rim is the only thing lit; the shaft is deep shadow, never a flat black disc.
-Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
 speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
-than #23272b.
+Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
+than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
 colours or its subject from it.
@@ -395,11 +395,11 @@ The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen 
 ```
 Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
 Pale selenite: a cluster of long translucent gypsum blades growing out of a seam in a lump of grey rock, tilting different ways, milky white with a faint cool tint, the tallest about the height of the frame's upper third. Matte, never glassy.
-Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
 speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
-than #23272b.
+Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
+than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
 colours or its subject from it.
@@ -415,11 +415,11 @@ The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen 
 ```
 Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
 An old campfire: a ring of fire-blackened stones around a bed of grey ash and a few charred sticks, long cold. Someone camped here before. Low and wide, a little soot staining the nearest stones.
-Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
 speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
-than #23272b.
+Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
+than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
 colours or its subject from it.
@@ -435,11 +435,11 @@ The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen 
 ```
 Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
 A cluster of stalagmites: three or four low stone cones of different heights growing from one patch of damp floor, pale grey, smooth, dripstone-banded, rounded at the tips, the tallest no higher than the middle of the frame.
-Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
 speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
-than #23272b.
+Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
+than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
 colours or its subject from it.
@@ -455,11 +455,11 @@ The object alone on pure magenta #FF00FF, portrait, standing on the floor, seen 
 ```
 Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
 A puddle on a cave floor, seen from above: a flat irregular patch of still water, soft at the edges where it thins out over the rock, a darker shadow in the middle and a faint cool sheen on the surface. Flat on the floor, no depth, no ripples.
-Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
 speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
-than #23272b.
+Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
+than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
 colours or its subject from it.
@@ -475,11 +475,11 @@ The patch alone on pure magenta #FF00FF, soft-edged, centred in the lower part o
 ```
 Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
 An old animal skeleton lying half-buried in drifted sand, seen from above: a ribcage, a few long bones and a skull, bleached and brittle, the sand covering one end. Flat on the floor, edges soft where bone sinks into sand, nothing standing up.
-Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
 speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
-than #23272b.
+Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
+than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
 colours or its subject from it.
@@ -495,11 +495,11 @@ The patch alone on pure magenta #FF00FF, soft-edged, centred in the lower part o
 ```
 Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
 Roots from above: pale-brown tree roots breaking through the rock at the top of a cave wall and hanging down its face, thick near the ceiling, branching and thinning to fine hairs, a few trailing nearly to the floor. Frontal, flat, one band wide and shallow.
-Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
 speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
-than #23272b.
+Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
+than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
 colours or its subject from it.
@@ -515,11 +515,11 @@ Flat frontal view, no perspective. A wide shallow band, twice as wide as tall, o
 ```
 Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
 A fringe of stalactites: a row of pale-grey dripstone cones hanging from the top edge of a cave wall, of uneven lengths, damp tips glistening faintly, the lower part of the band left clear rock. Frontal, flat, wide and shallow.
-Cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
+Dark, cool and dim but readable. HAND-PAINTED digital art: matte, visible soft brush texture, grit and fine
 speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
-Grey stone #8a8f94, damp shadow #3b4046, sand #c9b48a. Nothing lighter than #d8d4c8, nothing darker
-than #23272b.
+Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
+than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
 THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
 colours or its subject from it.

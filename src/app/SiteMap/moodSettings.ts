@@ -100,7 +100,7 @@ const RANK_MOOD: Record<Tileset, Mood> = {
   },
   // Cool and dim: no lamp has ever hung here, and what daylight there is comes down the mouth.
   cave: {
-    tint: { fill: "#5a6470", opacity: 0.1 },
+    tint: { fill: "#2e353e", opacity: 0.22 },
     drift: { count: 24, size: 0.8, fill: "#a8b0b8", opacity: 0.45, seconds: 16 },
     beam: 0.05,
   },
