@@ -72,16 +72,18 @@ Defaults this queue takes (each goes into the review list):
 2. **Waterskin** belongs to the trap mod (it owns health): picked up, it heals one heart at once if a heart
    is missing, and otherwise heals nothing. Either way it is used up: there is no inventory of supplies any more,
    and nothing is ever left behind in a chest. (Decided by the designer.)
-3. **Healing** happens at the camp fire on coming home: hearts refill to full. Core gets a "coming home" seam
+3. **Healing** happens at the camp fire on every coming home: hearts refill to full. (Decided by the designer.) Core gets a "coming home" seam
    that mods register into; core never names trap or health.
 4. **"Coming home"** fires whenever the player leaves the expedition screen back to base: at a journey's end
-   (always) and when leaving mid-journey. The overview lists what was found since the last homecoming; an empty
+   (always) and when leaving mid-journey, so going home to recover is always possible. (Decided by the designer.) The overview lists what was found since the last homecoming; an empty
    haul shows only the fire and hearts.
-5. **Perks that pointed at consumables:** pack-mule (`starter_a_3`) becomes "waterskins heal two hearts"; the
-   supplies detector levels 1–3 detect camp finds instead.
-6. **Animal prices** are authored defaults that satisfy the per-gate guard with a margin; the caravan banner
-   opens nothing.
-7. **Where things live once the pager is gone:** settings behind a gear in the camp HUD (developer mode keeps
+5. **Perks that pointed at consumables** (decided by the designer): pack-mule (`starter_a_3`) becomes "a
+   waterskin heals two hearts". The supplies detector levels 1–3 are removed; the three treasures that granted
+   them stay as plain treasures in the collection, with no perk. Waterskins lie on expert-and-up only.
+6. **Animal prices** are authored defaults that satisfy the per-gate guard with a margin, chosen by Claude and
+   listed for review; the caravan banner opens nothing. Animals are bought from Fez in his tomb shops only and
+   wait in the camp on coming home; there is no shop in the camp. (Decided by the designer.)
+7. **Where things live once the pager is gone** (decided by the designer): settings behind a gear in the camp HUD (developer mode keeps
    its 7-tap entrance on the title), the story log as a tab in the Verzameling, the mosaic window opens the
    existing mosaic screen, the dev tools from Travel move to the settings panel.
 
@@ -96,10 +98,10 @@ Remove bandage, oil and trapTool as a currency everywhere: the trap descriptor's
 the DSL `consumableRates`, the reward contribution and its full-pack `canAccept`, the left-behind chest flow
 (`disabledTraps`, `skippedConsumables`, `useRewardOffer`, `RewardFlow`'s `consumableFull`), the HUD bar, the
 consumable emoji/display/schema, the shop's `CONSUMABLE_PRICES`, Fez's shop rows, the locale keys. Traps keep
-dealing damage; nothing heals during a site. Add the core "coming home" seam (decision 3) and the trap mod's
+dealing damage; inside a site only a waterskin heals. Add the core "coming home" seam (decision 3) and the trap mod's
 registration that refills health. Add the waterskin currency (decision 2) as a trap-owned distribution on
-expert-and-up puzzle slots, replacing the consumable fill there one for one where possible. Retarget pack-mule
-and the supplies detector (decision 5). Rewrite the docs that describe consumables and health:
+expert-and-up puzzle slots, replacing the consumable fill there one for one where possible. Retarget pack-mule and
+remove the supplies detector levels (decision 5). Rewrite the docs that describe consumables and health:
 `docs/game-design/pyramid-interior-design.md` (health section), `docs/game-design/shop-mechanic.md`,
 `docs/mods/collection-and-detector-design.md`. Soundness: the bake and the economy guard. Ends with a bake; the
 loot overview below is run and its numbers recorded in the review list.
@@ -110,16 +112,23 @@ loot overview below is run and its numbers recorded in the review list.
 reward type), empty puzzle rooms, the share of puzzles with loot, chests filled, and totals per currency against
 demand (fragments needed by tableaus, mosaic 252, map pieces, keys, camp finds, money needed before each gate once
 phase 4 exists). A pure function over the baked configs with specs on a made-up world, and a world validator
-that fails the bake when a chest or path end is empty. Small, but every later phase reads its output.
+that fails the bake when a chest or path end is empty. The report prints tables and writes `docs/loot-report.md` (committed, so every
+bake shows what moved). The puzzle-loot share is reported only, never enforced. (Decided by the designer.) Small, but every later phase reads its output.
 
 ### Phase 3 — camp loot: found items and structure parts [ ]
 
 The `camp` mod (decision 1). Two currencies from the loot spec: **found items** (26) and **structure parts**
-(26 structures, about 3 parts each; small structures 1–2; the spec leaves names and counts to the builder), placed
-by tier following each step's tier in the catalogue, as a capped/dynamic distribution so they fill slots without
+(26 structures; parts per structure SCALE WITH THE TIER, about 2–3 on starter and junior up to 4–6 on master and
+wizard, so the higher tiers pay more often — a little more loot than today is accepted; every part has its own
+name, drafted in nl and en by Claude and listed in the review list), placed by tier following each step's tier
+in the catalogue, as a capped/dynamic distribution so they fill slots without
 gating. Reward contributions that record a find; the camp's found state (`CampFound` per spot, any order); a
 structure appears only when all its parts are in; self-growing steps follow on the next homecoming. The
-Verzameling gets a **Constructies** tab (started structures only, "n van m", parts named or "???"). The scene
+Verzameling gets a **Constructies** tab (started structures only, "n van m", parts named or "???"). It must not
+clutter: one row per structure with its art and "n van m"; its parts show only when the row is opened. A find
+shows its own camp art (cut from the painted camp layers) with how far it is, as hieroglyph fragments do ("Put ·
+3 van 5"). ART: every sellable (junk) and every part icon gets a prompt in `docs/instructions/repaint-queue.md`
+so the designer can paint them; until painted, the current icon stays. (Decided by the designer.) The scene
 reads the found state through props. Soundness: placement and the bake. Ends with a bake and the loot report.
 
 ### Phase 4 — animals as gates, the per-gate guard [ ]
@@ -148,7 +157,7 @@ reachability and the guard. Ends with a bake.
 ### Phase 5 — the economy recomputed [ ]
 
 Sinks = the 13 rare items + the 7 purchases. Income ≈ 1.1 × sinks and passing the per-gate guard, split over
-sellables and loose coins; sellables go up (more of them or dearer, `src/data/sellables.ts`) so the animals are
+sellables and loose coins; sellables go up: the same 25 kinds, more of them and dearer (decided by the designer; `src/data/sellables.ts`) so the animals are
 affordable. The total number of drops stays about what it is (the loot report shows it). Sold items stay
 visible in the collection. Ends with a bake, the loot report in the review list, and the tier fingerprints
 updated deliberately (the world is unreleased; starter moves only if this phase must touch it, and the review
@@ -156,7 +165,8 @@ list says why).
 
 ### Phase 6 — the camp as home, coming home [ ]
 
-Mount `CampScene` as the home screen in place of the Travel/Collection pager (`src/app/Base.tsx`), following
+On desktop Alle reizen is a panel beside the camp, always shown (`DesktopKamp.dc.html`); on mobile a popup
+(decided by the designer). Mount `CampScene` as the home screen in place of the Travel/Collection pager (`src/app/Base.tsx`), following
 `docs/design/camp-sketches/Main.dc.html` and `DesktopKamp.dc.html`: the HUD (coins, hearts, settings gear), the
 scene with its entrances (chest → Verzameling, mosaic window → mosaic screen, map → Alle reizen, fire), the
 "Verder met" card with **Op pad**, **Alle reizen**, the hint row. Journey end and leaving an expedition go
@@ -187,6 +197,10 @@ jokes land on first read; the explorer speaks only where it helps), mark each as
 - the animal gates: the first time a tier or optional tomb is blocked for want of an animal (who says it, and
   where to get one), the moment the animal lets the player through, and the animal arriving in the camp;
 - finishing a structure; the first camp find.
+
+Voices (decided by the designer): in the camp the explorer and Fez talk together (Fez travels home with the
+explorer; he sells nothing there); at a gate that needs an animal, Fez says so and points to where one is
+sold. Drafts are written in Dutch first (spoken, everyday Dutch), then in English; both go in.
 
 Lines go where the story layer keeps them, each listed in the review list with where it fires. No line is
 "final" until the designer has read it.
