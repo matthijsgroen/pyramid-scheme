@@ -402,7 +402,9 @@ hieroglyphs, no watermark, no frame, no border.
 It is about one third as wide as it is tall: a column taller than a person.
 ```
 
-**Import:** `yarn import-tile art/masters/props/cave/pillar.webp --tier=cave --name=pillar --slot=prop --filter=smooth`
+**Prepare:** `art/deshadow.sh <render> clean.png art/masters/props/cave/pillar-shadow.png`, keep `clean.png` as the master (the shadow comes back magenta).
+
+**Import:** `yarn import-tile art/masters/props/cave/pillar.webp --tier=cave --name=pillar --slot=prop --filter=smooth --seat=art/masters/props/cave/pillar-shadow.png --seat-opacity=0.55`
 
 ### `cave/rubblePile` — a rockfall of broken limestone
 
