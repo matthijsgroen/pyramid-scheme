@@ -165,6 +165,3 @@ export const EveryFamily: Story = {
     </div>
   ),
 }
-
-/** The cave's own wall behind the starter boards it holds. */
-export const OnTheCaveWall: Story = { args: { wall: "cave" } }
