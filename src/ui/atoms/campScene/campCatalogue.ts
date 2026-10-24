@@ -125,7 +125,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["master", "dryingRack"],
       ["wizard", "feast"],
     ]),
-    chain("donkey", { x: -1.85, y: -0.39, frame: 1.49, footprint: 1.34, bleed: 0.15 }, [
+    chain("donkey", { x: -2.1, y: -0.39, frame: 1.49, footprint: 1.34, bleed: 0.25 }, [
       ["junior", "halter"],
       ["junior", "donkey"],
       ["junior", "saddlebags"],
