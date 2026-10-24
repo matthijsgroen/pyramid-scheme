@@ -183,7 +183,7 @@ export const campLayers = async ({ catalogue, sources, assetsRoot, shadowSize }:
     const layer = await cutLayer(file(job.with), job.without && file(job.without))
     const out = join(outRoot, `${job.id}.webp`)
     await sharp(layer).webp({ quality: 90 }).toFile(out)
-    await writeShadow(layer, join(outRoot, `${job.id}-shadow.webp`), shadowSize)
+    await writeShadow(layer, join(outRoot, `${job.id}-shadow.webp`), shadowSize, file(job.with))
     written.push(out)
   }
   return { written, skipped }

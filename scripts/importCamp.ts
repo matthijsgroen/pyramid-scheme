@@ -164,23 +164,40 @@ const keyUnmix = (data: Buffer, width: number, height: number, key: string, tole
 /** The alpha from which a pixel counts as the object, not its keyed fringe. */
 const OPAQUE = 128
 
-/** Per column, a full band from the lowest opaque pixel upward. */
-const baseBand = (alpha: Buffer, width: number, height: number) => {
+/** How far below a foot, as a share of the height, the rest of the spot still counts as what it rests on. */
+const RESTS_ON = 0.03
+
+/**
+ * Per column, a full band from the lowest opaque pixel upward; with `ground` (the whole spot the piece is
+ * part of), only where nothing of the spot lies just below that foot, so a roof on a tower casts none.
+ */
+const baseBand = (alpha: Buffer, width: number, height: number, ground?: Buffer) => {
   const band = Math.max(1, Math.round(height * SHADOW_BAND))
+  const reach = Math.max(2, Math.round(height * RESTS_ON))
   const out = Buffer.alloc(width * height)
   for (let x = 0; x < width; x++) {
     let bottom = height - 1
     while (bottom >= 0 && alpha[bottom * width + x] < OPAQUE) bottom--
+    if (bottom < 0) continue
+    let rests = false
+    for (let y = bottom + 2; ground && y < Math.min(height, bottom + reach); y++)
+      rests ||= ground[y * width + x] >= OPAQUE
+    if (rests) continue
     for (let y = bottom; y >= 0 && y > bottom - band; y--) out[y * width + x] = 255
   }
   return out
 }
 
-export const writeShadow = async (piece: Buffer, path: string, size: number) => {
-  const small = await sharp(piece).resize(size, size, { fit: "inside", withoutEnlargement: true }).png().toBuffer()
-  const { data: alpha, info } = await sharp(small).extractChannel(3).raw().toBuffer({ resolveWithObject: true })
+const alphaAt = async (image: Buffer | string, size: number) => {
+  const small = await sharp(image).resize(size, size, { fit: "inside", withoutEnlargement: true }).png().toBuffer()
+  return sharp(small).ensureAlpha().extractChannel(3).raw().toBuffer({ resolveWithObject: true })
+}
+
+export const writeShadow = async (piece: Buffer, path: string, size: number, ground?: Buffer | string) => {
+  const { data: alpha, info } = await alphaAt(piece, size)
   const { width, height } = info
-  const data = await sharp(baseBand(alpha, width, height), { raw: { width, height, channels: 1 } })
+  const under = ground && (await alphaAt(ground, size)).data
+  const data = await sharp(baseBand(alpha, width, height, under), { raw: { width, height, channels: 1 } })
     .blur(Math.max(0.3, Math.max(width, height) * SHADOW_BLUR))
     // sharp writes a one-channel input back out as sRGB; keep the one channel the alpha needs.
     .extractChannel(0)

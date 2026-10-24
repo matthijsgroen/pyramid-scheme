@@ -97,6 +97,19 @@ describe("layerJobs", () => {
 })
 
 describe("campLayers", () => {
+  it("gives a layer a contact shadow only where it stands on the ground, not where it rests on the rest", async () => {
+    const BASE = { colour: "#ff0000", left: 20, top: 120, size: 60 }
+    const ON_TOP = { colour: "#0000ff", left: 30, top: 80, size: 40 }
+    const ALONE = { colour: "#00ffff", left: 130, top: 110, size: 40 }
+    await picture("plain", [BASE])
+    await picture("cup", [BASE, ON_TOP, ALONE])
+    await campLayers({ catalogue, sources: {}, assetsRoot: join(dir, "camp"), shadowSize: 200 })
+
+    const shadow = await alphaOf(join(dir, "camp", "layers", "cup-shadow.webp"))
+    expect(shadow(50, 115)).toBeLessThan(40)
+    expect(shadow(150, 145)).toBeGreaterThan(200)
+  })
+
   it("writes each painted layer with its shadow and skips the ones not painted yet", async () => {
     await picture("plain", [RED])
     await picture("cup", [RED, BLUE])
