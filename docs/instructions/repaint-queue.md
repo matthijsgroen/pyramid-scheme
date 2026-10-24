@@ -663,7 +663,7 @@ projection with zero vanishing points; lines must never converge. Display exactl
 elevation and 50% top-down elevation. All depth lines must extrude straight upwards along the
 vertical Y-axis. Strictly hide all left and right side planes.
 
-SUBJECT: An old animal skeleton half buried in sand: a ribcage, a long skull and scattered leg bones, dry and grey, the bones no lighter than #a8aaa8.
+SUBJECT: An old animal skeleton lying FLAT on the cave floor, seen mostly from ABOVE: the spine runs left to right across the picture as one line of small vertebrae, the ribs fan out from it to BOTH sides like the teeth of a comb and lie flattened on the ground, the long skull at one end is seen from above (its top and the two eye hollows, not its profile), a few leg bones lie loose beside it. Nothing stands up: the whole skeleton is a low flat pattern, its tallest part a rib no higher than a tenth of its length. It has NO ground of its own — no sand mound, heap, slab or plate under it; at most a few grains of sand between the bones.
 
 RENDERING: one object alone, painted and matte, with soft brush texture and grit. Soft modelled
 shading, never flat cel shading. NO OUTLINES: no dark contour around the object or any part of it
