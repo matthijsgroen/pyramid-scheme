@@ -524,13 +524,20 @@ describe("layoutCamp", () => {
     })
   })
 
-  it("keeps every pyramid inside the container", () => {
+  it("keeps every pyramid's peak and left foot inside the container; only a right foot may run off", () => {
     sweep((l, { width }) => {
       for (const p of l.pyramids) {
         expect(p.x - p.width / 2).toBeGreaterThanOrEqual(0)
-        expect(p.x + p.width / 2).toBeLessThanOrEqual(width)
+        expect(p.x).toBeLessThanOrEqual(width)
+        expect(p.x + p.width / 2).toBeLessThanOrEqual(width + (p.width / 2) * CAMP_LAYOUT_PARAMS.pyramidBleed)
       }
     })
+  })
+
+  it("lets the last pyramid run off the right edge of a phone", () => {
+    const l = layout({ chapter: "wizard", width: 390, height: 844 })
+    const last = l.pyramids[l.pyramids.length - 1]
+    expect(last.x + last.width / 2).toBeGreaterThan(390)
   })
 
   it("survives insets larger than the container", () => {

@@ -103,6 +103,8 @@ export const CAMP_LAYOUT_PARAMS = {
   minInsetFreeShare: 0.25,
   /** A horizon pyramid's width over its height. */
   pyramidAspect: 1.5,
+  /** The share of its half-width a pyramid's right foot may run off the container. */
+  pyramidBleed: 0.4,
 }
 
 const P = CAMP_LAYOUT_PARAMS
@@ -405,13 +407,13 @@ export const layoutCamp = ({
     shadow: p.visible ? castShadow(p, glows) : undefined,
   }))
 
-  // Clamped by its half-width so a pyramid stands whole even where the frame runs to the container's edge.
+  // Clamped by its half-width so a pyramid stands whole on the left; on the right its foot may run off a little.
   const pyramids: PlacedPyramid[] = difficulties.slice(0, difficulties.indexOf(chapter) + 1).map((_, i) => {
     const pyramidHeight = (0.55 + 0.22 * i) * unit
     const pyramidWidth = pyramidHeight * P.pyramidAspect
     const half = pyramidWidth / 2
     return {
-      x: clamp(frame.x + frame.width * (0.1 + 0.2 * i), half, width - half),
+      x: clamp(frame.x + frame.width * (0.1 + 0.21 * i), half, width - half * (1 - P.pyramidBleed)),
       width: pyramidWidth,
       height: pyramidHeight,
       golden: i === 4,
