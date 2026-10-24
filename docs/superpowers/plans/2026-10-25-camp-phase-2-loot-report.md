@@ -65,7 +65,7 @@ Each is the option that changes the least shipped behaviour; Task 5 writes them 
 - Produces: `renderLootReportMarkdown(report: LootReport): string` — the doc: a title, one line saying it is written by `yarn loot-report` from `src/data/generatedWorld.ts` and not edited by hand, then "Totals against demand", "Per tier", "Per journey" (one table per tier, a row per journey level, fills written as `money 12 · sellable 3`), and "Loot ends without a reward in the spec" ("None." when empty). No timestamp.
 - Consumes: `ResolveEncounter` (`src/game/siteAssembler.ts`), `CARVE_FAMILY_QUERIES` (`src/game/encounterFallback.ts`), `SiteConfig` (`src/worldGen/types.ts`).
 
-- [ ] **Step 1: Failing tests** on a made-up world (two journeys, three or four tiny floors; a stub resolver that answers a made-up shop encounter id with the shop family's id, everything else with a puzzle family):
+- [x] **Step 1: Failing tests** on a made-up world (two journeys, three or four tiny floors; a stub resolver that answers a made-up shop encounter id with the shop family's id, everything else with a puzzle family):
   - a floor with 3 puzzles and `rewards` [money, undefined, waterskin] counts 3 rooms, 2 with loot, 1 empty, share 2/3, and its fills per type;
   - a floor's main-path end on an `exit` floor and on a `none` floor is a chest; on a `staircase` floor it is no slot;
   - a side section ending in `treasure` is a path end; one ending in a staircase or `{ stairId }` is not; a sub-section's end counts too; a hidden section's slots carry `hidden`;
@@ -76,9 +76,9 @@ Each is the option that changes the least shipped behaviour; Task 5 writes them 
   - `totals` pass through in order; `short` and `surplus` are set only where `needed` is, and never both;
   - `renderLootReportMarkdown` gives the same string for the same report twice, holds every heading above, writes "None." with no unrewarded ends, and holds no digit-run that looks like a date or time it was not given.
 - [ ] **Step 2: Run** `yarn test src/worldGen/lootReport` — FAIL.
-- [ ] **Step 3: Implement.** One walk, the shapes above. The file's top comment says what the report is for (the designer reads the loot in the world without opening the bake) and that core counts reward types without knowing them.
-- [ ] **Step 4: Run** the spec — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Commit** — `feat: a pure loot report over the world configs`
+- [x] **Step 3: Implement.** One walk, the shapes above. The file's top comment says what the report is for (the designer reads the loot in the world without opening the bake) and that core counts reward types without knowing them.
+- [x] **Step 4: Run** the spec — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Commit** — `feat: a pure loot report over the world configs`
 
 ---
 
@@ -101,11 +101,11 @@ Each is the option that changes the least shipped behaviour; Task 5 writes them 
 - Produces: `MOD_LOOT_TOTALS(configs): LootTotal[]`.
 - Extension point (not built): phase 3's camp mod adds its found-item and structure-part rows here; phase 4's shop mod adds one row per animal gate (income reachable before it against everything buyable before it). Same field, same row shape.
 
-- [ ] **Step 1: Failing tests** per mod, each on a made-up `Record<string, SiteConfig[]>` holding a few of that mod's rewards on puzzle slots, path ends, chests and shop stock, plus some other types it must ignore: the row counts only its own type, wherever it lies (puzzle, chest, path end, sub-section, shop stock); `needed` equals the mod's own constant by reference; the shop's income row adds coins and sell value. One `registeredMods` spec: `MOD_LOOT_TOTALS` returns rows in registry order and is empty for an empty world without throwing.
+- [x] **Step 1: Failing tests** per mod, each on a made-up `Record<string, SiteConfig[]>` holding a few of that mod's rewards on puzzle slots, path ends, chests and shop stock, plus some other types it must ignore: the row counts only its own type, wherever it lies (puzzle, chest, path end, sub-section, shop stock); `needed` equals the mod's own constant by reference; the shop's income row adds coins and sell value. One `registeredMods` spec: `MOD_LOOT_TOTALS` returns rows in registry order and is empty for an empty world without throwing.
 - [ ] **Step 2: Run** `yarn test src/mods` — the new specs FAIL.
-- [ ] **Step 3: Implement.** Each mod reads only its own reward type; labels are plain English ("Hieroglyph fragments", "Mosaic pieces", "Map pieces", "Tomb treasures", "Ward gates with their key", "Waterskins", "Coin drops", "Coins", "Sellables", "Sell value", "Income against buyable stock"). No mod imports a sibling.
-- [ ] **Step 4: Run** `yarn test src/mods src/worldGen` — PASS. `yarn check-types`, `yarn lint` (import rules at zero).
-- [ ] **Step 5: Commit** — `feat: mods report their loot against their demand`
+- [x] **Step 3: Implement.** Each mod reads only its own reward type; labels are plain English ("Hieroglyph fragments", "Mosaic pieces", "Map pieces", "Tomb treasures", "Ward gates with their key", "Waterskins", "Coin drops", "Coins", "Sellables", "Sell value", "Income against buyable stock"). No mod imports a sibling.
+- [x] **Step 4: Run** `yarn test src/mods src/worldGen` — PASS. `yarn check-types`, `yarn lint` (import rules at zero).
+- [x] **Step 5: Commit** — `feat: mods report their loot against their demand`
 
 ---
 
