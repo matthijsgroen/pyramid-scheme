@@ -12,16 +12,29 @@
 // The band is drawn at HALF the stored height, which is what the renderer does with a face.
 //
 //   yarn on-floor src/assets/tiles/starter/pit.png starter /tmp/pit.png
+//   yarn on-floor src/assets/tiles/cave/bones.png cave /tmp/bones.png --cells=2x1 [--tall=1]
+//
+// A prop bigger than one cell names its footprint, the same flags `import-tile` took: it is drawn in the
+// frame the map gives it, from the west edge of the middle cell, standing on its bottom row's floor line.
 import sharp from "sharp"
 
 const CELL = 56
 const BAND = 28
-const [tile, tier = "starter", out = "/tmp/on-floor.png"] = process.argv.slice(2)
-const W = CELL * 3
-const H = BAND + CELL * 2
+const SIDE = 14
+const flag = name => process.argv.find(a => a.startsWith(`--${name}=`))?.split("=")[1]
+const [tile, tier = "starter", out = "/tmp/on-floor.png"] = process.argv.slice(2).filter(a => !a.startsWith("--"))
+const [cols, rows] = (flag("cells") ?? "1x1").split("x").map(Number)
+const tall = Number(flag("tall") ?? 0)
+const multi = cols > 1 || rows > 1 || tall > 0
+// mapScale's COL_PITCH and ROW_PITCH: a further column is a cell plus a side wall, a further row a cell plus a band.
+const footprint = multi
+  ? [CELL + (cols - 1) * (CELL + SIDE), CELL + BAND + (rows - 1) * (CELL + BAND) + tall * CELL]
+  : null
+const W = CELL * (2 + cols)
+const H = BAND + CELL * (1 + rows) + (rows - 1) * BAND + tall * CELL
 const face = await sharp(`src/assets/tiles/${tier}/wall-face.png`).resize(W, BAND, { fit: "fill" }).toBuffer()
 const floor = await sharp(`src/assets/tiles/${tier}/floor.png`)
-  .resize(W, CELL * 2, { fit: "cover" })
+  .resize(W, H - BAND, { fit: "cover" })
   .toBuffer()
 /**
  * A tile's stored size is no longer its size in MAP UNITS — `importTile`'s SPRITE_SCALE is 2, so a prop
@@ -45,7 +58,7 @@ const aspect = spriteMeta.width / spriteMeta.height
 const slot = SLOTS_IN_UNITS.reduce((best, s) =>
   Math.abs(s[0] / s[1] - aspect) < Math.abs(best[0] / best[1] - aspect) ? s : best
 )
-const [width, height] = slot
+const [width, height] = footprint ?? slot
 const sprite = sharp(await sharp(tile).resize(width, height, { fit: "fill" }).png().toBuffer())
 // Bottom-aligned on the middle cell's floor line, the way SiteMapView draws a prop.
 const composed = await sharp({
@@ -58,7 +71,9 @@ const composed = await sharp({
     // because the wall slot is the only one shorter than the band.
     height <= BAND
       ? { input: await sprite.toBuffer(), top: BAND - height, left: CELL }
-      : { input: await sprite.toBuffer(), top: BAND + CELL - height + 14, left: Math.round((W - width) / 2) },
+      : multi
+        ? { input: await sprite.toBuffer(), top: H - CELL / 2 - height, left: CELL }
+        : { input: await sprite.toBuffer(), top: BAND + CELL - height + 14, left: Math.round((W - width) / 2) },
   ])
   .png()
   .toBuffer()

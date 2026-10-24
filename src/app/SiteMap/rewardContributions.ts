@@ -5,6 +5,7 @@ import type { TreasureReward } from "@/game/siteTypes"
 // it; most effects ignore it.
 export type RewardEffectCtx = { journeyId: string }
 export type RewardEffect = (reward: TreasureReward, ctx: RewardEffectCtx) => void
+export type RewardSeen = (reward: TreasureReward) => void
 
 // How a mod plugs into reward claiming without core knowing the mod exists. A contribution is a
 // HOOK (so it can read the mod's own state, e.g. useTrapProgress) returning:
@@ -18,6 +19,9 @@ export type RewardEffect = (reward: TreasureReward, ctx: RewardEffectCtx) => voi
 // or threads mod-specific state into the reward context. See docs/mods/app-plugins-design.md.
 export type RewardContribution = {
   effects?: Partial<Record<TreasureReward["type"], RewardEffect>>
+  /** Once the player has dismissed the popup announcing a reward of this type: the moment to say something
+   * about it without talking over the find. */
+  seen?: Partial<Record<TreasureReward["type"], RewardSeen>>
   canAccept?: (reward: TreasureReward) => boolean
   skip?: (reward: TreasureReward) => boolean
 }
@@ -30,6 +34,7 @@ export const registerRewardContribution = (useContribution: UseRewardContributio
 
 export type MergedRewardContributions = {
   effects: Partial<Record<TreasureReward["type"], RewardEffect>>
+  seen: Partial<Record<TreasureReward["type"], RewardSeen>>
   canAccept: (reward: TreasureReward) => boolean
   skip: (reward: TreasureReward) => boolean
 }
@@ -41,15 +46,18 @@ export type MergedRewardContributions = {
 // distinction is testable without the registry/hooks.
 export const mergeContributions = (contributions: readonly RewardContribution[]): MergedRewardContributions => {
   const effects: Partial<Record<TreasureReward["type"], RewardEffect>> = {}
+  const seen: Partial<Record<TreasureReward["type"], RewardSeen>> = {}
   const accepts: Array<(reward: TreasureReward) => boolean> = []
   const skips: Array<(reward: TreasureReward) => boolean> = []
   for (const c of contributions) {
     Object.assign(effects, c.effects)
+    Object.assign(seen, c.seen)
     if (c.canAccept) accepts.push(c.canAccept)
     if (c.skip) skips.push(c.skip)
   }
   return {
     effects,
+    seen,
     canAccept: reward => accepts.every(fn => fn(reward)),
     skip: reward => skips.some(fn => fn(reward)),
   }

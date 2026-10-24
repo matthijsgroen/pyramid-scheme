@@ -18,7 +18,7 @@ the ending's mechanism arriving quietly, four tiers early.
 >
 > **Fez:** So people started counting the days between. That is where the calendar comes from — birds.
 >
-> **Explorer:** Birds.
+> **Explorer (deadpan):** Birds.
 >
 > **Fez:** Birds and paperwork. It is always birds and paperwork.
 
@@ -26,9 +26,9 @@ the ending's mechanism arriving quietly, four tiers early.
 
 `story.arrival.junior_2.*` — **the quiet one.** It never says the word copy.
 
-> **Fez:** This is where they made it all. Not the tombs — the things that went in them.
+> **Fez (pointUp):** This is where they made it all. Not the tombs — the things that went in them.
 >
-> **Fez:** Look at the moulds. Same bracelet, forty times.
+> **Fez (pointUp):** Look at the moulds. Same bracelet, forty times.
 >
 > **Explorer:** For forty people?
 >
@@ -40,15 +40,15 @@ the ending's mechanism arriving quietly, four tiers early.
 
 > **Fez:** Thoth, this one. God of secrets and magic, I am fairly sure.
 >
-> **Explorer:** Fairly.
+> **Explorer (deadpan):** Fairly.
 >
-> **Fez:** Ninety per cent. Anyway — the signs you have been collecting are his.
+> **Fez (sheepish):** Ninety per cent. Anyway — the signs you have been collecting are his.
 
 ## `junior_4` — Lighthouse of Alexandria
 
 `story.arrival.junior_4.*`
 
-> **Fez:** Three hundred feet of it, and a fire at the top that never went out.
+> **Fez (pointUp):** Three hundred feet of it, and a fire at the top that never went out.
 >
 > **Fez:** Sailors could find the coast from a day away. Before that they found it by hitting it.
 >
@@ -69,7 +69,7 @@ game does not say so — Fez does, badly, and is corrected.
 
 > **Henut:** Finally. You will have come about the lapis. I assume Ipi is still going on about the lapis.
 >
-> **Explorer:** He is.
+> **Explorer (deadpan):** He is.
 >
 > **Henut:** It was glass. Beautiful glass. He knew.
 >
@@ -88,7 +88,7 @@ hieroglyphs do anything outside a tableau, and the mechanism the ending runs on.
 
 > **Henut:** There. Now it will still be my name in a thousand years.
 >
-> **Explorer:** Ipi spelled it correctly.
+> **Explorer (deadpan):** Ipi spelled it correctly.
 >
 > **Henut:** Ipi spelled everything correctly. It was his one redeeming feature.
 >
@@ -133,13 +133,13 @@ everyone has met her.
 `story.reading.junior.*` — fires the first time the player can read a full line of the formula that is
 written in **every** tomb, because it genuinely was.
 
-> **Explorer:** There is a line here I can read now.
+> **Explorer (pointUp):** There is a line here I can read now.
 >
 > **Explorer:** _I gave bread to the hungry._
 >
 > **Fez:** Bread. In a tomb.
 >
-> **Explorer:** It is in the last one too. I did not know it was words.
+> **Explorer (surprised):** It is in the last one too. I did not know it was words.
 
 ## Open
 

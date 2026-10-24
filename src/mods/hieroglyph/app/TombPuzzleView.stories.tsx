@@ -38,6 +38,7 @@ export const InProgress: Story = {
     return (
       <TombPuzzleView
         difficulty={journey.difficulty}
+        wall={journey.difficulty}
         tableau={tableau}
         calculation={calculation}
         filledState={{ symbolCounts: {}, filledPositions: {} }}

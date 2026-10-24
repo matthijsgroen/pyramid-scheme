@@ -1,4 +1,4 @@
-import type { SideSection, SiteConfig, SubSection, TreasureReward, MapPieceReward } from "./types"
+import type { FloorConfig, SideSection, SiteConfig, SubSection, TreasureReward, MapPieceReward } from "./types"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import { FORK_SHAPES, type ForkShape } from "@/game/forkShape"
@@ -33,6 +33,21 @@ export type WorldValidator = (
 // "expected N, got 0". Omit both to skip the currency-reward check. Mod-owned capped currencies
 // (mosaic) aren't checked here — placeFragments' phase-3 pass hard-fails if it can't fully place
 // them, so core needs no per-mod count (docs/mods/TARGET.md rule 2).
+// The floor a site's main path ends on: from floor 0, follow each main-path stair down to the floor it
+// arrives on. A site has one exit, and it stands there.
+const mainPathEnd = (floors: readonly FloorConfig[]): number => {
+  let at = 0
+  const walked = new Set<number>([at])
+  for (;;) {
+    const way = floors[at].exitOrStaircase
+    if (typeof way !== "object") return at
+    const next = floors.findIndex(f => typeof f.entrance === "object" && f.entrance.stairId === way.stairId)
+    if (next < 0 || walked.has(next)) return at
+    walked.add(next)
+    at = next
+  }
+}
+
 export const validateRewardCounts = (
   configs: Record<string, SiteConfig[]>,
   expectedCurrencyRewards?: number,
@@ -68,13 +83,15 @@ export const validateRewardCounts = (
 
   for (const [siteId, siteConfigs] of Object.entries(configs)) {
     for (const floors of siteConfigs) {
+      const mainEnd = mainPathEnd(floors)
       for (let fi = 0; fi < floors.length; fi++) {
         const floor = floors[fi]
-        const isLast = fi === floors.length - 1
-        if (isLast && floor.exitOrStaircase !== "exit")
+        if (fi === mainEnd && floor.exitOrStaircase !== "exit")
           throw new Error(
-            `[worldSpec] Site "${siteId}" last floor has exitOrStaircase="${floor.exitOrStaircase}", expected "exit"`
+            `[worldSpec] Site "${siteId}" main path ends on floor ${fi} with exitOrStaircase="${floor.exitOrStaircase}", expected "exit"`
           )
+        if (fi !== mainEnd && floor.exitOrStaircase === "exit")
+          throw new Error(`[worldSpec] Site "${siteId}" floor ${fi} is off the main path but has an exit`)
         checkReward(floor.mainEndReward, false, `${siteId}#${fi} main`)
         checkRewards(floor.rewards, false, `${siteId}#${fi} main`)
         for (const s of floor.sideSections) {

@@ -1,0 +1,15 @@
+// designed by: Claude
+// junior, the starter cave. One lever opens two doors at once, and each room behind them holds the lever for the
+// other's: west's lever opens the cell in east, whose lever opens the way out.
+
+in -- hall
+hall -- side
+hall -[C]- west
+hall -[C]- east
+east -[W]- cell
+hall -[A]- out
+C toggle @side
+W toggle @west
+A toggle @cell
+west *
+east *

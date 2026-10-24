@@ -26,7 +26,7 @@ the place is and lets the mechanic read itself.
 >
 > **Explorer:** That is what we have been doing.
 >
-> **Fez:** I had been trying not to say so.
+> **Fez (worried):** I had been trying not to say so.
 >
 > **Explorer:** The sand is still coming in.
 >
@@ -52,7 +52,7 @@ The sand covers the spine, not merely the side paths, so a player walks in, sees
 so the beat must not apologise for it or explain how to fix it — either would turn a deliberate wall into a
 tutorial about a wall.
 
-> **Fez:** …Ah.
+> **Fez (surprised):** …Ah.
 >
 > **Explorer:** It is full.
 >
@@ -64,7 +64,7 @@ tutorial about a wall.
 >
 > **Fez:** Nothing for us today, then.
 >
-> **Explorer:** It is not going anywhere.
+> **Explorer (deadpan):** It is not going anywhere.
 >
 > **Fez:** No. Neither is it.
 
@@ -83,7 +83,7 @@ Which is why the line stays understated. The structure carries it; the dialogue 
 any of them could be the one a player finishes on. With it there is one authored place that comes late —
 **the only point in a free-order tier a beat can count on.**
 
-> **Fez:** …It moved.
+> **Fez (surprised):** …It moved.
 >
 > **Explorer:** The whole way through.
 >
@@ -142,27 +142,27 @@ _(a pause the game should hold)_
 >
 > **Explorer:** Yours.
 >
-> **Fez:** …
+> **Fez (surprised):** …
 >
-> **Fez:** Are you sure?
+> **Fez (surprised):** Are you sure?
 >
 > **Explorer:** It is written down.
 
 _(let that sit)_
 
-> **Fez:** Huh.
+> **Fez (surprised):** Huh.
 >
-> **Fez:** Hori.
+> **Fez (wistful):** Hori.
 >
-> **Fez:** There was a Hori in every village in Egypt.
+> **Fez (wistful):** There was a Hori in every village in Egypt.
 >
-> **Fez:** Well. That explains the fez.
+> **Fez (wistful):** Well. That explains the fez.
 
 **This is the whole ending.** Not a pronouncement and not a moral about what the player collected — fifty
 hours to say one name out loud, and it is his.
 
-_"It is written down"_ is Ipi's, from the first tomb in the game: _"a thing written down is a thing that
-happened. Rub out a man's name and he never did."_ The explorer is not consoling him, they are quoting a
+_"It is written down"_ is Ipi's, from the first tomb in the game: _"It's written down! A thing written down is a thing
+that happened."_ The explorer is not consoling him, they are quoting a
 bookkeeper, and that is why it lands without anybody explaining it.
 
 **He is unimpressed, and that is the rule** (`cast.md`). No curse lifts, nothing mends, he does not weep —
@@ -176,7 +176,7 @@ Fez's own turn stays where it was, a beat later:
 >
 > **Explorer:** It is on every wall we passed.
 >
-> **Fez:** …I know. I have been selling the walls.
+> **Fez (wistful):** …I know. I have been selling the walls.
 
 ## `wizard_2` — Colossi of Memnon · the wrong name
 
@@ -188,7 +188,7 @@ stuck for two thousand years because nobody read the one already there. And afte
 the statue sounded a note at dawn every morning — until a Roman emperor repaired it, after which it never
 made a sound again.
 
-> **Fez:** Two of them, twenty metres up, and both of them Amenhotep.
+> **Fez (pointUp):** Two of them, eighteen metres up, and both of them Amenhotep.
 >
 > **Fez:** The Greeks took one look and decided it was a hero of theirs. Memnon. The name stuck for two
 > thousand years.
@@ -197,14 +197,14 @@ made a sound again.
 >
 > **Fez:** His own. Cut into the throne, where it has always been.
 >
-> **Fez:** Nobody read it.
+> **Fez (wistful):** Nobody read it.
 >
-> **Fez:** After the earthquake the northern one sang at dawn. A note, every morning, when the sun warmed
+> **Fez (wistful):** After the earthquake the northern one sang at dawn. A note, every morning, when the sun warmed
 > the crack.
 >
 > **Explorer:** And now?
 >
-> **Fez:** An emperor had it mended. It has not made a sound since.
+> **Fez (wistful):** An emperor had it mended. It has not made a sound since.
 
 **_"His own. Nobody read it."_ is the act's tell**, and it costs nothing: Fez is talking about a statue. The
 player hears the shape of the ending one journey early, as a fact about somebody else.
@@ -218,13 +218,13 @@ is the only sad note Act V gets, and it is spent on a rock rather than on a char
 
 > **Fez:** The scale. Heart on one side, feather on the other — so a good heavy heart wins, presumably.
 >
-> **Explorer:** Which way does a heavy thing go?
+> **Explorer (deadpan):** Which way does a heavy thing go?
 >
-> **Fez:** …Down.
+> **Fez (surprised):** …Down.
 >
-> **Fez:** Oh.
+> **Fez (surprised):** Oh.
 >
-> **Fez:** Light. You want it LIGHT.
+> **Fez (pointUp):** Light. You want it LIGHT.
 
 ## `wizard_4` — Eternal Pyramid
 
@@ -234,7 +234,7 @@ is the only sad note Act V gets, and it is spent on a rock rather than on a char
 >
 > **Explorer:** For whom?
 >
-> **Fez:** Anyone looking. That was the point — it was never for the man inside.
+> **Fez (wistful):** Anyone looking. That was the point — it was never for the man inside.
 
 ## `wizard_treasure_tomb` — Vault of the Gods · the announcement
 
@@ -248,7 +248,7 @@ The rite the priest has been waiting three thousand years to complete.
 >
 > **Priest:** That is the first time I have done that. I had begun to think I had forgotten how.
 >
-> **Explorer:** Had you?
+> **Explorer (deadpan):** Had you?
 >
 > **Priest:** Completely. It came back.
 
@@ -258,13 +258,13 @@ The rite the priest has been waiting three thousand years to complete.
 
 Not a body. A rope still hanging, a notebook, and somebody who turned back.
 
-> **Fez:** Their rope. Still tied off.
+> **Fez (worried):** Their rope. Still tied off.
 >
 > **Explorer:** They got this far.
 >
-> **Fez:** Further than this. And then they went back up it.
+> **Fez (wistful):** Further than this. And then they went back up it.
 >
-> **Explorer:** There is a notebook.
+> **Explorer (surprised):** There is a notebook.
 >
 > **Fez:** What does it say?
 >
@@ -272,7 +272,7 @@ Not a body. A rope still hanging, a notebook, and somebody who turned back.
 >
 > **Explorer:** _Nobody was fooled._
 >
-> **Fez:** …They forged it because they could not read what it was for.
+> **Fez (wistful):** …They forged it because they could not read what it was for.
 >
 > **Explorer:** And then they went home.
 
@@ -280,11 +280,11 @@ Not a body. A rope still hanging, a notebook, and somebody who turned back.
 
 `story.tomb.wizardC.*` — the existing `mosaicFinale` lines already close this. Their setup:
 
-> **Fez:** Stop a moment. Look at what we have been carrying up out of those pyramids.
+> **Fez (pointUp):** Stop a moment. Look at what we have been carrying up out of those pyramids.
 >
 > **Explorer:** It is a picture.
 >
-> **Fez:** It has been a picture the whole time.
+> **Fez (wistful):** It has been a picture the whole time.
 
 _(the shipped `mosaicFinale` beats run from here: "Every piece is part of him… That's his record of us. And
 I'd say it balances.")_
@@ -296,19 +296,19 @@ true."_
 
 > **Explorer:** What is this one worth?
 >
-> **Fez:** …
+> **Fez (wistful):** …
 >
-> **Fez:** I am not going to price that.
+> **Fez (wistful):** I am not going to price that.
 >
-> **Explorer:** Noted.
+> **Explorer (deadpan):** Noted.
 
 ## The last exchange
 
 `story.end.*`
 
-> **Fez:** Was it neat?
+> **Fez (wistful):** Was it neat?
 >
-> **Explorer:** It'll do.
+> **Explorer (deadpan):** It'll do.
 
 ## Open
 

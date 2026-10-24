@@ -10,16 +10,22 @@ fifth rank from costing as much to draw as the first.
 
 ## The contract
 
-| Slot           | File                         | Size    | Anchor                                                                |
-| -------------- | ---------------------------- | ------- | --------------------------------------------------------------------- |
-| Floor megatile | `tiles/<rank>/floor.png`     | 448×448 | tiles both ways, world-aligned. `yarn make-seamless`                  |
-| Wall face      | `tiles/<rank>/wall-face.png` | 448×56  | tiles horizontally only; **shown at 448×28** — see below              |
-| Threshold sill | `tiles/<rank>/threshold.png` | 56×12   | laid across the way through, at a rank seam                           |
-| Archway        | `tiles/<rank>/arch.png`      | 84×56   | middle transparent; jambs in the outer 14px each side                 |
-| Chamber prop   | `tiles/<rank>/<kind>.png`    | 56×84   | **bottom-anchored**; the top 28 is headroom, used only by tall things |
-| Wall item      | `tiles/<rank>/<kind>.png`    | 56×28   | painted on the face band                                              |
-| Floor scatter  | `tiles/<rank>/<kind>.png`    | 56×84   | flat on the floor, soft-edged; the PROP box, bottom-anchored          |
-| Shared         | `tiles/default/<name>.png`   | varies  | not a rank: the explorer, the scarab                                  |
+| Slot            | File                         | Size         | Anchor                                                                |
+| --------------- | ---------------------------- | ------------ | --------------------------------------------------------------------- |
+| Floor megatile  | `tiles/<rank>/floor.png`     | 448×448      | tiles both ways, world-aligned. `yarn make-seamless`                  |
+| Wall face       | `tiles/<rank>/wall-face.png` | 448×56       | tiles horizontally only; **shown at 448×28** — see below              |
+| Threshold sill  | `tiles/<rank>/threshold.png` | 56×12        | laid across the way through, at a rank seam                           |
+| Archway         | `tiles/<rank>/arch.png`      | 84×56        | middle transparent; jambs in the outer 14px each side                 |
+| Chamber prop    | `tiles/<rank>/<kind>.png`    | 56×84        | **bottom-anchored**; the top 28 is headroom, used only by tall things |
+| Multi-cell prop | `tiles/<rank>/<kind>.png`    | 126×84 (2×1) | as a prop, spanning its footprint: see below                          |
+| Wall item       | `tiles/<rank>/<kind>.png`    | 56×28        | painted on the face band                                              |
+| Floor scatter   | `tiles/<rank>/<kind>.png`    | 56×84        | flat on the floor, soft-edged; the PROP box, bottom-anchored          |
+| Shared          | `tiles/default/<name>.png`   | varies       | not a rank: the explorer, the scarab                                  |
+
+**A multi-cell prop covers `cols` × `rows` cells and stands `tall` cells higher** (the kind's
+`DECORATION_FOOTPRINTS` entry): 56 + 70 per extra column wide, 84 + 84 per extra row + 56 per `tall` high.
+Bottom-anchored on its bottom row's floor line, its left edge on the anchor (north-west) cell's west edge.
+Import with `--cells=COLSxROWS --tall=N`.
 
 **A face is the one slot whose file is not the shape it is seen at.** The renderer draws a 448×56 face
 into a band `WALL_H` = 28 tall, so art drawn at 8:1 arrives on screen at 16:1 and every sign, brick and
@@ -248,21 +254,16 @@ What painted means for a drawing, and every one of these was learned by measurin
 
 ## Colour, before the art
 
-The merchant palette was settled with `yarn generate-dummy-tiles --palettes` (see the prep doc's tools) and
-is **dark grey-brown** — a cellar of mudbrick and limestone chips lit by the stair and a wick, not a gallery
-of pale dressed stone. The pale cool grey the placeholders wore was measurably the worst of the candidates:
-the gold click marker sat at 1.78 contrast against its floor where the chosen one gives 4.31, and props
-separated from the ground at 1.29 against 2.08.
+**Colour is decided in [visual-direction.md](visual-direction.md)**, and where this section and that one
+disagree, that one wins. Each rank is a calm ground plus one saturated metal; master is the bar; rooms are
+lit. The merchant is light warm limestone and whitewashed mudbrick with red ochre and turquoise — its
+target palette is in the `starter/*` entries of [repaint-queue.md](../instructions/repaint-queue.md).
 
-Two constraints came out of that test and hold for the other four ranks:
+What holds from the palette test (`yarn generate-dummy-tiles --palettes`) is **value separation**: floor
+against wall face, wall mass, outline, prop and marker. A pale floor is fine; a pale floor with props or a
+wall face at its own value is not. `yarn rank-colour` measures a rank against master once its art is in.
 
-- **A rank must not out-brown the rank above it.** Junior is dressed sandstone with ochre paint, so it has
-  to read as the step UP in wealth; the mudbrick candidate lost partly for being more ochre than junior.
-- **Value separation, not hue separation.** Floor against wall face, floor against wall mass, floor against
-  outline, floor against prop, floor against the marker — the table prints all five, and a candidate that
-  goes below what already ships is flagged. Hue is taste; those numbers are not.
-
-Run it before drawing a rank, not after.
+Run both before drawing a rank, not after.
 
 ## 1. Surfaces — 4 per rank
 
@@ -379,6 +380,31 @@ fills the lower part of that box, so nothing reaches the wall band a prop's head
 | **stain**    | something spilled long ago         | oil pooled and dried black                      | wine, sunk into plaster                  | resin and natron, crusted white       | scorch under a lamp tree              | a spill of light                 |
 | **tilework** | a patch of the floor that is finer | one salvaged tile set into the earth            | ochre band painted across the slabs      | faience panel, tiles missing from it  | inlay panel, lapis and gold, complete | star-field inlay, still moving   |
 
+## 4a. The cave tileset
+
+`cave` is a tileset, not a rank: the starter tomb's first level draws from `tiles/cave/`, dim and cool where the
+starter is warm and daylit. It has the four surfaces (floor, wall face, threshold, encounter wall) and its own
+furniture, authored in the tomb's `decorations` and `wallDecorations` pools. A kind is a silhouette and the
+tileset is its skin, so the shared kinds are the same slots as every rank's.
+
+| Kind            | Slot                        | What it is                                                              |
+| --------------- | --------------------------- | ----------------------------------------------------------------------- |
+| **basin**       | chamber prop 56×84          | a still, clear rock pool with a wet rim                                 |
+| **pillar**      | chamber prop 56×84          | a dripstone column, stalactite and stalagmite grown together            |
+| **rubblePile**  | chamber prop 56×84          | a rockfall of broken limestone                                          |
+| **pit**         | chamber prop 56×84          | a sinkhole, a dark shaft                                                |
+| **crystal**     | chamber prop 56×84          | pale selenite blades growing from a rock seam                           |
+| **brazier**     | chamber prop 56×84          | an old campfire: a ring of stones round ash, someone camped here before |
+| **stalagmite**  | chamber prop 56×84          | a cluster of low stone cones                                            |
+| **puddle**      | floor scatter, prop box     | flat, glossy, soft-edged water on the rock                              |
+| **bones**       | multi-cell prop 2×1, 126×84 | an old animal skeleton half in the sand                                 |
+| **roots**       | wall item 56×28             | roots coming through the ceiling and down the face                      |
+| **stalactites** | wall item 56×28             | a fringe of stalactites along the face top                              |
+
+`puddle` and `bones` are authored in the pool like `mat`, and are flat, so they draw on the lower part of the
+prop box; `bones` lies across two cells, and a room with no two free cells side by side stands a one-cell
+kind from its pool instead. The prompts are in `docs/instructions/repaint-queue.md`, "Cave and cavern".
+
 ## 5. What has to be built for §3–§4
 
 | Needed for                | Change                                                                                                                                                                                     | Size  |
@@ -420,12 +446,12 @@ else in this document is that same list four more times, with better stone.
 Ten tiles, all `--tier=default`: one skin for every rank, because a condition is a thing that has got
 into a site rather than a property of its masonry. Three slots and a ground.
 
-| slot | members |
-| --- | --- |
-| floor joints (`growth`, 22×22) | `overgrown` tuft · `-flowers` · `-scrub` · `-fronds` |
-| wall band (`growthWall`, 22×34) | `-wall` root · `-creeper` · `-curtain` |
-| chamber floor (`growth`; `canopy`, 110×110, for a tree) | `-plant` · `-palm` · `-ferns` |
-| the ground (`drift`) | `-grass` |
+| slot                                                    | members                                              |
+| ------------------------------------------------------- | ---------------------------------------------------- |
+| floor joints (`growth`, 22×22)                          | `overgrown` tuft · `-flowers` · `-scrub` · `-fronds` |
+| wall band (`growthWall`, 22×34)                         | `-wall` root · `-creeper` · `-curtain`               |
+| chamber floor (`growth`; `canopy`, 110×110, for a tree) | `-plant` · `-palm` · `-ferns`                        |
+| the ground (`drift`)                                    | `-grass`                                             |
 
 **A plant is drawn from ABOVE, not from the side.** This is the rule the family cost the most rolls on.
 The 30° camera in §2 describes FURNITURE — a jar rack, a timber post, things with a front. A plant grows

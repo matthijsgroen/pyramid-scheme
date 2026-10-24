@@ -176,11 +176,11 @@ describe("tomb floor linking — ward-path shortcuts", () => {
   // SKIP_ECONOMY_GUARD — a describe-body call would execute at collection time, before it.
   let floors: FloorConfig[]
   beforeAll(() => {
-    floors = buildRealConfigs().junior_treasure_tomb[0]
+    floors = buildRealConfigs().junior_treasure_tomb[1] // level 2, the cavern
   }, 600_000)
 
-  it("every floor's main path ends in a real exit, not an auto-chained stairhead", () => {
-    for (const floor of floors) expect(floor.exitOrStaircase).toBe("exit")
+  it("the tomb's one exit ends floor 0, and every deeper floor is left by its stair back up", () => {
+    expect(floors.map(floor => floor.exitOrStaircase)).toEqual(["exit", ...floors.slice(1).map(() => "none")])
   })
 
   it("every non-last floor has a ward-path shortcut gated by that floor's own key", () => {

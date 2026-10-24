@@ -114,7 +114,29 @@ below has a lock so far.
 | 5    | 1           | 1           | blue floor key, two tomb-key chests, master ward wing | weighingOfTheHeart | ✓      |
 
 Site counts: junior 16 (3 + 4 + 4 + 5), expert 18 (4 + 4 + 5 + 5), the same as the curriculum's. Treasure
-tombs are not sites in this table.
+tombs are not sites in this table; their locks are below.
+
+### Starter tomb
+
+A tomb's floor locks feel one tier up (`docs/superpowers/specs/2026-10-22-tomb-redesign-design.md` §5–6), so the
+starter tomb's are junior locks, with one expert-weight capstone. The cave is the first floor lock a starter player
+meets: levers and doors only.
+
+| Site             | Floor       | Chosen lock | Mechanics   | Placed |
+| ---------------- | ----------- | ----------- | ----------- | ------ |
+| cave (level 1)   | the one     | caveLevers  | lever       | no     |
+| cavern (level 2) | 2 (index 1) | pitStair    | lever, drop | no     |
+| cavern (level 2) | 4 (index 3) | throwItBack | lever, drop | no     |
+
+- **caveLevers**: one lever in a side room opens two doors at once; west's lever opens a cell inside east, and the
+  cell's lever opens the way out. Four doors, three levers, and the order of west and east is the player's. 3 actions.
+- **pitStair**: a lever opens a ledge, the drop below lands beside the lever that opens both the stair back up and
+  the gallery holding the exit lever. The one mechanic beyond levers is the drop. 3 actions.
+- **throwItBack**: the lever beside the shut exit opens a side room, whose lever swaps the way east for a ledge; the
+  exit's lever waits below the drop, so the swap lever is thrown, then thrown back to reach the exit again. The
+  tomb's capstone and its one expert-weight lock (`expert/`): 4 actions.
+
+They stand on authored floors through `lockOnFloor(name)` (below).
 
 Duplicates among the stand-ins, until they are replaced: leverSwapsDoors (junior_2 site 2 and expert_3 site 1),
 stoneOnAPlate (junior_4 site 1 and expert_4 site 1), dropHome (junior_3 site 3 and expert_3 site 2).
@@ -155,11 +177,12 @@ expert_4's stoneGate stands the same way, read from its `.lock` file with `catal
 The locks between a journey's lessons and its capstone stand through `lockOnMainFloor(name)` in
 `src/worldGen/spec/locks/onFloor.ts`: the lock read with `catalogueLock`, every
 region `free`, and only the kinds it uses bound (fork-switch `lightbeamSwitch`, toggle `handle`, one-way `zipline`,
-activator `torch`). master_2's last site stands the same way in `src/worldGen/spec/master.ts`: Tom's
-weighingOfTheHeart, bound toggle `handle`, sequence `pressure-plate`, weights `stonePlate`, pipe `stonePipe`,
-unladen `narrowPassage`, beside the floor's own blue floor key, chests and ward wing. expert_3's doubleBack pyramid
-authors `packing: 0.15`: at the default packing its floor carves at the inspector's default seed on no attempt. No
-`RELAID_FLOORS_VERSION`, by the designer's call.
+activator `torch`). On a floor the spec authors itself, such as a tomb's, `lockOnFloor(name)` gives the same lock
+and bindings as the floor's `locks` and `realisations`. master_2's last site stands the same way in
+`src/worldGen/spec/master.ts`: Tom's weighingOfTheHeart, bound toggle `handle`, sequence `pressure-plate`, weights
+`stonePlate`, pipe `stonePipe`, unladen `narrowPassage`, beside the floor's own blue floor key, chests and ward wing.
+expert_3's doubleBack pyramid authors `packing: 0.15`: at the default packing its floor carves at the inspector's
+default seed on no attempt. No `RELAID_FLOORS_VERSION`, by the designer's call.
 
 A lesson stands through `lessonOnMainFloor(name)` in `src/worldGen/spec/locks/lessons.ts`: the lesson's file read as
 `catalogueLock("lessons/<name>")`, every region `free`, and only the kinds the lesson uses bound (toggle `handle`,
@@ -304,6 +327,9 @@ but are still a proposal for the engine (`lock-curriculum.md`, "Stones").
 | tide               | master                                      | lever, torch, water/sand barrier                                                       | solvable                                                   |
 | stoneGate          | expert capstone (Djoser 5), stones          | torch, door-waits-for-two, stones & plates, narrow passage                             | solvable                                                   |
 | weighingOfTheHeart | master (Book of the Dead 5), stones, by Tom | lever, door-waits-for-two, stones & plates, stone pipe, narrow passage, sequence tiles | solvable; gate court-west does nothing (kept by design)    |
+| caveLevers         | junior (starter tomb cave)                  | lever                                                                                  | solvable                                                   |
+| pitStair           | junior (starter tomb cavern 2)              | lever, drop                                                                            | solvable                                                   |
+| throwItBack        | expert (starter tomb capstone)              | lever, drop                                                                            | solvable                                                   |
 
 The curriculum's "lever: all but plates" is wider than the files: twoStones, counterweight, masonsRamp,
 observatory and stoneGate have no lever either.

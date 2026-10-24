@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react"
+import { use, useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { getOwnedKeys } from "@/game/gridNavigation"
 import { concealShutGround } from "@/game/concealment"
@@ -21,6 +21,8 @@ import { useSiteExit } from "./useSiteExit"
 import { useCrossing } from "./useCrossing"
 import { useNoticeLabel, usePromptLabel } from "./usePromptLabel"
 import { useSiteNavigation } from "./useSiteNavigation"
+import { useExitIntro } from "./useExitIntro"
+import { FezContext } from "@/app/fez/context"
 import { RewardFlow } from "./RewardFlow"
 import { EncounterModal } from "./EncounterModal"
 import { useApplyReward } from "./applyReward"
@@ -32,6 +34,8 @@ import { EntranceTransitionOverlay } from "@/ui/atoms/EntranceTransitionOverlay"
 import { hudWidgets } from "@/app/SiteMap/hudRegistry"
 import { useMergedRewardContributions } from "@/app/SiteMap/rewardContributions"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
+import { useMergedRoomOccupants } from "@/app/SiteMap/roomOccupants"
+import { useMergedRoomReplays } from "@/app/SiteMap/roomReplays"
 import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { useDetectorReadout } from "@/app/SiteMap/useDetectorReadout"
 import { useMergedReactions } from "@/app/reactions/reactionContributions"
@@ -49,8 +53,8 @@ type Props = {
   journeyId: string
   siteConfig: SiteConfig
   /** Which level of the journey this is (levelNr - 1) — the address its rooms draw their boards by
-   * (src/game/seeds/boardIndex.ts). A tomb re-enters one authored site per level, so the level is what
-   * separates those visits, not the site. */
+   * (src/game/seeds/boardIndex.ts). A tomb is a journey of levelCount sites, so the level is what
+   * tells its sites apart. */
   levelIndex: number
   seed: number
   onSiteComplete: () => void
@@ -66,6 +70,8 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   const exploredCells = journeys.getExploredCells(journeyId)
   const journeyState = journeys.getJourney(journeyId)
   const wardKeys = useMergedHeldKeys()
+  const occupantOf = useMergedRoomOccupants(journeyId)
+  const replaysAt = useMergedRoomReplays(journeyId)
   // Detector levels come from the owning mods (compass←hieroglyph, supplies←trap, corridor←core) via
   // the merged accessor — core names no mod.
   const detectorLevels = useMergedDetectorLevels()
@@ -205,8 +211,11 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
     onExitReached: exit.arrived,
     playTraversal,
   })
+  useExitIntro(prompt?.kind, use(FezContext).showConversation)
 
   const promptLabel = usePromptLabel()
+  const promptCell = prompt?.kind === "room" ? grid?.cells[prompt.at[0]]?.[prompt.at[1]] : undefined
+  const replaysAtPrompt = promptCell?.type === "room" && replaysAt(promptCell)
   const noticeLabel = useNoticeLabel()
 
   const ActiveEncounterComponent = encounter.family?.Component ?? null
@@ -231,8 +240,10 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
           pendingCells={pendingConsumableCells}
           ownedKeys={ownedKeys}
           mechanismStates={mechanismStates}
-          prompt={prompt && { label: promptLabel(prompt), at: prompt.at, onTake: prompt.take }}
+          prompt={prompt && { label: promptLabel(prompt, replaysAtPrompt), at: prompt.at, onTake: prompt.take }}
           notice={notice && { label: noticeLabel, at: notice.at }}
+          occupantOf={occupantOf}
+          replaysAt={replaysAt}
           className="size-full"
         />
       </div>
@@ -312,7 +323,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
         />
       )}
       {encounter.isOpen && ActiveEncounterComponent && encounter.ctx && (
-        <EncounterModal difficulty={encounter.ctx.difficulty}>
+        <EncounterModal tileset={encounter.ctx.tileset}>
           {/* The room the board belongs to — what an unfinished board is saved against. */}
           <PuzzleRoomContext value={encounter.roomKey}>
             <ActiveEncounterComponent

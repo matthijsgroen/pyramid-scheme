@@ -1,5 +1,7 @@
 import { tier, journey, tomb, wardPath, wardChest, sidePath, hiddenPath } from "../dsl"
 import { TOMB_ROOMS_PER_FLOOR } from "../data"
+import { lockBeforeFloorContent, lockOnFloor } from "./locks/onFloor"
+import { CAVE_DRESSING } from "./cave"
 import type { Rule } from "../dsl"
 
 // Ward-chest teasers: every starter pyramid gets one ward-gated loot chest keyed to a LATER
@@ -30,8 +32,12 @@ const holdChest = (index: number) => wardChest({ tomb: "starter_treasure_tomb", 
 // Cycled per pyramid ordinal so no pyramid stacks two chests behind the identical key.
 const HOLD_CYCLE = [1, 2, 0, 1]
 
+// The tier + 1 step inside the cavern: a junior puzzle as the second room, after the first tableau.
+const juniorBetweenTableaus = { where: 2, encounter: "puzzle", difficulty: "junior" } as const
+
 export const starterRules: Rule[] = [
-  // a merchant's cellar: shelves and crates, amphorae, a market table, a water jar, mats.
+  // a merchant's house of trade: scales and weights, baskets and bales, a counter, a scribe's desk,
+  // shelves and amphorae, a market table, a water jar, mats.
   tier("starter", {
     difficulty: "starter",
     decorations: [
@@ -47,6 +53,12 @@ export const starterRules: Rule[] = [
       "brazier",
       "rubblePile",
       "mat",
+      "scale",
+      "weightsTable",
+      "basketStack",
+      "bales",
+      "counter",
+      "scribeDesk",
     ],
     // a merchant hangs inventory: a niche of goods and the tally board beside it.
     wallDecorations: ["niche", "tallyBoard"],
@@ -65,14 +77,17 @@ export const starterRules: Rule[] = [
     .hiddenPaths("low")
     .settings({ pathPuzzles: 1, end: "mosaic" }),
 
-  // First pyramid of each starter journey is that journey's map-piece entry-point.
-  tier("starter").pyramid("first", { mainEndReward: "mapPiece" }),
+  // First pyramid of each starter journey is that journey's map-piece entry-point. Named per journey, so the
+  // tomb's cave (its first level) is not one.
+  ...["starter_1", "starter_2", "starter_3", "starter_4"].map(jid =>
+    journey(jid).pyramid("first", { mainEndReward: "mapPiece" })
+  ),
 
   // starter_1 — the whole game's onboarding. Pyramid 1: the map piece + a gentle ward path into
   // the starter tomb (see the deadlock fix below). Pyramid 2: one main puzzle, its chests from
   // the tier defaults. Both also carry a ward-chest teaser to a later tier.
   //
-  // The tier-wide "first pyramid → mapPiece" rule lands on this pyramid's LAST floor by default;
+  // The "first pyramid → mapPiece" rule above lands on this pyramid's LAST floor by default;
   // on floor 1 that would gate the map piece behind the very ward path that needs
   // starter_treasure_tomb's OWN tier-unlock treasure to open — a deadlock (the map piece feeds the
   // tomb's own piecesRequired threshold, which grants the key that floor needs). So the real map
@@ -82,6 +97,13 @@ export const starterRules: Rule[] = [
     .pyramid(1, { pathPuzzles: 0 })
     .floor(0, {
       mainEndReward: "mapPiece",
+      // Fez's stall, where the explorer meets him (story/review.md, The opening): a room of his own,
+      // authored one room longer so the beat is added rather than standing in for a puzzle.
+      // `pathPuzzles` is structural and re-carves this floor; the encounter itself is free
+      // (docs/game-design/world-spec-stability.md). LAST, as in starter_treasure_tomb below, so the
+      // rooms ahead of him keep their place along the path.
+      pathPuzzles: 1,
+      nodes: [{ where: "last", encounter: "conversation", activity: "selling" }],
       sideSections: [
         // Shares the starter→junior tier-unlock key — narratively you need it anyway.
         wardPath({ puzzles: 1, tomb: "starter_treasure_tomb", index: 0 }),
@@ -194,31 +216,58 @@ export const starterRules: Rule[] = [
     sidePaths: [{ density: "medium", pathPuzzles: 1, end: "fragment" }],
   }),
 
+  // The tomb's first level: the cave. Starter puzzles on the way to the pillar, one junior-weight lock
+  // (levers and doors) as the step up. Its puzzles carry ordinary starter filler loot.
+  journey("starter_treasure_tomb").pyramid("first", {
+    ...CAVE_DRESSING,
+    difficulty: "starter",
+    floors: [{ pathPuzzles: 3, encounter: "puzzle", ...lockOnFloor("caveLevers") }],
+  }),
+
+  // The tomb proper, in the sunlit cavern: every floor puts one junior puzzle between its two
+  // tableaus, and floors 2 and 4 carry a lock.
   tomb("starter_treasure_tomb", {
     encounter: "tomb-puzzle",
     difficulty: "starter",
-    levelCount: 4,
+    floorCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
     floors: [
       // Ipi is at the end of the first floor, in among his own jars — which is what "third shelf,
       // the jar with the chip out of it" is pointing at.
-      // A ROOM OF HIS OWN, not a tableau's: this floor is authored one room longer so the beat is
-      // added rather than substituted. A tomb's tableau count is what drives hieroglyph
+      // A ROOM OF HIS OWN, not a tableau's: this floor is authored two rooms longer (his and the junior
+      // room) so the beat is added rather than substituted. A tomb's tableau count is what drives hieroglyph
       // distribution, so a ghost standing in a tableau's place would quietly cost the tier a
       // fragment host. `pathPuzzles` is structural and re-carves this floor; the encounter itself is
       // free (docs/game-design/world-spec-stability.md).
       //
-      // LAST, not first: a tableau's authored content is keyed by its position along the path
-      // (`levelNr = pathIndex + 1`), so a room inserted ahead of them renumbers every tableau on the
-      // floor and asks for a level nobody wrote.
+      // LAST by choice: his ghost beat closes the floor. A tableau's authored content is keyed by its place
+      // among tableaus (`levelNr = familyOrdinal + 1`), so he could stand anywhere without renumbering them.
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.starter + 1,
-        nodes: [{ where: "last", encounter: "conversation" }],
+        encounterArgs: { runNr: 1 },
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.starter + 2,
+        nodes: [juniorBetweenTableaus, { where: "last", encounter: "conversation", activity: "ledger" }],
       },
-      { mainEndReward: "tombTreasure" },
-      { mainEndReward: "tombTreasure" },
-      { mainEndReward: "tombTreasure" },
+      {
+        mainEndReward: "tombTreasure",
+        encounterArgs: { runNr: 2 },
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.starter + 1,
+        nodes: [juniorBetweenTableaus],
+        ...lockBeforeFloorContent("pitStair"),
+      },
+      {
+        mainEndReward: "tombTreasure",
+        encounterArgs: { runNr: 3 },
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.starter + 1,
+        nodes: [juniorBetweenTableaus],
+      },
+      {
+        mainEndReward: "tombTreasure",
+        encounterArgs: { runNr: 4 },
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.starter + 1,
+        nodes: [juniorBetweenTableaus],
+        ...lockBeforeFloorContent("throwItBack"),
+      },
     ],
   }),
 

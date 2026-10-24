@@ -1,6 +1,5 @@
-import type { Difficulty } from "@/data/difficultyLevels"
 import { difficulties } from "@/data/difficultyLevels"
-import type { Direction, FloorGrid } from "@/game/siteTypes"
+import type { Direction, FloorGrid, Tileset } from "@/game/siteTypes"
 import { cellAt } from "@/game/roomFootprint"
 import { hashUnit } from "@/support/hashString"
 import { DIR_MOVES, OPPOSITE_DIR, isCorridorCorner } from "./corridorRuns"
@@ -26,9 +25,12 @@ export const SEATING_PASS = 0.45
  * Per sprite rather than on the layer holding them: a filter rasterises its subtree as ONE layer, and the
  * standing layer is the size of the map (`docs/instructions/map-rendering.md`). A prop's own box is a cell.
  */
-export const STANDING_RELIEF: Record<Difficulty, string> = Object.fromEntries(
-  difficulties.map(tier => [tier, `contrast(${(1 / (1 - nightAlpha(tier) * SEATING_PASS)).toFixed(2)})`])
-) as Record<Difficulty, string>
+export const STANDING_RELIEF: Record<Tileset, string> = Object.fromEntries(
+  [...difficulties, "cave" as const].map(tier => [
+    tier,
+    `contrast(${(1 / (1 - nightAlpha(tier) * SEATING_PASS)).toFixed(2)})`,
+  ])
+) as Record<Tileset, string>
 export const LIT_STRENGTH = 0.5
 export const LIT_STANDING_STRENGTH = 0.25
 
@@ -42,15 +44,15 @@ export const LIT_STANDING_STRENGTH = 0.25
  * more, and the rest of the range is left for what the beam does on its way down (`MapBeams`).
  *
  * Read off the RENDERED PAGE rather than modelled — a Storybook shot of a starter floor, sampled as mean
- * L* over a patch of paving. Unlit floor 27.1, a beamed room's own floor 38.8, a ray in the air 44.8, the
- * patch of sun it lands in 66.6. Twelve steps up from the night to say the room is lit, twenty-eight more
- * to say where the light comes in. Composited off the art alone the same numbers come out several L*
- * apart, because the page also carries the scatter, the sand drift and the second shade pass; what the
- * player sees is what this is solved against.
+ * L* over a patch of paving, on the repainted limestone at its own share of the light: unlit floor 50, the
+ * torch-lit floor round the explorer 60, the patch of sun 63. The pool is the brightest thing on the
+ * floor. Composited off the art alone the same numbers come out several L* apart,
+ * because the page also carries the scatter, the sand drift and the second shade pass; what the player
+ * sees is what this is solved against.
  *
- * ONE NUMBER, NOT ONE PER RANK. The night is already solved to land every rank's floor at the same L*, so
- * a light asked for the same lift everywhere needs the same strength everywhere, and a rank that wanted
- * its own would be a rank out of step with the others (docs/instructions/map-rendering.md).
+ * THE FULL STRENGTH, scaled per rank. A lit rank's night is light, and a full lift on its pale floor only
+ * bleaches it, so each rank takes its own share of this (`TierPalette.lamp`), measured by `yarn rank-colour`
+ * (docs/instructions/map-rendering.md).
  *
  * TWO LIGHTS IN ONE ROOM DO NOT STACK. `color-dodge` divides, so a beam and a torch drawn over each other
  * multiply their scales and take the floor half again above anything else on the map. So the beam's light

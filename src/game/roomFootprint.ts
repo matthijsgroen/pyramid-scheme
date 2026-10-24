@@ -1,4 +1,4 @@
-import type { FloorGrid, GridCell } from "./siteTypes"
+import type { FloorGrid, GridCell, RoomCell } from "./siteTypes"
 
 /** Out of bounds reads as void, which is why a room on the grid's edge claims into the map's margin. */
 export const cellAt = (grid: FloorGrid, r: number, c: number): GridCell => grid.cells[r]?.[c] ?? { type: "empty" }
@@ -49,3 +49,28 @@ export const footprintSize = (grid: FloorGrid, r: number, c: number): number => 
     }
   return n
 }
+
+/** What a portal is, read off where it stands: a stair's head, the floor's way in, or its way out. */
+export const portalKindOf = (
+  grid: Pick<FloorGrid, "entrancePos">,
+  r: number,
+  c: number,
+  cell: Pick<RoomCell, "stairId">
+): "stairhead" | "entrance" | "exit" => {
+  if (cell.stairId) return "stairhead"
+  return r === grid.entrancePos[0] && c === grid.entrancePos[1] ? "entrance" : "exit"
+}
+
+/**
+ * A CHAMBER claims the floor around it on the map; every other room is a stop in a 1-wide corridor. Every
+ * junction is one, whatever stands in it, and so is a dead end that holds treasure or is a stairhead or the
+ * exit, and so is a room a story authored an activity for, wherever it stands: a scene needs its set. `kind`
+ * is the shape the room is drawn as.
+ *
+ * It lives in the DOMAIN because the renderer claims the floor by it and the carve dresses by it: a prop
+ * recorded on a room that claims no floor is a prop nobody can see.
+ */
+export const isChamber = (cell: Pick<RoomCell, "roomType" | "dirs" | "authoredActivity">, kind: string): boolean =>
+  cell.roomType === "fork" ||
+  cell.authoredActivity !== undefined ||
+  ((kind === "treasure" || kind === "stairhead" || kind === "exit") && cell.dirs.size === 1)

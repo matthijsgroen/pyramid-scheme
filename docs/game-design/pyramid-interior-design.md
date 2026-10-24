@@ -90,7 +90,7 @@ The interior is a node graph. Every room is one of:
 | `gate (seal)` | Locked door (local)       | Opens when the seal key from this site is collected                         |
 | `gate (ward)` | Locked door (cross-site)  | Opens when player holds the specific tomb treasure                          |
 | `stairhead`   | Floor transition          | Descends to the next floor                                                  |
-| `exit`        | Leave the pyramid         | Ends the interior visit                                                     |
+| `exit`        | Leave the pyramid         | The site's one way out, at its main path's end; ends the interior visit     |
 | `trap`        | Timed challenge (expert+) | Requires passing a time-based math encounter to mark as completed           |
 
 **Trap rooms** are a room type — same navigation as puzzle rooms, but the encounter is time-based (arithmetic reflex) rather than a grid puzzle. Displayed on the map with a **skull icon**. No warning node is needed; the skull provides the visual signal before the player commits to entering.
@@ -252,6 +252,14 @@ explore tier pyramids (surface)
 
 ## 6. The floor system
 
+### One exit per site
+
+A site has one exit, the glowing pillar, at the end of its main path, on whichever floor that path ends:
+floor 0 for most sites, the last main floor where the main path spans floors. A floor reached by a
+side-section stair (a ward wing, a tomb's deeper floor) has none: its main path ends at its goal chest, a
+dead end, and its way out is the stair it came down, back up. A level completes only when the player leaves
+by the exit. Every room a player can walk into has to walk back to that way home (`wayHome.ts`).
+
 ### Ward gate → staircase (always)
 
 Every ward gate leads to exactly one stairhead. The stairhead is on the other side. The floor is the reward — each new floor has its own puzzle rooms, branch endpoints, loot, and potentially another ward gate.
@@ -359,6 +367,37 @@ All mechanics active. Up to 3 floors. Floor 2 carries map pieces for wizard_b; f
 
 ## 8. Tomb interior design
 
+### Two levels — the cave, then the cavern
+
+Every tomb is a journey of **two levels, two nodes on its map** (`TOMB_STRUCTURES` `levelCount: 2`,
+`docs/superpowers/specs/2026-10-22-tomb-redesign-design.md`). The starter tomb is described first; the other
+tiers' tombs share its shape without locks (last bullet).
+
+- **Level 1, the cave.** Exterior: a desert ridge with a cave mouth and an Enter button, no board
+  (`levels[0] = { exterior: "caveMouth", board: false }` in `journeys.ts`). One floor in the `cave` tileset,
+  authored with the ordinary site vocabulary (`journey("starter_treasure_tomb").pyramid("first", …)` in
+  `src/worldGen/spec/starter.ts`): three starter puzzles on the main path, the `caveLevers` floor lock (levers and
+  doors, a junior-weight step up), `loot: false` on the whole site. The player leaves by the pillar at the main
+  path's end, and finishing the cave opens the cavern's exterior with no slide in between.
+- **Level 2, the cavern.** Exterior: a sunlit cavern with the pyramid standing in it, in front of a
+  junior-sized board (`levels[1] = { exterior: "cavern" }`). Inside, the tomb proper as described below: four
+  floors in the starter tileset, each with its two tableaus, its treasure and its ward key. Between the two
+  tableaus of every floor stands **one junior puzzle** (`nodes: [{ where: 2, encounter: "puzzle", difficulty:
+"junior", loot: false }]`), drawn on the floor's own walls; floor 1 ends with Ipi's room after the second
+  tableau. A completed tomb resumes at the cavern.
+- **Floor locks in the cavern**: `pitStair` on floor 2 (junior weight) and `throwItBack` on floor 4 (the
+  capstone, expert weight), each standing between the floor's entrance and its tableaus
+  (`lockBeforeFloorContent` in `src/worldGen/spec/locks/onFloor.ts`: every lock region but its way out takes
+  nothing). The lock walk reads a tableau's hieroglyph door and a ward gate as opened off the floor, so the exit
+  past them is reachable; a lock whose own control stood behind one would lean on a key earned elsewhere, and the
+  walk refuses it (`leansOffFloor`).
+- **The starter cave ends in a chest; a lootless floor ends at its pillar**: a floor with no main-end reward has no goal chest.
+- **The other tiers' tombs** have the same two levels, with no locks yet. The cave (`tombCave` in
+  `src/worldGen/spec/cave.ts`) has three puzzles at the tomb's own tier per floor — junior one floor, expert and
+  master two, wizard three — going down by main stairs to the pillar on its last floor, each floor ending in a
+  chest. In the cavern every floor puts one tier + 1 puzzle (wizard: wizard) as the second room, after the
+  first tableau.
+
 ### Structure — one persistent multi-floor site, same shape as a pyramid interior
 
 A tomb is **structurally the same as a pyramid interior**: a `SiteConfig[]` of connected floors, generated once, revisited over time — not a small site replayed N times with reshuffled content. Floor `T` corresponds to treasure `T` (a tomb with 4 treasures has 4 floors).
@@ -368,14 +407,14 @@ A tomb is **structurally the same as a pyramid interior**: a `SiteConfig[]` of c
 ```
 Entrance ── side path ── [fez shop] (always open, no gate)
     │
-    └── main path ── N tableau rooms ──┬── [gate: tomb-key, requires treasure T]
+    └── main path ── tableau rooms (and authored rooms between them) ──┬── [gate: tomb-key, requires treasure T]
                                         │        └── stairhead → floor T+1 entrance
-                                        └── [crocodile capstone] ── [chest: treasure T] ── exit
+                                        └── [crocodile capstone] ── [chest: treasure T] (── exit, floor 1 only)
 ```
 
 - **The treasure _is_ the key** — one reward, not two. Collecting treasure `T` at floor `T`'s chest is what satisfies floor `T`'s own gate (`gate: {type:"tomb-key", tombId, index}`, the same ward-gate primitive pyramids already use, just self-referential — a tomb gating its own next floor with its own earlier treasure). A treasure can _also_ carry a permanent perk on top (see §1/§14) — being a key and granting a perk aren't exclusive.
 - The **gated side path** branches off the main path partway through and leads to floor `T+1`'s entrance.
-- The **main path's own end** — crocodile capstone, then the chest — is a separate, ungated terminus. The exit there returns to the overworld.
+- The **main path's own end** — crocodile capstone, then the chest — is a separate, ungated terminus. On floor 1 the exit stands past it and returns to the overworld; a deeper floor ends at the chest, and its way out is the stair back up (§6, "One exit per site").
 - Since the gate that unlocks floor `T+1` sits on floor `T`'s own main path, reaching floor `T+1` means **solving floor T, then backtracking through the same floor** to the now-unlocked side path. This is the intended shape, not a workaround.
 - **N tableau rooms per floor** needs no new formula — `tableauLevels` (`src/data/tableaus.ts`) already has one `TableauLevel` entry per (tomb, run, level); those entries, fragmented into `hieroglyphFragment` collectibles by `fragments.ts`, are exactly the floor's tableau rooms. Nothing new to author here beyond what already exists.
 - **Crocodile capstone: every floor gets one**, not just the tomb's last (today's `hasCroc`/`isLast` special-casing in `configBuilder.ts` is the thing to replace). This needs to become an _authorable per-floor DSL field_ — not another hardcoded tier/position special case. See the DSL example below.
@@ -413,7 +452,7 @@ const floorThree: FloorConstraint = {
 2. Reach the crocodile capstone and chest: collect treasure 1 + key 1.
 3. Backtrack to the gated side path (now unlockable with key 1) and proceed to floor 2 — or exit the tomb here; nothing is lost either way, since the tomb remembers what's already been explored.
 4. Floor 2's tableaus need hieroglyphs the player doesn't have yet. Progress stalls here by design.
-5. Exit the tomb, explore pyramids/other tombs to collect the missing fragments, then return. The tomb map is exactly as left — already-unlocked gates stay unlocked, already-solved rooms stay solved.
+5. Climb back up and leave the tomb, explore pyramids/other tombs to collect the missing fragments, then return. The tomb map is exactly as left — already-unlocked gates stay unlocked, already-solved rooms stay solved.
 
 The fragment hunt and the tomb gate each other: pyramids supply the symbols, tombs consume them to unlock deeper floors. Progress is driven entirely by what the player has actually collected — never by a replay counter or randomized content.
 

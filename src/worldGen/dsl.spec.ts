@@ -1,7 +1,28 @@
 import { describe, expect, it } from "vitest"
-import { global, tier, journey, resolveNodeSelectors, wardPath, wardChest, wardWing } from "./dsl"
+import {
+  global,
+  tier,
+  journey,
+  resolveNodeActivities,
+  resolveNodeSelectors,
+  wardPath,
+  wardChest,
+  wardWing,
+} from "./dsl"
 
 // ── Node selectors → per-index encounter overrides (§G) ───────────────────────
+
+describe("resolveNodeActivities", () => {
+  it("resolves an authored activity to its 0-based node index", () => {
+    expect(resolveNodeActivities([{ where: "last", encounter: "conversation", activity: "ledger" }], 4)).toEqual({
+      3: "ledger",
+    })
+  })
+
+  it("skips a selector that authors no activity", () => {
+    expect(resolveNodeActivities([{ where: "last", encounter: "conversation" }], 4)).toEqual({})
+  })
+})
 
 describe("resolveNodeSelectors", () => {
   it("resolves first/last/nth to 0-based indices (1-based authoring)", () => {

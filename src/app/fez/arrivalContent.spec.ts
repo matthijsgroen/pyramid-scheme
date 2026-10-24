@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
-import { GHOSTS, JOURNEYS_WITH_ARRIVAL, type Speaker } from "./arrivalConversation"
+import { GHOSTS, JOURNEYS_WITH_ARRIVAL, UNSEEN, type Speaker } from "./arrivalConversation"
 import { PORTRAITS } from "./portraits"
 
 /**
@@ -15,14 +15,14 @@ import { PORTRAITS } from "./portraits"
 const scenes = (locale: string): Record<string, Record<string, Record<string, string>>> => {
   const doc = JSON.parse(readFileSync(join("public/locales", locale, "fez.json"), "utf8"))
   // Every group a beat can live in, plus "end", which is one scene rather than a group of them.
-  const entries = ["arrival", "tomb", "bond", "reading", "altar"].flatMap(group =>
+  const entries = ["arrival", "meeting", "tomb", "bond", "reading", "altar"].flatMap(group =>
     Object.entries(doc[group] ?? {}).map(([id, lines]) => [`${group}.${id}`, lines] as [string, unknown])
   )
   if (doc.end) entries.push(["end", doc.end])
   return Object.fromEntries(entries) as Record<string, Record<string, Record<string, string>>>
 }
 
-const SPEAKERS: Speaker[] = ["fez", "explorer", ...GHOSTS]
+const SPEAKERS: Speaker[] = ["fez", "explorer", ...GHOSTS, ...UNSEEN]
 const LOCALES = ["en", "nl"]
 
 describe("every authored arrival", () => {
@@ -81,7 +81,8 @@ describe("everyone who speaks", () => {
     const missing = new Set<string>()
     for (const lines of Object.values(scenes("en")))
       for (const line of Object.values(lines))
-        for (const speaker of Object.keys(line)) if (!PORTRAITS[speaker as Speaker]?.default) missing.add(speaker)
+        for (const speaker of Object.keys(line) as Speaker[])
+          if (!UNSEEN.includes(speaker) && !PORTRAITS[speaker]?.bases.default) missing.add(speaker)
     expect([...missing]).toEqual([])
   })
 })

@@ -9,6 +9,7 @@ import { plainSwitchId } from "@/game/cellSlot"
 import type { FloorConfig } from "@/game/siteTypes"
 import { forkSwitchFloorConfig } from "@/game/testSupport/forkSwitchFixtures"
 import { configHash } from "@/game/seeds/configHash"
+import { roomDifficulty } from "@/game/roomDifficulty"
 
 const tierById = new Map<string, Difficulty>(
   [...PYRAMID_STRUCTURES, ...TOMB_STRUCTURES].map(({ id, tier }) => [id, tier])
@@ -39,7 +40,7 @@ const roomsOf = (world: typeof worldLevelSites): Room[] => {
             rooms.push({
               journeyId,
               tier: tierOf(journeyId),
-              bucket: configHash(seedable.resolveOptions({ difficulty: section.difficulty })),
+              bucket: configHash(seedable.resolveOptions({ difficulty: roomDifficulty(section, pathIndex) })),
               ordinal,
               key: `${journeyId}|${levelIndex}|${floorIndex}|${address}|${pathIndex}`,
             })

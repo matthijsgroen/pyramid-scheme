@@ -37,28 +37,20 @@ A rule explained by one character is a lecture. The same rule is a conversation 
 the question the player is already asking — which is the oldest way to make instruction not feel like
 instruction, and it is available now for nothing.
 
-`pyramidIntro` as it ships:
+`pyramidIntro` as it ships — the explorer alone, before Fez is met:
 
-> **Fez:** Look at these walls — so many numbers are missing!
+> **Explorer:** There are numbers on these stones. And some are missing…
 >
-> **Fez:** The secret: every number is the sum of the two below it.
->
-> **Fez:** Use that, and we'll uncover what the ancient builders hid here. Good luck!
+> **Explorer:** Wait. Every stone is the two below it, added up! Yes — here too!
 
-The same rule, as a two-hander:
+> **Explorer:** Er staan getallen op die stenen. En er missen er een paar…
+>
+> **Explorer:** Wacht. Elke steen is die twee eronder bij elkaar! Ja, hier ook!
 
-> **Fez:** Look at these walls. Half the numbers are gone.
->
-> **Explorer:** Gone, or never there?
->
-> **Fez:** Never there. Each one is the two below it, added together. They left the sums out on purpose.
->
-> **Explorer:** So it's a lock.
->
-> **Fez:** It's a lock.
-
-Same instruction, one line shorter, and it ends on the sentence that reframes the entire game. _"Good
-luck!"_ ends on nothing.
+The whole rule is there, and it arrives as something noticed rather than something announced — which is
+what the house style (`FORMAT.md` § "Every line is spoken, not narrated") asks of every line that
+teaches. Once Fez is met, a rule can be a two-hander as well: somebody asks the question the player is
+already asking, and the instruction stops feeling like one.
 
 ## Revisiting is not only rewriting
 

@@ -149,6 +149,7 @@ export const standOnCorridor = (cell: Extract<GridCell, { type: "corridor" }>, p
   legacySectionHash: cell.legacySectionHash,
   ordinal: cell.ordinal,
   difficulty: cell.difficulty,
+  ...(cell.tileset ? { tileset: cell.tileset } : {}),
   region: cell.region,
   ...piece,
 })

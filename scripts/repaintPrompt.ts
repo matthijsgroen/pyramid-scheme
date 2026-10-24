@@ -5,10 +5,17 @@
  *   yarn repaint                 # list every key still owed
  *   yarn repaint junior/lamp     # prompt to the clipboard, both files revealed
  *   yarn repaint junior/lamp --check   # report only: no clipboard, no Finder
+ *   yarn repaint junior/lamp --land    # newest image in ~/Downloads becomes the master, imported and measured
  *
  * The loop is manual on purpose: driving Gemini's web UI is against Google's terms and the API costs
  * money, so the prompt is pasted by hand. What that leaves worth automating is the fetching — finding the
  * right block in a 950-line document, and locating two files in a folder of two hundred renders.
+ *
+ * `--land` takes the newest png, jpg or webp in `~/Downloads` as the entry's master (the first path after
+ * `yarn import-tile`, or `art/masters/props/<tier>/<name>.webp`), makes a floor seamless both ways and a
+ * face along x, runs the entry's own import (its fenced `sh` block, scaffold renders included, or its
+ * `**Import:**` line), then prints `tile-stats` and the rank's `rank-colour` row and ends on IMPORT, or
+ * RE-ROLL with the failing number: a tile-stats fault, or a step under 25 L* off the floor.
  *
  * Three queues feed it, because the kinds of art are owed in the same sense and a person with an hour
  * at the generator wants one list: `docs/instructions/repaint-queue.md` for tiles, and
@@ -22,6 +29,7 @@ import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync } from "fs"
 import { homedir } from "os"
 import { join } from "path"
 import { selectScript, stagedNames } from "./repaintReveal"
+import { land } from "./repaintLandRun"
 import { parse, type Entry } from "./repaintQueue"
 import { parseCamp } from "./campPrompts"
 
@@ -65,19 +73,32 @@ const parseCharacters = (md: string): Entry[] => {
   // The measured fills, so "cream cargo trousers" stops being the generator's to interpret.
   const palette = quoted(section("1.").split(/^### /m)[0])
   const ghostPreamble = quoted(section("2.").split(/^### /m)[0]).replace(/^\*\*Ghost preamble\*\*[^:]*:\s*/, "")
+  // §5's blocks that are not entries hold Fez's measured fills, as §1's intro holds the explorer's.
+  const fezPalette = section("5.")
+    .split(/^### /m)
+    .filter(block => !block.startsWith("`"))
+    .map(quoted)
+    .join("\n")
+    .trim()
   const groups = [
     { group: "portrait", body: section("1.") },
     { group: "ghost", body: section("2.") },
+    { group: "portrait", body: section("5.") },
   ]
   const drawn: Entry[] = []
   for (const { group, body } of groups)
     for (const block of body.split(/^### /m).slice(1)) {
-      const file = /^`([\w-]+)-250\.png`/.exec(block)?.[1]
+      // A `**Master:**` line makes an entry master only: the download is kept there and nothing is imported,
+      // so a proof input can never overwrite a shipped sprite.
+      const masterOnly = /^\*\*Master:\*\*\s*`([^`]+)`/m.exec(block)?.[1]
+      const file = masterOnly ? /^`([\w-]+)`/.exec(block)?.[1] : /^`([\w-]+)-250\.png`/.exec(block)?.[1]
       if (!file) continue
       const name = file.replace(/^ghost-/, "")
-      const out = join("src/assets", `${file}-250.png`)
+      const out = masterOnly ?? join("src/assets", `${file}-250.png`)
       // An entry may name its own references in backticks; most want the default pair.
-      const named = [...block.matchAll(/`((?:art|src)\/[^`]+\.(?:jpe?g|png))`/g)].map(m => m[1])
+      const named = [...block.matchAll(/`((?:art|src)\/[^`]+\.(?:jpe?g|png))`/g)]
+        .map(m => m[1])
+        .filter(path => path !== masterOnly)
       const reroll = /\*\*Re-roll:\*\*\s*([^\n]+)/.exec(block)?.[1]?.trim()
       drawn.push({
         key: `${group}/${name}`,
@@ -92,11 +113,15 @@ const parseCharacters = (md: string): Entry[] => {
           .replace(/\[preamble \+ ghost preamble\]\s*/, `${preamble}\n\n${ghostPreamble}\n\n`)
           .replace(/\[preamble\]\s*/, `${preamble}\n\n`)
           .replace(/\[palette\]\s*/, palette ? `${palette}\n\n` : "")
+          .replace(/\[fez palette\]\s*/, fezPalette ? `${fezPalette}\n\n` : "")
           .replace(/\*\*/g, "")
           .trim(),
         out,
-        master: join("art/masters/characters", `${file}.jpeg`),
-        importedBy: `yarn import-portrait art/masters/characters/${file}.jpeg --name=${file}`,
+        master: masterOnly ?? join("art/masters/characters", `${file}.jpeg`),
+        masterOnly: Boolean(masterOnly),
+        importedBy: masterOnly
+          ? "nothing — master only"
+          : `yarn import-portrait art/masters/characters/${file}.jpeg --name=${file}`,
       })
     }
   let reference: string | undefined
@@ -107,7 +132,8 @@ const parseCharacters = (md: string): Entry[] => {
     withReferences.push({ ...entry, attachments, drawn: landed })
     // Hand over the MASTER where there is one: the sprite is 250px wide, and a reference that small is
     // most of the detail gone before the generator sees it (art/README.md).
-    if (landed) reference = entry.master && existsSync(entry.master) ? entry.master : entry.out
+    // A master-only entry is a proof input, not the newest of the set, so it never becomes the reference.
+    if (landed && !entry.masterOnly) reference = entry.master && existsSync(entry.master) ? entry.master : entry.out
   }
   return withReferences
 }
@@ -159,6 +185,11 @@ if (found.length !== 1) {
 }
 
 const entry = found[0]
+// --land is the other half of the loop: the download comes back, and this turns it into a measured tile.
+if (process.argv.includes("--land")) {
+  await land(entry)
+  process.exit(0)
+}
 // --check reports and touches NOTHING — no clipboard, no Finder. It exists because the obvious way to
 // audit the queue is to run this over every key, and doing that steals the desktop's focus once per
 // entry and leaves the clipboard holding whichever prompt happened to be last. Fifty-two of those in a
@@ -192,5 +223,8 @@ if (missing.length > 0) {
   console.log(`\nSelected in the Finder (${stage}) — drag them in, paste, and put the download in ~/Downloads.`)
 }
 
-console.log(`\nWhen it lands I import it and measure it; the file is ${entry.out}.`)
-console.log(`  ${entry.importedBy}`)
+if (entry.masterOnly) console.log(`\nWhen it lands it is kept as ${entry.out}, master only — nothing is imported.`)
+else {
+  console.log(`\nWhen it lands I import it and measure it; the file is ${entry.out}.`)
+  console.log(`  ${entry.importedBy}`)
+}

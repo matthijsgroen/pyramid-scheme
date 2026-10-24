@@ -9,8 +9,18 @@ import { render, renderShut } from "./render"
 import type { RenderState } from "./render"
 import { validate } from "./validate"
 import { assembleFloor } from "./assembleFloor"
-import type { Cell, OneWayEdge, RoomSpec } from "./state"
-import type { Direction, FloorConfig, FloorGrid, GridCell, RoomCell } from "../siteTypes"
+import type { Cell, DressingPools, OneWayEdge, RoomSpec } from "./state"
+import { ACTIVITIES, activitiesFor, type ActivityId } from "../activities"
+import {
+  DECORATION_KINDS,
+  decorationFootprint,
+  isSingleCell,
+  type Direction,
+  type FloorConfig,
+  type FloorGrid,
+  type GridCell,
+  type RoomCell,
+} from "../siteTypes"
 // A walk of three nodes along row 0 (0,0 → 0,2 → 0,4), the entrance and exit rooms at its ends, and a node at
 // 4,4 a vertical drop below the exit.
 describe("render", () => {
@@ -261,5 +271,261 @@ describe("a switch on a carved floor", () => {
     expect(grid.cells[r][c]).toMatchObject({ roomType: "fork" })
     expect(grid.cells[r][c]).not.toHaveProperty("mechanism")
     expect(roomsOf(grid.cells).filter(cell => cell.requiredKeyId?.startsWith("switch:"))).toEqual([])
+  })
+})
+
+// entrance 0,0 → puzzle 0,2 → junction 0,4 → stairhead 0,6 along row 0; a treasure dead end 2,4 below the
+// junction; a gate 2,2 below the puzzle, and a ward room 4,2 behind it.
+describe("dressing by purpose", () => {
+  const TRADE: DressingPools = { props: ["shelf", "jarRack", "rubblePile"], wall: ["niche", "tallyBoard", "sconce"] }
+  const pkey = makePkey(7)
+  const mainPath: Cell[] = [
+    [0, 0],
+    [0, 2],
+    [0, 4],
+    [0, 6],
+  ]
+  const passages = new Set([
+    pkey(0, 0, 0, 2),
+    pkey(0, 2, 0, 4),
+    pkey(0, 4, 0, 6),
+    pkey(0, 4, 2, 4),
+    pkey(0, 2, 2, 2),
+    pkey(2, 2, 4, 2),
+  ])
+  const nodes = ["0,0", "0,2", "0,4", "0,6", "2,4", "2,2", "4,2"]
+  type Setup = {
+    pools?: DressingPools
+    stairPools?: DressingPools
+    junctionPools?: DressingPools
+    patron?: FloorConfig["patron"]
+    switchAtJunction?: boolean
+    authored?: Record<string, ActivityId>
+  }
+  const dressed = ({
+    pools = TRADE,
+    stairPools,
+    junctionPools,
+    patron,
+    switchAtJunction = false,
+    authored = {},
+  }: Setup = {}) => {
+    const withAuthored = (entries: [string, RoomSpec][]) =>
+      new Map<string, RoomSpec>(
+        entries.map(([pk, spec]) => [pk, authored[pk] ? { ...spec, authoredActivity: authored[pk] } : spec])
+      )
+    const prep = prepOf(plainFloor(patron ? { patron } : {}))
+    const labels = noLabels()
+    for (const node of nodes) labels.dressing.set(node, pools)
+    if (stairPools) labels.dressing.set("0,6", stairPools)
+    if (junctionPools) labels.dressing.set("0,4", junctionPools)
+    const grid = render(prep, {
+      ...freshState(prep),
+      lay: null,
+      maze: { n: 7, entrance: mainPath[0], exit: mainPath[3], mainPath, passages },
+      branches: {
+        used: new Set(nodes),
+        groups: [{ sectionIdx: 0, cells: [[2, 4]], attachedAt: [0, 4] }],
+        subChains: [],
+        seamDrops: [],
+        carved: new Set<string>(),
+      },
+      labels,
+      doors: {
+        intended: passages,
+        gated: new Set<string>(),
+        behind: new Map(),
+        ground: new Map(),
+        seamGated: new Set<string>(),
+        seamBehind: new Map(),
+      },
+      mainRooms: withAuthored([
+        ["0,0", { roomType: "portal" }],
+        ["0,2", { roomType: "encounter", family: "sumplete" }],
+        ["0,4", { roomType: "fork" }],
+        ["0,6", { roomType: "portal", stairId: "down" }],
+      ]),
+      chainRooms: withAuthored([
+        ["2,4", { roomType: "encounter", family: "chest", tags: ["treasure"] }],
+        ["2,2", { roomType: "encounter", family: "keyGate", requiredKeyId: "ward", gateVariant: "tomb-key" }],
+        ["4,2", { roomType: "encounter", family: "sumplete" }],
+      ]),
+      switchDoors: new Map(),
+      drops: [],
+      forks: { reserved: [], inFork: new Set<string>(), switchesPlaced: 0 },
+      switchWays: [],
+      switchRooms: new Map(switchAtJunction ? [["0,4", { family: "sumplete", mechanismId: "switch:0" }]] : []),
+      forkSwitchRooms: new Map(),
+      pipeHoles: new Map(),
+    })
+    return (pk: string) => {
+      const [r, c] = pk.split(",").map(Number)
+      return grid.cells[r][c] as RoomCell
+    }
+  }
+  const activityOf = (id: string) => ACTIVITIES.find(activity => activity.id === id)
+
+  it("dresses a junction from one activity its pool furnishes", () => {
+    const room = dressed()("0,4")
+    expect(room.activity).toBeDefined()
+    expect(activitiesFor(TRADE.props ?? []).map(activity => activity.id)).toContain(room.activity)
+    expect(activityOf(room.activity!)?.props).toContain(room.decoration)
+  })
+
+  it("leaves a puzzle room standing in the corridor bare, a dead-end one too", () => {
+    const at = dressed()
+    for (const pk of ["0,2", "4,2"]) {
+      expect(at(pk)).not.toHaveProperty("decoration")
+      expect(at(pk)).not.toHaveProperty("wallDecoration")
+      expect(at(pk)).not.toHaveProperty("activity")
+    }
+  })
+
+  it("hangs only the activity's own wall item, or nothing", () => {
+    const at = dressed()
+    for (const pk of ["0,4", "0,6"]) {
+      const room = at(pk)
+      if (room.wallDecoration === undefined) continue
+      expect(activityOf(room.activity!)?.wall).toContain(room.wallDecoration)
+    }
+  })
+
+  it("gives a treasure room, a switch junction and a gate no prop and no activity", () => {
+    const at = dressed({ switchAtJunction: true })
+    for (const pk of ["2,4", "0,4", "2,2"]) {
+      expect(at(pk)).not.toHaveProperty("decoration")
+      expect(at(pk)).not.toHaveProperty("wallDecoration")
+      expect(at(pk)).not.toHaveProperty("activity")
+    }
+  })
+
+  it("dresses the stairhead, never the entrance", () => {
+    const at = dressed()
+    expect(at("0,0")).not.toHaveProperty("decoration")
+    expect(at("0,0")).not.toHaveProperty("activity")
+    expect(at("0,6").activity).toBeDefined()
+  })
+
+  it("never stands a pit in a stairhead", () => {
+    expect(dressed({ stairPools: { props: ["pit"] } })("0,6")).not.toHaveProperty("decoration")
+  })
+
+  it("dresses a room from its own section's pool's activities", () => {
+    const room = dressed({ stairPools: { props: ["basketStack", "bales"], wall: [] } })("0,6")
+    expect(room.activity).toBe("packing")
+    expect(["basketStack", "bales"]).toContain(room.decoration)
+    expect(room).not.toHaveProperty("wallDecoration")
+  })
+
+  it("dresses a room whose pool furnishes no activity from the whole pool, with no activity", () => {
+    const room = dressed({ pools: { props: ["statue", "rubblePile"], wall: ["stela", "sconce"] } })("0,4")
+    expect(["statue", "rubblePile"]).toContain(room.decoration)
+    expect(room).not.toHaveProperty("activity")
+  })
+
+  it("gives a funerary wing whose pool holds selling's props no activity", () => {
+    const room = dressed({
+      junctionPools: { props: ["offeringTable", "hanging"], wall: ["stela"], role: "funerary" },
+    })("0,4")
+    expect(room).not.toHaveProperty("activity")
+    expect(["offeringTable", "hanging"]).toContain(room.decoration)
+  })
+
+  it("gives a trade wing an activity of trade's", () => {
+    const room = dressed({
+      junctionPools: { props: ["offeringTable", "hanging", "jarRack"], wall: ["niche"], role: ["trade"] },
+    })("0,4")
+    expect(["selling", "storage"]).toContain(room.activity)
+  })
+
+  it("narrows by role only to an activity that serves it", () => {
+    const room = dressed({
+      junctionPools: { props: ["counter", "jarRack"], wall: ["niche"], role: "agriculture" },
+    })("0,4")
+    expect(room.activity).toBe("storage")
+  })
+
+  it("lets a role no place furnishes leave the pool's activities whole", () => {
+    const room = dressed({ junctionPools: { props: ["basketStack"], wall: [], role: "puzzle" } })("0,4")
+    expect(room.activity).toBe("packing")
+  })
+
+  it("gives the god the junction on a dedicated floor, ahead of any activity", () => {
+    const pools: DressingPools = { props: ["statue", "shelf", "rubblePile"], wall: ["stela", "niche"] }
+    const junction = dressed({ pools, patron: "anubis" })("0,4")
+    expect(junction).toMatchObject({ decoration: "statue", wallDecoration: "stela", patronRoom: true })
+    expect(junction).not.toHaveProperty("activity")
+  })
+
+  it("lets a switch keep its junction from the god, who takes the next room that can hold him", () => {
+    const pools: DressingPools = { props: ["statue", "shelf", "rubblePile"], wall: ["stela", "niche"] }
+    const at = dressed({ pools, patron: "anubis", switchAtJunction: true })
+    expect(at("0,4")).not.toHaveProperty("decoration")
+    expect(at("0,4")).not.toHaveProperty("patronRoom")
+    expect(at("2,4")).toMatchObject({ decoration: "statue", patronRoom: true })
+  })
+
+  it("dresses a room from its authored activity, whatever the hash would pick", () => {
+    const hashed = dressed()("0,4").activity
+    const other = hashed === "ledger" ? "storage" : "ledger"
+    const room = dressed({ authored: { "0,4": other } })("0,4")
+    expect(room.activity).toBe(other)
+    expect(activityOf(other)?.props).toContain(room.decoration)
+    expect(TRADE.props).toContain(room.decoration)
+  })
+
+  it("dresses a story room standing in the corridor, which the authored activity makes a chamber", () => {
+    const room = dressed({ authored: { "0,2": "ledger" } })("0,2")
+    expect(room).toMatchObject({ activity: "ledger", decoration: "shelf" })
+  })
+
+  it("dresses from the authored activity's own props where the pool holds none of them", () => {
+    const room = dressed({ pools: { props: ["basketStack"], wall: [] }, authored: { "0,2": "ledger" } })("0,2")
+    expect(room.activity).toBe("ledger")
+    expect(["scribeDesk", "shelf"]).toContain(room.decoration)
+  })
+
+  it("lets an authored activity take a mechanism's room", () => {
+    const room = dressed({ switchAtJunction: true, authored: { "0,4": "ledger" } })("0,4")
+    expect(room).toMatchObject({ activity: "ledger", decoration: "shelf" })
+  })
+
+  it("keeps the god off a room with an authored activity", () => {
+    const pools: DressingPools = { props: ["statue", "shelf", "rubblePile"], wall: ["stela", "niche"] }
+    const junction = dressed({ pools, patron: "anubis", authored: { "0,4": "ledger" } })("0,4")
+    expect(junction).toMatchObject({ activity: "ledger", decoration: "shelf" })
+    expect(junction).not.toHaveProperty("patronRoom")
+  })
+
+  it("dresses the same site the same way every time", () => {
+    const first = dressed()
+    const second = dressed()
+    for (const pk of nodes) expect(first(pk)).toEqual(second(pk))
+  })
+
+  describe("a prop wider than one cell", () => {
+    const wide = DECORATION_KINDS.filter(kind => !isSingleCell(decorationFootprint(kind)))
+    const dressedRooms = (props: DressingPools["props"]) => {
+      const at = dressed({ pools: { props, wall: [] } })
+      return ["0,4", "0,6"].map(at).filter(room => room.decoration !== undefined)
+    }
+
+    it.skipIf(wide.length === 0)("carries a single-cell fallback from the same pool", () => {
+      const rooms = dressedRooms([...wide, ...wide, ...wide, ...wide, "rubblePile"])
+      expect(rooms.some(room => wide.includes(room.decoration!))).toBe(true)
+      for (const room of rooms)
+        if (wide.includes(room.decoration!)) expect(room.decorationFallback).toBe("rubblePile")
+        else expect(room).not.toHaveProperty("decorationFallback")
+    })
+
+    it.skipIf(wide.length === 0)("carries no fallback when the pool has no single-cell kind", () => {
+      const rooms = dressedRooms([...wide])
+      expect(rooms.length).toBeGreaterThan(0)
+      for (const room of rooms) expect(room).not.toHaveProperty("decorationFallback")
+    })
+
+    it("carries no fallback for a single-cell prop", () => {
+      for (const room of dressedRooms(["rubblePile", "pillar"])) expect(room).not.toHaveProperty("decorationFallback")
+    })
   })
 })

@@ -108,6 +108,7 @@ export const noLabels = (): CellLabels => ({
   hidden: new Set(),
   dressing: new Map(),
   difficulty: new Map(),
+  tileset: new Map(),
   region: new Map(),
   absorbedHash: new Map(),
 })

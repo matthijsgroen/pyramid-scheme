@@ -26,16 +26,16 @@ core. Elements on a starter floor came down with it: 754 → 478.
 
 Bottom to top, all inside `[data-map]`:
 
-| layer                                                                   | what it is                                                                            |
-| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `TileLayers`                                                            | floor, wall mass, faces, tops, sills, shadows, state washes                           |
-| sand, scatter, arch shadows, the lit place, scarabs, growth, wall items | the floor's own dressing                                                              |
-| `RegionBarrierCovers`                                                    | the water or sand over a shut region barrier, a box per cell, under the shade and lamp |
-| the markers                                                             | one `MarkerCell` per cell: an icon in a little `<svg>`, in a box the size of the cell |
-| the standing layer                                                      | props, chests, stairs, exits, gates, the explorer — sorted by floor line              |
-| archways and gates                                                      | drawn last, so the player walks under them                                            |
-| the shade's second pass, then the light's                               | the dark that seats what is standing, and the lamp reaching it (see below)            |
-| `MapWeather`                                                            | over the SCROLLING BOX, not inside the map: drift and tint belong to the window       |
+| layer                                                                   | what it is                                                                             |
+| ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `TileLayers`                                                            | floor, wall mass, faces, tops, sills, shadows, state washes                            |
+| sand, scatter, arch shadows, the lit place, scarabs, growth, wall items | the floor's own dressing                                                               |
+| `RegionBarrierCovers`                                                   | the water or sand over a shut region barrier, a box per cell, under the shade and lamp |
+| the markers                                                             | one `MarkerCell` per cell: an icon in a little `<svg>`, in a box the size of the cell  |
+| the standing layer                                                      | props, chests, stairs, exits, gates, the explorer — sorted by floor line               |
+| archways and gates                                                      | drawn last, so the player walks under them                                             |
+| the shade's second pass, then the light's                               | the dark that seats what is standing, and the lamp reaching it (see below)             |
+| `MapWeather`                                                            | over the SCROLLING BOX, not inside the map: drift and tint belong to the window        |
 
 Two primitives build almost all of it (`htmlLayers.tsx`): **`Sprite`**, a box with the art as its
 background, and **`ClipLayer`**, a box cut to a path — the size of its own SHAPE, never of the map.
@@ -81,16 +81,17 @@ background, and **`ClipLayer`**, a box cut to a path — the size of its own SHA
   with 61% of its chroma gone and its hue dragged from ochre (73°) to a cold magenta (330°) — a lit room
   of grey mush with pale cut-outs standing in it, on art that had the colour all along. So the wash colour
   is the rank's OWN near-black (`outline`), which adds the rank's own hue rather than a foreign one, and
-  the alpha is solved rather than authored: whatever lands that rank's floor at **L\* ≈ 24**.
-- **The ranks are held together by their targets and told apart by their hues.** Floor at L\* 24 and a
-  7.5-step back to the wall on every rank; starter ochre at C\* 6.6, junior ochre at 18.2, expert cold at
-  263°, wizard verdigris at 168°. Consistent is not flat: same rule everywhere, different character in it.
+  the night is a light hand — light enough that the rank keeps its colour, deep enough that a room nobody
+  lights is not washed out. Starter, on pale limestone, is at **0.3**; the other ranks follow with their own
+  art repaint. `yarn rank-colour` is the measurement.
+- **The ranks are held together by their targets and told apart by their hues.** A light night, and a wall face at least 25 L\* off its floor on every rank; starter ochre at C\* 6.6, junior ochre at 18.2,
+  expert cold at 263°, wizard verdigris at 168°. Consistent is not flat: same rule everywhere, different
+  character in it.
 - **A vertical face takes a helping of the night the floor does not** (`faceNight`). A lamp is carried at
   floor level, so a wall takes its light at a glancing angle — and without that the two planes land within
-  a step of each other once the night is over both (the starter art's 9.5 step measures 3.5 as drawn) and
-  a room reads as a floorplan with a change of texture rather than as a place with walls. Solved per rank
-  to the same RENDERED step, because the art's own runs from 6.8 to 22.7 and it is what the player sees
-  that has to agree. The wall MASS takes none of it: it is the rock seen from above, so it is lit like
+  a step of each other once the night is over both and a room reads as a floorplan with a change of
+  texture rather than as a place with walls. Solved per rank to the same RENDERED step, because it is what the player sees that has to agree; 0 where the art already
+  steps that far. The wall MASS takes none of it: it is the rock seen from above, so it is lit like
   ground, and it already sits 9–14 L\* under the floor.
 - **The light falls in the same two passes, and for the same reason read backwards.** A lit place drawn
   only under the shade's second pass hands a quarter of the tier's night back to everything the lamp just
@@ -155,4 +156,4 @@ each wash as `art × (1−a) + wash × a`, each light as a `screen` at its opaci
 **chroma** and **hue angle** rather than as a WCAG ratio, which is built for text and understates
 separation at the values a tomb is drawn at. Three numbers decide a change to the night: where the unlit
 floor lands, how much of the art's own chroma and hue survive to it, and what the lamp is still worth
-above it (the lit floor, less the unlit). A rank that moves alone has gone out of step with the others.
+above it (the lit floor, less the unlit). A repainted rank whose night has to darken its stone to read is a rank whose art is too pale.

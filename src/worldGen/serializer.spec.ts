@@ -12,20 +12,24 @@ describe("generateFile — serializeSideSection field coverage", () => {
     {
       pathPuzzles: 1,
       difficulty: "junior",
+      tileset: "cave",
       end: "treasure",
       exitOrStaircase: "exit",
       sealed: true,
       theme: "night",
+      activitiesByIndex: { 0: "ledger" },
       sideSections: [
         {
           pathPuzzles: 1,
           difficulty: "junior",
+          tileset: "starter",
           end: "treasure",
           theme: "day",
           endReward: { type: "mosaicPiece" },
           rewards: [{ type: "mosaicPiece" }, { type: "consumable", consumable: "oil" }],
           sealed: true,
           encounter: "tableau",
+          activitiesByIndex: { 0: "selling" },
           sideSections: [{ pathPuzzles: 0, difficulty: "junior", end: "treasure", endReward: { type: "mosaicPiece" } }],
         },
       ],
@@ -33,6 +37,11 @@ describe("generateFile — serializeSideSection field coverage", () => {
   ]
 
   const output = generateFile({ test_journey: [config] })
+
+  it("keeps a floor's and a section's tileset in the bake", () => {
+    expect(output).toContain('tileset: "cave"')
+    expect(output).toContain('difficulty: "junior", tileset: "starter", end: "treasure"')
+  })
 
   it("keeps a rewards (shop stock) array on a serialized side section", () => {
     expect(output).toContain("rewards: [")
@@ -60,6 +69,11 @@ describe("generateFile — serializeSideSection field coverage", () => {
   it("keeps the skin on both a serialized floor and a serialized side section", () => {
     expect(output).toContain('theme: "night"')
     expect(output).toContain('theme: "day"')
+  })
+
+  it("keeps an authored room activity on both a serialized floor and a serialized side section", () => {
+    expect(output).toContain('activitiesByIndex: { 0: "ledger" }')
+    expect(output).toContain('activitiesByIndex: { 0: "selling" }')
   })
 })
 

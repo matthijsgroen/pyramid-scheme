@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react"
-import type { Difficulty } from "@/data/difficultyLevels"
-import type { FloorGrid } from "@/game/siteTypes"
+import type { FloorGrid, Tileset } from "@/game/siteTypes"
 import { CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop } from "./mapScale"
 import { ClipLayer } from "./htmlLayers"
 import { boundsOf, type Rect } from "./tileRegions"
@@ -266,7 +265,7 @@ export const LitPlaces = ({
  * to 2.2. The lighter second pass lies over everything, so furniture is seated in the dark it stands in
  * and the markers pay a quarter of the wash instead of all of it.
  */
-export const FloorShade = ({ tier, strength = 1 }: { tier: Difficulty; strength?: number }) => (
+export const FloorShade = ({ tier, strength = 1 }: { tier: Tileset; strength?: number }) => (
   <div
     data-floor-shade=""
     style={{

@@ -148,6 +148,12 @@ From the camp.md table (rewards counted by section tier):
 - With 26 structures × ~3 parts ≈ 78 parts plus 26 items, camp loot fills most of the ~100 free slots
   on expert and up; the economy recompute decides the rest.
 - Fragments, mosaic, map pieces, tomb keys and treasures are unchanged.
+- **The table does not count the tomb redesign's slots** (`docs/superpowers/specs/2026-10-22-tomb-redesign-design.md`). The
+  starter tomb is now a cave and a sunlit cavern and adds five beginner slots: the cave's end chest and one
+  puzzle on each of the four cavern floors. A room's loot tier is its path's, so the cavern's junior-weight
+  puzzles count as beginner. The four cavern slots are empty today (the filler pool runs out first), which
+  makes them natural homes for camp finds and parts. Every later tier's tomb brings its own cave and cavern
+  slots with its release; recount the table from `yarn world-info` when building.
 - **The world is still growing** (new areas are being authored in another session), and more loot is
   better. Camp loot is the flexible filler: the number of parts per structure scales with the slots a
   tier has, so new areas add camp parts without touching the fixed currency totals. Nothing in the build
@@ -189,6 +195,13 @@ From the camp.md table (rewards counted by section tier):
 - Fez sells the animals in his tomb shops; they arrive in the camp.
 - **Starter stays simple:** starter → junior needs no ride, no shop, no money; the first purchase is the
   junior donkey, which opens expert.
+- **No more loot than before (2026-10-24).** The swap is −185 consumables, +26 found items, +~78 parts and
+  +~60 waterskins (expert and up): about the same number of drops as the world has now. The animals add
+  money VALUE, not slots: sellables go up (more of them, or dearer) to fund them inside the per-gate guard.
+- **Every chest carries loot; puzzles only partly.** Chest and path-end slots are always filled (they are
+  today: 866 of 866). A puzzle room may be empty; the share of puzzles with loot is reported per tier. Measured
+  on the bake with every tomb as cave + cavern: starter 81%, junior 43%, expert 40%, master 27%, wizard 17%.
+  Extra sellables land in puzzle slots first, so they also lift those shares.
 
 ## Settled with the builder check (Claude's calls, flagged for review)
 

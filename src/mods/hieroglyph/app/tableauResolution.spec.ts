@@ -16,6 +16,7 @@ const ctxFor = (journeyId: string, runNr: number): FamilyContext => ({
   difficulty: "starter",
   encounterArgs: { runNr },
   pathIndex: 0,
+  familyOrdinal: 0,
 })
 
 const symbolsOf = (journeyId: string, runNr: number): string[] => {

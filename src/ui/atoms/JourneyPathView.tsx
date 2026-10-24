@@ -102,7 +102,7 @@ export const JourneyPathView: FC<Props> = ({
   return (
     <button
       onClick={onClick}
-      className={`group relative mt-8 flex w-full flex-col overflow-hidden rounded-lg shadow-2xl transition-all duration-300 hover:scale-102 hover:shadow-xl ${
+      className={`group relative mt-8 flex aspect-square w-full flex-col overflow-hidden rounded-lg shadow-2xl transition-all duration-300 hover:scale-102 hover:shadow-xl ${
         isPyramid ? "border-2 border-amber-800" : "border-2 border-stone-700"
       }`}
       style={
@@ -190,11 +190,12 @@ export const JourneyPathView: FC<Props> = ({
         {isPyramid ? "🗺️" : "🏺"} {label}
       </span>
 
-      {/* The map: path + site nodes, in a box of its own below the label. Square, because the node
-          positions are authored in a square 0-100 space and a stretched box draws them as ellipses. */}
-      <div className="relative aspect-square w-full">
+      {/* The map: path + site nodes, in the space the square button leaves below the label. The drawing
+          keeps its own square (meet), because the node positions are authored in a square 0-100 space
+          and a stretched box draws them as ellipses. */}
+      <div className="relative min-h-0 w-full flex-1">
         {inJourney && (
-          <svg className="absolute inset-0 size-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <svg className="absolute inset-0 size-full" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
             {/* Node hover halo — plain CSS so it doesn't depend on Tailwind JIT picking up SVG hover
               utilities, and pointer-events:all so the transparent-when-idle circle still captures. */}
             <style>{`.jpv-node{fill:#fcd34d;opacity:0;pointer-events:all;cursor:pointer;transition:opacity .15s}.jpv-node:hover{opacity:.6}`}</style>

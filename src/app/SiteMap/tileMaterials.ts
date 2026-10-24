@@ -1,5 +1,5 @@
-import type { CellState } from "@/game/siteTypes"
-import type { Difficulty } from "@/data/difficultyLevels"
+import type { CellState, Tileset } from "@/game/siteTypes"
+import { METALS } from "@/ui/tokens/metalPalette"
 
 // The tier materials, in one place because two consumers need the same numbers: the renderer (for
 // the wall mass, which is a solid fill rather than art, and the silhouette outline) and
@@ -22,56 +22,48 @@ export type TierPalette = {
   wallBase: string
   /** The wash lying over everything the lamp does not reach — the tier's own night, hue and all.
    *
-   * IT IS THE TIER'S OWN NEAR-BLACK, AT THE ALPHA THAT LANDS ITS FLOOR ON THE SHARED TARGET. A wash is
-   * a scale plus an added colour (`art × (1−a) + wash × a`), and both halves are why the night used to
-   * cost so much: the scale flattens the art's own modelling, and at a floor already scaled to a third
-   * the added colour is most of what is left. A near-white-grey wash at a = 0.56 took the starter floor
-   * from L* 40 to 16 with 61% of its chroma gone and its hue dragged from ochre (73°) to a cold
-   * magenta (330°) — which is what made a lit room read as grey mush with pale cut-outs standing in it.
-   *
-   * So the wash colour is the rank's own near-black (`outline`), which adds the rank's own hue rather
-   * than a foreign one, and the alpha is solved per rank rather than authored: whatever lands that
-   * rank's floor at L* ≈ 24. The ranks then agree on how dark a lit floor is and on how far a wall
-   * steps back from it, and differ where they are meant to — starter stays ochre at C* 6.6, junior
-   * ochre at 18.2, expert cold at 263°, wizard verdigris at 168°. Consistent is not flat. */
+   * It is the tier's own near-black (`outline`) at a light alpha: a wash is a scale plus an
+   * added colour (`art × (1−a) + wash × a`), and a heavy one flattens the art's own modelling and drags
+   * its hue toward the wash, so the night stays the lightest hand on the map and the rank keeps its own
+   * hue. `yarn rank-colour` measures the result per rank and solves `faceNight` for it. */
   shade: string
   /** The extra helping of that night a VERTICAL face takes, over the floor's share.
    *
    * A lamp is carried at floor level, so a wall takes its light at a glancing angle and the ground does
-   * not — without that the two planes sit within a step of each other (measured: the floor→face step is
-   * 9.5 in the starter art and 3.5 once the night is over both) and a room reads as a floorplan with a
-   * texture change rather than as a place with walls. Solved per rank to the same 7.5 step, since the
-   * art's own step varies from 6.8 to 22.7 and it is the RENDERED one the player sees. */
+   * not — without that the two planes sit within a step of each other and a room reads as a floorplan
+   * with a texture change rather than as a place with walls. On a light-floored rank it shadows the face 30 L* below
+   * the floor (`yarn rank-colour` solves it); a dark-floored rank lights its faces in the art instead and
+   * takes 0 here. */
   faceNight: number
+  /** How much of the full lamp (`LIT_STRENGTH`) this rank's torch burns at, 0–1. A lamp lifts a dark
+   * room into view; in a rank whose night is already light it only bleaches the stone, so a lit rank
+   * burns it low and the torch stays an accent (docs/game-design/visual-direction.md). */
+  lamp: number
   /** freestanding props, and the near-black they are outlined in */
   prop: string
   propDark: string
   outline: string
 }
 
-export const tierPalette: Record<Difficulty, TierPalette> = {
-  // A merchant's cellar is DARK: mudbrick and limestone chips, lit by the stair and a wick, not a
-  // gallery of pale dressed stone. Grey-brown rather than blue-grey, and deliberately not more ochre than
-  // junior — junior's sandstone has to read as the step UP in wealth, so the first rank stays neutral.
-  // Settled with `yarn generate-dummy-tiles --palettes`: of the candidates it was the one that kept the
-  // gold click marker legible (4.31 against the floor, where the pale grey managed 1.78), kept props
-  // separate from the ground they stand on (2.08 against 1.29), and still held its wall FACE apart from
-  // the floor (1.68 — better than any rank shipping before it).
+export const tierPalette: Record<Tileset, TierPalette> = {
+  // A merchant's storehouse: pale warm limestone underfoot, red ochre and turquoise as its colour
+  // (docs/game-design/visual-direction.md). The floor and wall tokens are the repainted floor's and wall face's;
+  // the prop tokens move with the props' repaint.
   starter: {
-    bed: "#544b40",
-    slab: "#6c6257",
-    slabHi: "#7b7166",
-    slabLo: "#5f564b",
-    joint: "#282219",
-    accent: "#b07a3c",
-    wall: "#4a4137",
-    wallTop: "#736858",
-    wallBase: "#2b261f",
-    // Mudbrick keeps the day's warmth even unlit, and a wick is not what makes a cellar warm — the
-    // stone is. The cold wash that used to stand here made its point against the torch by taking the
-    // ochre out of every surface in the place.
-    shade: "rgba(21,17,12,0.39)",
-    faceNight: 0.18,
+    bed: "#bfae8c",
+    slab: "#d8c8a8",
+    slabHi: "#e4d6b8",
+    slabLo: "#cbb995",
+    joint: "#8a7656",
+    accent: METALS.starter.accent,
+    wall: "#b49d74",
+    wallTop: "#e6d9bd",
+    wallBase: "#3d2e20",
+    // The night is the lightest hand on the map, as master's is: rooms are lit and the torch is an
+    // accent (docs/game-design/visual-direction.md). Its colour is the rank's own near-black.
+    shade: "rgba(21,17,12,0.3)",
+    faceNight: 0.55,
+    lamp: 0.3,
     prop: "#a49781",
     propDark: "#5c5347",
     outline: "#15110c",
@@ -82,7 +74,7 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     slabHi: "#cfa974",
     slabLo: "#b8925f",
     joint: "#4a3520",
-    accent: "#c2452c",
+    accent: METALS.junior.accent,
     wall: "#8f6a3f",
     wallTop: "#b58a55",
     wallBase: "#4a3520",
@@ -90,6 +82,7 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     // in the game, and the highest alpha, because its slabs are also the palest.
     shade: "rgba(36,23,8,0.66)",
     faceNight: 0.14,
+    lamp: 1,
     prop: "#e0c193",
     propDark: "#9c7442",
     outline: "#241708",
@@ -100,7 +93,7 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     slabHi: "#98a3b0",
     slabLo: "#828d9a",
     joint: "#2b333d",
-    accent: "#6ea08a",
+    accent: METALS.expert.accent,
     wall: "#5b6675",
     wallTop: "#7c8797",
     wallBase: "#323a46",
@@ -109,6 +102,7 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     // from rather than a wash borrowed from another rank.
     shade: "rgba(23,28,34,0.63)",
     faceNight: 0.31,
+    lamp: 1,
     prop: "#a7b2be",
     propDark: "#69737f",
     outline: "#171c22",
@@ -119,7 +113,7 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     slabHi: "#615c53",
     slabLo: "#4e4a43",
     joint: "#25221d",
-    accent: "#d9a93f",
+    accent: METALS.master.accent,
     wall: "#3a3630",
     wallTop: "#5b554b",
     wallBase: "#201d19",
@@ -127,6 +121,7 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     // most of the way to black before any night falls on them, so this is the lightest hand of the five.
     shade: "rgba(20,18,16,0.18)",
     faceNight: 0.17,
+    lamp: 1,
     prop: "#d9a93f",
     propDark: "#8a6a24",
     outline: "#141210",
@@ -137,16 +132,38 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
     slabHi: "#658c80",
     slabLo: "#537668",
     joint: "#22423a",
-    accent: "#5fd9a4",
+    accent: METALS.wizard.accent,
     wall: "#3a6155",
     wallTop: "#4f7c6d",
     wallBase: "#1d3830",
     // Verdigris and standing water. Not the absence of a lamp — the colour the place already is.
     shade: "rgba(15,35,29,0.61)",
     faceNight: 0.45,
+    lamp: 1,
     prop: "#8fd9bd",
     propDark: "#3f7563",
     outline: "#0f231d",
+  },
+  // Bare rock: grey-brown, uncut and unlit. No rank's stone, so it borrows no rank's metal either.
+  cave: {
+    bed: "#554e46",
+    slab: "#615951",
+    slabHi: "#6b6259",
+    slabLo: "#59524a",
+    joint: "#2a2520",
+    accent: METALS.expert.accent,
+    // A dark floor, so the wall and what stands on it are on the light side of it (visual-direction.md,
+    // "Light and dark floors"): pale rock catching the torch, never shadowed further.
+    wall: "#ccc6ba",
+    wallTop: "#d8d2c4",
+    wallBase: "#1f1b16",
+    // A cave has no lamps of its own and is dim before any night falls on it.
+    shade: "rgba(22,19,16,0.35)",
+    faceNight: 0,
+    lamp: 1,
+    prop: "#d8d2c4",
+    propDark: "#9c968a",
+    outline: "#1a1612",
   },
 }
 
@@ -154,8 +171,7 @@ export const tierPalette: Record<Difficulty, TierPalette> = {
  *
  * Derived rather than authored beside it, because anything that has to UNDO part of the wash needs the
  * same number the wash is drawn with, and two copies of it drift the first time one is tuned. */
-export const nightAlpha = (tier: Difficulty): number =>
-  Number(tierPalette[tier].shade.match(/([\d.]+)\s*\)$/)?.[1] ?? 1)
+export const nightAlpha = (tier: Tileset): number => Number(tierPalette[tier].shade.match(/([\d.]+)\s*\)$/)?.[1] ?? 1)
 
 // Fog is an overlay over the one material, never a second set of art: a wash per cell state, and
 // nothing at all on `reachable`, which is the brightness everything else is read against.

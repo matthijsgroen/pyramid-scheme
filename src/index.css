@@ -360,6 +360,21 @@ body {
     }
   }
 
+  --animate-tap: tap 1.6s ease-in-out infinite;
+  @keyframes tap {
+    0%,
+    45%,
+    100% {
+      transform: translateY(0) scale(1);
+    }
+    60% {
+      transform: translateY(-8px) scale(0.9);
+    }
+    75% {
+      transform: translateY(0) scale(1);
+    }
+  }
+
   --animate-slide-down: slide-down 3s ease-in-out forwards;
   @keyframes slide-down {
     0% {

@@ -77,6 +77,9 @@ jobs:
         run: yarn
       - name: Build
         run: yarn build
+        env:
+          # What players can open: the release ships starter only, while development builds open every tier.
+          VITE_LAST_RELEASED_DIFFICULTY: starter
       - name: Setup Pages
         uses: actions/configure-pages@v6
       - name: Upload artifact

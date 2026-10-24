@@ -28,13 +28,14 @@ export type ProgressionAPI = {
   ledger: Ledger
 }
 
-export const useProgression = (): ProgressionAPI => {
-  const [state, setState] = useGameStorage<ProgressionState>("pyramid-scheme-progression-v4", initialState)
+// `loaded` is for a caller that acts once on what the save holds, rather than on the empty ledger before it arrives.
+export const useProgression = (): ProgressionAPI & { loaded: boolean } => {
+  const [state, setState, loaded] = useGameStorage<ProgressionState>("pyramid-scheme-progression-v4", initialState)
 
   return useMemo(() => {
     const ledger = createLedger(state.ledger ?? DEFAULT_LEDGER, updater =>
       setState(prev => ({ ...prev, ledger: updater(prev.ledger ?? DEFAULT_LEDGER) }))
     )
-    return { ledger }
-  }, [state, setState])
+    return { ledger, loaded }
+  }, [state, setState, loaded])
 }

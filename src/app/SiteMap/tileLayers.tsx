@@ -1,11 +1,15 @@
-import { Fragment } from "react"
-import type { Difficulty } from "@/data/difficultyLevels"
+import { Fragment, useMemo } from "react"
+import type { Tileset } from "@/game/siteTypes"
 import { CELL, SIDE_W, WALL_H } from "./mapScale"
 import { corridorShade, stateWash, tierPalette } from "./tileMaterials"
 import { tileUrl } from "./tileAssets"
 import { LightPoolDefs } from "./ExplorerDot"
 import { ALL_STATES, faceShadowRects, faceTopRects, rectsToPath, type Rect, type TileRegions } from "./tileRegions"
 import { FACE_SHADOW, FACE_TOP } from "./roomClaims"
+import { floorGroups, floorOutline, wornFaceCorners } from "./floorOutline"
+
+/** Natural rock: its floor's outline is worn round rather than cut square (see floorOutline). */
+const wornEdges = (tier: Tileset) => tier === "cave"
 
 // THE STONE ITSELF: floor, wall mass, faces, tops, sills, shadows and the state washes over them, as
 // merged paths rather than a shape per cell — a floor's whole masonry is 22 elements, and that is the
@@ -34,22 +38,25 @@ export const TileLayers = ({
   regions,
   tier,
   archedGaps,
+  seed,
 }: {
   regions: TileRegions
-  tier: Difficulty
+  tier: Tileset
+  /** The site's id: a worn edge wanders the same way every time the floor is drawn. */
+  seed: string
   /** "x,y" of every gap an archway stands in, and the arch's own tier. An arch's middle is transparent, so
    * the sill shows THROUGH it — the step the jambs stand on, which is what stops a doorway hovering in a
    * gap with its reveal running straight into floor. The one thing the two disagreed about was stone: a
    * sill takes the tier being ENTERED and an arch the tier of the band it pierces, so at a ward gate the
    * map laid one rank's threshold inside another's gateway. Settled by giving the gap to the arch — an
    * arched sill is drawn in the arch's stone, so an opening is one material. */
-  archedGaps?: ReadonlyMap<string, Difficulty>
+  archedGaps?: ReadonlyMap<string, Tileset>
 }) => {
   const mega = CELL * 8
   // Every sill that an arch stands in, filed under the ARCH's tier rather than the tier being entered.
   // At a ward gate those differ, and one opening showing two ranks of stone is the reason the sill used to
   // be skipped here entirely.
-  const archedSills = new Map<Difficulty, Rect[]>()
+  const archedSills = new Map<Tileset, Rect[]>()
   for (const [, groups] of regions) {
     for (const rect of groups.threshold) {
       const archTier = archedGaps?.get(`${rect[0]},${rect[1]}`)
@@ -59,16 +66,21 @@ export const TileLayers = ({
       else archedSills.set(archTier, [rect])
     }
   }
-  const floorRects = [...regions.values()].flatMap(groups => [
-    ...Object.values(groups.floorRoom).flat(),
-    ...Object.values(groups.floorCorridor).flat(),
-  ])
-  const allFloor = rectsToPath(floorRects)
+  const { outline: allFloor, fills: floorFills } = useMemo(
+    () => floorOutline(floorGroups(regions, wornEdges), seed),
+    [regions, seed]
+  )
   // The same floor, each cell grown UPWARD by a prop's headroom. Furniture standing off-centre in its
   // cell is cut by the wall beside it and by the wall below it, and still rises into the band above —
   // which is the one direction a prop is meant to cross, so a tall thing occludes the wall behind it
   // instead of being sliced off at its own floor line.
   const tiers = [...regions.keys()]
+  // Every face and floor rect on the map, whatever its tier or light: where a worn wall's run ends is a question
+  // about its neighbours, which need not share either.
+  const allFaces = [...regions.values()].flatMap(g => ALL_STATES.flatMap(s => g.wallFace[s]))
+  const allFloorRects = [...regions.values()].flatMap(g =>
+    ALL_STATES.flatMap(s => [...g.floorRoom[s], ...g.floorCorridor[s]])
+  )
 
   return (
     <>
@@ -144,8 +156,8 @@ export const TileLayers = ({
             <g key={t}>
               {ALL_STATES.map(state => {
                 const wash = stateWash[state]
-                const room = rectsToPath(groups.floorRoom[state])
-                const corridor = rectsToPath(groups.floorCorridor[state])
+                const room = floorFills.get(`${t}:room:${state}`)!
+                const corridor = floorFills.get(`${t}:corridor:${state}`)!
                 const mass = rectsToPath(groups.wallMass[state])
                 const faces = rectsToPath(groups.wallFace[state])
                 const shadows = rectsToPath(faceShadowRects(groups.wallFace[state], FACE_SHADOW))
@@ -154,6 +166,11 @@ export const TileLayers = ({
                 // an arch is drawn with the ARCH's tier rather than this one, so it is handled below.
                 const thresholds = groups.threshold.filter(([x, y]) => !archedGaps?.has(`${x},${y}`))
                 const arched = archedSills.get(t) ?? []
+                // A worn corner is a hole in the floor fill, and the wash has to darken what shows through
+                // it like the stone around it — so the square floor goes under the wash as well.
+                const wornWash = wornEdges(t)
+                  ? rectsToPath(groups.floorRoom[state]) + rectsToPath(groups.floorCorridor[state])
+                  : ""
                 return (
                   <g key={state}>
                     {mass && <path d={mass} fill={palette.wallBase} />}
@@ -187,7 +204,15 @@ export const TileLayers = ({
                         <path key={rect.join(",")} d={rectsToPath([rect])} fill={sillFill(rect)} opacity={0.9} />
                       ))}
                     {shadows && <path d={shadows} fill={palette.outline} opacity={0.45} />}
-                    {wash && <path d={room + corridor + faces + mass} fill={wash.fill} opacity={wash.opacity} />}
+                    {wornEdges(t) && (
+                      <path
+                        d={wornFaceCorners(groups.wallFace[state], allFaces, allFloorRects, WALL_H * 0.8)}
+                        fill={palette.wallBase}
+                      />
+                    )}
+                    {wash && (
+                      <path d={room + corridor + faces + mass + wornWash} fill={wash.fill} opacity={wash.opacity} />
+                    )}
                   </g>
                 )
               })}

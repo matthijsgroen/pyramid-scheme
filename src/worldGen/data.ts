@@ -46,7 +46,11 @@ export const PYRAMID_JOURNEYS: JourneyDef[] = PYRAMID_STRUCTURES.map(s => ({
   pathPuzzles: PYRAMID_PATH_PUZZLES[s.id] ?? 3,
 }))
 
-export const TOMB_JOURNEYS: TombJourneyDef[] = TOMB_STRUCTURES.map(s => ({ ...s, tier: s.tier as Tier }))
+export const TOMB_JOURNEYS: TombJourneyDef[] = TOMB_STRUCTURES.map(s => ({
+  ...s,
+  tier: s.tier as Tier,
+  levelCount: s.levelCount ?? 1,
+}))
 
 // Hieroglyph data (TOMB_SYMBOLS, per-hieroglyph fragment requirements, the fragment matrix)
 // lived here but is the hieroglyph mod's own — it now lives in

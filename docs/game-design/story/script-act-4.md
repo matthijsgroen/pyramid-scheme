@@ -22,9 +22,9 @@ it.
 
 > **Fez:** Two million blocks. Somebody counted.
 >
-> **Explorer:** Somebody counted?
+> **Explorer (surprised):** Somebody counted?
 >
-> **Fez:** Somebody always counts. That is the part people forget about all this — it was run by clerks.
+> **Fez (pointUp):** Somebody always counts. That is the part people forget about all this — it was run by clerks.
 >
 > **Fez:** Beautiful, isn't it. Hate to think what the payroll looked like.
 
@@ -35,36 +35,36 @@ hidden corridor here.
 
 > **Fez:** Instructions. That is all it is — what to say, in what order, so the journey goes properly.
 >
-> **Explorer:** A manual.
+> **Explorer (deadpan):** A manual.
 >
 > **Fez:** A manual for being dead. They wrote everything down, this lot.
 >
-> **Fez:** Which, given what we are looking for, is the first good news all week.
+> **Fez (pointUp):** Which, given what we are looking for, is the first good news all week.
 
 ## `master_3` — Curse of the Pharaohs
 
 `story.arrival.master_3.*` — **where somebody was here first.**
 
-> **Fez:** Ah. Somebody's camp.
+> **Fez (worried):** Ah. Somebody's camp.
 >
-> **Explorer:** Recent?
+> **Explorer (surprised):** Recent?
 >
 > **Fez:** Recent-ish. Tinned food and a bad cough, by the look of it.
 >
-> **Fez:** They went in further than this and they did not take their kit with them.
+> **Fez (worried):** They went in further than this and they did not take their kit with them.
 >
 > **Explorer:** Did they come back for it?
 >
-> **Fez:** …Let us keep moving.
+> **Fez (worried):** …Let us keep moving.
 
 ## `master_4` — Tomb of Nefertari
 
 `story.arrival.master_4.*` — the comparison: one done properly.
 
-> **Fez:** Now THIS is what the others were imitating. Look at the colour — three thousand years and it is
+> **Fez (pointUp):** Now THIS is what the others were imitating. Look at the colour — three thousand years and it is
 > still wet-looking.
 >
-> **Explorer:** Henut would be furious.
+> **Explorer (deadpan):** Henut would be furious.
 >
 > **Fez:** Henut would be taking notes.
 
@@ -131,7 +131,7 @@ sent to `master_2`. This says only that what they hold is wrong.
 
 `story.bond.master.*` — reaction rail, after the refusal.
 
-> **Fez:** We could stop.
+> **Fez (worried):** We could stop.
 >
 > **Explorer:** We could.
 >
@@ -147,7 +147,7 @@ sent to `master_2`. This says only that what they hold is wrong.
 >
 > **Explorer:** In the tomb of a man who took everything with him.
 >
-> **Fez:** …Yes. I had noticed that.
+> **Fez (sheepish):** …Yes. I had noticed that.
 
 ## Open
 

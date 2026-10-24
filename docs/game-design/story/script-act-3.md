@@ -26,13 +26,13 @@ thinks, twice, and does not comment on it.
 >
 > **Fez:** What do you make of it?
 >
-> **Explorer:** That we are late.
+> **Explorer (deadpan):** That we are late.
 
 ## `expert_2` — Karnak Temple Complex
 
 `story.arrival.expert_2.*` — **Fez's error.**
 
-> **Fez:** Amun-Ra. The sun. Everybody's favourite, and you can see why — look at the size of the place.
+> **Fez (pointUp):** Amun-Ra. The sun. Everybody's favourite, and you can see why — look at the size of the place.
 >
 > **Explorer:** Two names.
 >
@@ -42,14 +42,14 @@ thinks, twice, and does not comment on it.
 
 `story.arrival.expert_3.*`
 
-> **Fez:** The whole country is a line of green either side of one river, and then it opens out here into
+> **Fez (pointUp):** The whole country is a line of green either side of one river, and then it opens out here into
 > this.
 >
 > **Fez:** Everything grows. Everything also bites.
 >
-> **Explorer:** Which of those are we here for?
+> **Explorer (deadpan):** Which of those are we here for?
 >
-> **Fez:** I was rather hoping neither.
+> **Fez (worried):** I was rather hoping neither.
 
 ## `expert_4` — Pyramid of Djoser
 
@@ -57,9 +57,9 @@ thinks, twice, and does not comment on it.
 
 > **Fez:** The first one. Before this, kings went under a flat slab like everyone else.
 >
-> **Fez:** Someone stood here and thought: what if we did that, but six times, upwards.
+> **Fez (pointUp):** Someone stood here and thought: what if we did that, but six times, upwards.
 >
-> **Explorer:** Did it work?
+> **Explorer (deadpan):** Did it work?
 >
 > **Fez:** It is still standing and he is not. Depends what you mean.
 
@@ -100,11 +100,11 @@ years ago and he has not left off waiting for the rest of it.
 >
 > **Priest:** They are the same god. That is not a coincidence, it is the entire idea.
 >
-> **Fez:** …Right. Yes. I did know that.
+> **Fez (sheepish):** …Right. Yes. I did know that.
 >
-> **Explorer:** You did not.
+> **Explorer (deadpan):** You did not.
 >
-> **Fez:** I did not.
+> **Fez (sheepish):** I did not.
 
 ## `expert_treasure_tomb_b` — Inner Sanctum
 
@@ -118,21 +118,21 @@ which makes it the one tomb in the tier that may refer back to a scene the playe
 **Which is also why the ask stays with him and not here.** The treasury is auto-discovered and this is not;
 an ask placed in an optional room is an arc the player can walk past.
 
-> **Fez:** Nobody has been in here. Not us, not the earlier lot, nobody.
+> **Fez (surprised):** Nobody has been in here. Not us, not the earlier lot, nobody.
 >
 > **Explorer:** How can you tell?
 >
-> **Fez:** Because there is still something in it.
+> **Fez (pointUp):** Because there is still something in it.
 
 ## The bond beat
 
 `story.bond.expert.*` — reaction rail, on a trap survived.
 
-> **Fez:** That was close.
+> **Fez (worried):** That was close.
 >
-> **Explorer:** It was fine.
+> **Explorer (deadpan):** It was fine.
 >
-> **Fez:** It was close. I am allowed to say so.
+> **Fez (worried):** It was close. I am allowed to say so.
 
 ## The inscription, line two
 

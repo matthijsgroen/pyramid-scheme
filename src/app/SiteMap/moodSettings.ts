@@ -1,5 +1,4 @@
-import type { Difficulty } from "@/data/difficultyLevels"
-import type { ConditionKind, SiteCondition } from "@/game/siteTypes"
+import type { ConditionKind, SiteCondition, Tileset } from "@/game/siteTypes"
 
 // What the air in a tomb is like. Everything here is OVERLAY — a wash, some drifting motes, a few living
 // things — never a second set of art (docs/game-design/spritesheet-renderer-prep.md, "Mood settings"): a
@@ -67,7 +66,7 @@ export type Mood = {
 // in the same way and runs out the same way: a cellar is a room under a street and the gods' vault is
 // under the whole mountain, so a roof that has given way is common at the top of the world and rare at
 // the bottom of it.
-const RANK_MOOD: Record<Difficulty, Mood> = {
+const RANK_MOOD: Record<Tileset, Mood> = {
   starter: {
     tint: { fill: "#c8b48a", opacity: 0.06 },
     drift: { count: 34, size: 0.9, fill: "#e8dcc0", opacity: 0.6, seconds: 8 },
@@ -98,6 +97,12 @@ const RANK_MOOD: Record<Difficulty, Mood> = {
     tint: { fill: "#26407a", opacity: 0.1 },
     drift: { count: 32, size: 1, fill: "#bfe4ff", opacity: 0.7, seconds: 14 },
     beam: 0.06,
+  },
+  // Cool and dim: no lamp has ever hung here, and what daylight there is comes down the mouth.
+  cave: {
+    tint: { fill: "#2e353e", opacity: 0.22 },
+    drift: { count: 24, size: 0.8, fill: "#a8b0b8", opacity: 0.45, seconds: 16 },
+    beam: 0.05,
   },
 }
 
@@ -247,7 +252,7 @@ const DAYLIGHT_BEAM_ODDS = 2
 /** The air on this floor: its rank's own, with whatever its authored hour replaces, and whatever has got
  * into the site laid over the result. An unknown theme name is not an error — a family may recognise a
  * skin the map has no weather for — and simply leaves the rank's ambience alone. */
-export const moodFor = (tier: Difficulty, theme?: string, condition?: SiteCondition): Mood => {
+export const moodFor = (tier: Tileset, theme?: string, condition?: SiteCondition): Mood => {
   const hour: Mood = { ...RANK_MOOD[tier], ...(theme ? (THEME_MOOD[theme] ?? {}) : {}) }
   if (!condition) return hour
   const amount = Math.max(0, Math.min(1, condition.amount))

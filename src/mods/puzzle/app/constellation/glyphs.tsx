@@ -52,21 +52,28 @@ export const Plant: FC<{ grown: boolean; flowering?: boolean }> = ({ grown, flow
  * once the roads reach it, and a **capstone** on it when the network is finished.
  *
  * The same three stages the plant has, and for the same reason — the last one belongs to the completion run,
- * so a served site deliberately stops short of it. A pyramid is drawn rather than filled flat because a
- * flat triangle on sand is a triangle; the courses are what make it masonry.
+ * so a served site deliberately stops short of it. A pyramid is squat — about two thirds as tall as it is wide
+ * — and shows two faces, one in the sun and one in shade: a tall striped triangle with a gold tip reads as a
+ * party hat, and the second face is what makes this a block of stone.
  */
 export const Pyramid: FC<{ grown: boolean; flowering?: boolean }> = ({ grown, flowering }) => (
   <svg viewBox="0 0 24 24" className="size-full" aria-hidden focusable="false">
     {grown ? (
       <>
-        <path d="M12 3 L22 22 L2 22 Z" className="fill-stone-200 stroke-stone-700" strokeWidth={1.4} />
-        {/* Two courses, which is all it takes to stop reading as a road sign. */}
-        <path d="M6.5 16 L17.5 16 M9 10 L15 10" className="stroke-stone-500" strokeWidth={1} fill="none" />
+        <path d="M12 7 L15 21 L1 21 Z" className="fill-stone-200" />
+        <path d="M12 7 L23 21 L15 21 Z" className="fill-stone-400" />
+        <path
+          d="M12 7 L23 21 L1 21 Z M12 7 L15 21"
+          className="stroke-stone-700"
+          strokeWidth={1.2}
+          strokeLinejoin="round"
+          fill="none"
+        />
       </>
     ) : (
-      // Staked out, not yet built: the footprint and one course of stone.
+      // Staked out, not yet built: the footprint and the line of its first faces.
       <path
-        d="M4.5 22 L19.5 22 M7 17 L17 17 M12 8 L17 17 M12 8 L7 17"
+        d="M2 21 L22 21 M12 9 L4.5 18 M12 9 L19.5 18"
         className="stroke-stone-600"
         strokeWidth={1.4}
         strokeDasharray="2.6 2"
@@ -76,8 +83,8 @@ export const Pyramid: FC<{ grown: boolean; flowering?: boolean }> = ({ grown, fl
     )}
     {flowering && (
       <g className="animate-flower-in">
-        {/* The capstone going on, gilded — the one thing on this board that is not stone-coloured. */}
-        <path d="M12 1.5 L16 9 L8 9 Z" className="fill-amber-300 stroke-amber-600" strokeWidth={0.8} />
+        {/* The capstone going on: the pyramid's own gilded tip, inside its outline — the one thing on this board that is not stone-coloured. */}
+        <path d="M12 7 L14.75 10.5 L9.25 10.5 Z" className="fill-amber-300 stroke-amber-600" strokeWidth={0.8} />
       </g>
     )}
   </svg>

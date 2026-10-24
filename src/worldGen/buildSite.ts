@@ -1,4 +1,4 @@
-import type { DecorationKind, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
+import type { DecorationKind, Patron, SiteCondition, Tileset, WallDecorationKind } from "../game/siteTypes"
 import type { Difficulty, FloorConfig, SideSection, Tier, TreasureReward } from "./types"
 import { TOMB_PERK_IDS } from "../data/treasurePerks"
 import { GLOBAL_DEFAULTS } from "./spec/global"
@@ -8,7 +8,7 @@ import { initPuzzleChains } from "./puzzleRewards"
 import { buildSideSections, type ResolveReward } from "./sideSections"
 import { stairIdAt } from "../game/stairAddress"
 import type { FloorConstraint, PyramidConstraint, RewardSpec } from "./dsl"
-import { resolveNodeSelectors } from "./dsl"
+import { resolveNodeActivities, resolveNodeDifficulties, resolveNodeLoot, resolveNodeSelectors } from "./dsl"
 import { ONE_WAY_KIND, declaredBinding, regionBarrierBinding, resolveBinding } from "./realisationBinding"
 
 // ── Per-pyramid randomized resolution ─────────────────────────────────────────
@@ -94,6 +94,10 @@ export type BuildFloorOptions = {
   mainEndReward?: TreasureReward
   encounter?: FloorConfig["encounter"]
   encountersByIndex?: FloorConfig["encountersByIndex"]
+  activitiesByIndex?: FloorConfig["activitiesByIndex"]
+  difficultiesByIndex?: FloorConfig["difficultiesByIndex"]
+  loot?: FloorConfig["loot"]
+  lootByIndex?: FloorConfig["lootByIndex"]
   forks?: FloorConfig["forks"]
   oneWays?: FloorConfig["oneWays"]
   oneWayRealisation?: FloorConfig["oneWayRealisation"]
@@ -112,6 +116,7 @@ export type BuildFloorOptions = {
   sealed?: boolean
   encounterArgs?: unknown
   theme?: string
+  tileset?: Tileset
   decorations?: DecorationKind[]
   /** What has got into the site. Copied onto every floor, which is what makes it survive the climb. */
   condition?: SiteCondition
@@ -137,12 +142,21 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
   ...(opts.encountersByIndex && Object.keys(opts.encountersByIndex).length
     ? { encountersByIndex: opts.encountersByIndex }
     : {}),
+  ...(opts.activitiesByIndex && Object.keys(opts.activitiesByIndex).length
+    ? { activitiesByIndex: opts.activitiesByIndex }
+    : {}),
+  ...(opts.difficultiesByIndex && Object.keys(opts.difficultiesByIndex).length
+    ? { difficultiesByIndex: opts.difficultiesByIndex }
+    : {}),
+  ...(opts.loot === false ? { loot: false as const } : {}),
+  ...(opts.lootByIndex && Object.keys(opts.lootByIndex).length ? { lootByIndex: opts.lootByIndex } : {}),
   ...(opts.corridorStraightness !== undefined ? { corridorStraightness: opts.corridorStraightness } : {}),
   ...(opts.packing !== undefined ? { packing: opts.packing } : {}),
   ...(opts.seed !== undefined ? { seed: opts.seed } : {}),
   ...(opts.sealed ? { sealed: true } : {}),
   ...(opts.encounterArgs !== undefined ? { encounterArgs: opts.encounterArgs } : {}),
   ...(opts.theme !== undefined ? { theme: opts.theme } : {}),
+  ...(opts.tileset !== undefined ? { tileset: opts.tileset } : {}),
   ...(opts.forks ? { forks: opts.forks } : {}),
   ...(opts.oneWays ? { oneWays: opts.oneWays } : {}),
   ...(opts.oneWayRealisation ? { oneWayRealisation: opts.oneWayRealisation } : {}),
@@ -158,7 +172,7 @@ export const buildFloor = (opts: BuildFloorOptions): FloorConfig => ({
 })
 
 // Sequentially links floors[fi] → floors[fi+1] via a stairhead: floor fi's exitOrStaircase and floor
-// fi+1's entrance both become the id of floor fi's main-path way up, which is what pairs them. Used
+// fi+1's entrance both become the id of floor fi's main-path way down, which is what pairs them. Used
 // for main-path chains (pyramid auto-multi-floor) — never touches the last floor's exit.
 export const wireStaircases = (floors: FloorConfig[], site: { journeyId: string; pyramidIndex: number }): void => {
   for (let fi = 0; fi < floors.length - 1; fi++) {
@@ -173,11 +187,25 @@ export const wireStaircases = (floors: FloorConfig[], site: { journeyId: string;
 // whether the shortcut is ward-gated by an external key (a pyramid's authored floors[]) or
 // self-gated by the floor's own treasure (a tomb's shortcut — pyramid-interior-design.md
 // §8, "the treasure IS the key"). Both are just a side section whose `end` is a stairhead.
-export const wireSideSectionStaircases = (floors: FloorConfig[]): void => {
+// A floor reached by a side stair is off the main path, so it has no exit: its way out is
+// that stair, back up (one exit per site, at the main path's end).
+//
+// A floor ON THE MAIN WALK with no stairhead section of its own goes down by its main path instead, the way a
+// pyramid's main floors do (wireStaircases), so a site authored floor by floor can be one walk down to a
+// single exit on its last floor. A floor reached by a side stair stays off that walk and gains no main stair.
+export const wireSideSectionStaircases = (
+  floors: FloorConfig[],
+  site: { journeyId: string; pyramidIndex: number }
+): void => {
   for (let fi = 0; fi < floors.length - 1; fi++) {
     const stairSection = floors[fi].sideSections.find(s => typeof s.end === "object")
     if (stairSection && typeof stairSection.end === "object") {
       floors[fi + 1].entrance = { stairId: stairSection.end.stairId }
+      floors[fi + 1].exitOrStaircase = "none"
+    } else if (floors[fi].exitOrStaircase !== "none") {
+      const id = stairIdAt({ ...site, floorIndex: fi, path: "main" })
+      floors[fi].exitOrStaircase = { stairId: id }
+      floors[fi + 1].entrance = { stairId: id }
     }
   }
 }
@@ -254,9 +282,12 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     sideWallDecorations,
   } = ctx
 
-  const mainEndReward: TreasureReward = constraint.mainEndReward
+  // The end of a path that authors no reward is an open loot slot, unless it is lootless.
+  const unauthoredEnd = (loot: false | undefined): TreasureReward | undefined =>
+    loot === false ? undefined : { type: "fragmentSlot" }
+  const mainEndReward = constraint.mainEndReward
     ? resolveMainEndReward(constraint.mainEndReward)
-    : { type: "fragmentSlot" }
+    : unauthoredEnd(constraint.loot)
 
   if (constraint.floors?.length) {
     if (constraint.floorLocks)
@@ -272,6 +303,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
       const fc = floors[fi] ?? {}
       const floorPP = typeof fc.pathPuzzles === "number" ? fc.pathPuzzles : pp
       const floorDiff: Difficulty = fc.difficulty ?? difficulty
+      const floorLoot = fc.loot ?? constraint.loot
       const isLast = fi === floors.length - 1
       const floorSections = Array.isArray(fc.sideSections) ? fc.sideSections : undefined
       const floorSideSections = buildSideSections({
@@ -283,6 +315,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         journeyId: `${journeyId}:${i}:floor${fi}`,
         floor: { journeyId, pyramidIndex: i, floorIndex: fi },
         constraintSections: floorSections,
+        loot: floorLoot,
         // Floor-level declared side/hidden paths. Authored per-floor (fc.*); no pyramid/tier
         // fallback here so a fully-authored floor stays explicit (tombs author everything).
         declaredSidePaths: fc.sidePaths,
@@ -311,9 +344,9 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
       const floorMainEndReward =
         fc.mainEndReward !== undefined
           ? resolveReward(fc.mainEndReward)
-          : isLast
+          : isLast && constraint.mainEndReward
             ? mainEndReward
-            : { type: "fragmentSlot" as const }
+            : unauthoredEnd(floorLoot)
       floorConfigs.push(
         buildFloor({
           pathPuzzles: floorPP,
@@ -326,6 +359,10 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           encounter: fc.encounter ?? constraint.encounter,
           // Resolve this floor's authored `nodes` selectors → per-node encounter overrides (§G).
           encountersByIndex: resolveNodeSelectors(fc.nodes, floorPP),
+          activitiesByIndex: resolveNodeActivities(fc.nodes, floorPP),
+          difficultiesByIndex: resolveNodeDifficulties(fc.nodes, floorPP),
+          loot: floorLoot,
+          lootByIndex: resolveNodeLoot(fc.nodes, floorPP),
           // A floor's own junctions win; otherwise the site's, the way `encounter` and `theme` resolve.
           forks: fc.forks ?? constraint.forks,
           oneWays: fc.oneWays ?? constraint.oneWays,
@@ -350,6 +387,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           encounterArgs: fc.encounterArgs ?? constraint.encounterArgs,
           // A floor may wear its own skin inside a plainer pyramid; unset, it wears the site’s.
           theme: fc.theme ?? constraint.theme,
+          tileset: fc.tileset ?? constraint.tileset,
           decorations: fc.decorations ?? constraint.decorations,
           wallDecorations: fc.wallDecorations ?? constraint.wallDecorations,
           // No per-floor override: a condition that stopped halfway up would read as an authoring slip
@@ -359,7 +397,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         })
       )
     }
-    wireSideSectionStaircases(floorConfigs)
+    wireSideSectionStaircases(floorConfigs, { journeyId, pyramidIndex: i })
     initPuzzleChains(floorConfigs)
     return { floors: floorConfigs }
   }
@@ -389,7 +427,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             pathPuzzles: pp,
             difficulty,
             sideSections: [],
-            mainEndReward: { type: "fragmentSlot" },
+            mainEndReward: unauthoredEnd(constraint.loot),
+            loot: constraint.loot,
             encounter: constraint.encounter,
             // The junctions the site asks every floor of it to carve, and what stands in them.
             forks: constraint.forks,
@@ -404,6 +443,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             switches: constraint.switches,
             encounterArgs: constraint.encounterArgs,
             theme: constraint.theme,
+            tileset: constraint.tileset,
             // The SITE's condition, on every floor. It rides beside `theme` at each of these calls, and the
             // difference between the two is the point: a floor may wear its own hour, but green through the
             // brick that stopped at floor three would read as an authoring slip rather than as weather.
@@ -429,6 +469,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         // Only the last main floor carries the site's side content, so `fi` is where these sit.
         floor: { journeyId, pyramidIndex: i, floorIndex: fi },
         constraintSections,
+        loot: constraint.loot,
         hasMapPieceBranch,
         hasWardGate,
         nextTier,
@@ -448,6 +489,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           difficulty,
           sideSections,
           mainEndReward,
+          loot: constraint.loot,
           encounter: constraint.encounter,
           // The junctions the site asks every floor of it to carve, and what stands in them.
           forks: constraint.forks,
@@ -462,6 +504,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           switches: constraint.switches,
           encounterArgs: constraint.encounterArgs,
           theme: constraint.theme,
+          tileset: constraint.tileset,
           condition: constraint.condition,
           patron: constraint.patron,
           // The pools ride with them, and for the same reason: a fork is where a prop goes, so a floor
@@ -514,7 +557,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
           }))
 
       wingDefs.forEach(wing => {
-        // The stairs up to a wing are a section of the last main floor, so the id takes that
+        // The stairs down to a wing are a section of the last main floor, so the id takes that
         // section's own address — the index it is about to land on, which is what the assembler
         // would have called it had the authoring left the stairhead unnamed.
         const wingStairId = stairIdAt({
@@ -530,7 +573,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             difficulty: wing.difficulty,
             end: { stairId: wingStairId },
             gate: { type: "tomb-key", wardKeyId: wing.wardKeyId },
-            // The stairs up to a wing are rooms of this pyramid, so they wear its theme too. Built here
+            // The stairs down to a wing are rooms of this pyramid, so they wear its theme too. Built here
             // rather than by buildSideSections, which is why the role is applied by hand.
             ...(sideEncounter !== undefined ? { encounter: sideEncounter } : {}),
             ...(sideTheme !== undefined ? { theme: sideTheme } : {}),
@@ -542,6 +585,8 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             difficulty: wing.difficulty,
             sideSections: [],
             entrance: { stairId: wingStairId },
+            // A wing is off the main path: its way out is the stair it came down.
+            exitOrStaircase: "none",
             mainEndReward: wing.endReward ? hintToReward(wing.endReward, wing.difficulty) : { type: "fragmentSlot" },
             // A wing is a floor of this pyramid, so it wears the pyramid's theme too.
             encounter: constraint.encounter,
@@ -558,6 +603,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
             switches: constraint.switches,
             encounterArgs: constraint.encounterArgs,
             theme: constraint.theme,
+            tileset: constraint.tileset,
             condition: constraint.condition,
             patron: constraint.patron,
             // The pools ride with them, and for the same reason: a fork is where a prop goes, so a floor
@@ -606,6 +652,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     // A single-floor site: everything it has hangs off floor 0.
     floor: { journeyId, pyramidIndex: i, floorIndex: 0 },
     constraintSections,
+    loot: constraint.loot,
     hasMapPieceBranch,
     hasWardGate,
     nextTier,
@@ -624,6 +671,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     difficulty,
     sideSections,
     mainEndReward,
+    loot: constraint.loot,
     encounter: constraint.encounter,
     // The junctions the site asks every floor of it to carve, and what stands in them.
     forks: constraint.forks,
@@ -638,6 +686,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
     switches: constraint.switches,
     encounterArgs: constraint.encounterArgs,
     theme: constraint.theme,
+    tileset: constraint.tileset,
     condition: constraint.condition,
     patron: constraint.patron,
     // The pools ride with them, and for the same reason: a fork is where a prop goes, so a floor

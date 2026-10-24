@@ -67,6 +67,7 @@ const meta = {
         start={journey.background.time}
         timeStepSize={journey.background.timeStepSize}
         showNile={journey.background.showNile}
+        landmark={journey.background.landmark}
       >
         <div className="relative flex size-full flex-col">
           <h1 className="pointer-events-none mt-0 inline-block pt-4 text-center font-pyramid text-2xl font-bold">

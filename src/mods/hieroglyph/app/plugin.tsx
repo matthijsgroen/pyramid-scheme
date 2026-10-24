@@ -49,7 +49,7 @@ const TableauComponent: FamilyPlugin<RewardCalculation>["Component"] = ({ puzzle
   // generated calculation. Without this the puzzle rendered an empty name/description (no story).
   const translatedTableaus = useTableauTranslations()
   const parsed = tableauEncounterArgsSchema.safeParse(ctx.encounterArgs)
-  const levelNr = (ctx.pathIndex ?? 0) + 1
+  const levelNr = (ctx.familyOrdinal ?? 0) + 1
   const authored = parsed.success
     ? translatedTableaus.find(
         t => t.tombJourneyId === ctx.journeyId && t.runNumber === parsed.data.runNr && t.levelNr === levelNr
@@ -68,7 +68,13 @@ const TableauComponent: FamilyPlugin<RewardCalculation>["Component"] = ({ puzzle
   return (
     <PuzzleFamilyShell onSolved={onSolved} onCancel={onCancel}>
       {({ solved }) => (
-        <TombPuzzle tableau={tableau} calculation={puzzle} difficulty={difficulty} onComplete={solved} />
+        <TombPuzzle
+          tableau={tableau}
+          calculation={puzzle}
+          difficulty={difficulty}
+          wall={ctx.tileset}
+          onComplete={solved}
+        />
       )}
     </PuzzleFamilyShell>
   )
@@ -86,11 +92,11 @@ if (isModEnabled("hieroglyph"))
       // symbols world-gen placed reachable fragments for (keyRequirements.ts, through the shared
       // getTableauLevel) — anything else can be unsolvable at 0/N. The floor's `{ runNr }` rides
       // ctx.encounterArgs on the same schema the world-gen resolver reads; levelNr is its
-      // structural pathIndex+1.
+      // familyOrdinal+1.
       const parsed = tableauEncounterArgsSchema.safeParse(ctx.encounterArgs)
       const journey = journeys.find(j => j.id === ctx.journeyId && j.exterior === "tomb")
       if (parsed.success && journey) {
-        const levelNr = (ctx.pathIndex ?? 0) + 1
+        const levelNr = (ctx.familyOrdinal ?? 0) + 1
         const tableau = getTableauLevel(ctx.journeyId, parsed.data.runNr, levelNr)
         if (tableau) {
           // Escalate by the room's position across the whole tomb (floor AND room), so two tableaus
@@ -98,7 +104,7 @@ if (isModEnabled("hieroglyph"))
           const roomsPerFloor = TABLEAUS_PER_FLOOR[journey.difficulty]
           const escalation = {
             position: (parsed.data.runNr - 1) * roomsPerFloor + levelNr,
-            total: (TOMB_JOURNEYS.find(t => t.id === ctx.journeyId)?.levelCount ?? 1) * roomsPerFloor,
+            total: (TOMB_JOURNEYS.find(t => t.id === ctx.journeyId)?.floorCount ?? 1) * roomsPerFloor,
           }
           return generateRewardCalculation(
             buildTombCalculationSettings(tombFormulaFor(ctx.journeyId), tableau, escalation),

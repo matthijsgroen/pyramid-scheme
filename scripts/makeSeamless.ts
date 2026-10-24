@@ -24,8 +24,9 @@
 
 import { basename } from "path"
 import sharp from "sharp"
+import { pathToFileURL } from "url"
 
-type Axis = "both" | "x" | "y"
+export type Axis = "both" | "x" | "y"
 
 const swapHalves = async (file: string, axis: Axis): Promise<Buffer> => {
   const image = sharp(file)
@@ -115,7 +116,7 @@ const roll = async (file: string, fraction: number): Promise<void> => {
   await sharp(rolled).png({ compressionLevel: 9 }).toFile(file)
 }
 
-const makeSeamless = async (file: string, axis: Axis): Promise<string> => {
+export const makeSeamless = async (file: string, axis: Axis): Promise<string> => {
   const { width, height } = await sharp(file).metadata()
   if (!width || !height) throw new Error(`${file}: no dimensions`)
 
@@ -152,7 +153,9 @@ const main = async (): Promise<void> => {
   }
 }
 
-main().catch(err => {
-  console.error(err)
-  process.exit(1)
-})
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch(err => {
+    console.error(err)
+    process.exit(1)
+  })
+}

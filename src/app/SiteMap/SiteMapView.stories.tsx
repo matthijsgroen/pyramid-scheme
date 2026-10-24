@@ -535,3 +535,33 @@ export const HandlesAndTheirDoors: Story = {
     revealAllCells: true,
   },
 }
+
+// THE EXPLORER AT A STAIR, going down and coming up: the stair's art is the node, so where he stands in
+// that room decides whether he reads as at the stair or swallowed by its shaft. starter_1 is two floors.
+const stairFloor = (floorIndex: number): FloorGrid => {
+  const floor = generatedWorldConfigs.starter_1?.flat()[floorIndex]
+  if (!floor) throw new Error(`no floor ${floorIndex} for starter_1`)
+  const result = assembleFloor(`starter_1:${floorIndex}`, floor, 7)
+  if (!result.success) throw new Error("world grid assembly failed")
+  return revealAll(result.grid)
+}
+
+export const ExplorerAtStairDown: Story = {
+  args: (() => {
+    const grid = stairFloor(0)
+    const stair = grid.cells
+      .flatMap((row, r) => row.map((cell, c) => ({ cell, at: [r, c] as const })))
+      .find(
+        ({ cell, at }) =>
+          cell.type === "room" && cell.stairId && (at[0] !== grid.entrancePos[0] || at[1] !== grid.entrancePos[1])
+      )
+    return { grid, revealAllCells: true, explorerPos: stair?.at ?? grid.entrancePos }
+  })(),
+}
+
+export const ExplorerAtStairUp: Story = {
+  args: (() => {
+    const grid = stairFloor(1)
+    return { grid, revealAllCells: true, explorerPos: grid.entrancePos }
+  })(),
+}

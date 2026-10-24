@@ -14,6 +14,13 @@ vi.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }))
 
+// The interior is its own screen; these tests only need a way to finish it.
+vi.mock("@/app/SiteMap/SiteMapScreen", () => ({
+  SiteMapScreen: ({ onSiteComplete }: { onSiteComplete: () => void }) => (
+    <button onClick={onSiteComplete}>finish interior</button>
+  ),
+}))
+
 // Long enough that levels 1–3 all exist — past `levelCount` the screen shows the completion
 // overlay instead of a board.
 const journeyData = allJourneys.find(j => j.exterior === "pyramid" && j.levelCount >= 4)!
@@ -124,5 +131,106 @@ describe("PyramidExpedition — focus", () => {
     expect(container.querySelectorAll('[tabindex="0"]')).toHaveLength(1)
     // …and the decorative layers are inert, so their inputs leave the tab order too.
     expect(container.querySelectorAll("div.absolute.inset-0[inert]")).toHaveLength(2)
+  })
+})
+
+describe("PyramidExpedition — leaving a reopened interior", () => {
+  beforeEach(async () => {
+    await clearGameData()
+  })
+
+  const interiorJourney = allJourneys.find(
+    j => j.exterior === "pyramid" && (j.siteConfigs?.length ?? 0) > 0 && j.levelCount >= 3
+  )!
+  const reopenedInterior: CombinedJourneyState = {
+    ...makeActiveJourney(1),
+    journeyId: interiorJourney.id,
+    completionCount: 0,
+    interiorLevelNr: 1,
+    journey: {
+      ...interiorJourney,
+      name: interiorJourney.id,
+      description: "",
+      lengthLabel: "short",
+    } as TranslatedJourney,
+  }
+
+  it("slides the solved board away filled in, not emptied", async () => {
+    const { container, getByText } = render(
+      <FezContext.Provider value={{ showConversation: () => {} }}>
+        <PyramidExpedition activeJourney={reopenedInterior} runNr={1} />
+      </FezContext.Provider>
+    )
+    await settle()
+
+    await act(async () => {
+      getByText("finish interior").click()
+      await new Promise(resolve => setTimeout(resolve, 400))
+    })
+
+    const outgoing = [...container.querySelectorAll<HTMLElement>("div.absolute.inset-0")].find(isThrownOffScreen)
+    expect(outgoing).toBeDefined()
+    const inputs = [...outgoing!.querySelectorAll("input")]
+    expect(inputs.length).toBeGreaterThan(0)
+    expect(inputs.filter(input => input.value === "")).toHaveLength(0)
+  })
+})
+
+describe("PyramidExpedition — a level without a board", () => {
+  beforeEach(async () => {
+    await clearGameData()
+  })
+
+  const boardlessJourney: CombinedJourneyState = {
+    ...makeActiveJourney(1),
+    completionCount: 0,
+    interiorLevelNr: null,
+    journey: {
+      ...journeyData,
+      siteConfigs: allJourneys.find(j => (j.siteConfigs?.length ?? 0) > 0)!.siteConfigs,
+      levels: [{ exterior: "caveMouth", board: false }],
+      name: "cave",
+      description: "",
+      lengthLabel: "short",
+    } as TranslatedJourney,
+  }
+  const screen = (state: CombinedJourneyState) => (
+    <FezContext.Provider value={{ showConversation: () => {} }}>
+      <PyramidExpedition activeJourney={state} runNr={1} />
+    </FezContext.Provider>
+  )
+
+  it("shows the way in and no board, and the way in opens the interior", async () => {
+    const { container, getByText, queryByText } = render(screen(boardlessJourney))
+    await settle()
+
+    expect(container.querySelectorAll('[tabindex="0"]')).toHaveLength(0)
+    expect(queryByText("finish interior")).toBeNull()
+
+    await act(async () => getByText("ui.enterSite").click())
+
+    expect(queryByText("finish interior")).not.toBeNull()
+  })
+
+  it("stands the cave mouth on the desert where the board would be", async () => {
+    const { container } = render(screen(boardlessJourney))
+    await settle()
+
+    expect(container.querySelector("[data-cave-mouth]")).not.toBeNull()
+  })
+
+  it("draws no board of its own and borrows none of the next level's as scenery", async () => {
+    const { container } = render(screen(boardlessJourney))
+    await settle()
+
+    expect(container.querySelectorAll("[inert] *")).toHaveLength(0)
+  })
+
+  it("reopens the interior, not the way in, when the player comes back mid-visit", async () => {
+    const { queryByText } = render(screen({ ...boardlessJourney, interiorLevelNr: 1 }))
+    await settle()
+
+    expect(queryByText("finish interior")).not.toBeNull()
+    expect(queryByText("ui.enterSite")).toBeNull()
   })
 })

@@ -443,18 +443,19 @@ describe("floorLock", () => {
     }
   })
 
-  it("seals a ward gate, because a key earned elsewhere cannot be proved from this floor", () => {
+  it("opens a ward gate off the floor: a held key nothing here throws", () => {
     const lock = floorLock(assembled(wardedTwice(), wardsCollide))!
-    const sealed = Object.entries(lock.mechanisms).filter(([id]) => id.startsWith("sealed "))
-    expect(sealed.length).toBeGreaterThan(0)
-    for (const [, mechanism] of sealed) {
-      expect(mechanism.states).toEqual(["shut"])
+    const offFloor = Object.entries(lock.mechanisms).filter(([id]) => id.startsWith("off-floor "))
+    expect(offFloor.length).toBeGreaterThan(0)
+    for (const [id, mechanism] of offFloor) {
+      expect(mechanism.states).toEqual(["held"])
       expect(mechanism.transitions).toEqual([])
-      expect(Object.values(mechanism.opens).flat()).toEqual([])
+      const owned = Object.entries(lock.gates).flatMap(([gateId, gate]) => (gate.owners.includes(id) ? [gateId] : []))
+      expect(mechanism.opens.held.sort()).toEqual(owned.sort())
     }
   })
 
-  it("makes a room asking for several keys a door as well, sealed by every one of them", () => {
+  it("makes an encounter asking for several keys a door as well, opened off the floor by every one of them", () => {
     const grid = assembled(switchFloor(), standsASwitch)
     const at = findRoom(
       grid,
@@ -467,15 +468,15 @@ describe("floorLock", () => {
     )
     // A tableau needing two hieroglyphs complete: the game refuses the step until both are held, and
     // nothing on the floor mints either, so every boundary it stands in has to come out shut.
-    const lock = floorLock(rewrite(grid, at, { requiredKeyIds: ["hiero:a", "hiero:b"] }))!
+    const lock = floorLock(rewrite(grid, at, { family: "tableau", requiredKeyIds: ["hiero:a", "hiero:b"] }))!
     const doorRegion = `door ${at[0]},${at[1]}`
     expect(lock.regions).toContain(doorRegion)
     const into = Object.values(lock.gates).filter(gate => gate.to === doorRegion)
     expect(into.length).toBeGreaterThan(0)
-    for (const gate of into) expect(new Set(gate.owners)).toEqual(new Set(["sealed hiero:a", "sealed hiero:b"]))
+    for (const gate of into) expect(new Set(gate.owners)).toEqual(new Set(["off-floor hiero:a", "off-floor hiero:b"]))
   })
 
-  it("seals a ward gate even when a chest on this floor mints the key it names", () => {
+  it("opens a ward gate off the floor even when a chest on this floor mints the key it names", () => {
     const grid = assembled(withFloorKey(), standsASwitch)
     const minted = new Set(
       grid.cells
@@ -484,13 +485,13 @@ describe("floorLock", () => {
     )
     const at = findRoom(grid, cell => !!cell.requiredKeyId && minted.has(cell.requiredKeyId))
     const keyId = (grid.cells[at[0]][at[1]] as RoomCell).requiredKeyId!
-    // The container rule is categorical: a ward key is earned elsewhere, so the door is shut because
-    // it is a ward door — not because this floor happened to mint nothing that opens it.
+    // A ward key is earned elsewhere because the door is a ward door — not because this floor happened to
+    // mint nothing that opens it.
     const lock = floorLock(rewrite(grid, at, { gateVariant: "tomb-key" }))!
     expect(lock.mechanisms[`key ${keyId}`]).toBeUndefined()
     const into = Object.values(lock.gates).filter(gate => gate.to === `door ${at[0]},${at[1]}`)
     expect(into.length).toBeGreaterThan(0)
-    for (const gate of into) expect(gate.owners).toEqual([`sealed ${keyId}`])
+    for (const gate of into) expect(gate.owners).toEqual([`off-floor ${keyId}`])
   })
 
   it("refuses a switch whose door does not carry the key the switch names", () => {

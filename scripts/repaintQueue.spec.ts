@@ -158,3 +158,18 @@ describe("an entry's own Import line", () => {
     expect(parse(entry(""))[0].importedBy).toContain("--slot=prop")
   })
 })
+
+describe("an entry's attachments", () => {
+  it("end where its section ends, so the next section's intro attaches nothing", () => {
+    const md = [
+      "### `starter/arch` — a doorway",
+      "**Attach:** `art/masters/surfaces/starter-floor.webp`",
+      "```\nprompt\n```",
+      "## Next section",
+      "Cut from `art/masters/surfaces/starter-floor.webp`.",
+      "### `starter/shelf` — shelving",
+      "```\nprompt\n```",
+    ].join("\n")
+    expect(parse(md)[0].attachments).toEqual(["art/masters/surfaces/starter-floor.webp"])
+  })
+})

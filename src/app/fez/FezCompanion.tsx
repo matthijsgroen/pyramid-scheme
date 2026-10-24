@@ -1,13 +1,16 @@
 import { useMemo, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { Fez } from "./Fez"
-import { useGameStorage } from "@/support/useGameStorage"
+import { latestGameValue, useGameStorage } from "@/support/useGameStorage"
 import { FezContext, type FezConversationResult } from "./context"
 import { shouldSkipConversation } from "./shouldSkipConversation"
+import { fezMeeting, hasMetFez, type JourneyProgress } from "./fezMeeting"
 
 export const FezCompanion: React.FC<{
   children: React.ReactNode
-}> = ({ children }) => {
+  /** How far the save has come through a journey — a save past the meeting's pyramid has met Fez. */
+  journeyProgress?: (journeyId: string) => JourneyProgress | undefined
+}> = ({ children, journeyProgress }) => {
   const [activeConversation, setActiveConversation] = useState<string | null>(null)
   const conversationQueue = useRef<
     {
@@ -41,10 +44,12 @@ export const FezCompanion: React.FC<{
         const entry = {
           conversation: conversationId,
           onComplete: (result: FezConversationResult) => {
-            setConversations(prev => ({
-              ...prev,
-              [conversationId]: true,
-            })).then(v => {
+            // A conversation dropped because Fez is not met yet stays unheard, so it can play once he is.
+            const recorded =
+              result === "unmet"
+                ? Promise.resolve(latestGameValue<Record<string, boolean>>("conversations") ?? {})
+                : setConversations(prev => ({ ...prev, [conversationId]: true }))
+            recorded.then(v => {
               // remove from queue
               conversationQueue.current = conversationQueue.current.filter(item => item !== entry)
               onComplete?.(result)
@@ -52,6 +57,10 @@ export const FezCompanion: React.FC<{
                 const nextConversation = conversationQueue.current[0]
                 if (v[nextConversation.conversation]) {
                   nextConversation.onComplete("seen-earlier")
+                } else if (result === "unmet" && nextConversation.conversation === conversationId) {
+                  // The same beat asked again: it would drop the same way, and re-activating the id
+                  // already active mounts nothing, so it would sit at the head of the queue for good.
+                  nextConversation.onComplete("unmet")
                 } else {
                   setActiveConversation(nextConversation.conversation)
                 }
@@ -69,15 +78,28 @@ export const FezCompanion: React.FC<{
     }),
     [conversations, loaded, setConversations, tutorialsEnabled]
   )
+  // Kept apart from the memo above: `showConversation` must stay stable while speakers come and go, or every
+  // caller that asks from an effect would ask again on each line.
+  const speaking = activeConversation !== null
+  const meeting = fezMeeting()
+  const met = hasMetFez({
+    meeting,
+    heard: conversations,
+    progress: meeting && journeyProgress?.(meeting.journeyId),
+  })
+  const value = useMemo(() => ({ ...contextValue, speaking, met }), [contextValue, speaking, met])
+
+  const beforeMeeting = activeConversation !== meeting?.conversation && !met
 
   return (
     <>
-      <FezContext.Provider value={contextValue}>{children}</FezContext.Provider>
+      <FezContext.Provider value={value}>{children}</FezContext.Provider>
       {createPortal(
         activeConversation && (
           <Fez
             key={activeConversation}
             conversation={activeConversation}
+            beforeMeeting={beforeMeeting}
             onComplete={result => {
               conversationQueue.current[0].onComplete(result)
             }}

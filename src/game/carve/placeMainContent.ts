@@ -42,6 +42,11 @@ export const placeMainContent = pass("placeMainContent", ["maze", "regions", "la
     placed.push(index)
   }
   if (placed.length < contentCount) return { retry: [] }
+  // A FLOOR WITH NO EXIT ENDS AT ITS GOAL CHEST: the main path's terminal is a dead end, and with no pillar to
+  // stand there the chest takes it, so no empty stub runs on past the last thing the floor holds.
+  const terminal = mainPath.length - 1
+  if (!state.lay && prep.config.config.exitOrStaircase === "none" && !seams.has(terminal))
+    placed[placed.length - 1] = terminal
 
   // EACH PUZZLE'S AUTHORED ORDINAL — 0-based, in path order — ASSIGNED ONCE, HERE, before a control gets
   // any chance to move one of these nodes. `k` indexes `config.rewards[k]`/`config.encountersByIndex[k]`, is

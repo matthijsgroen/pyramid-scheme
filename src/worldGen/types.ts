@@ -1,3 +1,4 @@
+import type { ActivityId } from "../game/activities"
 import type {
   DecorationKind,
   ForkDemand,
@@ -22,7 +23,7 @@ export type Difficulty = "starter" | "junior" | "expert" | "master" | "wizard"
 
 // One open reward type, shared: worldGen re-exports game/siteTypes rather than mirroring it
 // (worldGen→game is an allowed edge). Core enumerates no reward id; see the doc comment there.
-import type { TreasureReward, FragmentSlotReward, MapPieceReward, TombKeyReward } from "@/game/siteTypes"
+import type { TreasureReward, FragmentSlotReward, MapPieceReward, TombKeyReward, Tileset } from "@/game/siteTypes"
 export type { TreasureReward, FragmentSlotReward, MapPieceReward, TombKeyReward }
 
 export type SubSection = {
@@ -31,6 +32,8 @@ export type SubSection = {
   label?: string
   pathPuzzles: number
   difficulty: Difficulty
+  /** The tileset this path is drawn in. Mirrors game/siteTypes.ts. */
+  tileset?: Tileset
   end: "treasure" | "staircase" | { stairId: string }
   gate?:
     | {
@@ -57,6 +60,15 @@ export type SubSection = {
   /** Per-node encounter override: 0-based room index → family/tag, resolved from authored `nodes`
    * selectors. A room uses `encountersByIndex[k] ?? encounter`. Mirrors game/siteTypes.ts. */
   encountersByIndex?: Record<number, string | string[]>
+  /** Per-node authored activity, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
+  activitiesByIndex?: Record<number, ActivityId>
+  /** Per-node difficulty, resolved from `nodes` selectors: a room builds at `difficultiesByIndex[k] ?? difficulty`
+   * (see roomDifficulty). Mirrors game/siteTypes.ts. */
+  difficultiesByIndex?: Record<number, Difficulty>
+  /** `false` keeps generated loot out of this section. Mirrors game/siteTypes.ts. */
+  loot?: false
+  /** Per-node loot, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
+  lootByIndex?: Record<number, false>
   /** Opaque payload for whichever family renders this section's rooms (e.g. a tableau's
    * `{runNr}`) — mirrors game/siteTypes.ts's SubSection.encounterArgs. */
   encounterArgs?: unknown
@@ -80,8 +92,10 @@ export type SideSection = SubSection & {
 export type FloorConfig = {
   pathPuzzles: number
   difficulty: Difficulty
+  /** The tileset this floor is drawn in. Mirrors game/siteTypes.ts. */
+  tileset?: Tileset
   end: "treasure"
-  exitOrStaircase: "exit" | "staircase" | { stairId: string }
+  exitOrStaircase: "exit" | "none" | "staircase" | { stairId: string }
   entrance?: "stairhead" | { stairId: string }
   sideSections: SideSection[]
   mainEndReward?: TreasureReward
@@ -91,6 +105,14 @@ export type FloorConfig = {
    * authored `nodes` selectors (e.g. the last room → "capstone"). Room k uses
    * `encountersByIndex[k] ?? encounter`. Mirrors game/siteTypes.ts. */
   encountersByIndex?: Record<number, string | string[]>
+  /** Per-node authored activity for the main path, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
+  activitiesByIndex?: Record<number, ActivityId>
+  /** Per-node difficulty for the main path, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
+  difficultiesByIndex?: Record<number, Difficulty>
+  /** `false` keeps generated loot out of this floor. Mirrors game/siteTypes.ts. */
+  loot?: false
+  /** Per-node loot for the main path, resolved from `nodes` selectors. Mirrors game/siteTypes.ts. */
+  lootByIndex?: Record<number, false>
   corridorStraightness?: number
   packing?: number
   /** The seed this floor carves at, in place of the one its address derives. Read inside the assembler, so
@@ -158,4 +180,4 @@ export type FloorConfig = {
 
 export type SiteConfig = FloorConfig[]
 
-export type TombJourneyDef = { id: string; tier: Tier; levelCount: number }
+export type TombJourneyDef = { id: string; tier: Tier; floorCount: number; levelCount: number }

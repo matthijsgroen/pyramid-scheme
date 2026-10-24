@@ -1,4 +1,5 @@
 import { DEFAULT_CONTROL_ROLE } from "../encounterFallback"
+import { roomDifficulty, roomTileset } from "../roomDifficulty"
 import type { EncounterResolution } from "../siteAssembler"
 import type { KeyColor, MechanismRecord, SideSection, SubSection } from "../siteTypes"
 import type { StatefulControl } from "../obstacles"
@@ -77,21 +78,36 @@ export const controlRoomSpec = (
   mechanismId: control.id,
 })
 
+/** Counts, per family, the rooms of one chain as they are resolved in path order. The one place a room's
+ * `familyOrdinal` is computed: every reader takes it off the room. */
+export const familyOrdinals = () => {
+  const seen = new Map<string, number>()
+  return (familyId: string): number => {
+    const ordinal = seen.get(familyId) ?? 0
+    seen.set(familyId, ordinal + 1)
+    return ordinal
+  }
+}
+
 // THE ROOMS A SIDE SECTION IS MADE OF, written once for a branch and for a section filled into laid nodes.
 export const puzzleRoomSpec = (
   prep: FloorPrep,
   section: SideSection | SubSection,
   positional: string,
-  pi: number
+  pi: number,
+  ordinalOf: (familyId: string) => number
 ): RoomSpec => {
   const { resolveEncounter, resolveKeyRequirements, resolveBoardIndex, floorRef } = prep.input
   const reward = section.rewards?.[pi]
+  const authoredActivity = section.activitiesByIndex?.[pi]
   const override = section.encountersByIndex?.[pi]
   const family =
     override !== undefined ? resolveEncounter(override, "puzzle") : resolveEncounter(section.encounter, "puzzle")
+  const familyOrdinal = ordinalOf(family.familyId)
   const requiredKeyIds = resolveKeyRequirements(family.familyId, {
     ...floorRef,
     pathIndex: pi,
+    familyOrdinal,
     encounterArgs: section.encounterArgs,
   })
   const boardIndex = resolveBoardIndex?.(family.familyId, { section: positional, pathIndex: pi })
@@ -103,13 +119,16 @@ export const puzzleRoomSpec = (
     family: family.familyId,
     tags: family.tags,
     pathIndex: pi,
+    familyOrdinal,
     ...(boardIndex !== undefined ? { boardIndex } : {}),
     ...(section.encounterArgs !== undefined ? { encounterArgs: section.encounterArgs } : {}),
-    difficulty: section.difficulty,
+    difficulty: roomDifficulty(section, pi),
+    ...roomTileset(section, prep.config.config, pi),
     ...(section.theme !== undefined ? { theme: section.theme } : {}),
     ...(section.role !== undefined ? { role: section.role } : {}),
     ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
     ...(reward ? { reward } : {}),
+    ...(authoredActivity ? { authoredActivity } : {}),
   }
 }
 

@@ -1,0 +1,16 @@
+// designed by: Claude
+// junior. A lever opens the ledge, and the drop below it lands beside the lever that opens both the stair back up
+// and the gallery that holds the last lever: a drop is a way down, never back, until you open the way.
+
+in -- hall
+hall -- side
+hall -[C]- ledge
+ledge >> pit
+pit -[B]- hall
+hall -[B]- gallery
+hall -[A]- out
+C toggle @side
+B toggle @pit
+A toggle @gallery
+pit *
+gallery *

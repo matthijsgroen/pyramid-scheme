@@ -1,5 +1,6 @@
 import type { SiteConfig, SubSection, Difficulty } from "./types"
 import { hashString } from "@/support/hashString"
+import { roomDifficulty } from "@/game/roomDifficulty"
 
 // A role (a family tag, or a list of tags meaning "any of these") resolved to a concrete family id for a
 // slot at `tier`, deterministically in `seed`. Injected from src/mods (allFamilyMeta's allocateEncounter-
@@ -40,7 +41,7 @@ const roleOf = (authored: string | string[] | undefined, fallback: string): stri
 // tag is the node's role itself (a capstone pool is single-family, so the seed is inert there).
 const assignByIndex = (
   byIndex: Record<number, string | string[]> | undefined,
-  difficulty: Difficulty,
+  section: Chain,
   seedFor: (node: string) => number,
   node: string,
   allocate: EncounterAllocator
@@ -48,7 +49,7 @@ const assignByIndex = (
   if (!byIndex) return
   for (const key of Object.keys(byIndex)) {
     const role = byIndex[+key]
-    byIndex[+key] = one(allocate, role, difficulty, seedFor(`${node}#${key}`))
+    byIndex[+key] = one(allocate, role, roomDifficulty(section, +key), seedFor(`${node}#${key}`))
   }
 }
 
@@ -56,6 +57,7 @@ const assignByIndex = (
 type Chain = {
   pathPuzzles: number
   difficulty: Difficulty
+  difficultiesByIndex?: Record<number, Difficulty>
   encounter?: string | string[]
   encountersByIndex?: Record<number, string | string[]>
 }
@@ -75,9 +77,16 @@ const dealChain = (chain: Chain, role: string | string[], seed: number, allocate
     chain.encounter = one(allocate, role, chain.difficulty, seed)
     return
   }
-  const hand = allocate(role, chain.difficulty, seed, open.length)
-  open.forEach((room, i) => (byIndex[room] = hand[i]))
-  chain.encounter = hand[0]
+  // One hand per difficulty: a room a node retiered is dealt from its own tier's pool, the rest from the chain's.
+  const tiers = [...new Set(open.map(room => roomDifficulty(chain, room)))]
+  const hands = new Map(
+    tiers.map(tier => {
+      const rooms = open.filter(room => roomDifficulty(chain, room) === tier)
+      return [tier, { rooms, hand: allocate(role, tier, seed, rooms.length) }] as const
+    })
+  )
+  for (const { rooms, hand } of hands.values()) rooms.forEach((room, i) => (byIndex[room] = hand[i]))
+  chain.encounter = (hands.get(chain.difficulty) ?? [...hands.values()][0]).hand[0]
   chain.encountersByIndex = byIndex
 }
 
@@ -100,7 +109,7 @@ export const assignEncounters = (
 
         // Per-node overrides (authored `nodes` selectors — e.g. the last room's capstone). Baked first:
         // an authored room owns its index, and the deal below fills only what is left.
-        assignByIndex(floor.encountersByIndex, floor.difficulty, seedFor, "main", allocate)
+        assignByIndex(floor.encountersByIndex, floor, seedFor, "main", allocate)
         // Main path rooms (only when the floor actually has them).
         if (floor.pathPuzzles > 0) {
           // **The role is kept, not just the family it resolved to.** Baking used to write the answer over
@@ -128,7 +137,7 @@ const assignSection = (
   isTrap?: IsTrapFamily
 ): void => {
   // Authored per-node overrides first, so the deal below fills only the rooms nothing has named.
-  assignByIndex(section.encountersByIndex, section.difficulty, seedFor, node, allocate)
+  assignByIndex(section.encountersByIndex, section, seedFor, node, allocate)
   // Resolve this section when it has puzzle rooms (dealt, one family a room) OR when it authors an
   // encounter with no chain (e.g. a shop: `pathPuzzles: 0, encounter: "shop"` — with no chain,
   // `encounter` describes the section's single end node). A chainless section with no authored

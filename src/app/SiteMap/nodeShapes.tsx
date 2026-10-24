@@ -2,7 +2,8 @@ import type { CellState, GateVariant, KeyColor } from "@/game/siteTypes"
 import type { TileStatus } from "@/game/sequence"
 import { sequenceTileLook } from "./sequenceTileLook"
 import { ART_IMAGE_RENDERING, sharedTileUrl } from "./tileAssets"
-import type { Difficulty } from "@/data/difficultyLevels"
+import { type Difficulty, difficulties } from "@/data/difficultyLevels"
+import { METALS } from "@/ui/tokens/metalPalette"
 import { keyColorHex } from "@/ui/tokens/keyColors"
 import { CELL, NODE_RADIUS_FORK, NODE_RADIUS_LARGE, NODE_RADIUS_PUZZLE, PROP_H } from "./mapScale"
 import type { ShapeKind } from "./nodeKinds"
@@ -50,6 +51,17 @@ export const CompletedBadge = ({ r }: { r: number }) => (
     <text textAnchor="middle" dominantBaseline="central" fontSize={8} fill="#60c080" style={{ userSelect: "none" }}>
       ✓
     </text>
+  </g>
+)
+
+// A finished room that plays its scene again when walked back into (roomReplays.ts)
+export const ReplayBadge = ({ r }: { r: number }) => (
+  <g data-replay-badge transform={`translate(${r - 7}, ${r - 7})`}>
+    <circle r={7} fill="#14182a" stroke="#6a80c8" strokeWidth={1.5} />
+    {/* ⏯ drawn rather than typed: an emoji glyph brings its own tile and differs per platform. */}
+    <path d="M -4 -3 L -4 3 L 0 0 Z" fill="#a8b8f0" />
+    <rect x={1} y={-3} width={1.2} height={6} fill="#a8b8f0" />
+    <rect x={3} y={-3} width={1.2} height={6} fill="#a8b8f0" />
   </g>
 )
 
@@ -568,16 +580,11 @@ const tombGateStroke: Record<CellState, string> = {
   completed: "#7060c0",
 }
 
-// Ward (tomb-key) gate tint per difficulty tier — `visible` is the dimmer locked hue, `reachable`
-// the brighter one (also used for `completed`). Hues track the tier material palette
-// (difficultyColors.ts): stone / amber / slate / gold / emerald.
-const DIFFICULTY_GATE_ACCENT: Record<Difficulty, { visible: string; reachable: string }> = {
-  starter: { visible: "#8a857e", reachable: "#c4bcb2" },
-  junior: { visible: "#c2740e", reachable: "#f59e0b" },
-  expert: { visible: "#586274", reachable: "#94a3b8" },
-  master: { visible: "#c2a10b", reachable: "#eab308" },
-  wizard: { visible: "#0e9268", reachable: "#10b981" },
-}
+// A ward gate is drawn in its key's metal: the plain metal while it is only seen, its light surface once
+// it can be reached.
+const DIFFICULTY_GATE_ACCENT: Record<Difficulty, { visible: string; reachable: string }> = Object.fromEntries(
+  difficulties.map(tier => [tier, { visible: METALS[tier].material, reachable: METALS[tier].light }])
+) as Record<Difficulty, { visible: string; reachable: string }>
 
 const treasureFill: Record<CellState, string> = {
   fogged: "#1a1208",

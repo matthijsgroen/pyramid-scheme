@@ -4,6 +4,7 @@ import { findPath } from "../../game/gridNavigation"
 import { CELL, EXPLORER_DOT_RADIUS, cellCenter } from "./mapScale"
 import { sharedTileFrames } from "./tileAssets"
 import { tierPalette } from "./tileMaterials"
+import type { StandingOffset } from "./standingSpot"
 
 type Point = { x: number; y: number }
 
@@ -42,6 +43,9 @@ type Props = {
   carrying?: boolean
   /** Fires once the dot visually settles at `pos` — on arrival, on an instant snap, and on mount. */
   onArrive?: () => void
+  /** Where in its room the figure stands, off the node's centre (see `standingOffset`). The walk between
+   * cells still runs centre to centre; only the spot it sets out from and the spot it stops at move. */
+  standAt?: (r: number, c: number) => StandingOffset
 }
 
 export const ExplorerDot = ({
@@ -51,10 +55,16 @@ export const ExplorerDot = ({
   color = "#ffd060",
   carrying = false,
   onArrive,
+  standAt,
 }: Props) => {
   // The map lays cells out on a stretched pitch so every wall has a place of its own — the dot walks
   // between floor-square centres, wherever those land.
   const toPixel = ([r, c]: readonly [number, number]): Point => {
+    const { cx, cy } = cellCenter(r, c)
+    const { dx, dy } = standAt?.(r, c) ?? { dx: 0, dy: 0 }
+    return { x: cx + dx, y: cy + dy }
+  }
+  const throughPixel = ([r, c]: readonly [number, number]): Point => {
     const { cx, cy } = cellCenter(r, c)
     return { x: cx, y: cy }
   }
@@ -105,7 +115,7 @@ export const ExplorerDot = ({
       onArriveRef.current?.()
       return
     }
-    const waypoints = route.map(toPixel)
+    const waypoints = route.map((at, i) => (i === 0 || i === route.length - 1 ? toPixel(at) : throughPixel(at)))
     const dest = waypoints[waypoints.length - 1]
 
     // Snap if mid-glide

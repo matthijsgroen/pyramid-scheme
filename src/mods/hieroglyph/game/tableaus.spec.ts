@@ -11,7 +11,7 @@ import type { Difficulty } from "@/data/difficultyLevels"
 const tombJourneys = TOMB_JOURNEYS.map(tomb => ({
   id: tomb.id,
   difficulty: tomb.tier as Difficulty,
-  levelCount: tomb.levelCount,
+  floorCount: tomb.floorCount,
 }))
 
 describe("Tableau System", () => {
@@ -22,7 +22,7 @@ describe("Tableau System", () => {
   describe("Basic Structure", () => {
     it("generates TABLEAUS_PER_FLOOR tableaux per tomb floor", () => {
       const expectedTotal = tombJourneys.reduce(
-        (sum, tomb) => sum + tomb.levelCount * TABLEAUS_PER_FLOOR[tomb.difficulty],
+        (sum, tomb) => sum + tomb.floorCount * TABLEAUS_PER_FLOOR[tomb.difficulty],
         0
       )
       expect(tableauLevels).toHaveLength(expectedTotal)
@@ -42,12 +42,12 @@ describe("Tableau System", () => {
   })
 
   describe("Tomb Distribution", () => {
-    it("has levelCount × TABLEAUS_PER_FLOOR tableaus per tomb, levelNr 1..N on each floor", () => {
+    it("has floorCount × TABLEAUS_PER_FLOOR tableaus per tomb, levelNr 1..N on each floor", () => {
       for (const tomb of tombJourneys) {
         const n = TABLEAUS_PER_FLOOR[tomb.difficulty]
         const tombTableaux = tableauLevels.filter(t => t.tombJourneyId === tomb.id)
-        expect(tombTableaux).toHaveLength(tomb.levelCount * n)
-        for (let floor = 1; floor <= tomb.levelCount; floor++) {
+        expect(tombTableaux).toHaveLength(tomb.floorCount * n)
+        for (let floor = 1; floor <= tomb.floorCount; floor++) {
           const rooms = tombTableaux.filter(t => t.runNumber === floor)
           expect(rooms.map(t => t.levelNr).sort((a, b) => a - b)).toEqual(Array.from({ length: n }, (_, i) => i + 1))
         }
@@ -233,7 +233,7 @@ describe("Tableau System", () => {
     it("creates a representative tableau for the expert tomb's last floor", () => {
       const expertTomb = tombJourneys.find(j => j.id === "expert_treasure_tomb")!
       const lastTableau = translatedTableauLevels.find(
-        (t: TableauLevel) => t.tombJourneyId === "expert_treasure_tomb" && t.runNumber === expertTomb.levelCount
+        (t: TableauLevel) => t.tombJourneyId === "expert_treasure_tomb" && t.runNumber === expertTomb.floorCount
       )!
       expect(lastTableau.symbolCount).toBe(4)
       expect(lastTableau.levelNr).toBe(1)
@@ -243,10 +243,10 @@ describe("Tableau System", () => {
     it("creates a representative tableau for the wizard tomb's last floor", () => {
       const wizardTomb = tombJourneys.find(j => j.id === "wizard_treasure_tomb")!
       const lastTableau = translatedTableauLevels.find(
-        (t: TableauLevel) => t.tombJourneyId === "wizard_treasure_tomb" && t.runNumber === wizardTomb.levelCount
+        (t: TableauLevel) => t.tombJourneyId === "wizard_treasure_tomb" && t.runNumber === wizardTomb.floorCount
       )!
       expect(lastTableau.tombJourneyId).toBe("wizard_treasure_tomb")
-      expect(lastTableau.runNumber).toBe(wizardTomb.levelCount)
+      expect(lastTableau.runNumber).toBe(wizardTomb.floorCount)
       expect(lastTableau.levelNr).toBe(1)
       expect(lastTableau.symbolCount).toBe(5)
       expect(lastTableau.inventoryIds).toHaveLength(5)

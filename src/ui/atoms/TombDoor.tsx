@@ -1,29 +1,49 @@
-import type { Difficulty } from "@/data/difficultyLevels"
+import type { Tileset } from "@/game/siteTypes"
 import clsx from "clsx"
-import type { FC, PropsWithChildren } from "react"
+import type { FC, PropsWithChildren, Ref } from "react"
 import { imageMap, WALL_SIZE } from "./tombImageMap"
 
-export const TombDoor: FC<PropsWithChildren<{ className?: string; open?: boolean; difficulty: Difficulty }>> = ({
-  children,
-  className,
-  difficulty,
-  open = false,
-}) => {
-  const settings = imageMap[difficulty]
+/** Where the surrounding wall lies behind the door, in CSS background terms. */
+export type WallPlacement = { size: string; position: string }
+
+// The scrim the encounter frame lays over its wall (EncounterModal, stone-900 at 55%): a door cut from that
+// wall wears it too, or it reads as a lighter panel set into the stone.
+const SCRIM = "linear-gradient(rgb(28 25 23 / 0.55), rgb(28 25 23 / 0.55))"
+
+export const TombDoor: FC<
+  PropsWithChildren<{
+    className?: string
+    open?: boolean
+    wall: Tileset
+    /** Set, the door shows exactly the stretch of wall behind it, so shut it cannot be told from the wall. */
+    inWall?: WallPlacement
+    ref?: Ref<HTMLDivElement>
+  }>
+> = ({ children, className, wall, inWall, open = false, ref }) => {
+  const settings = imageMap[wall]
   return (
-    <div className={clsx(settings.behind, "perspective-midrange perspective-origin-left", className)}>
+    <div ref={ref} className={clsx(settings.behind, "perspective-midrange perspective-origin-left", className)}>
       <div
         className={clsx(
           settings.color,
           "relative flex size-full origin-left flex-col items-center justify-start pb-4 transition-transform duration-2000 ease-in-out transform-3d",
           open && "rotate-y-90"
         )}
-        style={{
-          backgroundImage: `url(${settings.image})`,
-          backgroundSize: WALL_SIZE,
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
+        style={
+          inWall
+            ? {
+                backgroundImage: `${SCRIM}, url(${settings.image})`,
+                backgroundSize: `100% 100%, ${inWall.size}`,
+                backgroundPosition: `0 0, ${inWall.position}`,
+                backgroundRepeat: "no-repeat",
+              }
+            : {
+                backgroundImage: `url(${settings.image})`,
+                backgroundSize: WALL_SIZE,
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+              }
+        }
       >
         {children}
       </div>

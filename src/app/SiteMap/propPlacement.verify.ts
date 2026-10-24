@@ -72,7 +72,8 @@ describe("props stay out of the way", () => {
       levels.flat().forEach((floor, i) => {
         const result = assembleFloor(`${siteId}:${i}`, floor, 7)
         if (!result.success) return
-        for (const [key] of buildRoomClaims(result.grid).decorationAt) {
+        // Every cell a prop covers, not only its anchor: a wide prop stands on all of them.
+        for (const key of buildRoomClaims(result.grid).decorationCells) {
           props++
           const [r, c] = key.split(",").map(Number)
           // A claim may reach one cell outside the grid; anything off-grid is void by definition.

@@ -4,9 +4,10 @@
 
 First-encounter explanations for every mechanic that needs one, layered on top
 of the core loop rather than woven in. Shipped onboarding lives in Fez
-conversations (`public/locales/*/fez.json`) and one-time flags in game storage;
-mechanic tutorials use a lightweight modal/banner, not Fez (Fez stays for
-narrative moments).
+conversations (`public/locales/*/fez.json`) and one-time flags in game storage.
+Fez teaches the mechanics too: he is the expert of the pair. Before he is met
+(the exterior and floor 0 of `starter_1`, [story/review.md](story/review.md))
+the explorer hints only where a board does not show its own rules.
 
 The copy that ships in the meantime is audited in [story/shipped-copy.md](story/shipped-copy.md) — 37 of
 Fez's 59 lines predate the explorer, and rewriting them is a different fix from the one below rather than a
@@ -14,8 +15,7 @@ substitute for it.
 
 ## Not yet built — first-encounter tutorials
 
-One-shot flags in `useProgression` (or a `useTutorials` slice), `seenTutorials:
-Set<string>`. Each mechanic checks its flag before showing, sets it on dismiss.
+One-shot flags in `useProgression` (or a `useTutorials` slice), `seenTutorials: Set<string>`. Each mechanic checks its flag before showing, sets it on dismiss.
 
 - **Puzzle rules** — first encounter with each family (Sumplete, Tableau, Crocodile); explain win condition, skip on revisit.
 - **Traps** — first trap room: timed challenge, health cost on fail, blocked at 1 half-heart.

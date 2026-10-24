@@ -144,6 +144,15 @@ export type JourneyAPI = {
   /** Enters pyramid `levelNr` from the travel map, where the player stood in it when they last backed out of it to
    *  the map (`pyramidPositions`), or at its entrance; where they stand now is remembered for the pyramid they left. */
   visitLevel: (journeyId: string, levelNr: number) => Promise<unknown>
+  /** Makes `journeyId` the active journey with site `levelNr`'s interior open and the explorer standing at
+   *  `address` (null: the entrance), starting the journey if it never was. A develop-mode jump. With
+   *  `walkedOnto` the cell is written down explored, as walking onto it would, so he can move from it. */
+  enterAt: (
+    journeyId: string,
+    levelNr: number,
+    address: string | null,
+    walkedOnto?: { sectionHash: string; cellId: string }
+  ) => Promise<unknown>
   nextJourneySeed: (journeyId: string) => number
   getJourney: (journeyId: string) => CombinedJourneyState | undefined
   completeJourney: () => void
@@ -223,6 +232,33 @@ export type JourneyAPI = {
 
 const knownJourneyIds = journeyData.map(j => j.id)
 
+/** `j` with one cell written down explored on level `levelNr`. Two keys, on purpose: exploration is filed by the
+ * section's AUTHORING address, the coordinate archive beside it stays filed by the structural hash it was always
+ * written under, so a later re-keying can still match it. Both go when the reshape drops the archive. */
+const withExplored = (
+  j: StoredJourneyStateV3,
+  levelNr: number,
+  sectionHash: string,
+  cellId: string,
+  address?: string | null
+): StoredJourneyStateV3 => {
+  const key = `${levelNr}:${sectionHash}`
+  const cellKey = address ? keyOfAddress(address) : undefined
+  const sectionKey = address ? `${levelNr}:${sectionOfAddress(address)}` : key
+  const coordinates = j.exploredSections[key] ?? []
+  const keys = j.exploredCells?.[sectionKey] ?? []
+  const haveCoordinate = coordinates.includes(cellId)
+  const haveKey = !cellKey || keys.includes(cellKey)
+  if (haveCoordinate && haveKey) return j
+  return {
+    ...j,
+    // The cell key is what the map restores from. The coordinate is written alongside it purely
+    // as the archive a re-keying reads (see `cellKeyVersion`), and goes when the floors move.
+    exploredSections: haveCoordinate ? j.exploredSections : { ...j.exploredSections, [key]: [...coordinates, cellId] },
+    ...(cellKey && !haveKey ? { exploredCells: { ...(j.exploredCells ?? {}), [sectionKey]: [...keys, cellKey] } } : {}),
+  }
+}
+
 /** A level's entries of a level-keyed record, by the address under the level. */
 const atLevelMap = (levelNr: number, entries: Record<string, string> | undefined): Map<string, string> => {
   const prefix = `${levelNr}:`
@@ -264,6 +300,20 @@ const forgetting = (j: StoredJourneyStateV3, levelNr: number) => {
 // useOfflineStorage look like a different default to anything comparing by identity.
 const INITIAL_STORAGE_VERSIONS = { journeys: 3, inventory: 1, answers: 1 }
 const NO_JOURNEYS: StoredJourneyStateV3[] = []
+
+const freshJourney = (journeyId: string): StoredJourneyStateV3 => ({
+  journeyId,
+  levelNr: 1,
+  completionCount: 0,
+  active: true,
+  exploredSections: {},
+  position: null,
+  interiorLevelNr: null,
+  // Born current: a journey started under this release has never been keyed any other way.
+  cellKeyVersion: CELL_KEY_VERSION,
+  mechanismSlotVersion: MECHANISM_SLOT_VERSION,
+  relaidFloorsVersion: RELAID_FLOORS_VERSION,
+})
 
 export const useJourneys = (): JourneyAPI => {
   const [storageVersions, setStorageVersion, versionLoaded] = useGameStorage<{
@@ -366,21 +416,28 @@ export const createJourneysV3Api = ({
         )
       )
     }
-    const newJourney: StoredJourneyStateV3 = {
-      journeyId: journey.id,
-      levelNr: 1,
-      completionCount: 0,
-      active: true,
-      exploredSections: {},
-      position: null,
-      interiorLevelNr: null,
-      // Born current: a journey started under this release has never been keyed any other way.
-      cellKeyVersion: CELL_KEY_VERSION,
-      mechanismSlotVersion: MECHANISM_SLOT_VERSION,
-      relaidFloorsVersion: RELAID_FLOORS_VERSION,
-    }
-    return Promise.resolve(setJourneys(prev => [...prev, newJourney]))
+    return Promise.resolve(setJourneys(prev => [...prev, freshJourney(journey.id)]))
   }
+
+  const enterAt: JourneyAPI["enterAt"] = (journeyId, levelNr, address, walkedOnto) =>
+    Promise.resolve(
+      setJourneys(prev => {
+        const placed = (j: StoredJourneyStateV3): StoredJourneyStateV3 => ({
+          ...(address && walkedOnto ? withExplored(j, levelNr, walkedOnto.sectionHash, walkedOnto.cellId, address) : j),
+          active: true,
+          levelNr,
+          interiorLevelNr: levelNr,
+          position: null,
+          // A save resumes only at an authored place, as updatePosition files one; a corridor is only stood on.
+          positionKey: address && isPlaceAddress(address) ? address : null,
+          standingKey: address,
+        })
+        const others = prev.map(j =>
+          j.journeyId === journeyId ? placed(j) : j.active ? { ...j, active: false, interiorLevelNr: null } : j
+        )
+        return prev.some(j => j.journeyId === journeyId) ? others : [...others, placed(freshJourney(journeyId))]
+      })
+    )
 
   const completeJourney = () => {
     if (!activeJourneyId) return
@@ -450,32 +507,8 @@ export const createJourneysV3Api = ({
   const markCellExplored = (sectionHash: string, cellId: string, address?: string | null) => {
     if (!activeJourneyId) return
     const levelNr = levelOf(activeJourneyId)
-    // Two keys, on purpose: exploration is filed by the section's AUTHORING address, the coordinate
-    // archive beside it stays filed by the structural hash it was always written under, so a later
-    // re-keying can still match it. Both go when the reshape drops the archive.
-    const key = `${levelNr}:${sectionHash}`
-    const cellKey = address ? keyOfAddress(address) : undefined
-    const sectionKey = address ? `${levelNr}:${sectionOfAddress(address)}` : key
     setJourneys(prev =>
-      prev.map(j => {
-        if (j.journeyId !== activeJourneyId) return j
-        const coordinates = j.exploredSections[key] ?? []
-        const keys = j.exploredCells?.[sectionKey] ?? []
-        const haveCoordinate = coordinates.includes(cellId)
-        const haveKey = !cellKey || keys.includes(cellKey)
-        if (haveCoordinate && haveKey) return j
-        return {
-          ...j,
-          // The cell key is what the map restores from. The coordinate is written alongside it purely
-          // as the archive a re-keying reads (see `cellKeyVersion`), and goes when the floors move.
-          exploredSections: haveCoordinate
-            ? j.exploredSections
-            : { ...j.exploredSections, [key]: [...coordinates, cellId] },
-          ...(cellKey && !haveKey
-            ? { exploredCells: { ...(j.exploredCells ?? {}), [sectionKey]: [...keys, cellKey] } }
-            : {}),
-        }
-      })
+      prev.map(j => (j.journeyId === activeJourneyId ? withExplored(j, levelNr, sectionHash, cellId, address) : j))
     )
   }
 
@@ -832,9 +865,8 @@ export const createJourneysV3Api = ({
     const j = journeys.find(j => j.journeyId === journeyId)
     const levels = new Set<number>()
     if (!j?.floorExploration) return levels
-    // Only levels this journey still has a node for. A tomb's earliest runs filed floors under the
-    // levels its exterior used to count, and it now re-enters level 1 from every node: those entries
-    // are unreachable, and counting them left the journey card pulsing at a tomb with nothing left.
+    // Only levels this journey still has a node for (one per site): an entry filed under a higher
+    // level is unreachable, and counting it left the journey card pulsing with nothing left to visit.
     const nodes = journeyData.find(info => info.id === journeyId)?.levelCount ?? 1
     for (const [key, entry] of Object.entries(j.floorExploration)) {
       const level = Number(key.split(":")[0])
@@ -854,6 +886,7 @@ export const createJourneysV3Api = ({
     nextJourneySeed,
     startJourney,
     visitLevel,
+    enterAt,
     completeJourney,
     cancelJourney,
     completeLevel,

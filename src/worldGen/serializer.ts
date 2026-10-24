@@ -56,9 +56,17 @@ const serializeGate = (g: NonNullable<SideSection["gate"]>): string =>
     .map(([k, v]) => `${k}: ${serializeValue(v)}`)
     .join(", ")} }`
 
+const serializeLootByIndex = (m: Record<number, false>): string =>
+  `{ ${Object.keys(m)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .map(k => `${k}: false`)
+    .join(", ")} }`
+
 const serializeSideSection = (s: SideSection): string => {
   const endStr = typeof s.end === "object" ? `{ stairId: "${s.end.stairId}" }` : `"${s.end}"`
   const parts = [`pathPuzzles: ${s.pathPuzzles}`, `difficulty: "${s.difficulty}"`, `end: ${endStr}`]
+  if (s.tileset !== undefined) parts.splice(2, 0, `tileset: "${s.tileset}"`)
   if (s.label !== undefined) parts.unshift(`label: ${JSON.stringify(s.label)}`)
   if (s.gate) parts.push(`gate: ${serializeGate(s.gate)}`)
   if (s.endReward) parts.push(`endReward: ${serializeReward(s.endReward)}`)
@@ -73,6 +81,13 @@ const serializeSideSection = (s: SideSection): string => {
   if (s.role) parts.push(`role: ${serializeEncounter(s.role)}`)
   if (s.encountersByIndex && Object.keys(s.encountersByIndex).length)
     parts.push(`encountersByIndex: ${serializeEncountersByIndex(s.encountersByIndex)}`)
+  if (s.activitiesByIndex && Object.keys(s.activitiesByIndex).length)
+    parts.push(`activitiesByIndex: ${serializeEncountersByIndex(s.activitiesByIndex)}`)
+  if (s.difficultiesByIndex && Object.keys(s.difficultiesByIndex).length)
+    parts.push(`difficultiesByIndex: ${serializeEncountersByIndex(s.difficultiesByIndex)}`)
+  if (s.loot === false) parts.push(`loot: false`)
+  if (s.lootByIndex && Object.keys(s.lootByIndex).length)
+    parts.push(`lootByIndex: ${serializeLootByIndex(s.lootByIndex)}`)
   if (s.sideSections?.length)
     parts.push(`sideSections: [${s.sideSections.map(sub => serializeSideSection(sub as SideSection)).join(", ")}]`)
   return `{ ${parts.join(", ")} }`
@@ -164,6 +179,7 @@ const floorFieldEmitters: {
 } = {
   pathPuzzles: v => `pathPuzzles: ${v}`,
   difficulty: v => `difficulty: "${v}"`,
+  tileset: v => `tileset: "${v}"`,
   end: () => `end: "treasure"`,
   exitOrStaircase: v =>
     typeof v === "object" ? `exitOrStaircase: { stairId: "${v.stairId}" }` : `exitOrStaircase: "${v}"`,
@@ -179,6 +195,10 @@ const floorFieldEmitters: {
   wallDecorations: v => (v.length ? `wallDecorations: ${JSON.stringify(v)}` : null),
   role: v => `role: ${serializeEncounter(v)}`,
   encountersByIndex: v => (Object.keys(v).length ? `encountersByIndex: ${serializeEncountersByIndex(v)}` : null),
+  activitiesByIndex: v => (Object.keys(v).length ? `activitiesByIndex: ${serializeEncountersByIndex(v)}` : null),
+  difficultiesByIndex: v => (Object.keys(v).length ? `difficultiesByIndex: ${serializeEncountersByIndex(v)}` : null),
+  loot: () => `loot: false`,
+  lootByIndex: v => (Object.keys(v).length ? `lootByIndex: ${serializeLootByIndex(v)}` : null),
   corridorStraightness: v => `corridorStraightness: ${v}`,
   packing: v => `packing: ${v}`,
   seed: v => `seed: ${v}`,

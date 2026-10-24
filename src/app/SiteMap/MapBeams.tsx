@@ -43,9 +43,8 @@ const BEAM_FILL: LightFill = [154, 149, 141]
  *
  * IT FADES ON THE WAY DOWN, but nowhere near to nothing. A ray that dies before it lands is a smear of
  * floor with nothing overhead to have cast it, which is what a foot alpha of 0.03 drew; the ray has to
- * survive all the way into the pool for the eye to follow it there. Sampled off the rendered page, a ray
- * mid-air lands at L* 44.8 over a beamed floor of 38.8 — present, and well under the 66.6 of the patch it
- * ends on, so the landing still wins. */
+ * survive all the way into the pool for the eye to follow it there. A lit rank thins it by its share of
+ * the light (`TierPalette.lamp`): on pale stone a full veil is a haze over the whole room. */
 const DUST = "230,223,211"
 const DUST_AT_SLOT = 0.3
 const DUST_AT_FLOOR = 0.14
@@ -56,7 +55,7 @@ const DUST_AT_FLOOR = 0.14
  * shaft whose middle outshines its own landing reads as an object lit from within. The volume thins on
  * the way down (`DUST_AT_FLOOR`) and this takes over at the bottom of it — so the eye follows the
  * rays down to where they end, which is the one place the beam touches the room. Sampled off the rendered
- * page it lands at L* 66.6 against the room it sits in at 38.8 and an unlit floor at 27.1.
+ * page, on the repainted starter floor, it lands at L* 63 against torch-lit floor at 60 and unlit floor at 50.
  *
  * An ellipse, not the parallelogram the geometry says: a hard-edged patch of sun on stone is a decal, and
  * the light arrives through a ragged hole anyway. Wider than tall, because a slanted beam meets the floor
@@ -198,6 +197,7 @@ export const BeamLight = ({
   torchPlace,
   daylight = 0,
   headroom = false,
+  share = 1,
 }: {
   grid: FloorGrid
   claims: RoomClaims
@@ -207,9 +207,11 @@ export const BeamLight = ({
   /** The floor's own daylight, which the shaft comes down with — see `shaftStrength`. */
   daylight?: number
   headroom?: boolean
+  /** The rank's share of a full light (`TierPalette.lamp`): a lit rank lifts its rooms less. */
+  share?: number
 }) => {
   if (shafts.length === 0) return null
-  const strength = shaftStrength(daylight)
+  const strength = shaftStrength(daylight) * share
   return (
     <LightGroup>
       {shafts.map(key => (
@@ -239,6 +241,7 @@ export const BeamShafts = ({
   shafts,
   siteId,
   floorRects,
+  share = 1,
 }: {
   grid: FloorGrid
   claims: RoomClaims
@@ -246,6 +249,9 @@ export const BeamShafts = ({
   /** The walkable floor, as rectangles. The patch of sun is cut to it — see the pool below. */
   floorRects: readonly Rect[]
   siteId: string
+  /** The rank's share of a full light (`TierPalette.lamp`). Thins the cone's dust, which on a pale floor
+   * is a haze over the whole room; the patch of sun keeps its strength, so it is still where the beam lands. */
+  share?: number
 }) => {
   if (shafts.length === 0) return null
   return (
@@ -307,7 +313,7 @@ export const BeamShafts = ({
               data-beam-shaft={key}
               rects={rects}
               feather={CONE_FEATHER}
-              fill={`linear-gradient(to bottom, rgba(${DUST},${DUST_AT_SLOT}), rgba(${DUST},${DUST_AT_FLOOR}))`}
+              fill={`linear-gradient(to bottom, rgba(${DUST},${DUST_AT_SLOT * share}), rgba(${DUST},${DUST_AT_FLOOR * share}))`}
             />
             {/* The motes take the cone's shape as a clip of their own, so one that wanders off its line
                 is cut at the edge of the shaft instead of turning up in the dark beside it. */}

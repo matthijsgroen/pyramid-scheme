@@ -95,6 +95,29 @@ describe(enumerateConfigs, () => {
     ])
   })
 
+  it("counts a node that names its own tier under that tier", () => {
+    const retiered: Record<string, SiteConfig[]> = {
+      p: [
+        [
+          {
+            pathPuzzles: 3,
+            difficulty: "expert",
+            difficultiesByIndex: { 1: "junior" },
+            end: "treasure",
+            exitOrStaircase: "exit",
+            encounter: "stub",
+            sideSections: [],
+          },
+        ],
+      ],
+    }
+
+    expect(enumerateConfigs(retiered, [family]).map(({ difficulty, rooms }) => [difficulty, rooms])).toEqual([
+      ["expert", 2],
+      ["junior", 1],
+    ])
+  })
+
   it("owes a floor's switch a board at every fork shape, at that floor's own tier", () => {
     const demand = enumerateConfigs(switchWorld({ encounter: "stub-switch", min: 1, max: 1 }), [family, switchFamily])
 

@@ -1,4 +1,4 @@
-import { type FC, use, useMemo } from "react"
+import { type FC, type ReactNode, use, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { Level } from "@/app/PyramidLevel/Level"
 import { LevelCompletionHandler } from "@/app/PyramidLevel/LevelCompletionHandler"
@@ -12,6 +12,7 @@ import { SiteMapScreen } from "@/app/SiteMap/SiteMapScreen"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { clsx } from "clsx"
 import { DesertBackdrop } from "@/ui/atoms/DesertBackdrop"
+import { CaveBackdrop, CaveMouth, cavernFloor } from "@/ui/atoms/CaveBackdrop"
 import { getLevelWidth } from "@/game/state"
 import { dayNightCycleDayTime, dayNightCycleStep } from "@/ui/atoms/backdropSelection"
 import { generateJourneyLevel } from "@/game/generateJourneyLevel"
@@ -40,8 +41,8 @@ export const PyramidExpedition: FC<{
   onClose?: () => void
 }> = ({ activeJourney, onLevelComplete: onNextLevel, onJourneyComplete, onStartJourney, onClose }) => {
   const isTomb = activeJourney.journey.exterior === "tomb"
-  // Both site types render through this one flow; a tomb is adapted into a single-level exterior
-  // journey whose interior is its multi-floor site.
+  // Both site types render through this one flow; a tomb is a journey of levelCount sites (the
+  // starter tomb has two, cave then cavern), each with its own multi-floor interior.
   const journey = activeJourney.journey
   const { t } = useTranslation("common")
   const { isDevelopMode } = use(DevelopContext)
@@ -49,25 +50,32 @@ export const PyramidExpedition: FC<{
   // Ward/tomb keys held right now — what decides whether the next tier is open (journeyAvailability).
   const heldKeys = useMergedHeldKeys()
   const hasInterior = !!journey.siteConfigs?.length
+  const levelSetup = journey.levels?.[activeJourney.levelNr - 1]
+  const boardless = levelSetup?.board === false
   const flow = useExpeditionFlow({
     journeyId: activeJourney.journeyId,
     levelNr: activeJourney.levelNr,
     completionCount: activeJourney.completionCount,
     interiorLevelNr: activeJourney.interiorLevelNr,
     hasInterior,
+    boardless,
     setInteriorLevel,
     onNextLevel,
     onClose,
   })
-  const { startNextLevel, levelCompleted, showingInterior } = flow
+  const { startNextLevel, levelCompleted, showingInterior, boardSolved } = flow
   // The board's entrance animation is only meaningful when the board is actually shown — dropping
   // straight into a restored interior skips it.
   const { entering } = useEntranceAnimation(!showingInterior)
   const { scrollContainerRef, currentLevelRef, nextLevelRef, futureLevelRef } = useLevelParallax(startNextLevel)
 
-  const levelContent = generateExpeditionLevel(journey, activeJourney.randomSeed, activeJourney.levelNr)
-  const nextLevelContent = generateExpeditionLevel(journey, activeJourney.randomSeed, activeJourney.levelNr + 1)
-  const nextNextLevelContent = generateExpeditionLevel(journey, activeJourney.randomSeed, activeJourney.levelNr + 2)
+  // A boardless level draws no board at all, so none is generated: not its own, and not the next
+  // level's as scenery either.
+  const levelAt = (levelNr: number) =>
+    boardless ? null : generateExpeditionLevel(journey, activeJourney.randomSeed, levelNr)
+  const levelContent = levelAt(activeJourney.levelNr)
+  const nextLevelContent = levelAt(activeJourney.levelNr + 1)
+  const nextNextLevelContent = levelAt(activeJourney.levelNr + 2)
 
   const width = levelContent ? getLevelWidth(levelContent.pyramid.floorCount) : 0
 
@@ -84,7 +92,7 @@ export const PyramidExpedition: FC<{
     return levelContent?.pyramid.blocks.some(block => !block.isOpen && block.value === undefined) ?? false
   }, [levelContent])
 
-  useExpeditionIntro({ isTomb, hasBlockedBlocks, showConversation })
+  useExpeditionIntro({ journeyId: activeJourney.journeyId, isTomb, hasBlockedBlocks, showConversation })
 
   const expeditionCompleted = activeJourney.levelNr > journey.levelCount
 
@@ -109,13 +117,24 @@ export const PyramidExpedition: FC<{
       ? "text-black"
       : "text-white"
 
-  return (
-    <DesertBackdrop
-      levelNr={activeJourney.levelNr}
-      start={journey.background.time}
-      timeStepSize={journey.background.timeStepSize}
-      showNile={journey.background.showNile}
-    >
+  // A function, not a component: a component defined here would be a new type every render and remount the board.
+  const backdrop = (children: ReactNode) =>
+    levelSetup?.exterior === "cavern" ? (
+      <CaveBackdrop>{children}</CaveBackdrop>
+    ) : (
+      <DesertBackdrop
+        levelNr={activeJourney.levelNr}
+        start={journey.background.time}
+        timeStepSize={journey.background.timeStepSize}
+        showNile={journey.background.showNile}
+        landmark={journey.background.landmark}
+      >
+        {children}
+      </DesertBackdrop>
+    )
+
+  return backdrop(
+    <>
       <div className="flex size-full flex-col">
         <div className="flex-shrink-0 bg-gradient-to-t from-transparent via-transparent to-black/30 backdrop-blur-sm">
           <Header className={textColor}>
@@ -200,7 +219,8 @@ export const PyramidExpedition: FC<{
               ref={currentLevelRef}
               key={activeJourney.levelNr}
               className={clsx(
-                "absolute inset-0 flex flex-1 items-center justify-center transition-all duration-1000 ease-in-out",
+                "absolute inset-0 flex flex-1 justify-center transition-all duration-1000 ease-in-out",
+                levelSetup?.exterior === "cavern" ? cavernFloor : "items-center",
                 entering && "pointer-events-none"
               )}
               style={{
@@ -208,6 +228,7 @@ export const PyramidExpedition: FC<{
                 transition: startNextLevel ? "transform 1000ms ease-in-out" : "none",
               }}
             >
+              {levelSetup?.exterior === "caveMouth" && <CaveMouth />}
               {levelContent && (
                 <Level
                   key={activeJourney.levelNr}
@@ -216,14 +237,14 @@ export const PyramidExpedition: FC<{
                   decorationOffset={activeJourney.randomSeed}
                   onComplete={flow.completeLevel}
                   dayTime={dayTime}
-                  revealed={revealSolvedBoard}
+                  revealed={revealSolvedBoard || boardSolved}
                   entranceBlockId={entering || levelCompleted || revealSolvedBoard ? entranceBlockId : undefined}
                 />
               )}
             </div>
-            {revealSolvedBoard && !showingInterior && !startNextLevel && (
+            {(revealSolvedBoard || boardless) && !showingInterior && !startNextLevel && (
               <div className="absolute inset-x-0 bottom-4 z-20 mb-safe-bottom flex justify-center">
-                <ActionButton label={t("ui.enterSite")} onClick={flow.completionFinished} />
+                <ActionButton label={t("ui.enterSite")} onClick={flow.enterInterior} />
               </div>
             )}
             {expeditionCompleted && (
@@ -255,6 +276,6 @@ export const PyramidExpedition: FC<{
           />
         </div>
       )}
-    </DesertBackdrop>
+    </>
   )
 }

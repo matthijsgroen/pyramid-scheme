@@ -43,3 +43,20 @@ describe("a landed file marked for re-rolling", () => {
     }
   })
 })
+
+describe("a master-only entry", () => {
+  const proofs = section("5.")
+    .split(/^### /m)
+    .slice(1)
+    .filter(block => block.startsWith("`"))
+
+  it("keeps its download under art/masters and never names a shipped sprite as where it lands", () => {
+    expect(proofs.length).toBeGreaterThan(0)
+    for (const block of proofs)
+      expect(/^\*\*Master:\*\*\s*`art\/masters\/characters\/[\w-]+\.jpeg`/m.test(block)).toBe(true)
+  })
+
+  it("opens its prompt with the house style too", () => {
+    for (const block of proofs) expect(quotedLines(block)[0]?.slice(2)).toMatch(/^\[preamble\]/)
+  })
+})

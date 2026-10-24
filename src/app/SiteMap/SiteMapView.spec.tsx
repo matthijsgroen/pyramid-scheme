@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { render, fireEvent, screen } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
-import { SiteMapView, approachCells } from "./SiteMapView"
+import { SiteMapView, approachCells, cornerRocksFor } from "./SiteMapView"
 import { allFloorRects, buildRoomClaims, tileRegionsFor } from "./roomClaims"
 import { grassMatsFor } from "./floorScatter"
 import { footprintPath } from "./tileRegions"
@@ -12,6 +12,7 @@ import { ARCH_H, ARCH_RISE, CELL, SIDE_W, WALL_H, cellCenter, cellLeft, cellTop 
 import { ALL_STATES } from "./tileRegions"
 import { MAX_ZOOM, MIN_ZOOM } from "./useMapZoom"
 import { tierPalette } from "./tileMaterials"
+import type { Difficulty } from "@/data/difficultyLevels"
 import type {
   CellState,
   DecorationKind,
@@ -21,6 +22,7 @@ import type {
   GridCell,
   MechanismRecord,
   RoomCell,
+  Tileset,
 } from "@/game/siteTypes"
 import { assembleFloor } from "@/game/siteAssembler"
 import { registerFamily } from "@/app/families/familyRegistry"
@@ -30,7 +32,8 @@ import { cellAddress } from "@/game/cellAddress"
 import { AXES, DROP_AT, dropGrid, obstacleIndexes } from "./floorFixtures.testing"
 import { CHAMBER_SCALE, GROWTH_POOLS, growthTile } from "./moodSettings"
 import { sharedTileUrl } from "./tileAssets"
-import { STANDING_RELIEF } from "./lighting"
+import { STANDING_RELIEF, lampStrength } from "./lighting"
+import { BeamLight } from "./MapBeams"
 
 // Cell positions come from mapScale's own geometry (the pitch is stretched to give every wall a
 // place of its own), so a change there can't silently break every position assumption in this file.
@@ -168,6 +171,20 @@ describe("a node's furniture and the clip it is cut to", () => {
     tags: ["treasure"],
     dirs: new Set<Direction>(dirs),
     state: "completed",
+  })
+
+  it("carries the chest of the floor's rank into a cave, which has none of its own", () => {
+    const grid: FloorGrid = {
+      ...makeGrid([
+        [empty, empty, empty],
+        [empty, treasureCell(["w"]), empty],
+        [empty, empty, empty],
+      ]),
+      difficulty: "junior",
+      tileset: "cave",
+    }
+    const { container } = render(<SiteMapView grid={grid} onCellClick={() => {}} />)
+    expect(urlOf(spriteMatching(container, "chestProp")[0])).toContain("junior")
   })
 
   it("grows the clip into the paving beside it, so a chest is not cut by its own offset", () => {
@@ -1060,11 +1077,12 @@ describe("SiteMapView — the shade the lamp is read against", () => {
     // A lamp is carried at floor level, so a vertical face takes it at a glancing angle. Without this
     // the floor and the wall land within a step of each other once the night is over both, and the room
     // reads as a floorplan with a change of texture rather than as a place with walls.
-    const { container } = render(<SiteMapView grid={twoRooms()} />)
+    const { container } = render(<SiteMapView grid={{ ...twoRooms(), difficulty: "expert" }} />)
     const faceNight = container.querySelector<SVGElement>("[data-face-night]")!
 
     expect(faceNight).toBeDefined()
-    expect(Number(faceNight.getAttribute("opacity"))).toBe(tierPalette.starter.faceNight)
+    expect(tierPalette.expert.faceNight).toBeGreaterThan(0)
+    expect(Number(faceNight.getAttribute("opacity"))).toBe(tierPalette.expert.faceNight)
     // Under the night itself: it deepens the face's own stone rather than lying over the whole picture.
     expect(depthOf(container, faceNight)).toBeLessThan(depthOf(container, shades(container)[0]))
   })
@@ -1089,6 +1107,31 @@ describe("SiteMapView — the shade the lamp is read against", () => {
     expect(depthOf(container, full)).toBeLessThan(depthOf(container, marker))
     expect(depthOf(container, second)).toBeGreaterThan(depthOf(container, marker))
     expect(Number(second.style.opacity)).toBeLessThan(1)
+  })
+
+  it("burns each rank's lamp at that rank's own share, so a lit room is not bleached by it", () => {
+    const litStrength = (difficulty: Difficulty) => {
+      const { container } = render(<SiteMapView grid={{ ...twoRooms(), difficulty }} explorerPos={[0, 0]} />)
+      const lit = container.querySelector<HTMLElement>("[data-torch='lit']")!
+      return Number(lit.style.getPropertyValue("--map-lit-strength"))
+    }
+
+    expect(litStrength("starter")).toBeCloseTo(lampStrength() * tierPalette.starter.lamp, 5)
+    expect(litStrength("expert")).toBeCloseTo(lampStrength() * tierPalette.expert.lamp, 5)
+  })
+
+  it("lifts a shaft's room by the rank's own share too, so daylight does not bleach a lit rank", () => {
+    const grid = twoRooms()
+    const claims = buildRoomClaims(grid)
+    const strengthAt = (share: number) => {
+      const { container } = render(
+        <BeamLight grid={grid} claims={claims} shafts={["0,1"]} torchPlace={new Set()} share={share} />
+      )
+      const lit = container.querySelector<HTMLElement>("[data-beam='lit']")!
+      return Number(lit.style.getPropertyValue("--map-lit-strength"))
+    }
+
+    expect(strengthAt(0.3)).toBeCloseTo(strengthAt(1) * 0.3, 5)
   })
 
   it("draws the lit place over the shade, or the lamp would be washed out by it", () => {
@@ -1197,6 +1240,24 @@ const doorwayGrid = () =>
     [empty, corridor("completed", false), empty],
     [empty, chamber("completed"), empty],
   ])
+
+describe("corner rocks", () => {
+  const rocksIn = (grid: FloorGrid, hasArt: (tier: Tileset) => boolean) =>
+    cornerRocksFor(grid, buildRoomClaims(grid), undefined, hasArt).map(({ row, col, side }) => `${row},${col},${side}`)
+
+  it("gathers rock where a side wall closes a back wall, never in a doorway", () => {
+    expect(rocksIn({ ...doorwayGrid(), tileset: "cave" }, () => true).sort()).toEqual([
+      "0,1,e",
+      "0,1,w",
+      "1,0,w",
+      "1,2,e",
+    ])
+  })
+
+  it("leaves a tileset without corner rock art bare", () => {
+    expect(rocksIn({ ...doorwayGrid(), tileset: "cave" }, () => false)).toEqual([])
+  })
+})
 
 describe("archways", () => {
   it("stands an arch at the way into a chamber", () => {

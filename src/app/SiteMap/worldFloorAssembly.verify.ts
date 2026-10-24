@@ -6,7 +6,7 @@ import { configHash } from "@/game/seeds/configHash"
 import { puzzleSeeds } from "@/data/puzzleSeeds"
 import { hashString } from "@/support/hashString"
 import { boardIndexesForFloor } from "./boardIndexes"
-import { buildRoomClaims } from "./roomClaims"
+import { buildRoomClaims, floorTier } from "./roomClaims"
 import { authoredKindsFor } from "./authoredKinds"
 import { encodeEdge } from "./edgeId"
 import { allFloors, resolveKeyRequirements } from "./worldFloors.testing"
@@ -225,6 +225,28 @@ describe("what a world-spec setting may and may not move", () => {
         }),
     ],
     [
+      "the activity a room is dressed for",
+      c =>
+        edited(c, n => {
+          if (n.decorations) n.decorations = ["scale", "basketStack", "scribeDesk"]
+          if (n.wallDecorations) n.wallDecorations = ["tallyBoard"]
+        }),
+    ],
+    [
+      "the activity a story authored for a room",
+      c =>
+        edited(c, n => {
+          if ((n.pathPuzzles as number) > 0) n.activitiesByIndex = { 0: "ledger" }
+        }),
+    ],
+    [
+      "the tileset a floor and its paths are drawn in",
+      c =>
+        edited(c, n => {
+          n.tileset = "cave"
+        }),
+    ],
+    [
       "the skin and the role a room was drawn for",
       c =>
         edited(c, n => {
@@ -393,7 +415,7 @@ describe("a rank is dressed with what it is authored to hold", () => {
         floorRef: { journeyId: floor.journeyId, levelIndex: floor.levelIndex, floorIndex: floor.floorIndex },
       })
       if (!result.success) continue
-      const tier = result.grid.difficulty ?? "starter"
+      const tier = floorTier(result.grid)
       const authored = authoredKindsFor(tier).props
       for (const [cell, kind] of buildRoomClaims(result.grid).decorationAt)
         if (!authored.includes(kind)) wrong.push(`${floor.label} ${cell}: ${kind} at ${tier}`)

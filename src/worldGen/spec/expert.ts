@@ -1,6 +1,7 @@
 import { tier, journey, tomb, wardChest, wardWing } from "../dsl"
 import type { Rule, PathEntry } from "../dsl"
 import { TOMB_ROOMS_PER_FLOOR } from "../data"
+import { tombCave } from "./cave"
 import { freeRegions } from "@/game/lockAuthoring"
 import { catalogueLock } from "./locks/catalogue"
 import { lessonOnMainFloor } from "./locks/lessons"
@@ -105,6 +106,9 @@ const wardRules: Rule[] = EXPERT_PYRAMIDS.flatMap(([jid, n], ji) => {
   })
 })
 
+// The tier + 1 step inside the cavern: a master puzzle as the second room, after the first tableau.
+const masterBetweenTableaus = { where: 2, encounter: "puzzle", difficulty: "master" } as const
+
 export const expertRules: Rule[] = [
   // a priest's temple: canopic jars, an altar, the sacred pool, a veil before the shrine.
   tier("expert", {
@@ -207,23 +211,27 @@ export const expertRules: Rule[] = [
     sidePaths: [...EXPERT_SIDE_PATHS, FLOOR_KEY_PATH],
   }),
 
+  // Each tomb's first level: the cave, 2 floors of expert puzzles on the way to the pillar.
+  ...["expert_treasure_tomb", "expert_treasure_tomb_b"].map(id => tombCave(id, "expert", 2)),
+
   tomb("expert_treasure_tomb", {
     encounter: "tomb-puzzle",
     difficulty: "expert",
-    levelCount: 4,
+    floorCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
-    // A crocodile capstone guards EVERY floor's treasure (see junior.ts for why `+ 1`).
+    // A crocodile capstone guards EVERY floor's treasure (see junior.ts for the room count).
     floors: [
       {
         // Somebody is waiting on this floor: a room of its own, two from the end. The tableaus keep
-        // positions 1..n (their authored content is keyed by position), the crocodile keeps the last
-        // room, and the beat sits between them — so it is passed on the way to the floor's treasure
-        // and cannot be skipped by taking the stairs.
+        // their order (their authored content is keyed by their place among tableaus), the crocodile
+        // keeps the last room, and the beat sits between them — so it is passed on the way to the
+        // floor's treasure and cannot be skipped by taking the stairs.
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 2,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 3,
         nodes: [
+          masterBetweenTableaus,
           { where: "last", encounter: "capstone" },
-          { where: TOMB_ROOMS_PER_FLOOR.expert + 1, encounter: "conversation" },
+          { where: TOMB_ROOMS_PER_FLOOR.expert + 2, encounter: "conversation" },
         ],
         // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
@@ -231,57 +239,58 @@ export const expertRules: Rule[] = [
       // A side path opting into the same hieroglyph-fragment assignment pyramids use.
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 2,
+        nodes: [masterBetweenTableaus, { where: "last", encounter: "capstone" }],
         sideSections: [{ pathPuzzles: 1, endReward: "fragmentSlot" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 2,
+        nodes: [masterBetweenTableaus, { where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 2,
+        nodes: [masterBetweenTableaus, { where: "last", encounter: "capstone" }],
       },
     ],
   }),
   tomb("expert_treasure_tomb_b", {
     encounter: "tomb-puzzle",
     difficulty: "expert",
-    levelCount: 4,
+    floorCount: 4,
     sealed: true, // linear tomb — no shortcut around a tableau room
-    // A crocodile capstone guards EVERY floor's treasure (see junior.ts for why `+ 1`).
+    // A crocodile capstone guards EVERY floor's treasure (see junior.ts for the room count).
     floors: [
       {
         // Somebody is waiting on this floor: a room of its own, two from the end. The tableaus keep
-        // positions 1..n (their authored content is keyed by position), the crocodile keeps the last
-        // room, and the beat sits between them — so it is passed on the way to the floor's treasure
-        // and cannot be skipped by taking the stairs.
+        // their order (their authored content is keyed by their place among tableaus), the crocodile
+        // keeps the last room, and the beat sits between them — so it is passed on the way to the
+        // floor's treasure and cannot be skipped by taking the stairs.
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 2,
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 3,
         nodes: [
+          masterBetweenTableaus,
           { where: "last", encounter: "capstone" },
-          { where: TOMB_ROOMS_PER_FLOOR.expert + 1, encounter: "conversation" },
+          { where: TOMB_ROOMS_PER_FLOOR.expert + 2, encounter: "conversation" },
         ],
         // Fez shop — a 6-slot stock node, filled by the mods. Empty until resolveShopStock lands.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 2,
+        nodes: [masterBetweenTableaus, { where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 2,
+        nodes: [masterBetweenTableaus, { where: "last", encounter: "capstone" }],
       },
       {
         mainEndReward: "tombTreasure",
-        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 1,
-        nodes: [{ where: "last", encounter: "capstone" }],
+        pathPuzzles: TOMB_ROOMS_PER_FLOOR.expert + 2,
+        nodes: [masterBetweenTableaus, { where: "last", encounter: "capstone" }],
       },
     ],
   }),

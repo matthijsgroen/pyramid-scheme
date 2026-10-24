@@ -14,10 +14,10 @@ const first = (free: readonly string[]) => free[0]
 
 describe("companionsFor", () => {
   it("offers only kinds that share a purpose with the leader", () => {
-    // offeringTable is trade/funerary/judgement; shelf is trade; basin is water/agriculture.
+    // offeringTable is trade/shop/funerary/judgement; shelf is trade; crystal is cosmos/sky/light.
     const options = companionsFor("offeringTable", all)
     expect(options).toContain("shelf")
-    expect(options).not.toContain("basin")
+    expect(options).not.toContain("crystal")
   })
 
   it("never offers the leader again", () => {
@@ -32,11 +32,30 @@ describe("companionsFor", () => {
   it("drops kinds that are not drawn at this rank, so a placeholder cannot be multiplied by rule", () => {
     expect(companionsFor("offeringTable", kind => kind !== "shelf")).not.toContain("shelf")
   })
+
+  it("offers a storage room's shelf only the storage props, never a selling counter of the same role", () => {
+    expect(companionsFor("shelf", all, "storage")).toEqual(["basin", "jarRack"])
+  })
+
+  it("offers an activity's filler kind, since the activity names it", () => {
+    expect(companionsFor("counter", all, "selling")).toContain("mat")
+  })
+
+  it("drops an activity's kinds that are not drawn at this rank", () => {
+    expect(companionsFor("shelf", kind => kind !== "basin", "storage")).toEqual(["jarRack"])
+  })
 })
 
 describe("companionFor", () => {
   it("places nothing in a room too small to hold a second prop", () => {
     expect(companionFor("s", [room("2,2", "offeringTable", ["1,1"])], all, first).size).toBe(0)
+  })
+
+  it("takes the companion from the room's activity", () => {
+    const rooms = Array.from({ length: 60 }, (_, i) => ({ ...room(`${i},0`, "shelf"), activity: "storage" as const }))
+    const kinds = new Set(companionFor("s", rooms, all, first).values())
+    expect(kinds.size).toBeGreaterThan(0)
+    for (const kind of kinds) expect(["jarRack", "basin"]).toContain(kind)
   })
 
   it("places nothing when the leader is untagged", () => {

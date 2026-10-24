@@ -4,13 +4,13 @@ import clsx from "clsx"
 import { Page } from "@/ui/atoms/Page"
 import { useGameStorage } from "@/support/useGameStorage"
 import { GHOSTS, spokenLines, type Speaker } from "@/app/fez/arrivalConversation"
-import { PORTRAITS } from "@/app/fez/portraits"
+import { portraitFor } from "@/app/fez/portraits"
 import { heardScenes } from "@/mods/story/game/log/heardScenes"
 
 /** Who said it, for a transcript with nobody's face in it. */
 const Said: FC<{ speaker: Speaker; text: string }> = ({ speaker, text }) => {
   const { t } = useTranslation("common")
-  const portrait = PORTRAITS[speaker]?.default
+  const portrait = portraitFor(speaker, "default")
   const explorer = speaker === "explorer"
 
   return (

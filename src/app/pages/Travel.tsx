@@ -1,4 +1,4 @@
-import { use, useEffect, useMemo, useRef, useState, type FC } from "react"
+import { use, useMemo, useRef, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { Page } from "@/ui/atoms/Page"
 import { JourneyPathView } from "@/ui/atoms/JourneyPathView"
@@ -10,7 +10,9 @@ import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { useJourneyTranslations, type TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import { DifficultyPill } from "@/ui/atoms/DifficultyPill"
-import { FezContext } from "../fez/context"
+import { TapHint } from "@/ui/atoms/TapHint"
+import { useTapHint } from "@/app/state/useTapHint"
+import { FezContext } from "@/app/fez/context"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import { DevPanel } from "@/ui/molecules/DevPanel"
@@ -23,7 +25,6 @@ import { journeyCardSlots } from "./journeyCardSlots"
 import "@/mods/registerModApps" // populate the journey-card slot registry, as Collection does for its sections
 import { availablePyramidJourneyIds, comingSoonDifficulty } from "./journeyAvailability"
 import { useMergedJourneyContributions } from "./journeyContributions"
-import { useJourneyArrival } from "@/app/fez/useJourneyArrival"
 import { isWebKey } from "@/game/floorLock"
 
 export const TravelPage: FC<{
@@ -45,7 +46,7 @@ export const TravelPage: FC<{
   // that has a matching unopened ward door (getUnexploredLevels re-checks against this).
   const heldKeys = useMergedHeldKeys()
   // Playtesting grants + the every-journey bypass below; rendered only in develop mode.
-  const devActions = useDevActions()
+  const devActions = useDevActions(startGame)
   // A completed journey (completionCount > 0) is in revisit/explore mode: selecting it from the grid
   // lands on the map (not the game) so the player picks which pyramid to re-enter.
   const isRevisit = (journeyId: string) => (getJourney(journeyId)?.completionCount ?? 0) > 0
@@ -54,25 +55,21 @@ export const TravelPage: FC<{
   // What the mods say about each journey: still locked (and how far along), not on the map yet, or
   // holding something of theirs the player already found.
   const journeyFacts = useMergedJourneyContributions()
-  const setOff = useJourneyArrival()
+  // A pointing hand waits for the conversation to end, so one thing at a time asks for the player's eye.
+  const { speaking } = use(FezContext)
+  const [mapHint, mapTapped] = useTapHint("travelMap")
+  const [journeyHint, journeyTapped] = useTapHint("firstJourney")
   const [showJourneySelection, setShowJourneySelection] = useState(false)
   const [selectedJourney, setSelectedJourney] = useState<TranslatedJourney | null>(null)
   const [showInterruptModal, setShowInterruptModal] = useState(false)
   const journeyId = activeJourneyId ?? selectedJourney?.id
   const activeJourneyInfo = journeyId ? getJourney(journeyId) : undefined
 
-  const { showConversation } = use(FezContext)
   const { isDevelopMode } = use(DevelopContext)
   const shopTombJourney = journeys.find(j => j.id === "junior_treasure_tomb")
 
-  useEffect(() => {
-    if (showJourneySelection) {
-      showConversation("chooseExpedition")
-    }
-  }, [showJourneySelection, showConversation])
-
   const journey = activeJourneyInfo?.journey ?? selectedJourney
-  // Nodes on this journey's map: one per site, so a tomb (one site, however many floors) has one.
+  // Nodes on this journey's map: one per site; a tomb is a journey of levelCount sites.
   const effectiveLevelCount = journey?.levelCount ?? 1
   // Revisit/explore: a completed journey (completionCount > 0). Every pyramid stays a pickable node
   // even while one is open, so drive the path view past the last level regardless of stored levelNr.
@@ -80,11 +77,12 @@ export const TravelPage: FC<{
   const pathLevelNr = revisiting && journey ? effectiveLevelCount + 1 : (activeJourneyInfo?.levelNr ?? 1)
 
   const handleMapClick = async () => {
+    mapTapped()
     if (revisiting && journey) {
-      // Tapping the map background (not a node) re-enters the last-picked pyramid, re-solving its
-      // exterior board (visitLevel clears the interior).
-      const info = getJourney(journey.id)
-      const resumeAt = info && info.levelNr >= 1 && info.levelNr <= effectiveLevelCount ? info.levelNr : 1
+      // Tapping the map card (not a node) resumes a finished journey at its last level, whatever level
+      // it stopped on; node taps still pick any level. visitLevel re-solves the exterior board and
+      // clears the interior.
+      const resumeAt = effectiveLevelCount
       // Awaited: the expedition must not mount until every useJourneys() instance can see the
       // level we're heading to, or it seeds its transition animation from the level we're leaving.
       await visitLevel(journey.id, resumeAt)
@@ -97,6 +95,7 @@ export const TravelPage: FC<{
   }
 
   const handleJourneySelect = async (journey: TranslatedJourney) => {
+    journeyTapped()
     if (isRevisit(journey.id)) {
       // Don't jump in — return to the map with the journey loaded so the player picks a pyramid.
       setSelectedJourney(journey)
@@ -104,12 +103,7 @@ export const TravelPage: FC<{
       return
     }
     await startJourney(journey)
-    // THE ARRIVAL BEAT BELONGS HERE, not at the pyramid. It is about the PLACE — the Valley of the
-    // Artisans, the Colossi, the Sphinx — and a journey holds several pyramids in free order, so
-    // fired on the way into one it landed at whichever the player happened to open first, over a
-    // board of numbered blocks with nothing of the place on screen. Here the card they just chose
-    // is still behind it. The board's own teaching (`pyramidIntro`) stays where the board is.
-    setOff(journey.id, startGame)
+    startGame()
   }
 
   const handleBackToMap = () => {
@@ -118,8 +112,7 @@ export const TravelPage: FC<{
 
   const handleNodeClick = async (levelNr: number) => {
     if (!journey) return
-    // A tomb has a single exterior level; every "node" re-enters that one site (see effectiveLevelCount).
-    // Awaited — see handleMapClick.
+    // Each node is one site (see effectiveLevelCount). Awaited — see handleMapClick.
     await visitLevel(journey.id, levelNr)
     startGame()
   }
@@ -154,6 +147,9 @@ export const TravelPage: FC<{
     () => journeys.filter(j => availableJourneyIds.has(j.id)).at(-1)?.id,
     [journeys, availableJourneyIds]
   )
+
+  // The first card in the list: the one the hand points at before the player has picked any journey.
+  const firstPickableId = journeys.find(j => availableJourneyIds.has(j.id) && !journeyFacts.hidden(j.id))?.id
 
   // A lock the player has started but not finished is worth a nudge back onto the map.
   const hasPendingLockProgress = journeys.some(j => {
@@ -226,27 +222,29 @@ export const TravelPage: FC<{
                 </>
               )}
               {!journey && <p className="mb-4 text-center">{t("ui.startAdventure")}</p>}
-              <JourneyPathView
-                onClick={handleMapClick}
-                onNodeClick={journey ? handleNodeClick : undefined}
-                inJourney={!!journey}
-                levelCount={effectiveLevelCount}
-                levelNr={pathLevelNr}
-                journeyLength={journey?.journeyLength ?? "long"}
-                exterior={journey?.exterior ?? "pyramid"}
-                label={
-                  revisiting
-                    ? journey?.exterior === "tomb"
-                      ? t("ui.revisitTomb")
-                      : t("ui.revisitExpedition")
-                    : activeJourneyInfo?.inProgress
-                      ? t("ui.continueExpedition")
-                      : t("ui.planExpedition")
-                }
-                nudge={!journey && hasPendingLockProgress}
-                unexploredNodes={mapUnexploredNodes}
-                buriedNodes={buriedNodes}
-              />
+              <TapHint show={mapHint && !journey && !speaking}>
+                <JourneyPathView
+                  onClick={handleMapClick}
+                  onNodeClick={journey ? handleNodeClick : undefined}
+                  inJourney={!!journey}
+                  levelCount={effectiveLevelCount}
+                  levelNr={pathLevelNr}
+                  journeyLength={journey?.journeyLength ?? "long"}
+                  exterior={journey?.exterior ?? "pyramid"}
+                  label={
+                    revisiting
+                      ? journey?.exterior === "tomb"
+                        ? t("ui.revisitTomb")
+                        : t("ui.revisitExpedition")
+                      : activeJourneyInfo?.inProgress
+                        ? t("ui.continueExpedition")
+                        : t("ui.planExpedition")
+                  }
+                  nudge={!journey && hasPendingLockProgress}
+                  unexploredNodes={mapUnexploredNodes}
+                  buriedNodes={buriedNodes}
+                />
+              </TapHint>
               {revisiting && (
                 <div className="mt-4 text-center text-sm">
                   {t("ui.or")}{" "}
@@ -325,30 +323,33 @@ export const TravelPage: FC<{
                   )
                 }
                 return (
-                  <JourneyCard
-                    key={journey.id}
-                    showDetails={journey.id === newestAvailableId}
-                    journey={journey}
-                    disabled={false}
-                    completionCount={completionCount}
-                    progressLevelNr={journeyInfo?.inProgress ? progressLevelNr : undefined}
-                    index={index}
-                    showAnimation={showJourneySelection}
-                    mark={mark}
-                    hasUnexploredCorridors={
-                      corridorDetectorLevel >= 4 && getOutstandingHiddenCorridorCount(journey.id) > 0
-                    }
-                    hasReachableUnexplored={completionCount > 0 && getUnexploredLevels(journey.id, heldKeys).size > 0}
-                    lang={i18n.language}
-                    labels={{
-                      progressLevel: t("ui.progressLevel"),
-                    }}
-                    onClick={() => handleJourneySelect(journey)}
-                  >
-                    {journeyInfo
-                      ? journeyCardSlots().map(({ id, Component }) => <Component key={id} journeyInfo={journeyInfo} />)
-                      : null}
-                  </JourneyCard>
+                  <TapHint key={journey.id} show={journeyHint && !speaking && journey.id === firstPickableId}>
+                    <JourneyCard
+                      showDetails={journey.id === newestAvailableId}
+                      journey={journey}
+                      disabled={false}
+                      completionCount={completionCount}
+                      progressLevelNr={journeyInfo?.inProgress ? progressLevelNr : undefined}
+                      index={index}
+                      showAnimation={showJourneySelection}
+                      mark={mark}
+                      hasUnexploredCorridors={
+                        corridorDetectorLevel >= 4 && getOutstandingHiddenCorridorCount(journey.id) > 0
+                      }
+                      hasReachableUnexplored={completionCount > 0 && getUnexploredLevels(journey.id, heldKeys).size > 0}
+                      lang={i18n.language}
+                      labels={{
+                        progressLevel: t("ui.progressLevel"),
+                      }}
+                      onClick={() => handleJourneySelect(journey)}
+                    >
+                      {journeyInfo
+                        ? journeyCardSlots().map(({ id, Component }) => (
+                            <Component key={id} journeyInfo={journeyInfo} />
+                          ))
+                        : null}
+                    </JourneyCard>
+                  </TapHint>
                 )
               })}
               {comingSoonTier && (

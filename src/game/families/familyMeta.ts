@@ -8,6 +8,7 @@ export type FamilyKeyRequirementResolverCtx = {
   journeyId: string
   floorIndex: number
   pathIndex: number
+  familyOrdinal: number
   encounterArgs?: unknown
 }
 export type FamilyKeyRequirementResolver = (ctx: FamilyKeyRequirementResolverCtx) => string[] | undefined

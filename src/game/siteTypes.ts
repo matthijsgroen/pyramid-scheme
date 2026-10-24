@@ -7,6 +7,7 @@ import type { CarveFault } from "./carveAgreement"
 import type { GateFace } from "./gateFace"
 import type { LockNesting, LockNestingFault, PlacedLock } from "./floorLocks"
 import type { LockFault, RealisationBinding } from "./lockCompile"
+import type { ActivityId } from "./activities"
 import type { WebDoorPlacement } from "./webDoors"
 export type RoomType = "portal" | "fork" | "encounter"
 // OPEN reward vocabulary (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1):
@@ -38,6 +39,8 @@ export type CorridorCell = {
    * the floor's tier: a ward pocket gated behind a junior key is junior stone inside a starter
    * pyramid. Mirrors RoomCell.difficulty, which has always carried this for rooms. */
   difficulty?: Difficulty
+  /** The tileset this corridor's own section authored, if it did: drawn in place of the floor's. */
+  tileset?: Tileset
   /** WHICH SECTION OF THE AUTHORING this cell belongs to — `main`, `s0` for the first sidepath off it,
    *  `s0.1` for that sidepath's second sub-path. This is what a save files the cell under, because it
    *  is what the author steers: the first sidepath of the main path stays the first sidepath whether
@@ -98,34 +101,72 @@ export const KEY_COLORS: readonly KeyColor[] = ["blue", "red", "green", "yellow"
 // tiles/<tier>/<kind>.png — which is what keeps a fifth rank from costing as much to draw as the
 // first (docs/game-design/spritesheet-renderer-prep.md, "Chamber props"). `basin` rather than
 // "fountain": Egypt had libation basins, ablution basins and temple lakes, not pressurised fountains.
-export type DecorationKind =
-  | "rubblePile"
-  | "pillar"
-  | "pit"
-  | "statue"
-  | "basin"
-  | "sarcophagus"
+export const DECORATION_KINDS = [
+  "rubblePile",
+  "pillar",
+  "pit",
+  "statue",
+  "basin",
+  "sarcophagus",
   // A CHEST MEANS TREASURE YOU CAN OPEN, so no rank's pool authors one as furniture. The kind stays
   // because the art does: a treasure room draws `tiles/<tier>/chestProp.png` beside its marker
   // (`NodeChest`). Put it back in a `decorations` pool and the map starts saying "you may open this
   // one and not that one" with the same picture.
-  | "chestProp"
-  | "offeringTable"
-  | "jarRack"
-  | "brazier"
-  | "lamp"
-  | "hanging"
-  | "shelf"
-  | "shrine"
-  | "crystal"
-  | "mat"
+  "chestProp",
+  "offeringTable",
+  "jarRack",
+  "brazier",
+  "lamp",
+  "hanging",
+  "shelf",
+  "shrine",
+  "crystal",
+  "mat",
+  "scale",
+  "weightsTable",
+  "basketStack",
+  "bales",
+  "counter",
+  "scribeDesk",
+  // The cave's own furniture (tileset `cave`). `puddle` and `bones` lie flat on the floor, like `mat`.
+  "stalagmite",
+  "puddle",
+  "bones",
+] as const
+export type DecorationKind = (typeof DECORATION_KINDS)[number]
+
+/**
+ * How much floor a prop covers: `cols` cells east from its anchor, `rows` cells south, and `tall` cells of
+ * extra height above the normal prop frame, for art that stands higher than a face band. The anchor is the
+ * north-west cell; every cell of the footprint must be the room's own free floor for the prop to stand.
+ */
+export type PropFootprint = { cols: number; rows: number; tall: number }
+export const SINGLE_CELL: PropFootprint = { cols: 1, rows: 1, tall: 0 }
+/** The kinds bigger than one cell. Every kind not listed is `SINGLE_CELL`. */
+export const DECORATION_FOOTPRINTS: Partial<Record<DecorationKind, PropFootprint>> = {
+  // A skeleton lies at full length: two cells across, flat on the floor.
+  bones: { cols: 2, rows: 1, tall: 0 },
+}
+export const decorationFootprint = (kind: DecorationKind): PropFootprint => DECORATION_FOOTPRINTS[kind] ?? SINGLE_CELL
+export const isSingleCell = ({ cols, rows }: PropFootprint): boolean => cols === 1 && rows === 1
 // What hangs ON a wall, drawn into a cell's face band rather than standing on its floor. Its own
 // vocabulary rather than a slice of DecorationKind: a stela is not a prop that could stand in the
 // middle of a chamber, and the two must not be confusable
 // (docs/game-design/spritesheet-renderer-prep.md, "Three things a tier dresses"). Resolved as
 // tiles/<tier>/<kind>.png at CELL x WALL_H — the band's own shape, not a square.
-export type WallDecorationKind =
-  "niche" | "stela" | "sconce" | "veil" | "starShaft" | "wallShrine" | "tallyBoard" | "mask"
+export const WALL_DECORATION_KINDS = [
+  "niche",
+  "stela",
+  "sconce",
+  "veil",
+  "starShaft",
+  "wallShrine",
+  "tallyBoard",
+  "mask",
+  "roots",
+  "stalactites",
+] as const
+export type WallDecorationKind = (typeof WALL_DECORATION_KINDS)[number]
 
 /**
  * Something that has got INTO a site and runs through the whole of it — water standing in the floors,
@@ -220,6 +261,10 @@ export type RoomCell = {
   // family re-deriving which TableauLevel it presents from journeyId + the section's own
   // encounterArgs.runNr + this index, not from floor position).
   pathIndex?: number
+  // This room's position among the rooms of its own family on its chain (main path, or one section),
+  // 0-based in path order. A family keys authored content by it (a tableau's level), so a room of
+  // another family standing before it never renumbers it.
+  familyOrdinal?: number
   // Which entry of its family's seed list this room draws (see src/game/seeds/boardIndex.ts). Every
   // room drawing from one list gets a different entry, so no two rooms in the world serve the same
   // board. Unset where the site isn't part of the baked world (stories, specs, the builder), and the
@@ -239,6 +284,9 @@ export type RoomCell = {
   // gentler detour), and the room is what the player meets, not the floor. Unset falls back to the
   // floor's own difficulty.
   difficulty?: Difficulty
+  // What this room is drawn in when that is not what the floor draws (see cellTileset): the section's own
+  // tileset, or, for a room whose node names another difficulty, the tileset its section is drawn in.
+  tileset?: Tileset
   // Which skin this room's family should wear (docs/instructions/puzzle-screens.md §2), carried from the
   // FloorConfig/SideSection that authored it. A NAME, not a look: core knows nothing about what it means,
   // and a family with no skin registered under it draws its default one.
@@ -251,7 +299,17 @@ export type RoomCell = {
   tags?: string[]
   stairId?: string
   decoration?: DecorationKind
+  /** The single-cell kind this room stands instead when `decoration` covers more than one cell and the
+   * room has no free floor that shape (roomClaims.ts). Picked from the same pool by the same hash, so the
+   * map never has to know the pool. Unset when `decoration` is single-cell or the pool has no such kind. */
+  decorationFallback?: DecorationKind
   wallDecoration?: WallDecorationKind
+  /** What the room is for (activities.ts): its props and wall item come from this activity. Unset on a
+   * room some other purpose has, or on a rank whose pool furnishes no activity. */
+  activity?: ActivityId
+  /** The activity a story authored for this room (`nodes: [{ activity }]`). It wins over every other purpose,
+   * and it makes the room a chamber even where it stands in a corridor (`isChamber`): a scene needs its set. */
+  authoredActivity?: ActivityId
   /**
    * THE GOD'S ROOM on a dedicated floor: the biggest chamber, dressed with a statue of him and paired.
    *
@@ -347,6 +405,8 @@ export type FloorGrid = {
    * `RoomCell.difficulty` can differ (a ward-chest teaser is authored at a later tier), so it must not
    * be used to infer this. Optional only because test fixtures build grids by hand. */
   readonly difficulty?: Difficulty
+  /** The tileset the floor authors, which draws it in place of `difficulty`. Unset = drawn in `difficulty`. */
+  readonly tileset?: Tileset
   /** What has got into this site, if anything — see SiteCondition. Runs through every floor of a
    * pyramid by construction: it is authored once, on the pyramid. */
   readonly condition?: SiteCondition
@@ -471,12 +531,17 @@ export type GateConfig =
   | { type: "tomb-key"; wardKeyId: string }
 export type { Difficulty } from "@/data/difficultyLevels"
 import type { Difficulty } from "@/data/difficultyLevels"
+/** What a floor, path or room is DRAWN in: its tiles, palette, mood and encounter wall. A rank is the stone
+ * built for that difficulty; `cave` is a set of its own. Apart from `difficulty`, which picks the board. */
+export type Tileset = Difficulty | "cave"
 export type SubSection = {
   /** The authored name for this path, if it has one — what a save files its cells under, in place of
    * the positional `s0`/`s0.1`. See SideSectionConstraint.label and cellIdentity.ts. */
   label?: string
   pathPuzzles: number
   difficulty: Difficulty
+  /** The tileset this path is drawn in, in place of the floor's tileset or its own `difficulty`. */
+  tileset?: Tileset
   end: "treasure" | "staircase" | { stairId: string }
   gate?: GateConfig
   endReward?: TreasureReward
@@ -493,7 +558,15 @@ export type SubSection = {
    * selectors (docs/mods/ARCHITECTURE.md ("Authoring: node selectors")). Room k uses `encountersByIndex[k] ?? encounter`;
    * at runtime the values are resolved family ids. */
   encountersByIndex?: Record<number, string | string[]>
-  /** Pool of decoration kinds available to this section's fork/endpoint rooms. */
+  /** Per-node authored activity: 0-based room index → the activity that room is dressed for. */
+  activitiesByIndex?: Record<number, ActivityId>
+  /** Per-node difficulty: 0-based room index → the tier that room builds at, else the section's `difficulty`. */
+  difficultiesByIndex?: Record<number, Difficulty>
+  /** `false` keeps generated loot out of this section's puzzle rooms (and its unauthored end); authored rewards stay. */
+  loot?: false
+  /** Per-node loot: 0-based room index → `false`, keeping generated loot out of that room alone. */
+  lootByIndex?: Record<number, false>
+  /** Pool of decoration kinds this section's rooms are dressed from. */
   decorations?: DecorationKind[]
   /** Pool of wall-item kinds for the same rooms, hung on a wall instead of standing on the floor. */
   wallDecorations?: WallDecorationKind[]
@@ -522,12 +595,14 @@ export type ForkDemand = { exits: number; count: number } | { in: string }
 export type FloorConfig = {
   pathPuzzles: number
   difficulty: Difficulty
+  /** The tileset this floor is drawn in, in place of its `difficulty`; its paths inherit it. */
+  tileset?: Tileset
   end: "treasure"
-  exitOrStaircase: "exit" | "staircase" | { stairId: string }
+  exitOrStaircase: "exit" | "none" | "staircase" | { stairId: string }
   /** If set, the entrance room becomes an up-stairhead with this stairId. */
   entrance?: "stairhead" | { stairId: string }
   sideSections: SideSection[]
-  /** Pool of decoration kinds available to the main path's fork/endpoint rooms. */
+  /** Pool of decoration kinds the main path's rooms are dressed from. */
   decorations?: DecorationKind[]
   /** Pool of wall-item kinds for the same rooms, hung on a wall instead of standing on the floor. */
   wallDecorations?: WallDecorationKind[]
@@ -659,6 +734,14 @@ export type FloorConfig = {
    * `encountersByIndex[k] ?? encounter`; baked to concrete family ids by the gen-time encounter
    * pass. Replaces the old last-only `lastMainPuzzleFamily`. See docs/mods/ARCHITECTURE.md ("Authoring: node selectors"). */
   encountersByIndex?: Record<number, string | string[]>
+  /** Per-node authored activity for the main path: 0-based room index → the activity that room is dressed for. */
+  activitiesByIndex?: Record<number, ActivityId>
+  /** Per-node difficulty for the main path: 0-based room index → the tier that room builds at, else `difficulty`. */
+  difficultiesByIndex?: Record<number, Difficulty>
+  /** `false` keeps generated loot out of this floor's main-path puzzle rooms (and its unauthored end); authored rewards stay. */
+  loot?: false
+  /** Per-node loot for the main path: 0-based room index → `false`, keeping generated loot out of that room alone. */
+  lootByIndex?: Record<number, false>
   /** How often the maze continues straight instead of turning, 0-1. Defaults to 0.65 (fairly straight); lower = more winding. */
   corridorStraightness?: number
   /** Main-path length multiplier, relative to actual content. Defaults to 1; lower = a shorter, tighter walk, higher = a longer, more wandering one. */

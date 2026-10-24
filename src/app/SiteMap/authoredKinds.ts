@@ -1,6 +1,5 @@
 import { generatedWorldConfigs } from "@/data/generatedWorld"
-import type { Difficulty } from "@/data/difficultyLevels"
-import type { DecorationKind, WallDecorationKind } from "@/game/siteTypes"
+import type { DecorationKind, Tileset, WallDecorationKind } from "@/game/siteTypes"
 import type { SideSection, SubSection } from "@/worldGen/types"
 import { FLOOR_KINDS } from "./floorScatter"
 
@@ -32,16 +31,16 @@ export type AuthoredKinds = { props: DecorationKind[]; wallItems: WallDecoration
  */
 const SCATTER = [...FLOOR_KINDS].sort()
 
-const collect = (): Map<Difficulty, AuthoredKinds> => {
-  const byTier = new Map<Difficulty, { props: Set<DecorationKind>; wallItems: Set<WallDecorationKind> }>()
-  const bucket = (tier: Difficulty) => {
+const collect = (): Map<Tileset, AuthoredKinds> => {
+  const byTier = new Map<Tileset, { props: Set<DecorationKind>; wallItems: Set<WallDecorationKind> }>()
+  const bucket = (tier: Tileset) => {
     const found = byTier.get(tier)
     if (found) return found
     const fresh = { props: new Set<DecorationKind>(), wallItems: new Set<WallDecorationKind>() }
     byTier.set(tier, fresh)
     return fresh
   }
-  const walk = (section: SubSection | SideSection, tier: Difficulty) => {
+  const walk = (section: SubSection | SideSection, tier: Tileset) => {
     const into = bucket(tier)
     section.decorations?.forEach(k => into.props.add(k))
     section.wallDecorations?.forEach(k => into.wallItems.add(k))
@@ -50,7 +49,7 @@ const collect = (): Map<Difficulty, AuthoredKinds> => {
   for (const sites of Object.values(generatedWorldConfigs))
     for (const site of sites)
       for (const floor of site) {
-        const tier = floor.difficulty
+        const tier = floor.tileset ?? floor.difficulty
         const into = bucket(tier)
         floor.decorations?.forEach(k => into.props.add(k))
         floor.wallDecorations?.forEach(k => into.wallItems.add(k))
@@ -67,5 +66,5 @@ const collect = (): Map<Difficulty, AuthoredKinds> => {
 const cached = collect()
 
 /** The props and wall items this rank can draw. Empty arrays for a rank the world never sends anyone to. */
-export const authoredKindsFor = (tier: Difficulty): AuthoredKinds =>
+export const authoredKindsFor = (tier: Tileset): AuthoredKinds =>
   cached.get(tier) ?? { props: [], wallItems: [], scatter: SCATTER }

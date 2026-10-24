@@ -1,5 +1,4 @@
-import type { Difficulty } from "@/data/difficultyLevels"
-import type { FloorGrid } from "@/game/siteTypes"
+import type { FloorGrid, Tileset } from "@/game/siteTypes"
 import type { RoomClaims } from "./roomClaims"
 import { hashUnit } from "@/support/hashString"
 
@@ -84,7 +83,7 @@ const runThrough = (grid: FloorGrid, row: number, col: number, dr: number, dc: n
  * One file for the art: sand has its own colour in all five tombs, so it lives in `tiles/default/` like
  * the explorer. The gods' rank gets none — a clean seam — which is sand's only per-rank difference.
  */
-export const driftsFor = (grid: FloorGrid, tier: Difficulty): Drift[] => {
+export const driftsFor = (grid: FloorGrid, tier: Tileset): Drift[] => {
   if (tier === "wizard") return []
   const walkable: string[] = []
   for (let r = 0; r < grid.rows; r++)
@@ -167,6 +166,8 @@ export const grassMatsFor = (grid: FloorGrid, amount: number): Drift[] => {
 // SAND IS NOT HERE, and that is the point of `driftsFor` below: a drift does not fit in a cell.
 const GROUND_KINDS: readonly ScatterKind[] = ["rubbleSpill"]
 const CHAMBER_KINDS: readonly ScatterKind[] = ["mat", "rubbleSpill"]
+// A cave is a place nobody furnished: its chambers get what falls, never what someone laid down.
+const UNFURNISHED: readonly ScatterKind[] = ["rubbleSpill"]
 
 /** One piece per this many corridor cells, within the bounds. Measured at 6.9 a floor when the divisor
  * was 7 and the cap 7 — which is to say every floor was at the cap, and a passage with something in
@@ -188,6 +189,7 @@ const PER_CHAMBER = 2
  */
 export const scatterFor = (grid: FloorGrid, claims: RoomClaims): ReadonlyMap<string, ScatterKind> => {
   const out = new Map<string, ScatterKind>()
+  const chamberKinds = grid.tileset === "cave" ? UNFURNISHED : CHAMBER_KINDS
 
   // ── the chambers, each dressed on its own floor ──
   //
@@ -201,12 +203,12 @@ export const scatterFor = (grid: FloorGrid, claims: RoomClaims): ReadonlyMap<str
   }
   for (const [c, [ownerKey, cells]] of [...footprints].sort(([a], [b]) => (a < b ? -1 : 1)).entries()) {
     // NOT the owner's own cell: that is where the room's icon goes — a puzzle's family, an exit's star
-    // — and not a cell that already carries the room's prop, which `decorationAt` has put on one of
-    // the claims. Dressing lies on the floor AROUND what the room is for.
-    const free = cells.filter(key => !claims.decorationAt.has(key) && key !== ownerKey)
+    // — and not a cell a prop stands on (`decorationCells`, every cell of its footprint). Dressing lies
+    // on the floor AROUND what the room is for.
+    const free = cells.filter(key => !claims.decorationCells.has(key) && key !== ownerKey)
     for (let i = 0; i < PER_CHAMBER && free.length; i++) {
       const key = free[Math.floor(hashUnit(grid.siteId, `chamber-cell-${c}`, i) * free.length)]
-      out.set(key, CHAMBER_KINDS[Math.floor(hashUnit(grid.siteId, `chamber-kind-${c}`, i) * CHAMBER_KINDS.length)])
+      out.set(key, chamberKinds[Math.floor(hashUnit(grid.siteId, `chamber-kind-${c}`, i) * chamberKinds.length)])
     }
   }
 

@@ -23,40 +23,20 @@ const rooms = (): { journeyId: string; floor: number; index: number }[] => {
   return found
 }
 
-const scenes = (locale: string): Record<string, unknown> =>
-  JSON.parse(readFileSync(`public/locales/${locale}/fez.json`, "utf8")).tomb ?? {}
+/** Whether `<group>.<id>` has lines in `locale` — a tomb's scene and the meeting live in different groups. */
+const written = (locale: string, scene: string): boolean => {
+  const [group, id] = scene.split(".")
+  return JSON.parse(readFileSync(`public/locales/${locale}/fez.json`, "utf8"))[group]?.[id] !== undefined
+}
 
 describe("every conversation room in the world", () => {
   it("has a scene written for it, in both languages", () => {
     const missing: string[] = []
     for (const room of rooms()) {
       const scene = sceneFor(room.journeyId)
-      const id = scene?.replace(/^tomb\./, "")
       for (const locale of ["en", "nl"])
-        if (!id || !scenes(locale)[id]) missing.push(`${locale}: ${room.journeyId} wants ${scene ?? "nothing"}`)
+        if (!scene || !written(locale, scene)) missing.push(`${locale}: ${room.journeyId} wants ${scene ?? "nothing"}`)
     }
     expect(missing).toEqual([])
-  })
-
-  it("never stands ahead of a tableau, which is numbered by its position", () => {
-    // `resolveTableauKeyRequirements` reads `levelNr = pathIndex + 1`, so a room inserted before a
-    // tableau renumbers it and asks for authored content that does not exist. World generation fails
-    // outright when that happens — this says why, and keeps the rule where the placements are.
-    const ahead: string[] = []
-    for (const [journeyId, levels] of Object.entries(generatedWorldConfigs))
-      levels.forEach((floors, floor) =>
-        floors.forEach(section => {
-          const byIndex = section.encountersByIndex ?? {}
-          const talk = Object.entries(byIndex)
-            .filter(([, encounter]) => encounter === "conversation")
-            .map(([index]) => Number(index))
-          const tableaus = Object.entries(byIndex)
-            .filter(([, encounter]) => encounter === "tableau")
-            .map(([index]) => Number(index))
-          for (const at of talk)
-            if (tableaus.some(tableau => tableau > at)) ahead.push(`${journeyId} floor ${floor}, room ${at}`)
-        })
-      )
-    expect(ahead).toEqual([])
   })
 })

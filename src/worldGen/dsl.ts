@@ -1,5 +1,6 @@
 import type { Tier, Difficulty, PathPuzzlesRange } from "./types"
-import type { DecorationKind, HandleSide, Patron, SiteCondition, WallDecorationKind } from "../game/siteTypes"
+import type { ActivityId } from "../game/activities"
+import type { DecorationKind, HandleSide, Patron, SiteCondition, Tileset, WallDecorationKind } from "../game/siteTypes"
 import type { PlacedContainer } from "../game/regions"
 import type { BarrierOrder, Control, Obstacle } from "@/game/obstacles"
 import type { PlacedLock } from "@/game/floorLocks"
@@ -67,6 +68,13 @@ export type NodeSelector = {
   where: NodeWhere
   /** Family/tag for the selected node(s) — an exact family id or a tag (e.g. "capstone", "trap"). */
   encounter?: string | string[]
+  /** What the selected room is for — a story scene's set (activities.ts). Free: it only dresses the room. */
+  activity?: ActivityId
+  /** The difficulty this room is dealt and generated at, in place of its path's. A node that names only a
+   * difficulty is dealt from that difficulty's pool of the path's role. */
+  difficulty?: Difficulty
+  /** `false` keeps generated loot out of this room. Authored rewards are never touched. */
+  loot?: false
 }
 
 /** Expand `nodes` selectors against a path's node `count` into a sparse 0-based index → encounter
@@ -75,23 +83,44 @@ export type NodeSelector = {
 export const resolveNodeSelectors = (
   nodes: NodeSelector[] | undefined,
   count: number
-): Record<number, string | string[]> => {
-  const out: Record<number, string | string[]> = {}
+): Record<number, string | string[]> => resolveNodeField(nodes, count, sel => sel.encounter)
+
+/** Expand `nodes` selectors into a sparse 0-based index → authored activity map, the way
+ * `resolveNodeSelectors` does for encounters. */
+export const resolveNodeActivities = (nodes: NodeSelector[] | undefined, count: number): Record<number, ActivityId> =>
+  resolveNodeField(nodes, count, sel => sel.activity)
+
+/** Expand `nodes` selectors into a sparse 0-based index → difficulty map, the way `resolveNodeActivities` does. */
+export const resolveNodeDifficulties = (nodes: NodeSelector[] | undefined, count: number): Record<number, Difficulty> =>
+  resolveNodeField(nodes, count, sel => sel.difficulty)
+
+/** Expand `nodes` selectors into a sparse 0-based index → `false` map of the rooms kept free of generated loot. */
+export const resolveNodeLoot = (nodes: NodeSelector[] | undefined, count: number): Record<number, false> =>
+  resolveNodeField(nodes, count, sel => sel.loot)
+
+const resolveNodeField = <T>(
+  nodes: NodeSelector[] | undefined,
+  count: number,
+  field: (sel: NodeSelector) => T | undefined
+): Record<number, T> => {
+  const out: Record<number, T> = {}
   if (!nodes || count <= 0) return out
-  const set = (oneBased: number, enc: string | string[] | undefined) => {
-    const i = oneBased - 1
-    if (enc !== undefined && i >= 0 && i < count) out[i] = enc
-  }
   for (const sel of nodes) {
+    const value = field(sel)
+    if (value === undefined) continue
+    const set = (oneBased: number) => {
+      const i = oneBased - 1
+      if (i >= 0 && i < count) out[i] = value
+    }
     const w = sel.where
-    if (w === "first") set(1, sel.encounter)
-    else if (w === "last") set(count, sel.encounter)
-    else if (typeof w === "number") set(w, sel.encounter)
+    if (w === "first") set(1)
+    else if (w === "last") set(count)
+    else if (typeof w === "number") set(w)
     else {
       // Clamp step to a positive integer so a bad `every` (0, negative, fractional) can't hang the
       // build; a nonsense value degrades to "every node" rather than looping forever.
       const step = Math.max(1, Math.floor(w.every))
-      for (let pos = w.from ?? 1; pos <= count; pos += step) set(pos, sel.encounter)
+      for (let pos = w.from ?? 1; pos <= count; pos += step) set(pos)
     }
   }
   return out
@@ -115,6 +144,12 @@ export type SideSectionConstraint<TExtra extends string = never> = {
   gate?: GateSpec
   pathPuzzles?: PathPuzzlesPreset | number
   difficulty?: Difficulty
+  /** What this path is drawn in (tiles, palette, mood, encounter wall), apart from the `difficulty` its boards
+   * are built at. Unset: the floor's tileset, else this path's `difficulty`. */
+  tileset?: Tileset
+  /** `false` keeps generated loot out of this path: its puzzle rooms and its unauthored end. Authored rewards
+   * (`endReward`, a gate) stay. Inherited by the sections beneath it; unset inherits the floor's. */
+  loot?: false
   /** Which family/tag renders this section's intermediate rooms — an exact registered family
    * id (e.g. "tableau", "sumplete") or a tag (e.g. "trap", "puzzle"). Omit = the default for
    * this section's context (a side path defaults to the "puzzle" tag, i.e. sumplete). */
@@ -150,6 +185,12 @@ export type SideSectionConstraint<TExtra extends string = never> = {
 export type FloorConstraint<TExtra extends string = never> = {
   pathPuzzles?: PathPuzzlesPreset | number
   difficulty?: Difficulty
+  /** What this floor and its paths are drawn in, apart from the `difficulty` its boards are built at. Unset
+   * inherits the site's, else the floor is drawn in its `difficulty`. */
+  tileset?: Tileset
+  /** `false` keeps generated loot out of this floor: its puzzle rooms, its unauthored end and every section
+   * on it. Authored rewards (`mainEndReward`, `endReward`, gates) stay. Unset inherits the site's. */
+  loot?: false
   /** Default family/tag for this floor's main-path encounter rooms. */
   encounter?: string | string[]
   /** Per-node encounter selectors — override `encounter` at chosen positions of the main-path
@@ -294,6 +335,10 @@ export type PyramidConstraint = {
    * and sharedKeyChance. */
   keyColorsRange?: { min: number; max: number }
   difficulty?: Difficulty
+  /** What every floor of the site is drawn in, unless one names its own; see FloorConstraint.tileset. */
+  tileset?: Tileset
+  /** `false` keeps generated loot out of the whole site; see FloorConstraint.loot. */
+  loot?: false
   /** Pool of decoration kinds every floor and side section of this site draws its props from, unless
    * one names its own. Authored at tier level this dresses a whole rank in one line. Purely drawn —
    * a free field (docs/game-design/world-spec-stability.md). */
@@ -415,8 +460,8 @@ export type PyramidConstraint = {
   hiddenPaths?: PathEntry[]
   /** Integer weights for consumable type selection. Higher = more frequent. */
   consumableRates?: { bandage: number; oil: number; trapTool: number }
-  /** Number of floors for tomb journeys. Overrides the value in TOMB_STRUCTURES. */
-  levelCount?: number
+  /** Number of floors of a tomb level. Overrides the value in TOMB_STRUCTURES. */
+  floorCount?: number
 }
 
 /** Tomb-only reward hints: "tombTreasure" draws the next ward-key/perk off the tomb's
@@ -576,7 +621,7 @@ export function journey(id: string, c?: PyramidConstraint): Rule | JourneyScopeB
 }
 
 export function tomb(id: string, c: TombConstraint): Rule {
-  return { scope: { level: "journey", journey: id }, constraints: c }
+  return { scope: { level: "journey-pyramid", journey: id, pyramid: "last" }, constraints: c }
 }
 
 export const rules = (list: Rule[]): Rule[] => list

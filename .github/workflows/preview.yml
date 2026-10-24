@@ -1,9 +1,13 @@
 name: Preview
 
+# Only by hand, naming the branch: several sessions push in parallel, and a push is not a request to deploy.
 on:
-  push:
-    branches: [topology/mechanics]
   workflow_dispatch:
+    inputs:
+      branch:
+        description: The branch to build and publish to the preview
+        required: true
+        type: string
 
 concurrency:
   group: preview
@@ -18,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: topology/mechanics
+          ref: ${{ inputs.branch }}
       - name: Enable Corepack
         run: corepack enable
       - name: Set up Node
@@ -33,6 +37,8 @@ jobs:
         env:
           VITE_BASE: /pyramid-scheme-preview/
           VITE_STORAGE_PREFIX: "preview:"
+          # The preview plays what the next release ships, so it is tested as players will meet it.
+          VITE_LAST_RELEASED_DIFFICULTY: starter
       - name: Add .nojekyll
         run: touch dist/.nojekyll
       - name: Publish to pyramid-scheme-preview

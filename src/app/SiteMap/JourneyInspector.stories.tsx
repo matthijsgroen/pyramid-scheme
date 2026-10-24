@@ -7,6 +7,7 @@ import { generatedWorldConfigs } from "../../data/generatedWorld"
 import { journeys } from "../../data/journeys"
 import type { Journey } from "../../data/journeys"
 import { SiteMapView } from "./SiteMapView"
+import "@/mods/registerModApps"
 import { encodeEdge, decodeEdge } from "./edgeId"
 import type { FloorConfig } from "../../game/siteTypes"
 

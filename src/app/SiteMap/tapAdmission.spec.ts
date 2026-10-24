@@ -47,6 +47,8 @@ const stubJourneys = () =>
     getSkippedConsumables: () => new Set<string>(),
     getMechanismStates: vi.fn(() => new Map<string, string>()),
     setMechanismState: vi.fn(),
+    setMechanismStates: vi.fn(),
+    recordWalkedSteps: vi.fn(),
   }) as unknown as JourneyAPI
 
 describe("a tap on a carved floor goes through the offer layer", () => {

@@ -49,13 +49,14 @@
       "setStone": "Leg de steen op de plaat",
       "postStone": "Schuif de steen erin",
       "takeStone": "Pak de steen",
-      "squeeze": "Wurm je er door"
+      "squeeze": "Wurm je er door",
+      "replay": "Opnieuw afspelen"
     },
     "blocked": {
       "carrying": "Niet te passeren met een steen"
     },
     "travel": "Reizen",
-    "chooseYourJourney": "Kies je Reis",
+    "chooseYourJourney": "Kies je Expeditie",
     "backToMap": "Terug naar kaart",
     "startAdventure": "Begin je avontuur door piramides te verkennen.",
     "continueExploration": "Ga door met het verkennen van de piramides.",
@@ -166,7 +167,7 @@
   "loot": {
     "youFound": "Je hebt gevonden",
     "expeditionReward": "Extra beloning voor het voltooien van de expeditie",
-    "clickToContinue": "Klik ergens om door te gaan"
+    "clickToContinue": "Tik ergens om door te gaan"
   },
   "money": {
     "label": "Munten"
@@ -199,7 +200,7 @@
   },
   "collection": {
     "title": "Collectie",
-    "clickForDetails": "Klik op een tegel voor details",
+    "clickForDetails": "Tik op een tegel voor details",
     "categories": {
       "deities": "🏺 Goden",
       "professions": "⚱️ Beroepen",
@@ -1112,6 +1113,7 @@
     }
   },
   "story": {
+    "invitation": "Praat",
     "log": {
       "title": "Wat ons verteld is",
       "empty": "Nog niets. Fez gaat vast genoeg zeggen."
@@ -1122,7 +1124,8 @@
       "ipi": "Ipi",
       "henut": "Henut",
       "priest": "De priester",
-      "pharaoh": "De farao"
+      "pharaoh": "De farao",
+      "voice": "Een stem"
     },
     "wall": {
       "wrong": "Iemand heeft het derde teken verkeerd gehakt. Al drieduizend jaar staat het er fout.",

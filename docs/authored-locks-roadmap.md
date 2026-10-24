@@ -280,11 +280,11 @@ that can never open.
 
 So three brackets, which must not be confused:
 
-| Question                | Bracket                                                                    |
-| ----------------------- | -------------------------------------------------------------------------- |
-| Is the lock sound?      | ward keys assumed **shut** — keeps the proof local to the container        |
-| Is this loot reachable? | authored doors assumed **open** — reachable at any point counts            |
-| Is this region reached? | mechanism gates use **the walk**; ward and off-floor keys assumed openable |
+| Question                | Bracket                                                                                                                                              |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Is the lock sound?      | keys earned off the floor (ward gates, a tableau's hieroglyphs) assumed **held**; a lock control standing only past one is refused (`leansOffFloor`) |
+| Is this loot reachable? | authored doors assumed **open** — reachable at any point counts                                                                                      |
+| Is this region reached? | mechanism gates use **the walk**; ward and off-floor keys assumed openable                                                                           |
 
 The third is the new one and it sits between the other two. `junior_2` L2 F0's deliberately
 unreachable ward pocket stays legal, because its key is earned elsewhere in the world; a region behind

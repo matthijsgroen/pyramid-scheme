@@ -10,6 +10,7 @@ import type {
   DecorationKind,
   FloorGrid,
   Difficulty,
+  Tileset,
   Direction,
   FloorConfig,
   KeyColor,
@@ -107,8 +108,9 @@ export type SectionGroup = { sectionIdx: number; cells: Cell[]; attachedAt: Cell
 /** A room as a pass decides it; the renderer adds what the grid alone knows. */
 export type RoomSpec = Omit<RoomCell, "type" | "dirs" | "state" | "sectionHash" | "legacySectionHash" | "hidden">
 
-/** Which section's authored dressing pools a room draws from, on its floor and on its wall. */
-export type DressingPools = { props?: DecorationKind[]; wall?: WallDecorationKind[] }
+/** Which section's authored dressing pools a room draws from, on its floor and on its wall, and the role that
+ * section was authored for, which says which activities its rooms may serve. */
+export type DressingPools = { props?: DecorationKind[]; wall?: WallDecorationKind[]; role?: string | string[] }
 
 /** A gate the carve agreement checks, with the regions it bounds. */
 export type AgreementGate = { id: string; between: readonly [string, string]; key: string; bounds: string[] }
@@ -271,6 +273,8 @@ export type CellLabels = {
   hidden: Set<string>
   dressing: Map<string, DressingPools>
   difficulty: Map<string, Difficulty>
+  /** The tileset a section authored for its own cells; a cell with none draws in the floor's. */
+  tileset: Map<string, Tileset>
   region: Map<string, string>
   /** The section hash a filled-in room carries, which is its section's and never the ground's. */
   absorbedHash: Map<string, { hash: string; legacy: string }>

@@ -26,6 +26,15 @@ const withI18next = (Story, context) => {
 const preview: Preview = {
   tags: ["autodocs"],
   parameters: {
+    // The screens a painted backdrop has to hold up on: the toolbar's viewport button switches between them.
+    viewport: {
+      options: {
+        phone: { name: "Phone", styles: { width: "390px", height: "844px" }, type: "mobile" },
+        tablet: { name: "Tablet", styles: { width: "820px", height: "1180px" }, type: "tablet" },
+        desktop: { name: "Desktop", styles: { width: "1440px", height: "900px" }, type: "desktop" },
+        ultrawide: { name: "Ultrawide", styles: { width: "3440px", height: "1440px" }, type: "desktop" },
+      },
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,

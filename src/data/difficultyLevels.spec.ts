@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { wardKeyDifficulty } from "./difficultyLevels"
+import { wardKeyDifficulty, releasedDifficulty } from "./difficultyLevels"
 
 // Ward gates are tinted + described by their key's difficulty, derived from the key id prefix
 // (`<difficulty>_<wing>_<n>`, e.g. "junior_a_2"). Guards the parse used by the map + gate encounter.
@@ -16,5 +16,20 @@ describe("wardKeyDifficulty", () => {
     expect(wardKeyDifficulty(undefined)).toBeUndefined()
     expect(wardKeyDifficulty("blue")).toBeUndefined() // a floor-key color, not a ward key
     expect(wardKeyDifficulty("")).toBeUndefined()
+  })
+})
+
+describe("the tier a build ships up to", () => {
+  it("is the one the release names", () => {
+    expect(releasedDifficulty("starter")).toBe("starter")
+  })
+
+  it("is every authored tier when the build names none", () => {
+    expect(releasedDifficulty(undefined)).toBe("expert")
+    expect(releasedDifficulty("")).toBe("expert")
+  })
+
+  it("fails the build on a name that is not a tier", () => {
+    expect(() => releasedDifficulty("starterr")).toThrow(/not a tier/)
   })
 })

@@ -7,6 +7,10 @@ import { ViteImageOptimizer } from "vite-plugin-image-optimizer"
 import path from "node:path"
 
 import info from "./package.json" with { type: "json" }
+import { PRODUCTION_BASE, pwaBuild } from "./scripts/pwaIdentity.ts"
+
+const base = process.env.VITE_BASE ?? PRODUCTION_BASE
+const pwa = pwaBuild(base)
 
 const htmlPlugin = () => {
   return {
@@ -46,16 +50,15 @@ export default defineConfig({
       VitePWA({
         registerType: "prompt",
         injectRegister: false,
+        selfDestroying: pwa.selfDestroying,
 
         pwaAssets: {
           disabled: false,
           config: true,
         },
 
-        manifest: {
-          name: "Pyramid Scheme",
-          short_name: "Pyramid Scheme",
-          id: "com.matthijsgroen.pyramidscheme",
+        manifest: pwa.identity && {
+          ...pwa.identity,
           description:
             "An ancient Egyptian-themed math puzzle adventure game where you explore mysterious pyramids, solve hieroglyphic puzzles, and collect treasures from forgotten tombs.",
           theme_color: "#bedff",
@@ -135,7 +138,7 @@ export default defineConfig({
       exclude: /apple-(splash|touch-icon)|maskable-icon|pwa-\d+x\d+/,
     }),
   ],
-  base: process.env.VITE_BASE ?? "/pyramid-scheme/",
+  base,
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),

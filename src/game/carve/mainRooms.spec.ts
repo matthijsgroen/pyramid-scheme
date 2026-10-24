@@ -37,6 +37,38 @@ describe("mainRooms", () => {
     expect(at(goal)?.family).toBe("treasure-chest")
   })
 
+  describe("the goal of a floor with no main-end reward", () => {
+    const goalOf = (config: Parameters<typeof plainFloor>[0]) => {
+      const state = firstCarved(prepOf(plainFloor({ pathPuzzles: 2, exitOrStaircase: "exit", ...config })))
+      return state.mainRooms!.get(keyOf(state.maze!.mainPath[state.content!.goal]))
+    }
+
+    it("is no chest on a lootless floor: the floor ends at its pillar", () => {
+      expect(goalOf({ loot: false })?.family).not.toBe("treasure-chest")
+    })
+
+    it("is still a chest on a floor with loot", () => {
+      expect(goalOf({})?.family).toBe("treasure-chest")
+    })
+
+    it("is a chest on a lootless floor whose main end authors a reward", () => {
+      expect(goalOf({ loot: false, mainEndReward: { type: "tombKey", keyId: "k" } })?.family).toBe("treasure-chest")
+    })
+  })
+
+  it("numbers a room among the rooms of its own family on the chain", () => {
+    const state = firstCarved(
+      prepOf(plainFloor({ pathPuzzles: 4, encounter: "tableau", encountersByIndex: { 1: "sumplete" } }))
+    )
+    const rooms = state.content!.placed.slice(0, 4).map(step => state.mainRooms!.get(keyOf(state.maze!.mainPath[step])))
+    expect(rooms.map(room => [room?.family, room?.familyOrdinal])).toEqual([
+      ["tableau", 0],
+      ["sumplete", 0],
+      ["tableau", 1],
+      ["tableau", 2],
+    ])
+  })
+
   it("makes the exit a plain portal, or a stairhead where the floor goes down", () => {
     const exit = (exitOrStaircase: "exit" | "staircase") => {
       const { state, rooms } = carvedWith(exitOrStaircase)
@@ -108,6 +140,50 @@ describe("carved through assembleFloor", () => {
     if (!result.success) throw new Error("assembly failed")
     const rooms = result.grid.cells.flat().filter((c): c is RoomCell => c.type === "room" && isPuzzleRoom(c))
     expect(rooms.map(r => r.difficulty).sort()).toEqual(["master", "starter", "wizard", "wizard"])
+  })
+
+  it("draws a room whose node names another difficulty in its section's tileset", () => {
+    const config: FloorConfig = {
+      ...basicConfig(),
+      pathPuzzles: 2,
+      difficulty: "starter",
+      difficultiesByIndex: { 1: "junior" },
+    }
+    const result = assembleFloor("site-1", config, 42)
+    if (!result.success) throw new Error("assembly failed")
+    const rooms = result.grid.cells.flat().filter((c): c is RoomCell => c.type === "room" && isPuzzleRoom(c))
+    const named = rooms.find(r => r.pathIndex === 1)
+    expect(named).toMatchObject({ difficulty: "junior", tileset: "starter" })
+    expect(rooms.find(r => r.pathIndex === 0)?.tileset).toBeUndefined()
+  })
+
+  it("draws a room whose node names another difficulty in the floor's tileset when the floor names one", () => {
+    const config: FloorConfig = {
+      ...basicConfig(),
+      pathPuzzles: 2,
+      difficulty: "starter",
+      tileset: "cave",
+      difficultiesByIndex: { 1: "junior" },
+    }
+    const result = assembleFloor("site-1", config, 42)
+    if (!result.success) throw new Error("assembly failed")
+    expect(result.grid.tileset).toBe("cave")
+    const rooms = result.grid.cells.flat().filter((c): c is RoomCell => c.type === "room" && isPuzzleRoom(c))
+    expect(rooms.find(r => r.pathIndex === 1)).toMatchObject({ difficulty: "junior", tileset: "cave" })
+  })
+
+  it("stamps a section's own tileset on its cells and leaves the others to the floor", () => {
+    const config: FloorConfig = {
+      ...basicConfig(),
+      pathPuzzles: 1,
+      sideSections: [{ pathPuzzles: 1, difficulty: "starter", tileset: "cave", end: "treasure" }],
+    }
+    const result = assembleFloor("site-1", config, 42)
+    if (!result.success) throw new Error("assembly failed")
+    expect(result.grid.tileset).toBeUndefined()
+    const tilesets = result.grid.cells.flat().flatMap(c => (c.type === "empty" || !c.tileset ? [] : [c.tileset]))
+    expect(tilesets.length).toBeGreaterThan(0)
+    expect(new Set(tilesets)).toEqual(new Set(["cave"]))
   })
 
   it("resolves a main-path puzzle room's own key requirement via the injected resolver, tagged with its path index and the floor's encounterArgs", () => {

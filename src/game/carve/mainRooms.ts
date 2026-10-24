@@ -1,10 +1,12 @@
 import { contentNow, controlAtIndex, forkPositions, gateIndexOf, gateIndices, keyOf } from "./derive"
+import { roomDifficulty, roomTileset } from "../roomDifficulty"
 import { gateKeyOf, stairOnThisFloor } from "./ids"
 import {
   controlRoomSpec,
   endRoomSpec,
   floorKeysOfGate,
   leverSpec,
+  familyOrdinals,
   puzzleRoomSpec,
   regionBarrierDoorSpec,
 } from "./roomSpecs"
@@ -35,6 +37,7 @@ export const mainRooms = pass(
     const gateAt = gateIndexOf(state)
     const controlAt = controlAtIndex(prep, state.mainControls)
     const rooms = new Map<string, RoomSpec>()
+    const mainOrdinalOf = familyOrdinals()
 
     // A SECTION FILLED INTO LAID NODES KEEPS ITS OWN IDENTITY ON ITS ROOMS: the section's address and its slots
     // are the ones it would have as a branch, so a save filed under them survives a re-carve that moves the room
@@ -42,24 +45,27 @@ export const mainRooms = pass(
     for (const { section: idx, cells: nodes } of laid?.absorbed ?? []) {
       const section = sideSections[idx]
       const positional = `s${idx}`
+      const ordinalOf = familyOrdinals()
       nodes.forEach((cellKey, i) => {
         const cell = cellKey.split(",").map(Number) as Cell
         const spec =
           i < section.pathPuzzles
-            ? puzzleRoomSpec(prep, section, positional, i)
+            ? puzzleRoomSpec(prep, section, positional, i, ordinalOf)
             : endRoomSpec(prep, section, positional, hostColors.get(idx) ?? [], cell)
         rooms.set(cellKey, {
           ...spec,
           sectionAddress: addressOf.get(positional) ?? positional,
-          difficulty: section.difficulty,
+          difficulty: i < section.pathPuzzles ? roomDifficulty(section, i) : section.difficulty,
+          ...(i < section.pathPuzzles ? roomTileset(section, config, i) : {}),
         })
       })
     }
 
     // Main path nodes — spread across the full path per the content placed; everything else along the path is
-    // left unassigned and falls through to plain corridor. The goal-room fallback here is defensive only: every
-    // real config sets mainEndReward explicitly (buildSite.ts). An unset one falls back to the same
-    // grant-nothing placeholder every other unset reward slot uses.
+    // left unassigned and falls through to plain corridor. The goal is a chest; one whose mainEndReward is unset
+    // grants nothing, like every other unset reward slot. A LOOTLESS FLOOR WITH NO MAIN-END REWARD HAS NO CHEST:
+    // its goal stays corridor and the floor ends at its pillar.
+    const goalIsChest = config.loot !== false || config.mainEndReward !== undefined
     mainPath.forEach((cell, mi) => {
       const key = keyOf(cell)
       if (mi === 0) {
@@ -69,6 +75,7 @@ export const mainRooms = pass(
           rooms.set(key, { roomType: "portal", stairId })
         } else rooms.set(key, { roomType: "portal" })
       } else if (mi === goal) {
+        if (!goalIsChest) return
         rooms.set(key, {
           roomType: "encounter",
           family: treasureChest.familyId,
@@ -102,9 +109,12 @@ export const mainRooms = pass(
         const family =
           override !== undefined ? resolveEncounter(override, "puzzle") : resolveEncounter(config.encounter, "puzzle")
         const reward = config.rewards?.[k]
+        const authoredActivity = config.activitiesByIndex?.[k]
+        const familyOrdinal = mainOrdinalOf(family.familyId)
         const requiredKeyIds = resolveKeyRequirements(family.familyId, {
           ...floorRef,
           pathIndex: k,
+          familyOrdinal,
           encounterArgs: config.encounterArgs,
         })
         const boardIndex = resolveBoardIndex?.(family.familyId, { section: "main", pathIndex: k })
@@ -113,15 +123,18 @@ export const mainRooms = pass(
           family: family.familyId,
           tags: family.tags,
           pathIndex: k,
+          familyOrdinal,
           ...(boardIndex !== undefined ? { boardIndex } : {}),
           ...(config.encounterArgs !== undefined ? { encounterArgs: config.encounterArgs } : {}),
-          difficulty: config.difficulty,
+          difficulty: roomDifficulty(config, k),
+          ...roomTileset(config, config, k),
           ...(config.theme !== undefined ? { theme: config.theme } : {}),
           ...(config.condition !== undefined ? { condition: config.condition } : {}),
           ...(config.patron !== undefined ? { patron: config.patron } : {}),
           ...(config.role !== undefined ? { role: config.role } : {}),
           ...(requiredKeyIds?.length ? { requiredKeyIds } : {}),
           ...(reward ? { reward } : {}),
+          ...(authoredActivity ? { authoredActivity } : {}),
         })
       }
     })
@@ -132,7 +145,7 @@ export const mainRooms = pass(
     for (const key of forkPositions(state)) if (!rooms.has(key)) rooms.set(key, { roomType: "fork" })
 
     if (config.exitOrStaircase === "exit") rooms.set(keyOf(exit), { roomType: "portal" })
-    else {
+    else if (config.exitOrStaircase !== "none") {
       const stairId =
         typeof config.exitOrStaircase === "object" ? config.exitOrStaircase.stairId : stairOnThisFloor(floorRef, "main")
       rooms.set(keyOf(exit), { roomType: "portal", stairId })

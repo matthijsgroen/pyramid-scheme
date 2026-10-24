@@ -26,7 +26,9 @@ export const ExpeditionCompletionOverlay: FC<{
 
   // The tier's tomb, announced the run its lock comes open — asking the lock itself, so a tomb
   // whose pieces are shared with a sibling tomb is judged on what it actually needs.
-  const tombJourney = allJourneys.find(j => j.exterior === "tomb" && j.difficulty === journey.difficulty)
+  const tombJourney = allJourneys.find(
+    j => j.exterior === "tomb" && j.difficulty === journey.difficulty && j.id !== journey.id
+  )
   const tombLock = tombJourney ? lock(tombJourney.id) : undefined
   const tombState = tombJourney ? getJourney(tombJourney.id) : undefined
   const newTombJourneyId =

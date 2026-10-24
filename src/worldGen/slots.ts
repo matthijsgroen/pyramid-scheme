@@ -122,7 +122,12 @@ export const collectSlots = (
       const emitPuzzle = (
         rewards: (TreasureReward | undefined)[] | undefined,
         ref: FloorRef,
-        difficulty: Difficulty,
+        chain: {
+          difficulty: Difficulty
+          difficultiesByIndex?: Record<number, Difficulty>
+          loot?: false
+          lootByIndex?: Record<number, false>
+        },
         encounter: string | string[] | undefined,
         encountersByIndex: Record<number, string | string[]> | undefined,
         hidden: boolean
@@ -132,6 +137,14 @@ export const collectSlots = (
           // A reward already standing in a puzzle room (a web activator) is placed, not a slot to fill or clear.
           if (rw !== undefined && rw.type !== "fragmentSlot") return
           const arr = rewards
+          // A room's loot is tiered by its SECTION, never by its node's own difficulty: a node picks
+          // the board, so a junior node on a starter path must not pull junior loot into it.
+          // A lootless room (or chain) offers nothing to the pool. A currency sentinel a mod tagged into
+          // it would never be filled, so it goes too.
+          if (chain.loot === false || chain.lootByIndex?.[i] === false) {
+            if (rw?.type === "fragmentSlot") arr[i] = undefined
+            return
+          }
           const enc = encountersByIndex?.[i] ?? encounter
           const encId = Array.isArray(enc) ? enc[0] : enc
           // A reward-array entry that's a fragmentSlot sentinel is a currency placeholder (a shop's
@@ -142,7 +155,7 @@ export const collectSlots = (
           slots.push({
             ref,
             journeyId,
-            tier: difficulty as Tier,
+            tier: chain.difficulty as Tier,
             wardKeys: [],
             isPlaceholder: frag !== undefined,
             ...(frag?.prefers ? { preference: frag.prefers } : {}),
@@ -159,19 +172,12 @@ export const collectSlots = (
       }
       floors.forEach((floor, floorIndex) => {
         const pRef: FloorRef = { journeyId, levelIndex, floorIndex }
-        emitPuzzle(floor.rewards, pRef, floor.difficulty, floor.encounter, floor.encountersByIndex, false)
+        emitPuzzle(floor.rewards, pRef, floor, floor.encounter, floor.encountersByIndex, false)
         for (const section of floor.sideSections) {
           const secHidden = !!section.hidden
-          emitPuzzle(section.rewards, pRef, section.difficulty, section.encounter, section.encountersByIndex, secHidden)
+          emitPuzzle(section.rewards, pRef, section, section.encounter, section.encountersByIndex, secHidden)
           for (const sub of section.sideSections ?? [])
-            emitPuzzle(
-              sub.rewards,
-              pRef,
-              sub.difficulty,
-              sub.encounter,
-              sub.encountersByIndex,
-              secHidden || !!sub.hidden
-            )
+            emitPuzzle(sub.rewards, pRef, sub, sub.encounter, sub.encountersByIndex, secHidden || !!sub.hidden)
         }
       })
 

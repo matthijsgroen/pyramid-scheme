@@ -2,6 +2,7 @@ import type { FC, PropsWithChildren } from "react"
 import clsx from "clsx"
 import type { Journey } from "@/data/journeys"
 import { DifficultyPill } from "@/ui/atoms/DifficultyPill"
+import { METALS } from "@/ui/tokens/metalPalette"
 
 // A journey whose `name`/`description` are already the translated ones, plus the one label the card
 // renders itself. The app layer does the translating.
@@ -76,14 +77,12 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
       }}
     >
       <div
-        className={clsx(
-          "w-4 flex-shrink-0 self-stretch",
-          journey.difficulty === "starter" && "bg-stone-500",
-          journey.difficulty === "junior" && "bg-gradient-to-b from-orange-300 to-orange-400",
-          journey.difficulty === "expert" && "bg-gradient-to-b from-slate-200 to-slate-400",
-          journey.difficulty === "master" && "bg-gradient-to-b from-yellow-200 to-yellow-400",
-          journey.difficulty === "wizard" && "bg-gradient-to-b from-emerald-200 to-emerald-500"
-        )}
+        className="w-4 flex-shrink-0 self-stretch"
+        style={{
+          background: `linear-gradient(to bottom, ${METALS[journey.difficulty].light}, ${
+            METALS[journey.difficulty].material
+          })`,
+        }}
       ></div>
       <div
         className={clsx("flex-1 flex-col rounded-r-lg border-2 border-l-0 py-3 pr-3 pl-1", {
@@ -116,8 +115,8 @@ export const JourneyCard: FC<PropsWithChildren<JourneyCardProps>> = ({
             "text-amber-700": !disabled && !isTreasureTomb,
           })}
         >
-          {/* How far along the journey's nodes the player is. A journey of one node (a tomb, whose
-              single site holds all its floors) has nowhere to be along, so it says nothing. */}
+          {/* How far along the journey's nodes the player is. A journey of one node has nowhere to be
+              along, so it says nothing. */}
           {progressLevelNr > 0 && journey.levelCount > 1 && (
             <span className="flex-shrink-0 font-bold">
               {labels.progressLevel}:{" "}

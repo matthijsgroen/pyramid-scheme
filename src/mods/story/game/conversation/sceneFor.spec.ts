@@ -11,7 +11,11 @@ describe(sceneFor, () => {
     expect(sceneFor("wizard_treasure_tomb_c")).toBe("tomb.wizardC")
   })
 
-  it("has nothing to say for a pyramid, whose beat is its arrival", () => {
-    expect(sceneFor("starter_1")).toBeUndefined()
+  it("plays the meeting in the game's first pyramid, apart from its arrival", () => {
+    expect(sceneFor("starter_1")).toBe("meeting.starter_1")
+  })
+
+  it("has nothing to say for any other pyramid, whose beat is its arrival", () => {
+    expect(sceneFor("starter_2")).toBeUndefined()
   })
 })

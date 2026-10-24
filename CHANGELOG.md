@@ -9,6 +9,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Every treasure tomb is now hidden in a cave before its sunlit cavern; the starter tomb's cave is behind a lever lock.
+- The old skeleton in the cave lies across two floor cells.
+- The cave floor has worn, rounded edges instead of square ones, and its back walls end round against the side walls.
+- The tomb cave is a rocky hill standing in the desert where a pyramid would, and tombs are visited by day.
+- The tomb's cavern is painted: its pyramid stands in a shaft of sunlight under a hole in the rock.
+- Grit and sand that trickled from the roof lie in the cave's passages.
+- Rock gathers in the back corners of the cave's rooms.
+- A chest in the cave is the chest of its rank instead of a stand-in.
+- A pyramid has one way out now: the pillar of light where its main corridor ends, which Fez explains the first time you reach it.
+- The first sudoku boards hand you more of the answer, and the next tier steps up more gently.
+- Ipi, in the first tomb, talks with Fez and the explorer instead of at them.
+- The map button on the main screen is square.
+- The explorer looks dry when he is being dry, and surprised when something surprises him.
+- Fez and the explorer look excited on their excited story lines.
+- Fez looks worried on his worried story lines.
+- Fez looks wistful, surprised or sheepish on the story lines that call for it.
+- Fez at his shop is the same lizard as everywhere else, cocktail in hand.
+- On a wider screen the explorer and the ghosts stand whole beside the conversation; a phone still cuts them at its edge.
+- The explorer pointing is the same explorer as when he talks.
+- The Sphinx stands on the horizon behind the Dawn at the Sphinx pyramids.
+- A journey's arrival plays in front of its pyramid, not over the list of journeys.
+- The first pyramids' rooms are furnished for what was done in them: weighing, packing, storage, selling and the books.
+- You meet Fez on the first pyramid's ground floor, a voice in the dark before he is a face.
+- The game says tap rather than click, and calls an expedition one thing everywhere.
 - Coming back to a pyramid puts you where you left it.
 - A journey under sand says how much is still buried.
 - All wizard journeys open together.
@@ -18,6 +42,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A door with several controls opens a board showing each one with its mark, and a painted lever no longer has a square under it.
 - A torch stands painted on the floor, and once lit it lights the floor around it.
 - The Valley of the Kings' last pyramid has a zipline back into the lever chamber, so no room there is shut for good.
+- The first pyramids' rooms are lit instead of sinking into the dark.
+- The first pyramids are pale limestone and whitewashed brick, painted with red ochre, down to the wall behind their puzzles.
+- The room you are standing in is never dimmed as finished.
+- Difficulty now has one colour, its metal: stone, copper, silver, gold and emerald.
+- A journey card names the place; the joke waits for the arrival.
 - Turning tutorials off no longer silences the story — only the teaching.
 - Fez has someone to talk to: a conversation can carry two speakers, and the explorer answers from the other side of the screen.
 - Every pyramid in the world now greets you in its own voice.
@@ -30,11 +59,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A story log: everything you have been told, to read back if you tapped through it.
 - Henut's name is spelled wrong on her own wall, and you can put it right — if you know the sign.
 - The rest of the script is written in: the friendship beats, the inscription as it becomes readable, the priest refusing a fake, and the last thing anybody says.
+- Fez explains the mosaic when you find your first piece, and now and then reminds you to set the ones you carry.
 - Fez notices how you play now, and says so five times in a whole game: a board solved cold, a trap survived by a hair, and what he will not put a price on.
 - The writing on the Sphinx can be read at last, back in the pyramid you started in, once the Vault of the Gods gives up its key and its last sign.
 
 ### Fixed
 
+- On the map the explorer stands beside a stair instead of inside it, going up and going down.
+- The installed game no longer turns into the preview and asks to reload after every preview update.
+- How a tomb's tableau is worked is explained when the tableau is open, not on arrival.
+- The pointing hand on the travel map waits until the conversation is over.
+- Fez says nothing before you have met him.
+- On a wide screen the conversation stands by the game, not in the screen's corners.
+- No more bar across the screen while somebody talks to you in a room, or while Fez greets you at his stall.
+- No more faint bar behind a treasure chest before you open it.
+- The explorer no longer spins round each time the speaker changes in a conversation.
+- A solved pyramid stays filled in as it slides away, also after leaving its interior and coming back.
 - The arrow up a corridor that ends at a shut door or a narrow passage walks you there instead of doing nothing.
 - A journey now says its piece on the map as you set off, not once you are outside one of its pyramids.
 - Whoever speaks first slides in first. Fez used to appear with nothing to say and vanish again.
@@ -44,6 +84,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- The tomb ghosts stand in their rooms and say one line when you walk back in; a conversation room without one wears a replay symbol on the map and plays its scene again.
+- A tapping hand shows where to start on the travel screen, and in a conversation the explorer faces whoever he talks to.
 - A stone pipe in the walls carries a stone where you cannot: post it at one hole and take it out of the other.
 - A procession door: its tiles free the bars of a procession board, and solving it teaches the order to walk.
 - A junior pyramid's fork now has a mirror puzzle standing in it, and the way that stands open is the one you route the beam to. Change your mind and the other way opens as that one shuts. The fork and its doors wear one mark on the map.

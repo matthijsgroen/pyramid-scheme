@@ -64,7 +64,10 @@ export const useRewardOffer = ({ journeys, rewardContributions, applyReward }: R
     [journeys, rewardContributions, applyReward]
   )
 
-  const dismiss = useCallback(() => setPending(null), [])
+  const dismiss = useCallback(() => {
+    if (pending && !pending.consumableFull) rewardContributions.seen[pending.reward.type]?.(pending.reward)
+    setPending(null)
+  }, [pending, rewardContributions])
 
   return { pending, offerFound, offerSkipped, dismiss }
 }

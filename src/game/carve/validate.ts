@@ -4,6 +4,7 @@ import { appetiteAccepts } from "../regions"
 import type { ContentKind } from "../regions"
 import type { FloorGrid } from "../siteTypes"
 import { validateSite } from "../siteValidator"
+import { strandedFromHome } from "../wayHome"
 import { gateKeyOf } from "./ids"
 import { renderGround, renderShut } from "./render"
 import type { RenderState, WritableGrid } from "./render"
@@ -47,6 +48,10 @@ export const validate = (prep: FloorPrep, state: RenderState, grid: WritableGrid
   // itself shuts only the junctions a switch stands in.
   if (!validateSite(ground).valid) return { retry: [] }
   if (!validateSite(renderShut(prep, state)).valid) return { retry: [] }
+
+  // EVERY ROOM A PLAYER CAN WALK INTO WALKS HOME AGAIN. A site has one exit, and re-entering puts the player back
+  // where they stood, so a room with no way back to the exit, or to the stair up off the main path, ends the run.
+  if (strandedFromHome(grid).length > 0) return { retry: [] }
 
   const duplicate = duplicateSlot(grid)
   if (duplicate) return duplicate

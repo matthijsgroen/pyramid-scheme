@@ -100,3 +100,40 @@ describe(collectSlots, () => {
     expect(slots).toHaveLength(0)
   })
 })
+
+describe("collectSlots on a lootless chain", () => {
+  it("clears a currency sentinel tagged into a lootless room instead of leaving it unfilled", () => {
+    const site: SiteConfig = [
+      {
+        pathPuzzles: 2,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        loot: false,
+        rewards: [{ type: "fragmentSlot", prefers: "junk" }, undefined],
+        sideSections: [],
+      },
+    ]
+    expect(collectSlots({ starter_1: [site] })).toEqual([])
+    expect(site[0].rewards).toEqual([undefined, undefined])
+  })
+})
+
+describe("collectSlots on a chain with node difficulties", () => {
+  it("tiers every puzzle slot at its section's difficulty, not its node's", () => {
+    const site: SiteConfig = [
+      {
+        pathPuzzles: 3,
+        difficulty: "starter",
+        difficultiesByIndex: { 1: "junior" },
+        rewards: [undefined, undefined, undefined],
+        end: "treasure",
+        exitOrStaircase: "exit",
+        sideSections: [],
+      },
+    ]
+    const puzzles = collectSlots({ starter_1: [site] }).filter(s => s.kind === "puzzle")
+    expect(puzzles.length).toBeGreaterThan(0)
+    expect(puzzles.map(s => s.tier)).toEqual(puzzles.map(() => "starter"))
+  })
+})

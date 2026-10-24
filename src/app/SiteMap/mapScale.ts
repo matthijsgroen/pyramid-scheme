@@ -1,4 +1,4 @@
-import type { Direction } from "@/game/siteTypes"
+import type { Direction, PropFootprint } from "@/game/siteTypes"
 
 // Every size on the site map derives from this one base unit. Bump EM to zoom the whole
 // map in or out — cell size, wall thickness, and every room icon's radius scale with it,
@@ -157,3 +157,23 @@ export const cellCenter = (row: number, col: number): { cx: number; cy: number }
 
 export const mapWidth = (cols: number): number => cols * COL_PITCH + SIDE_W + PAD * 2
 export const mapHeight = (rows: number): number => rows * ROW_PITCH + WALL_H + PAD_TOP + PAD
+
+/** A prop's frame size in map units. One cell is `CELL` x `PROP_H`; each further column adds a pitch across,
+ * each further row a pitch down, and each `tall` a cell of height above the face band. Shared with
+ * `import-tile`, which stores the slot at this shape. */
+export const propFrameSize = ({ cols, rows, tall }: PropFootprint): { w: number; h: number } => ({
+  w: CELL + (cols - 1) * COL_PITCH,
+  h: PROP_H + (rows - 1) * ROW_PITCH + tall * CELL,
+})
+
+/** Where a prop anchored at (row, col) is drawn: its left edge on the anchor's west edge, its bottom on the
+ * floor line of its bottom row, which is also the line it sorts by (`baseY`). */
+export const propFrame = (
+  row: number,
+  col: number,
+  footprint: PropFootprint
+): { x: number; y: number; w: number; h: number; baseY: number } => {
+  const { w, h } = propFrameSize(footprint)
+  const baseY = cellTop(row + footprint.rows - 1) + CELL
+  return { x: cellLeft(col), y: baseY - h, w, h, baseY }
+}

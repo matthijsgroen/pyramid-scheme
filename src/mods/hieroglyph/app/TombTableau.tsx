@@ -2,7 +2,6 @@ import type { Difficulty } from "@/data/difficultyLevels"
 import { difficultyMaterialFlat } from "@/ui/tokens/difficultyColors"
 import type { TableauLevel } from "@/mods/hieroglyph/game/tableaus"
 import type { Formula as FormulaType } from "@/game/formulas/formulas"
-import clsx from "clsx"
 import type { FC } from "react"
 import { Formula } from "@/ui/molecules/Formula"
 import type { FilledTileState } from "@/ui/molecules/FormulaPart"
@@ -29,10 +28,8 @@ export const TombTableau: FC<{
   onTileClick?: (symbolId: string, position: string) => void
 }> = ({ difficulty, tableau, calculation, filledState, resolveTile, hintFormulas, onTileClick }) => (
   <div
-    className={clsx(
-      "relative z-20 flex w-full max-w-md flex-col gap-4 rounded-lg border-t-4 p-4 text-slate-600 shadow-lg",
-      difficultyMaterialFlat[difficulty]
-    )}
+    className="relative z-20 flex w-full max-w-md flex-col gap-4 rounded-lg border-t-4 p-4 text-slate-600 shadow-lg"
+    style={difficultyMaterialFlat[difficulty]}
   >
     <h1 className="text-center font-pyramid text-2xl">{tableau.name}</h1>
     <div>{tableau.description}</div>

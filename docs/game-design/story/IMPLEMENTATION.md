@@ -200,28 +200,29 @@ before translation starts rather than after.
 On `story/journey-beats` (PR #304), playing in English and Dutch. What is written here as "ready now"
 below was the plan; this is what came of it.
 
-| Built                                        | Where it lives                                                                    |
-| -------------------------------------------- | --------------------------------------------------------------------------------- |
-| Journey arrivals, all 20, fired from the map | `useJourneyArrival.ts` + `fez.json` `arrival.*` — 96 lines                        |
-| Two speakers, portraits, sides swapping      | `Fez.tsx`, `portraits.ts`                                                         |
-| Story beats exempt from the tutorials toggle | `shouldSkipConversation`                                                          |
-| The eight tomb scenes                        | `fez.json` `tomb.*` — 92 lines, five ghosts drawn and placed                      |
-| The reaction rail — five of the six bonds    | `reactionContributions.ts` (core) + `story/game/reaction/beatFor.ts`              |
-| The Sphinx ending                            | `walls.ts` `starter_1`, the ward gate in `starter.ts`, the reed leaf in the Vault |
-| The story mod                                | `src/mods/story/` — `conversation` and `reading` families                         |
-| The story log                                | a mod screen; arrivals and tomb scenes, re-readable                               |
-| The explorer and the five ghosts             | `art/masters/characters/`, imported by `yarn import-portrait --bust=0.55`         |
+| Built                                          | Where it lives                                                                    |
+| ---------------------------------------------- | --------------------------------------------------------------------------------- |
+| Journey arrivals, all 20, fired at the pyramid | `useExpeditionIntro.ts` + `fez.json` `arrival.*` — 96 lines                       |
+| Two speakers, portraits, sides swapping        | `Fez.tsx`, `portraits.ts`                                                         |
+| Story beats exempt from the tutorials toggle   | `shouldSkipConversation`                                                          |
+| The eight tomb scenes                          | `fez.json` `tomb.*` — 86 lines, five ghosts drawn and placed                      |
+| The reaction rail — five of the six bonds      | `reactionContributions.ts` (core) + `story/game/reaction/beatFor.ts`              |
+| The Sphinx ending                              | `walls.ts` `starter_1`, the ward gate in `starter.ts`, the reed leaf in the Vault |
+| The story mod                                  | `src/mods/story/` — `conversation` and `reading` families                         |
+| The story log                                  | a mod screen; arrivals and tomb scenes, re-readable                               |
+| The explorer and the five ghosts               | `art/masters/characters/`, imported by `yarn import-portrait --bust=0.55`         |
 
 **238 authored lines against this document's own count of 237.** The content is complete except for two
 beats that cannot be written yet (below).
 
 ### The arrival belongs to the journey, not to a pyramid (decided)
 
-It fires on the travel screen as the player sets off, not on the way into a pyramid. **A journey is the
-place; a pyramid is only a site in it** — every arrival beat is written about the Valley of the Artisans
-or the Colossi or the Sphinx, and a journey holds two to four pyramids opened in free order. Fired at the
-pyramid it landed at whichever one happened to be entered first, over a board of numbered blocks with
-nothing of the place on screen. `pyramidIntro` stays at the pyramid, because it is about that board.
+It fires on the journey's first pyramid exterior screen, before `pyramidIntro`, keyed to the journey.
+**A journey is the place; a pyramid is only a site in it** — every arrival beat is written about the
+Valley of the Artisans or the Colossi or the Sphinx, and a journey holds two to four pyramids opened in
+free order. Heard at whichever is entered first, it is skipped at the rest: the conversation id is
+`arrival.<journeyId>`, so Fez's seen record keeps it to once per journey. The travel list has no place on
+screen to talk about. `pyramidIntro` follows it, because it is about the board.
 
 ### Reading is ACTIVE (decided)
 

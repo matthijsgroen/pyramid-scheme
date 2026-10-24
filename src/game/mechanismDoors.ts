@@ -321,6 +321,7 @@ export const openWaysOut = (grid: FloorGrid, open: ReadonlySet<string>): FloorGr
         legacySectionHash: cell.legacySectionHash,
         ordinal: cell.ordinal,
         difficulty: cell.difficulty,
+        ...(cell.tileset ? { tileset: cell.tileset } : {}),
         hidden: cell.hidden,
         ...(remembered && {
           openGate: {

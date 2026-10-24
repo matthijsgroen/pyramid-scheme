@@ -1,4 +1,4 @@
-import type { Difficulty } from "@/data/difficultyLevels"
+import type { Tileset } from "@/game/siteTypes"
 
 // Every tile is one file, the filename is the key, and a missing one simply resolves to undefined
 // so the caller can fall back (docs/game-design/spritesheet-renderer-prep.md, "The art itself").
@@ -28,7 +28,7 @@ for (const [path, url] of Object.entries(urls)) {
  * crystal is a dummy. Ask `tileOrPlaceholder` when you mean "draw something"; ask this when you mean
  * "is it painted".
  */
-export const tileUrl = (tier: Difficulty, name: string): string | undefined =>
+export const tileUrl = (tier: Tileset, name: string): string | undefined =>
   byTier.get(`${tier}/${name}`) ?? byTier.get(`default/${name}`)
 
 /** The stand-in for a kind nobody has painted yet: flat shapes from `yarn generate-dummy-tiles`, one set
@@ -38,7 +38,7 @@ export const placeholderUrl = (name: string): string | undefined => byTier.get(`
 /** What to DRAW for a kind: this rank's art, the shared art, or the stand-in — in that order. The map
  * draws what a floor was authored to hold whether or not it is painted yet; what it must not do is add
  * MORE of a kind because a dummy exists (see `tileUrl`). */
-export const tileOrPlaceholder = (tier: Difficulty, name: string): string | undefined =>
+export const tileOrPlaceholder = (tier: Tileset, name: string): string | undefined =>
   tileUrl(tier, name) ?? placeholderUrl(name)
 
 /**
@@ -59,7 +59,7 @@ export const tileOrPlaceholder = (tier: Difficulty, name: string): string | unde
  * Mixed tiers resolve per NAME and not per variant: a tier that draws none of its own falls back to
  * `default` wholesale, so a half-imported set never shows one rank's table beside another rank's baskets.
  */
-export const tileVariants = (tier: Difficulty, name: string): string[] => {
+export const tileVariants = (tier: Tileset, name: string): string[] => {
   const forTier = (t: string): string[] => {
     const base = byTier.get(`${t}/${name}`)
     if (!base) return []
@@ -101,7 +101,7 @@ export const PATRON_KINDS = new Set<string>(["statue", "shrine", "wallShrine", "
  * That is the decided behaviour rather than a gap (see the handover's patron note), and it is why
  * authoring a patron today is safe: it cannot make a floor look worse than it already does.
  */
-export const patronTileUrl = (tier: Difficulty, name: string, patron?: string): string | undefined =>
+export const patronTileUrl = (tier: Tileset, name: string, patron?: string): string | undefined =>
   (patron && PATRON_KINDS.has(name) ? byTier.get(`${tier}/${name}-${patron}`) : undefined) ??
   tileOrPlaceholder(tier, name)
 

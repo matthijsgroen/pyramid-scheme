@@ -19,6 +19,18 @@ import { PYRAMID_STRUCTURES, TOMB_STRUCTURES } from "./journeyStructure"
  */
 export type DayNightCycleStep = "morning" | "afternoon" | "evening" | "night"
 
+/** What stands on the horizon behind a journey's pyramids: the place the journey is named after. The
+ * backdrop declares the same list for itself (`src/ui/atoms/DesertBackdrop.tsx`), for the same reason. */
+export type Landmark = "sphinx"
+
+/** What one level of a journey is, when it differs from the journey's own exterior and board. */
+export type JourneyLevel = {
+  // The outdoor scene this level opens on; unset, the journey's desert.
+  exterior?: "caveMouth" | "cavern"
+  // `false`: no cross-sum board stands before this level's site, only the way in.
+  board?: false
+}
+
 export type Journey = {
   id: string
   name: string
@@ -35,6 +47,7 @@ export type Journey = {
     time: DayNightCycleStep
     timeStepSize?: number
     showNile?: boolean
+    landmark?: Landmark
   }
   // The cross-sum board each of this journey's sites is entered through.
   levelSettings: {
@@ -52,6 +65,8 @@ export type Journey = {
   // that currency says which one it is and reports the progress (app/pages/journeyContributions.ts);
   // core only knows a count has to be reached.
   entryLock?: { count: number }
+  // Per-level overrides, indexed by level number - 1; a level without an entry is an ordinary one.
+  levels?: JourneyLevel[]
   siteConfigs?: SiteConfig[]
 }
 
@@ -70,6 +85,7 @@ const authoredJourneys: AuthoredJourney[] = [
     journeyLength: "short",
     background: {
       time: "morning",
+      landmark: "sphinx",
     },
     levelSettings: {
       startFloorCount: 3,
@@ -146,10 +162,13 @@ const authoredJourneys: AuthoredJourney[] = [
     difficulty: "starter",
     journeyLength: "short",
     entryLock: { count: 4 },
-    background: { time: "night" },
+    background: { time: "afternoon" },
+    // The cave has no board; the cavern's is junior-sized, the tier + 1 step.
+    levels: [{ exterior: "caveMouth", board: false }, { exterior: "cavern" }],
     levelSettings: {
-      startFloorCount: 3,
-      startNumberRange: [1, 6],
+      startFloorCount: 4,
+      startNumberRange: [1, 5],
+      blocksOpen: [0.5, 0.5],
     },
   },
 
@@ -242,7 +261,8 @@ const authoredJourneys: AuthoredJourney[] = [
     difficulty: "junior",
     journeyLength: "medium",
     entryLock: { count: 4 },
-    background: { time: "night" },
+    background: { time: "afternoon" },
+    levels: [{ exterior: "caveMouth", board: false }, { exterior: "cavern" }],
     levelSettings: {
       startFloorCount: 3,
       startNumberRange: [1, 10],
@@ -344,7 +364,8 @@ const authoredJourneys: AuthoredJourney[] = [
     difficulty: "expert",
     journeyLength: "short",
     entryLock: { count: 4 },
-    background: { time: "night" },
+    background: { time: "afternoon" },
+    levels: [{ exterior: "caveMouth", board: false }, { exterior: "cavern" }],
     levelSettings: {
       startFloorCount: 4,
       startNumberRange: [1, 10],
@@ -359,7 +380,8 @@ const authoredJourneys: AuthoredJourney[] = [
     difficulty: "expert",
     journeyLength: "short",
     entryLock: { count: 3 },
-    background: { time: "night" },
+    background: { time: "afternoon" },
+    levels: [{ exterior: "caveMouth", board: false }, { exterior: "cavern" }],
     levelSettings: {
       startFloorCount: 4,
       startNumberRange: [2, 12],
@@ -456,7 +478,8 @@ const authoredJourneys: AuthoredJourney[] = [
     difficulty: "master",
     journeyLength: "medium",
     entryLock: { count: 4 },
-    background: { time: "night" },
+    background: { time: "afternoon" },
+    levels: [{ exterior: "caveMouth", board: false }, { exterior: "cavern" }],
     levelSettings: {
       startFloorCount: 4,
       startNumberRange: [1, 10],
@@ -471,7 +494,8 @@ const authoredJourneys: AuthoredJourney[] = [
     difficulty: "master",
     journeyLength: "medium",
     entryLock: { count: 3 },
-    background: { time: "night" },
+    background: { time: "afternoon" },
+    levels: [{ exterior: "caveMouth", board: false }, { exterior: "cavern" }],
     levelSettings: {
       startFloorCount: 4,
       startNumberRange: [1, 12],
@@ -579,7 +603,8 @@ const authoredJourneys: AuthoredJourney[] = [
     difficulty: "wizard",
     journeyLength: "medium",
     entryLock: { count: 4 },
-    background: { time: "night" },
+    background: { time: "afternoon" },
+    levels: [{ exterior: "caveMouth", board: false }, { exterior: "cavern" }],
     levelSettings: {
       startFloorCount: 5,
       startNumberRange: [1, 15],
@@ -594,7 +619,8 @@ const authoredJourneys: AuthoredJourney[] = [
     difficulty: "wizard",
     journeyLength: "medium",
     entryLock: { count: 3 },
-    background: { time: "night" },
+    background: { time: "afternoon" },
+    levels: [{ exterior: "caveMouth", board: false }, { exterior: "cavern" }],
     levelSettings: {
       startFloorCount: 5,
       startNumberRange: [2, 18],
@@ -609,7 +635,8 @@ const authoredJourneys: AuthoredJourney[] = [
     difficulty: "wizard",
     journeyLength: "medium",
     entryLock: { count: 2 },
-    background: { time: "night" },
+    background: { time: "afternoon" },
+    levels: [{ exterior: "caveMouth", board: false }, { exterior: "cavern" }],
     levelSettings: {
       startFloorCount: 5,
       startNumberRange: [3, 20],
@@ -629,5 +656,5 @@ export const journeys: Journey[] = authoredJourneys.map(journey => {
   const config = generatedWorldConfigs[journey.id]
   // No config means the world has not been generated (yarn generate-world); fall back to world-gen's
   // own input so the screens still have something to draw.
-  return { ...journey, levelCount: config?.length ?? structure.levelCount, siteConfigs: config }
+  return { ...journey, levelCount: config?.length ?? structure.levelCount ?? 1, siteConfigs: config }
 })

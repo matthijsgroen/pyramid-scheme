@@ -49,13 +49,14 @@
       "setStone": "Set the stone on the plate",
       "postStone": "Post the stone",
       "takeStone": "Take the stone",
-      "squeeze": "Squeeze through"
+      "squeeze": "Squeeze through",
+      "replay": "Play again"
     },
     "blocked": {
       "carrying": "Cannot pass with a stone"
     },
     "travel": "Travel",
-    "chooseYourJourney": "Choose Your Journey",
+    "chooseYourJourney": "Choose Your Expedition",
     "backToMap": "Back to map",
     "startAdventure": "Start your adventure by exploring pyramids.",
     "continueExploration": "Continue your exploration of the pyramids.",
@@ -68,7 +69,7 @@
     "webBuriedPercent": "Still {{percent}}% buried",
     "selectAnotherExpedition": "Select another expedition",
     "interruptExpedition": "Interrupt expedition",
-    "confirmInterruptExpedition": "Are you sure you want to interrupt this expedition? Journey progress will be kept, but level progress will be lost!",
+    "confirmInterruptExpedition": "Are you sure you want to interrupt this expedition? Expedition progress will be kept, but level progress will be lost!",
     "cancel": "Cancel",
     "settings": "Settings",
     "language": "Language",
@@ -166,7 +167,7 @@
   "loot": {
     "youFound": "You found",
     "expeditionReward": "Extra reward for completing the expedition",
-    "clickToContinue": "Click anywhere to continue"
+    "clickToContinue": "Tap anywhere to continue"
   },
   "money": {
     "label": "Coins"
@@ -199,7 +200,7 @@
   },
   "collection": {
     "title": "Collection",
-    "clickForDetails": "Click a tile for details",
+    "clickForDetails": "Tap a tile for details",
     "categories": {
       "deities": "🏺 Deities",
       "professions": "⚱️ Professions",
@@ -1112,6 +1113,7 @@
     }
   },
   "story": {
+    "invitation": "Talk",
     "log": {
       "title": "What we have been told",
       "empty": "Nothing yet. Fez will have plenty to say."
@@ -1122,7 +1124,8 @@
       "ipi": "Ipi",
       "henut": "Henut",
       "priest": "The priest",
-      "pharaoh": "The pharaoh"
+      "pharaoh": "The pharaoh",
+      "voice": "A voice"
     },
     "wall": {
       "wrong": "Somebody cut the third sign wrong. It has been wrong for three thousand years.",

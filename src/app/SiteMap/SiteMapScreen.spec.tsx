@@ -9,6 +9,7 @@ import { registerHeldKeysProvider } from "@/app/SiteMap/keyProviders"
 import { assembleFloor } from "@/game/siteAssembler"
 import { completeCell, revealAll } from "@/game/gridNavigation"
 import { allFloors, resolveKeyRequirements } from "./worldFloors.testing"
+import { FezContext } from "@/app/fez/context"
 
 // Keys are enough to tell the buttons apart; none of these assertions read copy. Interpolated data
 // is appended so a label built from a nested lookup (the key ring's "<colour> key — in hand") still
@@ -152,16 +153,19 @@ describe(SiteMapScreen, () => {
     vi.useRealTimers()
   })
 
+  const showConversation = vi.fn()
   const renderScreen = async (onSiteComplete = () => {}) => {
     const result = render(
-      <SiteMapScreen
-        journeyId="test-journey"
-        siteConfig={[floorConfig]}
-        levelIndex={0}
-        seed={1}
-        onSiteComplete={onSiteComplete}
-        onCancel={() => {}}
-      />
+      <FezContext.Provider value={{ showConversation }}>
+        <SiteMapScreen
+          journeyId="test-journey"
+          siteConfig={[floorConfig]}
+          levelIndex={0}
+          seed={1}
+          onSiteComplete={onSiteComplete}
+          onCancel={() => {}}
+        />
+      </FezContext.Provider>
     )
     await settle()
     return result
@@ -199,6 +203,16 @@ describe(SiteMapScreen, () => {
     expect(parseFloat(hanging.style.left)).toBe(cellCenter(0, 2).cx)
     expect(container.querySelector(".animate-entrance-zoom")).toBeNull()
     expect(onSiteComplete).not.toHaveBeenCalled()
+  })
+
+  it("explains the pillar in its own room when the walk reaches it", async () => {
+    showConversation.mockClear()
+    const { container } = await renderScreen()
+    expect(showConversation).not.toHaveBeenCalledWith("exitPillar")
+
+    await walkToExit(container)
+
+    expect(showConversation).toHaveBeenCalledWith("exitPillar")
   })
 
   it("takes the prompt away when the player walks back off the exit", async () => {
