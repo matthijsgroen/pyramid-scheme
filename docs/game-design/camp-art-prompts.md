@@ -737,7 +737,7 @@ Attach: `art/masters/camp/ref-lookout.webp`, `art/masters/camp/platform.webp`
 
 The final state; paint this one first for the spot.
 
-Attach: `art/masters/camp/ref-godStatues.webp`, `art/masters/camp/chest.webp`
+Attach: `art/masters/camp/ref-godStatues-soft.webp`, `art/masters/camp/chest.webp`
 
 > [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the god statues, complete: a long low ledge of pale sandstone blocks running diagonally from the front left up to the back right, and on it four small statue busts, each on its own square stone plinth, spaced evenly along the ledge: at the front left Thoth, a green ibis head with a long curved black beak and a blue headdress, on a gold and white body; then Bastet, a dark blue cat bust with tall ears and a gold beaded collar; then Anubis, a dark jackal head with tall ears and a blue and gold striped headdress, on a gold body; and at the back right Ra, a falcon head with a blue headdress and a red sun disc above it, on a gold body. Use the colours of the matching objects in the reference image.
 
