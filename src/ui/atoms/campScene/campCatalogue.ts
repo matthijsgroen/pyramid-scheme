@@ -133,7 +133,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["master", "secondDonkey"],
       ["wizard", "paintedCart"],
     ]),
-    chain("camel", { x: 1.95, y: 0.13, frame: 1.46, footprint: 1.19, bleed: 0.15 }, [
+    chain("camel", { x: 2.3, y: 0.13, frame: 1.46, footprint: 1.19, bleed: 0.3 }, [
       ["expert", "camel"],
       ["master", "secondCamel"],
       ["wizard", "caravanBanner"],
