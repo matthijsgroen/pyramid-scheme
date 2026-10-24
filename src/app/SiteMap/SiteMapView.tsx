@@ -8,6 +8,7 @@ import type {
   Tileset,
   WallDecorationKind,
 } from "../../game/siteTypes"
+import { decorationFootprint } from "../../game/siteTypes"
 import { wardKeyDifficulty } from "../../data/difficultyLevels"
 import { isSealedWayOut, oneWayRuns, revealAll } from "../../game/gridNavigation"
 import { ExplorerDot, LightPool } from "./ExplorerDot"
@@ -35,6 +36,7 @@ import {
   mapHeight,
   mapWidth,
   PROP_H,
+  propFrame,
 } from "./mapScale"
 import { DROP_ART, LOOTED_OPACITY, NODE_OVER_ART_OPACITY, nodeArtOffset, type NodeSprite } from "./nodeArt"
 import { stateWash, tierPalette } from "./tileMaterials"
@@ -721,11 +723,14 @@ const Decoration = ({
   tier,
   seed,
   patron,
+  frame,
 }: {
   kind: DecorationKind
   tier: Tileset
   seed: string
   patron?: Patron
+  /** The sprite's box relative to the anchor cell's centre (`propFrame`), spanning the whole footprint. */
+  frame: { x: number; y: number; w: number; h: number }
 }) => {
   // A PATRON BEATS A VARIANT. Both choose a drawing, and where a site names a god that choice is
   // authored rather than positional — a dedicated tomb whose statues varied by cell would be saying two
@@ -744,10 +749,10 @@ const Decoration = ({
       {url ? (
         <Sprite
           url={url}
-          x={-CELL / 2}
-          y={CELL / 2 - PROP_H}
-          w={CELL}
-          h={PROP_H}
+          x={frame.x}
+          y={frame.y}
+          w={frame.w}
+          h={frame.h}
           stretch={false}
           filter={STANDING_RELIEF[tier]}
         />
@@ -1419,9 +1424,11 @@ export const SiteMapView = ({
       const owner = litClaimOwner(grid, claims, r, c)
       if (!owner) continue
       const { cx, cy } = cellCenter(r, c)
+      // A prop bigger than a cell spans its footprint from the anchor and sorts by its bottom row.
+      const frame = propFrame(r, c, decorationFootprint(kind))
       sprites.push({
         key: `prop:${cellKey}`,
-        baseY: cy + CELL / 2,
+        baseY: frame.baseY,
         node: (
           // A box with no size of its own, standing at the middle of the cell: what is inside it is then
           // drawn in cell-local units, the way it was inside a `<g transform>`.
@@ -1431,6 +1438,7 @@ export const SiteMapView = ({
               tier={cellTileset(owner, grid, tier)}
               patron={grid.patron}
               seed={`${grid.siteId}:${cellKey}`}
+              frame={{ x: frame.x - cx, y: frame.y - cy, w: frame.w, h: frame.h }}
             />
           </div>
         ),
