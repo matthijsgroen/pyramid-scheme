@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import type { FC } from "react"
-import { difficulties, type Difficulty } from "@/data/difficultyLevels"
+import { difficulties } from "@/data/difficultyLevels"
 import { PROP_ROLES, WALL_ITEM_ROLES } from "@/game/dressingTags"
 import {
   DECORATION_KINDS,
@@ -9,6 +9,7 @@ import {
   type Direction,
   type FloorGrid,
   type GridCell,
+  type Tileset,
   type WallDecorationKind,
 } from "@/game/siteTypes"
 import { SiteMapView } from "./SiteMapView"
@@ -32,7 +33,7 @@ const purposeOf = (roles: readonly string[] | undefined): string => roles?.[0] ?
 
 /** Every kind that has art for this rank, read off the tile registry, grouped by purpose. A purpose holds
  * as many rooms as it has props or wall items, whichever is more. */
-const purposesFor = (tier: Difficulty): Purpose[] => {
+const purposesFor = (tier: Tileset): Purpose[] => {
   const props = new Map<string, DecorationKind[]>()
   const walls = new Map<string, WallDecorationKind[]>()
   const push = <K,>(into: Map<string, K[]>, key: string, kind: K) => into.set(key, [...(into.get(key) ?? []), kind])
@@ -48,12 +49,18 @@ const purposesFor = (tier: Difficulty): Purpose[] => {
   })
 }
 
+/** A tileset with no prop art yet still gets its floor and walls judged: four bare rooms in a row. */
+const BARE: Purpose[] = [{ name: "bare", rooms: [{}, {}, {}, {}] }]
+
 /** Rooms four cells apart, so each chamber's 3x3 footprint has a wall of its own on every side. */
 const STEP = 4
 const MARGIN = 2
 
 /** One purpose per row of rooms, joined by corridors: rows run east, the first rooms join north-south. */
-const sheetGrid = (tier: Difficulty, purposes: Purpose[]): FloorGrid => {
+const sheetGrid = (tier: Tileset, purposes: Purpose[]): FloorGrid => {
+  // A rank is both what the rooms are worth and what they wear; a tileset that is no rank (the cave) wears its
+  // own and stands at the starter's worth.
+  const rank = tier === "cave" ? "starter" : tier
   const widest = Math.max(1, ...purposes.map(p => p.rooms.length))
   const rows = MARGIN * 2 + (purposes.length - 1) * STEP + 1
   const cols = MARGIN * 2 + (widest - 1) * STEP + 1
@@ -77,7 +84,7 @@ const sheetGrid = (tier: Difficulty, purposes: Purpose[]): FloorGrid => {
         roomType: "fork",
         dirs: new Set(dirs),
         state: "reachable",
-        difficulty: tier,
+        difficulty: rank,
         ...(room.prop ? { decoration: room.prop } : {}),
         ...(room.wall ? { wallDecoration: room.wall } : {}),
       }
@@ -88,7 +95,8 @@ const sheetGrid = (tier: Difficulty, purposes: Purpose[]): FloorGrid => {
   const last = purposes.length - 1
   return {
     siteId: `${tier}-on-the-floor`,
-    difficulty: tier,
+    difficulty: rank,
+    ...(tier === "cave" ? { tileset: tier } : {}),
     rows,
     cols,
     cells,
@@ -98,8 +106,11 @@ const sheetGrid = (tier: Difficulty, purposes: Purpose[]): FloorGrid => {
   }
 }
 
-const RankOnTheFloor: FC<{ tier: Difficulty }> = ({ tier }) => {
+const TILESETS: Tileset[] = [...difficulties, "cave"]
+
+const RankOnTheFloor: FC<{ tier: Tileset }> = ({ tier }) => {
   const purposes = purposesFor(tier)
+  const shown = purposes.length > 0 ? purposes : BARE
   return (
     <div className="flex h-screen flex-col bg-neutral-900">
       <ol className="m-0 flex flex-wrap gap-x-6 gap-y-1 p-3 text-[11px] text-white/70">
@@ -110,11 +121,8 @@ const RankOnTheFloor: FC<{ tier: Difficulty }> = ({ tier }) => {
           </li>
         ))}
       </ol>
-      {purposes.length > 0 ? (
-        <SiteMapView grid={sheetGrid(tier, purposes)} className="min-h-0 flex-1" />
-      ) : (
-        <p className="p-3 text-sm text-white/60">{tier} has no prop art yet.</p>
-      )}
+      {purposes.length === 0 && <p className="m-0 px-3 text-sm text-white/60">{tier} has no prop art yet.</p>}
+      <SiteMapView grid={sheetGrid(tier, shown)} className="min-h-0 flex-1" />
     </div>
   )
 }
@@ -122,7 +130,7 @@ const RankOnTheFloor: FC<{ tier: Difficulty }> = ({ tier }) => {
 const meta = {
   component: RankOnTheFloor,
   parameters: { layout: "fullscreen" },
-  argTypes: { tier: { control: "select", options: difficulties } },
+  argTypes: { tier: { control: "select", options: TILESETS } },
   args: { tier: "starter" },
 } satisfies Meta<typeof RankOnTheFloor>
 
@@ -134,3 +142,4 @@ export const Junior: Story = { name: "junior on the floor", args: { tier: "junio
 export const Expert: Story = { name: "expert on the floor", args: { tier: "expert" } }
 export const Master: Story = { name: "master on the floor", args: { tier: "master" } }
 export const Wizard: Story = { name: "wizard on the floor", args: { tier: "wizard" } }
+export const Cave: Story = { name: "cave on the floor", args: { tier: "cave" } }
