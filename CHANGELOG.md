@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The starter treasure tomb is now hidden in a cave, behind a lever lock, before its sunlit cavern.
 - The old skeleton in the cave lies across two floor cells.
 - The cave floor has worn, rounded edges instead of square ones.
+- The tomb cave is a rocky hill standing in the desert where a pyramid would, and tombs are visited by day.
 - A pyramid has one way out now: the pillar of light where its main corridor ends, which Fez explains the first time you reach it.
 - The first sudoku boards hand you more of the answer, and the next tier steps up more gently.
 - Ipi, in the first tomb, talks with Fez and the explorer instead of at them.

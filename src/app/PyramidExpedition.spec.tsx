@@ -212,6 +212,13 @@ describe("PyramidExpedition — a level without a board", () => {
     expect(queryByText("finish interior")).not.toBeNull()
   })
 
+  it("stands the cave mouth on the desert where the board would be", async () => {
+    const { container } = render(screen(boardlessJourney))
+    await settle()
+
+    expect(container.querySelector("[data-cave-mouth]")).not.toBeNull()
+  })
+
   it("draws no board of its own and borrows none of the next level's as scenery", async () => {
     const { container } = render(screen(boardlessJourney))
     await settle()

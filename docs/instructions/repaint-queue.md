@@ -281,7 +281,7 @@ its colours or its subject from it. Same aspect as the reference; do not re-comp
 
 **Import:** `yarn import-panel art/masters/tombWall/cave.webp --tier=cave`
 
-### `exteriors/cave-mouth` — a cave mouth in a small desert range
+### `exteriors/cave-mouth-scene` — a cave mouth in a small desert range
 
 **Attach:**
 
@@ -303,7 +303,28 @@ Landscape, 16 by 9. No text, no watermark, no frame, no vignette.
 THE SECOND IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality. Do NOT take its subject from it.
 ```
 
-**Import:** `cp ~/Downloads/<file> src/assets/exteriors/cave-mouth.png`
+**Import:** keep it as `art/masters/exteriors/cave-mouth-scene.webp`; the hill is cut out of it below.
+
+### `exteriors/cave-mouth` — the cave hill alone, to stand where a pyramid stands
+
+**Attach:** `art/masters/exteriors/cave-mouth-scene.webp` — the accepted scene, whose hill this is
+
+```
+THE ATTACHED IMAGE HOLDS THIS VERY OBJECT, already accepted: the rocky sandstone hill with the dark cave
+mouth in it. Repaint ONLY that hill, exactly as it is — keep its shape, its outline, its every ledge and
+crack, its light from the left, its colours and its paint, the dark cave mouth and the little drifted
+sand at its foot. Do not redesign it, do not add or remove anything.
+Take away everything else: no sky, no sun, no horizon, no desert around it. Everything that is not the
+hill or the sand drift at its foot is flat magenta, exactly #ff00ff (red 255 green 0 blue 255), to all
+four edges — no gradient, no glow, no ground plane.
+A soft dark shadow lies on the ground beneath it, darkest where it meets the hill, reaching a little to
+the right as in the attached image. No hard edge. The shadow is a warm brown-grey, around #6b4a30,
+completely free of pink or purple.
+NO OUTLINES — no black contour, no ink, no cel shading. Landscape, the hill filling the width with a
+little magenta margin. No text, no watermark, no frame.
+```
+
+**Import:** keep the render as `art/masters/exteriors/cave-mouth.webp`, then `art/cutout-exterior.sh art/masters/exteriors/cave-mouth.webp src/assets/exteriors/cave-mouth.png 1180` (1180 cuts off the band of sand the render ends in; the shadow is drawn by the script)
 
 ### `exteriors/cavern` — a sunlit cavern with a pyramid standing in it
 

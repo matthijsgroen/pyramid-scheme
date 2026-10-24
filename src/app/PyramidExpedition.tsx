@@ -12,7 +12,7 @@ import { SiteMapScreen } from "@/app/SiteMap/SiteMapScreen"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { clsx } from "clsx"
 import { DesertBackdrop } from "@/ui/atoms/DesertBackdrop"
-import { CaveBackdrop } from "@/ui/atoms/CaveBackdrop"
+import { CaveBackdrop, CaveMouth } from "@/ui/atoms/CaveBackdrop"
 import { getLevelWidth } from "@/game/state"
 import { dayNightCycleDayTime, dayNightCycleStep } from "@/ui/atoms/backdropSelection"
 import { generateJourneyLevel } from "@/game/generateJourneyLevel"
@@ -119,8 +119,8 @@ export const PyramidExpedition: FC<{
 
   // A function, not a component: a component defined here would be a new type every render and remount the board.
   const backdrop = (children: ReactNode) =>
-    levelSetup?.exterior ? (
-      <CaveBackdrop variant={levelSetup.exterior === "caveMouth" ? "mouth" : "cavern"}>{children}</CaveBackdrop>
+    levelSetup?.exterior === "cavern" ? (
+      <CaveBackdrop>{children}</CaveBackdrop>
     ) : (
       <DesertBackdrop
         levelNr={activeJourney.levelNr}
@@ -227,6 +227,7 @@ export const PyramidExpedition: FC<{
                 transition: startNextLevel ? "transform 1000ms ease-in-out" : "none",
               }}
             >
+              {levelSetup?.exterior === "caveMouth" && <CaveMouth />}
               {levelContent && (
                 <Level
                   key={activeJourney.levelNr}

@@ -162,7 +162,7 @@ const authoredJourneys: AuthoredJourney[] = [
     difficulty: "starter",
     journeyLength: "short",
     entryLock: { count: 4 },
-    background: { time: "night" },
+    background: { time: "morning" },
     // The cave has no board; the cavern's is junior-sized, the tier + 1 step.
     levels: [{ exterior: "caveMouth", board: false }, { exterior: "cavern" }],
     levelSettings: {
@@ -261,7 +261,7 @@ const authoredJourneys: AuthoredJourney[] = [
     difficulty: "junior",
     journeyLength: "medium",
     entryLock: { count: 4 },
-    background: { time: "night" },
+    background: { time: "morning" },
     levelSettings: {
       startFloorCount: 3,
       startNumberRange: [1, 10],
@@ -363,7 +363,7 @@ const authoredJourneys: AuthoredJourney[] = [
     difficulty: "expert",
     journeyLength: "short",
     entryLock: { count: 4 },
-    background: { time: "night" },
+    background: { time: "morning" },
     levelSettings: {
       startFloorCount: 4,
       startNumberRange: [1, 10],
@@ -378,7 +378,7 @@ const authoredJourneys: AuthoredJourney[] = [
     difficulty: "expert",
     journeyLength: "short",
     entryLock: { count: 3 },
-    background: { time: "night" },
+    background: { time: "morning" },
     levelSettings: {
       startFloorCount: 4,
       startNumberRange: [2, 12],
@@ -475,7 +475,7 @@ const authoredJourneys: AuthoredJourney[] = [
     difficulty: "master",
     journeyLength: "medium",
     entryLock: { count: 4 },
-    background: { time: "night" },
+    background: { time: "morning" },
     levelSettings: {
       startFloorCount: 4,
       startNumberRange: [1, 10],
@@ -490,7 +490,7 @@ const authoredJourneys: AuthoredJourney[] = [
     difficulty: "master",
     journeyLength: "medium",
     entryLock: { count: 3 },
-    background: { time: "night" },
+    background: { time: "morning" },
     levelSettings: {
       startFloorCount: 4,
       startNumberRange: [1, 12],
@@ -598,7 +598,7 @@ const authoredJourneys: AuthoredJourney[] = [
     difficulty: "wizard",
     journeyLength: "medium",
     entryLock: { count: 4 },
-    background: { time: "night" },
+    background: { time: "morning" },
     levelSettings: {
       startFloorCount: 5,
       startNumberRange: [1, 15],
@@ -613,7 +613,7 @@ const authoredJourneys: AuthoredJourney[] = [
     difficulty: "wizard",
     journeyLength: "medium",
     entryLock: { count: 3 },
-    background: { time: "night" },
+    background: { time: "morning" },
     levelSettings: {
       startFloorCount: 5,
       startNumberRange: [2, 18],
@@ -628,7 +628,7 @@ const authoredJourneys: AuthoredJourney[] = [
     difficulty: "wizard",
     journeyLength: "medium",
     entryLock: { count: 2 },
-    background: { time: "night" },
+    background: { time: "morning" },
     levelSettings: {
       startFloorCount: 5,
       startNumberRange: [3, 20],
