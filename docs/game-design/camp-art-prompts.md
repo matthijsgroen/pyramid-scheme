@@ -700,7 +700,8 @@ Attach: `art/masters/camp/ref-lookout.webp`, `art/masters/camp/signalFire.webp`
 
 #### 67. `camp/roof` — Lookout tower, step 4 of 6 (master)
 
-Edit of `camp/flag`.
+Cut from `camp/flag`, no generation: the pennant stands alone above the roof's peak, so everything above
+the peak (13.7% of the height) is painted back to the key.
 
 Attach: `art/masters/camp/ref-lookout.webp`, `art/masters/camp/flag.webp`
 
