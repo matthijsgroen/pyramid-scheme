@@ -107,7 +107,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["master", "secondTent", { on: "tent" }],
       ["wizard", "pavilion", { on: "secondTent" }],
     ]),
-    layered("water", { x: 1.1, y: -0.94, frame: 1.21, footprint: 0.91 }, [
+    layered("water", { x: 1.45, y: -0.94, frame: 1.21, footprint: 0.91 }, [
       ["starter", "gourd"],
       ["starter", "jar"],
       ["junior", "secondJar"],
