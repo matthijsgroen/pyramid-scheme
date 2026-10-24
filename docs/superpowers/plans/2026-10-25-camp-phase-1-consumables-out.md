@@ -117,16 +117,16 @@ Each is the option that changes the least shipped behaviour; Task 1 writes them 
 - Produces (game): `trapWaterskins: Distribution` — id `trap-waterskins`; eligible: `kind === "puzzle" && rewardPriority > 0 && tier ≥ expert` (the consumable rule, unchanged); footprint `{ min: 0, max: WATERSKIN_COUNT }` with `WATERSKIN_COUNT = 60`; rank: round-robin over tiers in difficulty order, within a tier round-robin over sites in id order, within a site slots in `puzzleSeq` order (deterministic, seed-free); fill assigns `{ type: "waterskin" }`.
 - Produces (app): `waterskinRewardSchema = z.object({ type: z.literal("waterskin") })`; `TrapProgressAPI.drinkWaterskin(): void`.
 
-- [ ] **Step 1: Failing tests** (made-up slots and states only).
+- [x] **Step 1: Failing tests** (made-up slots and states only).
   - `waterskin.spec.ts`: heals one heart when hurt by one or more; heals two hearts with pack-mule; never above max; at full health returns the same health.
   - `waterskins.spec.ts`: over a made-up slot set (three tiers × several sites × several puzzle slots, plus chests, path ends, a fez-shop slot and starter/junior puzzle slots), allocation through `allocateDistributions` gives at most 60 waterskins; none on a non-puzzle slot, a `rewardPriority` 0 slot, a shop slot or a tier below expert; the three tiers differ by at most one when each has more than 20 eligible slots; a tier with fewer eligible slots than its share gives the rest to the others; the same input ranks the same way twice.
   - `useTrapProgress.perks.spec.ts`: drinking a waterskin after a hit restores one heart; with `starter_a_3`'s pack-mule perk held it restores two; at full health it changes nothing.
   - A reward-contribution test (in the trap app's existing spec location, or `useTrapProgress.perks.spec.ts`): applying a `waterskin` reward through the merged contributions calls the heal; the reward is never refused.
-- [ ] **Step 2: Run** `yarn test src/mods/trap` — FAIL.
-- [ ] **Step 3: Implement.** The distribution's comment says why it is capped and why the tier round-robin (an even spread at a small cap; the site-id order alone fills expert and master first). The descriptor comment says trap owns health, its damage and the waterskin, and that with trap off no waterskin is placed.
-- [ ] **Step 4: Run** `yarn test src/mods/trap src/worldGen/slotAllocator` — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Per-task review** (soundness): eligibility unchanged from the consumable rule; no chest, path end or shop slot can be claimed; the rank is deterministic.
-- [ ] **Step 6: Commit** — `feat: waterskins heal on pickup, on expert-and-up puzzles`
+- [x] **Step 2: Run** `yarn test src/mods/trap` — FAIL.
+- [x] **Step 3: Implement.** The distribution's comment says why it is capped and why the tier round-robin (an even spread at a small cap; the site-id order alone fills expert and master first). The descriptor comment says trap owns health, its damage and the waterskin, and that with trap off no waterskin is placed.
+- [x] **Step 4: Run** `yarn test src/mods/trap src/worldGen/slotAllocator` — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Per-task review** (soundness): eligibility unchanged from the consumable rule; no chest, path end or shop slot can be claimed; the rank is deterministic.
+- [x] **Step 6: Commit** — `feat: waterskins heal on pickup, on expert-and-up puzzles`
 
 ---
 

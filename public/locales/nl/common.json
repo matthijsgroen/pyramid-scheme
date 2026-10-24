@@ -162,7 +162,9 @@
       "trapTool": "Valuitschakelaar"
     },
     "consumableFull": "Rugzak vol — {{item}} achtergelaten",
-    "packFull": "Rugzak vol"
+    "packFull": "Rugzak vol",
+    "waterskin": "Waterzak",
+    "waterskinDescription": "Koel water. Je drinkt hem meteen leeg en voelt je wonden minder pijn doen."
   },
   "loot": {
     "youFound": "Je hebt gevonden",

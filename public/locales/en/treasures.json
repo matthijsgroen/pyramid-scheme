@@ -7,7 +7,7 @@
     "max-health": "+½ heart to your health cap",
     "armor": "Reduces trap damage",
     "trap-insight": "+1s on timed traps",
-    "pack-mule": "Carry up to 4 supplies",
+    "pack-mule": "A waterskin heals two hearts",
     "consumable-detector": "Supply detector (Lv {{level}})",
     "compass": "Fragment compass (Lv {{level}})",
     "detection": "Hidden-corridor detector (Lv {{level}})",

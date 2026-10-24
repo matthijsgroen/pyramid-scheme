@@ -7,3 +7,6 @@ export const consumableRewardSchema = z.object({
   type: z.literal("consumable"),
   consumable: z.enum(["bandage", "oil", "trapTool"]),
 })
+
+// The trap mod owns the `waterskin` reward payload: no fields, it is drunk on pickup.
+export const waterskinRewardSchema = z.object({ type: z.literal("waterskin") })

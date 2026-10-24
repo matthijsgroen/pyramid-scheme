@@ -94,3 +94,32 @@ describe("trap perks derived from the treasures held", () => {
     expect(result.current.currentHealth).toBeLessThanOrEqual(6)
   })
 })
+
+describe("drinking a waterskin", () => {
+  it("restores one heart after trap hits", async () => {
+    earned = []
+    const { result } = renderHook(() => useTrapProgress())
+    await act(async () => result.current.takeTrapDamage())
+    await act(async () => result.current.takeTrapDamage())
+    expect(result.current.currentHealth).toBe(2)
+    await act(async () => result.current.drinkWaterskin())
+    expect(result.current.currentHealth).toBe(4)
+  })
+
+  it("restores two hearts while a treasure carrying pack-mule is held", async () => {
+    earned = [{ type: "pack-mule" }]
+    const { result } = renderHook(() => useTrapProgress())
+    await act(async () => result.current.takeTrapDamage())
+    await act(async () => result.current.takeTrapDamage())
+    expect(result.current.currentHealth).toBe(2)
+    await act(async () => result.current.drinkWaterskin())
+    expect(result.current.currentHealth).toBe(6)
+  })
+
+  it("changes nothing at full health", async () => {
+    earned = [{ type: "pack-mule" }]
+    const { result } = renderHook(() => useTrapProgress())
+    await act(async () => result.current.drinkWaterskin())
+    expect(result.current.currentHealth).toBe(result.current.maxHealth)
+  })
+})

@@ -4,9 +4,10 @@ import { useMergedEarnedPerks } from "@/app/SiteMap/perkContributions"
 import { perkLevel, perkStacks } from "@/game/perkTotals"
 import type { ConsumableType } from "@/mods/trap/game/consumableTypes"
 import { trapDamage, isTrapAttemptSafe } from "@/mods/trap/game/trapHealth"
+import { waterskinHeal } from "@/mods/trap/game/waterskin"
 
 // Trap-owned runtime state: health + the consumable pack + the trap-owned perks. Health is
-// trap-only (traps are the sole source of damage and consumables the sole heal), so it lives in the
+// trap-only (traps are the sole source of damage; a waterskin, the pack and coming home heal), so it lives in the
 // trap mod's own persisted slice (useModState). The five trap perks (max-health, armor, trap-insight,
 // pack-mule, consumable-detector) are read here too — derived from the tomb treasures held via the
 // earned-perks seam, never stored — so toggling trap off drops all of it and core names none of it.
@@ -48,6 +49,7 @@ export type TrapProgressAPI = {
   addConsumable: (type: ConsumableType) => boolean // false if at cap
   useConsumable: (type: ConsumableType) => void
   restoreHealth: () => void
+  drinkWaterskin: () => void
 }
 
 export const useTrapProgress = (): TrapProgressAPI => {
@@ -84,6 +86,12 @@ export const useTrapProgress = (): TrapProgressAPI => {
         return true
       },
       restoreHealth: () => setState(prev => ({ ...prev, health: maxHealth })),
+      // Drunk on pickup: pack-mule makes it heal two hearts; at full health it heals nothing.
+      drinkWaterskin: () =>
+        setState(prev => ({
+          ...prev,
+          health: waterskinHeal(Math.min(prev.health, maxHealth), maxHealth, packMuleLevel),
+        })),
       useConsumable: type =>
         setState(prev => {
           if (prev.consumables[type] <= 0) return prev

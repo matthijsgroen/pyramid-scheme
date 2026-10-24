@@ -1,9 +1,9 @@
 import { registerRewardHandler } from "@/app/SiteMap/rewardHandlerRegistry"
 import { CONSUMABLE_EMOJI } from "./consumableEmoji"
 
-// The consumable reward's synchronous popup text/emoji (used by the generic RewardFlow fallback
-// and the shop stock list). The claim EFFECT is trap's reward contribution (see ./index); there
-// is no rich display registration — the plain icon + label is enough.
+// The trap rewards' synchronous popup text/emoji (used by the generic RewardFlow fallback and the
+// shop stock list). The claim EFFECTS are trap's reward contribution (see ./index); there is no
+// rich display registration — the plain icon + label is enough.
 export const registerTrapRewardDisplay = () => {
   registerRewardHandler({
     type: "consumable",
@@ -11,6 +11,15 @@ export const registerTrapRewardDisplay = () => {
     text: (reward, t) => ({
       itemName: t(`chest.consumable.${reward.consumable}`),
       icon: CONSUMABLE_EMOJI[reward.consumable as keyof typeof CONSUMABLE_EMOJI],
+    }),
+  })
+  registerRewardHandler({
+    type: "waterskin",
+    emoji: "💧",
+    text: (_reward, t) => ({
+      itemName: t("chest.waterskin"),
+      itemDescription: t("chest.waterskinDescription"),
+      icon: "💧",
     }),
   })
 }
