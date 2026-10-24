@@ -30,7 +30,6 @@ const preview: Preview = {
     viewport: {
       options: {
         phone: { name: "Phone", styles: { width: "390px", height: "844px" }, type: "mobile" },
-        phoneLandscape: { name: "Phone landscape", styles: { width: "844px", height: "390px" }, type: "mobile" },
         tablet: { name: "Tablet", styles: { width: "820px", height: "1180px" }, type: "tablet" },
         desktop: { name: "Desktop", styles: { width: "1440px", height: "900px" }, type: "desktop" },
         ultrawide: { name: "Ultrawide", styles: { width: "3440px", height: "1440px" }, type: "desktop" },
