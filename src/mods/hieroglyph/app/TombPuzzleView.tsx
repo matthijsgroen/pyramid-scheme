@@ -1,10 +1,11 @@
-import type { FC, FormEvent } from "react"
+import { useRef, type FC, type FormEvent } from "react"
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { Tileset } from "@/game/siteTypes"
 import type { TableauLevel } from "@/mods/hieroglyph/game/tableaus"
 import type { HieroglyphSymbolResolver } from "@/ui/molecules/FormulaPart"
 import type { ChestState } from "@/ui/atoms/Chest"
 import { TombDoor } from "@/ui/atoms/TombDoor"
+import { useWallBehind } from "./useWallBehind"
 import { TombLockPanel } from "@/ui/molecules/TombLockPanel"
 import { HieroglyphInventoryStrip, type InventoryStripItem } from "@/ui/molecules/HieroglyphInventoryStrip"
 import { TombTableau, type OrderedFormula, type TableauCalculation } from "@/mods/hieroglyph/app/TombTableau"
@@ -49,40 +50,54 @@ export const TombPuzzleView: FC<{
   inventoryTitle,
   inventoryItems,
   onInventoryItemClick,
-}) => (
-  // No backdrop of its own: `EncounterModal` wears the floor's wall now, so the whole card is stone and
-  // this view is the part of it the door stands in. Painting the wall here as well put the same image on
-  // three layers at three different scales.
-  <div className="flex flex-1 flex-row overflow-y-auto">
-    <div className="flex flex-1" />
-    <div className="flex min-w-fit flex-1 flex-col items-center justify-center overflow-y-auto px-4 text-white">
+}) => {
+  const door = useRef<HTMLDivElement>(null)
+  const inWall = useWallBehind(door)
+  return (
+    // No backdrop of its own: `EncounterModal` wears the floor's wall now, so the whole card is stone and
+    // this view is the part of it the door stands in. Painting the wall here as well put the same image on
+    // three layers at three different scales.
+    <div className="flex flex-1 flex-row overflow-y-auto">
       <div className="flex flex-1" />
-      <TombDoor className="flex flex-2 flex-col items-center justify-center" open={lockState === "open"} wall={wall}>
-        {isPuzzleCompleted && (
-          <TombLockPanel
+      <div className="flex min-w-fit flex-1 flex-col items-center justify-center overflow-y-auto px-4 text-white">
+        <div className="flex flex-1" />
+        <TombDoor
+          ref={door}
+          className="flex flex-2 flex-col items-center justify-center"
+          open={lockState === "open"}
+          wall={wall}
+          inWall={inWall}
+        >
+          {isPuzzleCompleted && (
+            <TombLockPanel
+              difficulty={difficulty}
+              lockState={lockState}
+              value={lockValue}
+              onChange={onLockChange}
+              onSubmit={onLockSubmit}
+              disabled={lockDisabled}
+              placeholder={lockPlaceholder}
+            />
+          )}
+          <TombTableau
             difficulty={difficulty}
-            lockState={lockState}
-            value={lockValue}
-            onChange={onLockChange}
-            onSubmit={onLockSubmit}
-            disabled={lockDisabled}
-            placeholder={lockPlaceholder}
+            tableau={tableau}
+            calculation={calculation}
+            filledState={filledState}
+            resolveTile={resolveTile}
+            hintFormulas={hintFormulas}
+            onTileClick={onTileClick}
           />
-        )}
-        <TombTableau
-          difficulty={difficulty}
-          tableau={tableau}
-          calculation={calculation}
-          filledState={filledState}
-          resolveTile={resolveTile}
-          hintFormulas={hintFormulas}
-          onTileClick={onTileClick}
-        />
-        {!isPuzzleCompleted && (
-          <HieroglyphInventoryStrip title={inventoryTitle} items={inventoryItems} onItemClick={onInventoryItemClick} />
-        )}
-      </TombDoor>
+          {!isPuzzleCompleted && (
+            <HieroglyphInventoryStrip
+              title={inventoryTitle}
+              items={inventoryItems}
+              onItemClick={onInventoryItemClick}
+            />
+          )}
+        </TombDoor>
+      </div>
+      <div className="flex flex-1" />
     </div>
-    <div className="flex flex-1" />
-  </div>
-)
+  )
+}
