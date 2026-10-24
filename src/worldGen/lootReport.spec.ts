@@ -203,6 +203,7 @@ describe("renderLootReportMarkdown", () => {
     const md = renderLootReportMarkdown(report)
     for (const heading of [
       "# Loot report",
+      "## How to read this",
       "## Totals against demand",
       "## Per tier",
       "## Per journey",

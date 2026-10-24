@@ -160,7 +160,7 @@ export const buildLootReport = (
       ...emptyRow(),
       journeyId,
       levelNr,
-      tier: journeyTier(journeyId) ?? own[0]?.tier ?? "starter",
+      tier: journeyTier(journeyId) ?? own[0]?.tier ?? difficulties[0],
     }
     for (const slot of own) addSlot(row, slot)
     return row
@@ -246,6 +246,13 @@ export const renderLootReportMarkdown = (report: LootReport): string => {
     "",
     "Written by `yarn loot-report` from `src/data/generatedWorld.ts`; not edited by hand.",
     "",
+    "## How to read this",
+    "",
+    "- Share is puzzle rooms with loot / puzzle rooms. Empty is puzzle rooms without loot.",
+    "- Chests, Path ends and the first Shop stock column are filled / declared slots: `2/6` is 2 of 6 stock slots holding a reward.",
+    "- The loot columns after Empty count the rewards placed in each kind of slot, by reward type.",
+    "- A journey level reads `<journey> · level N`.",
+    "",
     "## Totals against demand",
     "",
     "| Currency | Found | Needed | Against demand |",
@@ -269,7 +276,7 @@ export const renderLootReportMarkdown = (report: LootReport): string => {
       "",
       ...table(
         "Journey level",
-        levels.map(l => ({ first: `${l.journeyId} ${l.levelNr}`, row: l }))
+        levels.map(l => ({ first: `${l.journeyId} · level ${l.levelNr}`, row: l }))
       )
     )
   }

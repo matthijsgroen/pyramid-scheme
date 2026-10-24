@@ -42,7 +42,7 @@ const everyEnd = (reward?: TreasureReward): FloorConfig =>
 
 describe("the bake's guard over every kind of loot end", () => {
   it("names the main chest, a side end, a sub end and a hidden end when none holds a reward", () => {
-    expect(emptyPlaces(everyEnd())).toEqual(["main", "side 0", "side 0.0", "side 1"])
+    expect(emptyPlaces(everyEnd())).toEqual(["main", "side 1", "side 1.1", "side 2"])
   })
 
   it("names nothing when every end holds a reward", () => {
@@ -80,7 +80,7 @@ describe("the bake's guard over every kind of loot end", () => {
     expect(keyHosts(config)).toBe(1)
     const named = emptyPlaces(config)
     expect(named).toHaveLength(2)
-    expect(named).toContain("side 2")
+    expect(named).toContain("side 3")
   })
 
   it("names a shop whose stock is all empty, and leaves a stocked one alone", () => {
@@ -89,7 +89,7 @@ describe("the bake's guard over every kind of loot end", () => {
         mainEndReward: coin,
         sideSections: [side({ pathPuzzles: 0, encounter: "fez-shop", rewards })],
       })
-    expect(emptyPlaces(shop([undefined, undefined]))).toEqual(["side 0"])
+    expect(emptyPlaces(shop([undefined, undefined]))).toEqual(["side 1"])
     expect(emptyPlaces(shop([coin, undefined]))).toEqual([])
   })
 

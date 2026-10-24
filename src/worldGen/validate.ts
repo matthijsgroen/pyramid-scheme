@@ -143,8 +143,8 @@ export const validateRewardCounts = (
 // room knows the difference.
 //
 // `place` is the section the chest ends, in words an author reads off the spec: "main", "side n" for
-// the n-th path off the main one, "side n.m" for that path's m-th sub path (both counted from 0, as
-// the floor lists them), or the section's own label where it has one.
+// the n-th path off the main one, "side n.m" for that path's m-th sub path (both counted from 1, in the
+// order the floor lists them), or the section's own label where it has one.
 export type EmptyChest = {
   journeyId: string
   levelNr: number
@@ -157,7 +157,7 @@ export type EmptyChest = {
 const placeOf = (sectionAddress: string | undefined): string => {
   const address = sectionAddress ?? "main"
   const positional = /^s(\d+(?:\.\d+)?)$/.exec(address)
-  return positional ? `side ${positional[1]}` : address
+  return positional ? `side ${positional[1].split(".").map(n => Number(n) + 1).join(".")}` : address
 }
 
 export const findEmptyChests = (

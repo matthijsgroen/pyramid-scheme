@@ -6,7 +6,8 @@ import { totalBuyable } from "./economyGuard"
 import { moneyRewardSchema, sellableRewardSchema } from "./rewardSchemas"
 
 // The shop mod's rows of the loot report: the coins and sellables placed, and what they add up to
-// against the price of everything the shops stock. Drops with the mod.
+// against the price of everything the shops stock. Income counts money and sellables wherever placed,
+// shop stock included (none is placed as stock today). Drops with the mod.
 export const shopLootTotals = (configs: Record<string, SiteConfig[]>): LootTotal[] => {
   let coinDrops = 0
   let coins = 0

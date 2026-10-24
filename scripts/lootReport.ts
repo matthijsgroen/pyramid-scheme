@@ -12,18 +12,19 @@ import { resolveEncounterMeta } from "../src/mods/allFamilyMeta"
 import { MOD_LOOT_TOTALS } from "../src/mods/registeredMods"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "../src/worldGen/data"
 import { buildLootReport, renderLootReportMarkdown } from "../src/worldGen/lootReport"
+import type { Difficulty } from "../src/worldGen/types"
 import type { TierRow } from "../src/worldGen/lootReport"
 
 const argv = process.argv.slice(2)
 const journeyIdx = argv.indexOf("--journey")
 const journeyId = journeyIdx !== -1 ? argv[journeyIdx + 1] : argv.find(a => a.startsWith("--journey="))?.split("=")[1]
 
-const tiers = new Map<string, string>([...PYRAMID_JOURNEYS, ...TOMB_JOURNEYS].map(j => [j.id, j.tier]))
+const tiers = new Map<string, Difficulty>([...PYRAMID_JOURNEYS, ...TOMB_JOURNEYS].map(j => [j.id, j.tier]))
 
 const report = buildLootReport(generatedWorldConfigs, {
   resolveEncounter: resolveEncounterMeta,
   totals: MOD_LOOT_TOTALS(generatedWorldConfigs),
-  journeyTier: id => tiers.get(id) as never,
+  journeyTier: id => tiers.get(id),
 })
 
 const pad = (cells: string[][]) => {
@@ -46,7 +47,7 @@ console.log(
       t.label,
       `${t.found}${unitOf(t.unit)}`,
       t.needed === undefined ? "-" : `${t.needed}${unitOf(t.unit)}`,
-      t.short ? `short ${t.short}` : t.surplus ? `surplus ${t.surplus}` : t.needed === undefined ? "-" : "met",
+      t.short ? `short ${t.short}` : t.surplus ? `surplus ${t.surplus}` : t.needed === undefined ? "-" : "exact",
     ]),
   ])
 )
