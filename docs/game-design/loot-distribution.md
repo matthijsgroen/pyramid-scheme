@@ -21,7 +21,7 @@ Key constraint: **no hieroglyph fragment appears more than once per journey** (r
 | `endReward` on side sections | Branch endpoints with `end: "fragment"`       | Hieroglyph fragment (fragmentSlot) or explicit (tombKey, mapPiece)     |
 | `chestRewards[]`             | Main spine chests, 1 per `chestEvery` puzzles | Consumables only                                                       |
 
-Tomb reward slots (ward keys, location keys) are authored directly and never go through fragment assignment.
+Tomb treasures (ward keys, location keys) are authored directly and never go through fragment assignment. Every other slot in a tomb — its cave's and cavern's open path ends and side sections — is a `fragmentSlot` like a pyramid's: tombs opt in through `TOMB_CAPABILITIES.emitFragmentSlots` (`src/worldGen/capabilities.ts`).
 
 ---
 
@@ -52,7 +52,7 @@ Where sentinels appear:
 
 ### Step 1 — collect slots
 
-Scans all pyramid configs (tombs are skipped) and builds a list of `SlotRef` objects. Each `SlotRef` carries:
+Scans every site config whose capabilities set `emitFragmentSlots` — every pyramid, then every tomb (tomb configs are collected after the pyramids') — and builds a list of `SlotRef` objects. Each `SlotRef` carries:
 
 - `journeyId` / `tier` / `journeyOrderIndex` — where the slot lives
 - `wardKeys` — tomb-key IDs the player must hold to reach this slot (empty = always accessible)

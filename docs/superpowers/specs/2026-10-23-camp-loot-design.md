@@ -195,6 +195,13 @@ From the camp.md table (rewards counted by section tier):
 - Fez sells the animals in his tomb shops; they arrive in the camp.
 - **Starter stays simple:** starter → junior needs no ride, no shop, no money; the first purchase is the
   junior donkey, which opens expert.
+- **No more loot than before (2026-10-24).** The swap is −185 consumables, +26 found items, +~78 parts and
+  +~60 waterskins (expert and up): about the same number of drops as the world has now. The animals add
+  money VALUE, not slots: sellables go up (more of them, or dearer) to fund them inside the per-gate guard.
+- **Every chest carries loot; puzzles only partly.** Chest and path-end slots are always filled (they are
+  today: 866 of 866). A puzzle room may be empty; the share of puzzles with loot is reported per tier. Measured
+  on the bake with every tomb as cave + cavern: starter 81%, junior 43%, expert 40%, master 27%, wizard 17%.
+  Extra sellables land in puzzle slots first, so they also lift those shares.
 
 ## Settled with the builder check (Claude's calls, flagged for review)
 

@@ -367,11 +367,11 @@ All mechanics active. Up to 3 floors. Floor 2 carries map pieces for wizard_b; f
 
 ## 8. Tomb interior design
 
-### Two levels — the cave, then the cavern (starter tomb)
+### Two levels — the cave, then the cavern
 
-The starter tomb is a journey of **two levels, two nodes on its map** (`TOMB_STRUCTURES` `levelCount: 2`,
-`docs/superpowers/specs/2026-10-22-tomb-redesign-design.md`). The other tiers' tombs are still one level, the
-cavern on its own, until their own releases add a cave.
+Every tomb is a journey of **two levels, two nodes on its map** (`TOMB_STRUCTURES` `levelCount: 2`,
+`docs/superpowers/specs/2026-10-22-tomb-redesign-design.md`). The starter tomb is described first; the other
+tiers' tombs share its shape without locks (last bullet).
 
 - **Level 1, the cave.** Exterior: a desert ridge with a cave mouth and an Enter button, no board
   (`levels[0] = { exterior: "caveMouth", board: false }` in `journeys.ts`). One floor in the `cave` tileset,
@@ -392,6 +392,11 @@ cavern on its own, until their own releases add a cave.
   past them is reachable; a lock whose own control stood behind one would lean on a key earned elsewhere, and the
   walk refuses it (`leansOffFloor`).
 - **The starter cave ends in a chest; a lootless floor ends at its pillar**: a floor with no main-end reward has no goal chest.
+- **The other tiers' tombs** have the same two levels, with no locks yet. The cave (`tombCave` in
+  `src/worldGen/spec/cave.ts`) has three puzzles at the tomb's own tier per floor — junior one floor, expert and
+  master two, wizard three — going down by main stairs to the pillar on its last floor, each floor ending in a
+  chest. In the cavern every floor puts one tier + 1 puzzle (wizard: wizard) as the second room, after the
+  first tableau.
 
 ### Structure — one persistent multi-floor site, same shape as a pyramid interior
 
