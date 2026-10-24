@@ -159,11 +159,11 @@ Each is the option that changes the least shipped behaviour; Task 5 writes them 
 
 **Interfaces:** none.
 
-- [ ] **Step 1: Bake** — `timeout 900 yarn generate-world`. Then `git diff --exit-code src/data/generatedWorld.ts` must be clean (carve-ledger hashes may move from comment edits; nothing else). A failure or a diff is a stop: write it under Failures in the review list.
-- [ ] **Step 2: Report** — `timeout 900 yarn loot-report`. Run it a second time: `git diff` on `docs/loot-report.md` between the two runs is empty (determinism).
-- [ ] **Step 3: Toggle-off** — remove `trapMod` from `REGISTERED_MODS` (and its import), run `yarn loot-report` (no waterskin row, no crash), `yarn check-types`; then `git checkout src/mods/registeredMods.ts docs/loot-report.md` and confirm `git status --short` holds only the files this task makes.
-- [ ] **Step 4: Gate** — each under `timeout 900`: `yarn verify`, `yarn verify-content`, `yarn build`. All pass.
-- [ ] **Step 5: Record** in `docs/review-camp-release.md`: this plan's seven decisions under Decisions (`Phase 2 —`, with their alternatives); a "Phase 2 loot" block with the headline numbers from the report — per tier the puzzle-loot share and empty puzzle rooms, chests and path ends filled, and every total against its demand (short or surplus) — plus one line that `docs/loot-report.md` is the full table and is refreshed by `yarn loot-report`; the toggle-off result; the gate result. Tick this plan's boxes.
-- [ ] **Step 6: Commit** — `docs: the loot report and its numbers`
+- [x] **Step 1: Bake** — `timeout 900 yarn generate-world`. Then `git diff --exit-code src/data/generatedWorld.ts` must be clean (carve-ledger hashes may move from comment edits; nothing else). A failure or a diff is a stop: write it under Failures in the review list.
+- [x] **Step 2: Report** — `timeout 900 yarn loot-report`. Run it a second time: `git diff` on `docs/loot-report.md` between the two runs is empty (determinism).
+- [x] **Step 3: Toggle-off** — remove `trapMod` from `REGISTERED_MODS` (and its import), run `yarn loot-report` (no waterskin row, no crash), `yarn check-types`; then `git checkout src/mods/registeredMods.ts docs/loot-report.md` and confirm `git status --short` holds only the files this task makes.
+- [x] **Step 4: Gate** — each under `timeout 900`: `yarn verify`, `yarn verify-content`, `yarn build`. All pass.
+- [x] **Step 5: Record** in `docs/review-camp-release.md`: this plan's seven decisions under Decisions (`Phase 2 —`, with their alternatives); a "Phase 2 loot" block with the headline numbers from the report — per tier the puzzle-loot share and empty puzzle rooms, chests and path ends filled, and every total against its demand (short or surplus) — plus one line that `docs/loot-report.md` is the full table and is refreshed by `yarn loot-report`; the toggle-off result; the gate result. Tick this plan's boxes.
+- [x] **Step 6: Commit** — `docs: the loot report and its numbers`
 
 The driver then runs the phase review (Sonnet), pushes the branch, ticks Phase 2 in `docs/handover-camp-release.md` and adds one line to its State.

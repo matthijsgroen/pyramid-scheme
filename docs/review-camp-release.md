@@ -26,6 +26,15 @@ The designer's morning list for the unattended camp-release queue. Newest phase 
 - Phase 1 fingerprints — expert moved (`9cd2d41a4173e69a`): 56 supply puzzle slots become 20 waterskins and 36 empty puzzles; 9 shop stock slots empty; coins 187 → 185.
 - Phase 1 fingerprints — master moved (`b6f13390418f0f13`): 56 supply puzzle slots become 20 waterskins and 36 empty puzzles; 9 shop stock slots empty; coins 197 → 196.
 - Phase 1 fingerprints — wizard moved (`f2faabe2e557a758`): 38 supply puzzle slots become 20 waterskins and 18 empty puzzles; 13 shop stock slots empty; coins 345 → 344.
+- Phase 2 — The empty-loot refusal is the existing bake check (`findEmptyChests`, judged on the assembled floor so a floor-key host is not taken for empty), now pinned by a spec for every kind of loot end, not a second check. Alternative: a second, config-level `WorldValidator` in `buildConfigs`, which would refuse a `loot: false` key host.
+- Phase 2 — The bake's empty-end check skips journeys whose capabilities say `emitFragmentSlots === false`, as it already did: a site outside the loot economy grows no reward slot, so its chests stand empty by design. No journey in the world sets it today. Alternative: check them too.
+- Phase 2 — `yarn generate-world` does not write `docs/loot-report.md`; `yarn loot-report` is its own command, run in the last task of every phase that bakes (3, 5, 9), and the bake prints one line pointing at it. Alternative: chain the report into `generate-world` so the doc can never go stale.
+- Phase 2 — `yarn loot-report` runs prettier on the doc from inside the script, so its output is the committed bytes and two runs match. Alternative: leave formatting to lint-staged.
+- Phase 2 — "Every slot" is counted by reward type per level in the doc, not listed one per line (about 3000 lines); `yarn loot-report --journey <id>` prints one journey's slots on the console. Alternative: list every slot in the doc.
+- Phase 2 — Puzzle rooms are counted as in phase 1 (a floor's or non-shop section's `pathPuzzles`, loot = its defined `rewards[]`, by section tier), so the numbers compare one to one; tableaus, traps and the crocodile count as puzzle rooms without loot. Alternative: count only loot-eligible rooms.
+- Phase 2 — Demand reaches the report through a new descriptor field, `lootTotals`: each mod reports its own currency found and needed, core never learns what a fragment or a coin is, and a toggled-off mod's rows drop. Alternative: let `scripts/lootReport.ts` import each mod's numbers directly.
+- Phase 2 — Demand rows now: fragments against `HIEROGLYPH_REQUIRED`, mosaic pieces against `MOSAIC_TOTAL`, map pieces against the tombs' `piecesRequired`, tomb treasures against the catalogue plus every ward gate with its key, waterskins (count only), coins and sellables (count and value), income against the shop's buyable stock. Camp finds come with phase 3, money before each gate with phase 4. Alternative: counts only, demand later.
+- Phase 2 — Loot ends without a reward in the spec (a floor-key host, a `loot: false` end) are listed under their own heading, not counted as empty; the bake has already refused any truly empty one. Alternative: count them as empty.
 
 ## Phase 1 loot
 
@@ -45,6 +54,25 @@ Measured on the committed world before (c493c30b) and after the bake (5f0d80f4),
 - Money 1082 coins before and after (530 → 532 drops); sellables 85 worth 7025, unchanged; buyable 6300, unchanged; income 8107 covers it and the economy guard passes.
 - Toggle-off: with `trapMod` out of `REGISTERED_MODS` (and its import, which `check-types` otherwise refuses as unused), `yarn generate-world`, `yarn check-types` and `yarn build` pass, and the bake holds no waterskin. Restored afterwards; the tree was clean.
 - Gate after Tasks 7 and 8: the re-bake left `generatedWorld.ts` byte-identical (only carve-ledger hashes moved from comment edits), the fingerprint verify passes unchanged, and `yarn verify` (531 files, 6406 tests, betterer ratcheted 5 fixed issues), `yarn verify-content` (43 files, 751 tests) and `yarn build` pass.
+
+## Phase 2 loot
+
+From `yarn loot-report` on the committed bake (byte-identical to phase 1's). `docs/loot-report.md` is the full table, per tier and per journey level; refresh it with `yarn loot-report`.
+
+| tier    | puzzles with loot | empty puzzle rooms | chests filled | path ends filled | shop stock filled |
+| ------- | ----------------- | ------------------ | ------------- | ---------------- | ----------------- |
+| starter | 72/92 = 78%       | 20                 | 20/20         | 52/52            | 0/0               |
+| junior  | 72/186 = 39%      | 114                | 27/27         | 113/113          | 2/6               |
+| expert  | 91/431 = 21%      | 340                | 35/35         | 141/141          | 3/12              |
+| master  | 91/540 = 17%      | 449                | 54/54         | 158/158          | 3/12              |
+| wizard  | 91/860 = 11%      | 769                | 58/58         | 169/169          | 5/18              |
+| all     | 417/2109 = 20%    | 1692               | 194/194       | 633/633          | 13/48             |
+
+- Against demand: mosaic pieces 252/252, hieroglyph fragments 296/296, map pieces 31/31, tomb treasures 40/40, ward gates with their key 290/290 — all exact. Income 8107 coins (1082 coins in 532 drops + 85 sellables worth 7025) against 6300 buyable: surplus 1807. Waterskins 60, no demand.
+- Loot ends without a reward in the spec: none. The empty shop stock slots (35) are phase 1's emptied supply slots, waiting for phase 4's animals.
+- Determinism: two `yarn loot-report` runs on the same bake write identical bytes.
+- Toggle-off: with `trapMod` out of `REGISTERED_MODS` (and its import), `yarn loot-report` runs and drops the Waterskins row; `yarn check-types` passes. Without a re-bake the baked world still holds its waterskins, so they still show as `waterskin` counts in the tier columns (reward types are counted as opaque strings). Restored afterwards.
+- Gate: `yarn generate-world` left `generatedWorld.ts` byte-identical (carveLedger unchanged too); `yarn verify` (539 files, 6439 tests; betterer only re-keyed the `§` backlog entries of `modDescriptor.ts` and `registeredMods.ts` whose lines moved), `yarn verify-content` (43 files, 751 tests) and `yarn build` pass.
 
 ## Drafts
 
