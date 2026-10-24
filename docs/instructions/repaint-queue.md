@@ -183,11 +183,13 @@ its palette.
 
 ### `cave/floor` — bare cave rock underfoot
 
-**Attach:** `art/masters/surfaces/starter-floor.webp` — the merchant's floor, as the style reference
+**Attach:** `art/masters/surfaces/cave-floor-natural.webp` — natural cave rock, right in material, too coarse in scale
 
 ```
-Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
-Rough pale-grey limestone bedrock, damp-dark in the hollows, a little sand drifted into the cracks.
+Top-down dungeon game tile art for a natural cave under the Egyptian desert, a hidden tomb's approach.
+A NATURAL CAVE FLOOR that no hand ever cut: grey limestone bedrock, water-worn and uneven, rounded
+bumps and shallow hollows, flowing curved cracks, damp-dark in the low spots, sand and grit drifted
+into the dips.
 Dark, cool and dim but readable: every part of the floor is visible, nothing sinks into black.
 HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
 surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
@@ -196,26 +198,29 @@ a comic, not a cartoon. An edge is a change of value, never a stroke.
 Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
 than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it.
-THE CAMERA: straight down. A seamless square tile of uneven bedrock broken into MANY SMALL pieces:
-about as many fragments across the tile as the reference has paving blocks — ten to twelve across,
-the largest no wider than a tenth of the tile. Shallow cracks between them, fine grit and a few tiny
-pebbles. NO big slabs, NO boulders, NO large dark patches or pools of shadow: the tile repeats across
-the floor, and any large feature turns into a visible grid. Value spread evenly over the whole tile.
-No joints, no built stonework. Even lighting, no hotspot, no vignette.
+THE ATTACHED IMAGE IS THE RIGHT MATERIAL AT THE WRONG SCALE. Keep its natural rock, its paint and its
+sand; paint the same kind of floor about THREE TIMES SMALLER, so ten or more rock forms cross the tile and
+the largest is no wider than a tenth of it.
+THE CAMERA: straight down. A seamless square tile of natural rock: irregular rounded forms, curving
+cracks that wander and branch, fine grit and a few tiny pebbles.
+NOTHING BUILT: no rectangular blocks, no rows or courses, no straight edges, no right angles, no
+mortar lines, no paving, no carved holes or circles, no beads, no grains, no seeds.
+NO big slabs, NO boulders, NO large dark patches or pools of shadow: the tile repeats across the floor,
+and any large feature turns into a visible grid. Value spread evenly over the whole tile.
+Even lighting, no hotspot, no vignette.
 ```
 
 **Import:** `yarn import-tile art/masters/surfaces/cave-floor.webp --tier=cave --name=floor --slot=floor --filter=smooth --key=none --repeat=2.4`
 
 ### `cave/wall-face` — the cave's rock wall face
 
-**Attach:** `art/masters/surfaces/starter-wall-face.webp` — the merchant's wall face, as the style reference
+**Attach:** `art/masters/surfaces/cave-floor-natural.webp` — natural cave rock, for the material and the paint
 
 ```
 Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
-The standing face of a cave wall seen from the front: raw rough-hewn limestone, vertical weathering
-streaks, a few ledges and small hollows, damp-dark toward the foot. No bricks, no joints, no paint.
+The standing face of a cave wall seen from the front: natural limestone no hand ever cut, water-worn and
+flowing: vertical weathering streaks, rounded bulges, a few ledges and small hollows, damp-dark toward the
+foot. NOTHING BUILT: no bricks, no blocks, no courses, no joints, no straight edges, no tool marks, no paint.
 Dark, cool and dim but readable. HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and
 fine speckle in the surface, forms modelled with soft shading. Painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
@@ -231,20 +236,21 @@ Flat frontal view, no perspective. A wide band, seamless left to right. Even lig
 
 ### `cave/threshold` — the worn sill of a cave passage
 
-**Attach:** `art/masters/surfaces/starter-threshold.webp` — the merchant's sill, as the style reference
+**Attach:** `art/masters/surfaces/starter-threshold.webp` — the merchant's sill, for its camera and proportions only
 
 ```
 Top-down dungeon game tile art for a cave under the Egyptian desert, a hidden tomb's approach.
-A worn sill where one cave passage meets the next: bedrock rubbed smooth and slightly dished by feet,
-a thin line of sand along its edge. No blocks, no joints, no paint.
+A worn sill where one cave passage meets the next: natural bedrock rubbed smooth and slightly dished
+by feet, a thin line of sand along its edge, its edges irregular and rounded. NOTHING BUILT: no blocks, no
+slab, no straight edges, no joints, no paint.
 Dark, cool and dim but readable. HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and
 fine speckle in the surface, soft shading. Painted rather than drawn.
 NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look.
 Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
 than #181b1e.
 No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it.
+THE ATTACHED IMAGE IS FOR CAMERA AND PROPORTIONS ONLY. Do NOT take its colours, its cut stone or its
+subject from it.
 Same camera and proportions as the attached sill. Even lighting.
 ```
 
@@ -252,12 +258,12 @@ Same camera and proportions as the attached sill. Even lighting.
 
 ### `cave/wall-panel` — the encounter wall, a cave face
 
-**Attach:** `art/masters/tombWall/starter.webp` — the merchant's encounter wall, as the style reference
+**Attach:** `art/masters/tombWall/starter.webp` — the merchant's encounter wall, for the frame's proportions only
 
 ```
-A whole wall of a cave, seen straight on, for a puzzle's backdrop: raw pale-grey limestone, rough and
-weathered, vertical streaks, a few ledges and hollows, sand drifted at the foot. No carving, no hieroglyphs,
-no paint, no bricks. Dark, cool and dim but readable.
+A whole wall of a cave, seen straight on, for a puzzle's backdrop: natural grey limestone no hand ever cut,
+water-worn and flowing: vertical streaks, rounded bulges, a few ledges and hollows, sand drifted at the foot.
+NOTHING BUILT: no blocks, no courses, no straight edges, no carving, no hieroglyphs, no paint, no bricks. Dark, cool and dim but readable.
 HAND-PAINTED digital art: matte, soft brush texture, grit and speckle. NO OUTLINES — no black contour, no
 ink, no cel shading, no vector look.
 Grey stone #6c7177, damp shadow #2b2f34, sand #a3906c. Nothing lighter than #b4b0a6, nothing darker
