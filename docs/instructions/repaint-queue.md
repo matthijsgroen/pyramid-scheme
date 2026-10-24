@@ -210,7 +210,10 @@ and any large feature turns into a visible grid. Value spread evenly over the wh
 Even lighting, no hotspot, no vignette.
 ```
 
-**Import:** `yarn import-tile art/masters/surfaces/cave-floor.webp --tier=cave --name=floor --slot=floor --filter=smooth --key=none --repeat=2.4`
+**Prepare:** the generator returns the reference's wide band, not a square. Stack it on itself, cut the square and make it seamless; that square is the master, `art/masters/surfaces/cave-floor.webp`:
+`magick band.jpeg band.jpeg -append -gravity Center -crop 2688x2688+0+0 +repage square.png && yarn make-seamless square.png`
+
+**Import:** `yarn import-tile art/masters/surfaces/cave-floor.webp --tier=cave --name=floor --slot=floor --filter=smooth --key=none --repeat=2`
 
 ### `cave/wall-face` — the cave's rock wall face
 
