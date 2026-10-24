@@ -16,10 +16,10 @@
 import sharp from "sharp"
 import { pathToFileURL } from "url"
 import { difficulties, type Difficulty } from "../src/data/difficultyLevels"
+import type { Tileset } from "../src/game/siteTypes"
 import { tierPalette } from "../src/app/SiteMap/tileMaterials"
 import { SEATING_PASS } from "../src/app/SiteMap/lighting"
 import { MARKER_FILL, MARKER_OUTLINE } from "../src/app/SiteMap/markerColours"
-import { METALS } from "../src/ui/tokens/metalPalette"
 import { contrastRatio, hexToRgb, hueDistance, parseRgba, toLch, wash, type Lch, type Rgb } from "../src/support/colour"
 
 export type RankInput = {
@@ -100,7 +100,7 @@ export const meanOpaque = (raw: Uint8Array, channels: number): Rgb => {
   return [r / n, g / n, b / n]
 }
 
-export const artMean = async (tier: Difficulty, name: string): Promise<Rgb> => {
+export const artMean = async (tier: Tileset, name: string): Promise<Rgb> => {
   const { data, info } = await sharp(`src/assets/tiles/${tier}/${name}.png`)
     .ensureAlpha()
     .raw()
@@ -108,7 +108,7 @@ export const artMean = async (tier: Difficulty, name: string): Promise<Rgb> => {
   return meanOpaque(new Uint8Array(data), info.channels)
 }
 
-export const inputFor = async (tier: Difficulty): Promise<RankInput> => {
+export const inputFor = async (tier: Tileset): Promise<RankInput> => {
   const palette = tierPalette[tier]
   const { rgb: night, alpha: nightAlpha } = parseRgba(palette.shade)
   return {
@@ -118,7 +118,7 @@ export const inputFor = async (tier: Difficulty): Promise<RankInput> => {
     nightAlpha,
     faceNight: palette.faceNight,
     seatingPass: SEATING_PASS,
-    accent: hexToRgb(METALS[tier].accent),
+    accent: hexToRgb(palette.accent),
     prop: hexToRgb(palette.prop),
     markerFill: hexToRgb(MARKER_FILL),
     markerOutline: hexToRgb(MARKER_OUTLINE),
@@ -145,7 +145,8 @@ export const rankRow = (
 ) => {
   const r = reports[tier]
   const v = verdict(r, reports.master)
-  const next = difficulties[difficulties.indexOf(tier) + 1]
+  const index = difficulties.indexOf(tier)
+  const next = index >= 0 ? difficulties[index + 1] : undefined
   const round = (n: number) => Math.round(n * 10) / 10
   return {
     "floor L*": round(r.floor.L),
@@ -162,7 +163,14 @@ export const rankRow = (
 
 const main = async () => {
   const { inputs, reports } = await measureAll()
-  console.table(Object.fromEntries(difficulties.map(tier => [tier, rankRow(tier, inputs, reports)])))
+  // The cave is a tileset and no rank: it is held to the same steps and printed under the five.
+  const cave = await inputFor("cave")
+  const caveInputs = { ...inputs, cave } as Record<Difficulty, RankInput>
+  const caveReports = { ...reports, cave: measureRank(cave) } as Record<Difficulty, RankReport>
+  console.table({
+    ...Object.fromEntries(difficulties.map(tier => [tier, rankRow(tier, inputs, reports)])),
+    cave: rankRow("cave" as Difficulty, caveInputs, caveReports),
+  })
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
