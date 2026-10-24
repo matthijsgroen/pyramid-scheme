@@ -223,6 +223,8 @@ export const starterRules: Rule[] = [
     // Cave furniture, not the starter merchant's house the tier pool dresses its pyramids in.
     decorations: ["basin", "pillar", "rubblePile", "pit", "crystal", "brazier", "stalagmite", "puddle", "bones"],
     wallDecorations: ["roots", "stalactites"],
+    // A cave winds: its passages turn far more often than a built corridor does.
+    corridorStraightness: 0.3,
     floors: [{ pathPuzzles: 3, encounter: "puzzle", ...lockOnFloor("caveLevers") }],
   }),
 

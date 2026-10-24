@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 345658846
+export const worldContentHash = 2003002742
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -20106,6 +20106,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         wallDecorations: ["roots", "stalactites"],
         role: "puzzle",
         encountersByIndex: { 0: "eclipse", 1: "balance-scale", 2: "star-battle" },
+        corridorStraightness: 0.3,
         packing: 0.1,
         seed: 1835615271702410,
         mainEndReward: { type: "money", amount: 2 },
