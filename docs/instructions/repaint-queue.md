@@ -322,7 +322,7 @@ scatter pieces, two wall items. Each is a single repaint with no scaffold, keyed
 
 ### `cave/basin` — a still rock pool, wet rim
 
-**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's own rock, for its paint and its colour
+**Attach:** `art/masters/props/cave/basin-dark.webp` — the accepted basin as first painted, to be repainted lighter
 
 ```
 STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
@@ -342,6 +342,11 @@ of stone in shade, around #23272b, completely free of pink or purple.
 Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
 blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
 
+THE ATTACHED IMAGE IS THIS VERY OBJECT, already accepted. Repaint it: keep its shape, its outline, its
+composition, its camera angle and every one of its details exactly — change ONLY its values, to the
+lighter palette below, as if the explorer's torch now lights it. Do not redesign it, do not add or remove
+anything.
+
 PALETTE, strictly: a dark cave, and this object is LIT by the explorer's torch — far lighter than the
 dark floor it stands on. Objects #d8d2c4 and #a19b8f, one sand accent #b8a585, against floor #3e4246
 and walls #ccc6ba. NOTHING LIGHTER THAN #f2ecde, no pure white, no shine. Nothing darker than #4a4640
@@ -358,7 +363,7 @@ It is about twice as wide as it is tall: a low mound of rock, knee-high.
 
 ### `cave/pillar` — a dripstone column
 
-**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's own rock, for its paint and its colour; the STYLE block gives the angle
+**Attach:** `art/masters/props/cave/pillar-dark.webp` — the accepted pillar as first painted, to be repainted lighter
 
 ```
 STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
@@ -378,6 +383,11 @@ of stone in shade, around #23272b, completely free of pink or purple.
 Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
 blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
 
+THE ATTACHED IMAGE IS THIS VERY OBJECT, already accepted. Repaint it: keep its shape, its outline, its
+composition, its camera angle and every one of its details exactly — change ONLY its values, to the
+lighter palette below, as if the explorer's torch now lights it. Do not redesign it, do not add or remove
+anything.
+
 PALETTE, strictly: a dark cave, and this object is LIT by the explorer's torch — far lighter than the
 dark floor it stands on. Objects #d8d2c4 and #a19b8f, one sand accent #b8a585, against floor #3e4246
 and walls #ccc6ba. NOTHING LIGHTER THAN #f2ecde, no pure white, no shine. Nothing darker than #4a4640
@@ -394,7 +404,7 @@ It is about one third as wide as it is tall: a column taller than a person.
 
 ### `cave/rubblePile` — a rockfall of broken limestone
 
-**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's own rock, for its paint and its colour; the STYLE block gives the angle
+**Attach:** `art/masters/props/cave/rubblePile-dark.webp` — the accepted rubblePile as first painted, to be repainted lighter
 
 ```
 STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
@@ -414,6 +424,11 @@ of stone in shade, around #23272b, completely free of pink or purple.
 Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
 blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
 
+THE ATTACHED IMAGE IS THIS VERY OBJECT, already accepted. Repaint it: keep its shape, its outline, its
+composition, its camera angle and every one of its details exactly — change ONLY its values, to the
+lighter palette below, as if the explorer's torch now lights it. Do not redesign it, do not add or remove
+anything.
+
 PALETTE, strictly: a dark cave, and this object is LIT by the explorer's torch — far lighter than the
 dark floor it stands on. Objects #d8d2c4 and #a19b8f, one sand accent #b8a585, against floor #3e4246
 and walls #ccc6ba. NOTHING LIGHTER THAN #f2ecde, no pure white, no shine. Nothing darker than #4a4640
@@ -430,7 +445,7 @@ It is about one and a half times as wide as it is tall: a knee-high heap.
 
 ### `cave/pit` — a sinkhole, dark shaft
 
-**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's own rock, for its paint and its colour; the STYLE block gives the angle
+**Attach:** `art/masters/props/cave/pit-dark.webp` — the accepted pit as first painted, to be repainted lighter
 
 ```
 STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
@@ -450,6 +465,11 @@ of stone in shade, around #23272b, completely free of pink or purple.
 Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
 blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
 
+THE ATTACHED IMAGE IS THIS VERY OBJECT, already accepted. Repaint it: keep its shape, its outline, its
+composition, its camera angle and every one of its details exactly — change ONLY its values, to the
+lighter palette below, as if the explorer's torch now lights it. Do not redesign it, do not add or remove
+anything.
+
 PALETTE, strictly: a dark cave, and this object is LIT by the explorer's torch — far lighter than the
 dark floor it stands on. Objects #d8d2c4 and #a19b8f, one sand accent #b8a585, against floor #3e4246
 and walls #ccc6ba. NOTHING LIGHTER THAN #f2ecde, no pure white, no shine. Nothing darker than #4a4640
@@ -466,7 +486,7 @@ It is about twice as wide as it is tall: a hole in the floor with a low broken r
 
 ### `cave/crystal` — pale selenite blades from a rock seam
 
-**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's own rock, for its paint and its colour; the STYLE block gives the angle
+**Attach:** `art/masters/props/cave/crystal-dark.webp` — the accepted crystal as first painted, to be repainted lighter
 
 ```
 STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
@@ -486,6 +506,11 @@ of stone in shade, around #23272b, completely free of pink or purple.
 Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
 blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
 
+THE ATTACHED IMAGE IS THIS VERY OBJECT, already accepted. Repaint it: keep its shape, its outline, its
+composition, its camera angle and every one of its details exactly — change ONLY its values, to the
+lighter palette below, as if the explorer's torch now lights it. Do not redesign it, do not add or remove
+anything.
+
 PALETTE, strictly: a dark cave, and this object is LIT by the explorer's torch — far lighter than the
 dark floor it stands on. Objects #d8d2c4 and #a19b8f, one sand accent #b8a585, against floor #3e4246
 and walls #ccc6ba. NOTHING LIGHTER THAN #f2ecde, no pure white, no shine. Nothing darker than #4a4640
@@ -504,7 +529,7 @@ It is about as wide as it is tall: a waist-high cluster.
 
 ### `cave/brazier` — an old campfire, someone camped here
 
-**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's own rock, for its paint and its colour; the STYLE block gives the angle
+**Attach:** `art/masters/props/cave/brazier-dark.webp` — the accepted brazier as first painted, to be repainted lighter
 
 ```
 STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
@@ -524,6 +549,11 @@ of stone in shade, around #23272b, completely free of pink or purple.
 Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
 blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
 
+THE ATTACHED IMAGE IS THIS VERY OBJECT, already accepted. Repaint it: keep its shape, its outline, its
+composition, its camera angle and every one of its details exactly — change ONLY its values, to the
+lighter palette below, as if the explorer's torch now lights it. Do not redesign it, do not add or remove
+anything.
+
 PALETTE, strictly: a dark cave, and this object is LIT by the explorer's torch — far lighter than the
 dark floor it stands on. Objects #d8d2c4 and #a19b8f, one sand accent #b8a585, against floor #3e4246
 and walls #ccc6ba. NOTHING LIGHTER THAN #f2ecde, no pure white, no shine. Nothing darker than #4a4640
@@ -542,7 +572,7 @@ It is about three times as wide as it is tall: flat on the floor, ankle-high.
 
 ### `cave/stalagmite` — a cluster of low stone cones
 
-**Attach:** `art/masters/surfaces/cave-floor.webp` — the cave's own rock, for its paint and its colour; the STYLE block gives the angle
+**Attach:** `art/masters/props/cave/stalagmite-dark.webp` — the accepted stalagmite as first painted, to be repainted lighter
 
 ```
 STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
@@ -561,6 +591,11 @@ below it than a tenth of its height. No hard edge, no drawn ellipse. The shadow 
 of stone in shade, around #23272b, completely free of pink or purple.
 Everything that is not the object or its shadow is flat magenta, exactly #ff00ff (red 255 green 0
 blue 255), to all four edges — no floor, no wall, no room, no gradient, no glow.
+
+THE ATTACHED IMAGE IS THIS VERY OBJECT, already accepted. Repaint it: keep its shape, its outline, its
+composition, its camera angle and every one of its details exactly — change ONLY its values, to the
+lighter palette below, as if the explorer's torch now lights it. Do not redesign it, do not add or remove
+anything.
 
 PALETTE, strictly: a dark cave, and this object is LIT by the explorer's torch — far lighter than the
 dark floor it stands on. Objects #d8d2c4 and #a19b8f, one sand accent #b8a585, against floor #3e4246
