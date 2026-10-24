@@ -61,6 +61,7 @@ import { drawingOf, familyIconOf, isLockedGate, isSpentAt, nodeRadius, shapeKind
 import { MapActionPrompt } from "@/ui/atoms/MapActionPrompt"
 import { MapNotice } from "@/ui/atoms/MapNotice"
 import { MarkArtBadge } from "./mark"
+import { getRewardHandler } from "./rewardHandlerRegistry"
 import { CompletedBadge, NodeBadge, NodeShape, PendingLootBadge, ReplayBadge } from "./nodeShapes"
 import { FloorShade, LitPlaces } from "./torchlight"
 import {
@@ -457,13 +458,22 @@ export const nodeSpritesFor = (
       const { cx, cy } = cellCenter(r, c)
       const footprint = clipCells(footprints.get(`${r},${c}`) ?? [`${r},${c}`])
       if (kind === "treasure" && !cell.tags?.includes("shop")) {
-        const url = tileOrPlaceholder(tier, "chestProp")
-        if (!url) continue
+        // A REWARD THAT IS NOT A CHEST'S stands as what it is (`RewardArt`): painted, or the stand-in it names.
+        const rewardArt = cell.reward ? getRewardHandler(cell.reward.type)?.art?.(cell.reward) : undefined
+        const ownKey = rewardArt?.kind === "prop" ? rewardArt.tile : undefined
+        const url =
+          rewardArt?.kind === "prop"
+            ? (tileUrl(tier, rewardArt.tile) ?? tileOrPlaceholder(tier, rewardArt.stand))
+            : tileOrPlaceholder(tier, "chestProp")
+        const leverUrls =
+          rewardArt?.kind === "lever"
+            ? (["back", "arm", "front"] as const).map(
+                piece => tileUrl(tier, rewardArt.tiles[piece]) ?? tileUrl(tier, rewardArt.stand[piece])
+              )
+            : undefined
+        if (!url && !leverUrls) continue
         const { dx, dy } = nodeArtOffset(cell.dirs)
-        out.push({
-          footprint,
-          key: `chest:${r},${c}`,
-          url,
+        const placed = {
           x: cx + dx - CELL / 2,
           y: cy + dy + CELL / 2 - PROP_H,
           mirrored: false,
@@ -473,7 +483,20 @@ export const nodeSpritesFor = (
           ...(cell.state === "completed" && !staysOpen(cell)
             ? { badge: pendingCells?.has(`${r},${c}`) ? ("pending" as const) : ("taken" as const) }
             : {}),
-        })
+          ...(rewardArt?.mark ? { mark: rewardArt.mark } : {}),
+        }
+        if (leverUrls) {
+          // A SAND LEVER IS PULLED FOR GOOD: taking the reward is the pull, and nothing swings it back.
+          const [back, arm, front] = leverUrls
+          if (!back || !arm || !front) continue
+          out.push({
+            footprint,
+            key: `webLever:${r},${c}`,
+            url: back,
+            ...placed,
+            armStack: { armUrl: arm, frontUrl: front, angleDeg: cell.state === "completed" ? HANDLE_THROW_DEG : 0 },
+          })
+        } else if (url) out.push({ footprint, key: `${ownKey ? "webKey" : "chest"}:${r},${c}`, url, ...placed })
       } else if (kind === "exit") {
         // THE WAY OUT IS A MARKER, NOT ARCHITECTURE. A doorway has to be aimed — face on it needs the
         // wall it is cut in, and walked across it becomes a narrow lit slot that reads as a column, which

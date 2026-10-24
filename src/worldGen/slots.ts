@@ -134,6 +134,8 @@ export const collectSlots = (
       ) => {
         if (!rewards) return
         rewards.forEach((rw, i) => {
+          // A reward already standing in a puzzle room (a web activator) is placed, not a slot to fill or clear.
+          if (rw !== undefined && rw.type !== "fragmentSlot") return
           const arr = rewards
           // A room's loot is tiered by its SECTION, never by its node's own difficulty: a node picks
           // the board, so a junior node on a starter path must not pull junior loot into it.

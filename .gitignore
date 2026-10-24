@@ -30,3 +30,4 @@ storybook-static
 .claude/worktrees
 .claude/settings.local.json
 .playwright-mcp/
+.superpowers/

@@ -1,6 +1,7 @@
 import { tier, journey, tomb, wardChest, wardWing } from "../dsl"
 import type { Rule, PathEntry, SideSectionConstraint } from "../dsl"
 import { TOMB_ROOMS_PER_FLOOR } from "../data"
+import { lockOnMainFloor } from "./locks/onFloor"
 
 // Own-tomb HOLDBACK chests: gated on master's own SECONDARY tomb keys, since most master symbols
 // first needed on a later tableau run turn out to belong to master_treasure_tomb_b, not the
@@ -287,4 +288,7 @@ export const masterRules: Rule[] = [
   // Pharaohs because a curse and an omen are hers.
   journey("master_1").pyramid("last", { patron: "horus" }),
   journey("master_3").pyramid("last", { patron: "sekhmet" }),
+
+  // The Book of the Dead closes on its judgement: Tom's weighing of the heart stands on the last pyramid's main floor.
+  journey("master_2").pyramid("last", lockOnMainFloor("weighingOfTheHeart")),
 ]

@@ -3,7 +3,8 @@ import { renderHook, act } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { assembleFloor } from "@/game/siteAssembler"
 import { resolveEncounter } from "@/app/families/familyRegistry"
-import { revealAll } from "@/game/gridNavigation"
+import { findPath, revealAll, walkableFrom } from "@/game/gridNavigation"
+import { passageCrossing } from "@/game/passages"
 import type { FloorGrid, GridCell } from "@/game/siteTypes"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { buildRoomClaims } from "./roomClaims"
@@ -25,6 +26,19 @@ const carve = (floor: ReturnType<typeof allFloors>[number]): FloorGrid | null =>
   return result.success ? revealAll(result.grid) : null
 }
 
+// The cell an offered tap puts the explorer on: the target itself, except a narrow passage, which nobody stands in.
+const landingOf = (grid: FloorGrid, from: readonly [number, number], target: readonly [number, number]) => {
+  const walkable = walkableFrom(grid, from)
+  const crossing = passageCrossing(
+    grid,
+    target[0],
+    target[1],
+    (r, c) => walkable.has(`${r},${c}`),
+    (r, c) => findPath(grid, from, [r, c]).length
+  )
+  return crossing ? crossing.near : target
+}
+
 const stubJourneys = () =>
   ({
     markCellExplored: vi.fn(),
@@ -41,7 +55,7 @@ describe("a tap on a carved floor goes through the offer layer", () => {
   beforeEach(() => vi.useFakeTimers())
   afterEach(() => vi.useRealTimers())
 
-  it("moves nobody on a tap nothing offers, and lands every offered tap on its resolved target", () => {
+  it("moves nobody on a tap nothing offers, and lands every offered tap on its resolved target, a narrow passage's on its near side", () => {
     const floors = allFloors().filter((_, i) => i % SAMPLE_EVERY === 0)
     let refused = 0
     let refusedStraightRun = 0
@@ -89,7 +103,8 @@ describe("a tap on a carved floor goes through the offer layer", () => {
           }
           offered++
           if (target[0] !== r || target[1] !== c) redirected++
-          const want = encodeEdge(0, target[0], target[1])
+          const [landRow, landCol] = landingOf(grid, explorerPos, target)
+          const want = encodeEdge(0, landRow, landCol)
           if (moved.length !== 1 || moved[0][2] !== want)
             faults.push(`${floor.label}: the offer at ${r},${c} should land on ${want}, wrote ${JSON.stringify(moved)}`)
         }

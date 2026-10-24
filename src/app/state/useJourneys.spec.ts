@@ -605,6 +605,33 @@ describe("floor exploration tracking", () => {
     expect([...api.getUnexploredLevels(REAL_ID, new Set(["ward_a_1", "hieroglyph:p10"]))]).toEqual([1]) // both → lit
   })
 
+  describe("what a pull opened since the floor was saved", () => {
+    const isWeb = (key: string) => key.startsWith("web:")
+
+    it("lights a floor saved behind a web door once its key is held", () => {
+      const { api } = run(a => a.registerFloorExploration(REAL_ID, 1, 0, false, [["web:moon"]]))
+      expect([...api.getUnexploredLevels(REAL_ID, new Set(["web:moon"]), isWeb)]).toEqual([1])
+    })
+
+    it("does not light before the key is held", () => {
+      const { api } = run(a => a.registerFloorExploration(REAL_ID, 1, 0, false, [["web:moon"]]))
+      expect(api.getUnexploredLevels(REAL_ID, NO_KEYS, isWeb).size).toBe(0)
+    })
+
+    it("does not light a pyramid never visited, whatever is pulled", () => {
+      const { api } = run(() => {})
+      expect(api.getUnexploredLevels(REAL_ID, new Set(["web:moon"]), isWeb).size).toBe(0)
+    })
+
+    it("does not count ungated or ward-gated content", () => {
+      const { api } = run(a => {
+        a.registerFloorExploration(REAL_ID, 1, 0, true, [])
+        a.registerFloorExploration(REAL_ID, 1, 1, false, [["junior_a_1"]])
+      })
+      expect(api.getUnexploredLevels(REAL_ID, new Set(["junior_a_1", "web:moon"]), isWeb).size).toBe(0)
+    })
+  })
+
   it("records against the passed journeyId even when the journey is no longer active", () => {
     // Recording runs from the interior's unmount cleanup — which can happen right after
     // completeJourney flips `active` to false. Passing journeyId explicitly (not relying on the
@@ -913,6 +940,96 @@ describe("the re-laid pyramids step", () => {
     await api.startJourney({ id: REAL_ID, levelCount: REAL_LEVEL_COUNT } as Parameters<typeof api.startJourney>[0])
 
     expect(state[0].relaidFloorsVersion).toBe(RELAID_FLOORS_VERSION)
+  })
+})
+
+describe("coming back to a pyramid from the travel map", () => {
+  const stateful = (stored: StoredJourneyStateV3) => {
+    let state = [stored]
+    const api = createJourneysV3Api({
+      journeys: state,
+      setJourneys: updater => {
+        state = typeof updater === "function" ? updater(state) : updater
+      },
+      journeyData: [makeJourneyData(REAL_ID)],
+    })
+    return { api, current: () => state[0] }
+  }
+  // Inside pyramid 2, backed out to the map with the interior still open.
+  const insideTwo = makeStoredJourney({
+    levelNr: 2,
+    interiorLevelNr: 2,
+    position: "0:1,2",
+    positionKey: "main#1/p2",
+    standingKey: "main#1/~7",
+  })
+  const standing = (stored: StoredJourneyStateV3) => [stored.positionKey ?? null, stored.standingKey ?? null]
+
+  it("resumes where the player stood when they backed out of it", async () => {
+    const { api, current } = stateful(insideTwo)
+
+    await api.visitLevel(REAL_ID, 3)
+    expect(standing(current())).toEqual([null, null])
+    await api.visitLevel(REAL_ID, 2)
+
+    expect(current().levelNr).toBe(2)
+    expect(standing(current())).toEqual(["main#1/p2", "main#1/~7"])
+  })
+
+  it("starts at the entrance of a pyramid visited for the first time", async () => {
+    const { api, current } = stateful(insideTwo)
+
+    await api.visitLevel(REAL_ID, 3)
+
+    expect(current()).toMatchObject({ levelNr: 3, position: null, positionKey: null, standingKey: null })
+  })
+
+  it("starts a save that remembers no position, as an older save, at the entrance", async () => {
+    const { api, current } = stateful(makeStoredJourney({ levelNr: 3, positionKey: "main#0/p4" }))
+
+    await api.visitLevel(REAL_ID, 2)
+
+    expect(standing(current())).toEqual([null, null])
+    expect(current().pyramidPositions).toBeUndefined()
+  })
+
+  it("starts at the entrance of a pyramid the player left by its way out", async () => {
+    const { api, current } = stateful(insideTwo)
+    await api.visitLevel(REAL_ID, 3)
+    await api.visitLevel(REAL_ID, 2)
+
+    api.setInteriorLevel(REAL_ID, null)
+    await api.visitLevel(REAL_ID, 3)
+    await api.visitLevel(REAL_ID, 2)
+
+    expect(standing(current())).toEqual([null, null])
+  })
+
+  it("forgets the position remembered in a re-laid pyramid, and keeps the others", async () => {
+    const { api, current } = stateful(insideTwo)
+    await api.visitLevel(REAL_ID, 3)
+    api.setInteriorLevel(REAL_ID, 3)
+    api.updatePosition(REAL_ID, "main#0/p1", "0:2,2")
+    await api.visitLevel(REAL_ID, 4)
+
+    api.setRelaidFloors(REAL_ID, false, [2, 4])
+
+    expect(current().pyramidPositions).toEqual({ 3: { positionKey: "main#0/p1", standingKey: "main#0/p1" } })
+  })
+
+  it("restarts a finished run in its first pyramid where the player stood in it", async () => {
+    const journey = allJourneys.find(j => j.id === REAL_ID)!
+    const { api, current } = stateful(
+      makeStoredJourney({
+        levelNr: journey.levelCount + 1,
+        pyramidPositions: { 1: { positionKey: "main#0/p3", standingKey: null } },
+      })
+    )
+
+    await api.startJourney(journey)
+
+    expect(current().levelNr).toBe(1)
+    expect(standing(current())).toEqual(["main#0/p3", null])
   })
 })
 

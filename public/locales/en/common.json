@@ -66,6 +66,7 @@
     "revisitExpedition": "Revisit — pick a pyramid",
     "revisitTomb": "Revisit — re-enter the tomb",
     "or": "Or",
+    "webBuriedPercent": "Still {{percent}}% buried",
     "selectAnotherExpedition": "Select another expedition",
     "interruptExpedition": "Interrupt expedition",
     "confirmInterruptExpedition": "Are you sure you want to interrupt this expedition? Expedition progress will be kept, but level progress will be lost!",
@@ -147,6 +148,10 @@
     "hieroglyphFragment": "Hieroglyph Fragment",
     "fragmentProgress": "{{found}} of {{required}} fragments found",
     "tombKey": "Tomb Key",
+    "sandLever": "Sand Lever",
+    "sandLeverDescription": "You pull it and it stays down. Somewhere far off, sand is draining away.",
+    "webKey": "Sealed Key",
+    "webKeyDescription": "Its head wears a mark you have seen on a sealed door elsewhere.",
     "hieroglyphs": "Ancient Hieroglyphs",
     "hieroglyphsDescription": "Sacred symbols inscribed on the walls of this chamber. Their meaning adds to your growing knowledge of the ancient world.",
     "mosaicPiece": "Mosaic Piece",
@@ -1053,14 +1058,7 @@
       }
     },
     "events": {
-      "default": [
-        "the fire",
-        "the water carrying",
-        "the baking",
-        "the boat trip",
-        "the ox driving",
-        "the night watch"
-      ],
+      "default": ["the fire", "the water carrying", "the baking", "the boat trip", "the ox driving", "the night watch"],
       "funerary": [
         "the plastering",
         "the grid drawing",
@@ -1175,11 +1173,82 @@
     "hint": "Every sign must burn before this door will open.",
     "lit": "{{owner}}: lit",
     "unlit": "{{owner}}: not yet",
-    "owner": { "torch": "Torch", "handle": "Lever", "key": "Key", "plateStone": "A stone on a plate", "plateEmpty": "A plate left empty", "other": "Mechanism" },
+    "owner": {
+      "torch": "Torch",
+      "handle": "Lever",
+      "key": "Key",
+      "web": "A sign of the sand",
+      "plateStone": "A stone on a plate",
+      "plateEmpty": "A plate left empty",
+      "other": "Mechanism"
+    },
     "orderHint": "Walk the tiles in this order.",
     "reset": "Start again",
     "spoiled": "The run is spoiled: a tile was walked out of order.",
-    "tile": { "unwalked": "Step {{step}}: not yet walked", "inOrder": "Step {{step}}: walked in order", "outOfOrder": "Step {{step}}: walked out of order" }
+    "tile": {
+      "unwalked": "Step {{step}}: not yet walked",
+      "inOrder": "Step {{step}}: walked in order",
+      "outOfOrder": "Step {{step}}: walked out of order"
+    }
   },
-  "devLockEditor": {"syntax":"Syntax","example":"Example","useExample":"Use example","title":"Lock editor","notation":"Lock notation","checks":"Checks","drawing":"Drawing","carveAndPlay":"Carve and play","copyLink":"Copy link","copied":"Link copied","failed":"Could not copy; the link is in the address bar","backToEditor":"← Editor","close":"Close","open":"Lock editor"}
+  "devLockEditor": {
+    "syntax": "Syntax",
+    "example": "Example",
+    "useExample": "Use example",
+    "title": "Lock editor",
+    "notation": "Lock notation",
+    "checks": "Checks",
+    "drawing": "Drawing",
+    "carveAndPlay": "Carve and play",
+    "copyLink": "Copy link",
+    "copied": "Link copied",
+    "failed": "Could not copy; the link is in the address bar",
+    "backToEditor": "← Editor",
+    "close": "Close",
+    "open": "Lock editor",
+    "modeLock": "Lock",
+    "modeWeb": "Web",
+    "webNotation": "Web notation",
+    "openWeb": "Open a web",
+    "checking": "Checking…",
+    "checkedIn": "checked in {{ms}} ms",
+    "worldCarved": "wizard floors carved in {{ms}} ms, once",
+    "simulation": "Pulls",
+    "noSimulation": "Nothing to play through until every place is in the world.",
+    "summary": "Summary",
+    "stillBuried": "Still {{percent}}% buried",
+    "nothingBuried": "Nothing buried",
+    "finishes": "finishes",
+    "stopsAt": "stops at {{pct}}%",
+    "notOpenYet": "not open yet",
+    "pullAll": "Pull everything in reach",
+    "reset": "Reset",
+    "progress": "{{reachable}} in reach · {{pulled}} of {{total}} taken",
+    "allTaken": "Everything pulled and taken.",
+    "potFront": "{{pulled}} of {{total}} pulled · front at {{pct}}%",
+    "potOpen": "{{pulled}} of {{total}} pulled · open",
+    "keys": "Keys",
+    "keysNote": "each opens a seal",
+    "log": "What happened",
+    "logEmpty": "Nothing pulled yet.",
+    "logPull": "pulls {{name}} in {{at}}",
+    "logTake": "takes {{name}} in {{at}}",
+    "logFront": "{{pot}} front to {{pct}}%",
+    "logPotOpen": "{{pot}} open",
+    "logSeal": "seal in {{at}} open",
+    "logNew": "new: {{names}}",
+    "pullPin": "pull lever {{name}}",
+    "takePin": "take key {{name}}",
+    "legendCleared": "cleared",
+    "legendBuried": "buried",
+    "legendSeal": "seal",
+    "legendPins": "● lever · ■ key · small = side section"
+  },
+  "camp": {
+    "entrance": {
+      "collection": "Collection",
+      "mosaic": "Mosaic",
+      "journeys": "All journeys"
+    }
+  }
 }

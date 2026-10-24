@@ -319,7 +319,7 @@ const MechanismShape = ({ state, mark, icon }: ShapeProps) => {
 }
 
 /** A door wears NO owner mark: with several owners one badge would misname the rest, so the board it opens shows them. */
-const GateNodeShape = ({ state, gateVariant, keyColor, difficulty }: ShapeProps) => {
+const GateNodeShape = ({ state, gateVariant, keyColor, difficulty, mark }: ShapeProps) => {
   const r = NODE_RADIUS_LARGE
   const isTomb = gateVariant === "tomb-key"
   const colorKey = state === "visible" ? "visible" : "reachable"
@@ -377,6 +377,8 @@ const GateNodeShape = ({ state, gateVariant, keyColor, difficulty }: ShapeProps)
       {state !== "fogged" && (
         <line x1={-r + 3} y1={-r / 3} x2={r - 3} y2={-r / 3} stroke={barColor} strokeWidth={1.5} />
       )}
+      {/* Only the web's mark: a door one web key shuts. A floor owner's mark is on its board, never here. */}
+      {mark?.web && <MarkBadge mark={mark} r={r} state={state} />}
     </>
   )
 }

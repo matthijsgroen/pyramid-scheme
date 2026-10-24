@@ -13,7 +13,14 @@ import { KEY_COLORS } from "./siteTypes"
  * The pair itself is plain data, written onto cells by the assembler, so it lives here rather than
  * beside the drawings that wear it (src/app/SiteMap/mark.tsx): the domain layer holds no React.
  */
-export type Mark = { color: KeyColor; glyph: number }
+export type Mark = {
+  color: KeyColor
+  glyph: number
+  /** A WEB MARK (`webMarkFor`): drawn on a sand ground in a cartouche, whatever `color` says. */
+  web?: true
+  /** The stop of its pot a web door waits for, written beside the glyph. */
+  count?: number
+}
 
 /**
  * Picked out of HIEROGLYPHS_IN_FONT for reading as twelve different SHAPES at marker size — 𓅃 falcon,
@@ -33,6 +40,57 @@ export type Mark = { color: KeyColor; glyph: number }
 export const MARK_GLYPHS: readonly number[] = [
   0x13143, 0x132f9, 0x13197, 0x13080, 0x131a3, 0x13216, 0x131f3, 0x13250, 0x132bd, 0x130bb, 0x13274, 0x13333,
 ]
+
+/**
+ * THE WEB'S GLYPHS, a set disjoint from MARK_GLYPHS (sky 𓇯, star 𓇼, ripple 𓈗, 𓈘, 𓈙, 𓈍, 𓈇, 𓈂): a web key is
+ * minted outside any floor, so no floor's `allocateMarks` ever sees it, and two mechanics of one floor still
+ * never share a mark. Guarded in mark.spec.tsx against the font list like the floor's own.
+ */
+export const WEB_MARK_GLYPHS: readonly number[] = [
+  0x131ef, 0x131fc, 0x13217, 0x13218, 0x13219, 0x1320d, 0x13207, 0x13202,
+]
+
+/** The pot or activator a web key names: `web:moon#2` and `web:moon` both name `moon`. */
+export const webMarkName = (keyId: string): string => keyId.replace(/^web:/, "").split("#")[0]
+
+const nameHash = (name: string): number => {
+  let hash = 0
+  for (const ch of name) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0
+  return hash
+}
+
+/**
+ * THE GLYPH EACH NAME OF ONE WEB WEARS, none shared: each name, in sorted order, takes the glyph its hash prefers or
+ * the next one free, as `allocateMarks` hands a floor its marks. A name left once every glyph is taken is `unmarked`.
+ */
+export const allocateWebMarks = (names: Iterable<string>): { glyphs: Record<string, number>; unmarked: string[] } => {
+  const glyphs: Record<string, number> = {}
+  const unmarked: string[] = []
+  const taken = new Set<number>()
+  for (const name of [...new Set(names)].sort()) {
+    const seed = nameHash(name)
+    const index = WEB_MARK_GLYPHS.map((_, step) => (seed + step) % WEB_MARK_GLYPHS.length).find(n => !taken.has(n))
+    if (index === undefined) unmarked.push(name)
+    else {
+      taken.add(index)
+      glyphs[name] = WEB_MARK_GLYPHS[index]
+    }
+  }
+  return { glyphs, unmarked }
+}
+
+/** The mark a web key wears: the glyph its web handed its pot or activator (`allocateWebMarks`), the stop
+ * (`web:moon#2`) written beside it, so every door of one pot wears one glyph in every pyramid. Without the web's
+ * glyphs the name's own hash picks one. */
+export const webMarkFor = (keyId: string, glyphs?: Readonly<Record<string, number>>): Mark => {
+  const [name, count] = keyId.replace(/^web:/, "").split("#")
+  return {
+    color: "yellow",
+    glyph: glyphs?.[name] ?? WEB_MARK_GLYPHS[nameHash(name) % WEB_MARK_GLYPHS.length],
+    web: true,
+    ...(count === undefined ? {} : { count: Number(count) }),
+  }
+}
 
 /** The glyphs a request's seed picks its preference among; the rest are taken only once these are gone, so a
  * floor that fits in these keeps its marks however many glyphs follow them. */

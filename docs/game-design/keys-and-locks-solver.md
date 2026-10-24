@@ -129,6 +129,34 @@ player hold currency X" — but what it unlocks differs by **scope**:
   pieces are held (no single room, a threshold over the whole journey).
 - **Global-scoped** — the next difficulty tier unlocks.
 
+**A key minted in one journey and spent in another.** The sand pyramid
+(`../instructions/sand-pyramid.md`) buries wizard_3 from its first arrival,
+and the sand is written in a web across the wizard journeys. Each lever or
+key of the web is **positional** at both ends: one activator at one named
+reward (a main-path room, a section end, a lock region), harvested by
+reachability and never ranked into free slots, minting one named key
+`web:<id>`; and the doors that ask for a web key, each a room-scoped lock
+like a ward gate: a gate on a main-path seam or a section mouth, or a gate of
+a floor lock, as an owner the web adds where a sand front stops or an input
+the lock declares. An input's door may ask for a floor mechanism's say beside
+the key, under the door's mode; `reachableFrom` counts the mechanism's say as
+given, as for every lock door.
+
+**A sand front is counted.** A pot lists its levers, and its n-th stop is a
+key `web:<pot>#n`, held once any n of them are reached: a threshold over a
+named set, the shape a tomb's `piecesRequired` already has. Which levers make
+up the count is free, so no order is forced: the web walker proves every set
+of pulls a player can reach finishes, and the bake requires this solver, run
+over the carved floors with the web's keys, to agree with that walk.
+
+The buried journey is also the one place where **the order of pyramids
+inside a journey** matters to the solver: wizard_3's later pyramids are
+reachable only once the earlier pyramids' exits are. The rule is general —
+pyramid N+1 of a journey is enterable when pyramid N's exit is reachable —
+and it is the only within-journey ordering the solver needs. The order of
+journeys inside a tier is not modelled: the wizard journeys are open
+together, and every journey of an unlocked tier is enterable.
+
 One key instance can satisfy multiple scoped locks at once — a tomb's
 first treasure is simultaneously the thing that opens that tomb's own
 room-scoped ward gates _and_ the thing that flips the global next-

@@ -41,12 +41,13 @@ go. If the mechanic ever needs a word for its reset, it is _turn_, never _restar
 **It is the desert, not a timepiece.** Egypt measured hours with water, not sand. What runs here is the
 desert getting in, which is true of every one of these sites and only mechanical in this one.
 
-## The choked pyramid · nothing, yet
+## `wizard_3`, first pyramid — the sand pyramid · nothing, yet
 
-`story.arrival.<the choked one>.*` — **place beat**, and the only one in the game whose job is to say there
-is nothing here.
+**Place beat**, and the only one in the game whose job is to say there is nothing here. wizard_3's first
+pyramid is the buried one (`../../instructions/sand-pyramid.md`), so this beat and `story.arrival.wizard_3.*`
+happen in the same doorway; how the two combine is the designer's open question there.
 
-The dust covers the spine, not merely the side paths, so a player walks in, sees it, and walks out
+The sand covers the spine, not merely the side paths, so a player walks in, sees it, and walks out
 (`docs/mods/floor-topology-design.md`). **Being able to see the thing you cannot yet do is the mechanic**,
 so the beat must not apologise for it or explain how to fix it — either would turn a deliberate wall into a
 tutorial about a wall.
@@ -71,16 +72,16 @@ tutorial about a wall.
 a dead end, and it has to come from the one who is not disappointed. Fez wanted to sell something; they
 came to see something, and they have.
 
-**It is the same move the Sphinx makes, at the scale of a journey.** The choked pyramid cannot be finished
-until its siblings hand over the handles, so **it is necessarily the last pyramid completed in its
-journey** — and the player meets it first, with nothing to do. A first sight of the ending, unreadable.
+**It is the same move the Sphinx makes, at the scale of a tier.** The sand pyramid cannot be finished until
+levers in the other wizard journeys are pulled, so **wizard_3 is necessarily the tier's late journey** — and
+the player can meet it first, with nothing to do. A first sight of the ending, unreadable.
 That is the game's opening beat happening again, one tier down, and neither version says so.
 
 Which is why the line stays understated. The structure carries it; the dialogue must not explain it.
 
-**And it hands a free-order journey its finale back.** Without dust, any pyramid could be the one a player
-finishes on, so a journey has no ending to write to. With it there is exactly one authored place where a
-journey ends — **the only point in a free-order journey a beat can count on.**
+**And it hands a free-order tier a late point back.** The wizard journeys open together, so without the sand
+any of them could be the one a player finishes on. With it there is one authored place that comes late —
+**the only point in a free-order tier a beat can count on.**
 
 > **Fez (surprised):** …It moved.
 >
@@ -88,25 +89,25 @@ journey ends — **the only point in a free-order journey a beat can count on.**
 >
 > **Fez:** Somebody put this back. And I do not think it was us, exactly.
 
-One beat, at the clearing, and nothing more. It is the only place the dust's come-back loop carries a beat
+One beat, at the clearing, and nothing more. It is the only place the sand's come-back loop carries a beat
 rather than merely permitting one, and it is where a **thread** beat can safely be scheduled if the queue
 wants a place with a guaranteed end.
 
-**Steep and choked are different tenses, not different intensities.** Once a journey's pyramids are open at
-once and the map shows which are hard, a choked pyramid must not read as merely a very hard one — a player
+**Steep and buried are different tenses, not different intensities.** Once a tier's journeys are open at
+once and the map shows which are hard, a buried pyramid must not read as merely a very hard one — a player
 who steels themselves for it and finds nothing to do feels cheated rather than intrigued.
 
 | Node   | Says                      | About     |
 | ------ | ------------------------- | --------- |
 | steep  | this will take some doing | **you**   |
-| choked | this is not open yet      | the world |
+| buried | this is not open yet      | the world |
 
 The beat above already sits on the right side of that: _"Nothing for us today, then." / "It is not going
 anywhere."_ is a **promise**, not a difficulty warning, and nobody in it is daunted. The map node has to
 make the same distinction in pixels, and it is much cheaper to get right before there are two of them than
 after.
 
-**What it must not say:** that the handles are in the sibling pyramids, that the dust can be cleared, or
+**What it must not say:** that the levers are in the other journeys, that the sand can be cleared, or
 that clearing it is balance restored. All three belong here, at the clearing — not at the arrival
 (`what-the-player-knows.md`: a belief stated in order to be used later reads as a lesson).
 

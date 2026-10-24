@@ -156,8 +156,8 @@ things that never have to agree.
 | gates, switches, one-ways                          | topology mod     |
 
 Not because of locks. **Four of the six catalogue features act on regions**: a lock gates the
-boundaries between them, `waterline` floods one from within, `cosmicDust` re-lays which corridors
-connect them, `sandSlide` blocks one. Regions belong to whoever owns the floor.
+boundaries between them, `waterline` floods one from within, `sandPyramid` buries them until
+levers elsewhere clear them, `sandSlide` blocks one. Regions belong to whoever owns the floor.
 
 This is the `forks`/`switches` split one size up, and it buys the same guarantee: **toggle the
 topology mod off and the identical walls carve with every door standing open.** Not "roughly the same
@@ -530,13 +530,13 @@ Told by the owner, 2026-09-27, and recorded because none of it is written down e
 
 The story layer is not blocked on step 6 landing `doubleBack`. It waits on **the whole re-authoring of
 master and wizard** — the 58 floor-key gates, 56 of them in those two tiers — together with **the
-hourglass mechanic**, and on **a pyramid standing full of sand that clears a little at a time as other
-pyramids in the same journey are finished**.
+hourglass mechanic**, and on **a pyramid standing full of sand that clears a little at a time as levers are
+pulled in other journeys** — wizard_3's first pyramid, cleared from wizard_1, wizard_2 and wizard_4.
 
-That last one is journey-scoped progress gating a site's interior, which is P5 in the design document's
-primitive table (`../mods/floor-topology-design.md`, "Currency scope — journey, beside positional and
-world-spread") reaching past a single floor the way `cosmicDust` and `hourglass` do. It is not costed in
-the six steps above; it arrives with them.
+That last one is progress in one journey gating a site in another, which is P5 in the design document's
+primitive table (`../mods/floor-topology-design.md`, "A web across journeys") reaching past a
+single floor the way `sandPyramid` and `hourglass` do. It is not costed in the six steps above; its plan
+is `instructions/sand-pyramid.md`.
 
 So the chain is long: handle → container → `doubleBack` → master and wizard re-authored → hourglass →
 the sand pyramid → the story layer on top. **That is the main meat of the release**, and all of it stands

@@ -167,7 +167,7 @@ belt to its braces.
 
 **Which means it is legible from the first minute.** The inscription is on the board in `starter_1`, and a
 player who comes back late enough to read it can find the name before Act V hands it over. That is a
-feature — it is the same move the choked pyramid makes — but it does mean the inscription artwork settles
+feature — it is the same move the sand pyramid makes — but it does mean the inscription artwork settles
 the ending, so it cannot be drawn as decorative squiggles.
 
 ---

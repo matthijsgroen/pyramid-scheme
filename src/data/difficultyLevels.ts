@@ -30,6 +30,12 @@ export const LAST_RELEASED_DIFFICULTY: Difficulty = releasedDifficulty(
 export const isDifficultyReleased = (difficulty: Difficulty): boolean =>
   difficultyCompare(difficulty, LAST_RELEASED_DIFFICULTY) <= 0
 
+// Tiers whose journeys open together once the tier does, instead of one after the other. Authored data:
+// the world solver already treats every journey of an unlocked tier as enterable.
+export const FREE_ORDER_DIFFICULTIES: readonly Difficulty[] = ["wizard"]
+
+export const isFreeOrderDifficulty = (difficulty: Difficulty): boolean => FREE_ORDER_DIFFICULTIES.includes(difficulty)
+
 // A ward key id is `<difficulty>_<wing>_<n>` (e.g. "junior_a_2"), so its prefix is the tier the
 // gate it opens belongs to. Used to tint/describe a ward gate by its key's difficulty. Returns
 // undefined for anything that isn't a tier-prefixed key (e.g. a floor-key color id).

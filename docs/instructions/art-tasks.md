@@ -240,6 +240,44 @@ and `default/regionSand` (masters in `art/masters/surfaces/`, imports in `art/re
 without a texture draws its flat fallback colour; the owner's mark is drawn over the cover, so nothing in the
 texture needs to leave room for it.
 
+## 5c. The sand web — four paintings, drawn today as placeholders
+
+The sand web (`sand-pyramid.md`, "The look") is built and draws with stand-ins; nothing in it is painted. All four are
+**default-tier art, the same at every difficulty** (masters in `art/masters/props/default/` and
+`art/masters/surfaces/`). Each stand-in is named in code, so a painted file dropped in under the key takes over with
+no other edit: `src/mods/topology/app/web/webArt.ts` (the lever and the key) and `WEB_SAND_META` / `WEB_SEAL_META` in
+`src/mods/topology/game/regionBarrier/meta.ts` (the sand and the seal, their `owed` field names the key).
+
+| key         | drawn today as                                                  | the painting                                                                 |
+| ----------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `sandLever` | the floor lever (`leverBaseBack`, `leverArm`, `leverBaseFront`) | a heavy stone post, a sun-disc or star-chart head, a sand channel; two poses |
+| `webSand`   | `regionSand`                                                    | a drift of sand in a corridor, distinct from `regionSand`                    |
+| `webSeal`   | the flat fill `#8a7a5c`                                         | a doorway closed by a stone slab with a cartouche on it                      |
+| `webKey`    | the chest (`chestProp`) wearing its mark                        | a key whose head wears a cartouche                                           |
+
+**`sandLever` is three files, as the floor lever is, so it swings the same way:** `sandLeverBack`, `sandLeverArm`,
+`sandLeverFront`, one frame to the pixel and the same projection and footprint as `leverBase*` + `leverArm`. Not the
+floor lever: a heavy stone post, a sun-disc or star-chart head instead of the plain handle, a channel of sand running
+from its base into the floor. **Two poses, and the map draws both from the one arm:** set (head up, channel full) is the
+arm upright, and pulled (head down, channel empty) is the same arm thrown by `HANDLE_THROW_DEG`; it never swings back.
+If the arm cannot carry both, the pulled pose becomes a second arm file and `webArt.ts` names it.
+
+**`webSand` is a seamless texture, a drift, in the way `regionSand` is** (it is drawn by `RegionBarrierCovers` over a
+buried region). It must read as a different sand from `regionSand` at map size, because a site holds one kind of sand
+and the player tells the two apart by look: cooler and finer, with a visible cartouche half out of the drift. Set
+`texture: "webSand"` and drop `owed` on `WEB_SAND_META` when it lands.
+
+**`webSeal` is a doorway closed by a stone slab with a cartouche cut in it.** It is the door of an `opens` line; a stop
+of a pot is web sand. The cartouche is left blank: the web mark (a glyph on a sand ground in a cartouche, drawn by
+`mark.tsx`) is laid over it by the map, so nothing painted names a pot.
+
+**`webKey`** stands where the chest stands (cell-wide prop frame, same footing as `chestProp`). Its head is the
+cartouche, left blank for the same reason; the map lays the key's web mark on it.
+
+Repaint-queue entries come with their scaffolds: a prop needs one, and none of these four has been modelled yet
+(`prop-pipeline.md`, Step 0: the post and the key are parametric primitives, the drift is a full-bleed texture). Until
+then these rows are the brief.
+
 ## 6. Waiting on a scan
 
 Step 0's table sends statues and coffins to a museum scan (Scan the World, Smithsonian Open Access,

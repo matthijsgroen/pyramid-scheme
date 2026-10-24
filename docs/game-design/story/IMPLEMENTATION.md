@@ -260,16 +260,16 @@ standing in a tableau's place costs the tier a fragment host. `placement.spec.ts
 
 ### What is left
 
-| Left                                        | Blocked on                                                                                    |
-| ------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| `reading.junior/expert/master`              | nothing — authored, and the encounter exists; three tomb rooms to author                      |
-| `story.end.*`                               | nothing — authored, and nothing fires it. Where it goes is the decision                       |
-| The new beats in the story log              | nothing — `ALL_SCENES` is arrivals and tombs, so `bond.*`, `reading.*` and `end` never appear |
-| The Sphinx inscription artwork              | nothing — the encounter draws catalogue glyphs today                                          |
-| The offering arc (`altar.*`, `bond.master`) | **wall-or-choice at the tier gate** (`story-and-time-brainstorm.md` §4.5)                     |
-| The choked pyramid's arrival                | the topology work — its journey id does not exist                                             |
-| One Fez line at the dust clearing           | the topology work                                                                             |
-| Reviewing a story beat at all               | the Puzzle Lab benches `puzzle`/`tomb-puzzle`/`capstone`; these are `story`                   |
+| Left                                        | Blocked on                                                                                                                    |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `reading.junior/expert/master`              | nothing — authored, and the encounter exists; three tomb rooms to author                                                      |
+| `story.end.*`                               | nothing — authored, and nothing fires it. Where it goes is the decision                                                       |
+| The new beats in the story log              | nothing — `ALL_SCENES` is arrivals and tombs, so `bond.*`, `reading.*` and `end` never appear                                 |
+| The Sphinx inscription artwork              | nothing — the encounter draws catalogue glyphs today                                                                          |
+| The offering arc (`altar.*`, `bond.master`) | **wall-or-choice at the tier gate** (`story-and-time-brainstorm.md` §4.5)                                                     |
+| The sand pyramid's arrival                  | the sand pyramid (`../../instructions/sand-pyramid.md`); it is wizard_3's first pyramid, so it meets `story.arrival.wizard_3` |
+| One Fez line at the sand clearing           | the sand pyramid                                                                                                              |
+| Reviewing a story beat at all               | the Puzzle Lab benches `puzzle`/`tomb-puzzle`/`capstone`; these are `story`                                                   |
 
 ## Ready now
 

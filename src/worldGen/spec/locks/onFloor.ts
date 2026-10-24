@@ -4,7 +4,7 @@ import { catalogueLock } from "./catalogue"
 
 // What a catalogue lock's controls look like on the floor: a lever is a handle, a board a lightbeam switch, a drop a
 // zipline, an activator or a flame the standing torch, a region barrier water or sand, a sequence pressure plates, a
-// weight a stone plate, a pipe the stone pipe. A procession door binds itself. Each lock binds only the kinds it uses.
+// weight a stone plate, a pipe the stone pipe, an unladen door the narrow passage. A procession door binds itself. Each lock binds only the kinds it uses.
 const LOCK_BINDINGS = {
   dropHome: { "fork-switch": "lightbeamSwitch", toggle: "handle", "one-way": "zipline" },
   twoLamps: { "fork-switch": "lightbeamSwitch", toggle: "handle" },
@@ -29,6 +29,13 @@ const LOCK_BINDINGS = {
   caveLevers: { toggle: "handle" },
   pitStair: { toggle: "handle", "one-way": "zipline" },
   throwItBack: { toggle: "handle", "one-way": "zipline" },
+  weighingOfTheHeart: {
+    toggle: "handle",
+    sequence: "pressure-plate",
+    weights: "stonePlate",
+    pipe: "stonePipe",
+    unladen: "narrowPassage",
+  },
 } as const
 
 type LockName = keyof typeof LOCK_BINDINGS

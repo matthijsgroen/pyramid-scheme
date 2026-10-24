@@ -1,0 +1,19 @@
+// designed by: Tom
+// master. The weighing of the heart: pipe the feather's stone east onto the heart, walk the sun, turn Ra back to dawn.
+in -- court
+court -[feather]- west
+court -[unladen]- crypt
+crypt -[unladen]- west
+court -[Ra]- east
+crypt -- sanctum
+sanctum -[Ra:dawn]- -[heart]- -[Sun]- out
+
+east -- sunrise
+crypt -- zenith
+west -- sunset
+
+Ra toggle @crypt dawn dusk
+Sun sequence sunrise zenith sunset
+feather plate @west stone
+heart plate @east
+canopic pipe @west @east

@@ -98,6 +98,7 @@ const FLOORS_WITH_MECHANICS = [
   "expert_4 level 3 floor 0",
   "expert_4 level 4 floor 0",
   "expert_4 level 5 floor 0",
+  "master_2 level 5 floor 0",
   "starter_treasure_tomb level 1 floor 0",
   "starter_treasure_tomb level 2 floor 1",
   "starter_treasure_tomb level 2 floor 3",

@@ -8,6 +8,7 @@ import type { GateFace } from "./gateFace"
 import type { LockNesting, LockNestingFault, PlacedLock } from "./floorLocks"
 import type { LockFault, RealisationBinding } from "./lockCompile"
 import type { ActivityId } from "./activities"
+import type { WebDoorPlacement } from "./webDoors"
 export type RoomType = "portal" | "fork" | "encounter"
 // OPEN reward vocabulary (docs/mods/distribution-primitive-design.md §D; ARCHITECTURE invariant 1):
 // core enumerates no reward/currency id. A reward is a `type` tag plus arbitrary payload fields the
@@ -373,6 +374,9 @@ export type RoomCell = {
   /** THIS DOOR IS A NARROW PASSAGE (src/game/passages.ts): a gate empty hands alone open, dressed as the realisation
    * it was bound to. Nobody stands in it: the explorer waits on either side and is taken through by its prompt. */
   passage?: { realisation: string }
+  /** THIS DOOR IS THE WEB'S, on ground no lock owns (src/game/webDoors.ts): `realisation` is the web sand a stop of a
+   * pot is drawn as, or the web seal a door an activator opens is. Its web mark is `mark`. */
+  webDoor?: { realisation: string }
 }
 export type GridCell = EmptyCell | CorridorCell | RoomCell
 
@@ -404,6 +408,8 @@ export type FloorGrid = {
   /** The locks nested in a region of another, as the floor's `locks` placed them; absent on a floor with none.
    * The walk reads it to take each nested lock as one place of its host (game/floorLockWalk.ts). */
   readonly lockNesting?: readonly LockNesting[]
+  /** The floor's `webMarks`, carried where its web doors are laid: what a door's face draws a web key's mark with. */
+  readonly webMarks?: Readonly<Record<string, number>>
 }
 
 /** THE TWO SIDES A LEVER HANGS ON, and the whole of its state vocabulary. The assembler tags each
@@ -679,6 +685,13 @@ export type FloorConfig = {
    * `regionLayout`, `obstacles`, `controls`, `forks` and `barrierOrder` where the floor is assembled, so a
    * floor authoring `locks` may not author those itself: the contradiction is refused by name. */
   locks?: PlacedLock[]
+  /** THE WEB'S DOORS ON GROUND NO LOCK OWNS, each asking for its `web:` key (src/game/webDoors.ts): laid on the
+   * finished carve, so they move no wall, and left off it where no registered mod realises web sand. Placed by the
+   * bake from the tier's web (docs/instructions/sand-pyramid.md). */
+  webDoors?: WebDoorPlacement[]
+  /** THE GLYPH EACH POT AND ACTIVATOR OF THE FLOOR'S WEB WEARS, by name, as the bake handed them out per web
+   * (`allocateWebMarks`, src/game/mark.ts): what the floor's web doors and gate faces draw their web marks with. */
+  webMarks?: Record<string, number>
   /** WHICH REALISATION EACH CONTROL KIND OF THE FLOOR'S LOCKS IS DRESSED AS, by kind (`region-barrier` for barred regions), as the build resolved
    * them (floor over pyramid over journey over difficulty) and baked. The runtime reads this and never resolves from the levels. */
   realisations?: RealisationBinding
@@ -861,6 +874,12 @@ export type AssemblerReason =
   | { type: "forkSwitchSeamUngated"; id: string; between: [string, string] }
   | { type: "forkSwitchSeamGatedTwice"; id: string; between: [string, string] }
   | { type: "regionBarrierHoldsPort"; id: string; region: string; port: "in" | "out" }
+  /** A web door has no cell to stand in on the finished carve: `where` names the door, `why` what the carve has there
+   * instead (webDoors.ts). The bake moves the stop; a wall is never moved for it. */
+  | { type: "webDoorUnseated"; where: string; why: string }
+  /** A site holds one kind of sand: it has web sand, and a lock of it binds its region barriers to the floor's sand.
+   * Bind them to water there. `floor` is the floor index whose lock binds it, `realisation` what it bound. */
+  | { type: "webSandKindMixed"; floor: number; realisation: string }
   | { type: "mechanicStandsInBarredRegion"; id: string; region: string; barrier: string }
   | { type: "regionBarrierDropLands"; id: string; region: string; drop: string }
   | { type: "sequenceTooShort"; id: string }

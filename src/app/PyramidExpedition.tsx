@@ -46,7 +46,7 @@ export const PyramidExpedition: FC<{
   const journey = activeJourney.journey
   const { t } = useTranslation("common")
   const { isDevelopMode } = use(DevelopContext)
-  const { setInteriorLevel } = useJourneys()
+  const { setInteriorLevel, getJourney } = useJourneys()
   // Ward/tomb keys held right now — what decides whether the next tier is open (journeyAvailability).
   const heldKeys = useMergedHeldKeys()
   const hasInterior = !!journey.siteConfigs?.length
@@ -104,7 +104,13 @@ export const PyramidExpedition: FC<{
 
   // Check if a new pyramid journey is unlocked (first time completing this journey)
   const nextPyramidJourneyId =
-    activeJourney.completionCount === 0 ? getNextUnlockedPyramidJourneyId(activeJourney.journeyId, heldKeys) : undefined
+    activeJourney.completionCount === 0
+      ? getNextUnlockedPyramidJourneyId(
+          activeJourney.journeyId,
+          heldKeys,
+          id => (getJourney(id)?.completionCount ?? 0) > 0
+        )
+      : undefined
   const dayTime = dayNightCycleDayTime(activeJourney.levelNr, journey.background.time, journey.background.timeStepSize)
   const textColor =
     dayNightCycleStep(activeJourney.levelNr, journey.background.time, journey.background.timeStepSize) < 6

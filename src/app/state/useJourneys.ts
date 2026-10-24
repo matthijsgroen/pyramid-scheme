@@ -34,6 +34,9 @@ export const MECHANISM_SLOT_VERSION = 1
  * app callers reach it beside the save that stores it. */
 export { MECHANISM_AT_REST } from "@/game/siteTypes"
 
+/** Where the player stood in one pyramid, as the save's own position fields name it. */
+export type PyramidPosition = { positionKey: string | null; standingKey: string | null }
+
 export type StoredJourneyStateV3 = {
   journeyId: string
 
@@ -61,6 +64,11 @@ export type StoredJourneyStateV3 = {
    *  `positionKey` (see `useAssembledFloor`'s `explorerPos`). Cleared everywhere `positionKey` is,
    *  so a new level or a reset never resumes standing on the floor it left. */
   standingKey?: string | null
+  /** Where the player stood in each pyramid they backed out of to the travel map, keyed `${levelNr}`: the
+   *  `positionKey` and `standingKey` a return to it resumes at (`visitLevel`). Leaving a pyramid by its way out
+   *  forgets its entry, so that return starts at the entrance; absent reads as the entrance. A cell the carve no
+   *  longer has falls back to the entrance where the map resolves it (`useAssembledFloor`'s `explorerPos`). */
+  pyramidPositions?: Record<string, PyramidPosition>
   interiorLevelNr: number | null // set when interior is open for a level; cleared on level advance
   // All three name cells by address — `${levelNr}:${sectionHash}#${floor}/${slot}` — so a
   // re-carve moves the cell and takes the entry with it. See migrateJourneyToCarveIndependent.
@@ -133,6 +141,8 @@ export type JourneyAPI = {
   // levelNr through the store's subscribe callback, which fires after the write lands. Mounting
   // PyramidExpedition before that leaves it seeded with the level the player just left.
   startJourney: (journey: Journey) => Promise<unknown>
+  /** Enters pyramid `levelNr` from the travel map, where the player stood in it when they last backed out of it to
+   *  the map (`pyramidPositions`), or at its entrance; where they stand now is remembered for the pyramid they left. */
   visitLevel: (journeyId: string, levelNr: number) => Promise<unknown>
   /** Makes `journeyId` the active journey with site `levelNr`'s interior open and the explorer standing at
    *  `address` (null: the entrance), starting the journey if it never was. A develop-mode jump. With
@@ -162,15 +172,17 @@ export type JourneyAPI = {
   setMechanismSlotBackfill: (journeyId: string, copied: MechanismSlotBackfill) => void
   /** Saves not yet through the current re-laying of shipped pyramids — see useRelaidFloorsBackfill. */
   journeysNeedingRelaidFloors: () => StoredJourneyStateV3[]
-  /** Stamps the save; with `resumeAtEntrance` it also forgets where the save stands, as visitLevel does, and keeps
-   *  the level it is on. */
-  setRelaidFloors: (journeyId: string, resumeAtEntrance: boolean) => void
+  /** Stamps the save; with `resumeAtEntrance` it also forgets where the save stands and keeps the level it is on, and
+   *  it forgets the remembered position of each pyramid in `relaidLevels`. */
+  setRelaidFloors: (journeyId: string, resumeAtEntrance: boolean, relaidLevels?: readonly number[]) => void
   /** This level's exploration, by section: the cell keys the map restores from. */
   getExploredCells: (journeyId: string) => Record<string, string[]>
   /** Records `address` as the live cell the player is standing on (`standingKey`), and — unless it
    *  names a bend or bare fork, a cell with no slot (src/game/cellSlot.ts) — as `positionKey`, the
    *  place a save resumes at. */
   updatePosition: (journeyId: string, address: string, nodeId: string) => void
+  /** `null` closes the interior, which happens when the player leaves it by the way out: the pyramid's remembered
+   *  position is forgotten, so a return starts at the entrance. */
   setInteriorLevel: (journeyId: string, levelNr: number | null) => void
   // Every one of these names a cell by its `${sectionHash}#${floor}/${slot}` address, which
   // the caller reads off the cell with `cellAddress`. The level is added here, as for exploration.
@@ -209,7 +221,13 @@ export type JourneyAPI = {
   // held keys — ungated content, or gated content whose full key bundle the player now holds (a ward
   // door's key, a tableau's hieroglyphs, …). Empty set = nothing to go back for. Read cheaply on the
   // travel screen from the persisted floorExploration summary; names no mod (keys are opaque ids).
-  getUnexploredLevels: (journeyId: string, heldKeys: ReadonlySet<string>) => ReadonlySet<number>
+  getUnexploredLevels: (
+    journeyId: string,
+    heldKeys: ReadonlySet<string>,
+    /** Only bundles asking for a key this accepts count, and ungated content never does: what a held key of that
+     * kind opened since the floor was saved. */
+    via?: (keyId: string) => boolean
+  ) => ReadonlySet<number>
 }
 
 const knownJourneyIds = journeyData.map(j => j.id)
@@ -249,6 +267,33 @@ const atLevelMap = (levelNr: number, entries: Record<string, string> | undefined
       .filter(([key]) => key.startsWith(prefix))
       .map(([key, value]) => [key.slice(prefix.length), value])
   )
+}
+
+/** The save standing where the player stood in pyramid `levelNr` when they last backed out of it, or at its entrance. */
+const standingIn = (j: StoredJourneyStateV3, levelNr: number) => {
+  const back = j.pyramidPositions?.[levelNr]
+  return { position: null, positionKey: back?.positionKey ?? null, standingKey: back?.standingKey ?? null }
+}
+
+/** The save leaving the pyramid it stands in for pyramid `levelNr`. Backed out of the interior to the map, where the
+ * player stood is written down for a return; then the save stands where they stood in `levelNr`. */
+const leavingFor = (j: StoredJourneyStateV3, levelNr: number) => {
+  const pyramidPositions = { ...j.pyramidPositions }
+  if (j.interiorLevelNr === j.levelNr) {
+    const positionKey = j.positionKey ?? null
+    const standingKey = j.standingKey ?? null
+    if (positionKey === null && standingKey === null) delete pyramidPositions[j.levelNr]
+    else pyramidPositions[j.levelNr] = { positionKey, standingKey }
+  }
+  const remembered = j.pyramidPositions || Object.keys(pyramidPositions).length > 0 ? { pyramidPositions } : {}
+  return { ...remembered, ...standingIn({ ...j, pyramidPositions }, levelNr) }
+}
+
+/** The pyramid positions without `levelNr`'s. */
+const forgetting = (j: StoredJourneyStateV3, levelNr: number) => {
+  if (!j.pyramidPositions?.[levelNr]) return {}
+  const { [levelNr]: _left, ...pyramidPositions } = j.pyramidPositions
+  return { pyramidPositions }
 }
 
 // Module constants, not inline literals: a fresh literal on every render makes every consumer of
@@ -362,9 +407,7 @@ export const createJourneysV3Api = ({
                     ...j,
                     active: true,
                     levelNr: 1,
-                    position: null,
-                    positionKey: null,
-                    standingKey: null,
+                    ...standingIn(j, 1),
                     interiorLevelNr: null,
                   }
                 : { ...j, active: true }
@@ -428,9 +471,7 @@ export const createJourneysV3Api = ({
                 ...j,
                 active: true,
                 levelNr: targetLevelNr,
-                position: null,
-                positionKey: null,
-                standingKey: null,
+                ...leavingFor(j, targetLevelNr),
                 interiorLevelNr: null,
               }
             : j
@@ -531,13 +572,17 @@ export const createJourneysV3Api = ({
   // Stamped on every journey, standing or not, so the stamp is the exact record of which saves came through.
   const journeysNeedingRelaidFloors = () => journeys.filter(j => j.relaidFloorsVersion !== RELAID_FLOORS_VERSION)
 
-  const setRelaidFloors = (journeyId: string, resumeAtEntrance: boolean) => {
+  const setRelaidFloors = (journeyId: string, resumeAtEntrance: boolean, relaidLevels: readonly number[] = []) => {
     setJourneys(prev =>
       prev.map(j =>
         j.journeyId === journeyId
           ? {
               ...j,
               ...(resumeAtEntrance ? { position: null, positionKey: null, standingKey: null } : {}),
+              ...relaidLevels.reduce<Partial<StoredJourneyStateV3>>(
+                (kept, levelNr) => ({ ...kept, ...forgetting({ ...j, ...kept }, levelNr) }),
+                {}
+              ),
               relaidFloorsVersion: RELAID_FLOORS_VERSION,
             }
           : j
@@ -575,8 +620,15 @@ export const createJourneysV3Api = ({
     )
   }
 
+  // Closed (null) only when the player leaves by the way out, so a return starts at the entrance again.
   const setInteriorLevel = (journeyId: string, levelNr: number | null) => {
-    setJourneys(prev => prev.map(j => (j.journeyId === journeyId ? { ...j, interiorLevelNr: levelNr } : j)))
+    setJourneys(prev =>
+      prev.map(j =>
+        j.journeyId === journeyId
+          ? { ...j, ...(levelNr === null ? forgetting(j, j.levelNr) : {}), interiorLevelNr: levelNr }
+          : j
+      )
+    )
   }
 
   const maxDifficulty = journeys.reduce<Difficulty>((difficulty, item) => {
@@ -805,7 +857,11 @@ export const createJourneysV3Api = ({
     )
   }
 
-  const getUnexploredLevels = (journeyId: string, heldKeys: ReadonlySet<string>): ReadonlySet<number> => {
+  const getUnexploredLevels = (
+    journeyId: string,
+    heldKeys: ReadonlySet<string>,
+    via?: (keyId: string) => boolean
+  ): ReadonlySet<number> => {
     const j = journeys.find(j => j.journeyId === journeyId)
     const levels = new Set<number>()
     if (!j?.floorExploration) return levels
@@ -815,7 +871,9 @@ export const createJourneysV3Api = ({
     for (const [key, entry] of Object.entries(j.floorExploration)) {
       const level = Number(key.split(":")[0])
       if (level > nodes) continue
-      const lit = (entry.open ?? false) || (entry.keySets ?? []).some(ks => ks.every(k => heldKeys.has(k)))
+      const lit =
+        (!via && (entry.open ?? false)) ||
+        (entry.keySets ?? []).some(ks => ks.every(k => heldKeys.has(k)) && (!via || ks.some(via)))
       if (lit) levels.add(level)
     }
     return levels

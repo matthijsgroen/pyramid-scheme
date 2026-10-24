@@ -9,7 +9,8 @@
  *   yarn lock sketch.lock           a file
  *   yarn lock sketch.lock --watch   redrawn on every save; a new file starts with the notation
  *   yarn lock - < sketch.lock       standard input
- *   yarn lock --help                the notation
+ *   yarn lock chamberOfMaat.web     a sand web, read against the last bake: its checks, where each stop landed
+ *   yarn lock --help                the notation, the lock's and the web's
  */
 import { existsSync, readFileSync, watch, writeFileSync } from "node:fs"
 import { basename, dirname } from "node:path"
@@ -19,6 +20,7 @@ import { LOCK_SYNTAX, parseLock } from "../src/game/lockNotation"
 import type { ParsedLock } from "../src/game/lockNotation"
 import { LESSONS, LOCK_CATALOGUE, LOCK_ENTRIES, LOCK_TIERS, findLockEntry } from "../src/game/lockCatalogue"
 import { corridorLines, formatLockTable, isLessonPath, lockChecks, lockRow } from "./lockTable"
+import { WEB_SYNTAX } from "../src/game/webNotation"
 
 const args = process.argv.slice(2)
 const watching = args.includes("--watch")
@@ -26,7 +28,7 @@ const named = args.find(arg => !arg.startsWith("--"))
 const library: Record<string, ParsedLock> = { ...LOCK_CATALOGUE, ...LESSONS }
 // A name without `.lock` is a catalogue lock by any name it answers to; watching a new one starts it in its tier
 // folder (`expert/sketch`), or under junior without one.
-const isName = named && named !== "-" && !named.endsWith(".lock")
+const isName = named && named !== "-" && !named.endsWith(".lock") && !named.endsWith(".web")
 const entry = isName ? findLockEntry(named) : undefined
 const inLocks = isName
   ? entry
@@ -81,8 +83,21 @@ if (watching && target && target !== "-" && !entry && !existsSync(target)) {
   )
 }
 
+// A web is read against the last bake's wizard floors, carved as the game carves them.
+const webCheck = async (path: string): Promise<boolean> => {
+  const { bakedWebWorld, checkWeb } = await import("../src/mods/webCheck")
+  const checked = checkWeb(readFileSync(path, "utf8"), basename(path), bakedWebWorld())
+  console.log(checked.parsed ? checked.text : `${checked.text}\n\n${WEB_SYNTAX}`)
+  return checked.sound
+}
+
 if (args.includes("--help")) {
-  console.log(syntax)
+  console.log(`${syntax}\n${WEB_SYNTAX}`)
+} else if (target?.endsWith(".web")) {
+  if (!existsSync(target)) {
+    console.error(`no web called ${target}`)
+    process.exitCode = 1
+  } else void webCheck(target).then(sound => (process.exitCode = sound ? 0 : 1))
 } else if (!target) {
   const rows = LOCK_ENTRIES.map(e => lockRow(`${e.tier}/${e.path}`, (e.lesson ? LESSONS : LOCK_CATALOGUE)[e.name]))
   console.log(formatLockTable(rows))

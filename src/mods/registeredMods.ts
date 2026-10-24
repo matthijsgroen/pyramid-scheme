@@ -4,6 +4,7 @@ import type { TombTreasureResolver } from "@/worldGen/configBuilder"
 import type { Distribution } from "@/worldGen/slotAllocator"
 import type { ShopStockAssignment } from "@/worldGen/shopStock"
 import type { WorldValidator } from "@/worldGen/validate"
+import type { WebActivatorReward } from "@/worldGen/webPlacement"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { OneWayRealisationMeta, ResolveOneWayRealisation } from "@/game/oneWayRealisation"
 import type { PassageRealisationMeta, ResolvePassageRealisation } from "@/game/passageRealisation"
@@ -105,6 +106,8 @@ const firstDefined = <T>(values: (T | undefined)[]): T | undefined => values.fin
 export const MOD_REACHABILITY_SUPPORT: ReachabilitySupport = {
   thresholdFor: bucket => firstDefined(REACHABILITY_SUPPORTS.map(s => s.thresholdFor?.(bucket))),
   bucketForReward: reward => firstDefined(REACHABILITY_SUPPORTS.map(s => s.bucketForReward?.(reward))),
+  alsoHarvests: reward => REACHABILITY_SUPPORTS.flatMap(s => s.alsoHarvests?.(reward) ?? []),
+  factsForCount: (bucket, count) => REACHABILITY_SUPPORTS.flatMap(s => s.factsForCount?.(bucket, count) ?? []),
   journeyEntryLock: journeyId => firstDefined(REACHABILITY_SUPPORTS.map(s => s.journeyEntryLock?.(journeyId))),
   tierUnlockBucket: tier => firstDefined(REACHABILITY_SUPPORTS.map(s => s.tierUnlockBucket?.(tier))),
   resolveOneWay: resolveOneWayRealisation,
@@ -125,6 +128,11 @@ export const MOD_TOMB_TREASURE_RESOLVER: TombTreasureResolver | undefined = REGI
 export const MOD_RESERVED_TREASURE_INDICES: ((tombId: string) => number[]) | undefined = REGISTERED_MODS.map(
   m => m.reservedTreasureIndices
 ).find(r => r !== undefined)
+
+// The reward a web activator stands as, from the mod that realises the sand web. With none (mod off), no web is placed.
+export const MOD_WEB_ACTIVATOR: WebActivatorReward | undefined = REGISTERED_MODS.map(m => m.webActivator).find(
+  r => r !== undefined
+)
 
 // Is a mod enabled? The single toggle point the app side consults (Base.tsx, registerCurrencies)
 // so a mod's screen + currency-meta drop out together when it leaves REGISTERED_MODS.

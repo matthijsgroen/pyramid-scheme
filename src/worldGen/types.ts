@@ -11,6 +11,7 @@ import type { PlacedContainer } from "../game/regions"
 import type { BarrierOrder, Control, Obstacle } from "@/game/obstacles"
 import type { PlacedLock } from "@/game/floorLocks"
 import type { RealisationBinding } from "@/game/lockCompile"
+import type { WebDoorPlacement } from "@/game/webDoors"
 
 export type Tier = "starter" | "junior" | "expert" | "master" | "wizard"
 // Authored puzzle-count progression across a journey's pyramids: `start` on pyramid 1,
@@ -170,6 +171,10 @@ export type FloorConfig = {
   barrierOrder?: BarrierOrder[]
   /** Mirrors game/siteTypes.ts's FloorConfig.locks and .realisations. */
   locks?: PlacedLock[]
+  /** Mirrors game/siteTypes.ts's FloorConfig.webDoors. */
+  webDoors?: WebDoorPlacement[]
+  /** Mirrors game/siteTypes.ts's FloorConfig.webMarks. */
+  webMarks?: Record<string, number>
   realisations?: RealisationBinding
 }
 

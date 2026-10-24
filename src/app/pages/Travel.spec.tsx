@@ -42,7 +42,7 @@ vi.mock("@/app/SiteMap/keyProviders", async importOriginal => ({
 vi.mock("@/app/state/useTapHint", () => ({ useTapHint: () => [false, () => {}] }))
 vi.mock("@/app/dev/useDevActions", () => ({ useDevActions: () => ({}) }))
 vi.mock("./journeyContributions", () => ({
-  useMergedJourneyContributions: () => ({ lock: () => undefined, hidden: () => false }),
+  useMergedJourneyContributions: () => ({ lock: () => undefined, hidden: () => false, buried: () => new Set() }),
 }))
 vi.mock("./journeyAvailability", () => ({
   availablePyramidJourneyIds: () => new Set(),

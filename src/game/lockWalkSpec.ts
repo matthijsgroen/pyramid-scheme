@@ -3,6 +3,7 @@
 import type { Lock, LockConnection, LockMechanic } from "./lockAuthoring"
 import { barriersOf, isRegionGate, isWeightOwner, joinOf } from "./lockAuthoring"
 import type { LockSpec, Mechanism } from "./lockWalk"
+import { outsideInput } from "./lockWalk"
 import { TORCH_OFF, TORCH_ON } from "./mechanics/torch"
 import { holeRegion, stoneArrangements } from "./mechanics/weights"
 import { progressState, resettableStates, sequenceStates, tileMoves } from "./sequence"
@@ -146,6 +147,14 @@ export const walkSpecOf = (lock: Lock, drafts: readonly string[] = []): LockSpec
   const mechanisms: Record<string, Mechanism> = Object.fromEntries(
     Object.entries(lock.mechanics).map(([id, m]) => [id, mechanismOf(id, m)])
   )
+  // An outside input opens every gate naming it once it has arrived, and arrives from any state.
+  const arrivals: NonNullable<LockSpec["arrivals"]> = []
+  for (const id of lock.inputs ?? []) {
+    const named = Object.entries(lock.gates).flatMap(([gate, { owners }]) => (owners.includes(id) ? [gate] : []))
+    const { mechanism, arrival } = outsideInput(id, opened(named))
+    mechanisms[id] = mechanism
+    arrivals.push(arrival)
+  }
   for (const id of drafts) mechanisms[id] = { states: [DRAFT], initial: DRAFT, opens: { [DRAFT]: [] }, transitions: [] }
   if (plain.length > 0)
     mechanisms[OPEN] = { states: ["open"], initial: "open", opens: { open: plain }, transitions: [] }
@@ -175,6 +184,7 @@ export const walkSpecOf = (lock: Lock, drafts: readonly string[] = []): LockSpec
     out: lock.out,
     ...(emptyHands ? { emptyHands } : {}),
     ...(torches.length > 0 ? { torches } : {}),
+    ...(arrivals.length > 0 ? { arrivals } : {}),
   }
 }
 

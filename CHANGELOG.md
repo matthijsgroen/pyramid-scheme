@@ -26,6 +26,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The first pyramids' rooms are furnished for what was done in them: weighing, packing, storage, selling and the books.
 - You meet Fez on the first pyramid's ground floor, a voice in the dark before he is a face.
 - The game says tap rather than click, and calls an expedition one thing everywhere.
+- Coming back to a pyramid puts you where you left it.
+- A journey under sand says how much is still buried.
+- All wizard journeys open together.
+- The Book of the Dead's last pyramid has its own puzzle: the weighing of the heart, with a lever, sun tiles and a stone pipe.
 - Seven expert pyramids at Karnak, the Nile Delta and Djoser have puzzles of their own: a procession door, an hourglass of sand, floods, a canal lock and the stone pipe.
 - The Temple of Thoth's second pyramid has its own puzzle: two levers, one on each side of a drop.
 - A door with several controls opens a board showing each one with its mark, and a painted lever no longer has a square under it.

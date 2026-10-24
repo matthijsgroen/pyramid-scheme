@@ -114,6 +114,7 @@ describe("the journey inspector on lock floors", () => {
       ["expert_4", 3, 0],
       ["expert_4", 4, 0],
       ["expert_4", 5, 0],
+      ["master_2", 5, 0],
       ["starter_treasure_tomb", 1, 0],
       ["starter_treasure_tomb", 2, 1],
       ["starter_treasure_tomb", 2, 3],

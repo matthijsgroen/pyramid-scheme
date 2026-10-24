@@ -453,7 +453,7 @@ describe("LOCK_SYNTAX", () => {
   })
   it("splits every line into notation and meaning, each under a section", () => {
     const sections = syntaxSections()
-    expect(sections).toHaveLength(4)
+    expect(sections).toHaveLength(5)
     expect(sections.every(section => section.rows.length > 0)).toBe(true)
     const rows = sections.flatMap(section => section.rows)
     expect(rows.every(row => row.syntax !== "" && row.meaning !== "")).toBe(true)

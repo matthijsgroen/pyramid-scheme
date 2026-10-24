@@ -420,3 +420,22 @@ describe("generateFile — every term of a gate survives the bake", () => {
     )
   })
 })
+
+describe("generateFile — the web survives the bake", () => {
+  it("writes a reward carrying a list, and a floor's web doors, so both read back", () => {
+    const floor = {
+      pathPuzzles: 1,
+      difficulty: "wizard" as const,
+      end: "treasure" as const,
+      exitOrStaircase: "exit" as const,
+      sideSections: [],
+      mainEndReward: { type: "webActivator", name: "sun", look: "lever", pots: ["w3", "w1p3"] },
+      webDoors: [{ key: "web:w3#1", at: { seam: 2 } }],
+    }
+    const emitted = generateFile({ testJourney: [[floor]] })
+    expect(emitted).toContain(
+      `mainEndReward: { type: "webActivator", name: "sun", look: "lever", pots: ["w3","w1p3"] }`
+    )
+    expect(emitted).toContain(`webDoors: [{"key":"web:w3#1","at":{"seam":2}}]`)
+  })
+})

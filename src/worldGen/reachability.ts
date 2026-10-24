@@ -31,6 +31,10 @@ export type ReachabilitySupport = {
   /** Dresses each gate empty hands alone open as the passage it names, as in play. */
   resolvePassage?: ResolvePassageRealisation
   bucketForReward?: (reward: TreasureReward) => string | undefined
+  /** Further buckets one reward counts in besides its own: a web activator counts once in each pot it is a lever of. */
+  alsoHarvests?: (reward: TreasureReward) => string[]
+  /** Facts a held count stands for besides its bucket: a pot holding n of its levers holds each of its first n stops. */
+  factsForCount?: (bucket: string, count: number) => string[]
   journeyEntryLock?: (journeyId: string) => { bucket: string; threshold: number } | undefined
   tierUnlockBucket?: (tier: Tier) => string[] | undefined
 }
@@ -68,7 +72,10 @@ const thresholdFor = (id: string, support: ReachabilitySupport): number => suppo
 // Bounded to whatever's actually been recorded in `counts` (a handful of perks/currencies/
 // tombs at most), not the whole universe of possible bucket ids.
 export const deriveOwnedFacts = (counts: OwnedCounts, support: ReachabilitySupport = noSupport): Set<string> =>
-  new Set([...counts.keys()].filter(id => (counts.get(id) ?? 0) >= thresholdFor(id, support)))
+  new Set([
+    ...[...counts.keys()].filter(id => (counts.get(id) ?? 0) >= thresholdFor(id, support)),
+    ...[...counts].flatMap(([id, count]) => support.factsForCount?.(id, count) ?? []),
+  ])
 
 // One entry of a journey's SiteConfig[] — a single pyramid-level, or (for tombs) the
 // tomb's one multi-floor site. Progressing between `levelIndex` values is plain sequential
@@ -118,6 +125,8 @@ export type SiteReachability = {
   // "how much of a thing is out there at all", which is what a collection's target count is
   // measured against. Core reads no reward type here — a consumer counts its own.
   reachableRewards: readonly TreasureReward[]
+  /** Whether the site's way out is reached: the exit of the floor its main path leaves by. */
+  exit: boolean
 }
 
 // Reachable floor indices within one site, given already-held facts (plus any tombKey
@@ -151,6 +160,8 @@ export const reachableFloorsInSite = (
   const harvest = (id: string) => harvestedCounts.set(id, (harvestedCounts.get(id) ?? 0) + 1)
   const discoveredLocks = new Set<string>()
   const reachableRewards: TreasureReward[] = []
+  const exitFloor = site.findIndex(floor => floor.exitOrStaircase === "exit")
+  let exit = false
 
   for (let i = 0; i < site.length; i++) {
     if (!reachable.has(i)) continue
@@ -196,6 +207,7 @@ export const reachableFloorsInSite = (
       mechanismGatesOf(result.grid)
     )
     keys = expandedKeys
+    if (i === exitFloor && reachableHere.has(`${result.grid.exitPos[0]},${result.grid.exitPos[1]}`)) exit = true
     // A gate a mechanism of this floor owns is never blocking here (the walk takes the floor's own lock as
     // sound), so only a key gate, or a floor key such a gate also lists, is a lock the worklist can see.
     for (const id of blockedRequirements) discoveredLocks.add(id)
@@ -214,6 +226,7 @@ export const reachableFloorsInSite = (
         if (cell.reward) {
           const bucket = support.bucketForReward?.(cell.reward)
           if (bucket) harvest(bucket)
+          for (const also of support.alsoHarvests?.(cell.reward) ?? []) harvest(also)
           reachableRewards.push(cell.reward)
         }
         for (const stocked of cell.stock ?? []) if (stocked) reachableRewards.push(stocked)
@@ -233,8 +246,20 @@ export const reachableFloorsInSite = (
     }
   }
 
-  return { floors: reachable, harvestedCounts, discoveredLocks, reachableRewards }
+  return { floors: reachable, harvestedCounts, discoveredLocks, reachableRewards, exit }
 }
+
+/**
+ * A JOURNEY WHOSE PYRAMIDS ARE WALKED IN ORDER: pyramid N+1 is entered only once pyramid N's way out is reached, which
+ * is what the journey's `levelNr` cursor makes true in play. Asked of the journeys a web lays doors in, the only ones
+ * whose way out a key held from elsewhere can shut.
+ */
+export const isOrderedJourney = (sites: readonly SiteConfig[]): boolean =>
+  sites.some(site =>
+    site.some(
+      floor => (floor.webDoors?.length ?? 0) > 0 || (floor.locks ?? []).some(placed => placed.web && !placed.web.open)
+    )
+  )
 
 // Global scope: a tier is unlocked when it has no unlock locks (e.g. the first tier), or when ANY
 // ONE of the mod-supplied unlock buckets for it is held — so a player who finds just one of a
@@ -266,6 +291,8 @@ export type ReachabilityResult = {
   // SiteReachability.reachableRewards. A collection's target count is checked against this: a
   // count of a kind, not a count of the locks it opens.
   reachableRewards: readonly TreasureReward[]
+  /** The sites whose way out is reached, as `${journeyId}#${levelIndex}`. */
+  exitsReached: ReadonlySet<string>
 }
 
 const ALL_TIERS: Tier[] = ["starter", "junior", "expert", "master", "wizard"]
@@ -296,6 +323,7 @@ export const computeReachability = (
   const addHarvested = (id: string, count: number) => harvestedCounts.set(id, (harvestedCounts.get(id) ?? 0) + count)
   const discoveredLocks = new Set<string>()
   const reachableRewards: TreasureReward[] = []
+  const exitsReached = new Set<string>()
 
   for (const [journeyId, sites] of Object.entries(allConfigs)) {
     const meta = journeyMeta[journeyId]
@@ -310,7 +338,10 @@ export const computeReachability = (
       continue
     }
 
+    const ordered = isOrderedJourney(sites)
+    let open = true
     sites.forEach((site, levelIndex) => {
+      if (!open) return
       const ref: SiteRef = { journeyId, levelIndex }
       const siteResult = reachableFloorsInSite(
         ref,
@@ -327,8 +358,10 @@ export const computeReachability = (
       for (const [id, count] of siteResult.harvestedCounts) addHarvested(id, count)
       for (const id of siteResult.discoveredLocks) discoveredLocks.add(id)
       reachableRewards.push(...siteResult.reachableRewards)
+      if (siteResult.exit) exitsReached.add(`${journeyId}#${levelIndex}`)
+      if (ordered && !siteResult.exit) open = false
     })
   }
 
-  return { reachableFloors, unlockedTiers, harvestedCounts, discoveredLocks, reachableRewards }
+  return { reachableFloors, unlockedTiers, harvestedCounts, discoveredLocks, reachableRewards, exitsReached }
 }

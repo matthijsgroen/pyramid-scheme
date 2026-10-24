@@ -1,10 +1,35 @@
-import { useDeferredValue, useEffect, useMemo, useState, type FC } from "react"
+import { Suspense, lazy, useDeferredValue, useEffect, useMemo, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { LOCK_EXAMPLE, syntaxSections } from "@/game/lockNotation"
 import { LockPlayground } from "@/app/SiteMap/lockPlayground"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
-import { encodeLockHash, initialLockText } from "./lockEditorUrl"
+import { WEB_HASH_PREFIX, encodeLockHash, encodeWebHash, initialLockText, initialWebText } from "./lockEditorUrl"
 import { lockReport } from "./lockReport"
+import type { WebEngine } from "./webEngine"
+
+// The web mode carries the engine's web walk and is only loaded once opened.
+const WebMode = lazy(() => import("./WebMode").then(module => ({ default: module.WebMode })))
+
+export type EditorMode = "lock" | "web"
+
+const ModeSwitch: FC<{ mode: EditorMode; onMode: (mode: EditorMode) => void }> = ({ mode, onMode }) => {
+  const { t } = useTranslation()
+  return (
+    <div className="flex overflow-hidden rounded-md border border-red-400" role="group">
+      {(["lock", "web"] as const).map(option => (
+        <button
+          key={option}
+          type="button"
+          aria-pressed={mode === option}
+          onClick={() => onMode(option)}
+          className={`px-3 py-2 text-sm ${mode === option ? "bg-red-600 text-white" : "text-red-200"}`}
+        >
+          {t(option === "lock" ? "devLockEditor.modeLock" : "devLockEditor.modeWeb")}
+        </button>
+      ))}
+    </div>
+  )
+}
 
 const checkTone = (check: string) =>
   check.startsWith("✗") ? "text-red-300" : check.startsWith("⚠") ? "text-amber-300" : "text-white/80"
@@ -56,13 +81,24 @@ const SyntaxHelp: FC<{ onUse: () => void; onClose: () => void }> = ({ onUse, onC
 }
 
 // Designing a lock on a phone: the notation, the checks `yarn lock` runs, its drawing, and a floor carved from it.
-// The text lives in the URL hash, so a copied link reproduces the lock.
-export const LockEditor: FC<{ initialText?: string; onClose?: () => void }> = ({
+// The text lives in the URL hash, so a copied link reproduces the lock. Web mode does the same for a `.web`.
+export const LockEditor: FC<{
+  initialText?: string
+  initialMode?: EditorMode
+  initialWeb?: string
+  webEngine?: WebEngine
+  onClose?: () => void
+}> = ({
   initialText = initialLockText(window.location.hash),
+  initialMode = window.location.hash.startsWith(WEB_HASH_PREFIX) ? "web" : "lock",
+  initialWeb = initialWebText(window.location.hash),
+  webEngine,
   onClose,
 }) => {
   const { t } = useTranslation()
+  const [mode, setMode] = useState(initialMode)
   const [text, setText] = useState(initialText)
+  const [web, setWeb] = useState(initialWeb)
   const [playing, setPlaying] = useState(false)
   const [helping, setHelping] = useState(false)
   const [copied, setCopied] = useState<"copied" | "failed" | null>(null)
@@ -84,6 +120,32 @@ export const LockEditor: FC<{ initialText?: string; onClose?: () => void }> = ({
     }
   }
 
+  // The lock and the web each keep their text; the link follows the one shown.
+  const switchMode = (next: EditorMode) => {
+    setMode(next)
+    window.history.replaceState(null, "", next === "lock" ? encodeLockHash(text) : encodeWebHash(web))
+  }
+  const header = (
+    <div className="flex flex-wrap items-center justify-between gap-2">
+      <h2 className="text-sm font-bold tracking-wide text-red-300 uppercase">{t("devLockEditor.title")}</h2>
+      <div className="flex flex-wrap gap-2">
+        <ModeSwitch mode={mode} onMode={switchMode} />
+        {mode === "lock" && <DeveloperButton label={t("devLockEditor.syntax")} onClick={() => setHelping(true)} />}
+        {onClose && <DeveloperButton label={t("devLockEditor.close")} onClick={onClose} />}
+      </div>
+    </div>
+  )
+
+  if (mode === "web")
+    return (
+      <div className="flex h-(--screen-height) flex-col gap-3 overflow-y-auto bg-neutral-900 p-4 text-white">
+        {header}
+        <Suspense fallback={<p className="text-sm text-white/60">{t("devLockEditor.checking")}</p>}>
+          <WebMode text={web} onText={setWeb} engine={webEngine} />
+        </Suspense>
+      </div>
+    )
+
   if (playing)
     return (
       <div className="flex h-(--screen-height) flex-col overflow-y-auto bg-neutral-900 text-white">
@@ -96,13 +158,7 @@ export const LockEditor: FC<{ initialText?: string; onClose?: () => void }> = ({
 
   return (
     <div className="flex h-(--screen-height) flex-col gap-3 overflow-y-auto bg-neutral-900 p-4 text-white">
-      <div className="flex items-center justify-between gap-2">
-        <h2 className="text-sm font-bold tracking-wide text-red-300 uppercase">{t("devLockEditor.title")}</h2>
-        <div className="flex gap-2">
-          <DeveloperButton label={t("devLockEditor.syntax")} onClick={() => setHelping(true)} />
-          {onClose && <DeveloperButton label={t("devLockEditor.close")} onClick={onClose} />}
-        </div>
-      </div>
+      {header}
       {helping && (
         <SyntaxHelp
           onUse={() => {

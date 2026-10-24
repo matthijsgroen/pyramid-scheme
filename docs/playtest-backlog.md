@@ -116,3 +116,11 @@ played, and open an issue or a task for anything that plays wrong.
 - **Tombs after the first in a tier** (e.g. `*_tomb_b`) deal different runtime boards than before: phantom tomb
   levels no longer reserve board indexes. Harmless with the release's save reset, but check a revisited
   `tomb_b` board.
+
+## Camp art (`camp/scene-component`)
+
+- Water spot before the well (junior to expert): the second jar stands far left, keeping the well's place, so the
+  two jars look far apart. Left as is for now; a jar that shifts in until the well lands is the cheap fix.
+- Layer flaws still open: the left seating stone has a notch under the pot's tripod leg (visible without the pot);
+  oven, pavilion and astrolabe are tied to the bread board, second tent and star cloth only to hide repainted bits;
+  the second palm's crown edge is ragged when it stands alone. Each wants a layer source.
