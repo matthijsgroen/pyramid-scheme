@@ -976,6 +976,76 @@ export const wallItemsFor = (grid: FloorGrid, claims: RoomClaims, ownedKeys?: Re
   return items
 }
 
+// ─── Corner rocks ──────────────────────────────────────────────────────────────
+// Rock gathers where a back wall meets a side wall: the one corner of a worn floor that stays square,
+// because the face above it is a straight band. Only in a tileset that has the art.
+
+type CornerRock = { row: number; col: number; side: "w" | "e"; tier: Tileset; state: CellState }
+
+/** Every inner corner under a face that a side wall closes. Exported for tests. */
+// eslint-disable-next-line react-refresh/only-export-components -- pure function over the grid, exported so tests can assert on cells
+export const cornerRocksFor = (
+  grid: FloorGrid,
+  claims: RoomClaims,
+  ownedKeys?: ReadonlySet<string>,
+  hasArt: (tier: Tileset) => boolean = tier => !!tileUrl(tier, "cornerRock")
+): CornerRock[] => {
+  const floorAt: FloorAt = (r, c) => cellFloorAt(grid, claims, ownedKeys, r, c)
+  const openBetween = (r: number, c: number, dir: "s" | "e") => isPassable(grid, claims, r, c, dir)
+  const rocks: CornerRock[] = []
+  for (let r = 0; r < grid.rows; r++) {
+    for (let c = 0; c < grid.cols; c++) {
+      const at = floorAt(r, c)
+      if (typeof at === "string" || !hasArt(at.tier) || !hasWallFace(floorAt, openBetween, r, c)) continue
+      const { tier, state } = at
+      if (!openBetween(r, c - 1, "e")) rocks.push({ row: r, col: c, side: "w", tier, state })
+      if (!openBetween(r, c, "e")) rocks.push({ row: r, col: c, side: "e", tier, state })
+    }
+  }
+  return rocks
+}
+
+const ROCK = CELL / 2
+
+const CornerRocks = ({ rocks }: { rocks: readonly CornerRock[] }) => (
+  <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+    {rocks.map(({ row, col, side, tier, state }) => {
+      const x = side === "w" ? cellLeft(col) - SIDE_W / 2 : cellLeft(col) + CELL + SIDE_W / 2 - ROCK
+      const y = cellTop(row) - WALL_H / 2
+      const wash = stateWash[state]
+      return (
+        <Fragment key={`${row},${col},${side}`}>
+          <Sprite
+            url={tileUrl(tier, "cornerRock")!}
+            x={x}
+            y={y}
+            w={ROCK}
+            h={ROCK}
+            mirrored={side === "e"}
+            data-corner-rock={side}
+          />
+          {wash && (
+            <div
+              style={{
+                position: "absolute",
+                left: x,
+                top: y,
+                width: ROCK,
+                height: ROCK,
+                background: wash.fill,
+                opacity: wash.opacity,
+                maskImage: `url(${tileUrl(tier, "cornerRock")})`,
+                maskSize: "100% 100%",
+                transform: side === "e" ? "scaleX(-1)" : undefined,
+              }}
+            />
+          )}
+        </Fragment>
+      )
+    })}
+  </div>
+)
+
 const WallItems = ({ items, patron }: { items: readonly WallItem[]; patron?: Patron }) => (
   <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
     {items.map(({ row, col, kind, tier, state }) => {
@@ -1272,6 +1342,7 @@ export const SiteMapView = ({
     [grid, torchPlace, claims, ownedKeys]
   )
   const wallItems = useMemo(() => wallItemsFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
+  const cornerRocks = useMemo(() => cornerRocksFor(grid, claims, ownedKeys), [grid, claims, ownedKeys])
   // Reckoned from where the explorer stands: the water is what he cannot walk into from there.
   const coverFrom = explorerPos ?? grid.entrancePos
   const covers = useMemo(
@@ -1752,6 +1823,7 @@ export const SiteMapView = ({
               }}
             />
             <WallItems items={wallItems} patron={grid.patron} />
+            <CornerRocks rocks={cornerRocks} />
 
             {/* THE WATER OR SAND OVER A SHUT REGION BARRIER, under the shade and the lamp so the floor's
                 own light is what tints it, and under the markers and everything standing so a mark on the

@@ -161,6 +161,9 @@ const SLOTS = {
   // file, it was upscaled five times and came out visibly softer than every prop beside it. The other
   // members keep `growth` — nothing about a fern wants four times the bytes.
   canopy: { w: px(110), h: px(110), seat: false },
+  // Rock gathered in an inner corner under the back wall, drawn the west way and mirrored for the east
+  // (`CornerRocks`, `ROCK` in SiteMapView).
+  corner: { w: px(28), h: px(28), seat: false },
   explorer: { w: px(40), h: px(70), seat: true },
 } as const
 

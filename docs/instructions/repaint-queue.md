@@ -783,6 +783,41 @@ PALETTE, strictly: the cave wall behind them is pale lit limestone #ccc6ba, so t
 
 **Import:** `yarn import-tile art/masters/props/cave/stalactites.webp --tier=cave --name=stalactites --slot=wall --filter=smooth --headroom=0.18`
 
+### `cave/cornerRock` — rock gathered in the corner under the back wall
+
+**Attach:** `art/masters/props/cave/rubblePile.webp` — the accepted rockfall, for its stone, its paint and its values only
+
+```
+STYLE: Pure Cavalier Oblique Projection. 16-bit 2D top-down RPG perspective. Pure 2D parallel
+projection with zero vanishing points; lines must never converge. Display exactly 50% flat front
+elevation and 50% top-down elevation. All depth lines must extrude straight upwards along the
+vertical Y-axis. Strictly hide all left and right side planes.
+
+SUBJECT: A few rounded boulders and a slope of smaller stones heaped into a corner: the heap is
+tallest and tightest in the TOP-LEFT of the picture, where two unseen walls meet, and runs out
+lower and looser toward the bottom-right. Its left side and its top are cut off straight by the
+edges of the picture, as if pressed against the walls.
+
+RENDERING: painted and matte, with soft brush texture and grit. Soft modelled shading, never flat
+cel shading. NO OUTLINES: no dark contour around any stone — every edge is a change of value, never
+a stroke. No cast shadow. Everything that is not stone is flat magenta, exactly #ff00ff (red 255
+green 0 blue 255), to the bottom and right edges — no floor, no wall, no gradient, no glow.
+
+PALETTE, strictly: a dark cave, and the rock is LIT by the explorer's torch — far lighter than the
+dark floor. Stone #d8d2c4 and #a19b8f, one sand accent #b8a585, against floor #3e4246 and walls
+#ccc6ba. NOTHING LIGHTER THAN #f2ecde, no pure white. Nothing darker than #4a4640. Nothing built by
+hand: no cut edges, no tool marks.
+
+THE ATTACHED IMAGE IS A REFERENCE FOR THE STONE ONLY. Match its material, paint and values. Do NOT
+take its shape from it.
+
+SCALE: it will be shown very small, about half a fingernail. It must read as a SILHOUETTE: three
+or four large stones, nothing finer than a tenth of the picture. Square. No text, no watermark, no
+frame.
+```
+
+**Import:** `yarn import-tile art/masters/props/cave/cornerRock.webp --tier=cave --name=cornerRock --slot=corner --filter=smooth --trim`
+
 ---
 
 ## Priest — three

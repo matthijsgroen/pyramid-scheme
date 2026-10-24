@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { render, fireEvent, screen } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
-import { SiteMapView, approachCells } from "./SiteMapView"
+import { SiteMapView, approachCells, cornerRocksFor } from "./SiteMapView"
 import { allFloorRects, buildRoomClaims, tileRegionsFor } from "./roomClaims"
 import { grassMatsFor } from "./floorScatter"
 import { footprintPath } from "./tileRegions"
@@ -22,6 +22,7 @@ import type {
   GridCell,
   MechanismRecord,
   RoomCell,
+  Tileset,
 } from "@/game/siteTypes"
 import { assembleFloor } from "@/game/siteAssembler"
 import { registerFamily } from "@/app/families/familyRegistry"
@@ -1225,6 +1226,24 @@ const doorwayGrid = () =>
     [empty, corridor("completed", false), empty],
     [empty, chamber("completed"), empty],
   ])
+
+describe("corner rocks", () => {
+  const rocksIn = (grid: FloorGrid, hasArt: (tier: Tileset) => boolean) =>
+    cornerRocksFor(grid, buildRoomClaims(grid), undefined, hasArt).map(({ row, col, side }) => `${row},${col},${side}`)
+
+  it("gathers rock where a side wall closes a back wall, never in a doorway", () => {
+    expect(rocksIn({ ...doorwayGrid(), tileset: "cave" }, () => true).sort()).toEqual([
+      "0,1,e",
+      "0,1,w",
+      "1,0,w",
+      "1,2,e",
+    ])
+  })
+
+  it("leaves a tileset without corner rock art bare", () => {
+    expect(rocksIn({ ...doorwayGrid(), tileset: "cave" }, () => false)).toEqual([])
+  })
+})
 
 describe("archways", () => {
   it("stands an arch at the way into a chamber", () => {
