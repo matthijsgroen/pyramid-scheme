@@ -122,11 +122,11 @@ Each is the option that changes the least shipped behaviour; Task 5 writes them 
 - Consumes: `findEmptyChests(configs, assembleFloorAt)`; `assembleFloor` with the fixtures' resolver.
 - Produces: no new API. The refusal message names, per empty end, its journey, level, floor and cell (as now) and the place ("main", "side n", "side n.m") where the assembled cell can tell it.
 
-- [ ] **Step 1: Tests on assembled made-up floors** (the carve fixtures, not the real world): a floor whose main-path chest, side path end, sub path end and hidden path end all hold no reward — each assembled end is named by `findEmptyChests`; the same floor with a reward on each end — nothing named; a free treasure end the carve turns into a floor-key host — not named; a shop end whose stock is all empty — named, one with stock — not named; a puzzle room with no loot — not named. The existing grid-only cases stay.
-- [ ] **Step 2: Run** `yarn test src/worldGen/validate src/worldGen/emptyLootEnds`. A failing case is a real gap: fix `findEmptyChests` (or what it reads) so the case passes, never the test. If every case passes on the first run, the guard is proven as it stands and only the specs are committed.
-- [ ] **Step 3: The bake points at the report:** `scripts/generateWorld.ts` prints one line after writing the world: run `yarn loot-report` to refresh `docs/loot-report.md`.
-- [ ] **Step 4: Per-task review** (soundness): every loot-end kind the carve builds (`endRoomSpec`, the main-path end, relayed key hosts) is covered by a case; nothing the guard skips can hold loot a player is owed.
-- [ ] **Step 5:** `yarn check-types`, `yarn lint`. **Commit** — `test: the bake refuses every kind of empty loot end`
+- [x] **Step 1: Tests on assembled made-up floors** (the carve fixtures, not the real world): a floor whose main-path chest, side path end, sub path end and hidden path end all hold no reward — each assembled end is named by `findEmptyChests`; the same floor with a reward on each end — nothing named; a free treasure end the carve turns into a floor-key host — not named; a shop end whose stock is all empty — named, one with stock — not named; a puzzle room with no loot — not named. The existing grid-only cases stay.
+- [x] **Step 2: Run** `yarn test src/worldGen/validate src/worldGen/emptyLootEnds`. A failing case is a real gap: fix `findEmptyChests` (or what it reads) so the case passes, never the test. If every case passes on the first run, the guard is proven as it stands and only the specs are committed.
+- [x] **Step 3: The bake points at the report:** `scripts/generateWorld.ts` prints one line after writing the world: run `yarn loot-report` to refresh `docs/loot-report.md`.
+- [x] **Step 4: Per-task review** (soundness): every loot-end kind the carve builds (`endRoomSpec`, the main-path end, relayed key hosts) is covered by a case; nothing the guard skips can hold loot a player is owed.
+- [x] **Step 5:** `yarn check-types`, `yarn lint`. **Commit** — `test: the bake refuses every kind of empty loot end`
 
 ---
 

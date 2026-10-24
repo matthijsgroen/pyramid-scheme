@@ -141,7 +141,24 @@ export const validateRewardCounts = (
 // end with no `endReward` is exactly how an author offers a section as a floor-key host: the
 // assembler hands it a key, and the room the player opens is not empty at all. Only the assembled
 // room knows the difference.
-export type EmptyChest = { journeyId: string; levelNr: number; floorIndex: number; row: number; col: number }
+//
+// `place` is the section the chest ends, in words an author reads off the spec: "main", "side n" for
+// the n-th path off the main one, "side n.m" for that path's m-th sub path (both counted from 0, as
+// the floor lists them), or the section's own label where it has one.
+export type EmptyChest = {
+  journeyId: string
+  levelNr: number
+  floorIndex: number
+  row: number
+  col: number
+  place: string
+}
+
+const placeOf = (sectionAddress: string | undefined): string => {
+  const address = sectionAddress ?? "main"
+  const positional = /^s(\d+(?:\.\d+)?)$/.exec(address)
+  return positional ? `side ${positional[1]}` : address
+}
 
 export const findEmptyChests = (
   configs: Record<string, SiteConfig[]>,
@@ -168,7 +185,14 @@ export const findEmptyChests = (
             // A key host holds a key rather than a reward, and a shop holds stock.
             if (cell.reward || cell.keyColor || cell.keyColors?.length) return
             if ((cell.stock ?? []).some(Boolean)) return
-            empties.push({ journeyId, levelNr: siteIdx + 1, floorIndex, row: r, col: c })
+            empties.push({
+              journeyId,
+              levelNr: siteIdx + 1,
+              floorIndex,
+              row: r,
+              col: c,
+              place: placeOf(cell.sectionAddress),
+            })
           })
         )
       })

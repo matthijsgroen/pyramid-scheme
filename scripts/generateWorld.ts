@@ -412,7 +412,7 @@ for (const placed of webPlacements) {
 if (emptyChests.length > 0) {
   console.error(`✗ ${emptyChests.length} chest(s) hold nothing — give them loot or take them out:`)
   for (const c of emptyChests.slice(0, 20))
-    console.error(`    ${c.journeyId} level ${c.levelNr} floor ${c.floorIndex} at ${c.row},${c.col}`)
+    console.error(`    ${c.journeyId} level ${c.levelNr} floor ${c.floorIndex} at ${c.row},${c.col} (${c.place})`)
   if (emptyChests.length > 20) console.error(`    … and ${emptyChests.length - 20} more`)
   process.exit(1)
 }
@@ -434,3 +434,4 @@ writeFileSync(
   JSON.stringify(Object.fromEntries(Object.entries(nextLedger).sort(([a], [b]) => a.localeCompare(b))), null, 2) + "\n"
 )
 console.log("✓ Written: src/data/carveLedger.json")
+console.log("  Run `yarn loot-report` to refresh docs/loot-report.md")
