@@ -445,7 +445,9 @@ hieroglyphs, no watermark, no frame, no border.
 It is about one and a half times as wide as it is tall: a knee-high heap.
 ```
 
-**Import:** `yarn import-tile art/masters/props/cave/rubblePile.webp --tier=cave --name=rubblePile --slot=prop --filter=smooth`
+**Prepare:** `art/deshadow.sh <render> clean.png art/masters/props/cave/rubblePile-shadow.png`, keep `clean.png` as the master (the shadow comes back magenta).
+
+**Import:** `yarn import-tile art/masters/props/cave/rubblePile.webp --tier=cave --name=rubblePile --slot=prop --filter=smooth --seat=art/masters/props/cave/rubblePile-shadow.png --seat-opacity=0.55`
 
 ### `cave/pit` — a sinkhole, dark shaft
 
