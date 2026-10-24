@@ -51,7 +51,8 @@ export type CampImport = {
   behind?: string
 }
 
-const SCENERY = new Set(["sand", "dunes", "pyramid", "pyramidGold"])
+// Pieces that cast no contact shadow: the scenery, and the oasis, which lies flat in the ground.
+const SCENERY = new Set(["sand", "dunes", "pyramid", "pyramidGold", "oasis"])
 
 /** The donkey's stake is its own picture, so no edit has to keep it: every later step stands in front of it. */
 export const BEHIND: Record<string, string> = Object.fromEntries(

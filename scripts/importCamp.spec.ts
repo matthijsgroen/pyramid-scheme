@@ -166,7 +166,7 @@ describe("importCamp", () => {
 
   it("casts no shadow for scenery or an unkeyed import", async () => {
     const source = await magentaWithRedSquare()
-    for (const name of ["sand", "dunes", "pyramid", "pyramidGold"])
+    for (const name of ["sand", "dunes", "pyramid", "pyramidGold", "oasis"])
       expect((await importCamp({ ...options(source), name })).shadow).toBeUndefined()
     expect((await importCamp({ ...options(source), key: "none" })).shadow).toBeUndefined()
     expect(existsSync(join(dir, "assets", "chest-shadow.webp"))).toBe(false)
