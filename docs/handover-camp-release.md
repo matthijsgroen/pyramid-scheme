@@ -92,7 +92,7 @@ Defaults this queue takes (each goes into the review list):
 Each brief is the input for that phase's plan task. Order is fixed; a later phase may start only when the
 earlier ones it names are done.
 
-### Phase 1 — consumables out, healing at the camp [ ]
+### Phase 1 — consumables out, healing at the camp [x]
 
 Remove bandage, oil and trapTool as a currency everywhere: the trap descriptor's distributions and shop stock,
 the DSL `consumableRates`, the reward contribution and its full-pack `canAccept`, the left-behind chest flow
@@ -214,3 +214,4 @@ worktree, and the review list sorted: decisions, drafts, failures, things to loo
 ## State
 
 - 2026-10-24 — queue written; PR #322 merged into main; branch `camp/home-and-loot` created. Next: phase 1 plan task, in a fresh session.
+- 2026-10-25 — phase 1 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-1-consumables-out.md`): supplies, pack and supplies detector gone; 60 waterskins (20 per tier, expert and up) heal on pickup; hearts refill on every return to base; gate green. Two trap checks wait in the review list. Next: phase 2 plan task.
