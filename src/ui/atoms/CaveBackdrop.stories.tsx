@@ -14,7 +14,7 @@ type Story = StoryObj<typeof meta>
 export const Mouth: Story = {
   render: () => (
     <div className="h-screen">
-      <DesertBackdrop levelNr={1} start="morning" timeStepSize={1}>
+      <DesertBackdrop levelNr={1} start="afternoon" timeStepSize={1}>
         <div className="flex flex-1 items-center justify-center">
           <CaveMouth />
         </div>

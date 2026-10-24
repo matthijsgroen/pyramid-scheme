@@ -324,7 +324,7 @@ NO OUTLINES — no black contour, no ink, no cel shading. Landscape, the hill fi
 little magenta margin. No text, no watermark, no frame.
 ```
 
-**Import:** keep the render as `art/masters/exteriors/cave-mouth.webp`, then `art/cutout-exterior.sh art/masters/exteriors/cave-mouth.webp src/assets/exteriors/cave-mouth.png 1180` (1180 cuts off the band of sand the render ends in; the shadow is drawn by the script)
+**Import:** keep the render as `art/masters/exteriors/cave-mouth.webp`, then `art/cutout-exterior.sh art/masters/exteriors/cave-mouth.webp src/assets/exteriors/cave-mouth.png 1180` (1180 cuts off the band of sand the render ends in; the shadow is cast in CSS)
 
 ### `exteriors/cavern` — a sunlit cavern with a pyramid standing in it
 

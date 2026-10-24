@@ -33,5 +33,15 @@ export const CaveBackdrop: FC<PropsWithChildren> = ({ children }) => {
   )
 }
 
-/** The rocky hill with the cave in it, standing on the desert where a pyramid would. */
-export const CaveMouth: FC = () => <img src={caveMouthUrl} alt="" data-cave-mouth="" className="w-[min(80vw,32rem)]" />
+/** The rocky hill with the cave in it, standing on the desert where a pyramid would. Its shadow is the
+ * camel's: the same silhouette flipped down onto the sand, short under an afternoon sun. */
+export const CaveMouth: FC = () => (
+  <div className="relative w-[min(80vw,32rem)]" data-cave-mouth="">
+    <img
+      src={caveMouthUrl}
+      alt=""
+      className="absolute inset-0 origin-bottom -translate-y-1/3 -scale-y-45 opacity-20 brightness-0"
+    />
+    <img src={caveMouthUrl} alt="" className="relative block" />
+  </div>
+)
