@@ -406,6 +406,15 @@ describe("layoutCamp", () => {
   })
   const narrow = (c: CampCatalogue) => layout({ catalogue: c, width: 320, height: 900, steps: { water: 1, camel: 1 } })
 
+  it("draws a fixed piece under the spot that shares its anchor, so the spot's finds stand on it", () => {
+    const pond: CampCatalogue = {
+      spots: [lone("ibisPond", 0, 1, 1, 1)],
+      fixed: [{ id: "oasis", x: 0, y: 1, frame: 1, footprint: 1, piece: piece("pool") }],
+    }
+    const keys = layout({ catalogue: pond, steps: { ibisPond: 1 } }).pieces.map(p => p.key)
+    expect(keys.indexOf("oasis:pool")).toBeLessThan(keys.indexOf("ibisPond:ibisPond"))
+  })
+
   it("frames a spot with bleed closer, letting its top and sides leave the screen", () => {
     const tall = (bleed?: number): CampCatalogue => ({
       spots: [{ ...lone("palmGarden", 1, 0, 3, 0.7), bleed }],

@@ -328,15 +328,19 @@ export const layoutCamp = ({
   const frame = { x: frameX, y: frameY, width: frameWidth, height: bottom - frameY }
   const fireX = frameX + (P.sideMargin - leftAt(sx)) * unit
 
-  const drawn: Placed[] = []
+  // Fixed pieces come first so that, on a shared anchor, a spot's finds stand on them (birds on the oasis).
+  const drawn: Placed[] = catalogue.fixed.map(fixed => ({
+    spot: fixed.id,
+    place: fixed,
+    piece: fixed.piece,
+    layer: false,
+    shown: true,
+  }))
   for (const spot of catalogue.spots) {
     if (!spotOpen(spot, chapter)) continue
     for (const { step, shown } of spotSteps(spot, chapter, found[spot.id] ?? []))
       for (const piece of step.pieces) drawn.push({ spot: spot.id, place: spot, piece, layer: !isBase(step), shown })
   }
-  // Fixed pieces follow spot pieces so that, on a shared anchor, they draw on top.
-  for (const fixed of catalogue.fixed)
-    drawn.push({ spot: fixed.id, place: fixed, piece: fixed.piece, layer: false, shown: true })
 
   const hidden = new Set(
     drawn.filter(d => d.shown).flatMap(d => (d.piece.replaces ?? []).filter(id => id !== d.piece.id))
