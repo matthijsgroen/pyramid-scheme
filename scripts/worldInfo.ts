@@ -48,7 +48,7 @@ const empty = (): Tally => ({
 })
 
 const countPuzzleRewards = (t: Tally, rewards?: Array<{ type: string } | undefined>) => {
-  for (const r of rewards ?? []) if (r?.type === "consumable" || r?.type === "money") t.rewards++
+  for (const r of rewards ?? []) if (r?.type === "waterskin" || r?.type === "money") t.rewards++
 }
 
 const countSection = (t: Tally, s: SubSection) => {

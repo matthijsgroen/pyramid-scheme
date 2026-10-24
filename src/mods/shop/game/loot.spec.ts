@@ -53,8 +53,8 @@ describe("shopMoneyEconomy fill", () => {
   })
 
   it("places ≥1 of each item per present tier (completeness) and hits the budget floor", () => {
-    // Shop stock worth 4 × 500 = 2000 → the fill must fund that floor. Enough divine slots (50 each)
-    // to fund it with room for coins.
+    // Shop stock worth 4 × 500 = 2000, plus the money allowance → the fill must fund that
+    // floor. Enough divine slots (50 each) to fund it with room for coins.
     const slots = Array.from({ length: 120 }, (_, i) => slot({ weight: 100, tier: "wizard", kind: "end", seq: i }))
     const available = new Set<Slot>(slots)
     allocateDistributions(available, [shopMoneyEconomy], shopWorld(4))
@@ -66,7 +66,7 @@ describe("shopMoneyEconomy fill", () => {
     const value =
       sellables.length * SELL_VALUE_BY_TIER.divine +
       (rewards.filter(r => r.type === "money") as unknown as { amount: number }[]).reduce((a, r) => a + r.amount, 0)
-    expect(value).toBeGreaterThanOrEqual(2000) // totalBuyable floor (4 mosaic × 500)
+    expect(value).toBeGreaterThanOrEqual(4 * 500 + MONEY_ALLOWANCE) // totalBuyable (4 mosaic × 500) + allowance
   })
 
   const placedValue = (slots: Slot[]) =>

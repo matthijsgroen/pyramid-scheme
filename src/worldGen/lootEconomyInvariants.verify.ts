@@ -15,7 +15,7 @@ import { ALL_SELLABLES, SELLABLES_BY_TIER } from "@/data/sellables"
 // Empty chests as such are legitimate: the shop's money economy places a FIXED money-equivalent
 // total (what its stock costs, loot.ts), so once that budget is spent the remaining chests are
 // empty by design. Two kinds of puzzle-slot loot are exempt because they never compete for a
-// chest: trap consumables (`kind: "puzzle"` eligibility only), and the shop's PUZZLE_COIN_SHARE —
+// chest: trap waterskins (`kind: "puzzle"` eligibility only), and the shop's PUZZLE_COIN_SHARE —
 // a slice of the budget deliberately withheld from chests so solving a puzzle still pays out.
 //
 // This is the check that was missing: the suite verified reward COUNTS (golden guard), which

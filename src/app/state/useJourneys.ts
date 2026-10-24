@@ -182,7 +182,7 @@ export type JourneyAPI = {
   /** `null` closes the interior, which happens when the player leaves it by the way out: the pyramid's remembered
    *  position is forgotten, so a return starts at the entrance. */
   setInteriorLevel: (journeyId: string, levelNr: number | null) => void
-  // Every one of these names a cell by its `${sectionHash}#${floor}/${slot}` address, which
+  // The two shop members name a cell by its `${sectionHash}#${floor}/${slot}` address, which
   // the caller reads off the cell with `cellAddress`. The level is added here, as for exploration.
   markShopSlotPurchased: (address: string, stockIndex: number) => void
   getPurchasedShopSlots: (journeyId: string) => ReadonlySet<string>

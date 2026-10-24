@@ -8,7 +8,6 @@
     "armor": "Reduces trap damage",
     "trap-insight": "+1s on timed traps",
     "pack-mule": "A waterskin heals two hearts",
-    "consumable-detector": "Supply detector (Lv {{level}})",
     "compass": "Fragment compass (Lv {{level}})",
     "detection": "Hidden-corridor detector (Lv {{level}})",
     "tier-unlock": "Unlocks {{tier}} expeditions",

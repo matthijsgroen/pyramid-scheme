@@ -115,7 +115,7 @@ const buildJourneyMeta = (): Record<string, JourneyMeta> => {
 
 // Mutates allConfigs in place: places gating currencies (reachability worklist) then capped
 // currencies (allocator) into path-end slots, then hands every remaining slot to the dynamic-loot
-// distributions (allocateDistributions — the mod-owned money/junk/consumable Distributions).
+// distributions (allocateDistributions — the mod-owned money/junk/waterskin Distributions).
 // Throws (does not warn) if a demand has no reachable slot once every relaxation rung is exhausted
 // — docs/game-design/keys-and-locks-solver.md, "Exhausted relaxation is a build failure, not a warning".
 //
@@ -370,14 +370,14 @@ export const placeFragments = (
   // exact-footprint Distribution (spread across still-available slots in its own rank order, up
   // to its total), which HARD-FAILS if short — capped loot must fully place (keys-and-locks-
   // solver.md, "Exhausted relaxation is a build failure"). A shortfall means author more loot-
-  // bearing capacity in the DSL (docs/mods/TARGET.md rule 2). Money/junk/consumables join this
+  // bearing capacity in the DSL (docs/mods/TARGET.md rule 2). Money/junk/waterskins join this
   // allocator as flexible-footprint distributions in later steps (distribution-primitive-design.md).
   allocateDistributions(available, capped.map(cappedToDistribution), allConfigs)
 
-  // Phase 5: dynamic loot — the mod-owned distributions (trap consumables, shop money economy)
+  // Phase 5: dynamic loot — the mod-owned distributions (trap waterskins, shop money economy)
   // claim priority-ordered eligible slots (chest 100 before puzzle 60) and fill them themselves;
   // `emptyFraction` reserves a share empty up front so found loot stays meaningful. Each drops
-  // with its mod (shop off → no money/junk; trap off → no consumables). See slotAllocator.ts +
+  // with its mod (shop off → no money/junk; trap off → no waterskins). See slotAllocator.ts +
   // docs/mods/distribution-primitive-design.md.
   allocateDistributions(available, dynamicDistributions, allConfigs, emptyFraction)
 

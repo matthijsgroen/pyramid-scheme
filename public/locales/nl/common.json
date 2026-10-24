@@ -115,9 +115,6 @@
     "canAttempt": "Je kunt proberen door te gaan.",
     "tooWeak": "Gevaarlijk zwak — een mislukte poging laat je met niets achter.",
     "attempt": "Val proberen",
-    "heal": "Gebruik verband",
-    "fullHeal": "Gebruik olie (volledig herstel)",
-    "disable": "Val uitschakelen",
     "turnAround": "Omdraaien"
   },
   "gate": {
@@ -156,11 +153,6 @@
     "hieroglyphsDescription": "Heilige symbolen gegraveerd in de wanden van deze kamer. Hun betekenis vergroot je kennis van de oude wereld.",
     "mosaicPiece": "Mozaïekstuk",
     "mosaicPieceDescription": "Een glanzende glazen tegel, één stukje van een groot mozaïek. Leg het bij de andere en het verborgen beeld komt langzaam tot leven.",
-    "consumable": {
-      "bandage": "Verband",
-      "oil": "Genezende Olie",
-      "trapTool": "Valuitschakelaar"
-    },
     "waterskin": "Waterzak",
     "waterskinDescription": "Koel water. Je drinkt hem meteen leeg en voelt je wonden minder pijn doen."
   },
@@ -180,7 +172,6 @@
     "soldOut": "Uitverkocht",
     "dismiss": "Vertrekken",
     "rareItems": "Zeldzame Vondsten",
-    "supplies": "Benodigdheden",
     "sellSection": "Snuisterijen verkopen"
   },
   "level": {
@@ -220,11 +211,9 @@
   },
   "detector": {
     "compassTitle": "Kompas",
-    "consumableTitle": "Voorraaddetector",
     "corridorTitle": "Verborgen gangen",
     "pickTarget": "Kies een hiëroglief om op te jagen in je collectie",
     "allCollected": "Alle stukken verzameld",
-    "noSkippedChests": "Geen overgeslagen kisten",
     "more": "+{{count}} meer",
     "corridorNearby": "Een verborgen gang is vlakbij",
     "corridorOnFloor": "Een verborgen gang wacht op deze verdieping",
@@ -1153,7 +1142,12 @@
     },
     "doorOpen": "{{way}} doorgang: open",
     "doorShut": "{{way}} doorgang: dicht",
-    "way": { "n": "Noordelijke", "e": "Oostelijke", "s": "Zuidelijke", "w": "Westelijke" }
+    "way": {
+      "n": "Noordelijke",
+      "e": "Oostelijke",
+      "s": "Zuidelijke",
+      "w": "Westelijke"
+    }
   },
   "handle": {
     "name": "De Hendel",

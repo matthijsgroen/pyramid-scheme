@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Hearts refill at camp; waterskins on expert and up heal on the spot; supplies and the supplies detector are gone.
 - Every treasure tomb is now hidden in a cave before its sunlit cavern; the starter tomb's cave is behind a lever lock.
 - The old skeleton in the cave lies across two floor cells.
 - The cave floor has worn, rounded edges instead of square ones, and its back walls end round against the side walls.

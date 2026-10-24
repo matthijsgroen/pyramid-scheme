@@ -229,8 +229,8 @@ export const juniorRules: Rule[] = [
           // Her wall, in the room after she asks: she says "fix it" and the next door along is it.
           { where: TOMB_ROOMS_PER_FLOOR.junior + 3, encounter: "reading" },
         ],
-        // Fez shop — a 6-slot stock node, filled by the mods (currency pieces + consumables).
-        // Empty until resolveShopStock + the consumable fill land; the shop mods own its content.
+        // Fez shop — a 6-slot stock node, filled by the mods (currency pieces).
+        // Empty until resolveShopStock lands; the shop mods own its content.
         sideSections: [{ pathPuzzles: 0, encounter: "shop" }],
       },
       {

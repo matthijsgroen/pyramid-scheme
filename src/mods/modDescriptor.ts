@@ -45,8 +45,8 @@ export type ModDescriptor = {
   currencyMeta?: CurrencyMeta | CurrencyMeta[]
   // Dynamic-loot distributions this mod owns (the unified loot primitive): each claims slots by
   // footprint/eligibility/rank and fills them itself (owns variants/rarity/completeness) — e.g.
-  // trap consumables, the shop money economy. Drops when the mod leaves REGISTERED_MODS (trap off
-  // → no consumables; shop off → no money/junk, leftover chests fall empty). See
+  // trap waterskins, the shop money economy. Drops when the mod leaves REGISTERED_MODS (trap off
+  // → no waterskins; shop off → no money/junk, leftover chests fall empty). See
   // docs/mods/distribution-primitive-design.md.
   dynamicDistributions?: Distribution[]
   // Post-build world validator (e.g. the shop economy guard) — a global balance check run over

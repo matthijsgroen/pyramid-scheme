@@ -13,9 +13,9 @@ import { getSellableById, sellValueForItemId } from "@/data/sellables"
 
 // Fez's shop encounter — browsing/buying, never a solve/fail challenge, so it always
 // closes via onCancel and never onSolved (which would auto-grant the node's rewards for free).
-// Stock is the node's baked `rewards[]` (finite currency pieces), reached as ctx.stock. Each slot is bought once, tracked per-(edgeId, index) in journeys — sold-out stays
-// sold-out (no per-visit refresh). The shop prices every slot via priceFor; the currency mods
-// stay money-blind.
+// Stock is the node's baked `rewards[]` (finite currency pieces), reached as ctx.stock. Each slot is
+// bought once, tracked per-(edgeId, index) in journeys — sold-out stays sold-out
+// (no per-visit refresh). The shop prices every slot via priceFor; the currency mods stay money-blind.
 const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, inventory, applyReward, onCancel }) => {
   const { t } = useTranslation(["common", "sellables"])
   const contributions = useMergedRewardContributions()

@@ -262,10 +262,10 @@ Mechanical; one agent.
 - Modify: other living docs that describe consumables as current (`grep -rli "consumable\|bandage" docs` minus `docs/superpowers/`, `docs/handover-*.md`, `camp.md` and the loot spec): at least `docs/mods/ARCHITECTURE.md`, `docs/mods/distribution-primitive-design.md`, `docs/game-design/loot-distribution.md`, `docs/game-design/TRAP_FAMILIES.md`, `docs/game-design/progression-route.md` — one sentence each where they state current behaviour
 - Modify: `CHANGELOG.md` `## Unreleased` — one line: hearts refill at camp, and waterskins found on expert-and-up heal on the spot; supplies, the pack and the supplies detector are gone
 
-- [ ] **Step 1: Edit.** Keys go in both languages. Docs state the current design and why, no history.
-- [ ] **Step 2: Check** — `grep -rnE "bandage|trapTool|consumableRates|CONSUMABLE_PRICES" src scripts public` — empty; `grep -rn "consumable" src` lists nothing but the canister puzzle's unrelated words, if any.
-- [ ] **Step 3: Run** `yarn test src/i18n src/worldGen src/game src/mods` (fixture swaps), `yarn check-types`, `yarn lint`.
-- [ ] **Step 4: Commit** — `docs: supplies out, waterskins and the camp fire in`
+- [x] **Step 1: Edit.** Keys go in both languages. Docs state the current design and why, no history.
+- [x] **Step 2: Check** — `grep -rnE "bandage|trapTool|consumableRates|CONSUMABLE_PRICES" src scripts public` — empty; `grep -rn "consumable" src` lists nothing but the canister puzzle's unrelated words, if any.
+- [x] **Step 3: Run** `yarn test src/i18n src/worldGen src/game src/mods` (fixture swaps), `yarn check-types`, `yarn lint`.
+- [x] **Step 4: Commit** — `docs: supplies out, waterskins and the camp fire in`
 
 ---
 

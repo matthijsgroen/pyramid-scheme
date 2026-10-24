@@ -76,10 +76,10 @@ export const MOD_PASSAGE_REALISATIONS: PassageRealisationMeta[] = REGISTERED_MOD
 export const resolvePassageRealisation: ResolvePassageRealisation = id =>
   id === undefined ? undefined : MOD_PASSAGE_REALISATIONS.find(realisation => realisation.id === id)
 
-// Every dynamic-loot distribution all enabled mods contribute, in registry order (trap consumables
-// before the shop money economy — consumables claim their expert+ puzzle slots first, then the shop
+// Every dynamic-loot distribution all enabled mods contribute, in registry order (trap waterskins
+// before the shop money economy — waterskins claim their expert+ puzzle slots first, then the shop
 // takes what's left). A distribution drops when its mod leaves REGISTERED_MODS: shop off → no
-// money/junk, trap off → no consumables.
+// money/junk, trap off → no waterskins.
 export const DYNAMIC_DISTRIBUTIONS: Distribution[] = REGISTERED_MODS.flatMap(m => m.dynamicDistributions ?? [])
 
 // Every mod's shop-stock placements, in registry order (so a shop shared by several currencies

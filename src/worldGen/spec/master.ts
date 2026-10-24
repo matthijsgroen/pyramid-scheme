@@ -103,7 +103,7 @@ export const masterRules: Rule[] = [
   tier("master").set({
     wardWings: 1,
     wardPaths: 1,
-    wardPathTrapped: true, // hazardous returns — revisiting ward paths costs consumables
+    wardPathTrapped: true, // hazardous returns — revisiting ward paths costs health
     keyDensity: "medium",
     keyColorsRange: { min: 2, max: 3 }, // multi-color floor keys (expert had 1 color)
     sharedKeyChance: 0.4,

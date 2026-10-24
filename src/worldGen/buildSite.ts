@@ -617,7 +617,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
 
       // Ward paths: a single tomb-key gated side section with one fragment reward — cheaper
       // return-content than a whole wing. With wardPathTrapped, the earlier-half pyramids trap
-      // their ward paths so the return trip costs consumables (raising their value).
+      // their ward paths so the return trip costs health (raising their value).
       const trapWardPath = (constraint.wardPathTrapped ?? false) && i < Math.ceil(levelCount / 2)
       lastMain.sideSections = [
         ...lastMain.sideSections,

@@ -10,7 +10,7 @@ import { lockOnMainFloor } from "./locks/onFloor"
 // Expert's open side/hidden paths, as reusable arrays so a per-pyramid override can restate them
 // and ADD to them (pyramid-level sidePaths REPLACES the tier's, it doesn't merge).
 const EXPERT_SIDE_PATHS: PathEntry[] = [
-  // Bumped to 2 puzzles: more open puzzle rooms = more consumable drops, so the open trap path
+  // Bumped to 2 puzzles: more open puzzle rooms = more waterskin drops, so the open trap path
   // below is survivable.
   { density: "medium", pathPuzzles: 2, end: "fragment" },
   // First OPEN (visible) trapped path — a threat you can see, ending in junk (sellable income).
@@ -22,7 +22,7 @@ const FLOOR_KEY_PATH: PathEntry = { density: "low", pathPuzzles: 1, end: "fragme
 
 // Expert is the first tier with ward content on EVERY pyramid (chests up front, wings on the
 // back half), varied to tease the two harder tiers (master/wizard), plus the first VISIBLE
-// (open) trapped pathways — earlier tiers only trap hidden paths. Consumables to survive the
+// (open) trapped pathways — earlier tiers only trap hidden paths. Waterskins to survive the
 // open traps come from the extra open puzzle rooms (a trapped chain drops none itself).
 // Difficulty is left unset on all four so it auto-derives to match each key's own tier exactly
 // (see dsl.ts's wardKeyTier).

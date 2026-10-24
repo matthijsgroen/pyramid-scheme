@@ -115,9 +115,6 @@
     "canAttempt": "You can attempt to pass through.",
     "tooWeak": "Dangerously weak — a failed attempt will leave you with nothing.",
     "attempt": "Attempt the trap",
-    "heal": "Use a bandage",
-    "fullHeal": "Use oil (full heal)",
-    "disable": "Disable trap",
     "turnAround": "Turn around"
   },
   "gate": {
@@ -156,11 +153,6 @@
     "hieroglyphsDescription": "Sacred symbols inscribed on the walls of this chamber. Their meaning adds to your growing knowledge of the ancient world.",
     "mosaicPiece": "Mosaic Piece",
     "mosaicPieceDescription": "A gleaming glass tile, one fragment of a great mosaic. Set it beside the others and the hidden image slowly comes to light.",
-    "consumable": {
-      "bandage": "Bandage",
-      "oil": "Healing Oil",
-      "trapTool": "Trap Disabler"
-    },
     "waterskin": "Waterskin",
     "waterskinDescription": "Cool water. You drink it on the spot and feel your wounds ease."
   },
@@ -180,7 +172,6 @@
     "soldOut": "Sold out",
     "dismiss": "Leave",
     "rareItems": "Rare Finds",
-    "supplies": "Supplies",
     "sellSection": "Trinkets to sell"
   },
   "level": {
@@ -220,11 +211,9 @@
   },
   "detector": {
     "compassTitle": "Compass",
-    "consumableTitle": "Consumable detector",
     "corridorTitle": "Hidden passageways",
     "pickTarget": "Pick a hieroglyph to hunt in your Collection",
     "allCollected": "All pieces collected",
-    "noSkippedChests": "No skipped chests",
     "more": "+{{count}} more",
     "corridorNearby": "A hidden corridor is close by",
     "corridorOnFloor": "A hidden corridor waits on this floor",
@@ -1153,7 +1142,12 @@
     },
     "doorOpen": "{{way}} way out: open",
     "doorShut": "{{way}} way out: shut",
-    "way": { "n": "Northern", "e": "Eastern", "s": "Southern", "w": "Western" }
+    "way": {
+      "n": "Northern",
+      "e": "Eastern",
+      "s": "Southern",
+      "w": "Western"
+    }
   },
   "handle": {
     "name": "The Lever",

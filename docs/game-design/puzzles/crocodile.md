@@ -146,8 +146,8 @@ capstone, which is exactly what the encounter-authoring stability tenet
 belongs to is what gives it health, not the tag.
 
 It also does **not** use `TrapFamilyShell`. That shell owns the trap lifecycle —
-a risk warning, one attempt, and a `trapTool` that disables the encounter and
-walks past it. On a tomb capstone that consumable would buy the floor's treasure.
+a risk warning, one attempt, and a way to walk away from the encounter. On a tomb
+capstone that would buy the floor's treasure.
 The crocodile is a puzzle that bites, not a trap: no warning screen, no disable,
 and a bite returns the player to the near bank rather than ejecting them from the
 room.

@@ -46,7 +46,7 @@ The site itself is the progress indicator — fog revealing is the reward. No se
 
 **Ward-gated content** (from Phase 5d of the build plan) means a first visit is not the whole story: some branches are deliberately inaccessible until a tomb key from a _later_ tomb arrives. Early sites stay live throughout the game; they are _dormant_, not spent.
 
-**Trap corridors** (expert tier and above) are a second reason to return or backtrack. Specific authored side branches are preceded by a warning sign — the player may opt in. Moving through a trapped corridor triggers a timed math question: pass to proceed, fail to take health damage. Health is session-persistent; depleted health blocks further trap attempts until restored by consumables (found in normal chests) or permanent upgrades (from tomb treasures). See `pyramid-interior-design.md §11` for full trap system design.
+**Trap corridors** (expert tier and above) are a second reason to return or backtrack. Specific authored side branches are preceded by a warning sign — the player may opt in. Moving through a trapped corridor triggers a timed math question: pass to proceed, fail to take health damage. Health is session-persistent; depleted health blocks further trap attempts until restored by going home (hearts refill at camp), a waterskin (expert and up) or permanent upgrades (from tomb treasures). See `pyramid-interior-design.md §11` for full trap system design.
 
 ### Macro loop — one difficulty tier (several sessions)
 

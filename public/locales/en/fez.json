@@ -82,7 +82,7 @@
   "shopFirstVisit2": "Everything on this counter I carried out of somewhere. That one came from two tombs back.",
 
   "shopArrival": "Ah, my stall! Let me lay out what I've picked up along the way.",
-  "shopArrival2": "Rare finds cost the most, but I've also got everyday supplies — and I'll pay you for any trinkets you're carrying.",
+  "shopArrival2": "Rare finds cost the most, but I'll pay you for any trinkets you're carrying.",
   "arrival": {
     "starter_1": {
       "1": { "explorer": "Look, back there! The Sphinx!" },

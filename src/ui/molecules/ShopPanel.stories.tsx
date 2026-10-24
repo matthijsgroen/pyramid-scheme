@@ -22,8 +22,8 @@ export const Default: Story = {
     children: (
       <>
         <ShopItemCard
-          itemName="Bandage"
-          icon="🩹"
+          itemName="Mosaic Tile"
+          icon="🧩"
           price={10}
           affordable
           buyLabel="Buy"

@@ -28,10 +28,7 @@ vi.mock("@/data/generatedWorld", () => ({
               pathPuzzles: 0,
               difficulty: "starter",
               end: "treasure",
-              rewards: [
-                { type: "hieroglyphFragment", hieroglyphId: "h1", pieceIndex: 2 },
-                { type: "consumable", consumable: "oil" },
-              ],
+              rewards: [{ type: "hieroglyphFragment", hieroglyphId: "h1", pieceIndex: 2 }, { type: "waterskin" }],
             },
           ],
         },

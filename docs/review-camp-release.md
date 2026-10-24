@@ -29,7 +29,8 @@ The designer's morning list for the unattended camp-release queue. Newest phase 
 
 ## Drafts
 
-- Phase 1 — Fez's `shopArrival2` without "everyday supplies" (filled in by Task 8).
+- Phase 1 — Fez's `shopArrival2`, now without supplies. en: "Rare finds cost the most, but I'll pay you for any trinkets you're carrying." nl: "Zeldzame vondsten kosten het meest, maar ik betaal je voor snuisterijen die je meedraagt."
+- Phase 1 — `chest.waterskinDescription`. en: "Cool water. You drink it on the spot and feel your wounds ease." nl: "Koel water. Je drinkt hem meteen leeg en voelt je wonden minder pijn doen."
 
 ## Failures
 

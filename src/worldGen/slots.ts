@@ -26,7 +26,7 @@ export type Slot = {
   preference?: string
   /** `"end"` = a path-end reward (fragmentSlot / open ward gate) — the only slots the gating
    * worklist and capped pass touch. `"puzzle"` = a puzzle-chain position — filler-only, seen
-   * exclusively by the dynamic loot pass (money/consumables). */
+   * exclusively by the dynamic loot pass (money/waterskins). */
   kind: "end" | "puzzle"
   /** True when this slot lives in a hidden (discovery-gated) section — a hidden corridor is an
    * OPTIONAL loot pocket (docs/mods/collection-and-detector-design.md §7.3): structurally
@@ -107,7 +107,7 @@ export const collectSlots = (
     siteConfigs.forEach((floors, levelIndex) => {
       // Puzzle-chain slots: one per position of every `rewards` array initPuzzleChains
       // (buildSite) created, walked in that same order (floor main path → each side section →
-      // its sub-sections) so the dynamic loot pass replays money/consumable placement per site
+      // its sub-sections) so the dynamic loot pass replays money/waterskin placement per site
       // deterministically. Tagged `kind:"puzzle"` + a per-site `puzzleSeq`; the gating worklist
       // and capped pass skip them (they were never reward-slot candidates — only filler is).
       const siteId = `${journeyId}:${levelIndex}`
@@ -150,7 +150,7 @@ export const collectSlots = (
           // A reward-array entry that's a fragmentSlot sentinel is a currency placeholder (a shop's
           // stock slot the mods tagged for their currency) — it needs the capped/gating fill, which
           // only touch `kind:"end"`. So emit it as an end slot (placeholder + its prefers tag), not a
-          // puzzle-chain filler slot. Empty entries stay puzzle-kind (dynamic loot / consumable fill).
+          // puzzle-chain filler slot. Empty entries stay puzzle-kind (dynamic loot / waterskin fill).
           const frag = rw?.type === "fragmentSlot" ? (rw as FragmentSlotReward) : undefined
           slots.push({
             ref,

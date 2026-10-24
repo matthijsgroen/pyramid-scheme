@@ -1,7 +1,7 @@
 # Design — the Distribution primitive (unified encounter + loot placement)
 
 The model: **everything placed into the world is a `Distribution`** — encounters
-(traps/puzzles/shops) _and_ loot (currencies/junk/consumables/money). Core
+(traps/puzzles/shops) _and_ loot (currencies/junk/waterskins/money). Core
 allocates the slots (footprint + eligibility + priority); the mod fills them
 (owning its variants / rarity / completeness / per-instance config).
 
@@ -20,7 +20,7 @@ a few real dependencies:
 2. encounters  — which rooms are traps / puzzles / shops       (distributions)
 3. gating loot — keys, map pieces, hieroglyph fragments        (reachability worklist)
 4. capped loot — fixed-total currencies (mosaic)               (distributions)
-5. dynamic loot— money, junk, consumables + the empty quota    (distributions)
+5. dynamic loot— money, junk, waterskins + the empty quota    (distributions)
 ```
 
 Why this order (the dependency edges — everything else is independent):
@@ -70,7 +70,7 @@ unlocks that the current tag mechanism can't do cleanly:
 - **The `eligible` join** — a slot's metadata (`slot.encounter`, `slot.capacity`,
   `slot.pathDifficulty`, `slot.tier`) is what later loot passes filter on:
   - shop stock: `eligible = s => s.encounter === "shop"`, footprint = `s.capacity`
-  - consumables: `eligible = s => s.pathDifficulty >= "expert"` (settled: no consumables
+  - waterskins: `eligible = s => s.pathDifficulty >= "expert"` (settled: no waterskins
     in open early areas. Starter/junior do have traps, but only in hidden optional
     corridors, and they're survived on the health you brought rather than on supply)
   - every loot dist: trap rooms `eligible = false`
@@ -88,7 +88,7 @@ being separate frozen items.
 | keys / map pieces / hieroglyph | gating    | core + hieroglyph mod     | reachability worklist (unchanged)                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | mosaic                         | capped    | mosaic mod                | exact footprint                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | money **+** junk               | dynamic   | **shop mod**              | ONE `shopMoneyEconomy` Distribution — junk is money packaged as a sellable, so they share one value budget (`min` = totalBuyable, `max` = 1.1×) the `fill` divides: per-tier junk (≥1 of each = completeness hard-fail; ≤~20 each) up to `JUNK_SHARE`, then loose coins for the rest — chest slots first world-wide, minus a `PUZZLE_COIN_SHARE` tail reserved for puzzle solves. Shop off → not registered → no money/junk, leftover chests empty. |
-| consumables                    | dynamic   | **trap mod**              | one Distribution; rarity trap-owned; `eligible` = expert+ puzzle slots; count is a mod-owned target                                                                                                                                                                                                                                                                                                                                                 |
+| waterskins                     | dynamic   | **trap mod**              | one Distribution; spread evenly over expert, master and wizard; `eligible` = expert+ puzzle slots; count is a mod-owned target                                                                                                                                                                                                                                                                                                                      |
 | empty                          | —         | core                      | `emptyFraction` — a real knob (see below), % of loot-eligible slots reserved empty                                                                                                                                                                                                                                                                                                                                                                  |
 
 ## Toggle-off gate (settled)
@@ -107,7 +107,7 @@ mod shifting existing placements) are a **separate session** — safe pre-releas
 - Money validates by **footprint only**; the economy guard belongs to the **shop
   mod**, not core.
 - Junk completeness (≥1 of each collectible) **hard-fails** the build.
-- Consumables: trap-owned; **eligible only on expert+ difficulty paths**.
+- Waterskins: trap-owned; **eligible only on expert+ difficulty paths**.
 - Toggle-off gate = valid + solvable world (not byte-identical); world-stability
   ripple = a separate session.
 - Core allocates slots; the **mod fills** (owns variants/rarity/completeness).
@@ -131,6 +131,6 @@ mod shifting existing placements) are a **separate session** — safe pre-releas
 
 ## Open design questions
 
-- "area" vocabulary beyond difficulty, if consumable eligibility ever needs more than `tier >= expert`.
+- "area" vocabulary beyond difficulty, if waterskin eligibility ever needs more than `tier >= expert`.
 - min-first-across-all allocator upgrade — only once a second nonzero-`min` distribution contends for
   the same slot pool.

@@ -121,7 +121,7 @@ not just hieroglyphs.
 - The detector is core UI, but its _target vocabulary_ (hieroglyphs) comes
   from the registered fragment currency. With the mod off there are no
   partial-fragment slots → no target affordance → compass has nothing to hunt
-  (consumable/hidden-passageway modes, owned by trap/core, are unaffected). The
+  (the hidden-passageway mode, owned by core, is unaffected). The
   detector must degrade cleanly when the fragment currency isn't registered.
 
 ---
@@ -132,19 +132,17 @@ One interlocking system: **tomb treasures** grant **perks**; some perks are **de
 levels**; the **Collection** shows treasures + their perk bonus. Ownership is split so
 each mod owns its own gameplay and core names none of it.
 
-### 7.1 The three detectors — different effects, different owners
+### 7.1 The two detectors — different effects, different owners
 
-The "detectors" are NOT one mechanic. Three distinct effects, do not conflate:
+The "detectors" are NOT one mechanic. Two distinct effects, do not conflate:
 
-| detector                           | kind               | owner          | scanner/consumer                                      | what the level does                            |
-| ---------------------------------- | ------------------ | -------------- | ----------------------------------------------------- | ---------------------------------------------- |
-| **corridor** (`detection`)         | passive reveal     | **core**       | `useAssembledFloor` masks/reveals `hidden` cells      | reveal scope **widens outward** with level     |
-| **compass** (hieroglyph fragments) | active target mode | **hieroglyph** | `detectorScanners` (hieroglyph registers the scanner) | precision **narrows inward** with level        |
-| **supplies** (consumables)         | active target mode | **trap**       | `useDetector` reads skipped-consumable chests         | precision **narrows inward** (same as compass) |
+| detector                           | kind               | owner          | scanner/consumer                                      | what the level does                        |
+| ---------------------------------- | ------------------ | -------------- | ----------------------------------------------------- | ------------------------------------------ |
+| **corridor** (`detection`)         | passive reveal     | **core**       | `useAssembledFloor` masks/reveals `hidden` cells      | reveal scope **widens outward** with level |
+| **compass** (hieroglyph fragments) | active target mode | **hieroglyph** | `detectorScanners` (hieroglyph registers the scanner) | precision **narrows inward** with level    |
 
 `max-health`/`armor`/`trap-insight`/`pack-mule` (trap) are the non-detector perks. Detection is the only detector core owns — because a hidden
-corridor is core map structure; compass/supplies serve a mod's gameplay (fragments /
-consumables) so they belong to that mod.
+corridor is core map structure; the compass serves a mod's gameplay (fragments) so it belongs to that mod.
 
 ### 7.2 Tier semantics (the gameplay spec)
 
@@ -158,7 +156,7 @@ the authored `TREASURE_PERKS` grants L1–L4, decided 2026-07-16):
 | L3  | **pyramid marker** — on the pyramid's own map: this pyramid has unexplored hidden corridors    |
 | L4  | **journey-list marker** — on the travel screen (broadest reach, for revisits across the world) |
 
-**Compass (fragments) & supplies (consumables) — narrow inward** (higher = more precise):
+**Compass (fragments) — narrows inward** (higher = more precise):
 
 | L   | precision                  |
 | --- | -------------------------- |
@@ -166,7 +164,7 @@ the authored `TREASURE_PERKS` grants L1–L4, decided 2026-07-16):
 | L2  | which **floor**            |
 | L3  | **exact** location         |
 
-The two active detectors share the inward-narrowing shape; the passive corridor detector
+The active compass narrows inward; the passive corridor detector
 is the mirror (outward-widening). This directional contrast is the design's core idea.
 
 ### 7.3 Hidden corridor = a gated pathway (loot-placement model)
@@ -209,14 +207,14 @@ written on claim, so holding the treasure _is_ holding the perk:
 **Perk homes** (each perk is derived by its owning gameplay — closes the last
 §D-class core-state leak):
 
-| home (derives it; stores nothing) | perks                                                             |
-| --------------------------------- | ----------------------------------------------------------------- |
-| trap `useTrapProgress`            | max-health, armor, trap-insight, pack-mule, **supplies-detector** |
-| hieroglyph progress hook          | **compass**                                                       |
-| core `mods/core/app/index.ts`     | **corridor-detector**                                             |
+| home (derives it; stores nothing) | perks                                      |
+| --------------------------------- | ------------------------------------------ |
+| trap `useTrapProgress`            | max-health, armor, trap-insight, pack-mule |
+| hieroglyph progress hook          | **compass**                                |
+| core `mods/core/app/index.ts`     | **corridor-detector**                      |
 
-The `DetectorPanel` (core UI) reads its three levels from a **merged detector-level
-accessor** (`useMergedHeldKeys`-style: compass←hieroglyph, supplies←trap,
+The `DetectorPanel` (core UI) reads its levels from a **merged detector-level
+accessor** (`useMergedHeldKeys`-style: compass←hieroglyph,
 corridor←core) instead of one core `perks` blob.
 
 ### 7.5 Tomb-treasure collection — unify with perks
@@ -244,8 +242,8 @@ Collection treasure sections show all-empty). Unify:
 ### 7.7 Toggle-off
 
 - trap/puzzle/hieroglyph off → their perk contribution unregistered → `grant` no-ops,
-  `describe` → undefined → Collection shows the treasure with no bonus line. Compass/
-  supplies mode simply absent (no scanner/level source). World unaffected.
+  `describe` → undefined → Collection shows the treasure with no bonus line. The compass
+  mode simply absent (no scanner/level source). World unaffected.
 - The corridor detector (core) is always present; its payoff (hidden pockets) exists
   independent of any mod.
 
@@ -258,11 +256,11 @@ Collection treasure sections show all-empty). Unify:
 - **Payload = open descriptor** `{ type: string; level?: number }`; each mod matches its
   own perk-id strings. No shared union. Boot/test **assertion**: every stat-perk type in
   `TREASURE_PERKS` has a registered `grant` (guards the silent-no-op typo risk).
-- **Perk state homes** (§7.4 table): trap owns max-health/armor/trap-insight/pack-mule/
-  supplies-detector; hieroglyph owns compass; core owns
+- **Perk state homes** (§7.4 table): trap owns max-health/armor/trap-insight/pack-mule;
+  hieroglyph owns compass; core owns
   corridor-detector only. Resolves the `maxHealth` duplication (trap's copy becomes the
   single source).
-- **Detector ownership**: corridor=core, compass=hieroglyph, supplies=trap. `DetectorPanel`
+- **Detector ownership**: corridor=core, compass=hieroglyph. `DetectorPanel`
   reads a **merged detector-level accessor**, not one core `perks` blob.
 - **Treasure identity**: keyId `<tier>_<a|b|c>_<floor>` ↔ `tN` is **1:1**;
   `keyId → journey.treasures[floor-1]`. "Collected" = own the keyId (no inventory `tN`).
@@ -278,15 +276,14 @@ Collection treasure sections show all-empty). Unify:
 Each mod's `grant` implements its own bump. `bump`: `inc` = `min(cap, cur+1)`, `set` = fixed
 value, `toLevel` = `max(cur, grantedLevel)`.
 
-| perk              | owner      | field                     | cap | bump    | effect (consumer)                                                                   |
-| ----------------- | ---------- | ------------------------- | --- | ------- | ----------------------------------------------------------------------------------- |
-| max-health        | trap       | `maxHealth`               | 12  | inc     | health cap in **half-hearts** (base 6, +½♥ = +1); `HealthDisplay`/`TrapFamilyShell` |
-| armor             | trap       | `armorStacks`             | 2   | inc     | reduces trap damage per stack (consumer exists)                                     |
-| trap-insight      | trap       | `trapInsightStacks`       | 2   | inc     | +1s/stack in `TRAP_TIME_LIMITS_SECONDS`                                             |
-| pack-mule         | trap       | `packMuleLevel`           | 1   | set 1   | consumable carry cap `lvl===1 ? 4 : 2`                                              |
-| supplies-detector | trap       | `consumableDetectorLevel` | 3   | toLevel | supplies detector                                                                   |
-| compass           | hieroglyph | `compassLevel`            | 3   | toLevel | fragment compass                                                                    |
-| corridor-detector | core       | `detectionLevel`          | 4   | toLevel | hidden-corridor reveal                                                              |
+| perk              | owner      | field               | cap | bump    | effect (consumer)                                                                   |
+| ----------------- | ---------- | ------------------- | --- | ------- | ----------------------------------------------------------------------------------- |
+| max-health        | trap       | `maxHealth`         | 12  | inc     | health cap in **half-hearts** (base 6, +½♥ = +1); `HealthDisplay`/`TrapFamilyShell` |
+| armor             | trap       | `armorStacks`       | 2   | inc     | reduces trap damage per stack (consumer exists)                                     |
+| trap-insight      | trap       | `trapInsightStacks` | 2   | inc     | +1s/stack in `TRAP_TIME_LIMITS_SECONDS`                                             |
+| pack-mule         | trap       | `packMuleLevel`     | 1   | set 1   | a waterskin heals two hearts instead of one (`lvl===1`)                             |
+| compass           | hieroglyph | `compassLevel`      | 3   | toLevel | fragment compass                                                                    |
+| corridor-detector | core       | `detectionLevel`    | 4   | toLevel | hidden-corridor reveal                                                              |
 
 Non-perk `TREASURE_PERKS` types (`tier-unlock`/`location-key`/`none`) are NOT granted via the
 seam — `addTombKey` + discovery handle them; tomb-treasure `describe`s their Collection line itself.

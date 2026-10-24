@@ -16,7 +16,7 @@ chest.
 
 ## Stock
 
-Two kinds of stock, both refresh on re-entry:
+The stock is rare collectibles, nothing else:
 
 - **Rare collectibles** — relocated instances of currencies the game
   already places elsewhere (hieroglyph fragment, mosaic tile, map piece —
@@ -26,8 +26,9 @@ Two kinds of stock, both refresh on re-entry:
   same capped currencies — the shop is a placement site, not a second
   producer (see `docs/game-design/keys-and-locks-solver.md` for how
   placement into a shop's stock generalizes).
-- **Consumables** — bandage/oil/trapTool, `CONSUMABLE_STOCK_PER_VISIT` (2)
-  of each, every shop, every visit.
+
+Hearts refill at camp and waterskins are found, never sold, so the shop stocks
+no supplies; a stock slot that holds no priced item stays empty.
 
 ## Pricing
 
@@ -38,7 +39,6 @@ All defined in `src/mods/shop/game/pricing.ts`:
 - **Mosaic tile**: flat 500, regardless of tier (a completionist item, not
   tied to how hard it was to find).
 - **Map piece**: flat 1000 (rarest — gates the tier's final tomb).
-- **Consumables**: bandage 20, oil 50, trapTool 40.
 
 ## Economy model
 
@@ -47,15 +47,15 @@ All defined in `src/mods/shop/game/pricing.ts`:
   until bought. A player can earn late and backtrack to an earlier shop,
   or save early for a pricier one.
 - **Income**: junk loot sell value (sellables, below) plus loose coins,
-  both placed to a fixed budget of 1.1× what all shop stock costs — a 10%
-  margin, so buying everything means finding nearly everything. Chests
+  both placed to a fixed budget of 1.1× what all shop stock costs plus
+  `MONEY_ALLOWANCE` (the coins the world carries beyond the priced stock, so
+  finds pay out at the rate the world was tuned to) — a 10% margin, so
+  buying everything means finding nearly everything. Chests
   carry that loot first, except a `PUZZLE_COIN_SHARE` slice held back for
   loose coins on puzzle solves.
-- **Sinks**: consumables (optional — also free-findable via puzzles) and
-  all 13 rare collectibles (mandatory for 100% completion).
+- **Sinks**: all 13 rare collectibles (mandatory for 100% completion).
 - **Guard, enforced at world-gen time** (`src/worldGen/validate.ts`):
-  `Σ(all shop prices, rares + one full consumable restock per shop) ≤
-Σ(all guaranteed income)`. Global cumulative, not per-tier — backtracking
+  `Σ(all shop prices, the rare collectibles) ≤ Σ(all guaranteed income)`. Global cumulative, not per-tier — backtracking
   makes the whole game's economy one pool, not tier-isolated budgets.
   World generation fails if this doesn't hold.
 

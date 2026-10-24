@@ -87,7 +87,7 @@ export type FamilyMeta = {
   // How many reward slots a node of this family exposes. Default 1 (an ordinary node bears one
   // reward, like a chest or a puzzle-chain position). A shop is the one family that overrides it
   // (6): its node carries a `rewards[]` stock array of this length, filled by the mods that place
-  // into it (positional currency assignment + trap's finite consumable fill), each priced by the
+  // into it (positional currency assignment), each priced by the
   // shop. Distinct from rewardPriority: priority is fill order, capacity is slot count.
   rewardCapacity?: number
   // First difficulty tier this family may be allocated at (its catalogue debut, per

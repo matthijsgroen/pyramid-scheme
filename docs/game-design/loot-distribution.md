@@ -7,7 +7,7 @@ Companion to: `pyramid-interior-design.md` §3 (fragment matrix), §10 (loot eco
 
 ## Overview
 
-Every reward slot in every pyramid site is filled exactly once. There is no random loot — every fragment, mosaic piece, consumable, and map piece is placed deliberately by the world builder and shipped as static data.
+Every reward slot in every pyramid site is filled exactly once. There is no random loot — every fragment, mosaic piece, waterskin, and map piece is placed deliberately by the world builder and shipped as static data.
 
 Key constraint: **no hieroglyph fragment appears more than once per journey** (relaxed only when there are not enough journeys to distribute the required count).
 
@@ -15,11 +15,11 @@ Key constraint: **no hieroglyph fragment appears more than once per journey** (r
 
 ## Reward slot types
 
-| Slot                         | Location                                      | Default reward                                                         |
-| ---------------------------- | --------------------------------------------- | ---------------------------------------------------------------------- |
-| `mainEndReward`              | End of the main spine per floor               | Hieroglyph fragment (fragmentSlot) or explicit (mapPiece, mosaicPiece) |
-| `endReward` on side sections | Branch endpoints with `end: "fragment"`       | Hieroglyph fragment (fragmentSlot) or explicit (tombKey, mapPiece)     |
-| `chestRewards[]`             | Main spine chests, 1 per `chestEvery` puzzles | Consumables only                                                       |
+| Slot                         | Location                                | Default reward                                                         |
+| ---------------------------- | --------------------------------------- | ---------------------------------------------------------------------- |
+| `mainEndReward`              | End of the main spine per floor         | Hieroglyph fragment (fragmentSlot) or explicit (mapPiece, mosaicPiece) |
+| `endReward` on side sections | Branch endpoints with `end: "fragment"` | Hieroglyph fragment (fragmentSlot) or explicit (tombKey, mapPiece)     |
+| Main spine chests            | 1 per `chestEvery` puzzles              | Money and sellables (the shop's dynamic loot pass)                     |
 
 Tomb treasures (ward keys, location keys) are authored directly and never go through fragment assignment. Every other slot in a tomb — its cave's and cavern's open path ends and side sections — is a `fragmentSlot` like a pyramid's: tombs opt in through `TOMB_CAPABILITIES.emitFragmentSlots` (`src/worldGen/capabilities.ts`).
 
@@ -37,7 +37,6 @@ buildTombConfigs()        ↘
                            allConfigs
 assignFragments(allConfigs) → replaces every fragmentSlot with either:
                                • { type: "hieroglyphFragment", hieroglyphId: "..." }
-                               • { type: "consumable", consumable: "..." }   (fallback)
 generateFile(allConfigs)   → throws if any fragmentSlot survived (invariant check)
 ```
 
@@ -59,7 +58,7 @@ Scans every site config whose capabilities set `emitFragmentSlots` — every pyr
 - `isPlaceholder` — true if it was a `fragmentSlot` sentinel; false if it is an empty ward-gated section with no explicit reward (optional slot)
 - `assign(r)` — closure that writes the reward back into the config in place
 
-Non-placeholder ward slots are included so they can receive fragments during assignment, but are never filled with consumables if they remain unassigned.
+Non-placeholder ward slots are included so they can receive fragments during assignment, but are never filled with waterskins if they remain unassigned.
 
 ### Step 2 — build placement infos
 
@@ -96,9 +95,9 @@ For each hieroglyph (in tier order, starter first):
 
 Once `required` copies are placed, move to the next hieroglyph.
 
-### Step 4 — consumable fill
+### Step 4 — dynamic fill
 
-Any `isPlaceholder` slot that was not assigned a fragment receives a consumable (bandage, oil, or trapTool) chosen by a deterministic hash of `journeyId + fallbackIdx`.
+Slots left after fragment assignment go to the mod-owned distributions: waterskins on expert-and-up puzzle slots (never chests, path ends or shop stock), then money and junk, chests first. What no distribution claims stays empty.
 
 ---
 

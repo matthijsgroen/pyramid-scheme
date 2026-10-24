@@ -62,7 +62,7 @@ describe("carved through assembleFloor", () => {
       end: "treasure",
       exitOrStaircase: "exit",
       sideSections: [],
-      rewards: [undefined, { type: "money", amount: 5 }, undefined, { type: "consumable", consumable: "oil" }],
+      rewards: [undefined, { type: "money", amount: 5 }, undefined, { type: "waterskin" }],
     }
     const result = assembleFloor("site-1", config, 42)
     expect(result.success).toBe(true)
@@ -71,7 +71,7 @@ describe("carved through assembleFloor", () => {
       expect(puzzles).toHaveLength(4)
       const rewards = puzzles.map(p => p.reward?.type)
       expect(rewards).toContain("money")
-      expect(rewards).toContain("consumable")
+      expect(rewards).toContain("waterskin")
       expect(rewards.filter(r => r === undefined)).toHaveLength(2)
       expect(validateSite(result.grid)).toEqual({ valid: true })
     }

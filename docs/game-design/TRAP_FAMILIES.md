@@ -3,7 +3,7 @@
 Status: PART BUILT · the catalogue is design, three of its families ship  
 **Built:** arithmetic reflex (§5.1) and clock reading (§5.2), both in `src/mods/trap/`, plus the
 crocodile, which is a trap the catalogue never named. Time limits (§3), difficulty gating (§4) and the
-consumable/health interaction (§6) are all live — `trapConfig.ts`, `trapHealth.ts`, `consumables.ts`.
+health interaction (§6) are all live — `trapConfig.ts`, `trapHealth.ts`, `waterskin.ts`.
 **Still design:** pattern recognition (§5.3), memory (§5.4) and the Egyptian-instrument family (§5.5).  
 Companion to: `PUZZLE_FAMILIES.md` (puzzle nodes), `pyramid-interior-design.md §11` (trap system design)
 
@@ -180,4 +180,4 @@ Tomb treasures grant permanent effects that directly modify trap encounters. Exa
 1. ~~**Armor negation floor**~~ — **Resolved.** Minimum damage is 1 half-heart; armor cannot fully negate. 2 stacks max.
 2. **Memory display duration** — the `displayDuration` in §5.3 is a second timer before the answer timer starts. Does it count against the tier time limit, or is the tier time limit only for the answer phase? Recommendation: keep timers separate — display phase is fixed, answer phase is the authored time limit.
 3. **Multiple trap insight stacks** — if the player holds 3 trap insight treasures, do all three add time? Recommendation: yes, they stack additively.
-4. **Trap tool interaction** — a trap tool permanently disables a specific corridor's trap; the corridor becomes freely traversable. No interaction with trap families needed — the tool bypasses the encounter entirely before a family is invoked.
+4. **Beating a trap** — there is no way to disarm one: a trap is beaten, or walked away from. Hearts refill at camp, and a waterskin heals one heart on pickup.
