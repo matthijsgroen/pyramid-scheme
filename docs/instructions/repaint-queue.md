@@ -493,7 +493,10 @@ hieroglyphs, no watermark, no frame, no border.
 It is about as wide as it is tall: a waist-high cluster.
 ```
 
-**Import:** `yarn import-tile art/masters/props/cave/crystal.webp --tier=cave --name=crystal --slot=prop --filter=smooth`
+**Prepare:** the generator paints the shadow in a dark MAGENTA, which keys to a hard black ring. Turn every magenta-hued pixel to pure #ff00ff first, and lay a soft shadow back with `--seat` (`art/masters/props/cave/crystal-shadow.png`, a blurred ellipse under the base):
+`magick in.png -colorspace HSL -channel R -separate +channel -fx "abs(u-0.833)<0.06?1:0" hue.png; magick in.png -colorspace HSL -channel G -separate +channel -threshold 30% sat.png; magick hue.png sat.png -compose multiply -composite -morphology Dilate Disk:2 mask.png; magick in.png \( -size 1024x1024 xc:'#FF00FF' \) mask.png -composite clean.png`
+
+**Import:** `yarn import-tile art/masters/props/cave/crystal.webp --tier=cave --name=crystal --slot=prop --filter=smooth --seat=art/masters/props/cave/crystal-shadow.png --seat-opacity=0.55`
 
 ### `cave/brazier` — an old campfire, someone camped here
 
