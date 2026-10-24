@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { priceFor, CONSUMABLE_PRICES } from "./pricing"
+import { priceFor } from "./pricing"
 
 describe("priceFor", () => {
   it("scales fragment price by the shop's tier", () => {
@@ -15,15 +15,9 @@ describe("priceFor", () => {
     expect(priceFor({ type: "mapPiece", tombId: "x" }, "junior")).toBe(1000)
   })
 
-  it("prices consumables by kind", () => {
-    expect(priceFor({ type: "consumable", consumable: "bandage" }, "junior")).toBe(CONSUMABLE_PRICES.bandage)
-    expect(priceFor({ type: "consumable", consumable: "oil" }, "junior")).toBe(CONSUMABLE_PRICES.oil)
-    expect(priceFor({ type: "consumable", consumable: "trapTool" }, "junior")).toBe(CONSUMABLE_PRICES.trapTool)
-  })
-
   it("returns 0 for a reward type it doesn't price (money/sellable/unknown)", () => {
     expect(priceFor({ type: "money", amount: 5 }, "junior")).toBe(0)
     expect(priceFor({ type: "sellable", itemId: "x" }, "junior")).toBe(0)
-    expect(priceFor({ type: "consumable", consumable: "unknown" }, "junior")).toBe(0)
+    expect(priceFor({ type: "consumable", consumable: "bandage" }, "junior")).toBe(0)
   })
 })

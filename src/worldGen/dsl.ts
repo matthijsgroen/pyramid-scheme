@@ -293,8 +293,6 @@ export type FloorConstraint<TExtra extends string = never> = {
   sidePaths?: PathEntry[]
   /** Declared hidden side paths (hidden: true) — invisible without Detection perk. */
   hiddenPaths?: PathEntry[]
-  /** Integer weights for consumable type selection. Higher = more frequent. */
-  consumableRates?: { bandage: number; oil: number; trapTool: number }
 }
 
 /** One authored ward wing: a gated staircase to a bonus floor at `difficulty`, keyed to a
@@ -452,14 +450,12 @@ export type PyramidConstraint = {
    * wardWings (allocated after them). */
   wardPaths?: number
   /** Trap the ward paths in this journey's earlier-half pyramids, so the return trip costs
-   * consumables. Only affects wardPaths (a floor's main path has no trap model). */
+   * health. Only affects wardPaths (a floor's main path has no trap model). */
   wardPathTrapped?: boolean
   /** Declared visible side paths — each entry adds paths of that density with the given reward. */
   sidePaths?: PathEntry[]
   /** Declared hidden side paths (hidden: true) — invisible without Detection perk. */
   hiddenPaths?: PathEntry[]
-  /** Integer weights for consumable type selection. Higher = more frequent. */
-  consumableRates?: { bandage: number; oil: number; trapTool: number }
   /** Number of floors of a tomb level. Overrides the value in TOMB_STRUCTURES. */
   floorCount?: number
 }

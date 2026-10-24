@@ -20,8 +20,6 @@ export const GLOBAL_DEFAULTS = {
   windyStraightness: 0.35,
   /** packing applied on a packingChance hit. */
   packingWhenHit: 0.16,
-  /** Integer weights for consumable-type selection in chest rewards. */
-  consumableRates: { bandage: 3, oil: 1, trapTool: 1 },
 }
 
 export const globalRules: Rule[] = [global({ ...GLOBAL_DEFAULTS })]

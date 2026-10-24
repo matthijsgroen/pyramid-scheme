@@ -2,7 +2,6 @@ import type { ModDescriptor } from "../modDescriptor"
 import { ARITHMETIC_REFLEX_META } from "./game/arithmeticReflex/meta"
 import { CLOCK_REFLEX_META } from "./game/clockReflex/meta"
 import { CROCODILE_META } from "./game/crocodile/meta"
-import { trapShopStock } from "./game/consumables"
 import { trapWaterskins } from "./game/waterskins"
 import { HEALTH_CURRENCY_META } from "./game/healthCurrency"
 
@@ -18,6 +17,6 @@ import { HEALTH_CURRENCY_META } from "./game/healthCurrency"
 export const trapMod: ModDescriptor = {
   id: "trap",
   families: [ARITHMETIC_REFLEX_META, CLOCK_REFLEX_META, CROCODILE_META],
-  dynamicDistributions: [trapWaterskins, trapShopStock],
+  dynamicDistributions: [trapWaterskins],
   currencyMeta: HEALTH_CURRENCY_META,
 }

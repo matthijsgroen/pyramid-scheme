@@ -14,7 +14,12 @@ import { totalBuyable } from "./economyGuard"
 // to empty. Shop off → this distribution isn't registered → no money/junk placed. See
 // docs/mods/distribution-primitive-design.md.
 
-const BUDGET_CEILING = 1.1 // max money-equivalent placed = the floor (totalBuyable) + 10% margin
+// Coins the world carries beyond the priced shop stock, so finds pay out at the rate the world was
+// tuned to. The number is the price of the stock the shop slots without priced stock stand for
+// (measured on the bake); it holds until the economy is recomputed against what the shops sell.
+export const MONEY_ALLOWANCE = 1070
+
+const BUDGET_CEILING = 1.1 // max money-equivalent placed = the floor (priced stock + allowance) + 10% margin
 const JUNK_SHARE = 0.95 // fraction of the floor bulk junk covers; loose coins fill the rest
 const PUZZLE_COIN_SHARE = 0.05 // fraction of the floor held back from chests, so solves still pay
 const PER_ITEM_CAP = 20 // ≤20 of each junk collectible, so no single item floods the world
@@ -40,14 +45,14 @@ const byMaterialTier = (slots: Slot[]): Map<MaterialTier, Slot[]> => {
 export const shopMoneyEconomy: Distribution = {
   id: "shop-money-economy",
   // Puzzle + chest slots that still bear loot (rewardPriority>0); junk needs a material tier, which
-  // every slot has (via its difficulty). Runs after consumables, so it takes what's left.
+  // every slot has (via its difficulty). Runs after the other loot distributions, so it takes what's left.
   eligible: slot => slot.rewardPriority > 0,
   // Completeness needs ≥1 of each collectible = 25 slots minimum (hard-fail below). No ceiling —
   // the shop claims every remaining eligible slot and empties the ones its budget doesn't need,
   // so reward priority (chest-first) + the budget decide how much of the world actually bears loot.
   footprint: () => ({ min: 25, max: Number.MAX_SAFE_INTEGER }),
   fill: (slots, allConfigs) => {
-    const budgetMin = totalBuyable(allConfigs)
+    const budgetMin = totalBuyable(allConfigs) + MONEY_ALLOWANCE
     const budgetMax = Math.round(budgetMin * BUDGET_CEILING)
     const junkTarget = Math.round(budgetMin * JUNK_SHARE)
     const chestCeiling = budgetMax - Math.round(budgetMin * PUZZLE_COIN_SHARE)

@@ -13,8 +13,7 @@ import { getSellableById, sellValueForItemId } from "@/data/sellables"
 
 // Fez's shop encounter — browsing/buying, never a solve/fail challenge, so it always
 // closes via onCancel and never onSolved (which would auto-grant the node's rewards for free).
-// Stock is the node's baked `rewards[]` (currency pieces + finite consumables), reached as
-// ctx.stock. Each slot is bought once, tracked per-(edgeId, index) in journeys — sold-out stays
+// Stock is the node's baked `rewards[]` (finite currency pieces), reached as ctx.stock. Each slot is bought once, tracked per-(edgeId, index) in journeys — sold-out stays
 // sold-out (no per-visit refresh). The shop prices every slot via priceFor; the currency mods
 // stay money-blind.
 const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, inventory, applyReward, onCancel }) => {
@@ -48,34 +47,31 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
 
   if (!greeted) return null
 
-  // One buy path for every stock slot (currency piece or consumable alike): pay, apply, claim.
+  // One buy path for every stock slot: pay, apply, claim.
   const buySlot = (j: number) => {
     const item = stock[j]
     if (!item || claimed.has(`${ctx.address}!${j}`)) return
-    // canAccept before spend — a full consumable pack refuses now, so nothing is charged then lost.
-    if (!contributions.canAccept(item)) return
     if (!progression.ledger.spend("money", priceFor(item, tier))) return
     applyReward(item)
     journeys.markShopSlotPurchased(ctx.address, j)
   }
 
-  // A slot renders once, split into the shop's two buy sections by reward type: consumables are
-  // "supplies", everything else (fragments/mosaic/map pieces) is "rare". Sold-out = already bought
-  // OR already owned (skip = nothing to grant) — mirrors the compass dropping an owned fragment.
-  const rareItems: ShopBuyItem[] = []
-  const consumables: ShopBuyItem[] = []
-  stock.forEach((item, j) => {
-    if (!item) return
+  // Every stock slot (fragments/mosaic/map pieces) renders once, in the shop's one buy list.
+  // Sold-out = already bought OR already owned (skip = nothing to grant) — mirrors the compass
+  // dropping an owned fragment.
+  const rareItems: ShopBuyItem[] = stock.flatMap((item, j) => {
+    if (!item) return []
     const price = priceFor(item, tier)
-    const buyItem: ShopBuyItem = {
-      id: String(j),
-      ...rewardText(item, t),
-      price,
-      affordable: balance >= price,
-      soldOut: claimed.has(`${ctx.address}!${j}`) || contributions.skip(item),
-    }
-    if (item.type === "consumable") consumables.push(buyItem)
-    else rareItems.push({ ...buyItem, featured: true })
+    return [
+      {
+        id: String(j),
+        ...rewardText(item, t),
+        price,
+        affordable: balance >= price,
+        soldOut: claimed.has(`${ctx.address}!${j}`) || contributions.skip(item),
+        featured: true,
+      },
+    ]
   })
 
   const handleSell = (id: string) => {
@@ -96,10 +92,8 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
       soldOutLabel={t("shop.soldOut")}
       sellLabel={t("shop.sell")}
       rareItemsLabel={t("shop.rareItems")}
-      suppliesLabel={t("shop.supplies")}
       sellSectionLabel={t("shop.sellSection")}
       rareItems={rareItems}
-      consumables={consumables}
       sellables={Object.entries(inventory.inventory).flatMap(([id, count]) => {
         const item = getSellableById(id)
         if (!item || !count) return []

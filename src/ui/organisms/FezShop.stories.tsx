@@ -13,7 +13,6 @@ const meta = {
     soldOutLabel: "Sold out",
     sellLabel: "Sell",
     rareItemsLabel: "Rare Finds",
-    suppliesLabel: "Supplies",
     sellSectionLabel: "Trinkets to sell",
     rareItems: [
       {
@@ -42,11 +41,6 @@ const meta = {
         affordable: false,
         soldOut: true,
       },
-    ],
-    consumables: [
-      { id: "bandage", itemName: "Bandage", icon: "🩹", price: 20, affordable: true },
-      { id: "oil", itemName: "Lamp Oil", icon: "🏺", price: 50, affordable: true },
-      { id: "trapTool", itemName: "Trap Tool", icon: "🔧", price: 40, affordable: false },
     ],
     sellables: [
       { id: "sell1", itemName: "Cracked Amulet", icon: "📿", sellValue: 20, ownedCount: 3 },

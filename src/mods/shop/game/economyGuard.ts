@@ -4,12 +4,13 @@ import { sellValueForItemId } from "@/data/sellables"
 import { moneyRewardSchema, sellableRewardSchema } from "./rewardSchemas"
 import { priceFor } from "./pricing"
 
-// Σ of the shop-priced value of every baked shop stock item across the world (currency pieces +
-// finite consumables), each priced by the shop's own priceFor. The shop's money economy needs the
+// Σ of the shop-priced value of every baked shop stock item across the world (the finite currency
+// pieces), each priced by the shop's own priceFor. The shop's money economy needs the
 // player to be able to afford all of it — it's the floor the loot budget targets (see loot.ts) and
 // the number the economy guard checks income against. One walk, one source, shared by both so they
-// can never drift. (Finite stock is what keeps this bounded, so the guard can guarantee every
-// progression piece stays affordable — docs/mods/ARCHITECTURE.md (shop mod).)
+// can never drift. (Finite stock — sold-out stays sold-out, nothing restocks — is what keeps this
+// bounded, so the guard can guarantee every progression piece stays affordable —
+// docs/mods/ARCHITECTURE.md (shop mod).)
 export const totalBuyable = (allConfigs: Record<string, SiteConfig[]>): number => {
   let sum = 0
   const tally = (s: SubSection) => {
@@ -29,8 +30,8 @@ export const totalBuyable = (allConfigs: Record<string, SiteConfig[]>): number =
   return sum
 }
 
-// Economy guard: Σ(all shop prices, rares + one full consumable restock per shop) ≤
-// Σ(all guaranteed income — puzzle-solve money + junk sell value).
+// Economy guard: Σ(the priced stock of every shop) ≤ Σ(all guaranteed income — puzzle-solve
+// money + junk sell value).
 // Global cumulative, not per-tier — shops are revisitable, so backtracking makes any
 // order affordable; only the world-wide totals matter. Throws at build, not at runtime.
 // Shop-owned: injected as the shop mod's worldValidator, so the check drops out when shop

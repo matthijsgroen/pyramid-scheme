@@ -150,15 +150,15 @@ Each is the option that changes the least shipped behaviour; Task 1 writes them 
 - Produces: the shop money budget floor = `totalBuyable(allConfigs) + MONEY_ALLOWANCE` (name the constant for what it is: coins the world carries beyond the priced stock), `MONEY_ALLOWANCE = 1070`; the ceiling, junk share and puzzle-coin share stay multipliers of that floor. `runEconomyGuard` is unchanged in logic (income ≥ buyable).
 - Produces: `FezShop` props without `consumables` and `suppliesLabel`.
 
-- [ ] **Step 1: Failing tests.**
+- [x] **Step 1: Failing tests.**
   - `loot.spec.ts`: on a made-up world whose shop stock prices to P, the placed money-equivalent lies between `P + allowance` and `round((P + allowance) × 1.1)`; with an empty stock it still places the allowance.
   - `pricing.spec.ts`: a `consumable`-typed reward prices 0 (unknown types are free); the fragment / mosaic / map prices are unchanged.
   - `economyGuard.spec.ts`: keeps passing on its made-up worlds; any fixture using consumable stock switches to a priced currency piece.
-- [ ] **Step 2: Run** `yarn test src/mods/shop src/mods/trap src/worldGen/serializer` — FAIL where the specs changed.
-- [ ] **Step 3: Implement.** The allowance comment says what it keeps (finds pay out at the rate the world was tuned to) and where its number comes from (the stock the world no longer sells), without history words. `grep -rn "consumable" src/mods/shop src/ui/organisms/FezShop* src/worldGen/dsl.ts src/worldGen/spec/global.ts` is empty afterwards.
-- [ ] **Step 4: Run** `yarn test src/mods/shop src/mods/trap src/worldGen src/ui/organisms` — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Per-task review** (soundness): the guard still compares all income to all buyable stock; the budget floor never falls below buyable; nothing in core learned a shop or trap name.
-- [ ] **Step 6: Commit** — `feat: Fez stops selling supplies; the world places none`
+- [x] **Step 2: Run** `yarn test src/mods/shop src/mods/trap src/worldGen/serializer` — FAIL where the specs changed.
+- [x] **Step 3: Implement.** The allowance comment says what it keeps (finds pay out at the rate the world was tuned to) and where its number comes from (the stock the world no longer sells), without history words. `grep -rn "consumable" src/mods/shop src/ui/organisms/FezShop* src/worldGen/dsl.ts src/worldGen/spec/global.ts` is empty afterwards.
+- [x] **Step 4: Run** `yarn test src/mods/shop src/mods/trap src/worldGen src/ui/organisms` — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Per-task review** (soundness): the guard still compares all income to all buyable stock; the budget floor never falls below buyable; nothing in core learned a shop or trap name.
+- [x] **Step 6: Commit** — `feat: Fez stops selling supplies; the world places none`
 
 ---
 

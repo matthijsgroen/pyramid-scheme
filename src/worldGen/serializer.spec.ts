@@ -26,7 +26,7 @@ describe("generateFile — serializeSideSection field coverage", () => {
           end: "treasure",
           theme: "day",
           endReward: { type: "mosaicPiece" },
-          rewards: [{ type: "mosaicPiece" }, { type: "consumable", consumable: "oil" }],
+          rewards: [{ type: "mosaicPiece" }, { type: "money", amount: 7 }],
           sealed: true,
           encounter: "tableau",
           activitiesByIndex: { 0: "selling" },
@@ -45,7 +45,7 @@ describe("generateFile — serializeSideSection field coverage", () => {
 
   it("keeps a rewards (shop stock) array on a serialized side section", () => {
     expect(output).toContain("rewards: [")
-    expect(output).toContain('consumable: "oil"')
+    expect(output).toContain("amount: 7")
   })
 
   it("keeps a nested sideSections array", () => {

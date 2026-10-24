@@ -3,7 +3,7 @@ import { allocateDistributions } from "@/worldGen/slotAllocator"
 import type { Slot } from "@/worldGen/slots"
 import type { TreasureReward, SiteConfig } from "@/worldGen/types"
 import { SELL_VALUE_BY_TIER } from "@/data/sellables"
-import { shopMoneyEconomy } from "./loot"
+import { MONEY_ALLOWANCE, shopMoneyEconomy } from "./loot"
 
 // A fake loot slot — only the fields the allocator + mod fills read, plus a spy on assign.
 const slot = (opts: { weight: number; tier?: Slot["tier"]; kind?: Slot["kind"]; seq?: number }): Slot => {
@@ -67,6 +67,31 @@ describe("shopMoneyEconomy fill", () => {
       sellables.length * SELL_VALUE_BY_TIER.divine +
       (rewards.filter(r => r.type === "money") as unknown as { amount: number }[]).reduce((a, r) => a + r.amount, 0)
     expect(value).toBeGreaterThanOrEqual(2000) // totalBuyable floor (4 mosaic × 500)
+  })
+
+  const placedValue = (slots: Slot[]) =>
+    (slots.map(reward).filter(Boolean) as TreasureReward[]).reduce(
+      (sum, r) =>
+        sum +
+        (r.type === "sellable" ? SELL_VALUE_BY_TIER.divine : 0) +
+        (r.type === "money" ? (r as unknown as { amount: number }).amount : 0),
+      0
+    )
+
+  it("places the priced stock plus the allowance, within the 10% ceiling", () => {
+    const slots = Array.from({ length: 200 }, (_, i) => slot({ weight: 100, tier: "wizard", kind: "end", seq: i }))
+    allocateDistributions(new Set<Slot>(slots), [shopMoneyEconomy], shopWorld(4))
+    const floor = 4 * 500 + MONEY_ALLOWANCE
+    expect(MONEY_ALLOWANCE).toBe(1070)
+    expect(placedValue(slots)).toBeGreaterThanOrEqual(floor)
+    expect(placedValue(slots)).toBeLessThanOrEqual(Math.round(floor * 1.1))
+  })
+
+  it("still places the allowance when the shops sell nothing", () => {
+    const slots = Array.from({ length: 200 }, (_, i) => slot({ weight: 100, tier: "wizard", kind: "end", seq: i }))
+    allocateDistributions(new Set<Slot>(slots), [shopMoneyEconomy], shopWorld(0))
+    expect(placedValue(slots)).toBeGreaterThanOrEqual(MONEY_ALLOWANCE)
+    expect(placedValue(slots)).toBeLessThanOrEqual(Math.round(MONEY_ALLOWANCE * 1.1))
   })
 
   it("hard-fails a present tier with fewer slots than its collectibles", () => {
