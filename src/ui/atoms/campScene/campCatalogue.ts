@@ -180,6 +180,7 @@ export const CAMP_CATALOGUE: CampCatalogue = {
       ["wizard", "signalFire", { on: "platform", lights: [SIGNAL] }],
     ]),
     layered("godStatues", { x: 1.33, y: 1.87, frame: 1.8, footprint: 1.62 }, [
+      ["wizard", "statueBench", { base: true, given: true }],
       ["wizard", "thoth"],
       ["wizard", "bastet"],
       ["wizard", "anubis"],

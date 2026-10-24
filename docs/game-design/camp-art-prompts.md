@@ -739,7 +739,7 @@ The final state; paint this one first for the spot.
 
 Attach: `art/masters/camp/ref-godStatues.webp`, `art/masters/camp/chest.webp`
 
-> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the god statues, complete: a low stone bench with four statues in a row: Thoth ibis-headed in blue and gold, Bastet a seated black cat with gold jewellery, Anubis black jackal-headed in blue and gold, and Ra falcon-headed with a red sun disc. Use the colours of the matching objects in the reference image.
+> [preamble] The first attached image is the reference: paint exactly this camp spot, with its objects, shapes, proportions, arrangement and angle. The second attached image is a finished prop in the target painting style: match its brushwork, matte finish and lighting. Paint one camp spot, the god statues, complete: a long low ledge of pale sandstone blocks running diagonally from the front left up to the back right, and on it four small statue busts, each on its own square stone plinth, spaced evenly along the ledge: at the front left Thoth, a green ibis head with a long curved black beak and a blue headdress, on a gold and white body; then Bastet, a dark blue cat bust with tall ears and a gold beaded collar; then Anubis, a dark jackal head with tall ears and a blue and gold striped headdress, on a gold body; and at the back right Ra, a falcon head with a blue headdress and a red sun disc above it, on a gold body. Use the colours of the matching objects in the reference image.
 
 #### 72. `camp/anubis` — God statues, step 3 of 4 (wizard)
 
@@ -747,7 +747,7 @@ Edit of `camp/ra`.
 
 Attach: `art/masters/camp/ref-godStatues.webp`, `art/masters/camp/ra.webp`
 
-> [edit] Remove this, and only this: a fourth statue on the right end: Ra, falcon-headed with a red sun disc. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the Ra statue at the back right, with its plinth: the falcon head, the red sun disc and its gold body. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 #### 73. `camp/bastet` — God statues, step 2 of 4 (wizard)
@@ -756,7 +756,7 @@ Edit of `camp/anubis`.
 
 Attach: `art/masters/camp/ref-godStatues.webp`, `art/masters/camp/anubis.webp`
 
-> [edit] Remove this, and only this: a third statue: Anubis, black jackal-headed, in blue and gold. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the Anubis statue, third from the front, with its plinth. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 #### 74. `camp/thoth` — God statues, step 1 of 4 (wizard)
@@ -765,7 +765,7 @@ Edit of `camp/bastet`.
 
 Attach: `art/masters/camp/ref-godStatues.webp`, `art/masters/camp/bastet.webp`
 
-> [edit] Remove this, and only this: a second statue next to Thoth: Bastet, a seated black cat with gold jewellery. Where it stood, show the #ff00ff background or
+> [edit] Remove this, and only this: the Bastet cat bust, second from the front, with its plinth. Where it stood, show the #ff00ff background or
 > whatever was behind it.
 
 ### Star canopy (`starCanopy`)
@@ -848,6 +848,16 @@ Attach: `art/masters/camp/waterTrough.webp`
 > [edit] Remove everything except the long low stone water trough: both jars and the gourd bowl. Where the
 > second jar stood behind the trough, show the #ff00ff background. The trough itself stays exactly where and as
 > it is.
+
+### 94. `camp/statueBench` — Layer source: the bare statue ledge
+
+The god statues arrive in any order, so the ledge they stand on is given ground, there with the first one.
+Edit of `camp/thoth`.
+
+Attach: `art/masters/camp/thoth.webp`
+
+> [edit] Remove this, and only this: the Thoth statue with its plinth. Where it stood, paint the rest of the
+> sandstone ledge as it continues. The ledge stays exactly as it is.
 
 ### 91. `camp/starMap-cloth` — Layer source: the star cloth without the compass
 

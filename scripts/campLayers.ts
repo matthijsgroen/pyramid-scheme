@@ -40,6 +40,8 @@ export const LAYER_SOURCES: Record<string, LayerSource> = {
   // Each growth stage of the first palm is the whole plant, so each is cut against the bare bed.
   // The ibis pond adds to the fixed oasis pool, so its first step is cut against the bare pool.
   edgeStones: { without: "oasis" },
+  // Thoth was painted as the first statue on the ledge; cut against the bare ledge.
+  thoth: { without: "statueBench" },
   seed: { without: "bed" },
   sprout: { without: "bed" },
   palm: { without: "bed" },
