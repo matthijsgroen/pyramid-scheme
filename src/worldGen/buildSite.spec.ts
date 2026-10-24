@@ -140,6 +140,20 @@ describe("buildSite", () => {
     expect(floors.map(f => f.exitOrStaircase)).toEqual(["exit", "none", "none"])
   })
 
+  it("authored floors[] branch: a floor with no stairhead section goes down by its main path to one exit on the last floor", () => {
+    const { floors } = buildSite({
+      ...baseCtx,
+      constraint: { floors: [{ pathPuzzles: 1 }, { pathPuzzles: 2 }, { pathPuzzles: 1 }] },
+    })
+    expect(floors.map(f => f.exitOrStaircase)).toEqual([
+      { stairId: "j1:p0:f0:main" },
+      { stairId: "j1:p0:f1:main" },
+      "exit",
+    ])
+    expect(floors[1].entrance).toEqual({ stairId: "j1:p0:f0:main" })
+    expect(floors[2].entrance).toEqual({ stairId: "j1:p0:f1:main" })
+  })
+
   it("auto multi-floor branch: the exit ends the last main floor, and a ward wing has none", () => {
     const { floors } = buildSite({ ...baseCtx, constraint: { mainFloors: 2, wardWings: 1 } })
     expect(floors).toHaveLength(3)

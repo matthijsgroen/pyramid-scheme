@@ -189,12 +189,23 @@ export const wireStaircases = (floors: FloorConfig[], site: { journeyId: string;
 // §8, "the treasure IS the key"). Both are just a side section whose `end` is a stairhead.
 // A floor reached by a side stair is off the main path, so it has no exit: its way out is
 // that stair, back up (one exit per site, at the main path's end).
-export const wireSideSectionStaircases = (floors: FloorConfig[]): void => {
+//
+// An authored floor with no stairhead section of its own goes down by its main path instead, the way a
+// pyramid's main floors do (wireStaircases), so a site authored floor by floor can still be one walk down
+// to a single exit on its last floor.
+export const wireSideSectionStaircases = (
+  floors: FloorConfig[],
+  site: { journeyId: string; pyramidIndex: number }
+): void => {
   for (let fi = 0; fi < floors.length - 1; fi++) {
     const stairSection = floors[fi].sideSections.find(s => typeof s.end === "object")
     if (stairSection && typeof stairSection.end === "object") {
       floors[fi + 1].entrance = { stairId: stairSection.end.stairId }
       floors[fi + 1].exitOrStaircase = "none"
+    } else {
+      const id = stairIdAt({ ...site, floorIndex: fi, path: "main" })
+      floors[fi].exitOrStaircase = { stairId: id }
+      floors[fi + 1].entrance = { stairId: id }
     }
   }
 }
@@ -386,7 +397,7 @@ export const buildSite = <TExtra extends string = never>(ctx: BuildSiteContext<T
         })
       )
     }
-    wireSideSectionStaircases(floorConfigs)
+    wireSideSectionStaircases(floorConfigs, { journeyId, pyramidIndex: i })
     initPuzzleChains(floorConfigs)
     return { floors: floorConfigs }
   }
