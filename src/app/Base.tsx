@@ -39,7 +39,7 @@ type Popup = "collection" | "window" | "journeys"
 // Space kept between the card and the scene's lowest piece on a phone.
 const CARD_GAP = 16
 
-// The camp is the home screen: the scene with its entrances, a HUD, the "Verder met" card and, from `lg`,
+// The camp is the home screen: the scene with its entrances, a HUD, the current-expedition card and, from `lg`,
 // the journeys beside it. Everything else (collection, a mod's window, the journeys on a phone) opens as a
 // popup over it.
 export const Base = ({

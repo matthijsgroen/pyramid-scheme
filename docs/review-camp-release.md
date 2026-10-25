@@ -12,7 +12,7 @@ What got built, per phase:
 - **Phase 3** — the `camp` mod: 28 found items and 99 structure parts on puzzle slots of their tier, the camp save, the Constructies tab, 25 sellable (junk) icon prompts in the repaint queue; camp parts keep their structure's art (designer, 2026-10-25).
 - **Phase 4** — STOPPED after Tasks 1–2: gates hold every mod's requirement, a gate walk, no loot on a shop's end. The animals, the per-gate guard and buying are not built.
 - **Phase 5** — skipped: the economy recompute needs phase 4's purchases.
-- **Phase 6** — the camp is the home screen (HUD, scene entrances, Verder met, desktop side panel), the coming-home screen with the haul, the new-chapter card, settings with the dev tools.
+- **Phase 6** — the camp is the home screen (HUD, scene entrances, the Huidige expeditie card, desktop side panel), the coming-home screen with the haul, the new-chapter card, settings with the dev tools.
 - **Phase 7** — Alle reizen replaces the Travel page; the Verzameling opens in tabs with NIEUW and a chest badge. The mosaic window has no count line; the camp label carries the count.
 - **Phase 8** — 64 draft scenes in nl and en (27 tomb, 10 camp, 27 animal); tomb and camp beats wired, the animal ones wait on phase 4; settings play every draft in develop mode.
 - **Phase 9** — changelog, playtest backlog, docs, the last loot report and the clean-worktree gate.

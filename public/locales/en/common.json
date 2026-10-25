@@ -1254,7 +1254,7 @@
   "camp": {
     "title": "Camp",
     "continue": {
-      "heading": "Continue with",
+      "heading": "Current expedition",
       "setOff": "Set off",
       "pyramid": "Pyramid {{level}} of {{count}} · {{tier}}",
       "tomb": "Tomb · {{tier}}",

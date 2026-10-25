@@ -1261,7 +1261,7 @@
   "camp": {
     "title": "Kamp",
     "continue": {
-      "heading": "Verder met",
+      "heading": "Huidige expeditie",
       "setOff": "Op pad",
       "pyramid": "Piramide {{level}} van {{count}} · {{tier}}",
       "tomb": "Graftombe · {{tier}}",
