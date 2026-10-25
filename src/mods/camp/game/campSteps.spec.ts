@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest"
-import { campDemand, campStepProblems, campUnits, type CampStepEntry, type CampStepTable } from "./campSteps"
+import { difficulties, isFreeOrderDifficulty } from "@/data/difficultyLevels"
+import {
+  campDemand,
+  campStepProblems,
+  campUnits,
+  PART_BANDS,
+  type CampStepEntry,
+  type CampStepTable,
+} from "./campSteps"
 
 const step = (over: Partial<CampStepEntry> & Pick<CampStepEntry, "id">): CampStepEntry => ({
   spot: "hearth",
@@ -49,6 +57,20 @@ describe("campStepProblems", () => {
 
   it("names an early step that is not a structure", () => {
     expect(campStepProblems([step({ id: "pot", early: true })])).toEqual(['step "pot" is early but not a structure'])
+  })
+
+  it("names an early structure with fewer than 2 parts", () => {
+    expect(campStepProblems([step({ id: "ring", source: "structure", parts: ["a"], early: true })])).toContain(
+      'early structure "ring" needs at least 2 parts, one for each of the first two journeys'
+    )
+  })
+
+  it("names an early step on a tier whose journeys open in no order", () => {
+    const freeOrder = difficulties.find(isFreeOrderDifficulty)!
+    const parts = ["a", "b", "c", "d", "e"].slice(0, PART_BANDS[freeOrder].min)
+    expect(campStepProblems([step({ id: "ring", tier: freeOrder, source: "structure", parts, early: true })])).toEqual([
+      `step "ring" is early in ${freeOrder}, whose journeys open in no order`,
+    ])
   })
 
   it("names a tier with two early structures, and allows one per tier", () => {

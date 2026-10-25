@@ -1,5 +1,5 @@
 import type { Difficulty } from "@/data/difficultyLevels"
-import { difficulties } from "@/data/difficultyLevels"
+import { difficulties, isFreeOrderDifficulty } from "@/data/difficultyLevels"
 
 // Where each step of the camp comes from. Every step of the ui's camp catalogue has exactly one source:
 //   found      a find lying in the world, one pick-up is one step
@@ -58,6 +58,10 @@ export const campStepProblems = (table: CampStepTable): string[] => {
       for (const part of duplicates(parts)) problems.push(`structure "${entry.id}" has part "${part}" twice`)
     } else if (entry.parts !== undefined) problems.push(`step "${entry.id}" is not a structure but has parts`)
     if (entry.early && entry.source !== "structure") problems.push(`step "${entry.id}" is early but not a structure`)
+    if (entry.early && entry.source === "structure" && (entry.parts ?? []).length < 2)
+      problems.push(`early structure "${entry.id}" needs at least 2 parts, one for each of the first two journeys`)
+    if (entry.early && isFreeOrderDifficulty(entry.tier))
+      problems.push(`step "${entry.id}" is early in ${entry.tier}, whose journeys open in no order`)
     if (entry.source === "grows") {
       if (entry.growsFrom === undefined || entry.growsFrom.length === 0)
         problems.push(`growing step "${entry.id}" names no step it grows from`)
