@@ -6,7 +6,7 @@ export const FUTOSHIKI_META: FamilyMeta = {
   id: "futoshiki",
   ownerMod: "puzzle",
   tags: ["puzzle"],
-  minTier: "starter",
+  minTier: "junior",
   icon: "⚖️",
   color: "amber",
   rewardPriority: 60, // fills only once treasure's guaranteed slots are spoken for

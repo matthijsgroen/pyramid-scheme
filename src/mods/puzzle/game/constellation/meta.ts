@@ -29,7 +29,7 @@ export const CONSTELLATION_META: FamilyMeta = {
     agriculture: ["irrigation"],
     funerary: ["ceiling"],
   },
-  minTier: "starter",
+  minTier: "junior",
   // Every skin this family has, listed for the puzzle lab: the lab picks a THEME, so naming a skin here is
   // what makes it playable without a site to author its role. `night` is the ambience, not a skin — it
   // layers over whichever place the room already is (a causeway after dark is still a causeway).

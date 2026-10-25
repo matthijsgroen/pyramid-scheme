@@ -18,7 +18,7 @@ export const STAR_BATTLE_META: FamilyMeta = {
     water: ["fields"],
     agriculture: ["fields"],
   },
-  minTier: "starter",
+  minTier: "junior",
   // A sky and a farm, the same two twin stars lists, so the lab can show both. A site never names a skin, it
   // names a role; `theme: "night"` is an ambience the default skin already is.
   themes: ["default", "fields"],
