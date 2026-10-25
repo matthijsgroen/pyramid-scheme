@@ -1,3 +1,4 @@
+import { useModState } from "@/app/state/useModState"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
@@ -46,7 +47,10 @@ if (isModEnabled("tomb-treasure")) {
       },
     }
   })
-  registerHeldKeysProvider(() => useTombTreasureProgress().tombKeyIds)
+  registerHeldKeysProvider(
+    () => useTombTreasureProgress().tombKeyIds,
+    () => useModState("tomb-treasure", {})[2]
+  )
   // Every perk the player has earned, derived from the treasures they hold. This mod owns the perk
   // TABLE, so it owns the fold from key id → perk; the owning mods (trap, hieroglyph, puzzle, core)
   // read the merged list and take their own. Toggling this mod off empties the list, which correctly

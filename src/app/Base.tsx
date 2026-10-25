@@ -8,7 +8,7 @@ import { useMergedJourneyContributions } from "@/app/pages/journeyContributions"
 import { useAvailableJourneyIds } from "@/app/pages/useAvailableJourneyIds"
 import { SettingsModal } from "@/app/SettingsModal"
 import { hudWidgets } from "@/app/SiteMap/hudRegistry"
-import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
+import { useHeldKeysLoaded, useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { LockEditorHost } from "@/app/dev/LockEditorHost"
 import { useSecretTaps } from "@/app/dev/useSecretTaps"
 import { FezContext } from "@/app/fez/context"
@@ -66,9 +66,10 @@ export const Base = ({
   const [chapterClosed, setChapterClosed] = useState(false)
   const [setOffHint, setOffTapped] = useTapHint("setOff")
 
+  // Fez greets once the player has unpacked, not behind the coming-home screen.
   useEffect(() => {
-    showConversation("welcome")
-  }, [showConversation])
+    if (!cameHome) showConversation("welcome")
+  }, [showConversation, cameHome])
 
   // Seven taps on the title toggles develop mode, on any build: phone playtesting happens against the
   // deployed one. See useSecretTaps for why seven taps is safe to ship.
@@ -78,18 +79,21 @@ export const Base = ({
   const [hudRef, hud] = useElementSize()
   const [cardRef, card] = useElementSize()
   const heldKeys = useMergedHeldKeys()
+  const keysLoaded = useHeldKeysLoaded()
   const found = useCampFound()
   const chapter = currentChapter(heldKeys)
   const home = useHomeSave()
   const homeSave = { version: 1 as const, haul: [...home.haul], chapter: home.chapter }
   // A save with no record takes the chapter it is in without announcing it; only a tier reached after
   // the record is announced, and only once the coming-home screen has gone.
-  const recordMissing = home.loaded && needsChapterRecord(homeSave)
+  // The chapter is read off the held keys, which start empty until their saves are read: wait for them too.
+  const settled = home.loaded && keysLoaded
+  const recordMissing = settled && needsChapterRecord(homeSave)
   const { markChapter } = home
   useEffect(() => {
     if (recordMissing) void markChapter(chapter)
   }, [recordMissing, markChapter, chapter])
-  const announced = home.loaded && !cameHome && !chapterClosed ? chapterToAnnounce(homeSave, chapter) : undefined
+  const announced = settled && !cameHome && !chapterClosed ? chapterToAnnounce(homeSave, chapter) : undefined
   const windowEntrance = useWindowEntrance()
 
   const journeys = useJourneyTranslations()
@@ -215,7 +219,7 @@ export const Base = ({
         </CampPopup>
       )}
       {cameHome && <ComingHome onDone={() => onArrived?.()} />}
-      {!cameHome && <HomeHooks />}
+      {!cameHome && !announced && <HomeHooks />}
       {announced && <NewChapter tier={announced} startGame={startGame} onClose={() => setChapterClosed(true)} />}
       <SettingsModal isOpen={showSettings} onClose={() => setShowSettings(false)} startGame={startGame} />
       {isDevelopMode && <LockEditorHost />}

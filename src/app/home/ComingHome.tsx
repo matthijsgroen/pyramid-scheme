@@ -11,13 +11,18 @@ const fireUrl = campArt("campfire")?.url
 // button is the only thing that empties the haul, so a trip's loot is never lost to a reload.
 export const ComingHome = ({ onDone }: { onDone: () => void }) => {
   const { t } = useTranslation("common")
-  const { haul, clearHaul } = useHomeSave()
+  const { haul, clearHaul, loaded } = useHomeSave()
   const lines = useHaulLines(haul)
 
   const unpack = async () => {
     await clearHaul()
     onDone()
   }
+
+  // Only a haul the screen shows is emptied: leaving past one the player never saw (not read yet, or of a
+  // type nothing draws) keeps it for the next time.
+  const shown = lines.length > 0
+  if (!loaded) return null
 
   return (
     <ComingHomeScreen
@@ -28,8 +33,8 @@ export const ComingHome = ({ onDone }: { onDone: () => void }) => {
       ))}
       haulTitle={t("camp.comingHome.haulTitle")}
       lines={lines.map(({ isNew, ...line }) => ({ ...line, badge: isNew ? t("camp.comingHome.new") : undefined }))}
-      buttonLabel={lines.length > 0 ? t("camp.comingHome.unpack") : t("camp.comingHome.toCamp")}
-      onDone={unpack}
+      buttonLabel={shown ? t("camp.comingHome.unpack") : t("camp.comingHome.toCamp")}
+      onDone={shown ? unpack : onDone}
     />
   )
 }

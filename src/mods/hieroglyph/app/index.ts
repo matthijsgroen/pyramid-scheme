@@ -1,3 +1,4 @@
+import { useModState } from "@/app/state/useModState"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
@@ -67,7 +68,10 @@ if (isModEnabled("hieroglyph")) {
   // Completed hieroglyphs are held keys (`hieroglyph:${id}`), so a tableau the player can now solve
   // reads as unlocked content on the travel screen — same seam the tomb-treasure mod uses for ward
   // keys. Core never learns these are hieroglyphs; a tableau node just exposes them as requiredKeyIds.
-  registerHeldKeysProvider(() => useHieroglyphProgress().completedHieroglyphKeys)
+  registerHeldKeysProvider(
+    () => useHieroglyphProgress().completedHieroglyphKeys,
+    () => useModState("hieroglyph", {})[2]
+  )
 
   // Without every hieroglyph, jumping to a late tomb hits a wall of unfillable tableau formulas.
   registerDevGrants(() => {

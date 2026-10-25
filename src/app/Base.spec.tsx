@@ -38,7 +38,16 @@ vi.mock("@/app/pages/useAvailableJourneyIds", () => ({ useAvailableJourneyIds: (
 vi.mock("@/app/pages/journeyContributions", () => ({
   useMergedJourneyContributions: () => ({ lock: () => undefined, hidden: () => false }),
 }))
-vi.mock("@/app/SiteMap/keyProviders", () => ({ useMergedHeldKeys: () => new Set<string>() }))
+let keysLoaded = true
+let setKeysLoaded: (loaded: boolean) => void = () => {}
+vi.mock("@/app/SiteMap/keyProviders", () => ({
+  useMergedHeldKeys: () => new Set<string>(),
+  useHeldKeysLoaded: () => {
+    const [loaded, set] = useState(keysLoaded)
+    setKeysLoaded = set
+    return loaded
+  },
+}))
 let chapter = "starter"
 vi.mock("@/app/pages/journeyAvailability", () => ({ currentChapter: () => chapter }))
 vi.mock("@/app/state/useTapHint", () => ({ useTapHint: () => [false, () => {}] }))
@@ -69,7 +78,6 @@ vi.mock("@/ui/atoms/CampScene", () => ({
 
 const { Base } = await import("./Base")
 const { registerModEntrance } = await import("@/app/home/modEntrances")
-const { registerHomeHook } = await import("@/app/home/homeHooks")
 
 const stubDesktop = (desktop: boolean) =>
   vi.stubGlobal("matchMedia", (query: string) => ({
@@ -103,6 +111,7 @@ const renderBase = (startGame = vi.fn(), cameHome = false) => {
 beforeEach(async () => {
   await clearGameData()
   chapter = "starter"
+  keysLoaded = true
   stubDesktop(false)
   activeJourneyId = undefined
   available = new Set(["a", "b"])
@@ -201,21 +210,11 @@ describe(Base, () => {
   describe("coming home and the new chapter", () => {
     it("shows the coming-home screen over the camp after a journey, and none otherwise", async () => {
       renderBase(vi.fn(), true)
-      expect(screen.getByText("camp.comingHome.title")).toBeTruthy()
+      expect(await screen.findByText("camp.comingHome.title")).toBeTruthy()
       expect(screen.getByTestId("scene")).toBeTruthy()
 
       await act(async () => fireEvent.click(screen.getByText("camp.comingHome.toCamp")))
       expect(screen.queryByText("camp.comingHome.title")).toBeNull()
-    })
-
-    it("runs a registered home hook when the camp shows, not behind the coming-home screen", async () => {
-      const ran = vi.fn()
-      registerHomeHook(() => ran())
-      renderBase(vi.fn(), true)
-      expect(ran).not.toHaveBeenCalled()
-
-      await act(async () => fireEvent.click(screen.getByText("camp.comingHome.toCamp")))
-      expect(ran).toHaveBeenCalled()
     })
 
     it("shows no coming-home screen on a plain visit", () => {
@@ -238,6 +237,18 @@ describe(Base, () => {
       expect(latestGameValue("homecoming")).toEqual({ version: 1, haul: [], chapter: "expert" })
     })
 
+    it("records and announces nothing until the held keys are read", async () => {
+      chapter = "expert"
+      keysLoaded = false
+      renderBase()
+      await new Promise(r => setTimeout(r, 50))
+      expect(latestGameValue("homecoming")).toEqual({ version: 1, haul: [] })
+      expect(screen.queryByText("camp.chapter.title")).toBeNull()
+      await act(async () => setKeysLoaded(true))
+      await vi.waitFor(() => expect(latestGameValue("homecoming")).toEqual({ version: 1, haul: [], chapter: "expert" }))
+      expect(screen.queryByText("camp.chapter.title")).toBeNull()
+    })
+
     it("stores the current chapter silently for a save without a record", async () => {
       chapter = "expert"
       renderBase()
@@ -245,5 +256,32 @@ describe(Base, () => {
       await vi.waitFor(() => expect(latestGameValue("homecoming")).toEqual({ version: 1, haul: [], chapter: "expert" }))
       expect(screen.queryByText("camp.chapter.title")).toBeNull()
     })
+  })
+})
+
+describe("home hooks", () => {
+  it("runs a registered hook when the camp shows, not behind the coming-home screen", async () => {
+    vi.resetModules()
+    const { registerHomeHook } = await import("@/app/home/homeHooks")
+    const { Base: FreshBase } = await import("./Base")
+    const { FezContext: FreshFez } = await import("@/app/fez/context")
+    const ran = vi.fn()
+    registerHomeHook(() => ran())
+    const Page = ({ cameHome }: { cameHome: boolean }) => {
+      const [arriving, setArriving] = useState(cameHome)
+      return <FreshBase startGame={() => {}} cameHome={arriving} onArrived={() => setArriving(false)} />
+    }
+    render(
+      <Develop>
+        <FreshFez.Provider value={{ showConversation: () => {} }}>
+          <Page cameHome />
+        </FreshFez.Provider>
+      </Develop>
+    )
+    await screen.findByText("camp.comingHome.toCamp")
+    expect(ran).not.toHaveBeenCalled()
+
+    await act(async () => fireEvent.click(screen.getByText("camp.comingHome.toCamp")))
+    expect(ran).toHaveBeenCalled()
   })
 })

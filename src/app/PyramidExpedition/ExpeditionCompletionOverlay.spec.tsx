@@ -9,6 +9,12 @@ vi.mock("react-i18next", () => ({
 vi.mock("@/app/translations/useJourneyTranslations", () => ({
   useJourneyTranslation: (id: string) => ({ name: id }),
 }))
+vi.mock("@/data/journeys", () => ({
+  journeys: [
+    { id: "pyramid-a", exterior: "pyramid", difficulty: "tier-x" },
+    { id: "tomb-a", exterior: "tomb", difficulty: "tier-x" },
+  ],
+}))
 vi.mock("../state/useJourneys", () => ({
   useJourneys: () => ({ getJourney: () => ({ completionCount: 0 }) }),
 }))
@@ -31,20 +37,20 @@ const stateFor = (id: string) => ({ journey: journeys.find(j => j.id === id) }) 
 
 describe(ExpeditionCompletionOverlay, () => {
   it("announces the tier's tomb when a pyramid of that tier finishes", () => {
-    renderOverlay("starter_1")
+    renderOverlay("pyramid-a")
 
-    expect(screen.getAllByText(/starter_treasure_tomb/).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/tomb-a/).length).toBeGreaterThan(0)
   })
 
   it("does not announce a tomb as unlocked on its own completion screen", () => {
-    renderOverlay("starter_treasure_tomb")
+    renderOverlay("tomb-a")
 
     expect(screen.queryByText(/ui.newTombUnlocked/)).toBeNull()
   })
 
   it("announces what opened but offers one button, which goes back to camp", () => {
     const onJourneyComplete = vi.fn()
-    renderOverlay("starter_1", onJourneyComplete)
+    renderOverlay("pyramid-a", onJourneyComplete)
 
     expect(screen.getAllByRole("button")).toHaveLength(1)
     fireEvent.click(screen.getByRole("button", { name: "ui.goBackToBase" }))

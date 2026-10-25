@@ -46,6 +46,7 @@ describe("ComingHome", () => {
     const onDone = vi.fn()
     render(<ComingHome onDone={onDone} />)
 
+    await screen.findByText("camp.comingHome.toCamp")
     expect(screen.queryByText("camp.comingHome.haulTitle")).toBeNull()
     expect(screen.queryByText("camp.comingHome.unpack")).toBeNull()
     await act(async () => fireEvent.click(screen.getByText("camp.comingHome.toCamp")))
@@ -58,6 +59,30 @@ describe("ComingHome", () => {
     registerHomecomingPanel({ id: "made-up", order: 1, Component: () => <p>rested</p> })
     render(<ComingHome onDone={() => {}} />)
 
-    expect(screen.getByText("rested")).toBeTruthy()
+    expect(await screen.findByText("rested")).toBeTruthy()
+  })
+
+  it("keeps a haul it did not show when leaving by Naar het kamp", async () => {
+    const { ComingHome, clearGameData, writeGameData, latestGameValue } = await load()
+    await clearGameData()
+    await writeGameData({ homecoming: { version: 1, haul: [bead] } })
+    const onDone = vi.fn()
+    render(<ComingHome onDone={onDone} />)
+
+    const button = await screen.findByText("camp.comingHome.toCamp")
+    await act(async () => fireEvent.click(button))
+
+    expect(onDone).toHaveBeenCalledOnce()
+    expect(latestGameValue("homecoming")).toEqual({ version: 1, haul: [bead] })
+  })
+
+  it("offers no button before the save is read", async () => {
+    const { ComingHome, clearGameData, writeGameData } = await load()
+    await clearGameData()
+    await writeGameData({ homecoming: { version: 1, haul: [bead] } })
+    render(<ComingHome onDone={() => {}} />)
+
+    expect(screen.queryByRole("button")).toBeNull()
+    expect(await screen.findByRole("button")).toBeTruthy()
   })
 })
