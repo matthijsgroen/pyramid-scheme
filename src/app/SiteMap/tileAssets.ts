@@ -136,3 +136,11 @@ export const sharedTileFrames = (prefix: string): string[] => {
   const single = byTier.get(`default/${prefix}`)
   return single ? [single] : []
 }
+
+/** Every file one tileset folder holds (`default`, `placeholder` or a tileset), in a stable order: what a
+ * floor drawn in that tileset can ask the map for, so it can be fetched before the floor is shown. */
+export const tilesetFolderUrls = (folder: Tileset | "default" | "placeholder"): string[] =>
+  [...byTier.entries()]
+    .filter(([key]) => key.startsWith(`${folder}/`))
+    .map(([, url]) => url)
+    .sort()

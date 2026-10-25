@@ -10,6 +10,7 @@ import { useEntranceAnimation } from "@/app/PyramidExpedition/useEntranceAnimati
 import { useLevelParallax } from "@/app/PyramidExpedition/useLevelParallax"
 import { SiteMapScreen } from "@/app/SiteMap/SiteMapScreen"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
+import { usePreloadSiteArt } from "@/app/SiteMap/preloadArt"
 import { clsx } from "clsx"
 import { DesertBackdrop } from "@/ui/atoms/DesertBackdrop"
 import { CaveBackdrop, CaveMouth, cavernFloor } from "@/ui/atoms/CaveBackdrop"
@@ -63,6 +64,13 @@ export const PyramidExpedition: FC<{
     onClose,
   })
   const { startNextLevel, levelCompleted, showingInterior, boardSolved } = flow
+  const siteConfig = journey.siteConfigs?.[activeJourney.levelNr - 1] ?? journey.siteConfigs?.[0]
+  // Fetched while the board is being solved, so the site opens with its art already decoded.
+  const journeyState = getJourney(activeJourney.journeyId)
+  usePreloadSiteArt(
+    activeJourney.levelNr > journey.levelCount ? undefined : siteConfig,
+    journeyState?.standingKey ?? journeyState?.positionKey
+  )
   // The board's entrance animation is only meaningful when the board is actually shown — dropping
   // straight into a restored interior skips it.
   const { entering } = useEntranceAnimation(!showingInterior)
@@ -272,12 +280,12 @@ export const PyramidExpedition: FC<{
       {levelContent && levelCompleted && <LevelCompletionHandler onCompletionFinished={flow.completionFinished} />}
 
       {/* Interior: shown after pyramid is solved for V3 journeys */}
-      {showingInterior && journey.siteConfigs && (
+      {showingInterior && siteConfig && (
         <div className="absolute inset-0 z-30 bg-stone-950">
           <SiteMapScreen
             key={`${activeJourney.journeyId}-${activeJourney.levelNr}-${activeJourney.completionCount}`}
             journeyId={activeJourney.journeyId}
-            siteConfig={journey.siteConfigs[activeJourney.levelNr - 1] ?? journey.siteConfigs[0]}
+            siteConfig={siteConfig}
             levelIndex={activeJourney.levelNr - 1}
             exterior={levelSetup?.exterior}
             lastLevel={activeJourney.levelNr >= journey.levelCount}
