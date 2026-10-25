@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- The camp is home: set off, all journeys, the collection and the mosaic open from the camp; coming home shows your haul.
+- The camp is home: set off, all journeys in one list, the collection in tabs with NIEUW marks and the mosaic open from the camp; coming home shows your haul.
 - Camp things and structure parts are found on puzzles; started structures show in the collection.
 - Hearts refill at camp; waterskins on expert and up heal on the spot; supplies and the supplies detector are gone.
 - Every treasure tomb is now hidden in a cave before its sunlit cavern; the starter tomb's cave is behind a lever lock.
