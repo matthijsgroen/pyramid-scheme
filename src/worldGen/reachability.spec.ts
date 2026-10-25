@@ -747,3 +747,71 @@ describe("isOrderedJourney", () => {
     expect(isOrderedJourney(withLockWeb({ inputs: {}, open: true }))).toBe(false)
   })
 })
+
+describe("reachableFloorsInSite on a hidden stair", () => {
+  // Floor 0's hidden side section ends in the stairhead floor 1 is entered by: floor 1 is reached only through
+  // hidden cells, and holds a reward of its own.
+  const floorOneLoot = { type: "mosaicPiece", tier: "starter" } as const
+  const hiddenStairSite = (): SiteConfig => [
+    {
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [{ pathPuzzles: 0, difficulty: "starter", end: { stairId: "site:hidden" }, hidden: true }],
+    },
+    {
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      entrance: { stairId: "site:hidden" },
+      mainEndReward: floorOneLoot,
+      sideSections: [],
+    },
+  ]
+  const ref = { journeyId: "j", levelIndex: 0 }
+  const sight: ReachabilitySupport = { hiddenRequirement: () => "made-up-sight" }
+  const walk = (held: string[], support: ReachabilitySupport, authoredKeysHeld = false) =>
+    reachableFloorsInSite(
+      ref,
+      hiddenStairSite(),
+      new Set(held),
+      undefined,
+      undefined,
+      undefined,
+      support,
+      undefined,
+      authoredKeysHeld
+    )
+
+  it("with no hidden requirement a hidden section walks open", () => {
+    const result = walk([], {})
+    expect(result.floors).toEqual(new Set([0, 1]))
+    expect(result.reachableRewards).toContainEqual(floorOneLoot)
+    expect(result.discoveredLocks.size).toBe(0)
+  })
+
+  it("leaves the floor past a hidden stair out until the requirement is held, and discovers it as a lock", () => {
+    const shut = walk([], sight)
+    expect(shut.floors).toEqual(new Set([0]))
+    expect(shut.reachableRewards).not.toContainEqual(floorOneLoot)
+    expect(shut.discoveredLocks).toEqual(new Set(["made-up-sight"]))
+
+    const held = walk(["made-up-sight"], sight)
+    expect(held.floors).toEqual(new Set([0, 1]))
+    expect(held.discoveredLocks.size).toBe(0)
+  })
+
+  it("walks a hidden section open in the permissive bracket, which answers what is ever obtainable", () => {
+    const result = walk([], sight, true)
+    expect(result.floors).toEqual(new Set([0, 1]))
+    expect(result.discoveredLocks.size).toBe(0)
+  })
+
+  it("discovers no lock on a floor whose walk never stands beside a hidden cell", () => {
+    const site: SiteConfig = [{ ...hiddenStairSite()[1], entrance: undefined }]
+    const result = reachableFloorsInSite(ref, site, new Set(), undefined, undefined, undefined, sight)
+    expect(result.discoveredLocks.size).toBe(0)
+  })
+})

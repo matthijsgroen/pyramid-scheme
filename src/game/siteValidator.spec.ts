@@ -440,7 +440,7 @@ describe(reachableFrom, () => {
       [0, 2]
     )
     const blockedRequirements = new Set<string>()
-    const reachable = reachableFrom(grid, [0, 0], new Set(), undefined, blockedRequirements)
+    const reachable = reachableFrom(grid, [0, 0], new Set(), { blockedRequirements })
     expect(reachable.has("0,2")).toBe(false)
     expect(blockedRequirements.size).toBe(0)
   })
@@ -456,7 +456,7 @@ describe(reachableFrom, () => {
       [0, 2]
     )
     const blockedRequirements = new Set<string>()
-    const reachable = reachableFrom(grid, [0, 0], new Set(), undefined, blockedRequirements)
+    const reachable = reachableFrom(grid, [0, 0], new Set(), { blockedRequirements })
     expect(reachable.has("0,2")).toBe(false)
     expect(blockedRequirements).toEqual(new Set(["authored:east"]))
   })
@@ -474,7 +474,7 @@ describe(reachableFrom, () => {
       [0, 2]
     )
     const blockedRequirements = new Set<string>()
-    const reachable = reachableFrom(grid, [0, 0], new Set(), undefined, blockedRequirements)
+    const reachable = reachableFrom(grid, [0, 0], new Set(), { blockedRequirements })
     expect(reachable.has("0,2")).toBe(false)
     expect(blockedRequirements.size).toBe(0)
   })
@@ -493,7 +493,7 @@ describe(reachableFrom, () => {
       [0, 0],
       [0, 2]
     )
-    expect(reachableFrom(grid, [0, 0], new Set(), undefined, undefined, true).has("0,2")).toBe(true)
+    expect(reachableFrom(grid, [0, 0], new Set(), { authoredKeysHeld: true }).has("0,2")).toBe(true)
   })
 
   it("authoredKeysHeld walks through an authored gate asking for SEVERAL keys", () => {
@@ -506,7 +506,7 @@ describe(reachableFrom, () => {
       [0, 0],
       [0, 2]
     )
-    expect(reachableFrom(grid, [0, 0], new Set(), undefined, undefined, true).has("0,2")).toBe(true)
+    expect(reachableFrom(grid, [0, 0], new Set(), { authoredKeysHeld: true }).has("0,2")).toBe(true)
   })
 
   it("authoredKeysHeld leaves an UNAUTHORED gate shut, so it opens doors rather than all of them", () => {
@@ -520,8 +520,26 @@ describe(reachableFrom, () => {
       [0, 2]
     )
     const blockedRequirements = new Set<string>()
-    expect(reachableFrom(grid, [0, 0], new Set(), undefined, blockedRequirements, true).has("0,2")).toBe(false)
+    expect(reachableFrom(grid, [0, 0], new Set(), { blockedRequirements, authoredKeysHeld: true }).has("0,2")).toBe(
+      false
+    )
     expect(blockedRequirements).toEqual(new Set(["tomb:ward"]))
+  })
+
+  it("walks a hidden cell by default, and leaves it and what lies past it out when hiddenOpen is false", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, { ...corridor(["w", "e"]), hidden: true }],
+        [0, 2, room("treasure", ["w"], { hidden: true })],
+      ],
+      [0, 0],
+      [0, 0]
+    )
+    expect(reachableFrom(grid, [0, 0]).has("0,2")).toBe(true)
+    const shut = reachableFrom(grid, [0, 0], new Set(), { hiddenOpen: false })
+    expect(shut.has("0,1")).toBe(false)
+    expect(shut.has("0,2")).toBe(false)
   })
 })
 

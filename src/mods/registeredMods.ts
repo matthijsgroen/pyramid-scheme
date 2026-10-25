@@ -107,14 +107,28 @@ export const MOD_WORLD_VALIDATORS: WorldValidator[] = REGISTERED_MODS.flatMap(m 
 // all stand, so a gate holds every mod's requirement (AND across mods, OR within one group). An empty
 // group offers no bucket to hold, so it would lock its tier for good; it is dropped as no requirement. With
 // no contributor (or a mod toggled off) a hook answers nothing, so core reachability falls back to
-// "no lock" — generic and mod-agnostic.
+// "no lock" — generic and mod-agnostic. The hidden requirement is one fact for the whole world, so a second mod
+// naming one is a build error rather than a silent pick.
 const firstDefined = <T>(values: (T | undefined)[]): T | undefined => values.find(v => v !== undefined)
+const oneHiddenRequirement = (supports: readonly ReachabilitySupport[]): ReachabilitySupport["hiddenRequirement"] => {
+  const named = supports.flatMap(s => (s.hiddenRequirement ? [s.hiddenRequirement] : []))
+  if (named.length > 1)
+    throw new Error(`mergeReachabilitySupports: ${named.length} supports name a hidden requirement; one may.`)
+  return named[0]
+}
 export const mergeReachabilitySupports = (
   supports: readonly ReachabilitySupport[]
 ): Pick<
   ReachabilitySupport,
-  "thresholdFor" | "bucketForReward" | "alsoHarvests" | "factsForCount" | "journeyEntryLocks" | "tierUnlockGroups"
+  | "thresholdFor"
+  | "bucketForReward"
+  | "alsoHarvests"
+  | "factsForCount"
+  | "journeyEntryLocks"
+  | "tierUnlockGroups"
+  | "hiddenRequirement"
 > => ({
+  hiddenRequirement: oneHiddenRequirement(supports),
   thresholdFor: bucket => firstDefined(supports.map(s => s.thresholdFor?.(bucket))),
   bucketForReward: reward => firstDefined(supports.map(s => s.bucketForReward?.(reward))),
   alsoHarvests: reward => supports.flatMap(s => s.alsoHarvests?.(reward) ?? []),

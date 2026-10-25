@@ -43,6 +43,20 @@ describe(mergeReachabilitySupports, () => {
     expect(merged.tierUnlockGroups?.("starter")).toEqual([])
   })
 
+  it("two supports naming a hidden requirement fail the merge", () => {
+    const naming: ReachabilitySupport = { hiddenRequirement: () => "made-up-sight" }
+    expect(() => mergeReachabilitySupports([naming, { hiddenRequirement: () => "other-sight" }])).toThrow(
+      /hidden requirement/
+    )
+  })
+
+  it("keeps the one support's hidden requirement, and names none when no support does", () => {
+    expect(mergeReachabilitySupports([first, { hiddenRequirement: () => "made-up-sight" }]).hiddenRequirement?.()).toBe(
+      "made-up-sight"
+    )
+    expect(mergeReachabilitySupports([first, second]).hiddenRequirement).toBeUndefined()
+  })
+
   it("drops an empty group, which would otherwise lock its tier for good", () => {
     const merged = mergeReachabilitySupports([first, { tierUnlockGroups: () => [[]] }])
     expect(merged.tierUnlockGroups?.("expert")).toEqual([["perk-a", "perk-b"]])

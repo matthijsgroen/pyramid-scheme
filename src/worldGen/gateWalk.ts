@@ -11,8 +11,9 @@ import {
 // THE GATE WALK: what lies before a gate. "Before a gate" is the ground a player reaches from empty
 // hands with that gate's fact never held: every key, map piece and ladder treasure in reach is picked
 // up (a shop's stock counts as held the moment its shop is reached), world-wide, in the strict bracket
-// (an authored door needs its key), and the walk settles to its fixed point. Hidden pockets in that
-// ground count: they are reachable, only not guaranteed found.
+// (an authored door needs its key), and the walk settles to its fixed point. A hidden section is a gate too:
+// its cells are in the ground only once the support's hidden requirement is held (a reward reached in the
+// ground may grant it), and withholding that fact keeps every hidden pocket out.
 //
 // The walk never decides money. It lists every reward standing in the ground — room rewards and shop
 // stock alike, the withheld fact's own reward included — and a mod counts its own kind in there:

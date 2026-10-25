@@ -1,11 +1,11 @@
 import type { SiteConfig, Tier, TreasureReward } from "./types"
-import type { AssemblerResult, FloorConfig as GameFloorConfig } from "../game/siteTypes"
+import type { AssemblerResult, FloorConfig as GameFloorConfig, FloorGrid } from "../game/siteTypes"
 import type { ResolveEncounter, ResolveKeyRequirements } from "../game/siteAssembler"
 import { assembleFloor, defaultResolveEncounter } from "../game/siteAssembler"
 import type { ResolveOneWayRealisation } from "../game/oneWayRealisation"
 import type { ResolvePassageRealisation } from "../game/passageRealisation"
 import type { ResolveRegionBarrierRealisation } from "../game/regionBarrierRealisation"
-import { collectReachableKeys } from "../game/siteValidator"
+import { collectReachableKeys, reachableFrom } from "../game/siteValidator"
 import { mechanismGatesOf } from "../game/mechanismDoors"
 import { hashString } from "../support/hashString"
 
@@ -40,6 +40,12 @@ export type ReachabilitySupport = {
   factsForCount?: (bucket: string, count: number) => string[]
   journeyEntryLocks?: (journeyId: string) => readonly JourneyEntryLock[]
   tierUnlockGroups?: (tier: Tier) => readonly (readonly string[])[]
+  /**
+   * The fact a hidden section needs: its cells are ground to the strict walk only while this fact is held, and a
+   * walk that stops at one discovers the fact as a lock. Absent, hidden sections walk open. The permissive walk
+   * always walks them open: it answers what is ever obtainable.
+   */
+  hiddenRequirement?: () => string
 }
 const noSupport: ReachabilitySupport = {}
 
@@ -131,6 +137,12 @@ export type SiteReachability = {
   exit: boolean
 }
 
+const isHidden = (grid: FloorGrid, at: string): boolean => {
+  const [r, c] = at.split(",").map(Number)
+  const cell = grid.cells[r][c]
+  return (cell.type === "room" || cell.type === "corridor") && !!cell.hidden
+}
+
 // Reachable floor indices within one site, given already-held facts (plus any tombKey
 // rewards the site's own reachable floors grant along the way — a tomb's treasure can be
 // exactly the key that opens its own further gate, pyramid-interior-design.md §8).
@@ -173,6 +185,7 @@ export const reachableFloorsInSite = (
   }
   const exitFloor = site.findIndex(floor => floor.exitOrStaircase === "exit")
   let exit = false
+  const hiddenRequirement = authoredKeysHeld ? undefined : support.hiddenRequirement?.()
 
   for (let i = 0; i < site.length; i++) {
     if (!reachable.has(i)) continue
@@ -207,19 +220,27 @@ export const reachableFloorsInSite = (
       )
     }
 
+    const hiddenOpen = hiddenRequirement === undefined || keys.has(hiddenRequirement)
+    const mechanismGates = mechanismGatesOf(result.grid)
     const {
       keys: expandedKeys,
       reachable: reachableHere,
       blockedRequirements,
-    } = collectReachableKeys(
-      result.grid,
-      result.grid.entrancePos,
-      keys,
+    } = collectReachableKeys(result.grid, result.grid.entrancePos, keys, {
       authoredKeysHeld,
-      mechanismGatesOf(result.grid),
-      withheld
-    )
+      mechanismGates,
+      withheld,
+      hiddenOpen,
+    })
     keys = expandedKeys
+    // The hidden requirement is a lock here when holding it would let this walk onto a hidden cell.
+    if (
+      !hiddenOpen &&
+      [...reachableFrom(result.grid, result.grid.entrancePos, keys, { mechanismGates })].some(
+        at => isHidden(result.grid, at) && !reachableHere.has(at)
+      )
+    )
+      discoveredLocks.add(hiddenRequirement)
     if (i === exitFloor && reachableHere.has(`${result.grid.exitPos[0]},${result.grid.exitPos[1]}`)) exit = true
     // A gate a mechanism of this floor owns is never blocking here (the walk takes the floor's own lock as
     // sound), so only a key gate, or a floor key such a gate also lists, is a lock the worklist can see.

@@ -103,3 +103,60 @@ describe(makeGateWalk, () => {
     expect(walk("ladder")).not.toBe(walk())
   })
 })
+
+describe("makeGateWalk on a hidden section", () => {
+  // A made-up world: one journey's hidden side section holds a reward, and another journey's main path ends in
+  // a treasure the support counts as the hidden requirement.
+  const hiddenLoot: TreasureReward = { type: "mosaicPiece", tier: "starter" }
+  const lens: TreasureReward = { type: "tombKey", keyId: "lens" }
+  const hiddenWorld = (): Record<string, SiteConfig[]> => ({
+    near: [
+      [
+        {
+          pathPuzzles: 1,
+          difficulty: "starter",
+          end: "treasure",
+          exitOrStaircase: "exit",
+          sideSections: [
+            { pathPuzzles: 0, difficulty: "starter", end: "treasure", hidden: true, endReward: hiddenLoot },
+          ],
+        },
+      ],
+    ],
+    far: [
+      [
+        {
+          pathPuzzles: 1,
+          difficulty: "starter",
+          end: "treasure",
+          exitOrStaircase: "exit",
+          mainEndReward: lens,
+          sideSections: [],
+        },
+      ],
+    ],
+  })
+  const hiddenSupport: ReachabilitySupport = {
+    bucketForReward: reward => (reward.type === "tombKey" ? (reward.keyId as string) : undefined),
+    alsoHarvests: reward => (reward.type === "tombKey" && reward.keyId === "lens" ? ["made-up-sight"] : []),
+    hiddenRequirement: () => "made-up-sight",
+  }
+  const hiddenWalk = () =>
+    makeGateWalk({
+      configs: hiddenWorld(),
+      journeyMeta: { near: { tier: "starter" }, far: { tier: "starter" } },
+      support: hiddenSupport,
+    })
+
+  it("a reward in a hidden section is out of the ground until the detector fact is held, and in once a reached treasure grants it", () => {
+    const walk = hiddenWalk()
+    const without = walk("made-up-sight")
+    expect(without.rewards).toContainEqual(lens)
+    expect(without.rewards).not.toContainEqual(hiddenLoot)
+    expect(without.blocking).toEqual(new Set(["made-up-sight"]))
+
+    const open = walk()
+    expect(open.rewards).toContainEqual(hiddenLoot)
+    expect(open.blocking.size).toBe(0)
+  })
+})

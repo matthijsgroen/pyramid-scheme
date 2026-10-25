@@ -125,6 +125,7 @@ export const mergeReachabilitySupport = (
   factsForCount: support.factsForCount,
   journeyEntryLocks: support.journeyEntryLocks,
   tierUnlockGroups: support.tierUnlockGroups,
+  hiddenRequirement: support.hiddenRequirement,
 })
 
 export type PlacedWorld = {

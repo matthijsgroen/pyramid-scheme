@@ -30,7 +30,10 @@ const walkFloor = (grid: FloorGrid, held: ReadonlySet<string>, reentry: boolean)
   if (!lock) {
     // Nothing on the floor moves: every key but the web's is taken as held, as the web's graph takes it.
     const keys = new Set([...doorKeys].filter(id => !isWebKey(id)))
-    const reached = reachableFrom(grid, grid.entrancePos, keys, undefined, undefined, true, mechanismGatesOf(grid))
+    const reached = reachableFrom(grid, grid.entrancePos, keys, {
+      authoredKeysHeld: true,
+      mechanismGates: mechanismGatesOf(grid),
+    })
     return { exit: reached.has(key(grid.exitPos)), reached, waiting: new Set() }
   }
   const found = reachableStates(lock, MAX_LOCK_STATES, { reentry })

@@ -23,14 +23,21 @@ const MOVES: Record<string, [number, number]> = { n: [-1, 0], s: [1, 0], e: [0, 
 // `mechanismGates` names the gate keys a mechanism standing on this floor owns, with how that gate folds its
 // owners: the walk counts the mechanism's say as given (the floor's lock walk is sound, so it can be operated),
 // and a door under `any` needs nothing else, while one under `all` still needs every floor key it lists.
+// `hiddenOpen` says whether a hidden cell is ground: true (the default) walks hidden sections like any other, false
+// leaves every hidden cell out, as a player who cannot find hidden corridors sees the floor.
+export type WalkOptions = {
+  blockedPos?: Pos
+  blockedRequirements?: Set<string>
+  authoredKeysHeld?: boolean
+  mechanismGates?: ReadonlyMap<string, DoorMode>
+  hiddenOpen?: boolean
+}
+
 export const reachableFrom = (
   grid: FloorGrid,
   startPos: Pos,
   ownedKeys: ReadonlySet<string> = new Set(),
-  blockedPos?: Pos,
-  blockedRequirements?: Set<string>,
-  authoredKeysHeld = false,
-  mechanismGates?: ReadonlyMap<string, DoorMode>
+  { blockedPos, blockedRequirements, authoredKeysHeld = false, mechanismGates, hiddenOpen = true }: WalkOptions = {}
 ): Set<string> => {
   const [sr, sc] = startPos
   const startKey = posKey(sr, sc)
@@ -44,6 +51,9 @@ export const reachableFrom = (
   for (const run of oneWayRuns(grid))
     landingsOf.set(posKey(...run.launch), [...(landingsOf.get(posKey(...run.launch)) ?? []), run.landing])
 
+  const shutHidden = (cell: FloorGrid["cells"][number][number] | undefined) =>
+    !hiddenOpen && (cell?.type === "room" || cell?.type === "corridor") && !!cell.hidden
+
   while (queue.length > 0) {
     const [r, c] = queue.shift()!
     const cell = grid.cells[r]?.[c]
@@ -52,7 +62,8 @@ export const reachableFrom = (
     for (const landing of landingsOf.get(posKey(r, c)) ?? [])
       if (
         !visited.has(posKey(...landing)) &&
-        !(blockedPos && landing[0] === blockedPos[0] && landing[1] === blockedPos[1])
+        !(blockedPos && landing[0] === blockedPos[0] && landing[1] === blockedPos[1]) &&
+        !shutHidden(grid.cells[landing[0]]?.[landing[1]])
       ) {
         visited.add(posKey(...landing))
         queue.push(landing)
@@ -69,7 +80,7 @@ export const reachableFrom = (
       if (blockedPos && nr === blockedPos[0] && nc === blockedPos[1]) continue
 
       const ncell = grid.cells[nr]?.[nc]
-      if (!ncell || ncell.type === "empty") continue
+      if (!ncell || ncell.type === "empty" || shutHidden(ncell)) continue
 
       // Gate: only passable if we own the key(s). requiredKeyId/requiredKeyIds alone are
       // the signal — any encounter can carry a key requirement (a gate's only job; a
@@ -122,31 +133,25 @@ export const reachableFrom = (
 // ones (a room's own tombKey reward opening its own further gate — pyramid-interior-
 // design.md §8, "the treasure IS the key"). Exported for src/worldGen/reachability.ts's
 // coarse graph, which needs the same fixed point across a whole multi-floor site.
-// `authoredKeysHeld` passes straight to `reachableFrom` — see there for what the permissive
-// bracket opens. The `withheld` key is never collected, even standing in reach: the gate walk asks
+// The walk options pass straight to `reachableFrom` — see there for what the permissive bracket and
+// `hiddenOpen` open. The `withheld` key is never collected, even standing in reach: the gate walk asks
 // what lies before a gate, so the key that opens it must stay unheld.
+export type KeyWalkOptions = Pick<WalkOptions, "authoredKeysHeld" | "mechanismGates" | "hiddenOpen"> & {
+  withheld?: string
+}
+
 export const collectReachableKeys = (
   grid: FloorGrid,
   startPos: Pos,
   initialKeys: ReadonlySet<string> = new Set(),
-  authoredKeysHeld = false,
-  mechanismGates?: ReadonlyMap<string, DoorMode>,
-  withheld?: string
+  { withheld, ...walkOptions }: KeyWalkOptions = {}
 ): { reachable: Set<string>; keys: Set<string>; blockedRequirements: Set<string> } => {
   const collectedKeys = new Set(initialKeys)
   // Fresh set per pass — only the FINAL (post-fixed-point) pass's blocked requirements are
   // genuine discovered locks; an earlier pass's block may have been resolved by a tombKey
   // this same floor's fixed point went on to collect.
   let blockedRequirements = new Set<string>()
-  let reachable = reachableFrom(
-    grid,
-    startPos,
-    collectedKeys,
-    undefined,
-    blockedRequirements,
-    authoredKeysHeld,
-    mechanismGates
-  )
+  let reachable = reachableFrom(grid, startPos, collectedKeys, { ...walkOptions, blockedRequirements })
   let changed = true
   while (changed) {
     changed = false
@@ -167,15 +172,7 @@ export const collectReachableKeys = (
     }
     if (changed) {
       blockedRequirements = new Set<string>()
-      reachable = reachableFrom(
-        grid,
-        startPos,
-        collectedKeys,
-        undefined,
-        blockedRequirements,
-        authoredKeysHeld,
-        mechanismGates
-      )
+      reachable = reachableFrom(grid, startPos, collectedKeys, { ...walkOptions, blockedRequirements })
     }
   }
   return { reachable, keys: collectedKeys, blockedRequirements }
@@ -259,7 +256,7 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
   for (const { switchPos, gatePos } of switchGates) {
     // Starting in the switch is standing in it, so a walk out of the entrance is already through it.
     if (switchPos[0] === grid.entrancePos[0] && switchPos[1] === grid.entrancePos[1]) continue
-    const withoutSwitch = reachableFrom(grid, grid.entrancePos, allKeyIds, switchPos)
+    const withoutSwitch = reachableFrom(grid, grid.entrancePos, allKeyIds, { blockedPos: switchPos })
     if (withoutSwitch.has(posKey(gatePos[0], gatePos[1])))
       reasons.push({ type: "switchGateNotBehindSwitch", switchPos, gatePos })
   }

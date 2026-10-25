@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest"
 import type { SiteConfig, TreasureReward } from "./types"
 import type { ReachabilitySupport } from "./reachability"
-import { placeFragments } from "./placeFragments"
+import { mergeReachabilitySupport, placeFragments, type CurrencyDistribution } from "./placeFragments"
+import type { Distribution } from "./slotAllocator"
 import { PYRAMID_JOURNEYS } from "./data"
 
 // placeFragments reads each journey's tier from the world's journey list, so the made-up world
@@ -71,3 +72,84 @@ describe("placeFragments gate walk", () => {
 })
 
 const byType = (a: TreasureReward, b: TreasureReward) => a.type.localeCompare(b.type)
+
+describe("placeFragments behind a hidden corridor", () => {
+  // The starter journey's floor 1 is entered only by a hidden stair from floor 0, so none of its slots is flagged
+  // hidden, yet every one of them stands past hidden cells. The junior journey's main path ends in a lens the
+  // support counts as the hidden requirement, when the world holds one.
+  const lens: TreasureReward = { type: "tombKey", keyId: "lens" }
+  const glyph: TreasureReward = { type: "made-up-glyph" }
+  const coin: TreasureReward = { type: "made-up-coin" }
+  const hiddenStairWorld = (withLens: boolean): Record<string, SiteConfig[]> => ({
+    [journeyOfTier("starter")]: [
+      [
+        {
+          ...plainSite()[0],
+          sideSections: [{ pathPuzzles: 0, difficulty: "starter", end: { stairId: "site:hidden" }, hidden: true }],
+        },
+        {
+          ...plainSite()[0],
+          entrance: { stairId: "site:hidden" },
+          mainEndReward: { type: "fragmentSlot" },
+          rewards: [undefined],
+        },
+      ],
+    ],
+    [journeyOfTier("junior")]: [[{ ...plainSite()[0], ...(withLens ? { mainEndReward: lens } : {}) }]],
+  })
+  const support: ReachabilitySupport = {
+    bucketForReward: reward => (reward.type === "tombKey" ? (reward.keyId as string) : undefined),
+    alsoHarvests: reward => (reward.type === "tombKey" && reward.keyId === "lens" ? ["made-up-sight"] : []),
+    hiddenRequirement: () => "made-up-sight",
+  }
+  const glyphCurrency: CurrencyDistribution = {
+    ownsBucket: bucket => bucket === "made-up-glyph",
+    toReward: () => glyph,
+    allBuckets: () => ["made-up-glyph"],
+    demandFor: bucket => ({
+      bucket,
+      instanceId: "made-up-glyph",
+      tier: "starter",
+      preferredWardKeys: [],
+      required: 1,
+      totalRequired: 1,
+    }),
+    rank: candidates => [...candidates],
+  }
+  const coins: Distribution = {
+    id: "made-up-coins",
+    footprint: () => ({ min: 1, max: 1 }),
+    eligible: slot => slot.kind === "puzzle" && slot.ref.floorIndex === 1,
+    fill: slots => slots.forEach(slot => slot.assign(coin)),
+  }
+
+  it("a slot not flagged hidden but reached only through hidden cells (past a hidden stair) gets no key until the detector is held", () => {
+    expect(() =>
+      placeFragments(hiddenStairWorld(false), [glyphCurrency], undefined, [], [], undefined, 0, support)
+    ).toThrow(/made-up-glyph.*no reachable slot/)
+    const world = hiddenStairWorld(true)
+    placeFragments(world, [glyphCurrency], undefined, [], [], undefined, 0, support)
+    expect(world[journeyOfTier("starter")][0][1].mainEndReward).toEqual(glyph)
+  })
+
+  it("a dynamic distribution's slot reached only through hidden cells counts as behind the detector", () => {
+    const { reachableRewards, walk } = placeFragments(
+      hiddenStairWorld(true),
+      [],
+      undefined,
+      [],
+      [coins],
+      () => 60,
+      0,
+      support
+    )
+    expect(reachableRewards).toContainEqual(coin)
+    expect(walk().rewards).toContainEqual(coin)
+    expect(walk("made-up-sight").rewards).not.toContainEqual(coin)
+    expect(walk("made-up-sight").blocking).toEqual(new Set(["made-up-sight"]))
+  })
+
+  it("the merged support keeps the hidden requirement", () => {
+    expect(mergeReachabilitySupport([], support).hiddenRequirement?.()).toBe("made-up-sight")
+  })
+})
