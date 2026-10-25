@@ -16,6 +16,7 @@ import { puzzleMod } from "./puzzle"
 import { mosaicMod } from "./mosaic"
 import { hieroglyphMod } from "./hieroglyph"
 import { trapMod } from "./trap"
+import { campMod } from "./camp"
 import { shopMod } from "./shop"
 import { tombTreasureMod } from "./tombTreasure"
 import { storyMod } from "./story"
@@ -31,6 +32,7 @@ export const REGISTERED_MODS: ModDescriptor[] = [
   mosaicMod,
   hieroglyphMod,
   trapMod,
+  campMod,
   shopMod,
   tombTreasureMod,
   storyMod,
@@ -78,10 +80,11 @@ export const MOD_PASSAGE_REALISATIONS: PassageRealisationMeta[] = REGISTERED_MOD
 export const resolvePassageRealisation: ResolvePassageRealisation = id =>
   id === undefined ? undefined : MOD_PASSAGE_REALISATIONS.find(realisation => realisation.id === id)
 
-// Every dynamic-loot distribution all enabled mods contribute, in registry order (trap waterskins
-// before the shop money economy — waterskins claim their expert+ puzzle slots first, then the shop
-// takes what's left). A distribution drops when its mod leaves REGISTERED_MODS: shop off → no
-// money/junk, trap off → no waterskins.
+// Every dynamic-loot distribution all enabled mods contribute, in registry order: trap → camp → shop.
+// Waterskins claim their expert+ puzzle slots first, camp finds and parts take theirs next, then the
+// shop's money fills what's left (its budget is global, so its coins move to other slots, not out of
+// the world). A distribution drops when its mod leaves REGISTERED_MODS: shop off → no money/junk,
+// camp off → no camp loot, trap off → no waterskins.
 export const DYNAMIC_DISTRIBUTIONS: Distribution[] = REGISTERED_MODS.flatMap(m => m.dynamicDistributions ?? [])
 
 // Every mod's shop-stock placements, in registry order (so a shop shared by several currencies
