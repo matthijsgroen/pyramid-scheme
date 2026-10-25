@@ -317,7 +317,15 @@ export const validateSite = (grid: FloorGrid): ValidationResult => {
               (bcell.tags?.includes("puzzle") || bcell.tags?.includes("tomb-puzzle") || bcell.tags?.includes("trap"))
             // A door is something to reach whatever it wears: a lock's own doors carry no tags until their face.
             const isGate = bcell.tags?.includes("gate") || bcell.requiredKeyId !== undefined
-            if (isGate || bcell.roomType === "portal" || isTreasureLike) hasInteresting = true
+            // A lock's control (lever, plate, sequence tile, pipe hole, or a room working one) is a room the
+            // player has to stand in, so it is worth reaching too.
+            const isMechanism =
+              bcell.mechanism !== undefined ||
+              bcell.worksMechanism !== undefined ||
+              bcell.plate !== undefined ||
+              bcell.sequenceTile !== undefined ||
+              bcell.pipeHole !== undefined
+            if (isGate || isMechanism || bcell.roomType === "portal" || isTreasureLike) hasInteresting = true
             else if (isPuzzleLike || bcell.roomType === "fork") {
               // traverse through puzzles/forks to find what's at the end of the branch
               for (const d of bcell.dirs) {

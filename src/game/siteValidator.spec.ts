@@ -284,6 +284,71 @@ describe(validateSite, () => {
     expect(validateSite(grid)).toEqual({ valid: true })
   })
 
+  // A lock's control is a room the player has to stand in to work it, so a branch ending at one is worth walking.
+  const lever: RoomCell = {
+    type: "room",
+    roomType: "encounter",
+    dirs: new Set(["n"]),
+    state: "reachable",
+    mechanism: { states: ["left", "right"], initial: "left", returnsToInitial: true, positions: [] },
+  }
+  const mechanismRoom = (extra: Partial<RoomCell>): RoomCell => ({
+    type: "room",
+    roomType: "encounter",
+    dirs: new Set(["n"]),
+    state: "reachable",
+    ...extra,
+  })
+  it.each<[string, RoomCell]>([
+    ["a lever", lever],
+    [
+      "a plate",
+      mechanismRoom({ plate: { id: "made.up" }, worksMechanism: { mechanismId: "made.stones", transition: 0 } }),
+    ],
+    [
+      "a sequence tile",
+      mechanismRoom({
+        sequenceTile: { id: "made.Sun", step: 0, glyph: 1, entrance: "made.court" },
+        worksMechanism: { mechanismId: "made.Sun", transition: 0 },
+      }),
+    ],
+    ["a pipe hole", mechanismRoom({ pipeHole: { pipe: "made.pipe", region: "made.east" } })],
+    [
+      "a room working a mechanism elsewhere",
+      mechanismRoom({ worksMechanism: { mechanismId: "made.x", transition: 0 } }),
+    ],
+  ])("noAllBlandFork: passes when a fork's only other branch ends at %s", (_name, cell) => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("fork", ["w", "e", "s"])],
+        [0, 2, room("puzzle", ["w"])],
+        [1, 1, cell],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    const result = validateSite(grid)
+    expect(result.valid ? [] : result.reasons.filter(r => r.type === "allBlandFork")).toEqual([])
+  })
+
+  it("noAllBlandFork: fails when a fork's branches lead to untagged rooms that work nothing", () => {
+    const grid = buildGrid(
+      [
+        [0, 0, room("puzzle", ["e"])],
+        [0, 1, room("fork", ["w", "e", "s"])],
+        [0, 2, room("puzzle", ["w"])],
+        [1, 1, mechanismRoom({})],
+      ],
+      [0, 0],
+      [0, 2]
+    )
+    const result = validateSite(grid)
+    expect(result.valid ? [] : result.reasons.filter(r => r.type === "allBlandFork")).toEqual([
+      { type: "allBlandFork", forkPos: [0, 1] },
+    ])
+  })
+
   it("keyBeforeGate: tomb-key gate is not validated (key lives off-floor)", () => {
     // tomb-key gate with no matching key on this floor — should still pass
     const grid = buildGrid(
