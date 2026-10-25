@@ -33,13 +33,13 @@ if (isModEnabled("camp")) {
   registerRewardContribution(useCampRewardContribution)
   registerHomecoming(() => {
     const held = useMergedHeldKeys()
-    const { comeHome, save, loaded } = useCampProgress()
+    const { comeHome, save, usable } = useCampProgress()
     const { addToHaul } = useHomeSave()
     return () => {
-      // The coming-home screen names each animal that arrives with this homecoming, through the haul.
-      if (loaded)
-        for (const purchase of arrivingPurchases(save, CAMP_STEPS, held))
-          void addToHaul({ type: "campArrival", purchase })
+      // The coming-home screen names each animal that arrives with this homecoming, through the haul. A save that is
+      // unread or unreadable announces nothing, since nothing can be recorded as arrived.
+      if (!usable) return
+      for (const purchase of arrivingPurchases(save, CAMP_STEPS, held)) void addToHaul({ type: "campArrival", purchase })
       void comeHome(held)
     }
   })

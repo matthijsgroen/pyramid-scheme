@@ -40,6 +40,14 @@ describe("campStepProblems", () => {
     expect(campStepProblems([step({ id: "ring", source: "structure" })])).toEqual(['structure "ring" has no parts'])
   })
 
+  it("names a tier with two early structures", () => {
+    const early = (id: string) =>
+      step({ id, tier: "junior", source: "structure", parts: ["a", "b"], early: true })
+    expect(campStepProblems([early("wall"), early("screen")])).toEqual([
+      'junior has 2 early structures ("wall", "screen"), at most one',
+    ])
+  })
+
   it("names a part used twice in a structure", () => {
     expect(campStepProblems([step({ id: "ring", source: "structure", parts: ["a", "a"] })])).toEqual([
       'structure "ring" has part "a" twice',

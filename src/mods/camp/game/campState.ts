@@ -45,6 +45,10 @@ const readable = (stored: unknown): CampSave | undefined => {
   }
 }
 
+// Whether the stored value is one this build can read and write: nothing stored yet, or a readable save.
+export const isCampSaveUsable = (stored: unknown): boolean =>
+  stored === null || stored === undefined || readable(stored) !== undefined
+
 // An unreadable save shows as the empty camp.
 export const readCampSave = (stored: unknown): CampSave => readable(stored) ?? emptyCampSave()
 

@@ -121,13 +121,6 @@ describe("makeCampLoot", () => {
     expect(() => place(world({ starter: 3, master: 1 }, 2))).toThrow(/master.*6.*4 available/)
   })
 
-  it("fails an unsound table before any slot is taken", () => {
-    const unsound: CampStepTable = [...table, { id: "cup", spot: "fire", tier: "starter", source: "found" }]
-    const slots = world(full, 4)
-    expect(() => place(slots, [makeCampLoot(unsound)])).toThrow(/cup/)
-    expect(slots.every(s => s.filled.length === 0)).toBe(true)
-  })
-
   it("keeps an earlier distribution's slots and leaves the rest to a later one", () => {
     const first: Distribution = {
       id: "first",
@@ -220,16 +213,6 @@ describe("makeCampLoot early structure", () => {
       .filter(s => rewardOf(s).structure === "hut")
       .map(s => s.siteId)
     expect(new Set(sites).size).toBe(3)
-  })
-
-  it("two early structures in one tier is a step-table problem", () => {
-    const twoEarly: CampStepTable = [
-      ...earlyTable,
-      { id: "wall", spot: "fire", tier: "starter", source: "structure", parts: ["bricks", "mortar"], early: true },
-    ]
-    const slots = journeyWorld()
-    expect(() => place(slots, [makeCampLoot(twoEarly, journeys)])).toThrow(/starter has 2 early structures/)
-    expect(slots.every(s => s.filled.length === 0)).toBe(true)
   })
 
   it("an early structure in a tier with one journey fails, naming the structure", () => {

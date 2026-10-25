@@ -3,7 +3,7 @@ import type { Slot } from "@/worldGen/slots"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { difficulties } from "@/data/difficultyLevels"
 import type { CampStepEntry, CampStepTable, CampUnit } from "./campSteps"
-import { CAMP_STEPS, campDemand, campStepProblems, campUnits } from "./campSteps"
+import { CAMP_STEPS, campDemand, campUnits } from "./campSteps"
 import { PYRAMID_JOURNEYS } from "@/worldGen/data"
 
 // The camp's finds and structure parts lie on loot-bearing PUZZLE slots only: chests carry the economy and
@@ -105,11 +105,7 @@ export const makeCampLoot = (table: CampStepTable, journeys: JourneyOrder = PYRA
   const demand = tierDemand(table)
   return {
     id: "camp-loot",
-    footprint: () => {
-      const problems = campStepProblems(table)
-      if (problems.length > 0) throw new Error(`camp-loot: the camp step table is unsound — ${problems.join("; ")}`)
-      return { min: units.length, max: units.length }
-    },
+    footprint: () => ({ min: units.length, max: units.length }),
     eligible: slot => slot.kind === "puzzle" && slot.rewardPriority > 0 && demand[slot.tier] > 0,
     // Returns exactly each tier's demand, tiers in difficulty order: the list is shorter than the candidates
     // on purpose, since that is how the per-tier quota is kept (the allocator takes the list's first N).

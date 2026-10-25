@@ -74,6 +74,7 @@ describe("the camp's homecoming", () => {
     const { useCampProgress: useCamp } = await import("./useCampProgress")
     await writeGameData({ "pyramid-scheme-mod-camp": { version: 1, finds: ["seed"], parts: {}, grown: [] } })
     const { result } = renderHook(() => ({ home: useHomecoming(), camp: useCamp() }))
+    await act(async () => {})
     await act(async () => result.current.home())
     expect(result.current.camp.save.grown).toEqual(["sprout"])
     await act(async () => result.current.home())
@@ -127,6 +128,29 @@ describe("the camp's homecoming", () => {
       version: 1,
       haul: [{ type: "campArrival", purchase: "purchase:mule" }],
     })
+    vi.doUnmock("@/mods/camp/game/campSteps")
+  })
+
+  it("announces nothing and records nothing while the save is one this build cannot read", async () => {
+    vi.resetModules()
+    vi.doMock("@/mods/camp/game/campSteps", async importOriginal => ({
+      ...(await importOriginal<typeof import("@/mods/camp/game/campSteps")>()),
+      CAMP_STEPS: [{ id: "mule", spot: "donkey", tier: "junior", source: "bought", purchase: "purchase:mule" }],
+    }))
+    const { registerHeldKeysProvider } = await import("@/app/SiteMap/keyProviders")
+    registerHeldKeysProvider(() => new Set(["purchase:mule"]))
+    await import("./index")
+    const { useHomecoming } = await import("@/app/homecomingRegistry")
+    const { readModState: readFreshModState } = await import("@/app/state/useModState")
+    const { latestGameValue: latestFresh } = await import("@/support/useGameStorage")
+    const newer = { version: 3, finds: [], parts: {}, grown: [], arrived: [] }
+    await writeGameData({ "pyramid-scheme-mod-camp": newer })
+    const { result } = renderHook(() => useHomecoming())
+    await act(async () => {})
+    await act(async () => result.current())
+    await act(async () => result.current())
+    expect(latestFresh<{ haul: unknown[] }>("homecoming")?.haul ?? []).toEqual([])
+    expect(readFreshModState("camp")).toEqual(newer)
     vi.doUnmock("@/mods/camp/game/campSteps")
   })
 })

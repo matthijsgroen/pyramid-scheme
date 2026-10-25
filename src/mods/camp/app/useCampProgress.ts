@@ -8,6 +8,7 @@ import {
   campFound,
   comeHome,
   emptyCampSave,
+  isCampSaveUsable,
   readCampSave,
   recordFind,
   recordPart,
@@ -20,6 +21,8 @@ import {
 export type CampProgressAPI = {
   // True once the camp's own save has been read.
   loaded: boolean
+  // False while the save is unread or is one this build cannot read: nothing is recorded or announced then.
+  usable: boolean
   save: CampSave
   found: CampFound
   recordFind: (step: string) => Promise<unknown>
@@ -41,6 +44,7 @@ export const useCampProgress = (table: CampStepTable = CAMP_STEPS): CampProgress
     return {
       save,
       loaded,
+      usable: loaded && isCampSaveUsable(stored),
       // The table's spot ids are the catalogue's spot ids; the agreement check holds the two together.
       found: campFound(save, table) as CampFound,
       recordFind: step => setStored((prev: unknown) => updateCampSave(prev, current => recordFind(current, step))),

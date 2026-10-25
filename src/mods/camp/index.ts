@@ -1,5 +1,6 @@
 import type { ModDescriptor } from "../modDescriptor"
 import { campLoot } from "./game/campLoot"
+import { CAMP_STEPS, campStepProblems } from "./game/campSteps"
 import { campLootTotals } from "./game/lootTotals"
 
 // The camp mod descriptor. Owns the camp's finds and structure parts (placed on puzzle slots of their
@@ -11,6 +12,8 @@ import { campLootTotals } from "./game/lootTotals"
 // (src/mods/camp/app, pulled in by registerModApps), gated on this mod being enabled.
 export const campMod: ModDescriptor = {
   id: "camp",
+  // An unsound step table refuses the build before placement.
+  authoringProblems: () => campStepProblems(CAMP_STEPS).map(problem => `camp steps: ${problem}`),
   dynamicDistributions: [campLoot],
   lootTotals: campLootTotals,
 }
