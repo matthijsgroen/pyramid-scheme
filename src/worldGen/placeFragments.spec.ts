@@ -123,13 +123,63 @@ describe("placeFragments behind a hidden corridor", () => {
     fill: slots => slots.forEach(slot => slot.assign(coin)),
   }
 
-  it("a slot not flagged hidden but reached only through hidden cells (past a hidden stair) gets no key until the detector is held", () => {
-    expect(() =>
-      placeFragments(hiddenStairWorld(false), [glyphCurrency], undefined, [], [], undefined, 0, support)
-    ).toThrow(/made-up-glyph.*no reachable slot/)
+  // The section case: the starter journey's one floor holds a hidden side section whose own sub-section is not
+  // flagged hidden, and that sub-section's end is the only slot in the world.
+  const hiddenSectionWorld = (withLens: boolean): Record<string, SiteConfig[]> => ({
+    [journeyOfTier("starter")]: [
+      [
+        {
+          ...plainSite()[0],
+          sideSections: [
+            {
+              pathPuzzles: 0,
+              difficulty: "starter",
+              end: "treasure",
+              hidden: true,
+              sideSections: [
+                { pathPuzzles: 0, difficulty: "starter", end: "treasure", endReward: { type: "fragmentSlot" } },
+              ],
+            },
+          ],
+        },
+      ],
+    ],
+    [journeyOfTier("junior")]: [[{ ...plainSite()[0], ...(withLens ? { mainEndReward: lens } : {}) }]],
+  })
+
+  it("a slot or section reached only through hidden cells (past a hidden stair, or inside a hidden section) gets no key until the detector is held", () => {
+    const place = (world: Record<string, SiteConfig[]>) =>
+      placeFragments(world, [glyphCurrency], undefined, [], [], undefined, 0, support)
+
+    expect(() => place(hiddenStairWorld(false))).toThrow(/made-up-glyph.*no reachable slot/)
     const world = hiddenStairWorld(true)
-    placeFragments(world, [glyphCurrency], undefined, [], [], undefined, 0, support)
+    place(world)
     expect(world[journeyOfTier("starter")][0][1].mainEndReward).toEqual(glyph)
+
+    expect(() => place(hiddenSectionWorld(false))).toThrow(/made-up-glyph.*no reachable slot/)
+    // Inside a hidden section a slot is an optional pocket, so it takes no gating key even once the detector is held.
+    expect(() => place(hiddenSectionWorld(true))).toThrow(/made-up-glyph.*no reachable slot/)
+  })
+
+  it("with no hidden requirement a slot past hidden cells gets no key and hidden loot is out of the strict walk", () => {
+    const { hiddenRequirement: _, ...noRequirement } = support
+    expect(() =>
+      placeFragments(hiddenStairWorld(true), [glyphCurrency], undefined, [], [], undefined, 0, noRequirement)
+    ).toThrow(/made-up-glyph.*no reachable slot/)
+
+    const { reachableRewards, walk } = placeFragments(
+      hiddenStairWorld(true),
+      [],
+      undefined,
+      [],
+      [coins],
+      () => 60,
+      0,
+      noRequirement
+    )
+    expect(reachableRewards).toContainEqual(coin)
+    expect(walk().rewards).not.toContainEqual(coin)
+    expect(walk().blocking.size).toBe(0)
   })
 
   it("a dynamic distribution's slot reached only through hidden cells counts as behind the detector", () => {

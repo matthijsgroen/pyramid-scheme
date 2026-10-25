@@ -42,8 +42,9 @@ export type ReachabilitySupport = {
   tierUnlockGroups?: (tier: Tier) => readonly (readonly string[])[]
   /**
    * The fact a hidden section needs: its cells are ground to the strict walk only while this fact is held, and a
-   * walk that stops at one discovers the fact as a lock. Absent, hidden sections walk open. The permissive walk
-   * always walks them open: it answers what is ever obtainable.
+   * walk that stops at one discovers the fact as a lock. Absent, nothing can reveal a hidden section in play, so
+   * the strict walk never enters one and discovers no lock for it. The permissive walk always walks them open: it
+   * answers what is ever obtainable.
    */
   hiddenRequirement?: () => string
 }
@@ -185,7 +186,7 @@ export const reachableFloorsInSite = (
   }
   const exitFloor = site.findIndex(floor => floor.exitOrStaircase === "exit")
   let exit = false
-  const hiddenRequirement = authoredKeysHeld ? undefined : support.hiddenRequirement?.()
+  const hiddenRequirement = support.hiddenRequirement?.()
 
   for (let i = 0; i < site.length; i++) {
     if (!reachable.has(i)) continue
@@ -220,7 +221,7 @@ export const reachableFloorsInSite = (
       )
     }
 
-    const hiddenOpen = hiddenRequirement === undefined || keys.has(hiddenRequirement)
+    const hiddenOpen = authoredKeysHeld || (hiddenRequirement !== undefined && keys.has(hiddenRequirement))
     const mechanismGates = mechanismGatesOf(result.grid)
     const {
       keys: expandedKeys,
@@ -236,6 +237,7 @@ export const reachableFloorsInSite = (
     // The hidden requirement is a lock here when holding it would let this walk onto a hidden cell.
     if (
       !hiddenOpen &&
+      hiddenRequirement !== undefined &&
       [...reachableFrom(result.grid, result.grid.entrancePos, keys, { mechanismGates })].some(
         at => isHidden(result.grid, at) && !reachableHere.has(at)
       )

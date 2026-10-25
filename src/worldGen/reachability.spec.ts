@@ -785,11 +785,17 @@ describe("reachableFloorsInSite on a hidden stair", () => {
       authoredKeysHeld
     )
 
-  it("with no hidden requirement a hidden section walks open", () => {
+  it("with no hidden requirement a hidden section is never ground to the strict walk, and discovers no lock", () => {
     const result = walk([], {})
+    expect(result.floors).toEqual(new Set([0]))
+    expect(result.reachableRewards).not.toContainEqual(floorOneLoot)
+    expect(result.discoveredLocks.size).toBe(0)
+  })
+
+  it("with no hidden requirement the permissive walk still walks a hidden section open", () => {
+    const result = walk([], {}, true)
     expect(result.floors).toEqual(new Set([0, 1]))
     expect(result.reachableRewards).toContainEqual(floorOneLoot)
-    expect(result.discoveredLocks.size).toBe(0)
   })
 
   it("leaves the floor past a hidden stair out until the requirement is held, and discovers it as a lock", () => {
