@@ -163,7 +163,7 @@ visible in the collection. Ends with a bake, the loot report in the review list,
 updated deliberately (the world is unreleased; starter moves only if this phase must touch it, and the review
 list says why).
 
-### Phase 6 — the camp as home, coming home [ ]
+### Phase 6 — the camp as home, coming home [x]
 
 On desktop Alle reizen is a panel beside the camp, always shown (`DesktopKamp.dc.html`); on mobile a popup
 (decided by the designer). Mount `CampScene` as the home screen in place of the Travel/Collection pager (`src/app/Base.tsx`), following
@@ -218,3 +218,4 @@ worktree, and the review list sorted: decisions, drafts, failures, things to loo
 - 2026-10-25 — phase 2 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-2-loot-report.md`): `yarn loot-report` writes `docs/loot-report.md`; mods report demand through `lootTotals`; the bake names the path of any empty chest or path end. Next: phase 3 plan task.
 - 2026-10-25 — phase 3 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-3-camp-loot.md`): `camp` mod; 28 finds + 99 parts (+127 drops) on puzzle slots of their tier; camp save v1; Constructies in the Collection; 124 repaint prompts; app-import guard spec. Popups not yet browser-checked (review list). Next: phase 4 plan task.
 - 2026-10-25 — phase 4 STOPPED after Tasks 1–2 (plan `docs/superpowers/plans/2026-10-25-camp-phase-4-animal-gates.md`): gates AND every mod's requirement; gate walk; loot never on a shop's end (8 hieroglyph pieces were lost there, pre-existing on main). Blocker, pre-existing: placement walks default-seed floors, the bake ships pinned seeds — at the shipped layout no wizard journey can be entered (review list, Failures). Tasks 3–8 wait on the designer. Phase 5 skipped (needs 4). Next: phase 6.
+- 2026-10-25 — phase 6 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-6-camp-home.md`): the camp is home (HUD, scene entrances, Verder met, desktop side panel); coming-home screen with the haul; new-chapter card; settings hold the dev tools; story log is a Collection section; nothing chains into the next journey. Alle reizen is still the old Travel page (phase 7). Next: phase 7 plan task.
