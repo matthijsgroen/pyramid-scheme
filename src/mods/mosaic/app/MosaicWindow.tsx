@@ -72,7 +72,7 @@ export const MosaicWindow: FC<{
   }, [beats])
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col self-stretch rounded-4xl bg-stone-950">
+    <div className="flex min-h-0 flex-1 flex-col self-stretch">
       {/* Size container: the frame takes whichever of the two fits — the space's full width, or the
         width the panel's own aspect ratio allows at the space's height. Height alone overflowed
         a narrow phone sideways whenever the row below happened to be short. */}
@@ -105,7 +105,7 @@ export const MosaicWindow: FC<{
               key={tier}
               disabled={placing || !onNarrate}
               onClick={() => onNarrate?.(beatFor(tier), () => {}, { replay: true })}
-              className="rounded-full border border-amber-500/40 px-3 py-1 text-xs text-amber-200 disabled:opacity-50"
+              className="rounded-full border border-[#B8A584] px-3 py-1 text-xs text-[#5C4A36] disabled:opacity-50"
             >
               ℹ {t(`mosaic.panel.${tier}`)}
             </button>
