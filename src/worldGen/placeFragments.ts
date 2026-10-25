@@ -266,12 +266,17 @@ export const placeFragments = (
         // forever. The doc's contract is explicit (keys-and-locks-solver.md: "a key is never placed
         // outside the reachable area"; "place ward key → pocket reachable → THEN place the required
         // piece") — a harvested tomb-key sits in ownedFacts, so once earned the pocket opens legitly.
+        //
+        // A placeholder's own room must be reached too, not only its floor: a room behind a lock of that
+        // same floor (a tableau needing this very piece) would hold the piece the lock waits on.
         const ownedFacts = deriveOwnedFacts(ownedCounts, support)
+        const reachedRooms = new Set(reach.reachableRewards)
         const eligible = (s: Slot) =>
           s.kind === "end" &&
           !s.hidden &&
           available.has(s) &&
           reach.reachableFloors.has(floorKey(s.ref)) &&
+          (s.sentinel === undefined || reachedRooms.has(s.sentinel)) &&
           s.wardKeys.every(k => ownedFacts.has(k)) &&
           (s.encounter !== "fez-shop" || s.preference === undefined || currency.ownsBucket(s.preference))
         // Soft-avoid slots an author tagged for a FILLER bucket — one no gating currency claims, i.e.
