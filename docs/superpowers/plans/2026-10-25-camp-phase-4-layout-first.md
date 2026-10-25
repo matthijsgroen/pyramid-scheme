@@ -407,12 +407,14 @@ No unit test pins the authored spec: the bake and the loot report are the check 
 - Modify: the trap mod's waterskin distribution. Per tier, `round(WATERSKINS_PER_TRAP × that tier's trap encounters)` (Decision 18), expert and up. The trap mod's `shopStock` gets 2 `prefers: waterskin` placeholders per expert-and-up tomb shop, filled by the same distribution (Decision 16).
 - Modify: `src/mods/shop/game/pricing.ts` (+ spec): the waterskin stock price by tier.
 - Modify: `src/mods/shop/game/loot.ts`: `fillsLast: true`.
+- Modify: `src/mods/camp/game/campLoot.ts` (+ spec): the first structure of each tier (step order) is dealt first and both its parts land in that tier's first journey (its earliest main, ungated slots in path order), so the player completes one structure early and sees the camp change; every other structure keeps today's spread deal (designer, 2026-10-25).
 
 - [ ] **Step 1: Failing tests** (made-up worlds):
   - `placeFragments.spec.ts`: "a distribution marked last fills after one registered after it".
   - "waterskins follow the traps per tier": with 2 / 0 / 10 traps on expert / master / wizard and a made-up ratio, the counts come out in that proportion, with none on a tier without traps or below expert.
   - "a tomb shop's waterskin placeholders are filled with waterskins and priced by its tier".
   - "no waterskin in a junior or starter shop".
+  - `campLoot.spec.ts`: "a tier's first structure completes in its first journey" (made-up steps and slots: both parts of the first structure sit on the first site's earliest main slots; the other structures' parts still fall on different sites).
 - [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`.
 - [ ] **Step 5: Per-task review** (Opus, light): ordering is mod-agnostic, and the shop prices a reward type it does not import.
 - [ ] **Step 6: Commit:** `feat: fixed loot fills before money, Fez sells waterskins`
