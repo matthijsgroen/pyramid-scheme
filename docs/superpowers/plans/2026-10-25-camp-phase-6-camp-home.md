@@ -252,10 +252,10 @@ One agent (Sonnet).
 - Produces: `SettingsModal` props `{ isOpen; onClose; startGame: () => void }`; in develop mode, below the normal settings and scrollable: the `DevPanel` with `useDevActions(startGame)`, "Jump to Shop Tomb" (start that journey, then `startGame`), `SaveTransfer`, the lock editor button, `PuzzleLab`. Outside develop mode none of them render.
 
 - [x] **Step 1: Failing tests.** `SettingsModal.spec.tsx`: with develop mode off no dev tool is in the dialog; on, the playtesting panel and the lock editor button are. `Travel.spec.tsx`: in develop mode the Travel page shows no dev panel.
-- [ ] **Step 2: Run** `yarn test src/app/SettingsModal src/app/pages/Travel` — FAIL.
-- [ ] **Step 3: Implement.** Move, do not rewrite: the same components and actions; the shop-tomb jump keeps its journey id lookup as Travel has it today.
+- [x] **Step 2: Run** `yarn test src/app/SettingsModal src/app/pages/Travel` — FAIL.
+- [x] **Step 3: Implement.** Move, do not rewrite: the same components and actions; the shop-tomb jump keeps its journey id lookup as Travel has it today.
 - [x] **Step 4: Run** — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Commit** — `feat: dev tools move from travel into settings`
+- [x] **Step 5: Commit** — `feat: dev tools move from travel into settings`
 
 ---
 

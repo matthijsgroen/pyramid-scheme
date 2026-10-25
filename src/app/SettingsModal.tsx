@@ -1,9 +1,18 @@
-import { type FC, useState } from "react"
+import { type FC, use, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { version } from "@/../package.json"
 import { clearGameData, useGameStorage } from "@/support/useGameStorage"
 import { CELL_KEY_VERSION, type StoredJourneyStateV3 } from "@/app/state/useJourneys"
 import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
+import { DevelopContext } from "@/contexts/DevelopMode"
+import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
+import { DevPanel } from "@/ui/molecules/DevPanel"
+import { useDevActions } from "@/app/dev/useDevActions"
+import { PuzzleLab } from "@/app/dev/PuzzleLab"
+import { SaveTransfer } from "@/app/dev/SaveTransfer"
+import { START_LOCK, encodeLockHash } from "@/app/dev/lockEditorUrl"
+import { useJourneys } from "@/app/state/useJourneys"
+import { useJourneyTranslations } from "@/app/translations/useJourneyTranslations"
 
 // Module constant, not an inline literal: a fresh array every render makes useOfflineStorage look
 // like it has a different default each time (same reason useJourneys keeps one).
@@ -12,12 +21,19 @@ const NO_JOURNEYS: StoredJourneyStateV3[] = []
 type SettingsModalProps = {
   isOpen: boolean
   onClose: () => void
+  // Opens the expedition after a dev jump or journey start.
+  startGame: () => void
 }
 
-export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
+export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, startGame }) => {
   const { t, i18n } = useTranslation("common")
   const [showClearConfirm, setShowClearConfirm] = useState(false)
   const [tutorialsEnabled, setTutorialsEnabled] = useGameStorage<boolean>("tutorialsEnabled", true)
+  const { isDevelopMode } = use(DevelopContext)
+  const { startJourney } = useJourneys()
+  const journeyList = useJourneyTranslations()
+  const devActions = useDevActions(startGame)
+  const shopTombJourney = journeyList.find(j => j.id === "junior_treasure_tomb")
   const [journeys, , journeysLoaded] = useGameStorage<StoredJourneyStateV3[]>("journeys", NO_JOURNEYS)
 
   // WHICH KEY FORMAT THIS SAVE IS ON, shown beside the app version so a player can read it out and the
@@ -64,7 +80,7 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
       <div className="absolute inset-0 bg-black/50" onClick={handleClose} />
 
       {/* Modal */}
-      <div className="relative z-10 mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+      <div className="relative z-10 mx-4 max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-lg bg-white p-6 shadow-xl">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900">{t("ui.settings")}</h2>
           <button onClick={handleClose} className="text-gray-400 hover:text-gray-600" aria-label={t("ui.close")}>
@@ -115,6 +131,31 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             </button>
           </div>
         </div>
+
+        {isDevelopMode && (
+          <div className="mt-6 space-y-4 rounded-lg bg-stone-900 p-3">
+            {shopTombJourney && (
+              <div className="flex justify-center">
+                <DeveloperButton
+                  onClick={async () => {
+                    await startJourney(shopTombJourney)
+                    startGame()
+                  }}
+                  label="Jump to Shop Tomb"
+                />
+              </div>
+            )}
+            <DevPanel title="Playtesting tools (every journey is pickable in develop mode)" actions={devActions} />
+            <SaveTransfer />
+            <div className="flex justify-center">
+              <DeveloperButton
+                onClick={() => (window.location.hash = encodeLockHash(START_LOCK))}
+                label={t("devLockEditor.open")}
+              />
+            </div>
+            <PuzzleLab />
+          </div>
+        )}
 
         <div className="mt-6 flex items-center justify-end gap-4">
           <div className="text-sm text-gray-500">

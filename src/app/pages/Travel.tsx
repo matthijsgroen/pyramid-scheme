@@ -14,12 +14,6 @@ import { TapHint } from "@/ui/atoms/TapHint"
 import { useTapHint } from "@/app/state/useTapHint"
 import { FezContext } from "@/app/fez/context"
 import { DevelopContext } from "@/contexts/DevelopMode"
-import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
-import { DevPanel } from "@/ui/molecules/DevPanel"
-import { useDevActions } from "@/app/dev/useDevActions"
-import { PuzzleLab } from "@/app/dev/PuzzleLab"
-import { START_LOCK, encodeLockHash } from "@/app/dev/lockEditorUrl"
-import { SaveTransfer } from "@/app/dev/SaveTransfer"
 
 import { journeyCardSlots } from "./journeyCardSlots"
 import "@/mods/registerModApps" // populate the journey-card slot registry, as Collection does for its sections
@@ -45,8 +39,6 @@ export const TravelPage: FC<{
   // Ward/tomb keys the player currently holds — a newly-earned one re-lights a completed pyramid
   // that has a matching unopened ward door (getUnexploredLevels re-checks against this).
   const heldKeys = useMergedHeldKeys()
-  // Playtesting grants + the every-journey bypass below; rendered only in develop mode.
-  const devActions = useDevActions(startGame)
   // A completed journey (completionCount > 0) is in revisit/explore mode: selecting it from the grid
   // lands on the map (not the game) so the player picks which pyramid to re-enter.
   const isRevisit = (journeyId: string) => (getJourney(journeyId)?.completionCount ?? 0) > 0
@@ -66,7 +58,6 @@ export const TravelPage: FC<{
   const activeJourneyInfo = journeyId ? getJourney(journeyId) : undefined
 
   const { isDevelopMode } = use(DevelopContext)
-  const shopTombJourney = journeys.find(j => j.id === "junior_treasure_tomb")
 
   const journey = activeJourneyInfo?.journey ?? selectedJourney
   // Nodes on this journey's map: one per site; a tomb is a journey of levelCount sites.
@@ -129,7 +120,7 @@ export const TravelPage: FC<{
   // Which pyramid expeditions are pickable: a tier is entered on holding one of its unlock
   // treasures, and inside a tier they open together (wizard) or one at a time (see journeyAvailability).
   //
-  // Develop mode opens every one of them. This IS a bypass, unlike the dev panel's grants (those go
+  // Develop mode opens every one of them. This IS a bypass, unlike the dev panel's grants in settings (those go
   // through the real mod APIs): the within-tier "previous pyramid completed" rule can't be satisfied
   // by granting anything, and faking completionCount instead would flip journeys into revisit mode
   // and change how they're entered — the opposite of what playtesting needs.
@@ -190,25 +181,6 @@ export const TravelPage: FC<{
             content, rough edges, and save resets.
           </p>
           <h1 className="mb-4 text-center font-pyramid text-xl font-bold">{t("ui.travel")}</h1>
-          {isDevelopMode && (
-            <>
-              {shopTombJourney && (
-                <div className="mb-4 flex justify-center">
-                  <DeveloperButton onClick={() => handleJourneySelect(shopTombJourney)} label="Jump to Shop Tomb" />
-                </div>
-              )}
-              <DevPanel title="Playtesting tools (every journey is pickable in develop mode)" actions={devActions} />
-              <SaveTransfer />
-              <div className="mb-4 flex justify-center">
-                <DeveloperButton
-                  onClick={() => (window.location.hash = encodeLockHash(START_LOCK))}
-                  label={t("devLockEditor.open")}
-                />
-              </div>
-              <PuzzleLab />
-            </>
-          )}
-
           {/* Map Section */}
           <div className={`flex w-full flex-col items-center px-8 pb-safe-bottom`}>
             <div className="mb-6 w-full max-w-md">

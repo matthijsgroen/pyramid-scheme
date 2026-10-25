@@ -42,7 +42,12 @@ vi.mock("@/app/SiteMap/keyProviders", async importOriginal => ({
 vi.mock("@/app/state/useTapHint", () => ({ useTapHint: () => [false, () => {}] }))
 vi.mock("@/app/dev/useDevActions", () => ({ useDevActions: () => ({}) }))
 vi.mock("./journeyContributions", () => ({
-  useMergedJourneyContributions: () => ({ lock: () => undefined, hidden: () => false, buried: () => new Set() }),
+  useMergedJourneyContributions: () => ({
+    lock: () => undefined,
+    mark: () => undefined,
+    hidden: () => false,
+    buried: () => new Set(),
+  }),
 }))
 vi.mock("./journeyAvailability", () => ({
   availablePyramidJourneyIds: () => new Set(),
@@ -53,6 +58,7 @@ vi.mock("@/ui/atoms/JourneyPathView", () => ({
 }))
 
 const { TravelPage } = await import("./Travel")
+const { DevelopContext } = await import("@/contexts/DevelopMode")
 
 describe(TravelPage, () => {
   it("resumes a completed journey at its last level from the map", async () => {
@@ -73,5 +79,16 @@ describe(TravelPage, () => {
     await act(async () => fireEvent.click(screen.getByTestId("journey-map")))
 
     expect(visitLevel).toHaveBeenCalledWith("t", 2)
+  })
+
+  it("shows no dev tools in develop mode: they live in settings", () => {
+    const { container } = render(
+      <DevelopContext.Provider value={{ isDevelopMode: true, setDevelopMode: () => {} }}>
+        <TravelPage startGame={() => {}} />
+      </DevelopContext.Provider>
+    )
+
+    expect(container.textContent).not.toContain("Playtesting tools")
+    expect(container.textContent).not.toContain("devLockEditor.open")
   })
 })

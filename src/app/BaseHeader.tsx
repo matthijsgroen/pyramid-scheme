@@ -6,7 +6,7 @@ import { useSecretTaps } from "@/app/dev/useSecretTaps"
 import { Header } from "@/ui/atoms/Header"
 import { GearIcon } from "@/ui/atoms/GearIcon"
 
-export const BaseHeader = () => {
+export const BaseHeader = ({ startGame }: { startGame: () => void }) => {
   const { t } = useTranslation("common")
   const [showSettingsModal, setShowSettingsModal] = useState(false)
   const { isDevelopMode, setDevelopMode } = use(DevelopContext)
@@ -37,7 +37,7 @@ export const BaseHeader = () => {
         <span className="text-xs font-bold text-red-300">{isDevelopMode ? "DEV" : ""}</span>
       </Header>
 
-      <SettingsModal isOpen={showSettingsModal} onClose={() => setShowSettingsModal(false)} />
+      <SettingsModal isOpen={showSettingsModal} onClose={() => setShowSettingsModal(false)} startGame={startGame} />
     </>
   )
 }

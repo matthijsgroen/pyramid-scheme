@@ -3,6 +3,7 @@ import { BaseHeader } from "./BaseHeader"
 
 const meta = {
   component: BaseHeader,
+  args: { startGame: () => {} },
   parameters: {
     layout: "fullscreen",
   },
@@ -16,7 +17,7 @@ export const Default: Story = {}
 export const InApp: Story = {
   render: () => (
     <div className="min-h-screen bg-gray-50">
-      <BaseHeader />
+      <BaseHeader startGame={() => {}} />
       <div className="p-8">
         <h2 className="mb-4 text-2xl font-bold">App Content</h2>
         <p className="text-gray-600">

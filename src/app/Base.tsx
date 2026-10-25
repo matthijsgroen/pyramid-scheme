@@ -19,7 +19,7 @@ export const Base = ({ startGame }: { startGame: () => void }) => {
   return (
     <div className="flex h-(--screen-height) w-full flex-col items-center justify-between overflow-y-auto ">
       <div className="w-full shrink-0 grid-flow-dense auto-rows-min grid-cols-1">
-        <BaseHeader />
+        <BaseHeader startGame={startGame} />
       </div>
       <div className="flex w-full flex-1 snap-x snap-mandatory flex-row justify-around overflow-x-scroll overscroll-contain bg-gradient-to-b from-blue-100 to-blue-300">
         <TravelPage startGame={startGame} />
