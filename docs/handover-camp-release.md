@@ -163,6 +163,26 @@ visible in the collection. Ends with a bake, the loot report in the review list,
 updated deliberately (the world is unreleased; starter moves only if this phase must touch it, and the review
 list says why).
 
+### Phase 4b — locks as side-path blueprints [ ]
+
+A lock is a generic blueprint of rooms and corridors; its corridors may be filled as a side path, so between
+two areas of a lock lie a side path's puzzles and chests with the lock's obstacles in between. Open and trapped
+side paths go into a lock's corridors; gated and hidden ones keep hanging as branches (a key or a detector inside a
+lock would make it not provably solvable). Its own plan; after phase 4, before the release; it re-carves every
+lock floor and bakes through the layout-first guards. The layout-first plan leaves `it.todo("a corridor asking for
+a side path that carries none is named")` ready for it.
+
+### Phase 4c — the tunnel to the Sphinx [ ]
+
+The ending moves inside the Sphinx. Behind starter_1's ward gate (opened by the Vault of the Gods' key, sealed
+and visible in the first hour as today) a staircase leads down into a cave floor at wizard difficulty; the player
+puzzles through it and takes a staircase up into the Sphinx itself, where the same inscription stands, clear
+of the sand that keeps covering it outside, and the reading plays. Build: a stair side path names the floor it
+leads to (stairs already link by id at runtime; only `wireSideSectionStaircases` wires floor i to i+1 today),
+the starter_1 authoring (floor 0's ward stair → cave floor → Sphinx floor), the Sphinx-placement spec rewritten,
+the stair drawn going up out of the cave. Art: the Sphinx's inside (floor, wall face, the inscription wall);
+prompts go to the repaint queue. Baked together with phase 4b.
+
 ### Phase 6 — the camp as home, coming home [x]
 
 On desktop Alle reizen is a panel beside the camp, always shown (`DesktopKamp.dc.html`); on mobile a popup
@@ -225,4 +245,4 @@ worktree, and the review list sorted: decisions, drafts, failures, things to loo
 
 ## Next
 
-Phase 4 Tasks 3–8 (purchases, the per-gate guard, gate needs, buying, arrival) and phase 5 (the economy recomputed) wait on the designer's placement decision: place loot on the pinned layout (pin every floor first), or make placement layout-independent and guard the stamped world (`docs/review-camp-release.md`, Failures). Once decided, resume at Task 3 of `docs/superpowers/plans/2026-10-25-camp-phase-4-animal-gates.md`; the animal story drafts (phase 8) are wired then.
+Phase 4 resumes from `docs/superpowers/plans/2026-10-25-camp-phase-4-layout-first.md` (it replaces the old plan's Tasks 3–8 and phase 5); its ledger is `.superpowers/sdd/2026-10-25-camp-phase-4-layout-first/progress.md`. Then phase 4b and 4c, planned and baked together.
