@@ -3,6 +3,7 @@ import { DevelopContext } from "@/contexts/DevelopMode"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { useJourneys } from "@/app/state/useJourneys"
 import type { Journey } from "@/data/journeys"
+import { useMergedGateNeeds } from "./gateNeeds"
 import { availablePyramidJourneyIds } from "./journeyAvailability"
 
 // Which pyramid expeditions the player may pick: the tier ladder, with develop mode opening every one of
@@ -11,12 +12,19 @@ import { availablePyramidJourneyIds } from "./journeyAvailability"
 export const useAvailableJourneyIds = (journeys: readonly Journey[]): ReadonlySet<string> => {
   const { getJourney } = useJourneys()
   const heldKeys = useMergedHeldKeys()
+  const gateNeeds = useMergedGateNeeds()
   const { isDevelopMode } = use(DevelopContext)
   return useMemo(
     () =>
       isDevelopMode
         ? new Set(journeys.filter(j => !j.entryLock).map(j => j.id))
-        : availablePyramidJourneyIds(journeys, heldKeys, id => (getJourney(id)?.completionCount ?? 0) > 0),
-    [journeys, heldKeys, getJourney, isDevelopMode]
+        : availablePyramidJourneyIds(
+            journeys,
+            heldKeys,
+            id => (getJourney(id)?.completionCount ?? 0) > 0,
+            undefined,
+            tier => gateNeeds.open({ tier }, heldKeys)
+          ),
+    [journeys, heldKeys, getJourney, isDevelopMode, gateNeeds]
   )
 }

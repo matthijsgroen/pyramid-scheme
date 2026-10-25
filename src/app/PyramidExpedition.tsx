@@ -10,6 +10,7 @@ import { useEntranceAnimation } from "@/app/PyramidExpedition/useEntranceAnimati
 import { useLevelParallax } from "@/app/PyramidExpedition/useLevelParallax"
 import { SiteMapScreen } from "@/app/SiteMap/SiteMapScreen"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
+import { useMergedGateNeeds } from "@/app/pages/gateNeeds"
 import { usePreloadSiteArt } from "@/app/SiteMap/preloadArt"
 import { clsx } from "clsx"
 import { DesertBackdrop } from "@/ui/atoms/DesertBackdrop"
@@ -49,6 +50,7 @@ export const PyramidExpedition: FC<{
   const { setInteriorLevel, getJourney } = useJourneys()
   // Ward/tomb keys held right now — what decides whether the next tier is open (journeyAvailability).
   const heldKeys = useMergedHeldKeys()
+  const gateNeeds = useMergedGateNeeds()
   const hasInterior = !!journey.siteConfigs?.length
   const levelSetup = journey.levels?.[activeJourney.levelNr - 1]
   const boardless = levelSetup?.board === false
@@ -122,7 +124,8 @@ export const PyramidExpedition: FC<{
       ? getNextUnlockedPyramidJourneyId(
           activeJourney.journeyId,
           heldKeys,
-          id => (getJourney(id)?.completionCount ?? 0) > 0
+          id => (getJourney(id)?.completionCount ?? 0) > 0,
+          tier => gateNeeds.open({ tier }, heldKeys)
         )
       : undefined
   const dayTime = dayNightCycleDayTime(activeJourney.levelNr, journey.background.time, journey.background.timeStepSize)

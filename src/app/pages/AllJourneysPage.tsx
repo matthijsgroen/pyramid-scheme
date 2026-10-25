@@ -16,6 +16,7 @@ import { allJourneys, type JourneyRowModel, type TierGroup } from "./allJourneys
 import { journeyCardSlots } from "./journeyCardSlots"
 import "@/mods/registerModApps" // populate the journey-card slot registry, as Collection does for its sections
 import { comingSoonDifficulty, holdsTierKey, isTierUnlocked, tierKeyNeed } from "./journeyAvailability"
+import { useMergedGateNeeds } from "./gateNeeds"
 import { useAvailableJourneyIds } from "./useAvailableJourneyIds"
 import { useMergedJourneyContributions } from "./journeyContributions"
 
@@ -37,6 +38,8 @@ export const AllJourneys: FC<{ startGame: () => void; compact?: boolean }> = ({ 
   const keyDisplay = useMergedKeyDisplay()
   const corridorDetectorLevel = useMergedDetectorLevels().corridor
   const facts = useMergedJourneyContributions()
+  const gateNeeds = useMergedGateNeeds()
+  const gateOpen = (tier: Difficulty) => gateNeeds.open({ tier }, heldKeys)
   const available = useAvailableJourneyIds(journeys)
 
   const [tierToggled, setTierToggled] = useState<Partial<Record<Difficulty, boolean>>>({})
@@ -70,7 +73,8 @@ export const AllJourneys: FC<{ startGame: () => void; compact?: boolean }> = ({ 
       completed(id) &&
       (getUnexploredLevels(id, heldKeys).size > 0 ||
         (corridorDetectorLevel >= 4 && getOutstandingHiddenCorridorCount(id) > 0)),
-    tierOpen: tier => isTierUnlocked(tier, heldKeys),
+    tierOpen: tier => isTierUnlocked(tier, heldKeys, gateOpen),
+    extraNeeds: gate => gateNeeds.unmet(gate, heldKeys),
     tierKeyHeld: tier => holdsTierKey(tier, heldKeys),
     tierNeeds: tier => {
       const need = tierKeyNeed(tier, heldKeys, keyDisplay, t("journeys.tierNeed"))
@@ -173,6 +177,7 @@ export const AllJourneys: FC<{ startGame: () => void; compact?: boolean }> = ({ 
                 required: need.progress.required,
               })
             : need.label,
+          hint: need.hint,
           symbols: need.symbols ? [...need.symbols] : undefined,
         }))}
         compact={compact}
@@ -229,6 +234,7 @@ export const AllJourneys: FC<{ startGame: () => void; compact?: boolean }> = ({ 
               currentLabel={t("journeys.now")}
               needs={group.needs.map(need => ({
                 label: need.label,
+                hint: need.hint,
                 symbols: need.symbols ? [...need.symbols] : undefined,
               }))}
               compact={compact}

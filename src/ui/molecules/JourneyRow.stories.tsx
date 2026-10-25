@@ -41,6 +41,24 @@ export const LockedWithSymbols: Story = {
     ],
   },
 }
+export const LockedTierWithHint: Story = {
+  args: {
+    status: "locked",
+    name: "Expert-reizen",
+    needs: [
+      { label: "Vind deze schat", symbols: [{ symbol: "𓋹", held: true }] },
+      { label: "Je hebt een ezel nodig", hint: "Fez verkoopt er een in de Graftombe van Ra" },
+    ],
+  },
+}
+export const LockedTombWithNeed: Story = {
+  args: {
+    status: "locked",
+    exterior: "tomb",
+    name: "Kluis van de Edelman",
+    needs: [{ label: "Je hebt een kar nodig", hint: "Fez verkoopt er een in de Graftombe van Ra" }],
+  },
+}
 export const WithDetails: Story = {
   args: {
     status: "open",

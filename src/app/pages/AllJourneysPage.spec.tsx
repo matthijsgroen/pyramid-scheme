@@ -54,6 +54,7 @@ let buried: Record<string, number[]> = {}
 let heldKeys = new Set<string>()
 let lockFound = 2
 let comingSoon: string | undefined
+let gateNeeds: { gate: { tier: string } | { journeyId: string }; key: string; label: string; hint?: string }[] = []
 const startJourney = vi.fn()
 const visitLevel = vi.fn()
 const cancelJourney = vi.fn()
@@ -96,6 +97,14 @@ vi.mock("@/app/SiteMap/keyProviders", () => ({
   useMergedKeyDisplay: () => (id: string) => ({ symbol: `sym-${id}` }),
 }))
 vi.mock("@/app/SiteMap/detectorLevels", () => ({ useMergedDetectorLevels: () => ({}) }))
+vi.mock("@/app/pages/gateNeeds", () => ({
+  useMergedGateNeeds: () => {
+    const sameGate = (a: object, b: object) => JSON.stringify(a) === JSON.stringify(b)
+    const unmet = (gate: object, held: ReadonlySet<string>) =>
+      gateNeeds.filter(n => sameGate(n.gate, gate) && !held.has(n.key))
+    return { needs: unmet, unmet, open: (gate: object, held: ReadonlySet<string>) => unmet(gate, held).length === 0 }
+  },
+}))
 vi.mock("@/app/pages/journeyAvailability", () => ({
   isTierUnlocked: (tier: string) => tier === "starter" || tier === "junior",
   comingSoonDifficulty: () => comingSoon,
@@ -132,6 +141,7 @@ beforeEach(() => {
   heldKeys = new Set()
   lockFound = 2
   comingSoon = undefined
+  gateNeeds = []
   startJourney.mockReset()
   visitLevel.mockReset()
   cancelJourney.mockReset()
@@ -276,6 +286,31 @@ describe("AllJourneys", () => {
     const dim = container.querySelector('[data-held="false"]')
     expect(lit?.textContent).toBe("sym-k1")
     expect(dim?.textContent).toBe("sym-k2")
+  })
+
+  it("lists the treasure lit and an unmet need with its hint under the shut tier", () => {
+    heldKeys = new Set(["k1"])
+    gateNeeds = [{ gate: { tier: "expert" }, key: "made-up-need", label: "Need a thing", hint: "Sold somewhere" }]
+    const { container } = render(<AllJourneys startGame={() => {}} />)
+    expect(container.querySelector('[data-held="true"]')?.textContent).toBe("sym-k1")
+    expect(screen.getByText("Need a thing")).toBeTruthy()
+    expect(screen.getByText("Sold somewhere")).toBeTruthy()
+  })
+
+  it("lists no need once its key is held", () => {
+    heldKeys = new Set(["made-up-need"])
+    gateNeeds = [{ gate: { tier: "expert" }, key: "made-up-need", label: "Need a thing" }]
+    renderList()
+    expect(screen.queryByText("Need a thing")).toBeNull()
+  })
+
+  it("keeps a tomb with every map piece shut while its need is unmet, and lists the need", () => {
+    lockFound = 3
+    gateNeeds = [{ gate: { journeyId: "jt" }, key: "made-up-need", label: "Need a thing", hint: "Sold somewhere" }]
+    renderList()
+    expect(screen.queryByRole("button", { name: /^Name jt|^Lock title/ })).toBeNull()
+    expect(screen.getByText("Need a thing")).toBeTruthy()
+    expect(screen.getByText("Sold somewhere")).toBeTruthy()
   })
 
   it("renders a card slot for a one-site journey, which has no chevron", () => {

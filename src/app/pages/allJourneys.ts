@@ -11,6 +11,8 @@ export type Gate = { tier: Difficulty } | { journeyId: string }
 export type JourneyNeed = {
   key: string
   label: string
+  /** A line under the label, such as where to get it. */
+  hint?: string
   progress?: { found: number; required: number }
   symbols?: readonly { symbol: string; held: boolean }[]
 }
@@ -51,8 +53,7 @@ export type AllJourneysInput = {
   /** Whether the player holds the treasure that opens this tier, whatever else it still waits for. */
   tierKeyHeld: (tier: Difficulty) => boolean
   comingSoon?: Difficulty
-  // The one extension point for a gate's other requirements. A registry a mod fills may feed it;
-  // nothing does today.
+  // A gate's other requirements from what the mods registered (gateNeeds): only the unmet ones.
   extraNeeds?: (gate: Gate) => readonly JourneyNeed[]
 }
 

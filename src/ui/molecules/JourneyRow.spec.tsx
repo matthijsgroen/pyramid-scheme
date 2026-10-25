@@ -46,6 +46,12 @@ describe("JourneyRow", () => {
     expect(container.querySelector('[data-held="false"]')?.textContent).toBe("B")
   })
 
+  it("a locked row reads a need's hint under its label", () => {
+    row({ status: "locked", needs: [{ label: "Need a thing", hint: "Sold somewhere" }, { label: "No hint here" }] })
+    expect(screen.getByText("Sold somewhere")).toBeTruthy()
+    expect(screen.getAllByText(/Sold somewhere|No hint here/)).toHaveLength(2)
+  })
+
   it("only the current row shows its NU label", () => {
     row({ status: "current" })
     expect(screen.getByText("NU")).toBeTruthy()

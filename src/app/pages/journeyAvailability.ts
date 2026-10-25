@@ -22,8 +22,12 @@ export const holdsTierKey = (difficulty: Difficulty, heldKeys: ReadonlySet<strin
   return keys.some(keyId => heldKeys.has(keyId))
 }
 
-export const isTierUnlocked = (difficulty: Difficulty, heldKeys: ReadonlySet<string>): boolean =>
-  isDifficultyReleased(difficulty) && holdsTierKey(difficulty, heldKeys)
+// `gateOpen` is what a mod's other needs on the tier say (gateNeeds); no need means open.
+export const isTierUnlocked = (
+  difficulty: Difficulty,
+  heldKeys: ReadonlySet<string>,
+  gateOpen: (tier: Difficulty) => boolean = () => true
+): boolean => isDifficultyReleased(difficulty) && holdsTierKey(difficulty, heldKeys) && gateOpen(difficulty)
 
 // The chapter the player is in: the last tier, in order, that is open to them. The first tier is always
 // open, so a player holding no key is in it.
@@ -39,7 +43,8 @@ export const availablePyramidJourneyIds = (
   journeys: readonly Journey[],
   heldKeys: ReadonlySet<string>,
   isCompleted: (journeyId: string) => boolean,
-  isFreeOrder: (difficulty: Difficulty) => boolean = isFreeOrderDifficulty
+  isFreeOrder: (difficulty: Difficulty) => boolean = isFreeOrderDifficulty,
+  gateOpen: (tier: Difficulty) => boolean = () => true
 ): ReadonlySet<string> => {
   const available = new Set<string>()
   const previousInTier = new Map<Difficulty, Journey>()
@@ -48,7 +53,7 @@ export const availablePyramidJourneyIds = (
     if (journey.entryLock) continue
     const previous = previousInTier.get(journey.difficulty)
     previousInTier.set(journey.difficulty, journey)
-    if (!isTierUnlocked(journey.difficulty, heldKeys)) continue
+    if (!isTierUnlocked(journey.difficulty, heldKeys, gateOpen)) continue
     if (!previous || isFreeOrder(journey.difficulty) || isCompleted(previous.id)) available.add(journey.id)
   }
   return available
@@ -63,13 +68,14 @@ export const nextPyramidJourneyId = (
   journeyId: string,
   heldKeys: ReadonlySet<string>,
   isCompleted: (journeyId: string) => boolean = () => false,
-  isFreeOrder: (difficulty: Difficulty) => boolean = isFreeOrderDifficulty
+  isFreeOrder: (difficulty: Difficulty) => boolean = isFreeOrderDifficulty,
+  gateOpen: (tier: Difficulty) => boolean = () => true
 ): string | undefined => {
   const index = journeys.findIndex(j => j.id === journeyId)
   if (index === -1) return undefined
   const current = journeys[index]
   if (isFreeOrder(current.difficulty)) {
-    if (!isTierUnlocked(current.difficulty, heldKeys)) return undefined
+    if (!isTierUnlocked(current.difficulty, heldKeys, gateOpen)) return undefined
     const others = journeys.filter(j => !j.entryLock && j.difficulty === current.difficulty && j.id !== journeyId)
     const split = others.findIndex(j => journeys.indexOf(j) > index)
     const ordered = split === -1 ? others : [...others.slice(split), ...others.slice(0, split)]
@@ -77,7 +83,7 @@ export const nextPyramidJourneyId = (
   }
   const next = journeys[index + 1]
   if (!next || next.entryLock) return undefined
-  return isTierUnlocked(next.difficulty, heldKeys) ? next.id : undefined
+  return isTierUnlocked(next.difficulty, heldKeys, gateOpen) ? next.id : undefined
 }
 
 // What stands between the player and a tier: one of its unlock treasures. The tomb gives its floors

@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from "react"
 import { NoticeDot } from "@/ui/atoms/NoticeDot"
 
-export type JourneyRowNeed = { label: string; symbols?: { symbol: string; held: boolean }[] }
+export type JourneyRowNeed = { label: string; hint?: string; symbols?: { symbol: string; held: boolean }[] }
 
 export type JourneyRowProps = {
   name: string
@@ -147,11 +147,14 @@ export const JourneyRow: FC<JourneyRowProps> = ({
                 <span
                   key={symbol}
                   data-held={held}
-                  className={`flex size-8 items-center justify-center rounded-md border-2 text-lg ${held ? "border-[#A3401A] bg-[#FFF8EA]" : "border-dashed border-[#B8A584] opacity-40"}`}
+                  className={`flex size-8 items-center justify-center rounded-md border-2 text-lg ${
+                    held ? "border-[#A3401A] bg-[#FFF8EA]" : "border-dashed border-[#B8A584] opacity-40"
+                  }`}
                 >
                   {symbol}
                 </span>
               ))}
+              {need.hint && <span className="basis-full text-xs text-[#5C4A36]">{need.hint}</span>}
             </li>
           ))}
         </ul>

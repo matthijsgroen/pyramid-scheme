@@ -1,3 +1,4 @@
+import type { Difficulty } from "@/data/difficultyLevels"
 import { journeys } from "@/data/journeys"
 import { nextPyramidJourneyId } from "@/app/pages/journeyAvailability"
 
@@ -7,7 +8,8 @@ import { nextPyramidJourneyId } from "@/app/pages/journeyAvailability"
 export function getNextUnlockedPyramidJourneyId(
   journeyId: string,
   heldKeys: ReadonlySet<string>,
-  isCompleted: (journeyId: string) => boolean
+  isCompleted: (journeyId: string) => boolean,
+  gateOpen?: (tier: Difficulty) => boolean
 ): string | undefined {
-  return nextPyramidJourneyId(journeys, journeyId, heldKeys, isCompleted)
+  return nextPyramidJourneyId(journeys, journeyId, heldKeys, isCompleted, undefined, gateOpen)
 }

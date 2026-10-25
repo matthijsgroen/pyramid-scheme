@@ -103,6 +103,40 @@ describe(allJourneys, () => {
     expect(allJourneys(base()).groups[0].needs).toEqual([{ key: "need-junior", label: "keys" }])
   })
 
+  it("lists a locked group, the treasure lit and the unmet need with its hint, only once the treasure is held", () => {
+    const need: JourneyNeed = { key: "made-up", label: "Need a thing", hint: "Sold somewhere" }
+    const lit: JourneyNeed = { key: "tier", label: "Find it", symbols: [{ symbol: "A", held: true }] }
+    const input = base({
+      tierOpen: t => t === "starter" || t === "junior",
+      available: new Set(["s1", "j1"]),
+      tierNeeds: () => [lit],
+      extraNeeds: gate => ("tier" in gate ? [need] : []),
+    })
+    const locked = allJourneys(input).groups[0]
+    expect(locked).toMatchObject({ tier: "expert", locked: true, rows: [], needs: [lit, need] })
+    expect(tiers({ ...input, tierKeyHeld: () => false })).toEqual(["junior", "starter"])
+  })
+
+  it("lists the tier's journeys once its need is met", () => {
+    const input = base({
+      tierOpen: () => true,
+      available: new Set(["s1", "j1", "e1"]),
+      extraNeeds: () => [],
+    })
+    const expert = allJourneys(input).groups.find(g => g.tier === "expert")!
+    expect(expert).toMatchObject({ locked: false })
+    expect(expert.rows.map(r => r.journeyId)).toEqual(["e1"])
+  })
+
+  it("offers no journey of a tier its need keeps shut", () => {
+    const input = base({ tierOpen: t => t === "starter", available: new Set(["s1"]) })
+    expect(
+      allJourneys(input)
+        .groups.flatMap(g => g.rows)
+        .map(r => r.journeyId)
+    ).toEqual(["s1"])
+  })
+
   it("collapses a finished older tier with its news; the newest open tier stays open", () => {
     const input = base({
       tierOpen: t => t === "starter" || t === "junior",

@@ -95,6 +95,19 @@ describe(availablePyramidJourneyIds, () => {
   })
 })
 
+describe("a tier a need keeps shut", () => {
+  const shut = (tier: string) => tier !== "junior"
+  it("offers no journey of that tier and announces none, whatever keys are held", () => {
+    const all = keys(...Object.values(TIER_UNLOCK_PERK_IDS).flatMap(ids => ids ?? []))
+    const done = completed(...starterPyramids)
+    expect(
+      [...availablePyramidJourneyIds(journeys, all, done, undefined, shut)].filter(id => juniorPyramids.includes(id))
+    ).toEqual([])
+    expect(nextPyramidJourneyId(journeys, starterPyramids.at(-1)!, all, done, undefined, shut)).toBeUndefined()
+    expect(isTierUnlocked("junior", all, shut)).toBe(false)
+  })
+})
+
 describe(nextPyramidJourneyId, () => {
   it("announces the next expedition inside the tier", () => {
     expect(nextPyramidJourneyId(journeys, juniorPyramids[0], keys("starter_a_1"))).toBe(juniorPyramids[1])
