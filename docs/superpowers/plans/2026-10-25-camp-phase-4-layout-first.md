@@ -8,7 +8,7 @@
 
 1. The DSL fixes floors, locks, chests and puzzles.
 2. Every floor's layout (`seed` + `packing`) is picked **before** any loot is placed. The layout meets **hard** criteria: it carves, its lock walks sound, every lock holds a puzzle on the way, no dead region and no bare stub. A floor whose authoring cannot meet them fails the bake by name. `packing` is an intention, not a requirement: the search prefers the pair closest to it and never fails a floor on it.
-3. On that layout the worklist places keys, first blockage first: hieroglyphs, ward keys, tomb treasures, map pieces, the corridor detector, and the animals Fez sells.
+3. On that layout the worklist places keys, first blockage first: hieroglyphs, ward keys, map pieces and the animals Fez sells. Tomb treasures (the corridor detector among them) are fixed when the tombs are built (Phase 3), before the layout, and count as structure.
 4. Money is a condition, not a placement: in every ground the player can stand in, the money lying there covers everything for sale there.
 5. The fixed quantities follow: mosaic pieces, camp finds and parts, waterskins, Fez's waterskins.
 6. Money is placed last, so that it meets every condition from step 4.
@@ -33,7 +33,7 @@ A guard walks the **stamped** world and refuses any bake in which a journey cann
 4. **Keys on the shipped layout.** The worklist walks the pinned floors, so its reachability is the player's. A key is placed only in a room the walk reaches (the room-reach hunk of the shelved patch). The animals are a gating currency: each fills a stock placeholder in its named shop, and only when that shop is reached before the gate.
 5. **Grounds and money.** The gate walk gains a mode in which shop stock counts as held only once bought. A core function enumerates every **ground**: a fixed point the player can stand in, given which key pieces they bought. The shop mod checks `income(ground) ≥ buyable(ground)` on each ground, its waterskins and rares included. A one-gate-at-a-time check is unsound (Decision 12).
 6. **Money last.** Every distribution that places a fixed quantity runs before the money distribution. Money fills the smallest ground first until each ground is covered. The authored 1070-coin allowance goes.
-7. **The stamped guard.** After the stamp, `scripts/generateWorld.ts` builds a fresh gate walk over the final configs. It refuses the bake on any unentered journey, locked tier or blocking lock. It also re-runs every mod's world validator, so the shop's ground check runs on the stamped world. A verify runs the same check over the committed `generatedWorld.ts`.
+7. **The guard on the final world.** Once the build is done and the layout check has passed, `scripts/generateWorld.ts` builds a fresh gate walk over the final configs and refuses the bake on any unentered journey, locked tier or blocking lock. The mod validators (the shop's ground check among them) already run inside `buildConfigs` on the pinned world, which is the world that ships, so they are not run twice. A verify runs the same check over the committed `generatedWorld.ts`.
 8. **The app** (old Tasks 5–7, adapted to Alle reizen): gate needs feed `allJourneys`' `extraNeeds`, the shop store records purchases as held keys, and the camp lands the animals on coming home.
 
 **Tech Stack:** TypeScript, Vitest, React 19, Storybook, zod reward schemas, immer state models, `src/worldGen/{reachability,placeFragments,gateWalk,configBuilder,slots,slotAllocator,carveSeedSearch}.ts`, `src/game/floorLockWalk.ts`, `scripts/generateWorld.ts`, `yarn loot-report`.
@@ -151,33 +151,39 @@ Each decision is **default** / alternative. Task 16 writes them under Decisions,
 - Modify: `src/worldGen/configBuilder.ts` (+ spec): the `pickLayout` option, called after Phase 3.6, the stock trim and the shop-end pass, before 3.65 (web) and Phase 4 (placement).
 - Modify: `src/worldGen/slots.ts`, `slots.spec.ts`: `collectSlots` skips shop ends and clears nothing.
 - Modify: `src/worldGen/shopStock.ts` (+ `shopStock.spec.ts`): `clearShopEnds(configs, resolveEncounter)` and `trimEmptyStock(configs)`, both structural passes.
-- Modify: `src/mods/buildWorldConfigs.ts`: passes `pickLayout`; the `pinWebFloors` call goes.
+- Modify: `src/mods/buildWorldConfigs.ts`: takes `pickLayout` as an option and hands it to `buildConfigs`; exports `pinsFrom(baked)`, a `PickLayout` that copies `seed` + `packing` from a baked world (default: `generatedWorldConfigs`); the `pinWebFloors` call goes (C1).
+- Modify: every caller of `buildConfigs` / `buildWorldConfigs` other than the bake passes `pinsFrom(generatedWorldConfigs)`, so it builds the shipped world (C1): `src/worldGen/configBuilder.integration.verify.ts`, `src/data/newFamilyIsNoOp.verify.ts`, `src/mods/topology/carveNeverDependsOnAMod.verify.ts`, `src/worldGen/lockPlanWorld.verify.ts`, `src/worldGen/lockFloorInspector.verify.ts`, `src/worldGen/seedDemand.verify.ts`, `scripts/puzzleSeeds.ts` (re-check with `grep -rln "buildConfigs(\|buildWorldConfigs(" src scripts`). Only `scripts/generateWorld.ts` passes the search.
+- Modify: `src/worldGen/reachability.ts` (+ spec): `reachableFloorsInSite` carves floor `i` at `site[i].seed ?? defaultSeedFor(ref) + i`, passed explicitly, and keys its cache on that seed; the comment that says it assembles at `defaultSeedFor` and not the runtime seed is rewritten to the current state (C5).
 - Modify: `src/worldGen/webPlacement.ts`: `pinWebFloors` and `bakeOnSettledPins` go; `placementMoved` stays for the refusal.
 - Create: `src/worldGen/layoutCheck.ts`, `layoutCheck.spec.ts`.
 - Modify: `scripts/generateWorld.ts`:
   - `assembleOnce` becomes the `pickLayout` implementation;
-  - after the build, `layoutMoved` and `placementMoved` run, and either one non-empty exits 1.
+  - after the build, `layoutMoved` (carving every final floor afresh, never through the pick's grid cache, R4) and `placementMoved` run, and either one non-empty exits 1;
+  - `pickLayout` refuses by name a lock with outside inputs (a web's `A outside`) that cannot carve before the web is laid, and a web floor's pick is verified again after Phase 3.65 (C4; no web ships today, so this costs nothing now).
 
 **Interfaces:**
 
 - Produces: `PickLayout = (configs: Record<string, SiteConfig[]>) => void`, which writes `seed` and `packing` on every floor.
 - Produces: `clearShopEnds`, which clears a section's `fragmentSlot` end placeholder when its end resolves to the Fez-shop family. The resolver is injected.
 - Produces: `trimEmptyStock`, which drops every `undefined` stock entry.
-- Produces: `gridShape(grid: FloorGrid): string`, a hash of the cells, walls and doors with rewards left out.
-- Produces: `layoutMoved(picked: ReadonlyMap<string, string>, configs, carve): string[]`.
+- Produces: `gridShape(grid: FloorGrid): string`, a hash of the cells and walls only: rewards, web doors and web gates are left out (web placement has its own `placementMoved` check, C4).
+- Produces: `layoutMoved(picked: ReadonlyMap<string, string>, configs, carve): string[]`; `carve` carves the final config afresh (R4).
+- Produces: `pinsFrom(baked): PickLayout` (C1).
 - Consumes: `searchCarvePair`, `verifyCarvePair`, the carve ledger.
 
 - [ ] **Step 1: Failing tests** (made-up worlds and a made-up encounter resolver):
-  - `configBuilder.spec.ts` "the layout hook sees the world before any loot": every end placeholder is in place, no concrete reward has been placed, shop ends are cleared and stock is trimmed.
-  - `configBuilder.spec.ts` "placement carves each floor at the layout's pin": a spy resolver records each `assembleFloor` seed placement uses, and every one is the written seed.
+  - `configBuilder.spec.ts` "the layout hook sees the world before any loot": every `fragmentSlot` placeholder is still unfilled and no distribution has run; shop ends are cleared and stock is trimmed. Tomb treasures written in Phase 3 are structure and may already stand (C6).
+  - `reachability.spec.ts` "placement carves each floor at the layout's pin": the grid the placement walk carves for a made-up floor with a written `seed` equals `assembleFloor` at that seed (or the cache key carries it), not at `defaultSeedFor` (C5).
+  - `buildWorldConfigs` spec "pinsFrom copies seed and packing from the baked world onto every floor".
   - `layoutCheck.spec.ts` "a placed reward moves no wall": `gridShape` is equal with placeholders and with concrete rewards.
   - `layoutCheck.spec.ts` "an end that loses its reward after the pick is named".
-  - `shopStock.spec.ts`: "a shop's end placeholder is cleared before the layout", "a shop keeps only its assigned stock", and "trimming moves no wall".
+  - `shopStock.spec.ts`: "a shop's end placeholder is cleared before the layout", "a shop keeps only its assigned stock", and "trimming moves no wall", which carves the made-up floor with both stock shapes (untrimmed and trimmed) and compares the two `gridShape`s (R5).
+  - `layoutCheck.spec.ts` "layoutMoved carves afresh": handed a carve that returns a different grid than the pick saw, it names the floor (R4).
   - `slots.spec.ts`: "collectSlots skips a shop end and clears nothing".
-- [ ] **Step 2: Run** `yarn test src/worldGen src/mods/buildWorldConfigs` → FAIL.
+- [ ] **Step 2: Run** `yarn test src/worldGen src/mods/buildWorldConfigs` → FAIL. (Before the first commit, the working tree must hold no edits that are not this task's.)
 - [ ] **Step 3: Implement.** Comments say why the layout precedes loot and why end presence is structural.
 - [ ] **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`. Do not bake.
-- [ ] **Step 5: Per-task review** (Opus): no structural write after `pickLayout`; the web is read on picked floors.
+- [ ] **Step 5: Per-task review** (Opus): no structural write after `pickLayout`; the web is read on picked floors; every non-bake caller of `buildConfigs` builds on `pinsFrom` (C1).
 - [ ] **Step 6: Commit:** `refactor: world layout is picked before loot is placed`
 
 ---
@@ -191,26 +197,32 @@ Each decision is **default** / alternative. Task 16 writes them under Decisions,
 - Create: `src/worldGen/layoutFeasibility.ts`, `layoutFeasibility.spec.ts`: the authoring checks that hold for every seed (Decision 9).
 - Modify: `scripts/generateWorld.ts`: `STRICT_ATTEMPT_ZERO` goes; the ladder fallback is no longer pinned unchecked; any infeasible or not-found floor exits 1 after every floor has been tried, listing all of them.
 - Modify: `scripts/carveLedger.ts`: the entry carries `kind: "notFound"`.
+- Modify: `src/worldGen/carveSeedSearch.ts` `verifyCarvePair`: a pin equal to (base seed, authored packing) verifies when its full-ladder carve meets every hard criterion (`laddered: true`), so a laddered floor is verified, not re-searched, each bake (C3).
+- Modify: `src/worldGen/bakedCarve.verify.ts`: the `NEEDS_THE_LADDER` list and the attempt-0 assertion go; it asserts `refusal(...) === null` under `HARD_CRITERIA` on every baked floor, laddered floors carved with the ladder (stricter than today, C2).
+- Modify: `src/game/carve/ladder.ts`: the comment naming `STRICT_ATTEMPT_ZERO` says the current state (C2).
+- Modify: the `pickLayout` implementation Task 1 put in `scripts/generateWorld.ts`, to the new result kinds.
+- Create: `scripts/layoutReport.ts` and a `yarn layout-report` script in `package.json`: runs `pickLayout` over the current authoring with no bake write and prints every infeasible, not-found and ladder-only floor (C15). Committed, so later tasks re-run it.
 
 **Interfaces:**
 
 - Produces: `HARD_CRITERIA` = `carves`, `lock walks sound`, `lock holds a puzzle`, `no dead region`, `every stub holds a room`; `refusal(result)` reports only these. `attempt 0` and the packing step stay in the search's order, not in its refusals.
 - Produces: `layoutInfeasible(floor, prep): { criterion; detail }[]`, with no carve.
-- Produces: `searchCarvePair` returns `CarvePairFound` (with `packing` and `laddered: boolean`) or `{ kind: "notFound"; hardest; counts; seeds; packings }`. The caller asks `layoutInfeasible` first and reports `{ kind: "infeasible"; criterion; detail }` without searching.
-- Produces: `lockWithoutPuzzle(grid): string[]` and `lockGroundUnfed(grid): string[]`, the latter reading each lock part's appetite through one `appetiteOf(part)` (regions today; connections once phase 4b gives them one).
+- Produces: one discriminant on every result (C17): `{ kind: "found"; seed; packing; laddered: boolean; grid; … }`, `{ kind: "notFound"; hardest; counts; seeds; packings }`, `{ kind: "infeasible"; criterion; detail }`. The caller asks `layoutInfeasible` first and reports `infeasible` without searching. `seedBudget` counts seeds (offsets `0 … n-1`); each candidate is one carve, the ladder carve last.
+- Produces: `lockWithoutPuzzle(grid): string[]` and `lockGroundUnfed(grid, floor): string[]` (C17): the grid's cells carry region names, the floor's locks carry the appetites, read through one `appetiteOf(part)` (regions today; connections once phase 4b gives them one).
 
 - [ ] **Step 1: Failing tests** (made-up floors, injected assembler):
   - `layoutFeasibility.spec.ts` "a lock floor with no main-path puzzle and only gated sections is infeasible before any carve": **0** carves counted, the message names the lock and `lock holds a puzzle`.
   - `layoutFeasibility.spec.ts` "a one-way naming a missing section is infeasible".
-  - `carveSeedSearch.spec.ts` "a hard criterion no candidate meets is not found": an assembler failing `no dead region` everywhere, budget 3 seeds × 2 packings plus the ladder: `notFound`, 7 tries, the hardest criterion and its count.
+  - `carveSeedSearch.spec.ts` "a hard criterion no candidate meets is not found": an assembler failing `no dead region` everywhere, budget 3 seeds (offsets 0–2) × 2 packings plus the ladder carve: `notFound`, 7 carves, the hardest criterion and its count.
   - `carveSeedSearch.spec.ts` "the pair closest to the authored packing wins": passing at the second packing step and at the fourth, the second is pinned.
   - `carveSeedSearch.spec.ts` "packing never fails a floor": an assembler passing only on the ladder carve gives `found` with `laddered: true`.
   - `carveSeedSearch.spec.ts` "the ladder carve must meet the hard criteria": a ladder carve whose lock walks unsound is `notFound`, never pinned.
+  - `carveSeedSearch.spec.ts` "a laddered pin verifies without a search": a pin at (base, authored) whose ladder carve meets the hard criteria verifies with one carve and `laddered: true` (C3).
   - `lockPuzzles.spec.ts`: "a lock whose way passes a puzzle room passes"; "a lock whose control is the only room on its way is named"; "a region asking for puzzles that holds none is named"; `it.todo("a corridor asking for a side path that carries none is named")` for phase 4b.
 - [ ] **Step 2: Run** `yarn test src/worldGen/carveSeedSearch src/worldGen/layoutFeasibility src/game/lockPuzzles` → FAIL.
 - [ ] **Step 3: Implement.**
-- [ ] **Step 4: Measure, without baking:** run the layout stage alone (a scratch script over the committed configs). List every floor that is now infeasible or not found, with its message, under Failures in the review list, and the count of floors that pass only on the ladder (accepted). This is what Task 6's bake will refuse, so the designer sees it before the bake.
-- [ ] **Step 5: Run** → PASS; `yarn check-types`; `yarn lint`.
+- [ ] **Step 4: Measure, without baking:** `timeout 900 yarn layout-report` (the committed `scripts/layoutReport.ts`). List every floor that is now infeasible or not found, with its message, under Failures in the review list, and the count of floors that pass only on the ladder (accepted). This is what Task 6's bake will refuse, so the designer sees it before the bake.
+- [ ] **Step 5: Run** → PASS; `yarn check-types`; `yarn lint`; `yarn vitest run --config vitest.verify.config.ts src/worldGen/bakedCarve` on the committed world (its laddered floors must pass the hard criteria; a floor that does not goes under Failures with the Step 4 list).
 - [ ] **Step 6: Per-task review** (Opus): no fallback ships a floor unchecked; infeasible is only claimed for checks that hold for every seed; packing orders the search and never refuses.
 - [ ] **Step 7: Commit:** `feat: a floor's layout meets every hard criterion or the bake names it`
 
@@ -221,9 +233,11 @@ Each decision is **default** / alternative. Task 16 writes them under Decisions,
 **Files:**
 
 - Modify: `src/worldGen/reachability.ts` (+ spec): `ReachabilitySupport.hiddenRequirement`. The strict and placement walks treat a hidden cell as walkable only while that fact is held, and record the requirement as a discovered lock.
-- Modify: `src/game/siteValidator.ts` (+ spec): `reachableFrom` takes a `hiddenOpen: boolean`.
+- Modify: `src/game/siteValidator.ts` (+ spec): `reachableFrom` and `collectReachableKeys` take `hiddenOpen` inside an options object that replaces their growing positional tail (C11; Task 8 adds to the same object).
 - Modify: `src/worldGen/gateWalk.ts` (+ spec): the walk honours it.
-- Modify: `src/worldGen/placeFragments.ts`: `mergeReachabilitySupport` takes the one `hiddenRequirement` (two mods naming one is a build error).
+- Modify: `src/mods/registeredMods.ts` (+ spec): `mergeReachabilitySupports` carries `hiddenRequirement`; two contributors naming one throws (C8).
+- Modify: `src/worldGen/placeFragments.ts`: `mergeReachabilitySupport` (which copies a fixed list of fields today) forwards `hiddenRequirement` (C8).
+- Modify: `src/worldGen/gateWalk.ts`: its top comment's "Hidden pockets in that ground count" says the current state.
 - Modify: `src/mods/tombTreasure/game/reachabilitySupport.ts` (+ spec): `detector:corridor:<k>` facts from `detection` perk treasures, and the hidden requirement.
 
 **Interfaces:**
@@ -232,10 +246,11 @@ Each decision is **default** / alternative. Task 16 writes them under Decisions,
 
 - [ ] **Step 1: Failing tests** (made-up worlds):
   - `gateWalk.spec.ts` "a reward in a hidden section is out of the ground until the detector fact is held, and in once a reached treasure grants it".
-  - `reachability.spec.ts` "a key is never placed in a hidden section before the detector is reachable".
+  - `reachability.spec.ts` "a slot not flagged hidden but reached only through hidden cells (past a hidden stair or section) gets no key until the detector is held" (C10; hidden-flagged slots are already skipped today, `placeFragments.ts:272`).
+  - `placeFragments.spec.ts` "a dynamic distribution's slot reached only through hidden cells counts as behind the detector" (C10).
   - `reachability.spec.ts` "with no hidden requirement a hidden section walks open".
   - tombTreasure support spec: "a level-2 detection treasure grants levels 1 and 2".
-  - `placeFragments.spec.ts`: "two supports naming a hidden requirement fail the merge".
+  - `registeredMods.spec.ts`: "two supports naming a hidden requirement fail the merge"; `placeFragments.spec.ts`: "the merged support keeps the hidden requirement" (C8).
 - [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`.
 - [ ] **Step 5: Per-task review** (Opus): the runtime rule matches (L1 is what lets the player stand on a hidden junction); the permissive walk is unchanged; core names no perk.
 - [ ] **Step 6: Commit:** `feat: hidden corridors count only once the corridor detector is held`
@@ -246,10 +261,11 @@ Each decision is **default** / alternative. Task 16 writes them under Decisions,
 
 **Files:**
 
-- Apply: the `slots.ts`, `placeFragments.ts` and `placeFragments.spec.ts` hunks of `.superpowers/sdd/2026-10-25-camp-phase-4-animal-gates/task-2b-room-reach-and-walk-guard.patch`. Fit the spec's `demandFor` to the full `CurrencyDemand`, as Task 2c did.
+- Apply with `git apply`: only the `placeFragments.ts` and `placeFragments.spec.ts` hunks of `.superpowers/sdd/2026-10-25-camp-phase-4-animal-gates/task-2b-room-reach-and-walk-guard.patch`. Fit the spec's `demandFor` to the full `CurrencyDemand`, as Task 2c did.
+- Modify by hand: `src/worldGen/slots.ts`, on Task 1's version: the patch's `Slot.sentinel` field and the room-reach eligibility line (the hunk no longer applies, C7).
+- Modify: `src/worldGen/placeFragments.ts` `mergeReachabilitySupport` forwards `resolveOneWay`, `resolveRegionBarrier` and `resolvePassage` (dropped there today); `gateWalk.ts` already forwards the support whole and needs no change for them (C8).
 - Modify: `src/worldGen/validate.ts` (+ spec): `stuckPoints`, which generalises the patch's `validateWalkEntersEveryJourney`.
-- Modify: `src/worldGen/gateWalk.ts` (+ spec): the walk passes `resolveOneWay`, `resolveRegionBarrier` and `resolvePassage` from the support.
-- Modify: `scripts/generateWorld.ts`: after the stamp, a fresh walk over the final configs, then `stuckPoints` and every `worldValidators` entry on it. Any failure exits 1.
+- Modify: `scripts/generateWorld.ts`: once the build is done and the layout check has passed, a fresh walk (fresh cache) over the final configs and `stuckPoints` on it; any line exits 1. The mod validators are not re-run here: `buildConfigs` already runs them on the pinned world (R1).
 - Create: `src/data/worldWinnable.verify.ts`: the same check over the committed `generatedWorld.ts`, run by `yarn verify-content`.
 
 **Interfaces:**
@@ -258,10 +274,10 @@ Each decision is **default** / alternative. Task 16 writes them under Decisions,
 
 - [ ] **Step 1: Failing tests** (made-up worlds):
   - from the patch: "a slot behind a room needing the made-up glyph is skipped for another journey's end";
-  - "a key on a shop's end leaves its journey unentered and is named";
+  - "a key on a shop's end leaves its journey unentered and is named" (the made-up world is built by hand with the key on the shop end, since placement no longer puts one there);
   - "a world whose every lock opens has no stuck points";
   - "a tier whose only group's bucket is nowhere is named locked";
-  - "a one-way door is walked as the support resolves it";
+  - `placeFragments.spec.ts` "the merged support keeps the one-way, region-barrier and passage resolvers", and "a one-way door is walked as the support resolves it" (C8);
   - "a journey reachable only through a hidden corridor with no detector anywhere is named".
 - [ ] **Step 2: Run** `yarn test src/worldGen src/data` → FAIL.
 - [ ] **Step 3: Implement.** The script prints `strict walk enters N of M journeys` on success.
@@ -286,7 +302,7 @@ No unit test pins the authored spec: the bake and the loot report are the check 
 
 - [ ] **Step 1: Failing test** (`lootTotals.spec.ts`, made-up configs): "traps and waterskins are counted per tier", where a made-up world with traps on two tiers gets one row per tier with those counts.
 - [ ] **Step 2: Run** `yarn test src/mods/trap` → FAIL. **Step 3: Implement** both edits. **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`. Do not bake.
-- [ ] **Step 5:** The corridor's length is structural, so re-run Task 2's layout measurement (its Step 4 script) for master floors, and update the review list's layout-refusal lines.
+- [ ] **Step 5:** The corridor's length is structural, so run `timeout 900 yarn layout-report` (committed by Task 2, C15) and update the review list's layout-refusal lines for master.
 - [ ] **Step 6: Commit:** `feat: master's open junk corridor carries traps`
 
 ---
@@ -307,7 +323,7 @@ No unit test pins the authored spec: the bake and the loot report are the check 
     - show in the loot report master's trap count between expert's and wizard's. Waterskins still follow the flat rule until Task 9; from Task 11 on, they follow these new trap counts.
 - [ ] **Step 3: Fingerprints:** every tier may move, starter included. For each tier whose fingerprint moved, copy its hash and write one review-list line saying why (layout re-picked, loot re-placed on it, master's trap corridor).
 - [ ] **Step 4: Report:** `timeout 900 yarn loot-report`. Totals are exact, and the slot mix and hidden-pocket keys move.
-- [ ] **Step 5: Checks:** `timeout 900 yarn verify-content` (includes `worldWinnable.verify.ts`) and `timeout 900 yarn verify`.
+- [ ] **Step 5: Checks:** `timeout 900 yarn verify-content` (includes `worldWinnable.verify.ts`, `bakedCarve.verify.ts` under the hard criteria, and the verifies that now build on `pinsFrom`, C1/C2) and `timeout 900 yarn verify`.
 - [ ] **Step 6: Review list:** the phase-4 blocker moves from Failures to resolved, with the walk counts (22/29 → 29/29 shipped) and how many floors moved pin.
 - [ ] **Step 7: Commit:** `chore: bake the world with loot placed on its picked layout`
 
@@ -326,8 +342,9 @@ No unit test pins the authored spec: the bake and the loot report are the check 
 - Produces: `purchaseProblems(table, tombIds)`, which reports a duplicate, a bad fact, a bad price, a non-tomb shop, two purchases on one gate, or a purchase opening starter or junior.
 - Produces: `requirementsFor(table)`.
 - Produces: `purchaseRewardSchema = { type: "purchase"; id }`; `priceFor` prices a purchase flat from the table.
-- Produces: `purchaseCurrency(table): CurrencyDistribution`. It owns every purchase fact, and its demand is one `{ type: "purchase", id }`. `eligible` is a hard filter: only a slot whose `preference` is that fact. `allBuckets` lists every fact, so the banner is placed.
+- Produces: `purchaseCurrency(table): CurrencyDistribution`. It owns every purchase fact, and its demand is one `{ type: "purchase", id }`. Its `rank` returns only the candidates whose `preference` is that fact (it may shorten the list), so no other slot is ever offered; no core change (C14). If the worklist turns out to assume `rank` keeps every candidate, add an optional core `eligible` to `CurrencyDistribution` and list `src/worldGen/placeFragments.ts`. `allBuckets` lists every fact, so the banner is placed.
 - Produces: `SHOP_REACHABILITY`, which maps a purchase to its fact and supplies `tierUnlockGroups` / `journeyEntryLocks`.
+- Consumes: `CurrencyDistribution` as it is (`ownsBucket`, `demandFor`, `rank`, `allBuckets`).
 
 - [ ] **Step 1: Failing tests** (made-up tables and worlds):
   - every problem is reported once and named;
@@ -335,6 +352,7 @@ No unit test pins the authored spec: the bake and the loot report are the check 
   - "a purchase whose shop lies behind the gate it opens fails the build, naming both";
   - "a purchase that opens nothing is still placed by the completion pass";
   - "no other currency takes a purchase placeholder";
+  - "a purchase is never ranked into a slot that is not its placeholder" (C14);
   - a purchase is priced from a made-up table at every tier.
 - [ ] **Step 2: Run** `yarn test src/mods/shop src/worldGen` → FAIL. **Step 3: Implement.** Do not bake. **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`.
 - [ ] **Step 5: Per-task review** (Opus): the gate is the frontier when the purchase is placed; core reads no reward type; nothing gates starter → junior.
@@ -346,17 +364,18 @@ No unit test pins the authored spec: the bake and the loot report are the check 
 
 **Files:**
 
-- Modify: `src/worldGen/gateWalk.ts` (+ spec): the `holding` mode.
-- Create: `src/worldGen/grounds.ts`, `grounds.spec.ts`.
+- Modify: `src/worldGen/reachability.ts` (+ spec): a `stockHeld?: (reward) => boolean` hook in the walk's options object (Task 3's), consulted where shop stock is harvested; absent, stock harvests as today (C11).
+- Modify: `src/worldGen/gateWalk.ts` (+ spec): the `holding` mode, built on that hook.
+- Create: `src/worldGen/grounds.ts`, `grounds.spec.ts` (`reachableGrounds`, `keyRewardsOf`).
 - Create: `src/mods/shop/game/moneyLedger.ts`, `moneyLedger.spec.ts`.
 - Modify: `src/mods/shop/game/economyGuard.ts` (+ spec) and `lootTotals.ts` (+ spec).
 
 **Interfaces:**
 
 - Produces: `GateWalk.holding(bought: ReadonlySet<TreasureReward>): GateWalkResult & { stock: readonly TreasureReward[] }`. Shop stock harvests only when bought (by identity). Room rewards harvest as before, the hidden requirement included. Memoised per set.
-- Produces: `reachableGrounds(walk, { isKey, cap }): { grounds: Ground[] } | { overCap: number }`, with `Ground = { bought; rewards; stock }`. It searches breadth-first from ∅, buying one key piece in `stock` at a time, and deduplicates grounds by the rewards reached. Key pieces are purchases, hieroglyph pieces and the map piece; Fez's waterskins and rares are stock, never keys.
+- Produces: `reachableGrounds(walk, { isKey, cap }): { grounds: Ground[] } | { overCap: number }`, with `Ground = { bought; rewards; stock }`. It searches breadth-first from ∅, buying one key piece in `stock` at a time, and deduplicates grounds by the rewards reached. `isKey` comes from core, never from a mod (C12): `keyRewardsOf(configs, support)` in `src/worldGen/grounds.ts` says a reward is a key when its bucket (through the merged support) is named by some lock in the world (an entry lock, a tier group, a gate or a tableau requirement). Purchases, hieroglyph pieces and the map piece qualify; Fez's waterskins and rares do not (a mosaic counted as a key only makes grounds finer, which is safe). The shop guard and the fill take it from there.
 - Produces (shop): `moneyLedger(grounds, priceFor, incomeOf): MoneyRow[]`, each row `{ label: the key pieces bought; income; buyable; margin }`.
-- Produces (shop): `purchasePlacementProblems(walk, table)`.
+- Produces (shop): `purchasePlacementProblems(walk, table)`: only a purchase stocked twice or missing. Whether its shop lies before its gate stays the worklist's (Task 7) and `stuckPoints`' (Task 4) question (R3).
 - Produces (shop): `runEconomyGuard(configs, reachable, walk)`. It throws on placement problems, on any negative margin (naming the ground, income, buyable and shortfall), and on `overCap`. The global-only check goes; the last ground is the world.
 - Produces: loot-report rows `Money with <bought> bought` and `Purchases in shops`.
 
@@ -365,14 +384,15 @@ No unit test pins the authored spec: the bake and the loot report are the check 
     - "buying a key that opens nothing new adds no ground";
     - "two independent keys give four grounds";
     - "over the cap returns the count";
-    - "walks ≤ grounds × key pieces" (counted).
+    - "walks ≤ grounds × key pieces" (counted);
+    - "a reward is a key when some lock names its bucket": a made-up glyph a tableau names is a key, a made-up mosaic no lock names is not (C12).
   - `moneyLedger.spec.ts`:
     - the Decision 12 counterexample: the old one-withheld rows pass, and the guard refuses, naming the ground "A bought";
     - **"money behind a hidden corridor does not cover a purchase until the detector is held"**: a made-up world where the only money that pays for a key in a shop lies in a hidden section, and the detector treasure lies behind that key. The guard refuses, naming the ground. Moving the detector treasure before the shop makes it pass;
     - "Fez's waterskins count as buyable in their ground and never open anything";
     - a property test over 200 seeded made-up worlds (≤ 3 shops, ≤ 4 key pieces, ≤ 3 rares, ≤ 1 hidden section). On every world the guard passes, an exhaustive spender (every buy order) never ends with an unbought visible key it cannot afford.
   - `economyGuard.spec.ts`: a purchase stocked twice, or missing, throws naming it.
-  - `lootTotals.spec.ts`: the rows equal `moneyLedger`.
+  - `lootTotals.spec.ts`: on a made-up world, the rows equal numbers computed by hand in the spec (R2).
 - [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** The top comment of `grounds.ts` says what a ground is and why every one is checked. **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`. Do not bake.
 - [ ] **Step 5: Per-task review** (Opus): the soundness argument holds in code; no money word in core; the property test can fail (break the guard locally and see it go red).
 - [ ] **Step 6: Commit:** `feat: the economy guard checks every ground a player can stand in`
@@ -403,7 +423,7 @@ No unit test pins the authored spec: the bake and the loot report are the check 
 
 **Files:**
 
-- Modify: `src/worldGen/slotAllocator.ts`, `src/worldGen/placeFragments.ts`: a distribution's `fill` gets `ctx: { walk: GateWalk }`. The walk is built with a fresh cache over the world as it stands once every earlier distribution has filled, and it lists the remaining placeholder objects, so a slot's ground is known by identity.
+- Modify: `src/worldGen/slotAllocator.ts`, `src/worldGen/placeFragments.ts`: a distribution's `fill` gets `ctx: { walk: GateWalk; isKey }`. Before the walk is built, a fill marked `fillsLast` gets a fresh placeholder object standing in every free slot it was handed (puzzle slots included, which carry no sentinel today); the walk, built with a fresh cache over the world as it stands, lists those objects, so a slot's ground is known by identity; the fill clears every placeholder it does not fill (C13).
 - Modify: `src/mods/shop/game/loot.ts` (+ `loot.spec.ts`): `MONEY_ALLOWANCE` goes.
 - Modify: `src/data/sellables.ts`: tier sell values, by Decision 20's rule.
 
@@ -415,9 +435,10 @@ No unit test pins the authored spec: the bake and the loot report are the check 
   - "the smallest ground is covered before the world";
   - "a ground with no free slot fails, naming it";
   - "a slot in a hidden section only counts toward grounds that hold the detector";
-  - "no allowance is added".
+  - "no allowance is added";
+  - "every placeholder the fill does not use is cleared, a puzzle slot's included" (C13).
 - [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement.** Set the sellable values by the rule, using a scratch measurement on the Task 6 bake noted in the report.
+- [ ] **Step 3: Implement.** Set the sellable values by the rule. Sinks come from the purchase table, the 13 rares' prices and Task 9's Fez waterskins (count × tier price), not from the Task 6 bake, which has neither purchases nor Fez waterskins; income per tier from the Task 6 loot report. Note the arithmetic in the task report.
 - [ ] **Step 4: Run** `yarn test src/mods/shop src/worldGen` → PASS; `yarn check-types`; `yarn lint`. Do not bake.
 - [ ] **Step 5: Per-task review** (Opus): the fill reads the same grounds the guard checks.
 - [ ] **Step 6: Commit:** `feat: money is placed so every ground pays for its stock`
@@ -529,9 +550,16 @@ As old Task 7, unchanged:
 
 Sonnet.
 
-**Files:** `src/mods/story/game/reaction/storyBeats.ts` (+ spec) and `src/mods/story/game/drafts.ts` (+ spec). The seams are the ones the drafts name: `animal.forSale`, `bought*`, `blocked*`, `through*` and `arrives*`.
+**Files:** `src/mods/story/game/reaction/storyBeats.ts` (+ spec) and `src/mods/story/game/drafts.ts` (+ spec; `drafts.spec.ts` today asserts every animal beat is waiting, which inverts). The story mod imports neither shop nor camp (C16); it reads core seams it already sees:
 
-- [ ] **Step 1: Failing tests** (made-up seams): each animal beat fires once, at its moment; `WAITING_BEATS` lists no animal beat.
+- `bought*` and `through*`: a held-key fact appearing (`useMergedHeldKeys`), the fact string named in the story's own data;
+- `blocked*`: the gate-needs list (`useMergedGateNeeds`, Task 12) showing that fact unmet;
+- `arrives*`: the homecoming seam with the fact held;
+- `animal.forSale`: the first time the fact's gate need is shown (the stall has no core seam).
+
+A beat with no core seam to read stays in `WAITING_BEATS` and goes under Failures, never wired by a sibling import.
+
+- [ ] **Step 1: Failing tests** (made-up facts and needs): each wired animal beat fires once, at its moment; `WAITING_BEATS` lists no wired animal beat; the story mod's import list names no sibling mod.
 - [ ] **Steps 2–4:** FAIL → wire → PASS; `yarn check-types`; `yarn lint`.
 - [ ] **Step 5: Commit:** `feat: Fez and the explorer talk about the animals`
 
@@ -543,7 +571,7 @@ Docs: Sonnet. The rest: Opus.
 
 **Files:**
 
-- `docs/game-design/keys-and-locks-solver.md`: the order becomes layout (hard criteria) → keys (detector and purchases included) → money as a condition → fixed loot → money; plus grounds and the stamped guard.
+- `docs/game-design/keys-and-locks-solver.md`: the order becomes structure (tomb treasures, the corridor detector among them, fixed at build, C6) → layout (hard criteria) → keys (purchases included) → money as a condition → fixed loot → money; plus grounds and the stamped guard.
 - `docs/game-design/world-spec-stability.md`: the layout is picked before loot, and loot moves no wall.
 - `docs/game-design/journeys.md` §3: packing is an intention the search prefers, never a refusal.
 - `docs/game-design/lock-placement.md`: what a lock floor's side sections stand on, and the lock-holds-a-puzzle check.
