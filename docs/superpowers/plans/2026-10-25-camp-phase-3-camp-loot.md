@@ -266,10 +266,10 @@ Mechanical; one agent (Sonnet).
 - Produces: entries keyed `sellable/<id>` and `part/<structure>-<part>`; each a full block (the queue's rule: a block is the unit of use): the frame line (square, as camp art), the camp house style from `camp-art-prompts.md` §0 written out, the object in one or two sentences from its name (nl name in brackets), "flat `#ff00ff` background", attachments `art/masters/camp/chest.webp` (brushwork) and, for a part, its structure's master `art/masters/camp/<structure>.webp`; and the import line.
 - Produces: `sellableArt(id): string | undefined` — the painted file or nothing.
 
-- [ ] **Step 1: Tests.** `repaintQueue.spec.ts` on a made-up markdown: a `sellable/sell_stone_1` entry and a `part/well-rope` entry parse with their attachments, prompt and `out` under the `--out-dir`. `sellableArt.spec.ts`: a made-up art map with one file returns it, otherwise `undefined`.
-- [ ] **Step 2: Write** the 124 entries (names from `public/locales/en/sellables.json` and `camp.json`), then the parser and import flag, then the sellable lookup.
-- [ ] **Step 3: Run** `yarn repaint` — the new keys are listed as owed; `yarn repaint part/<any>` copies its prompt (check the clipboard text once, then restore nothing: it changes no file). `yarn test scripts src/mods/shop`, `yarn check-types`, `yarn lint`.
-- [ ] **Step 4: Commit** — `docs: repaint prompts for every sellable and camp part`
+- [x] **Step 1: Tests.** `repaintQueue.spec.ts` on a made-up markdown: a `sellable/sell_stone_1` entry and a `part/well-rope` entry parse with their attachments, prompt and `out` under the `--out-dir`. `sellableArt.spec.ts`: a made-up art map with one file returns it, otherwise `undefined`.
+- [x] **Step 2: Write** the 124 entries (names from `public/locales/en/sellables.json` and `camp.json`), then the parser and import flag, then the sellable lookup.
+- [x] **Step 3: Run** `yarn repaint` — the new keys are listed as owed; `yarn repaint part/<any>` copies its prompt (check the clipboard text once, then restore nothing: it changes no file). `yarn test scripts src/mods/shop`, `yarn check-types`, `yarn lint`.
+- [x] **Step 4: Commit** — `docs: repaint prompts for every sellable and camp part`
 
 ---
 
