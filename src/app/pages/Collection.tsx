@@ -1,7 +1,6 @@
 import type { FC } from "react"
 import { use, useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { Page } from "@/ui/atoms/Page"
 import { HieroglyphTile } from "@/ui/molecules/HieroglyphTile"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { FezContext } from "../fez/context"
@@ -66,7 +65,6 @@ const DetailPanel: FC<{
 }
 
 export const CollectionPage: FC = () => {
-  const { t } = useTranslation("common")
   const [selectedItem, setSelectedItem] = useState<CollectionItem | null>(null)
   const { inventory, addItem } = useInventory()
   const { isDevelopMode } = use(DevelopContext)
@@ -84,10 +82,8 @@ export const CollectionPage: FC = () => {
   }
 
   return (
-    <Page className="flex bg-gradient-to-b from-blue-100 to-blue-300" snap="center">
+    <div className="flex size-full bg-gradient-to-b from-blue-100 to-blue-300">
       <div className="relative flex-1 overflow-y-auto p-6">
-        <h1 className="mb-6 text-center font-pyramid text-3xl font-bold text-purple-900">{t("collection.title")}</h1>
-
         <div className="space-y-6 pb-safe-bottom">
           {/* Mod-contributed sections (shop's junk category, hieroglyph's fragments, tomb treasures,
               …). Each
@@ -106,6 +102,6 @@ export const CollectionPage: FC = () => {
           onAdd={() => selectedItem && addItem(selectedItem?.id, 1)}
         />
       </div>
-    </Page>
+    </div>
   )
 }

@@ -1,6 +1,5 @@
 import { use, useMemo, useRef, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
-import { Page } from "@/ui/atoms/Page"
 import { JourneyPathView } from "@/ui/atoms/JourneyPathView"
 import { JourneyCard } from "@/ui/organisms/JourneyCard"
 import { LockedJourneyCard } from "@/ui/organisms/LockedJourneyCard"
@@ -13,11 +12,11 @@ import { DifficultyPill } from "@/ui/atoms/DifficultyPill"
 import { TapHint } from "@/ui/atoms/TapHint"
 import { useTapHint } from "@/app/state/useTapHint"
 import { FezContext } from "@/app/fez/context"
-import { DevelopContext } from "@/contexts/DevelopMode"
 
 import { journeyCardSlots } from "./journeyCardSlots"
 import "@/mods/registerModApps" // populate the journey-card slot registry, as Collection does for its sections
-import { availablePyramidJourneyIds, comingSoonDifficulty } from "./journeyAvailability"
+import { comingSoonDifficulty } from "./journeyAvailability"
+import { useAvailableJourneyIds } from "./useAvailableJourneyIds"
 import { useMergedJourneyContributions } from "./journeyContributions"
 import { isWebKey } from "@/game/floorLock"
 
@@ -56,8 +55,6 @@ export const TravelPage: FC<{
   const [showInterruptModal, setShowInterruptModal] = useState(false)
   const journeyId = activeJourneyId ?? selectedJourney?.id
   const activeJourneyInfo = journeyId ? getJourney(journeyId) : undefined
-
-  const { isDevelopMode } = use(DevelopContext)
 
   const journey = activeJourneyInfo?.journey ?? selectedJourney
   // Nodes on this journey's map: one per site; a tomb is a journey of levelCount sites.
@@ -117,20 +114,7 @@ export const TravelPage: FC<{
     setShowInterruptModal(false)
   }
 
-  // Which pyramid expeditions are pickable: a tier is entered on holding one of its unlock
-  // treasures, and inside a tier they open together (wizard) or one at a time (see journeyAvailability).
-  //
-  // Develop mode opens every one of them. This IS a bypass, unlike the dev panel's grants in settings (those go
-  // through the real mod APIs): the within-tier "previous pyramid completed" rule can't be satisfied
-  // by granting anything, and faking completionCount instead would flip journeys into revisit mode
-  // and change how they're entered — the opposite of what playtesting needs.
-  const availableJourneyIds = useMemo(
-    () =>
-      isDevelopMode
-        ? new Set(journeys.filter(j => !j.entryLock).map(j => j.id))
-        : availablePyramidJourneyIds(journeys, heldKeys, id => (getJourney(id)?.completionCount ?? 0) > 0),
-    [journeys, heldKeys, getJourney, isDevelopMode]
-  )
+  const availableJourneyIds = useAvailableJourneyIds(journeys)
   const comingSoonTier = comingSoonDifficulty(heldKeys)
 
   // The newest one open to the player — the card that shows its details expanded.
@@ -165,10 +149,7 @@ export const TravelPage: FC<{
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   return (
-    <Page
-      className="flex flex-col items-center justify-center overflow-y-auto bg-gradient-to-b from-blue-100 to-blue-300 text-black"
-      snap="start"
-    >
+    <div className="flex size-full min-h-[70dvh] flex-col items-center justify-center overflow-y-auto bg-gradient-to-b from-blue-100 to-blue-300 text-black">
       <div className="relative flex size-full overflow-x-hidden">
         <div
           className={`absolute inset-0 flex w-full flex-1 flex-col pb-6 transition-all duration-700 ease-in-out md:px-16 ${
@@ -180,7 +161,6 @@ export const TravelPage: FC<{
             <strong className="font-bold">completely new game</strong> — currently testing the skeleton. Expect missing
             content, rough edges, and save resets.
           </p>
-          <h1 className="mb-4 text-center font-pyramid text-xl font-bold">{t("ui.travel")}</h1>
           {/* Map Section */}
           <div className={`flex w-full flex-col items-center px-8 pb-safe-bottom`}>
             <div className="mb-6 w-full max-w-md">
@@ -348,6 +328,6 @@ export const TravelPage: FC<{
         onConfirm={handleInterruptExpedition}
         onCancel={handleCancelInterrupt}
       />
-    </Page>
+    </div>
   )
 }

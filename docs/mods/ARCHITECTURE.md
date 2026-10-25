@@ -239,13 +239,13 @@ the reward). Core allocates; the mod fills — it never rolls a variant.
 Component uses it for state that is neither a ledger currency nor a perk (e.g. a
 reveal-animation counter, a health meter).
 
-### Screens, HUD widgets, collection sections
+### Mod entrances, HUD widgets, collection sections
 
-Three parallel component registries a mod pushes into, so core UI iterates and
+Three parallel registries a mod pushes into, so core UI iterates and
 names no mod:
 
-- `src/app/pages/screenRegistry.ts` — full-screen pages; `Base.tsx` renders the
-  registered screens (e.g. the mosaic screen) beside core's Travel/Collection.
+- `src/app/home/modEntrances.ts` — a mod claims the camp window with a label and a
+  screen; `Base.tsx` opens that screen as a popup (e.g. the mosaic window).
 - `src/app/SiteMap/hudRegistry.ts` — site-map HUD widgets, ordered; `SiteMapScreen`
   renders them (e.g. the trap health widget).
 - `src/app/pages/collectionSectionRegistry.ts` — Collection-screen sections.

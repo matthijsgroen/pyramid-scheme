@@ -1254,6 +1254,18 @@
     "legendPins": "● hendel · ■ sleutel · klein = zijgang"
   },
   "camp": {
+    "title": "Kamp",
+    "continue": {
+      "heading": "Verder met",
+      "setOff": "Op pad",
+      "allJourneys": "Alle reizen",
+      "pyramid": "Piramide {{level}} van {{count}} · {{tier}}",
+      "tomb": "Graftombe · {{tier}}",
+      "empty": "Alles staat open op je kaart"
+    },
+    "hint_one": "{{count}} oude reis heeft iets nieuws te ontdekken",
+    "hint_other": "{{count}} oude reizen hebben iets nieuws te ontdekken",
+    "close": "Sluiten",
     "entrance": {
       "collection": "Verzameling",
       "mosaic": "Mozaïek",

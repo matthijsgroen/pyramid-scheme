@@ -1,5 +1,4 @@
 import { type FC, use, useMemo } from "react"
-import { Page } from "@/ui/atoms/Page"
 import { FezContext } from "@/app/fez/context"
 import { MOSAIC_TIERS, mosaicBucket } from "@/mods/mosaic/game/mosaicCurrency"
 import { useProgression } from "@/app/state/useProgression"
@@ -21,14 +20,14 @@ export const MosaicPage: FC = () => {
     [ledger]
   )
   const placed = Object.fromEntries(MOSAIC_TIERS.map(t => [t, placedCount(t)])) as TierCounts
-  // Every screen of the pager mounts with the travel screen, so this is where a return to it is counted.
+  // Opening the window is where a return to it is counted.
   useMosaicReminder({
     unplaced: carriedPieces(owned, placed).reduce((sum, c) => sum + c.count, 0),
     ready: ledgerLoaded && placedLoaded,
   })
 
   return (
-    <Page className="flex flex-col bg-stone-950" snap="end">
+    <div className="flex size-full flex-col bg-stone-950">
       <MosaicWindow
         owned={owned}
         placed={placed}
@@ -37,6 +36,6 @@ export const MosaicPage: FC = () => {
           fez.showConversation(conversation, done, { forceReplay: options?.replay })
         }
       />
-    </Page>
+    </div>
   )
 }

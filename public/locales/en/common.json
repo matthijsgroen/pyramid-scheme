@@ -1254,6 +1254,18 @@
     "legendPins": "● lever · ■ key · small = side section"
   },
   "camp": {
+    "title": "Camp",
+    "continue": {
+      "heading": "Continue with",
+      "setOff": "Set off",
+      "allJourneys": "All journeys",
+      "pyramid": "Pyramid {{level}} of {{count}} · {{tier}}",
+      "tomb": "Tomb · {{tier}}",
+      "empty": "Everything is open on your map"
+    },
+    "hint_one": "{{count}} old journey has something new to discover",
+    "hint_other": "{{count}} old journeys have something new to discover",
+    "close": "Close",
     "entrance": {
       "collection": "Collection",
       "mosaic": "Mosaic",

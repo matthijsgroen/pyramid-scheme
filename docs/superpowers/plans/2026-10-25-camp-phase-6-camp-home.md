@@ -291,10 +291,10 @@ One agent (Sonnet). The biggest task; it replaces the pager.
   - A registered made-up window entrance shows its label and opens its screen in a dialog.
   - The gear opens settings; seven title taps turn develop mode on (the DEV badge shows).
   - `useElementSize.spec.ts`: reports the size a stubbed ResizeObserver delivers and disconnects on unmount.
-- [ ] **Step 2: Run** `yarn test src/app/Base src/app/home` — FAIL.
-- [ ] **Step 3: Implement.** No HTML/CSS of the home's own beyond composing the ui pieces. Remove every import of the deleted files (`rg "BaseHeader|screenRegistry|atoms/Page"` must find nothing).
-- [ ] **Step 4: Run** `yarn test src/app src/mods/mosaic src/mods/story src/ui`, `yarn test src/app/appImports`, `yarn test src/i18n` — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Commit** — `feat: the camp is the home screen`
+- [x] **Step 2: Run** `yarn test src/app/Base src/app/home` — FAIL.
+- [x] **Step 3: Implement.** No HTML/CSS of the home's own beyond composing the ui pieces. Remove every import of the deleted files (`rg "BaseHeader|screenRegistry|atoms/Page"` must find nothing).
+- [x] **Step 4: Run** `yarn test src/app src/mods/mosaic src/mods/story src/ui`, `yarn test src/app/appImports`, `yarn test src/i18n` — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Commit** — `feat: the camp is the home screen`
 
 ---
 

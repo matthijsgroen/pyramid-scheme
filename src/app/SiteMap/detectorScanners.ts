@@ -26,7 +26,7 @@ export const useMergedCompassScanner = (): CompassScanner => {
   // the exception: a re-evaluated mod module registers its scanner again, this list grows by one, and
   // React reports "a change in the order of Hooks" for whatever component is rendering. It is a
   // development artifact — a full reload clears it — and the durable fix would be registering by id,
-  // the way screenRegistry does.
+  // the way the mod entrance registry does.
   return useMemo<CompassScanner>(
     () => target => scanners.flatMap(scan => scan(target)),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fixed-length list of stable scanners

@@ -3,7 +3,6 @@ import { z } from "zod"
 import { FezContext } from "@/app/fez/context"
 import { registerModEntrance } from "@/app/home/modEntrances"
 import { registerHaulLines } from "@/app/home/haulLines"
-import { registerModScreen } from "@/app/pages/screenRegistry"
 import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
 import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
 import { isModEnabled } from "@/mods/registeredMods"
@@ -16,13 +15,11 @@ import { registerMosaicRewardDisplay } from "./rewardDisplay"
 import { MOSAIC_INTRO } from "./useMosaicReminder"
 
 // Mosaic's app-side registration (side-effect), self-gated on the mod being enabled:
-// - its screen (Base renders the screen registry, naming no mod).
 // - the reward contribution: a mosaicPiece pickup increments the piece count (the effect) — the
 //   mod owns the reward id, core owns the ledger bucket it writes to.
 // - the home: the camp window opens the mosaic, and the pieces brought home read as one line.
 // See docs/mods/app-plugins-design.md.
 if (isModEnabled("mosaic")) {
-  registerModScreen({ id: "mosaic", Component: MosaicPage })
   registerModEntrance({
     id: "mosaic",
     object: "window",
