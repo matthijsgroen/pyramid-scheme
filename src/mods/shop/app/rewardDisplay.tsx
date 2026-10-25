@@ -82,7 +82,7 @@ export const registerShopRewardDisplay = () => {
         ItemVisual: (() => {
           const art = item && sellableArt(item.id)
           return art ? (
-            <img src={art} alt="" draggable={false} className="size-24 object-contain" />
+            <img src={art} alt="" draggable={false} className="size-40 object-contain" />
           ) : (
             <span className="text-6xl">{item?.symbol ?? "🔷"}</span>
           )

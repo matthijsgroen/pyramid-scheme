@@ -2,6 +2,7 @@ import { registerRewardHandler, type TFn } from "@/app/SiteMap/rewardHandlerRegi
 import { registerRewardDisplays, type RewardDisplay, type RewardDisplayFn } from "@/app/SiteMap/rewardDisplayRegistry"
 import type { TreasureReward } from "@/game/siteTypes"
 import { campArt } from "@/ui/atoms/campScene/campArt"
+import { TrimmedPicture } from "@/ui/atoms/TrimmedPicture"
 import { CAMP_STEPS, type CampStepTable } from "@/mods/camp/game/campSteps"
 import { spotProgress, structureProgress, type CampSave } from "@/mods/camp/game/campState"
 import { partIcon } from "./campIcons"
@@ -11,11 +12,7 @@ import { useCampProgress } from "./useCampProgress"
 const NS = { ns: "camp" }
 
 const picture = (url: string | undefined, emoji: string) =>
-  url ? (
-    <img src={url} alt="" draggable={false} className="size-24 object-contain" />
-  ) : (
-    <span className="text-6xl">{emoji}</span>
-  )
+  url ? <TrimmedPicture src={url} className="size-40" /> : <span className="text-6xl">{emoji}</span>
 
 // The popup content for a find: its spot's progress counts the pick-up itself, recorded or not yet.
 export const campFindDisplay = (
