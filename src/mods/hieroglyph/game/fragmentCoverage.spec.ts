@@ -3,9 +3,10 @@ import { hieroglyphCoverageValidator } from "./fragmentFinalize"
 import type { FloorConfig, SiteConfig } from "@/worldGen/types"
 import type { GateWalk } from "@/worldGen/gateWalk"
 
-const unwalked: GateWalk = () => {
+const never = (): never => {
   throw new Error("this validator never walks")
 }
+const unwalked: GateWalk = Object.assign(never, { holding: never, isKey: never })
 
 const configWithFragments = (counts: Record<string, number>): Record<string, SiteConfig[]> => ({
   site: [

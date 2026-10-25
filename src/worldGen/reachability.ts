@@ -50,6 +50,16 @@ export type ReachabilitySupport = {
 }
 const noSupport: ReachabilitySupport = {}
 
+/** How a walk treats what it reaches, beyond which facts it holds. */
+export type ReachOptions = {
+  /**
+   * Which pieces of a reached shop's stock count as held. Absent, every piece does the moment its shop is reached. Given,
+   * a piece it refuses is listed as stock and never harvested, and stock stays out of the reached rewards: the walk
+   * a player stands in who has bought only some of what is for sale.
+   */
+  stockHeld?: (reward: TreasureReward) => boolean
+}
+
 // No default resolver here — this module stays within src/worldGen/'s own dependency rules
 // (data/, game/ only) same as assembleFloor itself never importing the real resolveEncounter.
 // A caller wanting real key-requirement gating (e.g. a future placement script) passes one
@@ -136,6 +146,8 @@ export type SiteReachability = {
   // "how much of a thing is out there at all", which is what a collection's target count is
   // measured against. Core reads no reward type here — a consumer counts its own.
   reachableRewards: readonly TreasureReward[]
+  /** Every piece of stock in this site's reachable shops, held or not. */
+  reachableStock: readonly TreasureReward[]
   /** Whether the site's way out is reached: the exit of the floor its main path leaves by. */
   exit: boolean
 }
@@ -144,6 +156,61 @@ const isHidden = (grid: FloorGrid, at: string): boolean => {
   const [r, c] = at.split(",").map(Number)
   const cell = grid.cells[r][c]
   return (cell.type === "room" || cell.type === "corridor") && !!cell.hidden
+}
+
+/** What carving a floor for a walk needs besides the floor itself. */
+export type FloorCarve = {
+  resolveRequirements?: ResolveKeyRequirements
+  cache?: FloorAssemblyCache
+  support?: ReachabilitySupport
+  resolveEncounter?: ResolveEncounter
+}
+
+/**
+ * One floor of a site, carved as play carves it: at its layout's pin where it carries one, under the journey id. The
+ * cache is keyed on the seed and packing carved at, so a floor re-pinned between two calls is never read off the old
+ * carve. A floor that will not assemble is a data bug, never an unreachable floor, so it throws.
+ */
+export const carveSiteFloor = (
+  ref: SiteRef,
+  site: SiteConfig,
+  i: number,
+  seed: number = defaultSeedFor(ref),
+  {
+    resolveRequirements = noKeyRequirements,
+    cache,
+    support = noSupport,
+    resolveEncounter = defaultResolveEncounter,
+  }: FloorCarve = {}
+): Extract<AssemblerResult, { success: true }> => {
+  const siteId = `${ref.journeyId}:${ref.levelIndex}`
+  // worldGen's FloorConfig (this module's SiteConfig type) is a slightly looser mirror
+  // of game/siteTypes.ts's — real authored data only ever assigns values the stricter
+  // type accepts too, so this cast is safe (see the two files' own "mirrors" comments).
+  const floorSeed = site[i].seed ?? seed + i
+  const cacheKey = `${siteId}#${i}#${floorSeed}#${site[i].packing ?? ""}`
+  let result = cache?.get(cacheKey)
+  if (!result) {
+    // Carved under the journey id, as play and the bake carve it: ids and hashes inside the floor derive from it.
+    result = assembleFloor(ref.journeyId, site[i] as GameFloorConfig, floorSeed, resolveEncounter, {
+      resolveKeyRequirements: resolveRequirements,
+      floorRef: { journeyId: ref.journeyId, levelIndex: ref.levelIndex, floorIndex: i },
+      ...(support.resolveOneWay ? { resolveOneWay: support.resolveOneWay } : {}),
+      ...(support.resolveRegionBarrier ? { resolveRegionBarrier: support.resolveRegionBarrier } : {}),
+      ...(support.resolvePassage ? { resolvePassage: support.resolvePassage } : {}),
+    })
+    cache?.set(cacheKey, result)
+  }
+  // A floor carrying its layout's pin is carved here as the runtime carves it; one carrying none is carved at
+  // `defaultSeedFor`, which says nothing about what players get.
+  if (!result.success) {
+    throw new Error(
+      `Floor ${floorKey({ ...ref, floorIndex: i })} cannot be assembled (seed ${floorSeed}): ${JSON.stringify(
+        result.reasons
+      )}`
+    )
+  }
+  return result
 }
 
 // Reachable floor indices within one site, given already-held facts (plus any tombKey
@@ -170,9 +237,9 @@ export const reachableFloorsInSite = (
   // walk answers "is this ever obtainable" rather than "is it open right now".
   authoredKeysHeld = false,
   // A fact the walk never holds, not even from a key standing in reach on this site (the gate walk).
-  withheld?: string
+  withheld?: string,
+  { stockHeld }: ReachOptions = {}
 ): SiteReachability => {
-  const siteId = `${ref.journeyId}:${ref.levelIndex}`
   const reachable = new Set<number>([0])
   let keys = new Set(ownedFacts)
   if (withheld !== undefined) keys.delete(withheld)
@@ -185,11 +252,20 @@ export const reachableFloorsInSite = (
     lockFloors.set(id, (lockFloors.get(id) ?? new Set()).add(floorIndex))
   }
   const reachableRewards: TreasureReward[] = []
-  const harvestReward = (reward: TreasureReward) => {
+  const reachableStock: TreasureReward[] = []
+  const harvestBuckets = (reward: TreasureReward) => {
     const bucket = support.bucketForReward?.(reward)
     if (bucket) harvest(bucket)
     for (const also of support.alsoHarvests?.(reward) ?? []) harvest(also)
+  }
+  const harvestReward = (reward: TreasureReward) => {
+    harvestBuckets(reward)
     reachableRewards.push(reward)
+  }
+  const harvestStock = (reward: TreasureReward) => {
+    reachableStock.push(reward)
+    if (!stockHeld) harvestReward(reward)
+    else if (stockHeld(reward)) harvestBuckets(reward)
   }
   const exitFloor = site.findIndex(floor => floor.exitOrStaircase === "exit")
   let exit = false
@@ -198,36 +274,8 @@ export const reachableFloorsInSite = (
   for (let i = 0; i < site.length; i++) {
     if (!reachable.has(i)) continue
 
-    // worldGen's FloorConfig (this module's SiteConfig type) is a slightly looser mirror
-    // of game/siteTypes.ts's — real authored data only ever assigns values the stricter
-    // type accepts too, so this cast is safe (see the two files' own "mirrors" comments).
-    // The floor is carved at its layout's pin, where it carries one: the floor the player walks. The cache is keyed
-    // on the seed and packing carved at, so a floor re-pinned between two calls is never read off the old carve.
-    const floorSeed = site[i].seed ?? seed + i
-    const cacheKey = `${siteId}#${i}#${floorSeed}#${site[i].packing ?? ""}`
-    let result = cache?.get(cacheKey)
-    if (!result) {
-      // Carved under the journey id, as play and the bake carve it: ids and hashes inside the floor derive from it.
-      result = assembleFloor(ref.journeyId, site[i] as GameFloorConfig, floorSeed, resolveEncounter, {
-        resolveKeyRequirements: resolveRequirements,
-        floorRef: { journeyId: ref.journeyId, levelIndex: ref.levelIndex, floorIndex: i },
-        ...(support.resolveOneWay ? { resolveOneWay: support.resolveOneWay } : {}),
-        ...(support.resolveRegionBarrier ? { resolveRegionBarrier: support.resolveRegionBarrier } : {}),
-        ...(support.resolvePassage ? { resolvePassage: support.resolvePassage } : {}),
-      })
-      cache?.set(cacheKey, result)
-    }
-    // A floor that won't assemble is a data bug, never an unreachable floor: skipping it would place no
-    // content behind it and report nothing. So say so and stop. A floor carrying its layout's pin is
-    // carved here as the runtime carves it; one carrying none is carved at `defaultSeedFor`, which
-    // says nothing about what players get.
-    if (!result.success) {
-      throw new Error(
-        `Floor ${floorKey({ ...ref, floorIndex: i })} cannot be assembled (seed ${floorSeed}): ${JSON.stringify(
-          result.reasons
-        )}`
-      )
-    }
+    // The floor the player walks; one that won't assemble stops the walk rather than place nothing behind it.
+    const result = carveSiteFloor(ref, site, i, seed, { resolveRequirements, cache, support, resolveEncounter })
 
     const hiddenOpen = authoredKeysHeld || (hiddenRequirement !== undefined && keys.has(hiddenRequirement))
     const mechanismGates = mechanismGatesOf(result.grid)
@@ -265,12 +313,12 @@ export const reachableFloorsInSite = (
         // hieroglyph fragment → hieroglyph:<id>). Core names none.
         //
         // A room's own reward and every piece of a shop's stock are both loot standing in a
-        // reachable room, so both are harvested and both land in `reachableRewards`. A stock piece
-        // counts as held the moment its shop is reached: whether the player can afford it is the
+        // reachable room. A stock piece counts as held the moment its shop is reached, unless the
+        // caller says which pieces are held (`stockHeld`): whether the player can afford one is the
         // economy guard's question (it owns money), not this walk's. Only harvesting reads buckets;
-        // the rewards list stays raw for whoever counts its own kind.
+        // the rewards and stock lists stay raw for whoever counts its own kind.
         if (cell.reward) harvestReward(cell.reward)
-        for (const stocked of cell.stock ?? []) if (stocked) harvestReward(stocked)
+        for (const stocked of cell.stock ?? []) if (stocked) harvestStock(stocked)
       }
     }
 
@@ -287,7 +335,7 @@ export const reachableFloorsInSite = (
     }
   }
 
-  return { floors: reachable, harvestedCounts, discoveredLocks, lockFloors, reachableRewards, exit }
+  return { floors: reachable, harvestedCounts, discoveredLocks, lockFloors, reachableRewards, reachableStock, exit }
 }
 
 /**
@@ -339,6 +387,8 @@ export type ReachabilityResult = {
   // SiteReachability.reachableRewards. A collection's target count is checked against this: a
   // count of a kind, not a count of the locks it opens.
   reachableRewards: readonly TreasureReward[]
+  /** Every piece of stock in the reachable shops, held or not. */
+  reachableStock: readonly TreasureReward[]
   /** The sites whose way out is reached, as `${journeyId}#${levelIndex}`. */
   exitsReached: ReadonlySet<string>
   /** The journeys walked: tier open and every entry lock held. */
@@ -369,7 +419,8 @@ export const computeReachability = (
   // The permissive bracket, passed down to every site's walk — see reachableFloorsInSite.
   authoredKeysHeld = false,
   // A fact never held this call, whatever the counts or the sites' own keys say (the gate walk).
-  withheld?: string
+  withheld?: string,
+  options: ReachOptions = {}
 ): ReachabilityResult => {
   const ownedFacts = deriveOwnedFacts(ownedCounts, support)
   if (withheld !== undefined) ownedFacts.delete(withheld)
@@ -385,6 +436,7 @@ export const computeReachability = (
     discoveredAt.set(id, [...(discoveredAt.get(id) ?? []), place])
   }
   const reachableRewards: TreasureReward[] = []
+  const reachableStock: TreasureReward[] = []
   const exitsReached = new Set<string>()
   const sitesNeverLeft: string[] = []
 
@@ -420,13 +472,15 @@ export const computeReachability = (
         support,
         resolveEncounter,
         authoredKeysHeld,
-        withheld
+        withheld,
+        options
       )
       for (const floorIndex of siteResult.floors) reachableFloors.add(floorKey({ ...ref, floorIndex }))
       for (const [id, count] of siteResult.harvestedCounts) addHarvested(id, count)
       for (const [id, floors] of siteResult.lockFloors)
         for (const floorIndex of floors) discoverAt(id, `${journeyId} level ${levelIndex + 1} floor ${floorIndex}`)
       reachableRewards.push(...siteResult.reachableRewards)
+      reachableStock.push(...siteResult.reachableStock)
       if (siteResult.exit) exitsReached.add(`${journeyId}#${levelIndex}`)
       else if (site.some(floor => floor.exitOrStaircase === "exit"))
         sitesNeverLeft.push(`${journeyId} level ${levelIndex + 1}`)
@@ -441,6 +495,7 @@ export const computeReachability = (
     discoveredLocks,
     discoveredAt,
     reachableRewards,
+    reachableStock,
     exitsReached,
     enteredJourneys,
     sitesNeverLeft,

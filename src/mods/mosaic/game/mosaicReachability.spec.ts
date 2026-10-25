@@ -6,9 +6,10 @@ import { MOSAIC_STEPS_BY_TIER, MOSAIC_TIERS, type MosaicTier } from "./mosaicCur
 import { mosaicMod } from ".."
 import type { GateWalk } from "@/worldGen/gateWalk"
 
-const unwalked: GateWalk = () => {
+const never = (): never => {
   throw new Error("this validator never walks")
 }
+const unwalked: GateWalk = Object.assign(never, { holding: never, isKey: never })
 
 const noConfigs: Record<string, SiteConfig[]> = {}
 

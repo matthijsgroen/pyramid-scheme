@@ -414,6 +414,53 @@ describe(reachableFloorsInSite, () => {
     expect(result.harvestedCounts.get("stocked-key")).toBe(1)
   })
 
+  it("with stockHeld, harvests only the stock pieces held, lists every piece as stock and keeps stock out of the rewards", () => {
+    const bought = { type: "tombKey", keyId: "bought-key" }
+    const unbought = { type: "tombKey", keyId: "unbought-key" }
+    const site: SiteConfig = [
+      {
+        pathPuzzles: 1,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        sideSections: [
+          {
+            pathPuzzles: 0,
+            difficulty: "starter",
+            end: "treasure",
+            encounter: "fez-shop",
+            rewards: [bought, unbought],
+          },
+        ],
+      },
+    ]
+    const ref = { journeyId: "j", levelIndex: 0 }
+    const held = reachableFloorsInSite(
+      ref,
+      site,
+      new Set(),
+      undefined,
+      undefined,
+      undefined,
+      testSupport(),
+      undefined,
+      false,
+      undefined,
+      {
+        stockHeld: reward => reward === bought,
+      }
+    )
+    expect(held.harvestedCounts.get("bought-key")).toBe(1)
+    expect(held.harvestedCounts.get("unbought-key")).toBeUndefined()
+    expect(held.reachableStock).toEqual([bought, unbought])
+    expect(held.reachableRewards).toEqual([])
+
+    const everyPiece = reachableFloorsInSite(ref, site, new Set(), undefined, undefined, undefined, testSupport())
+    expect(everyPiece.harvestedCounts.get("unbought-key")).toBe(1)
+    expect(everyPiece.reachableStock).toEqual([bought, unbought])
+    expect(everyPiece.reachableRewards).toEqual([bought, unbought])
+  })
+
   it("does not harvest a key in a shop behind a still-locked gate", () => {
     const result = reachableFloorsInSite(
       { journeyId: "j", levelIndex: 0 },

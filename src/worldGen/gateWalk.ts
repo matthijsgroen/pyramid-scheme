@@ -7,8 +7,10 @@ import {
   unmetTierGroups,
   type FloorAssemblyCache,
   type JourneyMeta,
+  type OwnedCounts,
   type ReachabilitySupport,
 } from "./reachability"
+import { keyRewardsOf } from "./grounds"
 
 // THE GATE WALK: what lies before a gate. "Before a gate" is the ground a player reaches from empty
 // hands with that gate's fact never held: every key, map piece and ladder treasure in reach is picked
@@ -20,6 +22,10 @@ import {
 // The walk never decides money. It lists every reward standing in the ground — room rewards and shop
 // stock alike, the withheld fact's own reward included — and a mod counts its own kind in there:
 // income against the price of what is buyable, which is the economy guard's question.
+//
+// `holding` is the walk a player stands in who has bought only some of what is for sale: shop stock counts as held
+// only when it is one of the pieces bought, and the stock of every reached shop is listed apart. Grounds (grounds.ts)
+// are enumerated on it.
 //
 // Core names no currency: the withheld fact is an opaque bucket string, and which reward feeds which
 // bucket is the injected support's answer.
@@ -39,8 +45,25 @@ export type GateWalkResult = {
   lockedTierNeeds: ReadonlyMap<Tier, readonly (readonly string[])[]>
 }
 
+/** The ground reached with only the bought pieces of shop stock held. */
+export type HoldingResult = GateWalkResult & {
+  /** Every piece of stock in the reached shops, bought or not; `rewards` lists the rooms' own rewards only. */
+  stock: readonly TreasureReward[]
+  /**
+   * What the walk holds, as a key: its counts, each capped at the most any lock of the world asks of its bucket, plus
+   * each bought piece feeding other than exactly one bucket by itself. Two results with equal keys and equal rewards and
+   * stock walk on alike whatever is bought next: pieces feeding one bucket are interchangeable by count.
+   */
+  heldKey: string
+}
+
 /** The ground reached with `withheld` never held; with nothing withheld, the whole world as the strict walk sees it. */
-export type GateWalk = (withheld?: string) => GateWalkResult
+export type GateWalk = ((withheld?: string) => GateWalkResult) & {
+  /** The ground reached with only `bought` of all shop stock held (by identity). */
+  holding: (bought: ReadonlySet<TreasureReward>) => HoldingResult
+  /** Whether a reward is a key: its bucket is one some lock of the world names (grounds.ts, `keyRewardsOf`). */
+  isKey: (reward: TreasureReward) => boolean
+}
 
 export type GateWalkOptions = {
   configs: Record<string, SiteConfig[]>
@@ -68,8 +91,12 @@ export const makeGateWalk = ({
   cache = createFloorAssemblyCache(),
 }: GateWalkOptions): GateWalk => {
   const walks = new Map<string | undefined, GateWalkResult>()
+  const holdings = new Map<string, HoldingResult>()
 
-  const walk = (withheld: string | undefined): GateWalkResult => {
+  const walk = (
+    withheld: string | undefined,
+    stockHeld?: (reward: TreasureReward) => boolean
+  ): GateWalkResult & { stock: readonly TreasureReward[]; owned: OwnedCounts } => {
     // Fresh counts every call: a walk never inherits what another walk held.
     const owned = new Map<string, number>()
     const reachWith = () =>
@@ -82,7 +109,8 @@ export const makeGateWalk = ({
         support,
         resolveEncounter,
         false,
-        withheld
+        withheld,
+        { stockHeld }
       )
     let reach = reachWith()
     for (;;) {
@@ -110,14 +138,66 @@ export const makeGateWalk = ({
       blocking: reach.discoveredLocks,
       blockingAt: reach.discoveredAt,
       lockedTierNeeds: new Map([...lockedTiers].map(tier => [tier, unmetTierGroups(tier, facts, support)])),
+      stock: reach.reachableStock,
+      owned,
     }
   }
 
-  return withheld => {
-    const known = walks.get(withheld)
-    if (known) return known
-    const result = walk(withheld)
-    walks.set(withheld, result)
-    return result
+  // The most any lock asks of a bucket: its own threshold, or a journey entry lock's. A bucket that stands for further
+  // facts by its count (a pot of levers) is never capped.
+  const capOf = (bucket: string): number => {
+    if ((support.factsForCount?.(bucket, 1) ?? []).length > 0) return Infinity
+    const entry = Object.keys(journeyMeta).flatMap(journeyId =>
+      (support.journeyEntryLocks?.(journeyId) ?? []).filter(lock => lock.bucket === bucket).map(lock => lock.threshold)
+    )
+    return Math.max(support.thresholdFor?.(bucket) ?? 1, ...entry)
   }
+
+  const harvestOf = (reward: TreasureReward): string[] => [
+    ...[support.bucketForReward?.(reward)].filter((bucket): bucket is string => bucket !== undefined),
+    ...(support.alsoHarvests?.(reward) ?? []),
+  ]
+
+  // A bought set is remembered by the identity of its pieces.
+  const ids = new WeakMap<TreasureReward, number>()
+  let nextId = 0
+  const identity = (reward: TreasureReward): number => {
+    const known = ids.get(reward)
+    if (known !== undefined) return known
+    ids.set(reward, ++nextId)
+    return nextId
+  }
+
+  let isKey: ((reward: TreasureReward) => boolean) | undefined
+
+  return Object.assign(
+    (withheld?: string): GateWalkResult => {
+      const known = walks.get(withheld)
+      if (known) return known
+      const { stock: _stock, owned: _owned, ...result } = walk(withheld)
+      walks.set(withheld, result)
+      return result
+    },
+    {
+      holding: (bought: ReadonlySet<TreasureReward>): HoldingResult => {
+        const key = [...bought]
+          .map(identity)
+          .sort((a, b) => a - b)
+          .join(",")
+        const known = holdings.get(key)
+        if (known) return known
+        const { owned, ...result } = walk(undefined, reward => bought.has(reward))
+        const counts = [...owned].map(([bucket, count]) => `${bucket}=${Math.min(count, capOf(bucket))}`).sort()
+        const apart = [...bought]
+          .filter(piece => harvestOf(piece).length !== 1)
+          .map(identity)
+          .sort((a, b) => a - b)
+        const holding = { ...result, heldKey: `${counts.join(",")}|${apart.join(",")}` }
+        holdings.set(key, holding)
+        return holding
+      },
+      isKey: (reward: TreasureReward): boolean =>
+        (isKey ??= keyRewardsOf(configs, support, { resolveRequirements, resolveEncounter, cache }))(reward),
+    }
+  )
 }

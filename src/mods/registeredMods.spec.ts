@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import type { ReachabilitySupport } from "@/worldGen/reachability"
-import type { GateWalk } from "@/worldGen/gateWalk"
+import { makeGateWalk } from "@/worldGen/gateWalk"
 import {
   MOD_LOOT_TOTALS,
   REGISTERED_MODS,
@@ -11,15 +11,7 @@ import type { ModDescriptor } from "./modDescriptor"
 
 describe("MOD_LOOT_TOTALS", () => {
   it("is every registered mod's rows in registry order, without throwing on an empty world", () => {
-    const walk: GateWalk = () => ({
-      rewards: [],
-      unlockedTiers: new Set(),
-      enteredJourneys: new Set(),
-      sitesNeverLeft: [],
-      blocking: new Set(),
-      blockingAt: new Map(),
-      lockedTierNeeds: new Map(),
-    })
+    const walk = makeGateWalk({ configs: {}, journeyMeta: {}, support: {} })
     const expected = REGISTERED_MODS.flatMap(m => m.lootTotals?.({}, walk) ?? [])
     expect(expected.length).toBeGreaterThan(0)
     expect(MOD_LOOT_TOTALS({}, walk)).toEqual(expected)

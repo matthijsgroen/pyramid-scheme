@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 import { buildLootReport, collectLootTotals, renderLootReportMarkdown, type LootTotal } from "./lootReport"
 import type { GateWalk } from "./gateWalk"
 import type { ResolveEncounter } from "@/game/siteAssembler"
-import type { Difficulty, FloorConfig, SideSection, SiteConfig, SubSection } from "./types"
+import type { Difficulty, FloorConfig, SideSection, SiteConfig, SubSection, Tier } from "./types"
 
 const SHOP_ENCOUNTER = "made-up-shop"
 const resolveEncounter: ResolveEncounter = (encounter, defaultTag) => {
@@ -229,15 +229,23 @@ describe("renderLootReportMarkdown", () => {
 })
 
 describe(collectLootTotals, () => {
-  const walk: GateWalk = withheld => ({
-    rewards: withheld === undefined ? [money, money] : [money],
-    unlockedTiers: new Set(),
-    enteredJourneys: new Set(),
-    sitesNeverLeft: [],
-    blocking: new Set(),
-    blockingAt: new Map(),
-    lockedTierNeeds: new Map(),
-  })
+  const walk: GateWalk = Object.assign(
+    (withheld?: string) => ({
+      rewards: withheld === undefined ? [money, money] : [money],
+      unlockedTiers: new Set<Tier>(),
+      enteredJourneys: new Set<string>(),
+      sitesNeverLeft: [],
+      blocking: new Set<string>(),
+      blockingAt: new Map(),
+      lockedTierNeeds: new Map(),
+    }),
+    {
+      holding: () => {
+        throw new Error("no contributor here asks for a ground")
+      },
+      isKey: () => false,
+    }
+  )
 
   it("hands each contributor the same world and walk, and keeps their rows in order", () => {
     const reads = {
