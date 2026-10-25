@@ -202,8 +202,10 @@
     "tabs": {
       "treasures": "Treasures",
       "hieroglyphs": "Hieroglyphs",
-      "stories": "Stories"
+      "stories": "Stories",
+      "junk": "Trinkets"
     },
+    "tabsLabel": "What you have collected",
     "tabNew_one": "{{label}} · {{count}} new",
     "tabNew_other": "{{label}} · {{count}} new",
     "empty": "Your chest is still empty",
@@ -1064,14 +1066,7 @@
       }
     },
     "events": {
-      "default": [
-        "the fire",
-        "the water carrying",
-        "the baking",
-        "the boat trip",
-        "the ox driving",
-        "the night watch"
-      ],
+      "default": ["the fire", "the water carrying", "the baking", "the boat trip", "the ox driving", "the night watch"],
       "funerary": [
         "the plastering",
         "the grid drawing",
@@ -1311,6 +1306,8 @@
     "noteFinished": "Finished",
     "noteFinishedNews": "Finished · something new to discover",
     "noteOpen": "Not visited yet",
+    "noteResumePyramid": "Started before · pyramid {{level}} of {{count}}",
+    "noteResumeTomb": "Started before · in the tomb",
     "needProgress": "{{unit}}: {{found}} of {{required}}",
     "showStops": "Show the sites of {{name}}",
     "stopPyramid": "Pyramid",

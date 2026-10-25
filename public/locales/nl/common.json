@@ -202,8 +202,10 @@
     "tabs": {
       "treasures": "Schatten",
       "hieroglyphs": "Hiërogliefen",
-      "stories": "Verhalen"
+      "stories": "Verhalen",
+      "junk": "Snuisterijen"
     },
+    "tabsLabel": "Wat je verzameld hebt",
     "tabNew_one": "{{label}} · {{count}} nieuw",
     "tabNew_other": "{{label}} · {{count}} nieuw",
     "empty": "Je kist is nog leeg",
@@ -1311,6 +1313,8 @@
     "noteFinished": "Voltooid",
     "noteFinishedNews": "Voltooid · iets nieuws te ontdekken",
     "noteOpen": "Nog niet geweest",
+    "noteResumePyramid": "Eerder begonnen · piramide {{level}} van {{count}}",
+    "noteResumeTomb": "Eerder begonnen · in de graftombe",
     "needProgress": "{{unit}}: {{found}} van {{required}}",
     "showStops": "Toon de plekken van {{name}}",
     "stopPyramid": "Piramide",

@@ -121,7 +121,7 @@ export type StoredJourneyStateV3 = {
 }
 
 export type CombinedJourneyState = StoredJourneyStateV3 & {
-  inProgress: boolean // derived: same as active, kept for Travel.tsx compatibility
+  inProgress: boolean // derived: same as active
   randomSeed: number
   progressPercentage: number
   journey: TranslatedJourney

@@ -7,7 +7,7 @@ import { piecesRequiredFor } from "../game/piecesRequired"
 // the mod's own slice (useModState key `pyramid-scheme-mod-tomb-treasure`).
 //   - tombKeys: ward + location keys the player has earned from tomb treasures (opens pyramid
 //     ward floors + drives tier unlock; read for gate satisfaction via the held-keys seam).
-//   - discoveredTombs: tombs visible on the Travel screen — the first of each tier from the start,
+//   - discoveredTombs: tombs visible in the all-journeys list — the first of each tier from the start,
 //     secondary tombs revealed on their first map piece.
 //   - collectedMapPieces: per-tomb count of map pieces found (unlocks a tomb's entry).
 //   - mapPieceJourneys: pyramid journeys whose map-piece chest has been opened (inventory-as-truth

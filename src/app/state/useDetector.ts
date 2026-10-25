@@ -35,7 +35,7 @@ const accessOf = (
 ): { access: CompassAccess; missingKeys?: readonly string[] } => {
   const missingKeys = (hit.wardKeys ?? []).filter(k => !heldKeys.has(k))
   if (missingKeys.length > 0) return { access: "locked", missingKeys }
-  // Same gate the Travel screen uses, including tiers this release doesn't ship yet.
+  // Same gate the all-journeys list uses, including tiers this release doesn't ship yet.
   const tier = JOURNEY_TIER[hit.journeyId] as Difficulty | undefined
   if (tier && !isTierUnlocked(tier, heldKeys)) return { access: "locked" }
   if (hit.hidden) return { access: "hidden" }
