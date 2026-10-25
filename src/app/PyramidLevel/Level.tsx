@@ -10,6 +10,7 @@ export const Level: FC<{
   storageKey?: string
   onComplete?: () => void
   decorationOffset?: number
+  decorated?: boolean
   dayTime?: DayNightCycleStep
   entranceBlockId?: string
   interactive?: boolean
@@ -20,6 +21,7 @@ export const Level: FC<{
   storageKey,
   onComplete,
   decorationOffset = 0,
+  decorated,
   dayTime,
   entranceBlockId,
   interactive = true,
@@ -71,6 +73,7 @@ export const Level: FC<{
           pyramid={content.pyramid}
           dayTime={dayTime}
           decorationOffset={decorationOffset}
+          decorated={decorated}
           values={answers}
           completed={completed}
           entranceBlockId={entranceBlockId}

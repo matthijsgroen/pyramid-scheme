@@ -196,6 +196,7 @@ export const PyramidExpedition: FC<{
                   key={activeJourney.levelNr + 2}
                   content={nextNextLevelContent}
                   decorationOffset={activeJourney.randomSeed}
+                  decorated={!journey.levels?.[activeJourney.levelNr + 1]?.exterior}
                   interactive={false}
                 />
               )}
@@ -217,6 +218,7 @@ export const PyramidExpedition: FC<{
                   dayTime={dayTime}
                   content={nextLevelContent}
                   decorationOffset={activeJourney.randomSeed}
+                  decorated={!journey.levels?.[activeJourney.levelNr]?.exterior}
                   interactive={false}
                 />
               )}
@@ -241,6 +243,7 @@ export const PyramidExpedition: FC<{
                   storageKey={storageKey}
                   content={levelContent}
                   decorationOffset={activeJourney.randomSeed}
+                  decorated={!levelSetup?.exterior}
                   onComplete={flow.completeLevel}
                   dayTime={dayTime}
                   revealed={revealSolvedBoard || boardSolved}
