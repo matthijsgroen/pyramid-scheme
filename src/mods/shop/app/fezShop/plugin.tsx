@@ -6,6 +6,7 @@ import { isModEnabled } from "@/mods/registeredMods"
 import { FEZ_SHOP_META } from "@/mods/shop/game/fezShop/meta"
 import { useMergedRewardContributions } from "@/app/SiteMap/rewardContributions"
 import { FezContext } from "@/app/fez/context"
+import { useReportOnce } from "@/app/reactions/useReport"
 import { FezShop, type ShopBuyItem } from "@/ui/organisms/FezShop"
 import { rewardText } from "@/app/SiteMap/rewardDisplay"
 import { priceFor } from "@/mods/shop/game/pricing"
@@ -46,14 +47,21 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fires once per room instance
   }, [ctx.edgeId])
 
-  if (!greeted) return null
-
   // Sold out = already bought OR skipped by its owning mod (an owned fragment, a recorded purchase, a
   // purchase the shop's save cannot keep).
   const soldOut = (j: number) => {
     const item = stock[j]
     return !item || claimed.has(`${ctx.address}!${j}`) || contributions.skip(item)
   }
+
+  // The stall is open once Fez has greeted; what it shows for sale is told to whoever listens, once per room.
+  useReportOnce(greeted ? ctx.address : undefined, {
+    kind: "stockShown",
+    journeyId: ctx.journeyId,
+    rewards: stock.flatMap((item, j) => (item && !soldOut(j) ? [item] : [])),
+  })
+
+  if (!greeted) return null
 
   // One buy path for every stock slot: apply, pay, claim.
   const buySlot = (j: number) => {

@@ -575,13 +575,13 @@ The last line is drawn in the pointing pose on purpose.
 
 ## Fez and the animals
 
-**Twenty of these play, seven wait.** `WAITING_BEATS` in `src/mods/story/game/drafts.ts` names the seam each waiting one lacks;
+**All of these play.** `WAITING_BEATS` in `src/mods/story/game/drafts.ts` names the seam each waiting one lacks;
 the story mod reads only what core reports (held keys, gate needs, reactions, the home's tags), never the shop or camp.
 The seams:
 
-- `animal.forSale` — Fez's stall shows a purchase for the first time; **waiting** (core reports no such moment);
+- `animal.forSale` — Fez's stall shows a purchase for the first time; plays on the core reaction `stockShown`;
 - `animal.bought<Id>` — a purchase is bought (at the stall, in the tomb); plays when its fact joins the held keys;
-- `animal.blocked<Id>` — a gate refuses for want of a purchase (the locked tier or tomb card in Travel); **waiting** (Travel reports no moment);
+- `animal.blocked<Id>` — a gate refuses for want of a purchase (the locked tier or tomb card in Travel); plays on the core reaction `gateShown`, by the unmet fact;
 - `animal.through<Id>` — a gate opens because of a purchase; plays on entering a journey whose tier or gate needs it;
 - `animal.arrives<Id>` — a bought step arrives in the camp; plays on the homecoming, from the camp's home tag.
 

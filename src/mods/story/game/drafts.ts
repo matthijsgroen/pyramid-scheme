@@ -52,10 +52,7 @@ export const DRAFT_BEATS: Readonly<Record<"tombs" | "camp" | "structures" | "ani
 }
 
 /** The seam each kind of animal beat still waits on, by id prefix; a kind with none is wired. */
-const ANIMAL_SEAMS: readonly (readonly [prefix: string, seam: string])[] = [
-  ["animal.forSale", "Fez's stall reports no moment when it shows a purchase"],
-  ["animal.blocked", "Travel reports no moment when a gate shows its unmet need"],
-]
+const ANIMAL_SEAMS: readonly (readonly [prefix: string, seam: string])[] = []
 
 /** Beats written before the game has the seam that plays them: beat id → the missing seam. */
 export const WAITING_BEATS: Readonly<Record<string, string>> = Object.fromEntries(

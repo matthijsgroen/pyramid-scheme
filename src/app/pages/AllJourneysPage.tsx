@@ -1,4 +1,4 @@
-import { useState, type FC } from "react"
+import { useEffect, useRef, useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { JourneyRow } from "@/ui/molecules/JourneyRow"
@@ -6,13 +6,14 @@ import { JourneyStops, type JourneyStop } from "@/ui/molecules/JourneyStops"
 import { TierHeader } from "@/ui/molecules/TierHeader"
 import { JourneyList, type JourneyListGroup } from "@/ui/organisms/JourneyList"
 import { useJourneys } from "@/app/state/useJourneys"
+import { useReport } from "@/app/reactions/useReport"
 import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { useMergedHeldKeys, useMergedKeyDisplay } from "@/app/SiteMap/keyProviders"
 import { useJourneyTranslations, type TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { isWebKey } from "@/game/floorLock"
 
-import { allJourneys, type JourneyRowModel, type TierGroup } from "./allJourneys"
+import { allJourneys, type Gate, type JourneyRowModel, type TierGroup } from "./allJourneys"
 import { journeyCardSlots } from "./journeyCardSlots"
 import "@/mods/registerModApps" // populate the journey-card slot registry, as Collection does for its sections
 import { comingSoonDifficulty, holdsTierKey, isTierUnlocked, tierKeyNeed } from "./journeyAvailability"
@@ -243,6 +244,28 @@ export const AllJourneys: FC<{ startGame: () => void; compact?: boolean }> = ({ 
         : group.rows.map(row => renderRow(row)),
     }
   }
+
+  // Each locked tier or journey that still waits on a need is reported once per showing, and again if its unmet
+  // needs change while the list stays up.
+  const report = useReport()
+  const reported = useRef(new Set<string>())
+  const refused = model.groups
+    .flatMap((group): Gate[] =>
+      group.locked
+        ? [{ tier: group.tier }]
+        : group.rows.filter(row => row.status === "locked").map(row => ({ journeyId: row.journeyId }))
+    )
+    .map(gate => ({ gate, unmet: gateNeeds.unmet(gate, heldKeys).map(need => need.key) }))
+    .filter(({ unmet }) => unmet.length > 0)
+  const refusedKey = JSON.stringify(refused)
+  useEffect(() => {
+    for (const { gate, unmet } of JSON.parse(refusedKey) as typeof refused) {
+      const key = JSON.stringify({ gate, unmet })
+      if (reported.current.has(key)) continue
+      reported.current.add(key)
+      report({ kind: "gateShown", gate, unmet })
+    }
+  }, [refusedKey, report])
 
   const comingSoon = model.comingSoon
   return (

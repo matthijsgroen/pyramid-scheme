@@ -9,6 +9,8 @@ vi.mock("react-i18next", () => ({
   }),
 }))
 vi.mock("@/mods/registerModApps", () => ({}))
+const report = vi.fn()
+vi.mock("@/app/reactions/useReport", () => ({ useReport: () => report }))
 // The slot registry is module state; a mock keeps this spec's made-up slot out of every other spec.
 vi.mock("./journeyCardSlots", () => ({
   journeyCardSlots: () => [
@@ -135,6 +137,7 @@ const state = (extra: Partial<Progress> = {}): Progress => ({
 })
 
 beforeEach(() => {
+  report.mockClear()
   progress = {}
   activeJourneyId = undefined
   unexplored = {}
@@ -356,5 +359,21 @@ describe("AllJourneys", () => {
 
     expect(screen.queryByText("ui.tierComingSoon difficulty.expert")).toBeNull()
     expect(screen.getByText("Need a thing")).toBeTruthy()
+  })
+
+  it("reports a locked tier once, with the facts its unmet needs wait for", () => {
+    gateNeeds = [{ gate: { tier: "expert" }, key: "made-up-need", label: "Need a thing" }]
+    const { rerender } = render(<AllJourneys startGame={vi.fn()} />)
+    rerender(<AllJourneys startGame={vi.fn()} />)
+    expect(report.mock.calls.map(([r]) => r)).toEqual([
+      { kind: "gateShown", gate: { tier: "expert" }, unmet: ["made-up-need"] },
+    ])
+  })
+
+  it("reports nothing for a gate whose needs are met", () => {
+    gateNeeds = [{ gate: { tier: "expert" }, key: "made-up-need", label: "Need a thing" }]
+    heldKeys = new Set(["made-up-need"])
+    render(<AllJourneys startGame={vi.fn()} />)
+    expect(report).not.toHaveBeenCalled()
   })
 })

@@ -65,6 +65,26 @@ describe("animalBeatsFor", () => {
     ).toEqual([])
   })
 
+  it("plays blocked<Id> when a gate shows an unmet fact of an animal, and not one already held", () => {
+    const shown = (unmet: string[]): Reaction => ({ kind: "gateShown", gate: { tier: "expert" }, unmet })
+    const world = { held: new Set<string>(), needsOn: () => [] }
+    expect(animalBeatsFor(shown([fact("Donkey"), "made-up-fact"]), world, declared)).toEqual(["animal.blockedDonkey"])
+    expect(animalBeatsFor(shown(["made-up-fact"]), world, declared)).toEqual([])
+    expect(animalBeatsFor(shown([fact("Cart")]), { ...world, held: new Set([fact("Cart")]) }, declared)).toEqual([])
+  })
+
+  it("plays forSale when the stall shows a purchase, and not for other stock", () => {
+    const world = { held: new Set<string>(), needsOn: () => [] }
+    const stall = (...types: string[]): Reaction => ({
+      kind: "stockShown",
+      journeyId: "made-up-tomb",
+      rewards: types.map(type => ({ type })),
+    })
+    expect(animalBeatsFor(stall("sellable", "purchase"), world, declared)).toEqual(["animal.forSale"])
+    expect(animalBeatsFor(stall("sellable", "fragment"), world, declared)).toEqual([])
+    expect(animalBeatsFor(stall(), world, declared)).toEqual([])
+  })
+
   it("plays arrives<Id> when coming home to a camp that carries the arrived tag", () => {
     const world = { held: new Set<string>(), needsOn: () => [] }
     const home = (tags: string[], arrived?: { haul: boolean }): Reaction => ({ kind: "homeShown", tags, arrived })

@@ -17,6 +17,9 @@ export const ANIMALS: readonly { id: string; fact: string; needed: boolean }[] =
   { id: "CaravanBanner", fact: "purchase:caravanBanner", needed: false },
 ]
 
+/** The reward type of a purchase on Fez's stall, as the stock names it. */
+const PURCHASE_REWARD = "purchase"
+
 /** The tag the home carries for an animal that has come to stand in the camp. */
 export const arrivedTag = (fact: string) => `camp.arrived:${fact}`
 
@@ -36,7 +39,7 @@ export const boughtBeats = (before: ReadonlySet<string>, now: ReadonlySet<string
   ANIMALS.filter(({ fact }) => now.has(fact) && !before.has(fact)).map(({ id }) => `animal.bought${id}`)
 
 /**
- * The animal beats a moment could play: entering a journey whose tier or own gate asked for a purchase now held,
+ * The animal beats a moment could play: a gate that refuses for want of a purchase, a stall that shows one, entering a journey whose tier or own gate asked for a purchase now held,
  * and coming home to an animal that has arrived. Only declared beats come back.
  */
 export const animalBeatsFor = (reaction: Reaction, world: AnimalWorld, declared: ReadonlySet<string>): string[] => {
@@ -51,6 +54,14 @@ export const animalBeatsFor = (reaction: Reaction, world: AnimalWorld, declared:
             needed && held.has(fact) && gates.some(gate => needsOn(gate).some(need => need.key === fact))
         ).map(({ id }) => `animal.through${id}`)
       }
+      case "gateShown": {
+        const unmet = new Set(reaction.unmet)
+        return ANIMALS.filter(({ fact, needed }) => needed && unmet.has(fact) && !held.has(fact)).map(
+          ({ id }) => `animal.blocked${id}`
+        )
+      }
+      case "stockShown":
+        return reaction.rewards.some(reward => reward.type === PURCHASE_REWARD) ? ["animal.forSale"] : []
       case "homeShown":
         return reaction.arrived
           ? ANIMALS.filter(({ fact }) => reaction.tags.includes(arrivedTag(fact))).map(

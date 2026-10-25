@@ -66,6 +66,10 @@ const candidates = (reaction: Reaction): (string | undefined)[] => {
       ]
     case "chapterOpened":
       return [`camp.chapter${capitalised(reaction.tier)}`]
+    // The animal beats read these two themselves (animalBeatsFor).
+    case "gateShown":
+    case "stockShown":
+      return []
   }
 }
 

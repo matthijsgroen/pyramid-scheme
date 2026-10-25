@@ -1,4 +1,5 @@
 import type { Difficulty } from "@/data/difficultyLevels"
+import type { TreasureReward } from "@/game/siteTypes"
 
 /**
  * What the player just DID, as opposed to where they are.
@@ -52,6 +53,21 @@ export type Reaction =
       tags: readonly string[]
     }
   | { kind: "chapterOpened"; tier: Difficulty }
+  | {
+      /**
+       * Alle reizen shows a locked tier or journey whose gate still has unmet needs. `unmet` holds the facts
+       * those needs wait for, as the gate-needs seam names them.
+       */
+      kind: "gateShown"
+      gate: { tier: Difficulty } | { journeyId: string }
+      unmet: readonly string[]
+    }
+  | {
+      /** A shop room's stall opened and shows these rewards for sale (the ones not yet bought). */
+      kind: "stockShown"
+      journeyId: string
+      rewards: readonly TreasureReward[]
+    }
 
 /** What a family says about HOW it was beaten, handed back through `onSolved`. */
 export type SolveOutcome = { unaided?: boolean; close?: boolean }
