@@ -244,6 +244,7 @@ export const PyramidExpedition: FC<{
                   content={levelContent}
                   decorationOffset={activeJourney.randomSeed}
                   decorated={!levelSetup?.exterior}
+                  grounded={levelSetup?.exterior === "cavern"}
                   onComplete={flow.completeLevel}
                   dayTime={dayTime}
                   revealed={revealSolvedBoard || boardSolved}

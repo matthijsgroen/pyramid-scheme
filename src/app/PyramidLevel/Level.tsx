@@ -11,6 +11,8 @@ export const Level: FC<{
   onComplete?: () => void
   decorationOffset?: number
   decorated?: boolean
+  /** The board stands on the bottom of its space (a cave floor) instead of in its middle. */
+  grounded?: boolean
   dayTime?: DayNightCycleStep
   entranceBlockId?: string
   interactive?: boolean
@@ -22,6 +24,7 @@ export const Level: FC<{
   onComplete,
   decorationOffset = 0,
   decorated,
+  grounded = false,
   dayTime,
   entranceBlockId,
   interactive = true,
@@ -67,7 +70,7 @@ export const Level: FC<{
 
   return (
     <div className="relative flex size-full flex-col">
-      <div className="flex w-full flex-1 items-center justify-center">
+      <div className={`flex w-full flex-1 justify-center ${grounded ? "items-end" : "items-center"}`}>
         <PyramidDisplay
           levelNr={content.levelNr}
           pyramid={content.pyramid}
