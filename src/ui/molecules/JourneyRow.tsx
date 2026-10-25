@@ -22,8 +22,9 @@ export type JourneyRowProps = {
   onOpen?: () => void
   /** The chevron that opens the sites. */
   stops?: { label: string; open: boolean; onToggle: () => void }
-  /** What the mods say about the journey, under the row whether or not it has sites to open. */
-  details?: ReactNode
+  /** What the mods say about the journey, under the row whether or not it has sites to open. An empty
+   * list, or contributions that all render nothing, leaves no space behind. */
+  details?: ReactNode[]
   /** The opened sites, under the row. */
   children?: ReactNode
 }
@@ -155,7 +156,7 @@ export const JourneyRow: FC<JourneyRowProps> = ({
           ))}
         </ul>
       )}
-      {!locked && details && <div className="px-3 pb-3">{details}</div>}
+      {!locked && details && details.length > 0 && <div className="px-3 pb-3 empty:hidden">{details}</div>}
       {stops?.open && children && <div className="px-3 pb-3">{children}</div>}
     </div>
   )

@@ -9,6 +9,17 @@ vi.mock("react-i18next", () => ({
   }),
 }))
 vi.mock("@/mods/registerModApps", () => ({}))
+// The slot registry is module state; a mock keeps this spec's made-up slot out of every other spec.
+vi.mock("./journeyCardSlots", () => ({
+  journeyCardSlots: () => [
+    {
+      id: "made-up",
+      Component: ({ journeyInfo }: { journeyInfo: { journey: { id: string } } }) => (
+        <p>{`slot for ${journeyInfo.journey.id}`}</p>
+      ),
+    },
+  ],
+}))
 
 type Made = {
   id: string
@@ -104,12 +115,6 @@ vi.mock("@/app/pages/journeyAvailability", () => ({
 }))
 
 const { AllJourneys } = await import("./AllJourneysPage")
-const { registerJourneyCardSlot } = await import("./journeyCardSlots")
-
-registerJourneyCardSlot({
-  id: "made-up",
-  Component: ({ journeyInfo }) => <p>{`slot for ${journeyInfo.journey.id}`}</p>,
-})
 
 const state = (extra: Partial<Progress> = {}): Progress => ({
   levelNr: 1,

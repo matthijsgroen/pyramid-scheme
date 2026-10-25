@@ -81,6 +81,18 @@ describe("JourneyRow", () => {
     expect(onOpen).not.toHaveBeenCalled()
   })
 
+  it("an empty details list leaves no wrapper under the row", () => {
+    const { container } = row({ details: [] })
+    expect(container.firstElementChild?.childElementCount).toBe(1)
+  })
+
+  it("details that all render nothing leave a wrapper hidden while empty", () => {
+    const { container } = row({ details: [null] })
+    const wrapper = container.firstElementChild?.lastElementChild
+    expect(wrapper?.className).toContain("empty:hidden")
+    expect(wrapper?.childElementCount).toBe(0)
+  })
+
   it("shows its children only while the stops are open", () => {
     const stops = { label: "Show stops", onToggle: () => {} }
     row({ stops: { ...stops, open: false }, children: <p>the stops</p> })

@@ -45,7 +45,15 @@ export const LockedWithSymbols: Story = {
   },
 }
 export const WithDetails: Story = {
-  args: { status: "open", note: "Nog niet begonnen", details: <p className="text-[13px]">3 van 5 stenen getrokken</p> },
+  args: {
+    status: "open",
+    note: "Nog niet begonnen",
+    details: [
+      <p key="stones" className="text-[13px]">
+        3 van 5 stenen getrokken
+      </p>,
+    ],
+  },
 }
 export const Compact: Story = { args: { status: "current", note: "piramide 3 van 5", compact: true } }
 export const StopsClosed: Story = {
