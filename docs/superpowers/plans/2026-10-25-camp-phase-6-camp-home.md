@@ -137,14 +137,14 @@ One agent (Sonnet).
 - Produces: `HomecomingPanel = { id; order: number; Component: FC }`, `registerHomecomingPanel`, `homecomingPanels()` sorted by order.
 - Produces: `HaulLine = { key: string; visual: ReactNode; title: string; note?: string; isNew?: boolean }`; `registerHaulLines(useLines: () => Partial<Record<string, (rewards: readonly TreasureReward[], t: TFn) => HaulLine[]>>)`; `useHaulLines(haul): HaulLine[]` — groups the haul by type in first-found order, hands each group to its registered summariser, falls back to core's default per group (equal rewards merged with "×n", name and visual from `useMergedRewardDisplays`, a type with no display skipped), puts `isNew` lines first, otherwise keeps first-found order. Core's strings: `home.haul.times` ("×{{count}}").
 
-- [ ] **Step 1: Failing tests** (made-up registrations; each spec resets what it registers).
+- [x] **Step 1: Failing tests** (made-up registrations; each spec resets what it registers).
   - `campFoundSource.spec.ts`: no source gives `{}`; a registered source's value comes through; a second registration replaces the first.
   - `modEntrances.spec.ts`: registering twice under one id keeps one; the list holds what was registered.
   - `homecomingRegistry.spec.ts`: panels come back sorted by order; the existing handler tests stay.
   - `haulLines.spec.tsx`: a made-up summariser for type `a` receives all `a` rewards in found order and its lines are used; a type without one gets one default line per distinct reward with "×2" for two equal ones; a type with neither summariser nor display is left out; an `isNew` line moves to the top; an empty haul gives no lines.
-- [ ] **Step 2: Run** `yarn test src/app/home src/app/homecomingRegistry` — FAIL.
-- [ ] **Step 3: Implement.** Each registry's comment says what a mod contributes and what is shown when none does. Hooks run in fixed registry order (the pattern of `rewardContributions.ts`).
-- [ ] **Step 4: Run** the specs — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 2: Run** `yarn test src/app/home src/app/homecomingRegistry` — FAIL.
+- [x] **Step 3: Implement.** Each registry's comment says what a mod contributes and what is shown when none does. Hooks run in fixed registry order (the pattern of `rewardContributions.ts`).
+- [x] **Step 4: Run** the specs — PASS. `yarn check-types`, `yarn lint`.
 - [ ] **Step 5: Commit** — `feat: seams for the camp home — found state, entrances, rest, haul`
 
 ---

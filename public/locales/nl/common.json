@@ -1244,5 +1244,10 @@
       "mosaic": "Mozaïek",
       "journeys": "Alle reizen"
     }
+  },
+  "home": {
+    "haul": {
+      "times": "×{{count}}"
+    }
   }
 }

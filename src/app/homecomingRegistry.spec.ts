@@ -2,7 +2,13 @@
 import { useState } from "react"
 import { describe, expect, it, vi } from "vitest"
 import { act, renderHook } from "@testing-library/react"
-import { mergeHomecomings, registerHomecoming, useHomecoming } from "./homecomingRegistry"
+import {
+  homecomingPanels,
+  mergeHomecomings,
+  registerHomecoming,
+  registerHomecomingPanel,
+  useHomecoming,
+} from "./homecomingRegistry"
 
 describe("mergeHomecomings", () => {
   it("runs every handler once, in registration order", () => {
@@ -29,5 +35,16 @@ describe("useHomecoming", () => {
     act(() => setValue(5))
     result.current()
     expect(seen).toHaveBeenCalledExactlyOnceWith(5)
+  })
+})
+
+describe("homecomingPanels", () => {
+  it("come back sorted by order, one per id", () => {
+    const Panel = () => null
+    registerHomecomingPanel({ id: "late", order: 20, Component: Panel })
+    registerHomecomingPanel({ id: "early", order: 5, Component: Panel })
+    registerHomecomingPanel({ id: "mid", order: 10, Component: Panel })
+    registerHomecomingPanel({ id: "mid", order: 10, Component: Panel })
+    expect(homecomingPanels().map(p => p.id)).toEqual(["early", "mid", "late"])
   })
 })
