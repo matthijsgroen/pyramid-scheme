@@ -28,11 +28,11 @@ type SettingsModalProps = {
 
 // The playtesting tools: mounted only while the dialog is open in develop mode, so their hooks cost
 // nothing the rest of the time.
-const DevTools: FC<{ startGame: () => void }> = ({ startGame }) => {
+const DevTools: FC<{ startGame: () => void; onClose: () => void }> = ({ startGame, onClose }) => {
   const { t } = useTranslation("common")
   const { startJourney } = useJourneys()
   const journeyList = useJourneyTranslations()
-  const devActions = useDevActions(startGame)
+  const devActions = useDevActions(startGame, onClose)
   const shopTombJourney = journeyList.find(j => j.id === "junior_treasure_tomb")
   return (
     <div className="mt-6 space-y-4 rounded-lg bg-stone-900 p-3">
@@ -178,7 +178,7 @@ export const SettingsModal: FC<SettingsModalProps> = ({ isOpen, onClose, startGa
           </div>
         </div>
 
-        {isDevelopMode && <DevTools startGame={startGame} />}
+        {isDevelopMode && <DevTools startGame={startGame} onClose={handleClose} />}
 
         <div className="mt-6 flex items-center justify-end gap-4">
           <div className="text-sm text-gray-500">

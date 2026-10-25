@@ -35,3 +35,24 @@ describe("dev menu jumps", () => {
     expect(jump).not.toHaveBeenCalled()
   })
 })
+
+describe("dev menu previews", () => {
+  it("close the menu, so what they play is seen", () => {
+    const onLook = vi.fn()
+    const { result } = renderHook(() => useDevActions(undefined, onLook))
+
+    result.current.find(a => a.label === "A preview")?.onClick()
+
+    expect(preview).toHaveBeenCalled()
+    expect(onLook).toHaveBeenCalledOnce()
+  })
+
+  it("leave a grant's menu open", () => {
+    const onLook = vi.fn()
+    const { result } = renderHook(() => useDevActions(undefined, onLook))
+
+    result.current.find(a => a.label === "A grant")?.onClick()
+
+    expect(onLook).not.toHaveBeenCalled()
+  })
+})

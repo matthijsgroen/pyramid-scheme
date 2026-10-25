@@ -3,7 +3,7 @@
 export type DevGrant = {
   label: string
   grant: () => void
-  /** False for a grant that only plays something to look at; "Unlock everything" skips it. */
+  /** False for a grant that only plays something to look at: "Unlock everything" skips it, and it closes the menu. */
   inUnlockEverything?: boolean
 }
 
