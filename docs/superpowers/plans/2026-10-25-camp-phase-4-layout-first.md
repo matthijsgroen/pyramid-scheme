@@ -81,7 +81,7 @@ Each decision is listed as **default** / alternative. Task 14 writes them under 
 12. **Hidden-pocket money counts as income** (old Decision 4). / Alternative: exclude it. Open question 1.
 13. **Money runs last by a flag:** `Distribution.fillsLast` (mod-agnostic). Every other dynamic distribution fills before it. / Alternative: rely on registry order.
 14. **A shop has no empty stock slot.** Stock arrays are trimmed to what was assigned, right after `placeShopStock`, before the layout. / Alternative: fill the 28 spare slots with sellables for sale.
-15. **Waterskins go back to 50 per tier (150).** If Task 9's bake cannot meet a ground's money, they step down by 10 per tier, never below 20. / Alternative: keep 60.
+15. **Waterskins follow the traps (designer's ruling):** expert and up, each tier gets `round(WATERSKINS_PER_TRAP × traps in that tier)`, the traps counted from the world's trap encounters at build time, never hard-coded. The trap mod authors `WATERSKINS_PER_TRAP = 1.3`, about 150 in all at today's 32 / 19 / 64 expert / master / wizard traps (≈ 42 / 25 / 83). If Task 9's bake cannot meet a ground's money, the ratio steps down by 0.2, never below 0.6. / Alternative: a flat 50 per tier, or keep 60.
 16. **Sellables: the same 25 kinds, more and dearer.** The tier sell values in `src/data/sellables.ts` are raised once, so that world income ≈ 1.1 × sinks (13 rares + 7 purchases). `PER_ITEM_CAP` is raised only if the fill needs more drops. The fill varies drop counts per ground, never per-drop values. / Alternative: new sellable ids at new values.
 17. **`MONEY_ALLOWANCE` goes.** The budget is each ground's need plus a 10 % margin, and then the world up to ≈ 1.1 × sinks. / Alternative: keep an allowance.
 18. **A need line can carry a hint.** `JourneyNeed.hint` is shown under the label. The locked tier group (shown only when `tierKeyHeld`) lists the tier treasure lit and "Je hebt een ezel nodig" with "Fez verkoopt er een in <tomb>". / Alternative: the place inside the label.
@@ -266,7 +266,7 @@ Each decision is listed as **default** / alternative. Task 14 writes them under 
 
 - Modify: `src/worldGen/slotAllocator.ts`, `src/worldGen/placeFragments.ts` (+ specs): `Distribution.fillsLast?: true`, and distributions that fill last run after every other one.
 - Modify: `src/worldGen/shopStock.ts` (+ spec): `trimEmptyStock(configs)` right after `placeShopStock`.
-- Modify: the trap mod's waterskin count (50 per tier) and its spec only if the spec builds a made-up count.
+- Modify: the trap mod's waterskin distribution: per tier `round(WATERSKINS_PER_TRAP × that tier's trap encounters)` (decision 15), expert and up. Test `waterskins follow the traps per tier`: a made-up world with 2 / 0 / 10 traps on expert / master / wizard and a made-up ratio gets counts in that proportion, none on a tier without traps or below expert.
 - Modify: `src/mods/shop/game/loot.ts`: `fillsLast: true`.
 
 **Interfaces:**
@@ -310,7 +310,7 @@ Each decision is listed as **default** / alternative. Task 14 writes them under 
 **Files (by the bake):** as Task 4, plus `src/mods/shop/game/purchases.ts` and the waterskin count, only by the rules below.
 
 - [ ] **Step 1: Bake:** `timeout 900 yarn generate-world`.
-  - If a ground falls short and has no free slot: first lower waterskins by 10 per tier (never below 20). Then lower the price of the purchase in that ground closest to its gate by 50 (never below 100). Two rounds at most.
+  - If a ground falls short and has no free slot: first lower `WATERSKINS_PER_TRAP` by 0.2 (never below 0.6). Then lower the price of the purchase in that ground closest to its gate by 50 (never below 100). Two rounds at most.
   - A purchase placement failure, or a third round, stops the phase (Failures).
 - [ ] **Step 2: Required:**
   - `strict walk enters 29 of 29`;
