@@ -488,6 +488,8 @@ describe("placeFragments at the frontier", () => {
         [
           {
             ...tagged("made-up-key:gate")[0],
+            // The order slots are reached in follows the layout, so the layout is pinned.
+            seed: 1,
             sideSections: [
               section("made-up-key:gate", "made-up-key:junior"),
               section("made-up-key:later", "made-up-key:other"),

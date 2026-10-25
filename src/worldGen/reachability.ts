@@ -7,7 +7,7 @@ import type { ResolvePassageRealisation } from "../game/passageRealisation"
 import type { ResolveRegionBarrierRealisation } from "../game/regionBarrierRealisation"
 import { collectReachableKeys, reachableFrom } from "../game/siteValidator"
 import { mechanismGatesOf } from "../game/mechanismDoors"
-import { hashString } from "../support/hashString"
+import { floorAssemblySeed, persistentInteriorSeed } from "../game/siteSeed"
 
 // Every piece of currency knowledge reachability needs, injected by the caller (placeFragments,
 // which assembles it from the registered mod currencies + every mod's reachability support).
@@ -106,9 +106,11 @@ export type FloorRef = SiteRef & { floorIndex: number }
 
 export const floorKey = (ref: FloorRef): string => `${ref.journeyId}#${ref.levelIndex}#${ref.floorIndex}`
 
-// The seed a floor that carries no `seed` of its own is carved at. Every floor of a built world carries the
-// seed its layout was picked at (configBuilder.ts, `pickLayout`), and that pin is what the walk carves.
-const defaultSeedFor = (ref: SiteRef): number => hashString(`${ref.journeyId}:${ref.levelIndex}`)
+// The seed a floor that carries no `seed` of its own is carved at: floor 0's seed at the address, the seed play
+// carves an unstamped floor at (floor i adds i). Every floor of a built world carries the seed its layout was
+// picked at (configBuilder.ts, `pickLayout`), and that pin is what the walk carves.
+const defaultSeedFor = (ref: SiteRef): number =>
+  floorAssemblySeed(persistentInteriorSeed(ref.journeyId), ref.levelIndex + 1, 0)
 
 // Grid topology (gate/key structure, room layout) depends only on (siteId, floorIndex,
 // seed), never on which keys are currently owned — assembleFloor is deterministic given
@@ -202,7 +204,7 @@ export const carveSiteFloor = (
     cache?.set(cacheKey, result)
   }
   // A floor carrying its layout's pin is carved here as the runtime carves it; one carrying none is carved at
-  // `defaultSeedFor`, which says nothing about what players get.
+  // the seed its address gives it, the one play carves it at.
   if (!result.success) {
     throw new Error(
       `Floor ${floorKey({ ...ref, floorIndex: i })} cannot be assembled (seed ${floorSeed}): ${JSON.stringify(
