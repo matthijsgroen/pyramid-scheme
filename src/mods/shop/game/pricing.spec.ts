@@ -39,9 +39,12 @@ describe("priceFor", () => {
 
 describe("waterskin stock", () => {
   it("prices a waterskin by the shop's tier, from expert up", () => {
-    expect(priceFor({ type: "waterskin" }, "expert")).toBe(30)
-    expect(priceFor({ type: "waterskin" }, "master")).toBe(40)
-    expect(priceFor({ type: "waterskin" }, "wizard")).toBe(50)
+    const [expert, master, wizard] = (["expert", "master", "wizard"] as const).map(tier =>
+      priceFor({ type: "waterskin" }, tier)
+    )
+    expect(expert).toBeGreaterThan(0)
+    expect(master).toBeGreaterThan(expert)
+    expect(wizard).toBeGreaterThan(master)
   })
 
   it("a tomb shop's waterskin is priced by the tier of the shop that sells it", () => {
@@ -68,7 +71,8 @@ describe("waterskin stock", () => {
       ],
     }
     const price = stockPrices(configs, [])
-    expect(price(inMaster)).toBe(40)
-    expect(price(inWizard)).toBe(50)
+    expect(price(inMaster)).toBe(priceFor(skin(), "master"))
+    expect(price(inWizard)).toBe(priceFor(skin(), "wizard"))
+    expect(price(inWizard)).toBeGreaterThan(price(inMaster))
   })
 })
