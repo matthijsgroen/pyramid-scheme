@@ -218,8 +218,14 @@ export const makeShopMoneyEconomy = (purchases: PurchaseTable = PURCHASES): Dist
         )
     }
 
-    // Phase 4 — every slot the grounds didn't need is empty: no placeholder may reach the serializer.
-    for (const slot of slots) if (!placed.has(slot)) slot.assign(undefined)
+    // Phase 4 — no placeholder may reach the serializer. A puzzle the grounds didn't need is left empty; a chest gets
+    // loose change, because an end without a reward is a free end the carve may pick as a key host, so emptying it
+    // after the layout was picked would move the floor's walls.
+    for (const slot of slots) {
+      if (placed.has(slot)) continue
+      if (slot.kind === "end") placeCoin(slot)
+      else slot.assign(undefined)
+    }
   },
 })
 

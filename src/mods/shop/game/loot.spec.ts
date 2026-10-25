@@ -147,6 +147,37 @@ describe("shopMoneyEconomy fill", () => {
     expect(configs.start[0][0].rewards!.filter(r => r === undefined).length).toBeGreaterThan(0)
   })
 
+  it("every chest still holds loot when no ground needs it, since an empty end changes the floor's key hosts", () => {
+    const journeys = { start: { slots: 40 } }
+    const { configs } = groundWorld(journeys)
+    const chests = Array.from({ length: 10 }, () => ({ reward: undefined as TreasureReward | undefined }))
+    const endSlots: Slot[] = chests.map((chest, i) => ({
+      ref: { journeyId: "start", levelIndex: 0, floorIndex: 0 },
+      journeyId: "start",
+      tier: "starter",
+      wardKeys: [],
+      isPlaceholder: true,
+      kind: "end",
+      siteId: "start:0",
+      puzzleSeq: 100 + i,
+      rewardPriority: 100,
+      assign: r => {
+        chest.reward = r
+      },
+    }))
+    allocateDistributions(
+      new Set([...slotsOf(configs), ...endSlots]),
+      [makeShopMoneyEconomy(tableOf({}))],
+      configs,
+      0,
+      () => {
+        const walk = walkOver(configs, journeys)
+        return { walk, isKey: walk.isKey }
+      }
+    )
+    expect(chests.map(c => c.reward?.type).filter(t => t !== "sellable" && t !== "money")).toEqual([])
+  })
+
   it("covers stock a distribution registered after it put in a shop", () => {
     const table = tableOf({ K: 10 * STONE, X: 0 })
     const stocker: Distribution = {
