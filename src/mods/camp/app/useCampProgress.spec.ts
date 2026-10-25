@@ -100,6 +100,7 @@ describe("the camp's homecoming", () => {
     const { useHomecoming } = await import("@/app/homecomingRegistry")
     const { useCampProgress: useCamp } = await import("./useCampProgress")
     const { readModState: readFreshModState } = await import("@/app/state/useModState")
+    const { latestGameValue: latestFresh } = await import("@/support/useGameStorage")
     await writeGameData({ "pyramid-scheme-mod-camp": { version: 1, finds: ["seed"], parts: {}, grown: [] } })
     const { result, rerender } = renderHook(() => ({ home: useHomecoming(), camp: useCamp() }))
     await act(async () => {})
@@ -115,6 +116,16 @@ describe("the camp's homecoming", () => {
       parts: {},
       grown: ["sprout"],
       arrived: ["mule", "halter"],
+    })
+    // The coming-home screen reads the haul: one arrival per purchase, and none on the homecoming after.
+    expect(latestFresh("homecoming")).toEqual({
+      version: 1,
+      haul: [{ type: "campArrival", purchase: "purchase:mule" }],
+    })
+    await act(async () => result.current.home())
+    expect(latestFresh("homecoming")).toEqual({
+      version: 1,
+      haul: [{ type: "campArrival", purchase: "purchase:mule" }],
     })
     vi.doUnmock("@/mods/camp/game/campSteps")
   })

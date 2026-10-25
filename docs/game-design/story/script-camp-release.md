@@ -573,17 +573,17 @@ fires: the camp — the first home showing after the first structure has all its
 
 The last line is drawn in the pointing pose on purpose.
 
-## Fez and the animals — waits on phase 4
+## Fez and the animals
 
-**Nothing fires these yet.** Phase 4 (`docs/superpowers/plans/2026-10-25-camp-phase-4-animal-gates.md`) stopped
-before the purchases, their gates and their camp arrivals were built, so every scene below waits on a seam that
-does not exist; `WAITING_BEATS` in `src/mods/story/game/drafts.ts` names it per id. The seams:
+**Twenty of these play, seven wait.** `WAITING_BEATS` in `src/mods/story/game/drafts.ts` names the seam each waiting one lacks;
+the story mod reads only what core reports (held keys, gate needs, reactions, the home's tags), never the shop or camp.
+The seams:
 
-- `animal.forSale` — Fez's stall shows a purchase for the first time;
-- `animal.bought<Id>` — a purchase is bought (at the stall, in the tomb);
-- `animal.blocked<Id>` — a gate refuses for want of a purchase (the locked tier or tomb card in Travel);
-- `animal.through<Id>` — a gate opens because of a purchase (the first time that tier or tomb is entered);
-- `animal.arrives<Id>` — a bought step arrives in the camp (the camp, on the homecoming after the purchase).
+- `animal.forSale` — Fez's stall shows a purchase for the first time; **waiting** (core reports no such moment);
+- `animal.bought<Id>` — a purchase is bought (at the stall, in the tomb); plays when its fact joins the held keys;
+- `animal.blocked<Id>` — a gate refuses for want of a purchase (the locked tier or tomb card in Travel); **waiting** (Travel reports no moment);
+- `animal.through<Id>` — a gate opens because of a purchase; plays on entering a journey whose tier or gate needs it;
+- `animal.arrives<Id>` — a bought step arrives in the camp; plays on the homecoming, from the camp's home tag.
 
 Fez sells the animals in his tomb shops; at a gate that wants one, Fez says so and says whose tomb his stall
 stands in; in the camp the animal arrives and Fez sells nothing. Each animal has its own character: the donkey

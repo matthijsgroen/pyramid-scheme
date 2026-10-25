@@ -241,5 +241,14 @@
     "new": "Nieuw in je kamp",
     "parts_one": "{{name}} · {{count}} onderdeel",
     "parts_other": "{{name}} · {{count}} onderdelen"
+  },
+  "arrivals": {
+    "donkey": "Je ezel staat in het kamp",
+    "cart": "Je kar staat in het kamp",
+    "camel": "Je kameel staat in het kamp",
+    "secondDonkey": "Je tweede ezel staat in het kamp",
+    "secondCamel": "Je tweede kameel staat in het kamp",
+    "sturdyCart": "Je stevigere kar staat in het kamp",
+    "caravanBanner": "Je karavaanvaandel hangt in het kamp"
   }
 }

@@ -7,3 +7,6 @@ export const campPartRewardSchema = z.object({
   structure: z.string(),
   part: z.string(),
 })
+
+// What the haul carries to say a purchase has come to stand in the camp: the purchase fact, as a plain string.
+export const campArrivalRewardSchema = z.object({ type: z.literal("campArrival"), purchase: z.string() })

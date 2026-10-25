@@ -2,7 +2,8 @@ import type { TFn } from "@/app/SiteMap/rewardHandlerRegistry"
 import type { HaulLine } from "@/app/home/haulLines"
 import type { TreasureReward } from "@/game/siteTypes"
 import { campArt } from "@/ui/atoms/campScene/campArt"
-import { campFindRewardSchema, campPartRewardSchema } from "./rewardSchema"
+import { CAMP_STEPS } from "@/mods/camp/game/campSteps"
+import { campArrivalRewardSchema, campFindRewardSchema, campPartRewardSchema } from "./rewardSchema"
 
 const NS = { ns: "camp" }
 
@@ -43,4 +44,23 @@ export const summariseParts = (rewards: readonly TreasureReward[], t: TFn): Haul
   }))
 }
 
-export const useCampHaulLines = () => ({ campFind: summariseFinds, campPart: summariseParts })
+// An animal that has come to stand in the camp is one line per purchase, named by the part of its fact after the
+// colon (the strings live under `arrivals`), drawn as the step of the same name or else the purchase's first step.
+export const summariseArrivals = (rewards: readonly TreasureReward[], t: TFn): HaulLine[] =>
+  rewards.map(reward => {
+    const { purchase } = campArrivalRewardSchema.parse(reward)
+    const name = purchase.slice(purchase.indexOf(":") + 1)
+    const steps = CAMP_STEPS.filter(step => step.purchase === purchase)
+    return {
+      key: `campArrival-${purchase}`,
+      visual: picture((steps.find(step => step.id === name) ?? steps[0])?.id ?? name, "⛺"),
+      title: t(`arrivals.${name}`, NS),
+      isNew: true,
+    }
+  })
+
+export const useCampHaulLines = () => ({
+  campFind: summariseFinds,
+  campPart: summariseParts,
+  campArrival: summariseArrivals,
+})

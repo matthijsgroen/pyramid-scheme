@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { spokenLines } from "@/app/fez/arrivalConversation"
-import { DRAFT_BEATS, WAITING_BEATS } from "../drafts"
+import { DRAFT_BEATS, WAITING_BEATS, WIRED_ANIMAL_BEATS } from "../drafts"
 import { STORY_BEATS } from "./storyBeats"
 
 const hasLineIn = (locale: string) => {
@@ -17,8 +17,9 @@ describe("the declared story beats", () => {
     expect([...STORY_BEATS].filter(id => spokenLines(id, hasLine).length === 0)).toEqual([])
   })
 
-  it("leave the animal scenes unwired", () => {
-    expect([...STORY_BEATS].filter(id => id.startsWith("animal."))).toEqual([])
+  it("wire every animal beat that is not waiting, and no other animal beat", () => {
+    expect([...STORY_BEATS].filter(id => id.startsWith("animal.")).sort()).toEqual([...WIRED_ANIMAL_BEATS].sort())
+    expect(WIRED_ANIMAL_BEATS.filter(id => !STORY_BEATS.has(id))).toEqual([])
   })
 
   it("wire every drafted tomb, camp and structure beat", () => {

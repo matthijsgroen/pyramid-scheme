@@ -9,7 +9,20 @@ vi.mock("@/mods/registeredMods", () => ({ isModEnabled: () => false }))
 let heard: Record<string, boolean> = {}
 vi.mock("@/support/useGameStorage", () => ({ latestGameValue: () => heard }))
 vi.mock("@/mods/story/game/reaction/storyBeats", () => ({
-  STORY_BEATS: new Set(["cave.t1", "camp.firstHome", "camp.rested", "bond.starter"]),
+  STORY_BEATS: new Set([
+    "cave.t1",
+    "camp.firstHome",
+    "camp.rested",
+    "bond.starter",
+    "animal.throughDonkey",
+    "animal.arrivesDonkey",
+  ]),
+}))
+
+let held: ReadonlySet<string> = new Set()
+vi.mock("@/app/SiteMap/keyProviders", () => ({ useMergedHeldKeys: () => held, useHeldKeysLoaded: () => true }))
+vi.mock("@/app/pages/gateNeeds", () => ({
+  useMergedGateNeeds: () => ({ needs: (gate: object) => ("journeyId" in gate ? [{ key: "purchase:donkey" }] : []) }),
 }))
 
 const { useStoryReactions } = await import("./rail")
@@ -26,6 +39,35 @@ const rail = () => {
 describe("the reaction rail", () => {
   beforeEach(() => {
     heard = {}
+    held = new Set()
+  })
+
+  it("offers an animal's through beat on entering a journey whose gate needs a fact now held", () => {
+    held = new Set(["purchase:donkey"])
+    const { react, showConversation } = rail()
+
+    react({ kind: "siteArrived", journeyId: "made-up-tomb", levelNr: 1 })
+
+    expect(showConversation).toHaveBeenCalledWith("animal.throughDonkey", undefined, { story: true })
+  })
+
+  it("offers an animal's beat only after the moment's other beats are heard", () => {
+    held = new Set(["purchase:donkey"])
+    heard = { "animal.throughDonkey": true }
+    const { react, showConversation } = rail()
+
+    react({ kind: "siteArrived", journeyId: "made-up-tomb", levelNr: 1 })
+
+    expect(showConversation).not.toHaveBeenCalled()
+  })
+
+  it("offers an animal's arrival on the homecoming that carries its tag", () => {
+    heard = { "camp.firstHome": true }
+    const { react, showConversation } = rail()
+
+    react({ kind: "homeShown", tags: ["camp.arrived:purchase:donkey"], arrived: { haul: true } })
+
+    expect(showConversation).toHaveBeenCalledWith("animal.arrivesDonkey", undefined, { story: true })
   })
 
   it("offers the beat a move is worth, as story so the tutorials toggle cannot silence it", () => {

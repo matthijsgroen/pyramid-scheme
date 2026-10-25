@@ -8,6 +8,7 @@ import { useCampHomeTags } from "./homeTags"
 const table: CampStepTable = [
   { id: "shell", spot: "shore", tier: "junior", source: "found" },
   { id: "tent", spot: "sleeping", tier: "junior", source: "structure", parts: ["poles", "canvas"] },
+  { id: "mule", spot: "pen", tier: "junior", source: "bought", purchase: "purchase:mule" },
 ]
 
 const expectTags = async (save: unknown, expected: string[]) => {
@@ -35,6 +36,11 @@ describe("the camp's home tags", () => {
 
   it("say nothing of a structure still missing a part", async () => {
     await expectTags({ version: 1, finds: ["shell"], parts: { tent: ["poles"] }, grown: [] }, ["camp.found"])
+  })
+
+  it("say which purchase has arrived, and none that is only held", async () => {
+    await expectTags({ version: 2, finds: [], parts: {}, grown: [], arrived: ["mule"] }, ["camp.arrived:purchase:mule"])
+    await expectTags({ version: 2, finds: [], parts: {}, grown: [], arrived: [] }, [])
   })
 
   it("are none for a save this build cannot read", async () => {

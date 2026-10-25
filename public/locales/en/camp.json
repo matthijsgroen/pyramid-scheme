@@ -241,5 +241,14 @@
     "new": "New in your camp",
     "parts_one": "{{name}} · {{count}} part",
     "parts_other": "{{name}} · {{count}} parts"
+  },
+  "arrivals": {
+    "donkey": "Your donkey is in the camp",
+    "cart": "Your cart is in the camp",
+    "camel": "Your camel is in the camp",
+    "secondDonkey": "Your second donkey is in the camp",
+    "secondCamel": "Your second camel is in the camp",
+    "sturdyCart": "Your sturdier cart is in the camp",
+    "caravanBanner": "Your caravan banner hangs in the camp"
   }
 }

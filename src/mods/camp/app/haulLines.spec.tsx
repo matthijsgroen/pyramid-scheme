@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import type { TreasureReward } from "@/game/siteTypes"
-import { summariseFinds, summariseParts } from "./haulLines"
+import { summariseArrivals, summariseFinds, summariseParts } from "./haulLines"
 
 const t = (key: string, opts?: { name?: string; count?: number }) =>
   opts?.count === undefined ? key : `${key}:${opts.name}:${opts.count}`
@@ -28,5 +28,18 @@ describe("camp haul lines", () => {
       "haul.parts:structures.made-up-hut:2",
       "haul.parts:structures.made-up-well:1",
     ])
+  })
+
+  it("gives each arrived purchase one new line, named by the part of its fact after the colon", () => {
+    const lines = summariseArrivals(
+      [
+        { type: "campArrival", purchase: "purchase:made-up-mule" },
+        { type: "campArrival", purchase: "purchase:made-up-flag" },
+      ],
+      t
+    )
+    expect(lines.map(l => l.title)).toEqual(["arrivals.made-up-mule", "arrivals.made-up-flag"])
+    expect(lines.every(l => l.isNew)).toBe(true)
+    expect(new Set(lines.map(l => l.key)).size).toBe(2)
   })
 })

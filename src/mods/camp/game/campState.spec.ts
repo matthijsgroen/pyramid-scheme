@@ -5,6 +5,9 @@ import {
   campFound,
   emptyCampSave,
   arrive,
+  arrivedPurchases,
+  arrivedTag,
+  arrivingPurchases,
   growCamp,
   hasStandingStructure,
   inPlace,
@@ -77,6 +80,27 @@ describe("fixed and bought steps", () => {
 
   it("never has a bought step in place by being found, even when its id is recorded", () => {
     expect(inPlace(recordFind(emptyCampSave(), "stool"), table).has("stool")).toBe(false)
+  })
+})
+
+describe("arrivingPurchases and arrivedPurchases", () => {
+  it("name each held purchase once, however many steps it brings", () => {
+    expect(arrivingPurchases(emptyCampSave(), table, new Set(["purchase:mule", "purchase:stool", "other"]))).toEqual([
+      "purchase:stool",
+      "purchase:mule",
+    ])
+  })
+
+  it("name nothing once the steps have arrived, and then list them as arrived", () => {
+    const held = new Set(["purchase:mule"])
+    const save = arrive(emptyCampSave(), table, held)
+    expect(arrivingPurchases(save, table, held)).toEqual([])
+    expect(arrivedPurchases(save, table)).toEqual(["purchase:mule"])
+    expect(arrivedPurchases(emptyCampSave(), table)).toEqual([])
+  })
+
+  it("tag an arrived purchase by its fact", () => {
+    expect(arrivedTag("purchase:mule")).toBe("camp.arrived:purchase:mule")
   })
 })
 

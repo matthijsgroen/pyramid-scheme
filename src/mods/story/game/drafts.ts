@@ -51,16 +51,19 @@ export const DRAFT_BEATS: Readonly<Record<"tombs" | "camp" | "structures" | "ani
   ],
 }
 
-/** The seam each kind of animal beat waits on, by id prefix. */
+/** The seam each kind of animal beat still waits on, by id prefix; a kind with none is wired. */
 const ANIMAL_SEAMS: readonly (readonly [prefix: string, seam: string])[] = [
-  ["animal.forSale", "Fez's stall shows a purchase for the first time"],
-  ["animal.bought", "a purchase is bought"],
-  ["animal.blocked", "a gate refuses for want of a purchase"],
-  ["animal.through", "a gate opens because of a purchase"],
-  ["animal.arrives", "a bought step arrives in the camp"],
+  ["animal.forSale", "Fez's stall reports no moment when it shows a purchase"],
+  ["animal.blocked", "Travel reports no moment when a gate shows its unmet need"],
 ]
 
 /** Beats written before the game has the seam that plays them: beat id → the missing seam. */
-export const WAITING_BEATS: Readonly<Record<string, string | undefined>> = Object.fromEntries(
-  DRAFT_BEATS.animals.map(id => [id, ANIMAL_SEAMS.find(([prefix]) => id.startsWith(prefix))?.[1]])
+export const WAITING_BEATS: Readonly<Record<string, string>> = Object.fromEntries(
+  DRAFT_BEATS.animals.flatMap(id => {
+    const seam = ANIMAL_SEAMS.find(([prefix]) => id.startsWith(prefix))?.[1]
+    return seam ? [[id, seam]] : []
+  })
 )
+
+/** The animal beats a seam plays: every one not waiting. */
+export const WIRED_ANIMAL_BEATS: readonly string[] = DRAFT_BEATS.animals.filter(id => !(id in WAITING_BEATS))

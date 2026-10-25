@@ -1,5 +1,5 @@
 import { produce } from "immer"
-import type { CampStepTable } from "./campSteps"
+import type { CampStepEntry, CampStepTable } from "./campSteps"
 
 // The camp save holds facts by authoring name: the finds picked up, the parts recorded per structure, the
 // steps that have grown, and the bought steps that have arrived. What the camp shows is derived from those
@@ -83,14 +83,32 @@ export const growCamp = (save: CampSave, table: CampStepTable): CampSave => {
 
 // An animal or a cart is ordered from Fez, not carried home: a bought step arrives on the homecoming after its
 // purchase is held, every step of one purchase at once. Once arrived it stays, whatever the held keys say later.
-export const arrive = (save: CampSave, table: CampStepTable, held: ReadonlySet<string>): CampSave => {
-  const arriving = table.filter(
+const arrivingSteps = (save: CampSave, table: CampStepTable, held: ReadonlySet<string>): CampStepEntry[] =>
+  table.filter(
     entry =>
       entry.source === "bought" &&
       entry.purchase !== undefined &&
       held.has(entry.purchase) &&
       !save.arrived.includes(entry.id)
   )
+
+const distinct = (facts: (string | undefined)[]): string[] => [
+  ...new Set(facts.filter((fact): fact is string => fact !== undefined)),
+]
+
+// The purchases whose steps would arrive on a homecoming now, each once.
+export const arrivingPurchases = (save: CampSave, table: CampStepTable, held: ReadonlySet<string>): string[] =>
+  distinct(arrivingSteps(save, table, held).map(entry => entry.purchase))
+
+// The purchases that have a step standing in the camp, each once.
+export const arrivedPurchases = (save: CampSave, table: CampStepTable): string[] =>
+  distinct(table.filter(entry => entry.source === "bought" && save.arrived.includes(entry.id)).map(e => e.purchase))
+
+// The tag the home carries for a purchase that has come to stand in the camp.
+export const arrivedTag = (purchase: string): string => `camp.arrived:${purchase}`
+
+export const arrive = (save: CampSave, table: CampStepTable, held: ReadonlySet<string>): CampSave => {
+  const arriving = arrivingSteps(save, table, held)
   if (arriving.length === 0) return save
   return produce(save, draft => {
     for (const entry of arriving) draft.arrived.push(entry.id)

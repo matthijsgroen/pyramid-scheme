@@ -4,6 +4,7 @@ import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { registerCampFoundSource } from "@/app/home/campFoundSource"
 import { registerHaulLines } from "@/app/home/haulLines"
 import { registerHomeTags } from "@/app/home/homeTags"
+import { useHomeSave } from "@/app/home/useHomeSave"
 import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
 import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
 import { isModEnabled } from "@/mods/registeredMods"
@@ -15,11 +16,13 @@ import { useCampHomeTags } from "./homeTags"
 import { CampCollectionSection } from "./CampCollectionSection"
 import { useCampTab } from "./collectionTab"
 import { useCampProgress } from "./useCampProgress"
+import { CAMP_STEPS } from "@/mods/camp/game/campSteps"
+import { arrivingPurchases } from "@/mods/camp/game/campState"
 
 // The camp's app-side registrations, self-gated on the mod being enabled:
 // - the reward schemas, display and claim effects for finds and parts,
 // - the homecoming: each time the player comes home, what was bought (a held purchase fact) arrives and the camp
-//   grows one stage,
+//   grows one stage, and the coming-home screen names each animal that arrived,
 // - the home: what the camp has found, how a find or part brought home reads in the haul, and whether
 //   anything has been found or a structure stands,
 // - the Collection section listing the started structures.
@@ -30,8 +33,15 @@ if (isModEnabled("camp")) {
   registerRewardContribution(useCampRewardContribution)
   registerHomecoming(() => {
     const held = useMergedHeldKeys()
-    const { comeHome } = useCampProgress()
-    return () => void comeHome(held)
+    const { comeHome, save, loaded } = useCampProgress()
+    const { addToHaul } = useHomeSave()
+    return () => {
+      // The coming-home screen names each animal that arrives with this homecoming, through the haul.
+      if (loaded)
+        for (const purchase of arrivingPurchases(save, CAMP_STEPS, held))
+          void addToHaul({ type: "campArrival", purchase })
+      void comeHome(held)
+    }
   })
   registerCampFoundSource(() => useCampProgress().found)
   registerHaulLines(useCampHaulLines)
