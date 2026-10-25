@@ -22,7 +22,9 @@ import { isWebKey } from "@/game/floorLock"
 
 export const TravelPage: FC<{
   startGame: () => void
-}> = ({ startGame }) => {
+  /** Off where another control already holds the pointing hand. */
+  hints?: boolean
+}> = ({ startGame, hints = true }) => {
   const { t, i18n } = useTranslation("common")
   const journeys = useJourneyTranslations()
 
@@ -174,7 +176,7 @@ export const TravelPage: FC<{
                 </>
               )}
               {!journey && <p className="mb-4 text-center">{t("ui.startAdventure")}</p>}
-              <TapHint show={mapHint && !journey && !speaking}>
+              <TapHint show={hints && mapHint && !journey && !speaking}>
                 <JourneyPathView
                   onClick={handleMapClick}
                   onNodeClick={journey ? handleNodeClick : undefined}
@@ -275,7 +277,7 @@ export const TravelPage: FC<{
                   )
                 }
                 return (
-                  <TapHint key={journey.id} show={journeyHint && !speaking && journey.id === firstPickableId}>
+                  <TapHint key={journey.id} show={hints && journeyHint && !speaking && journey.id === firstPickableId}>
                     <JourneyCard
                       showDetails={journey.id === newestAvailableId}
                       journey={journey}

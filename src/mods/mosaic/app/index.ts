@@ -3,6 +3,7 @@ import { z } from "zod"
 import { FezContext } from "@/app/fez/context"
 import { registerModEntrance } from "@/app/home/modEntrances"
 import { registerHaulLines } from "@/app/home/haulLines"
+import { registerHomeHook } from "@/app/home/homeHooks"
 import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
 import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
 import { isModEnabled } from "@/mods/registeredMods"
@@ -12,12 +13,14 @@ import { useMosaicEntranceLabel } from "./campEntrance"
 import { useMosaicHaulLines } from "./haulLines"
 import { MosaicPage } from "./MosaicPage"
 import { registerMosaicRewardDisplay } from "./rewardDisplay"
+import { useMosaicHomeReminder } from "./useMosaicHomeReminder"
 import { MOSAIC_INTRO } from "./useMosaicReminder"
 
 // Mosaic's app-side registration (side-effect), self-gated on the mod being enabled:
 // - the reward contribution: a mosaicPiece pickup increments the piece count (the effect) — the
 //   mod owns the reward id, core owns the ledger bucket it writes to.
-// - the home: the camp window opens the mosaic, and the pieces brought home read as one line.
+// - the home: the camp window opens the mosaic, the pieces brought home read as one line, and the
+//   reminder is counted each time the camp shows.
 // See docs/mods/app-plugins-design.md.
 if (isModEnabled("mosaic")) {
   registerModEntrance({
@@ -28,6 +31,7 @@ if (isModEnabled("mosaic")) {
     title: t => t("mosaic.entrance.title"),
   })
   registerHaulLines(useMosaicHaulLines)
+  registerHomeHook(useMosaicHomeReminder)
   registerMosaicRewardDisplay()
   // A mosaic piece carries the register it belongs to, so a find fills the panel for the
   // difficulty it was found on.

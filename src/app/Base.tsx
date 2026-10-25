@@ -12,10 +12,15 @@ import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { LockEditorHost } from "@/app/dev/LockEditorHost"
 import { useSecretTaps } from "@/app/dev/useSecretTaps"
 import { FezContext } from "@/app/fez/context"
+import { chapterToAnnounce, needsChapterRecord } from "@/game/homeSave"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useTapHint } from "@/app/state/useTapHint"
 import { useJourneyTranslations } from "@/app/translations/useJourneyTranslations"
 import { DevelopContext } from "@/contexts/DevelopMode"
+import { ComingHome } from "@/app/home/ComingHome"
+import { useHomeHooks } from "@/app/home/homeHooks"
+import { NewChapter } from "@/app/home/NewChapter"
+import { useHomeSave } from "@/app/home/useHomeSave"
 import { useCampFound } from "@/app/home/campFoundSource"
 import { continueJourney, newToDiscoverCount } from "@/app/home/continueJourney"
 import { useElementSize } from "@/app/home/useElementSize"
@@ -28,6 +33,12 @@ import { ContinueCard } from "@/ui/molecules/ContinueCard"
 import { CampHomeLayout } from "@/ui/organisms/CampHomeLayout"
 import { CampPopup } from "@/ui/organisms/CampPopup"
 
+// Mounted once the player has settled in (after the coming-home screen), so a mod's hook never speaks behind it.
+const HomeHooks = () => {
+  useHomeHooks()
+  return null
+}
+
 type Popup = "collection" | "window" | "journeys"
 
 // Space kept between the card and the scene's lowest piece on a phone.
@@ -36,13 +47,23 @@ const CARD_GAP = 16
 // The camp is the home screen: the scene with its entrances, a HUD, the "Verder met" card and, from `lg`,
 // the journeys beside it. Everything else (collection, a mod's window, the journeys on a phone) opens as a
 // popup over it.
-export const Base = ({ startGame }: { startGame: () => void }) => {
+export const Base = ({
+  startGame,
+  cameHome = false,
+  onArrived,
+}: {
+  startGame: () => void
+  /** The player just came back from a journey: the coming-home screen shows over the camp until it is done. */
+  cameHome?: boolean
+  onArrived?: () => void
+}) => {
   const { t } = useTranslation("common")
   const { showConversation, speaking } = use(FezContext)
   const { isDevelopMode, setDevelopMode } = use(DevelopContext)
   const isDesktop = useIsDesktop()
   const [popup, setPopup] = useState<Popup | undefined>()
   const [showSettings, setShowSettings] = useState(false)
+  const [chapterClosed, setChapterClosed] = useState(false)
   const [setOffHint, setOffTapped] = useTapHint("setOff")
 
   useEffect(() => {
@@ -58,6 +79,17 @@ export const Base = ({ startGame }: { startGame: () => void }) => {
   const [cardRef, card] = useElementSize()
   const heldKeys = useMergedHeldKeys()
   const found = useCampFound()
+  const chapter = currentChapter(heldKeys)
+  const home = useHomeSave()
+  const homeSave = { version: 1 as const, haul: [...home.haul], chapter: home.chapter }
+  // A save with no record takes the chapter it is in without announcing it; only a tier reached after
+  // the record is announced, and only once the coming-home screen has gone.
+  const recordMissing = home.loaded && needsChapterRecord(homeSave)
+  const { markChapter } = home
+  useEffect(() => {
+    if (recordMissing) void markChapter(chapter)
+  }, [recordMissing, markChapter, chapter])
+  const announced = home.loaded && !cameHome && !chapterClosed ? chapterToAnnounce(homeSave, chapter) : undefined
   const windowEntrance = useWindowEntrance()
 
   const journeys = useJourneyTranslations()
@@ -165,7 +197,7 @@ export const Base = ({ startGame }: { startGame: () => void }) => {
             <CampScene
               width={scene.width}
               height={scene.height}
-              chapter={currentChapter(heldKeys)}
+              chapter={chapter}
               found={found}
               insets={{ top: hud.height, bottom: isDesktop ? 0 : card.height + CARD_GAP }}
               entrances={entrances}
@@ -173,7 +205,7 @@ export const Base = ({ startGame }: { startGame: () => void }) => {
           )
         }
         card={<div ref={cardRef}>{continueCard}</div>}
-        aside={isDesktop ? <TravelPage startGame={startGame} /> : undefined}
+        aside={isDesktop ? <TravelPage startGame={startGame} hints={false} /> : undefined}
       />
       {popup && (
         <CampPopup title={popupTitle[popup]} closeLabel={t("camp.close")} onClose={closePopup}>
@@ -182,6 +214,9 @@ export const Base = ({ startGame }: { startGame: () => void }) => {
           {popup === "journeys" && <TravelPage startGame={startGame} />}
         </CampPopup>
       )}
+      {cameHome && <ComingHome onDone={() => onArrived?.()} />}
+      {!cameHome && <HomeHooks />}
+      {announced && <NewChapter tier={announced} startGame={startGame} onClose={() => setChapterClosed(true)} />}
       <SettingsModal isOpen={showSettings} onClose={() => setShowSettings(false)} startGame={startGame} />
       {isDevelopMode && <LockEditorHost />}
     </>

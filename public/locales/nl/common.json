@@ -34,7 +34,7 @@
     "description": "Beschrijving",
     "expedition": "Expeditie",
     "expeditionCompleted": "Expeditie Voltooid!",
-    "goBackToBase": "Terug naar basis",
+    "goBackToBase": "Terug naar het kamp",
     "backArrow": "←",
     "back": "← Terug",
     "floor": "Verdieping {{number}}",
@@ -95,7 +95,6 @@
     "newTombUnlocked": "Een nieuwe tombe is nu ontgrendeld",
     "tierComingSoonTitle": "{{tier}}-expedities zijn onderweg",
     "tierComingSoon": "Je hebt de sleutel, maar aan de {{tier}}-piramides wordt nog gebouwd. Ze komen in een latere update — tot die tijd opent je sleutel meer van de piramides die je al kent.",
-    "startJourney": "Start {{name}}",
     "answerNow": "Het antwoord is: ",
     "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
     "saveVersion": "· opslag v{{saveVersion}}",
@@ -1265,6 +1264,20 @@
     },
     "hint_one": "{{count}} oude reis heeft iets nieuws te ontdekken",
     "hint_other": "{{count}} oude reizen hebben iets nieuws te ontdekken",
+    "comingHome": {
+      "title": "Terug in het kamp",
+      "haulTitle": "Je buit van deze tocht",
+      "new": "NIEUW",
+      "unpack": "Uitpakken",
+      "toCamp": "Naar het kamp"
+    },
+    "chapter": {
+      "subtitle": "Nieuw hoofdstuk",
+      "title": "Er doemt een nieuwe piramide op",
+      "body": "{{tier}}-reizen staan open. Kom op adem in het kamp en ga op pad als je er klaar voor bent.",
+      "journeyNote": "Eerste {{tier}}-reis",
+      "later": "Later"
+    },
     "close": "Sluiten",
     "entrance": {
       "collection": "Verzameling",

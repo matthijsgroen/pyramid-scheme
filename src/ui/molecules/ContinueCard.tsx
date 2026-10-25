@@ -33,7 +33,7 @@ export const ContinueCard: FC<ContinueCardProps> = ({
     <button
       type="button"
       onClick={onSetOff}
-      className="h-13 w-full rounded-xl bg-[#A3401A] text-[17px] font-extrabold text-[#FFF8EA] hover:bg-[#8A3515]"
+      className="h-13 w-full rounded-xl bg-[#A3401A] px-4 text-[17px] font-extrabold text-[#FFF8EA] hover:bg-[#8A3515]"
     >
       {setOffLabel}
     </button>

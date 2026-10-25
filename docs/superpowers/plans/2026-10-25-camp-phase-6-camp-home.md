@@ -325,10 +325,10 @@ One agent (Sonnet); per-task review (it clears the haul).
   - `ExpeditionCompletionOverlay.spec.tsx`: a newly unlocked journey is announced and there is no start button; the one button calls `onJourneyComplete`.
   - `PyramidExpedition.spec.tsx` / an `App` level check: completing a journey and closing an expedition each run the homecoming handlers once and land on the coming-home screen.
 - [ ] **Step 2: Run** `yarn test src/app` — FAIL.
-- [ ] **Step 3: Implement.** The `cameHome` flag lives in `App` state (not stored): a reload never shows the screen.
-- [ ] **Step 4: Run** `yarn test src/app src/i18n` — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 3: Implement.** The `cameHome` flag lives in `App` state (not stored): a reload never shows the screen.
+- [x] **Step 4: Run** `yarn test src/app src/i18n` — PASS. `yarn check-types`, `yarn lint`.
 - [ ] **Step 5: Per-task review:** coming home only on the two exits; the haul cleared only by the screen's button; the chapter marked on both ways out of the new-chapter screen; no start offer left in the expedition.
-- [ ] **Step 6: Commit** — `feat: coming home to the fire, and a new chapter on a new tier`
+- [x] **Step 6: Commit** — `feat: coming home to the fire, and a new chapter on a new tier`
 
 ---
 

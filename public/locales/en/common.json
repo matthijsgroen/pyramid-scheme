@@ -34,7 +34,7 @@
     "description": "Description",
     "expedition": "Expedition",
     "expeditionCompleted": "Expedition Completed!",
-    "goBackToBase": "Go back to base",
+    "goBackToBase": "Back to camp",
     "backArrow": "←",
     "back": "← Back",
     "floor": "Floor {{number}}",
@@ -95,7 +95,6 @@
     "newTombUnlocked": "A new tomb is now unlocked",
     "tierComingSoonTitle": "{{tier}} expeditions are on their way",
     "tierComingSoon": "You hold the key, but the {{tier}} pyramids are still being built. They arrive in a later update — until then, your key opens more of the pyramids you already know.",
-    "startJourney": "Start {{name}}",
     "answerNow": "The answer is: ",
     "footer": "©️ {{year}} Matthijs Groen, v{{version}}",
     "saveVersion": "· save v{{saveVersion}}",
@@ -1265,6 +1264,20 @@
     },
     "hint_one": "{{count}} old journey has something new to discover",
     "hint_other": "{{count}} old journeys have something new to discover",
+    "comingHome": {
+      "title": "Back at camp",
+      "haulTitle": "Your haul from this trip",
+      "new": "NEW",
+      "unpack": "Unpack",
+      "toCamp": "To the camp"
+    },
+    "chapter": {
+      "subtitle": "New chapter",
+      "title": "A new pyramid looms",
+      "body": "{{tier}} journeys are open. Catch your breath at camp and set off when you are ready.",
+      "journeyNote": "First {{tier}} journey",
+      "later": "Later"
+    },
     "close": "Close",
     "entrance": {
       "collection": "Collection",

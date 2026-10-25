@@ -4,6 +4,7 @@ import { useState, type ReactNode } from "react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { FezContext } from "@/app/fez/context"
+import { clearGameData, latestGameValue, writeGameData } from "@/support/useGameStorage"
 
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
@@ -38,6 +39,8 @@ vi.mock("@/app/pages/journeyContributions", () => ({
   useMergedJourneyContributions: () => ({ lock: () => undefined, hidden: () => false }),
 }))
 vi.mock("@/app/SiteMap/keyProviders", () => ({ useMergedHeldKeys: () => new Set<string>() }))
+let chapter = "starter"
+vi.mock("@/app/pages/journeyAvailability", () => ({ currentChapter: () => chapter }))
 vi.mock("@/app/state/useTapHint", () => ({ useTapHint: () => [false, () => {}] }))
 vi.mock("@/app/home/useElementSize", () => ({ useElementSize: () => [() => {}, { width: 400, height: 800 }] }))
 vi.mock("@/app/dev/LockEditorHost", () => ({ LockEditorHost: () => null }))
@@ -66,6 +69,7 @@ vi.mock("@/ui/atoms/CampScene", () => ({
 
 const { Base } = await import("./Base")
 const { registerModEntrance } = await import("@/app/home/modEntrances")
+const { registerHomeHook } = await import("@/app/home/homeHooks")
 
 const stubDesktop = (desktop: boolean) =>
   vi.stubGlobal("matchMedia", (query: string) => ({
@@ -80,18 +84,25 @@ const Develop = ({ children }: { children: ReactNode }) => {
   return <DevelopContext.Provider value={{ isDevelopMode, setDevelopMode }}>{children}</DevelopContext.Provider>
 }
 
-const renderBase = (startGame = vi.fn()) => {
+const Arrival = ({ startGame, cameHome }: { startGame: () => void; cameHome: boolean }) => {
+  const [arriving, setArriving] = useState(cameHome)
+  return <Base startGame={startGame} cameHome={arriving} onArrived={() => setArriving(false)} />
+}
+
+const renderBase = (startGame = vi.fn(), cameHome = false) => {
   render(
     <Develop>
       <FezContext.Provider value={{ showConversation: () => {} }}>
-        <Base startGame={startGame} />
+        <Arrival startGame={startGame} cameHome={cameHome} />
       </FezContext.Provider>
     </Develop>
   )
   return startGame
 }
 
-beforeEach(() => {
+beforeEach(async () => {
+  await clearGameData()
+  chapter = "starter"
   stubDesktop(false)
   activeJourneyId = undefined
   available = new Set(["a", "b"])
@@ -185,5 +196,54 @@ describe(Base, () => {
 
     for (let i = 0; i < 7; i++) fireEvent.click(screen.getByText("camp.title"))
     expect(screen.getByText("DEV")).toBeTruthy()
+  })
+
+  describe("coming home and the new chapter", () => {
+    it("shows the coming-home screen over the camp after a journey, and none otherwise", async () => {
+      renderBase(vi.fn(), true)
+      expect(screen.getByText("camp.comingHome.title")).toBeTruthy()
+      expect(screen.getByTestId("scene")).toBeTruthy()
+
+      await act(async () => fireEvent.click(screen.getByText("camp.comingHome.toCamp")))
+      expect(screen.queryByText("camp.comingHome.title")).toBeNull()
+    })
+
+    it("runs a registered home hook when the camp shows, not behind the coming-home screen", async () => {
+      const ran = vi.fn()
+      registerHomeHook(() => ran())
+      renderBase(vi.fn(), true)
+      expect(ran).not.toHaveBeenCalled()
+
+      await act(async () => fireEvent.click(screen.getByText("camp.comingHome.toCamp")))
+      expect(ran).toHaveBeenCalled()
+    })
+
+    it("shows no coming-home screen on a plain visit", () => {
+      renderBase()
+      expect(screen.queryByText("camp.comingHome.title")).toBeNull()
+    })
+
+    it("announces a tier reached after the record once Uitpakken is done, and marks it on close", async () => {
+      await writeGameData({ homecoming: { version: 1, haul: [], chapter: "starter" } })
+      chapter = "expert"
+      renderBase(vi.fn(), true)
+      await screen.findByText("camp.comingHome.title")
+      expect(screen.queryByText("camp.chapter.title")).toBeNull()
+
+      await act(async () => fireEvent.click(screen.getByText("camp.comingHome.toCamp")))
+      expect(await screen.findByText("camp.chapter.title")).toBeTruthy()
+
+      await act(async () => fireEvent.click(screen.getByText("camp.chapter.later")))
+      expect(screen.queryByText("camp.chapter.title")).toBeNull()
+      expect(latestGameValue("homecoming")).toEqual({ version: 1, haul: [], chapter: "expert" })
+    })
+
+    it("stores the current chapter silently for a save without a record", async () => {
+      chapter = "expert"
+      renderBase()
+
+      await vi.waitFor(() => expect(latestGameValue("homecoming")).toEqual({ version: 1, haul: [], chapter: "expert" }))
+      expect(screen.queryByText("camp.chapter.title")).toBeNull()
+    })
   })
 })

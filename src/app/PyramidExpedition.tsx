@@ -37,9 +37,8 @@ export const PyramidExpedition: FC<{
   runNr: number
   onLevelComplete?: () => void
   onJourneyComplete?: () => void
-  onStartJourney?: (journeyId: string) => void
   onClose?: () => void
-}> = ({ activeJourney, onLevelComplete: onNextLevel, onJourneyComplete, onStartJourney, onClose }) => {
+}> = ({ activeJourney, onLevelComplete: onNextLevel, onJourneyComplete, onClose }) => {
   const isTomb = activeJourney.journey.exterior === "tomb"
   // Both site types render through this one flow; a tomb is a journey of levelCount sites (the
   // starter tomb has two, cave then cavern), each with its own multi-floor interior.
@@ -250,7 +249,6 @@ export const PyramidExpedition: FC<{
             {expeditionCompleted && (
               <ExpeditionCompletionOverlay
                 onJourneyComplete={onJourneyComplete}
-                onStartJourney={onStartJourney}
                 newPyramidJourneyId={nextPyramidJourneyId}
                 activeJourney={activeJourney}
               />

@@ -10,13 +10,14 @@ import { FezCompanion } from "./app/fez/FezCompanion"
 import { DevelopModeProvider } from "./contexts/DevelopMode"
 import PWABadge from "./PWABadge"
 import { useHomecoming } from "@/app/homecomingRegistry"
-import { journeys as allJourneys } from "@/data/journeys"
 
 function App() {
   const [inGame, setInGame] = useState(false)
+  // Set at the two ways home, never stored: a reload at base shows no coming-home screen.
+  const [cameHome, setCameHome] = useState(false)
   const journeys = useJourneys()
   const comeHome = useHomecoming()
-  const { activeJourneyId, getJourney, completeLevel, completeJourney, startJourney } = journeys
+  const { activeJourneyId, getJourney, completeLevel, completeJourney } = journeys
   // One-time, and it must happen in the release BEFORE any floor is reshaped — see the hook.
   useCarveIndependentBackfill(journeys)
   // Also one-time: floor summaries a save kept from a visit it never finished light pyramids that
@@ -34,7 +35,7 @@ function App() {
   return (
     <DevelopModeProvider>
       <FezCompanion journeyProgress={getJourney}>
-        {!inGame && <Base startGame={() => setInGame(true)} />}
+        {!inGame && <Base startGame={() => setInGame(true)} cameHome={cameHome} onArrived={() => setCameHome(false)} />}
         {inGame && journeyInfo && journeyInfo.journey && (
           <PyramidExpedition
             key={activeJourneyId}
@@ -44,16 +45,12 @@ function App() {
             onJourneyComplete={() => {
               completeJourney()
               comeHome()
+              setCameHome(true)
               setInGame(false)
-            }}
-            onStartJourney={journeyId => {
-              const journey = allJourneys.find(j => j.id === journeyId)
-              if (!journey) return
-              completeJourney()
-              startJourney(journey)
             }}
             onClose={() => {
               comeHome()
+              setCameHome(true)
               setInGame(false)
             }}
           />

@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { render, screen } from "@testing-library/react"
+import { fireEvent, render, screen } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 import type { CombinedJourneyState } from "../state/useJourneys"
 
@@ -20,10 +20,10 @@ const { ExpeditionCompletionOverlay } = await import("./ExpeditionCompletionOver
 const { journeys } = await import("@/data/journeys")
 const { FezContext } = await import("../fez/context")
 
-const renderOverlay = (id: string) =>
+const renderOverlay = (id: string, onJourneyComplete?: () => void) =>
   render(
     <FezContext value={{ showConversation: () => {} }}>
-      <ExpeditionCompletionOverlay activeJourney={stateFor(id)} />
+      <ExpeditionCompletionOverlay activeJourney={stateFor(id)} onJourneyComplete={onJourneyComplete} />
     </FezContext>
   )
 
@@ -40,5 +40,14 @@ describe(ExpeditionCompletionOverlay, () => {
     renderOverlay("starter_treasure_tomb")
 
     expect(screen.queryByText(/ui.newTombUnlocked/)).toBeNull()
+  })
+
+  it("announces what opened but offers one button, which goes back to camp", () => {
+    const onJourneyComplete = vi.fn()
+    renderOverlay("starter_1", onJourneyComplete)
+
+    expect(screen.getAllByRole("button")).toHaveLength(1)
+    fireEvent.click(screen.getByRole("button", { name: "ui.goBackToBase" }))
+    expect(onJourneyComplete).toHaveBeenCalledOnce()
   })
 })
