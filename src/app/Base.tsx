@@ -214,8 +214,13 @@ export const Base = ({
             />
           )
         }
-        card={<div ref={cardRef}>{continueCard}</div>}
-        // The journey list waits while someone speaks: behind a conversation it only makes the screen busy.
+        // The card and the journey list wait while someone speaks: behind a conversation they only make the
+        // screen busy. Invisible, not gone, so the scene keeps its place.
+        card={
+          <div ref={cardRef} className={speaking ? "invisible" : undefined}>
+            {continueCard}
+          </div>
+        }
         aside={
           isDesktop ? (
             <div className={`flex min-h-0 flex-1 flex-col ${speaking ? "invisible" : ""}`}>
