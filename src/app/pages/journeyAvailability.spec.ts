@@ -8,6 +8,7 @@ import {
   currentChapter,
   isTierUnlocked,
   nextPyramidJourneyId,
+  tierKeyNeed,
 } from "./journeyAvailability"
 
 const noKeys: ReadonlySet<string> = new Set()
@@ -171,5 +172,28 @@ describe(currentChapter, () => {
   it("passes over a tier this release does not ship", () => {
     const all = Object.values(TIER_UNLOCK_PERK_IDS).flatMap(ids => ids ?? [])
     expect(currentChapter(keys(...all))).toBe("expert")
+  })
+})
+
+describe(tierKeyNeed, () => {
+  const display = (keyId: string) => ({ symbol: `sym-${keyId}` })
+
+  it("has no need for a tier without unlock keys", () => {
+    expect(tierKeyNeed("starter", noKeys, display, "Find")).toBeUndefined()
+  })
+
+  it("lights the held keys, one symbol per unlock key", () => {
+    const [held, ...rest] = TIER_UNLOCK_PERK_IDS.junior!
+    const need = tierKeyNeed("junior", keys(held), display, "Find")!
+    expect(need.label).toBe("Find")
+    expect(need.symbols).toHaveLength(rest.length + 1)
+    expect(need.symbols![0]).toEqual({ symbol: `sym-${held}`, held: true })
+    expect(need.symbols!.slice(1).every(s => !s.held)).toBe(true)
+  })
+
+  it("gives no symbol to a key without a display", () => {
+    const [first, ...rest] = TIER_UNLOCK_PERK_IDS.junior!
+    const need = tierKeyNeed("junior", noKeys, id => (id === first ? undefined : display(id)), "Find")!
+    expect(need.symbols).toHaveLength(rest.length)
   })
 })

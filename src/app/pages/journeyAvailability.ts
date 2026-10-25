@@ -1,6 +1,7 @@
 import { difficulties, isDifficultyReleased, isFreeOrderDifficulty, type Difficulty } from "@/data/difficultyLevels"
 import { TIER_UNLOCK_PERK_IDS } from "@/data/treasurePerks"
 import type { Journey } from "@/data/journeys"
+import type { JourneyNeed } from "./allJourneys"
 
 // Which expeditions the player may pick, and why.
 //
@@ -77,4 +78,21 @@ export const nextPyramidJourneyId = (
   const next = journeys[index + 1]
   if (!next || next.entryLock) return undefined
   return isTierUnlocked(next.difficulty, heldKeys) ? next.id : undefined
+}
+
+// What stands between the player and a tier: one of its unlock treasures. Each treasure with a look
+// of its own is one symbol, lit when held. A tier with no unlock treasures has nothing to find.
+export const tierKeyNeed = (
+  tier: Difficulty,
+  heldKeys: ReadonlySet<string>,
+  display: (keyId: string) => { symbol: string } | undefined,
+  label: string
+): JourneyNeed | undefined => {
+  const keys = TIER_UNLOCK_PERK_IDS[tier]
+  if (!keys || keys.length === 0) return undefined
+  const symbols = keys.flatMap(keyId => {
+    const shown = display(keyId)
+    return shown ? [{ symbol: shown.symbol, held: heldKeys.has(keyId) }] : []
+  })
+  return { key: `tier:${tier}`, label, symbols }
 }
