@@ -60,3 +60,35 @@ describe("CollectibleSlot count badge", () => {
     expect(screen.queryByText(/^\d+$/)).toBeNull()
   })
 })
+
+describe("CollectibleSlot new label", () => {
+  it("shows the badge on a collected slot that has a new label", () => {
+    render(<CollectibleSlot state="collected" symbol="𓂀" difficulty="junior" newLabel="NIEUW" />)
+    expect(screen.getByText("NIEUW")).toBeTruthy()
+  })
+
+  it("shows the badge on a partial slot too", () => {
+    render(
+      <CollectibleSlot
+        state="partial"
+        symbol="𓂀"
+        difficulty="junior"
+        progress={{ found: 1, required: 3 }}
+        newLabel="NIEUW"
+      />
+    )
+    expect(screen.getByText("NIEUW")).toBeTruthy()
+  })
+
+  it("shows no badge without a new label", () => {
+    render(<CollectibleSlot state="collected" symbol="𓂀" difficulty="junior" />)
+    expect(screen.queryByText("NIEUW")).toBeNull()
+  })
+
+  it("still forwards a click on a new slot", () => {
+    const onClick = vi.fn()
+    render(<CollectibleSlot state="collected" symbol="𓂀" difficulty="junior" newLabel="NIEUW" onClick={onClick} />)
+    fireEvent.click(screen.getByText("𓂀"))
+    expect(onClick).toHaveBeenCalledOnce()
+  })
+})

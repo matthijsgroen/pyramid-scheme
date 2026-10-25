@@ -46,3 +46,17 @@ export const Complete: Story = {
   },
 }
 export const WithoutArt: Story = { args: { artUrl: undefined } }
+export const WithNewPart: Story = {
+  args: {
+    open: true,
+    parts: [
+      { id: "a", name: "Tentstokken", iconUrl: art },
+      { id: "b", name: "Geweven doek", iconUrl: art, newLabel: "NIEUW" },
+      { id: "c" },
+      { id: "d" },
+    ],
+  },
+}
+export const ClosedWithNewPart: Story = {
+  args: { parts: [{ id: "a", name: "Tentstokken", iconUrl: art, newLabel: "NIEUW" }, { id: "b" }] },
+}

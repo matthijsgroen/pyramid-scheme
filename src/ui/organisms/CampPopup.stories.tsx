@@ -23,3 +23,6 @@ export const WithFiller: Story = {
     </CampPopup>
   ),
 }
+
+// On a phone the panel starts below a taller HUD.
+export const TallHud: Story = { ...WithFiller, args: { hudHeight: 120 } }

@@ -63,3 +63,24 @@ describe("CampPopup dialog behaviour", () => {
     expect(document.activeElement).toBe(close)
   })
 })
+
+describe("CampPopup inset panel", () => {
+  const overlay = () => screen.getByRole("dialog").parentElement as HTMLElement
+
+  it("starts below the safe area plus a fixed HUD height", () => {
+    render(<CampPopup title="Journeys" closeLabel="Close" onClose={() => {}} />)
+    expect(overlay().style.getPropertyValue("--popup-top")).toContain("72px")
+    expect(overlay().style.getPropertyValue("--popup-top")).toContain("safe-area-inset-top")
+  })
+
+  it("starts below the HUD height the caller passes", () => {
+    render(<CampPopup title="Journeys" closeLabel="Close" hudHeight={96} onClose={() => {}} />)
+    expect(overlay().style.getPropertyValue("--popup-top")).toContain("96px")
+  })
+
+  it("stops 40 px above the bottom plus the safe area", () => {
+    render(<CampPopup title="Journeys" closeLabel="Close" onClose={() => {}} />)
+    expect(overlay().style.getPropertyValue("--popup-bottom")).toContain("40px")
+    expect(overlay().style.getPropertyValue("--popup-bottom")).toContain("safe-area-inset-bottom")
+  })
+})

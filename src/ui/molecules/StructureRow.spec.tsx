@@ -54,3 +54,31 @@ describe("StructureRow", () => {
     expect(onToggle).toHaveBeenCalledOnce()
   })
 })
+
+describe("StructureRow new parts", () => {
+  const withNew: Partial<StructureRowProps> = {
+    parts: [
+      { id: "poles", name: "Poles", newLabel: "NIEUW" },
+      { id: "cloth", name: "Cloth" },
+    ],
+  }
+
+  it("a closed row carries the new label in its accessible name", () => {
+    row(withNew)
+    expect(screen.getByRole("button").getAttribute("aria-label")).toContain("NIEUW")
+    expect(screen.getByText("NIEUW")).toBeTruthy()
+  })
+
+  it("an open row badges only the new part", () => {
+    row({ ...withNew, open: true })
+    expect(screen.getAllByText("NIEUW")).toHaveLength(2)
+    expect(screen.getByText("Poles").parentElement?.textContent).toContain("NIEUW")
+    expect(screen.getByText("Cloth").parentElement?.textContent).not.toContain("NIEUW")
+  })
+
+  it("shows no badge when no part is new", () => {
+    row({ open: true })
+    expect(screen.queryByText("NIEUW")).toBeNull()
+    expect(screen.getByRole("button").getAttribute("aria-label")).toBe("Hut, toggle")
+  })
+})
