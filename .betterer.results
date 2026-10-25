@@ -24,7 +24,7 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/app/SiteMap/htmlLayers.tsx:1994925392": [
       [140, 97, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/app/SiteMap/tileAssets.ts:1147390374": [
+    "src/app/SiteMap/tileAssets.ts:3686447252": [
       [48, 24, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/app/SiteMap/useAssembledFloor.ts:1329155897": [
@@ -57,7 +57,7 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/app/state/useProgression.ts:555630573": [
       [5, 62, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/data/puzzleSeeds.ts:3607964741": [
+    "src/data/puzzleSeeds.ts:3908215064": [
       [4, 58, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/game/dressingTags.ts:589999011": [
@@ -97,7 +97,7 @@ exports[`design doc references name a file, not a paragraph`] = {
       [1019, 86, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
       [1031, 85, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/game/siteValidator.ts:2810836130": [
+    "src/game/siteValidator.ts:1733249837": [
       [133, 13, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/allFamilyMeta.spec.ts:653045342": [
