@@ -9,7 +9,7 @@ What got built, per phase:
 
 - **Phase 1** — bandage, oil, trap tool, the pack and the supplies detector are gone; 60 waterskins (20 per tier, expert and up) heal on pickup; hearts refill on every coming home; pack-mule makes a waterskin heal two.
 - **Phase 2** — `yarn loot-report` writes `docs/loot-report.md` (every slot per tier and level, demand per currency); the bake names any empty chest or path end.
-- **Phase 3** — the `camp` mod: 28 found items and 99 structure parts on puzzle slots of their tier, the camp save, the Constructies tab, 124 icon prompts in the repaint queue.
+- **Phase 3** — the `camp` mod: 28 found items and 99 structure parts on puzzle slots of their tier, the camp save, the Constructies tab, 25 sellable (junk) icon prompts in the repaint queue; camp parts keep their structure's art (designer, 2026-10-25).
 - **Phase 4** — STOPPED after Tasks 1–2: gates hold every mod's requirement, a gate walk, no loot on a shop's end. The animals, the per-gate guard and buying are not built.
 - **Phase 5** — skipped: the economy recompute needs phase 4's purchases.
 - **Phase 6** — the camp is the home screen (HUD, scene entrances, Verder met, desktop side panel), the coming-home screen with the haul, the new-chapter card, settings with the dev tools.
