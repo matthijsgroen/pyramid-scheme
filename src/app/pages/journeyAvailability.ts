@@ -80,8 +80,9 @@ export const nextPyramidJourneyId = (
   return isTierUnlocked(next.difficulty, heldKeys) ? next.id : undefined
 }
 
-// What stands between the player and a tier: one of its unlock treasures. Each treasure with a look
-// of its own is one symbol, lit when held. A tier with no unlock treasures has nothing to find.
+// What stands between the player and a tier: one of its unlock treasures. The tomb gives its floors
+// in order, so the first floor's treasure is always the one found first and the only one shown, lit
+// when held. A tier with no unlock treasures has nothing to find.
 export const tierKeyNeed = (
   tier: Difficulty,
   heldKeys: ReadonlySet<string>,
@@ -90,7 +91,7 @@ export const tierKeyNeed = (
 ): JourneyNeed | undefined => {
   const keys = TIER_UNLOCK_PERK_IDS[tier]
   if (!keys || keys.length === 0) return undefined
-  const symbols = keys.flatMap(keyId => {
+  const symbols = keys.slice(0, 1).flatMap(keyId => {
     const shown = display(keyId)
     return shown ? [{ symbol: shown.symbol, held: heldKeys.has(keyId) }] : []
   })

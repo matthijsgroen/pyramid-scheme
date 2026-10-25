@@ -182,18 +182,19 @@ describe(tierKeyNeed, () => {
     expect(tierKeyNeed("starter", noKeys, display, "Find")).toBeUndefined()
   })
 
-  it("lights the held keys, one symbol per unlock key", () => {
-    const [held, ...rest] = TIER_UNLOCK_PERK_IDS.junior!
-    const need = tierKeyNeed("junior", keys(held), display, "Find")!
+  it("shows only the first floor's treasure, lit when held", () => {
+    const [first, second] = TIER_UNLOCK_PERK_IDS.junior!
+    expect(tierKeyNeed("junior", keys(second), display, "Find")!.symbols).toEqual([
+      { symbol: `sym-${first}`, held: false },
+    ])
+    const need = tierKeyNeed("junior", keys(first), display, "Find")!
     expect(need.label).toBe("Find")
-    expect(need.symbols).toHaveLength(rest.length + 1)
-    expect(need.symbols![0]).toEqual({ symbol: `sym-${held}`, held: true })
-    expect(need.symbols!.slice(1).every(s => !s.held)).toBe(true)
+    expect(need.symbols).toEqual([{ symbol: `sym-${first}`, held: true }])
   })
 
   it("gives no symbol to a key without a display", () => {
-    const [first, ...rest] = TIER_UNLOCK_PERK_IDS.junior!
+    const [first] = TIER_UNLOCK_PERK_IDS.junior!
     const need = tierKeyNeed("junior", noKeys, id => (id === first ? undefined : display(id)), "Find")!
-    expect(need.symbols).toHaveLength(rest.length)
+    expect(need.symbols).toEqual([])
   })
 })
