@@ -1,10 +1,16 @@
 // @vitest-environment jsdom
-import { describe, expect, it, vi } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 import { renderHook } from "@testing-library/react"
 import { FezContext } from "@/app/fez/context"
 import type { Reaction } from "@/app/reactions/reactionContributions"
 
 vi.mock("@/mods/registeredMods", () => ({ isModEnabled: () => false }))
+
+let heard: Record<string, boolean> = {}
+vi.mock("@/support/useGameStorage", () => ({ latestGameValue: () => heard }))
+vi.mock("@/mods/story/game/reaction/storyBeats", () => ({
+  STORY_BEATS: new Set(["cave.t1", "camp.firstHome", "camp.rested", "bond.starter"]),
+}))
 
 const { useStoryReactions } = await import("./rail")
 
@@ -18,6 +24,10 @@ const rail = () => {
 }
 
 describe("the reaction rail", () => {
+  beforeEach(() => {
+    heard = {}
+  })
+
   it("offers the beat a move is worth, as story so the tutorials toggle cannot silence it", () => {
     const { react, showConversation } = rail()
 
@@ -42,5 +52,26 @@ describe("the reaction rail", () => {
 
     // The companion skips a conversation already seen; asking for a forced replay would defeat it.
     expect(showConversation.mock.calls[0][2]).not.toHaveProperty("forceReplay")
+  })
+
+  const home: Reaction = { kind: "homeShown", tags: ["trap.mended"] }
+
+  it("offers the first candidate not yet heard, as story", () => {
+    heard = { "camp.firstHome": true }
+    const { react, showConversation } = rail()
+
+    react(home)
+
+    expect(showConversation).toHaveBeenCalledTimes(1)
+    expect(showConversation).toHaveBeenCalledWith("camp.rested", undefined, { story: true })
+  })
+
+  it("offers nothing once every candidate is heard", () => {
+    heard = { "camp.firstHome": true, "camp.rested": true }
+    const { react, showConversation } = rail()
+
+    react(home)
+
+    expect(showConversation).not.toHaveBeenCalled()
   })
 })

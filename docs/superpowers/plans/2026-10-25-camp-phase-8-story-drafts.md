@@ -206,14 +206,14 @@ One Opus agent; reading list as Task 1, plus the phase-4 plan's purchase table a
 - The rail offers the first candidate not in the `conversations` store, with `{ story: true }`, and nothing when every candidate is heard.
 - `ALL_SCENES` gains, per tomb, `cave.`, `pillar.`, `cavern.<tombId>` (each in `STORY_BEATS`) before the tomb's ghost scene, `journeyId` the tomb; no camp beat enters the log.
 
-- [ ] **Step 1: Failing tests** (made-up journey ids, a made-up declared set, made-up heard maps).
+- [x] **Step 1: Failing tests** (made-up journey ids, a made-up declared set, made-up heard maps).
   - `beatsFor`: a made-up tomb id at `caveMouth` gives its cave id only when declared; `cavern` gives the cavern id; a plain pyramid exterior gives none; `exitReached` at `caveMouth` gives the pillar id, elsewhere none; `siteLeft` gives the afterword only with `lastLevel`; `homeShown` without tags and without `arrived` gives only the first-home id; with all three tags and `arrived` the order is first home, rested, structure, find, haul line; `arrived.haul` false gives the empty-haul id; `chapterOpened` gives the tier's id; an undeclared id is never returned.
   - Rail: with the first candidate heard it offers the second, once, with `story: true`; with all heard it offers nothing; a `solved` reaction still reaches its bond beat as before.
   - `heardScenes`: a made-up save that heard a tomb's cave beat lists it before that tomb's ghost scene; a heard camp beat is not listed.
-- [ ] **Step 2: Run** `yarn test src/mods/story` — FAIL.
-- [ ] **Step 3: Implement.**
-- [ ] **Step 4: Run** — PASS. `yarn test src/app/fez src/i18n`, `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Commit** — `feat: tomb and camp beats play once, one per moment`
+- [x] **Step 2: Run** `yarn test src/mods/story` — FAIL.
+- [x] **Step 3: Implement.**
+- [x] **Step 4: Run** — PASS. `yarn test src/app/fez src/i18n`, `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Commit** — `feat: tomb and camp beats play once, one per moment`
 
 ---
 

@@ -37,6 +37,24 @@ describe(heardScenes, () => {
     expect(log.map(scene => scene.id)).toEqual(["arrival.starter_2", "arrival.junior_1", "tomb.wizard"])
   })
 
+  it("lists a tomb's heard beats before its ghost scene, in the order of the way in", () => {
+    const log = heardScenes({
+      "tomb.starter": true,
+      "cavern.starter_treasure_tomb": true,
+      "cave.starter_treasure_tomb": true,
+    })
+
+    expect(log.map(scene => scene.id)).toEqual([
+      "cave.starter_treasure_tomb",
+      "cavern.starter_treasure_tomb",
+      "tomb.starter",
+    ])
+  })
+
+  it("keeps a heard camp beat out of the log", () => {
+    expect(heardScenes({ "camp.firstHome": true, "camp.chapterJunior": true })).toEqual([])
+  })
+
   it("names every scene after a journey the player can see on the map", () => {
     const journeys = JSON.parse(readFileSync("public/locales/en/journeys.json", "utf8"))
 

@@ -1,4 +1,5 @@
 import type { Reaction } from "@/app/reactions/reactionContributions"
+import { STORY_BEATS } from "./storyBeats"
 
 /**
  * Which bond beat a move is worth, if any.
@@ -24,13 +25,9 @@ const ON_LEAVING: Record<string, string> = {
   wizard_treasure_tomb_c: "bond.wizard",
 }
 
-export const beatFor = (reaction: Reaction): string | undefined => {
-  // Both bond beats that answer a tomb rather than a move play on the way out of it, because
-  // both are what somebody says once the room is behind them.
-  if (reaction.kind === "siteLeft") return ON_LEAVING[reaction.journeyId]
-  // Places and the home are reported too; this listener has no beat for them yet.
-  if (reaction.kind !== "solved") return undefined
+const capitalised = (word: string) => word.charAt(0).toUpperCase() + word.slice(1)
 
+const solvedBeat = (reaction: Extract<Reaction, { kind: "solved" }>): string | undefined => {
   // A trap is not a board, and beating one says something different — so the tag decides which
   // beat a solve can reach, and a trap can never reach the "that was quick" one.
   if (reaction.tags.includes("trap")) return reaction.close ? "bond.expert" : undefined
@@ -42,3 +39,39 @@ export const beatFor = (reaction: Reaction): string | undefined => {
   if (reaction.tier === "junior") return "bond.junior"
   return undefined
 }
+
+const candidates = (reaction: Reaction): (string | undefined)[] => {
+  switch (reaction.kind) {
+    case "siteArrived":
+      if (reaction.exterior === "caveMouth") return [`cave.${reaction.journeyId}`]
+      if (reaction.exterior === "cavern") return [`cavern.${reaction.journeyId}`]
+      return []
+    case "exitReached":
+      return reaction.exterior === "caveMouth" ? [`pillar.${reaction.journeyId}`] : []
+    // A tomb's afterword is what somebody says once the whole tomb is behind them; the cave's exit
+    // is only its first level.
+    case "siteLeft":
+      return reaction.lastLevel ? [ON_LEAVING[reaction.journeyId]] : []
+    case "solved":
+      return [solvedBeat(reaction)]
+    case "homeShown":
+      return [
+        "camp.firstHome",
+        reaction.tags.includes("trap.mended") ? "camp.rested" : undefined,
+        reaction.tags.includes("camp.structureDone") ? "camp.structureDone" : undefined,
+        reaction.tags.includes("camp.found") ? "camp.firstFind" : undefined,
+        reaction.arrived ? (reaction.arrived.haul ? "camp.homeHaul" : "camp.homeEmpty") : undefined,
+      ]
+    case "chapterOpened":
+      return [`camp.chapter${capitalised(reaction.tier)}`]
+  }
+}
+
+/**
+ * The beats a moment could play, in the order they should be offered; the rail plays the first one
+ * the player has not heard, so one moment never says two things.
+ *
+ * Only declared beats come back: a scene that is written but not in `declared` stays silent.
+ */
+export const beatsFor = (reaction: Reaction, declared: ReadonlySet<string> = STORY_BEATS): string[] =>
+  candidates(reaction).filter((id): id is string => id !== undefined && declared.has(id))
