@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import type { Difficulty } from "@/data/difficultyLevels"
-import { continueJourney, newToDiscoverCount, type ContinueInput } from "./continueJourney"
+import { continueJourney, entryOpen, newToDiscoverCount, type ContinueInput } from "./continueJourney"
 
 const journey = (id: string, difficulty: Difficulty, entryLock?: { count: number }) => ({
   id,
@@ -78,5 +78,18 @@ describe("newToDiscoverCount", () => {
         unexploredLevels: id => unexplored.get(id) ?? new Set(),
       })
     ).toBe(1)
+  })
+})
+
+describe(entryOpen, () => {
+  it("is open without a lock and without an unmet need", () => {
+    expect(entryOpen(undefined, true)).toBe(true)
+  })
+
+  it("is shut while the lock is short, or while a need is unmet even with the lock met", () => {
+    expect(entryOpen({ found: 2, required: 3 }, true)).toBe(false)
+    expect(entryOpen({ found: 3, required: 3 }, true)).toBe(true)
+    expect(entryOpen({ found: 3, required: 3 }, false)).toBe(false)
+    expect(entryOpen(undefined, false)).toBe(false)
   })
 })

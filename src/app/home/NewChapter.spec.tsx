@@ -8,6 +8,7 @@ vi.mock("react-i18next", () => ({
 }))
 
 const journeys = [
+  { id: "tomb", name: "Shut tomb", difficulty: "expert", levelCount: 2, exterior: "tomb", entryLock: { count: 1 } },
   { id: "low", name: "Low one", difficulty: "starter", levelCount: 1, exterior: "pyramid" },
   { id: "first", name: "First of tier", difficulty: "expert", levelCount: 2, exterior: "pyramid" },
   { id: "second", name: "Second of tier", difficulty: "expert", levelCount: 2, exterior: "pyramid" },
@@ -21,6 +22,12 @@ vi.mock("@/app/pages/useAvailableJourneyIds", () => ({
 vi.mock("@/app/pages/journeyContributions", () => ({
   useMergedJourneyContributions: () => ({ lock: () => undefined, hidden: () => false }),
 }))
+
+const { registerGateNeeds } = await import("@/app/pages/gateNeeds")
+const tombNeed = [{ key: "made-up-need", label: "A thing" }]
+const readNeeds = (gate: { tier: string } | { journeyId: string }) =>
+  "journeyId" in gate && gate.journeyId === "tomb" ? tombNeed : []
+registerGateNeeds(() => readNeeds)
 
 const { NewChapter } = await import("./NewChapter")
 const { registerReactionContribution } = await import("@/app/reactions/reactionContributions")
@@ -45,7 +52,7 @@ describe(NewChapter, () => {
 
     await act(async () => fireEvent.click(screen.getByText("camp.continue.setOff")))
 
-    expect(startJourney).toHaveBeenCalledWith(journeys[1])
+    expect(startJourney).toHaveBeenCalledWith(journeys[2])
     expect(startGame).toHaveBeenCalledOnce()
     expect(calls).toEqual(["opened:expert", "startJourney"])
     expect(latestGameValue("homecoming")).toEqual({ version: 1, haul: [], chapter: "expert" })

@@ -1,11 +1,13 @@
 import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { useMergedJourneyContributions } from "@/app/pages/journeyContributions"
+import { useMergedGateNeeds } from "@/app/pages/gateNeeds"
+import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { useAvailableJourneyIds } from "@/app/pages/useAvailableJourneyIds"
 import { useReport } from "@/app/reactions/useReport"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useJourneyTranslations } from "@/app/translations/useJourneyTranslations"
-import { continueJourney } from "@/app/home/continueJourney"
+import { continueJourney, entryOpen } from "@/app/home/continueJourney"
 import { useHomeSave } from "@/app/home/useHomeSave"
 import { NewChapterScreen } from "@/ui/organisms/NewChapterScreen"
 
@@ -27,6 +29,8 @@ export const NewChapter = ({
   const journeys = useJourneyTranslations()
   const available = useAvailableJourneyIds(journeys)
   const facts = useMergedJourneyContributions()
+  const heldKeys = useMergedHeldKeys()
+  const gateNeeds = useMergedGateNeeds()
 
   // No journey in progress is named, so the rule picks the first open one, and only among this tier's.
   const offer = continueJourney({
@@ -35,10 +39,7 @@ export const NewChapter = ({
     completionCount: () => 0,
     levelNr: () => 1,
     available,
-    lockOpen: id => {
-      const lock = facts.lock(id)
-      return !lock || lock.found >= lock.required
-    },
+    lockOpen: id => entryOpen(facts.lock(id), gateNeeds.open({ journeyId: id }, heldKeys)),
     hidden: facts.hidden,
   })
   const journey = journeys.find(j => j.id === offer?.journeyId)

@@ -182,6 +182,11 @@ describe(currentChapter, () => {
     expect(currentChapter(keys(TIER_UNLOCK_PERK_IDS.junior![0], TIER_UNLOCK_PERK_IDS.expert![0]))).toBe("expert")
   })
 
+  it("passes over a tier a need keeps shut", () => {
+    const held = keys(TIER_UNLOCK_PERK_IDS.junior![0], TIER_UNLOCK_PERK_IDS.expert![0])
+    expect(currentChapter(held, tier => tier !== "expert")).toBe("junior")
+  })
+
   it("passes over a tier this release does not ship", () => {
     const all = Object.values(TIER_UNLOCK_PERK_IDS).flatMap(ids => ids ?? [])
     expect(currentChapter(keys(...all))).toBe("expert")

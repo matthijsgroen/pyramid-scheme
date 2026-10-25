@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useState } from "react"
 import type { Gate } from "./allJourneys"
 
 // What else a mod asks of a tier or a tomb before it opens, beyond the treasure and the map pieces core
@@ -14,10 +14,19 @@ export type GateNeed = {
   hint?: string
 }
 
-export type UseGateNeeds = () => (gate: Gate) => readonly GateNeed[]
+type GateNeedsReader = (gate: Gate) => readonly GateNeed[]
+
+/**
+ * The hook returns a reader of the needs on a gate. It must return the SAME reader on every render
+ * until what it reads changes (memoise it with useCallback on the state and translations it uses): the
+ * merged result keeps one identity only while every reader does, and the memos that depend on it
+ * (available journeys, the detector's compass hits) recompute whenever it changes.
+ */
+export type UseGateNeeds = () => GateNeedsReader
 
 const registry: UseGateNeeds[] = []
 
+/** Register a mod's gate needs once, at module load. See UseGateNeeds for the stable-reader contract. */
 export const registerGateNeeds = (useNeeds: UseGateNeeds) => registry.push(useNeeds)
 
 export type MergedGateNeeds = {
@@ -26,21 +35,30 @@ export type MergedGateNeeds = {
   open: (gate: Gate, held: ReadonlySet<string>) => boolean
 }
 
-// No registered hook means no need, so every gate is open. The result is stable while every hook returns
-// the same reader, so a hook memoises its reader on the state it reads.
+const merge = (readers: readonly GateNeedsReader[]): MergedGateNeeds => {
+  const needs = (gate: Gate) => readers.flatMap(read => read(gate))
+  const unmet = (gate: Gate, held: ReadonlySet<string>) => needs(gate).filter(need => !held.has(need.key))
+  return { needs, unmet, open: (gate, held) => unmet(gate, held).length === 0 }
+}
+
+const sameReaders = (a: readonly GateNeedsReader[], b: readonly GateNeedsReader[]) =>
+  a.length === b.length && a.every((reader, i) => reader === b[i])
+
+// The previous merge is kept, as state derived during render, while the readers are shallow-equal.
+const useStableMerge = (readers: readonly GateNeedsReader[]): MergedGateNeeds => {
+  const [kept, setKept] = useState(() => ({ readers, merged: merge(readers) }))
+  if (sameReaders(kept.readers, readers)) return kept.merged
+  const next = { readers, merged: merge(readers) }
+  setKept(next)
+  return next.merged
+}
+
+// No registered hook means no need, so every gate is open.
 export const useMergedGateNeeds = (): MergedGateNeeds => {
-  const readers: ((gate: Gate) => readonly GateNeed[])[] = []
+  const readers: GateNeedsReader[] = []
   for (const useNeeds of registry) {
     // eslint-disable-next-line react-hooks/rules-of-hooks -- stable registry order; see above
     readers.push(useNeeds())
   }
-  return useMemo(
-    () => {
-      const needs = (gate: Gate) => readers.flatMap(read => read(gate))
-      const unmet = (gate: Gate, held: ReadonlySet<string>) => needs(gate).filter(need => !held.has(need.key))
-      return { needs, unmet, open: (gate, held) => unmet(gate, held).length === 0 }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/use-memo -- fixed-length list of readers
-    readers
-  )
+  return useStableMerge(readers)
 }

@@ -6,6 +6,7 @@ import { CollectionPage } from "@/app/pages/Collection"
 import { useCollectionNews } from "@/app/pages/useCollectionNews"
 import { currentChapter } from "@/app/pages/journeyAvailability"
 import { useMergedJourneyContributions } from "@/app/pages/journeyContributions"
+import { useMergedGateNeeds } from "@/app/pages/gateNeeds"
 import { useAvailableJourneyIds } from "@/app/pages/useAvailableJourneyIds"
 import { SettingsModal } from "@/app/SettingsModal"
 import { hudWidgets } from "@/app/SiteMap/hudRegistry"
@@ -23,7 +24,7 @@ import { HomeHooks } from "@/app/home/HomeShowing"
 import { NewChapter } from "@/app/home/NewChapter"
 import { useHomeSave } from "@/app/home/useHomeSave"
 import { useCampFound } from "@/app/home/campFoundSource"
-import { continueJourney, newToDiscoverCount } from "@/app/home/continueJourney"
+import { continueJourney, entryOpen, newToDiscoverCount } from "@/app/home/continueJourney"
 import { useElementSize } from "@/app/home/useElementSize"
 import { useIsDesktop } from "@/app/home/useIsDesktop"
 import { useWindowEntrance } from "@/app/home/useWindowEntrance"
@@ -79,7 +80,8 @@ export const Base = ({
   const heldKeys = useMergedHeldKeys()
   const keysLoaded = useHeldKeysLoaded()
   const found = useCampFound()
-  const chapter = currentChapter(heldKeys)
+  const gateNeeds = useMergedGateNeeds()
+  const chapter = currentChapter(heldKeys, tier => gateNeeds.open({ tier }, heldKeys))
   const home = useHomeSave()
   const homeSave = { version: 1 as const, haul: [...home.haul], chapter: home.chapter }
   // A save with no record takes the chapter it is in without announcing it; only a tier reached after
@@ -107,10 +109,7 @@ export const Base = ({
     completionCount: id => getJourney(id)?.completionCount ?? 0,
     levelNr: id => getJourney(id)?.levelNr ?? 1,
     available,
-    lockOpen: id => {
-      const lock = facts.lock(id)
-      return !lock || lock.found >= lock.required
-    },
+    lockOpen: id => entryOpen(facts.lock(id), gateNeeds.open({ journeyId: id }, heldKeys)),
     hidden: facts.hidden,
   })
   const offered = journeys.find(j => j.id === offer?.journeyId)

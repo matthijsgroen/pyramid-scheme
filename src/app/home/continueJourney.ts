@@ -16,6 +16,10 @@ export type ContinueInput = {
   hidden: (journeyId: string) => boolean
 }
 
+/** An entry lock met (or none) and no unmet need of a mod standing on the journey. */
+export const entryOpen = (lock: { found: number; required: number } | undefined, needsMet: boolean): boolean =>
+  needsMet && (!lock || lock.found >= lock.required)
+
 export type ContinueOffer = {
   journeyId: string
   mode: "continue" | "start"
