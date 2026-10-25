@@ -123,13 +123,15 @@ export const reachableFrom = (
 // design.md §8, "the treasure IS the key"). Exported for src/worldGen/reachability.ts's
 // coarse graph, which needs the same fixed point across a whole multi-floor site.
 // `authoredKeysHeld` passes straight to `reachableFrom` — see there for what the permissive
-// bracket opens.
+// bracket opens. The `withheld` key is never collected, even standing in reach: the gate walk asks
+// what lies before a gate, so the key that opens it must stay unheld.
 export const collectReachableKeys = (
   grid: FloorGrid,
   startPos: Pos,
   initialKeys: ReadonlySet<string> = new Set(),
   authoredKeysHeld = false,
-  mechanismGates?: ReadonlyMap<string, DoorMode>
+  mechanismGates?: ReadonlyMap<string, DoorMode>,
+  withheld?: string
 ): { reachable: Set<string>; keys: Set<string>; blockedRequirements: Set<string> } => {
   const collectedKeys = new Set(initialKeys)
   // Fresh set per pass — only the FINAL (post-fixed-point) pass's blocked requirements are
@@ -155,6 +157,7 @@ export const collectReachableKeys = (
           cell.type === "room" &&
           cell.reward?.type === "tombKey" &&
           reachable.has(posKey(r, c)) &&
+          (cell.reward as TombKeyReward).keyId !== withheld &&
           !collectedKeys.has((cell.reward as TombKeyReward).keyId)
         ) {
           collectedKeys.add((cell.reward as TombKeyReward).keyId)

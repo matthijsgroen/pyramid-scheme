@@ -5,7 +5,8 @@ import type { Distribution } from "@/worldGen/slotAllocator"
 import type { ShopStockAssignment } from "@/worldGen/shopStock"
 import type { WorldValidator } from "@/worldGen/validate"
 import type { WebActivatorReward } from "@/worldGen/webPlacement"
-import type { LootTotal } from "@/worldGen/lootReport"
+import { collectLootTotals, type LootTotal } from "@/worldGen/lootReport"
+import type { GateWalk } from "@/worldGen/gateWalk"
 import type { SiteConfig } from "@/worldGen/types"
 import type { FamilyMeta } from "@/game/families/familyMeta"
 import type { OneWayRealisationMeta, ResolveOneWayRealisation } from "@/game/oneWayRealisation"
@@ -103,7 +104,8 @@ export const MOD_WORLD_VALIDATORS: WorldValidator[] = REGISTERED_MODS.flatMap(m 
 // reachability must not name (tomb-key harvest, tomb map-piece entry lock, tier-unlock ladder).
 // A single-answer hook (a threshold, a reward's bucket) takes the first contributor's defined
 // answer. The gates concatenate in registry order instead: every mod's entry locks and tier groups
-// all stand, so a gate holds every mod's requirement (AND across mods, OR within one group). With
+// all stand, so a gate holds every mod's requirement (AND across mods, OR within one group). An empty
+// group offers no bucket to hold, so it would lock its tier for good; it is dropped as no requirement. With
 // no contributor (or a mod toggled off) a hook answers nothing, so core reachability falls back to
 // "no lock" — generic and mod-agnostic.
 const firstDefined = <T>(values: (T | undefined)[]): T | undefined => values.find(v => v !== undefined)
@@ -118,7 +120,7 @@ export const mergeReachabilitySupports = (
   alsoHarvests: reward => supports.flatMap(s => s.alsoHarvests?.(reward) ?? []),
   factsForCount: (bucket, count) => supports.flatMap(s => s.factsForCount?.(bucket, count) ?? []),
   journeyEntryLocks: journeyId => supports.flatMap(s => s.journeyEntryLocks?.(journeyId) ?? []),
-  tierUnlockGroups: tier => supports.flatMap(s => s.tierUnlockGroups?.(tier) ?? []),
+  tierUnlockGroups: tier => supports.flatMap(s => (s.tierUnlockGroups?.(tier) ?? []).filter(group => group.length > 0)),
 })
 
 // Injected into buildConfigs by scripts/generateWorld.ts.
@@ -149,9 +151,9 @@ export const MOD_WEB_ACTIVATOR: WebActivatorReward | undefined = REGISTERED_MODS
 )
 
 // Every registered mod's loot-report rows, in registry order. A mod off reports nothing, so the report names
-// only currencies the build knows. Read by `yarn loot-report`.
-export const MOD_LOOT_TOTALS = (configs: Record<string, SiteConfig[]>): LootTotal[] =>
-  REGISTERED_MODS.flatMap(m => m.lootTotals?.(configs) ?? [])
+// only currencies the build knows. Each is handed the gate walk over the same world. Read by `yarn loot-report`.
+export const MOD_LOOT_TOTALS = (configs: Record<string, SiteConfig[]>, walk: GateWalk): LootTotal[] =>
+  collectLootTotals(REGISTERED_MODS, configs, walk)
 
 // Is a mod enabled? The single toggle point the app side consults (Base.tsx, registerCurrencies)
 // so a mod's screen + currency-meta drop out together when it leaves REGISTERED_MODS.

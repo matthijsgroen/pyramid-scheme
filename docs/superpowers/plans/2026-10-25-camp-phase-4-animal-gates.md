@@ -135,15 +135,15 @@ Each is the option that changes the least shipped behaviour, or the one the brie
 - Produces: `makeGateWalk({ configs, journeyMeta, support, resolveRequirements?, resolveEncounter?, cache? }): GateWalk` — each call starts from empty owned counts, settles the harvest to its fixed point in the strict bracket (authored doors need their keys) with `withheld` never counted, and returns what that ground holds: every reward standing in it (room rewards and shop stock alike), the tiers unlocked, the journeys entered and the locks still blocking. Results are memoised per `withheld`. `journeyMetaFor(PYRAMID_JOURNEYS, TOMB_JOURNEYS)` is exported for callers outside `placeFragments`.
 - Produces: `placeFragments` returns `{ reachableRewards, walk }`; its walk uses one cache built over the finished (post-fill) world, never the pre-fill `assemblyCache`.
 
-- [ ] **Step 1: Failing tests** (`gateWalk.spec.ts`, made-up configs: two journeys, two tiers, a tier gate on a bucket a reward in the first journey grants, a shop holding a key).
+- [x] **Step 1: Failing tests** (`gateWalk.spec.ts`, made-up configs: two journeys, two tiers, a tier gate on a bucket a reward in the first journey grants, a shop holding a key).
   - With nothing withheld the walk reaches both tiers and journeys and returns every reward in them; withholding the tier's bucket leaves the second tier locked and its rewards out, and the first journey's rewards in; a bucket whose key lies in a shop is held once the shop's room is reached; a withheld bucket is never held even when its reward is in reach (the reward itself is still listed); two calls with the same `withheld` return the same result object (memoised).
   - `configBuilder` (an existing spec with made-up mods): a validator receives a walk whose no-withheld result reaches what the permissive `reachableRewards` lists, minus nothing a strict walk can reach.
   - `lootReport.spec.ts`: `MOD_LOOT_TOTALS`-style aggregation passes the walk through to each contributor (a made-up contributor reads it).
 - [ ] **Step 2: Run** `yarn test src/worldGen src/mods` — FAIL.
-- [ ] **Step 3: Implement.** The file's top comment says what "before a gate" means (decision 4) and that the walk never decides money. Measure once with a throwaway script (scratchpad, not committed) how long `walk()` plus seven withheld walks take over the real baked world; note it in the task report (no assertion on time).
-- [ ] **Step 4: Run** `yarn test src/worldGen src/mods scripts` — PASS. `yarn check-types`, `yarn lint`. `timeout 900 yarn loot-report` prints the same totals as before (no row reads the walk yet) and leaves `docs/loot-report.md` unchanged.
-- [ ] **Step 5: Per-task review** (soundness): fresh counts every call; strict bracket; post-fill cache; core names no currency; validators and `lootTotals` still drop with their mods.
-- [ ] **Step 6: Commit** — `feat: a gate walk tells what lies before each gate`
+- [x] **Step 3: Implement.** The file's top comment says what "before a gate" means (decision 4) and that the walk never decides money. Measure once with a throwaway script (scratchpad, not committed) how long `walk()` plus seven withheld walks take over the real baked world; note it in the task report (no assertion on time).
+- [x] **Step 4: Run** `yarn test src/worldGen src/mods scripts` — PASS. `yarn check-types`, `yarn lint`. `timeout 900 yarn loot-report` prints the same totals as before (no row reads the walk yet) and leaves `docs/loot-report.md` unchanged.
+- [x] **Step 5: Per-task review** (soundness): fresh counts every call; strict bracket; post-fill cache; core names no currency; validators and `lootTotals` still drop with their mods.
+- [x] **Step 6: Commit** — `feat: a gate walk tells what lies before each gate`
 
 ---
 

@@ -154,11 +154,14 @@ export const reachableFloorsInSite = (
   resolveEncounter: ResolveEncounter = defaultResolveEncounter,
   // The permissive bracket (siteValidator.ts's `reachableFrom`): authored doors stand open, so the
   // walk answers "is this ever obtainable" rather than "is it open right now".
-  authoredKeysHeld = false
+  authoredKeysHeld = false,
+  // A fact the walk never holds, not even from a key standing in reach on this site (the gate walk).
+  withheld?: string
 ): SiteReachability => {
   const siteId = `${ref.journeyId}:${ref.levelIndex}`
   const reachable = new Set<number>([0])
   let keys = new Set(ownedFacts)
+  if (withheld !== undefined) keys.delete(withheld)
   const harvestedCounts = new Map<string, number>()
   const harvest = (id: string) => harvestedCounts.set(id, (harvestedCounts.get(id) ?? 0) + 1)
   const discoveredLocks = new Set<string>()
@@ -213,7 +216,8 @@ export const reachableFloorsInSite = (
       result.grid.entrancePos,
       keys,
       authoredKeysHeld,
-      mechanismGatesOf(result.grid)
+      mechanismGatesOf(result.grid),
+      withheld
     )
     keys = expandedKeys
     if (i === exitFloor && reachableHere.has(`${result.grid.exitPos[0]},${result.grid.exitPos[1]}`)) exit = true
@@ -304,6 +308,8 @@ export type ReachabilityResult = {
   reachableRewards: readonly TreasureReward[]
   /** The sites whose way out is reached, as `${journeyId}#${levelIndex}`. */
   exitsReached: ReadonlySet<string>
+  /** The journeys walked: tier open and every entry lock held. */
+  enteredJourneys: ReadonlySet<string>
 }
 
 const ALL_TIERS: Tier[] = ["starter", "junior", "expert", "master", "wizard"]
@@ -325,9 +331,13 @@ export const computeReachability = (
   support: ReachabilitySupport = noSupport,
   resolveEncounter: ResolveEncounter = defaultResolveEncounter,
   // The permissive bracket, passed down to every site's walk — see reachableFloorsInSite.
-  authoredKeysHeld = false
+  authoredKeysHeld = false,
+  // A fact never held this call, whatever the counts or the sites' own keys say (the gate walk).
+  withheld?: string
 ): ReachabilityResult => {
   const ownedFacts = deriveOwnedFacts(ownedCounts, support)
+  if (withheld !== undefined) ownedFacts.delete(withheld)
+  const enteredJourneys = new Set<string>()
   const unlockedTiers = new Set(ALL_TIERS.filter(t => isTierUnlocked(t, ownedFacts, support)))
   const reachableFloors = new Set<string>()
   const harvestedCounts = new Map<string, number>()
@@ -352,6 +362,7 @@ export const computeReachability = (
       continue
     }
 
+    enteredJourneys.add(journeyId)
     const ordered = isOrderedJourney(sites)
     let open = true
     sites.forEach((site, levelIndex) => {
@@ -366,7 +377,8 @@ export const computeReachability = (
         cache,
         support,
         resolveEncounter,
-        authoredKeysHeld
+        authoredKeysHeld,
+        withheld
       )
       for (const floorIndex of siteResult.floors) reachableFloors.add(floorKey({ ...ref, floorIndex }))
       for (const [id, count] of siteResult.harvestedCounts) addHarvested(id, count)
@@ -377,5 +389,13 @@ export const computeReachability = (
     })
   }
 
-  return { reachableFloors, unlockedTiers, harvestedCounts, discoveredLocks, reachableRewards, exitsReached }
+  return {
+    reachableFloors,
+    unlockedTiers,
+    harvestedCounts,
+    discoveredLocks,
+    reachableRewards,
+    exitsReached,
+    enteredJourneys,
+  }
 }

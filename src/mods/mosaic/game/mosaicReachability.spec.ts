@@ -4,6 +4,11 @@ import type { TreasureReward } from "@/game/siteTypes"
 import { mosaicReachabilityValidator, reachableMosaicCounts } from "./mosaicReachability"
 import { MOSAIC_STEPS_BY_TIER, MOSAIC_TIERS, type MosaicTier } from "./mosaicCurrency"
 import { mosaicMod } from ".."
+import type { GateWalk } from "@/worldGen/gateWalk"
+
+const unwalked: GateWalk = () => {
+  throw new Error("this validator never walks")
+}
 
 const noConfigs: Record<string, SiteConfig[]> = {}
 
@@ -27,12 +32,12 @@ describe(reachableMosaicCounts, () => {
 
 describe(mosaicReachabilityValidator, () => {
   it("passes when every register's target count stands in reachable ground", () => {
-    expect(() => mosaicReachabilityValidator(noConfigs, fullWorld())).not.toThrow()
+    expect(() => mosaicReachabilityValidator(noConfigs, fullWorld(), unwalked)).not.toThrow()
   })
 
   it("throws naming the register and its shortfall when one register is a single piece short", () => {
     const oneShort = fullWorld().filter((_, i) => i !== 0)
-    expect(() => mosaicReachabilityValidator(noConfigs, oneShort)).toThrow(
+    expect(() => mosaicReachabilityValidator(noConfigs, oneShort, unwalked)).toThrow(
       new RegExp(`starter: ${MOSAIC_STEPS_BY_TIER.starter - 1}/${MOSAIC_STEPS_BY_TIER.starter}`)
     )
   })
@@ -46,11 +51,11 @@ describe(mosaicReachabilityValidator, () => {
       ...glass("wizard", MOSAIC_STEPS_BY_TIER.wizard + 1),
     ]
     expect(traded).toHaveLength(Object.values(MOSAIC_STEPS_BY_TIER).reduce((s, n) => s + n, 0))
-    expect(() => mosaicReachabilityValidator(noConfigs, traded)).toThrow(/junior:/)
+    expect(() => mosaicReachabilityValidator(noConfigs, traded, unwalked)).toThrow(/junior:/)
   })
 
   it("names every short register at once, not just the first", () => {
-    expect(() => mosaicReachabilityValidator(noConfigs, [])).toThrow(
+    expect(() => mosaicReachabilityValidator(noConfigs, [], unwalked)).toThrow(
       new RegExp(MOSAIC_TIERS.map(t => `${t}: 0/${MOSAIC_STEPS_BY_TIER[t]}`).join(", "))
     )
   })
@@ -64,6 +69,6 @@ describe(mosaicReachabilityValidator, () => {
       "starter",
       Object.values(MOSAIC_STEPS_BY_TIER).reduce((s, n) => s + n, 0)
     )
-    expect(() => mosaicReachabilityValidator(noConfigs, allStarter)).toThrow(/wizard: 0\//)
+    expect(() => mosaicReachabilityValidator(noConfigs, allStarter, unwalked)).toThrow(/wizard: 0\//)
   })
 })

@@ -9,6 +9,7 @@ import { walkFloorLock, describeFloorWalkFailure, deadFloorRegions } from "@/gam
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { WORLD_TARGETS } from "./worldTargets"
 import { capabilitiesFor, type SiteCapabilities } from "./capabilities"
+import type { GateWalk } from "./gateWalk"
 
 const KNOWN_JOURNEY_IDS = new Set([...PYRAMID_JOURNEYS.map(j => j.id), ...TOMB_JOURNEYS.map(j => j.id)])
 
@@ -19,9 +20,15 @@ const KNOWN_JOURNEY_IDS = new Set([...PYRAMID_JOURNEYS.map(j => j.id), ...TOMB_J
 // `reachableRewards` is every reward a player can ever get to, from placeFragments' final
 // permissive walk — a mod counts its own kind in there to hold its collection's target count. A
 // validator that only reads the authored configs ignores the second argument.
+//
+// `walk` answers what lies before a gate: `walk(fact)` is the ground a player reaches from empty
+// hands with that fact never held (strict bracket, over the finished world), `walk()` the whole
+// world as the strict walk sees it. A validator weighing a gate (income before it against what is
+// buyable before it) reads it; one that doesn't ignores the third argument.
 export type WorldValidator = (
   configs: Record<string, SiteConfig[]>,
-  reachableRewards: readonly TreasureReward[]
+  reachableRewards: readonly TreasureReward[],
+  walk: GateWalk
 ) => void
 
 // Throws if: a non-last floor is set to exit, a mapPiece references an unknown journey ID,

@@ -1,12 +1,19 @@
 import { describe, expect, it } from "vitest"
 import type { ReachabilitySupport } from "@/worldGen/reachability"
+import type { GateWalk } from "@/worldGen/gateWalk"
 import { MOD_LOOT_TOTALS, REGISTERED_MODS, mergeReachabilitySupports } from "./registeredMods"
 
 describe("MOD_LOOT_TOTALS", () => {
   it("is every registered mod's rows in registry order, without throwing on an empty world", () => {
-    const expected = REGISTERED_MODS.flatMap(m => m.lootTotals?.({}) ?? [])
+    const walk: GateWalk = () => ({
+      rewards: [],
+      unlockedTiers: new Set(),
+      enteredJourneys: new Set(),
+      blocking: new Set(),
+    })
+    const expected = REGISTERED_MODS.flatMap(m => m.lootTotals?.({}, walk) ?? [])
     expect(expected.length).toBeGreaterThan(0)
-    expect(MOD_LOOT_TOTALS({})).toEqual(expected)
+    expect(MOD_LOOT_TOTALS({}, walk)).toEqual(expected)
   })
 })
 
@@ -34,5 +41,11 @@ describe(mergeReachabilitySupports, () => {
     expect(merged.journeyEntryLocks?.("tomb")).toEqual([{ bucket: "pieces", threshold: 3 }])
     expect(merged.tierUnlockGroups?.("expert")).toEqual([["perk-a", "perk-b"]])
     expect(merged.tierUnlockGroups?.("starter")).toEqual([])
+  })
+
+  it("drops an empty group, which would otherwise lock its tier for good", () => {
+    const merged = mergeReachabilitySupports([first, { tierUnlockGroups: () => [[]] }])
+    expect(merged.tierUnlockGroups?.("expert")).toEqual([["perk-a", "perk-b"]])
+    expect(merged.tierUnlockGroups?.("junior")).toEqual([])
   })
 })

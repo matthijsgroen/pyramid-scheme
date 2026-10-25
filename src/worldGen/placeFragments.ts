@@ -6,12 +6,12 @@ import {
   deriveOwnedFacts,
   floorKey,
   unmetTierGroups,
-  type JourneyMeta,
   type ReachabilitySupport,
 } from "./reachability"
 import { collectSlots, type Slot, type FamilyPriorityFor } from "./slots"
 import { allocateDistributions, cappedToDistribution, type Distribution } from "./slotAllocator"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
+import { journeyMetaFor, makeGateWalk, type GateWalk } from "./gateWalk"
 
 // Worklist-driven, reachability-gated currency placement — the concrete engine this
 // backlog item's solver was built for. See docs/game-design/keys-and-locks-solver.md,
@@ -104,14 +104,34 @@ export type CappedCurrency = {
   rank: (candidates: readonly Slot[]) => Slot[]
 }
 
-// Each journey carries only its tier — whether entering it needs a currency threshold (a tomb's
-// map pieces) is the injected `reachabilitySupport.journeyEntryLocks`'s data, so core names no
-// currency and reads no per-tomb count here.
-const buildJourneyMeta = (): Record<string, JourneyMeta> => {
-  const meta: Record<string, JourneyMeta> = {}
-  for (const j of PYRAMID_JOURNEYS) meta[j.id] = { tier: j.tier }
-  for (const j of TOMB_JOURNEYS) meta[j.id] = { tier: j.tier }
-  return meta
+// Currency knowledge reachability needs but must not import (it's mod-agnostic): each registered
+// currency supplies its own gate threshold + reward→bucket harvest, merged with the mod-injected
+// `support` (the tomb-treasure mod's tomb-key harvest, the tomb journey-entry lock, and the
+// tier-unlock ladder). A currency's answer comes before the support's. Core names no currency.
+export const mergeReachabilitySupport = (
+  currencies: readonly CurrencyDistribution[],
+  support: ReachabilitySupport
+): ReachabilitySupport => ({
+  thresholdFor: (bucket: string) =>
+    currencies.find(c => c.ownsBucket(bucket))?.thresholdFor?.(bucket) ?? support.thresholdFor?.(bucket),
+  bucketForReward: (reward: TreasureReward) => {
+    for (const c of currencies) {
+      const b = c.bucketForReward?.(reward)
+      if (b) return b
+    }
+    return support.bucketForReward?.(reward)
+  },
+  alsoHarvests: support.alsoHarvests,
+  factsForCount: support.factsForCount,
+  journeyEntryLocks: support.journeyEntryLocks,
+  tierUnlockGroups: support.tierUnlockGroups,
+})
+
+export type PlacedWorld = {
+  /** Every reward standing in reachable ground once placement is finished, in the permissive bracket. */
+  reachableRewards: readonly TreasureReward[]
+  /** The strict gate walk over the finished world. */
+  walk: GateWalk
 }
 
 // Mutates allConfigs in place: places gating currencies (reachability worklist) then capped
@@ -122,7 +142,7 @@ const buildJourneyMeta = (): Record<string, JourneyMeta> => {
 //
 // Returns every reward standing in reachable ground once placement is finished, walked in the
 // permissive bracket (see the final pass at the bottom) — what a collection's target count is
-// checked against.
+// checked against — and the strict gate walk over that same finished world (gateWalk.ts).
 export const placeFragments = (
   allConfigs: Record<string, SiteConfig[]>,
   currencies: readonly CurrencyDistribution[],
@@ -138,10 +158,12 @@ export const placeFragments = (
   // callers with no mods) falls back to reachability.ts's own default, which never claims
   // reEnterable for anyone.
   resolveEncounter?: ResolveEncounter
-): readonly TreasureReward[] => {
+): PlacedWorld => {
   const slots = collectSlots(allConfigs, familyPriorityFor)
   const available = new Set(slots)
-  const journeyMeta = buildJourneyMeta()
+  // Each journey carries only its tier — whether entering it needs a currency threshold (a tomb's
+  // map pieces) is the injected support's data, so core reads no per-tomb count here.
+  const journeyMeta = journeyMetaFor(PYRAMID_JOURNEYS, TOMB_JOURNEYS)
 
   const ownedCounts = new Map<string, number>()
   // One cache for this whole placement run — grid topology never changes as ownedCounts
@@ -149,38 +171,19 @@ export const placeFragments = (
   // so every one of this loop's many computeReachability calls reuses the same assembled
   // grids instead of re-running maze generation for every reachable floor every time.
   const assemblyCache = createFloorAssemblyCache()
-  // A second cache for the permissive final pass, which runs after the filler passes have written
-  // rewards into floors `assemblyCache` still holds pre-filler copies of. Authored doors stand open
-  // only there, so the two caches also never mix walks under different gating.
-  const permissiveCache = createFloorAssemblyCache()
+  // A second cache for the finished world, filled only after the filler passes have written rewards
+  // into floors `assemblyCache` still holds pre-filler copies of. The permissive final pass and the
+  // strict gate walk share it: an assembled grid does not depend on the bracket it is walked in.
+  const finishedCache = createFloorAssemblyCache()
   let authoredKeysHeld = false
-  // Currency knowledge reachability needs but must not import (it's mod-agnostic): each
-  // registered currency supplies its own gate threshold + reward→bucket harvest, merged with the
-  // mod-injected `reachabilitySupport` (the tomb-treasure mod's tomb-key harvest, the tomb
-  // journey-entry lock, and the tier-unlock ladder). Built here, where the injected `currencies`
-  // + support are in scope, and threaded into every reachability call. Core names no currency.
-  const support: ReachabilitySupport = {
-    thresholdFor: (bucket: string) =>
-      currencies.find(c => c.ownsBucket(bucket))?.thresholdFor?.(bucket) ?? reachabilitySupport.thresholdFor?.(bucket),
-    bucketForReward: (reward: TreasureReward) => {
-      for (const c of currencies) {
-        const b = c.bucketForReward?.(reward)
-        if (b) return b
-      }
-      return reachabilitySupport.bucketForReward?.(reward)
-    },
-    alsoHarvests: reachabilitySupport.alsoHarvests,
-    factsForCount: reachabilitySupport.factsForCount,
-    journeyEntryLocks: reachabilitySupport.journeyEntryLocks,
-    tierUnlockGroups: reachabilitySupport.tierUnlockGroups,
-  }
+  const support = mergeReachabilitySupport(currencies, reachabilitySupport)
   const computeReach = () =>
     computeReachability(
       allConfigs,
       journeyMeta,
       ownedCounts,
       resolveRequirements,
-      authoredKeysHeld ? permissiveCache : assemblyCache,
+      authoredKeysHeld ? finishedCache : assemblyCache,
       support,
       resolveEncounter,
       authoredKeysHeld
@@ -352,9 +355,15 @@ export const placeFragments = (
   // once placement is done. A locked tier's journeys are never walked, so their locks are never
   // discovered — the sweep above cannot see a tier whose unlock bucket no one places (a mod's
   // group whose currency was never placed, or whose treasures all sit beyond the tier itself).
+  // A journey with no tier is never walked at all, so it is refused rather than left out.
   const ownedFacts = deriveOwnedFacts(ownedCounts, support)
   const walkedTiers = new Set(
-    Object.keys(allConfigs).flatMap(journeyId => (journeyMeta[journeyId] ? [journeyMeta[journeyId].tier] : []))
+    Object.keys(allConfigs).map(journeyId => {
+      const meta = journeyMeta[journeyId]
+      if (!meta)
+        throw new Error(`placeFragments: journey ${journeyId} is in the world but in no journey list, so has no tier.`)
+      return meta.tier
+    })
   )
   const lockedTiers = [...walkedTiers].filter(tier => !reach.unlockedTiers.has(tier))
   if (lockedTiers.length > 0) {
@@ -418,5 +427,14 @@ export const placeFragments = (
   authoredKeysHeld = true
   reach = computeReach()
   settleHarvest()
-  return reach.reachableRewards
+  // The gate walk starts from empty hands on every call, so it shares only the finished grids.
+  const walk = makeGateWalk({
+    configs: allConfigs,
+    journeyMeta,
+    support,
+    resolveRequirements,
+    resolveEncounter,
+    cache: finishedCache,
+  })
+  return { reachableRewards: reach.reachableRewards, walk }
 }

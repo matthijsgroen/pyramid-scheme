@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
-import { buildLootReport, renderLootReportMarkdown, type LootTotal } from "./lootReport"
+import { buildLootReport, collectLootTotals, renderLootReportMarkdown, type LootTotal } from "./lootReport"
+import type { GateWalk } from "./gateWalk"
 import type { ResolveEncounter } from "@/game/siteAssembler"
 import type { Difficulty, FloorConfig, SideSection, SiteConfig, SubSection } from "./types"
 
@@ -224,5 +225,34 @@ describe("renderLootReportMarkdown", () => {
     const md = renderLootReportMarkdown(report)
     expect(md).not.toMatch(/\d{4}-\d{2}-\d{2}/)
     expect(md).not.toMatch(/\d{1,2}:\d{2}/)
+  })
+})
+
+describe(collectLootTotals, () => {
+  const walk: GateWalk = withheld => ({
+    rewards: withheld === undefined ? [money, money] : [money],
+    unlockedTiers: new Set(),
+    enteredJourneys: new Set(),
+    blocking: new Set(),
+  })
+
+  it("hands each contributor the same world and walk, and keeps their rows in order", () => {
+    const reads = {
+      lootTotals: (configs: Record<string, SiteConfig[]>, given: GateWalk): LootTotal[] => [
+        {
+          label: "Before the made-up gate",
+          found: given("made-up-gate").rewards.length,
+          needed: given().rewards.length,
+        },
+        { label: "Journeys", found: Object.keys(configs).length },
+      ],
+    }
+    const silent = {}
+    const other = { lootTotals: (): LootTotal[] => [{ label: "Other", found: 7 }] }
+    expect(collectLootTotals([reads, silent, other], { a: [[floor()]] }, walk)).toEqual([
+      { label: "Before the made-up gate", found: 1, needed: 2 },
+      { label: "Journeys", found: 1 },
+      { label: "Other", found: 7 },
+    ])
   })
 })

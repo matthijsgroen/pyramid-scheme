@@ -2,6 +2,7 @@ import type { Difficulty, FloorConfig, SideSection, SiteConfig, SubSection, Trea
 import { difficulties } from "@/data/difficultyLevels"
 import { CARVE_FAMILY_QUERIES } from "@/game/encounterFallback"
 import type { ResolveEncounter } from "@/game/siteAssembler"
+import type { GateWalk } from "./gateWalk"
 
 // The designer reads the loot in the world here without opening the bake: every place a reward can
 // stand (a puzzle room, a chest, a path end, a shop's stock slot), whether something stands in it,
@@ -32,6 +33,18 @@ export type LootSlot = {
 /** One currency's world total as its mod reports it. No `needed` means "reported, no demand". */
 export type LootTotal = { label: string; found: number; needed?: number; unit?: "count" | "coins" }
 export type LootTotalRow = LootTotal & { short?: number; surplus?: number }
+
+/** Whatever reports loot rows (a mod): it reads the world and, to weigh a gate, the gate walk over it. */
+export type LootTotalsContributor = {
+  lootTotals?: (configs: Record<string, SiteConfig[]>, walk: GateWalk) => LootTotal[]
+}
+
+/** Every contributor's rows in order, each handed the same world and walk. */
+export const collectLootTotals = (
+  contributors: readonly LootTotalsContributor[],
+  configs: Record<string, SiteConfig[]>,
+  walk: GateWalk
+): LootTotal[] => contributors.flatMap(contributor => contributor.lootTotals?.(configs, walk) ?? [])
 
 export type Fill = { filled: number; total: number }
 export type RewardCounts = Record<LootSlotKind, Record<string, number>>

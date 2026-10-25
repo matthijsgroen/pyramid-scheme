@@ -6,6 +6,7 @@ import type { ShopStockAssignment } from "@/worldGen/shopStock"
 import type { WorldValidator } from "@/worldGen/validate"
 import type { WebActivatorReward } from "@/worldGen/webPlacement"
 import type { LootTotal } from "@/worldGen/lootReport"
+import type { GateWalk } from "@/worldGen/gateWalk"
 import type { SiteConfig } from "@/worldGen/types"
 import type { CurrencyMeta } from "@/game/ledger/currencyRegistry"
 import type { FamilyMeta } from "@/game/families/familyMeta"
@@ -76,6 +77,7 @@ export type ModDescriptor = {
   // gives one, so the web drops with its mod: no doors, no activators, every slot left to the loot passes.
   webActivator?: WebActivatorReward
   // This mod's own placed-against-needed counts for `yarn loot-report`, one row per figure it can state.
-  // Drops with the mod, so core reports no currency it does not know.
-  lootTotals?: (configs: Record<string, SiteConfig[]>) => LootTotal[]
+  // Drops with the mod, so core reports no currency it does not know. `walk` is the gate walk over the same world
+  // (gateWalk.ts), for a row that weighs what lies before a gate; a row that doesn't ignores it.
+  lootTotals?: (configs: Record<string, SiteConfig[]>, walk: GateWalk) => LootTotal[]
 }
