@@ -294,8 +294,8 @@ One agent (Sonnet). The biggest task: it removes the Travel page.
 
 Reserved for the end-of-phase review's findings (driver dispatches a fresh Sonnet agent per finding batch). If the review finds nothing, tick and skip.
 
-- [ ] **Step 1:** fix each finding with a failing test first where it is behaviour; run the touched specs, `yarn check-types`, `yarn lint`.
-- [ ] **Step 2: Commit** — `fix: <what the review found>`
+- [x] **Step 1:** fix each finding with a failing test first where it is behaviour; run the touched specs, `yarn check-types`, `yarn lint`.
+- [x] **Step 2: Commit** — `fix: <what the review found>`
 
 ---
 
