@@ -131,7 +131,7 @@ export const makeLayoutPicker = ({
         packing: result.packing,
         offset: result.offset,
         laddered: result.laddered,
-        unjudged: unjudgedLocks(result.grid),
+        unjudged: unjudgedLocks(result.grid, floor as GameFloorConfig),
       })
       floor.seed = result.seed
       floor.packing = result.packing

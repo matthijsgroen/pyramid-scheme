@@ -76,7 +76,7 @@ export const refusal = (result: AssemblerResult, floor: Pick<FloorConfig, "locks
   if (!walk) return null
   if (!walk.sound) return { criterion: "lock walks sound", detail: describeFloorWalkFailure(walk.failure) }
   const unfed = [
-    ...lockWithoutPuzzle(result.grid).map(lock => `lock ${lock} has no puzzle on its way`),
+    ...lockWithoutPuzzle(result.grid, floor).map(lock => `lock ${lock} has no puzzle on its way`),
     ...lockGroundUnfed(result.grid, floor),
   ]
   if (unfed.length > 0) return { criterion: "lock holds a puzzle", detail: unfed.join(", ") }

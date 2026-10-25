@@ -71,12 +71,16 @@ export type LockPuzzleVerdict = { without: string[]; unjudged: string[] }
  *
  * A LOCK NONE OF WHOSE CONTROLS CAN BE TIED TO ITS GROUND IS UNJUDGED, never passed: a control that is no room of the
  * lock (a floor key's chest, a room with no region label), or a floor whose lock does not compile into a walk.
+ *
+ * A LOCK STANDING BEFORE THE FLOOR'S CONTENT (`standsBeforeContent`) IS NOT ASKED FOR A PUZZLE: it is a lesson in the
+ * lock alone, so it is neither named nor unjudged here. Every other hard criterion still holds for it.
  */
-export const judgeLockPuzzles = (grid: FloorGrid): LockPuzzleVerdict => {
+export const judgeLockPuzzles = (grid: FloorGrid, floor: Pick<FloorConfig, "locks">): LockPuzzleVerdict => {
+  const lessons = new Set((floor.locks ?? []).filter(standsBeforeContent).map(placed => placed.as ?? placed.lock.name))
   const instances = new Set(
     grid.cells.flat().flatMap(cell => {
       const instance = cell.type === "empty" ? undefined : instanceOf(cell.region)
-      return instance ? [instance] : []
+      return instance && !lessons.has(instance) ? [instance] : []
     })
   )
   if (instances.size === 0) return { without: [], unjudged: [] }
@@ -102,7 +106,7 @@ export const judgeLockPuzzles = (grid: FloorGrid): LockPuzzleVerdict => {
     const home = /(\d+),(\d+)$/.exec(id)
     const cell = home ? grid.cells[Number(home[1])]?.[Number(home[2])] : undefined
     const instance = cell && cell.type !== "empty" ? instanceOf(cell.region) : undefined
-    if (instance) mechanismsOf.set(instance, [...(mechanismsOf.get(instance) ?? []), id])
+    if (instance && instances.has(instance)) mechanismsOf.set(instance, [...(mechanismsOf.get(instance) ?? []), id])
   }
   const unjudged = [...instances].filter(instance => !mechanismsOf.has(instance)).sort()
   if (mechanismsOf.size === 0) return { without: [], unjudged }
@@ -138,10 +142,12 @@ export const judgeLockPuzzles = (grid: FloorGrid): LockPuzzleVerdict => {
 }
 
 /** The locks whose solving walk passes no puzzle room (`judgeLockPuzzles`). */
-export const lockWithoutPuzzle = (grid: FloorGrid): string[] => judgeLockPuzzles(grid).without
+export const lockWithoutPuzzle = (grid: FloorGrid, floor: Pick<FloorConfig, "locks">): string[] =>
+  judgeLockPuzzles(grid, floor).without
 
 /** The locks the walk could not judge (`judgeLockPuzzles`). */
-export const unjudgedLocks = (grid: FloorGrid): string[] => judgeLockPuzzles(grid).unjudged
+export const unjudgedLocks = (grid: FloorGrid, floor: Pick<FloorConfig, "locks">): string[] =>
+  judgeLockPuzzles(grid, floor).unjudged
 
 /** A part of a placed lock that may ask for content: one of its regions. Its corridors join once they carry an
  * appetite of their own. */
@@ -149,6 +155,13 @@ export type LockPart = { kind: "region"; placed: PlacedLock; region: string }
 
 /** What a part of a lock asks for. */
 export const appetiteOf = (part: LockPart): RegionAppetite => part.placed.lock.regions[part.region]?.takes ?? "free"
+
+/** A lock placed before the floor's content: every region but its way out takes nothing, so the floor's content lies
+ * past it. Such a lock is a lesson in the lock alone and is asked for no puzzle on its way. */
+export const standsBeforeContent = (placed: PlacedLock): boolean => {
+  const ground = Object.keys(placed.lock.regions).filter(region => region !== placed.lock.out)
+  return ground.length > 0 && ground.every(region => appetiteOf({ kind: "region", placed, region }) === "nothing")
+}
 
 /** Every region of the floor's locks whose appetite asks for puzzles or a reward and that holds none on the grid. */
 export const lockGroundUnfed = (grid: FloorGrid, floor: Pick<FloorConfig, "locks">): string[] => {

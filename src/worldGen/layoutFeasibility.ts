@@ -1,7 +1,7 @@
 import { prepareFloor } from "@/game/carve/prepareFloor"
 import type { FloorPrep } from "@/game/carve/state"
 import { expandFloorLocks } from "@/game/floorLocks"
-import { appetiteOf } from "@/game/lockPuzzles"
+import { appetiteOf, standsBeforeContent } from "@/game/lockPuzzles"
 import { planLockFloor } from "@/game/lockPlan"
 import type { AssembleFloorKeyRequirements, ResolveEncounter } from "@/game/siteAssembler"
 import type { AssemblerFailure, FloorConfig, SubSection } from "@/game/siteTypes"
@@ -52,9 +52,7 @@ const allRewards = (sections: readonly { end: SubSection["end"]; sideSections?: 
  * - the assembler refuses it before any attempt (a one-way naming a missing section, a switch asking for more
  *   junctions than `forks` reserves): `carves`;
  * - a lock floor with no puzzle that may stand on a lock's way, none on the main path and none on an open section:
- *   `lock holds a puzzle`;
- * - a lock whose every region but its way out takes nothing (a lock placed before the floor's content): its way is
- *   ground no content may stand on, so no puzzle stands on it: `lock holds a puzzle`;
+ *   `lock holds a puzzle`. A lock standing before the floor's content is asked for none (`standsBeforeContent`);
  * - more lock regions asking for puzzles, or for a reward, than the floor has to give: `lock holds a puzzle`.
  */
 export const layoutInfeasible = (floor: FloorConfig, prep: PreparedLayout): CarveRefusal[] => {
@@ -65,20 +63,12 @@ export const layoutInfeasible = (floor: FloorConfig, prep: PreparedLayout): Carv
   const locks = floor.locks ?? []
   if (locks.length === 0) return []
   const found: CarveRefusal[] = []
-  const names = locks.map(placed => placed.as ?? placed.lock.name)
-  if (floor.pathPuzzles + openPuzzles(floor.sideSections) === 0)
+  const names = locks.filter(placed => !standsBeforeContent(placed)).map(placed => placed.as ?? placed.lock.name)
+  if (names.length > 0 && floor.pathPuzzles + openPuzzles(floor.sideSections) === 0)
     found.push({
       criterion: "lock holds a puzzle",
       detail: `lock ${names.join(", ")}: pathPuzzles is 0 and every side section with puzzles stands behind a gate, a seal or a hidden way, so no puzzle can stand on a lock's way`,
     })
-  for (const placed of locks) {
-    const ground = Object.keys(placed.lock.regions).filter(region => region !== placed.lock.out)
-    if (ground.length > 0 && ground.every(region => appetiteOf({ kind: "region", placed, region }) === "nothing"))
-      found.push({
-        criterion: "lock holds a puzzle",
-        detail: `lock ${placed.as ?? placed.lock.name}: every region but its way out (${ground.join(", ")}) takes nothing, so no content may stand on its way — move the lock after some of the floor's content (lockBeforeFloorContent places it before all of it) or let a region on its way take puzzles`,
-      })
-  }
   const asking = (appetite: "puzzles" | "reward") =>
     locks.flatMap(placed =>
       Object.keys(placed.lock.regions)

@@ -60,21 +60,14 @@ describe(layoutInfeasible, () => {
     expect(result.kind === "infeasible" ? result.detail : "").toContain("lever")
   })
 
-  it("a lock whose ground takes nothing but its way out is infeasible before any carve", () => {
+  it("a lock standing before the floor's content is asked for no puzzle, even on a floor with none", () => {
     const lock = leverLock()
     const before: Lock = {
       ...lock,
       regions: { foyer: { takes: "nothing" }, hall: { takes: "nothing" }, landing: { takes: "free" } },
     }
-    const config = floor({ pathPuzzles: 2, locks: [{ lock: before }] })
-    let carves = 0
-    const result = searchLayout(config, prepared(config), () => {
-      carves++
-      throw new Error("searched an infeasible floor")
-    })
-    expect(carves).toBe(0)
-    expect(result).toMatchObject({ kind: "infeasible", criterion: "lock holds a puzzle" })
-    expect(result.kind === "infeasible" ? result.detail : "").toContain("lock lever: every region but its way out")
+    const config = floor({ pathPuzzles: 0, sideSections: [gated], locks: [{ lock: before }] })
+    expect(layoutInfeasible(config, prepared(config))).toEqual([])
   })
 
   it("a lock floor whose main path or an open section holds a puzzle is feasible", () => {

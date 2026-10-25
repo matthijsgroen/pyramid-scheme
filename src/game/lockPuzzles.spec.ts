@@ -28,6 +28,12 @@ const carve = (config: FloorConfig, seed: number): FloorGrid => {
 
 const SEEDS = [1, 2, 3, 4, 5]
 
+/** The lever lock placed before the floor's content: every region but its way out takes nothing. */
+const beforeContent = (): Lock => ({
+  ...leverLock(),
+  regions: { foyer: { takes: "nothing" }, hall: { takes: "nothing" }, landing: { takes: "free" } },
+})
+
 /** The lever lock with one of its regions asking for something. */
 const asking = (region: string, takes: "puzzles" | "reward"): Lock => {
   const lock = leverLock()
@@ -45,23 +51,25 @@ const puzzleRegionOf = (grid: FloorGrid): string => {
 
 describe(lockWithoutPuzzle, () => {
   it("a lock whose way passes a puzzle room passes", () => {
-    for (const seed of SEEDS) expect(lockWithoutPuzzle(carve(floorWith(2), seed))).toEqual([])
+    for (const seed of SEEDS) expect(lockWithoutPuzzle(carve(floorWith(2), seed), floorWith(2))).toEqual([])
   })
 
   it("a lock whose control is the only room on its way is named", () => {
-    for (const seed of SEEDS) expect(lockWithoutPuzzle(carve(floorWith(0), seed))).toEqual(["lever"])
+    for (const seed of SEEDS) expect(lockWithoutPuzzle(carve(floorWith(0), seed), floorWith(0))).toEqual(["lever"])
   })
 
-  it("a lock solved before any puzzle, with every puzzle past its way out, is named", () => {
-    const lock = leverLock()
-    const before: Lock = {
-      ...lock,
-      regions: { foyer: { takes: "nothing" }, hall: { takes: "nothing" }, landing: { takes: "free" } },
-    }
+  it("an ordinary lock solved before any puzzle, with every puzzle past its way out, is named", () => {
     for (const seed of SEEDS) {
-      const grid = carve(floorWith(2, before), seed)
+      const grid = carve(floorWith(2, beforeContent()), seed)
       expect(grid.cells.flat().filter(cell => cell.type === "room" && cell.pathIndex !== undefined)).toHaveLength(2)
-      expect(lockWithoutPuzzle(grid)).toEqual(["lever"])
+      expect(lockWithoutPuzzle(grid, floorWith(2))).toEqual(["lever"])
+    }
+  })
+
+  it("a lock standing before the floor's content is a lesson in the lock alone, asked for no puzzle", () => {
+    for (const seed of [0, 2].map(n => SEEDS[n])) {
+      const before = floorWith(0, beforeContent())
+      expect(judgeLockPuzzles(carve(before, seed), before)).toEqual({ without: [], unjudged: [] })
     }
   })
 
@@ -73,13 +81,13 @@ describe(lockWithoutPuzzle, () => {
         row.map(cell => (cell.type === "room" && cell.mechanism ? { ...cell, region: undefined } : cell))
       ),
     }
-    expect(judgeLockPuzzles(grid)).toEqual({ without: ["lever"], unjudged: [] })
-    expect(judgeLockPuzzles(unlabelled)).toEqual({ without: [], unjudged: ["lever"] })
+    expect(judgeLockPuzzles(grid, floorWith(0))).toEqual({ without: ["lever"], unjudged: [] })
+    expect(judgeLockPuzzles(unlabelled, floorWith(0))).toEqual({ without: [], unjudged: ["lever"] })
   })
 
   it("a floor with no lock names nothing", () => {
     const { locks: _locks, realisations: _realisations, ...bare } = floorWith(1)
-    expect(lockWithoutPuzzle(carve(bare, 1))).toEqual([])
+    expect(lockWithoutPuzzle(carve(bare, 1), {})).toEqual([])
   })
 })
 
