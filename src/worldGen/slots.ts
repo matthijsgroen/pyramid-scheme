@@ -81,6 +81,11 @@ export const collectSlots = (
   const shopFamily = resolveEncounter(CARVE_FAMILY_QUERIES.fezShop, CARVE_FAMILY_QUERIES.fezShop).familyId
   const endsInShop = (section: SubSection) =>
     section.encounter !== undefined && resolveEncounter(section.encounter, "treasure").familyId === shopFamily
+  // An authored reward on that end would vanish the same way, so it is refused rather than dropped.
+  const refuseShopEndReward = (section: SubSection, address: string) => {
+    if (section.endReward !== undefined && section.endReward.type !== "fragmentSlot")
+      throw new Error(`authored endReward on a shop end: ${address}`)
+  }
 
   for (const [journeyId, siteConfigs] of Object.entries(allConfigs)) {
     if (!capabilitiesFor(journeyId)?.emitFragmentSlots) continue
@@ -196,7 +201,7 @@ export const collectSlots = (
             f.mainEndReward = r
           })
         }
-        for (const section of floor.sideSections) {
+        for (const [si, section] of floor.sideSections.entries()) {
           const sWardKeys = section.gate?.type === "tomb-key" ? [section.gate.wardKeyId] : []
           const secHidden = !!section.hidden
           // A section whose `end` is a stairhead (`"staircase"` / `{ stairId }`) is a pure
@@ -208,7 +213,8 @@ export const collectSlots = (
           // slot — the reward would be silently dropped, capping that currency one instance short.
           const rewardCapable = section.end === "treasure" && !endsInShop(section)
           if (endsInShop(section)) {
-            if (section.endReward?.type === "fragmentSlot") section.endReward = undefined
+            refuseShopEndReward(section, `${journeyId}:${levelIndex} floor ${floorIndex} ${section.label ?? `s${si}`}`)
+            section.endReward = undefined
           } else if (section.endReward?.type === "fragmentSlot") {
             const s = section
             addSlot(
@@ -228,12 +234,13 @@ export const collectSlots = (
               s.endReward = r
             })
           }
-          for (const sub of section.sideSections ?? []) {
+          for (const [ui, sub] of (section.sideSections ?? []).entries()) {
             const subWardKeys = [...sWardKeys, ...(sub.gate?.type === "tomb-key" ? [sub.gate.wardKeyId] : [])]
             const subHidden = secHidden || !!sub.hidden
             const subRewardCapable = sub.end === "treasure" && !endsInShop(sub)
             if (endsInShop(sub)) {
-              if (sub.endReward?.type === "fragmentSlot") sub.endReward = undefined
+              refuseShopEndReward(sub, `${journeyId}:${levelIndex} floor ${floorIndex} ${sub.label ?? `s${si}.${ui}`}`)
+              sub.endReward = undefined
             } else if (sub.endReward?.type === "fragmentSlot") {
               const ss = sub
               addSlot(
