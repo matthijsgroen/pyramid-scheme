@@ -173,11 +173,6 @@
     "completed": "Level Completed!"
   },
   "mosaic": {
-    "window": {
-      "count": "{{found}} of {{total}} pieces",
-      "new_one": "{{count}} new",
-      "new_other": "{{count}} new"
-    },
     "place_one": "Place {{count}} piece",
     "place_other": "Place {{count}} pieces",
     "placing": "Placing…",

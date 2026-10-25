@@ -2,8 +2,7 @@ import { type FC, lazy, Suspense, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import clsx from "clsx"
 import { StoneFrame } from "@/ui/atoms/StoneFrame"
-import { CountProgress } from "@/ui/molecules/CountProgress"
-import { MOSAIC_TIERS, MOSAIC_TOTAL, type MosaicTier } from "@/mods/mosaic/game/mosaicCurrency"
+import { MOSAIC_TIERS, type MosaicTier } from "@/mods/mosaic/game/mosaicCurrency"
 import {
   beatFor,
   beatsEarnedBy,
@@ -41,9 +40,6 @@ export const MosaicWindow: FC<{
 
   const carriedTotal = carriedPieces(owned, placed).reduce((sum, c) => sum + c.count, 0)
   const placedTotal = MOSAIC_TIERS.reduce((sum, tier) => sum + placed[tier], 0)
-  // Found is what the window holds plus what is in hand (the place button counts the same carried
-  // pieces); new is only the part in hand.
-  const found = placedTotal + carriedTotal
   const revealed = useMemo(() => revealedPieceIds(placed), [placedTotal]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Set the carried pieces one at a time until none are left in hand, pausing while Fez has
@@ -76,56 +72,46 @@ export const MosaicWindow: FC<{
   }, [beats])
 
   return (
-    <>
-      <div className="flex min-h-0 flex-1 flex-col self-stretch rounded-4xl bg-stone-950">
-        {/* Size container: the frame takes whichever of the two fits — the space's full width, or the
-          width the panel's own aspect ratio allows at the space's height. Height alone overflowed
-          a narrow phone sideways whenever the row below happened to be short. */}
-        <div className="[container-type:size] flex min-h-0 flex-1 items-center justify-center p-1">
-          <StoneFrame className="w-[min(100cqw,calc(100cqh*200/347))]">
-            {/* Holds the panel's aspect ratio while the glass is on its way, so the frame does not
-              snap to a new size the moment it arrives. */}
-            <Suspense fallback={<div className="aspect-[200/347] w-full bg-stone-950" />}>
-              <StainedGlassMosaic revealedPieces={revealed} newPieces={justPlaced} />
-            </Suspense>
-          </StoneFrame>
-        </div>
-        <div className="flex shrink-0 flex-col items-center gap-2 py-2">
-          {/* Kept in the layout with nothing in hand: the window resizes to whatever height is left,
-            so a button appearing and disappearing would resize the mosaic under the player. */}
-          <button
-            onClick={() => setPlacing(true)}
-            disabled={placing || carriedTotal === 0}
-            className={clsx(
-              "rounded-full bg-amber-600 px-6 py-2 font-bold text-white shadow-lg disabled:opacity-70",
-              carriedTotal === 0 && "invisible"
-            )}
-          >
-            {placing ? t("mosaic.placing") : t("mosaic.place", { count: carriedTotal })}
-          </button>
-          {/* A finished scene keeps its name, and the name is the way back to what Fez said about it. */}
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            {completedTiers(placed).map(tier => (
-              <button
-                key={tier}
-                disabled={placing || !onNarrate}
-                onClick={() => onNarrate?.(beatFor(tier), () => {}, { replay: true })}
-                className="rounded-full border border-amber-500/40 px-3 py-1 text-xs text-amber-200 disabled:opacity-50"
-              >
-                ℹ {t(`mosaic.panel.${tier}`)}
-              </button>
-            ))}
-          </div>
+    <div className="flex min-h-0 flex-1 flex-col self-stretch rounded-4xl bg-stone-950">
+      {/* Size container: the frame takes whichever of the two fits — the space's full width, or the
+        width the panel's own aspect ratio allows at the space's height. Height alone overflowed
+        a narrow phone sideways whenever the row below happened to be short. */}
+      <div className="[container-type:size] flex min-h-0 flex-1 items-center justify-center p-1">
+        <StoneFrame className="w-[min(100cqw,calc(100cqh*200/347))]">
+          {/* Holds the panel's aspect ratio while the glass is on its way, so the frame does not
+            snap to a new size the moment it arrives. */}
+          <Suspense fallback={<div className="aspect-[200/347] w-full bg-stone-950" />}>
+            <StainedGlassMosaic revealedPieces={revealed} newPieces={justPlaced} />
+          </Suspense>
+        </StoneFrame>
+      </div>
+      <div className="flex shrink-0 flex-col items-center gap-2 py-2">
+        {/* Kept in the layout with nothing in hand: the window resizes to whatever height is left,
+          so a button appearing and disappearing would resize the mosaic under the player. */}
+        <button
+          onClick={() => setPlacing(true)}
+          disabled={placing || carriedTotal === 0}
+          className={clsx(
+            "rounded-full bg-amber-600 px-6 py-2 font-bold text-white shadow-lg disabled:opacity-70",
+            carriedTotal === 0 && "invisible"
+          )}
+        >
+          {placing ? t("mosaic.placing") : t("mosaic.place", { count: carriedTotal })}
+        </button>
+        {/* A finished scene keeps its name, and the name is the way back to what Fez said about it. */}
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          {completedTiers(placed).map(tier => (
+            <button
+              key={tier}
+              disabled={placing || !onNarrate}
+              onClick={() => onNarrate?.(beatFor(tier), () => {}, { replay: true })}
+              className="rounded-full border border-amber-500/40 px-3 py-1 text-xs text-amber-200 disabled:opacity-50"
+            >
+              ℹ {t(`mosaic.panel.${tier}`)}
+            </button>
+          ))}
         </div>
       </div>
-      <div className="shrink-0 px-4 py-3 lg:w-60 lg:px-0">
-        <CountProgress
-          label={t("mosaic.window.count", { found, total: MOSAIC_TOTAL })}
-          note={carriedTotal > 0 ? t("mosaic.window.new", { count: carriedTotal }) : undefined}
-          value={found}
-          max={MOSAIC_TOTAL}
-        />
-      </div>
-    </>
+    </div>
   )
 }

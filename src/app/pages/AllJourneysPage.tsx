@@ -15,7 +15,7 @@ import { isWebKey } from "@/game/floorLock"
 import { allJourneys, type JourneyRowModel, type TierGroup } from "./allJourneys"
 import { journeyCardSlots } from "./journeyCardSlots"
 import "@/mods/registerModApps" // populate the journey-card slot registry, as Collection does for its sections
-import { comingSoonDifficulty, isTierUnlocked, tierKeyNeed } from "./journeyAvailability"
+import { comingSoonDifficulty, holdsTierKey, isTierUnlocked, tierKeyNeed } from "./journeyAvailability"
 import { useAvailableJourneyIds } from "./useAvailableJourneyIds"
 import { useMergedJourneyContributions } from "./journeyContributions"
 
@@ -71,6 +71,7 @@ export const AllJourneys: FC<{ startGame: () => void; compact?: boolean }> = ({ 
       (getUnexploredLevels(id, heldKeys).size > 0 ||
         (corridorDetectorLevel >= 4 && getOutstandingHiddenCorridorCount(id) > 0)),
     tierOpen: tier => isTierUnlocked(tier, heldKeys),
+    tierKeyHeld: tier => holdsTierKey(tier, heldKeys),
     tierNeeds: tier => {
       const need = tierKeyNeed(tier, heldKeys, keyDisplay, t("journeys.tierNeed"))
       return need ? [need] : []

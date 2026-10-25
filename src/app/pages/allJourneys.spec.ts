@@ -27,6 +27,7 @@ const base = (over: Partial<AllJourneysInput> = {}): AllJourneysInput => ({
   news: () => false,
   tierOpen: tier => tier === "starter",
   tierNeeds: tier => [{ key: `need-${tier}`, label: "keys" }],
+  tierKeyHeld: () => true,
   ...over,
 })
 
@@ -39,6 +40,11 @@ describe(allJourneys, () => {
     ).groups
     expect(groups.map(g => g.tier)).toEqual(["expert", "junior", "starter"])
     expect(groups[0]).toMatchObject({ locked: true, rows: [], needs: [{ key: "need-expert" }] })
+  })
+
+  it("shows no shut tier while its treasure is not held", () => {
+    const input = base({ tierOpen: t => t === "starter" || t === "junior", available: new Set(["s1", "j1"]) })
+    expect(tiers({ ...input, tierKeyHeld: () => false })).toEqual(["junior", "starter"])
   })
 
   it("opens a tier when one of its journeys is available", () => {

@@ -15,7 +15,7 @@ import type { JourneyNeed } from "./allJourneys"
 // them one at a time: its first as soon as the tier is, each later one when the pyramid before it
 // has been completed.
 
-const holdsTierKey = (difficulty: Difficulty, heldKeys: ReadonlySet<string>): boolean => {
+export const holdsTierKey = (difficulty: Difficulty, heldKeys: ReadonlySet<string>): boolean => {
   // The first tier has no entry key — nothing gates the start of the game.
   const keys = TIER_UNLOCK_PERK_IDS[difficulty]
   if (!keys) return true

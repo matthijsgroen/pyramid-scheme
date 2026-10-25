@@ -173,11 +173,6 @@
     "completed": "Niveau Voltooid!"
   },
   "mosaic": {
-    "window": {
-      "count": "{{found}} van {{total}} stukjes",
-      "new_one": "{{count}} nieuw",
-      "new_other": "{{count}} nieuw"
-    },
     "place_one": "Plaats {{count}} stuk",
     "place_other": "Plaats {{count}} stukken",
     "placing": "Bezig met plaatsen…",

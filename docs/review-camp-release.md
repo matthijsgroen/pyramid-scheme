@@ -13,7 +13,7 @@ What got built, per phase:
 - **Phase 4** — STOPPED after Tasks 1–2: gates hold every mod's requirement, a gate walk, no loot on a shop's end. The animals, the per-gate guard and buying are not built.
 - **Phase 5** — skipped: the economy recompute needs phase 4's purchases.
 - **Phase 6** — the camp is the home screen (HUD, scene entrances, Verder met, desktop side panel), the coming-home screen with the haul, the new-chapter card, settings with the dev tools.
-- **Phase 7** — Alle reizen replaces the Travel page; the Verzameling opens in tabs with NIEUW and a chest badge; the mosaic window's count line.
+- **Phase 7** — Alle reizen replaces the Travel page; the Verzameling opens in tabs with NIEUW and a chest badge. The mosaic window has no count line; the camp label carries the count.
 - **Phase 8** — 64 draft scenes in nl and en (27 tomb, 10 camp, 27 animal); tomb and camp beats wired, the animal ones wait on phase 4; settings play every draft in develop mode.
 - **Phase 9** — changelog, playtest backlog, docs, the last loot report and the clean-worktree gate.
 
@@ -205,7 +205,7 @@ From `yarn loot-report` before (651aad2c) and after the bake (88646b9e). `docs/l
 
 - Phase 7 — **Rows within a tier keep the authored order;** only the tiers run newest first. The sketch shows the in-progress journey above an earlier finished one. Alternative: newest first inside a tier as well, or the current journey always on top.
 - Phase 7 — **A pyramid journey the player cannot pick yet is not listed** (as Travel), but it counts in the header's "n van m klaar", so the header says how much of the tier is left. Alternative: list it as a locked row "Eerst <vorige reis>".
-- Phase 7 — **The next locked tier shows as a header with one locked line,** "Vind deze schat" with the first-floor treasure of the tomb before it as one symbol; tiers beyond it are not shown. A tier whose key is held but which this release does not ship is no locked group (it keeps Travel's "onderweg" note). Alternative: show every locked tier, or none.
+- Phase 7 — **The next locked tier shows as a header with one locked line,** shown only once its treasure is held and something else (an animal) still keeps it shut: "Vind deze schat" with the first-floor treasure of the tomb before it as one symbol; tiers beyond it are not shown. Before the treasure is held the next tier is not teased. A tier whose key is held but which this release does not ship is no locked group (it keeps Travel's "onderweg" note). Alternative: show every locked tier, or none.
 - Phase 7 — **A locked tomb keeps its name hidden,** as the locked card did: it reads as the mod's lock title ("Schatlokatie") with the journey's `mapHint`, and its need line "Kaartdelen: 2 van 3". The sketch names it ("Edelman's Verborgen Kluis", "Nog 1 kaartstuk nodig"). Alternative: name it, as the sketch does.
 - Phase 7 — **Revisiting:** tapping a finished journey's row goes straight back in at its last site (what tapping Travel's map card did); a separate chevron on the row opens its sites as numbered stops — a dot on a stop that holds something new, a buried stop shut — and tapping a stop goes in there. A journey in progress gets the same chevron for the sites already behind the player. Alternative: tapping a finished row opens the stops, two taps to go in.
 - Phase 7 — **Mods' journey-card slots** (the tableau's fragment preview, the sand's "nog n% bedolven") show under every open row, whether or not it has stops to open (the plan put them inside the opened stops; the phase review moved them, since a one-site journey has no chevron). An empty slot list, or slots that all render nothing, leave no space. Alternative: only inside the opened stops, or drop the card-slot registry.
@@ -225,7 +225,7 @@ From `yarn loot-report` before (651aad2c) and after the bake (88646b9e). `docs/l
 - Phase 7 — **A section's own heading goes inside its tab** where it only repeats the tab (Constructies, the story log); the tomb treasures and hieroglyphs keep their per-difficulty and per-category headings. Alternative: keep every heading.
 - Phase 7 — **The Verzameling has no chest picture at its top;** the popup's title row is the plain one every camp popup has. Alternative: the sketch's banner with the open chest.
 - Phase 7 — **On a phone a camp popup is an inset panel** over the dimmed camp (16 px at the sides, below the HUD, rounded), as all three sketches draw it; on desktop it stays the centred panel. Alternative: keep phase 6's full-screen popup.
-- Phase 7 — **The mosaic keeps placing by hand:** the window still waits for the player's "zet n stukjes" tap and outlines what just fell in; below it the sketch's "n van 252 stukjes" (pieces found, as the window's label counts them), "k nieuw" (found, not yet set in) and the bar. Alternative: set the pieces in by themselves when the window opens.
+- Phase 7 — **The mosaic keeps placing by hand:** the window still waits for the player's "zet n stukjes" tap and outlines what just fell in; no count line or bar below it (the camp label "Mozaïek n/252" counts). Alternative: set the pieces in by themselves when the window opens.
 
 #### Phase 7 gate
 
@@ -326,7 +326,6 @@ From `yarn loot-report` before (651aad2c) and after the bake (88646b9e). `docs/l
   - Row bits: `common:journeys.now` "NU" / "NOW"; `common:journeys.newDot` (screen reader) "Iets nieuws te ontdekken" / "Something new to discover"; `common:journeys.needProgress` "{{unit}}: {{found}} van {{required}}" / "{{unit}}: {{found}} of {{required}}".
   - Stops: `common:journeys.showStops` (screen reader) "Toon de plekken van {{name}}" / "Show the sites of {{name}}"; `common:journeys.stopPyramid` "Piramide" / "Pyramid"; `common:journeys.stopTomb` "Plek" / "Site".
   - Verzameling: `common:collection.empty` "Je kist is nog leeg" / "Your chest is still empty"; `common:collection.newLabel` "NIEUW" / "NEW"; `common:collection.tabNew_one/_other` "{{label}} · {{count}} nieuw" / "{{label}} · {{count}} new"; `common:collection.tabsLabel` (screen reader) "Wat je verzameld hebt" / "What you have collected"; tabs `common:collection.tabs.treasures` "Schatten" / "Treasures", `.hieroglyphs` "Hiërogliefen" / "Hieroglyphs", `.junk` "Snuisterijen" / "Trinkets", `.stories` "Verhalen" / "Stories" (Constructies keeps the camp's existing section title).
-  - Mosaic window: `common:mosaic.window.count` "{{found}} van {{total}} stukjes" / "{{found}} of {{total}} pieces"; `common:mosaic.window.new_one/_other` "{{count}} nieuw" / "{{count}} new".
 - Phase 8 — `cave.starter_treasure_tomb` — fires: Forgotten Merchant's Cache — entering the cave
   - Fez: "Een grot! Op de kaart stond een kelderdeur, en dit is een hele heuvel!" / "A cave! The map showed a cellar door, and this is a whole hill!"
   - Fez: "Slimme vent. Je voorraad in een heuvel verstoppen, daar komt geen dief op." / "Clever fellow. Hide your stock inside a hill — no thief would think of that."

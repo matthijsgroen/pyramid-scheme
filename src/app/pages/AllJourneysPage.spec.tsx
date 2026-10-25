@@ -99,6 +99,7 @@ vi.mock("@/app/SiteMap/detectorLevels", () => ({ useMergedDetectorLevels: () => 
 vi.mock("@/app/pages/journeyAvailability", () => ({
   isTierUnlocked: (tier: string) => tier === "starter" || tier === "junior",
   comingSoonDifficulty: () => comingSoon,
+  holdsTierKey: () => true,
   tierKeyNeed: (
     _tier: string,
     held: ReadonlySet<string>,

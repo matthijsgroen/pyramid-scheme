@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { render, cleanup } from "@testing-library/react"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { MOSAIC_TIERS, MOSAIC_TOTAL } from "@/mods/mosaic/game/mosaicCurrency"
+import { MOSAIC_TIERS } from "@/mods/mosaic/game/mosaicCurrency"
 import type { TierCounts } from "@/mods/mosaic/game/placementQueue"
 import { MosaicWindow } from "./MosaicWindow"
 
@@ -29,23 +29,5 @@ describe(MosaicWindow, () => {
     const button = container.querySelector("button")!
     expect(button.className).not.toContain("invisible")
     expect(button.disabled).toBe(false)
-  })
-})
-
-describe("MosaicWindow count", () => {
-  it("counts found as placed plus carried, with the carried ones as new", () => {
-    const owned = { ...counts(0), [MOSAIC_TIERS[0]]: 3 }
-    const placed = { ...counts(0), [MOSAIC_TIERS[0]]: 1 }
-    const { getByRole, getByText } = render(<MosaicWindow owned={owned} placed={placed} onPlace={() => {}} />)
-
-    expect(getByRole("progressbar").getAttribute("aria-valuenow")).toBe("3")
-    expect(getByRole("progressbar").getAttribute("aria-valuemax")).toBe(String(MOSAIC_TOTAL))
-    expect(getByText("mosaic.window.count")).toBeTruthy()
-    expect(getByText("mosaic.window.new")).toBeTruthy()
-  })
-
-  it("says nothing is new with nothing carried", () => {
-    const { queryByText } = render(<MosaicWindow owned={counts(0)} placed={counts(0)} onPlace={() => {}} />)
-    expect(queryByText("mosaic.window.new")).toBeNull()
   })
 })

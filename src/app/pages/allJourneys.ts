@@ -48,6 +48,8 @@ export type AllJourneysInput = {
   news: (journeyId: string) => boolean
   tierOpen: (tier: Difficulty) => boolean
   tierNeeds: (tier: Difficulty) => readonly JourneyNeed[]
+  /** Whether the player holds the treasure that opens this tier, whatever else it still waits for. */
+  tierKeyHeld: (tier: Difficulty) => boolean
   comingSoon?: Difficulty
   // The one extension point for a gate's other requirements. A registry a mod fills may feed it;
   // nothing does today.
@@ -118,9 +120,10 @@ export const allJourneys = (input: AllJourneysInput): { groups: TierGroup[]; com
     }
   })
 
-  // The one tier past the highest listed is shown shut, with what opens it and no rows. The tier that
-  // is coming soon has nothing to find yet, so it is only the footer's note.
-  if (lockedTier && !input.tierOpen(lockedTier) && lockedTier !== input.comingSoon) {
+  // The one tier past the highest listed is shown shut, with what opens it and no rows, but only once its
+  // treasure is held and something else still keeps it shut: before that the next tier is no tease. The
+  // tier that is coming soon has nothing to find yet, so it is only the footer's note.
+  if (lockedTier && !input.tierOpen(lockedTier) && input.tierKeyHeld(lockedTier) && lockedTier !== input.comingSoon) {
     groups.push({
       tier: lockedTier,
       done: 0,
