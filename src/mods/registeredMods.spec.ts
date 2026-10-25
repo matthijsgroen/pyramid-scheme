@@ -10,6 +10,8 @@ describe("MOD_LOOT_TOTALS", () => {
       unlockedTiers: new Set(),
       enteredJourneys: new Set(),
       blocking: new Set(),
+      blockingAt: new Map(),
+      lockedTierNeeds: new Map(),
     })
     const expected = REGISTERED_MODS.flatMap(m => m.lootTotals?.({}, walk) ?? [])
     expect(expected.length).toBeGreaterThan(0)

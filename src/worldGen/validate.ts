@@ -10,6 +10,7 @@ import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
 import { WORLD_TARGETS } from "./worldTargets"
 import { capabilitiesFor, type SiteCapabilities } from "./capabilities"
 import type { GateWalk } from "./gateWalk"
+import type { JourneyMeta } from "./reachability"
 
 const KNOWN_JOURNEY_IDS = new Set([...PYRAMID_JOURNEYS.map(j => j.id), ...TOMB_JOURNEYS.map(j => j.id)])
 
@@ -30,6 +31,35 @@ export type WorldValidator = (
   reachableRewards: readonly TreasureReward[],
   walk: GateWalk
 ) => void
+
+/**
+ * WHERE A PLAYER GETS STUCK, read off the strict walk over a finished world from empty hands: one line for each journey
+ * it never enters, each tier of the world it leaves locked, and each lock it still runs into, with where that lock
+ * stands. The walk carves rooms as play does, so a key the configs list but no room shows (a shop's end, say) counts as
+ * missing here. No line means every journey is entered, every tier opens and no lock blocks.
+ */
+export const stuckPoints = (walk: GateWalk, journeyMeta: Record<string, JourneyMeta>): string[] => {
+  const { enteredJourneys, unlockedTiers, blockingAt, lockedTierNeeds } = walk()
+  const entranceNeeds = (journeyId: string) =>
+    [...blockingAt].filter(([, places]) => places.includes(`${journeyId} entrance`)).map(([bucket]) => bucket)
+  const unentered = Object.entries(journeyMeta)
+    .filter(([journeyId]) => !enteredJourneys.has(journeyId))
+    .map(([journeyId, { tier }]) => {
+      const needs = entranceNeeds(journeyId)
+      const why = !unlockedTiers.has(tier)
+        ? ": its tier stays locked"
+        : needs.length > 0
+          ? `: its entrance needs ${needs.join(", ")}`
+          : ""
+      return `journey ${journeyId} (${tier}) is never entered${why}`
+    })
+  const locked = [...lockedTierNeeds].map(
+    ([tier, groups]) =>
+      `tier ${tier} stays locked: none held of ${groups.map(group => `[${group.join(" | ")}]`).join(", ")}`
+  )
+  const blocking = [...blockingAt].map(([bucket, places]) => `lock ${bucket} still blocks at ${places.join("; ")}`)
+  return [...unentered, ...locked, ...blocking]
+}
 
 // Throws if: a non-last floor is set to exit, a mapPiece references an unknown journey ID,
 // the total mapPiece count drifts from WORLD_TARGETS, or the count of placed gating-currency

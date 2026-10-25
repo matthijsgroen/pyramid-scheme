@@ -128,6 +128,8 @@ export type SiteReachability = {
   // (keys-and-locks-solver.md, "Structure, then loot": the wish was always in the
   // structure, this is the walk noticing it isn't satisfiable yet).
   discoveredLocks: ReadonlySet<string>
+  /** The floors each discovered lock stands on: the floor whose walk ran into it. */
+  lockFloors: ReadonlyMap<string, ReadonlySet<number>>
   // Every reward sitting in this site's reachable rooms, verbatim and un-bucketed — a room's own
   // `reward` plus each piece of a shop's `stock`. `harvestedCounts` above answers "which locks does
   // the walk now satisfy", so it only sees rewards some currency claims a bucket for; this answers
@@ -177,6 +179,11 @@ export const reachableFloorsInSite = (
   const harvestedCounts = new Map<string, number>()
   const harvest = (id: string) => harvestedCounts.set(id, (harvestedCounts.get(id) ?? 0) + 1)
   const discoveredLocks = new Set<string>()
+  const lockFloors = new Map<string, Set<number>>()
+  const discover = (id: string, floorIndex: number) => {
+    discoveredLocks.add(id)
+    lockFloors.set(id, (lockFloors.get(id) ?? new Set()).add(floorIndex))
+  }
   const reachableRewards: TreasureReward[] = []
   const harvestReward = (reward: TreasureReward) => {
     const bucket = support.bucketForReward?.(reward)
@@ -242,11 +249,11 @@ export const reachableFloorsInSite = (
         at => isHidden(result.grid, at) && !reachableHere.has(at)
       )
     )
-      discoveredLocks.add(hiddenRequirement)
+      discover(hiddenRequirement, i)
     if (i === exitFloor && reachableHere.has(`${result.grid.exitPos[0]},${result.grid.exitPos[1]}`)) exit = true
     // A gate a mechanism of this floor owns is never blocking here (the walk takes the floor's own lock as
     // sound), so only a key gate, or a floor key such a gate also lists, is a lock the worklist can see.
-    for (const id of blockedRequirements) discoveredLocks.add(id)
+    for (const id of blockedRequirements) discover(id, i)
 
     for (let r = 0; r < result.grid.rows; r++) {
       for (let c = 0; c < result.grid.cols; c++) {
@@ -279,7 +286,7 @@ export const reachableFloorsInSite = (
     }
   }
 
-  return { floors: reachable, harvestedCounts, discoveredLocks, reachableRewards, exit }
+  return { floors: reachable, harvestedCounts, discoveredLocks, lockFloors, reachableRewards, exit }
 }
 
 /**
@@ -325,6 +332,8 @@ export type ReachabilityResult = {
   // tableau requirement, or a journey-scoped piecesRequired shortfall for a tomb whose tier
   // is unlocked but isn't enterable yet. The worklist's queue is seeded and grown from this.
   discoveredLocks: ReadonlySet<string>
+  /** Where each discovered lock stands: `<journey> level <n> floor <f>`, or `<journey> entrance` for an entry lock. */
+  discoveredAt: ReadonlyMap<string, readonly string[]>
   // Every reward standing in the reachable area this call computed, across every journey — see
   // SiteReachability.reachableRewards. A collection's target count is checked against this: a
   // count of a kind, not a count of the locks it opens.
@@ -366,6 +375,11 @@ export const computeReachability = (
   const harvestedCounts = new Map<string, number>()
   const addHarvested = (id: string, count: number) => harvestedCounts.set(id, (harvestedCounts.get(id) ?? 0) + count)
   const discoveredLocks = new Set<string>()
+  const discoveredAt = new Map<string, string[]>()
+  const discoverAt = (id: string, place: string) => {
+    discoveredLocks.add(id)
+    discoveredAt.set(id, [...(discoveredAt.get(id) ?? []), place])
+  }
   const reachableRewards: TreasureReward[] = []
   const exitsReached = new Set<string>()
 
@@ -381,7 +395,7 @@ export const computeReachability = (
       lock => (ownedCounts.get(lock.bucket) ?? 0) < lock.threshold
     )
     if (unmetEntry.length > 0) {
-      for (const lock of unmetEntry) discoveredLocks.add(lock.bucket)
+      for (const lock of unmetEntry) discoverAt(lock.bucket, `${journeyId} entrance`)
       continue
     }
 
@@ -405,7 +419,8 @@ export const computeReachability = (
       )
       for (const floorIndex of siteResult.floors) reachableFloors.add(floorKey({ ...ref, floorIndex }))
       for (const [id, count] of siteResult.harvestedCounts) addHarvested(id, count)
-      for (const id of siteResult.discoveredLocks) discoveredLocks.add(id)
+      for (const [id, floors] of siteResult.lockFloors)
+        for (const floorIndex of floors) discoverAt(id, `${journeyId} level ${levelIndex + 1} floor ${floorIndex}`)
       reachableRewards.push(...siteResult.reachableRewards)
       if (siteResult.exit) exitsReached.add(`${journeyId}#${levelIndex}`)
       if (ordered && !siteResult.exit) open = false
@@ -417,6 +432,7 @@ export const computeReachability = (
     unlockedTiers,
     harvestedCounts,
     discoveredLocks,
+    discoveredAt,
     reachableRewards,
     exitsReached,
     enteredJourneys,

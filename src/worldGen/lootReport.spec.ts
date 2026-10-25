@@ -234,6 +234,8 @@ describe(collectLootTotals, () => {
     unlockedTiers: new Set(),
     enteredJourneys: new Set(),
     blocking: new Set(),
+    blockingAt: new Map(),
+    lockedTierNeeds: new Map(),
   })
 
   it("hands each contributor the same world and walk, and keeps their rows in order", () => {

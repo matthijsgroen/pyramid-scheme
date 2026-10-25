@@ -3,6 +3,8 @@ import type { ResolveEncounter, ResolveKeyRequirements } from "../game/siteAssem
 import {
   computeReachability,
   createFloorAssemblyCache,
+  deriveOwnedFacts,
+  unmetTierGroups,
   type FloorAssemblyCache,
   type JourneyMeta,
   type ReachabilitySupport,
@@ -29,6 +31,10 @@ export type GateWalkResult = {
   enteredJourneys: ReadonlySet<string>
   /** The locks the reached ground still runs into. */
   blocking: ReadonlySet<string>
+  /** Where each blocking lock stands: `<journey> level <n> floor <f>`, or `<journey> entrance`. */
+  blockingAt: ReadonlyMap<string, readonly string[]>
+  /** For each tier of the world still locked, the groups of buckets none of which is held. */
+  lockedTierNeeds: ReadonlyMap<Tier, readonly (readonly string[])[]>
 }
 
 /** The ground reached with `withheld` never held; with nothing withheld, the whole world as the strict walk sees it. */
@@ -87,11 +93,20 @@ export const makeGateWalk = ({
       if (!grew) break
       reach = reachWith()
     }
+    const facts = deriveOwnedFacts(owned, support)
+    if (withheld !== undefined) facts.delete(withheld)
+    const lockedTiers = new Set(
+      Object.values(journeyMeta)
+        .map(meta => meta.tier)
+        .filter(tier => !reach.unlockedTiers.has(tier))
+    )
     return {
       rewards: reach.reachableRewards,
       unlockedTiers: reach.unlockedTiers,
       enteredJourneys: reach.enteredJourneys,
       blocking: reach.discoveredLocks,
+      blockingAt: reach.discoveredAt,
+      lockedTierNeeds: new Map([...lockedTiers].map(tier => [tier, unmetTierGroups(tier, facts, support)])),
     }
   }
 

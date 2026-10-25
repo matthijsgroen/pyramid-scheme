@@ -34,7 +34,9 @@ import {
   findUnseededDoorBoards,
   findUnwalkedLocks,
   floorsOwingALock,
+  stuckPoints,
 } from "../src/worldGen/validate"
+import { worldGateWalk } from "../src/mods/worldGateWalk"
 import { refusal as carveRefusal } from "../src/worldGen/carveSeedSearch"
 import { generatedWorldConfigs } from "../src/data/generatedWorld"
 import { readLedger, writeLedger } from "./carveLedger"
@@ -158,6 +160,19 @@ if (webFloorsRefused.length > 0) {
   for (const line of webFloorsRefused) console.error(`    ${line}`)
   process.exit(1)
 }
+
+// THE STAMPED WORLD, WALKED AFRESH: a strict walk from empty hands over the final configs, every floor carved again,
+// must enter every journey, open every tier and pass every lock. The mod validators already ran on this same pinned
+// world inside the build, so only the walk is asked here.
+const { walk: finalWalk, journeyMeta } = worldGateWalk(configs)
+const stuck = stuckPoints(finalWalk, journeyMeta)
+const walkedJourneys = `strict walk enters ${finalWalk().enteredJourneys.size} of ${Object.keys(journeyMeta).length} journeys`
+if (stuck.length > 0) {
+  console.error(`✗ ${walkedJourneys}; ${stuck.length} place(s) a player gets stuck:`)
+  for (const line of stuck) console.error(`    ${line}`)
+  process.exit(1)
+}
+console.log(`  ${walkedJourneys}`)
 
 const emptyChests = findEmptyChests(configs, carveFinal)
 

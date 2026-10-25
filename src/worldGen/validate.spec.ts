@@ -7,8 +7,11 @@ import {
   findUnbakedSwitchBoards,
   findUnseededDoorBoards,
   findUnwalkedLocks,
+  stuckPoints,
   validateRewardCounts,
 } from "./validate"
+import { makeGateWalk } from "./gateWalk"
+import type { ReachabilitySupport } from "./reachability"
 import { PYRAMID_CAPABILITIES } from "./capabilities"
 
 const UNBAKED_CAPABILITIES = { ...PYRAMID_CAPABILITIES, requireBakedBoards: false }
@@ -585,5 +588,87 @@ describe("findMispairedStairs", () => {
       ],
     } as Record<string, SiteConfig[]>
     expect(findMispairedStairs(nested)).toEqual({ paired: 1, mispaired: [] })
+  })
+})
+
+describe(stuckPoints, () => {
+  // A made-up world: the second journey's entrance needs the key the first journey holds somewhere.
+  const shopKey: TreasureReward = { type: "tombKey", keyId: "shop-key" }
+  const lens: TreasureReward = { type: "tombKey", keyId: "lens" }
+  const keyIn = (first: Partial<FloorConfig>): Record<string, SiteConfig[]> => ({
+    first: [
+      [
+        {
+          pathPuzzles: 1,
+          difficulty: "starter",
+          end: "treasure",
+          exitOrStaircase: "exit",
+          sideSections: [],
+          ...first,
+        },
+      ],
+    ],
+    second: [[{ pathPuzzles: 1, difficulty: "junior", end: "treasure", exitOrStaircase: "exit", sideSections: [] }]],
+  })
+  const meta = { first: { tier: "starter" as const }, second: { tier: "junior" as const } }
+  const support: ReachabilitySupport = {
+    bucketForReward: reward => (reward.type === "tombKey" ? (reward.keyId as string) : undefined),
+    journeyEntryLocks: journeyId => (journeyId === "second" ? [{ bucket: "shop-key", threshold: 1 }] : []),
+  }
+  const stuck = (configs: Record<string, SiteConfig[]>, given: ReachabilitySupport = support) =>
+    stuckPoints(makeGateWalk({ configs, journeyMeta: meta, support: given }), meta)
+
+  it("a world whose every lock opens has no stuck points", () => {
+    expect(stuck(keyIn({ mainEndReward: shopKey }))).toEqual([])
+  })
+
+  it("a key on a shop's end leaves its journey unentered and is named", () => {
+    // Built by hand: a shop's room shows its stock and never its end, so the key the configs list is in no room.
+    const configs = keyIn({
+      sideSections: [
+        {
+          pathPuzzles: 0,
+          difficulty: "starter",
+          end: "treasure",
+          encounter: "fez-shop",
+          rewards: [],
+          endReward: shopKey,
+        },
+      ],
+    })
+    expect(stuck(configs)).toEqual([
+      "journey second (junior) is never entered: its entrance needs shop-key",
+      "lock shop-key still blocks at second entrance",
+    ])
+  })
+
+  it("a tier whose only group's bucket is nowhere is named locked", () => {
+    const tierLocked: ReachabilitySupport = {
+      ...support,
+      journeyEntryLocks: () => [],
+      tierUnlockGroups: tier => (tier === "junior" ? [["made-up-unlock"]] : []),
+    }
+    expect(stuck(keyIn({}), tierLocked)).toEqual([
+      "journey second (junior) is never entered: its tier stays locked",
+      "tier junior stays locked: none held of [made-up-unlock]",
+    ])
+  })
+
+  it("a journey reachable only through a hidden corridor with no detector anywhere is named", () => {
+    const configs = keyIn({
+      sideSections: [{ pathPuzzles: 0, difficulty: "starter", end: "treasure", hidden: true, endReward: shopKey }],
+    })
+    const detector: ReachabilitySupport = {
+      ...support,
+      alsoHarvests: reward => (reward === lens ? ["made-up-sight"] : []),
+      hiddenRequirement: () => "made-up-sight",
+    }
+    expect(stuck(configs, detector)).toEqual([
+      "journey second (junior) is never entered: its entrance needs shop-key",
+      "lock made-up-sight still blocks at first level 1 floor 0",
+      "lock shop-key still blocks at second entrance",
+    ])
+    // The same world with the detector standing on the first journey's main end is walked through.
+    expect(stuck({ ...configs, first: [[{ ...configs.first[0][0], mainEndReward: lens }]] }, detector)).toEqual([])
   })
 })

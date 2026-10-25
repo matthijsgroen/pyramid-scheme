@@ -203,3 +203,101 @@ describe("placeFragments behind a hidden corridor", () => {
     expect(mergeReachabilitySupport([], support).hiddenRequirement?.()).toBe("made-up-sight")
   })
 })
+
+describe("placeFragments slot reach", () => {
+  // A made-up world: the starter journey's main path runs through a room that needs the made-up glyph,
+  // and ends in a slot behind it; the junior journey's main end is a slot nothing stands before.
+  const glyph = "made-up:glyph"
+  const starter = journeyOfTier("starter")
+  const piece: TreasureReward = { type: "made-up-piece" }
+  const slotWorld = (): Record<string, SiteConfig[]> => ({
+    [starter]: [
+      [
+        {
+          pathPuzzles: 2,
+          difficulty: "starter",
+          end: "treasure",
+          exitOrStaircase: "exit",
+          encountersByIndex: { 1: "made-up-lock" },
+          mainEndReward: { type: "fragmentSlot" },
+          sideSections: [],
+        },
+      ],
+    ],
+    [journeyOfTier("junior")]: [[{ ...plainSite()[0], mainEndReward: { type: "fragmentSlot" } }]],
+  })
+  // Ranks the starter slot first, so only the reach check keeps the piece out of the room behind its own lock.
+  const currency: CurrencyDistribution = {
+    ownsBucket: bucket => bucket === glyph,
+    toReward: () => piece,
+    thresholdFor: () => 1,
+    bucketForReward: reward => (reward.type === piece.type ? glyph : undefined),
+    demandFor: bucket => ({
+      bucket,
+      instanceId: glyph,
+      tier: "starter",
+      preferredWardKeys: [],
+      required: 1,
+      totalRequired: 1,
+    }),
+    rank: candidates =>
+      [...candidates].sort((a, b) => Number(b.journeyId === starter) - Number(a.journeyId === starter)),
+  }
+  const requirements = (familyId: string) => (familyId === "made-up-lock" ? [glyph] : undefined)
+
+  it("a slot behind a room needing the made-up glyph is skipped for another journey's end", () => {
+    const configs = slotWorld()
+    placeFragments(configs, [currency], requirements, [], [], undefined, 0, {})
+    expect(configs[journeyOfTier("junior")][0][0].mainEndReward).toEqual(piece)
+    expect(configs[starter][0][0].mainEndReward).toBeUndefined()
+  })
+})
+
+describe("placeFragments carves one-ways as the support binds them", () => {
+  // A made-up floor whose one-way names no realisation: play binds only what the registry answers.
+  const oneWayFloor = (seed: number): SiteConfig => [
+    {
+      ...plainSite()[0],
+      seed,
+      sideSections: [
+        { pathPuzzles: 1, difficulty: "starter", end: "treasure", label: "upper" },
+        { pathPuzzles: 1, difficulty: "starter", end: "treasure", label: "lower" },
+      ],
+      oneWays: [{ from: "upper", to: "lower" }],
+    },
+  ]
+  const oneWayWorld = (seed: number): Record<string, SiteConfig[]> => ({
+    [journeyOfTier("starter")]: [oneWayFloor(seed)],
+    [journeyOfTier("junior")]: [plainSite()],
+  })
+  const bindsNone: ReachabilitySupport = { resolveOneWay: () => undefined }
+  const bindsRope: ReachabilitySupport = {
+    resolveOneWay: () => ({ id: "made-up-rope", ownerMod: "made-up", prompt: "made-up.prompt" }),
+  }
+  const outcome = (seed: number, support: ReachabilitySupport): string => {
+    try {
+      placeFragments(oneWayWorld(seed), [], undefined, [], [], undefined, 0, support)
+      return "walked"
+    } catch (error) {
+      return String(error)
+    }
+  }
+  const SEEDS = Array.from({ length: 30 }, (_, n) => n + 1)
+
+  it("the merged support keeps the one-way, region-barrier and passage resolvers", () => {
+    const resolveOneWay = () => undefined
+    const resolveRegionBarrier = () => undefined
+    const resolvePassage = () => undefined
+    const merged = mergeReachabilitySupport([], { resolveOneWay, resolveRegionBarrier, resolvePassage })
+    expect(merged.resolveOneWay).toBe(resolveOneWay)
+    expect(merged.resolveRegionBarrier).toBe(resolveRegionBarrier)
+    expect(merged.resolvePassage).toBe(resolvePassage)
+  })
+
+  it("a one-way door is walked as the support resolves it", () => {
+    // Bound to nothing, every carve is refused for the one-way; bound to the made-up rope, the floor is walked.
+    expect(SEEDS.map(seed => outcome(seed, bindsNone)).every(o => /oneWayRealisationRefused/.test(o))).toBe(true)
+    expect(SEEDS.map(seed => outcome(seed, bindsRope))).toContain("walked")
+    expect(SEEDS.map(seed => outcome(seed, bindsRope)).filter(o => /oneWayRealisationRefused/.test(o))).toEqual([])
+  })
+})

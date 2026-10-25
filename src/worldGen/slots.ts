@@ -22,6 +22,9 @@ export type Slot = {
   /** True for an explicit `fragmentSlot` sentinel (always eligible); false for an open,
    * not-yet-rewarded tomb-key gate (eligible only until something else claims it). */
   isPlaceholder: boolean
+  /** The placeholder standing in the slot's room until it is filled: a walk that lists it among its reached rewards
+   * has reached the room itself, not only the floor around it. Absent for an open tomb-key gate, which has none. */
+  sentinel?: FragmentSlotReward
   /** Soft authored placement preference (a bucket id, e.g. `mapPiece:starter_treasure_tomb`)
    * — a ranking boost for that currency, not an exclusive claim. See
    * docs/game-design/keys-and-locks-solver.md, "A slot's authored placement preference is a
@@ -96,7 +99,8 @@ export const collectSlots = (
       isPlaceholder: boolean,
       preference: string | undefined,
       hidden: boolean,
-      assign: (r: TreasureReward | undefined) => void
+      assign: (r: TreasureReward | undefined) => void,
+      sentinel?: FragmentSlotReward
     ) =>
       slots.push({
         ref,
@@ -104,6 +108,7 @@ export const collectSlots = (
         tier: difficulty as Tier,
         wardKeys,
         isPlaceholder,
+        ...(sentinel ? { sentinel } : {}),
         preference,
         kind: "end",
         rewardPriority: chestWeight,
@@ -165,6 +170,7 @@ export const collectSlots = (
             tier: chain.difficulty as Tier,
             wardKeys: [],
             isPlaceholder: frag !== undefined,
+            ...(frag ? { sentinel: frag } : {}),
             ...(frag?.prefers ? { preference: frag.prefers } : {}),
             kind: frag ? "end" : "puzzle",
             ...(frag ? {} : { siteId, puzzleSeq: puzzleSeq++ }),
@@ -192,9 +198,19 @@ export const collectSlots = (
         const ref: FloorRef = { journeyId, levelIndex, floorIndex }
         if (floor.mainEndReward?.type === "fragmentSlot") {
           const f = floor
-          addSlot(ref, floor.difficulty, [], true, (floor.mainEndReward as FragmentSlotReward).prefers, false, r => {
-            f.mainEndReward = r
-          })
+          const sentinel = floor.mainEndReward as FragmentSlotReward
+          addSlot(
+            ref,
+            floor.difficulty,
+            [],
+            true,
+            sentinel.prefers,
+            false,
+            r => {
+              f.mainEndReward = r
+            },
+            sentinel
+          )
         }
         for (const section of floor.sideSections) {
           const sWardKeys = section.gate?.type === "tomb-key" ? [section.gate.wardKeyId] : []
@@ -219,7 +235,8 @@ export const collectSlots = (
               secHidden,
               r => {
                 s.endReward = r
-              }
+              },
+              section.endReward as FragmentSlotReward
             )
           } else if (section.gate?.type === "tomb-key" && !section.endReward && rewardCapable) {
             const s = section
@@ -243,7 +260,8 @@ export const collectSlots = (
                 subHidden,
                 r => {
                   ss.endReward = r
-                }
+                },
+                sub.endReward as FragmentSlotReward
               )
             } else if (sub.gate?.type === "tomb-key" && !sub.endReward && subRewardCapable) {
               const ss = sub
