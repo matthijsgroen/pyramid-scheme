@@ -169,6 +169,44 @@
       "note": "Losse munten onderweg"
     }
   },
+  "purchases": {
+    "donkey": {
+      "name": "Ezel",
+      "need": "Je hebt een ezel nodig",
+      "opens": "Draagt je spullen. Daarmee kun je de Expert-tochten op."
+    },
+    "cart": {
+      "name": "Kar",
+      "need": "Je hebt een kar nodig",
+      "opens": "Daar past het hele kamp op. Daarmee kun je de Meester-tochten op."
+    },
+    "camel": {
+      "name": "Kameel",
+      "need": "Je hebt een kameel nodig",
+      "opens": "Loopt dagen zonder water. Daarmee kom je bij het Binnenste Heiligdom."
+    },
+    "secondDonkey": {
+      "name": "Tweede ezel",
+      "need": "Je hebt een tweede ezel nodig",
+      "opens": "Nog meer sjouwkracht. Daarmee kun je de Tovenaar-tochten op."
+    },
+    "secondCamel": {
+      "name": "Tweede kameel",
+      "need": "Je hebt een tweede kameel nodig",
+      "opens": "Twee kamelen dragen genoeg water voor de Hal van Osiris."
+    },
+    "sturdyCart": {
+      "name": "Stevigere kar",
+      "need": "Je hebt een stevigere kar nodig",
+      "opens": "Breekt niet, ook niet op weg naar het Rijk der Kosmische Krachten."
+    },
+    "caravanBanner": {
+      "name": "Karavaanvaandel",
+      "opens": "Opent niks. Gewoon omdat hij mooi is."
+    },
+    "hint": "Fez verkoopt er een in {{place}}",
+    "devGrant": "Koop alle dieren"
+  },
   "level": {
     "completed": "Niveau Voltooid!"
   },

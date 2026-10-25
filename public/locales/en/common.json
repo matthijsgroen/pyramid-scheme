@@ -169,6 +169,44 @@
       "note": "Loose coins on the way"
     }
   },
+  "purchases": {
+    "donkey": {
+      "name": "Donkey",
+      "need": "You need a donkey",
+      "opens": "Carries your gear. With it you can set out on the Expert journeys."
+    },
+    "cart": {
+      "name": "Cart",
+      "need": "You need a cart",
+      "opens": "The whole camp fits on it. With it you can set out on the Master journeys."
+    },
+    "camel": {
+      "name": "Camel",
+      "need": "You need a camel",
+      "opens": "Walks for days without water. It takes you to the Inner Sanctum."
+    },
+    "secondDonkey": {
+      "name": "Second donkey",
+      "need": "You need a second donkey",
+      "opens": "Even more to carry with. With it you can set out on the Wizard journeys."
+    },
+    "secondCamel": {
+      "name": "Second camel",
+      "need": "You need a second camel",
+      "opens": "Two camels carry enough water for the Hall of Osiris."
+    },
+    "sturdyCart": {
+      "name": "Sturdier cart",
+      "need": "You need a sturdier cart",
+      "opens": "Won't break, not even on the way to the Realm of Cosmic Forces."
+    },
+    "caravanBanner": {
+      "name": "Caravan banner",
+      "opens": "Opens nothing. Just for fun."
+    },
+    "hint": "Fez sells one in {{place}}",
+    "devGrant": "Buy every animal"
+  },
   "level": {
     "completed": "Level Completed!"
   },

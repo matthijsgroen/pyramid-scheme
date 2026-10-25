@@ -18,11 +18,11 @@ registerReactionContribution(() => reaction => reactions.push(reaction))
 // Keys are enough to tell the buttons apart; none of these assertions read copy. Interpolated data
 // is appended so a label built from a nested lookup (the key ring's "<colour> key — in hand") still
 // says which colour it stands for.
-vi.mock("react-i18next", () => ({
-  useTranslation: () => ({
-    t: (key: string, opts?: Record<string, unknown>) => (opts ? `${key}:${JSON.stringify(opts)}` : key),
-  }),
-}))
+// One t for every render, as react-i18next gives: hooks memoise on it.
+vi.mock("react-i18next", () => {
+  const t = (key: string, opts?: Record<string, unknown>) => (opts ? `${key}:${JSON.stringify(opts)}` : key)
+  return { useTranslation: () => ({ t }) }
+})
 
 // The screen's own click handling is what's under test, so the floor comes from here rather than
 // from a real assembly the player would have to walk through first.
