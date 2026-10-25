@@ -12,6 +12,7 @@ import {
   spotProgress,
   startedStructures,
   structureProgress,
+  updateCampSave,
 } from "./campState"
 
 const table: CampStepTable = [
@@ -121,6 +122,13 @@ describe("ids the table does not know", () => {
     expect(inPlace(save, table)).toEqual(new Set(["cup", "hut", "lamp"]))
     expect(readCampSave(save)).toBe(save)
     expect(recordFind(save, "rug").finds).toContain("goneFind")
+    const grown = growCamp(recordFind(save, "pit"), table)
+    expect(grown.grown).toEqual(["goneSprout", "shoot"])
+    expect(grown.parts.goneStructure).toEqual(["a"])
+    const parted = recordPart(save, "ring", "sand")
+    expect(parted.parts.goneStructure).toEqual(["a"])
+    expect(parted.parts.hut).toContain("goneSail")
+    expect(parted.finds).toContain("goneFind")
   })
 })
 
@@ -166,5 +174,28 @@ describe("readCampSave", () => {
   it("gives a version 1 save back unchanged", () => {
     const save: CampSave = { version: 1, finds: ["cup"], parts: { hut: ["poles"] }, grown: ["shoot"] }
     expect(readCampSave(save)).toBe(save)
+  })
+})
+
+describe("updateCampSave", () => {
+  const record = (stored: unknown): unknown => updateCampSave(stored, save => recordFind(save, "cup"))
+
+  it.each([
+    ["nothing", undefined],
+    ["null", null],
+  ])("starts from the empty save when %s is stored", (_name, stored) => {
+    expect(record(stored)).toEqual({ ...emptyCampSave(), finds: ["cup"] })
+  })
+
+  it("records into a version 1 save", () => {
+    expect(record({ ...emptyCampSave(), finds: ["rug"] })).toEqual({ ...emptyCampSave(), finds: ["rug", "cup"] })
+  })
+
+  it.each([
+    ["a newer version", { version: 2, finds: ["rug"], parts: {}, grown: [], extra: true }],
+    ["a damaged version 1 save", { version: 1, finds: ["rug", 7], parts: {}, grown: [] }],
+    ["an older shape", { found: ["rug"] }],
+  ])("leaves %s untouched", (_name, stored) => {
+    expect(record(stored)).toBe(stored)
   })
 })

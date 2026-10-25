@@ -41,7 +41,7 @@ const duplicates = (ids: readonly string[]): string[] => [...new Set(ids.filter(
 
 export const campStepProblems = (table: CampStepTable): string[] => {
   const problems: string[] = []
-  const known = new Set(table.map(entry => entry.id))
+  const sourceOf = new Map(table.map(entry => [entry.id, entry.source]))
   for (const id of duplicates(table.map(entry => entry.id))) problems.push(`step "${id}" appears more than once`)
   for (const entry of table) {
     if (entry.source === "structure") {
@@ -59,7 +59,9 @@ export const campStepProblems = (table: CampStepTable): string[] => {
         problems.push(`growing step "${entry.id}" names no step it grows from`)
       else
         for (const from of entry.growsFrom)
-          if (!known.has(from)) problems.push(`growing step "${entry.id}" grows from unknown step "${from}"`)
+          if (!sourceOf.has(from)) problems.push(`growing step "${entry.id}" grows from unknown step "${from}"`)
+          else if (sourceOf.get(from) === "given" || sourceOf.get(from) === "bought")
+            problems.push(`growing step "${entry.id}" grows from "${from}", which is ${sourceOf.get(from)}`)
     }
   }
   return problems

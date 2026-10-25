@@ -2,7 +2,7 @@
 import { beforeEach, describe, expect, it } from "vitest"
 import { act, renderHook } from "@testing-library/react"
 import { readModState } from "@/app/state/useModState"
-import { clearGameData } from "@/support/useGameStorage"
+import { clearGameData, writeGameData } from "@/support/useGameStorage"
 import type { CampStepTable } from "@/mods/camp/game/campSteps"
 import { useCampProgress } from "./useCampProgress"
 
@@ -43,5 +43,16 @@ describe("useCampProgress", () => {
       parts: { hut: ["poles"] },
       grown: ["sprig"],
     })
+  })
+})
+
+describe("a save this build cannot read", () => {
+  it("shows as the empty camp and survives a record untouched", async () => {
+    const newer = { version: 2, finds: ["seedling"], parts: {}, grown: [] }
+    await writeGameData({ "pyramid-scheme-mod-camp": newer })
+    const { result } = renderHook(() => useCampProgress(table))
+    await act(async () => result.current.recordFind("seedling"))
+    expect(result.current.found).toEqual({})
+    expect(readModState("camp")).toEqual(newer)
   })
 })

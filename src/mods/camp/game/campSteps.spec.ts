@@ -61,6 +61,19 @@ describe("campStepProblems", () => {
       'growing step "sprout" grows from unknown step "seed"',
     ])
   })
+
+  it("names a growing step that grows from a given or bought step, which never stands by being found", () => {
+    expect(
+      campStepProblems([
+        step({ id: "bed", source: "given" }),
+        step({ id: "cart", source: "bought" }),
+        step({ id: "sprout", source: "grows", growsFrom: ["bed", "cart"] }),
+      ])
+    ).toEqual([
+      'growing step "sprout" grows from "bed", which is given',
+      'growing step "sprout" grows from "cart", which is bought',
+    ])
+  })
 })
 
 describe("campDemand", () => {

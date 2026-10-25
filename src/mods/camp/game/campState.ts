@@ -16,18 +16,37 @@ export const emptyCampSave = (): CampSave => ({ version: 1, finds: [], parts: {}
 const isStringArray = (value: unknown): value is string[] =>
   Array.isArray(value) && value.every(item => typeof item === "string")
 
-const isCampSave = (value: unknown): value is CampSave => {
-  if (typeof value !== "object" || value === null) return false
-  const save = value as Record<string, unknown>
-  if (save.version !== 1 || !isStringArray(save.finds) || !isStringArray(save.grown)) return false
+const isCampSaveV1 = (save: Record<string, unknown>): boolean => {
+  if (!isStringArray(save.finds) || !isStringArray(save.grown)) return false
   const parts = save.parts
   return (
     typeof parts === "object" && parts !== null && !Array.isArray(parts) && Object.values(parts).every(isStringArray)
   )
 }
 
-// Version 1 is the first camp save, so a stored value of any other shape starts the camp afresh.
-export const readCampSave = (stored: unknown): CampSave => (isCampSave(stored) ? stored : emptyCampSave())
+// One branch per save version; a later version adds its migration here. A version this build does not know
+// (a save from a newer build) or a damaged save is unreadable, never guessed at.
+const readable = (stored: unknown): CampSave | undefined => {
+  if (typeof stored !== "object" || stored === null) return undefined
+  const save = stored as Record<string, unknown>
+  switch (save.version) {
+    case 1:
+      return isCampSaveV1(save) ? (stored as CampSave) : undefined
+    default:
+      return undefined
+  }
+}
+
+// An unreadable save shows as the empty camp.
+export const readCampSave = (stored: unknown): CampSave => readable(stored) ?? emptyCampSave()
+
+// A change to the stored camp. Nothing stored starts from the empty camp; a stored value this build cannot
+// read is handed back untouched, so a newer or damaged save is never overwritten by an empty one.
+export const updateCampSave = (stored: unknown, action: (save: CampSave) => CampSave): unknown => {
+  if (stored === null || stored === undefined) return action(emptyCampSave())
+  const save = readable(stored)
+  return save === undefined ? stored : action(save)
+}
 
 export const recordFind = produce((save: CampSave, step: string) => {
   if (!save.finds.includes(step)) save.finds.push(step)
