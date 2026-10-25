@@ -145,7 +145,7 @@ One agent (Sonnet).
 - [x] **Step 2: Run** `yarn test src/app/home src/app/homecomingRegistry` — FAIL.
 - [x] **Step 3: Implement.** Each registry's comment says what a mod contributes and what is shown when none does. Hooks run in fixed registry order (the pattern of `rewardContributions.ts`).
 - [x] **Step 4: Run** the specs — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Commit** — `feat: seams for the camp home — found state, entrances, rest, haul`
+- [x] **Step 5: Commit** — `feat: seams for the camp home — found state, entrances, rest, haul`
 
 ---
 
