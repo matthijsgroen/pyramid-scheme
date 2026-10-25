@@ -2589,24 +2589,6 @@ silver, gold, lapis), and still an ordinary, worn object.
 
 Entries are deleted as they land, like the rest of this file.
 
-### `sellable/sell_stone_3` — Worn Reed Sandal
-
-1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
-
-```
-FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
-
-STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
-
-THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
-
-SUBJECT: Worn Reed Sandal (Versleten Rieten Sandaal). A single worn sandal woven from pale papyrus reed, the sole rubbed thin and a strap frayed loose.
-
-BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
-```
-
-**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_stone_3 --size=256`
-
 ### `sellable/sell_stone_4` — Faded Linen Scrap
 
 1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
