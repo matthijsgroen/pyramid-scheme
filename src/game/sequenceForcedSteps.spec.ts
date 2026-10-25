@@ -5,6 +5,7 @@ import type { Direction, FloorConfig, FloorGrid, GridCell } from "./siteTypes"
 import { floorLock, regionsOf } from "./floorLock"
 import { entering, reachableStates, type LockState } from "./lockWalk"
 import { walkFloorLock } from "./floorLockWalk"
+import { lockWithoutPuzzle } from "./lockPuzzles"
 import { progressState, spoiledState } from "./sequence"
 import { walkPresses } from "./sequencePlay"
 import { cellAddress } from "./cellAddress"
@@ -169,7 +170,8 @@ describe.each(FLOORS)("forced steps over $name", ({ make, minSound }) => {
         const refused = refusal({ success: true, grid, attempt: 0 })
         if (walk.sound) {
           kept++
-          expect(refused).toBeNull()
+          // A sound walk is refused only for the next criterion: a lock with no puzzle on its way.
+          expect(refused?.criterion ?? null).toBe(lockWithoutPuzzle(grid).length > 0 ? "lock holds a puzzle" : null)
         } else expect(refused?.criterion).toBe("lock walks sound")
       }
       expect(kept).toBeGreaterThan(0)

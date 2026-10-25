@@ -20,7 +20,7 @@ import { buildWorldConfigs } from "../src/mods/buildWorldConfigs"
 import { MOD_REACHABILITY_SUPPORT } from "../src/mods/registeredMods"
 import { checkPlacedWeb } from "../src/worldGen/webBakeCheck"
 import { placementMoved, webJourneysOf } from "../src/worldGen/webPlacement"
-import { gridShape, layoutKey, layoutMoved } from "../src/worldGen/layoutCheck"
+import { layoutKey, layoutMoved } from "../src/worldGen/layoutCheck"
 import type { PickLayout } from "../src/worldGen/configBuilder"
 import type { WebPlacement } from "../src/worldGen/webPlacement"
 import { generateFile, printStats } from "../src/worldGen/serializer"
@@ -35,25 +35,14 @@ import {
   findUnwalkedLocks,
   floorsOwingALock,
 } from "../src/worldGen/validate"
-import { assembleFloor, DEFAULT_PACKING, PACKING_CEILING } from "../src/game/siteAssembler"
-import {
-  PACKING_STEP,
-  refusal as carveRefusal,
-  searchCarvePair,
-  verifyCarvePair,
-  type CarveCriterion,
-  type CarvePairFound,
-  type CarvePairMissing,
-} from "../src/worldGen/carveSeedSearch"
+import { refusal as carveRefusal } from "../src/worldGen/carveSeedSearch"
 import { generatedWorldConfigs } from "../src/data/generatedWorld"
-import { floorHash, LEDGER_PATH, readLedger, sourceFingerprint, type CarveLedger } from "./carveLedger"
-import type { AssemblerResult, FloorConfig as GameFloorConfig, FloorGrid } from "../src/game/siteTypes"
-import type { FloorConfig, SiteConfig } from "../src/worldGen/types"
-import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
-import { resolveKeyRequirements, resolveEncounterMeta, ALL_FAMILY_META } from "../src/mods/allFamilyMeta"
+import { readLedger, writeLedger } from "./carveLedger"
+import { carveAt, makeLayoutPicker, printFailures, printPicks, unboundOutsideInputs } from "./layoutPicker"
+import type { FloorConfig as GameFloorConfig, FloorGrid } from "../src/game/siteTypes"
+import type { FloorConfig } from "../src/worldGen/types"
+import { resolveEncounterMeta, ALL_FAMILY_META } from "../src/mods/allFamilyMeta"
 import { puzzleSeeds } from "../src/data/puzzleSeeds"
-import { resolveOneWayRealisation } from "../src/mods/allOneWayRealisations"
-import { resolvePassageRealisation } from "../src/mods/allPassageRealisations"
 import { HIEROGLYPH_REQUIRED } from "../src/mods/hieroglyph/game/hieroglyphData"
 import { assignFragmentPieceIndices, hieroglyphCoverage } from "../src/mods/hieroglyph/game/fragmentFinalize"
 
@@ -74,166 +63,27 @@ if (errors.length > 0) {
 const validateOnly = process.argv.includes("--validate-only")
 
 // THE LAYOUT IS PICKED BEFORE THE LOOT. `pickLayout` runs inside the build (configBuilder.ts) once the world's
-// structure is final and before the web and any loot are placed: every floor gets the (packing, seed) pair the carve
-// search finds, and placement then walks the floors the player walks. Nothing placed afterwards may move a wall: the
-// final world is carved again from scratch and compared with the pick (`layoutMoved`), and a web that lands elsewhere
-// on it is refused too (`placementMoved`).
+// structure is final and before the web and any loot are placed: every floor gets the layout closest to its authored
+// packing that meets every hard criterion (layoutPicker.ts), and placement then walks the floors the player walks.
+// Nothing placed afterwards may move a wall: the final world is carved again from scratch and compared with the pick
+// (`layoutMoved`), and a web that lands elsewhere on it is refused too (`placementMoved`).
 //
-// A floor is carved at the first (packing, seed) pair that carves on the assembler's FIRST attempt, walks
-// sound and leaves no dead region: every seed at the authored `packing` is tried before the packing
-// rises a step. Both are stamped on EVERY floor, including the ones where they equal what the address
-// formula and DEFAULT_PACKING produce: a floor that leaned on either would re-carve silently the day the
-// seed formula, a journey id or the default moved. A floor no pair satisfies is an authoring the
-// assembler cannot satisfy, not bad luck, and is named (see STRICT_ATTEMPT_ZERO); it is pinned at the
-// pair the runtime ladder starts from.
-const CARVE_SEED_BUDGET = 100
-// A floor no pair satisfies needs more than `packing` and a seed can give it (the grid the assembler
-// derives is too small, and only its widening rungs grow it). Off, it is listed by name and carved by the
-// ladder as the runtime carves it; on, it fails the build.
-const STRICT_ATTEMPT_ZERO = process.env.STRICT_ATTEMPT_ZERO === "1"
-// A full re-search from scratch: every baked pin and every ledger entry is ignored. Run it after
-// changing the assembler or adding a criterion, so the pins are the earliest pair that satisfies today's
+// Both `seed` and `packing` are stamped on EVERY floor, including the ones where they equal what the address formula
+// and DEFAULT_PACKING produce: a floor that leaned on either would re-carve silently the day the seed formula, a
+// journey id or the default moved.
+//
+// CARVE_RESEARCH=1 is a full re-search from scratch: every baked pin and every ledger entry is ignored. Run it after
+// changing the assembler or adding a criterion, so the pins are the layouts closest to the authoring under today's
 // rules rather than the ones that happened to hold before.
 const CARVE_RESEARCH = process.env.CARVE_RESEARCH === "1"
-// A floor already carrying a baked (packing, seed) is verified, one carve, and searched only when the
-// pair no longer holds. A floor the search once failed is recorded in src/data/carveLedger.json against a
-// hash of its authoring and of every source file the carve reads, so it is skipped only while nothing
-// that could change the outcome has changed: the day the assembler changes, its hash moves and the floor
-// is searched again, and a floor that now carves is noticed and stamped like any other.
-const carveLedger = readLedger()
-const nextLedger: CarveLedger = {}
-const carveSources = sourceFingerprint([
-  "src/game/siteAssembler.ts",
-  "src/worldGen/carveSeedSearch.ts",
-  "src/mods/allFamilyMeta.ts",
-])
-const carveStats = { verified: 0, ledgered: 0, searched: 0 }
-const unsatisfiable: string[] = []
-const unassembled: string[] = []
-const carveSearch: {
-  key: string
-  offset: number
-  baseRefusal: CarveCriterion | null
-  authored: number
-  packing: number
-}[] = []
-// The shape of every floor's grid as its layout was picked: what the final world must still carve to.
-const pickedShapes = new Map<string, string>()
-// Floors pinned at the base pair because no pair satisfies them, carved by the runtime ladder.
-const laddered = new Set<string>()
+const picker = makeLayoutPicker({
+  ledger: CARVE_RESEARCH ? {} : readLedger(),
+  baked: CARVE_RESEARCH ? undefined : generatedWorldConfigs,
+})
 
-// One floor carved with the bake's resolvers, at the floor's own pin when it carries one.
-const carveAt = (journeyId: string, levelNr: number, floorIndex: number) => {
-  const base = floorAssemblySeed(persistentInteriorSeed(journeyId), levelNr, floorIndex)
-  // The whole address, so the ids derived from it here — a stairhead the authoring left unnamed,
-  // a lever's gate stem — are the ones the runtime builds for this same floor.
-  const floorRef = { journeyId, levelIndex: levelNr - 1, floorIndex }
-  return (config: FloorConfig, maxAttempts: number) =>
-    assembleFloor(journeyId, config as GameFloorConfig, base, resolveEncounterMeta, {
-      resolveKeyRequirements,
-      resolveOneWay: resolveOneWayRealisation,
-      resolvePassage: resolvePassageRealisation,
-      floorRef,
-      maxAttempts,
-    })
-}
-
-// A lock whose inputs come from outside the floor (a web's `A outside`) is bound by the web, which is laid only
-// after the layout is picked: such a lock cannot carve when its floor is picked, so it is refused by name.
-const unboundOutsideInputs = (configs: Record<string, SiteConfig[]>): string[] =>
-  Object.entries(configs).flatMap(([journeyId, sites]) =>
-    sites.flatMap((site, levelIndex) =>
-      site.flatMap((floor, floorIndex) =>
-        (floor.locks ?? [])
-          .filter(placed => (placed.lock.inputs?.length ?? 0) > 0 && !placed.web)
-          .map(
-            placed =>
-              `${journeyId} level ${levelIndex + 1} floor ${floorIndex}: lock ${placed.as ?? placed.lock.name} takes inputs from outside the floor, which the web binds only after the layout is picked`
-          )
-      )
-    )
-  )
-
-const pickFloor = (journeyId: string, floor: FloorConfig, levelNr: number, floorIndex: number) => {
-  const cacheKey = layoutKey(journeyId, levelNr, floorIndex)
-  const base = floor.seed ?? floorAssemblySeed(persistentInteriorSeed(journeyId), levelNr, floorIndex)
-  const authored = floor.packing ?? DEFAULT_PACKING
-  const carve = carveAt(journeyId, levelNr, floorIndex)
-  // The authored packing is passed as written (possibly absent), so a floor the search leaves alone
-  // carves exactly as the runtime carves its unstamped config.
-  const assembleAt = (seed: number, packing: number, maxAttempts: number) =>
-    carve({ ...floor, seed, packing: packing === authored ? floor.packing : packing }, maxAttempts)
-  // The floor as the runtime carves it when nothing is stamped: the ladder widens the grid when the
-  // authored packing cannot carve it on the first attempt.
-  let ladderMemo: AssemblerResult | undefined
-  const ladderCarve = () => (ladderMemo ??= assembleAt(base, authored, Infinity))
-  const options = {
-    authoredPacking: authored,
-    ceiling: PACKING_CEILING,
-    seedBudget: CARVE_SEED_BUDGET,
-    fullLadder: Infinity,
-  }
-  const hash = floorHash(carveSources, floor, { ...options, step: PACKING_STEP })
-  const baked = CARVE_RESEARCH ? undefined : generatedWorldConfigs[journeyId]?.[levelNr - 1]?.[floorIndex]
-  const verified = baked
-    ? verifyCarvePair(base, { seed: baked.seed ?? base, packing: baked.packing ?? authored }, assembleAt, options)
-    : null
-  const recorded = !CARVE_RESEARCH && !verified ? carveLedger[cacheKey] : undefined
-  let search: CarvePairFound | CarvePairMissing
-  if (verified) {
-    carveStats.verified++
-    search = verified
-  } else if (recorded?.hash === hash) {
-    carveStats.ledgered++
-    const ladder = ladderCarve()
-    search = {
-      found: false,
-      hardest: "carves",
-      detail: recorded.refusal,
-      tried: 0,
-      reached: authored,
-      baseRefusal: carveRefusal(ladder)?.criterion ?? null,
-    }
-  } else {
-    carveStats.searched++
-    search = searchCarvePair(base, assembleAt, options)
-  }
-  // WITH WHY, NOT JUST WHERE. The assembler refuses an authoring it can never satisfy — a one-way
-  // or a handle naming a section the floor does not have, a switch asking for more junctions than
-  // `forks` reserves — and names it in the reason. Printed as a bare floor id, all of those reach
-  // the author as "cannot be carved", which reads as a seed problem and sends them looking at the
-  // wrong thing.
-  if (search.found) {
-    carveSearch.push({
-      key: cacheKey,
-      offset: search.offset,
-      baseRefusal: search.baseRefusal,
-      authored,
-      packing: search.packing,
-    })
-    floor.seed = search.seed
-    floor.packing = search.packing
-    pickedShapes.set(cacheKey, gridShape(search.grid))
-    return
-  }
-  const refusal =
-    recorded?.hash === hash && !verified
-      ? recorded.refusal
-      : `${journeyId} level ${levelNr} floor ${floorIndex}: no seed in ${search.tried} tries up to packing ${search.reached} satisfies "${search.hardest}" — ${search.detail}`
-  nextLedger[cacheKey] = { hash, refusal }
-  unsatisfiable.push(refusal)
-  carveSearch.push({ key: cacheKey, offset: 0, baseRefusal: search.baseRefusal, authored, packing: authored })
-  floor.seed = base
-  floor.packing = authored
-  laddered.add(cacheKey)
-  const ladder = ladderCarve()
-  if (STRICT_ATTEMPT_ZERO || !ladder.success) unassembled.push(refusal)
-  if (ladder.success) pickedShapes.set(cacheKey, gridShape(ladder.grid))
-}
-
-// Every floor of the structural world gets its layout. A floor that cannot carve at the seed the runtime hands it
-// renders "Site layout unavailable." for every player, permanently, so the bake stops here, before any loot is
-// placed on a floor nobody can walk.
+// Every floor of the structural world gets its layout, or is named. A floor no layout meets renders a floor a player
+// can lose a run on, or none at all, so the bake stops here, after every floor has been tried and before any loot is
+// placed, listing every one of them.
 const pickLayout: PickLayout = configs => {
   const outside = unboundOutsideInputs(configs)
   if (outside.length > 0) {
@@ -241,12 +91,11 @@ const pickLayout: PickLayout = configs => {
     for (const line of outside) console.error(`    ${line}`)
     process.exit(1)
   }
-  for (const [journeyId, sites] of Object.entries(configs))
-    sites.forEach((site, levelIndex) => site.forEach((floor, f) => pickFloor(journeyId, floor, levelIndex + 1, f)))
-  if (unassembled.length > 0) {
-    console.error(`✗ ${unassembled.length} floor(s) cannot be carved at the seed the runtime hands them:`)
-    for (const floor of unassembled.slice(0, 20)) console.error(`    ${floor}`)
-    if (unassembled.length > 20) console.error(`    … and ${unassembled.length - 20} more`)
+  picker.pickAll(configs)
+  if (picker.failures.length > 0) {
+    printPicks(picker.picks, picker.stats)
+    printFailures(picker.failures)
+    writeLedger(picker.nextLedger)
     process.exit(1)
   }
 }
@@ -278,7 +127,7 @@ const finalGridOf = (journeyId: string, levelNr: number, floorIndex: number) =>
 
 // Loot placed after the pick must move no wall, and the web must stand where it was placed.
 const movedAfterPick = [
-  ...layoutMoved(pickedShapes, configs, (journeyId, levelNr, floorIndex, config) =>
+  ...layoutMoved(picker.pickedShapes, configs, (journeyId, levelNr, floorIndex, config) =>
     carveFinal(journeyId, config as FloorConfig, levelNr, floorIndex)
   ),
   ...webPlacements.flatMap(placed => placementMoved(placed, configs, (id, levelNr, f) => finalGridOf(id, levelNr, f)!)),
@@ -291,15 +140,13 @@ if (movedAfterPick.length > 0) {
 }
 
 // A web floor's layout is picked before its web is laid, so once the web's doors stand on it the floor is asked the
-// carve criteria again: a door can shut what its lock's walk counted on. A laddered floor carves past attempt 0 by
-// construction, so that one criterion is not asked of it.
+// hard criteria again: a door can shut what its lock's walk counted on.
 const webFloorsRefused = webJourneysOf(configs).flatMap(([, id]) =>
   configs[id].flatMap((site, levelIndex) =>
     site.flatMap((floor, f) => {
-      const key = layoutKey(id, levelIndex + 1, f)
       const result = carveAt(id, levelIndex + 1, f)(floor, Infinity)
-      const refused = carveRefusal(result)
-      if (!refused || (refused.criterion === "attempt 0" && laddered.has(key))) return []
+      const refused = carveRefusal(result, floor as GameFloorConfig)
+      if (!refused) return []
       return [
         `${id} level ${levelIndex + 1} floor ${f}: "${refused.criterion}" once the web is laid — ${refused.detail}`,
       ]
@@ -374,24 +221,11 @@ if (unseededDoors.length > 0) {
 // state it died in is printed because that is what a person walks by hand to confirm it.
 const { walked, stranding } = findStrandingLocks(configs, carveFinal)
 
-// What the search did, printed on every run: how many floors carve at their authored packing and the
-// address's own seed, how many needed a seed past it, and how many needed a packing above what was
-// authored. The last is the author's cue: the authored value cannot carve, and the baked one is what the
-// player gets, so each such floor is listed with how far it rose.
-const moved = carveSearch.filter(f => f.offset > 0)
-const raised = carveSearch.filter(f => f.packing !== f.authored)
-const pastAttemptZero = carveSearch.filter(f => f.baseRefusal === "attempt 0")
-console.log(
-  `  Carve search: ${carveSearch.length} floor(s), ${moved.length} moved off their address seed (worst offset ${Math.max(0, ...carveSearch.map(f => f.offset))}), ${raised.length} raised above their authored packing (worst +${Math.max(0, ...carveSearch.map(f => f.packing - f.authored)).toFixed(2)}), ${pastAttemptZero.length} carve only past attempt 0 as authored, ${unsatisfiable.length} unsatisfiable up to packing ${PACKING_CEILING}`
-)
-console.log(
-  `  Carve pins: ${carveStats.verified} verified in one carve, ${carveStats.ledgered} unsatisfiable floor(s) skipped on the ledger, ${carveStats.searched} searched${CARVE_RESEARCH ? " (CARVE_RESEARCH=1: every pin and ledger entry ignored)" : ""}`
-)
-for (const line of unsatisfiable) console.log(`    unsatisfiable: ${line}`)
-if (raised.length > 0) {
-  console.log(`  Floors whose authored packing cannot carve (authored -> baked), to correct in the authoring:`)
-  for (const f of raised) console.log(`    ${f.key}: ${f.authored} -> ${f.packing}`)
-}
+// What the layout stage did, printed on every run: how many floors moved off their address seed, how many needed a
+// packing above what was authored (the author's cue: the authored value cannot carve, so each is listed with how far
+// it rose), and how many carve only on the ladder.
+printPicks(picker.picks, picker.stats)
+if (CARVE_RESEARCH) console.log("  (CARVE_RESEARCH=1: every pin and ledger entry ignored)")
 
 // How far the sweep reached, printed on every run: a walk that reports no failure is otherwise
 // indistinguishable from a walk that never got to a floor, and this is the number a reader compares
@@ -477,9 +311,6 @@ writeFileSync(
   generateFile(configs, { hieroglyphRequired: HIEROGLYPH_REQUIRED })
 )
 console.log("✓ Written: src/data/generatedWorld.ts")
-writeFileSync(
-  LEDGER_PATH,
-  JSON.stringify(Object.fromEntries(Object.entries(nextLedger).sort(([a], [b]) => a.localeCompare(b))), null, 2) + "\n"
-)
+writeLedger(picker.nextLedger)
 console.log("✓ Written: src/data/carveLedger.json")
 console.log("  Run `yarn loot-report` to refresh docs/loot-report.md")

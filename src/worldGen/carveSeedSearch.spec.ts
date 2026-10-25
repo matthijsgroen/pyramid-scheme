@@ -6,6 +6,7 @@ import {
   roomlessRouteStubs,
   searchCarvePair,
   seedAtOffset,
+  refusal,
   verifyCarvePair,
   STAMPED_SEED_RANGE,
   type CarvePairOptions,
@@ -31,44 +32,15 @@ describe(packingAtRung, () => {
 describe(searchCarvePair, () => {
   it("keeps the authored pair when the base seed carves on the first attempt", () => {
     const found = searchCarvePair(100, () => carvedAt(0), options())
-    expect(found).toMatchObject({ found: true, seed: 100, packing: 0.1, offset: 0, baseRefusal: null })
+    expect(found).toMatchObject({ kind: "found", seed: 100, packing: 0.1, offset: 0, laddered: false })
   })
 
-  it("moves the seed before it raises the packing, and says the base refused late", () => {
-    const found = searchCarvePair(100, seed => (seed < 103 ? carvedAt(9) : carvedAt(0)), options())
-    expect(found).toMatchObject({ found: true, seed: 103, packing: 0.1, offset: 3, baseRefusal: "attempt 0" })
+  it("moves the seed before it raises the packing", () => {
+    const found = searchCarvePair(100, seed => (seed < 103 ? failed : carvedAt(0)), options())
+    expect(found).toMatchObject({ kind: "found", seed: 103, packing: 0.1, offset: 3, laddered: false })
   })
 
-  it("raises the packing one step only after every seed at the lower one is spent", () => {
-    const asked: [number, number][] = []
-    searchCarvePair(
-      10,
-      (seed, packing) => {
-        asked.push([seed, packing])
-        return failed
-      },
-      options({ seedBudget: 1, ceiling: 0.14 })
-    )
-    expect(asked).toEqual([
-      [10, 0.1],
-      [11, 0.1],
-      [10, 0.12],
-      [11, 0.12],
-      [10, 0.14],
-      [11, 0.14],
-    ])
-  })
-
-  it("settles on the smallest packing any seed carves at, and the seed that did", () => {
-    const found = searchCarvePair(
-      50,
-      (seed, packing) => (packing >= 0.14 && seed === 52 ? carvedAt(0) : carvedAt(3)),
-      options({ ceiling: 0.5 })
-    )
-    expect(found).toMatchObject({ found: true, seed: 52, packing: 0.14, offset: 2, baseRefusal: "attempt 0" })
-  })
-
-  it("gives only the authored packing's base seed the whole ladder and every other try one attempt", () => {
+  it("raises the packing one step only after every seed at the lower one is spent, then tries the ladder", () => {
     const asked: [number, number, number][] = []
     searchCarvePair(
       10,
@@ -76,51 +48,124 @@ describe(searchCarvePair, () => {
         asked.push([seed, packing, attempts])
         return failed
       },
-      options({ seedBudget: 1, ceiling: 0.12, fullLadder: 60 })
+      options({ seedBudget: 2, ceiling: 0.14, fullLadder: 60 })
     )
     expect(asked).toEqual([
-      [10, 0.1, 60],
+      [10, 0.1, 1],
       [11, 0.1, 1],
       [10, 0.12, 1],
       [11, 0.12, 1],
+      [10, 0.14, 1],
+      [11, 0.14, 1],
+      [10, 0.1, 60],
     ])
   })
 
-  it("never asks for a packing past the ceiling", () => {
-    const asked: number[] = []
-    searchCarvePair(
-      1,
-      (_seed, packing) => {
-        asked.push(packing)
-        return failed
-      },
-      options({ seedBudget: 0, ceiling: 0.16 })
+  it("the pair closest to the authored packing wins", () => {
+    const passesAt = new Set([0.12, 0.16])
+    const found = searchCarvePair(
+      50,
+      (seed, packing) => (passesAt.has(packing) && seed === 52 ? carvedAt(0) : failed),
+      options({ ceiling: 0.5 })
     )
-    expect(asked).toEqual([0.1, 0.12, 0.14, 0.16])
+    expect(found).toMatchObject({ kind: "found", seed: 52, packing: 0.12, offset: 2, laddered: false })
   })
 
-  it("fails by name when no pair ever carves on the first attempt, and says how high it went", () => {
-    const missing = searchCarvePair(1, () => carvedAt(4), options({ seedBudget: 6 }))
+  it("never asks for a packing past the ceiling, and asks one authored above it at its own value only", () => {
+    const asked = (authoredPacking: number) => {
+      const packings: number[] = []
+      searchCarvePair(
+        1,
+        (_seed, packing, attempts) => {
+          if (attempts === 1) packings.push(packing)
+          return failed
+        },
+        options({ authoredPacking, seedBudget: 1, ceiling: 0.16 })
+      )
+      return packings
+    }
+    expect(asked(0.1)).toEqual([0.1, 0.12, 0.14, 0.16])
+    expect(asked(2)).toEqual([2])
+  })
+
+  it("a hard criterion no candidate meets is not found", () => {
+    let carves = 0
+    const missing = searchCarvePair(
+      1,
+      () => {
+        carves++
+        return carvedAt(0)
+      },
+      options({
+        seedBudget: 3,
+        ceiling: 0.12,
+        judge: () => ({ criterion: "no dead region", detail: "at 3,3" }),
+      })
+    )
+    expect(carves).toBe(7)
     expect(missing).toMatchObject({
-      found: false,
-      hardest: "attempt 0",
-      tried: 42,
-      reached: 0.2,
-      baseRefusal: "attempt 0",
+      kind: "notFound",
+      hardest: "no dead region",
+      detail: "at 3,3",
+      counts: { "no dead region": 7 },
+      seeds: 3,
+      packings: 2,
     })
-    expect(missing.found ? "" : missing.detail).toContain("attempt 4")
   })
 
-  it("names the true failure of the authored pair, not the ladder's late carve", () => {
-    const missing = searchCarvePair(1, (_seed, _packing, attempts) => (attempts > 1 ? carvedAt(5) : failed), options())
-    expect(missing).toMatchObject({ found: false, hardest: "carves", baseRefusal: "attempt 0" })
+  it("names the furthest criterion any candidate reached as the hardest, and counts each", () => {
+    const missing = searchCarvePair(
+      1,
+      (_seed, packing) => (packing === 0.1 ? failed : carvedAt(0)),
+      options({
+        seedBudget: 2,
+        ceiling: 0.12,
+        judge: result => (result.success ? { criterion: "lock holds a puzzle", detail: "lever" } : refusal(result)),
+      })
+    )
+    expect(missing).toMatchObject({
+      kind: "notFound",
+      hardest: "lock holds a puzzle",
+      counts: { carves: 3, "lock holds a puzzle": 2 },
+    })
+  })
+
+  it("packing never fails a floor", () => {
+    const found = searchCarvePair(
+      100,
+      (_seed, _packing, attempts) => (attempts > 1 ? carvedAt(7) : failed),
+      options({ fullLadder: 60 })
+    )
+    expect(found).toMatchObject({ kind: "found", seed: 100, packing: 0.1, offset: 0, laddered: true })
+  })
+
+  it("the ladder carve must meet the hard criteria", () => {
+    const missing = searchCarvePair(
+      100,
+      (_seed, _packing, attempts) => (attempts > 1 ? carvedAt(7) : failed),
+      options({
+        fullLadder: 60,
+        judge: result =>
+          !result.success
+            ? refusal(result)
+            : result.attempt > 0
+              ? { criterion: "lock walks sound", detail: "strands" }
+              : null,
+      })
+    )
+    expect(missing).toMatchObject({ kind: "notFound", hardest: "lock walks sound" })
+  })
+
+  it("asks no attempt 0 of a carve: a late carve meeting every hard criterion is accepted", () => {
+    expect(
+      refusal({ success: true, grid: { cells: [], entrancePos: [0, 0] } as unknown as FloorGrid, attempt: 9 })
+    ).toBeNull()
   })
 
   it("names a floor that never carves as such", () => {
     expect(searchCarvePair(1, () => failed, options({ seedBudget: 2 }))).toMatchObject({
-      found: false,
+      kind: "notFound",
       hardest: "carves",
-      baseRefusal: "carves",
     })
   })
 
@@ -138,7 +183,7 @@ describe(searchCarvePair, () => {
         assembleFloor("site", { ...config, seed, packing }, 0, undefined, { maxAttempts }),
       options({ seedBudget: 10, ceiling: PACKING_CEILING })
     )
-    if (!found.found) throw new Error("no pair")
+    if (found.kind !== "found") throw new Error("no pair")
     const again = assembleFloor("site", { ...config, seed: found.seed, packing: found.packing }, 0)
     expect(again).toMatchObject({ success: true, attempt: 0 })
   })
@@ -157,11 +202,11 @@ describe(searchCarvePair, () => {
       const asked: number[] = []
       searchCarvePair(
         unsafeBase,
-        seed => {
-          asked.push(seed)
+        (seed, _packing, attempts) => {
+          if (attempts === 1) asked.push(seed)
           return failed
         },
-        options({ seedBudget: budget, ceiling: 0.1, fullLadder: 1 })
+        options({ seedBudget: budget + 1, ceiling: 0.1, fullLadder: 2 })
       )
       expect(asked).toHaveLength(budget + 1)
       expect(asked[0]).toBe(unsafeBase)
@@ -198,7 +243,7 @@ describe(searchCarvePair, () => {
         (seed, _packing, maxAttempts) => (seed === unsafeBase ? failed : carve(seed, maxAttempts)),
         options({ seedBudget: budget, ceiling: 0.1 })
       )
-      if (!found.found) throw new Error("no seed")
+      if (found.kind !== "found") throw new Error("no seed")
       expect(found.offset).toBeGreaterThan(0)
       expect(Number.isSafeInteger(found.seed)).toBe(true)
       const literal = Number(String(found.seed))
@@ -211,28 +256,46 @@ describe(searchCarvePair, () => {
 describe(verifyCarvePair, () => {
   const ladder = { authoredPacking: 0.1, fullLadder: Infinity }
 
-  it("keeps a pinned pair that carves on the first attempt, in one carve plus the base's own report", () => {
+  it("keeps a pinned pair that carves on the first attempt, in one carve", () => {
     const asked: [number, number, number][] = []
     const found = verifyCarvePair(
       100,
       { seed: 103, packing: 0.14 },
       (seed, packing, attempts) => {
         asked.push([seed, packing, attempts])
-        return seed === 103 ? carvedAt(0) : carvedAt(4)
+        return carvedAt(0)
       },
       ladder
     )
-    expect(found).toMatchObject({ found: true, seed: 103, packing: 0.14, offset: 3, baseRefusal: "attempt 0" })
-    expect(asked).toEqual([
-      [103, 0.14, 1],
-      [100, 0.1, Infinity],
-    ])
+    expect(found).toMatchObject({ kind: "found", seed: 103, packing: 0.14, offset: 3, laddered: false })
+    expect(asked).toEqual([[103, 0.14, 1]])
   })
 
-  it("rejects a pinned pair that carves only past the first attempt, or not at all", () => {
+  it("rejects a pinned pair off the base that carves only past the first attempt, or not at all", () => {
     const pin = { seed: 103, packing: 0.14 }
     expect(verifyCarvePair(100, pin, () => carvedAt(2), ladder)).toBeNull()
     expect(verifyCarvePair(100, pin, () => failed, ladder)).toBeNull()
+  })
+
+  it("a laddered pin verifies without a search", () => {
+    const asked: [number, number, number][] = []
+    const found = verifyCarvePair(
+      100,
+      { seed: 100, packing: 0.1 },
+      (seed, packing, attempts) => {
+        asked.push([seed, packing, attempts])
+        return attempts > 1 ? carvedAt(6) : failed
+      },
+      ladder
+    )
+    expect(found).toMatchObject({ kind: "found", seed: 100, packing: 0.1, offset: 0, laddered: true })
+    expect(asked).toEqual([[100, 0.1, Infinity]])
+  })
+
+  it("rejects a pin whose carve misses a hard criterion", () => {
+    const judge = () => ({ criterion: "lock holds a puzzle" as const, detail: "lever" })
+    expect(verifyCarvePair(100, { seed: 100, packing: 0.1 }, () => carvedAt(6), { ...ladder, judge })).toBeNull()
+    expect(verifyCarvePair(100, { seed: 103, packing: 0.1 }, () => carvedAt(0), { ...ladder, judge })).toBeNull()
   })
 
   it("measures the offset past the base inside the stamped range", () => {

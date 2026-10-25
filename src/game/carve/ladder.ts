@@ -2,17 +2,14 @@ import { startingGridSize } from "../layLocks"
 import { carvedCells, deriveN, distanceFor } from "./ids"
 import type { FloorPrep, Rung } from "./state"
 
-// THE LADDER IS LOAD-BEARING FOR 31 OF THE 206 SHIPPED FLOORS. The bake searches every floor for the
-// smallest `packing` (from the authored one, in small steps) and a seed that carve on attempt 0
-// (worldGen/carveSeedSearch.ts), and bakes the pair, so 175 floors never leave attempt 0. The other 31
-// (expert, master and wizard main floors, listed in worldGen/bakedCarve.verify.ts) fail attempt 0 with
-// `layoutNotFound` at every seed and every `packing` up to PACKING_CEILING: the grid `deriveN` sizes
-// is too small for them, and only the rungs below that grow it (`N += 2`, then recovery's `carvedCells`
-// sizing) carve them. Without the ladder those 31 render "Site layout unavailable." for every player.
-// A floor whose pair was never searched is carved by it too. Removing it is a decision, and needs the
-// derived grid to start large enough for those 31 first; changing its rungs re-carves every floor that
-// climbs them. STRICT_ATTEMPT_ZERO=1 on `yarn generate-world` fails the build by name on a floor that
-// needs it.
+// THE LADDER IS LOAD-BEARING. The bake picks each floor's layout (worldGen/carveSeedSearch.ts): every seed at the
+// authored `packing`, then each raised packing up to PACKING_CEILING, each carved on attempt 0, and last the floor's
+// base seed carved by this ladder. Floors whose grid `deriveN` sizes too small for any (packing, seed) carve only on
+// the rungs below that grow it (`N += 2`, then recovery's `carvedCells` sizing); they are pinned at their base seed and
+// authored packing, and the runtime carves them here. The ladder carve is held to the same hard criteria as any
+// other, so a laddered floor ships only when it walks sound and holds its puzzles. Removing the ladder needs the
+// derived grid to start large enough for those floors first; changing its rungs re-carves every floor that climbs
+// them. `yarn layout-report` lists the floors that carve only here.
 //
 // Maze carving is a per-attempt gamble (each attempt reshuffles branch points and section order), so the
 // carve retries. The first RECOVERY_ATTEMPT attempts run at the original sizing; the rest re-size the grid

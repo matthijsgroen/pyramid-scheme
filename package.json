@@ -32,6 +32,7 @@
     "cut-sheet": "tsx scripts/cutSheet.ts",
     "build-sheet": "tsx scripts/buildSheet.ts",
     "validate-world": "tsx scripts/generateWorld.ts --validate-only",
+    "layout-report": "tsx scripts/layoutReport.ts",
     "generate-seeds": "tsx scripts/puzzleSeeds.ts generate",
     "seeds-info": "tsx scripts/puzzleSeeds.ts info",
     "verify-seeds": "tsx scripts/puzzleSeeds.ts verify",

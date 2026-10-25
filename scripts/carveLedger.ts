@@ -1,18 +1,26 @@
 import { createHash } from "crypto"
-import { existsSync, readFileSync } from "fs"
+import { existsSync, readFileSync, writeFileSync } from "fs"
 import { dirname, join, resolve } from "path"
 import { fileURLToPath } from "url"
+import type { LayoutNotFound } from "../src/worldGen/carveSeedSearch"
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..")
 export const LEDGER_PATH = join(root, "src/data/carveLedger.json")
 
-/** Floors the search tried and could not satisfy, by `journey#level#floor`. An entry holds only while its
- * `hash` still equals what the floor hashes to now, so a floor is skipped exactly as long as nothing that
- * could change the outcome has changed. */
-export type CarveLedger = Record<string, { hash: string; refusal: string }>
+/** Floors the bounded search found no layout for, by `journey#level#floor`, with what it found. An entry holds only
+ * while its `hash` still equals what the floor hashes to now, so a floor is skipped exactly as long as nothing that
+ * could change the outcome has changed. An entry of any other kind is read as absent. */
+export type CarveLedgerEntry = { kind: "notFound"; hash: string; result: LayoutNotFound }
+export type CarveLedger = Record<string, CarveLedgerEntry | undefined>
 
 export const readLedger = (): CarveLedger =>
   existsSync(LEDGER_PATH) ? JSON.parse(readFileSync(LEDGER_PATH, "utf8")) : {}
+
+export const writeLedger = (ledger: CarveLedger) =>
+  writeFileSync(
+    LEDGER_PATH,
+    JSON.stringify(Object.fromEntries(Object.entries(ledger).sort(([a], [b]) => a.localeCompare(b))), null, 2) + "\n"
+  )
 
 // The baked world is the search's own output, so it cannot be an input to what the search decides.
 const OUTPUTS = new Set([join(root, "src/data/generatedWorld.ts"), LEDGER_PATH])
