@@ -153,7 +153,7 @@ Mechanical; one agent (Sonnet).
   - `fill`: per tier, deals that tier's units to its slots in rank order, the units ordered first-part-of-every-structure, then the finds, then second parts, and so on, so one structure's parts fall on different sites; assigns `{ type: "campFind", step }` or `{ type: "campPart", structure, part }`.
 - Produces: `campLootTotals(configs): LootTotal[]` — `{ label: "Camp finds", found, needed }` and `{ label: "Structure parts", found, needed }`, found counted wherever the reward lies (via `forEachConfigReward`), needed from `campDemand(CAMP_STEPS)`.
 
-- [ ] **Step 1: Failing tests** (made-up table and slots; slots built the way `waterskins.spec.ts` builds them).
+- [x] **Step 1: Failing tests** (made-up table and slots; slots built the way `waterskins.spec.ts` builds them).
   - Over made-up slots on three tiers and several sites (puzzle slots with and without loot priority, chests, path ends, a fez-shop stock slot, ward-gated and hidden puzzle slots) and a made-up table, `allocateDistributions` with `[makeCampLoot(table)]`: exactly N camp rewards; every find and every part exactly once; each on a puzzle slot of its own step's tier; none on a chest, path end, shop stock or a priority-0 slot.
   - Ungated main slots are taken before ward-gated ones, and those before hidden ones; a hidden slot is used only when a tier's other slots run out.
   - With two or more sites in a tier, no two parts of one structure share a site while the tier has sites left unused by that structure.
@@ -162,10 +162,10 @@ Mechanical; one agent (Sonnet).
   - The same input gives the same placement twice.
   - `lootTotals.spec.ts`: counts `campFind` and `campPart` rewards on puzzles, chests, path ends, sub-sections and shop stock alike; ignores other types; `needed` equals the made-up table's demand, by reference.
 - [ ] **Step 2: Run** `yarn test src/mods/camp src/worldGen/slotAllocator` — FAIL.
-- [ ] **Step 3: Implement.** The distribution's comment says why puzzle slots only (chests carry the economy and the capped currencies; puzzle rooms carried the consumables camp loot replaces), why exact tiers, why main slots first (every player's camp must fill), and that a short tier is an authoring problem. No rank logic in core changes.
-- [ ] **Step 4: Run** `yarn test src/mods src/worldGen` — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Per-task review** (soundness): every unit is placed or the bake fails; tiers exact; no chest, path end or shop slot claimed; deterministic; registry order keeps waterskins first and the shop last; core unchanged.
-- [ ] **Step 6: Commit** — `feat: camp finds and parts lie on puzzle slots of their tier`
+- [x] **Step 3: Implement.** The distribution's comment says why puzzle slots only (chests carry the economy and the capped currencies; puzzle rooms carried the consumables camp loot replaces), why exact tiers, why main slots first (every player's camp must fill), and that a short tier is an authoring problem. No rank logic in core changes.
+- [x] **Step 4: Run** `yarn test src/mods src/worldGen` — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Per-task review** (soundness): every unit is placed or the bake fails; tiers exact; no chest, path end or shop slot claimed; deterministic; registry order keeps waterskins first and the shop last; core unchanged.
+- [x] **Step 6: Commit** — `feat: camp finds and parts lie on puzzle slots of their tier`
 
 ---
 
