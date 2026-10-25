@@ -37,6 +37,7 @@ const meta = {
     chapter: "wizard",
     found: fullFound(CAMP_CATALOGUE, "wizard"),
     insets: INSETS,
+    standIns: true,
   },
 } satisfies Meta<typeof CampScene>
 
@@ -104,6 +105,7 @@ export const Playground: StoryObj<PlaygroundArgs> = {
         insets={insets}
         entrances={entrances}
         className={className}
+        standIns
       />
     )
   },

@@ -27,9 +27,14 @@ export type CampSceneProps = {
   entrances?: { chest?: CampEntrance; window?: CampEntrance; mapTable?: CampEntrance }
   catalogue?: CampCatalogue
   className?: string
+  /**
+   * Draws a labelled box for a piece whose art is still owed. For Storybook only: the app never passes it,
+   * so there a piece without art leaves its spot bare and offers no entrance.
+   */
+  standIns?: boolean
 }
 
-// A piece with no art yet draws the stand-in; the scenery (sand, dunes, pyramid, pyramidGold) falls back to CSS.
+// The scenery (sand, dunes, pyramid, pyramidGold) falls back to CSS when its art is missing.
 
 const NO_INSETS = { top: 0, bottom: 0 }
 /** Entrance labels stay readable however far the camera zooms out. */
@@ -270,12 +275,16 @@ export const CampScene = ({
   entrances = {},
   catalogue = CAMP_CATALOGUE,
   className,
+  standIns = false,
 }: CampSceneProps) => {
   const rootClass = ["camp-scene", className].filter(Boolean).join(" ")
   const layout = layoutCamp({ width, height, insets, chapter, found, catalogue })
   if (!layout) return <div className={rootClass} />
 
   const { unit: u, horizon } = layout
+  const bare = standIns ? [] : layout.pieces.filter(p => !campArt(p.piece.id, p.layer))
+  const pieces = layout.pieces.filter(p => !bare.includes(p))
+  const glows = layout.glows.filter(g => !bare.some(p => g.key.startsWith(`${p.key}:`)))
   const stars = starField(width, horizon)
   const moon = Math.max(18, u * 0.55)
   const tagSize = clamp(u * 0.2, TAG_MIN, 14)
@@ -289,7 +298,7 @@ export const CampScene = ({
   const rootStyle = { "--camp-horizon": `${(horizon / height) * 100}%` } as CSSProperties
 
   const entranceSpots = (["chest", "window", "mapTable"] as const).filter(spot => entrances[spot])
-  const entranceButtons = entranceAreas(layout.pieces, entranceSpots).map(area => {
+  const entranceButtons = entranceAreas(pieces, entranceSpots).map(area => {
     const { label, badge, onOpen } = entrances[area.spot as (typeof entranceSpots)[number]]!
     return (
       <button
@@ -370,17 +379,13 @@ export const CampScene = ({
         <div className="camp-ground-tint" style={{ top: horizon, ...centre }} />
       </div>
       <div className="camp-layer">
-        {layout.pieces.map(placed => (
-          <Piece
-            key={placed.key}
-            placed={placed}
-            lightIndex={layout.glows.findIndex(g => g.key === placed.shadow?.light)}
-          />
+        {pieces.map(placed => (
+          <Piece key={placed.key} placed={placed} lightIndex={glows.findIndex(g => g.key === placed.shadow?.light)} />
         ))}
       </div>
       <div className="camp-layer" aria-hidden="true">
         <div className="camp-vignette" style={{ top: horizon, ...centre }} />
-        {layout.glows.map((glow, i) => {
+        {glows.map((glow, i) => {
           const glowStyle = (reach: number, top: number) =>
             ({
               left: glow.x,
