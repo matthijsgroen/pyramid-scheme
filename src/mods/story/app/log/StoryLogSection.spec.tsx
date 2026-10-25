@@ -39,19 +39,3 @@ describe("StoryLogSection", () => {
   })
 })
 
-describe("StoryLogSection new marks", () => {
-  it("badges only the scene isNew answers true for, and carries no heading of its own", async () => {
-    scenes.list = [
-      { id: "scene-a", journeyId: "journey-a", parts: [] },
-      { id: "scene-b", journeyId: "journey-b", parts: [] },
-    ]
-    await act(
-      async () =>
-        void render(
-          <StoryLogSection selectedItem={null} onSelect={() => {}} isNew={id => id === "scene-a"} newLabel="NEW" />
-        )
-    )
-    expect(screen.getAllByText("NEW")).toHaveLength(1)
-    expect(screen.queryByRole("heading")).toBeNull()
-  })
-})

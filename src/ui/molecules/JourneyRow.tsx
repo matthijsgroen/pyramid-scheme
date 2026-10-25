@@ -88,7 +88,7 @@ export const JourneyRow: FC<JourneyRowProps> = ({
     <>
       {!compact && <Icon status={status} exterior={exterior} />}
       <span className={`flex min-w-0 flex-1 ${compact ? "items-center gap-2" : "flex-col gap-0.5"}`}>
-        <span className={`text-[15px] font-extrabold ${compact ? "flex-1" : ""}`}>{name}</span>
+        <span className={`font-pyramid text-[15px] ${compact ? "flex-1" : ""}`}>{name}</span>
         {note && <span className="text-[13px] text-[#5C4A36]">{note}</span>}
       </span>
       {status === "current" && <span className="text-xs font-extrabold text-[#A3401A]">{currentLabel}</span>}

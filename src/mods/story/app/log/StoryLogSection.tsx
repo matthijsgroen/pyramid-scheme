@@ -5,7 +5,6 @@ import { useGameStorage } from "@/support/useGameStorage"
 import { GHOSTS, spokenLines, type Speaker } from "@/app/fez/arrivalConversation"
 import { portraitFor } from "@/app/fez/portraits"
 import { heardScenes } from "@/mods/story/game/log/heardScenes"
-import { NewBadge } from "@/ui/atoms/NewBadge"
 import type { CollectionSectionProps } from "@/app/pages/collectionSectionRegistry"
 
 /** Who said it, for a transcript with nobody's face in it. */
@@ -40,7 +39,7 @@ const Said: FC<{ speaker: Speaker; text: string }> = ({ speaker, text }) => {
  * them. The lines are translations and the save already records which scenes have played, so the log
  * is a read of what is there rather than anything it has to keep for itself.
  */
-export const StoryLogSection: FC<CollectionSectionProps> = ({ isNew, newLabel }) => {
+export const StoryLogSection: FC<CollectionSectionProps> = () => {
   const { t, i18n } = useTranslation(["common", "journeys"])
   const [played] = useGameStorage<Record<string, boolean>>("conversations", {})
   const [open, setOpen] = useState<string | null>(null)
@@ -65,7 +64,6 @@ export const StoryLogSection: FC<CollectionSectionProps> = ({ isNew, newLabel })
                 >
                   <span className="flex items-center gap-2">
                     {t(`${scene.journeyId}.name`, { ns: "journeys" })}
-                    {isNew(scene.id) && <NewBadge label={newLabel} />}
                   </span>
                   <span aria-hidden>{showing ? "▾" : "▸"}</span>
                 </button>

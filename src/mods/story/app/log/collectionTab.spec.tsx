@@ -30,12 +30,12 @@ describe("useStoryTab", () => {
     expect(result.current.label).toBe("collection.tabs.stories")
   })
 
-  it("lists the heard scenes", async () => {
+  it("is shown once a scene was heard, and marks none as news", async () => {
     await writeGameData({ conversations: { "scene-a": true, "scene-c": true } })
     const { result } = renderHook(() => useStoryTab())
     await waitFor(() => expect(result.current.loaded).toBe(true))
     expect(result.current.shown).toBe(true)
-    expect(result.current.ids).toEqual(["scene-a", "scene-c"])
+    expect(result.current.ids).toEqual([])
   })
 
   it("is not loaded before the conversations save has been read", async () => {
