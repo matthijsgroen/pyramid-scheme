@@ -115,3 +115,8 @@ export const spotProgress = (save: CampSave, table: CampStepTable, spot: string)
   )
   return { found: counted.filter(entry => placed.has(entry.id)).length, total: counted.length }
 }
+
+export const hasStandingStructure = (save: CampSave, table: CampStepTable): boolean => {
+  const placed = inPlace(save, table)
+  return table.some(entry => entry.source === "structure" && placed.has(entry.id))
+}

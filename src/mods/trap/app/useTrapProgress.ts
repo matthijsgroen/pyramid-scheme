@@ -17,11 +17,13 @@ const MAX_HEALTH_CAP = 12
 const ARMOR_CAP = 2
 const INSIGHT_CAP = 2
 
-// Only what the player SPENDS is stored: current health. The trap perks are derived from the
-// treasures held (see game/perkTotals.ts), so `maxHealth` is a computed ceiling rather than a saved
-// number that could drift from the treasures that justify it.
+// Stored: current health, and whether the last homecoming refilled a missing heart. The trap perks are
+// derived from the treasures held (see game/perkTotals.ts), so `maxHealth` is a computed ceiling rather
+// than a saved number that could drift from the treasures that justify it. `mended` is optional so a save
+// without it still reads, as nothing refilled.
 type TrapState = {
   health: number
+  mended?: boolean
 }
 
 const INITIAL: TrapState = {
@@ -31,6 +33,7 @@ const INITIAL: TrapState = {
 export type TrapProgressAPI = {
   currentHealth: number
   maxHealth: number
+  mended: boolean
   armorStacks: number
   trapInsightStacks: number
   isTrapAttemptSafe: () => boolean
@@ -55,11 +58,12 @@ export const useTrapProgress = (): TrapProgressAPI => {
     return {
       currentHealth,
       maxHealth,
+      mended: state.mended === true,
       armorStacks,
       trapInsightStacks,
       isTrapAttemptSafe: () => isTrapAttemptSafe(currentHealth),
       takeTrapDamage: () => setState(prev => ({ ...prev, health: Math.max(0, prev.health - trapDamage(armorStacks)) })),
-      restoreHealth: () => setState(prev => ({ ...prev, health: maxHealth })),
+      restoreHealth: () => setState(prev => ({ ...prev, health: maxHealth, mended: prev.health < maxHealth })),
       // Drunk on pickup: pack-mule makes it heal two hearts; at full health it heals nothing.
       drinkWaterskin: () =>
         setState(prev => ({
@@ -69,3 +73,6 @@ export const useTrapProgress = (): TrapProgressAPI => {
     }
   }, [state, setState, maxHealth, armorStacks, trapInsightStacks, packMuleLevel])
 }
+
+// The trap's word on the home: a heart was refilled on the way in.
+export const useTrapHomeTags = (): string[] => (useTrapProgress().mended ? ["trap.mended"] : [])

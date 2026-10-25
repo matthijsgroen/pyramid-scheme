@@ -5,6 +5,7 @@ import {
   campFound,
   emptyCampSave,
   growCamp,
+  hasStandingStructure,
   inPlace,
   readCampSave,
   recordFind,
@@ -197,5 +198,17 @@ describe("updateCampSave", () => {
     ["an older shape", { found: ["rug"] }],
   ])("leaves %s untouched", (_name, stored) => {
     expect(record(stored)).toBe(stored)
+  })
+})
+
+describe("hasStandingStructure", () => {
+  it("is false while every structure still misses a part", () => {
+    const save = recordPart(recordPart(emptyCampSave(), "hut", "poles"), "hut", "cloth")
+    expect(hasStandingStructure(save, table)).toBe(false)
+  })
+
+  it("is true once one structure has all its parts", () => {
+    const save = recordPart(recordPart(emptyCampSave(), "ring", "stones"), "ring", "sand")
+    expect(hasStandingStructure(save, table)).toBe(true)
   })
 })

@@ -230,14 +230,14 @@ One Opus agent; reading list as Task 1, plus the phase-4 plan's purchase table a
 - Trap registers `registerHomeTags` → `["trap.mended"]` when `mended`, else none.
 - Camp registers `registerHomeTags` → `"camp.found"` when the camp save holds any find, `"camp.structureDone"` when any structure in the step table has all its parts; read through the camp's existing save reader.
 
-- [ ] **Step 1: Failing tests** (made-up states, a made-up step table).
+- [x] **Step 1: Failing tests** (made-up states, a made-up step table).
   - Trap: restoring from below max records `mended` true and full health; restoring at full records false; a stored state without `mended` reads false and a restore on it works; the tag hook gives `trap.mended` only when true.
   - Camp: an empty save gives no tags; one find gives `camp.found`; a made-up structure with all its parts gives `camp.structureDone`, with one missing it does not.
-- [ ] **Step 2: Run** `yarn test src/mods/trap src/mods/camp` — FAIL.
-- [ ] **Step 3: Implement.**
-- [ ] **Step 4: Run** — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Per-task review:** the field is optional both ways; one write per homecoming; health never changes because of the field; no other save shape moved.
-- [ ] **Step 6: Commit** — `feat: trap and camp tell the home what happened`
+- [x] **Step 2: Run** `yarn test src/mods/trap src/mods/camp` — FAIL.
+- [x] **Step 3: Implement.**
+- [x] **Step 4: Run** — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Per-task review:** the field is optional both ways; one write per homecoming; health never changes because of the field; no other save shape moved.
+- [x] **Step 6: Commit** — `feat: trap and camp tell the home what happened`
 
 ---
 
