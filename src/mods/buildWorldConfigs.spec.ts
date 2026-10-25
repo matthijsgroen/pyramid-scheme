@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 import type { FloorConfig, SiteConfig } from "@/worldGen/types"
+import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
 import { pinsFrom } from "./buildWorldConfigs"
 
 const floor = (pin: Partial<Pick<FloorConfig, "seed" | "packing">> = {}): FloorConfig => ({
@@ -30,10 +31,15 @@ describe(pinsFrom, () => {
     expect(pins(configs)).toEqual(pins(baked))
   })
 
-  it("leaves a floor the baked world does not have as it is", () => {
-    const configs: Record<string, SiteConfig[]> = { made_up: [[floor({ seed: 5 })]], unbaked: [[floor()]] }
+  it("pins a floor the baked world does not have at the seed play carves it at", () => {
+    const configs: Record<string, SiteConfig[]> = {
+      made_up: [[floor({ seed: 5 })]],
+      unbaked: [[floor(), floor({ seed: 7 })]],
+    }
     pinsFrom({ made_up: [[floor({ seed: 11, packing: 0.4 })]] })(configs)
     expect(configs.made_up[0][0]).toMatchObject({ seed: 11, packing: 0.4 })
-    expect(configs.unbaked[0][0].seed).toBeUndefined()
+    expect(configs.unbaked[0][0].seed).toBe(floorAssemblySeed(persistentInteriorSeed("unbaked"), 1, 0))
+    expect(configs.unbaked[0][0].packing).toBeUndefined()
+    expect(configs.unbaked[0][1].seed).toBe(7)
   })
 })

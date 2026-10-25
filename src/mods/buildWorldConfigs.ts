@@ -6,6 +6,7 @@ import type { Web } from "@/game/webNotation"
 import { placeWeb } from "@/worldGen/webPlacement"
 import type { WebPlacement } from "@/worldGen/webPlacement"
 import { carveWorldFloor } from "./carveWorldFloor"
+import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
 import { ALL_CURRENCY_DISTRIBUTIONS } from "./allCurrencyDistributions"
 import {
   resolveKeyRequirements,
@@ -38,7 +39,8 @@ export const openLockInputs = (configs: Record<string, SiteConfig[]>) => {
           )
 }
 
-/** The layout a baked world shipped with: each floor takes the `seed` and `packing` the same floor carries in `baked`.
+/** The layout a baked world shipped with: each floor takes the `seed` and `packing` the same floor carries in `baked`,
+ * and a floor `baked` lacks takes its address's seed, so every floor is pinned.
  * Every build but the bake's builds on it, so what it checks is the world that ships. */
 export const pinsFrom =
   (baked: Readonly<Record<string, SiteConfig[]>> = generatedWorldConfigs): PickLayout =>
@@ -47,7 +49,12 @@ export const pinsFrom =
       sites.forEach((site, levelIndex) =>
         site.forEach((floor, floorIndex) => {
           const pinned = baked[journeyId]?.[levelIndex]?.[floorIndex]
-          if (pinned?.seed !== undefined) floor.seed = pinned.seed
+          // A floor the baked world does not have is pinned at the seed its address gives it, the one play carves
+          // an unstamped floor at, so the walk and play never read two layouts of it.
+          floor.seed =
+            pinned?.seed ??
+            floor.seed ??
+            floorAssemblySeed(persistentInteriorSeed(journeyId), levelIndex + 1, floorIndex)
           if (pinned?.packing !== undefined) floor.packing = pinned.packing
         })
       )

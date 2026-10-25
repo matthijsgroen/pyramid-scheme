@@ -414,7 +414,7 @@ export const buildConfigs = (
   // + stock arrays seed, before slot collection fills them). Core names no currency here.
   placeShopStock(allConfigs, shopStock)
   // A shop sells what was assigned to it and has no empty stock slot.
-  trimEmptyStock(allConfigs)
+  trimEmptyStock(allConfigs, resolveEncounter ?? defaultResolveEncounter)
   // Whether an end holds a reward decides which ends may host a floor key, so a shop end's placeholder is
   // cleared here, as structure, and never by the placement below.
   clearShopEnds(allConfigs, resolveEncounter ?? defaultResolveEncounter)

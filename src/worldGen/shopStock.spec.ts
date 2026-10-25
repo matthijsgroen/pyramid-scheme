@@ -77,21 +77,29 @@ describe(trimEmptyStock, () => {
     const floor = shopFloor([undefined, undefined, undefined])
     const configs: Record<string, SiteConfig[]> = { made_up: [[floor]] }
     placeShopStock(configs, [{ journeyId: "made_up", prefers: "made-up-bucket" }])
-    trimEmptyStock(configs)
+    trimEmptyStock(configs, defaultResolveEncounter)
+    expect(floor.sideSections[0].rewards).toEqual([{ type: "fragmentSlot", prefers: "made-up-bucket" }])
+  })
+
+  it("asks the injected resolver which section is the shop", () => {
+    const floor = shopFloor([undefined, { type: "fragmentSlot", prefers: "made-up-bucket" }])
+    floor.sideSections[0].encounter = "made-up-stall"
+    trimEmptyStock({ made_up: [[floor]] }, resolve)
     expect(floor.sideSections[0].rewards).toEqual([{ type: "fragmentSlot", prefers: "made-up-bucket" }])
   })
 
   it("leaves a puzzle chain's empty reward positions alone", () => {
     const floor = shopFloor([undefined])
     floor.rewards = [undefined, undefined]
-    trimEmptyStock({ made_up: [[floor]] })
+    trimEmptyStock({ made_up: [[floor]] }, defaultResolveEncounter)
     expect(floor.rewards).toEqual([undefined, undefined])
   })
 
   it("trimming moves no wall", () => {
     const untrimmed = shopFloor([{ type: "fragmentSlot", prefers: "made-up-bucket" }, undefined, undefined])
-    const trimmed = shopFloor([{ type: "fragmentSlot", prefers: "made-up-bucket" }])
-    trimEmptyStock({ made_up: [[trimmed]] })
+    const trimmed = structuredClone(untrimmed)
+    trimEmptyStock({ made_up: [[trimmed]] }, defaultResolveEncounter)
+    expect(trimmed.sideSections[0].rewards).toEqual([{ type: "fragmentSlot", prefers: "made-up-bucket" }])
     const carve = (config: GameFloorConfig, seed: number): FloorGrid | null => {
       const result = assembleFloor("made_up", { ...config, seed }, seed, defaultResolveEncounter)
       return result.success ? result.grid : null

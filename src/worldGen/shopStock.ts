@@ -13,10 +13,13 @@ export type ShopStockAssignment = { journeyId: string; prefers: string; nth?: nu
 // A shop section is a node whose gen-time-resolved encounter is fez-shop; assignEncounters seeded
 // its `rewards[]` to the shop's capacity. Collect them in walk order so `nth` is stable.
 // `levels` is a journey's SiteConfig[] (each SiteConfig is one level's FloorConfig[]).
-const shopSectionsOf = (levels: SiteConfig[]): SubSection[] => {
+const shopSectionsOf = (
+  levels: SiteConfig[],
+  isShop: (section: SubSection) => boolean = section => section.encounter === "fez-shop"
+): SubSection[] => {
   const shops: SubSection[] = []
   const walk = (section: SubSection & { sideSections?: SubSection[] }) => {
-    if (section.encounter === "fez-shop") shops.push(section)
+    if (isShop(section)) shops.push(section)
     section.sideSections?.forEach(walk)
   }
   for (const level of levels) for (const floor of level) for (const section of floor.sideSections) walk(section)
@@ -42,20 +45,22 @@ export const placeShopStock = (
   }
 }
 
-// A shop has no empty stock slot: what no mod assigned is not for sale, so the stock is what was
-// assigned and nothing else. A structural pass, run before the layout is picked, so the floor the
-// layout is picked on is the floor that ships.
-export const trimEmptyStock = (allConfigs: Record<string, SiteConfig[]>): void => {
-  for (const levels of Object.values(allConfigs))
-    for (const shop of shopSectionsOf(levels))
-      if (shop.rewards) shop.rewards = shop.rewards.filter(r => r !== undefined)
-}
-
 // Whether a section ends in a shop room, by the family its encounter resolves to.
 export const endsInShopBy = (resolveEncounter: ResolveEncounter) => {
   const shopFamily = resolveEncounter(CARVE_FAMILY_QUERIES.fezShop, CARVE_FAMILY_QUERIES.fezShop).familyId
   return (section: SubSection): boolean =>
     section.encounter !== undefined && resolveEncounter(section.encounter, "treasure").familyId === shopFamily
+}
+
+// A shop has no empty stock slot: what no mod assigned is not for sale, so the stock is what was
+// assigned and nothing else. A shop is told by the family its encounter resolves to, as clearShopEnds
+// tells it. A structural pass, run before the layout is picked, so the floor the layout is picked on is
+// the floor that ships.
+export const trimEmptyStock = (allConfigs: Record<string, SiteConfig[]>, resolveEncounter: ResolveEncounter): void => {
+  const endsInShop = endsInShopBy(resolveEncounter)
+  for (const levels of Object.values(allConfigs))
+    for (const shop of shopSectionsOf(levels, endsInShop))
+      if (shop.rewards) shop.rewards = shop.rewards.filter(r => r !== undefined)
 }
 
 // A section ending in a shop room shows its stock and never its endReward (carve/roomSpecs.ts asks the
