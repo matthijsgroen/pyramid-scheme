@@ -355,6 +355,145 @@
     }
   },
 
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "A cave! The map showed a cellar door, and this is a whole hill!" },
+      "2": { "fez": "Clever fellow. Hide your stock inside a hill — no thief would think of that." },
+      "3": { "explorer": "We did." },
+      "4": { "fez": "We're not thieves. We're customers. Very late customers." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "This must be it. Henut! Eleven deben of lapis, that one!" },
+      "2": { "fez": "What do you reckon — do we get a cut if we collect?" },
+      "3": { "explorer": "You haven't collected anything." },
+      "4": { "fez": "I like to work it out early." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "So this is where Henut's priest is. Insufferable, she said." },
+      "2": { "fez": "What do you think, should we bring something? Flowers?" },
+      "3": { "explorer": "He's dead." },
+      "4": { "fez": "All the more reason. You want to make a good first impression." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Only the high priest was allowed in here. And now us!" },
+      "2": { "explorer": "Are we allowed?" },
+      "3": { "fez": "There's nobody on the door to say no." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Look, the map just stops here. Sand, and then nothing." },
+      "2": { "explorer": "Then we're in the right place." },
+      "3": { "fez": "That's what I mean. That's exactly what makes me nervous." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "The hall of Osiris! Green, of course. Because he comes back every year, like the grain." },
+      "2": { "explorer": "You always knew that." },
+      "3": { "fez": "Always." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "fez": "The gods' own storeroom! What do you keep when you already have everything?" },
+      "2": { "explorer": "Whatever people bring you." },
+      "3": { "fez": "…Yes. That'll be it." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Realm of Cosmic Forces. Well, well." },
+      "2": { "fez": "If I had something to sell that was nothing much, that's what I'd call it too." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "I've suddenly got this feeling I've done something wrong." },
+      "2": { "explorer": "Like what?" },
+      "3": { "fez": "No idea. That's the worst part." }
+    }
+  },
+
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "All those levers and doors, for one cellar!" },
+      "2": { "fez": "Then there's something good down there. Nobody goes to that much trouble over rubbish." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Phew. Those doors were a lot fussier than Ipi's." },
+      "2": { "fez": "Well. Madam had money, of course." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Phew, at last! That cave really did not want us in." },
+      "2": { "explorer": "I think that was the idea." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Psst… why am I whispering?" },
+      "2": { "explorer": "No idea. I'm doing it too." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Whew. My tail's still shaking from that last door." },
+      "2": { "fez": "A king who locks his things away like that… he really doesn't want to lose them." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "See? Stay under the ground long enough, and up you come again." },
+      "2": { "explorer": "Is that Osiris as well?" },
+      "3": { "fez": "No, that one's mine." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "fez": "Doors like those… once, we'd have just turned round." },
+      "2": { "explorer": "Not any more." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Three floors of cave, and only then the front door." },
+      "2": { "explorer": "Must be worth it, then." },
+      "3": { "fez": "That's what they always say. And then it's a jar." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Last stretch of dark. I can feel it." },
+      "2": { "explorer": "You said that at the last one." },
+      "3": { "fez": "And I was nearly right." }
+    }
+  },
+
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "Look at that! A pyramid, underground! For a merchant!" },
+      "2": { "fez": "He either earned very well, or haggled very well." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Look at the tip shining in the sun! Real gold, I bet." },
+      "2": { "explorer": "Down a hole in the ground. Who's it shining for?" },
+      "3": { "fez": "Her. You can tell the type." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Hm. Are you actually allowed to sell something that already belongs to a god?" },
+      "2": { "explorer": "Ask the god." },
+      "3": { "fez": "I'd rather not." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Do you think that priest knows we're wandering about in here?" },
+      "2": { "explorer": "He doesn't keep count. It would be unprofessional." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Look at it, all alone in the sun. Lovely, isn't it?" },
+      "2": { "fez": "Shall we just do a drawing and go?" },
+      "3": { "explorer": "You can't draw." },
+      "4": { "fez": "…No. In we go, then." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "Whoever's in there is counting on coming back. That's the deal round here." },
+      "2": { "explorer": "How long has he been waiting?" },
+      "3": { "fez": "A long time. Comes with the job, though. Being dead is mostly waiting." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "explorer": "Wow." },
+      "2": { "fez": "Yes." },
+      "3": { "fez": "Sometimes there's just nothing left to say, is there." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "See that patch of sun on the pyramid? You could tell the time by it." },
+      "2": { "explorer": "What time is it, then?" },
+      "3": { "fez": "…Afternoon. Roughly. I'm not a clock." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "There it is. Every line on that map ends up here." },
+      "2": { "explorer": "Then this is the end." },
+      "3": { "fez": "Of the map, yes. Funny. I thought that would feel better." }
+    }
+  },
+
   "bond": {
     "starter": {
       "1": { "fez": "That was quick." },

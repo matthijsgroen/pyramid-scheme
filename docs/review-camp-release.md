@@ -251,6 +251,109 @@ From `yarn loot-report` before (651aad2c) and after the bake (88646b9e). `docs/l
   - Stops: `common:journeys.showStops` (screen reader) "Toon de plekken van {{name}}" / "Show the sites of {{name}}"; `common:journeys.stopPyramid` "Piramide" / "Pyramid"; `common:journeys.stopTomb` "Plek" / "Site".
   - Verzameling: `common:collection.empty` "Je kist is nog leeg" / "Your chest is still empty"; `common:collection.newLabel` "NIEUW" / "NEW"; `common:collection.tabNew_one/_other` "{{label}} · {{count}} nieuw" / "{{label}} · {{count}} new"; `common:collection.tabsLabel` (screen reader) "Wat je verzameld hebt" / "What you have collected"; tabs `common:collection.tabs.treasures` "Schatten" / "Treasures", `.hieroglyphs` "Hiërogliefen" / "Hieroglyphs", `.junk` "Snuisterijen" / "Trinkets", `.stories` "Verhalen" / "Stories" (Constructies keeps the camp's existing section title).
   - Mosaic window: `common:mosaic.window.count` "{{found}} van {{total}} stukjes" / "{{found}} of {{total}} pieces"; `common:mosaic.window.new_one/_other` "{{count}} nieuw" / "{{count}} new".
+- Phase 8 — `cave.starter_treasure_tomb` — fires: Forgotten Merchant's Cache — entering the cave
+  - Fez: "Een grot! Op de kaart stond een kelderdeur, en dit is een hele heuvel!" / "A cave! The map showed a cellar door, and this is a whole hill!"
+  - Fez: "Slimme vent. Je voorraad in een heuvel verstoppen, daar komt geen dief op." / "Clever fellow. Hide your stock inside a hill — no thief would think of that."
+  - Explorer: "Wij wel." / "We did."
+  - Fez: "Wij zijn geen dieven. Wij zijn klanten. Héle late klanten." / "We're not thieves. We're customers. Very late customers."
+- Phase 8 — `pillar.starter_treasure_tomb` — fires: Forgotten Merchant's Cache — reaching the pillar
+  - Fez: "Al die hendels en deuren, voor één kelder!" / "All those levers and doors, for one cellar!"
+  - Fez: "Dan ligt er wat goeds, hoor. Niemand doet zoveel moeite voor rommel." / "Then there's something good down there. Nobody goes to that much trouble over rubbish."
+- Phase 8 — `cavern.starter_treasure_tomb` — fires: Forgotten Merchant's Cache — arriving at the cavern
+  - Fez: "Kijk dan! Een piramide, onder de grond! Voor een handelaar!" / "Look at that! A pyramid, underground! For a merchant!"
+  - Fez: "Die heeft óf heel goed verdiend, óf heel goed afgedongen." / "He either earned very well, or haggled very well."
+- Phase 8 — `cave.junior_treasure_tomb` — fires: Noble's Hidden Vault — entering the cave
+  - Fez: "Hier moet het zijn. Henut! Die van de elf deben lapis!" / "This must be it. Henut! Eleven deben of lapis, that one!"
+  - Fez: "Wat denk je, mogen we een procentje houden als we het innen?" / "What do you reckon — do we get a cut if we collect?"
+  - Explorer: "Je hebt nog niks geïnd." / "You haven't collected anything."
+  - Fez: "Ik reken alvast." / "I like to work it out early."
+- Phase 8 — `pillar.junior_treasure_tomb` — fires: Noble's Hidden Vault — reaching the pillar
+  - Fez: "Pff. Die deuren waren heel wat lastiger dan bij Ipi." / "Phew. Those doors were a lot fussier than Ipi's."
+  - Fez: "Tja. Mevrouw had natuurlijk geld." / "Well. Madam had money, of course."
+- Phase 8 — `cavern.junior_treasure_tomb` — fires: Noble's Hidden Vault — arriving at the cavern
+  - Fez: "Kijk die punt eens glimmen in de zon! Echt goud, wedden?" / "Look at the tip shining in the sun! Real gold, I bet."
+  - Explorer: "In een gat in de grond. Voor wie glimt dat dan?" / "Down a hole in the ground. Who's it shining for?"
+  - Fez: "Voor haar. Zo'n type is het, dat zie je zo." / "Her. You can tell the type."
+- Phase 8 — `cave.expert_treasure_tomb` — fires: High Priest's Treasury — entering the cave
+  - Fez: "Dus hier zit die priester van Henut. Onuitstaanbaar, zei ze." / "So this is where Henut's priest is. Insufferable, she said."
+  - Fez: "Wat denk jij, moeten we iets meenemen? Bloemen?" / "What do you think, should we bring something? Flowers?"
+  - Explorer: "Hij is dood." / "He's dead."
+  - Fez: "Juist daarom. Je wilt toch een goeie eerste indruk maken." / "All the more reason. You want to make a good first impression."
+- Phase 8 — `pillar.expert_treasure_tomb` — fires: High Priest's Treasury — reaching the pillar
+  - Fez: "Hè hè, eindelijk! Die grot wilde ons er echt niet in hebben." / "Phew, at last! That cave really did not want us in."
+  - Explorer: "Dat was ook de bedoeling, denk ik." / "I think that was the idea."
+- Phase 8 — `cavern.expert_treasure_tomb` — fires: High Priest's Treasury — arriving at the cavern
+  - Fez: "Hm. Mag je eigenlijk iets verkopen wat al van een god is?" / "Hm. Are you actually allowed to sell something that already belongs to a god?"
+  - Explorer: "Vraag het de god." / "Ask the god."
+  - Fez: "Liever niet." / "I'd rather not."
+- Phase 8 — `cave.expert_treasure_tomb_b` — fires: Inner Sanctum — entering the cave
+  - Fez: "Hier mocht alleen de hogepriester naar binnen. En nu wij!" / "Only the high priest was allowed in here. And now us!"
+  - Explorer: "Mogen wij dat?" / "Are we allowed?"
+  - Fez: "Er staat niemand bij de deur om nee te zeggen." / "There's nobody on the door to say no."
+- Phase 8 — `pillar.expert_treasure_tomb_b` — fires: Inner Sanctum — reaching the pillar
+  - Fez: "Psst… Waarom fluister ik eigenlijk?" / "Psst… why am I whispering?"
+  - Explorer: "Geen idee. Ik doe het ook." / "No idea. I'm doing it too."
+- Phase 8 — `cavern.expert_treasure_tomb_b` — fires: Inner Sanctum — arriving at the cavern
+  - Fez: "Zou die priester weten dat we hier rondlopen?" / "Do you think that priest knows we're wandering about in here?"
+  - Explorer: "Hij houdt niks bij. Dat zou onprofessioneel zijn." / "He doesn't keep count. It would be unprofessional."
+- Phase 8 — `cave.master_treasure_tomb` — fires: Pharaoh's Secret Hoard — entering the cave
+  - Fez: "Kijk, hier houdt de kaart gewoon op. Zand, en dan niks meer." / "Look, the map just stops here. Sand, and then nothing."
+  - Explorer: "Dan zitten we goed." / "Then we're in the right place."
+  - Fez: "Dat bedoel ik nou. Daar word ik juist zenuwachtig van." / "That's what I mean. That's exactly what makes me nervous."
+- Phase 8 — `pillar.master_treasure_tomb` — fires: Pharaoh's Secret Hoard — reaching the pillar
+  - Fez: "Pfoe. Mijn staart trilt nog van die laatste deur." / "Whew. My tail's still shaking from that last door."
+  - Fez: "Een koning die z'n spullen zó opbergt… die wil ze echt niet kwijt." / "A king who locks his things away like that… he really doesn't want to lose them."
+- Phase 8 — `cavern.master_treasure_tomb` — fires: Pharaoh's Secret Hoard — arriving at the cavern
+  - Fez: "Kijk hem staan, helemaal alleen in de zon. Mooi, hè?" / "Look at it, all alone in the sun. Lovely, isn't it?"
+  - Fez: "Zullen we gewoon een tekening maken en weer gaan?" / "Shall we just do a drawing and go?"
+  - Explorer: "Je kunt niet tekenen." / "You can't draw."
+  - Fez: "…Nee. Naar binnen dan maar." / "…No. In we go, then."
+- Phase 8 — `cave.master_treasure_tomb_b` — fires: Hall of Osiris — entering the cave
+  - Fez: "De hal van Osiris! Groen, natuurlijk. Omdat hij elk jaar terugkomt, net als het graan." / "The hall of Osiris! Green, of course. Because he comes back every year, like the grain."
+  - Explorer: "Dat wist je altijd al." / "You always knew that."
+  - Fez: "Altijd al." / "Always."
+- Phase 8 — `pillar.master_treasure_tomb_b` — fires: Hall of Osiris — reaching the pillar
+  - Fez: "Zie je wel. Zit je maar lang genoeg onder de grond, dan kom je vanzelf weer boven." / "See? Stay under the ground long enough, and up you come again."
+  - Explorer: "Is dat ook van Osiris?" / "Is that Osiris as well?"
+  - Fez: "Nee, die is van mij." / "No, that one's mine."
+- Phase 8 — `cavern.master_treasure_tomb_b` — fires: Hall of Osiris — arriving at the cavern
+  - Fez: "Wie daarin ligt, rekent erop dat hij terugkomt. Dat is hier de afspraak." / "Whoever's in there is counting on coming back. That's the deal round here."
+  - Explorer: "Hoe lang wacht hij al?" / "How long has he been waiting?"
+  - Fez: "Lang. Maar dat hoort bij het vak, hè. Dood zijn is vooral wachten." / "A long time. Comes with the job, though. Being dead is mostly waiting."
+- Phase 8 — `cave.wizard_treasure_tomb` — fires: Vault of the Gods — entering the cave
+  - Fez: "De voorraadkamer van de goden! Wat sla je op als je al alles hebt?" / "The gods' own storeroom! What do you keep when you already have everything?"
+  - Explorer: "Wat mensen je brengen." / "Whatever people bring you."
+  - Fez: "…Ja. Dat zal het zijn." / "…Yes. That'll be it."
+- Phase 8 — `pillar.wizard_treasure_tomb` — fires: Vault of the Gods — reaching the pillar
+  - Fez: "Zulke deuren… daar waren we vroeger gewoon voor omgedraaid." / "Doors like those… once, we'd have just turned round."
+  - Explorer: "Nu niet meer." / "Not any more."
+- Phase 8 — `cavern.wizard_treasure_tomb` — fires: Vault of the Gods — arriving at the cavern
+  - Explorer: "Wauw." / "Wow."
+  - Fez: "Ja." / "Yes."
+  - Fez: "Soms valt er gewoon niks meer bij te zeggen, hè." / "Sometimes there's just nothing left to say, is there."
+- Phase 8 — `cave.wizard_treasure_tomb_b` — fires: Realm of Cosmic Forces — entering the cave
+  - Fez: "Rijk der Kosmische Krachten. Zo, zo." / "Realm of Cosmic Forces. Well, well."
+  - Fez: "Als ik iets moest verkopen dat niks voorstelde, zou ik het ook zo noemen." / "If I had something to sell that was nothing much, that's what I'd call it too."
+- Phase 8 — `pillar.wizard_treasure_tomb_b` — fires: Realm of Cosmic Forces — reaching the pillar
+  - Fez: "Drie verdiepingen grot, en dán pas de voordeur." / "Three floors of cave, and only then the front door."
+  - Explorer: "Dan is het vast de moeite waard." / "Must be worth it, then."
+  - Fez: "Dat zeggen ze altijd. En dan is het een kruik." / "That's what they always say. And then it's a jar."
+- Phase 8 — `cavern.wizard_treasure_tomb_b` — fires: Realm of Cosmic Forces — arriving at the cavern
+  - Fez: "Zie je die vlek zon op de piramide? Daar kun je zo de tijd op aflezen." / "See that patch of sun on the pyramid? You could tell the time by it."
+  - Explorer: "Hoe laat is het dan?" / "What time is it, then?"
+  - Fez: "…Middag. Zo ongeveer. Ik ben geen klok, hè." / "…Afternoon. Roughly. I'm not a clock."
+- Phase 8 — `cave.wizard_treasure_tomb_c` — fires: Throne of Eternity — entering the cave
+  - Fez: "Ik heb ineens het gevoel dat ik iets fout heb gedaan." / "I've suddenly got this feeling I've done something wrong."
+  - Explorer: "Wat dan?" / "Like what?"
+  - Fez: "Weet ik niet. Dat is nou juist het ergste." / "No idea. That's the worst part."
+- Phase 8 — `pillar.wizard_treasure_tomb_c` — fires: Throne of Eternity — reaching the pillar
+  - Fez: "Laatste stuk donker. Dat voel ik gewoon." / "Last stretch of dark. I can feel it."
+  - Explorer: "Dat zei je bij de vorige ook." / "You said that at the last one."
+  - Fez: "En toen had ik bijna gelijk." / "And I was nearly right."
+- Phase 8 — `cavern.wizard_treasure_tomb_c` — fires: Throne of Eternity — arriving at the cavern
+  - Fez: "Daar is hij. Alle lijnen op die kaart komen hier uit." / "There it is. Every line on that map ends up here."
+  - Explorer: "Dan is dit het eind." / "Then this is the end."
+  - Fez: "Van de kaart, ja. Raar. Ik dacht dat dat beter zou voelen." / "Of the map, yes. Funny. I thought that would feel better."
 
 ## Failures
 

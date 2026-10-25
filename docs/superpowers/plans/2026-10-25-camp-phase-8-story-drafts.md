@@ -80,12 +80,12 @@ One Opus agent, reading the voice sources before writing a line: `FORMAT.md` §5
 - Produces (story mod data): `DRAFT_BEATS: Record<"tombs" | "camp" | "structures" | "animals", readonly string[]>` — this task fills `tombs` with the 27 ids; `WAITING_BEATS: Readonly<Record<string, string>>` — beat id → the missing seam it waits on (empty here).
 - `drafts.spec.ts`: every id in `DRAFT_BEATS` and `WAITING_BEATS` has a line 1 (some speaker) in both `nl` and `en` `fez.json` (read with `node:fs`, resolved with `spokenLines`); no id appears twice across the areas. Presence only, never the words.
 
-- [ ] **Step 1: Write the drafts** in the script file, nl first, en beneath each line, every scene with "fires: <tomb name> — <entering the cave | reaching the pillar | arriving at the cavern>".
-- [ ] **Step 2: Copy them into** both `fez.json` files under the fixed ids; poses into `storyPoses.ts`.
-- [ ] **Step 3: Drafts list and spec** (`drafts.ts`, `drafts.spec.ts`); extend `arrivalContent.spec.ts`'s groups.
-- [ ] **Step 4: Run** `yarn test src/mods/story src/app/fez src/i18n` — PASS; `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Review list:** under Drafts, one bullet per scene: `Phase 8 — \`<id>\` — fires: <where>`, then one sub-bullet per line, `Speaker: "nl" / "en"`.
-- [ ] **Step 6: Commit** — `story: draft the tomb cave, pillar and cavern lines`
+- [x] **Step 1: Write the drafts** in the script file, nl first, en beneath each line, every scene with "fires: <tomb name> — <entering the cave | reaching the pillar | arriving at the cavern>".
+- [x] **Step 2: Copy them into** both `fez.json` files under the fixed ids; poses into `storyPoses.ts`.
+- [x] **Step 3: Drafts list and spec** (`drafts.ts`, `drafts.spec.ts`); extend `arrivalContent.spec.ts`'s groups.
+- [x] **Step 4: Run** `yarn test src/mods/story src/app/fez src/i18n` — PASS; `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Review list:** under Drafts, one bullet per scene: `Phase 8 — \`<id>\` — fires: <where>`, then one sub-bullet per line, `Speaker: "nl" / "en"`.
+- [x] **Step 6: Commit** — `story: draft the tomb cave, pillar and cavern lines`
 
 ---
 

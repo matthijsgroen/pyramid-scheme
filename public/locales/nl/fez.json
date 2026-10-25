@@ -362,6 +362,145 @@
     }
   },
 
+  "cave": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "Een grot! Op de kaart stond een kelderdeur, en dit is een hele heuvel!" },
+      "2": { "fez": "Slimme vent. Je voorraad in een heuvel verstoppen, daar komt geen dief op." },
+      "3": { "explorer": "Wij wel." },
+      "4": { "fez": "Wij zijn geen dieven. Wij zijn klanten. Héle late klanten." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Hier moet het zijn. Henut! Die van de elf deben lapis!" },
+      "2": { "fez": "Wat denk je, mogen we een procentje houden als we het innen?" },
+      "3": { "explorer": "Je hebt nog niks geïnd." },
+      "4": { "fez": "Ik reken alvast." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Dus hier zit die priester van Henut. Onuitstaanbaar, zei ze." },
+      "2": { "fez": "Wat denk jij, moeten we iets meenemen? Bloemen?" },
+      "3": { "explorer": "Hij is dood." },
+      "4": { "fez": "Juist daarom. Je wilt toch een goeie eerste indruk maken." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Hier mocht alleen de hogepriester naar binnen. En nu wij!" },
+      "2": { "explorer": "Mogen wij dat?" },
+      "3": { "fez": "Er staat niemand bij de deur om nee te zeggen." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Kijk, hier houdt de kaart gewoon op. Zand, en dan niks meer." },
+      "2": { "explorer": "Dan zitten we goed." },
+      "3": { "fez": "Dat bedoel ik nou. Daar word ik juist zenuwachtig van." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "De hal van Osiris! Groen, natuurlijk. Omdat hij elk jaar terugkomt, net als het graan." },
+      "2": { "explorer": "Dat wist je altijd al." },
+      "3": { "fez": "Altijd al." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "fez": "De voorraadkamer van de goden! Wat sla je op als je al alles hebt?" },
+      "2": { "explorer": "Wat mensen je brengen." },
+      "3": { "fez": "…Ja. Dat zal het zijn." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Rijk der Kosmische Krachten. Zo, zo." },
+      "2": { "fez": "Als ik iets moest verkopen dat niks voorstelde, zou ik het ook zo noemen." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Ik heb ineens het gevoel dat ik iets fout heb gedaan." },
+      "2": { "explorer": "Wat dan?" },
+      "3": { "fez": "Weet ik niet. Dat is nou juist het ergste." }
+    }
+  },
+
+  "pillar": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "Al die hendels en deuren, voor één kelder!" },
+      "2": { "fez": "Dan ligt er wat goeds, hoor. Niemand doet zoveel moeite voor rommel." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Pff. Die deuren waren heel wat lastiger dan bij Ipi." },
+      "2": { "fez": "Tja. Mevrouw had natuurlijk geld." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Hè hè, eindelijk! Die grot wilde ons er echt niet in hebben." },
+      "2": { "explorer": "Dat was ook de bedoeling, denk ik." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Psst… Waarom fluister ik eigenlijk?" },
+      "2": { "explorer": "Geen idee. Ik doe het ook." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Pfoe. Mijn staart trilt nog van die laatste deur." },
+      "2": { "fez": "Een koning die z'n spullen zó opbergt… die wil ze echt niet kwijt." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "Zie je wel. Zit je maar lang genoeg onder de grond, dan kom je vanzelf weer boven." },
+      "2": { "explorer": "Is dat ook van Osiris?" },
+      "3": { "fez": "Nee, die is van mij." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "fez": "Zulke deuren… daar waren we vroeger gewoon voor omgedraaid." },
+      "2": { "explorer": "Nu niet meer." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Drie verdiepingen grot, en dán pas de voordeur." },
+      "2": { "explorer": "Dan is het vast de moeite waard." },
+      "3": { "fez": "Dat zeggen ze altijd. En dan is het een kruik." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Laatste stuk donker. Dat voel ik gewoon." },
+      "2": { "explorer": "Dat zei je bij de vorige ook." },
+      "3": { "fez": "En toen had ik bijna gelijk." }
+    }
+  },
+
+  "cavern": {
+    "starter_treasure_tomb": {
+      "1": { "fez": "Kijk dan! Een piramide, onder de grond! Voor een handelaar!" },
+      "2": { "fez": "Die heeft óf heel goed verdiend, óf heel goed afgedongen." }
+    },
+    "junior_treasure_tomb": {
+      "1": { "fez": "Kijk die punt eens glimmen in de zon! Echt goud, wedden?" },
+      "2": { "explorer": "In een gat in de grond. Voor wie glimt dat dan?" },
+      "3": { "fez": "Voor haar. Zo'n type is het, dat zie je zo." }
+    },
+    "expert_treasure_tomb": {
+      "1": { "fez": "Hm. Mag je eigenlijk iets verkopen wat al van een god is?" },
+      "2": { "explorer": "Vraag het de god." },
+      "3": { "fez": "Liever niet." }
+    },
+    "expert_treasure_tomb_b": {
+      "1": { "fez": "Zou die priester weten dat we hier rondlopen?" },
+      "2": { "explorer": "Hij houdt niks bij. Dat zou onprofessioneel zijn." }
+    },
+    "master_treasure_tomb": {
+      "1": { "fez": "Kijk hem staan, helemaal alleen in de zon. Mooi, hè?" },
+      "2": { "fez": "Zullen we gewoon een tekening maken en weer gaan?" },
+      "3": { "explorer": "Je kunt niet tekenen." },
+      "4": { "fez": "…Nee. Naar binnen dan maar." }
+    },
+    "master_treasure_tomb_b": {
+      "1": { "fez": "Wie daarin ligt, rekent erop dat hij terugkomt. Dat is hier de afspraak." },
+      "2": { "explorer": "Hoe lang wacht hij al?" },
+      "3": { "fez": "Lang. Maar dat hoort bij het vak, hè. Dood zijn is vooral wachten." }
+    },
+    "wizard_treasure_tomb": {
+      "1": { "explorer": "Wauw." },
+      "2": { "fez": "Ja." },
+      "3": { "fez": "Soms valt er gewoon niks meer bij te zeggen, hè." }
+    },
+    "wizard_treasure_tomb_b": {
+      "1": { "fez": "Zie je die vlek zon op de piramide? Daar kun je zo de tijd op aflezen." },
+      "2": { "explorer": "Hoe laat is het dan?" },
+      "3": { "fez": "…Middag. Zo ongeveer. Ik ben geen klok, hè." }
+    },
+    "wizard_treasure_tomb_c": {
+      "1": { "fez": "Daar is hij. Alle lijnen op die kaart komen hier uit." },
+      "2": { "explorer": "Dan is dit het eind." },
+      "3": { "fez": "Van de kaart, ja. Raar. Ik dacht dat dat beter zou voelen." }
+    }
+  },
+
   "bond": {
     "starter": {
       "1": { "fez": "Dat ging snel." },
