@@ -231,7 +231,7 @@ export const Base = ({
           title={popupTitle[popup]}
           closeLabel={t("camp.close")}
           onClose={closePopup}
-          fill={popup === "window"}
+          fill={popup !== "journeys"}
         >
           {popup === "collection" && <CollectionPage />}
           {popup === "window" && WindowScreen && <WindowScreen />}

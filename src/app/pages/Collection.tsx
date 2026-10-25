@@ -122,23 +122,25 @@ export const CollectionPage: FC = () => {
   const newInTab = current?.id === opened.tab ? opened.ids : []
 
   return (
-    <div className="flex size-full bg-gradient-to-b from-blue-100 to-blue-300">
-      <div className="relative flex-1 overflow-y-auto p-6">
+    <div className="flex size-full flex-col gap-3">
+      {section && current && (
+        <CollectionTabs
+          tabs={shown.map(tab => ({
+            id: tab.id,
+            label:
+              tab.newIds.length > 0
+                ? t("collection.tabNew", { label: tab.label, count: tab.newIds.length })
+                : tab.label,
+          }))}
+          selected={current.id}
+          onSelect={selectTab}
+          label={t("collection.tabsLabel")}
+          panelId={panelId}
+        />
+      )}
+      <div className="relative min-h-0 flex-1 overflow-y-auto">
         {section && current ? (
-          <div className="space-y-4 pb-safe-bottom">
-            <CollectionTabs
-              tabs={shown.map(tab => ({
-                id: tab.id,
-                label:
-                  tab.newIds.length > 0
-                    ? t("collection.tabNew", { label: tab.label, count: tab.newIds.length })
-                    : tab.label,
-              }))}
-              selected={current.id}
-              onSelect={selectTab}
-              label={t("collection.tabsLabel")}
-              panelId={panelId}
-            />
+          <div className="pb-safe-bottom">
             {/* The open tab's section from a mod: it registers itself gated on its mod, so a tab drops
                 out with its mod — core names none. */}
             <div role="tabpanel" id={panelId} aria-labelledby={`${panelId}-tab-${current.id}`} tabIndex={0}>

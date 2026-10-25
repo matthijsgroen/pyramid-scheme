@@ -1,4 +1,4 @@
-import type { CSSProperties, FC, KeyboardEvent, ReactNode } from "react"
+import type { FC, KeyboardEvent, ReactNode } from "react"
 import { closeOnEscape, focusOnMount, trapTab } from "@/ui/atoms/dialogFocus"
 
 export type CampPopupProps = {
@@ -7,38 +7,21 @@ export type CampPopupProps = {
   onClose: () => void
   /** From `lg` the panel takes the full height, for content that lays itself out to it. */
   fill?: boolean
-  /** Pixels the camp's HUD takes under the safe area; on a phone the panel starts below it. */
-  hudHeight?: number
   children?: ReactNode
 }
 
 const TITLE_ID = "camp-popup-title"
-const DEFAULT_HUD_HEIGHT = 72
 
-// Everything the camp opens (journeys, collection, shop) is a popup over it: an inset panel on a phone, so
-// the camp stays in view behind it, a large centred panel from `lg`.
-export const CampPopup: FC<CampPopupProps> = ({
-  title,
-  closeLabel,
-  onClose,
-  fill = false,
-  hudHeight = DEFAULT_HUD_HEIGHT,
-  children,
-}) => {
+// Everything the camp opens (journeys, collection, shop) is a popup over it: an inset panel on a phone that
+// takes the height inside the safe edges, a large centred panel from `lg`.
+export const CampPopup: FC<CampPopupProps> = ({ title, closeLabel, onClose, fill = false, children }) => {
   const escape = closeOnEscape(onClose)
   const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
     escape(event)
     trapTab(event)
   }
-  const insets = {
-    "--popup-top": `calc(env(safe-area-inset-top, 0px) + ${hudHeight}px)`,
-    "--popup-bottom": "calc(env(safe-area-inset-bottom, 0px) + 40px)",
-  } as CSSProperties
   return (
-    <div
-      style={insets}
-      className="fixed inset-0 z-50 flex items-stretch justify-center bg-black/60 px-4 pt-(--popup-top) pb-(--popup-bottom) lg:items-center lg:p-10"
-    >
+    <div className="fixed inset-0 z-50 flex items-stretch justify-center bg-black/60 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] lg:items-center lg:p-4">
       <div
         ref={focusOnMount}
         role="dialog"

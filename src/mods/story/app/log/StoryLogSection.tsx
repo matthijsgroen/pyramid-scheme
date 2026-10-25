@@ -62,9 +62,7 @@ export const StoryLogSection: FC<CollectionSectionProps> = () => {
                   onClick={() => setOpen(showing ? null : scene.id)}
                   aria-expanded={showing}
                 >
-                  <span className="flex items-center gap-2">
-                    {t(`${scene.journeyId}.name`, { ns: "journeys" })}
-                  </span>
+                  <span className="flex items-center gap-2">{t(`${scene.journeyId}.name`, { ns: "journeys" })}</span>
                   <span aria-hidden>{showing ? "▾" : "▸"}</span>
                 </button>
                 {showing && (

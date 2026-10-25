@@ -38,4 +38,3 @@ describe("StoryLogSection", () => {
     expect(screen.queryByText("story.log.empty")).toBeNull()
   })
 })
-

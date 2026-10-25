@@ -77,11 +77,11 @@ export const MosaicWindow: FC<{
 
   return (
     <>
-      <div className="flex min-h-0 flex-1 flex-col rounded-4xl bg-stone-950">
+      <div className="flex min-h-0 flex-1 flex-col self-stretch rounded-4xl bg-stone-950">
         {/* Size container: the frame takes whichever of the two fits — the space's full width, or the
           width the panel's own aspect ratio allows at the space's height. Height alone overflowed
           a narrow phone sideways whenever the row below happened to be short. */}
-        <div className="[container-type:size] flex min-h-0 flex-1 items-center justify-center p-2">
+        <div className="[container-type:size] flex min-h-0 flex-1 items-center justify-center p-1">
           <StoneFrame className="w-[min(100cqw,calc(100cqh*200/347))]">
             {/* Holds the panel's aspect ratio while the glass is on its way, so the frame does not
               snap to a new size the moment it arrives. */}
@@ -118,7 +118,7 @@ export const MosaicWindow: FC<{
           </div>
         </div>
       </div>
-      <div className="shrink-0 px-4 py-3">
+      <div className="shrink-0 px-4 py-3 lg:w-60 lg:px-0">
         <CountProgress
           label={t("mosaic.window.count", { found, total: MOSAIC_TOTAL })}
           note={carriedTotal > 0 ? t("mosaic.window.new", { count: carriedTotal }) : undefined}
