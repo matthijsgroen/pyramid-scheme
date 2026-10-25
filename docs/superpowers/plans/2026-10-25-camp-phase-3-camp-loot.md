@@ -184,14 +184,14 @@ Mechanical; one agent (Sonnet).
   - `readCampSave(stored: unknown): CampSave` — a stored value of another shape or version becomes `emptyCampSave()` (saves reset at the starter release; this is the first version); a known shape keeps every id, known or not.
 - Produces (app): `useCampProgress(): { save; found: CampFound; recordFind; recordPart; grow; structureProgress; startedStructures; spotProgress }` over `useModState("camp", emptyCampSave)`, every read through `readCampSave`. `found` is the prop phase 6 passes to `CampScene` (cast to the ui's `CampFound` in the app layer).
 
-- [ ] **Step 1: Failing tests** (made-up table and saves).
+- [x] **Step 1: Failing tests** (made-up table and saves).
   - `campState.spec.ts`: a find is in place once recorded, in any order; a structure is not in place with one part missing and is once the last part lands, whatever the order; recording twice changes nothing; a fixed step is always in place, a bought step never (phase 4); `growCamp` adds the sprout after the seed, the palm only on the following call, dates only once both palms stand; an ibis-like step waiting on two steps grows only when both are there; nothing grows from an empty save; an id the table does not know survives in the save and never reaches `inPlace`; `startedStructures` lists only structures with a part; `structureProgress` and `spotProgress` count as described; `readCampSave` of `undefined`, a number, a v0-shaped object or a `version: 2` object gives the empty save; of a v1 save gives it back unchanged.
   - `useCampProgress.spec.ts` (renderHook over the real `useModState` with a fresh storage): `recordPart` for every part of a made-up structure puts it in `found`; `grow` after recording a seed adds the sprout; the stored value carries `version: 1` and ids only.
-- [ ] **Step 2: Run** `yarn test src/mods/camp` — FAIL.
-- [ ] **Step 3: Implement.** The state file's comment says the save holds facts by authoring name and the picture is derived, so a table change never strands a save.
-- [ ] **Step 4: Run** the specs — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Per-task review** (soundness): no index or ordinal stored; unknown ids kept but inert; idempotent records; growth judged on the save as given; the store key is the mod's own.
-- [ ] **Step 6: Commit** — `feat: the camp remembers what was found and grows on coming home`
+- [x] **Step 2: Run** `yarn test src/mods/camp` — FAIL.
+- [x] **Step 3: Implement.** The state file's comment says the save holds facts by authoring name and the picture is derived, so a table change never strands a save.
+- [x] **Step 4: Run** the specs — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Per-task review** (soundness): no index or ordinal stored; unknown ids kept but inert; idempotent records; growth judged on the save as given; the store key is the mod's own.
+- [x] **Step 6: Commit** — `feat: the camp remembers what was found and grows on coming home`
 
 ---
 
