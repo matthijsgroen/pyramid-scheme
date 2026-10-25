@@ -9,9 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- The camp is home: set off, all journeys in one list, the collection in tabs with NIEUW marks and the mosaic open from the camp; coming home shows your haul, and Fez and the explorer talk in every tomb's cave and cavern and at camp.
-- Camp things and structure parts are found on puzzles; started structures show in the collection.
-- Hearts refill at camp; waterskins on expert and up heal on the spot; supplies and the supplies detector are gone.
+- The camp is your home: you set off from it and come back to it to unpack what you found.
+- All journeys are in one list at the camp, the newest difficulty first.
+- The collection opens from the camp's chest in tabs, and marks what is new.
+- Camp things and parts of camp structures are found on puzzles, and your camp grows with them.
+- Hearts refill at the camp fire, and a waterskin found on expert and up heals on the spot.
+- Bandages, oil, trap tools and the supplies detector are gone.
+- Fez and the explorer talk at the camp and in every tomb's cave and cavern.
 - Every treasure tomb is now hidden in a cave before its sunlit cavern; the starter tomb's cave is behind a lever lock.
 - The old skeleton in the cave lies across two floor cells.
 - The cave floor has worn, rounded edges instead of square ones, and its back walls end round against the side walls.
@@ -23,7 +27,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A pyramid has one way out now: the pillar of light where its main corridor ends, which Fez explains the first time you reach it.
 - The first sudoku boards hand you more of the answer, and the next tier steps up more gently.
 - Ipi, in the first tomb, talks with Fez and the explorer instead of at them.
-- The map button on the main screen is square.
 - The explorer looks dry when he is being dry, and surprised when something surprises him.
 - Fez and the explorer look excited on their excited story lines.
 - Fez looks worried on his worried story lines.
@@ -71,7 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - On the map the explorer stands beside a stair instead of inside it, going up and going down.
 - The installed game no longer turns into the preview and asks to reload after every preview update.
 - How a tomb's tableau is worked is explained when the tableau is open, not on arrival.
-- The pointing hand on the travel map waits until the conversation is over.
+- The pointing hand waits until the conversation is over.
 - Fez says nothing before you have met him.
 - On a wide screen the conversation stands by the game, not in the screen's corners.
 - No more bar across the screen while somebody talks to you in a room, or while Fez greets you at his stall.
@@ -88,7 +91,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - The tomb ghosts stand in their rooms and say one line when you walk back in; a conversation room without one wears a replay symbol on the map and plays its scene again.
-- A tapping hand shows where to start on the travel screen, and in a conversation the explorer faces whoever he talks to.
+- A tapping hand shows where to start at the camp, and in a conversation the explorer faces whoever he talks to.
 - A stone pipe in the walls carries a stone where you cannot: post it at one hole and take it out of the other.
 - A procession door: its tiles free the bars of a procession board, and solving it teaches the order to walk.
 - A junior pyramid's fork now has a mirror puzzle standing in it, and the way that stands open is the one you route the beam to. Change your mind and the other way opens as that one shuts. The fork and its doors wear one mark on the map.
@@ -115,7 +118,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The way out of a site now counts as explored, so the corridor to it stays lit.
 - Pyramid floors now lay out the same on every browser, so a save carried between devices lands on the maze it was written against.
 - Fixed a black screen when starting an expedition right after the game loads.
-- Tapping "continue expedition" on the travel map no longer sends you back to a pyramid you already finished.
+- Setting off from the camp no longer sends you back to a pyramid you already finished.
 - A lever standing across a corridor no longer walls off everything past it.
 - A lever now stays visible while you're standing on it throwing it.
 - A mirror puzzle no longer crashes reopening a fork the game reshaped since you left it mid-turn.
