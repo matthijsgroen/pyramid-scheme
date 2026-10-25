@@ -580,4 +580,4 @@ Docs: Sonnet. The rest: Opus.
 
 ## Open questions for the designer
 
-1. **Trap and gated paths inside a lock (phase 4b):** today a sealed (trap), gated or hidden side section always hangs as a branch off the lock, never inside its corridors. Should phase 4b lay those into a lock's corridors too, or only ungated paths?
+None open. Answered for phase 4b: only open (ungated, unsealed, not hidden) side paths are laid into a lock's corridors; trap, gated and hidden sections keep hanging as branches, since a lock must stay provably solvable (designer, 2026-10-25).
