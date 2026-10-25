@@ -7,7 +7,7 @@
 **Goal:** The world is built in the designer's order, and the bake proves that the player can never get stuck in the world that ships.
 
 1. The DSL fixes floors, locks, chests and puzzles.
-2. Every floor's layout (`seed` + `packing`) is picked **before** any loot is placed. The layout meets **hard** criteria: it carves, every lock holds a puzzle on the way, and the sprawl knobs hold. A floor whose authoring cannot meet them fails the bake by name.
+2. Every floor's layout (`seed` + `packing`) is picked **before** any loot is placed. The layout meets **hard** criteria: it carves, its lock walks sound, every lock holds a puzzle on the way, no dead region and no bare stub. A floor whose authoring cannot meet them fails the bake by name. `packing` is an intention, not a requirement: the search prefers the pair closest to it and never fails a floor on it.
 3. On that layout the worklist places keys, first blockage first: hieroglyphs, ward keys, tomb treasures, map pieces, the corridor detector, and the animals Fez sells.
 4. Money is a condition, not a placement: in every ground the player can stand in, the money lying there covers everything for sale there.
 5. The fixed quantities follow: mosaic pieces, camp finds and parts, waterskins, Fez's waterskins.
@@ -21,13 +21,14 @@ A guard walks the **stamped** world and refuses any bake in which a journey cann
 - It places loot (`placeFragments`, `src/worldGen/configBuilder.ts:404`) and validates it on floors carved at `defaultSeedFor` (`src/worldGen/reachability.ts:95,147,187`).
 - Only then does it stamp a carve-searched `seed` + `packing` on every floor (`assembleOnce`, `scripts/generateWorld.ts:133-224`, base `floorAssemblySeed`). It re-builds only when the web moved (`bakeOnSettledPins`, `webPlacement.ts:58-77`).
 - Nothing walks the stamped world. Which rooms lie before a tableau or lock depends on the carve, so pieces land behind their own gates in play. The strict walk enters 22 of 29 journeys at the shipped layout, and none of the 7 wizard journeys.
-- The carve search also relaxes silently. It raises `packing` above the authored value up to `PACKING_CEILING`, and it pins a floor no pair satisfies at its base seed, carved by the ladder (fatal only under `STRICT_ATTEMPT_ZERO`).
+- The carve search falls back silently. It raises `packing` from the authored value in steps of 0.02 up to `PACKING_CEILING` (1, `src/game/carve/ladder.ts:47`), which is acceptable variation. But a floor no pair satisfies is pinned at its base seed and carved by the runtime ladder, and that ladder carve is only checked for `success` (`scripts/generateWorld.ts:206-222`). So a floor whose lock walks unsound, or which leaves a dead region, ships unless `STRICT_ATTEMPT_ZERO` is set: the fallback hides real failures.
+- On a lock floor the carve already lays ungated side sections into the lock's laid corridors and regions; this is the designer's "a lock is a blueprint whose corridors may be filled in as a side path", in part (see Decision 7 for the evidence and the gap).
 - The gate walk treats a hidden section as open. At runtime a hidden corridor is found only with the corridor detector: the `detection` perk, L1 at the earliest (`useCorridorDetection.ts`, `treasurePerks.ts`).
 
 **Architecture:**
 
 1. **A layout stage inside the build.** `buildConfigs` gains an injected `pickLayout` hook. It runs after every structural pass (roles, encounters, dressing, shop stock and its trim, shop-end clearing) and before the web and placement. It writes `seed` + `packing` on every floor. The bake supplies it from the carve search and ledger. The old after-build stamp becomes a check: if loot moved a wall, the bake is refused. Every tier is searched alike; no tier's pins are frozen.
-2. **Hard layout criteria.** The carve search adds "every lock holds a puzzle on the way" and "sprawl kept" to its five criteria. It never relaxes a criterion. An authoring that no layout can meet is reported as **infeasible**: a check on the authoring, before or without carving. An authoring the bounded search did not meet is reported as **not found in budget**. Both fail the bake, naming the floor and the criterion.
+2. **Hard layout criteria, packing as intent.** The carve search's hard criteria are: carves, lock walks sound, **every lock holds a puzzle on the way** (new), no dead region, every stub holds a room. `packing` and the ladder's widening are preferences, not criteria: the search takes the passing pair closest to the authored packing (`attempt 0` at the authored packing first, then raised packings closest first, then the ladder carve), and the ladder fallback must meet every hard criterion too. An authoring that no layout can meet is reported as **infeasible** (a check on the authoring, before or without carving); one the bounded search did not meet as **not found in budget**. Both fail the bake, naming the floor and the criterion.
 3. **The corridor detector is a key.** The reachability support names the fact a hidden section needs. The tomb-treasure mod harvests a `detection` perk treasure to the detector facts for its level and below. Placement walks, the gate walk and grounds all honour it.
 4. **Keys on the shipped layout.** The worklist walks the pinned floors, so its reachability is the player's. A key is placed only in a room the walk reaches (the room-reach hunk of the shelved patch). The animals are a gating currency: each fills a stock placeholder in its named shop, and only when that shop is reached before the gate.
 5. **Grounds and money.** The gate walk gains a mode in which shop stock counts as held only once bought. A core function enumerates every **ground**: a fixed point the player can stand in, given which key pieces they bought. The shop mod checks `income(ground) ≥ buyable(ground)` on each ground, its waterskins and rares included. A one-gate-at-a-time check is unsound (Decision 12).
@@ -75,7 +76,7 @@ A guard walks the **stamped** world and refuses any bake in which a journey cann
 ## Review Focus
 
 1. **The layout is picked before loot and is the layout that ships.** Placement's reachability carves every floor at the `seed` + `packing` the layout stage wrote, and the post-build check finds no floor whose grid differs from the picked one (Tasks 1, 6).
-2. **Layout criteria never relax.** A floor that cannot meet one fails the bake by name. Infeasible and not-found-in-budget are told apart (Task 2).
+2. **Hard layout criteria never relax, packing never fails a floor.** A floor that cannot meet a hard criterion fails the bake by name, infeasible and not-found told apart; a floor that only carves at a raised packing or on the ladder is accepted when it meets them (Task 2).
 3. **A hidden corridor is a gate.** Nothing behind it counts, for placement, the guard or money, until the detector is held (Tasks 3, 9).
 4. **No piece behind its own gate.** Room-level eligibility plus the stamped guard: every journey entered, every tier unlocked and no lock blocking, on the final configs and on the committed file (Tasks 4, 6).
 5. **The animals are keys.** Each is placed by the worklist into its own shop, only when that shop is reached before the gate it opens. None opens starter or junior (Task 7).
@@ -95,21 +96,21 @@ Each decision is **default** / alternative. Task 16 writes them under Decisions,
 3. **Shop-end placeholder clearing moves out of `collectSlots`** into a structural pass before the layout, because an end's `endReward` presence decides floor-key hosts. / Alternative: leave it in placement and rely on Decision 2's refusal.
 4. **No tier is frozen** (designer: saves do not exist yet). Starter's floors are picked by the search like every other tier's. A baked pin that still verifies is kept (the search verifies before it searches); one that fails is re-searched. / Alternative: starter's pins verify-only, and a failing one stops the bake.
 5. **A key that fits no slot before its gate stops the bake**, naming the gate and the bucket. No layout is re-picked automatically (designer: keep the default).
-6. **Hard layout criteria, two added.** The search's criteria become: carves, attempt 0, lock walks sound, **every lock holds a puzzle on the way**, no dead region, every stub holds a room, **sprawl kept**. None relaxes. `STRICT_ATTEMPT_ZERO` goes; the strict mode is the only mode. / Alternative: keep today's raise-packing and ladder fallbacks behind a flag.
-7. **"Every lock holds a puzzle on the way"** means: on the lock's solving walk (`walkFloorLock`), from the first sighting of its shut door to its last control, the player passes at least one encounter room that is neither the lock's control nor its door. / Alternative: any encounter room inside the region the lock closes off.
-8. **"Sprawl kept"** means the search may not raise `packing` past the floor's sprawl band:
-   - A floor the DSL left tight (no `packingChance` hit and no authored `packing` above 1) must carve at its authored `packing`. It may rise at most up to just under its tier's `packingWhenHit` (default 1.6), so a tight floor never comes out broad.
-   - A broad floor carves at its authored or rolled `packing`, up to + 0.2.
-   - `PACKING_CEILING` stops being the search's bound.
-
-   / Alternative: `packing` exact, seeds only.
-9. **Infeasible versus not found.** The search reports one of two kinds:
-   - **Infeasible** is decided on the authoring, before carving, by checks that hold for every seed. A lock whose authored sections hold no encounter on its way. A seed-independent assembler refusal (a one-way naming a missing section, a switch asking for more junctions than `forks` reserves). A tight floor whose rooms cannot fit within its band at any seed, by the assembler's own grid-size bound.
+6. **Hard criteria, one added; packing is intent.** Hard: carves, lock walks sound, every lock holds a puzzle on the way, no dead region, every stub holds a room. Not hard: `attempt 0` and `packing` (designer: "packing is an intention, not a requirement"). The search order is the preference: every seed at the authored packing first, then each raised packing closest first up to `PACKING_CEILING` (a packing authored above the ceiling, a 1.6 sprawl hit or expert_4's 2, is searched at its own value only), then the runtime ladder carve at the base seed. The first candidate meeting every hard criterion is pinned; the ladder carve is now checked against the hard criteria instead of `success` alone, and `STRICT_ATTEMPT_ZERO` goes. `corridorStraightness` is never varied by the search; it stays as authored. / Alternative: keep `attempt 0` hard and fail floors that need the ladder.
+7. **"A lock holds a puzzle on the way" is checked on what the carve already builds here; corridors as side-path blueprints are their own phase in this release.** Finding (code as it is):
+   - **Already there, in part.** On a laid (lock) floor, an ungated side section (no gate, not sealed, not hidden, no sub-sections, ending in a chest, no lever, not named by a one-way, not a junction's way) is content, not a branch: its puzzles and end chest stand on the lock's laid corridor and region nodes, in walk order (`src/game/carve/prepareFloor.ts:613-632` `isContentSection`/`absorbedDemands`; `src/game/laidFloor.ts:516-524` `fillLaidFloor`). When the laid stretches are too short, the lay is lengthened on the cheapest region or corridor and laid again (`src/game/carve/layFloor.ts:17-25,79-85`; `Lengthening.kind: "region" | "corridor"`, `laidFloor.ts:514`). The main path's own puzzles stand on the lock's route (`layFloor.ts:57-61` `placeContentOnRoute`). Gates and drops keep their nodes, so rooms and obstacles interleave along a corridor.
+   - **Not there.** A gated, keyed, sealed (every trap path) or hidden section, a section with sub-sections, and a junction's ways stay branches hung off laid ground, filtered only by region appetite (`prepareFloor.ts:607-611`, `hangBranches.ts:397-403`). Nothing addresses a section to a particular corridor or says "between these two areas": the spread is from the way in, and "a floor the spread cannot seat is packed from the way in instead" (`laidFloor.ts:521-522`). A `.lock` connection has no appetite of its own, only regions do (`src/game/regions.ts:12`, `lockAuthoring.ts:32`), and every placed catalogue lock is stood with every region `free` (`src/worldGen/spec/locks/onFloor.ts:43-45`), so no authored region appetite is in force. No check asks whether a lock's way holds a puzzle.
+   - **This plan (default):** the hard criterion "every lock holds a puzzle on the way" (on the lock's solving walk, `walkFloorLock`, from the first sight of its shut door to its last control, at least one encounter room that is neither its control nor its door), plus "every region whose appetite asks for puzzles or a reward holds one", built on today's absorption. Infeasible when the floor has no content that may stand on lock ground: no main-path puzzle and no content section. A small task, before the first bake.
+   - **Phase 4b, in this release (recommended order: after this plan, before the release):** locks as side-path blueprints, its own plan (`docs/superpowers/plans/<date>-camp-phase-4b-lock-blueprints.md`). This release may reset saves, so every lock floor re-carving is allowed. A connection gets an appetite and may name the side section it carries; the lay sizes that corridor for the section's rooms; `fillLaidFloor` seats each named section on its own corridor, the corridor's obstacles interleaved; gated, sealed and hidden sections may be laid into a corridor where a gate can stand on it. Size, honestly: the `.lock` notation and `lockAuthoring` types, `layLocks`' corridor sizing, `fillLaidFloor`'s assignment, `lockReview`, the catalogue's authoring, and every lock floor re-carved; large, a phase of its own. It ends with a re-bake through this plan's pipeline (layout stage, hard criteria, stamped guard, grounds), which is why it sits after: the guards it needs are built here, and its re-bake is mechanical. What this plan leaves ready for it: Task 2's lock-ground check reads appetite through one `appetiteOf(part)` over regions now and connections once they have one, so "every corridor asking for a side path carries one" becomes a case of the same `lockGroundUnfed` check, not a new criterion; `layoutInfeasible` reads the same appetites; Task 2 adds the corridor case as `it.todo` in `lockPuzzles.spec.ts`; and Task 16's review list names phase 4b as next.
+   / Alternative: build phase 4b first, before this plan's first bake (Task 6). One bake fewer, but the animals, money and the stamped guard wait on a large carve feature, and 4b's carve changes would be checked without the guards this plan builds.
+8. **No sprawl band** (designer): packing never fails a floor; Decision 6 says how the search prefers it. / Alternative: a band per tier (dropped).
+9. **Infeasible versus not found.** The search reports one of two kinds for a hard criterion:
+   - **Infeasible** is decided on the authoring, before carving, by checks that hold for every seed: a lock floor with no content that may stand on lock ground (no main-path puzzle, no content section); a region asking for puzzles or a reward on a floor with none to give; a seed-independent assembler refusal (a one-way naming a missing section, a switch asking for more junctions than `forks` reserves).
 
      Message: `<journey> level <n> floor <f>: infeasible — <criterion>: <authoring field and why>`.
-   - **Not found** follows a bounded search: `CARVE_SEED_BUDGET` seeds × every packing rung in the band, with each criterion's refusal counts.
+   - **Not found** follows the bounded search: `CARVE_SEED_BUDGET` seeds × every packing step up to the ceiling, then the ladder carve, with each hard criterion's refusal counts.
 
-     Message: `<journey> level <n> floor <f>: no layout in <seeds> seeds × <rungs> packings meets "<hardest criterion>" (<counts per criterion>) — change <field> or raise the budget`.
+     Message: `<journey> level <n> floor <f>: no layout in <seeds> seeds × <packings> packings and the ladder meets "<hardest criterion>" (<counts per criterion>) — change <field> or raise the budget`.
 
    Both fail the bake. The ledger records not-found results by authoring hash, so they are not re-searched until something changes. / Alternative: one message for both.
 10. **The corridor detector is a key.** `ReachabilitySupport.hiddenRequirement?: () => string`, one fact for the whole world. A hidden section's cells are walkable only while that fact is held (strict walk, placement walks, grounds). The tomb-treasure support harvests a treasure with a `detection` perk of level n to the fact `detector:corridor:<k>` for every k ≤ n, and names `detector:corridor:1` as the hidden requirement, since L1 is what lets a player step onto a hidden junction at runtime. The permissive "everything ever reachable" walk keeps hidden open, because it answers collection totals. / Alternative: a hidden section needs a level per section (needs authoring that does not exist).
@@ -181,39 +182,37 @@ Each decision is **default** / alternative. Task 16 writes them under Decisions,
 
 ---
 
-### Task 2: Layout criteria are hard (**soundness**: world-gen layout)
+### Task 2: Layout criteria are hard, packing is intent (**soundness**: world-gen layout)
 
 **Files:**
 
-- Modify: `src/worldGen/carveSeedSearch.ts` (+ spec): the two new criteria, the sprawl band and the two result kinds.
-- Create: `src/game/lockPuzzles.ts`, `lockPuzzles.spec.ts`: on the carved grid, the locks whose solving walk passes no encounter room (Decision 7).
-- Create: `src/worldGen/layoutFeasibility.ts`, `layoutFeasibility.spec.ts`: the authoring checks that hold for every seed.
-- Modify: `src/worldGen/dsl.ts` / `buildSite.ts`: they record on each floor whether its `packing` came from a sprawl hit or the author (`sprawl: "tight" | "broad"`), so the band can be read. Structural, written before the layout.
-- Modify: `scripts/generateWorld.ts`: `STRICT_ATTEMPT_ZERO` goes; any infeasible or not-found floor exits 1 after every floor has been tried, listing all of them; ledger entries carry the kind.
+- Modify: `src/worldGen/carveSeedSearch.ts` (+ spec): the hard criteria (Decision 6), the search order as preference, the ladder carve as the last candidate checked against the hard criteria, and the two result kinds.
+- Create: `src/game/lockPuzzles.ts`, `lockPuzzles.spec.ts`: on the carved grid, the locks whose solving walk passes no encounter room, and the lock ground (regions; corridors once 4b lands) whose appetite asks for puzzles or a reward and holds none (Decision 7).
+- Create: `src/worldGen/layoutFeasibility.ts`, `layoutFeasibility.spec.ts`: the authoring checks that hold for every seed (Decision 9).
+- Modify: `scripts/generateWorld.ts`: `STRICT_ATTEMPT_ZERO` goes; the ladder fallback is no longer pinned unchecked; any infeasible or not-found floor exits 1 after every floor has been tried, listing all of them.
 - Modify: `scripts/carveLedger.ts`: the entry carries `kind: "notFound"`.
 
 **Interfaces:**
 
-- Produces: `CARVE_CRITERIA` = `carves`, `attempt 0`, `lock walks sound`, `lock holds a puzzle`, `no dead region`, `every stub holds a room`, `sprawl kept`.
-- Produces: `sprawlBand(floor, tierPackingWhenHit): { min: number; max: number }`.
-- Produces: `layoutInfeasible(floor, resolve): { criterion: CarveCriterion; detail: string }[]`, with no carve.
-- Produces: `searchCarvePair` returns `CarvePairFound | { kind: "notFound"; hardest; counts: Record<CarveCriterion, number>; seeds; rungs }`. The caller asks `layoutInfeasible` first and reports `{ kind: "infeasible"; criterion; detail }` without searching.
-- Produces: `lockWithoutPuzzle(grid): string[]` (lock instance names).
+- Produces: `HARD_CRITERIA` = `carves`, `lock walks sound`, `lock holds a puzzle`, `no dead region`, `every stub holds a room`; `refusal(result)` reports only these. `attempt 0` and the packing step stay in the search's order, not in its refusals.
+- Produces: `layoutInfeasible(floor, prep): { criterion; detail }[]`, with no carve.
+- Produces: `searchCarvePair` returns `CarvePairFound` (with `packing` and `laddered: boolean`) or `{ kind: "notFound"; hardest; counts; seeds; packings }`. The caller asks `layoutInfeasible` first and reports `{ kind: "infeasible"; criterion; detail }` without searching.
+- Produces: `lockWithoutPuzzle(grid): string[]` and `lockGroundUnfed(grid): string[]`, the latter reading each lock part's appetite through one `appetiteOf(part)` (regions today; connections once phase 4b gives them one).
 
-- [ ] **Step 1: Failing tests** (made-up floors):
-  - `layoutFeasibility.spec.ts` "a lock whose sections hold no encounter is infeasible before any carve": an injected assembler counts **0** carves, and the message names the lock and `lock holds a puzzle`.
+- [ ] **Step 1: Failing tests** (made-up floors, injected assembler):
+  - `layoutFeasibility.spec.ts` "a lock floor with no main-path puzzle and only gated sections is infeasible before any carve": **0** carves counted, the message names the lock and `lock holds a puzzle`.
   - `layoutFeasibility.spec.ts` "a one-way naming a missing section is infeasible".
-  - `carveSeedSearch.spec.ts` "a criterion no seed in budget meets is not found": with a made-up assembler that fails `no dead region` on every seed and a budget of 3 seeds × 2 rungs, the result is `notFound` with 6 tries, the hardest criterion, and its count.
-  - `carveSeedSearch.spec.ts` "a floor that passes on the third seed is found at offset 2".
-  - `carveSeedSearch.spec.ts` "packing never leaves the band": a tight floor's search asks no packing ≥ its tier's `packingWhenHit`, and a broad floor none above authored + 0.2 (counted through the injected assembler).
-  - `carveSeedSearch.spec.ts` "no fallback pin": a not-found floor gets no seed written.
-  - `lockPuzzles.spec.ts`: "a lock whose way passes a puzzle room passes", and "a lock whose control is the only room on its way is named".
+  - `carveSeedSearch.spec.ts` "a hard criterion no candidate meets is not found": an assembler failing `no dead region` everywhere, budget 3 seeds × 2 packings plus the ladder: `notFound`, 7 tries, the hardest criterion and its count.
+  - `carveSeedSearch.spec.ts` "the pair closest to the authored packing wins": passing at the second packing step and at the fourth, the second is pinned.
+  - `carveSeedSearch.spec.ts` "packing never fails a floor": an assembler passing only on the ladder carve gives `found` with `laddered: true`.
+  - `carveSeedSearch.spec.ts` "the ladder carve must meet the hard criteria": a ladder carve whose lock walks unsound is `notFound`, never pinned.
+  - `lockPuzzles.spec.ts`: "a lock whose way passes a puzzle room passes"; "a lock whose control is the only room on its way is named"; "a region asking for puzzles that holds none is named"; `it.todo("a corridor asking for a side path that carries none is named")` for phase 4b.
 - [ ] **Step 2: Run** `yarn test src/worldGen/carveSeedSearch src/worldGen/layoutFeasibility src/game/lockPuzzles` → FAIL.
 - [ ] **Step 3: Implement.**
-- [ ] **Step 4: Measure, without baking:** run the layout stage alone (a scratch script over the committed configs). List every floor that is now infeasible or not found, with its message, under Failures in the review list. This is what Task 6's bake will refuse, so the designer sees it before the bake.
+- [ ] **Step 4: Measure, without baking:** run the layout stage alone (a scratch script over the committed configs). List every floor that is now infeasible or not found, with its message, under Failures in the review list, and the count of floors that pass only on the ladder (accepted). This is what Task 6's bake will refuse, so the designer sees it before the bake.
 - [ ] **Step 5: Run** → PASS; `yarn check-types`; `yarn lint`.
-- [ ] **Step 6: Per-task review** (Opus): no relaxation path is left; infeasible is only claimed for checks that hold for every seed; the band follows the DSL.
-- [ ] **Step 7: Commit:** `feat: a floor's layout meets every criterion or the bake names it`
+- [ ] **Step 6: Per-task review** (Opus): no fallback ships a floor unchecked; infeasible is only claimed for checks that hold for every seed; packing orders the search and never refuses.
+- [ ] **Step 7: Commit:** `feat: a floor's layout meets every hard criterion or the bake names it`
 
 ---
 
@@ -546,7 +545,8 @@ Docs: Sonnet. The rest: Opus.
 
 - `docs/game-design/keys-and-locks-solver.md`: the order becomes layout (hard criteria) → keys (detector and purchases included) → money as a condition → fixed loot → money; plus grounds and the stamped guard.
 - `docs/game-design/world-spec-stability.md`: the layout is picked before loot, and loot moves no wall.
-- `docs/game-design/journeys.md` §3: sprawl as a hard band.
+- `docs/game-design/journeys.md` §3: packing is an intention the search prefers, never a refusal.
+- `docs/game-design/lock-placement.md`: what a lock floor's side sections stand on, and the lock-holds-a-puzzle check.
 - `docs/game-design/shop-mechanic.md`.
 - `docs/review-camp-release.md`.
 - `docs/handover-camp-release.md`: tick phases 4 and 5, with a State line each.
@@ -572,6 +572,7 @@ Docs: Sonnet. The rest: Opus.
   - the fingerprint lines;
   - the toggle and gate results;
   - the CHANGELOG line.
+  - phase 4b (locks as side-path blueprints, Decision 7) as the next phase, in `docs/handover-camp-release.md` too.
 
   **Commit:** `docs: phase 4 and 5 results in the review list`
 
@@ -579,5 +580,4 @@ Docs: Sonnet. The rest: Opus.
 
 ## Open questions for the designer
 
-1. **Sprawl band values (Decision 8):** may a tight floor rise up to just under its tier's `packingWhenHit`, and a broad one by + 0.2? Or should `packing` be exact, seeds only? The exact rule may refuse many of today's 29 raised floors. Task 2's measurement (Step 4) lists them before any bake.
-2. **"A lock holds a puzzle on the way" (Decision 7):** is the lock's solving walk, from first sight of its door to its last control, the right stretch? Or any encounter inside the region the lock closes?
+1. **Trap and gated paths inside a lock (phase 4b):** today a sealed (trap), gated or hidden side section always hangs as a branch off the lock, never inside its corridors. Should phase 4b lay those into a lock's corridors too, or only ungated paths?
