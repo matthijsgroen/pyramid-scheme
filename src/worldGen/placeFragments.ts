@@ -248,6 +248,33 @@ export const placeFragments = (
     }
   }
 
+  // The tiers a journey of this world sits in that are still locked, each with the groups it still needs; undefined
+  // when every one is open. A journey with no tier is never walked at all, so it is refused rather than left out.
+  const lockedTiersProblem = (): string | undefined => {
+    const ownedFacts = deriveOwnedFacts(ownedCounts, support)
+    const walkedTiers = new Set(
+      Object.keys(allConfigs).map(journeyId => {
+        const meta = journeyMeta[journeyId]
+        if (!meta)
+          throw new Error(
+            `placeFragments: journey ${journeyId} is in the world but in no journey list, so has no tier.`
+          )
+        return meta.tier
+      })
+    )
+    const lockedTiers = [...walkedTiers].filter(tier => !reach.unlockedTiers.has(tier))
+    if (lockedTiers.length === 0) return undefined
+    const named = lockedTiers
+      .map(
+        tier =>
+          `${tier} (needs one of each: ${unmetTierGroups(tier, ownedFacts, support)
+            .map(group => `[${group.join(" | ")}]`)
+            .join(", ")})`
+      )
+      .join("; ")
+    return `world not fully solvable — tier(s) still locked after placement: ${named}`
+  }
+
   // Drains `queue` to empty, placing each bucket's demand and growing the queue as newly
   // reachable frontier reveals further locks (enqueueNewLocks) or harvests new facts
   // (settleHarvest). Called twice: once for the discovery-driven walk below, once more for
@@ -256,7 +283,7 @@ export const placeFragments = (
   //
   // A bucket with too few reachable slots waits in `waiting` with its refusal. Once the queue is empty, the frontier
   // tier's buckets join it; when nothing joins, the waiting buckets are tried again if anything was placed since their
-  // last try, and the first is refused if nothing was. Every retry follows a placement, so the drain ends.
+  // last try, and all of them are refused if nothing was. Every retry follows a placement, so the drain ends.
   const waiting = new Map<string, string>()
   let placedSinceRetry = false
   const drain = (): void => {
@@ -264,9 +291,13 @@ export const placeFragments = (
       drainQueue()
       enqueueFrontierTier()
       if (queue.length > 0) continue
-      const [first] = waiting.values()
-      if (first === undefined) return
-      if (!placedSinceRetry) throw new Error(first)
+      if (waiting.size === 0) return
+      if (!placedSinceRetry) {
+        // Every waiting bucket is named, since the first may only be stuck behind another; a tier left locked leads,
+        // as its unmet groups say most about why nothing more was reached.
+        const locked = lockedTiersProblem()
+        throw new Error([...(locked ? [`placeFragments: ${locked}`] : []), ...waiting.values()].join("; "))
+      }
       placedSinceRetry = false
       queue.push(...waiting.keys())
       waiting.clear()
@@ -347,7 +378,9 @@ export const placeFragments = (
           waiting.set(
             bucket,
             `placeFragments: ${demand.instanceId} (${bucket}) unplaceable — ${needed - ranked.length} instance(s) with no reachable slot` +
-              (gate === undefined ? "" : ` before its gate (${gate})`)
+              (gate === undefined
+                ? " (no gate on it was reached; its currency lists it for the completion pass)"
+                : ` before its gate (${gate})`)
           )
           queued.add(bucket)
           continue
@@ -380,13 +413,7 @@ export const placeFragments = (
   // already `satisfied` is skipped), so it can only move the world TOWARD full coverage, never
   // away from it — and it's the reason `allBuckets` must return every id a currency's own
   // `expectedTotal` counts, so the two agree by construction instead of by luck.
-  for (const currency of currencies) {
-    for (const bucket of currency.allBuckets?.() ?? []) {
-      if (satisfied.has(bucket) || queued.has(bucket)) continue
-      queue.push(bucket)
-      queued.add(bucket)
-    }
-  }
+  for (const currency of currencies) for (const bucket of currency.allBuckets?.() ?? []) enqueue(bucket)
   drain()
 
   // Winnability guard (keys-and-locks-solver.md, "nothing can progress = hard-fail"): once the
@@ -410,27 +437,8 @@ export const placeFragments = (
   // discovered — the sweep above cannot see a tier whose unlock bucket no one places (a mod's
   // group whose currency was never placed, or whose treasures all sit beyond the tier itself).
   // A journey with no tier is never walked at all, so it is refused rather than left out.
-  const ownedFacts = deriveOwnedFacts(ownedCounts, support)
-  const walkedTiers = new Set(
-    Object.keys(allConfigs).map(journeyId => {
-      const meta = journeyMeta[journeyId]
-      if (!meta)
-        throw new Error(`placeFragments: journey ${journeyId} is in the world but in no journey list, so has no tier.`)
-      return meta.tier
-    })
-  )
-  const lockedTiers = [...walkedTiers].filter(tier => !reach.unlockedTiers.has(tier))
-  if (lockedTiers.length > 0) {
-    const named = lockedTiers
-      .map(
-        tier =>
-          `${tier} (needs one of each: ${unmetTierGroups(tier, ownedFacts, support)
-            .map(group => `[${group.join(" | ")}]`)
-            .join(", ")})`
-      )
-      .join("; ")
-    throw new Error(`placeFragments: world not fully solvable — tier(s) still locked after placement: ${named}.`)
-  }
+  const locked = lockedTiersProblem()
+  if (locked) throw new Error(`placeFragments: ${locked}.`)
 
   // A slot an author tagged for a gating currency (e.g. `endReward: "hieroglyph"`), if that
   // currency's own demand never claimed it, gracefully falls back to a top-priority capped-currency

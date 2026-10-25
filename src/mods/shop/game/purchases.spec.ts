@@ -4,12 +4,18 @@ import {
   purchaseProblems,
   purchaseShopStock,
   requirementsFor,
-  soundPurchases,
   type Purchase,
+  type PurchaseJourney,
   type PurchaseTable,
 } from "./purchases"
 
-const TOMBS = ["made-up-tomb", "made-up-tomb-b"]
+const JOURNEYS: PurchaseJourney[] = [
+  { id: "made-up-tomb", tier: "expert", tomb: true },
+  { id: "made-up-tomb-b", tier: "expert", tomb: true },
+  { id: "made-up-pyramid", tier: "expert", tomb: false },
+  { id: "made-up-junior-tomb", tier: "junior", tomb: true },
+  { id: "made-up-starter-pyramid", tier: "starter", tomb: false },
+]
 
 const purchase = (id: string, rest: Partial<Purchase> = {}): Purchase => ({
   id,
@@ -27,7 +33,7 @@ const sound: PurchaseTable = [
 
 describe(purchaseProblems, () => {
   it("finds nothing wrong with a sound table", () => {
-    expect(purchaseProblems(sound, TOMBS)).toEqual([])
+    expect(purchaseProblems(sound, JOURNEYS)).toEqual([])
   })
 
   it.each<[string, PurchaseTable, RegExp]>([
@@ -51,17 +57,30 @@ describe(purchaseProblems, () => {
     ],
     ["a purchase opening starter", [purchase("mule", { opens: { tier: "starter" } })], /mule: opens tier starter/],
     ["a purchase opening junior", [purchase("mule", { opens: { tier: "junior" } })], /mule: opens tier junior/],
+    [
+      "a purchase opening a junior journey",
+      [purchase("mule", { opens: { journeyId: "made-up-junior-tomb" } })],
+      /mule: opens journey made-up-junior-tomb in tier junior/,
+    ],
+    [
+      "a purchase opening a starter journey",
+      [purchase("mule", { opens: { journeyId: "made-up-starter-pyramid" } })],
+      /mule: opens journey made-up-starter-pyramid in tier starter/,
+    ],
+    [
+      "a purchase opening a journey the world does not have",
+      [purchase("mule", { opens: { journeyId: "made-up-nowhere" } })],
+      /mule: opens journey made-up-nowhere, which is no journey/,
+    ],
+    [
+      "a shop in a journey the world does not have",
+      [purchase("mule", { soldAt: { journeyId: "made-up-nowhere" } })],
+      /mule: sold at made-up-nowhere, not a tomb/,
+    ],
   ])("reports %s once, naming the purchase", (_, table, problem) => {
-    const problems = purchaseProblems(table, TOMBS)
+    const problems = purchaseProblems(table, JOURNEYS)
     expect(problems).toHaveLength(1)
     expect(problems[0]).toMatch(problem)
-  })
-
-  it("an unsound table is refused whole, every problem named", () => {
-    expect(() => soundPurchases([purchase("mule", { price: 0, opens: { tier: "junior" } })], TOMBS)).toThrow(
-      /mule: price 0.*mule: opens tier junior/
-    )
-    expect(soundPurchases(sound, TOMBS)).toBe(sound)
   })
 })
 
@@ -86,9 +105,9 @@ describe(requirementsFor, () => {
 describe(purchaseShopStock, () => {
   it("stocks one placeholder per purchase in its own shop, tagged with its fact", () => {
     expect(purchaseShopStock(sound)).toEqual([
-      { journeyId: "made-up-tomb", prefers: purchaseFact("mule") },
-      { journeyId: "made-up-tomb", prefers: purchaseFact("yak") },
-      { journeyId: "made-up-tomb-b", prefers: purchaseFact("flag"), nth: 1 },
+      { journeyId: "made-up-tomb", prefers: purchaseFact("mule"), required: true },
+      { journeyId: "made-up-tomb", prefers: purchaseFact("yak"), required: true },
+      { journeyId: "made-up-tomb-b", prefers: purchaseFact("flag"), required: true, nth: 1 },
     ])
   })
 })

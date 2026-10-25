@@ -13,8 +13,11 @@ import type { PurchaseTable } from "./purchases"
 // spread-currency count check does not count purchases; the worklist itself refuses a purchase it cannot place.
 export const purchaseCurrency = (table: PurchaseTable): CurrencyDistribution => {
   const byFact = new Map(table.map(p => [p.fact, p]))
-  const tierOf = (journeyId: string): Tier =>
-    [...PYRAMID_JOURNEYS, ...TOMB_JOURNEYS].find(j => j.id === journeyId)?.tier ?? "starter"
+  const tierOf = (id: string, journeyId: string): Tier => {
+    const journey = [...PYRAMID_JOURNEYS, ...TOMB_JOURNEYS].find(j => j.id === journeyId)
+    if (!journey) throw new Error(`purchases: ${id} is sold at ${journeyId}, which is no journey`)
+    return journey.tier
+  }
   return {
     ownsBucket: bucket => byFact.has(bucket),
     toReward: id => ({ type: "purchase", id }),
@@ -25,7 +28,7 @@ export const purchaseCurrency = (table: PurchaseTable): CurrencyDistribution => 
       return {
         bucket,
         instanceId: purchase.id,
-        tier: tierOf(purchase.soldAt.journeyId),
+        tier: tierOf(purchase.id, purchase.soldAt.journeyId),
         preferredWardKeys: [],
         required: 1,
         totalRequired: 1,

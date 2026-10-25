@@ -94,6 +94,13 @@ export const DYNAMIC_DISTRIBUTIONS: Distribution[] = REGISTERED_MODS.flatMap(m =
 // shops resolve so the assignments no-op. Injected into buildConfigs by scripts/generateWorld.ts.
 export const MOD_SHOP_STOCK: ShopStockAssignment[] = REGISTERED_MODS.flatMap(m => m.shopStock ?? [])
 
+// Refuses the build when any mod reports a problem with its own authored tables, every problem named with its mod.
+// Run before anything is placed, so a world is never built on an unsound table. A mod off reports nothing.
+export const refuseModAuthoringProblems = (mods: readonly ModDescriptor[] = REGISTERED_MODS): void => {
+  const problems = mods.flatMap(m => (m.authoringProblems?.() ?? []).map(problem => `${m.id}: ${problem}`))
+  if (problems.length > 0) throw new Error(`mod authoring refused: ${problems.join("; ")}`)
+}
+
 // Every post-build world validator any registered mod contributes (e.g. the shop economy guard),
 // run last in buildConfigs over the whole grown world. A validator drops with its mod.
 export const MOD_WORLD_VALIDATORS: WorldValidator[] = REGISTERED_MODS.flatMap(m =>

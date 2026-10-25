@@ -1,6 +1,7 @@
 import type { Difficulty } from "@/data/difficultyLevels"
 import type { JourneyEntryLock } from "@/worldGen/reachability"
 import type { ShopStockAssignment } from "@/worldGen/shopStock"
+import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "@/worldGen/data"
 
 // What Fez sells for the caravan: each purchase is a key. Holding its fact opens the gate it names, a whole tier or one
 // journey, and the worklist places it in its own shop before that gate (purchaseCurrency.ts). This table is the shop's
@@ -78,9 +79,13 @@ const UNGATED_TIERS: readonly Difficulty[] = ["starter", "junior"]
 
 const gateName = (gate: PurchaseGate): string => ("tier" in gate ? `tier ${gate.tier}` : `journey ${gate.journeyId}`)
 
+/** A journey of the world as the table check reads it: its tier, and whether it is a tomb (where Fez keeps shop). */
+export type PurchaseJourney = { id: string; tier: Difficulty; tomb: boolean }
+
 /** Every way the table is unsound, one line each, naming the purchase. Empty for a sound table. */
-export const purchaseProblems = (table: PurchaseTable, tombJourneyIds: readonly string[]): string[] => {
+export const purchaseProblems = (table: PurchaseTable, journeys: readonly PurchaseJourney[]): string[] => {
   const problems: string[] = []
+  const journeyOf = (id: string) => journeys.find(j => j.id === id)
   const seen = (key: (p: Purchase) => string | undefined, what: string) => {
     const first = new Map<string, string>()
     for (const p of table) {
@@ -98,19 +103,19 @@ export const purchaseProblems = (table: PurchaseTable, tombJourneyIds: readonly 
     if (p.fact !== purchaseFact(p.id)) problems.push(`${p.id}: fact ${p.fact} is not ${purchaseFact(p.id)}`)
     if (!Number.isInteger(p.price) || p.price <= 0)
       problems.push(`${p.id}: price ${p.price} is not a whole number above 0`)
-    if (!tombJourneyIds.includes(p.soldAt.journeyId))
-      problems.push(`${p.id}: sold at ${p.soldAt.journeyId}, not a tomb`)
-    if (p.opens && "tier" in p.opens && UNGATED_TIERS.includes(p.opens.tier))
-      problems.push(`${p.id}: opens tier ${p.opens.tier}, which no purchase may gate`)
+    if (!journeyOf(p.soldAt.journeyId)?.tomb) problems.push(`${p.id}: sold at ${p.soldAt.journeyId}, not a tomb`)
+    if (!p.opens) continue
+    if ("tier" in p.opens) {
+      if (UNGATED_TIERS.includes(p.opens.tier))
+        problems.push(`${p.id}: opens tier ${p.opens.tier}, which no purchase may gate`)
+      continue
+    }
+    const opened = journeyOf(p.opens.journeyId)
+    if (!opened) problems.push(`${p.id}: opens journey ${p.opens.journeyId}, which is no journey`)
+    else if (UNGATED_TIERS.includes(opened.tier))
+      problems.push(`${p.id}: opens journey ${opened.id} in tier ${opened.tier}, which no purchase may gate`)
   }
   return problems
-}
-
-/** The table, refused whole when it is unsound, so no world is built on it. */
-export const soundPurchases = (table: PurchaseTable, tombJourneyIds: readonly string[]): PurchaseTable => {
-  const problems = purchaseProblems(table, tombJourneyIds)
-  if (problems.length > 0) throw new Error(`purchases: ${problems.join("; ")}`)
-  return table
 }
 
 export type PurchaseRequirements = {
@@ -128,6 +133,18 @@ export const requirementsFor = (table: PurchaseTable): PurchaseRequirements => (
       .map(p => ({ bucket: p.fact, threshold: 1 })),
 })
 
-/** One stock placeholder per purchase in its own shop, tagged with its fact, for the worklist to fill. */
+/** One stock placeholder per purchase in its own shop, tagged with its fact, for the worklist to fill. Each is
+ * required: a purchase with no shop, or a full one, is refused by name rather than left out of the world. */
 export const purchaseShopStock = (table: PurchaseTable): ShopStockAssignment[] =>
-  table.map(p => ({ journeyId: p.soldAt.journeyId, prefers: p.fact, ...(p.soldAt.nth ? { nth: p.soldAt.nth } : {}) }))
+  table.map(p => ({
+    journeyId: p.soldAt.journeyId,
+    prefers: p.fact,
+    required: true,
+    ...(p.soldAt.nth ? { nth: p.soldAt.nth } : {}),
+  }))
+
+/** The world's journeys as the table check reads them. */
+export const worldPurchaseJourneys = (): PurchaseJourney[] => [
+  ...PYRAMID_JOURNEYS.map(j => ({ id: j.id, tier: j.tier, tomb: false })),
+  ...TOMB_JOURNEYS.map(j => ({ id: j.id, tier: j.tier, tomb: true })),
+]

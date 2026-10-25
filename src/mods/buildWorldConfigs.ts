@@ -26,6 +26,7 @@ import {
   MOD_RESERVED_TREASURE_INDICES,
   MOD_WEB_ACTIVATOR,
   REGISTERED_MOD_IDS,
+  refuseModAuthoringProblems,
 } from "./registeredMods"
 
 /** With no mod realising the web, a lock's outside inputs are open ground: nothing binds them, nothing shuts them. */
@@ -69,13 +70,15 @@ export type BuildWorldOptions = {
   onWebPlaced?: (placement: WebPlacement) => void
 }
 
-/** The world as the spec builds it with every registered mod, on the layout `pickLayout` picks. A web is placed only
+/** The world as the spec builds it with every registered mod, on the layout `pickLayout` picks, refused first when a
+ * mod reports a problem with its own tables. A web is placed only
  * where a registered mod realises its activators; where none does, a lock's outside inputs are opened before the
  * layout is picked, since how a lock compiles is structure. */
 export const buildWorldConfigs = (
   emptyFraction: number,
   options: BuildWorldOptions = {}
 ): Record<string, SiteConfig[]> => {
+  refuseModAuthoringProblems()
   const webs = options.webs ?? worldWebs()
   const toReward = MOD_WEB_ACTIVATOR
   const placeWorldWeb =

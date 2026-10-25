@@ -178,4 +178,11 @@ describe("purchaseCurrency rank", () => {
     expect(currency.toReward("yak")).toEqual(bought("yak"))
     expect(currency.demandFor(purchaseFact("yak"), {})).toMatchObject({ instanceId: "yak", required: 1 })
   })
+
+  it("a purchase sold at a journey the world does not have is refused by name", () => {
+    const lost = purchaseCurrency([purchase("ox", "made-up-nowhere")])
+    expect(() => lost.demandFor(purchaseFact("ox"), {})).toThrow(
+      "purchases: ox is sold at made-up-nowhere, which is no journey"
+    )
+  })
 })

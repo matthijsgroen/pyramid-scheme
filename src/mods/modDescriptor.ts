@@ -68,6 +68,9 @@ export type ModDescriptor = {
   // tier/discovery machinery). Injected into buildConfigs so a pyramid's ward wings skip them
   // without core reading perk types. Drops with the mod (nothing reserved). One provider expected.
   reservedTreasureIndices?: (tombId: string) => number[]
+  // What is wrong with this mod's own authored tables, one line each. The build refuses on any before it places
+  // anything (buildWorldConfigs), naming the mod; the app never asks, so it loads whatever the tables say.
+  authoringProblems?: () => string[]
   // This mod's shop-stock placements: sell specific currency pieces at specific shops (by
   // journeyId + nth). Each drops a fragmentSlot sentinel the capped/gating pass fills, so the piece
   // is moved out of the free-world spread into the shop. Drops with the mod (shop off → shops fall

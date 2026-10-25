@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest"
 import type { ReachabilitySupport } from "@/worldGen/reachability"
 import type { GateWalk } from "@/worldGen/gateWalk"
-import { MOD_LOOT_TOTALS, REGISTERED_MODS, mergeReachabilitySupports } from "./registeredMods"
+import {
+  MOD_LOOT_TOTALS,
+  REGISTERED_MODS,
+  mergeReachabilitySupports,
+  refuseModAuthoringProblems,
+} from "./registeredMods"
+import type { ModDescriptor } from "./modDescriptor"
 
 describe("MOD_LOOT_TOTALS", () => {
   it("is every registered mod's rows in registry order, without throwing on an empty world", () => {
@@ -64,5 +70,24 @@ describe(mergeReachabilitySupports, () => {
     const merged = mergeReachabilitySupports([first, { tierUnlockGroups: () => [[]] }])
     expect(merged.tierUnlockGroups?.("expert")).toEqual([["perk-a", "perk-b"]])
     expect(merged.tierUnlockGroups?.("junior")).toEqual([])
+  })
+})
+
+describe(refuseModAuthoringProblems, () => {
+  it("refuses with every problem of every mod, each named with its mod", () => {
+    const mods: ModDescriptor[] = [
+      { id: "made-up-a", authoringProblems: () => ["row 1 is wrong", "row 2 is wrong"] },
+      { id: "made-up-b" },
+      { id: "made-up-c", authoringProblems: () => ["row 3 is wrong"] },
+    ]
+    expect(() => refuseModAuthoringProblems(mods)).toThrow(
+      "mod authoring refused: made-up-a: row 1 is wrong; made-up-a: row 2 is wrong; made-up-c: row 3 is wrong"
+    )
+  })
+
+  it("lets a build through when no mod reports a problem", () => {
+    expect(() =>
+      refuseModAuthoringProblems([{ id: "made-up-a", authoringProblems: () => [] }, { id: "made-up-b" }])
+    ).not.toThrow()
   })
 })

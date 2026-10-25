@@ -415,6 +415,43 @@ describe("placeFragments at the frontier", () => {
     expect(walk().enteredJourneys).toContain(journeyOfTier("junior"))
   })
 
+  it("every bucket still waiting is named when nothing more can be placed", () => {
+    const configs = {
+      [journeyOfTier("junior")]: [plainSite()],
+      [journeyOfTier("starter")]: [plainSite()],
+    }
+    const twoLocks: ReachabilitySupport = {
+      ...support,
+      tierUnlockGroups: () => [],
+      journeyEntryLocks: journeyId =>
+        journeyId === journeyOfTier("junior")
+          ? [
+              { bucket: "made-up-key:a", threshold: 1 },
+              { bucket: "made-up-key:b", threshold: 1 },
+            ]
+          : [],
+    }
+    expect(() => placeFragments(configs, [keys], undefined, [], [], undefined, 0, twoLocks)).toThrow(
+      /made-up-key:a \(made-up-key:a\) unplaceable.*; placeFragments: made-up-key:b \(made-up-key:b\) unplaceable/
+    )
+  })
+
+  it("a completion-pass bucket that cannot be placed is refused after the tier lock that kept it out of reach", () => {
+    // The junior tier waits on a bucket no currency owns, so the completion pass is all that asks for the key.
+    const configs = {
+      [journeyOfTier("starter")]: [plainSite()],
+      [journeyOfTier("junior")]: [tagged("made-up-key:late")],
+    }
+    const listed: CurrencyDistribution = { ...keys, allBuckets: () => ["made-up-key:late"] }
+    const unowned: ReachabilitySupport = {
+      ...support,
+      tierUnlockGroups: tier => (tier === "junior" ? [["made-up-perk"]] : []),
+    }
+    expect(() => placeFragments(configs, [listed], undefined, [], [], undefined, 0, unowned)).toThrow(
+      /^placeFragments: world not fully solvable — tier\(s\) still locked after placement: junior \(needs one of each: \[made-up-perk\]\); placeFragments: made-up-key:late \(made-up-key:late\) unplaceable — 1 instance\(s\) with no reachable slot \(no gate on it was reached; its currency lists it for the completion pass\)$/
+    )
+  })
+
   it("a bucket no placement ever reaches is refused, naming the gate it stands before", () => {
     const configs = {
       [journeyOfTier("starter")]: [plainSite()],

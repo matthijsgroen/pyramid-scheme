@@ -7,8 +7,9 @@ import type { ResolveEncounter } from "../game/siteAssembler"
 // capped/gating currency pass then fills it exactly as it fills any other loot slot — so the
 // shop's stock is a real, counted, detectable currency instance (moved out of the free-world
 // spread, not added on top). Core places the sentinel but names no currency: `prefers` is
-// mod-supplied data. `nth` disambiguates when a journey has more than one shop (default 0).
-export type ShopStockAssignment = { journeyId: string; prefers: string; nth?: number }
+// mod-supplied data. `nth` disambiguates when a journey has more than one shop (default 0). A `required` piece has no
+// home but that shop (a key sold only there), so a missing or full shop refuses the build, naming the piece and the shop.
+export type ShopStockAssignment = { journeyId: string; prefers: string; nth?: number; required?: boolean }
 
 // A shop section is a node whose gen-time-resolved encounter is fez-shop; assignEncounters seeded
 // its `rewards[]` to the shop's capacity. Collect them in walk order so `nth` is stable.
@@ -29,18 +30,25 @@ const shopSectionsOf = (
 // Places every mod's shop-stock sentinels into the next free slot of the addressed shop's stock
 // array. Runs after assignEncounters (shops resolved + stock seeded) and before slot collection
 // (so the sentinel is collected as a currency-fillable end slot). A missing shop (mod off / no
-// shop authored at that address) drops the assignment silently — the piece stays in the free-world
-// capped spread instead (the fallback the design calls for).
+// shop authored at that address) or a full one drops the assignment silently — the piece stays in the free-world
+// capped spread instead (the fallback the design calls for). A required piece has no such fallback, so it is refused.
 export const placeShopStock = (
   allConfigs: Record<string, SiteConfig[]>,
   assignments: readonly ShopStockAssignment[]
 ): void => {
-  for (const { journeyId, prefers, nth = 0 } of assignments) {
+  for (const { journeyId, prefers, nth = 0, required } of assignments) {
     const shops = shopSectionsOf(allConfigs[journeyId] ?? [])
     const shop = shops[nth]
-    if (!shop?.rewards) continue
+    const where = `shop ${nth} of ${journeyId}`
+    if (!shop?.rewards) {
+      if (required) throw new Error(`shop stock: ${prefers} is sold at ${where}, which does not exist`)
+      continue
+    }
     const free = shop.rewards.findIndex(r => r === undefined)
-    if (free < 0) continue // shop full — over-subscribed; drop (design: author more capacity)
+    if (free < 0) {
+      if (required) throw new Error(`shop stock: ${prefers} is sold at ${where}, which is full`)
+      continue // shop full — over-subscribed; drop (design: author more capacity)
+    }
     shop.rewards[free] = { type: "fragmentSlot", prefers }
   }
 }

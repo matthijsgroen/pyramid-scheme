@@ -1,19 +1,12 @@
 import type { ModDescriptor } from "../modDescriptor"
-import { TOMB_JOURNEYS } from "@/worldGen/data"
 import { shopLootTotals } from "./game/lootTotals"
 import { FEZ_SHOP_META } from "./game/fezShop/meta"
 import { MONEY_CURRENCY_META } from "./game/moneyCurrency"
 import { shopMoneyEconomy } from "./game/loot"
 import { shopEconomyGuard } from "./game/economyGuard"
-import { PURCHASES, purchaseShopStock, soundPurchases } from "./game/purchases"
+import { PURCHASES, purchaseProblems, purchaseShopStock, worldPurchaseJourneys } from "./game/purchases"
 import { purchaseCurrency } from "./game/purchaseCurrency"
 import { SHOP_REACHABILITY } from "./game/reachabilitySupport"
-
-// The purchase table, refused whole when unsound (a purchase gating starter or junior among the reasons).
-const purchases = soundPurchases(
-  PURCHASES,
-  TOMB_JOURNEYS.map(j => j.id)
-)
 
 // The shop mod descriptor. Owns the Fez-shop encounter family, the money currency, loose-money +
 // junk placement, the economy guard, and the purchases: the animals and carts Fez sells, each a key
@@ -29,9 +22,11 @@ export const shopMod: ModDescriptor = {
   id: "shop",
   families: [FEZ_SHOP_META],
   currencyMeta: MONEY_CURRENCY_META,
-  currencyDistributions: [purchaseCurrency(purchases)],
-  shopStock: purchaseShopStock(purchases),
+  currencyDistributions: [purchaseCurrency(PURCHASES)],
+  shopStock: purchaseShopStock(PURCHASES),
   reachabilitySupport: SHOP_REACHABILITY,
+  // An unsound purchase table (a purchase gating starter or junior among the reasons) refuses the build before placement.
+  authoringProblems: () => purchaseProblems(PURCHASES, worldPurchaseJourneys()).map(problem => `purchases: ${problem}`),
   dynamicDistributions: [shopMoneyEconomy],
   worldValidator: shopEconomyGuard,
   lootTotals: shopLootTotals,
