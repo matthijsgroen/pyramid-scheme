@@ -1,4 +1,5 @@
 import type { SiteConfig, TreasureReward } from "./types"
+import { identitiesOf } from "./rewardIdentity"
 import type { GateWalk, HoldingResult } from "./gateWalk"
 import { carveSiteFloor, TIER_LADDER, type FloorCarve, type ReachabilitySupport } from "./reachability"
 
@@ -32,19 +33,7 @@ export type GroundsOptions = {
   cap: number
 }
 
-const identities = new WeakMap<TreasureReward, number>()
-let lastIdentity = 0
-const identity = (reward: TreasureReward): number => {
-  const known = identities.get(reward)
-  if (known !== undefined) return known
-  identities.set(reward, ++lastIdentity)
-  return lastIdentity
-}
-const idsOf = (rewards: Iterable<TreasureReward>): string =>
-  [...rewards]
-    .map(identity)
-    .sort((a, b) => a - b)
-    .join(",")
+const idsOf = (rewards: Iterable<TreasureReward>): string => identitiesOf(rewards).join(",")
 
 const groundKey = (result: HoldingResult): string => `${idsOf(result.rewards)}|${idsOf(result.stock)}`
 const stateKey = (result: HoldingResult): string => `${groundKey(result)}|${result.heldKey}`

@@ -1,3 +1,4 @@
+import { identitiesOf } from "./rewardIdentity"
 import type { JourneyDef, SiteConfig, Tier, TombJourneyDef, TreasureReward } from "./types"
 import type { ResolveEncounter, ResolveKeyRequirements } from "../game/siteAssembler"
 import {
@@ -158,16 +159,6 @@ export const makeGateWalk = ({
     ...(support.alsoHarvests?.(reward) ?? []),
   ]
 
-  // A bought set is remembered by the identity of its pieces.
-  const ids = new WeakMap<TreasureReward, number>()
-  let nextId = 0
-  const identity = (reward: TreasureReward): number => {
-    const known = ids.get(reward)
-    if (known !== undefined) return known
-    ids.set(reward, ++nextId)
-    return nextId
-  }
-
   let isKey: ((reward: TreasureReward) => boolean) | undefined
 
   return Object.assign(
@@ -180,18 +171,13 @@ export const makeGateWalk = ({
     },
     {
       holding: (bought: ReadonlySet<TreasureReward>): HoldingResult => {
-        const key = [...bought]
-          .map(identity)
-          .sort((a, b) => a - b)
-          .join(",")
+        // A bought set is remembered by the identity of its pieces.
+        const key = identitiesOf(bought).join(",")
         const known = holdings.get(key)
         if (known) return known
         const { owned, ...result } = walk(undefined, reward => bought.has(reward))
         const counts = [...owned].map(([bucket, count]) => `${bucket}=${Math.min(count, capOf(bucket))}`).sort()
-        const apart = [...bought]
-          .filter(piece => harvestOf(piece).length !== 1)
-          .map(identity)
-          .sort((a, b) => a - b)
+        const apart = identitiesOf([...bought].filter(piece => harvestOf(piece).length !== 1))
         const holding = { ...result, heldKey: `${counts.join(",")}|${apart.join(",")}` }
         holdings.set(key, holding)
         return holding
