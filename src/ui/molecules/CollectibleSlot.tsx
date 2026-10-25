@@ -18,6 +18,7 @@ import { Badge } from "@/ui/atoms/Badge"
 type CollectibleSlotProps = {
   state: "empty" | "partial" | "collected"
   symbol?: string
+  imageUrl?: string
   difficulty?: Difficulty
   progress?: { found: number; required: number }
   count?: number
@@ -30,6 +31,7 @@ type CollectibleSlotProps = {
 export const CollectibleSlot: FC<CollectibleSlotProps> = ({
   state,
   symbol,
+  imageUrl,
   difficulty,
   progress,
   count,
@@ -58,6 +60,7 @@ export const CollectibleSlot: FC<CollectibleSlotProps> = ({
   const tile = (
     <HieroglyphTile
       symbol={symbol}
+      imageUrl={imageUrl}
       difficulty={difficulty}
       selected={selected}
       onClick={onClick}

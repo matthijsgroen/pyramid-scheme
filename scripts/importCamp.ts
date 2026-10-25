@@ -15,6 +15,9 @@
  *   --tolerance=60   how far from that colour still counts as background (0-441)
  *   --size=512       the longest side of the shipped file; never enlarged
  *   --shadow-size=256  the longest side of the contact shadow, which is blurred and needs few pixels
+ *   --out-dir=src/assets/camp/parts  where the shipped file lands (default src/assets/camp). The master
+ *                    follows under the same sub-folder of art/masters/camp, and the piece is an ICON: a
+ *                    picture shown on its own in the Collection, so it gets no contact shadow and no foot.
  *
  * Keying un-mixes the edge. A soft edge — a flame's wisps, a painted fringe — is part magenta, and a hard
  * cut leaves it as a pink rim. Within a few pixels of the background, a pixel's distance from the key sets
@@ -49,6 +52,8 @@ export type CampImport = {
   masterRoot: string
   /** A shipped piece painted in behind this one, in the same frame: the spot's first step standing in every later one. */
   behind?: string
+  /** A picture shown on its own, not a piece of the scene: no contact shadow, no foot. */
+  icon?: boolean
 }
 
 // Pieces that cast no contact shadow: the scenery, and the oasis, which lies flat in the ground.
@@ -58,6 +63,17 @@ const SCENERY = new Set(["sand", "dunes", "pyramid", "pyramidGold", "oasis"])
 export const BEHIND: Record<string, string> = Object.fromEntries(
   ["donkey", "saddlebags", "cart", "secondDonkey", "paintedCart"].map(step => [step, "halter"])
 )
+
+const SHIPPED = "src/assets/camp"
+const MASTERS = "art/masters/camp"
+
+/** Where a piece lands for an `--out-dir`, and where its master is kept: the same sub-folder of the masters. */
+export const campRoots = (outDir: string = SHIPPED) => {
+  const clean = outDir.replace(/\/+$/, "")
+  const under =
+    clean === SHIPPED ? "" : clean.startsWith(`${SHIPPED}/`) ? clean.slice(SHIPPED.length + 1) : clean.split("/").pop()!
+  return { outRoot: clean, masterRoot: under ? `${MASTERS}/${under}` : MASTERS, icon: clean !== SHIPPED }
+}
 
 /** The blur's spread as a share of the piece's longest side, so a shadow looks the same at any import size. */
 const SHADOW_BLUR = 0.008
@@ -232,6 +248,7 @@ export const importCamp = async ({
   outRoot,
   masterRoot,
   behind,
+  icon,
 }: CampImport) => {
   mkdirSync(outRoot, { recursive: true })
   mkdirSync(masterRoot, { recursive: true })
@@ -256,7 +273,7 @@ export const importCamp = async ({
           .toBuffer()
       : keyed
   await sharp(piece).webp({ quality: 90 }).toFile(out)
-  if (key === "none" || SCENERY.has(name)) return { out, master }
+  if (key === "none" || icon || SCENERY.has(name)) return { out, master }
   await recordFoot(outRoot, name, piece)
   const shadow = join(outRoot, `${name}-shadow.webp`)
   await writeShadow(piece, shadow, shadowSize)
@@ -271,10 +288,11 @@ const main = async () => {
   const name = arg("name")
   if (!file || file.startsWith("--") || !name) {
     console.error(
-      "usage: yarn import-camp <file> --name=<piece> [--key=#ff00ff|none] [--tolerance=60] [--size=512] [--shadow-size=256]"
+      "usage: yarn import-camp <file> --name=<piece> [--key=#ff00ff|none] [--tolerance=60] [--size=512] [--shadow-size=256] [--out-dir=src/assets/camp]"
     )
     process.exit(1)
   }
+  const roots = campRoots(arg("out-dir"))
   const { out, master, shadow } = await importCamp({
     file,
     name,
@@ -282,9 +300,10 @@ const main = async () => {
     tolerance: Number(arg("tolerance", "60")),
     size: Number(arg("size", "512")),
     shadowSize: Number(arg("shadow-size", "256")),
-    outRoot: join(ROOT, "src", "assets", "camp"),
-    masterRoot: join(ROOT, "art", "masters", "camp"),
-    behind: BEHIND[name],
+    outRoot: join(ROOT, roots.outRoot),
+    masterRoot: join(ROOT, roots.masterRoot),
+    behind: roots.icon ? undefined : BEHIND[name],
+    icon: roots.icon,
   })
   const { width, height } = await sharp(out).metadata()
   console.log(`${out}  ${width}x${height}\nmaster ${master}${shadow ? `\nshadow ${shadow}` : ""}`)

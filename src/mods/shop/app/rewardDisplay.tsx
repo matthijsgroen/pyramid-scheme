@@ -1,6 +1,7 @@
 import { registerRewardHandler } from "@/app/SiteMap/rewardHandlerRegistry"
 import { registerRewardDisplays } from "@/app/SiteMap/rewardDisplayRegistry"
 import { getSellableById } from "@/data/sellables"
+import { sellableArt } from "./sellableArt"
 import { moneyRewardSchema, sellableRewardSchema } from "@/mods/shop/game/rewardSchemas"
 import type { MaterialTier } from "@/data/materialTiers"
 
@@ -49,7 +50,14 @@ export const registerShopRewardDisplay = () => {
         rarity: item ? SELLABLE_RARITY[item.tier] : "common",
         itemName: item ? t(`${item.id}.name`, { ns: "sellables" }) : itemId,
         itemDescription: item ? t(`${item.id}.description`, { ns: "sellables" }) : undefined,
-        ItemVisual: <span className="text-6xl">{item?.symbol ?? "🔷"}</span>,
+        ItemVisual: (() => {
+          const art = item && sellableArt(item.id)
+          return art ? (
+            <img src={art} alt="" draggable={false} className="size-24 object-contain" />
+          ) : (
+            <span className="text-6xl">{item?.symbol ?? "🔷"}</span>
+          )
+        })(),
       }
     },
   }))

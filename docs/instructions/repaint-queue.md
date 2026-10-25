@@ -3350,3 +3350,2357 @@ a re-roll: magenta would show through it and the key cannot take that out.
 
 **One frame, standing.** A ghost does not walk, so there is no strip to build — `default/ghost-<name>` is
 a single file, which the map finds with no code change.
+
+---
+
+## Collection icons — sellables and camp parts
+
+The pictures the Collection shows: one per loose sellable (`sellable/<id>`, landing in
+`src/assets/sellables/<id>.webp`) and one per part of a camp structure (`part/<structure>-<part>`, landing in
+`src/assets/camp/parts/<structure>-<part>.webp`). Until a file lands the item keeps its glyph and the part its
+structure's art, so none of these blocks anything.
+
+**Two attachments for a part, one for a sellable.** The chest is the BRUSHWORK: the finished camp art's matte
+finish, which every icon is painted against. A part also attaches its structure's master, for the colours,
+the materials and the scale, so a rope is the rope of that well. Both are in `art/masters/camp/`; the
+structure masters are listed in [camp-art-prompts.md](../game-design/camp-art-prompts.md).
+
+**A square canvas, flat `#ff00ff` to the edges.** `yarn import-camp` keys the magenta out, keeps the master
+in `art/masters/camp/<folder>/` and writes the shipped file. An icon casts no contact shadow and records no
+foot: it is shown alone, not stood on sand. A return with a ground patch or a cast shadow is a re-roll.
+
+**Wizard is the top difficulty, never a kind of magic.** A wizard-tier part is the richest of its structure
+(gilding, dyed cloth, bronze), and still an ordinary object.
+
+Entries are deleted as they land, like the rest of this file.
+
+### `sellable/sell_stone_1` — Chipped Ostracon
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Chipped Ostracon (Gebroken Ostracon). A curved shard of broken pottery, pale clay with a few faded black scribe's marks scratched across its face.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_stone_1 --size=256`
+
+### `sellable/sell_stone_2` — Cracked Clay Jar
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Cracked Clay Jar (Gebarsten Kleikruik). A fat clay storage jar with a short neck, split by one long crack down its side, its rim chipped.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_stone_2 --size=256`
+
+### `sellable/sell_stone_3` — Worn Reed Sandal
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Worn Reed Sandal (Versleten Rieten Sandaal). A single worn sandal woven from pale papyrus reed, the sole rubbed thin and a strap frayed loose.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_stone_3 --size=256`
+
+### `sellable/sell_stone_4` — Faded Linen Scrap
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Faded Linen Scrap (Vervaagde Linnen Reep). A torn strip of undyed, faintly yellowed linen, ragged at both ends, lying in a loose fold.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_stone_4 --size=256`
+
+### `sellable/sell_stone_5` — Broken Flint Blade
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Broken Flint Blade (Gebroken Vuurstenen Mes). A knapped flint knife of grey-brown stone with a flaked edge, snapped off at the tip.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_stone_5 --size=256`
+
+### `sellable/sell_bronze_1` — Bent Bronze Amulet
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Bent Bronze Amulet (Verbogen Bronzen Amulet). A small cast bronze charm shaped like a protective sign, its loop and body bent crooked, dull warm brown.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_bronze_1 --size=256`
+
+### `sellable/sell_bronze_2` — Corroded Bronze Mirror
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Corroded Bronze Mirror (Verweerde Bronzen Spiegel). A round hand mirror of bronze on a short handle, its face clouded with green corrosion.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_bronze_2 --size=256`
+
+### `sellable/sell_bronze_3` — Dull Bronze Fishhook
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Dull Bronze Fishhook (Dof Bronzen Vishaak). A small plain bronze fishhook with a barb, dulled and darkened, a bit of old cord on its eye.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_bronze_3 --size=256`
+
+### `sellable/sell_bronze_4` — Small Bronze Bell
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Small Bronze Bell (Kleine Bronzen Bel). A small bronze bell with a loop on top, dented, its brown surface dulled, no clapper showing.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_bronze_4 --size=256`
+
+### `sellable/sell_bronze_5` — Tarnished Bronze Ring
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Tarnished Bronze Ring (Verkleurde Bronzen Ring). A plain bronze ring band, dull brown and tarnished green in places, slightly out of round.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_bronze_5 --size=256`
+
+### `sellable/sell_silver_1` — Tarnished Silver Ankh
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Tarnished Silver Ankh (Verkleurde Zilveren Ankh). An ankh, the looped cross of life, in tarnished silver, dulled to a grey with darker patches.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_silver_1 --size=256`
+
+### `sellable/sell_silver_2` — Silver Kohl Applicator
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Silver Kohl Applicator (Zilveren Kohl-Applicator). A slender silver rod with a rounded tip and a small collar, once used to line the eyes, dull and clean of paint.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_silver_2 --size=256`
+
+### `sellable/sell_silver_3` — Dented Silver Bowl
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Dented Silver Bowl (Gedeukte Zilveren Schaal). A small shallow offering bowl of silver, crushed in on one side, tarnished grey.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_silver_3 --size=256`
+
+### `sellable/sell_silver_4` — Silver Hair Pin
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Silver Hair Pin (Zilveren Haarspeld). A simple long silver hair pin with a plain rounded head, slightly bent, dull grey.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_silver_4 --size=256`
+
+### `sellable/sell_silver_5` — Worn Silver Bracelet
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Worn Silver Bracelet (Versleten Zilveren Armband). A thin silver bracelet, its clasp broken open so the band lies in a loose open ring, worn dull.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_silver_5 --size=256`
+
+### `sellable/sell_gold_1` — Small Gold Bead
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Small Gold Bead (Kleine Gouden Kraal). One small round gold bead with a hole through it, warm and slightly dented.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_gold_1 --size=256`
+
+### `sellable/sell_gold_2` — Gold Leaf Fragment
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Gold Leaf Fragment (Gouden Bladfragment). A sliver of gold leaf, a thin curled flake with ragged edges, warm yellow.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_gold_2 --size=256`
+
+### `sellable/sell_gold_3` — Thin Gold Earring
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Thin Gold Earring (Dunne Gouden Oorring). A thin hammered gold earring, a slim crescent hoop, pale warm gold, slightly bent.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_gold_3 --size=256`
+
+### `sellable/sell_gold_4` — Gold-Flecked Shard
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Gold-Flecked Shard (Goudgespikkelde Scherf). A broken piece of pale gilded plaster with flecks of real gold still clinging to its surface.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_gold_4 --size=256`
+
+### `sellable/sell_gold_5` — Chipped Gold Signet
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Chipped Gold Signet (Beschadigde Gouden Zegelring). A gold signet ring with a flat oval bezel, its engraving worn smooth, a small chip out of the band.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_gold_5 --size=256`
+
+### `sellable/sell_divine_1` — Faded Lapis Scarab
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Faded Lapis Scarab (Vervaagde Lapis Scarabee). A scarab beetle carved from deep blue lapis lazuli, its colour faded and chalky in places, a few gold flecks left.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_divine_1 --size=256`
+
+### `sellable/sell_divine_2` — Carnelian Eye Amulet
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Carnelian Eye Amulet (Carneool Oog-Amulet). A protective eye amulet carved from blood-red carnelian, the eye in the style of the Eye of Horus, smooth and glowing.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_divine_2 --size=256`
+
+### `sellable/sell_divine_3` — Turquoise Inlay Chip
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Turquoise Inlay Chip (Turkoois Inlegstukje). A single small square mosaic tile of turquoise stone, one edge chipped, rich blue-green.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_divine_3 --size=256`
+
+### `sellable/sell_divine_4` — Alabaster Canopic Shard
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Alabaster Canopic Shard (Albasten Canopische Scherf). A broken curved piece of a pale alabaster jar, with a smooth outer face and a jagged torn edge, creamy white.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_divine_4 --size=256`
+
+### `sellable/sell_divine_5` — Obsidian Ritual Blade
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture.
+
+SUBJECT: Obsidian Ritual Blade (Obsidiaan Ritueel Mes). A leaf-shaped ceremonial blade of black volcanic obsidian, ground to a fine edge, glassy but painted matte, with a short wrapped handle.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_divine_5 --size=256`
+
+### `part/stoneRing-fieldStones` — Field stones, part of the stone ring
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/stoneRing.webp` — the finished stone ring this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE STONE RING THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Field stones (Veldkeien), a part of the stone ring (stenen kring). A small heap of rough, fist-sized field stones, warm grey and sandy brown, no two the same shape. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=stoneRing-fieldStones --size=256`
+
+### `part/stoneRing-sandBed` — Sand bed, part of the stone ring
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/stoneRing.webp` — the finished stone ring this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE STONE RING THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Sand bed (Zandbed), a part of the stone ring (stenen kring). A low flat bed of clean pale sand, raked smooth into a shallow round patch with a soft edge. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=stoneRing-sandBed --size=256`
+
+### `part/fire-tinder` — Tinder, part of the fire
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/fire.webp` — the finished fire this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE FIRE THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Tinder (Tondel), a part of the fire (vuur). A loose bundle of dry grass and shredded palm fibre, pale straw yellow, ready to catch a spark. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=fire-tinder --size=256`
+
+### `part/fire-acaciaLogs` — Acacia logs, part of the fire
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/fire.webp` — the finished fire this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE FIRE THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Acacia logs (Acaciahout), a part of the fire (vuur). Three short split logs of dark acacia wood stacked together, the cut faces pale, the bark rough and brown. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=fire-acaciaLogs --size=256`
+
+### `part/cookingStones-flatStone` — Flat stone, part of the cooking stones
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/cookingStones.webp` — the finished cooking stones this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE COOKING STONES THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Flat stone (Platte steen), a part of the cooking stones (kookstenen). One broad flat stone slab, smooth on top, warm grey, sized to cook on. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=cookingStones-flatStone --size=256`
+
+### `part/cookingStones-supportStones` — Support stones, part of the cooking stones
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/cookingStones.webp` — the finished cooking stones this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE COOKING STONES THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Support stones (Steunstenen), a part of the cooking stones (kookstenen). Three squat rounded stones of equal height standing close together to carry a flat stone above a fire. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=cookingStones-supportStones --size=256`
+
+### `part/seatingStones-smoothBoulders` — Smooth boulders, part of the seating stones
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/seatingStones.webp` — the finished seating stones this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE SEATING STONES THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Smooth boulders (Gladde keien), a part of the seating stones (zitstenen). Two river-smoothed boulders, rounded and warm tan, each big enough to sit on. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=seatingStones-smoothBoulders --size=256`
+
+### `part/seatingStones-sandstoneBlock` — Sandstone block, part of the seating stones
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/seatingStones.webp` — the finished seating stones this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE SEATING STONES THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Sandstone block (Zandsteenblok), a part of the seating stones (zitstenen). One squared block of pale sandstone, its corners slightly worn, fine layers showing in its sides. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=seatingStones-sandstoneBlock --size=256`
+
+### `part/seatingStones-hewnSlab` — Hewn slab, part of the seating stones
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/seatingStones.webp` — the finished seating stones this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE SEATING STONES THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Hewn slab (Gehouwen plaat), a part of the seating stones (zitstenen). A long hewn slab of sandstone, flat on top, with chisel marks along its edges, laid on its side as a bench seat. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=seatingStones-hewnSlab --size=256`
+
+### `part/clayOven-ovenFloor` — Oven floor, part of the clay oven
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/clayOven.webp` — the finished clay oven this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE CLAY OVEN THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Oven floor (Ovenvloer), a part of the clay oven (leemoven). A thick round floor of baked clay, smooth and level on top, warm terracotta, with a sooty centre. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=clayOven-ovenFloor --size=256`
+
+### `part/clayOven-firebricks` — Firebricks, part of the clay oven
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/clayOven.webp` — the finished clay oven this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE CLAY OVEN THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Firebricks (Vuurvaste stenen), a part of the clay oven (leemoven). A neat stack of pale buff firebricks, rectangular and slightly rough, a few chipped at the corners. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=clayOven-firebricks --size=256`
+
+### `part/clayOven-smokeHole` — Smoke hole, part of the clay oven
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/clayOven.webp` — the finished clay oven this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE CLAY OVEN THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Smoke hole (Rookgat), a part of the clay oven (leemoven). A short round clay collar for the top of an oven, a smoke hole in its middle, terracotta with a darkened lip. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=clayOven-smokeHole --size=256`
+
+### `part/clayOven-copperGrate` — Copper grate, part of the clay oven
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/clayOven.webp` — the finished clay oven this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE CLAY OVEN THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Copper grate (Koperen rooster), a part of the clay oven (leemoven). A round copper grate of crossed bars on a rim, matte reddish copper with green tarnish in the corners. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=clayOven-copperGrate --size=256`
+
+### `part/windbreak-reedBundles` — Reed bundles, part of the windbreak
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/windbreak.webp` — the finished windbreak this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE WINDBREAK THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Reed bundles (Rietbundels), a part of the windbreak (windscherm). Three tall bundles of river reed, tied at the middle, golden-green with feathery tops, standing together. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=windbreak-reedBundles --size=256`
+
+### `part/windbreak-stakes` — Wooden stakes, part of the windbreak
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/windbreak.webp` — the finished windbreak this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE WINDBREAK THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Wooden stakes (Houten palen), a part of the windbreak (windscherm). Four stout wooden stakes, sharpened at one end, pale weathered wood with a rough grain. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=windbreak-stakes --size=256`
+
+### `part/tent-tentPoles` — Tent poles, part of the tent
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/tent.webp` — the finished tent this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE TENT THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Tent poles (Tentstokken), a part of the tent (tent). A bundle of three long straight wooden tent poles, light brown, one slightly forked at the top. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=tent-tentPoles --size=256`
+
+### `part/tent-wovenCloth` — Woven cloth, part of the tent
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/tent.webp` — the finished tent this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE TENT THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Woven cloth (Geweven doek), a part of the tent (tent). A folded stack of heavy woven cloth, sandy and rust-striped, thick at the edges, one corner turned back. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=tent-wovenCloth --size=256`
+
+### `part/tent-tentPegs` — Tent pegs, part of the tent
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/tent.webp` — the finished tent this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE TENT THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Tent pegs (Haringen), a part of the tent (tent). A small cluster of carved wooden tent pegs, short and tapered, with a notch near the head and a coil of cord. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=tent-tentPegs --size=256`
+
+### `part/secondTent-largeCloth` — Large tent cloth, part of the second tent
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/secondTent.webp` — the finished second tent this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE SECOND TENT THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Large tent cloth (Groot tentdoek), a part of the second tent (tweede tent). A large folded bolt of heavy dyed tent cloth, deep red-brown with a pale woven border, thick and rich. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=secondTent-largeCloth --size=256`
+
+### `part/secondTent-ridgePole` — Ridge pole, part of the second tent
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/secondTent.webp` — the finished second tent this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE SECOND TENT THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Ridge pole (Nokbalk), a part of the second tent (tweede tent). One long straight ridge pole of dark seasoned wood, smooth, with carved notches at both ends. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=secondTent-ridgePole --size=256`
+
+### `part/secondTent-guyRopes` — Guy ropes, part of the second tent
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/secondTent.webp` — the finished second tent this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE SECOND TENT THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Guy ropes (Spantouwen), a part of the second tent (tweede tent). Four neat coils of thick twisted guy rope in natural fibre, tied off with a short loop each. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=secondTent-guyRopes --size=256`
+
+### `part/secondTent-woolFloor` — Wool ground cloth, part of the second tent
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/secondTent.webp` — the finished second tent this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE SECOND TENT THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Wool ground cloth (Wollen vloerkleed), a part of the second tent (tweede tent). A rolled and half-unrolled thick wool ground cloth, deep red and cream woven pattern, soft and heavy. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=secondTent-woolFloor --size=256`
+
+### `part/pavilion-pavilionPosts` — Pavilion posts, part of the pavilion
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/pavilion.webp` — the finished pavilion this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE PAVILION THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Pavilion posts (Paviljoenpalen), a part of the pavilion (paviljoen). Four tall carved wooden posts leaning together, dark polished wood with gold-painted bands near the top. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=pavilion-pavilionPosts --size=256`
+
+### `part/pavilion-linenCanopy` — Linen canopy, part of the pavilion
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/pavilion.webp` — the finished pavilion this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE PAVILION THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Linen canopy (Linnen dak), a part of the pavilion (paviljoen). A big folded canopy of fine white linen with a deep blue border and gold-thread edging, soft heavy folds. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=pavilion-linenCanopy --size=256`
+
+### `part/pavilion-hangingCurtains` — Curtains, part of the pavilion
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/pavilion.webp` — the finished pavilion this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE PAVILION THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Curtains (Gordijnen), a part of the pavilion (paviljoen). Two long gathered curtains of rich saturated fabric, one deep blue and one warm red, hanging from a rod with gold rings. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=pavilion-hangingCurtains --size=256`
+
+### `part/pavilion-woolRugs` — Wool rugs, part of the pavilion
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/pavilion.webp` — the finished pavilion this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE PAVILION THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Wool rugs (Wollen kleden), a part of the pavilion (paviljoen). A short stack of three woven wool rugs in layered patterns, red, ochre and indigo, fringed at the ends. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=pavilion-woolRugs --size=256`
+
+### `part/pavilion-woodenFloor` — Wooden floor, part of the pavilion
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/pavilion.webp` — the finished pavilion this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE PAVILION THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Wooden floor (Houten vloer), a part of the pavilion (paviljoen). A section of fitted wooden floor boards, warm honey-brown, planks tightly joined with a polished top. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=pavilion-woodenFloor --size=256`
+
+### `part/well-wellStones` — Well stones, part of the well
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/well.webp` — the finished well this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE WELL THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Well stones (Putstenen), a part of the well (put). A ring of cut and fitted well stones, pale limestone blocks, curved and stacked in a low round wall. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=well-wellStones --size=256`
+
+### `part/well-rope` — Long rope, part of the well
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/well.webp` — the finished well this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE WELL THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Long rope (Lang touw), a part of the well (put). A long thick coil of twisted rope, natural palm fibre, tied off with a loop at one end. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=well-rope --size=256`
+
+### `part/well-bucket` — Bucket, part of the well
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/well.webp` — the finished well this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE WELL THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Bucket (Emmer), a part of the well (put). A wooden bucket with iron-dark rope handle, rounded staves bound by two bands, a little water darkening its inside. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=well-bucket --size=256`
+
+### `part/well-windlass` — Windlass, part of the well
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/well.webp` — the finished well this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE WELL THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Windlass (Windas), a part of the well (put). A wooden windlass: a round beam on two forked posts with a bent crank handle at one end. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=well-windlass --size=256`
+
+### `part/wellPulley-pulleyWheel` — Pulley wheel, part of the pulley well
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/wellPulley.webp` — the finished pulley well this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE PULLEY WELL THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Pulley wheel (Katrol), a part of the pulley well (katrolput). A carved wooden pulley wheel with a deep groove round its rim and a bronze axle through its hub, richly made. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=wellPulley-pulleyWheel --size=256`
+
+### `part/wellPulley-frame` — Support frame, part of the pulley well
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/wellPulley.webp` — the finished pulley well this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE PULLEY WELL THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Support frame (Draagframe), a part of the pulley well (katrolput). A sturdy A-shaped wooden support frame, dark timber with a bronze-capped crossbeam at the top, joined with pegs. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=wellPulley-frame --size=256`
+
+### `part/wellPulley-hoistRope` — Hoisting rope, part of the pulley well
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/wellPulley.webp` — the finished pulley well this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE PULLEY WELL THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Hoisting rope (Hijstouw), a part of the pulley well (katrolput). A long heavy coil of braided hoisting rope, thick dyed fibre in two colours, with a bronze ring at the end. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=wellPulley-hoistRope --size=256`
+
+### `part/wellPulley-counterweight` — Counterweight, part of the pulley well
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/wellPulley.webp` — the finished pulley well this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE PULLEY WELL THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Counterweight (Tegengewicht), a part of the pulley well (katrolput). A heavy rounded counterweight stone bound in a rope net, with a loop on top. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=wellPulley-counterweight --size=256`
+
+### `part/wellPulley-leatherBucket` — Leather bucket, part of the pulley well
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/wellPulley.webp` — the finished pulley well this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE PULLEY WELL THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Leather bucket (Leren emmer), a part of the pulley well (katrolput). A fine leather bucket with a rim ring and a stitched seam, dark oiled leather with a gilded band. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=wellPulley-leatherBucket --size=256`
+
+### `part/tripod-tripodPoles` — Three poles, part of the tripod
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/tripod.webp` — the finished tripod this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE TRIPOD THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Three poles (Drie stokken), a part of the tripod (driepoot). Three long straight wooden poles leaning together, light brown, their tops notched. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=tripod-tripodPoles --size=256`
+
+### `part/tripod-binding` — Binding rope, part of the tripod
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/tripod.webp` — the finished tripod this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE TRIPOD THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Binding rope (Bindtouw), a part of the tripod (driepoot). A thick coil of binding rope, natural fibre, with one loose end hanging. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=tripod-binding --size=256`
+
+### `part/tripod-hook` — Bronze hook, part of the tripod
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/tripod.webp` — the finished tripod this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE TRIPOD THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Bronze hook (Bronzen haak), a part of the tripod (driepoot). A single forged bronze hook with a curl at the top for hanging, warm yellow-brown. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=tripod-hook --size=256`
+
+### `part/breadOven-mudBricks` — Mud bricks, part of the bread oven
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/breadOven.webp` — the finished bread oven this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE BREAD OVEN THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Mud bricks (Leemstenen), a part of the bread oven (broodoven). A stack of sun-dried mud bricks, rough, warm earth brown, a few straw flecks in them. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=breadOven-mudBricks --size=256`
+
+### `part/breadOven-clayPlaster` — Clay plaster, part of the bread oven
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/breadOven.webp` — the finished bread oven this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE BREAD OVEN THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Clay plaster (Kleipleister), a part of the bread oven (broodoven). A shallow wooden trough of wet grey-tan clay plaster with a smoothing stick lying in it. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=breadOven-clayPlaster --size=256`
+
+### `part/breadOven-ovenLid` — Oven lid, part of the bread oven
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/breadOven.webp` — the finished bread oven this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE BREAD OVEN THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Oven lid (Ovenklep), a part of the bread oven (broodoven). A round clay oven lid with a small knob handle, baked terracotta with a darker rim. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=breadOven-ovenLid --size=256`
+
+### `part/dryingRack-rackPoles` — Rack poles, part of the drying rack
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/dryingRack.webp` — the finished drying rack this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE DRYING RACK THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Rack poles (Rekpalen), a part of the drying rack (droogrek). Four straight wooden rack poles, each with a forked top, light brown seasoned wood. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=dryingRack-rackPoles --size=256`
+
+### `part/dryingRack-crossbar` — Crossbar, part of the drying rack
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/dryingRack.webp` — the finished drying rack this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE DRYING RACK THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Crossbar (Dwarshout), a part of the drying rack (droogrek). A long straight wooden crossbar with a worn smooth middle and a notch at each end. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=dryingRack-crossbar --size=256`
+
+### `part/dryingRack-wickerTray` — Wickerwork tray, part of the drying rack
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/dryingRack.webp` — the finished drying rack this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE DRYING RACK THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Wickerwork tray (Vlechtwerk), a part of the drying rack (droogrek). A flat woven wicker tray, round and shallow, golden reed with a neat rim. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=dryingRack-wickerTray --size=256`
+
+### `part/dryingRack-cords` — Hanging cords, part of the drying rack
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/dryingRack.webp` — the finished drying rack this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE DRYING RACK THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Hanging cords (Hangkoorden), a part of the drying rack (droogrek). Several short hanging cords of twisted fibre knotted at their top, hanging from a small stick. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=dryingRack-cords --size=256`
+
+### `part/feast-lowTable` — Low table, part of the feast
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/feast.webp` — the finished feast this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE FEAST THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Low table (Lage tafel), a part of the feast (feestmaal). A low wooden feasting table with carved legs and a polished top, dark rich wood with a thin gold inlay line. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=feast-lowTable --size=256`
+
+### `part/feast-breadBaskets` — Bread baskets, part of the feast
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/feast.webp` — the finished feast this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE FEAST THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Bread baskets (Broodmanden), a part of the feast (feestmaal). Two woven baskets heaped with round flat loaves of golden bread, one covered by a bit of linen. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=feast-breadBaskets --size=256`
+
+### `part/feast-roastDuck` — Roast duck, part of the feast
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/feast.webp` — the finished feast this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE FEAST THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Roast duck (Gebraden eend), a part of the feast (feestmaal). A whole roast duck on a round clay platter, golden-brown skin, laid with a few herbs. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=feast-roastDuck --size=256`
+
+### `part/feast-beerJars` — Beer jars, part of the feast
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/feast.webp` — the finished feast this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE FEAST THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Beer jars (Bierkruiken), a part of the feast (feestmaal). Three tall clay beer jars with pointed bases in a small wooden stand, ochre and red-brown, one with a reed straw. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=feast-beerJars --size=256`
+
+### `part/feast-fruitBowl` — Fruit bowl, part of the feast
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/feast.webp` — the finished feast this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE FEAST THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Fruit bowl (Fruitschaal), a part of the feast (feestmaal). A wide bowl heaped with dates, figs and pomegranates, deep reds, purples and golds, in a glazed blue bowl. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=feast-fruitBowl --size=256`
+
+### `part/table-tableTop` — Table top, part of the map table
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/table.webp` — the finished map table this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE MAP TABLE THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Table top (Tafelblad), a part of the map table (kaartentafel). A wide flat table top of pale planks joined together, worn smooth, with a few ink map marks on it. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=table-tableTop --size=256`
+
+### `part/table-trestles` — Trestles, part of the map table
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/table.webp` — the finished map table this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE MAP TABLE THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Trestles (Schragen), a part of the map table (kaartentafel). A pair of wooden trestles, each an A-shaped frame in medium brown wood, standing a little apart. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=table-trestles --size=256`
+
+### `part/table-leatherStraps` — Leather straps, part of the map table
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/table.webp` — the finished map table this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE MAP TABLE THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Leather straps (Leren riempjes), a part of the map table (kaartentafel). Two lengths of dark leather strap with small brass buckles, coiled together. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=table-leatherStraps --size=256`
+
+### `part/lotusPlanter-clayTub` — Clay trough, part of the lotus planter
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/lotusPlanter.webp` — the finished lotus planter this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE LOTUS PLANTER THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Clay trough (Kleibak), a part of the lotus planter (lotusbak). A wide shallow clay trough, empty, terracotta with a painted band of blue wave marks near the rim. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=lotusPlanter-clayTub --size=256`
+
+### `part/lotusPlanter-nileSilt` — Nile silt, part of the lotus planter
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/lotusPlanter.webp` — the finished lotus planter this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE LOTUS PLANTER THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Nile silt (Nijlslib), a part of the lotus planter (lotusbak). A heap of dark rich Nile silt in a small woven basket, soft, damp, deep brown. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=lotusPlanter-nileSilt --size=256`
+
+### `part/lotusPlanter-waterJar` — Water jar, part of the lotus planter
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/lotusPlanter.webp` — the finished lotus planter this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE LOTUS PLANTER THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Water jar (Waterkruik), a part of the lotus planter (lotusbak). A tall two-handled water jar of glazed blue-green clay, with a narrow neck and a small stopper. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=lotusPlanter-waterJar --size=256`
+
+### `part/lotusPlanter-lotusTubers` — Lotus tubers, part of the lotus planter
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/lotusPlanter.webp` — the finished lotus planter this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE LOTUS PLANTER THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Lotus tubers (Lotusknollen), a part of the lotus planter (lotusbak). A small cluster of pale pinkish-white lotus tubers with thin root threads, lying on a bit of damp reed. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=lotusPlanter-lotusTubers --size=256`
+
+### `part/lotusPlanter-stoneRim` — Stone rim, part of the lotus planter
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/lotusPlanter.webp` — the finished lotus planter this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE LOTUS PLANTER THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Stone rim (Stenen rand), a part of the lotus planter (lotusbak). A curved section of carved pale stone rim, with a lotus petal pattern around its edge. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=lotusPlanter-stoneRim --size=256`
+
+### `part/edgeStones-riverStones` — River stones, part of the pond edge
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/edgeStones.webp` — the finished pond edge this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE POND EDGE THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: River stones (Rivierstenen), a part of the pond edge (vijverrand). A small heap of smooth rounded river stones in greys, creams and rust browns. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=edgeStones-riverStones --size=256`
+
+### `part/edgeStones-clayBedding` — Clay bedding, part of the pond edge
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/edgeStones.webp` — the finished pond edge this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE POND EDGE THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Clay bedding (Kleibed), a part of the pond edge (vijverrand). A smooth mound of wet grey-brown clay on a flat board, with the print of a hand in it. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=edgeStones-clayBedding --size=256`
+
+### `part/edgeStones-gravel` — Gravel, part of the pond edge
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/edgeStones.webp` — the finished pond edge this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE POND EDGE THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Gravel (Grind), a part of the pond edge (vijverrand). A low pile of small coarse gravel, sandy tan and grey, in a shallow woven basket. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=edgeStones-gravel --size=256`
+
+### `part/edgeStones-boundaryStakes` — Boundary stakes, part of the pond edge
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/edgeStones.webp` — the finished pond edge this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE POND EDGE THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Boundary stakes (Afbakenpaaltjes), a part of the pond edge (vijverrand). Four short wooden boundary stakes with their tops painted red, standing in a bundle. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=edgeStones-boundaryStakes --size=256`
+
+### `part/post-postTrunk` — Palm trunk, part of the lookout post
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/post.webp` — the finished lookout post this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE LOOKOUT POST THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Palm trunk (Palmstam), a part of the lookout post (uitkijkpaal). One tall straight palm trunk, rough ringed bark, stripped of its fronds, pale brown. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=post-postTrunk --size=256`
+
+### `part/post-footStones` — Foundation stones, part of the lookout post
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/post.webp` — the finished lookout post this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE LOOKOUT POST THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Foundation stones (Voetstenen), a part of the lookout post (uitkijkpaal). A group of four heavy foundation stones, squared and flat on top, grey sandstone. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=post-footStones --size=256`
+
+### `part/post-wedges` — Wedges, part of the lookout post
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/post.webp` — the finished lookout post this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE LOOKOUT POST THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Wedges (Wiggen), a part of the lookout post (uitkijkpaal). A small pile of hardwood wedges, tapering, dark brown with hammer-marked heads. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=post-wedges --size=256`
+
+### `part/post-braces` — Braces, part of the lookout post
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/post.webp` — the finished lookout post this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE LOOKOUT POST THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Braces (Schoren), a part of the lookout post (uitkijkpaal). Two angled wooden braces, each notched at both ends, medium brown, leaning together. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=post-braces --size=256`
+
+### `part/platform-platformBeams` — Support beams, part of the lookout platform
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/platform.webp` — the finished lookout platform this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE LOOKOUT PLATFORM THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Support beams (Draagbalken), a part of the lookout platform (uitkijkplatform). Three heavy squared support beams stacked together, dark timber with dowel holes. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=platform-platformBeams --size=256`
+
+### `part/platform-platformPlanks` — Planks, part of the lookout platform
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/platform.webp` — the finished lookout platform this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE LOOKOUT PLATFORM THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Planks (Planken), a part of the lookout platform (uitkijkplatform). A stack of flat pale planks, evenly cut and fitted, light timber with visible grain. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=platform-platformPlanks --size=256`
+
+### `part/platform-lashingRope` — Lashing rope, part of the lookout platform
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/platform.webp` — the finished lookout platform this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE LOOKOUT PLATFORM THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Lashing rope (Sjortouw), a part of the lookout platform (uitkijkplatform). A thick coil of lashing rope, natural fibre, with a tidy knot at one end. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=platform-lashingRope --size=256`
+
+### `part/platform-edgeRail` — Railing, part of the lookout platform
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/platform.webp` — the finished lookout platform this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE LOOKOUT PLATFORM THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Railing (Reling), a part of the lookout platform (uitkijkplatform). A section of wooden railing, two posts joined by a smooth horizontal rail, medium brown. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=platform-edgeRail --size=256`
+
+### `part/ladder-ladderRails` — Ladder rails, part of the ladder
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/ladder.webp` — the finished ladder this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE LADDER THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Ladder rails (Ladderzijden), a part of the ladder (ladder). Two long straight ladder rails of pale wood, with evenly spaced holes down their length, leaning together. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=ladder-ladderRails --size=256`
+
+### `part/ladder-rungs` — Rungs, part of the ladder
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/ladder.webp` — the finished ladder this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE LADDER THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Rungs (Sporten), a part of the ladder (ladder). A bundle of round wooden rungs of equal length, golden brown, tied together with cord. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=ladder-rungs --size=256`
+
+### `part/ladder-groundPegs` — Ground pegs, part of the ladder
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/ladder.webp` — the finished ladder this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE LADDER THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Ground pegs (Grondpennen), a part of the ladder (ladder). Four sharp wooden ground pegs with notched heads, pale wood with dark earth at the points. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=ladder-groundPegs --size=256`
+
+### `part/ladder-leatherLoops` — Leather loops, part of the ladder
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/ladder.webp` — the finished ladder this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE LADDER THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Leather loops (Leren lussen), a part of the ladder (ladder). A set of three leather loops, dark brown, each with a stitched seam, lying in a stack. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=ladder-leatherLoops --size=256`
+
+### `part/roof-roofPoles` — Roof poles, part of the roof
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/roof.webp` — the finished roof this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE ROOF THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Roof poles (Dakbalkjes), a part of the roof (dak). A bundle of slender straight roof poles, light brown, about the same length, tied in the middle. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=roof-roofPoles --size=256`
+
+### `part/roof-thatch` — Palm thatch, part of the roof
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/roof.webp` — the finished roof this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE ROOF THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Palm thatch (Palmbladeren), a part of the roof (dak). A thick sheaf of dried palm leaves, golden-green fading to straw yellow, bound with a cord. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=roof-thatch --size=256`
+
+### `part/roof-clayLayer` — Clay layer, part of the roof
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/roof.webp` — the finished roof this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE ROOF THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Clay layer (Kleilaag), a part of the roof (dak). A flat slab of rolled clay, pale tan, with fingerprints pressed along its edge, lying on a board. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=roof-clayLayer --size=256`
+
+### `part/roof-bindingGrass` — Binding grass, part of the roof
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/roof.webp` — the finished roof this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE ROOF THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Binding grass (Bindgras), a part of the roof (dak). A bundle of long dried grass twisted into binding hanks, pale gold, with a few ends loose. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=roof-bindingGrass --size=256`
+
+### `part/signalFire-fireBasin` — Fire basin, part of the signal fire
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/signalFire.webp` — the finished signal fire this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE SIGNAL FIRE THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Fire basin (Vuurschaal), a part of the signal fire (seinvuur). A wide shallow bronze fire basin on three short legs, with a sooted inside and a hammered rim, richly made. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=signalFire-fireBasin --size=256`
+
+### `part/signalFire-pitch` — Pitch, part of the signal fire
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/signalFire.webp` — the finished signal fire this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE SIGNAL FIRE THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Pitch (Pek), a part of the signal fire (seinvuur). A black lump of pitch in a small clay pot, glossy-matte dark brown, with a wooden spoon in it. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=signalFire-pitch --size=256`
+
+### `part/signalFire-dryBrushwood` — Dry brushwood, part of the signal fire
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/signalFire.webp` — the finished signal fire this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE SIGNAL FIRE THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Dry brushwood (Droog kreupelhout), a part of the signal fire (seinvuur). A tied bundle of dry grey-brown brushwood sticks, long and thin, with some pale leaves. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=signalFire-dryBrushwood --size=256`
+
+### `part/signalFire-flint` — Flint, part of the signal fire
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/signalFire.webp` — the finished signal fire this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE SIGNAL FIRE THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Flint (Vuursteen), a part of the signal fire (seinvuur). A fine pale flint stone with a sharp chipped edge, next to a small iron striker. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=signalFire-flint --size=256`
+
+### `part/signalFire-bellows` — Bellows, part of the signal fire
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/signalFire.webp` — the finished signal fire this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE SIGNAL FIRE THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Bellows (Blaasbalg), a part of the signal fire (seinvuur). A leather bellows with a wooden handle and a short bronze nozzle, dark oiled leather, folded softly. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=signalFire-bellows --size=256`
+
+### `part/poles-masts` — Masts, part of the canopy masts
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/poles.webp` — the finished canopy masts this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE CANOPY MASTS THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Masts (Masten), a part of the canopy masts (sterrenmasten). Three tall slender masts of dark polished wood, each topped by a small gold cap, leaning together. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=poles-masts --size=256`
+
+### `part/poles-cornerStones` — Corner stones, part of the canopy masts
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/poles.webp` — the finished canopy masts this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE CANOPY MASTS THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Corner stones (Hoekstenen), a part of the canopy masts (sterrenmasten). Four squared corner stones of dark granite, each with a round socket on top, with gold-painted lines. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=poles-cornerStones --size=256`
+
+### `part/poles-stayLines` — Stay lines, part of the canopy masts
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/poles.webp` — the finished canopy masts this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE CANOPY MASTS THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Stay lines (Tuilijnen), a part of the canopy masts (sterrenmasten). Several neat coils of fine stay line in dyed blue and natural fibre, each with a bronze ring. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=poles-stayLines --size=256`
+
+### `part/poles-bigPegs` — Large pegs, part of the canopy masts
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/poles.webp` — the finished canopy masts this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE CANOPY MASTS THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Large pegs (Grote haringen), a part of the canopy masts (sterrenmasten). Four large forged pegs of bronze, thick and tapered, with ring heads, warm yellow-brown. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=poles-bigPegs --size=256`
+
+### `part/poles-poleSockets` — Pole sockets, part of the canopy masts
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/poles.webp` — the finished canopy masts this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE CANOPY MASTS THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Pole sockets (Paalvoeten), a part of the canopy masts (sterrenmasten). Three carved stone pole sockets, round with a deep hole in the middle, pale granite with gold-painted rims. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=poles-poleSockets --size=256`
+
+### `part/stars-goldLeaf` — Gold leaf, part of the stars
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/stars.webp` — the finished stars this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE STARS THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Gold leaf (Bladgoud), a part of the stars (sterren). A small stack of thin gold leaf sheets between papers, a corner lifted, warm bright yellow gold. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=stars-goldLeaf --size=256`
+
+### `part/stars-needleThread` — Needle and thread, part of the stars
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/stars.webp` — the finished stars this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE STARS THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Needle and thread (Naald en draad), a part of the stars (sterren). A bone sewing needle and a small spool of strong dark blue thread, with a loose loop of thread. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=stars-needleThread --size=256`
+
+### `part/stars-indigoDye` — Indigo dye, part of the stars
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/stars.webp` — the finished stars this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE STARS THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Indigo dye (Indigoverf), a part of the stars (sterren). A small clay bowl of deep indigo dye, with a little blue powder spilled beside it. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=stars-indigoDye --size=256`
+
+### `part/stars-chalk` — Chalk, part of the stars
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/stars.webp` — the finished stars this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE STARS THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Chalk (Krijt), a part of the stars (sterren). A few white chalk sticks of different lengths, chalky and crumbled at the ends, lying together. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=stars-chalk --size=256`
+
+### `part/stars-stencils` — Stencils, part of the stars
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/stars.webp` — the finished stars this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE STARS THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Stencils (Sjablonen), a part of the stars (sterren). A stack of three thin leather stencils with star shapes cut out of them, dark brown. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=stars-stencils --size=256`
+
+### `part/planets-ochre` — Ochre, part of the planets
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/planets.webp` — the finished planets this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE PLANETS THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Ochre (Oker), a part of the planets (planeten). A small clay bowl heaped with bright red-yellow ochre powder. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=planets-ochre --size=256`
+
+### `part/planets-copperDiscs` — Copper discs, part of the planets
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/planets.webp` — the finished planets this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE PLANETS THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Copper discs (Koperen schijven), a part of the planets (planeten). A short stack of round hammered copper discs, matte reddish copper with a small hole in each. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=planets-copperDiscs --size=256`
+
+### `part/planets-lapisPowder` — Lapis powder, part of the planets
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/planets.webp` — the finished planets this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE PLANETS THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Lapis powder (Lapispoeder), a part of the planets (planeten). A small bowl of deep blue lapis powder, ultramarine and rich, with a little spilled beside it. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=planets-lapisPowder --size=256`
+
+### `part/planets-hangingLoops` — Hanging loops, part of the planets
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/planets.webp` — the finished planets this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE PLANETS THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Hanging loops (Ophanglusjes), a part of the planets (planeten). A few small loops of braided cord with tiny brass rings, hanging from a short stick. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=planets-hangingLoops --size=256`
+
+### `part/planets-dividers` — Dividers, part of the planets
+
+1. `art/masters/camp/chest.webp` — the finished chest, for the brushwork only
+2. `art/masters/camp/planets.webp` — the finished planets this part belongs to
+
+```
+FRAME: square, 1:1, exactly as the camp art. The object stands alone, centred, on an invisible ground line at about 88% of the height, filling about 70% of the width. Do not crop it and do not re-compose it.
+
+STYLE: painted illustration of a vivid game prop, matte: soft brush texture, NO outlines anywhere, every edge is a change of value between painted areas. Seen from slightly above, about 35 degrees down. Evenly lit by soft, neutral white light from the upper left: full, rich, saturated colour. Mid-tone to dark values with clear form shading, so the object stands out against pale sand, but never murky, grey or dull. Metals are saturated but matte, never glossy or shiny. No glow cast on anything, no light pool, no cast shadow on the ground, no sand, dirt, ash or ground patch under the object. No text, no frame, no border.
+
+THE FIRST ATTACHED IMAGE IS A CHEST, already painted in the finished style of this set. Take ONLY its brushwork, its matte finish and the way it models form. Nothing of the chest itself appears in the picture. THE SECOND ATTACHED IMAGE IS THE PLANETS THIS PART BELONGS TO: take its colours, materials and scale from it. The finished structure does not appear in the picture, only the part described.
+
+SUBJECT: Dividers (Passer), a part of the planets (planeten). A bronze pair of dividers for drawing circles, long thin legs hinged at the top, with sharp points. Paint this part alone, lying on the ground line, as it would lie before the structure is built.
+
+BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills the whole square canvas to all four edges. No floor, no wall, no gradient, no sand, no shadow.
+```
+
+**Import:** `yarn import-camp <file> --out-dir=src/assets/camp/parts --name=planets-dividers --size=256`

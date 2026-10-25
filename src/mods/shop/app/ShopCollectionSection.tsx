@@ -6,6 +6,7 @@ import { difficultyByMaterialTier } from "@/data/materialTiers"
 import { CategoryGrid } from "@/ui/atoms/CategoryGrid"
 import { CollectionSection } from "@/ui/atoms/CollectionSection"
 import { CollectibleSlot } from "@/ui/molecules/CollectibleSlot"
+import { sellableArt } from "./sellableArt"
 import type { CollectionSectionProps } from "@/app/pages/collectionSectionRegistry"
 
 // The shop mod's Collection contribution: the "junk" category of loose sellables, each shown as an
@@ -29,6 +30,7 @@ export const ShopCollectionSection: FC<CollectionSectionProps> = ({ selectedItem
             state={inventory[item.id] !== undefined ? "collected" : "empty"}
             count={inventory[item.id]}
             symbol={item.symbol}
+            imageUrl={sellableArt(item.id)}
             difficulty={difficultyByMaterialTier[item.tier]}
             selected={selectedItem?.id === item.id}
             onClick={() =>
