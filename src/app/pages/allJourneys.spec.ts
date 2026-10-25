@@ -110,6 +110,26 @@ describe(allJourneys, () => {
     expect(byTier("junior")).toMatchObject({ collapsed: false })
   })
 
+  it("leaves out a listed tier with no journey to show, instead of calling it finished", () => {
+    const input = base({
+      journeys: made.filter(j => j.difficulty !== "starter"),
+      tierOpen: t => t === "starter" || t === "junior",
+      available: new Set(["j1"]),
+    })
+    expect(tiers(input)).toEqual(["expert", "junior"])
+    expect(allJourneys({ ...input, hidden: () => true }).groups.every(g => g.tier !== "starter")).toBe(true)
+  })
+
+  it("makes the coming-soon tier no locked group, and any other next tier still one", () => {
+    const input = base({ tierOpen: t => t === "starter" || t === "junior", available: new Set(["s1", "j1"]) })
+    expect(allJourneys({ ...input, comingSoon: "expert" }).groups.map(g => g.tier)).toEqual(["junior", "starter"])
+    expect(allJourneys({ ...input, comingSoon: "master" }).groups.map(g => g.tier)).toEqual([
+      "expert",
+      "junior",
+      "starter",
+    ])
+  })
+
   it("passes comingSoon through", () => {
     expect(allJourneys(base({ comingSoon: "master" })).comingSoon).toBe("master")
   })

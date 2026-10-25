@@ -29,7 +29,7 @@ const made = (id: string, difficulty: string, extra: Partial<Made> = {}): Made =
 })
 const journeys = [
   made("s1", "starter"),
-  made("s2", "starter"),
+  made("s2", "starter", { levelCount: 1 }),
   made("j1", "junior"),
   made("j2", "junior"),
   made("jt", "junior", { exterior: "tomb", entryLock: { count: 3 }, mapHint: "Hint jt", levelCount: 2 }),
@@ -42,6 +42,7 @@ let unexplored: Record<string, number[]> = {}
 let buried: Record<string, number[]> = {}
 let heldKeys = new Set<string>()
 let lockFound = 2
+let comingSoon: string | undefined
 const startJourney = vi.fn()
 const visitLevel = vi.fn()
 const cancelJourney = vi.fn()
@@ -86,7 +87,7 @@ vi.mock("@/app/SiteMap/keyProviders", () => ({
 vi.mock("@/app/SiteMap/detectorLevels", () => ({ useMergedDetectorLevels: () => ({}) }))
 vi.mock("@/app/pages/journeyAvailability", () => ({
   isTierUnlocked: (tier: string) => tier === "starter" || tier === "junior",
-  comingSoonDifficulty: () => undefined,
+  comingSoonDifficulty: () => comingSoon,
   tierKeyNeed: (
     _tier: string,
     held: ReadonlySet<string>,
@@ -105,6 +106,11 @@ vi.mock("@/app/pages/journeyAvailability", () => ({
 const { AllJourneys } = await import("./AllJourneysPage")
 const { registerJourneyCardSlot } = await import("./journeyCardSlots")
 
+registerJourneyCardSlot({
+  id: "made-up",
+  Component: ({ journeyInfo }) => <p>{`slot for ${journeyInfo.journey.id}`}</p>,
+})
+
 const state = (extra: Partial<Progress> = {}): Progress => ({
   levelNr: 1,
   completionCount: 0,
@@ -119,6 +125,7 @@ beforeEach(() => {
   buried = {}
   heldKeys = new Set()
   lockFound = 2
+  comingSoon = undefined
   startJourney.mockReset()
   visitLevel.mockReset()
   cancelJourney.mockReset()
@@ -267,14 +274,38 @@ describe("AllJourneys", () => {
     expect(dim?.textContent).toBe("sym-k2")
   })
 
-  it("renders a registered card slot inside an opened row", () => {
-    registerJourneyCardSlot({ id: "made-up", Component: () => <p>slot content</p> })
-    progress = { j2: state({ completionCount: 1 }) }
+  it("renders a card slot for a one-site journey, which has no chevron", () => {
+    progress = { s2: state({ completionCount: 1 }), s1: state({ completionCount: 1 }) }
+    heldKeys = new Set()
     renderList()
-    expect(screen.queryByText("slot content")).toBeNull()
+    fireEvent.click(screen.getByRole("button", { name: /difficulty.starter/ }))
 
-    fireEvent.click(screen.getByRole("button", { name: "journeys.showStops Name j2" }))
+    expect(screen.queryByRole("button", { name: "journeys.showStops Name s2" })).toBeNull()
+    expect(screen.getByText("slot for s2")).toBeTruthy()
+  })
 
-    expect(screen.getByText("slot content")).toBeTruthy()
+  it("renders a card slot for an open journey that was started and cancelled", () => {
+    progress = { j2: state({ levelNr: 2 }) }
+    renderList()
+
+    expect(screen.getByText("slot for j2")).toBeTruthy()
+    expect(screen.queryByText("slot for j1")).toBeNull()
+  })
+
+  it("says a started-and-cancelled journey was started before, and a fresh one not visited", () => {
+    progress = { j2: state({ levelNr: 2 }), j1: state() }
+    renderList()
+
+    expect(rowButton("Name j2").textContent).toContain("journeys.noteResumePyramid 2 3")
+    expect(rowButton("Name j1").textContent).toContain("journeys.noteOpen")
+  })
+
+  it("leaves the coming-soon tier to the footer note, not a locked group", () => {
+    comingSoon = "expert"
+    renderList()
+
+    expect(screen.queryByText("journeys.tierNeed")).toBeNull()
+    expect(screen.queryByText("journeys.tierLockedName difficulty.expert")).toBeNull()
+    expect(screen.getByText("ui.tierComingSoon difficulty.expert")).toBeTruthy()
   })
 })

@@ -1,4 +1,4 @@
-import { useMemo, useState, type FC } from "react"
+import { useState, type FC } from "react"
 import { useTranslation } from "react-i18next"
 import { ConfirmModal } from "@/ui/atoms/ConfirmModal"
 import { JourneyRow } from "@/ui/molecules/JourneyRow"
@@ -121,6 +121,11 @@ export const AllJourneys: FC<{ startGame: () => void; compact?: boolean }> = ({ 
         : t("journeys.noteCurrentPyramid", { level: Math.min(row.levelNr, row.levelCount), count: row.levelCount })
     }
     if (row.status === "finished") return row.news ? t("journeys.noteFinishedNews") : t("journeys.noteFinished")
+    if (row.levelNr > 1) {
+      return journey.exterior === "tomb"
+        ? t("journeys.noteResumeTomb")
+        : t("journeys.noteResumePyramid", { level: Math.min(row.levelNr, row.levelCount), count: row.levelCount })
+    }
     return t("journeys.noteOpen")
   }
 
@@ -144,7 +149,8 @@ export const AllJourneys: FC<{ startGame: () => void; compact?: boolean }> = ({ 
     const journey = journeys.find(j => j.id === row.journeyId)
     if (!journey) return null
     const locked = row.status === "locked"
-    const lock = locked ? facts.lock(journey.id) : undefined
+    const lockFacts = locked ? facts.lock(journey.id) : undefined
+    const lock = lockFacts && lockFacts.found < lockFacts.required ? lockFacts : undefined
     const hasStops = (row.status === "current" || row.status === "finished") && journey.levelCount > 1
     const open = stopsOpen.has(journey.id)
     const info = getJourney(journey.id)
@@ -171,15 +177,16 @@ export const AllJourneys: FC<{ startGame: () => void; compact?: boolean }> = ({ 
         }))}
         compact={compact}
         onOpen={() => tap(journey, row)}
+        details={
+          info ? journeyCardSlots().map(({ id, Component }) => <Component key={id} journeyInfo={info} />) : undefined
+        }
         stops={
           hasStops
             ? { label: t("journeys.showStops", { name }), open, onToggle: () => toggleStops(journey.id) }
             : undefined
         }
       >
-        <JourneyStops stops={stopsFor(journey, row)} onStop={n => enter(journey, n)}>
-          {info ? journeyCardSlots().map(({ id, Component }) => <Component key={id} journeyInfo={info} />) : null}
-        </JourneyStops>
+        <JourneyStops stops={stopsFor(journey, row)} onStop={n => enter(journey, n)} />
       </JourneyRow>
     )
   }
@@ -227,12 +234,11 @@ export const AllJourneys: FC<{ startGame: () => void; compact?: boolean }> = ({ 
     }
   }
 
-  const groups = useMemo(() => model.groups, [model.groups])
   const comingSoon = model.comingSoon
   return (
     <>
       <JourneyList
-        groups={groups.map(groupFor)}
+        groups={model.groups.map(groupFor)}
         footer={
           comingSoon && (
             <div className="rounded-xl border-2 border-dashed border-[#B8A584] p-3 text-left">

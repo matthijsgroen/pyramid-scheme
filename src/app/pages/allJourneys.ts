@@ -95,7 +95,8 @@ export const allJourneys = (input: AllJourneysInput): { groups: TierGroup[]; com
   const listedIndexes = difficulties.flatMap((tier, index) => (listed(tier) ? [index] : []))
   const highest = listedIndexes.length > 0 ? Math.max(...listedIndexes) : -1
   const lockedTier = difficulties[highest + 1]
-  const tiersListed = difficulties.filter(listed)
+  // A listed tier with no journey to show has no progress to speak of, so it is no group.
+  const tiersListed = difficulties.filter(tier => listed(tier) && shown(tier).length > 0)
   // The newest tier that is open is the one the player is in, so it never folds away.
   const newestOpen = [...tiersListed].reverse()[0]
 
@@ -117,8 +118,9 @@ export const allJourneys = (input: AllJourneysInput): { groups: TierGroup[]; com
     }
   })
 
-  // The one tier past the highest listed is shown shut, with what opens it and no rows.
-  if (lockedTier && !input.tierOpen(lockedTier)) {
+  // The one tier past the highest listed is shown shut, with what opens it and no rows. The tier that
+  // is coming soon has nothing to find yet, so it is only the footer's note.
+  if (lockedTier && !input.tierOpen(lockedTier) && lockedTier !== input.comingSoon) {
     groups.push({
       tier: lockedTier,
       done: 0,
