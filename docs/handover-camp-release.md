@@ -131,7 +131,7 @@ shows its own camp art (cut from the painted camp layers) with how far it is, as
 so the designer can paint them; until painted, the current icon stays. (Decided by the designer.) The scene
 reads the found state through props. Soundness: placement and the bake. Ends with a bake and the loot report.
 
-### Phase 4 — animals as gates, the per-gate guard [ ]
+### Phase 4 — animals as gates, the per-gate guard [x]
 
 The animals are **obstacles**: without the right one the player cannot reach a higher tier or an optional
 tomb. The seven purchases (loot spec, "Bought at Fez"):
@@ -151,10 +151,10 @@ its gate), each landing its camp steps and opening its gate **on top of** the ex
 treasure, tomb `entryLock`). Core grows a registry so several mods can each add a requirement to the same gate
 (today `journeyEntryLock` returns one lock and `tierUnlockBucket` is an OR; mods may not import each other). The
 economy guard becomes **per gate**: all income reachable before a gate ≥ the price of everything buyable before
-it, the animal included. Shop mod off: the animal gates fall away. Starter → junior needs no animal. Soundness:
+it, the animal included. (Built per ground instead: a per-gate check is unsound, see the review list, §2 Phase 4.) Shop mod off: the animal gates fall away. Starter → junior needs no animal. Soundness:
 reachability and the guard. Ends with a bake.
 
-### Phase 5 — the economy recomputed [ ]
+### Phase 5 — the economy recomputed [x]
 
 Sinks = the 13 rare items + the 7 purchases. Income ≈ 1.1 × sinks and passing the per-gate guard, split over
 sellables and loose coins; sellables go up: the same 25 kinds, more of them and dearer (decided by the designer; `src/data/sellables.ts`) so the animals are
@@ -242,7 +242,9 @@ worktree, and the review list sorted: decisions, drafts, failures, things to loo
 - 2026-10-25 — phase 7 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-7-journeys-collection.md`): Alle reizen replaces Travel (one list, tiers newest first, locked needs, `extraNeeds` seam for animals later); the Verzameling opens in tabs with NIEUW and a chest badge (seen save); mosaic window count line. Next: phase 8 plan task.
 - 2026-10-25 — phase 8 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-8-story-drafts.md`): 64 draft scenes nl+en (27 tomb, 10 camp, 27 animal — the animal ones unwired, waiting on phase 4) in `docs/game-design/story/script-camp-release.md`; tomb and camp beats wired once each; develop mode plays the drafts from settings. Next: phase 9 wrap-up.
 - 2026-10-25 — phase 9 wrap-up done: changelog condensed, playtest backlog and the docs the queue made stale updated (`camp.md`, the mod architecture, the Travel page's old references), loot report unchanged, the review list sorted with a "Start here" summary, the clean-worktree gate green (bake clean after re-keying the carve ledger's hashes, verify, verify-content, build); branch pushed, no PR.
+- 2026-10-25 — phase 4 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-4-layout-first.md`, which replaced the old plan's Tasks 3–8): every floor's layout is picked before loot under hard criteria (packing is intent), keys are placed on it room by room, a hidden corridor needs the corridor detector, and the bake refuses a stamped world with a stuck point (29 of 29 journeys entered); the seven purchases are keys sold by Fez; Alle reizen shows a locked tier's need and where to buy it; bought animals arrive in the camp; all 27 animal beats play. Starter teaches five families. Shop toggle-off is refused by the bake (review list, Failures); camp off passes.
+- 2026-10-25 — phase 5 done inside phase 4's plan: money is placed last, ground by ground (21 grounds, every one with a surplus, the smallest +166); sellables 30–150; the allowance is gone; found waterskins follow the traps (0.5 per trap, 159) and Fez sells 14. Clean-worktree gate green (review list, §2 Phase 4 gate).
 
 ## Next
 
-Phase 4 resumes from `docs/superpowers/plans/2026-10-25-camp-phase-4-layout-first.md` (it replaces the old plan's Tasks 3–8 and phase 5); its ledger is `.superpowers/sdd/2026-10-25-camp-phase-4-layout-first/progress.md`. Then phase 4b and 4c, planned and baked together.
+Phase 4b (locks as side-path blueprints) and phase 4c (the tunnel to the Sphinx), planned and baked together, in a fresh session. Before or beside them: the shop toggle-off decision (review list, Failures).

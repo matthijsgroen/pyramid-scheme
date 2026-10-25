@@ -10,20 +10,21 @@ What got built, per phase:
 - **Phase 1** — bandage, oil, trap tool, the pack and the supplies detector are gone; 60 waterskins (20 per tier, expert and up) heal on pickup; hearts refill on every coming home; pack-mule makes a waterskin heal two.
 - **Phase 2** — `yarn loot-report` writes `docs/loot-report.md` (every slot per tier and level, demand per currency); the bake names any empty chest or path end.
 - **Phase 3** — the `camp` mod: 28 found items and 99 structure parts on puzzle slots of their tier, the camp save, the Constructies tab, 25 sellable (junk) icon prompts in the repaint queue; camp parts keep their structure's art (designer, 2026-10-25).
-- **Phase 4** — STOPPED after Tasks 1–2: gates hold every mod's requirement, a gate walk, no loot on a shop's end. The animals, the per-gate guard and buying are not built.
-- **Phase 5** — skipped: the economy recompute needs phase 4's purchases.
+- **Phase 4** — the layout is picked before loot (hard criteria, packing as intent), keys are placed on it room by room, a hidden corridor needs the corridor detector, and the bake refuses a stamped world a player can get stuck in (29 of 29 journeys entered). Fez sells seven animals as keys: the donkey opens expert, the cart master, the second donkey wizard; the camel, second camel and sturdier cart each open a second tomb; the banner is for fun. Alle reizen says what a locked tier still needs and where Fez sells it; a bought animal arrives in the camp on the next homecoming; all 27 animal beats play.
+- **Phase 5** — done inside phase 4's plan: money is placed last, ground by ground, so wherever a player can stand the money lying there pays for everything sold there (21 grounds, every one with a surplus); sellables are worth 30–150; the 1070-coin allowance is gone; found waterskins follow the traps (159) and Fez sells 14.
 - **Phase 6** — the camp is the home screen (HUD, scene entrances, the Huidige expeditie card, desktop side panel), the coming-home screen with the haul, the new-chapter card, settings with the dev tools.
 - **Phase 7** — Alle reizen replaces the Travel page; the Verzameling opens in tabs with NIEUW and a chest badge. The mosaic window has no count line; the camp label carries the count.
-- **Phase 8** — 64 draft scenes in nl and en (27 tomb, 10 camp, 27 animal); tomb and camp beats wired, the animal ones wait on phase 4; settings play every draft in develop mode.
+- **Phase 8** — 64 draft scenes in nl and en (27 tomb, 10 camp, 27 animal); tomb and camp beats wired, the animal ones since phase 4; settings play every draft in develop mode.
 - **Phase 9** — changelog, playtest backlog, docs, the last loot report and the clean-worktree gate.
 
 What most needs your eye:
 
-1. **Phase 4's blocker — resolved (Failures):** the bake picks every floor's layout first and places loot on it; the shipped world's strict walk enters 29 of 29 journeys (was 22 of 29), and the bake refuses a world a player can get stuck in.
-2. **How much camp loot (phase 3):** 28 finds and parts at 2 / 3 / 3 / 4 / 5 per structure by tier, 127 more drops; or 2 / 3 / 4 / 5 / 6 (147).
-3. **The stopgaps that stand until phase 4–5 run (phase 1):** 60 waterskins rather than 150, 35 emptied shop stock slots, and the shop's authored 1070-coin allowance.
-4. **The 64 draft scenes (Drafts, phase 8):** play them from settings in develop mode (Story drafts); a draft is approved by taking its id out of `DRAFT_BEATS`.
-5. **A save can be wiped (Failures, pre-existing):** when the IndexedDB read rejects, the next write overwrites the store with an empty value.
+1. **Shop toggle-off is refused (Failures, phase 4):** with the shop mod off the bake stops, since no other mod fills the chests money filled; a decision on who fills them is needed.
+2. **Phase 4's blocker — resolved (Failures):** the bake picks every floor's layout first and places loot on it; the shipped world's strict walk enters 29 of 29 journeys (was 22 of 29), and the bake refuses a world a player can get stuck in.
+3. **How much camp loot (phase 3):** 28 finds and parts at 2 / 3 / 3 / 4 / 5 per structure by tier, 127 more drops; or 2 / 3 / 4 / 5 / 6 (147).
+4. **The animal economy (phase 4):** the prices, 21 grounds with the smallest surplus 166, loose change in chests no ground needs (world income 1.16 × sinks), and the loose-change knob.
+5. **The 64 draft scenes (Drafts, phase 8):** play them from settings in develop mode (Story drafts); a draft is approved by taking its id out of `DRAFT_BEATS`.
+6. **A save can be wiped (Failures, pre-existing):** when the IndexedDB read rejects, the next write overwrites the store with an empty value.
 
 ## 2. Decisions
 
@@ -34,15 +35,15 @@ What most needs your eye:
 - Healing happens at the camp fire: hearts refill to full on every coming home (queue default).
 - Coming home fires on every return to base: a journey's end and leaving mid-journey (queue default).
 - Pack-mule and the supplies detector: pack-mule becomes "a waterskin heals two hearts", the supplies detector is removed and its three treasures carry no perk (queue default).
-- Animal prices are authored defaults that satisfy the per-gate guard with a margin; animals are bought from Fez in tomb shops only (queue default).
+- Animal prices are authored defaults that satisfy the per-ground guard with a margin; animals are bought from Fez in tomb shops only (queue default).
 - Where things live once the pager is gone: settings behind a gear in the camp HUD, story log as a Verzameling tab, mosaic window opens the mosaic screen, dev tools move to settings (queue default).
 
 ### Phase 1 — consumables out, healing at the camp
 
 - Phase 1 — 60 waterskins, not 150, the rest of the freed expert-and-up puzzle slots wait for phase 3's camp loot (phase 3 placed it there). Alternative: 150, keeping today's puzzle-loot share.
 - Phase 1 — Waterskins spread evenly by tier (20 each over expert, master, wizard), round-robin over sites. Alternative: proportional to each tier's puzzle slots.
-- Phase 1 — The shop's money budget keeps its size via an authored allowance of 1070 coins until phase 5 (phase 5 has not run, so the allowance stands). Alternative: let the budget fall to the rare stock.
-- Phase 1 — Shop stock slots the consumables filled stay empty and the "Supplies" section goes, until phase 4 sells animals (phase 4 stopped before the animals, so they are still empty). Alternative: fill them with rares or sellables.
+- Phase 1 — The shop's money budget keeps its size via an authored allowance of 1070 coins until phase 5 (gone in phase 4: money is placed per ground). Alternative: let the budget fall to the rare stock.
+- Phase 1 — Shop stock slots the consumables filled stay empty and the "Supplies" section goes, until phase 4 sells animals (phase 4 trimmed empty stock and sells animals and waterskins). Alternative: fill them with rares or sellables.
 - Phase 1 — Pack-mule keeps its perk id `pack-mule`; only meaning and label change. Alternative: rename the id.
 - Phase 1 — The supplies detector's three treasures (`expert_b_1`, `master_b_1`, `wizard_b_1`) carry perk `none`. Alternative: give them a new perk.
 - Phase 1 — Waterskin is reward type `waterskin`, icon 💧, heals one heart, plain reward popup. Alternative: a popup that says whether it healed.
@@ -100,7 +101,7 @@ From `yarn loot-report` on the committed bake (byte-identical to phase 1's). `do
 | all     | 417/2109 = 20%    | 1692               | 194/194       | 633/633          | 13/48             |
 
 - Against demand: mosaic pieces 252/252, hieroglyph fragments 296/296, map pieces 31/31, tomb treasures 40/40, ward gates with their key 290/290 — all exact. Income 8107 coins (1082 coins in 532 drops + 85 sellables worth 7025) against 6300 buyable: surplus 1807. Waterskins 60, no demand.
-- Loot ends without a reward in the spec: none. The empty shop stock slots (35) are phase 1's emptied supply slots, waiting for phase 4's animals.
+- Loot ends without a reward in the spec: none. The empty shop stock slots (35) are phase 1's emptied supply slots, since trimmed in phase 4.
 - Determinism: two `yarn loot-report` runs on the same bake write identical bytes.
 - Toggle-off: with `trapMod` out of `REGISTERED_MODS` (and its import), `yarn loot-report` runs and drops the Waterskins row; `yarn check-types` passes. Without a re-bake the baked world still holds its waterskins, so they still show as `waterskin` counts in the tier columns (reward types are counted as opaque strings). Restored afterwards.
 - Gate: `yarn generate-world` left `generatedWorld.ts` byte-identical (carveLedger unchanged too); `yarn verify` (539 files, 6439 tests; betterer only re-keyed the `§` backlog entries of `modDescriptor.ts` and `registeredMods.ts` whose lines moved), `yarn verify-content` (43 files, 751 tests) and `yarn build` pass.
@@ -158,7 +159,7 @@ From `yarn loot-report` before (651aad2c) and after the bake (88646b9e). `docs/l
 - Gate: `yarn verify` (551 files, 6529 tests; betterer only re-keyed the `§` entries of `registeredMods.ts` and `CollectibleSlot.tsx`, whose lines moved), `yarn verify-content` (44 files, 753 tests, the camp catalogue agreement included) and `yarn build` pass.
 - Found during the look: `yarn dev` showed a blank page (`node:path` has no export `dirname`). Since phase 2, the tomb-treasure loot rows imported `WORLD_TARGETS` from `worldSpec.ts`, which pulls the lock catalogue (read from disk) into the app; the production bundle carried the same `node:` shims. Fixed in 7afaa564: `WORLD_TARGETS` has its own file, and the app graph no longer reaches the spec.
 
-### Phase 4 — animals as gates (stopped after Tasks 1–2)
+### Phase 4 — animals as gates, and phase 5's economy
 
 - Phase 4 — World-gen offers no slot on the end of a section that resolves to Fez's shop, and clears a placeholder standing there, because a shop room shows only its stock. Nothing (fragment, key, money, camp loot) lands there any more. The bake moved: pieces relocated, so the junior, expert, master and wizard tier fingerprints changed; starter did not. Alternative: let a shop room also hand out its end reward (a new room kind).
 - Phase 4 — World-gen refuses an authored (non-placeholder) `endReward` on a shop's end ("authored endReward on a shop end: <address>"), since it would vanish in play. None is authored today.
@@ -184,6 +185,88 @@ From `yarn loot-report` before (651aad2c) and after the bake (88646b9e). `docs/l
 - Phase 4 (layout-first) bake 2 fingerprints — expert moved (`7f5671a3ac55c418`): cart and camel in expert_treasure_tomb's shop, waterskins following traps (47 found + 4 sold), money per ground, and hieroglyphs re-placed now that the camel is placed as soon as its shop is reached.
 - Phase 4 (layout-first) bake 2 fingerprints — master moved (`fbf41de2e1959a0f`): secondDonkey and secondCamel in master_treasure_tomb's shop, waterskins (48 + 4), money per ground, hieroglyphs re-placed.
 - Phase 4 (layout-first) bake 2 fingerprints — wizard moved (`57389ea18be4ad67`): sturdyCart and caravanBanner in their shops, waterskins (64 + 6), money per ground, hieroglyphs re-placed.
+
+- Phase 4 — **The layout stage is a hook inside the build** (`pickLayout`, one pass): the carve search runs on the structural authoring after every structural pass (roles, encounters, dressing, shop stock, its trim, shop-end clearing), and placement then runs on the pins. Alternative: pin every floor from the last bake and re-bake until the pins settle.
+- Phase 4 — **Loot that moves a wall refuses the bake.** After the build every floor is carved again from the final configs and compared with the picked layout (`layoutMoved`); a web placement that moved is refused too, and `bakeOnSettledPins`' re-build loop is gone. Alternative: keep re-building until settled.
+- Phase 4 — **Shop-end clearing is a structural pass before the layout,** since whether an end holds a reward decides the floor-key hosts. Alternative: leave it in placement and rely on the refusal above.
+- Phase 4 — **No tier is frozen** (designer: saves do not exist yet). A baked pin that still verifies is kept; one that fails is re-searched, starter's included. Alternative: starter's pins verify-only.
+- Phase 4 — **A key that fits no slot before its gate stops the bake,** naming the gate and the bucket; no layout is re-picked automatically (designer). Alternative: re-pick the layout of the floors before the gate.
+- Phase 4 — **Hard layout criteria, packing is intent.** Hard: carves, lock walks sound, every lock holds a puzzle on its way (new), no dead region, every stub holds a room. The search tries every seed at the authored packing, then raised packings closest first up to 1, then the runtime ladder carve, which must meet every hard criterion too; `STRICT_ATTEMPT_ZERO` is gone. 20 floors carve only on the ladder (master_1–4 and wizard_1–4 main floors) and ship. Alternative: keep attempt 0 hard and fail floors that need the ladder.
+- Phase 4 — **"A lock holds a puzzle on its way" is checked on what the carve builds today;** locks as side-path blueprints are phase 4b (`docs/handover-camp-release.md`), with `it.todo("a corridor asking for a side path that carries none is named")` ready for it. Alternative: build phase 4b before the first bake.
+- Phase 4 — **No sprawl band** (designer): packing never fails a floor. Alternative: a band per tier.
+- Phase 4 — **Infeasible and not found are told apart:** infeasible is decided on the authoring before carving (a lock floor with no content that may stand on lock ground, a region asking for loot on a floor with none, a seed-independent assembler refusal); not found follows the bounded search with refusal counts per criterion. Both fail the bake by floor and criterion; the ledger records not-found results by authoring hash. Alternative: one message for both.
+- Phase 4 — **The corridor detector is a key** (`ReachabilitySupport.hiddenRequirement`, one fact for the world, `detector:corridor:1`). A detection treasure of level n harvests `detector:corridor:k` for every k ≤ n. With no `hiddenRequirement` (tomb-treasure off) strict walks treat hidden cells as shut, as the runtime does at level 0 (ruling during Task 3; the plan said "walk open"). The permissive walk keeps hidden open for collection totals. Alternative: a level per hidden section.
+- Phase 4 — **The purchase table, shops and prices carry over** from the old plan; no price moved in the bake. Alternative: price them like the rare stock (500–1000).
+- Phase 4 — **A money moment is a reachable ground, not a withheld gate** (`src/worldGen/grounds.ts`): a ground is a fixed point from empty hands in which shop stock counts only once bought, enumerated by buying one key piece at a time; the check is `income ≥ buyable` per ground. The one-gate-withheld check is unsound (made-up counterexample in `docs/game-design/keys-and-locks-solver.md`). Alternative: per-gate rows.
+- Phase 4 — **The ground enumeration is capped at 4096;** over it the bake refuses and names the count. The shipped world has 21 grounds. Alternative: no cap.
+- Phase 4 — **Hidden-pocket money counts only in grounds that hold the corridor detector** (designer). Alternative: count it everywhere.
+- Phase 4 — **Fez keeps his key stock** (designer): 6 hieroglyph pieces and the map piece stay in shops, bought with money and part of the ground enumeration.
+- Phase 4 — **Fez sells waterskins: 2 per tomb shop, expert and up** (7 shops, 14 in all) at 30 / 40 / 50 by tier, on top of the found ones. Not keys; money must cover them where they are sold. Alternative: 1 per shop, or none.
+- Phase 4 — **Money runs last by a flag** (`Distribution.fillsLast`, mod-agnostic). Alternative: rely on registry order.
+- Phase 4 — **Waterskins follow the traps** (designer): `WATERSKINS_PER_TRAP = 0.5`, so expert / master / wizard find 47 / 48 / 64 = 159, plus Fez's 14. Alternative: a flat number per tier.
+- Phase 4 — **Master's open junk corridor is a trap path of 3 puzzles,** so master's traps (95) sit between expert's (94) and wizard's (128). Alternative: 2 or 4 puzzles.
+- Phase 4 — **A shop has no empty stock slot:** stock is trimmed to what was assigned, before the layout. Alternative: fill spare slots with sellables.
+- Phase 4 — **Sellables: the same 25 kinds, dearer:** 30 / 60 / 90 / 120 / 150 (×1.2), so world income is about 1.1 × sinks. Alternative: new sellable ids.
+- Phase 4 — **`MONEY_ALLOWANCE` is gone:** money is each ground's need plus a 10 % margin, then the world up to 1.1 × sinks. Alternative: keep an allowance.
+- Phase 4 — **The 10 % margin is a target, not a check:** a ground whose free slots run out between buyable and 1.1 × buyable is accepted; only a ground short of buyable fails the build. The guard is `income ≥ buyable`. Alternative: enforce 1.1 × in the guard.
+- Phase 4 — **Loose change comes before the grounds:** `LOOSE_CHANGE_SHARE = 0.12` of all stock in coins on puzzle solves, early tiers first, on at most half of a tier's puzzle slots (`COIN_SLOT_SHARE = 0.5`, `src/mods/shop/game/loot.ts`). Without it starter and junior would show no coins; when a ground runs out of room its coins are upgraded to junk, so loose change never costs a ground its cover. The knob to turn if coins feel too common or too rare. Alternative: no loose change, junk only.
+- Phase 4 — **A need line can carry a hint:** the locked tier, shown once its treasure is held, lists the treasure lit, "Je hebt een ezel nodig" and "Fez verkoopt er een in <tomb>". Alternative: the place inside the label.
+- Phase 4 — **The windbreak is the early camp structure** (designer): its two parts lie on starter_1 level 1 (floor 1, main path) and starter_2 level 1 (main path), so it stands after the second journey. Alternative: no early structure.
+- Phase 4 — **Carried from the old plan:** a purchase opens its gate at once and the animal arrives on the next homecoming; the catalogue's steps land; the camp learns through held keys; camp save v2 with `arrived`; a shop store `{ version: 1, purchases }`; purchases in Fez's one buy list; emoji 🫏 🐪 🛞 🚩; toggle-off semantics; the dev grant "Koop alle dieren".
+- Phase 4 — **The animal beats play through two new core reactions:** `gateShown` (Alle reizen shows a locked tier or journey with unmet needs, once per unmet set) and `stockShown` (Fez's stall, once per room after his greeting). The story mod imports neither shop nor camp. Alternative: leave `blocked` and `forSale` waiting.
+- Phase 4 — **An arriving animal gets a line on the coming-home screen** ("Je ezel staat in het kamp"), from the camp mod's haul lines; an arrival is not loot, so it alone does not count as a haul. Alternative: no line, the animal just stands in the camp.
+- Phase 4 — **No CHANGELOG line:** the eight Unreleased headlines already cover the camp and the new look, and an animal shop is a detail the designer did not want as a headline.
+
+#### Phase 4 grounds
+
+Purchases (from the bake; `yarn loot-report`: purchases in shops 7/7):
+
+| Purchase        | Shop                     | Price | Gate it opens                    |
+| --------------- | ------------------------ | ----- | -------------------------------- |
+| `donkey`        | `junior_treasure_tomb`   | 200   | tier expert                      |
+| `cart`          | `expert_treasure_tomb`   | 300   | tier master                      |
+| `camel`         | `expert_treasure_tomb`   | 250   | journey `expert_treasure_tomb_b` |
+| `secondDonkey`  | `master_treasure_tomb`   | 250   | tier wizard                      |
+| `secondCamel`   | `master_treasure_tomb`   | 250   | journey `master_treasure_tomb_b` |
+| `sturdyCart`    | `wizard_treasure_tomb`   | 400   | journey `wizard_treasure_tomb_b` |
+| `caravanBanner` | `wizard_treasure_tomb_c` | 500   | nothing                          |
+
+Grounds (21, from `docs/loot-report.md`; a ground is named by the key pieces bought to stand in it, hieroglyph pieces by symbol and count):
+
+| #   | bought (in order)                                                                                                       | income | buyable | margin         |
+| --- | ----------------------------------------------------------------------------------------------------------------------- | ------ | ------- | -------------- |
+| 1   | nothing                                                                                                                 | 1166   | 1000    | +166 (16.6 %)  |
+| 2   | d15 2                                                                                                                   | 1205   | 1000    | +205 (20.5 %)  |
+| 3   | d15 2, donkey                                                                                                           | 2789   | 2460    | +329 (13.4 %)  |
+| 4   | d15 2, donkey, cart                                                                                                     | 3831   | 2460    | +1371 (55.7 %) |
+| 5   | d15 2, donkey, camel                                                                                                    | 3251   | 2870    | +381 (13.3 %)  |
+| 6   | d15 2, donkey, cart, camel                                                                                              | 4293   | 2870    | +1423 (49.6 %) |
+| 7   | d15 2, donkey, d9 4, camel, p2 4                                                                                        | 4166   | 2870    | +1296 (45.2 %) |
+| 8   | d15 2, donkey, d9 4, cart, camel, p2 4                                                                                  | 5454   | 4350    | +1104 (25.4 %) |
+| 9   | d15 2, donkey, d9 4, cart, camel, p2 4, p4 5                                                                            | 5454   | 4350    | +1104 (25.4 %) |
+| 10  | d15 2, donkey, d9 4, cart, camel, p2 4, secondDonkey                                                                    | 6450   | 4350    | +2100 (48.3 %) |
+| 11  | d15 2, donkey, d9 4, cart, camel, p2 4, secondCamel                                                                     | 6183   | 5430    | +753 (13.9 %)  |
+| 12  | d15 2, donkey, d9 4, cart, camel, p2 4, p4 5, secondDonkey                                                              | 6450   | 4350    | +2100 (48.3 %) |
+| 13  | d15 2, donkey, d9 4, cart, camel, p2 4, p4 5, secondCamel                                                               | 6649   | 5430    | +1219 (22.4 %) |
+| 14  | d15 2, donkey, d9 4, cart, camel, p2 4, secondDonkey, secondCamel                                                       | 7179   | 5430    | +1749 (32.2 %) |
+| 15  | d15 2, donkey, d9 4, cart, camel, p2 4, p4 5, secondDonkey, secondCamel                                                 | 8032   | 6880    | +1152 (16.7 %) |
+| 16  | d15 2, donkey, d9 4, cart, camel, p2 4, p4 5, secondDonkey, secondCamel, map piece (wizard_c)                           | 8032   | 6880    | +1152 (16.7 %) |
+| 17  | d15 2, donkey, d9 4, cart, camel, p2 4, p4 5, secondDonkey, secondCamel, sturdyCart                                     | 8032   | 6880    | +1152 (16.7 %) |
+| 18  | d15 2, donkey, d9 4, cart, camel, p2 4, p4 5, secondDonkey, secondCamel, map piece (wizard_c), sturdyCart               | 8032   | 6880    | +1152 (16.7 %) |
+| 19  | d15 2, donkey, d9 4, cart, camel, p2 4, p4 5, secondDonkey, secondCamel, d13 4, sturdyCart                              | 9260   | 7930    | +1330 (16.8 %) |
+| 20  | d15 2, donkey, d9 4, cart, camel, p2 4, p4 5, secondDonkey, secondCamel, map piece (wizard_c), d13 4, sturdyCart        | 9260   | 7930    | +1330 (16.8 %) |
+| 21  | d15 2, donkey, d9 4, cart, camel, p2 4, p4 5, secondDonkey, secondCamel, map piece (wizard_c), d13 4, sturdyCart, d12 5 | 10326  | 9030    | +1296 (14.4 %) |
+
+- Sinks 8680 (13 rares 5950, 7 purchases 2150, Fez's 14 waterskins 580). Money placed: 1476 coins in 727 drops and 90 sellables worth 8850.
+- Every ground has a surplus; the smallest is "nothing bought", 1166 against 1000 (+166).
+- **Waterskin and price rounds:** one round each. `WATERSKINS_PER_TRAP` stayed 0.5 (no step down) and no price moved: every ground was met on the first bake.
+- **Layout refusals:** none in the final bakes (225 pins verified in one carve, 0 searched, 0 infeasible). On the way, two starter tomb floors failed "a lock holds a puzzle" and were resolved by the designer's ruling above (Failures), and the first bake 2 attempt was refused for walls moved by emptied chests, fixed by loose change in unneeded chests.
+
+#### Phase 4 gate
+
+- Toggle-off, camp: with `campMod` and its import out of `REGISTERED_MODS`, `yarn generate-world` (56 s), `yarn check-types`, `yarn build` and `yarn loot-report` pass. Strict walk 29 of 29, hieroglyphs 296/296, purchases 7/7, 21 grounds with the smallest at 1187 against 1000; no `campFind` / `campPart` in the world and no camp rows in the report. Run in a throwaway worktree, nothing committed.
+- Toggle-off, shop: **refused** (Failures). `yarn check-types` and `yarn build` pass; `yarn generate-world` refuses: 23 floors' walls moved after the layout was picked. `yarn loot-report` then ran on the committed world, so its rows say nothing.
+- Gate in a clean worktree at edebac19 (`git worktree add`, the record commit after it touches docs only): `yarn verify` (625 files, 7140 tests, 1 todo; lint 0 errors, 17 warnings, the pin; betterer unchanged), `yarn verify-content` (47 files, 760 tests) and `yarn build` pass; `yarn generate-world` (54 s, strict walk 29 of 29) left `generatedWorld.ts` and `carveLedger.json` byte-identical, and the tree was clean. The look is under §5.
 
 ### Phase 6 — the camp as home
 
@@ -276,7 +359,7 @@ From `yarn loot-report` before (651aad2c) and after the bake (88646b9e). `docs/l
 - Phase 8 — **Tomb beats are per tomb** (`cave.` / `pillar.` / `cavern.<tombId>`), all nine tombs; `tombIntro` stays and plays first at the cave mouth. Alternative: one set per tier, or fold `tombIntro` into the cave beats.
 - Phase 8 — **The tomb beats join the story log** under their tomb, in the order cave, pillar, cavern, then the tomb's ghost scene; camp and structure beats stay out of the log, which remembers places. Alternative: a "Het kamp" row in the log.
 - Phase 8 — **`bond.starterTomb` waits for the tomb's last level.** `siteLeft` fires on every level's exit, so with the two-level tomb Ipi's afterword plays on leaving the cave, before Ipi. `siteLeft` now carries whether the level left was the journey's last, and the tomb afterwords fire only then. Alternative: leave it and list it under Failures.
-- Phase 8 — **The animal lines are drafted but unwired,** parked in `fez.json` under `animal.*` and in `WAITING_BEATS` with the seam each waits on; they follow the phase-4 plan's purchase ids, shops and gates. Alternative: keep them in the script file only until phase 4.
+- Phase 8 — **The animal lines are drafted and were unwired until phase 4 (all 27 play now),** parked in `fez.json` under `animal.*` and in `WAITING_BEATS` with the seam each waits on; they follow the phase-4 plan's purchase ids, shops and gates. Alternative: keep them in the script file only until phase 4.
 - Phase 8 — **A gate line names the tomb whose stall sells the animal** (phase 4's decision 6); if phase 4 moves a purchase, the line moves with it. Alternative: a line that names no place ("bij een van mijn kraampjes").
 - Phase 8 — **Drafts are marked in data, not on screen:** `DRAFT_BEATS` in the story mod and "draft" on every scene in the script file; the designer removes an id when the line is approved. Alternative: a "concept" tag on draft lines in develop mode.
 - Phase 8 — **A develop-mode tool plays the drafts:** in settings, one button per area (tombs, camp, structures and finds, animals) plays that area's beats in order with `forceReplay`, so the designer reads each in its bubble, the unwired animal lines included. Alternative: no tool; read them in the review list.
@@ -502,107 +585,107 @@ From `yarn loot-report` before (651aad2c) and after the bake (88646b9e). `docs/l
   - Fez: "Het is af! Alle stukjes zitten erin!" / "It's done! Every last bit's in!"
   - Explorer: "Zelf gebouwd." / "All our own work."
   - Fez: "Nou ja. Ik heb vooral gewezen." / "Well. I mostly pointed."
-- Phase 8 — `animal.forSale` — drafted, waits on phase 4 — would fire: Fez's stall — the first time it shows a purchase (the donkey, in Henut's vault)
+- Phase 8 — `animal.forSale` — fires: Fez's stall — the first time it shows a purchase (the donkey, in Henut's vault)
   - Fez: "Kijk eens wat ik in de kraam heb! Vanaf nu verkoop ik ook vervoer." / "Look what's at the stall! I do transport now."
   - Explorer: "Het staat te kauwen." / "It's chewing."
   - Fez: "Dat zit bij de prijs in." / "That's included in the price."
-- Phase 8 — `animal.boughtDonkey` — drafted, waits on phase 4 — would fire: Fez's stall in Henut's vault — the donkey is bought
+- Phase 8 — `animal.boughtDonkey` — fires: Fez's stall in Henut's vault — the donkey is bought
   - Fez: "Verkocht! Eén ezel. Koppig, maar hij draagt alles." / "Sold! One donkey. Stubborn, but he'll carry anything."
   - Explorer: "Waar is hij dan?" / "So where is he?"
   - Fez: "Al op weg naar huis. Hij loopt liever zonder ons." / "Already on his way home. He'd rather walk without us."
-- Phase 8 — `animal.blockedDonkey` — drafted, waits on phase 4 — would fire: Alle reizen — the expert tier refuses for want of the donkey
+- Phase 8 — `animal.blockedDonkey` — fires: Alle reizen — the expert tier refuses for want of the donkey
   - Fez: "Zo ver lopen wij niet, met al die spullen. Daar hoort een ezel bij." / "We're not walking that far with all this stuff. That takes a donkey."
   - Fez: "En wie heeft er eentje staan? Ik. In mijn kraam bij Henut." / "And guess who has one? Me. At my stall in Henut's vault."
-- Phase 8 — `animal.throughDonkey` — drafted, waits on phase 4 — would fire: the expert tier opens because of the donkey (first expert journey entered)
+- Phase 8 — `animal.throughDonkey` — fires: the expert tier opens because of the donkey (first expert journey entered)
   - Explorer: "Hij wil wel." / "He's willing."
   - Fez: "Vandaag. Morgen hebben we het er weer over." / "Today. Ask him again tomorrow."
-- Phase 8 — `animal.arrivesDonkey` — drafted, waits on phase 4 — would fire: the camp — the donkey's steps arrive on the homecoming
+- Phase 8 — `animal.arrivesDonkey` — fires: the camp — the donkey's steps arrive on the homecoming
   - Fez: "Daar staat hij! Hij was er eerder dan wij." / "There he is! Got here before us."
   - Explorer: "Het vuur heeft hij ook al gevonden." / "Found the fire, too."
   - Fez: "Mijn plekje. Nou ja. Hij was eerst." / "My spot. Well. He was first."
-- Phase 8 — `animal.boughtCart` — drafted, waits on phase 4 — would fire: Fez's stall in the High Priest's Treasury — the cart is bought
+- Phase 8 — `animal.boughtCart` — fires: Fez's stall in the High Priest's Treasury — the cart is bought
   - Fez: "Een kar! Twee wielen, en ze rammelen bijna niet." / "A cart! Two wheels, and they hardly rattle."
   - Explorer: "Bijna?" / "Hardly?"
   - Fez: "Dat rammelen krijg je er gratis bij." / "The rattle comes free."
-- Phase 8 — `animal.blockedCart` — drafted, waits on phase 4 — would fire: Alle reizen — the master tier refuses for want of the cart
+- Phase 8 — `animal.blockedCart` — fires: Alle reizen — the master tier refuses for want of the cart
   - Fez: "De ezel draagt geen tas meer. Ik heb het hem gevraagd." / "The donkey won't take another bag. I asked him."
   - Fez: "Een kar, dat hebben we nodig. Ik heb er een in mijn kraam, bij de hogepriester." / "A cart, that's what we need. There's one at my stall, at the high priest's."
-- Phase 8 — `animal.throughCart` — drafted, waits on phase 4 — would fire: the master tier opens because of the cart (first master journey entered)
+- Phase 8 — `animal.throughCart` — fires: the master tier opens because of the cart (first master journey entered)
   - Explorer: "Hoor je dat?" / "Hear that?"
   - Fez: "Dat is de kar. Hij zingt een beetje." / "That's the cart. It sings a bit."
   - Explorer: "De hele weg?" / "All the way?"
-- Phase 8 — `animal.arrivesCart` — drafted, waits on phase 4 — would fire: the camp — the cart arrives on the homecoming
+- Phase 8 — `animal.arrivesCart` — fires: the camp — the cart arrives on the homecoming
   - Fez: "Een kar bij ons kamp! Nu zien we eruit alsof we ergens heen gaan." / "A cart at our camp! Now we look like we're going somewhere."
   - Explorer: "We gaan ook ergens heen." / "We are going somewhere."
   - Fez: "Ja, maar nu ziet iedereen het." / "Yes, but now everyone can tell."
-- Phase 8 — `animal.boughtCamel` — drafted, waits on phase 4 — would fire: Fez's stall in the High Priest's Treasury — the camel is bought
+- Phase 8 — `animal.boughtCamel` — fires: Fez's stall in the High Priest's Treasury — the camel is bought
   - Fez: "Een kameel! Die loopt dagen zonder water. Ik niet, hoor." / "A camel! Goes for days without water. I don't, mind you."
   - Explorer: "Hij kijkt naar je." / "He's looking at you."
   - Fez: "Op me neer. Kamelen kijken altijd op je neer." / "Down at me. Camels always look down at you."
-- Phase 8 — `animal.blockedCamel` — drafted, waits on phase 4 — would fire: Alle reizen — the Inner Sanctum refuses for want of the camel
+- Phase 8 — `animal.blockedCamel` — fires: Alle reizen — the Inner Sanctum refuses for want of the camel
   - Fez: "Het Binnenste Heiligdom? Daar komen we te voet nooit." / "The Inner Sanctum? We'll never get there on foot."
   - Fez: "Toevallig heb ik een kameel. In mijn kraam, bij de hogepriester." / "As luck would have it, I have a camel. At my stall, at the high priest's."
-- Phase 8 — `animal.throughCamel` — drafted, waits on phase 4 — would fire: the Inner Sanctum opens because of the camel (entered)
+- Phase 8 — `animal.throughCamel` — fires: the Inner Sanctum opens because of the camel (entered)
   - Fez: "Hij knielt! Voor mij!" / "He's kneeling! For me!"
   - Explorer: "Om op te stappen." / "So we can climb on."
   - Fez: "Laat me nou even." / "Let me have this."
-- Phase 8 — `animal.arrivesCamel` — drafted, waits on phase 4 — would fire: the camp — the camel's steps arrive on the homecoming
+- Phase 8 — `animal.arrivesCamel` — fires: the camp — the camel's steps arrive on the homecoming
   - Fez: "Daar staat hij. Hij doet alsof het kamp van hem is." / "There he is. Acting like the camp's his."
   - Explorer: "En de ezel?" / "And the donkey?"
   - Fez: "Die doet alsof hij hem niet ziet. Net als ik." / "Pretending not to see him. Same as me."
-- Phase 8 — `animal.boughtSecondDonkey` — drafted, waits on phase 4 — would fire: Fez's stall in the Pharaoh's Secret Hoard — the second donkey is bought
+- Phase 8 — `animal.boughtSecondDonkey` — fires: Fez's stall in the Pharaoh's Secret Hoard — the second donkey is bought
   - Fez: "Nog een ezel! Dan heeft de eerste eindelijk iemand om mee te praten." / "Another donkey! Now the first one has someone to talk to."
   - Explorer: "Praten?" / "Talk?"
   - Fez: "Balken. Dat is praten, maar harder." / "Bray. It's talking, only louder."
-- Phase 8 — `animal.blockedSecondDonkey` — drafted, waits on phase 4 — would fire: Alle reizen — the wizard tier refuses for want of the second donkey
+- Phase 8 — `animal.blockedSecondDonkey` — fires: Alle reizen — the wizard tier refuses for want of the second donkey
   - Fez: "De ezel wil niet verder. Niet alleen, zegt hij." / "The donkey won't go on. Not alone, he says."
   - Explorer: "Zegt hij dat?" / "He said that?"
   - Fez: "Ik versta ezel. Hij wil een maatje, en bij de farao heb ik er een in de kraam." / "I speak donkey. He wants a pal, and I've got one at my stall in the pharaoh's hoard."
-- Phase 8 — `animal.throughSecondDonkey` — drafted, waits on phase 4 — would fire: the wizard tier opens because of the second donkey (first wizard journey entered)
+- Phase 8 — `animal.throughSecondDonkey` — fires: the wizard tier opens because of the second donkey (first wizard journey entered)
   - Fez: "Hoor ze! Ze balken om het hardst." / "Listen to them! Each one louder than the other."
   - Explorer: "Wie wint er?" / "Who's winning?"
   - Fez: "Wij niet. Wij moeten het aanhoren." / "Not us. We have to listen to it."
-- Phase 8 — `animal.arrivesSecondDonkey` — drafted, waits on phase 4 — would fire: the camp — the second donkey arrives on the homecoming
+- Phase 8 — `animal.arrivesSecondDonkey` — fires: the camp — the second donkey arrives on the homecoming
   - Fez: "Kijk ze nou staan. Alsof ze elkaar al jaren kennen." / "Look at them. Like they've known each other for years."
   - Explorer: "Net als wij." / "Like us."
   - Fez: "Wij balken minder." / "We bray less."
-- Phase 8 — `animal.boughtSecondCamel` — drafted, waits on phase 4 — would fire: Fez's stall in the Pharaoh's Secret Hoard — the second camel is bought
+- Phase 8 — `animal.boughtSecondCamel` — fires: Fez's stall in the Pharaoh's Secret Hoard — the second camel is bought
   - Fez: "Nog een kameel. Ja. Ik vind ze ook niet aardig." / "Another camel. Yes. I don't like them either."
   - Fez: "Maar deze kijkt tenminste vriendelijk." / "But this one at least looks friendly."
   - Explorer: "Hij kijkt naar je fez." / "He's looking at your fez."
-- Phase 8 — `animal.blockedSecondCamel` — drafted, waits on phase 4 — would fire: Alle reizen — the Hall of Osiris refuses for want of the second camel
+- Phase 8 — `animal.blockedSecondCamel` — fires: Alle reizen — the Hall of Osiris refuses for want of the second camel
   - Fez: "De Hal van Osiris. Met één kameel komen we daar niet." / "The Hall of Osiris. One camel won't get us there."
   - Fez: "Gelukkig heb ik er nog een, bij de farao in de kraam. Mijn allerlaatste." / "Luckily I've got another, at my stall in the pharaoh's hoard. My very last one."
   - Explorer: "Dat zeg je altijd." / "You always say that."
-- Phase 8 — `animal.throughSecondCamel` — drafted, waits on phase 4 — would fire: the Hall of Osiris opens because of the second camel (entered)
+- Phase 8 — `animal.throughSecondCamel` — fires: the Hall of Osiris opens because of the second camel (entered)
   - Fez: "Hij eet aan mijn fez!" / "He's eating my fez!"
   - Explorer: "Een vriendelijke kameel." / "A friendly camel."
   - Fez: "Té vriendelijk." / "Too friendly."
-- Phase 8 — `animal.arrivesSecondCamel` — drafted, waits on phase 4 — would fire: the camp — the second camel arrives on the homecoming
+- Phase 8 — `animal.arrivesSecondCamel` — fires: the camp — the second camel arrives on the homecoming
   - Fez: "Twee kamelen. Nu kijken ze met z'n tweeën op me neer." / "Two camels. Now they both look down on me."
   - Explorer: "Ga dan bij de ezels staan." / "Go and stand with the donkeys, then."
   - Fez: "Daar sta ik al." / "I already am."
-- Phase 8 — `animal.boughtSturdyCart` — drafted, waits on phase 4 — would fire: Fez's stall in the Vault of the Gods — the sturdier cart is bought
+- Phase 8 — `animal.boughtSturdyCart` — fires: Fez's stall in the Vault of the Gods — the sturdier cart is bought
   - Fez: "Een stevigere kar. Deze zingt niet onderweg." / "A sturdier cart. This one doesn't sing on the road."
   - Explorer: "Er staan bloemen op geschilderd." / "There are flowers painted on it."
   - Fez: "Voor de stevigheid." / "For sturdiness."
-- Phase 8 — `animal.blockedSturdyCart` — drafted, waits on phase 4 — would fire: Alle reizen — the Realm of Cosmic Forces refuses for want of the sturdier cart
+- Phase 8 — `animal.blockedSturdyCart` — fires: Alle reizen — the Realm of Cosmic Forces refuses for want of the sturdier cart
   - Fez: "Daar komt die ouwe kar niet heel aan. Daar wil ik iets stevigers voor." / "The old cart won't get there in one piece. That wants something sturdier."
   - Fez: "Er staat er een in mijn kraam, in de Kluis van de Goden. Niet om de verf, hoor." / "There's one at my stall in the Vault of the Gods. Not for the paint, mind."
-- Phase 8 — `animal.throughSturdyCart` — drafted, waits on phase 4 — would fire: the Realm of Cosmic Forces opens because of the sturdier cart (entered)
+- Phase 8 — `animal.throughSturdyCart` — fires: the Realm of Cosmic Forces opens because of the sturdier cart (entered)
   - Explorer: "Geen gerammel." / "No rattle."
   - Fez: "Zie je wel? Stevigheid." / "See? Sturdiness."
   - Explorer: "En de bloemen?" / "And the flowers?"
   - Fez: "Die helpen ook een beetje." / "They help a bit too."
-- Phase 8 — `animal.arrivesSturdyCart` — drafted, waits on phase 4 — would fire: the camp — the painted cart arrives on the homecoming
+- Phase 8 — `animal.arrivesSturdyCart` — fires: the camp — the painted cart arrives on the homecoming
   - Fez: "Moet je zien hoe hij glimt!" / "Look at it shine!"
   - Explorer: "Mooier dan nodig." / "Prettier than it needs to be."
   - Fez: "Ja. Ik heb hem ook niet om de stevigheid verkocht." / "Yes. I didn't sell it for the sturdiness either."
-- Phase 8 — `animal.boughtCaravanBanner` — drafted, waits on phase 4 — would fire: Fez's stall in the Throne of Eternity — the caravan banner is bought
+- Phase 8 — `animal.boughtCaravanBanner` — fires: Fez's stall in the Throne of Eternity — the caravan banner is bought
   - Fez: "Een vaandel. Ik moet eerlijk zijn: hij opent niks." / "A banner. I'll be honest: it opens nothing."
   - Explorer: "Wat doet hij dan?" / "What does it do, then?"
   - Fez: "Wapperen. Heel mooi wapperen." / "It flaps. Beautifully."
-- Phase 8 — `animal.arrivesCaravanBanner` — drafted, waits on phase 4 — would fire: the camp — the caravan banner arrives on the homecoming
+- Phase 8 — `animal.arrivesCaravanBanner` — fires: the camp — the caravan banner arrives on the homecoming
   - Fez: "Kijk hem wapperen! Boven ons eigen kamp!" / "Look at it flap! Over our own camp!"
   - Explorer: "Hij opent nog steeds niks." / "Still opens nothing."
   - Fez: "Nee. Dat hoeft ook niet." / "No. It doesn't have to."
@@ -614,6 +697,7 @@ From `yarn loot-report` before (651aad2c) and after the bake (88646b9e). `docs/l
 - Phase 4 (layout-first) — Resolved by a designer ruling (see §2 Phase 4). Task 2's measurement (`yarn layout-report`, no bake) found two starter tomb floors that failed the new hard criterion "a lock holds a puzzle on its way": `starter_treasure_tomb` level 2 floor 1 (`pitStair`) and floor 3 (`throwItBack`), both `lockBeforeFloorContent`. Such a lock is now exempt as a pure lock lesson, and every floor has a layout meeting every hard criterion. 20 floors carve only on the ladder (master_1–4 and wizard_1–4 main floors) and are accepted. "On the way" is judged per region on the shortest solving walk, so a puzzle in a dead-end branch of a region the walk crosses counts.
 - Phase 7 — found while building the seen save, pre-existing: `useOfflineStorage` keeps the initial empty value when the IndexedDB read rejects, and the next write overwrites the store with it. This affects every save, not only the seen save. Not fixed in this phase.
 - Phase 4 — All 27 animal beats play. `bought<Id>` when the purchase fact joins the held keys; `through<Id>` on entering a journey whose tier or own gate needs a fact now held; `arrives<Id>` on the homecoming when the camp's home tag `camp.arrived:<fact>` is set; `blocked<Id>` on the core reaction `gateShown` (Alle reizen shows a locked tier or journey with unmet needs); `forSale` on `stockShown` (the shop reports its stall once Fez has greeted, listing the rewards for sale). The banner has `bought` and `arrives` only.
+- Phase 4 — **Shop toggle-off: the bake is refused.** With `shopMod` and its import out of `REGISTERED_MODS`, `yarn check-types` and `yarn build` pass, but `yarn generate-world` stops: "23 floor(s) or web placement(s) moved after the layout was picked" (expert_4 levels 2 and 4, master_3 levels 2–5, master_4 levels 1–5, wizard_3 levels 1–6 floor 1, wizard_4 levels 1–3 floor 1 and 3 more). Cause: the shop's money is what fills the chests no other currency takes. With the shop off those ends stay empty after placement, an empty end is a free end the carve may pick as a floor-key host, so the walls move. Pre-existing in part: the same toggle at the phase's base (b330bf96) was refused by the empty-chest check ("220 chest(s) hold nothing"), so a shop-off world has not baked since that check came in; the layout check now fires first. Not fixed here, it needs a decision: (a) the carve judges key hosts on whether an end is a loot end, not on whether loot landed in it, plus an exemption from the empty-chest check for a world without a money distribution; (b) a core fallback fills the chests money would have (e.g. a mod-agnostic "junk" filler), which keeps both checks as they are; (c) the shop mod is declared not toggleable. Camp off bakes and passes (§2 Phase 4 gate).
 
 ## 5. Look at in browser
 
@@ -664,3 +748,11 @@ From `yarn loot-report` before (651aad2c) and after the bake (88646b9e). `docs/l
   - Rested after damage: take damage in an expert trap, tap ←: hearts full on the coming-home screen, then `camp.rested` at the camp.
   - A chapter card's beat: finish the starter tier until the junior key is held, come home: after the coming-home screen the new-chapter card; Later plays `camp.chapterJunior`, then the home beat as its own moment.
   - The first find and the first finished structure: bring home the jar (Dageraad bij de Sfinx level 1, first puzzle on side path 1), unpack: `camp.firstFind` at the camp; finish the stone ring's two parts and come home: `camp.structureDone`.
+- Phase 4 — Checked unattended (`nl-NL`, 390×844, own `yarn dev` on 9177, `.playwright-mcp/p4-gate-390-*.png`):
+  - Develop mode, "All treasures + keys", Alle reizen: EXPERT "0 van 4 klaar" is a locked "Expert-reizen" group with "Vind deze schat", the junior tomb treasure lit, "Je hebt een ezel nodig" and "Fez verkoopt er een in Edelman's Verborgen Kluis" (`1-locked-expert`).
+  - "Koop alle dieren": the shop save reads `{"version":1,"purchases":["donkey","cart","camel","secondDonkey","secondCamel","sturdyCart","caravanBanner"]}`; Alle reizen opens the expert tier with Vallei der Koningen, the need line gone (`2-expert-open`).
+  - Op pad, then ←: the coming-home screen lists seven arrival lines under "Je buit van deze tocht", each with NIEUW ("Je kameel staat in het kamp", "Je ezel staat in het kamp", … "Je karavaanvaandel hangt in het kamp") (`3-coming-home`). The camp save then reads `"arrived":["waterTrough","halter","donkey","saddlebags","cart","secondDonkey","paintedCart","camel","secondCamel","caravanBanner"]`.
+  - At the camp the cart with the donkey, halter and saddlebags, and the camel with its trough stand by the fire (`4-camp`). The second donkey, second camel, painted cart and banner are in the save but not drawn: the scene shows the expert chapter, and those steps belong to later chapters (or have no art yet).
+- Phase 4 — The arrival lines come in save order (camel before donkey), not in the order the animals were bought. Look at whether they should follow the purchase table.
+- Phase 4 — Not reached unattended: Fez's two waterskins in an expert tomb shop (it means walking the tomb to its shop). Steps: develop mode, "All treasures + keys" and "Koop alle dieren", start Hogepriester's Schatkamer (expert_treasure_tomb), walk level 2 to Fez's Kraam: the stall lists two waterskins at 30 beside the cart, the camel (both sold out once bought), a hieroglyph piece and a mosaic piece. The loot report has it as stock "hieroglyphFragment 1 · mosaicPiece 1 · purchase 2 · waterskin 2" on expert_treasure_tomb level 2.
+- Phase 4 — Not reached unattended: buying the donkey for 200 at Fez's stall in Edelman's Verborgen Kluis with money found, rather than by the dev grant. Steps: on a save holding a junior tomb treasure and 200 coins, walk junior_treasure_tomb level 2 to Fez's Kraam, buy the donkey: it shows sold out, Alle reizen opens expert, and Fez says `animal.boughtDonkey`.

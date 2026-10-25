@@ -171,7 +171,7 @@ Each decision is **default** / alternative. Task 16 writes them under Decisions,
 - Produces: `pinsFrom(baked): PickLayout` (C1).
 - Consumes: `searchCarvePair`, `verifyCarvePair`, the carve ledger.
 
-- [ ] **Step 1: Failing tests** (made-up worlds and a made-up encounter resolver):
+- [x] **Step 1: Failing tests** (made-up worlds and a made-up encounter resolver):
   - `configBuilder.spec.ts` "the layout hook sees the world before any loot": every `fragmentSlot` placeholder is still unfilled and no distribution has run; shop ends are cleared and stock is trimmed. Tomb treasures written in Phase 3 are structure and may already stand (C6).
   - `reachability.spec.ts` "placement carves each floor at the layout's pin": the grid the placement walk carves for a made-up floor with a written `seed` equals `assembleFloor` at that seed (or the cache key carries it), not at `defaultSeedFor` (C5).
   - `buildWorldConfigs` spec "pinsFrom copies seed and packing from the baked world onto every floor".
@@ -180,11 +180,11 @@ Each decision is **default** / alternative. Task 16 writes them under Decisions,
   - `shopStock.spec.ts`: "a shop's end placeholder is cleared before the layout", "a shop keeps only its assigned stock", and "trimming moves no wall", which carves the made-up floor with both stock shapes (untrimmed and trimmed) and compares the two `gridShape`s (R5).
   - `layoutCheck.spec.ts` "layoutMoved carves afresh": handed a carve that returns a different grid than the pick saw, it names the floor (R4).
   - `slots.spec.ts`: "collectSlots skips a shop end and clears nothing".
-- [ ] **Step 2: Run** `yarn test src/worldGen src/mods/buildWorldConfigs` → FAIL. (Before the first commit, the working tree must hold no edits that are not this task's.)
-- [ ] **Step 3: Implement.** Comments say why the layout precedes loot and why end presence is structural.
-- [ ] **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`. Do not bake.
-- [ ] **Step 5: Per-task review** (Opus): no structural write after `pickLayout`; the web is read on picked floors; every non-bake caller of `buildConfigs` builds on `pinsFrom` (C1).
-- [ ] **Step 6: Commit:** `refactor: world layout is picked before loot is placed`
+- [x] **Step 2: Run** `yarn test src/worldGen src/mods/buildWorldConfigs` → FAIL. (Before the first commit, the working tree must hold no edits that are not this task's.)
+- [x] **Step 3: Implement.** Comments say why the layout precedes loot and why end presence is structural.
+- [x] **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`. Do not bake.
+- [x] **Step 5: Per-task review** (Opus): no structural write after `pickLayout`; the web is read on picked floors; every non-bake caller of `buildConfigs` builds on `pinsFrom` (C1).
+- [x] **Step 6: Commit:** `refactor: world layout is picked before loot is placed`
 
 ---
 
@@ -210,7 +210,7 @@ Each decision is **default** / alternative. Task 16 writes them under Decisions,
 - Produces: one discriminant on every result (C17): `{ kind: "found"; seed; packing; laddered: boolean; grid; … }`, `{ kind: "notFound"; hardest; counts; seeds; packings }`, `{ kind: "infeasible"; criterion; detail }`. The caller asks `layoutInfeasible` first and reports `infeasible` without searching. `seedBudget` counts seeds (offsets `0 … n-1`); each candidate is one carve, the ladder carve last.
 - Produces: `lockWithoutPuzzle(grid): string[]` and `lockGroundUnfed(grid, floor): string[]` (C17): the grid's cells carry region names, the floor's locks carry the appetites, read through one `appetiteOf(part)` (regions today; connections once phase 4b gives them one).
 
-- [ ] **Step 1: Failing tests** (made-up floors, injected assembler):
+- [x] **Step 1: Failing tests** (made-up floors, injected assembler):
   - `layoutFeasibility.spec.ts` "a lock floor with no main-path puzzle and only gated sections is infeasible before any carve": **0** carves counted, the message names the lock and `lock holds a puzzle`.
   - `layoutFeasibility.spec.ts` "a one-way naming a missing section is infeasible".
   - `carveSeedSearch.spec.ts` "a hard criterion no candidate meets is not found": an assembler failing `no dead region` everywhere, budget 3 seeds (offsets 0–2) × 2 packings plus the ladder carve: `notFound`, 7 carves, the hardest criterion and its count.
@@ -219,12 +219,12 @@ Each decision is **default** / alternative. Task 16 writes them under Decisions,
   - `carveSeedSearch.spec.ts` "the ladder carve must meet the hard criteria": a ladder carve whose lock walks unsound is `notFound`, never pinned.
   - `carveSeedSearch.spec.ts` "a laddered pin verifies without a search": a pin at (base, authored) whose ladder carve meets the hard criteria verifies with one carve and `laddered: true` (C3).
   - `lockPuzzles.spec.ts`: "a lock whose way passes a puzzle room passes"; "a lock whose control is the only room on its way is named"; "a region asking for puzzles that holds none is named"; `it.todo("a corridor asking for a side path that carries none is named")` for phase 4b.
-- [ ] **Step 2: Run** `yarn test src/worldGen/carveSeedSearch src/worldGen/layoutFeasibility src/game/lockPuzzles` → FAIL.
-- [ ] **Step 3: Implement.**
-- [ ] **Step 4: Measure, without baking:** `timeout 900 yarn layout-report` (the committed `scripts/layoutReport.ts`). List every floor that is now infeasible or not found, with its message, under Failures in the review list, and the count of floors that pass only on the ladder (accepted). This is what Task 6's bake will refuse, so the designer sees it before the bake.
-- [ ] **Step 5: Run** → PASS; `yarn check-types`; `yarn lint`; `yarn vitest run --config vitest.verify.config.ts src/worldGen/bakedCarve` on the committed world (its laddered floors must pass the hard criteria; a floor that does not goes under Failures with the Step 4 list).
-- [ ] **Step 6: Per-task review** (Opus): no fallback ships a floor unchecked; infeasible is only claimed for checks that hold for every seed; packing orders the search and never refuses.
-- [ ] **Step 7: Commit:** `feat: a floor's layout meets every hard criterion or the bake names it`
+- [x] **Step 2: Run** `yarn test src/worldGen/carveSeedSearch src/worldGen/layoutFeasibility src/game/lockPuzzles` → FAIL.
+- [x] **Step 3: Implement.**
+- [x] **Step 4: Measure, without baking:** `timeout 900 yarn layout-report` (the committed `scripts/layoutReport.ts`). List every floor that is now infeasible or not found, with its message, under Failures in the review list, and the count of floors that pass only on the ladder (accepted). This is what Task 6's bake will refuse, so the designer sees it before the bake.
+- [x] **Step 5: Run** → PASS; `yarn check-types`; `yarn lint`; `yarn vitest run --config vitest.verify.config.ts src/worldGen/bakedCarve` on the committed world (its laddered floors must pass the hard criteria; a floor that does not goes under Failures with the Step 4 list).
+- [x] **Step 6: Per-task review** (Opus): no fallback ships a floor unchecked; infeasible is only claimed for checks that hold for every seed; packing orders the search and never refuses.
+- [x] **Step 7: Commit:** `feat: a floor's layout meets every hard criterion or the bake names it`
 
 ---
 
@@ -244,16 +244,16 @@ Each decision is **default** / alternative. Task 16 writes them under Decisions,
 
 - Produces: `hiddenRequirement?: () => string`. With no support naming one, hidden cells walk open, as today.
 
-- [ ] **Step 1: Failing tests** (made-up worlds):
+- [x] **Step 1: Failing tests** (made-up worlds):
   - `gateWalk.spec.ts` "a reward in a hidden section is out of the ground until the detector fact is held, and in once a reached treasure grants it".
   - `reachability.spec.ts` "a slot not flagged hidden but reached only through hidden cells (past a hidden stair or section) gets no key until the detector is held" (C10; hidden-flagged slots are already skipped today, `placeFragments.ts:272`).
   - `placeFragments.spec.ts` "a dynamic distribution's slot reached only through hidden cells counts as behind the detector" (C10).
   - `reachability.spec.ts` "with no hidden requirement a hidden section walks open".
   - tombTreasure support spec: "a level-2 detection treasure grants levels 1 and 2".
   - `registeredMods.spec.ts`: "two supports naming a hidden requirement fail the merge"; `placeFragments.spec.ts`: "the merged support keeps the hidden requirement" (C8).
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`.
-- [ ] **Step 5: Per-task review** (Opus): the runtime rule matches (L1 is what lets the player stand on a hidden junction); the permissive walk is unchanged; core names no perk.
-- [ ] **Step 6: Commit:** `feat: hidden corridors count only once the corridor detector is held`
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`.
+- [x] **Step 5: Per-task review** (Opus): the runtime rule matches (L1 is what lets the player stand on a hidden junction); the permissive walk is unchanged; core names no perk.
+- [x] **Step 6: Commit:** `feat: hidden corridors count only once the corridor detector is held`
 
 ---
 
@@ -272,18 +272,18 @@ Each decision is **default** / alternative. Task 16 writes them under Decisions,
 
 - Produces: `stuckPoints(walk: GateWalk, journeyMeta): string[]`, one line each for an unentered journey, a locked tier and a blocking lock (the bucket and where it stands).
 
-- [ ] **Step 1: Failing tests** (made-up worlds):
+- [x] **Step 1: Failing tests** (made-up worlds):
   - from the patch: "a slot behind a room needing the made-up glyph is skipped for another journey's end";
   - "a key on a shop's end leaves its journey unentered and is named" (the made-up world is built by hand with the key on the shop end, since placement no longer puts one there);
   - "a world whose every lock opens has no stuck points";
   - "a tier whose only group's bucket is nowhere is named locked";
   - `placeFragments.spec.ts` "the merged support keeps the one-way, region-barrier and passage resolvers", and "a one-way door is walked as the support resolves it" (C8);
   - "a journey reachable only through a hidden corridor with no detector anywhere is named".
-- [ ] **Step 2: Run** `yarn test src/worldGen src/data` → FAIL.
-- [ ] **Step 3: Implement.** The script prints `strict walk enters N of M journeys` on success.
-- [ ] **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`.
-- [ ] **Step 5: Per-task review** (Opus): final configs, a fresh cache, nothing withheld; messages name a target, never a fix.
-- [ ] **Step 6: Commit:** `feat: the bake refuses a stamped world the player can get stuck in`
+- [x] **Step 2: Run** `yarn test src/worldGen src/data` → FAIL.
+- [x] **Step 3: Implement.** The script prints `strict walk enters N of M journeys` on success.
+- [x] **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`.
+- [x] **Step 5: Per-task review** (Opus): final configs, a fresh cache, nothing withheld; messages name a target, never a fix.
+- [x] **Step 6: Commit:** `feat: the bake refuses a stamped world the player can get stuck in`
 
 ---
 
@@ -300,10 +300,10 @@ Master has fewer traps than expert (32 expert / 19 master / 64 wizard today). It
 
 No unit test pins the authored spec: the bake and the loot report are the check (Task 6).
 
-- [ ] **Step 1: Failing test** (`lootTotals.spec.ts`, made-up configs): "traps and waterskins are counted per tier", where a made-up world with traps on two tiers gets one row per tier with those counts.
-- [ ] **Step 2: Run** `yarn test src/mods/trap` → FAIL. **Step 3: Implement** both edits. **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`. Do not bake.
-- [ ] **Step 5:** The corridor's length is structural, so run `timeout 900 yarn layout-report` (committed by Task 2, C15) and update the review list's layout-refusal lines for master.
-- [ ] **Step 6: Commit:** `feat: master's open junk corridor carries traps`
+- [x] **Step 1: Failing test** (`lootTotals.spec.ts`, made-up configs): "traps and waterskins are counted per tier", where a made-up world with traps on two tiers gets one row per tier with those counts.
+- [x] **Step 2: Run** `yarn test src/mods/trap` → FAIL. **Step 3: Implement** both edits. **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`. Do not bake.
+- [x] **Step 5:** The corridor's length is structural, so run `timeout 900 yarn layout-report` (committed by Task 2, C15) and update the review list's layout-refusal lines for master.
+- [x] **Step 6: Commit:** `feat: master's open junk corridor carries traps`
 
 ---
 
@@ -311,8 +311,8 @@ No unit test pins the authored spec: the bake and the loot report are the check 
 
 **Files (by the bake):** `src/data/generatedWorld.ts`, `src/data/carveLedger.json`, `src/data/tierFingerprints.json` (moved tiers, deliberately), `docs/loot-report.md`, `docs/review-camp-release.md`, `.betterer.results` (re-key only).
 
-- [ ] **Step 1: Before:** `timeout 900 yarn loot-report` on the committed bake, with its totals and per-tier trap counts kept in the scratchpad.
-- [ ] **Step 2: Bake:** `timeout 900 yarn generate-world`.
+- [x] **Step 1: Before:** `timeout 900 yarn loot-report` on the committed bake, with its totals and per-tier trap counts kept in the scratchpad.
+- [x] **Step 2: Bake:** `timeout 900 yarn generate-world`.
   - If it refuses on layout (infeasible or not found), stop the phase. The floors and criteria go under Failures for the designer's authoring, which Task 2 already listed.
   - Otherwise it must:
     - print `strict walk enters 29 of 29 journeys`;
@@ -321,11 +321,11 @@ No unit test pins the authored spec: the bake and the loot report are the check 
     - leave 0 empty chests;
     - keep every currency total.
     - show in the loot report master's trap count between expert's and wizard's. Waterskins still follow the flat rule until Task 9; from Task 11 on, they follow these new trap counts.
-- [ ] **Step 3: Fingerprints:** every tier may move, starter included. For each tier whose fingerprint moved, copy its hash and write one review-list line saying why (layout re-picked, loot re-placed on it, master's trap corridor).
-- [ ] **Step 4: Report:** `timeout 900 yarn loot-report`. Totals are exact, and the slot mix and hidden-pocket keys move.
-- [ ] **Step 5: Checks:** `timeout 900 yarn verify-content` (includes `worldWinnable.verify.ts`, `bakedCarve.verify.ts` under the hard criteria, and the verifies that now build on `pinsFrom`, C1/C2) and `timeout 900 yarn verify`.
-- [ ] **Step 6: Review list:** the phase-4 blocker moves from Failures to resolved, with the walk counts (22/29 → 29/29 shipped) and how many floors moved pin.
-- [ ] **Step 7: Commit:** `chore: bake the world with loot placed on its picked layout`
+- [x] **Step 3: Fingerprints:** every tier may move, starter included. For each tier whose fingerprint moved, copy its hash and write one review-list line saying why (layout re-picked, loot re-placed on it, master's trap corridor).
+- [x] **Step 4: Report:** `timeout 900 yarn loot-report`. Totals are exact, and the slot mix and hidden-pocket keys move.
+- [x] **Step 5: Checks:** `timeout 900 yarn verify-content` (includes `worldWinnable.verify.ts`, `bakedCarve.verify.ts` under the hard criteria, and the verifies that now build on `pinsFrom`, C1/C2) and `timeout 900 yarn verify`.
+- [x] **Step 6: Review list:** the phase-4 blocker moves from Failures to resolved, with the walk counts (22/29 → 29/29 shipped) and how many floors moved pin.
+- [x] **Step 7: Commit:** `chore: bake the world with loot placed on its picked layout`
 
 ---
 
@@ -346,7 +346,7 @@ No unit test pins the authored spec: the bake and the loot report are the check 
 - Produces: `SHOP_REACHABILITY`, which maps a purchase to its fact and supplies `tierUnlockGroups` / `journeyEntryLocks`.
 - Consumes: `CurrencyDistribution` as it is (`ownsBucket`, `demandFor`, `rank`, `allBuckets`).
 
-- [ ] **Step 1: Failing tests** (made-up tables and worlds):
+- [x] **Step 1: Failing tests** (made-up tables and worlds):
   - every problem is reported once and named;
   - "a purchase lands in its own shop's placeholder";
   - "a purchase whose shop lies behind the gate it opens fails the build, naming both";
@@ -354,9 +354,9 @@ No unit test pins the authored spec: the bake and the loot report are the check 
   - "no other currency takes a purchase placeholder";
   - "a purchase is never ranked into a slot that is not its placeholder" (C14);
   - a purchase is priced from a made-up table at every tier.
-- [ ] **Step 2: Run** `yarn test src/mods/shop src/worldGen` → FAIL. **Step 3: Implement.** Do not bake. **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`.
-- [ ] **Step 5: Per-task review** (Opus): the gate is the frontier when the purchase is placed; core reads no reward type; nothing gates starter → junior.
-- [ ] **Step 6: Commit:** `feat: Fez's animals are keys placed before the gates they open`
+- [x] **Step 2: Run** `yarn test src/mods/shop src/worldGen` → FAIL. **Step 3: Implement.** Do not bake. **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`.
+- [x] **Step 5: Per-task review** (Opus): the gate is the frontier when the purchase is placed; core reads no reward type; nothing gates starter → junior.
+- [x] **Step 6: Commit:** `feat: Fez's animals are keys placed before the gates they open`
 
 ---
 
@@ -379,7 +379,7 @@ No unit test pins the authored spec: the bake and the loot report are the check 
 - Produces (shop): `runEconomyGuard(configs, reachable, walk)`. It throws on placement problems, on any negative margin (naming the ground, income, buyable and shortfall), and on `overCap`. The global-only check goes; the last ground is the world.
 - Produces: loot-report rows `Money with <bought> bought` and `Purchases in shops`.
 
-- [ ] **Step 1: Failing tests** (made-up worlds and tables):
+- [x] **Step 1: Failing tests** (made-up worlds and tables):
   - `grounds.spec.ts`:
     - "buying a key that opens nothing new adds no ground";
     - "two independent keys give four grounds";
@@ -393,9 +393,9 @@ No unit test pins the authored spec: the bake and the loot report are the check 
     - a property test over 200 seeded made-up worlds (≤ 3 shops, ≤ 4 key pieces, ≤ 3 rares, ≤ 1 hidden section). On every world the guard passes, an exhaustive spender (every buy order) never ends with an unbought visible key it cannot afford.
   - `economyGuard.spec.ts`: a purchase stocked twice, or missing, throws naming it.
   - `lootTotals.spec.ts`: on a made-up world, the rows equal numbers computed by hand in the spec (R2).
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** The top comment of `grounds.ts` says what a ground is and why every one is checked. **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`. Do not bake.
-- [ ] **Step 5: Per-task review** (Opus): the soundness argument holds in code; no money word in core; the property test can fail (break the guard locally and see it go red).
-- [ ] **Step 6: Commit:** `feat: the economy guard checks every ground a player can stand in`
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** The top comment of `grounds.ts` says what a ground is and why every one is checked. **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`. Do not bake.
+- [x] **Step 5: Per-task review** (Opus): the soundness argument holds in code; no money word in core; the property test can fail (break the guard locally and see it go red).
+- [x] **Step 6: Commit:** `feat: the economy guard checks every ground a player can stand in`
 
 ---
 
@@ -409,15 +409,15 @@ No unit test pins the authored spec: the bake and the loot report are the check 
 - Modify: `src/mods/shop/game/loot.ts`: `fillsLast: true`.
 - Modify: `src/mods/camp/game/campSteps.ts` + `campLoot.ts` (+ specs): the camp step table names one structure as the early one (authored data, e.g. `early: true` on a structure; today the starter `windbreak`). Its first part lands on the earliest main, ungated slot of its tier's first journey and its second part on the earliest such slot of the second journey, so it is complete after the second journey and the player sees the camp change early. A table naming more than one early structure per tier is a `campStepProblems` error. Every other structure keeps today's spread deal (designer, 2026-10-25).
 
-- [ ] **Step 1: Failing tests** (made-up worlds):
+- [x] **Step 1: Failing tests** (made-up worlds):
   - `placeFragments.spec.ts`: "a distribution marked last fills after one registered after it".
   - "waterskins follow the traps per tier": with 2 / 0 / 10 traps on expert / master / wizard and a made-up ratio, the counts come out in that proportion, with none on a tier without traps or below expert.
   - "a tomb shop's waterskin placeholders are filled with waterskins and priced by its tier".
   - "no waterskin in a junior or starter shop".
   - `campLoot.spec.ts`: "the early structure completes in its tier's second journey" (made-up steps and slots: part 1 on the first journey's earliest main slot, part 2 on the second journey's; other structures still spread) and "two early structures in one tier is a step-table problem".
-- [ ] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`.
-- [ ] **Step 5: Per-task review** (Opus, light): ordering is mod-agnostic, and the shop prices a reward type it does not import.
-- [ ] **Step 6: Commit:** `feat: fixed loot fills before money, Fez sells waterskins`
+- [x] **Step 2: Run** → FAIL. **Step 3: Implement.** **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`.
+- [x] **Step 5: Per-task review** (Opus, light): ordering is mod-agnostic, and the shop prices a reward type it does not import.
+- [x] **Step 6: Commit:** `feat: fixed loot fills before money, Fez sells waterskins`
 
 ---
 
@@ -433,17 +433,17 @@ No unit test pins the authored spec: the bake and the loot report are the check 
 
 - Produces: the money fill. It computes the grounds, takes them smallest first, and places junk and coins in each ground's free slots until `income ≥ buyable × 1.1`. Then it fills the world up to ≈ 1.1 × all buyable. A ground with no free slot left throws, naming it and its shortfall. Completeness (≥ 1 of each sellable per tier) and the per-level spread stay.
 
-- [ ] **Step 1: Failing tests** (`loot.spec.ts`, made-up nested grounds):
+- [x] **Step 1: Failing tests** (`loot.spec.ts`, made-up nested grounds):
   - "the smallest ground is covered before the world";
   - "a ground with no free slot fails, naming it";
   - "a slot in a hidden section only counts toward grounds that hold the detector";
   - "no allowance is added";
   - "every placeholder the fill does not use is cleared, a puzzle slot's included" (C13).
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement.** Set the sellable values by the rule. Sinks come from the purchase table, the 13 rares' prices and Task 9's Fez waterskins (count × tier price), not from the Task 6 bake, which has neither purchases nor Fez waterskins; income per tier from the Task 6 loot report. Note the arithmetic in the task report.
-- [ ] **Step 4: Run** `yarn test src/mods/shop src/worldGen` → PASS; `yarn check-types`; `yarn lint`. Do not bake.
-- [ ] **Step 5: Per-task review** (Opus): the fill reads the same grounds the guard checks.
-- [ ] **Step 6: Commit:** `feat: money is placed so every ground pays for its stock`
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement.** Set the sellable values by the rule. Sinks come from the purchase table, the 13 rares' prices and Task 9's Fez waterskins (count × tier price), not from the Task 6 bake, which has neither purchases nor Fez waterskins; income per tier from the Task 6 loot report. Note the arithmetic in the task report.
+- [x] **Step 4: Run** `yarn test src/mods/shop src/worldGen` → PASS; `yarn check-types`; `yarn lint`. Do not bake.
+- [x] **Step 5: Per-task review** (Opus): the fill reads the same grounds the guard checks.
+- [x] **Step 6: Commit:** `feat: money is placed so every ground pays for its stock`
 
 ---
 
@@ -451,11 +451,11 @@ No unit test pins the authored spec: the bake and the loot report are the check 
 
 **Files (by the bake):** as Task 6, plus `src/mods/shop/game/purchases.ts` and `WATERSKINS_PER_TRAP`, changed only by the rules below.
 
-- [ ] **Step 0: Fewer families in starter (designer, 2026-10-25):** set `minTier: "junior"` in the meta of futoshiki, sumplete, eclipse, constellation, starBattle and procession, so starter teaches sudoku, hidato, balanceScale, lightbeam and rushHour (plus the tableau and the traps, which only stand in hidden corridors). Comments current state only. If the bake then refuses a starter role pool for being too small (the 4-family floor), stop and name the role for the designer; don't move another family back on your own. Commit `feat: starter teaches five puzzle families, the rest open at junior` before the bake.
-- [ ] **Step 1: Bake:** `timeout 900 yarn generate-world`.
+- [x] **Step 0: Fewer families in starter (designer, 2026-10-25):** set `minTier: "junior"` in the meta of futoshiki, sumplete, eclipse, constellation, starBattle and procession, so starter teaches sudoku, hidato, balanceScale, lightbeam and rushHour (plus the tableau and the traps, which only stand in hidden corridors). Comments current state only. If the bake then refuses a starter role pool for being too small (the 4-family floor), stop and name the role for the designer; don't move another family back on your own. Commit `feat: starter teaches five puzzle families, the rest open at junior` before the bake.
+- [x] **Step 1: Bake:** `timeout 900 yarn generate-world`.
   - If a ground falls short and has no free slot: first lower `WATERSKINS_PER_TRAP` by 0.1 (never below 0.3). Then lower the price of the purchase in that ground closest to its gate by 50 (never below 100). Two rounds at most.
   - A purchase placement failure, a layout refusal, or a third round stops the phase (Failures).
-- [ ] **Step 2: Required:**
+- [x] **Step 2: Required:**
   - `strict walk enters 29 of 29`;
   - every `Money with … bought` row has found ≥ needed;
   - `Purchases in shops` reads 7/7;
@@ -463,9 +463,9 @@ No unit test pins the authored spec: the bake and the loot report are the check 
   - chests and path ends are 100 % filled;
   - hieroglyphs, mosaic, map pieces, tomb treasures, camp finds and parts are exact;
   - the loot report's trap counts per tier put master between expert and wizard, and each tier's waterskins follow its trap count by `WATERSKINS_PER_TRAP` (no number pinned here; the report shows them).
-- [ ] **Step 3: Report and fingerprints:** `timeout 900 yarn loot-report`, then one review-list line per moved tier.
-- [ ] **Step 4: Checks:** `timeout 900 yarn verify-content`.
-- [ ] **Step 5: Commit:** `chore: bake the world with Fez's animals and money per ground`
+- [x] **Step 3: Report and fingerprints:** `timeout 900 yarn loot-report`, then one review-list line per moved tier.
+- [x] **Step 4: Checks:** `timeout 900 yarn verify-content`.
+- [x] **Step 5: Commit:** `chore: bake the world with Fez's animals and money per ground`
 
 ---
 
@@ -485,7 +485,7 @@ Sonnet.
 - Produces: `registerGateNeeds(useNeeds)` and `useMergedGateNeeds(): { needs; unmet(gate, held); open(gate, held) }`, with `GateNeed = { key; label; hint? }`.
 - Produces: `JourneyNeed.hint?`. `AllJourneysPage` feeds `extraNeeds`, and `tierOpen = ladder ∧ open({ tier })`. A tomb with an unmet need is not enterable. Availability and the detector take the same predicates, defaulting to open. Dev mode still opens pyramids.
 
-- [ ] **Step 1: Failing tests** (made-up needs):
+- [x] **Step 1: Failing tests** (made-up needs):
   - "a tier whose treasure is held but whose need is unmet is one locked group listing the treasure lit and the need with its hint";
   - "before the treasure is held there is no locked group";
   - "holding the need's key lists the tier's journeys";
@@ -493,10 +493,10 @@ Sonnet.
   - two need hooks concatenate, and no hooks means open;
   - `tierOpen` false offers no journey of that tier;
   - the hint renders under its need.
-- [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement.** Stories: a locked tier with the treasure lit and one need with a hint; a complete tomb with a need.
-- [ ] **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`.
-- [ ] **Step 5: Commit:** `feat: a locked tier or tomb says which animal it still needs`
+- [x] **Step 2: Run** → FAIL.
+- [x] **Step 3: Implement.** Stories: a locked tier with the treasure lit and one need with a hint; a complete tomb with a need.
+- [x] **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`.
+- [x] **Step 5: Commit:** `feat: a locked tier or tomb says which animal it still needs`
 
 ---
 
@@ -523,16 +523,16 @@ As old Task 6, with Travel read as Alle reizen.
   - `registerGateNeeds`: key = the fact, label `purchases.<id>.need`, hint `purchases.hint` with the selling tomb's name;
   - the dev grant.
 
-- [ ] **Step 1: Failing tests:**
+- [x] **Step 1: Failing tests:**
   - recording twice records once;
   - an unknown id is kept and inert;
   - `version: 2` reads empty and is never written over;
   - a recorded fact is held through `useMergedHeldKeys`;
   - one need per opened gate with its hint, and none for the banner;
   - a purchase shows its name and what it opens, and a recorded one is skipped.
-- [ ] **Steps 2–4:** FAIL → implement (words nl first) → PASS; `yarn check-types`; `yarn lint`.
-- [ ] **Step 5: Per-task review** (Opus).
-- [ ] **Step 6: Commit:** `feat: buying an animal from Fez opens its gate`
+- [x] **Steps 2–4:** FAIL → implement (words nl first) → PASS; `yarn check-types`; `yarn lint`.
+- [x] **Step 5: Per-task review** (Opus).
+- [x] **Step 6: Commit:** `feat: buying an animal from Fez opens its gate`
 
 ---
 
@@ -545,7 +545,7 @@ As old Task 7, unchanged:
 - `useCampProgress.ts` arrives before it grows.
 - `src/mods/purchaseFacts.verify.ts` holds the shop–camp agreement.
 
-- [ ] **Steps:** failing tests → FAIL → implement → PASS (`yarn test src/mods/camp src/app`, the verify) → `yarn check-types`, `yarn lint` (sibling rule at zero) → per-task review (Opus) → **Commit:** `feat: a bought animal waits in the camp on coming home`
+- [x] **Steps:** failing tests → FAIL → implement → PASS (`yarn test src/mods/camp src/app`, the verify) → `yarn check-types`, `yarn lint` (sibling rule at zero) → per-task review (Opus) → **Commit:** `feat: a bought animal waits in the camp on coming home`
 
 ---
 
@@ -562,9 +562,9 @@ Sonnet.
 
 A beat with no core seam to read stays in `WAITING_BEATS` and goes under Failures, never wired by a sibling import.
 
-- [ ] **Step 1: Failing tests** (made-up facts and needs): each wired animal beat fires once, at its moment; `WAITING_BEATS` lists no wired animal beat; the story mod's import list names no sibling mod.
-- [ ] **Steps 2–4:** FAIL → wire → PASS; `yarn check-types`; `yarn lint`.
-- [ ] **Step 5: Commit:** `feat: Fez and the explorer talk about the animals`
+- [x] **Step 1: Failing tests** (made-up facts and needs): each wired animal beat fires once, at its moment; `WAITING_BEATS` lists no wired animal beat; the story mod's import list names no sibling mod.
+- [x] **Steps 2–4:** FAIL → wire → PASS; `yarn check-types`; `yarn lint`.
+- [x] **Step 5: Commit:** `feat: Fez and the explorer talk about the animals`
 
 ---
 
@@ -584,18 +584,18 @@ Docs: Sonnet. The rest: Opus.
 - `CHANGELOG.md`: one line.
 - This plan: tick the boxes.
 
-- [ ] **Step 1: Docs**, current state only. **Commit:** `docs: layout first, grounds and the animals`
-- [ ] **Step 2: Toggle-off, shop:** take `shopMod` out of `REGISTERED_MODS`, then under `timeout 900` run `yarn generate-world`, `yarn check-types`, `yarn build` and `yarn loot-report`. Expect no purchase, no Fez waterskin, no money rows, a passing guard, and every tier open. Restore with `git checkout src/mods/registeredMods.ts src/data docs/loot-report.md`, and confirm the tree is clean.
-- [ ] **Step 3: Toggle-off, camp:** the same steps. Purchases and money rows stay; no camp rows appear.
-- [ ] **Step 4: Gate:** under `timeout 900`, run `yarn verify`, `yarn verify-content` and `yarn build`.
-- [ ] **Step 5: Look:** in Storybook and `yarn dev`:
+- [x] **Step 1: Docs**, current state only. **Commit:** `docs: layout first, grounds and the animals`
+- [ ] **Step 2: Toggle-off, shop:** take `shopMod` out of `REGISTERED_MODS`, then under `timeout 900` run `yarn generate-world`, `yarn check-types`, `yarn build` and `yarn loot-report`. Expect no purchase, no Fez waterskin, no money rows, a passing guard, and every tier open. Restore with `git checkout src/mods/registeredMods.ts src/data docs/loot-report.md`, and confirm the tree is clean. **Refused** by the bake (loot moved walls with no money in the chests); see the review list, Failures.
+- [x] **Step 3: Toggle-off, camp:** the same steps. Purchases and money rows stay; no camp rows appear.
+- [x] **Step 4: Gate:** under `timeout 900`, run `yarn verify`, `yarn verify-content` and `yarn build`.
+- [x] **Step 5: Look:** in Storybook and `yarn dev`:
   - holding a junior tomb treasure without the donkey, the expert group shows the treasure lit and "Je hebt een ezel nodig — Fez verkoopt er een in …";
   - buy the donkey, and the expert journeys open;
   - Fez lists two waterskins in an expert tomb shop;
   - the camp save carries `arrived`.
 
   Take screenshots. Anything not reachable goes under Look at in browser, with steps.
-- [ ] **Step 6: Record:**
+- [x] **Step 6: Record:**
   - the decisions;
   - a "Phase 4 grounds" block (per purchase: shop, price, gate; per ground: income, buyable, margin);
   - the waterskin and price rounds;
