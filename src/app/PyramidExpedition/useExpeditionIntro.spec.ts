@@ -5,7 +5,12 @@ import { registerReactionContribution, type Reaction } from "@/app/reactions/rea
 import { useExpeditionIntro } from "./useExpeditionIntro"
 
 const reactions: Reaction[] = []
-registerReactionContribution(() => reaction => reactions.push(reaction))
+/** Offers and reports in the order they happened. */
+const calls: string[] = []
+registerReactionContribution(() => reaction => {
+  reactions.push(reaction)
+  calls.push(`report:${reaction.kind}`)
+})
 
 type Over = { journeyId?: string; isTomb?: boolean; hasBlockedBlocks?: boolean; levelNr?: number; exterior?: string }
 type Shown = { id: string; story?: boolean }
@@ -124,5 +129,24 @@ describe("useExpeditionIntro", () => {
 
       expect(reactions).toEqual([{ kind: "siteArrived", journeyId: "starter_1", levelNr: 1, exterior: undefined }])
     })
+  })
+
+  it("offers the tomb's welcome before reporting the arrival", () => {
+    calls.length = 0
+    const showConversation = vi.fn((id: string) => {
+      calls.push(`offer:${id}`)
+    })
+    renderHook(() =>
+      useExpeditionIntro({
+        journeyId: "made-up",
+        isTomb: true,
+        hasBlockedBlocks: false,
+        levelNr: 1,
+        exterior: "caveMouth",
+        showConversation,
+      })
+    )
+
+    expect(calls).toEqual(["offer:tombIntro", "report:siteArrived"])
   })
 })

@@ -25,8 +25,6 @@ export const useExpeditionIntro = ({
   exterior,
   showConversation,
 }: IntroArgs): void => {
-  // Told once per level shown: a re-render, or the blocks changing, is not another arrival.
-  useReportOnce(`${journeyId}:${levelNr}`, { kind: "siteArrived", journeyId, levelNr, exterior })
   useEffect(() => {
     // The tableau's own lesson waits for the tableau (TombPuzzle): here it is not on screen yet.
     if (isTomb) {
@@ -41,4 +39,7 @@ export const useExpeditionIntro = ({
     showConversation("pyramidIntro")
     if (hasBlockedBlocks) showConversation("pyramidBlockedBlocks")
   }, [journeyId, isTomb, showConversation, hasBlockedBlocks])
+  // Told once per level shown: a re-render, or the blocks changing, is not another arrival. After the
+  // offers above, since effects run in order: what a listener queues on arrival follows the welcome.
+  useReportOnce(`${journeyId}:${levelNr}`, { kind: "siteArrived", journeyId, levelNr, exterior })
 }
