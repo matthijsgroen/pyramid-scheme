@@ -8,15 +8,15 @@
     "journeyCount": 5
   },
   "expert": {
-    "hash": "734d6a09983b9f55",
+    "hash": "d3b12a0f12a640db",
     "journeyCount": 6
   },
   "master": {
-    "hash": "76e628a706ea67df",
+    "hash": "4cf2cf52be3c211a",
     "journeyCount": 6
   },
   "wizard": {
-    "hash": "c84603d8f5a112b0",
+    "hash": "de15ca5c3810edd4",
     "journeyCount": 7
   }
 }
