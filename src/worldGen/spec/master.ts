@@ -57,8 +57,9 @@ const starterEcho = () => wardChest({ tomb: "starter_treasure_tomb", index: 0, p
 // open junk corridors the economy needs — master is the biggest tier and generated no income.
 const MASTER_SIDE_PATHS: PathEntry[] = [
   { density: "medium", pathPuzzles: 1, end: "fragment" },
-  // Open junk corridor — the shop income master was missing.
-  { density: "low", pathPuzzles: 2, end: "junk" },
+  // Open trap corridor, like expert's: master's trap count sits between expert's and wizard's and the
+  // waterskins follow it. Its income still comes from the junk end.
+  { density: "low", pathPuzzles: 3, end: "junk", encounter: "trap" },
   // Multi-color floor-key path (colors rotate through keyColorsRange below).
   { density: "low", pathPuzzles: 1, end: "fragment", gate: "floor-key" },
 ]
