@@ -36,6 +36,7 @@ import { useMergedRewardContributions } from "@/app/SiteMap/rewardContributions"
 import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { useMergedRoomOccupants } from "@/app/SiteMap/roomOccupants"
 import { useMergedRoomReplays } from "@/app/SiteMap/roomReplays"
+import { useMergedRoomArrivals } from "@/app/SiteMap/roomArrivals"
 import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
 import { useDetectorReadout } from "@/app/SiteMap/useDetectorReadout"
 import { useMergedReactions } from "@/app/reactions/reactionContributions"
@@ -85,6 +86,7 @@ export const SiteMapScreen = ({
   const wardKeys = useMergedHeldKeys()
   const occupantOf = useMergedRoomOccupants(journeyId)
   const replaysAt = useMergedRoomReplays(journeyId)
+  const opensOnArrival = useMergedRoomArrivals(journeyId)
   // Detector levels come from the owning mods (compass←hieroglyph, corridor←core) via
   // the merged accessor — core names no mod.
   const detectorLevels = useMergedDetectorLevels()
@@ -200,6 +202,7 @@ export const SiteMapScreen = ({
     onEncounter: encounter.open,
     onExitReached: exit.arrived,
     playTraversal,
+    opensOnArrival,
   })
   useExitIntro(prompt?.kind, use(FezContext).showConversation, { journeyId, levelNr: levelIndex + 1, exterior })
 

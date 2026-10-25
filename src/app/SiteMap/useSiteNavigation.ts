@@ -20,6 +20,7 @@ import type { ResolveOneWayRealisation } from "@/game/oneWayRealisation"
 import { resolveOneWayRealisation } from "@/mods/allOneWayRealisations"
 import type { ResolvePassageRealisation } from "@/game/passageRealisation"
 import { resolvePassageRealisation } from "@/mods/allPassageRealisations"
+import type { OpensOnArrival } from "./roomArrivals"
 
 type NavigationArgs = {
   journeys: JourneyAPI
@@ -39,6 +40,8 @@ type NavigationArgs = {
   resolveOneWay?: ResolveOneWayRealisation
   /** Says what the passage a gate was dressed as declares: its prompt. Every passage takes empty hands. */
   resolvePassage?: ResolvePassageRealisation
+  /** A finished room that still opens by itself when walked into (roomArrivals.ts). */
+  opensOnArrival?: OpensOnArrival
 }
 
 /**
@@ -82,6 +85,8 @@ export type SiteNavigation = {
   explorerHidden: boolean
 }
 
+const opensNever: OpensOnArrival = () => false
+
 // What a tap on the map does: walk there, and — for a room that reopens, a shop, a staircase or the way
 // out — offer what is there rather than take it. Walking somewhere and acting on what you find are two
 // acts, so the walk ends with a prompt beside the explorer and the player decides.
@@ -99,6 +104,7 @@ export const useSiteNavigation = ({
   playTraversal = crossAtOnce,
   resolveOneWay = resolveOneWayRealisation,
   resolvePassage = resolvePassageRealisation,
+  opensOnArrival = opensNever,
 }: NavigationArgs): SiteNavigation => {
   const [scheduleArrival] = useTimeout()
   const [prompt, setPrompt] = useState<ArrivalPrompt | null>(null)
@@ -358,11 +364,16 @@ export const useSiteNavigation = ({
         return
       }
 
-      // Completed cells just reposition the player, except two that reopen: a room whose family
-      // says it stays re-enterable, and a shop with unbought stock.
+      // Completed cells just reposition the player, except those that reopen: a room with something in it
+      // not yet shown opens by itself, as a room never entered does; a room whose family says it stays
+      // re-enterable, and a shop with unbought stock, offer it.
       if (cell.state === "completed") {
         const alreadyStandingHere = explorerPos[0] === row && explorerPos[1] === col
         goHere()
+        if (cell.type === "room" && opensOnArrival(cell)) {
+          scheduleArrival(walkDelay(row, col), () => onEncounter([row, col], !alreadyStandingHere))
+          return
+        }
         // A family that hands over one of several things it holds, one per visit — see `staysOpen`.
         const familyStaysOpen = cell.type === "room" && staysOpen(cell) && !(actsOnArrival(cell) && isSpent(cell))
         const shopHasUnclaimedStock =
@@ -456,6 +467,7 @@ export const useSiteNavigation = ({
       takeSpan,
       resolveOneWay,
       resolvePassage,
+      opensOnArrival,
     ]
   )
 

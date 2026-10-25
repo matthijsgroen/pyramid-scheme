@@ -2,7 +2,7 @@
 import { createElement, useState } from "react"
 import { renderHook, render, act } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import type { CellState, Direction, FloorGrid, GridCell, MechanismRecord, SiteConfig } from "@/game/siteTypes"
+import type { CellState, Direction, FloorGrid, GridCell, MechanismRecord, RoomCell, SiteConfig } from "@/game/siteTypes"
 import type { JourneyAPI } from "@/app/state/useJourneys"
 import { registerFamily } from "@/app/families/familyRegistry"
 import { getCell } from "@/game/gridNavigation"
@@ -225,7 +225,7 @@ const twoFloors: SiteConfig = [
   },
 ]
 
-const setup = (cells: GridCell[], config: SiteConfig = siteConfig) => {
+const setup = (cells: GridCell[], config: SiteConfig = siteConfig, opensOnArrival?: (cell: RoomCell) => boolean) => {
   const journeys = {
     markCellExplored: vi.fn(),
     updatePosition: vi.fn(),
@@ -250,6 +250,7 @@ const setup = (cells: GridCell[], config: SiteConfig = siteConfig) => {
         explorerPos: pos,
         onEncounter,
         onExitReached,
+        opensOnArrival,
       }),
     { initialProps: { pos: [0, 0] as readonly [number, number] } }
   )
@@ -508,6 +509,35 @@ describe("useSiteNavigation", () => {
 
     act(() => promptOf(hook).take())
     expect(onEncounter).toHaveBeenCalledWith([0, 1], true)
+  })
+
+  it("opens a completed re-enterable room on arrival while it holds something not yet shown", () => {
+    const { hook, journeys, onEncounter } = setup(
+      [entrance, { ...puzzleRoom, family: RETURNABLE_FAMILY, state: "completed" }],
+      siteConfig,
+      () => true
+    )
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+
+    expect(onEncounter).toHaveBeenCalledWith([0, 1], true)
+    expect(hook.result.current.prompt).toBeNull()
+    expect(journeys.updatePosition).toHaveBeenCalledWith("j1", PUZZLE_AT_1, "0:0,1")
+  })
+
+  it("offers the way back in again once the room has nothing left unshown", () => {
+    const { hook, onEncounter } = setup(
+      [entrance, { ...puzzleRoom, family: RETURNABLE_FAMILY, state: "completed" }],
+      siteConfig,
+      () => false
+    )
+
+    act(() => hook.result.current.onCellClick(0, 1))
+    arrive()
+
+    expect(promptOf(hook)).toMatchObject({ kind: "room", at: [0, 1] })
+    expect(onEncounter).not.toHaveBeenCalled()
   })
 
   it("drops a re-enterable room's prompt when the player walks off it, opening nothing", () => {
