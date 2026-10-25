@@ -28,14 +28,14 @@ const starterKeyId = keyIdByTreasureId[difficultyTreasures.starter[0].id]
 describe("TombTreasureCollectionSection hide-until-collected (per group)", () => {
   it("renders no groups when no tomb treasure is owned", () => {
     tombKeyIds = new Set()
-    render(<TombTreasureCollectionSection selectedItem={null} onSelect={() => {}} />)
+    render(<TombTreasureCollectionSection selectedItem={null} onSelect={() => {}} isNew={() => false} newLabel="NEW" />)
     expect(screen.queryByText(MERCHANT_CACHE)).toBeNull()
     expect(screen.queryByText(NOBLE_VAULT)).toBeNull()
   })
 
   it("shows only the group that has an owned treasure", () => {
     tombKeyIds = new Set([starterKeyId])
-    render(<TombTreasureCollectionSection selectedItem={null} onSelect={() => {}} />)
+    render(<TombTreasureCollectionSection selectedItem={null} onSelect={() => {}} isNew={() => false} newLabel="NEW" />)
     expect(screen.getByText(MERCHANT_CACHE)).toBeTruthy() // starter group revealed
     expect(screen.queryByText(NOBLE_VAULT)).toBeNull() // junior group still hidden
   })

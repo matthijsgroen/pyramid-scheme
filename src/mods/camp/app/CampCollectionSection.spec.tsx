@@ -19,7 +19,9 @@ const table: CampStepTable = [
   { id: "pit", spot: "fire", tier: "junior", source: "structure", parts: ["stones"] },
 ]
 
-const section = () => <CampCollectionSection selectedItem={null} onSelect={() => {}} table={table} />
+const section = () => (
+  <CampCollectionSection selectedItem={null} onSelect={() => {}} isNew={() => false} newLabel="NEW" table={table} />
+)
 
 const withSave = async (parts: Record<string, string[]>) =>
   writeGameData({ "pyramid-scheme-mod-camp": { version: 1, finds: [], parts, grown: [] } })

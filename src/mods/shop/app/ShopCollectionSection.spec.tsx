@@ -23,13 +23,13 @@ const JUNK_TITLE = "collection.categories.junk"
 describe("ShopCollectionSection hide-until-collected", () => {
   it("renders nothing when no sellable is owned", () => {
     inventory = {}
-    render(<ShopCollectionSection selectedItem={null} onSelect={() => {}} />)
+    render(<ShopCollectionSection selectedItem={null} onSelect={() => {}} isNew={() => false} newLabel="NEW" />)
     expect(screen.queryByText(JUNK_TITLE)).toBeNull()
   })
 
   it("renders the junk category once at least one sellable is owned", () => {
     inventory = { [ALL_SELLABLES[0].id]: 1 }
-    render(<ShopCollectionSection selectedItem={null} onSelect={() => {}} />)
+    render(<ShopCollectionSection selectedItem={null} onSelect={() => {}} isNew={() => false} newLabel="NEW" />)
     expect(screen.getByText(JUNK_TITLE)).toBeTruthy()
   })
 
@@ -39,7 +39,7 @@ describe("ShopCollectionSection hide-until-collected", () => {
     const item = ALL_SELLABLES[0]
     inventory = { [item.id]: 1 }
     const onSelect = vi.fn()
-    render(<ShopCollectionSection selectedItem={null} onSelect={onSelect} />)
+    render(<ShopCollectionSection selectedItem={null} onSelect={onSelect} isNew={() => false} newLabel="NEW" />)
     fireEvent.click(screen.getByText(item.symbol))
     expect(onSelect).toHaveBeenCalledWith(
       expect.objectContaining({ id: item.id, symbol: item.symbol, difficulty: expect.any(String) })

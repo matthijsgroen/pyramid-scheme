@@ -79,7 +79,7 @@ Each is the option that changes the least shipped behaviour or the one the brief
 - [x] **Step 1: Failing tests** (made-up section ids and item ids).
   - `collectionSeen.spec.ts`: `newIds` is empty for a section without a record and lists unseen ids in order once seeded; `markSeen` twice with overlapping ids keeps each id once and keeps earlier ones; `seedSection` on a section with a record changes nothing (same reference), on one without creates it; `readCollectionSeen` of `undefined`, a number, an object without `version`, `version: 2`, and a v1 save whose record holds a number gives the empty save; a v1 save with an unknown section reads back with it; `updateCollectionSeen` on a `version: 2` value returns that value itself (same reference), on `undefined` applies the action to the empty save.
   - `useCollectionSeen.spec.ts` (renderHook over the real storage, fresh store): seed then `markSeen` then `newIds` gives what is left; the stored value carries `version: 1` and id lists only; with a `version: 2` value primed in storage, `markSeen` and `seedSection` leave the stored value unchanged and `newIds` is empty.
-- [x] **Step 2: Run** `yarn test src/game/collectionSeen src/app/pages/useCollectionSeen` — FAIL.
+- [ ] **Step 2: Run** `yarn test src/game/collectionSeen src/app/pages/useCollectionSeen` — FAIL.
 - [x] **Step 3: Implement.** The model file's comment says why a section without a record has nothing new (a save from before, or a mod switched on later, is not flooded) and why an unreadable save is left alone.
 - [x] **Step 4: Run** the specs — PASS. `yarn check-types`, `yarn lint`.
 - [x] **Step 5: Per-task review** (soundness): no write path bypasses `updateCollectionSeen`; nothing derived is stored; an unreadable value survives every action; the store key is core's and generic.
@@ -105,16 +105,16 @@ One agent (Sonnet).
 - Produces: `useCollectionNews(): { tabs: { id: string; label: string; shown: boolean; newIds: readonly string[] }[]; total: number; markTabSeen(id: string): void }` — calls every entry's `useTab` in registry order (fixed at module load, the `rewardContributions.ts` pattern), reads the seen save, and once both the seen save and a tab are loaded seeds that tab's record from its ids when it has none (an effect, once per missing record). `total` sums the shown tabs' new ids. `markTabSeen` marks that tab's current ids.
 - Core string: `collection.tabNew_one/_other` "{{label}} · {{count}} nieuw" / "{{label}} · {{count}} new" (the sketch's "Schatten · 1 nieuw").
 
-- [ ] **Step 1: Failing tests** (made-up registrations through the registry, reset per spec; the real seen storage, fresh store).
+- [x] **Step 1: Failing tests** (made-up registrations through the registry, reset per spec; the real seen storage, fresh store).
   - A section without a record shows no new ids before it is loaded, and after it reports `loaded` its record is seeded with its ids and still nothing is new; an id that appears afterwards is new and counted in `total`.
   - A tab that is not loaded is never seeded, however long the seen save has been loaded.
   - `markTabSeen` empties that tab's new ids and leaves the other tab's.
   - A tab that is not `shown` adds nothing to `total`.
   - With no section registered: no tabs, `total` 0.
 - [ ] **Step 2: Run** `yarn test src/app/pages/useCollectionNews src/app/pages/collectionSectionRegistry` — FAIL.
-- [ ] **Step 3: Implement.** The registry comment says what a tab declares and that `ids` are only things held. So that this commit type-checks before the mods are filled, `useTab` is optional here and an entry without one is skipped by `useCollectionNews` (no tab, nothing new); Task 4 makes it required once every section supplies one.
-- [ ] **Step 4: Run** the specs — PASS. `yarn test src/i18n`, `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Commit** — `feat: collection sections are tabs that know what is new`
+- [x] **Step 3: Implement.** The registry comment says what a tab declares and that `ids` are only things held. So that this commit type-checks before the mods are filled, `useTab` is optional here and an entry without one is skipped by `useCollectionNews` (no tab, nothing new); Task 4 makes it required once every section supplies one.
+- [x] **Step 4: Run** the specs — PASS. `yarn test src/i18n`, `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Commit** — `feat: collection sections are tabs that know what is new`
 
 ---
 
@@ -243,7 +243,7 @@ One agent (Sonnet).
   - An `extraNeeds` answer for a journey locks it, for a tier adds to its needs; without `extraNeeds` nothing changes.
   - A fully finished older tier is collapsed with `news` when one row has news; the newest open tier is never collapsed.
   - `tierKeyNeed`: no keys → undefined; held keys lit; a key without display gives no symbol.
-- [x] **Step 2: Run** `yarn test src/app/pages/allJourneys src/app/pages/journeyAvailability` — FAIL.
+- [ ] **Step 2: Run** `yarn test src/app/pages/allJourneys src/app/pages/journeyAvailability` — FAIL.
 - [x] **Step 3: Implement** as pure functions; each rule one sentence of comment.
 - [x] **Step 4: Run** — PASS. `yarn check-types`, `yarn lint`.
 - [x] **Step 5: Commit** — `feat: the all-journeys list as one flat model`

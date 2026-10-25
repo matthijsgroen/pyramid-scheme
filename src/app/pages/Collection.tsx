@@ -66,6 +66,7 @@ const DetailPanel: FC<{
 
 export const CollectionPage: FC = () => {
   const [selectedItem, setSelectedItem] = useState<CollectionItem | null>(null)
+  const { t } = useTranslation("common")
   const { inventory, addItem } = useInventory()
   const { isDevelopMode } = use(DevelopContext)
 
@@ -90,7 +91,13 @@ export const CollectionPage: FC = () => {
               registers itself gated on its mod, so a section drops out when its mod is toggled
               off — core names none here. */}
           {collectionSections().map(section => (
-            <section.Component key={section.id} selectedItem={selectedItem} onSelect={handleItemClick} />
+            <section.Component
+              key={section.id}
+              selectedItem={selectedItem}
+              onSelect={handleItemClick}
+              isNew={() => false}
+              newLabel={t("collection.newLabel")}
+            />
           ))}
         </div>
         {/* Always present: most of what the Collection shows isn't an inventory item at all — a

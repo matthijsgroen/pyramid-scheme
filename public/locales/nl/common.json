@@ -203,6 +203,9 @@
     }
   },
   "collection": {
+    "tabNew_one": "{{label}} · {{count}} nieuw",
+    "tabNew_other": "{{label}} · {{count}} nieuw",
+    "newLabel": "NIEUW",
     "clickForDetails": "Tik op een tegel voor details",
     "categories": {
       "deities": "🏺 Goden",
