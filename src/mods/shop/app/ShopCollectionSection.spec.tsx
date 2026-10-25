@@ -16,6 +16,9 @@ vi.mock("@/app/Inventory/useInventory", () => ({
   useInventory: () => ({ inventory }),
 }))
 
+// Painted or not, a junk item is tapped the same way; the test finds it by its glyph.
+vi.mock("./sellableArt", () => ({ sellableArt: () => undefined }))
+
 const { ShopCollectionSection } = await import("./ShopCollectionSection")
 
 const JUNK_TITLE = "collection.categories.junk"
