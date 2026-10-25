@@ -1,5 +1,5 @@
 import type { FC } from "react"
-import { use, useEffect, useState } from "react"
+import { use, useEffect, useId, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { HieroglyphTile } from "@/ui/molecules/HieroglyphTile"
 import { useInventory } from "@/app/Inventory/useInventory"
@@ -7,7 +7,9 @@ import { FezContext } from "../fez/context"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { DeveloperButton } from "@/ui/atoms/DeveloperButton"
 import { DifficultyPill } from "@/ui/atoms/DifficultyPill"
+import { CollectionTabs } from "@/ui/molecules/CollectionTabs"
 import { collectionSections, type CollectionItem } from "./collectionSectionRegistry"
+import { useCollectionNews } from "./useCollectionNews"
 // Side-effect: registers every enabled mod's Collection section into the registry
 import "@/mods/registerModApps"
 
@@ -69,6 +71,11 @@ export const CollectionPage: FC = () => {
   const { t } = useTranslation("common")
   const { inventory, addItem } = useInventory()
   const { isDevelopMode } = use(DevelopContext)
+  const panelId = useId()
+  const { tabs, markTabSeen } = useCollectionNews()
+  const [picked, setPicked] = useState<string | undefined>()
+  // What was new in the open tab when it opened: its badges stay while the player looks.
+  const [opened, setOpened] = useState<{ tab: string; ids: readonly string[] }>({ tab: "", ids: [] })
 
   const { showConversation } = use(FezContext)
 
@@ -78,28 +85,73 @@ export const CollectionPage: FC = () => {
     }
   }, [inventory, showConversation])
 
-  const handleItemClick = (item: CollectionItem) => {
-    setSelectedItem(item)
+  const shown = tabs.filter(tab => tab.shown)
+  const current = shown.find(tab => tab.id === picked) ?? shown.find(tab => tab.newIds.length > 0) ?? shown[0]
+  // Once every tab has read its save the first tab with news is the one that opens; until then nothing
+  // is new yet, and what is chosen first must not stay chosen.
+  if (!picked && current && shown.every(tab => tab.ready)) setPicked(current.id)
+  if (current?.ready && opened.tab !== current.id) setOpened({ tab: current.id, ids: current.newIds })
+
+  // Leaving a tab, and closing the page, marks what the open tab showed as seen. The latest values are
+  // kept in a ref for the unmount, which strict mode simulates once: only a real unmount marks.
+  const latest = useRef({ current: current?.id, markTabSeen })
+  const closing = useRef(false)
+  useEffect(() => {
+    latest.current = { current: current?.id, markTabSeen }
+  })
+  useEffect(() => {
+    closing.current = false
+    return () => {
+      closing.current = true
+      queueMicrotask(() => {
+        const { current: open, markTabSeen: mark } = latest.current
+        if (closing.current && open) mark(open)
+      })
+    }
+  }, [])
+
+  const selectTab = (id: string) => {
+    if (current && id !== current.id) {
+      markTabSeen(current.id)
+      setSelectedItem(null)
+    }
+    setPicked(id)
   }
+
+  const section = collectionSections().find(entry => entry.id === current?.id)
+  const newInTab = current?.id === opened.tab ? opened.ids : []
 
   return (
     <div className="flex size-full bg-gradient-to-b from-blue-100 to-blue-300">
       <div className="relative flex-1 overflow-y-auto p-6">
-        <div className="space-y-6 pb-safe-bottom">
-          {/* Mod-contributed sections (shop's junk category, hieroglyph's fragments, tomb treasures,
-              …). Each
-              registers itself gated on its mod, so a section drops out when its mod is toggled
-              off — core names none here. */}
-          {collectionSections().map(section => (
-            <section.Component
-              key={section.id}
-              selectedItem={selectedItem}
-              onSelect={handleItemClick}
-              isNew={() => false}
-              newLabel={t("collection.newLabel")}
+        {section && current ? (
+          <div className="space-y-4 pb-safe-bottom">
+            <CollectionTabs
+              tabs={shown.map(tab => ({
+                id: tab.id,
+                label:
+                  tab.newIds.length > 0
+                    ? t("collection.tabNew", { label: tab.label, count: tab.newIds.length })
+                    : tab.label,
+              }))}
+              selected={current.id}
+              onSelect={selectTab}
+              panelId={panelId}
             />
-          ))}
-        </div>
+            {/* The open tab's section from a mod (shop's junk, hieroglyph fragments, tomb treasures, …):
+                it registers itself gated on its mod, so a tab drops out with its mod — core names none. */}
+            <div role="tabpanel" id={panelId} aria-labelledby={`${panelId}-tab-${current.id}`}>
+              <section.Component
+                selectedItem={selectedItem}
+                onSelect={setSelectedItem}
+                isNew={id => newInTab.includes(id)}
+                newLabel={t("collection.newLabel")}
+              />
+            </div>
+          </div>
+        ) : (
+          <p className="py-8 text-center text-gray-700">{t("collection.empty")}</p>
+        )}
         {/* Always present: most of what the Collection shows isn't an inventory item at all — a
             finished hieroglyph is fragments, a tomb treasure is a held key, mosaic glass is a
             ledger count — so gating this panel on the inventory left those tapping into silence. */}

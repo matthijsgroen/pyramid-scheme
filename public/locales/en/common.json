@@ -215,6 +215,7 @@
     },
     "tabNew_one": "{{label}} · {{count}} new",
     "tabNew_other": "{{label}} · {{count}} new",
+    "empty": "Your chest is still empty",
     "newLabel": "NEW",
     "clickForDetails": "Tap a tile for details",
     "categories": {

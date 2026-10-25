@@ -206,14 +206,14 @@ One agent (Sonnet); per-task review (it writes the seen save).
 - Produces: `CollectionPage` — the shown tabs (label, with `collection.tabNew` when it has new ids) over the selected section's panel and the shared detail panel; the first tab with something new is selected on open, else the first; the selected section gets `isNew = id ∈ that tab's new ids at the moment the tab opened` (so a badge does not vanish while looking) and `newLabel` "NIEUW" / "NEW"; switching away from a tab and unmounting the page call `markTabSeen` for the tab that was open; no shown tab → `collection.empty` "Je kist is nog leeg" / "Your chest is still empty" (draft). Fez's `collectionIntro` stays.
 - `Base`: the chest entrance gets `badge = total` when above 0.
 
-- [ ] **Step 1: Failing tests.**
+- [x] **Step 1: Failing tests.**
   - `Collection.spec.tsx` (two made-up sections, made-up seen save): only shown sections become tabs; the tab with something new opens first and its label reads "· 1 nieuw"; its new item carries NIEUW; switching to the other tab marks the first tab's ids seen in storage and the NIEUW is gone when switching back; unmounting marks the open tab; no shown section → the empty line; the tab list is a `tablist` with the panel labelled by the tab.
   - `Base.spec.tsx`: with a made-up section holding one new id the chest's accessible name carries the count; with none, no badge.
 - [ ] **Step 2: Run** `yarn test src/app/pages/Collection src/app/Base` — FAIL.
-- [ ] **Step 3: Implement.**
-- [ ] **Step 4: Run** — PASS. `yarn test src/app/appImports`, `yarn test src/i18n`, `yarn check-types`, `yarn lint`.
+- [x] **Step 3: Implement.**
+- [x] **Step 4: Run** — PASS. `yarn test src/app/appImports`, `yarn test src/i18n`, `yarn check-types`, `yarn lint`.
 - [ ] **Step 5: Per-task review:** seen is marked only on leaving a tab or closing; only the open tab's ids; nothing is marked for a tab never opened; the badge counts shown tabs only.
-- [ ] **Step 6: Commit** — `feat: the Verzameling opens in tabs and the chest counts what is new`
+- [x] **Step 6: Commit** — `feat: the Verzameling opens in tabs and the chest counts what is new`
 
 ---
 

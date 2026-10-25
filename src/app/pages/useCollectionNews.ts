@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import { collectionSections } from "./collectionSectionRegistry"
 import { useCollectionSeen } from "./useCollectionSeen"
 
-export type CollectionNewsTab = { id: string; label: string; shown: boolean; newIds: readonly string[] }
+export type CollectionNewsTab = { id: string; label: string; shown: boolean; ready: boolean; newIds: readonly string[] }
 
 // What is new in each registered section's tab. Every section's useTab runs each render in registry
 // order (fixed at module load); an entry without one is no tab. A section without a record is seeded
@@ -35,6 +35,7 @@ export const useCollectionNews = (): {
     id,
     label: tab.label,
     shown: tab.shown,
+    ready: seenLoaded && tab.loaded,
     newIds: tab.loaded ? newIds(id, tab.ids) : [],
   }))
   const total = result.filter(tab => tab.shown).reduce((sum, tab) => sum + tab.newIds.length, 0)

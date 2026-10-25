@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next"
 import "@/mods/registerModApps"
 import { TravelPage } from "@/app/pages/Travel"
 import { CollectionPage } from "@/app/pages/Collection"
+import { useCollectionNews } from "@/app/pages/useCollectionNews"
 import { currentChapter } from "@/app/pages/journeyAvailability"
 import { useMergedJourneyContributions } from "@/app/pages/journeyContributions"
 import { useAvailableJourneyIds } from "@/app/pages/useAvailableJourneyIds"
@@ -95,6 +96,7 @@ export const Base = ({
   }, [recordMissing, markChapter, chapter])
   const announced = settled && !cameHome && !chapterClosed ? chapterToAnnounce(homeSave, chapter) : undefined
   const windowEntrance = useWindowEntrance()
+  const news = useCollectionNews()
 
   const journeys = useJourneyTranslations()
   const { activeJourneyId, startJourney, getJourney, getUnexploredLevels } = useJourneys()
@@ -140,7 +142,11 @@ export const Base = ({
 
   const entrances = useMemo(
     () => ({
-      chest: { label: t("camp.entrance.collection"), onOpen: () => setPopup("collection") },
+      chest: {
+        label: t("camp.entrance.collection"),
+        badge: news.total > 0 ? news.total : undefined,
+        onOpen: () => setPopup("collection"),
+      },
       window: windowEntrance && {
         label: windowEntrance.label,
         badge: windowEntrance.badge,
@@ -148,7 +154,7 @@ export const Base = ({
       },
       mapTable: isDesktop ? undefined : { label: t("camp.entrance.journeys"), onOpen: () => setPopup("journeys") },
     }),
-    [t, windowEntrance, isDesktop]
+    [t, windowEntrance, isDesktop, news.total]
   )
 
   const continueCard = (

@@ -68,7 +68,11 @@ vi.mock("@/ui/atoms/CampScene", () => ({
     <div data-testid="scene">
       {Object.entries(entrances).map(([spot, e]) =>
         e ? (
-          <button key={spot} onClick={e.onOpen}>
+          <button
+            key={spot}
+            aria-label={e.badge === undefined ? e.label : `${e.label} (${e.badge})`}
+            onClick={e.onOpen}
+          >
             {e.label}
           </button>
         ) : null
@@ -79,6 +83,7 @@ vi.mock("@/ui/atoms/CampScene", () => ({
 
 const { Base } = await import("./Base")
 const { registerModEntrance } = await import("@/app/home/modEntrances")
+const { clearCollectionSections, registerCollectionSection } = await import("@/app/pages/collectionSectionRegistry")
 
 const stubDesktop = (desktop: boolean) =>
   vi.stubGlobal("matchMedia", (query: string) => ({
@@ -111,6 +116,7 @@ const renderBase = (startGame = vi.fn(), cameHome = false) => {
 
 beforeEach(async () => {
   await clearGameData()
+  clearCollectionSections()
   chapter = "starter"
   keysLoaded = true
   stubDesktop(false)
@@ -137,6 +143,40 @@ describe(Base, () => {
 
     fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" })
     expect(screen.queryByRole("dialog")).toBeNull()
+  })
+
+  describe("the chest's badge", () => {
+    const section = (ids: string[], shown = true) =>
+      registerCollectionSection({
+        id: "made-up",
+        order: 1,
+        Component: () => null,
+        useTab: () => ({ label: "Made-up", shown, ids, loaded: true }),
+      })
+    const seen = (ids: string[]) => writeGameData({ collectionSeen: { version: 1, seen: { "made-up": ids } } })
+
+    it("carries the count of what is new", async () => {
+      section(["x", "y"])
+      await seen(["x"])
+      renderBase()
+
+      expect(await screen.findByRole("button", { name: "camp.entrance.collection (1)" })).toBeTruthy()
+    })
+
+    it("has no badge when nothing is new, or when the tab is not shown", async () => {
+      section(["x"])
+      await seen(["x"])
+      renderBase()
+      await act(async () => new Promise(resolve => setTimeout(resolve, 20)))
+      expect(screen.getByRole("button", { name: "camp.entrance.collection" })).toBeTruthy()
+
+      cleanup()
+      clearCollectionSections()
+      section(["x", "y"], false)
+      renderBase()
+      await act(async () => new Promise(resolve => setTimeout(resolve, 20)))
+      expect(screen.getByRole("button", { name: "camp.entrance.collection" })).toBeTruthy()
+    })
   })
 
   it("continues a journey in progress without starting one", async () => {
