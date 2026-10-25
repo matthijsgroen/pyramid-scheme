@@ -64,10 +64,10 @@ vi.mock("@/ui/atoms/CampScene", () => ({
   CampScene: ({
     entrances,
   }: {
-    entrances: Record<string, { label: string; badge?: number; onOpen: () => void } | undefined>
+    entrances?: Record<string, { label: string; badge?: number; onOpen: () => void } | undefined>
   }) => (
     <div data-testid="scene">
-      {Object.entries(entrances).map(([spot, e]) =>
+      {Object.entries(entrances ?? {}).map(([spot, e]) =>
         e ? (
           <button
             key={spot}
@@ -119,10 +119,10 @@ const Arrival = ({ startGame, cameHome }: { startGame: () => void; cameHome: boo
   return <Base startGame={startGame} cameHome={arriving} onArrived={() => setArriving(false)} />
 }
 
-const renderBase = (startGame = vi.fn(), cameHome = false) => {
+const renderBase = (startGame = vi.fn(), cameHome = false, speaking = false) => {
   render(
     <Develop>
-      <FezContext.Provider value={{ showConversation: () => {} }}>
+      <FezContext.Provider value={{ showConversation: () => {}, speaking }}>
         <Arrival startGame={startGame} cameHome={cameHome} />
       </FezContext.Provider>
     </Develop>
@@ -218,6 +218,11 @@ describe(Base, () => {
     expect(startJourney).toHaveBeenCalledWith(journeys[0])
     expect(startGame).toHaveBeenCalled()
     expect(order).toEqual(["start", "game"])
+  })
+
+  it("hides the camp's entrances while someone speaks", () => {
+    renderBase(vi.fn(), false, true)
+    expect(screen.queryByText("camp.entrance.collection")).toBeNull()
   })
 
   it("opens the journeys as a dialog on a phone", () => {

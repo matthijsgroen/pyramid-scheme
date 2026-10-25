@@ -210,7 +210,8 @@ export const Base = ({
               chapter={chapter}
               found={found}
               insets={{ top: hud.height, bottom: isDesktop ? 0 : card.height + CARD_GAP }}
-              entrances={entrances}
+              // The entrances say their names only when they can be used: not while someone speaks.
+              entrances={speaking ? undefined : entrances}
             />
           )
         }
