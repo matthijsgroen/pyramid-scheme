@@ -16,7 +16,7 @@ export const ComingHome = ({ onDone }: { onDone: (haul: boolean) => void }) => {
 
   const unpack = async () => {
     await clearHaul()
-    onDone(true)
+    onDone(lines.some(line => !line.news))
   }
 
   // Only a haul the screen shows is emptied: leaving past one the player never saw (not read yet, or of a
@@ -32,7 +32,13 @@ export const ComingHome = ({ onDone }: { onDone: (haul: boolean) => void }) => {
         <Component key={id} />
       ))}
       haulTitle={t("camp.comingHome.haulTitle")}
-      lines={lines.map(({ isNew, ...line }) => ({ ...line, badge: isNew ? t("camp.comingHome.new") : undefined }))}
+      lines={lines.map(({ key, visual, title, note, isNew }) => ({
+        key,
+        visual,
+        title,
+        note,
+        badge: isNew ? t("camp.comingHome.new") : undefined,
+      }))}
       buttonLabel={shown ? t("camp.comingHome.unpack") : t("camp.comingHome.toCamp")}
       onDone={shown ? unpack : () => onDone(false)}
     />

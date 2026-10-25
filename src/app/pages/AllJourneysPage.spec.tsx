@@ -54,6 +54,7 @@ let activeJourneyId: string | undefined
 let unexplored: Record<string, number[]> = {}
 let buried: Record<string, number[]> = {}
 let heldKeys = new Set<string>()
+let keysLoaded = true
 let lockFound = 2
 let comingSoon: string | undefined
 let gateNeeds: { gate: { tier: string } | { journeyId: string }; key: string; label: string; hint?: string }[] = []
@@ -96,6 +97,7 @@ vi.mock("@/app/pages/journeyContributions", () => ({
 }))
 vi.mock("@/app/SiteMap/keyProviders", () => ({
   useMergedHeldKeys: () => heldKeys,
+  useHeldKeysLoaded: () => keysLoaded,
   useMergedKeyDisplay: () => (id: string) => ({ symbol: `sym-${id}` }),
 }))
 vi.mock("@/app/SiteMap/detectorLevels", () => ({ useMergedDetectorLevels: () => ({}) }))
@@ -138,6 +140,7 @@ const state = (extra: Partial<Progress> = {}): Progress => ({
 
 beforeEach(() => {
   report.mockClear()
+  keysLoaded = true
   progress = {}
   activeJourneyId = undefined
   unexplored = {}
@@ -375,5 +378,27 @@ describe("AllJourneys", () => {
     heldKeys = new Set(["made-up-need"])
     render(<AllJourneys startGame={vi.fn()} />)
     expect(report).not.toHaveBeenCalled()
+  })
+
+  it("reports nothing until the held keys are read, then what is still unmet", () => {
+    gateNeeds = [{ gate: { tier: "expert" }, key: "made-up-need", label: "Need a thing" }]
+    keysLoaded = false
+    const { rerender } = render(<AllJourneys startGame={vi.fn()} />)
+    expect(report).not.toHaveBeenCalled()
+    keysLoaded = true
+    heldKeys = new Set(["made-up-need"])
+    rerender(<AllJourneys startGame={vi.fn()} />)
+    expect(report).not.toHaveBeenCalled()
+  })
+
+  it("reports again when the unmet set of a showing changes", () => {
+    gateNeeds = [
+      { gate: { tier: "expert" }, key: "need-a", label: "A" },
+      { gate: { tier: "expert" }, key: "need-b", label: "B" },
+    ]
+    const { rerender } = render(<AllJourneys startGame={vi.fn()} />)
+    heldKeys = new Set(["need-a"])
+    rerender(<AllJourneys startGame={vi.fn()} />)
+    expect(report.mock.calls.map(([r]) => r.unmet)).toEqual([["need-a", "need-b"], ["need-b"]])
   })
 })

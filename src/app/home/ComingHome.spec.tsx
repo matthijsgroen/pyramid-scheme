@@ -40,6 +40,34 @@ describe("ComingHome", () => {
     expect(latestGameValue("homecoming")).toEqual({ version: 1, haul: [] })
   })
 
+  it("says loot came home unless every line only tells news", async () => {
+    const { ComingHome, registerHaulLines, clearGameData, writeGameData } = await load()
+    await clearGameData()
+    await writeGameData({ homecoming: { version: 1, haul: [bead, { type: "tale" }] } })
+    registerHaulLines(() => ({
+      bead: () => [{ key: "beads", visual: null, title: "beads" }],
+      tale: () => [{ key: "tale", visual: null, title: "a tale", news: true }],
+    }))
+    const onDone = vi.fn()
+    render(<ComingHome onDone={onDone} />)
+    const unpack = await screen.findByText("camp.comingHome.unpack")
+    await act(async () => fireEvent.click(unpack))
+    expect(onDone).toHaveBeenCalledWith(true)
+  })
+
+  it("says no loot came home when the haul only tells news, though it is shown and unpacked", async () => {
+    const { ComingHome, registerHaulLines, clearGameData, writeGameData, latestGameValue } = await load()
+    await clearGameData()
+    await writeGameData({ homecoming: { version: 1, haul: [{ type: "tale" }] } })
+    registerHaulLines(() => ({ tale: () => [{ key: "tale", visual: null, title: "a tale", news: true }] }))
+    const onDone = vi.fn()
+    render(<ComingHome onDone={onDone} />)
+    expect(await screen.findByText("a tale")).toBeTruthy()
+    await act(async () => fireEvent.click(screen.getByText("camp.comingHome.unpack")))
+    expect(onDone).toHaveBeenCalledWith(false)
+    expect(latestGameValue("homecoming")).toEqual({ version: 1, haul: [] })
+  })
+
   it("offers only the way back to the camp when the haul is empty", async () => {
     const { ComingHome, clearGameData } = await load()
     await clearGameData()

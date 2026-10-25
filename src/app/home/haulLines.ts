@@ -5,7 +5,16 @@ import type { TFn } from "@/app/SiteMap/rewardHandlerRegistry"
 import { useMergedRewardDisplays } from "@/app/SiteMap/rewardDisplayRegistry"
 
 // One line of what the player carried home.
-export type HaulLine = { key: string; visual: ReactNode; title: string; note?: string; isNew?: boolean }
+// `news` marks a line that tells something instead of listing loot carried home (an arrival): it is shown and
+// unpacked like the rest, but a haul of only such lines is not loot brought home.
+export type HaulLine = {
+  key: string
+  visual: ReactNode
+  title: string
+  note?: string
+  isNew?: boolean
+  news?: boolean
+}
 
 type Summariser = (rewards: readonly TreasureReward[], t: TFn) => HaulLine[]
 type UseSummarisers = () => Partial<Record<string, Summariser>>

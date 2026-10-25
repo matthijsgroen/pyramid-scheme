@@ -8,7 +8,7 @@ import { JourneyList, type JourneyListGroup } from "@/ui/organisms/JourneyList"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useReport } from "@/app/reactions/useReport"
 import { useMergedDetectorLevels } from "@/app/SiteMap/detectorLevels"
-import { useMergedHeldKeys, useMergedKeyDisplay } from "@/app/SiteMap/keyProviders"
+import { useHeldKeysLoaded, useMergedHeldKeys, useMergedKeyDisplay } from "@/app/SiteMap/keyProviders"
 import { useJourneyTranslations, type TranslatedJourney } from "@/app/translations/useJourneyTranslations"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { isWebKey } from "@/game/floorLock"
@@ -246,8 +246,10 @@ export const AllJourneys: FC<{ startGame: () => void; compact?: boolean }> = ({ 
   }
 
   // Each locked tier or journey that still waits on a need is reported once per showing, and again if its unmet
-  // needs change while the list stays up.
+  // needs change while the list stays up. Held keys read from saved state start empty, so nothing is reported
+  // until they are read: a need already met would show as unmet.
   const report = useReport()
+  const keysLoaded = useHeldKeysLoaded()
   const reported = useRef(new Set<string>())
   const refused = model.groups
     .flatMap((group): Gate[] =>
@@ -257,15 +259,22 @@ export const AllJourneys: FC<{ startGame: () => void; compact?: boolean }> = ({ 
     )
     .map(gate => ({ gate, unmet: gateNeeds.unmet(gate, heldKeys).map(need => need.key) }))
     .filter(({ unmet }) => unmet.length > 0)
-  const refusedKey = JSON.stringify(refused)
+  const refusedKey = refused
+    .map(({ gate, unmet }) => `${"tier" in gate ? gate.tier : gate.journeyId}|${unmet.join()}`)
+    .join(";")
+  const latestRefused = useRef(refused)
   useEffect(() => {
-    for (const { gate, unmet } of JSON.parse(refusedKey) as typeof refused) {
-      const key = JSON.stringify({ gate, unmet })
+    latestRefused.current = refused
+  })
+  useEffect(() => {
+    if (!keysLoaded) return
+    for (const { gate, unmet } of latestRefused.current) {
+      const key = `${"tier" in gate ? gate.tier : gate.journeyId}|${unmet.join()}`
       if (reported.current.has(key)) continue
       reported.current.add(key)
       report({ kind: "gateShown", gate, unmet })
     }
-  }, [refusedKey, report])
+  }, [refusedKey, keysLoaded, report])
 
   const comingSoon = model.comingSoon
   return (

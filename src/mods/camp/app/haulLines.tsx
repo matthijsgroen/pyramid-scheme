@@ -56,6 +56,7 @@ export const summariseArrivals = (rewards: readonly TreasureReward[], t: TFn): H
       visual: picture((steps.find(step => step.id === name) ?? steps[0])?.id ?? name, "⛺"),
       title: t(`arrivals.${name}`, NS),
       isNew: true,
+      news: true,
     }
   })
 

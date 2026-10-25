@@ -39,7 +39,7 @@ describe("camp haul lines", () => {
       t
     )
     expect(lines.map(l => l.title)).toEqual(["arrivals.made-up-mule", "arrivals.made-up-flag"])
-    expect(lines.every(l => l.isNew)).toBe(true)
+    expect(lines.every(l => l.isNew && l.news)).toBe(true)
     expect(new Set(lines.map(l => l.key)).size).toBe(2)
   })
 })
