@@ -1,4 +1,6 @@
 import type { SiteConfig, SubSection } from "./types"
+import { CARVE_FAMILY_QUERIES } from "../game/encounterFallback"
+import type { ResolveEncounter } from "../game/siteAssembler"
 
 // A mod's request to sell one of its currency pieces at a specific shop: place a fragmentSlot
 // sentinel (tagged with the mod's own `prefers` bucket) into that shop's stock. The existing
@@ -38,4 +40,45 @@ export const placeShopStock = (
     if (free < 0) continue // shop full — over-subscribed; drop (design: author more capacity)
     shop.rewards[free] = { type: "fragmentSlot", prefers }
   }
+}
+
+// A shop has no empty stock slot: what no mod assigned is not for sale, so the stock is what was
+// assigned and nothing else. A structural pass, run before the layout is picked, so the floor the
+// layout is picked on is the floor that ships.
+export const trimEmptyStock = (allConfigs: Record<string, SiteConfig[]>): void => {
+  for (const levels of Object.values(allConfigs))
+    for (const shop of shopSectionsOf(levels))
+      if (shop.rewards) shop.rewards = shop.rewards.filter(r => r !== undefined)
+}
+
+// Whether a section ends in a shop room, by the family its encounter resolves to.
+export const endsInShopBy = (resolveEncounter: ResolveEncounter) => {
+  const shopFamily = resolveEncounter(CARVE_FAMILY_QUERIES.fezShop, CARVE_FAMILY_QUERIES.fezShop).familyId
+  return (section: SubSection): boolean =>
+    section.encounter !== undefined && resolveEncounter(section.encounter, "treasure").familyId === shopFamily
+}
+
+// A section ending in a shop room shows its stock and never its endReward (carve/roomSpecs.ts asks the
+// same question), so its end placeholder is cleared, and an authored reward there, which would vanish
+// in play, is refused by name. A structural pass: whether an end holds a reward decides which ends are
+// free to host a floor key (carve/sections.ts), so it is settled before the layout is picked, and loot
+// placed afterwards never changes it.
+export const clearShopEnds = (allConfigs: Record<string, SiteConfig[]>, resolveEncounter: ResolveEncounter): void => {
+  const endsInShop = endsInShopBy(resolveEncounter)
+  const clear = (section: SubSection, address: string) => {
+    if (!endsInShop(section)) return
+    if (section.endReward !== undefined && section.endReward.type !== "fragmentSlot")
+      throw new Error(`authored endReward on a shop end: ${address}`)
+    section.endReward = undefined
+  }
+  for (const [journeyId, levels] of Object.entries(allConfigs))
+    levels.forEach((floors, levelIndex) =>
+      floors.forEach((floor, floorIndex) =>
+        floor.sideSections.forEach((section, si) => {
+          const at = `${journeyId}:${levelIndex} floor ${floorIndex}`
+          clear(section, `${at} ${section.label ?? `s${si}`}`)
+          section.sideSections?.forEach((sub, ui) => clear(sub, `${at} ${sub.label ?? `s${si}.${ui}`}`))
+        })
+      )
+    )
 }

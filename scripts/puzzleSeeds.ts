@@ -42,7 +42,8 @@ import { writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 import { Worker } from "node:worker_threads"
-import { buildWorldConfigs } from "../src/mods/buildWorldConfigs"
+import { buildWorldConfigs, pinsFrom } from "../src/mods/buildWorldConfigs"
+import { generatedWorldConfigs } from "../src/data/generatedWorld"
 import { seedDemandOf } from "../src/worldGen/seedDemand"
 import { puzzleSeeds } from "../src/data/puzzleSeeds"
 import type { Grade } from "../src/game/families/familyMeta"
@@ -75,7 +76,7 @@ const rebuild = argv.includes("--rebuild")
 
 // The world as the spec builds it, not the committed bake: a floor the spec added needs its seeds
 // before the bake that would list it can exist. generate-world takes EMPTY_FRACTION 0 too.
-const allDemands = seedDemandOf(buildWorldConfigs(0), ALL_FAMILY_META)
+const allDemands = seedDemandOf(buildWorldConfigs(0, { pickLayout: pinsFrom(generatedWorldConfigs) }), ALL_FAMILY_META)
 const demands = allDemands.filter(demand => !only || only.includes(demand.familyId))
 const targetFor = (demand: ConfigDemand) => seedTarget(demand, CAP)
 const describe = (demand: ConfigDemand) => `${demandLabel(demand)} (${demand.rooms} rooms)`

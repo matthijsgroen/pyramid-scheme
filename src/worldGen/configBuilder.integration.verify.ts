@@ -1,4 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
+import { pinsFrom } from "../mods/buildWorldConfigs"
+import { generatedWorldConfigs } from "../data/generatedWorld"
 import { buildConfigs } from "./configBuilder"
 import { WORLD_TARGETS } from "./worldTargets"
 import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
@@ -60,7 +62,9 @@ const buildRealConfigs = () =>
     MOD_RESERVED_TREASURE_INDICES,
     familyIsTrap,
     REGISTERED_MOD_IDS,
-    resolveEncounterMeta
+    resolveEncounterMeta,
+    undefined,
+    { pickLayout: pinsFrom(generatedWorldConfigs) }
   )
 
 // Golden guard for the world-builder refactor: buildRealConfigs() must keep
@@ -149,7 +153,9 @@ describe("buildConfigs golden guard", () => {
       MOD_RESERVED_TREASURE_INDICES,
       familyIsTrap,
       REGISTERED_MOD_IDS,
-      resolveEncounterMeta
+      resolveEncounterMeta,
+      undefined,
+      { pickLayout: pinsFrom(generatedWorldConfigs) }
     )
     expect(reachableMosaicCounts(reachableRewards)).toEqual(MOSAIC_STEPS_BY_TIER)
   }, 600_000)

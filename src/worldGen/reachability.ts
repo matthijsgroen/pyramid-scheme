@@ -89,9 +89,8 @@ export type FloorRef = SiteRef & { floorIndex: number }
 
 export const floorKey = (ref: FloorRef): string => `${ref.journeyId}#${ref.levelIndex}#${ref.floorIndex}`
 
-// Reachability only depends on gate/key structure, which the FloorConfig DSL fixes
-// regardless of seed — the maze shape assembleFloor rolls per seed doesn't change which
-// keys gate which transitions. Any deterministic seed is a representative instance.
+// The seed a floor that carries no `seed` of its own is carved at. Every floor of a built world carries the
+// seed its layout was picked at (configBuilder.ts, `pickLayout`), and that pin is what the walk carves.
 const defaultSeedFor = (ref: SiteRef): number => hashString(`${ref.journeyId}:${ref.levelIndex}`)
 
 // Grid topology (gate/key structure, room layout) depends only on (siteId, floorIndex,
@@ -181,10 +180,13 @@ export const reachableFloorsInSite = (
     // worldGen's FloorConfig (this module's SiteConfig type) is a slightly looser mirror
     // of game/siteTypes.ts's — real authored data only ever assigns values the stricter
     // type accepts too, so this cast is safe (see the two files' own "mirrors" comments).
-    const cacheKey = `${siteId}#${i}#${seed + i}`
+    // The floor is carved at its layout's pin, where it carries one: the floor the player walks. The cache is keyed
+    // on the seed and packing carved at, so a floor re-pinned between two calls is never read off the old carve.
+    const floorSeed = site[i].seed ?? seed + i
+    const cacheKey = `${siteId}#${i}#${floorSeed}#${site[i].packing ?? ""}`
     let result = cache?.get(cacheKey)
     if (!result) {
-      result = assembleFloor(siteId, site[i] as GameFloorConfig, seed + i, resolveEncounter, {
+      result = assembleFloor(siteId, site[i] as GameFloorConfig, floorSeed, resolveEncounter, {
         resolveKeyRequirements: resolveRequirements,
         floorRef: { journeyId: ref.journeyId, levelIndex: ref.levelIndex, floorIndex: i },
         ...(support.resolveOneWay ? { resolveOneWay: support.resolveOneWay } : {}),
@@ -193,15 +195,13 @@ export const reachableFloorsInSite = (
       })
       cache?.set(cacheKey, result)
     }
-    // A floor that won't assemble used to be skipped silently, which quietly reclassified it as
-    // unreachable: generation then placed no content behind it and reported nothing, so
-    // unenterable floors shipped unnoticed. It's a data bug, so say so and stop. Note this
-    // assembles at `defaultSeedFor`, NOT the seed the runtime uses (game/siteSeed.ts) — a floor
-    // passing here says nothing about what players get, which is what worldFloorAssembly.verify.ts
-    // is for.
+    // A floor that won't assemble is a data bug, never an unreachable floor: skipping it would place no
+    // content behind it and report nothing. So say so and stop. A floor carrying its layout's pin is
+    // carved here as the runtime carves it; one carrying none is carved at `defaultSeedFor`, which
+    // says nothing about what players get.
     if (!result.success) {
       throw new Error(
-        `Floor ${floorKey({ ...ref, floorIndex: i })} cannot be assembled (seed ${seed + i}): ${JSON.stringify(
+        `Floor ${floorKey({ ...ref, floorIndex: i })} cannot be assembled (seed ${floorSeed}): ${JSON.stringify(
           result.reasons
         )}`
       )

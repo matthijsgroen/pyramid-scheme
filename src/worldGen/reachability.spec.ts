@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest"
 import type { SiteConfig } from "./types"
 import type { ResolveEncounter } from "../game/siteAssembler"
-import { defaultResolveEncounter } from "../game/siteAssembler"
+import { assembleFloor, defaultResolveEncounter } from "../game/siteAssembler"
+import type { FloorConfig as GameFloorConfig } from "../game/siteTypes"
 import {
   computeReachability,
+  createFloorAssemblyCache,
   floorKey,
   isOrderedJourney,
   isTierUnlocked,
@@ -194,6 +196,22 @@ const reEnterableFamilies: ResolveEncounter = (encounter, defaultTag) => ({
 })
 
 describe(reachableFloorsInSite, () => {
+  it("placement carves each floor at the layout's pin", () => {
+    const floor = ungatedTwoFloorSite()[1]
+    const pin = [7919, 15838, 23757].find(
+      seed => assembleFloor("j:0", { ...floor, seed } as GameFloorConfig, 1).success
+    )!
+    const site: SiteConfig = [{ ...floor, entrance: undefined, seed: pin, packing: 0.5 }]
+    const cache = createFloorAssemblyCache()
+    reachableFloorsInSite({ journeyId: "j", levelIndex: 0 }, site, new Set(), undefined, undefined, cache)
+    const carved = [...cache.entries()]
+    expect(carved.map(([key]) => key)).toEqual([`j:0#0#${pin}#0.5`])
+    const atPin = assembleFloor("j:0", site[0] as GameFloorConfig, pin, defaultResolveEncounter, {
+      floorRef: { journeyId: "j", levelIndex: 0, floorIndex: 0 },
+    })
+    expect(carved[0][1]).toEqual(atPin)
+  })
+
   it("floor 0 is always reachable, no keys needed", () => {
     const site = gatedTwoFloorSite("some-key")
     const result = reachableFloorsInSite({ journeyId: "j", levelIndex: 0 }, site, new Set())

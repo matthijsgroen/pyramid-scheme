@@ -225,10 +225,11 @@ of a region) and which side section hangs first after a percentage are the carve
 the baked floor and pins them by authored name: a section by its address, a lock corridor or region by the
 lock's own region names. A section is not given a label for it: a label may not imitate a positional address
 (`src/game/carve/sections.ts`), so "a label equal to its current address" is refused by the carve. Instead the
-bake places the web on the floors at their last pins, then reads it again on the floors the search pinned, and
-refuses the bake, naming each line, when anything landed elsewhere; the report says where each landed. A web
-floor the search re-stamps is built again on its new pin before that check (`bakeOnSettledPins`), so the pins the
-bake writes are the ones the web was placed on, and the next bake starts from them.
+bake picks every floor's layout before the web is placed (`pickLayout`), places the web on the floors at those
+pins, then carves the finished world afresh and reads the web again on it, refusing the bake, naming each line,
+when anything landed elsewhere (`placementMoved`); the report says where each landed. A web floor is asked the
+carve criteria again once its doors stand on it. A lock taking inputs from outside its floor cannot carve before
+the web binds them, so the bake refuses it by name when its floor's layout is picked.
 
 ### The worked example
 

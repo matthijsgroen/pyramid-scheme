@@ -2,7 +2,8 @@ import type { SiteConfig, SubSection, Tier, TreasureReward, FragmentSlotReward }
 import type { Difficulty } from "../data/difficultyLevels"
 import { capabilitiesFor } from "./capabilities"
 import type { FloorRef } from "./reachability"
-import { CARVE_FAMILY_QUERIES, defaultResolveEncounter } from "../game/encounterFallback"
+import { defaultResolveEncounter } from "../game/encounterFallback"
+import { endsInShopBy } from "./shopStock"
 import type { ResolveEncounter } from "../game/siteAssembler"
 
 // A candidate reward-placement site, tagged with the floor it lives on so a distribution
@@ -77,15 +78,9 @@ export const collectSlots = (
   const chestWeight = familyPriorityFor(undefined, "treasure")
   // A section whose encounter resolves to the shop ends in a shop room, which shows its stock and
   // never its endReward (carve/roomSpecs.ts endRoomSpec asks the same question). So its end is no
-  // slot, and a sentinel standing there is cleared: anything placed on it would not exist in play.
-  const shopFamily = resolveEncounter(CARVE_FAMILY_QUERIES.fezShop, CARVE_FAMILY_QUERIES.fezShop).familyId
-  const endsInShop = (section: SubSection) =>
-    section.encounter !== undefined && resolveEncounter(section.encounter, "treasure").familyId === shopFamily
-  // An authored reward on that end would vanish the same way, so it is refused rather than dropped.
-  const refuseShopEndReward = (section: SubSection, address: string) => {
-    if (section.endReward !== undefined && section.endReward.type !== "fragmentSlot")
-      throw new Error(`authored endReward on a shop end: ${address}`)
-  }
+  // slot. Its placeholder is cleared before the layout is picked (shopStock.ts clearShopEnds), and
+  // nothing here writes to it.
+  const endsInShop = endsInShopBy(resolveEncounter)
 
   for (const [journeyId, siteConfigs] of Object.entries(allConfigs)) {
     if (!capabilitiesFor(journeyId)?.emitFragmentSlots) continue
@@ -201,7 +196,7 @@ export const collectSlots = (
             f.mainEndReward = r
           })
         }
-        for (const [si, section] of floor.sideSections.entries()) {
+        for (const section of floor.sideSections) {
           const sWardKeys = section.gate?.type === "tomb-key" ? [section.gate.wardKeyId] : []
           const secHidden = !!section.hidden
           // A section whose `end` is a stairhead (`"staircase"` / `{ stairId }`) is a pure
@@ -211,11 +206,9 @@ export const collectSlots = (
           // `end: "treasure"` section can actually display/grant a reward at runtime. An open
           // tomb-key gate leading to a stairhead must never be handed to a currency as a fillable
           // slot — the reward would be silently dropped, capping that currency one instance short.
-          const rewardCapable = section.end === "treasure" && !endsInShop(section)
-          if (endsInShop(section)) {
-            refuseShopEndReward(section, `${journeyId}:${levelIndex} floor ${floorIndex} ${section.label ?? `s${si}`}`)
-            section.endReward = undefined
-          } else if (section.endReward?.type === "fragmentSlot") {
+          const shopEnd = endsInShop(section)
+          const rewardCapable = section.end === "treasure" && !shopEnd
+          if (!shopEnd && section.endReward?.type === "fragmentSlot") {
             const s = section
             addSlot(
               ref,
@@ -234,14 +227,12 @@ export const collectSlots = (
               s.endReward = r
             })
           }
-          for (const [ui, sub] of (section.sideSections ?? []).entries()) {
+          for (const sub of section.sideSections ?? []) {
             const subWardKeys = [...sWardKeys, ...(sub.gate?.type === "tomb-key" ? [sub.gate.wardKeyId] : [])]
             const subHidden = secHidden || !!sub.hidden
-            const subRewardCapable = sub.end === "treasure" && !endsInShop(sub)
-            if (endsInShop(sub)) {
-              refuseShopEndReward(sub, `${journeyId}:${levelIndex} floor ${floorIndex} ${sub.label ?? `s${si}.${ui}`}`)
-              sub.endReward = undefined
-            } else if (sub.endReward?.type === "fragmentSlot") {
+            const subShopEnd = endsInShop(sub)
+            const subRewardCapable = sub.end === "treasure" && !subShopEnd
+            if (!subShopEnd && sub.endReward?.type === "fragmentSlot") {
               const ss = sub
               addSlot(
                 ref,

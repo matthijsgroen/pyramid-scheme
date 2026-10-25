@@ -1,9 +1,9 @@
-import { buildConfigs } from "@/worldGen/configBuilder"
+import { buildConfigs, type PickLayout } from "@/worldGen/configBuilder"
 import type { SiteConfig } from "@/worldGen/types"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
 import { worldWebs } from "@/game/webCatalogue"
 import type { Web } from "@/game/webNotation"
-import { pinWebFloors, placeWeb } from "@/worldGen/webPlacement"
+import { placeWeb } from "@/worldGen/webPlacement"
 import type { WebPlacement } from "@/worldGen/webPlacement"
 import { carveWorldFloor } from "./carveWorldFloor"
 import { ALL_CURRENCY_DISTRIBUTIONS } from "./allCurrencyDistributions"
@@ -38,17 +38,33 @@ export const openLockInputs = (configs: Record<string, SiteConfig[]>) => {
           )
 }
 
+/** The layout a baked world shipped with: each floor takes the `seed` and `packing` the same floor carries in `baked`.
+ * Every build but the bake's builds on it, so what it checks is the world that ships. */
+export const pinsFrom =
+  (baked: Readonly<Record<string, SiteConfig[]>> = generatedWorldConfigs): PickLayout =>
+  configs => {
+    for (const [journeyId, sites] of Object.entries(configs))
+      sites.forEach((site, levelIndex) =>
+        site.forEach((floor, floorIndex) => {
+          const pinned = baked[journeyId]?.[levelIndex]?.[floorIndex]
+          if (pinned?.seed !== undefined) floor.seed = pinned.seed
+          if (pinned?.packing !== undefined) floor.packing = pinned.packing
+        })
+      )
+  }
+
 export type BuildWorldOptions = {
+  /** Picks every floor's layout before any loot is placed: the bake's carve search, or `pinsFrom` a baked world. */
+  pickLayout?: PickLayout
   /** The tier webs to place; the ones under src/game/locks by default. */
   webs?: readonly Web[]
-  /** Handed each web as it was placed, for the checks run once the floors carry their pins. */
+  /** Handed each web as it was placed, for the checks run on the final floors. */
   onWebPlaced?: (placement: WebPlacement) => void
-  /** The carve pins the web's floors are read at; the last bake's by default. */
-  pins?: Readonly<Record<string, SiteConfig[]>>
 }
 
-/** The world as the spec builds it with every registered mod, before carve seeds are stamped. A web is placed only
- * where a registered mod realises its activators. */
+/** The world as the spec builds it with every registered mod, on the layout `pickLayout` picks. A web is placed only
+ * where a registered mod realises its activators; where none does, a lock's outside inputs are opened before the
+ * layout is picked, since how a lock compiles is structure. */
 export const buildWorldConfigs = (
   emptyFraction: number,
   options: BuildWorldOptions = {}
@@ -58,12 +74,16 @@ export const buildWorldConfigs = (
   const placeWorldWeb =
     toReward && webs.length > 0
       ? (configs: Record<string, SiteConfig[]>) => {
-          pinWebFloors(configs, options.pins ?? generatedWorldConfigs)
           for (const web of webs) options.onWebPlaced?.(placeWeb(web, configs, carveWorldFloor, toReward))
         }
-      : toReward
-        ? undefined
-        : openLockInputs
+      : undefined
+  const { pickLayout } = options
+  const layout: PickLayout | undefined = toReward
+    ? pickLayout
+    : configs => {
+        openLockInputs(configs)
+        pickLayout?.(configs)
+      }
   return buildConfigs(
     resolveKeyRequirements,
     ALL_CURRENCY_DISTRIBUTIONS,
@@ -81,6 +101,7 @@ export const buildWorldConfigs = (
     familyIsTrap,
     REGISTERED_MOD_IDS,
     resolveEncounterMeta,
-    placeWorldWeb
+    placeWorldWeb,
+    { pickLayout: layout }
   )
 }

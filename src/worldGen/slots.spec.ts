@@ -159,12 +159,12 @@ describe("collectSlots on a shop's end", () => {
     },
   ]
 
-  it("offers no slot on a shop's end and clears its sentinel, since the shop room shows only its stock", () => {
+  it("collectSlots skips a shop end and clears nothing", () => {
     const site = siteWithShopAndPlainEnd()
     const ends = collectSlots({ starter_1: [site] }).filter(s => s.kind === "end" && s.encounter === undefined)
     expect(ends).toHaveLength(1)
     ends[0].assign({ type: "mosaicPiece", tier: "starter" })
-    expect(site[0].sideSections[0].endReward).toBeUndefined()
+    expect(site[0].sideSections[0].endReward).toEqual({ type: "fragmentSlot" })
     expect(site[0].sideSections[1].endReward).toEqual({ type: "mosaicPiece", tier: "starter" })
   })
 
@@ -206,61 +206,5 @@ describe("collectSlots on a shop's end", () => {
       return { familyId: id === "made-up-stall" ? "fez-shop" : id, tags: [], ownerMod: "made-up" }
     }
     expect(collectSlots({ starter_1: [site] }, () => 0, resolve).filter(s => s.kind === "end")).toHaveLength(1)
-  })
-})
-
-describe("collectSlots on a shop's end with an authored reward", () => {
-  it("refuses it, naming the section, since the shop room shows only its stock", () => {
-    const site: SiteConfig = [
-      {
-        pathPuzzles: 1,
-        difficulty: "starter",
-        end: "treasure",
-        exitOrStaircase: "exit",
-        sideSections: [
-          { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
-          {
-            pathPuzzles: 0,
-            difficulty: "starter",
-            end: "treasure",
-            encounter: "fez-shop",
-            endReward: { type: "mosaicPiece", tier: "starter" },
-          },
-        ],
-      },
-    ]
-    expect(() => collectSlots({ starter_1: [site] })).toThrow(
-      "authored endReward on a shop end: starter_1:0 floor 0 s1"
-    )
-  })
-
-  it("refuses one on a shop that ends a sub-section", () => {
-    const site: SiteConfig = [
-      {
-        pathPuzzles: 1,
-        difficulty: "starter",
-        end: "treasure",
-        exitOrStaircase: "exit",
-        sideSections: [
-          {
-            pathPuzzles: 0,
-            difficulty: "starter",
-            end: "treasure",
-            sideSections: [
-              {
-                pathPuzzles: 0,
-                difficulty: "starter",
-                end: "treasure",
-                encounter: "fez-shop",
-                endReward: { type: "mosaicPiece", tier: "starter" },
-              },
-            ],
-          },
-        ],
-      },
-    ]
-    expect(() => collectSlots({ starter_1: [site] })).toThrow(
-      "authored endReward on a shop end: starter_1:0 floor 0 s0.0"
-    )
   })
 })
