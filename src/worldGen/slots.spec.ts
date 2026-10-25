@@ -62,6 +62,40 @@ describe(collectSlots, () => {
     expect(slots[0]).toMatchObject({ wardKeys: ["some-key"], isPlaceholder: false })
   })
 
+  it("a puzzle slot behind a tomb-key gate carries the ward keys of its section and sub-section", () => {
+    const site: SiteConfig = [
+      {
+        pathPuzzles: 1,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        rewards: [undefined],
+        sideSections: [
+          {
+            pathPuzzles: 1,
+            difficulty: "starter",
+            end: "treasure",
+            endReward: { type: "money", amount: 1 },
+            gate: { type: "tomb-key", wardKeyId: "outer" },
+            rewards: [undefined],
+            sideSections: [
+              {
+                pathPuzzles: 1,
+                difficulty: "starter",
+                end: "treasure",
+                endReward: { type: "money", amount: 1 },
+                gate: { type: "tomb-key", wardKeyId: "inner" },
+                rewards: [undefined],
+              },
+            ],
+          },
+        ],
+      },
+    ]
+    const puzzles = collectSlots({ starter_1: [site] }).filter(s => s.kind === "puzzle")
+    expect(puzzles.map(s => s.wardKeys)).toEqual([[], ["outer"], ["outer", "inner"]])
+  })
+
   it("assign() mutates the underlying config in place", () => {
     const site = siteWithFragmentSlot()
     const slots = collectSlots({ starter_1: [site] })

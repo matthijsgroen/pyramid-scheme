@@ -15,9 +15,9 @@ export type Slot = {
   ref: FloorRef
   journeyId: string
   tier: Tier
-  /** Ward keys already gating this slot (its own side section's tomb-key gate, if any) —
-   * empty means ungated. Used by a currency's own distribution rule (e.g. hieroglyph
-   * fragments preferring slots behind a specific tomb run's ward keys). */
+  /** Ward keys already gating this slot (its section's and sub-section's tomb-key gates, for an end and a puzzle
+   * alike) — empty means ungated. Used by a currency's own distribution rule (e.g. hieroglyph fragments preferring
+   * slots behind a specific tomb run's ward keys, camp loot taking ungated rooms first). */
   wardKeys: readonly string[]
   /** True for an explicit `fragmentSlot` sentinel (always eligible); false for an open,
    * not-yet-rewarded tomb-key gate (eligible only until something else claims it). */
@@ -66,6 +66,10 @@ export type Slot = {
 // Defaults to 0 (loot-ineligible) when omitted, so tests/callers that don't inject it place no
 // dynamic loot rather than crashing.
 export type FamilyPriorityFor = (encounter: string | string[] | undefined, defaultTag: string) => number
+
+// The ward keys a section's own tomb-key gate asks for: none when it has no such gate.
+const tombKeysOf = (section: SubSection): string[] =>
+  section.gate?.type === "tomb-key" ? [section.gate.wardKeyId] : []
 
 // Every fragmentSlot sentinel and open (unrewarded) tomb-key gate across every site that
 // opts into the emitFragmentSlots capability — the same eligibility fragments.ts's own
@@ -142,7 +146,8 @@ export const collectSlots = (
         },
         encounter: string | string[] | undefined,
         encountersByIndex: Record<number, string | string[]> | undefined,
-        hidden: boolean
+        hidden: boolean,
+        wardKeys: string[]
       ) => {
         if (!rewards) return
         rewards.forEach((rw, i) => {
@@ -168,7 +173,7 @@ export const collectSlots = (
             ref,
             journeyId,
             tier: chain.difficulty as Tier,
-            wardKeys: [],
+            wardKeys,
             isPlaceholder: frag !== undefined,
             ...(frag ? { sentinel: frag } : {}),
             ...(frag?.prefers ? { preference: frag.prefers } : {}),
@@ -185,12 +190,24 @@ export const collectSlots = (
       }
       floors.forEach((floor, floorIndex) => {
         const pRef: FloorRef = { journeyId, levelIndex, floorIndex }
-        emitPuzzle(floor.rewards, pRef, floor, floor.encounter, floor.encountersByIndex, false)
+        emitPuzzle(floor.rewards, pRef, floor, floor.encounter, floor.encountersByIndex, false, [])
         for (const section of floor.sideSections) {
           const secHidden = !!section.hidden
-          emitPuzzle(section.rewards, pRef, section, section.encounter, section.encountersByIndex, secHidden)
+          const secWardKeys = tombKeysOf(section)
+          emitPuzzle(
+            section.rewards,
+            pRef,
+            section,
+            section.encounter,
+            section.encountersByIndex,
+            secHidden,
+            secWardKeys
+          )
           for (const sub of section.sideSections ?? [])
-            emitPuzzle(sub.rewards, pRef, sub, sub.encounter, sub.encountersByIndex, secHidden || !!sub.hidden)
+            emitPuzzle(sub.rewards, pRef, sub, sub.encounter, sub.encountersByIndex, secHidden || !!sub.hidden, [
+              ...secWardKeys,
+              ...tombKeysOf(sub),
+            ])
         }
       })
 
