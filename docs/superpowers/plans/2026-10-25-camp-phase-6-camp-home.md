@@ -343,17 +343,17 @@ One agent (Sonnet); per-task review (it clears the haul).
 
 **Interfaces:** none.
 
-- [ ] **Step 1: No bake.** `git diff --stat <phase start>..HEAD -- src/data/ src/worldGen/` is empty; if not, the change is a finding, not a bake.
-- [ ] **Step 2: Toggle-off, camp.** Remove `campMod` (and its import) from `src/mods/registeredMods.ts`; each under `timeout 900`: `yarn check-types`, `yarn build`, `yarn test src/app`. Then the look of Step 4 at phone width on a fresh save: the bare camp (chest, window, campfire, oasis), the card, the HUD; Op pad sets off; the chest opens the Verzameling without Constructies. Screenshot. Restore with `git checkout src/mods/registeredMods.ts`; `git status --short` clean.
-- [ ] **Step 3: Toggle-off, the others.** One at a time — `mosaicMod`, `storyMod`, `trapMod`, `shopMod` — remove, `timeout 900 yarn check-types`, `timeout 900 yarn build`, restore. Record per mod what drops (window entrance, story section, hearts and rest panel, coins).
-- [ ] **Step 4: Look** (`docs/instructions/browser-checks.md`: own headless Chromium from a scratchpad script, own `yarn dev` on a free port, fresh context, close everything, screenshots to `.playwright-mcp/`):
+- [x] **Step 1: No bake.** `git diff --stat <phase start>..HEAD -- src/data/ src/worldGen/` is empty; if not, the change is a finding, not a bake.
+- [x] **Step 2: Toggle-off, camp.** Remove `campMod` (and its import) from `src/mods/registeredMods.ts`; each under `timeout 900`: `yarn check-types`, `yarn build`, `yarn test src/app`. Then the look of Step 4 at phone width on a fresh save: the bare camp (chest, window, campfire, oasis), the card, the HUD; Op pad sets off; the chest opens the Verzameling without Constructies. Screenshot. Restore with `git checkout src/mods/registeredMods.ts`; `git status --short` clean.
+- [x] **Step 3: Toggle-off, the others.** One at a time — `mosaicMod`, `storyMod`, `trapMod`, `shopMod` — remove, `timeout 900 yarn check-types`, `timeout 900 yarn build`, restore. Record per mod what drops (window entrance, story section, hearts and rest panel, coins).
+- [x] **Step 4: Look** (`docs/instructions/browser-checks.md`: own headless Chromium from a scratchpad script, own `yarn dev` on a free port, fresh context, close everything, screenshots to `.playwright-mcp/`):
   - Phone 390×844, fresh save: home with Fez's welcome, then the hand on Op pad; Op pad starts the first starter journey; the expedition's back button lands on the coming-home screen (empty haul: fire only, "Naar het kamp"); the chest opens the Verzameling popup; the window opens the mosaic; the gear opens settings; seven title taps show DEV and the dev tools in settings.
   - With a dev grant or a short solve, collect one reward, go back: the haul lists it; Uitpakken clears it (reload, go back again: empty).
   - Desktop 1440×900: camp left, card and Alle reizen panel right; no map-table entrance.
   - Storybook: every new story renders; `CampScene` stories still show stand-ins.
   - Anything not reachable unattended (a real new chapter, hearts after trap damage, a camp find landing) goes under Look at in browser with steps.
-- [ ] **Step 5: Gate** — each under `timeout 900`: `yarn verify`, `yarn verify-content`, `yarn build`. All pass.
-- [ ] **Step 6: Record** in `docs/review-camp-release.md`: this plan's 22 decisions under Decisions (`Phase 6 —`); under Drafts the new strings that are not in the sketches (empty-card text, "Naar het kamp", the generic chapter body, the haul notes, the rest line), nl / en; the toggle-off and gate results; under Look at in browser the screenshots' paths and the unreached checks with steps. Tick this plan's boxes; CHANGELOG line.
-- [ ] **Step 7: Commit** — `docs: phase 6 results in the review list`
+- [x] **Step 5: Gate** — each under `timeout 900`: `yarn verify`, `yarn verify-content`, `yarn build`. All pass.
+- [x] **Step 6: Record** in `docs/review-camp-release.md`: this plan's 22 decisions under Decisions (`Phase 6 —`); under Drafts the new strings that are not in the sketches (empty-card text, "Naar het kamp", the generic chapter body, the haul notes, the rest line), nl / en; the toggle-off and gate results; under Look at in browser the screenshots' paths and the unreached checks with steps. Tick this plan's boxes; CHANGELOG line.
+- [x] **Step 7: Commit** — `docs: phase 6 results in the review list`
 
 The driver then runs the phase review (Sonnet), pushes the branch, ticks Phase 6 in `docs/handover-camp-release.md` and adds one line to its State.
