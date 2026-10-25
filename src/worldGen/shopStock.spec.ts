@@ -76,7 +76,7 @@ describe(trimEmptyStock, () => {
   it("a shop keeps only its assigned stock", () => {
     const floor = shopFloor([undefined, undefined, undefined])
     const configs: Record<string, SiteConfig[]> = { made_up: [[floor]] }
-    placeShopStock(configs, [{ journeyId: "made_up", prefers: "made-up-bucket" }])
+    placeShopStock(configs, [{ journeyId: "made_up", prefers: "made-up-bucket" }], defaultResolveEncounter)
     trimEmptyStock(configs, defaultResolveEncounter)
     expect(floor.sideSections[0].rewards).toEqual([{ type: "fragmentSlot", prefers: "made-up-bucket" }])
   })
@@ -117,25 +117,42 @@ describe(placeShopStock, () => {
 
   it("a piece for a missing or full shop is dropped, unless it is required", () => {
     const full = world([{ type: "fragmentSlot", prefers: "made-up-other" }])
-    placeShopStock(full, [{ journeyId: "made_up", prefers: "made-up-bucket" }])
-    placeShopStock(full, [{ journeyId: "made_up", prefers: "made-up-bucket", nth: 1 }])
+    placeShopStock(full, [{ journeyId: "made_up", prefers: "made-up-bucket" }], defaultResolveEncounter)
+    placeShopStock(full, [{ journeyId: "made_up", prefers: "made-up-bucket", nth: 1 }], defaultResolveEncounter)
     expect(full.made_up[0][0].sideSections[0].rewards).toEqual([{ type: "fragmentSlot", prefers: "made-up-other" }])
   })
 
   it("a required piece for a full shop is refused, naming the piece and the shop", () => {
     expect(() =>
-      placeShopStock(world([{ type: "fragmentSlot", prefers: "made-up-other" }]), [
-        { journeyId: "made_up", prefers: "made-up-key", required: true },
-      ])
+      placeShopStock(
+        world([{ type: "fragmentSlot", prefers: "made-up-other" }]),
+        [{ journeyId: "made_up", prefers: "made-up-key", required: true }],
+        defaultResolveEncounter
+      )
     ).toThrow("shop stock: made-up-key is sold at shop 0 of made_up, which is full")
   })
 
   it("a required piece for a shop that does not exist is refused, naming the piece and the shop", () => {
     expect(() =>
-      placeShopStock(world([undefined]), [{ journeyId: "made_up", prefers: "made-up-key", nth: 1, required: true }])
+      placeShopStock(
+        world([undefined]),
+        [{ journeyId: "made_up", prefers: "made-up-key", nth: 1, required: true }],
+        defaultResolveEncounter
+      )
     ).toThrow("shop stock: made-up-key is sold at shop 1 of made_up, which does not exist")
     expect(() =>
-      placeShopStock(world([undefined]), [{ journeyId: "made-up-elsewhere", prefers: "made-up-key", required: true }])
+      placeShopStock(
+        world([undefined]),
+        [{ journeyId: "made-up-elsewhere", prefers: "made-up-key", required: true }],
+        defaultResolveEncounter
+      )
     ).toThrow("shop stock: made-up-key is sold at shop 0 of made-up-elsewhere, which does not exist")
+  })
+
+  it("asks the injected resolver which section is the shop", () => {
+    const configs = world([undefined])
+    configs.made_up[0][0].sideSections[0].encounter = "made-up-stall"
+    placeShopStock(configs, [{ journeyId: "made_up", prefers: "made-up-bucket" }], resolve)
+    expect(configs.made_up[0][0].sideSections[0].rewards).toEqual([{ type: "fragmentSlot", prefers: "made-up-bucket" }])
   })
 })

@@ -412,7 +412,7 @@ export const buildConfigs = (
 
   // Phase 3.6: mods place their shop-stock sentinels into resolved shops (after encounters resolve
   // + stock arrays seed, before slot collection fills them). Core names no currency here.
-  placeShopStock(allConfigs, shopStock)
+  placeShopStock(allConfigs, shopStock, resolveEncounter ?? defaultResolveEncounter)
   // A shop sells what was assigned to it and has no empty stock slot.
   trimEmptyStock(allConfigs, resolveEncounter ?? defaultResolveEncounter)
   // Whether an end holds a reward decides which ends may host a floor key, so a shop end's placeholder is

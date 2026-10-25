@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import type { SiteConfig, SubSection, TreasureReward } from "@/worldGen/types"
 import { placeFragments, type CurrencyDistribution } from "@/worldGen/placeFragments"
 import { placeShopStock } from "@/worldGen/shopStock"
+import { defaultResolveEncounter } from "@/game/siteAssembler"
 import type { Slot } from "@/worldGen/slots"
 import { PYRAMID_JOURNEYS } from "@/worldGen/data"
 import { purchaseFact, purchaseShopStock, type Purchase, type PurchaseTable } from "./purchases"
@@ -44,7 +45,7 @@ const bought = (id: string): TreasureReward => ({ type: "purchase", id })
 
 // Stocks the table's placeholders as the build does, then runs the worklist with the purchases and any other currency.
 const place = (world: Record<string, SiteConfig[]>, table: PurchaseTable, others: CurrencyDistribution[] = []) => {
-  placeShopStock(world, purchaseShopStock(table))
+  placeShopStock(world, purchaseShopStock(table), defaultResolveEncounter)
   return placeFragments(
     world,
     [...others, purchaseCurrency(table)],

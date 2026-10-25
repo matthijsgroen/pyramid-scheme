@@ -11,13 +11,10 @@ import type { ResolveEncounter } from "../game/siteAssembler"
 // home but that shop (a key sold only there), so a missing or full shop refuses the build, naming the piece and the shop.
 export type ShopStockAssignment = { journeyId: string; prefers: string; nth?: number; required?: boolean }
 
-// A shop section is a node whose gen-time-resolved encounter is fez-shop; assignEncounters seeded
+// A shop section is a node whose encounter resolves to the shop family; assignEncounters seeded
 // its `rewards[]` to the shop's capacity. Collect them in walk order so `nth` is stable.
 // `levels` is a journey's SiteConfig[] (each SiteConfig is one level's FloorConfig[]).
-const shopSectionsOf = (
-  levels: SiteConfig[],
-  isShop: (section: SubSection) => boolean = section => section.encounter === "fez-shop"
-): SubSection[] => {
+const shopSectionsOf = (levels: SiteConfig[], isShop: (section: SubSection) => boolean): SubSection[] => {
   const shops: SubSection[] = []
   const walk = (section: SubSection & { sideSections?: SubSection[] }) => {
     if (isShop(section)) shops.push(section)
@@ -34,10 +31,12 @@ const shopSectionsOf = (
 // capped spread instead (the fallback the design calls for). A required piece has no such fallback, so it is refused.
 export const placeShopStock = (
   allConfigs: Record<string, SiteConfig[]>,
-  assignments: readonly ShopStockAssignment[]
+  assignments: readonly ShopStockAssignment[],
+  resolveEncounter: ResolveEncounter
 ): void => {
+  const endsInShop = endsInShopBy(resolveEncounter)
   for (const { journeyId, prefers, nth = 0, required } of assignments) {
-    const shops = shopSectionsOf(allConfigs[journeyId] ?? [])
+    const shops = shopSectionsOf(allConfigs[journeyId] ?? [], endsInShop)
     const shop = shops[nth]
     const where = `shop ${nth} of ${journeyId}`
     if (!shop?.rewards) {
