@@ -136,13 +136,13 @@ the judging happens after a whole candidate exists.
 Rolled over 2000 seeds a tier, one attempt each — the search the offline pass runs. `steps` is what the
 ladder reported, and it is the closest thing to a bookkeeping measure this family has.
 
-| Tier    | Bars | Ticks | Marks in play           | Rung    | Splits | Seeds clean | Marks on the board | steps |
-| ------- | ---- | ----- | ----------------------- | ------- | ------ | ----------- | ------------------ | ----- |
-| starter | 3    | 8     | pin, link, before, span | squeeze | —      | 7.1%        | 2–3                | 15–18 |
-| junior  | 4    | 10    | + apart, together       | apart   | —      | 13.3%       | 4–5                | 28–32 |
-| expert  | 5    | 12    | all                     | split   | 1–3    | 3.4%        | ~7                 | 43–49 |
-| master  | 5    | 14    | all                     | split   | 4–8    | 1.4%        | ~7                 | 52–58 |
-| wizard  | 6    | 16    | all                     | split   | 9–20   | 2.4%        | ~8                 | 73–83 |
+| Tier    | Bars | Ticks | Marks in play           | Rung          | Splits | Seeds clean | Marks on the board | steps |
+| ------- | ---- | ----- | ----------------------- | ------------- | ------ | ----------- | ------------------ | ----- |
+| starter | 3    | 8     | pin, link, before, span | squeeze       | —      | 7.1%        | 2–3                | 15–18 |
+| junior  | 4    | 10    | + apart, together       | squeeze–apart | —      | 15.6%       | 4–5                | 28–32 |
+| expert  | 5    | 12    | all                     | split         | 1–3    | 3.4%        | ~7                 | 43–49 |
+| master  | 5    | 14    | all                     | split         | 4–8    | 1.4%        | ~7                 | 52–58 |
+| wizard  | 6    | 16    | all                     | split         | 9–20   | 2.4%        | ~8                 | 73–83 |
 
 **The top three tiers are the same rung, and the splits column is what tells them apart** — how many
 candidates only fall to a supposition. The ceiling matters as much as the floor: past twenty, a board stops

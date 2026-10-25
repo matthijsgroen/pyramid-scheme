@@ -1,11 +1,21 @@
 import { describe, expect, it } from "vitest"
-import type { Difficulty } from "@/data/difficultyLevels"
+import { difficulties, difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 import { puzzleSeeds } from "@/data/puzzleSeeds"
 import { configHash } from "@/game/seeds/configHash"
 import { generateProcession } from "./generateProcession"
 import { PROCESSION_CONFIG } from "./processionConfig"
+import { PROCESSION_META } from "./meta"
 import { countArrangements, deduce, requiredRung, RUNGS, type Rung } from "./solveProcession"
 import { markHolds, type ProcessionPuzzle } from "./procession"
+
+/** The tiers the world deals procession boards at, so the tiers with listed seeds. */
+const SHIPPED = difficulties.filter(tier => difficultyCompare(tier, PROCESSION_META.minTier ?? "starter") >= 0)
+
+/** Every board a room at this tier can open: one per listed seed. */
+const pool = (tier: Difficulty): ProcessionPuzzle[] => {
+  const options = PROCESSION_CONFIG[tier]
+  return (puzzleSeeds[configHash(options)] ?? []).map(seed => generateProcession(seed, options, 1))
+}
 
 /** The board a room actually opens at this tier — the first seed the offline pass admitted. */
 const shipped = (tier: Difficulty): ProcessionPuzzle => {
@@ -26,10 +36,9 @@ describe("the ladder", () => {
    * (`procession.md` §3). It stays a rung because the ladder has to start somewhere and the hint wording
    * keys on it — the board below is what keeps it honest.
    */
-  it("has a tier whose shipped board needs each rung above the floor", () => {
+  it("has shipped boards that need each rung above the floor", () => {
     const reached = new Set<Rung>()
-    for (const tier of ["starter", "junior", "expert", "master", "wizard"] as const)
-      reached.add(requiredRung(shipped(tier))!.rung)
+    for (const tier of SHIPPED) for (const puzzle of pool(tier)) reached.add(requiredRung(puzzle)!.rung)
     expect([...reached].sort()).toEqual(["apart", "split", "squeeze"])
     expect(reached.has("chain")).toBe(false)
   })
@@ -51,7 +60,7 @@ describe("the ladder", () => {
   })
 
   it("settles each shipped board, and its answer satisfies every mark", () => {
-    for (const tier of ["starter", "junior", "expert", "master", "wizard"] as const) {
+    for (const tier of SHIPPED) {
       const puzzle = shipped(tier)
       const ladder = requiredRung(puzzle)!
       expect(
@@ -68,7 +77,7 @@ describe("the ladder", () => {
    * one below it has to leave something unknown.
    */
   it("cannot settle a board with the rung below the one it needs", () => {
-    for (const tier of ["junior", "expert", "master", "wizard"] as const) {
+    for (const tier of SHIPPED) {
       const puzzle = shipped(tier)
       const needed = RUNGS.indexOf(requiredRung(puzzle)!.rung)
       expect(deduce(puzzle, RUNGS[needed - 1]).determined, tier).toBe(false)
@@ -76,7 +85,8 @@ describe("the ladder", () => {
   })
 
   it("counts both arrangements when a mark is taken away", () => {
-    const puzzle = shipped("starter")
+    // Starter ships no procession board, so its board is searched from its settings.
+    const puzzle = generateProcession(1, PROCESSION_CONFIG.starter)
     const loosened = { ...puzzle, marks: puzzle.marks.filter(mark => mark.kind !== "pin") }
     // Nothing pins the day any more, so it slides along the track — which is what the generator's
     // thinning pass is really testing for when it asks for uniqueness.

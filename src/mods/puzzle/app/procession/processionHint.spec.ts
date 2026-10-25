@@ -5,10 +5,14 @@ import { requiredRung } from "@/mods/puzzle/game/procession/solveProcession"
 import { createProcessionState } from "@/mods/puzzle/game/procession/procession"
 import { puzzleSeeds } from "@/data/puzzleSeeds"
 import { configHash } from "@/game/seeds/configHash"
+import { PROCESSION_META } from "@/mods/puzzle/game/procession/meta"
+import { difficultyCompare } from "@/data/difficultyLevels"
 import { buildProcessionHint } from "./processionHint"
 
+// A shipped tier's first listed board; a tier procession does not ship at is searched from its settings.
 const board = (tier: "starter" | "expert" | "wizard") => {
   const options = PROCESSION_CONFIG[tier]
+  if (difficultyCompare(tier, PROCESSION_META.minTier ?? "starter") < 0) return generateProcession(1, options)
   return generateProcession(puzzleSeeds[configHash(options)][0], options, 1)
 }
 
