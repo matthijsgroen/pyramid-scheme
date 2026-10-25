@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, expect, it } from "vitest"
-import { renderHook } from "@testing-library/react"
+import { render, renderHook } from "@testing-library/react"
 import type { Gate } from "./allJourneys"
 import { registerGateNeeds, useMergedGateNeeds } from "./gateNeeds"
 
@@ -37,5 +37,45 @@ describe("useMergedGateNeeds stability", () => {
     const first = result.current
     rerender()
     expect(result.current).toBe(first)
+  })
+})
+
+describe("a reader new on every render", () => {
+  // Registered hooks stay for the rest of the file, so the hook that is new every render comes last.
+  it("gives a new merge when a reader changes, and the kept one when none does", () => {
+    const first = () => []
+    const second = () => []
+    let current = first
+    registerGateNeeds(() => current)
+    const { result, rerender } = renderHook(() => useMergedGateNeeds())
+    const before = result.current
+    rerender()
+    expect(result.current).toBe(before)
+    current = second
+    rerender()
+    expect(result.current).not.toBe(before)
+  })
+
+  it("renders without looping and still answers", () => {
+    registerGateNeeds(() => (g: Gate) => ("tier" in g ? [{ key: "fresh", label: "Fresh" }] : []))
+    let renders = 0
+    const Probe = () => {
+      renders++
+      const merged = useMergedGateNeeds()
+      return (
+        <p>
+          {merged.open(gate, new Set())
+            ? "open"
+            : merged
+                .unmet(gate, new Set(["a", "b"]))
+                .map(n => n.key)
+                .join()}
+        </p>
+      )
+    }
+    const { container, rerender } = render(<Probe />)
+    rerender(<Probe />)
+    expect(container.textContent).toBe("fresh")
+    expect(renders).toBe(2)
   })
 })

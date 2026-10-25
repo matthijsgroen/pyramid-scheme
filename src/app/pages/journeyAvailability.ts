@@ -36,10 +36,14 @@ export const currentChapter = (
   gateOpen: (tier: Difficulty) => boolean = () => true
 ): Difficulty => [...difficulties].reverse().find(d => isTierUnlocked(d, heldKeys, gateOpen)) ?? difficulties[0]
 
-// The player earned the key to a tier this release doesn't ship yet — they've reached the end of
-// the content and should be told more is coming, not left wondering why nothing opened.
-export const comingSoonDifficulty = (heldKeys: ReadonlySet<string>): Difficulty | undefined =>
-  difficulties.find(d => !isDifficultyReleased(d) && holdsTierKey(d, heldKeys))
+// The player earned the key to a tier this release doesn't ship yet, and meets every other need on it
+// (`gateOpen`) — they've reached the end of the content and should be told more is coming, not left
+// wondering why nothing opened. A tier still shut by another need is not promised.
+export const comingSoonDifficulty = (
+  heldKeys: ReadonlySet<string>,
+  gateOpen: (tier: Difficulty) => boolean = () => true
+): Difficulty | undefined =>
+  difficulties.find(d => !isDifficultyReleased(d) && holdsTierKey(d, heldKeys) && gateOpen(d))
 
 export const availablePyramidJourneyIds = (
   journeys: readonly Journey[],

@@ -55,6 +55,12 @@ describe("unreleased tiers", () => {
     expect(comingSoonDifficulty(keys(TIER_UNLOCK_PERK_IDS.master![0]))).toBe("master")
   })
 
+  it("names nothing coming soon while another need still shuts that tier", () => {
+    const masterKey = keys(TIER_UNLOCK_PERK_IDS.master![0])
+    expect(comingSoonDifficulty(masterKey, tier => tier !== "master")).toBeUndefined()
+    expect(comingSoonDifficulty(masterKey, () => true)).toBe("master")
+  })
+
   it("names nothing coming soon before the player reaches the cap", () => {
     expect(comingSoonDifficulty(keys(...TIER_UNLOCK_PERK_IDS.expert!))).toBeUndefined()
   })

@@ -1,4 +1,3 @@
-import { useState } from "react"
 import type { Gate } from "./allJourneys"
 
 // What else a mod asks of a tier or a tomb before it opens, beyond the treasure and the map pieces core
@@ -17,10 +16,11 @@ export type GateNeed = {
 type GateNeedsReader = (gate: Gate) => readonly GateNeed[]
 
 /**
- * The hook returns a reader of the needs on a gate. It must return the SAME reader on every render
- * until what it reads changes (memoise it with useCallback on the state and translations it uses): the
- * merged result keeps one identity only while every reader does, and the memos that depend on it
- * (available journeys, the detector's compass hits) recompute whenever it changes.
+ * The hook returns a reader of the needs on a gate. It should return the SAME reader on every render
+ * until what it reads changes (memoise it on the state and translations it uses): the merged result keeps
+ * one identity only while every reader does, and the memos that depend on it (available journeys, the
+ * detector's compass hits) recompute whenever it changes. A reader new on every render costs those
+ * recomputes on every render, nothing more.
  */
 export type UseGateNeeds = () => GateNeedsReader
 
@@ -41,16 +41,24 @@ const merge = (readers: readonly GateNeedsReader[]): MergedGateNeeds => {
   return { needs, unmet, open: (gate, held) => unmet(gate, held).length === 0 }
 }
 
-const sameReaders = (a: readonly GateNeedsReader[], b: readonly GateNeedsReader[]) =>
-  a.length === b.length && a.every((reader, i) => reader === b[i])
+// One merge per sequence of readers, found by walking their identities: the same readers give back the same
+// merged object, and readers that change every render only cost a new merge each render. Weakly held, so a
+// merge goes once its readers do.
+type MergeNode = { next: WeakMap<GateNeedsReader, MergeNode>; merged?: MergedGateNeeds }
+const merges: MergeNode = { next: new WeakMap() }
 
-// The previous merge is kept, as state derived during render, while the readers are shallow-equal.
-const useStableMerge = (readers: readonly GateNeedsReader[]): MergedGateNeeds => {
-  const [kept, setKept] = useState(() => ({ readers, merged: merge(readers) }))
-  if (sameReaders(kept.readers, readers)) return kept.merged
-  const next = { readers, merged: merge(readers) }
-  setKept(next)
-  return next.merged
+const mergeOf = (readers: readonly GateNeedsReader[]): MergedGateNeeds => {
+  let node = merges
+  for (const reader of readers) {
+    let next = node.next.get(reader)
+    if (!next) {
+      next = { next: new WeakMap() }
+      node.next.set(reader, next)
+    }
+    node = next
+  }
+  node.merged ??= merge(readers)
+  return node.merged
 }
 
 // No registered hook means no need, so every gate is open.
@@ -60,5 +68,5 @@ export const useMergedGateNeeds = (): MergedGateNeeds => {
     // eslint-disable-next-line react-hooks/rules-of-hooks -- stable registry order; see above
     readers.push(useNeeds())
   }
-  return useStableMerge(readers)
+  return mergeOf(readers)
 }

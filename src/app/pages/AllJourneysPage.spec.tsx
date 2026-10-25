@@ -107,7 +107,8 @@ vi.mock("@/app/pages/gateNeeds", () => ({
 }))
 vi.mock("@/app/pages/journeyAvailability", () => ({
   isTierUnlocked: (tier: string) => tier === "starter" || tier === "junior",
-  comingSoonDifficulty: () => comingSoon,
+  comingSoonDifficulty: (_held: ReadonlySet<string>, gateOpen: (tier: string) => boolean) =>
+    comingSoon && gateOpen(comingSoon) ? comingSoon : undefined,
   holdsTierKey: () => true,
   tierKeyNeed: (
     _tier: string,
@@ -346,5 +347,14 @@ describe("AllJourneys", () => {
     expect(screen.queryByText("journeys.tierNeed")).toBeNull()
     expect(screen.queryByText("journeys.tierLockedName difficulty.expert")).toBeNull()
     expect(screen.getByText("ui.tierComingSoon difficulty.expert")).toBeTruthy()
+  })
+
+  it("promises no coming-soon tier while another need still shuts it", () => {
+    comingSoon = "expert"
+    gateNeeds = [{ gate: { tier: "expert" }, key: "made-up-need", label: "Need a thing" }]
+    renderList()
+
+    expect(screen.queryByText("ui.tierComingSoon difficulty.expert")).toBeNull()
+    expect(screen.getByText("Need a thing")).toBeTruthy()
   })
 })

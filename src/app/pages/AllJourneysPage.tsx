@@ -80,7 +80,7 @@ export const AllJourneys: FC<{ startGame: () => void; compact?: boolean }> = ({ 
       const need = tierKeyNeed(tier, heldKeys, keyDisplay, t("journeys.tierNeed"))
       return need ? [need] : []
     },
-    comingSoon: comingSoonDifficulty(heldKeys),
+    comingSoon: comingSoonDifficulty(heldKeys, gateOpen),
   })
 
   // Another journey under way is dropped first: a pyramid after asking, a tomb without.
