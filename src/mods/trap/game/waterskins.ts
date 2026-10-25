@@ -15,7 +15,8 @@ import { trapsByTier } from "./trapRooms"
 //     on top of the trap share: Fez sells water where the traps are.
 // Trap off → this distribution and the stock placeholders aren't registered → no waterskin is placed.
 
-export const WATERSKINS_PER_TRAP = 1.3
+// About 150 found waterskins across expert–wizard at today's trap rooms; the one constant to change the total.
+export const WATERSKINS_PER_TRAP = 0.5
 export const WATERSKINS_PER_SHOP = 2
 export const WATERSKIN_STOCK = "waterskin"
 const FIRST_TIER: Difficulty = "expert"

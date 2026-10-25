@@ -170,6 +170,7 @@ From `yarn loot-report` before (651aad2c) and after the bake (88646b9e). `docs/l
 - Phase 4 (layout-first) fingerprints — expert moved (`a1acfbd5cecff73b`): loot re-placed on the picked layout under the detector gate and room reach (28 fragments, 15 sellables, 1 mosaic piece, 1 coin moved).
 - Phase 4 (layout-first) fingerprints — master moved (`92299cac20f242ab`): master's trap corridor (19 open junk corridors become 3-puzzle trap paths, traps 38 → 95, 19 more puzzle rooms), 6 main floors re-pinned, and loot re-placed (32 coins, 15 fragments, 9 sellables moved).
 - Phase 4 (layout-first) fingerprints — wizard moved (`30ea69c36592e055`): loot re-placed on the picked layout under the detector gate and room reach (42 fragments, 6 sellables, 2 mosaic pieces, 1 coin moved).
+- Phase 4 (layout-first) — Found waterskins follow the traps: each tier from expert up gets round(`WATERSKINS_PER_TRAP` × its trap rooms), with `WATERSKINS_PER_TRAP = 0.5` (`src/mods/trap/game/waterskins.ts`). That is the designer's "about 150 in all" at today's 94 / 95 / 128 traps (≈ 47 / 48 / 64 = 159), plus 2 sold in each of the 7 expert-and-up tomb shops. One constant changes the total. Alternative: a flat number per tier.
 
 ### Phase 6 — the camp as home
 
