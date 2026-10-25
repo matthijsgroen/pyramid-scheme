@@ -61,6 +61,7 @@ describe(readHomeSave, () => {
     ["a number", 7],
     ["an object without version", { haul: [] }],
     ["version 2", { version: 2, haul: [coins] }],
+    ["a chapter that is no tier", { version: 1, haul: [coins], chapter: "bogus" }],
   ])("reads %s as the empty save", (_, stored) => {
     expect(readHomeSave(stored)).toEqual(emptyHomeSave())
   })

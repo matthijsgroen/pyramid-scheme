@@ -1,5 +1,5 @@
 import { produce } from "immer"
-import { difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
+import { difficulties, difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
 import type { TreasureReward } from "./siteTypes"
 
 // The home save: what the player brought home since the last unpacking, and the chapter last shown.
@@ -20,7 +20,7 @@ const isReward = (value: unknown): value is TreasureReward =>
 const isHomeSaveV1 = (save: Record<string, unknown>): boolean =>
   Array.isArray(save.haul) &&
   save.haul.every(isReward) &&
-  (save.chapter === undefined || typeof save.chapter === "string")
+  (save.chapter === undefined || difficulties.includes(save.chapter as Difficulty))
 
 // One branch per save version; a later version adds its migration here. A version this build does not
 // know (a save from a newer build) or a damaged save is unreadable, never guessed at.
