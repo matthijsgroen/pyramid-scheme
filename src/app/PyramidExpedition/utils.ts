@@ -9,7 +9,7 @@ export function getNextUnlockedPyramidJourneyId(
   journeyId: string,
   heldKeys: ReadonlySet<string>,
   isCompleted: (journeyId: string) => boolean,
-  gateOpen?: (tier: Difficulty) => boolean
+  gateOpen: (tier: Difficulty) => boolean
 ): string | undefined {
   return nextPyramidJourneyId(journeys, journeyId, heldKeys, isCompleted, undefined, gateOpen)
 }

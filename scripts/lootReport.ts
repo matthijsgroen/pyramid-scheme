@@ -8,12 +8,10 @@ import { execFileSync } from "node:child_process"
 import { writeFileSync } from "node:fs"
 import { fileURLToPath } from "node:url"
 import { generatedWorldConfigs } from "../src/data/generatedWorld"
-import { resolveEncounterMeta, resolveKeyRequirements } from "../src/mods/allFamilyMeta"
-import { ALL_CURRENCY_DISTRIBUTIONS } from "../src/mods/allCurrencyDistributions"
-import { MOD_LOOT_TOTALS, MOD_REACHABILITY_SUPPORT } from "../src/mods/registeredMods"
+import { resolveEncounterMeta } from "../src/mods/allFamilyMeta"
+import { worldGateWalk } from "../src/mods/worldGateWalk"
+import { MOD_LOOT_TOTALS } from "../src/mods/registeredMods"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "../src/worldGen/data"
-import { journeyMetaFor, makeGateWalk } from "../src/worldGen/gateWalk"
-import { mergeReachabilitySupport } from "../src/worldGen/placeFragments"
 import { buildLootReport, renderLootReportMarkdown } from "../src/worldGen/lootReport"
 import type { Difficulty } from "../src/worldGen/types"
 import type { TierRow } from "../src/worldGen/lootReport"
@@ -24,15 +22,8 @@ const journeyId = journeyIdx !== -1 ? argv[journeyIdx + 1] : argv.find(a => a.st
 
 const tiers = new Map<string, Difficulty>([...PYRAMID_JOURNEYS, ...TOMB_JOURNEYS].map(j => [j.id, j.tier]))
 
-// The gate walk over the baked world, injected as the bake injects it: the registered currencies merged with every
-// mod's reachability support, the real key requirements and encounter resolution. It walks only when a row asks.
-const walk = makeGateWalk({
-  configs: generatedWorldConfigs,
-  journeyMeta: journeyMetaFor(PYRAMID_JOURNEYS, TOMB_JOURNEYS),
-  support: mergeReachabilitySupport(ALL_CURRENCY_DISTRIBUTIONS, MOD_REACHABILITY_SUPPORT),
-  resolveRequirements: resolveKeyRequirements,
-  resolveEncounter: resolveEncounterMeta,
-})
+// The gate walk over the baked world, the one the bake runs. It walks only when a row asks.
+const { walk } = worldGateWalk(generatedWorldConfigs)
 
 const report = buildLootReport(generatedWorldConfigs, {
   resolveEncounter: resolveEncounterMeta,

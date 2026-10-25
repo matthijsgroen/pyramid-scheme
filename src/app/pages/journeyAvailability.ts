@@ -26,14 +26,14 @@ export const holdsTierKey = (difficulty: Difficulty, heldKeys: ReadonlySet<strin
 export const isTierUnlocked = (
   difficulty: Difficulty,
   heldKeys: ReadonlySet<string>,
-  gateOpen: (tier: Difficulty) => boolean = () => true
+  gateOpen: (tier: Difficulty) => boolean
 ): boolean => isDifficultyReleased(difficulty) && holdsTierKey(difficulty, heldKeys) && gateOpen(difficulty)
 
 // The chapter the player is in: the last tier, in order, that is open to them. The first tier is always
 // open, so a player holding no key is in it.
 export const currentChapter = (
   heldKeys: ReadonlySet<string>,
-  gateOpen: (tier: Difficulty) => boolean = () => true
+  gateOpen: (tier: Difficulty) => boolean
 ): Difficulty => [...difficulties].reverse().find(d => isTierUnlocked(d, heldKeys, gateOpen)) ?? difficulties[0]
 
 // The player earned the key to a tier this release doesn't ship yet, and meets every other need on it
@@ -41,7 +41,7 @@ export const currentChapter = (
 // wondering why nothing opened. A tier still shut by another need is not promised.
 export const comingSoonDifficulty = (
   heldKeys: ReadonlySet<string>,
-  gateOpen: (tier: Difficulty) => boolean = () => true
+  gateOpen: (tier: Difficulty) => boolean
 ): Difficulty | undefined =>
   difficulties.find(d => !isDifficultyReleased(d) && holdsTierKey(d, heldKeys) && gateOpen(d))
 
@@ -50,7 +50,7 @@ export const availablePyramidJourneyIds = (
   heldKeys: ReadonlySet<string>,
   isCompleted: (journeyId: string) => boolean,
   isFreeOrder: (difficulty: Difficulty) => boolean = isFreeOrderDifficulty,
-  gateOpen: (tier: Difficulty) => boolean = () => true
+  gateOpen: (tier: Difficulty) => boolean
 ): ReadonlySet<string> => {
   const available = new Set<string>()
   const previousInTier = new Map<Difficulty, Journey>()
@@ -75,7 +75,7 @@ export const nextPyramidJourneyId = (
   heldKeys: ReadonlySet<string>,
   isCompleted: (journeyId: string) => boolean = () => false,
   isFreeOrder: (difficulty: Difficulty) => boolean = isFreeOrderDifficulty,
-  gateOpen: (tier: Difficulty) => boolean = () => true
+  gateOpen: (tier: Difficulty) => boolean
 ): string | undefined => {
   const index = journeys.findIndex(j => j.id === journeyId)
   if (index === -1) return undefined

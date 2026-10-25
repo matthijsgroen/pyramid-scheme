@@ -11,6 +11,7 @@ import {
   tierKeyNeed,
 } from "./journeyAvailability"
 
+const open = () => true
 const noKeys: ReadonlySet<string> = new Set()
 const keys = (...ids: string[]): ReadonlySet<string> => new Set(ids)
 const completed =
@@ -23,28 +24,28 @@ const juniorPyramids = journeys.filter(j => !j.entryLock && j.difficulty === "ju
 
 describe(isTierUnlocked, () => {
   it("lets the player start the game — the first tier has no entry key", () => {
-    expect(isTierUnlocked("starter", noKeys)).toBe(true)
+    expect(isTierUnlocked("starter", noKeys, open)).toBe(true)
   })
 
   it("opens a tier on any one of its four unlock treasures, not a specific one", () => {
     for (const keyId of TIER_UNLOCK_PERK_IDS.junior!) {
-      expect(isTierUnlocked("junior", keys(keyId))).toBe(true)
+      expect(isTierUnlocked("junior", keys(keyId), open)).toBe(true)
     }
   })
 
   it("stays shut for a key belonging to another tier", () => {
-    expect(isTierUnlocked("junior", keys(...TIER_UNLOCK_PERK_IDS.expert!))).toBe(false)
+    expect(isTierUnlocked("junior", keys(...TIER_UNLOCK_PERK_IDS.expert!), open)).toBe(false)
   })
 })
 
 describe("unreleased tiers", () => {
   it("keeps master shut even with its unlock key held", () => {
-    expect(isTierUnlocked("master", keys(...TIER_UNLOCK_PERK_IDS.master!))).toBe(false)
+    expect(isTierUnlocked("master", keys(...TIER_UNLOCK_PERK_IDS.master!), open)).toBe(false)
   })
 
   it("offers no master expedition to a player holding every key", () => {
     const allKeys = keys(...(Object.values(TIER_UNLOCK_PERK_IDS).flat() as string[]))
-    const available = availablePyramidJourneyIds(journeys, allKeys, () => true)
+    const available = availablePyramidJourneyIds(journeys, allKeys, () => true, undefined, open)
     const tiers = new Set(journeys.filter(j => available.has(j.id)).map(j => j.difficulty))
     expect(tiers.has("master")).toBe(false)
     expect(tiers.has("wizard")).toBe(false)
@@ -52,7 +53,7 @@ describe("unreleased tiers", () => {
   })
 
   it("names master as coming soon once its key is held", () => {
-    expect(comingSoonDifficulty(keys(TIER_UNLOCK_PERK_IDS.master![0]))).toBe("master")
+    expect(comingSoonDifficulty(keys(TIER_UNLOCK_PERK_IDS.master![0]), open)).toBe("master")
   })
 
   it("names nothing coming soon while another need still shuts that tier", () => {
@@ -62,29 +63,35 @@ describe("unreleased tiers", () => {
   })
 
   it("names nothing coming soon before the player reaches the cap", () => {
-    expect(comingSoonDifficulty(keys(...TIER_UNLOCK_PERK_IDS.expert!))).toBeUndefined()
+    expect(comingSoonDifficulty(keys(...TIER_UNLOCK_PERK_IDS.expert!), open)).toBeUndefined()
   })
 })
 
 describe(availablePyramidJourneyIds, () => {
   it("offers the first expedition on a fresh game", () => {
-    const available = availablePyramidJourneyIds(journeys, noKeys, completed())
+    const available = availablePyramidJourneyIds(journeys, noKeys, completed(), undefined, open)
     expect([...available]).toEqual([starterPyramids[0]])
   })
 
   it("opens the next expedition of a tier as the one before it is completed", () => {
-    const available = availablePyramidJourneyIds(journeys, noKeys, completed(starterPyramids[0]))
+    const available = availablePyramidJourneyIds(journeys, noKeys, completed(starterPyramids[0]), undefined, open)
     expect([...available]).toEqual(starterPyramids.slice(0, 2))
   })
 
   it("keeps the next tier shut until one of its unlock treasures is held, however much is completed", () => {
-    const available = availablePyramidJourneyIds(journeys, noKeys, completed(...starterPyramids))
+    const available = availablePyramidJourneyIds(journeys, noKeys, completed(...starterPyramids), undefined, open)
     expect(available.has(juniorPyramids[0])).toBe(false)
     expect([...available]).toEqual(starterPyramids)
   })
 
   it("admits the player to the tier's first expedition once the treasure is held", () => {
-    const available = availablePyramidJourneyIds(journeys, keys("starter_a_1"), completed(...starterPyramids))
+    const available = availablePyramidJourneyIds(
+      journeys,
+      keys("starter_a_1"),
+      completed(...starterPyramids),
+      undefined,
+      open
+    )
     expect(available.has(juniorPyramids[0])).toBe(true)
     // Entry only — the rest of the tier still opens one at a time.
     expect(available.has(juniorPyramids[1])).toBe(false)
@@ -94,7 +101,9 @@ describe(availablePyramidJourneyIds, () => {
     const available = availablePyramidJourneyIds(
       journeys,
       keys("starter_a_1"),
-      completed(...starterPyramids, juniorPyramids[0])
+      completed(...starterPyramids, juniorPyramids[0]),
+      undefined,
+      open
     )
     expect(available.has(juniorPyramids[1])).toBe(true)
     expect(available.has(juniorPyramids[2])).toBe(false)
@@ -116,15 +125,17 @@ describe("a tier a need keeps shut", () => {
 
 describe(nextPyramidJourneyId, () => {
   it("announces the next expedition inside the tier", () => {
-    expect(nextPyramidJourneyId(journeys, juniorPyramids[0], keys("starter_a_1"))).toBe(juniorPyramids[1])
+    expect(nextPyramidJourneyId(journeys, juniorPyramids[0], keys("starter_a_1"), undefined, undefined, open)).toBe(
+      juniorPyramids[1]
+    )
   })
 
   it("announces nothing at a tier's last expedition — a tomb comes next, not a pyramid", () => {
-    expect(nextPyramidJourneyId(journeys, starterPyramids.at(-1)!, noKeys)).toBeUndefined()
+    expect(nextPyramidJourneyId(journeys, starterPyramids.at(-1)!, noKeys, undefined, undefined, open)).toBeUndefined()
   })
 
   it("announces nothing the player couldn't start", () => {
-    expect(nextPyramidJourneyId(journeys, juniorPyramids[0], noKeys)).toBeUndefined()
+    expect(nextPyramidJourneyId(journeys, juniorPyramids[0], noKeys, undefined, undefined, open)).toBeUndefined()
   })
 })
 
@@ -143,32 +154,32 @@ describe("free-order tier", () => {
   const juniorKey = keys(...TIER_UNLOCK_PERK_IDS.junior!)
 
   it("opens every journey of the tier with the tier key, nothing completed", () => {
-    const available = availablePyramidJourneyIds(world, juniorKey, completed(), freeJunior)
+    const available = availablePyramidJourneyIds(world, juniorKey, completed(), freeJunior, open)
     expect([...available].filter(id => id.startsWith("j"))).toEqual(["j1", "j2", "j3"])
   })
 
   it("keeps the tier shut without its key", () => {
-    const available = availablePyramidJourneyIds(world, noKeys, completed(), freeJunior)
+    const available = availablePyramidJourneyIds(world, noKeys, completed(), freeJunior, open)
     expect([...available].some(id => id.startsWith("j"))).toBe(false)
   })
 
   it("keeps the previous-completed rule in a tier that is not free-order", () => {
-    const available = availablePyramidJourneyIds(world, juniorKey, completed(), freeJunior)
+    const available = availablePyramidJourneyIds(world, juniorKey, completed(), freeJunior, open)
     expect([...available].filter(id => id.startsWith("s"))).toEqual(["s1"])
   })
 
   it("offers the first open journey after this one, then any before it", () => {
-    expect(nextPyramidJourneyId(world, "j1", juniorKey, completed(), freeJunior)).toBe("j2")
-    expect(nextPyramidJourneyId(world, "j3", juniorKey, completed(), freeJunior)).toBe("j1")
+    expect(nextPyramidJourneyId(world, "j1", juniorKey, completed(), freeJunior, open)).toBe("j2")
+    expect(nextPyramidJourneyId(world, "j3", juniorKey, completed(), freeJunior, open)).toBe("j1")
   })
 
   it("never names a completed journey, nor the one just finished", () => {
-    expect(nextPyramidJourneyId(world, "j1", juniorKey, completed("j2"), freeJunior)).toBe("j3")
-    expect(nextPyramidJourneyId(world, "j1", juniorKey, completed("j2", "j3"), freeJunior)).toBeUndefined()
+    expect(nextPyramidJourneyId(world, "j1", juniorKey, completed("j2"), freeJunior, open)).toBe("j3")
+    expect(nextPyramidJourneyId(world, "j1", juniorKey, completed("j2", "j3"), freeJunior, open)).toBeUndefined()
   })
 
   it("never names a journey of a closed tier", () => {
-    expect(nextPyramidJourneyId(world, "j1", noKeys, completed(), freeJunior)).toBeUndefined()
+    expect(nextPyramidJourneyId(world, "j1", noKeys, completed(), freeJunior, open)).toBeUndefined()
   })
 
   it("marks wizard, and no other tier, free-order", () => {
@@ -179,13 +190,13 @@ describe("free-order tier", () => {
 
 describe(currentChapter, () => {
   it("is the first tier when no key is held", () => {
-    expect(currentChapter(noKeys)).toBe("starter")
-    expect(currentChapter(keys("not-a-tier-key"))).toBe("starter")
+    expect(currentChapter(noKeys, open)).toBe("starter")
+    expect(currentChapter(keys("not-a-tier-key"), open)).toBe("starter")
   })
 
   it("is the highest tier a held key opens", () => {
-    expect(currentChapter(keys(TIER_UNLOCK_PERK_IDS.junior![0]))).toBe("junior")
-    expect(currentChapter(keys(TIER_UNLOCK_PERK_IDS.junior![0], TIER_UNLOCK_PERK_IDS.expert![0]))).toBe("expert")
+    expect(currentChapter(keys(TIER_UNLOCK_PERK_IDS.junior![0]), open)).toBe("junior")
+    expect(currentChapter(keys(TIER_UNLOCK_PERK_IDS.junior![0], TIER_UNLOCK_PERK_IDS.expert![0]), open)).toBe("expert")
   })
 
   it("passes over a tier a need keeps shut", () => {
@@ -195,7 +206,7 @@ describe(currentChapter, () => {
 
   it("passes over a tier this release does not ship", () => {
     const all = Object.values(TIER_UNLOCK_PERK_IDS).flatMap(ids => ids ?? [])
-    expect(currentChapter(keys(...all))).toBe("expert")
+    expect(currentChapter(keys(...all), open)).toBe("expert")
   })
 })
 
