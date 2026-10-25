@@ -51,33 +51,16 @@ export const DRAFT_BEATS: Readonly<Record<"tombs" | "camp" | "structures" | "ani
   ],
 }
 
+/** The seam each kind of animal beat waits on, by id prefix. */
+const ANIMAL_SEAMS: readonly (readonly [prefix: string, seam: string])[] = [
+  ["animal.forSale", "Fez's stall shows a purchase for the first time"],
+  ["animal.bought", "a purchase is bought"],
+  ["animal.blocked", "a gate refuses for want of a purchase"],
+  ["animal.through", "a gate opens because of a purchase"],
+  ["animal.arrives", "a bought step arrives in the camp"],
+]
+
 /** Beats written before the game has the seam that plays them: beat id → the missing seam. */
-export const WAITING_BEATS: Readonly<Record<string, string>> = {
-  "animal.forSale": "Fez's stall shows a purchase for the first time",
-  "animal.boughtDonkey": "a purchase is bought",
-  "animal.blockedDonkey": "a gate refuses for want of a purchase",
-  "animal.throughDonkey": "a gate opens because of a purchase",
-  "animal.arrivesDonkey": "a bought step arrives in the camp",
-  "animal.boughtCart": "a purchase is bought",
-  "animal.blockedCart": "a gate refuses for want of a purchase",
-  "animal.throughCart": "a gate opens because of a purchase",
-  "animal.arrivesCart": "a bought step arrives in the camp",
-  "animal.boughtCamel": "a purchase is bought",
-  "animal.blockedCamel": "a gate refuses for want of a purchase",
-  "animal.throughCamel": "a gate opens because of a purchase",
-  "animal.arrivesCamel": "a bought step arrives in the camp",
-  "animal.boughtSecondDonkey": "a purchase is bought",
-  "animal.blockedSecondDonkey": "a gate refuses for want of a purchase",
-  "animal.throughSecondDonkey": "a gate opens because of a purchase",
-  "animal.arrivesSecondDonkey": "a bought step arrives in the camp",
-  "animal.boughtSecondCamel": "a purchase is bought",
-  "animal.blockedSecondCamel": "a gate refuses for want of a purchase",
-  "animal.throughSecondCamel": "a gate opens because of a purchase",
-  "animal.arrivesSecondCamel": "a bought step arrives in the camp",
-  "animal.boughtSturdyCart": "a purchase is bought",
-  "animal.blockedSturdyCart": "a gate refuses for want of a purchase",
-  "animal.throughSturdyCart": "a gate opens because of a purchase",
-  "animal.arrivesSturdyCart": "a bought step arrives in the camp",
-  "animal.boughtCaravanBanner": "a purchase is bought",
-  "animal.arrivesCaravanBanner": "a bought step arrives in the camp",
-}
+export const WAITING_BEATS: Readonly<Record<string, string | undefined>> = Object.fromEntries(
+  DRAFT_BEATS.animals.map(id => [id, ANIMAL_SEAMS.find(([prefix]) => id.startsWith(prefix))?.[1]])
+)

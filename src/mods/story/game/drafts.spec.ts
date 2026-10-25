@@ -22,4 +22,8 @@ describe("the drafted beats", () => {
     const listed = Object.values(DRAFT_BEATS).flat()
     expect(listed.filter((id, index) => listed.indexOf(id) !== index)).toEqual([])
   })
+
+  it("name the seam every animal beat waits on", () => {
+    expect(DRAFT_BEATS.animals.filter(id => !WAITING_BEATS[id])).toEqual([])
+  })
 })
