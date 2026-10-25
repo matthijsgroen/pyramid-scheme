@@ -35,10 +35,11 @@ const itemFor = (id: string): CollectionItem => ({
 const tabs: Record<string, CollectionTab> = {}
 const setTab = (id: string, tab: Partial<CollectionTab>) =>
   (tabs[id] = { label: `Tab ${id}`, shown: true, ids: [], loaded: true, ...tab })
-const register = (id: string, order: number) =>
+const register = (id: string, order: number, details = true) =>
   registerCollectionSection({
     id,
     order,
+    details,
     useTab: () => tabs[id],
     Component: ({ onSelect, isNew, newLabel }: CollectionSectionProps) => (
       <div>
@@ -65,6 +66,15 @@ beforeEach(async () => {
 afterEach(cleanup)
 
 describe(CollectionPage, () => {
+  it("shows no detail panel under a section that shows everything itself, nor with no tab", async () => {
+    register("a", 1, false)
+    setTab("a", { ids: ["a1"] })
+    await seenSave({ a: ["a1"] })
+    render(<CollectionPage />)
+    expect(await screen.findByText("Item a1")).toBeTruthy()
+    expect(screen.queryByText("collection.clickForDetails")).toBeNull()
+  })
+
   it("shows a tapped item's details even when the player holds no inventory items", async () => {
     register("a", 1)
     setTab("a", { ids: ["a1"] })
@@ -83,6 +93,7 @@ describe(CollectionPage, () => {
     render(<CollectionPage />)
 
     expect(screen.queryByText("collection.empty")).not.toBeNull()
+    expect(screen.queryByText("collection.clickForDetails")).toBeNull()
     expect(screen.queryByRole("tablist")).toBeNull()
   })
 

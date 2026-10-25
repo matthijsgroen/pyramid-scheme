@@ -11,4 +11,5 @@ if (isModEnabled("hieroglyph"))
     order: 20,
     Component: HieroglyphCollectionSection,
     useTab: useHieroglyphTab,
+    details: true,
   })

@@ -155,14 +155,16 @@ export const CollectionPage: FC = () => {
         ) : (
           <p className="py-8 text-center text-gray-700">{t("collection.empty")}</p>
         )}
-        {/* Always present: most of what the Collection shows isn't an inventory item at all — a
-            finished hieroglyph is fragments, a tomb treasure is a held key, mosaic glass is a
-            ledger count — so gating this panel on the inventory left those tapping into silence. */}
-        <DetailPanel
-          item={selectedItem}
-          debug={isDevelopMode}
-          onAdd={() => selectedItem && addItem(selectedItem?.id, 1)}
-        />
+        {/* Under a section whose tiles open details, whether or not the player holds the item: a finished
+            hieroglyph is fragments and a tomb treasure is a held key, so gating this panel on the inventory
+            left those tapping into silence. A section that shows everything itself, or no tab at all, has none. */}
+        {section?.details && (
+          <DetailPanel
+            item={selectedItem}
+            debug={isDevelopMode}
+            onAdd={() => selectedItem && addItem(selectedItem?.id, 1)}
+          />
+        )}
       </div>
     </div>
   )

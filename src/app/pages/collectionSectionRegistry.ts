@@ -46,6 +46,9 @@ export type CollectionSectionEntry = {
   Component: FC<CollectionSectionProps>
   // A hook, called every render in registry order (fixed at module load).
   useTab: () => CollectionTab
+  // The section's tiles open the shared detail panel when tapped. Unset: the section shows everything
+  // itself, and no detail panel stands under it.
+  details?: boolean
 }
 
 const registry = new Map<string, CollectionSectionEntry>()

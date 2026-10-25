@@ -77,6 +77,7 @@ if (isModEnabled("tomb-treasure")) {
     order: 10,
     Component: TombTreasureCollectionSection,
     useTab: useTombTreasureTab,
+    details: true,
   })
 
   // The cheat menu's tomb grants — this mod's state, so this mod hands them out.
