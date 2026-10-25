@@ -235,7 +235,7 @@ One agent (Sonnet).
   - Rules: tiers newest first; a tier is listed when `tierOpen` or any of its journeys is `available` (develop mode opens them all); the one tier after the highest listed, if `tierOpen` is false for it, is listed `locked` with `needs = tierNeeds(tier) ++ extraNeeds({ tier })` and no rows. Rows keep the journeys' order; a `hidden` journey is skipped and not counted; a pyramid journey (no `entryLock`) not in `available` is not a row but counts in `total`; an entry-locked journey whose `lock` is unmet is `locked` with the lock as a need (`label` = the lock's unit, `progress` = found/required); any journey with non-empty `extraNeeds({ journeyId })` is `locked` with those needs added. Status otherwise: `current` when it is the active journey and in progress, `finished` when its completion count is above 0, else `open`. `done` = finished journeys of the tier, `total` = its journeys not hidden. `finished` = done equals total. `news` = any row's news. `collapsed` = finished and not the newest listed open tier. `comingSoon` passes through.
   - `extraNeeds` is the one extension point for a gate's other requirements; its doc comment says a mod-filled registry may feed it and that nothing does today.
 
-- [ ] **Step 1: Failing tests** (made-up journeys over three tiers, one tomb with a lock, made-up keys).
+- [x] **Step 1: Failing tests** (made-up journeys over three tiers, one tomb with a lock, made-up keys).
   - Tiers come newest first; the tier above the highest open one is listed locked with its key need and no rows; a further tier is not listed.
   - A not-yet-available pyramid journey is no row but counts in "total"; a hidden one is neither.
   - The active in-progress journey is `current`; a completed one `finished`; others `open`.
@@ -243,10 +243,10 @@ One agent (Sonnet).
   - An `extraNeeds` answer for a journey locks it, for a tier adds to its needs; without `extraNeeds` nothing changes.
   - A fully finished older tier is collapsed with `news` when one row has news; the newest open tier is never collapsed.
   - `tierKeyNeed`: no keys → undefined; held keys lit; a key without display gives no symbol.
-- [ ] **Step 2: Run** `yarn test src/app/pages/allJourneys src/app/pages/journeyAvailability` — FAIL.
-- [ ] **Step 3: Implement** as pure functions; each rule one sentence of comment.
-- [ ] **Step 4: Run** — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Commit** — `feat: the all-journeys list as one flat model`
+- [x] **Step 2: Run** `yarn test src/app/pages/allJourneys src/app/pages/journeyAvailability` — FAIL.
+- [x] **Step 3: Implement** as pure functions; each rule one sentence of comment.
+- [x] **Step 4: Run** — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Commit** — `feat: the all-journeys list as one flat model`
 
 ---
 
