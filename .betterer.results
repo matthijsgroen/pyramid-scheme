@@ -896,15 +896,15 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/mods/trap/app/crocodile/CrocodilePit.tsx:3418231483": [
       [186, 98, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/trap/app/index.ts:3344367212": [
-      [20, 60, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
-      [26, 65, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/mods/trap/app/index.ts:680977320": [
+      [21, 60, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],
+      [27, 65, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/trap/app/useTrapProgress.perks.spec.ts:11753170": [
       [26, 25, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/mods/trap/app/useTrapProgress.ts:842845439": [
-      [12, 41, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/mods/trap/app/useTrapProgress.ts:2208005379": [
+      [13, 41, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/mods/trap/game/crocodile/crocodileConfig.ts:896949358": [
       [3, 80, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
