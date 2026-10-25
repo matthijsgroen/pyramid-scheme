@@ -76,14 +76,14 @@ Each is the option that changes the least shipped behaviour or the one the brief
   - `readCollectionSeen(stored: unknown): CollectionSeen` — another shape or version, or a record that is not a list of strings, reads as the empty save; a v1 save comes back unchanged, records of unknown sections included. `updateCollectionSeen(stored, action): unknown` — nothing stored starts from the empty save; a stored value it cannot read is returned untouched.
 - Produces (app): `useCollectionSeen(): { loaded: boolean; hasRecord(section); newIds(section, ids); markSeen(section, ids); seedSection(section, ids) }` over `useGameStorage("collectionSeen", emptyCollectionSeen)`, every read through `readCollectionSeen`, every write through `updateCollectionSeen` from the latest stored value; the actions keep their identity across writes.
 
-- [ ] **Step 1: Failing tests** (made-up section ids and item ids).
+- [x] **Step 1: Failing tests** (made-up section ids and item ids).
   - `collectionSeen.spec.ts`: `newIds` is empty for a section without a record and lists unseen ids in order once seeded; `markSeen` twice with overlapping ids keeps each id once and keeps earlier ones; `seedSection` on a section with a record changes nothing (same reference), on one without creates it; `readCollectionSeen` of `undefined`, a number, an object without `version`, `version: 2`, and a v1 save whose record holds a number gives the empty save; a v1 save with an unknown section reads back with it; `updateCollectionSeen` on a `version: 2` value returns that value itself (same reference), on `undefined` applies the action to the empty save.
   - `useCollectionSeen.spec.ts` (renderHook over the real storage, fresh store): seed then `markSeen` then `newIds` gives what is left; the stored value carries `version: 1` and id lists only; with a `version: 2` value primed in storage, `markSeen` and `seedSection` leave the stored value unchanged and `newIds` is empty.
-- [ ] **Step 2: Run** `yarn test src/game/collectionSeen src/app/pages/useCollectionSeen` — FAIL.
-- [ ] **Step 3: Implement.** The model file's comment says why a section without a record has nothing new (a save from before, or a mod switched on later, is not flooded) and why an unreadable save is left alone.
-- [ ] **Step 4: Run** the specs — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Per-task review** (soundness): no write path bypasses `updateCollectionSeen`; nothing derived is stored; an unreadable value survives every action; the store key is core's and generic.
-- [ ] **Step 6: Commit** — `feat: the seen save remembers what the collection showed`
+- [x] **Step 2: Run** `yarn test src/game/collectionSeen src/app/pages/useCollectionSeen` — FAIL.
+- [x] **Step 3: Implement.** The model file's comment says why a section without a record has nothing new (a save from before, or a mod switched on later, is not flooded) and why an unreadable save is left alone.
+- [x] **Step 4: Run** the specs — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Per-task review** (soundness): no write path bypasses `updateCollectionSeen`; nothing derived is stored; an unreadable value survives every action; the store key is core's and generic.
+- [x] **Step 6: Commit** — `feat: the seen save remembers what the collection showed`
 
 ---
 
