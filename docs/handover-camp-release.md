@@ -115,7 +115,7 @@ phase 4 exists). A pure function over the baked configs with specs on a made-up 
 that fails the bake when a chest or path end is empty. The report prints tables and writes `docs/loot-report.md` (committed, so every
 bake shows what moved). The puzzle-loot share is reported only, never enforced. (Decided by the designer.) Small, but every later phase reads its output.
 
-### Phase 3 — camp loot: found items and structure parts [ ]
+### Phase 3 — camp loot: found items and structure parts [x]
 
 The `camp` mod (decision 1). Two currencies from the loot spec: **found items** (26) and **structure parts**
 (26 structures; parts per structure SCALE WITH THE TIER, about 2–3 on starter and junior up to 4–6 on master and
@@ -216,3 +216,4 @@ worktree, and the review list sorted: decisions, drafts, failures, things to loo
 - 2026-10-24 — queue written; PR #322 merged into main; branch `camp/home-and-loot` created. Next: phase 1 plan task, in a fresh session.
 - 2026-10-25 — phase 1 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-1-consumables-out.md`): supplies, pack and supplies detector gone; 60 waterskins (20 per tier, expert and up) heal on pickup; hearts refill on every return to base; gate green. Two trap checks wait in the review list. Next: phase 2 plan task.
 - 2026-10-25 — phase 2 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-2-loot-report.md`): `yarn loot-report` writes `docs/loot-report.md`; mods report demand through `lootTotals`; the bake names the path of any empty chest or path end. Next: phase 3 plan task.
+- 2026-10-25 — phase 3 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-3-camp-loot.md`): `camp` mod; 28 finds + 99 parts (+127 drops) on puzzle slots of their tier; camp save v1; Constructies in the Collection; 124 repaint prompts; app-import guard spec. Popups not yet browser-checked (review list). Next: phase 4 plan task.
