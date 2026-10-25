@@ -179,14 +179,14 @@ Mechanical, batched; one agent (Sonnet). Each change stays inside the mod's exis
 - story: label "Verhalen" / "Stories" (draft); ids = heard scene ids; shown when any; the section drops its own `<h2>`; a new scene's row carries the NewBadge.
 - mosaic: `MosaicPage` keeps the window and its place button and adds `CountProgress` below it: label `mosaic.window.count` "{{found}} van {{total}} stukjes" (found counted as the window's label counts it), note `mosaic.window.new` "{{count}} nieuw" (owned, not yet placed; hidden at 0), value/max found/total; the page sits on the popup's light panel, the window in its dark arch.
 
-- [ ] **Step 1: Failing tests** (made-up state through each mod's own test helpers; translations through the test `t`).
+- [x] **Step 1: Failing tests** (made-up state through each mod's own test helpers; translations through the test `t`).
   - Each `collectionTab.spec`: with nothing held the tab is not shown and has no ids; with two held made-up items its ids are those two; `loaded` follows the mod's own loaded flag.
   - One render spec per changed section (tomb, camp, story enough): an item for which `isNew` answers true carries the `newLabel`, the others do not.
   - `MosaicWindow.spec` (or a `MosaicPage` spec): made-up owned/placed counts show "found van total" and "k nieuw"; with nothing carried no "nieuw".
 - [ ] **Step 2: Run** `yarn test src/mods/tombTreasure src/mods/hieroglyph src/mods/shop src/mods/camp src/mods/story src/mods/mosaic` — FAIL.
-- [ ] **Step 3: Implement.** Strings nl first, en second.
-- [ ] **Step 4: Run** the specs — PASS. `yarn test src/i18n`, `yarn check-types`, `yarn lint` (import rules at zero).
-- [ ] **Step 5: Commit** — `feat: every collection section is a tab with NIEUW marks`
+- [x] **Step 3: Implement.** Strings nl first, en second.
+- [x] **Step 4: Run** the specs — PASS. `yarn test src/i18n`, `yarn check-types`, `yarn lint` (import rules at zero).
+- [x] **Step 5: Commit** — `feat: every collection section is a tab with NIEUW marks`
 
 ---
 

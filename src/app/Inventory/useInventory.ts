@@ -3,10 +3,11 @@ import { useGameStorage } from "@/support/useGameStorage"
 
 export const useInventory = () => {
   // store inventory items in the offline storage
-  const [inventory, setInventory] = useGameStorage<Record<string, number>>("inventory-v2", {})
+  const [inventory, setInventory, loaded] = useGameStorage<Record<string, number>>("inventory-v2", {})
 
   return {
     inventory,
+    loaded,
     addItem: useCallback(
       (id: string, count: number) => {
         setInventory(prev => ({

@@ -19,7 +19,10 @@ afterEach(cleanup)
 
 describe("StoryLogSection", () => {
   it("shows the empty note for an empty log", async () => {
-    await act(async () => void render(<StoryLogSection />))
+    await act(
+      async () =>
+        void render(<StoryLogSection selectedItem={null} onSelect={() => {}} isNew={() => false} newLabel="NEW" />)
+    )
     expect(screen.getByText("story.log.empty")).toBeTruthy()
     expect(screen.queryAllByRole("button")).toHaveLength(0)
   })
@@ -27,8 +30,28 @@ describe("StoryLogSection", () => {
   it("lists a played conversation by its journey", async () => {
     scenes.list = [{ id: "made-up-scene", journeyId: "made-up-journey", parts: ["made-up-part"] }]
     await writeGameData({ conversations: { "made-up-part": true } })
-    await act(async () => void render(<StoryLogSection />))
+    await act(
+      async () =>
+        void render(<StoryLogSection selectedItem={null} onSelect={() => {}} isNew={() => false} newLabel="NEW" />)
+    )
     expect(screen.getByText("made-up-journey.name")).toBeTruthy()
     expect(screen.queryByText("story.log.empty")).toBeNull()
+  })
+})
+
+describe("StoryLogSection new marks", () => {
+  it("badges only the scene isNew answers true for, and carries no heading of its own", async () => {
+    scenes.list = [
+      { id: "scene-a", journeyId: "journey-a", parts: [] },
+      { id: "scene-b", journeyId: "journey-b", parts: [] },
+    ]
+    await act(
+      async () =>
+        void render(
+          <StoryLogSection selectedItem={null} onSelect={() => {}} isNew={id => id === "scene-a"} newLabel="NEW" />
+        )
+    )
+    expect(screen.getAllByText("NEW")).toHaveLength(1)
+    expect(screen.queryByRole("heading")).toBeNull()
   })
 })

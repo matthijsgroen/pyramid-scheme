@@ -13,7 +13,7 @@ import type { CollectionSectionProps } from "@/app/pages/collectionSectionRegist
 // empty / collected slot. Registered app-side and gated on the mod (see ./index), so it drops out
 // of the shared Collection screen when shop is off — matching the world-gen side that places no
 // junk when shop is off.
-export const ShopCollectionSection: FC<CollectionSectionProps> = ({ selectedItem, onSelect }) => {
+export const ShopCollectionSection: FC<CollectionSectionProps> = ({ selectedItem, onSelect, isNew, newLabel }) => {
   const { t } = useTranslation(["common", "sellables"])
   const { inventory } = useInventory()
 
@@ -29,6 +29,7 @@ export const ShopCollectionSection: FC<CollectionSectionProps> = ({ selectedItem
             key={item.id}
             state={inventory[item.id] !== undefined ? "collected" : "empty"}
             count={inventory[item.id]}
+            newLabel={inventory[item.id] !== undefined && isNew(item.id) ? newLabel : undefined}
             symbol={item.symbol}
             imageUrl={sellableArt(item.id)}
             difficulty={difficultyByMaterialTier[item.tier]}

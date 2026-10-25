@@ -8,6 +8,7 @@ import { useProgression } from "@/app/state/useProgression"
 import { useInventory } from "@/app/Inventory/useInventory"
 import { moneyRewardSchema, sellableRewardSchema } from "@/mods/shop/game/rewardSchemas"
 import { ShopCollectionSection } from "./ShopCollectionSection"
+import { useShopTab } from "./collectionTab"
 import { useShopHaulLines } from "./haulLines"
 import { ShopHud } from "./ShopHud"
 import { registerShopRewardDisplay } from "./rewardDisplay"
@@ -22,7 +23,7 @@ import "./fezShop/plugin" // the Fez shop encounter family (self-gated)
 // - the reward contribution: money is banked and a sellable is added to the inventory (the
 //   effects) — the mod owns the reward ids, core owns the money bucket + inventory it writes to.
 if (isModEnabled("shop")) {
-  registerCollectionSection({ id: "shop", order: 30, Component: ShopCollectionSection })
+  registerCollectionSection({ id: "shop", order: 30, Component: ShopCollectionSection, useTab: useShopTab })
   registerHudWidget({ id: "shop", order: 10, Component: ShopHud })
   registerShopRewardDisplay()
   registerHaulLines(useShopHaulLines)

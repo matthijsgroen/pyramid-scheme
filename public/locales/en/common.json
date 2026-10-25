@@ -182,6 +182,11 @@
     "completed": "Level Completed!"
   },
   "mosaic": {
+    "window": {
+      "count": "{{found}} of {{total}} pieces",
+      "new_one": "{{count}} new",
+      "new_other": "{{count}} new"
+    },
     "place_one": "Place {{count}} piece",
     "place_other": "Place {{count}} pieces",
     "placing": "Placing…",
@@ -203,6 +208,11 @@
     }
   },
   "collection": {
+    "tabs": {
+      "treasures": "Treasures",
+      "hieroglyphs": "Hieroglyphs",
+      "stories": "Stories"
+    },
     "tabNew_one": "{{label}} · {{count}} new",
     "tabNew_other": "{{label}} · {{count}} new",
     "newLabel": "NEW",
@@ -1119,7 +1129,6 @@
   "story": {
     "invitation": "Talk",
     "log": {
-      "title": "What we have been told",
       "empty": "Nothing yet. Fez will have plenty to say."
     },
     "speaker": {

@@ -40,6 +40,8 @@ export type TombTreasureProgressAPI = {
   hasTombKey: (treasureId: string) => boolean
   addTombKey: (treasureId: string) => void
   tombKeyIds: ReadonlySet<string>
+  // True once the mod's own save has been read, so a list still on its way is not taken for nothing held.
+  loaded: boolean
   isTombDiscovered: (tombJourneyId: string) => boolean
   discoverTomb: (tombJourneyId: string) => void
   collectMapPiece: (tombId: string) => void
@@ -51,13 +53,14 @@ export type TombTreasureProgressAPI = {
 }
 
 export const useTombTreasureProgress = (): TombTreasureProgressAPI => {
-  const [state, setState] = useModState<TombTreasureState>("tomb-treasure", INITIAL)
+  const [state, setState, loaded] = useModState<TombTreasureState>("tomb-treasure", INITIAL)
 
   return useMemo(
     () => ({
       hasTombKey: treasureId => !!state.tombKeys[treasureId],
       addTombKey: treasureId => setState(prev => ({ ...prev, tombKeys: { ...prev.tombKeys, [treasureId]: true } })),
       tombKeyIds: new Set(Object.keys(state.tombKeys)),
+      loaded,
       isTombDiscovered: tombJourneyId => state.discoveredTombs.includes(tombJourneyId),
       discoverTomb: tombJourneyId =>
         setState(prev => ({
@@ -92,6 +95,6 @@ export const useTombTreasureProgress = (): TombTreasureProgressAPI => {
             : { ...prev, mapPieceJourneys: [...(prev.mapPieceJourneys ?? []), journeyId] }
         ),
     }),
-    [state, setState]
+    [state, setState, loaded]
   )
 }

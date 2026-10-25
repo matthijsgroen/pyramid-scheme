@@ -40,3 +40,25 @@ describe("TombTreasureCollectionSection hide-until-collected (per group)", () =>
     expect(screen.queryByText(NOBLE_VAULT)).toBeNull() // junior group still hidden
   })
 })
+
+describe("TombTreasureCollectionSection new marks", () => {
+  it("puts the new label only on the collected treasure that isNew answers true for", () => {
+    const [first, second] = difficultyTreasures.starter
+    tombKeyIds = new Set([keyIdByTreasureId[first.id], keyIdByTreasureId[second.id]])
+    render(
+      <TombTreasureCollectionSection
+        selectedItem={null}
+        onSelect={() => {}}
+        isNew={id => id === first.id}
+        newLabel="NEW"
+      />
+    )
+    expect(screen.getAllByText("NEW")).toHaveLength(1)
+  })
+
+  it("never marks a treasure that is not held", () => {
+    tombKeyIds = new Set([keyIdByTreasureId[difficultyTreasures.starter[0].id]])
+    render(<TombTreasureCollectionSection selectedItem={null} onSelect={() => {}} isNew={() => true} newLabel="NEW" />)
+    expect(screen.getAllByText("NEW")).toHaveLength(1)
+  })
+})

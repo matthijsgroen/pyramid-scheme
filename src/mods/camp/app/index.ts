@@ -10,6 +10,7 @@ import { useCampRewardContribution } from "./rewardContribution"
 import { campFindRewardSchema, campPartRewardSchema } from "./rewardSchema"
 import { useCampHaulLines } from "./haulLines"
 import { CampCollectionSection } from "./CampCollectionSection"
+import { useCampTab } from "./collectionTab"
 import { useCampProgress } from "./useCampProgress"
 
 // The camp's app-side registrations, self-gated on the mod being enabled:
@@ -25,5 +26,5 @@ if (isModEnabled("camp")) {
   registerHomecoming(() => useCampProgress().grow)
   registerCampFoundSource(() => useCampProgress().found)
   registerHaulLines(useCampHaulLines)
-  registerCollectionSection({ id: "camp", order: 40, Component: CampCollectionSection })
+  registerCollectionSection({ id: "camp", order: 40, Component: CampCollectionSection, useTab: useCampTab })
 }

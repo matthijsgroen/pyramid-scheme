@@ -45,7 +45,7 @@ export type CollectionSectionEntry = {
   order: number
   Component: FC<CollectionSectionProps>
   // A hook, called every render in registry order (fixed at module load).
-  useTab?: () => CollectionTab
+  useTab: () => CollectionTab
 }
 
 const registry = new Map<string, CollectionSectionEntry>()

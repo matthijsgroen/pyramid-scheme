@@ -182,6 +182,11 @@
     "completed": "Niveau Voltooid!"
   },
   "mosaic": {
+    "window": {
+      "count": "{{found}} van {{total}} stukjes",
+      "new_one": "{{count}} nieuw",
+      "new_other": "{{count}} nieuw"
+    },
     "place_one": "Plaats {{count}} stuk",
     "place_other": "Plaats {{count}} stukken",
     "placing": "Bezig met plaatsen…",
@@ -203,6 +208,11 @@
     }
   },
   "collection": {
+    "tabs": {
+      "treasures": "Schatten",
+      "hieroglyphs": "Hiërogliefen",
+      "stories": "Verhalen"
+    },
     "tabNew_one": "{{label}} · {{count}} nieuw",
     "tabNew_other": "{{label}} · {{count}} nieuw",
     "newLabel": "NIEUW",
@@ -1119,7 +1129,6 @@
   "story": {
     "invitation": "Praat",
     "log": {
-      "title": "Wat ons verteld is",
       "empty": "Nog niets. Fez gaat vast genoeg zeggen."
     },
     "speaker": {

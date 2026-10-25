@@ -59,3 +59,28 @@ describe("CampCollectionSection", () => {
     expect(screen.getByText("parts.well.rope")).toBeTruthy()
   })
 })
+
+describe("CampCollectionSection new marks", () => {
+  it("badges the row of a structure with a new part, and the part once the row is open", async () => {
+    await withSave({ hut: ["poles", "cloth"], well: ["rope"] })
+    render(
+      <CampCollectionSection
+        selectedItem={null}
+        onSelect={() => {}}
+        isNew={id => id === "hut/poles"}
+        newLabel="NEW"
+        table={table}
+      />
+    )
+    await act(async () => void 0)
+    expect(screen.getAllByText("NEW")).toHaveLength(1)
+    fireEvent.click(screen.getAllByRole("button")[0])
+    expect(screen.getAllByText("NEW")).toHaveLength(2)
+  })
+
+  it("shows no badge when nothing is new", async () => {
+    await withSave({ hut: ["poles"] })
+    await act(async () => void render(section()))
+    expect(screen.queryByText("NEW")).toBeNull()
+  })
+})

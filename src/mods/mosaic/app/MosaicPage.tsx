@@ -22,7 +22,7 @@ export const MosaicPage: FC = () => {
 
   // The camp popup gives a window screen the full height of its panel; this fills it.
   return (
-    <div className="flex size-full min-h-0 flex-col bg-stone-950">
+    <div className="flex size-full min-h-0 flex-col bg-[#F4EAD5]">
       <MosaicWindow
         owned={owned}
         placed={placed}

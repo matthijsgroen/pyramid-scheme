@@ -18,6 +18,8 @@ import {
 } from "@/mods/camp/game/campState"
 
 export type CampProgressAPI = {
+  // True once the camp's own save has been read.
+  loaded: boolean
   save: CampSave
   found: CampFound
   recordFind: (step: string) => Promise<unknown>
@@ -31,12 +33,13 @@ export type CampProgressAPI = {
 // The camp's own store. Every read goes through readCampSave, so a stored value of another shape shows as
 // the empty camp; every change goes through updateCampSave, which leaves such a value untouched.
 export const useCampProgress = (table: CampStepTable = CAMP_STEPS): CampProgressAPI => {
-  const [stored, setStored] = useModState<unknown>("camp", emptyCampSave)
+  const [stored, setStored, loaded] = useModState<unknown>("camp", emptyCampSave)
 
   return useMemo(() => {
     const save = readCampSave(stored)
     return {
       save,
+      loaded,
       // The table's spot ids are the catalogue's spot ids; the agreement check holds the two together.
       found: campFound(save, table) as CampFound,
       recordFind: step => setStored((prev: unknown) => updateCampSave(prev, current => recordFind(current, step))),
@@ -47,5 +50,5 @@ export const useCampProgress = (table: CampStepTable = CAMP_STEPS): CampProgress
       startedStructures: () => startedStructures(save, table),
       spotProgress: spot => spotProgress(save, table, spot),
     }
-  }, [stored, setStored, table])
+  }, [stored, setStored, table, loaded])
 }
