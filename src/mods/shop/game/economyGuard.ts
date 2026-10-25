@@ -8,30 +8,6 @@ import { priceFor } from "./pricing"
 import { PURCHASES, type PurchaseTable } from "./purchases"
 import { moneyLedger, rewardName, type MoneyRow } from "./moneyLedger"
 
-// Σ of the shop-priced value of every baked shop stock item across the world (the finite currency
-// pieces), each priced by the shop's own priceFor. The shop's money economy needs the
-// player to be able to afford all of it — it's the floor the loot budget targets (see loot.ts).
-// (Finite stock — sold-out stays sold-out, nothing restocks — is what keeps this bounded, so the
-// guard below can guarantee every progression piece stays affordable — docs/mods/ARCHITECTURE.md (shop mod).)
-export const totalBuyable = (allConfigs: Record<string, SiteConfig[]>): number => {
-  let sum = 0
-  const tally = (s: SubSection) => {
-    if (s.encounter !== "fez-shop") return
-    for (const r of s.rewards ?? []) if (r) sum += priceFor(r, s.difficulty)
-  }
-  for (const siteConfigs of Object.values(allConfigs)) {
-    for (const floors of siteConfigs) {
-      for (const floor of floors) {
-        for (const s of floor.sideSections) {
-          tally(s)
-          for (const sub of s.sideSections ?? []) tally(sub)
-        }
-      }
-    }
-  }
-  return sum
-}
-
 /** Coins a reward brings in: a money drop's amount, a sellable's sell value, nothing for anything else. */
 export const incomeOf = (reward: TreasureReward): number => {
   if (reward.type === "money") return moneyRewardSchema.parse(reward).amount

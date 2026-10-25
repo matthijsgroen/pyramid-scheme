@@ -46,13 +46,13 @@ All defined in `src/mods/shop/game/pricing.ts`:
   tier. Shops are revisitable — stock refreshes, a rare item persists
   until bought. A player can earn late and backtrack to an earlier shop,
   or save early for a pricier one.
-- **Income**: junk loot sell value (sellables, below) plus loose coins,
-  both placed to a fixed budget of 1.1× what all shop stock costs plus
-  `MONEY_ALLOWANCE` (the coins the world carries beyond the priced stock, so
-  finds pay out at the rate the world was tuned to) — a 10% margin, so
-  buying everything means finding nearly everything. Chests
-  carry that loot first, except a `PUZZLE_COIN_SHARE` slice held back for
-  loose coins on puzzle solves.
+- **Income**: junk loot sell value (sellables, below) plus loose coins.
+  Money is placed last, ground by ground (`src/mods/shop/game/loot.ts`): in
+  every ground a player can stand in, smallest first, junk is placed until
+  the money lying there is 1.1× what its shops sell, then the world up to
+  1.1× all stock — a 10% margin, so buying everything means finding nearly
+  everything. A slice of loose coins on puzzle solves comes first, early
+  tiers first.
 - **Sinks**: all 13 rare collectibles (mandatory for 100% completion).
 - **Guard, enforced at world-gen time** (`src/worldGen/validate.ts`):
   `Σ(all shop prices, the rare collectibles) ≤ Σ(all guaranteed income)`. Global cumulative, not per-tier — backtracking

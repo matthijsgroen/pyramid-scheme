@@ -472,7 +472,20 @@ export const placeFragments = (
   // first and a distribution marked `fillsLast` (one sized from what the others placed) after them. Each drops
   // with its mod (mod off → its distribution places nothing). See slotAllocator.ts +
   // docs/mods/distribution-primitive-design.md.
-  allocateDistributions(available, dynamicDistributions, allConfigs, emptyFraction)
+  //
+  // A last fill places by the strict gate walk over the world as it stands, its placeholders in their slots. Its cache
+  // is fresh: `assemblyCache` holds grids from before the fills, which list none of the placeholders.
+  allocateDistributions(available, dynamicDistributions, allConfigs, emptyFraction, () => {
+    const lastWalk = makeGateWalk({
+      configs: allConfigs,
+      journeyMeta,
+      support,
+      resolveRequirements,
+      resolveEncounter,
+      cache: createFloorAssemblyCache(),
+    })
+    return { walk: lastWalk, isKey: lastWalk.isKey }
+  })
 
   // Every slot no distribution claimed (reserved-empty, weight-0, or budget left over) is an empty
   // path end — clear the fragmentSlot sentinels so none reaches the serializer.

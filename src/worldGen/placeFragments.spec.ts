@@ -94,6 +94,37 @@ describe("placeFragments dynamic loot order", () => {
     expect(configs[journeyOfTier("starter")][0][0].rewards).toEqual([{ type: "made-up-other" }])
   })
 
+  it("a distribution marked last finds a fresh placeholder in each slot, a puzzle slot's included, and a walk listing it", () => {
+    const authored: TreasureReward = { type: "fragmentSlot" }
+    const configs: Record<string, SiteConfig[]> = {
+      [journeyOfTier("starter")]: [[{ ...plainSite()[0], rewards: [undefined], mainEndReward: authored }]],
+      [journeyOfTier("junior")]: [plainSite()],
+    }
+    const seen: { kind: string; fresh: boolean; listed: boolean; inConfig: boolean }[] = []
+    const last: Distribution = {
+      id: "made-up-last",
+      footprint: () => ({ min: 0, max: 2 }),
+      fillsLast: true,
+      fill: (slots, world, ctx) => {
+        const floor = world[journeyOfTier("starter")][0][0]
+        const listed = new Set(ctx!.walk.holding(new Set()).rewards)
+        for (const slot of slots)
+          seen.push({
+            kind: slot.kind,
+            fresh: slot.sentinel !== undefined && slot.sentinel !== authored,
+            listed: listed.has(slot.sentinel!),
+            inConfig: floor.rewards![0] === slot.sentinel || floor.mainEndReward === slot.sentinel,
+          })
+        for (const slot of slots) slot.assign(undefined)
+      },
+    }
+    placeFragments(configs, [], undefined, [], [last], undefined, 0, {})
+    expect(seen.sort((a, b) => a.kind.localeCompare(b.kind))).toEqual([
+      { kind: "end", fresh: true, listed: true, inConfig: true },
+      { kind: "puzzle", fresh: true, listed: true, inConfig: true },
+    ])
+  })
+
   it("unmarked distributions keep their registration order", () => {
     const configs = oneSlotWorld()
     placeFragments(configs, [], undefined, [], [takesOne("made-up-a"), takesOne("made-up-b")], undefined, 0, {})
