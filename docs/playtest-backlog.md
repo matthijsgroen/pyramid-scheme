@@ -102,7 +102,7 @@ played, and open an issue or a task for anything that plays wrong.
 - Every beat can be read first in Storybook, `Mods/Story/Beats`: arrivals, tomb scenes, bonds, readings, and the
   beats nothing fires yet, each with where it lands in the game and whether it needs a room in a level. Switch
   English and Dutch in the toolbar.
-- In the game: set off for a journey from each act on the travel screen and read its arrival.
+- In the game: set off for a journey from each act in Alle reizen and read its arrival.
 - Two speakers: the portrait and the bubble swap sides when the speaker changes.
 - With tutorials turned off the arrival still plays.
 
@@ -124,3 +124,32 @@ played, and open an issue or a task for anything that plays wrong.
 - Layer flaws still open: the left seating stone has a notch under the pot's tripod leg (visible without the pot);
   oven, pavilion and astrolabe are tied to the bread board, second tent and star cloth only to hide repainted bits;
   the second palm's crown edge is ragged when it stands alone. Each wants a layer source.
+
+## The camp release (`camp/home-and-loot`)
+
+Play in Dutch on a phone width (390 px) and once on desktop (1440 px); develop mode (7 taps on "Kamp") has the
+grants and jumps in settings. The full checklist with screenshots is `docs/review-camp-release.md`, "Look at in
+browser".
+
+- **Coming home.** Fresh save, Op pad, solve the first puzzle on side path 1 of Dageraad bij de Sfinx level 1 (the
+  jar), tap ←: the coming-home screen shows the fire and the haul with the jar NIEUW; Uitpakken, and the jar
+  stands by its spot. Does arriving home feel like a moment, and is the jar's tiny haul icon readable?
+- **An empty haul.** Back out of a journey with nothing found: fire, rest panel, "Naar het kamp".
+- **Hearts.** Take damage in an expert trap, tap ←: hearts are full on the coming-home screen, and `camp.rested`
+  plays at the camp. Is walking home to heal an obvious choice when low?
+- **Waterskins.** Hurt, solve a puzzle holding one (Vallei der Koningen floor 1, first puzzle up the main
+  corridor): one heart back (two with pack-mule); at full health it is drunk for nothing. Does that sting?
+- **A new chapter.** Finish the starter journeys until the junior key is held, go home: after the coming-home
+  screen the new-chapter card, Later plays `camp.chapterJunior`. Once only.
+- **Alle reizen.** From the card and from the map table (phone), the side panel (desktop): tiers newest first, the
+  current journey NU, a finished tier folded with a dot when something waits, a locked tomb with "Kaartdelen: n van
+  m", the chevron's stops. Is every journey one tap away, and is leaving one under way asked first?
+- **Verzameling NIEUW.** Grant all treasures: the chest's badge, "Schatten · 40 nieuw", NIEUW slots; leave the tab
+  and they clear, also after a reload. Should the opening story scene count as news on the first trip home?
+- **Camp finds and parts.** The jar's popup shows its camp art and "<spot> · n van m"; a part (Dageraad bij de
+  Sfinx level 2, first puzzle up the main corridor: the stone ring's sand bed) shows "Stenen kring · 1 van 2".
+  Constructies lists started structures, parts only when a row opens. Finish the stone ring: `camp.structureDone`.
+- **Story beats.** The starter tomb: `tombIntro` then the cave beat at the mouth, the pillar beat at the cave's
+  exit, the cavern beat on level 2, Ipi's afterword only after the cavern. At camp: `camp.firstHome`,
+  `camp.homeHaul` / `camp.homeEmpty`, `camp.firstFind`. Settings (develop mode) plays every draft per area.
+- **Mosaic window.** "n van 252 stukjes", "k nieuw" and the bar once a piece is found; set them in by hand.
