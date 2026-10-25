@@ -80,7 +80,7 @@ Defaults this queue takes (each goes into the review list):
 5. **Perks that pointed at consumables** (decided by the designer): pack-mule (`starter_a_3`) becomes "a
    waterskin heals two hearts". The supplies detector levels 1–3 are removed; the three treasures that granted
    them stay as plain treasures in the collection, with no perk. Waterskins lie on expert-and-up only.
-6. **Animal prices** are authored defaults that satisfy the per-gate guard with a margin, chosen by Claude and
+6. **Animal prices** are authored defaults that satisfy the per-ground guard with a margin, chosen by Claude and
    listed for review; the caravan banner opens nothing. Animals are bought from Fez in his tomb shops only and
    wait in the camp on coming home; there is no shop in the camp. (Decided by the designer.)
 7. **Where things live once the pager is gone** (decided by the designer): settings behind a gear in the camp HUD (developer mode keeps
@@ -156,7 +156,7 @@ reachability and the guard. Ends with a bake.
 
 ### Phase 5 — the economy recomputed [x]
 
-Sinks = the 13 rare items + the 7 purchases. Income ≈ 1.1 × sinks and passing the per-gate guard, split over
+Sinks = the 13 rare items + the 7 purchases. Income ≈ 1.1 × sinks and passing the per-ground guard, split over
 sellables and loose coins; sellables go up: the same 25 kinds, more of them and dearer (decided by the designer; `src/data/sellables.ts`) so the animals are
 affordable. The total number of drops stays about what it is (the loot report shows it). Sold items stay
 visible in the collection. Ends with a bake, the loot report in the review list, and the tier fingerprints
