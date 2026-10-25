@@ -1,10 +1,11 @@
-import { produce } from "immer"
-
 // What the collection has shown the player: per section id, the item ids already seen. Only ids are
 // stored, never a count or a flag, so what is new is always worked out from what the section holds now.
 // A section without a record has nothing new: a save from before this record existed, or a section
-// whose mod is switched on later, would otherwise light up everything it holds at once. Such a section
-// is seeded with what it shows and only items found after that are announced.
+// whose mod is switched on later, would otherwise light up everything it holds at once. Only seeding
+// opens a record, with what the section shows at that moment; marking a section without one does
+// nothing, so a mark that reaches the save before its seed cannot turn everything else into news.
+// Records are read and written as own properties only, so a section id such as "constructor" never
+// finds an inherited value.
 export type CollectionSeen = {
   version: 1
   seen: Record<string, string[]>
@@ -45,17 +46,22 @@ export const updateCollectionSeen = (stored: unknown, action: (save: CollectionS
   return save === undefined ? stored : action(save)
 }
 
-export const markSeen = produce((save: CollectionSeen, section: string, ids: readonly string[]) => {
-  const list = (save.seen[section] ??= [])
-  for (const id of ids) {
-    if (!list.includes(id)) list.push(id)
-  }
+export const hasRecord = (save: CollectionSeen, section: string): boolean => Object.hasOwn(save.seen, section)
+
+const withRecord = (save: CollectionSeen, section: string, ids: string[]): CollectionSeen => ({
+  ...save,
+  seen: { ...save.seen, [section]: ids },
 })
 
-export const seedSection = (save: CollectionSeen, section: string, ids: readonly string[]): CollectionSeen =>
-  hasRecord(save, section) ? save : markSeen(save, section, ids)
+export const markSeen = (save: CollectionSeen, section: string, ids: readonly string[]): CollectionSeen => {
+  if (!hasRecord(save, section)) return save
+  const list = save.seen[section]
+  const added = [...new Set(ids)].filter(id => !list.includes(id))
+  return added.length === 0 ? save : withRecord(save, section, [...list, ...added])
+}
 
-export const hasRecord = (save: CollectionSeen, section: string): boolean => Object.hasOwn(save.seen, section)
+export const seedSection = (save: CollectionSeen, section: string, ids: readonly string[]): CollectionSeen =>
+  hasRecord(save, section) ? save : withRecord(save, section, [...new Set(ids)])
 
 export const newIds = (save: CollectionSeen, section: string, ids: readonly string[]): string[] => {
   if (!hasRecord(save, section)) return []

@@ -20,14 +20,16 @@ describe("useCollectionSeen", () => {
   it("stores version 1 and the id lists only", async () => {
     const { result } = renderHook(() => useCollectionSeen())
     await act(async () => result.current.seedSection("shells", ["a"]))
-    await act(async () => result.current.markSeen("stones", ["x"]))
+    await act(async () => result.current.seedSection("stones", ["x"]))
     expect(latestGameValue("collectionSeen")).toEqual({ version: 1, seen: { shells: ["a"], stones: ["x"] } })
   })
 
   it("keeps the actions' identity across writes", async () => {
     const { result } = renderHook(() => useCollectionSeen())
     const { markSeen, seedSection } = result.current
-    await act(async () => result.current.markSeen("shells", ["a"]))
+    await act(async () => result.current.seedSection("shells", ["a"]))
+    await act(async () => result.current.markSeen("shells", ["b"]))
+    expect(latestGameValue("collectionSeen")).toEqual({ version: 1, seen: { shells: ["a", "b"] } })
     expect(result.current.markSeen).toBe(markSeen)
     expect(result.current.seedSection).toBe(seedSection)
   })
