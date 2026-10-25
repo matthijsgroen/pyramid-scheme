@@ -72,11 +72,11 @@ export const MosaicWindow: FC<{
   }, [beats])
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col self-stretch">
+    <div className="relative flex min-h-0 flex-1 flex-col self-stretch">
       {/* Size container: the frame takes whichever of the two fits — the space's full width, or the
         width the panel's own aspect ratio allows at the space's height. Height alone overflowed
         a narrow phone sideways whenever the row below happened to be short. */}
-      <div className="[container-type:size] flex min-h-0 flex-1 items-center justify-center p-1">
+      <div className="[container-type:size] flex min-h-0 flex-1 items-center justify-center">
         <StoneFrame className="w-[min(100cqw,calc(100cqh*200/347))]">
           {/* Holds the panel's aspect ratio while the glass is on its way, so the frame does not
             snap to a new size the moment it arrives. */}
@@ -85,9 +85,9 @@ export const MosaicWindow: FC<{
           </Suspense>
         </StoneFrame>
       </div>
-      <div className="flex shrink-0 flex-col items-center gap-2 py-2">
-        {/* Kept in the layout with nothing in hand: the window resizes to whatever height is left,
-          so a button appearing and disappearing would resize the mosaic under the player. */}
+      {/* Floats over the window's foot, so the glass takes the whole height and a button appearing
+        or going never resizes the mosaic under the player. */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-3 flex flex-col items-center gap-2 [&_button]:pointer-events-auto">
         <button
           onClick={() => setPlacing(true)}
           disabled={placing || carriedTotal === 0}

@@ -31,7 +31,7 @@ export const CampPopup: FC<CampPopupProps> = ({ title, closeLabel, onClose, fill
         onKeyDown={onKeyDown}
         className={`flex min-h-0 w-full flex-col overflow-hidden rounded-[18px] border-2 border-[#2B2118] bg-[#F4EAD5] text-[#2B2118] outline-none ${fill ? "lg:h-full" : ""} lg:max-h-full lg:max-w-4xl lg:rounded-[20px]`}
       >
-        <div className="flex items-center justify-between gap-3 border-b-[1.5px] border-[#D6C4A0] py-2.5 pr-3 pl-4 lg:border-b-0 lg:px-6 lg:py-3">
+        <div className="flex items-center justify-between gap-3 border-b-[1.5px] border-[#D6C4A0] pr-0.5 pl-4 lg:border-b-0 lg:pl-6">
           <h2 id={TITLE_ID} className="font-pyramid text-[22px] lg:text-2xl">
             {title}
           </h2>
@@ -39,14 +39,14 @@ export const CampPopup: FC<CampPopupProps> = ({ title, closeLabel, onClose, fill
             type="button"
             aria-label={closeLabel}
             onClick={onClose}
-            className="flex size-11 items-center justify-center rounded-full bg-[#E9DCBF] lg:size-10 lg:border-2 lg:border-[#2B2118] lg:bg-[#FFF8EA]"
+            className="flex size-11 items-center justify-center rounded-full hover:bg-black/5"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2B2118" strokeWidth="2.5" aria-hidden>
               <path d="M6 6l12 12M18 6L6 18" />
             </svg>
           </button>
         </div>
-        <div className="min-h-0 flex-1 overflow-auto px-3.5 pt-3 pb-3.5 lg:px-6 lg:pt-0 lg:pb-6">{children}</div>
+        <div className="min-h-0 flex-1 overflow-auto px-2 pb-2 lg:px-4 lg:pb-4">{children}</div>
       </div>
     </div>
   )
