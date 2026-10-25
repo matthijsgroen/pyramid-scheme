@@ -213,15 +213,15 @@ Mechanical; one agent (Sonnet).
 - Produces: `partIcon(structure, part): string | undefined` — the painted file `src/assets/camp/parts/<structure>-<part>.webp` when it exists, else the structure's own camp art (`campArt(structure, true)` then `campArt(structure)`). The glob is built the way `campArt.ts` builds its own.
 - Produces: `registerHomecoming(() => useCampProgress().grow)`.
 
-- [ ] **Step 1: Failing tests.**
+- [x] **Step 1: Failing tests.**
   - `rewardContribution.spec.ts`: applying a `campFind` and a `campPart` through `mergeContributions` records them; a reward already recorded is skipped; a reward of another type is not.
   - `rewardDisplay.spec.tsx`: for a made-up save one part short of a structure, the last part's display reads "<structure> · m van m" (the count includes the part being shown, recorded or not yet) and shows the structure art while no part icon exists; a find's display reads its spot's progress the same way. (Translations through the test `t`, made-up table injected where the display reads the table.)
   - `campIcons.spec.ts`: with a made-up art map holding a part icon, it is used; without, the structure's layer art; without that, its step art; with none, `undefined`.
   - Homecoming: with a recorded seed in storage, running `useHomecoming()`'s merged handler (the camp app entrypoint imported) adds the sprout; running it again adds the palm. Lives in `useCampProgress.spec.ts`.
 - [ ] **Step 2: Run** `yarn test src/mods/camp` — FAIL.
-- [ ] **Step 3: Implement.** Display and contribution read the mod's own state only; nothing in `src/app` changes. `validatePlacedRewards` (boot) accepts the two types once registered.
-- [ ] **Step 4: Run** `yarn test src/mods src/app/SiteMap` — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Commit** — `feat: camp finds and parts pop up with their art and progress`
+- [x] **Step 3: Implement.** Display and contribution read the mod's own state only; nothing in `src/app` changes. `validatePlacedRewards` (boot) accepts the two types once registered.
+- [x] **Step 4: Run** `yarn test src/mods src/app/SiteMap` — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Commit** — `feat: camp finds and parts pop up with their art and progress`
 
 ---
 

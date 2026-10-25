@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 import { act, renderHook } from "@testing-library/react"
 import { readModState } from "@/app/state/useModState"
 import { clearGameData, writeGameData } from "@/support/useGameStorage"
@@ -54,5 +54,29 @@ describe("a save this build cannot read", () => {
     await act(async () => result.current.recordFind("seedling"))
     expect(result.current.found).toEqual({})
     expect(readModState("camp")).toEqual(newer)
+  })
+})
+
+describe("the camp's homecoming", () => {
+  it("grows one stage per homecoming, judged on the save as it stood", async () => {
+    vi.resetModules()
+    vi.doMock("@/mods/camp/game/campSteps", async importOriginal => ({
+      ...(await importOriginal<typeof import("@/mods/camp/game/campSteps")>()),
+      CAMP_STEPS: [
+        { id: "seed", spot: "palmGarden", tier: "junior", source: "found" },
+        { id: "sprout", spot: "palmGarden", tier: "junior", source: "grows", growsFrom: ["seed"] },
+        { id: "palm", spot: "palmGarden", tier: "junior", source: "grows", growsFrom: ["sprout"] },
+      ],
+    }))
+    await import("./index")
+    const { useHomecoming } = await import("@/app/homecomingRegistry")
+    const { useCampProgress: useCamp } = await import("./useCampProgress")
+    await writeGameData({ "pyramid-scheme-mod-camp": { version: 1, finds: ["seed"], parts: {}, grown: [] } })
+    const { result } = renderHook(() => ({ home: useHomecoming(), camp: useCamp() }))
+    await act(async () => result.current.home())
+    expect(result.current.camp.save.grown).toEqual(["sprout"])
+    await act(async () => result.current.home())
+    expect(result.current.camp.save.grown).toEqual(["sprout", "palm"])
+    vi.doUnmock("@/mods/camp/game/campSteps")
   })
 })

@@ -1,7 +1,19 @@
+import { registerHomecoming } from "@/app/homecomingRegistry"
+import { registerRewardContribution } from "@/app/SiteMap/rewardContributions"
+import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
 import { isModEnabled } from "@/mods/registeredMods"
+import { registerCampRewardDisplay } from "./rewardDisplay"
+import { useCampRewardContribution } from "./rewardContribution"
+import { campFindRewardSchema, campPartRewardSchema } from "./rewardSchema"
+import { useCampProgress } from "./useCampProgress"
 
-// The camp's app-side registrations (reward display, claim effect, homecoming growth, Collection section),
-// self-gated on the mod being enabled. None yet.
+// The camp's app-side registrations, self-gated on the mod being enabled:
+// - the reward schemas, display and claim effects for finds and parts,
+// - the homecoming: the camp grows one stage each time the player comes home.
 if (isModEnabled("camp")) {
-  // registrations arrive with the camp's reward and Collection work
+  registerRewardSchema("campFind", campFindRewardSchema)
+  registerRewardSchema("campPart", campPartRewardSchema)
+  registerCampRewardDisplay()
+  registerRewardContribution(useCampRewardContribution)
+  registerHomecoming(() => useCampProgress().grow)
 }
