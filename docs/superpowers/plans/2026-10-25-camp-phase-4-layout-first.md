@@ -580,4 +580,4 @@ Docs: Sonnet. The rest: Opus.
 
 ## Open questions for the designer
 
-None open. Answered for phase 4b: only open (ungated, unsealed, not hidden) side paths are laid into a lock's corridors; trap, gated and hidden sections keep hanging as branches, since a lock must stay provably solvable (designer, 2026-10-25).
+None open. Answered for phase 4b: open side paths and trapped (sealed) side paths are laid into a lock's corridors, since a trap costs hearts and the player can always heal at the camp; gated and hidden sections keep hanging as branches, since a key or a detector inside a lock would make it not provably solvable (designer, 2026-10-25).
