@@ -229,11 +229,11 @@ One agent (Sonnet). Follow the sketches' layout and colours (`Main.dc.html`, `De
 - `ComingHomeScreen`: `{ title; fire: ReactNode; rest?: ReactNode; haulTitle; lines: { key; visual; title; note?; badge? }[]; buttonLabel; onDone }` — no haul heading when `lines` is empty.
 - `NewChapterScreen`: `{ title; subtitle; body; journeyName?; journeyNote?; setOffLabel; onSetOff?; closeLabel; onClose }` — a card that sits over whatever is behind it.
 
-- [ ] **Step 1: Failing tests.** `CampHud`: title taps call `onTitleTap`, the gear calls `onSettings` and has its label, `tapsLeft` 2 shows "2…", 5 shows nothing. `ContinueCard`: Op pad and Alle reizen call their handlers; no journey → no Op pad, empty text shown; hint row calls `onOpen`; no hint → no row. `CampPopup`: Escape and close call `onClose`; dialog labelled by its title. `ComingHomeScreen`: lines render with the badge; empty lines → no haul heading; the button calls `onDone`. `NewChapterScreen`: Op pad and close call their handlers; no journey → no Op pad.
+- [x] **Step 1: Failing tests.** `CampHud`: title taps call `onTitleTap`, the gear calls `onSettings` and has its label, `tapsLeft` 2 shows "2…", 5 shows nothing. `ContinueCard`: Op pad and Alle reizen call their handlers; no journey → no Op pad, empty text shown; hint row calls `onOpen`; no hint → no row. `CampPopup`: Escape and close call `onClose`; dialog labelled by its title. `ComingHomeScreen`: lines render with the badge; empty lines → no haul heading; the button calls `onDone`. `NewChapterScreen`: Op pad and close call their handlers; no journey → no Op pad.
 - [ ] **Step 2: Run** `yarn test src/ui/molecules src/ui/organisms` — FAIL.
-- [ ] **Step 3: Implement.** Stories: `CampHud` with two made-up widgets and with the DEV badge; `ContinueCard` in progress, start, empty, with and without hint; `HaulRow` plain and NIEUW; `CampPopup` with filler; `CampHomeLayout` with placeholder blocks at phone and desktop viewports; `ComingHomeScreen` with three lines and empty; `NewChapterScreen` with and without a journey. Fire visual in stories: the campfire art via `campArt("campfire")`. Tailwind class order per lint.
-- [ ] **Step 4: Run** — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Commit** — `feat: camp home pieces — HUD, card, popup, coming home, new chapter`
+- [x] **Step 3: Implement.** Stories: `CampHud` with two made-up widgets and with the DEV badge; `ContinueCard` in progress, start, empty, with and without hint; `HaulRow` plain and NIEUW; `CampPopup` with filler; `CampHomeLayout` with placeholder blocks at phone and desktop viewports; `ComingHomeScreen` with three lines and empty; `NewChapterScreen` with and without a journey. Fire visual in stories: the campfire art via `campArt("campfire")`. Tailwind class order per lint.
+- [x] **Step 4: Run** — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Commit** — `feat: camp home pieces — HUD, card, popup, coming home, new chapter`
 
 ---
 
@@ -251,10 +251,10 @@ One agent (Sonnet).
 
 - Produces: `SettingsModal` props `{ isOpen; onClose; startGame: () => void }`; in develop mode, below the normal settings and scrollable: the `DevPanel` with `useDevActions(startGame)`, "Jump to Shop Tomb" (start that journey, then `startGame`), `SaveTransfer`, the lock editor button, `PuzzleLab`. Outside develop mode none of them render.
 
-- [ ] **Step 1: Failing tests.** `SettingsModal.spec.tsx`: with develop mode off no dev tool is in the dialog; on, the playtesting panel and the lock editor button are. `Travel.spec.tsx`: in develop mode the Travel page shows no dev panel.
+- [x] **Step 1: Failing tests.** `SettingsModal.spec.tsx`: with develop mode off no dev tool is in the dialog; on, the playtesting panel and the lock editor button are. `Travel.spec.tsx`: in develop mode the Travel page shows no dev panel.
 - [ ] **Step 2: Run** `yarn test src/app/SettingsModal src/app/pages/Travel` — FAIL.
 - [ ] **Step 3: Implement.** Move, do not rewrite: the same components and actions; the shop-tomb jump keeps its journey id lookup as Travel has it today.
-- [ ] **Step 4: Run** — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 4: Run** — PASS. `yarn check-types`, `yarn lint`.
 - [ ] **Step 5: Commit** — `feat: dev tools move from travel into settings`
 
 ---
@@ -284,7 +284,7 @@ One agent (Sonnet). The biggest task; it replaces the pager.
   - **Desktop aside** (from `lg`, `matchMedia`): the card without its Alle reizen button, then the Travel page content as the panel.
   - Fez's `welcome` conversation on mount and `LockEditorHost` in develop mode stay.
 
-- [ ] **Step 1: Failing tests** (`Base.spec.tsx`, made-up journeys through the existing test helpers, mod registrations of this spec only, `matchMedia` stubbed per case).
+- [x] **Step 1: Failing tests** (`Base.spec.tsx`, made-up journeys through the existing test helpers, mod registrations of this spec only, `matchMedia` stubbed per case).
   - With no mod entrance, no found source and no HUD widget registered, the home renders the scene, the card and the chest entrance; tapping the chest opens a dialog titled Verzameling; Escape closes it.
   - With a journey in progress Op pad calls `startGame` without starting a journey; with none it starts the offered journey, then calls `startGame`.
   - On a phone, Alle reizen opens a dialog holding the Travel content; on desktop the Travel content is in the page without a tap and the card has no Alle reizen button.
@@ -318,7 +318,7 @@ One agent (Sonnet); per-task review (it clears the haul).
 - Produces: `NewChapter({ tier, startGame, onClose })` — `NewChapterScreen` for `tier` with the tier's first open journey (Task 5's rule restricted to that tier): Op pad starts it and calls `startGame`; close only closes. Either marks the chapter seen.
 - `Base`: when `cameHome`, `ComingHome` shows over the home until done (`onArrived` resets the flag in `App`); after it, or on mount without a homecoming, `chapterToAnnounce(save, currentChapter)` decides whether `NewChapter` shows; a save without a chapter record gets `markChapter(current)` silently once loaded.
 
-- [ ] **Step 1: Failing tests.**
+- [x] **Step 1: Failing tests.**
   - `ComingHome.spec.tsx`: with a made-up haul and a made-up haul summariser the lines show; Uitpakken empties the stored haul and calls `onDone`; an empty haul shows no haul heading and the "Naar het kamp" button; a registered made-up rest panel renders.
   - `NewChapter.spec.tsx`: Op pad starts the tier's first open journey and marks the chapter; close marks it and starts nothing.
   - `Base.spec.tsx`: `cameHome` shows the coming-home screen and the home behind it; without it, none; a save whose chapter is behind the current one shows the new chapter after Uitpakken; a save without a record shows none and gets the current chapter stored.
