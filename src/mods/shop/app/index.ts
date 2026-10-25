@@ -6,7 +6,7 @@ import { registerRewardSchema } from "@/app/SiteMap/rewardSchemas"
 import { isModEnabled } from "@/mods/registeredMods"
 import { useProgression } from "@/app/state/useProgression"
 import { useInventory } from "@/app/Inventory/useInventory"
-import { moneyRewardSchema, sellableRewardSchema } from "@/mods/shop/game/rewardSchemas"
+import { moneyRewardSchema, purchaseRewardSchema, sellableRewardSchema } from "@/mods/shop/game/rewardSchemas"
 import { ShopCollectionSection } from "./ShopCollectionSection"
 import { useShopTab } from "./collectionTab"
 import { useShopHaulLines } from "./haulLines"
@@ -19,6 +19,7 @@ import "./fezShop/plugin" // the Fez shop encounter family (self-gated)
 //   that places no junk when shop is off).
 // - the HUD widget: the money balance (order after trap's health).
 // - the reward text/display for money + sellable (synchronous stock text + the loot popup).
+// - the purchase reward schema, so a world with an animal in Fez's stock loads.
 // - the home haul: coins as one line, sellables one line per item.
 // - the reward contribution: money is banked and a sellable is added to the inventory (the
 //   effects) — the mod owns the reward ids, core owns the money bucket + inventory it writes to.
@@ -35,6 +36,7 @@ if (isModEnabled("shop")) {
   registerHaulLines(useShopHaulLines)
   registerRewardSchema("money", moneyRewardSchema)
   registerRewardSchema("sellable", sellableRewardSchema)
+  registerRewardSchema("purchase", purchaseRewardSchema)
   registerRewardContribution(() => {
     const progression = useProgression()
     const inventory = useInventory()
