@@ -23,7 +23,7 @@ One-shot flags in `useProgression` (or a `useTutorials` slice), `seenTutorials: 
 - **Hidden passages** — first reveal prompt: what a hidden passage is, that some hold rare loot.
 - **Ward keys / gated sections** — first gate: a ward key from a tomb unlocks it.
 - **Health and healing** — first waterskin: it heals a heart on the spot; hearts also refill at camp.
-- **Map pieces** — first map piece: reveals a new tomb on the travel screen.
+- **Map pieces** — first map piece: reveals a new tomb in Alle reizen.
 - **Hieroglyph fragments** — first fragment: the hieroglyph collection mechanic.
 
 The **?**-button replay pattern (the tutorial replay for `tombTutorial`) may

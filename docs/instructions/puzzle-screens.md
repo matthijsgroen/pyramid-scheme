@@ -334,7 +334,7 @@ The domain solver lives beside the family's state model
 
 ## 6. Playtesting — the puzzle lab
 
-`src/app/dev/PuzzleLab.tsx`, on the Travel page in develop mode: pick family,
+`src/app/dev/PuzzleLab.tsx`, in settings in develop mode: pick family,
 theme and tier, play the real screen through the real `EncounterModal`, reroll
 the seed. A family shows up there by being registered and carrying one of the board tags —
 `puzzle`, `tomb-puzzle` or `capstone` (`playableInLab`); its theme list comes from

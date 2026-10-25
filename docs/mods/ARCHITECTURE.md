@@ -246,9 +246,17 @@ names no mod:
 
 - `src/app/home/modEntrances.ts` — a mod claims the camp window with a label and a
   screen; `Base.tsx` opens that screen as a popup (e.g. the mosaic window).
-- `src/app/SiteMap/hudRegistry.ts` — site-map HUD widgets, ordered; `SiteMapScreen`
-  renders them (e.g. the trap health widget).
-- `src/app/pages/collectionSectionRegistry.ts` — Collection-screen sections.
+- `src/app/SiteMap/hudRegistry.ts` — HUD widgets, ordered; `SiteMapScreen` and the
+  camp HUD in `Base.tsx` render them (e.g. the trap health widget, the shop's coins).
+- `src/app/pages/collectionSectionRegistry.ts` — Collection-screen sections, each a
+  Verzameling tab with its own NIEUW count.
+
+The camp home has its own seams in `src/app/home/`, the same way: `haulLines.ts` (a
+mod sums its rewards on the coming-home screen), `homeTags.ts` (facts a mod reports
+about the homecoming, which the story matches), `homeHooks.ts` (effects run when the
+home shows), `campFoundSource.ts` (what the scene draws), and in
+`src/app/homecomingRegistry.ts` the homecoming effects and the coming-home panels
+(e.g. trap's rest panel).
 
 Each contributed component reads its own mod state via hooks, so core imports none
 of them. A mod registers these in its app entrypoint (below).
@@ -359,6 +367,16 @@ guard are the sell/buy sides of one mechanic. A shop is a node with
 mods stay money-blind. Stock is finite (no restock): the economy guard proves
 `income ≥ total buyable`, so a player who buys everything can still afford every
 progression-gating piece — unlimited stock would break that guarantee.
+
+### camp (`src/mods/camp`)
+
+The camp's loot and saved state. Descriptor: the `campLoot` dynamic distribution (found items `campFind`
+and structure parts `campPart`, each on puzzle slots of its step's tier; never gating) and `lootTotals`.
+App: the camp save (`useCampProgress`, `useModState("camp")`: finds, parts per structure, grown steps),
+growth on coming home (`registerHomecoming`), the found state the scene draws (`registerCampFoundSource`),
+its haul lines, its home tags for the story (`camp.found`, `camp.structureDone`) and the Constructies
+section of the Verzameling. Off: the slots it took go back to the shop, the scene shows only the fixed
+chest, window and fire, and the Verzameling has no Constructies.
 
 ### tombTreasure (`src/mods/tombTreasure`)
 

@@ -154,7 +154,7 @@ the authored `TREASURE_PERKS` grants L1–L4, decided 2026-07-16):
 | L1  | **proximity** — notify + reveal when the player is _near_ a hidden corridor (built today)      |
 | L2  | **floor** — indicator that a hidden corridor exists _somewhere on this floor_                  |
 | L3  | **pyramid marker** — on the pyramid's own map: this pyramid has unexplored hidden corridors    |
-| L4  | **journey-list marker** — on the travel screen (broadest reach, for revisits across the world) |
+| L4  | **journey-list marker** — in Alle reizen (broadest reach, for revisits across the world) |
 
 **Compass (fragments) — narrows inward** (higher = more precise):
 
