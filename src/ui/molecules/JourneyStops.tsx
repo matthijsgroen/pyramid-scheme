@@ -3,7 +3,6 @@ import { NoticeDot } from "@/ui/atoms/NoticeDot"
 
 export type JourneyStop = {
   n: number
-  label: string
   /** done: behind the player, can be visited; ahead: not reached; buried: reached but closed off. */
   state: "done" | "ahead" | "buried"
   dot?: boolean
@@ -11,48 +10,58 @@ export type JourneyStop = {
 }
 
 export type JourneyStopsProps = {
+  /** What every stop is ("Piramide"), said once before the numbers and in each stop's name. */
+  label: string
   stops: JourneyStop[]
   onStop: (n: number) => void
   /** What the mods put under the stops. */
   children?: ReactNode
 }
 
-const CHIP = "flex min-h-11 items-center gap-2 rounded-[10px] border-2 px-2.5 text-left text-sm font-bold"
+const CHIP = "relative flex size-11 items-center justify-center rounded-full border-2 text-sm font-extrabold"
 
-// The sites of a journey, numbered. Only a stop already passed is a button; one ahead or buried is shown
-// but cannot be entered.
-export const JourneyStops: FC<JourneyStopsProps> = ({ stops, onStop, children }) => (
+// The sites of a journey: their kind once, then one numbered stop each, so a long journey stays one
+// short row. Only a stop already passed is a button; one ahead or buried is shown but cannot be entered.
+export const JourneyStops: FC<JourneyStopsProps> = ({ label, stops, onStop, children }) => (
   <div className="flex flex-col gap-2 text-[#2B2118]">
-    <ol className="flex flex-wrap gap-2">
-      {stops.map(stop => {
-        const inner = (
-          <>
-            <span
-              className={`flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-extrabold ${stop.state === "done" ? "bg-[#A3401A] text-[#FFF8EA]" : "bg-[#E9DCBF] text-[#5C4A36]"}`}
-            >
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="text-sm font-bold">{label}</span>
+      <ol className="flex flex-wrap gap-2">
+        {stops.map(stop => {
+          const inner = (
+            <>
               {stop.n}
-            </span>
-            <span>{stop.label}</span>
-            {stop.dot && <NoticeDot label={stop.dotLabel} />}
-          </>
-        )
-        return (
-          <li key={stop.n}>
-            {stop.state === "done" ? (
-              <button type="button" onClick={() => onStop(stop.n)} className={`${CHIP} border-[#D6C4A0] bg-[#FFF8EA]`}>
-                {inner}
-              </button>
-            ) : (
-              <span
-                className={`${CHIP} border-dashed border-[#B8A584] text-[#5C4A36] ${stop.state === "buried" ? "opacity-60" : ""}`}
-              >
-                {inner}
-              </span>
-            )}
-          </li>
-        )
-      })}
-    </ol>
+              {stop.dot && (
+                <span className="absolute -top-0.5 -right-0.5 flex rounded-full ring-2 ring-[#FFF8EA]">
+                  <NoticeDot label={stop.dotLabel} />
+                </span>
+              )}
+            </>
+          )
+          return (
+            <li key={stop.n}>
+              {stop.state === "done" ? (
+                <button
+                  type="button"
+                  aria-label={`${label} ${stop.n}`}
+                  onClick={() => onStop(stop.n)}
+                  className={`${CHIP} border-[#A3401A] bg-[#A3401A] text-[#FFF8EA]`}
+                >
+                  {inner}
+                </button>
+              ) : (
+                <span
+                  aria-label={`${label} ${stop.n}`}
+                  className={`${CHIP} border-dashed border-[#B8A584] text-[#5C4A36] ${stop.state === "buried" ? "opacity-60" : ""}`}
+                >
+                  {inner}
+                </span>
+              )}
+            </li>
+          )
+        })}
+      </ol>
+    </div>
     {children}
   </div>
 )

@@ -138,7 +138,6 @@ export const AllJourneys: FC<{ startGame: () => void; compact?: boolean }> = ({ 
       const n = i + 1
       return {
         n,
-        label: journey.exterior === "tomb" ? t("journeys.stopTomb") : t("journeys.stopPyramid"),
         state: buried.has(n) ? "buried" : n < here ? "done" : "ahead",
         dot: unexplored.has(n),
         dotLabel: t("journeys.newDot"),
@@ -187,7 +186,11 @@ export const AllJourneys: FC<{ startGame: () => void; compact?: boolean }> = ({ 
             : undefined
         }
       >
-        <JourneyStops stops={stopsFor(journey, row)} onStop={n => enter(journey, n)} />
+        <JourneyStops
+          label={journey.exterior === "tomb" ? t("journeys.stopTomb") : t("journeys.stopPyramid")}
+          stops={stopsFor(journey, row)}
+          onStop={n => enter(journey, n)}
+        />
       </JourneyRow>
     )
   }

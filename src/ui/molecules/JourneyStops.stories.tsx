@@ -5,12 +5,13 @@ const meta = {
   component: JourneyStops,
   parameters: { layout: "centered" },
   args: {
+    label: "Piramide",
     onStop: () => {},
     stops: [
-      { n: 1, label: "Piramide 1", state: "done" },
-      { n: 2, label: "Piramide 2", state: "done", dot: true, dotLabel: "Nog niet alles bekeken" },
-      { n: 3, label: "Piramide 3", state: "ahead" },
-      { n: 4, label: "Piramide 4", state: "buried" },
+      { n: 1, state: "done" },
+      { n: 2, state: "done", dot: true, dotLabel: "Nog niet alles bekeken" },
+      { n: 3, state: "ahead" },
+      { n: 4, state: "buried" },
     ],
   },
   decorators: [

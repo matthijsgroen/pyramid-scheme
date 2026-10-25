@@ -67,11 +67,12 @@ export const StopsOpen: Story = {
     stops: { label: "Piramides verbergen", open: true, onToggle: () => {} },
     children: (
       <JourneyStops
+        label="Piramide"
         onStop={() => {}}
         stops={[
-          { n: 1, label: "Piramide 1", state: "done" },
-          { n: 2, label: "Piramide 2", state: "done", dot: true, dotLabel: "Nog niet alles bekeken" },
-          { n: 3, label: "Piramide 3", state: "buried" },
+          { n: 1, state: "done" },
+          { n: 2, state: "done", dot: true, dotLabel: "Nog niet alles bekeken" },
+          { n: 3, state: "buried" },
         ]}
       />
     ),

@@ -6,34 +6,39 @@ import { JourneyStops } from "./JourneyStops"
 afterEach(cleanup)
 
 const stops = [
-  { n: 1, label: "First", state: "done" as const, dot: true, dotLabel: "News here" },
-  { n: 2, label: "Second", state: "ahead" as const },
-  { n: 3, label: "Third", state: "buried" as const },
+  { n: 1, state: "done" as const, dot: true, dotLabel: "News here" },
+  { n: 2, state: "ahead" as const },
+  { n: 3, state: "buried" as const },
 ]
 
 describe("JourneyStops", () => {
+  it("says the kind once and names each stop by kind and number", () => {
+    render(<JourneyStops label="Site" stops={stops} onStop={() => {}} />)
+    expect(screen.getAllByText("Site")).toHaveLength(1)
+    expect(screen.getByLabelText("Site 2")).toBeTruthy()
+  })
+
   it("a done stop calls onStop with its number", () => {
     const onStop = vi.fn()
-    render(<JourneyStops stops={stops} onStop={onStop} />)
-    fireEvent.click(screen.getByRole("button", { name: /First/ }))
+    render(<JourneyStops label="Site" stops={stops} onStop={onStop} />)
+    fireEvent.click(screen.getByRole("button", { name: "Site 1" }))
     expect(onStop).toHaveBeenCalledWith(1)
   })
 
   it("only done stops are buttons", () => {
-    render(<JourneyStops stops={stops} onStop={() => {}} />)
+    render(<JourneyStops label="Site" stops={stops} onStop={() => {}} />)
     expect(screen.getAllByRole("button")).toHaveLength(1)
-    expect(screen.getByText("Second")).toBeTruthy()
-    expect(screen.getByText("Third")).toBeTruthy()
+    expect(screen.getByLabelText("Site 3")).toBeTruthy()
   })
 
   it("shows a dot on its stop", () => {
-    render(<JourneyStops stops={stops} onStop={() => {}} />)
+    render(<JourneyStops label="Site" stops={stops} onStop={() => {}} />)
     expect(screen.getByRole("img", { name: "News here" })).toBeTruthy()
   })
 
   it("renders what the mods put under the stops", () => {
     render(
-      <JourneyStops stops={stops} onStop={() => {}}>
+      <JourneyStops label="Site" stops={stops} onStop={() => {}}>
         <p>mod card</p>
       </JourneyStops>
     )

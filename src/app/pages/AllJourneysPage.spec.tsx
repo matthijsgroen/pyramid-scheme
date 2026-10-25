@@ -193,11 +193,9 @@ describe("AllJourneys", () => {
     expect(startGame).toHaveBeenCalledTimes(1)
 
     fireEvent.click(screen.getByRole("button", { name: "journeys.showStops Name j2" }))
-    const stops = screen
-      .getAllByRole("listitem")
-      .filter(li => !li.querySelector("li") && li.textContent?.includes("journeys.stopPyramid"))
-    expect(within(stops[2]).queryByRole("button")).toBeNull()
-    await click(within(stops[1]).getByRole("button"))
+    expect(screen.queryByRole("button", { name: "journeys.stopPyramid 3" })).toBeNull()
+    expect(screen.getByLabelText("journeys.stopPyramid 3")).toBeTruthy()
+    await click(screen.getByRole("button", { name: "journeys.stopPyramid 2" }))
     expect(visitLevel).toHaveBeenLastCalledWith("j2", 2)
     expect(startGame).toHaveBeenCalledTimes(2)
   })
