@@ -8,8 +8,6 @@ const meta = {
     heading: "Verder met",
     setOffLabel: "Op pad",
     onSetOff: () => {},
-    allJourneysLabel: "Alle reizen",
-    onAllJourneys: () => {},
   },
   decorators: [
     Story => (
@@ -34,7 +32,4 @@ export const WithHint: Story = {
     detail: "Piramide 3 van 5 · Junior",
     hint: { text: "2 oude reizen hebben iets nieuws te ontdekken", onOpen: () => {} },
   },
-}
-export const WithoutAllJourneys: Story = {
-  args: { journeyName: "Vallei van de Ambachtslieden", onAllJourneys: undefined },
 }

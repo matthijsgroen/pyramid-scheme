@@ -161,8 +161,6 @@ export const Base = ({
       detail={detail}
       setOffLabel={t("camp.continue.setOff")}
       onSetOff={setOff}
-      allJourneysLabel={t("camp.continue.allJourneys")}
-      onAllJourneys={isDesktop ? undefined : () => setPopup("journeys")}
       emptyText={t("camp.continue.empty")}
       hint={
         toDiscover > 0

@@ -310,7 +310,7 @@ export const CampScene = ({
         style={{ left: area.x, top: area.y + area.height / 2, width: area.width, height: area.height }}
       >
         {badge !== undefined && <span className="camp-entrance__badge">{badge}</span>}
-        <span className="camp-entrance__tag" style={{ fontSize: tagSize }}>
+        <span className="camp-entrance__tag translate-y-[calc(100%+4px)]" style={{ fontSize: tagSize }}>
           {label}
         </span>
       </button>

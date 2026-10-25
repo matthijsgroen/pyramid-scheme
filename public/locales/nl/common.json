@@ -1268,7 +1268,6 @@
     "continue": {
       "heading": "Verder met",
       "setOff": "Op pad",
-      "allJourneys": "Alle reizen",
       "pyramid": "Piramide {{level}} van {{count}} · {{tier}}",
       "tomb": "Graftombe · {{tier}}",
       "empty": "Alles staat open op je kaart"

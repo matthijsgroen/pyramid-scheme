@@ -6,9 +6,6 @@ export type ContinueCardProps = {
   detail?: string
   setOffLabel: string
   onSetOff?: () => void
-  allJourneysLabel: string
-  /** Left out where the journeys list already stands beside the card (desktop). */
-  onAllJourneys?: () => void
   emptyText?: string
   /** Without `onOpen` the row is a plain note. */
   hint?: { text: string; onOpen?: () => void }
@@ -16,7 +13,7 @@ export type ContinueCardProps = {
   setOffSlot?: (button: ReactNode) => ReactNode
 }
 
-// "Verder met": the journey to go on with, the big set-off button, the all-journeys button and an optional
+// "Verder met": the journey to go on with, the big set-off button and an optional
 // hint row. Without a journey there is nothing to set off on, so only the empty text shows.
 export const ContinueCard: FC<ContinueCardProps> = ({
   heading,
@@ -24,8 +21,6 @@ export const ContinueCard: FC<ContinueCardProps> = ({
   detail,
   setOffLabel,
   onSetOff,
-  allJourneysLabel,
-  onAllJourneys,
   emptyText,
   hint,
   setOffSlot,
@@ -55,19 +50,6 @@ export const ContinueCard: FC<ContinueCardProps> = ({
           emptyText && <div className="text-[15px] text-[#4A3B2A]">{emptyText}</div>
         )}
       </div>
-      {onAllJourneys && (
-        <button
-          type="button"
-          onClick={onAllJourneys}
-          className="flex h-12 items-center justify-center gap-2 rounded-xl border-2 border-[#2B2118] bg-[#FFF8EA] text-[15px] font-extrabold"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-            <path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z" />
-            <path d="M9 4v14M15 6v14" />
-          </svg>
-          {allJourneysLabel}
-        </button>
-      )}
       {hint &&
         (hint.onOpen ? (
           <button

@@ -16,8 +16,6 @@ const meta = {
         journeyName="Vallei van de Ambachtslieden"
         detail="Piramide 3 van 5 · Junior"
         setOffLabel="Op pad"
-        allJourneysLabel="Alle reizen"
-        onAllJourneys={() => {}}
       />
     ),
     aside: <div className="flex-1 rounded-[10px] border-2 border-dashed border-[#B8A584] p-3">Aside</div>,

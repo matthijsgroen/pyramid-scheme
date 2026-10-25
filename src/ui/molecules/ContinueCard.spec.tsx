@@ -11,31 +11,22 @@ const props: ContinueCardProps = {
   heading: "Continue",
   journeyName: "Made-up valley",
   setOffLabel: "Set off",
-  allJourneysLabel: "All journeys",
   emptyText: "Nothing to continue",
 }
 const card = (extra: Partial<ContinueCardProps> = {}) => render(<ContinueCard {...props} {...extra} />)
 
 describe("ContinueCard", () => {
-  it("set off and all journeys call their handlers", () => {
+  it("set off calls its handler", () => {
     const onSetOff = vi.fn()
-    const onAllJourneys = vi.fn()
-    card({ onSetOff, onAllJourneys })
+    card({ onSetOff })
     fireEvent.click(screen.getByText("Set off"))
-    fireEvent.click(screen.getByText("All journeys"))
     expect(onSetOff).toHaveBeenCalledOnce()
-    expect(onAllJourneys).toHaveBeenCalledOnce()
   })
 
   it("without a journey there is no set off button, only the empty text", () => {
     card({ journeyName: undefined })
     expect(screen.queryByText("Set off")).toBeNull()
     expect(screen.getByText("Nothing to continue")).toBeTruthy()
-  })
-
-  it("without onAllJourneys there is no all journeys button", () => {
-    card()
-    expect(screen.queryByText("All journeys")).toBeNull()
   })
 
   it("a hint row calls onOpen; no hint, no row", () => {

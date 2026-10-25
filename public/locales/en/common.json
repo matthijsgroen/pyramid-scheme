@@ -1261,7 +1261,6 @@
     "continue": {
       "heading": "Continue with",
       "setOff": "Set off",
-      "allJourneys": "All journeys",
       "pyramid": "Pyramid {{level}} of {{count}} · {{tier}}",
       "tomb": "Tomb · {{tier}}",
       "empty": "Everything is open on your map"

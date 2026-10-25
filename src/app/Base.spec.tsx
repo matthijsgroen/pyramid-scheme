@@ -224,18 +224,18 @@ describe(Base, () => {
     renderBase()
     expect(screen.queryByText("journeys content")).toBeNull()
 
-    fireEvent.click(screen.getByText("camp.continue.allJourneys"))
+    fireEvent.click(screen.getByText("camp.entrance.journeys"))
 
     expect(screen.getByRole("dialog", { name: "camp.entrance.journeys" })).toBeTruthy()
     expect(screen.getByText("journeys content")).toBeTruthy()
   })
 
-  it("shows the journeys in the page on desktop, with no all-journeys button on the card", () => {
+  it("shows the journeys in the page on desktop, with no map entrance", () => {
     stubDesktop(true)
     renderBase()
 
     expect(screen.getByText("journeys content")).toBeTruthy()
-    expect(screen.queryByText("camp.continue.allJourneys")).toBeNull()
+    expect(screen.queryByText("camp.entrance.journeys")).toBeNull()
     expect(screen.queryByRole("dialog")).toBeNull()
   })
 
