@@ -1,7 +1,7 @@
 import type { SiteConfig } from "@/worldGen/types"
 import type { LootTotal } from "@/worldGen/lootReport"
 import { forEachConfigReward, forEachConfigSection } from "@/worldGen/configRewards"
-import { WORLD_TARGETS } from "@/worldGen/worldSpec"
+import { WORLD_TARGETS } from "@/worldGen/worldTargets"
 import { allTreasures, treasureByKeyId } from "./treasures"
 
 // The tomb-treasure mod's rows of the loot report: map pieces against the world's target, tomb

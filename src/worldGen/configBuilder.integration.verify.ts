@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
 import { buildConfigs } from "./configBuilder"
-import { WORLD_TARGETS } from "./worldSpec"
+import { WORLD_TARGETS } from "./worldTargets"
 import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
 // Deliberate exception to "src/worldGen/ never imports src/mods/": this integration spec
 // verifies the REAL, complete world, which needs the real mod-owned currencies — same standing

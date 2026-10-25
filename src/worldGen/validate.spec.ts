@@ -23,7 +23,7 @@ import {
   STUB_BOARD,
   STUB_DOOR,
 } from "../game/testSupport/processionFixtures"
-import { WORLD_TARGETS } from "./worldSpec"
+import { WORLD_TARGETS } from "./worldTargets"
 import { PYRAMID_JOURNEYS } from "./data"
 import type { FloorConfig, SiteConfig, TreasureReward } from "./types"
 import type { FloorGrid, RoomCell } from "@/game/siteTypes"

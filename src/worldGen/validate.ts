@@ -7,7 +7,7 @@ import { doorBoardsOf, switchFamilies } from "@/game/seeds/enumerateConfigs"
 import type { FloorConfig as GameFloorConfig, FloorGrid as AssembledFloor } from "@/game/siteTypes"
 import { walkFloorLock, describeFloorWalkFailure, deadFloorRegions } from "@/game/floorLockWalk"
 import { PYRAMID_JOURNEYS, TOMB_JOURNEYS } from "./data"
-import { WORLD_TARGETS } from "./worldSpec"
+import { WORLD_TARGETS } from "./worldTargets"
 import { capabilitiesFor, type SiteCapabilities } from "./capabilities"
 
 const KNOWN_JOURNEY_IDS = new Set([...PYRAMID_JOURNEYS.map(j => j.id), ...TOMB_JOURNEYS.map(j => j.id)])

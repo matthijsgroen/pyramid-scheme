@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { tombTreasureLootTotals } from "./lootTotals"
 import { allTreasures, keyIdByTreasureId } from "./treasures"
-import { WORLD_TARGETS } from "@/worldGen/worldSpec"
+import { WORLD_TARGETS } from "@/worldGen/worldTargets"
 import type { FloorConfig, SideSection, SiteConfig, SubSection, TreasureReward } from "@/worldGen/types"
 
 const floor = (overrides: Partial<FloorConfig> = {}): FloorConfig => ({
