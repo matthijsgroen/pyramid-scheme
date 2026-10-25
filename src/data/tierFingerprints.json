@@ -4,19 +4,19 @@
     "journeyCount": 5
   },
   "junior": {
-    "hash": "ee7ad76c08ed137f",
+    "hash": "e5097c4d0d011164",
     "journeyCount": 5
   },
   "expert": {
-    "hash": "88e695ec8e596a0a",
+    "hash": "d3b12a0f12a640db",
     "journeyCount": 6
   },
   "master": {
-    "hash": "8efaa7248d8645f0",
+    "hash": "4cf2cf52be3c211a",
     "journeyCount": 6
   },
   "wizard": {
-    "hash": "b3c21b3af901eeb4",
+    "hash": "de15ca5c3810edd4",
     "journeyCount": 7
   }
 }

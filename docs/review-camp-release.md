@@ -59,6 +59,7 @@ The designer's morning list for the unattended camp-release queue. Newest phase 
 - Phase 3 — Finds and parts get no description line in this phase; the popup shows name, art and progress. Story phase 8 may add flavour. Alternative: draft a description per find now.
 - Phase 3 — Loot report rows: "Camp finds" against the table's found items and "Structure parts" against the table's parts, each counted wherever it lies.
 - Phase 3 — The brief wins over the spec on three points: parts scale with the tier (the parts decision above), the found-item count follows the catalogue (the 28 finds decision above), and the Constructies list shows structure art plus "n van m", with parts only in an opened row (the spec showed parts inline).
+- Phase 4 — World-gen offers no slot on the end of a section that resolves to Fez's shop, and clears a placeholder standing there, because a shop room shows only its stock. Nothing (fragment, key, money, camp loot) lands there any more. The bake moved: pieces relocated, so the junior, expert, master and wizard tier fingerprints changed; starter did not. Alternative: let a shop room also hand out its end reward (a new room kind).
 
 ## Phase 1 loot
 
@@ -160,6 +161,9 @@ From `yarn loot-report` before (651aad2c) and after the bake (88646b9e). `docs/l
 - Phase 3 — find names (nl / en): Kookpot / Cooking pot, Zitkussens / Seat cushions, Rietmat / Reed mat, Deken / Blanket, Tenttapijt / Tent rug, Tentvlag / Tent flag, Kalebas / Gourd, Kruik / Jar, Tweede kruik / Second jar, Kruidenrek / Spice rack, Broodplank / Bread board, Kompas / Compass, Sterrenkaart / Star map, Rolkoker / Scroll case, Astrolabium / Astrolabe, Rieten wereldbol / Reed globe, Palmzaad / Palm seed, Palmzaad / Palm seed, Vijgenzaad / Fig seed, Papyruswortel / Papyrus root, Rietstek / Reed cutting, Lotusknol / Lotus tuber, Uitkijkvlag / Lookout flag, Thoth-beeldje / Thoth statuette, Bastet-beeldje / Bastet statuette, Anubis-beeldje / Anubis statuette, Ra-beeldje / Ra statuette, Sterrendoek / Star cloth
 
 ## Failures
+
+- Phase 4 — 8 hieroglyph fragments (a2, art3, d9, art10, d5, d12, a10, d13) sat on the end of a tomb's shop section, which the shop room never shows, so their tomb tableaus could not be finished. Pre-existing on main. Fixed: such an end is no slot any more. The strict gate walk over the shipped world now enters 22 of 29 journeys (was 16).
+- Phase 4 — BLOCKED: the strict walk still misses all of wizard (7 journeys). The root is art6: its last piece is stocked in expert_treasure_tomb_b level 2's shop, which stands behind that floor's own tableau needing art6; holding art6 alone opens all 29 journeys (d13 and a10 then still block a lock each in the wizard tombs). Two causes, both pre-existing: placement checks only that a slot's floor is reached, not its room; and placement walks floors carved at a different seed (`defaultSeedFor`) from the pinned seed the bake ships and the runtime carves, so the room order it sees is not the one players get. A room-level check plus a bake guard that the walk enters every journey are written (`.superpowers/sdd/2026-10-25-camp-phase-4-animal-gates/task-2b-room-reach-and-walk-guard.patch`). With them the bake passes, but the shipped world walks to only 16 of 29, because of the seed mismatch. Needs a decision: walk placement on the pinned seeds (every floor pinned like the web floors, settled across rounds), or run the guard on the stamped world and re-place.
 
 ## Look at in browser
 
