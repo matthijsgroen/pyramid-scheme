@@ -4,6 +4,7 @@ import type { CampSave } from "./campState"
 import {
   campFound,
   emptyCampSave,
+  arrive,
   growCamp,
   hasStandingStructure,
   inPlace,
@@ -22,7 +23,9 @@ const table: CampStepTable = [
   { id: "ring", spot: "hearth", tier: "starter", source: "structure", parts: ["stones", "sand"] },
   { id: "hut", spot: "bed", tier: "junior", source: "structure", parts: ["poles", "cloth", "pegs"] },
   { id: "lamp", spot: "hearth", tier: "starter", source: "fixed" },
-  { id: "stool", spot: "hearth", tier: "junior", source: "bought" },
+  { id: "stool", spot: "hearth", tier: "junior", source: "bought", purchase: "purchase:stool" },
+  { id: "mule", spot: "pen", tier: "junior", source: "bought", purchase: "purchase:mule" },
+  { id: "halter", spot: "pen", tier: "junior", source: "bought", purchase: "purchase:mule" },
   { id: "pit", spot: "grove", tier: "junior", source: "found" },
   { id: "otherTree", spot: "grove", tier: "junior", source: "found" },
   { id: "shoot", spot: "grove", tier: "junior", source: "grows", growsFrom: ["pit"] },
@@ -72,8 +75,37 @@ describe("fixed and bought steps", () => {
     expect(inPlace(emptyCampSave(), table).has("lamp")).toBe(true)
   })
 
-  it("never has a bought step in place, even when its id is recorded", () => {
+  it("never has a bought step in place by being found, even when its id is recorded", () => {
     expect(inPlace(recordFind(emptyCampSave(), "stool"), table).has("stool")).toBe(false)
+  })
+})
+
+describe("arrive", () => {
+  it("brings every step of a held purchase at once, and is in campFound", () => {
+    const save = arrive(emptyCampSave(), table, new Set(["purchase:mule"]))
+    expect(save.arrived).toEqual(["mule", "halter"])
+    expect(campFound(save, table).pen).toEqual(["mule", "halter"])
+  })
+
+  it("changes nothing when run twice", () => {
+    const once = arrive(emptyCampSave(), table, new Set(["purchase:mule"]))
+    expect(arrive(once, table, new Set(["purchase:mule"]))).toBe(once)
+  })
+
+  it("leaves a bought step whose purchase is not held out of place", () => {
+    const save = arrive(emptyCampSave(), table, new Set(["purchase:mule", "somethingElse"]))
+    expect(inPlace(save, table).has("stool")).toBe(false)
+  })
+
+  it("brings nothing on a fact no bought step names, and never a step of another source", () => {
+    const save = emptyCampSave()
+    expect(arrive(save, table, new Set(["purchase:unknown", "cup"]))).toBe(save)
+  })
+
+  it("keeps an arrived step when its purchase is no longer held", () => {
+    const save = arrive(emptyCampSave(), table, new Set(["purchase:stool"]))
+    const later = arrive(save, table, new Set())
+    expect(inPlace(later, table).has("stool")).toBe(true)
   })
 })
 
@@ -115,10 +147,11 @@ describe("growCamp", () => {
 describe("ids the table does not know", () => {
   it("keeps them in the save and never puts them in place", () => {
     const save: CampSave = {
-      version: 1,
+      version: 2,
       finds: ["cup", "goneFind"],
       parts: { goneStructure: ["a"], hut: ["poles", "cloth", "pegs", "goneSail"] },
       grown: ["goneSprout"],
+      arrived: ["goneAnimal"],
     }
     expect(inPlace(save, table)).toEqual(new Set(["cup", "hut", "lamp"]))
     expect(readCampSave(save)).toBe(save)
@@ -130,6 +163,7 @@ describe("ids the table does not know", () => {
     expect(parted.parts.goneStructure).toEqual(["a"])
     expect(parted.parts.hut).toContain("goneSail")
     expect(parted.finds).toContain("goneFind")
+    expect(arrive(save, table, new Set(["purchase:stool"])).arrived).toEqual(["goneAnimal", "stool"])
   })
 })
 
@@ -167,14 +201,37 @@ describe("readCampSave", () => {
     ["nothing", undefined],
     ["a number", 3],
     ["an older shape", { found: ["cup"] }],
-    ["a newer version", { version: 2, finds: [], parts: {}, grown: [] }],
+    ["a newer version", { version: 3, finds: [], parts: {}, grown: [], arrived: [] }],
+    ["a version 2 save without arrivals", { version: 2, finds: [], parts: {}, grown: [] }],
+    ["a version 2 save with a damaged arrival", { version: 2, finds: [], parts: {}, grown: [], arrived: [7] }],
   ])("gives the empty save for %s", (_name, stored) => {
     expect(readCampSave(stored)).toEqual(emptyCampSave())
   })
 
-  it("gives a version 1 save back unchanged", () => {
-    const save: CampSave = { version: 1, finds: ["cup"], parts: { hut: ["poles"] }, grown: ["shoot"] }
+  it("gives a version 2 save back unchanged", () => {
+    const save: CampSave = {
+      version: 2,
+      finds: ["cup"],
+      parts: { hut: ["poles"] },
+      grown: ["shoot"],
+      arrived: ["stool"],
+    }
     expect(readCampSave(save)).toBe(save)
+  })
+
+  it("reads a version 1 save as version 2 with no arrivals, every id kept", () => {
+    const v1 = { version: 1, finds: ["cup", "goneFind"], parts: { hut: ["poles"], gone: ["a"] }, grown: ["shoot"] }
+    expect(readCampSave(v1)).toEqual({
+      version: 2,
+      finds: ["cup", "goneFind"],
+      parts: { hut: ["poles"], gone: ["a"] },
+      grown: ["shoot"],
+      arrived: [],
+    })
+  })
+
+  it("leaves a damaged version 1 save unread", () => {
+    expect(readCampSave({ version: 1, finds: ["cup"], parts: [], grown: [] })).toEqual(emptyCampSave())
   })
 })
 
@@ -188,13 +245,29 @@ describe("updateCampSave", () => {
     expect(record(stored)).toEqual({ ...emptyCampSave(), finds: ["cup"] })
   })
 
-  it("records into a version 1 save", () => {
-    expect(record({ ...emptyCampSave(), finds: ["rug"] })).toEqual({ ...emptyCampSave(), finds: ["rug", "cup"] })
+  it("records into a version 2 save", () => {
+    expect(record({ ...emptyCampSave(), finds: ["rug"], arrived: ["stool"] })).toEqual({
+      ...emptyCampSave(),
+      finds: ["rug", "cup"],
+      arrived: ["stool"],
+    })
+  })
+
+  it("writes a version 1 save back as version 2, losing nothing", () => {
+    const v1 = { version: 1, finds: ["rug"], parts: { hut: ["poles"] }, grown: ["shoot"] }
+    expect(record(v1)).toEqual({
+      version: 2,
+      finds: ["rug", "cup"],
+      parts: { hut: ["poles"] },
+      grown: ["shoot"],
+      arrived: [],
+    })
   })
 
   it.each([
-    ["a newer version", { version: 2, finds: ["rug"], parts: {}, grown: [], extra: true }],
+    ["a newer version", { version: 3, finds: ["rug"], parts: {}, grown: [], arrived: [], extra: true }],
     ["a damaged version 1 save", { version: 1, finds: ["rug", 7], parts: {}, grown: [] }],
+    ["a damaged version 2 save", { version: 2, finds: ["rug"], parts: {}, grown: [], arrived: "stool" }],
     ["an older shape", { found: ["rug"] }],
   ])("leaves %s untouched", (_name, stored) => {
     expect(record(stored)).toBe(stored)

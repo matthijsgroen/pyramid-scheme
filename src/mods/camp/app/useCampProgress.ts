@@ -6,8 +6,8 @@ import { CAMP_STEPS } from "@/mods/camp/game/campSteps"
 import type { CampSave } from "@/mods/camp/game/campState"
 import {
   campFound,
+  comeHome,
   emptyCampSave,
-  growCamp,
   readCampSave,
   recordFind,
   recordPart,
@@ -24,7 +24,8 @@ export type CampProgressAPI = {
   found: CampFound
   recordFind: (step: string) => Promise<unknown>
   recordPart: (structure: string, part: string) => Promise<unknown>
-  grow: () => Promise<unknown>
+  // The homecoming: bought steps whose purchase is held arrive, and the camp grows one stage.
+  comeHome: (held: ReadonlySet<string>) => Promise<unknown>
   structureProgress: (structure: string) => { found: string[]; total: string[] }
   startedStructures: () => string[]
   spotProgress: (spot: string) => { found: number; total: number }
@@ -45,7 +46,7 @@ export const useCampProgress = (table: CampStepTable = CAMP_STEPS): CampProgress
       recordFind: step => setStored((prev: unknown) => updateCampSave(prev, current => recordFind(current, step))),
       recordPart: (structure, part) =>
         setStored((prev: unknown) => updateCampSave(prev, current => recordPart(current, structure, part))),
-      grow: () => setStored((prev: unknown) => updateCampSave(prev, current => growCamp(current, table))),
+      comeHome: held => setStored((prev: unknown) => updateCampSave(prev, current => comeHome(current, table, held))),
       structureProgress: structure => structureProgress(save, table, structure),
       startedStructures: () => startedStructures(save, table),
       spotProgress: spot => spotProgress(save, table, spot),

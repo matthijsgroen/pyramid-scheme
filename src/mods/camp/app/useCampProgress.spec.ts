@@ -28,27 +28,28 @@ describe("useCampProgress", () => {
   it("grows the sprig on a homecoming after the seedling is found", async () => {
     const { result } = renderHook(() => useCampProgress(table))
     await act(async () => result.current.recordFind("seedling"))
-    await act(async () => result.current.grow())
+    await act(async () => result.current.comeHome(new Set()))
     expect(result.current.found.palmGarden).toEqual(["seedling", "sprig"])
   })
 
-  it("stores version 1 and authoring ids only", async () => {
+  it("stores version 2 and authoring ids only", async () => {
     const { result } = renderHook(() => useCampProgress(table))
     await act(async () => result.current.recordFind("seedling"))
     await act(async () => result.current.recordPart("hut", "poles"))
-    await act(async () => result.current.grow())
+    await act(async () => result.current.comeHome(new Set()))
     expect(readModState("camp")).toEqual({
-      version: 1,
+      version: 2,
       finds: ["seedling"],
       parts: { hut: ["poles"] },
       grown: ["sprig"],
+      arrived: [],
     })
   })
 })
 
 describe("a save this build cannot read", () => {
   it("shows as the empty camp and survives a record untouched", async () => {
-    const newer = { version: 2, finds: ["seedling"], parts: {}, grown: [] }
+    const newer = { version: 3, finds: ["seedling"], parts: {}, grown: [], arrived: [] }
     await writeGameData({ "pyramid-scheme-mod-camp": newer })
     const { result } = renderHook(() => useCampProgress(table))
     await act(async () => result.current.recordFind("seedling"))
@@ -77,6 +78,44 @@ describe("the camp's homecoming", () => {
     expect(result.current.camp.save.grown).toEqual(["sprout"])
     await act(async () => result.current.home())
     expect(result.current.camp.save.grown).toEqual(["sprout", "palm"])
+    vi.doUnmock("@/mods/camp/game/campSteps")
+  })
+
+  it("brings a bought step home only on a homecoming, once its purchase is held", async () => {
+    vi.resetModules()
+    vi.doMock("@/mods/camp/game/campSteps", async importOriginal => ({
+      ...(await importOriginal<typeof import("@/mods/camp/game/campSteps")>()),
+      CAMP_STEPS: [
+        { id: "seed", spot: "palmGarden", tier: "junior", source: "found" },
+        { id: "sprout", spot: "palmGarden", tier: "junior", source: "grows", growsFrom: ["seed"] },
+        { id: "mule", spot: "donkey", tier: "junior", source: "bought", purchase: "purchase:mule" },
+        { id: "halter", spot: "donkey", tier: "junior", source: "bought", purchase: "purchase:mule" },
+        { id: "flag", spot: "camel", tier: "junior", source: "bought", purchase: "purchase:flag" },
+      ],
+    }))
+    const { registerHeldKeysProvider } = await import("@/app/SiteMap/keyProviders")
+    let held: ReadonlySet<string> = new Set()
+    registerHeldKeysProvider(() => held)
+    await import("./index")
+    const { useHomecoming } = await import("@/app/homecomingRegistry")
+    const { useCampProgress: useCamp } = await import("./useCampProgress")
+    const { readModState: readFreshModState } = await import("@/app/state/useModState")
+    await writeGameData({ "pyramid-scheme-mod-camp": { version: 1, finds: ["seed"], parts: {}, grown: [] } })
+    const { result, rerender } = renderHook(() => ({ home: useHomecoming(), camp: useCamp() }))
+    await act(async () => {})
+    held = new Set(["purchase:mule"])
+    rerender()
+    expect(result.current.camp.found.donkey).toBeUndefined()
+    await act(async () => result.current.home())
+    expect(result.current.camp.found.donkey).toEqual(["mule", "halter"])
+    expect(result.current.camp.found.camel).toBeUndefined()
+    expect(readFreshModState("camp")).toEqual({
+      version: 2,
+      finds: ["seed"],
+      parts: {},
+      grown: ["sprout"],
+      arrived: ["mule", "halter"],
+    })
     vi.doUnmock("@/mods/camp/game/campSteps")
   })
 })

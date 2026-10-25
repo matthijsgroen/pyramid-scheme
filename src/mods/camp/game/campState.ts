@@ -1,17 +1,19 @@
 import { produce } from "immer"
 import type { CampStepTable } from "./campSteps"
 
-// The camp save holds facts by authoring name: the finds picked up, the parts recorded per structure, and
-// the steps that have grown. What the camp shows is derived from those facts and the step table on every
-// read, so a table change never strands a save: an id the table no longer knows stays in the save, inert.
+// The camp save holds facts by authoring name: the finds picked up, the parts recorded per structure, the
+// steps that have grown, and the bought steps that have arrived. What the camp shows is derived from those
+// facts and the step table on every read, so a table change never strands a save: an id the table no longer
+// knows stays in the save, inert.
 export type CampSave = {
-  version: 1
+  version: 2
   finds: string[]
   parts: Record<string, string[]>
   grown: string[]
+  arrived: string[]
 }
 
-export const emptyCampSave = (): CampSave => ({ version: 1, finds: [], parts: {}, grown: [] })
+export const emptyCampSave = (): CampSave => ({ version: 2, finds: [], parts: {}, grown: [], arrived: [] })
 
 const isStringArray = (value: unknown): value is string[] =>
   Array.isArray(value) && value.every(item => typeof item === "string")
@@ -24,14 +26,20 @@ const isCampSaveV1 = (save: Record<string, unknown>): boolean => {
   )
 }
 
-// One branch per save version; a later version adds its migration here. A version this build does not know
-// (a save from a newer build) or a damaged save is unreadable, never guessed at.
+const isCampSaveV2 = (save: Record<string, unknown>): boolean => isCampSaveV1(save) && isStringArray(save.arrived)
+
+// One branch per save version. A version 1 save predates purchases, so nothing has arrived in it. A version
+// this build does not know (a save from a newer build) or a damaged save is unreadable, never guessed at.
 const readable = (stored: unknown): CampSave | undefined => {
   if (typeof stored !== "object" || stored === null) return undefined
   const save = stored as Record<string, unknown>
   switch (save.version) {
     case 1:
-      return isCampSaveV1(save) ? (stored as CampSave) : undefined
+      return isCampSaveV1(save)
+        ? { ...(stored as Omit<CampSave, "version" | "arrived">), version: 2, arrived: [] }
+        : undefined
+    case 2:
+      return isCampSaveV2(save) ? (stored as CampSave) : undefined
     default:
       return undefined
   }
@@ -73,6 +81,28 @@ export const growCamp = (save: CampSave, table: CampStepTable): CampSave => {
   })
 }
 
+// An animal or a cart is ordered from Fez, not carried home: a bought step arrives on the homecoming after its
+// purchase is held, every step of one purchase at once. Once arrived it stays, whatever the held keys say later.
+export const arrive = (save: CampSave, table: CampStepTable, held: ReadonlySet<string>): CampSave => {
+  const arriving = table.filter(
+    entry =>
+      entry.source === "bought" &&
+      entry.purchase !== undefined &&
+      held.has(entry.purchase) &&
+      !save.arrived.includes(entry.id)
+  )
+  if (arriving.length === 0) return save
+  return produce(save, draft => {
+    for (const entry of arriving) draft.arrived.push(entry.id)
+  })
+}
+
+// Coming home: what was bought arrives and the camp grows one stage, both judged on the save as it stood on
+// arriving home. Arrival reads only the held keys and what has arrived, which growing never touches, and growing
+// is judged before arrivals land.
+export const comeHome = (save: CampSave, table: CampStepTable, held: ReadonlySet<string>): CampSave =>
+  arrive(growCamp(save, table), table, held)
+
 export const inPlace = (save: CampSave, table: CampStepTable): Set<string> => {
   const placed = new Set<string>()
   for (const entry of table) {
@@ -80,6 +110,7 @@ export const inPlace = (save: CampSave, table: CampStepTable): Set<string> => {
       entry.source === "fixed" ||
       (entry.source === "found" && save.finds.includes(entry.id)) ||
       (entry.source === "grows" && save.grown.includes(entry.id)) ||
+      (entry.source === "bought" && save.arrived.includes(entry.id)) ||
       (entry.source === "structure" && (entry.parts ?? []).every(part => save.parts[entry.id]?.includes(part)))
     if (there) placed.add(entry.id)
   }

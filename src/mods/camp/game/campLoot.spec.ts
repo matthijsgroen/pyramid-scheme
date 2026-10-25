@@ -33,7 +33,7 @@ const table: CampStepTable = [
   { id: "lamp", spot: "tower", tier: "master", source: "found" },
   { id: "gong", spot: "tower", tier: "master", source: "found" },
   { id: "tower", spot: "tower", tier: "master", source: "structure", parts: ["base", "beams", "planks", "rail"] },
-  { id: "flag", spot: "tower", tier: "master", source: "bought" },
+  { id: "flag", spot: "tower", tier: "master", source: "bought", purchase: "purchase:flag" },
   { id: "moss", spot: "tower", tier: "master", source: "grows", growsFrom: ["tower"] },
 ]
 const N = campUnits(table).length

@@ -1,5 +1,6 @@
 import { registerCollectionSection } from "@/app/pages/collectionSectionRegistry"
 import { registerHomecoming } from "@/app/homecomingRegistry"
+import { useMergedHeldKeys } from "@/app/SiteMap/keyProviders"
 import { registerCampFoundSource } from "@/app/home/campFoundSource"
 import { registerHaulLines } from "@/app/home/haulLines"
 import { registerHomeTags } from "@/app/home/homeTags"
@@ -17,7 +18,8 @@ import { useCampProgress } from "./useCampProgress"
 
 // The camp's app-side registrations, self-gated on the mod being enabled:
 // - the reward schemas, display and claim effects for finds and parts,
-// - the homecoming: the camp grows one stage each time the player comes home,
+// - the homecoming: each time the player comes home, what was bought (a held purchase fact) arrives and the camp
+//   grows one stage,
 // - the home: what the camp has found, how a find or part brought home reads in the haul, and whether
 //   anything has been found or a structure stands,
 // - the Collection section listing the started structures.
@@ -26,7 +28,11 @@ if (isModEnabled("camp")) {
   registerRewardSchema("campPart", campPartRewardSchema)
   registerCampRewardDisplay()
   registerRewardContribution(useCampRewardContribution)
-  registerHomecoming(() => useCampProgress().grow)
+  registerHomecoming(() => {
+    const held = useMergedHeldKeys()
+    const { comeHome } = useCampProgress()
+    return () => void comeHome(held)
+  })
   registerCampFoundSource(() => useCampProgress().found)
   registerHaulLines(useCampHaulLines)
   registerHomeTags(() => useCampHomeTags())

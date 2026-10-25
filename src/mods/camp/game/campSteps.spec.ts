@@ -22,7 +22,7 @@ const sound: CampStepTable = [
   step({ id: "hut", tier: "master", source: "structure", parts: ["a", "b", "c", "d"] }),
   step({ id: "seed", tier: "junior" }),
   step({ id: "sprout", tier: "junior", source: "grows", growsFrom: ["seed"] }),
-  step({ id: "cart", tier: "junior", source: "bought" }),
+  step({ id: "cart", tier: "junior", source: "bought", purchase: "purchase:wagon" }),
   step({ id: "map", source: "fixed" }),
   step({ id: "bed", source: "given" }),
 ]
@@ -103,11 +103,21 @@ describe("campStepProblems", () => {
     ])
   })
 
+  it("names a bought step that names no purchase", () => {
+    expect(campStepProblems([step({ id: "cart", source: "bought" })])).toEqual(['bought step "cart" names no purchase'])
+  })
+
+  it("names a purchase on a step that is not bought", () => {
+    expect(campStepProblems([step({ id: "pot", purchase: "purchase:wagon" })])).toEqual([
+      'step "pot" is found but names purchase "purchase:wagon"',
+    ])
+  })
+
   it("names a growing step that grows from a given or bought step, which never stands by being found", () => {
     expect(
       campStepProblems([
         step({ id: "bed", source: "given" }),
-        step({ id: "cart", source: "bought" }),
+        step({ id: "cart", source: "bought", purchase: "purchase:wagon" }),
         step({ id: "sprout", source: "grows", growsFrom: ["bed", "cart"] }),
       ])
     ).toEqual([

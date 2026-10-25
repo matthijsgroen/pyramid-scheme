@@ -20,6 +20,9 @@ export type CampStepEntry = {
   source: CampSource
   parts?: readonly string[]
   growsFrom?: readonly string[]
+  // The fact whose holding brings a bought step to the camp, as a plain string: the camp learns of a purchase through
+  // held keys and imports nothing of the shop.
+  purchase?: string
   // The structure the player sees the camp change with first: its parts lie in the first two journeys of its tier, so
   // it stands after the second. At most one per tier.
   early?: true
@@ -57,6 +60,10 @@ export const campStepProblems = (table: CampStepTable): string[] => {
         )
       for (const part of duplicates(parts)) problems.push(`structure "${entry.id}" has part "${part}" twice`)
     } else if (entry.parts !== undefined) problems.push(`step "${entry.id}" is not a structure but has parts`)
+    if (entry.source === "bought" && entry.purchase === undefined)
+      problems.push(`bought step "${entry.id}" names no purchase`)
+    if (entry.source !== "bought" && entry.purchase !== undefined)
+      problems.push(`step "${entry.id}" is ${entry.source} but names purchase "${entry.purchase}"`)
     if (entry.early && entry.source !== "structure") problems.push(`step "${entry.id}" is early but not a structure`)
     if (entry.early && entry.source === "structure" && (entry.parts ?? []).length < 2)
       problems.push(`early structure "${entry.id}" needs at least 2 parts, one for each of the first two journeys`)
@@ -115,6 +122,10 @@ const rows = (spot: string, source: CampSource, entries: Row[]): CampStepEntry[]
     ...(growsFrom && { growsFrom }),
   }))
 
+// A bought step names the purchase fact that brings it.
+const bought = (spot: string, entries: [id: string, tier: Difficulty, purchase: string][]): CampStepEntry[] =>
+  entries.map(([id, tier, purchase]) => ({ id, spot, tier, source: "bought", purchase }))
+
 // Part counts by tier: 2 / 3 / 3 / 4 / 5. Part ids are unique within their structure.
 export const CAMP_STEPS: CampStepTable = [
   ...rows("fire", "found", [
@@ -152,7 +163,7 @@ export const CAMP_STEPS: CampStepTable = [
     ["well", M, ["wellStones", "rope", "bucket", "windlass"]],
     ["wellPulley", W, ["pulleyWheel", "frame", "hoistRope", "counterweight", "leatherBucket"]],
   ]),
-  ...rows("water", "bought", [["waterTrough", E]]),
+  ...bought("water", [["waterTrough", E, "purchase:camel"]]),
   ...rows("cooking", "found", [
     ["spiceRack", J],
     ["breadBoard", J],
@@ -163,18 +174,18 @@ export const CAMP_STEPS: CampStepTable = [
     ["dryingRack", M, ["rackPoles", "crossbar", "wickerTray", "cords"]],
     ["feast", W, ["lowTable", "breadBaskets", "roastDuck", "beerJars", "fruitBowl"]],
   ]),
-  ...rows("donkey", "bought", [
-    ["halter", J],
-    ["donkey", J],
-    ["saddlebags", J],
-    ["cart", E],
-    ["secondDonkey", M],
-    ["paintedCart", W],
+  ...bought("donkey", [
+    ["halter", J, "purchase:donkey"],
+    ["donkey", J, "purchase:donkey"],
+    ["saddlebags", J, "purchase:donkey"],
+    ["cart", E, "purchase:cart"],
+    ["secondDonkey", M, "purchase:secondDonkey"],
+    ["paintedCart", W, "purchase:sturdyCart"],
   ]),
-  ...rows("camel", "bought", [
-    ["camel", E],
-    ["secondCamel", M],
-    ["caravanBanner", W],
+  ...bought("camel", [
+    ["camel", E, "purchase:camel"],
+    ["secondCamel", M, "purchase:secondCamel"],
+    ["caravanBanner", W, "purchase:caravanBanner"],
   ]),
   ...rows("mapTable", "found", [
     ["compass", E],
