@@ -451,6 +451,7 @@ No unit test pins the authored spec: the bake and the loot report are the check 
 
 **Files (by the bake):** as Task 6, plus `src/mods/shop/game/purchases.ts` and `WATERSKINS_PER_TRAP`, changed only by the rules below.
 
+- [ ] **Step 0: Fewer families in starter (designer, 2026-10-25):** set `minTier: "junior"` in the meta of futoshiki, sumplete, eclipse, constellation, starBattle and procession, so starter teaches sudoku, hidato, balanceScale, lightbeam and rushHour (plus the tableau and the traps, which only stand in hidden corridors). Comments current state only. If the bake then refuses a starter role pool for being too small (the 4-family floor), stop and name the role for the designer; don't move another family back on your own. Commit `feat: starter teaches five puzzle families, the rest open at junior` before the bake.
 - [ ] **Step 1: Bake:** `timeout 900 yarn generate-world`.
   - If a ground falls short and has no free slot: first lower `WATERSKINS_PER_TRAP` by 0.2 (never below 0.6). Then lower the price of the purchase in that ground closest to its gate by 50 (never below 100). Two rounds at most.
   - A purchase placement failure, a layout refusal, or a third round stops the phase (Failures).
