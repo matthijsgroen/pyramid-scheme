@@ -35,6 +35,30 @@ The designer's morning list for the unattended camp-release queue. Newest phase 
 - Phase 2 — Demand reaches the report through a new descriptor field, `lootTotals`: each mod reports its own currency found and needed, core never learns what a fragment or a coin is, and a toggled-off mod's rows drop. Alternative: let `scripts/lootReport.ts` import each mod's numbers directly.
 - Phase 2 — Demand rows now: fragments against `HIEROGLYPH_REQUIRED`, mosaic pieces against `MOSAIC_TOTAL`, map pieces against the tombs' `piecesRequired`, tomb treasures against the catalogue plus every ward gate with its key, waterskins (count only), coins and sellables (count and value), income against the shop's buyable stock. Camp finds come with phase 3, money before each gate with phase 4. Alternative: counts only, demand later.
 - Phase 2 — Loot ends without a reward in the spec (a floor-key host, a `loot: false` end) are listed under their own heading, not counted as empty; the bake has already refused any truly empty one. Alternative: count them as empty.
+- Phase 3 — 28 found items, not 26. The catalogue's own steps split this way: the palm, fig, papyrus and reeds are found as seeds and cuttings, and the star cloth and the lookout flag are finds. The brief and the loot spec say 26 (the spec's own list counts 28). Alternative: make two of them (star map, scroll case) structure parts.
+- Phase 3 — Parts per structure are 2 / 3 / 3 / 4 / 5 by tier (99 parts), authored per structure inside a checked band (starter and junior 2–3, expert 3–4, master and wizard 4–6). The brief's "scale with the tier" wins over the spec's "scale with the slots a tier has"; counts are authored, never computed from slots. Alternative: 2 / 3 / 4 / 5 / 6 (119 parts).
+- Phase 3 — 28 finds + 99 parts = 127 more drops, against the handover's estimate of about 104. The plan took the low end of the parts bands (2/3/3/4/5 per structure by tier). Alternative: 2/3/4/5/6 = 119 parts (147 drops).
+- Phase 3 — Camp loot lies only on loot-bearing puzzle slots of exactly its step's tier (a slot's tier is its section's). Chests, path ends and shop stock stay with the shop and the capped currencies. A tier that is short fails the bake (TARGET rule 2). Alternative: allow chests, or let a short tier use the next tier's slots.
+- Phase 3 — Within a tier the order is ungated main slots first, then ward-gated, then hidden. Sites are dealt round-robin in id order and slots in path order, and a structure's parts are dealt so they fall on different sites. Deterministic, no seed. Alternative: a seeded random spread.
+- Phase 3 — Core gives every puzzle slot `wardKeys: []`, so camp's "ward-gated last" step never applies in the real world. Some camp parts can sit behind ward gates (reachable with keys placed in the world). Alternative: core puzzle slots carry their section's wardKeys (moves every dynamic distribution).
+- Phase 3 — Registry order is trap → camp → shop. Waterskins keep their 60 slots, camp takes its 127 next, and the shop's money fills what is left (its budget is global, so its coins move to other slots, not out of the world). Alternative: camp before trap.
+- Phase 3 — The mod's step table is the source of each step's tier and source. The ui catalogue keeps `chapter` for its camera framing, and `yarn verify-content` fails when the two disagree (a step missing on either side, or a different tier or spot). Alternative: strip `chapter` from the ui catalogue and pass a merged catalogue in as a prop (left to phase 6, which mounts the scene).
+- Phase 3 — The camp save is `useModState("camp")` holding `{ version: 1, finds: step ids, parts: structure id → part ids, grown: step ids }`. `CampFound` for the scene is derived from it (fixed steps + finds + finished structures + grown steps). Alternative: store `CampFound` itself.
+- Phase 3 — The camp save refuses to overwrite a save it cannot read (a newer version or a damaged one), and such a save reads as an empty camp. Alternative: reset it to an empty camp on the next write.
+- Phase 3 — Growth: the sprout comes after the palm seed, the palm after the sprout, dates once both palms stand, the first ibis after the reeds, and the second ibis once the first ibis and the lotus are there. Each rule grows one stage per homecoming, judged on the save as it was on arriving home. Alternative: grow every ready stage at once.
+- Phase 3 — Camp growth runs once per homecoming, called from core's homecoming handler. Alternative: grow on every visit to the base screen.
+- Phase 3 — The second palm seed and the fig seed land as their tree at once (no sprout art exists for them). Alternative: make them grow too.
+- Phase 3 — Constructies is a Collection section now (registered at order 40, after the shop's), titled "Constructies". Phase 7 turns the sections into tabs. Alternative: build the tab bar in this phase.
+- Phase 3 — The brief overrides the Verzameling sketch's note "Kampspullen staan hier niet in": started structures are listed in Constructies. Found items stay out of the Verzameling (they are seen in the camp and in their popup).
+- Phase 3 — Progress lines: a part reads "<structure> · n van m" over that structure's parts. A find reads "<spot> · n van m" over the spot's finds and structures in place. Alternative: a find shows no progress line.
+- Phase 3 — Missing parts always read "???" in an opened row; there is no "seen" state, because the spec's "not seen yet" variant needs a store nothing else uses. Alternative: remember seen parts.
+- Phase 3 — Until it is painted, a part shows its structure's camp art and a sellable shows its glyph. A painted icon takes over once its file is dropped in (`src/assets/camp/parts/<structure>-<part>.webp`, `src/assets/sellables/<id>.webp`). Alternative: an emoji per part.
+- Phase 3 — The icon prompts live in `docs/instructions/repaint-queue.md` (as the brief asks), in the camp house style (`docs/game-design/camp-art-prompts.md` §0: matte, flat `#ff00ff` ground, neutral light). Their keys are `part/<structure>-<part>` and `sellable/<id>`, imported with `yarn import-camp --out-dir`. Alternative: put them in `camp-art-prompts.md`.
+- Phase 3 — A new locale namespace `camp` (`public/locales/*/camp.json`) holds the spot, find, structure and part names and the Constructies strings. Alternative: keep them under the `camp` key of `common.json`.
+- Phase 3 — A camp reward is skipped silently only when the save already has it (a revisit, a dev grant); otherwise it is always taken. Alternative: no skip.
+- Phase 3 — Finds and parts get no description line in this phase; the popup shows name, art and progress. Story phase 8 may add flavour. Alternative: draft a description per find now.
+- Phase 3 — Loot report rows: "Camp finds" against the table's found items and "Structure parts" against the table's parts, each counted wherever it lies.
+- Phase 3 — The brief wins over the spec on three points: parts scale with the tier (the parts decision above), the found-item count follows the catalogue (the 28 finds decision above), and the Constructies list shows structure art plus "n van m", with parts only in an opened row (the spec showed parts inline).
 
 ## Phase 1 loot
 
@@ -73,6 +97,34 @@ From `yarn loot-report` on the committed bake (byte-identical to phase 1's). `do
 - Determinism: two `yarn loot-report` runs on the same bake write identical bytes.
 - Toggle-off: with `trapMod` out of `REGISTERED_MODS` (and its import), `yarn loot-report` runs and drops the Waterskins row; `yarn check-types` passes. Without a re-bake the baked world still holds its waterskins, so they still show as `waterskin` counts in the tier columns (reward types are counted as opaque strings). Restored afterwards.
 - Gate: `yarn generate-world` left `generatedWorld.ts` byte-identical (carveLedger unchanged too); `yarn verify` (539 files, 6439 tests; betterer only re-keyed the `§` backlog entries of `modDescriptor.ts` and `registeredMods.ts` whose lines moved), `yarn verify-content` (43 files, 751 tests) and `yarn build` pass.
+
+## Phase 3 loot
+
+From `yarn loot-report` before (651aad2c) and after the bake (88646b9e). `docs/loot-report.md` has the full table. The tier is the section's tier.
+
+| tier    | camp finds + parts | puzzles with loot               | empty puzzle rooms | chests filled | path ends filled | coins on puzzles (drops) | coins in the tier |
+| ------- | ------------------ | ------------------------------- | ------------------ | ------------- | ---------------- | ------------------------ | ----------------- |
+| starter | 4 + 8 = 12         | 72/92 = 78% → 78/92 = 85%       | 20 → 14            | 20/20         | 52/52            | 72 → 66                  | 155 → 145         |
+| junior  | 5 + 6 = 11         | 72/186 = 39% → 83/186 = 45%     | 114 → 103          | 27/27         | 113/113          | 72 → 72                  | 202 → 206         |
+| expert  | 3 + 9 = 12         | 91/431 = 21% → 104/431 = 24%    | 340 → 327          | 35/35         | 141/141          | 71 → 72                  | 185 → 192         |
+| master  | 5 + 36 = 41        | 91/540 = 17% → 133/540 = 25%    | 449 → 407          | 54/54         | 158/158          | 71 → 72                  | 196 → 193         |
+| wizard  | 11 + 40 = 51       | 91/860 = 11% → 142/860 = 17%    | 769 → 718          | 58/58         | 169/169          | 71 → 71                  | 344 → 346         |
+| all     | 28 + 99 = 127      | 417/2109 = 20% → 540/2109 = 26% | 1692 → 1569        | 194/194       | 633/633          | 357 → 353                | 1082 → 1082       |
+
+- Against demand: Camp finds 28/28 and Structure parts 99/99, both exact. Mosaic 252/252, fragments 296/296, map pieces 31/31, tomb treasures 40/40 and ward gates with their key 290/290 are unchanged.
+- Every camp find and part lies on a puzzle slot of its step's tier: none on a chest, path end or shop stock slot. 100 lie on main paths and 27 on side paths. The camp loot fills empty puzzle rooms and takes some puzzle slots the shop's coins held before.
+- Waterskins: 60, on the same 60 slots before and after (compared slot by slot over every journey's `yarn loot-report --journey` listing).
+- Money: 1082 coins before and after, in 532 → 528 drops. Sellables 85 worth 7025, unchanged. Income 8107 against 6300 buyable: surplus 1807, unchanged, and the economy guard passes.
+- The bake also moved the carve ledger's input hashes for its refused master/wizard floors (each refusal is unchanged). Reward placement feeds that hash; no floor carves differently.
+- Phase 3 fingerprints — starter moved (`f528edc2c6be20f8`): 8 camp finds and parts on puzzle slots of its journeys, and the shop's coins moved to other slots (coin drops 87 → 85).
+- Phase 3 fingerprints — junior moved (`ee7ad76c08ed137f`): 17 camp finds and parts on puzzle slots of its journeys, and coins moved to other slots (coin drops 112 → 104).
+- Phase 3 fingerprints — expert moved (`88e695ec8e596a0a`): 27 camp finds and parts on puzzle slots of its journeys, and coins moved to other slots (coin drops 100 → 88).
+- Phase 3 fingerprints — master moved (`8efaa7248d8645f0`): 28 camp finds and parts on puzzle slots of its journeys, and the shop's budget put coins on other slots here (coin drops 90 → 104).
+- Phase 3 fingerprints — wizard moved (`b3c21b3af901eeb4`): 47 camp finds and parts on puzzle slots of its journeys, and coins moved to other slots (coin drops 143 → 147).
+- (The fingerprint counts are by journey tier: a starter-tier part can lie in an expert journey's starter-tier section, so these differ from the table's section-tier counts.)
+- Toggle-off: with `campMod` out of `REGISTERED_MODS` (and its import), `yarn generate-world`, `yarn check-types`, `yarn build` and `yarn loot-report` pass. The report has no camp rows, and the baked world holds no `campFind` / `campPart`. `generatedWorld.ts` is then byte-identical to the bake before this phase. Restored afterwards; the tree was clean.
+- Gate: `yarn verify` (551 files, 6529 tests; betterer only re-keyed the `§` entries of `registeredMods.ts` and `CollectibleSlot.tsx`, whose lines moved), `yarn verify-content` (44 files, 753 tests, the camp catalogue agreement included) and `yarn build` pass.
+- Found during the look: `yarn dev` showed a blank page (`node:path` has no export `dirname`). Since phase 2, the tomb-treasure loot rows imported `WORLD_TARGETS` from `worldSpec.ts`, which pulls the lock catalogue (read from disk) into the app; the production bundle carried the same `node:` shims. Fixed in 7afaa564: `WORLD_TARGETS` has its own file, and the app graph no longer reaches the spec.
 
 ## Drafts
 
@@ -118,3 +170,7 @@ From `yarn loot-report` on the committed bake (byte-identical to phase 1's). `do
 - Phase 1 — The trap warning without heal or disarm buttons.
 - Phase 1 — The HUD without the supplies bar.
 - Phase 1 — The detector toggles without the supplies detector.
+- Phase 3 — The Constructies section. Checked unattended on a fresh dev save with a seeded camp save (stone ring 1 part, fire both parts, well 1 part, plus the jar find): the section sits last in the Collection with each structure's camp art, "1 van 2", "gebouwd", "1 van 4". Opening "Put" lists "???", "Lang touw" with its art, "???", "???". The jar find is not listed. Its heading is brown without an icon or underline, unlike the purple hieroglyph sections above it. Look at it on a phone too.
+- Phase 3 — A part popup. Not reached unattended: no puzzle room turned up on the first floor walked. Steps: on a fresh save start Dageraad bij de Sfinx, finish level 1, and on level 2 solve the first puzzle up the main corridor. It holds the stone ring's sand bed: the popup shows the stone ring's camp art and "Stenen kring · 1 van 2".
+- Phase 3 — A find popup with its layer art. Not reached unattended. Steps: Dageraad bij de Sfinx level 1, the first puzzle on side path 1, holds the jar: the popup shows the jar's camp layer art and a "<spot> · n van m" line.
+- Phase 3 — The StructureRow and StructuresPanel stories (closed, open, complete, "???", "gebouwd") render. The panel story's rows have no art because its made-up rows pass none.
