@@ -2,6 +2,8 @@ import type { SiteConfig, SubSection, Tier, TreasureReward, FragmentSlotReward }
 import type { Difficulty } from "../data/difficultyLevels"
 import { capabilitiesFor } from "./capabilities"
 import type { FloorRef } from "./reachability"
+import { CARVE_FAMILY_QUERIES, defaultResolveEncounter } from "../game/encounterFallback"
+import type { ResolveEncounter } from "../game/siteAssembler"
 
 // A candidate reward-placement site, tagged with the floor it lives on so a distribution
 // rule can be filtered down to only the currently-reachable ones (see
@@ -66,14 +68,19 @@ export type FamilyPriorityFor = (encounter: string | string[] | undefined, defau
 // collectSlots used, now with each slot's own FloorRef attached.
 export const collectSlots = (
   allConfigs: Record<string, SiteConfig[]>,
-  familyPriorityFor: FamilyPriorityFor = () => 0
+  familyPriorityFor: FamilyPriorityFor = () => 0,
+  resolveEncounter: ResolveEncounter = defaultResolveEncounter
 ): Slot[] => {
   const slots: Slot[] = []
-  // Every emitted end slot is a treasure-chest path end (shop ends resolve to fez-shop with their
-  // own stock and are never fragmentSlot sentinels, so they aren't collected here) → chest
-  // reward priority (100). Resolved through
-  // the injected lookup rather than hardcoded, so a mod set that redefines "treasure" still wins.
+  // Every emitted end slot is a treasure-chest path end → chest reward priority (100). Resolved
+  // through the injected lookup rather than hardcoded, so a mod set that redefines "treasure" still wins.
   const chestWeight = familyPriorityFor(undefined, "treasure")
+  // A section whose encounter resolves to the shop ends in a shop room, which shows its stock and
+  // never its endReward (carve/roomSpecs.ts endRoomSpec asks the same question). So its end is no
+  // slot, and a sentinel standing there is cleared: anything placed on it would not exist in play.
+  const shopFamily = resolveEncounter(CARVE_FAMILY_QUERIES.fezShop, CARVE_FAMILY_QUERIES.fezShop).familyId
+  const endsInShop = (section: SubSection) =>
+    section.encounter !== undefined && resolveEncounter(section.encounter, "treasure").familyId === shopFamily
 
   for (const [journeyId, siteConfigs] of Object.entries(allConfigs)) {
     if (!capabilitiesFor(journeyId)?.emitFragmentSlots) continue
@@ -199,8 +206,10 @@ export const collectSlots = (
           // `end: "treasure"` section can actually display/grant a reward at runtime. An open
           // tomb-key gate leading to a stairhead must never be handed to a currency as a fillable
           // slot — the reward would be silently dropped, capping that currency one instance short.
-          const rewardCapable = section.end === "treasure"
-          if (section.endReward?.type === "fragmentSlot") {
+          const rewardCapable = section.end === "treasure" && !endsInShop(section)
+          if (endsInShop(section)) {
+            if (section.endReward?.type === "fragmentSlot") section.endReward = undefined
+          } else if (section.endReward?.type === "fragmentSlot") {
             const s = section
             addSlot(
               ref,
@@ -222,8 +231,10 @@ export const collectSlots = (
           for (const sub of section.sideSections ?? []) {
             const subWardKeys = [...sWardKeys, ...(sub.gate?.type === "tomb-key" ? [sub.gate.wardKeyId] : [])]
             const subHidden = secHidden || !!sub.hidden
-            const subRewardCapable = sub.end === "treasure"
-            if (sub.endReward?.type === "fragmentSlot") {
+            const subRewardCapable = sub.end === "treasure" && !endsInShop(sub)
+            if (endsInShop(sub)) {
+              if (sub.endReward?.type === "fragmentSlot") sub.endReward = undefined
+            } else if (sub.endReward?.type === "fragmentSlot") {
               const ss = sub
               addSlot(
                 ref,

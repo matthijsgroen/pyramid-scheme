@@ -159,7 +159,7 @@ export const placeFragments = (
   // reEnterable for anyone.
   resolveEncounter?: ResolveEncounter
 ): PlacedWorld => {
-  const slots = collectSlots(allConfigs, familyPriorityFor)
+  const slots = collectSlots(allConfigs, familyPriorityFor, resolveEncounter)
   const available = new Set(slots)
   // Each journey carries only its tier — whether entering it needs a currency threshold (a tomb's
   // map pieces) is the injected support's data, so core reads no per-tomb count here.

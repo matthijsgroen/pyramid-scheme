@@ -137,3 +137,74 @@ describe("collectSlots on a chain with node difficulties", () => {
     expect(puzzles.map(s => s.tier)).toEqual(puzzles.map(() => "starter"))
   })
 })
+
+describe("collectSlots on a shop's end", () => {
+  const siteWithShopAndPlainEnd = (): SiteConfig => [
+    {
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [
+        {
+          pathPuzzles: 0,
+          difficulty: "starter",
+          end: "treasure",
+          encounter: "fez-shop",
+          endReward: { type: "fragmentSlot" },
+          rewards: [{ type: "fragmentSlot", prefers: "made-up-bucket" }, undefined],
+        },
+        { pathPuzzles: 0, difficulty: "starter", end: "treasure", endReward: { type: "fragmentSlot" } },
+      ],
+    },
+  ]
+
+  it("offers no slot on a shop's end and clears its sentinel, since the shop room shows only its stock", () => {
+    const site = siteWithShopAndPlainEnd()
+    const ends = collectSlots({ starter_1: [site] }).filter(s => s.kind === "end" && s.encounter === undefined)
+    expect(ends).toHaveLength(1)
+    ends[0].assign({ type: "mosaicPiece", tier: "starter" })
+    expect(site[0].sideSections[0].endReward).toBeUndefined()
+    expect(site[0].sideSections[1].endReward).toEqual({ type: "mosaicPiece", tier: "starter" })
+  })
+
+  it("still offers the shop's tagged stock sentinel", () => {
+    const stock = collectSlots({ starter_1: [siteWithShopAndPlainEnd()] }).filter(
+      s => s.kind === "end" && s.encounter === "fez-shop"
+    )
+    expect(stock).toHaveLength(1)
+    expect(stock[0]).toMatchObject({ kind: "end", preference: "made-up-bucket" })
+  })
+
+  it("never offers an open tomb-key gate whose end is a shop", () => {
+    const site: SiteConfig = [
+      {
+        pathPuzzles: 1,
+        difficulty: "starter",
+        end: "treasure",
+        exitOrStaircase: "exit",
+        sideSections: [
+          {
+            pathPuzzles: 0,
+            difficulty: "starter",
+            end: "treasure",
+            encounter: "fez-shop",
+            gate: { type: "tomb-key", wardKeyId: "some-key" },
+          },
+        ],
+      },
+    ]
+    expect(collectSlots({ starter_1: [site] })).toEqual([])
+  })
+
+  it("asks the injected resolver which encounter is the shop", () => {
+    const site = siteWithShopAndPlainEnd()
+    site[0].sideSections[0].encounter = "made-up-stall"
+    site[0].sideSections[0].rewards = []
+    const resolve = (encounter: string | string[] | undefined, tag: string) => {
+      const id = (Array.isArray(encounter) ? encounter[0] : encounter) ?? tag
+      return { familyId: id === "made-up-stall" ? "fez-shop" : id, tags: [], ownerMod: "made-up" }
+    }
+    expect(collectSlots({ starter_1: [site] }, () => 0, resolve).filter(s => s.kind === "end")).toHaveLength(1)
+  })
+})
