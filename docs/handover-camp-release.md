@@ -205,7 +205,7 @@ sold. Drafts are written in Dutch first (spoken, everyday Dutch), then in Englis
 Lines go where the story layer keeps them, each listed in the review list with where it fires. No line is
 "final" until the designer has read it.
 
-### Phase 9 — wrap-up [ ]
+### Phase 9 — wrap-up [x]
 
 CHANGELOG (edit the Unreleased bullets, do not pile them up), `docs/playtest-backlog.md` (what to try in the
 browser), the onboarding/handover docs this queue made stale, a last loot report, the full gate in a clean
@@ -221,3 +221,8 @@ worktree, and the review list sorted: decisions, drafts, failures, things to loo
 - 2026-10-25 — phase 6 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-6-camp-home.md`): the camp is home (HUD, scene entrances, Verder met, desktop side panel); coming-home screen with the haul; new-chapter card; settings hold the dev tools; story log is a Collection section; nothing chains into the next journey. Alle reizen is still the old Travel page (phase 7). Next: phase 7 plan task.
 - 2026-10-25 — phase 7 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-7-journeys-collection.md`): Alle reizen replaces Travel (one list, tiers newest first, locked needs, `extraNeeds` seam for animals later); the Verzameling opens in tabs with NIEUW and a chest badge (seen save); mosaic window count line. Next: phase 8 plan task.
 - 2026-10-25 — phase 8 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-8-story-drafts.md`): 64 draft scenes nl+en (27 tomb, 10 camp, 27 animal — the animal ones unwired, waiting on phase 4) in `docs/game-design/story/script-camp-release.md`; tomb and camp beats wired once each; develop mode plays the drafts from settings. Next: phase 9 wrap-up.
+- 2026-10-25 — phase 9 wrap-up done: changelog condensed, playtest backlog and the docs the queue made stale updated (`camp.md`, the mod architecture, the Travel page's old references), loot report unchanged, the review list sorted with a "Start here" summary, the clean-worktree gate green (bake clean after re-keying the carve ledger's hashes, verify, verify-content, build); branch pushed, no PR.
+
+## Next
+
+Phase 4 Tasks 3–8 (purchases, the per-gate guard, gate needs, buying, arrival) and phase 5 (the economy recomputed) wait on the designer's placement decision: place loot on the pinned layout (pin every floor first), or make placement layout-independent and guard the stamped world (`docs/review-camp-release.md`, Failures). Once decided, resume at Task 3 of `docs/superpowers/plans/2026-10-25-camp-phase-4-animal-gates.md`; the animal story drafts (phase 8) are wired then.
