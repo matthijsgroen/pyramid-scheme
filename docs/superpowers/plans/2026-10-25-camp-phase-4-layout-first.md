@@ -13,7 +13,7 @@
 5. The fixed quantities follow: mosaic pieces, camp finds and parts, waterskins, Fez's waterskins.
 6. Money is placed last, so that it meets every condition from step 4.
 
-A guard walks the **stamped** world and refuses any bake in which a journey cannot be entered, a tableau cannot be finished, or a ground is short of money. A hidden corridor counts as a gate too: what lies behind it is reachable only once the corridor detector is held. Starter is released, so its layout pins are verify-only; its loot may move. Then the animals: buying one opens its gate, Alle reizen says what a locked tier still needs, and the animal waits in the camp.
+A guard walks the **stamped** world and refuses any bake in which a journey cannot be entered, a tableau cannot be finished, or a ground is short of money. A hidden corridor counts as a gate too: what lies behind it is reachable only once the corridor detector is held. Saves do not exist yet, so every tier's layout and loot (starter included) may be reshaped by any bake. Master's open junk corridor becomes a trap path, so the waterskins that follow traps put master between expert and wizard. Then the animals: buying one opens its gate, Alle reizen says what a locked tier still needs, and the animal waits in the camp.
 
 **Diagnosis (established, not re-derived):**
 
@@ -26,7 +26,7 @@ A guard walks the **stamped** world and refuses any bake in which a journey cann
 
 **Architecture:**
 
-1. **A layout stage inside the build.** `buildConfigs` gains an injected `pickLayout` hook. It runs after every structural pass (roles, encounters, dressing, shop stock and its trim, shop-end clearing) and before the web and placement. It writes `seed` + `packing` on every floor. The bake supplies it from the carve search and ledger. The old after-build stamp becomes a check: if loot moved a wall, the bake is refused. Released tiers' floors are verified only, never re-searched.
+1. **A layout stage inside the build.** `buildConfigs` gains an injected `pickLayout` hook. It runs after every structural pass (roles, encounters, dressing, shop stock and its trim, shop-end clearing) and before the web and placement. It writes `seed` + `packing` on every floor. The bake supplies it from the carve search and ledger. The old after-build stamp becomes a check: if loot moved a wall, the bake is refused. Every tier is searched alike; no tier's pins are frozen.
 2. **Hard layout criteria.** The carve search adds "every lock holds a puzzle on the way" and "sprawl kept" to its five criteria. It never relaxes a criterion. An authoring that no layout can meet is reported as **infeasible**: a check on the authoring, before or without carving. An authoring the bounded search did not meet is reported as **not found in budget**. Both fail the bake, naming the floor and the criterion.
 3. **The corridor detector is a key.** The reachability support names the fact a hidden section needs. The tomb-treasure mod harvests a `detection` perk treasure to the detector facts for its level and below. Placement walks, the gate walk and grounds all honour it.
 4. **Keys on the shipped layout.** The worklist walks the pinned floors, so its reachability is the player's. A key is placed only in a room the walk reaches (the room-reach hunk of the shelved patch). The animals are a gating currency: each fills a stock placeholder in its named shop, and only when that shop is reached before the gate.
@@ -39,7 +39,7 @@ A guard walks the **stamped** world and refuses any bake in which a journey cann
 
 **Spec:** `docs/handover-camp-release.md` (Phase 4 and Phase 5 briefs, driver rules); `docs/game-design/keys-and-locks-solver.md` (canonical order, worklist, completion pass, winnability); `docs/game-design/world-spec-stability.md` (free and structural fields, tier fingerprints); `docs/game-design/journeys.md` §3 (sprawl); `docs/superpowers/specs/2026-10-23-camp-loot-design.md` ("Bought at Fez", "No softlock"); `docs/mods/TARGET.md`; `docs/review-camp-release.md` §4 Failures (the phase-4 blocker this plan resolves).
 
-## The purchase table (carried from the old plan; prices may move only by Task 10's rule)
+## The purchase table (carried from the old plan; prices may move only by Task 11's rule)
 
 | Purchase id     | Fact                     | Sold at (first Fez shop) | Opens                            | Camp steps                       | Price |
 | --------------- | ------------------------ | ------------------------ | -------------------------------- | -------------------------------- | ----- |
@@ -53,13 +53,13 @@ A guard walks the **stamped** world and refuses any bake in which a journey cann
 
 ## Global Constraints
 
-- **Branch** `camp/home-and-loot` only. Never `git pull`, never a bare `git stash`, never switch branches. One commit per task (Task 15 commits its docs step separately). Do not push from a task; the driver pushes after the phase.
+- **Branch** `camp/home-and-loot` only. Never `git pull`, never a bare `git stash`, never switch branches. One commit per task (Task 16 commits its docs step separately). Do not push from a task; the driver pushes after the phase.
 - **Core is mod-agnostic.** `src/app`, `src/ui`, `src/game`, `src/data` and `src/worldGen` never name a mod, the `purchase` reward type, an animal, a purchase id, a `purchase:` fact, money, a sellable, a waterskin or a perk. Core speaks of buckets, stock, rewards, grounds and the support's hidden-section fact. `no-restricted-imports` stays at zero, and mods import no sibling. The one file that reads both shop and camp is an aggregate verify (`src/mods/purchaseFacts.verify.ts`, or under `scripts/` if lint refuses it, never an allowlist).
 - **Mods toggle off.**
   - Shop off: no purchase, no Fez stock, no money condition and no gate need, so every tier and tomb opens as before.
   - Camp off: gates and purchases work, and no animal shows anywhere.
   - Tomb-treasure off: no detector facts and no hidden-section requirement, so hidden sections walk open, as without the mod today.
-  - Task 15 proves shop off and camp off with a bake, types, build and the loot report.
+  - Task 16 proves shop off and camp off with a bake, types, build and the loot report.
 - **`src/ui` takes props only**, and each new or changed `src/ui` component gets or updates its story with made-up props.
 - **Strings** go nl first (spoken, everyday Dutch), then en, in `public/locales/{nl,en}/`. Every draft is listed under Drafts in `docs/review-camp-release.md`.
 - **Saves never overwrite what they cannot read.** A stored value whose shape or version this build does not know reads as empty and is never written over. Ids are authoring names, never indices.
@@ -69,30 +69,31 @@ A guard walks the **stamped** world and refuses any bake in which a journey cann
 - **Every bake, loot report, verify and build runs under `timeout 900`.** When a process is quiet for long, check `ps` for a hung node or vitest.
 - **Commits:** one line, `type: what changed`, ≤ 72 chars, plus the session's attribution trailer.
 - **Model per task:** tasks marked **soundness** are implemented by Opus and get a per-task Opus review. The others are implemented by Sonnet. The phase review at the end is Sonnet.
-- **Bakes run only in Tasks 5, 10 and 15.** The other tasks do not bake. Each runs its specs, `yarn check-types` and `yarn lint`.
+- **Bakes run only in Tasks 6, 11 and 16.** The other tasks do not bake. Each runs its specs, `yarn check-types` and `yarn lint`.
 - **Stop rule:** two failed attempts at a task stop the phase. Write what failed under Failures, and continue with the next task that does not depend on it. A layout infeasibility in a bake is not a failed attempt: it is the designer's authoring to fix. Record it under Failures with the floor and criterion, and stop the phase.
 
 ## Review Focus
 
-1. **The layout is picked before loot and is the layout that ships.** Placement's reachability carves every floor at the `seed` + `packing` the layout stage wrote, and the post-build check finds no floor whose grid differs from the picked one (Tasks 1, 5).
+1. **The layout is picked before loot and is the layout that ships.** Placement's reachability carves every floor at the `seed` + `packing` the layout stage wrote, and the post-build check finds no floor whose grid differs from the picked one (Tasks 1, 6).
 2. **Layout criteria never relax.** A floor that cannot meet one fails the bake by name. Infeasible and not-found-in-budget are told apart (Task 2).
-3. **A hidden corridor is a gate.** Nothing behind it counts, for placement, the guard or money, until the detector is held (Tasks 3, 8).
-4. **No piece behind its own gate.** Room-level eligibility plus the stamped guard: every journey entered, every tier unlocked and no lock blocking, on the final configs and on the committed file (Tasks 4, 5).
-5. **The animals are keys.** Each is placed by the worklist into its own shop, only when that shop is reached before the gate it opens. None opens starter or junior (Task 6).
-6. **The money guard is sound against any spending order.** For every reachable ground, income ≥ everything for sale in it. A property test with an exhaustive spender on made-up worlds holds it (Task 7).
-7. **Money is placed last and meets every ground,** with no allowance constant (Tasks 8, 9).
-8. **The app gates on the same facts.** The locked tier shows the treasure lit, plus the animal it still needs and where Fez sells it (Task 11).
-9. **Purchases and arrivals are saved by id and never clobbered** (Tasks 12, 13).
-10. **Toggle-off works both ways** (Task 15).
+3. **A hidden corridor is a gate.** Nothing behind it counts, for placement, the guard or money, until the detector is held (Tasks 3, 9).
+4. **No piece behind its own gate.** Room-level eligibility plus the stamped guard: every journey entered, every tier unlocked and no lock blocking, on the final configs and on the committed file (Tasks 4, 6).
+5. **The animals are keys.** Each is placed by the worklist into its own shop, only when that shop is reached before the gate it opens. None opens starter or junior (Task 7).
+6. **The money guard is sound against any spending order.** For every reachable ground, income ≥ everything for sale in it. A property test with an exhaustive spender on made-up worlds holds it (Task 8).
+7. **Money is placed last and meets every ground,** with no allowance constant (Tasks 9, 10).
+8. **The app gates on the same facts.** The locked tier shows the treasure lit, plus the animal it still needs and where Fez sells it (Task 12).
+9. **Purchases and arrivals are saved by id and never clobbered** (Tasks 13, 14).
+10. **Toggle-off works both ways** (Task 16).
+11. **Master's traps sit between expert's and wizard's**, read from the loot report after the bake, never from a unit test (Tasks 5, 6).
 
 ## Decisions for the review list
 
-Each decision is **default** / alternative. Task 15 writes them under Decisions, prefixed `Phase 4 —`.
+Each decision is **default** / alternative. Task 16 writes them under Decisions, prefixed `Phase 4 —`.
 
 1. **The layout stage is a hook inside the build** (`pickLayout`, one pass): the carve search runs on the structural authoring, and placement then runs on the pins. / Alternative: pin every floor from the last bake and re-bake until the pins settle, which takes two or more full builds and picks the layout after a first placement.
 2. **"Loot moved a wall" refuses the bake.** The post-build carve compares each floor's grid shape with the picked one, and `bakeOnSettledPins`' re-build loop goes. A web placement that moved is also a refusal. / Alternative: keep re-building until settled.
 3. **Shop-end placeholder clearing moves out of `collectSlots`** into a structural pass before the layout, because an end's `endReward` presence decides floor-key hosts. / Alternative: leave it in placement and rely on Decision 2's refusal.
-4. **Released tiers' pins are verify-only; their loot moves freely** (designer: starter's loot need not be frozen). `pickLayout` never searches a starter floor. A starter pin that no longer carves, or that fails a criterion, fails the bake with the floor named. It costs one flag in `pickLayout`, and it keeps released players' corridors where they walked them. / Alternative: treat starter like every other tier and let the search re-pin it.
+4. **No tier is frozen** (designer: saves do not exist yet). Starter's floors are picked by the search like every other tier's. A baked pin that still verifies is kept (the search verifies before it searches); one that fails is re-searched. / Alternative: starter's pins verify-only, and a failing one stops the bake.
 5. **A key that fits no slot before its gate stops the bake**, naming the gate and the bucket. No layout is re-picked automatically (designer: keep the default).
 6. **Hard layout criteria, two added.** The search's criteria become: carves, attempt 0, lock walks sound, **every lock holds a puzzle on the way**, no dead region, every stub holds a room, **sprawl kept**. None relaxes. `STRICT_ATTEMPT_ZERO` goes; the strict mode is the only mode. / Alternative: keep today's raise-packing and ladder fallbacks behind a flag.
 7. **"Every lock holds a puzzle on the way"** means: on the lock's solving walk (`walkFloorLock`), from the first sighting of its shut door to its last control, the player passes at least one encounter room that is neither the lock's control nor its door. / Alternative: any encounter room inside the region the lock closes off.
@@ -123,7 +124,8 @@ Each decision is **default** / alternative. Task 15 writes them under Decisions,
 15. **Fez keeps his key stock** (designer): the 6 hieroglyph pieces and the map piece stay in shops, bought with money and part of the ground enumeration.
 16. **Fez sells waterskins: 2 per tomb shop, expert and up** (7 shops, 14 in all). Price: 30 at expert, 40 at master, 50 at wizard. They are not keys, just stock that money must cover in their grounds. A bought waterskin works like a found one (heals a missing heart at once). The trap mod adds the stock placeholders through `shopStock`, and they come on top of the trap-scaled count of Decision 18. / Alternative: 1 per shop, taken out of the trap-scaled count, or none in junior and up.
 17. **Money runs last by a flag**, `Distribution.fillsLast` (mod-agnostic): every other dynamic distribution fills before it. / Alternative: rely on registry order.
-18. **Waterskins follow the traps (designer's ruling).** For expert and up, each tier gets `round(WATERSKINS_PER_TRAP × traps in that tier)`, with the traps counted from the world's trap encounters at build time, never hard-coded. The trap mod authors `WATERSKINS_PER_TRAP = 1.3`, which comes to about 150 in all at today's 32 / 19 / 64 expert / master / wizard traps (≈ 42 / 25 / 83). If Task 10's bake cannot meet a ground's money, the ratio steps down by 0.2, never below 0.6. / Alternative: a flat 50 per tier, or keep 60.
+18. **Waterskins follow the traps (designer's ruling).** For expert and up, each tier gets `round(WATERSKINS_PER_TRAP × traps in that tier)`, with the traps counted from the world's trap encounters at build time, never hard-coded. The trap mod authors `WATERSKINS_PER_TRAP = 1.3`, which comes to about 150 in all at today's 32 / 19 / 64 expert / master / wizard traps (≈ 42 / 25 / 83). If Task 11's bake cannot meet a ground's money, the ratio steps down by 0.2, never below 0.6. / Alternative: a flat 50 per tier, or keep 60.
+18a. **Master's open junk corridor is a trap path of 3 puzzles** (`src/worldGen/spec/master.ts`, `MASTER_SIDE_PATHS`: `{ density: "low", pathPuzzles: 3, end: "junk", encounter: "trap" }`), so master's trap count lands between expert's and wizard's and its waterskins follow (Decision 18). / Alternatives: `encounter: "trap"` at 2 puzzles (fewer traps added); or 4 puzzles like expert's open junk path (more traps, a longer corridor).
 19. **A shop has no empty stock slot.** Stock arrays are trimmed to what was assigned, right after `placeShopStock`, before the layout. / Alternative: fill the spare slots with sellables for sale.
 20. **Sellables: the same 25 kinds, more and dearer.** The tier sell values in `src/data/sellables.ts` are raised once, so that world income ≈ 1.1 × sinks (13 rares, 7 purchases and Fez's waterskins). `PER_ITEM_CAP` is raised only if the fill needs more drops. The fill varies drop counts per ground, never per-drop values. / Alternative: new sellable ids at new values.
 21. **`MONEY_ALLOWANCE` goes.** The budget is each ground's need plus a 10 % margin, then the world up to ≈ 1.1 × sinks. / Alternative: keep an allowance.
@@ -153,7 +155,6 @@ Each decision is **default** / alternative. Task 15 writes them under Decisions,
 - Create: `src/worldGen/layoutCheck.ts`, `layoutCheck.spec.ts`.
 - Modify: `scripts/generateWorld.ts`:
   - `assembleOnce` becomes the `pickLayout` implementation;
-  - `RELEASED_TIERS = ["starter"]`: those floors only verify, and a failed verification exits 1, naming the floor;
   - after the build, `layoutMoved` and `placementMoved` run, and either one non-empty exits 1.
 
 **Interfaces:**
@@ -175,7 +176,7 @@ Each decision is **default** / alternative. Task 15 writes them under Decisions,
 - [ ] **Step 2: Run** `yarn test src/worldGen src/mods/buildWorldConfigs` → FAIL.
 - [ ] **Step 3: Implement.** Comments say why the layout precedes loot and why end presence is structural.
 - [ ] **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`. Do not bake.
-- [ ] **Step 5: Per-task review** (Opus): no structural write after `pickLayout`; the web is read on picked floors; a released floor is never searched.
+- [ ] **Step 5: Per-task review** (Opus): no structural write after `pickLayout`; the web is read on picked floors.
 - [ ] **Step 6: Commit:** `refactor: world layout is picked before loot is placed`
 
 ---
@@ -209,7 +210,7 @@ Each decision is **default** / alternative. Task 15 writes them under Decisions,
   - `lockPuzzles.spec.ts`: "a lock whose way passes a puzzle room passes", and "a lock whose control is the only room on its way is named".
 - [ ] **Step 2: Run** `yarn test src/worldGen/carveSeedSearch src/worldGen/layoutFeasibility src/game/lockPuzzles` → FAIL.
 - [ ] **Step 3: Implement.**
-- [ ] **Step 4: Measure, without baking:** run the layout stage alone (a scratch script over the committed configs). List every floor that is now infeasible or not found, with its message, under Failures in the review list. This is what Task 5's bake will refuse, so the designer sees it before the bake.
+- [ ] **Step 4: Measure, without baking:** run the layout stage alone (a scratch script over the committed configs). List every floor that is now infeasible or not found, with its message, under Failures in the review list. This is what Task 6's bake will refuse, so the designer sees it before the bake.
 - [ ] **Step 5: Run** → PASS; `yarn check-types`; `yarn lint`.
 - [ ] **Step 6: Per-task review** (Opus): no relaxation path is left; infeasible is only claimed for checks that hold for every seed; the band follows the DSL.
 - [ ] **Step 7: Commit:** `feat: a floor's layout meets every criterion or the bake names it`
@@ -271,11 +272,31 @@ Each decision is **default** / alternative. Task 15 writes them under Decisions,
 
 ---
 
-### Task 5: Bake 1 — the world on its picked layout (**soundness**: the bake)
+### Task 5: Master's open junk corridor carries traps
+
+Sonnet.
+
+Master has fewer traps than expert (32 expert / 19 master / 64 wizard today). Its open junk corridor carries none, while expert's open junk path is a trap path, so master's waterskins (which follow traps, Decision 18) fall below expert's.
+
+**Files:**
+
+- Modify: `src/worldGen/spec/master.ts`, the open junk corridor in `MASTER_SIDE_PATHS` (about line 60): `{ density: "low", pathPuzzles: 3, end: "junk", encounter: "trap" }` (Decision 18a). The comment above it says, in the current state only, why the corridor is a trap path: master's traps sit between expert's and wizard's, and its income still comes from the junk end.
+- Modify: `src/mods/trap/game/lootTotals.ts` (+ `lootTotals.spec.ts`): the loot report shows traps and waterskins per tier (`Traps (<tier>)`, `Waterskins (<tier>)`), with the tier read from the section, so the bake can be checked.
+
+No unit test pins the authored spec: the bake and the loot report are the check (Task 6).
+
+- [ ] **Step 1: Failing test** (`lootTotals.spec.ts`, made-up configs): "traps and waterskins are counted per tier", where a made-up world with traps on two tiers gets one row per tier with those counts.
+- [ ] **Step 2: Run** `yarn test src/mods/trap` → FAIL. **Step 3: Implement** both edits. **Step 4: Run** → PASS; `yarn check-types`; `yarn lint`. Do not bake.
+- [ ] **Step 5:** The corridor's length is structural, so re-run Task 2's layout measurement (its Step 4 script) for master floors, and update the review list's layout-refusal lines.
+- [ ] **Step 6: Commit:** `feat: master's open junk corridor carries traps`
+
+---
+
+### Task 6: Bake 1 — the world on its picked layout (**soundness**: the bake)
 
 **Files (by the bake):** `src/data/generatedWorld.ts`, `src/data/carveLedger.json`, `src/data/tierFingerprints.json` (moved tiers, deliberately), `docs/loot-report.md`, `docs/review-camp-release.md`, `.betterer.results` (re-key only).
 
-- [ ] **Step 1: Before:** `timeout 900 yarn loot-report` on the committed bake, with its totals kept in the scratchpad. Copy the starter pins out with a scratch script.
+- [ ] **Step 1: Before:** `timeout 900 yarn loot-report` on the committed bake, with its totals and per-tier trap counts kept in the scratchpad.
 - [ ] **Step 2: Bake:** `timeout 900 yarn generate-world`.
   - If it refuses on layout (infeasible or not found), stop the phase. The floors and criteria go under Failures for the designer's authoring, which Task 2 already listed.
   - Otherwise it must:
@@ -284,7 +305,8 @@ Each decision is **default** / alternative. Task 15 writes them under Decisions,
     - place hieroglyphs 296/296;
     - leave 0 empty chests;
     - keep every currency total.
-- [ ] **Step 3: Starter pins:** the scratch diff of starter `seed`/`packing` is empty. For every tier whose fingerprint moved, starter included (its loot may move), copy the hash and write one review-list line saying why.
+    - show in the loot report master's trap count between expert's and wizard's. Waterskins still follow the flat rule until Task 9; from Task 11 on, they follow these new trap counts.
+- [ ] **Step 3: Fingerprints:** every tier may move, starter included. For each tier whose fingerprint moved, copy its hash and write one review-list line saying why (layout re-picked, loot re-placed on it, master's trap corridor).
 - [ ] **Step 4: Report:** `timeout 900 yarn loot-report`. Totals are exact, and the slot mix and hidden-pocket keys move.
 - [ ] **Step 5: Checks:** `timeout 900 yarn verify-content` (includes `worldWinnable.verify.ts`) and `timeout 900 yarn verify`.
 - [ ] **Step 6: Review list:** the phase-4 blocker moves from Failures to resolved, with the walk counts (22/29 → 29/29 shipped) and how many floors moved pin.
@@ -292,7 +314,7 @@ Each decision is **default** / alternative. Task 15 writes them under Decisions,
 
 ---
 
-### Task 6: The animals are keys (**soundness**: world-gen placement)
+### Task 7: The animals are keys (**soundness**: world-gen placement)
 
 **Files:**
 
@@ -321,7 +343,7 @@ Each decision is **default** / alternative. Task 15 writes them under Decisions,
 
 ---
 
-### Task 7: Grounds and the money guard (**soundness**: the economy guard, reachability)
+### Task 8: Grounds and the money guard (**soundness**: the economy guard, reachability)
 
 **Files:**
 
@@ -358,7 +380,7 @@ Each decision is **default** / alternative. Task 15 writes them under Decisions,
 
 ---
 
-### Task 8: Fixed quantities before money, Fez's waterskins (**soundness**: world-gen placement)
+### Task 9: Fixed quantities before money, Fez's waterskins (**soundness**: world-gen placement)
 
 **Files:**
 
@@ -378,7 +400,7 @@ Each decision is **default** / alternative. Task 15 writes them under Decisions,
 
 ---
 
-### Task 9: Money is placed to meet every ground (**soundness**: the economy guard)
+### Task 10: Money is placed to meet every ground (**soundness**: the economy guard)
 
 **Files:**
 
@@ -396,16 +418,16 @@ Each decision is **default** / alternative. Task 15 writes them under Decisions,
   - "a slot in a hidden section only counts toward grounds that hold the detector";
   - "no allowance is added".
 - [ ] **Step 2: Run** → FAIL.
-- [ ] **Step 3: Implement.** Set the sellable values by the rule, using a scratch measurement on the Task 5 bake noted in the report.
+- [ ] **Step 3: Implement.** Set the sellable values by the rule, using a scratch measurement on the Task 6 bake noted in the report.
 - [ ] **Step 4: Run** `yarn test src/mods/shop src/worldGen` → PASS; `yarn check-types`; `yarn lint`. Do not bake.
 - [ ] **Step 5: Per-task review** (Opus): the fill reads the same grounds the guard checks.
 - [ ] **Step 6: Commit:** `feat: money is placed so every ground pays for its stock`
 
 ---
 
-### Task 10: Bake 2 — animals, money and waterskins (**soundness**: the bake)
+### Task 11: Bake 2 — animals, money and waterskins (**soundness**: the bake)
 
-**Files (by the bake):** as Task 5, plus `src/mods/shop/game/purchases.ts` and `WATERSKINS_PER_TRAP`, changed only by the rules below.
+**Files (by the bake):** as Task 6, plus `src/mods/shop/game/purchases.ts` and `WATERSKINS_PER_TRAP`, changed only by the rules below.
 
 - [ ] **Step 1: Bake:** `timeout 900 yarn generate-world`.
   - If a ground falls short and has no free slot: first lower `WATERSKINS_PER_TRAP` by 0.2 (never below 0.6). Then lower the price of the purchase in that ground closest to its gate by 50 (never below 100). Two rounds at most.
@@ -417,14 +439,14 @@ Each decision is **default** / alternative. Task 15 writes them under Decisions,
   - Fez's waterskins 14/14;
   - chests and path ends are 100 % filled;
   - hieroglyphs, mosaic, map pieces, tomb treasures, camp finds and parts are exact;
-  - starter pins are unchanged.
+  - the loot report's trap counts per tier put master between expert and wizard, and each tier's waterskins follow its trap count by `WATERSKINS_PER_TRAP` (no number pinned here; the report shows them).
 - [ ] **Step 3: Report and fingerprints:** `timeout 900 yarn loot-report`, then one review-list line per moved tier.
 - [ ] **Step 4: Checks:** `timeout 900 yarn verify-content`.
 - [ ] **Step 5: Commit:** `chore: bake the world with Fez's animals and money per ground`
 
 ---
 
-### Task 11: Alle reizen shows what a gate still needs
+### Task 12: Alle reizen shows what a gate still needs
 
 Sonnet.
 
@@ -455,7 +477,7 @@ Sonnet.
 
 ---
 
-### Task 12: Buying an animal (**soundness**: saves)
+### Task 13: Buying an animal (**soundness**: saves)
 
 As old Task 6, with Travel read as Alle reizen.
 
@@ -491,7 +513,7 @@ As old Task 6, with Travel read as Alle reizen.
 
 ---
 
-### Task 13: The animal arrives in the camp (**soundness**: saves)
+### Task 14: The animal arrives in the camp (**soundness**: saves)
 
 As old Task 7, unchanged:
 
@@ -504,7 +526,7 @@ As old Task 7, unchanged:
 
 ---
 
-### Task 14: The animal story beats are wired
+### Task 15: The animal story beats are wired
 
 Sonnet.
 
@@ -516,14 +538,14 @@ Sonnet.
 
 ---
 
-### Task 15: Docs, toggle-off, gate, look
+### Task 16: Docs, toggle-off, gate, look
 
 Docs: Sonnet. The rest: Opus.
 
 **Files:**
 
 - `docs/game-design/keys-and-locks-solver.md`: the order becomes layout (hard criteria) → keys (detector and purchases included) → money as a condition → fixed loot → money; plus grounds and the stamped guard.
-- `docs/game-design/world-spec-stability.md`: released pins, and loot moves no wall.
+- `docs/game-design/world-spec-stability.md`: the layout is picked before loot, and loot moves no wall.
 - `docs/game-design/journeys.md` §3: sprawl as a hard band.
 - `docs/game-design/shop-mechanic.md`.
 - `docs/review-camp-release.md`.
