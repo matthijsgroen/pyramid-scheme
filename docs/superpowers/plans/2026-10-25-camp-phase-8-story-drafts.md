@@ -252,9 +252,9 @@ One Opus agent; reading list as Task 1, plus the phase-4 plan's purchase table a
 
 - Registers through `registerDevGrants` (gated on the story mod): one grant per `DRAFT_BEATS` area ("Story drafts: tombs" …), which offers every id of that area, in order, through `showConversation(id, undefined, { forceReplay: true, story: true })`. Nothing is recorded as heard that was not heard before (a forced replay of an unheard beat must not mark it heard — check how FezCompanion records it, and if a forced replay would record, pass the area's ids through a path that does not).
 
-- [ ] **Step 1: Failing test:** a made-up drafts table of two areas gives two grants; running one offers its ids in order with `forceReplay`; the heard map is unchanged afterwards.
-- [ ] **Step 2–4:** run (FAIL), implement, run (PASS); `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Commit** — `feat: develop mode plays the story drafts`
+- [x] **Step 1: Failing test:** a made-up drafts table of two areas gives two grants; running one offers its ids in order with `forceReplay`; the heard map is unchanged afterwards.
+- [x] **Step 2–4:** run (FAIL), implement, run (PASS); `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Commit** — `feat: develop mode plays the story drafts`
 
 ---
 

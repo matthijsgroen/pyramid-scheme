@@ -13,7 +13,10 @@ export const useDevActions = (onJumped: () => void = () => {}): DevAction[] => {
     ...(grants.length === 0
       ? []
       : [
-          { label: "Unlock everything", onClick: () => grants.forEach(g => g.grant()) },
+          {
+            label: "Unlock everything",
+            onClick: () => grants.forEach(g => g.inUnlockEverything !== false && g.grant()),
+          },
           ...grants.map(({ label, grant }) => ({ label, onClick: grant })),
         ]),
     ...jumps.map(({ label, jump }) => ({ label, onClick: () => void jump().then(onJumped) })),

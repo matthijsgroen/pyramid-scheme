@@ -6,7 +6,11 @@ import { useDevActions } from "./useDevActions"
 
 const grant = vi.fn()
 const jump = vi.fn(() => Promise.resolve())
-registerDevGrants(() => [{ label: "A grant", grant }])
+const preview = vi.fn()
+registerDevGrants(() => [
+  { label: "A grant", grant },
+  { label: "A preview", grant: preview, inUnlockEverything: false },
+])
 registerDevJumps(() => [{ label: "A jump", jump }])
 
 describe("dev menu jumps", () => {
@@ -27,6 +31,7 @@ describe("dev menu jumps", () => {
     result.current.find(a => a.label === "Unlock everything")?.onClick()
 
     expect(grant).toHaveBeenCalled()
+    expect(preview).not.toHaveBeenCalled()
     expect(jump).not.toHaveBeenCalled()
   })
 })

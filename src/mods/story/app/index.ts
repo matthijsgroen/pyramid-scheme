@@ -8,6 +8,7 @@ import "./conversation/plugin"
 import "./reading/plugin"
 import "./reaction/rail"
 import "./devJumps"
+import "./draftPlayer"
 
 // Gated on the mod: story off and there is no log, because there is nothing to log.
 if (isModEnabled("story")) {

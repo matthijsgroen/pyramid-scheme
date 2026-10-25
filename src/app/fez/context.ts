@@ -6,7 +6,12 @@ export const FezContext = createContext<{
   showConversation: (
     conversationId: string,
     onComplete?: (result: FezConversationResult) => void,
-    options?: { forceReplay?: boolean; story?: boolean }
+    options?: {
+      forceReplay?: boolean
+      story?: boolean
+      /** Plays without writing the conversation down as heard: a preview. */
+      unrecorded?: boolean
+    }
   ) => void
   /** Someone is talking: whatever else asks for the player's eye waits until the conversation is over. */
   speaking?: boolean
