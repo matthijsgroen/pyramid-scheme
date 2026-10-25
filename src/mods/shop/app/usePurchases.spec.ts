@@ -1,10 +1,12 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it, vi } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { act, renderHook } from "@testing-library/react"
 import { readModState } from "@/app/state/useModState"
 import { clearGameData, writeGameData } from "@/support/useGameStorage"
 import type { PurchaseTable } from "@/mods/shop/game/purchases"
-import { usePurchases } from "./usePurchases"
+import { mergeContributions } from "@/app/SiteMap/rewardContributions"
+import { buyStockSlot } from "./fezShop/buyStockSlot"
+import { purchaseRewardContribution, usePurchases } from "./usePurchases"
 
 const table: PurchaseTable = [
   { id: "mule", fact: "purchase:mule", price: 10, soldAt: { journeyId: "tomb_a" }, opens: { tier: "expert" } },
@@ -49,9 +51,41 @@ describe("a save this build cannot read", () => {
     expect(result.current.facts.size).toBe(0)
     expect(readModState("shop")).toEqual(newer)
   })
+
+  it("offers no purchase for sale, so a buy is refused and no money is taken", async () => {
+    await writeGameData({ "pyramid-scheme-mod-shop": { version: 2, purchases: [] } })
+    const { result } = renderHook(() => usePurchases(table))
+    await act(async () => {})
+    expect(result.current.loaded).toBe(true)
+    expect(result.current.ready).toBe(false)
+    const merged = mergeContributions([purchaseRewardContribution(result.current)])
+    const reward = { type: "purchase", id: "mule" }
+    expect(merged.skip(reward)).toBe(true)
+    const spend = vi.fn(() => true)
+    const apply = vi.fn()
+    const bought = buyStockSlot({ price: 10, balance: 100, soldOut: merged.skip(reward), apply, spend, claim: vi.fn() })
+    expect(bought).toBe(false)
+    expect(spend).not.toHaveBeenCalled()
+    expect(apply).not.toHaveBeenCalled()
+  })
+})
+
+describe("a readable save", () => {
+  it("is ready once read, so a purchase is for sale", async () => {
+    const { result } = renderHook(() => usePurchases(table))
+    await act(async () => {})
+    expect(result.current.ready).toBe(true)
+    expect(
+      mergeContributions([purchaseRewardContribution(result.current)]).skip({ type: "purchase", id: "mule" })
+    ).toBe(false)
+  })
 })
 
 describe("the shop's held keys", () => {
+  afterEach(() => {
+    vi.doUnmock("@/mods/shop/game/purchases")
+  })
+
   it("hold a recorded purchase's fact through the merged held keys", async () => {
     vi.resetModules()
     vi.doMock("@/mods/shop/game/purchases", async importOriginal => ({
@@ -65,6 +99,5 @@ describe("the shop's held keys", () => {
     expect(result.current.held.has("purchase:mule")).toBe(false)
     await act(async () => result.current.purchases.record("mule"))
     expect(result.current.held.has("purchase:mule")).toBe(true)
-    vi.doUnmock("@/mods/shop/game/purchases")
   })
 })

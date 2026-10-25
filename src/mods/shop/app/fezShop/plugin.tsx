@@ -9,6 +9,7 @@ import { FezContext } from "@/app/fez/context"
 import { FezShop, type ShopBuyItem } from "@/ui/organisms/FezShop"
 import { rewardText } from "@/app/SiteMap/rewardDisplay"
 import { priceFor } from "@/mods/shop/game/pricing"
+import { buyStockSlot } from "./buyStockSlot"
 import { getSellableById, sellValueForItemId } from "@/data/sellables"
 
 // Fez's shop encounter — browsing/buying, never a solve/fail challenge, so it always
@@ -47,18 +48,30 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
 
   if (!greeted) return null
 
-  // One buy path for every stock slot: pay, apply, claim.
-  const buySlot = (j: number) => {
+  // Sold out = already bought OR skipped by its owning mod (an owned fragment, a recorded purchase, a
+  // purchase the shop's save cannot keep).
+  const soldOut = (j: number) => {
     const item = stock[j]
-    if (!item || claimed.has(`${ctx.address}!${j}`)) return
-    if (!progression.ledger.spend("money", priceFor(item, tier))) return
-    applyReward(item)
-    journeys.markShopSlotPurchased(ctx.address, j)
+    return !item || claimed.has(`${ctx.address}!${j}`) || contributions.skip(item)
   }
 
-  // Every stock slot (fragments/mosaic/map pieces) renders once, in the shop's one buy list.
-  // Sold-out = already bought OR already owned (skip = nothing to grant) — mirrors the compass
-  // dropping an owned fragment.
+  // One buy path for every stock slot: apply, pay, claim.
+  const buySlot = (j: number) => {
+    const item = stock[j]
+    if (!item) return
+    const price = priceFor(item, tier)
+    buyStockSlot({
+      price,
+      balance,
+      soldOut: soldOut(j),
+      apply: () => applyReward(item),
+      spend: () => progression.ledger.spend("money", price),
+      claim: () => journeys.markShopSlotPurchased(ctx.address, j),
+    })
+  }
+
+  // Every stock slot (fragments/mosaic/map pieces/purchases) renders once, in the shop's one buy list,
+  // sold out by the same rule the buy path checks.
   const rareItems: ShopBuyItem[] = stock.flatMap((item, j) => {
     if (!item) return []
     const price = priceFor(item, tier)
@@ -68,7 +81,7 @@ const ShopComponent: FamilyPlugin["Component"] = ({ ctx, progression, journeys, 
         ...rewardText(item, t),
         price,
         affordable: balance >= price,
-        soldOut: claimed.has(`${ctx.address}!${j}`) || contributions.skip(item),
+        soldOut: soldOut(j),
         featured: true,
       },
     ]

@@ -18,6 +18,8 @@ import { useShopHaulLines } from "./haulLines"
 import { ShopHud } from "./ShopHud"
 import { registerShopRewardDisplay } from "./rewardDisplay"
 import { PURCHASES } from "@/mods/shop/game/purchases"
+import { emptyPurchaseSave } from "@/mods/shop/game/purchaseState"
+import { useModState } from "@/app/state/useModState"
 import { purchaseRewardContribution, usePurchases } from "./usePurchases"
 import { usePurchaseGateNeeds } from "./gateNeeds"
 import "./fezShop/plugin" // the Fez shop encounter family (self-gated)
@@ -62,7 +64,7 @@ if (isModEnabled("shop")) {
   })
   registerHeldKeysProvider(
     () => usePurchases().facts,
-    () => usePurchases().loaded
+    () => useModState("shop", emptyPurchaseSave)[2]
   )
   registerGateNeeds(usePurchaseGateNeeds)
   registerDevGrants(() => {

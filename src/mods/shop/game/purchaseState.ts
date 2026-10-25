@@ -27,6 +27,10 @@ const readable = (stored: unknown): PurchaseSave | undefined => {
   }
 }
 
+// Whether a change to this stored value would land: nothing stored, or a save this build reads.
+export const isWritablePurchaseSave = (stored: unknown): boolean =>
+  stored === null || stored === undefined || readable(stored) !== undefined
+
 // An unreadable save shows as nothing bought.
 export const readPurchaseSave = (stored: unknown): PurchaseSave => readable(stored) ?? emptyPurchaseSave()
 

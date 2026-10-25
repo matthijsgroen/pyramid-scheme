@@ -5,6 +5,7 @@ import { getSellableById } from "@/data/sellables"
 import { sellableArt } from "./sellableArt"
 import { moneyRewardSchema, purchaseRewardSchema, sellableRewardSchema } from "@/mods/shop/game/rewardSchemas"
 import type { MaterialTier } from "@/data/materialTiers"
+import { PURCHASES, type PurchaseTable } from "@/mods/shop/game/purchases"
 
 // Junk material tier → loot rarity for the reward popup.
 const SELLABLE_RARITY: Record<MaterialTier, "common" | "rare" | "legendary"> = {
@@ -15,31 +16,22 @@ const SELLABLE_RARITY: Record<MaterialTier, "common" | "rare" | "legendary"> = {
   divine: "legendary",
 }
 
-// What stands for a purchase until it is painted.
-const PURCHASE_EMOJI: Record<string, string> = {
-  donkey: "🫏",
-  secondDonkey: "🫏",
-  camel: "🐪",
-  secondCamel: "🐪",
-  cart: "🛞",
-  sturdyCart: "🛞",
-  caravanBanner: "🚩",
-}
-const purchaseEmoji = (id: string): string => PURCHASE_EMOJI[id] ?? "🛞"
+// What stands for a purchase the table gives no emoji.
+const PURCHASE_EMOJI = "🛞"
 
 // A purchase in Fez's list: its name, and what it opens.
-export const purchaseText = (reward: TreasureReward, t: TFn): RewardText => {
+export const purchaseText = (reward: TreasureReward, t: TFn, table: PurchaseTable = PURCHASES): RewardText => {
   const { id } = purchaseRewardSchema.parse(reward)
   return {
     itemName: t(`purchases.${id}.name`, { defaultValue: id }),
     itemDescription: t(`purchases.${id}.opens`, { defaultValue: "" }) || undefined,
-    icon: purchaseEmoji(id),
+    icon: table.find(p => p.id === id)?.emoji ?? PURCHASE_EMOJI,
   }
 }
 
 // The popup once bought: what it opens, set apart as the effect gained.
-export const purchaseDisplay = (reward: TreasureReward, t: TFn): RewardDisplay => {
-  const { itemName, itemDescription, icon } = purchaseText(reward, t)
+export const purchaseDisplay = (reward: TreasureReward, t: TFn, table: PurchaseTable = PURCHASES): RewardDisplay => {
+  const { itemName, itemDescription, icon } = purchaseText(reward, t, table)
   return {
     rarity: "epic",
     itemName,
@@ -76,10 +68,10 @@ export const registerShopRewardDisplay = () => {
     },
   })
 
-  registerRewardHandler({ type: "purchase", emoji: "🫏", text: purchaseText })
+  registerRewardHandler({ type: "purchase", emoji: PURCHASE_EMOJI, text: (reward, t) => purchaseText(reward, t) })
 
   registerRewardDisplays(() => ({
-    purchase: purchaseDisplay,
+    purchase: (reward, t) => purchaseDisplay(reward, t),
     sellable: (reward, t) => {
       const { itemId } = sellableRewardSchema.parse(reward)
       const item = getSellableById(itemId)

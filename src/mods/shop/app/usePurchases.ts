@@ -5,6 +5,7 @@ import { PURCHASES, type PurchaseTable } from "@/mods/shop/game/purchases"
 import {
   emptyPurchaseSave,
   heldFacts,
+  isWritablePurchaseSave,
   readPurchaseSave,
   recordPurchase,
   updatePurchaseSave,
@@ -15,6 +16,8 @@ import { purchaseRewardSchema } from "@/mods/shop/game/rewardSchemas"
 export type PurchasesAPI = {
   /** True once the shop's own save has been read. */
   loaded: boolean
+  /** True once the save is read and a purchase recorded now would be kept: only then is a purchase for sale. */
+  ready: boolean
   save: PurchaseSave
   has: (id: string) => boolean
   record: (id: string) => Promise<unknown>
@@ -31,6 +34,7 @@ export const usePurchases = (table: PurchaseTable = PURCHASES): PurchasesAPI => 
     const save = readPurchaseSave(stored)
     return {
       loaded,
+      ready: loaded && isWritablePurchaseSave(stored),
       save,
       has: id => save.purchases.includes(id),
       record: id => setStored((prev: unknown) => updatePurchaseSave(prev, current => recordPurchase(current, id))),
@@ -39,9 +43,13 @@ export const usePurchases = (table: PurchaseTable = PURCHASES): PurchasesAPI => 
   }, [stored, setStored, table, loaded])
 }
 
-// Buying a purchase records it; one already recorded is skipped, so Fez shows it sold out and it is never
-// bought twice.
-export const purchaseRewardContribution = (purchases: Pick<PurchasesAPI, "has" | "record">): RewardContribution => ({
+// Buying a purchase records it. One already recorded is skipped, so Fez shows it sold out and it is never
+// bought twice; so is every purchase while the save is unread or unreadable, so no money is taken for a
+// purchase the save could not keep.
+export const purchaseRewardContribution = (
+  purchases: Pick<PurchasesAPI, "ready" | "has" | "record">
+): RewardContribution => ({
   effects: { purchase: reward => void purchases.record(purchaseRewardSchema.parse(reward).id) },
-  skip: reward => reward.type === "purchase" && purchases.has(purchaseRewardSchema.parse(reward).id),
+  skip: reward =>
+    reward.type === "purchase" && (!purchases.ready || purchases.has(purchaseRewardSchema.parse(reward).id)),
 })

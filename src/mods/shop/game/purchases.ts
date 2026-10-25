@@ -17,6 +17,8 @@ export type Purchase = {
   soldAt: { journeyId: string; nth?: number }
   /** The gate holding it opens. A purchase with none is bought for its own sake. */
   opens?: PurchaseGate
+  /** What stands for it in Fez's list and the popup until it is painted. */
+  emoji?: string
 }
 
 export type PurchaseTable = readonly Purchase[]
@@ -27,6 +29,7 @@ export const PURCHASES: PurchaseTable = [
   {
     id: "donkey",
     fact: purchaseFact("donkey"),
+    emoji: "🫏",
     price: 200,
     soldAt: { journeyId: "junior_treasure_tomb" },
     opens: { tier: "expert" },
@@ -34,6 +37,7 @@ export const PURCHASES: PurchaseTable = [
   {
     id: "cart",
     fact: purchaseFact("cart"),
+    emoji: "🛞",
     price: 300,
     soldAt: { journeyId: "expert_treasure_tomb" },
     opens: { tier: "master" },
@@ -41,6 +45,7 @@ export const PURCHASES: PurchaseTable = [
   {
     id: "camel",
     fact: purchaseFact("camel"),
+    emoji: "🐪",
     price: 250,
     soldAt: { journeyId: "expert_treasure_tomb" },
     opens: { journeyId: "expert_treasure_tomb_b" },
@@ -48,6 +53,7 @@ export const PURCHASES: PurchaseTable = [
   {
     id: "secondDonkey",
     fact: purchaseFact("secondDonkey"),
+    emoji: "🫏",
     price: 250,
     soldAt: { journeyId: "master_treasure_tomb" },
     opens: { tier: "wizard" },
@@ -55,6 +61,7 @@ export const PURCHASES: PurchaseTable = [
   {
     id: "secondCamel",
     fact: purchaseFact("secondCamel"),
+    emoji: "🐪",
     price: 250,
     soldAt: { journeyId: "master_treasure_tomb" },
     opens: { journeyId: "master_treasure_tomb_b" },
@@ -62,6 +69,7 @@ export const PURCHASES: PurchaseTable = [
   {
     id: "sturdyCart",
     fact: purchaseFact("sturdyCart"),
+    emoji: "🛞",
     price: 400,
     soldAt: { journeyId: "wizard_treasure_tomb" },
     opens: { journeyId: "wizard_treasure_tomb_b" },
@@ -69,6 +77,7 @@ export const PURCHASES: PurchaseTable = [
   {
     id: "caravanBanner",
     fact: purchaseFact("caravanBanner"),
+    emoji: "🚩",
     price: 500,
     soldAt: { journeyId: "wizard_treasure_tomb_c" },
   },
