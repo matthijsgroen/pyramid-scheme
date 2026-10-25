@@ -3,7 +3,7 @@
 // World seed: 42195837
 import type { SiteConfig } from "../game/siteTypes"
 
-export const worldContentHash = 1887788987
+export const worldContentHash = 648659388
 
 export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
   starter_1: [
@@ -19,7 +19,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "starter",
             end: { stairId: "starter_1:p0:f0:s0" },
             gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
-            rewards: [{ type: "money", amount: 2 }],
+            rewards: [{ type: "campFind", step: "jar" }],
             encounter: "lightbeam",
             decorations: [
               "shelf",
@@ -400,7 +400,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 2975698674563321,
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
-        rewards: [{ type: "money", amount: 1 }],
+        rewards: [{ type: "campPart", structure: "stoneRing", part: "sandBed" }],
       },
     ],
   ],
@@ -471,7 +471,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "art10", pieceIndex: 0 },
             rewards: [
-              { type: "money", amount: 3 },
+              { type: "campPart", structure: "secondTent", part: "woolFloor" },
               { type: "money", amount: 1 },
             ],
             encounter: "rush-hour",
@@ -572,7 +572,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.12,
         seed: 3323337401,
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
-        rewards: [{ type: "money", amount: 3 }],
+        rewards: [{ type: "campPart", structure: "fire", part: "acaciaLogs" }],
       },
       {
         pathPuzzles: 2,
@@ -781,7 +781,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 3323337401,
         mainEndReward: { type: "mosaicPiece", tier: "starter" },
-        rewards: [{ type: "money", amount: 2 }],
+        rewards: [{ type: "campPart", structure: "cookingStones", part: "supportStones" }],
       },
       {
         pathPuzzles: 3,
@@ -1069,7 +1069,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 1354033022,
         mainEndReward: { type: "mapPiece", tombId: "starter_treasure_tomb" },
         rewards: [
-          { type: "money", amount: 1 },
+          { type: "campPart", structure: "windbreak", part: "stakes" },
           { type: "money", amount: 2 },
         ],
       },
@@ -1477,7 +1477,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "art10", pieceIndex: 1 },
             rewards: [
-              { type: "money", amount: 3 },
+              { type: "campPart", structure: "well", part: "windlass" },
               { type: "money", amount: 1 },
             ],
             encounter: "canisters",
@@ -2254,7 +2254,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "master_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "art10", pieceIndex: 2 },
             rewards: [
-              { type: "money", amount: 2 },
+              { type: "campPart", structure: "dryingRack", part: "cords" },
               { type: "money", amount: 2 },
             ],
             encounter: "twin-stars",
@@ -2503,7 +2503,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a8", pieceIndex: 2 },
-            rewards: [{ type: "money", amount: 2 }],
+            rewards: [{ type: "campPart", structure: "fire", part: "tinder" }],
             encounter: "hidato",
             decorations: ["jarRack", "basin", "pillar", "rubblePile", "mat"],
             wallDecorations: ["stela", "niche", "sconce"],
@@ -2593,7 +2593,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 1902847392,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art12", pieceIndex: 1 },
         rewards: [
-          { type: "money", amount: 1 },
+          { type: "campFind", step: "pot" },
           { type: "money", amount: 1 },
         ],
         locks: [
@@ -2663,7 +2663,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "starter",
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_stone_1" },
-            rewards: [{ type: "money", amount: 3 }],
+            rewards: [{ type: "campPart", structure: "cookingStones", part: "flatStone" }],
             encounter: "constellation",
             decorations: ["jarRack", "basin", "pillar", "rubblePile", "mat"],
             wallDecorations: ["stela", "niche", "sconce"],
@@ -2726,7 +2726,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 1902847375,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d2", pieceIndex: 0 },
         rewards: [
-          { type: "money", amount: 2 },
+          { type: "campFind", step: "tentRug" },
           { type: "money", amount: 2 },
           { type: "money", amount: 3 },
         ],
@@ -2847,7 +2847,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 1902847389,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d2", pieceIndex: 1 },
         rewards: [
-          { type: "money", amount: 2 },
+          { type: "campFind", step: "secondJar" },
           { type: "money", amount: 2 },
           { type: "money", amount: 2 },
           { type: "money", amount: 3 },
@@ -3085,7 +3085,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 458394307,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p1", pieceIndex: 0 },
         rewards: [
-          { type: "money", amount: 2 },
+          { type: "campFind", step: "spiceRack" },
           { type: "money", amount: 2 },
           { type: "money", amount: 3 },
         ],
@@ -3149,7 +3149,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "starter",
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_stone_2" },
-            rewards: [{ type: "money", amount: 2 }],
+            rewards: [{ type: "campPart", structure: "windbreak", part: "reedBundles" }],
             encounter: "lightbeam",
             decorations: [
               "shelf",
@@ -3369,7 +3369,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 458394293,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art7", pieceIndex: 1 },
         rewards: [
-          { type: "money", amount: 1 },
+          { type: "campFind", step: "breadBoard" },
           { type: "money", amount: 1 },
           { type: "money", amount: 1 },
           { type: "money", amount: 2 },
@@ -3621,7 +3621,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 458394312,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a13", pieceIndex: 2 },
         rewards: [
-          { type: "money", amount: 3 },
+          { type: "campPart", structure: "tent", part: "wovenCloth" },
           { type: "money", amount: 1 },
           { type: "money", amount: 1 },
           { type: "money", amount: 1 },
@@ -3817,7 +3817,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: { stairId: "junior_2:p3:f0:s5" },
             gate: { type: "tomb-key", wardKeyId: "master_a_1" },
-            rewards: [{ type: "waterskin" }, { type: "money", amount: 1 }],
+            rewards: [{ type: "waterskin" }, { type: "campPart", structure: "roof", part: "roofPoles" }],
             encounter: "twin-stars",
             role: "puzzle",
             encountersByIndex: { 0: "twin-stars", 1: "lightbeam" },
@@ -3846,7 +3846,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 458394293,
         mainEndReward: { type: "mosaicPiece", tier: "junior" },
         rewards: [
-          { type: "money", amount: 2 },
+          { type: "campPart", structure: "tripod", part: "binding" },
           { type: "money", amount: 2 },
           { type: "money", amount: 2 },
           { type: "money", amount: 3 },
@@ -3920,7 +3920,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 1491887413430964,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p5", pieceIndex: 0 },
         rewards: [
-          { type: "money", amount: 2 },
+          { type: "campPart", structure: "ladder", part: "leatherLoops" },
           { type: "money", amount: 2 },
         ],
       },
@@ -4083,7 +4083,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 1401747288,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d15", pieceIndex: 0 },
         rewards: [
-          { type: "money", amount: 1 },
+          { type: "campPart", structure: "tent", part: "tentPegs" },
           { type: "money", amount: 1 },
           { type: "money", amount: 1 },
           { type: "money", amount: 2 },
@@ -4157,7 +4157,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "starter",
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_stone_3" },
-            rewards: [{ type: "money", amount: 1 }],
+            rewards: [{ type: "campFind", step: "reedMat" }],
             encounter: "futoshiki",
             decorations: [
               "shelf",
@@ -4209,7 +4209,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "junior",
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_bronze_4" },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 2 }],
             encounter: "rush-hour",
             decorations: [
               "shelf",
@@ -4235,7 +4235,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "junior",
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_bronze_5" },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 2 }],
             encounter: "canisters",
             decorations: [
               "shelf",
@@ -4353,7 +4353,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 1401747208,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d15", pieceIndex: 1 },
         rewards: [
-          { type: "money", amount: 2 },
+          { type: "campPart", structure: "tripod", part: "hook" },
           { type: "money", amount: 2 },
           { type: "money", amount: 3 },
           { type: "money", amount: 3 },
@@ -4454,7 +4454,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "junior_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p1", pieceIndex: 2 },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 3 }],
             encounter: "constellation",
             decorations: [
               "shelf",
@@ -4480,7 +4480,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "junior",
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_bronze_3" },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 1 }],
             encounter: "rush-hour",
             decorations: [
               "shelf",
@@ -4659,7 +4659,13 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 1401747202,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p11", pieceIndex: 1 },
-        rewards: [undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "money", amount: 2 },
+          { type: "money", amount: 2 },
+          { type: "money", amount: 2 },
+          { type: "money", amount: 3 },
+          { type: "money", amount: 3 },
+        ],
         locks: [
           {
             lock: {
@@ -5313,7 +5319,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "starter",
             end: "treasure",
             endReward: { type: "sellable", itemId: "sell_stone_4" },
-            rewards: [{ type: "money", amount: 2 }],
+            rewards: [{ type: "campFind", step: "blanket" }],
             encounter: "star-battle",
             theme: "night",
             decorations: ["lamp", "pillar", "brazier", "rubblePile", "mat"],
@@ -5520,7 +5526,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: { stairId: "junior_4:p3:f0:s6" },
             gate: { type: "tomb-key", wardKeyId: "master_a_1" },
-            rewards: [{ type: "waterskin" }, { type: "money", amount: 2 }],
+            rewards: [{ type: "waterskin" }, { type: "campFind", step: "starMap" }],
             encounter: "lightbeam",
             theme: "night",
             role: ["light", "sky"],
@@ -5977,7 +5983,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 3529644467,
         mainEndReward: { type: "mapPiece", tombId: "expert_treasure_tomb_b" },
-        rewards: [{ type: "waterskin" }, { type: "money", amount: 2 }, { type: "money", amount: 3 }],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campPart", structure: "seatingStones", part: "smoothBoulders" },
+          { type: "money", amount: 3 },
+        ],
         locks: [
           {
             lock: {
@@ -6014,7 +6024,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "master_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p5", pieceIndex: 1 },
-            rewards: [{ type: "waterskin" }, { type: "money", amount: 2 }],
+            rewards: [{ type: "waterskin" }, { type: "campPart", structure: "clayOven", part: "ovenFloor" }],
             encounter: "twin-stars",
             decorations: [
               "offeringTable",
@@ -6203,7 +6213,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p2", pieceIndex: 0 },
         rewards: [
           { type: "waterskin" },
-          { type: "money", amount: 1 },
+          { type: "campPart", structure: "breadOven", part: "mudBricks" },
           { type: "money", amount: 1 },
           { type: "money", amount: 2 },
         ],
@@ -6466,7 +6476,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: { stairId: "expert_1:p2:f0:s9" },
             gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
             rewards: [
-              { type: "money", amount: 3 },
+              { type: "campPart", structure: "stoneRing", part: "fieldStones" },
               { type: "money", amount: 1 },
             ],
             encounter: "constellation",
@@ -6494,7 +6504,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         mainEndReward: { type: "mosaicPiece", tier: "expert" },
         rewards: [
           { type: "waterskin" },
-          { type: "money", amount: 1 },
+          { type: "campPart", structure: "table", part: "tableTop" },
           { type: "money", amount: 1 },
           { type: "money", amount: 1 },
         ],
@@ -6797,7 +6807,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: { stairId: "expert_1:p3:f0:s8" },
             gate: { type: "tomb-key", wardKeyId: "master_a_1" },
-            rewards: [{ type: "waterskin" }, { type: "money", amount: 3 }],
+            rewards: [{ type: "waterskin" }, { type: "campPart", structure: "secondTent", part: "largeCloth" }],
             encounter: "canisters",
             role: ["funerary", "puzzle"],
             encountersByIndex: { 0: "canisters", 1: "twin-stars" },
@@ -6824,7 +6834,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d3", pieceIndex: 0 },
         rewards: [
           { type: "waterskin" },
-          { type: "money", amount: 2 },
+          { type: "campFind", step: "tentFlag" },
           { type: "money", amount: 2 },
           { type: "money", amount: 3 },
           { type: "money", amount: 3 },
@@ -6891,7 +6901,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 2816278010141110,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p4", pieceIndex: 1 },
         rewards: [
-          { type: "money", amount: 1 },
+          { type: "campPart", structure: "edgeStones", part: "boundaryStakes" },
           { type: "money", amount: 1 },
         ],
       },
@@ -6911,7 +6921,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "expert_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a11", pieceIndex: 0 },
-            rewards: [undefined, undefined],
+            rewards: [
+              { type: "money", amount: 2 },
+              { type: "money", amount: 2 },
+            ],
             encounter: "sudoku",
             decorations: [
               "shelf",
@@ -6938,7 +6951,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "expert_b_2" },
             endReward: { type: "mosaicPiece", tier: "expert" },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 2 }],
             encounter: "star-battle",
             decorations: [
               "shelf",
@@ -6965,7 +6978,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "expert_b_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a11", pieceIndex: 1 },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 3 }],
             encounter: "twin-stars",
             decorations: [
               "shelf",
@@ -6991,7 +7004,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "expert",
             end: "treasure",
             endReward: { type: "hieroglyphFragment", hieroglyphId: "art14", pieceIndex: 0 },
-            rewards: [undefined, undefined],
+            rewards: [{ type: "money", amount: 3 }, undefined],
             encounter: "canisters",
             decorations: [
               "shelf",
@@ -7114,7 +7127,12 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 2858765648,
         mainEndReward: { type: "mapPiece", tombId: "expert_treasure_tomb_b" },
-        rewards: [{ type: "waterskin" }, { type: "money", amount: 1 }, { type: "money", amount: 1 }, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campFind", step: "compass" },
+          { type: "money", amount: 1 },
+          { type: "money", amount: 2 },
+        ],
         locks: [
           {
             lock: {
@@ -7165,7 +7183,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "master_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p4", pieceIndex: 2 },
-            rewards: [{ type: "waterskin" }, { type: "money", amount: 1 }],
+            rewards: [{ type: "waterskin" }, { type: "campPart", structure: "well", part: "wellStones" }],
             encounter: "sumplete",
             decorations: [
               "shelf",
@@ -7219,7 +7237,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "junior_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p11", pieceIndex: 3 },
-            rewards: [undefined],
+            rewards: [{ type: "campPart", structure: "tent", part: "tentPoles" }],
             encounter: "star-battle",
             decorations: [
               "shelf",
@@ -7394,7 +7412,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 5207779554184528,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d9", pieceIndex: 2 },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined],
+        rewards: [{ type: "waterskin" }, { type: "campFind", step: "seed" }, undefined, undefined, undefined],
         locks: [
           {
             lock: {
@@ -7683,7 +7701,13 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 5207779554184529,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p12", pieceIndex: 0 },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campPart", structure: "seatingStones", part: "sandstoneBlock" },
+          undefined,
+          undefined,
+          undefined,
+        ],
         locks: [
           {
             lock: {
@@ -7983,7 +8007,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: { stairId: "expert_2:p3:f0:s8" },
             gate: { type: "tomb-key", wardKeyId: "master_a_1" },
-            rewards: [{ type: "waterskin" }, { type: "money", amount: 3 }],
+            rewards: [{ type: "waterskin" }, { type: "campPart", structure: "dryingRack", part: "rackPoles" }],
             encounter: "sumplete",
             role: "puzzle",
             encountersByIndex: { 0: "sumplete", 1: "eclipse" },
@@ -8018,7 +8042,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.16,
         seed: 2858765656,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art14", pieceIndex: 1 },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campPart", structure: "breadOven", part: "clayPlaster" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
         locks: [
           {
             lock: {
@@ -8089,7 +8120,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 5207779554184531,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p5", pieceIndex: 2 },
         rewards: [
-          { type: "money", amount: 3 },
+          { type: "campPart", structure: "post", part: "braces" },
           { type: "money", amount: 3 },
         ],
       },
@@ -8313,7 +8344,13 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 3982655454,
         mainEndReward: { type: "mapPiece", tombId: "expert_treasure_tomb_b" },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campPart", structure: "table", part: "trestles" },
+          undefined,
+          undefined,
+          undefined,
+        ],
         locks: [
           {
             lock: {
@@ -8359,7 +8396,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "master_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "p5", pieceIndex: 3 },
-            rewards: [{ type: "waterskin" }, { type: "money", amount: 3 }],
+            rewards: [{ type: "waterskin" }, { type: "campPart", structure: "edgeStones", part: "riverStones" }],
             encounter: "sudoku",
             decorations: [
               "shelf",
@@ -8543,7 +8580,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.16,
         seed: 3982655373,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a7", pieceIndex: 0 },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campPart", structure: "seatingStones", part: "hewnSlab" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
         locks: [
           {
             lock: {
@@ -8674,7 +8718,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "junior_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a2", pieceIndex: 2 },
-            rewards: [undefined],
+            rewards: [{ type: "campPart", structure: "tripod", part: "tripodPoles" }],
             encounter: "futoshiki",
             decorations: [
               "shelf",
@@ -8857,7 +8901,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.16,
         seed: 3982655362,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art3", pieceIndex: 0 },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campPart", structure: "breadOven", part: "ovenLid" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
         locks: [
           {
             lock: {
@@ -9095,7 +9146,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: { stairId: "expert_3:p3:f0:s7" },
             gate: { type: "tomb-key", wardKeyId: "master_a_1" },
-            rewards: [{ type: "waterskin" }, { type: "money", amount: 2 }],
+            rewards: [{ type: "waterskin" }, { type: "campPart", structure: "post", part: "postTrunk" }],
             encounter: "hidato",
             role: "puzzle",
             encountersByIndex: { 0: "hidato", 1: "sudoku" },
@@ -9132,7 +9183,15 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 7816500863991682,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p3", pieceIndex: 2 },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campPart", structure: "table", part: "leatherStraps" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
         locks: [
           {
             lock: {
@@ -9209,7 +9268,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 7816500863991683,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p4", pieceIndex: 3 },
         rewards: [
-          { type: "money", amount: 3 },
+          { type: "campPart", structure: "platform", part: "edgeRail" },
           { type: "money", amount: 3 },
         ],
       },
@@ -9805,7 +9864,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "master_a_1" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "art10", pieceIndex: 3 },
-            rewards: [{ type: "waterskin" }, { type: "money", amount: 1 }],
+            rewards: [{ type: "waterskin" }, { type: "campPart", structure: "platform", part: "platformBeams" }],
             encounter: "balance-scale",
             decorations: [
               "shelf",
@@ -10517,7 +10576,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: { stairId: "expert_4:p3:f0:s8" },
             gate: { type: "tomb-key", wardKeyId: "master_a_1" },
-            rewards: [{ type: "waterskin" }, { type: "money", amount: 2 }],
+            rewards: [{ type: "waterskin" }, { type: "campPart", structure: "ladder", part: "ladderRails" }],
             encounter: "canisters",
             role: "puzzle",
             encountersByIndex: { 0: "canisters", 1: "sumplete" },
@@ -10627,7 +10686,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 7907893988303845,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p5", pieceIndex: 4 },
         rewards: [
-          { type: "money", amount: 2 },
+          { type: "campPart", structure: "roof", part: "bindingGrass" },
           { type: "money", amount: 2 },
         ],
       },
@@ -11002,7 +11061,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "starter_a_1" },
             endReward: { type: "mosaicPiece", tier: "starter" },
-            rewards: [{ type: "money", amount: 2 }],
+            rewards: [{ type: "campFind", step: "gourd" }],
             encounter: "eclipse",
             decorations: ["shelf", "jarRack", "offeringTable", "basin", "hanging", "pillar"],
             wallDecorations: ["sconce", "niche"],
@@ -11107,7 +11166,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         mainEndReward: { type: "mapPiece", tombId: "master_treasure_tomb_b" },
         rewards: [
           { type: "waterskin" },
-          { type: "money", amount: 3 },
+          { type: "campFind", step: "scrollCase" },
           { type: "money", amount: 3 },
           { type: "money", amount: 1 },
         ],
@@ -11278,7 +11337,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a14", pieceIndex: 0 },
         rewards: [
           { type: "waterskin" },
-          { type: "money", amount: 3 },
+          { type: "campFind", step: "secondPalm" },
           { type: "money", amount: 3 },
           { type: "money", amount: 3 },
           { type: "money", amount: 1 },
@@ -11416,7 +11475,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "master" },
-            rewards: [undefined, undefined],
+            rewards: [
+              { type: "money", amount: 3 },
+              { type: "money", amount: 3 },
+            ],
             encounter: "hidato",
             decorations: ["shelf", "jarRack", "offeringTable", "basin", "hanging", "pillar"],
             wallDecorations: ["sconce", "niche"],
@@ -11429,7 +11491,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "mosaicPiece", tier: "master" },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 3 }],
             encounter: "procession",
             decorations: ["shelf", "jarRack", "offeringTable", "basin", "hanging", "pillar"],
             wallDecorations: ["sconce", "niche"],
@@ -11466,7 +11528,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: { stairId: "master_1:p2:f0:s10" },
             gate: { type: "tomb-key", wardKeyId: "master_a_5" },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 1 }],
             encounter: "balance-scale",
             role: ["trade", "puzzle"],
             encountersByIndex: { 0: "balance-scale" },
@@ -11482,7 +11544,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a15", pieceIndex: 2 },
         rewards: [
           { type: "waterskin" },
-          { type: "money", amount: 1 },
+          { type: "campFind", step: "papyrus" },
           { type: "money", amount: 2 },
           { type: "money", amount: 2 },
           { type: "money", amount: 2 },
@@ -11503,7 +11565,13 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 4404046083800499,
         mainEndReward: { type: "mosaicPiece", tier: "master" },
-        rewards: [undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "money", amount: 1 },
+          { type: "money", amount: 1 },
+          { type: "money", amount: 2 },
+          { type: "money", amount: 2 },
+          { type: "money", amount: 2 },
+        ],
       },
     ],
     [
@@ -11540,7 +11608,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "master" },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 2 }],
             encounter: "eclipse",
             decorations: ["shelf", "jarRack", "offeringTable", "basin", "hanging", "pillar"],
             wallDecorations: ["sconce", "niche"],
@@ -11552,7 +11620,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "master" },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 3 }],
             encounter: "balance-scale",
             decorations: ["shelf", "jarRack", "offeringTable", "basin", "hanging", "pillar"],
             wallDecorations: ["sconce", "niche"],
@@ -11564,7 +11632,10 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: "treasure",
             endReward: { type: "mosaicPiece", tier: "master" },
-            rewards: [undefined, undefined],
+            rewards: [
+              { type: "money", amount: 3 },
+              { type: "money", amount: 3 },
+            ],
             encounter: "hidato",
             decorations: ["shelf", "jarRack", "offeringTable", "basin", "hanging", "pillar"],
             wallDecorations: ["sconce", "niche"],
@@ -11577,7 +11648,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "mosaicPiece", tier: "master" },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 3 }],
             encounter: "constellation",
             decorations: ["shelf", "jarRack", "offeringTable", "basin", "hanging", "pillar"],
             wallDecorations: ["sconce", "niche"],
@@ -11614,7 +11685,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "master",
             end: { stairId: "master_1:p3:f0:s7" },
             gate: { type: "tomb-key", wardKeyId: "master_a_5" },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 1 }],
             encounter: "sumplete",
             role: ["trade", "puzzle"],
             encountersByIndex: { 0: "sumplete" },
@@ -11636,7 +11707,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.24,
         seed: 3798351317,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art9", pieceIndex: 0 },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campFind", step: "reeds" },
+          { type: "money", amount: 1 },
+          { type: "money", amount: 2 },
+          { type: "money", amount: 2 },
+          { type: "money", amount: 2 },
+        ],
       },
       {
         pathPuzzles: 6,
@@ -11661,7 +11739,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 4404046083800500,
         mainEndReward: { type: "mosaicPiece", tier: "master" },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "money", amount: 1 },
+          { type: "money", amount: 1 },
+          { type: "money", amount: 1 },
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
     ],
   ],
@@ -11799,7 +11884,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.12,
         seed: 3815879149,
         mainEndReward: { type: "mapPiece", tombId: "master_treasure_tomb_b" },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campPart", structure: "clayOven", part: "firebricks" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 6,
@@ -11952,7 +12044,15 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.12,
         seed: 3815879149,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art15", pieceIndex: 0 },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campPart", structure: "secondTent", part: "ridgePole" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 7,
@@ -12149,7 +12249,15 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 4081382388249043,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a3", pieceIndex: 3 },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campPart", structure: "well", part: "rope" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 7,
@@ -12301,8 +12409,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_b_1" },
             rewards: [
               { type: "waterskin" },
-              { type: "money", amount: 2 },
-              { type: "money", amount: 3 },
+              { type: "campPart", structure: "pavilion", part: "pavilionPosts" },
+              { type: "campPart", structure: "feast", part: "roastDuck" },
               { type: "money", amount: 3 },
             ],
             encounter: "hidato",
@@ -12327,7 +12435,16 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.16,
         seed: 3815879169,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art9", pieceIndex: 1 },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campPart", structure: "dryingRack", part: "crossbar" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 4,
@@ -12483,7 +12600,16 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.16,
         seed: 4081382388249045,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p14", pieceIndex: 1 },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campPart", structure: "edgeStones", part: "clayBedding" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
         locks: [
           {
             lock: {
@@ -12730,7 +12856,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 1886837787460537,
         mainEndReward: { type: "mapPiece", tombId: "master_treasure_tomb_b" },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campPart", structure: "post", part: "footStones" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 6,
@@ -12903,7 +13036,15 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.28,
         seed: 2819752933,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art9", pieceIndex: 2 },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "campPart", structure: "platform", part: "platformPlanks" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 7,
@@ -13100,7 +13241,15 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 1886837787460539,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art15", pieceIndex: 3 },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "campPart", structure: "ladder", part: "rungs" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 7,
@@ -13274,7 +13423,16 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.28,
         seed: 2819752900,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p4", pieceIndex: 5 },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "campPart", structure: "roof", part: "thatch" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 8,
@@ -13447,7 +13605,16 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.2,
         seed: 2819752942,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art15", pieceIndex: 4 },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "campPart", structure: "clayOven", part: "smokeHole" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 8,
@@ -13606,7 +13773,13 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 9018423533998432,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d6", pieceIndex: 5 },
-        rewards: [undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "campPart", structure: "secondTent", part: "guyRopes" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 5,
@@ -13746,7 +13919,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.16,
         seed: 1529713001,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p15", pieceIndex: 1 },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "campPart", structure: "well", part: "bucket" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 6,
@@ -13916,7 +14096,14 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 9018423533998432,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "art15", pieceIndex: 5 },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "campPart", structure: "dryingRack", part: "wickerTray" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 6,
@@ -14055,8 +14242,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             gate: { type: "tomb-key", wardKeyId: "wizard_b_1" },
             rewards: [
               { type: "waterskin" },
-              { type: "money", amount: 1 },
-              { type: "money", amount: 2 },
+              { type: "campPart", structure: "wellPulley", part: "pulleyWheel" },
+              { type: "campPart", structure: "lotusPlanter", part: "waterJar" },
               { type: "money", amount: 2 },
             ],
             encounter: "twin-stars",
@@ -14080,7 +14267,15 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.42,
         seed: 1529712999,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d5", pieceIndex: 2 },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "campPart", structure: "edgeStones", part: "gravel" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 4,
@@ -14247,7 +14442,15 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.12,
         seed: 1529713081,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d5", pieceIndex: 3 },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "campPart", structure: "post", part: "wedges" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 7,
@@ -14303,8 +14506,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         mainEndReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_b" },
         rewards: [
           { type: "waterskin" },
-          { type: "money", amount: 3 },
-          { type: "money", amount: 3 },
+          { type: "campPart", structure: "feast", part: "lowTable" },
+          { type: "campPart", structure: "signalFire", part: "dryBrushwood" },
           { type: "money", amount: 3 },
           { type: "money", amount: 1 },
           { type: "money", amount: 1 },
@@ -14532,8 +14735,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a9", pieceIndex: 0 },
         rewards: [
           { type: "waterskin" },
-          { type: "money", amount: 1 },
-          { type: "money", amount: 2 },
+          { type: "campPart", structure: "lotusPlanter", part: "clayTub" },
+          { type: "campPart", structure: "poles", part: "stayLines" },
           { type: "money", amount: 2 },
           { type: "money", amount: 2 },
           { type: "money", amount: 2 },
@@ -14773,8 +14976,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d13", pieceIndex: 0 },
         rewards: [
           { type: "waterskin" },
-          { type: "money", amount: 1 },
-          { type: "money", amount: 1 },
+          { type: "campPart", structure: "signalFire", part: "fireBasin" },
+          { type: "campPart", structure: "stars", part: "indigoDye" },
           { type: "money", amount: 2 },
           { type: "money", amount: 2 },
           { type: "money", amount: 2 },
@@ -14828,7 +15031,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "floor-key", color: "blue" },
             endReward: { type: "hieroglyphFragment", hieroglyphId: "a10", pieceIndex: 2 },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 1 }],
             encounter: "sudoku",
             decorations: ["offeringTable", "statue", "hanging", "shrine", "sarcophagus", "pillar"],
             wallDecorations: ["sconce", "wallShrine"],
@@ -14900,7 +15103,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             difficulty: "wizard",
             end: { stairId: "wizard_1:p2:f1:s7" },
             gate: { type: "tomb-key", wardKeyId: "wizard_a_1" },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 1 }],
             encounter: "lightbeam",
             role: ["funerary", "puzzle"],
             encountersByIndex: { 0: "lightbeam" },
@@ -14911,7 +15114,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "wizard_a_3" },
             endReward: { type: "mosaicPiece", tier: "wizard" },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 1 }],
             encounter: "sudoku",
             role: ["funerary", "puzzle"],
             encountersByIndex: { 0: "sudoku" },
@@ -14922,7 +15125,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
             end: "treasure",
             gate: { type: "tomb-key", wardKeyId: "wizard_a_4" },
             endReward: { type: "mosaicPiece", tier: "wizard" },
-            rewards: [undefined],
+            rewards: [{ type: "money", amount: 2 }],
             encounter: "star-battle",
             role: ["funerary", "puzzle"],
             encountersByIndex: { 0: "star-battle" },
@@ -14955,7 +15158,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
           { type: "money", amount: 2 },
           { type: "money", amount: 2 },
           { type: "money", amount: 3 },
-          undefined,
+          { type: "money", amount: 3 },
         ],
       },
       {
@@ -14983,7 +15186,16 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 5743489570450043,
         mainEndReward: { type: "mosaicPiece", tier: "wizard" },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "money", amount: 2 },
+          { type: "money", amount: 2 },
+          { type: "money", amount: 3 },
+          { type: "money", amount: 3 },
+          { type: "money", amount: 3 },
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
     ],
     [
@@ -15014,8 +15226,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         mainEndReward: { type: "mosaicPiece", tier: "wizard" },
         rewards: [
           { type: "waterskin" },
-          undefined,
-          undefined,
+          { type: "campPart", structure: "poles", part: "masts" },
+          { type: "campPart", structure: "planets", part: "lapisPowder" },
           undefined,
           undefined,
           undefined,
@@ -15235,7 +15447,15 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 3796722926199437,
         mainEndReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_b" },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campPart", structure: "stars", part: "goldLeaf" },
+          { type: "campPart", structure: "pavilion", part: "woolRugs" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 7,
@@ -15526,7 +15746,16 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 3796722926199438,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p6", pieceIndex: 2 },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campPart", structure: "planets", part: "ochre" },
+          { type: "campPart", structure: "wellPulley", part: "counterweight" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 8,
@@ -15807,7 +16036,16 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 3796722926199439,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a9", pieceIndex: 2 },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campFind", step: "seatCushions" },
+          { type: "campPart", structure: "feast", part: "beerJars" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 8,
@@ -16173,8 +16411,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p6", pieceIndex: 3 },
         rewards: [
           { type: "waterskin" },
-          undefined,
-          undefined,
+          { type: "campFind", step: "astrolabe" },
+          { type: "campPart", structure: "lotusPlanter", part: "lotusTubers" },
           undefined,
           undefined,
           undefined,
@@ -16450,8 +16688,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d13", pieceIndex: 1 },
         rewards: [
           { type: "waterskin" },
-          undefined,
-          undefined,
+          { type: "campFind", step: "reedGlobe" },
+          { type: "campPart", structure: "signalFire", part: "flint" },
           undefined,
           undefined,
           undefined,
@@ -16714,7 +16952,15 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 6887435361277313,
         mainEndReward: { type: "mapPiece", tombId: "wizard_treasure_tomb_b" },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campFind", step: "figTree" },
+          { type: "campPart", structure: "poles", part: "bigPegs" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 7,
@@ -16938,7 +17184,15 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 6887435361277314,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 3 },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campFind", step: "lotus" },
+          { type: "campPart", structure: "stars", part: "chalk" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 7,
@@ -17150,7 +17404,16 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 6887435361277315,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 4 },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campFind", step: "flag" },
+          { type: "campPart", structure: "planets", part: "hangingLoops" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 8,
@@ -17378,7 +17641,16 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 6887435361277316,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p6", pieceIndex: 4 },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campFind", step: "thoth" },
+          { type: "campPart", structure: "pavilion", part: "woodenFloor" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 8,
@@ -17592,8 +17864,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a9", pieceIndex: 3 },
         rewards: [
           { type: "waterskin" },
-          undefined,
-          undefined,
+          { type: "campFind", step: "bastet" },
+          { type: "campPart", structure: "wellPulley", part: "leatherBucket" },
           undefined,
           undefined,
           undefined,
@@ -17804,8 +18076,8 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d12", pieceIndex: 0 },
         rewards: [
           { type: "waterskin" },
-          undefined,
-          undefined,
+          { type: "campFind", step: "anubis" },
+          { type: "campPart", structure: "feast", part: "fruitBowl" },
           undefined,
           undefined,
           undefined,
@@ -18025,7 +18297,15 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 993470859248192,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d12", pieceIndex: 1 },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campFind", step: "ra" },
+          { type: "campPart", structure: "lotusPlanter", part: "stoneRim" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 7,
@@ -18341,7 +18621,15 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 993470859248193,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a12", pieceIndex: 5 },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campFind", step: "cloth" },
+          { type: "campPart", structure: "signalFire", part: "bellows" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 7,
@@ -18621,7 +18909,16 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 993470859248194,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d12", pieceIndex: 2 },
-        rewards: [{ type: "waterskin" }, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "waterskin" },
+          { type: "campPart", structure: "pavilion", part: "linenCanopy" },
+          { type: "campPart", structure: "poles", part: "poleSockets" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 8,
@@ -18890,7 +19187,16 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 993470859248195,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a10", pieceIndex: 3 },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "campPart", structure: "wellPulley", part: "frame" },
+          { type: "campPart", structure: "stars", part: "stencils" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 8,
@@ -19229,7 +19535,17 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 993470859248196,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a9", pieceIndex: 5 },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "campPart", structure: "feast", part: "breadBaskets" },
+          { type: "campPart", structure: "planets", part: "dividers" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 9,
@@ -19475,7 +19791,17 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 993470859248197,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d13", pieceIndex: 2 },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          { type: "campPart", structure: "lotusPlanter", part: "nileSilt" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 9,
@@ -19725,7 +20051,11 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 1835615271702410,
         mainEndReward: { type: "money", amount: 2 },
-        rewards: [{ type: "money", amount: 3 }, undefined, undefined],
+        rewards: [
+          { type: "money", amount: 3 },
+          { type: "money", amount: 3 },
+          { type: "money", amount: 3 },
+        ],
         locks: [
           {
             lock: {
@@ -19832,7 +20162,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 1835615271702411,
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "starter_a_1" },
-        rewards: [undefined, undefined, undefined, undefined],
+        rewards: [undefined, { type: "money", amount: 2 }, undefined, undefined],
       },
       {
         pathPuzzles: 3,
@@ -19899,7 +20229,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 1835615271702412,
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "starter_a_2" },
-        rewards: [undefined, undefined, undefined],
+        rewards: [undefined, { type: "money", amount: 3 }, undefined],
         locks: [
           {
             lock: {
@@ -20006,7 +20336,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 1835615271702413,
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "starter_a_3" },
-        rewards: [undefined, undefined, undefined],
+        rewards: [undefined, { type: "money", amount: 1 }, undefined],
       },
       {
         pathPuzzles: 3,
@@ -20074,7 +20404,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 1835615271702414,
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "starter_a_4" },
-        rewards: [undefined, undefined, undefined],
+        rewards: [undefined, { type: "money", amount: 2 }, undefined],
         locks: [
           {
             lock: {
@@ -21194,7 +21524,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 6589218256995083,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p15", pieceIndex: 2 },
-        rewards: [undefined, undefined, undefined],
+        rewards: [{ type: "campPart", structure: "platform", part: "lashingRope" }, undefined, undefined],
       },
       {
         pathPuzzles: 3,
@@ -21296,7 +21626,16 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 6589218256995084,
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "master_a_1" },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          undefined,
+          { type: "campPart", structure: "ladder", part: "groundPegs" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 7,
@@ -21568,7 +21907,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.16,
         seed: 9830847063567492,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "p15", pieceIndex: 4 },
-        rewards: [undefined, undefined, undefined],
+        rewards: [{ type: "campPart", structure: "roof", part: "clayLayer" }, undefined, undefined],
       },
       {
         pathPuzzles: 3,
@@ -21669,7 +22008,15 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 9830847063567492,
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "master_b_1" },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          undefined,
+          { type: "campPart", structure: "clayOven", part: "copperGrate" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 7,
@@ -21940,7 +22287,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.16,
         seed: 6433541520964355,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "a4", pieceIndex: 5 },
-        rewards: [undefined, undefined, undefined],
+        rewards: [{ type: "campPart", structure: "signalFire", part: "pitch" }, undefined, undefined],
       },
       {
         pathPuzzles: 3,
@@ -22084,7 +22431,17 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 6433541520964356,
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "wizard_a_1" },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          undefined,
+          { type: "campPart", structure: "poles", part: "cornerStones" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 8,
@@ -22293,7 +22650,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 7217094877269120,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d7", pieceIndex: 6 },
-        rewards: [undefined, undefined, undefined],
+        rewards: [{ type: "campPart", structure: "stars", part: "needleThread" }, undefined, undefined],
       },
       {
         pathPuzzles: 3,
@@ -22413,7 +22770,17 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 7217094877269121,
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "wizard_b_1" },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          undefined,
+          { type: "campPart", structure: "planets", part: "copperDiscs" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 8,
@@ -22622,7 +22989,7 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         packing: 0.1,
         seed: 6830267333425582,
         mainEndReward: { type: "hieroglyphFragment", hieroglyphId: "d12", pieceIndex: 5 },
-        rewards: [undefined, undefined, undefined],
+        rewards: [{ type: "campPart", structure: "pavilion", part: "hangingCurtains" }, undefined, undefined],
       },
       {
         pathPuzzles: 3,
@@ -22735,7 +23102,17 @@ export const generatedWorldConfigs: Record<string, SiteConfig[]> = {
         seed: 6830267333425583,
         sealed: true,
         mainEndReward: { type: "tombKey", keyId: "wizard_c_1" },
-        rewards: [undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+        rewards: [
+          undefined,
+          { type: "campPart", structure: "wellPulley", part: "hoistRope" },
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
       },
       {
         pathPuzzles: 8,
