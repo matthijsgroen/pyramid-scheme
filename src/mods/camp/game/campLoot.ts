@@ -6,7 +6,7 @@ import type { CampStepTable, CampUnit } from "./campSteps"
 import { CAMP_STEPS, campDemand, campStepProblems, campUnits } from "./campSteps"
 
 // The camp's finds and structure parts lie on loot-bearing PUZZLE slots only: chests carry the economy and
-// the capped currencies, and puzzle rooms carried the consumables camp loot replaces. Each unit lies on a
+// the capped currencies, and puzzle rooms are where camp loot lies. Each unit lies on a
 // slot of exactly its step's tier (a slot's tier is its section's), so a tier's camp fills by playing that
 // tier. Main, ungated slots are taken first, then ward-gated ones, then hidden ones: every player's camp
 // must fill, and a hidden pocket is only found by some. A tier with fewer slots than its demand is an

@@ -11,7 +11,11 @@ import { useCampProgress } from "./useCampProgress"
 const NS = { ns: "camp" }
 
 const picture = (url: string | undefined, emoji: string) =>
-  url ? <img src={url} alt="" className="size-24 object-contain" /> : <span className="text-6xl">{emoji}</span>
+  url ? (
+    <img src={url} alt="" draggable={false} className="size-24 object-contain" />
+  ) : (
+    <span className="text-6xl">{emoji}</span>
+  )
 
 // The popup content for a find: its spot's progress counts the pick-up itself, recorded or not yet.
 export const campFindDisplay = (

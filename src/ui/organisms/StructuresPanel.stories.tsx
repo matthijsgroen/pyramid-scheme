@@ -6,9 +6,22 @@ import { StructuresPanel } from "./StructuresPanel"
 const labels = { progress: "", built: "gebouwd", unknownPart: "???", toggle: "Onderdelen tonen" }
 
 const rows = [
-  { name: "Tent", found: 2, total: 3, parts: [{ name: "Tentstokken" }, { name: "Geweven doek" }, {}] },
-  { name: "Put", found: 1, total: 4, parts: [{ name: "Putstenen" }, {}, {}, {}] },
-  { name: "Vuur", found: 2, total: 2, parts: [{ name: "Tondel" }, { name: "Acaciahout" }] },
+  {
+    name: "Tent",
+    found: 2,
+    total: 3,
+    parts: [{ id: "a", name: "Tentstokken" }, { id: "b", name: "Geweven doek" }, { id: "c" }],
+  },
+  { name: "Put", found: 1, total: 4, parts: [{ id: "a", name: "Putstenen" }, { id: "b" }, { id: "c" }, { id: "d" }] },
+  {
+    name: "Vuur",
+    found: 2,
+    total: 2,
+    parts: [
+      { id: "a", name: "Tondel" },
+      { id: "b", name: "Acaciahout" },
+    ],
+  },
 ]
 
 const Demo = () => {

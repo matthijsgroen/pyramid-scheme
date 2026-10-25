@@ -32,8 +32,8 @@ export const CampCollectionSection: FC<CollectionSectionProps & { table?: CampSt
             total={total.length}
             parts={total.map(part =>
               recorded.includes(part)
-                ? { name: t(`parts.${structure}.${part}`, NS), iconUrl: partIcon(structure, part) }
-                : {}
+                ? { id: part, name: t(`parts.${structure}.${part}`, NS), iconUrl: partIcon(structure, part) }
+                : { id: part }
             )}
             open={open === structure}
             onToggle={() => setOpen(open === structure ? null : structure)}

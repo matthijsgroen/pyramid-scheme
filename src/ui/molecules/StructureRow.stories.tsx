@@ -25,7 +25,12 @@ export const Closed: Story = {}
 export const Open: Story = {
   args: {
     open: true,
-    parts: [{ name: "Tentstokken", iconUrl: art }, { name: "Geweven doek", iconUrl: art }, {}, {}],
+    parts: [
+      { id: "a", name: "Tentstokken", iconUrl: art },
+      { id: "b", name: "Geweven doek", iconUrl: art },
+      { id: "c" },
+      { id: "d" },
+    ],
   },
 }
 export const Complete: Story = {
@@ -33,7 +38,11 @@ export const Complete: Story = {
     found: 3,
     total: 3,
     open: true,
-    parts: [{ name: "Palen", iconUrl: art }, { name: "Doek", iconUrl: art }, { name: "Haringen" }],
+    parts: [
+      { id: "a", name: "Palen", iconUrl: art },
+      { id: "b", name: "Doek", iconUrl: art },
+      { id: "c", name: "Haringen" },
+    ],
   },
 }
 export const WithoutArt: Story = { args: { artUrl: undefined } }

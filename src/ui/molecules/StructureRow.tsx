@@ -1,6 +1,6 @@
 import type { FC } from "react"
 
-export type StructureRowPart = { name?: string; iconUrl?: string }
+export type StructureRowPart = { id: string; name?: string; iconUrl?: string }
 
 export type StructureRowProps = {
   name: string
@@ -32,8 +32,8 @@ export const StructureRow: FC<StructureRowProps> = ({ name, artUrl, found, total
     </button>
     {open && (
       <ul className="flex flex-col gap-1 px-3 pb-3">
-        {parts.map((part, index) => (
-          <li key={index} className="flex items-center gap-2 text-sm text-amber-950">
+        {parts.map(part => (
+          <li key={part.id} className="flex items-center gap-2 text-sm text-amber-950">
             <span className="flex size-6 shrink-0 items-center justify-center">
               {part.name !== undefined && part.iconUrl && (
                 <img src={part.iconUrl} alt="" className="max-h-full max-w-full object-contain" />

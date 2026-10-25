@@ -10,7 +10,7 @@ const props: StructureRowProps = {
   name: "Hut",
   found: 2,
   total: 4,
-  parts: [{ name: "Poles" }, { name: "Cloth" }, {}, {}],
+  parts: [{ id: "poles", name: "Poles" }, { id: "cloth", name: "Cloth" }, { id: "c" }, { id: "d" }],
   open: false,
   onToggle: () => {},
   labels: { progress: "2 van 4", built: "gebouwd", unknownPart: "???", toggle: "toggle" },

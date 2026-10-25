@@ -5,7 +5,7 @@ import { difficulties } from "@/data/difficultyLevels"
 //   found      a find lying in the world, one pick-up is one step
 //   structure  built from named parts lying in the world; it stands once every part is in
 //   grows      comes by itself on a homecoming, after the steps it `growsFrom` stand
-//   bought     sold by the shop (a later phase)
+//   bought     sold by the shop
 //   fixed      there from the start
 //   given      ground for its spot, there once anything else in the spot is
 // A step's tier is the tier of the puzzle slots its find or parts lie on. The order the art is painted in

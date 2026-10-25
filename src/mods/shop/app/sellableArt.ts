@@ -9,7 +9,9 @@ const FILES = import.meta.glob("../../../assets/sellables/*.webp", {
 const byId = (files: Record<string, string>): ReadonlyMap<string, string> =>
   new Map(Object.entries(files).map(([path, url]) => [path.replace(/^.*\/([^/]+)\.webp$/, "$1"), url]))
 
+const ART_BY_ID = byId(FILES)
+
 export const sellableArtFrom = (files: Record<string, string>, id: string): string | undefined => byId(files).get(id)
 
 /** The painted file for a sellable, or nothing. */
-export const sellableArt = (id: string): string | undefined => sellableArtFrom(FILES, id)
+export const sellableArt = (id: string): string | undefined => ART_BY_ID.get(id)
