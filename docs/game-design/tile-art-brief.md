@@ -403,7 +403,7 @@ tileset is its skin, so the shared kinds are the same slots as every rank's.
 
 `puddle` and `bones` are authored in the pool like `mat`, and are flat, so they draw on the lower part of the
 prop box; `bones` lies across two cells, and a room with no two free cells side by side stands a one-cell
-kind from its pool instead. The prompts are in `docs/instructions/repaint-queue.md`, "Cave and cavern".
+kind from its pool instead. Their masters are in `art/masters/`.
 
 ## 5. What has to be built for §3–§4
 

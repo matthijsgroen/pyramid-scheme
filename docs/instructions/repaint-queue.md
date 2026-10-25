@@ -114,62 +114,7 @@ landed. `prop-pipeline.md` has the numbers.
 
 ---
 
-## Merchant surfaces — one, the vivid starter
-
-The pilot of [visual-direction.md](../game-design/visual-direction.md): the merchant's storehouse, light and
-warm, its ground calm so the red ochre and the turquoise stand out. These are SURFACES, not props — no
-scaffold, no mask. Each block carries the whole preamble, and the one attachment is a STYLE reference
-whose colours the prompt tells the model to ignore.
-
-The floor, the wall face, the threshold and the tableau wall have landed (`art/rebuild.sh`); every entry here is painted against
-`art/masters/surfaces/starter-floor.webp`.
-
-### `starter/arch` — a timber doorway with a painted lintel
-
-**Attach:** `art/masters/surfaces/starter-floor.webp` — the new floor, as the style reference
-
-```
-Top-down dungeon game tile art for an ancient Egyptian tomb, New Kingdom period.
-Rank: a MERCHANT's storehouse tomb — the poorest of five, and the friendliest. Whitewashed mudbrick and
-pale limestone, red ochre paint, a little turquoise faience. Homely and warm: market day, not a cellar.
-Lit evenly by daylight from above — every corner of the room is visible, nothing sinks into darkness.
-HAND-PAINTED digital texture art: matte, visible soft brush texture, grit and fine speckle in the
-surface, forms modelled with soft shading. Realistic materials, painted rather than drawn.
-NO OUTLINES ANYWHERE — no black contour around anything, no ink, no cel shading, no vector look, not
-a comic, not a cartoon. An edge is a change of value, never a stroke.
-Red ochre paint #b8452c, turquoise faience #2a9d8f. Nothing lighter than #f1e8d4, nothing darker than
-#2a1e14.
-No text, no letters, no watermark, no logo, no frame, no border, no vignette.
-THE ATTACHED IMAGE IS A STYLE REFERENCE ONLY. Match its paint quality and its texture. Do NOT take its
-colours or its subject from it.
-THE CAMERA: 30 degrees above the floor, looking slightly down. Depth going away from the viewer is
-squashed to HALF; height is barely squashed. A square wooden beam shows a top face a bit more than HALF
-as deep as the front of it is tall — a clear band, not a sliver. Verticals stay vertical, horizontals
-stay horizontal: an orthographic squash, never a vanishing point. Not isometric, not photographic.
-
-A free-standing wooden doorway frame, alone on a flat magenta #ff00ff background. Nothing else in the
-picture: no wall, no floor, no ground, no shadow cast on the magenta.
-The frame is 2.7 times as wide as it is tall. Two thick upright wooden posts, one at the left and one at
-the right, and a heavy beam lying across the top of them. THE MIDDLE IS EMPTY — flat magenta #ff00ff
-between the posts, from under the beam all the way down and off the bottom edge of the picture. Magenta
-OUTSIDE the frame too, left of the left post, right of the right post, and above the beam.
-Each post is about a sixth of the picture's width. The gap between them is the remaining two thirds.
-The wood is a WARM HONEY BROWN, clearly warmer and darker than the pale stone around it: #9a6a3c in the
-light, #5e3a1e in shadow. Old rough-hewn timber, split along the grain, adze marks.
-The front of the beam carries a painted band of red ochre #b8452c with a row of small turquoise #2a9d8f
-dots along it — the merchant's one decoration — worn at the ends where hands have gripped it.
-EVERY PIECE SHOWS ITS TOP. The beam's whole upper face is visible as a band running the full width,
-lighter than its front. Each post shows the small top face where the beam rests on it.
-The underside of the beam, where it overhangs the opening, is in shadow, and so is the inner face of each
-post. That darker edge around the empty middle is what makes the gateway read as a way through.
-Even lighting left to right, no hotspot, no vignette.
-```
-
-**Import:** `yarn import-tile art/masters/surfaces/starter-arch.webp --tier=starter --name=arch --slot=arch --filter=smooth`
-
----
-
-## Priest — three
+## Priest — fifteen
 
 His CHAMBER props, and none of them existed as a model until now: his rank had nothing but the veil and
 the hanging. Some are new `--contents` variants and some are geometry another rank already proved, which
@@ -1519,7 +1464,7 @@ yarn import-tile art/masters/props/wizard/hanging.webp --tier=wizard --name=hang
 
 ---
 
-## Floor scatter — five
+## Floor scatter — four
 
 **FLOOR SCATTER IS PLACED BY RULE, not by an author**, so every rank draws all three of `mat`,
 `rubblePile` and `rubbleSpill` and a missing one shows on every floor of that rank rather than in a
@@ -1665,7 +1610,7 @@ yarn import-tile art/masters/props/wizard/mat.webp --tier=wizard --name=mat --sl
 
 ---
 
-## Patrons — nineteen
+## Patrons — seventeen
 
 **IF A GOD COMES BACK AS THE HEAP, `prim_shrine` TAKES `--contents=standing`.** The default contents is
 BES — two wide domes, squat and big-headed — so a shrine's god is painted onto or beside a rounded mass.
@@ -2626,27 +2571,6 @@ yarn import-tile art/masters/props/master/statue-horus.webp --tier=master --name
 
 ---
 
-## Ghosts on the map — four
-
-The dead stand in the rooms they talk in (`roomOccupants.ts`), and until these land each one is drawn as
-the face frame of their conversation portrait — the right person, plainly not map art. These are their
-map figures: the explorer's own frame and pixel style, so a ghost and the explorer standing in one room are
-drawn the same way.
-
-**Two attachments, and both do a different job.** The explorer's front-facing frame is the STYLE and the
-SCALE: pixel size, outline weight, canvas, where the feet stand. The ghost's portrait master is the
-CHARACTER: who it is and what they wear. Asking for one figure in the other's style is the edit that has
-kept the explorer consistent across poses (`art/README.md`, The explorer).
-
-**Painted opaque.** The game draws every ghost see-through, in a conversation and on the map alike, so one
-painted figure serves both and the room shows through all of them equally. A return painted translucent is
-a re-roll: magenta would show through it and the key cannot take that out.
-
-**One frame, standing.** A ghost does not walk, so there is no strip to build — `default/ghost-<name>` is
-a single file, which the map finds with no code change.
-
----
-
 ## Collection icons — sellables
 
 The pictures the Collection shows for the junk the player finds and sells: one per sellable (`sellable/<id>`, landing
@@ -3114,4 +3038,3 @@ BACKGROUND: a flat, solid #ff00ff magenta (red 255 green 0 blue 255) that fills 
 ```
 
 **Import:** `yarn import-camp <file> --out-dir=src/assets/sellables --name=sell_divine_5 --size=256`
-
