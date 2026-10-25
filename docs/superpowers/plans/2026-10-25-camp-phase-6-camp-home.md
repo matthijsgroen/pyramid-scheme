@@ -170,16 +170,16 @@ Mechanical, batched; one agent (Sonnet). Each mod registers only inside its exis
 - trap: `registerHomecomingPanel({ id: "trap", order: 0, Component: RestPanel })` — full hearts and "Uitgerust bij het vuur — weer helemaal fit" / "Rested by the fire — fit again"; waterskin summariser returns no line.
 - story: `registerCollectionSection({ id: "story", order: 50, Component: StoryLogSection })` — heading and the log list the `StoryLogPage` shows today, no `Page` wrapper.
 
-- [ ] **Step 1: Failing tests** (made-up rewards; translations through the test `t`).
+- [x] **Step 1: Failing tests** (made-up rewards; translations through the test `t`).
   - camp: two finds and three parts of one made-up structure give two `isNew` find lines and one structure line reading 3 parts.
   - mosaic: the entrance label reads found/total from a primed ledger; three pieces give one line counting 3.
   - shop: coin rewards of 5, 10 and 70 give one line "+85"; two equal sellables give one line "×2".
   - trap: `RestPanel` shows max hearts; the waterskin summariser gives `[]`.
   - story: the section lists a played made-up conversation and shows nothing for an empty log.
 - [ ] **Step 2: Run** `yarn test src/mods/camp src/mods/mosaic src/mods/shop src/mods/trap src/mods/story` — FAIL.
-- [ ] **Step 3: Implement.** Strings nl first, en second.
-- [ ] **Step 4: Run** the specs — PASS. `yarn test src/i18n`, `yarn check-types`, `yarn lint` (import rules at zero: no mod imports a sibling).
-- [ ] **Step 5: Commit** — `feat: mods fill the camp home — found state, window, rest, haul`
+- [x] **Step 3: Implement.** Strings nl first, en second.
+- [x] **Step 4: Run** the specs — PASS. `yarn test src/i18n`, `yarn check-types`, `yarn lint` (import rules at zero: no mod imports a sibling).
+- [x] **Step 5: Commit** — `feat: mods fill the camp home — found state, window, rest, haul`
 
 ---
 
