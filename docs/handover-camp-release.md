@@ -175,7 +175,7 @@ since last time, **Uitpakken**; the completion overlay stops offering the next j
 shows the new-chapter screen (`MobielHoofdstuk`). Settings, dev tools and story log move per decision 7. New ui
 pieces get stories; strings in en and nl. No camp spot ships as a stand-in: a spot without art stays bare ground.
 
-### Phase 7 — Alle reizen and the Verzameling [ ]
+### Phase 7 — Alle reizen and the Verzameling [x]
 
 Alle reizen as a popup over the camp (side panel on desktop), per `MobielReizen.dc.html`: one flat list, tiers
 as headers newest first, the current journey marked, completed tiers collapsed with a dot when something new
@@ -219,3 +219,4 @@ worktree, and the review list sorted: decisions, drafts, failures, things to loo
 - 2026-10-25 — phase 3 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-3-camp-loot.md`): `camp` mod; 28 finds + 99 parts (+127 drops) on puzzle slots of their tier; camp save v1; Constructies in the Collection; 124 repaint prompts; app-import guard spec. Popups not yet browser-checked (review list). Next: phase 4 plan task.
 - 2026-10-25 — phase 4 STOPPED after Tasks 1–2 (plan `docs/superpowers/plans/2026-10-25-camp-phase-4-animal-gates.md`): gates AND every mod's requirement; gate walk; loot never on a shop's end (8 hieroglyph pieces were lost there, pre-existing on main). Blocker, pre-existing: placement walks default-seed floors, the bake ships pinned seeds — at the shipped layout no wizard journey can be entered (review list, Failures). Tasks 3–8 wait on the designer. Phase 5 skipped (needs 4). Next: phase 6.
 - 2026-10-25 — phase 6 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-6-camp-home.md`): the camp is home (HUD, scene entrances, Verder met, desktop side panel); coming-home screen with the haul; new-chapter card; settings hold the dev tools; story log is a Collection section; nothing chains into the next journey. Alle reizen is still the old Travel page (phase 7). Next: phase 7 plan task.
+- 2026-10-25 — phase 7 done (plan `docs/superpowers/plans/2026-10-25-camp-phase-7-journeys-collection.md`): Alle reizen replaces Travel (one list, tiers newest first, locked needs, `extraNeeds` seam for animals later); the Verzameling opens in tabs with NIEUW and a chest badge (seen save); mosaic window count line. Next: phase 8 plan task.
