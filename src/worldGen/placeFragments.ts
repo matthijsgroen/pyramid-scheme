@@ -6,6 +6,7 @@ import {
   deriveOwnedFacts,
   floorKey,
   unmetTierGroups,
+  TIER_LADDER,
   type ReachabilitySupport,
 } from "./reachability"
 import { collectSlots, type Slot, type FamilyPriorityFor } from "./slots"
@@ -217,15 +218,33 @@ export const placeFragments = (
   // from whatever's discovered blocking right now, grown after every placement as newly
   // reachable frontier reveals further locks. `queued` prevents duplicate enqueue; `satisfied`
   // prevents re-processing a bucket a later recompute still (harmlessly) reports as discovered.
-  const queue: string[] = [...reach.discoveredLocks]
-  const queued = new Set(queue)
+  // `gateOf` keeps where each bucket was found blocking, for the refusal of one that cannot be placed.
+  const queue: string[] = []
+  const queued = new Set<string>()
   const satisfied = new Set<string>()
+  const gateOf = new Map<string, string>()
+  const enqueue = (id: string, gate?: string): void => {
+    if (satisfied.has(id) || queued.has(id)) return
+    queue.push(id)
+    queued.add(id)
+    if (gate !== undefined) gateOf.set(id, gate)
+  }
 
   const enqueueNewLocks = (): void => {
-    for (const id of reach.discoveredLocks) {
-      if (satisfied.has(id) || queued.has(id)) continue
-      queue.push(id)
-      queued.add(id)
+    for (const id of reach.discoveredLocks) enqueue(id, reach.discoveredAt.get(id)?.join(", "))
+  }
+  enqueueNewLocks()
+
+  // A locked tier is a lock too once every tier below it is open: its gate is then the frontier. Each of its unmet
+  // groups whose bucket a currency owns is enqueued, one bucket per group (holding any one meets the group). A tier
+  // further up is not the frontier yet, so its buckets wait; one no currency owns is resolved by the harvest or refused
+  // by the locked-tier guard below.
+  const enqueueFrontierTier = (): void => {
+    const frontier = TIER_LADDER.find(tier => !reach.unlockedTiers.has(tier))
+    if (!frontier) return
+    for (const group of unmetTierGroups(frontier, deriveOwnedFacts(ownedCounts, support), support)) {
+      const owned = group.find(bucket => currencies.some(c => c.ownsBucket(bucket)))
+      if (owned !== undefined) enqueue(owned, `tier ${frontier}`)
     }
   }
 
@@ -234,7 +253,26 @@ export const placeFragments = (
   // (settleHarvest). Called twice: once for the discovery-driven walk below, once more for
   // the completion pass after it (see `allBuckets` on CurrencyDistribution) — a second call
   // is a no-op if the first one already discovered and placed everything, which today it does.
+  //
+  // A bucket with too few reachable slots waits in `waiting` with its refusal. Once the queue is empty, the frontier
+  // tier's buckets join it; when nothing joins, the waiting buckets are tried again if anything was placed since their
+  // last try, and the first is refused if nothing was. Every retry follows a placement, so the drain ends.
+  const waiting = new Map<string, string>()
+  let placedSinceRetry = false
   const drain = (): void => {
+    for (;;) {
+      drainQueue()
+      enqueueFrontierTier()
+      if (queue.length > 0) continue
+      const [first] = waiting.values()
+      if (first === undefined) return
+      if (!placedSinceRetry) throw new Error(first)
+      placedSinceRetry = false
+      queue.push(...waiting.keys())
+      waiting.clear()
+    }
+  }
+  const drainQueue = (): void => {
     while (queue.length > 0) {
       const bucket = queue.shift()!
       queued.delete(bucket)
@@ -302,22 +340,30 @@ export const placeFragments = (
           (a, b) => reservedForFiller(a) - reservedForFiller(b)
         )
 
+        // Too few slots reached yet: the bucket waits (still counted as queued) while the rest of the queue grows the
+        // reach, and is refused only once nothing more can be placed.
+        if (ranked.length < needed) {
+          const gate = gateOf.get(bucket)
+          waiting.set(
+            bucket,
+            `placeFragments: ${demand.instanceId} (${bucket}) unplaceable — ${needed - ranked.length} instance(s) with no reachable slot` +
+              (gate === undefined ? "" : ` before its gate (${gate})`)
+          )
+          queued.add(bucket)
+          continue
+        }
+
         for (const slot of ranked) {
           if (needed <= 0) break
           slot.assign(currency.toReward(demand.instanceId))
           available.delete(slot)
           needed--
         }
-
-        if (needed > 0) {
-          throw new Error(
-            `placeFragments: ${demand.instanceId} (${bucket}) unplaceable — ${needed} instance(s) with no reachable slot`
-          )
-        }
       }
 
       satisfied.add(bucket)
       ownedCounts.set(bucket, demand.totalRequired)
+      placedSinceRetry = true
       reach = computeReach()
       settleHarvest()
       enqueueNewLocks()

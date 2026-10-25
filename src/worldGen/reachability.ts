@@ -347,7 +347,8 @@ export type ReachabilityResult = {
   sitesNeverLeft: readonly string[]
 }
 
-const ALL_TIERS: Tier[] = ["starter", "junior", "expert", "master", "wizard"]
+// The tiers bottom to top: the ladder a player climbs, each tier opened from the one below.
+export const TIER_LADDER: readonly Tier[] = ["starter", "junior", "expert", "master", "wizard"]
 
 // The whole-world pass: every reachable floor of every enterable journey's sites, all
 // against the SAME shared `ownedCounts` snapshot — which is exactly what lets a key earned
@@ -373,7 +374,7 @@ export const computeReachability = (
   const ownedFacts = deriveOwnedFacts(ownedCounts, support)
   if (withheld !== undefined) ownedFacts.delete(withheld)
   const enteredJourneys = new Set<string>()
-  const unlockedTiers = new Set(ALL_TIERS.filter(t => isTierUnlocked(t, ownedFacts, support)))
+  const unlockedTiers = new Set(TIER_LADDER.filter(t => isTierUnlocked(t, ownedFacts, support)))
   const reachableFloors = new Set<string>()
   const harvestedCounts = new Map<string, number>()
   const addHarvested = (id: string, count: number) => harvestedCounts.set(id, (harvestedCounts.get(id) ?? 0) + count)

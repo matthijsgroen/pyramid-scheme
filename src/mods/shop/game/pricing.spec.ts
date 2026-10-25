@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest"
+import { difficulties } from "@/data/difficultyLevels"
 import { priceFor } from "./pricing"
+import { purchaseFact, type PurchaseTable } from "./purchases"
 
 describe("priceFor", () => {
   it("scales fragment price by the shop's tier", () => {
@@ -18,5 +20,17 @@ describe("priceFor", () => {
   it("returns 0 for a reward type it doesn't price (money/sellable/unknown)", () => {
     expect(priceFor({ type: "money", amount: 5 }, "junior")).toBe(0)
     expect(priceFor({ type: "sellable", itemId: "x" }, "junior")).toBe(0)
+  })
+
+  const table: PurchaseTable = [
+    { id: "made-up-mule", fact: purchaseFact("made-up-mule"), price: 123, soldAt: { journeyId: "made-up-tomb" } },
+  ]
+
+  it("prices a purchase at its table price at every tier", () => {
+    for (const tier of difficulties) expect(priceFor({ type: "purchase", id: "made-up-mule" }, tier, table)).toBe(123)
+  })
+
+  it("prices a purchase the table does not list at 0", () => {
+    expect(priceFor({ type: "purchase", id: "made-up-yak" }, "expert", table)).toBe(0)
   })
 })

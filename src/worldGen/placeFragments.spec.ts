@@ -348,3 +348,80 @@ describe("placeFragments carves one-ways as the support binds them", () => {
     expect(SEEDS.map(seed => outcome(seed, bindsRope)).filter(o => /oneWayRealisationRefused/.test(o))).toEqual([])
   })
 })
+
+describe("placeFragments at the frontier", () => {
+  // A made-up currency of one-instance keys: each key's only home is a slot tagged with its own bucket.
+  const keyOf = (bucket: string): TreasureReward => ({ type: "made-up-key", bucket })
+  const keys: CurrencyDistribution = {
+    ownsBucket: bucket => bucket.startsWith("made-up-key:"),
+    toReward: bucket => keyOf(bucket),
+    demandFor: bucket => ({
+      bucket,
+      instanceId: bucket,
+      tier: "starter",
+      preferredWardKeys: [],
+      required: 1,
+      totalRequired: 1,
+    }),
+    rank: (candidates, demand) => candidates.filter(slot => slot.preference === demand.bucket),
+  }
+  const support: ReachabilitySupport = {
+    bucketForReward: reward => (reward.type === "made-up-key" ? (reward.bucket as string) : undefined),
+    tierUnlockGroups: tier => (tier === "junior" ? [["made-up-key:junior"]] : []),
+  }
+  const tagged = (bucket: string): SiteConfig => [
+    { ...plainSite()[0], mainEndReward: { type: "fragmentSlot", prefers: bucket } },
+  ]
+
+  it("a locked tier's bucket a currency owns is placed once every tier below it is open", () => {
+    const configs = {
+      [journeyOfTier("starter")]: [tagged("made-up-key:junior")],
+      [journeyOfTier("junior")]: [plainSite()],
+    }
+    const { walk } = placeFragments(configs, [keys], undefined, [], [], undefined, 0, support)
+    expect(configs[journeyOfTier("starter")][0][0].mainEndReward).toEqual(keyOf("made-up-key:junior"))
+    expect(walk().unlockedTiers).toContain("junior")
+  })
+
+  it("a bucket whose slot is not reached yet waits for the placement that reaches it", () => {
+    // The junior tier opens on a key whose slot stands behind a gate on another key, discovered after it.
+    const configs = {
+      [journeyOfTier("junior")]: [plainSite()],
+      [journeyOfTier("starter")]: [
+        [
+          {
+            ...tagged("made-up-key:gate")[0],
+            sideSections: [
+              {
+                pathPuzzles: 0,
+                difficulty: "starter" as const,
+                end: "treasure" as const,
+                gate: { type: "tomb-key" as const, wardKeyId: "made-up-key:gate" },
+                endReward: { type: "fragmentSlot" as const, prefers: "made-up-key:junior" },
+              },
+            ],
+          },
+        ],
+      ],
+    }
+    const gated: ReachabilitySupport = {
+      ...support,
+      journeyEntryLocks: journeyId =>
+        journeyId === journeyOfTier("junior") ? [{ bucket: "made-up-key:junior", threshold: 1 }] : [],
+      tierUnlockGroups: () => [],
+    }
+    const { walk } = placeFragments(configs, [keys], undefined, [], [], undefined, 0, gated)
+    expect(configs[journeyOfTier("starter")][0][0].sideSections[0].endReward).toEqual(keyOf("made-up-key:junior"))
+    expect(walk().enteredJourneys).toContain(journeyOfTier("junior"))
+  })
+
+  it("a bucket no placement ever reaches is refused, naming the gate it stands before", () => {
+    const configs = {
+      [journeyOfTier("starter")]: [plainSite()],
+      [journeyOfTier("junior")]: [tagged("made-up-key:junior")],
+    }
+    expect(() => placeFragments(configs, [keys], undefined, [], [], undefined, 0, support)).toThrow(
+      /made-up-key:junior \(made-up-key:junior\) unplaceable — 1 instance\(s\) with no reachable slot before its gate \(tier junior\)/
+    )
+  })
+})
