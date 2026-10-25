@@ -81,10 +81,9 @@ export const MOD_PASSAGE_REALISATIONS: PassageRealisationMeta[] = REGISTERED_MOD
 export const resolvePassageRealisation: ResolvePassageRealisation = id =>
   id === undefined ? undefined : MOD_PASSAGE_REALISATIONS.find(realisation => realisation.id === id)
 
-// Every dynamic-loot distribution all enabled mods contribute, in registry order: trap → camp → shop.
-// Waterskins claim their expert+ puzzle slots first, camp finds and parts take theirs next, then the
-// shop's money fills what's left (its budget is global, so its coins move to other slots, not out of
-// the world). A distribution drops when its mod leaves REGISTERED_MODS: shop off → no money/junk,
+// Every dynamic-loot distribution all enabled mods contribute. The fixed quantities fill in registry order
+// (waterskins and Fez's waterskins, then camp finds and parts), and the shop's money is marked `fillsLast`, so it
+// fills what's left and its budget reads the stock they put in the shops. A distribution drops when its mod leaves REGISTERED_MODS: shop off → no money/junk,
 // camp off → no camp loot, trap off → no waterskins.
 export const DYNAMIC_DISTRIBUTIONS: Distribution[] = REGISTERED_MODS.flatMap(m => m.dynamicDistributions ?? [])
 

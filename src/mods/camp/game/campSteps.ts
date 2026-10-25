@@ -20,6 +20,9 @@ export type CampStepEntry = {
   source: CampSource
   parts?: readonly string[]
   growsFrom?: readonly string[]
+  // The structure the player sees the camp change with first: its parts lie in the first two journeys of its tier, so
+  // it stands after the second. At most one per tier.
+  early?: true
 }
 
 export type CampStepTable = readonly CampStepEntry[]
@@ -54,6 +57,7 @@ export const campStepProblems = (table: CampStepTable): string[] => {
         )
       for (const part of duplicates(parts)) problems.push(`structure "${entry.id}" has part "${part}" twice`)
     } else if (entry.parts !== undefined) problems.push(`step "${entry.id}" is not a structure but has parts`)
+    if (entry.early && entry.source !== "structure") problems.push(`step "${entry.id}" is early but not a structure`)
     if (entry.source === "grows") {
       if (entry.growsFrom === undefined || entry.growsFrom.length === 0)
         problems.push(`growing step "${entry.id}" names no step it grows from`)
@@ -63,6 +67,11 @@ export const campStepProblems = (table: CampStepTable): string[] => {
           else if (sourceOf.get(from) === "given" || sourceOf.get(from) === "bought")
             problems.push(`growing step "${entry.id}" grows from "${from}", which is ${sourceOf.get(from)}`)
     }
+  }
+  for (const tier of difficulties) {
+    const early = table.filter(entry => entry.early && entry.tier === tier).map(entry => `"${entry.id}"`)
+    if (early.length > 1)
+      problems.push(`${tier} has ${early.length} early structures (${early.join(", ")}), at most one`)
   }
   return problems
 }
@@ -121,8 +130,11 @@ export const CAMP_STEPS: CampStepTable = [
     ["tentRug", J],
     ["tentFlag", E],
   ]),
+  ...rows("sleeping", "structure", [["windbreak", S, ["reedBundles", "stakes"]]]).map(entry => ({
+    ...entry,
+    early: true as const,
+  })),
   ...rows("sleeping", "structure", [
-    ["windbreak", S, ["reedBundles", "stakes"]],
     ["tent", J, ["tentPoles", "wovenCloth", "tentPegs"]],
     ["secondTent", M, ["largeCloth", "ridgePole", "guyRopes", "woolFloor"]],
     ["pavilion", W, ["pavilionPosts", "linenCanopy", "hangingCurtains", "woolRugs", "woodenFloor"]],

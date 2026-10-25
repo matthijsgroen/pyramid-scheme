@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { allocateDistributions } from "@/worldGen/slotAllocator"
+import { allocateDistributions, type Distribution } from "@/worldGen/slotAllocator"
 import type { Slot } from "@/worldGen/slots"
 import type { TreasureReward, SiteConfig } from "@/worldGen/types"
 import { SELL_VALUE_BY_TIER } from "@/data/sellables"
@@ -84,6 +84,21 @@ describe("shopMoneyEconomy fill", () => {
     const floor = 4 * 500 + MONEY_ALLOWANCE
     expect(placedValue(slots)).toBeGreaterThanOrEqual(floor)
     expect(placedValue(slots)).toBeLessThanOrEqual(Math.round(floor * 1.1))
+  })
+
+  it("fills after a distribution registered after it, so its budget covers the stock that one put in a shop", () => {
+    const slots = Array.from({ length: 200 }, (_, i) => slot({ weight: 100, tier: "wizard", kind: "end", seq: i }))
+    const world = shopWorld(0)
+    const stocker: Distribution = {
+      id: "made-up-stocker",
+      eligible: () => false,
+      footprint: () => ({ min: 0, max: 0 }),
+      fill: (_, configs) => {
+        configs.j[0][0].sideSections[0].rewards!.push({ type: "mosaicPiece" }, { type: "mosaicPiece" })
+      },
+    }
+    allocateDistributions(new Set<Slot>(slots), [shopMoneyEconomy, stocker], world)
+    expect(placedValue(slots)).toBeGreaterThanOrEqual(2 * 500 + MONEY_ALLOWANCE)
   })
 
   it("still places the allowance when the shops sell nothing", () => {

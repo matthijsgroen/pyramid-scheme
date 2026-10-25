@@ -160,12 +160,85 @@ describe("makeCampLoot", () => {
     const loot = makeCampLoot(table)
     const eligible = world(full, 4).filter(s => loot.eligible!(s))
     const label = (slots: Slot[]) => slots.map(s => (s as TestSlot).label)
-    expect(label(loot.rank!([...eligible].reverse()))).toEqual(label(loot.rank!(eligible)))
+    expect(label(loot.rank!([...eligible].reverse(), {}))).toEqual(label(loot.rank!(eligible, {})))
   })
 
   it("claims no slot on a tier without camp demand", () => {
     const demand = campDemand(table)
     expect(demand.expert).toEqual({ finds: 0, parts: 0 })
     expect(place(world(full, 4)).some(s => s.tier === "expert")).toBe(false)
+  })
+})
+
+describe("makeCampLoot early structure", () => {
+  // Made-up steps: a starter tier with an early structure, a second structure and a find.
+  const earlyTable: CampStepTable = [
+    { id: "cup", spot: "fire", tier: "starter", source: "found" },
+    { id: "screen", spot: "fire", tier: "starter", source: "structure", parts: ["reeds", "poles"], early: true },
+    { id: "hut", spot: "fire", tier: "starter", source: "structure", parts: ["beams", "cloth", "pegs"] },
+  ]
+  // The game opens journey "made-up-a" before "made-up-b" before "made-up-c"; the list order says so, not the ids.
+  const journeys = [
+    { id: "made-up-c", tier: "starter" as const },
+    { id: "made-up-b", tier: "starter" as const },
+    { id: "made-up-a", tier: "starter" as const },
+    { id: "made-up-x", tier: "junior" as const },
+  ]
+  // Each journey has two levels of three main slots, and on its first level an earlier ward-gated and hidden slot.
+  const journeyWorld = (): TestSlot[] =>
+    journeys
+      .filter(j => j.tier === "starter")
+      .flatMap(({ id }) => [
+        slot(`${id}:0:ward`, { journeyId: id, siteId: `${id}:0`, puzzleSeq: 0, wardKeys: ["k"] }),
+        slot(`${id}:0:hidden`, { journeyId: id, siteId: `${id}:0`, puzzleSeq: 1, hidden: true }),
+        ...[1, 0].flatMap(level =>
+          [4, 3, 2].map(seq =>
+            slot(`${id}:${level}#${seq}`, {
+              journeyId: id,
+              ref: { journeyId: id, levelIndex: level, floorIndex: 0 },
+              siteId: `${id}:${level}`,
+              puzzleSeq: seq,
+            })
+          )
+        ),
+      ])
+  const partOn = (slots: TestSlot[], structure: string) =>
+    campSlots(slots)
+      .filter(s => rewardOf(s).type === "campPart" && rewardOf(s).structure === structure)
+      .map(s => `${s.label}=${rewardOf(s).part as string}`)
+
+  it("the early structure completes in its tier's second journey", () => {
+    const slots = journeyWorld()
+    place(slots, [makeCampLoot(earlyTable, journeys)])
+    expect(partOn(slots, "screen").sort()).toEqual(["made-up-b:0#2=poles", "made-up-c:0#2=reeds"])
+  })
+
+  it("other structures still spread over the tier's sites", () => {
+    const slots = journeyWorld()
+    place(slots, [makeCampLoot(earlyTable, journeys)])
+    const sites = campSlots(slots)
+      .filter(s => rewardOf(s).structure === "hut")
+      .map(s => s.siteId)
+    expect(new Set(sites).size).toBe(3)
+  })
+
+  it("two early structures in one tier is a step-table problem", () => {
+    const twoEarly: CampStepTable = [
+      ...earlyTable,
+      { id: "wall", spot: "fire", tier: "starter", source: "structure", parts: ["bricks", "mortar"], early: true },
+    ]
+    const slots = journeyWorld()
+    expect(() => place(slots, [makeCampLoot(twoEarly, journeys)])).toThrow(/starter has 2 early structures/)
+    expect(slots.every(s => s.filled.length === 0)).toBe(true)
+  })
+
+  it("an early structure in a tier with one journey fails, naming the structure", () => {
+    const slots = journeyWorld()
+    expect(() => place(slots, [makeCampLoot(earlyTable, journeys.slice(2))])).toThrow(/"screen" needs two starter/)
+  })
+
+  it("a journey with no main slot for the early part fails, naming the journey", () => {
+    const slots = journeyWorld().filter(s => s.journeyId !== "made-up-b" || s.label.endsWith("ward"))
+    expect(() => place(slots, [makeCampLoot(earlyTable, journeys)])).toThrow(/"screen".*made-up-b/)
   })
 })

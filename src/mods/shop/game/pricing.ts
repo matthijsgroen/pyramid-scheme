@@ -14,6 +14,9 @@ import { purchaseRewardSchema } from "./rewardSchemas"
 // row in the purchase table says, at any tier.
 const fragmentPrice = (tier: Difficulty): number => 250 + 50 * difficulties.indexOf(tier)
 
+// A waterskin is sold in expert-and-up tomb shops only: 30, 40 and 50 there, dearer as the traps get worse.
+const waterskinPrice = (tier: Difficulty): number => 10 * (difficulties.indexOf(tier) + 1)
+
 export const priceFor = (reward: TreasureReward, tier: Difficulty, purchases: PurchaseTable = PURCHASES): number => {
   switch (reward.type) {
     case "hieroglyphFragment":
@@ -22,6 +25,8 @@ export const priceFor = (reward: TreasureReward, tier: Difficulty, purchases: Pu
       return 500
     case "mapPiece":
       return 1000
+    case "waterskin":
+      return waterskinPrice(tier)
     case "purchase": {
       const { id } = purchaseRewardSchema.parse(reward)
       return purchases.find(p => p.id === id)?.price ?? 0

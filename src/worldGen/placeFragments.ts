@@ -468,7 +468,8 @@ export const placeFragments = (
 
   // Phase 5: dynamic loot — the mod-owned distributions (owned by mods, e.g. the shop's money economy)
   // claim priority-ordered eligible slots (chest 100 before puzzle 60) and fill them themselves;
-  // `emptyFraction` reserves a share empty up front so found loot stays meaningful. Each drops
+  // `emptyFraction` reserves a share empty up front so found loot stays meaningful. The fixed quantities fill
+  // first and a distribution marked `fillsLast` (one sized from what the others placed) after them. Each drops
   // with its mod (mod off → its distribution places nothing). See slotAllocator.ts +
   // docs/mods/distribution-primitive-design.md.
   allocateDistributions(available, dynamicDistributions, allConfigs, emptyFraction)

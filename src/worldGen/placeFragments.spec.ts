@@ -73,6 +73,34 @@ describe("placeFragments gate walk", () => {
 
 const byType = (a: TreasureReward, b: TreasureReward) => a.type.localeCompare(b.type)
 
+describe("placeFragments dynamic loot order", () => {
+  // The made-up world's one loot slot: the starter floor's only puzzle room.
+  const oneSlotWorld = (): Record<string, SiteConfig[]> => ({
+    [journeyOfTier("starter")]: [[{ ...plainSite()[0], rewards: [undefined] }]],
+    [journeyOfTier("junior")]: [plainSite()],
+  })
+  const takesOne = (type: string, over: Partial<Distribution> = {}): Distribution => ({
+    id: `made-up-${type}`,
+    footprint: () => ({ min: 0, max: 1 }),
+    eligible: slot => slot.kind === "puzzle",
+    fill: slots => slots.forEach(slot => slot.assign({ type })),
+    ...over,
+  })
+
+  it("a distribution marked last fills after one registered after it", () => {
+    const configs = oneSlotWorld()
+    const last = takesOne("made-up-last", { fillsLast: true })
+    placeFragments(configs, [], undefined, [], [last, takesOne("made-up-other")], undefined, 0, {})
+    expect(configs[journeyOfTier("starter")][0][0].rewards).toEqual([{ type: "made-up-other" }])
+  })
+
+  it("unmarked distributions keep their registration order", () => {
+    const configs = oneSlotWorld()
+    placeFragments(configs, [], undefined, [], [takesOne("made-up-a"), takesOne("made-up-b")], undefined, 0, {})
+    expect(configs[journeyOfTier("starter")][0][0].rewards).toEqual([{ type: "made-up-a" }])
+  })
+})
+
 describe("placeFragments behind a hidden corridor", () => {
   // The starter journey's floor 1 is entered only by a hidden stair from floor 0, so none of its slots is flagged
   // hidden, yet every one of them stands past hidden cells. The junior journey's main path ends in a lens the

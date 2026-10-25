@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest"
-import { difficulties } from "@/data/difficultyLevels"
+import { difficulties, type Difficulty } from "@/data/difficultyLevels"
+import type { SideSection, SiteConfig, TreasureReward } from "@/worldGen/types"
+import { stockPrices } from "./economyGuard"
 import { priceFor } from "./pricing"
 import { purchaseFact, type PurchaseTable } from "./purchases"
 
@@ -32,5 +34,41 @@ describe("priceFor", () => {
 
   it("prices a purchase the table does not list at 0", () => {
     expect(priceFor({ type: "purchase", id: "made-up-yak" }, "expert", table)).toBe(0)
+  })
+})
+
+describe("waterskin stock", () => {
+  it("prices a waterskin by the shop's tier, from expert up", () => {
+    expect(priceFor({ type: "waterskin" }, "expert")).toBe(30)
+    expect(priceFor({ type: "waterskin" }, "master")).toBe(40)
+    expect(priceFor({ type: "waterskin" }, "wizard")).toBe(50)
+  })
+
+  it("a tomb shop's waterskin is priced by the tier of the shop that sells it", () => {
+    const skin = (): TreasureReward => ({ type: "waterskin" })
+    const [inMaster, inWizard] = [skin(), skin()]
+    const shop = (difficulty: Difficulty, stock: TreasureReward): SideSection => ({
+      pathPuzzles: 0,
+      difficulty,
+      end: "treasure",
+      encounter: "fez-shop",
+      rewards: [stock],
+    })
+    const configs: Record<string, SiteConfig[]> = {
+      "made-up-tomb": [
+        [
+          {
+            pathPuzzles: 1,
+            difficulty: "master",
+            end: "treasure",
+            exitOrStaircase: "exit",
+            sideSections: [shop("master", inMaster), shop("wizard", inWizard)],
+          },
+        ],
+      ],
+    }
+    const price = stockPrices(configs, [])
+    expect(price(inMaster)).toBe(40)
+    expect(price(inWizard)).toBe(50)
   })
 })

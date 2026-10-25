@@ -47,6 +47,25 @@ describe("campStepProblems", () => {
     ).toHaveLength(1)
   })
 
+  it("names an early step that is not a structure", () => {
+    expect(campStepProblems([step({ id: "pot", early: true })])).toEqual(['step "pot" is early but not a structure'])
+  })
+
+  it("names a tier with two early structures, and allows one per tier", () => {
+    const early = (id: string, tier: CampStepEntry["tier"]) =>
+      step({
+        id,
+        tier,
+        source: "structure",
+        parts: ["a", "b", "c", "d"].slice(0, tier === "master" ? 4 : 2),
+        early: true,
+      })
+    expect(campStepProblems([early("ring", "starter"), early("hut", "master")])).toEqual([])
+    expect(campStepProblems([early("ring", "starter"), early("wall", "starter")])).toEqual([
+      'starter has 2 early structures ("ring", "wall"), at most one',
+    ])
+  })
+
   it("names parts on a step that is not a structure", () => {
     expect(campStepProblems([step({ id: "pot", parts: ["lid"] })])).toEqual([
       'step "pot" is not a structure but has parts',

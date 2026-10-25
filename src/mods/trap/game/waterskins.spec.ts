@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest"
 import { allocateDistributions } from "@/worldGen/slotAllocator"
 import type { Slot } from "@/worldGen/slots"
-import type { Tier, TreasureReward } from "@/worldGen/types"
-import { trapWaterskins, WATERSKIN_COUNT } from "./waterskins"
+import type { SideSection, SiteConfig, Tier, TreasureReward } from "@/worldGen/types"
+import { makeTrapWaterskins, waterskinShopStock, WATERSKIN_STOCK } from "./waterskins"
 
 type TestSlot = Slot & { label: string; filled: (TreasureReward | undefined)[] }
 
@@ -23,9 +23,9 @@ const slot = (label: string, over: Partial<Slot>): TestSlot => {
   }
 }
 
-// A made-up world: `sites` sites per tier with `perSite` loot puzzle slots each, plus slots no
-// waterskin may take — a chest, a path end, a fez-shop stock slot and a trap room in every site.
-const world = (sitesPerTier: Partial<Record<Tier, number>>, perSite: number): TestSlot[] => {
+// Made-up slots: `sites` sites per tier with `perSite` loot puzzle slots each, plus slots no waterskin may take —
+// a chest, a path end, a fez-shop stock slot tagged for something else and a trap room in every site.
+const slotWorld = (sitesPerTier: Partial<Record<Tier, number>>, perSite: number): TestSlot[] => {
   const slots: TestSlot[] = []
   for (const [tier, sites] of Object.entries(sitesPerTier) as [Tier, number][]) {
     for (let s = 0; s < sites; s++) {
@@ -33,15 +33,31 @@ const world = (sitesPerTier: Partial<Record<Tier, number>>, perSite: number): Te
       for (let p = 0; p < perSite; p++) slots.push(slot(`${siteId}#${p}`, { tier, siteId, puzzleSeq: p }))
       slots.push(slot(`${siteId}:chest`, { tier, kind: "end", rewardPriority: 100 }))
       slots.push(slot(`${siteId}:end`, { tier, kind: "end", rewardPriority: 60 }))
-      slots.push(slot(`${siteId}:shop`, { tier, siteId, puzzleSeq: perSite, rewardPriority: 0, encounter: "fez-shop" }))
+      slots.push(
+        slot(`${siteId}:shop`, { tier, kind: "end", rewardPriority: 0, encounter: "fez-shop", preference: "made-up" })
+      )
       slots.push(slot(`${siteId}:trap`, { tier, siteId, puzzleSeq: perSite + 1, rewardPriority: 0 }))
     }
   }
   return slots
 }
 
-const place = (slots: TestSlot[]): TestSlot[] => {
-  allocateDistributions(new Set<Slot>(slots), [trapWaterskins], {})
+// A made-up world holding `traps[tier]` trap rooms per tier, one trapped section each.
+const trapWorld = (traps: Partial<Record<Tier, number>>): Record<string, SiteConfig[]> => {
+  const sections: SideSection[] = (Object.entries(traps) as [Tier, number][])
+    .filter(([, n]) => n > 0)
+    .map(([difficulty, n]) => ({ pathPuzzles: n, difficulty, end: "treasure", encounter: "trap" }))
+  return {
+    "made-up": [
+      [{ pathPuzzles: 1, difficulty: "starter", end: "treasure", exitOrStaircase: "exit", sideSections: sections }],
+    ],
+  }
+}
+
+const RATIO = 0.5
+
+const place = (slots: TestSlot[], configs: Record<string, SiteConfig[]> = {}): TestSlot[] => {
+  allocateDistributions(new Set<Slot>(slots), [makeTrapWaterskins(RATIO)], configs)
   return slots.filter(s => s.filled.some(r => r?.type === "waterskin"))
 }
 
@@ -51,49 +67,78 @@ const countByTier = (slots: readonly TestSlot[]) => {
   return counts
 }
 
-describe("trapWaterskins", () => {
-  const full = { starter: 4, junior: 4, expert: 5, master: 4, wizard: 6 }
+const all = { starter: 2, junior: 2, expert: 3, master: 3, wizard: 3 }
+const traps = { starter: 6, junior: 8, expert: 2, master: 0, wizard: 10 }
 
-  it("places the capped count, no more, when more slots are eligible", () => {
-    const placed = place(world(full, 8))
-    expect(placed).toHaveLength(WATERSKIN_COUNT)
+describe("trapWaterskins", () => {
+  it("waterskins follow the traps per tier", () => {
+    const counts = countByTier(place(slotWorld(all, 4), trapWorld(traps)))
+    expect(counts).toEqual({ expert: 1, wizard: 5 })
+  })
+
+  it("places fewer than a tier's share when the tier has fewer slots", () => {
+    const counts = countByTier(place(slotWorld({ expert: 1 }, 2), trapWorld({ expert: 20 })))
+    expect(counts).toEqual({ expert: 2 })
   })
 
   it("lands only on expert-and-up puzzle slots that bear loot", () => {
-    const placed = place(world(full, 8))
-    for (const s of placed) {
+    for (const s of place(slotWorld(all, 4), trapWorld({ starter: 9, junior: 9, expert: 9, master: 9, wizard: 9 }))) {
       expect(s.kind).toBe("puzzle")
       expect(s.rewardPriority).toBeGreaterThan(0)
-      expect(s.encounter).not.toBe("fez-shop")
       expect(["expert", "master", "wizard"]).toContain(s.tier)
     }
   })
 
-  it("spreads evenly over the three tiers when each has more than its share", () => {
-    const counts = countByTier(place(world(full, 8)))
-    const perTier = [counts.expert ?? 0, counts.master ?? 0, counts.wizard ?? 0]
-    expect(Math.max(...perTier) - Math.min(...perTier)).toBeLessThanOrEqual(1)
+  it("spreads a tier's share over its sites", () => {
+    const placed = place(slotWorld({ wizard: 3 }, 4), trapWorld({ wizard: 6 }))
+    expect(new Set(placed.map(s => s.siteId)).size).toBe(3)
   })
 
-  it("hands a short tier's leftover share to the other tiers", () => {
-    const counts = countByTier(place(world({ expert: 5, master: 1, wizard: 6 }, 8)))
-    expect(counts.master).toBe(8)
-    expect((counts.expert ?? 0) + (counts.wizard ?? 0)).toBe(WATERSKIN_COUNT - 8)
-  })
-
-  it("ranks the same input the same way twice", () => {
-    const first = place(world(full, 8)).map(s => s.label)
-    const second = place(world(full, 8)).map(s => s.label)
-    expect(second).toEqual(first)
-  })
-
-  it("ranks by tier, site and path order, not by the order slots arrive in", () => {
-    const eligible = world(full, 8).filter(s => trapWaterskins.eligible!(s))
+  it("ranks the same input the same way twice, whatever order slots arrive in", () => {
+    const loot = makeTrapWaterskins(RATIO)
+    const configs = trapWorld(traps)
+    const eligible = slotWorld(all, 4).filter(s => loot.eligible!(s))
     const label = (slots: Slot[]) => slots.map(s => (s as TestSlot).label)
-    expect(label(trapWaterskins.rank!([...eligible].reverse()))).toEqual(label(trapWaterskins.rank!(eligible)))
+    expect(label(loot.rank!([...eligible].reverse(), configs))).toEqual(label(loot.rank!(eligible, configs)))
   })
 
-  it("never claims more than the eligible slots", () => {
-    expect(place(world({ junior: 3, expert: 1 }, 4))).toHaveLength(4)
+  it("a tomb shop's waterskin placeholders are filled with waterskins, on top of the trap share", () => {
+    const stock = (tier: Tier, n: number) =>
+      slot(`${tier}-shop-${n}`, {
+        tier,
+        kind: "end",
+        rewardPriority: 0,
+        encounter: "fez-shop",
+        preference: WATERSKIN_STOCK,
+      })
+    const shopSlots = [stock("expert", 0), stock("expert", 1), stock("wizard", 0)]
+    const placed = place([...slotWorld(all, 4), ...shopSlots], trapWorld(traps))
+    for (const s of shopSlots) expect(s.filled).toEqual([{ type: "waterskin" }])
+    expect(placed.filter(s => s.kind === "puzzle")).toHaveLength(6)
+  })
+
+  it("no waterskin in a junior or starter shop", () => {
+    const tombs = [
+      { id: "made-up-starter", tier: "starter" as const },
+      { id: "made-up-junior", tier: "junior" as const },
+      { id: "made-up-expert", tier: "expert" as const },
+      { id: "made-up-wizard", tier: "wizard" as const },
+    ]
+    const stock = waterskinShopStock(tombs)
+    expect(stock.map(s => s.journeyId)).toEqual([
+      "made-up-expert",
+      "made-up-expert",
+      "made-up-wizard",
+      "made-up-wizard",
+    ])
+    expect(stock.every(s => s.prefers === WATERSKIN_STOCK && !s.required)).toBe(true)
+    const juniorShop = slot("junior-shop", {
+      tier: "junior",
+      kind: "end",
+      rewardPriority: 0,
+      encounter: "fez-shop",
+      preference: WATERSKIN_STOCK,
+    })
+    expect(makeTrapWaterskins(RATIO).eligible!(juniorShop)).toBe(false)
   })
 })

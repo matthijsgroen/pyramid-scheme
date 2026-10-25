@@ -18,16 +18,20 @@ export type Distribution = {
   // e.g. a mod's distribution may filter on `slot.rewardPriority > 0 && tier >= expert`; the shop takes any
   // loot-eligible (`rewardPriority > 0`) slot.
   eligible?: (slot: Slot) => boolean
-  // Priority among eligible slots when contended (default: natural order).
-  rank?: (candidates: readonly Slot[]) => Slot[]
+  // Priority among eligible slots when contended (default: natural order). Handed the whole world too, for a
+  // distribution whose quota is read off what the world holds (a count per tier of some encounter).
+  rank?: (candidates: readonly Slot[], allConfigs: Record<string, SiteConfig[]>) => Slot[]
   // Core hands the mod its allocated slots (+ the whole world, e.g. so the shop can size its money
   // budget from the authored shop prices); the mod bakes rewards, owns variants/rarity/completeness,
   // and clears any claimed-but-unused slot to empty (`assign(undefined)`). Core does not inspect it.
   fill: (allocatedSlots: Slot[], allConfigs: Record<string, SiteConfig[]>) => void
+  // Fills after every distribution without the flag, whatever the registration order: a distribution whose fill
+  // reads what the others placed (a budget sized from everything else the world holds) marks itself last.
+  fillsLast?: true
 }
 
-// Allocate `available` slots to each distribution (footprint + eligibility + rank), remove the
-// taken slots from `available`, and hand them to the mod's fill. Hard-fails if a distribution's
+// Allocate `available` slots to each distribution (footprint + eligibility + rank), those marked `fillsLast`
+// after all the others, remove the taken slots from `available`, and hand them to the mod's fill. Hard-fails if a distribution's
 // `min` can't be met — capped/required loot must fully place (keys-and-locks-solver.md,
 // "Exhausted relaxation is a build failure").
 //
@@ -56,13 +60,14 @@ export const allocateDistributions = (
       .sort((a, b) => a.rewardPriority - b.rewardPriority)
     for (const slot of eligible.slice(0, Math.round(eligible.length * emptyFraction))) available.delete(slot)
   }
-  for (const dist of distributions) {
+  const ordered = [...distributions.filter(d => !d.fillsLast), ...distributions.filter(d => d.fillsLast)]
+  for (const dist of ordered) {
     const { min, max } = dist.footprint(allConfigs)
     // Priority order is the default; dist.rank refines within it (Array.sort is stable).
     const eligible = [...available]
       .filter(s => dist.eligible?.(s) ?? true)
       .sort((a, b) => b.rewardPriority - a.rewardPriority)
-    const ranked = dist.rank ? dist.rank(eligible) : eligible
+    const ranked = dist.rank ? dist.rank(eligible, allConfigs) : eligible
     const take = ranked.slice(0, max)
     if (take.length < min) {
       throw new Error(

@@ -1,16 +1,26 @@
 import type { Distribution } from "@/worldGen/slotAllocator"
 import type { Slot } from "@/worldGen/slots"
-import { difficulties, difficultyCompare } from "@/data/difficultyLevels"
+import type { ShopStockAssignment } from "@/worldGen/shopStock"
+import type { SiteConfig } from "@/worldGen/types"
+import { difficulties, difficultyCompare, type Difficulty } from "@/data/difficultyLevels"
+import { trapsByTier } from "./trapRooms"
 
-// Trap places the waterskins (docs/mods/distribution-primitive-design.md): only on expert-and-up
-// PUZZLE slots that bear loot, so chests, path ends and shop stock never hold one. Starter and junior
-// traps sit in optional corridors and are survived on the hearts you bring. A slot's tier is its own
-// section difficulty, so a low-tier ward path inside a wizard tomb stays ineligible.
-// Trap off → this distribution isn't registered → no waterskin is placed.
+// Trap places the waterskins (docs/mods/distribution-primitive-design.md), expert and up only: starter and junior
+// traps sit in optional corridors and are survived on the hearts you bring. Two kinds of slot take one:
+//   - a loot-bearing PUZZLE slot, so chests and path ends never hold one. Each tier gets
+//     round(WATERSKINS_PER_TRAP × that tier's trap rooms), counted off the world's trap encounters, so the water
+//     follows the danger. A slot's tier is its own section difficulty, so a low-tier ward path inside a wizard tomb
+//     stays ineligible. A tier with fewer slots than its share gets what it has.
+//   - a tomb shop's stock placeholder tagged WATERSKIN_STOCK, WATERSKINS_PER_SHOP in every expert-and-up tomb shop,
+//     on top of the trap share: Fez sells water where the traps are.
+// Trap off → this distribution and the stock placeholders aren't registered → no waterskin is placed.
 
-// The design total, capped: a waterskin is a rare find, not a supply line, and there are far more
-// eligible slots than this. Fewer are placed when the world has fewer eligible slots (min 0).
-export const WATERSKIN_COUNT = 60
+export const WATERSKINS_PER_TRAP = 1.3
+export const WATERSKINS_PER_SHOP = 2
+export const WATERSKIN_STOCK = "waterskin"
+const FIRST_TIER: Difficulty = "expert"
+
+const fromFirstTier = (tier: Difficulty) => difficultyCompare(tier, FIRST_TIER) >= 0
 
 // Round-robin over `groups`, one item from each per pass, so a small budget is shared evenly and a
 // group that runs dry hands its turns to the others.
@@ -41,18 +51,47 @@ const rankTier = (slots: readonly Slot[]): Slot[] =>
       .map(([, site]) => [...site].sort((a, b) => (a.puzzleSeq ?? 0) - (b.puzzleSeq ?? 0)))
   )
 
-export const trapWaterskins: Distribution = {
+const isStock = (slot: Slot) => slot.kind === "end" && slot.preference === WATERSKIN_STOCK
+
+/** Each tier's share of found waterskins: none below expert, round(ratio × trap rooms) from expert up. */
+export const waterskinShares = (
+  configs: Record<string, SiteConfig[]>,
+  ratio: number = WATERSKINS_PER_TRAP
+): Record<Difficulty, number> => {
+  const traps = trapsByTier(configs)
+  return Object.fromEntries(
+    difficulties.map(tier => [tier, fromFirstTier(tier) ? Math.round(ratio * traps[tier]) : 0])
+  ) as Record<Difficulty, number>
+}
+
+export const makeTrapWaterskins = (ratio: number = WATERSKINS_PER_TRAP): Distribution => ({
   id: "trap-waterskins",
-  eligible: slot => slot.kind === "puzzle" && slot.rewardPriority > 0 && difficultyCompare(slot.tier, "expert") >= 0,
-  footprint: () => ({ min: 0, max: WATERSKIN_COUNT }),
-  // Round-robin over the tiers in difficulty order before the sites: with a small cap, the site-id
-  // order alone spends the whole budget on the tiers whose sites sort first (expert and master) and
-  // leaves wizard almost dry. Deterministic and seed-free.
-  rank: candidates => {
-    const byTier = groupBy(candidates, s => s.tier)
-    return interleave(difficulties.map(tier => rankTier(byTier.get(tier) ?? [])))
+  eligible: slot => fromFirstTier(slot.tier) && (isStock(slot) || (slot.kind === "puzzle" && slot.rewardPriority > 0)),
+  // The rank is the quota: every stock placeholder, then each tier's share of its puzzle slots.
+  footprint: () => ({ min: 0, max: Number.MAX_SAFE_INTEGER }),
+  // Tiers in difficulty order, each spread over its sites. Deterministic and seed-free.
+  rank: (candidates, configs) => {
+    const shares = waterskinShares(configs, ratio)
+    const byTier = groupBy(
+      candidates.filter(s => !isStock(s)),
+      s => s.tier
+    )
+    return [
+      ...candidates.filter(isStock),
+      ...difficulties.flatMap(tier => rankTier(byTier.get(tier) ?? []).slice(0, shares[tier])),
+    ]
   },
   fill: slots => {
     for (const slot of slots) slot.assign({ type: "waterskin" })
   },
-}
+})
+
+export const trapWaterskins: Distribution = makeTrapWaterskins()
+
+/** WATERSKINS_PER_SHOP stock placeholders in the shop of every expert-and-up tomb. */
+export const waterskinShopStock = (tombs: readonly { id: string; tier: Difficulty }[]): ShopStockAssignment[] =>
+  tombs
+    .filter(tomb => fromFirstTier(tomb.tier))
+    .flatMap(tomb =>
+      Array.from({ length: WATERSKINS_PER_SHOP }, () => ({ journeyId: tomb.id, prefers: WATERSKIN_STOCK }))
+    )

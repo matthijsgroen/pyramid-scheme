@@ -3,7 +3,8 @@ import { trapLootTotals } from "./game/lootTotals"
 import { ARITHMETIC_REFLEX_META } from "./game/arithmeticReflex/meta"
 import { CLOCK_REFLEX_META } from "./game/clockReflex/meta"
 import { CROCODILE_META } from "./game/crocodile/meta"
-import { trapWaterskins } from "./game/waterskins"
+import { trapWaterskins, waterskinShopStock } from "./game/waterskins"
+import { TOMB_JOURNEYS } from "@/worldGen/data"
 import { HEALTH_CURRENCY_META } from "./game/healthCurrency"
 
 // The trap mod descriptor. Owns health, the damage traps deal and the waterskin that heals it; the
@@ -19,6 +20,7 @@ export const trapMod: ModDescriptor = {
   id: "trap",
   families: [ARITHMETIC_REFLEX_META, CLOCK_REFLEX_META, CROCODILE_META],
   dynamicDistributions: [trapWaterskins],
+  shopStock: waterskinShopStock(TOMB_JOURNEYS),
   currencyMeta: HEALTH_CURRENCY_META,
   lootTotals: trapLootTotals,
 }
