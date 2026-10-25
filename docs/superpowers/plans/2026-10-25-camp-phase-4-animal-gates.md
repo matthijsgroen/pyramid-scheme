@@ -103,17 +103,17 @@ Each is the option that changes the least shipped behaviour, or the one the brie
 - Produces: the winnability guard in `placeFragments` also throws when, after the drain, a tier in the walk is still locked, naming the tier and its unmet groups.
 - Produces: `MOD_REACHABILITY_SUPPORT.journeyEntryLocks` / `.tierUnlockGroups` = the concatenation over every contributing mod, in registry order; the tomb-treasure mod returns one group (its `TIER_UNLOCK_PERK_IDS[tier]`, none for starter) and one lock (its map pieces).
 
-- [ ] **Step 1: Failing tests** (made-up configs and supports only).
+- [x] **Step 1: Failing tests** (made-up configs and supports only).
   - `reachability.spec.ts`: a tier with two groups opens only when both have a held bucket; one group of three opens on any one; no groups is open. A journey with two entry locks is entered only when both hold, and each unmet one is a discovered lock. A key in a shop's stock in a reachable room is harvested; the same key in a shop behind a locked gate is not.
   - `registeredMods.spec.ts` (or a spec beside the merge, with made-up supports): two supports' groups and locks are concatenated, not first-wins; a support with none adds nothing.
   - A `placeFragments` spec on a made-up world: a tier whose only group's bucket no one places ends locked, and the build throws naming that tier.
   - Tomb-treasure: its support gives one group per non-starter tier and one map-piece lock per tomb.
 - [ ] **Step 2: Run** `yarn test src/worldGen/reachability src/worldGen/placeFragments src/mods/registeredMods src/mods/tombTreasure` — FAIL.
-- [ ] **Step 3: Implement.** Comments say AND across contributors, OR within a group, and why stock counts as held (the guard owns money).
-- [ ] **Step 4: Run** the specs — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Byte-identical probe** (the one bake before Task 8): `git status --short` clean, then `timeout 900 yarn generate-world`, then `git diff --quiet src/data` must hold (no byte moved: the tomb-treasure mod alone gives the same gates, and harvesting a shop's map piece changes no placement). Restore with `git checkout src/data` if anything was written. A moved byte stops the task: report what moved.
-- [ ] **Step 6: Per-task review** (soundness): AND semantics everywhere both hooks were read; no core file names a currency; the guard's new throw cannot fire on today's world (the probe).
-- [ ] **Step 7: Commit** — `refactor: gates hold every mod's requirement, shops are harvested`
+- [x] **Step 3: Implement.** Comments say AND across contributors, OR within a group, and why stock counts as held (the guard owns money).
+- [x] **Step 4: Run** the specs — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Byte-identical probe** (the one bake before Task 8): `git status --short` clean, then `timeout 900 yarn generate-world`, then `git diff --quiet src/data` must hold (no byte moved: the tomb-treasure mod alone gives the same gates, and harvesting a shop's map piece changes no placement). Restore with `git checkout src/data` if anything was written. A moved byte stops the task: report what moved.
+- [x] **Step 6: Per-task review** (soundness): AND semantics everywhere both hooks were read; no core file names a currency; the guard's new throw cannot fire on today's world (the probe).
+- [x] **Step 7: Commit** — `refactor: gates hold every mod's requirement, shops are harvested`
 
 ---
 

@@ -5,6 +5,7 @@ import {
   createFloorAssemblyCache,
   deriveOwnedFacts,
   floorKey,
+  unmetTierGroups,
   type JourneyMeta,
   type ReachabilitySupport,
 } from "./reachability"
@@ -104,7 +105,7 @@ export type CappedCurrency = {
 }
 
 // Each journey carries only its tier — whether entering it needs a currency threshold (a tomb's
-// map pieces) is the injected `reachabilitySupport.journeyEntryLock`'s data, so core names no
+// map pieces) is the injected `reachabilitySupport.journeyEntryLocks`'s data, so core names no
 // currency and reads no per-tomb count here.
 const buildJourneyMeta = (): Record<string, JourneyMeta> => {
   const meta: Record<string, JourneyMeta> = {}
@@ -170,8 +171,8 @@ export const placeFragments = (
     },
     alsoHarvests: reachabilitySupport.alsoHarvests,
     factsForCount: reachabilitySupport.factsForCount,
-    journeyEntryLock: reachabilitySupport.journeyEntryLock,
-    tierUnlockBucket: reachabilitySupport.tierUnlockBucket,
+    journeyEntryLocks: reachabilitySupport.journeyEntryLocks,
+    tierUnlockGroups: reachabilitySupport.tierUnlockGroups,
   }
   const computeReach = () =>
     computeReachability(
@@ -346,6 +347,26 @@ export const placeFragments = (
         `No registered currency owns them (a gating mod toggled off with its gate still authored?), ` +
         `or a required key sits behind the gate it opens.`
     )
+  }
+  // The same invariant at global scope: every tier a journey of this world sits in must be open
+  // once placement is done. A locked tier's journeys are never walked, so their locks are never
+  // discovered — the sweep above cannot see a tier whose unlock bucket no one places (a mod's
+  // group whose currency was never placed, or whose treasures all sit beyond the tier itself).
+  const ownedFacts = deriveOwnedFacts(ownedCounts, support)
+  const walkedTiers = new Set(
+    Object.keys(allConfigs).flatMap(journeyId => (journeyMeta[journeyId] ? [journeyMeta[journeyId].tier] : []))
+  )
+  const lockedTiers = [...walkedTiers].filter(tier => !reach.unlockedTiers.has(tier))
+  if (lockedTiers.length > 0) {
+    const named = lockedTiers
+      .map(
+        tier =>
+          `${tier} (needs one of each: ${unmetTierGroups(tier, ownedFacts, support)
+            .map(group => `[${group.join(" | ")}]`)
+            .join(", ")})`
+      )
+      .join("; ")
+    throw new Error(`placeFragments: world not fully solvable — tier(s) still locked after placement: ${named}.`)
   }
 
   // A slot an author tagged for a gating currency (e.g. `endReward: "hieroglyph"`), if that

@@ -129,6 +129,22 @@ player hold currency X" — but what it unlocks differs by **scope**:
   pieces are held (no single room, a threshold over the whole journey).
 - **Global-scoped** — the next difficulty tier unlocks.
 
+**Gates hold every mod's requirement.** A journey's entry and a tier's
+unlock are mod data (`journeyEntryLocks`, `tierUnlockGroups` on a mod's
+reachability support), and the registry concatenates every mod's answer.
+A journey is entered only when every entry lock holds; a tier opens only
+when every group has one held bucket — AND across groups, OR within a
+group. One mod can offer alternatives inside its own group (any one of a
+tomb's tier-unlock treasures) but never waives another mod's group. Each
+unmet entry lock is a discovered lock, and the winnability guard refuses
+a world that, once placement drains, still has a tier of its journeys
+locked, naming the tier and its unmet groups.
+
+**A shop's stock is harvested.** The walk harvests every piece of a
+reached shop's stock exactly as a room's reward: a key on sale counts as
+held once its shop is reached. Whether the player can afford it is the
+economy guard's question — it owns money — not reachability's.
+
 **A key minted in one journey and spent in another.** The sand pyramid
 (`../instructions/sand-pyramid.md`) buries wizard_3 from its first arrival,
 and the sand is written in a web across the wizard journeys. Each lever or
@@ -175,8 +191,10 @@ opens.
 
 Difficulty is linear: each tier is 4 pyramid journeys + 1 tomb. Collecting
 ANY ONE of a tomb's 4 designated tier-unlock treasures (`TIER_UNLOCK_PERK_IDS`,
-`src/data/treasurePerks.ts`) unlocks the next tier (another 4 journeys + a
-tomb), and so on to Wizard. The solver's top-level goal graph is exactly
+`src/data/treasurePerks.ts`) meets the tomb-treasure mod's group for the next
+tier (another 4 journeys + a tomb), and so on to Wizard. That group is one of
+the tier's unlock groups: another mod may add its own, and the tier opens only
+when every group is met. The solver's top-level goal graph is exactly
 this ladder — reaching Wizard. Each of those 4 treasures is _also_ paired to
 one specific journey of the next tier (journey N's own ward gates open on
 tier-unlock key N) — so tier entry itself only ever needs one key, but

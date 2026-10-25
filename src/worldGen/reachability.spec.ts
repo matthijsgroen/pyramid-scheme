@@ -32,9 +32,8 @@ const testSupport = (entryThresholds: Record<string, number> = {}): Reachability
         : r.type === "hieroglyphFragment"
           ? `hieroglyph:${r.hieroglyphId as string}`
           : undefined,
-  journeyEntryLock: j =>
-    j in entryThresholds ? { bucket: mapPieceBucket(j), threshold: entryThresholds[j] } : undefined,
-  tierUnlockBucket: t => TIER_UNLOCK[t],
+  journeyEntryLocks: j => (j in entryThresholds ? [{ bucket: mapPieceBucket(j), threshold: entryThresholds[j] }] : []),
+  tierUnlockGroups: t => (TIER_UNLOCK[t] ? [TIER_UNLOCK[t]] : []),
 })
 
 // Two floors, floor 0's side section gated by `wardKeyId`, ending in a stairhead wired to
@@ -367,6 +366,51 @@ describe(reachableFloorsInSite, () => {
     expect(result.reachableRewards).toEqual([{ type: "mosaicPiece", tier: "starter" }])
   })
 
+  const shopSite = (gate?: { type: "tomb-key"; wardKeyId: string }): SiteConfig => [
+    {
+      pathPuzzles: 1,
+      difficulty: "starter",
+      end: "treasure",
+      exitOrStaircase: "exit",
+      sideSections: [
+        {
+          pathPuzzles: 0,
+          difficulty: "starter",
+          end: "treasure",
+          encounter: "fez-shop",
+          rewards: [{ type: "tombKey", keyId: "stocked-key" }],
+          ...(gate ? { gate } : {}),
+        },
+      ],
+    },
+  ]
+
+  it("harvests a key standing in a reachable shop's stock, as it would a room's reward", () => {
+    const result = reachableFloorsInSite(
+      { journeyId: "j", levelIndex: 0 },
+      shopSite(),
+      new Set(),
+      undefined,
+      undefined,
+      undefined,
+      testSupport()
+    )
+    expect(result.harvestedCounts.get("stocked-key")).toBe(1)
+  })
+
+  it("does not harvest a key in a shop behind a still-locked gate", () => {
+    const result = reachableFloorsInSite(
+      { journeyId: "j", levelIndex: 0 },
+      shopSite({ type: "tomb-key", wardKeyId: "never-supplied" }),
+      new Set(),
+      undefined,
+      undefined,
+      undefined,
+      testSupport()
+    )
+    expect(result.harvestedCounts.get("stocked-key")).toBeUndefined()
+  })
+
   it("leaves out a reward behind a still-locked gate, so the list is reachable loot and not all loot", () => {
     const site: SiteConfig = [
       {
@@ -454,6 +498,25 @@ describe(isTierUnlocked, () => {
 
   it("holding none of the tier's keys stays locked even if unrelated other buckets are held", () => {
     expect(isTierUnlocked("junior", new Set(["junior_a_1", "some_other_bucket"]), testSupport())).toBe(false)
+  })
+
+  const groupSupport = (groups: string[][]): ReachabilitySupport => ({ tierUnlockGroups: () => groups })
+
+  it("opens a tier with two groups only once each group has a held bucket", () => {
+    const support = groupSupport([["perk-a"], ["other-mod-key"]])
+    expect(isTierUnlocked("expert", new Set(["perk-a"]), support)).toBe(false)
+    expect(isTierUnlocked("expert", new Set(["other-mod-key"]), support)).toBe(false)
+    expect(isTierUnlocked("expert", new Set(["perk-a", "other-mod-key"]), support)).toBe(true)
+  })
+
+  it("opens a tier with one group of three on any one of them", () => {
+    const support = groupSupport([["one", "two", "three"]])
+    expect(isTierUnlocked("expert", new Set(["two"]), support)).toBe(true)
+    expect(isTierUnlocked("expert", new Set(["four"]), support)).toBe(false)
+  })
+
+  it("opens a tier with no groups", () => {
+    expect(isTierUnlocked("wizard", new Set(), groupSupport([]))).toBe(true)
   })
 })
 
@@ -546,6 +609,34 @@ describe(computeReachability, () => {
       support
     )
     expect(enough.reachableFloors.has(floorKey({ journeyId: "tomb", levelIndex: 0, floorIndex: 0 }))).toBe(true)
+  })
+
+  it("enters a journey with two entry locks only once both hold, discovering each unmet one", () => {
+    const allConfigs: Record<string, SiteConfig[]> = { tomb: [ungatedTwoFloorSite()] }
+    const journeyMeta = { tomb: { tier: "starter" as const } }
+    const support: ReachabilitySupport = {
+      journeyEntryLocks: () => [
+        { bucket: "pieces", threshold: 2 },
+        { bucket: "other-mod-key", threshold: 1 },
+      ],
+    }
+    const reach = (counts: [string, number][]) =>
+      computeReachability(allConfigs, journeyMeta, new Map(counts), undefined, undefined, support)
+
+    const none = reach([])
+    expect(none.reachableFloors.size).toBe(0)
+    expect(none.discoveredLocks).toEqual(new Set(["pieces", "other-mod-key"]))
+
+    const onlyPieces = reach([["pieces", 2]])
+    expect(onlyPieces.reachableFloors.size).toBe(0)
+    expect(onlyPieces.discoveredLocks).toEqual(new Set(["other-mod-key"]))
+
+    const both = reach([
+      ["pieces", 2],
+      ["other-mod-key", 1],
+    ])
+    expect(both.reachableFloors.has(floorKey({ journeyId: "tomb", levelIndex: 0, floorIndex: 0 }))).toBe(true)
+    expect(both.discoveredLocks.size).toBe(0)
   })
 
   it("unlockedTiers reflects only the tiers whose (mod-supplied) unlock keys are held, plus the lockless first tier", () => {

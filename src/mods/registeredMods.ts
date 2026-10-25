@@ -101,20 +101,29 @@ export const MOD_WORLD_VALIDATORS: WorldValidator[] = REGISTERED_MODS.flatMap(m 
 
 // Every mod's reachability support (§E), merged into one — the currency-specific facts core
 // reachability must not name (tomb-key harvest, tomb map-piece entry lock, tier-unlock ladder).
-// Each hook tries every contributing mod and takes the first defined answer; with no contributor
-// (or a mod toggled off) it returns undefined, so core reachability falls back to "no lock" —
-// generic and mod-agnostic. Injected into buildConfigs by scripts/generateWorld.ts.
-const REACHABILITY_SUPPORTS: ReachabilitySupport[] = REGISTERED_MODS.flatMap(m =>
-  m.reachabilitySupport ? [m.reachabilitySupport] : []
-)
+// A single-answer hook (a threshold, a reward's bucket) takes the first contributor's defined
+// answer. The gates concatenate in registry order instead: every mod's entry locks and tier groups
+// all stand, so a gate holds every mod's requirement (AND across mods, OR within one group). With
+// no contributor (or a mod toggled off) a hook answers nothing, so core reachability falls back to
+// "no lock" — generic and mod-agnostic.
 const firstDefined = <T>(values: (T | undefined)[]): T | undefined => values.find(v => v !== undefined)
+export const mergeReachabilitySupports = (
+  supports: readonly ReachabilitySupport[]
+): Pick<
+  ReachabilitySupport,
+  "thresholdFor" | "bucketForReward" | "alsoHarvests" | "factsForCount" | "journeyEntryLocks" | "tierUnlockGroups"
+> => ({
+  thresholdFor: bucket => firstDefined(supports.map(s => s.thresholdFor?.(bucket))),
+  bucketForReward: reward => firstDefined(supports.map(s => s.bucketForReward?.(reward))),
+  alsoHarvests: reward => supports.flatMap(s => s.alsoHarvests?.(reward) ?? []),
+  factsForCount: (bucket, count) => supports.flatMap(s => s.factsForCount?.(bucket, count) ?? []),
+  journeyEntryLocks: journeyId => supports.flatMap(s => s.journeyEntryLocks?.(journeyId) ?? []),
+  tierUnlockGroups: tier => supports.flatMap(s => s.tierUnlockGroups?.(tier) ?? []),
+})
+
+// Injected into buildConfigs by scripts/generateWorld.ts.
 export const MOD_REACHABILITY_SUPPORT: ReachabilitySupport = {
-  thresholdFor: bucket => firstDefined(REACHABILITY_SUPPORTS.map(s => s.thresholdFor?.(bucket))),
-  bucketForReward: reward => firstDefined(REACHABILITY_SUPPORTS.map(s => s.bucketForReward?.(reward))),
-  alsoHarvests: reward => REACHABILITY_SUPPORTS.flatMap(s => s.alsoHarvests?.(reward) ?? []),
-  factsForCount: (bucket, count) => REACHABILITY_SUPPORTS.flatMap(s => s.factsForCount?.(bucket, count) ?? []),
-  journeyEntryLock: journeyId => firstDefined(REACHABILITY_SUPPORTS.map(s => s.journeyEntryLock?.(journeyId))),
-  tierUnlockBucket: tier => firstDefined(REACHABILITY_SUPPORTS.map(s => s.tierUnlockBucket?.(tier))),
+  ...mergeReachabilitySupports(REGISTERED_MODS.flatMap(m => (m.reachabilitySupport ? [m.reachabilitySupport] : []))),
   resolveOneWay: resolveOneWayRealisation,
   resolveRegionBarrier: resolveRegionBarrierRealisation,
   resolvePassage: resolvePassageRealisation,
