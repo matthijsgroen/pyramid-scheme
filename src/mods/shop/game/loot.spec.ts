@@ -80,7 +80,7 @@ const rowsOf = (configs: Record<string, SiteConfig[]>, walk: ReturnType<typeof w
 }
 
 describe("shopMoneyEconomy fill", () => {
-  it("the smallest ground is covered before the world", () => {
+  it("covers the ground before a key, not only the world, when the chests lie behind the key", () => {
     // The rooms behind the key rank first (chests), so a fill sized for the world alone would put its money there.
     const key = purchase("K")
     const table = tableOf({ K: 10 * STONE, R: 20 * STONE })

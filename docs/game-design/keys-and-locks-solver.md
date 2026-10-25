@@ -29,41 +29,98 @@ place this touches the mods architecture at all.)
 
 ## World-building phases — the canonical order
 
-Four phases, strictly sequential, each depending only on what the previous
-one finished:
+Six steps, strictly sequential, each depending only on what the previous
+one finished (`buildConfigs` in `src/worldGen/configBuilder.ts`, called by
+`scripts/generateWorld.ts`):
 
-1. **Structural setup (DSL).** Builds every node — portal, fork, encounter
-   — for the whole world, deterministic per seed. Assigns each node's own
-   _wish_ (a gate's `requiredKeyId`, a tableau's `requiredKeyIds`) and, new
-   here, each candidate slot's own _loot preference_ (`prefers: <currency>`
-   — a soft tag, e.g. "this chest prefers the mosaic currency"). No reward
-   is granted yet — a wish or a preference is not loot. See "Structure,
-   then loot" below.
-2. **Exploration.** The reactive worklist: discover key demands (locks) as
-   reachability expands, place keys — anything that _gates_ progress
-   (map pieces, hieroglyph fragments, future mod-owned key currencies) —
-   into reachable slots. See "The placement algorithm" below.
-3. **Capped loot.** Runs once exploration settles (nothing left blocking).
-   Any mod can register a capped-loot currency (mosaic tiles are the
-   first). Every capped currency must be placed **completely** — no
-   partial fills. Each currency owns its own placement rule, but should
-   prefer slots already tagged in phase 1 before falling back to its
-   generic rule. Spreading across journeys/pyramids/tombs is itself a goal
-   of this phase, not an accident — avoid front-loading a currency's
-   instances into early-game content, the same diversity-ladder shape map
-   pieces already use (see "Capped loot spreads" below). Authored DSL drop
-   rates for capped loot are a tentative idea, not yet designed — see
-   "Open" below.
-4. **Uncapped loot.** Fills whatever's left (money, sellables,
-   junk) — a max-%-occupancy and a drop rate, not "always fill." Not yet
-   designed at all; out of scope until phase 3 (capped loot) is built and
-   proven. See "Open" below.
+1. **Structure (DSL).** Builds every floor, lock, chest and puzzle for the
+   whole world, deterministic per seed. Assigns each node's own _wish_ (a
+   gate's `requiredKeyId`, a tableau's `requiredKeyIds`) and each candidate
+   slot's own _loot preference_ (`prefers: <currency>`, a soft tag). The
+   tomb treasures are fixed here, when the tombs are built: they are
+   structure, and the corridor detector is one of them. Shop stock
+   placeholders go in, each shop's stock is trimmed to what was assigned,
+   and a shop's end is cleared, because whether an end holds a reward
+   decides which ends the carve may use as key hosts. No other reward is
+   granted yet. See "Structure, then loot" below.
+2. **Layout.** Every floor's `seed` + `packing` is picked (the injected
+   `pickLayout` hook; the bake supplies the carve search and its ledger,
+   `src/worldGen/carveSeedSearch.ts`). The pick must meet the **hard
+   criteria** (`HARD_CRITERIA`): it carves, its lock walks sound, every lock
+   holds a puzzle on its way, no dead region, every route stub holds a room.
+   `packing` is an intention, not a criterion: the search tries every seed
+   at the authored packing first, then raised packings closest first, then
+   the runtime ladder carve, and pins the first candidate meeting every
+   hard criterion. A floor whose authoring no layout can meet fails the bake
+   as **infeasible**; one the bounded search did not meet fails as **not
+   found**, naming the floor and the criterion. A pin that still verifies
+   is kept without a search.
+3. **Keys.** The reactive worklist, on the pinned layout: discover key
+   demands (locks) as reachability expands, and place keys — anything that
+   _gates_ progress (hieroglyph fragments, ward keys, map pieces, the
+   animals Fez sells) — into slots whose **room** the walk reaches. First
+   blockage first: a key that waits for its slot is tried again right after
+   the next placement. A key that fits no slot before its gate stops the
+   bake, naming the gate and the bucket. See "The placement algorithm"
+   below.
+4. **Money as a condition.** Money is not placed here; it is a condition
+   the last step must meet: in every **ground** a player can stand in, the
+   money lying there covers everything for sale there. See "Grounds" below.
+5. **Fixed loot.** Every distribution that places a fixed quantity: mosaic
+   pieces (capped, placed completely), camp finds and parts, found
+   waterskins and Fez's waterskins. Spreading across
+   journeys/pyramids/tombs is a goal here, not an accident (see "Capped
+   loot spreads" below).
+6. **Money.** The shop's money distribution is flagged `fillsLast`
+   (mod-agnostic), so it runs after every other dynamic distribution and
+   fills the free slots ground by ground until each ground's condition holds.
 
-Phases 3 and 4 both used to be lumped together as "filler loot, once the
-worklist is empty" — they're related (both non-gating, both run after
-exploration) but distinct enough in their own completion guarantee
-(capped = must-finish, uncapped = drop-rate-gated) to warrant separate
-phases, not one pass.
+After the build the bake carves every floor again from the final configs
+and refuses the world if loot moved a wall (`layoutMoved`,
+`src/worldGen/layoutCheck.ts`) or a web placement moved (`placementMoved`),
+and then runs **the stamped guard** (below).
+
+### Grounds
+
+A **ground** (`src/worldGen/grounds.ts`) is the fixed point of the strict walk
+from empty hands in which a piece of shop stock counts as held only once it
+is bought. Grounds are enumerated breadth-first by buying one key piece in a
+ground's stock at a time, and deduplicated by the rewards they reach; only
+keys are bought, since a piece no lock names opens nothing. Every ground is
+listed, not one per gate: a check that withholds one gate at a time is
+unsound. Made-up counterexample: starting income 100, keys A, B and C at 50
+each; A opens a room holding a 50-coin rare and no money, B and C each
+open 1000. Every one-withheld walk passes, but buying A and then the rare strands
+the player. Asked of every ground R, `income(R) ≥ buyable(R)` is sound: a
+player stuck in R with an unbought key K has spent at most `buyable(R) −
+price(K)`. Core lists the grounds; what pays and what costs is the shop
+mod's (`economyGuard.ts`). The enumeration is capped at 4096; past it the
+bake fails and names the count.
+
+### A hidden corridor is a gate
+
+A hidden section is reachable only once the corridor detector is held. The
+reachability support names the fact (`hiddenRequirement`); the tomb-treasure
+mod harvests a `detection` perk treasure of level n to `detector:corridor:k`
+for every k ≤ n and names `detector:corridor:1`, the level that lets a
+player step onto a hidden junction. Placement walks, the strict walk and
+grounds honour it, so no key lies in a hidden pocket before the detector is
+reachable, and hidden-pocket money counts only in grounds that hold it. With
+no `hiddenRequirement` (tomb-treasure off) strict walks treat hidden cells as
+shut, as the runtime does at detector level 0. The permissive "everything
+ever reachable" walk keeps hidden sections open, because it answers
+collection totals.
+
+### The stamped guard
+
+Once the build is done and the layout check has passed,
+`scripts/generateWorld.ts` builds a fresh gate walk over the final configs
+and refuses the bake on any journey it cannot enter, any locked tier or any
+blocking lock (`stuckPoints`, `src/worldGen/validate.ts`). The mod
+validators, the shop's ground check among them, already ran inside
+`buildConfigs` on the pinned world, which is the world that ships.
+`src/data/worldWinnable.verify.ts` runs the same check over the committed
+`generatedWorld.ts`.
 
 ## Node types: portal, fork, encounter — gate is not a fourth thing
 
@@ -325,22 +382,21 @@ satisfied by the first drain is a no-op here — so it's purely a safety
 net against a symbol slipping through discovery, not a second placement
 policy.
 
-### Phase 3/4 loot: the same pipeline, once the worklist is empty
+### Fixed loot and money: the same pipeline, once the worklist is empty
 
-Once every key-like currency is fully placed (no blockers left), remaining
-slots get filled by phase 3 (capped loot: mosaic tiles today, more
-mod-owned capped currencies later) then phase 4 (uncapped loot:
-money, sellables, junk) — through the **same composable
-distribution-rule pipeline** every key currency already uses, just with
-different completion guarantees (capped = must fully place; uncapped =
-drop-rate-gated, a slot can end up genuinely empty). Neither phase needs
-incremental reachability recompute — by the time the worklist is empty the
-reachable area _is_ the final, fully-unlocked world, so both are one pass
-over whatever candidate slots remain, not a re-expanding loop.
-`fragments.ts`'s old final pass ("fill every remaining slot with junk
-loot") proved this shape in miniature, unconditionally — it needs to
-become two real, ranked phases (capped first, uncapped second), not stay
-fragment-specific or single-pass. Since shop stock is a capacity-bearing
+Once every key-like currency is fully placed (no blockers left), the
+remaining slots are filled by the fixed quantities (step 5: mosaic tiles,
+camp loot, waterskins) and then money (step 6) — through the **same
+composable distribution-rule pipeline** every key currency already uses,
+with different completion guarantees: a fixed quantity must place fully;
+money must meet every ground's condition, and a ground with no free slot
+left to meet it fails the build by name. The fixed quantities need no
+incremental reachability recompute: by the time the worklist is empty the
+reachable area _is_ the final, fully-unlocked world, so each is one pass over
+whatever candidate slots remain. Money does read reachability: the allocator
+stands a fresh placeholder in every slot it hands the money distribution,
+then builds a gate walk over the world as it stands, so the fill enumerates
+the same grounds the guard checks. Since shop stock is a capacity-bearing
 slot like any other, this same pipeline is what populates a shop's stock,
 too.
 
@@ -604,20 +660,16 @@ then loot" above).
 
 Resolved since: the real worklist queue is built and proven, and map
 pieces are migrated onto it using the two-level diversity ladder —
-phases 1 and 2 above are real, not just designed.
+the keys step above is real, not just designed. Money is placed by grounds
+(steps 4 and 6 above), not by a drop rate.
 
 Still genuinely open:
 
-- **Phase 3 (capped loot) isn't generalized yet.** Mosaic tiles are still
+- **Capped loot (step 5) isn't generalized yet.** Mosaic tiles are still
   placed by an older, structural, pre-worklist mechanism — deciding how
   many mosaic slots a pyramid gets at build time, rather than a currency
-  choosing among already-built candidate slots. Migrating it to a real
-  phase-3 currency is the current work.
-- **Phase 4 (uncapped loot) isn't designed at all.** What "drop rate" and
-  "max occupancy" mean precisely, and what happens to a slot that misses
-  its roll (decided: genuinely empty, not a guaranteed fallback) still
-  need a real mechanism, not just this paragraph.
-- **Authored DSL drop rates for phase-3 capped currencies** — floated as
+  choosing among already-built candidate slots.
+- **Authored DSL drop rates for capped currencies** — floated as
   an idea, not committed to a shape. May not survive contact with
   "capped loot must fully place" (a dropped roll would need to be retried
   somewhere, or the total would need to shrink) — genuinely open.

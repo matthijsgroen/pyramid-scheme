@@ -189,6 +189,30 @@ A lesson stands through `lessonOnMainFloor(name)` in `src/worldGen/spec/locks/le
 fork-switch `lightbeamSwitch`, one-way `zipline`, flame `torch`, weights `stonePlate`). The lessons raised no
 `RELAID_FLOORS_VERSION`, by the designer's call: a save standing inside one of their pyramids keeps its place.
 
+### What a lock floor's side sections stand on
+
+A lock is laid first and the floor's content is seated on it. The main path's own puzzles stand on the lock's
+route, and an **ungated side section** (no gate, not sealed, not hidden, no sub-sections, ending in a chest, no lever,
+not named by a one-way, not a junction's way) is content, not a branch: its puzzles and end chest stand on the lock's
+laid corridors and regions, in walk order. When those stretches are too short, the lay is lengthened on its cheapest
+region or corridor and laid again. Gates and drops keep their nodes, so rooms and obstacles interleave along a
+corridor. Every other section — gated, keyed, sealed (a trap path), hidden, with sub-sections, or a junction's way —
+hangs as a branch off laid ground, filtered only by region appetite. Every catalogue lock is stood with every region
+`free`, so no authored appetite is in force.
+
+### A lock holds a puzzle on its way
+
+A layout is accepted only if every lock holds a puzzle on its way: on the lock's solving walk, from the first sight of
+its shut door to its last control, at least one encounter room that is neither its control nor its door. "On the way"
+is judged per region on the shortest solving walk, so a puzzle in a dead-end branch of a region the walk crosses
+counts. A region whose appetite asks for puzzles or a reward must hold one too. It is one of the bake's hard layout
+criteria (`HARD_CRITERIA` in `src/worldGen/carveSeedSearch.ts`). A floor with no content that may stand on lock
+ground (no main-path puzzle and no content section) is infeasible and fails the bake by name.
+
+A lock that stands before the floor's content (every region but its way out takes nothing, `lockBeforeFloorContent`)
+is exempt: it is a lesson in the lock alone. Every other criterion still holds for it. The starter tomb's level 2
+floors 1 (`pitStair`) and 3 (`throwItBack`) stand that way.
+
 ## Proposal: one puzzle per floor
 
 Adopted 2026-10-11, and baked as far as it carves (Part 1 says where a stand-in holds a floor). Every one of the 34

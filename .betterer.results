@@ -45,8 +45,8 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/app/dev/puzzleLabOptions.ts:3740091060": [
       [38, 61, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/app/state/useDetector.ts:1187317355": [
-      [57, 76, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/app/state/useDetector.ts:4019668708": [
+      [59, 76, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/app/state/useJourneys.spec.ts:788713542": [
       [526, 54, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
@@ -955,8 +955,8 @@ exports[`design doc references name a file, not a paragraph`] = {
     "src/worldGen/dsl.spec.ts:531463177": [
       [12, 54, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
-    "src/worldGen/lootEconomyInvariants.verify.ts:2022799130": [
-      [21, 13, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
+    "src/worldGen/lootEconomyInvariants.verify.ts:1284098077": [
+      [20, 78, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"]
     ],
     "src/worldGen/placeFragments.ts:1464341080": [
       [328, 37, 1, "Name the design file and say the claim. A § resolves only until the doc is reorganised, and nothing tells you when it stops.", "177410"],

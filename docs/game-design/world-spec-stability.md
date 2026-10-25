@@ -100,6 +100,26 @@ The same sweep assembles every floor at the exact seed the runtime hands it, so 
 
 Such a floor renders "Site layout unavailable." for every player and never recovers, so nothing is written. Re-author it, or change a setting from the list above — a different `packing` or `corridorStraightness` re-carves it. `worldFloorAssembly.verify.ts` holds the same line against the artifact already in the repo.
 
+### The layout is picked before the loot, and loot moves no wall
+
+The bake picks every floor's `seed` + `packing` once the structure is built (floors, locks, chests, puzzles, tomb
+treasures, shop stock) and before any loot is placed, so placement walks the floors the player will walk. Loot is
+content, and the rule above holds for it: after the build the bake carves every floor again from the final configs, and
+a floor whose walls differ from the picked layout stops it, and it writes nothing:
+
+```
+✗ 1 floor(s) or web placement(s) moved after the layout was picked:
+    master_3 level 2 floor 0: the loot placed after the layout moved a wall
+```
+
+The one way loot can reach the walls is an end left without a reward, since that end may then host a floor key (the
+`endReward` row above). So every end that is a loot slot when the layout is picked must still hold a reward after
+placement: the money fill gives a chest no ground needs a little loose change rather than emptying it.
+
+A baked pin that still meets the hard layout criteria is kept; a pin that no longer does is searched again.
+`packing` is an intention, not a criterion: the search prefers the authored value and raises it only when no seed
+there meets the criteria (`docs/game-design/keys-and-locks-solver.md`, the canonical order).
+
 ---
 
 `packing` and `corridorStraightness` are the two worth naming twice, for the opposite reason they used to be. They re-shape a floor end to end — 206 of 206 floors re-carved, measured — and they are in the section hash, which is exactly why the hash is no longer what a save is filed under: keying progress to it meant retuning either knob reset every run in the world at once. A save is keyed to the authoring instead, so these two now cost nothing at all.

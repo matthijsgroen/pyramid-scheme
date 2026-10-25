@@ -139,6 +139,13 @@ brings floor keys onto the open main path, and a broad floor is somewhere to hid
 resolves the roll once for the whole site, so a tomb comes out sprawling on every floor or on none, where a
 pyramid picks up a floor or two.
 
+Packing is an intention the layout search prefers, never a refusal. The bake tries every seed at the authored
+packing first, then raises it in small steps, closest first, and last takes the runtime's own carve; a floor that
+only carves at a raised packing or on that last carve ships, as long as it meets the hard layout criteria (it carves,
+its locks walk sound and hold a puzzle on the way, no dead region, no bare stub). A floor no layout can satisfy fails
+the bake on the criterion, never on its packing. So "sprawl" here is what the author asked for; the baked floor can be
+broader, never tighter.
+
 ## 4. Starter
 
 | Journey                              | Pyr | Rooms | Sects | Sprawl | Wears   | Its story asks for                  | If restricted to it |
