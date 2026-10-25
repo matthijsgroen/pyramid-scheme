@@ -58,6 +58,9 @@ const solvingPath = (spec: LockSpec, order: LockState[], edges: number[][]): Loc
   return undefined
 }
 
+/** The two answers of the walk: the locks named, and the locks it could not judge. */
+export type LockPuzzleVerdict = { without: string[]; unjudged: string[] }
+
 /**
  * THE LOCKS WHOSE SOLVING WALK PASSES NO PUZZLE ROOM, by instance name. The walk is the shortest one from the
  * entrance to the way out over the floor's lock states; its stretch from the first time the player stands beside one
@@ -65,10 +68,20 @@ const solvingPath = (spec: LockSpec, order: LockState[], edges: number[][]): Loc
  * holding a puzzle room that is neither a control nor a door. A lock whose walk never stands beside its door or never
  * works its control is judged on the stretch the walk spends on its ground; one whose states are too many to walk is
  * judged on its whole ground.
+ *
+ * A LOCK NONE OF WHOSE CONTROLS CAN BE TIED TO ITS GROUND IS UNJUDGED, never passed: a control that is no room of the
+ * lock (a floor key's chest, a room with no region label), or a floor whose lock does not compile into a walk.
  */
-export const lockWithoutPuzzle = (grid: FloorGrid): string[] => {
+export const judgeLockPuzzles = (grid: FloorGrid): LockPuzzleVerdict => {
+  const instances = new Set(
+    grid.cells.flat().flatMap(cell => {
+      const instance = cell.type === "empty" ? undefined : instanceOf(cell.region)
+      return instance ? [instance] : []
+    })
+  )
+  if (instances.size === 0) return { without: [], unjudged: [] }
   const spec = floorLock(grid)
-  if (!spec) return []
+  if (!spec) return { without: [], unjudged: [...instances].sort() }
   const { of } = regionsOf(grid)
   const cellsOf = new Map<RegionId, GridCell[]>()
   const groundOf = new Map<string, Set<RegionId>>()
@@ -91,14 +104,15 @@ export const lockWithoutPuzzle = (grid: FloorGrid): string[] => {
     const instance = cell && cell.type !== "empty" ? instanceOf(cell.region) : undefined
     if (instance) mechanismsOf.set(instance, [...(mechanismsOf.get(instance) ?? []), id])
   }
-  if (mechanismsOf.size === 0) return []
+  const unjudged = [...instances].filter(instance => !mechanismsOf.has(instance)).sort()
+  if (mechanismsOf.size === 0) return { without: [], unjudged }
 
   const found = reachableStates(spec)
   const path = found === "tooLarge" ? undefined : solvingPath(spec, found.order, found.edges)
   const holdsPuzzle = (regions: Iterable<RegionId>) =>
     [...regions].some(region => (cellsOf.get(region) ?? []).some(isPuzzleRoom))
 
-  return [...mechanismsOf]
+  const without = [...mechanismsOf]
     .filter(([instance, mechanisms]) => {
       const ground = groundOf.get(instance) ?? new Set<RegionId>()
       if (!path) return !holdsPuzzle(ground)
@@ -120,7 +134,14 @@ export const lockWithoutPuzzle = (grid: FloorGrid): string[] => {
     })
     .map(([instance]) => instance)
     .sort()
+  return { without, unjudged }
 }
+
+/** The locks whose solving walk passes no puzzle room (`judgeLockPuzzles`). */
+export const lockWithoutPuzzle = (grid: FloorGrid): string[] => judgeLockPuzzles(grid).without
+
+/** The locks the walk could not judge (`judgeLockPuzzles`). */
+export const unjudgedLocks = (grid: FloorGrid): string[] => judgeLockPuzzles(grid).unjudged
 
 /** A part of a placed lock that may ask for content: one of its regions. Its corridors join once they carry an
  * appetite of their own. */

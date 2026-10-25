@@ -5,7 +5,6 @@ import type { Direction, FloorConfig, FloorGrid, GridCell } from "./siteTypes"
 import { floorLock, regionsOf } from "./floorLock"
 import { entering, reachableStates, type LockState } from "./lockWalk"
 import { walkFloorLock } from "./floorLockWalk"
-import { lockWithoutPuzzle } from "./lockPuzzles"
 import { progressState, spoiledState } from "./sequence"
 import { walkPresses } from "./sequencePlay"
 import { cellAddress } from "./cellAddress"
@@ -167,11 +166,14 @@ describe.each(FLOORS)("forced steps over $name", ({ make, minSound }) => {
       let kept = 0
       for (const grid of grids) {
         const walk = walkFloorLock(grid)!
-        const refused = refusal({ success: true, grid, attempt: 0 })
+        const refused = refusal({ success: true, grid, attempt: 0 }, make())
         if (walk.sound) {
           kept++
-          // A sound walk is refused only for the next criterion: a lock with no puzzle on its way.
-          expect(refused?.criterion ?? null).toBe(lockWithoutPuzzle(grid).length > 0 ? "lock holds a puzzle" : null)
+          // A sound walk is refused only for the next criterion: a placed lock on a floor holding no puzzle room at
+          // all has none on its way either.
+          const puzzleRooms = grid.cells.flat().filter(cell => cell.type === "room" && cell.pathIndex !== undefined)
+          const lockWithNothing = (make().locks?.length ?? 0) > 0 && puzzleRooms.length === 0
+          expect(refused?.criterion ?? null).toBe(lockWithNothing ? "lock holds a puzzle" : null)
         } else expect(refused?.criterion).toBe("lock walks sound")
       }
       expect(kept).toBeGreaterThan(0)
@@ -278,7 +280,7 @@ describe("a floor on which no walk keeps the order", () => {
       const grid = carveLockFloor(freeRegions(lock), BINDING)
       const walk = walkFloorLock(grid)
       expect(walk && !walk.sound && walk.failure.type).toBe("goalUnreachable")
-      const refused = refusal({ success: true, grid, attempt: 0 })
+      const refused = refusal({ success: true, grid, attempt: 0 }, { locks: [{ lock: freeRegions(lock) }] })
       expect(refused?.criterion).toBe("lock walks sound")
       expect(refused?.detail).toContain("sequence order.P")
     },

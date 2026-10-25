@@ -1,4 +1,4 @@
-import { assembleFloor, DEFAULT_PACKING, PACKING_CEILING } from "../src/game/siteAssembler"
+import { DEFAULT_PACKING, PACKING_CEILING } from "../src/game/siteAssembler"
 import {
   describeLayoutFailure,
   PACKING_STEP,
@@ -13,36 +13,33 @@ import { gridShape, layoutKey } from "../src/worldGen/layoutCheck"
 import type { FloorConfig as GameFloorConfig } from "../src/game/siteTypes"
 import type { FloorConfig, SiteConfig } from "../src/worldGen/types"
 import { floorAssemblySeed, persistentInteriorSeed } from "../src/game/siteSeed"
-import { resolveKeyRequirements, resolveEncounterMeta } from "../src/mods/allFamilyMeta"
-import { resolveOneWayRealisation } from "../src/mods/allOneWayRealisations"
-import { resolvePassageRealisation } from "../src/mods/allPassageRealisations"
+import { worldFloorCarve } from "../src/mods/carveWorldFloor"
+import { unjudgedLocks } from "../src/game/lockPuzzles"
 import { floorHash, sourceFingerprint, type CarveLedger } from "./carveLedger"
 
 // Seeds tried at each packing, offsets 0 … CARVE_SEED_BUDGET-1 from the floor's base seed.
 export const CARVE_SEED_BUDGET = 100
 
 /** One floor's pick, for the bake's summary. */
-export type FloorPick = { key: string; authored: number; packing: number; offset: number; laddered: boolean }
+export type FloorPick = {
+  key: string
+  authored: number
+  packing: number
+  offset: number
+  laddered: boolean
+  /** Locks on the picked grid whose puzzle on the way could not be judged (`judgeLockPuzzles`). */
+  unjudged: string[]
+}
 
 /** A floor no layout was picked for: its authoring cannot meet a hard criterion, or the bounded search met none. */
 export type LayoutFailure = { key: string; kind: "infeasible" | "notFound"; message: string }
 
-/** One floor carved with the bake's resolvers at its address, at the floor's own pin when it carries one. */
+/** One floor carved exactly as play carves it (`worldFloorCarve`), at the floor's own pin when it carries one, and
+ * prepared with the same resolvers for the feasibility check. */
 export const carveAt = (journeyId: string, levelNr: number, floorIndex: number) => {
-  const base = floorAssemblySeed(persistentInteriorSeed(journeyId), levelNr, floorIndex)
-  // The whole address, so the ids derived from it here — a stairhead the authoring left unnamed,
-  // a lever's gate stem — are the ones the runtime builds for this same floor.
-  const floorRef = { journeyId, levelIndex: levelNr - 1, floorIndex }
-  const resolvers = {
-    resolveKeyRequirements,
-    resolveOneWay: resolveOneWayRealisation,
-    resolvePassage: resolvePassageRealisation,
-    floorRef,
-  }
-  const carve = (config: FloorConfig, maxAttempts: number) =>
-    assembleFloor(journeyId, config as GameFloorConfig, base, resolveEncounterMeta, { ...resolvers, maxAttempts })
-  const prepare = (config: FloorConfig) =>
-    prepareLayout(journeyId, config as GameFloorConfig, base, { ...resolvers, resolveEncounter: resolveEncounterMeta })
+  const { seed, resolvers, carve: carveWorld } = worldFloorCarve(journeyId, levelNr, floorIndex)
+  const carve = (config: FloorConfig, maxAttempts: number) => carveWorld(config as GameFloorConfig, maxAttempts)
+  const prepare = (config: FloorConfig) => prepareLayout(journeyId, config as GameFloorConfig, seed, resolvers)
   return Object.assign(carve, { prepare })
 }
 
@@ -83,6 +80,7 @@ export const makeLayoutPicker = ({
     "src/game/siteAssembler.ts",
     "src/worldGen/carveSeedSearch.ts",
     "src/mods/allFamilyMeta.ts",
+    "src/mods/carveWorldFloor.ts",
   ])
   const stats = { verified: 0, ledgered: 0, searched: 0, infeasible: 0 }
   const failures: LayoutFailure[] = []
@@ -127,7 +125,14 @@ export const makeLayoutPicker = ({
       return searchCarvePair(base, assembleAt, options)
     })
     if (result.kind === "found") {
-      picks.push({ key, authored, packing: result.packing, offset: result.offset, laddered: result.laddered })
+      picks.push({
+        key,
+        authored,
+        packing: result.packing,
+        offset: result.offset,
+        laddered: result.laddered,
+        unjudged: unjudgedLocks(result.grid),
+      })
       floor.seed = result.seed
       floor.packing = result.packing
       pickedShapes.set(key, gridShape(result.grid))
@@ -162,6 +167,11 @@ export const printPicks = (picks: FloorPick[], stats: ReturnType<typeof makeLayo
   if (raised.length > 0) {
     console.log(`  Floors whose authored packing cannot carve (authored -> baked), to correct in the authoring:`)
     for (const f of raised) console.log(`    ${f.key}: ${f.authored} -> ${f.packing}`)
+  }
+  const unjudged = picks.filter(f => f.unjudged.length > 0)
+  if (unjudged.length > 0) {
+    console.log(`  Floors with a lock whose puzzle on the way could not be judged (no control tied to its ground):`)
+    for (const f of unjudged) console.log(`    ${f.key}: ${f.unjudged.join(", ")}`)
   }
   if (laddered.length > 0) {
     console.log(`  Floors that carve only on the ladder (accepted: they meet every hard criterion):`)

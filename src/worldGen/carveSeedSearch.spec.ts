@@ -15,11 +15,14 @@ import {
 const grid = {} as FloorGrid
 const carvedAt = (attempt: number): AssemblerResult => ({ success: true, grid, attempt })
 const failed: AssemblerResult = { success: false, reasons: [] }
+// The floors these stand-ins carve author no lock.
+const judge = (result: AssemblerResult) => refusal(result, {})
 const options = (over: Partial<CarvePairOptions> = {}): CarvePairOptions => ({
   authoredPacking: 0.1,
   ceiling: 0.2,
   seedBudget: 5,
   fullLadder: Infinity,
+  judge,
   ...over,
 })
 
@@ -120,7 +123,7 @@ describe(searchCarvePair, () => {
       options({
         seedBudget: 2,
         ceiling: 0.12,
-        judge: result => (result.success ? { criterion: "lock holds a puzzle", detail: "lever" } : refusal(result)),
+        judge: result => (result.success ? { criterion: "lock holds a puzzle", detail: "lever" } : judge(result)),
       })
     )
     expect(missing).toMatchObject({
@@ -147,7 +150,7 @@ describe(searchCarvePair, () => {
         fullLadder: 60,
         judge: result =>
           !result.success
-            ? refusal(result)
+            ? judge(result)
             : result.attempt > 0
               ? { criterion: "lock walks sound", detail: "strands" }
               : null,
@@ -158,7 +161,7 @@ describe(searchCarvePair, () => {
 
   it("asks no attempt 0 of a carve: a late carve meeting every hard criterion is accepted", () => {
     expect(
-      refusal({ success: true, grid: { cells: [], entrancePos: [0, 0] } as unknown as FloorGrid, attempt: 9 })
+      refusal({ success: true, grid: { cells: [], entrancePos: [0, 0] } as unknown as FloorGrid, attempt: 9 }, {})
     ).toBeNull()
   })
 
@@ -254,7 +257,7 @@ describe(searchCarvePair, () => {
 })
 
 describe(verifyCarvePair, () => {
-  const ladder = { authoredPacking: 0.1, fullLadder: Infinity }
+  const ladder = { authoredPacking: 0.1, fullLadder: Infinity, judge }
 
   it("keeps a pinned pair that carves on the first attempt, in one carve", () => {
     const asked: [number, number, number][] = []
@@ -293,9 +296,9 @@ describe(verifyCarvePair, () => {
   })
 
   it("rejects a pin whose carve misses a hard criterion", () => {
-    const judge = () => ({ criterion: "lock holds a puzzle" as const, detail: "lever" })
-    expect(verifyCarvePair(100, { seed: 100, packing: 0.1 }, () => carvedAt(6), { ...ladder, judge })).toBeNull()
-    expect(verifyCarvePair(100, { seed: 103, packing: 0.1 }, () => carvedAt(0), { ...ladder, judge })).toBeNull()
+    const unfed = () => ({ criterion: "lock holds a puzzle" as const, detail: "lever" })
+    expect(verifyCarvePair(100, { seed: 100, packing: 0.1 }, () => carvedAt(6), { ...ladder, judge: unfed })).toBeNull()
+    expect(verifyCarvePair(100, { seed: 103, packing: 0.1 }, () => carvedAt(0), { ...ladder, judge: unfed })).toBeNull()
   })
 
   it("measures the offset past the base inside the stamped range", () => {

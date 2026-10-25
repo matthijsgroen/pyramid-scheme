@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import type { Lock } from "./lockAuthoring"
-import { lockGroundUnfed, lockWithoutPuzzle } from "./lockPuzzles"
+import { judgeLockPuzzles, lockGroundUnfed, lockWithoutPuzzle } from "./lockPuzzles"
 import { assembleFloor } from "./siteAssembler"
 import type { FloorConfig, FloorGrid } from "./siteTypes"
 import { BINDING } from "./testSupport/lockFixtures"
@@ -50,6 +50,31 @@ describe(lockWithoutPuzzle, () => {
 
   it("a lock whose control is the only room on its way is named", () => {
     for (const seed of SEEDS) expect(lockWithoutPuzzle(carve(floorWith(0), seed))).toEqual(["lever"])
+  })
+
+  it("a lock solved before any puzzle, with every puzzle past its way out, is named", () => {
+    const lock = leverLock()
+    const before: Lock = {
+      ...lock,
+      regions: { foyer: { takes: "nothing" }, hall: { takes: "nothing" }, landing: { takes: "free" } },
+    }
+    for (const seed of SEEDS) {
+      const grid = carve(floorWith(2, before), seed)
+      expect(grid.cells.flat().filter(cell => cell.type === "room" && cell.pathIndex !== undefined)).toHaveLength(2)
+      expect(lockWithoutPuzzle(grid)).toEqual(["lever"])
+    }
+  })
+
+  it("a lock whose control stands on no ground of its own is unjudged, never passed", () => {
+    const grid = carve(floorWith(0), 1)
+    const unlabelled: FloorGrid = {
+      ...grid,
+      cells: grid.cells.map(row =>
+        row.map(cell => (cell.type === "room" && cell.mechanism ? { ...cell, region: undefined } : cell))
+      ),
+    }
+    expect(judgeLockPuzzles(grid)).toEqual({ without: ["lever"], unjudged: [] })
+    expect(judgeLockPuzzles(unlabelled)).toEqual({ without: [], unjudged: ["lever"] })
   })
 
   it("a floor with no lock names nothing", () => {

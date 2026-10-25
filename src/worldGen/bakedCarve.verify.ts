@@ -1,21 +1,12 @@
 import { describe, expect, it } from "vitest"
 import { generatedWorldConfigs } from "@/data/generatedWorld"
-import { assembleFloor } from "@/game/siteAssembler"
-import { floorAssemblySeed, persistentInteriorSeed } from "@/game/siteSeed"
-import { resolveEncounterMeta, resolveKeyRequirements } from "@/mods/allFamilyMeta"
+import { worldFloorCarve } from "@/mods/carveWorldFloor"
 import { refusal } from "./carveSeedSearch"
 
-/** What the runtime carves a shipped floor to, ladder and all, judged on every hard criterion. */
+/** What play carves a shipped floor to, ladder and all, judged on every hard criterion. */
 const refusalOf = (journeyId: string, levelNr: number, floorIndex: number) => {
   const floor = generatedWorldConfigs[journeyId][levelNr - 1][floorIndex]
-  const result = assembleFloor(
-    journeyId,
-    floor,
-    floorAssemblySeed(persistentInteriorSeed(journeyId), levelNr, floorIndex),
-    resolveEncounterMeta,
-    { resolveKeyRequirements, floorRef: { journeyId, levelIndex: levelNr - 1, floorIndex } }
-  )
-  return refusal(result, floor)
+  return refusal(worldFloorCarve(journeyId, levelNr, floorIndex).carve(floor), floor)
 }
 
 describe("the baked (packing, seed) pair of every shipped floor", () => {

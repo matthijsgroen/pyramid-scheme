@@ -19,7 +19,8 @@ export type CarveRefusal = { criterion: HardCriterion; detail: string }
 export const AUTHORING_FIELD: Record<HardCriterion, string> = {
   carves: "the floor's content or its locks",
   "lock walks sound": "locks",
-  "lock holds a puzzle": "pathPuzzles, sideSections or the locks' region appetites",
+  "lock holds a puzzle":
+    "where the lock stands (a lock placed before the floor's content, lockBeforeFloorContent), its regions' `takes`, or pathPuzzles and sideSections",
   "no dead region": "locks",
   "every stub holds a room": "sideSections or locks",
 }
@@ -67,16 +68,16 @@ export const seedAtOffset = (base: number, offset: number): number =>
 
 export { roomlessRouteStubs }
 
-/** Which hard criterion `result` misses, or null when it meets them all. `floor` adds the appetites of its locks'
- * regions to "lock holds a puzzle"; without it only the locks' solving walks are asked. */
-export const refusal = (result: AssemblerResult, floor?: Pick<FloorConfig, "locks">): CarveRefusal | null => {
+/** Which hard criterion `result` misses, or null when it meets them all. `floor` is the authoring carved: its locks'
+ * region appetites are part of "lock holds a puzzle". */
+export const refusal = (result: AssemblerResult, floor: Pick<FloorConfig, "locks">): CarveRefusal | null => {
   if (!result.success) return { criterion: "carves", detail: JSON.stringify(result.reasons) }
   const walk = walkFloorLock(result.grid)
   if (!walk) return null
   if (!walk.sound) return { criterion: "lock walks sound", detail: describeFloorWalkFailure(walk.failure) }
   const unfed = [
     ...lockWithoutPuzzle(result.grid).map(lock => `lock ${lock} has no puzzle on its way`),
-    ...(floor ? lockGroundUnfed(result.grid, floor) : []),
+    ...lockGroundUnfed(result.grid, floor),
   ]
   if (unfed.length > 0) return { criterion: "lock holds a puzzle", detail: unfed.join(", ") }
   const dead = deadFloorRegions(result.grid)
@@ -114,8 +115,8 @@ export type CarvePairOptions = {
   /** The attempts the runtime ladder gives a floor: the last candidate's. */
   fullLadder: number
   step?: number
-  /** Which hard criterion a carve misses; `refusal` unless a caller asks otherwise. */
-  judge?: (result: AssemblerResult) => CarveRefusal | null
+  /** Which hard criterion a carve misses: `refusal` against the floor carved. */
+  judge: (result: AssemblerResult) => CarveRefusal | null
 }
 
 const offsetOf = (base: number, seed: number) =>
@@ -131,7 +132,7 @@ export const verifyCarvePair = (
   base: number,
   pair: { seed: number; packing: number },
   assemble: (seed: number, packing: number, attempts: number) => AssemblerResult,
-  { authoredPacking, fullLadder, judge = refusal }: Pick<CarvePairOptions, "authoredPacking" | "fullLadder" | "judge">
+  { authoredPacking, fullLadder, judge }: Pick<CarvePairOptions, "authoredPacking" | "fullLadder" | "judge">
 ): LayoutFound | null => {
   const atBase = pair.seed === base && pair.packing === authoredPacking
   const result = assemble(pair.seed, pair.packing, atBase ? fullLadder : 1)
@@ -160,13 +161,15 @@ export const verifyCarvePair = (
 export const searchCarvePair = (
   base: number,
   assemble: (seed: number, packing: number, attempts: number) => AssemblerResult,
-  { authoredPacking, ceiling, seedBudget, fullLadder, step = PACKING_STEP, judge = refusal }: CarvePairOptions
+  { authoredPacking, ceiling, seedBudget, fullLadder, step = PACKING_STEP, judge }: CarvePairOptions
 ): LayoutFound | LayoutNotFound => {
   const counts: Partial<Record<HardCriterion, number>> = {}
   let hardest = 0
   let detail = ""
   const accepts = (result: AssemblerResult): boolean => {
-    const refused = judge(result) ?? (result.success ? null : refusal(result))
+    const refused =
+      judge(result) ??
+      (result.success ? null : { criterion: "carves" as const, detail: JSON.stringify(result.reasons) })
     if (!refused) return true
     counts[refused.criterion] = (counts[refused.criterion] ?? 0) + 1
     const rank = HARD_CRITERIA.indexOf(refused.criterion)
