@@ -112,6 +112,27 @@ The designer's morning list for the unattended camp-release queue. Newest phase 
 - Phase 7 — **The Verzameling has no chest picture at its top;** the popup's title row is the plain one every camp popup has. Alternative: the sketch's banner with the open chest.
 - Phase 7 — **On a phone a camp popup is an inset panel** over the dimmed camp (16 px at the sides, below the HUD, rounded), as all three sketches draw it; on desktop it stays the centred panel. Alternative: keep phase 6's full-screen popup.
 - Phase 7 — **The mosaic keeps placing by hand:** the window still waits for the player's "zet n stukjes" tap and outlines what just fell in; below it the sketch's "n van 252 stukjes" (pieces found, as the window's label counts them), "k nieuw" (found, not yet set in) and the bar. Alternative: set the pieces in by themselves when the window opens.
+- Phase 8 — **One beat per moment.** A moment's candidates are ordered; the rail plays the first the save has not heard, never two. Precedence at home: first home together, rested after damage, first finished structure, first find, then the haul line. Alternative: queue every matching beat.
+- Phase 8 — **"First arrival at the camp" is the first time Fez and the explorer are home together** (the first home showing after the meeting); the fresh-game `welcome` (the explorer alone, before Fez) stays as it is. Alternative: rewrite `welcome` as the camp's first arrival and drop `camp.firstHome`.
+- Phase 8 — **Home beats play at the camp, after the coming-home screen is left,** in one moment (`homeShown`) that knows whether the player just unpacked and whether anything was in the haul. The conversation layer (`Fez.tsx`, `z-10`) sits under the coming-home and new-chapter screens (`z-40`); lifting it changes every in-site panel's layering. Alternative: lift the conversation layer above those two screens and speak at the fire.
+- Phase 8 — **Coming home with and without a haul each play once ever** (the first homecoming with something in the haul, the first with nothing). Alternative: a small pool of lines rotating per homecoming.
+- Phase 8 — **Resting at the fire after damage** is one beat, once: the trap mod remembers whether its last homecoming refilled a heart (one optional save field) and says so as a home tag. Alternative: a line per tier, or no save field and no beat.
+- Phase 8 — **A new chapter** is one beat per tier (junior to wizard; starter is never announced), played when the new-chapter card is left — by "Later" at the camp, by "Op pad" on the way out, before the journey's arrival. Alternative: play it only on "Later".
+- Phase 8 — **Finishing a structure** is one beat, for the first structure completed, played at the camp on the next home showing. Alternative: one beat per structure (26 scenes).
+- Phase 8 — **The first camp find** plays at the camp on the next home showing, where the find stands, not when it is picked up. Alternative: at pickup, in the site.
+- Phase 8 — **Tomb beats are per tomb** (`cave.` / `pillar.` / `cavern.<tombId>`), all nine tombs; `tombIntro` stays and plays first at the cave mouth. Alternative: one set per tier, or fold `tombIntro` into the cave beats.
+- Phase 8 — **The tomb beats join the story log** under their tomb, in the order cave, pillar, cavern, then the tomb's ghost scene; camp and structure beats stay out of the log, which remembers places. Alternative: a "Het kamp" row in the log.
+- Phase 8 — **`bond.starterTomb` waits for the tomb's last level.** `siteLeft` fires on every level's exit, so with the two-level tomb Ipi's afterword plays on leaving the cave, before Ipi. `siteLeft` now carries whether the level left was the journey's last, and the tomb afterwords fire only then. Alternative: leave it and list it under Failures.
+- Phase 8 — **The animal lines are drafted but unwired,** parked in `fez.json` under `animal.*` and in `WAITING_BEATS` with the seam each waits on; they follow the phase-4 plan's purchase ids, shops and gates. Alternative: keep them in the script file only until phase 4.
+- Phase 8 — **A gate line names the tomb whose stall sells the animal** (phase 4's decision 6); if phase 4 moves a purchase, the line moves with it. Alternative: a line that names no place ("bij een van mijn kraampjes").
+- Phase 8 — **Drafts are marked in data, not on screen:** `DRAFT_BEATS` in the story mod and "draft" on every scene in the script file; the designer removes an id when the line is approved. Alternative: a "concept" tag on draft lines in develop mode.
+- Phase 8 — **A develop-mode tool plays the drafts:** in settings, one button per area (tombs, camp, structures and finds, animals) plays that area's beats in order with `forceReplay`, so the designer reads each in its bubble, the unwired animal lines included. Alternative: no tool; read them in the review list.
+- Phase 8 — **Home tags are owned by the mod that says them** (`trap.mended`, `camp.found`, `camp.structureDone`) and matched by the story mod as strings. Alternative: a core vocabulary of home facts.
+- Phase 8 — **Only existing poses and faces;** a line that wants an undrawn one notes it on the script file's art list. Alternative: draw new poses first.
+- Phase 8 — **A tier-up homecoming is two moments:** the chapter beat plays on leaving the new-chapter card, and the home beat then plays as a separate moment on that same home showing. Alternative: the card swallows the home beat, so a tier-up homecoming says one thing.
+- Phase 8 — **`camp.rested` plays only on the homecoming showing** (the home showing right after the coming-home screen), not on a later open of the app while hearts were refilled. Alternative: on any home showing while the trap mod says the last homecoming refilled a heart.
+- Phase 8 — **Drafts play unrecorded from settings:** the develop-mode buttons replay each beat without writing it into the heard save, so a preview never silences the real beat when its moment comes; a preview closes settings so its bubbles are seen. Alternative: record them as heard, as any forced replay does.
+- Phase 8 — **The explorer speaks in most animal scenes;** the rule is "only where it helps", so the designer trims. Alternative: Fez alone in the animal scenes.
 
 ## Phase 1 loot
 
@@ -201,6 +222,13 @@ From `yarn loot-report` before (651aad2c) and after the bake (88646b9e). `docs/l
   - trap, puzzle: nothing on these screens (trap: the HUD hearts and the rest panel; puzzle: the puzzle families in the world).
 - Gate: `yarn verify` (592 files, 6793 tests; betterer unchanged), `yarn verify-content` (44 files, 753 tests) and `yarn build` pass.
 - Fixed before the gate (7224c17c): a journey row drew an empty details wrapper (12 px) when no card slot had anything to show; and the all-journeys spec's made-up slot leaked into the module registry for other specs.
+
+## Phase 8 gate
+
+- No bake: `git diff --stat a242a96d..HEAD -- src/data/ src/worldGen/` is empty.
+- Toggle-off: each of `storyMod`, `trapMod`, `campMod` out of `REGISTERED_MODS` in turn (entry and import), `yarn check-types` and `yarn build` pass every time; restored with `git checkout src/mods/registeredMods.ts`, tree clean after. Not run with a re-bake. What drops, read from each mod's registrations: story — every new beat (tomb, camp, structure, find), the bond beats and the "Story drafts" buttons, core still reports arrivals, exits and home showings to no listener; trap — its `trap.mended` home tag, so `camp.rested` never plays; camp — its `camp.found` and `camp.structureDone` tags, so `camp.firstFind` and `camp.structureDone` never play. The home still shows in each case.
+- Gate: `yarn verify` (600 files, 6857 tests; betterer only re-keyed the `§` entries of `src/mods/trap/app/index.ts` and `src/mods/trap/app/useTrapProgress.ts`, whose lines moved), `yarn verify-content` (44 files, 753 tests) and `yarn build` pass.
+- Fixed before the gate: the cave beat was queued before `tombIntro` (the arrival was reported before the intro was offered), so `tombIntro` now plays first at the cave mouth (94d4b7bc); `bond.master` is out of the wired beats, and the wired and waiting lists derive from `DRAFT_BEATS` (76a085ef). Found during the look, fixed (8118119e): a "Story drafts" button played its bubbles under the settings dialog (`z-10` under `z-50`); a preview now closes settings.
 
 ## Drafts
 
@@ -546,3 +574,16 @@ From `yarn loot-report` before (651aad2c) and after the bake (88646b9e). `docs/l
   - A stop with something new: open that row's chevron: the stop holding the unexplored site has its dot; a buried stop (sand) is shut.
   - A tomb lock at 2 of 3: find two of a tomb's three map pieces: its row is locked, named by the lock title with the map hint, "Kaartdelen: 2 van 3".
   - The confirmation with a pyramid under way: with a pyramid in progress, tap another open row: "Onderbreek expeditie" asks first; with a tomb in progress it goes without asking.
+- Phase 8 — Checked unattended (`nl-NL`, 390×844, own `yarn dev`, `.playwright-mcp/p8-*.png`):
+  - Develop mode, settings, each "Story drafts" button: settings close and the area plays in order — tombs 76 bubbles, camp 28, structures 7, animals 77 — none shows a key or "not-found", every settled bubble fits the screen (`p8-drafts-tombs-0`, a cave line; `p8-drafts-camp-0`, `camp.firstHome`; `p8-drafts-structures-0`, `camp.structureDone`; `p8-drafts-animals-0`, `animal.forSale`; `-1` is each area's third line).
+  - Fresh save, Op pad, back out of Dageraad bij de Sfinx before the meeting: nothing on the coming-home screen, no camp beat at the camp (`p8-unmet-home`).
+  - Fez met (starter_1 seeded at pyramid 2): the camp's first showing plays `camp.firstHome` and nothing more. That was the app opening on the camp, not a homecoming: the beat fires on the first home showing after the meeting, whichever it is.
+  - The starter tomb seeded at level 1 (with "All map pieces"), Op pad: `tombIntro` (2 lines, `p8-tomb-intro`) then `cave.starter_treasure_tomb` (4 lines, `p8-tomb-cave-beat`). ← home: nothing on the coming-home screen, then `camp.homeEmpty` at the camp, and nothing more (`p8-tomb-home-beat`).
+  - The starter tomb seeded at level 2, Op pad: `tombIntro`, then `cavern.starter_treasure_tomb` (`p8-cavern-intro`, `p8-cavern-beat`).
+  - "Jump: Ipi's tomb" lands inside level 2's site map and plays one line of `tombIntro` and no cavern beat (`p8-ipi-after`): the jump skips the exterior, so it is no check of the cavern beat. Look at whether the jump should drop the arrival entirely.
+- Phase 8 — Not reached unattended:
+  - The pillar beat and Ipi's afterword: in the starter tomb's cave (level 1) walk to the exit pillar: `pillar.starter_treasure_tomb` plays; take it to the cavern: Ipi's afterword (`bond.starterTomb`) does not play on leaving the cave, only on leaving the cavern after Ipi.
+  - A real homecoming as the first showing after the meeting: on a fresh save meet Fez on Dageraad bij de Sfinx's ground floor, tap ←, unpack: `camp.firstHome` at the camp, and nothing more on that showing.
+  - Rested after damage: take damage in an expert trap, tap ←: hearts full on the coming-home screen, then `camp.rested` at the camp.
+  - A chapter card's beat: finish the starter tier until the junior key is held, come home: after the coming-home screen the new-chapter card; Later plays `camp.chapterJunior`, then the home beat as its own moment.
+  - The first find and the first finished structure: bring home the jar (Dageraad bij de Sfinx level 1, first puzzle on side path 1), unpack: `camp.firstFind` at the camp; finish the stone ring's two parts and come home: `camp.structureDone`.
