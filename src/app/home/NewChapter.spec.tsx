@@ -23,10 +23,18 @@ vi.mock("@/app/pages/journeyContributions", () => ({
 }))
 
 const { NewChapter } = await import("./NewChapter")
+const { registerReactionContribution } = await import("@/app/reactions/reactionContributions")
+
+const calls: string[] = []
+registerReactionContribution(
+  () => reaction => calls.push(reaction.kind === "chapterOpened" ? `opened:${reaction.tier}` : reaction.kind)
+)
 
 beforeEach(async () => {
   await clearGameData()
   startJourney.mockReset()
+  startJourney.mockImplementation(async () => void calls.push("startJourney"))
+  calls.length = 0
 })
 afterEach(cleanup)
 
@@ -39,6 +47,7 @@ describe(NewChapter, () => {
 
     expect(startJourney).toHaveBeenCalledWith(journeys[1])
     expect(startGame).toHaveBeenCalledOnce()
+    expect(calls).toEqual(["opened:expert", "startJourney"])
     expect(latestGameValue("homecoming")).toEqual({ version: 1, haul: [], chapter: "expert" })
   })
 
@@ -50,6 +59,7 @@ describe(NewChapter, () => {
     await act(async () => fireEvent.click(screen.getByText("camp.chapter.later")))
 
     expect(onClose).toHaveBeenCalledOnce()
+    expect(calls).toEqual(["opened:expert"])
     expect(startJourney).not.toHaveBeenCalled()
     expect(startGame).not.toHaveBeenCalled()
     expect(latestGameValue("homecoming")).toEqual({ version: 1, haul: [], chapter: "expert" })

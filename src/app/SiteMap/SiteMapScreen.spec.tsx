@@ -10,6 +10,10 @@ import { assembleFloor } from "@/game/siteAssembler"
 import { completeCell, revealAll } from "@/game/gridNavigation"
 import { allFloors, resolveKeyRequirements } from "./worldFloors.testing"
 import { FezContext } from "@/app/fez/context"
+import { registerReactionContribution, type Reaction } from "@/app/reactions/reactionContributions"
+
+const reactions: Reaction[] = []
+registerReactionContribution(() => reaction => reactions.push(reaction))
 
 // Keys are enough to tell the buttons apart; none of these assertions read copy. Interpolated data
 // is appended so a label built from a nested lookup (the key ring's "<colour> key — in hand") still
@@ -145,6 +149,7 @@ describe(SiteMapScreen, () => {
     openGateKeys = new Set()
     // jsdom doesn't implement scrollTo; SiteMapView calls it to center on explorerPos.
     Element.prototype.scrollTo = vi.fn()
+    reactions.length = 0
     await clearGameData()
     vi.useFakeTimers({ shouldAdvanceTime: true })
   })
@@ -154,7 +159,7 @@ describe(SiteMapScreen, () => {
   })
 
   const showConversation = vi.fn()
-  const renderScreen = async (onSiteComplete = () => {}) => {
+  const renderScreen = async (onSiteComplete = () => {}, level: { exterior?: string; lastLevel?: boolean } = {}) => {
     const result = render(
       <FezContext.Provider value={{ showConversation }}>
         <SiteMapScreen
@@ -162,6 +167,8 @@ describe(SiteMapScreen, () => {
           siteConfig={[floorConfig]}
           levelIndex={0}
           seed={1}
+          exterior={level.exterior}
+          lastLevel={level.lastLevel ?? false}
           onSiteComplete={onSiteComplete}
           onCancel={() => {}}
         />
@@ -250,6 +257,29 @@ describe(SiteMapScreen, () => {
 
     expect(container.querySelector(".animate-entrance-zoom")).toBeNull()
     expect(onSiteComplete).not.toHaveBeenCalled()
+  })
+
+  it("reports reaching the exit once, with the level's exterior", async () => {
+    const { container } = await renderScreen(() => {}, { exterior: "caveMouth" })
+    expect(reactions.filter(r => r.kind === "exitReached")).toEqual([])
+
+    await walkToExit(container)
+
+    expect(reactions.filter(r => r.kind === "exitReached")).toEqual([
+      { kind: "exitReached", journeyId: "test-journey", levelNr: 1, exterior: "caveMouth" },
+    ])
+  })
+
+  it.each([true, false])("says on leaving whether the level is the journey's last (%s)", async lastLevel => {
+    const { container } = await renderScreen(() => {}, { lastLevel })
+    await takeTheWayOut(container)
+    // jsdom has no animation style, so React listens for the prefixed event name.
+    const overlay = container.querySelector(".animate-entrance-zoom")!
+    await act(async () => void overlay.dispatchEvent(new Event("webkitAnimationEnd", { bubbles: true })))
+
+    expect(reactions.filter(r => r.kind === "siteLeft")).toEqual([
+      { kind: "siteLeft", journeyId: "test-journey", lastLevel },
+    ])
   })
 
   it("leaves the site once the player takes the way out", async () => {

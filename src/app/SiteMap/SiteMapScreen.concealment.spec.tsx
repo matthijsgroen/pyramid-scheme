@@ -91,6 +91,7 @@ describe("a shut barrier's concealment is a drawing matter only", () => {
         siteConfig={[config]}
         levelIndex={0}
         seed={1}
+        lastLevel={false}
         onSiteComplete={() => {}}
         onCancel={() => {}}
       />

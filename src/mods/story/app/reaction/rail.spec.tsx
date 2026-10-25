@@ -30,7 +30,7 @@ describe("the reaction rail", () => {
     const { react, showConversation } = rail()
 
     react({ kind: "solved", tags: ["puzzle"], unaided: false, tier: "starter", journeyId: "starter_1" })
-    react({ kind: "siteLeft", journeyId: "expert_2" })
+    react({ kind: "siteLeft", journeyId: "expert_2", lastLevel: false })
 
     expect(showConversation).not.toHaveBeenCalled()
   })

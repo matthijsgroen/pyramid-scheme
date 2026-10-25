@@ -91,7 +91,14 @@ export const PyramidExpedition: FC<{
     return levelContent?.pyramid.blocks.some(block => !block.isOpen && block.value === undefined) ?? false
   }, [levelContent])
 
-  useExpeditionIntro({ journeyId: activeJourney.journeyId, isTomb, hasBlockedBlocks, showConversation })
+  useExpeditionIntro({
+    journeyId: activeJourney.journeyId,
+    isTomb,
+    hasBlockedBlocks,
+    levelNr: activeJourney.levelNr,
+    exterior: levelSetup?.exterior,
+    showConversation,
+  })
 
   const expeditionCompleted = activeJourney.levelNr > journey.levelCount
 
@@ -268,6 +275,8 @@ export const PyramidExpedition: FC<{
             journeyId={activeJourney.journeyId}
             siteConfig={journey.siteConfigs[activeJourney.levelNr - 1] ?? journey.siteConfigs[0]}
             levelIndex={activeJourney.levelNr - 1}
+            exterior={levelSetup?.exterior}
+            lastLevel={activeJourney.levelNr >= journey.levelCount}
             seed={activeJourney.randomSeed + activeJourney.levelNr}
             onSiteComplete={flow.interiorComplete}
             onCancel={flow.leaveInterior}

@@ -22,7 +22,36 @@ export type Reaction =
       tier?: Difficulty
       journeyId: string
     }
-  | { kind: "siteLeft"; journeyId: string }
+  | {
+      kind: "siteLeft"
+      journeyId: string
+      /** The level walked out of is the journey's last. */
+      lastLevel: boolean
+    }
+  | {
+      /** A level's exterior screen showed. `exterior` is the level's authored one; absent for a plain pyramid. */
+      kind: "siteArrived"
+      journeyId: string
+      levelNr: number
+      exterior?: string
+    }
+  | {
+      /** The explorer stands at the site's exit. */
+      kind: "exitReached"
+      journeyId: string
+      levelNr: number
+      exterior?: string
+    }
+  | {
+      /**
+       * The home settled: neither the coming-home screen nor a new-chapter card is up. `arrived` is set
+       * when the player has just left the coming-home screen, `haul` whether it showed any line.
+       */
+      kind: "homeShown"
+      arrived?: { haul: boolean }
+      tags: readonly string[]
+    }
+  | { kind: "chapterOpened"; tier: Difficulty }
 
 /** What a family says about HOW it was beaten, handed back through `onSolved`. */
 export type SolveOutcome = { unaided?: boolean; close?: boolean }

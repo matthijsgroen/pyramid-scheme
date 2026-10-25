@@ -4,6 +4,7 @@ import { useState, type ReactNode } from "react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { FezContext } from "@/app/fez/context"
+import type { Reaction } from "@/app/reactions/reactionContributions"
 import { clearGameData, latestGameValue, writeGameData } from "@/support/useGameStorage"
 
 vi.mock("react-i18next", () => ({
@@ -82,8 +83,16 @@ vi.mock("@/ui/atoms/CampScene", () => ({
 }))
 
 const { Base } = await import("./Base")
+const { registerReactionContribution } = await import("@/app/reactions/reactionContributions")
+const { registerHomeTags } = await import("@/app/home/homeTags")
+const { registerHaulLines } = await import("@/app/home/haulLines")
 const { registerModEntrance } = await import("@/app/home/modEntrances")
 const { clearCollectionSections, registerCollectionSection } = await import("@/app/pages/collectionSectionRegistry")
+
+const reported: Reaction[] = []
+registerReactionContribution(() => reaction => reported.push(reaction))
+registerHomeTags(() => ["made-up-tag"])
+const homeShown = () => reported.filter(r => r.kind === "homeShown")
 
 const stubDesktop = (desktop: boolean) =>
   vi.stubGlobal("matchMedia", (query: string) => ({
@@ -115,6 +124,7 @@ const renderBase = (startGame = vi.fn(), cameHome = false) => {
 }
 
 beforeEach(async () => {
+  reported.length = 0
   await clearGameData()
   clearCollectionSections()
   chapter = "starter"
@@ -306,6 +316,64 @@ describe(Base, () => {
       await vi.waitFor(() => expect(latestGameValue("homecoming")).toEqual({ version: 1, haul: [], chapter: "expert" }))
       expect(screen.queryByText("camp.chapter.title")).toBeNull()
     })
+  })
+})
+
+describe("reporting the home", () => {
+  it("reports a plain visit once, with the tags and no arrival", async () => {
+    renderBase()
+
+    await vi.waitFor(() => expect(homeShown()).toHaveLength(1))
+    await act(async () => {})
+    expect(homeShown()).toEqual([{ kind: "homeShown", arrived: undefined, tags: ["made-up-tag"] }])
+  })
+
+  it("reports nothing behind the coming-home screen, then one arrival with the haul shown", async () => {
+    registerHaulLines(() => ({
+      bead: rewards => [{ key: "beads", visual: null, title: `${rewards.length} beads` }],
+    }))
+    await writeGameData({ homecoming: { version: 1, haul: [{ type: "bead", name: "blue" }] } })
+    renderBase(vi.fn(), true)
+    await screen.findByText("camp.comingHome.unpack")
+    expect(homeShown()).toEqual([])
+
+    await act(async () => fireEvent.click(screen.getByText("camp.comingHome.unpack")))
+
+    expect(homeShown()).toEqual([{ kind: "homeShown", arrived: { haul: true }, tags: ["made-up-tag"] }])
+  })
+
+  it("reports an arrival with no haul when the screen showed no line", async () => {
+    renderBase(vi.fn(), true)
+    await screen.findByText("camp.comingHome.toCamp")
+
+    await act(async () => fireEvent.click(screen.getByText("camp.comingHome.toCamp")))
+
+    expect(homeShown()).toEqual([{ kind: "homeShown", arrived: { haul: false }, tags: ["made-up-tag"] }])
+  })
+
+  it("reports nothing while a chapter card is up, and the showing once it is closed", async () => {
+    await writeGameData({ homecoming: { version: 1, haul: [], chapter: "starter" } })
+    chapter = "expert"
+    renderBase()
+    await screen.findByText("camp.chapter.title")
+    expect(homeShown()).toEqual([])
+
+    await act(async () => fireEvent.click(screen.getByText("camp.chapter.later")))
+
+    expect(homeShown()).toHaveLength(1)
+  })
+
+  it("forgets the arrival: a later showing is not one", async () => {
+    renderBase(vi.fn(), true)
+    const toCamp = await screen.findByText("camp.comingHome.toCamp")
+    await act(async () => fireEvent.click(toCamp))
+    reported.length = 0
+    cleanup()
+
+    renderBase()
+
+    await vi.waitFor(() => expect(homeShown()).toHaveLength(1))
+    expect(homeShown()[0]).toMatchObject({ arrived: undefined })
   })
 })
 

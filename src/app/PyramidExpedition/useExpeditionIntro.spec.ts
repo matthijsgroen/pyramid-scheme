@@ -1,8 +1,13 @@
 // @vitest-environment jsdom
 import { renderHook } from "@testing-library/react"
-import { describe, expect, it, vi } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
+import { registerReactionContribution, type Reaction } from "@/app/reactions/reactionContributions"
 import { useExpeditionIntro } from "./useExpeditionIntro"
 
+const reactions: Reaction[] = []
+registerReactionContribution(() => reaction => reactions.push(reaction))
+
+type Over = { journeyId?: string; isTomb?: boolean; hasBlockedBlocks?: boolean; levelNr?: number; exterior?: string }
 type Shown = { id: string; story?: boolean }
 
 /** A companion that, like FezCompanion, plays a conversation once and drops it on every later offer. */
@@ -14,18 +19,24 @@ const companion = () => {
     heard.add(id)
     shown.push({ id, story: options?.story })
   })
-  const visit = (over: { journeyId?: string; isTomb?: boolean; hasBlockedBlocks?: boolean } = {}) => {
+  const visit = (over: Over = {}) => {
     const before = shown.length
     renderHook(() =>
-      useExpeditionIntro({ journeyId: "starter_1", isTomb: false, hasBlockedBlocks: false, ...over, showConversation })
+      useExpeditionIntro({
+        journeyId: "starter_1",
+        isTomb: false,
+        hasBlockedBlocks: false,
+        levelNr: 1,
+        ...over,
+        showConversation,
+      })
     )
     return shown.slice(before)
   }
   return { visit }
 }
 
-const render = (over: { journeyId?: string; isTomb?: boolean; hasBlockedBlocks?: boolean } = {}) =>
-  companion().visit(over)
+const render = (over: Over = {}) => companion().visit(over)
 
 describe("useExpeditionIntro", () => {
   it("tells the journey's place first, with its pyramid on screen, then teaches the board", () => {
@@ -79,5 +90,39 @@ describe("useExpeditionIntro", () => {
 
   it("says nothing about boards inside a tomb", () => {
     expect(render({ isTomb: true, hasBlockedBlocks: true }).map(s => s.id)).not.toContain("pyramidBlockedBlocks")
+  })
+
+  describe("reporting the arrival", () => {
+    beforeEach(() => {
+      reactions.length = 0
+    })
+
+    it("reports one siteArrived with the level's exterior, and nothing more on a re-render", () => {
+      const showConversation = vi.fn()
+      const args = { journeyId: "made-up", isTomb: true, hasBlockedBlocks: false, levelNr: 1, exterior: "caveMouth" }
+      const { rerender } = renderHook(p => useExpeditionIntro({ ...p, showConversation }), { initialProps: args })
+      rerender({ ...args })
+      rerender({ ...args, hasBlockedBlocks: true })
+
+      expect(reactions).toEqual([{ kind: "siteArrived", journeyId: "made-up", levelNr: 1, exterior: "caveMouth" }])
+    })
+
+    it("reports the next level's own arrival", () => {
+      const showConversation = vi.fn()
+      const args = { journeyId: "made-up", isTomb: true, hasBlockedBlocks: false, levelNr: 1, exterior: "caveMouth" }
+      const { rerender } = renderHook(p => useExpeditionIntro({ ...p, showConversation }), { initialProps: args })
+      rerender({ ...args, levelNr: 2, exterior: "cavern" })
+
+      expect(reactions.map(r => r.kind === "siteArrived" && [r.levelNr, r.exterior])).toEqual([
+        [1, "caveMouth"],
+        [2, "cavern"],
+      ])
+    })
+
+    it("leaves the exterior absent for a plain pyramid", () => {
+      render()
+
+      expect(reactions).toEqual([{ kind: "siteArrived", journeyId: "starter_1", levelNr: 1, exterior: undefined }])
+    })
   })
 })

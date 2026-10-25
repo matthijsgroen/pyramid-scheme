@@ -28,6 +28,8 @@ export const beatFor = (reaction: Reaction): string | undefined => {
   // Both bond beats that answer a tomb rather than a move play on the way out of it, because
   // both are what somebody says once the room is behind them.
   if (reaction.kind === "siteLeft") return ON_LEAVING[reaction.journeyId]
+  // Places and the home are reported too; this listener has no beat for them yet.
+  if (reaction.kind !== "solved") return undefined
 
   // A trap is not a board, and beating one says something different — so the tag decides which
   // beat a solve can reach, and a trap can never reach the "that was quick" one.

@@ -20,6 +20,8 @@ import { useJourneyTranslations } from "@/app/translations/useJourneyTranslation
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { ComingHome } from "@/app/home/ComingHome"
 import { useHomeHooks } from "@/app/home/homeHooks"
+import { useHomeTags } from "@/app/home/homeTags"
+import { useReportOnce } from "@/app/reactions/useReport"
 import { NewChapter } from "@/app/home/NewChapter"
 import { useHomeSave } from "@/app/home/useHomeSave"
 import { useCampFound } from "@/app/home/campFoundSource"
@@ -35,8 +37,13 @@ import { CampHomeLayout } from "@/ui/organisms/CampHomeLayout"
 import { CampPopup } from "@/ui/organisms/CampPopup"
 
 // Mounted once the player has settled in (after the coming-home screen), so a mod's hook never speaks behind it.
-const HomeHooks = () => {
+// The home showing is reported once here too, with whether the player has just come home.
+const HomeHooks = ({ arrived, onReported }: { arrived?: { haul: boolean }; onReported: () => void }) => {
   useHomeHooks()
+  const tags = useHomeTags()
+  useReportOnce("shown", { kind: "homeShown", arrived, tags })
+  // The arrival is told once; a later showing of the home is not an arrival.
+  useEffect(onReported, [onReported])
   return null
 }
 
@@ -65,6 +72,9 @@ export const Base = ({
   const [popup, setPopup] = useState<Popup | undefined>()
   const [showSettings, setShowSettings] = useState(false)
   const [chapterClosed, setChapterClosed] = useState(false)
+  // Kept from leaving the coming-home screen until the home showing has reported it.
+  const [arrived, setArrived] = useState<{ haul: boolean } | undefined>()
+  const forgetArrival = useCallback(() => setArrived(undefined), [])
   const [setOffHint, setOffTapped] = useTapHint("setOff")
 
   // Fez greets once the player has unpacked, not behind the coming-home screen.
@@ -238,8 +248,15 @@ export const Base = ({
           )}
         </CampPopup>
       )}
-      {cameHome && <ComingHome onDone={() => onArrived?.()} />}
-      {settled && !cameHome && !announced && <HomeHooks />}
+      {cameHome && (
+        <ComingHome
+          onDone={haul => {
+            setArrived({ haul })
+            onArrived?.()
+          }}
+        />
+      )}
+      {settled && !cameHome && !announced && <HomeHooks arrived={arrived} onReported={forgetArrival} />}
       {announced && <NewChapter tier={announced} startGame={startGame} onClose={() => setChapterClosed(true)} />}
       <SettingsModal isOpen={showSettings} onClose={() => setShowSettings(false)} startGame={startGame} />
       {isDevelopMode && <LockEditorHost />}

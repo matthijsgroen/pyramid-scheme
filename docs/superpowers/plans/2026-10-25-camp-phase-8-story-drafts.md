@@ -171,16 +171,16 @@ One Opus agent; reading list as Task 1, plus the phase-4 plan's purchase table a
 - `ComingHome`'s `onDone` hands back whether a haul was shown; `Base` keeps it until the home showing reports it, and forgets it after.
 - Every reporter reports once per fact: the merged listener is held so that a re-render with the same facts reports nothing.
 
-- [ ] **Step 1: Failing tests** (a made-up reaction contribution registered for the test, counting calls; made-up journeys with made-up exteriors; made-up tag hooks).
+- [x] **Step 1: Failing tests** (a made-up reaction contribution registered for the test, counting calls; made-up journeys with made-up exteriors; made-up tag hooks).
   - `homeTags.spec`: two hooks' tags merge in order with duplicates dropped; no hooks → empty.
   - Expedition: arriving at a made-up level with `exterior: "caveMouth"` reports one `siteArrived` with that exterior; a re-render reports nothing more; the next level reports its own.
   - Site map: reaching the exit reports one `exitReached` with the level's exterior; `siteLeft` carries `lastLevel` true on the last level, false before it.
   - Base / ComingHome: leaving the coming-home screen with a haul line reports one `homeShown` with `arrived.haul` true and the registered tags; with an empty haul `haul` false; a home showing with no homecoming has no `arrived`; nothing is reported while the coming-home screen or a chapter card is up.
   - NewChapter: "Later" reports one `chapterOpened` with its tier; "Op pad" reports it before `startGame` is called.
 - [ ] **Step 2: Run** the specs — FAIL.
-- [ ] **Step 3: Implement.** Existing listeners (`beatFor`) keep compiling: unknown kinds return nothing.
-- [ ] **Step 4: Run** — PASS. `yarn test src/app/appImports src/app/fez src/mods/story`, `yarn check-types`, `yarn lint` (import rules at zero).
-- [ ] **Step 5: Commit** — `feat: core reports site arrivals, exits and home showings`
+- [x] **Step 3: Implement.** Existing listeners (`beatFor`) keep compiling: unknown kinds return nothing.
+- [x] **Step 4: Run** — PASS. `yarn test src/app/appImports src/app/fez src/mods/story`, `yarn check-types`, `yarn lint` (import rules at zero).
+- [x] **Step 5: Commit** — `feat: core reports site arrivals, exits and home showings`
 
 ---
 

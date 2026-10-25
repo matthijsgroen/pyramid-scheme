@@ -57,11 +57,24 @@ type Props = {
    * tells its sites apart. */
   levelIndex: number
   seed: number
+  /** The level's authored exterior, handed on to what is reported at the exit. */
+  exterior?: string
+  /** The level is the journey's last. */
+  lastLevel: boolean
   onSiteComplete: () => void
   onCancel: () => void
 }
 
-export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteComplete, onCancel }: Props) => {
+export const SiteMapScreen = ({
+  journeyId,
+  siteConfig,
+  levelIndex,
+  seed,
+  exterior,
+  lastLevel,
+  onSiteComplete,
+  onCancel,
+}: Props) => {
   const { t } = useTranslation(["common", "inventory", "sellables"])
   const journeys = useJourneys()
   const progression = useProgression()
@@ -188,7 +201,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
     onExitReached: exit.arrived,
     playTraversal,
   })
-  useExitIntro(prompt?.kind, use(FezContext).showConversation)
+  useExitIntro(prompt?.kind, use(FezContext).showConversation, { journeyId, levelNr: levelIndex + 1, exterior })
 
   const promptLabel = usePromptLabel()
   const promptCell = prompt?.kind === "room" ? grid?.cells[prompt.at[0]]?.[prompt.at[1]] : undefined
@@ -291,7 +304,7 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
           onComplete={() => {
             // Walking out is a move too: the beat that belongs to a place the player has finished
             // with cannot fire inside it, because inside it they have not finished.
-            react({ kind: "siteLeft", journeyId })
+            react({ kind: "siteLeft", journeyId, lastLevel })
             onSiteComplete()
           }}
         />

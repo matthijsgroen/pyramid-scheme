@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next"
 import type { Difficulty } from "@/data/difficultyLevels"
 import { useMergedJourneyContributions } from "@/app/pages/journeyContributions"
 import { useAvailableJourneyIds } from "@/app/pages/useAvailableJourneyIds"
+import { useReport } from "@/app/reactions/useReport"
 import { useJourneys } from "@/app/state/useJourneys"
 import { useJourneyTranslations } from "@/app/translations/useJourneyTranslations"
 import { continueJourney } from "@/app/home/continueJourney"
@@ -22,6 +23,7 @@ export const NewChapter = ({
   const { t } = useTranslation("common")
   const { markChapter } = useHomeSave()
   const { startJourney } = useJourneys()
+  const report = useReport()
   const journeys = useJourneyTranslations()
   const available = useAvailableJourneyIds(journeys)
   const facts = useMergedJourneyContributions()
@@ -43,6 +45,7 @@ export const NewChapter = ({
   const tierName = t(`difficulty.${tier}`)
 
   const close = () => {
+    report({ kind: "chapterOpened", tier })
     void markChapter(tier)
     onClose()
   }
@@ -57,6 +60,7 @@ export const NewChapter = ({
       setOffLabel={t("camp.continue.setOff")}
       onSetOff={async () => {
         if (!journey) return
+        report({ kind: "chapterOpened", tier })
         void markChapter(tier)
         await startJourney(journey)
         startGame()

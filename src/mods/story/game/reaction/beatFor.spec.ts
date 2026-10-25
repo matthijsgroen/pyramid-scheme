@@ -38,12 +38,12 @@ describe("what Fez is willing to remark on", () => {
   })
 
   it("waits until the tomb is behind them for the two that answer a tomb", () => {
-    expect(beatFor({ kind: "siteLeft", journeyId: "starter_treasure_tomb" })).toBe("bond.starterTomb")
-    expect(beatFor({ kind: "siteLeft", journeyId: "wizard_treasure_tomb_c" })).toBe("bond.wizard")
+    expect(beatFor({ kind: "siteLeft", journeyId: "starter_treasure_tomb", lastLevel: false })).toBe("bond.starterTomb")
+    expect(beatFor({ kind: "siteLeft", journeyId: "wizard_treasure_tomb_c", lastLevel: false })).toBe("bond.wizard")
   })
 
   it("has nothing to say about leaving anywhere else", () => {
-    expect(beatFor({ kind: "siteLeft", journeyId: "expert_2" })).toBeUndefined()
+    expect(beatFor({ kind: "siteLeft", journeyId: "expert_2", lastLevel: false })).toBeUndefined()
   })
 })
 
@@ -58,8 +58,8 @@ describe("the beats the rail can reach", () => {
     beatFor(solved({ unaided: true, tier: "starter" })),
     beatFor(solved({ unaided: true, tier: "junior" })),
     beatFor(solved({ tags: ["trap"], close: true })),
-    beatFor({ kind: "siteLeft", journeyId: "starter_treasure_tomb" }),
-    beatFor({ kind: "siteLeft", journeyId: "wizard_treasure_tomb_c" }),
+    beatFor({ kind: "siteLeft", journeyId: "starter_treasure_tomb", lastLevel: false }),
+    beatFor({ kind: "siteLeft", journeyId: "wizard_treasure_tomb_c", lastLevel: false }),
   ]
 
   it("are all written, in both languages", () => {
