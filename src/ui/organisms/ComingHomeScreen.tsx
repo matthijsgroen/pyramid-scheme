@@ -36,7 +36,7 @@ export const ComingHomeScreen: FC<ComingHomeScreenProps> = ({
     >
       <h1
         id="coming-home-title"
-        className="text-center font-serif text-2xl font-bold lg:col-start-2 lg:row-start-1 lg:text-left lg:text-[26px]"
+        className="text-center font-pyramid text-2xl lg:col-start-2 lg:row-start-1 lg:text-left lg:text-[26px]"
       >
         {title}
       </h1>

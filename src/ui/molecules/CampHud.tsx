@@ -1,4 +1,5 @@
 import type { FC, ReactNode } from "react"
+import { GearIcon } from "@/ui/atoms/GearIcon"
 
 export type CampHudProps = {
   title: string
@@ -28,7 +29,7 @@ export const CampHud: FC<CampHudProps> = ({
       <button
         type="button"
         onClick={onTitleTap}
-        className="font-serif text-[22px] font-bold tracking-wide select-none lg:text-[26px]"
+        className="font-pyramid text-[22px] tracking-wide select-none lg:text-[26px]"
       >
         {title}
         {tapsLeft !== undefined && tapsLeft >= 1 && tapsLeft <= 3 && (
@@ -49,10 +50,7 @@ export const CampHud: FC<CampHudProps> = ({
         onClick={onSettings}
         className="flex size-9 items-center justify-center rounded-full text-[#F4EAD5] hover:bg-white/10"
       >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-          <circle cx="12" cy="12" r="3" />
-          <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1" />
-        </svg>
+        <GearIcon size={22} />
       </button>
     </div>
   </header>

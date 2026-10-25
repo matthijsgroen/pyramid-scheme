@@ -49,7 +49,7 @@ export const CampPopup: FC<CampPopupProps> = ({
         className={`flex min-h-0 w-full flex-col overflow-hidden rounded-[18px] border-2 border-[#2B2118] bg-[#F4EAD5] text-[#2B2118] outline-none ${fill ? "lg:h-full" : ""} lg:max-h-full lg:max-w-4xl lg:rounded-[20px]`}
       >
         <div className="flex items-center justify-between gap-3 border-b-[1.5px] border-[#D6C4A0] py-2.5 pr-3 pl-4 lg:border-b-0 lg:px-6 lg:py-3">
-          <h2 id={TITLE_ID} className="font-serif text-[22px] font-bold lg:text-2xl">
+          <h2 id={TITLE_ID} className="font-pyramid text-[22px] lg:text-2xl">
             {title}
           </h2>
           <button

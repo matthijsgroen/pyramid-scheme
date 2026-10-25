@@ -217,7 +217,14 @@ export const Base = ({
           )
         }
         card={<div ref={cardRef}>{continueCard}</div>}
-        aside={isDesktop ? <AllJourneys startGame={startGame} compact /> : undefined}
+        // The journey list waits while someone speaks: behind a conversation it only makes the screen busy.
+        aside={
+          isDesktop ? (
+            <div className={`flex min-h-0 flex-1 flex-col ${speaking ? "invisible" : ""}`}>
+              <AllJourneys startGame={startGame} compact />
+            </div>
+          ) : undefined
+        }
       />
       {popup && (
         <CampPopup

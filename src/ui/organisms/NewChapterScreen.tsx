@@ -43,7 +43,7 @@ export const NewChapterScreen: FC<NewChapterScreenProps> = ({
         className="flex w-full max-w-lg flex-col gap-3 rounded-t-[20px] bg-[#F4EAD5] px-4 pt-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-[#2B2118] outline-none lg:rounded-[20px] lg:border-2 lg:border-[#2B2118] lg:p-8"
       >
         <div className="text-xs font-extrabold tracking-widest text-[#5C4A36] uppercase">{subtitle}</div>
-        <h1 id="new-chapter-title" className="font-serif text-[26px] leading-tight font-bold">
+        <h1 id="new-chapter-title" className="font-pyramid text-[26px] leading-tight">
           {title}
         </h1>
         <p className="text-[15px] leading-snug text-[#4A3B2A]">{body}</p>

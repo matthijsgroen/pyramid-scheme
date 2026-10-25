@@ -46,7 +46,7 @@ export const ContinueCard: FC<ContinueCardProps> = ({
         {journeyName ? (
           <>
             <div className="flex flex-col gap-0.5">
-              <div className="font-serif text-lg font-bold lg:text-xl">{journeyName}</div>
+              <div className="font-pyramid text-lg lg:text-xl">{journeyName}</div>
               {detail && <div className="text-sm text-[#5C4A36]">{detail}</div>}
             </div>
             {setOffSlot ? setOffSlot(setOff) : setOff}
