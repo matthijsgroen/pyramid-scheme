@@ -55,18 +55,10 @@
     "blocked": {
       "carrying": "Cannot pass with a stone"
     },
-    "chooseYourJourney": "Choose Your Expedition",
     "backToMap": "Back to map",
-    "startAdventure": "Start your adventure by exploring pyramids.",
     "continueExploration": "Continue your exploration of the pyramids.",
-    "continueExpedition": "Continue Expedition",
     "startExpedition": "Start Expedition",
-    "planExpedition": "Plan Expedition",
-    "revisitExpedition": "Revisit — pick a pyramid",
-    "revisitTomb": "Revisit — re-enter the tomb",
-    "or": "Or",
     "webBuriedPercent": "Still {{percent}}% buried",
-    "selectAnotherExpedition": "Select another expedition",
     "interruptExpedition": "Interrupt expedition",
     "confirmInterruptExpedition": "Are you sure you want to interrupt this expedition? Expedition progress will be kept, but level progress will be lost!",
     "cancel": "Cancel",
@@ -77,7 +69,6 @@
     "clearGameData": "Clear game data",
     "confirmClearGameData": "This permanently deletes all progress, items, and explored pyramids. This cannot be undone.",
     "disableTutorials": "Disable tutorials",
-    "progressLevel": "In Progress",
     "treasureTomb": "Treasure Location",
     "requiresMapPieces": "Requires map pieces",
     "mapPieces": "Map Pieces",
@@ -1073,7 +1064,14 @@
       }
     },
     "events": {
-      "default": ["the fire", "the water carrying", "the baking", "the boat trip", "the ox driving", "the night watch"],
+      "default": [
+        "the fire",
+        "the water carrying",
+        "the baking",
+        "the boat trip",
+        "the ox driving",
+        "the night watch"
+      ],
       "funerary": [
         "the plastering",
         "the grid drawing",
@@ -1300,5 +1298,22 @@
     "haul": {
       "times": "×{{count}}"
     }
+  },
+  "journeys": {
+    "tierNeed": "Find one of these treasures",
+    "tierProgress": "{{done}} of {{total}} done",
+    "tierLockedName": "{{tier}} journeys",
+    "toggleTier": "Show or hide the {{tier}} journeys",
+    "now": "NOW",
+    "newDot": "Something new to discover",
+    "noteCurrentPyramid": "In progress · pyramid {{level}} of {{count}}",
+    "noteCurrentTomb": "In progress · in the tomb",
+    "noteFinished": "Finished",
+    "noteFinishedNews": "Finished · something new to discover",
+    "noteOpen": "Not visited yet",
+    "needProgress": "{{unit}}: {{found}} of {{required}}",
+    "showStops": "Show the sites of {{name}}",
+    "stopPyramid": "Pyramid",
+    "stopTomb": "Site"
   }
 }

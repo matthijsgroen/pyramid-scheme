@@ -23,26 +23,26 @@ const { useTapHint } = await import("./useTapHint")
 describe("useTapHint", () => {
   it("shows until the target is tapped, then stays gone across a remount", () => {
     store.saved = {}
-    const first = renderHook(() => useTapHint("travelMap"))
+    const first = renderHook(() => useTapHint("targetA"))
     expect(first.result.current[0]).toBe(true)
 
     act(() => first.result.current[1]())
     expect(first.result.current[0]).toBe(false)
 
-    const later = renderHook(() => useTapHint("travelMap"))
+    const later = renderHook(() => useTapHint("targetA"))
     expect(later.result.current[0]).toBe(false)
   })
 
   it("retires only the target that was tapped", () => {
-    store.saved = { travelMap: true }
-    const { result } = renderHook(() => useTapHint("firstJourney"))
+    store.saved = { targetA: true }
+    const { result } = renderHook(() => useTapHint("targetB"))
     expect(result.current[0]).toBe(true)
   })
 
   it("stays hidden while the save is still loading", () => {
     store.saved = {}
     store.loaded = false
-    const { result } = renderHook(() => useTapHint("travelMap"))
+    const { result } = renderHook(() => useTapHint("targetA"))
     expect(result.current[0]).toBe(false)
     store.loaded = true
   })

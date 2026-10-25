@@ -1,7 +1,7 @@
 import { use, useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import "@/mods/registerModApps"
-import { TravelPage } from "@/app/pages/Travel"
+import { AllJourneys } from "@/app/pages/AllJourneysPage"
 import { CollectionPage } from "@/app/pages/Collection"
 import { useCollectionNews } from "@/app/pages/useCollectionNews"
 import { currentChapter } from "@/app/pages/journeyAvailability"
@@ -220,7 +220,7 @@ export const Base = ({
           )
         }
         card={<div ref={cardRef}>{continueCard}</div>}
-        aside={isDesktop ? <TravelPage startGame={startGame} hints={false} /> : undefined}
+        aside={isDesktop ? <AllJourneys startGame={startGame} compact /> : undefined}
       />
       {popup && (
         <CampPopup
@@ -231,7 +231,11 @@ export const Base = ({
         >
           {popup === "collection" && <CollectionPage />}
           {popup === "window" && WindowScreen && <WindowScreen />}
-          {popup === "journeys" && <TravelPage startGame={startGame} />}
+          {popup === "journeys" && (
+            <div className="p-4">
+              <AllJourneys startGame={startGame} />
+            </div>
+          )}
         </CampPopup>
       )}
       {cameHome && <ComingHome onDone={() => onArrived?.()} />}

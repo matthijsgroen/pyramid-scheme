@@ -273,7 +273,7 @@ One agent (Sonnet). The biggest task: it removes the Travel page.
   - The tier-coming-soon note (Travel's strings) as the list's footer when `comingSoon` is set.
 - `Base`: the journeys popup and the desktop aside render `AllJourneys` (`compact` on desktop); the hint row and the map table keep opening it.
 
-- [ ] **Step 1: Failing tests** (`AllJourneys.spec.tsx`: made-up journeys through mocked `useJourneys` and translations as `Travel.spec.tsx` did; made-up contributions; made-up key display).
+- [x] **Step 1: Failing tests** (`AllJourneys.spec.tsx`: made-up journeys through mocked `useJourneys` and translations as `Travel.spec.tsx` did; made-up contributions; made-up key display).
   - The newest tier's header comes first with its "n van m klaar"; the current journey shows NU and its tap calls `startGame` without starting anything.
   - An open journey's tap starts it, then calls `startGame`.
   - A finished journey's tap visits its last site; its chevron shows the stops and a stop's tap visits that site; a buried stop is not a button.
@@ -284,9 +284,9 @@ One agent (Sonnet). The biggest task: it removes the Travel page.
   - A registered made-up card slot renders inside an opened row.
   - `Base.spec.tsx`: on a phone the map table and Alle reizen open a dialog with the list; on desktop the list is in the page.
 - [ ] **Step 2: Run** `yarn test src/app/pages src/app/Base` — FAIL.
-- [ ] **Step 3: Implement.** Remove every import of the deleted files (`rg "TravelPage|JourneyPathView|JourneyCard\b|LockedJourneyCard|travelMap|firstJourney" src` finds nothing; `journeyCardSlots` stays). Remove locale keys no code asks for any more (check each with `rg` across `src/` before removing), in both languages.
-- [ ] **Step 4: Run** `yarn test src/app src/ui src/mods/hieroglyph src/mods/topology src/i18n`, `yarn test src/app/appImports` — PASS. `yarn check-types`, `yarn lint`.
-- [ ] **Step 5: Commit** — `feat: all journeys in one list, the travel page goes`
+- [x] **Step 3: Implement.** Remove every import of the deleted files (`rg "TravelPage|JourneyPathView|JourneyCard\b|LockedJourneyCard|travelMap|firstJourney" src` finds nothing; `journeyCardSlots` stays). Remove locale keys no code asks for any more (check each with `rg` across `src/` before removing), in both languages.
+- [x] **Step 4: Run** `yarn test src/app src/ui src/mods/hieroglyph src/mods/topology src/i18n`, `yarn test src/app/appImports` — PASS. `yarn check-types`, `yarn lint`.
+- [x] **Step 5: Commit** — `feat: all journeys in one list, the travel page goes`
 
 ---
 

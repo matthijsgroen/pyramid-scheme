@@ -39,7 +39,7 @@ type Props = {
   onSetDetector?: (mode: DetectorMode) => void
   // Corridor detector widens outward (§7.2), one scope per level: L1 = within a few steps of the
   // player, L2 = anywhere on this floor, L3 = any other floor of this pyramid (L4 adds the marker on
-  // the journey map, which JourneyCard draws). Each scope reports either way once unlocked.
+  // the journey map). Each scope reports either way once unlocked.
   corridorNearby?: boolean
   floorHasHiddenCorridor?: boolean
   // Outstanding on floors OTHER than this one — and only floors already visited, so the L3 negative

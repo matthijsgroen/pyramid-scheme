@@ -54,7 +54,7 @@ vi.mock("@/app/pages/journeyAvailability", () => ({ currentChapter: () => chapte
 vi.mock("@/app/state/useTapHint", () => ({ useTapHint: () => [false, () => {}] }))
 vi.mock("@/app/home/useElementSize", () => ({ useElementSize: () => [() => {}, { width: 400, height: 800 }] }))
 vi.mock("@/app/dev/LockEditorHost", () => ({ LockEditorHost: () => null }))
-vi.mock("@/app/pages/Travel", () => ({ TravelPage: () => <div>travel content</div> }))
+vi.mock("@/app/pages/AllJourneysPage", () => ({ AllJourneys: () => <div>journeys content</div> }))
 vi.mock("@/app/pages/Collection", () => ({ CollectionPage: () => <div>collection content</div> }))
 vi.mock("@/app/SettingsModal", () => ({
   SettingsModal: ({ isOpen }: { isOpen: boolean }) => (isOpen ? <div data-testid="settings" /> : null),
@@ -204,19 +204,19 @@ describe(Base, () => {
 
   it("opens the journeys as a dialog on a phone", () => {
     renderBase()
-    expect(screen.queryByText("travel content")).toBeNull()
+    expect(screen.queryByText("journeys content")).toBeNull()
 
     fireEvent.click(screen.getByText("camp.continue.allJourneys"))
 
     expect(screen.getByRole("dialog", { name: "camp.entrance.journeys" })).toBeTruthy()
-    expect(screen.getByText("travel content")).toBeTruthy()
+    expect(screen.getByText("journeys content")).toBeTruthy()
   })
 
   it("shows the journeys in the page on desktop, with no all-journeys button on the card", () => {
     stubDesktop(true)
     renderBase()
 
-    expect(screen.getByText("travel content")).toBeTruthy()
+    expect(screen.getByText("journeys content")).toBeTruthy()
     expect(screen.queryByText("camp.continue.allJourneys")).toBeNull()
     expect(screen.queryByRole("dialog")).toBeNull()
   })

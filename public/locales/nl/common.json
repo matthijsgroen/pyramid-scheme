@@ -55,18 +55,10 @@
     "blocked": {
       "carrying": "Niet te passeren met een steen"
     },
-    "chooseYourJourney": "Kies je Expeditie",
     "backToMap": "Terug naar kaart",
-    "startAdventure": "Begin je avontuur door piramides te verkennen.",
     "continueExploration": "Ga door met het verkennen van de piramides.",
-    "continueExpedition": "Ga door met Expeditie",
     "startExpedition": "Start Expeditie",
-    "planExpedition": "Plan Expeditie",
-    "revisitExpedition": "Opnieuw bezoeken — kies een piramide",
-    "revisitTomb": "Opnieuw bezoeken — betreed de tombe",
-    "or": "Of",
     "webBuriedPercent": "Nog voor {{percent}}% bedolven",
-    "selectAnotherExpedition": "Selecteer een andere expeditie",
     "interruptExpedition": "Onderbreek expeditie",
     "confirmInterruptExpedition": "Weet je zeker dat je deze expeditie wilt onderbreken? Expeditie voortgang wordt bewaard, maar niveau voortgang gaat verloren!",
     "cancel": "Annuleren",
@@ -77,7 +69,6 @@
     "clearGameData": "Spelgegevens wissen",
     "confirmClearGameData": "Dit verwijdert permanent alle voortgang, items en verkende piramides. Dit kan niet ongedaan worden gemaakt.",
     "disableTutorials": "Tutorials uitschakelen",
-    "progressLevel": "Voortgang",
     "treasureTomb": "Schatlokatie",
     "requiresMapPieces": "Vereist kaartdelen",
     "mapPieces": "Kaartdelen",
@@ -1073,7 +1064,14 @@
       }
     },
     "events": {
-      "default": ["het vuur", "het water halen", "het bakken", "de boottocht", "het ossen drijven", "de nachtwake"],
+      "default": [
+        "het vuur",
+        "het water halen",
+        "het bakken",
+        "de boottocht",
+        "het ossen drijven",
+        "de nachtwake"
+      ],
       "funerary": [
         "het pleisteren",
         "het uitzetten van het raster",
@@ -1300,5 +1298,22 @@
     "haul": {
       "times": "×{{count}}"
     }
+  },
+  "journeys": {
+    "tierNeed": "Vind een van deze schatten",
+    "tierProgress": "{{done}} van {{total}} klaar",
+    "tierLockedName": "{{tier}}-reizen",
+    "toggleTier": "Toon of verberg de {{tier}}-reizen",
+    "now": "NU",
+    "newDot": "Iets nieuws te ontdekken",
+    "noteCurrentPyramid": "Bezig · piramide {{level}} van {{count}}",
+    "noteCurrentTomb": "Bezig · in de graftombe",
+    "noteFinished": "Voltooid",
+    "noteFinishedNews": "Voltooid · iets nieuws te ontdekken",
+    "noteOpen": "Nog niet geweest",
+    "needProgress": "{{unit}}: {{found}} van {{required}}",
+    "showStops": "Toon de plekken van {{name}}",
+    "stopPyramid": "Piramide",
+    "stopTomb": "Plek"
   }
 }
