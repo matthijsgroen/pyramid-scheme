@@ -1,4 +1,5 @@
 import { useMemo } from "react"
+import type { HomeTagsReading } from "@/app/home/homeTags"
 import { useModState } from "@/app/state/useModState"
 import { useMergedEarnedPerks } from "@/app/SiteMap/perkContributions"
 import { perkStacks } from "@/game/perkTotals"
@@ -31,6 +32,8 @@ const INITIAL: TrapState = {
 }
 
 export type TrapProgressAPI = {
+  // True once the trap's own save has been read.
+  loaded: boolean
   currentHealth: number
   maxHealth: number
   mended: boolean
@@ -43,7 +46,7 @@ export type TrapProgressAPI = {
 }
 
 export const useTrapProgress = (): TrapProgressAPI => {
-  const [state, setState] = useModState<TrapState>("trap", INITIAL)
+  const [state, setState, loaded] = useModState<TrapState>("trap", INITIAL)
   // max-health/armor/trap-insight/pack-mule are stacking — one stack per treasure carrying them.
   const earned = useMergedEarnedPerks()
   const maxHealth = BASE_MAX_HEALTH + perkStacks(earned, "max-health", MAX_HEALTH_CAP - BASE_MAX_HEALTH)
@@ -56,6 +59,7 @@ export const useTrapProgress = (): TrapProgressAPI => {
     // rather than trusted — otherwise a save could sit above a max it no longer earns.
     const currentHealth = Math.min(state.health, maxHealth)
     return {
+      loaded,
       currentHealth,
       maxHealth,
       mended: state.mended === true,
@@ -71,8 +75,11 @@ export const useTrapProgress = (): TrapProgressAPI => {
           health: waterskinHeal(Math.min(prev.health, maxHealth), maxHealth, packMuleLevel),
         })),
     }
-  }, [state, setState, maxHealth, armorStacks, trapInsightStacks, packMuleLevel])
+  }, [state, setState, loaded, maxHealth, armorStacks, trapInsightStacks, packMuleLevel])
 }
 
 // The trap's word on the home: a heart was refilled on the way in.
-export const useTrapHomeTags = (): string[] => (useTrapProgress().mended ? ["trap.mended"] : [])
+export const useTrapHomeTags = (): HomeTagsReading => {
+  const { mended, loaded } = useTrapProgress()
+  return { tags: mended ? ["trap.mended"] : [], loaded }
+}

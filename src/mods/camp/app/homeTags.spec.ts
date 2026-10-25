@@ -13,7 +13,7 @@ const table: CampStepTable = [
 const expectTags = async (save: unknown, expected: string[]) => {
   await writeGameData({ "pyramid-scheme-mod-camp": save })
   const { result } = renderHook(() => useCampHomeTags(table))
-  await waitFor(() => expect(result.current).toEqual(expected))
+  await waitFor(() => expect(result.current).toEqual({ tags: expected, loaded: true }))
 }
 
 beforeEach(async () => {
@@ -39,5 +39,11 @@ describe("the camp's home tags", () => {
 
   it("are none for a save this build cannot read", async () => {
     await expectTags({ version: 2, finds: ["shell"], parts: { tent: ["poles", "canvas"] }, grown: [] }, [])
+  })
+})
+
+describe("before the camp's save is read", () => {
+  it("says it has not loaded", () => {
+    expect(renderHook(() => useCampHomeTags(table)).result.current.loaded).toBe(false)
   })
 })

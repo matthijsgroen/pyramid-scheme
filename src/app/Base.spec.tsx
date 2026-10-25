@@ -91,7 +91,14 @@ const { clearCollectionSections, registerCollectionSection } = await import("@/a
 
 const reported: Reaction[] = []
 registerReactionContribution(() => reaction => reported.push(reaction))
-registerHomeTags(() => ["made-up-tag"])
+// A made-up tag source that reads a save: `setTagsLoaded` stands in for that read landing.
+let tagsLoaded = true
+let setTagsLoaded: (loaded: boolean) => void = () => {}
+registerHomeTags(() => {
+  const [loaded, set] = useState(tagsLoaded)
+  setTagsLoaded = set
+  return { tags: loaded ? ["made-up-tag"] : [], loaded }
+})
 const homeShown = () => reported.filter(r => r.kind === "homeShown")
 
 const stubDesktop = (desktop: boolean) =>
@@ -129,6 +136,7 @@ beforeEach(async () => {
   clearCollectionSections()
   chapter = "starter"
   keysLoaded = true
+  tagsLoaded = true
   stubDesktop(false)
   activeJourneyId = undefined
   available = new Set(["a", "b"])
@@ -361,6 +369,30 @@ describe("reporting the home", () => {
     await act(async () => fireEvent.click(screen.getByText("camp.chapter.later")))
 
     expect(homeShown()).toHaveLength(1)
+  })
+
+  it("holds the showing until every tag source has read its save", async () => {
+    tagsLoaded = false
+    renderBase()
+    await screen.findByTestId("scene")
+    await act(async () => {})
+    expect(homeShown()).toEqual([])
+
+    await act(async () => setTagsLoaded(true))
+
+    expect(homeShown()).toEqual([{ kind: "homeShown", arrived: undefined, tags: ["made-up-tag"] }])
+  })
+
+  it("keeps the arrival for a showing held back by a tag source", async () => {
+    tagsLoaded = false
+    renderBase(vi.fn(), true)
+    const toCamp = await screen.findByText("camp.comingHome.toCamp")
+    await act(async () => fireEvent.click(toCamp))
+    expect(homeShown()).toEqual([])
+
+    await act(async () => setTagsLoaded(true))
+
+    expect(homeShown()).toEqual([{ kind: "homeShown", arrived: { haul: false }, tags: ["made-up-tag"] }])
   })
 
   it("forgets the arrival: a later showing is not one", async () => {

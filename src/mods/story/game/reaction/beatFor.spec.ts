@@ -103,6 +103,15 @@ describe("the beats a moment can play", () => {
     ])
   })
 
+  it("offers the rest only as the player comes home", () => {
+    expect(beatsFor(home(["trap.mended"]), all)).toEqual(["camp.firstHome"])
+    expect(beatsFor(home(["trap.mended"], { haul: false }), all)).toEqual([
+      "camp.firstHome",
+      "camp.rested",
+      "camp.homeEmpty",
+    ])
+  })
+
   it("picks the empty-haul beat when the coming-home screen showed no line", () => {
     expect(beatsFor(home([], { haul: false }), all)).toEqual(["camp.firstHome", "camp.homeEmpty"])
   })

@@ -19,9 +19,7 @@ import { useTapHint } from "@/app/state/useTapHint"
 import { useJourneyTranslations } from "@/app/translations/useJourneyTranslations"
 import { DevelopContext } from "@/contexts/DevelopMode"
 import { ComingHome } from "@/app/home/ComingHome"
-import { useHomeHooks } from "@/app/home/homeHooks"
-import { useHomeTags } from "@/app/home/homeTags"
-import { useReportOnce } from "@/app/reactions/useReport"
+import { HomeHooks } from "@/app/home/HomeShowing"
 import { NewChapter } from "@/app/home/NewChapter"
 import { useHomeSave } from "@/app/home/useHomeSave"
 import { useCampFound } from "@/app/home/campFoundSource"
@@ -35,17 +33,6 @@ import { CampHud } from "@/ui/molecules/CampHud"
 import { ContinueCard } from "@/ui/molecules/ContinueCard"
 import { CampHomeLayout } from "@/ui/organisms/CampHomeLayout"
 import { CampPopup } from "@/ui/organisms/CampPopup"
-
-// Mounted once the player has settled in (after the coming-home screen), so a mod's hook never speaks behind it.
-// The home showing is reported once here too, with whether the player has just come home.
-const HomeHooks = ({ arrived, onReported }: { arrived?: { haul: boolean }; onReported: () => void }) => {
-  useHomeHooks()
-  const tags = useHomeTags()
-  useReportOnce("shown", { kind: "homeShown", arrived, tags })
-  // The arrival is told once; a later showing of the home is not an arrival.
-  useEffect(onReported, [onReported])
-  return null
-}
 
 type Popup = "collection" | "window" | "journeys"
 

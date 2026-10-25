@@ -54,10 +54,12 @@ const candidates = (reaction: Reaction): (string | undefined)[] => {
       return reaction.lastLevel ? [ON_LEAVING[reaction.journeyId]] : []
     case "solved":
       return [solvedBeat(reaction)]
+    // The rest is told as the player comes home; the tag stays until the next homecoming, so a later showing
+    // of the home is no rest.
     case "homeShown":
       return [
         "camp.firstHome",
-        reaction.tags.includes("trap.mended") ? "camp.rested" : undefined,
+        reaction.arrived && reaction.tags.includes("trap.mended") ? "camp.rested" : undefined,
         reaction.tags.includes("camp.structureDone") ? "camp.structureDone" : undefined,
         reaction.tags.includes("camp.found") ? "camp.firstFind" : undefined,
         reaction.arrived ? (reaction.arrived.haul ? "camp.homeHaul" : "camp.homeEmpty") : undefined,

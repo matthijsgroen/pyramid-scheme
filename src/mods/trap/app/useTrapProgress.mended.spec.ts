@@ -63,6 +63,6 @@ describe("the trap's home tags", () => {
     await writeGameData({ "pyramid-scheme-mod-trap": stored })
     const { result } = renderHook(() => useTrapHomeTags())
     await waitFor(() => expect(readModState("trap")).toEqual(stored))
-    await waitFor(() => expect(result.current).toEqual(expected))
+    await waitFor(() => expect(result.current).toEqual({ tags: expected, loaded: true }))
   })
 })

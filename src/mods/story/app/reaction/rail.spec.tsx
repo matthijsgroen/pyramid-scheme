@@ -54,7 +54,7 @@ describe("the reaction rail", () => {
     expect(showConversation.mock.calls[0][2]).not.toHaveProperty("forceReplay")
   })
 
-  const home: Reaction = { kind: "homeShown", tags: ["trap.mended"] }
+  const home: Reaction = { kind: "homeShown", tags: ["trap.mended"], arrived: { haul: false } }
 
   it("offers the first candidate not yet heard, as story", () => {
     heard = { "camp.firstHome": true }
