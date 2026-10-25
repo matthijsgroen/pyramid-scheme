@@ -9,15 +9,17 @@ const money: TreasureReward = { type: "money", amount: 5 }
 const tombKey: TreasureReward = { type: "tombKey", keyId: "site-0-0" }
 
 const setup = (contributions: Partial<MergedRewardContributions> = {}) => {
-  const applyReward = vi.fn()
+  const calls: string[] = []
+  const applyReward = vi.fn(() => calls.push("apply"))
+  const onTaken = vi.fn(() => calls.push("taken"))
   const rewardContributions = {
     effects: {},
     seen: {},
     skip: () => false,
     ...contributions,
   } as MergedRewardContributions
-  const hook = renderHook(() => useRewardOffer({ rewardContributions, applyReward }))
-  return { hook, applyReward }
+  const hook = renderHook(() => useRewardOffer({ rewardContributions, applyReward, onTaken }))
+  return { hook, applyReward, onTaken, calls }
 }
 
 describe("useRewardOffer", () => {
@@ -63,5 +65,36 @@ describe("useRewardOffer", () => {
     act(() => hook.result.current.dismiss())
 
     expect(seen).toHaveBeenCalledWith(tombKey)
+  })
+
+  it("hands a collected reward to onTaken once, right after applying it", () => {
+    const { hook, applyReward, onTaken, calls } = setup()
+    act(() => hook.result.current.offerFound(tombKey))
+
+    act(() => hook.result.current.pending!.onCollect())
+
+    expect(applyReward).toHaveBeenCalledWith(tombKey)
+    expect(onTaken).toHaveBeenCalledTimes(1)
+    expect(onTaken).toHaveBeenCalledWith(tombKey)
+    expect(calls).toEqual(["apply", "taken"])
+  })
+
+  it("takes nothing for a skipped reward", () => {
+    const { hook, applyReward, onTaken } = setup({ skip: () => true })
+
+    act(() => hook.result.current.offerFound(money))
+
+    expect(applyReward).not.toHaveBeenCalled()
+    expect(onTaken).not.toHaveBeenCalled()
+  })
+
+  it("takes nothing for an offer dismissed without collecting", () => {
+    const { hook, applyReward, onTaken } = setup()
+    act(() => hook.result.current.offerFound(tombKey))
+
+    act(() => hook.result.current.dismiss())
+
+    expect(applyReward).not.toHaveBeenCalled()
+    expect(onTaken).not.toHaveBeenCalled()
   })
 })

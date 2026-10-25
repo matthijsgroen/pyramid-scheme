@@ -16,6 +16,7 @@ import { floorOfPosition } from "./stairTravel"
 import { useFloorExplorationRecorder } from "./useFloorExplorationRecorder"
 import { useEncounter } from "./useEncounter"
 import { useRewardOffer } from "./useRewardOffer"
+import { useHomeSave } from "@/app/home/useHomeSave"
 import { useSiteExit } from "./useSiteExit"
 import { useCrossing } from "./useCrossing"
 import { useNoticeLabel, usePromptLabel } from "./usePromptLabel"
@@ -156,7 +157,9 @@ export const SiteMapScreen = ({ journeyId, siteConfig, levelIndex, seed, onSiteC
   // Applies a claimed reward to game state; whether it reaches the player at all is useRewardOffer's.
   const applyReward = useApplyReward(progression, inventory, journeyId)
   const react = useMergedReactions()
-  const rewardOffer = useRewardOffer({ rewardContributions, applyReward })
+  // A reward taken from the popup joins the haul the player brings home.
+  const { addToHaul } = useHomeSave()
+  const rewardOffer = useRewardOffer({ rewardContributions, applyReward, onTaken: addToHaul })
 
   const encounter = useEncounter({
     journeys: floorJourneys,

@@ -5,6 +5,7 @@ import { TIER_UNLOCK_PERK_IDS } from "@/data/treasurePerks"
 import {
   availablePyramidJourneyIds,
   comingSoonDifficulty,
+  currentChapter,
   isTierUnlocked,
   nextPyramidJourneyId,
 } from "./journeyAvailability"
@@ -153,5 +154,22 @@ describe("free-order tier", () => {
   it("marks wizard, and no other tier, free-order", () => {
     expect(isFreeOrderDifficulty("wizard")).toBe(true)
     expect(isFreeOrderDifficulty("expert")).toBe(false)
+  })
+})
+
+describe(currentChapter, () => {
+  it("is the first tier when no key is held", () => {
+    expect(currentChapter(noKeys)).toBe("starter")
+    expect(currentChapter(keys("not-a-tier-key"))).toBe("starter")
+  })
+
+  it("is the highest tier a held key opens", () => {
+    expect(currentChapter(keys(TIER_UNLOCK_PERK_IDS.junior![0]))).toBe("junior")
+    expect(currentChapter(keys(TIER_UNLOCK_PERK_IDS.junior![0], TIER_UNLOCK_PERK_IDS.expert![0]))).toBe("expert")
+  })
+
+  it("passes over a tier this release does not ship", () => {
+    const all = Object.values(TIER_UNLOCK_PERK_IDS).flatMap(ids => ids ?? [])
+    expect(currentChapter(keys(...all))).toBe("expert")
   })
 })

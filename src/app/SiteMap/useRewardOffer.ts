@@ -19,21 +19,30 @@ export type RewardOffer = {
 type RewardOfferArgs = {
   rewardContributions: MergedRewardContributions
   applyReward: (reward: TreasureReward) => void
+  /** Runs once, right after applyReward, for a reward the player collected from the popup. */
+  onTaken?: (reward: TreasureReward) => void
 }
 
 // Whether a reward reaches the player, and what the popup says when it does. Core dispatches through
 // the mod seams here and names no mod: a mod may silently ignore a reward (`skip` — nothing to do,
 // e.g. an already-collected hieroglyph fragment: no popup, no side effect, not remembered); every
 // other reward is offered and taken.
-export const useRewardOffer = ({ rewardContributions, applyReward }: RewardOfferArgs): RewardOffer => {
+export const useRewardOffer = ({ rewardContributions, applyReward, onTaken }: RewardOfferArgs): RewardOffer => {
   const [pending, setPending] = useState<PendingReward | null>(null)
 
   const offerFound = useCallback(
     (reward: TreasureReward, keyColors?: readonly KeyColor[]) => {
       if (rewardContributions.skip(reward)) return
-      setPending({ reward, keyColors, onCollect: () => applyReward(reward) })
+      setPending({
+        reward,
+        keyColors,
+        onCollect: () => {
+          applyReward(reward)
+          onTaken?.(reward)
+        },
+      })
     },
-    [rewardContributions, applyReward]
+    [rewardContributions, applyReward, onTaken]
   )
 
   const dismiss = useCallback(() => {

@@ -24,6 +24,11 @@ const holdsTierKey = (difficulty: Difficulty, heldKeys: ReadonlySet<string>): bo
 export const isTierUnlocked = (difficulty: Difficulty, heldKeys: ReadonlySet<string>): boolean =>
   isDifficultyReleased(difficulty) && holdsTierKey(difficulty, heldKeys)
 
+// The chapter the player is in: the last tier, in order, that is open to them. The first tier is always
+// open, so a player holding no key is in it.
+export const currentChapter = (heldKeys: ReadonlySet<string>): Difficulty =>
+  [...difficulties].reverse().find(d => isTierUnlocked(d, heldKeys)) ?? difficulties[0]
+
 // The player earned the key to a tier this release doesn't ship yet — they've reached the end of
 // the content and should be told more is coming, not left wondering why nothing opened.
 export const comingSoonDifficulty = (heldKeys: ReadonlySet<string>): Difficulty | undefined =>

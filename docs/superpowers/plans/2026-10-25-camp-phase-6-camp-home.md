@@ -106,16 +106,16 @@ Small; one agent (Sonnet).
 - Produces: `useRewardOffer({ …, onTaken? })` — `onTaken(reward)` runs once, right after `applyReward`, when the player collects; never for a skipped reward.
 - Produces: `currentChapter(heldKeys): Difficulty` — the last difficulty in order that `isTierUnlocked`; the first tier when none is.
 
-- [ ] **Step 1: Failing tests** (made-up rewards and saves).
+- [x] **Step 1: Failing tests** (made-up rewards and saves).
   - `homeSave.spec.ts`: adding two rewards keeps both, in order, equal rewards included; `clearHaul` empties it and keeps `chapter`; `chapterToAnnounce` gives the later tier, nothing for the same or an earlier tier, nothing without a record; `needsChapterRecord` is true only without one; `readHomeSave` of `undefined`, a number, an object without `version`, and `version: 2` gives the empty save; `updateHomeSave` on a `version: 2` value returns that value itself (same reference), on `undefined` applies the action to the empty save.
   - `useHomeSave.spec.ts` (renderHook over the real storage, fresh store): `addToHaul` twice then `clearHaul` leaves an empty haul; the stored value carries `version: 1` and the reward objects only; with a `version: 2` value primed in storage, `addToHaul` leaves the stored value unchanged.
   - `useRewardOffer.spec.ts`: collecting an offered reward calls `applyReward` then `onTaken` with that reward; a skipped reward calls neither; dismissing without collecting calls neither.
   - `journeyAvailability.spec.ts`: `currentChapter` over made-up held keys gives the highest unlocked released tier, and the first tier with no keys.
-- [ ] **Step 2: Run** `yarn test src/game/homeSave src/app/home src/app/SiteMap/useRewardOffer src/app/pages/journeyAvailability` — FAIL.
-- [ ] **Step 3: Implement.** The model file's comment says the haul is the reward objects as offered (so a display can be drawn later by whichever mod owns the type) and why an unreadable save is left alone. The shop's purchase path (`applyReward` from the shop plugin) is not touched.
-- [ ] **Step 4: Run** the specs — PASS. `yarn test src/app/appImports`, `yarn check-types`, `yarn lint`.
+- [x] **Step 2: Run** `yarn test src/game/homeSave src/app/home src/app/SiteMap/useRewardOffer src/app/pages/journeyAvailability` — FAIL.
+- [x] **Step 3: Implement.** The model file's comment says the haul is the reward objects as offered (so a display can be drawn later by whichever mod owns the type) and why an unreadable save is left alone. The shop's purchase path (`applyReward` from the shop plugin) is not touched.
+- [x] **Step 4: Run** the specs — PASS. `yarn test src/app/appImports`, `yarn check-types`, `yarn lint`.
 - [ ] **Step 5: Per-task review** (soundness): one record per collect; no record for skip, purchase or dismiss; unreadable save untouched; no derived value stored; store key is core's own and generic.
-- [ ] **Step 6: Commit** — `feat: the home save keeps the haul and the chapter last shown`
+- [x] **Step 6: Commit** — `feat: the home save keeps the haul and the chapter last shown`
 
 ---
 
