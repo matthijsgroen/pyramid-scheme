@@ -1301,7 +1301,7 @@
     }
   },
   "journeys": {
-    "tierNeed": "Vind een van deze schatten",
+    "tierNeed": "Vind deze schat",
     "tierProgress": "{{done}} van {{total}} klaar",
     "tierLockedName": "{{tier}}-reizen",
     "toggleTier": "Toon of verberg de {{tier}}-reizen",

@@ -1294,7 +1294,7 @@
     }
   },
   "journeys": {
-    "tierNeed": "Find one of these treasures",
+    "tierNeed": "Find this treasure",
     "tierProgress": "{{done}} of {{total}} done",
     "tierLockedName": "{{tier}} journeys",
     "toggleTier": "Show or hide the {{tier}} journeys",

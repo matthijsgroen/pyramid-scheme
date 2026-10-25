@@ -35,11 +35,8 @@ export const LockedWithSymbols: Story = {
     name: "Volgende tier",
     needs: [
       {
-        label: "Vind een van deze schatten",
-        symbols: [
-          { symbol: "𓂀", held: true },
-          { symbol: "𓋹", held: false },
-        ],
+        label: "Vind deze schat",
+        symbols: [{ symbol: "𓋹", held: false }],
       },
     ],
   },
