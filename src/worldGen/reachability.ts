@@ -207,7 +207,8 @@ export const reachableFloorsInSite = (
     const cacheKey = `${siteId}#${i}#${floorSeed}#${site[i].packing ?? ""}`
     let result = cache?.get(cacheKey)
     if (!result) {
-      result = assembleFloor(siteId, site[i] as GameFloorConfig, floorSeed, resolveEncounter, {
+      // Carved under the journey id, as play and the bake carve it: ids and hashes inside the floor derive from it.
+      result = assembleFloor(ref.journeyId, site[i] as GameFloorConfig, floorSeed, resolveEncounter, {
         resolveKeyRequirements: resolveRequirements,
         floorRef: { journeyId: ref.journeyId, levelIndex: ref.levelIndex, floorIndex: i },
         ...(support.resolveOneWay ? { resolveOneWay: support.resolveOneWay } : {}),
@@ -342,6 +343,8 @@ export type ReachabilityResult = {
   exitsReached: ReadonlySet<string>
   /** The journeys walked: tier open and every entry lock held. */
   enteredJourneys: ReadonlySet<string>
+  /** The walked sites with a way out the walk never reaches, as `<journey> level <n>`. */
+  sitesNeverLeft: readonly string[]
 }
 
 const ALL_TIERS: Tier[] = ["starter", "junior", "expert", "master", "wizard"]
@@ -382,6 +385,7 @@ export const computeReachability = (
   }
   const reachableRewards: TreasureReward[] = []
   const exitsReached = new Set<string>()
+  const sitesNeverLeft: string[] = []
 
   for (const [journeyId, sites] of Object.entries(allConfigs)) {
     const meta = journeyMeta[journeyId]
@@ -423,6 +427,8 @@ export const computeReachability = (
         for (const floorIndex of floors) discoverAt(id, `${journeyId} level ${levelIndex + 1} floor ${floorIndex}`)
       reachableRewards.push(...siteResult.reachableRewards)
       if (siteResult.exit) exitsReached.add(`${journeyId}#${levelIndex}`)
+      else if (site.some(floor => floor.exitOrStaircase === "exit"))
+        sitesNeverLeft.push(`${journeyId} level ${levelIndex + 1}`)
       if (ordered && !siteResult.exit) open = false
     })
   }
@@ -436,5 +442,6 @@ export const computeReachability = (
     reachableRewards,
     exitsReached,
     enteredJourneys,
+    sitesNeverLeft,
   }
 }

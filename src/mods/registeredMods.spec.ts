@@ -9,6 +9,7 @@ describe("MOD_LOOT_TOTALS", () => {
       rewards: [],
       unlockedTiers: new Set(),
       enteredJourneys: new Set(),
+      sitesNeverLeft: [],
       blocking: new Set(),
       blockingAt: new Map(),
       lockedTierNeeds: new Map(),

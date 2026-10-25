@@ -198,15 +198,13 @@ const reEnterableFamilies: ResolveEncounter = (encounter, defaultTag) => ({
 describe(reachableFloorsInSite, () => {
   it("placement carves each floor at the layout's pin", () => {
     const floor = ungatedTwoFloorSite()[1]
-    const pin = [7919, 15838, 23757].find(
-      seed => assembleFloor("j:0", { ...floor, seed } as GameFloorConfig, 1).success
-    )!
+    const pin = [7919, 15838, 23757].find(seed => assembleFloor("j", { ...floor, seed } as GameFloorConfig, 1).success)!
     const site: SiteConfig = [{ ...floor, entrance: undefined, seed: pin, packing: 0.5 }]
     const cache = createFloorAssemblyCache()
     reachableFloorsInSite({ journeyId: "j", levelIndex: 0 }, site, new Set(), undefined, undefined, cache)
     const carved = [...cache.entries()]
     expect(carved.map(([key]) => key)).toEqual([`j:0#0#${pin}#0.5`])
-    const atPin = assembleFloor("j:0", site[0] as GameFloorConfig, pin, defaultResolveEncounter, {
+    const atPin = assembleFloor("j", site[0] as GameFloorConfig, pin, defaultResolveEncounter, {
       floorRef: { journeyId: "j", levelIndex: 0, floorIndex: 0 },
     })
     expect(carved[0][1]).toEqual(atPin)
@@ -819,5 +817,38 @@ describe("reachableFloorsInSite on a hidden stair", () => {
     const site: SiteConfig = [{ ...hiddenStairSite()[1], entrance: undefined }]
     const result = reachableFloorsInSite(ref, site, new Set(), undefined, undefined, undefined, sight)
     expect(result.discoveredLocks.size).toBe(0)
+  })
+})
+
+describe("the walk carves a floor as play carves it", () => {
+  // A made-up floor whose sub-section key gate takes an id derived from the id the floor is carved under.
+  const floor: SiteConfig[number] = {
+    pathPuzzles: 1,
+    difficulty: "starter",
+    end: "treasure",
+    exitOrStaircase: "exit",
+    seed: 7,
+    sideSections: [
+      {
+        pathPuzzles: 1,
+        difficulty: "starter",
+        end: "treasure",
+        sideSections: [
+          { pathPuzzles: 0, difficulty: "starter", end: "treasure" },
+          { pathPuzzles: 0, difficulty: "starter", end: "treasure", gate: { type: "floor-key" } },
+        ],
+      },
+    ],
+  }
+
+  it("carves under the journey id, so the walked grid and its key ids equal the runtime carve", () => {
+    const cache = createFloorAssemblyCache()
+    reachableFloorsInSite({ journeyId: "made-up", levelIndex: 2 }, [floor], new Set(), undefined, undefined, cache)
+    const walked = [...cache.values()][0]
+    const played = assembleFloor("made-up", floor as GameFloorConfig, 7, defaultResolveEncounter, {
+      floorRef: { journeyId: "made-up", levelIndex: 2, floorIndex: 0 },
+    })
+    expect(played.success).toBe(true)
+    expect(walked).toEqual(played)
   })
 })

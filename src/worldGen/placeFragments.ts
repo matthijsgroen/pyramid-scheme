@@ -107,15 +107,13 @@ export type CappedCurrency = {
 // Currency knowledge reachability needs but must not import (it's mod-agnostic): each registered
 // currency supplies its own gate threshold + reward→bucket harvest, merged with the mod-injected
 // `support` (the tomb-treasure mod's tomb-key harvest, the tomb journey-entry lock, and the
-// tier-unlock ladder). A currency's answer comes before the support's. Core names no currency. The realisation
-// resolvers ride along unchanged, so every walk built on the merged support carves its floors as play does.
+// tier-unlock ladder). A currency's answer comes before the support's. Core names no currency. Every other field of
+// the support rides along unchanged (the realisation resolvers among them, so every walk carves as play does).
 export const mergeReachabilitySupport = (
   currencies: readonly CurrencyDistribution[],
   support: ReachabilitySupport
 ): ReachabilitySupport => ({
-  resolveOneWay: support.resolveOneWay,
-  resolveRegionBarrier: support.resolveRegionBarrier,
-  resolvePassage: support.resolvePassage,
+  ...support,
   thresholdFor: (bucket: string) =>
     currencies.find(c => c.ownsBucket(bucket))?.thresholdFor?.(bucket) ?? support.thresholdFor?.(bucket),
   bucketForReward: (reward: TreasureReward) => {

@@ -233,6 +233,7 @@ describe(collectLootTotals, () => {
     rewards: withheld === undefined ? [money, money] : [money],
     unlockedTiers: new Set(),
     enteredJourneys: new Set(),
+    sitesNeverLeft: [],
     blocking: new Set(),
     blockingAt: new Map(),
     lockedTierNeeds: new Map(),

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import type { SiteConfig, TreasureReward } from "./types"
+import type { SideSection, SiteConfig, TreasureReward } from "./types"
 import type { ReachabilitySupport } from "./reachability"
 import { mergeReachabilitySupport, placeFragments, type CurrencyDistribution } from "./placeFragments"
 import type { Distribution } from "./slotAllocator"
@@ -250,6 +250,53 @@ describe("placeFragments slot reach", () => {
     placeFragments(configs, [currency], requirements, [], [], undefined, 0, {})
     expect(configs[journeyOfTier("junior")][0][0].mainEndReward).toEqual(piece)
     expect(configs[starter][0][0].mainEndReward).toBeUndefined()
+  })
+
+  // The same world, with the starter slot in a side section whose own first room needs the glyph, or in a shop the
+  // glyph's gate shuts. A ward key on the starter main end opens the tomb-key gate of the open-gate case.
+  const ward: TreasureReward = { type: "tombKey", keyId: "made-up-ward" }
+  const wardSupport: ReachabilitySupport = {
+    bucketForReward: reward => (reward.type === "tombKey" ? (reward.keyId as string) : undefined),
+  }
+  const sectionWorld = (section: SideSection): Record<string, SiteConfig[]> => ({
+    [starter]: [[{ ...plainSite()[0], mainEndReward: ward, sideSections: [section] }]],
+    [journeyOfTier("junior")]: [[{ ...plainSite()[0], mainEndReward: { type: "fragmentSlot" } }]],
+  })
+  const lockedChain = {
+    pathPuzzles: 1,
+    difficulty: "starter" as const,
+    end: "treasure" as const,
+    encountersByIndex: { 0: "made-up-lock" },
+  }
+
+  it.each<[string, SideSection, (section: SideSection) => TreasureReward | undefined]>([
+    [
+      "a side section's end behind its own glyph room",
+      { ...lockedChain, endReward: { type: "fragmentSlot" } },
+      section => section.endReward,
+    ],
+    [
+      "an open tomb-key gate's end behind its own glyph room",
+      { ...lockedChain, gate: { type: "tomb-key", wardKeyId: "made-up-ward" } },
+      section => section.endReward,
+    ],
+    [
+      "a shop's stock placeholder behind a gate on the glyph",
+      {
+        pathPuzzles: 0,
+        difficulty: "starter",
+        end: "treasure",
+        encounter: "fez-shop",
+        gate: { type: "tomb-key", wardKeyId: glyph },
+        rewards: [{ type: "fragmentSlot" }],
+      },
+      section => section.rewards?.[0],
+    ],
+  ])("%s is skipped for another journey's end", (_, section, held) => {
+    const configs = sectionWorld(section)
+    placeFragments(configs, [currency], requirements, [], [], undefined, 0, wardSupport)
+    expect(configs[journeyOfTier("junior")][0][0].mainEndReward).toEqual(piece)
+    expect(held(configs[starter][0][0].sideSections[0])).toBeUndefined()
   })
 })
 

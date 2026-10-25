@@ -29,6 +29,8 @@ export type GateWalkResult = {
   rewards: readonly TreasureReward[]
   unlockedTiers: ReadonlySet<Tier>
   enteredJourneys: ReadonlySet<string>
+  /** The walked sites whose way out the walk never reaches, as `<journey> level <n>`. */
+  sitesNeverLeft: readonly string[]
   /** The locks the reached ground still runs into. */
   blocking: ReadonlySet<string>
   /** Where each blocking lock stands: `<journey> level <n> floor <f>`, or `<journey> entrance`. */
@@ -104,6 +106,7 @@ export const makeGateWalk = ({
       rewards: reach.reachableRewards,
       unlockedTiers: reach.unlockedTiers,
       enteredJourneys: reach.enteredJourneys,
+      sitesNeverLeft: reach.sitesNeverLeft,
       blocking: reach.discoveredLocks,
       blockingAt: reach.discoveredAt,
       lockedTierNeeds: new Map([...lockedTiers].map(tier => [tier, unmetTierGroups(tier, facts, support)])),

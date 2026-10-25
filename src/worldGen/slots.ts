@@ -23,7 +23,7 @@ export type Slot = {
    * not-yet-rewarded tomb-key gate (eligible only until something else claims it). */
   isPlaceholder: boolean
   /** The placeholder standing in the slot's room until it is filled: a walk that lists it among its reached rewards
-   * has reached the room itself, not only the floor around it. Absent for an open tomb-key gate, which has none. */
+   * has reached the room itself, not only the floor around it. An open tomb-key gate's end is given one here. */
   sentinel?: FragmentSlotReward
   /** Soft authored placement preference (a bucket id, e.g. `mapPiece:starter_treasure_tomb`)
    * — a ranking boost for that currency, not an exclusive claim. See
@@ -240,9 +240,22 @@ export const collectSlots = (
             )
           } else if (section.gate?.type === "tomb-key" && !section.endReward && rewardCapable) {
             const s = section
-            addSlot(ref, section.difficulty, sWardKeys, false, undefined, secHidden, r => {
-              s.endReward = r
-            })
+            // An open gate's end holds a placeholder too while placement runs, so the walk can tell its room reached
+            // from its floor reached. Filled or cleared like every slot, so none survives placement.
+            const sentinel: FragmentSlotReward = { type: "fragmentSlot" }
+            s.endReward = sentinel
+            addSlot(
+              ref,
+              section.difficulty,
+              sWardKeys,
+              false,
+              undefined,
+              secHidden,
+              r => {
+                s.endReward = r
+              },
+              sentinel
+            )
           }
           for (const sub of section.sideSections ?? []) {
             const subWardKeys = [...sWardKeys, ...(sub.gate?.type === "tomb-key" ? [sub.gate.wardKeyId] : [])]
@@ -265,9 +278,20 @@ export const collectSlots = (
               )
             } else if (sub.gate?.type === "tomb-key" && !sub.endReward && subRewardCapable) {
               const ss = sub
-              addSlot(ref, sub.difficulty, subWardKeys, false, undefined, subHidden, r => {
-                ss.endReward = r
-              })
+              const sentinel: FragmentSlotReward = { type: "fragmentSlot" }
+              ss.endReward = sentinel
+              addSlot(
+                ref,
+                sub.difficulty,
+                subWardKeys,
+                false,
+                undefined,
+                subHidden,
+                r => {
+                  ss.endReward = r
+                },
+                sentinel
+              )
             }
           }
         }

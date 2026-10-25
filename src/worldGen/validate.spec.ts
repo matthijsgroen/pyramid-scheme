@@ -671,4 +671,46 @@ describe(stuckPoints, () => {
     // The same world with the detector standing on the first journey's main end is walked through.
     expect(stuck({ ...configs, first: [[{ ...configs.first[0][0], mainEndReward: lens }]] }, detector)).toEqual([])
   })
+
+  // The first journey's main path runs through a room that needs a made-up door key nothing in the world holds.
+  const doorRequirements = (familyId: string) => (familyId === "made-up-door" ? ["made-up-door-key"] : undefined)
+  const doorWorld = () => keyIn({ pathPuzzles: 2, encountersByIndex: { 1: "made-up-door" }, mainEndReward: shopKey })
+
+  it("an entered journey whose way out is never reached is named, with the lock that holds it", () => {
+    expect(
+      stuckPoints(
+        makeGateWalk({ configs: doorWorld(), journeyMeta: meta, support, resolveRequirements: doorRequirements }),
+        meta
+      )
+    ).toEqual([
+      "journey second (junior) is never entered: its entrance needs shop-key",
+      "journey first level 1 is never left: its way out is not reached",
+      "lock made-up-door-key still blocks at first level 1 floor 0",
+      "lock shop-key still blocks at second entrance",
+    ])
+  })
+
+  it("names unentered journeys, then sites never left, then locked tiers, then blocking locks", () => {
+    const tierLocked: ReachabilitySupport = {
+      ...support,
+      journeyEntryLocks: () => [],
+      tierUnlockGroups: tier => (tier === "junior" ? [["made-up-unlock"]] : []),
+    }
+    expect(
+      stuckPoints(
+        makeGateWalk({
+          configs: doorWorld(),
+          journeyMeta: meta,
+          support: tierLocked,
+          resolveRequirements: doorRequirements,
+        }),
+        meta
+      )
+    ).toEqual([
+      "journey second (junior) is never entered: its tier stays locked",
+      "journey first level 1 is never left: its way out is not reached",
+      "tier junior stays locked: none held of [made-up-unlock]",
+      "lock made-up-door-key still blocks at first level 1 floor 0",
+    ])
+  })
 })
